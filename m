@@ -2,179 +2,595 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CECE9C67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:43:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06FAFC004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:43:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F86920824
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:43:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC55820824
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:43:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Dhsjzrpf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F86920824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="c3m3Sxca";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dCG0GeyC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC55820824
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbeJXXLz (ORCPT
+        id S1727077AbeJXXMN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 19:11:55 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:55664 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726457AbeJXXLz (ORCPT
+        Wed, 24 Oct 2018 19:12:13 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37322 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726901AbeJXXMM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 19:11:55 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9OEdGoH176211;
-        Wed, 24 Oct 2018 14:43:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=AbNljhcUSQP5zBUBWMIzLUBNF9pIZHzSltGKoqNEsCY=;
- b=DhsjzrpfH/c5RDhkmmBjjT1Tsqrqdmdg6T3vhJ1qkAW5ncp5XzNQgYi6UuiLxGRgZLf0
- 92E0pfY6yEewD5FO2e52wkFK90J+RwUEzG4vUyK/DdRXAI/o4W77BlXE1oQ4JiiAJm9s
- 3hIBmu3p6URK6EegECxhWWfRsHBrMi8fTjsM9FQo6pzo3QtyghmDn90iBFJUKu/0bdpL
- lGFORq7GvfSur7eWdDU1Of5t4HO2ZQbgljrgtQfcG5UOb6KkWD7vKXqNOKAW5h7cCOaz
- yeLoB5iqHwaxVyOQeC4bJ9qKt0HXAG87aNlCOL92m7XMFUlU2lG4Pg1tlwKvQILYr7Vu lQ== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2n7w0quxup-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 24 Oct 2018 14:43:27 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9OEhQlW028211
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 24 Oct 2018 14:43:27 GMT
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9OEhQm4002815;
-        Wed, 24 Oct 2018 14:43:26 GMT
-Received: from [10.211.46.5] (/10.211.46.5)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 24 Oct 2018 07:43:25 -0700
-Subject: Re: [PATCH] xen-swiotlb: exchange memory with Xen only when pages are
- contiguous
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc:     "DONGLI.ZHANG" <dongli.zhang@oracle.com>, konrad@kernel.org,
-        Christoph Helwig <hch@lst.de>,
-        John Sobecki <john.sobecki@oracle.com>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "linux-kernel@vger.kernel.org\"" <linux-kernel@vger.kernel.org>
-References: <bb6d87b4-c371-c6c0-8c48-bc95df018ad1@oracle.com>
- <20181024130246.GA22616@localhost.localdomain>
- <83900cf4-690c-9725-d022-d427fdeb4f7d@oracle.com>
-From:   Joe Jin <joe.jin@oracle.com>
-Message-ID: <581cb7ea-3112-791d-918d-9bb887e4744f@oracle.com>
-Date:   Wed, 24 Oct 2018 07:43:23 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Wed, 24 Oct 2018 19:12:12 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id F100D60C4F; Wed, 24 Oct 2018 14:43:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540392229;
+        bh=d3W+X9ll4ZbxOF1di84wfFh9oH9GxkZxHxzu1D8gRlE=;
+        h=From:Subject:To:Cc:References:Date:In-Reply-To:From;
+        b=c3m3SxcaFhQZ5t9EnzKSFtGTsDK9ShjhiNpqZlazevBVERQYKPJrippvN2yEIA1vx
+         ny2XQpwWs1VYCkl68vyo5BRiznFWZV6QjLD5wt0dTIFtlFyXwkwxYiTdadTnFtYaDc
+         X8i7z4vfah/XNBwpbcSXwQryStLdW2+EXsO8bnUA=
+Received: from [10.206.28.53] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: anilc@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 11D6B6030F;
+        Wed, 24 Oct 2018 14:43:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540392227;
+        bh=d3W+X9ll4ZbxOF1di84wfFh9oH9GxkZxHxzu1D8gRlE=;
+        h=From:Subject:To:Cc:References:Date:In-Reply-To:From;
+        b=dCG0GeyCrKcqaCcnHTntLZtziYKIFV3hEvlXaLNMR/pNnz5z8RHOlvB9+YMkEUp/9
+         olm/dXe+QRWM3Sigz4j9vItcQJAp+O9lstDd2w2QosWlegOqr+Jm8JISVm66TFd3cJ
+         nOQjBBMjsudqQ3liBUrUmrUMNyNjPmBfaGLA33R8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 11D6B6030F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=anilc@codeaurora.org
+From:   AnilKumar Chimata <anilc@codeaurora.org>
+Subject: Re: [PATCH 3/3] crypto: qce: ice: Add support for Inline Crypto
+ Engine
+To:     Randy Dunlap <rdunlap@infradead.org>
+Cc:     andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1539789476-6098-1-git-send-email-anilc@codeaurora.org>
+ <1539789476-6098-4-git-send-email-anilc@codeaurora.org>
+ <48c7da0d-4e57-bc36-a683-94088b3b8319@infradead.org>
+Message-ID: <fe8cd0a3-30d9-34ee-d0b9-2f1ddb655d70@codeaurora.org>
+Date:   Wed, 24 Oct 2018 20:13:41 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <83900cf4-690c-9725-d022-d427fdeb4f7d@oracle.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <48c7da0d-4e57-bc36-a683-94088b3b8319@infradead.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9055 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810240127
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/24/18 6:57 AM, Boris Ostrovsky wrote:
-> On 10/24/18 9:02 AM, Konrad Rzeszutek Wilk wrote:
->> On Tue, Oct 23, 2018 at 08:09:04PM -0700, Joe Jin wrote:
->>> Commit 4855c92dbb7 "xen-swiotlb: fix the check condition for
->>> xen_swiotlb_free_coherent" only fixed memory address check condition
->>> on xen_swiotlb_free_coherent(), when memory was not physically
->>> contiguous and tried to exchanged with Xen via 
->>> xen_destroy_contiguous_region it will lead kernel panic.
->> s/it will lead/which lead to/?
->>
->>> The correct check condition should be memory is in DMA area and
->>> physically contiguous.
->> "The correct check condition to make Xen hypercall to revert the
->> memory back from its 32-bit pool is if it is:
->>  1) Above its DMA bit mask (for example 32-bit devices can only address
->> up to 4GB, and we may want 4GB+2K), and
-> 
-> Is this "and' or 'or'?
-> 
->>  2) If it not physically contingous
->>
->> N.B. The logic in the code is inverted, which leads to all sorts of
->> confusions."
-> 
-> 
-> I would, in fact, suggest to make the logic the same in both
-> xen_swiotlb_alloc_coherent() and xen_swiotlb_free_coherent() to avoid
-> this. This will involve swapping if and else in the former.
-> 
-> 
->>
->> Does that sound correct?
->>
->>> Thank you Boris for pointing it out.
->>>
->> Fixes: 4855c92dbb7 ("xen-sw..") ?
->>
->>> Signed-off-by: Joe Jin <joe.jin@oracle.com>
->>> Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
->>> Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
->> Reported-by: Boris Ostrovs... ?
->>> Cc: Christoph Helwig <hch@lst.de>
->>> Cc: Dongli Zhang <dongli.zhang@oracle.com>
->>> Cc: John Sobecki <john.sobecki@oracle.com>
->>> ---
->>>  drivers/xen/swiotlb-xen.c | 4 ++--
->>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
->>> index f5c1af4ce9ab..aed92fa019f9 100644
->>> --- a/drivers/xen/swiotlb-xen.c
->>> +++ b/drivers/xen/swiotlb-xen.c
->>> @@ -357,8 +357,8 @@ xen_swiotlb_free_coherent(struct device *hwdev, size_t size, void *vaddr,
->>>  	/* Convert the size to actually allocated. */
->>>  	size = 1UL << (order + XEN_PAGE_SHIFT);
->>>  
->>> -	if (((dev_addr + size - 1 <= dma_mask)) ||
->>> -	    range_straddles_page_boundary(phys, size))
->>> +	if ((dev_addr + size - 1 <= dma_mask) &&
->>> +	    !range_straddles_page_boundary(phys, size))
->>>  		xen_destroy_contiguous_region(phys, order);
-> 
-> 
-> I don't think this is right.
-> 
-> if ((dev_addr + size - 1 > dma_mask) || range_straddles_page_boundary(phys, size))
-> 
-> No?
+Hi Randy,
 
-No this is not correct.
+Thanks for your comments,
 
-When allocate memory, it tried to allocated from Dom0/Guest, then check if physical
-address is DMA memory also contiguous, if no, exchange with Hypervisor, code as below:
+On 2018-10-17 23:09, Randy Dunlap wrote:
+> On 10/17/18 8:17 AM, AnilKumar Chimata wrote:
+>> This patch adds support for Inline Crypto Engine (ICE), which
+>> is embedded into storage device/controller such as UFS/eMMC.
+>> ICE is intended for high throughput cryptographic encryption
+>> or decryption of storage data.
+>> 
+>> Signed-off-by: AnilKumar Chimata <anilc@codeaurora.org>
+>> ---
+>>  Documentation/crypto/msm/ice.txt |  235 ++++++
+>>  drivers/crypto/Kconfig           |   10 +
+>>  drivers/crypto/qce/Makefile      |    1 +
+>>  drivers/crypto/qce/ice.c         | 1613 
+>> ++++++++++++++++++++++++++++++++++++++
+>>  drivers/crypto/qce/iceregs.h     |  159 ++++
+>>  include/crypto/ice.h             |   80 ++
+>>  6 files changed, 2098 insertions(+)
+>>  create mode 100644 Documentation/crypto/msm/ice.txt
+>>  create mode 100644 drivers/crypto/qce/ice.c
+>>  create mode 100644 drivers/crypto/qce/iceregs.h
+>>  create mode 100644 include/crypto/ice.h
+>> 
+>> diff --git a/Documentation/crypto/msm/ice.txt 
+>> b/Documentation/crypto/msm/ice.txt
+>> new file mode 100644
+>> index 0000000..58f7081
+>> --- /dev/null
+>> +++ b/Documentation/crypto/msm/ice.txt
+>> @@ -0,0 +1,235 @@
+>> +Introduction:
+>> +=============
+>> +Storage encryption has been one of the most required feature from 
+>> security
+> 
+>                                                         features
 
-326         phys = *dma_handle;                                                     
-327         dev_addr = xen_phys_to_bus(phys);                                       
-328         if (((dev_addr + size - 1 <= dma_mask)) &&                              
-329             !range_straddles_page_boundary(phys, size))                         
-330                 *dma_handle = dev_addr;                                         
-331         else {                                                                  
-332                 if (xen_create_contiguous_region(phys, order,                   
-333                                                  fls64(dma_mask), dma_handle) != 0) {
-334                         xen_free_coherent_pages(hwdev, size, ret, (dma_addr_t)phys, attrs);
-335                         return NULL;                                            
-336                 }                                                               
-337         }                                                                       
-                                                                     
+changed.
 
-On freeing, need to return the memory to Xen, otherwise DMA memory will be used
-up(this is the issue the patch intend to fix), so when memory is DMAable and
-contiguous then call xen_destroy_contiguous_region(), return DMA memory to Xen.
+> 
+>> +point of view. QTI based storage encryption solution uses general 
+>> purpose
+>> +crypto engine. While this kind of solution provide a decent amount of
+> 
+>                                               provides
 
-Thanks,
-Joe
+changed.
+
+> 
+>> +performance, it falls short as storage speed is improving 
+>> significantly
+>> +continuously. To overcome performance degradation, newer chips are 
+>> going to
+>> +have Inline Crypto Engine (ICE) embedded into storage device. ICE is 
+>> supposed
+>> +to meet the line speed of storage devices.
+>> +
+>> +Hardware Description
+>> +====================
+>> +ICE is a HW block that is embedded into storage device such as 
+>> UFS/eMMC. By
+> 
+> s/HW/hardware/                                     devices
+
+changed.
+
+> 
+>> +default, ICE works in bypass mode i.e. ICE HW does not perform any 
+>> crypto
+>> +operation on data to be processed by storage device. If required, ICE 
+>> can be
+>> +configured to perform crypto operation in one direction (i.e. either 
+>> encryption
+>> +or decryption) or in both direction(both encryption & decryption).
+> 
+>                              directions (both ...
+
+changed.
+
+> 
+>> +
+>> +When a switch between the operation modes(plain to crypto or crypto 
+>> to plain)
+> 
+>                                        modes (plain ...
+
+changed.
+
+> 
+>> +is desired for a particular partition, SW must complete all 
+>> transactions for
+> 
+> s/SW/software/
+
+changed.
+
+> 
+>> +that particular partition before switching the crypto mode i.e. no 
+>> crypto, one
+> 
+>                                                   crypto mode;
+
+changed.
+
+> 
+>> +direction crypto or both direction crypto operation. Requests for 
+>> other
+> 
+>                             directions
+
+changed.
+
+> 
+>> +partitions are not impacted due to crypto mode switch.
+>> +
+>> +ICE HW currently supports AES128/256 bit ECB & XTS mode encryption 
+>> algorithms.
+>> +
+>> +Keys for crypto operations are loaded from SW. Keys are stored in a 
+>> lookup
+>> +table(LUT) located inside ICE HW. Maximum of 32 keys can be loaded in 
+>> ICE key
+>> +LUT. A Key inside the LUT can be referred using a key index.
+> 
+>                                     referred to using
+
+changed.
+
+> 
+>> +
+>> +SW Description
+>> +==============
+>> +ICE HW has categorized ICE registers in 2 groups: those which can be 
+>> accessed by
+>> +only secure side i.e. TZ and those which can be accessed by 
+>> non-secure side such
+> 
+> at least tell the reader what TZ and HLOS mean...
+
+changed.
+
+> 
+>> +as HLOS as well. This requires that ICE driver to be split in two 
+>> pieces: one
+> 
+>                                   that the ICE driver be split into
+> two pieces: one
+
+changed.
+
+> 
+>> +running from TZ space and another from HLOS space.
+>> +
+>> +ICE driver from TZ would configure keys as requested by HLOS side.
+>> +
+>> +ICE driver on HLOS side is responsible for initialization of ICE HW.
+>> +
+>> +SW Architecture Diagram
+>> +=======================
+>> +Following are all the components involved in the ICE driver for 
+>> control path:
+>> +
+>> ++++++++++++++++++++++++++++++++++++++++++
+>> ++               App layer               +
+>> ++++++++++++++++++++++++++++++++++++++++++
+>> ++             System layer              +
+>> ++   ++++++++         +++++++            +
+>> ++   + VOLD +         + PFM +            +
+>> ++   ++++++++         +++++++            +
+>> ++         ||         ||                 +
+>> ++         ||         ||                 +
+>> ++         \/         \/                 +
+>> ++     +++++++++++++++++++++++++++       +
+>> ++     + LibQSEECom / cryptfs_hw +       +
+>> ++     +++++++++++++++++++++++++++       +
+>> ++++++++++++++++++++++++++++++++++++++++++
+>> ++             Kernel                    +       +++++++++++++++++
+>> ++                                       +       +     KMS       +
+>> ++  +++++++  +++++++++++  +++++++++++    +       +++++++++++++++++
+>> ++  + ICE +  + Storage +  + QSEECom +    +       +   ICE Driver  +
+>> ++++++++++++++++++++++++++++++++++++++++++ <===> +++++++++++++++++
+>> +               ||                                    ||
+>> +               ||                                    ||
+>> +               \/                                    \/
+>> ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>> ++                      Storage Device                           +
+>> ++                      ++++++++++++++                           +
+>> ++                      +   ICE HW   +                           +
+>> ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>> +
+>> +Use Cases:
+>> +----------
+>> +a) Device bootup
+>> +ICE HW is detected during bootup time and corresponding probe 
+>> function is
+>> +called. ICE driver parses its data from device tree node. ICE HW and 
+>> storage
+>> +HW are tightly coupled. Storage device probing is dependent upon ICE 
+>> device
+>> +probing. ICE driver configures all the required registers to put the 
+>> ICE HW
+>> +in bypass mode.
+>> +
+>> +b) Configuring keys
+>> +Currently, there are couple of use cases to configure the keys.
+>> +
+>> +1) Full Disk Encryption(FDE)
+>> +System layer(VOLD) at invocation of apps layer would call libqseecom 
+>> to create
+>> +the encryption key. Libqseecom calls qseecom driver to communicate 
+>> with KMS
+>> +module on the secure side i.e. TZ. KMS would call ICE driver on the 
+>> TZ side to
+>> +create and set the keys in ICE HW. At the end of transaction, VOLD 
+>> would have
+>> +key index of key LUT where encryption key is present.
+>> +
+>> +2) Per File Encryption (PFE)
+>> +Per File Manager(PFM) calls QSEECom api to create the key. PFM has a 
+>> peer comp-
+> 
+> Preferably don't split (hyphenate) "component."  But if you must, it
+> should be com-
+> ponent.
+
+Taken into account, will follow on future patches. For this patch changed.
+
+> 
+>> +onent(PFT) at kernel layer which gets the corresponding key index 
+>> from PFM.
+>> +
+>> +Following are all the components involved in the ICE driver for data 
+>> path:
+>> +
+>> +       +++++++++++++++++++++++++++++++++++++++++
+>> +       +               App layer               +
+>> +       +++++++++++++++++++++++++++++++++++++++++
+>> +       +              VFS                      +
+>> +       +---------------------------------------+
+>> +       +         File System (EXT4)            +
+>> +       +---------------------------------------+
+>> +       +             Block Layer               +
+>> +       + --------------------------------------+
+>> +       +                              +++++++  +
+>> +       +              dm-req-crypt => + PFT +  +
+>> +       +                              +++++++  +
+>> +       +                                       +
+>> +       +---------------------------------------+
+>> +       +    +++++++++++           +++++++      +
+>> +       +    + Storage +           + ICE +      +
+>> +       +++++++++++++++++++++++++++++++++++++++++
+>> +       +                  ||                   +
+>> +       +                  || (Storage Req with +
+>> +       +                  \/  ICE parameters ) +
+>> +       +++++++++++++++++++++++++++++++++++++++++
+>> +       +          Storage Device               +
+>> +       +          ++++++++++++++               +
+>> +       +          +   ICE HW   +               +
+>> +       +++++++++++++++++++++++++++++++++++++++++
+>> +
+>> +c) Data transaction
+>> +Once the crypto key has been configured, VOLD/PFM creates device 
+>> mapping for
+>> +data partition. As part of device mapping VOLD passes key index, 
+>> crypto
+>> +algorithm, mode and key length to dm layer. In case of PFE, keys are 
+>> provided
+>> +by PFT as and when request is processed by dm-req-crypt. When any 
+>> application
+>> +needs to read/write data, it would go through DM layer which would 
+>> add crypto
+>> +information, provided by VOLD/PFT, to Request. For each Request, 
+>> Storage driver
+>> +would ask ICE driver to configure crypto part of request. ICE driver 
+>> extracts
+>> +crypto data from Request structure and provide it to storage driver 
+>> which would
+> 
+>                                           provides
+
+changed.
+
+> 
+>> +finally dispatch request to storage device.
+>> +
+>> +d) Error Handling
+>> +Due to issue # 1 mentioned in "Known Issues", ICE driver does not 
+>> register for
+>> +any interrupt. However, it enables sources of interrupt for ICE HW. 
+>> After each
+>> +data transaction, Storage driver receives transaction completion 
+>> event. As part
+>> +of event handling, storage driver calls  ICE driver to check if any 
+>> of ICE
+>> +interrupt status is set. If yes, storage driver returns error to 
+>> upper layer.
+>> +
+>> +Error handling would be changed in future chips.
+>> +
+>> +Interfaces
+>> +==========
+>> +ICE driver exposes interfaces for storage driver to :
+> 
+>                                                     to:
+
+changed.
+
+> 
+>> +1. Get the global instance of ICE driver
+>> +2. Get the implemented interfaces of the particular ice instance
+>> +3. Initialize the ICE HW
+>> +4. Reset the ICE HW
+>> +5. Resume/Suspend the ICE HW
+>> +6. Get the Crypto configuration for the data request for storage
+>> +7. Check if current data transaction has generated any interrupt
+>> +
+>> +Driver Parameters
+>> +=================
+>> +This driver is built and statically linked into the kernel; 
+>> therefore,
+>> +there are no module parameters supported by this driver.
+>> +
+>> +There are no kernel command line parameters supported by this driver.
+>> +
+>> +Power Management
+>> +================
+>> +ICE driver does not do power management on its own as it is part of 
+>> storage
+>> +hardware. Whenever storage driver receives request for power 
+>> collapse/suspend
+>> +resume, it would call ICE driver which exposes APIs for Storage HW. 
+>> ICE HW
+>> +during power collapse or reset, wipes crypto configuration data. When 
+>> ICE
+> 
+>                                  ^no comma
+
+changed.
+
+> 
+>> +driver receives request to resume, it would ask ICE driver on TZ side 
+>> to
+>> +restore the configuration. ICE driver does not do anything as part of 
+>> power
+>> +collapse or suspend event.
+>> +
+>> +Interface:
+>> +==========
+>> +ICE driver exposes following APIs for storage driver to use:
+>> +
+>> +int (*init)(struct platform_device *, void *, ice_success_cb, 
+>> ice_error_cb);
+>> +	-- This function is invoked by storage controller during 
+>> initialization of
+>> +	storage controller. Storage controller would provide success and 
+>> error call
+>> +	backs which would be invoked asynchronously once ICE HW init is 
+>> done.
+>> +
+>> +int (*reset)(struct platform_device *);
+>> +	-- ICE HW reset as part of storage controller reset. When storage 
+>> controller
+>> +	received reset command, it would call reset on ICE HW. As of now, 
+>> ICE HW
+>> +	does not need to do anything as part of reset.
+>> +
+>> +int (*resume)(struct platform_device *);
+>> +	-- ICE HW while going to reset, wipes all crypto keys and other data 
+>> from ICE
+> 
+>                                       ^no comma
+
+changed.
+
+> 
+>> +	HW. ICE driver would reconfigure those data as part of resume 
+>> operation.
+>> +
+>> +int (*suspend)(struct platform_device *);
+>> +	-- This API would be called by storage driver when storage device is 
+>> going to
+>> +	suspend mode. As of today, ICE driver does not do anything to handle 
+>> suspend.
+>> +
+>> +int (*config)(struct platform_device *, struct request* , struct 
+>> ice_data_setting*);
+>> +	-- Storage driver would call this interface to get all crypto data 
+>> required to
+>> +	perform crypto operation.
+>> +
+>> +int (*status)(struct platform_device *);
+>> +	-- Storage driver would call this interface to check if previous 
+>> data transfer
+>> +	generated any error.
+>> +
+>> +Config options
+>> +==============
+>> +This driver is enabled by the kernel config option 
+>> CONFIG_CRYPTO_DEV_MSM_ICE.
+>> +
+>> +Dependencies
+>> +============
+>> +ICE driver depends upon corresponding ICE driver on TZ side to 
+>> function
+>> +appropriately.
+>> +
+>> +Known Issues
+>> +============
+>> +1. ICE HW emits 0s even if it has generated an interrupt
+> 
+> That statement is unclear.  Emits where?  in a data stream?  in
+> interrupt status?
+
+Its interrupt status line unchanged, currently its handled on storage driver
+
+> 
+>> +This issue has significant impact on how ICE interrupts are handled. 
+>> Currently,
+>> +ICE driver does not register for any of the ICE interrupts but 
+>> enables the
+>> +sources of interrupt. Once storage driver asks to check the status of 
+>> interrupt,
+>> +it reads and clears the clear status and provide read status to 
+>> storage driver.
+> 
+>                "clears the clear status"???         s/provide/provides/
+
+changed.
+
+> 
+>> +This mechanism though not optimal but prevents file-system 
+>> corruption.
+> 
+> mangled sentence above.
+
+changed.
+
+> 
+>> +This issue has been fixed in newer chips.
+>> +
+>> +2. ICE HW wipes all crypto data during power collapse
+>> +This issue necessitate that ICE driver on TZ side store the crypto 
+>> material
+> 
+>               necessitates
+
+changed.
+
+> 
+>> +which is not required in the case of general purpose crypto engine.
+>> +This issue has been fixed in newer chips.
+>> +
+>> +Further Improvements
+>> +====================
+>> +Currently, Due to PFE use case, ICE driver is dependent upon 
+>> dm-req-crypt to
+> 
+>               due
+
+changed.
+
+> 
+>> +provide the keys as part of request structure. This couples ICE 
+>> driver with
+>> +dm-req-crypt based solution. It is under discussion to expose an 
+>> IOCTL based
+> 
+>                                                        to expose IOCTL 
+> based
+
+changed.
+
+> 
+>> +and registration based interface APIs from ICE driver. ICE driver 
+>> would use
+>> +these two interfaces to find out if any key exists for current 
+>> request. If
+>> +yes, choose the right key index received from IOCTL or registration 
+>> based
+>> +APIs. If not, dont set any crypto parameter in the request.
+> 
+>                  don't
+
+changed.
+
+> 
+>> diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
+>> index a8c4ce0..e40750e 100644
+>> --- a/drivers/crypto/Kconfig
+>> +++ b/drivers/crypto/Kconfig
+>> @@ -596,6 +596,16 @@ config CRYPTO_DEV_QCOM_RNG
+>>  	  To compile this driver as a module, choose M here. The
+>>            module will be called qcom-rng. If unsure, say N.
+>> 
+>> +config CRYPTO_DEV_QTI_ICE
+>> +	tristate "Qualcomm inline crypto engine accelerator"
+>> +	default n
+> 
+> Please drop the redundant "default n" since n is already the default.
+
+Agree, will drop this change.
+
+> 
+>> +	depends on (ARCH_QCOM || COMPILE_TEST) && BLK_DEV_DM
+>> +	help
+>> +	  This driver supports Inline Crypto Engine for QTI chipsets, 
+>> MSM8994
+>> +	  and later, to accelerate crypto operations for storage needs.
+>> +	  To compile this driver as a module, choose M here: the
+>> +	  module will be called ice.
+>> +
+>>  config CRYPTO_DEV_VMX
+>>  	bool "Support for VMX cryptographic acceleration instructions"
+>>  	depends on PPC64 && VSX
