@@ -2,103 +2,92 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C44DBC67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:33:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21A9FC004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:33:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B87D207DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:33:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="pXmt4DCR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B87D207DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id AE8C8207DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:33:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE8C8207DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727070AbeJXXBV (ORCPT
+        id S1727109AbeJXXBy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 19:01:21 -0400
-Received: from imap.thunk.org ([74.207.234.97]:52936 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726633AbeJXXBV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 19:01:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=86PvxqfuSQ8vFchwNPOzlFA//A+fTlde2GmjpjgpLq8=; b=pXmt4DCRxdcgLJ5FRQ2WlfWsN3
-        ksDYrFz6b30g0rJm0uPPwAGCUWrpnOMRKlR9cb98OfMQwOYC9ZQHJTg7ZlIibHKgviFaM1zZeASfi
-        3mlO6UxSp9BFR/vUK2T0apJnvHZ1gHKYAtawatyULWz1q07QGAD8qjRTYyPtEtc7ylXY=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1gFKD9-0008Mh-4e; Wed, 24 Oct 2018 14:32:39 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 7A4557A56BE; Wed, 24 Oct 2018 10:32:37 -0400 (EDT)
-Date:   Wed, 24 Oct 2018 10:32:37 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     NeilBrown <neilb@suse.com>, Andy Lutomirski <luto@kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dmitry Safonov <dsafonov@virtuozzo.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        Brian Gerst <brgerst@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-tip-commits@vger.kernel.org, jsimmons@infradead.org
-Subject: Re: in_compat_syscall() returns from kernel thread for X86_32.
-Message-ID: <20181024143237.GA27168@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        NeilBrown <neilb@suse.com>, Andy Lutomirski <luto@kernel.org>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dmitry Safonov <dsafonov@virtuozzo.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        Brian Gerst <brgerst@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-tip-commits@vger.kernel.org, jsimmons@infradead.org
-References: <1460987025-30360-1-git-send-email-dsafonov@virtuozzo.com>
- <tip-abfb9498ee1327f534df92a7ecaea81a85913bae@git.kernel.org>
- <87h8hkc9fd.fsf@notabene.neil.brown.name>
- <CALCETrXB8PE4Ue0BeD0wUS9psLLjpv_pt+nj=SEaj+Nb_dZzUA@mail.gmail.com>
- <871s8ndg6a.fsf@notabene.neil.brown.name>
- <CALCETrWH342Y7jKHsYdT=_3fuyDkWhvQLK9z4PTs9jzbfoCVwg@mail.gmail.com>
- <871s8g6roy.fsf@notabene.neil.brown.name>
- <20181024131534.GD11606@thunk.org>
+        Wed, 24 Oct 2018 19:01:54 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:14115 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726423AbeJXXBy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 19:01:54 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 01584DE31AC1C;
+        Wed, 24 Oct 2018 22:33:28 +0800 (CST)
+Received: from S00293818-DELL1.china.huawei.com (10.47.83.247) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.408.0; Wed, 24 Oct 2018 22:33:19 +0800
+From:   Salil Mehta <salil.mehta@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
+        <dan.carpenter@oracle.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linuxarm@huawei.com>,
+        Shiju Jose <shiju.jose@huawei.com>
+Subject: [PATCH net-next] net: hns3: Fix for warning uninitialized symbol hw_err_lst3
+Date:   Wed, 24 Oct 2018 15:32:18 +0100
+Message-ID: <20181024143218.4204-1-salil.mehta@huawei.com>
+X-Mailer: git-send-email 2.8.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181024131534.GD11606@thunk.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+Content-Type: text/plain
+X-Originating-IP: [10.47.83.247]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 09:15:34AM -0400, Theodore Y. Ts'o wrote:
-> At least for ext4, the primary problem is that we want to use a 64-bit
-> telldir/seekdir cookie if all 64-bits will make it to user space, and
-> a 32-bit telldir cookie if only 32 bits will make it userspace.  This
-> impacts NFS as well because if there are people who are still using
-> NFSv2, which has 32-bit directory offsets, we need to constrain the
-> telldir/seekdir cookies we give to NFS to be a 32 has as opposed to a
-> 64-bit hash.
+From: Shiju Jose <shiju.jose@huawei.com>
 
-Are there anyone still using NFSv2, BTW?  One way of making the
-problem *much* easier to sovle would be to drop NFSv2 support.  :-)
+This patch fixes the smatch warning,
 
-	       	      	       	     - Ted
+drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c:700
+hclge_log_and_clear_ppp_error() error: uninitialized symbol
+'hw_err_lst3'
+
+Link: https://lkml.org/lkml/2018/10/23/430
+
+Fixes: da2d072a9ea7 ("net: hns3: Add enable and process hw errors from PPP")
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+---
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
+index f7e363b..dca6f23 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c
+@@ -859,10 +859,12 @@ static int hclge_log_and_clear_ppp_error(struct hclge_dev *hdev, u32 cmd,
+ 		reset_level = HNAE3_FUNC_RESET;
+ 	}
+ 
+-	err_sts = (le32_to_cpu(desc[0].data[4]) >> 8) & 0x3;
+-	if (err_sts) {
+-		hclge_log_error(dev, hw_err_lst3, err_sts);
+-		reset_level = HNAE3_FUNC_RESET;
++	if (cmd == HCLGE_PPP_CMD0_INT_CMD) {
++		err_sts = (le32_to_cpu(desc[0].data[4]) >> 8) & 0x3;
++		if (err_sts) {
++			hclge_log_error(dev, hw_err_lst3, err_sts);
++			reset_level = HNAE3_FUNC_RESET;
++		}
+ 	}
+ 
+ 	/* clear PPP INT */
+-- 
+1.9.1
+
+
