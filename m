@@ -2,92 +2,89 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 942F6C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:34:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 656D0C67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:37:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 563042075D
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:34:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 563042075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 2E557206B5
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:37:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E557206B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727441AbeJXRBO (ORCPT
+        id S1727387AbeJXRES (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 13:01:14 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:48029 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727189AbeJXRBO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 13:01:14 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 0C5CA807F7; Wed, 24 Oct 2018 10:34:02 +0200 (CEST)
-Date:   Wed, 24 Oct 2018 10:34:03 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Baolin Wang <baolin.wang@linaro.org>
-Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        rteysseyre@gmail.com, Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v15 1/2] leds: core: Introduce LED pattern trigger
-Message-ID: <20181024083403.GB24165@amd>
-References: <9794969ab8a5a6f62d8ac54cdebcaa3caedfc6d6.1539230481.git.baolin.wang@linaro.org>
- <d90397dd-429f-4f3f-307c-b69dccc360e0@gmail.com>
- <CAMz4kuKSvqx1_=Co70QhmRJVnOACZ0EjLCAs-GF1svqvHDdttA@mail.gmail.com>
+        Wed, 24 Oct 2018 13:04:18 -0400
+Received: from mga14.intel.com ([192.55.52.115]:3922 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726732AbeJXRES (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 13:04:18 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 01:37:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,419,1534834800"; 
+   d="scan'208";a="102185655"
+Received: from sakethyx-mobl2.gar.corp.intel.com ([10.249.254.29])
+  by orsmga001.jf.intel.com with ESMTP; 24 Oct 2018 01:37:00 -0700
+Date:   Wed, 24 Oct 2018 11:36:57 +0300 (EEST)
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+X-X-Sender: jsakkine@jsakkine-mobl1
+To:     Nick Desaulniers <ndesaulniers@google.com>
+cc:     dhowells@redhat.com, jejb@linux.vnet.ibm.com,
+        natechancellor@gmail.com, David.Laight@aculab.com,
+        denkenz@gmail.com,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v2] [PATCH] KEYS: trusted: fix -Wvarags warning
+In-Reply-To: <20181022234357.82217-1-ndesaulniers@google.com>
+Message-ID: <alpine.DEB.2.21.1810241136130.3525@jsakkine-mobl1>
+References: <0147a993d4a94426afa469a8dcc4e5d7@AcuMS.aculab.com> <20181022234357.82217-1-ndesaulniers@google.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="6sX45UoQRIJXqkqR"
-Content-Disposition: inline
-In-Reply-To: <CAMz4kuKSvqx1_=Co70QhmRJVnOACZ0EjLCAs-GF1svqvHDdttA@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 22 Oct 2018, ndesaulniers@google.com wrote:
+> Fixes the warning reported by Clang:
+> security/keys/trusted.c:146:17: warning: passing an object that
+> undergoes default
+>      argument promotion to 'va_start' has undefined behavior [-Wvarargs]
+>        va_start(argp, h3);
+>                       ^
+> security/keys/trusted.c:126:37: note: parameter of type 'unsigned
+> char' is declared here
+> unsigned char *h2, unsigned char h3, ...)
+>                               ^
+> Specifically, it seems that both the C90 (4.8.1.1) and C11 (7.16.1.4)
+> standards explicitly call this out as undefined behavior:
+>
+> The parameter parmN is the identifier of the rightmost parameter in
+> the variable parameter list in the function definition (the one just
+> before the ...). If the parameter parmN is declared with ... or with a
+> type that is not compatible with the type that results after
+> application of the default argument promotions, the behavior is
+> undefined.
+>
+> Link: https://github.com/ClangBuiltLinux/linux/issues/41
+> Link: https://www.eskimo.com/~scs/cclass/int/sx11c.html
+> Suggested-by: David Laight <David.Laight@aculab.com>
+> Suggested-by: Denis Kenzior <denkenz@gmail.com>
+> Suggested-by: James Bottomley <jejb@linux.vnet.ibm.com>
+> Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 
---6sX45UoQRIJXqkqR
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Hi!
-
-> > OK, let's abide by constant update interval for now.
-> >
-> > Thank you for your work on this patch set throughout
-> > all these months. We will have -rc8, so one week of testing
-> > before sending upstream should be enough.
-> >
-> > Patch set applied to the for-next branch of linux-leds.git.
->=20
-> Thanks Jacek and Pavel, you are so patient and always give me lots of
-> help there. Glad to co-work with you, thanks again.
-
-Thanks for patience, too. I'm pretty sure pattern trigger will be
-useful in future.
-
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---6sX45UoQRIJXqkqR
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlvQLnsACgkQMOfwapXb+vJoGACfSxvbleM4NwzCgC7v3meDI1zq
-y1QAnj4UrsTQ45lc8w5iDR8Eae2Op0oG
-=ACLE
------END PGP SIGNATURE-----
-
---6sX45UoQRIJXqkqR--
+/Jarkko
