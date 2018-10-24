@@ -2,65 +2,63 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D588C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:48:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD4AAC67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:48:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 651F52082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:48:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 651F52082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7F23B20824
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:48:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F23B20824
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.ee
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727050AbeJXXQm (ORCPT
+        id S1727120AbeJXXRM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 19:16:42 -0400
-Received: from mga14.intel.com ([192.55.52.115]:32896 "EHLO mga14.intel.com"
+        Wed, 24 Oct 2018 19:17:12 -0400
+Received: from mx2.cyber.ee ([193.40.6.72]:53741 "EHLO mx2.cyber.ee"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726457AbeJXXQm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 19:16:42 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 07:48:18 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,420,1534834800"; 
-   d="scan'208";a="94661264"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
-  by orsmga003.jf.intel.com with ESMTP; 24 Oct 2018 07:48:18 -0700
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 4F55B30137B; Wed, 24 Oct 2018 07:48:18 -0700 (PDT)
-Date:   Wed, 24 Oct 2018 07:48:18 -0700
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Milian Wolff <milian.wolff@kdab.com>
-Cc:     linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-        namhyung@kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho <acme@kernel.org>
-Subject: Re: Broken dwarf unwinding - wrong stack pointer register value?
-Message-ID: <20181024144818.GF6218@tassilo.jf.intel.com>
-References: <2335309.gnWok9HYb4@agathebauer>
- <2679413.U8bCfAhSQu@agathebauer>
- <20181023040356.GA6218@tassilo.jf.intel.com>
- <2086866.px82jjA6i7@agathebauer>
+        id S1726457AbeJXXRL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 19:17:11 -0400
+Subject: Re: HP DL585 warm boot fail (old)
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pci@vger.kernel.org
+References: <alpine.LRH.2.21.1807051515260.21817@math.ut.ee>
+ <CAErSpo6Fp8XpTQi7gcSQEuvpuJMYCMn5Y0cXRNvmO_opSR08HQ@mail.gmail.com>
+ <b36c537a-90ee-c474-9efa-df2ead8e0376@linux.ee>
+ <20181024134946.GA214775@bhelgaas-glaptop.roam.corp.google.com>
+From:   Meelis Roos <mroos@linux.ee>
+Message-ID: <8a8c6cf8-dd21-87db-3498-48f1ddb8fbc1@linux.ee>
+Date:   Wed, 24 Oct 2018 17:47:17 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2086866.px82jjA6i7@agathebauer>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181024134946.GA214775@bhelgaas-glaptop.roam.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: et-EE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> 
-> Can someone at least confirm whether unwinding from a function prologue via 
-> .eh_frame (but without .debug_frame) should actually be possible?
+> Can you try the patch below?  This is extracted from the code here:
+> https://github.com/joyent/illumos-joyent/blob/b6a0b04d591f5b877cfe05f45e81f0e8a5cfc2b3/usr/src/uts/intel/io/pci/pci_boot.c#L1805
 
-Yes it should be possible. Asynchronous unwind tables should work
-from any instruction.
+Thank you. Unfortunately it does not change anything noticable.
 
--Andi
+> I'm not sure why this would be only an intermittent problem, but at
+> least we can see if this is related.
+
+It seems 4.19 and current git are 100% reproducers so far - I have not managed to
+successfully boot either of them yet. I have seen 4.19-rc1 era git kernel booting at least once.
+
+I noticed that Debian packaged 4.17 with initramfs worked fine so far for my test,
+from these I have in grub menu. My selfcompiled kernels do not use initramfs.
+
+-- 
+Meelis Roos <mroos@linux.ee>
