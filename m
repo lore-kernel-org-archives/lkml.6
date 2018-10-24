@@ -2,253 +2,103 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2536CECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 21:41:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD2C9ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 21:44:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF70B2082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 21:41:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF70B2082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 806EE20652
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 21:44:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 806EE20652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727173AbeJYGL2 (ORCPT
+        id S1727472AbeJYGOf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 02:11:28 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:36299 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726378AbeJYGL2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 02:11:28 -0400
-Received: by mail-ot1-f65.google.com with SMTP id x4so6597045otg.3;
-        Wed, 24 Oct 2018 14:41:43 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+asLhH7avNXtJSDoIT1sM3YWg5U5bqZZWEGl23fiMm0=;
-        b=PhaFamut/zeFlDKknstGWPwSfYBzN5tFKNs85N/lgndImmv2Or2LRB9Lh26ui3zthh
-         LftNVeA6ufKRfY2C/QWovNSSKHD+3wDs6DkDUw4XFzrbjT4Uiil48PwL+DZvaM/pn38v
-         CmWEqMQjqaAmQUv/ASRbP6XChKGjqypv6wEtSd4gj7ylG6E1CRzsWOoXKGOZadF2T46D
-         6kTdytH8fQYb8wf0rUPRI2Y7CYhnXRo0UEqrAAZq1TumUpWAJoQjQEO4xzp//nhY9YtD
-         5R9vHKGLyr9rtSM9YYXXCvffXcGDInUTRrFDI8aXxK+pQ0xv/UdXb8M3bBCMC6MqmSTz
-         4Iig==
-X-Gm-Message-State: AGRZ1gJ4/pm73toIoK3THXQ9FhKpkNO7BTf1xCwTJ3FTLjGRnW29D8n4
-        tMxOawokBfEbYNzpN38n2EZIElu3oLs=
-X-Google-Smtp-Source: AJdET5e15WUWOenikiN232wh5udxxXjmjQpWPtsHcS9fyDgPLqodgrijUIg22kRU08SkI2OSl1Ikgw==
-X-Received: by 2002:a9d:385:: with SMTP id f5mr2878916otf.208.1540417302552;
-        Wed, 24 Oct 2018 14:41:42 -0700 (PDT)
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com. [209.85.167.180])
-        by smtp.gmail.com with ESMTPSA id v34sm2072979oti.78.2018.10.24.14.41.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Oct 2018 14:41:41 -0700 (PDT)
-Received: by mail-oi1-f180.google.com with SMTP id h4-v6so3290474oih.9;
-        Wed, 24 Oct 2018 14:41:40 -0700 (PDT)
-X-Received: by 2002:aca:5256:: with SMTP id g83-v6mr2456148oib.351.1540417300541;
- Wed, 24 Oct 2018 14:41:40 -0700 (PDT)
+        Thu, 25 Oct 2018 02:14:35 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34892 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727000AbeJYGOe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 02:14:34 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 29FD33001DD8;
+        Wed, 24 Oct 2018 21:44:49 +0000 (UTC)
+Received: from [10.36.112.27] (ovpn-112-27.ams2.redhat.com [10.36.112.27])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8CB475ED46;
+        Wed, 24 Oct 2018 21:44:45 +0000 (UTC)
+Subject: Re: [GIT PULL] KVM updates for Linux 4.20-rc1
+To:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+References: <20181024111410.GA2221@potion.hotspot.internet-for-guests.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <b75a43e2-1546-3956-361f-f72e76b54f3d@redhat.com>
+Date:   Wed, 24 Oct 2018 23:44:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-References: <1539536883-1928-1-git-send-email-vabhav.sharma@nxp.com> <1539536883-1928-7-git-send-email-vabhav.sharma@nxp.com>
-In-Reply-To: <1539536883-1928-7-git-send-email-vabhav.sharma@nxp.com>
-From:   Li Yang <leoyang.li@nxp.com>
-Date:   Wed, 24 Oct 2018 16:41:29 -0500
-X-Gmail-Original-Message-ID: <CADRPPNSQt=d4HDR9YckZnXvFi4jB2RisraT869BvTGbpS3Etdg@mail.gmail.com>
-Message-ID: <CADRPPNSQt=d4HDR9YckZnXvFi4jB2RisraT869BvTGbpS3Etdg@mail.gmail.com>
-Subject: Re: [PATCH v5 6/6] arm64: dts: add LX2160ARDB board support
-To:     Vabhav Sharma <vabhav.sharma@nxp.com>
-Cc:     Sudeep Holla <sudeep.holla@arm.com>, Scott Wood <oss@buserror.net>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>, linux-pm@vger.kernel.org,
-        linux-kernel-owner@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        yamada.masahiro@socionext.com, Shawn Guo <shawnguo@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>, V.Sethi@nxp.com,
-        udit.kumar@nxp.com, pankaj.bansal@nxp.com,
-        Priyanka Jain <priyanka.jain@nxp.com>,
-        Sriram Dash <sriram.dash@nxp.com>,
-        Horia Geanta <horia.geanta@nxp.com>,
-        Ran Wang <ran.wang_1@nxp.com>,
-        Ying Zhang <ying.zhang22455@nxp.com>,
-        Yinbo Zhu <yinbo.zhu@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181024111410.GA2221@potion.hotspot.internet-for-guests.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Wed, 24 Oct 2018 21:44:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 15, 2018 at 12:14 AM Vabhav Sharma <vabhav.sharma@nxp.com> wrote:
->
-> LX2160A reference design board (RDB) is a high-performance
-> computing, evaluation, and development platform with LX2160A
-> SoC.
->
-> Signed-off-by: Priyanka Jain <priyanka.jain@nxp.com>
-> Signed-off-by: Sriram Dash <sriram.dash@nxp.com>
-> Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
-> Signed-off-by: Horia Geanta <horia.geanta@nxp.com>
-> Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
-> Signed-off-by: Zhang Ying-22455 <ying.zhang22455@nxp.com>
-> Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
+On 24/10/2018 13:14, Radim Krčmář wrote:
+> Linus,
+> 
+> there are conflicts with the ARM tree as we didn't have a topic branch and some
+> with 4.19 fixes.  Future merge of the selftests tree will also have a conflict,
+> https://lkml.org/lkml/2018/10/18/273.  All should be resolved as in next and
+> a resolution of the first two is attached at the bottom.
 
-Acked-by: Li Yang <leoyang.li@nxp.com>
+FWIW, for the selftests tree you should just keep the version from the
+KVM tree.
 
-> ---
->  arch/arm64/boot/dts/freescale/Makefile            |   1 +
->  arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts | 119 ++++++++++++++++++++++
->  2 files changed, 120 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
->
-> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-> index 86e18ad..445b72b 100644
-> --- a/arch/arm64/boot/dts/freescale/Makefile
-> +++ b/arch/arm64/boot/dts/freescale/Makefile
-> @@ -13,3 +13,4 @@ dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-rdb.dtb
->  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-simu.dtb
->  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2088a-qds.dtb
->  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2088a-rdb.dtb
-> +dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-lx2160a-rdb.dtb
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-> new file mode 100644
-> index 0000000..6481e5f
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
-> @@ -0,0 +1,119 @@
-> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> +//
-> +// Device Tree file for LX2160ARDB
-> +//
-> +// Copyright 2018 NXP
-> +
-> +/dts-v1/;
-> +
-> +#include "fsl-lx2160a.dtsi"
-> +
-> +/ {
-> +       model = "NXP Layerscape LX2160ARDB";
-> +       compatible = "fsl,lx2160a-rdb", "fsl,lx2160a";
-> +
-> +       aliases {
-> +               crypto = &crypto;
-> +               serial0 = &uart0;
-> +       };
-> +
-> +       chosen {
-> +               stdout-path = "serial0:115200n8";
-> +       };
-> +
-> +       sb_3v3: regulator-sb3v3 {
-> +               compatible = "regulator-fixed";
-> +               regulator-name = "MC34717-3.3VSB";
-> +               regulator-min-microvolt = <3300000>;
-> +               regulator-max-microvolt = <3300000>;
-> +               regulator-boot-on;
-> +               regulator-always-on;
-> +       };
-> +};
-> +
-> +&crypto {
-> +       status = "okay";
-> +};
-> +
-> +&esdhc0 {
-> +       sd-uhs-sdr104;
-> +       sd-uhs-sdr50;
-> +       sd-uhs-sdr25;
-> +       sd-uhs-sdr12;
-> +       status = "okay";
-> +};
-> +
-> +&esdhc1 {
-> +       mmc-hs200-1_8v;
-> +       mmc-hs400-1_8v;
-> +       bus-width = <8>;
-> +       status = "okay";
-> +};
-> +
-> +&i2c0 {
-> +       status = "okay";
-> +
-> +       i2c-mux@77 {
-> +               compatible = "nxp,pca9547";
-> +               reg = <0x77>;
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +
-> +               i2c@2 {
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       reg = <0x2>;
-> +
-> +                       power-monitor@40 {
-> +                               compatible = "ti,ina220";
-> +                               reg = <0x40>;
-> +                               shunt-resistor = <1000>;
-> +                       };
-> +               };
-> +
-> +               i2c@3 {
-> +                       #address-cells = <1>;
-> +                       #size-cells = <0>;
-> +                       reg = <0x3>;
-> +
-> +                       temperature-sensor@4c {
-> +                               compatible = "nxp,sa56004";
-> +                               reg = <0x4c>;
-> +                               vcc-supply = <&sb_3v3>;
-> +                       };
-> +
-> +                       temperature-sensor@4d {
-> +                               compatible = "nxp,sa56004";
-> +                               reg = <0x4d>;
-> +                               vcc-supply = <&sb_3v3>;
-> +                       };
-> +               };
-> +       };
-> +};
-> +
-> +&i2c4 {
-> +       status = "okay";
-> +
-> +       rtc@51 {
-> +               compatible = "nxp,pcf2129";
-> +               reg = <0x51>;
-> +               // IRQ10_B
-> +               interrupts = <0 150 0x4>;
-> +       };
-> +};
-> +
-> +&uart0 {
-> +       status = "okay";
-> +};
-> +
-> +&uart1 {
-> +       status = "okay";
-> +};
-> +
-> +&usb0 {
-> +       status = "okay";
-> +};
-> +
-> +&usb1 {
-> +       status = "okay";
-> +};
-> --
-> 2.7.4
->
+Thanks,
+
+Paolo
