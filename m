@@ -2,67 +2,69 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6287ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 20:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86AAFECDE47
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 20:40:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 323C5205F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 20:40:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46154205F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 20:40:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="Sw1IUYa8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 323C5205F4
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="YeFBL9dt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46154205F4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbeJYFKX (ORCPT
+        id S1727009AbeJYFK0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 01:10:23 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44403 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726117AbeJYFKX (ORCPT
+        Thu, 25 Oct 2018 01:10:26 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38726 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726117AbeJYFKZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 01:10:23 -0400
-Received: by mail-pg1-f193.google.com with SMTP id w3-v6so2872061pgs.11
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 13:40:50 -0700 (PDT)
+        Thu, 25 Oct 2018 01:10:25 -0400
+Received: by mail-pl1-f195.google.com with SMTP id p7-v6so2782167plk.5
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 13:40:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sifive.com; s=google;
         h=subject:date:message-id:in-reply-to:references:cc:from:to;
-        bh=f3Nvcbf0Gw3YkxjzeP8g/4jyAF8rPdusxreoDtLe9Hg=;
-        b=Sw1IUYa80rtIliU8t37XuCJiVaXpSAv+bg2DJL3O6WZ/4KUvDeqeGyQioxD+E0jW2v
-         mMBCdMFXv1IDuK56l5FtBtywQitS15Mv4n194iWXEYI1+EZ0xbpe0d6qQ+AwufVg9hdu
-         6hDtxQHoyhvSdy+LcRewChmKhj8xRkHUcaA4JEJBWBeR++xSarzjGvXHCQ82HVkA45Xw
-         6WKhaKxRjWM/+Sg+ubGhl5gNXSJzPlMBpCi5OBBmEAko9V93ggoYC9j+EPYJhvM23CWk
-         ADnH9Qva/sEyjEMTjXm8vzggmOxUyV4yGTAFr+c9U2GVkx+SFyTmfeC1Kr1gyXy5ppPo
-         QEhA==
+        bh=l4cQhwyUcUP06KMujhIUzoj6XcQBIruPW01G2CSbcCk=;
+        b=YeFBL9dt1FwnXNd1jeUEcz6PARC2or2JgJtQflvzRRugxSOooDcJ2ZgeZ+x5GYfOtf
+         FzYg0/oAqZz5+Xjo6agzS2PF6HimmTYckT4xcKHS1Oo9Fk8FYlk0stpYmedh4ABHQFnT
+         BTXgfRoQ7rEIPwCdNNY2y7WeCFtFjGyLYX6bQAd/UE/jdnNl4T7zNlMpUfcZpht6L7XK
+         KZTG39UiOnKDRW0bGLY2BD2EYWkjyJA+M33r9wlJNdR2NGGTSnOVtposIAUhA94RXw35
+         VatWoc4XIeq5WCo9/fKkLQ0w2L2Mjg/vIbKQz+SvKnhG/75oKcbuuW28S6Bz7hsz8i2L
+         jn1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:date:message-id:in-reply-to:references
          :cc:from:to;
-        bh=f3Nvcbf0Gw3YkxjzeP8g/4jyAF8rPdusxreoDtLe9Hg=;
-        b=RlGYFSTqKOQzB9i3CmL5p2udRAfaTYnZfjfb0nLd833WCMsF4s1BllBgcjsER0owEG
-         SMKlc+M9vPoyHueZbf/0+FGt/bT34AIQmJOyPGsUA/rwLGJfbvMsZQcX8IXiFW7hKHcg
-         jjmfQy0qoQTBErmdYKgFRaWHsKulTtutXuhW4+pLf5qIymVv5nRrTeFcthp6TJnLWtNn
-         XSkHAP9yfME5FLC1TGbS/eRX4IKIQT6KV1gnCWHBDzm39qfaO7AMT1zPUXDF5+McEn6F
-         MQ8/jAj736ds61iQcZ5SBzHGSPnu9bZFJqEJmg7BlYkWuPbvkJ5KGJBVE5NXx/zM6u6Y
-         Ijyw==
-X-Gm-Message-State: AGRZ1gKyGfU/dcrOFiCobctCYX4hngxm7ZCAj/5eOJpxjXcTujuyciYC
-        Oza+4Cp8k01hAAhPTQKd77wuXA==
-X-Google-Smtp-Source: AJdET5ekDwAqPzLVvSCKc9c/kWl601c6s0nYtt43/Bn86+aFf87PVchiBPEU9CNKK2H15JVbURyDzQ==
-X-Received: by 2002:a63:5a57:: with SMTP id k23mr2496689pgm.5.1540413649439;
-        Wed, 24 Oct 2018 13:40:49 -0700 (PDT)
+        bh=l4cQhwyUcUP06KMujhIUzoj6XcQBIruPW01G2CSbcCk=;
+        b=S0caY+Zg2ohEiVTfYT4x9Zx0c8Y7zc1q6hfwVF706Id5jbKxZAOEXNH7ITGAoNReBL
+         Elxc48tEF9zG5Gk3yl8D2kpN/40x0FbQ/PE3TyZcmfdQP6H7xFse12xXUXz3GAIISstk
+         yM3OVu174IKQI8j4K3S5btWkohGcIEiWf4Vnxjp30E89e/V7gECzzgu33RVWSRgaoRAX
+         0l4NAXyxHFLimPNLzkCeGOGqL6wqpYUEzCgmz4ZNj0emMtCORqtXiMr/S1rAxVDCwvq+
+         2L/UdOs1cwMUmSQQxOADpm36irHOcJ8WPYQLZm8ZSdUnhGwOKdpseJJjh/WnXBfsgexc
+         /3kQ==
+X-Gm-Message-State: AGRZ1gJq01ZejgX4JbWT1C8OPNeiTU4UPsLm/4JXxmMk2bJA1eTe+r+q
+        Xu7ke2IMj5xbDN4w9/LKwbPBqw==
+X-Google-Smtp-Source: AJdET5eQ4iRvTxkuKb1mCg0vLUEmhYnw4urK9QM/Gc0lr2i/a1Cg5cY5zpFTtkO1tUSYUidL4Xvn0Q==
+X-Received: by 2002:a17:902:7d98:: with SMTP id a24-v6mr3844789plm.271.1540413651482;
+        Wed, 24 Oct 2018 13:40:51 -0700 (PDT)
 Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id f28-v6sm6257711pgb.9.2018.10.24.13.40.47
+        by smtp.gmail.com with ESMTPSA id x73-v6sm14410558pfk.139.2018.10.24.13.40.50
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Oct 2018 13:40:48 -0700 (PDT)
-Subject: [PATCH 0/2] RISC-V: Add support for SECCOMP
-Date:   Wed, 24 Oct 2018 13:40:34 -0700
-Message-Id: <20181024204036.8799-1-palmer@sifive.com>
+        Wed, 24 Oct 2018 13:40:50 -0700 (PDT)
+Subject: [PATCH 1/2] Move EM_RISCV into elf-em.h
+Date:   Wed, 24 Oct 2018 13:40:35 -0700
+Message-Id: <20181024204036.8799-2-palmer@sifive.com>
 X-Mailer: git-send-email 2.18.1
-In-Reply-To: <CAEn-LTqbEmWovu4t7Rs4C211+GRRU4V3B=+WmW0SOhX_b8db5Q@mail.gmail.com>
+In-Reply-To: <20181024204036.8799-1-palmer@sifive.com>
 References: <CAEn-LTqbEmWovu4t7Rs4C211+GRRU4V3B=+WmW0SOhX_b8db5Q@mail.gmail.com>
+ <20181024204036.8799-1-palmer@sifive.com>
 Cc:     Palmer Dabbelt <palmer@sifive.com>, aou@eecs.berkeley.edu,
         paul@paul-moore.com, eparis@redhat.com, keescook@chromium.org,
         luto@amacapital.net, wad@chromium.org,
@@ -79,28 +81,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 23 Oct 2018 01:20:28 PDT (-0700), david.abdurachmanov@gmail.com wrote:
-> On Tue, Oct 23, 2018 at 3:20 AM Palmer Dabbelt <palmer@sifive.com> wrote:
->
->> I'm pretty sure this is our largest patch set since the original kernel
->> contribution, and it's certainly the one with the most contributors.
->> While I don't have anything else I know I'm going to submit for the
->> merge window, I would be somewhat surprised if I didn't screw anything
->> up.
->
-> Hi Palmer,
->
-> Do you plan to land wip-seccomp in 4.20?
->
-> It was mentioned back in August:
-> http://lists.infradead.org/pipermail/linux-riscv/2018-August/001182.html
->
-> david
+This should never have been inside our arch port to begin with, it's
+just a relic from when we were maintaining out of tree patches.
 
-I've updated the patches to live on top of 4.19 as well as cleaning up
-the Kconfig entry.  Unless anyone has any comments I'll add them to
-for-next and submit a PR next week.
+Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+---
+ arch/riscv/include/asm/elf.h | 3 ---
+ include/uapi/linux/elf-em.h  | 1 +
+ 2 files changed, 1 insertion(+), 3 deletions(-)
 
-Thanks for the reminder!
-
+diff --git a/arch/riscv/include/asm/elf.h b/arch/riscv/include/asm/elf.h
+index a1ef503d616e..697fc23b0d5a 100644
+--- a/arch/riscv/include/asm/elf.h
++++ b/arch/riscv/include/asm/elf.h
+@@ -16,9 +16,6 @@
+ #include <asm/auxvec.h>
+ #include <asm/byteorder.h>
+ 
+-/* TODO: Move definition into include/uapi/linux/elf-em.h */
+-#define EM_RISCV	0xF3
+-
+ /*
+  * These are used to set parameters in the core dumps.
+  */
+diff --git a/include/uapi/linux/elf-em.h b/include/uapi/linux/elf-em.h
+index 31aa10178335..93722e60204c 100644
+--- a/include/uapi/linux/elf-em.h
++++ b/include/uapi/linux/elf-em.h
+@@ -41,6 +41,7 @@
+ #define EM_TILEPRO	188	/* Tilera TILEPro */
+ #define EM_MICROBLAZE	189	/* Xilinx MicroBlaze */
+ #define EM_TILEGX	191	/* Tilera TILE-Gx */
++#define EM_RISCV	243	/* RISC-V */
+ #define EM_BPF		247	/* Linux BPF - in-kernel virtual machine */
+ #define EM_FRV		0x5441	/* Fujitsu FR-V */
+ 
+-- 
+2.18.1
 
