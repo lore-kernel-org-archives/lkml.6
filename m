@@ -2,139 +2,150 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2634BC67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 09:56:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50BFEC004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:02:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD4B12082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 09:56:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=philpotter-co-uk.20150623.gappssmtp.com header.i=@philpotter-co-uk.20150623.gappssmtp.com header.b="iiXUtc3L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD4B12082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=philpotter.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 0916E2082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:02:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0916E2082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727203AbeJXSXb (ORCPT
+        id S1727101AbeJXSaC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 14:23:31 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51430 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726426AbeJXSXa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 14:23:30 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 143-v6so4671627wmf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 02:56:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=philpotter-co-uk.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=iMCNIb4gQUy56AtQLBK16lAQcTcy1Y7nn8vbGld84f8=;
-        b=iiXUtc3LGpO5Cz+dq841Tw2x+T7SpBwOY+KuwogBHHKDkjV+Js+3NaPRmO5TyM6Nxe
-         JT8IQkrvxyUB9/KGaYGbgxDY0t7xIHLrTS5fr0NM0r38N0mHuAQ/pygccN2mLFKSpxEU
-         kXRn9bMRudlbM098aQ2h3++TgWgtiX8yqKh3iOXsoYbVIXt3MjMBgv70pjF6xPXc4fgs
-         gLrmynK2QpDyTthzW1kJveCycfQiiU3hgPRnMuGpn0v868QPT+JqPt8fCCYMsdQVMP9x
-         W45/IqRQEg7WIMAgNJ13O0T7sGEbJnRDYXw8JsyZmoqjkpsZMrbY0gG0472CCiaSLlla
-         WFhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iMCNIb4gQUy56AtQLBK16lAQcTcy1Y7nn8vbGld84f8=;
-        b=PAQYI926lqIIJgM+5YdNPp2oyDKP0Um4EDxwrOyJOnx2txrIZVGMc9hvMdwHL7xQo+
-         jspnVbsHZGjwmsQcfaD/nYiSXp/9DoqXOSnnqlhs+mMzSILGHh2h34ziVOc2EJfla1kM
-         PGoi6UWQYNYWPWOJ9D2dxkj3ucyHapi/8+TndbxzxEQW/10zX9vU6hOe/aN3B/XDENuC
-         uvBYQTaUoNV4BbYcZeZElahLlWWKRZ2Xjw7Re8uy6+hLeeq9S26XvYfQgHU+w4DO792S
-         ceubsQLMj1TjBoykU+DxYK3csCvUz8UxmKt6p9x/pSySRwZK0KeTCI3B7jxAg3HAMFXv
-         Q4iw==
-X-Gm-Message-State: AGRZ1gIqqU0xH/2XwaOnDkLI2dH1uhlJAfdJYLKdQTdoG0rONEVh1z7A
-        Un5hd0r/L7nv929D8X++6b8BOwO8NDEbLTkU
-X-Google-Smtp-Source: AJdET5ftGiXMHlAaMQ6IT/YLMI5Vg7SJl5nXgM9wjUe3K3yZptkkX7vAEGCqG1mzKXktEPrjvkQ7Ig==
-X-Received: by 2002:a1c:9a4d:: with SMTP id c74-v6mr1383872wme.42.1540374963603;
-        Wed, 24 Oct 2018 02:56:03 -0700 (PDT)
-Received: from pathfinder (62-64-249-96.dynamic.dsl.as9105.com. [62.64.249.96])
-        by smtp.gmail.com with ESMTPSA id y19-v6sm3519871wma.7.2018.10.24.02.56.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 24 Oct 2018 02:56:02 -0700 (PDT)
-Date:   Wed, 24 Oct 2018 10:56:01 +0100
-From:   Phillip Potter <phil@philpotter.co.uk>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC][PATCH v3 01/10] fs: common implementation of file type
-Message-ID: <20181024095601.GA19974@pathfinder>
-References: <20181023201953.GA15687@pathfinder>
- <CAOQ4uxjfChxZyAUiYKQ-UiVjmxsosR+KG1ZSBu2TOeuAX3vJnA@mail.gmail.com>
- <20181024082134.GA14565@pathfinder>
- <CAOQ4uxjQwE2nhS7KccL_P+jUnz4vGwTpxjQquvbaZ0zZpJqGtA@mail.gmail.com>
- <20181024093103.GA19623@pathfinder>
- <CAOQ4uxjyTtjPk1OaWCSKs3Larqog+vmqLSth1kKWdOA5oRTtAA@mail.gmail.com>
+        Wed, 24 Oct 2018 14:30:02 -0400
+Received: from mga04.intel.com ([192.55.52.120]:19670 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726301AbeJXSaC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 14:30:02 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 03:02:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,420,1534834800"; 
+   d="scan'208";a="243918192"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga004.jf.intel.com with ESMTP; 24 Oct 2018 03:02:31 -0700
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andy.shevchenko@gmail.com>)
+        id 1gFFzi-0003Zb-F8; Wed, 24 Oct 2018 13:02:30 +0300
+Date:   Wed, 24 Oct 2018 13:02:30 +0300
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+To:     Rajat Jain <rajatja@google.com>
+Cc:     "Hunter, Adrian" <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rajat Jain <rajatxjain@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Dmitry Torokhov <dtor@google.com>, linux-gpio@vger.kernel.org,
+        linux-acpi@vger.kernel.org
+Subject: Re: [PATCH] mmc: sdhci-pci: Try "cd" for card-detect lookup before
+ using NULL
+Message-ID: <20181024100230.GQ10650@smile.fi.intel.com>
+References: <CACRpkdY7eaYk81CU8gmHKfWB82_qNJur=c=7SCRuW+BNeL=Oiw@mail.gmail.com>
+ <20181018215101.169847-1-rajatja@google.com>
+ <CAHp75Vd_r4QGR5xw2cJigM2J3WStg_0PdynBXMZOyZh+t1znKg@mail.gmail.com>
+ <CACK8Z6HOsUcPFyf-GguxPxh_Zdj6gCXP=FpGw-vQXJfnM=cquw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxjyTtjPk1OaWCSKs3Larqog+vmqLSth1kKWdOA5oRTtAA@mail.gmail.com>
+In-Reply-To: <CACK8Z6HOsUcPFyf-GguxPxh_Zdj6gCXP=FpGw-vQXJfnM=cquw@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 12:44:50PM +0300, Amir Goldstein wrote:
-> On Wed, Oct 24, 2018 at 12:31 PM Phillip Potter <phil@philpotter.co.uk> wrote:
-> >
-> > On Wed, Oct 24, 2018 at 12:20:14PM +0300, Amir Goldstein wrote:
-> > > On Wed, Oct 24, 2018 at 11:21 AM Phillip Potter <phil@philpotter.co.uk> wrote:
-> > > > Dear Amir,
-> > > >
-> > > > Yes, I applied each patch manually to my tree, fixed it up where needed,
-> > > > then after rebuilding and testing each one I committed it and regenerated
-> > > > each patch. Thank you very much for your advice, I will take it into
-> > > > account and make the necessary changes. In the meantime, do I add other
-> > > > tags in the order they are received also (such as Reviewed-by:) and am
-> > > > I safe to add these in when I re-send the patches with the changes you
-> > > > and others have suggested (or would that offend people that have
-> > > > offered the tags)?
-> > > >
-> > >
-> > > Reviewed-by before of after Signed-off-by.
-> > > I prefer Signed-off-by last which conceptually covers the entire patch,
-> > > the commit message including all the review tags that you may have added.
-> > >
-> > > Some developers add Reviewed-by after Signed-off-by signifying the
-> > > order that things happened, so choose your own preference.
-> > >
-> > > As a reviewer, and I speak only for myself, if I offered my Reviewed-by
-> > > I expect it to be removed if a future revision of the patch has changed
-> > > so I have an indication of patches that I need to re-review.
-> > > But if the patch changed very lightly, like small edits to commit message
-> > > and code nits in general, that would not invalidate my review.
-> > > When in doubt, you can always explicitly ask the reviewer.
-> > >
-> > > Thanks,
-> > > Amir.
-> >
-> > Dear Amir,
-> >
-> > Thanks - I am just going to fix up the commit messages as you suggested
-> > using git am etc. The content of the patches themselves will not change
-> > (until further feedback is received).
-> >
-> 
-> Well, I did request to change some content (the location and the comment
-> above BUILD_BUG_ON section) which is relevant for several patches.
-> However, so far affected patched did not get any Reviewed-by.
-> 
-> Thanks,
-> Amir.
+On Mon, Oct 22, 2018 at 04:34:55PM -0700, Rajat Jain wrote:
+> On Fri, Oct 19, 2018 at 2:13 AM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> > On Fri, Oct 19, 2018 at 12:53 AM Rajat Jain <rajatja@google.com> wrote:
 
-Sorry, I missed that bit at the end, was too keen to click through to the
-note about the alleged ext2 bug :-) I will make sure those changes are made
-as well. By location do you mean the location of the v3, v2, etc. stuff and
-your point about including it in the main [0/10] message rather than the
-patches themselves? Again, thank you for your feedback and for being patient
-with me, I really do appreciate it.
+> > > across other users of this API (other MMC host controller drivers).
+> >
+> > >         if (slot->cd_idx >= 0) {
+> > > -               ret = mmc_gpiod_request_cd(host->mmc, NULL, slot->cd_idx,
+> > > +               ret = mmc_gpiod_request_cd(host->mmc, "cd", slot->cd_idx,
+> > >                                            slot->cd_override_level, 0, NULL);
+> >
+> > Yes.
+> >
+> > > +               if (ret && ret != -EPROBE_DEFER)
+> > > +                       ret = mmc_gpiod_request_cd(host->mmc, NULL,
+> > > +                                                  slot->cd_idx,
+> > > +                                                  slot->cd_override_level,
+> > > +                                                  0, NULL);
+> >
+> > And no. Instead of this part you need to provide an ACPI GPIO mapping table.
+> 
+> Sure, I am willing to do so, and I tried earlier too. However, certain
+> doubts arose in my mind when I tried that and I posted my questions
+> earlier (https://lkml.org/lkml/2018/9/28/507) but couldn't elicit any
+> response. Unfortunately I still do not have answers. My primary
+> questions are:
+> 
+> 1) - It seems that 1 SDHCI device may support multiple slots (looking
+> at the code). It is not clear to me if they could share card detect
+> interrupts, or should have separate ones? 
 
-Regards,
-Phil
+This is more likely question to HW engineers of your platform with a caveat
+that there should be a way to distinguish exact slot in which card is being
+inserted.
+
+> Also, the driver may not
+> really know? 
+
+I think in such case the bug in HW design and / or driver.
+
+> So should I add 1 or two pins using the
+> devm_acpi_dev_add_driver_gpios().
+
+This depends on the above, e.g. HW design, ACPI tables.
+
+> Is some one familiar with SDHC
+> driver can answer these questions, it shall be great.
+
+Actually above questions better to ask in linux-mmc mailing list, which by the
+fact is in Cc list already. So, wait for someone to clarify.
+
+
+> 2) I'm not really sure what should I set "active_low" to? Isn't this
+> something that should be specified by platform / ACPI too, and driver
+> should just be able to say say choose whatever the ACPI says?
+> 
+> struct acpi_gpio_params {
+>         unsigned int crs_entry_index;
+>         unsigned int line_index;
+>         bool active_low;
+> };
+
+
+ACPI specification misses this property, that's why we have it in the
+structure. In your case it should be provided by _DSD and thus be consistent
+with the hardcoded values.
+
+> Since I do not understand the above two issues, and thus I chose the
+> safest path and not disturb the current code so as not to cause any
+> regressions.
+
+As far as I can see in the above it is disturbing the current code more than
+needed.
+
+> 
+> Please let me know, and I'm happy to re-spin my patch.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
