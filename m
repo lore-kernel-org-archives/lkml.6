@@ -2,124 +2,78 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACE84C67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:57:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B858C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:59:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EBF62064A
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:57:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EBF62064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 466B62064A
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:59:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 466B62064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727103AbeJXW0B (ORCPT
+        id S1727101AbeJXW1Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 18:26:01 -0400
-Received: from mga02.intel.com ([134.134.136.20]:53480 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726426AbeJXW0A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 18:26:00 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 06:57:46 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,420,1534834800"; 
-   d="scan'208";a="98174069"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.130]) ([10.237.72.130])
-  by fmsmga002.fm.intel.com with ESMTP; 24 Oct 2018 06:57:44 -0700
-Subject: Re: [PATCH V2 17/19] perf scripts python: exported-sql-viewer.py: Add
- All branches report
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@redhat.com>, Andi Kleen <ak@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20181001062853.28285-18-adrian.hunter@intel.com>
- <20181023075949.18920-1-adrian.hunter@intel.com>
- <20181023181218.GB6114@kernel.org>
- <363DA0ED52042842948283D2FC38E4649C2B8A4D@IRSMSX106.ger.corp.intel.com>
- <20181023192935.GD6114@kernel.org>
- <363DA0ED52042842948283D2FC38E4649C2B8AA7@IRSMSX106.ger.corp.intel.com>
- <20181023200230.GE6114@kernel.org>
- <fa8d2495-0c47-c023-53dd-66718c2e1751@intel.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <04a9bf3a-ff00-2331-d0a5-a3efcc4cdd94@intel.com>
-Date:   Wed, 24 Oct 2018 16:56:03 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 24 Oct 2018 18:27:16 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58846 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726407AbeJXW1Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 18:27:16 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6CD34AF8F;
+        Wed, 24 Oct 2018 13:59:01 +0000 (UTC)
+Date:   Wed, 24 Oct 2018 15:58:59 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, suzuki.poulose@arm.com,
+        punit.agrawal@arm.com, will.deacon@arm.com, Steven.Price@arm.com,
+        steve.capper@arm.com, catalin.marinas@arm.com,
+        akpm@linux-foundation.org, mike.kravetz@oracle.com,
+        n-horiguchi@ah.jp.nec.com
+Subject: Re: [PATCH V3 3/5] mm/hugetlb: Enable arch specific huge page size
+ support for migration
+Message-ID: <20181024135859.GI18839@dhcp22.suse.cz>
+References: <1540299721-26484-1-git-send-email-anshuman.khandual@arm.com>
+ <1540299721-26484-4-git-send-email-anshuman.khandual@arm.com>
+ <20181024135639.GH18839@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <fa8d2495-0c47-c023-53dd-66718c2e1751@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181024135639.GH18839@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/10/18 11:31 PM, Adrian Hunter wrote:
-> On 23/10/18 11:02 PM, Arnaldo Carvalho de Melo wrote:
->> Em Tue, Oct 23, 2018 at 07:57:17PM +0000, Hunter, Adrian escreveu:
->>>> -----Original Message-----
->>>> From: Arnaldo Carvalho de Melo [mailto:acme@kernel.org]
->>>> Sent: Tuesday, October 23, 2018 10:30 PM
->>>> To: Hunter, Adrian <adrian.hunter@intel.com>
->>>> Cc: Jiri Olsa <jolsa@redhat.com>; Andi Kleen <ak@linux.intel.com>; linux-
->>>> kernel@vger.kernel.org
->>>> Subject: Re: [PATCH V2 17/19] perf scripts python: exported-sql-viewer.py:
->>>> Add All branches report
->>>>
->>>> Em Tue, Oct 23, 2018 at 06:41:17PM +0000, Hunter, Adrian escreveu:
->>>>>> -----Original Message-----
->>>>>> From: Arnaldo Carvalho de Melo [mailto:acme@kernel.org]
->>>>>> So, I followed the instructions then ended up with:
->>>>>>
->>>>>> [acme@seventh perf]$ find /usr/local -name "*xed*" | head
->>>>>> /usr/local/lib/libxed.so /usr/local/lib/libxed.a
->>>>>> /usr/local/lib/libxed-ild.so /usr/local/lib/libxed-ild.a
->>>>>> /usr/local/include/xed /usr/local/include/xed/xed- syntax-enum.h
->>>>>> /usr/local/include/xed/xed-attributes.h
->>>>>> /usr/local/include/xed/xed-build-defines.h
->>>>>> /usr/local/include/xed/xed-cpuid-rec.h
->>>>>> /usr/local/include/xed/xed-flags.h
->>>>>> [acme@seventh perf]$
->>>>>>
->>>>>> Ran ldconfig as root, etc:
->>>>>>
->>>>>> [acme@seventh perf]$ ldconfig -v -N | grep xed
->>>
->>> What about:
->>> 	ldconfig -p | grep  xed
->>
->> $ ldconfig -p | grep xed
->> $ echo $LD_LIBRARY_PATH 
->> /usr/local/lib
->> $ ls -la /usr/local/lib/libxed*so
->> -r--r--r--. 1 root root  132840 Oct 23 14:52 /usr/local/lib/libxed-ild.so
->> -r--r--r--. 2 root root 6842688 Oct 23 14:52 /usr/local/lib/libxed.so
->> $ ldconfig -p | grep xed
->> $ 
->>
+On Wed 24-10-18 15:56:39, Michal Hocko wrote:
+> On Tue 23-10-18 18:31:59, Anshuman Khandual wrote:
+> > Architectures like arm64 have HugeTLB page sizes which are different than
+> > generic sizes at PMD, PUD, PGD level and implemented via contiguous bits.
+> > At present these special size HugeTLB pages cannot be identified through
+> > macros like (PMD|PUD|PGDIR)_SHIFT and hence chosen not be migrated.
+> > 
+> > Enabling migration support for these special HugeTLB page sizes along with
+> > the generic ones (PMD|PUD|PGD) would require identifying all of them on a
+> > given platform. A platform specific hook can precisely enumerate all huge
+> > page sizes supported for migration. Instead of comparing against standard
+> > huge page orders let hugetlb_migration_support() function call a platform
+> > hook arch_hugetlb_migration_support(). Default definition for the platform
+> > hook maintains existing semantics which checks standard huge page order.
+> > But an architecture can choose to override the default and provide support
+> > for a comprehensive set of huge page sizes.
+> > 
+> > Reviewed-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> > Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 > 
-> A short term solution might be to add /usr/local/lib with ldconfig i.e.
-> 
-> sudo ldconfig /usr/local/lib
+> Acked-by: Michal Hocko <mhocko@use.com>
 
-That worked for me, but I will look at making the script work even if
-/usr/local/lib is not in /etc/ld.so.conf or /etc/ld.do.conf.d/*
-
-However I found kernel disassembly doesn't work, I think due to:
-
-    commit edeb0c90df3581b821a764052d185df985f8b8dc
-    perf tools: Stop fallbacking to kallsyms for vdso symbols lookup
-
-As I mentioned here:
-
-
-https://lore.kernel.org/lkml/4c682937-3cee-6974-0970-68610e13ad37@intel.com/T/#u
-
-So I will look at a fix for that also.
+fat fingers here, should be mhocko@suse.com of course.
+-- 
+Michal Hocko
+SUSE Labs
