@@ -2,148 +2,265 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE40C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:41:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D21C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:43:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 421B620831
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:41:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Hj1j3snd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 421B620831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id D1EFF20833
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:43:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1EFF20833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paulk.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727421AbeJXTJJ (ORCPT
+        id S1727199AbeJXTLa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 15:09:09 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:18303 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727061AbeJXTJI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 15:09:08 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bd04c520002>; Wed, 24 Oct 2018 03:41:22 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 24 Oct 2018 03:41:32 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 24 Oct 2018 03:41:32 -0700
-Received: from [10.21.132.148] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 24 Oct
- 2018 10:41:30 +0000
-Subject: Re: [PATCH] mfd: tps6586x: Handle interrupts on suspend
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     Lee Jones <lee.jones@linaro.org>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, Dmitry Osipenko <digetx@gmail.com>,
-        <stable@vger.kernel.org>
-References: <1539955373-13735-1-git-send-email-jonathanh@nvidia.com>
- <20181022095257.GD4014@ulmo>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <38d9adb7-8a1a-3169-5401-f353a190f9c7@nvidia.com>
-Date:   Wed, 24 Oct 2018 11:41:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181022095257.GD4014@ulmo>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1540377682; bh=YlMD+oal1eunp4ZsnQn3UuQKsJNF2LuRwDgS8c4SMKk=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=Hj1j3sndxAs5SQLDdf1zJwaFih+Oc/QgAcL+XadYFpJp0RnNo2LfpC5UmebDj2NBw
-         J4/BtW996fCKn4bnupndbie/bRLna+mnaY8H88rVLyBAOz59p/N9kXOxmsUZdzYonC
-         2+ASFZK2tIsGjfijzn2TsXuvs3YUQSYdmxI7/idewzdGONIYL8g0CKnuiRK0oTLTT4
-         ykrxVjFjdLlQ2PAMEJqqpBgcbeX/pjQnreP8m6x3+I2JAKU6ZaGcL7swhPvKiW0p5q
-         oqCvGx1TJ7iO9rchSQDnHsU7l5TZBO3nanJeAkF91WXI4K6IrfVEnMF6jhO+mXNOwv
-         XUD3VlqDVII6g==
+        Wed, 24 Oct 2018 15:11:30 -0400
+Received: from leonov.paulk.fr ([185.233.101.22]:42178 "EHLO leonov.paulk.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726428AbeJXTLa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 15:11:30 -0400
+Received: from gagarine.paulk.fr (gagarine [192.168.1.127])
+        by leonov.paulk.fr (Postfix) with ESMTPS id 30456BFE1D;
+        Wed, 24 Oct 2018 12:43:54 +0200 (CEST)
+Received: by gagarine.paulk.fr (Postfix, from userid 114)
+        id C21F2C0FDF; Wed, 24 Oct 2018 12:43:53 +0200 (CEST)
+Received: from collins (unknown [192.168.1.1])
+        by gagarine.paulk.fr (Postfix) with ESMTPSA id 81C3AC04A1;
+        Wed, 24 Oct 2018 12:43:50 +0200 (CEST)
+Message-ID: <6ec9238a952c428b07da5a1e392e4d7b600fac37.camel@paulk.fr>
+Subject: Re: [RFC] Stateless codecs: how to refer to reference frames
+From:   Paul Kocialkowski <contact@paulk.fr>
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Pawel Osciak <posciak@chromium.org>,
+        linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Date:   Wed, 24 Oct 2018 12:44:28 +0200
+In-Reply-To: <a02b50ee-37e1-0202-b999-8e32b7bd1a96@xs4all.nl>
+References: <20181019080928.208446-1-acourbot@chromium.org>
+         <a02b50ee-37e1-0202-b999-8e32b7bd1a96@xs4all.nl>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-ZDbRHXgDOFbsTxIYZqiK"
+User-Agent: Evolution 3.30.1 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 22/10/2018 10:52, Thierry Reding wrote:
-> On Fri, Oct 19, 2018 at 02:22:53PM +0100, Jon Hunter wrote:
->> From: Jonathan Hunter <jonathanh@nvidia.com>
->>
->> The tps6586x driver creates an irqchip that is used by its various child
->> devices for managing interrupts. The tps6586x-rtc device is one of its
->> children that uses the tps6586x irqchip. When using the tps6586x-rtc as
->> a wake-up device from suspend, the following is seen:
->>
->>  PM: Syncing filesystems ... done.
->>  Freezing user space processes ... (elapsed 0.001 seconds) done.
->>  OOM killer disabled.
->>  Freezing remaining freezable tasks ... (elapsed 0.000 seconds) done.
->>  Disabling non-boot CPUs ...
->>  Entering suspend state LP1
->>  Enabling non-boot CPUs ...
->>  CPU1 is up
->>  tps6586x 3-0034: failed to read interrupt status
->>  tps6586x 3-0034: failed to read interrupt status
->>
->> The reason why the tps6586x interrupt status cannot be read is because
->> the tps6586x interrupt is not masked during suspend and when the
->> tps6586x-rtc interrupt occurs, to wake-up the device, the interrupt is
->> seen before the i2c controller has been resumed in order to read the
->> tps6586x interrupt status.
->>
->> The tps6586x-rtc driver sets it's interrupt as a wake-up source during
->> suspend, which gets propagated to the parent tps6586x interrupt.
->> However, the tps6586x-rtc driver cannot disable it's interrupt during
->> suspend otherwise we would never be woken up and so the tps6586x must
->> disable it's interrupt instead.
->>
->> Prevent the tps6586x interrupt handler from executing on exiting suspend
->> before the i2c controller has been resumed by disabling the tps6586x
->> interrupt on entering suspend and re-enabling it on resuming from
->> suspend.
->>
->> Cc: stable@vger.kernel.org
->>
->> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->> ---
->>  drivers/mfd/tps6586x.c | 24 ++++++++++++++++++++++++
->>  1 file changed, 24 insertions(+)
-> 
-> So does this mean that the SPI interrupt for the PMIC can still be a
-> wakeup source even if it is masked? This is slightly odd because now
-> you're saying that this does work while it doesn't work for the RTC
-> interrupt. So is this an implementation quirk of the LIC/GIC on Tegra
-> which doesn't extend to the TPS6586x? Or am I missing something?
+--=-ZDbRHXgDOFbsTxIYZqiK
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-No it is not a quirk for the Tegra LIC/GIC, it is purely an issue with
-the PMIC driver and this issue could occur on other platforms not just
-Tegra.
+Hi,
 
-During suspend, we want the PMIC's host interrupt to be masked in the
-LIC/GIC level, but the wake-up for this interrupt to be enabled in the
-LIC. Currently, the wake-up is enabled in the LIC, but the interrupt is
-not being masked in the LIC/GIC which is the problem.
+Le vendredi 19 octobre 2018 =C3=A0 11:40 +0200, Hans Verkuil a =C3=A9crit :
+> From Alexandre's '[RFC PATCH v3] media: docs-rst: Document m2m stateless
+> video decoder interface':
+>=20
+> On 10/19/18 10:09, Alexandre Courbot wrote:
+> > Two points being currently discussed have not been changed in this
+> > revision due to lack of better idea. Of course this is open to change:
+>=20
+> <snip>
+>=20
+> > * The other hot topic is the use of capture buffer indexes in order to
+> >   reference frames. I understand the concerns, but I doesn't seem like
+> >   we have come with a better proposal so far - and since capture buffer=
+s
+> >   are essentially well, frames, using their buffer index to directly
+> >   reference them doesn't sound too inappropriate to me. There is also
+> >   the restriction that drivers must return capture buffers in queue
+> >   order. Do we have any concrete example where this scenario would not
+> >   work?
+>=20
+> I'll stick to decoders in describing the issue. Stateless encoders probab=
+ly
+> do not have this issue.
+>=20
+> To recap: the application provides a buffer with compressed data to the
+> decoder. After the request is finished the application can dequeue the
+> decompressed frame from the capture queue.
+>=20
+> In order to decompress the decoder needs to access previously decoded
+> reference frames. The request passed to the decoder contained state
+> information containing the buffer index (or indices) of capture buffers
+> that contain the reference frame(s).
+>=20
+> This approach puts restrictions on the framework and the application:
+>=20
+> 1) It assumes that the application can predict the capture indices.
+> This works as long as there is a simple relationship between the
+> buffer passed to the decoder and the buffer you get back.
+>=20
+> But that may not be true for future codecs. And what if one buffer
+> produces multiple capture buffers? (E.g. if you want to get back
+> decompressed slices instead of full frames to reduce output latency).
 
-If the RTC interrupt within the PMIC is disabled, then the PMIC
-generates no interrupt to the host (ie. Tegra) on an alarm. The PMIC
-interrupt controller only has an interrupt mask for the various
-interrupt sources within the PMIC. Therefore, if the RTC is
-enabled/in-use we should never mask its interrupt within the PMIC.
+I don't really understand how there could be multiple capture buffers
+for the same frame used as reference here. I believe the stateless VPU
+API should make it a hard requirement that reference frames must be
+fully held in a single capture buffer. This is because the hardware
+will generally expect one address for the reference frame (that's
+definitely the case for Cedrus: we cannot deal with reference frames if
+each reference is scattered accross multiple buffers).
 
-Once the PMIC has been suspended, then it makes sense to disable its
-interrupt, because it cannot be service until it has been resumed,
-implying that I2C controller (ie. its parent) has also been resumed.
+So I don't believe it's a problem to associate a reference frame and a
+single capture buffer for the stateless VPU case. Rather that it should
+be specified as a requriement of the API.
 
-Cheers
-Jon
+I don't see any problem with allowing multiple output buffers though
+(that should then be rendered to the same capture buffer), so the 1:1
+relationship between output and capture cannot be assumed either way.
 
--- 
-nvpublic
+> This API should be designed to be future-proof (within reason of course),
+> and I am not at all convinced that future codecs will be just as easy
+> to predict.
+>=20
+> 2) It assumes that neither drivers nor applications mess with the buffers=
+.
+> One case that might happen today is if the DMA fails and a buffer is
+> returned marked ERROR and the DMA is retried with the next buffer. There
+> is nothing in the spec that prevents you from doing that, but it will mes=
+s
+> up the capture index numbering. And does the application always know in
+> what order capture buffers are queued? Perhaps there are two threads: one
+> queueing buffers with compressed data, and the other dequeueing the
+> decompressed buffers, and they are running mostly independently.
+>=20
+> I believe that assuming that you can always predict the indices of the
+> capture queue is dangerous and asking for problems in the future.
+
+I agree, assuming that userspace can predict the matching capture
+buffer index seems very fragile.=20
+
+> I am very much in favor of using a dedicated cookie. The application sets
+> it for the compressed buffer and the driver copies it to the uncompressed
+> capture buffer. It keeps track of the association between capture index
+> and cookie. If a compressed buffer decompresses into multiple capture
+> buffers, then they will all be associated with the same cookie, so
+> that simplifies how you refer to reference frames if they are split
+> over multiple buffers.
+
+This seems like a great idea, I'm all for it!
+
+> The codec controls refer to reference frames by cookie(s).
+>=20
+> For existing applications that use the capture index all you need to do
+> is to set the capture index as the cookie value in the output buffer.
+>=20
+> It is my understanding that ChromeOS was using the timestamp as the
+> cookie value.
+>=20
+> I have thought about that, but I am not in favor of doing that. One
+> reason is that struct timeval comes in various flavors (32 bit, 64 bit,
+> and a y2038-compatible 32-bit type in the future).
+>=20
+> The y2038 compat code that we will need concerns me in particular since
+> it will mean that the timeval is converted from 32 to 64 bit and back
+> again, and that might well mangle the data. I'm not so sure if you can
+> stick a 64-bit pointer in the timeval (e.g. the high 32 bits go to into
+> the tv_sec field, the low 32 bits go to the usecs). The y2038 conversion
+> might mangle the tv_usec field (e.g. divide by 1000000 and add the second=
+s
+> to the tv_sec field).
+>=20
+> I would really prefer an independent 64-bit cookie value that the applica=
+tion
+> can set instead of abusing something else.
+>=20
+> I propose to make a union with v4l2_timecode (which nobody uses) and a
+> new V4L2_BUF_FLAG_COOKIE flag.
+>=20
+> struct v4l2_buffer_cookie {
+> 	__u32 high;
+> 	__u32 low;
+> };
+>=20
+> And in v4l2_buffer:
+>=20
+> 	union {
+> 		struct v4l2_timecode timecode;
+> 		struct v4l2_buffer_cookie cookie;
+> 	};
+>=20
+> And static inlines:
+>=20
+> void v4l2_buffer_set_cookie(struct v4l2_buffer *buf, __u64 cookie)
+> {
+> 	buf->cookie.high =3D cookie >> 32;
+> 	buf->cookie.low =3D cookie & 0xffffffffULL;
+> 	buf->flags |=3D V4L2_BUF_FLAG_COOKIE;
+> }
+>=20
+> void v4l2_buffer_set_cookie_ptr(struct v4l2_buffer *buf, void *cookie)
+> {
+> 	v4l2_buffer_set_cookie(buf, (__u64)cookie);
+> }
+>=20
+> __u64 v4l2_buffer_get_cookie(struct v4l2_buffer *buf)
+> {
+> 	if (!(buf->flags & V4L2_BUF_FLAG_COOKIE))
+> 		return 0;
+> 	return (((__u64)buf->cookie.high) << 32) | (__u64)buf->cookie.low;
+> }
+>=20
+> void *v4l2_buffer_get_cookie_ptr(struct v4l2_buffer *buf)
+> {
+> 	return (void *)v4l2_buffer_get_cookie(buf);
+> }
+>=20
+> Why not just use __u64? Because the alignment in v4l2_buffer is a nightma=
+re.
+> Using __u64 would create holes, made even worse by different struct timev=
+al
+> sizes depending on the architecture.
+>=20
+> I'm proposing a struct v4l2_ext_buffer together with new streaming ioctls
+> during the media summit that has a clean layout and there this can be jus=
+t
+> a __u64.
+>=20
+> I'm calling it a 'cookie' here, but that's just a suggestion. Better
+> names are welcome.
+
+Cheers,
+
+Paul
+
+--=20
+Developer of free digital technology and hardware support.
+
+Website: https://www.paulk.fr/
+Coding blog: https://code.paulk.fr/
+Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
+
+--=-ZDbRHXgDOFbsTxIYZqiK
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEAbcMXZQMtj1fphLChP3B6o/ulQwFAlvQTQwACgkQhP3B6o/u
+lQyR6A//YZ2aTeJcgGKBMV/PdqAnWjnxTSD0MRcq1McM5htWM+MZDEdM64z3Kv/P
+2AqWFflRimc63Bd+fl/H0YdmSlINj/j79SLy0+bPK8AjFr+kF4dXADMnbZKVV9fZ
+emlzulu/pzNhf3IWEaeqA1zOw9TQ0b6gaf3l7jTuMgtsBgXyLJaEMFVBRhhIYNU7
+iOXW681DuJzvp8ylnPOrhyzdalAqy0ANxKk9mqU9PXWXB8+1YZyK1gj4ZOl3CBiS
+iH9hpEi5fF2jsm7Hpb7CHq4kTaVDa5XFd8+r43RFI1rXHqtCnMD7D2iw/oeWPJw8
+uy+0RgmeZolyP2CbiaH1cQBl9FBWaH/6V29BA53ecyTS+t3UlAJKmrRZ1ALMm6m2
+8nB/pJh9T3BfZCFZ1ehY1eAYbKNIEJwvkrrIrrXAbUHnBBq5GOXyyLD4hyB9lzTl
+S/Yg9KofCTszhSI4ZLWyZUpChO/COKu+KyTbacMEGbnBLnPpjZpLtD+18yce2A5b
+xRhHpEMSPCYea1lDtnzPs7cpi2Su62ANNfsLjU+5fNDNDmzJiUHUioyBMTs/5T2Q
+sL16TAKUnSO5fdDIk6nYfg7oS8ZS60oJLmDmZarB7bqjHnQFOs89FsQrfbjbnSFJ
+TE7+4qDNRQee5IwM16m+GZ7vMoL6B3DN4oyZtX3ZF5fKNHrGCz0=
+=MB8T
+-----END PGP SIGNATURE-----
+
+--=-ZDbRHXgDOFbsTxIYZqiK--
+
