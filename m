@@ -2,163 +2,156 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB480C67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 16:04:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E651C67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 16:05:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C0D0205F4
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 16:04:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C0D0205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id E98B2205F4
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 16:05:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="3RQ3YDzo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E98B2205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727117AbeJYAdd (ORCPT
+        id S1727144AbeJYAeS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 20:33:33 -0400
-Received: from www62.your-server.de ([213.133.104.62]:46488 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726449AbeJYAdd (ORCPT
+        Wed, 24 Oct 2018 20:34:18 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:55974 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726449AbeJYAeS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 20:33:33 -0400
-Received: from [88.198.220.130] (helo=sslproxy01.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1gFLeC-00020a-Td; Wed, 24 Oct 2018 18:04:40 +0200
-Received: from [62.203.87.61] (helo=linux.home)
-        by sslproxy01.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1gFLeC-0001aV-Jo; Wed, 24 Oct 2018 18:04:40 +0200
-Subject: Re: [PATCH RFC v3 0/3] Rlimit for module space
-To:     Jessica Yu <jeyu@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "arjan@linux.intel.com" <arjan@linux.intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "jannh@google.com" <jannh@google.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "kristen@linux.intel.com" <kristen@linux.intel.com>,
-        "Dock, Deneen T" <deneen.t.dock@intel.com>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        alexei.starovoitov@gmail.com, netdev@vger.kernel.org
-References: <20181019204723.3903-1-rick.p.edgecombe@intel.com>
- <CAKv+Gu_AgPv2o4=U0-7pnpgtSufEobnta8oKhhGfCdCxM82B5Q@mail.gmail.com>
- <6b1017c450d163539d2b974657baaaf697f0a138.camel@intel.com>
- <CAKv+Gu-Rk-SQVOQ63L3DkF3=EVik3pHXzpNp5r5TrgDajTM_iQ@mail.gmail.com>
- <20181024150706.jewcclhhh756tupn@linux-8ccs>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <d7cb6a8c-b7d6-5c82-6721-2b5387da673f@iogearbox.net>
-Date:   Wed, 24 Oct 2018 18:04:39 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Wed, 24 Oct 2018 20:34:18 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9OG4R6a117844;
+        Wed, 24 Oct 2018 16:05:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=6agoU7alTHiWAx6DoRytImdcajTbjXamv5ky2Y6SWPo=;
+ b=3RQ3YDzoAet0rdMxjVjg4C5rNQlYw+RxnHMUJA95BohzFjq5FWgfTWcXsQK4j2kBMBrK
+ E3EfZzYKnOpNGUYfMVfg5x90VKMKfv5ehd/B/2KACEtFo3EDhh63y3dKROIBXy27AzK7
+ NIgb/yYqOovZf/MJmAjxwbdLVkMOrTJrjJK9r3L16RHUZ+c31zWqkqU3wpgp1UCnx1zi
+ O+Z4Z2Nn90DaN771Xdf9kmVUiJcAQsUVLi3uHSCy9NCSklRHVC8dM30Bya5wB/7cTGeb
+ jprEN4tAI6J3Av8ZbcFLlyfmMENY9VBSp+mdgmbJ90I51KQYQfGbXs6xJL++UiibtmZJ Ng== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2120.oracle.com with ESMTP id 2n7vaq4kj0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 24 Oct 2018 16:05:32 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9OG5VUo007121
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 24 Oct 2018 16:05:31 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9OG5V1S007440;
+        Wed, 24 Oct 2018 16:05:31 GMT
+Received: from [10.211.46.5] (/10.211.46.5)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 24 Oct 2018 09:05:31 -0700
+Subject: Re: [PATCH] xen-swiotlb: exchange memory with Xen only when pages are
+ contiguous
+To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc:     "DONGLI.ZHANG" <dongli.zhang@oracle.com>, konrad@kernel.org,
+        Christoph Helwig <hch@lst.de>,
+        John Sobecki <john.sobecki@oracle.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        "linux-kernel@vger.kernel.org\"" <linux-kernel@vger.kernel.org>
+References: <bb6d87b4-c371-c6c0-8c48-bc95df018ad1@oracle.com>
+ <20181024130246.GA22616@localhost.localdomain>
+From:   Joe Jin <joe.jin@oracle.com>
+Message-ID: <b6f5e6e3-0536-d8e1-d100-aaa7f944731d@oracle.com>
+Date:   Wed, 24 Oct 2018 09:05:30 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181024150706.jewcclhhh756tupn@linux-8ccs>
+In-Reply-To: <20181024130246.GA22616@localhost.localdomain>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.2/25066/Wed Oct 24 15:00:13 2018)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9055 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810240137
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ +Alexei, netdev ]
-
-On 10/24/2018 05:07 PM, Jessica Yu wrote:
-> +++ Ard Biesheuvel [23/10/18 08:54 -0300]:
->> On 22 October 2018 at 20:06, Edgecombe, Rick P
->> <rick.p.edgecombe@intel.com> wrote:
-[...]
->> I think it is wrong to conflate the two things. Limiting the number of
->> BPF allocations and the limiting number of module allocations are two
->> separate things, and the fact that BPF reuses module_alloc() out of
->> convenience does not mean a single rlimit for both is appropriate.
+On 10/24/18 6:02 AM, Konrad Rzeszutek Wilk wrote:
+> On Tue, Oct 23, 2018 at 08:09:04PM -0700, Joe Jin wrote:
+>> Commit 4855c92dbb7 "xen-swiotlb: fix the check condition for
+>> xen_swiotlb_free_coherent" only fixed memory address check condition
+>> on xen_swiotlb_free_coherent(), when memory was not physically
+>> contiguous and tried to exchanged with Xen via 
+>> xen_destroy_contiguous_region it will lead kernel panic.
 > 
-> Hm, I think Ard has a good point. AFAIK, and correct me if I'm wrong,
-> users of module_alloc() i.e. kprobes, ftrace, bpf, seem to use it
-> because it is an easy way to obtain executable kernel memory (and
-> depending on the needs of the architecture, being additionally
-> reachable via relative branches) during runtime. The side effect is
-> that all these users share the "module" memory space, even though this
-> memory region is not exclusively used by modules (well, personally I
-> think it technically should be, because seeing module_alloc() usage
-> outside of the module loader is kind of a misuse of the module API and
-> it's confusing for people who don't know the reason behind its usage
-> outside of the module loader).
+> s/it will lead/which lead to/?
 > 
-> Right now I'm not sure if it makes sense to impose a blanket limit on
-> all module_alloc() allocations when the real motivation behind the
-> rlimit is related to BPF, i.e., to stop unprivileged users from
-> hogging up all the vmalloc space for modules with JITed BPF filters.
-> So the rlimit has more to do with limiting the memory usage of BPF
-> filters than it has to do with modules themselves.
+>>
+>> The correct check condition should be memory is in DMA area and
+>> physically contiguous.
 > 
-> I think Ard's suggestion of having a separate bpf_alloc/free API makes
-> a lot of sense if we want to keep track of bpf-related allocations
-> (and then the rlimit would be enforced for those). Maybe part of the
-> module mapping space could be carved out for bpf filters (e.g. have
-> BPF_VADDR, BPF_VSIZE, etc like how we have it for modules), or
-> continue sharing the region but explicitly define a separate bpf_alloc
-> API, depending on an architecture's needs. What do people think?
+> "The correct check condition to make Xen hypercall to revert the
+> memory back from its 32-bit pool is if it is:
+>  1) Above its DMA bit mask (for example 32-bit devices can only address
+> up to 4GB, and we may want 4GB+2K), and
+>  2) If it not physically contingous
 
-Hmm, I think here are several issues mixed up at the same time which is just
-very confusing, imho:
+Here should be physically contiguous? on allocating, it asked physically
+contiguous memory for DMA, if not contiguous, it can not do DMA,
+am I right?
 
-1) The fact that there are several non-module users of module_alloc()
-as Jessica notes such as kprobes, ftrace, bpf, for example. While all of
-them are not being modules, they all need to alloc some piece of executable
-memory. It's nothing new, this exists for 7 years now since 0a14842f5a3c
-("net: filter: Just In Time compiler for x86-64") from BPF side; effectively
-that is even /before/ eBPF existed. Having some different API perhaps for all
-these users seems to make sense if the goal is not to interfere with modules
-themselves. It might also help as a benefit to potentially increase that
-memory pool if we're hitting limits at scale which would not be a concern
-for normal kernel modules since there's usually just a very few of them
-needed (unlike dynamically tracing various kernel parts 24/7 w/ or w/o BPF,
-running BPF-seccomp policies, networking BPF policies, etc which need to
-scale w/ application or container deployment; so this is of much more
-dynamic and unpredictable nature).
+Andy range_straddles_page_boundary() return 0 means is physically contiguous,
+is that correct?
 
-2) Then there is rlimit which is proposing to have a "fairer" share among
-unprivileged users. I'm not fully sure yet whether rlimit is actually a
-nice usable interface for all this. I'd agree that something is needed
-on that regard, but I also tend to like Michal Hocko's cgroup proposal,
-iow, to have such resource control as part of memory cgroup could be
-something to consider _especially_ since it already _exists_ for vmalloc()
-backed memory so this should be not much different than that. It sounds
-like 2) comes on top of 1).
+Thanks,
+Joe
 
-3) Last but not least, there's a short term fix which is needed independently
-of 1) and 2) and should be done immediately which is to account for
-unprivileged users and restrict them based on a global configurable
-limit such that privileged use keeps functioning, and 2) could enforce
-based on the global upper limit, for example. Pending fix is under
-https://patchwork.ozlabs.org/patch/987971/ which we intend to ship to
-Linus as soon as possible as short term fix. Then something like memcg
-can be considered on top since it seems this makes most sense from a
-usability point.
-
-Thanks a lot,
-Daniel
+> 
+> N.B. The logic in the code is inverted, which leads to all sorts of
+> confusions."
+> 
+> Does that sound correct?
+> 
+>>
+>> Thank you Boris for pointing it out.
+>>
+> 
+> Fixes: 4855c92dbb7 ("xen-sw..") ?
+> 
+>> Signed-off-by: Joe Jin <joe.jin@oracle.com>
+>> Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+>> Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> 
+> Reported-by: Boris Ostrovs... ?
+>> Cc: Christoph Helwig <hch@lst.de>
+>> Cc: Dongli Zhang <dongli.zhang@oracle.com>
+>> Cc: John Sobecki <john.sobecki@oracle.com>
+>> ---
+>>  drivers/xen/swiotlb-xen.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
+>> index f5c1af4ce9ab..aed92fa019f9 100644
+>> --- a/drivers/xen/swiotlb-xen.c
+>> +++ b/drivers/xen/swiotlb-xen.c
+>> @@ -357,8 +357,8 @@ xen_swiotlb_free_coherent(struct device *hwdev, size_t size, void *vaddr,
+>>  	/* Convert the size to actually allocated. */
+>>  	size = 1UL << (order + XEN_PAGE_SHIFT);
+>>  
+>> -	if (((dev_addr + size - 1 <= dma_mask)) ||
+>> -	    range_straddles_page_boundary(phys, size))
+>> +	if ((dev_addr + size - 1 <= dma_mask) &&
+>> +	    !range_straddles_page_boundary(phys, size))
+>>  		xen_destroy_contiguous_region(phys, order);
+>>  
+>>  	xen_free_coherent_pages(hwdev, size, vaddr, (dma_addr_t)phys, attrs);
+>> -- 
+>> 2.17.1 (Apple Git-112)
+>>
