@@ -2,153 +2,176 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12471ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:36:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E122ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:37:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C81EF2064C
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:36:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C81EF2064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B59992054F
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:37:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FB5A32R1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B59992054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbeJYEFg (ORCPT
+        id S1727126AbeJYEGe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 00:05:36 -0400
-Received: from mga09.intel.com ([134.134.136.24]:14657 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726207AbeJYEFg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 00:05:36 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 12:36:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,421,1534834800"; 
-   d="scan'208";a="244068057"
-Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
-  by orsmga004.jf.intel.com with ESMTP; 24 Oct 2018 12:36:14 -0700
-Received: from fmsmsx119.amr.corp.intel.com (10.18.124.207) by
- FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 24 Oct 2018 12:36:14 -0700
-Received: from crsmsx102.amr.corp.intel.com (172.18.63.137) by
- FMSMSX119.amr.corp.intel.com (10.18.124.207) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 24 Oct 2018 12:36:13 -0700
-Received: from crsmsx101.amr.corp.intel.com ([169.254.1.85]) by
- CRSMSX102.amr.corp.intel.com ([169.254.2.244]) with mapi id 14.03.0415.000;
- Wed, 24 Oct 2018 13:36:11 -0600
-From:   "Bae, Chang Seok" <chang.seok.bae@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-CC:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Metzger, Markus T" <markus.t.metzger@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: RE: [v3 05/12] x86/fsgsbase/64: Preserve FS/GS state in
- __switch_to() if FSGSBASE is on
-Thread-Topic: [v3 05/12] x86/fsgsbase/64: Preserve FS/GS state in
- __switch_to() if FSGSBASE is on
-Thread-Index: AQHUawBO7l1gssH07kCl6Hdk10LxvKUvLBEA//+e6ZA=
-Date:   Wed, 24 Oct 2018 19:36:10 +0000
-Message-ID: <C9BB696F3A938947B10DCAD29FAB8FFA66CCBCEE@CRSMSX101.amr.corp.intel.com>
-References: <20181023184234.14025-1-chang.seok.bae@intel.com>
- <20181023184234.14025-6-chang.seok.bae@intel.com>
- <CALCETrWZZ65pzmO_OwG0x3DWtLbLykB16DB5t8r3rkjg5VmzmA@mail.gmail.com>
-In-Reply-To: <CALCETrWZZ65pzmO_OwG0x3DWtLbLykB16DB5t8r3rkjg5VmzmA@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDdkZTBiMjktNjBiOS00ZGVmLTk4Y2EtMGI4ZjZlOWRmMWVhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiTExFNFRoN1Flclp5SFduY0pEbk5mVDFVaHRWWnpnSUd3UE92Qkx4QnRpYmtPZHo5TUlRQ1hhdk82VHcrXC9YSDAifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [172.18.205.10]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Thu, 25 Oct 2018 00:06:34 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45917 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726178AbeJYEGd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 00:06:33 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n5-v6so3051067wrw.12;
+        Wed, 24 Oct 2018 12:37:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=2S+qq7eHn7jtuqE/DLkUUqZS5/P5m6JsCPwpuiklhRo=;
+        b=FB5A32R17/WO33PmCghSc8jl+wUpOP6UiZQiR4XSuA7GeNRDt/8GHw3kQ7QXwnZ7fC
+         Bbejy0mitQIkI2YWcS3YkqZpeJYJW8F5Z0SNIkeOCbpEjkRwi/qpC0Fk281n0/Aq3hS8
+         xgSJK4v0F5ndYoLpw6VX5/d2XAKGxSC8mJRNNKsoGWuSnMYt0LjT++00tMuOGq22AWUL
+         qPa2ma4oIcAC/zGUofU0Lgqlb3T9ityYKIyU1a1AkMU1oSp0xYLkAx3hQAnvWR9ZO6fM
+         I+kQ0mA6pheab/aQENcqpUNeOGGcHsWUm5HPCDvNwPFse1Kis6gst4yEe4HlRb+fdk5Z
+         brsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=2S+qq7eHn7jtuqE/DLkUUqZS5/P5m6JsCPwpuiklhRo=;
+        b=qfr0hgT8GSoZbrltAyunlvxW9m7cHMXN01qf312mJybHd58uDXeB5kAWc3YmkrlDhk
+         xVWlnr5Ofvnm9sbTFf+mHYHD0Py6GELblANEFmTBg1xcD2ikzp8myX7t19i4I5tzKTgD
+         q6NJNRq0xtwvOZjRmoK/Fx35TaZJ7JXlvd/ydFtLVpz2PXjWSf+197mw6JKryjInOd2V
+         63UumxwJVNKHi540YstyHMxwHNNgFjQlVyCnngX6BmCx5xd4UiEsjBWxRM/5ZhIKiwOb
+         KSiC97LTuWUKE3SVNw8eZqU+To+uO6JfiUCEJgjE4DVIGz5NO1Dly7bx9XMQgw0uO1PS
+         HIKw==
+X-Gm-Message-State: AGRZ1gJHzg5i+pfAS3PGbvfA89VntP2KFfbYPVXfP00keTM+MNPg6IPD
+        vvvCFvJ/hzvj8551YlxssIdjHwpw9P0=
+X-Google-Smtp-Source: AJdET5fLWOmnzhKjEGD/R+8ub5WwqzzMJlu4qSkt75qL32vGUdzQWDM+73FXyY8GsvxTqs7uQKlpmw==
+X-Received: by 2002:adf:9589:: with SMTP id p9-v6mr399280wrp.270.1540409829439;
+        Wed, 24 Oct 2018 12:37:09 -0700 (PDT)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id t143-v6sm4293725wmt.2.2018.10.24.12.37.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 24 Oct 2018 12:37:08 -0700 (PDT)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     netdev@vger.kernel.org
+Cc:     jiri@mellanox.com, petr@mellanox.com, idosch@mellanox.com,
+        privat@egil-hjelmeland.no, Woojung.Huh@microchip.com,
+        tristram.ha@microchip.com, Florian Fainelli <f.fainelli@gmail.com>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@savoirfairelinux.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH RFC] net: dsa: Make switches VLAN aware when enslaved into a bridge
+Date:   Wed, 24 Oct 2018 12:36:57 -0700
+Message-Id: <20181024193657.24012-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVHVlLCBPY3QgMjQsIDIwMTggYXQgMTI6MjEgUE0gQW5keSBMdXRvbWlyc2tpIDxsdXRvQGtl
-cm5lbC5vcmc+IHdyb3RlOg0KPiBPbiBUdWUsIE9jdCAyMywgMjAxOCBhdCAxMTo0MyBBTSBDaGFu
-ZyBTLiBCYWUgPGNoYW5nLnNlb2suYmFlQGludGVsLmNvbT4NCj4gd3JvdGU6DQo+ID4NCj4gPiBG
-cm9tOiBBbmR5IEx1dG9taXJza2kgPGx1dG9Aa2VybmVsLm9yZz4NCj4gPg0KPiA+IFdpdGggdGhl
-IG5ldyBGU0dTQkFTRSBpbnN0cnVjdGlvbnMsIHdlIGNhbiBlZmZpY2llbnRseSByZWFkIGFuZCB3
-cml0ZQ0KPiA+IHRoZSBGU0JBU0UgYW5kIEdTQkFTRSBpbiBfX3N3aXRjaF90bygpLiAgVXNlIHRo
-YXQgY2FwYWJpbGl0eSB0byBwcmVzZXJ2ZQ0KPiA+IHRoZSBmdWxsIHN0YXRlLg0KPiA+DQo+ID4g
-VGhpcyB3aWxsIGVuYWJsZSB1c2VyIGNvZGUgdG8gZG8gd2hhdGV2ZXIgaXQgd2FudHMgd2l0aCB0
-aGUgbmV3DQo+ID4gaW5zdHJ1Y3Rpb25zIHdpdGhvdXQgYW55IGtlcm5lbC1pbmR1Y2VkIGdvdGNo
-YXMuICAoVGhlcmUgY2FuIHN0aWxsIGJlDQo+ID4gYXJjaGl0ZWN0dXJhbCBnb3RjaGFzOiBtb3Zs
-ICVncywlZWF4OyBtb3ZsICVlYXgsJWdzIG1heSBjaGFuZ2UgR1NCQVNFDQo+ID4gaWYgV1JHU0JB
-U0Ugd2FzIHVzZWQsIGJ1dCB1c2VycyBhcmUgZXhwZWN0ZWQgdG8gcmVhZCB0aGUgQ1BVIG1hbnVh
-bA0KPiA+IGJlZm9yZSBkb2luZyB0aGluZ3MgbGlrZSB0aGF0LikNCj4gPg0KPiA+IFRoaXMgaXMg
-YSBjb25zaWRlcmFibGUgc3BlZWR1cC4gIEl0IHNlZW1zIHRvIHNhdmUgYWJvdXQgMTAwIGN5Y2xl
-cw0KPiA+IHBlciBjb250ZXh0IHN3aXRjaCBjb21wYXJlZCB0byB0aGUgYmFzZWxpbmUgNC42LXJj
-MSBiZWhhdmlvciBvbiBteQ0KPiA+IFNreWxha2UgbGFwdG9wLg0KPiA+DQo+ID4gWyBjaGFuZzog
-NX4xMCUgcGVyZm9ybWFuY2UgaW1wcm92ZW1lbnRzIHdlcmUgc2VlbiBieSBhIGNvbnRleHQgc3dp
-dGNoDQo+ID4gICBiZW5jaG1hcmsgdGhhdCByYW4gdGhyZWFkcyB3aXRoIGRpZmZlcmVudCBGUy9H
-U0JBU0UgdmFsdWVzLiBNaW5vcg0KPiA+ICAgZWRpdCBvbiB0aGUgY2hhbmdlbG9nLiBdDQo+ID4N
-Cj4gPiBTaWduZWQtb2ZmLWJ5OiBBbmR5IEx1dG9taXJza2kgPGx1dG9Aa2VybmVsLm9yZz4NCj4g
-PiBTaWduZWQtb2ZmLWJ5OiBDaGFuZyBTLiBCYWUgPGNoYW5nLnNlb2suYmFlQGludGVsLmNvbT4N
-Cj4gPiBSZXZpZXdlZC1ieTogQW5kaSBLbGVlbiA8YWtAbGludXguaW50ZWwuY29tPg0KPiA+IENj
-OiBILiBQZXRlciBBbnZpbiA8aHBhQHp5dG9yLmNvbT4NCj4gPiBDYzogVGhvbWFzIEdsZWl4bmVy
-IDx0Z2x4QGxpbnV0cm9uaXguZGU+DQo+ID4gQ2M6IEluZ28gTW9sbmFyIDxtaW5nb0BrZXJuZWwu
-b3JnPg0KPiA+IENjOiBEYXZlIEhhbnNlbiA8ZGF2ZS5oYW5zZW5AbGludXguaW50ZWwuY29tPg0K
-PiA+IC0tLQ0KPiA+ICBhcmNoL3g4Ni9rZXJuZWwvcHJvY2Vzc182NC5jIHwgMzQgKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKy0tLS0tLQ0KPiA+ICAxIGZpbGUgY2hhbmdlZCwgMjggaW5zZXJ0
-aW9ucygrKSwgNiBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9hcmNoL3g4Ni9r
-ZXJuZWwvcHJvY2Vzc182NC5jIGIvYXJjaC94ODYva2VybmVsL3Byb2Nlc3NfNjQuYw0KPiA+IGlu
-ZGV4IGZjZjE4MDQ2YzNkNi4uMWQ5NzVjYWRjMjU2IDEwMDY0NA0KPiA+IC0tLSBhL2FyY2gveDg2
-L2tlcm5lbC9wcm9jZXNzXzY0LmMNCj4gPiArKysgYi9hcmNoL3g4Ni9rZXJuZWwvcHJvY2Vzc182
-NC5jDQo+ID4gQEAgLTIzOCw4ICsyMzgsMTggQEAgc3RhdGljIF9fYWx3YXlzX2lubGluZSB2b2lk
-IHNhdmVfZnNncyhzdHJ1Y3QNCj4gdGFza19zdHJ1Y3QgKnRhc2spDQo+ID4gIHsNCj4gPiAgICAg
-ICAgIHNhdmVzZWdtZW50KGZzLCB0YXNrLT50aHJlYWQuZnNpbmRleCk7DQo+ID4gICAgICAgICBz
-YXZlc2VnbWVudChncywgdGFzay0+dGhyZWFkLmdzaW5kZXgpOw0KPiA+IC0gICAgICAgc2F2ZV9i
-YXNlX2xlZ2FjeSh0YXNrLCB0YXNrLT50aHJlYWQuZnNpbmRleCwgRlMpOw0KPiA+IC0gICAgICAg
-c2F2ZV9iYXNlX2xlZ2FjeSh0YXNrLCB0YXNrLT50aHJlYWQuZ3NpbmRleCwgR1MpOw0KPiA+ICsg
-ICAgICAgaWYgKHN0YXRpY19jcHVfaGFzKFg4Nl9GRUFUVVJFX0ZTR1NCQVNFKSkgew0KPiA+ICsg
-ICAgICAgICAgICAgICAvKg0KPiA+ICsgICAgICAgICAgICAgICAgKiBJZiBGU0dTQkFTRSBpcyBl
-bmFibGVkLCB3ZSBjYW4ndCBtYWtlIGFueSB1c2VmdWwgZ3Vlc3Nlcw0KPiA+ICsgICAgICAgICAg
-ICAgICAgKiBhYm91dCB0aGUgYmFzZSwgYW5kIHVzZXIgY29kZSBleHBlY3RzIHVzIHRvIHNhdmUg
-dGhlIGN1cnJlbnQNCj4gPiArICAgICAgICAgICAgICAgICogdmFsdWUuICBGb3J0dW5hdGVseSwg
-cmVhZGluZyB0aGUgYmFzZSBkaXJlY3RseSBpcyBlZmZpY2llbnQuDQo+ID4gKyAgICAgICAgICAg
-ICAgICAqLw0KPiA+ICsgICAgICAgICAgICAgICB0YXNrLT50aHJlYWQuZnNiYXNlID0gcmRmc2Jh
-c2UoKTsNCj4gPiArICAgICAgICAgICAgICAgdGFzay0+dGhyZWFkLmdzYmFzZSA9IHJkX2luYWN0
-aXZlX2dzYmFzZSgpOw0KPiA+ICsgICAgICAgfSBlbHNlIHsNCj4gPiArICAgICAgICAgICAgICAg
-c2F2ZV9iYXNlX2xlZ2FjeSh0YXNrLCB0YXNrLT50aHJlYWQuZnNpbmRleCwgRlMpOw0KPiA+ICsg
-ICAgICAgICAgICAgICBzYXZlX2Jhc2VfbGVnYWN5KHRhc2ssIHRhc2stPnRocmVhZC5nc2luZGV4
-LCBHUyk7DQo+ID4gKyAgICAgICB9DQo+ID4gIH0NCj4gPg0KPiA+ICAjaWYgSVNfRU5BQkxFRChD
-T05GSUdfS1ZNKQ0KPiA+IEBAIC0zMTgsMTAgKzMyOCwyMiBAQCBzdGF0aWMgX19hbHdheXNfaW5s
-aW5lIHZvaWQNCj4gbG9hZF9zZWdfbGVnYWN5KHVuc2lnbmVkIHNob3J0IHByZXZfaW5kZXgsDQo+
-ID4gIHN0YXRpYyBfX2Fsd2F5c19pbmxpbmUgdm9pZCB4ODZfZnNnc2Jhc2VfbG9hZChzdHJ1Y3Qg
-dGhyZWFkX3N0cnVjdCAqcHJldiwNCj4gPiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgc3RydWN0IHRocmVhZF9zdHJ1Y3QgKm5leHQpDQo+ID4gIHsNCj4gPiAt
-ICAgICAgIGxvYWRfc2VnX2xlZ2FjeShwcmV2LT5mc2luZGV4LCBwcmV2LT5mc2Jhc2UsDQo+ID4g
-LSAgICAgICAgICAgICAgICAgICAgICAgbmV4dC0+ZnNpbmRleCwgbmV4dC0+ZnNiYXNlLCBGUyk7
-DQo+ID4gLSAgICAgICBsb2FkX3NlZ19sZWdhY3kocHJldi0+Z3NpbmRleCwgcHJldi0+Z3NiYXNl
-LA0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgIG5leHQtPmdzaW5kZXgsIG5leHQtPmdzYmFz
-ZSwgR1MpOw0KPiA+ICsgICAgICAgaWYgKHN0YXRpY19jcHVfaGFzKFg4Nl9GRUFUVVJFX0ZTR1NC
-QVNFKSkgew0KPiA+ICsgICAgICAgICAgICAgICAvKiBVcGRhdGUgdGhlIEZTIGFuZCBHUyBzZWxl
-Y3RvcnMgaWYgdGhleSBjb3VsZCBoYXZlIGNoYW5nZWQuICovDQo+ID4gKyAgICAgICAgICAgICAg
-IGlmICh1bmxpa2VseShwcmV2LT5mc2luZGV4IHx8IG5leHQtPmZzaW5kZXgpKQ0KPiA+ICsgICAg
-ICAgICAgICAgICAgICAgICAgIGxvYWRzZWcoRlMsIG5leHQtPmZzaW5kZXgpOw0KPiA+ICsgICAg
-ICAgICAgICAgICBpZiAodW5saWtlbHkocHJldi0+Z3NpbmRleCB8fCBuZXh0LT5nc2luZGV4KSkN
-Cj4gPiArICAgICAgICAgICAgICAgICAgICAgICBsb2Fkc2VnKEdTLCBuZXh0LT5nc2luZGV4KTsN
-Cj4gPiArDQo+ID4gKyAgICAgICAgICAgICAgIC8qIFVwZGF0ZSB0aGUgYmFzZXMuICovDQo+ID4g
-KyAgICAgICAgICAgICAgIHdyZnNiYXNlKG5leHQtPmZzYmFzZSk7DQo+ID4gKyAgICAgICAgICAg
-ICAgIHdyX2luYWN0aXZlX2dzYmFzZShuZXh0LT5nc2Jhc2UpOw0KPiANCj4gQWhhLCBJIHNlZSB3
-aGF0IHlvdSdyZSBkb2luZyB3aXRoIHRoZSBGU0dTQkFTRS1vcHRpbWl6ZWQgdmVyc2lvbiBiZWlu
-Zw0KPiBvdXQgb2YgbGluZS4gIEJ1dCBpdCdzIHdheSB0b28gdW5jbGVhciBmcm9tIHRoZSBjb2Rl
-LiAgWW91IHNob3VsZCBuYW1lDQo+IHRoZSBoZWxwZXIgd3Jnc2Jhc2VfaW5hY3RpdmUgb3IgbWF5
-YmUgX193cmdzYmFzZV9pbmFjdGl2ZSgpIHRvDQo+IGVtcGhhc2l6ZSB0aGF0IHlvdSdyZSBsaXRl
-cmFsbHkgdXNpbmcgdGhlIFdSR1NCQVNFIGluc3RydWN0aW9uLiAgKE9yDQo+IGl0J3MgWGVuIFBW
-IGVxdWl2YWxlbnQuICBIbW0uKQ0KDQpPa2F5LiBXaWxsIHJlbmFtZSB0aGUgcmVsZXZhbnRzLg0K
+Commit 2ea7a679ca2a ("net: dsa: Don't add vlans when vlan filtering is
+disabled") changed the behavior of DSA switches when the switch ports
+are enslaved into the bridge and only pushed the VLAN configuration down
+to the switch if the bridge is configured with VLAN filtering enabled.
+
+This is unfortunately wrong, because what vlan_filtering configures is a
+policy on the acceptance of VLAN tagged frames with an unknown VID.
+
+vlan_filtering=0 means a frame with a VLAN tag that is not part of the
+VLAN table should be allowed to ingress the switch, and vlan_fltering=1
+would reject that frame.
+
+Fixes: 2ea7a679ca2a ("net: dsa: Don't add vlans when vlan filtering is disabled")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+Andrew,
+
+I checked with Jiri and he confirmed that our interpretention of
+vlan_filtering in DSA was incorrect and that it does denote whether the
+switch should be doing VID ingress policy checking.
+
+You mentioned in the commit message some problems without being too
+specific about them which is why I am putting the same checks in
+mv88e6xxx in order not to break your use cases. Let me know if you want
+to drop that hunk entirely.
+
+Thanks!
+
+ drivers/net/dsa/mv88e6xxx/chip.c |  7 ++++++-
+ net/dsa/port.c                   | 10 ++--------
+ 2 files changed, 8 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/net/dsa/mv88e6xxx/chip.c b/drivers/net/dsa/mv88e6xxx/chip.c
+index 8da3d39e3218..df411e776911 100644
+--- a/drivers/net/dsa/mv88e6xxx/chip.c
++++ b/drivers/net/dsa/mv88e6xxx/chip.c
+@@ -1684,13 +1684,14 @@ static int _mv88e6xxx_port_vlan_add(struct mv88e6xxx_chip *chip, int port,
+ static void mv88e6xxx_port_vlan_add(struct dsa_switch *ds, int port,
+ 				    const struct switchdev_obj_port_vlan *vlan)
+ {
++	struct dsa_port *dp = &ds->ports[i];
+ 	struct mv88e6xxx_chip *chip = ds->priv;
+ 	bool untagged = vlan->flags & BRIDGE_VLAN_INFO_UNTAGGED;
+ 	bool pvid = vlan->flags & BRIDGE_VLAN_INFO_PVID;
+ 	u8 member;
+ 	u16 vid;
+ 
+-	if (!chip->info->max_vid)
++	if (!chip->info->max_vid || br_vlan_enabled(dp->bridge_dev))
+ 		return;
+ 
+ 	if (dsa_is_dsa_port(ds, port) || dsa_is_cpu_port(ds, port))
+@@ -1751,12 +1752,16 @@ static int mv88e6xxx_port_vlan_del(struct dsa_switch *ds, int port,
+ 				   const struct switchdev_obj_port_vlan *vlan)
+ {
+ 	struct mv88e6xxx_chip *chip = ds->priv;
++	struct dsa_port *dp = &ds->ports[i];
+ 	u16 pvid, vid;
+ 	int err = 0;
+ 
+ 	if (!chip->info->max_vid)
+ 		return -EOPNOTSUPP;
+ 
++	if (br_vlan_enabled(dp->bridge_dev))
++		return 0;
++
+ 	mutex_lock(&chip->reg_lock);
+ 
+ 	err = mv88e6xxx_port_get_pvid(chip, port, &pvid);
+diff --git a/net/dsa/port.c b/net/dsa/port.c
+index ed0595459df1..111d7cfc8982 100644
+--- a/net/dsa/port.c
++++ b/net/dsa/port.c
+@@ -255,10 +255,7 @@ int dsa_port_vlan_add(struct dsa_port *dp,
+ 	if (netif_is_bridge_master(vlan->obj.orig_dev))
+ 		return -EOPNOTSUPP;
+ 
+-	if (br_vlan_enabled(dp->bridge_dev))
+-		return dsa_port_notify(dp, DSA_NOTIFIER_VLAN_ADD, &info);
+-
+-	return 0;
++	return dsa_port_notify(dp, DSA_NOTIFIER_VLAN_ADD, &info);
+ }
+ 
+ int dsa_port_vlan_del(struct dsa_port *dp,
+@@ -273,10 +270,7 @@ int dsa_port_vlan_del(struct dsa_port *dp,
+ 	if (netif_is_bridge_master(vlan->obj.orig_dev))
+ 		return -EOPNOTSUPP;
+ 
+-	if (br_vlan_enabled(dp->bridge_dev))
+-		return dsa_port_notify(dp, DSA_NOTIFIER_VLAN_DEL, &info);
+-
+-	return 0;
++	return dsa_port_notify(dp, DSA_NOTIFIER_VLAN_DEL, &info);
+ }
+ 
+ static struct phy_device *dsa_port_get_phy_device(struct dsa_port *dp)
+-- 
+2.17.1
+
