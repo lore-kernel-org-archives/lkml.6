@@ -2,475 +2,338 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7E42ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:43:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9952AECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:44:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6760820832
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:43:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6760820832
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
+	by mail.kernel.org (Postfix) with ESMTP id 3C247207DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:44:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C247207DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbeJYDMb (ORCPT
+        id S1727512AbeJYDN0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 23:12:31 -0400
-Received: from anholt.net ([50.246.234.109]:53148 "EHLO anholt.net"
+        Wed, 24 Oct 2018 23:13:26 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40640 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727449AbeJYDMa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 23:12:30 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 56F7410A12E8;
-        Wed, 24 Oct 2018 11:43:20 -0700 (PDT)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id zY0icURY2Rmj; Wed, 24 Oct 2018 11:43:16 -0700 (PDT)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id DBBCE10A122F;
-        Wed, 24 Oct 2018 11:43:14 -0700 (PDT)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 7F28B2FE1BF2; Wed, 24 Oct 2018 11:43:13 -0700 (PDT)
-From:   Eric Anholt <eric@anholt.net>
-To:     dri-devel@lists.freedesktop.org,
-        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Eric Anholt <eric@anholt.net>
-Subject: [PATCH 2/3] drm: Add an hx8367d tinydrm driver.
-Date:   Wed, 24 Oct 2018 11:43:12 -0700
-Message-Id: <20181024184313.2967-3-eric@anholt.net>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181024184313.2967-1-eric@anholt.net>
-References: <20181024184313.2967-1-eric@anholt.net>
+        id S1726773AbeJYDN0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 23:13:26 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 69BDB3097031;
+        Wed, 24 Oct 2018 18:44:15 +0000 (UTC)
+Received: from [10.36.116.114] (ovpn-116-114.ams2.redhat.com [10.36.116.114])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4F044608EC;
+        Wed, 24 Oct 2018 18:44:06 +0000 (UTC)
+Subject: Re: [RFC v2 12/20] dma-iommu: Implement NESTED_MSI cookie
+To:     Robin Murphy <robin.murphy@arm.com>, eric.auger.pro@gmail.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
+        yi.l.liu@linux.intel.com, jean-philippe.brucker@arm.com,
+        will.deacon@arm.com
+Cc:     tianyu.lan@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, peter.maydell@linaro.org
+References: <20180918142457.3325-1-eric.auger@redhat.com>
+ <20180918142457.3325-13-eric.auger@redhat.com>
+ <bd90bf0e-1bf6-244b-0ed6-0018ddc25eb4@arm.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <167b1683-9dfe-d471-da2e-37bf53278007@redhat.com>
+Date:   Wed, 24 Oct 2018 20:44:03 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <bd90bf0e-1bf6-244b-0ed6-0018ddc25eb4@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Wed, 24 Oct 2018 18:44:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I want to sort out support for tinydrm in vc4, so I needed to get a
-tinydrm-appropriate panel working and this is what I had on hand.
-This is derived from a combination of ili9341.c from tinydrm and
-fb_hx8357d.c from staging's fbtft.  The register header is copied
-directly from staging's fbtft, on the assumption that we will delete
-that copy later.
+Hi Robin,
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
----
- MAINTAINERS                       |   7 +
- drivers/gpu/drm/tinydrm/Kconfig   |  11 ++
- drivers/gpu/drm/tinydrm/Makefile  |   1 +
- drivers/gpu/drm/tinydrm/hx8357d.c | 261 ++++++++++++++++++++++++++++++
- drivers/gpu/drm/tinydrm/hx8357d.h |  71 ++++++++
- 5 files changed, 351 insertions(+)
- create mode 100644 drivers/gpu/drm/tinydrm/hx8357d.c
- create mode 100644 drivers/gpu/drm/tinydrm/hx8357d.h
+On 10/24/18 8:02 PM, Robin Murphy wrote:
+> Hi Eric,
+> 
+> On 2018-09-18 3:24 pm, Eric Auger wrote:
+>> Up to now, when the type was UNMANAGED, we used to
+>> allocate IOVA pages within a range provided by the user.
+>> This does not work in nested mode.
+>>
+>> If both the host and the guest are exposed with SMMUs, each
+>> would allocate an IOVA. The guest allocates an IOVA (gIOVA)
+>> to map onto the guest MSI doorbell (gDB). The Host allocates
+>> another IOVA (hIOVA) to map onto the physical doorbell (hDB).
+>>
+>> So we end up with 2 unrelated mappings, at S1 and S2:
+>>           S1             S2
+>> gIOVA    ->     gDB
+>>                 hIOVA    ->    hDB
+>>
+>> The PCI device would be programmed with hIOVA.
+>>
+>> iommu_dma_bind_doorbell allows to pass gIOVA/gDB to the host
+>> so that gIOVA can be used by the host instead of re-allocating
+>> a new IOVA. That way the host can create the following nested
+>> mapping:
+>>
+>>           S1           S2
+>> gIOVA    ->    gDB    ->    hDB
+>>
+>> this time, the PCI device will be programmed with the gIOVA MSI
+>> doorbell which is correctly map through the 2 stages.
+> 
+> If I'm understanding things correctly, this plus a couple of the
+> preceding patches all add up to a rather involved way of coercing an
+> automatic allocator to only "allocate" predetermined addresses in an
+> entirely known-ahead-of-time manner.
+agreed
+ Given that the guy calling
+> iommu_dma_bind_doorbell() could seemingly just as easily call
+> iommu_map() at that point and not bother with an allocator cookie and
+> all this machinery at all, what am I missing?
+Well iommu_dma_map_msi_msg() gets called and is part of this existing
+MSI mapping machinery. If we do not do anything this function allocates
+an hIOVA that is not involved in any nested setup. So either we coerce
+the allocator in place (which is what this series does) or we unplug the
+allocator to replace this latter with a simple S2 mapping, as you
+suggest, ie. iommu_map(gDB, hDB). Assuming we unplug the allocator, the
+guy who actually calls  iommu_dma_bind_doorbell() knows gDB but does not
+know hDB. So I don't really get how we can simplify things.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 39c3f6682ace..e78971e20a11 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4623,6 +4623,13 @@ S:	Maintained
- F:	drivers/gpu/drm/tinydrm/ili9225.c
- F:	Documentation/devicetree/bindings/display/ilitek,ili9225.txt
- 
-+DRM DRIVER FOR HX8357D PANELS
-+M:	Eric Anholt <eric@anholt.net>
-+T:	git git://anongit.freedesktop.org/drm/drm-misc
-+S:	Maintained
-+F:	drivers/gpu/drm/tinydrm/hx8357d.c
-+F:	Documentation/devicetree/bindings/display/himax,hx8357d.txt
-+
- DRM DRIVER FOR INTEL I810 VIDEO CARDS
- S:	Orphan / Obsolete
- F:	drivers/gpu/drm/i810/
-diff --git a/drivers/gpu/drm/tinydrm/Kconfig b/drivers/gpu/drm/tinydrm/Kconfig
-index 16f4b5c91f1b..2c408ac1a900 100644
---- a/drivers/gpu/drm/tinydrm/Kconfig
-+++ b/drivers/gpu/drm/tinydrm/Kconfig
-@@ -10,6 +10,17 @@ menuconfig DRM_TINYDRM
- config TINYDRM_MIPI_DBI
- 	tristate
- 
-+config TINYDRM_HX8357D
-+	tristate "DRM support for HX8357D display panels"
-+	depends on DRM_TINYDRM && SPI
-+	depends on BACKLIGHT_CLASS_DEVICE
-+	select TINYDRM_MIPI_DBI
-+	help
-+	  DRM driver for the following HX8357D panels:
-+	  * YX350HV15-T 3.5" 340x350 TFT (Adafruit 3.5")
-+
-+	  If M is selected the module will be called hx8357d.
-+
- config TINYDRM_ILI9225
- 	tristate "DRM support for ILI9225 display panels"
- 	depends on DRM_TINYDRM && SPI
-diff --git a/drivers/gpu/drm/tinydrm/Makefile b/drivers/gpu/drm/tinydrm/Makefile
-index 14d99080665a..f823066f7743 100644
---- a/drivers/gpu/drm/tinydrm/Makefile
-+++ b/drivers/gpu/drm/tinydrm/Makefile
-@@ -4,6 +4,7 @@ obj-$(CONFIG_DRM_TINYDRM)		+= core/
- obj-$(CONFIG_TINYDRM_MIPI_DBI)		+= mipi-dbi.o
- 
- # Displays
-+obj-$(CONFIG_TINYDRM_HX8357D)		+= hx8357d.o
- obj-$(CONFIG_TINYDRM_ILI9225)		+= ili9225.o
- obj-$(CONFIG_TINYDRM_ILI9341)		+= ili9341.o
- obj-$(CONFIG_TINYDRM_MI0283QT)		+= mi0283qt.o
-diff --git a/drivers/gpu/drm/tinydrm/hx8357d.c b/drivers/gpu/drm/tinydrm/hx8357d.c
-new file mode 100644
-index 000000000000..51d4da624d57
---- /dev/null
-+++ b/drivers/gpu/drm/tinydrm/hx8357d.c
-@@ -0,0 +1,261 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * DRM driver for the HX8357D LCD controller
-+ *
-+ * Copyright 2018 Broadcom
-+ * Copyright 2018 David Lechner <david@lechnology.com>
-+ * Copyright 2016 Noralf Trønnes
-+ * Copyright (C) 2015 Adafruit Industries
-+ * Copyright (C) 2013 Christian Vogelgsang
-+ */
-+
-+#include <linux/backlight.h>
-+#include <linux/delay.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/module.h>
-+#include <linux/property.h>
-+#include <linux/spi/spi.h>
-+
-+#include <drm/drm_fb_helper.h>
-+#include <drm/drm_gem_framebuffer_helper.h>
-+#include <drm/drm_modeset_helper.h>
-+#include <drm/tinydrm/mipi-dbi.h>
-+#include <drm/tinydrm/tinydrm-helpers.h>
-+#include <video/mipi_display.h>
-+#include "hx8357d.h"
-+
-+#define HX8357D_MADCTL_MY  0x80
-+#define HX8357D_MADCTL_MX  0x40
-+#define HX8357D_MADCTL_MV  0x20
-+#define HX8357D_MADCTL_ML  0x10
-+#define HX8357D_MADCTL_RGB 0x00
-+#define HX8357D_MADCTL_BGR 0x08
-+#define HX8357D_MADCTL_MH  0x04
-+
-+static void yx240qv29_enable(struct drm_simple_display_pipe *pipe,
-+			     struct drm_crtc_state *crtc_state,
-+			     struct drm_plane_state *plane_state)
-+{
-+	struct tinydrm_device *tdev = pipe_to_tinydrm(pipe);
-+	struct mipi_dbi *mipi = mipi_dbi_from_tinydrm(tdev);
-+	u8 addr_mode;
-+	int ret;
-+
-+	DRM_DEBUG_KMS("\n");
-+
-+	ret = mipi_dbi_poweron_conditional_reset(mipi);
-+	if (ret < 0)
-+		return;
-+	if (ret == 1)
-+		goto out_enable;
-+
-+	/* setextc */
-+	mipi_dbi_command(mipi, HX8357D_SETC, 0xFF, 0x83, 0x57);
-+	msleep(150);
-+
-+	/* setRGB which also enables SDO */
-+	mipi_dbi_command(mipi, HX8357_SETRGB, 0x00, 0x00, 0x06, 0x06);
-+
-+	/* -1.52V */
-+	mipi_dbi_command(mipi, HX8357D_SETCOM, 0x25);
-+
-+	/* Normal mode 70Hz, Idle mode 55 Hz */
-+	mipi_dbi_command(mipi, HX8357_SETOSC, 0x68);
-+
-+	/* Set Panel - BGR, Gate direction swapped */
-+	mipi_dbi_command(mipi, HX8357_SETPANEL, 0x05);
-+
-+	mipi_dbi_command(mipi, HX8357_SETPWR1,
-+			 0x00,  /* Not deep standby */
-+			 0x15,  /* BT */
-+			 0x1C,  /* VSPR */
-+			 0x1C,  /* VSNR */
-+			 0x83,  /* AP */
-+			 0xAA);  /* FS */
-+
-+	mipi_dbi_command(mipi, HX8357D_SETSTBA,
-+			 0x50,  /* OPON normal */
-+			 0x50,  /* OPON idle */
-+			 0x01,  /* STBA */
-+			 0x3C,  /* STBA */
-+			 0x1E,  /* STBA */
-+			 0x08);  /* GEN */
-+
-+	mipi_dbi_command(mipi, HX8357D_SETCYC,
-+			 0x02,  /* NW 0x02 */
-+			 0x40,  /* RTN */
-+			 0x00,  /* DIV */
-+			 0x2A,  /* DUM */
-+			 0x2A,  /* DUM */
-+			 0x0D,  /* GDON */
-+			 0x78);  /* GDOFF */
-+
-+	mipi_dbi_command(mipi, HX8357D_SETGAMMA,
-+			 0x02,
-+			 0x0A,
-+			 0x11,
-+			 0x1d,
-+			 0x23,
-+			 0x35,
-+			 0x41,
-+			 0x4b,
-+			 0x4b,
-+			 0x42,
-+			 0x3A,
-+			 0x27,
-+			 0x1B,
-+			 0x08,
-+			 0x09,
-+			 0x03,
-+			 0x02,
-+			 0x0A,
-+			 0x11,
-+			 0x1d,
-+			 0x23,
-+			 0x35,
-+			 0x41,
-+			 0x4b,
-+			 0x4b,
-+			 0x42,
-+			 0x3A,
-+			 0x27,
-+			 0x1B,
-+			 0x08,
-+			 0x09,
-+			 0x03,
-+			 0x00,
-+			 0x01);
-+
-+	/* 16 bit */
-+	mipi_dbi_command(mipi, MIPI_DCS_SET_PIXEL_FORMAT,
-+			 MIPI_DCS_PIXEL_FMT_16BIT);
-+
-+	/* TE off */
-+	mipi_dbi_command(mipi, MIPI_DCS_SET_TEAR_ON, 0x00);
-+
-+	/* tear line */
-+	mipi_dbi_command(mipi, MIPI_DCS_SET_TEAR_SCANLINE, 0x00, 0x02);
-+
-+	/* Exit Sleep */
-+	mipi_dbi_command(mipi, MIPI_DCS_EXIT_SLEEP_MODE);
-+	msleep(150);
-+
-+	/* display on */
-+	mipi_dbi_command(mipi, MIPI_DCS_SET_DISPLAY_ON);
-+	usleep_range(5000, 7000);
-+
-+out_enable:
-+	switch (mipi->rotation) {
-+	default:
-+		addr_mode = HX8357D_MADCTL_MX | HX8357D_MADCTL_MY;
-+		break;
-+	case 90:
-+		addr_mode = HX8357D_MADCTL_MV | HX8357D_MADCTL_MY;
-+		break;
-+	case 180:
-+		addr_mode = 0;
-+		break;
-+	case 270:
-+		addr_mode = HX8357D_MADCTL_MV | HX8357D_MADCTL_MX;
-+		break;
-+	}
-+	mipi_dbi_command(mipi, MIPI_DCS_SET_ADDRESS_MODE, addr_mode);
-+	mipi_dbi_enable_flush(mipi, crtc_state, plane_state);
-+}
-+
-+static const struct drm_simple_display_pipe_funcs hx8357d_pipe_funcs = {
-+	.enable = yx240qv29_enable,
-+	.disable = mipi_dbi_pipe_disable,
-+	.update = tinydrm_display_pipe_update,
-+	.prepare_fb = drm_gem_fb_simple_display_pipe_prepare_fb,
-+};
-+
-+static const struct drm_display_mode yx350hv15_mode = {
-+	TINYDRM_MODE(320, 480, 60, 75),
-+};
-+
-+DEFINE_DRM_GEM_CMA_FOPS(hx8357d_fops);
-+
-+static struct drm_driver hx8357d_driver = {
-+	.driver_features	= DRIVER_GEM | DRIVER_MODESET | DRIVER_PRIME | DRIVER_ATOMIC,
-+	.fops			= &hx8357d_fops,
-+	TINYDRM_GEM_DRIVER_OPS,
-+	.debugfs_init		= mipi_dbi_debugfs_init,
-+	.name			= "hx8357d",
-+	.desc			= "HX8357D",
-+	.date			= "20181023",
-+	.major			= 1,
-+	.minor			= 0,
-+};
-+
-+static const struct of_device_id hx8357d_of_match[] = {
-+	{ .compatible = "adafruit,yx350hv15" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, hx8357d_of_match);
-+
-+static const struct spi_device_id hx8357d_id[] = {
-+	{ "hx8357d", 0 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(spi, hx8357d_id);
-+
-+static int hx8357d_probe(struct spi_device *spi)
-+{
-+	struct device *dev = &spi->dev;
-+	struct mipi_dbi *mipi;
-+	struct gpio_desc *dc;
-+	u32 rotation = 0;
-+	int ret;
-+
-+	mipi = devm_kzalloc(dev, sizeof(*mipi), GFP_KERNEL);
-+	if (!mipi)
-+		return -ENOMEM;
-+
-+	dc = devm_gpiod_get(dev, "dc", GPIOD_OUT_LOW);
-+	if (IS_ERR(dc)) {
-+		DRM_DEV_ERROR(dev, "Failed to get gpio 'dc'\n");
-+		return PTR_ERR(dc);
-+	}
-+
-+	mipi->backlight = devm_of_find_backlight(dev);
-+	if (IS_ERR(mipi->backlight))
-+		return PTR_ERR(mipi->backlight);
-+
-+	device_property_read_u32(dev, "rotation", &rotation);
-+
-+	ret = mipi_dbi_spi_init(spi, mipi, dc);
-+	if (ret)
-+		return ret;
-+
-+	ret = mipi_dbi_init(&spi->dev, mipi, &hx8357d_pipe_funcs,
-+			    &hx8357d_driver, &yx350hv15_mode, rotation);
-+	if (ret)
-+		return ret;
-+
-+	spi_set_drvdata(spi, mipi);
-+
-+	return devm_tinydrm_register(&mipi->tinydrm);
-+}
-+
-+static void hx8357d_shutdown(struct spi_device *spi)
-+{
-+	struct mipi_dbi *mipi = spi_get_drvdata(spi);
-+
-+	tinydrm_shutdown(&mipi->tinydrm);
-+}
-+
-+static struct spi_driver hx8357d_spi_driver = {
-+	.driver = {
-+		.name = "hx8357d",
-+		.of_match_table = hx8357d_of_match,
-+	},
-+	.id_table = hx8357d_id,
-+	.probe = hx8357d_probe,
-+	.shutdown = hx8357d_shutdown,
-+};
-+module_spi_driver(hx8357d_spi_driver);
-+
-+MODULE_DESCRIPTION("HX8357D DRM driver");
-+MODULE_AUTHOR("Eric Anholt <eric@anholt.net>");
-+MODULE_LICENSE("GPL");
-diff --git a/drivers/gpu/drm/tinydrm/hx8357d.h b/drivers/gpu/drm/tinydrm/hx8357d.h
-new file mode 100644
-index 000000000000..6180b093f94f
---- /dev/null
-+++ b/drivers/gpu/drm/tinydrm/hx8357d.h
-@@ -0,0 +1,71 @@
-+/* SPDX-License-Identifier: MIT */
-+/*
-+ * This is our library for the Adafruit  ILI9341 Breakout and Shield
-+ * ----> http://www.adafruit.com/products/1651
-+ *
-+ * Check out the links above for our tutorials and wiring diagrams
-+ * These displays use SPI to communicate, 4 or 5 pins are required to
-+ * interface (RST is optional)
-+ * Adafruit invests time and resources providing this open source code,
-+ * please support Adafruit and open-source hardware by purchasing
-+ * products from Adafruit!
-+ *
-+ * Written by Limor Fried/Ladyada for Adafruit Industries.
-+ * MIT license, all text above must be included in any redistribution
-+ */
-+
-+#ifndef __HX8357_H__
-+#define __HX8357_H__
-+
-+#define HX8357D 0xD
-+#define HX8357B 0xB
-+
-+#define HX8357_TFTWIDTH  320
-+#define HX8357_TFTHEIGHT 480
-+
-+#define HX8357_SETOSC 0xB0
-+#define HX8357_SETPWR1 0xB1
-+#define HX8357B_SETDISPLAY 0xB2
-+#define HX8357_SETRGB 0xB3
-+#define HX8357D_SETCOM  0xB6
-+
-+#define HX8357B_SETDISPMODE  0xB4
-+#define HX8357D_SETCYC  0xB4
-+#define HX8357B_SETOTP 0xB7
-+#define HX8357D_SETC 0xB9
-+
-+#define HX8357B_SET_PANEL_DRIVING 0xC0
-+#define HX8357D_SETSTBA 0xC0
-+#define HX8357B_SETDGC  0xC1
-+#define HX8357B_SETID  0xC3
-+#define HX8357B_SETDDB  0xC4
-+#define HX8357B_SETDISPLAYFRAME 0xC5
-+#define HX8357B_GAMMASET 0xC8
-+#define HX8357B_SETCABC  0xC9
-+#define HX8357_SETPANEL  0xCC
-+
-+#define HX8357B_SETPOWER 0xD0
-+#define HX8357B_SETVCOM 0xD1
-+#define HX8357B_SETPWRNORMAL 0xD2
-+
-+#define HX8357B_RDID1   0xDA
-+#define HX8357B_RDID2   0xDB
-+#define HX8357B_RDID3   0xDC
-+#define HX8357B_RDID4   0xDD
-+
-+#define HX8357D_SETGAMMA 0xE0
-+
-+#define HX8357B_SETGAMMA 0xC8
-+#define HX8357B_SETPANELRELATED  0xE9
-+
-+/* Color definitions */
-+#define	HX8357_BLACK   0x0000
-+#define	HX8357_BLUE    0x001F
-+#define	HX8357_RED     0xF800
-+#define	HX8357_GREEN   0x07E0
-+#define HX8357_CYAN    0x07FF
-+#define HX8357_MAGENTA 0xF81F
-+#define HX8357_YELLOW  0xFFE0
-+#define HX8357_WHITE   0xFFFF
-+
-+#endif /* __HX8357_H__ */
--- 
-2.19.1
+Thanks
 
+Eric
+
+> 
+> Robin.
+> 
+>>
+>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>>
+>> ---
+>>
+>> v1 -> v2:
+>> - unmap stage2 on put()
+>> ---
+>>   drivers/iommu/dma-iommu.c | 97 +++++++++++++++++++++++++++++++++++++--
+>>   include/linux/dma-iommu.h | 11 +++++
+>>   2 files changed, 105 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+>> index 511ff9a1d6d9..53444c3e8f2f 100644
+>> --- a/drivers/iommu/dma-iommu.c
+>> +++ b/drivers/iommu/dma-iommu.c
+>> @@ -37,12 +37,14 @@
+>>   struct iommu_dma_msi_page {
+>>       struct list_head    list;
+>>       dma_addr_t        iova;
+>> +    dma_addr_t        ipa;
+>>       phys_addr_t        phys;
+>>   };
+>>     enum iommu_dma_cookie_type {
+>>       IOMMU_DMA_IOVA_COOKIE,
+>>       IOMMU_DMA_MSI_COOKIE,
+>> +    IOMMU_DMA_NESTED_MSI_COOKIE,
+>>   };
+>>     struct iommu_dma_cookie {
+>> @@ -109,14 +111,17 @@ EXPORT_SYMBOL(iommu_get_dma_cookie);
+>>    *
+>>    * Users who manage their own IOVA allocation and do not want DMA
+>> API support,
+>>    * but would still like to take advantage of automatic MSI
+>> remapping, can use
+>> - * this to initialise their own domain appropriately. Users should
+>> reserve a
+>> + * this to initialise their own domain appropriately. Users may
+>> reserve a
+>>    * contiguous IOVA region, starting at @base, large enough to
+>> accommodate the
+>>    * number of PAGE_SIZE mappings necessary to cover every MSI
+>> doorbell address
+>> - * used by the devices attached to @domain.
+>> + * used by the devices attached to @domain. The other way round is to
+>> provide
+>> + * usable iova pages through the iommu_dma_bind_doorbell API (nested
+>> stages
+>> + * use case)
+>>    */
+>>   int iommu_get_msi_cookie(struct iommu_domain *domain, dma_addr_t base)
+>>   {
+>>       struct iommu_dma_cookie *cookie;
+>> +    int nesting, ret;
+>>         if (domain->type != IOMMU_DOMAIN_UNMANAGED)
+>>           return -EINVAL;
+>> @@ -124,7 +129,12 @@ int iommu_get_msi_cookie(struct iommu_domain
+>> *domain, dma_addr_t base)
+>>       if (domain->iova_cookie)
+>>           return -EEXIST;
+>>   -    cookie = cookie_alloc(IOMMU_DMA_MSI_COOKIE);
+>> +    ret =  iommu_domain_get_attr(domain, DOMAIN_ATTR_NESTING, &nesting);
+>> +    if (!ret && nesting)
+>> +        cookie = cookie_alloc(IOMMU_DMA_NESTED_MSI_COOKIE);
+>> +    else
+>> +        cookie = cookie_alloc(IOMMU_DMA_MSI_COOKIE);
+>> +
+>>       if (!cookie)
+>>           return -ENOMEM;
+>>   @@ -145,6 +155,7 @@ void iommu_put_dma_cookie(struct iommu_domain
+>> *domain)
+>>   {
+>>       struct iommu_dma_cookie *cookie = domain->iova_cookie;
+>>       struct iommu_dma_msi_page *msi, *tmp;
+>> +    bool s2_unmap = false;
+>>         if (!cookie)
+>>           return;
+>> @@ -152,7 +163,15 @@ void iommu_put_dma_cookie(struct iommu_domain
+>> *domain)
+>>       if (cookie->type == IOMMU_DMA_IOVA_COOKIE && cookie->iovad.granule)
+>>           put_iova_domain(&cookie->iovad);
+>>   +    if (cookie->type == IOMMU_DMA_NESTED_MSI_COOKIE)
+>> +        s2_unmap = true;
+>> +
+>>       list_for_each_entry_safe(msi, tmp, &cookie->msi_page_list, list) {
+>> +        if (s2_unmap && msi->phys) {
+>> +            size_t size = cookie_msi_granule(cookie);
+>> +
+>> +            WARN_ON(iommu_unmap(domain, msi->ipa, size) != size);
+>> +        }
+>>           list_del(&msi->list);
+>>           kfree(msi);
+>>       }
+>> @@ -161,6 +180,50 @@ void iommu_put_dma_cookie(struct iommu_domain
+>> *domain)
+>>   }
+>>   EXPORT_SYMBOL(iommu_put_dma_cookie);
+>>   +/**
+>> + * iommu_dma_bind_doorbell - Allows to provide a usable IOVA page
+>> + * @domain: domain handle
+>> + * @binding: IOVA/IPA binding
+>> + *
+>> + * In nested stage use case, the user can provide IOVA/IPA bindings
+>> + * corresponding to a guest MSI stage 1 mapping. When the host needs
+>> + * to map its own MSI doorbells, it can use the IPA as stage 2 input
+>> + * and map it onto the physical MSI doorbell.
+>> + */
+>> +int iommu_dma_bind_doorbell(struct iommu_domain *domain,
+>> +                struct iommu_guest_msi_binding *binding)
+>> +{
+>> +    struct iommu_dma_cookie *cookie = domain->iova_cookie;
+>> +    struct iommu_dma_msi_page *msi;
+>> +    dma_addr_t ipa, iova;
+>> +    size_t size;
+>> +
+>> +    if (!cookie)
+>> +        return -EINVAL;
+>> +
+>> +    if (cookie->type != IOMMU_DMA_NESTED_MSI_COOKIE)
+>> +        return -EINVAL;
+>> +
+>> +    size = 1 << binding->granule;
+>> +    iova = binding->iova & ~(phys_addr_t)(size - 1);
+>> +    ipa = binding->gpa & ~(phys_addr_t)(size - 1);
+>> +
+>> +    list_for_each_entry(msi, &cookie->msi_page_list, list) {
+>> +        if (msi->iova == iova)
+>> +            return 0; /* this page is already registered */
+>> +    }
+>> +
+>> +    msi = kzalloc(sizeof(*msi), GFP_KERNEL);
+>> +    if (!msi)
+>> +        return -ENOMEM;
+>> +
+>> +    msi->iova = iova;
+>> +    msi->ipa = ipa;
+>> +    list_add(&msi->list, &cookie->msi_page_list);
+>> +    return 0;
+>> +}
+>> +EXPORT_SYMBOL(iommu_dma_bind_doorbell);
+>> +
+>>   /**
+>>    * iommu_dma_get_resv_regions - Reserved region driver helper
+>>    * @dev: Device from iommu_get_resv_regions()
+>> @@ -846,6 +909,34 @@ static struct iommu_dma_msi_page
+>> *iommu_dma_get_msi_page(struct device *dev,
+>>           if (msi_page->phys == msi_addr)
+>>               return msi_page;
+>>   +    /*
+>> +     * In nested stage mode, we do not allocate an MSI page in
+>> +     * a range provided by the user. Instead, IOVA/IPA bindings are
+>> +     * individually provided. We reuse thise IOVAs to build the
+>> +     * IOVA -> IPA -> MSI PA nested stage mapping.
+>> +     */
+>> +    if (cookie->type == IOMMU_DMA_NESTED_MSI_COOKIE) {
+>> +        list_for_each_entry(msi_page, &cookie->msi_page_list, list)
+>> +            if (!msi_page->phys) { /* this binding is free to use */
+>> +                dma_addr_t ipa = msi_page->ipa;
+>> +                int ret;
+>> +
+>> +                msi_page->phys = msi_addr;
+>> +
+>> +                /* do the stage 2 mapping */
+>> +                ret = iommu_map(domain, ipa, msi_addr, size,
+>> +                        IOMMU_MMIO | IOMMU_WRITE);
+>> +                if (ret) {
+>> +                    pr_warn("MSI S2 mapping failed (%d)\n",
+>> +                        ret);
+>> +                    return NULL;
+>> +                }
+>> +                return msi_page;
+>> +            }
+>> +        pr_warn("%s no MSI binding found\n", __func__);
+>> +        return NULL;
+>> +    }
+>> +
+>>       msi_page = kzalloc(sizeof(*msi_page), GFP_ATOMIC);
+>>       if (!msi_page)
+>>           return NULL;
+>> diff --git a/include/linux/dma-iommu.h b/include/linux/dma-iommu.h
+>> index e8ca5e654277..324745eef644 100644
+>> --- a/include/linux/dma-iommu.h
+>> +++ b/include/linux/dma-iommu.h
+>> @@ -24,6 +24,7 @@
+>>   #include <linux/dma-mapping.h>
+>>   #include <linux/iommu.h>
+>>   #include <linux/msi.h>
+>> +#include <uapi/linux/iommu.h>
+>>     int iommu_dma_init(void);
+>>   @@ -74,12 +75,15 @@ int iommu_dma_mapping_error(struct device *dev,
+>> dma_addr_t dma_addr);
+>>   /* The DMA API isn't _quite_ the whole story, though... */
+>>   void iommu_dma_map_msi_msg(int irq, struct msi_msg *msg);
+>>   void iommu_dma_get_resv_regions(struct device *dev, struct list_head
+>> *list);
+>> +int iommu_dma_bind_doorbell(struct iommu_domain *domain,
+>> +                struct iommu_guest_msi_binding *binding);
+>>     #else
+>>     struct iommu_domain;
+>>   struct msi_msg;
+>>   struct device;
+>> +struct iommu_guest_msi_binding;
+>>     static inline int iommu_dma_init(void)
+>>   {
+>> @@ -104,6 +108,13 @@ static inline void iommu_dma_map_msi_msg(int irq,
+>> struct msi_msg *msg)
+>>   {
+>>   }
+>>   +static inline int
+>> +iommu_dma_bind_doorbell(struct iommu_domain *domain,
+>> +            struct iommu_guest_msi_binding *binding)
+>> +{
+>> +    return -ENODEV;
+>> +}
+>> +
+>>   static inline void iommu_dma_get_resv_regions(struct device *dev,
+>> struct list_head *list)
+>>   {
+>>   }
+>>
