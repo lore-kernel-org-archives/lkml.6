@@ -2,123 +2,104 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C970ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:14:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09297ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:16:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03CD620831
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:14:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JGD2EwkM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03CD620831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id C165C2082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:16:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C165C2082F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727265AbeJYCnn (ORCPT
+        id S1727369AbeJYCpi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 22:43:43 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54830 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726433AbeJYCnn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 22:43:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=gby0APml37BXslNnoxTYpVn9Dt2sYAd+h3kISPnzojY=; b=JGD2EwkMuKKmFVx2GP2A6yd6w
-        eBmbmTn25uN70xreDqDmRcnR8qSIBNnvvLhtN9bSbWKV+3dduht92Ma9X1xtsBR2yUbz+1JzWBgAg
-        oRLqOvpf7M8TGOlyL1LhxMRUHGSBHfspn/GCwPROzuFnPpoOhcTjfQB4sZnGWPV3+eimYJ9vpzrJe
-        yFIh9TklKY7VbeQbTok5FhbJUN/BJJS7Dideb+ZJaJKIFVfc/mUlYM94djEVeMK8ivPvhzDyNZcA9
-        Tuf9Q2dBn31WbQLuXXmfpNAM40uyIzL89slrpg8rg8ZrgVQtlPY/vfKPCsfS6cNiTf7L4442w4igN
-        TAGaULEHQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gFNfy-0006zd-IB; Wed, 24 Oct 2018 18:14:38 +0000
-Subject: Re: [PATCH] V4 init/main.c Enable watchdog_thresh control from kernel
- line
-To:     Laurence Oberman <loberman@redhat.com>,
-        linux-kernel@vger.kernel.org
-Cc:     tglx@linutronix.de
-References: <1540404366-26999-1-git-send-email-loberman@redhat.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <fe9d7131-fc66-7f18-339b-b4bdc1ed314d@infradead.org>
-Date:   Wed, 24 Oct 2018 11:14:37 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 24 Oct 2018 22:45:38 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:52990 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726505AbeJYCph (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 22:45:37 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 99DC1208E6; Wed, 24 Oct 2018 20:08:14 +0200 (CEST)
+Received: from localhost (unknown [2.223.63.88])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 98347208B5;
+        Wed, 24 Oct 2018 20:07:54 +0200 (CEST)
+Date:   Wed, 24 Oct 2018 19:07:54 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 10/15] dt-bindings: panel: Add Bananapi S070WV20-CT16
+ ICN6211 MIPI-DSI to RGB bridge
+Message-ID: <20181024180754.pfae27y6i7jhcdgy@flea>
+References: <20181023155035.9101-1-jagan@amarulasolutions.com>
+ <20181023155035.9101-11-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-In-Reply-To: <1540404366-26999-1-git-send-email-loberman@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="tliezdgp7h7h37ia"
+Content-Disposition: inline
+In-Reply-To: <20181023155035.9101-11-jagan@amarulasolutions.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/24/18 11:06 AM, Laurence Oberman wrote:
-> Both graphics and serial consoles are exposed to hard lockups
-> when handling a large amount of messaging. The kernel watchdog_thresh
-> parameter up to now has not been available to be set on the kernel line for
-> early boot.
-> This patch allows the setting of watchdog_thresh to be increased
-> when needed to avoid the hard lockups in the console code.
-> 
-> Signed-off-by: Laurence Oberman <loberman@redhat.com>
 
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+--tliezdgp7h7h37ia
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks.
+On Tue, Oct 23, 2018 at 09:20:30PM +0530, Jagan Teki wrote:
+> Bananapi S070WV20-CT16 ICN6211 is 800x480, 4-lane MIPI-DSI to RGB bridge =
+panel,
+> the same panel PCB comes with parallel RBG which is supported via
+> panel-simple driver with "bananapi,s070wv20-ct16" compatible.
+>=20
+> But this binding is specific for MIPI DSI to RGB bridge panels,
+> which usually accessed using MIPI DSI controller driver.
+>=20
+> for information:
+> - "bananapi,s070wv20-ct16" compatible for parallel RGB panels
+> - "bananapi,s070wv20-ct16-icn6211" compatible for MIPI-DSI to RGB
+> bridge panels
+>=20
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 
-> ---
->  Documentation/admin-guide/kernel-parameters.txt | 7 +++++++
->  init/main.c                                     | 8 ++++++++
->  2 files changed, 15 insertions(+)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 4cdcd1a..05f76b8 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -4932,6 +4932,13 @@
->  			or other driver-specific files in the
->  			Documentation/watchdog/ directory.
->  
-> +	watchdog_thresh=
-> +			This parameter allows early boot to change the
-> +			value of the watchdog timeout threshold from the default
-> +			of 10 seconds to avoid hard lockups.  Example:
-> +			 watchdog_thresh=30
-> +			Default: 10
-> +
->  	workqueue.watchdog_thresh=
->  			If CONFIG_WQ_WATCHDOG is configured, workqueue can
->  			warn stall conditions and dump internal state to
-> diff --git a/init/main.c b/init/main.c
-> index 1c3f902..ae45291 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -1038,6 +1038,14 @@ static int __init set_debug_rodata(char *str)
->  __setup("rodata=", set_debug_rodata);
->  #endif
->  
-> +static int __init is_watchdog_thresh_setup(char *str)
-> +{
-> +	get_option(&str, &watchdog_thresh);
-> +	return 1;
-> +}
-> +__setup("watchdog_thresh=", is_watchdog_thresh_setup);
-> +
-> +
->  #ifdef CONFIG_STRICT_KERNEL_RWX
->  static void mark_readonly(void)
->  {
-> 
+Why not just reusing the same binding document?
 
+Maxime
 
--- 
-~Randy
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--tliezdgp7h7h37ia
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW9C0+gAKCRDj7w1vZxhR
+xawdAQDyAtws+TD84oliR1GAEZ5mo1HTxWMgDJn4ug51E5lSXgD/RAC0+Wd7GNUH
+dCwh30PfRH666iYZOpnQ2vNBosm+Fw8=
+=5t+R
+-----END PGP SIGNATURE-----
+
+--tliezdgp7h7h37ia--
