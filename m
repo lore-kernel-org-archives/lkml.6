@@ -2,159 +2,112 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 481B9C67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:23:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A5D0C46475
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:23:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C4BD20671
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:23:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C4BD20671
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
+	by mail.kernel.org (Postfix) with ESMTP id 1DB6920671
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:23:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DB6920671
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726696AbeJXLtP (ORCPT
+        id S1726819AbeJXLtZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 07:49:15 -0400
-Received: from ipmail03.adl6.internode.on.net ([150.101.137.143]:23872 "EHLO
-        ipmail03.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725826AbeJXLtP (ORCPT
+        Wed, 24 Oct 2018 07:49:25 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:34438 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725826AbeJXLtZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 07:49:15 -0400
-Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
-  by ipmail03.adl6.internode.on.net with ESMTP; 24 Oct 2018 10:30:24 +1030
-Received: from dave by dastard with local (Exim 4.80)
-        (envelope-from <david@fromorbit.com>)
-        id 1gF6b0-0004t4-5t; Wed, 24 Oct 2018 11:00:22 +1100
-Date:   Wed, 24 Oct 2018 11:00:22 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     torvalds@linux-foundation.org
-Cc:     djwong@kernel.org, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, sandeen@sandeen.net
-Subject: [GIT PULL] xfs: 4.20 merge
-Message-ID: <20181024000022.GP18822@dastard>
+        Wed, 24 Oct 2018 07:49:25 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9O3KBG7026439
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 23:23:17 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2nachth26c-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 23:23:16 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Wed, 24 Oct 2018 04:23:15 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 24 Oct 2018 04:23:10 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9O3N9327537126
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 24 Oct 2018 03:23:09 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1949CA4040;
+        Wed, 24 Oct 2018 03:23:09 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0570FA404D;
+        Wed, 24 Oct 2018 03:23:07 +0000 (GMT)
+Received: from linux.vnet.ibm.com (unknown [9.126.150.29])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Wed, 24 Oct 2018 03:23:06 +0000 (GMT)
+Date:   Wed, 24 Oct 2018 08:53:06 +0530
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@01.org, Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Rik van Riel <riel@surriel.com>,
+        Yi Wang <wang.yi59@zte.com.cn>, zhong.weidong@zte.com.cn,
+        Yi Liu <liu.yi24@zte.com.cn>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] sched/core: Don't mix isolcpus and housekeeping CPUs
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <1540317297-14545-1-git-send-email-srikar@linux.vnet.ibm.com>
+ <201810240330.2DUB7fst%fengguang.wu@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <201810240330.2DUB7fst%fengguang.wu@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-GCONF: 00
+x-cbid: 18102403-0012-0000-0000-000002BCAF42
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18102403-0013-0000-0000-000020F0B5BF
+Message-Id: <20181024032306.GC7111@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-24_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810240028
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+> url:    https://github.com/0day-ci/linux/commits/Srikar-Dronamraju/sched-core-Don-t-mix-isolcpus-and-housekeeping-CPUs/20181024-025019
+> config: i386-tinyconfig (attached as .config)
+> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=i386 
+> 
+> All warnings (new ones prefixed by >>):
+> 
+>    kernel/sched/core.c: In function 'sched_setaffinity':
+> >> kernel/sched/core.c:4783:10: warning: assignment discards 'const' qualifier from pointer target type [-Wdiscarded-qualifiers]
+>      hk_mask = housekeeping_cpumask(HK_FLAG_DOMAIN);
+>              ^
 
-Can you please pull the XFS 4.20 update from the tag listed below?
-There's not a huge amount of change in this cycle - Darrick has been
-out of action for a couple of months (hence me sending the last few
-pull requests), so we decided a quiet cycle mainly focussed on bug
-fixes was a good idea. Darrick will take the helm again at the end of
-this merge window.
+Thanks, I have posted a v2 fixing this.
 
-The branch has applied cleanly to your current tree, so you
-shouldn't see any problems with it.
-
-FYI, I may be sending another update later in the cycle - there's a
-pending rework of the clone/dedupe_file_range code that fixes
-numerous bugs that is spread amongst the VFS, XFS and ocfs2 code. It
-has been reviewed and tested, Al and I just need to work out the
-details of the merge, so it may come from him rather than me.
-
-Thanks!
-
--Dave.
-
-
-The following changes since commit b39989009bdb84992915c9869f58094ed5becf10:
-
-  xfs: fix data corruption w/ unaligned reflink ranges (2018-10-06 11:44:39 +1000)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux tags/xfs-4.20-merge-1
-
-for you to fetch changes up to 96987eea537d6ccd98704a71958f9ba02da80843:
-
-  xfs: cancel COW blocks before swapext (2018-10-18 17:21:55 +1100)
-
-----------------------------------------------------------------
-xfs: Changes for 4.20
-
-- only support filesystems with unwritten extents
-- add definition for statfs XFS magic number
-- remove unused parameters around reflink code
-- more debug for dangling delalloc extents
-- cancel COW extents on extent swap targets
-- fix quota stats output and clean up the code
-- refactor some of the attribute code in preparation for parent pointers
-- fix several buffer handling bugs
-
-----------------------------------------------------------------
-Adam Borowski (1):
-      xfs: add a define for statfs magic to uapi
-
-Allison Henderson (4):
-      xfs: Move fs/xfs/xfs_attr.h to fs/xfs/libxfs/xfs_attr.h
-      xfs: Add helper function xfs_attr_try_sf_addname
-      xfs: Add attibute set and helper functions
-      xfs: Add attibute remove and helper functions
-
-Brian Foster (1):
-      xfs: clear ail delwri queued bufs on unmount of shutdown fs
-
-Carlos Maiolino (2):
-      xfs: Fix xqmstats offsets in /proc/fs/xfs/xqmstat
-      xfs: use offsetof() in place of offset macros for __xfsstats
-
-Christoph Hellwig (8):
-      xfs: remove XFS_IO_INVALID
-      xfs: remove suport for filesystems without unwritten extent flag
-      xfs: handle zeroing in xfs_file_iomap_begin_delay
-      xfs: remove the unused shared argument to xfs_reflink_reserve_cow
-      xfs: remove the unused trimmed argument from xfs_reflink_trim_around_shared
-      xfs: fix fork selection in xfs_find_trim_cow_extent
-      xfs: print dangling delalloc extents
-      xfs: cancel COW blocks before swapext
-
-Darrick J. Wong (3):
-      xfs: xrep_findroot_block should reject root blocks with siblings
-      xfs: always assign buffer verifiers when one is provided
-      xfs: fix buffer state management in xrep_findroot_block
-
-Dave Chinner (2):
-      xfs: issue log message on user force shutdown
-      xfs: fix use-after-free race in xfs_buf_rele
-
- fs/xfs/libxfs/xfs_attr.c       | 236 ++++++++++++++++++++++++-----------------
- fs/xfs/{ => libxfs}/xfs_attr.h |   2 +
- fs/xfs/libxfs/xfs_bmap.c       |  70 ++++++------
- fs/xfs/libxfs/xfs_bmap.h       |   1 +
- fs/xfs/libxfs/xfs_format.h     |   8 +-
- fs/xfs/libxfs/xfs_sb.c         |   5 +-
- fs/xfs/scrub/repair.c          | 128 +++++++++++++++++-----
- fs/xfs/scrub/scrub.c           |  13 ---
- fs/xfs/xfs_aops.c              |   4 +-
- fs/xfs/xfs_aops.h              |  14 ++-
- fs/xfs/xfs_bmap_util.c         |  61 ++---------
- fs/xfs/xfs_buf.c               | 109 +++++++++++++++----
- fs/xfs/xfs_buf.h               |   2 +
- fs/xfs/xfs_fsops.c             |  50 ++++-----
- fs/xfs/xfs_ioctl.c             |   8 --
- fs/xfs/xfs_iomap.c             |  53 ++++++---
- fs/xfs/xfs_reflink.c           |  33 +++---
- fs/xfs/xfs_reflink.h           |   4 +-
- fs/xfs/xfs_stats.c             |  52 ++++-----
- fs/xfs/xfs_stats.h             |  28 +----
- fs/xfs/xfs_super.c             |  38 ++++++-
- fs/xfs/xfs_trans.h             |   1 +
- fs/xfs/xfs_trans_ail.c         |  28 +++--
- fs/xfs/xfs_trans_buf.c         |  42 ++++++++
- include/uapi/linux/magic.h     |   1 +
- 25 files changed, 608 insertions(+), 383 deletions(-)
- rename fs/xfs/{ => libxfs}/xfs_attr.h (97%)
+http://lkml.kernel.org/r/1540350169-18581-1-git-send-email-srikar@linux.vnet.ibm.com
 
 -- 
-Dave Chinner
-david@fromorbit.com
+Thanks and Regards
+Srikar Dronamraju
+
