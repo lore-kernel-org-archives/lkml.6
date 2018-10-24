@@ -2,151 +2,127 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF92AC004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 12:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A771C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 12:44:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F57E2082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 12:44:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E70202064A
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 12:44:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="paPvFFqm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F57E2082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=shutemov-name.20150623.gappssmtp.com header.i=@shutemov-name.20150623.gappssmtp.com header.b="u2sX5DMC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E70202064A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727703AbeJXVMW (ORCPT
+        id S1727740AbeJXVMt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 17:12:22 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:43541 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726812AbeJXVMW (ORCPT
+        Wed, 24 Oct 2018 17:12:49 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40284 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726812AbeJXVMt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 17:12:22 -0400
-Received: by mail-lj1-f193.google.com with SMTP id x22-v6so1434342ljc.10;
-        Wed, 24 Oct 2018 05:44:22 -0700 (PDT)
+        Wed, 24 Oct 2018 17:12:49 -0400
+Received: by mail-pg1-f193.google.com with SMTP id o14-v6so2261144pgv.7
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 05:44:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Ma0ZH6VoHaR/w8ecQJz/U30X0/K4X+emPKDvOX0nm50=;
-        b=paPvFFqmeHqNvf61ojdQcA7TJ1MQ+NCOuciUgwhO/mR/pAw+9hJ7PMhZQi5QzeTZPl
-         /TtTwN6sjHuAKXP0msjIXajVf8k/POzgC25t/nQbdHyTrXSDqS1ZHxcg7qFgMD5O0ghh
-         Wc6Rw7APV3aucHIzlT8F9GljzsYtca9w6dgpxZw4XzlXy8lSh654MxGwpLNWIRiYrasM
-         OGX/DqITWon6H+g/J0AHRkMDUCiDFcUB7LofUYV5K9eop3gdiyLOCO+xQns+NYcpAiZd
-         hpbd7sNlVzM6Qu4srd2ibtwI2HYYypYfr/8dYzBX1OzY4JDXkAKYeiSrRpTqKq6gLvKj
-         7lRw==
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Q/vR+1XVJRF6KSaibQS2hUtXZ9xgUWhlKcqs3fkgpDM=;
+        b=u2sX5DMCFbXZ6WoE4OBfdrE13/orMDoM0ITclmiakIEen8h+EWfiL8BEHdGmfzYeLf
+         HAkY5obS8sNIgP8bCdtJhbbIEMr4V+w3MppPSxMt2TokRs7bzO25h+RnE7dzwrjmlzie
+         kQK4MURVKKcxQXjwqG/uWbr0rYPICaYv3ZyYgOBX5W9qq6jbG4YZNbonbUqRVzf0MrM3
+         LBkBjDXaGC92nSbICXIabkbNdBxuu8u5/SZZsre3EPdEcLTJehnFJynYevfXvZGaMC+Y
+         7e7RSWIWki4NfFy5TEqz+Ps6oG+4LZovkc/bI68J1+QEw+EL0XwVdhzIokU8eN+LDVle
+         FMow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Ma0ZH6VoHaR/w8ecQJz/U30X0/K4X+emPKDvOX0nm50=;
-        b=f4K4hMAnV2XlYtbXaVd+MJppvAgaSxD1Y9LOBmiNl9G8Z1xgT1s6mBeGaKxUClb5g3
-         ExrwcUHGWi+Vitds3iYmQ3fE21K85wsabTBbHjaelKI/jcM0FTO1+/aP8hh75fF+jgF9
-         83eojtH5YqLsjdVq7I2lBZqfM528y0qO2/WdRIpxN1aNHyYOEWdjSg4nQz/52XNkw9nO
-         vmY8bBVrpIuPEWnvNBjr1mFtAbK65YjetXKL6jtpwXxSZUky7qWooM6aGssQ0+Id5Oez
-         nIjyWfVxC/K0Uho8di636atcEGIS8G9XzgiXkBSqZ78R7yL/6STjUDPBmMNPgr76sCuc
-         MM6w==
-X-Gm-Message-State: AGRZ1gIodpY5Q3vms5orrXtS6Hz/tbsKO38sFRiqoEOp9XI71XbtB/p+
-        kbH9NqzczSi/gQ/kVCaVEOoaNZkN
-X-Google-Smtp-Source: AJdET5cRO2YHKOWEuxzycRaozeiVNLFfOizq2Zyj2C+tVnyrS52iIIJ9Qjw2zWfqwBV6KWCV4rXviA==
-X-Received: by 2002:a2e:9d05:: with SMTP id t5-v6mr1692685lji.57.1540385061157;
-        Wed, 24 Oct 2018 05:44:21 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-91-118.nat.spd-mgts.ru. [109.252.91.118])
-        by smtp.googlemail.com with ESMTPSA id f95-v6sm655037lji.76.2018.10.24.05.44.19
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Q/vR+1XVJRF6KSaibQS2hUtXZ9xgUWhlKcqs3fkgpDM=;
+        b=hYUmlAyg3PzZkE31PFRziv58eZTzro9xrL7R6xi+qsNTrCaMaNKsO1EfGHunUjSnwo
+         FVL0EFP7vo0VfC/R/uYTW7rh19px9PKren5m4kxEai218IwqFWCBfhb/uD8LFlzGjWi6
+         ZVcAKqaC+WSCvVTQL9i3z9tptMN0L7W4HihDwVQcUZNGLKMc8X7hXtp3SNhqeq2DrSZc
+         9VTJTBvQRr8Bw2hPJqtu+VoFduTjfHLCHw6pCgjpRilui6ICZ4dGP0cKyqaOxfWtNCq9
+         GU+ys0+r47bgXO2kRKDJBM4NyTb9f448yDXv461/TI/EXqfVHaBYgNPnYHEDVwNht7h0
+         jcDA==
+X-Gm-Message-State: AGRZ1gL8wRLQ9as6bKeNcQ/adJpnU5B5TJRG0XwgF+FOSHlxZgvKScfM
+        zmdzXNauDWnulgiDPzdwS503BvkeIsg5AVPb
+X-Google-Smtp-Source: AJdET5fiM46I1o/1qme0jBXc2r21xy5a2UJctG/+6cuW6R2Cf8ARu63D52aeLuFYVXm+iyqJ5fzdew==
+X-Received: by 2002:a63:6883:: with SMTP id d125-v6mr2391675pgc.451.1540385089599;
+        Wed, 24 Oct 2018 05:44:49 -0700 (PDT)
+Received: from kshutemo-mobl1.localdomain ([192.55.54.44])
+        by smtp.gmail.com with ESMTPSA id p11-v6sm5629714pfo.65.2018.10.24.05.44.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Oct 2018 05:44:20 -0700 (PDT)
-Subject: Re: [PATCH] mfd: tps6586x: Handle interrupts on suspend
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-Cc:     Lee Jones <lee.jones@linaro.org>, linux-kernel@vger.kernel.org,
-        linux-tegra@vger.kernel.org, stable@vger.kernel.org
-References: <1539955373-13735-1-git-send-email-jonathanh@nvidia.com>
- <20181022095257.GD4014@ulmo> <366ad7c3-85e2-3526-1c0b-6d2fbde4c552@gmail.com>
- <72b80285-d6ff-9cb9-3bcd-bb3d92006323@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <3e79e753-4e63-5bf0-c9ff-40547d053c8a@gmail.com>
-Date:   Wed, 24 Oct 2018 15:44:17 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Wed, 24 Oct 2018 05:44:48 -0700 (PDT)
+Received: by kshutemo-mobl1.localdomain (Postfix, from userid 1000)
+        id C35F5300225; Wed, 24 Oct 2018 15:44:43 +0300 (+03)
+Date:   Wed, 24 Oct 2018 15:44:43 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        x86@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] x86/mm: Move LDT remap out of KASLR region on
+ 5-level paging
+Message-ID: <20181024124443.husnnxgligsncm5t@kshutemo-mobl1>
+References: <20181023163157.41441-1-kirill.shutemov@linux.intel.com>
+ <20181023163157.41441-2-kirill.shutemov@linux.intel.com>
+ <20181024115447.GE25444@bombadil.infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <72b80285-d6ff-9cb9-3bcd-bb3d92006323@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181024115447.GE25444@bombadil.infradead.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/24/18 1:49 PM, Jon Hunter wrote:
+On Wed, Oct 24, 2018 at 04:54:47AM -0700, Matthew Wilcox wrote:
+> On Tue, Oct 23, 2018 at 07:31:56PM +0300, Kirill A. Shutemov wrote:
+> > -ffff880000000000 - ffffc7ffffffffff (=64 TB) direct mapping of all phys. memory
+> > +ffff888000000000 - ffff887fffffffff (=39 bits) LDT remap for PTI
 > 
-> On 22/10/2018 12:19, Dmitry Osipenko wrote:
->> On 10/22/18 12:52 PM, Thierry Reding wrote:
->>> On Fri, Oct 19, 2018 at 02:22:53PM +0100, Jon Hunter wrote:
->>>> From: Jonathan Hunter <jonathanh@nvidia.com>
->>>>
->>>> The tps6586x driver creates an irqchip that is used by its various child
->>>> devices for managing interrupts. The tps6586x-rtc device is one of its
->>>> children that uses the tps6586x irqchip. When using the tps6586x-rtc as
->>>> a wake-up device from suspend, the following is seen:
->>>>
->>>>  PM: Syncing filesystems ... done.
->>>>  Freezing user space processes ... (elapsed 0.001 seconds) done.
->>>>  OOM killer disabled.
->>>>  Freezing remaining freezable tasks ... (elapsed 0.000 seconds) done.
->>>>  Disabling non-boot CPUs ...
->>>>  Entering suspend state LP1
->>>>  Enabling non-boot CPUs ...
->>>>  CPU1 is up
->>>>  tps6586x 3-0034: failed to read interrupt status
->>>>  tps6586x 3-0034: failed to read interrupt status
->>>>
->>>> The reason why the tps6586x interrupt status cannot be read is because
->>>> the tps6586x interrupt is not masked during suspend and when the
->>>> tps6586x-rtc interrupt occurs, to wake-up the device, the interrupt is
->>>> seen before the i2c controller has been resumed in order to read the
->>>> tps6586x interrupt status.
->>>>
->>>> The tps6586x-rtc driver sets it's interrupt as a wake-up source during
->>>> suspend, which gets propagated to the parent tps6586x interrupt.
->>>> However, the tps6586x-rtc driver cannot disable it's interrupt during
->>>> suspend otherwise we would never be woken up and so the tps6586x must
->>>> disable it's interrupt instead.
->>>>
->>>> Prevent the tps6586x interrupt handler from executing on exiting suspend
->>>> before the i2c controller has been resumed by disabling the tps6586x
->>>> interrupt on entering suspend and re-enabling it on resuming from
->>>> suspend.
->>>>
->>>> Cc: stable@vger.kernel.org
->>>>
->>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->>>> ---
->>>>  drivers/mfd/tps6586x.c | 24 ++++++++++++++++++++++++
->>>>  1 file changed, 24 insertions(+)
->>>
->>> So does this mean that the SPI interrupt for the PMIC can still be a
->>> wakeup source even if it is masked? This is slightly odd because now
->>> you're saying that this does work while it doesn't work for the RTC
->>> interrupt. So is this an implementation quirk of the LIC/GIC on Tegra
->>> which doesn't extend to the TPS6586x? Or am I missing something?
->>
->> What is the expected behaviour of IRQ disabling? Should it disable wakeup ability or only mask IRQ handling?
+> I'm a little bit cross-eyed at this point, but I think the above '888'
+> should be '880'.
 > 
-> I believe only mask the interrupt. However, the caveat here could be if
-> the parent interrupt controller actually supports wake-up. For Tegra it
-> is the LIC that handles the wake-up.
+> > @@ -14,7 +15,6 @@ ffffec0000000000 - fffffbffffffffff (=44 bits) kasan shadow memory (16TB)
+> >  ... unused hole ...
+> >  				    vaddr_end for KASLR
+> >  fffffe0000000000 - fffffe7fffffffff (=39 bits) cpu_entry_area mapping
+> > -fffffe8000000000 - fffffeffffffffff (=39 bits) LDT remap for PTI
 > 
->> Couple months ago disabling of IRQ was disabling the wakeup, now something has been changed in kernel and wakeup isn't getting disabled. So either there was a bug before that was fixed or there is a bug now.
+> ... and the line above this one should be adjusted to finish at
+> fffffeffffffffff (also it's now 40 bits).  Or should there be something
+> else here?
 > 
-> Are you sure you were disabling the PMIC host interrupt? If you disable
-> the RTC interrupt in the PMIC's RTC driver, then this will prevent the
-> wake-up from occurring because you are masking the interrupt within the
-> PMIC and so it will never generate an interrupt to the host.
+> >  ffffff0000000000 - ffffff7fffffffff (=39 bits) %esp fixup stacks
+> >  ... unused hole ...
+> >  ffffffef00000000 - fffffffeffffffff (=64 GB) EFI region mapping space
+> > @@ -30,8 +30,8 @@ Virtual memory map with 5 level page tables:
+> >  0000000000000000 - 00ffffffffffffff (=56 bits) user space, different per mm
+> >  hole caused by [56:63] sign extension
+> >  ff00000000000000 - ff0fffffffffffff (=52 bits) guard hole, reserved for hypervisor
+> > -ff10000000000000 - ff8fffffffffffff (=55 bits) direct mapping of all phys. memory
+> > -ff90000000000000 - ff9fffffffffffff (=52 bits) LDT remap for PTI
+> > +ff10000000000000 - ff10ffffffffffff (=48 bits) LDT remap for PTI
+> > +ff11000000000000 - ff90ffffffffffff (=55 bits) direct mapping of all phys. memory
+> 
+> What's at ff910..0 to ff9f..f ?
+> 
+> Is there any way we can generate this part of this file to prevent human
+> error from creeping in over time?  ;-)
 
-I'm pretty sure (but not 100%) that was trying the same change as in your patch and it didn't work sometime before. If disable_irq() shouldn't disable wakeup, then everything is perfect now.
+In current Linus' tree this part of the documentation was re-written. I've
+rebased to it and rewrote the documenation for the change.
+
+I believe I've fixed all mistakes you've noticied. Please check out v2. I
+will post it soon.
+
+-- 
+ Kirill A. Shutemov
