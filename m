@@ -2,133 +2,122 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7735C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 07:31:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B197C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 07:33:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 670E22082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 07:31:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C31B42082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 07:33:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lPy1p2Jj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 670E22082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bglf7+eu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C31B42082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728675AbeJXP62 (ORCPT
+        id S1729109AbeJXQAc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 11:58:28 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:58122 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728654AbeJXP62 (ORCPT
+        Wed, 24 Oct 2018 12:00:32 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:35412 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729107AbeJXQAc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 11:58:28 -0400
-Received: from dflxv15.itg.ti.com ([128.247.5.124])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9O7VOf2105345;
-        Wed, 24 Oct 2018 02:31:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1540366284;
-        bh=dMXhnGzyH123ROxiWCj2JQgk7QJuEQqZTcE+Yw3Kdl0=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=lPy1p2Jjb99IIBjvIVPnymnQjdA2KmohyL0GoN6iRrPqk4dj3+pRszt++KmB7eQZy
-         9v6ZEPxRlLAWbMPBCqZaZAY4chRJ3hbO6Uiwvk7kCQ4wtJsyH+EykGKvRihL+StcaZ
-         l5oOnFr2hucQHcri0tvoWRkdYbDkpPoSs4eoWD8M=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9O7VO1N018057;
-        Wed, 24 Oct 2018 02:31:24 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 24
- Oct 2018 02:31:24 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Wed, 24 Oct 2018 02:31:24 -0500
-Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9O7VLT9029054;
-        Wed, 24 Oct 2018 02:31:22 -0500
-Subject: Re: [RFC PATCH 0/3] M_CAN Framework rework
-To:     Dan Murphy <dmurphy@ti.com>, <wg@grandegger.com>,
-        <mkl@pengutronix.de>, <davem@davemloft.net>
-CC:     <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20181010142055.25271-1-dmurphy@ti.com>
- <e8485e2e-df04-0905-7055-c2228c0f1fa4@ti.com>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <8247a28f-ae33-1ab1-b6d1-c89b839d357c@ti.com>
-Date:   Wed, 24 Oct 2018 13:03:52 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 24 Oct 2018 12:00:32 -0400
+Received: by mail-wm1-f68.google.com with SMTP id w186-v6so4244319wmf.0;
+        Wed, 24 Oct 2018 00:33:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/YF1wO9NyG8uKqLGo3bF9rVq5MMXAjc8vyckrlBNCa8=;
+        b=Bglf7+euR6AlIhNKcnSWIeE8CsiPe/zkGZp7zTcqBVeEjmrZidckW+dvBTfj4jy1Vw
+         BWLWec8gk4ybtMvDcYoEZn3i2p9hO2gtt2jVOrJoooCmHC//soIGcyNrharP7DYAQx/q
+         gbruSTmQYie6he8wXKaaXo5FfdJmksOejFxxVUFP5B5Nzyr9JNt7cBIDhkGvDsZQDDxl
+         AyJ8rxwA//SFxLRuK6ykUkhQ7hmpMhpy2LCJ1UC0yZFIEKKt5aBzxKU1oBxp4Nz3UEWD
+         dy4FystvkFGSZd1+prWayXuJTGUGWkXK4R3nvaepIB4KZQv4s/jQh1M9w87Y/FTFT1se
+         jh3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/YF1wO9NyG8uKqLGo3bF9rVq5MMXAjc8vyckrlBNCa8=;
+        b=L70Xwd8cC8HmTPnw7l2djXj7XTpTJcEZ8pbXJcZk6F1iJQMN9ZHJ/jwW6BlpE2uH1I
+         XhTP6uqZjMxiNIx7SzzZf46OB9T1ai1t5V3hii6I/kHM3AsN4ve7Pd2PnBJpUleXNG7B
+         0rJ84q5rftcp5ZdflTsJ9u9ovse+SV5Q0+nf+WIwN9Jq45JOGCiylXuhsVpMgmOeeYPN
+         cVhs1kSwbtoX2JT5tNf7nPIJc+yw6ZPfjmWmSahG2QyNYAhXnIO4gpK66EGl4e4dCCNA
+         iberd+SYdgjTK+aldyIV4n12MV4F5q2x7G6GZyWH11frxLUFBhv46PEvpwo5ERlMl44c
+         5fhw==
+X-Gm-Message-State: AGRZ1gIFB6Ibt7pwJvq6O2sXqwpiPWUgfbCbL7002vqaDxfv2wM+4jHb
+        707Mu56qfK1pEqIiWBUuX9s=
+X-Google-Smtp-Source: AJdET5c+AdkUIW0yxI03vPSXhxRs0qFVaMEisyuVkxcgiWXnwJjqpI3BIPQzlVa89y5L4W/B++dXWw==
+X-Received: by 2002:a1c:cfcb:: with SMTP id f194-v6mr1354206wmg.98.1540366417092;
+        Wed, 24 Oct 2018 00:33:37 -0700 (PDT)
+Received: from pi ([167.98.65.38])
+        by smtp.gmail.com with ESMTPSA id y19-v6sm4906374wra.60.2018.10.24.00.33.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 24 Oct 2018 00:33:35 -0700 (PDT)
+X-Google-Original-Sender: <johan@kernel.org>
+Received: from johan by pi with local (Exim 4.91)
+        (envelope-from <johan@pi>)
+        id 1gFDeT-0005QC-I6; Wed, 24 Oct 2018 09:32:25 +0200
+Date:   Wed, 24 Oct 2018 09:32:25 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        CK Hu <ck.hu@mediatek.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Rob Clark <robdclark@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Josh Wu <rainyfeeling@outlook.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Doug Berger <opendmb@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        David Miller <davem@davemloft.net>,
+        Giuseppe CAVALLARO <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        joabreu@synopsys.com, Samuel Ortiz <sameo@linux.intel.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH v2 0/9] of: fix compatible-child-node lookups
+Message-ID: <20181024073225.GD20058@localhost>
+References: <20180827082153.22537-1-johan@kernel.org>
+ <20180904130557.GT28861@localhost>
+ <20181023091951.GC20058@localhost>
+ <CAL_Jsq+eX0Zr46UT6_+OKhfxLhc315Un5MZkHHAWhK0tt4OvzA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <e8485e2e-df04-0905-7055-c2228c0f1fa4@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_Jsq+eX0Zr46UT6_+OKhfxLhc315Un5MZkHHAWhK0tt4OvzA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dan,
+On Tue, Oct 23, 2018 at 01:32:56PM -0500, Rob Herring wrote:
+> On Tue, Oct 23, 2018 at 4:21 AM Johan Hovold <johan@kernel.org> wrote:
+> >
+> > Hi Rob,
+> >
+> > On Tue, Sep 04, 2018 at 03:05:57PM +0200, Johan Hovold wrote:
 
-On Thursday 18 October 2018 01:51 AM, Dan Murphy wrote:
-> Bump
+> > > I think Rob will be picking up any patches that remain by the end of the
+> > > release cycle for 4.20.
+> >
+> > So far only Ulf has picked up the mmc patch below directly, so if you
+> > could take the rest through your tree for -rc1 that would be great.
 > 
-> On 10/10/2018 09:20 AM, Dan Murphy wrote:
->> All
->>
->> This patch series creates a m_can core framework that devices can register
->> to.  The m_can core manages the Bosch IP and CAN frames.  Each device that
->> is registered is responsible for managing device specific functions.
->>
->> This rewrite was suggested in a device driver submission for the TCAN4x5x
->> device
->> Reference upstream post:
->> https://lore.kernel.org/patchwork/patch/984163/
->>
->> For instance the TCAN device is a SPI device that uses a specific data payload to
->> determine writes and reads.  In addition the device has a reset input as well
->> as a wakeup pin.  The register offset of the m_can registers differs and must
->> be set by the device attached to the core.
->>
->> The m_can core will use iomapped writes and reads as the default mechanism for
->> writing and reading.  The device driver can provide over rides for this.
->>
->> This patch series is not complete as it does not handle the CAN interrupts
->> nor can perform a CAN write.  If this patch series is deemed acceptable I will
->> finish debugging the driver and post a non RFC series.
->>
->> Finally I did attempt to reduce the first patch with various git format patch
->> directives but none seemed to reduce the patch.
->>
->> Dan
->>
->> Dan Murphy (3):
->>   can: m_can: Create m_can core to leverage common code
->>   dt-bindings: can: tcan4x5x: Add DT bindings for TCAN4x5X driver
->>   can: tcan4x5x: Add tcan4x5x driver to the kernel
->>
->>  .../devicetree/bindings/net/can/tcan4x5x.txt  |   34 +
->>  drivers/net/can/m_can/Kconfig                 |   18 +
->>  drivers/net/can/m_can/Makefile                |    4 +-
->>  drivers/net/can/m_can/m_can.c                 | 1683 +----------------
->>  .../net/can/m_can/{m_can.c => m_can_core.c}   |  479 +++--
->>  drivers/net/can/m_can/m_can_core.h            |  100 +
->>  drivers/net/can/m_can/tcan4x5x.c              |  321 ++++
->>  7 files changed, 722 insertions(+), 1917 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/net/can/tcan4x5x.txt
->>  copy drivers/net/can/m_can/{m_can.c => m_can_core.c} (83%)
->>  create mode 100644 drivers/net/can/m_can/m_can_core.h
->>  create mode 100644 drivers/net/can/m_can/tcan4x5x.c
->>
+> Thanks for the reminder, though before the merge window opened would
+> have been better. I've applied all but the mtd patch.
 
-Patch 1/3 never arrived for me. Its not there on lkml either.
-https://lkml.org/lkml/2018/10/10/611
+Yeah, sorry about that, this slipped my mind. Thanks for picking them
+up.
 
-Can you resend the complete series?
-
-Thanks,
-Faiz
+Johan
