@@ -4,108 +4,99 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB43EECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 17:27:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45AAFECDE47
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 17:28:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 627CE2082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 17:27:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08AD5206B5
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 17:28:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KdxfwXgP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 627CE2082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="1Ih9Krzx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08AD5206B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727179AbeJYB4v (ORCPT
+        id S1727209AbeJYB4y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 21:56:51 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43458 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726829AbeJYB4u (ORCPT
+        Wed, 24 Oct 2018 21:56:54 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:36232 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726829AbeJYB4x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 21:56:50 -0400
-Received: by mail-pg1-f193.google.com with SMTP id n10-v6so1913105pgv.10
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 10:27:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=VUI22asxxpRgfZvx1G8w787XAGBffs85E3H9kHNlSeE=;
-        b=KdxfwXgPV26rtQ8Iop9NIyFf0yk9gQiVXt+fs+fdol0VqrL5/q3MLMgQctzdhRZXWh
-         GRqxYvfWwKlcjCz6GgfJ6+1OoXhK4l9rM3d2SZ6/vh+GpzSOYwxpPApBYZofmdtiEYrB
-         P3uLgxvUySDcZOgE4DdIViCSDOmdHnrbyoaCY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=VUI22asxxpRgfZvx1G8w787XAGBffs85E3H9kHNlSeE=;
-        b=tT2t1hG9qTjdChFzOQGmxn60zmbS6z59Fitx6vdTKBQfA4BtdkQ7caMrU1ZYf8xJ2k
-         CgZho4XxJ6ZifbLpqH4SvsIp7R2WXLV/alR7EGHlitFDVwcZBmKs1fdU2F9xM1y8CE0w
-         WsNoSD6lq3RFKslP3CAGeAld0AnXT6GBgCA4of5sMdWDDXEcm4tPmHpa1XqWcPuZ4G46
-         tUYS35GENgoEtzLOA+B25gyjeais5ECpNPaUPqL/hxa1f1e9oNejZ+AWhuNb4iIJZ6rX
-         ZNtSxYzvWiy6IgCeGCVkG8AdfJE30TidJmNCcM0+aZQtyp/QBPXvZ0L0OYwhH/sKVQHN
-         dAfw==
-X-Gm-Message-State: AGRZ1gKvC3BXMM4wvHlrGOPRZk+e2xIZBLm3zmlZbj3wEJOAnQLxz4PV
-        LSNqdQHb952rBFN00FGDEEokfA==
-X-Google-Smtp-Source: AJdET5fn/d2xDopq75ozChr89woQrmw1Nn/epkMiB//MVt/MiUJddLfxTeXsWF33Qj83lp49M73AUw==
-X-Received: by 2002:aa7:814f:: with SMTP id d15-v6mr3543521pfn.78.1540402076448;
-        Wed, 24 Oct 2018 10:27:56 -0700 (PDT)
-Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:e418:c825:76cf:5f64])
-        by smtp.gmail.com with ESMTPSA id v185-v6sm5674265pfv.48.2018.10.24.10.27.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 24 Oct 2018 10:27:55 -0700 (PDT)
-From:   Evan Green <evgreen@chromium.org>
-To:     Rob Herring <robh@kernel.org>, Andy Gross <andy.gross@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Douglas Anderson <dianders@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Evan Green <evgreen@chromium.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, Can Guo <cang@codeaurora.org>,
-        linux-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Manu Gautam <mgautam@codeaurora.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH v4 0/5] arm64: dts: qcom: sdm845: Add UFS DT nodes
-Date:   Wed, 24 Oct 2018 10:27:30 -0700
-Message-Id: <20181024172735.154304-1-evgreen@chromium.org>
-X-Mailer: git-send-email 2.16.4
+        Wed, 24 Oct 2018 21:56:53 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9OHNnjF182082;
+        Wed, 24 Oct 2018 17:27:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=corp-2018-07-02;
+ bh=mpOyUjFNWJXyUfFsWlGyA4QuP/ThkzOTH3D9X6HcaPE=;
+ b=1Ih9KrzxxctdxbgCuRWXL4S37swlnrHHRlSI+ZSczely9lMylfry9CO9z6Ni5e6K2yL4
+ XJMom0MRTmVW9Z9WFGdwtHnE2wF7+UFZU/vA8M9WrQ/SsjuGxzPepVDvR4GyiyD8KeAn
+ HsnhiHKWWHp9TnC1Rkrr6E7LxxQTUpYqfxK8C2RkRAXI4G2xB3az2BAags0TUmJQ3q7I
+ SuZgED6hMyq8zDOYQXZ5dczfPWyopM73OgKdfaGJwjwgC+og/0d11NImgd0yIkACgZQJ
+ oAM6Gm8ltFVrSzZJBXJZU6PZAHCaqhxZwdrvsB7GkOIy9BKWcgq01sv9XKEXrinQzfbO Eg== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2n7usud385-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 24 Oct 2018 17:27:44 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9OHRiQL002524
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 24 Oct 2018 17:27:44 GMT
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9OHRh2n013105;
+        Wed, 24 Oct 2018 17:27:43 GMT
+Received: from ca-dmjordan1.us.oracle.com (/10.211.9.48)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 24 Oct 2018 10:27:43 -0700
+Date:   Wed, 24 Oct 2018 10:27:49 -0700
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+To:     Huang Ying <ying.huang@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
+        Minchan Kim <minchan@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: Re: [PATCH -V6 14/21] swap: Support to move swap account for PMD
+ swap mapping
+Message-ID: <20181024172749.bila5pnfsqsu7th3@ca-dmjordan1.us.oracle.com>
+References: <20181010071924.18767-1-ying.huang@intel.com>
+ <20181010071924.18767-15-ying.huang@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181010071924.18767-15-ying.huang@intel.com>
+User-Agent: NeoMutt/20180323-268-5a959c
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9056 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810240146
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the device tree bindings for the QMP PHY to properly
-specify the registers for dual-lane PHYs. Update the driver to use
-those new registers. Add the DT nodes for UFS on SDM845 and MTP.
-Finally, fix up the USB3 PHY on SDM845, which also has a dual-lane phy
+On Wed, Oct 10, 2018 at 03:19:17PM +0800, Huang Ying wrote:
+> +static struct page *mc_handle_swap_pmd(struct vm_area_struct *vma,
+> +			pmd_t pmd, swp_entry_t *entry)
+> +{
 
-Changes in v4:
-- Remove "status" from DT binding example (Rob)
-
-Changes in v3:
- - Removed erroneous fixup for USB UniPro PHY, which is not dual lane (Doug)
-
-Changes in v2:
-- Added dt bindings change, corresponding driver fixup, and USB PHY fixup
-- Renamed ufsphy to phy (Vivek)
-- Removed #clock-cells (Vivek)
-
-Can Guo (1):
-  arm64: dts: qcom: sdm845: Add UFS nodes for sdm845-mtp
-
-Evan Green (4):
-  dt-bindings: phy-qcom-qmp: Fix register underspecification
-  phy: qcom-qmp: Utilize fully-specified DT registers
-  arm64: dts: qcom: sdm845: add UFS controller
-  arm64: dts: qcom: sdm845: Add USB PHY lane two
-
- .../devicetree/bindings/phy/qcom-qmp-phy.txt       | 70 ++++++++++++++++++---
- arch/arm64/boot/dts/qcom/sdm845-mtp.dts            | 14 +++++
- arch/arm64/boot/dts/qcom/sdm845.dtsi               | 71 +++++++++++++++++++++-
- drivers/phy/qualcomm/phy-qcom-qmp.c                | 51 ++++++++++++----
- 4 files changed, 184 insertions(+), 22 deletions(-)
-
--- 
-2.16.4
+Got
+/home/dbbench/linux/mm/memcontrol.c:4719:21: warning: ‘mc_handle_swap_pmd’ defined but not used [-Wunused-function]
+ static struct page *mc_handle_swap_pmd(struct vm_area_struct *vma,
+when
+# CONFIG_TRANSPARENT_HUGEPAGE is not set
 
