@@ -2,116 +2,201 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 520DAECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:29:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B4CECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:31:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 213422064C
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:29:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 213422064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 93E372064C
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:31:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kn0l5u+5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93E372064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbeJYD6h (ORCPT
+        id S1726117AbeJYEAZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 23:58:37 -0400
-Received: from mga03.intel.com ([134.134.136.65]:40014 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726433AbeJYD6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 23:58:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 12:29:17 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,421,1534834800"; 
-   d="scan'208";a="102991679"
-Received: from fmsmsx105.amr.corp.intel.com ([10.18.124.203])
-  by orsmga002.jf.intel.com with ESMTP; 24 Oct 2018 12:29:17 -0700
-Received: from fmsmsx157.amr.corp.intel.com (10.18.116.73) by
- FMSMSX105.amr.corp.intel.com (10.18.124.203) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 24 Oct 2018 12:29:16 -0700
-Received: from crsmsx151.amr.corp.intel.com (172.18.7.86) by
- FMSMSX157.amr.corp.intel.com (10.18.116.73) with Microsoft SMTP Server (TLS)
- id 14.3.319.2; Wed, 24 Oct 2018 12:29:16 -0700
-Received: from crsmsx101.amr.corp.intel.com ([169.254.1.85]) by
- CRSMSX151.amr.corp.intel.com ([169.254.3.57]) with mapi id 14.03.0415.000;
- Wed, 24 Oct 2018 13:29:14 -0600
-From:   "Bae, Chang Seok" <chang.seok.bae@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-CC:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Metzger, Markus T" <markus.t.metzger@intel.com>,
-        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: RE: [regression in -rc1] Re: [PATCH v6 2/8] x86/fsgsbase/64:
- Introduce FS/GS base helper functions
-Thread-Topic: [regression in -rc1] Re: [PATCH v6 2/8] x86/fsgsbase/64:
- Introduce FS/GS base helper functions
-Thread-Index: AQHUT6S8E0XwPCm1jkGysv7aiho556UvXU2A//+dxwCAAGf+AP//m/Aw
-Date:   Wed, 24 Oct 2018 19:29:14 +0000
-Message-ID: <C9BB696F3A938947B10DCAD29FAB8FFA66CCBC7E@CRSMSX101.amr.corp.intel.com>
-References: <1537312139-5580-1-git-send-email-chang.seok.bae@intel.com>
- <1537312139-5580-3-git-send-email-chang.seok.bae@intel.com>
- <CALCETrUr3DGwW8y6y_cffEKWO_KQs1J2_UvTBZsbdAzES_f-Ag@mail.gmail.com>
- <C9BB696F3A938947B10DCAD29FAB8FFA66CCBBE3@CRSMSX101.amr.corp.intel.com>
- <CALCETrWMMQDa4T0m34GfkkYBxqwGUOg96aeWgiANRv9tCvQVRw@mail.gmail.com>
-In-Reply-To: <CALCETrWMMQDa4T0m34GfkkYBxqwGUOg96aeWgiANRv9tCvQVRw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNTA4MTMyMDktMmVjNi00YTE4LWI1MGItZmQ2MGVlNmFlZTAxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoibnlDaHljVlRKNjlEdjF6ODdQamVyc2wyemlibXMzcmRzdVdSYW1OeFEydEh3NGd4VGFDZldZdkpZVnBlemFPWCJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [172.18.205.10]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Thu, 25 Oct 2018 00:00:25 -0400
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:38524 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725778AbeJYEAZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 00:00:25 -0400
+Received: by mail-vk1-f196.google.com with SMTP id j20so1558061vke.5
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 12:31:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=uuL8CGpFwsnazJUuWRI8sA6By+ZuS8XUG+87qvwunJ4=;
+        b=kn0l5u+5cMwyi4hCEbEIYzS+uBRdpVydyCiPQK7KfFqWufro+Anoj2qTN6uvcuP9Eu
+         6paDkwKDV9lVQPrpKqcFfpTNkuhZ5962WGGQKGBEHFm7jefl4t6lVToHyDtFZWjZ06TH
+         kreK3+K4RvbTryyr2F8/TmC9uGm4v0Ow2o+BRH//Hhcqd5WB5lsy8Y0Vk3xTiSdV4P81
+         kxYLKbB+gOKE42f8To7OaS3M2+Z7hHNt4TtedQ84B2daGuwbDsJ/LmqGWP4ZlpziYBRK
+         lv+wZh06GBOT+4yGxP9eTH85bIJCoJpI5jfVOdKs/VBTj4XJk1ZdmqmlwVJUTMLR5XuO
+         IVTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=uuL8CGpFwsnazJUuWRI8sA6By+ZuS8XUG+87qvwunJ4=;
+        b=Yu/Hjh7XD3llNjDhk7600NfJOsnoiITS8P5L1Sib09VVlnOIlQCuV/IK37pejGciRw
+         UcMAm/C6otIuabKfoc03EWn7tNfFLnl9J5n943+3IIsGuDC93XkrXpj+ogweFlUVJjSV
+         hKdwA4lPWrZ/+IlsX3Q8iz7j+o1wXdUN5NdQ9odAPV2TyeXr7NGFF80sbOQT6hcaispR
+         Dv56vwQl97gZ4NItUZS3SCnV3NUutFNukzgqzD32jrMQDKBCwaVjSmyc2p6hYyjGb6K/
+         cFYkEFEM4ZuGW3wTGRSUbH4tI6rt8qCVoRWFo/sLfUJKYtTBIG5mZpEuRDi8H2VzU9wU
+         PtEg==
+X-Gm-Message-State: AGRZ1gILaq7BUbeQeGt75mJ8PCKCk/ttlw9nyF6jM4r2IMLp5CJa4VSp
+        pxcaE4doTxseqPrLTTgc6uIqnNjtYLZT9CbJsmEjkA==
+X-Google-Smtp-Source: AJdET5c+fVoXGmKpIf2Y8bLx5I3eaA5GeCQr7DCZG8u+wtSNUr5EmuYPONI+Cz+EtL+vRRYfyu/nK6KexJQk3YC4bmI=
+X-Received: by 2002:a1f:ad0e:: with SMTP id w14mr1704480vke.36.1540409464073;
+ Wed, 24 Oct 2018 12:31:04 -0700 (PDT)
 MIME-Version: 1.0
+References: <20181024151116.30935-1-kan.liang@linux.intel.com>
+In-Reply-To: <20181024151116.30935-1-kan.liang@linux.intel.com>
+From:   Stephane Eranian <eranian@google.com>
+Date:   Wed, 24 Oct 2018 12:30:52 -0700
+Message-ID: <CABPqkBQEp9SLQuAonW7-c9HzH4bSgUyJGJ5ZZNXHy-0phHvvZQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] perf: Add munmap callback
+To:     "Liang, Kan" <kan.liang@linux.intel.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>, Andi Kleen <ak@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCBPY3QgMjQsIDIwMTggYXQgMTI6MjIgUE0gQW5keSBMdXRvbWlyc2tpIDxsdXRvQGtl
-cm5lbC5vcmc+DQo+IE9uIFdlZCwgT2N0IDI0LCAyMDE4IGF0IDEyOjEzIFBNIEJhZSwgQ2hhbmcg
-U2Vvaw0KPiA8Y2hhbmcuc2Vvay5iYWVAaW50ZWwuY29tPiB3cm90ZToNCj4gPg0KPiA+IE9uIFR1
-ZSwgU2VwIDE4LCAyMDE4IGF0IDEyOjAyIFBNIEFuZHkgTHV0b21pcnNraSA8bHV0b0BrZXJuZWwu
-b3JnPg0KPiA+ID4gT24gVHVlLCBTZXAgMTgsIDIwMTggYXQgNDowOSBQTSBDaGFuZyBTLiBCYWUN
-Cj4gPiA+IDxjaGFuZy5zZW9rLmJhZUBpbnRlbC5jb20+DQo+ID4gPiB3cm90ZToNCj4gPiA+ID4N
-Cj4gPiA+ID4gV2l0aCBuZXcgaGVscGVycywgRlMvR1MgYmFzZSBhY2Nlc3MgaXMgY2VudHJhbGl6
-ZWQuDQo+ID4gPiA+IEV2ZW50dWFsbHksIHdoZW4gRlNHU0JBU0UgaW5zdHJ1Y3Rpb24gZW5hYmxl
-ZCwgaXQgd2lsbCBiZSBmYXN0ZXIuDQo+ID4gPg0KPiA+ID4gU29ycnkgZm9yIG5vdCBjYXRjaGlu
-ZyB0aGlzIGR1cmluZyByZXZpZXcsIGJ1dDoNCj4gPiA+DQo+ID4gPiA+ICt2b2lkIHg4Nl9mc2Jh
-c2Vfd3JpdGVfY3B1KHVuc2lnbmVkIGxvbmcgZnNiYXNlKSB7DQo+ID4gPiA+ICsgICAgICAgLyoN
-Cj4gPiA+ID4gKyAgICAgICAgKiBTZXQgdGhlIHNlbGVjdG9yIHRvIDAgYXMgYSBub3Rpb24sIHRo
-YXQgdGhlIHNlZ21lbnQgYmFzZSBpcw0KPiA+ID4gPiArICAgICAgICAqIG92ZXJ3cml0dGVuLCB3
-aGljaCB3aWxsIGJlIGNoZWNrZWQgZm9yIHNraXBwaW5nIHRoZSBzZWdtZW50IGxvYWQNCj4gPiA+
-ID4gKyAgICAgICAgKiBkdXJpbmcgY29udGV4dCBzd2l0Y2guDQo+ID4gPiA+ICsgICAgICAgICov
-DQo+ID4gPiA+ICsgICAgICAgbG9hZHNlZyhGUywgMCk7DQo+ID4gPg0KPiA+ID4gXl5eDQo+ID4g
-Pg0KPiA+ID4gd2hhdD8NCj4gPiA+DQo+ID4gPiA+ICsgICAgICAgd3Jtc3JsKE1TUl9GU19CQVNF
-LCBmc2Jhc2UpOyB9DQo+ID4gPg0KPiA+ID4gSSBkb24ndCB1bmRlcnN0YW5kIHdoYXQgdGhlIGNv
-bW1lbnQgaXMgdHJ5aW5nIHRvIHNheSwgYnV0IHRoZSBzb2xlDQo+ID4gPiBjYWxsZXIgc28gZmFy
-IG9mIHRoaXMgZnVuY3Rpb24gaXMgeDg2X2dzYmFzZV93cml0ZV90YXNrKCksIGFuZCB0aGUgY29k
-ZSBsb29rcw0KPiBpbmNvcnJlY3QuDQo+ID4gPg0KPiA+ID4gSW5nbywgSSB0aGluayB3ZSBuZWVk
-IHRvIGFkZHJlc3MgdGhpcyBkdXJpbmcgdGhpcyBtZXJnZSB3aW5kb3csDQo+ID4gPiBwcm9iYWJs
-eSBieSByZW1vdmluZyB0aGUgY29tbWVudCBhbmQgdGhlIGxvYWRzZWcoKSBjYWxsIChhbmQgdGhl
-DQo+ID4gPiBzYW1lIGZvciBnc2Jhc2UuLi5pbmFjdGl2ZSkuICBCdXQgZmlyc3QsIENoYW5nLCBj
-YW4geW91IGV4cGxhaW4gd2hhdA0KPiA+ID4gZXhhY3RseSB5b3VyIGludGVudCBpcyBoZXJlPw0K
-PiA+DQo+ID4gSXQncyBjb21pbmcgZnJvbSBkb19hcmNoX3ByY3RsXzY0KCkuIElmIHlvdSB0aGlu
-ayBpdCByZWFsbHkgbWFrZXMNCj4gPiBjb25mdXNpb24gaW4geDg2X2ZzYmFzZV93cml0ZV9jcHUo
-KSwgaG93IGFib3V0IG1vdmluZyBpdCB0bw0KPiB4ODZfZnNiYXNlX3dyaXRlX3Rhc2soKT8NCj4g
-DQo+IFdoeSBzaG91bGQgLi53cml0ZV90YXNrKCkgbWFnaWNhbGx5IGNoYW5nZSB0aGUgaW5kZXgg
-YnV0IG9ubHkgaWYgaXQncyB3cml0aW5nDQo+IGN1cnJlbnQ/DQo+IA0KPiBJIHRoaW5rIHlvdSBz
-aG91bGQgbW92ZSBpdCBhbGwgdGhlIHdheSBvdXQgdG8gdGhlIGNhbGxlcg0KPiAoZG9fYXJjaF9w
-cmN0bF82NCgpPykgYW5kIHdlIGNhbiBzZWUgaWYgaXQgbWFrZXMgc2Vuc2UgdGhlcmUuDQo+IA0K
-DQpPa2F5LiB4ODZfZnNiYXNlX3dyaXRlX3Rhc2soKSBkb2Vzbid0IG1ha2Ugc2Vuc2UuIA0KVGhl
-biwgaXQgc2hvdWxkIHJvbGxiYWNrIHRoYXQgaGVscGVyIGFuZCBjYWxsIHg4Nl9mc2Jhc2Vfd3Jp
-dGVfY3B1KCkgb25seQ0KZnJvbSBwdHJhY2UuIFNhbWUgZm9yIGdzYmFzZS4gU291bmRzIG9rYXk/
-DQoNCkNoYW5nDQoNCg==
+Hi,
+
+On Wed, Oct 24, 2018 at 8:12 AM <kan.liang@linux.intel.com> wrote:
+>
+> From: Kan Liang <kan.liang@linux.intel.com>
+>
+> To calculate the physical address, perf needs to walk the pages tables.
+> The related mapping may has already been removed from pages table in
+> some cases (e.g. large PEBS). The virtual address recorded in the first
+> PEBS records may already be unmapped before draining PEBS buffers.
+>
+> Add a munmap callback to notify the PMU of any unmapping, which only be
+> invoked when the munmap is implemented.
+>
+The need for this new record type extends beyond physical address conversions
+and PEBS. A long while ago, someone reported issues with symbolization related
+to perf lacking munmap tracking. It had to do with vma merging. I think the
+sequence of mmaps was as follows in the problematic case:
+1.   addr1 = mmap(8192);
+2.   munmap(addr1 + 4096, 4096)
+3.   addr2 = mmap(addr1+4096, 4096)
+
+If successful, that yields addr2 = addr1 + 4096 (could also get the
+same without forcing the address).
+
+In that case, if I recall correctly, the vma for 1st mapping (now at
+4k) and that of the 2nd mapping (4k)
+get merged into a single 8k vma and this is what perf_events will
+record for PERF_RECORD_MMAP.
+On the perf tool side, it is assumed that if two timestamped mappings
+overlap then, the latter overrides
+the former. In this case, perf would loose the mapping of the first
+4kb and assume all symbols comes from
+2nd mapping. Hopefully I got the scenario right. If so, then you'd
+need PERF_RECORD_UNMAP to
+disambiguate assuming the perf tool is modified accordingly.
+
+
+>
+> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+> ---
+>  include/linux/perf_event.h |  3 +++
+>  kernel/events/core.c       | 25 +++++++++++++++++++++++++
+>  mm/mmap.c                  |  1 +
+>  3 files changed, 29 insertions(+)
+>
+> diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
+> index 53c500f0ca79..7f0a9258ce1f 100644
+> --- a/include/linux/perf_event.h
+> +++ b/include/linux/perf_event.h
+> @@ -400,6 +400,7 @@ struct pmu {
+>          */
+>         void (*sched_task)              (struct perf_event_context *ctx,
+>                                         bool sched_in);
+> +       void (*munmap)                  (void);
+>         /*
+>          * PMU specific data size
+>          */
+> @@ -1113,6 +1114,7 @@ static inline void perf_event_task_sched_out(struct task_struct *prev,
+>  }
+>
+>  extern void perf_event_mmap(struct vm_area_struct *vma);
+> +extern void perf_event_munmap(void);
+>  extern struct perf_guest_info_callbacks *perf_guest_cbs;
+>  extern int perf_register_guest_info_callbacks(struct perf_guest_info_callbacks *callbacks);
+>  extern int perf_unregister_guest_info_callbacks(struct perf_guest_info_callbacks *callbacks);
+> @@ -1333,6 +1335,7 @@ static inline int perf_unregister_guest_info_callbacks
+>  (struct perf_guest_info_callbacks *callbacks)                          { return 0; }
+>
+>  static inline void perf_event_mmap(struct vm_area_struct *vma)         { }
+> +static inline void perf_event_munmap(void)                             { }
+>  static inline void perf_event_exec(void)                               { }
+>  static inline void perf_event_comm(struct task_struct *tsk, bool exec) { }
+>  static inline void perf_event_namespaces(struct task_struct *tsk)      { }
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 5a97f34bc14c..00338d6fbed7 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -3184,6 +3184,31 @@ static void perf_pmu_sched_task(struct task_struct *prev,
+>         }
+>  }
+>
+> +void perf_event_munmap(void)
+> +{
+> +       struct perf_cpu_context *cpuctx;
+> +       unsigned long flags;
+> +       struct pmu *pmu;
+> +
+> +       local_irq_save(flags);
+> +       list_for_each_entry(cpuctx, this_cpu_ptr(&sched_cb_list), sched_cb_entry) {
+> +               pmu = cpuctx->ctx.pmu;
+> +
+> +               if (!pmu->munmap)
+> +                       continue;
+> +
+> +               perf_ctx_lock(cpuctx, cpuctx->task_ctx);
+> +               perf_pmu_disable(pmu);
+> +
+> +               pmu->munmap();
+> +
+> +               perf_pmu_enable(pmu);
+> +
+> +               perf_ctx_unlock(cpuctx, cpuctx->task_ctx);
+> +       }
+> +       local_irq_restore(flags);
+> +}
+> +
+>  static void perf_event_switch(struct task_struct *task,
+>                               struct task_struct *next_prev, bool sched_in);
+>
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index 5f2b2b184c60..61978ad8c480 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -2777,6 +2777,7 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
+>         /*
+>          * Remove the vma's, and unmap the actual pages
+>          */
+> +       perf_event_munmap();
+>         detach_vmas_to_be_unmapped(mm, vma, prev, end);
+>         unmap_region(mm, vma, prev, start, end);
+>
+> --
+> 2.17.1
+>
