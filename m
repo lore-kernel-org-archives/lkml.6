@@ -2,146 +2,98 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A9C5ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 17:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5D15ECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 17:16:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2A6A20824
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 17:13:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ccR8E2Ca"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2A6A20824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 37BCA2082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 17:16:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37BCA2082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=vivier.eu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbeJYBmf (ORCPT
+        id S1727030AbeJYBpU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 21:42:35 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:36238 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726575AbeJYBmf (ORCPT
+        Wed, 24 Oct 2018 21:45:20 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:54681 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726497AbeJYBpU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 21:42:35 -0400
-Received: by mail-wm1-f66.google.com with SMTP id a8-v6so6198810wmf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 10:13:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=a61AxcMEEoOMby5wnEQKj4zTJW6/YYCLTZm/LR69Eak=;
-        b=ccR8E2CaWIxow2gsguoihgieQq3o5wiDx3hFraj6Bc2Wt+UeoEzieHKCoPiJaZhDxx
-         PnoJF/ZfveXvtnp/nYMbUsJ6dwmw1P4UHH1u9W2j62A0DaNdgXEt0KszX/lsIHMgdrit
-         zTSnRM+WvD9fXKr176H5+ekicoCZkZAfTgm1E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=a61AxcMEEoOMby5wnEQKj4zTJW6/YYCLTZm/LR69Eak=;
-        b=CIf03086P/HKlwdwu+uAFE0A6mJr2r4wakSo7Qyc79dhm8JIeZOh7+okTsY8SOCH/F
-         TzV5mMEN+n9ZF3DY+A/wE0MH1TGgXVbZMJxEZWr24+rl78FV827QBSWVFHM3aua7xL65
-         BEFmiujyNqcNqduqZY0217kpM5jJOVhOdU/OwE9TLjD+DCotiNojEpk1IqBZjKghP2fV
-         IQGH6LG1/KMN9cj7QD1iRmeDlbBeKn6cIEit5UcwAtcBw2g/CDtvpYJdIiMn0KWkN5Aa
-         h8MS9fwIoC3np2yL+Ple1SPqcUI8icREMKiqCGuSpnhbAcfsVIQjCJUYLR/T5eH1AWn1
-         EqsQ==
-X-Gm-Message-State: AGRZ1gI+HbxgEkFV/ioFtl6GcPoAIdBTlnFxQtFw7DEC3CSx6n4+sC7f
-        8kZyUBq/RGP5gX0dG0vZOPRb/w==
-X-Google-Smtp-Source: AJdET5dPN19u9l5CCBA5r/4WxzLox0LT77bCcfq4cmEJuA4HoP9F5jQoA04TWzR4tG5wywRE1Mtqdw==
-X-Received: by 2002:a1c:6c09:: with SMTP id h9-v6mr3454230wmc.95.1540401221962;
-        Wed, 24 Oct 2018 10:13:41 -0700 (PDT)
-Received: from localhost.localdomain ([2.43.217.248])
-        by smtp.gmail.com with ESMTPSA id 64-v6sm6449041wrr.64.2018.10.24.10.13.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Oct 2018 10:13:40 -0700 (PDT)
-From:   Paolo Valente <paolo.valente@linaro.org>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        broonie@kernel.org, bfq-iosched@googlegroups.com,
-        oleksandr@natalenko.name, Federico Motta <federico@willer.it>,
-        Paolo Valente <paolo.valente@linaro.org>
-Subject: [PATCH BUGFIX] block, bfq: fix asymmetric scenarios detection
-Date:   Wed, 24 Oct 2018 19:13:25 +0200
-Message-Id: <20181024171325.7154-1-paolo.valente@linaro.org>
-X-Mailer: git-send-email 2.16.1
+        Wed, 24 Oct 2018 21:45:20 -0400
+Received: from [10.43.15.91] ([94.185.135.34]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.184]) with ESMTPSA (Nemesis) id
+ 1MF35K-1gLwLV3oMq-00FQKN; Wed, 24 Oct 2018 19:15:58 +0200
+Received: from [10.43.15.91] ([94.185.135.34]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.184]) with ESMTPSA (Nemesis) id
+ 1MF35K-1gLwLV3oMq-00FQKN; Wed, 24 Oct 2018 19:15:58 +0200
+Subject: Re: [PATCH v6 1/1] ns: add binfmt_misc to the user namespace
+To:     Andrei Vagin <avagin@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        containers@lists.linux-foundation.org,
+        Dmitry Safonov <dima@arista.com>
+References: <20181010161430.11633-1-laurent@vivier.eu>
+ <20181010161430.11633-2-laurent@vivier.eu> <20181016162245.GA7697@gmail.com>
+From:   Laurent Vivier <laurent@vivier.eu>
+Message-ID: <0fb09ce6-e006-31a2-1f32-f3f6eda44504@vivier.eu>
+Date:   Wed, 24 Oct 2018 18:15:55 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20181016162245.GA7697@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:iiQD9ckAiFLTBKMZ1aJxZN0Qflsphi71k9meEBIC8QASsiKcVvb
+ N4l1RZoCaGoBadYiuiV0mYFdXXtyggbTfpbqUgmAS6j0t2t8pF1A2rITPg0Q+Dls1t0funH
+ KsOdbzGrVdvnhLsCtSNmfJyT3TPOBG5seKfqi6EErpzKmR1FzJqHfrqo9pInxnQ/XtfhNer
+ IcIem34IkIO5bwoSGlVGQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:JCwADjGa0Lo=:w0yaDMiWIqp7AHd11N3aZ3
+ 6NL+bYC67rWIlR9QfiAEP1yUkQogCMfJZqUpk5FHAQnCvx0b1/FyfZOgnVO/uDbftkauAGscr
+ zNWIlX9Q6qzEYWa4fnuhQWX/m3hlPFJs8A9EUu+o+N0wDGXI5WHisVfZ0pnO9rOW40MV5asY3
+ DfvubLYvvQAoq7Hq6vykOExsAgYjV7aI8dweIEv1xGxBaHKl4dluhdRAe+iFBMnNIZRA86mLh
+ VV8mXPLTKunw2E3NHiwtJz94fBCXxzkszpDlV+PNoIuOMBz59EY12BW/w/+YXgP2kTNclLTu3
+ HSt3dZcyJjSzkLArItv9guNt6ZgzFr/7urdbkl9/qYVlZvZs/Jrb0xMu8PGuyPb/wTjqMs8Rf
+ Gb130tqVHKvjWaMT6pTlvapqV1sHCEeG3I7fbzMiZ7mAvl9Agz0xyRDxjjZt2rbvIqRUotG/d
+ KF/w4kwRTTPDJXqWeqH0E3aZQ/vEYpHIvFnNKQcWwQpegqCLiZbv9VkRJYzcAu9tePP5reTVD
+ EM0EFrEm6Oi7Yr9s65g4ylZN6A6NdXTHIHN34uShUsVg5sqmS0e4VGUREg1vTQFG7mLBEnWQh
+ 1J6qnTlp5wYzJuVFm4mC9XeN6wK5P5mx3Zq61PtfOIKOKIg70sjJfFVionpLWRRWjuGiGUXBM
+ HyCZiHwAHtVk7M/tOKFCUvaYegWzeOD1sPg5DcwnXQe6JzGJBqiJc39rZKf5P/S340DIqUnE5
+ T2/R4Cqr6S5cmUa2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Federico Motta <federico@willer.it>
+On 16/10/2018 17:22, Andrei Vagin wrote:
+> On Wed, Oct 10, 2018 at 06:14:30PM +0200, Laurent Vivier wrote:
+>> This patch allows to have a different binfmt_misc configuration
+>> for each new user namespace. By default, the binfmt_misc configuration
+>> is the one of the previous level, but if the binfmt_misc filesystem is
+>> mounted in the new namespace a new empty binfmt instance is created and
+>> used in this namespace.
+>>
+>> For instance, using "unshare" we can start a chroot of another
+>> architecture and configure the binfmt_misc interpreter without being root
+>> to run the binaries in this chroot.
+>>
+>> Signed-off-by: Laurent Vivier <laurent@vivier.eu>
+> 
+> Acked-by: Andrei Vagin <avagin@gmail.com>
+> 
+> Thanks,
+> Andrei
+> 
 
-Since commit 2d29c9f89fcd ("block, bfq: improve asymmetric scenarios
-detection"), a scenario is defined asymmetric when one of the
-following conditions holds:
-- active bfq_queues have different weights
-- one or more group of entities (bfq_queue or other groups of entities)
-  are active
-bfq grants fairness and low latency also in such asymmetric scenarios,
-by plugging the dispatching of I/O if the bfq_queue in service happens
-to be temporarily idle. This plugging may lower throughput, so it is
-important to do it only when strictly needed.
+I don't konw who is the maintainer for this part, but is there any
+chance to have this merged in 4.20?
 
-By mystake, in commit '2d29c9f89fcd' ("block, bfq: improve asymmetric
-scenarios detection") the num_active_groups counter was firstly
-incremented and subsequently decremented at any entity (group or
-bfq_queue) weight change.
-
-This is useless, because only transitions from active to inactive and
-vice versa matter for that counter. Unfortunately this is also
-incorrect in the following case: the entity at issue is a bfq_queue
-and it is under weight raising. In fact in this case there is a
-spurious increment of the num_active_groups counter.
-
-This spurious increment may cause scenarios to be wrongly detected as
-asymmetric, thus causing useless plugging and loss of throughput.
-
-This commit fixes this issue by simply removing the above useless and
-wrong increments and decrements.
-
-Fixes: 2d29c9f89fcd ("block, bfq: improve asymmetric scenarios detection")
-Signed-off-by: Federico Motta <federico@willer.it>
-Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
----
- block/bfq-wf2q.c | 18 ++++++------------
- 1 file changed, 6 insertions(+), 12 deletions(-)
-
-diff --git a/block/bfq-wf2q.c b/block/bfq-wf2q.c
-index 476b5a90a5a4..4b0d5fb69160 100644
---- a/block/bfq-wf2q.c
-+++ b/block/bfq-wf2q.c
-@@ -792,24 +792,18 @@ __bfq_entity_update_weight_prio(struct bfq_service_tree *old_st,
- 		 * queue, remove the entity from its old weight counter (if
- 		 * there is a counter associated with the entity).
- 		 */
--		if (prev_weight != new_weight) {
--			if (bfqq) {
--				root = &bfqd->queue_weights_tree;
--				__bfq_weights_tree_remove(bfqd, bfqq, root);
--			} else
--				bfqd->num_active_groups--;
-+		if (prev_weight != new_weight && bfqq) {
-+			root = &bfqd->queue_weights_tree;
-+			__bfq_weights_tree_remove(bfqd, bfqq, root);
- 		}
- 		entity->weight = new_weight;
- 		/*
- 		 * Add the entity, if it is not a weight-raised queue,
- 		 * to the counter associated with its new weight.
- 		 */
--		if (prev_weight != new_weight) {
--			if (bfqq && bfqq->wr_coeff == 1) {
--				/* If we get here, root has been initialized. */
--				bfq_weights_tree_add(bfqd, bfqq, root);
--			} else
--				bfqd->num_active_groups++;
-+		if (prev_weight != new_weight && bfqq && bfqq->wr_coeff == 1) {
-+			/* If we get here, root has been initialized. */
-+			bfq_weights_tree_add(bfqd, bfqq, root);
- 		}
- 
- 		new_st->wsum += entity->weight;
--- 
-2.19.1
+Thanks,
+Laurent
 
