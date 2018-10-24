@@ -2,115 +2,106 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7132ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFE0CECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:21:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6FF120831
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:16:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6FF120831
+	by mail.kernel.org (Postfix) with ESMTP id 90E8F20834
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:21:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90E8F20834
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727199AbeJYCph (ORCPT
+        id S1727131AbeJYCuI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 22:45:37 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:52989 "EHLO mail.bootlin.com"
+        Wed, 24 Oct 2018 22:50:08 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:53024 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726433AbeJYCph (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 22:45:37 -0400
+        id S1726735AbeJYCuI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 22:50:08 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4B065208BE; Wed, 24 Oct 2018 20:09:37 +0200 (CEST)
-Received: from localhost (unknown [2.223.63.88])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 0BFDD20379;
-        Wed, 24 Oct 2018 20:09:27 +0200 (CEST)
-Date:   Wed, 24 Oct 2018 19:09:27 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        id E912E208B5; Wed, 24 Oct 2018 20:20:59 +0200 (CEST)
+Received: from bbrezillon (unknown [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2598F20379;
+        Wed, 24 Oct 2018 20:20:49 +0200 (CEST)
+Date:   Wed, 24 Oct 2018 20:20:48 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
+        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 13/15] dt-bindings: sun6i-dsi: Add compatible for A64
- DPHY
-Message-ID: <20181024180927.ejt7odo23ebzjgfg@flea>
-References: <20181023155035.9101-1-jagan@amarulasolutions.com>
- <20181023155035.9101-14-jagan@amarulasolutions.com>
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>,
+        linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
+        Przemyslaw Gaj <pgaj@cadence.com>,
+        Peter Rosin <peda@axentia.se>,
+        Mike Shettel <mshettel@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Joe Perches <joe@perches.com>
+Subject: Re: [PATCH v9 6/9] i3c: master: Add driver for Cadence IP
+Message-ID: <20181024202048.7e3534f7@bbrezillon>
+In-Reply-To: <20181022133404.2061-7-boris.brezillon@bootlin.com>
+References: <20181022133404.2061-1-boris.brezillon@bootlin.com>
+        <20181022133404.2061-7-boris.brezillon@bootlin.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ui6phgloguktf2lb"
-Content-Disposition: inline
-In-Reply-To: <20181023155035.9101-14-jagan@amarulasolutions.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Arnd,
 
---ui6phgloguktf2lb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Mon, 22 Oct 2018 15:34:01 +0200
+Boris Brezillon <boris.brezillon@bootlin.com> wrote:
 
-On Tue, Oct 23, 2018 at 09:20:33PM +0530, Jagan Teki wrote:
-> The MIPI DSI PHY HDMI controller on Allwinner A64 is similar
-> on the one on A31.
->=20
-> Add A64 compatible and append A31 compatible as fallback.
->=20
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
-> Changes for v2:
-> - new patch
->=20
->  Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.tx=
-t b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
-> index 9fa6e7a758ad..704fb31962f2 100644
-> --- a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
-> +++ b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
-> @@ -36,7 +36,7 @@ D-PHY
-> =20
->  Required properties:
->    - compatible: value must be one of:
-> -    * allwinner,sun6i-a31-mipi-dphy
-> +    * "allwinner,sun50i-a64-mipi-dphy", "allwinner,sun6i-a31-mipi-dphy"
 
-No. you need both. The A64 MIPI DPHY one needs to be always set with
-the A31 fallback, but the A31 is also usable on its own.
+> +
+> +static void cdns_i3c_master_rd_from_rx_fifo(struct cdns_i3c_master *master,
+> +					    u8 *bytes, int nbytes)
+> +{
+> +	readsl(master->regs + RX_FIFO, bytes, nbytes / 4);
 
-Maxime
+Vitor reported a problem with readsl(): this function expects the 2nd
+argument to be aligned on 32-bit, which is not guaranteed here. Unless
+you see a better solution, I'll switch back to a loop doing:
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+	for (i = 0; i < nbytes; i += 4) {
+		u32 tmp = __raw_readl(...);
+		memcpy(bytes + i, &tmp,
+		       nbytes - i  > 4 ? 4 : nbytes - i);
+	}
 
---ui6phgloguktf2lb
-Content-Type: application/pgp-signature; name="signature.asc"
+> +	if (nbytes & 3) {
+> +		u32 tmp;
+> +
+> +		readsl(master->regs + RX_FIFO, &tmp, 1);
+> +		memcpy(bytes + (nbytes & ~3), &tmp, nbytes & 3);
+> +	}
+> +}
 
------BEGIN PGP SIGNATURE-----
+Regards,
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW9C1VwAKCRDj7w1vZxhR
-xXuTAQDzCZHL9SXKlA1ovDyGvoJ1vBXyWfqzogsxrCg1RyCHYwEAsrgUwe59jxcD
-kH3hkhaPYhxxvs8q/HSGKCfBCvlZQQ8=
-=aytP
------END PGP SIGNATURE-----
-
---ui6phgloguktf2lb--
+Boris
