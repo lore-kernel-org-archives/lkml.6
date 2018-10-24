@@ -2,334 +2,369 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FA13ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 20:15:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 796D5ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 20:16:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E428E2082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 20:15:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0869920832
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 20:16:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NAThINp4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E428E2082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bEFp/vbb";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GwNNMbdF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0869920832
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726351AbeJYEpB (ORCPT
+        id S1726696AbeJYEqM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 00:45:01 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:46031 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725877AbeJYEpB (ORCPT
+        Thu, 25 Oct 2018 00:46:12 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48112 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbeJYEqM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 00:45:01 -0400
-Received: by mail-io1-f66.google.com with SMTP id p83-v6so3962025iod.12
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 13:15:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MOJhulJo/0XURfFrOcsiTJoaa9Ph7VtNilLsTXAFOgE=;
-        b=NAThINp4q8rv36JKnxPB6g0VlrLrstoDFdEt5qxzDzsKpRD2JcrsFaoVGgp5aako7x
-         DErv9vx81/UrHXOSw9XYd7fD8giaREGB0vxck4MaC1Ey1QQIq4aiy8MhAd7FjEPrZ74s
-         1xCrB2zZ4IemZ4eVvJko6n/yXqyZ5Zl5F7CRI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MOJhulJo/0XURfFrOcsiTJoaa9Ph7VtNilLsTXAFOgE=;
-        b=mHOTGSnIPsvfwHqQ01BtLszh2OGtVMGa1dR13BEreYTC6qbQSa02u9MonB8ikWKdrD
-         KsfihC2uLpHIXDNo9Y/fmjVp6Kwvwx34rtGa/dbkfBzzkqWok8iBrl7D6UZ9e+d+rxNr
-         HYhb8JB2E4DmYFnxkzn0OnD9WQwHc3/nrkPuQpL6gk71BH5BMuj8L7IxOal5gVjhnu0l
-         erxq6vKZPIvDRav1M7zvhEXx+ySIblfnQVscEUsvPAAy5uPFafjcjYhfG+h4e2TwMI+c
-         E10Uz6Dvq9xZSAwPBlzV4cTFkvkHlVwUzNtOJ0/o7bAsfDq5D8m9ITRU5EmA1jcmuMF5
-         9qrA==
-X-Gm-Message-State: AGRZ1gKBoWhZ4HpdZYP8cliK6RHMJ2+vbOIqL2h5ZkRrQ59V2qQJR992
-        oX/uPiPwzC0Wtpt6S91bwACpAVBS2CjDvxeJHJhPvw==
-X-Google-Smtp-Source: AJdET5d/aCmU2Mji/WMYk74GyjyMwhXpEJdxmR9LPgMs81J8K0pFHDFFg250b621rguNwnddy6jSN5lfkEm6amtwJcM=
-X-Received: by 2002:a6b:ac45:: with SMTP id v66-v6mr16644206ioe.66.1540412131204;
- Wed, 24 Oct 2018 13:15:31 -0700 (PDT)
+        Thu, 25 Oct 2018 00:46:12 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id EE94A60A34; Wed, 24 Oct 2018 20:16:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540412202;
+        bh=VklIIkzQa5Caf8h1Ms7cECw1xHBGSU3vr8u2gWf5ib0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bEFp/vbb31Xt6my6fdlQhWGwRH24/KnEYxhQtGOZnG5NbEPGzTlMOF2Oa0sBlP+Iy
+         j+T7GlCSYvLJ+hY1RU5pwCr9BsjZkWOdVK3rEf9Ip+2RqI5meg6G8f5B1v/pC7klnf
+         16hEKEcYo8IV2PBIhVzFaVaqZrxamJJHlIy2N1yg=
+Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: ilina@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E51D760246;
+        Wed, 24 Oct 2018 20:16:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540412200;
+        bh=VklIIkzQa5Caf8h1Ms7cECw1xHBGSU3vr8u2gWf5ib0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=GwNNMbdFrTr695R8bNQZ11ew1rixWFTLargxOC9bPwll6s8O5KUys/EFSDbIx7dEx
+         VKPfo5TbLyKEly9xtBfP8grxnBGkocy+ywuS6THcEpSiB1C4xIwCEzwwFY6ZrhRfWL
+         B/VVSNfeSuqRpOqCKzVaJMOytA+EGpfhuRNYS7E8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E51D760246
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
+Date:   Wed, 24 Oct 2018 14:16:37 -0600
+From:   Lina Iyer <ilina@codeaurora.org>
+To:     Evan Green <evgreen@chromium.org>
+Cc:     rplsssn@codeaurora.org, Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        sboyd@kernel.org, Doug Anderson <dianders@chromium.org>,
+        mka@chromium.org
+Subject: Re: [PATCH v3 3/3] drivers: qcom: rpmh: disallow active requests in
+ solver mode
+Message-ID: <20181024201637.GG17444@codeaurora.org>
+References: <1539050912-25749-1-git-send-email-rplsssn@codeaurora.org>
+ <1539050912-25749-4-git-send-email-rplsssn@codeaurora.org>
+ <CAE=gft4qNfRFN2sXG7gX0kV5AGCtHAdLNxD5fz1RAbZ-8WCoDw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20181024013132.115907-1-dbasehore@chromium.org>
- <20181024013132.115907-2-dbasehore@chromium.org> <264adf2a81bcd602f2a58e4a46c3273cd7c77ca2.camel@baylibre.com>
-In-Reply-To: <264adf2a81bcd602f2a58e4a46c3273cd7c77ca2.camel@baylibre.com>
-From:   "dbasehore ." <dbasehore@chromium.org>
-Date:   Wed, 24 Oct 2018 13:15:19 -0700
-Message-ID: <CAGAzgspHFiuUpfTjD5v9-U=yAxwkBnZh3Mwtaom4wsiO-Bcfgw@mail.gmail.com>
-Subject: Re: [PATCH 1/6] clk: Remove recursion in clk_core_{prepare,enable}()
-To:     jbrunet@baylibre.com
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org,
-        sboyd@kernel.org, Michael Turquette <mturquette@baylibre.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        aisheng.dong@nxp.com, mchehab+samsung@kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAE=gft4qNfRFN2sXG7gX0kV5AGCtHAdLNxD5fz1RAbZ-8WCoDw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 2:51 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
+On Wed, Oct 24 2018 at 11:43 -0600, Evan Green wrote:
+>On Mon, Oct 8, 2018 at 7:09 PM Raju P.L.S.S.S.N <rplsssn@codeaurora.org> wrote:
+>>
+>> From: Lina Iyer <ilina@codeaurora.org>
+>>
+>> Controllers may be in 'solver' state, where they could be in autonomous
+>> mode executing low power modes for their hardware and as such are not
+>> available for sending active votes. Device driver may notify RPMH API
+>> that the controller is in solver mode and when in such mode, disallow
+>> requests from platform drivers for state change using the RSC.
 >
-> On Tue, 2018-10-23 at 18:31 -0700, Derek Basehore wrote:
-> > From: Stephen Boyd <sboyd@codeaurora.org>
-> >
-> > Enabling and preparing clocks can be written quite naturally with
-> > recursion. We start at some point in the tree and recurse up the
-> > tree to find the oldest parent clk that needs to be enabled or
-> > prepared. Then we enable/prepare and return to the caller, going
-> > back to the clk we started at and enabling/preparing along the
-> > way.
-> >
-> > The problem is recursion isn't great for kernel code where we
-> > have a limited stack size. Furthermore, we may be calling this
-> > code inside clk_set_rate() which also has recursion in it, so
-> > we're really not looking good if we encounter a tall clk tree.
-> >
-> > Let's create a stack instead by looping over the parent chain and
-> > collecting clks of interest. Then the enable/prepare becomes as
-> > simple as iterating over that list and calling enable.
+>Maybe I'm being dense, but I don't really get it. So in solver mode,
+>the whole RSC is just disabled? Solver mode just figures out what
+>state to put the hardware in without needing all these votes? Sounds
+>cool, why doesn't it just do that all the time? Can you describe an
+>example usecase of a real client that would use solver mode, and how
+>that works?
 >
-> Hi Derek,
->
-> What about unprepare() and disable() ?
->
-> This patch removes the recursion from the enable path but keeps it for the
-> disable path ... this is very odd. Assuming doing so works, It certainly makes
-> CCF a lot harder to understand.
->
-> What about clock protection which essentially works on the same model as prepare
-> and enable ?
->
-> Overall, this change does not look like something that should be merged as it
-> is. If you were just seeking comments, you should add the "RFC" tag to your
-> series.
->
-> Jerome.
->
-> >
-> > Cc: Jerome Brunet <jbrunet@baylibre.com>
->
-> If you don't mind, I would prefer to get the whole series next time. It helps to
-> get the context.
->
-> > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> > Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-> > ---
-> >  drivers/clk/clk.c | 113 ++++++++++++++++++++++++++--------------------
-> >  1 file changed, 64 insertions(+), 49 deletions(-)
-> >
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index af011974d4ec..95d818f5edb2 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -71,6 +71,8 @@ struct clk_core {
-> >       struct hlist_head       children;
-> >       struct hlist_node       child_node;
-> >       struct hlist_head       clks;
-> > +     struct list_head        prepare_list;
-> > +     struct list_head        enable_list;
-> >       unsigned int            notifier_count;
-> >  #ifdef CONFIG_DEBUG_FS
-> >       struct dentry           *dentry;
-> > @@ -740,49 +742,48 @@ EXPORT_SYMBOL_GPL(clk_unprepare);
-> >  static int clk_core_prepare(struct clk_core *core)
-> >  {
-> >       int ret = 0;
-> > +     struct clk_core *tmp, *parent;
-> > +     LIST_HEAD(head);
-> >
-> >       lockdep_assert_held(&prepare_lock);
-> >
-> > -     if (!core)
-> > -             return 0;
-> > +     while (core) {
-> > +             list_add(&core->prepare_list, &head);
-> > +             /* Stop once we see a clk that is already prepared */
-> > +             if (core->prepare_count)
-> > +                     break;
-> > +             core = core->parent;
-> > +     }
-> >
-> > -     if (core->prepare_count == 0) {
-> > -             ret = clk_pm_runtime_get(core);
-> > -             if (ret)
-> > -                     return ret;
-> > +     list_for_each_entry_safe(core, tmp, &head, prepare_list) {
-> > +             list_del_init(&core->prepare_list);
->
-> Is there any point in removing it from the list ?
-> Maybe I missed it but it does not seems useful.
->
-> Without this, we could use list_for_each_entry()
->
-> >
-> > -             ret = clk_core_prepare(core->parent);
-> > -             if (ret)
-> > -                     goto runtime_put;
-> > +             if (core->prepare_count == 0) {
->
-> Should we really check the count here ? You are not checking the count when the
-> put() counterpart is called below.
+You are right. Solver just figures out the state to put the hardware in
+for a short period of time. Usually when a usecase runs and the hw block
+can periodically sleep while a partner/client is busy processing the
+data, the solver can take care of figuring out the next wakeup and
+choose the best low power mode for the hardware block and reduce the
+votes. But all that have to be pre-programmed into the hardware. The
+display RSC is a good example. A smart display controller can pick up
+the data and show it on the screen and sleep until the next data needs
+to be sent. The driver can configure the active and therefore the wake
+values of the bus clocks and the sleep value, it can run without CPU
+intervention. The display driver makes the decision to put the block in
+solver mode and informs the RPMH block that the hardware is not to be
+used for active requests or writing any sleep/wake votes.
 
-I think I accidentally messed that up when I picked up the patch.
-There were some merge conflicts with the addition of the
-clk_pm_runtime code.
+Coordinating that with the drivers is a major pain point involving
+multiple drivers. To avoid that, we let the RPMH know that the RSC is
+running in solver mode and will ignore voting that may happen from
+drivers.
 
->
-> Since PM runtime has ref counting as well, either way would work I guess ... but
-> we shall be consistent
->
-> > +                     ret = clk_pm_runtime_get(core);
-> > +                     if (ret)
-> > +                             goto err;
-> >
-> > -             trace_clk_prepare(core);
-> > +                     trace_clk_prepare(core);
-> >
-> > -             if (core->ops->prepare)
-> > -                     ret = core->ops->prepare(core->hw);
-> > +                     if (core->ops->prepare)
-> > +                             ret = core->ops->prepare(core->hw);
-> >
-> > -             trace_clk_prepare_complete(core);
-> > +                     trace_clk_prepare_complete(core);
-> >
-> > -             if (ret)
-> > -                     goto unprepare;
-> > +                     if (ret) {
-> > +                             clk_pm_runtime_put(core);
-> > +                             goto err;
-> > +                     }
-> > +             }
-> > +             core->prepare_count++;
-> >       }
-> >
-> > -     core->prepare_count++;
-> > -
-> > -     /*
-> > -      * CLK_SET_RATE_GATE is a special case of clock protection
-> > -      * Instead of a consumer claiming exclusive rate control, it is
-> > -      * actually the provider which prevents any consumer from making any
-> > -      * operation which could result in a rate change or rate glitch while
-> > -      * the clock is prepared.
-> > -      */
-> > -     if (core->flags & CLK_SET_RATE_GATE)
-> > -             clk_core_rate_protect(core);
->
-> This gets removed without anything replacing it.
->
-> is CLK_SET_RATE_GATE and clock protection support dropped after this change ?
+Thanks,
+Lina
 
-No, I think I just accidentally removed this when resolving conflicts.
-
+>>
+>> Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+>> Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
+>> ---
+>> Chanages in v3
+>>  - Add functionality to set solver mode for RSC controller
+>>  - return -EINVAL if active requests are sent in solver mode
+>> ---
+>>  drivers/soc/qcom/rpmh-internal.h |  5 ++++
+>>  drivers/soc/qcom/rpmh-rsc.c      | 31 ++++++++++++++++++++++++
+>>  drivers/soc/qcom/rpmh.c          | 51 ++++++++++++++++++++++++++++++++++++++++
+>>  include/soc/qcom/rpmh.h          |  5 ++++
+>>  4 files changed, 92 insertions(+)
+>>
+>> diff --git a/drivers/soc/qcom/rpmh-internal.h b/drivers/soc/qcom/rpmh-internal.h
+>> index 4b891c23..0923c45 100644
+>> --- a/drivers/soc/qcom/rpmh-internal.h
+>> +++ b/drivers/soc/qcom/rpmh-internal.h
+>> @@ -70,12 +70,14 @@ struct rpmh_request {
+>>   * @cache_lock: synchronize access to the cache data
+>>   * @dirty: was the cache updated since flush
+>>   * @batch_cache: Cache sleep and wake requests sent as batch
+>> + * @in_solver_mode: Controller is busy in solver mode
+>>   */
+>>  struct rpmh_ctrlr {
+>>         struct list_head cache;
+>>         spinlock_t cache_lock;
+>>         bool dirty;
+>>         struct list_head batch_cache;
+>> +       bool in_solver_mode;
+>>  };
+>>
+>>  /**
+>> @@ -86,6 +88,7 @@ struct rpmh_ctrlr {
+>>   * @base:       start address of the RSC's DRV registers
+>>   * @tcs_base:   start address of the TCS registers in this controller
+>>   * @id:         instance id in the controller (Direct Resource Voter)
+>> + * @in_solver_mode: Controller is in solver mode
+>>   * @num_tcs:    number of TCSes in this DRV
+>>   * @tcs:        TCS groups
+>>   * @tcs_in_use: s/w state of the TCS
+>> @@ -97,6 +100,7 @@ struct rsc_drv {
+>>         void __iomem *base;
+>>         void __iomem *tcs_base;
+>>         int id;
+>> +       bool in_solver_mode;
+>>         int num_tcs;
+>>         struct tcs_group tcs[TCS_TYPE_NR];
+>>         DECLARE_BITMAP(tcs_in_use, MAX_TCS_NR);
+>> @@ -107,6 +111,7 @@ struct rsc_drv {
+>>  int rpmh_rsc_send_data(struct rsc_drv *drv, const struct tcs_request *msg);
+>>  int rpmh_rsc_write_ctrl_data(struct rsc_drv *drv,
+>>                              const struct tcs_request *msg);
+>> +void rpmh_rsc_mode_solver_set(struct rsc_drv *drv, bool enable);
+>>  int rpmh_rsc_invalidate(struct rsc_drv *drv);
+>>  int rpmh_rsc_write_pdc_data(struct rsc_drv *drv, const struct tcs_request *msg);
+>>  bool rpmh_rsc_ctrlr_is_idle(struct rsc_drv *drv);
+>> diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
+>> index 9cc303e..17126be 100644
+>> --- a/drivers/soc/qcom/rpmh-rsc.c
+>> +++ b/drivers/soc/qcom/rpmh-rsc.c
+>> @@ -386,6 +386,11 @@ static int tcs_write(struct rsc_drv *drv, const struct tcs_request *msg)
+>>                 return PTR_ERR(tcs);
+>>
+>>         spin_lock(&drv->lock);
+>> +
+>> +       if (msg->state == RPMH_ACTIVE_ONLY_STATE && drv->in_solver_mode) {
+>> +               ret = -EINVAL;
+>> +               goto done_write;
+>> +       }
+>>         /*
+>>          * The h/w does not like if we send a request to the same address,
+>>          * when one is already in-flight or being processed.
+>> @@ -525,6 +530,31 @@ static int tcs_ctrl_write(struct rsc_drv *drv, const struct tcs_request *msg)
+>>  }
+>>
+>>  /**
+>> + *  rpmh_rsc_mode_solver_set: Enable/disable solver mode
+>> + *
+>> + *  @drv: The controller
+>> + *
+>> + *  enable: boolean state to be set - true/false
 >
-> > -
-> >       return 0;
-> > -unprepare:
-> > -     clk_core_unprepare(core->parent);
-> > -runtime_put:
-> > -     clk_pm_runtime_put(core);
-> > +err:
-> > +     parent = core->parent;
-> > +     list_for_each_entry_safe_continue(core, tmp, &head, prepare_list)
-> > +             list_del_init(&core->prepare_list);
-> > +     clk_core_unprepare(parent);
+>Add an @?
 >
-> If you get here because of failure clk_pm_runtime_get(), you will unprepare a
-> clock which may have not been prepared first
+>> + */
+>> +void rpmh_rsc_mode_solver_set(struct rsc_drv *drv, bool enable)
+>> +{
+>> +       int m;
+>> +       struct tcs_group *tcs = get_tcs_of_type(drv, ACTIVE_TCS);
+>> +
+>> +again:
+>> +       spin_lock(&drv->lock);
+>> +       for (m = tcs->offset; m < tcs->offset + tcs->num_tcs; m++) {
+>> +               if (!tcs_is_free(drv, m)) {
+>> +                       spin_unlock(&drv->lock);
+>> +                       goto again;
+>> +               }
+>> +       }
+>> +       drv->in_solver_mode = enable;
+>> +       spin_unlock(&drv->lock);
 >
-> Overall the rework of error exit path does not seem right (or necessary)
+>I don't see you actually telling the controller to be in solver mode.
+>So I guess this is more informing the rpmh driver that something has
+>happened behind its back? Maybe the example will help me understand
+>this.
 >
-
-Yeah, all of this seems to just be a poor resolution of patch
-conflicts on my part. Will fix.
-
-> >       return ret;
-> >  }
-> >
-> > @@ -878,37 +879,49 @@ EXPORT_SYMBOL_GPL(clk_disable);
-> >  static int clk_core_enable(struct clk_core *core)
-> >  {
-> >       int ret = 0;
-> > +     struct clk_core *tmp, *parent;
-> > +     LIST_HEAD(head);
-> >
-> >       lockdep_assert_held(&enable_lock);
-> >
-> > -     if (!core)
-> > -             return 0;
-> > -
-> > -     if (WARN(core->prepare_count == 0,
-> > -         "Enabling unprepared %s\n", core->name))
-> > -             return -ESHUTDOWN;
-> > +     while (core) {
-> > +             list_add(&core->enable_list, &head);
-> > +             /* Stop once we see a clk that is already enabled */
-> > +             if (core->enable_count)
-> > +                     break;
-> > +             core = core->parent;
-> > +     }
-> >
-> > -     if (core->enable_count == 0) {
-> > -             ret = clk_core_enable(core->parent);
-> > +     list_for_each_entry_safe(core, tmp, &head, enable_list) {
-> > +             list_del_init(&core->enable_list);
-> >
-> > -             if (ret)
-> > -                     return ret;
-> > +             if (WARN_ON(core->prepare_count == 0)) {
-> > +                     ret = -ESHUTDOWN;
-> > +                     goto err;
-> > +             }
-> >
-> > -             trace_clk_enable_rcuidle(core);
-> > +             if (core->enable_count == 0) {
-> > +                     trace_clk_enable_rcuidle(core);
-> >
-> > -             if (core->ops->enable)
-> > -                     ret = core->ops->enable(core->hw);
-> > +                     if (core->ops->enable)
-> > +                             ret = core->ops->enable(core->hw);
-> >
-> > -             trace_clk_enable_complete_rcuidle(core);
-> > +                     trace_clk_enable_complete_rcuidle(core);
-> >
-> > -             if (ret) {
-> > -                     clk_core_disable(core->parent);
-> > -                     return ret;
-> > +                     if (ret)
-> > +                             goto err;
-> >               }
-> > +
-> > +             core->enable_count++;
-> >       }
-> >
-> > -     core->enable_count++;
-> >       return 0;
-> > +err:
-> > +     parent = core->parent;
-> > +     list_for_each_entry_safe_continue(core, tmp, &head, enable_list)
-> > +             list_del_init(&core->enable_list);
-> > +     clk_core_disable(parent);
-> > +     return ret;
-> >  }
-> >
-> >  static int clk_core_enable_lock(struct clk_core *core)
-> > @@ -3281,6 +3294,8 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
-> >       core->num_parents = hw->init->num_parents;
-> >       core->min_rate = 0;
-> >       core->max_rate = ULONG_MAX;
-> > +     INIT_LIST_HEAD(&core->prepare_list);
-> > +     INIT_LIST_HEAD(&core->enable_list);
-> >       hw->core = core;
-> >
-> >       /* allocate local copy in case parent_names is __initdata */
+>> +
+>> +}
+>> +
+>> +/**
+>>   *  rpmh_rsc_ctrlr_is_idle: Check if any of the AMCs are busy.
+>>   *
+>>   *  @drv: The controller
+>> @@ -718,6 +748,7 @@ static int rpmh_rsc_probe(struct platform_device *pdev)
+>>                 return ret;
+>>
+>>         spin_lock_init(&drv->lock);
+>> +       drv->in_solver_mode = false;
+>>         bitmap_zero(drv->tcs_in_use, MAX_TCS_NR);
+>>
+>>         irq = platform_get_irq(pdev, drv->id);
+>> diff --git a/drivers/soc/qcom/rpmh.c b/drivers/soc/qcom/rpmh.c
+>> index 43eb981..e6e98d4 100644
+>> --- a/drivers/soc/qcom/rpmh.c
+>> +++ b/drivers/soc/qcom/rpmh.c
+>> @@ -5,6 +5,7 @@
+>>
+>>  #include <linux/atomic.h>
+>>  #include <linux/bug.h>
+>> +#include <linux/delay.h>
+>>  #include <linux/interrupt.h>
+>>  #include <linux/jiffies.h>
+>>  #include <linux/kernel.h>
+>> @@ -75,6 +76,42 @@ static struct rpmh_ctrlr *get_rpmh_ctrlr(const struct device *dev)
+>>         return &drv->client;
+>>  }
+>>
+>> +static int check_ctrlr_state(struct rpmh_ctrlr *ctrlr, enum rpmh_state state)
+>> +{
+>> +       int ret = 0;
+>> +
+>> +       /* Do not allow setting active votes when in solver mode */
+>> +       spin_lock(&ctrlr->cache_lock);
+>> +       if (ctrlr->in_solver_mode && state == RPMH_ACTIVE_ONLY_STATE)
+>> +               ret = -EBUSY;
+>> +       spin_unlock(&ctrlr->cache_lock);
+>> +
+>> +       return ret;
+>> +}
+>> +
+>> +/**
+>> + * rpmh_mode_solver_set: Indicate that the RSC controller hardware has
+>> + * been configured to be in solver mode
+>> + *
+>> + * @dev: the device making the request
+>> + * @enable: Boolean value indicating if the controller is in solver mode.
+>> + *
+>> + * When solver mode is enabled, passthru API will not be able to send wake
+>> + * votes, just awake and active votes.
 >
+>I don't understand this comment, maybe sharpening up the terminology
+>will help me?
 >
+>> + */
+>> +int rpmh_mode_solver_set(const struct device *dev, bool enable)
+>> +{
+>> +       struct rpmh_ctrlr *ctrlr = get_rpmh_ctrlr(dev);
+>> +
+>> +       spin_lock(&ctrlr->cache_lock);
+>> +       rpmh_rsc_mode_solver_set(ctrlr_to_drv(ctrlr), enable);
+>> +       ctrlr->in_solver_mode = enable;
+>> +       spin_unlock(&ctrlr->cache_lock);
+>> +
+>> +       return 0;
+>> +}
+>> +EXPORT_SYMBOL(rpmh_mode_solver_set);
+>> +
+>>  void rpmh_tx_done(const struct tcs_request *msg, int r)
+>>  {
+>>         struct rpmh_request *rpm_msg = container_of(msg, struct rpmh_request,
+>> @@ -230,8 +267,13 @@ int rpmh_write_async(const struct device *dev, enum rpmh_state state,
+>>                      const struct tcs_cmd *cmd, u32 n)
+>>  {
+>>         struct rpmh_request *rpm_msg;
+>> +       struct rpmh_ctrlr *ctrlr = get_rpmh_ctrlr(dev);
+>>         int ret;
+>>
+>> +       ret = check_ctrlr_state(ctrlr, state);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>>         rpm_msg = kzalloc(sizeof(*rpm_msg), GFP_ATOMIC);
+>>         if (!rpm_msg)
+>>                 return -ENOMEM;
+>> @@ -262,11 +304,16 @@ int rpmh_write(const struct device *dev, enum rpmh_state state,
+>>  {
+>>         DECLARE_COMPLETION_ONSTACK(compl);
+>>         DEFINE_RPMH_MSG_ONSTACK(dev, state, &compl, rpm_msg);
+>> +       struct rpmh_ctrlr *ctrlr = get_rpmh_ctrlr(dev);
+>>         int ret;
+>>
+>>         if (!cmd || !n || n > MAX_RPMH_PAYLOAD)
+>>                 return -EINVAL;
+>>
+>> +       ret = check_ctrlr_state(ctrlr, state);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>>         memcpy(rpm_msg.cmd, cmd, n * sizeof(*cmd));
+>>         rpm_msg.msg.num_cmds = n;
+>>
+>> @@ -353,6 +400,10 @@ int rpmh_write_batch(const struct device *dev, enum rpmh_state state,
+>>         if (!cmd || !n)
+>>                 return -EINVAL;
+>>
+>> +       ret = check_ctrlr_state(ctrlr, state);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>>         while (n[count] > 0)
+>>                 count++;
+>>         if (!count)
+>> diff --git a/include/soc/qcom/rpmh.h b/include/soc/qcom/rpmh.h
+>> index 4c4b013..e8356b6 100644
+>> --- a/include/soc/qcom/rpmh.h
+>> +++ b/include/soc/qcom/rpmh.h
+>> @@ -29,6 +29,8 @@ int rpmh_write_pdc_data(const struct device *dev,
+>>
+>>  int rpmh_ctrlr_idle(const struct device *dev);
+>>
+>> +int rpmh_mode_solver_set(const struct device *dev, bool enable);
+>> +
+>>  #else
+>>
+>>  static inline int rpmh_write(const struct device *dev, enum rpmh_state state,
+>> @@ -58,6 +60,9 @@ static inline int rpmh_write_pdc_data(const struct device *dev,
+>>  static inline int rpmh_ctrlr_idle(const struct device *dev)
+>>  { return -ENODEV; }
+>>
+>> +static inline int rpmh_mode_solver_set(const struct device *dev, bool enable)
+>> +{ return -ENODEV; }
+>> +
+>>  #endif /* CONFIG_QCOM_RPMH */
+>>
+>>  #endif /* __SOC_QCOM_RPMH_H__ */
+>> --
+>> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+>> of the Code Aurora Forum, hosted by The Linux Foundation.
+>>
