@@ -2,143 +2,95 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FD62C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 04:31:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0703BC67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 04:31:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01E0D20652
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 04:31:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2E4720652
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 04:31:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dp5Kgz/E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01E0D20652
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="GKiFZrBs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2E4720652
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726531AbeJXM5W (ORCPT
+        id S1726792AbeJXM6C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 08:57:22 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:37802 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726224AbeJXM5W (ORCPT
+        Wed, 24 Oct 2018 08:58:02 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:51380 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726224AbeJXM6B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 08:57:22 -0400
-Received: by mail-pl1-f194.google.com with SMTP id bh10-v6so1654452plb.4;
-        Tue, 23 Oct 2018 21:31:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=V9HEy+JpVDrqHTtVwbWj1AV96zTNQiQmnitvlf06EDk=;
-        b=dp5Kgz/Ew1FiDmoWunQvzK6lvfWDP81FICZ6LO5gqpkPG5GYtJaij7SFP/AMxKiDMY
-         1Ph0MgvsMNFY4RVtEra3GNqQgq1kkw6XHKKQsiL51tfW80CWtpHlwCX9MpUW37C4lxZC
-         ElV9DAjup+ShDx/c6FwhQf+HTR5IkgchoE02yLI0KigC9WBu2GOrMo6KyDq9pxoi1+z9
-         oERZPqzNTRr3nRXttIEUDJGCPlRvX2yHIyV9rjjg2jutiIMm4uXw/tJ9vCUSwgZmjGjT
-         uXG7Gs379sCel/ByTWxRz/w9R4WxFfOnyV2+vulfs2owzlS1CzHOBMgWjf1bykeG+BWy
-         UNvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=V9HEy+JpVDrqHTtVwbWj1AV96zTNQiQmnitvlf06EDk=;
-        b=mhPRLGwnFPZNny264iVPWNCXFXUGdkGd7cmXgsSWON9xfvsT+cHkaAr3r+Dt/61luV
-         whEjOhqEJ3Ef4ZYKsYApmfEjJYzumD1BP5AEeVn0zXor+WsK2YGIx8ve52wgXAFKRviZ
-         uZ1yL+R+pPqqld1QxEWRG4ZCwFy8dk2UzouyMeLBTvqCiG7PNxwbuYVeRSSwr9VQj8St
-         HSIw6IikvifOCWq7tiHBFwPjfSiaSLWrDVPqHiAj1F6YIfM0oVRdWJIH3wnz410KFjuf
-         BEn+VzOwwoWeq9gDaTrzHnhJXJEkta8clThk/OlneAbQLDAKwZ7sbEeTal0GvA3KLw0Z
-         eoXw==
-X-Gm-Message-State: AGRZ1gKGcpDa2YcoW431Z6GXELpLntFDDH5d6oNEQrtsAtIL4/T8c7Ty
-        ePt9ujLNWnSKIVwOzkVfsUE=
-X-Google-Smtp-Source: AJdET5c5AQQ1wCnMjGWL8arUPOUwWniLVA09Ztx1MeGVWX8EdB+IK8qlpY5DYhlAAU0hCfMP7AG8Nw==
-X-Received: by 2002:a17:902:2ac3:: with SMTP id j61-v6mr1035664plb.139.1540355459881;
-        Tue, 23 Oct 2018 21:30:59 -0700 (PDT)
-Received: from localhost.localdomain ([39.7.47.81])
-        by smtp.gmail.com with ESMTPSA id r81-v6sm11228163pfa.110.2018.10.23.21.30.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Oct 2018 21:30:58 -0700 (PDT)
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-To:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: [PATCH] s390/fault: use wake_up_klogd() in bust_spinlocks()
-Date:   Wed, 24 Oct 2018 13:30:48 +0900
-Message-Id: <20181024043048.21248-1-sergey.senozhatsky@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        Wed, 24 Oct 2018 08:58:01 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9O1Nqj1079773;
+        Wed, 24 Oct 2018 01:29:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=pFCtZRVbQP+0gGVJRlYdvksoX2/l+VekidlcZqwN85o=;
+ b=GKiFZrBsauRaIFDMjIspZ8VfwlV7asUJcWFPlH/57tFyuOeoO80n9OEsoc5vTpziWAIg
+ uRE+Cw9i5eVf6liaFTWq3MPcS/HicnTBgusKcNRAUjLE+Su4wKapcKvAGG7iCG9hCuUo
+ sawhRZyUaR5zlajDqP+GRmifYYG5UToP9ovfOkiWV2QnkK2wajcakR/cJUW3whR7jlSv
+ iC7VUMX3WxoKnw4S/oSROJ7iFBpSjafALS68E1tya1+ZBvQEOLyAEhwJ1JQpP2a32wPP
+ 43O9Yf1BphrAM36MdEsyY176Irrzc6sRDu7GexH7VGEZ8h4+2c1gDre41xXWEFb1UR15 Vw== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2120.oracle.com with ESMTP id 2n7vaq0mjq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 24 Oct 2018 01:29:07 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9O1T6GT017967
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 24 Oct 2018 01:29:06 GMT
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9O1T5sj028302;
+        Wed, 24 Oct 2018 01:29:06 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 23 Oct 2018 18:29:05 -0700
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Adam Radford <aradford@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] scsi: 3w-{sas,9xxx}: Use unsigned char for cdb
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20181018215541.4768-1-natechancellor@gmail.com>
+Date:   Tue, 23 Oct 2018 21:29:03 -0400
+In-Reply-To: <20181018215541.4768-1-natechancellor@gmail.com> (Nathan
+        Chancellor's message of "Thu, 18 Oct 2018 14:55:41 -0700")
+Message-ID: <yq11s8ggmjk.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9055 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=912
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810240010
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-printk() without oops_in_progress set is potentially dangerous.
-it will attempt to call into console driver, so if oops happened
-while console driver port->lock spin_lock was locked on the same
-CPU (NMI oops or oops from console driver), then re-entering
-console driver from bust_spinlocks() will deadlock the system.
 
-Some serial drivers have are re-entrant from oops path:
+Nathan,
 
-static void serial_console_write(struct console *co, const char *s,
-                                 unsigned count)
-{
-...
-        if (port->sysrq)
-                locked = 0;
-        else if (oops_in_progress)
-                locked = spin_trylock_irqsave(&port->lock, flags);
-        else
-                spin_lock_irqsave(&port->lock, flags);
-...
+> Clang warns a few times:
+>
+> drivers/scsi/3w-sas.c:386:11: warning: implicit conversion from 'int' to
+> 'char' changes value from 128 to -128 [-Wconstant-conversion]
+>         cdb[4] = TW_ALLOCATION_LENGTH; /* allocation length */
+>                ~ ^~~~~~~~~~~~~~~~~~~~
+>
+> Update cdb's type to unsigned char, which matches the type of the cdb
+> member in struct TW_Command_Apache.
 
-        uart_console_write(port, s, count, serial_console_putchar);
-...
-        if (locked)
-                spin_unlock_irqrestore(&port->lock, flags);
-}
+Applied to 4.20/scsi-queue. Thank you.
 
-So it's OK to call printk() or console_unblank() and re-enter
-serial console drivers when oops_in_progress set. But once we
-clear oops_in_progress serial consoles become non-reentrant.
-
-From the comment it seems that s390 wants to just poke klogd.
-There is wake_up_klogd() for this purpose, so we can replace
-that printk(" ").
-
-Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
----
- arch/s390/mm/fault.c | 11 +++--------
- 1 file changed, 3 insertions(+), 8 deletions(-)
-
-diff --git a/arch/s390/mm/fault.c b/arch/s390/mm/fault.c
-index 2b8f32f56e0c..244993dc3c70 100644
---- a/arch/s390/mm/fault.c
-+++ b/arch/s390/mm/fault.c
-@@ -93,15 +93,10 @@ void bust_spinlocks(int yes)
- 	} else {
- 		int loglevel_save = console_loglevel;
- 		console_unblank();
--		oops_in_progress = 0;
--		/*
--		 * OK, the message is on the console.  Now we call printk()
--		 * without oops_in_progress set so that printk will give klogd
--		 * a poke.  Hold onto your hats...
--		 */
--		console_loglevel = 15;
--		printk(" ");
- 		console_loglevel = loglevel_save;
-+
-+		oops_in_progress = 0;
-+		wake_up_klogd();
- 	}
- }
- 
 -- 
-2.19.1
-
+Martin K. Petersen	Oracle Linux Engineering
