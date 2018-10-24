@@ -2,305 +2,112 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F06FBC67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B40FC67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:27:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B985A2082B
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:25:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B985A2082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+	by mail.kernel.org (Postfix) with ESMTP id 6381C2082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:27:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GBTmaOSK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6381C2082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727161AbeJXLvm (ORCPT
+        id S1726652AbeJXLx1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 07:51:42 -0400
-Received: from vmicros1.altlinux.org ([194.107.17.57]:46244 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726240AbeJXLvl (ORCPT
+        Wed, 24 Oct 2018 07:53:27 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:60690 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725896AbeJXLx1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 07:51:41 -0400
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 362CF72CC63;
-        Wed, 24 Oct 2018 06:25:30 +0300 (MSK)
-Received: from beacon.altlinux.org (unknown [185.6.174.98])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 942EC4A4A16;
-        Wed, 24 Oct 2018 06:25:29 +0300 (MSK)
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Vitaly Chikunov <vt@altlinux.org>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 3/3] crypto: streebog - add Streebog test vectors
-Date:   Wed, 24 Oct 2018 06:23:51 +0300
-Message-Id: <20181024032356.3388-4-vt@altlinux.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20181024032356.3388-1-vt@altlinux.org>
-References: <20181024032356.3388-1-vt@altlinux.org>
+        Wed, 24 Oct 2018 07:53:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=zy2K2F53CAySisxVSbuPTYkyH7omh33CXz0Q8cfK5Bk=; b=GBTmaOSKz8/YDkvow2wdP5lv+h
+        8buucDgjgAYU08f2K7BLQApXv4+do+w7TpHWqZqucNnUuTzzcMdw+r1A0KuruvQrEqG/zLNP5sEs6
+        EFyc8DjtyH6R/WQ+6NLMHdXOejE8gC/4YXyhzQH56PY8fz4pHlAdZvSNJbdlBvUS8LSfuQh+fIQhR
+        pXGWrw9/X7yEQSXZMx4ZBwI8Nfu33V7ZDptGUxno5x/X4tY/6l1N8bQzj+Dggt8/c+FK+9UlSrGpI
+        U2b//WB32MtA/LBmpa7VzttDfNUonly5cZLUXRmJewazEbJvLPovGZXtpn0PymkfKXJTeGz4cBlOX
+        MaV35JkA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gF9p7-0005cA-SN; Wed, 24 Oct 2018 03:27:10 +0000
+Subject: Re: [PATCH 06/17] prmem: test cases for memory protection
+To:     Igor Stoppa <igor.stoppa@gmail.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        kernel-hardening@lists.openwall.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     igor.stoppa@huawei.com, Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-7-igor.stoppa@huawei.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <a6c74bb1-bd0c-ed8a-1dd3-b04f2e3c78d4@infradead.org>
+Date:   Tue, 23 Oct 2018 20:27:06 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181023213504.28905-7-igor.stoppa@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add testmgr and tcrypt tests and vectors for Streebog hash function
-from RFC 6986 and GOST R 34.11-2012, for HMAC-Streebog vectors are
-from R 50.1.113-2016.
+On 10/23/18 2:34 PM, Igor Stoppa wrote:
+> diff --git a/mm/Kconfig.debug b/mm/Kconfig.debug
+> index 9a7b8b049d04..57de5b3c0bae 100644
+> --- a/mm/Kconfig.debug
+> +++ b/mm/Kconfig.debug
+> @@ -94,3 +94,12 @@ config DEBUG_RODATA_TEST
+>      depends on STRICT_KERNEL_RWX
+>      ---help---
+>        This option enables a testcase for the setting rodata read-only.
+> +
+> +config DEBUG_PRMEM_TEST
+> +    tristate "Run self test for protected memory"
+> +    depends on STRICT_KERNEL_RWX
+> +    select PRMEM
+> +    default n
+> +    help
+> +      Tries to verify that the memory protection works correctly and that
+> +      the memory is effectively protected.
 
-Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
----
- crypto/tcrypt.c  |  35 +++++++++++++++++
- crypto/testmgr.c |  24 ++++++++++++
- crypto/testmgr.h | 114 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 173 insertions(+)
+Hi,
 
-diff --git a/crypto/tcrypt.c b/crypto/tcrypt.c
-index bdde95e8d369..5dae2eb16c8d 100644
---- a/crypto/tcrypt.c
-+++ b/crypto/tcrypt.c
-@@ -77,6 +77,7 @@ static char *check[] = {
- 	"khazad", "wp512", "wp384", "wp256", "tnepres", "xeta",  "fcrypt",
- 	"camellia", "seed", "salsa20", "rmd128", "rmd160", "rmd256", "rmd320",
- 	"lzo", "cts", "zlib", "sha3-224", "sha3-256", "sha3-384", "sha3-512",
-+	"sb256", "sb512",
- 	NULL
- };
- 
-@@ -1914,6 +1915,14 @@ static int do_test(const char *alg, u32 type, u32 mask, int m, u32 num_mb)
- 		ret += tcrypt_test("sm3");
- 		break;
- 
-+	case 53:
-+		ret += tcrypt_test("sb256");
-+		break;
-+
-+	case 54:
-+		ret += tcrypt_test("sb512");
-+		break;
-+
- 	case 100:
- 		ret += tcrypt_test("hmac(md5)");
- 		break;
-@@ -1970,6 +1979,14 @@ static int do_test(const char *alg, u32 type, u32 mask, int m, u32 num_mb)
- 		ret += tcrypt_test("hmac(sha3-512)");
- 		break;
- 
-+	case 115:
-+		ret += tcrypt_test("hmac(sb256)");
-+		break;
-+
-+	case 116:
-+		ret += tcrypt_test("hmac(sb512)");
-+		break;
-+
- 	case 150:
- 		ret += tcrypt_test("ansi_cprng");
- 		break;
-@@ -2392,6 +2409,14 @@ static int do_test(const char *alg, u32 type, u32 mask, int m, u32 num_mb)
- 		test_hash_speed("sm3", sec, generic_hash_speed_template);
- 		if (mode > 300 && mode < 400) break;
- 		/* fall through */
-+	case 327:
-+		test_hash_speed("sb256", sec, generic_hash_speed_template);
-+		if (mode > 300 && mode < 400) break;
-+		/* fall through */
-+	case 328:
-+		test_hash_speed("sb512", sec, generic_hash_speed_template);
-+		if (mode > 300 && mode < 400) break;
-+		/* fall through */
- 	case 399:
- 		break;
- 
-@@ -2505,6 +2530,16 @@ static int do_test(const char *alg, u32 type, u32 mask, int m, u32 num_mb)
- 				    num_mb);
- 		if (mode > 400 && mode < 500) break;
- 		/* fall through */
-+	case 426:
-+		test_mb_ahash_speed("sb256", sec, generic_hash_speed_template,
-+				    num_mb);
-+		if (mode > 400 && mode < 500) break;
-+		/* fall through */
-+	case 427:
-+		test_mb_ahash_speed("sb512", sec, generic_hash_speed_template,
-+				    num_mb);
-+		if (mode > 400 && mode < 500) break;
-+		/* fall through */
- 	case 499:
- 		break;
- 
-diff --git a/crypto/testmgr.c b/crypto/testmgr.c
-index a1d42245082a..6f3f0379260b 100644
---- a/crypto/testmgr.c
-+++ b/crypto/testmgr.c
-@@ -3122,6 +3122,18 @@ static const struct alg_test_desc alg_test_descs[] = {
- 			.hash = __VECS(hmac_rmd160_tv_template)
- 		}
- 	}, {
-+		.alg = "hmac(sb256)",
-+		.test = alg_test_hash,
-+		.suite = {
-+			.hash = __VECS(hmac_sb256_tv_template)
-+		}
-+	}, {
-+		.alg = "hmac(sb512)",
-+		.test = alg_test_hash,
-+		.suite = {
-+			.hash = __VECS(hmac_sb512_tv_template)
-+		}
-+	}, {
- 		.alg = "hmac(sha1)",
- 		.test = alg_test_hash,
- 		.fips_allowed = 1,
-@@ -3428,6 +3440,18 @@ static const struct alg_test_desc alg_test_descs[] = {
- 			.cipher = __VECS(salsa20_stream_tv_template)
- 		}
- 	}, {
-+		.alg = "sb256",
-+		.test = alg_test_hash,
-+		.suite = {
-+			.hash = __VECS(sb256_tv_template)
-+		}
-+	}, {
-+		.alg = "sb512",
-+		.test = alg_test_hash,
-+		.suite = {
-+			.hash = __VECS(sb512_tv_template)
-+		}
-+	}, {
- 		.alg = "sha1",
- 		.test = alg_test_hash,
- 		.fips_allowed = 1,
-diff --git a/crypto/testmgr.h b/crypto/testmgr.h
-index 173111c70746..a48ba2945093 100644
---- a/crypto/testmgr.h
-+++ b/crypto/testmgr.h
-@@ -2309,6 +2309,120 @@ static const struct hash_testvec crct10dif_tv_template[] = {
- 	}
- };
- 
-+/*
-+ * Streebog test vectors from RFC 6986 and GOST R 34.11-2012
-+ */
-+static const struct hash_testvec sb256_tv_template[] = {
-+	{ /* M1 */
-+		.plaintext = "012345678901234567890123456789012345678901234567890123456789012",
-+		.psize = 63,
-+		.digest =
-+			"\x9d\x15\x1e\xef\xd8\x59\x0b\x89"
-+			"\xda\xa6\xba\x6c\xb7\x4a\xf9\x27"
-+			"\x5d\xd0\x51\x02\x6b\xb1\x49\xa4"
-+			"\x52\xfd\x84\xe5\xe5\x7b\x55\x00",
-+	},
-+	{ /* M2 */
-+		.plaintext =
-+			"\xd1\xe5\x20\xe2\xe5\xf2\xf0\xe8"
-+			"\x2c\x20\xd1\xf2\xf0\xe8\xe1\xee"
-+			"\xe6\xe8\x20\xe2\xed\xf3\xf6\xe8"
-+			"\x2c\x20\xe2\xe5\xfe\xf2\xfa\x20"
-+			"\xf1\x20\xec\xee\xf0\xff\x20\xf1"
-+			"\xf2\xf0\xe5\xeb\xe0\xec\xe8\x20"
-+			"\xed\xe0\x20\xf5\xf0\xe0\xe1\xf0"
-+			"\xfb\xff\x20\xef\xeb\xfa\xea\xfb"
-+			"\x20\xc8\xe3\xee\xf0\xe5\xe2\xfb",
-+		.psize = 72,
-+		.digest =
-+			"\x9d\xd2\xfe\x4e\x90\x40\x9e\x5d"
-+			"\xa8\x7f\x53\x97\x6d\x74\x05\xb0"
-+			"\xc0\xca\xc6\x28\xfc\x66\x9a\x74"
-+			"\x1d\x50\x06\x3c\x55\x7e\x8f\x50",
-+	},
-+};
-+
-+static const struct hash_testvec sb512_tv_template[] = {
-+	{ /* M1 */
-+		.plaintext = "012345678901234567890123456789012345678901234567890123456789012",
-+		.psize = 63,
-+		.digest =
-+			"\x1b\x54\xd0\x1a\x4a\xf5\xb9\xd5"
-+			"\xcc\x3d\x86\xd6\x8d\x28\x54\x62"
-+			"\xb1\x9a\xbc\x24\x75\x22\x2f\x35"
-+			"\xc0\x85\x12\x2b\xe4\xba\x1f\xfa"
-+			"\x00\xad\x30\xf8\x76\x7b\x3a\x82"
-+			"\x38\x4c\x65\x74\xf0\x24\xc3\x11"
-+			"\xe2\xa4\x81\x33\x2b\x08\xef\x7f"
-+			"\x41\x79\x78\x91\xc1\x64\x6f\x48",
-+	},
-+	{ /* M2 */
-+		.plaintext =
-+			"\xd1\xe5\x20\xe2\xe5\xf2\xf0\xe8"
-+			"\x2c\x20\xd1\xf2\xf0\xe8\xe1\xee"
-+			"\xe6\xe8\x20\xe2\xed\xf3\xf6\xe8"
-+			"\x2c\x20\xe2\xe5\xfe\xf2\xfa\x20"
-+			"\xf1\x20\xec\xee\xf0\xff\x20\xf1"
-+			"\xf2\xf0\xe5\xeb\xe0\xec\xe8\x20"
-+			"\xed\xe0\x20\xf5\xf0\xe0\xe1\xf0"
-+			"\xfb\xff\x20\xef\xeb\xfa\xea\xfb"
-+			"\x20\xc8\xe3\xee\xf0\xe5\xe2\xfb",
-+		.psize = 72,
-+		.digest =
-+			"\x1e\x88\xe6\x22\x26\xbf\xca\x6f"
-+			"\x99\x94\xf1\xf2\xd5\x15\x69\xe0"
-+			"\xda\xf8\x47\x5a\x3b\x0f\xe6\x1a"
-+			"\x53\x00\xee\xe4\x6d\x96\x13\x76"
-+			"\x03\x5f\xe8\x35\x49\xad\xa2\xb8"
-+			"\x62\x0f\xcd\x7c\x49\x6c\xe5\xb3"
-+			"\x3f\x0c\xb9\xdd\xdc\x2b\x64\x60"
-+			"\x14\x3b\x03\xda\xba\xc9\xfb\x28",
-+	},
-+};
-+
-+/* Two HMAC-Streebog test vectors from R 50.1.113-2016 A */
-+static const struct hash_testvec hmac_sb256_tv_template[] = {
-+	{
-+		.key =  "\x00\x01\x02\x03\x04\x05\x06\x07"
-+			"\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f"
-+			"\x10\x11\x12\x13\x14\x15\x16\x17"
-+			"\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f",
-+		.ksize  = 32,
-+		.plaintext =
-+			"\x01\x26\xbd\xb8\x78\x00\xaf\x21"
-+			"\x43\x41\x45\x65\x63\x78\x01\x00",
-+		.psize  = 16,
-+		.digest =
-+			"\xa1\xaa\x5f\x7d\xe4\x02\xd7\xb3"
-+			"\xd3\x23\xf2\x99\x1c\x8d\x45\x34"
-+			"\x01\x31\x37\x01\x0a\x83\x75\x4f"
-+			"\xd0\xaf\x6d\x7c\xd4\x92\x2e\xd9",
-+	},
-+};
-+
-+static const struct hash_testvec hmac_sb512_tv_template[] = {
-+	{
-+		.key =  "\x00\x01\x02\x03\x04\x05\x06\x07"
-+			"\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f"
-+			"\x10\x11\x12\x13\x14\x15\x16\x17"
-+			"\x18\x19\x1a\x1b\x1c\x1d\x1e\x1f",
-+		.ksize  = 32,
-+		.plaintext =
-+			"\x01\x26\xbd\xb8\x78\x00\xaf\x21"
-+			"\x43\x41\x45\x65\x63\x78\x01\x00",
-+		.psize  = 16,
-+		.digest =
-+			"\xa5\x9b\xab\x22\xec\xae\x19\xc6"
-+			"\x5f\xbd\xe6\xe5\xf4\xe9\xf5\xd8"
-+			"\x54\x9d\x31\xf0\x37\xf9\xdf\x9b"
-+			"\x90\x55\x00\xe1\x71\x92\x3a\x77"
-+			"\x3d\x5f\x15\x30\xf2\xed\x7e\x96"
-+			"\x4c\xb2\xee\xdc\x29\xe9\xad\x2f"
-+			"\x3a\xfe\x93\xb2\x81\x4f\x79\xf5"
-+			"\x00\x0f\xfc\x03\x66\xc2\x51\xe6",
-+	},
-+};
-+
- /* Example vectors below taken from
-  * http://www.oscca.gov.cn/UpFile/20101222141857786.pdf
-  *
+a. It seems backwards (or upside down) to have a test case select a feature (PRMEM)
+instead of depending on that feature.
+
+b. Since PRMEM depends on MMU (in patch 04/17), the "select" here could try to
+enabled PRMEM even when MMU is not enabled.
+
+Changing this to "depends on PRMEM" would solve both of these issues.
+
+c. Don't use "default n".  That is already the default.
+
+
+thanks,
 -- 
-2.11.0
-
+~Randy
