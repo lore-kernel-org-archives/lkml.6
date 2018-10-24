@@ -2,313 +2,178 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CB4DECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 468D6ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:03:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7DD72075D
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:03:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7DD72075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0F4172075D
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:03:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KQXVQpIM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F4172075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726894AbeJYCcN (ORCPT
+        id S1727058AbeJYCc1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 22:32:13 -0400
-Received: from foss.arm.com ([217.140.101.70]:46404 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726433AbeJYCcN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 22:32:13 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C84DDA78;
-        Wed, 24 Oct 2018 11:03:11 -0700 (PDT)
-Received: from [10.43.3.86] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 546143F5D3;
-        Wed, 24 Oct 2018 11:03:07 -0700 (PDT)
-Subject: Re: [RFC v2 12/20] dma-iommu: Implement NESTED_MSI cookie
-To:     Eric Auger <eric.auger@redhat.com>, eric.auger.pro@gmail.com,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
-        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
-        yi.l.liu@linux.intel.com, jean-philippe.brucker@arm.com,
-        will.deacon@arm.com
-Cc:     tianyu.lan@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
-        christoffer.dall@arm.com, peter.maydell@linaro.org
-References: <20180918142457.3325-1-eric.auger@redhat.com>
- <20180918142457.3325-13-eric.auger@redhat.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <bd90bf0e-1bf6-244b-0ed6-0018ddc25eb4@arm.com>
-Date:   Wed, 24 Oct 2018 19:02:59 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 24 Oct 2018 22:32:27 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:34363 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726912AbeJYCc1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 22:32:27 -0400
+Received: by mail-lf1-f66.google.com with SMTP id n26-v6so4710402lfl.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 11:03:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yyeDmCSlXt4k5qqsuNoj/4ImCIWV/mNaDeLP7Ex/lzI=;
+        b=KQXVQpIMqwEiliZLpAuDEMXlck745+uLVVQYJ0AMQkYRq3BgFOhxq/q7z6uuF4tkVR
+         95wEWZR8zvxg4NUIdAzFeyfBKLhvSMeUfCqYTi4MZQEeS0M/1zaCqK93+Gyb9KObr0g5
+         owpaoHZ59OrxlRxRF5iG6v9z8cj1eVPOW7NasYL7Za78EjPJ50g7FGsDAezdo+BWTBHq
+         h6vTxIzpdn5fh7LoG6bAYe++c+DjMbrC5/Rhnd1HHV9B6XyFRNMK5mp5mddjqNI46Ipy
+         E0hW7NlRaF7lLE5ZL4EPso7/0JwBrup7LHONQ1yp8ZdDYMSuBBh3ZxRi84f1/YDAHRZd
+         34Dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yyeDmCSlXt4k5qqsuNoj/4ImCIWV/mNaDeLP7Ex/lzI=;
+        b=m+NHD3QmacwPySGqsxAVIU5/moRakhULItxmHCYEfKz5g4HklMoDJC1TBzCkTVDxw1
+         R0a4d8kC2tK7qqZLd0dxjUm0Dq4KxfCUYIboxO7UaNwAfhduw1YsJQxE0Z/U5k6dVC8o
+         VaHUmxPWRL/H8tqMIuhGA+naCFZgz46NAYGHCI1iHqZ1W+GwfmUEv3k+T+CMg2aI4g1k
+         9AXS2sU1ckRPhENkVXtagwNfAY+5lSo6K21bcsCU2w7Jgvh4dTZPxbD83FKMeK7FRKl6
+         5aSQ+wg9Wgdey/wdsEKomkZg2jttDWhyUXFwuMlSyT2CjBN1wT/Xz+4x+2R8kglt6xIM
+         VbMw==
+X-Gm-Message-State: AGRZ1gLERYV6AgLoWCs+ak0VoRfZZyPeJxcjpqyvkGWXdqxhktFACRlA
+        kvJ6LyubA7wg9PL9tXfrWnQrHz9UOw1NDkHhIyR/OQ==
+X-Google-Smtp-Source: AJdET5dkcscEIZxwgGFG8O2WUCBop/il1J4D+bYcUcZGzHi0WtAdHB0cJTFtdo5KeDcO4Od8XtcrBTzYWKecDaafRrs=
+X-Received: by 2002:a19:3809:: with SMTP id f9mr2424330lfa.148.1540404202573;
+ Wed, 24 Oct 2018 11:03:22 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180918142457.3325-13-eric.auger@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <CACRpkdY7eaYk81CU8gmHKfWB82_qNJur=c=7SCRuW+BNeL=Oiw@mail.gmail.com>
+ <20181018215101.169847-1-rajatja@google.com> <CAHp75Vd_r4QGR5xw2cJigM2J3WStg_0PdynBXMZOyZh+t1znKg@mail.gmail.com>
+ <CACK8Z6HOsUcPFyf-GguxPxh_Zdj6gCXP=FpGw-vQXJfnM=cquw@mail.gmail.com> <20181024100230.GQ10650@smile.fi.intel.com>
+In-Reply-To: <20181024100230.GQ10650@smile.fi.intel.com>
+From:   Dmitry Torokhov <dtor@google.com>
+Date:   Wed, 24 Oct 2018 11:03:11 -0700
+Message-ID: <CAE_wzQ-80NCNbzbFx1eEDwEEOEAbv-5u+W171iUagY2pOahbmw@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhci-pci: Try "cd" for card-detect lookup before
+ using NULL
+To:     andy.shevchenko@gmail.com
+Cc:     Rajat Jain <rajatja@google.com>, adrian.hunter@intel.com,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>, rajatxjain@gmail.com,
+        lkml <linux-kernel@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-gpio@vger.kernel.org,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+Hi Andy,
 
-On 2018-09-18 3:24 pm, Eric Auger wrote:
-> Up to now, when the type was UNMANAGED, we used to
-> allocate IOVA pages within a range provided by the user.
-> This does not work in nested mode.
-> 
-> If both the host and the guest are exposed with SMMUs, each
-> would allocate an IOVA. The guest allocates an IOVA (gIOVA)
-> to map onto the guest MSI doorbell (gDB). The Host allocates
-> another IOVA (hIOVA) to map onto the physical doorbell (hDB).
-> 
-> So we end up with 2 unrelated mappings, at S1 and S2:
->           S1             S2
-> gIOVA    ->     gDB
->                 hIOVA    ->    hDB
-> 
-> The PCI device would be programmed with hIOVA.
-> 
-> iommu_dma_bind_doorbell allows to pass gIOVA/gDB to the host
-> so that gIOVA can be used by the host instead of re-allocating
-> a new IOVA. That way the host can create the following nested
-> mapping:
-> 
->           S1           S2
-> gIOVA    ->    gDB    ->    hDB
-> 
-> this time, the PCI device will be programmed with the gIOVA MSI
-> doorbell which is correctly map through the 2 stages.
+On Wed, Oct 24, 2018 at 3:02 AM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Mon, Oct 22, 2018 at 04:34:55PM -0700, Rajat Jain wrote:
+> > On Fri, Oct 19, 2018 at 2:13 AM Andy Shevchenko
+> > <andy.shevchenko@gmail.com> wrote:
+> > > On Fri, Oct 19, 2018 at 12:53 AM Rajat Jain <rajatja@google.com> wrote:
+>
+> > > > across other users of this API (other MMC host controller drivers).
+> > >
+> > > >         if (slot->cd_idx >= 0) {
+> > > > -               ret = mmc_gpiod_request_cd(host->mmc, NULL, slot->cd_idx,
+> > > > +               ret = mmc_gpiod_request_cd(host->mmc, "cd", slot->cd_idx,
+> > > >                                            slot->cd_override_level, 0, NULL);
+> > >
+> > > Yes.
+> > >
+> > > > +               if (ret && ret != -EPROBE_DEFER)
+> > > > +                       ret = mmc_gpiod_request_cd(host->mmc, NULL,
+> > > > +                                                  slot->cd_idx,
+> > > > +                                                  slot->cd_override_level,
+> > > > +                                                  0, NULL);
+> > >
+> > > And no. Instead of this part you need to provide an ACPI GPIO mapping table.
+> >
+> > Sure, I am willing to do so, and I tried earlier too. However, certain
+> > doubts arose in my mind when I tried that and I posted my questions
+> > earlier (https://lkml.org/lkml/2018/9/28/507) but couldn't elicit any
+> > response. Unfortunately I still do not have answers. My primary
+> > questions are:
+> >
+> > 1) - It seems that 1 SDHCI device may support multiple slots (looking
+> > at the code). It is not clear to me if they could share card detect
+> > interrupts, or should have separate ones?
+>
+> This is more likely question to HW engineers of your platform with a caveat
+> that there should be a way to distinguish exact slot in which card is being
+> inserted.
+>
+> > Also, the driver may not
+> > really know?
+>
+> I think in such case the bug in HW design and / or driver.
 
-If I'm understanding things correctly, this plus a couple of the 
-preceding patches all add up to a rather involved way of coercing an 
-automatic allocator to only "allocate" predetermined addresses in an 
-entirely known-ahead-of-time manner. Given that the guy calling 
-iommu_dma_bind_doorbell() could seemingly just as easily call 
-iommu_map() at that point and not bother with an allocator cookie and 
-all this machinery at all, what am I missing?
+Why? You can have a shared or dedicated interrupt and the driver does
+not really need to know if it can poll the status.
 
-Robin.
+>
+> > So should I add 1 or two pins using the
+> > devm_acpi_dev_add_driver_gpios().
+>
+> This depends on the above, e.g. HW design, ACPI tables.
 
-> 
-> Signed-off-by: Eric Auger <eric.auger@redhat.com>
-> 
-> ---
-> 
-> v1 -> v2:
-> - unmap stage2 on put()
-> ---
->   drivers/iommu/dma-iommu.c | 97 +++++++++++++++++++++++++++++++++++++--
->   include/linux/dma-iommu.h | 11 +++++
->   2 files changed, 105 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> index 511ff9a1d6d9..53444c3e8f2f 100644
-> --- a/drivers/iommu/dma-iommu.c
-> +++ b/drivers/iommu/dma-iommu.c
-> @@ -37,12 +37,14 @@
->   struct iommu_dma_msi_page {
->   	struct list_head	list;
->   	dma_addr_t		iova;
-> +	dma_addr_t		ipa;
->   	phys_addr_t		phys;
->   };
->   
->   enum iommu_dma_cookie_type {
->   	IOMMU_DMA_IOVA_COOKIE,
->   	IOMMU_DMA_MSI_COOKIE,
-> +	IOMMU_DMA_NESTED_MSI_COOKIE,
->   };
->   
->   struct iommu_dma_cookie {
-> @@ -109,14 +111,17 @@ EXPORT_SYMBOL(iommu_get_dma_cookie);
->    *
->    * Users who manage their own IOVA allocation and do not want DMA API support,
->    * but would still like to take advantage of automatic MSI remapping, can use
-> - * this to initialise their own domain appropriately. Users should reserve a
-> + * this to initialise their own domain appropriately. Users may reserve a
->    * contiguous IOVA region, starting at @base, large enough to accommodate the
->    * number of PAGE_SIZE mappings necessary to cover every MSI doorbell address
-> - * used by the devices attached to @domain.
-> + * used by the devices attached to @domain. The other way round is to provide
-> + * usable iova pages through the iommu_dma_bind_doorbell API (nested stages
-> + * use case)
->    */
->   int iommu_get_msi_cookie(struct iommu_domain *domain, dma_addr_t base)
->   {
->   	struct iommu_dma_cookie *cookie;
-> +	int nesting, ret;
->   
->   	if (domain->type != IOMMU_DOMAIN_UNMANAGED)
->   		return -EINVAL;
-> @@ -124,7 +129,12 @@ int iommu_get_msi_cookie(struct iommu_domain *domain, dma_addr_t base)
->   	if (domain->iova_cookie)
->   		return -EEXIST;
->   
-> -	cookie = cookie_alloc(IOMMU_DMA_MSI_COOKIE);
-> +	ret =  iommu_domain_get_attr(domain, DOMAIN_ATTR_NESTING, &nesting);
-> +	if (!ret && nesting)
-> +		cookie = cookie_alloc(IOMMU_DMA_NESTED_MSI_COOKIE);
-> +	else
-> +		cookie = cookie_alloc(IOMMU_DMA_MSI_COOKIE);
-> +
->   	if (!cookie)
->   		return -ENOMEM;
->   
-> @@ -145,6 +155,7 @@ void iommu_put_dma_cookie(struct iommu_domain *domain)
->   {
->   	struct iommu_dma_cookie *cookie = domain->iova_cookie;
->   	struct iommu_dma_msi_page *msi, *tmp;
-> +	bool s2_unmap = false;
->   
->   	if (!cookie)
->   		return;
-> @@ -152,7 +163,15 @@ void iommu_put_dma_cookie(struct iommu_domain *domain)
->   	if (cookie->type == IOMMU_DMA_IOVA_COOKIE && cookie->iovad.granule)
->   		put_iova_domain(&cookie->iovad);
->   
-> +	if (cookie->type == IOMMU_DMA_NESTED_MSI_COOKIE)
-> +		s2_unmap = true;
-> +
->   	list_for_each_entry_safe(msi, tmp, &cookie->msi_page_list, list) {
-> +		if (s2_unmap && msi->phys) {
-> +			size_t size = cookie_msi_granule(cookie);
-> +
-> +			WARN_ON(iommu_unmap(domain, msi->ipa, size) != size);
-> +		}
->   		list_del(&msi->list);
->   		kfree(msi);
->   	}
-> @@ -161,6 +180,50 @@ void iommu_put_dma_cookie(struct iommu_domain *domain)
->   }
->   EXPORT_SYMBOL(iommu_put_dma_cookie);
->   
-> +/**
-> + * iommu_dma_bind_doorbell - Allows to provide a usable IOVA page
-> + * @domain: domain handle
-> + * @binding: IOVA/IPA binding
-> + *
-> + * In nested stage use case, the user can provide IOVA/IPA bindings
-> + * corresponding to a guest MSI stage 1 mapping. When the host needs
-> + * to map its own MSI doorbells, it can use the IPA as stage 2 input
-> + * and map it onto the physical MSI doorbell.
-> + */
-> +int iommu_dma_bind_doorbell(struct iommu_domain *domain,
-> +			    struct iommu_guest_msi_binding *binding)
-> +{
-> +	struct iommu_dma_cookie *cookie = domain->iova_cookie;
-> +	struct iommu_dma_msi_page *msi;
-> +	dma_addr_t ipa, iova;
-> +	size_t size;
-> +
-> +	if (!cookie)
-> +		return -EINVAL;
-> +
-> +	if (cookie->type != IOMMU_DMA_NESTED_MSI_COOKIE)
-> +		return -EINVAL;
-> +
-> +	size = 1 << binding->granule;
-> +	iova = binding->iova & ~(phys_addr_t)(size - 1);
-> +	ipa = binding->gpa & ~(phys_addr_t)(size - 1);
-> +
-> +	list_for_each_entry(msi, &cookie->msi_page_list, list) {
-> +		if (msi->iova == iova)
-> +			return 0; /* this page is already registered */
-> +	}
-> +
-> +	msi = kzalloc(sizeof(*msi), GFP_KERNEL);
-> +	if (!msi)
-> +		return -ENOMEM;
-> +
-> +	msi->iova = iova;
-> +	msi->ipa = ipa;
-> +	list_add(&msi->list, &cookie->msi_page_list);
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(iommu_dma_bind_doorbell);
-> +
->   /**
->    * iommu_dma_get_resv_regions - Reserved region driver helper
->    * @dev: Device from iommu_get_resv_regions()
-> @@ -846,6 +909,34 @@ static struct iommu_dma_msi_page *iommu_dma_get_msi_page(struct device *dev,
->   		if (msi_page->phys == msi_addr)
->   			return msi_page;
->   
-> +	/*
-> +	 * In nested stage mode, we do not allocate an MSI page in
-> +	 * a range provided by the user. Instead, IOVA/IPA bindings are
-> +	 * individually provided. We reuse thise IOVAs to build the
-> +	 * IOVA -> IPA -> MSI PA nested stage mapping.
-> +	 */
-> +	if (cookie->type == IOMMU_DMA_NESTED_MSI_COOKIE) {
-> +		list_for_each_entry(msi_page, &cookie->msi_page_list, list)
-> +			if (!msi_page->phys) { /* this binding is free to use */
-> +				dma_addr_t ipa = msi_page->ipa;
-> +				int ret;
-> +
-> +				msi_page->phys = msi_addr;
-> +
-> +				/* do the stage 2 mapping */
-> +				ret = iommu_map(domain, ipa, msi_addr, size,
-> +						IOMMU_MMIO | IOMMU_WRITE);
-> +				if (ret) {
-> +					pr_warn("MSI S2 mapping failed (%d)\n",
-> +						ret);
-> +					return NULL;
-> +				}
-> +				return msi_page;
-> +			}
-> +		pr_warn("%s no MSI binding found\n", __func__);
-> +		return NULL;
-> +	}
-> +
->   	msi_page = kzalloc(sizeof(*msi_page), GFP_ATOMIC);
->   	if (!msi_page)
->   		return NULL;
-> diff --git a/include/linux/dma-iommu.h b/include/linux/dma-iommu.h
-> index e8ca5e654277..324745eef644 100644
-> --- a/include/linux/dma-iommu.h
-> +++ b/include/linux/dma-iommu.h
-> @@ -24,6 +24,7 @@
->   #include <linux/dma-mapping.h>
->   #include <linux/iommu.h>
->   #include <linux/msi.h>
-> +#include <uapi/linux/iommu.h>
->   
->   int iommu_dma_init(void);
->   
-> @@ -74,12 +75,15 @@ int iommu_dma_mapping_error(struct device *dev, dma_addr_t dma_addr);
->   /* The DMA API isn't _quite_ the whole story, though... */
->   void iommu_dma_map_msi_msg(int irq, struct msi_msg *msg);
->   void iommu_dma_get_resv_regions(struct device *dev, struct list_head *list);
-> +int iommu_dma_bind_doorbell(struct iommu_domain *domain,
-> +			    struct iommu_guest_msi_binding *binding);
->   
->   #else
->   
->   struct iommu_domain;
->   struct msi_msg;
->   struct device;
-> +struct iommu_guest_msi_binding;
->   
->   static inline int iommu_dma_init(void)
->   {
-> @@ -104,6 +108,13 @@ static inline void iommu_dma_map_msi_msg(int irq, struct msi_msg *msg)
->   {
->   }
->   
-> +static inline int
-> +iommu_dma_bind_doorbell(struct iommu_domain *domain,
-> +			struct iommu_guest_msi_binding *binding)
-> +{
-> +	return -ENODEV;
-> +}
-> +
->   static inline void iommu_dma_get_resv_regions(struct device *dev, struct list_head *list)
->   {
->   }
-> 
+Yes, it depends on the HW design and that is exactly why the approach
+with devm_acpi_dev_add_driver_gpios() does not work well here: this is
+a generic driver used on many platforms and you are trying to put the
+platform knowledge into the driver. Here we are lucky I guess as I do
+not believe anyone is using more than one slot, so we can have a tavle
+with a single entry, but actually doing the fallback the way Rajat was
+proposing is more correct. Or you have a table with N entries, where N
+is hopefully sufficiently large.
+
+>
+>
+> > Is some one familiar with SDHC
+> > driver can answer these questions, it shall be great.
+>
+> Actually above questions better to ask in linux-mmc mailing list, which by the
+> fact is in Cc list already. So, wait for someone to clarify.
+>
+>
+> > 2) I'm not really sure what should I set "active_low" to? Isn't this
+> > something that should be specified by platform / ACPI too, and driver
+> > should just be able to say say choose whatever the ACPI says?
+> >
+> > struct acpi_gpio_params {
+> >         unsigned int crs_entry_index;
+> >         unsigned int line_index;
+> >         bool active_low;
+> > };
+>
+>
+> ACPI specification misses this property, that's why we have it in the
+> structure. In your case it should be provided by _DSD and thus be consistent
+> with the hardcoded values.
+
+Again, you think as if the driver was platform specific; it is not. I
+have 1000s of systems with different ACPI tables. Let's say half of
+them use one polarity, and half another. Which polarity do you propose
+to use?
+
+Thanks.
+
+-- 
+Dmitry
