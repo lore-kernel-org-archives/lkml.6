@@ -4,59 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02002ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 21:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2536CECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 21:41:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4F3E2082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 21:39:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4F3E2082F
+	by mail.kernel.org (Postfix) with ESMTP id BF70B2082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 21:41:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF70B2082F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727156AbeJYGJe (ORCPT
+        id S1727173AbeJYGL2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 02:09:34 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:37225 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726378AbeJYGJe (ORCPT
+        Thu, 25 Oct 2018 02:11:28 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:36299 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726378AbeJYGL2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 02:09:34 -0400
-Received: by mail-oi1-f195.google.com with SMTP id e17-v6so5364778oib.4;
-        Wed, 24 Oct 2018 14:39:49 -0700 (PDT)
+        Thu, 25 Oct 2018 02:11:28 -0400
+Received: by mail-ot1-f65.google.com with SMTP id x4so6597045otg.3;
+        Wed, 24 Oct 2018 14:41:43 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=SEqOUWzeYMJpqTHsCRJGXGDeUUUUuGFzoEAGmrKeWoM=;
-        b=mm1aPvXM2UGOEw/cSqhmy2DQ2iWGaWCHjq22ThBmZ8/5OJodVB6g0pzHsJdWlZE4D+
-         y0DhpqGjNRtpuTX+ROHarfADNz4meEd12byr+OR1WYz8m39Ubfgj8JzjPKJBQURuhwa8
-         tc5A4whO/cTgg0vNZSLXs7wk3oBF+mWlPr2kKBYGgLvbPbcGD54DY0lS9FM1eDsg7Ntr
-         /XNBjkAhj9lGbZTb5i1D896gcklUY/uBmMI5AyXFEnapeJrnWV//A70dWecXDnB/zVmS
-         TSaegHZF8P0fULCoXQJyx7TgIAaeL9LSBZScb4h5WpmeWWr7e7g9Yfx6+ANeKYOsT4nk
-         AWpg==
-X-Gm-Message-State: AGRZ1gK4J/MNu5NgK/UGTt7uHu4Yy7kwghkBeTWftGOD+KeM+4PgTrhn
-        2y9SUVYC/VoRfrE4MxBEGQTqHNgGV5U=
-X-Google-Smtp-Source: AJdET5c0hqwljjv63/3mrPDTeAqJAbYB3yJKACBB35QrzXXxQu779gXOYbB534EkohahFDPL7ojsng==
-X-Received: by 2002:aca:e7d4:: with SMTP id e203-v6mr2450399oih.187.1540417188968;
-        Wed, 24 Oct 2018 14:39:48 -0700 (PDT)
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com. [209.85.167.172])
-        by smtp.gmail.com with ESMTPSA id r7-v6sm1817664oih.24.2018.10.24.14.39.46
+        bh=+asLhH7avNXtJSDoIT1sM3YWg5U5bqZZWEGl23fiMm0=;
+        b=PhaFamut/zeFlDKknstGWPwSfYBzN5tFKNs85N/lgndImmv2Or2LRB9Lh26ui3zthh
+         LftNVeA6ufKRfY2C/QWovNSSKHD+3wDs6DkDUw4XFzrbjT4Uiil48PwL+DZvaM/pn38v
+         CmWEqMQjqaAmQUv/ASRbP6XChKGjqypv6wEtSd4gj7ylG6E1CRzsWOoXKGOZadF2T46D
+         6kTdytH8fQYb8wf0rUPRI2Y7CYhnXRo0UEqrAAZq1TumUpWAJoQjQEO4xzp//nhY9YtD
+         5R9vHKGLyr9rtSM9YYXXCvffXcGDInUTRrFDI8aXxK+pQ0xv/UdXb8M3bBCMC6MqmSTz
+         4Iig==
+X-Gm-Message-State: AGRZ1gJ4/pm73toIoK3THXQ9FhKpkNO7BTf1xCwTJ3FTLjGRnW29D8n4
+        tMxOawokBfEbYNzpN38n2EZIElu3oLs=
+X-Google-Smtp-Source: AJdET5e15WUWOenikiN232wh5udxxXjmjQpWPtsHcS9fyDgPLqodgrijUIg22kRU08SkI2OSl1Ikgw==
+X-Received: by 2002:a9d:385:: with SMTP id f5mr2878916otf.208.1540417302552;
+        Wed, 24 Oct 2018 14:41:42 -0700 (PDT)
+Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com. [209.85.167.180])
+        by smtp.gmail.com with ESMTPSA id v34sm2072979oti.78.2018.10.24.14.41.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Oct 2018 14:39:47 -0700 (PDT)
-Received: by mail-oi1-f172.google.com with SMTP id s69-v6so5358719oie.10;
-        Wed, 24 Oct 2018 14:39:46 -0700 (PDT)
-X-Received: by 2002:aca:3195:: with SMTP id x143-v6mr2279303oix.213.1540417186346;
- Wed, 24 Oct 2018 14:39:46 -0700 (PDT)
+        Wed, 24 Oct 2018 14:41:41 -0700 (PDT)
+Received: by mail-oi1-f180.google.com with SMTP id h4-v6so3290474oih.9;
+        Wed, 24 Oct 2018 14:41:40 -0700 (PDT)
+X-Received: by 2002:aca:5256:: with SMTP id g83-v6mr2456148oib.351.1540417300541;
+ Wed, 24 Oct 2018 14:41:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <1539536883-1928-1-git-send-email-vabhav.sharma@nxp.com> <1539536883-1928-3-git-send-email-vabhav.sharma@nxp.com>
-In-Reply-To: <1539536883-1928-3-git-send-email-vabhav.sharma@nxp.com>
+References: <1539536883-1928-1-git-send-email-vabhav.sharma@nxp.com> <1539536883-1928-7-git-send-email-vabhav.sharma@nxp.com>
+In-Reply-To: <1539536883-1928-7-git-send-email-vabhav.sharma@nxp.com>
 From:   Li Yang <leoyang.li@nxp.com>
-Date:   Wed, 24 Oct 2018 16:39:35 -0500
-X-Gmail-Original-Message-ID: <CADRPPNTwpQRu9fxt8PTVb6VoNJEFFrMHpCrRa5T7YEddSVnq-w@mail.gmail.com>
-Message-ID: <CADRPPNTwpQRu9fxt8PTVb6VoNJEFFrMHpCrRa5T7YEddSVnq-w@mail.gmail.com>
-Subject: Re: [PATCH v5 2/6] soc/fsl/guts: Add definition for LX2160A
+Date:   Wed, 24 Oct 2018 16:41:29 -0500
+X-Gmail-Original-Message-ID: <CADRPPNSQt=d4HDR9YckZnXvFi4jB2RisraT869BvTGbpS3Etdg@mail.gmail.com>
+Message-ID: <CADRPPNSQt=d4HDR9YckZnXvFi4jB2RisraT869BvTGbpS3Etdg@mail.gmail.com>
+Subject: Re: [PATCH v5 6/6] arm64: dts: add LX2160ARDB board support
 To:     Vabhav Sharma <vabhav.sharma@nxp.com>
 Cc:     Sudeep Holla <sudeep.holla@arm.com>, Scott Wood <oss@buserror.net>,
         lkml <linux-kernel@vger.kernel.org>,
@@ -81,6 +81,11 @@ Cc:     Sudeep Holla <sudeep.holla@arm.com>, Scott Wood <oss@buserror.net>,
         Adrian Hunter <adrian.hunter@intel.com>,
         Ulf Hansson <ulf.hansson@linaro.org>, V.Sethi@nxp.com,
         udit.kumar@nxp.com, pankaj.bansal@nxp.com,
+        Priyanka Jain <priyanka.jain@nxp.com>,
+        Sriram Dash <sriram.dash@nxp.com>,
+        Horia Geanta <horia.geanta@nxp.com>,
+        Ran Wang <ran.wang_1@nxp.com>,
+        Ying Zhang <ying.zhang22455@nxp.com>,
         Yinbo Zhu <yinbo.zhu@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -90,43 +95,160 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, Oct 15, 2018 at 12:14 AM Vabhav Sharma <vabhav.sharma@nxp.com> wrote:
 >
-> Adding compatible string "lx2160a-dcfg" to
-> initialize guts driver for lx2160 and SoC die
-> attribute definition for LX2160A
+> LX2160A reference design board (RDB) is a high-performance
+> computing, evaluation, and development platform with LX2160A
+> SoC.
 >
+> Signed-off-by: Priyanka Jain <priyanka.jain@nxp.com>
+> Signed-off-by: Sriram Dash <sriram.dash@nxp.com>
 > Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
+> Signed-off-by: Horia Geanta <horia.geanta@nxp.com>
+> Signed-off-by: Ran Wang <ran.wang_1@nxp.com>
+> Signed-off-by: Zhang Ying-22455 <ying.zhang22455@nxp.com>
 > Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
 
 Acked-by: Li Yang <leoyang.li@nxp.com>
 
 > ---
->  drivers/soc/fsl/guts.c | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  arch/arm64/boot/dts/freescale/Makefile            |   1 +
+>  arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts | 119 ++++++++++++++++++++++
+>  2 files changed, 120 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
 >
-> diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c
-> index 302e0c8..bcab1ee 100644
-> --- a/drivers/soc/fsl/guts.c
-> +++ b/drivers/soc/fsl/guts.c
-> @@ -100,6 +100,11 @@ static const struct fsl_soc_die_attr fsl_soc_die[] = {
->           .svr          = 0x87000000,
->           .mask         = 0xfff70000,
->         },
-> +       /* Die: LX2160A, SoC: LX2160A/LX2120A/LX2080A */
-> +       { .die          = "LX2160A",
-> +         .svr          = 0x87360000,
-> +         .mask         = 0xff3f0000,
-> +       },
->         { },
->  };
->
-> @@ -222,6 +227,7 @@ static const struct of_device_id fsl_guts_of_match[] = {
->         { .compatible = "fsl,ls1088a-dcfg", },
->         { .compatible = "fsl,ls1012a-dcfg", },
->         { .compatible = "fsl,ls1046a-dcfg", },
-> +       { .compatible = "fsl,lx2160a-dcfg", },
->         {}
->  };
->  MODULE_DEVICE_TABLE(of, fsl_guts_of_match);
+> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+> index 86e18ad..445b72b 100644
+> --- a/arch/arm64/boot/dts/freescale/Makefile
+> +++ b/arch/arm64/boot/dts/freescale/Makefile
+> @@ -13,3 +13,4 @@ dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-rdb.dtb
+>  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2080a-simu.dtb
+>  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2088a-qds.dtb
+>  dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-ls2088a-rdb.dtb
+> +dtb-$(CONFIG_ARCH_LAYERSCAPE) += fsl-lx2160a-rdb.dtb
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+> new file mode 100644
+> index 0000000..6481e5f
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts
+> @@ -0,0 +1,119 @@
+> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> +//
+> +// Device Tree file for LX2160ARDB
+> +//
+> +// Copyright 2018 NXP
+> +
+> +/dts-v1/;
+> +
+> +#include "fsl-lx2160a.dtsi"
+> +
+> +/ {
+> +       model = "NXP Layerscape LX2160ARDB";
+> +       compatible = "fsl,lx2160a-rdb", "fsl,lx2160a";
+> +
+> +       aliases {
+> +               crypto = &crypto;
+> +               serial0 = &uart0;
+> +       };
+> +
+> +       chosen {
+> +               stdout-path = "serial0:115200n8";
+> +       };
+> +
+> +       sb_3v3: regulator-sb3v3 {
+> +               compatible = "regulator-fixed";
+> +               regulator-name = "MC34717-3.3VSB";
+> +               regulator-min-microvolt = <3300000>;
+> +               regulator-max-microvolt = <3300000>;
+> +               regulator-boot-on;
+> +               regulator-always-on;
+> +       };
+> +};
+> +
+> +&crypto {
+> +       status = "okay";
+> +};
+> +
+> +&esdhc0 {
+> +       sd-uhs-sdr104;
+> +       sd-uhs-sdr50;
+> +       sd-uhs-sdr25;
+> +       sd-uhs-sdr12;
+> +       status = "okay";
+> +};
+> +
+> +&esdhc1 {
+> +       mmc-hs200-1_8v;
+> +       mmc-hs400-1_8v;
+> +       bus-width = <8>;
+> +       status = "okay";
+> +};
+> +
+> +&i2c0 {
+> +       status = "okay";
+> +
+> +       i2c-mux@77 {
+> +               compatible = "nxp,pca9547";
+> +               reg = <0x77>;
+> +               #address-cells = <1>;
+> +               #size-cells = <0>;
+> +
+> +               i2c@2 {
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +                       reg = <0x2>;
+> +
+> +                       power-monitor@40 {
+> +                               compatible = "ti,ina220";
+> +                               reg = <0x40>;
+> +                               shunt-resistor = <1000>;
+> +                       };
+> +               };
+> +
+> +               i2c@3 {
+> +                       #address-cells = <1>;
+> +                       #size-cells = <0>;
+> +                       reg = <0x3>;
+> +
+> +                       temperature-sensor@4c {
+> +                               compatible = "nxp,sa56004";
+> +                               reg = <0x4c>;
+> +                               vcc-supply = <&sb_3v3>;
+> +                       };
+> +
+> +                       temperature-sensor@4d {
+> +                               compatible = "nxp,sa56004";
+> +                               reg = <0x4d>;
+> +                               vcc-supply = <&sb_3v3>;
+> +                       };
+> +               };
+> +       };
+> +};
+> +
+> +&i2c4 {
+> +       status = "okay";
+> +
+> +       rtc@51 {
+> +               compatible = "nxp,pcf2129";
+> +               reg = <0x51>;
+> +               // IRQ10_B
+> +               interrupts = <0 150 0x4>;
+> +       };
+> +};
+> +
+> +&uart0 {
+> +       status = "okay";
+> +};
+> +
+> +&uart1 {
+> +       status = "okay";
+> +};
+> +
+> +&usb0 {
+> +       status = "okay";
+> +};
+> +
+> +&usb1 {
+> +       status = "okay";
+> +};
 > --
 > 2.7.4
 >
