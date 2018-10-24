@@ -2,94 +2,181 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A7CC67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C9D3C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:58:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40D6420824
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:58:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 63DA120824
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:58:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="WwE3MZqF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40D6420824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="pIdOmhiy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63DA120824
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727840AbeJXRZ5 (ORCPT
+        id S1727868AbeJXR0B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 13:25:57 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:40850 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727530AbeJXRZ5 (ORCPT
+        Wed, 24 Oct 2018 13:26:01 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:34663 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727530AbeJXR0A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 13:25:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=AYjQXz6bWR7JipRLfWzRXi6RiUNUoM4GnTU6Fp8/nso=; b=WwE3MZqF54u7xkalUcVPZwax+
-        EPpJ3cJ3Se6npXOhNxieBaET0Oq/+iqGjBmoay2rtPFxktt76MdNVyrzVWAoCbicmg3LXwcvtSgvR
-        4iNDOGN4TuaOIDWQriyAFmqUz/W0vDCV6QK5dPr79Y8abhj+22fr2SWl2EuMLno3lG1EE=;
-Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:57936)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gFEyX-00018S-Cc; Wed, 24 Oct 2018 09:57:13 +0100
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gFEyP-0007Cw-2L; Wed, 24 Oct 2018 09:57:05 +0100
-Date:   Wed, 24 Oct 2018 09:57:00 +0100
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Corentin Labbe <clabbe@baylibre.com>
-Cc:     Gilles.Muller@lip6.fr, Julia.Lawall@lip6.fr, agust@denx.de,
-        airlied@linux.ie, alexandre.torgue@st.com, alistair@popple.id.au,
-        benh@kernel.crashing.org, carlo@caione.org, davem@davemloft.net,
-        galak@kernel.crashing.org, joabreu@synopsys.com,
-        khilman@baylibre.com, matthias.bgg@gmail.com,
-        maxime.ripard@bootlin.com, michal.lkml@markovi.net,
-        mpe@ellerman.id.au, mporter@kernel.crashing.org,
-        narmstrong@baylibre.com, nicolas.palix@imag.fr, oss@buserror.net,
-        paulus@samba.org, peppe.cavallaro@st.com, tj@kernel.org,
-        vitb@kernel.crashing.org, wens@csie.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-ide@vger.kernel.org, linux-sunxi@googlegroups.com,
-        linux-mediatek@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        cocci@systeme.lip6.fr, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 0/7] include: add
- setbits32/clrbits32/clrsetbits32/setbits64/clrbits64/clrsetbits64
-Message-ID: <20181024085700.GR30658@n2100.armlinux.org.uk>
-References: <1540366553-18541-1-git-send-email-clabbe@baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1540366553-18541-1-git-send-email-clabbe@baylibre.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Wed, 24 Oct 2018 13:26:00 -0400
+Received: by mail-wm1-f67.google.com with SMTP id f1-v6so1857271wmg.1
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 01:58:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=XBv6KqGIf71xyXRnMQYrzKLmuKH14/ChKXMZjZ3eXhg=;
+        b=pIdOmhiytNqGY1viYBaD+wa730cuLSDcFI6Y7FPYd7XiX6TzYZN8lAXRVcuQ2poVbF
+         XMTCcDMRaGeJBKzl4cgxXMmU6O7QXtWCDmllfILWuplVN78EMY7sHk+F7gQ5h3cUTmYF
+         bOgIl3UEboWcJQ/CoZCGziag/OMgx6z5BWO6Zb2cKA2KdjhvGo9Tnehn/RsSBdJBRQXr
+         VMZo4VZg8eTbK09bfWj9etv7O2Ip5bXVnTq/dMQdMs7ZJ812x5MJpE7OvZQz326NWOpi
+         6oUq/l2ZV1UXEOIFvghSYI2Gy7unsZzDM65b517dUivAHDp1/I41eWfBzqssAgXC2KVV
+         ELPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=XBv6KqGIf71xyXRnMQYrzKLmuKH14/ChKXMZjZ3eXhg=;
+        b=EbRRjw0Ro6ljKcPR0xEqj0VBXaKK7g6AAdq5WONyhTke2WhVZuAeRXfmspXdkHLYrC
+         7zUji+OUmcDkJzSVVlADlfFMvHppYB+Ss/Y/6AX83J0kmgLKl+HaDEhB6hJsiRHzuYad
+         oi1haHEb6m/xVpt9uzYv12DpXe30nPTiNA95tN3yR3khx18/bSiFqnbM24NOchQbI8ci
+         Ap1bDE8kvnUia2sYXUIQ41cFif06doDMi2bagsxeVw/S/B3izZrgX+y1SJCL9FyjjD3b
+         irnideFLlrnuD77SAbfEUHykNMzLs2Xm2CD/1VHrHOClkC+SFRAGxFuMVf41/5sRbS2b
+         u4bQ==
+X-Gm-Message-State: AGRZ1gJWVVgAcwAmG50mNBpg47LeDLENkoBzMsa6qJB3Nk0EoAq919w0
+        a6oCtsMnAWHztp7juZfE20N9CA==
+X-Google-Smtp-Source: AJdET5faUMCU2fgXlITT1tjr3yXkb/P4QCBtu9H6/5eglaaqiGKyG6v4SXMhK8hSwGwtV0XiLc1JGQ==
+X-Received: by 2002:a1c:1752:: with SMTP id 79-v6mr1730730wmx.145.1540371524476;
+        Wed, 24 Oct 2018 01:58:44 -0700 (PDT)
+Received: from boomer ([90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id o201-v6sm4885975wmg.16.2018.10.24.01.58.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 24 Oct 2018 01:58:43 -0700 (PDT)
+Message-ID: <ca95948abd58876a23b2eb3e52b96124e9eed793.camel@baylibre.com>
+Subject: Re: [PATCH v5 2/3] clk: meson: add DT documentation for emmc clock
+ controller
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Jianxin Pan <jianxin.pan@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Yixun Lan <yixun.lan@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>, linux-clk@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date:   Wed, 24 Oct 2018 10:58:42 +0200
+In-Reply-To: <1539839245-13793-3-git-send-email-jianxin.pan@amlogic.com>
+References: <1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com>
+         <1539839245-13793-3-git-send-email-jianxin.pan@amlogic.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 07:35:46AM +0000, Corentin Labbe wrote:
-> This patchset adds a new set of functions which are open-coded in lot of
-> place.
-> Basicly the pattern is always the same, "read, modify a bit, write"
-> some driver and the powerpc arch already have thoses pattern them as functions. (like ahci_sunxi.c or dwmac-meson8b)
+On Thu, 2018-10-18 at 13:07 +0800, Jianxin Pan wrote:
+> From: Yixun Lan <yixun.lan@amlogic.com>
+> 
+> Document the MMC sub clock controller driver, the potential consumer
+> of this driver is MMC or NAND. Also add four clock bindings IDs which
+> provided by this driver.
+> 
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+> ---
+>  .../devicetree/bindings/clock/amlogic,mmc-clkc.txt | 31 ++++++++++++++++++++++
+>  include/dt-bindings/clock/amlogic,mmc-clkc.h       | 17 ++++++++++++
+>  2 files changed, 48 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+>  create mode 100644 include/dt-bindings/clock/amlogic,mmc-clkc.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+> new file mode 100644
+> index 0000000..9e6d343
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+> @@ -0,0 +1,31 @@
+> +* Amlogic MMC Sub Clock Controller Driver
+> +
+> +The Amlogic MMC clock controller generates and supplies clock to support
+> +MMC and NAND controller
+> +
+> +Required Properties:
+> +
+> +- compatible: should be:
+> +		"amlogic,gx-mmc-clkc"
+> +		"amlogic,axg-mmc-clkc"
+> +
+> +- #clock-cells: should be 1.
+> +- clocks: phandles to clocks corresponding to the clock-names property
+> +- clock-names: list of parent clock names
+> +	- "clkin0", "clkin1"
+> +
+> +Parent node should have the following properties :
+> +- compatible: "amlogic,axg-mmc-clkc", "syscon".
+> +- reg: base address and size of the MMC control register space.
 
-The advantage of them being open-coded is that it's _obvious_ to the
-reviewer that there is a read-modify-write going on which, in a multi-
-threaded environment, may need some locking (so it should trigger a
-review of the locking around that code.)
+I get why Stephen is confused by your description, I am too. The example
+contradict the documentation.
 
-With it hidden inside a helper which has no locking itself, it becomes
-much easier to pass over in review, which means that races are much
-more likely to go unspotted - and that is bad news.
+The  documentation above says that the parent node should be a syscon with the
+mmc register space.
 
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+But your example shows this in the node itself.
+
+> +
+> +Example: Clock controller node:
+> +
+> +sd_mmc_c_clkc: clock-controller@7000 {
+> +	compatible = "amlogic,axg-mmc-clkc", "syscon";
+> +	reg = <0x0 0x7000 0x0 0x4>;
+> +	#clock-cells = <1>;
+> +
+> +	clock-names = "clkin0", "clkin1";
+> +	clocks = <&clkc CLKID_SD_MMC_C_CLK0>,
+> +		 <&clkc CLKID_FCLK_DIV2>;
+> +};
+> diff --git a/include/dt-bindings/clock/amlogic,mmc-clkc.h b/include/dt-bindings/clock/amlogic,mmc-clkc.h
+> new file mode 100644
+> index 0000000..162b949
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/amlogic,mmc-clkc.h
+> @@ -0,0 +1,17 @@
+> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+> +/*
+> + * Meson MMC sub clock tree IDs
+> + *
+> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
+> + * Author: Yixun Lan <yixun.lan@amlogic.com>
+> + */
+> +
+> +#ifndef __MMC_CLKC_H
+> +#define __MMC_CLKC_H
+> +
+> +#define CLKID_MMC_DIV				1
+> +#define CLKID_MMC_PHASE_CORE			2
+> +#define CLKID_MMC_PHASE_TX			3
+> +#define CLKID_MMC_PHASE_RX			4
+> +
+> +#endif
+
+
