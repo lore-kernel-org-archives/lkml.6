@@ -2,119 +2,73 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 063F7C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:35:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF736C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:36:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9BB0207DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:35:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9BB0207DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A35E52064A
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:36:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A35E52064A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727113AbeJXXDb (ORCPT
+        id S1727036AbeJXXEj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 19:03:31 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:41963 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726423AbeJXXDb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 19:03:31 -0400
-Received: by mail-ot1-f67.google.com with SMTP id c32so5226837otb.8;
-        Wed, 24 Oct 2018 07:35:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=l2Q9ZcGYjc4V2J/SgluOMRWf7eCkp1JtA2wQ09il7Ng=;
-        b=T8nj2jeE21cC1Ij202fefGvsbaDxHYliNKlTNYHye6cID68TCA1V7OC9K/NbAI8hbm
-         AzCnP2yVE23dt8/IxwQd7kBVTgbvpR6NFI6nJsj74jx97Ej4OmNdVZRIdNeMPEBd+0qe
-         1ym90zbZx9gARYUTLPbRMvkuLRtRKqABF4uzWjvHG3SD9tLh/YNjZP8Gdpn+/rmKJjMj
-         LPzwZhIIVd8AHU0WStzxYoINVS3kgZCnw60z/pxGgxlAmSKjMosiaLd+wJ3TdrI7TyUD
-         jfvEjLaBuLmS5ho5OOr/UhtAZaieFrZiz4VaP82SA2n07dQtnbCa2otFn9CIzQQIv0XS
-         hW7w==
-X-Gm-Message-State: AGRZ1gLR7mFVdwZmfA4eYpgscvMe4GEwZuIeEAwYyNcdHQXwvQFmnZQk
-        cFiWAGbN5NT2WkaV1d7dIA==
-X-Google-Smtp-Source: AJdET5ebHXrhtC6b876NkzNb2K3Q4T7GYxboV/PCOGJVPed7CXferAHdkPBTFuhYu1Q/PCx4qg7DAg==
-X-Received: by 2002:a9d:5617:: with SMTP id e23mr1914387oti.228.1540391708648;
-        Wed, 24 Oct 2018 07:35:08 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id v124-v6sm1554241oie.48.2018.10.24.07.35.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 24 Oct 2018 07:35:07 -0700 (PDT)
-Date:   Wed, 24 Oct 2018 09:35:06 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Dan Murphy <dmurphy@ti.com>, jacek.anaszewski@gmail.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org, lee.jones@linaro.org, tony@atomide.com
-Subject: Re: [PATCH v4 5/7] dt-bindings: ti-lmu: Modify dt bindings for the
- LM3633
-Message-ID: <20181024143506.GA9327@bogus>
-References: <20181023170623.31820-1-dmurphy@ti.com>
- <20181023170623.31820-5-dmurphy@ti.com>
- <20181024092328.GD24997@amd>
+        Wed, 24 Oct 2018 19:04:39 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:13689 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726423AbeJXXEj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 19:04:39 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id C871FBB53ABC6;
+        Wed, 24 Oct 2018 22:36:09 +0800 (CST)
+Received: from huawei.com (10.113.189.234) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.408.0; Wed, 24 Oct 2018
+ 22:36:00 +0800
+From:   Yunlong Song <yunlong.song@huawei.com>
+To:     <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
+        <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
+CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH] f2fs: change segment to section in f2fs_ioc_gc_range
+Date:   Wed, 24 Oct 2018 22:35:36 +0800
+Message-ID: <1540391736-20714-1-git-send-email-yunlong.song@huawei.com>
+X-Mailer: git-send-email 1.8.5.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181024092328.GD24997@amd>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.113.189.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 11:23:28AM +0200, Pavel Machek wrote:
-> On Tue 2018-10-23 12:06:21, Dan Murphy wrote:
-> > The LM3633 is a single function LED driver. The single function LED
-> > driver needs to reside in the LED directory as a dedicated LED driver
-> > and not as a MFD device.  The device does have common brightness and ramp
-> > features and those can be accomodated by a TI LMU framework.
-> > 
-> > The LM3633 dt binding needs to be moved from the ti-lmu.txt and a dedicated
-> > LED dt binding needs to be added.  The new LM3633 LED dt binding will then
-> > reside in the Documentation/devicetree/bindings/leds directory and follow the
-> > current LED and general bindings guidelines.
-> 
-> What?
-> 
-> >  .../devicetree/bindings/leds/leds-lm3633.txt  | 102 ++++++++++++++++++
-> >  .../devicetree/bindings/mfd/ti-lmu.txt        |  48 ---------
-> >  2 files changed, 102 insertions(+), 48 deletions(-)
-> >  create mode 100644
-> >  Documentation/devicetree/bindings/leds/leds-lm3633.txt
-> 
-> > index 920f910be4e9..573e88578d3d 100644
-> > --- a/Documentation/devicetree/bindings/mfd/ti-lmu.txt
-> > +++ b/Documentation/devicetree/bindings/mfd/ti-lmu.txt
-> > @@ -7,7 +7,6 @@ TI LMU driver supports lighting devices below.
-> >    LM3532       Backlight
-> >    LM3631       Backlight and regulator
-> >    LM3632       Backlight and regulator
-> > -  LM3633       Backlight, LED and fault monitor
-> >    LM3695       Backlight
-> 
-> Are you seriously proposing to take one binding and split it into 6
-> copy&pasted ones?
-> 
-> That's not the way we do development. NAK.
-> 
-> We don't want to have copy & pasted code. We also don't want to have
-> copy & pasted bindings. Nor changelogs, for that matter.
+f2fs_ioc_gc_range skips blocks_per_seg each time, however, f2fs_gc moves
+blocks of section each time, so fix it from segment to section.
 
-I looked at the LM3633 and LM3632 datasheets. They look quite different 
-to me and should be separate IMO. Just looking at different LED 
-functions and GPIO control lines is enough to make that determination. 
-The LM3697 looks like a subset of LM3633 at least at a schematic 
-diagram level, so maybe those can be shared.
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+---
+ fs/f2fs/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-While we could litter the binding with conditions on properties 
-depending on specific compatible strings (such as which GPIO properties 
-apply to which compatible), that is going to be problematic down the 
-line when we convert to json-schema[1].
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 88b1246..8c06724 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -2155,7 +2155,7 @@ static int f2fs_ioc_gc_range(struct file *filp, unsigned long arg)
+ 	}
+ 
+ 	ret = f2fs_gc(sbi, range.sync, true, GET_SEGNO(sbi, range.start));
+-	range.start += sbi->blocks_per_seg;
++	range.start += sbi->blocks_per_seg * sbi->segs_per_sec;
+ 	if (range.start <= end)
+ 		goto do_more;
+ out:
+-- 
+1.8.5.2
 
-Rob
-
-[1] https://lkml.org/lkml/2018/10/5/883
