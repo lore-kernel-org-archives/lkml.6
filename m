@@ -2,1114 +2,149 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16619C7112C
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 11:37:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B51BEC004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 11:39:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE6BA2082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 11:37:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 619152082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 11:39:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="cmbRwWfC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE6BA2082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uDyI5xJM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 619152082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727423AbeJXUFn (ORCPT
+        id S1727456AbeJXUHf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 16:05:43 -0400
-Received: from mail.efficios.com ([167.114.142.138]:51500 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727009AbeJXUFn (ORCPT
+        Wed, 24 Oct 2018 16:07:35 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:46530 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726428AbeJXUHf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 16:05:43 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id F057D24505D;
-        Wed, 24 Oct 2018 07:37:54 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id BLkb2jefto-i; Wed, 24 Oct 2018 07:37:53 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 40F55245040;
-        Wed, 24 Oct 2018 07:37:53 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 40F55245040
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1540381073;
-        bh=YS7AuuXIgXGjAnly2gYd0DTAEOuVJXKFT01u1bfd64w=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=cmbRwWfCV0kiejqAwpFrVvOQ5Qq14FCoZqYb86R1isrnQ6IahUgyXbxFcCDf6L3Qc
-         EVe6BS4L7dh63Oa6BiSEXuApYHhX8IbzkXtRQGHjrdkGH2Qa7gHC4q0kp9APF49VYD
-         5YN+wTNj9L5cUa4laBqGa43OmJsL4FF6NZygu9XGfCPACdlP5/vyBGNwZDJjre3WgN
-         ND/Ed2Q9IFhY7QnSCE3UjkarNMnKSMLreVDomhvNC14pXejXf+P/sqSpZZvfx4B2tK
-         jd8xSe/3rPtEHKpqHzry6DxAfs6eZt1UbxSuTbU5XZofZiFe2VuxA2QQq+Y1f7thX1
-         W0mxIb1UEEx6g==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id ump75oSdVFi4; Wed, 24 Oct 2018 07:37:53 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 1008B24503A;
-        Wed, 24 Oct 2018 07:37:53 -0400 (EDT)
-Date:   Wed, 24 Oct 2018 07:37:52 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Igor Stoppa <igor.stoppa@gmail.com>
-Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        kernel-hardening@lists.openwall.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        igor stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        rostedt <rostedt@goodmis.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Message-ID: <1634210774.446.1540381072927.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20181023213504.28905-15-igor.stoppa@huawei.com>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com> <20181023213504.28905-15-igor.stoppa@huawei.com>
-Subject: Re: [PATCH 14/17] prmem: llist, hlist, both plain and rcu
+        Wed, 24 Oct 2018 16:07:35 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9OBdfm7046183;
+        Wed, 24 Oct 2018 06:39:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1540381181;
+        bh=D8C+71HgbOmzWSmmFjgZIm6OrZVmpL6uqIr4i0Xaf0E=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=uDyI5xJMLFKogOFsGRpgkTzZa+PlJ+yUYBMyP5kYXyLAA5PyUt3HIj+vo9BDrjp6i
+         SVjl8EbcbjQgjcE0RsE297ybMT6Pq9cC24PmxRZ0buRuIUv0t+/dp6FMF3xSeC50c8
+         aupKjHXgrkHaSexKcqZkeHQEos7w0RRJvEn/0yqE=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9OBdfWk023012;
+        Wed, 24 Oct 2018 06:39:41 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 24
+ Oct 2018 06:39:41 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Wed, 24 Oct 2018 06:39:41 -0500
+Received: from [172.22.136.76] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9OBdeih007833;
+        Wed, 24 Oct 2018 06:39:40 -0500
+Subject: Re: [RFC PATCH 0/3] M_CAN Framework rework
+To:     Faiz Abbas <faiz_abbas@ti.com>, <wg@grandegger.com>,
+        <mkl@pengutronix.de>, <davem@davemloft.net>
+CC:     <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20181010142055.25271-1-dmurphy@ti.com>
+ <e8485e2e-df04-0905-7055-c2228c0f1fa4@ti.com>
+ <8247a28f-ae33-1ab1-b6d1-c89b839d357c@ti.com>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <8b793f8a-6ffb-9e23-1965-9e7c631031a1@ti.com>
+Date:   Wed, 24 Oct 2018 06:39:33 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <8247a28f-ae33-1ab1-b6d1-c89b839d357c@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.10_GA_3039 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3041)
-Thread-Topic: prmem: llist, hlist, both plain and rcu
-Thread-Index: QkWxcQjbvdzhPDo+im3moDd6qCP46w==
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Oct 23, 2018, at 10:35 PM, Igor Stoppa igor.stoppa@gmail.com wrote:
-
-> In some cases, all the data needing protection can be allocated from a pool
-> in one go, as directly writable, then initialized and protected.
-> The sequence is relatively short and it's acceptable to leave the entire
-> data set unprotected.
+On 10/24/2018 02:33 AM, Faiz Abbas wrote:
+> Hi Dan,
 > 
-> In other cases, this is not possible, because the data will trickle over
-> a relatively long period of time, in a non predictable way, possibly for
-> the entire duration of the operations.
+> On Thursday 18 October 2018 01:51 AM, Dan Murphy wrote:
+>> Bump
+>>
+>> On 10/10/2018 09:20 AM, Dan Murphy wrote:
+>>> All
+>>>
+>>> This patch series creates a m_can core framework that devices can register
+>>> to.  The m_can core manages the Bosch IP and CAN frames.  Each device that
+>>> is registered is responsible for managing device specific functions.
+>>>
+>>> This rewrite was suggested in a device driver submission for the TCAN4x5x
+>>> device
+>>> Reference upstream post:
+>>> https://lore.kernel.org/patchwork/patch/984163/
+>>>
+>>> For instance the TCAN device is a SPI device that uses a specific data payload to
+>>> determine writes and reads.  In addition the device has a reset input as well
+>>> as a wakeup pin.  The register offset of the m_can registers differs and must
+>>> be set by the device attached to the core.
+>>>
+>>> The m_can core will use iomapped writes and reads as the default mechanism for
+>>> writing and reading.  The device driver can provide over rides for this.
+>>>
+>>> This patch series is not complete as it does not handle the CAN interrupts
+>>> nor can perform a CAN write.  If this patch series is deemed acceptable I will
+>>> finish debugging the driver and post a non RFC series.
+>>>
+>>> Finally I did attempt to reduce the first patch with various git format patch
+>>> directives but none seemed to reduce the patch.
+>>>
+>>> Dan
+>>>
+>>> Dan Murphy (3):
+>>>   can: m_can: Create m_can core to leverage common code
+>>>   dt-bindings: can: tcan4x5x: Add DT bindings for TCAN4x5X driver
+>>>   can: tcan4x5x: Add tcan4x5x driver to the kernel
+>>>
+>>>  .../devicetree/bindings/net/can/tcan4x5x.txt  |   34 +
+>>>  drivers/net/can/m_can/Kconfig                 |   18 +
+>>>  drivers/net/can/m_can/Makefile                |    4 +-
+>>>  drivers/net/can/m_can/m_can.c                 | 1683 +----------------
+>>>  .../net/can/m_can/{m_can.c => m_can_core.c}   |  479 +++--
+>>>  drivers/net/can/m_can/m_can_core.h            |  100 +
+>>>  drivers/net/can/m_can/tcan4x5x.c              |  321 ++++
+>>>  7 files changed, 722 insertions(+), 1917 deletions(-)
+>>>  create mode 100644 Documentation/devicetree/bindings/net/can/tcan4x5x.txt
+>>>  copy drivers/net/can/m_can/{m_can.c => m_can_core.c} (83%)
+>>>  create mode 100644 drivers/net/can/m_can/m_can_core.h
+>>>  create mode 100644 drivers/net/can/m_can/tcan4x5x.c
+>>>
 > 
-> For these cases, the safe approach is to have the memory already write
-> protected, when allocated. However, this will require replacing any
-> direct assignment with calls to functions that can perform write rare.
+> Patch 1/3 never arrived for me. Its not there on lkml either.
+> https://lkml.org/lkml/2018/10/10/611
 > 
-> Since lists are one of the most commonly used data structures in kernel,
-> they are a the first candidate for receiving write rare extensions.
+
+LKML seems to have issue with 1/3.  Here they were posted.
+Maybe the patch is to large but I received all 3 + the cover letter.
+
+https://lore.kernel.org/patchwork/patch/998019/
+https://lore.kernel.org/patchwork/patch/998017/
+https://lore.kernel.org/patchwork/patch/998020/
+
+> Can you resend the complete series?
 > 
-> This patch implements basic functionality for altering said lists.
-
-I could not find a description of the overall context of this patch
-(e.g. a patch 00/17 ?) that would explain the attack vectors this aims
-to protect against.
-
-This might help figuring out whether this added complexity in the core
-kernel is worth it.
-
-Also, is it the right approach to duplicate existing APIs, or should we
-rather hook into page fault handlers and let the kernel do those "shadow"
-mappings under the hood ?
-
-Adding a new GFP flags for dynamic allocation, and a macro mapping to
-a section attribute might suffice for allocation or definition of such
-mostly-read-only/seldom-updated data.
-
-Thanks,
-
-Mathieu
-
-
+> Thanks,
+> Faiz
 > 
-> Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
-> CC: Thomas Gleixner <tglx@linutronix.de>
-> CC: Kate Stewart <kstewart@linuxfoundation.org>
-> CC: "David S. Miller" <davem@davemloft.net>
-> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> CC: Philippe Ombredanne <pombredanne@nexb.com>
-> CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-> CC: Josh Triplett <josh@joshtriplett.org>
-> CC: Steven Rostedt <rostedt@goodmis.org>
-> CC: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> CC: Lai Jiangshan <jiangshanlai@gmail.com>
-> CC: linux-kernel@vger.kernel.org
-> ---
-> MAINTAINERS            |   1 +
-> include/linux/prlist.h | 934 +++++++++++++++++++++++++++++++++++++++++
-> 2 files changed, 935 insertions(+)
-> create mode 100644 include/linux/prlist.h
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 246b1a1cc8bb..f5689c014e07 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -9464,6 +9464,7 @@ F:	mm/prmem.c
-> F:	mm/test_write_rare.c
-> F:	mm/test_pmalloc.c
-> F:	Documentation/core-api/prmem.rst
-> +F:	include/linux/prlist.h
-> 
-> MEMORY MANAGEMENT
-> L:	linux-mm@kvack.org
-> diff --git a/include/linux/prlist.h b/include/linux/prlist.h
-> new file mode 100644
-> index 000000000000..0387c78f8be8
-> --- /dev/null
-> +++ b/include/linux/prlist.h
-> @@ -0,0 +1,934 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * prlist.h: Header for Protected Lists
-> + *
-> + * (C) Copyright 2018 Huawei Technologies Co. Ltd.
-> + * Author: Igor Stoppa <igor.stoppa@huawei.com>
-> + *
-> + * Code from <linux/list.h> and <linux/rculist.h>, adapted to perform
-> + * writes on write-rare data.
-> + * These functions and macros rely on data structures that allow the reuse
-> + * of what is already provided for reading the content of their non-write
-> + * rare variant.
-> + */
-> +
-> +#ifndef _LINUX_PRLIST_H
-> +#define _LINUX_PRLIST_H
-> +
-> +#include <linux/list.h>
-> +#include <linux/kernel.h>
-> +#include <linux/prmemextra.h>
-> +
-> +/* --------------- Circular Protected Doubly Linked List --------------- */
-> +union prlist_head {
-> +	struct list_head list __aligned(sizeof(void *));
-> +	struct {
-> +		union prlist_head *next __aligned(sizeof(void *));
-> +		union prlist_head *prev __aligned(sizeof(void *));
-> +	} __no_randomize_layout;
-> +} __aligned(sizeof(void *));
-> +
-> +static __always_inline
-> +union prlist_head *to_prlist_head(struct list_head *list)
-> +{
-> +	return container_of(list, union prlist_head, list);
-> +}
-> +
-> +#define PRLIST_HEAD_INIT(name) {	\
-> +	.list = LIST_HEAD_INIT(name),	\
-> +}
-> +
-> +#define PRLIST_HEAD(name) \
-> +	union prlist_head name __wr_after_init = PRLIST_HEAD_INIT(name.list)
-> +
-> +static __always_inline
-> +struct pmalloc_pool *prlist_create_custom_pool(size_t refill,
-> +					       unsigned short align_order)
-> +{
-> +	return pmalloc_create_custom_pool(refill, align_order,
-> +					  PMALLOC_MODE_START_WR);
-> +}
-> +
-> +static __always_inline struct pmalloc_pool *prlist_create_pool(void)
-> +{
-> +	return prlist_create_custom_pool(PMALLOC_REFILL_DEFAULT,
-> +					 PMALLOC_ALIGN_ORDER_DEFAULT);
-> +}
-> +
-> +static __always_inline
-> +void prlist_set_prev(union prlist_head *head,
-> +		     const union prlist_head *prev)
-> +{
-> +	wr_ptr(&head->prev, prev);
-> +}
-> +
-> +static __always_inline
-> +void prlist_set_next(union prlist_head *head,
-> +		     const union prlist_head *next)
-> +{
-> +	wr_ptr(&head->next, next);
-> +}
-> +
-> +static __always_inline void INIT_PRLIST_HEAD(union prlist_head *head)
-> +{
-> +	prlist_set_prev(head, head);
-> +	prlist_set_next(head, head);
-> +}
-> +
-> +/*
-> + * Insert a new entry between two known consecutive entries.
-> + *
-> + * This is only for internal list manipulation where we know
-> + * the prev/next entries already!
-> + */
-> +static __always_inline
-> +void __prlist_add(union prlist_head *new, union prlist_head *prev,
-> +		  union prlist_head *next)
-> +{
-> +	if (!__list_add_valid(&new->list, &prev->list, &next->list))
-> +		return;
-> +
-> +	prlist_set_prev(next, new);
-> +	prlist_set_next(new, next);
-> +	prlist_set_prev(new, prev);
-> +	prlist_set_next(prev, new);
-> +}
-> +
-> +/**
-> + * prlist_add - add a new entry
-> + * @new: new entry to be added
-> + * @head: prlist head to add it after
-> + *
-> + * Insert a new entry after the specified head.
-> + * This is good for implementing stacks.
-> + */
-> +static __always_inline
-> +void prlist_add(union prlist_head *new, union prlist_head *head)
-> +{
-> +	__prlist_add(new, head, head->next);
-> +}
-> +
-> +/**
-> + * prlist_add_tail - add a new entry
-> + * @new: new entry to be added
-> + * @head: list head to add it before
-> + *
-> + * Insert a new entry before the specified head.
-> + * This is useful for implementing queues.
-> + */
-> +static __always_inline
-> +void prlist_add_tail(union prlist_head *new, union prlist_head *head)
-> +{
-> +	__prlist_add(new, head->prev, head);
-> +}
-> +
-> +/*
-> + * Delete a prlist entry by making the prev/next entries
-> + * point to each other.
-> + *
-> + * This is only for internal list manipulation where we know
-> + * the prev/next entries already!
-> + */
-> +static __always_inline
-> +void __prlist_del(union prlist_head *prev, union prlist_head *next)
-> +{
-> +	prlist_set_prev(next, prev);
-> +	prlist_set_next(prev, next);
-> +}
-> +
-> +/**
-> + * prlist_del - deletes entry from list.
-> + * @entry: the element to delete from the list.
-> + * Note: list_empty() on entry does not return true after this, the entry is
-> + * in an undefined state.
-> + */
-> +static inline void __prlist_del_entry(union prlist_head *entry)
-> +{
-> +	if (!__list_del_entry_valid(&entry->list))
-> +		return;
-> +	__prlist_del(entry->prev, entry->next);
-> +}
-> +
-> +static __always_inline void prlist_del(union prlist_head *entry)
-> +{
-> +	__prlist_del_entry(entry);
-> +	prlist_set_next(entry, LIST_POISON1);
-> +	prlist_set_prev(entry, LIST_POISON2);
-> +}
-> +
-> +/**
-> + * prlist_replace - replace old entry by new one
-> + * @old : the element to be replaced
-> + * @new : the new element to insert
-> + *
-> + * If @old was empty, it will be overwritten.
-> + */
-> +static __always_inline
-> +void prlist_replace(union prlist_head *old, union prlist_head *new)
-> +{
-> +	prlist_set_next(new, old->next);
-> +	prlist_set_prev(new->next, new);
-> +	prlist_set_prev(new, old->prev);
-> +	prlist_set_next(new->prev, new);
-> +}
-> +
-> +static __always_inline
-> +void prlist_replace_init(union prlist_head *old, union prlist_head *new)
-> +{
-> +	prlist_replace(old, new);
-> +	INIT_PRLIST_HEAD(old);
-> +}
-> +
-> +/**
-> + * prlist_del_init - deletes entry from list and reinitialize it.
-> + * @entry: the element to delete from the list.
-> + */
-> +static __always_inline void prlist_del_init(union prlist_head *entry)
-> +{
-> +	__prlist_del_entry(entry);
-> +	INIT_PRLIST_HEAD(entry);
-> +}
-> +
-> +/**
-> + * prlist_move - delete from one list and add as another's head
-> + * @list: the entry to move
-> + * @head: the head that will precede our entry
-> + */
-> +static __always_inline
-> +void prlist_move(union prlist_head *list, union prlist_head *head)
-> +{
-> +	__prlist_del_entry(list);
-> +	prlist_add(list, head);
-> +}
-> +
-> +/**
-> + * prlist_move_tail - delete from one list and add as another's tail
-> + * @list: the entry to move
-> + * @head: the head that will follow our entry
-> + */
-> +static __always_inline
-> +void prlist_move_tail(union prlist_head *list, union prlist_head *head)
-> +{
-> +	__prlist_del_entry(list);
-> +	prlist_add_tail(list, head);
-> +}
-> +
-> +/**
-> + * prlist_rotate_left - rotate the list to the left
-> + * @head: the head of the list
-> + */
-> +static __always_inline void prlist_rotate_left(union prlist_head *head)
-> +{
-> +	union prlist_head *first;
-> +
-> +	if (!list_empty(&head->list)) {
-> +		first = head->next;
-> +		prlist_move_tail(first, head);
-> +	}
-> +}
-> +
-> +static __always_inline
-> +void __prlist_cut_position(union prlist_head *list, union prlist_head *head,
-> +			   union prlist_head *entry)
-> +{
-> +	union prlist_head *new_first = entry->next;
-> +
-> +	prlist_set_next(list, head->next);
-> +	prlist_set_prev(list->next, list);
-> +	prlist_set_prev(list, entry);
-> +	prlist_set_next(entry, list);
-> +	prlist_set_next(head, new_first);
-> +	prlist_set_prev(new_first, head);
-> +}
-> +
-> +/**
-> + * prlist_cut_position - cut a list into two
-> + * @list: a new list to add all removed entries
-> + * @head: a list with entries
-> + * @entry: an entry within head, could be the head itself
-> + *	and if so we won't cut the list
-> + *
-> + * This helper moves the initial part of @head, up to and
-> + * including @entry, from @head to @list. You should
-> + * pass on @entry an element you know is on @head. @list
-> + * should be an empty list or a list you do not care about
-> + * losing its data.
-> + *
-> + */
-> +static __always_inline
-> +void prlist_cut_position(union prlist_head *list, union prlist_head *head,
-> +			 union prlist_head *entry)
-> +{
-> +	if (list_empty(&head->list))
-> +		return;
-> +	if (list_is_singular(&head->list) &&
-> +		(head->next != entry && head != entry))
-> +		return;
-> +	if (entry == head)
-> +		INIT_PRLIST_HEAD(list);
-> +	else
-> +		__prlist_cut_position(list, head, entry);
-> +}
-> +
-> +/**
-> + * prlist_cut_before - cut a list into two, before given entry
-> + * @list: a new list to add all removed entries
-> + * @head: a list with entries
-> + * @entry: an entry within head, could be the head itself
-> + *
-> + * This helper moves the initial part of @head, up to but
-> + * excluding @entry, from @head to @list.  You should pass
-> + * in @entry an element you know is on @head.  @list should
-> + * be an empty list or a list you do not care about losing
-> + * its data.
-> + * If @entry == @head, all entries on @head are moved to
-> + * @list.
-> + */
-> +static __always_inline
-> +void prlist_cut_before(union prlist_head *list, union prlist_head *head,
-> +		       union prlist_head *entry)
-> +{
-> +	if (head->next == entry) {
-> +		INIT_PRLIST_HEAD(list);
-> +		return;
-> +	}
-> +	prlist_set_next(list, head->next);
-> +	prlist_set_prev(list->next, list);
-> +	prlist_set_prev(list, entry->prev);
-> +	prlist_set_next(list->prev, list);
-> +	prlist_set_next(head, entry);
-> +	prlist_set_prev(entry, head);
-> +}
-> +
-> +static __always_inline
-> +void __prlist_splice(const union prlist_head *list, union prlist_head *prev,
-> +				 union prlist_head *next)
-> +{
-> +	union prlist_head *first = list->next;
-> +	union prlist_head *last = list->prev;
-> +
-> +	prlist_set_prev(first, prev);
-> +	prlist_set_next(prev, first);
-> +	prlist_set_next(last, next);
-> +	prlist_set_prev(next, last);
-> +}
-> +
-> +/**
-> + * prlist_splice - join two lists, this is designed for stacks
-> + * @list: the new list to add.
-> + * @head: the place to add it in the first list.
-> + */
-> +static __always_inline
-> +void prlist_splice(const union prlist_head *list, union prlist_head *head)
-> +{
-> +	if (!list_empty(&list->list))
-> +		__prlist_splice(list, head, head->next);
-> +}
-> +
-> +/**
-> + * prlist_splice_tail - join two lists, each list being a queue
-> + * @list: the new list to add.
-> + * @head: the place to add it in the first list.
-> + */
-> +static __always_inline
-> +void prlist_splice_tail(union prlist_head *list, union prlist_head *head)
-> +{
-> +	if (!list_empty(&list->list))
-> +		__prlist_splice(list, head->prev, head);
-> +}
-> +
-> +/**
-> + * prlist_splice_init - join two lists and reinitialise the emptied list.
-> + * @list: the new list to add.
-> + * @head: the place to add it in the first list.
-> + *
-> + * The list at @list is reinitialised
-> + */
-> +static __always_inline
-> +void prlist_splice_init(union prlist_head *list, union prlist_head *head)
-> +{
-> +	if (!list_empty(&list->list)) {
-> +		__prlist_splice(list, head, head->next);
-> +		INIT_PRLIST_HEAD(list);
-> +	}
-> +}
-> +
-> +/**
-> + * prlist_splice_tail_init - join 2 lists and reinitialise the emptied list
-> + * @list: the new list to add.
-> + * @head: the place to add it in the first list.
-> + *
-> + * Each of the lists is a queue.
-> + * The list at @list is reinitialised
-> + */
-> +static __always_inline
-> +void prlist_splice_tail_init(union prlist_head *list,
-> +			     union prlist_head *head)
-> +{
-> +	if (!list_empty(&list->list)) {
-> +		__prlist_splice(list, head->prev, head);
-> +		INIT_PRLIST_HEAD(list);
-> +	}
-> +}
-> +
-> +/* ---- Protected Doubly Linked List with single pointer list head ---- */
-> +union prhlist_head {
-> +		struct hlist_head head __aligned(sizeof(void *));
-> +		union prhlist_node *first __aligned(sizeof(void *));
-> +} __aligned(sizeof(void *));
-> +
-> +union prhlist_node {
-> +	struct hlist_node node __aligned(sizeof(void *))
-> +			       ;
-> +	struct {
-> +		union prhlist_node *next __aligned(sizeof(void *));
-> +		union prhlist_node **pprev __aligned(sizeof(void *));
-> +	} __no_randomize_layout;
-> +} __aligned(sizeof(void *));
-> +
-> +#define PRHLIST_HEAD_INIT	{	\
-> +	.head = HLIST_HEAD_INIT,	\
-> +}
-> +
-> +#define PRHLIST_HEAD(name) \
-> +	union prhlist_head name __wr_after_init = PRHLIST_HEAD_INIT
-> +
-> +
-> +#define is_static(object) \
-> +	unlikely(wr_check_boundaries(object, sizeof(*object)))
-> +
-> +static __always_inline
-> +struct pmalloc_pool *prhlist_create_custom_pool(size_t refill,
-> +						unsigned short align_order)
-> +{
-> +	return pmalloc_create_custom_pool(refill, align_order,
-> +					  PMALLOC_MODE_AUTO_WR);
-> +}
-> +
-> +static __always_inline
-> +struct pmalloc_pool *prhlist_create_pool(void)
-> +{
-> +	return prhlist_create_custom_pool(PMALLOC_REFILL_DEFAULT,
-> +					  PMALLOC_ALIGN_ORDER_DEFAULT);
-> +}
-> +
-> +static __always_inline
-> +void prhlist_set_first(union prhlist_head *head, union prhlist_node *first)
-> +{
-> +	wr_ptr(&head->first, first);
-> +}
-> +
-> +static __always_inline
-> +void prhlist_set_next(union prhlist_node *node, union prhlist_node *next)
-> +{
-> +	wr_ptr(&node->next, next);
-> +}
-> +
-> +static __always_inline
-> +void prhlist_set_pprev(union prhlist_node *node, union prhlist_node **pprev)
-> +{
-> +	wr_ptr(&node->pprev, pprev);
-> +}
-> +
-> +static __always_inline
-> +void prhlist_set_prev(union prhlist_node *node, union prhlist_node *prev)
-> +{
-> +	wr_ptr(node->pprev, prev);
-> +}
-> +
-> +static __always_inline void INIT_PRHLIST_HEAD(union prhlist_head *head)
-> +{
-> +	prhlist_set_first(head, NULL);
-> +}
-> +
-> +static __always_inline void INIT_PRHLIST_NODE(union prhlist_node *node)
-> +{
-> +	prhlist_set_next(node, NULL);
-> +	prhlist_set_pprev(node, NULL);
-> +}
-> +
-> +static __always_inline void __prhlist_del(union prhlist_node *n)
-> +{
-> +	union prhlist_node *next = n->next;
-> +	union prhlist_node **pprev = n->pprev;
-> +
-> +	wr_ptr(pprev, next);
-> +	if (next)
-> +		prhlist_set_pprev(next, pprev);
-> +}
-> +
-> +static __always_inline void prhlist_del(union prhlist_node *n)
-> +{
-> +	__prhlist_del(n);
-> +	prhlist_set_next(n, LIST_POISON1);
-> +	prhlist_set_pprev(n, LIST_POISON2);
-> +}
-> +
-> +static __always_inline void prhlist_del_init(union prhlist_node *n)
-> +{
-> +	if (!hlist_unhashed(&n->node)) {
-> +		__prhlist_del(n);
-> +		INIT_PRHLIST_NODE(n);
-> +	}
-> +}
-> +
-> +static __always_inline
-> +void prhlist_add_head(union prhlist_node *n, union prhlist_head *h)
-> +{
-> +	union prhlist_node *first = h->first;
-> +
-> +	prhlist_set_next(n, first);
-> +	if (first)
-> +		prhlist_set_pprev(first, &n->next);
-> +	prhlist_set_first(h, n);
-> +	prhlist_set_pprev(n, &h->first);
-> +}
-> +
-> +/* next must be != NULL */
-> +static __always_inline
-> +void prhlist_add_before(union prhlist_node *n, union prhlist_node *next)
-> +{
-> +	prhlist_set_pprev(n, next->pprev);
-> +	prhlist_set_next(n, next);
-> +	prhlist_set_pprev(next, &n->next);
-> +	prhlist_set_prev(n, n);
-> +}
-> +
-> +static __always_inline
-> +void prhlist_add_behind(union prhlist_node *n, union prhlist_node *prev)
-> +{
-> +	prhlist_set_next(n, prev->next);
-> +	prhlist_set_next(prev, n);
-> +	prhlist_set_pprev(n, &prev->next);
-> +	if (n->next)
-> +		prhlist_set_pprev(n->next, &n->next);
-> +}
-> +
-> +/* after that we'll appear to be on some hlist and hlist_del will work */
-> +static __always_inline void prhlist_add_fake(union prhlist_node *n)
-> +{
-> +	prhlist_set_pprev(n, &n->next);
-> +}
-> +
-> +/*
-> + * Move a list from one list head to another. Fixup the pprev
-> + * reference of the first entry if it exists.
-> + */
-> +static __always_inline
-> +void prhlist_move_list(union prhlist_head *old, union prhlist_head *new)
-> +{
-> +	prhlist_set_first(new, old->first);
-> +	if (new->first)
-> +		prhlist_set_pprev(new->first, &new->first);
-> +	prhlist_set_first(old, NULL);
-> +}
-> +
-> +/* ------------------------ RCU list and hlist ------------------------ */
-> +
-> +/*
-> + * INIT_LIST_HEAD_RCU - Initialize a list_head visible to RCU readers
-> + * @head: list to be initialized
-> + *
-> + * It is exactly equivalent to INIT_LIST_HEAD()
-> + */
-> +static __always_inline void INIT_PRLIST_HEAD_RCU(union prlist_head *head)
-> +{
-> +	INIT_PRLIST_HEAD(head);
-> +}
-> +
-> +/*
-> + * Insert a new entry between two known consecutive entries.
-> + *
-> + * This is only for internal list manipulation where we know
-> + * the prev/next entries already!
-> + */
-> +static __always_inline
-> +void __prlist_add_rcu(union prlist_head *new, union prlist_head *prev,
-> +		      union prlist_head *next)
-> +{
-> +	if (!__list_add_valid(&new->list, &prev->list, &next->list))
-> +		return;
-> +	prlist_set_next(new, next);
-> +	prlist_set_prev(new, prev);
-> +	wr_rcu_assign_pointer(list_next_rcu(&prev->list), new);
-> +	prlist_set_prev(next, new);
-> +}
-> +
-> +/**
-> + * prlist_add_rcu - add a new entry to rcu-protected prlist
-> + * @new: new entry to be added
-> + * @head: prlist head to add it after
-> + *
-> + * Insert a new entry after the specified head.
-> + * This is good for implementing stacks.
-> + *
-> + * The caller must take whatever precautions are necessary
-> + * (such as holding appropriate locks) to avoid racing
-> + * with another prlist-mutation primitive, such as prlist_add_rcu()
-> + * or prlist_del_rcu(), running on this same list.
-> + * However, it is perfectly legal to run concurrently with
-> + * the _rcu list-traversal primitives, such as
-> + * list_for_each_entry_rcu().
-> + */
-> +static __always_inline
-> +void prlist_add_rcu(union prlist_head *new, union prlist_head *head)
-> +{
-> +	__prlist_add_rcu(new, head, head->next);
-> +}
-> +
-> +/**
-> + * prlist_add_tail_rcu - add a new entry to rcu-protected prlist
-> + * @new: new entry to be added
-> + * @head: prlist head to add it before
-> + *
-> + * Insert a new entry before the specified head.
-> + * This is useful for implementing queues.
-> + *
-> + * The caller must take whatever precautions are necessary
-> + * (such as holding appropriate locks) to avoid racing
-> + * with another prlist-mutation primitive, such as prlist_add_tail_rcu()
-> + * or prlist_del_rcu(), running on this same list.
-> + * However, it is perfectly legal to run concurrently with
-> + * the _rcu list-traversal primitives, such as
-> + * list_for_each_entry_rcu().
-> + */
-> +static __always_inline
-> +void prlist_add_tail_rcu(union prlist_head *new, union prlist_head *head)
-> +{
-> +	__prlist_add_rcu(new, head->prev, head);
-> +}
-> +
-> +/**
-> + * prlist_del_rcu - deletes entry from prlist without re-initialization
-> + * @entry: the element to delete from the prlist.
-> + *
-> + * Note: list_empty() on entry does not return true after this,
-> + * the entry is in an undefined state. It is useful for RCU based
-> + * lockfree traversal.
-> + *
-> + * In particular, it means that we can not poison the forward
-> + * pointers that may still be used for walking the list.
-> + *
-> + * The caller must take whatever precautions are necessary
-> + * (such as holding appropriate locks) to avoid racing
-> + * with another list-mutation primitive, such as prlist_del_rcu()
-> + * or prlist_add_rcu(), running on this same prlist.
-> + * However, it is perfectly legal to run concurrently with
-> + * the _rcu list-traversal primitives, such as
-> + * list_for_each_entry_rcu().
-> + *
-> + * Note that the caller is not permitted to immediately free
-> + * the newly deleted entry.  Instead, either synchronize_rcu()
-> + * or call_rcu() must be used to defer freeing until an RCU
-> + * grace period has elapsed.
-> + */
-> +static __always_inline void prlist_del_rcu(union prlist_head *entry)
-> +{
-> +	__prlist_del_entry(entry);
-> +	prlist_set_prev(entry, LIST_POISON2);
-> +}
-> +
-> +/**
-> + * prhlist_del_init_rcu - deletes entry from hash list with re-initialization
-> + * @n: the element to delete from the hash list.
-> + *
-> + * Note: list_unhashed() on the node return true after this. It is
-> + * useful for RCU based read lockfree traversal if the writer side
-> + * must know if the list entry is still hashed or already unhashed.
-> + *
-> + * In particular, it means that we can not poison the forward pointers
-> + * that may still be used for walking the hash list and we can only
-> + * zero the pprev pointer so list_unhashed() will return true after
-> + * this.
-> + *
-> + * The caller must take whatever precautions are necessary (such as
-> + * holding appropriate locks) to avoid racing with another
-> + * list-mutation primitive, such as hlist_add_head_rcu() or
-> + * hlist_del_rcu(), running on this same list.  However, it is
-> + * perfectly legal to run concurrently with the _rcu list-traversal
-> + * primitives, such as hlist_for_each_entry_rcu().
-> + */
-> +static __always_inline void prhlist_del_init_rcu(union prhlist_node *n)
-> +{
-> +	if (!hlist_unhashed(&n->node)) {
-> +		__prhlist_del(n);
-> +		prhlist_set_pprev(n, NULL);
-> +	}
-> +}
-> +
-> +/**
-> + * prlist_replace_rcu - replace old entry by new one
-> + * @old : the element to be replaced
-> + * @new : the new element to insert
-> + *
-> + * The @old entry will be replaced with the @new entry atomically.
-> + * Note: @old should not be empty.
-> + */
-> +static __always_inline
-> +void prlist_replace_rcu(union prlist_head *old, union prlist_head *new)
-> +{
-> +	prlist_set_next(new, old->next);
-> +	prlist_set_prev(new, old->prev);
-> +	wr_rcu_assign_pointer(list_next_rcu(&new->prev->list), new);
-> +	prlist_set_prev(new->next, new);
-> +	prlist_set_prev(old, LIST_POISON2);
-> +}
-> +
-> +/**
-> + * __prlist_splice_init_rcu - join an RCU-protected list into an existing list.
-> + * @list:	the RCU-protected list to splice
-> + * @prev:	points to the last element of the existing list
-> + * @next:	points to the first element of the existing list
-> + * @sync:	function to sync: synchronize_rcu(), synchronize_sched(), ...
-> + *
-> + * The list pointed to by @prev and @next can be RCU-read traversed
-> + * concurrently with this function.
-> + *
-> + * Note that this function blocks.
-> + *
-> + * Important note: the caller must take whatever action is necessary to prevent
-> + * any other updates to the existing list.  In principle, it is possible to
-> + * modify the list as soon as sync() begins execution. If this sort of thing
-> + * becomes necessary, an alternative version based on call_rcu() could be
-> + * created.  But only if -really- needed -- there is no shortage of RCU API
-> + * members.
-> + */
-> +static __always_inline
-> +void __prlist_splice_init_rcu(union prlist_head *list,
-> +			      union prlist_head *prev,
-> +			      union prlist_head *next, void (*sync)(void))
-> +{
-> +	union prlist_head *first = list->next;
-> +	union prlist_head *last = list->prev;
-> +
-> +	/*
-> +	 * "first" and "last" tracking list, so initialize it.  RCU readers
-> +	 * have access to this list, so we must use INIT_LIST_HEAD_RCU()
-> +	 * instead of INIT_LIST_HEAD().
-> +	 */
-> +
-> +	INIT_PRLIST_HEAD_RCU(list);
-> +
-> +	/*
-> +	 * At this point, the list body still points to the source list.
-> +	 * Wait for any readers to finish using the list before splicing
-> +	 * the list body into the new list.  Any new readers will see
-> +	 * an empty list.
-> +	 */
-> +
-> +	sync();
-> +
-> +	/*
-> +	 * Readers are finished with the source list, so perform splice.
-> +	 * The order is important if the new list is global and accessible
-> +	 * to concurrent RCU readers.  Note that RCU readers are not
-> +	 * permitted to traverse the prev pointers without excluding
-> +	 * this function.
-> +	 */
-> +
-> +	prlist_set_next(last, next);
-> +	wr_rcu_assign_pointer(list_next_rcu(&prev->list), first);
-> +	prlist_set_prev(first, prev);
-> +	prlist_set_prev(next, last);
-> +}
-> +
-> +/**
-> + * prlist_splice_init_rcu - splice an RCU-protected list into an existing
-> + *                          list, designed for stacks.
-> + * @list:	the RCU-protected list to splice
-> + * @head:	the place in the existing list to splice the first list into
-> + * @sync:	function to sync: synchronize_rcu(), synchronize_sched(), ...
-> + */
-> +static __always_inline
-> +void prlist_splice_init_rcu(union prlist_head *list,
-> +			    union prlist_head *head,
-> +			    void (*sync)(void))
-> +{
-> +	if (!list_empty(&list->list))
-> +		__prlist_splice_init_rcu(list, head, head->next, sync);
-> +}
-> +
-> +/**
-> + * prlist_splice_tail_init_rcu - splice an RCU-protected list into an
-> + *                               existing list, designed for queues.
-> + * @list:	the RCU-protected list to splice
-> + * @head:	the place in the existing list to splice the first list into
-> + * @sync:	function to sync: synchronize_rcu(), synchronize_sched(), ...
-> + */
-> +static __always_inline
-> +void prlist_splice_tail_init_rcu(union prlist_head *list,
-> +				 union prlist_head *head,
-> +				 void (*sync)(void))
-> +{
-> +	if (!list_empty(&list->list))
-> +		__prlist_splice_init_rcu(list, head->prev, head, sync);
-> +}
-> +
-> +/**
-> + * prhlist_del_rcu - deletes entry from hash list without re-initialization
-> + * @n: the element to delete from the hash list.
-> + *
-> + * Note: list_unhashed() on entry does not return true after this,
-> + * the entry is in an undefined state. It is useful for RCU based
-> + * lockfree traversal.
-> + *
-> + * In particular, it means that we can not poison the forward
-> + * pointers that may still be used for walking the hash list.
-> + *
-> + * The caller must take whatever precautions are necessary
-> + * (such as holding appropriate locks) to avoid racing
-> + * with another list-mutation primitive, such as hlist_add_head_rcu()
-> + * or hlist_del_rcu(), running on this same list.
-> + * However, it is perfectly legal to run concurrently with
-> + * the _rcu list-traversal primitives, such as
-> + * hlist_for_each_entry().
-> + */
-> +static __always_inline void prhlist_del_rcu(union prhlist_node *n)
-> +{
-> +	__prhlist_del(n);
-> +	prhlist_set_pprev(n, LIST_POISON2);
-> +}
-> +
-> +/**
-> + * prhlist_replace_rcu - replace old entry by new one
-> + * @old : the element to be replaced
-> + * @new : the new element to insert
-> + *
-> + * The @old entry will be replaced with the @new entry atomically.
-> + */
-> +static __always_inline
-> +void prhlist_replace_rcu(union prhlist_node *old, union prhlist_node *new)
-> +{
-> +	union prhlist_node *next = old->next;
-> +
-> +	prhlist_set_next(new, next);
-> +	prhlist_set_pprev(new, old->pprev);
-> +	wr_rcu_assign_pointer(*(union prhlist_node __rcu **)new->pprev, new);
-> +	if (next)
-> +		prhlist_set_pprev(new->next, &new->next);
-> +	prhlist_set_pprev(old, LIST_POISON2);
-> +}
-> +
-> +/**
-> + * prhlist_add_head_rcu
-> + * @n: the element to add to the hash list.
-> + * @h: the list to add to.
-> + *
-> + * Description:
-> + * Adds the specified element to the specified hlist,
-> + * while permitting racing traversals.
-> + *
-> + * The caller must take whatever precautions are necessary
-> + * (such as holding appropriate locks) to avoid racing
-> + * with another list-mutation primitive, such as hlist_add_head_rcu()
-> + * or hlist_del_rcu(), running on this same list.
-> + * However, it is perfectly legal to run concurrently with
-> + * the _rcu list-traversal primitives, such as
-> + * hlist_for_each_entry_rcu(), used to prevent memory-consistency
-> + * problems on Alpha CPUs.  Regardless of the type of CPU, the
-> + * list-traversal primitive must be guarded by rcu_read_lock().
-> + */
-> +static __always_inline
-> +void prhlist_add_head_rcu(union prhlist_node *n, union prhlist_head *h)
-> +{
-> +	union prhlist_node *first = h->first;
-> +
-> +	prhlist_set_next(n, first);
-> +	prhlist_set_pprev(n, &h->first);
-> +	wr_rcu_assign_pointer(hlist_first_rcu(&h->head), n);
-> +	if (first)
-> +		prhlist_set_pprev(first, &n->next);
-> +}
-> +
-> +/**
-> + * prhlist_add_tail_rcu
-> + * @n: the element to add to the hash list.
-> + * @h: the list to add to.
-> + *
-> + * Description:
-> + * Adds the specified element to the specified hlist,
-> + * while permitting racing traversals.
-> + *
-> + * The caller must take whatever precautions are necessary
-> + * (such as holding appropriate locks) to avoid racing
-> + * with another list-mutation primitive, such as prhlist_add_head_rcu()
-> + * or prhlist_del_rcu(), running on this same list.
-> + * However, it is perfectly legal to run concurrently with
-> + * the _rcu list-traversal primitives, such as
-> + * hlist_for_each_entry_rcu(), used to prevent memory-consistency
-> + * problems on Alpha CPUs.  Regardless of the type of CPU, the
-> + * list-traversal primitive must be guarded by rcu_read_lock().
-> + */
-> +static __always_inline
-> +void prhlist_add_tail_rcu(union prhlist_node *n, union prhlist_head *h)
-> +{
-> +	union prhlist_node *i, *last = NULL;
-> +
-> +	/* Note: write side code, so rcu accessors are not needed. */
-> +	for (i = h->first; i; i = i->next)
-> +		last = i;
-> +
-> +	if (last) {
-> +		prhlist_set_next(n, last->next);
-> +		prhlist_set_pprev(n, &last->next);
-> +		wr_rcu_assign_pointer(hlist_next_rcu(&last->node), n);
-> +	} else {
-> +		prhlist_add_head_rcu(n, h);
-> +	}
-> +}
-> +
-> +/**
-> + * prhlist_add_before_rcu
-> + * @n: the new element to add to the hash list.
-> + * @next: the existing element to add the new element before.
-> + *
-> + * Description:
-> + * Adds the specified element to the specified hlist
-> + * before the specified node while permitting racing traversals.
-> + *
-> + * The caller must take whatever precautions are necessary
-> + * (such as holding appropriate locks) to avoid racing
-> + * with another list-mutation primitive, such as prhlist_add_head_rcu()
-> + * or prhlist_del_rcu(), running on this same list.
-> + * However, it is perfectly legal to run concurrently with
-> + * the _rcu list-traversal primitives, such as
-> + * hlist_for_each_entry_rcu(), used to prevent memory-consistency
-> + * problems on Alpha CPUs.
-> + */
-> +static __always_inline
-> +void prhlist_add_before_rcu(union prhlist_node *n, union prhlist_node *next)
-> +{
-> +	prhlist_set_pprev(n, next->pprev);
-> +	prhlist_set_next(n, next);
-> +	wr_rcu_assign_pointer(hlist_pprev_rcu(&n->node), n);
-> +	prhlist_set_pprev(next, &n->next);
-> +}
-> +
-> +/**
-> + * prhlist_add_behind_rcu
-> + * @n: the new element to add to the hash list.
-> + * @prev: the existing element to add the new element after.
-> + *
-> + * Description:
-> + * Adds the specified element to the specified hlist
-> + * after the specified node while permitting racing traversals.
-> + *
-> + * The caller must take whatever precautions are necessary
-> + * (such as holding appropriate locks) to avoid racing
-> + * with another list-mutation primitive, such as prhlist_add_head_rcu()
-> + * or prhlist_del_rcu(), running on this same list.
-> + * However, it is perfectly legal to run concurrently with
-> + * the _rcu list-traversal primitives, such as
-> + * hlist_for_each_entry_rcu(), used to prevent memory-consistency
-> + * problems on Alpha CPUs.
-> + */
-> +static __always_inline
-> +void prhlist_add_behind_rcu(union prhlist_node *n, union prhlist_node *prev)
-> +{
-> +	prhlist_set_next(n, prev->next);
-> +	prhlist_set_pprev(n, &prev->next);
-> +	wr_rcu_assign_pointer(hlist_next_rcu(&prev->node), n);
-> +	if (n->next)
-> +		prhlist_set_pprev(n->next, &n->next);
-> +}
-> +#endif
-> --
-> 2.17.1
+
 
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+------------------
+Dan Murphy
