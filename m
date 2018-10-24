@@ -2,286 +2,281 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F445ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 17:45:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A30EECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 17:48:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E193A2084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 17:45:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 075E32082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 17:48:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="o7XGXzSI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E193A2084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="WvuWW7BJ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="S5le1BHc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 075E32082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727400AbeJYCOK (ORCPT
+        id S1727293AbeJYCRv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 22:14:10 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:53517 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726497AbeJYCOK (ORCPT
+        Wed, 24 Oct 2018 22:17:51 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52742 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726912AbeJYCRu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 22:14:10 -0400
-Received: by mail-it1-f195.google.com with SMTP id q70-v6so7242659itb.3
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 10:45:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=erCXCTu9lB9F6AX4sseScuPY1Z8Ds0WqfLYpPNdd1tE=;
-        b=o7XGXzSIFfn8Rt9eatPYaK3N4HVrJ1wAWRRodYCM75O1eKM6FA6aUUFdjVYBO3EXfe
-         SwLtoz4lhnLMdbiWCswsddQqsFkYefnt0+y9qkWSq/G9+Zx4pqVU28b6Ajqe6/x7JmyY
-         OQ/m0S+GLeqErfNyDQY01+hbC26Mhzbh/GeJ6reCmHc9AvGZ1T7dwYxaQgvCleV9HC0N
-         1/++MwT1LAb/v4vfA9EdL5mTSaI+v7rMjLRuHfAXZTcpzH2nRfnO9GUm9x7v7OFcvCD1
-         qJUPIrTZTg7b8gJVgDIrCLQ/KGNmOqXaFU0Nll7YPoiAy9IigzRGMYbToVfLFqZSfYYy
-         cnMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=erCXCTu9lB9F6AX4sseScuPY1Z8Ds0WqfLYpPNdd1tE=;
-        b=rUWtegXWsEU5C21jbVTMCTrebztFOLdNWR+Zry1WCFj/JNKGvQt6lnIMFpcSN/+Fkz
-         Y/4qUA87miDnq2sNUEBXFKtvJHzVnm4z8Oq5dy0ZJKkhm8/izaknmPaf7ywLomRcGBCI
-         DG43V3uwcoGxrms+aIIQhn/iRzOmwwiMjrWhw+p+09BosApYDMKqEWq5i5Tm/GxQEFwx
-         XqVcRYg981OZGm6UdqI5YxyARdqmkvd9EnDqPvpWGo0mAwRDo0Rg20c4q9nhBONSAr3D
-         Uz+yzDOw8XNgTp/+uyJsFMdV/s5MYR/ASbxryF+eks13nXUMSmNLhs+p76r9KEbxhQ91
-         gtyw==
-X-Gm-Message-State: AGRZ1gILgbZmZh/Y/R4BSVPo2zp5E7AMdM2S+s1BvwkkPyqhth8W+n6X
-        ABFd962BO4phEYiticuWKV3EaqLcr/Cs5zos97FgGw==
-X-Google-Smtp-Source: AJdET5dGEPHDiRupp7aeXxUeJlGjDfXlxNsyC0jiIhKoFBylXbZP+uSDZ3rAb5snVur+x31tIxlPsGhcv0za/yHZP1k=
-X-Received: by 2002:a24:6c14:: with SMTP id w20-v6mr2124807itb.103.1540403110526;
- Wed, 24 Oct 2018 10:45:10 -0700 (PDT)
+        Wed, 24 Oct 2018 22:17:50 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 3CD0C60CEC; Wed, 24 Oct 2018 17:48:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540403331;
+        bh=BAeLq9G/mv057IT1tXEQxPCgxGCfXhOHMiaM7gmiCUI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=WvuWW7BJ0HxQthavFLVioqMLAPAzbmGpR8rXyATr7WBX7cbWlHTnO+SPZy/rQGExG
+         z0IgDnu6bg8pIQXC3W3J5oIpQyN5HWB5qAlbriN+TlZ3+Z0KN0PAY44xH6D8bBauFF
+         anor5gCm18SUmtW6YKuDaQND1xmLw8kN6VXFKA8M=
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6F05E60ADB;
+        Wed, 24 Oct 2018 17:48:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540403330;
+        bh=BAeLq9G/mv057IT1tXEQxPCgxGCfXhOHMiaM7gmiCUI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=S5le1BHcQok4JqBsQIQ4FOjTyimE7fVlz0/+54mLwDoyqeOLrINkyJyw4OcsTXq0v
+         /Y1Hb7B6pNTlZ6+pRCC4pDpqF3q7GpgVdGh1rWbZ7+6uVsZiwUTUH6I/6mLG6ffKV/
+         CuV14CZxfMuIDJKoMsVy3CEsybFZ7uIbuIa5sQ7Q=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6F05E60ADB
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Received: by mail-qk1-f175.google.com with SMTP id g13-v6so3931980qke.8;
+        Wed, 24 Oct 2018 10:48:50 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gLuWG82ZAMHudghvSkjcm7Idg2reVjXPwaQ5aTkLNxIiJF7VSPK
+        LaXg/qof7iKd9DB+o4ZSKS/lqU3eoKyix+UcJ9g=
+X-Google-Smtp-Source: AJdET5ekTU6/qjygdJcgdK+WHba8dg2PteB+y8MM0TCVC5XVwj1SdsgY1013RQdqGwnRfExlwc7odW8GXRZfNz2QtSk=
+X-Received: by 2002:a37:4952:: with SMTP id w79-v6mr3266323qka.85.1540403329650;
+ Wed, 24 Oct 2018 10:48:49 -0700 (PDT)
 MIME-Version: 1.0
-References: <09986c98c9655f1542768ecfda644ac821e67a57.1540369608.git.jsteckli@amazon.de>
- <ba8f4a02e90f1dc95a900f6a34caddce40a358d4.1540369608.git.jsteckli@amazon.de>
-In-Reply-To: <ba8f4a02e90f1dc95a900f6a34caddce40a358d4.1540369608.git.jsteckli@amazon.de>
-From:   Eric Northup <digitaleric@google.com>
-Date:   Wed, 24 Oct 2018 10:44:59 -0700
-Message-ID: <CAG7+5M39QBY1dkBjkJ9N4_9f1b1B6Hfqzg1Oh1mMp8N=dk7ZgQ@mail.gmail.com>
-Subject: Re: [PATCH 4/4] kvm, vmx: remove manually coded vmx instructions
-To:     jsteckli@amazon.de
-Cc:     KVM <kvm@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
-        js@alien8.de,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180615105329.26800-1-vivek.gautam@codeaurora.org> <CAAFQd5AMirap5vjVC+73cv_KzE=-+EUD6TWd_NHRDw_m-sXDrw@mail.gmail.com>
+In-Reply-To: <CAAFQd5AMirap5vjVC+73cv_KzE=-+EUD6TWd_NHRDw_m-sXDrw@mail.gmail.com>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Date:   Wed, 24 Oct 2018 23:18:27 +0530
+X-Gmail-Original-Message-ID: <CAFp+6iFWZ9DGGHedqVLrGZqXPsS9RMbe4QgpJr5skJdd4m+RSA@mail.gmail.com>
+Message-ID: <CAFp+6iFWZ9DGGHedqVLrGZqXPsS9RMbe4QgpJr5skJdd4m+RSA@mail.gmail.com>
+Subject: Re: [PATCH 1/1] iommu/arm-smmu: Add support to use Last level cache
+To:     Tomasz Figa <tfiga@chromium.org>
+Cc:     pdaly@codeaurora.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <iommu@lists.linux-foundation.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 1:30 AM Julian Stecklina <jsteckli@amazon.de> wrote=
-:
->
-> So far the VMX code relied on manually assembled VMX instructions. This
-> was apparently done to ensure compatibility with old binutils. VMX
-> instructions were introduced with binutils 2.19 and the kernel currently
-> requires binutils 2.20.
->
-> Remove the manually assembled versions and replace them with the proper
-> inline assembly. This improves code generation (and source code
-> readability).
->
-> According to the bloat-o-meter this change removes ~1300 bytes from the
-> text segment.
+Hi Tomasz,
 
-This loses the exception handling from __ex* ->
-____kvm_handle_fault_on_reboot.
+On Tue, Oct 23, 2018 at 9:45 AM Tomasz Figa <tfiga@chromium.org> wrote:
+>
+> Hi Vivek,
+>
+> On Fri, Jun 15, 2018 at 7:53 PM Vivek Gautam
+> <vivek.gautam@codeaurora.org> wrote:
+> >
+> > Qualcomm SoCs have an additional level of cache called as
+> > System cache or Last level cache[1]. This cache sits right
+> > before the DDR, and is tightly coupled with the memory
+> > controller.
+> > The cache is available to all the clients present in the
+> > SoC system. The clients request their slices from this system
+> > cache, make it active, and can then start using it. For these
+> > clients with smmu, to start using the system cache for
+> > dma buffers and related page tables [2], few of the memory
+> > attributes need to be set accordingly.
+> > This change makes the related memory Outer-Shareable, and
+> > updates the MAIR with necessary protection.
+> >
+> > The MAIR attribute requirements are:
+> >     Inner Cacheablity = 0
+> >     Outer Cacheablity = 1, Write-Back Write Allocate
+> >     Outer Shareablity = 1
+> >
+> > This change is a realisation of following changes
+> > from downstream msm-4.9:
+> > iommu: io-pgtable-arm: Support DOMAIN_ATTRIBUTE_USE_UPSTREAM_HINT
+> > iommu: io-pgtable-arm: Implement IOMMU_USE_UPSTREAM_HINT
+>
+> Would you be able to provide links to those 2 downstream changes?
 
-If deliberate, this should be called out in changelog.  Has the race
-which commit 4ecac3fd fixed been mitigated otherwise?
+Thanks for the review.
+Here are the links for the changes:
+[1] -- iommu: io-pgtable-arm: Support DOMAIN_ATTRIBUTE_USE_UPSTREAM_HINT
+[2] -- iommu: io-pgtable-arm: Implement IOMMU_USE_UPSTREAM_HINT
 
+[1] https://source.codeaurora.org/quic/la/kernel/msm-4.9/commit/?h=msm-4.9&id=bf762276796e79ca90014992f4d9da5593fa7d51
+[2] https://source.codeaurora.org/quic/la/kernel/msm-4.9/commit/?h=msm-4.9&id=d4c72c413ea27c43f60825193d4de9cb8ffd9602
 
+>
+> >
+> > [1] https://patchwork.kernel.org/patch/10422531/
+> > [2] https://patchwork.kernel.org/patch/10302791/
+> >
+> > Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+> > ---
+> >  drivers/iommu/arm-smmu.c       | 14 ++++++++++++++
+> >  drivers/iommu/io-pgtable-arm.c | 24 +++++++++++++++++++-----
+> >  drivers/iommu/io-pgtable.h     |  4 ++++
+> >  include/linux/iommu.h          |  4 ++++
+> >  4 files changed, 41 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+> > index f7a96bcf94a6..8058e7205034 100644
+> > --- a/drivers/iommu/arm-smmu.c
+> > +++ b/drivers/iommu/arm-smmu.c
+> > @@ -249,6 +249,7 @@ struct arm_smmu_domain {
+> >         struct mutex                    init_mutex; /* Protects smmu pointer */
+> >         spinlock_t                      cb_lock; /* Serialises ATS1* ops and TLB syncs */
+> >         struct iommu_domain             domain;
+> > +       bool                            has_sys_cache;
+> >  };
+> >
+> >  struct arm_smmu_option_prop {
+> > @@ -862,6 +863,8 @@ static int arm_smmu_init_domain_context(struct iommu_domain *domain,
+> >
+> >         if (smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
+> >                 pgtbl_cfg.quirks = IO_PGTABLE_QUIRK_NO_DMA;
+> > +       if (smmu_domain->has_sys_cache)
+> > +               pgtbl_cfg.quirks |= IO_PGTABLE_QUIRK_SYS_CACHE;
+> >
+> >         smmu_domain->smmu = smmu;
+> >         pgtbl_ops = alloc_io_pgtable_ops(fmt, &pgtbl_cfg, smmu_domain);
+> > @@ -1477,6 +1480,9 @@ static int arm_smmu_domain_get_attr(struct iommu_domain *domain,
+> >         case DOMAIN_ATTR_NESTING:
+> >                 *(int *)data = (smmu_domain->stage == ARM_SMMU_DOMAIN_NESTED);
+> >                 return 0;
+> > +       case DOMAIN_ATTR_USE_SYS_CACHE:
+> > +               *((int *)data) = smmu_domain->has_sys_cache;
+> > +               return 0;
+> >         default:
+> >                 return -ENODEV;
+> >         }
+> > @@ -1506,6 +1512,14 @@ static int arm_smmu_domain_set_attr(struct iommu_domain *domain,
+> >                         smmu_domain->stage = ARM_SMMU_DOMAIN_S1;
+> >
+> >                 break;
+> > +       case DOMAIN_ATTR_USE_SYS_CACHE:
+> > +               if (smmu_domain->smmu) {
+> > +                       ret = -EPERM;
+> > +                       goto out_unlock;
+> > +               }
+> > +               if (*((int *)data))
+> > +                       smmu_domain->has_sys_cache = true;
+> > +               break;
+> >         default:
+> >                 ret = -ENODEV;
+> >         }
+> > diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
+> > index 010a254305dd..b2aee1828524 100644
+> > --- a/drivers/iommu/io-pgtable-arm.c
+> > +++ b/drivers/iommu/io-pgtable-arm.c
+> > @@ -169,9 +169,11 @@
+> >  #define ARM_LPAE_MAIR_ATTR_DEVICE      0x04
+> >  #define ARM_LPAE_MAIR_ATTR_NC          0x44
+> >  #define ARM_LPAE_MAIR_ATTR_WBRWA       0xff
+> > +#define ARM_LPAE_MAIR_ATTR_SYS_CACHE   0xf4
+> >  #define ARM_LPAE_MAIR_ATTR_IDX_NC      0
+> >  #define ARM_LPAE_MAIR_ATTR_IDX_CACHE   1
+> >  #define ARM_LPAE_MAIR_ATTR_IDX_DEV     2
+> > +#define ARM_LPAE_MAIR_ATTR_IDX_SYS_CACHE       3
+> >
+> >  /* IOPTE accessors */
+> >  #define iopte_deref(pte,d) __va(iopte_to_paddr(pte, d))
+> > @@ -442,6 +444,10 @@ static arm_lpae_iopte arm_lpae_prot_to_pte(struct arm_lpae_io_pgtable *data,
+> >                 else if (prot & IOMMU_CACHE)
+> >                         pte |= (ARM_LPAE_MAIR_ATTR_IDX_CACHE
+> >                                 << ARM_LPAE_PTE_ATTRINDX_SHIFT);
+> > +               else if (prot & IOMMU_SYS_CACHE)
+> > +                       pte |= (ARM_LPAE_MAIR_ATTR_IDX_SYS_CACHE
+> > +                               << ARM_LPAE_PTE_ATTRINDX_SHIFT);
+> > +
+>
+> Okay, so we favor the full caching (IC WBRWA, OC WBRWA, OS) first if
+> requested or otherwise try to use system cache (IC NC, OC WBWA?, OS)?
+> Sounds fine.
+
+That's right. When devices can use full caching, the system cache will
+also be used. Otherwise when devices can't allocate/use inner caches,
+system cache (Outer WBRWA, and IC NC) is the option.
 
 >
-> Signed-off-by: Julian Stecklina <jsteckli@amazon.de>
-> Reviewed-by: Jan H. Sch=C3=B6nherr <jschoenh@amazon.de>
-> Reviewed-by: Konrad Jan Miller <kjm@amazon.de>
-> Reviewed-by: Razvan-Alin Ghitulete <rga@amazon.de>
-> ---
->  arch/x86/include/asm/virtext.h |  2 +-
->  arch/x86/include/asm/vmx.h     | 13 -------------
->  arch/x86/kvm/vmx.c             | 39 ++++++++++++++++++------------------=
----
->  3 files changed, 19 insertions(+), 35 deletions(-)
+> nit: Unnecessary blank line.
+
+will remove it.
+
 >
-> diff --git a/arch/x86/include/asm/virtext.h b/arch/x86/include/asm/virtex=
-t.h
-> index 0116b2e..c5395b3 100644
-> --- a/arch/x86/include/asm/virtext.h
-> +++ b/arch/x86/include/asm/virtext.h
-> @@ -40,7 +40,7 @@ static inline int cpu_has_vmx(void)
->   */
->  static inline void cpu_vmxoff(void)
->  {
-> -       asm volatile (ASM_VMX_VMXOFF : : : "cc");
-> +       asm volatile ("vmxoff" : : : "cc");
->         cr4_clear_bits(X86_CR4_VMXE);
->  }
+> >         } else {
+> >                 pte = ARM_LPAE_PTE_HAP_FAULT;
+> >                 if (prot & IOMMU_READ)
+> > @@ -771,7 +777,8 @@ arm_64_lpae_alloc_pgtable_s1(struct io_pgtable_cfg *cfg, void *cookie)
+> >         u64 reg;
+> >         struct arm_lpae_io_pgtable *data;
+> >
+> > -       if (cfg->quirks & ~(IO_PGTABLE_QUIRK_ARM_NS | IO_PGTABLE_QUIRK_NO_DMA))
+> > +       if (cfg->quirks & ~(IO_PGTABLE_QUIRK_ARM_NS | IO_PGTABLE_QUIRK_NO_DMA |
+> > +                           IO_PGTABLE_QUIRK_SYS_CACHE))
+> >                 return NULL;
+> >
+> >         data = arm_lpae_alloc_pgtable(cfg);
+> > @@ -779,9 +786,14 @@ arm_64_lpae_alloc_pgtable_s1(struct io_pgtable_cfg *cfg, void *cookie)
+> >                 return NULL;
+> >
+> >         /* TCR */
+> > -       reg = (ARM_LPAE_TCR_SH_IS << ARM_LPAE_TCR_SH0_SHIFT) |
+> > -             (ARM_LPAE_TCR_RGN_WBWA << ARM_LPAE_TCR_IRGN0_SHIFT) |
+> > -             (ARM_LPAE_TCR_RGN_WBWA << ARM_LPAE_TCR_ORGN0_SHIFT);
+> > +       if (cfg->quirks & IO_PGTABLE_QUIRK_SYS_CACHE) {
+> > +               reg = (ARM_LPAE_TCR_SH_OS << ARM_LPAE_TCR_SH0_SHIFT) |
+> > +                     (ARM_LPAE_TCR_RGN_NC << ARM_LPAE_TCR_IRGN0_SHIFT);
 >
-> diff --git a/arch/x86/include/asm/vmx.h b/arch/x86/include/asm/vmx.h
-> index 9527ba5..ade0f15 100644
-> --- a/arch/x86/include/asm/vmx.h
-> +++ b/arch/x86/include/asm/vmx.h
-> @@ -503,19 +503,6 @@ enum vmcs_field {
+> Contrary to the earlier code which favored IC/IS if possible, here we
+> seem to disable IC/IS if the SYS_CACHE quirk is requested, regardless
+> of whether it could still be desirable to use IC/IS. Perhaps rather
+> than
+> IO_PGTABLE_QUIRK_SYS_CACHE, we need something like
+> IO_PGTABLE_QUIRK_NO_INNER_CACHE?
+
+IIUC, with QUIRK_NO_INNER_CACHE, we would explicitly handle the case
+of non I/O-coherent devices that can't use inner caches.
+Other devices will have coherent view of inner as well as outer caches
+(including system cache).
+Do I understand you correctly?
+
+Best regards
+Vivek
 >
->  #define VMX_EPT_IDENTITY_PAGETABLE_ADDR                0xfffbc000ul
+> > +       } else {
+> > +               reg = (ARM_LPAE_TCR_SH_IS << ARM_LPAE_TCR_SH0_SHIFT) |
+> > +                     (ARM_LPAE_TCR_RGN_WBWA << ARM_LPAE_TCR_IRGN0_SHIFT);
+> > +       }
+> > +       reg |= (ARM_LPAE_TCR_RGN_WBWA << ARM_LPAE_TCR_ORGN0_SHIFT);
+> >
 >
-> -
-> -#define ASM_VMX_VMCLEAR_RAX       ".byte 0x66, 0x0f, 0xc7, 0x30"
-> -#define ASM_VMX_VMLAUNCH          ".byte 0x0f, 0x01, 0xc2"
-> -#define ASM_VMX_VMRESUME          ".byte 0x0f, 0x01, 0xc3"
-> -#define ASM_VMX_VMPTRLD_RAX       ".byte 0x0f, 0xc7, 0x30"
-> -#define ASM_VMX_VMREAD_RDX_RAX    ".byte 0x0f, 0x78, 0xd0"
-> -#define ASM_VMX_VMWRITE_RAX_RDX   ".byte 0x0f, 0x79, 0xd0"
-> -#define ASM_VMX_VMWRITE_RSP_RDX   ".byte 0x0f, 0x79, 0xd4"
-> -#define ASM_VMX_VMXOFF            ".byte 0x0f, 0x01, 0xc4"
-> -#define ASM_VMX_VMXON_RAX         ".byte 0xf3, 0x0f, 0xc7, 0x30"
-> -#define ASM_VMX_INVEPT           ".byte 0x66, 0x0f, 0x38, 0x80, 0x08"
-> -#define ASM_VMX_INVVPID                  ".byte 0x66, 0x0f, 0x38, 0x81, =
-0x08"
-> -
->  struct vmx_msr_entry {
->         u32 index;
->         u32 reserved;
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index 82cfb909..bbbdccb 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -2077,7 +2077,7 @@ static int __find_msr_index(struct vcpu_vmx *vmx, u=
-32 msr)
->         return -1;
->  }
+> [keeping the context]
 >
-> -static inline void __invvpid(int ext, u16 vpid, gva_t gva)
-> +static inline void __invvpid(long ext, u16 vpid, gva_t gva)
->  {
->         struct {
->                 u64 vpid : 16;
-> @@ -2086,21 +2086,21 @@ static inline void __invvpid(int ext, u16 vpid, g=
-va_t gva)
->         } operand =3D { vpid, 0, gva };
->         bool error;
->
-> -       asm volatile (__ex(ASM_VMX_INVVPID) CC_SET(na)
-> -                     : CC_OUT(na) (error) : "a"(&operand), "c"(ext)
-> +       asm volatile ("invvpid %1, %2" CC_SET(na)
-> +                     : CC_OUT(na) (error) : "m"(operand), "r"(ext)
->                       : "memory");
->         BUG_ON(error);
->  }
->
-> -static inline void __invept(int ext, u64 eptp, gpa_t gpa)
-> +static inline void __invept(long ext, u64 eptp, gpa_t gpa)
->  {
->         struct {
->                 u64 eptp, gpa;
->         } operand =3D {eptp, gpa};
->         bool error;
->
-> -       asm volatile (__ex(ASM_VMX_INVEPT) CC_SET(na)
-> -                     : CC_OUT(na) (error) : "a" (&operand), "c" (ext)
-> +       asm volatile ("invept %1, %2" CC_SET(na)
-> +                     : CC_OUT(na) (error) : "m" (operand), "r" (ext)
->                       : "memory");
->         BUG_ON(error);
->  }
-> @@ -2120,8 +2120,8 @@ static void vmcs_clear(struct vmcs *vmcs)
->         u64 phys_addr =3D __pa(vmcs);
->         bool error;
->
-> -       asm volatile (__ex(ASM_VMX_VMCLEAR_RAX) CC_SET(na)
-> -                     : CC_OUT(na) (error) : "a"(&phys_addr), "m"(phys_ad=
-dr)
-> +       asm volatile ("vmclear %1" CC_SET(na)
-> +                     : CC_OUT(na) (error) : "m"(phys_addr)
->                       : "memory");
->         if (unlikely(error))
->                 printk(KERN_ERR "kvm: vmclear fail: %p/%llx\n",
-> @@ -2145,8 +2145,8 @@ static void vmcs_load(struct vmcs *vmcs)
->         if (static_branch_unlikely(&enable_evmcs))
->                 return evmcs_load(phys_addr);
->
-> -       asm volatile (__ex(ASM_VMX_VMPTRLD_RAX) CC_SET(na)
-> -                     : CC_OUT(na) (error) : "a"(&phys_addr), "m"(phys_ad=
-dr)
-> +       asm volatile ("vmptrld %1" CC_SET(na)
-> +                     : CC_OUT(na) (error) : "m"(phys_addr)
->                       : "memory");
->         if (unlikely(error))
->                 printk(KERN_ERR "kvm: vmptrld %p/%llx failed\n",
-> @@ -2323,8 +2323,7 @@ static __always_inline unsigned long __vmcs_readl(u=
-nsigned long field)
->  {
->         unsigned long value;
->
-> -       asm volatile (__ex_clear(ASM_VMX_VMREAD_RDX_RAX, "%0")
-> -                     : "=3Da"(value) : "d"(field) : "cc");
-> +       asm volatile ("vmread %1, %0" : "=3Drm"(value) : "r"(field) : "cc=
-");
->         return value;
->  }
->
-> @@ -2375,8 +2374,8 @@ static __always_inline void __vmcs_writel(unsigned =
-long field, unsigned long val
->  {
->         bool error;
->
-> -       asm volatile (__ex(ASM_VMX_VMWRITE_RAX_RDX) CC_SET(na)
-> -                     : CC_OUT(na) (error) : "a"(value), "d"(field));
-> +       asm volatile ("vmwrite %1, %2" CC_SET(na)
-> +                     : CC_OUT(na) (error) : "rm"(value), "r"(field));
->         if (unlikely(error))
->                 vmwrite_error(field, value);
->  }
-> @@ -4397,9 +4396,7 @@ static void kvm_cpu_vmxon(u64 addr)
->         cr4_set_bits(X86_CR4_VMXE);
->         intel_pt_handle_vmx(1);
->
-> -       asm volatile (ASM_VMX_VMXON_RAX
-> -                       : : "a"(&addr), "m"(addr)
-> -                       : "memory", "cc");
-> +       asm volatile ("vmxon %0" : : "m"(addr) : "memory", "cc");
->  }
->
->  static int hardware_enable(void)
-> @@ -4468,7 +4465,7 @@ static void vmclear_local_loaded_vmcss(void)
->   */
->  static void kvm_cpu_vmxoff(void)
->  {
-> -       asm volatile (__ex(ASM_VMX_VMXOFF) : : : "cc");
-> +       asm volatile ("vmxoff" : : : "cc");
->
->         intel_pt_handle_vmx(0);
->         cr4_clear_bits(X86_CR4_VMXE);
-> @@ -10748,7 +10745,7 @@ static void __noclone vmx_vcpu_run(struct kvm_vcp=
-u *vcpu)
->                 "mov %%" _ASM_SP ", (%%" _ASM_SI ") \n\t"
->                 "jmp 1f \n\t"
->                 "2: \n\t"
-> -               __ex(ASM_VMX_VMWRITE_RSP_RDX) "\n\t"
-> +               "vmwrite %%" _ASM_SP ", %%" _ASM_DX "\n\t"
->                 "1: \n\t"
->                 /* Check if vmlaunch of vmresume is needed */
->                 "cmpl $0, %c[launched](%0) \n\t"
-> @@ -10773,9 +10770,9 @@ static void __noclone vmx_vcpu_run(struct kvm_vcp=
-u *vcpu)
->
->                 /* Enter guest mode */
->                 "jne 1f \n\t"
-> -               __ex(ASM_VMX_VMLAUNCH) "\n\t"
-> +               "vmlaunch \n\t"
->                 "jmp 2f \n\t"
-> -               "1: " __ex(ASM_VMX_VMRESUME) "\n\t"
-> +               "1: vmresume \n\t"
->                 "2: "
->                 /* Save guest registers, load host registers, keep flags =
-*/
->                 "mov %0, %c[wordsize](%%" _ASM_SP ") \n\t"
-> --
-> 2.7.4
->
+> Best regards,
+> Tomasz
+> _______________________________________________
+> iommu mailing list
+> iommu@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+
+--
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
