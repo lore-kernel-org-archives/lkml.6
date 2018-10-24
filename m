@@ -2,162 +2,135 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 333B4C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:29:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FB97C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:29:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4E632075D
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:29:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D61A52075D
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:29:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CjnmdfV0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4E632075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="p0d1P78W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D61A52075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbeJXQ4V (ORCPT
+        id S1727330AbeJXQ4s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 12:56:21 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50921 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726301AbeJXQ4U (ORCPT
+        Wed, 24 Oct 2018 12:56:48 -0400
+Received: from smtp-fw-6002.amazon.com ([52.95.49.90]:62250 "EHLO
+        smtp-fw-6002.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726267AbeJXQ4s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 12:56:20 -0400
-Received: by mail-wm1-f66.google.com with SMTP id i8-v6so4389342wmg.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 01:29:12 -0700 (PDT)
+        Wed, 24 Oct 2018 12:56:48 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=MdFD4e72FFmwZ7wvKEg0G5lZXwuMW0V9JVo4DKcbigk=;
-        b=CjnmdfV0WRmQSFlcicOafmCTCedLPlr7XwLrAMOdViL77df9wxnbPwB1tzF4s+b8+O
-         7nkgWILTkJZn9A/Wi9kFfo3NiNJgWIOGeX4vYvAXZ/XWd/tug5PMtcwF5j1eJ83uKCsH
-         G5HLrsno+5SKvymvj+k0fHkpFmind68aVLEK8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MdFD4e72FFmwZ7wvKEg0G5lZXwuMW0V9JVo4DKcbigk=;
-        b=dNcCB2bP9I3ZdbxUM3VaGOENUq0pt1K/HV4G9fjwFEhbtA2+54Lr3uj1ZkGQZ673Wt
-         L2ooN+rUbDkMTOjjHABIlqH+aCeXKwU8+zCloyP2/FX//g9wf+PnYpWo3rlEjAyq3h73
-         2mDrJOT0Qu47l109jeKnLwLG5S6vsLAuOMCiR7+rRL6FU5KKlDvJFmPf5Z+ch7QzjHHE
-         jQzTmqeiog9mJL24XvLiSCNr2eSht7NmT+Eeh6ub98axpZV+vc6zHXD4Vp6phVsr2eVu
-         1LUgL0EPhTI05ZXBGFGMRLIpUAsCuJ1zys+wbNODMooVYN0WLDDsmAGzb9j2XSv/iokJ
-         ofGg==
-X-Gm-Message-State: AGRZ1gJP/dlJ9WRBLmgbdWrTkLzDnSf1pWDfOvwwz4JLO12N+vzhUh2r
-        yF7ADxJbuoumS+HkM5o19hcFCQ==
-X-Google-Smtp-Source: AJdET5d168IWTwWcK2uC1hfBXr4PAz0x5Lg+orGGepI0kgFvI3gKsXDrE3CCGijLlKtFubqucOlO6g==
-X-Received: by 2002:a1c:1b91:: with SMTP id b139-v6mr1590742wmb.147.1540369751480;
-        Wed, 24 Oct 2018 01:29:11 -0700 (PDT)
-Received: from [192.168.0.40] (157.132.88.92.rev.sfr.net. [92.88.132.157])
-        by smtp.googlemail.com with ESMTPSA id 77-v6sm6578974wmv.6.2018.10.24.01.29.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Oct 2018 01:29:10 -0700 (PDT)
-Subject: Re: [PATCH] thermal: qoriq: add multiple sensors support
-To:     Andy Tang <andy.tang@nxp.com>,
-        "rui.zhang@intel.com" <rui.zhang@intel.com>
-Cc:     "edubezval@gmail.com" <edubezval@gmail.com>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-References: <20180927024204.17314-1-andy.tang@nxp.com>
- <3d1f8304-9005-23f3-2e0e-ef9c962c9f6e@linaro.org>
- <DB5PR0401MB2213D4C1874291B87F231547F3FD0@DB5PR0401MB2213.eurprd04.prod.outlook.com>
- <cf157e9f-a4cb-6d7d-f51d-8b9d91f3335c@linaro.org>
- <DB5PR0401MB2213E291AC455D61ED15AF4AF3FE0@DB5PR0401MB2213.eurprd04.prod.outlook.com>
- <77993e69-db55-a2a0-799f-5225d5ffb010@linaro.org>
- <DB5PR0401MB221381AD65417D17AAD7B16DF3F60@DB5PR0401MB2213.eurprd04.prod.outlook.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <86739c2a-3027-0ac0-e4d1-8257f00effc6@linaro.org>
-Date:   Wed, 24 Oct 2018 10:29:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1540369778; x=1571905778;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=tdB5rCYLJAIR6t6/83w13JTk6bLB2tkIQ4irXe8NrL4=;
+  b=p0d1P78Wo46NFOezgxO2gbErUCCyc3n5RMJpskokiXEG+IynMbYvAn4z
+   P9BrOdu16KwUwv2ncAiBiJ7TFFCPpo754U91zJ9swrwR3mApRoDPE4nhB
+   Simg8Fe1/buIDaXWBkNDV7gWYlDTHZO48La55d3t0AxwRcCXkiSQ2dRs6
+   g=;
+X-IronPort-AV: E=Sophos;i="5.54,419,1534809600"; 
+   d="scan'208";a="370227152"
+Received: from iad6-co-svc-p1-lb1-vlan3.amazon.com (HELO email-inbound-relay-1a-16acd5e0.us-east-1.amazon.com) ([10.124.125.6])
+  by smtp-border-fw-out-6002.iad6.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 24 Oct 2018 08:29:37 +0000
+Received: from u54ee758033e858cfa736.ant.amazon.com (iad7-ws-svc-lb50-vlan2.amazon.com [10.0.93.210])
+        by email-inbound-relay-1a-16acd5e0.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w9O8TUfr031968
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Wed, 24 Oct 2018 08:29:33 GMT
+Received: from u54ee758033e858cfa736.ant.amazon.com (localhost [127.0.0.1])
+        by u54ee758033e858cfa736.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id w9O8TT2d029692;
+        Wed, 24 Oct 2018 10:29:29 +0200
+Received: (from jsteckli@localhost)
+        by u54ee758033e858cfa736.ant.amazon.com (8.15.2/8.15.2/Submit) id w9O8TTvq029688;
+        Wed, 24 Oct 2018 10:29:29 +0200
+From:   Julian Stecklina <jsteckli@amazon.de>
+To:     kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Julian Stecklina <jsteckli@amazon.de>, js@alien8.de,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/4] kvm, vmx: move CR2 context switch out of assembly path
+Date:   Wed, 24 Oct 2018 10:28:56 +0200
+Message-Id: <09986c98c9655f1542768ecfda644ac821e67a57.1540369608.git.jsteckli@amazon.de>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <DB5PR0401MB221381AD65417D17AAD7B16DF3F60@DB5PR0401MB2213.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/10/2018 04:48, Andy Tang wrote:
-> Hi Daniel,
-> 
->> -----Original Message-----
->> From: Daniel Lezcano <daniel.lezcano@linaro.org>
->> Sent: 2018年10月16日 19:21
->> To: Andy Tang <andy.tang@nxp.com>; rui.zhang@intel.com
->> Cc: edubezval@gmail.com; linux-pm@vger.kernel.org;
->> linux-kernel@vger.kernel.org; Rob Herring <robh+dt@kernel.org>
->> Subject: Re: [PATCH] thermal: qoriq: add multiple sensors support
->>
->>>>>> The current code is reading the DT in order to get the sensor id
->>>>>> and initialize it. IOW, the DT gives the sensors to use.
->>>>>>
->>>>>> IMO, it would be more self contained if the driver initializes all
->>>>>> the sensors without taking care of the DT and let the of- code to
->>>>>> do the binding when the thermal zone, no ?
->>>>> [Andy] could you please explain more about this way? I am not sure
->>>>> how
->>>> to implement it.
->>>>> But one thing is for sure: we must get the sensor IDs explicitly so
->>>>> that we can enable them by the following command:
->> tmu_write(qdata,
->>>>> sites | TMR_ME | TMR_ALPF, &qdata->regs->tmr);
->>>>
->>>> What I meant is about code separation between the driver itself and
->>>> the of-thermal code.
->>>>
->>>> The code above re-inspect the DT to find out the sensor ids in order
->>>> to enable them and somehow this is not wrong but breaks the self
->>>> encapsulation of the driver. I was suggesting if it isn't possible to
->>>> enable all the sensors without taking care of digging into the DT.
->>>
->>> [Andy] I don't want to re-parse the DT here too. But I have to.
->>> This driver will be used by all our SOCs with different sensor IDs and
->> number.
->>> For example: there are 2 sensors on ls1088a platform with ID 0 and 1.
->>> While on ls1043a there are 6 sensors with ID 0, 1, 2, 3, 4, 5.
->>> If we don't scan the DT we would not know how many sensors it is and
->>> what are the sensor's IDs, unless we hardcode it in driver.
->>
->> Yes, you are not the only one in this situation IMO and the drivers
->> supporting multiple sensors are increasing, so this will repeat again and
->> again.
->>
->> That could be hardcoded in the driver by using the compatible string but it
->> will be nicer if we can fix that in the DT.
->>
->> [Cc'ing Rob]
->>
->> What is missing is a description of the sensors id in the temperature
->> device node. We have the <thermal-sensor-cells> with 0 or 1 telling if
->> there is one or several sensors but we can't specify which sensor ids we
->> have. The only alternative is to parse the thermal zones to found out which
->> sensors are in use and use them to initialize the driver, an approach which
->> breaks the self-encapsulation: the of-thermal framework is the one in
->> charge of doing the link between the thermal zone and a sensor id.
->>
->> Is it acceptable to add the list of the sensors id in the temp device node, so
->> the driver can initialize these sensors without parsing the thermal zone in
->> the DT ?
->>
-> Have you got any conclusion yet?
-> When can I send the next version of this patch?
+The VM entry/exit path is a giant inline assembly statement. Simplify it
+by doing CR2 context switching in plain C. Move CR2 restore behind IBRS
+clearing, so we reduce the amount of code we execute with IBRS on.
 
+Signed-off-by: Julian Stecklina <jsteckli@amazon.de>
+Reviewed-by: Jan H. Schönherr <jschoenh@amazon.de>
+Reviewed-by: Konrad Jan Miller <kjm@amazon.de>
+---
+ arch/x86/kvm/vmx.c | 15 +++++----------
+ 1 file changed, 5 insertions(+), 10 deletions(-)
 
-Let's give an opportunity to Rob to answer.
-
-
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index e665aa7..93562d5 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -10728,6 +10728,9 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ 	evmcs_rsp = static_branch_unlikely(&enable_evmcs) ?
+ 		(unsigned long)&current_evmcs->host_rsp : 0;
+ 
++	if (read_cr2() != vcpu->arch.cr2)
++		write_cr2(vcpu->arch.cr2);
++
+ 	if (static_branch_unlikely(&vmx_l1d_should_flush))
+ 		vmx_l1d_flush(vcpu);
+ 
+@@ -10747,13 +10750,6 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ 		"2: \n\t"
+ 		__ex(ASM_VMX_VMWRITE_RSP_RDX) "\n\t"
+ 		"1: \n\t"
+-		/* Reload cr2 if changed */
+-		"mov %c[cr2](%0), %%" _ASM_AX " \n\t"
+-		"mov %%cr2, %%" _ASM_DX " \n\t"
+-		"cmp %%" _ASM_AX ", %%" _ASM_DX " \n\t"
+-		"je 3f \n\t"
+-		"mov %%" _ASM_AX", %%cr2 \n\t"
+-		"3: \n\t"
+ 		/* Check if vmlaunch of vmresume is needed */
+ 		"cmpl $0, %c[launched](%0) \n\t"
+ 		/* Load guest registers.  Don't clobber flags. */
+@@ -10810,8 +10806,6 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ 		"xor %%r14d, %%r14d \n\t"
+ 		"xor %%r15d, %%r15d \n\t"
+ #endif
+-		"mov %%cr2, %%" _ASM_AX "   \n\t"
+-		"mov %%" _ASM_AX ", %c[cr2](%0) \n\t"
+ 
+ 		"xor %%eax, %%eax \n\t"
+ 		"xor %%ebx, %%ebx \n\t"
+@@ -10843,7 +10837,6 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ 		[r14]"i"(offsetof(struct vcpu_vmx, vcpu.arch.regs[VCPU_REGS_R14])),
+ 		[r15]"i"(offsetof(struct vcpu_vmx, vcpu.arch.regs[VCPU_REGS_R15])),
+ #endif
+-		[cr2]"i"(offsetof(struct vcpu_vmx, vcpu.arch.cr2)),
+ 		[wordsize]"i"(sizeof(ulong))
+ 	      : "cc", "memory"
+ #ifdef CONFIG_X86_64
+@@ -10877,6 +10870,8 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ 	/* Eliminate branch target predictions from guest mode */
+ 	vmexit_fill_RSB();
+ 
++	vcpu->arch.cr2 = read_cr2();
++
+ 	/* All fields are clean at this point */
+ 	if (static_branch_unlikely(&enable_evmcs))
+ 		current_evmcs->hv_clean_fields |=
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+2.7.4
 
