@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A82C3C67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:09:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E922C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68787207DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:09:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68787207DD
+	by mail.kernel.org (Postfix) with ESMTP id E5232207DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:11:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5232207DD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727698AbeJXQg6 (ORCPT
+        id S1727572AbeJXQiO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 12:36:58 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:14113 "EHLO huawei.com"
+        Wed, 24 Oct 2018 12:38:14 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:57416 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727465AbeJXQg6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 12:36:58 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 825EF126A089E;
-        Wed, 24 Oct 2018 16:09:52 +0800 (CST)
-Received: from huawei.com (10.113.189.234) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.408.0; Wed, 24 Oct 2018
- 16:09:47 +0800
+        id S1726797AbeJXQiO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 12:38:14 -0400
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 65607F211CB7D;
+        Wed, 24 Oct 2018 16:11:07 +0800 (CST)
+Received: from huawei.com (10.113.189.234) by DGGEMS408-HUB.china.huawei.com
+ (10.3.19.208) with Microsoft SMTP Server id 14.3.408.0; Wed, 24 Oct 2018
+ 16:10:57 +0800
 From:   Yunlong Song <yunlong.song@huawei.com>
 To:     <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
         <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
@@ -35,9 +35,9 @@ CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
         <shengyong1@huawei.com>, <heyunlei@huawei.com>,
         <linux-f2fs-devel@lists.sourceforge.net>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH] f2fs: remove codes of unused wio_mutex
-Date:   Wed, 24 Oct 2018 16:09:42 +0800
-Message-ID: <1540368582-14312-1-git-send-email-yunlong.song@huawei.com>
+Subject: [PATCH] f2fs: only flush the single temp bio cache which owns the target page
+Date:   Wed, 24 Oct 2018 16:10:51 +0800
+Message-ID: <1540368651-14353-1-git-send-email-yunlong.song@huawei.com>
 X-Mailer: git-send-email 1.8.5.2
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -48,47 +48,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Previously, when f2fs finds which temp bio cache owns the target page,
+it will flush all the three temp bio caches, but we only need to flush
+one single bio cache indeed, which can help to keep bio merged.
+
 Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
 ---
- fs/f2fs/f2fs.h  | 1 -
- fs/f2fs/super.c | 5 +----
- 2 files changed, 1 insertion(+), 5 deletions(-)
+ fs/f2fs/data.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 56204a8..4dfa28d 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1170,7 +1170,6 @@ struct f2fs_sb_info {
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 106f116..04ebbad 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -374,7 +374,7 @@ static bool __has_merged_page(struct f2fs_bio_info *io, struct inode *inode,
  
- 	/* for bio operations */
- 	struct f2fs_bio_info *write_io[NR_PAGE_TYPE];	/* for write bios */
--	struct mutex wio_mutex[NR_PAGE_TYPE - 1][NR_TEMP_TYPE];
- 						/* bio ordering for NODE/DATA */
- 	/* keep migration IO order for LFS mode */
- 	struct rw_semaphore io_order_lock;
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index af58b2c..2d18de5 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -2674,7 +2674,7 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
- static void init_sb_info(struct f2fs_sb_info *sbi)
+ static bool has_merged_page(struct f2fs_sb_info *sbi, struct inode *inode,
+ 						struct page *page, nid_t ino,
+-						enum page_type type)
++						enum page_type type, enum temp_type *owner)
  {
- 	struct f2fs_super_block *raw_super = sbi->raw_super;
--	int i, j;
-+	int i;
+ 	enum page_type btype = PAGE_TYPE_OF_BIO(type);
+ 	enum temp_type temp;
+@@ -392,6 +392,10 @@ static bool has_merged_page(struct f2fs_sb_info *sbi, struct inode *inode,
+ 		if (ret || btype == META)
+ 			break;
+ 	}
++	if (!ret || (!inode && !page && !ino))
++		*owner = NR_TEMP_TYPE;
++	else
++		*owner = temp;
+ 	return ret;
+ }
  
- 	sbi->log_sectors_per_block =
- 		le32_to_cpu(raw_super->log_sectors_per_block);
-@@ -2710,9 +2710,6 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+@@ -421,9 +425,14 @@ static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
+ {
+ 	enum temp_type temp;
  
- 	INIT_LIST_HEAD(&sbi->s_list);
- 	mutex_init(&sbi->umount_mutex);
--	for (i = 0; i < NR_PAGE_TYPE - 1; i++)
--		for (j = HOT; j < NR_TEMP_TYPE; j++)
--			mutex_init(&sbi->wio_mutex[i][j]);
- 	init_rwsem(&sbi->io_order_lock);
- 	spin_lock_init(&sbi->cp_lock);
+-	if (!force && !has_merged_page(sbi, inode, page, ino, type))
++	if (!force && !has_merged_page(sbi, inode, page, ino, type, &temp))
+ 		return;
  
++	if (!force && temp != NR_TEMP_TYPE) {
++		__f2fs_submit_merged_write(sbi, type, temp);
++		return;
++	}
++
+ 	for (temp = HOT; temp < NR_TEMP_TYPE; temp++) {
+ 
+ 		__f2fs_submit_merged_write(sbi, type, temp);
 -- 
 1.8.5.2
 
