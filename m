@@ -3,100 +3,133 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7353FECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:43:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 413EAECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:43:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 108AC2082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:43:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 108AC2082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 0C4C82082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:43:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C4C82082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726652AbeJYHNP (ORCPT
+        id S1726949AbeJYHNZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 03:13:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47020 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726019AbeJYHNO (ORCPT
+        Thu, 25 Oct 2018 03:13:25 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:43040 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725829AbeJYHNZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 03:13:14 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5ED9B14C1;
-        Wed, 24 Oct 2018 22:43:17 +0000 (UTC)
-Date:   Wed, 24 Oct 2018 15:43:16 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     sebhtml@videotron.qc.ca, Steven Rostedt <rostedt@goodmis.org>,
-        acme@redhat.com, tz.stoyanov@gmail.com,
-        Namhyung Kim <namhyung@kernel.org>, zwisler@kernel.org,
-        arangradient@gmail.com, linux-perf-users@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] pfn_t: force '~' to be parsed as an unary operator
-Message-Id: <20181024154316.810676f4b8eb9be637a34e28@linux-foundation.org>
-In-Reply-To: <CAPcyv4iJ_bfzOtV_GAQg_tdLLuebE_1Gp420LMG0xbR2ZQdV7g@mail.gmail.com>
-References: <20181021145939.8760-1-sebhtml@videotron.qc.ca>
-        <CAPcyv4iJ_bfzOtV_GAQg_tdLLuebE_1Gp420LMG0xbR2ZQdV7g@mail.gmail.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Thu, 25 Oct 2018 03:13:25 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9OMh1YJ039206;
+        Wed, 24 Oct 2018 17:43:01 -0500
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id w9OMh0mc018570
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 24 Oct 2018 17:43:01 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 24
+ Oct 2018 17:43:00 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Wed, 24 Oct 2018 17:43:00 -0500
+Received: from [128.247.59.147] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9OMh0jL026227;
+        Wed, 24 Oct 2018 17:43:00 -0500
+Subject: Re: [PATCH v9 6/9] i3c: master: Add driver for Cadence IP
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+CC:     Wolfram Sang <wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Vitor Soares <Vitor.Soares@synopsys.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>,
+        <linux-gpio@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>,
+        Przemyslaw Gaj <pgaj@cadence.com>,
+        Peter Rosin <peda@axentia.se>,
+        Mike Shettel <mshettel@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Joe Perches <joe@perches.com>
+References: <20181022133404.2061-1-boris.brezillon@bootlin.com>
+ <20181022133404.2061-7-boris.brezillon@bootlin.com>
+ <20181024202048.7e3534f7@bbrezillon>
+ <99a506e3-d9d5-0d3e-26e1-031447c14857@ti.com>
+ <20181024230432.66dd71df@bbrezillon>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <380d73a8-2e54-3cee-2fdd-c6e891df93f7@ti.com>
+Date:   Wed, 24 Oct 2018 17:43:00 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181024230432.66dd71df@bbrezillon>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 22 Oct 2018 10:13:48 -0700 Dan Williams <dan.j.williams@intel.com> wrote:
 
-> [ added Andrew ]
+
+On 10/24/18 4:04 PM, Boris Brezillon wrote:
+> On Wed, 24 Oct 2018 15:25:17 -0500
+> Grygorii Strashko <grygorii.strashko@ti.com> wrote:
 > 
-> Patch here: https://lore.kernel.org/patchwork/patch/1002234/
+>> On 10/24/18 1:20 PM, Boris Brezillon wrote:
+>>> Hi Arnd,
+>>>
+>>> On Mon, 22 Oct 2018 15:34:01 +0200
+>>> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+>>>
+>>>    
+>>>> +
+>>>> +static void cdns_i3c_master_rd_from_rx_fifo(struct cdns_i3c_master *master,
+>>>> +					    u8 *bytes, int nbytes)
+>>>> +{
+>>>> +	readsl(master->regs + RX_FIFO, bytes, nbytes / 4);
+>>>
+>>> Vitor reported a problem with readsl(): this function expects the 2nd
+>>> argument to be aligned on 32-bit, which is not guaranteed here. Unless
+>>> you see a better solution, I'll switch back to a loop doing:
+>>>
+>>> 	for (i = 0; i < nbytes; i += 4) {
+>>> 		u32 tmp = __raw_readl(...);
+>>
+>> Pls, do not use __raw io.
 > 
-> On Sun, Oct 21, 2018 at 8:00 AM Sebastien Boisvert
-> <sebhtml@videotron.qc.ca> wrote:
-> >
-> > Tracing the event "fs_dax:dax_pmd_insert_mapping" with perf produces this
-> > warning:
-> >       [fs_dax:dax_pmd_insert_mapping] unknown op '~'
-> >
-> > It is printed in process_op (tools/lib/traceevent/event-parse.c) because '~'
-> > is parsed as a binary operator.
-> >
-> > perf reads the format of fs_dax:dax_pmd_insert_mapping ("print fmt") from
-> > /sys/kernel/debug/tracing/events/fs_dax/dax_pmd_insert_mapping/format .
-> >
-> > The format contains:
-> >
-> > ~(((u64) ~(~(((1UL) << 12)-1)))
-> >          ^
-> >          \ interpreted as a binary operator by process_op().
-> >
-> > This part is generated in the declaration of the event class
-> > dax_pmd_insert_mapping_class in include/trace/events/fs_dax.h :
-> >
-> >                 __print_flags_u64(__entry->pfn_val & PFN_FLAGS_MASK, "|",
-> >                         PFN_FLAGS_TRACE),
-> >
-> > This patch adds a pair of parentheses in the declaration of PFN_FLAGS_MASK to
-> > make sure that '~' is parsed as a unary operator by perf.
-> >
-> > The part of the format that was problematic is now:
-> >
-> > ~(((u64) (~(~(((1UL) << 12)-1))))
-> >
-> > Now, all the '~' are parsed as unary operators.
-> >
-> > Cc: Dan Williams <dan.j.williams@intel.com>
-> 
-> 
-> Acked-by: Dan Williams <dan.j.williams@intel.com>
+> Except this is exactly what I want here, unless you have a
+> replacement for "readl() without a mem-barrier and without endianness
+> conversion"
 > 
 
-I grabbed it, and added cc:stable.
+Not sure why endianness is the problem. readl_relaxed?
+Sry, I've missed that this is part of the driver not i3c core,
+so minor/ignore.
 
-But aren't we fixing this in the wrong place?  That's a valid
-expression and if this isn't addressed in perf then we may hit a
-similar issue elsewhere...
-
+-- 
+regards,
+-grygorii
