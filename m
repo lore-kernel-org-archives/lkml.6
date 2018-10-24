@@ -2,156 +2,126 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E7ACC004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 15:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1D9EC004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 15:04:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 509BC2082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 15:00:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E7C62075D
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 15:04:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="txnWwhbz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 509BC2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="bMeieu4w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E7C62075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbeJXX3N (ORCPT
+        id S1726804AbeJXXcj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 19:29:13 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:35596 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726748AbeJXX3N (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 19:29:13 -0400
-Received: by mail-qk1-f195.google.com with SMTP id v68-v6so3496180qka.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 08:00:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=9jStwo6WLQ1qKFH+n6UnzhTtzYHHqiefUGPudeKO1OU=;
-        b=txnWwhbzDOHa2eaUxgFLUfeSezrS5VXz2IvGkztsUDxFskTWKMLgQSeGC9emnivYCo
-         PwOqHQ2UXaDEDqELuYZ35uB82oCtp2y3V9CWv6h6uycfgtLloULPjHB/CERJzwxw+Yii
-         AL52tU/HYXrgfEmHrjrscxCLaXFEP2gGMkN3yGnHElh+rEkK0mmbbrYUJ9R2iEGvHFro
-         2tSvcFPLXmRx3gy8CoYcJsNMvTXvcw/kLjr4GY4U9PqcF4V2ZzlnqtsYKeX08UFWyWKl
-         mCaycH5NhTY1MFBtt1RNB8r4HUgHgvAA8PS3pZIRrO7zy1l/SPs/EbnskCnWEOhtdPEk
-         lq/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9jStwo6WLQ1qKFH+n6UnzhTtzYHHqiefUGPudeKO1OU=;
-        b=jDK3dDQgFjv3qGsVaoqGxdZvWLu/CW7ELSPm0WKqsNhuZHhmTGmzqJ7YErLCfCXdd6
-         +gPHVnoCJSCgzRjKWR977qNrVcTIPP+kRBqc8h0zgfvX7olHB6imh3bMECXM+rcW2gEY
-         /QfsLSoXnnRaeEJWSkpaXYpaXarUY4x358PQBXPAAB2aK5Q1nr5skKgLqYlyEInVpeR/
-         q/OPK8/d3offrE0h7hX0wlX4eVVSvbN0V8mFEku45cUX+pcm9pr5ZgOKLwQ4GhFE7nzb
-         kwyvWs0bwbmsLuBo3Mq8ioijEcZxYLq+DLGeYolNp9gtCw/XQzF71t7x09VGGMku5F4/
-         CPrw==
-X-Gm-Message-State: AGRZ1gLtps8RBxyEevYoT0JIgmqUK+VWKVhe0NHcHQSyQqOAfSMnVNrX
-        fmRE77ujL7KqWGwl1hChEVb9DA==
-X-Google-Smtp-Source: AJdET5cPuY0/vXqqWMu/xV13t7536/TmRzi4DnvnDK/VuwMZZNw/dB5NeW+sj3rPf5WNVueVAGLqCw==
-X-Received: by 2002:ac8:dcd:: with SMTP id t13-v6mr1775207qti.291.1540393245148;
-        Wed, 24 Oct 2018 08:00:45 -0700 (PDT)
-Received: from cisco ([192.241.255.151])
-        by smtp.gmail.com with ESMTPSA id l186-v6sm2659945qkf.60.2018.10.24.08.00.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 24 Oct 2018 08:00:38 -0700 (PDT)
-Date:   Wed, 24 Oct 2018 16:00:29 +0100
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Khalid Aziz <khalid.aziz@oracle.com>
-Cc:     "Stecklina, Julian" <jsteckli@amazon.de>,
-        "juerg.haefliger@hpe.com" <juerg.haefliger@hpe.com>,
-        "deepa.srinivasan@oracle.com" <deepa.srinivasan@oracle.com>,
-        "jmattson@google.com" <jmattson@google.com>,
-        "andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>,
-        "Woodhouse, David" <dwmw@amazon.co.uk>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        Wed, 24 Oct 2018 19:32:39 -0400
+Received: from mail-eopbgr680110.outbound.protection.outlook.com ([40.107.68.110]:35003
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726414AbeJXXcj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 19:32:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZKQMGyiLCVuGsDs0rYlNHFF8xj/GzfIrObJ5xe7snj4=;
+ b=bMeieu4w7exoNoZ76mg5iGfIZyKZsLbuTtwdxj00KN7iMbB/o+KQqTNT4MOzMmqXY7X3ptsSYOQaFy8wMSX4Q8Tml7vmFziGHXNG20iaQseOMnRzfelQlHCm7+c3sSnv2jlzU3b3LooUf7SiWqp4fQfJFU3Wq+UpxlFkIAzzw6o=
+Received: from CY4PR21MB0773.namprd21.prod.outlook.com (10.173.192.19) by
+ CY4PR21MB0760.namprd21.prod.outlook.com (10.173.195.150) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id
+ 15.20.1294.8; Wed, 24 Oct 2018 15:04:08 +0000
+Received: from CY4PR21MB0773.namprd21.prod.outlook.com
+ ([fe80::6d0b:b90f:7a73:99fb]) by CY4PR21MB0773.namprd21.prod.outlook.com
+ ([fe80::6d0b:b90f:7a73:99fb%8]) with mapi id 15.20.1294.001; Wed, 24 Oct 2018
+ 15:04:08 +0000
+From:   Michael Kelley <mikelley@microsoft.com>
+To:     KY Srinivasan <kys@microsoft.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
-        "pradeep.vincent@oracle.com" <pradeep.vincent@oracle.com>,
-        "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "kanth.ghatraju@oracle.com" <kanth.ghatraju@oracle.com>,
-        "joao.m.martins@oracle.com" <joao.m.martins@oracle.com>,
-        "liran.alon@oracle.com" <liran.alon@oracle.com>,
-        "ak@linux.intel.com" <ak@linux.intel.com>,
-        "keescook@google.com" <keescook@google.com>,
-        "kernel-hardening@lists.openwall.com" 
-        <kernel-hardening@lists.openwall.com>,
-        "chris.hyser@oracle.com" <chris.hyser@oracle.com>,
-        "tyhicks@canonical.com" <tyhicks@canonical.com>,
-        "john.haxby@oracle.com" <john.haxby@oracle.com>,
-        "jcm@redhat.com" <jcm@redhat.com>
-Subject: Re: Redoing eXclusive Page Frame Ownership (XPFO) with isolated CPUs
- in mind (for KVM to isolate its guests per CPU)
-Message-ID: <20181024150029.GB9019@cisco>
-References: <ciirm8a7p3alos.fsf@u54ee758033e858cfa736.ant.amazon.com>
- <CA+55aFzHj_GNZWG4K2oDu4DPP9sZdTZ9PY7sBxGB6WoN9g8d=A@mail.gmail.com>
- <ciirm8zhwyiqh4.fsf@u54ee758033e858cfa736.ant.amazon.com>
- <ciirm8efdy916l.fsf@u54ee758033e858cfa736.ant.amazon.com>
- <5efc291c-b0ed-577e-02d1-285d080c293d@oracle.com>
- <ciirm8va743105.fsf@u54ee758033e858cfa736.ant.amazon.com>
- <7221975d-6b67-effa-2747-06c22c041e78@oracle.com>
- <1537800341.9745.20.camel@amazon.de>
- <063f5efc-afb2-471f-eb4b-79bf90db22dd@oracle.com>
- <6cc985bb-6aed-4fb7-0ef2-43aad2717095@oracle.com>
+        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+        "olaf@aepfle.de" <olaf@aepfle.de>,
+        "apw@canonical.com" <apw@canonical.com>,
+        "jasowang@redhat.com" <jasowang@redhat.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        vkuznets <vkuznets@redhat.com>
+Subject: RE: [PATCH V2 1/5] Drivers: hv: vmbus: Get rid of unnecessary state
+ in hv_context
+Thread-Topic: [PATCH V2 1/5] Drivers: hv: vmbus: Get rid of unnecessary state
+ in hv_context
+Thread-Index: AQHUZqDovv3pKWswLUesnH4Ml/pRnKUuh/tQ
+Date:   Wed, 24 Oct 2018 15:04:08 +0000
+Message-ID: <CY4PR21MB07737F5CBF6C9F594A72B6A4D7F60@CY4PR21MB0773.namprd21.prod.outlook.com>
+References: <20181018050835.27828-1-kys@linuxonhyperv.com>
+ <20181018050932.27932-1-kys@linuxonhyperv.com>
+In-Reply-To: <20181018050932.27932-1-kys@linuxonhyperv.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-10-24T15:04:02.6040268Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
+ Sensitivity=General
+x-originating-ip: [12.130.117.98]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0760;6:8Bxu9N4LnRSdOLI3Zkl3cKhevzvC4aLebTmkzejXyMDp3z6lHdg4kA/c5027TsGk+Ba6Sy1RBjXP+CloQ6sltJRPFEuvGh3E9JoHxXCTJlwyVc0gznKKSHMj30w+lRKIBj3bUZIVBLfQF7JlGnDcO/UkXBtoDlBXx3JRNLXuEdPwhHPEEoRLxIMfCz15wcMBbWmnO6ywFJxguVOqk2rf0KeI/oMn+5e0lNtKN+00WfV6YO1J7dI3aQM3vnWaFvJ3bSyrN7oJFX7bX9JVu1hOZdcM5dLnrz5gQ16tOgVXoCIb4FdyS5fKOwh067/lvOsJuu2HrDnGU6/FfeMxil6OmEVcRvY71ggHVMM9NiIjjfADh0KTFjpWkE+bRBQ3WLPvw83qe/YMGKa110nIFDsSGdQkjNaHzVHlOEJSd38X/KVB2jIhMFd5Lc2gTTHOADxZNo2ZIDE2fmdZ/ma8PM48tg==;5:uUhEXkvwtv4wQyibWW9KZvSrvaztW2Hmg/NEV02aywBM03IXSrZWIRt+UZNNa3HBOij5vQ/Qn2ZId176vqk39nFUJinh1gu6aa1B3+/liZjx6oYrY60Leph+T2htB+VEz5H/hsnisLKqhZ3FB3Zc3PBYkoMY+pZnkLDFRct2AMo=;7:4pn75MN1lidkSGhOT6W9y5PEbhBUaKTws4+dgEHNSs4RAgkRaiFHPBsNmDEqVsn2ha7ca9EcutDWwagIG232778A/EZI5EpfOIK/24Sue8XmsxH0ZmV4WfOw79TwuQu7j748YB5c+OXWd4CnHNryvw==
+x-ms-office365-filtering-correlation-id: a75cc786-ed21-4aae-d2b8-08d639c1f2c1
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0760;
+x-ms-traffictypediagnostic: CY4PR21MB0760:
+x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
+x-microsoft-antispam-prvs: <CY4PR21MB0760CA7A240A0FD489225263D7F60@CY4PR21MB0760.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(8220027)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(2018427008)(10201501046)(3002001)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:CY4PR21MB0760;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0760;
+x-forefront-prvs: 083526BF8A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(376002)(346002)(39860400002)(136003)(366004)(189003)(199004)(478600001)(22452003)(10290500003)(110136005)(316002)(8990500004)(186003)(3846002)(6116002)(229853002)(14454004)(99286004)(5660300001)(2906002)(486006)(33656002)(6506007)(2201001)(86612001)(86362001)(446003)(11346002)(256004)(97736004)(76176011)(2501003)(6436002)(7696005)(476003)(5250100002)(10090500001)(305945005)(66066001)(53936002)(1511001)(74316002)(2900100001)(102836004)(105586002)(7736002)(106356001)(81156014)(68736007)(6346003)(9686003)(26005)(25786009)(55016002)(71190400001)(8936002)(6246003)(81166006)(8676002)(71200400001)(26583001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0760;H:CY4PR21MB0773.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=mikelley@microsoft.com; 
+x-microsoft-antispam-message-info: PVVKdFMXM7VXRfpbNaLhqgCz+CGhb9HE3QPLFuewC5Z4/RPR8P7owohy+kAclI8k8MuTcdMT30o7TV71lstcJRALg3D+S7WHkkCxxmJ1yCIkAq0NN5erhcrr1E4zx8yTPbxYRn54+TulXEXEKx0cOJv/YybII2FWsulVFDOcIuk1CtOs72DrbC2MfxC/g1Z9zkdF+Y2fnkq4w/1q9uGSyGa+ynyFzoSXBOLSBHHNskhLKtb08h5zOvYYlFEBV3zb+9nfw/nwTewPxnUJV2F8Hb4Go27Uc3ToBnSP/VOH/1E3sHgASVd/hVsJMwKeWnXkjeoMWlkc7QvZ3KfIlo2uuW+qhp50r0qDTRYiCqtcRgs=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6cc985bb-6aed-4fb7-0ef2-43aad2717095@oracle.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a75cc786-ed21-4aae-d2b8-08d639c1f2c1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Oct 2018 15:04:08.2402
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0760
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 04:30:42PM +0530, Khalid Aziz wrote:
-> On 10/15/2018 01:37 PM, Khalid Aziz wrote:
-> > On 09/24/2018 08:45 AM, Stecklina, Julian wrote:
-> > > I didn't test the version with TLB flushes, because it's clear that the
-> > > overhead is so bad that no one wants to use this.
-> > 
-> > I don't think we can ignore the vulnerability caused by not flushing
-> > stale TLB entries. On a mostly idle system, TLB entries hang around long
-> > enough to make it fairly easy to exploit this. I was able to use the
-> > additional test in lkdtm module added by this patch series to
-> > successfully read pages unmapped from physmap by just waiting for system
-> > to become idle. A rogue program can simply monitor system load and mount
-> > its attack using ret2dir exploit when system is mostly idle. This brings
-> > us back to the prohibitive cost of TLB flushes. If we are unmapping a
-> > page from physmap every time the page is allocated to userspace, we are
-> > forced to incur the cost of TLB flushes in some way. Work Tycho was
-> > doing to implement Dave's suggestion can help here. Once Tycho has
-> > something working, I can measure overhead on my test machine. Tycho, I
-> > can help with your implementation if you need.
-> 
-> I looked at Tycho's last patch with batch update from
-> <https://lkml.org/lkml/2017/11/9/951>. I ported it on top of Julian's
-> patches and got it working well enough to gather performance numbers. Here
-> is what I see for system times on a machine with dual Xeon E5-2630 and 256GB
-> of memory when running "make -j30 all" on 4.18.6 kernel (percentages are
-> relative to base 4.19-rc8 kernel without xpfo):
-> 
-> 
-> Base 4.19-rc8				913.84s
-> 4.19-rc8 + xpfo, no TLB flush		1027.985s (+12.5%)
-> 4.19-rc8 + batch update, no TLB flush	970.39s (+6.2%)
-> 4.19-rc8 + xpfo, TLB flush		8458.449s (+825.6%)
-> 4.19-rc8 + batch update, TLB flush	4665.659s (+410.6%)
-> 
-> Batch update is significant improvement but we are starting so far behind
-> baseline, it is still a huge slow down.
-
-There's some other stuff that Dave suggested that I didn't do; in
-particular coalesce xpfo bits instead of setting things once per page
-when mappings are shared, etc.
-
-Perhaps that will help more?
-
-I'm still stuck working on something else for now, but I hope to be
-able to participate more on this Soon (TM). Thanks for the testing!
-
-Tycho
+From: kys@linuxonhyperv.com <kys@linuxonhyperv.com>  Sent: Wednesday, Octob=
+er 17, 2018 10:09 PM
+>=20
+> Currently we are replicating state in struct hv_context that is unnecessa=
+ry -
+> this state can be retrieved from the hypervisor. Furthermore, this is a p=
+er-cpu
+> state that is being maintained as a global state in struct hv_context.
+> Get rid of this state in struct hv_context.
+>=20
+> Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+> ---
+>  drivers/hv/hv.c           | 10 +++-------
+>  drivers/hv/hyperv_vmbus.h |  2 --
+>  2 files changed, 3 insertions(+), 9 deletions(-)
+>=20
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
