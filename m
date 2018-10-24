@@ -2,223 +2,157 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 153D4C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:53:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADDB0C67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:54:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2C152064A
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:53:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dnQm9tDr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2C152064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7B063207DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:54:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B063207DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726838AbeJXWWI (ORCPT
+        id S1726997AbeJXWXI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 18:22:08 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45659 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726285AbeJXWWI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 18:22:08 -0400
-Received: by mail-ed1-f66.google.com with SMTP id t10-v6so5117262eds.12;
-        Wed, 24 Oct 2018 06:53:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hDExxvTKhJ/o1frLwdFq+stcMXreRFG+e9E30ZfmyjU=;
-        b=dnQm9tDroDTVc9evPX72Rqzuezcs9D6OKHrsHB/QyoQY9vxluWY0SSG+4sRZl/w/ZW
-         VHYSouyxU2l7ffLPs08L6BxOz7rjE/akHPg9a8ZGRW3S/NaavomzmsRoW11LRCtg0qrA
-         9SXrzypANJXKIm3jC4Tt7XyMBH9/BGgx71dOrimkAQcNMt8qABY8hYARCTRn6S7c1ncm
-         J/angYTuRY2njR5dSYGxNsIW6MW4wwLGZLfDXQtBbqnbgOFknDc2Ylpbv/Vbu+G66IdE
-         Jvgrwf9Sw1Zg0/tO85jDhz9SW5dgxM3QIkuvteugjZ9JvTUFGN7bxmO5/YaEbXykX0ij
-         lxZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hDExxvTKhJ/o1frLwdFq+stcMXreRFG+e9E30ZfmyjU=;
-        b=rbXP6++qMtVMXHQ9Y70NgWyP6JchRhhUgGpez1nl02IpIvJnyAtwcc2ZLvjsSTKy5o
-         sqMe9a9A/3Xk3HdJ5/szcD9kfwnLJiVJLqs9JF87fGs3vIrexQW7Sc/eAyKG/TZWQtY/
-         kZy1OPg6x8PjODExE8edp/DEo2Mf8MJqQ2cfC+ZROFMcH8EDxtOErVlhmPLHCwpn3P+W
-         NehBobb79nF2pWwVRXtcsN04ruFkcOVeCjPFn7hovDylhgiCDj6Sq7uznmcVZDPCSPjl
-         5tMqZhAMKAJqbUsf2fF8XK7gXDMKhqgJiHMyBHDK7xnfcqs03uMwFyFt3WQJkeagQY5M
-         gQpw==
-X-Gm-Message-State: ABuFfohqBr1ooPILRdVexgtXmLzPYDFJeUSyf2HmI6/pnYgZJ0ioYe40
-        vR/VjVxdaOCaYVAbf2K+LQEI1Wow8jbvv2UziA8=
-X-Google-Smtp-Source: ACcGV60WZxGNgtCXRV9Onhkpedvps22B2Mh2WPHrwrNJLPCmFgkEwp+bp26PBqJ5MzxGwHqTt4lUyGkL89ljwo2o600=
-X-Received: by 2002:a50:afa2:: with SMTP id h31-v6mr20071073edd.169.1540389233387;
- Wed, 24 Oct 2018 06:53:53 -0700 (PDT)
+        Wed, 24 Oct 2018 18:23:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57940 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726285AbeJXWXI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 18:23:08 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 71942AF3A;
+        Wed, 24 Oct 2018 13:54:53 +0000 (UTC)
+Date:   Wed, 24 Oct 2018 15:54:52 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, suzuki.poulose@arm.com,
+        punit.agrawal@arm.com, will.deacon@arm.com, Steven.Price@arm.com,
+        steve.capper@arm.com, catalin.marinas@arm.com,
+        akpm@linux-foundation.org, mike.kravetz@oracle.com,
+        n-horiguchi@ah.jp.nec.com
+Subject: Re: [PATCH V3 1/5] mm/hugetlb: Distinguish between migratability and
+ movability
+Message-ID: <20181024135452.GG18839@dhcp22.suse.cz>
+References: <1540299721-26484-1-git-send-email-anshuman.khandual@arm.com>
+ <1540299721-26484-2-git-send-email-anshuman.khandual@arm.com>
 MIME-Version: 1.0
-References: <CAHCN7xLx6uAmYiGh3p=piZFwE0VkfixTLqdjETibKwk2+DhMzA@mail.gmail.com>
- <CAHCN7xJKuPYg04WfRzbYWO4bGoHHnD16LBPRsK1QsiYY1bL7nA@mail.gmail.com>
- <20181022113306.GB2867@w540> <CAHCN7xJkc5RW73C0zruWBgyF7G0J3C5tLE=ZdfxTKbrUqs=-PQ@mail.gmail.com>
- <CAOMZO5ATm4BRzPEQOU+ZD6bHCP2Aqjp4raRYhuc+wNe0t4+C=w@mail.gmail.com>
- <CAHCN7x+csKEk25CF=teUv+F5_GoTe6_3Yqb5PODLn+AmCCm88w@mail.gmail.com>
- <d78877f8-2c23-2bf0-0a9c-cd98b855e95e@mentor.com> <CAHCN7xKhGAXs0jGv96CfOfLQfVubxzsdE9UjpDu+4NM6oLDGWw@mail.gmail.com>
- <bc034299-4a32-f248-d09a-0d1b5872a506@mentor.com> <CAHCN7xKVUgpyCb5k7s0PNXW-efySSwP25ZGMLdbFnohATPwKhg@mail.gmail.com>
- <20181023230259.GA3766@w540>
-In-Reply-To: <20181023230259.GA3766@w540>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Wed, 24 Oct 2018 08:53:41 -0500
-Message-ID: <CAHCN7xJaY_916OLHvaN_q1FwM2vqH5UXzVxLAS4DuEV0icPUXg@mail.gmail.com>
-Subject: Re: i.MX6 MIPI-CSI2 OV5640 Camera testing on Mainline Linux
-To:     jacopo@jmondi.org
-Cc:     steve_longerbeam@mentor.com, Fabio Estevam <festevam@gmail.com>,
-        Jagan Teki <jagan@amarulasolutions.com>,
-        p.zabel@pengutronix.de, Fabio Estevam <fabio.estevam@nxp.com>,
-        gstreamer-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1540299721-26484-2-git-send-email-anshuman.khandual@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 6:03 PM jacopo mondi <jacopo@jmondi.org> wrote:
->
-> Hi Adam,
->
-> On Tue, Oct 23, 2018 at 12:54:12PM -0500, Adam Ford wrote:
-> > On Tue, Oct 23, 2018 at 12:39 PM Steve Longerbeam
-> > <steve_longerbeam@mentor.com> wrote:
-> > >
-> > >
-> > > On 10/23/18 10:34 AM, Adam Ford wrote:
-> > > > On Tue, Oct 23, 2018 at 11:36 AM Steve Longerbeam
-> > > > <steve_longerbeam@mentor.com> wrote:
-> > > >> Hi Adam,
-> > > >>
-> > > >> On 10/23/18 8:19 AM, Adam Ford wrote:
-> > > >>> On Mon, Oct 22, 2018 at 7:40 AM Fabio Estevam <festevam@gmail.com> wrote:
-> > > >>>> Hi Adam,
-> > > >>>>
-> > > >>>> On Mon, Oct 22, 2018 at 9:37 AM Adam Ford <aford173@gmail.com> wrote:
-> > > >>>>
-> > > >>>>> Thank you!  This tutorial web site is exactly what I need.  The
-> > > >>>>> documentation page in Linux touched on the media-ctl links, but it
-> > > >>>>> didn't explain the syntax or the mapping.  This graphical
-> > > >>>>> interpretation really helps it make more sense.
-> > > >>>> Is capturing working well on your i.MX6 board now?
-> > > >>> Fabio,
-> > > >>>
-> > > >>> Unfortunately, no.  I built the rootfs based on Jagan's instructions
-> > > >>> at https://openedev.amarulasolutions.com/display/ODWIKI/i.CoreM6+1.5
-> > > >>>
-> > > >>> I tried building both the 4.15-RC6 kernel, a 4.19 kernel and a 4.14 LTS kernel.
-> > > >>>
-> > > >>> Using the suggested method of generating the graphical display of the
-> > > >>> pipeline options, I am able to enable various pipeline options
-> > > >>> connecting different /dev/videoX options tot he camera.  I have tried
-> > > >>> both the  suggested method above as well as the instructions found in
-> > > >>> Documentation/media/v4l-drivers/imx.rst for their respective kernels,
-> > > >>> and I have tried multiple options to capture through
-> > > >>> ipu1_csi1_capture, ipu2_csi1_capture, and ip1_ic_prepenc capture, and
-> > > >>> all yield a broken pipe.
-> > > >>>
-> > > >>> libv4l2: error turning on stream: Broken pipe
-> > > >>> ERROR: from element /GstPipeline:pipeline0/GstV4l2Src:v4l2src0: Could
-> > > >>> not read from resource.
-> > > >>> Additional debug info:
-> > > >>> gstv4l2bufferpool.c(1064): gst_v4l2_buffer_pool_poll ():
-> > > >>> /GstPipeline:pipeline0/GstV4l2Src:v4l2src0:
-> > > >>> poll error 1: Broken pipe (32)
-> > > >>>
-> > > >>> I can hear the camera click when I start gstreamer and click again
-> > > >>> when it stops trying to stream.
-> > > >>>
-> > > >>> dmesg indicates a broken pipe as well..
-> > > >>>
-> > > >>> [ 2419.851502] ipu2_csi1: pipeline start failed with -32
-> > > >>>
-> > > >>> might you have any suggestions?
-> > > >>
-> > > >> This -EPIPE error might mean you have a mis-match of resolution, pixel
-> > > >> format, or field type between one of the source->sink pad links. You can
-> > > >> find out which pads have a mis-match by enabling dynamic debug in the
-> > > >> kernel function __media_pipeline_start.
-> > > > Following Jagan's suggestion, I tried to make sure all the resolution
-> > > > and pixel formats were set the same between each source and sink.
-> > > >
-> > > > media-ctl --set-v4l2 "'ov5640 2-0010':0[fmt:UYVY2X8/640x480
-> > > > field:none]"
-> > > > media-ctl --set-v4l2 "'imx6-mipi-csi2':1[fmt:UYVY2X8/640x480
-> > > > field:none]"
-> > > > media-ctl --set-v4l2 "'ipu1_csi0_mux':2[fmt:UYVY2X8/640x480
-> > > > field:none]"
-> > > > media-ctl --set-v4l2 "'ipu1_csi0':2[fmt:AYUV32/640x480 field:none]"
-> > > >
-> > > >> Also make sure you are attempting to stream from the correct /dev/videoN.
-> > > > I have graphically plotted the pipeline using media-ctl --print-dot
-> > > > and I can see the proper video is routed, but your dynamic debug
-> > > > suggestion yielded something:
-> > > >
-> > > >     imx-media capture-subsystem: link validation failed for 'ov5640
-> > > > 2-0010':0 -> 'imx6-mipi-csi2':0, error -32
-> > >
-> > >
-> > > It's what I expected, you have a format mismatch between those pads.
-> >
-> > Is the mismatch something I am doing wrong with:
-> >
-> > media-ctl --set-v4l2 "'ov5640 2-0010':0[fmt:UYVY2X8/640x480 field:none]"
-> > media-ctl --set-v4l2 "'imx6-mipi-csi2':2[fmt:UYVY2X8/640x480 field:none]"
-> >
->
-> Could you try to verify the actual format configured on the sensor?
-> (media-ctl --get-v4l2 "'ov5640 2-0010':0").
->
-> Depending on the driver version you are running, you might be affected
-> by different regressions.
->
-> > or is there something else I need to do?  I just used Jagan's suggestion.
->
-> I suggest you to update the driver version to the last one available
-> in the media-tree master, or at least try to backport the following
-> commit:
-> fb98e29 media: ov5640: fix mode change regression
->
-> If it turns out the format and mode configured on the sensor do not
-> match the one you want.
->
-> Thanks
+On Tue 23-10-18 18:31:57, Anshuman Khandual wrote:
+> During huge page allocation it's migratability is checked to determine if
+> it should be placed under movable zones with GFP_HIGHUSER_MOVABLE. But the
+> movability aspect of the huge page could depend on other factors than just
+> migratability. Movability in itself is a distinct property which should not
+> be tied with migratability alone.
+> 
+> This differentiates these two and implements an enhanced movability check
+> which also considers huge page size to determine if it is feasible to be
+> placed under a movable zone. At present it just checks for gigantic pages
+> but going forward it can incorporate other enhanced checks.
+> 
+> Reviewed-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> Suggested-by: Michal Hocko <mhocko@kernel.org>
+> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 
-That got me past one hurdle.   Wtih your help, I was able to confirm
-the mis-match of the modes between the sensor and the csi1 source.  I
-applied the patch as you suggested, but now I get a new error.
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-[  295.294370] imx6-mipi-csi2: LP-11 timeout, phy_state = 0x00000230
-[  295.300681] ipu1_csi0: pipeline start failed with -110
+Thanks!
 
+> ---
+>  include/linux/hugetlb.h | 30 ++++++++++++++++++++++++++++++
+>  mm/hugetlb.c            |  2 +-
+>  mm/migrate.c            |  2 +-
+>  3 files changed, 32 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/hugetlb.h b/include/linux/hugetlb.h
+> index 087fd5f4..1b858d7 100644
+> --- a/include/linux/hugetlb.h
+> +++ b/include/linux/hugetlb.h
+> @@ -506,6 +506,31 @@ static inline bool hugepage_migration_supported(struct hstate *h)
+>  #endif
+>  }
+>  
+> +/*
+> + * Movability check is different as compared to migration check.
+> + * It determines whether or not a huge page should be placed on
+> + * movable zone or not. Movability of any huge page should be
+> + * required only if huge page size is supported for migration.
+> + * There wont be any reason for the huge page to be movable if
+> + * it is not migratable to start with. Also the size of the huge
+> + * page should be large enough to be placed under a movable zone
+> + * and still feasible enough to be migratable. Just the presence
+> + * in movable zone does not make the migration feasible.
+> + *
+> + * So even though large huge page sizes like the gigantic ones
+> + * are migratable they should not be movable because its not
+> + * feasible to migrate them from movable zone.
+> + */
+> +static inline bool hugepage_movable_supported(struct hstate *h)
+> +{
+> +	if (!hugepage_migration_supported(h))
+> +		return false;
+> +
+> +	if (hstate_is_gigantic(h))
+> +		return false;
+> +	return true;
+> +}
+> +
+>  static inline spinlock_t *huge_pte_lockptr(struct hstate *h,
+>  					   struct mm_struct *mm, pte_t *pte)
+>  {
+> @@ -602,6 +627,11 @@ static inline bool hugepage_migration_supported(struct hstate *h)
+>  	return false;
+>  }
+>  
+> +static inline bool hugepage_movable_supported(struct hstate *h)
+> +{
+> +	return false;
+> +}
+> +
+>  static inline spinlock_t *huge_pte_lockptr(struct hstate *h,
+>  					   struct mm_struct *mm, pte_t *pte)
+>  {
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index 5c390f5..f810cf0 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -919,7 +919,7 @@ static struct page *dequeue_huge_page_nodemask(struct hstate *h, gfp_t gfp_mask,
+>  /* Movability of hugepages depends on migration support. */
+>  static inline gfp_t htlb_alloc_mask(struct hstate *h)
+>  {
+> -	if (hugepage_migration_supported(h))
+> +	if (hugepage_movable_supported(h))
+>  		return GFP_HIGHUSER_MOVABLE;
+>  	else
+>  		return GFP_HIGHUSER;
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index 84381b5..bfda9e4 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -1272,7 +1272,7 @@ static int unmap_and_move_huge_page(new_page_t get_new_page,
+>  	struct anon_vma *anon_vma = NULL;
+>  
+>  	/*
+> -	 * Movability of hugepages depends on architectures and hugepage size.
+> +	 * Migratability of hugepages depends on architectures and their size.
+>  	 * This check is necessary because some callers of hugepage migration
+>  	 * like soft offline and memory hotremove don't walk through page
+>  	 * tables or check whether the hugepage is pmd-based or not before
+> -- 
+> 2.7.4
 
-I am going to go through various patches to the imx framework and
-ov5640 driver to see if I can find the solution,  but if you have
-suggestions as to which fixes are appropriate, I'll test those.  If I
-can get this working, would it make sense for me to submit some
-requests with kernel-stable to backport some of these commits to 4.19
-and if applicable, 4.14 too?
-
-adam
->    j
->
-> > adam
-> > >
-> > > Steve
-> > >
-> > >
-> > > >
-> > > > I am assume this means the interface between the camera and the csi2
-> > > > isn't working.  I am going to double check the power rails and the
-> > > > clocks.  i can hear it click when activated and deactivated, so
-> > > > something is happening.
-> > > >
-> > > > adam
-> > > >
-> > > >> Steve
-> > > >>
+-- 
+Michal Hocko
+SUSE Labs
