@@ -2,100 +2,127 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68C7AECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 20:18:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C05ECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 20:22:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A45B20833
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 20:18:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ztu31OOu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A45B20833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4330C20833
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 20:22:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4330C20833
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726473AbeJYEri (ORCPT
+        id S1726293AbeJYEwQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 00:47:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40934 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725779AbeJYEri (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 00:47:38 -0400
-Received: from jouet.infradead.org (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 556302082F;
-        Wed, 24 Oct 2018 20:18:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540412288;
-        bh=XA/Xls01qVFw0yeWTND+dWiPXtIP9U6BcQOysBULn+A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ztu31OOuQjkx2PKJ9qtmPEJ7evu+/Wd0UqG2jlecJ18nmwbP4a0FxxnpG8a8HswWL
-         ougf+FP4M6ARYmwg4q6BwIlTRmlxmZw8YjegFGEg9XVX03hwLre9KJBCYfEubLdnjs
-         pi+fySky/0hG/UWIqwQExyZ7JugnzzGCci8/C7eQ=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 0380D142C5F; Wed, 24 Oct 2018 17:18:04 -0300 (-03)
-Date:   Wed, 24 Oct 2018 17:18:04 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Benjamin Peterson <benjamin@python.org>
-Cc:     peterz@infradead.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-        namhyung@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf trace beautify: Beautify flags of mount(2) and
- umount(2).
-Message-ID: <20181024201804.GG15106@kernel.org>
-References: <20180828035344.31500-1-benjamin@python.org>
- <20180830182848.GE6097@kernel.org>
- <1535665851.2058334.1491869472.4E860103@webmail.messagingengine.com>
- <1539143546.2716467.1536750504.65ADF11A@webmail.messagingengine.com>
- <20181010125506.GH10775@kernel.org>
- <1540262435.2865915.1551182688.3057DD9D@webmail.messagingengine.com>
+        Thu, 25 Oct 2018 00:52:16 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35733 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725779AbeJYEwQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 00:52:16 -0400
+Received: by mail-ed1-f67.google.com with SMTP id e2-v6so6328577edn.2;
+        Wed, 24 Oct 2018 13:22:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Wd5Mf7uCqOKe1IS7J9h5HMp+qrUaFP2+rUpZ+W81aF0=;
+        b=rhzPKhyQyNnuQPS9AAnZ0/7RwDQb8327O9T8jwv2/jmvpuighziwT5NypqFMY3jUVA
+         xTYGxY6AzxujlDHNu2gC4ukwlLtWY56nXKpXM2qI6Je4jN1lUGo3qGaOngzNVCf4dbgd
+         3L4HmKjKJLE0RDfTcFuaAuSRkU0XryuPdwYYOxGvkRcllia8ctNsNt798ezImemPxuJI
+         B8dYa6JFMkHrM15Mhg5f//U/qsmifnCTR9wThKIoGBDB35+wn0silPT2L9rD6nXySGkV
+         q10qwr/kEG1IWINN0d3e3ay3F6d0rMJy2wdTzCnADXn+J3n72F8yzc+mLoRhGnNLlA+7
+         xDDw==
+X-Gm-Message-State: ABuFfojVrONNQ9Ym3BTvyhMRaBN+T74N7JP/gCirSQVpvkuptQmG4HhG
+        LWpobI9tzkRq3hXkzcDWVqBIGMVhtyY=
+X-Google-Smtp-Source: ACcGV63TjpVPPrrRXoYoe3ABIowc3eQfnheQLKpnvIjoak34IjgPUzi5+EvuFWLQlSOQj9ChVS0YXA==
+X-Received: by 2002:a50:c202:: with SMTP id n2-v6mr20560338edf.162.1540412563486;
+        Wed, 24 Oct 2018 13:22:43 -0700 (PDT)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com. [209.85.128.44])
+        by smtp.gmail.com with ESMTPSA id w37-v6sm2187836edc.2.2018.10.24.13.22.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 24 Oct 2018 13:22:43 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id b14-v6so4091194wmj.3;
+        Wed, 24 Oct 2018 13:22:43 -0700 (PDT)
+X-Received: by 2002:a1c:1752:: with SMTP id 79-v6mr4258899wmx.145.1540412562450;
+ Wed, 24 Oct 2018 13:22:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1540262435.2865915.1551182688.3057DD9D@webmail.messagingengine.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20180927114850.24565-1-jagan@amarulasolutions.com>
+ <20180927114850.24565-10-jagan@amarulasolutions.com> <20181015182448.GA7134@bogus>
+ <CAGb2v64QEhy1J05L9W0_uWhmrky8wD+vg3v5wA7Yd3_U-DdpKg@mail.gmail.com> <CAL_JsqJPn9hhGsk62RzLc1dPQyF2_iCSau+MvY9mD_QADybgvg@mail.gmail.com>
+In-Reply-To: <CAL_JsqJPn9hhGsk62RzLc1dPQyF2_iCSau+MvY9mD_QADybgvg@mail.gmail.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Wed, 24 Oct 2018 21:22:30 +0100
+X-Gmail-Original-Message-ID: <CAGb2v64euJCAZvyGFL+pr+CLQfY8ypnhRAJFKZQ9xGai6RvLDQ@mail.gmail.com>
+Message-ID: <CAGb2v64euJCAZvyGFL+pr+CLQfY8ypnhRAJFKZQ9xGai6RvLDQ@mail.gmail.com>
+Subject: Re: [PATCH 09/12] dt-bindings: panel: Add Bananapi S070WV20-CT16
+ MIPI-DSI panel bindings
+To:     Rob Herring <robh@kernel.org>,
+        Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Oct 22, 2018 at 07:40:35PM -0700, Benjamin Peterson escreveu:
-> 
-> 
-> On Wed, Oct 10, 2018, at 05:55, Arnaldo Carvalho de Melo wrote:
-> > Em Tue, Oct 09, 2018 at 08:52:26PM -0700, Benjamin Peterson escreveu:
-> > > Hi Arnaldo,
-> > > Did you get a chance to look at this again?
+On Tue, Oct 23, 2018 at 4:11 PM Rob Herring <robh@kernel.org> wrote:
+>
+> On Mon, Oct 22, 2018 at 5:22 AM Chen-Yu Tsai <wens@csie.org> wrote:
+> >
+> > Hi Rob,
+> >
+> > On Mon, Oct 15, 2018 at 7:24 PM Rob Herring <robh@kernel.org> wrote:
+> > >
+> > > On Thu, 27 Sep 2018 17:18:47 +0530, Jagan Teki wrote:
+> > > > Bananapi S070WV20-CT16 is 800x480, 4-lane MIPI-DSI panel, the
+> > > > same panel PCB comes with parallel RBG which is supported via
+> > > > panel-simple with "bananapi,s070wv20-ct16" compatible.
+> > > >
+> > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > > ---
+> > > >  .../panel/bananapi,s070wv20-ct16-dsi.txt      | 21 +++++++++++++++++++
+> > > >  1 file changed, 21 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16-dsi.txt
+> > > >
+> > >
+> > > Reviewed-by: Rob Herring <robh@kernel.org>
+> >
+> > This "panel" is actually an RGB panel with a MIPI-DSI-to-RGB bridge
+> > tacked on. On one particular revision of this module, one can also
+> > directly use the RGB interface.
+> >
+> > Would it be better to model this as bridge+panel? We already have
+> > a binding for the RGB version [1]. This would make it harder to
+> > make a driver though, as there is no publicly available datasheet
+> > for the bridge chip, so it's likely that part of the init sequence
+> > would have to be hard-coded.
+>
+> Perhaps you can use the same compatible and detect based on the OF
+> graph connection whether it is DSI or RGB interface? That would mean
+> the RGB version doesn't use simple-panel driver, but that should be
+> okay.
 
-> > Thanks, for pinging me about it, will check.
- 
-> Will the main part of my patch manage to make the cut for 4.20?
+I think that would work.
 
-The functionality will, but I'm implementing it differently, the model
-you used to create the patch is being phased out, now we're unsing a
-model that create tables from the header files where those flags are
-defined, so that when a new one gets added, we get it included
-automatically, please take a look at:
+> If there's other users of this bridge chip, then modeling the bridge
+> separately would be better.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git/commit/?h=tmp.perf/trace.mount_flags
+I doubt we'd find it. And given that there are no docs for the init
+sequence, even though we could make out some parts, it will always
+be a partially binary sequence tied to the compatible for the panel.
 
-More specifically this one:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git/commit/?h=tmp.perf/trace.mount_flags&id=341628af5643adbaa78097d528f34b4b16aa908f
-
-That will be used by one like tools/perf/trace/beauty/pkey_alloc.c, that
-goes looking if the bits are set and if so, get the strings from the
-table, etc.
-
-In time pkey_alloc__scnprintf_access_rights() will be further
-generalized, as all it needs is a strarray + the flags integer to
-produce a simbolic or-ed flags string.
-
-Sorry for taking so long, kept being sidetracked with other stuff...
-
-- Arnaldo
+Thanks
+ChenYu
