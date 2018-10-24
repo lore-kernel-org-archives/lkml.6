@@ -2,89 +2,122 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 656D0C67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C42C67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:39:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E557206B5
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:37:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E557206B5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2C840206B5
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:39:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C840206B5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727387AbeJXRES (ORCPT
+        id S1727466AbeJXRGc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 13:04:18 -0400
-Received: from mga14.intel.com ([192.55.52.115]:3922 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726732AbeJXRES (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 13:04:18 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 01:37:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,419,1534834800"; 
-   d="scan'208";a="102185655"
-Received: from sakethyx-mobl2.gar.corp.intel.com ([10.249.254.29])
-  by orsmga001.jf.intel.com with ESMTP; 24 Oct 2018 01:37:00 -0700
-Date:   Wed, 24 Oct 2018 11:36:57 +0300 (EEST)
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-X-Sender: jsakkine@jsakkine-mobl1
-To:     Nick Desaulniers <ndesaulniers@google.com>
-cc:     dhowells@redhat.com, jejb@linux.vnet.ibm.com,
-        natechancellor@gmail.com, David.Laight@aculab.com,
-        denkenz@gmail.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>, keyrings@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v2] [PATCH] KEYS: trusted: fix -Wvarags warning
-In-Reply-To: <20181022234357.82217-1-ndesaulniers@google.com>
-Message-ID: <alpine.DEB.2.21.1810241136130.3525@jsakkine-mobl1>
-References: <0147a993d4a94426afa469a8dcc4e5d7@AcuMS.aculab.com> <20181022234357.82217-1-ndesaulniers@google.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+        Wed, 24 Oct 2018 13:06:32 -0400
+Received: from smtprelay0032.hostedemail.com ([216.40.44.32]:52395 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726732AbeJXRGc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 13:06:32 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 5E838180585F3;
+        Wed, 24 Oct 2018 08:39:21 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: board99_34568bc2f9c0a
+X-Filterd-Recvd-Size: 3639
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf18.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 24 Oct 2018 08:39:19 +0000 (UTC)
+Message-ID: <02a1bfc2eed324f3d03aa4a7b5eb6fde4e4a3bdd.camel@perches.com>
+Subject: Re: [PATCH] mm: convert totalram_pages, totalhigh_pages and
+ managed_pages to atomic.
+From:   Joe Perches <joe@perches.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Arun KS <arunks@codeaurora.org>, Kees Cook <keescook@chromium.org>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, Minchan Kim <minchan@kernel.org>,
+        Arun Sudhilal <getarunks@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Date:   Wed, 24 Oct 2018 01:39:18 -0700
+In-Reply-To: <20181024082312.GD18839@dhcp22.suse.cz>
+References: <1540229092-25207-1-git-send-email-arunks@codeaurora.org>
+         <c57bcc584b3700c483b0311881ec3ae8786f88b1.camel@perches.com>
+         <15247f54-53f3-83d4-6706-e9264b90ca7a@yandex-team.ru>
+         <CAGXu5j+NsDHRWA5PKAKeJCO_oiGkFAUeWE8O-1fEBQX80MDu1A@mail.gmail.com>
+         <7a4fcbaee7efb71d2a3c6b403c090db4@codeaurora.org>
+         <20181024061546.GY18839@dhcp22.suse.cz>
+         <0e1fc40af360ed55fd32784f6973af5940232f99.camel@perches.com>
+         <20181024082312.GD18839@dhcp22.suse.cz>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 22 Oct 2018, ndesaulniers@google.com wrote:
-> Fixes the warning reported by Clang:
-> security/keys/trusted.c:146:17: warning: passing an object that
-> undergoes default
->      argument promotion to 'va_start' has undefined behavior [-Wvarargs]
->        va_start(argp, h3);
->                       ^
-> security/keys/trusted.c:126:37: note: parameter of type 'unsigned
-> char' is declared here
-> unsigned char *h2, unsigned char h3, ...)
->                               ^
-> Specifically, it seems that both the C90 (4.8.1.1) and C11 (7.16.1.4)
-> standards explicitly call this out as undefined behavior:
->
-> The parameter parmN is the identifier of the rightmost parameter in
-> the variable parameter list in the function definition (the one just
-> before the ...). If the parameter parmN is declared with ... or with a
-> type that is not compatible with the type that results after
-> application of the default argument promotions, the behavior is
-> undefined.
->
-> Link: https://github.com/ClangBuiltLinux/linux/issues/41
-> Link: https://www.eskimo.com/~scs/cclass/int/sx11c.html
-> Suggested-by: David Laight <David.Laight@aculab.com>
-> Suggested-by: Denis Kenzior <denkenz@gmail.com>
-> Suggested-by: James Bottomley <jejb@linux.vnet.ibm.com>
-> Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
-> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+On Wed, 2018-10-24 at 10:23 +0200, Michal Hocko wrote:
+> On Tue 23-10-18 23:26:16, Joe Perches wrote:
+> > On Wed, 2018-10-24 at 08:15 +0200, Michal Hocko wrote:
+> > > On Wed 24-10-18 10:47:52, Arun KS wrote:
+> > > > On 2018-10-24 01:34, Kees Cook wrote:
+> > > [...]
+> > > > > Thank you -- I was struggling to figure out the best way to reply to
+> > > > > this. :)
+> > > > I'm sorry for the trouble caused. Sent the email using,
+> > > > git send-email  --to-cmd="scripts/get_maintainer.pl -i"
+> > > > 0001-convert-totalram_pages-totalhigh_pages-and-managed_p.patch
+> > > > 
+> > > > Is this not a recommended approach?
+> > > 
+> > > Not really for tree wide mechanical changes. It is much more preferrable
+> > > IMHO to only CC people who should review the intention of the change
+> > > rather than each and every maintainer whose code is going to be changed.
+> > > This is a case by case thing of course but as soon as you see a giant CC
+> > > list from get_maintainer.pl then you should try to think twice to use
+> > > it. If not sure, just ask on the mailing list.
+> > 
+> > Generally, it's better to use scripts to control
+> > the --to-cmd and --cc-cmd options.
+> 
+> I would argue that it is better to use a common sense much more than
+> scripts.
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Common sense isn't common.
 
-/Jarkko
+Perhaps you could describe some guidelines you
+use to determine what you think is sensible to
+send patches to maintainers and reviewers and
+appropriate mailing lists.
+
+Then compare those to the rules in the scripts
+I suggested.
+
+My suggestions:
+
+o send to all top-level listed maintainers and
+  reviewers in MAINTAINERS for the specific files
+  in a patch
+o cc all maintainers and reviewers that are upstream
+  paths for the files in a patch
+o cc all the upstream mailing lists for the files
+  in the patch.
+o do not generally use git-history to exclude authors
+  of patches like drive-by/whitespace cleanups
+
+Other advanced possibilities for patches that
+modify specific and perhaps complex logic blocks:
+
+o cc the people that are not maintainers that
+  have modified the specific blocks or functions
+
+
+
