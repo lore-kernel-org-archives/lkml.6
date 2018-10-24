@@ -2,150 +2,98 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD168ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 536E0ECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:21:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D6892082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:21:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="e3gm+iaj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D6892082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 260E92082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:21:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 260E92082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726838AbeJYDuw (ORCPT
+        id S1727000AbeJYDu4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 23:50:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52106 "EHLO mail.kernel.org"
+        Wed, 24 Oct 2018 23:50:56 -0400
+Received: from mga06.intel.com ([134.134.136.31]:30598 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726433AbeJYDuw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 23:50:52 -0400
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E78220833
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 19:21:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540408893;
-        bh=bbWQxRFX4/+vHtn9cdWuUya71diqrTPZ89hG2hsEm+w=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=e3gm+iajTKAfr8zXHKImp7BgkdtHCEs1rcr6Go5uRQBsCnpoV3+0f2K+bRZzfnRyR
-         gBIm/SWSj0l4+2MIY2UNxYN7+ZV4LBnfy4YKPLiFupG+bhQpSSD0g4S5AvtTSuHxIP
-         8Jyc19Kze0iDdFY8JJeGxXOn0ETYk/AnaQUnCjJA=
-Received: by mail-wr1-f42.google.com with SMTP id r10-v6so5901811wrv.6
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 12:21:33 -0700 (PDT)
-X-Gm-Message-State: AGRZ1gJX7EAhCC67wDl83K97V//JRLqdAM1FckUpKuvby3hnuRrEVEYp
-        CEFfaYsLIte/YgjlOsEH6/M9Lz/DRCIO2sRbiSy61Q==
-X-Google-Smtp-Source: AJdET5dsaY8BbhGra9J/Fwp2KDH3DujLTXUYmks257mIL3uChbCyNdElBy/r78ZCedTvUTnE1OZN6BClJdgrdC7gYTo=
-X-Received: by 2002:adf:e50f:: with SMTP id j15-v6mr1117170wrm.94.1540408891744;
- Wed, 24 Oct 2018 12:21:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181023184234.14025-1-chang.seok.bae@intel.com> <20181023184234.14025-6-chang.seok.bae@intel.com>
-In-Reply-To: <20181023184234.14025-6-chang.seok.bae@intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Wed, 24 Oct 2018 12:21:20 -0700
-X-Gmail-Original-Message-ID: <CALCETrWZZ65pzmO_OwG0x3DWtLbLykB16DB5t8r3rkjg5VmzmA@mail.gmail.com>
-Message-ID: <CALCETrWZZ65pzmO_OwG0x3DWtLbLykB16DB5t8r3rkjg5VmzmA@mail.gmail.com>
-Subject: Re: [v3 05/12] x86/fsgsbase/64: Preserve FS/GS state in __switch_to()
- if FSGSBASE is on
-To:     "Bae, Chang Seok" <chang.seok.bae@intel.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
+        id S1726839AbeJYDu4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 23:50:56 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 12:21:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,421,1534834800"; 
+   d="scan'208";a="275300210"
+Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.126])
+  by fmsmga006.fm.intel.com with ESMTP; 24 Oct 2018 12:21:37 -0700
+Received: by tassilo.localdomain (Postfix, from userid 1000)
+        id 0C75430137B; Wed, 24 Oct 2018 12:21:37 -0700 (PDT)
+Date:   Wed, 24 Oct 2018 12:21:37 -0700
+From:   Andi Kleen <ak@linux.intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     "Bae, Chang Seok" <chang.seok.bae@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
         "Metzger, Markus T" <markus.t.metzger@intel.com>,
         "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
         LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [v3 03/12] x86/fsgsbase/64: Add intrinsics/macros for FSGSBASE
+ instructions
+Message-ID: <20181024192137.GI6218@tassilo.jf.intel.com>
+References: <20181023184234.14025-1-chang.seok.bae@intel.com>
+ <20181023184234.14025-4-chang.seok.bae@intel.com>
+ <CALCETrWWBYgaJfPykTpJ9=TsptVL_ieOR3JdYVVW02=O9CM17Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALCETrWWBYgaJfPykTpJ9=TsptVL_ieOR3JdYVVW02=O9CM17Q@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 11:43 AM Chang S. Bae <chang.seok.bae@intel.com> wrote:
->
-> From: Andy Lutomirski <luto@kernel.org>
->
-> With the new FSGSBASE instructions, we can efficiently read and write
-> the FSBASE and GSBASE in __switch_to().  Use that capability to preserve
-> the full state.
->
-> This will enable user code to do whatever it wants with the new
-> instructions without any kernel-induced gotchas.  (There can still be
-> architectural gotchas: movl %gs,%eax; movl %eax,%gs may change GSBASE
-> if WRGSBASE was used, but users are expected to read the CPU manual
-> before doing things like that.)
->
-> This is a considerable speedup.  It seems to save about 100 cycles
-> per context switch compared to the baseline 4.6-rc1 behavior on my
-> Skylake laptop.
->
-> [ chang: 5~10% performance improvements were seen by a context switch
->   benchmark that ran threads with different FS/GSBASE values. Minor
->   edit on the changelog. ]
->
-> Signed-off-by: Andy Lutomirski <luto@kernel.org>
-> Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-> Reviewed-by: Andi Kleen <ak@linux.intel.com>
-> Cc: H. Peter Anvin <hpa@zytor.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> ---
->  arch/x86/kernel/process_64.c | 34 ++++++++++++++++++++++++++++------
->  1 file changed, 28 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-> index fcf18046c3d6..1d975cadc256 100644
-> --- a/arch/x86/kernel/process_64.c
-> +++ b/arch/x86/kernel/process_64.c
-> @@ -238,8 +238,18 @@ static __always_inline void save_fsgs(struct task_struct *task)
->  {
->         savesegment(fs, task->thread.fsindex);
->         savesegment(gs, task->thread.gsindex);
-> -       save_base_legacy(task, task->thread.fsindex, FS);
-> -       save_base_legacy(task, task->thread.gsindex, GS);
-> +       if (static_cpu_has(X86_FEATURE_FSGSBASE)) {
-> +               /*
-> +                * If FSGSBASE is enabled, we can't make any useful guesses
-> +                * about the base, and user code expects us to save the current
-> +                * value.  Fortunately, reading the base directly is efficient.
-> +                */
-> +               task->thread.fsbase = rdfsbase();
-> +               task->thread.gsbase = rd_inactive_gsbase();
-> +       } else {
-> +               save_base_legacy(task, task->thread.fsindex, FS);
-> +               save_base_legacy(task, task->thread.gsindex, GS);
-> +       }
->  }
->
->  #if IS_ENABLED(CONFIG_KVM)
-> @@ -318,10 +328,22 @@ static __always_inline void load_seg_legacy(unsigned short prev_index,
->  static __always_inline void x86_fsgsbase_load(struct thread_struct *prev,
->                                               struct thread_struct *next)
->  {
-> -       load_seg_legacy(prev->fsindex, prev->fsbase,
-> -                       next->fsindex, next->fsbase, FS);
-> -       load_seg_legacy(prev->gsindex, prev->gsbase,
-> -                       next->gsindex, next->gsbase, GS);
-> +       if (static_cpu_has(X86_FEATURE_FSGSBASE)) {
-> +               /* Update the FS and GS selectors if they could have changed. */
-> +               if (unlikely(prev->fsindex || next->fsindex))
-> +                       loadseg(FS, next->fsindex);
-> +               if (unlikely(prev->gsindex || next->gsindex))
-> +                       loadseg(GS, next->gsindex);
-> +
-> +               /* Update the bases. */
-> +               wrfsbase(next->fsbase);
-> +               wr_inactive_gsbase(next->gsbase);
+On Wed, Oct 24, 2018 at 11:53:54AM -0700, Andy Lutomirski wrote:
+> On Tue, Oct 23, 2018 at 11:43 AM Chang S. Bae <chang.seok.bae@intel.com> wrote:
+> >
+> > From: Andi Kleen <ak@linux.intel.com>
+> >
+> > Add C intrinsics and assembler macros for the new FSBASE and GSBASE
+> > instructions.
+> >
+> > Very straight forward. Used in followon patches.
+> >
+> > [ luto: Rename the variables from FS and GS to FSBASE and GSBASE and
+> >   make <asm/fsgsbase.h> safe to include on 32-bit kernels. ]
+> >
+> > v2: Use __always_inline
+> >
+> > [ chang: Revise the changelog. Place them in <asm/fsgsbase.h>. Replace
+> >   the macros with GAS-compatible ones. ]
+> >
+> > If GCC supports it, we can add -mfsgsbase to CFLAGS and use the builtins
+> > here for extra performance.
+> 
+> Reviewed-by: Andy Lutomirski <luto@kernel.org> # C parts only
+> 
+> With the caveat that I'm not convinced that the memory clobbers are
+> needed.  The __force_order trick in special_insns.h would probably be
+> more appropriate.
+> 
+> I don't feel qualified to review the asm part without some research.
+> Whereas hpa or Boris could probably review it with their eyes closed.
 
-Aha, I see what you're doing with the FSGSBASE-optimized version being
-out of line.  But it's way too unclear from the code.  You should name
-the helper wrgsbase_inactive or maybe __wrgsbase_inactive() to
-emphasize that you're literally using the WRGSBASE instruction.  (Or
-it's Xen PV equivalent.  Hmm.)
+BTW the other option would be to update the min-binutils requirement 
+to 2.21 (currently it is 2.20) and then write it directly without .byte. 
+I believe 2.21 added support for these instructions.
+
+(It's only a binutils requirement, don't need gcc support)
+
+-Andi
