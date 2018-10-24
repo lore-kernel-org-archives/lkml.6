@@ -2,177 +2,112 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B9CCC004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 09:16:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 217ADC004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 09:16:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7D952075D
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 09:16:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dJ+mCyOM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7D952075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id E7A0A2082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 09:16:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7A0A2082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728029AbeJXRoC (ORCPT
+        id S1728095AbeJXRoH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 13:44:02 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:44946 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727875AbeJXRoC (ORCPT
+        Wed, 24 Oct 2018 13:44:07 -0400
+Received: from www62.your-server.de ([213.133.104.62]:35458 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726256AbeJXRoC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 24 Oct 2018 13:44:02 -0400
-Received: by mail-ot1-f66.google.com with SMTP id p23so4277726otf.11
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 02:16:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qVVfjUDhcB2D++FxirVvP8cmhi0Yi4tHY8i5hnXt9Do=;
-        b=dJ+mCyOM57Up0xu/yCuHTEYdu9lRz+GSZHNY8i0Z4v4VHj2LLzed3DZvFQs5hBz8NE
-         9il+X4/640V6SfEdboTSJzJ/bNd2cLNZywgkCIdnhwfRnt7RhjVKUUd6fj10VU34bFKP
-         cSZHpmebx28p6zXTBOUmIavKX1xgNt38dpazU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qVVfjUDhcB2D++FxirVvP8cmhi0Yi4tHY8i5hnXt9Do=;
-        b=EQp+iu4kzq16ArH1aFfNwC1y0fBH0AjTJeSTlh/njeVRs8w300Ph30i4+RA193Qa77
-         bS1HnpB+S1yfZBakFVS0rzgc0YbX0r/qvrXjIQP7tQNafC4Cx+hivYCfxKXzGVnNeMcb
-         Lj1EWSzQGMbZJg1OOF5CTcmGq+N9tXhbZvV26SFaL0mbIdkryxGz8DT4RDk5T1d3BYYA
-         Yqz7BNW4b3jZUEpT6csTHrAAQGbeJWXlCzVjfyn/ug5G2GR9EVF20caGmyWjY5OZMPTG
-         lkydQHbgyTROocfJULkcvd+BFlcFz8+8HceXGXJ5ar3PhUxPLMfCZc9UKxm03msEmPik
-         YhGw==
-X-Gm-Message-State: AGRZ1gLsISV5Cf76K+DO6089XiBmIH/QAa1pQrXKBTtPVmv5b8JTYo+z
-        0LCX+Irf4gp7nih9KIsQCcdv2/wzNu69wg==
-X-Google-Smtp-Source: AJdET5dgtwKzazsjkHBqBwkwkFz3D4cjVcpvEAI8DlTe3jtTbAD1WPKH3oXv3Ue3bBQ8g5u5/gUCTA==
-X-Received: by 2002:a9d:40f7:: with SMTP id t52mr1024440oti.311.1540372603592;
-        Wed, 24 Oct 2018 02:16:43 -0700 (PDT)
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com. [209.85.167.169])
-        by smtp.gmail.com with ESMTPSA id q5-v6sm1265381oia.54.2018.10.24.02.16.42
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Oct 2018 02:16:42 -0700 (PDT)
-Received: by mail-oi1-f169.google.com with SMTP id s69-v6so3477361oie.10
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 02:16:42 -0700 (PDT)
-X-Received: by 2002:aca:6709:: with SMTP id z9-v6mr893233oix.178.1540372601677;
- Wed, 24 Oct 2018 02:16:41 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181019080928.208446-1-acourbot@chromium.org> <a02b50ee-37e1-0202-b999-8e32b7bd1a96@xs4all.nl>
-In-Reply-To: <a02b50ee-37e1-0202-b999-8e32b7bd1a96@xs4all.nl>
-From:   Alexandre Courbot <acourbot@chromium.org>
-Date:   Wed, 24 Oct 2018 18:16:30 +0900
-X-Gmail-Original-Message-ID: <CAPBb6MUA5zNL9SsY2AEDNKgazyAqOMxGGSwidMV+RJnnrz7kTg@mail.gmail.com>
-Message-ID: <CAPBb6MUA5zNL9SsY2AEDNKgazyAqOMxGGSwidMV+RJnnrz7kTg@mail.gmail.com>
-Subject: Re: [RFC] Stateless codecs: how to refer to reference frames
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Tomasz Figa <tfiga@chromium.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
+Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gFFHM-0004QM-US; Wed, 24 Oct 2018 11:16:40 +0200
+Received: from [62.203.87.61] (helo=linux.home)
+        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1gFFHM-000PG9-Ka; Wed, 24 Oct 2018 11:16:40 +0200
+Subject: Re: [PATCH] bpf: btf: Fix a missing-check bug
+To:     Y Song <ys114321@gmail.com>, wang6495@umn.edu
+Cc:     kjlu@umn.edu, Alexei Starovoitov <ast@kernel.org>,
+        netdev <netdev@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <1539988191-13973-1-git-send-email-wang6495@umn.edu>
+ <CAH3MdRV2qLj_3KHFYmCKYHMx2wZk_4mQrdvRJe+znXr3Astm8g@mail.gmail.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <ff23c4af-9e31-8a79-9c37-95766bff7619@iogearbox.net>
+Date:   Wed, 24 Oct 2018 11:16:38 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
+MIME-Version: 1.0
+In-Reply-To: <CAH3MdRV2qLj_3KHFYmCKYHMx2wZk_4mQrdvRJe+znXr3Astm8g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.2/25065/Wed Oct 24 06:59:08 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Hans,
+Hi Wenwen,
 
-On Fri, Oct 19, 2018 at 6:40 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
->
-> From Alexandre's '[RFC PATCH v3] media: docs-rst: Document m2m stateless
-> video decoder interface':
->
-> On 10/19/18 10:09, Alexandre Courbot wrote:
-> > Two points being currently discussed have not been changed in this
-> > revision due to lack of better idea. Of course this is open to change:
->
-> <snip>
->
-> > * The other hot topic is the use of capture buffer indexes in order to
-> >   reference frames. I understand the concerns, but I doesn't seem like
-> >   we have come with a better proposal so far - and since capture buffers
-> >   are essentially well, frames, using their buffer index to directly
-> >   reference them doesn't sound too inappropriate to me. There is also
-> >   the restriction that drivers must return capture buffers in queue
-> >   order. Do we have any concrete example where this scenario would not
-> >   work?
->
-> I'll stick to decoders in describing the issue. Stateless encoders probably
-> do not have this issue.
->
-> To recap: the application provides a buffer with compressed data to the
-> decoder. After the request is finished the application can dequeue the
-> decompressed frame from the capture queue.
->
-> In order to decompress the decoder needs to access previously decoded
-> reference frames. The request passed to the decoder contained state
-> information containing the buffer index (or indices) of capture buffers
-> that contain the reference frame(s).
->
-> This approach puts restrictions on the framework and the application:
->
-> 1) It assumes that the application can predict the capture indices.
-> This works as long as there is a simple relationship between the
-> buffer passed to the decoder and the buffer you get back.
->
-> But that may not be true for future codecs. And what if one buffer
-> produces multiple capture buffers? (E.g. if you want to get back
-> decompressed slices instead of full frames to reduce output latency).
->
-> This API should be designed to be future-proof (within reason of course),
-> and I am not at all convinced that future codecs will be just as easy
-> to predict.
->
-> 2) It assumes that neither drivers nor applications mess with the buffers.
-> One case that might happen today is if the DMA fails and a buffer is
-> returned marked ERROR and the DMA is retried with the next buffer. There
-> is nothing in the spec that prevents you from doing that, but it will mess
-> up the capture index numbering. And does the application always know in
-> what order capture buffers are queued? Perhaps there are two threads: one
-> queueing buffers with compressed data, and the other dequeueing the
-> decompressed buffers, and they are running mostly independently.
->
->
-> I believe that assuming that you can always predict the indices of the
-> capture queue is dangerous and asking for problems in the future.
->
->
-> I am very much in favor of using a dedicated cookie. The application sets
-> it for the compressed buffer and the driver copies it to the uncompressed
-> capture buffer. It keeps track of the association between capture index
-> and cookie. If a compressed buffer decompresses into multiple capture
-> buffers, then they will all be associated with the same cookie, so
-> that simplifies how you refer to reference frames if they are split
-> over multiple buffers.
->
-> The codec controls refer to reference frames by cookie(s).
+On 10/22/2018 05:57 PM, Y Song wrote:
+> On Fri, Oct 19, 2018 at 3:30 PM Wenwen Wang <wang6495@umn.edu> wrote:
+>>
+>> In btf_parse(), the header of the user-space btf data 'btf_data' is firstly
+>> parsed and verified through btf_parse_hdr(). In btf_parse_hdr(), the header
+>> is copied from user-space 'btf_data' to kernel-space 'btf->hdr' and then
+>> verified. If no error happens during the verification process, the whole
+>> data of 'btf_data', including the header, is then copied to 'data' in
+>> btf_parse(). It is obvious that the header is copied twice here. More
+>> importantly, no check is enforced after the second copy to make sure the
+>> headers obtained in these two copies are same. Given that 'btf_data'
+>> resides in the user space, a malicious user can race to modify the header
+>> between these two copies. By doing so, the user can inject inconsistent
+>> data, which can cause undefined behavior of the kernel and introduce
+>> potential security risk.
+>>
+>> To avoid the above issue, this patch rewrites the header after the second
+>> copy, using 'btf->hdr', which is obtained in the first copy.
+>>
+>> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+>> ---
+>>  kernel/bpf/btf.c | 3 +++
+>>  1 file changed, 3 insertions(+)
+>>
+>> diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+>> index 138f030..2a85f91 100644
+>> --- a/kernel/bpf/btf.c
+>> +++ b/kernel/bpf/btf.c
+>> @@ -2202,6 +2202,9 @@ static struct btf *btf_parse(void __user *btf_data, u32 btf_data_size,
+>>                 goto errout;
+>>         }
+>>
+>> +       memcpy(data, &btf->hdr,
+>> +               min_t(u32, btf->hdr.hdr_len, sizeof(btf->hdr)));
+> 
+> Could you restructure the code to memcpy the header followed by copying
+> the rest of btf_data with copy_from_user? This way, each byte is only
+> copied once.
+> Could you add some comments right before memcpy so later people will know
+> why we implement this way?
 
-So as discussed yesterday, I understand your issue with using buffer
-indexes. The cookie idea sounds like it could work, but I'm afraid you
-could still run into issues when you don't have buffer symmetry.
+Thanks for the fix! Agree with Yonghong that we should rework this a bit, so
+please respin a v2 with the feedback addressed, thanks.
 
-For instance, imagine that the compressed buffer contains 2 frames
-worth of data. In this case, the 2 dequeued capture buffers would
-carry the same cookie, making it impossible to reference either frame
-unambiguously.
+>> +
+>>         err = btf_parse_str_sec(env);
+>>         if (err)
+>>                 goto errout;
+>> --
+>> 2.7.4
+>>
 
-There may also be a similar, yet simpler solution already in place
-that we can use. The v4l2_buffer structure contains a "sequence"
-member, that is supposed to sequentially count the delivered frames.
-What if we used this field in the same spirit as your cookie?
-Userspace would just need to keep count of the number of frames sent
-to the driver in order to accurately predict which sequence number a
-given frame is going to carry. Then the driver/framework just needs to
-associate the last sequence number of each buffer so it can find the
-reference frames, and we have an way to refer every frame. Would that
-work? We would need to make sure that error buffers are returned for
-every frame that fails (otherwise the counter could deviate between
-kernel and user-space), but if we take care of that it seems to me
-that this would stand, while being simpler and taking advantage of an
-already existing field.
