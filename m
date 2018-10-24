@@ -2,99 +2,89 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85BD4C67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 06:22:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F7E6C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 06:26:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5668C2084A
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 06:22:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5668C2084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 5C3212081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 06:26:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C3212081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726997AbeJXOtf (ORCPT
+        id S1726809AbeJXOxA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 10:49:35 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42930 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726268AbeJXOtf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 10:49:35 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D63F7B045;
-        Wed, 24 Oct 2018 06:22:54 +0000 (UTC)
-Date:   Wed, 24 Oct 2018 08:22:52 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Shuah Khan <shuah@kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        Wed, 24 Oct 2018 10:53:00 -0400
+Received: from smtprelay0011.hostedemail.com ([216.40.44.11]:53647 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726268AbeJXOxA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 10:53:00 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 99186182CF669;
+        Wed, 24 Oct 2018 06:26:19 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: eye20_36fc791bcd956
+X-Filterd-Recvd-Size: 2474
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf08.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 24 Oct 2018 06:26:17 +0000 (UTC)
+Message-ID: <0e1fc40af360ed55fd32784f6973af5940232f99.camel@perches.com>
+Subject: Re: [PATCH] mm: convert totalram_pages, totalhigh_pages and
+ managed_pages to atomic.
+From:   Joe Perches <joe@perches.com>
+To:     Michal Hocko <mhocko@kernel.org>, Arun KS <arunks@codeaurora.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
         LKML <linux-kernel@vger.kernel.org>,
-        Thomas Garnier <thgarnie@google.com>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>,
-        maco@android.com
-Subject: Re: [RFC PATCH 0/2] improve vmalloc allocation
-Message-ID: <20181024062252.GA18839@dhcp22.suse.cz>
-References: <20181019173538.590-1-urezki@gmail.com>
- <20181022125142.GD18839@dhcp22.suse.cz>
- <20181022165253.uphv3xzqivh44o3d@pc636>
- <20181023072306.GN18839@dhcp22.suse.cz>
- <dd0c3528-9c01-12bc-3400-ca88060cb7cf@kernel.org>
- <20181023152640.GD20085@bombadil.infradead.org>
- <20181023170532.GW18839@dhcp22.suse.cz>
- <98842edb-d462-96b1-311f-27c6ebfc108a@kernel.org>
- <20181023193044.GA139403@joelaf.mtv.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181023193044.GA139403@joelaf.mtv.corp.google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        linux-mm <linux-mm@kvack.org>, Minchan Kim <minchan@kernel.org>,
+        Arun Sudhilal <getarunks@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Date:   Tue, 23 Oct 2018 23:26:16 -0700
+In-Reply-To: <20181024061546.GY18839@dhcp22.suse.cz>
+References: <1540229092-25207-1-git-send-email-arunks@codeaurora.org>
+         <c57bcc584b3700c483b0311881ec3ae8786f88b1.camel@perches.com>
+         <15247f54-53f3-83d4-6706-e9264b90ca7a@yandex-team.ru>
+         <CAGXu5j+NsDHRWA5PKAKeJCO_oiGkFAUeWE8O-1fEBQX80MDu1A@mail.gmail.com>
+         <7a4fcbaee7efb71d2a3c6b403c090db4@codeaurora.org>
+         <20181024061546.GY18839@dhcp22.suse.cz>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 23-10-18 12:30:44, Joel Fernandes wrote:
-> On Tue, Oct 23, 2018 at 11:13:36AM -0600, Shuah Khan wrote:
-> > On 10/23/2018 11:05 AM, Michal Hocko wrote:
-> > > On Tue 23-10-18 08:26:40, Matthew Wilcox wrote:
-> > >> On Tue, Oct 23, 2018 at 09:02:56AM -0600, Shuah Khan wrote:
-> > > [...]
-> > >>> The way it can be handled is by adding a test module under lib. test_kmod,
-> > >>> test_sysctl, test_user_copy etc.
-> > >>
-> > >> The problem is that said module can only invoke functions which are
-> > >> exported using EXPORT_SYMBOL.  And there's a cost to exporting them,
-> > >> which I don't think we're willing to pay, purely to get test coverage.
-> > > 
-> > > Yes, I think we do not want to export internal functionality which might
-> > > be still interesting for the testing coverage. Maybe we want something
-> > > like EXPORT_SYMBOL_KSELFTEST which would allow to link within the
-> > > kselftest machinery but it wouldn't allow the same for general modules
-> > > and will not give any API promisses.
-> > > 
+On Wed, 2018-10-24 at 08:15 +0200, Michal Hocko wrote:
+> On Wed 24-10-18 10:47:52, Arun KS wrote:
+> > On 2018-10-24 01:34, Kees Cook wrote:
+> [...]
+> > > Thank you -- I was struggling to figure out the best way to reply to
+> > > this. :)
+> > I'm sorry for the trouble caused. Sent the email using,
+> > git send-email  --to-cmd="scripts/get_maintainer.pl -i"
+> > 0001-convert-totalram_pages-totalhigh_pages-and-managed_p.patch
 > > 
-> > I like this proposal. I think we will open up lot of test opportunities with
-> > this approach.
-> > 
-> > Maybe we can use this stress test as a pilot and see where it takes us.
+> > Is this not a recommended approach?
 > 
-> I am a bit worried that such an EXPORT_SYMBOL_KSELFTEST mechanism can be abused by
-> out-of-tree module writers to call internal functionality.
-> 
-> How would you prevent that?
+> Not really for tree wide mechanical changes. It is much more preferrable
+> IMHO to only CC people who should review the intention of the change
+> rather than each and every maintainer whose code is going to be changed.
+> This is a case by case thing of course but as soon as you see a giant CC
+> list from get_maintainer.pl then you should try to think twice to use
+> it. If not sure, just ask on the mailing list.
 
-There is no way to prevent non-exported symbols abuse by 3rd party
-AFAIK. EXPORT_SYMBOL_* is not there to prohibid abuse. It is a mere
-signal of what is, well, an exported API.
--- 
-Michal Hocko
-SUSE Labs
+Generally, it's better to use scripts to control
+the --to-cmd and --cc-cmd options.
+
+Something like what I detailed here:
+
+https://lkml.org/lkml/2016/9/14/482
+
+
