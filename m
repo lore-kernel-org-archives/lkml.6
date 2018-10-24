@@ -2,157 +2,139 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1DB2C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:31:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 307C3C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:32:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71C882082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:31:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71C882082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
+	by mail.kernel.org (Postfix) with ESMTP id DA9A420832
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:32:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="FEg2U7Zf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA9A420832
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbeJXS7D (ORCPT
+        id S1727392AbeJXTAK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 14:59:03 -0400
-Received: from outbound-smtp08.blacknight.com ([46.22.139.13]:47797 "EHLO
-        outbound-smtp08.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726899AbeJXS7D (ORCPT
+        Wed, 24 Oct 2018 15:00:10 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41562 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726428AbeJXTAK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 14:59:03 -0400
-Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
-        by outbound-smtp08.blacknight.com (Postfix) with ESMTPS id C7B261C2A50
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 11:31:27 +0100 (IST)
-Received: (qmail 7177 invoked from network); 24 Oct 2018 10:31:27 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.229.142])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 24 Oct 2018 10:31:27 -0000
-Date:   Wed, 24 Oct 2018 11:31:26 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        Yi Wang <wang.yi59@zte.com.cn>, zhong.weidong@zte.com.cn,
-        Yi Liu <liu.yi24@zte.com.cn>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2] sched/core: Don't mix isolcpus and housekeeping CPUs
-Message-ID: <20181024103126.GC23537@techsingularity.net>
-References: <1540350169-18581-1-git-send-email-srikar@linux.vnet.ibm.com>
- <20181024085636.GB23537@techsingularity.net>
- <20181024094646.GA18466@linux.vnet.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
-Content-Disposition: inline
-In-Reply-To: <20181024094646.GA18466@linux.vnet.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 24 Oct 2018 15:00:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=bOKdDbizi6bBnj6+44wux1kWXZGkusqbfeKBeAR3RfU=; b=FEg2U7Zfj7ol
+        ie5vN+cjxMJyTINsKt4n8XdOqGASRG68TYRJelppaQE+dx/iEbaE7XTHjJPfwPwnB4Pja98xTGWCo
+        pmiO7Krh1Ix0sZlsH5cFjZYCW2M4RULlI1SevkO55CCpFslJuXd2SBhuCHRRKrB8gxl+sNfm7xLMJ
+        khCG8=;
+Received: from [185.7.230.213] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gFGSi-00013v-40; Wed, 24 Oct 2018 10:32:28 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id AA308440078; Wed, 24 Oct 2018 12:32:27 +0200 (CEST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Keiji Hayashibara <hayashibara.keiji@socionext.com>
+Cc:     Mark Brown <broonie@kernel.org>, broonie@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        yamada.masahiro@socionext.com, linux-spi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        stable@vger.kernel.org, masami.hiramatsu@linaro.org,
+        jaswinder.singh@linaro.org, linux-kernel@vger.kernel.org,
+        hayashibara.keiji@socionext.com, linux-spi@vger.kernel.org
+Subject: Applied "spi: uniphier: fix incorrect property items" to the spi tree
+In-Reply-To:  <1540373669-18969-1-git-send-email-hayashibara.keiji@socionext.com>
+Message-Id: <20181024103227.AA308440078@finisterre.ee.mobilebroadband>
+Date:   Wed, 24 Oct 2018 12:32:27 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 03:16:46PM +0530, Srikar Dronamraju wrote:
-> * Mel Gorman <mgorman@techsingularity.net> [2018-10-24 09:56:36]:
-> 
-> > On Wed, Oct 24, 2018 at 08:32:49AM +0530, Srikar Dronamraju wrote:
-> > It would certainly be a bit odd because the
-> > application is asking for some protection but no guarantees are given
-> > and the application is not made aware via an error code that there is a
-> > problem. Asking the application to parse dmesg hoping to find the right
-> > error message is going to be fragile.
-> 
-> Its a actually a good question.
-> What should we be doing if a mix of isolcpus and housekeeping (aka
-> non-isolcpus) is given in the mask.
-> 
-> Right now as you pointed, there is no easy way for the application to know
-> which are the non-isolcpus to set its affinity. cpusets effective_cpus and
-> cpus_allowed both will contain isolcpus too.
-> 
+The patch
 
-While it's tangential to your patch, that sounds like a fairly big hole in
-the API. Now, sure enough, it just puts the burden on the administrator
-to figure it out but the silent "appears to work" is unfortunate. It's a
-question on whether application owners or sysadmins are displined enough
-to ensure that the kernel command line and scheduler affinities always
-match properly.
+   spi: uniphier: fix incorrect property items
 
-> > Would it be more appropriate to fail sched_setaffinity when there is a
-> > mix of isolated and housekeeping CPUs? In that case, an info message in
-> > dmesg may be appropriate as it'll likely be a once-off configuration
-> > error that's obvious due to an application failure.
-> 
-> I was looking at option of returning an error in that case. However our
-> own perf bench numa cant handle it. We can be sure that there will other
-> tools who could have coded that way and may start failing. So I am not sure
-> if thats a good option. Previously they would *seem* to be working.
-> 
+has been applied to the spi tree at
 
-I'm going to throw it out there -- should we do it anyway as it's a
-sensible configuration and see what breaks? At the end of the day, it
-would be a revert if we get caught by the "you never break userspace"
-rule and get overruled on the defense "what the application asks for is
-only being partially granted and it is vunerable to interference when it
-thinks the kernel has promised isolation". It could even be a patch on top
-of the one you have so that even if it does get reverted, there still is
-a warning left over. Of course, it would instantly break the perf bench
-numa case and open the question on whether that should be fixed too.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
-> Thats why I have taken an option of correcting within the kernel.
-> 
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-FWIW, I'm not going to nak the patch on that basis as the warning is
-beneficial in itself and an improvement of the current state. There are
-others on the cc that have a greater awareness of how much interference
-an isolated process is willing to tolerate and what sort of promises
-we've given them in the past.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-> > Alternatively,
-> > should NUMA balancing ignore isolated CPUs? The latter seems unusual as
-> > the application has specified a mask that allows those CPUs and it's not
-> > clear why NUMA balancing should ignore them. If anything, an application
-> > that wants to avoid all interference should also be using memory policies
-> > to bind to nodes so it behaves predictably with respect to access latencies
-> > (presumably if an application cannot tolerate kernel threads interfering
-> > then it also cannot tolerate remote access latencies) or disabling NUMA
-> > balancing entirely to avoid incurring minor faults.
-> > 
-> 
-> The numa balancing is doing the right thing because if the application has
-> the mask specified, then we should allow the application to run.
-> 
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-This is what I thought.
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-> The problem happens when the unbound application starts to run on the isolcpu,
-> regular load balancing will no more work. If another task is bound on the
-> isolcpu, and other cpus in the node are free, this task will still contend
-> with task bound to the isolcpus. (Unless numa affinity of the unbound thread
-> changes).
-> 
+Thanks,
+Mark
 
-Which is bad.
+From 3511ba7d4ca6f39e2d060bb94e42a41ad1fee7bf Mon Sep 17 00:00:00 2001
+From: Keiji Hayashibara <hayashibara.keiji@socionext.com>
+Date: Wed, 24 Oct 2018 18:34:29 +0900
+Subject: [PATCH] spi: uniphier: fix incorrect property items
 
-> Also isocpus are suppose to run only those tasks that are bound to it.
-> So we are kind of breaking that rule.
-> 
+This commit fixes incorrect property because it was different
+from the actual.
+The parameters of '#address-cells' and '#size-cells' were removed,
+and 'interrupts', 'pinctrl-names' and 'pinctrl-0' were added.
 
-Indeed so the warning has use in itself and it's a question on whether
-others think we should be more strict about misleading (or broken if it's
-critical enough) configurations.
+Fixes: 4dcd5c2781f3 ("spi: add DT bindings for UniPhier SPI controller")
+Signed-off-by: Keiji Hayashibara <hayashibara.keiji@socionext.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ .../devicetree/bindings/spi/spi-uniphier.txt       | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-As the patch at least highlights a problem and my suggestions are additional
-work that may or may not be useful;
-
-Acked-by: Mel Gorman <mgorman@techsingularity.net>
-
-But further opinions on whether there should be a patch on top that are
-more strict would be welcome.
-
+diff --git a/Documentation/devicetree/bindings/spi/spi-uniphier.txt b/Documentation/devicetree/bindings/spi/spi-uniphier.txt
+index 504a4ecfc7b1..b04e66a52de5 100644
+--- a/Documentation/devicetree/bindings/spi/spi-uniphier.txt
++++ b/Documentation/devicetree/bindings/spi/spi-uniphier.txt
+@@ -5,18 +5,20 @@ UniPhier SoCs have SCSSI which supports SPI single channel.
+ Required properties:
+  - compatible: should be "socionext,uniphier-scssi"
+  - reg: address and length of the spi master registers
+- - #address-cells: must be <1>, see spi-bus.txt
+- - #size-cells: must be <0>, see spi-bus.txt
+- - clocks: A phandle to the clock for the device.
+- - resets: A phandle to the reset control for the device.
++ - interrupts: a single interrupt specifier
++ - pinctrl-names: should be "default"
++ - pinctrl-0: pin control state for the default mode
++ - clocks: a phandle to the clock for the device
++ - resets: a phandle to the reset control for the device
+ 
+ Example:
+ 
+ spi0: spi@54006000 {
+ 	compatible = "socionext,uniphier-scssi";
+ 	reg = <0x54006000 0x100>;
+-	#address-cells = <1>;
+-	#size-cells = <0>;
++	interrupts = <0 39 4>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_spi0>;
+ 	clocks = <&peri_clk 11>;
+ 	resets = <&peri_rst 11>;
+ };
 -- 
-Mel Gorman
-SUSE Labs
+2.19.0
+
