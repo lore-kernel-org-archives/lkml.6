@@ -2,121 +2,377 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4CCEC004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 11:19:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 974F7C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 11:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63BBA20824
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 11:19:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KICerZX6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63BBA20824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4EAFF20824
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 11:20:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EAFF20824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727604AbeJXTrk (ORCPT
+        id S1727636AbeJXTry (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 15:47:40 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:41411 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727333AbeJXTrk (ORCPT
+        Wed, 24 Oct 2018 15:47:54 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43620 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727293AbeJXTry (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 15:47:40 -0400
-Received: by mail-oi1-f195.google.com with SMTP id i10-v6so925182oik.8;
-        Wed, 24 Oct 2018 04:19:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eRC71pANbsJQSJfop+JZfv2+94f2yTZ/DJjk/ocHqlk=;
-        b=KICerZX64BfGVkLNaG4V+C973XAKHnIn6eYw6kFJcnYQ5y42ekMYX9ykUZJ+1FJbqH
-         Unj2Jjze3rLFPwNKRYTgPaJrKI5BHl9L2qYMUdx5D5JxeWmGmzojOA2bsGCVJUuMOlu8
-         RZCCQ0fdIByj83OYjxzLn9fQ4lqqlrERu6w3UBWtgAOdoBPT6ymhh0FAYWA75EuniEpp
-         zdxLbaRXzRkmeKeS07D9/+JGdfEbKqzHZ8sTqGfF3DVZK+UVOTIa+OznMVSQhIjHw+hY
-         VAVa1o9zOlGcOoAl4+Iat5mWmVe/SUu0ekIQggQ9wxkrMrhx5O6eK/KxrKwnDForOcjB
-         cUtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eRC71pANbsJQSJfop+JZfv2+94f2yTZ/DJjk/ocHqlk=;
-        b=l6LVU2m2+hWvZq+2ZO6MEZAtEomGj9Y/0Ar7qcdULasdaj2aWSUKHNRFOkzGlq8FwI
-         oQd1+n0Ew4o+EfALOcVe5kra4+ihZE3Pm2amHX95NhAdS2iLYknFihNF0WBLLRH83MbL
-         41DMsUsoZmW2RkCAYpzErVCkEY3aESPeK/Qmy9EGbtwwLMbFi+5Mvm2IBz7kr/+mWefy
-         qCsMcTIRp38cxU9bKUJnpjqFwyOkir6geCxm4ZAFheqiAYtbNzSG1YXB4JmFHdcu7f1t
-         JCMmbAfBcT02yOSXuw+aVGc6fem74J/8ZEA284BWSoic5rVAgd5VWX/xSLoKbrn9lix+
-         YcFg==
-X-Gm-Message-State: AGRZ1gKqcxNLoUGo07E6XXafwzw3/grhLrBHEqB+zCTBuHRE4czh/AXI
-        q3x2hQaBRbl1ozMoV8xSmnxp8deGaDjbpxljFDg=
-X-Google-Smtp-Source: AJdET5eAzQ4rQETEe9kNu9oClvlIV/1HkrORrJXGKZu+BSbLK7dALvArRxVrJXOWebhWy9cH7WSd6t8rNz+4go4872k=
-X-Received: by 2002:aca:c7c9:: with SMTP id x192-v6mr1107091oif.43.1540379996413;
- Wed, 24 Oct 2018 04:19:56 -0700 (PDT)
+        Wed, 24 Oct 2018 15:47:54 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9OBAC2d071695
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 07:20:09 -0400
+Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nan2nru45-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 07:20:08 -0400
+Received: from localhost
+        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 24 Oct 2018 07:20:08 -0400
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 24 Oct 2018 07:20:05 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9OBK4O128311610
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 24 Oct 2018 11:20:04 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D2121B2067;
+        Wed, 24 Oct 2018 11:20:04 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 83754B205F;
+        Wed, 24 Oct 2018 11:20:04 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.162.46])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 24 Oct 2018 11:20:04 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 1346F16C0597; Wed, 24 Oct 2018 04:20:01 -0700 (PDT)
+Date:   Wed, 24 Oct 2018 04:20:01 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     "Raslan, KarimAllah" <karahmed@amazon.de>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>
+Subject: Re: [PATCH] rcu: Benefit from expedited grace period in __wait_rcu_gp
+Reply-To: paulmck@linux.ibm.com
+References: <1539910145-24305-1-git-send-email-karahmed@amazon.de>
+ <20181019123106.GX2674@linux.ibm.com>
+ <1539978350.11839.6.camel@amazon.de>
+ <20181019202155.GR2674@linux.ibm.com>
+ <1540307622.11839.53.camel@amazon.de>
 MIME-Version: 1.0
-References: <20181024111213.2724-1-qiangqing.zhang@nxp.com> <20181024111213.2724-4-qiangqing.zhang@nxp.com>
-In-Reply-To: <20181024111213.2724-4-qiangqing.zhang@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Wed, 24 Oct 2018 08:19:53 -0300
-Message-ID: <CAOMZO5Cm2U4dR982vYTmb5zfdjfXbQ95B+mDt2Fp8D-QtvT6FA@mail.gmail.com>
-Subject: Re: [PATCH V1 3/3] ARM: dts: sabreauto: Add flexcan support
-To:     qiangqing.zhang@nxp.com
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1540307622.11839.53.camel@amazon.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18102411-0060-0000-0000-000002C5DD01
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009926; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01107261; UDB=6.00573469; IPR=6.00887346;
+ MB=3.00023887; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-24 11:20:07
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18102411-0061-0000-0000-000046F47213
+Message-Id: <20181024112001.GN4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-24_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810240101
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Joakim,
+On Tue, Oct 23, 2018 at 03:13:43PM +0000, Raslan, KarimAllah wrote:
+> On Fri, 2018-10-19 at 13:21 -0700, Paul E. McKenney wrote:
+> > On Fri, Oct 19, 2018 at 07:45:51PM +0000, Raslan, KarimAllah wrote:
+> > > 
+> > > On Fri, 2018-10-19 at 05:31 -0700, Paul E. McKenney wrote:
+> > > > 
+> > > > On Fri, Oct 19, 2018 at 02:49:05AM +0200, KarimAllah Ahmed wrote:
+> > > > > 
+> > > > > 
+> > > > > When expedited grace-period is set, both synchronize_sched
+> > > > > synchronize_rcu_bh can be optimized to have a significantly lower latency.
+> > > > > 
+> > > > > Improve wait_rcu_gp handling to also account for expedited grace-period.
+> > > > > The downside is that wait_rcu_gp will not wait anymore for all RCU variants
+> > > > > concurrently when an expedited grace-period is set, however, given the
+> > > > > improved latency it does not really matter.
+> > > > > 
+> > > > > Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+> > > > > Cc: Josh Triplett <josh@joshtriplett.org>
+> > > > > Cc: Steven Rostedt <rostedt@goodmis.org>
+> > > > > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> > > > > Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+> > > > > Cc: linux-kernel@vger.kernel.org
+> > > > > Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
+> > > > 
+> > > > Cute!
+> > > > 
+> > > > Unfortunately, there are a few problems with this patch:
+> > > > 
+> > > > 1.	I will be eliminating synchronize_rcu_mult() due to the fact that
+> > > > 	the upcoming RCU flavor consolidation eliminates its sole caller.
+> > > > 	See 5fc9d4e000b1 ("rcu: Eliminate synchronize_rcu_mult()")
+> > > > 	in my -rcu tree.  This would of course also eliminate the effects
+> > > > 	of this patch.
+> > > 
+> > > Your patch covers our use-case already, but I still think that the semantics 
+> > > for wait_rcu_gp is not clear to me.
+> > > 
+> > > The problem for us was that sched_cpu_deactivate would call
+> > > synchronize_rcu_mult which does not check for "expedited" at all. So even
+> > > though we are already using rcu_expedited sysctl variable, synchronize_rcu_mult 
+> > > was just ignoring it.
+> > > 
+> > > That being said, I indeed overlooked rcu_normal and that it takes precedence 
+> > > over expedited and I did not notice at all the deadlock you mentioned below!
+> > > 
+> > > That can however be easily fixed by also checking for !rcu_gp_is_normal.
+> > 
+> > ???
+> > 
+> > The aforementioned 5fc9d4e000b1 commit replaces the synchronize_rcu_mult()
+> > with synchronize_rcu(), which really would be subject to the sysfs
+> > variables.  Of course, this is not yet in mainline, so it perhaps cannot
+> > solve your immediate problem, which probably involve older kernels in
+> > any case.  More on this below...
+> > 
+> > > 
+> > > > 
+> > > > 2.	The real-time guys' users are not going to be at all happy
+> > > > 	with the IPIs resulting from the _expedited() API members.
+> > > > 	Yes, they can boot with rcupdate.rcu_normal=1, but they don't
+> > > > 	always need that big a hammer, and use of this kernel parameter
+> > > > 	can slow down boot, hibernation, suspend, network configuration,
+> > > > 	and much else besides.	We therefore don't want them to have to
+> > > > 	use rcupdate.rcu_normal=1 unless absolutely necessary.
+> > > 
+> > > I might be missing something here. Why would they need to "explicitly" use 
+> > > rcu_normal? If rcu_expedited is set, would not the expected behavior is to call 
+> > > into the expedited version?
+> > > 
+> > > My patch should only activate *expedited* if and only if it is set.
+> > 
+> > You are right, I was confused.  However...
+> > 
+> > > 
+> > > I think I might be misunderstanding the expected behavior 
+> > > from synchronize_rcu_mult. My understanding is that something like:
+> > > 
+> > > synchronize_rcu_mult(call_rcu_sched) and synchronize_rcu() should have an 
+> > > identical behavior, right?
+> > 
+> > You would clearly prefer that it did, and the commit log does seem to
+> > read that way, but synchronize_rcu_mult() is going away anyway, so there
+> > isn't a whole lot of point in arguing about what it should have done.
+> > And the eventual implementation (with 5fc9d4e000b1 or its successor)
+> > will act as you want.
+> > 
+> > > 
+> > > At least in this commit:
+> > > 
+> > > commit d7d34d5e46140 ("sched: Rely on synchronize_rcu_mult() de-duplication")
+> > > 
+> > > .. the change clearly gives the impression that they can be used 
+> > > interchangeably. The problem is that this is not true when you look at the 
+> > > implementation. One of them (i.e. synchronize_rcu) will respect the
+> > > expedite_rcu flag set by sysfs while the other (i.e. synchronize_rcu_mult) 
+> > > simply ignores it.
+> > > 
+> > > So my patch is about making sure that both of the variants actually respect 
+> > > it.
+> > 
+> > I am guessing that you need to make an older version of the kernel
+> > expedite the CPU-hotplug grace periods.  I am also guessing that you can
+> > carry patches to your kernels.  If so, I suggest the following simpler
+> > change to sched_cpu_deactivate() in kernel/sched/core.c:
+> > 
+> > 	if (rcu_gp_is_expedited()) {
+> > 		synchronize_sched_expedited();
+> > 		if (IS_ENABLED(CONFIG_PREEMPT))
+> > 			synchronize_rcu_expedited();
+> > 	} else {
+> > 		synchronize_rcu_mult(call_rcu, call_rcu_sched);
+> > 	}
+> > 
+> > As soon as this patch conflicts due to the synchronize_rcu_mult()
+> > becoming synchronize_rcu(), you can drop the patch.  And this is the only
+> > use of synchronize_rcu_mult(), so this approach loses no generality.
+> > Longer term, this patch might possibly be the backport of 5fc9d4e000b1
+> > back to v4.14, but at the end of the day this is up to the various
+> > -stable maintainers.
+> > 
+> > Hmmm...  If you are running CONFIG_PREEMPT=n, you can use an even
+> > simpler replacement for synchronize_rcu_mult():
+> > 
+> > 	synchronize_sched_expedited(); /* Bug if CONFIG_PREEMPT=y!!! */
+> > 
+> > Would either of those two approaches work for you, or am I still missing
+> > something?
+> 
+> Sorry, I was not clear. The original commit in your -rcu tree already works for 
+> us. So that is sorted out, thank you :)
 
-On Wed, Oct 24, 2018 at 8:15 AM Joakim Zhang <qiangqing.zhang@nxp.com> wrote:
+Very good, thank you!
 
-> diff --git a/arch/arm/boot/dts/imx6dl-sabreauto-flexcan1.dts b/arch/arm/boot/dts/imx6dl-sabreauto-flexcan1.dts
-> new file mode 100644
-> index 000000000000..963e0b559d60
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/imx6dl-sabreauto-flexcan1.dts
-> @@ -0,0 +1,19 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2013 Freescale Semiconductor, Inc.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
+Just to confirm:
 
-You can remove this paragraph as you are using SPDX tag.
+1.	By "original commit", you mean 5fc9d4e000b1 ("rcu: Eliminate
+	synchronize_rcu_mult()"), right?
 
-> +++ b/arch/arm/boot/dts/imx6q-sabreauto-flexcan1.dts
-> @@ -0,0 +1,19 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2013 Freescale Semiconductor, Inc.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
+2.	Please note that 5fc9d4e000b1 can only be backported to the
+	upcoming v4.20 release, and given that it is only an uncommon-case
+	performance regression, I would not submit it to -stable at all.
+	So if you need this performance regression to work in v4.19 or
+	earlier, please:
 
-Ditto.
+	a.	Let me know.
 
-> +&can1 {
-> +       pinctrl-names = "default";
-> +       pinctrl-0 = <&pinctrl_flexcan1>;
-> +       pinctrl-assert-gpios = <&max7310_b 3 GPIO_ACTIVE_HIGH>; /* TX */
+	b.	Test this replacement for the current call to
+		synchronize_rcu_mult() from sched_cpu_deactivate()
+		in kernel/sched/core.c:
 
-This property does not exist in upstream.
+		if (rcu_gp_is_expedited()) {
+			synchronize_sched_expedited();
+			if (IS_ENABLED(CONFIG_PREEMPT))
+				synchronize_rcu_expedited();
+		} else {
+			synchronize_rcu_mult(call_rcu, call_rcu_sched);
+		}
+
+> In my previous reply, when I was referring to synchronize_rcu_mult I really
+> also wanted to also point to __wait_rcu_gp. With the current state in your -rcu 
+> tree, __wait_rcu_gp does not look whether "expedited" is enabled or not. This
+> is currently delegated to the callers (e.g. synchronize_rcu and 
+> synchronize_rcu_bh). So any new direct users of __wait_rcu_gp would also miss 
+> this check (i.e. just like what happened in synchronize_rcu_mult). If we want 
+> __wait_rcu_gp to always respect rcu_expedited and rcu_normal flags, we might 
+> want to pull these checks into __wait_rcu_gp instead and remove them from the 
+> callers.
+
+Yes, __wait_rcu_gp() does arguably have odd semantics.  It is after all
+used to implement the rcu_barrier() call in Tiny RCU and waits for a
+normal (not expedited!) grace period in Tree RCU.  But there are many
+other places in RCU where the semantics are quite a bit more unusual.
+
+So welcome to my world!  ;-)
+
+							Thanx, Paul
+
+> > > > 3.	If the real-time guys' users were to have booted with
+> > > > 	rcupdate.rcu_normal=1, then synchronize_sched_expedited()
+> > > > 	would invoke _synchronize_rcu_expedited, which would invoke
+> > > > 	wait_rcu_gp(), which would invoke _wait_rcu_gp() which would
+> > > > 	invoke __wait_rcu_gp(), which, given your patch, would in turn
+> > > > 	invoke synchronize_sched_expedited().  This situation could
+> > > > 	well prevent their systems from meeting their response-time
+> > > > 	requirements.
+> > > > 
+> > > > So I cannot accept this patch nor for that matter any similar patch.
+> > > > 
+> > > > But what were you really trying to get done here?  If you were thinking
+> > > > of adding another synchronize_rcu_mult(), the flavor consolidation will
+> > > > make that unnecessary in most cases.  If you are trying to speed up
+> > > > CPU-hotplug operations, I suggest using the rcu_expedited sysctl variable
+> > > > when taking a CPU offline.  If something else, please let me know what
+> > > > it is so that we can work out how the problem might best be solved.
+> > > > 
+> > > > 							Thanx, Paul
+> > > > 
+> > > > > 
+> > > > > 
+> > > > > ---
+> > > > >  kernel/rcu/update.c | 34 ++++++++++++++++++++++++++++------
+> > > > >  1 file changed, 28 insertions(+), 6 deletions(-)
+> > > > > 
+> > > > > diff --git a/kernel/rcu/update.c b/kernel/rcu/update.c
+> > > > > index 68fa19a..44b8817 100644
+> > > > > --- a/kernel/rcu/update.c
+> > > > > +++ b/kernel/rcu/update.c
+> > > > > @@ -392,13 +392,27 @@ void __wait_rcu_gp(bool checktiny, int n, call_rcu_func_t *crcu_array,
+> > > > >  			might_sleep();
+> > > > >  			continue;
+> > > > >  		}
+> > > > > -		init_rcu_head_on_stack(&rs_array[i].head);
+> > > > > -		init_completion(&rs_array[i].completion);
+> > > > > +
+> > > > >  		for (j = 0; j < i; j++)
+> > > > >  			if (crcu_array[j] == crcu_array[i])
+> > > > >  				break;
+> > > > > -		if (j == i)
+> > > > > -			(crcu_array[i])(&rs_array[i].head, wakeme_after_rcu);
+> > > > > +		if (j != i)
+> > > > > +			continue;
+> > > > > +
+> > > > > +		if ((crcu_array[i] == call_rcu_sched ||
+> > > > > +		     crcu_array[i] == call_rcu_bh)
+> > > > > +		    && rcu_gp_is_expedited()) {
+> > > > > +			if (crcu_array[i] == call_rcu_sched)
+> > > > > +				synchronize_sched_expedited();
+> > > > > +			else
+> > > > > +				synchronize_rcu_bh_expedited();
+> > > > > +
+> > > > > +			continue;
+> > > > > +		}
+> > > > > +
+> > > > > +		init_rcu_head_on_stack(&rs_array[i].head);
+> > > > > +		init_completion(&rs_array[i].completion);
+> > > > > +		(crcu_array[i])(&rs_array[i].head, wakeme_after_rcu);
+> > > > >  	}
+> > > > > 
+> > > > >  	/* Wait for all callbacks to be invoked. */
+> > > > > @@ -407,11 +421,19 @@ void __wait_rcu_gp(bool checktiny, int n, call_rcu_func_t *crcu_array,
+> > > > >  		    (crcu_array[i] == call_rcu ||
+> > > > >  		     crcu_array[i] == call_rcu_bh))
+> > > > >  			continue;
+> > > > > +
+> > > > > +		if ((crcu_array[i] == call_rcu_sched ||
+> > > > > +		     crcu_array[i] == call_rcu_bh)
+> > > > > +		    && rcu_gp_is_expedited())
+> > > > > +			continue;
+> > > > > +
+> > > > >  		for (j = 0; j < i; j++)
+> > > > >  			if (crcu_array[j] == crcu_array[i])
+> > > > >  				break;
+> > > > > -		if (j == i)
+> > > > > -			wait_for_completion(&rs_array[i].completion);
+> > > > > +		if (j != i)
+> > > > > +			continue;
+> > > > > +
+> > > > > +		wait_for_completion(&rs_array[i].completion);
+> > > > >  		destroy_rcu_head_on_stack(&rs_array[i].head);
+> > > > >  	}
+> > > > >  }
+> > > > > -- 
+> > > > > 2.7.4
+> > > > > 
+> > > > 
+> > > Amazon Development Center Germany GmbH
+> > > Berlin - Dresden - Aachen
+> > > main office: Krausenstr. 38, 10117 Berlin
+> > > Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
+> > > Ust-ID: DE289237879
+> > > Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
+> > 
+> > 
+> Amazon Development Center Germany GmbH
+> Berlin - Dresden - Aachen
+> main office: Krausenstr. 38, 10117 Berlin
+> Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
+> Ust-ID: DE289237879
+> Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
+
