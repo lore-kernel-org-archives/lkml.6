@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F04EBC67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:03:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 977BBC7112C
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:03:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C44F42082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:03:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C44F42082F
+	by mail.kernel.org (Postfix) with ESMTP id 6AECC20832
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:03:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AECC20832
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=andestech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbeJXL3r (ORCPT
+        id S1726898AbeJXL3s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 07:29:47 -0400
-Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:10030 "EHLO
+        Wed, 24 Oct 2018 07:29:48 -0400
+Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:57458 "EHLO
         ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726279AbeJXL3q (ORCPT
+        with ESMTP id S1726742AbeJXL3r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 07:29:46 -0400
+        Wed, 24 Oct 2018 07:29:47 -0400
 Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
-        by ATCSQR.andestech.com with ESMTP id w9O33hrG094903;
-        Wed, 24 Oct 2018 11:03:43 +0800 (GMT-8)
+        by ATCSQR.andestech.com with ESMTP id w9O33wDU094951;
+        Wed, 24 Oct 2018 11:03:58 +0800 (GMT-8)
         (envelope-from nickhu@andestech.com)
 Received: from atcsqa06.andestech.com (10.0.15.65) by ATCPCS16.andestech.com
  (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Wed, 24 Oct 2018
- 11:02:13 +0800
+ 11:02:29 +0800
 From:   Nickhu <nickhu@andestech.com>
 To:     <greentime@andestech.com>, <linux-kernel@vger.kernel.org>,
         <arnd@arndb.de>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
@@ -41,9 +41,9 @@ To:     <greentime@andestech.com>, <linux-kernel@vger.kernel.org>,
         <john.garry@huawei.com>, <devicetree@vger.kernel.org>,
         <zong@andestech.com>, <alankao@andestech.com>
 CC:     Nickhu <nickhu@andestech.com>, <green.hu@gmail.com>
-Subject: [PATCH 1/4] nds32: Fix bug in bitfield.h
-Date:   Wed, 24 Oct 2018 11:01:59 +0800
-Message-ID: <1e30cef737d040ad4cae7e80737354d370ce938e.1540349544.git.nickhu@andestech.com>
+Subject: [PATCH 4/4] nds32: Add document for NDS32 PMU.
+Date:   Wed, 24 Oct 2018 11:02:02 +0800
+Message-ID: <bdfe23ce3ded5299d7b525fcb16c353c2be31924.1540349544.git.nickhu@andestech.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <cover.1540349543.git.nickhu@andestech.com>
 References: <cover.1540349543.git.nickhu@andestech.com>
@@ -51,40 +51,44 @@ MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.0.15.65]
 X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com w9O33hrG094903
+X-MAIL: ATCSQR.andestech.com w9O33wDU094951
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There two bitfield bug for perfomance counter
-in bitfield.h:
-
-	PFM_CTL_offSEL1		21 --> 16
-	PFM_CTL_offSEL2		27 --> 22
-
-This commit fix it.
+The document for how to add NDS32 PMU
+in devicetree.
 
 Signed-off-by: Nickhu <nickhu@andestech.com>
 ---
- arch/nds32/include/asm/bitfield.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/nds32/pmu.txt | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/nds32/pmu.txt
 
-diff --git a/arch/nds32/include/asm/bitfield.h b/arch/nds32/include/asm/bitfield.h
-index 8e84fc385b94..19b2841219ad 100644
---- a/arch/nds32/include/asm/bitfield.h
-+++ b/arch/nds32/include/asm/bitfield.h
-@@ -692,8 +692,8 @@
- #define PFM_CTL_offKU1		13	/* Enable user mode event counting for PFMC1 */
- #define PFM_CTL_offKU2		14	/* Enable user mode event counting for PFMC2 */
- #define PFM_CTL_offSEL0		15	/* The event selection for PFMC0 */
--#define PFM_CTL_offSEL1		21	/* The event selection for PFMC1 */
--#define PFM_CTL_offSEL2		27	/* The event selection for PFMC2 */
-+#define PFM_CTL_offSEL1		16	/* The event selection for PFMC1 */
-+#define PFM_CTL_offSEL2		22	/* The event selection for PFMC2 */
- /* bit 28:31 reserved */
- 
- #define PFM_CTL_mskEN0		( 0x01  << PFM_CTL_offEN0 )
+diff --git a/Documentation/devicetree/bindings/nds32/pmu.txt b/Documentation/devicetree/bindings/nds32/pmu.txt
+new file mode 100644
+index 000000000000..1bd15785b4ae
+--- /dev/null
++++ b/Documentation/devicetree/bindings/nds32/pmu.txt
+@@ -0,0 +1,17 @@
++* NDS32 Performance Monitor Units
++
++NDS32 core have a PMU for counting cpu and cache events like cache misses.
++The NDS32 PMU representation in the device tree should be done as under:
++
++Required properties:
++
++- compatible :
++	"andestech,nds32v3-pmu"
++
++- interrupts : The interrupt number for NDS32 PMU is 13.
++
++Example:
++pmu{
++	compatible = "andestech,nds32v3-pmu";
++	interrupts = <13>;
++}
 -- 
 2.17.0
 
