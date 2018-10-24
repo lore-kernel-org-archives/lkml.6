@@ -2,675 +2,222 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27ADFECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:34:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA07FECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:34:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A44FF2064C
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:34:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A44FF2064C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=polymtl.ca
+	by mail.kernel.org (Postfix) with ESMTP id 6739D2064C
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:34:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nMdmMVYq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6739D2064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727392AbeJYEDl (ORCPT
+        id S1727356AbeJYEDl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 25 Oct 2018 00:03:41 -0400
-Received: from smtp.polymtl.ca ([132.207.4.11]:45500 "EHLO smtp.polymtl.ca"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725873AbeJYEDj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45487 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727173AbeJYEDj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 25 Oct 2018 00:03:39 -0400
-X-Greylist: delayed 674 seconds by postgrey-1.27 at vger.kernel.org; Thu, 25 Oct 2018 00:03:37 EDT
-Received: from horde5.polymtl.ca (horde5.polymtl.ca [132.207.4.156])
-        by smtp.polymtl.ca (8.14.7/8.14.7) with ESMTP id w9OJMUEM029055;
-        Wed, 24 Oct 2018 15:22:30 -0400
-Received: from 131.107.159.46 ([131.107.159.46]) by www.imp.polymtl.ca
- (Horde Framework) with HTTP; Wed, 24 Oct 2018 19:22:30 +0000
-Date:   Wed, 24 Oct 2018 19:22:30 +0000
-Message-ID: <20181024192230.Horde.jyOd6XtJHX9UpT8_PPWxjfa@www.imp.polymtl.ca>
-From:   Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>
-To:     rostedt@goodmis.org
-Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
-        mingo@redhat.com, mathieu.desnoyers@efficios.com
-Subject: [RFC PATCH v3] ftrace: support very early function tracing
-User-Agent: Horde Application Framework 5
-Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
-MIME-Version: 1.0
-Content-Disposition: inline
-X-Poly-FromMTA: (horde5.polymtl.ca [132.207.4.156]) at Wed, 24 Oct 2018 19:22:30 +0000
+Received: by mail-pg1-f195.google.com with SMTP id s3-v6so2789324pga.12;
+        Wed, 24 Oct 2018 12:34:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=HYBMANsFtxTvEdz9erpZJE2vyqhPlAPNtRDSmO7XKEw=;
+        b=nMdmMVYqB1CXISq9sWKNM8DbvIcy2wCj+DBB0YEpSH/372Yl9TZQ6/8ZVUG5P9Rz9u
+         pWwK01nVwQubX7ELXWyjViXSi278QbXUzVrxgkd9i30KlwL/vfJLPX1aZGTpyUqXp9WU
+         SmtKZGnlApRD4JjmIK34Yca5ffpCn0HhXyyTi8BPzm807r+/9XCWoSMxCE97m83FEGKz
+         4EVtZmhHZ11SGz5Zdio4uq5zzjjUqNVnTlt/C8sd1xu+bBBSm+5uWqj2dFMwQKmbCbQK
+         iCXvXHP8YjRdm7+IE5Gu6vD/CTTBt7KXwIPEboIg2ABWsNKtiZCWqG/U51tSDLsjft4Q
+         ob3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=HYBMANsFtxTvEdz9erpZJE2vyqhPlAPNtRDSmO7XKEw=;
+        b=UO5EF5xS5STE0LnCwtPOc9uHVPBm/dudOYn5SvCCL0jrbtWyW7FtWtY/kiexXnLHlC
+         8tH0m2RX56fa0k0GIwXqz+5m9Exk5gOCDyD8dlgn+cvjxwNgrN2XLBLJta0xQSgrQEAo
+         RZHx1q17VppVwnUrkhb8KKBXtM3e7JBqp+ONTQe6/6YpjeVnptcTbhXEBVXWsJT1n3zO
+         Xl6s2tVyGXTn9Kpdyr91ibrmE30JFhmAGyBbCvR7csS+HZuaqr1pfWitDE0UWJGiubT8
+         H3WZhooJm61LgMniWyqXk6Y9JRGHW/nTCxEjJrs7OKhfqnXNXfNzJ/JJQMhKSWVfyOwJ
+         YaMA==
+X-Gm-Message-State: AGRZ1gKfruDfnJXXFA6z2WdwgZDFq5BqXrBjLtIzEwCD8wD2oGDx3wq0
+        NWrMhF2EdlMP5MlbTbR6ifE=
+X-Google-Smtp-Source: AJdET5eDR9ND4Neq7WlmKCTMGAtsS+1bgr4XOsnP00bvlec+h678RPYcgFJrw8biKoascrI3vxEkhw==
+X-Received: by 2002:a62:9f11:: with SMTP id g17-v6mr3867594pfe.144.1540409658027;
+        Wed, 24 Oct 2018 12:34:18 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id r81-v6sm19921633pfa.110.2018.10.24.12.34.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 24 Oct 2018 12:34:17 -0700 (PDT)
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     jdelvare@suse.com, linux@roeck-us.net
+Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 3/5] hwmon: (ina3221) Serialize sysfs ABI accesses
+Date:   Wed, 24 Oct 2018 12:34:00 -0700
+Message-Id: <20181024193402.16698-4-nicoleotsuka@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181024193402.16698-1-nicoleotsuka@gmail.com>
+References: <20181024193402.16698-1-nicoleotsuka@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This change adds a mutex to serialize accesses of sysfs attributes.
 
-Hi Steve,
-I believe this patch is quite stable. I know some folks that were using
-it to debug early VM/KVM handshak and seemed very helpful for them.
+This is required when polling CVRF bit of the MASK/ENABLE register
+because this bit is cleared on a read of this MASK/ENABLE register
+or a write to CONFIG register, which means that this bit might be
+accidentally cleared by reading other fields like alert flags.
 
+So this patch adds a mutex lock to protect the write() and read()
+callbacks. The read_string() callback won't need the lock since it
+just returns the label without touching any hardware register.
 
-Previous changes:
-
-PATCH v1: Initial patch
-
-PATCH v2:
-
-   Removed arch specific code and use the default clock.
-   Add more code re-usability
-   Add HAVE_VERY_EARLY_FTRACE config option which is disabled by default
-
-
-PATCH v3 starts here :
----------------------------------------------------------------------
-
-The very early tracing will start from the beginning of start_kernel()
-and will stop at ftrace_init()
-
-start_kernel()
-{
-   ftrace_early_init() <--- start early function tracing
-   ...
-   (calls)
-   ...
-   ftrace_init()       <--- stop early function tracing
-   early_trace_init(); <--- fill ring buffer, before starting function tracer
-   ...
-}
-
-The events are placed in a temporary buffer, which will be copied to
-the trace buffer after memory setup.
-
-Dynamic tracing is not implemented with live patching, we use
-ftrace_filter and ftrace_notrace to find which functions to be
-filtered (traced / not traced), then during the callback from
-mcount hook, we do binary search lookup to decide which function
-to be save or not.
-
-Signed-off-by: Abderrahmane Benbachir <abderrahmane.benbachir@polymtl.ca>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
 ---
-  arch/x86/Kconfig            |   1 +
-  arch/x86/kernel/ftrace_32.S |  45 ++++--
-  arch/x86/kernel/ftrace_64.S |  14 ++
-  include/linux/ftrace.h      |  16 +-
-  init/main.c                 |   1 +
-  kernel/trace/Kconfig        |  51 +++++++
-  kernel/trace/ftrace.c       | 289 +++++++++++++++++++++++++++++++++++-
-  kernel/trace/trace.c        |   3 +
-  8 files changed, 408 insertions(+), 12 deletions(-)
+Changlog
+v1->v3:
+ * N/A
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 1a0be022f91d..3d5b89061a51 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -148,6 +148,7 @@ config X86
-  	select HAVE_FENTRY			if X86_64 || DYNAMIC_FTRACE
-  	select HAVE_FTRACE_MCOUNT_RECORD
-  	select HAVE_FUNCTION_GRAPH_TRACER
-+	select HAVE_VERY_EARLY_FTRACE
-  	select HAVE_FUNCTION_TRACER
-  	select HAVE_GCC_PLUGINS
-  	select HAVE_HW_BREAKPOINT
-diff --git a/arch/x86/kernel/ftrace_32.S b/arch/x86/kernel/ftrace_32.S
-index 4c8440de3355..1f2889d9e37e 100644
---- a/arch/x86/kernel/ftrace_32.S
-+++ b/arch/x86/kernel/ftrace_32.S
-@@ -31,12 +31,8 @@ EXPORT_SYMBOL(mcount)
-  # define MCOUNT_FRAME			0	/* using frame = false */
-  #endif
+ drivers/hwmon/ina3221.c | 51 ++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 45 insertions(+), 6 deletions(-)
 
--ENTRY(function_hook)
--	ret
--END(function_hook)
--
--ENTRY(ftrace_caller)
-
-+.macro save_mcount_regs
-  #ifdef USING_FRAME_POINTER
-  # ifdef CC_USING_FENTRY
-  	/*
-@@ -73,11 +69,9 @@ ENTRY(ftrace_caller)
-
-  	movl	function_trace_op, %ecx
-  	subl	$MCOUNT_INSN_SIZE, %eax
-+	.endm
-
--.globl ftrace_call
--ftrace_call:
--	call	ftrace_stub
--
-+.macro restore_mcount_regs
-  	addl	$4, %esp			/* skip NULL pointer */
-  	popl	%edx
-  	popl	%ecx
-@@ -90,6 +84,39 @@ ftrace_call:
-  	addl	$4, %esp			/* skip parent ip */
-  # endif
-  #endif
-+	.endm
+diff --git a/drivers/hwmon/ina3221.c b/drivers/hwmon/ina3221.c
+index 26cdf3342d80..10e8347a3c80 100644
+--- a/drivers/hwmon/ina3221.c
++++ b/drivers/hwmon/ina3221.c
+@@ -18,6 +18,7 @@
+ #include <linux/hwmon-sysfs.h>
+ #include <linux/i2c.h>
+ #include <linux/module.h>
++#include <linux/mutex.h>
+ #include <linux/of.h>
+ #include <linux/regmap.h>
+ 
+@@ -94,12 +95,14 @@ struct ina3221_input {
+  * @regmap: Register map of the device
+  * @fields: Register fields of the device
+  * @inputs: Array of channel input source specific structures
++ * @lock: mutex lock to serialize sysfs attribute accesses
+  * @reg_config: Register value of INA3221_CONFIG
+  */
+ struct ina3221_data {
+ 	struct regmap *regmap;
+ 	struct regmap_field *fields[F_MAX_FIELDS];
+ 	struct ina3221_input inputs[INA3221_NUM_CHANNELS];
++	struct mutex lock;
+ 	u32 reg_config;
+ };
+ 
+@@ -265,29 +268,53 @@ static int ina3221_write_enable(struct device *dev, int channel, bool enable)
+ static int ina3221_read(struct device *dev, enum hwmon_sensor_types type,
+ 			u32 attr, int channel, long *val)
+ {
++	struct ina3221_data *ina = dev_get_drvdata(dev);
++	int ret;
 +
-+ENTRY(function_hook)
-+#ifdef CONFIG_VERY_EARLY_FUNCTION_TRACER
-+	cmpl	$__PAGE_OFFSET, %esp
-+	jb	vearly_stub			/* Paging not enabled yet? */
++	mutex_lock(&ina->lock);
 +
-+	cmpl	$ftrace_stub, ftrace_vearly_trace_function
-+	jnz vearly_trace
+ 	switch (type) {
+ 	case hwmon_in:
+ 		/* 0-align channel ID */
+-		return ina3221_read_in(dev, attr, channel - 1, val);
++		ret = ina3221_read_in(dev, attr, channel - 1, val);
++		break;
+ 	case hwmon_curr:
+-		return ina3221_read_curr(dev, attr, channel, val);
++		ret = ina3221_read_curr(dev, attr, channel, val);
++		break;
+ 	default:
+-		return -EOPNOTSUPP;
++		ret = -EOPNOTSUPP;
++		break;
+ 	}
 +
-+vearly_stub:
-+	ret
++	mutex_unlock(&ina->lock);
 +
-+vearly_trace:
-+	save_mcount_regs
-+	call	*ftrace_vearly_trace_function
-+	restore_mcount_regs
++	return ret;
+ }
+ 
+ static int ina3221_write(struct device *dev, enum hwmon_sensor_types type,
+ 			 u32 attr, int channel, long val)
+ {
++	struct ina3221_data *ina = dev_get_drvdata(dev);
++	int ret;
 +
-+	jmp vearly_stub
-+#else
-+	ret
-+#endif
-+END(function_hook)
++	mutex_lock(&ina->lock);
 +
-+ENTRY(ftrace_caller)
-+	save_mcount_regs
+ 	switch (type) {
+ 	case hwmon_in:
+ 		/* 0-align channel ID */
+-		return ina3221_write_enable(dev, channel - 1, val);
++		ret = ina3221_write_enable(dev, channel - 1, val);
++		break;
+ 	case hwmon_curr:
+-		return ina3221_write_curr(dev, attr, channel, val);
++		ret = ina3221_write_curr(dev, attr, channel, val);
++		break;
+ 	default:
+-		return -EOPNOTSUPP;
++		ret = -EOPNOTSUPP;
++		break;
+ 	}
 +
-+.globl ftrace_call
-+ftrace_call:
-+	call	ftrace_stub
++	mutex_unlock(&ina->lock);
 +
-+	restore_mcount_regs
-+
-  .Lftrace_ret:
-  #ifdef CONFIG_FUNCTION_GRAPH_TRACER
-  .globl ftrace_graph_call
-diff --git a/arch/x86/kernel/ftrace_64.S b/arch/x86/kernel/ftrace_64.S
-index 91b2cff4b79a..879db2c759e3 100644
---- a/arch/x86/kernel/ftrace_64.S
-+++ b/arch/x86/kernel/ftrace_64.S
-@@ -151,7 +151,21 @@ EXPORT_SYMBOL(mcount)
-  #ifdef CONFIG_DYNAMIC_FTRACE
-
-  ENTRY(function_hook)
-+#ifdef CONFIG_VERY_EARLY_FUNCTION_TRACER
-+	cmpq $ftrace_stub, ftrace_vearly_trace_function
-+	jnz vearly_trace
-+
-+vearly_stub:
-  	retq
-+
-+vearly_trace:
-+	save_mcount_regs
-+	call *ftrace_vearly_trace_function
-+	restore_mcount_regs
-+	jmp vearly_stub
-+#else
-+	retq
-+#endif
-  ENDPROC(function_hook)
-
-  ENTRY(ftrace_caller)
-diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-index a397907e8d72..78e023c61289 100644
---- a/include/linux/ftrace.h
-+++ b/include/linux/ftrace.h
-@@ -239,6 +239,16 @@ static inline void ftrace_free_init_mem(void) { }
-  static inline void ftrace_free_mem(struct module *mod, void *start,  
-void *end) { }
-  #endif /* CONFIG_FUNCTION_TRACER */
-
-+#ifdef CONFIG_VERY_EARLY_FUNCTION_TRACER
-+extern void ftrace_early_init(char *command_line);
-+extern void ftrace_early_shutdown(void);
-+extern void ftrace_early_fill_ringbuffer(void *data);
-+#else
-+static inline void ftrace_early_init(char *command_line) { }
-+static inline void ftrace_early_shutdown(void) { }
-+static inline void ftrace_early_fill_ringbuffer(void *data) { }
-+#endif
-+
-  #ifdef CONFIG_STACK_TRACER
-
-  #define STACK_TRACE_ENTRIES 500
-@@ -443,6 +453,10 @@ unsigned long ftrace_get_addr_curr(struct  
-dyn_ftrace *rec);
-
-  extern ftrace_func_t ftrace_trace_function;
-
-+#if defined(CONFIG_VERY_EARLY_FUNCTION_TRACER) &&  
-defined(CONFIG_DYNAMIC_FTRACE)
-+extern ftrace_func_t ftrace_vearly_trace_function;
-+#endif
-+
-  int ftrace_regex_open(struct ftrace_ops *ops, int flag,
-  		  struct inode *inode, struct file *file);
-  ssize_t ftrace_filter_write(struct file *file, const char __user *ubuf,
-@@ -716,7 +730,7 @@ static inline unsigned long get_lock_parent_ip(void)
-  #ifdef CONFIG_FTRACE_MCOUNT_RECORD
-  extern void ftrace_init(void);
-  #else
--static inline void ftrace_init(void) { }
-+static inline void ftrace_init(void) { ftrace_early_shutdown(); }
-  #endif
-
-  /*
-diff --git a/init/main.c b/init/main.c
-index 18f8f0140fa0..1b289325223f 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -533,6 +533,7 @@ asmlinkage __visible void __init start_kernel(void)
-  	char *command_line;
-  	char *after_dashes;
-
-+	ftrace_early_init(boot_command_line);
-  	set_task_stack_end_magic(&init_task);
-  	smp_setup_processor_id();
-  	debug_objects_early_init();
-diff --git a/kernel/trace/Kconfig b/kernel/trace/Kconfig
-index 5e3de28c7677..4b358bf6abb0 100644
---- a/kernel/trace/Kconfig
-+++ b/kernel/trace/Kconfig
-@@ -19,6 +19,11 @@ config HAVE_FUNCTION_TRACER
-  	help
-  	  See Documentation/trace/ftrace-design.rst
-
-+config HAVE_VERY_EARLY_FTRACE
-+	bool
-+	help
-+	  See Documentation/trace/ftrace-design.txt
-+
-  config HAVE_FUNCTION_GRAPH_TRACER
-  	bool
-  	help
-@@ -155,6 +160,52 @@ config FUNCTION_TRACER
-  	  (the bootup default), then the overhead of the instructions is very
-  	  small and not measurable even in micro-benchmarks.
-
-+config VERY_EARLY_FUNCTION_TRACER
-+	bool "Very Early Kernel Function Tracer"
-+	depends on FUNCTION_TRACER
-+	depends on HAVE_VERY_EARLY_FTRACE
-+	help
-+	  Normally, function tracing can only start after memory has been
-+	  initialized early in boot. If "ftrace=function" is added to the
-+	  command line, then function tracing will start after memory setup.
-+	  In order to trace functions before that, this option will
-+	  have function tracing starts before memory setup is complete, by
-+	  placing the trace in a temporary buffer, which will be copied to
-+	  the trace buffer after memory setup. The size of this temporary
-+	  buffer is defined by VERY_EARLY_FTRACE_BUF_SHIFT.
-+
-+config VERY_EARLY_FTRACE_BUF_SHIFT
-+	int "Temporary buffer size (17 => 128 KB, 24 => 16 MB)"
-+	depends on VERY_EARLY_FUNCTION_TRACER
-+	range 8 24
-+	default 19
-+	help
-+	  Select the size of the buffer to be used for storing function calls at
-+	  very early stage.
-+	  The value defines the size as a power of 2.
-+	  Examples:
-+	    20 =>   1 MB
-+	    19 => 512 KB
-+	    17 => 128 KB
-+
-+config VERY_EARLY_FTRACE_FILTER_SHIFT
-+	int "Temporary filter size (filter/notrace) (17 => 128 KB, 19 => 512 KB)"
-+	depends on VERY_EARLY_FUNCTION_TRACER
-+	depends on FTRACE_MCOUNT_RECORD
-+	range 0 19
-+	default 17
-+	help
-+	  Select the size of the filter buffer to be used for filtering (trace/
-+	  no trace) functions at very early stage.
-+	  Two buffers (trace/no_trace) will be created using by this option.
-+	  These following kernel parameters control filtering during bootup :
-+	  "ftrace_filter", "ftrace_notrace".
-+	  The value defines the size as a power of 2.
-+	  Examples:
-+	    19 => 512 KB for each buffer
-+	    18 => 256 KB for each buffer
-+	    17 => 128 KB for each buffer
-+
-  config FUNCTION_GRAPH_TRACER
-  	bool "Kernel Function Graph Tracer"
-  	depends on HAVE_FUNCTION_GRAPH_TRACER
-diff --git a/kernel/trace/ftrace.c b/kernel/trace/ftrace.c
-index f536f601bd46..45d575ae2056 100644
---- a/kernel/trace/ftrace.c
-+++ b/kernel/trace/ftrace.c
-@@ -65,6 +65,11 @@
-  #define FTRACE_HASH_DEFAULT_BITS 10
-  #define FTRACE_HASH_MAX_BITS 12
-
-+#ifdef CONFIG_FTRACE_MCOUNT_RECORD
-+extern unsigned long __start_mcount_loc[];
-+extern unsigned long __stop_mcount_loc[];
-+#endif
-+
-  #ifdef CONFIG_DYNAMIC_FTRACE
-  #define INIT_OPS_HASH(opsname)	\
-  	.func_hash		= &opsname.local_hash,			\
-@@ -6126,11 +6131,11 @@ void __init ftrace_free_init_mem(void)
-
-  void __init ftrace_init(void)
-  {
--	extern unsigned long __start_mcount_loc[];
--	extern unsigned long __stop_mcount_loc[];
-  	unsigned long count, flags;
-  	int ret;
-
-+	ftrace_early_shutdown();
-+
-  	local_irq_save(flags);
-  	ret = ftrace_dyn_arch_init();
-  	local_irq_restore(flags);
-@@ -7092,3 +7097,283 @@ void ftrace_graph_exit_task(struct task_struct *t)
-  	kfree(ret_stack);
-  }
-  #endif
-+
-+
-+#ifdef CONFIG_VERY_EARLY_FUNCTION_TRACER
-+
-+#define VEARLY_BUFF_LEN ((1 << CONFIG_VERY_EARLY_FTRACE_BUF_SHIFT) / \
-+					sizeof(struct ftrace_vearly_entry))
-+
-+struct ftrace_vearly_entry {
-+	unsigned long ip;
-+	unsigned long parent_ip;
-+	unsigned long long clock;
-+};
-+/*
-+ * Only CPU0 is running in early stage, no need to have per-cpu buffer
-+ */
-+static struct ftrace_vearly_entry  
-ftrace_vearly_entries[VEARLY_BUFF_LEN] __initdata;
-+static const unsigned long VEARLY_BUFF_MAX __initconst = VEARLY_BUFF_LEN;
-+static unsigned long vearly_entries_count __initdata;
-+static char tmp_cmdline[COMMAND_LINE_SIZE] __initdata;
-+
-+
-+#ifdef CONFIG_DYNAMIC_FTRACE
-+ftrace_func_t ftrace_vearly_trace_function __read_mostly = ftrace_stub;
-+#else
-+# define ftrace_vearly_trace_function ftrace_trace_function
-+#endif
-+
-+static inline __init void ftrace_vearly_disable(void)
++	return ret;
+ }
+ 
+ static int ina3221_read_string(struct device *dev, enum hwmon_sensor_types type,
+@@ -582,6 +609,7 @@ static int ina3221_probe(struct i2c_client *client,
+ 	if (ret)
+ 		return ret;
+ 
++	mutex_init(&ina->lock);
+ 	dev_set_drvdata(dev, ina);
+ 
+ 	hwmon_dev = devm_hwmon_device_register_with_info(dev, client->name, ina,
+@@ -589,12 +617,22 @@ static int ina3221_probe(struct i2c_client *client,
+ 							 ina3221_groups);
+ 	if (IS_ERR(hwmon_dev)) {
+ 		dev_err(dev, "Unable to register hwmon device\n");
++		mutex_destroy(&ina->lock);
+ 		return PTR_ERR(hwmon_dev);
+ 	}
+ 
+ 	return 0;
+ }
+ 
++static int ina3221_remove(struct i2c_client *client)
 +{
-+	ftrace_vearly_trace_function = ftrace_stub;
-+}
++	struct ina3221_data *ina = dev_get_drvdata(&client->dev);
 +
-+#ifdef CONFIG_FTRACE_MCOUNT_RECORD
-+#define VEARLY_FILTER_LEN ((1 << CONFIG_VERY_EARLY_FTRACE_FILTER_SHIFT) / \
-+					sizeof(unsigned long))
-+struct ftrace_vearly_filtering {
-+	unsigned long list[VEARLY_FILTER_LEN];
-+	char buf[COMMAND_LINE_SIZE];
-+	int size;
-+};
-+static const unsigned long VEARLY_FILTER_MAX __initconst = VEARLY_FILTER_LEN;
-+static struct ftrace_vearly_filtering ftrace_data_notrace __initdata;
-+static struct ftrace_vearly_filtering ftrace_data_filter __initdata;
-+
-+static __init int ftrace_vearly_filter_has_addr(unsigned long addr,
-+	unsigned long *filter, int *size)
-+{
-+	int i;
-+
-+	for (i = 0; i < *size; i++) {
-+		if (filter[i] == addr)
-+			return 1;
-+	}
-+	return 0;
-+}
-+
-+static __init int
-+ftrace_vearly_match_record(unsigned long ip, struct ftrace_glob *func_g)
-+{
-+	char str[KSYM_SYMBOL_LEN];
-+	char *modname;
-+
-+	kallsyms_lookup(ip, NULL, NULL, &modname, str);
-+	return ftrace_match(str, func_g);
-+}
-+
-+static __init void
-+ftrace_vearly_regex(char *func, unsigned long *filter, int *size)
-+{
-+	struct ftrace_glob func_g = { .type = MATCH_FULL };
-+	unsigned long *start = __start_mcount_loc;
-+	unsigned long *end = __stop_mcount_loc;
-+	unsigned long count;
-+	unsigned long addr;
-+	unsigned long *p;
-+	int clear_filter = 0;
-+
-+	count = end - start;
-+
-+	if (!count)
-+		return;
-+
-+	if (func) {
-+		func_g.type = filter_parse_regex(func, strlen(func), &func_g.search,
-+						 &clear_filter);
-+		func_g.len = strlen(func_g.search);
-+	}
-+
-+	p = start;
-+	while (p < end) {
-+		addr = ftrace_call_adjust(*p++);
-+		if (!addr)
-+			continue;
-+
-+		if ((*size) > VEARLY_FILTER_MAX)
-+			return;
-+
-+		if (ftrace_vearly_match_record(addr, &func_g)) {
-+			if (!ftrace_vearly_filter_has_addr(addr, filter, size))
-+				filter[(*size)++] = addr;
-+		}
-+	}
-+}
-+
-+static int __init ftrace_addr_compare(const void *a, const void *b)
-+{
-+	if (*(unsigned long *)a > *(unsigned long *)b)
-+		return 1;
-+	if (*(unsigned long *)a < *(unsigned long *)b)
-+		return -1;
++	mutex_destroy(&ina->lock);
 +
 +	return 0;
 +}
 +
-+static void __init ftrace_addr_swap(void *a, void *b, int size)
-+{
-+	unsigned long t = *(unsigned long *)a;
-+	*(unsigned long *)a = *(unsigned long *)b;
-+	*(unsigned long *)b = t;
-+}
-+
-+static __init int set_ftrace_vearly_filtering(void *data, char *str)
-+{
-+	struct ftrace_vearly_filtering *ftrace_data = data;
-+	char *func;
-+	char *buf;
-+
-+	if (!ftrace_data)
-+		return 0;
-+	buf = ftrace_data->buf;
-+	strlcpy(buf, str, COMMAND_LINE_SIZE);
-+
-+	while (buf) {
-+		func = strsep(&buf, ",");
-+		ftrace_vearly_regex(func, ftrace_data->list, &ftrace_data->size);
-+	}
-+	/* sort filter to use binary search on it */
-+	sort(ftrace_data->list, ftrace_data->size,
-+		sizeof(unsigned long), ftrace_addr_compare, ftrace_addr_swap);
-+
-+	return 1;
-+}
-+
-+#define ftrace_vearly_bsearch_addr(addr, data) bsearch(&addr, data.list,\
-+	data.size, sizeof(unsigned long), ftrace_addr_compare)
-+
-+#endif /* CONFIG_FTRACE_MCOUNT_RECORD */
-+
-+
-+static __init void
-+ftrace_function_vearly_trace_call(unsigned long ip, unsigned long parent_ip,
-+			struct ftrace_ops *op, struct pt_regs *regs)
-+{
-+	struct ftrace_vearly_entry *entry;
-+
-+#ifdef CONFIG_FTRACE_MCOUNT_RECORD
-+	if (ftrace_data_notrace.size &&
-+			ftrace_vearly_bsearch_addr(ip, ftrace_data_notrace))
-+		return;
-+
-+	if (ftrace_data_filter.size &&
-+			!ftrace_vearly_bsearch_addr(ip, ftrace_data_filter))
-+		return;
-+#endif
-+
-+	if (vearly_entries_count >= VEARLY_BUFF_MAX) {
-+		/* stop tracing when buffer is full */
-+		ftrace_vearly_disable();
-+		return;
-+	}
-+
-+	entry = &ftrace_vearly_entries[vearly_entries_count++];
-+	entry->ip = ip;
-+	entry->parent_ip = parent_ip;
-+	entry->clock = trace_clock_local();
-+}
-+
-+/*
-+ * Will be passed to ringbuffer by early_trace_clock
-+ */
-+static u64 early_timestamp __initdata;
-+
-+static __init u64 early_trace_clock(void)
-+{
-+	return early_timestamp;
-+}
-+
-+void __init ftrace_early_fill_ringbuffer(void *data)
-+{
-+	struct ftrace_vearly_entry *entry;
-+	struct trace_array *tr = data;
-+	int i;
-+
-+	if (ftrace_vearly_entries <= 0)
-+		return;
-+
-+	ring_buffer_set_clock(tr->trace_buffer.buffer, early_trace_clock);
-+	preempt_disable_notrace();
-+	for (i = 0; i < vearly_entries_count; i++) {
-+		entry = &ftrace_vearly_entries[i];
-+		early_timestamp = entry->clock;
-+		trace_function(tr, entry->ip, entry->parent_ip, 0, 0);
-+	}
-+	preempt_enable_notrace();
-+	ring_buffer_set_clock(tr->trace_buffer.buffer, trace_clock_local);
-+}
-+
-+/*
-+ * this will be used as __setup_param
-+ */
-+struct ftrace_vearly_obs_param {
-+	int (*setup_func)(void *, char*);
-+	const char *str;
-+	void *data;
-+};
-+static struct ftrace_vearly_obs_param ftrace_vearly_params[] __initdata = {
-+#ifdef CONFIG_FTRACE_MCOUNT_RECORD
-+	{
-+		.str = "ftrace_notrace",
-+		.data = &ftrace_data_notrace,
-+		.setup_func = set_ftrace_vearly_filtering,
-+	},
-+	{
-+		.str = "ftrace_filter",
-+		.data = &ftrace_data_filter,
-+		.setup_func = set_ftrace_vearly_filtering,
-+	},
-+#endif
-+};
-+
-+static int __init ftrace_do_very_early_param(char *param, char *val,
-+				 const char *unused, void *arg)
-+{
-+	int size = ARRAY_SIZE(ftrace_vearly_params);
-+	struct ftrace_vearly_obs_param *p;
-+	int i;
-+
-+	for (i = 0; i < size; i++) {
-+		p = &ftrace_vearly_params[i];
-+		if (strcmp(param, p->str) == 0) {
-+			p->setup_func(p->data, val);
-+			return 0;
-+		}
-+	}
-+	return 0;
-+}
-+
-+void __init ftrace_early_init(char *command_line)
-+{
-+	/* proceed only if function tracing was enabled */
-+	if (!strstr(command_line, "ftrace=function "))
-+		return;
-+
-+	strlcpy(tmp_cmdline, command_line, COMMAND_LINE_SIZE);
-+	parse_args("ftrace vearly options", tmp_cmdline, NULL, 0, 0, 0, NULL,
-+		ftrace_do_very_early_param);
-+
-+	// After this point, we enable early function tracing
-+	ftrace_vearly_trace_function = ftrace_function_vearly_trace_call;
-+}
-+
-+void __init ftrace_early_shutdown(void)
-+{
-+	if (ftrace_vearly_trace_function == ftrace_stub)
-+		return;
-+
-+	// Disable early tracing
-+	ftrace_vearly_disable();
-+
-+#ifdef CONFIG_FTRACE_MCOUNT_RECORD
-+	pr_info("ftrace: vearly %lu entries, notrace=%d, filter=%d",
-+		vearly_entries_count,
-+		ftrace_data_notrace.size,
-+		ftrace_data_filter.size);
-+#else
-+	pr_info("ftrace: vearly %lu recorded entries", vearly_entries_count);
-+#endif
-+}
-+
-+#endif /* CONFIG_VERY_EARLY_FUNCTION_TRACER */
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index bf6f1d70484d..08763c380a3e 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -8551,6 +8551,9 @@ __init static int tracer_alloc_buffers(void)
-  	/* Function tracing may start here (via kernel command line) */
-  	init_function_trace();
-
-+	/* Pre-fill the ring buffer with very early events */
-+	ftrace_early_fill_ringbuffer(&global_trace);
-+
-  	/* All seems OK, enable tracing */
-  	tracing_disabled = 0;
-
+ static int __maybe_unused ina3221_suspend(struct device *dev)
+ {
+ 	struct ina3221_data *ina = dev_get_drvdata(dev);
+@@ -663,6 +701,7 @@ MODULE_DEVICE_TABLE(i2c, ina3221_ids);
+ 
+ static struct i2c_driver ina3221_i2c_driver = {
+ 	.probe = ina3221_probe,
++	.remove = ina3221_remove,
+ 	.driver = {
+ 		.name = INA3221_DRIVER_NAME,
+ 		.of_match_table = ina3221_of_match_table,
 -- 
 2.17.1
-
-
 
