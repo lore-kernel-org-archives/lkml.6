@@ -2,181 +2,84 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DFA3ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 16:37:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 084FAECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 16:37:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DCD220833
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 16:37:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SEehiHwI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DCD220833
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C9251207DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 16:37:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9251207DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbeJYBF5 (ORCPT
+        id S1726899AbeJYBGa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 21:05:57 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:42929 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726449AbeJYBF5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 21:05:57 -0400
-Received: by mail-lj1-f193.google.com with SMTP id z9-v6so558800ljk.9
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 09:37:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=CBH6pxQUT3aBGzjy1pRlWiZdbQKJpXP8e2xUJi7BgwM=;
-        b=SEehiHwImgQzipfu0zVeQ1EMIMLIpHLuvzfL1CMpHoWB1tyxCWzhpTA79gaYFmYZq5
-         Bmu388TuD0Lpktm3ogF7cxwFZVsDu03gX8d+hbRB5vQasPkH1SJGJtA74jkUVAF6w54g
-         rKqiJxSObfaKlBusAUojJcvy9uGPCdaZTGQQ8jVL5FovyUEw59QSFldBp1l67q8S6tnh
-         oa4QSUokgEt0zyxEgQw7nRfWFg1GGIkeyINZTyrFGiGItiqzCIgmisqZhGRdk60M/wYc
-         GIPHkh0f7+vvz+oV+2BLWTy816lDpykS7NiD1ZSra6McivrfF3om5Lo1nHFvgl8cvS1m
-         N2VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CBH6pxQUT3aBGzjy1pRlWiZdbQKJpXP8e2xUJi7BgwM=;
-        b=cO9N8pEYDK7GBX9NIdoY9I+gByo3jg8F2rYOlgKloPagYaiXWbzNjdsJdX2aQaDiiG
-         kpJ0tSL1iIUppTd5Qq+JOtaZpV6vm6BnGagR84A4vE/ELU7pesj2ziSf5gUlbG1q9fJR
-         TcdKs6Z/rHPRUJ0XGzwBE+dJrAy4G3JqZZ8l2okxlW49Q2VyZ7PQLIFgB3F7d8eSHamc
-         i+d52Hxg7kSdquYxUNssyT2a2eaWuLVVHNhW9jgKt2T2VbMwGNqTgyMm4tiVy+Kj+OXf
-         p6q6ssMBjYDFGTcyT8DOt2M+MD+/W+ZGdu9UoITCtg+3XdvoUeQ7tiwrxQxZ7/ZxY6nC
-         OQXA==
-X-Gm-Message-State: AGRZ1gLcl8hflxCWVg8Hp2w4vxx4+2ktlxKYvBtydumQo1/YGCmSEj1T
-        hSsmM14GLoQHenKAbvdaK7E=
-X-Google-Smtp-Source: AJdET5eSPAyU2T+CZto70qnVp48mbVQzKR323F5oOEv22Zj21Nds6Gkz3Z+3m8vIVEgS/hPYAbpJVA==
-X-Received: by 2002:a2e:9c59:: with SMTP id t25-v6mr2452180ljj.107.1540399028644;
-        Wed, 24 Oct 2018 09:37:08 -0700 (PDT)
-Received: from pc636 ([37.139.158.167])
-        by smtp.gmail.com with ESMTPSA id d17-v6sm799467lfg.97.2018.10.24.09.37.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 24 Oct 2018 09:37:07 -0700 (PDT)
-From:   Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date:   Wed, 24 Oct 2018 18:36:58 +0200
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Shuah Khan <shuah@kernel.org>, Michal Hocko <mhocko@kernel.org>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Garnier <thgarnie@google.com>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>
-Subject: Re: [RFC PATCH 0/2] improve vmalloc allocation
-Message-ID: <20181024163658.ojar7gvstaycn2wz@pc636>
-References: <20181019173538.590-1-urezki@gmail.com>
- <20181022125142.GD18839@dhcp22.suse.cz>
- <20181022165253.uphv3xzqivh44o3d@pc636>
- <20181023072306.GN18839@dhcp22.suse.cz>
- <dd0c3528-9c01-12bc-3400-ca88060cb7cf@kernel.org>
- <20181023152640.GD20085@bombadil.infradead.org>
+        Wed, 24 Oct 2018 21:06:30 -0400
+Received: from mga02.intel.com ([134.134.136.20]:14953 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726449AbeJYBGa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 21:06:30 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 09:37:44 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,421,1534834800"; 
+   d="scan'208";a="81274491"
+Received: from orsmsx102.amr.corp.intel.com ([10.22.225.129])
+  by fmsmga008.fm.intel.com with ESMTP; 24 Oct 2018 09:37:44 -0700
+Received: from orsmsx156.amr.corp.intel.com (10.22.240.22) by
+ ORSMSX102.amr.corp.intel.com (10.22.225.129) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 24 Oct 2018 09:37:43 -0700
+Received: from orsmsx114.amr.corp.intel.com ([169.254.8.194]) by
+ ORSMSX156.amr.corp.intel.com ([169.254.8.164]) with mapi id 14.03.0319.002;
+ Wed, 24 Oct 2018 09:37:43 -0700
+From:   "Li, Juston" <juston.li@intel.com>
+To:     "daniel@ffwll.ch" <daniel@ffwll.ch>
+CC:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Ciobanu, Nathan D" <nathan.d.ciobanu@intel.com>,
+        "jared_dominguez@dell.com" <jared_dominguez@dell.com>,
+        "mario.limonciello@dell.com" <mario.limonciello@dell.com>
+Subject: Re: [Intel-gfx] [RESEND PATCH v2 0/2] Check MST topology change on
+ resume
+Thread-Topic: [Intel-gfx] [RESEND PATCH v2 0/2] Check MST topology change on
+ resume
+Thread-Index: AQHUa0BopJxy2RsRZ0GPWoWsCNOADqUujiAAgACAegA=
+Date:   Wed, 24 Oct 2018 16:37:42 +0000
+Message-ID: <bdc963d6604f1ae7ff7c103c8d16b25db749a3e3.camel@intel.com>
+References: <20181024021925.27026-1-juston.li@intel.com>
+         <20181024085750.GK324@phenom.ffwll.local>
+In-Reply-To: <20181024085750.GK324@phenom.ffwll.local>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.7.198.167]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <4BA955D5317D3D42B0515A6670218B57@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181023152640.GD20085@bombadil.infradead.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 08:26:40AM -0700, Matthew Wilcox wrote:
-> On Tue, Oct 23, 2018 at 09:02:56AM -0600, Shuah Khan wrote:
-> > Hi Michal,
-> > 
-> > On 10/23/2018 01:23 AM, Michal Hocko wrote:
-> > > Hi Shuah,
-> > > 
-> > > On Mon 22-10-18 18:52:53, Uladzislau Rezki wrote:
-> > >> On Mon, Oct 22, 2018 at 02:51:42PM +0200, Michal Hocko wrote:
-> > >>> Hi,
-> > >>> I haven't read through the implementation yet but I have say that I
-> > >>> really love this cover letter. It is clear on intetion, it covers design
-> > >>> from high level enough to start discussion and provides a very nice
-> > >>> testing coverage. Nice work!
-> > >>>
-> > >>> I also think that we need a better performing vmalloc implementation
-> > >>> long term because of the increasing number of kvmalloc users.
-> > >>>
-> > >>> I just have two mostly workflow specific comments.
-> > >>>
-> > >>>> A test-suite patch you can find here, it is based on 4.18 kernel.
-> > >>>> ftp://vps418301.ovh.net/incoming/0001-mm-vmalloc-stress-test-suite-v4.18.patch
-> > >>>
-> > >>> Can you fit this stress test into the standard self test machinery?
-> > >>>
-> > >> If you mean "tools/testing/selftests", then i can fit that as a kernel module.
-> > >> But not all the tests i can trigger from kernel module, because 3 of 8 tests
-> > >> use __vmalloc_node_range() function that is not marked as EXPORT_SYMBOL.
-> > > 
-> > > Is there any way to conditionally export these internal symbols just for
-> > > kselftests? Or is there any other standard way how to test internal
-> > > functionality that is not exported to modules?
-> > > 
-> > 
-> > The way it can be handled is by adding a test module under lib. test_kmod,
-> > test_sysctl, test_user_copy etc.
-> 
-> The problem is that said module can only invoke functions which are
-> exported using EXPORT_SYMBOL.  And there's a cost to exporting them,
-> which I don't think we're willing to pay, purely to get test coverage.
-> 
-> Based on my own experience with the IDA & XArray test suites, I would
-> like to propose a solution which does not require exporting all of
-> these symbols:
-> 
-> Create a new kernel module in mm/test_vmalloc.c
-> 
-> Towards the top of that file,
-> 
-> #include <linux/export.h>
-> #undef EXPORT_SYMBOL
-> #define EXPORT_SYMBOL(x)	/* */
-> #include "vmalloc.c"
-> 
-> Now you can invoke even static functions from your test harness.
-I see your point. But i also think that it would not be so easy to go.
-
-<snip>
-#undef CONFIG_HAVE_ARCH_HUGE_VMAP
-#undef CONFIG_PROC_FS
-
-#include "../hikey_linux.git/mm/vmalloc.c"
-#include <linux/random.h>
-<snip>
-
-<snip>
-  LD [M]  /mnt/coding/vmalloc_performance_test/vmalloc_test.o
-  Building modules, stage 2.
-  MODPOST 1 modules
-WARNING: "__pud_alloc" [/mnt/coding/vmalloc_performance_test/vmalloc_test.ko] undefined!
-WARNING: "__sync_icache_dcache" [/mnt/coding/vmalloc_performance_test/vmalloc_test.ko] undefined!
-WARNING: "warn_alloc" [/mnt/coding/vmalloc_performance_test/vmalloc_test.ko] undefined!
-WARNING: "pmd_clear_bad" [/mnt/coding/vmalloc_performance_test/vmalloc_test.ko] undefined!
-WARNING: "pgd_clear_bad" [/mnt/coding/vmalloc_performance_test/vmalloc_test.ko] undefined!
-WARNING: "swapper_pg_dir" [/mnt/coding/vmalloc_performance_test/vmalloc_test.ko] undefined!
-WARNING: "__pmd_alloc" [/mnt/coding/vmalloc_performance_test/vmalloc_test.ko] undefined!
-WARNING: "pud_clear_bad" [/mnt/coding/vmalloc_performance_test/vmalloc_test.ko] undefined!
-WARNING: "__pte_alloc_kernel" [/mnt/coding/vmalloc_performance_test/vmalloc_test.ko] undefined!
- LD [M]  /mnt/coding/vmalloc_performance_test/vmalloc_test.ko
-<snip>
-
-i.e. i will need either link with objects where those functions are or
-wrap them up somehow. 
-
-Thanks!
-
---
-Vlad Rezki
+T24gV2VkLCAyMDE4LTEwLTI0IGF0IDEwOjU3ICswMjAwLCBEYW5pZWwgVmV0dGVyIHdyb3RlOg0K
+PiBPbiBUdWUsIE9jdCAyMywgMjAxOCBhdCAwNzoxOToyM1BNIC0wNzAwLCBKdXN0b24gTGkgd3Jv
+dGU6DQo+ID4gDQo+ID4gU2lnbmVkLW9mZi1ieTogSnVzdG9uIExpIDxqdXN0b24ubGlAaW50ZWwu
+Y29tPg0KPiANCj4gRm9yIGZvcm1hbGl0eSwgZG9lcyB0aGlzIGFsc28gaW1wbHkgYSByZXZpZXdl
+ZC1ieSB0YWc/DQoNCkknbSBxdWl0ZSBuZXcgdG8gZHJtIHNvIEknbGwgd2l0aGhvbGQgYSByZXZp
+ZXdlZC1ieSB0YWcgYW5kIGFzayB0aGF0DQpzb21lb25lIGVsc2UgdGFrZSBhIGxvb2sgYXQgaXQg
+dG9vLg0KDQpMeXVkZSwgdGhlIG9yaWdpbmFsIGF1dGhvciwgbWVudGlvbmVkIGhlIHNob3VsZCBw
+cm9iYWJseSB0YWtlIGEgbG9vaw0KYWdhaW4gYWxzbyBzaW5jZSB0aGUgcGF0Y2hzZXQgaXMgYSBi
+aXQgb2xkLg0KDQo+IEZvciBtZXJnaW5nIHByb3BhYmx5IGJlc3Qgd2Ugd2FpdCBmb3IgdGhlIGJh
+Y2ttZXJnZSBhbmQgdGhlIHB1c2gNCj4gdGhlc2UgaW4NCj4gdGhyb3VnaCBkcm0tbWlzYy1uZXh0
+LWZpeGVzLg0KPiANCj4gV2VsbCBmb3IgZHJtLW1pc2MtbmV4dC1maXhlcyBkcm0tbWlzYyBtYWlu
+dGFpbmVycyBuZWVkIHRvIHJvbGwgdGhlDQo+IHRyZWUNCj4gZm9yd2FyZC4gRWl0aGVyIHdheSBu
+ZWVkcyBzeW5jaHJvbml6YXRpb24uIFBsdXMgYW4gYWNrIGZyb20gZHJtLWludGVsDQo+IG1haW50
+YWluZXJzLg0KPiAtRGFuaWVsDQo+IA0KDQpXaWxsIGRvDQoNClRoYW5rcw0KSnVzdG9uDQo=
