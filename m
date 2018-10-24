@@ -2,116 +2,110 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4EEAECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:22:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F067ECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:24:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C6162082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:22:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bgzSWweZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C6162082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D6C5B2082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:24:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6C5B2082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727146AbeJYDvy (ORCPT
+        id S1726964AbeJYDxx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 23:51:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52632 "EHLO mail.kernel.org"
+        Wed, 24 Oct 2018 23:53:53 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47966 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727116AbeJYDvy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 23:51:54 -0400
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726433AbeJYDxx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 23:53:53 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6859D20847
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 19:22:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540408955;
-        bh=+D0NPno23QPTrut13tNKvapz6jIT//vFuUtH9HAymDY=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=bgzSWweZKq+gzl+hhJkIStyJFVEWeu+DIx62VoKaKz0K4ibx6EN90F/Zps5fZdgiw
-         81cCo/fdbZZ9ujnoRqq9bWB/xE1rucpsi0qRUfsmlmCwjDliOhqYJQMaogzj9Abk74
-         dEfdQAO33ij22nT28fj+JVv3MkgSPYiYeJwbX55s=
-Received: by mail-wr1-f48.google.com with SMTP id n5-v6so3014426wrw.12
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 12:22:35 -0700 (PDT)
-X-Gm-Message-State: AGRZ1gLzIOaKX8UfBBtvBxfaaRo32RoySRB0BNeDTt3Kvkv2PlLEpU2r
-        rlvGnVk2YsWC3SQAsL57E2+vGq7gcjemJQT2lygMEA==
-X-Google-Smtp-Source: AJdET5fpWrD3HC/tmL+4gvJNfSv5jqF/uoPDbH48XyR6gW+vgYA3YJYIQhz1kaaViQssQyDGRfILt+gXkMtlBHGnqbk=
-X-Received: by 2002:adf:97d3:: with SMTP id t19-v6mr1088158wrb.283.1540408953883;
- Wed, 24 Oct 2018 12:22:33 -0700 (PDT)
+        by mx1.redhat.com (Postfix) with ESMTPS id B8340C059B73;
+        Wed, 24 Oct 2018 19:24:34 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9E53610694C0;
+        Wed, 24 Oct 2018 19:24:30 +0000 (UTC)
+Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w9OJOTxA008839;
+        Wed, 24 Oct 2018 15:24:29 -0400
+Received: from localhost (mpatocka@localhost)
+        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w9OJOT0l008835;
+        Wed, 24 Oct 2018 15:24:29 -0400
+X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
+Date:   Wed, 24 Oct 2018 15:24:29 -0400 (EDT)
+From:   Mikulas Patocka <mpatocka@redhat.com>
+X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
+To:     Paul Lawrence <paullawrence@google.com>
+cc:     Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>, linux-doc@vger.kernel.org,
+        kernel-team@android.com, Jonathan Corbet <corbet@lwn.net>,
+        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
+        dm-devel@redhat.com, Shaohua Li <shli@kernel.org>
+Subject: Re: [dm-devel] [RFC] dm-bow working prototype
+In-Reply-To: <296148c2-f2d9-5818-ea76-d71a0d6f5cd4@google.com>
+Message-ID: <alpine.LRH.2.02.1810241514310.4080@file01.intranet.prod.int.rdu2.redhat.com>
+References: <20181023212358.60292-1-paullawrence@google.com> <20181023221819.GB17552@agk-dp.fab.redhat.com> <296148c2-f2d9-5818-ea76-d71a0d6f5cd4@google.com>
+User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
 MIME-Version: 1.0
-References: <1537312139-5580-1-git-send-email-chang.seok.bae@intel.com>
- <1537312139-5580-3-git-send-email-chang.seok.bae@intel.com>
- <CALCETrUr3DGwW8y6y_cffEKWO_KQs1J2_UvTBZsbdAzES_f-Ag@mail.gmail.com> <C9BB696F3A938947B10DCAD29FAB8FFA66CCBBE3@CRSMSX101.amr.corp.intel.com>
-In-Reply-To: <C9BB696F3A938947B10DCAD29FAB8FFA66CCBBE3@CRSMSX101.amr.corp.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Wed, 24 Oct 2018 12:22:22 -0700
-X-Gmail-Original-Message-ID: <CALCETrWMMQDa4T0m34GfkkYBxqwGUOg96aeWgiANRv9tCvQVRw@mail.gmail.com>
-Message-ID: <CALCETrWMMQDa4T0m34GfkkYBxqwGUOg96aeWgiANRv9tCvQVRw@mail.gmail.com>
-Subject: Re: [regression in -rc1] Re: [PATCH v6 2/8] x86/fsgsbase/64:
- Introduce FS/GS base helper functions
-To:     "Bae, Chang Seok" <chang.seok.bae@intel.com>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Metzger, Markus T" <markus.t.metzger@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Wed, 24 Oct 2018 19:24:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 12:13 PM Bae, Chang Seok
-<chang.seok.bae@intel.com> wrote:
->
-> On Tue, Sep 18, 2018 at 12:02 PM Andy Lutomirski <luto@kernel.org>
-> > On Tue, Sep 18, 2018 at 4:09 PM Chang S. Bae <chang.seok.bae@intel.com>
-> > wrote:
-> > >
-> > > With new helpers, FS/GS base access is centralized.
-> > > Eventually, when FSGSBASE instruction enabled, it will be faster.
-> >
-> > Sorry for not catching this during review, but:
-> >
-> > > +void x86_fsbase_write_cpu(unsigned long fsbase) {
-> > > +       /*
-> > > +        * Set the selector to 0 as a notion, that the segment base is
-> > > +        * overwritten, which will be checked for skipping the segment load
-> > > +        * during context switch.
-> > > +        */
-> > > +       loadseg(FS, 0);
-> >
-> > ^^^
-> >
-> > what?
-> >
-> > > +       wrmsrl(MSR_FS_BASE, fsbase);
-> > > +}
-> >
-> > I don't understand what the comment is trying to say, but the sole caller so far
-> > of this function is x86_gsbase_write_task(), and the code looks incorrect.
-> >
-> > Ingo, I think we need to address this during this merge window, probably by
-> > removing the comment and the loadseg() call (and the same for
-> > gsbase...inactive).  But first, Chang, can you explain what exactly your intent is
-> > here?
->
-> It's coming from do_arch_prctl_64(). If you think it really makes confusion in
-> x86_fsbase_write_cpu(), how about moving it to x86_fsbase_write_task()?
 
-Why should ..write_task() magically change the index but only if it's
-writing current?
 
-I think you should move it all the way out to the caller
-(do_arch_prctl_64()?) and we can see if it makes sense there.
+On Wed, 24 Oct 2018, Paul Lawrence wrote:
 
->
-> Chang
+> Android has had the concept of A/B updates for since Android N, which means
+> that if an update is unable to boot for any reason three times, we revert to
+> the older system. However, if the failure occurs after the new system has
+> started modifying userdata, we will be attempting to start an older system
+> with a newer userdata, which is an unsupported state. Thus to make A/B able to
+> fully deliver on its promise of safe updates, we need to be able to revert
+> userdata in the event of a failure.
+> 
+> For those cases where the file system on userdata supports
+> snapshots/checkpoints, we should clearly use them. However, there are many
+> Android devices using filesystems that do not support checkpoints, so we need
+> a generic solution. Here we had two options. One was to use overlayfs to
+> manage the changes, then on merge have a script that copies the files to the
+> underlying fs. This was rejected on the grounds of compatibility concerns and
+> managing the merge through reboots, though it is definitely a plausible
+> strategy. The second was to work at the block layer.
+> 
+> At the block layer, dm-snap would have given us a ready-made solution, except
+> that there is no sufficiently large spare partition on Android devices. But in
+> general there is free space on userdata, just scattered over the device, and
+> of course likely to get modified as soon as userdata is written to. We also
+> decided that the merge phase was a high risk component of any design. Since
+> the normal path is that the update succeeds, we anticipate merges happening
+> 99% of the time, and we want to guarantee their success even in the event of
+> unexpected failure during the merge. Thus we decided we preferred a strategy
+> where the device is in the committed state at all times, and rollback requires
+> work, to one where the device remains in the original state but the merge is
+> complex.
+
+What about allocating a big file, using the FIEMAP ioctl to find the 
+physical locations of the file, creating a dm device with many linear 
+targets to map the big file and using it as a snapshot store? I think it 
+would be way easier than re-implementing the snapshot functionality in a 
+new target.
+
+You can mount the whole filesystem using the "origin" target and you can 
+attach a "snapshot" target that uses the mapped big file as its snapshot 
+store - all writes will be placed directly to the device and the old data 
+will be copied to the snapshot store in the big file.
+
+If you decide that rollback is no longer needed, you just unload the 
+snapshot target and delete the big file. If you decide that you want to 
+rollback, you can use the snapshot merge functionality (or you can write a 
+userspace utility that does offline merge).
+
+Mikulas
