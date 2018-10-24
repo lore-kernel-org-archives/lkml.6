@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8152C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 07:36:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 429E5C67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 07:36:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A61FF206B5
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 07:36:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA2D3206B5
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 07:36:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="x/TSjgu2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A61FF206B5
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="c97Z8a6Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA2D3206B5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729729AbeJXQDE (ORCPT
+        id S1729925AbeJXQDo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 12:03:04 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50355 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729688AbeJXQDD (ORCPT
+        Wed, 24 Oct 2018 12:03:44 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:38022 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729658AbeJXQDD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 24 Oct 2018 12:03:03 -0400
-Received: by mail-wm1-f67.google.com with SMTP id i8-v6so4221530wmg.0
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 00:36:08 -0700 (PDT)
+Received: by mail-wm1-f65.google.com with SMTP id b14-v6so1632970wmj.3
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 00:36:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=L88Lfnmc/N8gUEWTdkG+BxTm3V0b7bIO1yVIVTZbeG4=;
-        b=x/TSjgu25TvNgs9VmJZuSAl8dvUbcaEScHcOHuJ4At9u0M+pDuvoCmxajfBnDhK9Uf
-         iZsnkrbPHXKbkM5ysIVj65CfzAz+CJ32utolctFrG0mB0jM5ZB8da+esje0wiSXy2jde
-         Vxp2kSNfGRNMTA8zLH3iQvREO+Qc8nYzq7wT1WMrezbMWTDWCi2UvxXUzi2NOMQIPf0t
-         GlNJJ7gg31lbwuw+nT061+8p9esBOqEahF7LvEvPe8qTG/YCjkYiZt/4Fu1B92CwI4fr
-         TxagemSD/W4RYefOKNBg47DUlYlaPMmqZ4XXh0h3fWEik67bFVTaee1Cy3MqC9SZ3j01
-         mJXQ==
+        bh=Jd6hkXZTJbcnWWDcjh6+9p31qTdXU3vBTFQBIoKepqk=;
+        b=c97Z8a6ZGpgXrhW5hq1jHeRDEagQP1EiXRqvZYD1JRp88YSby8LgR1nFOTEzsyPx7h
+         Kgkj99jAFkgONOUKu3srZqlNW0+GWbskQ9dAvocaeYayBJh4q0+9Cr5gU+P9RchNeLFr
+         Ngj1ofi7sV4YxiLAAkNwwiJ2J2Re7SpVkRJfB83KepJJmX/CiA0tOqY4hLotb0804Ywi
+         LsVq2sQM1M0jbFGH7I4mbX7VVNoPE5jflPPWgpLe42sdr6CNyeYJLTtomxFnANXXDUwl
+         /F30Z0ve76/Sk2shPwPPVDbxbIuSEonySjSupYtBoz3PKqdGi8+xviS64Lk0oRoVCCkw
+         iIEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=L88Lfnmc/N8gUEWTdkG+BxTm3V0b7bIO1yVIVTZbeG4=;
-        b=kgaK7lmoGvRO5cWg8Z8yaSpmx0OaZ6ndPWyf2x3fWGVpet7zVv/ym+8uabqzNA0IhE
-         86aBRhFxsIYjF55lY68N8ccBAu31t+PuyFMipUjP6tyoW0+5wX1n+QiUsgB/kPaE1jAa
-         SW5/eTZXzz5HQNMxuJUX9ms1z7r3bPM4PMjrmVTdd1TxGJYJ6CSQxFed7MRxyCarL8fc
-         2c4Bgi+yXksViZ4HGSO5S67k61rmP12cCYLybu4IoGN1CFxao78xmwwnACJzkSgr21dB
-         5Wxq+sqnN0NlA/uq66/7Fkm5CTXJQqQZMNvjeJ0M77N5VjigPz6ZJ+E9oYmS0LAPutsY
-         BeuQ==
-X-Gm-Message-State: AGRZ1gIntucNyFIWTu9Fa2YjJ6SRQWJu75mph2p79IxyIx+OVFfKcASQ
-        hr3oG39sNNzr0klkSi4OHQmRBQ==
-X-Google-Smtp-Source: AJdET5crZhAXz1KRb0S1BlPR0jMga616tJ5k9RmjLz/x7WzW7Bu/VUIAzb2xZyWoSP6tOR/tpBKDLw==
-X-Received: by 2002:a1c:a851:: with SMTP id r78-v6mr1420888wme.97.1540366567519;
-        Wed, 24 Oct 2018 00:36:07 -0700 (PDT)
+        bh=Jd6hkXZTJbcnWWDcjh6+9p31qTdXU3vBTFQBIoKepqk=;
+        b=ew8R9R+F6/mqk26VzojUVZd/fn/2Z9ejxG43+GrP7rtITd/PkLspIKlyW++QJMxeFt
+         7wrqkpc95PeDFbRlh5tJIVZg1ADEViLK6SWobQWzKjb8eDwGdtojZCkPDv6t5tyDTnHC
+         c9lQo1sPN23jZKOCgTG0S8X65M2Ls5KD+DKuQfqJdX/BFG02vyf8N6hVB2fmMukXCw2f
+         AaxD9WPsKd/Y4WEmS3o5m/t5RRheu6kQ4ZMM3cYShejNyEjb3tAY/21tfPnSMHR9RzVR
+         TADlHVpuINPXCeBUkI/7/W9ipx34uz54Q/1NV/8F9RiVLlmB4HKFWpHksT489xtHijtP
+         bcWA==
+X-Gm-Message-State: AGRZ1gIrCPDCNCDvyS7PBMMVSxVwED1YNfP34hHBSyWdrmeE5Aujrj/5
+        B7PSWFDj39KqJZjG/MvwlGLvGg==
+X-Google-Smtp-Source: AJdET5fnPZ3U6nRTETCVct0M52hp7Gb9KQR3ApU9GbXG1QjsciAbxPi/vnKaULdiZZBRX2xxIT0/Fg==
+X-Received: by 2002:a1c:2746:: with SMTP id n67-v6mr1411037wmn.116.1540366565173;
+        Wed, 24 Oct 2018 00:36:05 -0700 (PDT)
 Received: from localhost.localdomain ([51.15.160.169])
-        by smtp.googlemail.com with ESMTPSA id b139-v6sm6254351wmd.36.2018.10.24.00.36.06
+        by smtp.googlemail.com with ESMTPSA id b139-v6sm6254351wmd.36.2018.10.24.00.36.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 24 Oct 2018 00:36:06 -0700 (PDT)
+        Wed, 24 Oct 2018 00:36:04 -0700 (PDT)
 From:   Corentin Labbe <clabbe@baylibre.com>
 To:     Gilles.Muller@lip6.fr, Julia.Lawall@lip6.fr, agust@denx.de,
         airlied@linux.ie, alexandre.torgue@st.com, alistair@popple.id.au,
@@ -75,9 +75,9 @@ Cc:     cocci@systeme.lip6.fr, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
         linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
         linux-sunxi@googlegroups.com, Corentin Labbe <clabbe@baylibre.com>
-Subject: [PATCH v3 5/7] net: ethernet: stmmac: dwmac-sun8i: use xxxsetbits_le32
-Date:   Wed, 24 Oct 2018 07:35:51 +0000
-Message-Id: <1540366553-18541-6-git-send-email-clabbe@baylibre.com>
+Subject: [PATCH v3 3/7 DONOTMERGE] coccinelle: add xxxsetbits_leXX converting spatch
+Date:   Wed, 24 Oct 2018 07:35:49 +0000
+Message-Id: <1540366553-18541-4-git-send-email-clabbe@baylibre.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1540366553-18541-1-git-send-email-clabbe@baylibre.com>
 References: <1540366553-18541-1-git-send-email-clabbe@baylibre.com>
@@ -86,143 +86,1821 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch convert dwmac-sun8i driver to use all xxxsetbits_le32 functions.
+This patch add a spatch which convert all open coded of setbits_le32/clrbits_le32/clrsetbits_le32
+and their 64 bits counterparts.
+
+Note that 64 and 32_relaxed are generated via
+cp scripts/coccinelle/misc/setbits32.cocci scripts/coccinelle/misc/setbits32_relaxed.cocci
+sed -i 's,readl,readl_relaxed,' scripts/coccinelle/misc/setbits32_relaxed.cocci
+sed -i 's,writel,writel_relaxed,' scripts/coccinelle/misc/setbits32_relaxed.cocci
+sed -i 's,setbits_le32,setbits_le32_relaxed,g' scripts/coccinelle/misc/setbits32_relaxed.cocci
+sed -i 's,clrbits_le32,clrbits_le32_relaxed,g' scripts/coccinelle/misc/setbits32_relaxed.cocci
+cp scripts/coccinelle/misc/setbits32.cocci scripts/coccinelle/misc/setbits64.cocci
+sed -i 's,readl,readq,' scripts/coccinelle/misc/setbits64.cocci
+sed -i 's,writel,writeq,' scripts/coccinelle/misc/setbits64.cocci
+sed -i 's,le32,le64,' scripts/coccinelle/misc/setbits64.cocci
 
 Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
 ---
- .../net/ethernet/stmicro/stmmac/dwmac-sun8i.c | 62 +++++--------------
- 1 file changed, 16 insertions(+), 46 deletions(-)
+ scripts/add_new_include_in_source.py          |  61 +++
+ scripts/coccinelle/misc/setbits32.cocci       | 487 ++++++++++++++++++
+ .../coccinelle/misc/setbits32_relaxed.cocci   | 487 ++++++++++++++++++
+ scripts/coccinelle/misc/setbits64.cocci       | 487 ++++++++++++++++++
+ scripts/coccinelle/misc/setbits_dev.cocci     | 235 +++++++++
+ 5 files changed, 1757 insertions(+)
+ create mode 100755 scripts/add_new_include_in_source.py
+ create mode 100644 scripts/coccinelle/misc/setbits32.cocci
+ create mode 100644 scripts/coccinelle/misc/setbits32_relaxed.cocci
+ create mode 100644 scripts/coccinelle/misc/setbits64.cocci
+ create mode 100644 scripts/coccinelle/misc/setbits_dev.cocci
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-index f9a61f90cfbc..74067a59af50 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sun8i.c
-@@ -28,6 +28,7 @@
- #include <linux/regulator/consumer.h>
- #include <linux/regmap.h>
- #include <linux/stmmac.h>
-+#include <linux/setbits.h>
- 
- #include "stmmac.h"
- #include "stmmac_platform.h"
-@@ -342,50 +343,30 @@ static void sun8i_dwmac_disable_dma_irq(void __iomem *ioaddr, u32 chan)
- 
- static void sun8i_dwmac_dma_start_tx(void __iomem *ioaddr, u32 chan)
- {
--	u32 v;
--
--	v = readl(ioaddr + EMAC_TX_CTL1);
--	v |= EMAC_TX_DMA_START;
--	v |= EMAC_TX_DMA_EN;
--	writel(v, ioaddr + EMAC_TX_CTL1);
-+	setbits_le32(ioaddr + EMAC_TX_CTL1,
-+		     EMAC_TX_DMA_START | EMAC_TX_DMA_EN);
- }
- 
- static void sun8i_dwmac_enable_dma_transmission(void __iomem *ioaddr)
- {
--	u32 v;
--
--	v = readl(ioaddr + EMAC_TX_CTL1);
--	v |= EMAC_TX_DMA_START;
--	v |= EMAC_TX_DMA_EN;
--	writel(v, ioaddr + EMAC_TX_CTL1);
-+	setbits_le32(ioaddr + EMAC_TX_CTL1,
-+		     EMAC_TX_DMA_START | EMAC_TX_DMA_EN);
- }
- 
- static void sun8i_dwmac_dma_stop_tx(void __iomem *ioaddr, u32 chan)
- {
--	u32 v;
--
--	v = readl(ioaddr + EMAC_TX_CTL1);
--	v &= ~EMAC_TX_DMA_EN;
--	writel(v, ioaddr + EMAC_TX_CTL1);
-+	clrbits_le32(ioaddr + EMAC_TX_CTL1, EMAC_TX_DMA_EN);
- }
- 
- static void sun8i_dwmac_dma_start_rx(void __iomem *ioaddr, u32 chan)
- {
--	u32 v;
--
--	v = readl(ioaddr + EMAC_RX_CTL1);
--	v |= EMAC_RX_DMA_START;
--	v |= EMAC_RX_DMA_EN;
--	writel(v, ioaddr + EMAC_RX_CTL1);
-+	setbits_le32(ioaddr + EMAC_RX_CTL1,
-+		     EMAC_RX_DMA_START | EMAC_RX_DMA_EN);
- }
- 
- static void sun8i_dwmac_dma_stop_rx(void __iomem *ioaddr, u32 chan)
- {
--	u32 v;
--
--	v = readl(ioaddr + EMAC_RX_CTL1);
--	v &= ~EMAC_RX_DMA_EN;
--	writel(v, ioaddr + EMAC_RX_CTL1);
-+	clrbits_le32(ioaddr + EMAC_RX_CTL1, EMAC_RX_DMA_EN);
- }
- 
- static int sun8i_dwmac_dma_interrupt(void __iomem *ioaddr,
-@@ -578,7 +559,6 @@ static void sun8i_dwmac_set_umac_addr(struct mac_device_info *hw,
- 				      unsigned int reg_n)
- {
- 	void __iomem *ioaddr = hw->pcsr;
--	u32 v;
- 
- 	if (!addr) {
- 		writel(0, ioaddr + EMAC_MACADDR_HI(reg_n));
-@@ -588,9 +568,8 @@ static void sun8i_dwmac_set_umac_addr(struct mac_device_info *hw,
- 	stmmac_set_mac_addr(ioaddr, addr, EMAC_MACADDR_HI(reg_n),
- 			    EMAC_MACADDR_LO(reg_n));
- 	if (reg_n > 0) {
--		v = readl(ioaddr + EMAC_MACADDR_HI(reg_n));
--		v |= MAC_ADDR_TYPE_DST;
--		writel(v, ioaddr + EMAC_MACADDR_HI(reg_n));
-+		setbits_le32(ioaddr + EMAC_MACADDR_HI(reg_n),
-+			     MAC_ADDR_TYPE_DST);
- 	}
- }
- 
-@@ -608,11 +587,8 @@ static void sun8i_dwmac_get_umac_addr(struct mac_device_info *hw,
- static int sun8i_dwmac_rx_ipc_enable(struct mac_device_info *hw)
- {
- 	void __iomem *ioaddr = hw->pcsr;
--	u32 v;
- 
--	v = readl(ioaddr + EMAC_RX_CTL0);
--	v |= EMAC_RX_DO_CRC;
--	writel(v, ioaddr + EMAC_RX_CTL0);
-+	setbits_le32(ioaddr + EMAC_RX_CTL0, EMAC_RX_DO_CRC);
- 
- 	return 1;
- }
-@@ -662,21 +638,15 @@ static void sun8i_dwmac_flow_ctrl(struct mac_device_info *hw,
- 				  unsigned int pause_time, u32 tx_cnt)
- {
- 	void __iomem *ioaddr = hw->pcsr;
--	u32 v;
- 
--	v = readl(ioaddr + EMAC_RX_CTL0);
- 	if (fc == FLOW_AUTO)
--		v |= EMAC_RX_FLOW_CTL_EN;
-+		setbits_le32(ioaddr + EMAC_RX_CTL0, EMAC_RX_FLOW_CTL_EN);
- 	else
--		v &= ~EMAC_RX_FLOW_CTL_EN;
--	writel(v, ioaddr + EMAC_RX_CTL0);
--
--	v = readl(ioaddr + EMAC_TX_FLOW_CTL);
-+		clrbits_le32(ioaddr + EMAC_RX_CTL0, EMAC_RX_FLOW_CTL_EN);
- 	if (fc == FLOW_AUTO)
--		v |= EMAC_TX_FLOW_CTL_EN;
-+		setbits_le32(ioaddr + EMAC_TX_FLOW_CTL, EMAC_TX_FLOW_CTL_EN);
- 	else
--		v &= ~EMAC_TX_FLOW_CTL_EN;
--	writel(v, ioaddr + EMAC_TX_FLOW_CTL);
-+		clrbits_le32(ioaddr + EMAC_TX_FLOW_CTL, EMAC_TX_FLOW_CTL_EN);
- }
- 
- static int sun8i_dwmac_reset(struct stmmac_priv *priv)
+diff --git a/scripts/add_new_include_in_source.py b/scripts/add_new_include_in_source.py
+new file mode 100755
+index 000000000000..a43ccfbf9921
+--- /dev/null
++++ b/scripts/add_new_include_in_source.py
+@@ -0,0 +1,61 @@
++#!/usr/bin/env python
++
++# add <linux/setbits.h>
++
++import os, sys
++import re
++import shutil
++
++if len(sys.argv) < 2:
++    print("Usage: %s pathtosourcefile" % (sys.argv[0]))
++    sys.exit(1)
++
++found_global_headers = False
++found_local_headers = False
++#first check it does already here
++with open(sys.argv[1], 'r') as fp:
++    for line in fp:
++        if re.search("#include <linux/setbits.h>\n", line):
++            print("INFO: header already here")
++            sys.exit(0)
++        if re.search("^#include <", line):
++            found_global_headers = True
++        if re.search("^#include \"", line):
++            found_local_headers = True
++    fp.close()
++
++if not found_global_headers and not found_local_headers:
++    print("No header included do it at hand")
++    sys.exit(1)
++
++if found_global_headers:
++    done = False
++    inheader = False
++    with open("%s.new" % sys.argv[1], 'w') as fw:
++        with open(sys.argv[1], 'r') as fp:
++            for line in fp:
++                if re.search("^#include <linux/", line):
++                    inheader = True
++                    if (not done and line[16] >= "s" and line[17] >= "e" and line[18] >= "t" and line[19] >= 'b'):
++                        done = True
++                        fw.write("#include <linux/setbits.h>\n")
++                if not done and not re.search("^#include <linux/", line) and inheader:
++                    done = True
++                    fw.write("#include <linux/setbits.h>\n")
++                fw.write(line)
++    fw.close()
++    fp.close()
++else:
++    done = False
++    with open("%s.new" % sys.argv[1], 'w') as fw:
++        with open(sys.argv[1], 'r') as fp:
++            for line in fp:
++                if not done and re.search("^#include \"", line):
++                    fw.write("#include <linux/setbits.h>\n")
++                    done = True
++                fw.write(line)
++    fw.close()
++    fp.close()
++
++shutil.move("%s.new" % sys.argv[1], sys.argv[1])
++print("%s done" % sys.argv[1])
+diff --git a/scripts/coccinelle/misc/setbits32.cocci b/scripts/coccinelle/misc/setbits32.cocci
+new file mode 100644
+index 000000000000..71400cac6830
+--- /dev/null
++++ b/scripts/coccinelle/misc/setbits32.cocci
+@@ -0,0 +1,487 @@
++// SPDX-License-Identifier: GPL-2.0
++// Confidence: High
++// Copyright: (c) 2018 Corentin LABBE
++
++virtual patch
++
++@p_clrsetbits_le32_l4@
++local idexpression rr;
++expression addr;
++expression set;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readl(addr);
++- rr &= ~clear;
++- rr |= set;
++- writel(rr, addr);
+++ clrsetbits_le32(addr, clear, set);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_clrsetbits_le32_l4@
++p1 << p_clrsetbits_le32_l4.p;
++@@
++list.append(p1[0].file)
++
++
++@p_clrsetbits_le32_l3@
++local idexpression rr;
++expression addr;
++expression set;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readl(addr);
++- rr &= ~clear | set;
++- writel(rr, addr);
+++ clrsetbits_le32(addr, clear, set);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_clrsetbits_le32_l3@
++p1 << p_clrsetbits_le32_l3.p;
++@@
++list.append(p1[0].file)
++
++
++
++@p_clrsetbits_oneliner@
++expression addr;
++expression set;
++expression mask;
++position p;
++@@
++- writel@p(readl(addr) & ~mask | set, addr);
+++ clrsetbits_le32(addr, mask, set);
++
++@script:python depends on p_clrsetbits_oneliner@
++p1 << p_clrsetbits_oneliner.p;
++@@
++list.append(p1[0].file)
++
++
++@p_clrsetbits_oneliner_b@
++expression addr;
++expression set;
++expression mask;
++position p;
++@@
++- writel@p((readl(addr) & ~mask) | set, addr);
+++ clrsetbits_le32(addr, mask, set);
++
++@script:python depends on p_clrsetbits_oneliner_b@
++p1 << p_clrsetbits_oneliner_b.p;
++@@
++list.append(p1[0].file)
++
++
++
++// setclrbits ==========================
++
++
++
++@p_setclrbits_le32_l4@
++local idexpression rr;
++expression addr;
++expression set;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readl(addr);
++- rr |= set;
++- rr &= ~clear;
++- writel(rr, addr);
+++ setclrbits_le32(addr, clear, set);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_setclrbits_le32_l4@
++p1 << p_setclrbits_le32_l4.p;
++@@
++list.append(p1[0].file)
++
++
++@p_setclrbits_le32_l3@
++local idexpression rr;
++expression addr;
++expression set;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readl(addr);
++- rr |= set & ~clear;
++- writel(rr, addr);
+++ setclrbits_le32(addr, clear, set);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_setclrbits_le32_l3@
++p1 << p_setclrbits_le32_l3.p;
++@@
++list.append(p1[0].file)
++
++
++@p_setclrbits_oneliner@
++expression addr;
++expression set;
++expression mask;
++position p;
++@@
++- writel@p(readl(addr) | set & ~mask, addr);
+++ setclrbits_le32(addr, mask, set);
++
++@script:python depends on p_setclrbits_oneliner@
++p1 << p_setclrbits_oneliner.p;
++@@
++list.append(p1[0].file)
++
++@p_setclrbits_oneliner_b@
++expression addr;
++expression set;
++expression mask;
++position p;
++@@
++- writel@p((readl(addr) | set) & ~mask, addr);
+++ setclrbits_le32(addr, mask, set);
++
++@script:python depends on p_setclrbits_oneliner_b@
++p1 << p_setclrbits_oneliner_b.p;
++@@
++list.append(p1[0].file)
++
++
++// clr bits ===============================================
++
++@p_clrbits_le32_l3@
++local idexpression rr;
++expression addr;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readl(addr);
++- rr &= ~clear;
++- writel(rr, addr);
+++ clrbits_le32(addr, clear);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_clrbits_le32_l3@
++p1 << p_clrbits_le32_l3.p;
++@@
++list.append(p1[0].file)
++
++
++@p_clrbits_le32_l2_a@
++local idexpression rr;
++expression addr;
++expression mask;
++expression e;
++position p;
++@@
++
++- rr@p = readl(addr);
++- writel(rr & ~mask, addr);
+++ clrbits_le32(addr, mask);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_clrbits_le32_l2_a@
++p1 << p_clrbits_le32_l2_a.p;
++@@
++list.append(p1[0].file)
++
++
++@p_clrbits_le32_l2_b@
++local idexpression rr;
++expression addr;
++expression mask;
++expression e;
++position p;
++@@
++
++- rr@p = readl(addr) & ~mask;
++- writel(rr, addr);
+++ clrbits_le32(addr, mask);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_clrbits_le32_l2_b@
++p1 << p_clrbits_le32_l2_b.p;
++@@
++list.append(p1[0].file)
++
++
++@p_clrbits_le32_oneliner@
++expression addr;
++expression mask;
++position p;
++@@
++- writel@p(readl(addr) & ~mask, addr);
+++ clrbits_le32(addr, mask);
++
++@script:python depends on p_clrbits_le32_oneliner@
++p1 << p_clrbits_le32_oneliner.p;
++@@
++list.append(p1[0].file)
++
++
++
++
++
++
++
++// set bits ======================================
++
++@p_setbits_le32_l3@
++local idexpression rr;
++expression addr;
++expression set;
++expression e;
++position p;
++@@
++
++- rr@p = readl(addr);
++- rr |= set;
++- writel(rr, addr);
+++ setbits_le32(addr, set);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_setbits_le32_l3@
++p1 << p_setbits_le32_l3.p;
++@@
++list.append(p1[0].file)
++
++
++@p_setbits_le32_l4@
++local idexpression rr;
++expression addr;
++expression set1;
++expression set2;
++expression e;
++position p;
++@@
++
++- rr@p = readl(addr);
++- rr |= set1;
++- rr |= set2;
++- writel(rr, addr);
+++ setbits_le32(addr, set1 | set2);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_setbits_le32_l4@
++p1 << p_setbits_le32_l4.p;
++@@
++list.append(p1[0].file)
++
++
++
++
++
++@ppsetbits_le32@
++local idexpression rr;
++expression addr;
++expression set;
++expression e;
++@@
++
++- rr = readl(addr);
++- rr |= set;
++- writel(rr, addr);
+++ setbits_le32(addr, set);
++  ... when != rr
++? rr = e
++
++
++@p_setbits_le32_m2@
++local idexpression rr;
++expression addr;
++expression set;
++expression e;
++@@
++
++- rr = readl(addr);
++- writel(rr | set, addr);
+++ setbits_le32(addr, set);
++  ... when != rr
++? rr = e
++
++@p_setbits_le32_l2@
++local idexpression rr;
++expression addr;
++expression set;
++expression e;
++@@
++
++- rr = readl(addr) | set;
++- writel(rr, addr);
+++ setbits_le32(addr, set);
++  ... when != rr
++? rr = e
++
++
++@p_setbits_oneliner@
++expression addr;
++expression set;
++@@
++- writel(readl(addr) | set, addr);
+++ setbits_le32(addr, set);
++
++
++
++
++
++// misc pattern ======================================
++
++
++@p_if_set_clr@
++local idexpression rr;
++expression addr;
++expression set;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readl(addr);
++  if (...)
++- rr |= set;
+++ setbits_le32(addr, set);
++  else
++- rr &= ~clear;
+++ clrbits_le32(addr, clear);
++- writel(rr, addr);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_if_set_clr@
++p1 << p_if_set_clr.p;
++@@
++//import subprocess
++list.append(p1[0].file)
++//file = p1[0].file
++//print("Add setbits header in %s" % file)
++//subprocess.call(["./add_header.py", file])
++
++
++@p_if_clr_set@
++local idexpression rr;
++expression addr;
++expression set;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readl(addr);
++  if (...)
++- rr &= ~clear;
+++ clrbits_le32(addr, clear);
++  else
++- rr |= set;
+++ setbits_le32(addr, set);
++- writel(rr, addr);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_if_clr_set@
++p1 << p_if_clr_set.p;
++@@
++list.append(p1[0].file)
++
++
++
++@p_if_clr_set_b@
++local idexpression rr;
++expression addr;
++expression set1;
++expression set2;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readl(addr);
++- rr &= ~clear;
++  if (...)
++- rr |= set1;
+++ clrsetbits_le32(addr, clear, set1);
++  else
++- rr |= set2;
+++ clrsetbits_le32(addr, clear, set2);
++- writel(rr, addr);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_if_clr_set_b@
++p1 << p_if_clr_set_b.p;
++@@
++list.append(p1[0].file)
++
++
++@p_if_clr_set_c@
++local idexpression rr;
++expression addr;
++expression set;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readl(addr);
++- rr &= ~clear;
++  if (...)
++- rr |= set;
+++ clrsetbits_le32(addr, clear, set);
+++ else
+++ setbits_le32(addr, set);
++- writel(rr, addr);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_if_clr_set_c@
++p1 << p_if_clr_set_c.p;
++@@
++list.append(p1[0].file)
++
++
++
++// to check decon_set_bits
++//@p_setmask_a@
++//local idexpression rr;
++//expression addr;
++//expression set;
++//expression mask;
++//@@
++//- rr = (set & mask) | (readl(addr) & ~mask);
++//- writel(rr, addr);
++//+ setmask_le32(addr, set, mask);
++
++
++
++
++
++@initialize:python@
++@@
++list = []
++
++//@finalize:python depends on addr@
++@finalize:python@
++@@
++import subprocess
++for file in list:
++	print("Add setbits header in %s" % file)
++	subprocess.call(["./scripts/add_new_include_in_source.py", file])
++
+diff --git a/scripts/coccinelle/misc/setbits32_relaxed.cocci b/scripts/coccinelle/misc/setbits32_relaxed.cocci
+new file mode 100644
+index 000000000000..edf8c39e939e
+--- /dev/null
++++ b/scripts/coccinelle/misc/setbits32_relaxed.cocci
+@@ -0,0 +1,487 @@
++// SPDX-License-Identifier: GPL-2.0
++// Confidence: High
++// Copyright: (c) 2018 Corentin LABBE
++
++virtual patch
++
++@p_clrsetbits_le32_relaxed_l4@
++local idexpression rr;
++expression addr;
++expression set;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readl_relaxed(addr);
++- rr &= ~clear;
++- rr |= set;
++- writel_relaxed(rr, addr);
+++ clrsetbits_le32_relaxed(addr, clear, set);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_clrsetbits_le32_relaxed_l4@
++p1 << p_clrsetbits_le32_relaxed_l4.p;
++@@
++list.append(p1[0].file)
++
++
++@p_clrsetbits_le32_relaxed_l3@
++local idexpression rr;
++expression addr;
++expression set;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readl_relaxed(addr);
++- rr &= ~clear | set;
++- writel_relaxed(rr, addr);
+++ clrsetbits_le32_relaxed(addr, clear, set);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_clrsetbits_le32_relaxed_l3@
++p1 << p_clrsetbits_le32_relaxed_l3.p;
++@@
++list.append(p1[0].file)
++
++
++
++@p_clrsetbits_oneliner@
++expression addr;
++expression set;
++expression mask;
++position p;
++@@
++- writel_relaxed@p(readl_relaxed(addr) & ~mask | set, addr);
+++ clrsetbits_le32_relaxed(addr, mask, set);
++
++@script:python depends on p_clrsetbits_oneliner@
++p1 << p_clrsetbits_oneliner.p;
++@@
++list.append(p1[0].file)
++
++
++@p_clrsetbits_oneliner_b@
++expression addr;
++expression set;
++expression mask;
++position p;
++@@
++- writel_relaxed@p((readl_relaxed(addr) & ~mask) | set, addr);
+++ clrsetbits_le32_relaxed(addr, mask, set);
++
++@script:python depends on p_clrsetbits_oneliner_b@
++p1 << p_clrsetbits_oneliner_b.p;
++@@
++list.append(p1[0].file)
++
++
++
++// setclrbits ==========================
++
++
++
++@p_setclrbits_le32_relaxed_l4@
++local idexpression rr;
++expression addr;
++expression set;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readl_relaxed(addr);
++- rr |= set;
++- rr &= ~clear;
++- writel_relaxed(rr, addr);
+++ setclrbits_le32_relaxed(addr, clear, set);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_setclrbits_le32_relaxed_l4@
++p1 << p_setclrbits_le32_relaxed_l4.p;
++@@
++list.append(p1[0].file)
++
++
++@p_setclrbits_le32_relaxed_l3@
++local idexpression rr;
++expression addr;
++expression set;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readl_relaxed(addr);
++- rr |= set & ~clear;
++- writel_relaxed(rr, addr);
+++ setclrbits_le32_relaxed(addr, clear, set);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_setclrbits_le32_relaxed_l3@
++p1 << p_setclrbits_le32_relaxed_l3.p;
++@@
++list.append(p1[0].file)
++
++
++@p_setclrbits_oneliner@
++expression addr;
++expression set;
++expression mask;
++position p;
++@@
++- writel_relaxed@p(readl_relaxed(addr) | set & ~mask, addr);
+++ setclrbits_le32_relaxed(addr, mask, set);
++
++@script:python depends on p_setclrbits_oneliner@
++p1 << p_setclrbits_oneliner.p;
++@@
++list.append(p1[0].file)
++
++@p_setclrbits_oneliner_b@
++expression addr;
++expression set;
++expression mask;
++position p;
++@@
++- writel_relaxed@p((readl_relaxed(addr) | set) & ~mask, addr);
+++ setclrbits_le32_relaxed(addr, mask, set);
++
++@script:python depends on p_setclrbits_oneliner_b@
++p1 << p_setclrbits_oneliner_b.p;
++@@
++list.append(p1[0].file)
++
++
++// clr bits ===============================================
++
++@p_clrbits_le32_relaxed_l3@
++local idexpression rr;
++expression addr;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readl_relaxed(addr);
++- rr &= ~clear;
++- writel_relaxed(rr, addr);
+++ clrbits_le32_relaxed(addr, clear);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_clrbits_le32_relaxed_l3@
++p1 << p_clrbits_le32_relaxed_l3.p;
++@@
++list.append(p1[0].file)
++
++
++@p_clrbits_le32_relaxed_l2_a@
++local idexpression rr;
++expression addr;
++expression mask;
++expression e;
++position p;
++@@
++
++- rr@p = readl_relaxed(addr);
++- writel_relaxed(rr & ~mask, addr);
+++ clrbits_le32_relaxed(addr, mask);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_clrbits_le32_relaxed_l2_a@
++p1 << p_clrbits_le32_relaxed_l2_a.p;
++@@
++list.append(p1[0].file)
++
++
++@p_clrbits_le32_relaxed_l2_b@
++local idexpression rr;
++expression addr;
++expression mask;
++expression e;
++position p;
++@@
++
++- rr@p = readl_relaxed(addr) & ~mask;
++- writel_relaxed(rr, addr);
+++ clrbits_le32_relaxed(addr, mask);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_clrbits_le32_relaxed_l2_b@
++p1 << p_clrbits_le32_relaxed_l2_b.p;
++@@
++list.append(p1[0].file)
++
++
++@p_clrbits_le32_relaxed_oneliner@
++expression addr;
++expression mask;
++position p;
++@@
++- writel_relaxed@p(readl_relaxed(addr) & ~mask, addr);
+++ clrbits_le32_relaxed(addr, mask);
++
++@script:python depends on p_clrbits_le32_relaxed_oneliner@
++p1 << p_clrbits_le32_relaxed_oneliner.p;
++@@
++list.append(p1[0].file)
++
++
++
++
++
++
++
++// set bits ======================================
++
++@p_setbits_le32_relaxed_l3@
++local idexpression rr;
++expression addr;
++expression set;
++expression e;
++position p;
++@@
++
++- rr@p = readl_relaxed(addr);
++- rr |= set;
++- writel_relaxed(rr, addr);
+++ setbits_le32_relaxed(addr, set);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_setbits_le32_relaxed_l3@
++p1 << p_setbits_le32_relaxed_l3.p;
++@@
++list.append(p1[0].file)
++
++
++@p_setbits_le32_relaxed_l4@
++local idexpression rr;
++expression addr;
++expression set1;
++expression set2;
++expression e;
++position p;
++@@
++
++- rr@p = readl_relaxed(addr);
++- rr |= set1;
++- rr |= set2;
++- writel_relaxed(rr, addr);
+++ setbits_le32_relaxed(addr, set1 | set2);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_setbits_le32_relaxed_l4@
++p1 << p_setbits_le32_relaxed_l4.p;
++@@
++list.append(p1[0].file)
++
++
++
++
++
++@ppsetbits_le32_relaxed@
++local idexpression rr;
++expression addr;
++expression set;
++expression e;
++@@
++
++- rr = readl_relaxed(addr);
++- rr |= set;
++- writel_relaxed(rr, addr);
+++ setbits_le32_relaxed(addr, set);
++  ... when != rr
++? rr = e
++
++
++@p_setbits_le32_relaxed_m2@
++local idexpression rr;
++expression addr;
++expression set;
++expression e;
++@@
++
++- rr = readl_relaxed(addr);
++- writel_relaxed(rr | set, addr);
+++ setbits_le32_relaxed(addr, set);
++  ... when != rr
++? rr = e
++
++@p_setbits_le32_relaxed_l2@
++local idexpression rr;
++expression addr;
++expression set;
++expression e;
++@@
++
++- rr = readl_relaxed(addr) | set;
++- writel_relaxed(rr, addr);
+++ setbits_le32_relaxed(addr, set);
++  ... when != rr
++? rr = e
++
++
++@p_setbits_oneliner@
++expression addr;
++expression set;
++@@
++- writel_relaxed(readl_relaxed(addr) | set, addr);
+++ setbits_le32_relaxed(addr, set);
++
++
++
++
++
++// misc pattern ======================================
++
++
++@p_if_set_clr@
++local idexpression rr;
++expression addr;
++expression set;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readl_relaxed(addr);
++  if (...)
++- rr |= set;
+++ setbits_le32_relaxed(addr, set);
++  else
++- rr &= ~clear;
+++ clrbits_le32_relaxed(addr, clear);
++- writel_relaxed(rr, addr);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_if_set_clr@
++p1 << p_if_set_clr.p;
++@@
++//import subprocess
++list.append(p1[0].file)
++//file = p1[0].file
++//print("Add setbits header in %s" % file)
++//subprocess.call(["./add_header.py", file])
++
++
++@p_if_clr_set@
++local idexpression rr;
++expression addr;
++expression set;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readl_relaxed(addr);
++  if (...)
++- rr &= ~clear;
+++ clrbits_le32_relaxed(addr, clear);
++  else
++- rr |= set;
+++ setbits_le32_relaxed(addr, set);
++- writel_relaxed(rr, addr);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_if_clr_set@
++p1 << p_if_clr_set.p;
++@@
++list.append(p1[0].file)
++
++
++
++@p_if_clr_set_b@
++local idexpression rr;
++expression addr;
++expression set1;
++expression set2;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readl_relaxed(addr);
++- rr &= ~clear;
++  if (...)
++- rr |= set1;
+++ clrsetbits_le32_relaxed(addr, clear, set1);
++  else
++- rr |= set2;
+++ clrsetbits_le32_relaxed(addr, clear, set2);
++- writel_relaxed(rr, addr);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_if_clr_set_b@
++p1 << p_if_clr_set_b.p;
++@@
++list.append(p1[0].file)
++
++
++@p_if_clr_set_c@
++local idexpression rr;
++expression addr;
++expression set;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readl_relaxed(addr);
++- rr &= ~clear;
++  if (...)
++- rr |= set;
+++ clrsetbits_le32_relaxed(addr, clear, set);
+++ else
+++ setbits_le32_relaxed(addr, set);
++- writel_relaxed(rr, addr);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_if_clr_set_c@
++p1 << p_if_clr_set_c.p;
++@@
++list.append(p1[0].file)
++
++
++
++// to check decon_set_bits
++//@p_setmask_a@
++//local idexpression rr;
++//expression addr;
++//expression set;
++//expression mask;
++//@@
++//- rr = (set & mask) | (readl_relaxed(addr) & ~mask);
++//- writel_relaxed(rr, addr);
++//+ setmask_le32(addr, set, mask);
++
++
++
++
++
++@initialize:python@
++@@
++list = []
++
++//@finalize:python depends on addr@
++@finalize:python@
++@@
++import subprocess
++for file in list:
++	print("Add setbits header in %s" % file)
++	subprocess.call(["./scripts/add_new_include_in_source.py", file])
++
+diff --git a/scripts/coccinelle/misc/setbits64.cocci b/scripts/coccinelle/misc/setbits64.cocci
+new file mode 100644
+index 000000000000..00df21005b18
+--- /dev/null
++++ b/scripts/coccinelle/misc/setbits64.cocci
+@@ -0,0 +1,487 @@
++// SPDX-License-Identifier: GPL-2.0
++// Confidence: High
++// Copyright: (c) 2018 Corentin LABBE
++
++virtual patch
++
++@p_clrsetbits_le64_l4@
++local idexpression rr;
++expression addr;
++expression set;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readq(addr);
++- rr &= ~clear;
++- rr |= set;
++- writeq(rr, addr);
+++ clrsetbits_le64(addr, clear, set);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_clrsetbits_le64_l4@
++p1 << p_clrsetbits_le64_l4.p;
++@@
++list.append(p1[0].file)
++
++
++@p_clrsetbits_le64_l3@
++local idexpression rr;
++expression addr;
++expression set;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readq(addr);
++- rr &= ~clear | set;
++- writeq(rr, addr);
+++ clrsetbits_le64(addr, clear, set);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_clrsetbits_le64_l3@
++p1 << p_clrsetbits_le64_l3.p;
++@@
++list.append(p1[0].file)
++
++
++
++@p_clrsetbits_oneliner@
++expression addr;
++expression set;
++expression mask;
++position p;
++@@
++- writeq@p(readq(addr) & ~mask | set, addr);
+++ clrsetbits_le64(addr, mask, set);
++
++@script:python depends on p_clrsetbits_oneliner@
++p1 << p_clrsetbits_oneliner.p;
++@@
++list.append(p1[0].file)
++
++
++@p_clrsetbits_oneliner_b@
++expression addr;
++expression set;
++expression mask;
++position p;
++@@
++- writeq@p((readq(addr) & ~mask) | set, addr);
+++ clrsetbits_le64(addr, mask, set);
++
++@script:python depends on p_clrsetbits_oneliner_b@
++p1 << p_clrsetbits_oneliner_b.p;
++@@
++list.append(p1[0].file)
++
++
++
++// setclrbits ==========================
++
++
++
++@p_setclrbits_le64_l4@
++local idexpression rr;
++expression addr;
++expression set;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readq(addr);
++- rr |= set;
++- rr &= ~clear;
++- writeq(rr, addr);
+++ setclrbits_le64(addr, clear, set);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_setclrbits_le64_l4@
++p1 << p_setclrbits_le64_l4.p;
++@@
++list.append(p1[0].file)
++
++
++@p_setclrbits_le64_l3@
++local idexpression rr;
++expression addr;
++expression set;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readq(addr);
++- rr |= set & ~clear;
++- writeq(rr, addr);
+++ setclrbits_le64(addr, clear, set);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_setclrbits_le64_l3@
++p1 << p_setclrbits_le64_l3.p;
++@@
++list.append(p1[0].file)
++
++
++@p_setclrbits_oneliner@
++expression addr;
++expression set;
++expression mask;
++position p;
++@@
++- writeq@p(readq(addr) | set & ~mask, addr);
+++ setclrbits_le64(addr, mask, set);
++
++@script:python depends on p_setclrbits_oneliner@
++p1 << p_setclrbits_oneliner.p;
++@@
++list.append(p1[0].file)
++
++@p_setclrbits_oneliner_b@
++expression addr;
++expression set;
++expression mask;
++position p;
++@@
++- writeq@p((readq(addr) | set) & ~mask, addr);
+++ setclrbits_le64(addr, mask, set);
++
++@script:python depends on p_setclrbits_oneliner_b@
++p1 << p_setclrbits_oneliner_b.p;
++@@
++list.append(p1[0].file)
++
++
++// clr bits ===============================================
++
++@p_clrbits_le64_l3@
++local idexpression rr;
++expression addr;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readq(addr);
++- rr &= ~clear;
++- writeq(rr, addr);
+++ clrbits_le64(addr, clear);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_clrbits_le64_l3@
++p1 << p_clrbits_le64_l3.p;
++@@
++list.append(p1[0].file)
++
++
++@p_clrbits_le64_l2_a@
++local idexpression rr;
++expression addr;
++expression mask;
++expression e;
++position p;
++@@
++
++- rr@p = readq(addr);
++- writeq(rr & ~mask, addr);
+++ clrbits_le64(addr, mask);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_clrbits_le64_l2_a@
++p1 << p_clrbits_le64_l2_a.p;
++@@
++list.append(p1[0].file)
++
++
++@p_clrbits_le64_l2_b@
++local idexpression rr;
++expression addr;
++expression mask;
++expression e;
++position p;
++@@
++
++- rr@p = readq(addr) & ~mask;
++- writeq(rr, addr);
+++ clrbits_le64(addr, mask);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_clrbits_le64_l2_b@
++p1 << p_clrbits_le64_l2_b.p;
++@@
++list.append(p1[0].file)
++
++
++@p_clrbits_le64_oneliner@
++expression addr;
++expression mask;
++position p;
++@@
++- writeq@p(readq(addr) & ~mask, addr);
+++ clrbits_le64(addr, mask);
++
++@script:python depends on p_clrbits_le64_oneliner@
++p1 << p_clrbits_le64_oneliner.p;
++@@
++list.append(p1[0].file)
++
++
++
++
++
++
++
++// set bits ======================================
++
++@p_setbits_le64_l3@
++local idexpression rr;
++expression addr;
++expression set;
++expression e;
++position p;
++@@
++
++- rr@p = readq(addr);
++- rr |= set;
++- writeq(rr, addr);
+++ setbits_le64(addr, set);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_setbits_le64_l3@
++p1 << p_setbits_le64_l3.p;
++@@
++list.append(p1[0].file)
++
++
++@p_setbits_le64_l4@
++local idexpression rr;
++expression addr;
++expression set1;
++expression set2;
++expression e;
++position p;
++@@
++
++- rr@p = readq(addr);
++- rr |= set1;
++- rr |= set2;
++- writeq(rr, addr);
+++ setbits_le64(addr, set1 | set2);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_setbits_le64_l4@
++p1 << p_setbits_le64_l4.p;
++@@
++list.append(p1[0].file)
++
++
++
++
++
++@ppsetbits_le64@
++local idexpression rr;
++expression addr;
++expression set;
++expression e;
++@@
++
++- rr = readq(addr);
++- rr |= set;
++- writeq(rr, addr);
+++ setbits_le64(addr, set);
++  ... when != rr
++? rr = e
++
++
++@p_setbits_le64_m2@
++local idexpression rr;
++expression addr;
++expression set;
++expression e;
++@@
++
++- rr = readq(addr);
++- writeq(rr | set, addr);
+++ setbits_le64(addr, set);
++  ... when != rr
++? rr = e
++
++@p_setbits_le64_l2@
++local idexpression rr;
++expression addr;
++expression set;
++expression e;
++@@
++
++- rr = readq(addr) | set;
++- writeq(rr, addr);
+++ setbits_le64(addr, set);
++  ... when != rr
++? rr = e
++
++
++@p_setbits_oneliner@
++expression addr;
++expression set;
++@@
++- writeq(readq(addr) | set, addr);
+++ setbits_le64(addr, set);
++
++
++
++
++
++// misc pattern ======================================
++
++
++@p_if_set_clr@
++local idexpression rr;
++expression addr;
++expression set;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readq(addr);
++  if (...)
++- rr |= set;
+++ setbits_le64(addr, set);
++  else
++- rr &= ~clear;
+++ clrbits_le64(addr, clear);
++- writeq(rr, addr);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_if_set_clr@
++p1 << p_if_set_clr.p;
++@@
++//import subprocess
++list.append(p1[0].file)
++//file = p1[0].file
++//print("Add setbits header in %s" % file)
++//subprocess.call(["./add_header.py", file])
++
++
++@p_if_clr_set@
++local idexpression rr;
++expression addr;
++expression set;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readq(addr);
++  if (...)
++- rr &= ~clear;
+++ clrbits_le64(addr, clear);
++  else
++- rr |= set;
+++ setbits_le64(addr, set);
++- writeq(rr, addr);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_if_clr_set@
++p1 << p_if_clr_set.p;
++@@
++list.append(p1[0].file)
++
++
++
++@p_if_clr_set_b@
++local idexpression rr;
++expression addr;
++expression set1;
++expression set2;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readq(addr);
++- rr &= ~clear;
++  if (...)
++- rr |= set1;
+++ clrsetbits_le64(addr, clear, set1);
++  else
++- rr |= set2;
+++ clrsetbits_le64(addr, clear, set2);
++- writeq(rr, addr);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_if_clr_set_b@
++p1 << p_if_clr_set_b.p;
++@@
++list.append(p1[0].file)
++
++
++@p_if_clr_set_c@
++local idexpression rr;
++expression addr;
++expression set;
++expression clear;
++expression e;
++position p;
++@@
++
++- rr@p = readq(addr);
++- rr &= ~clear;
++  if (...)
++- rr |= set;
+++ clrsetbits_le64(addr, clear, set);
+++ else
+++ setbits_le64(addr, set);
++- writeq(rr, addr);
++  ... when != rr
++? rr = e
++
++@script:python depends on p_if_clr_set_c@
++p1 << p_if_clr_set_c.p;
++@@
++list.append(p1[0].file)
++
++
++
++// to check decon_set_bits
++//@p_setmask_a@
++//local idexpression rr;
++//expression addr;
++//expression set;
++//expression mask;
++//@@
++//- rr = (set & mask) | (readq(addr) & ~mask);
++//- writeq(rr, addr);
++//+ setmask_le64(addr, set, mask);
++
++
++
++
++
++@initialize:python@
++@@
++list = []
++
++//@finalize:python depends on addr@
++@finalize:python@
++@@
++import subprocess
++for file in list:
++	print("Add setbits header in %s" % file)
++	subprocess.call(["./scripts/add_new_include_in_source.py", file])
++
+diff --git a/scripts/coccinelle/misc/setbits_dev.cocci b/scripts/coccinelle/misc/setbits_dev.cocci
+new file mode 100644
+index 000000000000..859bd0526fcc
+--- /dev/null
++++ b/scripts/coccinelle/misc/setbits_dev.cocci
+@@ -0,0 +1,235 @@
++// SPDX-License-Identifier: GPL-2.0
++// Confidence: High
++// Copyright: (c) 2018 Corentin LABBE
++
++virtual patch
++
++// ========================================================================
++// driver specific changes
++// to be removed after conversion
++
++
++// mtk_hdmi_phy_mask
++@p_setmask_b@
++local idexpression rr;
++expression addr;
++expression set;
++expression mask;
++@@
++- rr = readl(addr);
++- rr = (rr & ~mask) | (set & mask);
++- writel(rr, addr);
+++ setmask_le32(addr, set, mask);
++
++@p_setmask_c@
++local idexpression rr;
++expression addr;
++expression set;
++expression mask;
++@@
++- rr = readl(addr);
++- rr = (set & mask) | (rr & ~mask);
++- writel(rr, addr);
+++ setmask_le32(addr, set, mask);
++
++
++@p_net_meson_clean@
++@@
++- meson8b_dwmac_mask_bits(...) {
++- ...
++- }
++
++@p_net_meson@
++expression dwmac;
++expression addr;
++expression mask;
++expression value;
++@@
++
++- meson8b_dwmac_mask_bits(dwmac, addr, mask, value);
+++ clrsetbits_le32(dwmac->regs + addr, mask, value);
++
++// meson DRM
++@p_meson_drm_writel@
++expression addr;
++expression set;
++expression mask;
++@@
++- writel_bits_relaxed(mask, set, addr);
+++ clrsetbits_le32_relaxed(addr, mask, set);
++
++@p_mtu3_setbits@
++expression base;
++expression offset;
++expression value;
++@@
++
++- mtu3_setbits(base, offset, value);
+++ setbits_le32(base + offset, value);
++
++@p_mtu3_clrbits@
++expression base;
++expression offset;
++expression mask;
++@@
++
++- mtu3_clrbits(base, offset, mask);
+++ clrbits_le32(base + offset, mask);
++
++//
++@p_fimc_clean_set@
++@@
++- static void fimc_set_bits(...) {
++- ...
++- }
++
++@p_fimc_clean_clrt@
++@@
++- static void fimc_clear_bits(...) {
++- ...
++- }
++
++@p_fimc_setbits@
++expression fimc;
++expression offset;
++expression value;
++@@
++
++- fimc_set_bits(fimc, offset, value);
+++ setbits_le32(fimc->regs + offset, value);
++
++@p_fimc_clrbits@
++expression fimc;
++expression offset;
++expression mask;
++@@
++
++- fimc_clear_bits(fimc, offset, mask);
+++ clrbits_le32(fimc->regs + offset, mask);
++
++//
++@p_sif_clean_clr@
++@@
++- static void sif_clr_bit(...) {
++- ...
++- }
++
++@p_sif_clean_set@
++@@
++- static void sif_set_bit(...) {
++- ...
++- }
++
++@p_sif_setbits@
++expression sif;
++expression offset;
++expression value;
++@@
++
++- sif_set_bit(sif, offset, value);
+++ setbits_le32(sif->regs + offset, value);
++
++@p_sif_clrbits@
++expression sif;
++expression offset;
++expression mask;
++@@
++
++- sif_clr_bit(sif, offset, mask);
+++ clrbits_le32(sif->regs + offset, mask);
++
++// mediatek
++@p_mtk_clean_clr@
++@@
++- static void mtk_cec_clear_bits(...) {
++- ...
++- }
++
++@p_mtk_clean_set@
++@@
++- static void mtk_cec_set_bits(...) {
++- ...
++- }
++
++@p_mtk_setbits@
++expression mtk;
++expression offset;
++expression value;
++@@
++
++- mtk_cec_set_bits(mtk, offset, value);
+++ setbits_le32(mtk->regs + offset, value);
++
++@p_mtk_clrbits@
++expression mtk;
++expression offset;
++expression mask;
++@@
++
++- mtk_cec_clear_bits(mtk, offset, mask);
+++ clrbits_le32(mtk->regs + offset, mask);
++
++// mediatek HDMI
++@p_mtk_hdmi_clean_set@
++@@
++- static void mtk_hdmi_set_bits(...) {
++- ...
++- }
++
++@p_mtk_hdmi_clean_clr@
++@@
++- static void mtk_hdmi_clear_bits(...) {
++- ...
++- }
++
++@p_mtk_hdmi_setbits@
++expression mtk;
++expression offset;
++expression value;
++@@
++
++- mtk_hdmi_set_bits(mtk, offset, value);
+++ setbits_le32(mtk->regs + offset, value);
++
++@p_mtk_hdmi_clrbits@
++expression mtk;
++expression offset;
++expression mask;
++@@
++
++- mtk_hdmi_clear_bits(mtk, offset, mask);
+++ clrbits_le32(mtk->regs + offset, mask);
++
++// mediatek HDMI
++@p_mtk_hdmi_phy_clean_set@
++@@
++- static void mtk_hdmi_phy_set_bits(...) {
++- ...
++- }
++
++@p_mtk_hdmi_phy_clean_clr@
++@@
++- static void mtk_hdmi_phy_clear_bits(...) {
++- ...
++- }
++
++@p_mtk_hdmi_phy_setbits@
++expression mtk;
++expression offset;
++expression value;
++@@
++
++- mtk_hdmi_phy_set_bits(mtk, offset, value);
+++ setbits_le32(mtk->regs + offset, value);
++
++@p_mtk_hdmi_phy_clrbits@
++expression mtk;
++expression offset;
++expression mask;
++@@
++
++- mtk_hdmi_phy_clear_bits(mtk, offset, mask);
+++ clrbits_le32(mtk->regs + offset, mask);
++
++
++
 -- 
 2.18.1
 
