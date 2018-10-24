@@ -2,106 +2,149 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CE82C7112C
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:49:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D494AC67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:50:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B1692082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:49:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 930AF2064A
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:50:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZS241srZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B1692082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Klgv3cvd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 930AF2064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727044AbeJXWSB (ORCPT
+        id S1726832AbeJXWSz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 18:18:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48326 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726285AbeJXWSB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 18:18:01 -0400
-Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B4092064A;
-        Wed, 24 Oct 2018 13:49:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540388988;
-        bh=AjQ1WDcYwm6zy7P43iwDrOzc7O4/XMyqCemfoAliZZc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZS241srZ/bOhj3A5WuAETxI4ZJK5A3pgaA0WXN+MfAjQhhyzdZIu/6wvmm3x/kp9j
-         bbahfu3nwl2VwKE61+51DhxG+lHbBUIlOUqqFXoNPVvpwSnjKwAEXHlfEj17oT8hSV
-         4UseVtTak03EaL48KI3EXzveTXtZ/2WeqnxWiHjo=
-Date:   Wed, 24 Oct 2018 08:49:47 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Meelis Roos <mroos@linux.ee>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-pci@vger.kernel.org
-Subject: Re: HH DL585 warm boot fail (old)
-Message-ID: <20181024134946.GA214775@bhelgaas-glaptop.roam.corp.google.com>
-References: <alpine.LRH.2.21.1807051515260.21817@math.ut.ee>
- <CAErSpo6Fp8XpTQi7gcSQEuvpuJMYCMn5Y0cXRNvmO_opSR08HQ@mail.gmail.com>
- <b36c537a-90ee-c474-9efa-df2ead8e0376@linux.ee>
+        Wed, 24 Oct 2018 18:18:55 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:46034 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726285AbeJXWSz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 18:18:55 -0400
+Received: by mail-io1-f68.google.com with SMTP id p83-v6so3163718iod.12
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 06:50:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=UwCxgTY7tIBBn3y37lNQQ/aQwUmlWJFHLrrsMY5uiQQ=;
+        b=Klgv3cvdarNNMSvtAMDWSQuOdEJ/r2H/JjMSErEkNUU6meA6alzJ2GJ6/hpjFzu6rI
+         cZELeefJMnqLx1pI1cN8zV0hlZqicJ2IbR8NzjfFRby9bc87BT8Kaodf/mwqxUZHRbJ3
+         UEKmzB7aCOtt4dBn8bVbFxUX6Sa4rkWZnIjYI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=UwCxgTY7tIBBn3y37lNQQ/aQwUmlWJFHLrrsMY5uiQQ=;
+        b=XK49Jgf1ib1gcoswzCo9LoaO33Dq3JSe0YKN6jr8TAXqOaeytCne9TYMGnwOJwDu6i
+         xZukZxB1VamnB/6BdIgoykm/+IJrOApo4su7YirFaCOIcentXdRhRa/D48/MgmIDl3+K
+         2KZ9Inmq6Fg69M5plbWX5fCdu1209HlTz642bS0qdBOmYi9KdxO+Lyc83u3YvhIWhBDy
+         kqbr43o540oMKwpTfCOkHMYcgjRHRXkcFJc4MQ9wfsGAl9y7mqbulMN3DwMurPsfsK9F
+         VyOp70ZPlejaunNr/kQRRGmVt6lE5k0FL1w7xxhclmv+MX0CfmGjeLu1LvyB7Tzrrslm
+         gn/w==
+X-Gm-Message-State: AGRZ1gI7ZY2TIOgV0q1BcLzSR4p60TkXVp/lITd2ShmHW5vCPCy3ZMON
+        OO+l490iJXIFlHDp3P9Nf0chQTmEJ+skqg9J/27w8w==
+X-Google-Smtp-Source: AJdET5f7v+j/miR03jYCz3xOMpYME5wOcHLabMpD0TFWh7rku4k0To/9z0uzIJlkPtpI7IxEeq9OpJyn7yxHJSzAmos=
+X-Received: by 2002:a6b:b487:: with SMTP id d129-v6mr14009360iof.131.1540389042691;
+ Wed, 24 Oct 2018 06:50:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b36c537a-90ee-c474-9efa-df2ead8e0376@linux.ee>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Wed, 24 Oct 2018 06:50:02
+ -0700 (PDT)
+In-Reply-To: <1540368084-32202-1-git-send-email-zhang.chunyan@linaro.org>
+References: <1540368084-32202-1-git-send-email-zhang.chunyan@linaro.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 24 Oct 2018 15:50:02 +0200
+Message-ID: <CAPDyKFp8vo11pb-5qVdhkxTgMnL-R0FvYKuh_dkLDNbF6_4=XQ@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhci: Convert sdhci_allocate_bounce_buffer() to
+ return void
+To:     Chunyan Zhang <zhang.chunyan@linaro.org>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 10:47:24AM +0300, Meelis Roos wrote:
-> > Would you mind opening a report at https://bugzilla.kernel.org?  I'm
-> > not sure if anybody will be able to do anything about this, but it's
-> > always possible.
-> 
-> Submitted now, https://bugzilla.kernel.org/show_bug.cgi?id=201503
-> 
-> > A complete dmesg log and "sudo lspci -vv" output from a successful
-> > boot would be a good start.  And if you have a screenshot of the
-> > failure, that would help, too.  You can use the "ignore_loglevel"
-> > kernel parameter to make sure we see everything on the console.
-> 
-> Added.
-> 
-> >  Does this machine have an iLO?  If so, it may have logs that
-> >  could be useful if this is related to some sort of bus error.
-> 
-> Nothing in the ILO logs.
+On 24 October 2018 at 10:01, Chunyan Zhang <zhang.chunyan@linaro.org> wrote:
+> The function sdhci_allocate_bounce_buffer() always return zero at
+> present, so there's no need to have a return value, that will also make
+> error path easier.
+>
+> CC: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
 
-Great, thanks!
+This looks good to me, however please re-post to linux-mmc.
 
-Can you try the patch below?  This is extracted from the code here:
-https://github.com/joyent/illumos-joyent/blob/b6a0b04d591f5b877cfe05f45e81f0e8a5cfc2b3/usr/src/uts/intel/io/pci/pci_boot.c#L1805
+Kind regards
+Uffe
 
-I'm not sure why this would be only an intermittent problem, but at
-least we can see if this is related.
-
-
-diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-index 6bc27b7fd452..842f900ed194 100644
---- a/drivers/pci/quirks.c
-+++ b/drivers/pci/quirks.c
-@@ -5113,3 +5113,15 @@ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8575,
- 			quirk_switchtec_ntb_dma_alias);
- DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_MICROSEMI, 0x8576,
- 			quirk_switchtec_ntb_dma_alias);
-+
-+static void quirk_amd_8111(struct pci_dev *pdev)
-+{
-+	u8 ioc;
-+
-+	pci_read_config_byte(pdev, 0x40, &ioc);
-+	if (ioc & 0x80) {
-+		pci_info(pdev, "disabling NMI on error\n");
-+		pci_write_config_byte(pdev, 0x40, ioc & ~0x80);
-+	}
-+}
-+DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_AMD, 0x7468, quirk_amd_8111);
+> ---
+>  drivers/mmc/host/sdhci.c | 15 +++++----------
+>  1 file changed, 5 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 1b3fbd9..e94f4aa 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -3408,7 +3408,7 @@ void __sdhci_read_caps(struct sdhci_host *host, u16 *ver, u32 *caps, u32 *caps1)
+>  }
+>  EXPORT_SYMBOL_GPL(__sdhci_read_caps);
+>
+> -static int sdhci_allocate_bounce_buffer(struct sdhci_host *host)
+> +static void sdhci_allocate_bounce_buffer(struct sdhci_host *host)
+>  {
+>         struct mmc_host *mmc = host->mmc;
+>         unsigned int max_blocks;
+> @@ -3446,7 +3446,7 @@ static int sdhci_allocate_bounce_buffer(struct sdhci_host *host)
+>                  * Exiting with zero here makes sure we proceed with
+>                  * mmc->max_segs == 1.
+>                  */
+> -               return 0;
+> +               return;
+>         }
+>
+>         host->bounce_addr = dma_map_single(mmc->parent,
+> @@ -3456,7 +3456,7 @@ static int sdhci_allocate_bounce_buffer(struct sdhci_host *host)
+>         ret = dma_mapping_error(mmc->parent, host->bounce_addr);
+>         if (ret)
+>                 /* Again fall back to max_segs == 1 */
+> -               return 0;
+> +               return;
+>         host->bounce_buffer_size = bounce_size;
+>
+>         /* Lie about this since we're bouncing */
+> @@ -3466,8 +3466,6 @@ static int sdhci_allocate_bounce_buffer(struct sdhci_host *host)
+>
+>         pr_info("%s bounce up to %u segments into one, max segment size %u bytes\n",
+>                 mmc_hostname(mmc), max_blocks, bounce_size);
+> -
+> -       return 0;
+>  }
+>
+>  int sdhci_setup_host(struct sdhci_host *host)
+> @@ -3987,12 +3985,9 @@ int sdhci_setup_host(struct sdhci_host *host)
+>          */
+>         mmc->max_blk_count = (host->quirks & SDHCI_QUIRK_NO_MULTIBLOCK) ? 1 : 65535;
+>
+> -       if (mmc->max_segs == 1) {
+> +       if (mmc->max_segs == 1)
+>                 /* This may alter mmc->*_blk_* parameters */
+> -               ret = sdhci_allocate_bounce_buffer(host);
+> -               if (ret)
+> -                       return ret;
+> -       }
+> +               sdhci_allocate_bounce_buffer(host);
+>
+>         return 0;
+>
+> --
+> 2.7.4
+>
