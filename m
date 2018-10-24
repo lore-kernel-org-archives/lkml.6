@@ -2,71 +2,88 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2423DECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:26:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCF45ECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:28:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C86782082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:26:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C86782082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=buserror.net
+	by mail.kernel.org (Postfix) with ESMTP id 798E020831
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:28:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 798E020831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727201AbeJYCzy (ORCPT
+        id S1727314AbeJYC5W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 22:55:54 -0400
-Received: from baldur.buserror.net ([165.227.176.147]:35148 "EHLO
-        baldur.buserror.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726759AbeJYCzy (ORCPT
+        Wed, 24 Oct 2018 22:57:22 -0400
+Received: from smtprelay0234.hostedemail.com ([216.40.44.234]:54013 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726867AbeJYC5W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 22:55:54 -0400
-X-Greylist: delayed 2467 seconds by postgrey-1.27 at vger.kernel.org; Wed, 24 Oct 2018 22:55:54 EDT
-Received: from [2601:449:8400:7293:12bf:48ff:fe84:c9a0]
-        by baldur.buserror.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <oss@buserror.net>)
-        id 1gFN9j-00027G-14; Wed, 24 Oct 2018 12:41:19 -0500
-Message-ID: <7bceb12756766931772f2ec37f94ad8cdfeb0fd5.camel@buserror.net>
-From:   Scott Wood <oss@buserror.net>
-To:     andy.tang@nxp.com, sboyd@kernel.org, mturquette@baylibre.com
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, benh@kernel.crashing.org,
-        paulus@samba.org, mpe@ellerman.id.au, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-Date:   Wed, 24 Oct 2018 12:41:16 -0500
-In-Reply-To: <20181024021122.3942-1-andy.tang@nxp.com>
-References: <20181024021122.3942-1-andy.tang@nxp.com>
-Organization: Red Hat
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
+        Wed, 24 Oct 2018 22:57:22 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 16859181D3419;
+        Wed, 24 Oct 2018 18:28:14 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: beast87_64d6c568c022d
+X-Filterd-Recvd-Size: 1931
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf05.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 24 Oct 2018 18:28:12 +0000 (UTC)
+Message-ID: <61d94f2a5563db4d6580c8385c3b93c8eeb3669a.camel@perches.com>
+Subject: Re: [PATCH] Change judgment len position
+From:   Joe Perches <joe@perches.com>
+To:     David Miller <davem@davemloft.net>, wanghaifine@gmail.com
+Cc:     netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Date:   Wed, 24 Oct 2018 11:28:11 -0700
+In-Reply-To: <20181024.101028.1211941922121897721.davem@davemloft.net>
+References: <20181024154729.5312-1-wanghaifine@gmail.com>
+         <20181024.101028.1211941922121897721.davem@davemloft.net>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2601:449:8400:7293:12bf:48ff:fe84:c9a0
-X-SA-Exim-Rcpt-To: andy.tang@nxp.com, sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org, mark.rutland@arm.com, benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-X-SA-Exim-Mail-From: oss@buserror.net
-Subject: Re: [PATCH 1/3 v2] powerpc/fsl: Use new clockgen binding
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on baldur.buserror.net)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-10-24 at 10:11 +0800, andy.tang@nxp.com wrote:
-> From: Scott Wood <oss@buserror.net>
+On Wed, 2018-10-24 at 10:10 -0700, David Miller wrote:
+> From: Wang Hai <wanghaifine@gmail.com>
+> Date: Wed, 24 Oct 2018 23:47:29 +0800
 > 
-> The driver retains compatibility with old device trees, but we don't
-> want the old nodes lying around to be copied, or used as a reference
-> (some of the mux options are incorrect), or even just being clutter.
+> > To determine whether len is less than zero, it should be put before 
+> > the function min_t, because the return value of min_t is not likely 
+> > to be less than zero.
+[]
+> > diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+[]
+> > @@ -3301,11 +3301,11 @@ static int do_tcp_getsockopt(struct sock *sk, int level,
+> >       struct net *net = sock_net(sk);
+> >       int val, len;
+> >  
+> > +     len = min_t(unsigned int, len, sizeof(int));
+> > +
+> >       if (get_user(len, optlen))
+> >               return -EFAULT;
 > 
-> We will also need the #clock-cells in the clockgen node in order to
-> add fman nodes.
+> You can't be serious?
 
-The comment about #clock-cells is no longer relevant to this patch, since that
- has already been added.
+I'm not personally taken aback by this but
+there is the new Code of
+Conduct to consider.
 
--Scott
+John McEnroe earned quite a bit of his
+reputation as an 'enfant terrible' via a
+similar statement.
+
+https://www.youtube.com/watch?v=t0hK1wyrrAU
+
+Perhaps a different word choice next time in
+reply to submitters of ill-considered and/or
+defective patches could be useful.
+
 
