@@ -2,183 +2,106 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1B82C67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 07:56:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61688C67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 07:58:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F883206B5
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 07:56:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02731207DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 07:58:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PUY6WbRl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F883206B5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="lSTuWwRw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02731207DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727778AbeJXQX4 (ORCPT
+        id S1727504AbeJXQY5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 12:23:56 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:40623 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726808AbeJXQX4 (ORCPT
+        Wed, 24 Oct 2018 12:24:57 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45918 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727432AbeJXQY5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 12:23:56 -0400
-Received: by mail-yb1-f194.google.com with SMTP id g9-v6so1732093ybh.7;
-        Wed, 24 Oct 2018 00:56:56 -0700 (PDT)
+        Wed, 24 Oct 2018 12:24:57 -0400
+Received: by mail-lf1-f66.google.com with SMTP id c24-v6so3189916lfi.12
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 00:57:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cazemmgITw+38DcQtiOT3humLWlxajcFoFT0jUf59nk=;
-        b=PUY6WbRlVH8VCh2cso7NhVUc0sI5LKHq3dcnT5lAtAhx7AGL0ngevNMjXF9WkurjM3
-         XSzL2jl5bSpl3duwLYk1hRZMR2iIW16hU7UVXj8FG9i7mfXRl7TrqdoGX0l2E1ZB2jGj
-         CHI/cNKmgdbtiW1ngan/hLQRygTGlvtI7sMYEpSXpJ+2OFH5vJ4Esv8MiwDXyDXMQxF9
-         yTmAFYIzd1qIV/YOnOXy5YPh18SKZKeqJhsapZ5glEU0vpxATAjVa1xdL13B2n9IcMkq
-         vrMSAPDKZoOYphF8NuS0TMl3a4Vde0nS9AIiLs+T4oHSUDS2ysHYBDMAWsdB4Cyn+XTZ
-         XMbQ==
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:cc:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding;
+        bh=V2JxQ9bo1qI+nhXdlK58QIW5s19i3I6plF2Wm8La7tg=;
+        b=lSTuWwRw+w4s0c6dnCFrgC2Ld3jUFS30Z4N8hxaNUmj1aVbNWQGhyYVwm05Fznzvv0
+         vDt/786ivZubvxT5fZoiumDQ4+rF5Qy1Ev/nIx+KZxXkwrU9gEi/mdjIAIT/K1WhsjjS
+         AyWbrNUUSjkTmTnsrHkYdX+kKeEgczFRp2W56nbOS0Ik/4AXjO7EZ+bwRSravPjIJW7j
+         kaTEyiX+w6uWoW2WNZ+tdTBCKwJYbYgEDIwf/yqqNC3D9aulvvGwXeTkP6wuACOFt6jw
+         uCGCSYmAzZc+Z6TQsNDfc6J6SX6aJERYzTdGQpdlp4hFSyA7bbbT5Ve15FYI+4jQIk6Q
+         ZPyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cazemmgITw+38DcQtiOT3humLWlxajcFoFT0jUf59nk=;
-        b=T4HHlAoicVqRz3Cy63X2XOq8JwIB2PbWdnXNGdYBd3yQUBplJVrR6lLDaZy7s1Ls74
-         4Shd0AQW7t8gjhwQzybZYD2+fJ7KmegIYUCbfYqtOsx0JQTWrZZm3o+EHG5/8gA8tJcq
-         xdhMTFAz1Comw+0Lltc3hXzv/2vokYrswVnqPYJr+HS3LroDpa0DgTJZmTb8G1pR0QBR
-         RT+PXtDswCpBCTRzgdqyyPB5Z17TYlfrCV4gEeSvAA4N5viUtmLAjJLKt8RHIFdlLT4s
-         4Lu/x1g6ByuTwcmbrqEixQ+ppYNhPD8HNoHRW2IAjJs4sfiQbq0JCVdbvbaTl/ABRBvK
-         0UfA==
-X-Gm-Message-State: AGRZ1gK0URHKit3hkK5md6e6EFUvdybHJ/yhcogVoWugOGCV8Kquiy//
-        7NlgEOC3OPUaB0a9mrKsIakavz4taI8a7qPDAkw=
-X-Google-Smtp-Source: AJdET5epCntvHuZJsQDjyyNUC/l6+Dz5yVEyEwgARik1HqsDo78LCFjMtVt5ex0aQf682OL0DefX6pCbbLBUtPlWzpk=
-X-Received: by 2002:a25:198a:: with SMTP id 132-v6mr1249182ybz.325.1540367815394;
- Wed, 24 Oct 2018 00:56:55 -0700 (PDT)
+        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=V2JxQ9bo1qI+nhXdlK58QIW5s19i3I6plF2Wm8La7tg=;
+        b=LKgHYXfgJefzsRwl9G/sgYLWW283iSt2jpPziXvYR/fVjrvj0DfhQCEKY/RADY5SHa
+         NM8rw3W1ZKVZAJCLn5S8kvg6RthuwP8PB9KOUYoakeHjcGWBkCqPV27utZhoacR8TnIJ
+         C+qDLXhyMC/CVsLJ2+EQG9ci5YSnTbwjsXKfHHcc6yHPmXWu4fsirqKERa/5T9c1em/N
+         NOn4pDawjauZ29HipPEIFhpncPKpXPJSFX2R6IWMWd8Mx/1C6OjFE6sgUP3bZ97Km57S
+         DM/Nl6zH/GhromWMo/BdCy0HW/s51yNGex3uZHISlBC13t6Tl3v1hJ4d+7le5JqgTcW0
+         BpoA==
+X-Gm-Message-State: ABuFfoj/YrnX97qhTVFmQlH8fubYCnQI8PnCHVtXh++LnE/KRk2aMG15
+        NCAFyREI2i53ZH25MxygP1Dh3g==
+X-Google-Smtp-Source: ACcGV62uYJH8DMiyK5GKYiczfyqB98ujW+uN85c+acc8oigvD5Qj6uIm52nRHcmBCYDFjU2bnn5Y5A==
+X-Received: by 2002:a19:5510:: with SMTP id n16mr8139579lfe.68.1540367875507;
+        Wed, 24 Oct 2018 00:57:55 -0700 (PDT)
+Received: from [192.168.0.200] ([31.173.82.66])
+        by smtp.gmail.com with ESMTPSA id u20-v6sm586980lfk.55.2018.10.24.00.57.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 24 Oct 2018 00:57:54 -0700 (PDT)
+Subject: Re: [PATCH v3 4/7] ata: ahci_sunxi: use xxxsetbitsi_le32 functions
+To:     Corentin Labbe <clabbe@baylibre.com>, Gilles.Muller@lip6.fr,
+        Julia.Lawall@lip6.fr, agust@denx.de, airlied@linux.ie,
+        alexandre.torgue@st.com, alistair@popple.id.au,
+        benh@kernel.crashing.org, carlo@caione.org, davem@davemloft.net,
+        galak@kernel.crashing.org, joabreu@synopsys.com,
+        khilman@baylibre.com, matthias.bgg@gmail.com,
+        maxime.ripard@bootlin.com, michal.lkml@markovi.net,
+        mpe@ellerman.id.au, mporter@kernel.crashing.org,
+        narmstrong@baylibre.com, nicolas.palix@imag.fr, oss@buserror.net,
+        paulus@samba.org, peppe.cavallaro@st.com, tj@kernel.org,
+        vitb@kernel.crashing.org, wens@csie.org
+References: <1540366553-18541-1-git-send-email-clabbe@baylibre.com>
+ <1540366553-18541-5-git-send-email-clabbe@baylibre.com>
+Cc:     cocci@systeme.lip6.fr, dri-devel@lists.freedesktop.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-ide@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Message-ID: <83472722-c7e7-820f-b97f-37016ff32893@cogentembedded.com>
+Date:   Wed, 24 Oct 2018 10:57:49 +0300
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.8.0
 MIME-Version: 1.0
-References: <20181023201957.GA15708@pathfinder> <CAOQ4uxhitRXu+qjg-0hWVe4VJLEu0Th+ExFr=MSeBdP+y2C6vw@mail.gmail.com>
-In-Reply-To: <CAOQ4uxhitRXu+qjg-0hWVe4VJLEu0Th+ExFr=MSeBdP+y2C6vw@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 24 Oct 2018 10:56:43 +0300
-Message-ID: <CAOQ4uxjAh9wbdKT5TAAY9mgahfqCdKghdAFxkuxwkx_+0+dXhA@mail.gmail.com>
-Subject: Re: [RFC][PATCH v2 04/10] ext2: use common file type conversion
-To:     Phillip Potter <phil@philpotter.co.uk>
-Cc:     Jan Kara <jack@suse.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Ext4 <linux-ext4@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1540366553-18541-5-git-send-email-clabbe@baylibre.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 9:50 AM Amir Goldstein <amir73il@gmail.com> wrote:
->
-> On Tue, Oct 23, 2018 at 11:19 PM Phillip Potter <phil@philpotter.co.uk> wrote:
-> >
-> > Deduplicate the ext2 file type conversion implementation.
-> >
-> > Original patch by Amir Goldstein.
-> >
-> > v2:
-> > - Rebased against Linux 4.19 by Phillip Potter
-> > - This version does not remove EXT2_FT_x enum from fs/ext2/ext2.h,
-> >   as these values are now used in compile-time checks added by
-> >   Phillip Potter to make sure they remain the same as FT_x values
-> >
-> > v1:
-> > - Initial implementation
-> >
->
-> Same comments as how to apply a patch and about changelog as patch 1.
-> Won't repeat for other patches.
->
-> I think it would be also good to mention there is a lurking bug if code
-> ever tries to access ext2_type_by_mode[S_IFMT] because on-disk
-> data is corrupted.
+Hello!
 
-So my old notes on the alleged ext2 bug:
-https://marc.info/?l=linux-fsdevel&m=148243866204444&w=2
+    Typo in the subject: s/xxxsetbitsi/xxxsetbits/.
 
+On 24.10.2018 10:35, Corentin Labbe wrote:
+
+> This patch converts ahci_sunxi to use xxxsetbits_le32 functions
 >
-> > Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
-> > ---
-> >  fs/ext2/dir.c | 51 ++++++++++++++++++++++-----------------------------
-> >  1 file changed, 22 insertions(+), 29 deletions(-)
-> >
-> > diff --git a/fs/ext2/dir.c b/fs/ext2/dir.c
-> > index 3b8114def693..420d4b9e8980 100644
-> > --- a/fs/ext2/dir.c
-> > +++ b/fs/ext2/dir.c
-> > @@ -252,33 +252,10 @@ ext2_validate_entry(char *base, unsigned offset, unsigned mask)
-> >         return (char *)p - base;
-> >  }
-> >
-> > -static unsigned char ext2_filetype_table[EXT2_FT_MAX] = {
-> > -       [EXT2_FT_UNKNOWN]       = DT_UNKNOWN,
-> > -       [EXT2_FT_REG_FILE]      = DT_REG,
-> > -       [EXT2_FT_DIR]           = DT_DIR,
-> > -       [EXT2_FT_CHRDEV]        = DT_CHR,
-> > -       [EXT2_FT_BLKDEV]        = DT_BLK,
-> > -       [EXT2_FT_FIFO]          = DT_FIFO,
-> > -       [EXT2_FT_SOCK]          = DT_SOCK,
-> > -       [EXT2_FT_SYMLINK]       = DT_LNK,
-> > -};
-> > -
-> > -#define S_SHIFT 12
-> > -static unsigned char ext2_type_by_mode[S_IFMT >> S_SHIFT] = {
-> > -       [S_IFREG >> S_SHIFT]    = EXT2_FT_REG_FILE,
-> > -       [S_IFDIR >> S_SHIFT]    = EXT2_FT_DIR,
-> > -       [S_IFCHR >> S_SHIFT]    = EXT2_FT_CHRDEV,
-> > -       [S_IFBLK >> S_SHIFT]    = EXT2_FT_BLKDEV,
-> > -       [S_IFIFO >> S_SHIFT]    = EXT2_FT_FIFO,
-> > -       [S_IFSOCK >> S_SHIFT]   = EXT2_FT_SOCK,
-> > -       [S_IFLNK >> S_SHIFT]    = EXT2_FT_SYMLINK,
-> > -};
-> > -
-> >  static inline void ext2_set_de_type(ext2_dirent *de, struct inode *inode)
-> >  {
-> > -       umode_t mode = inode->i_mode;
-> >         if (EXT2_HAS_INCOMPAT_FEATURE(inode->i_sb, EXT2_FEATURE_INCOMPAT_FILETYPE))
-> > -               de->file_type = ext2_type_by_mode[(mode & S_IFMT)>>S_SHIFT];
-> > +               de->file_type = fs_umode_to_ftype(inode->i_mode);
-> >         else
-> >                 de->file_type = 0;
-> >  }
-> > @@ -293,14 +270,14 @@ ext2_readdir(struct file *file, struct dir_context *ctx)
-> >         unsigned long n = pos >> PAGE_SHIFT;
-> >         unsigned long npages = dir_pages(inode);
-> >         unsigned chunk_mask = ~(ext2_chunk_size(inode)-1);
-> > -       unsigned char *types = NULL;
-> >         bool need_revalidate = !inode_eq_iversion(inode, file->f_version);
-> > +       bool has_filetype;
-> >
-> >         if (pos > inode->i_size - EXT2_DIR_REC_LEN(1))
-> >                 return 0;
-> >
-> > -       if (EXT2_HAS_INCOMPAT_FEATURE(sb, EXT2_FEATURE_INCOMPAT_FILETYPE))
-> > -               types = ext2_filetype_table;
-> > +       has_filetype =
-> > +               EXT2_HAS_INCOMPAT_FEATURE(sb, EXT2_FEATURE_INCOMPAT_FILETYPE);
-> >
-> >         for ( ; n < npages; n++, offset = 0) {
-> >                 char *kaddr, *limit;
-> > @@ -335,8 +312,24 @@ ext2_readdir(struct file *file, struct dir_context *ctx)
-> >                         if (de->inode) {
-> >                                 unsigned char d_type = DT_UNKNOWN;
-> >
-> > -                               if (types && de->file_type < EXT2_FT_MAX)
-> > -                                       d_type = types[de->file_type];
-> > +                               /*
-> > +                                * compile-time asserts that generic FT_x types
-> > +                                * still match EXT2_FT_x types - no need to list
-> > +                                * for other functions as well as build will
-> > +                                * fail either way
+> Signed-off-by: Corentin Labbe <clabbe@baylibre.com>
+[...]
 
-Please remove the part about "no need to list for other functions..."
-Imagine how kernel code would look like if every call to BUILD_BUG_ON()
-would have a comment explaining how BUILD_BUG_ON() works...
+MBR, Sergei
 
-Thanks,
-Amir.
