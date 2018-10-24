@@ -2,121 +2,84 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78296ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CBDBECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:55:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33FBA2075D
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:53:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33FBA2075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 9D4052075D
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:54:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D4052075D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726901AbeJYHXX (ORCPT
+        id S1726686AbeJYHY4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 03:23:23 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:35279 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbeJYHXW (ORCPT
+        Thu, 25 Oct 2018 03:24:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:47420 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725829AbeJYHY4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 03:23:22 -0400
-Received: by mail-qk1-f196.google.com with SMTP id v68-v6so4530683qka.2;
-        Wed, 24 Oct 2018 15:53:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+U50XVBot4H7FGuOkQDmHUygidnKMymT4Rk77k+9HhE=;
-        b=RIPXXYTGXnhx0Vwx/Ac12JfcxKg5AinEl+R4pOYH7wREp1VSBs34VnJozxlfhOy6zu
-         b+tF5GX2acSw2mN+RMs2lflfPpIaUAuMnIDnKiESdreJAYQ7t4w2WWmQUZVaWVjR7ypk
-         pksemh2BHpVfTjPstkJWWIMrODQLRVUGCtKaL/T6ASespOCg51z7GwzMm+HEWqz588yy
-         7gFOYFTQshrXTzlJB55r+HPA3J88TencMEJK1wkpldJIrj+7nFEdRqC7zswyvC9H97Qy
-         oqSYyQA12BCIh7fWKkzxmHUwNnp4TvMdxPNLiSMr/3elvyUz2m8uBL60S9+ygKdHwM/V
-         GWEw==
-X-Gm-Message-State: AGRZ1gL1r8lYX+Jird/k8xlP4N5tZ5UYRgSiDx9JqZ1H6bXGg8NZWlpQ
-        ZsnQM3KEF0YVXBGrFh6ssKxeTn+MwnQUaxHZ7OrnyZPW
-X-Google-Smtp-Source: AJdET5cykiGAFQS4f+VrDmFh99HwMxrJ5HNUUZivptgQ1MAlrWaR2sYdst+thZ9K1idPerxm3SfpNHEvpPnykSWykS8=
-X-Received: by 2002:a37:9886:: with SMTP id a128-v6mr4041112qke.343.1540421603509;
- Wed, 24 Oct 2018 15:53:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1539655731.git.ren_guo@c-sky.com> <801add6d63256a3bf0802e2b03efb0f9c206dab0.1539655731.git.ren_guo@c-sky.com>
- <20181023000834.GA20335@guoren-Inspiron-7460>
-In-Reply-To: <20181023000834.GA20335@guoren-Inspiron-7460>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 24 Oct 2018 23:53:05 +0100
-Message-ID: <CAK8P3a2coXVaaiZUcxsp8DmWcVdBrDMomYAN--M42TuSnHxKNA@mail.gmail.com>
-Subject: Re: [PATCH V9 01/21] csky: Build infrastructure
-To:     Guo Ren <ren_guo@c-sky.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 25 Oct 2018 03:24:56 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 145651814;
+        Wed, 24 Oct 2018 22:54:56 +0000 (UTC)
+Date:   Wed, 24 Oct 2018 15:54:54 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     David Rientjes <rientjes@google.com>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com, guro@fb.com,
+        kirill.shutemov@linux.intel.com, linux-kernel@vger.kernel.org,
+        yang.s@alibaba-inc.com,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH] mm,oom: Use timeout based back off.
+Message-Id: <20181024155454.4e63191fbfaa0441f2e62f56@linux-foundation.org>
+In-Reply-To: <alpine.DEB.2.21.1810221406400.120157@chino.kir.corp.google.com>
+References: <1540033021-3258-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+        <alpine.DEB.2.21.1810221406400.120157@chino.kir.corp.google.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 1:08 AM Guo Ren <ren_guo@c-sky.com> wrote:
->
-> Hi Arnd,
->
-> Could you help me review the patch, seems the patch is skipped.
-> ref: https://lkml.org/lkml/2018/10/16/224
+On Mon, 22 Oct 2018 14:11:10 -0700 (PDT) David Rientjes <rientjes@google.com> wrote:
 
-Ah right, I missed that. I think I originally had some thoughts on it but
-didn't immediately comment and then forgot about it. It's basically
-ok, so
+> > Michal has been refusing timeout based approach, but I don't think this
+> > is something we have to be frayed around the edge about possibility of
+> > overlooking races/bugs just because Michal does not want to use timeout.
+> > I believe that timeout based back off is the only approach we can use
+> > for now.
+> > 
+> 
+> I've proposed patches that have been running for months in a production 
+> environment that make the oom killer useful without serially killing many 
+> processes unnecessarily.  At this point, it is *much* easier to just fork 
+> the oom killer logic rather than continue to invest time into fixing it in 
+> Linux.  That's unfortunate because I'm sure you realize how problematic 
+> the current implementation is, how abusive it is, and have seen its 
+> effects yourself.  I admire your persistance in trying to fix the issues 
+> surrounding the oom killer, but have come to the conclusion that forking 
+> it is a much better use of time.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+The oom killer is, I think, fairly standalone and it shouldn't be too
+hard to add the infrastructure to make the whole thing pluggable.  At
+runtime, not at build time.
 
-but please have a look below for a follow-up patch:
+But it is a last resort - it will result in fragmented effort and
+difficult decisions for everyone regarding which should be used.
 
-> > diff --git a/arch/csky/include/asm/Kbuild b/arch/csky/include/asm/Kbuild
-> > new file mode 100644
-> > index 0000000..014eb57
-> > --- /dev/null
-> > +++ b/arch/csky/include/asm/Kbuild
-> > @@ -0,0 +1,72 @@
-> > +generic-y += asm-offsets.h
-> > +generic-y += bitsperlong.h
-> > +generic-y += bugs.h
-> > +generic-y += clkdev.h
-> > +generic-y += compat.h
-> > +generic-y += current.h
-> > +generic-y += delay.h
-> > +generic-y += device.h
-> > +generic-y += div64.h
-...
-> > +generic-y += errno.h
-...
-> > +generic-y += ioctl.h
-> > +generic-y += ioctls.h
+There has been a lot of heat and noise and confusion and handwaving in
+all of this.  What we're crying out for is simple testcases which
+everyone can run.  Find a problem, write the testcase, distribute that.
+Develop a solution for that testcase then move on to the next one.
 
-A number of the header files that are marked as generic-y in
-asm/Kbuild are also marked the same way in uapi/asm/Kbuild.
-I think this is a mistake, since we only need one of the two
-for each header.
-
-When both exist, we just take the one from asm/, but then we install
-the uapi/asm/ version in the 'make headers_install' stage, and they
-both have the same contents, so I think you only need the uapi/asm/
-version here.
-
-> > diff --git a/arch/csky/include/uapi/asm/Kbuild b/arch/csky/include/uapi/asm/Kbuild
-> > new file mode 100644
-> > index 0000000..b65252b
-> > --- /dev/null
-> > +++ b/arch/csky/include/uapi/asm/Kbuild
-> > @@ -0,0 +1,33 @@
-> > +include include/uapi/asm-generic/Kbuild.asm
-> > +
-> > +header-y += cachectl.h
-> > +header-y += stat.h
-
-It also seems that the second statement here (for stat.h) is from
-an older version, since that header no longer exists, at least if
-I'm reading your patches correctly.
-
-         Arnd
