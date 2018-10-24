@@ -2,114 +2,93 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D1BC67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:07:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06540C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:07:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7189A2082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:07:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7189A2082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id CDD9A2082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:07:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDD9A2082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbeJXQeb (ORCPT
+        id S1727959AbeJXQee (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 12:34:31 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:56077 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727823AbeJXQeb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 12:34:31 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 849D8B4557F11;
-        Wed, 24 Oct 2018 16:07:26 +0800 (CST)
-Received: from [127.0.0.1] (10.111.220.140) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.408.0; Wed, 24 Oct 2018
- 16:07:18 +0800
-Subject: Re: [PATCH] f2fs: avoid GC causing encrypted file corrupted
-To:     <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
-        <yunlong.song@icloud.com>
-CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
-        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <1537274393-78441-1-git-send-email-yunlong.song@huawei.com>
-From:   Yunlong Song <yunlong.song@huawei.com>
-Message-ID: <d2acab58-5f7f-1aed-3719-bc58c5c45b53@huawei.com>
-Date:   Wed, 24 Oct 2018 16:07:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <1537274393-78441-1-git-send-email-yunlong.song@huawei.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.111.220.140]
-X-CFilter-Loop: Reflected
+        Wed, 24 Oct 2018 12:34:34 -0400
+Received: from mga11.intel.com ([192.55.52.93]:61920 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727823AbeJXQed (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 12:34:33 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 01:07:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,419,1534834800"; 
+   d="scan'208";a="273987311"
+Received: from skx-d.bj.intel.com ([10.238.135.53])
+  by fmsmga005.fm.intel.com with ESMTP; 24 Oct 2018 01:07:26 -0700
+From:   Luwei Kang <luwei.kang@intel.com>
+To:     kvm@vger.kernel.org, x86@kernel.org
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        pbonzini@redhat.com, rkrcmar@redhat.com, joro@8bytes.org,
+        songliubraving@fb.com, peterz@infradead.org,
+        alexander.shishkin@linux.intel.com, kstewart@linuxfoundation.org,
+        gregkh@linuxfoundation.org, thomas.lendacky@amd.com,
+        konrad.wilk@oracle.com, mattst88@gmail.com,
+        Janakarajan.Natarajan@amd.com, dwmw@amazon.co.uk,
+        jpoimboe@redhat.com, marcorr@google.com, ubizjak@gmail.com,
+        sean.j.christopherson@intel.com, jmattson@google.com,
+        linux-kernel@vger.kernel.org, Luwei Kang <luwei.kang@intel.com>
+Subject: [PATCH v13 05/12] perf/x86/intel/pt: add new capability for Intel PT
+Date:   Wed, 24 Oct 2018 16:05:09 +0800
+Message-Id: <1540368316-12998-6-git-send-email-luwei.kang@intel.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1540368316-12998-1-git-send-email-luwei.kang@intel.com>
+References: <1540368316-12998-1-git-send-email-luwei.kang@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ping...
+This adds support for "output to Trace Transport subsystem"
+capability of Intel PT. It means that PT can output its
+trace to an MMIO address range rather than system memory buffer.
 
-On 2018/9/18 20:39, Yunlong Song wrote:
-> The encrypted file may be corrupted by GC in following case:
->
-> Time 1: | segment 1 blkaddr = A |  GC -> | segment 2 blkaddr = B |
-> Encrypted block 1 is moved from blkaddr A of segment 1 to blkaddr B of
-> segment 2,
->
-> Time 2: | segment 1 blkaddr = B |  GC -> | segment 3 blkaddr = C |
->
-> Before page 1 is written back and if segment 2 become a victim, then
-> page 1 is moved from blkaddr B of segment 2 to blkaddr Cof segment 3,
-> during the GC process of Time 2, f2fs should wait for page 1 written back
-> before reading it, or move_data_block will read a garbage block from
-> blkaddr B since page is not written back to blkaddr B yet.
->
-> Commit 6aa58d8a ("f2fs: readahead encrypted block during GC") introduce
-> ra_data_block to read encrypted block, but it forgets to add
-> f2fs_wait_on_page_writeback to avoid racing between GC and flush.
->
-> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-> ---
->   fs/f2fs/gc.c | 10 ++++++++++
->   1 file changed, 10 insertions(+)
->
-> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-> index a4c1a41..c55fb62 100644
-> --- a/fs/f2fs/gc.c
-> +++ b/fs/f2fs/gc.c
-> @@ -641,6 +641,14 @@ static int ra_data_block(struct inode *inode, pgoff_t index)
->   	fio.page = page;
->   	fio.new_blkaddr = fio.old_blkaddr = dn.data_blkaddr;
->   
-> +	/*
-> +	 * don't cache encrypted data into meta inode until previous dirty
-> +	 * data were writebacked to avoid racing between GC and flush.
-> +	 */
-> +	f2fs_wait_on_page_writeback(page, DATA, true);
-> +
-> +	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
-> +
->   	fio.encrypted_page = f2fs_pagecache_get_page(META_MAPPING(sbi),
->   					dn.data_blkaddr,
->   					FGP_LOCK | FGP_CREAT, GFP_NOFS);
-> @@ -723,6 +731,8 @@ static void move_data_block(struct inode *inode, block_t bidx,
->   	 */
->   	f2fs_wait_on_page_writeback(page, DATA, true);
->   
-> +	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
-> +
->   	err = f2fs_get_node_info(fio.sbi, dn.nid, &ni);
->   	if (err)
->   		goto put_out;
+Acked-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Luwei Kang <luwei.kang@intel.com>
+---
+ arch/x86/events/intel/pt.c      | 1 +
+ arch/x86/include/asm/intel_pt.h | 1 +
+ 2 files changed, 2 insertions(+)
 
+diff --git a/arch/x86/events/intel/pt.c b/arch/x86/events/intel/pt.c
+index 53e481a..9597ea6 100644
+--- a/arch/x86/events/intel/pt.c
++++ b/arch/x86/events/intel/pt.c
+@@ -68,6 +68,7 @@
+ 	PT_CAP(topa_output,		0, CPUID_ECX, BIT(0)),
+ 	PT_CAP(topa_multiple_entries,	0, CPUID_ECX, BIT(1)),
+ 	PT_CAP(single_range_output,	0, CPUID_ECX, BIT(2)),
++	PT_CAP(output_subsys,		0, CPUID_ECX, BIT(3)),
+ 	PT_CAP(payloads_lip,		0, CPUID_ECX, BIT(31)),
+ 	PT_CAP(num_address_ranges,	1, CPUID_EAX, 0x3),
+ 	PT_CAP(mtc_periods,		1, CPUID_EAX, 0xffff0000),
+diff --git a/arch/x86/include/asm/intel_pt.h b/arch/x86/include/asm/intel_pt.h
+index 00f4afb..634f99b 100644
+--- a/arch/x86/include/asm/intel_pt.h
++++ b/arch/x86/include/asm/intel_pt.h
+@@ -16,6 +16,7 @@ enum pt_capabilities {
+ 	PT_CAP_topa_output,
+ 	PT_CAP_topa_multiple_entries,
+ 	PT_CAP_single_range_output,
++	PT_CAP_output_subsys,
+ 	PT_CAP_payloads_lip,
+ 	PT_CAP_num_address_ranges,
+ 	PT_CAP_mtc_periods,
 -- 
-Thanks,
-Yunlong Song
-
+1.8.3.1
 
