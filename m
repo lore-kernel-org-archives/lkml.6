@@ -4,70 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DF36ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 17:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35CCFECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 17:28:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36396206B5
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 17:28:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE6E32082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 17:28:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Lq0Ahtip"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36396206B5
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MBYgtuPB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE6E32082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727369AbeJYB5S (ORCPT
+        id S1727408AbeJYB5Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 21:57:18 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45738 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727333AbeJYB5S (ORCPT
+        Wed, 24 Oct 2018 21:57:24 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:42994 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727033AbeJYB5X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 21:57:18 -0400
-Received: by mail-pf1-f195.google.com with SMTP id t10-v6so1333525pfh.12
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 10:28:24 -0700 (PDT)
+        Wed, 24 Oct 2018 21:57:23 -0400
+Received: by mail-pl1-f193.google.com with SMTP id t6-v6so2517936plo.9
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 10:28:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=1YMXXvnPT80nLN/AeRFvYKT6u9kQcvBBEAiIyCdBvqI=;
-        b=Lq0Ahtipr6t/85CWRjyUFcqKyaKN4r7LDsXNByrYsTIqZjSjNWkTnhGO9SVr/YXXB4
-         eb3kb4SQYvA7VzINBN15czFZeS3TZhzZxkgnYjJplmfRbHE0xgFqADcFp1B9uyELyuS4
-         s/2v7LHXQKhRPSM2ICZO3pxBj6AqtYQUVMcT4=
+        bh=ES2N2VLQVI4lirarWcy5SEuftsKQCycdGdpfuMoPM4s=;
+        b=MBYgtuPBJVy6OXxo+62q05//hlLXkUrmLKQ46y6paIxpznW/2mk0280LFb3VRirx63
+         yFL7pLcWlkHyn9X5T6b0ufqnULsL5wiAcUSvC0z/icJXqa+/HUf7KQNNmKEHQbs3Hat0
+         tcxBtx93uByDI9WMxeVF4+OvdzjqhMSQBo97E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=1YMXXvnPT80nLN/AeRFvYKT6u9kQcvBBEAiIyCdBvqI=;
-        b=nQHZQc7YNEwOkWoQfa4v+1PdLhL0+ppvbvgPDiD1tZFNaVQFqMl7O0jkSzJjuIMqKr
-         TUspkLeHRSpYlA2pArcHXCoP3yuuGIWlv4VigPNXtHl2MwHU+bFWGDJnSFZ7K2dt/1qc
-         OOt8ZJyEWlJal1/1qnGRhmbTU6oJ5WTfByvkTvtOjs8/Ba+KvR7rrOs0zu90Auej5/GP
-         OGPEzH4pW2PgLW+vJw6u5VofvoUWt952wlj2WSTonWMn/zscpdJApt16o/iBic9FlEjG
-         HROdf6eScQcIKesjujXcAaY8NYgLRG75oC4u/owj50V1BAlNkUSxPEKuqaiWODiQSqCH
-         GgZw==
-X-Gm-Message-State: AGRZ1gKvf9mdoApIdXk4oSNhiSJFkY1C+Bwj1adCuTg4Fc8n2ssZDM3O
-        DwXyDio/Al2oJYsGjJkfSrEefg==
-X-Google-Smtp-Source: AJdET5eE/x93izDsYzVpAIqkPew9unLYHGs1U7wWg3NxyYVlNDzxXjUQYyx3TKO8LBGFKrRs6jHliQ==
-X-Received: by 2002:a63:c0f:: with SMTP id b15-v6mr3423345pgl.400.1540402103844;
-        Wed, 24 Oct 2018 10:28:23 -0700 (PDT)
+        bh=ES2N2VLQVI4lirarWcy5SEuftsKQCycdGdpfuMoPM4s=;
+        b=laBJ7s0GfzBkWQaWqFg6HDFlH/QE3lBzcsqOVwBJ55pATXAcqG2BeigYHvBZMF9E9z
+         E6XIVUEXxvygN68yFfDsqawfwuz+uCaICJp03SW4+FD2xL+si9idXw90uMifPw/HgDhl
+         0l1C4K3191QKNodRcSlsDh4DKYmDmg6FVq++wVltXmPGUZqHCZqD1KmJVt5t7dzfQt4o
+         bmZzhKxKIZN13abtpyOADHpLvHonHVQVzThJ4Ab6hAXg0hcFRkDqbWsE/KwSyoGRzx7U
+         u2ugVKwG2zfZ172Fd3QgNmJxiN0BkRy9Xx1M9OEsiSPhRjPsjjHhsgrFeX1D4EhITFJH
+         EKPA==
+X-Gm-Message-State: AGRZ1gKMLil49UZPoELdavIoPSv3DoArcbHdHGVlAbNsxHUqlsXPOEUY
+        4EEiicLrHRHrw/87NO7m0sX+XA==
+X-Google-Smtp-Source: AJdET5f33RrfXL4uZ6FqbaIsUI3GDMI+wCfK453YRwy6bKOOGgD3y/db4kI0nxbx0fnlej8k65Vuaw==
+X-Received: by 2002:a17:902:9a07:: with SMTP id v7-v6mr3250258plp.14.1540402109037;
+        Wed, 24 Oct 2018 10:28:29 -0700 (PDT)
 Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:e418:c825:76cf:5f64])
-        by smtp.gmail.com with ESMTPSA id v185-v6sm5674265pfv.48.2018.10.24.10.28.22
+        by smtp.gmail.com with ESMTPSA id v185-v6sm5674265pfv.48.2018.10.24.10.28.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 24 Oct 2018 10:28:22 -0700 (PDT)
+        Wed, 24 Oct 2018 10:28:28 -0700 (PDT)
 From:   Evan Green <evgreen@chromium.org>
 To:     Rob Herring <robh@kernel.org>, Andy Gross <andy.gross@linaro.org>,
         Kishon Vijay Abraham I <kishon@ti.com>
 Cc:     Douglas Anderson <dianders@chromium.org>,
         Stephen Boyd <swboyd@chromium.org>,
+        Can Guo <cang@codeaurora.org>,
         Evan Green <evgreen@chromium.org>, devicetree@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         Rob Herring <robh+dt@kernel.org>,
         David Brown <david.brown@linaro.org>,
         Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org
-Subject: [PATCH v4 3/5] arm64: dts: qcom: sdm845: add UFS controller
-Date:   Wed, 24 Oct 2018 10:27:33 -0700
-Message-Id: <20181024172735.154304-4-evgreen@chromium.org>
+Subject: [PATCH v4 4/5] arm64: dts: qcom: sdm845: Add UFS nodes for sdm845-mtp
+Date:   Wed, 24 Oct 2018 10:27:34 -0700
+Message-Id: <20181024172735.154304-5-evgreen@chromium.org>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20181024172735.154304-1-evgreen@chromium.org>
 References: <20181024172735.154304-1-evgreen@chromium.org>
@@ -76,102 +77,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the UFS controller and PHY to SDM845.
+From: Can Guo <cang@codeaurora.org>
 
+Enable the UFS host controller and PHY on sdm845-mtp.
+
+Signed-off-by: Can Guo <cang@codeaurora.org>
 Signed-off-by: Evan Green <evgreen@chromium.org>
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
 ---
-As Doug mentioned in v2, this should land after (or with) the driver fix
-in this series.
 
 Changes in v4: None
 Changes in v3: None
-Changes in v2:
-- Renamed ufsphy to phy (Vivek)
-- Removed #clock-cells (Vivek)
+Changes in v2: None
 
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 67 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
+ arch/arm64/boot/dts/qcom/sdm845-mtp.dts | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index b72bdb0a31a5..9c72edb678ec 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -808,6 +808,73 @@
- 			};
- 		};
+diff --git a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+index eedfaf8922e2..d5fddea71a85 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
++++ b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+@@ -356,6 +356,20 @@
+ 	status = "okay";
+ };
  
-+		ufshc1: ufshc@1d84000 {
-+			compatible = "qcom,sdm845-ufshc", "qcom,ufshc",
-+				     "jedec,ufs-2.0";
-+			reg = <0x1d84000 0x2500>;
-+			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
-+			phys = <&ufsphy1_lanes>;
-+			phy-names = "ufsphy";
-+			lanes-per-direction = <2>;
-+			power-domains = <&gcc UFS_PHY_GDSC>;
++&ufshc1 {
++	status = "okay";
 +
-+			clock-names =
-+				"core_clk",
-+				"bus_aggr_clk",
-+				"iface_clk",
-+				"core_clk_unipro",
-+				"ref_clk",
-+				"tx_lane0_sync_clk",
-+				"rx_lane0_sync_clk",
-+				"rx_lane1_sync_clk";
-+			clocks =
-+				<&gcc GCC_UFS_PHY_AXI_CLK>,
-+				<&gcc GCC_AGGRE_UFS_PHY_AXI_CLK>,
-+				<&gcc GCC_UFS_PHY_AHB_CLK>,
-+				<&gcc GCC_UFS_PHY_UNIPRO_CORE_CLK>,
-+				<&rpmhcc RPMH_CXO_CLK>,
-+				<&gcc GCC_UFS_PHY_TX_SYMBOL_0_CLK>,
-+				<&gcc GCC_UFS_PHY_RX_SYMBOL_0_CLK>,
-+				<&gcc GCC_UFS_PHY_RX_SYMBOL_1_CLK>;
-+			freq-table-hz =
-+				<50000000 200000000>,
-+				<0 0>,
-+				<0 0>,
-+				<37500000 150000000>,
-+				<0 0>,
-+				<0 0>,
-+				<0 0>,
-+				<0 0>;
++	vcc-supply = <&vreg_l20a_2p95>;
++	vcc-max-microamp = <600000>;
++};
 +
-+			resets = <&gcc GCC_UFS_PHY_BCR>;
-+			reset-names = "rst";
++&ufsphy1 {
++	status = "okay";
 +
-+			status = "disabled";
-+		};
++	vdda-phy-supply = <&vdda_ufs1_core>;
++	vdda-pll-supply = <&vdda_ufs1_1p2>;
++};
 +
-+		ufsphy1: phy@1d87000 {
-+			compatible = "qcom,sdm845-qmp-ufs-phy";
-+			reg = <0x1d87000 0x18c>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+			clock-names = "ref",
-+				      "ref_aux";
-+			clocks = <&gcc GCC_UFS_MEM_CLKREF_CLK>,
-+				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>;
-+
-+			status = "disabled";
-+
-+			ufsphy1_lanes: lanes@1d87400 {
-+				reg = <0x1d87400 0x108>,
-+				      <0x1d87600 0x1e0>,
-+				      <0x1d87c00 0x1dc>,
-+				      <0x1d87800 0x108>,
-+				      <0x1d87a00 0x1e0>;
-+				#phy-cells = <0>;
-+			};
-+		};
-+
- 		tcsr_mutex_regs: syscon@1f40000 {
- 			compatible = "syscon";
- 			reg = <0x1f40000 0x40000>;
+ &usb_1 {
+ 	status = "okay";
+ };
 -- 
 2.16.4
 
