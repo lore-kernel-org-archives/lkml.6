@@ -2,84 +2,218 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5152C46475
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:05:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9370C46475
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:05:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AA8B2082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:05:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AA8B2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
+	by mail.kernel.org (Postfix) with ESMTP id 98FE720832
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:05:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UM4L/fsN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98FE720832
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727156AbeJXLbg (ORCPT
+        id S1727176AbeJXLbo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 07:31:36 -0400
-Received: from rtits2.realtek.com ([211.75.126.72]:34879 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725826AbeJXLbg (ORCPT
+        Wed, 24 Oct 2018 07:31:44 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42640 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725826AbeJXLbo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 07:31:36 -0400
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID w9O0qjYL001141, This message is accepted by code: ctloc85258
-Received: from mail.realtek.com (rtitcas12.realtek.com.tw[172.21.6.16])
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id w9O0qjYL001141
-        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 24 Oct 2018 08:52:45 +0800
-Received: from RTITEXH01.realtek.com.tw (172.21.6.62) by
- RTITCAS12.realtek.com.tw (172.21.6.16) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Wed, 24 Oct 2018 08:52:45 +0800
-Received: from RTITMBSVM01.realtek.com.tw ([fe80::f4ca:82cf:5a3:5d7a]) by
- RTITEXH01.realtek.com.tw ([::1]) with mapi id 14.03.0415.000; Wed, 24 Oct
- 2018 08:52:44 +0800
-From:   Pkshih <pkshih@realtek.com>
-To:     "joe@perches.com" <joe@perches.com>,
-        "zhongjiang@huawei.com" <zhongjiang@huawei.com>,
-        "kvalo@codeaurora.org" <kvalo@codeaurora.org>
-CC:     "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] rtlwifi: remove set but not used variable 'radiob_array_table' and 'radiob_arraylen'
-Thread-Topic: [PATCH v2] rtlwifi: remove set but not used variable
- 'radiob_array_table' and 'radiob_arraylen'
-Thread-Index: AQHUaqwWhqcVPdyTf0GD+7a2PdeLy6UssxGAgABZEoA=
-Date:   Wed, 24 Oct 2018 00:52:44 +0000
-Message-ID: <1540342331.2495.1.camel@realtek.com>
-References: <1540283282-9772-1-git-send-email-zhongjiang@huawei.com>
-         <19b16ca89b5cde607338513638d4ef8e3a3d2802.camel@perches.com>
-In-Reply-To: <19b16ca89b5cde607338513638d4ef8e3a3d2802.camel@perches.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.21.69.146]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3CD09867DC58C748B98D5D626FECFF87@realtek.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Wed, 24 Oct 2018 07:31:44 -0400
+Received: by mail-pg1-f195.google.com with SMTP id i4-v6so1608313pgq.9;
+        Tue, 23 Oct 2018 20:05:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=a5VCWP1jvBGTVRlOXHM630rkywHqtK6S6KhPyPHlEck=;
+        b=UM4L/fsNfl52iBUTqQrnNlYc0SvU96IYRp2htFW/JEC8hNwBNC9Q4SUWP8/xPvDJxo
+         hycsB/sDK2YcksE4CezBcK8RImrYzrT9S3wg67V6jOpn03dYxf2ped5CJ361iYN1qcv6
+         2J+t9+bnVtMT5xq4hTyd9tGVzDfozkmCb9X7PJg8lvu/Uh5hXzVFYft3NCXJbnm3Tg97
+         EQWRZinHuSPI9CVpHkBgxSss8yYYK8WrPEmWNElNnQM93D8JsI4iTRtFmC9rCAc7kAb2
+         VvQhKoKTaHLOsArkwj0XBbcMhMCHJXtEcXzmIoqNljlV3B5vT3O0ClfKtq+UNtPmyMdA
+         DZCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=a5VCWP1jvBGTVRlOXHM630rkywHqtK6S6KhPyPHlEck=;
+        b=a+/Kk89I8HLTBiG7M1J3oqwitoA1qEV3SKzxkEt8GDyNtoirUxsGBf/3PPNI9KF/PB
+         VvTvK9c7zFhlA3uVxdz/u94cNG5lX/6OL9pOR9az/ImThvCnH6fHrUT9+YAvDC+pzvGa
+         Rz6fp8/jpxuH/Rv6bntm5ijkeEd8XE00RaNdr2/elkvdQgRZFcPk4WRMWj0cFK2Ov3RT
+         6UTI7eGIUlcFx9IqB1Id2iv7qU87gN51KKGLxgLamgTRAZmCgUYQaPwjKDFzvErxx5UC
+         OPpHTgU6sCy5gg4QhenTWT8Lmfdnp1teTbSs91pK62Lyz/NrtZvRLP7MglXrTW1+2iZp
+         TySw==
+X-Gm-Message-State: AGRZ1gJurYzt25qOsFVx8vKqjtiJbNWmr6z69H+IqrJrAQ5Bfb8UEpxt
+        4BWuGXuoCFKb4JdKafsMaelyItgT
+X-Google-Smtp-Source: AJdET5fv217Bs7DKw59s4YDhDn46i1Imb1FTHLoPNX9xObMsI2s7ozEZ3mH85tjqMfool4WCWZrt0g==
+X-Received: by 2002:a63:1f58:: with SMTP id q24-v6mr781948pgm.88.1540348591440;
+        Tue, 23 Oct 2018 19:36:31 -0700 (PDT)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id n17-v6sm3606625pfj.84.2018.10.23.19.36.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 23 Oct 2018 19:36:30 -0700 (PDT)
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     jdelvare@suse.com, linux@roeck-us.net
+Cc:     linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 3/5] hwmon: (ina3221) Serialize sysfs ABI accesses
+Date:   Tue, 23 Oct 2018 19:36:21 -0700
+Message-Id: <20181024023623.4231-4-nicoleotsuka@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181024023623.4231-1-nicoleotsuka@gmail.com>
+References: <20181024023623.4231-1-nicoleotsuka@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDE4LTEwLTIzIGF0IDEyOjMzIC0wNzAwLCBKb2UgUGVyY2hlcyB3cm90ZToNCj4g
-T24gVHVlLCAyMDE4LTEwLTIzIGF0IDE2OjI4ICswODAwLCB6aG9uZyBqaWFuZyB3cm90ZToNCj4g
-PiByYWRpb2JfYXJyYXlfdGFibGUnIGFuZCAncmFkaW9iX2FycmF5bGVuJyBhcmUgbm90IHVzZWQg
-YWZ0ZXIgc2V0dGluZyBpdHMNCj4gdmFsdWUuDQo+ID4gSXQgaXMgc2FmZSB0byByZW1vdmUgdGhl
-IHVudXNlZCB2YXJpYWJsZS4gTWVhbndoaWxlLCByYWRpbyBCIHJhZGlvIHNob3VsZCBiZQ0KPiA+
-IHJlbW92ZWQgYXMgd2VsbC4gYmVjYXVzZSBpdCB3aWxsIG5vIGxvbmdlciBiZSByZWZlcmVuY2Vk
-Lg0KPiANCj4gVGhlIHBhdGNoIHN1YmplY3QgaXMgYSBiaXQgb2ZmIGFuZCB0b28gZ2VuZXJpYyBo
-ZXJlLg0KPiANCj4gVGhpcyBpcyBzcGVjaWZpYyB0byBydGw4NzIzYWUgYW5kIG5vdCBydGx3aWZp
-IHNvIGl0IGlzDQo+IHByb2JhYmx5IGJldHRlciBmb3IgdGhlIHN1YmplY3QgdG8gYmUgc29tZXRo
-aW5nIGxpa2U6DQo+IA0KPiBbUEFUQ0hdIHJ0bDg3MjNhZTogUmVtb3ZlIHNldCBidXQgbm90IHVz
-ZWQgdmFyaWFibGVzIGFuZCAjZGVmaW5lcw0KDQpJJ2QgbGlrZSAncnRsd2lmaTrCoHJ0bDg3MjNh
-ZTogJyBhcyBzdWJqZWN0IHByZWZpeC4NCg0KPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiB6aG9uZyBq
-aWFuZyA8emhvbmdqaWFuZ0BodWF3ZWkuY29tPg0KPiA+IC0tLQ0KPiA+wqDCoGRyaXZlcnMvbmV0
-L3dpcmVsZXNzL3JlYWx0ZWsvcnRsd2lmaS9ydGw4NzIzYWUvcGh5LmPCoMKgwqB8IDUgKy0tLS0N
-Cj4gPsKgwqBkcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0bHdpZmkvcnRsODcyM2FlL3Rh
-YmxlLmMgfCA0IC0tLS0NCj4gPsKgwqBkcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0bHdp
-ZmkvcnRsODcyM2FlL3RhYmxlLmggfCAyIC0tDQo+IA0KPiANCj4gLS0tLS0tUGxlYXNlIGNvbnNp
-ZGVyIHRoZSBlbnZpcm9ubWVudCBiZWZvcmUgcHJpbnRpbmcgdGhpcyBlLW1haWwuDQo=
+This change adds a mutex to serialize accesses of sysfs attributes.
+
+This is required when polling CVRF bit of the MASK/ENABLE register
+because this bit is cleared on a read of this MASK/ENABLE register
+or a write to CONFIG register, which means that this bit might be
+accidentally cleared by reading other fields like alert flags.
+
+So this patch adds a mutex lock to protect the write() and read()
+callbacks. The read_string() callback won't need the lock since it
+just returns the label without touching any hardware register.
+
+Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
+---
+ drivers/hwmon/ina3221.c | 51 ++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 45 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/hwmon/ina3221.c b/drivers/hwmon/ina3221.c
+index 26cdf3342d80..10e8347a3c80 100644
+--- a/drivers/hwmon/ina3221.c
++++ b/drivers/hwmon/ina3221.c
+@@ -18,6 +18,7 @@
+ #include <linux/hwmon-sysfs.h>
+ #include <linux/i2c.h>
+ #include <linux/module.h>
++#include <linux/mutex.h>
+ #include <linux/of.h>
+ #include <linux/regmap.h>
+ 
+@@ -94,12 +95,14 @@ struct ina3221_input {
+  * @regmap: Register map of the device
+  * @fields: Register fields of the device
+  * @inputs: Array of channel input source specific structures
++ * @lock: mutex lock to serialize sysfs attribute accesses
+  * @reg_config: Register value of INA3221_CONFIG
+  */
+ struct ina3221_data {
+ 	struct regmap *regmap;
+ 	struct regmap_field *fields[F_MAX_FIELDS];
+ 	struct ina3221_input inputs[INA3221_NUM_CHANNELS];
++	struct mutex lock;
+ 	u32 reg_config;
+ };
+ 
+@@ -265,29 +268,53 @@ static int ina3221_write_enable(struct device *dev, int channel, bool enable)
+ static int ina3221_read(struct device *dev, enum hwmon_sensor_types type,
+ 			u32 attr, int channel, long *val)
+ {
++	struct ina3221_data *ina = dev_get_drvdata(dev);
++	int ret;
++
++	mutex_lock(&ina->lock);
++
+ 	switch (type) {
+ 	case hwmon_in:
+ 		/* 0-align channel ID */
+-		return ina3221_read_in(dev, attr, channel - 1, val);
++		ret = ina3221_read_in(dev, attr, channel - 1, val);
++		break;
+ 	case hwmon_curr:
+-		return ina3221_read_curr(dev, attr, channel, val);
++		ret = ina3221_read_curr(dev, attr, channel, val);
++		break;
+ 	default:
+-		return -EOPNOTSUPP;
++		ret = -EOPNOTSUPP;
++		break;
+ 	}
++
++	mutex_unlock(&ina->lock);
++
++	return ret;
+ }
+ 
+ static int ina3221_write(struct device *dev, enum hwmon_sensor_types type,
+ 			 u32 attr, int channel, long val)
+ {
++	struct ina3221_data *ina = dev_get_drvdata(dev);
++	int ret;
++
++	mutex_lock(&ina->lock);
++
+ 	switch (type) {
+ 	case hwmon_in:
+ 		/* 0-align channel ID */
+-		return ina3221_write_enable(dev, channel - 1, val);
++		ret = ina3221_write_enable(dev, channel - 1, val);
++		break;
+ 	case hwmon_curr:
+-		return ina3221_write_curr(dev, attr, channel, val);
++		ret = ina3221_write_curr(dev, attr, channel, val);
++		break;
+ 	default:
+-		return -EOPNOTSUPP;
++		ret = -EOPNOTSUPP;
++		break;
+ 	}
++
++	mutex_unlock(&ina->lock);
++
++	return ret;
+ }
+ 
+ static int ina3221_read_string(struct device *dev, enum hwmon_sensor_types type,
+@@ -582,6 +609,7 @@ static int ina3221_probe(struct i2c_client *client,
+ 	if (ret)
+ 		return ret;
+ 
++	mutex_init(&ina->lock);
+ 	dev_set_drvdata(dev, ina);
+ 
+ 	hwmon_dev = devm_hwmon_device_register_with_info(dev, client->name, ina,
+@@ -589,12 +617,22 @@ static int ina3221_probe(struct i2c_client *client,
+ 							 ina3221_groups);
+ 	if (IS_ERR(hwmon_dev)) {
+ 		dev_err(dev, "Unable to register hwmon device\n");
++		mutex_destroy(&ina->lock);
+ 		return PTR_ERR(hwmon_dev);
+ 	}
+ 
+ 	return 0;
+ }
+ 
++static int ina3221_remove(struct i2c_client *client)
++{
++	struct ina3221_data *ina = dev_get_drvdata(&client->dev);
++
++	mutex_destroy(&ina->lock);
++
++	return 0;
++}
++
+ static int __maybe_unused ina3221_suspend(struct device *dev)
+ {
+ 	struct ina3221_data *ina = dev_get_drvdata(dev);
+@@ -663,6 +701,7 @@ MODULE_DEVICE_TABLE(i2c, ina3221_ids);
+ 
+ static struct i2c_driver ina3221_i2c_driver = {
+ 	.probe = ina3221_probe,
++	.remove = ina3221_remove,
+ 	.driver = {
+ 		.name = INA3221_DRIVER_NAME,
+ 		.of_match_table = ina3221_of_match_table,
+-- 
+2.17.1
+
