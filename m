@@ -2,115 +2,63 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54768C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 07:50:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 649DDC004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 07:52:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 193B12064A
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 07:50:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YlGqoIpK";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="isDlkWvq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 193B12064A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 24F492081B
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 07:52:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24F492081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727461AbeJXQRn (ORCPT
+        id S1727578AbeJXQTU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 12:17:43 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:40978 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726832AbeJXQRn (ORCPT
+        Wed, 24 Oct 2018 12:19:20 -0400
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:51996 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726832AbeJXQTT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 12:17:43 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 6D8C460F39; Wed, 24 Oct 2018 07:50:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540367444;
-        bh=airQKr2hQAfcDpd0qV4dEfogZh+vEH9IDTk9ys52p0k=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=YlGqoIpKJCSTirEIdiX3Iep+XHlTHOT9bWJBasfeTvcI7VaeU8hc8ZSjCCvT6mSE+
-         NWiCa/mpznZehpO7jMK3OhGGEm3dP4gm4Td91Ku+M4AmPjZCQcSk9itnm+GTzkNG+Z
-         GR/PpZUnopRqfzXCO2oCApLHscZk9iyziLTe+we4=
-Received: from x230.qca.qualcomm.com (87-93-79-96.bb.dnainternet.fi [87.93.79.96])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 86A6E6034D;
-        Wed, 24 Oct 2018 07:50:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540367443;
-        bh=airQKr2hQAfcDpd0qV4dEfogZh+vEH9IDTk9ys52p0k=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=isDlkWvqfETGCoQQl/S8bw4tZe932qnyQJcK0O0D1ztsrLZ/+r2gsGltHzVYeLMTi
-         Qf8GiDvPTrAS573tP8c9YrFSDof40BpgZknb24EDoq5VGgLbZAJZ/IQX70cmrrrUOL
-         q5ScqBbYQrT2/fjBlHWCh0PZ0NKzEYZhyNrAcF0s=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 86A6E6034D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Govind Singh <govinds@codeaurora.org>,
-        David Miller <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        netdev@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-wireless@vger.kernel.org, ath10k@lists.infradead.org,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>
-Subject: Re: [GIT] Networking
-References: <20181023.202921.1185045750138652543.davem@davemloft.net>
-        <CAHk-=whuhCGujWKO8JObGQaSdWOpJBXdkM-B-vD80QZifveScw@mail.gmail.com>
-        <CAHk-=wh2H9jE2RXibQgWs3_Q539roj62_gzPXKjnhhKqSFcw2g@mail.gmail.com>
-Date:   Wed, 24 Oct 2018 10:50:38 +0300
-In-Reply-To: <CAHk-=wh2H9jE2RXibQgWs3_Q539roj62_gzPXKjnhhKqSFcw2g@mail.gmail.com>
-        (Linus Torvalds's message of "Wed, 24 Oct 2018 08:23:44 +0100")
-Message-ID: <87lg6nu6k1.fsf@codeaurora.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        Wed, 24 Oct 2018 12:19:19 -0400
+Received: by kvm5.telegraphics.com.au (Postfix, from userid 502)
+        id E7FC522966; Wed, 24 Oct 2018 03:52:20 -0400 (EDT)
+To:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     Michael Schmitz <schmitzmic@gmail.com>, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Message-Id: <2e765651c37d951fb424eb966e1a91ff08c8391b.1540367133.git.fthain@telegraphics.com.au>
+From:   Finn Thain <fthain@telegraphics.com.au>
+Subject: [PATCH] NCR5380: Return false instead of NULL
+Date:   Wed, 24 Oct 2018 18:45:33 +1100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus Torvalds <torvalds@linux-foundation.org> writes:
+I overlooked this statement when I recently converted the function result
+type from struct scsi_cmnd * to bool. No change to object code.
 
-> On Wed, Oct 24, 2018 at 7:01 AM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
->>
->> Hmm. Tentatively pulled, but there's something wrong with the Kconfig rules.
->
-> Confirmed.
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+---
+ drivers/scsi/NCR5380.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-BTW, our emails crossed and more info in the other email[1].
-
-> I did a978a5b8d83f ("net/kconfig: Make QCOM_QMI_HELPERS available when
-> COMPILE_TEST") to fix the breakage.
-
-Thanks, though I don't see it yet as I guess you haven't pushed it yet.
-Do note that it _might_ conflict the other commit which I suspect is in
-also coming to you:
-
-ccfb464cd106 ("soc: qcom: Allow COMPILE_TEST of qcom SoC Kconfigs")
-
-> Why wasn't this noticed in testing?
-
-Mostly bad timing due to my vacation. I did do allmodconfig build but
-not sure why I missed the warning, also the kbuild bot didn't report
-anything. Jeff did report[2] it last week but I was on vacation at the
-time and just came back yesterday and didn't have time to react to it
-yet. Really sorry for the mess.
-
-[1] https://lkml.kernel.org/r/87pnvzu7i6.fsf@codeaurora.org
-
-[2] http://lists.infradead.org/pipermail/ath10k/2018-October/012330.html
-
+diff --git a/drivers/scsi/NCR5380.c b/drivers/scsi/NCR5380.c
+index 8429c855701f..01c23d27f290 100644
+--- a/drivers/scsi/NCR5380.c
++++ b/drivers/scsi/NCR5380.c
+@@ -1198,7 +1198,7 @@ static bool NCR5380_select(struct Scsi_Host *instance, struct scsi_cmnd *cmd)
+ 
+ out:
+ 	if (!hostdata->selecting)
+-		return NULL;
++		return false;
+ 	hostdata->selecting = NULL;
+ 	return ret;
+ }
 -- 
-Kalle Valo
+2.18.1
+
