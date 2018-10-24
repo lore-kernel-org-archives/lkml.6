@@ -6,91 +6,85 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71D2DC004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:08:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BB6AC67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:08:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44744207DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:08:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44744207DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D283B207DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:08:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D283B207DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729720AbeJXQfS (ORCPT
+        id S1727624AbeJXQf6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 12:35:18 -0400
-Received: from mga06.intel.com ([134.134.136.31]:43358 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729637AbeJXQfR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 12:35:17 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 01:08:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,419,1534834800"; 
-   d="scan'208";a="273987528"
-Received: from skx-d.bj.intel.com ([10.238.135.53])
-  by fmsmga005.fm.intel.com with ESMTP; 24 Oct 2018 01:08:09 -0700
-From:   Luwei Kang <luwei.kang@intel.com>
-To:     kvm@vger.kernel.org, x86@kernel.org
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        pbonzini@redhat.com, rkrcmar@redhat.com, joro@8bytes.org,
-        songliubraving@fb.com, peterz@infradead.org,
-        alexander.shishkin@linux.intel.com, kstewart@linuxfoundation.org,
-        gregkh@linuxfoundation.org, thomas.lendacky@amd.com,
-        konrad.wilk@oracle.com, mattst88@gmail.com,
-        Janakarajan.Natarajan@amd.com, dwmw@amazon.co.uk,
-        jpoimboe@redhat.com, marcorr@google.com, ubizjak@gmail.com,
-        sean.j.christopherson@intel.com, jmattson@google.com,
-        linux-kernel@vger.kernel.org, Luwei Kang <luwei.kang@intel.com>
-Subject: [PATCH v13 12/12] KVM: x86: Disable Intel PT when VMXON in L1 guest
-Date:   Wed, 24 Oct 2018 16:05:16 +0800
-Message-Id: <1540368316-12998-13-git-send-email-luwei.kang@intel.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1540368316-12998-1-git-send-email-luwei.kang@intel.com>
-References: <1540368316-12998-1-git-send-email-luwei.kang@intel.com>
+        Wed, 24 Oct 2018 12:35:58 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:56618 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727512AbeJXQf6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 12:35:58 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 7CEFBCEA933F0;
+        Wed, 24 Oct 2018 16:08:53 +0800 (CST)
+Received: from huawei.com (10.113.189.234) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.408.0; Wed, 24 Oct 2018
+ 16:08:45 +0800
+From:   Yunlong Song <yunlong.song@huawei.com>
+To:     <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
+        <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
+CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] f2fs: fix count of seg_freed to make sec_freed correct
+Date:   Wed, 24 Oct 2018 16:08:30 +0800
+Message-ID: <1540368510-14270-1-git-send-email-yunlong.song@huawei.com>
+X-Mailer: git-send-email 1.8.5.2
+In-Reply-To: <1539168739-79848-1-git-send-email-yunlong.song@huawei.com>
+References: <1539168739-79848-1-git-send-email-yunlong.song@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.113.189.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, Intel Processor Trace do not support tracing in L1 guest
-VMX operation(IA32_VMX_MISC[bit 14] is 0). As mentioned in SDM,
-on these type of processors, execution of the VMXON instruction will
-clears IA32_RTIT_CTL.TraceEn and any attempt to write IA32_RTIT_CTL
-causes a general-protection exception (#GP).
+When sbi->segs_per_sec > 1, and if some segno has 0 valid blocks before
+gc starts, do_garbage_collect will skip counting seg_freed++, and this
+will cause seg_freed < sbi->segs_per_sec and finally skip sec_freed++.
 
-Signed-off-by: Luwei Kang <luwei.kang@intel.com>
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- arch/x86/kvm/vmx.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ fs/f2fs/gc.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index ed247dd..5001049 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -4556,7 +4556,8 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 		break;
- 	case MSR_IA32_RTIT_CTL:
- 		if ((pt_mode != PT_MODE_HOST_GUEST) ||
--			vmx_rtit_ctl_check(vcpu, data))
-+			vmx_rtit_ctl_check(vcpu, data) ||
-+			vmx->nested.vmxon)
- 			return 1;
- 		vmcs_write64(GUEST_IA32_RTIT_CTL, data);
- 		pt_set_intercept_for_msr(vmx, !(data & RTIT_CTL_TRACEEN));
-@@ -8760,6 +8761,11 @@ static int handle_vmon(struct kvm_vcpu *vcpu)
- 	if (ret)
- 		return ret;
+diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+index a07241f..57841e9 100644
+--- a/fs/f2fs/gc.c
++++ b/fs/f2fs/gc.c
+@@ -1130,9 +1130,9 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+ 					GET_SUM_BLOCK(sbi, segno));
+ 		f2fs_put_page(sum_page, 0);
  
-+	if (pt_mode == PT_MODE_HOST_GUEST) {
-+		vmx->pt_desc.guest.ctl = 0;
-+		pt_set_intercept_for_msr(vmx, 1);
-+	}
-+
- 	return nested_vmx_succeed(vcpu);
- }
+-		if (get_valid_blocks(sbi, segno, false) == 0 ||
+-				!PageUptodate(sum_page) ||
+-				unlikely(f2fs_cp_error(sbi)))
++		if (get_valid_blocks(sbi, segno, false) == 0)
++			goto freed;
++		if (!PageUptodate(sum_page) || unlikely(f2fs_cp_error(sbi)))
+ 			goto next;
  
+ 		sum = page_address(sum_page);
+@@ -1160,6 +1160,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+ 
+ 		stat_inc_seg_count(sbi, type, gc_type);
+ 
++freed:
+ 		if (gc_type == FG_GC &&
+ 				get_valid_blocks(sbi, segno, false) == 0)
+ 			seg_freed++;
 -- 
-1.8.3.1
+1.8.5.2
 
