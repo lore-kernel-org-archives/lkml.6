@@ -2,103 +2,117 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FE5CC004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 11:36:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BFBEC004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 11:36:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C314C207DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 11:36:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C314C207DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 33BC0207DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 11:36:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="B/t4Ch3A"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33BC0207DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727323AbeJXUDs (ORCPT
+        id S1727496AbeJXUEB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 16:03:48 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:37370 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726428AbeJXUDr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 16:03:47 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 3E2A253E32EE2;
-        Wed, 24 Oct 2018 19:35:58 +0800 (CST)
-Received: from huawei.com (10.113.189.234) by DGGEMS401-HUB.china.huawei.com
- (10.3.19.201) with Microsoft SMTP Server id 14.3.408.0; Wed, 24 Oct 2018
- 19:35:50 +0800
-From:   Yunlong Song <yunlong.song@huawei.com>
-To:     <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
-        <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
-CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
-        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] f2fs: only flush the single temp bio cache which owns the target page
-Date:   Wed, 24 Oct 2018 19:35:45 +0800
-Message-ID: <1540380945-18114-1-git-send-email-yunlong.song@huawei.com>
-X-Mailer: git-send-email 1.8.5.2
-In-Reply-To: <1540368651-14353-1-git-send-email-yunlong.song@huawei.com>
-References: <1540368651-14353-1-git-send-email-yunlong.song@huawei.com>
+        Wed, 24 Oct 2018 16:04:01 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:45987 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726898AbeJXUEB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 16:04:01 -0400
+Received: by mail-lf1-f67.google.com with SMTP id c24-v6so3673952lfi.12
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 04:36:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AVeS+IaZEJucHxYD9CONZhvJSuR9Scjsnhgk8X4pErA=;
+        b=B/t4Ch3ArzNOOb85n+w5yJIxPM1vokwwebNasEsNqlDDj/89FetVPb4X9jAZazKzNz
+         gf5XuM5KOKemCVAKQ49el6CFdtv97/SDpUi2hQgZ1kdVY3zm8QC+Cf/W4kY1eE5eAZbI
+         zipn859uwT1gzsVxsHqlrXYfXDOoZz/R3wNKY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=AVeS+IaZEJucHxYD9CONZhvJSuR9Scjsnhgk8X4pErA=;
+        b=jebAX48MhpxX2VxjMqV5kjKBvNMmE19spqlvAWoX21YxkmteCnOpVnFQxqDqP2y4Tm
+         yyyhrR9DwtusjlTm0xwroUyNyNxrP8OuUnruv+bmjCfnU9Wv6zK4QZGoNIqOAI/q0s+d
+         RjkX/CXSd8GfGRIjGj7iMpvJz9epywKN0uhZa6pSxVZye0VyKSB4J23l2hCqPGLbLRPC
+         Tzwkb2/mNUfDTuGTooBV36b0tO4Ai2+VQZylcvGey8Gae8GIPhXQbWCVNn8qSkhtTW/y
+         /nx4mpYWd9p5h10e3E+ZuGTRPWPT9f1/0LFWO0yKHsz9nUlk3pTozsP2Rbl5qjmLqo/b
+         6WKw==
+X-Gm-Message-State: AGRZ1gI4DCKsEY1YljYLm9lQETi/4KzYWYlPUS2xDtOnFAnMmtX7YpkN
+        GerGN67gSJxXpZBHdST5aTV/pA==
+X-Google-Smtp-Source: AJdET5ewVV4nOVx3Lco8FJd0VY/HYtAesmiANgFdHzOKE26ciutOfjwvHI7Cira4WQdyaYC/jSZfxA==
+X-Received: by 2002:a19:4345:: with SMTP id m5mr3223146lfj.142.1540380973365;
+        Wed, 24 Oct 2018 04:36:13 -0700 (PDT)
+Received: from khorivan (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
+        by smtp.gmail.com with ESMTPSA id 18-v6sm387016ljg.50.2018.10.24.04.36.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 24 Oct 2018 04:36:12 -0700 (PDT)
+Date:   Wed, 24 Oct 2018 14:36:10 +0300
+From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To:     grygorii.strashko@ti.com, davem@davemloft.net
+Cc:     linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alexander.h.duyck@intel.com
+Subject: Re: [RFC PATCH net-next 3/4] net: ethernet: ti: cpsw: fix vlan mcast
+Message-ID: <20181024113609.GC4892@khorivan>
+Mail-Followup-To: grygorii.strashko@ti.com, davem@davemloft.net,
+        linux-omap@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alexander.h.duyck@intel.com
+References: <20181016182035.18234-1-ivan.khoronzhuk@linaro.org>
+ <20181016182035.18234-4-ivan.khoronzhuk@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.113.189.234]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20181016182035.18234-4-ivan.khoronzhuk@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Previously, when f2fs finds which temp bio cache owns the target page,
-it will flush all the three temp bio caches, but we only need to flush
-one single bio cache indeed, which can help to keep bio merged.
+On Tue, Oct 16, 2018 at 09:20:34PM +0300, Ivan Khoronzhuk wrote:
+>At this moment, mcast addresses are added only for real device only
+>(reserved vlans for dual-emac mode), even if a mcast address was added
+>for some vlan only, thus ALE doesn't have corresponding vlan mcast
+>entries after vlan socket joined multicast group. So ALE drops vlan
+>frames with mcast addresses intended for vlans and potentially can
+>receive mcast frames for base ndev. That's not correct. So, fix it by
+>creating only vlan/mcast entries as requested. Patch doesn't use any
+>additional lists and is based on device mc address list and cpsw ALE
+>table entries.
+>
+>Also, move device to allmulti state if no space for new mcast entries.
+>
+>Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
----
- fs/f2fs/data.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+I won't update allmulti state on v2, will do that separately as it
+requires also splitting allmulti between interfaces in dual-mac mode.
+Would be nice to move allmulti and promisc to ndo_change_rx_flags()
+and do updates only if flag is changed, not for every address change.
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 106f116..882e217 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -396,13 +396,17 @@ static bool has_merged_page(struct f2fs_sb_info *sbi, struct inode *inode,
- }
- 
- static void __f2fs_submit_merged_write(struct f2fs_sb_info *sbi,
--				enum page_type type, enum temp_type temp)
-+				struct inode *inode, struct page *page, nid_t ino,
-+				enum page_type type, enum temp_type temp, bool force)
- {
- 	enum page_type btype = PAGE_TYPE_OF_BIO(type);
- 	struct f2fs_bio_info *io = sbi->write_io[btype] + temp;
- 
- 	down_write(&io->io_rwsem);
- 
-+	if (!force && !__has_merged_page(io, inode, page, ino))
-+		goto out;
-+
- 	/* change META to META_FLUSH in the checkpoint procedure */
- 	if (type >= META_FLUSH) {
- 		io->fio.type = META_FLUSH;
-@@ -412,6 +416,7 @@ static void __f2fs_submit_merged_write(struct f2fs_sb_info *sbi,
- 			io->fio.op_flags |= REQ_PREFLUSH | REQ_FUA;
- 	}
- 	__submit_merged_bio(io);
-+out:
- 	up_write(&io->io_rwsem);
- }
- 
-@@ -426,7 +431,7 @@ static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
- 
- 	for (temp = HOT; temp < NR_TEMP_TYPE; temp++) {
- 
--		__f2fs_submit_merged_write(sbi, type, temp);
-+		__f2fs_submit_merged_write(sbi, inode, page, ino, type, temp, force);
- 
- 		/* TODO: use HOT temp only for meta pages now. */
- 		if (type >= META)
+Also there is an ability to set allmulti per vlan device and even
+dev->allmulti counter can be used for that and it works, but in case
+of allmulti flag there is no event from dev core if it's already set
+(only allmuilti counter is changed w/o event). Thus no event to
+segregate it between vlans. Adding update to dev core can lead to
+more frequent rx_mode event and w/o reason for those devices who
+doesn't care. I'm just wondering, why not to add smth like
+IFF_VLAN_MCAST_FLT to dev->priv_flags and based on it generate
+event differently or even do more stuff ....
+
+Or leave it as is and set allmulti for every vlan, that seems
+like a stub.
+
+[...]
+
 -- 
-1.8.5.2
-
+Regards,
+Ivan Khoronzhuk
