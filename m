@@ -7,65 +7,67 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD355C46475
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:16:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FBF5C46475
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:17:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F8D92075D
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:16:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B02FA2075D
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:17:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BaYTpkJk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F8D92075D
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Oq9hBHjf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B02FA2075D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726570AbeJXLmJ (ORCPT
+        id S1726732AbeJXLnN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 07:42:09 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:42295 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726111AbeJXLmJ (ORCPT
+        Wed, 24 Oct 2018 07:43:13 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41167 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725979AbeJXLnN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 07:42:09 -0400
-Received: by mail-pl1-f193.google.com with SMTP id t6-v6so1533314plo.9
-        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 20:16:03 -0700 (PDT)
+        Wed, 24 Oct 2018 07:43:13 -0400
+Received: by mail-pg1-f193.google.com with SMTP id 23-v6so1623860pgc.8
+        for <linux-kernel@vger.kernel.org>; Tue, 23 Oct 2018 20:17:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=x3TkIvHwvCjsIkU3sKcEr0f0Buh80YycqFypCbU48lY=;
-        b=BaYTpkJkfDCPE22hiEj2T6aYyKWQVy0xqr6auW5gRrdEvHuBuFE+TBJDGiqZ6uocEp
-         qAPAOdYAdMJIVtyuw4TL6GZiPJjdUv2N/zAmBfqvIo+dFpoAJrOEW2cNWxwGAv/aLq65
-         OF3cp2eIIy7w8OqfTtRmwH+6iWNQLxb5TlcpY=
+        bh=sLIRKsPeonK/zKq59N3XJK3GG96UNWulOAZhs9ex8SY=;
+        b=Oq9hBHjfqen+WJ1439fJed/MhzNLjcC79qA5qQHQAIMzaws1C8fAIf3VfOarEvwhWT
+         r5J0q+QWxIrpKpO+5x8i/nZxWbf/4AY1bcFhLVCiKwSzy3gcM8vMH0Bp0p7QpIAlXrvQ
+         b6nIHrhDtzRLebe1aQipDiaNzS22jPD9vdXOk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=x3TkIvHwvCjsIkU3sKcEr0f0Buh80YycqFypCbU48lY=;
-        b=qTeyKpyTUxYZNjnIW9HY86Zp0P6A5nWonjsfD2atUNAqq9ruq2WvhPBl9AtLiR1dpj
-         a1w4F8//Hy2lew0kx678PhUum5XRAlA/RZWnRdUWpRvwjet52ZUmNJu9JV9XuwrYKvaW
-         8ZwEtWHlnNGe9TNGDoa98qibZ6+XWdWioM6rpS0QorDTRF455Oh5hj+8omNxYHURFz27
-         NnHm4XS5EpCUs5jg55E+NO7JV/UlNeA3yNxTwDP2Mkq4+roYtXeEbxANa6aH76+PKdrG
-         iXhI2+LZF7iLCVF5RQbt4BBDUsVHypdCKXT20Ro59Au1hFR3lIFRFvUJDVsDBb+gaeus
-         gXUQ==
-X-Gm-Message-State: AGRZ1gIzx6ypxpDUkIlAty7BCT6DUateMg14ugnlEFCTjrzug8JMLnSf
-        vQi7rfKoWHIPSLmXBvYZxxV5nsO0CPg=
-X-Google-Smtp-Source: AJdET5dX9M7nx58hng1Vad3i3IQEdWQ5QAyUfM1Gy41vKuy3A4M0Of8NXer3XRA7QvJwQ5x9yJI9ng==
-X-Received: by 2002:a17:902:850b:: with SMTP id bj11-v6mr606340plb.107.1540344704862;
-        Tue, 23 Oct 2018 18:31:44 -0700 (PDT)
+        bh=sLIRKsPeonK/zKq59N3XJK3GG96UNWulOAZhs9ex8SY=;
+        b=s4mAa2SsbAOJcPtboSdYa03XxQzlhpBpG4xWjcPitu7s5aNgmsw1h8heng4qs9Q1dV
+         ATAcPhJlv5dQ4/8FmkHgi2PJ9PKg/fig7Mi9TuI4Z2JSoHBNwGPQGr+7vndneRhOH2yu
+         FPxJke4JeZlquCjrfSHBO/VpZHr2Xhm3XNFXgICE467k7zLvuB8Ks20E5SMShRHCoY/R
+         tcweYf/D2GIG5/E76ybtqIEakSrLL2Eo0auxKciBIyQESrW0AN5qFgii2sW5Kt3uJcct
+         UIt7cfoWrgjVeOKswSJD8dhbzcMnpCXoZQ0itlrSnjUtuCCZNSvn10SZYb59dZYY/f3a
+         YPng==
+X-Gm-Message-State: AGRZ1gKE6XAaMB+TPYnr26feCbYTh5WWNFb7nXUQhnzDbAl5UZRN18jw
+        9ueS76LRcO/9sxnRAaWpKP7O78mz44o=
+X-Google-Smtp-Source: AJdET5dNnQkWHsNuX1YpS5kddgO8he+p0IDdFMXZpwCjVhiBwvyf1ZDsSHKsxalh3KxPcd51MJp1CA==
+X-Received: by 2002:a63:fa4e:: with SMTP id g14-v6mr640117pgk.18.1540344702043;
+        Tue, 23 Oct 2018 18:31:42 -0700 (PDT)
 Received: from exogeni.mtv.corp.google.com ([2620:15c:202:1:5e2b:39df:72ed:4968])
-        by smtp.gmail.com with ESMTPSA id p4-v6sm3882341pfg.188.2018.10.23.18.31.43
+        by smtp.gmail.com with ESMTPSA id p4-v6sm3882341pfg.188.2018.10.23.18.31.40
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 23 Oct 2018 18:31:44 -0700 (PDT)
+        Tue, 23 Oct 2018 18:31:41 -0700 (PDT)
 From:   Derek Basehore <dbasehore@chromium.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org,
         sboyd@kernel.org, mturquette@baylibre.com, heiko@sntech.de,
         aisheng.dong@nxp.com, mchehab+samsung@kernel.org, corbet@lwn.net,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
         Derek Basehore <dbasehore@chromium.org>
-Subject: [PATCH 3/6] clk: change rates via list iteration
-Date:   Tue, 23 Oct 2018 18:31:29 -0700
-Message-Id: <20181024013132.115907-4-dbasehore@chromium.org>
+Subject: [PATCH 1/6] clk: Remove recursion in clk_core_{prepare,enable}()
+Date:   Tue, 23 Oct 2018 18:31:27 -0700
+Message-Id: <20181024013132.115907-2-dbasehore@chromium.org>
 X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
 In-Reply-To: <20181024013132.115907-1-dbasehore@chromium.org>
 References: <20181024013132.115907-1-dbasehore@chromium.org>
@@ -76,407 +78,198 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This changes the clk_set_rate code to use lists instead of recursion.
-While making this change, also add error handling for clk_set_rate.
-This means that errors in the set_rate/set_parent/set_rate_and_parent
-functions will not longer be ignored. When an error occurs, the clk
-rates and parents are reset, unless an error occurs here, in which we
-bail and cross our fingers.
+From: Stephen Boyd <sboyd@codeaurora.org>
 
+Enabling and preparing clocks can be written quite naturally with
+recursion. We start at some point in the tree and recurse up the
+tree to find the oldest parent clk that needs to be enabled or
+prepared. Then we enable/prepare and return to the caller, going
+back to the clk we started at and enabling/preparing along the
+way.
+
+The problem is recursion isn't great for kernel code where we
+have a limited stack size. Furthermore, we may be calling this
+code inside clk_set_rate() which also has recursion in it, so
+we're really not looking good if we encounter a tall clk tree.
+
+Let's create a stack instead by looping over the parent chain and
+collecting clks of interest. Then the enable/prepare becomes as
+simple as iterating over that list and calling enable.
+
+Cc: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 Signed-off-by: Derek Basehore <dbasehore@chromium.org>
 ---
- drivers/clk/clk.c | 225 +++++++++++++++++++++++++++++++---------------
- 1 file changed, 153 insertions(+), 72 deletions(-)
+ drivers/clk/clk.c | 113 ++++++++++++++++++++++++++--------------------
+ 1 file changed, 64 insertions(+), 49 deletions(-)
 
 diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 61de8ad3e4cf..1db44b4e46b0 100644
+index af011974d4ec..95d818f5edb2 100644
 --- a/drivers/clk/clk.c
 +++ b/drivers/clk/clk.c
-@@ -42,6 +42,13 @@ static LIST_HEAD(clk_notifier_list);
- 
- /***    private data structures    ***/
- 
-+struct clk_change {
-+	struct list_head	change_list;
-+	unsigned long		rate;
-+	struct clk_core		*core;
-+	struct clk_core		*parent;
-+};
-+
- struct clk_core {
- 	const char		*name;
- 	const struct clk_ops	*ops;
-@@ -52,11 +59,9 @@ struct clk_core {
- 	const char		**parent_names;
- 	struct clk_core		**parents;
- 	u8			num_parents;
--	u8			new_parent_index;
- 	unsigned long		rate;
- 	unsigned long		req_rate;
--	unsigned long		new_rate;
--	struct clk_core		*new_parent;
-+	struct clk_change	change;
- 	struct clk_core		*new_child;
- 	unsigned long		flags;
- 	bool			orphan;
-@@ -1719,20 +1724,53 @@ static int __clk_speculate_rates(struct clk_core *core,
- 
- static void clk_calc_subtree(struct clk_core *core)
+@@ -71,6 +71,8 @@ struct clk_core {
+ 	struct hlist_head	children;
+ 	struct hlist_node	child_node;
+ 	struct hlist_head	clks;
++	struct list_head	prepare_list;
++	struct list_head	enable_list;
+ 	unsigned int		notifier_count;
+ #ifdef CONFIG_DEBUG_FS
+ 	struct dentry		*dentry;
+@@ -740,49 +742,48 @@ EXPORT_SYMBOL_GPL(clk_unprepare);
+ static int clk_core_prepare(struct clk_core *core)
  {
--	struct clk_core *child;
-+	LIST_HEAD(tmp_list);
- 
--	hlist_for_each_entry(child, &core->children, child_node) {
--		child->new_rate = clk_recalc(child, core->new_rate);
--		clk_calc_subtree(child);
-+	list_add(&core->change.change_list, &tmp_list);
-+	while (!list_empty(&tmp_list)) {
-+		struct clk_change *change = list_first_entry(&tmp_list,
-+				struct clk_change, change_list);
-+		struct clk_core *tmp = change->core;
-+		struct clk_core *child;
-+
-+		hlist_for_each_entry(child, &tmp->children, child_node) {
-+			child->change.rate = clk_recalc(child,
-+					tmp->change.rate);
-+			list_add_tail(&child->change.change_list, &tmp_list);
-+		}
-+
-+		list_del_init(&change->change_list);
-+	}
-+}
-+
-+static void clk_prepare_changes(struct list_head *change_list,
-+				struct clk_core *core)
-+{
-+	LIST_HEAD(tmp_list);
-+
-+	list_add(&core->change.change_list, &tmp_list);
-+	while (!list_empty(&tmp_list)) {
-+		struct clk_change *change = list_first_entry(&tmp_list,
-+				struct clk_change, change_list);
-+		struct clk_core *tmp = change->core;
-+		struct clk_core *child;
-+
-+		hlist_for_each_entry(child, &tmp->children, child_node)
-+			list_add_tail(&child->change.change_list, &tmp_list);
-+
-+		child = tmp->new_child;
-+		if (child)
-+			list_add_tail(&child->change.change_list, &tmp_list);
-+
-+		list_move_tail(&tmp->change.change_list, change_list);
- 	}
- }
- 
- static void clk_set_change(struct clk_core *core, unsigned long new_rate,
--			   struct clk_core *new_parent, u8 p_index)
-+			   struct clk_core *new_parent)
- {
--	core->new_rate = new_rate;
--	core->new_parent = new_parent;
--	core->new_parent_index = p_index;
-+	core->change.rate = new_rate;
-+	core->change.parent = new_parent;
- 	/* include clk in new parent's PRE_RATE_CHANGE notifications */
- 	core->new_child = NULL;
- 	if (new_parent && new_parent != core->parent)
-@@ -1752,7 +1790,6 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
- 	unsigned long new_rate;
- 	unsigned long min_rate;
- 	unsigned long max_rate;
--	int p_index = 0;
- 	long ret;
- 
- 	/* sanity */
-@@ -1788,14 +1825,13 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
- 			return NULL;
- 	} else if (!parent || !(core->flags & CLK_SET_RATE_PARENT)) {
- 		/* pass-through clock without adjustable parent */
--		core->new_rate = core->rate;
- 		return NULL;
- 	} else {
- 		/* pass-through clock with adjustable parent */
- 		top = clk_calc_new_rates(parent, rate);
--		new_rate = parent->new_rate;
-+		new_rate = parent->change.rate;
- 		hlist_for_each_entry(child, &parent->children, child_node)
--			child->new_rate = clk_recalc(child, new_rate);
-+			child->change.rate = clk_recalc(child, new_rate);
- 		goto out;
- 	}
- 
-@@ -1807,25 +1843,16 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
- 		return NULL;
- 	}
- 
--	/* try finding the new parent index */
--	if (parent && core->num_parents > 1) {
--		p_index = clk_fetch_parent_index(core, parent);
--		if (p_index < 0) {
--			pr_debug("%s: clk %s can not be parent of clk %s\n",
--				 __func__, parent->name, core->name);
--			return NULL;
--		}
--	}
--
- 	if ((core->flags & CLK_SET_RATE_PARENT) && parent &&
- 	    best_parent_rate != parent->rate) {
- 		top = clk_calc_new_rates(parent, best_parent_rate);
- 		hlist_for_each_entry(child, &parent->children, child_node)
--			child->new_rate = clk_recalc(child, parent->new_rate);
-+			child->change.rate = clk_recalc(child,
-+					parent->change.rate);
- 	}
- 
- out:
--	clk_set_change(core, new_rate, parent, p_index);
-+	clk_set_change(core, new_rate, parent);
- 
- 	return top;
- }
-@@ -1841,18 +1868,18 @@ static struct clk_core *clk_propagate_rate_change(struct clk_core *core,
- 	struct clk_core *child, *tmp_clk, *fail_clk = NULL;
- 	int ret = NOTIFY_DONE;
- 
--	if (core->rate == core->new_rate)
-+	if (core->rate == core->change.rate)
- 		return NULL;
- 
- 	if (core->notifier_count) {
--		ret = __clk_notify(core, event, core->rate, core->new_rate);
-+		ret = __clk_notify(core, event, core->rate, core->change.rate);
- 		if (ret & NOTIFY_STOP_MASK)
- 			fail_clk = core;
- 	}
- 
- 	hlist_for_each_entry(child, &core->children, child_node) {
- 		/* Skip children who will be reparented to another clock */
--		if (child->new_parent && child->new_parent != core)
-+		if (child->change.parent && child->change.parent != core)
- 			continue;
- 		tmp_clk = clk_propagate_rate_change(child, event);
- 		if (tmp_clk)
-@@ -1873,28 +1900,30 @@ static struct clk_core *clk_propagate_rate_change(struct clk_core *core,
-  * walk down a subtree and set the new rates notifying the rate
-  * change on the way
-  */
--static void clk_change_rate(struct clk_core *core)
-+static int clk_change_rate(struct clk_change *change)
- {
--	struct clk_core *child;
--	struct hlist_node *tmp;
-+	struct clk_core *core = change->core;
- 	unsigned long old_rate;
- 	unsigned long best_parent_rate = 0;
- 	bool skip_set_rate = false;
--	struct clk_core *old_parent;
-+	struct clk_core *old_parent = NULL;
- 	struct clk_core *parent = NULL;
-+	int p_index;
-+	int ret = 0;
- 
- 	old_rate = core->rate;
- 
--	if (core->new_parent) {
--		parent = core->new_parent;
--		best_parent_rate = core->new_parent->rate;
-+	if (change->parent) {
-+		parent = change->parent;
-+		best_parent_rate = parent->rate;
- 	} else if (core->parent) {
- 		parent = core->parent;
--		best_parent_rate = core->parent->rate;
-+		best_parent_rate = parent->rate;
- 	}
- 
--	if (clk_pm_runtime_get(core))
--		return;
-+	ret = clk_pm_runtime_get(core);
-+	if (ret)
-+		return ret;
- 
- 	if (core->flags & CLK_SET_RATE_UNGATE) {
- 		unsigned long flags;
-@@ -1905,35 +1934,55 @@ static void clk_change_rate(struct clk_core *core)
- 		clk_enable_unlock(flags);
- 	}
- 
--	if (core->new_parent && core->new_parent != core->parent) {
--		old_parent = __clk_set_parent_before(core, core->new_parent);
--		trace_clk_set_parent(core, core->new_parent);
-+	if (core->flags & CLK_OPS_PARENT_ENABLE)
-+		clk_core_prepare_enable(parent);
-+
-+	if (parent != core->parent) {
-+		p_index = clk_fetch_parent_index(core, parent);
-+		if (p_index < 0) {
-+			pr_debug("%s: clk %s can not be parent of clk %s\n",
-+				 __func__, parent->name, core->name);
-+			ret = p_index;
-+			goto out;
-+		}
-+		old_parent = __clk_set_parent_before(core, parent);
-+
-+		trace_clk_set_parent(core, change->parent);
- 
- 		if (core->ops->set_rate_and_parent) {
- 			skip_set_rate = true;
--			core->ops->set_rate_and_parent(core->hw, core->new_rate,
-+			ret = core->ops->set_rate_and_parent(core->hw,
-+					change->rate,
- 					best_parent_rate,
--					core->new_parent_index);
-+					p_index);
- 		} else if (core->ops->set_parent) {
--			core->ops->set_parent(core->hw, core->new_parent_index);
-+			ret = core->ops->set_parent(core->hw, p_index);
- 		}
- 
--		trace_clk_set_parent_complete(core, core->new_parent);
--		__clk_set_parent_after(core, core->new_parent, old_parent);
--	}
-+		trace_clk_set_parent_complete(core, change->parent);
-+		__clk_set_parent_after(core, change->parent, old_parent);
-+		if (ret)
-+			goto out;
- 
--	if (core->flags & CLK_OPS_PARENT_ENABLE)
--		clk_core_prepare_enable(parent);
-+	}
- 
--	trace_clk_set_rate(core, core->new_rate);
-+	trace_clk_set_rate(core, change->rate);
- 
- 	if (!skip_set_rate && core->ops->set_rate)
--		core->ops->set_rate(core->hw, core->new_rate, best_parent_rate);
-+		ret = core->ops->set_rate(core->hw, change->rate,
-+				best_parent_rate);
- 
--	trace_clk_set_rate_complete(core, core->new_rate);
-+	trace_clk_set_rate_complete(core, change->rate);
- 
- 	core->rate = clk_recalc(core, best_parent_rate);
- 
-+out:
-+	if (core->flags & CLK_OPS_PARENT_ENABLE)
-+		clk_core_disable_unprepare(parent);
-+
-+	if (core->notifier_count && old_rate != core->rate)
-+		__clk_notify(core, POST_RATE_CHANGE, old_rate, core->rate);
-+
- 	if (core->flags & CLK_SET_RATE_UNGATE) {
- 		unsigned long flags;
- 
-@@ -1943,31 +1992,44 @@ static void clk_change_rate(struct clk_core *core)
- 		clk_core_unprepare(core);
- 	}
- 
--	if (core->flags & CLK_OPS_PARENT_ENABLE)
--		clk_core_disable_unprepare(parent);
--
--	if (core->notifier_count && old_rate != core->rate)
--		__clk_notify(core, POST_RATE_CHANGE, old_rate, core->rate);
-+	clk_pm_runtime_put(core);
- 
- 	if (core->flags & CLK_RECALC_NEW_RATES)
--		(void)clk_calc_new_rates(core, core->new_rate);
-+		(void)clk_calc_new_rates(core, change->rate);
- 
- 	/*
--	 * Use safe iteration, as change_rate can actually swap parents
--	 * for certain clock types.
-+	 * Keep track of old parent and requested rate in case we have
-+	 * to undo the change due to an error.
- 	 */
--	hlist_for_each_entry_safe(child, tmp, &core->children, child_node) {
--		/* Skip children who will be reparented to another clock */
--		if (child->new_parent && child->new_parent != core)
--			continue;
--		clk_change_rate(child);
-+	change->parent = old_parent;
-+	change->rate = old_rate;
-+	return ret;
-+}
-+
-+static int clk_change_rates(struct list_head *list)
-+{
-+	struct clk_change *change, *tmp;
-+	int ret = 0;
-+
-+	list_for_each_entry(change, list, change_list) {
-+		ret = clk_change_rate(change);
-+		if (ret)
-+			goto err;
- 	}
- 
--	/* handle the new child who might not be in core->children yet */
--	if (core->new_child)
--		clk_change_rate(core->new_child);
-+	return 0;
-+err:
-+	list_for_each_entry_safe_continue(change, tmp, list, change_list)
-+		list_del_init(&change->change_list);
- 
--	clk_pm_runtime_put(core);
-+	list_for_each_entry(change, list, change_list) {
-+		/* Give up. Driver might want to shutdown/reboot. */
-+		ret = clk_change_rate(change);
-+		if (WARN_ON(ret))
-+			return ret;
-+	}
-+
-+	return ret;
- }
- 
- static unsigned long clk_core_req_round_rate_nolock(struct clk_core *core,
-@@ -2001,7 +2063,9 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
- 				    unsigned long req_rate)
- {
- 	struct clk_core *top, *fail_clk;
-+	struct clk_change *change, *tmp;
- 	unsigned long rate;
-+	LIST_HEAD(changes);
  	int ret = 0;
++	struct clk_core *tmp, *parent;
++	LIST_HEAD(head);
  
- 	if (!core)
-@@ -2028,6 +2092,9 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+ 	lockdep_assert_held(&prepare_lock);
  
- 	clk_calc_subtree(core);
+-	if (!core)
+-		return 0;
++	while (core) {
++		list_add(&core->prepare_list, &head);
++		/* Stop once we see a clk that is already prepared */
++		if (core->prepare_count)
++			break;
++		core = core->parent;
++	}
  
-+	/* Construct the list of changes */
-+	clk_prepare_changes(&changes, top);
-+
- 	/* notify that we are about to change rates */
- 	fail_clk = clk_propagate_rate_change(top, PRE_RATE_CHANGE);
- 	if (fail_clk) {
-@@ -2039,7 +2106,19 @@ static int clk_core_set_rate_nolock(struct clk_core *core,
+-	if (core->prepare_count == 0) {
+-		ret = clk_pm_runtime_get(core);
+-		if (ret)
+-			return ret;
++	list_for_each_entry_safe(core, tmp, &head, prepare_list) {
++		list_del_init(&core->prepare_list);
+ 
+-		ret = clk_core_prepare(core->parent);
+-		if (ret)
+-			goto runtime_put;
++		if (core->prepare_count == 0) {
++			ret = clk_pm_runtime_get(core);
++			if (ret)
++				goto err;
+ 
+-		trace_clk_prepare(core);
++			trace_clk_prepare(core);
+ 
+-		if (core->ops->prepare)
+-			ret = core->ops->prepare(core->hw);
++			if (core->ops->prepare)
++				ret = core->ops->prepare(core->hw);
+ 
+-		trace_clk_prepare_complete(core);
++			trace_clk_prepare_complete(core);
+ 
+-		if (ret)
+-			goto unprepare;
++			if (ret) {
++				clk_pm_runtime_put(core);
++				goto err;
++			}
++		}
++		core->prepare_count++;
  	}
  
- 	/* change the rates */
--	clk_change_rate(top);
-+	ret = clk_change_rates(&changes);
-+	list_for_each_entry_safe(change, tmp, &changes, change_list) {
-+		change->rate = 0;
-+		change->parent = NULL;
-+		list_del_init(&change->change_list);
-+	}
-+
-+	if (ret) {
-+		pr_debug("%s: failed to set %s rate via top clk %s\n", __func__,
-+				core->name, top->name);
-+		clk_propagate_rate_change(top, ABORT_RATE_CHANGE);
-+		goto err;
+-	core->prepare_count++;
+-
+-	/*
+-	 * CLK_SET_RATE_GATE is a special case of clock protection
+-	 * Instead of a consumer claiming exclusive rate control, it is
+-	 * actually the provider which prevents any consumer from making any
+-	 * operation which could result in a rate change or rate glitch while
+-	 * the clock is prepared.
+-	 */
+-	if (core->flags & CLK_SET_RATE_GATE)
+-		clk_core_rate_protect(core);
+-
+ 	return 0;
+-unprepare:
+-	clk_core_unprepare(core->parent);
+-runtime_put:
+-	clk_pm_runtime_put(core);
++err:
++	parent = core->parent;
++	list_for_each_entry_safe_continue(core, tmp, &head, prepare_list)
++		list_del_init(&core->prepare_list);
++	clk_core_unprepare(parent);
+ 	return ret;
+ }
+ 
+@@ -878,37 +879,49 @@ EXPORT_SYMBOL_GPL(clk_disable);
+ static int clk_core_enable(struct clk_core *core)
+ {
+ 	int ret = 0;
++	struct clk_core *tmp, *parent;
++	LIST_HEAD(head);
+ 
+ 	lockdep_assert_held(&enable_lock);
+ 
+-	if (!core)
+-		return 0;
+-
+-	if (WARN(core->prepare_count == 0,
+-	    "Enabling unprepared %s\n", core->name))
+-		return -ESHUTDOWN;
++	while (core) {
++		list_add(&core->enable_list, &head);
++		/* Stop once we see a clk that is already enabled */
++		if (core->enable_count)
++			break;
++		core = core->parent;
 +	}
  
- 	core->req_rate = req_rate;
- err:
-@@ -3306,6 +3385,8 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+-	if (core->enable_count == 0) {
+-		ret = clk_core_enable(core->parent);
++	list_for_each_entry_safe(core, tmp, &head, enable_list) {
++		list_del_init(&core->enable_list);
+ 
+-		if (ret)
+-			return ret;
++		if (WARN_ON(core->prepare_count == 0)) {
++			ret = -ESHUTDOWN;
++			goto err;
++		}
+ 
+-		trace_clk_enable_rcuidle(core);
++		if (core->enable_count == 0) {
++			trace_clk_enable_rcuidle(core);
+ 
+-		if (core->ops->enable)
+-			ret = core->ops->enable(core->hw);
++			if (core->ops->enable)
++				ret = core->ops->enable(core->hw);
+ 
+-		trace_clk_enable_complete_rcuidle(core);
++			trace_clk_enable_complete_rcuidle(core);
+ 
+-		if (ret) {
+-			clk_core_disable(core->parent);
+-			return ret;
++			if (ret)
++				goto err;
+ 		}
++
++		core->enable_count++;
+ 	}
+ 
+-	core->enable_count++;
+ 	return 0;
++err:
++	parent = core->parent;
++	list_for_each_entry_safe_continue(core, tmp, &head, enable_list)
++		list_del_init(&core->enable_list);
++	clk_core_disable(parent);
++	return ret;
+ }
+ 
+ static int clk_core_enable_lock(struct clk_core *core)
+@@ -3281,6 +3294,8 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+ 	core->num_parents = hw->init->num_parents;
+ 	core->min_rate = 0;
  	core->max_rate = ULONG_MAX;
- 	INIT_LIST_HEAD(&core->prepare_list);
- 	INIT_LIST_HEAD(&core->enable_list);
-+	INIT_LIST_HEAD(&core->change.change_list);
-+	core->change.core = core;
++	INIT_LIST_HEAD(&core->prepare_list);
++	INIT_LIST_HEAD(&core->enable_list);
  	hw->core = core;
  
  	/* allocate local copy in case parent_names is __initdata */
