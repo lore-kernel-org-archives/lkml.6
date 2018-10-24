@@ -2,124 +2,104 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A51DDC004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:40:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 063FBC67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:41:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 749692082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:40:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 749692082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arcx.com
+	by mail.kernel.org (Postfix) with ESMTP id AFA3120832
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:41:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UGzJJbKd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFA3120832
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727189AbeJXXIu (ORCPT
+        id S1727201AbeJXXJu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 19:08:50 -0400
-Received: from mail.arcx.com ([184.94.50.18]:27680 "EHLO WEBMAIL.arcx.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726423AbeJXXIc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 19:08:32 -0400
-X-Greylist: delayed 906 seconds by postgrey-1.27 at vger.kernel.org; Wed, 24 Oct 2018 19:08:27 EDT
-Received: from svens-asus.arcx.com (192.168.2.132) by WEBMAIL.arcx.com
- (192.168.2.64) with Microsoft SMTP Server (TLS) id 15.0.847.32; Wed, 24 Oct
- 2018 10:26:18 -0400
-From:   Sven Van Asbroeck <svendev@arcx.com>
-To:     <svendev@arcx.com>, <lee.jones@linaro.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <afaerber@suse.de>, <treding@nvidia.com>,
-        <david@lechnology.com>, <noralf@tronnes.org>, <johan@kernel.org>,
-        <monstr@monstr.eu>, <michal.vokac@ysoft.com>, <arnd@arndb.de>,
-        <gregkh@linuxfoundation.org>, <john.garry@huawei.com>,
-        <andriy.shevchenko@linux.intel.com>, <geert+renesas@glider.be>,
-        <robin.murphy@arm.com>, <paul.gortmaker@windriver.com>,
-        <sebastien.bourdelin@savoirfairelinux.com>, <icenowy@aosc.io>,
-        <yuanzhichang@hisilicon.com>, <stuyoder@gmail.com>,
-        <linus.walleij@linaro.org>, <maxime.ripard@bootlin.com>,
-        <bogdan.purcareata@nxp.com>
-CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH anybus v1 2/4] dt-bindings: anybus-bridge: document devicetree binding.
-Date:   Wed, 24 Oct 2018 10:24:54 -0400
-Message-ID: <20181024142456.10084-3-svendev@arcx.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181024142456.10084-1-svendev@arcx.com>
-References: <20181024142456.10084-1-svendev@arcx.com>
+        Wed, 24 Oct 2018 19:09:50 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:46590 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726423AbeJXXJu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 19:09:50 -0400
+Received: by mail-yb1-f196.google.com with SMTP id o8-v6so2209270ybk.13;
+        Wed, 24 Oct 2018 07:41:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=cwRjKzQG2ZoEfLmqMundxMJxuVwlDB8jke5Q5JJhsNU=;
+        b=UGzJJbKd8F3qC8ufxlmGH6HrUQtrJaFt3x9z0GYzQz4HC+E4a0otfj+qAIVqMVIPBT
+         caEC2x4xQY4EBMPSnxK9X+bUC2qabNhQguRZAa7vvj0liGEInjtyJYLzs6m1XO4EfRhP
+         IcnD2fDgejAJ5lbL/wS8qy5lK3Guj1jjLc5xKdy5ajg6GrhNcUL0P9IUcvKZQ3418JFs
+         Qg9NwNoAN9ZeVWchceNX9JmuLPvef/zrwpk6Kme4wigNyZF3/iaotbxuyaVus/YIj0Bw
+         TgL+FlsXDwlJSBHPaQjjIf4Z9MxVaQDejDD1iAJjCI/mLTeDRVp/SoIrjnEUXxNG19B1
+         RhgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=cwRjKzQG2ZoEfLmqMundxMJxuVwlDB8jke5Q5JJhsNU=;
+        b=czFeok8suY3pIXvkXs9VuLGrqTehaFZtCJv7pUNlR6xdeH/xWYE6b2STgrixegmUI7
+         Kd5bHpw8Luq0gXELUeJ5aGMpLF4uoORltoJIiizmZbvuEgW7dRBniyg+kfZ8u9aE4IVK
+         llp9m4hPyRtypVWYH4vapkROxde8ES4OLsXBcfmAYRT4oIIAx7m3rOXfrmVs8XALTRP9
+         Zt59waxFIEVu3FHNdX4hI1cos85sGjOVDV4qzvshYr8qoSxvaQxg3lgI155EiVWNE7eS
+         Vk4fhuQXgQlBueyTIeaHj6mCMMF8abdj7KZALaZAypwUWtUmQTDaFPhqe68eqVgmHVCf
+         3gFQ==
+X-Gm-Message-State: AGRZ1gLHv7FPNEHfkxSzUI/Ki1sSOkWMlhl4jnYT415LZXXCQ+27uIPH
+        rLc9UTZ4lIkuD8RaViCJipeiIRyQM6fInYa6uoJlMVWz
+X-Google-Smtp-Source: AJdET5cmNHRiFn0lFPDUKjICOj/jaftpeYoYXtAqgaKtSBfWUJGfzOuTzD3T7SvWCmekafrCNjuTpA5QAoAtJ4HahS4=
+X-Received: by 2002:a25:5555:: with SMTP id j82-v6mr2529477ybb.337.1540392086894;
+ Wed, 24 Oct 2018 07:41:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [192.168.2.132]
-X-ClientProxiedBy: webmail.arcx.com (192.168.2.64) To WEBMAIL.arcx.com
- (192.168.2.64)
+References: <20181023201953.GA15687@pathfinder> <20181024130206.GC11606@thunk.org>
+In-Reply-To: <20181024130206.GC11606@thunk.org>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 24 Oct 2018 17:41:15 +0300
+Message-ID: <CAOQ4uxhGGZv52Ch2NjxOFt35KsFpja=jCk-x8jBNZcxRe9OoYA@mail.gmail.com>
+Subject: Re: [RFC][PATCH v3 01/10] fs: common implementation of file type
+To:     Theodore Tso <tytso@mit.edu>,
+        Phillip Potter <phil@philpotter.co.uk>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds devicetree binding documentation for the
-Arcx anybus bridge.
+On Wed, Oct 24, 2018 at 4:02 PM Theodore Y. Ts'o <tytso@mit.edu> wrote:
+>
+> On Tue, Oct 23, 2018 at 09:19:53PM +0100, Phillip Potter wrote:
+> > diff --git a/include/linux/file_type.h b/include/linux/file_type.h
+>
+> Shouldn't this be in include/uapi/linux/fs_types.h?
+>
 
-Signed-off-by: Sven Van Asbroeck <svendev@arcx.com>
----
- .../bindings/mfd/arcx,anybus-bridge.txt       | 37 +++++++++++++++++++
- .../devicetree/bindings/vendor-prefixes.txt   |  1 +
- 2 files changed, 38 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mfd/arcx,anybus-bridge.txt
+IDGI. Why do we want this file in uapi?
+The DT_ constants are already defined by glibc dirent.h
+and the FT_ constants and macros we don't want to expose
+to uapi at all. Right?
 
-diff --git a/Documentation/devicetree/bindings/mfd/arcx,anybus-bridge.txt b/Documentation/devicetree/bindings/mfd/arcx,anybus-bridge.txt
-new file mode 100644
-index 000000000000..3c0399c4ed45
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mfd/arcx,anybus-bridge.txt
-@@ -0,0 +1,37 @@
-+* Arcx anybus bridge
-+
-+This chip communicates with the SoC over the WEIM bus. It is
-+expected that its Device Tree node is specified as the child of a node
-+corresponding to the WEIM bus used for communication.
-+
-+Required properties:
-+
-+  - compatible : The following chip-specific string:
-+        "arcx,anybus-bridge"
-+
-+  - reg :
-+	weim memory area where the cpld registers are located,	followed by:
-+	weim memory area of the first  anybus-s slot,		followed by:
-+	weim memory area of the second anybus-s slot.
-+
-+  - enable-gpios : the gpio connected to the bridge's 'enable gpio'.
-+
-+  - pwms : the pwm connected to the bridge's 'pwm input'.
-+
-+  - irq-gpios : the gpios connected to the bridge's interrupt lines.
-+	note that there is no need to provide the 'interrupts' property here.
-+
-+Example of usage:
-+
-+&weim {
-+	bridge@0,0 {
-+		compatible = "arcx,anybus-bridge";
-+		reg = <0 0 0x100>, <0 0x400000 0x800>, <1 0x400000 0x800>;
-+		fsl,weim-cs-timing = <0x024400b1 0x00001010 0x20081100
-+				0x00000000 0xa0000240 0x00000000>;
-+		enable-gpios = <&gpio5 2 GPIO_ACTIVE_HIGH>;
-+		pwms = <&pwm3 0 571>;
-+		irq-gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>,
-+					<&gpio1 5 GPIO_ACTIVE_HIGH>;
-+	};
-+};
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index 2c3fc512e746..1bf07b20a8af 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -35,6 +35,7 @@ aptina	Aptina Imaging
- arasan	Arasan Chip Systems
- archermind ArcherMind Technology (Nanjing) Co., Ltd.
- arctic	Arctic Sand
-+arcx	Arcx/Archronix Inc.
- aries	Aries Embedded GmbH
- arm	ARM Ltd.
- armadeus	ARMadeus Systems SARL
--- 
-2.17.1
+Maybe all we need is a comment above DT_ constants
+that those are defined by POSIX and in glibc dirent.h?
 
+> One of things which must be made crystal clear is these definitions
+> MUST NOT ever change.  It would break the Userspace ABI, and would
+> break file systems on-disk format.
+>
+> It might also be useful to be clear *why* we are making this change in
+> the first place.  Code refactorization is good from a code maintenance
+> perspective (either to fix bugs, although this code is pretty
+> trivial),
+
+Very trivial code that has had an out of bounds access bug for two
+decades and bug was duplicated to 7 filesystems. IMO, fixing the bug in
+one place instead of 7 is a good enough reason for re-factoring.
+
+Thanks,
+Amir.
