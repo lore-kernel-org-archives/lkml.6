@@ -2,122 +2,230 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADFD8C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:54:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4C0BC004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:55:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62B262075D
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:54:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62B262075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 81FDC2075D
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:55:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JmAUZPze";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JmAUZPze"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81FDC2075D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727063AbeJXXXD (ORCPT
+        id S1727121AbeJXXYU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 19:23:03 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:35356 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726852AbeJXXXD (ORCPT
+        Wed, 24 Oct 2018 19:24:20 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51144 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726457AbeJXXYU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 19:23:03 -0400
-Received: by mail-ot1-f68.google.com with SMTP id 14so5316059oth.2;
-        Wed, 24 Oct 2018 07:54:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5gsgGgBe2ayl8tVgI96Uzufi9WAt/ExPaCGGCjQQkQY=;
-        b=QdZzi/T03wjr+89qD+Dg9zncsIeKtbF+DU3rZvSdXQ0O/I4OWk8rODcFipyT8adLvR
-         lewbzcRr0q0DrpDZ7cw0zS/qk/Fv98xnRAmstlPTqR21i1cxZRGdnDMEiV+5E/cnI+JN
-         Ntp5MUYFuOB20aE9srzoaQISbGVpS8W1jpZoa2jKUeuBYzeu353/CAyKLtwnlseUoiVO
-         IXC/ZEf1gmXHQMNjDtDVPSzpzD0x+L6TM3+zHAqrXESSxeoLl3Q5PW3vAoZIWr37Q60x
-         ILPg1pjULxp6emhjGSh3QJ6qW08UL01g9bKerUkoxlHccq4DilwisN65BFWaC6IMIemn
-         7wcg==
-X-Gm-Message-State: AGRZ1gJEd5BLytiKWelBoHrHuspLAdZejLFZg2x00Chr3Q84gpWs5n4a
-        eFhK2WKUzX07aWgJ84frVQ==
-X-Google-Smtp-Source: AJdET5dHmPsj2iE+vFzTn1p0Co7bBqI12lSUwWBixi4q7wTXcnCWQslWrLfqIKQnoZ1vZ926vlVxMg==
-X-Received: by 2002:a9d:7519:: with SMTP id r25mr1435984otk.231.1540392876333;
-        Wed, 24 Oct 2018 07:54:36 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id u43sm1704128otf.56.2018.10.24.07.54.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 24 Oct 2018 07:54:35 -0700 (PDT)
-Date:   Wed, 24 Oct 2018 09:54:34 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Dan Murphy <dmurphy@ti.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, jacek.anaszewski@gmail.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-leds@vger.kernel.org, lee.jones@linaro.org, tony@atomide.com
-Subject: Re: [PATCH v4 2/7] dt-bindings: ti-lmu: Modify dt bindings for the
- LM3697
-Message-ID: <20181024145434.GC9327@bogus>
-References: <20181023170623.31820-1-dmurphy@ti.com>
- <20181023170623.31820-2-dmurphy@ti.com>
- <20181024090421.GB24997@amd>
- <e8800c2e-8ada-7a0d-c1a6-14ddcbe1576d@ti.com>
+        Wed, 24 Oct 2018 19:24:20 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 90F4560C5F; Wed, 24 Oct 2018 14:55:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540392953;
+        bh=5qxJ1ECucaLRVbkAyvJ/6cvvyESt93lQXolXbKd1ddk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=JmAUZPzepi0UZdMgs10RmQbJPvXGDSfbvaPHcV0RRs1Pjt+7UMCQGiIEs5ZEq+Pnc
+         hwnEtFCI+L6+cYa7PpdRFO98/AzRjeKLScOIDQHJZr+7nO2TMjDhZHW8BfsALtWLPX
+         /GGyZxWtg5XLWMk0hygPn7GVKcwBHFT0MEFzNyBE=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 060DF60246;
+        Wed, 24 Oct 2018 14:55:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540392953;
+        bh=5qxJ1ECucaLRVbkAyvJ/6cvvyESt93lQXolXbKd1ddk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=JmAUZPzepi0UZdMgs10RmQbJPvXGDSfbvaPHcV0RRs1Pjt+7UMCQGiIEs5ZEq+Pnc
+         hwnEtFCI+L6+cYa7PpdRFO98/AzRjeKLScOIDQHJZr+7nO2TMjDhZHW8BfsALtWLPX
+         /GGyZxWtg5XLWMk0hygPn7GVKcwBHFT0MEFzNyBE=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e8800c2e-8ada-7a0d-c1a6-14ddcbe1576d@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Wed, 24 Oct 2018 20:25:52 +0530
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     Marcel Holtmann <marcel@holtmann.org>
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
+        linux-arm-msm@vger.kernel.org,
+        Harish Bandi <c-hbandi@codeaurora.org>
+Subject: Re: [PATCH v2] Bluetooth: hci_qca: Add support for controller debug
+ logs.
+In-Reply-To: <A1A25EBE-925D-4952-AE5E-4A6C2BA6FD9E@holtmann.org>
+References: <20181003151144.10537-1-bgodavar@codeaurora.org>
+ <2206464E-FA01-4A5A-8BC4-5CF70A0B9765@holtmann.org>
+ <eca6c8832017269881709e51eadcf543@codeaurora.org>
+ <EC27FDED-638A-4055-A861-C4AAD842F124@holtmann.org>
+ <fed90ab28af93bc27a07c0b4e8ca933c@codeaurora.org>
+ <01616379-E0FF-49AC-8C69-DA498DA9F51F@holtmann.org>
+ <540262ec6c6f1c5f3a9baf18b6f40d47@codeaurora.org>
+ <9261133E-226E-42E7-B2F6-15489CCC7CF1@holtmann.org>
+ <b59f1fdb359f74bcd3d932339c41f9f3@codeaurora.org>
+ <A1A25EBE-925D-4952-AE5E-4A6C2BA6FD9E@holtmann.org>
+Message-ID: <9cd7bbd5c6d620399f4562ec4f406725@codeaurora.org>
+X-Sender: bgodavar@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 07:07:57AM -0500, Dan Murphy wrote:
-> Pavel
-> 
-> On 10/24/2018 04:04 AM, Pavel Machek wrote:
-> > Hi!
-> > 
-> >> The LM3697 is a single function LED driver. The single function LED
-> >> driver needs to reside in the LED directory as a dedicated LED driver
-> >> and not as a MFD device.  The device does have common brightness and ramp
-> > 
-> > So it is single function LED driver. That does not mean it can not
-> > share bindings with the rest. Where the bindings live is not imporant.
-> > 
-> 
-> It can share bindings that are correctly done, not ones that are incomplete and incorrect.
-> 
-> Where bindings live is important to new Linux kernel developers and product 
-> developers looking for the proper documentation on the H/W bindings.
-> 
-> >> reside in the Documentation/devicetree/bindings/leds directory and follow the
-> >> current LED and general bindings guidelines.
-> > 
-> > What you forgot to tell us in the changelog:
-> 
-> I can add this to the changelog.
-> 
-> > 
-> >> +Optional child properties:
-> >> +	- runtime-ramp-up-msec: Current ramping from one brightness level to
-> >> +				the a higher brightness level.
-> >> +				Range from 2048 us - 117.44 s
-> > 
-> > The other binding uses "ramp-up-msec". Tell us why you are changing this, or
-> > better don't change things needlessly.
-> > 
-> > We don't want to be using "runtime-ramp-up-msec" for one device and
-> > "ramp-up-msec" for the other.
-> 
-> This is another example of how the original bindings were incorrect and misleading.
-> 
-> The LM3697 have 2 ramp implementations that can be used.
-> 
-> Startup/Shutdown ramp and Runtime Ramp.  Same Ramp rates different registers and
-> different end user experience.
-> 
-> So having a single node call ramp-up-msec is misleading and it does not
-> indicate what the H/W will do.
+Hi Balakrishna,
 
-The existing ones aren't documented (present in the example is not 
-documented). This seems like something that should be common rather than 
-TI specific. Though it also seems more like something the user would 
-want to control (i.e. sysfs) rather than fixed in DT.
+On 2018-10-18 13:28, Marcel Holtmann wrote:
+> Hi Balakrishna,
+> 
+>>>>>>>>>> This patch will prevent error messages splashing on console.
+>>>>>>>>>> [   78.426697] Bluetooth: hci_core.c:hci_acldata_packet() 
+>>>>>>>>>> hci0: ACL packet for unknown connection handle 3804
+>>>>>>>>>> [   78.436682] Bluetooth: hci_core.c:hci_acldata_packet() 
+>>>>>>>>>> hci0: ACL packet for unknown connection handle 3804
+>>>>>>>>>> [   78.446639] Bluetooth: hci_core.c:hci_acldata_packet() 
+>>>>>>>>>> hci0: ACL packet for unknown connection handle 3804
+>>>>>>>>>> [   78.456596] Bluetooth: hci_core.c:hci_acldata_packet() 
+>>>>>>>>>> hci0: ACL packet for unknown connection handle 3804
+>>>>>>>>>> QCA wcn3990 will send the debug logs in the form of ACL 
+>>>>>>>>>> packets.
+>>>>>>>>>> While decoding packet in qca_recv(), marking the received 
+>>>>>>>>>> debug log
+>>>>>>>>>> packet as diagnostic packet.
+>>>>>>>>>> Signed-off-by: Harish Bandi <c-hbandi@codeaurora.org>
+>>>>>>>>>> Signed-off-by: Balakrishna Godavarthi 
+>>>>>>>>>> <bgodavar@codeaurora.org>
+>>>>>>>>>> ---
+>>>>>>>>>> v2:
+>>>>>>>>>> * Addressed reviewer comments.
+>>>>>>>>>> v1:
+>>>>>>>>>> * initial patch
+>>>>>>>>>> ---
+>>>>>>>>>> drivers/bluetooth/hci_qca.c | 20 +++++++++++++++++++-
+>>>>>>>>>> 1 file changed, 19 insertions(+), 1 deletion(-)
+>>>>>>>>>> diff --git a/drivers/bluetooth/hci_qca.c 
+>>>>>>>>>> b/drivers/bluetooth/hci_qca.c
+>>>>>>>>>> index d98ed0442201..63ac3c6b4149 100644
+>>>>>>>>>> --- a/drivers/bluetooth/hci_qca.c
+>>>>>>>>>> +++ b/drivers/bluetooth/hci_qca.c
+>>>>>>>>>> @@ -63,6 +63,10 @@
+>>>>>>>>>> /* susclk rate */
+>>>>>>>>>> #define SUSCLK_RATE_32KHZ	32768
+>>>>>>>>>> +/* Controller debug log header */
+>>>>>>>>>> +#define QCA_DEBUG_HDR_MSB	0xDC
+>>>>>>>>>> +#define QCA_DEBUG_HDR_LSB	0x2E
+>>>>>>>>>> +
+>>>>>>>>> since this is actually the ACL handle, why not call it 
+>>>>>>>>> QCA_DEBUG_HANDLE.
+>>>>>>>> [Bala]: will update.
+>>>>>>>>>> /* HCI_IBS transmit side sleep protocol states */
+>>>>>>>>>> enum tx_ibs_states {
+>>>>>>>>>> 	HCI_IBS_TX_ASLEEP,
+>>>>>>>>>> @@ -849,6 +853,20 @@ static int qca_ibs_wake_ack(struct 
+>>>>>>>>>> hci_dev *hdev, struct sk_buff *skb)
+>>>>>>>>>> 	return 0;
+>>>>>>>>>> }
+>>>>>>>>>> +static int qca_recv_acl_data(struct hci_dev *hdev, struct 
+>>>>>>>>>> sk_buff *skb)
+>>>>>>>>>> +{
+>>>>>>>>>> +	/* We receive debug logs from chip as an ACL packets.
+>>>>>>>>>> +	 * Instead of sending the data to ACL to decode the
+>>>>>>>>>> +	 * received data, we are pushing them to the above layers
+>>>>>>>>>> +	 * as a diagnostic packet.
+>>>>>>>>>> +	 */
+>>>>>>>>>> +	if ((skb->len > 2) && (skb->data[0] == QCA_DEBUG_HDR_MSB) &&
+>>>>>>>>>> +	    (skb->data[1] == QCA_DEBUG_HDR_LSB))
+>>>>>>>>> Skip the individual () since they are not needed. Also the 
+>>>>>>>>> skb->len
+>>>>>>>>> check is not needed since the H4_RECV_ACL already ensures the 
+>>>>>>>>> proper
+>>>>>>>>> length of the header.
+>>>>>>>>> And just use get_unaligned_le16(skb->data) here (or be16 if 
+>>>>>>>>> that is
+>>>>>>>>> the byte order).
+>>>>>>>> [Bala] : will update condition with _le16()
+>>>>>>>>>> +		return hci_recv_diag(hdev, skb);
+>>>>>>>>> Is there any reason to keep the 4 octets hci_acl_hdr with this 
+>>>>>>>>> SKB? Or
+>>>>>>>>> would it be better to be stripped off. Mainly asking are they 
+>>>>>>>>> any
+>>>>>>>>> other magic handles that we might want to feed through the diag
+>>>>>>>>> channel?
+>>>>>>>> [Bala]: yes we need header in the stack, to  differentiate 
+>>>>>>>> between actual diagnostic packet and debug packet.
+>>>>>>> please explain that a bit more. There is just one debug handle or 
+>>>>>>> do
+>>>>>>> you have more special handles?
+>>>>>> [Bala]: Qualcomm bluetooth chip sends the debug data of the chip 
+>>>>>> with ACL header along with fixed handler i.e. 0x2edc..
+>>>>>>      this handler is dedicated for the debug logs sent by qcomm bt 
+>>>>>> chip and it is not used for any other connection handlers.
+>>>>>>      so here we are checking this handler and sending to stack as 
+>>>>>> an
+>>>>>>      a diagnostic packet.. so during the log capture we will read 
+>>>>>> this diagnostic packet and handler,to decode the debug packet.
+>>>>>>      that is the  reason why we don't remove handler during 
+>>>>>> condition check,  in future, if qualcomm chip sends diagnostic 
+>>>>>> packet,
+>>>>>>      then this will create an problem to upper layers to decide 
+>>>>>> whether it is an diagnostic packet or the debug packet.
+>>>>>>     this is how we do it.
+>>>>>>    if( diagnostic packet && handler == 0x2edc)
+>>>>>>       treat them as an ddebug packet
+>>>>>>    else
+>>>>>>        treat as diagnostic packet.
+>>>>> let me interpret this answer. Besides debug handle 0x2edc, there 
+>>>>> are
+>>>>> other handles that are not connection handles. And in future 
+>>>>> updates
+>>>>> you want to send these handles also via hci_recv_diag channel.
+>>>> No, 0x2edc is an dedicated handle for debug logs, i don't really 
+>>>> think they we will have an new handle coming up.
+>>>> this is only the handle we will send via hci_recv_diag channel to 
+>>>> the stack.
+>>>> what i mean in my previous answer was,we don't to remove debug 
+>>>> connection handle from the skb, because in the stack
+>>>> we look for a diagnostic packet and debug connection handler to 
+>>>> decode the message.
+>>> if 0x2edc is the only magic connection handle, then lets strip the 
+>>> SKB
+>>> of the ACL packet header and send only the payload to via
+>>> hci_recv_diag. All the information is present and you would be just
+>>> sending the ACL packet header for no reason. The diagnostic packets
+>>> get a separate channel on the monitor interface.
+>> [Bala]: even we the felt the same to remove ACL packet header before 
+>> sending to stack via an diagnostic channel,
+>> 
+>>        here is the case, let us assume that an in future qaulcomm bt 
+>> chip want to send diagnosis data as a diagnostic packet.
+>>        if we remove ACL header for ACL debug packet, how can the stack 
+>> differentiate between debug packet and diagnosis packet.
+> 
+> fair enough. Can we also do the same for the other Qualcomm / Atheros
+> devices on USB and SMD bus? And what about implementing hdev->set_diag
+> to enable / disable sending of debug logs. And of course the addition
+> to btmon to decode the diagnostic channel.
+> 
+[Bala]:
+        Does thing change need to be done for other Qualcomm/Atheros 
+device on USB and smd:  For the legacy Qualcomm/Atheros Chips 
+(Rome/AR30x2/AR30x3), they don’t have this ACL data debug log feature.
+        hdev->set_diag implementation to enable or disable the debug logs 
+from controller: will study further and get back to you on this
+        Qualcomm specific file in Bluez stack to decode the bypassed 
+debug packets in btmon: soon we will be posting the parsing file.
 
-Rob
+
+> Regards
+> 
+> Marcel
+
+-- 
+Regards
+Balakrishna.
