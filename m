@@ -2,121 +2,124 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA9BC004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 09:45:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29AE8C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 09:46:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 625AE2082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 09:45:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DC7WR3UU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 625AE2082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DA6C22082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 09:46:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA6C22082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726865AbeJXSM0 (ORCPT
+        id S1727089AbeJXSNl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 14:12:26 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:39766 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726258AbeJXSM0 (ORCPT
+        Wed, 24 Oct 2018 14:13:41 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:50114 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726426AbeJXSNl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 14:12:26 -0400
-Received: by mail-yw1-f67.google.com with SMTP id v1-v6so1797187ywv.6;
-        Wed, 24 Oct 2018 02:45:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=y2imPrQBCleSfuoYb57UDpMgu4SBmSZqDInqIhK1wD8=;
-        b=DC7WR3UUhYcwtC2hflCwUMcGVakio78s15rq22jDRcSuQiTWwMquQwTGS/iFzas+7+
-         TU943tO2UzMK8UYGfhWtVAMO/owhGptoj2Q1bfYOOKykFB7c8Y/2updCKZjynJUokXZh
-         pZWTrmd8KIyx4vzI73tkhE7sdfBg8Qe7nay+QEeDeX4tygdPh525+XXEjrMEuCxDDXuN
-         3JUlA7HQ703tsFYAQFYzZZeTbAxTZMfnj+a0achkOPbIWasAiOZuVLHt8eBtM/857cyn
-         VpLxfn/9YcaoQHqFfeedFFXettEsZHT9O14/uh3JC5eJU5fFPKnZ6a0wgMO+cuzW7KwW
-         EWuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=y2imPrQBCleSfuoYb57UDpMgu4SBmSZqDInqIhK1wD8=;
-        b=IiXFOKYBbGNYncBo2NoQcWNtNboxjD6dpA1N3roFuEE942HnqG5kJfORBQPE8eVJ7P
-         +PAlgjv2ibD7OW6MjAJizKRsVWZrurSwKM1LKZhwaOrWAoROt4elFI25+po8heyHh3ZM
-         e/tPJEfWulQkE3/2Xzd58x9cB0eLTzIiyFK9mA0D6e2RLFinosI2a/lUWOGu+p30tCH3
-         Mp7quo+CgXepBRdNpl593cnkc/1SU7AJM7Y1HEYjTbm90TjglnNW0BZWWwUQzLyafCRc
-         hT1AgDnXmnsgPwPBXuh/tMZfDC4YzBs4jLcKksSY4phn6DuR+m/GtDZP1RvfaS9uGlBy
-         o6ug==
-X-Gm-Message-State: AGRZ1gL2RWWA1m7HumrXgkRzCFsz176F3P3GQvshrCry/2tdWd77yYiR
-        cFb5B+jj3jhOrvURowemrrPnrYb2weqWD5Pc4Ow=
-X-Google-Smtp-Source: AJdET5fe8UyEC7PnlBa86AcY/nTwc9A1I1xDPidiEpyJoM4L3GV8YUOKlbUlP29aZEFvOF5NQWu9NgqaAa1P6X+qbHs=
-X-Received: by 2002:a0d:d181:: with SMTP id t123-v6mr1408902ywd.241.1540374301186;
- Wed, 24 Oct 2018 02:45:01 -0700 (PDT)
+        Wed, 24 Oct 2018 14:13:41 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 3BA9380765; Wed, 24 Oct 2018 11:46:13 +0200 (CEST)
+Date:   Wed, 24 Oct 2018 11:46:13 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Nick Hu <nickhu@andestech.com>
+Cc:     Greentime Ying-Han =?utf-8?B?SHUo6IOh6Iux5ryiKQ==?= 
+        <greentime@andestech.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "deanbo422@gmail.com" <deanbo422@gmail.com>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "jason@lakedaemon.net" <jason@lakedaemon.net>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        Zong Zong-Xian =?utf-8?B?TGko5p2O5a6X5oayKQ==?= 
+        <zong@andestech.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        Alan Quey-Liang =?utf-8?B?S2FvKOmrmOmtgeiJryk=?= 
+        <alankao@andestech.com>, "green.hu@gmail.com" <green.hu@gmail.com>
+Subject: Re: [PATCH 1/1] nds32: Power management for nds32
+Message-ID: <20181024094613.GA25773@amd>
+References: <cover.1540349342.git.nickhu@andestech.com>
+ <ccc18702a8d93c0a31e46f53c498b6d34c9c17e1.1540349342.git.nickhu@andestech.com>
+ <20181024065117.GA18779@amd>
+ <20181024093843.GA18476@andestech.com>
 MIME-Version: 1.0
-References: <20181023201953.GA15687@pathfinder> <CAOQ4uxjfChxZyAUiYKQ-UiVjmxsosR+KG1ZSBu2TOeuAX3vJnA@mail.gmail.com>
- <20181024082134.GA14565@pathfinder> <CAOQ4uxjQwE2nhS7KccL_P+jUnz4vGwTpxjQquvbaZ0zZpJqGtA@mail.gmail.com>
- <20181024093103.GA19623@pathfinder>
-In-Reply-To: <20181024093103.GA19623@pathfinder>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 24 Oct 2018 12:44:50 +0300
-Message-ID: <CAOQ4uxjyTtjPk1OaWCSKs3Larqog+vmqLSth1kKWdOA5oRTtAA@mail.gmail.com>
-Subject: Re: [RFC][PATCH v3 01/10] fs: common implementation of file type
-To:     Phillip Potter <phil@philpotter.co.uk>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="FL5UXtIhxfXey3p5"
+Content-Disposition: inline
+In-Reply-To: <20181024093843.GA18476@andestech.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 12:31 PM Phillip Potter <phil@philpotter.co.uk> wrote:
->
-> On Wed, Oct 24, 2018 at 12:20:14PM +0300, Amir Goldstein wrote:
-> > On Wed, Oct 24, 2018 at 11:21 AM Phillip Potter <phil@philpotter.co.uk> wrote:
-> > > Dear Amir,
-> > >
-> > > Yes, I applied each patch manually to my tree, fixed it up where needed,
-> > > then after rebuilding and testing each one I committed it and regenerated
-> > > each patch. Thank you very much for your advice, I will take it into
-> > > account and make the necessary changes. In the meantime, do I add other
-> > > tags in the order they are received also (such as Reviewed-by:) and am
-> > > I safe to add these in when I re-send the patches with the changes you
-> > > and others have suggested (or would that offend people that have
-> > > offered the tags)?
-> > >
-> >
-> > Reviewed-by before of after Signed-off-by.
-> > I prefer Signed-off-by last which conceptually covers the entire patch,
-> > the commit message including all the review tags that you may have added.
-> >
-> > Some developers add Reviewed-by after Signed-off-by signifying the
-> > order that things happened, so choose your own preference.
-> >
-> > As a reviewer, and I speak only for myself, if I offered my Reviewed-by
-> > I expect it to be removed if a future revision of the patch has changed
-> > so I have an indication of patches that I need to re-review.
-> > But if the patch changed very lightly, like small edits to commit message
-> > and code nits in general, that would not invalidate my review.
-> > When in doubt, you can always explicitly ask the reviewer.
-> >
-> > Thanks,
-> > Amir.
->
-> Dear Amir,
->
-> Thanks - I am just going to fix up the commit messages as you suggested
-> using git am etc. The content of the patches themselves will not change
-> (until further feedback is received).
->
 
-Well, I did request to change some content (the location and the comment
-above BUILD_BUG_ON section) which is relevant for several patches.
-However, so far affected patched did not get any Reviewed-by.
+--FL5UXtIhxfXey3p5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> > Can we get rid of "is_bit_1" array here, and use normal bit operations
+> > on another variable here?
+> >
+> Do you mean like this:
+>=20
+>  static int nointc_set_wake(struct irq_data *data, unsigned int on)  {
+>         unsigned long int_mask =3D __nds32__mfsr(NDS32_SR_INT_MASK);
+>         static unsigned long irq_orig_bit =3D 0;
+>         u32 bit =3D 1 << data->hwirq;
+>=20
+>         if (on) {
+>                 if (int_mask & bit)
+>                         __assign_bit(data->hwirq, &irq_orig_bit, true);
+>                 else
+>                         __assign_bit(data->hwirq, &irq_orig_bit, false);
+> =20
+>                 __assign_bit(data->hwirq, &int_mask, true);
+>                 __assign_bit(data->hwirq, &wake_mask, true);
+>=20
+>         } else {
+>                 if (!(irq_orig_bit & bit))
+>                         __assign_bit(data->hwirq, &int_mask, false);
+>=20
+>                 __assign_bit(data->hwirq, &wake_mask, false);
+>                 __assign_bit(data->hwirq, &irq_orig_bit, false);
+>         }
+>=20
+>         __nds32__mtsr_dsb(int_mask, NDS32_SR_INT_MASK);
+> =20
+>         return 0;
+
+Yes, that is better. You don't need =3D 0 on static variable
+afaict. (And may want to put it out of a function so it stands out).=20
+
+You can add my Acked-by on resulting patch.
 
 Thanks,
-Amir.
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--FL5UXtIhxfXey3p5
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvQP2UACgkQMOfwapXb+vJXwACfSdiA+90qawZRRQRvxxDC0LK2
+U74An0bjc/fSIkbk2JG3erC5eZSr/PDu
+=PSUH
+-----END PGP SIGNATURE-----
+
+--FL5UXtIhxfXey3p5--
