@@ -3,49 +3,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86CF0C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:55:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75BC9C67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:56:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EDC22064A
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:55:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EDC22064A
+	by mail.kernel.org (Postfix) with ESMTP id 1E6682082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:56:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E6682082F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727179AbeJXWX7 (ORCPT
+        id S1727199AbeJXWYt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 18:23:59 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:36184 "EHLO
+        Wed, 24 Oct 2018 18:24:49 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:37032 "EHLO
         mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726285AbeJXWX7 (ORCPT
+        with ESMTP id S1726285AbeJXWYt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 18:23:59 -0400
-Received: by mail-oi1-f194.google.com with SMTP id p125-v6so4141193oic.3;
-        Wed, 24 Oct 2018 06:55:46 -0700 (PDT)
+        Wed, 24 Oct 2018 18:24:49 -0400
+Received: by mail-oi1-f194.google.com with SMTP id e17-v6so4127511oib.4;
+        Wed, 24 Oct 2018 06:56:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fiJT+PXuu5nSTtdksmSq/lMOiZtjPnbxTjw1oSyhdsA=;
-        b=LcU38wSUzbrwQI0L6+TCQ2VjuBEw7SIs1+Z4UbaQrRjrkbNNzr66e3sIQBW+goEkSn
-         nixrzCVx2yEvWgdb0zJ92ffXyQZtSsWq/7E+xAcGZqzXslgRtHSyIGRoAQXnUCgDNkCH
-         6V+R9j64ALnEtK/I/uvS51dll3aaK162s6bCSu3Rj6mqi7rdAAVLrSeHFG4t841L8bua
-         4DtW3EN0Xznofog2xbqV6DKsjTpqTdQmqbMgLiKDSaHg5blZVYQblNg3xVocD8UcCysh
-         pLYratXQdSlFBQZP/2LJqiDoIEMJOm8GbiAA5fcWqBsznQZppsPMc9w224C/U2hcHRAi
-         dFrw==
-X-Gm-Message-State: AGRZ1gIZH2t6A5yzEoOAhkS9KfyRmjnjrpNb3DQWrRW5x/6u6nt7mvUY
-        7GoMrO8GmixDtbaWo675vg==
-X-Google-Smtp-Source: AJdET5di/uvVsA4y6AtBrVTpfMVTxr/dPgqYj1+XBoFjopseY84aGiOqY4slyqykYQPzohzYkHovSA==
-X-Received: by 2002:aca:ed57:: with SMTP id l84-v6mr1413988oih.188.1540389345366;
-        Wed, 24 Oct 2018 06:55:45 -0700 (PDT)
+        bh=nY2TGgNHrBcJVwcbT8yBBXw3agKmjMSEoy9OPBO8Yg8=;
+        b=noHJaL2ZgOcHZjhZrJIaNmKx8kyE3a32m6Dk5wvDTyppPp3x6iPYrVfJKKrQ2++M1D
+         b8sB1d+MUP9uFitBmUhTYFzD35uW4IU2F7sdcnm0db76sTLQ4gZuVEvNFQGMjaxxz/6m
+         nHPCj1wlxUO/PhxcSGy8M3lLJm24QyPlzJZQdVyhGiJIWrCWh0wGDhAU0h4hZMJ8jFN6
+         UgaYTvjHIb3p56jeiBeIgpIa3kjdhwJ4EZW8ZZZrMHvwT10qSoy76Wm4IfXXG2N1K0rF
+         nJ/jq5Le6P1/T+0xHE5JmDQ++ocFaS94/kGnBZRA+jAjFJN+BfiPUyaces/f4OwtZHOw
+         B63Q==
+X-Gm-Message-State: AGRZ1gJVHDsVnL2SEE7/xoJOdSXrQLMLf6grLKP9MReMJF9tJ5KPuHxw
+        pWws3u9RwuSsIotlgTsE/cS1KS8=
+X-Google-Smtp-Source: AJdET5c0TFrweTeLjXfCKcXnfudiLoVwKCiAMNidfPcarIP45mN5V1d2mWl7AVzuNaXxehoPKEn8Zw==
+X-Received: by 2002:aca:efd6:: with SMTP id n205-v6mr1379843oih.3.1540389394703;
+        Wed, 24 Oct 2018 06:56:34 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id s83-v6sm1383073oia.9.2018.10.24.06.55.44
+        by smtp.gmail.com with ESMTPSA id r17sm1770645otb.65.2018.10.24.06.56.34
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 24 Oct 2018 06:55:44 -0700 (PDT)
-Date:   Wed, 24 Oct 2018 08:55:44 -0500
+        Wed, 24 Oct 2018 06:56:34 -0700 (PDT)
+Date:   Wed, 24 Oct 2018 08:56:33 -0500
 From:   Rob Herring <robh@kernel.org>
 To:     Oskari Lemmela <oskari@lemmela.net>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
@@ -59,28 +59,27 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org,
         linux-iio@vger.kernel.org
-Subject: Re: [PATCH v5 03/11] dt-bindings: gpio: gpio-axp209: add AXP803 GPIO
- bindings
-Message-ID: <20181024135544.GA31518@bogus>
+Subject: Re: [PATCH v5 04/11] dt-bindings: iio: adc: add AXP803 ADC bindings
+Message-ID: <20181024135633.GA342@bogus>
 References: <20181023185330.10472-1-oskari@lemmela.net>
- <20181023185330.10472-4-oskari@lemmela.net>
+ <20181023185330.10472-5-oskari@lemmela.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181023185330.10472-4-oskari@lemmela.net>
+In-Reply-To: <20181023185330.10472-5-oskari@lemmela.net>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 23 Oct 2018 21:53:22 +0300, Oskari Lemmela wrote:
-> The AXP803 GPIO is compatible with AXP813 GPIO, but add
+On Tue, 23 Oct 2018 21:53:23 +0300, Oskari Lemmela wrote:
+> The AXP803 ADC is compatible with AXP813 ADC, but add
 > specific compatible for it.
 > 
 > Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
 > ---
->  Documentation/devicetree/bindings/gpio/gpio-axp209.txt | 2 ++
+>  Documentation/devicetree/bindings/iio/adc/axp20x_adc.txt | 2 ++
 >  1 file changed, 2 insertions(+)
 > 
 
