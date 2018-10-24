@@ -2,122 +2,107 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C42C67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:39:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E65C67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:48:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C840206B5
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:39:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C840206B5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 6BDF02082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:48:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tbFcP9XS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BDF02082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727466AbeJXRGc (ORCPT
+        id S1727502AbeJXRPK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 13:06:32 -0400
-Received: from smtprelay0032.hostedemail.com ([216.40.44.32]:52395 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726732AbeJXRGc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 13:06:32 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay05.hostedemail.com (Postfix) with ESMTP id 5E838180585F3;
-        Wed, 24 Oct 2018 08:39:21 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: board99_34568bc2f9c0a
-X-Filterd-Recvd-Size: 3639
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf18.hostedemail.com (Postfix) with ESMTPA;
-        Wed, 24 Oct 2018 08:39:19 +0000 (UTC)
-Message-ID: <02a1bfc2eed324f3d03aa4a7b5eb6fde4e4a3bdd.camel@perches.com>
-Subject: Re: [PATCH] mm: convert totalram_pages, totalhigh_pages and
- managed_pages to atomic.
-From:   Joe Perches <joe@perches.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Arun KS <arunks@codeaurora.org>, Kees Cook <keescook@chromium.org>,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>, Minchan Kim <minchan@kernel.org>,
-        Arun Sudhilal <getarunks@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Date:   Wed, 24 Oct 2018 01:39:18 -0700
-In-Reply-To: <20181024082312.GD18839@dhcp22.suse.cz>
-References: <1540229092-25207-1-git-send-email-arunks@codeaurora.org>
-         <c57bcc584b3700c483b0311881ec3ae8786f88b1.camel@perches.com>
-         <15247f54-53f3-83d4-6706-e9264b90ca7a@yandex-team.ru>
-         <CAGXu5j+NsDHRWA5PKAKeJCO_oiGkFAUeWE8O-1fEBQX80MDu1A@mail.gmail.com>
-         <7a4fcbaee7efb71d2a3c6b403c090db4@codeaurora.org>
-         <20181024061546.GY18839@dhcp22.suse.cz>
-         <0e1fc40af360ed55fd32784f6973af5940232f99.camel@perches.com>
-         <20181024082312.GD18839@dhcp22.suse.cz>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 24 Oct 2018 13:15:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54392 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727219AbeJXRPJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 13:15:09 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D73192081B;
+        Wed, 24 Oct 2018 08:47:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540370878;
+        bh=QVhTGzw5V0Wa+4cI2tp1Taqfs+xvEq+hJgmPBgiJkho=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=tbFcP9XSggjZWhp1hnq7/25ntDOKn+6L1oHHpiK2kMKfvx0dJGWOs7XNOnOeyXrKv
+         keoLBKfbAry3UHCeXM0hJWxKEIclwmQCMwrIQHM6QuuT45uvMuiWI1TNSO0hBBBATw
+         AmjQ3WmH2uIVOOXTTktEYo3aNF/6IQhAeI5vaxH0=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <ffb2e431-95a2-b5fc-34ee-432e101379a4@amlogic.com>
+Cc:     Yixun Lan <yixun.lan@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>, linux-clk@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com>
+ <1539839245-13793-4-git-send-email-jianxin.pan@amlogic.com>
+ <153988282130.5275.17528969137837015544@swboyd.mtv.corp.google.com>
+ <ffb2e431-95a2-b5fc-34ee-432e101379a4@amlogic.com>
+Message-ID: <154037087711.53599.12246779227164118041@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v5 3/3] clk: meson: add sub MMC clock controller driver
+Date:   Wed, 24 Oct 2018 01:47:57 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-10-24 at 10:23 +0200, Michal Hocko wrote:
-> On Tue 23-10-18 23:26:16, Joe Perches wrote:
-> > On Wed, 2018-10-24 at 08:15 +0200, Michal Hocko wrote:
-> > > On Wed 24-10-18 10:47:52, Arun KS wrote:
-> > > > On 2018-10-24 01:34, Kees Cook wrote:
-> > > [...]
-> > > > > Thank you -- I was struggling to figure out the best way to reply to
-> > > > > this. :)
-> > > > I'm sorry for the trouble caused. Sent the email using,
-> > > > git send-email  --to-cmd="scripts/get_maintainer.pl -i"
-> > > > 0001-convert-totalram_pages-totalhigh_pages-and-managed_p.patch
-> > > > 
-> > > > Is this not a recommended approach?
-> > > 
-> > > Not really for tree wide mechanical changes. It is much more preferrable
-> > > IMHO to only CC people who should review the intention of the change
-> > > rather than each and every maintainer whose code is going to be changed.
-> > > This is a case by case thing of course but as soon as you see a giant CC
-> > > list from get_maintainer.pl then you should try to think twice to use
-> > > it. If not sure, just ask on the mailing list.
-> > 
-> > Generally, it's better to use scripts to control
-> > the --to-cmd and --cc-cmd options.
-> 
-> I would argue that it is better to use a common sense much more than
-> scripts.
+Quoting Jianxin Pan (2018-10-23 23:29:24)
+> On 2018/10/19 1:13, Stephen Boyd wrote:
+> > Quoting Jianxin Pan (2018-10-17 22:07:25)
+> [...]
+> >> diff --git a/drivers/clk/meson/mmc-clkc.c b/drivers/clk/meson/mmc-clkc=
+.c
+> >> new file mode 100644
+> >> index 0000000..5555e3f
+> >> --- /dev/null
+> >> +++ b/drivers/clk/meson/mmc-clkc.c
+> >> @@ -0,0 +1,296 @@
+> >> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> >> +/*
+> >> + * Amlogic Meson MMC Sub Clock Controller Driver
+> >> + *
+> >> + * Copyright (c) 2017 Baylibre SAS.
+> >> + * Author: Jerome Brunet <jbrunet@baylibre.com>
+> >> + *
+> >> + * Copyright (c) 2018 Amlogic, inc.
+> >> + * Author: Yixun Lan <yixun.lan@amlogic.com>
+> >> + */
+> >> +
+> >> +#include <linux/clk.h>
+> > =
 
-Common sense isn't common.
+> > clk-provider.h instead of clk.h?>
+> Maybe we need to keep clk.h
+> devm_clk_get() is called in mmc_clkc_register_mux() to get parent in from=
+ DTS.
+> I'm sorry to miss this in previous reply.
 
-Perhaps you could describe some guidelines you
-use to determine what you think is sensible to
-send patches to maintainers and reviewers and
-appropriate mailing lists.
-
-Then compare those to the rules in the scripts
-I suggested.
-
-My suggestions:
-
-o send to all top-level listed maintainers and
-  reviewers in MAINTAINERS for the specific files
-  in a patch
-o cc all maintainers and reviewers that are upstream
-  paths for the files in a patch
-o cc all the upstream mailing lists for the files
-  in the patch.
-o do not generally use git-history to exclude authors
-  of patches like drive-by/whitespace cleanups
-
-Other advanced possibilities for patches that
-modify specific and perhaps complex logic blocks:
-
-o cc the people that are not maintainers that
-  have modified the specific blocks or functions
-
-
+OK. But also include clk-provider.h if provider APIs are being used
+here.
 
