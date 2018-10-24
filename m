@@ -2,229 +2,158 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4BC5ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 23:50:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 179A2ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 23:51:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 491982082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 23:50:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 578D02082F
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 23:51:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="FVnU7GkV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 491982082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="i8AnnAy2";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="Z0m4WOxs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 578D02082F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726901AbeJYIUi (ORCPT
+        id S1726981AbeJYIVq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 04:20:38 -0400
-Received: from alln-iport-4.cisco.com ([173.37.142.91]:14635 "EHLO
-        alln-iport-4.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726236AbeJYIUh (ORCPT
+        Thu, 25 Oct 2018 04:21:46 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:57050 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726236AbeJYIVp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 04:20:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=5574; q=dns/txt; s=iport;
-  t=1540425029; x=1541634629;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=nSDyUeFZTamygWJFj4YtCoFXcfBCH6R/8uXt4btYMJE=;
-  b=FVnU7GkVSZQPJ9tSna4kXRPJOkJ6A01veG1GB0w7ryQHA0EeL8R2BdIU
-   sgpbmiPzHISpo+VjZNUnOCtUQCuv/Emf3kJM/8nbZegOnUzTWaHNIzPv1
-   SDk+D1siOjJ0l9Di3ySvGyipQyzHvFlX5MbcRF6hmFHVOrAmkNr1rrpZO
-   M=;
-X-IronPort-AV: E=Sophos;i="5.54,422,1534809600"; 
-   d="scan'208";a="191136852"
-Received: from alln-core-11.cisco.com ([173.36.13.133])
-  by alln-iport-4.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 23:50:28 +0000
-Received: from [10.154.208.140] ([10.154.208.140])
-        by alln-core-11.cisco.com (8.15.2/8.15.2) with ESMTP id w9ONoQiA002861;
-        Wed, 24 Oct 2018 23:50:26 GMT
-Subject: Re: [PATCH v2] kernel/signal: Signal-based pre-coredump notification
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Helge Deller <deller@gmx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian@brauner.io>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Michal Hocko <mhocko@kernel.org>,
+        Thu, 25 Oct 2018 04:21:45 -0400
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9ONnD49012271;
+        Wed, 24 Oct 2018 16:51:18 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=t5gogMntyoLtkzNkd8cMqyna/FAh9ZxNuEp+GcJLASw=;
+ b=i8AnnAy2hADHqHCdYe+HQsHuXDFYOzOPOkxJCEo4eXLmZLrmEb9asH5mVXNf83k/KhVZ
+ r/+eROJqigQzAlyFmIUqd6nX+DGKKygekIuyrVAS45NSQBYIcDrewpcgpwEp8yG6jbYi
+ KrnxB5/h1gBHCFGGyxinoubkohMApIf3UCg= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2nayad0m4e-3
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Wed, 24 Oct 2018 16:51:18 -0700
+Received: from frc-hub01.TheFacebook.com (2620:10d:c021:18::171) by
+ frc-hub01.TheFacebook.com (2620:10d:c021:18::171) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Wed, 24 Oct 2018 16:51:13 -0700
+Received: from FRC-CHUB08.TheFacebook.com (2620:10d:c021:18::27) by
+ frc-hub01.TheFacebook.com (2620:10d:c021:18::171) with Microsoft SMTP Server
+ (version=TLS1_0, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3
+ via Frontend Transport; Wed, 24 Oct 2018 16:51:13 -0700
+Received: from NAM05-DM3-obe.outbound.protection.outlook.com (192.168.183.28)
+ by o365-in.thefacebook.com (192.168.177.28) with Microsoft SMTP Server (TLS)
+ id 14.3.361.1; Wed, 24 Oct 2018 19:51:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=t5gogMntyoLtkzNkd8cMqyna/FAh9ZxNuEp+GcJLASw=;
+ b=Z0m4WOxseHVpKha0Ebz4RG6nuvwLeG2c3GLVPB9VFYFW71E1Q9fkn/k9sNYxBr6dnHbEeCpjnAr+6xisdMqiVzkdbR8vMVXWUvQtRuFcDb529ul9sAPhEkJpTytCQmX7hBzmk1gUjSiDfSKsqGfCw2EQyEKvsClffOfuX+/dw2c=
+Received: from BY2PR15MB0167.namprd15.prod.outlook.com (10.163.64.141) by
+ BY2PR15MB0870.namprd15.prod.outlook.com (10.164.171.140) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1250.30; Wed, 24 Oct 2018 23:51:07 +0000
+Received: from BY2PR15MB0167.namprd15.prod.outlook.com
+ ([fe80::8e8:753:f746:ed14]) by BY2PR15MB0167.namprd15.prod.outlook.com
+ ([fe80::8e8:753:f746:ed14%2]) with mapi id 15.20.1250.028; Wed, 24 Oct 2018
+ 23:51:07 +0000
+From:   Roman Gushchin <guro@fb.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        "Michal Hocko" <mhocko@kernel.org>,
         Rik van Riel <riel@surriel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
-        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>,
-        Enke Chen <enkechen@cisco.com>
-References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
- <458c04d8-d189-4a26-729a-bb1d1d751534@cisco.com>
- <87sh0vpj5q.fsf@xmission.com>
-From:   Enke Chen <enkechen@cisco.com>
-Message-ID: <df08c74f-1027-c635-fb99-a12d23f60947@cisco.com>
-Date:   Wed, 24 Oct 2018 16:50:26 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <87sh0vpj5q.fsf@xmission.com>
-Content-Type: text/plain; charset=utf-8
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [RFC PATCH] mm: don't reclaim inodes with many attached pages
+Thread-Topic: [RFC PATCH] mm: don't reclaim inodes with many attached pages
+Thread-Index: AQHUau+GsFRIu7vNQ0mBGnFYa9WgU6Uu+XwAgAAZewA=
+Date:   Wed, 24 Oct 2018 23:51:07 +0000
+Message-ID: <20181024235101.GB15663@castle.DHCP.thefacebook.com>
+References: <20181023164302.20436-1-guro@fb.com>
+ <20181024151950.36fe2c41957d807756f587ca@linux-foundation.org>
+In-Reply-To: <20181024151950.36fe2c41957d807756f587ca@linux-foundation.org>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-Outbound-SMTP-Client: 10.154.208.140, [10.154.208.140]
-X-Outbound-Node: alln-core-11.cisco.com
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BN6PR13CA0023.namprd13.prod.outlook.com
+ (2603:10b6:404:10a::33) To BY2PR15MB0167.namprd15.prod.outlook.com
+ (2a01:111:e400:58e0::13)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c091:180::1:50a3]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BY2PR15MB0870;20:cA3qX0HB+fdJXRitqt2Cf8Ck/tKuqzPYwLcXdO8dyR/qQ+qgMDdLIsYMcmz7gWKePtG64VG7cYf9Yta1t7dDbPqAAkeLgCi5QziNvOckk2cTkY8nMoJp3Sm63jprWNOnUnSgoXZKNvWxaOI7NJfUO46Eig71ajA5nLf18s2lxj0=
+x-ms-office365-filtering-correlation-id: 5e727fe5-fe81-421c-30c4-08d63a0b910e
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BY2PR15MB0870;
+x-ms-traffictypediagnostic: BY2PR15MB0870:
+x-microsoft-antispam-prvs: <BY2PR15MB08704191EE2235A4AF2203A2BEF60@BY2PR15MB0870.namprd15.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(67672495146484);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823302103)(3002001)(3231355)(11241501184)(944501410)(52105095)(10201501046)(93006095)(93001095)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:BY2PR15MB0870;BCL:0;PCL:0;RULEID:;SRVR:BY2PR15MB0870;
+x-forefront-prvs: 083526BF8A
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(366004)(346002)(136003)(39860400002)(396003)(199004)(189003)(53936002)(305945005)(8676002)(2900100001)(97736004)(7736002)(54906003)(81166006)(14454004)(8936002)(5250100002)(11346002)(476003)(478600001)(81156014)(316002)(2906002)(6486002)(4326008)(6916009)(5024004)(446003)(1076002)(9686003)(25786009)(99286004)(6116002)(6512007)(33656002)(68736007)(6246003)(76176011)(186003)(105586002)(6436002)(71200400001)(256004)(5660300001)(6506007)(106356001)(229853002)(102836004)(71190400001)(52116002)(46003)(33896004)(86362001)(386003)(486006)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BY2PR15MB0870;H:BY2PR15MB0167.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 60YucXapT+ncCakUS+fdbVXmRPEcdHxwjc+TGB1e3ix64pCb0QukPUEccYcwrbgOSyA7LNXPIFzsLdMyvKuItyL8f+PFucoQsmfSS7h4CCCSZn/hSOCVaSpEE3VnWC6vWJeI4Vd2LOahB4jl6qePSnDh5rYVUlS0A0durifayilfmPjRCZdu/9BnS1eZrARFyS+7hbzFocoRWqKlfj5GLIS6bt1uJAsknbNaGj0zm7y9kqoidbds/2elEKHH51bojTXsxLhKRdVPqAQV/EZdPbJrCFdt1x3JHYotbFB+m0U2VPq08p4aRsIv3Vrg0fdxS+NhgV0au8tqGjOFS0qbdLDYS8ae5tknG6m55TYOT7s=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <79CFF4DBB7966C44A8429A0EEE6994C0@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5e727fe5-fe81-421c-30c4-08d63a0b910e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Oct 2018 23:51:07.7650
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR15MB0870
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-24_09:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Eric:
+On Wed, Oct 24, 2018 at 03:19:50PM -0700, Andrew Morton wrote:
+> On Tue, 23 Oct 2018 16:43:29 +0000 Roman Gushchin <guro@fb.com> wrote:
+>=20
+> > Spock reported that the commit 172b06c32b94 ("mm: slowly shrink slabs
+> > with a relatively small number of objects") leads to a regression on
+> > his setup: periodically the majority of the pagecache is evicted
+> > without an obvious reason, while before the change the amount of free
+> > memory was balancing around the watermark.
+> >=20
+> > The reason behind is that the mentioned above change created some
+> > minimal background pressure on the inode cache. The problem is that
+> > if an inode is considered to be reclaimed, all belonging pagecache
+> > page are stripped, no matter how many of them are there. So, if a huge
+> > multi-gigabyte file is cached in the memory, and the goal is to
+> > reclaim only few slab objects (unused inodes), we still can eventually
+> > evict all gigabytes of the pagecache at once.
+> >=20
+> > The workload described by Spock has few large non-mapped files in the
+> > pagecache, so it's especially noticeable.
+> >=20
+> > To solve the problem let's postpone the reclaim of inodes, which have
+> > more than 1 attached page. Let's wait until the pagecache pages will
+> > be evicted naturally by scanning the corresponding LRU lists, and only
+> > then reclaim the inode structure.
+>=20
+> Is this regression serious enough to warrant fixing 4.19.1?
 
-Thanks for your comments. Please see my replies inline.
+I'd give it some testing in the mm tree (and I'll test it by myself
+on our fleet), and then backport to 4.19.x.
 
-On 10/24/18 6:29 AM, Eric W. Biederman wrote:
-> Enke Chen <enkechen@cisco.com> writes:
-> 
->> For simplicity and consistency, this patch provides an implementation
->> for signal-based fault notification prior to the coredump of a child
->> process. A new prctl command, PR_SET_PREDUMP_SIG, is defined that can
->> be used by an application to express its interest and to specify the
->> signal (SIGCHLD or SIGUSR1 or SIGUSR2) for such a notification. A new
->> signal code (si_code), CLD_PREDUMP, is also defined for SIGCHLD.
->>
->> Changes to prctl(2):
->>
->>    PR_SET_PREDUMP_SIG (since Linux 4.20.x)
->>           Set the child pre-coredump signal of the calling process to
->>           arg2 (either SIGUSR1, or SIUSR2, or SIGCHLD, or 0 to clear).
->>           This is the signal that the calling process will get prior to
->>           the coredump of a child process. This value is cleared across
->>           execve(2), or for the child of a fork(2).
->>
->>           When SIGCHLD is specified, the signal code will be set to
->>           CLD_PREDUMP in such an SIGCHLD signal.
-> 
-> Your signal handling is still not right.  Please read and comprehend
-> siginfo_layout.
-> 
-> You have not filled in all of the required fields for the SIGCHLD case.
-> For the non SIGCHLD case you are using si_code == 0 == SI_USER which is
-> very wrong.  This is not a user generated signal.
-> 
-> Let me say this slowly.  The pair si_signo si_code determines the union
-> member of struct siginfo.  That needs to be handled consistently. You
-> aren't.  I just finished fixing this up in the entire kernel and now you
-> are trying to add a usage that is worst than most of the bugs I have
-> fixed.  I really don't appreciate having to deal with no bugs.
-> 
-
-My apologies. I will investigate and make them consistent.
-
-> 
-> 
-> Further siginfo can be dropped.  Multiple signals with the same signal
-> number can be consolidated.  What is your plan for dealing with that?
-
-The primary application for the early notification involves a process
-manager which is responsible for re-spawning processes or initiating
-the control-plane fail-over. There are two models:
-
-One model is to have 1:1 relationship between a process manager and
-application process. There can only be one predump-signal (say, SIGUSR1)
-from the child to the parent, and will unlikely be dropped or consolidated.
-
-Another model is to have 1:N where there is only one process manager with
-multiple application processes. One of the RT signal can be used to help
-make it more reliable.
-
-> Other code paths pair with wait to get the information out.  There
-> is no equivalent of wait in your code.
-
-I was not aware of that before.  Let me investigate.
-
-> 
-> Signals can be delayed by quite a bit, scheduling delays etc.  They can
-> not provide any meaningful kind of real time notification.
-> 
-
-The timing requirement is about 50-100 msecs for BFD.  Not sure if that
-qualifies as "real time".  This mechanism has worked well in deployment
-over the years.
-
-> So between delays and loss of information signals appear to be a very
-> poor fit for this usecase.
-> 
-> I am concerned about code that does not fit the usecase well because
-> such code winds up as code that no one cares about that must be
-> maintained indefinitely, because somewhere out there there is one use
-> that would break if the interface was removed.  This does not feel like
-> an interface people will want to use and maintain in proper working
-> order forever.
-> 
-> Ugh.  Your test case is even using signalfd.  So you don't even want
-> this signal to be delivered as a signal.
-
-I actually tested sigaction()/waitpid() as well. If there is a preference,
-I can check in the sigaction()/waitpid() version instead.
-
-> 
-> You add an interface that takes a pointer and you don't add a compat
-> interface.  See Oleg's point of just returning the signal number in the
-> return code.
-
-This is what Oleg said "but I won't insist, this is subjective and cosmetic".
-
-It is no big deal either way. It just seems less work if we do not keep
-adding exceptions to the prctl(2) manpage:
- 
-prctl(2):
-
-       On success, PR_GET_DUMPABLE,   PR_GET_KEEPCAPS,   PR_GET_NO_NEW_PRIVS,   PR_CAPBSET_READ,    PR_GET_TIMING,    PR_GET_SECUREBITS,
-       PR_MCE_KILL_GET,  PR_CAP_AMBIENT+PR_CAP_AMBIENT_IS_SET,  and  (if  it returns) PR_GET_SECCOMP return the nonnegative values described
-       above.  All other option values return 0 on success.  On error, -1 is returned, and errno is set appropriately.
-
-> 
-> Now I am wondering how well prctl works from a 32bit process on a 64bit
-> kernel.  At first glance it looks like it probably does not work.
->
-
-I am not sure which part would be problematic.
-
-> Consistency with PDEATHSIG is not a good argument for anything.
-> PDEATHSIG at the present time is unusable in the real world by most
-> applications that want something like it.
-
-Agreed, PDEATHSIG seems to have a few issues ...
-
-> 
-> So far I see an interface that even you don't want to use as designed,
-> that is implemented incorrectly.
-> 
-> The concern is real and deserves to be addressed.  I don't think signals
-> are the right way to handle it, and certainly not this patch as it
-> stands.
-
-I will address your concerns on the patch. Regarding the requirement and the
-overall solution, if there are specific questions that I have not answered,
-please let me know.
-
-Thanks. -- Enke
+Thanks!
