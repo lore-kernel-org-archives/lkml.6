@@ -2,155 +2,131 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD7FC67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 11:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69EE3C67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 11:37:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 932ED207DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 11:36:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F4CA2082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 11:37:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Pd4HGz51"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 932ED207DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="VMD9SF/Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F4CA2082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=umn.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727588AbeJXUES (ORCPT
+        id S1727656AbeJXUE6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 16:04:18 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:49766 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727302AbeJXUES (ORCPT
+        Wed, 24 Oct 2018 16:04:58 -0400
+Received: from mta-p2.oit.umn.edu ([134.84.196.202]:39196 "EHLO
+        mta-p2.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726898AbeJXUE6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 16:04:18 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9OBaHh1075196;
-        Wed, 24 Oct 2018 06:36:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1540380977;
-        bh=8D5JPRyxZwzLuzDbvWVS/rB6XrJcc8c2j+tFbk+4fSM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Pd4HGz519pBRJoKMk5vPY4eZZlaEbVphA6jL+6CjJQDi49P7FH/YR1ypa85AasWYQ
-         hX1M67dYDXQdosG83OjDiNyTkhvi4WuJUHfXdxLjjTiV7hmkQC/DUTzifte9/2bhN4
-         eNeE8kQoNsP5dGApwGfA+WxqCb719V6dcHYYUdbo=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9OBaH19029964;
-        Wed, 24 Oct 2018 06:36:17 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 24
- Oct 2018 06:36:17 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Wed, 24 Oct 2018 06:36:17 -0500
-Received: from [172.22.136.76] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9OBaHIu008147;
-        Wed, 24 Oct 2018 06:36:17 -0500
-Subject: Re: [RFC PATCH 0/3] M_CAN Framework rework
-To:     Wolfgang Grandegger <wg@grandegger.com>, <mkl@pengutronix.de>,
-        <davem@davemloft.net>
-CC:     <linux-can@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20181010142055.25271-1-dmurphy@ti.com>
- <e8485e2e-df04-0905-7055-c2228c0f1fa4@ti.com>
- <8d7fcd11-b537-97c1-ee50-ba30f236b5ec@grandegger.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <1db25e4b-9b83-a234-b98f-e3c0c72d5e31@ti.com>
-Date:   Wed, 24 Oct 2018 06:36:10 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 24 Oct 2018 16:04:58 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mta-p2.oit.umn.edu (Postfix) with ESMTP id 9E7D05EF;
+        Wed, 24 Oct 2018 11:37:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=umn.edu; h=
+        content-type:content-type:subject:subject:message-id:date:date
+        :from:from:in-reply-to:references:mime-version:received:received
+        :received; s=20160920; t=1540381030; x=1542195431; bh=z9XQ4VzQJc
+        Kps+aHG/lxTfnSLjuJ7rmPgK6CLxLMwTk=; b=VMD9SF/Zu9b9ZB54yNZQzfG4kf
+        /DTdEEvhOwpRHwgQSFWw7XKciVrqii1GCfNwNtOXM3qVd1lHNg30/jpeSgSVMf+f
+        /Wg0w6+ojo7fr7o3vww9uwu27moVBhkrZAGvdd7Z0OUh1FGkcGch/qhQCFVJqtFw
+        WGCM8RzKPY2r3VI0KXgBfWw02cNo5AUKbhPpAruTbaBaPmUUU5iMaaainzKPDt7m
+        V1Bg3Zq2yn9GAkkZaEX6vdOJJYa6wAb/bHvBmg16yn62cL4QQ2VYQMrWZot0DCS9
+        q0svX1luAh/R1cM6ZKhL9OdcKhQfDc+W+7h5k6pBf681wQG72/TVNSZh49ZQ==
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p2.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p2.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id ARbr8hRRwtQH; Wed, 24 Oct 2018 06:37:10 -0500 (CDT)
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+        (using TLSv1 with cipher AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: wang6495)
+        by mta-p2.oit.umn.edu (Postfix) with ESMTPSA id 512A5523;
+        Wed, 24 Oct 2018 06:37:10 -0500 (CDT)
+Received: by mail-io1-f41.google.com with SMTP id l25-v6so2934189ioj.0;
+        Wed, 24 Oct 2018 04:37:10 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gLHoeTLBolwYoV+kQr25aAfgmyz7EKqAZwaPxZssET5GFb5XyAg
+        n+Irbq2zUqRcy9aQA1kdIFr0uDFD40JjyQVPjUQ=
+X-Google-Smtp-Source: AJdET5c2s6BQRRxtp0U3MLgYpWFWUIJcPJ/OGgJG655A4pOz6MCgKBrRlES8EO3gkq1CNk29kDzFRZixfOfL5pMlnMo=
+X-Received: by 2002:a6b:7e07:: with SMTP id i7-v6mr3388740iom.16.1540381029995;
+ Wed, 24 Oct 2018 04:37:09 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <8d7fcd11-b537-97c1-ee50-ba30f236b5ec@grandegger.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <1539988191-13973-1-git-send-email-wang6495@umn.edu>
+ <CAH3MdRV2qLj_3KHFYmCKYHMx2wZk_4mQrdvRJe+znXr3Astm8g@mail.gmail.com> <ff23c4af-9e31-8a79-9c37-95766bff7619@iogearbox.net>
+In-Reply-To: <ff23c4af-9e31-8a79-9c37-95766bff7619@iogearbox.net>
+From:   Wenwen Wang <wang6495@umn.edu>
+Date:   Wed, 24 Oct 2018 06:36:33 -0500
+X-Gmail-Original-Message-ID: <CAAa=b7cwRdF+D9DZCeUkt6jvZs0yFeERoP3uDLdxQOeqmMkKJQ@mail.gmail.com>
+Message-ID: <CAAa=b7cwRdF+D9DZCeUkt6jvZs0yFeERoP3uDLdxQOeqmMkKJQ@mail.gmail.com>
+Subject: Re: [PATCH] bpf: btf: Fix a missing-check bug
+To:     daniel@iogearbox.net
+Cc:     ys114321@gmail.com, Kangjie Lu <kjlu@umn.edu>, ast@kernel.org,
+        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Wenwen Wang <wang6495@umn.edu>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wolfgang
+On Wed, Oct 24, 2018 at 4:39 AM Daniel Borkmann <daniel@iogearbox.net> wrote:
+>
+> Hi Wenwen,
+>
+> On 10/22/2018 05:57 PM, Y Song wrote:
+> > On Fri, Oct 19, 2018 at 3:30 PM Wenwen Wang <wang6495@umn.edu> wrote:
+> >>
+> >> In btf_parse(), the header of the user-space btf data 'btf_data' is firstly
+> >> parsed and verified through btf_parse_hdr(). In btf_parse_hdr(), the header
+> >> is copied from user-space 'btf_data' to kernel-space 'btf->hdr' and then
+> >> verified. If no error happens during the verification process, the whole
+> >> data of 'btf_data', including the header, is then copied to 'data' in
+> >> btf_parse(). It is obvious that the header is copied twice here. More
+> >> importantly, no check is enforced after the second copy to make sure the
+> >> headers obtained in these two copies are same. Given that 'btf_data'
+> >> resides in the user space, a malicious user can race to modify the header
+> >> between these two copies. By doing so, the user can inject inconsistent
+> >> data, which can cause undefined behavior of the kernel and introduce
+> >> potential security risk.
+> >>
+> >> To avoid the above issue, this patch rewrites the header after the second
+> >> copy, using 'btf->hdr', which is obtained in the first copy.
+> >>
+> >> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+> >> ---
+> >>  kernel/bpf/btf.c | 3 +++
+> >>  1 file changed, 3 insertions(+)
+> >>
+> >> diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+> >> index 138f030..2a85f91 100644
+> >> --- a/kernel/bpf/btf.c
+> >> +++ b/kernel/bpf/btf.c
+> >> @@ -2202,6 +2202,9 @@ static struct btf *btf_parse(void __user *btf_data, u32 btf_data_size,
+> >>                 goto errout;
+> >>         }
+> >>
+> >> +       memcpy(data, &btf->hdr,
+> >> +               min_t(u32, btf->hdr.hdr_len, sizeof(btf->hdr)));
+> >
+> > Could you restructure the code to memcpy the header followed by copying
+> > the rest of btf_data with copy_from_user? This way, each byte is only
+> > copied once.
+> > Could you add some comments right before memcpy so later people will know
+> > why we implement this way?
+>
+> Thanks for the fix! Agree with Yonghong that we should rework this a bit, so
+> please respin a v2 with the feedback addressed, thanks.
 
-On 10/24/2018 02:43 AM, Wolfgang Grandegger wrote:
-> Hallo Dan,
-> 
-> I will have a closer look later this week. Unfortunately you already
-> renamed file names and structs making the patch almost unreadable. More
-> soon..
-> 
+Hi Yonghong and Daniel,
 
-I tried to format the patch to eliminate the massive change but format patch kept 
-giving me the same result.
+Thanks for your suggestions! No problem, I will work on the v2 and
+resubmit the patch.
 
-It is a massive change regardless not sure how else to make is smaller.
-
-I guess this is why I opt'd to just create the dedicated TCAN driver.
-
-Dan
-
-
-> Thanks for you patience,
-> 
-> Wolfgang.
-> 
-> Am 17.10.2018 um 22:21 schrieb Dan Murphy:
->> Bump
->>
->> On 10/10/2018 09:20 AM, Dan Murphy wrote:
->>> All
->>>
->>> This patch series creates a m_can core framework that devices can register
->>> to.  The m_can core manages the Bosch IP and CAN frames.  Each device that
->>> is registered is responsible for managing device specific functions.
->>>
->>> This rewrite was suggested in a device driver submission for the TCAN4x5x
->>> device
->>> Reference upstream post:
->>> https://lore.kernel.org/patchwork/patch/984163/
->>>
->>> For instance the TCAN device is a SPI device that uses a specific data payload to
->>> determine writes and reads.  In addition the device has a reset input as well
->>> as a wakeup pin.  The register offset of the m_can registers differs and must
->>> be set by the device attached to the core.
->>>
->>> The m_can core will use iomapped writes and reads as the default mechanism for
->>> writing and reading.  The device driver can provide over rides for this.
->>>
->>> This patch series is not complete as it does not handle the CAN interrupts
->>> nor can perform a CAN write.  If this patch series is deemed acceptable I will
->>> finish debugging the driver and post a non RFC series.
->>>
->>> Finally I did attempt to reduce the first patch with various git format patch
->>> directives but none seemed to reduce the patch.
->>>
->>> Dan
->>>
->>> Dan Murphy (3):
->>>   can: m_can: Create m_can core to leverage common code
->>>   dt-bindings: can: tcan4x5x: Add DT bindings for TCAN4x5X driver
->>>   can: tcan4x5x: Add tcan4x5x driver to the kernel
->>>
->>>  .../devicetree/bindings/net/can/tcan4x5x.txt  |   34 +
->>>  drivers/net/can/m_can/Kconfig                 |   18 +
->>>  drivers/net/can/m_can/Makefile                |    4 +-
->>>  drivers/net/can/m_can/m_can.c                 | 1683 +----------------
->>>  .../net/can/m_can/{m_can.c => m_can_core.c}   |  479 +++--
->>>  drivers/net/can/m_can/m_can_core.h            |  100 +
->>>  drivers/net/can/m_can/tcan4x5x.c              |  321 ++++
->>>  7 files changed, 722 insertions(+), 1917 deletions(-)
->>>  create mode 100644 Documentation/devicetree/bindings/net/can/tcan4x5x.txt
->>>  copy drivers/net/can/m_can/{m_can.c => m_can_core.c} (83%)
->>>  create mode 100644 drivers/net/can/m_can/m_can_core.h
->>>  create mode 100644 drivers/net/can/m_can/tcan4x5x.c
->>>
->>
->>
-
-
--- 
-------------------
-Dan Murphy
+Wenwen
