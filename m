@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BB6AC67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:08:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A82C3C67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:09:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D283B207DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:08:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D283B207DD
+	by mail.kernel.org (Postfix) with ESMTP id 68787207DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:09:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68787207DD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727624AbeJXQf6 (ORCPT
+        id S1727698AbeJXQg6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 12:35:58 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:56618 "EHLO huawei.com"
+        Wed, 24 Oct 2018 12:36:58 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:14113 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727512AbeJXQf6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 12:35:58 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 7CEFBCEA933F0;
-        Wed, 24 Oct 2018 16:08:53 +0800 (CST)
-Received: from huawei.com (10.113.189.234) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.408.0; Wed, 24 Oct 2018
- 16:08:45 +0800
+        id S1727465AbeJXQg6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 12:36:58 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 825EF126A089E;
+        Wed, 24 Oct 2018 16:09:52 +0800 (CST)
+Received: from huawei.com (10.113.189.234) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.408.0; Wed, 24 Oct 2018
+ 16:09:47 +0800
 From:   Yunlong Song <yunlong.song@huawei.com>
 To:     <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
         <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
@@ -35,12 +35,10 @@ CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
         <shengyong1@huawei.com>, <heyunlei@huawei.com>,
         <linux-f2fs-devel@lists.sourceforge.net>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] f2fs: fix count of seg_freed to make sec_freed correct
-Date:   Wed, 24 Oct 2018 16:08:30 +0800
-Message-ID: <1540368510-14270-1-git-send-email-yunlong.song@huawei.com>
+Subject: [PATCH] f2fs: remove codes of unused wio_mutex
+Date:   Wed, 24 Oct 2018 16:09:42 +0800
+Message-ID: <1540368582-14312-1-git-send-email-yunlong.song@huawei.com>
 X-Mailer: git-send-email 1.8.5.2
-In-Reply-To: <1539168739-79848-1-git-send-email-yunlong.song@huawei.com>
-References: <1539168739-79848-1-git-send-email-yunlong.song@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.113.189.234]
@@ -50,41 +48,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When sbi->segs_per_sec > 1, and if some segno has 0 valid blocks before
-gc starts, do_garbage_collect will skip counting seg_freed++, and this
-will cause seg_freed < sbi->segs_per_sec and finally skip sec_freed++.
-
 Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/gc.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ fs/f2fs/f2fs.h  | 1 -
+ fs/f2fs/super.c | 5 +----
+ 2 files changed, 1 insertion(+), 5 deletions(-)
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index a07241f..57841e9 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -1130,9 +1130,9 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
- 					GET_SUM_BLOCK(sbi, segno));
- 		f2fs_put_page(sum_page, 0);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 56204a8..4dfa28d 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1170,7 +1170,6 @@ struct f2fs_sb_info {
  
--		if (get_valid_blocks(sbi, segno, false) == 0 ||
--				!PageUptodate(sum_page) ||
--				unlikely(f2fs_cp_error(sbi)))
-+		if (get_valid_blocks(sbi, segno, false) == 0)
-+			goto freed;
-+		if (!PageUptodate(sum_page) || unlikely(f2fs_cp_error(sbi)))
- 			goto next;
+ 	/* for bio operations */
+ 	struct f2fs_bio_info *write_io[NR_PAGE_TYPE];	/* for write bios */
+-	struct mutex wio_mutex[NR_PAGE_TYPE - 1][NR_TEMP_TYPE];
+ 						/* bio ordering for NODE/DATA */
+ 	/* keep migration IO order for LFS mode */
+ 	struct rw_semaphore io_order_lock;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index af58b2c..2d18de5 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -2674,7 +2674,7 @@ int f2fs_sanity_check_ckpt(struct f2fs_sb_info *sbi)
+ static void init_sb_info(struct f2fs_sb_info *sbi)
+ {
+ 	struct f2fs_super_block *raw_super = sbi->raw_super;
+-	int i, j;
++	int i;
  
- 		sum = page_address(sum_page);
-@@ -1160,6 +1160,7 @@ static int do_garbage_collect(struct f2fs_sb_info *sbi,
+ 	sbi->log_sectors_per_block =
+ 		le32_to_cpu(raw_super->log_sectors_per_block);
+@@ -2710,9 +2710,6 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
  
- 		stat_inc_seg_count(sbi, type, gc_type);
+ 	INIT_LIST_HEAD(&sbi->s_list);
+ 	mutex_init(&sbi->umount_mutex);
+-	for (i = 0; i < NR_PAGE_TYPE - 1; i++)
+-		for (j = HOT; j < NR_TEMP_TYPE; j++)
+-			mutex_init(&sbi->wio_mutex[i][j]);
+ 	init_rwsem(&sbi->io_order_lock);
+ 	spin_lock_init(&sbi->cp_lock);
  
-+freed:
- 		if (gc_type == FG_GC &&
- 				get_valid_blocks(sbi, segno, false) == 0)
- 			seg_freed++;
 -- 
 1.8.5.2
 
