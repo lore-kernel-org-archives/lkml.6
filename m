@@ -2,95 +2,164 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90107C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 11:55:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E338DC004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 11:57:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 557EE20824
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 11:55:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="d74AQk+m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 557EE20824
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 773E62082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 11:57:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 773E62082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=electrozaur.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727542AbeJXUWv (ORCPT
+        id S1727552AbeJXUYy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 16:22:51 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48526 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726428AbeJXUWv (ORCPT
+        Wed, 24 Oct 2018 16:24:54 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54360 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726428AbeJXUYy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 16:22:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=noYNixtyW6+tNSA5DMMgXeStNZuyJHQIA6ZSbn3aZnw=; b=d74AQk+mGnhZt5jphC1m0Ij0B
-        nkDHBVDu4HnXFEih4EG2ZaIsKZlK6ImhbKlHFrjABiY7MKuD/TiLs7ABml1gpbuwR7KpC+kFOB49s
-        3SItegqGnwV71Di8PuVLHMzoUhzN85iuwwZk+9as+POkXKZPv/n8Wqwl7PnZNq64ukHP/EkfTLc4/
-        PNRwUgP3+2bF6HxIJkxXducKCIzHAZLJ3vPpNwh2IiYOYpG5Jf03EjhvG4i4ptObOPK+ZZ5zXyAvs
-        SXGvfPDw1iEmBoYbZiUzm28+hy2VlmxzURw/uh1clBVhlburJ3fkv7Kdd8Dh2Z5kYjlHHf62alnaA
-        WZM2Hin2Q==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gFHkN-0005Bt-Kc; Wed, 24 Oct 2018 11:54:47 +0000
-Date:   Wed, 24 Oct 2018 04:54:47 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        x86@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] x86/mm: Move LDT remap out of KASLR region on
- 5-level paging
-Message-ID: <20181024115447.GE25444@bombadil.infradead.org>
-References: <20181023163157.41441-1-kirill.shutemov@linux.intel.com>
- <20181023163157.41441-2-kirill.shutemov@linux.intel.com>
+        Wed, 24 Oct 2018 16:24:54 -0400
+Received: by mail-wm1-f68.google.com with SMTP id r63-v6so5103621wma.4;
+        Wed, 24 Oct 2018 04:57:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=d01SOZy5TT66QMO4iZqWTeiU/L63HqZ4e588cmmTHqs=;
+        b=Z9dzXmcRE1IZK+69yz+ZB4WcHbc7fECzMbp9ce4AWNno4kFwEAD+duZ5lXBef0uMhs
+         PMTk459cJn9G3B9O4sK/cq/j7yoTnpu0o5FG/VldRCYGpCBk0qUCFaO1otDTrq/LBISl
+         bYmG5kBVjOdg+KGLGCtDIld/HtH81NeojMLjBxItCwrJVAdrux3X2lkqSPRsKFDZM6/o
+         WRuiOLmeiUxKxyjP037AaPzzihDFwGCqIczwlA3Zg+LBPEUKXV3S/Z7LXf4ljrqQmPTV
+         iAacSO4oHMIKXJvH9NjorwPLtSuXtK5f5FP8DZlcsHde6PZHJ0Xpf7HcemTnYfGGMLF+
+         5UKA==
+X-Gm-Message-State: AGRZ1gK0ACnghXCoY3gjeXCvdJeGnjRin2vjE8OZwFB1fAvBTh58oi6V
+        5mTQu/Av4nwsAl7JDYdns1v5ItC/
+X-Google-Smtp-Source: AJdET5ed+6TQG+P+oZ/33E2wYVSynj3ncvpGpGD2qMRSodOwButpQSo++eRT3r5bOIQUZN/itHmd/w==
+X-Received: by 2002:a1c:c142:: with SMTP id r63-v6mr2355043wmf.72.1540382222012;
+        Wed, 24 Oct 2018 04:57:02 -0700 (PDT)
+Received: from [10.0.0.5] ([207.232.55.62])
+        by smtp.gmail.com with ESMTPSA id r131-v6sm5270809wmb.32.2018.10.24.04.56.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 24 Oct 2018 04:57:00 -0700 (PDT)
+Subject: Re: [RFC][PATCH v2 05/10] exofs: use common file type conversion
+To:     Phillip Potter <phil@philpotter.co.uk>
+References: <20181023201959.GA15715@pathfinder>
+Cc:     linux-kernel@vger.kernel.org, amir73il@gmail.com,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
+From:   Boaz Harrosh <ooo@electrozaur.com>
+Message-ID: <11231c2a-0bb8-5c87-a65c-4fc7ff47f866@electrozaur.com>
+Date:   Wed, 24 Oct 2018 14:56:58 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
+ Thunderbird/45.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181023163157.41441-2-kirill.shutemov@linux.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20181023201959.GA15715@pathfinder>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 07:31:56PM +0300, Kirill A. Shutemov wrote:
-> -ffff880000000000 - ffffc7ffffffffff (=64 TB) direct mapping of all phys. memory
-> +ffff888000000000 - ffff887fffffffff (=39 bits) LDT remap for PTI
+On 23/10/18 23:19, Phillip Potter wrote:
+> Deduplicate the exofs file type conversion implementation.
+> 
+> Original patch by Amir Goldstein.
+> 
+> v2:
+> - This version does not remove EXOFS_FT_x enum from fs/exofs/common.h,
+>   as these values are now used in compile-time checks added by
+>   Phillip Potter to make sure they remain the same as FT_x values
+> 
+> v1:
+> - Initial implementation
+> 
+> Signed-off-by: Phillip Potter <phil@philpotter.co.uk>
 
-I'm a little bit cross-eyed at this point, but I think the above '888'
-should be '880'.
+Yes thank you, totally
 
-> @@ -14,7 +15,6 @@ ffffec0000000000 - fffffbffffffffff (=44 bits) kasan shadow memory (16TB)
->  ... unused hole ...
->  				    vaddr_end for KASLR
->  fffffe0000000000 - fffffe7fffffffff (=39 bits) cpu_entry_area mapping
-> -fffffe8000000000 - fffffeffffffffff (=39 bits) LDT remap for PTI
+ACK-by: Boaz Harrosh <ooo@electrozaur.com>
 
-... and the line above this one should be adjusted to finish at
-fffffeffffffffff (also it's now 40 bits).  Or should there be something
-else here?
-
->  ffffff0000000000 - ffffff7fffffffff (=39 bits) %esp fixup stacks
->  ... unused hole ...
->  ffffffef00000000 - fffffffeffffffff (=64 GB) EFI region mapping space
-> @@ -30,8 +30,8 @@ Virtual memory map with 5 level page tables:
->  0000000000000000 - 00ffffffffffffff (=56 bits) user space, different per mm
->  hole caused by [56:63] sign extension
->  ff00000000000000 - ff0fffffffffffff (=52 bits) guard hole, reserved for hypervisor
-> -ff10000000000000 - ff8fffffffffffff (=55 bits) direct mapping of all phys. memory
-> -ff90000000000000 - ff9fffffffffffff (=52 bits) LDT remap for PTI
-> +ff10000000000000 - ff10ffffffffffff (=48 bits) LDT remap for PTI
-> +ff11000000000000 - ff90ffffffffffff (=55 bits) direct mapping of all phys. memory
-
-What's at ff910..0 to ff9f..f ?
-
-Is there any way we can generate this part of this file to prevent human
-error from creeping in over time?  ;-)
+> ---
+>  fs/exofs/dir.c | 49 ++++++++++++++++++-------------------------------
+>  1 file changed, 18 insertions(+), 31 deletions(-)
+> 
+> diff --git a/fs/exofs/dir.c b/fs/exofs/dir.c
+> index f0138674c1ed..2e3161ca9014 100644
+> --- a/fs/exofs/dir.c
+> +++ b/fs/exofs/dir.c
+> @@ -204,33 +204,10 @@ exofs_validate_entry(char *base, unsigned offset, unsigned mask)
+>  	return (char *)p - base;
+>  }
+>  
+> -static unsigned char exofs_filetype_table[EXOFS_FT_MAX] = {
+> -	[EXOFS_FT_UNKNOWN]	= DT_UNKNOWN,
+> -	[EXOFS_FT_REG_FILE]	= DT_REG,
+> -	[EXOFS_FT_DIR]		= DT_DIR,
+> -	[EXOFS_FT_CHRDEV]	= DT_CHR,
+> -	[EXOFS_FT_BLKDEV]	= DT_BLK,
+> -	[EXOFS_FT_FIFO]		= DT_FIFO,
+> -	[EXOFS_FT_SOCK]		= DT_SOCK,
+> -	[EXOFS_FT_SYMLINK]	= DT_LNK,
+> -};
+> -
+> -#define S_SHIFT 12
+> -static unsigned char exofs_type_by_mode[S_IFMT >> S_SHIFT] = {
+> -	[S_IFREG >> S_SHIFT]	= EXOFS_FT_REG_FILE,
+> -	[S_IFDIR >> S_SHIFT]	= EXOFS_FT_DIR,
+> -	[S_IFCHR >> S_SHIFT]	= EXOFS_FT_CHRDEV,
+> -	[S_IFBLK >> S_SHIFT]	= EXOFS_FT_BLKDEV,
+> -	[S_IFIFO >> S_SHIFT]	= EXOFS_FT_FIFO,
+> -	[S_IFSOCK >> S_SHIFT]	= EXOFS_FT_SOCK,
+> -	[S_IFLNK >> S_SHIFT]	= EXOFS_FT_SYMLINK,
+> -};
+> -
+>  static inline
+>  void exofs_set_de_type(struct exofs_dir_entry *de, struct inode *inode)
+>  {
+> -	umode_t mode = inode->i_mode;
+> -	de->file_type = exofs_type_by_mode[(mode & S_IFMT) >> S_SHIFT];
+> +	de->file_type = fs_umode_to_ftype(inode->i_mode);
+>  }
+>  
+>  static int
+> @@ -279,17 +256,27 @@ exofs_readdir(struct file *file, struct dir_context *ctx)
+>  				exofs_put_page(page);
+>  				return -EIO;
+>  			}
+> -			if (de->inode_no) {
+> -				unsigned char t;
+>  
+> -				if (de->file_type < EXOFS_FT_MAX)
+> -					t = exofs_filetype_table[de->file_type];
+> -				else
+> -					t = DT_UNKNOWN;
+> +			/*
+> +			 * compile-time asserts that generic FT_x types
+> +			 * still match EXOFS_FT_x types - no need to list
+> +			 * for other functions as well as build will
+> +			 * fail either way
+> +			 */
+> +			BUILD_BUG_ON(EXOFS_FT_UNKNOWN != FT_UNKNOWN);
+> +			BUILD_BUG_ON(EXOFS_FT_REG_FILE != FT_REG_FILE);
+> +			BUILD_BUG_ON(EXOFS_FT_DIR != FT_DIR);
+> +			BUILD_BUG_ON(EXOFS_FT_CHRDEV != FT_CHRDEV);
+> +			BUILD_BUG_ON(EXOFS_FT_BLKDEV != FT_BLKDEV);
+> +			BUILD_BUG_ON(EXOFS_FT_FIFO != FT_FIFO);
+> +			BUILD_BUG_ON(EXOFS_FT_SOCK != FT_SOCK);
+> +			BUILD_BUG_ON(EXOFS_FT_SYMLINK != FT_SYMLINK);
+> +			BUILD_BUG_ON(EXOFS_FT_MAX != FT_MAX);
+>  
+> +			if (de->inode_no) {
+>  				if (!dir_emit(ctx, de->name, de->name_len,
+>  						le64_to_cpu(de->inode_no),
+> -						t)) {
+> +						fs_dtype(de->file_type))) {
+>  					exofs_put_page(page);
+>  					return 0;
+>  				}
+> 
 
