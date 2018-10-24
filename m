@@ -2,137 +2,108 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA964C67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:13:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55CC8C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:16:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0CCD2064C
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:13:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DB5502064C
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 13:16:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HopL6lEV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0CCD2064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="dau/jQwL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB5502064C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726732AbeJXVlF (ORCPT
+        id S1726735AbeJXVoQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 17:41:05 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:36842 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726240AbeJXVlF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 17:41:05 -0400
-Received: by mail-qk1-f193.google.com with SMTP id q184-v6so3074042qkd.3;
-        Wed, 24 Oct 2018 06:13:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8TTgfZexPF4tbTxTsDxIB/fYN6LR4U1y7/B9NKb3n4o=;
-        b=HopL6lEVq7bC4AL9lP3791oCmXR0NAE9HzZCdrdUa5XDg5gObrxnTCNuw9+cvUly1f
-         NI/SIf3vriTXWhRXuhnii+5T0ZKS1kNgtXepwS/9xjCzUusK0qKdsV8TOAHHYMPZibyk
-         u2yfVibOOrxgbOwjCmTYyCM41f7URhrR+rd1f7Df3zMAQKojsjh3rJ2xIBK8Jf9h0d2l
-         PjTenlStz8iRcLbvuwNvXiuaNIYVw11bCErxsryhWFvzRPsXg/aho33Lt06oxsfOTDmZ
-         X8bD96dMhRX2itPOxLlrlMZ+urND7OFOM/9M56KGVPomrVvIgarJEJ6+GguYn43PnNpK
-         y4WA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8TTgfZexPF4tbTxTsDxIB/fYN6LR4U1y7/B9NKb3n4o=;
-        b=ah5KswLWzkhyXzeKREPyDhTEYNO9IBICT2DmJaWeBFLj+qpuNbj6DJTQRKca6Et5My
-         2N3/EKlfzrMtBF+kNZcHWG+VpFaGu9BVM9S8q30ndJHc/eIk0xUBeikgBYViNE+OL7z9
-         dp8noz16WO5uV9tyuQ/Z3klAkA5djxAPMFs3YSMqCBWEO+DGxFXifUTZrY7YkBaVs20g
-         JZCBEKFeSeOlGGnuuj+0u9oVR5lUKEnJeScwOgW8s9fmQvfFQFy5Md67i4W0ZzzbjyZ0
-         AQFjr9Zhbdaato87axZLAC9xjFjxwpRa3FzJLrhaBbYkmwjoBWECogj7m1SnwAWUlxbZ
-         1tCQ==
-X-Gm-Message-State: AGRZ1gISzVUZe2e5x5743cjSleo1eRwjF1Bx2jrHwtzFHKXFnLlnd8mL
-        sSOaM9ohvcnHIDCjZsK+YUSC6UqbGBkhN6la2WU=
-X-Google-Smtp-Source: AJdET5ceeH0NHiSf2it4s+nZJ0vxC8T+b3nBfXyGwMYQlde+mnYlU3VGb2saopnONXti4bStKWbKljg6To7fPzMA9F0=
-X-Received: by 2002:ae9:f40b:: with SMTP id y11-v6mr2320193qkl.137.1540386780292;
- Wed, 24 Oct 2018 06:13:00 -0700 (PDT)
+        Wed, 24 Oct 2018 17:44:16 -0400
+Received: from imap.thunk.org ([74.207.234.97]:52676 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726285AbeJXVoQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 17:44:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=bBxSB3Vz4tdzpwUC7MA6Ml58QKYOxyWCVP1GvRwfYsc=; b=dau/jQwLkN6wuQgTUvkpNkl8Og
+        zH5tTWa8mClAXqMJdAJJeADvHDnFBQw1RRfmGh4tpKOwx4aqp4Eo4w9EbKraOjKGREhFyZtb6D/90
+        j025dQxVqvnT5sAB0GqyL4C6QbwTUuk5nP9qrvpDZsxRpNz/YcxDM6WQpusoPdjdtpdg=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1gFJ0e-0007sP-Sx; Wed, 24 Oct 2018 13:15:40 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id D180F7A56C1; Wed, 24 Oct 2018 09:15:34 -0400 (EDT)
+Date:   Wed, 24 Oct 2018 09:15:34 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     NeilBrown <neilb@suse.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dmitry Safonov <dsafonov@virtuozzo.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+        Brian Gerst <brgerst@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-tip-commits@vger.kernel.org, jsimmons@infradead.org
+Subject: Re: in_compat_syscall() returns from kernel thread for X86_32.
+Message-ID: <20181024131534.GD11606@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        NeilBrown <neilb@suse.com>, Andy Lutomirski <luto@kernel.org>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dmitry Safonov <dsafonov@virtuozzo.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+        Brian Gerst <brgerst@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-tip-commits@vger.kernel.org, jsimmons@infradead.org
+References: <1460987025-30360-1-git-send-email-dsafonov@virtuozzo.com>
+ <tip-abfb9498ee1327f534df92a7ecaea81a85913bae@git.kernel.org>
+ <87h8hkc9fd.fsf@notabene.neil.brown.name>
+ <CALCETrXB8PE4Ue0BeD0wUS9psLLjpv_pt+nj=SEaj+Nb_dZzUA@mail.gmail.com>
+ <871s8ndg6a.fsf@notabene.neil.brown.name>
+ <CALCETrWH342Y7jKHsYdT=_3fuyDkWhvQLK9z4PTs9jzbfoCVwg@mail.gmail.com>
+ <871s8g6roy.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-References: <1540401136-78500-1-git-send-email-peng.hao2@zte.com.cn> <1540401136-78500-3-git-send-email-peng.hao2@zte.com.cn>
-In-Reply-To: <1540401136-78500-3-git-send-email-peng.hao2@zte.com.cn>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 24 Oct 2018 16:12:47 +0300
-Message-ID: <CAHp75VfQQEsn8J_PWsET_ux-SagOVzavwo6Gy6EHQxuRD=78AQ@mail.gmail.com>
-Subject: Re: [PATCH V2 3/4] misc/pvpanic: add support to pvpanic device
- information by using FDT
-To:     peng.hao2@zte.com.cn
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        hutao@cn.fujitsu.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <871s8g6roy.fsf@notabene.neil.brown.name>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 12:02 PM Peng Hao <peng.hao2@zte.com.cn> wrote:
->
-> By default, when ACPI tables and FDT coexist for ARM64,
-> current kernel takes precedence over FDT to get device information.
-> This patch increases the way to get information through FDT.
+On Wed, Oct 24, 2018 at 12:47:57PM +1100, NeilBrown wrote:
+> 
+> I doubt it was copied - more likely independent evolution.
+> But on reflection, I see that it is probably reasonable that it
+> shouldn't be used this way - or at all in this context.
+> I'll try to understand what the issues really are and see if I can
+> find a solution that doesn't depend on this interface.
+> Thanks for your help.
 
->   *  pvpanic.c - pvpanic Device Support
->   *
->   *  Copyright (C) 2013 Fujitsu.
-> + *  Copyright (C) 2018 ZTE.
->   *
->   *  This program is free software; you can redistribute it and/or modify
->   *  it under the terms of the GNU General Public License as published by
+At least for ext4, the primary problem is that we want to use a 64-bit
+telldir/seekdir cookie if all 64-bits will make it to user space, and
+a 32-bit telldir cookie if only 32 bits will make it userspace.  This
+impacts NFS as well because if there are people who are still using
+NFSv2, which has 32-bit directory offsets, we need to constrain the
+telldir/seekdir cookies we give to NFS to be a 32 has as opposed to a
+64-bit hash.
 
-This hunk would be a separate patch which includes switch to SPDX and
-removing the file name from the file itself.
-
-> @@ -25,6 +26,10 @@
->  #include <linux/init.h>
->  #include <linux/types.h>
->  #include <linux/acpi.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-
-> +#include <asm/virt.h>
-
-asm/* goes after linux/*
-
-> +#include <linux/platform_device.h>
-
-Better to keep sorted.
-
-> +       if (!mem)
-> +               return -EINVAL;
-> +
-> +       if (!devm_request_mem_region(&pdev->dev, mem->start,
-> +                                    resource_size(mem), pdev->name))
-> +               return -EBUSY;
-> +
-> +       base = devm_ioremap(&pdev->dev, mem->start,
-> +                           resource_size(mem));
-> +       if (base == NULL)
-> +               return -EFAULT;
-
-devm_ioremap_resource()
-
-> +static const struct of_device_id pvpanic_mmio_match[] = {
-> +       { .compatible = "qemu,pvpanic-mmio", },
-> +       {},
-
-terminators better w/o comma.
-
-> +};
-
--- 
-With Best Regards,
-Andy Shevchenko
+						- Ted
