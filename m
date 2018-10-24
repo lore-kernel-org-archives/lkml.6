@@ -2,126 +2,121 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF8B1ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:52:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78296ECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:53:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC87A2075D
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:52:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC87A2075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 33FBA2075D
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 22:53:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33FBA2075D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726804AbeJYHWx (ORCPT
+        id S1726901AbeJYHXX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 03:22:53 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57611 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726238AbeJYHWw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 03:22:52 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B0003207F4; Thu, 25 Oct 2018 00:52:51 +0200 (CEST)
-Received: from bbrezillon (unknown [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D644720766;
-        Thu, 25 Oct 2018 00:52:40 +0200 (CEST)
-Date:   Thu, 25 Oct 2018 00:52:39 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     Wolfram Sang <wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        <linux-gpio@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>,
-        Peter Rosin <peda@axentia.se>,
-        Mike Shettel <mshettel@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Joe Perches <joe@perches.com>
-Subject: Re: [PATCH v9 6/9] i3c: master: Add driver for Cadence IP
-Message-ID: <20181025005239.15506a63@bbrezillon>
-In-Reply-To: <380d73a8-2e54-3cee-2fdd-c6e891df93f7@ti.com>
-References: <20181022133404.2061-1-boris.brezillon@bootlin.com>
-        <20181022133404.2061-7-boris.brezillon@bootlin.com>
-        <20181024202048.7e3534f7@bbrezillon>
-        <99a506e3-d9d5-0d3e-26e1-031447c14857@ti.com>
-        <20181024230432.66dd71df@bbrezillon>
-        <380d73a8-2e54-3cee-2fdd-c6e891df93f7@ti.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 25 Oct 2018 03:23:23 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:35279 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725829AbeJYHXW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 03:23:22 -0400
+Received: by mail-qk1-f196.google.com with SMTP id v68-v6so4530683qka.2;
+        Wed, 24 Oct 2018 15:53:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+U50XVBot4H7FGuOkQDmHUygidnKMymT4Rk77k+9HhE=;
+        b=RIPXXYTGXnhx0Vwx/Ac12JfcxKg5AinEl+R4pOYH7wREp1VSBs34VnJozxlfhOy6zu
+         b+tF5GX2acSw2mN+RMs2lflfPpIaUAuMnIDnKiESdreJAYQ7t4w2WWmQUZVaWVjR7ypk
+         pksemh2BHpVfTjPstkJWWIMrODQLRVUGCtKaL/T6ASespOCg51z7GwzMm+HEWqz588yy
+         7gFOYFTQshrXTzlJB55r+HPA3J88TencMEJK1wkpldJIrj+7nFEdRqC7zswyvC9H97Qy
+         oqSYyQA12BCIh7fWKkzxmHUwNnp4TvMdxPNLiSMr/3elvyUz2m8uBL60S9+ygKdHwM/V
+         GWEw==
+X-Gm-Message-State: AGRZ1gL1r8lYX+Jird/k8xlP4N5tZ5UYRgSiDx9JqZ1H6bXGg8NZWlpQ
+        ZsnQM3KEF0YVXBGrFh6ssKxeTn+MwnQUaxHZ7OrnyZPW
+X-Google-Smtp-Source: AJdET5cykiGAFQS4f+VrDmFh99HwMxrJ5HNUUZivptgQ1MAlrWaR2sYdst+thZ9K1idPerxm3SfpNHEvpPnykSWykS8=
+X-Received: by 2002:a37:9886:: with SMTP id a128-v6mr4041112qke.343.1540421603509;
+ Wed, 24 Oct 2018 15:53:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <cover.1539655731.git.ren_guo@c-sky.com> <801add6d63256a3bf0802e2b03efb0f9c206dab0.1539655731.git.ren_guo@c-sky.com>
+ <20181023000834.GA20335@guoren-Inspiron-7460>
+In-Reply-To: <20181023000834.GA20335@guoren-Inspiron-7460>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 24 Oct 2018 23:53:05 +0100
+Message-ID: <CAK8P3a2coXVaaiZUcxsp8DmWcVdBrDMomYAN--M42TuSnHxKNA@mail.gmail.com>
+Subject: Re: [PATCH V9 01/21] csky: Build infrastructure
+To:     Guo Ren <ren_guo@c-sky.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 24 Oct 2018 17:43:00 -0500
-Grygorii Strashko <grygorii.strashko@ti.com> wrote:
+On Tue, Oct 23, 2018 at 1:08 AM Guo Ren <ren_guo@c-sky.com> wrote:
+>
+> Hi Arnd,
+>
+> Could you help me review the patch, seems the patch is skipped.
+> ref: https://lkml.org/lkml/2018/10/16/224
 
-> On 10/24/18 4:04 PM, Boris Brezillon wrote:
-> > On Wed, 24 Oct 2018 15:25:17 -0500
-> > Grygorii Strashko <grygorii.strashko@ti.com> wrote:
-> >   
-> >> On 10/24/18 1:20 PM, Boris Brezillon wrote:  
-> >>> Hi Arnd,
-> >>>
-> >>> On Mon, 22 Oct 2018 15:34:01 +0200
-> >>> Boris Brezillon <boris.brezillon@bootlin.com> wrote:
-> >>>
-> >>>      
-> >>>> +
-> >>>> +static void cdns_i3c_master_rd_from_rx_fifo(struct cdns_i3c_master *master,
-> >>>> +					    u8 *bytes, int nbytes)
-> >>>> +{
-> >>>> +	readsl(master->regs + RX_FIFO, bytes, nbytes / 4);  
-> >>>
-> >>> Vitor reported a problem with readsl(): this function expects the 2nd
-> >>> argument to be aligned on 32-bit, which is not guaranteed here. Unless
-> >>> you see a better solution, I'll switch back to a loop doing:
-> >>>
-> >>> 	for (i = 0; i < nbytes; i += 4) {
-> >>> 		u32 tmp = __raw_readl(...);  
-> >>
-> >> Pls, do not use __raw io.  
-> > 
-> > Except this is exactly what I want here, unless you have a
-> > replacement for "readl() without a mem-barrier and without endianness
-> > conversion"
-> >   
-> 
-> Not sure why endianness is the problem. readl_relaxed?
+Ah right, I missed that. I think I originally had some thoughts on it but
+didn't immediately comment and then forgot about it. It's basically
+ok, so
 
-Because we want to read a stream of bytes, and, if we have a CPU that is
-operating in big-endian (ARM kernels can configured in BE or LE), byte
-ordering will be messed up (the controller is LE).
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
-If I use readl_relaxed(), I'll then have to call cpu_to_le32(), and
-finally copy the result to the buffer.
+but please have a look below for a follow-up patch:
 
-> Sry, I've missed that this is part of the driver not i3c core,
-> so minor/ignore.
-> 
+> > diff --git a/arch/csky/include/asm/Kbuild b/arch/csky/include/asm/Kbuild
+> > new file mode 100644
+> > index 0000000..014eb57
+> > --- /dev/null
+> > +++ b/arch/csky/include/asm/Kbuild
+> > @@ -0,0 +1,72 @@
+> > +generic-y += asm-offsets.h
+> > +generic-y += bitsperlong.h
+> > +generic-y += bugs.h
+> > +generic-y += clkdev.h
+> > +generic-y += compat.h
+> > +generic-y += current.h
+> > +generic-y += delay.h
+> > +generic-y += device.h
+> > +generic-y += div64.h
+...
+> > +generic-y += errno.h
+...
+> > +generic-y += ioctl.h
+> > +generic-y += ioctls.h
 
+A number of the header files that are marked as generic-y in
+asm/Kbuild are also marked the same way in uapi/asm/Kbuild.
+I think this is a mistake, since we only need one of the two
+for each header.
+
+When both exist, we just take the one from asm/, but then we install
+the uapi/asm/ version in the 'make headers_install' stage, and they
+both have the same contents, so I think you only need the uapi/asm/
+version here.
+
+> > diff --git a/arch/csky/include/uapi/asm/Kbuild b/arch/csky/include/uapi/asm/Kbuild
+> > new file mode 100644
+> > index 0000000..b65252b
+> > --- /dev/null
+> > +++ b/arch/csky/include/uapi/asm/Kbuild
+> > @@ -0,0 +1,33 @@
+> > +include include/uapi/asm-generic/Kbuild.asm
+> > +
+> > +header-y += cachectl.h
+> > +header-y += stat.h
+
+It also seems that the second statement here (for stat.h) is from
+an older version, since that header no longer exists, at least if
+I'm reading your patches correctly.
+
+         Arnd
