@@ -2,410 +2,89 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03B44C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:14:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 700B2C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:15:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B390E2082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:14:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B390E2082F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=andestech.com
+	by mail.kernel.org (Postfix) with ESMTP id 31BAA20831
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:15:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="faq0b/TH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31BAA20831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727350AbeJXSmX (ORCPT
+        id S1727368AbeJXSmv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 14:42:23 -0400
-Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:54085 "EHLO
-        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726301AbeJXSmX (ORCPT
+        Wed, 24 Oct 2018 14:42:51 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:36028 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726301AbeJXSmv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 14:42:23 -0400
-Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
-        by ATCSQR.andestech.com with ESMTP id w9OAGEWc051731;
-        Wed, 24 Oct 2018 18:16:14 +0800 (GMT-8)
-        (envelope-from nickhu@andestech.com)
-Received: from atcsqa06.andestech.com (10.0.15.65) by ATCPCS16.andestech.com
- (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Wed, 24 Oct 2018
- 18:14:46 +0800
-From:   Nick Hu <nickhu@andestech.com>
-To:     <greentime@andestech.com>, <linux-kernel@vger.kernel.org>,
-        <arnd@arndb.de>, <linux-arch@vger.kernel.org>,
-        <deanbo422@gmail.com>, <rjw@rjwysocki.net>, <pavel@ucw.cz>,
-        <tglx@linutronix.de>, <jason@lakedaemon.net>,
-        <marc.zyngier@arm.com>, <zong@andestech.com>,
-        <linux-pm@vger.kernel.org>, <alankao@andestech.com>
-CC:     Nick Hu <nickhu@andestech.com>, <green.hu@gmail.com>
-Subject: [PATCH v2 1/1] nds32: Power management for nds32
-Date:   Wed, 24 Oct 2018 18:14:32 +0800
-Message-ID: <8ce923ff55f75b764888fc82d97bc3b744858be1.1540375392.git.nickhu@andestech.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <cover.1540375392.git.nickhu@andestech.com>
-References: <cover.1540375392.git.nickhu@andestech.com>
+        Wed, 24 Oct 2018 14:42:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=6YdHeJ40st/wDoNAAH8y60ebo1dhqAW8+Uuit+CFc5U=; b=faq0b/TH5ULtPAR+Yk9y/vpf+
+        xmvUsD1vfgvqNKFIvriXnw/FGCnlwYtzQcp6py5o8C9n5AEOMHrQ3Xs/VyajhuD+l3Yy2Ew0altEM
+        4sE27EyVTQdhipOzw4cZmC1k6clK2sd7b3COicF3x7lPikZmGSbZqX/5pdM8BwcHjKpmri+OAZotM
+        BNyK34qjO6lTwqAvWnfFcMsDhTk7UfS0eu4rgYfn73mUec+9VHbbhKS79KAUXg6s77orQQRapjIer
+        28g85GCGfZdahlOOiO9y/TDrABGQD+U8VHyjlJ4342Jq1XG9D5pejjl4DAmiJ4M9i8E599iqt0/Fw
+        68T1wcWww==;
+Received: from [185.7.230.213] (helo=worktop)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gFGC4-0007L2-AH; Wed, 24 Oct 2018 10:15:17 +0000
+Received: by worktop (Postfix, from userid 1000)
+        id 0EDF86E08B3; Wed, 24 Oct 2018 12:15:08 +0200 (CEST)
+Date:   Wed, 24 Oct 2018 12:15:08 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc:     Mel Gorman <mgorman@techsingularity.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        Yi Wang <wang.yi59@zte.com.cn>, zhong.weidong@zte.com.cn,
+        Yi Liu <liu.yi24@zte.com.cn>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2] sched/core: Don't mix isolcpus and housekeeping CPUs
+Message-ID: <20181024101508.GP3109@worktop.c.hoisthospitality.com>
+References: <1540350169-18581-1-git-send-email-srikar@linux.vnet.ibm.com>
+ <20181024085636.GB23537@techsingularity.net>
+ <20181024094646.GA18466@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.0.15.65]
-X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com w9OAGEWc051731
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181024094646.GA18466@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.22.1 (2013-10-16)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are three sleep states in nds32:
-	suspend to idle,
-	suspend to standby,
-	suspend to ram
+On Wed, Oct 24, 2018 at 03:16:46PM +0530, Srikar Dronamraju wrote:
+> * Mel Gorman <mgorman@techsingularity.net> [2018-10-24 09:56:36]:
+> 
+> > On Wed, Oct 24, 2018 at 08:32:49AM +0530, Srikar Dronamraju wrote:
+> > It would certainly be a bit odd because the
+> > application is asking for some protection but no guarantees are given
+> > and the application is not made aware via an error code that there is a
+> > problem. Asking the application to parse dmesg hoping to find the right
+> > error message is going to be fragile.
+> 
+> Its a actually a good question.
+> What should we be doing if a mix of isolcpus and housekeeping (aka
+> non-isolcpus) is given in the mask.
+> 
+> Right now as you pointed, there is no easy way for the application to know
+> which are the non-isolcpus to set its affinity. cpusets effective_cpus and
+> cpus_allowed both will contain isolcpus too.
 
-In suspend to ram, we use the 'standby' instruction to emulate
-power management device to hang the system util wakeup source
-send wakeup events to break the loop.
-
-First, we push the general purpose registers and system registers
-to stack. Second, we translate stack pointer to physical address
-and store to memory to save the stack pointer. Third, after write
-back and invalid the cache we hang in 'standby' intruction.
-When wakeup source trigger wake up events, the loop will be break
-and resume the system.
-
-Signed-off-by: Nick Hu <nickhu@andestech.com>
-Acked-by: Pavel Machek <pavel@ucw.cz>
----
- arch/nds32/Kconfig               |  10 +++
- arch/nds32/include/asm/suspend.h |  11 +++
- arch/nds32/kernel/Makefile       |   2 +-
- arch/nds32/kernel/pm.c           |  79 +++++++++++++++++++
- arch/nds32/kernel/sleep.S        | 129 +++++++++++++++++++++++++++++++
- drivers/irqchip/irq-ativic32.c   |  31 ++++++++
- 6 files changed, 261 insertions(+), 1 deletion(-)
- create mode 100644 arch/nds32/include/asm/suspend.h
- create mode 100644 arch/nds32/kernel/pm.c
- create mode 100644 arch/nds32/kernel/sleep.S
-
-diff --git a/arch/nds32/Kconfig b/arch/nds32/Kconfig
-index dd448d431f5a..8e2c5ac6acd1 100644
---- a/arch/nds32/Kconfig
-+++ b/arch/nds32/Kconfig
-@@ -95,3 +95,13 @@ endmenu
- menu "Kernel Features"
- source "kernel/Kconfig.hz"
- endmenu
-+
-+menu "Power management options"
-+config SYS_SUPPORTS_APM_EMULATION
-+	bool
-+
-+config ARCH_SUSPEND_POSSIBLE
-+	def_bool y
-+
-+source "kernel/power/Kconfig"
-+endmenu
-diff --git a/arch/nds32/include/asm/suspend.h b/arch/nds32/include/asm/suspend.h
-new file mode 100644
-index 000000000000..6ed2418af1ac
---- /dev/null
-+++ b/arch/nds32/include/asm/suspend.h
-@@ -0,0 +1,11 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+// Copyright (C) 2008-2017 Andes Technology Corporation
-+
-+#ifndef __ASM_NDS32_SUSPEND_H
-+#define __ASM_NDS32_SUSPEND_H
-+
-+extern void suspend2ram(void);
-+extern void cpu_resume(void);
-+extern unsigned long wake_mask;
-+
-+#endif
-diff --git a/arch/nds32/kernel/Makefile b/arch/nds32/kernel/Makefile
-index f52bd2744f50..8d62f2ecb1ab 100644
---- a/arch/nds32/kernel/Makefile
-+++ b/arch/nds32/kernel/Makefile
-@@ -16,7 +16,7 @@ obj-$(CONFIG_STACKTRACE)	+= stacktrace.o
- obj-$(CONFIG_OF)		+= devtree.o
- obj-$(CONFIG_CACHE_L2)		+= atl2c.o
- obj-$(CONFIG_PERF_EVENTS) += perf_event_cpu.o
--
-+obj-$(CONFIG_PM)		+= pm.o sleep.o
- extra-y := head.o vmlinux.lds
- 
- obj-y				+= vdso/
-diff --git a/arch/nds32/kernel/pm.c b/arch/nds32/kernel/pm.c
-new file mode 100644
-index 000000000000..6989560abf4e
---- /dev/null
-+++ b/arch/nds32/kernel/pm.c
-@@ -0,0 +1,79 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2008-2017 Andes Technology Corporation
-+
-+#include <linux/init.h>
-+#include <linux/suspend.h>
-+#include <linux/device.h>
-+#include <linux/printk.h>
-+#include <linux/suspend.h>
-+#include <asm/suspend.h>
-+#include <nds32_intrinsic.h>
-+
-+unsigned int resume_addr;
-+unsigned int *phy_addr_sp_tmp;
-+
-+static void nds32_suspend2ram(void)
-+{
-+	pgd_t *pgdv;
-+	pud_t *pudv;
-+	pmd_t *pmdv;
-+	pte_t *ptev;
-+
-+	pgdv = (pgd_t *)__va((__nds32__mfsr(NDS32_SR_L1_PPTB) &
-+		L1_PPTB_mskBASE)) + pgd_index((unsigned int)cpu_resume);
-+
-+	pudv = pud_offset(pgdv, (unsigned int)cpu_resume);
-+	pmdv = pmd_offset(pudv, (unsigned int)cpu_resume);
-+	ptev = pte_offset_map(pmdv, (unsigned int)cpu_resume);
-+
-+	resume_addr = ((*ptev) & TLB_DATA_mskPPN)
-+			| ((unsigned int)cpu_resume & 0x00000fff);
-+
-+	suspend2ram();
-+}
-+
-+static void nds32_suspend_cpu(void)
-+{
-+	while (!(__nds32__mfsr(NDS32_SR_INT_PEND) & wake_mask))
-+		__asm__ volatile ("standby no_wake_grant\n\t");
-+}
-+
-+static int nds32_pm_valid(suspend_state_t state)
-+{
-+	switch (state) {
-+	case PM_SUSPEND_ON:
-+	case PM_SUSPEND_STANDBY:
-+	case PM_SUSPEND_MEM:
-+		return 1;
-+	default:
-+		return 0;
-+	}
-+}
-+
-+static int nds32_pm_enter(suspend_state_t state)
-+{
-+	pr_debug("%s:state:%d\n", __func__, state);
-+	switch (state) {
-+	case PM_SUSPEND_STANDBY:
-+		nds32_suspend_cpu();
-+		return 0;
-+	case PM_SUSPEND_MEM:
-+		nds32_suspend2ram();
-+		return 0;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static const struct platform_suspend_ops nds32_pm_ops = {
-+	.valid = nds32_pm_valid,
-+	.enter = nds32_pm_enter,
-+};
-+
-+static int __init nds32_pm_init(void)
-+{
-+	pr_debug("Enter %s\n", __func__);
-+	suspend_set_ops(&nds32_pm_ops);
-+	return 0;
-+}
-+late_initcall(nds32_pm_init);
-diff --git a/arch/nds32/kernel/sleep.S b/arch/nds32/kernel/sleep.S
-new file mode 100644
-index 000000000000..60c64bfbc901
---- /dev/null
-+++ b/arch/nds32/kernel/sleep.S
-@@ -0,0 +1,129 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (C) 2017 Andes Technology Corporation */
-+
-+#include <asm/memory.h>
-+
-+.data
-+.global sp_tmp
-+sp_tmp:
-+.long
-+
-+.text
-+.globl suspend2ram
-+.globl cpu_resume
-+
-+suspend2ram:
-+	pushm   $r0, $r31
-+#if defined(CONFIG_HWZOL)
-+	mfusr   $r0, $lc
-+	mfusr   $r1, $le
-+	mfusr   $r2, $lb
-+#endif
-+	mfsr	$r3, $mr0
-+	mfsr    $r4, $mr1
-+	mfsr    $r5, $mr4
-+	mfsr    $r6, $mr6
-+	mfsr    $r7, $mr7
-+	mfsr    $r8, $mr8
-+	mfsr    $r9, $ir0
-+	mfsr    $r10, $ir1
-+	mfsr    $r11, $ir2
-+	mfsr    $r12, $ir3
-+	mfsr    $r13, $ir9
-+	mfsr    $r14, $ir10
-+	mfsr    $r15, $ir12
-+	mfsr    $r16, $ir13
-+	mfsr    $r17, $ir14
-+	mfsr    $r18, $ir15
-+	pushm   $r0, $r19
-+
-+	tlbop	FlushAll
-+	isb
-+
-+	// transfer $sp from va to pa
-+	sethi	$r0, hi20(PAGE_OFFSET)
-+	ori	$r0, $r0, lo12(PAGE_OFFSET)
-+	movi	$r2, PHYS_OFFSET
-+	sub	$r1, $sp, $r0
-+	add	$r2, $r1, $r2
-+
-+	// store pa($sp) to sp_tmp
-+	sethi 	$r1, hi20(sp_tmp)
-+	swi	$r2, [$r1 + lo12(sp_tmp)]
-+
-+	pushm	$r16, $r25
-+	pushm	$r29, $r30
-+#ifdef	CONFIG_CACHE_L2
-+	jal	dcache_wb_all_level
-+#else
-+	jal	cpu_dcache_wb_all
-+#endif
-+	popm	$r29, $r30
-+	popm	$r16, $r25
-+
-+	// get wake_mask and loop in standby
-+	la	$r1, wake_mask
-+	lwi	$r1, [$r1]
-+self_loop:
-+	standby wake_grant
-+	mfsr	$r2, $ir15
-+	and	$r2, $r1, $r2
-+	beqz	$r2, self_loop
-+
-+	// set ipc to resume address
-+	la	$r1, resume_addr
-+	lwi	$r1, [$r1]
-+	mtsr	$r1, $ipc
-+	isb
-+
-+	// reset psw, turn off the address translation
-+	li      $r2, 0x7000a
-+	mtsr    $r2, $ipsw
-+	isb
-+
-+	iret
-+cpu_resume:
-+	// translate the address of sp_tmp variable to pa
-+	la	$r1, sp_tmp
-+	sethi   $r0, hi20(PAGE_OFFSET)
-+	ori     $r0, $r0, lo12(PAGE_OFFSET)
-+	movi    $r2, PHYS_OFFSET
-+	sub     $r1, $r1, $r0
-+	add     $r1, $r1, $r2
-+
-+	// access the sp_tmp to get stack pointer
-+	lwi	$sp, [$r1]
-+
-+	popm	$r0, $r19
-+#if defined(CONFIG_HWZOL)
-+	mtusr   $r0, $lb
-+	mtusr   $r1, $lc
-+	mtusr   $r2, $le
-+#endif
-+	mtsr	$r3, $mr0
-+	mtsr    $r4, $mr1
-+	mtsr    $r5, $mr4
-+	mtsr    $r6, $mr6
-+	mtsr    $r7, $mr7
-+	mtsr    $r8, $mr8
-+	// set original psw to ipsw
-+	mtsr    $r9, $ir1
-+
-+	mtsr    $r11, $ir2
-+	mtsr    $r12, $ir3
-+
-+	// set ipc to RR
-+	la	$r13, RR
-+	mtsr	$r13, $ir9
-+
-+	mtsr    $r14, $ir10
-+	mtsr    $r15, $ir12
-+	mtsr    $r16, $ir13
-+	mtsr    $r17, $ir14
-+	mtsr    $r18, $ir15
-+	popm    $r0, $r31
-+
-+	isb
-+	iret
-+RR:
-+	ret
-diff --git a/drivers/irqchip/irq-ativic32.c b/drivers/irqchip/irq-ativic32.c
-index f69a8588521c..85cf6e0e0e52 100644
---- a/drivers/irqchip/irq-ativic32.c
-+++ b/drivers/irqchip/irq-ativic32.c
-@@ -10,6 +10,8 @@
- #include <linux/irqchip.h>
- #include <nds32_intrinsic.h>
- 
-+unsigned long wake_mask;
-+
- static void ativic32_ack_irq(struct irq_data *data)
- {
- 	__nds32__mtsr_dsb(BIT(data->hwirq), NDS32_SR_INT_PEND2);
-@@ -27,11 +29,40 @@ static void ativic32_unmask_irq(struct irq_data *data)
- 	__nds32__mtsr_dsb(int_mask2 | (BIT(data->hwirq)), NDS32_SR_INT_MASK2);
- }
- 
-+static int nointc_set_wake(struct irq_data *data, unsigned int on)
-+{
-+	unsigned long int_mask = __nds32__mfsr(NDS32_SR_INT_MASK);
-+	static unsigned long irq_orig_bit;
-+	u32 bit = 1 << data->hwirq;
-+
-+	if (on) {
-+		if (int_mask & bit)
-+			__assign_bit(data->hwirq, &irq_orig_bit, true);
-+		else
-+			__assign_bit(data->hwirq, &irq_orig_bit, false);
-+
-+		__assign_bit(data->hwirq, &int_mask, true);
-+		__assign_bit(data->hwirq, &wake_mask, true);
-+
-+	} else {
-+		if (!(irq_orig_bit & bit))
-+			__assign_bit(data->hwirq, &int_mask, false);
-+
-+		__assign_bit(data->hwirq, &wake_mask, false);
-+		__assign_bit(data->hwirq, &irq_orig_bit, false);
-+	}
-+
-+	__nds32__mtsr_dsb(int_mask, NDS32_SR_INT_MASK);
-+
-+	return 0;
-+}
-+
- static struct irq_chip ativic32_chip = {
- 	.name = "ativic32",
- 	.irq_ack = ativic32_ack_irq,
- 	.irq_mask = ativic32_mask_irq,
- 	.irq_unmask = ativic32_unmask_irq,
-+	.irq_set_wake = nointc_set_wake,
- };
- 
- static unsigned int __initdata nivic_map[6] = { 6, 2, 10, 16, 24, 32 };
--- 
-2.17.0
-
+The easy option is to not use isolcpus :-) It is a horrifically bad
+interface.
