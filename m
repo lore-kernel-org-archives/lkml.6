@@ -2,230 +2,168 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4C0BC004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:55:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6AF0C7112C
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:56:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81FDC2075D
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:55:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A35412075D
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:56:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JmAUZPze";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JmAUZPze"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81FDC2075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="yCoKAAuP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A35412075D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbeJXXYU (ORCPT
+        id S1727179AbeJXXYn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 19:24:20 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:51144 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726457AbeJXXYU (ORCPT
+        Wed, 24 Oct 2018 19:24:43 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:40446 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727138AbeJXXYm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 19:24:20 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 90F4560C5F; Wed, 24 Oct 2018 14:55:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540392953;
-        bh=5qxJ1ECucaLRVbkAyvJ/6cvvyESt93lQXolXbKd1ddk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=JmAUZPzepi0UZdMgs10RmQbJPvXGDSfbvaPHcV0RRs1Pjt+7UMCQGiIEs5ZEq+Pnc
-         hwnEtFCI+L6+cYa7PpdRFO98/AzRjeKLScOIDQHJZr+7nO2TMjDhZHW8BfsALtWLPX
-         /GGyZxWtg5XLWMk0hygPn7GVKcwBHFT0MEFzNyBE=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 060DF60246;
-        Wed, 24 Oct 2018 14:55:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540392953;
-        bh=5qxJ1ECucaLRVbkAyvJ/6cvvyESt93lQXolXbKd1ddk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=JmAUZPzepi0UZdMgs10RmQbJPvXGDSfbvaPHcV0RRs1Pjt+7UMCQGiIEs5ZEq+Pnc
-         hwnEtFCI+L6+cYa7PpdRFO98/AzRjeKLScOIDQHJZr+7nO2TMjDhZHW8BfsALtWLPX
-         /GGyZxWtg5XLWMk0hygPn7GVKcwBHFT0MEFzNyBE=
+        Wed, 24 Oct 2018 19:24:42 -0400
+Received: by mail-qk1-f194.google.com with SMTP id x11-v6so3450155qkl.7
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 07:56:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=qZ2514qk1H7lrT6V2q7uwHgptwI/uC+DgUUVl41xFxM=;
+        b=yCoKAAuPKizyRRLcbeJ4eLSHRX33vdSWumR/8HFlQem5CnxmTYc2hglr1JtGYrc/KB
+         OvOW9R3RqwQjOh1V59ockJlflL4/agZNKHdnOcHGNQOKRtS9l61sUj1ZmWR/BNdmSr/w
+         kUzcD0WFwIvI8nI8kWkLuMk9WND0liCRLaeJ0vxK5QEN5dDOyA2EX8mEyaM5d4n9TLG2
+         FfkKWaQzRCX9u/87dXy7Kyk+3n/+Om/vkQ8mCaRciHxMUUEUnhs3fQJHYGiiOb5rr+Ob
+         XvuiqzUZW1jQe/UZ394W1QZDgkdTrxZfhKRoCkTtwtu5VjW8kqPf22XQ0I5TlLGZoKWH
+         TInw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qZ2514qk1H7lrT6V2q7uwHgptwI/uC+DgUUVl41xFxM=;
+        b=Bgw11vV/ubvfIY/yrnGd/CODtWak13LvLU3oLnCXT2hHBaG1+0WzHhVer1INDXL2WV
+         H3Jvj5ZCZGUIuPstUBU6q/dDzPsI7Ub64BCseUj/4xmFN6h0Zwgw3r0RBZlbhmqrvlFH
+         mrmDQDQPj2EtO8GZJIElxhl8+Q56WKLvtcfoOS/m7qgileC/yyPk5dIGcnihXN799/fa
+         jTzS9AYVFr+aQ4H1ABxbjn3uVyWuXPB6t7c2abUBmbl9WArdgbCNeCPLypDDMxH4W/T3
+         uGRp2X1S8dLNbAYkElctAaPiW1zUei4d1Oay9DB2yYTNlS7sbGFGjV/Ed3aoFe0eggoi
+         UKtg==
+X-Gm-Message-State: AGRZ1gKSks/fsxS4DJNc/wWQEC3L+COCjpVfKTgRpoVXla/Bg54tE+H8
+        brah/BwkcN1WD/el/+wloVXHmg==
+X-Google-Smtp-Source: AJdET5e99wyv4PKWEz3r3V7UFK7qWXI3xrDG/D67w1jWqdNZ+/ujU1pdTkq7DJAH8eq9uZPMIQ5sNw==
+X-Received: by 2002:ac8:27d0:: with SMTP id x16-v6mr2695782qtx.61.1540392975547;
+        Wed, 24 Oct 2018 07:56:15 -0700 (PDT)
+Received: from cisco ([192.241.255.151])
+        by smtp.gmail.com with ESMTPSA id v5-v6sm2732998qkc.75.2018.10.24.07.56.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 24 Oct 2018 07:56:14 -0700 (PDT)
+Date:   Wed, 24 Oct 2018 15:56:06 +0100
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Igor Stoppa <igor.stoppa@gmail.com>
+Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        kernel-hardening@lists.openwall.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        igor stoppa <igor.stoppa@huawei.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        rostedt <rostedt@goodmis.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 14/17] prmem: llist, hlist, both plain and rcu
+Message-ID: <20181024145606.GA9019@cisco>
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-15-igor.stoppa@huawei.com>
+ <1634210774.446.1540381072927.JavaMail.zimbra@efficios.com>
+ <243a8ff2-889c-089f-a1ff-c882933ca5c3@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Wed, 24 Oct 2018 20:25:52 +0530
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org,
-        Harish Bandi <c-hbandi@codeaurora.org>
-Subject: Re: [PATCH v2] Bluetooth: hci_qca: Add support for controller debug
- logs.
-In-Reply-To: <A1A25EBE-925D-4952-AE5E-4A6C2BA6FD9E@holtmann.org>
-References: <20181003151144.10537-1-bgodavar@codeaurora.org>
- <2206464E-FA01-4A5A-8BC4-5CF70A0B9765@holtmann.org>
- <eca6c8832017269881709e51eadcf543@codeaurora.org>
- <EC27FDED-638A-4055-A861-C4AAD842F124@holtmann.org>
- <fed90ab28af93bc27a07c0b4e8ca933c@codeaurora.org>
- <01616379-E0FF-49AC-8C69-DA498DA9F51F@holtmann.org>
- <540262ec6c6f1c5f3a9baf18b6f40d47@codeaurora.org>
- <9261133E-226E-42E7-B2F6-15489CCC7CF1@holtmann.org>
- <b59f1fdb359f74bcd3d932339c41f9f3@codeaurora.org>
- <A1A25EBE-925D-4952-AE5E-4A6C2BA6FD9E@holtmann.org>
-Message-ID: <9cd7bbd5c6d620399f4562ec4f406725@codeaurora.org>
-X-Sender: bgodavar@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <243a8ff2-889c-089f-a1ff-c882933ca5c3@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Balakrishna,
-
-On 2018-10-18 13:28, Marcel Holtmann wrote:
-> Hi Balakrishna,
+On Wed, Oct 24, 2018 at 05:03:01PM +0300, Igor Stoppa wrote:
+> On 24/10/18 14:37, Mathieu Desnoyers wrote:
+> > Also, is it the right approach to duplicate existing APIs, or should we
+> > rather hook into page fault handlers and let the kernel do those "shadow"
+> > mappings under the hood ?
 > 
->>>>>>>>>> This patch will prevent error messages splashing on console.
->>>>>>>>>> [   78.426697] Bluetooth: hci_core.c:hci_acldata_packet() 
->>>>>>>>>> hci0: ACL packet for unknown connection handle 3804
->>>>>>>>>> [   78.436682] Bluetooth: hci_core.c:hci_acldata_packet() 
->>>>>>>>>> hci0: ACL packet for unknown connection handle 3804
->>>>>>>>>> [   78.446639] Bluetooth: hci_core.c:hci_acldata_packet() 
->>>>>>>>>> hci0: ACL packet for unknown connection handle 3804
->>>>>>>>>> [   78.456596] Bluetooth: hci_core.c:hci_acldata_packet() 
->>>>>>>>>> hci0: ACL packet for unknown connection handle 3804
->>>>>>>>>> QCA wcn3990 will send the debug logs in the form of ACL 
->>>>>>>>>> packets.
->>>>>>>>>> While decoding packet in qca_recv(), marking the received 
->>>>>>>>>> debug log
->>>>>>>>>> packet as diagnostic packet.
->>>>>>>>>> Signed-off-by: Harish Bandi <c-hbandi@codeaurora.org>
->>>>>>>>>> Signed-off-by: Balakrishna Godavarthi 
->>>>>>>>>> <bgodavar@codeaurora.org>
->>>>>>>>>> ---
->>>>>>>>>> v2:
->>>>>>>>>> * Addressed reviewer comments.
->>>>>>>>>> v1:
->>>>>>>>>> * initial patch
->>>>>>>>>> ---
->>>>>>>>>> drivers/bluetooth/hci_qca.c | 20 +++++++++++++++++++-
->>>>>>>>>> 1 file changed, 19 insertions(+), 1 deletion(-)
->>>>>>>>>> diff --git a/drivers/bluetooth/hci_qca.c 
->>>>>>>>>> b/drivers/bluetooth/hci_qca.c
->>>>>>>>>> index d98ed0442201..63ac3c6b4149 100644
->>>>>>>>>> --- a/drivers/bluetooth/hci_qca.c
->>>>>>>>>> +++ b/drivers/bluetooth/hci_qca.c
->>>>>>>>>> @@ -63,6 +63,10 @@
->>>>>>>>>> /* susclk rate */
->>>>>>>>>> #define SUSCLK_RATE_32KHZ	32768
->>>>>>>>>> +/* Controller debug log header */
->>>>>>>>>> +#define QCA_DEBUG_HDR_MSB	0xDC
->>>>>>>>>> +#define QCA_DEBUG_HDR_LSB	0x2E
->>>>>>>>>> +
->>>>>>>>> since this is actually the ACL handle, why not call it 
->>>>>>>>> QCA_DEBUG_HANDLE.
->>>>>>>> [Bala]: will update.
->>>>>>>>>> /* HCI_IBS transmit side sleep protocol states */
->>>>>>>>>> enum tx_ibs_states {
->>>>>>>>>> 	HCI_IBS_TX_ASLEEP,
->>>>>>>>>> @@ -849,6 +853,20 @@ static int qca_ibs_wake_ack(struct 
->>>>>>>>>> hci_dev *hdev, struct sk_buff *skb)
->>>>>>>>>> 	return 0;
->>>>>>>>>> }
->>>>>>>>>> +static int qca_recv_acl_data(struct hci_dev *hdev, struct 
->>>>>>>>>> sk_buff *skb)
->>>>>>>>>> +{
->>>>>>>>>> +	/* We receive debug logs from chip as an ACL packets.
->>>>>>>>>> +	 * Instead of sending the data to ACL to decode the
->>>>>>>>>> +	 * received data, we are pushing them to the above layers
->>>>>>>>>> +	 * as a diagnostic packet.
->>>>>>>>>> +	 */
->>>>>>>>>> +	if ((skb->len > 2) && (skb->data[0] == QCA_DEBUG_HDR_MSB) &&
->>>>>>>>>> +	    (skb->data[1] == QCA_DEBUG_HDR_LSB))
->>>>>>>>> Skip the individual () since they are not needed. Also the 
->>>>>>>>> skb->len
->>>>>>>>> check is not needed since the H4_RECV_ACL already ensures the 
->>>>>>>>> proper
->>>>>>>>> length of the header.
->>>>>>>>> And just use get_unaligned_le16(skb->data) here (or be16 if 
->>>>>>>>> that is
->>>>>>>>> the byte order).
->>>>>>>> [Bala] : will update condition with _le16()
->>>>>>>>>> +		return hci_recv_diag(hdev, skb);
->>>>>>>>> Is there any reason to keep the 4 octets hci_acl_hdr with this 
->>>>>>>>> SKB? Or
->>>>>>>>> would it be better to be stripped off. Mainly asking are they 
->>>>>>>>> any
->>>>>>>>> other magic handles that we might want to feed through the diag
->>>>>>>>> channel?
->>>>>>>> [Bala]: yes we need header in the stack, to  differentiate 
->>>>>>>> between actual diagnostic packet and debug packet.
->>>>>>> please explain that a bit more. There is just one debug handle or 
->>>>>>> do
->>>>>>> you have more special handles?
->>>>>> [Bala]: Qualcomm bluetooth chip sends the debug data of the chip 
->>>>>> with ACL header along with fixed handler i.e. 0x2edc..
->>>>>>      this handler is dedicated for the debug logs sent by qcomm bt 
->>>>>> chip and it is not used for any other connection handlers.
->>>>>>      so here we are checking this handler and sending to stack as 
->>>>>> an
->>>>>>      a diagnostic packet.. so during the log capture we will read 
->>>>>> this diagnostic packet and handler,to decode the debug packet.
->>>>>>      that is the  reason why we don't remove handler during 
->>>>>> condition check,  in future, if qualcomm chip sends diagnostic 
->>>>>> packet,
->>>>>>      then this will create an problem to upper layers to decide 
->>>>>> whether it is an diagnostic packet or the debug packet.
->>>>>>     this is how we do it.
->>>>>>    if( diagnostic packet && handler == 0x2edc)
->>>>>>       treat them as an ddebug packet
->>>>>>    else
->>>>>>        treat as diagnostic packet.
->>>>> let me interpret this answer. Besides debug handle 0x2edc, there 
->>>>> are
->>>>> other handles that are not connection handles. And in future 
->>>>> updates
->>>>> you want to send these handles also via hci_recv_diag channel.
->>>> No, 0x2edc is an dedicated handle for debug logs, i don't really 
->>>> think they we will have an new handle coming up.
->>>> this is only the handle we will send via hci_recv_diag channel to 
->>>> the stack.
->>>> what i mean in my previous answer was,we don't to remove debug 
->>>> connection handle from the skb, because in the stack
->>>> we look for a diagnostic packet and debug connection handler to 
->>>> decode the message.
->>> if 0x2edc is the only magic connection handle, then lets strip the 
->>> SKB
->>> of the ACL packet header and send only the payload to via
->>> hci_recv_diag. All the information is present and you would be just
->>> sending the ACL packet header for no reason. The diagnostic packets
->>> get a separate channel on the monitor interface.
->> [Bala]: even we the felt the same to remove ACL packet header before 
->> sending to stack via an diagnostic channel,
->> 
->>        here is the case, let us assume that an in future qaulcomm bt 
->> chip want to send diagnosis data as a diagnostic packet.
->>        if we remove ACL header for ACL debug packet, how can the stack 
->> differentiate between debug packet and diagnosis packet.
+> This question is probably a good candidate for the small Q&A section I have
+> in the 00/17.
 > 
-> fair enough. Can we also do the same for the other Qualcomm / Atheros
-> devices on USB and SMD bus? And what about implementing hdev->set_diag
-> to enable / disable sending of debug logs. And of course the addition
-> to btmon to decode the diagnostic channel.
 > 
-[Bala]:
-        Does thing change need to be done for other Qualcomm/Atheros 
-device on USB and smd:  For the legacy Qualcomm/Atheros Chips 
-(Rome/AR30x2/AR30x3), they don’t have this ACL data debug log feature.
-        hdev->set_diag implementation to enable or disable the debug logs 
-from controller: will study further and get back to you on this
-        Qualcomm specific file in Bluez stack to decode the bypassed 
-debug packets in btmon: soon we will be posting the parsing file.
-
-
-> Regards
+> > Adding a new GFP flags for dynamic allocation, and a macro mapping to
+> > a section attribute might suffice for allocation or definition of such
+> > mostly-read-only/seldom-updated data.
 > 
-> Marcel
+> I think what you are proposing makes sense from a pure hardening standpoint.
+> From a more defensive one, I'd rather minimise the chances of giving a free
+> pass to an attacker.
+> 
+> Maybe there is a better implementation of this, than what I have in mind.
+> But, based on my current understanding of what you are describing, there
+> would be few issues:
+> 
+> 1) where would the pool go? The pool is a way to manage multiple vmas and
+> express common property they share. Even before a vma is associated to the
+> pool.
+> 
+> 2) there would be more code that can seamlessly deal with both protected and
+> regular data. Based on what? Some parameter, I suppose.
+> That parameter would be the new target.
+> If the code is "duplicated", as you say, the actual differences are baked in
+> at compile time. The "duplication" would also allow to have always inlined
+> functions for write-rare and leave more freedom to the compiler for their
+> non-protected version.
+> 
+> Besides, I think the separate wr version also makes it very clear, to the
+> user of the API, that there will be a price to pay, in terms of performance.
+> The more seamlessly alternative might make this price less obvious.
 
--- 
-Regards
-Balakrishna.
+What about something in the middle, where we move list to list_impl.h,
+and add a few macros where you have list_set_prev() in prlist now, so
+we could do,
+
+// prlist.h
+
+#define list_set_next(head, next) wr_ptr(&head->next, next)
+#define list_set_prev(head, prev) wr_ptr(&head->prev, prev)
+
+#include <linux/list_impl.h>
+
+// list.h
+
+#define list_set_next(next) (head->next = next)
+#define list_set_next(prev) (head->prev = prev)
+
+#include <linux/list_impl.h>
+
+I wonder then if you can get rid of some of the type punning too? It's
+not clear exactly why that's necessary from the series, but perhaps
+I'm missing something obvious :)
+
+I also wonder how much the actual differences being baked in at
+compile time makes. Most (all?) of this code is inlined.
+
+Cheers,
+
+Tycho
