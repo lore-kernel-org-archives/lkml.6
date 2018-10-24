@@ -2,52 +2,43 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0596C46475
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:21:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 481B9C67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:23:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 453D12082B
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:21:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FV7UdjGL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 453D12082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1C4BD20671
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 03:23:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C4BD20671
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fromorbit.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726433AbeJXLr6 (ORCPT
+        id S1726696AbeJXLtP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 07:47:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42000 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725826AbeJXLr6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 07:47:58 -0400
-Received: from localhost (unknown [104.132.1.80])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B8B62082B;
-        Wed, 24 Oct 2018 02:05:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540346705;
-        bh=Uzajyn/IyYEE6htCGyaXZ/tUzV6wJccvIKOcmNQcWNw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=FV7UdjGLcF9akOkVOtFC8iEghw4sn19YvS7J9jqEMQCoxRUNMLgI/uMtEG2KXRQDg
-         gPJkERabIw8dWGbU3OOffa2/lD4SfkDeQSWJeXPpt5XT+DQb5M+QtkgLFxgNw95Sw0
-         2151b2MnHsTvbOmxGVS4DGUElHFH6p+Y//lr4oh8=
-Date:   Tue, 23 Oct 2018 19:05:04 -0700
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux F2FS Dev Mailing List 
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] f2fs update for 4.20-rc1
-Message-ID: <20181024020504.GA31877@jaegeuk-macbookpro.roam.corp.google.com>
+        Wed, 24 Oct 2018 07:49:15 -0400
+Received: from ipmail03.adl6.internode.on.net ([150.101.137.143]:23872 "EHLO
+        ipmail03.adl6.internode.on.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725826AbeJXLtP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 07:49:15 -0400
+Received: from ppp59-167-129-252.static.internode.on.net (HELO dastard) ([59.167.129.252])
+  by ipmail03.adl6.internode.on.net with ESMTP; 24 Oct 2018 10:30:24 +1030
+Received: from dave by dastard with local (Exim 4.80)
+        (envelope-from <david@fromorbit.com>)
+        id 1gF6b0-0004t4-5t; Wed, 24 Oct 2018 11:00:22 +1100
+Date:   Wed, 24 Oct 2018 11:00:22 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     torvalds@linux-foundation.org
+Cc:     djwong@kernel.org, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, sandeen@sandeen.net
+Subject: [GIT PULL] xfs: 4.20 merge
+Message-ID: <20181024000022.GP18822@dastard>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.8.2 (2017-04-18)
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -55,157 +46,115 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi Linus,
 
-Could you please consider this pull request?
+Can you please pull the XFS 4.20 update from the tag listed below?
+There's not a huge amount of change in this cycle - Darrick has been
+out of action for a couple of months (hence me sending the last few
+pull requests), so we decided a quiet cycle mainly focussed on bug
+fixes was a good idea. Darrick will take the helm again at the end of
+this merge window.
 
-The following changes since commit b36fdc6853a38a6f8749897a33435635019e0647:
+The branch has applied cleanly to your current tree, so you
+shouldn't see any problems with it.
 
-  Merge tag 'gpio-v4.19-2' of git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio (2018-09-05 09:27:45 -0700)
+FYI, I may be sending another update later in the cycle - there's a
+pending rework of the clone/dedupe_file_range code that fixes
+numerous bugs that is spread amongst the VFS, XFS and ocfs2 code. It
+has been reviewed and tested, Al and I just need to work out the
+details of the merge, so it may come from him rather than me.
 
-are available in the Git repository at:
+Thanks!
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-4.20-rc1
+-Dave.
 
-for you to fetch changes up to 78130819695f17f5c042d8ba097802639478faf5:
 
-  f2fs: fix to keep project quota consistent (2018-10-22 17:54:48 -0700)
+The following changes since commit b39989009bdb84992915c9869f58094ed5becf10:
 
-----------------------------------------------------------------
-f2fs-for-4.20-rc1
+  xfs: fix data corruption w/ unaligned reflink ranges (2018-10-06 11:44:39 +1000)
 
-In this round, we've added 1) superblock checksum feature, 2) implemented new
-mount option which we can disable/enable checkpoint to provide atomic updates of
-entire filesystem, 3) refactored quota operations to enhance its consistency
-along with checkpoint, 4) fixed subtle IO hang conditions and roll-forward
-recovery flow to resurrect any fsync'ed inode metadata.
+are available in the git repository at:
 
-Enhancement:
- - add checksum to keep superblock contents more safe
- - add checkpoint=disable/enable to support A/B update of entire filesystem
- - use plug for readahead IO in readdir
- - add more IO counts to avoid block layer hacks
+  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux tags/xfs-4.20-merge-1
 
-Bug fix:
- - prevent data corruption issue for hardware encryption
- - fix IO hang issues when GC is heavily triggered
- - add missing up_read in __write_node_page
- - recover inode metadata during roll-forward recovery flow
- - fix null pointer dereference issue in wrongly configured discard map
+for you to fetch changes up to 96987eea537d6ccd98704a71958f9ba02da80843:
 
-There are some more sanity checks and minor bug fixes as well.
+  xfs: cancel COW blocks before swapext (2018-10-18 17:21:55 +1100)
 
 ----------------------------------------------------------------
-Chao Yu (33):
-      f2fs: fix to avoid NULL pointer dereference on se->discard_map
-      Revert "f2fs: use printk_ratelimited for f2fs_msg"
-      f2fs: fix to flush all dirty inodes recovered in readonly fs
-      f2fs: fix memory leak of write_io in fill_super()
-      f2fs: fix memory leak of percpu counter in fill_super()
-      f2fs: fix to do sanity check with current segment number
-      f2fs: plug readahead IO in readdir()
-      f2fs: add SPDX license identifiers
-      f2fs: split IO error injection according to RW
-      f2fs: fix to recover inode's uid/gid during POR
-      f2fs: fix to recover inode's project id during POR
-      f2fs: fix to recover inode's i_flags during POR
-      f2fs: fix to recover inode's i_gc_failures during POR
-      f2fs: fix to recover inode's crtime during POR
-      f2fs: mark inode dirty explicitly in recover_inode()
-      f2fs: add to account meta IO
-      f2fs: add to account skip count of background GC
-      Revert: "f2fs: check last page index in cached bio to decide submission"
-      f2fs: refactor ->page_mkwrite() flow
-      f2fs: allow out-place-update for direct IO in LFS mode
-      f2fs: submit cached bio to avoid endless PageWriteback
-      f2fs: fix to recover cold bit of inode block during POR
-      f2fs: use rb_*_cached friends
-      f2fs: shrink sbi->sb_lock coverage in set_file_temperature()
-      f2fs: remove unused sbi->trigger_ssr_threshold
-      f2fs: remove unneeded disable_nat_bits()
-      f2fs: fix to account IO correctly
-      f2fs: fix to account IO correctly for cgroup writeback
-      f2fs: fix to spread clear_cold_data()
-      f2fs: spread f2fs_set_inode_flags()
-      f2fs: fix to recover inode->i_flags of inode block during POR
-      f2fs: guarantee journalled quota data by checkpoint
-      f2fs: fix to keep project quota consistent
+xfs: Changes for 4.20
 
-Chengguang Xu (4):
-      f2fs: add additional sanity check in f2fs_acl_from_disk()
-      f2fs: cache NULL when both default_acl and acl are NULL
-      f2fs: surround fault_injection related option parsing using CONFIG_F2FS_FAULT_INJECTION
-      f2fs: fix remount problem of option io_bits
+- only support filesystems with unwritten extents
+- add definition for statfs XFS magic number
+- remove unused parameters around reflink code
+- more debug for dangling delalloc extents
+- cancel COW extents on extent swap targets
+- fix quota stats output and clean up the code
+- refactor some of the attribute code in preparation for parent pointers
+- fix several buffer handling bugs
 
-Daniel Rosenberg (1):
-      f2fs: checkpoint disabling
+----------------------------------------------------------------
+Adam Borowski (1):
+      xfs: add a define for statfs magic to uapi
 
-Jaegeuk Kim (13):
-      f2fs: avoid wrong decrypted data from disk
-      f2fs: submit bio after shutdown
-      f2fs: avoid infinite loop in f2fs_alloc_nid
-      f2fs: report ENOENT correctly in f2fs_rename
-      f2fs: update i_size after DIO completion
-      f2fs: avoid f2fs_bug_on if f2fs_get_meta_page_nofail got EIO
-      f2fs: return correct errno in f2fs_gc
-      f2fs: fix missing up_read
-      f2fs: keep lazytime on remount
-      f2fs: clear PageError on the read path
-      f2fs: allow to mount, if quota is failed
-      f2fs: account read IOs and use IO counts for is_idle
-      Revert "f2fs: fix to clear PG_checked flag in set_page_dirty()"
+Allison Henderson (4):
+      xfs: Move fs/xfs/xfs_attr.h to fs/xfs/libxfs/xfs_attr.h
+      xfs: Add helper function xfs_attr_try_sf_addname
+      xfs: Add attibute set and helper functions
+      xfs: Add attibute remove and helper functions
 
-Jens Axboe (1):
-      f2fs: remove request_list check in is_idle()
+Brian Foster (1):
+      xfs: clear ail delwri queued bufs on unmount of shutdown fs
 
-Junling Zheng (1):
-      f2fs: support superblock checksum
+Carlos Maiolino (2):
+      xfs: Fix xqmstats offsets in /proc/fs/xfs/xqmstat
+      xfs: use offsetof() in place of offset macros for __xfsstats
 
-Sahitya Tummala (5):
-      f2fs: fix unnecessary periodic wakeup of discard thread when dev is busy
-      f2fs: add new idle interval timing for discard and gc paths
-      f2fs: do not update REQ_TIME in case of error conditions
-      f2fs: update REQ_TIME in f2fs_cross_rename()
-      f2fs: fix data corruption issue with hardware encryption
+Christoph Hellwig (8):
+      xfs: remove XFS_IO_INVALID
+      xfs: remove suport for filesystems without unwritten extent flag
+      xfs: handle zeroing in xfs_file_iomap_begin_delay
+      xfs: remove the unused shared argument to xfs_reflink_reserve_cow
+      xfs: remove the unused trimmed argument from xfs_reflink_trim_around_shared
+      xfs: fix fork selection in xfs_find_trim_cow_extent
+      xfs: print dangling delalloc extents
+      xfs: cancel COW blocks before swapext
 
-Sheng Yong (1):
-      f2fs: cleanup dirty pages if recover failed
+Darrick J. Wong (3):
+      xfs: xrep_findroot_block should reject root blocks with siblings
+      xfs: always assign buffer verifiers when one is provided
+      xfs: fix buffer state management in xrep_findroot_block
 
-Wang Shilong (1):
-      f2fs: fix setattr project check upon fssetxattr ioctl
+Dave Chinner (2):
+      xfs: issue log message on user force shutdown
+      xfs: fix use-after-free race in xfs_buf_rele
 
-Yunlei He (1):
-      f2fs: report error if quota off error during umount
+ fs/xfs/libxfs/xfs_attr.c       | 236 ++++++++++++++++++++++++-----------------
+ fs/xfs/{ => libxfs}/xfs_attr.h |   2 +
+ fs/xfs/libxfs/xfs_bmap.c       |  70 ++++++------
+ fs/xfs/libxfs/xfs_bmap.h       |   1 +
+ fs/xfs/libxfs/xfs_format.h     |   8 +-
+ fs/xfs/libxfs/xfs_sb.c         |   5 +-
+ fs/xfs/scrub/repair.c          | 128 +++++++++++++++++-----
+ fs/xfs/scrub/scrub.c           |  13 ---
+ fs/xfs/xfs_aops.c              |   4 +-
+ fs/xfs/xfs_aops.h              |  14 ++-
+ fs/xfs/xfs_bmap_util.c         |  61 ++---------
+ fs/xfs/xfs_buf.c               | 109 +++++++++++++++----
+ fs/xfs/xfs_buf.h               |   2 +
+ fs/xfs/xfs_fsops.c             |  50 ++++-----
+ fs/xfs/xfs_ioctl.c             |   8 --
+ fs/xfs/xfs_iomap.c             |  53 ++++++---
+ fs/xfs/xfs_reflink.c           |  33 +++---
+ fs/xfs/xfs_reflink.h           |   4 +-
+ fs/xfs/xfs_stats.c             |  52 ++++-----
+ fs/xfs/xfs_stats.h             |  28 +----
+ fs/xfs/xfs_super.c             |  38 ++++++-
+ fs/xfs/xfs_trans.h             |   1 +
+ fs/xfs/xfs_trans_ail.c         |  28 +++--
+ fs/xfs/xfs_trans_buf.c         |  42 ++++++++
+ include/uapi/linux/magic.h     |   1 +
+ 25 files changed, 608 insertions(+), 383 deletions(-)
+ rename fs/xfs/{ => libxfs}/xfs_attr.h (97%)
 
-Zhikang Zhang (1):
-      f2fs: avoid sleeping under spin_lock
-
- Documentation/ABI/testing/sysfs-fs-f2fs |  17 +-
- Documentation/filesystems/f2fs.txt      |   8 +-
- fs/f2fs/acl.c                           |  12 +-
- fs/f2fs/acl.h                           |   5 +-
- fs/f2fs/checkpoint.c                    |  94 ++++++--
- fs/f2fs/data.c                          | 220 ++++++++++++-----
- fs/f2fs/debug.c                         |  35 ++-
- fs/f2fs/dir.c                           |  30 ++-
- fs/f2fs/extent_cache.c                  | 134 ++++++-----
- fs/f2fs/f2fs.h                          | 253 +++++++++++++++----
- fs/f2fs/file.c                          | 196 +++++++++------
- fs/f2fs/gc.c                            | 115 ++++++---
- fs/f2fs/gc.h                            |   5 +-
- fs/f2fs/hash.c                          |   5 +-
- fs/f2fs/inline.c                        |   8 +-
- fs/f2fs/inode.c                         |  28 ++-
- fs/f2fs/namei.c                         |  57 +++--
- fs/f2fs/node.c                          |  83 ++++---
- fs/f2fs/node.h                          |   5 +-
- fs/f2fs/recovery.c                      | 125 ++++++++--
- fs/f2fs/segment.c                       | 240 ++++++++++++------
- fs/f2fs/segment.h                       |  20 +-
- fs/f2fs/shrinker.c                      |   5 +-
- fs/f2fs/super.c                         | 415 +++++++++++++++++++++++++++-----
- fs/f2fs/sysfs.c                         |  17 +-
- fs/f2fs/trace.c                         |   5 +-
- fs/f2fs/trace.h                         |   5 +-
- fs/f2fs/xattr.c                         |   5 +-
- fs/f2fs/xattr.h                         |   5 +-
- include/linux/f2fs_fs.h                 |  10 +-
- 30 files changed, 1594 insertions(+), 568 deletions(-)
+-- 
+Dave Chinner
+david@fromorbit.com
