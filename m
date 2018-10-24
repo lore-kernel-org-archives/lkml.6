@@ -2,203 +2,122 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52D35C7112C
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:58:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87D6BC004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:59:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19DBD20833
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:58:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19DBD20833
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 4DCF72075D
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:59:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="UTffeD/7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DCF72075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727576AbeJXTZr (ORCPT
+        id S1727491AbeJXT0l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 15:25:47 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:21872 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727090AbeJXTZr (ORCPT
+        Wed, 24 Oct 2018 15:26:41 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:42342 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726964AbeJXT0l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 15:25:47 -0400
-Received: from [10.18.29.185] (10.18.29.185) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Wed, 24 Oct
- 2018 18:57:50 +0800
-Subject: Re: [PATCH v5 1/3] clk: meson: add emmc sub clock phase delay driver
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-CC:     Yixun Lan <yixun.lan@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com>
- <1539839245-13793-2-git-send-email-jianxin.pan@amlogic.com>
- <10a0572db79ef0cb4f345c8ba2685bea5670b1a5.camel@baylibre.com>
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-Message-ID: <04c6457f-4cc1-9af5-c56e-6880d5abc40d@amlogic.com>
-Date:   Wed, 24 Oct 2018 18:57:44 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 24 Oct 2018 15:26:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=/SdBY9nYjNB+jbYBCtjAsAOyzdzJjeHLEKkKl38KPQU=; b=UTffeD/7kcn0JFRxXr0+ve6qt
+        y4siw+5qyuknqD7Ea2HOzEwAuGRT9kluwFeu22xOb4scKRa5KzhGnKgFWnQehsuZ2yV2/hBSXIyDz
+        j1IUP86kaU5dVtMhd9Jqnd5uQO2eeZX3goan6dLNe+lCRQq5F4ZBf80Tu99PB2FxfLgQU=;
+Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:44154)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gFGsN-0001ee-9v; Wed, 24 Oct 2018 11:58:59 +0100
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gFGsK-0008Ub-7F; Wed, 24 Oct 2018 11:58:56 +0100
+Date:   Wed, 24 Oct 2018 11:58:54 +0100
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     shubhrajyoti.datta@gmail.com
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        michal.simek@xilinx.com, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] i2c: cadence: Implement timeout
+Message-ID: <20181024105854.GU30658@n2100.armlinux.org.uk>
+References: <1540378203-1655-1-git-send-email-shubhrajyoti.datta@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <10a0572db79ef0cb4f345c8ba2685bea5670b1a5.camel@baylibre.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.29.185]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1540378203-1655-1-git-send-email-shubhrajyoti.datta@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/10/24 16:58, Jerome Brunet wrote:
-> On Thu, 2018-10-18 at 13:07 +0800, Jianxin Pan wrote:
->> From: Yixun Lan <yixun.lan@amlogic.com>
-[...]
->>
->> --- /dev/null
->> +++ b/drivers/clk/meson/clk-phase-delay.c
->> @@ -0,0 +1,79 @@
->> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->> +/*
->> + * Amlogic Meson MMC Sub Clock Controller Driver
->> + *
->> + * Copyright (c) 2017 Baylibre SAS.
->> + * Author: Jerome Brunet <jbrunet@baylibre.com>
->> + *
->> + * Copyright (c) 2018 Amlogic, inc.
->> + * Author: Yixun Lan <yixun.lan@amlogic.com>
->> + */
->> +
->> +#include <linux/clk-provider.h>
->> +#include "clkc.h"
->> +
->> +static int meson_clk_phase_delay_get_phase(struct clk_hw *hw)
->> +{
->> +	struct clk_regmap *clk = to_clk_regmap(hw);
->> +	struct meson_clk_phase_delay_data *ph =
->> +		meson_clk_get_phase_delay_data(clk);
->> +	unsigned long period_ps, p, d;
->> +	int degrees;
->> +	u32 val;
->> +
->> +	regmap_read(clk->map, ph->phase.reg_off, &val);
->> +	p = PARM_GET(ph->phase.width, ph->phase.shift, val);
+On Wed, Oct 24, 2018 at 04:20:03PM +0530, shubhrajyoti.datta@gmail.com wrote:
+> From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
 > 
-> there is an helper for this: meson_parm_read()
-OK. I will use meson_parm_read instead. Thanks for your review.
+> In some cases we are waiting in a loop. Replace the infinite wait with
+> the  timeout.
+> 
+> Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+> ---
+>  drivers/i2c/busses/i2c-cadence.c | 30 ++++++++++++++++++++++++++----
+>  1 file changed, 26 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-cadence.c b/drivers/i2c/busses/i2c-cadence.c
+> index b136057..9c38278 100644
+> --- a/drivers/i2c/busses/i2c-cadence.c
+> +++ b/drivers/i2c/busses/i2c-cadence.c
+> @@ -209,6 +209,7 @@ static irqreturn_t cdns_i2c_isr(int irq, void *ptr)
+>  	struct cdns_i2c *id = ptr;
+>  	/* Signal completion only after everything is updated */
+>  	int done_flag = 0;
+> +	unsigned int timeout;
+>  	irqreturn_t status = IRQ_NONE;
+>  
+>  	isr_status = cdns_i2c_readreg(CDNS_I2C_ISR_OFFSET);
+> @@ -235,6 +236,7 @@ static irqreturn_t cdns_i2c_isr(int irq, void *ptr)
+>  	    ((isr_status & CDNS_I2C_IXR_COMP) ||
+>  	     (isr_status & CDNS_I2C_IXR_DATA))) {
+>  		/* Read data if receive data valid is set */
+> +		timeout = 1000;
+>  		while (cdns_i2c_readreg(CDNS_I2C_SR_OFFSET) &
+>  		       CDNS_I2C_SR_RXDV) {
+>  			/*
+> @@ -253,6 +255,16 @@ static irqreturn_t cdns_i2c_isr(int irq, void *ptr)
+>  
+>  			if (cdns_is_holdquirk(id, hold_quirk))
+>  				break;
+> +			timeout--;
+> +			if (timeout)
+> +				mdelay(1);
+> +			else
+> +				break;
+> +		}
+> +		if (!timeout) {
+> +			id->err_status = -ETIMEDOUT;
+> +			complete(&id->xfer_done);
+> +			return IRQ_HANDLED;
 
-The result of regmap_read is shared by two PARM_GETs: phase and delay.
-There will be one more register read when change to meson_parm_read, but I don't think it matters.
+Good kernel programming principle: Always check for the success
+condition when exiting due to timeout rather than the fact that we
+timed out.
 
-> 
->> +	degrees = p * 360 / (1 << (ph->phase.width));
->> +
->> +	period_ps = DIV_ROUND_UP((unsigned long)NSEC_PER_SEC * 1000,
->> +				 clk_hw_get_rate(hw));
->> +
->> +	d = PARM_GET(ph->delay.width, ph->delay.shift, val);
->> +	degrees += d * ph->delay_step_ps * 360 / period_ps;
->> +	degrees %= 360;
->> +
->> +	return degrees;
->> +}
->> +
->> +static void meson_clk_apply_phase_delay(struct clk_regmap *clk,
->> +					unsigned int phase,
->> +					unsigned int delay)
-> 
-> This helper function is a bit overkill.
-> simply call meson_parm_write() twice in meson_clk_phase_delay_set_phase().
-OK. I will use meson_parm_write() instead.
-With meson_parm_write(), there will be one more register read and write
-> 
->> +{
->> +	struct meson_clk_phase_delay_data *ph = clk->data;
->> +	u32 val;
->> +
->> +	regmap_read(clk->map, ph->delay.reg_off, &val);
->> +	val = PARM_SET(ph->phase.width, ph->phase.shift, val, phase);
->> +	val = PARM_SET(ph->delay.width, ph->delay.shift, val, delay);
->> +	regmap_write(clk->map, ph->delay.reg_off, val);
->> +}
->> +
->> +static int meson_clk_phase_delay_set_phase(struct clk_hw *hw, int degrees)
->> +{
->> +	struct clk_regmap *clk = to_clk_regmap(hw);
->> +	struct meson_clk_phase_delay_data *ph =
->> +		meson_clk_get_phase_delay_data(clk);
->> +	unsigned long period_ps, d = 0, r;
->> +	u64 p;
->> +
->> +	p = degrees % 360;
->> +	period_ps = DIV_ROUND_UP((unsigned long)NSEC_PER_SEC * 1000,
->> +				 clk_hw_get_rate(hw));
->> +
->> +	/* First compute the phase index (p), the remainder (r) is the
->> +	 * part we'll try to acheive using the delays (d).
->> +	 */
->> +	r = do_div(p, 360 / (1 << (ph->phase.width)));
->> +	d = DIV_ROUND_CLOSEST(r * period_ps,
->> +			      360 * ph->delay_step_ps);
->> +	d = min(d, PMASK(ph->delay.width));
->> +
->> +	meson_clk_apply_phase_delay(clk, p, d);
->> +	return 0;
->> +}
->> +
->> +const struct clk_ops meson_clk_phase_delay_ops = {
->> +	.get_phase = meson_clk_phase_delay_get_phase,
->> +	.set_phase = meson_clk_phase_delay_set_phase,
->> +};
->> +EXPORT_SYMBOL_GPL(meson_clk_phase_delay_ops);
->> diff --git a/drivers/clk/meson/clkc.h b/drivers/clk/meson/clkc.h
->> index 6b96d55..3309d78 100644
->> --- a/drivers/clk/meson/clkc.h
->> +++ b/drivers/clk/meson/clkc.h
->> @@ -105,6 +105,18 @@ struct clk_regmap _name = {						\
->>  	},								\
->>  };
->>  
->> +struct meson_clk_phase_delay_data {
->> +	struct parm			phase;
->> +	struct parm			delay;
->> +	unsigned int			delay_step_ps;
->> +};
->> +
->> +static inline struct meson_clk_phase_delay_data *
->> +meson_clk_get_phase_delay_data(struct clk_regmap *clk)
->> +{
->> +	return (struct meson_clk_phase_delay_data *)clk->data;
->> +}
->> +
->>  /* clk_ops */
->>  extern const struct clk_ops meson_clk_pll_ro_ops;
->>  extern const struct clk_ops meson_clk_pll_ops;
->> @@ -112,5 +124,6 @@ struct clk_regmap _name = {						\
->>  extern const struct clk_ops meson_clk_mpll_ro_ops;
->>  extern const struct clk_ops meson_clk_mpll_ops;
->>  extern const struct clk_ops meson_clk_phase_ops;
->> +extern const struct clk_ops meson_clk_phase_delay_ops;
->>  
->>  #endif /* __CLKC_H */
-> 
-> 
-> .
-> 
+Also, is this _really_ a loop that needs a timeout condition?  Looking
+at the original code, it looks like the purpose of the loop is to read
+more than one byte, and you are introducing a 1ms delay between the
+read of each byte.
 
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
