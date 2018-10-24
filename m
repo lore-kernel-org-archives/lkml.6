@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E33DFC7112C
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:40:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 028AFECDE44
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:40:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 751042082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:40:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 751042082F
+	by mail.kernel.org (Postfix) with ESMTP id 9D4952064A
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:40:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D4952064A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arcx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727075AbeJXXIc (ORCPT
+        id S1727133AbeJXXIf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 19:08:32 -0400
+        Wed, 24 Oct 2018 19:08:35 -0400
 Received: from mail.arcx.com ([184.94.50.18]:27680 "EHLO WEBMAIL.arcx.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726457AbeJXXIa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 19:08:30 -0400
+        id S1727050AbeJXXId (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 19:08:33 -0400
 X-Greylist: delayed 906 seconds by postgrey-1.27 at vger.kernel.org; Wed, 24 Oct 2018 19:08:27 EDT
 Received: from svens-asus.arcx.com (192.168.2.132) by WEBMAIL.arcx.com
  (192.168.2.64) with Microsoft SMTP Server (TLS) id 15.0.847.32; Wed, 24 Oct
- 2018 10:26:19 -0400
+ 2018 10:26:18 -0400
 From:   Sven Van Asbroeck <svendev@arcx.com>
 To:     <svendev@arcx.com>, <lee.jones@linaro.org>, <robh+dt@kernel.org>,
         <mark.rutland@arm.com>, <afaerber@suse.de>, <treding@nvidia.com>,
@@ -39,15 +39,14 @@ To:     <svendev@arcx.com>, <lee.jones@linaro.org>, <robh+dt@kernel.org>,
         <linus.walleij@linaro.org>, <maxime.ripard@bootlin.com>,
         <bogdan.purcareata@nxp.com>
 CC:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH anybus v1 3/4] bus: support HMS Anybus-S bus.
-Date:   Wed, 24 Oct 2018 10:24:55 -0400
-Message-ID: <20181024142456.10084-4-svendev@arcx.com>
+Subject: [PATCH anybus v1 1/4] mfd: support the Arcx anybus bridge.
+Date:   Wed, 24 Oct 2018 10:24:53 -0400
+Message-ID: <20181024142456.10084-2-svendev@arcx.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181024142456.10084-1-svendev@arcx.com>
 References: <20181024142456.10084-1-svendev@arcx.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-Originating-IP: [192.168.2.132]
 X-ClientProxiedBy: webmail.arcx.com (192.168.2.64) To WEBMAIL.arcx.com
  (192.168.2.64)
@@ -56,80 +55,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Anybus-S/Anybus-M is a series of interchangeable fieldbus communication
-modules featuring on board memory and processing power. All software and
-hardware functionality required to communicate on the fieldbus is
-incorporated in the module itself, allowing the application to focus on
-other tasks.
+Add a driver for the Arcx anybus bridge.
 
-Typical applications are frequency inverters, HMI and visualization
-devices, instruments, scales, robotics, PLC’s and intelligent measuring
-devices.
-
-Official documentation:
-https://www.anybus.com/docs/librariesprovider7/default-document-library/
-manuals-design-guides/hms-hmsi-27-275.pdf
-
-This driver implementation is designed to be almost completely independent
-from the way the Anybus-S hardware is accessed by the SoC. All it needs is:
-
-- a regmap which accesses the underlying Anybus-S dpram by whatever means;
-- an interrupt line, ultimately connected to the Anybus-S card;
-- a reset function.
+This chip embeds up to two Anybus-S application connectors
+(slots), and connects to the SoC via the i.MX parallel WEIM bus.
+There is also a CAN power readout, unrelated to the anybus.
 
 Signed-off-by: Sven Van Asbroeck <svendev@arcx.com>
 ---
- drivers/bus/Kconfig            |   11 +
- drivers/bus/Makefile           |    1 +
- drivers/bus/anybuss-host.c     | 1301 ++++++++++++++++++++++++++++++++
- include/linux/anybuss-client.h |  100 +++
- 4 files changed, 1413 insertions(+)
- create mode 100644 drivers/bus/anybuss-host.c
- create mode 100644 include/linux/anybuss-client.h
+ drivers/mfd/Kconfig          |  11 +
+ drivers/mfd/Makefile         |   1 +
+ drivers/mfd/anybus-bridge.c  | 441 +++++++++++++++++++++++++++++++++++
+ include/linux/anybuss-host.h |  28 +++
+ 4 files changed, 481 insertions(+)
+ create mode 100644 drivers/mfd/anybus-bridge.c
+ create mode 100644 include/linux/anybuss-host.h
 
-diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
-index 1851112ccc29..68869648b9ab 100644
---- a/drivers/bus/Kconfig
-+++ b/drivers/bus/Kconfig
-@@ -45,6 +45,17 @@ config IMX_WEIM
- 	  The WEIM(Wireless External Interface Module) works like a bus.
- 	  You can attach many different devices on it, such as NOR, onenand.
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index 11841f4b7b2b..49b9de71cb16 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -125,6 +125,17 @@ config MFD_ATMEL_SMC
+ 	bool
+ 	select MFD_SYSCON
  
-+config HMS_ANYBUSS_HOST
-+	tristate "HMS Anybus-S Host/Bus Driver"
++config MFD_ANYBUS_BRIDGE
++	tristate "Arcx Anybus-S Bridge"
++	select MFD_CORE
 +	select REGMAP
 +	depends on OF
-+	default n
 +	help
-+	  Driver for the HMS Industrial Networks Anybus-S bus.
-+	  You can attach Anybus-S compatible cards to it, which
-+	  typically provide fieldbus and industrial ethernet
-+	  functionality.
++	  Select this to get support for the Arcx Anybus bridge.
++	  It is accessible via the i.MX parallel WEIM bus, and
++	  embeds up to two Anybus-S application connectors (slots).
++	  There is also a CAN power readout, unrelated to the anybus.
 +
- config MIPS_CDMM
- 	bool "MIPS Common Device Memory Map (CDMM) Driver"
- 	depends on CPU_MIPSR2
-diff --git a/drivers/bus/Makefile b/drivers/bus/Makefile
-index ca300b1914ce..f67c6468126b 100644
---- a/drivers/bus/Makefile
-+++ b/drivers/bus/Makefile
-@@ -13,6 +13,7 @@ obj-$(CONFIG_BRCMSTB_GISB_ARB)	+= brcmstb_gisb.o
- obj-$(CONFIG_FSL_MC_BUS)	+= fsl-mc/
+ config MFD_BCM590XX
+ 	tristate "Broadcom BCM590xx PMUs"
+ 	select MFD_CORE
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index 5856a9489cbd..c45075452d40 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -223,6 +223,7 @@ obj-$(CONFIG_MFD_HI655X_PMIC)   += hi655x-pmic.o
+ obj-$(CONFIG_MFD_DLN2)		+= dln2.o
+ obj-$(CONFIG_MFD_RT5033)	+= rt5033.o
+ obj-$(CONFIG_MFD_SKY81452)	+= sky81452.o
++obj-$(CONFIG_MFD_ANYBUS_BRIDGE) += anybus-bridge.o
  
- obj-$(CONFIG_IMX_WEIM)		+= imx-weim.o
-+obj-$(CONFIG_HMS_ANYBUSS_HOST)	+= anybuss-host.o
- obj-$(CONFIG_MIPS_CDMM)		+= mips_cdmm.o
- obj-$(CONFIG_MVEBU_MBUS) 	+= mvebu-mbus.o
- 
-diff --git a/drivers/bus/anybuss-host.c b/drivers/bus/anybuss-host.c
+ intel-soc-pmic-objs		:= intel_soc_pmic_core.o intel_soc_pmic_crc.o
+ obj-$(CONFIG_INTEL_SOC_PMIC)	+= intel-soc-pmic.o
+diff --git a/drivers/mfd/anybus-bridge.c b/drivers/mfd/anybus-bridge.c
 new file mode 100644
-index 000000000000..41d62937a5eb
+index 000000000000..f6eda5b2b6e8
 --- /dev/null
-+++ b/drivers/bus/anybuss-host.c
-@@ -0,0 +1,1301 @@
++++ b/drivers/mfd/anybus-bridge.c
+@@ -0,0 +1,441 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * HMS Anybus-S Host Driver
++ * Arcx Anybus Bridge driver
 + *
 + * Copyright (C) 2018 Arcx Inc
 + */
@@ -139,1401 +123,469 @@ index 000000000000..41d62937a5eb
 +#include <linux/init.h>
 +#include <linux/slab.h>
 +#include <linux/platform_device.h>
-+#include <linux/interrupt.h>
-+#include <linux/atomic.h>
-+#include <linux/kthread.h>
-+#include <linux/kfifo.h>
++#include <linux/gpio.h>
++#include <linux/of_gpio.h>
++#include <linux/of_address.h>
++#include <linux/pwm.h>
++#include <linux/mfd/core.h>
++#include <linux/of_irq.h>
++#include <linux/delay.h>
++#include <linux/regmap.h>
++#include <linux/idr.h>
 +#include <linux/spinlock.h>
-+#include <linux/uaccess.h>
 +
 +#include <linux/anybuss-host.h>
-+#include <linux/anybuss-client.h>
 +
-+#define DPRAM_SIZE		0x800
-+#define MAX_MBOX_MSG_SZ		0x0FF
-+#define TIMEOUT			(HZ*2)
-+#define MAX_DATA_AREA_SZ	0x200
-+#define MAX_FBCTRL_AREA_SZ	0x1BE
++#define CPLD_STATUS1		0x80
++#define CPLD_CONTROL		0x80
++#define CPLD_CONTROL_CRST	0x40
++#define CPLD_CONTROL_RST1	0x04
++#define CPLD_CONTROL_RST2	0x80
++#define CPLD_STATUS1_AB		0x02
++#define CPLD_STATUS1_CAN_POWER	0x01
++#define CPLD_DESIGN_LO		0x81
++#define CPLD_DESIGN_HI		0x82
++#define CPLD_CAP		0x83
++#define CPLD_CAP_COMPAT		0x01
++#define CPLD_CAP_SEP_RESETS	0x02
 +
-+#define REG_BOOTLOADER_V	0x7C0
-+#define REG_API_V		0x7C2
-+#define REG_FIELDBUS_V		0x7C4
-+#define REG_SERIAL_NO		0x7C6
-+#define REG_FIELDBUS_TYPE	0x7CC
-+#define REG_MODULE_SW_V		0x7CE
-+#define REG_IND_AB		0x7FF
-+#define REG_IND_AP		0x7FE
-+#define REG_EVENT_CAUSE		0x7ED
-+#define MBOX_IN_AREA		0x400
-+#define MBOX_OUT_AREA		0x520
-+#define DATA_IN_AREA		0x000
-+#define DATA_OUT_AREA		0x200
-+#define FBCTRL_AREA		0x640
-+
-+#define EVENT_CAUSE_DC          0x01
-+#define EVENT_CAUSE_FBOF        0x02
-+#define EVENT_CAUSE_FBON        0x04
-+
-+#define IND_AB_UPDATED		0x08
-+#define IND_AX_MIN		0x80
-+#define IND_AX_MOUT		0x40
-+#define IND_AX_IN		0x04
-+#define IND_AX_OUT		0x02
-+#define IND_AX_FBCTRL		0x01
-+#define IND_AP_LOCK		0x08
-+#define IND_AP_ACTION		0x10
-+#define IND_AX_EVNT		0x20
-+#define IND_AP_ABITS		(IND_AX_IN | IND_AX_OUT | \
-+					IND_AX_FBCTRL | \
-+					IND_AP_ACTION | IND_AP_LOCK)
-+
-+#define INFO_TYPE_FB		0x0002
-+#define INFO_TYPE_APP		0x0001
-+#define INFO_COMMAND		0x4000
-+
-+#define OP_MODE_FBFC		0x0002
-+#define OP_MODE_FBS		0x0004
-+#define OP_MODE_CD		0x0200
-+
-+#define CMD_START_INIT		0x0001
-+#define CMD_ANYBUS_INIT		0x0002
-+#define CMD_END_INIT		0x0003
-+
-+/* ------------- ref counted tasks ------------- */
-+
-+struct ab_task;
-+typedef int (*ab_task_fn_t)(struct anybuss_host *cd,
-+					struct ab_task *t);
-+typedef void (*ab_done_fn_t)(struct anybuss_host *cd);
-+
-+struct area_priv {
-+	bool is_write;
-+	u16 flags;
-+	u16 addr;
-+	size_t count;
-+	u8 buf[MAX_DATA_AREA_SZ];
++struct bridge_priv {
++	struct device *class_dev;
++	void __iomem *cpld_base;
++	spinlock_t regs_lock;
++	u8 control_reg;
++	char version[3];
++	u16 design_no;
 +};
 +
-+struct anybus_mbox_hdr {
-+	u16 id;
-+	u16 info;
-+	u16 cmd_num;
-+	u16 data_size;
-+	u16 frame_count;
-+	u16 frame_num;
-+	u16 offset_high;
-+	u16 offset_low;
-+	u16 extended[8];
-+} __packed;
++/* the cpld supports single-byte accesses ONLY */
 +
-+struct mbox_priv {
-+	struct anybus_mbox_hdr hdr;
-+	size_t msg_out_sz;
-+	size_t msg_in_sz;
-+	u8 msg[MAX_MBOX_MSG_SZ];
-+};
++static int read_reg_weim(void *context, unsigned int reg,
++				unsigned int *val)
++{
++	void __iomem *base = context;
 +
-+struct ab_task {
-+	struct kmem_cache	*cache;
-+	atomic_t		refs;
-+	ab_task_fn_t		task_fn;
-+	ab_done_fn_t		done_fn;
-+	int			result;
-+	struct completion	done;
-+	unsigned long		start_jiffies;
-+	union {
-+		struct area_priv area_pd;
-+		struct mbox_priv mbox_pd;
++	*val = readb(base + reg);
++	return 0;
++}
++
++static int write_reg_weim(void *context, unsigned int reg,
++				unsigned int val)
++{
++	void __iomem *base = context;
++
++	writeb(val, base + reg);
++	return 0;
++}
++
++static struct regmap *create_weim_regmap(struct device *dev,
++			struct resource *res, int slot)
++{
++	struct regmap_config regmap_cfg = {
++		.reg_bits = 11,
++		.val_bits = 8,
++		/* bus accesses are simple weim byte accesses.
++		 * they don't require any synchronization.
++		 * also, the bus driver requirement is that regmap accesses
++		 * must never sleep.
++		 */
++		.disable_locking = true,
++		.reg_read = read_reg_weim,
++		.reg_write = write_reg_weim,
 +	};
-+};
++	void __iomem *base;
++	char name[32];
 +
-+static struct ab_task *ab_task_create_get(struct kmem_cache *cache,
-+			ab_task_fn_t task_fn)
-+{
-+	struct ab_task *t;
-+
-+	t = kmem_cache_alloc(cache, GFP_KERNEL);
-+	if (!t)
-+		return NULL;
-+	t->cache = cache;
-+	atomic_set(&t->refs, 1);
-+	t->task_fn = task_fn;
-+	t->done_fn = NULL;
-+	t->result = 0;
-+	init_completion(&t->done);
-+	return t;
-+}
-+
-+static void ab_task_put(struct ab_task *t)
-+{
-+	struct kmem_cache *cache = t->cache;
-+
-+	if (atomic_dec_and_test(&t->refs))
-+		kmem_cache_free(cache, t);
-+}
-+
-+static struct ab_task *__ab_task_get(struct ab_task *t)
-+{
-+	atomic_inc(&t->refs);
-+	return t;
-+}
-+
-+static void
-+__ab_task_finish(struct anybuss_host *cd, struct ab_task *t)
-+{
-+	if (t->done_fn)
-+		t->done_fn(cd);
-+	complete(&t->done);
-+}
-+
-+static void
-+ab_task_dequeue_finish_put(struct anybuss_host *cd, struct kfifo *q)
-+{
-+	int ret;
-+	struct ab_task *t;
-+
-+	ret = kfifo_out(q, &t, sizeof(t));
-+	WARN_ON(!ret);
-+	__ab_task_finish(cd, t);
-+	ab_task_put(t);
-+}
-+
-+static int
-+ab_task_enqueue(wait_queue_head_t *wq, struct kfifo *q,
-+			struct ab_task *t, spinlock_t *slock)
-+{
-+	int ret;
-+
-+	t->start_jiffies = jiffies;
-+	ret = kfifo_in_spinlocked(q, &t, sizeof(t), slock);
-+	if (!ret)
-+		return -ENOMEM;
-+	__ab_task_get(t);
-+	wake_up(wq);
-+	return 0;
-+}
-+
-+static int
-+ab_task_enqueue_wait(wait_queue_head_t *wq, struct kfifo *q,
-+			struct ab_task *t, spinlock_t *slock)
-+{
-+	int ret;
-+
-+	ret = ab_task_enqueue(wq, q, t, slock);
-+	if (ret)
-+		return ret;
-+	ret = wait_for_completion_interruptible(&t->done);
-+	if (ret)
-+		return ret;
-+	return t->result;
-+}
-+
-+/* ------------------------ anybus hardware ------------------------ */
-+
-+struct anybuss_host {
-+	struct device *dev;
-+	struct device *parent;
-+	struct anybuss_client *client;
-+	anybuss_reset_t reset;
-+	struct regmap *regmap;
-+	int irq;
-+	struct task_struct *qthread;
-+	wait_queue_head_t wq;
-+	struct completion card_boot;
-+	atomic_t ind_ab;
-+	spinlock_t qlock;
-+	struct kmem_cache *qcache;
-+	struct kfifo qs[3];
-+	struct kfifo *powerq;
-+	struct kfifo *mboxq;
-+	struct kfifo *areaq;
-+	bool power_on;
-+	bool softint_pending;
-+	atomic_t dc_event;
-+	wait_queue_head_t dc_wq;
-+	atomic_t fieldbus_online;
-+	struct kernfs_node *fieldbus_online_sd;
-+};
-+
-+static int test_dpram(struct regmap *regmap)
-+{
-+	int i;
-+	unsigned int val;
-+
-+	for (i = 0; i < DPRAM_SIZE; i++)
-+		regmap_write(regmap, i, (u8)i);
-+	for (i = 0; i < DPRAM_SIZE; i++) {
-+		regmap_read(regmap, i, &val);
-+		if ((u8)val != (u8)i)
-+			return -EIO;
-+	}
-+	return 0;
-+}
-+
-+static void ab_reset(struct anybuss_host *cd, bool reset)
-+{
-+	cd->reset(cd->parent, reset);
-+}
-+
-+static int read_ind_ab(struct regmap *regmap)
-+{
-+	unsigned long timeout = jiffies + HZ/2;
-+	unsigned int a, b;
-+
-+	while (time_before_eq(jiffies, timeout)) {
-+		regmap_read(regmap, REG_IND_AB, &a);
-+		regmap_read(regmap, REG_IND_AB, &b);
-+		if (likely(a == b))
-+			return (int)a;
-+		cpu_relax();
-+	}
-+	WARN(1, "IND_AB register not stable");
-+	return -ETIMEDOUT;
-+}
-+
-+static int write_ind_ap(struct regmap *regmap, unsigned int ind_ap)
-+{
-+	unsigned long timeout = jiffies + HZ/2;
-+	unsigned int v;
-+
-+	while (time_before_eq(jiffies, timeout)) {
-+		regmap_write(regmap, REG_IND_AP, ind_ap);
-+		regmap_read(regmap, REG_IND_AP, &v);
-+		if (likely(ind_ap == v))
-+			return 0;
-+		cpu_relax();
-+	}
-+	WARN(1, "IND_AP register not stable");
-+	return -ETIMEDOUT;
-+}
-+
-+static irqreturn_t irq_handler(int irq, void *data)
-+{
-+	struct anybuss_host *cd = data;
-+	int ind_ab;
-+
-+	/* reading the anybus indicator register acks the interrupt */
-+	ind_ab = read_ind_ab(cd->regmap);
-+	if (ind_ab < 0)
-+		return IRQ_NONE;
-+	atomic_set(&cd->ind_ab, ind_ab);
-+	complete(&cd->card_boot);
-+	wake_up(&cd->wq);
-+	return IRQ_HANDLED;
-+}
-+
-+/* ------------------------ power on/off tasks --------------------- */
-+
-+static int task_fn_power_off(struct anybuss_host *cd,
-+				struct ab_task *t)
-+{
-+	if (!cd->power_on)
-+		return 0;
-+	disable_irq(cd->irq);
-+	ab_reset(cd, true);
-+	atomic_set(&cd->ind_ab, IND_AB_UPDATED);
-+	atomic_set(&cd->fieldbus_online, 0);
-+	sysfs_notify_dirent(cd->fieldbus_online_sd);
-+	cd->power_on = false;
-+	return 0;
-+}
-+
-+static int task_fn_power_on_2(struct anybuss_host *cd,
-+				struct ab_task *t)
-+{
-+	if (completion_done(&cd->card_boot)) {
-+		cd->power_on = true;
-+		return 0;
-+	}
-+	if (time_after(jiffies, t->start_jiffies + TIMEOUT)) {
-+		disable_irq(cd->irq);
-+		ab_reset(cd, true);
-+		dev_err(cd->dev, "power on timed out");
-+		return -ETIMEDOUT;
-+	}
-+	return -EINPROGRESS;
-+}
-+
-+static int task_fn_power_on(struct anybuss_host *cd,
-+				struct ab_task *t)
-+{
-+	unsigned int dummy;
-+
-+	if (cd->power_on)
-+		return 0;
-+	/* anybus docs: prevent false 'init done' interrupt by
-+	 * doing a dummy read of IND_AB register while in reset.
-+	 */
-+	regmap_read(cd->regmap, REG_IND_AB, &dummy);
-+	reinit_completion(&cd->card_boot);
-+	enable_irq(cd->irq);
-+	ab_reset(cd, false);
-+	t->task_fn = task_fn_power_on_2;
-+	return -EINPROGRESS;
-+}
-+
-+int anybuss_set_power(struct anybuss_client *client, bool power_on)
-+{
-+	struct anybuss_host *cd = client->host;
-+	struct ab_task *t;
-+	int err;
-+
-+	t = ab_task_create_get(cd->qcache, power_on ?
-+				task_fn_power_on : task_fn_power_off);
-+	if (!t)
-+		return -ENOMEM;
-+	err = ab_task_enqueue_wait(&cd->wq, cd->powerq, t, &cd->qlock);
-+	ab_task_put(t);
-+	return err;
-+}
-+EXPORT_SYMBOL_GPL(anybuss_set_power);
-+
-+/* ---------------------------- area tasks ------------------------ */
-+
-+static int task_fn_area_3(struct anybuss_host *cd, struct ab_task *t)
-+{
-+	struct area_priv *pd = &t->area_pd;
-+
-+	if (!cd->power_on)
-+		return -EIO;
-+	if (atomic_read(&cd->ind_ab) & pd->flags) {
-+		/* area not released yet */
-+		if (time_after(jiffies, t->start_jiffies + TIMEOUT))
-+			return -ETIMEDOUT;
-+		return -EINPROGRESS;
-+	}
-+	return 0;
-+}
-+
-+static int task_fn_area_2(struct anybuss_host *cd, struct ab_task *t)
-+{
-+	struct area_priv *pd = &t->area_pd;
-+	unsigned int ind_ap;
-+	int ret;
-+
-+	if (!cd->power_on)
-+		return -EIO;
-+	regmap_read(cd->regmap, REG_IND_AP, &ind_ap);
-+	if (!(atomic_read(&cd->ind_ab) & pd->flags)) {
-+		/* we don't own the area yet */
-+		if (time_after(jiffies, t->start_jiffies + TIMEOUT)) {
-+			dev_warn(cd->dev, "timeout waiting for area");
-+			dump_stack();
-+			return -ETIMEDOUT;
-+		}
-+		return -EINPROGRESS;
-+	}
-+	/* we own the area, do what we're here to do */
-+	if (pd->is_write)
-+		regmap_bulk_write(cd->regmap, pd->addr, pd->buf,
-+							pd->count);
-+	else
-+		regmap_bulk_read(cd->regmap, pd->addr, pd->buf,
-+							pd->count);
-+	/* ask to release the area, must use unlocked release */
-+	ind_ap &= ~IND_AP_ABITS;
-+	ind_ap |= pd->flags;
-+	ret = write_ind_ap(cd->regmap, ind_ap);
-+	if (ret)
-+		return ret;
-+	t->task_fn = task_fn_area_3;
-+	return -EINPROGRESS;
-+}
-+
-+static int task_fn_area(struct anybuss_host *cd, struct ab_task *t)
-+{
-+	struct area_priv *pd = &t->area_pd;
-+	unsigned int ind_ap;
-+	int ret;
-+
-+	if (!cd->power_on)
-+		return -EIO;
-+	regmap_read(cd->regmap, REG_IND_AP, &ind_ap);
-+	/* ask to take the area */
-+	ind_ap &= ~IND_AP_ABITS;
-+	ind_ap |= pd->flags | IND_AP_ACTION | IND_AP_LOCK;
-+	ret = write_ind_ap(cd->regmap, ind_ap);
-+	if (ret)
-+		return ret;
-+	t->task_fn = task_fn_area_2;
-+	return -EINPROGRESS;
-+}
-+
-+static struct ab_task *
-+create_area_reader(struct kmem_cache *qcache, u16 flags, u16 addr,
-+				size_t count)
-+{
-+	struct ab_task *t;
-+	struct area_priv *ap;
-+
-+	t = ab_task_create_get(qcache, task_fn_area);
-+	if (!t)
-+		return NULL;
-+	ap = &t->area_pd;
-+	ap->flags = flags;
-+	ap->addr = addr;
-+	ap->is_write = false;
-+	ap->count = count;
-+	return t;
-+}
-+
-+static struct ab_task *
-+create_area_writer(struct kmem_cache *qcache, u16 flags, u16 addr,
-+				const void *buf, size_t count)
-+{
-+	struct ab_task *t;
-+	struct area_priv *ap;
-+
-+	t = ab_task_create_get(qcache, task_fn_area);
-+	if (!t)
-+		return NULL;
-+	ap = &t->area_pd;
-+	ap->flags = flags;
-+	ap->addr = addr;
-+	ap->is_write = true;
-+	ap->count = count;
-+	memcpy(ap->buf, buf, count);
-+	return t;
-+}
-+
-+static struct ab_task *
-+create_area_user_writer(struct kmem_cache *qcache, u16 flags, u16 addr,
-+				const void __user *buf, size_t count)
-+{
-+	struct ab_task *t;
-+	struct area_priv *ap;
-+
-+	t = ab_task_create_get(qcache, task_fn_area);
-+	if (!t)
++	if (resource_size(res) < (1<<regmap_cfg.reg_bits))
++		return ERR_PTR(-EINVAL);
++	base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(base))
++		return (struct regmap *)base;
++	/* give the regmap a name, so it shows up in debugfs */
++	snprintf(name, sizeof(name), "slot%d", slot);
++	regmap_cfg.name = devm_kmemdup(dev, name, sizeof(name), GFP_KERNEL);
++	if (regmap_cfg.name == NULL)
 +		return ERR_PTR(-ENOMEM);
-+	ap = &t->area_pd;
-+	ap->flags = flags;
-+	ap->addr = addr;
-+	ap->is_write = true;
-+	ap->count = count;
-+	if (copy_from_user(ap->buf, buf, count)) {
-+		ab_task_put(t);
-+		return ERR_PTR(-EFAULT);
-+	}
-+	return t;
++	return devm_regmap_init(dev, NULL, base, &regmap_cfg);
 +}
 +
-+static bool area_range_ok(u16 addr, size_t count, u16 area_start,
-+							size_t area_sz)
++static int add_anybus_slot(struct device *dev, anybuss_reset_t reset,
++				int slot)
 +{
-+	u16 area_end_ex = area_start + area_sz;
-+	u16 addr_end_ex;
++	int err, irq;
++	struct resource mem_res, *irq_res;
++	struct mfd_cell *cell;
++	struct anybuss_host_pdata *pdata;
++	struct gpio_desc *gpio;
++	struct regmap *regmap;
 +
-+	if (addr < area_start)
-+		return false;
-+	if (addr >= area_end_ex)
-+		return false;
-+	addr_end_ex = addr + count;
-+	if (addr_end_ex > area_end_ex)
-+		return false;
-+	return true;
-+}
-+
-+/* -------------------------- mailbox tasks ----------------------- */
-+
-+struct msgAnybusInit {
-+	u16 input_io_len;
-+	u16 input_dpram_len;
-+	u16 input_total_len;
-+	u16 output_io_len;
-+	u16 output_dpram_len;
-+	u16 output_total_len;
-+	u16 op_mode;
-+	u16 notif_config;
-+	u16 wd_val;
-+} __packed;
-+
-+static int task_fn_mbox_2(struct anybuss_host *cd, struct ab_task *t)
-+{
-+	struct mbox_priv *pd = &t->mbox_pd;
-+	unsigned int ind_ap;
-+
-+	if (!cd->power_on)
-+		return -EIO;
-+	regmap_read(cd->regmap, REG_IND_AP, &ind_ap);
-+	if (((atomic_read(&cd->ind_ab) ^ ind_ap) & IND_AX_MOUT) == 0) {
-+		/* output message not here */
-+		if (time_after(jiffies, t->start_jiffies + TIMEOUT))
-+			return -ETIMEDOUT;
-+		return -EINPROGRESS;
-+	}
-+	/* grab the returned header and msg */
-+	regmap_bulk_read(cd->regmap, MBOX_OUT_AREA, &pd->hdr,
-+		sizeof(pd->hdr));
-+	regmap_bulk_read(cd->regmap, MBOX_OUT_AREA + sizeof(pd->hdr),
-+		pd->msg, pd->msg_in_sz);
-+	/* tell anybus we've consumed the message */
-+	ind_ap ^= IND_AX_MOUT;
-+	return write_ind_ap(cd->regmap, ind_ap);
-+}
-+
-+static int task_fn_mbox(struct anybuss_host *cd, struct ab_task *t)
-+{
-+	struct mbox_priv *pd = &t->mbox_pd;
-+	unsigned int ind_ap;
-+	int ret;
-+
-+	if (!cd->power_on)
-+		return -EIO;
-+	regmap_read(cd->regmap, REG_IND_AP, &ind_ap);
-+	if ((atomic_read(&cd->ind_ab) ^ ind_ap) & IND_AX_MIN) {
-+		/* mbox input area busy */
-+		if (time_after(jiffies, t->start_jiffies + TIMEOUT))
-+			return -ETIMEDOUT;
-+		return -EINPROGRESS;
-+	}
-+	/* write the header and msg to input area */
-+	regmap_bulk_write(cd->regmap, MBOX_IN_AREA, &pd->hdr,
-+					sizeof(pd->hdr));
-+	regmap_bulk_write(cd->regmap, MBOX_IN_AREA + sizeof(pd->hdr),
-+					pd->msg, pd->msg_out_sz);
-+	/* tell anybus we gave it a message */
-+	ind_ap ^= IND_AX_MIN;
-+	ret = write_ind_ap(cd->regmap, ind_ap);
-+	if (ret)
-+		return ret;
-+	t->start_jiffies = jiffies;
-+	t->task_fn = task_fn_mbox_2;
-+	return -EINPROGRESS;
-+}
-+
-+static const char * const O_MSGS[] = {
-+	"Incorrect length of input I/O",		/* bit 0 */
-+	"Incorrect length of DPRAM input",		/* bit 1 */
-+	"Incorrect length of total input",		/* bit 2 */
-+	"(reserved)",					/* bit 3 */
-+	"Incorrect length of output I/O",		/* bit 4 */
-+	"Incorrect length of DPRAM output",		/* bit 5 */
-+	"Incorrect length of total output",		/* bit 6 */
-+	"(reserved)",					/* bit 7 */
-+	"Incorrect config of Module Status reg",	/* bit 8 */
-+	"Incorrect config of Event Notification reg",	/* bit 9 */
-+	"Incorrect Watchdog Counter difference value",	/* bit 10 */
-+};
-+
-+static void log_invalid_other(struct device *dev,
-+				struct anybus_mbox_hdr *hdr)
-+{
-+	int i;
-+	size_t ext_offs = sizeof(hdr->extended) - 1;
-+	u16 code = be16_to_cpu(hdr->extended[ext_offs]);
-+
-+	dev_err(dev, "   Invalid other: [0x%02X]", code);
-+	for (i = 0; code != 0; code >>= 1, i++)
-+		if ((code & 1) && (i < ARRAY_SIZE(O_MSGS)))
-+			dev_err(dev, "\t%s", O_MSGS[i]);
-+}
-+
-+static const char * const EMSGS[] = {
-+	"Invalid Message ID",
-+	"Invalid Message Type",
-+	"Invalid Command",
-+	"Invalid Data Size",
-+	"Message Header Malformed (offset 008h)",
-+	"Message Header Malformed (offset 00Ah)",
-+	"Message Header Malformed (offset 00Ch - 00Dh)",
-+	"Invalid Address",
-+	"Invalid Response",
-+	"Flash Config Error",
-+};
-+
-+static int mbox_cmd_err(struct device *dev, struct mbox_priv *mpriv)
-+{
-+	int i;
-+	u8 ecode;
-+	struct anybus_mbox_hdr *hdr = &mpriv->hdr;
-+	u16 info = be16_to_cpu(hdr->info);
-+	u8 *phdr = (u8 *)hdr;
-+	u8 *pmsg = mpriv->msg;
-+
-+	if (!(info & 0x8000))
-+		return 0;
-+	ecode = (info >> 8) & 0x0F;
-+	dev_err(dev, "mailbox command failed:");
-+	if (ecode == 0x0F)
-+		log_invalid_other(dev, hdr);
-+	else if (ecode < ARRAY_SIZE(EMSGS))
-+		dev_err(dev, "   Error code: %s (0x%02X)",
-+			EMSGS[ecode], ecode);
-+	else
-+		dev_err(dev, "   Error code: 0x%02X\n", ecode);
-+	dev_err(dev, "Failed command:");
-+	dev_err(dev, "Message Header:");
-+	for (i = 0; i < sizeof(mpriv->hdr); i += 2)
-+		dev_err(dev, "%02X%02X", phdr[i], phdr[i+1]);
-+	dev_err(dev, "Message Data:");
-+	for (i = 0; i < mpriv->msg_in_sz; i += 2)
-+		dev_err(dev, "%02X%02X", pmsg[i], pmsg[i+1]);
-+	dev_err(dev, "Stack dump:");
-+	dump_stack();
-+	return -EIO;
-+}
-+
-+static int _anybus_mbox_cmd(struct anybuss_host *cd,
-+				u16 cmd_num, bool is_fb_cmd,
-+				const void *msg_out, size_t msg_out_sz,
-+				void *msg_in, size_t msg_in_sz,
-+				const void *ext, size_t ext_sz)
-+{
-+	struct ab_task *t;
-+	struct mbox_priv *pd;
-+	struct anybus_mbox_hdr *h;
-+	size_t msg_sz = max(msg_in_sz, msg_out_sz);
-+	u16 info;
-+	int err;
-+
-+	if (msg_sz > MAX_MBOX_MSG_SZ)
++	/* get irq from devicetree */
++	gpio = devm_gpiod_get_index(dev, "irq", slot, GPIOD_IN);
++	if (IS_ERR(gpio))
++		return PTR_ERR(gpio);
++	irq = gpiod_to_irq(gpio);
++	if (irq < 0) {
++		dev_err(dev, "Anybus-S slot %d: no irq?", slot);
 +		return -EINVAL;
-+	if (ext && (ext_sz > sizeof(h->extended)))
-+		return -EINVAL;
-+	t = ab_task_create_get(cd->qcache, task_fn_mbox);
-+	if (!t)
++	}
++	/* get anybus mem resource from devicetree
++	 * note that the cpld registers sit at dt offset 0
++	 * anybus slot memory starts at offset 1
++	 */
++	err = of_address_to_resource(dev->of_node, slot+1, &mem_res);
++	if (err) {
++		dev_err(dev, "Anybus-S slot %d: no weim memory?", slot);
++		return err;
++	}
++	regmap = create_weim_regmap(dev, &mem_res, slot);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++	/* add slot as a mfd device */
++	irq_res = devm_kzalloc(dev, sizeof(*irq_res), GFP_KERNEL);
++	if (!irq_res)
 +		return -ENOMEM;
-+	pd = &t->mbox_pd;
-+	h = &pd->hdr;
-+	info = is_fb_cmd ? INFO_TYPE_FB : INFO_TYPE_APP;
-+	/* prevent uninitialized memory in the header from being sent
-+	 * across the anybus
-+	 */
-+	memset(h, 0, sizeof(*h));
-+	h->info = cpu_to_be16(info | INFO_COMMAND);
-+	h->cmd_num = cpu_to_be16(cmd_num);
-+	h->data_size = cpu_to_be16(msg_out_sz);
-+	h->frame_count = cpu_to_be16(1);
-+	h->frame_num = cpu_to_be16(1);
-+	h->offset_high = cpu_to_be16(0);
-+	h->offset_low = cpu_to_be16(0);
-+	if (ext)
-+		memcpy(h->extended, ext, ext_sz);
-+	memcpy(pd->msg, msg_out, msg_out_sz);
-+	pd->msg_out_sz = msg_out_sz;
-+	pd->msg_in_sz = msg_in_sz;
-+	err = ab_task_enqueue_wait(&cd->wq, cd->mboxq, t, &cd->qlock);
++	irq_res->start = irq_res->end = irq;
++	irq_res->flags = IORESOURCE_IRQ;
++	irq_res->name = "anybus-irq";
++	cell = devm_kzalloc(dev, sizeof(*cell), GFP_KERNEL);
++	if (!cell)
++		return -ENOMEM;
++	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
++	if (!pdata)
++		return -ENOMEM;
++	pdata->reset = reset;
++	pdata->regmap = regmap;
++	cell->name = "anybuss-host";
++	cell->num_resources = 1;
++	cell->resources = irq_res;
++	cell->platform_data = pdata;
++	cell->pdata_size = sizeof(*pdata);
++	dev_info(dev, "Anybus-S slot %d: [weim 0x%016x-0x%016x] [irq %d]",
++		slot, mem_res.start, mem_res.end, irq);
++	err = devm_mfd_add_devices(dev, PLATFORM_DEVID_AUTO, cell, 1,
++						NULL, 0, NULL);
 +	if (err)
-+		goto out;
-+	/* mailbox mechanism worked ok, but maybe the mbox response
-+	 * contains an error ?
-+	 */
-+	err = mbox_cmd_err(cd->dev, pd);
-+	if (err)
-+		goto out;
-+	memcpy(msg_in, pd->msg, msg_in_sz);
-+out:
-+	ab_task_put(t);
++		dev_err(dev, "failed to add Anybus-S slot %d", slot);
 +	return err;
 +}
 +
-+/* ------------------------ anybus queues ------------------------ */
-+
-+static void process_q(struct anybuss_host *cd, struct kfifo *q)
++static int add_anybus_slots(struct device *dev, struct device_node *np,
++				anybuss_reset_t *resets)
 +{
-+	struct ab_task *t;
-+	int ret;
++	int i, err;
 +
-+	ret = kfifo_out_peek(q, &t, sizeof(t));
-+	if (!ret)
-+		return;
-+	t->result = t->task_fn(cd, t);
-+	if (t->result != -EINPROGRESS)
-+		ab_task_dequeue_finish_put(cd, q);
++	/* bridge has two Anybus-S slots */
++	for (i = 0; i < 2; i++) {
++		err = add_anybus_slot(dev, resets[i], i);
++		if (err)
++			return err;
++	}
++	return 0;
 +}
 +
-+static bool qs_have_work(struct kfifo *qs, size_t num)
++static void do_reset(struct device *dev, u8 rst_bit, bool reset)
 +{
-+	size_t i;
-+	struct ab_task *t;
-+	int ret;
++	unsigned long flags;
++	struct bridge_priv *cd = dev_get_drvdata(dev);
 +
-+	for (i = 0; i < num; i++, qs++) {
-+		ret = kfifo_out_peek(qs, &t, sizeof(t));
-+		if (ret && (t->result != -EINPROGRESS))
-+			return true;
-+	}
-+	return false;
-+}
-+
-+static void process_qs(struct anybuss_host *cd)
-+{
-+	size_t i;
-+	struct kfifo *qs = cd->qs;
-+	size_t nqs = ARRAY_SIZE(cd->qs);
-+
-+	for (i = 0; i < nqs; i++, qs++)
-+		process_q(cd, qs);
-+}
-+
-+static void softint_ack(struct anybuss_host *cd)
-+{
-+	unsigned int ind_ap;
-+
-+	cd->softint_pending = false;
-+	if (!cd->power_on)
-+		return;
-+	regmap_read(cd->regmap, REG_IND_AP, &ind_ap);
-+	ind_ap &= ~IND_AX_EVNT;
-+	ind_ap |= atomic_read(&cd->ind_ab) & IND_AX_EVNT;
-+	write_ind_ap(cd->regmap, ind_ap);
-+}
-+
-+static void process_softint(struct anybuss_host *cd)
-+{
-+	static const u8 zero;
-+	int ret;
-+	unsigned int ind_ap, ev;
-+	struct ab_task *t;
-+
-+	if (!cd->power_on)
-+		return;
-+	if (cd->softint_pending)
-+		return;
-+	regmap_read(cd->regmap, REG_IND_AP, &ind_ap);
-+	if (!((atomic_read(&cd->ind_ab) ^ ind_ap) & IND_AX_EVNT))
-+		return;
-+	/* process software interrupt */
-+	regmap_read(cd->regmap, REG_EVENT_CAUSE, &ev);
-+	if (ev & EVENT_CAUSE_FBON) {
-+		atomic_set(&cd->fieldbus_online, 1);
-+		sysfs_notify_dirent(cd->fieldbus_online_sd);
-+		dev_dbg(cd->dev, "Fieldbus ON");
-+	}
-+	if (ev & EVENT_CAUSE_FBOF) {
-+		atomic_set(&cd->fieldbus_online, 0);
-+		sysfs_notify_dirent(cd->fieldbus_online_sd);
-+		dev_dbg(cd->dev, "Fieldbus OFF");
-+	}
-+	if (ev & EVENT_CAUSE_DC) {
-+		atomic_inc(&cd->dc_event);
-+		wake_up_all(&cd->dc_wq);
-+		dev_dbg(cd->dev, "Fieldbus data changed");
-+	}
-+	/* reset the event cause bits.
-+	 * this must be done while owning the fbctrl area, so we'll
-+	 * enqueue a task to do that.
++	spin_lock_irqsave(&cd->regs_lock, flags);
++	/* CPLD_CONTROL is write-only, so cache its value in
++	 * cd->control_reg
 +	 */
-+	t = create_area_writer(cd->qcache, IND_AX_FBCTRL,
-+		REG_EVENT_CAUSE, &zero, sizeof(zero));
-+	if (!t) {
-+		ret = -ENOMEM;
-+		goto out;
++	if (reset)
++		cd->control_reg &= ~rst_bit;
++	else
++		cd->control_reg |= rst_bit;
++	writeb(cd->control_reg, cd->cpld_base + CPLD_CONTROL);
++	/* h/w work-around:
++	 * EIM bus is 'too fast', so a reset followed by an immediate
++	 * not-reset will _not_ change the anybus reset line in any way,
++	 * losing the reset. to prevent this from happening, introduce
++	 * a minimum reset duration.
++	 * Verified minimum safe duration required using a scope
++	 * on 14-June-2018: 100 us.
++	 */
++	if (reset)
++		udelay(100);
++	spin_unlock_irqrestore(&cd->regs_lock, flags);
++}
++
++static void common_reset(struct device *dev, bool reset)
++{
++	do_reset(dev, CPLD_CONTROL_CRST, reset);
++}
++
++static void ab1_reset(struct device *dev, bool reset)
++{
++	do_reset(dev, CPLD_CONTROL_RST1, reset);
++}
++
++static void ab2_reset(struct device *dev, bool reset)
++{
++	do_reset(dev, CPLD_CONTROL_RST2, reset);
++}
++
++static void create_resets(struct device *dev, u8 cap,
++				anybuss_reset_t *resets)
++{
++	if (cap & CPLD_CAP_SEP_RESETS) {
++		dev_info(dev, "Bridge supports separate resets");
++		resets[0] = ab1_reset;
++		resets[1] = ab2_reset;
++	} else {
++		dev_info(dev, "Bridge supports a common reset");
++		resets[0] = resets[1] = common_reset;
 +	}
-+	t->done_fn = softint_ack;
-+	ret = ab_task_enqueue(&cd->wq, cd->areaq, t, &cd->qlock);
-+	ab_task_put(t);
-+	cd->softint_pending = true;
-+out:
-+	WARN_ON(ret);
-+	if (ret)
-+		softint_ack(cd);
 +}
 +
-+static int qthread_fn(void *data)
++static ssize_t version_show(struct device *dev,
++		struct device_attribute *attr, char *buf)
 +{
-+	struct anybuss_host *cd = data;
-+	struct kfifo *qs = cd->qs;
-+	size_t nqs = ARRAY_SIZE(cd->qs);
-+	unsigned int ind_ab;
++	struct bridge_priv *cd = dev_get_drvdata(dev);
 +
-+	while (!kthread_should_stop()) {
-+		ind_ab = atomic_read(&cd->ind_ab);
-+		process_qs(cd);
-+		process_softint(cd);
-+		wait_event_timeout(cd->wq,
-+			(atomic_read(&cd->ind_ab) != ind_ab) ||
-+				qs_have_work(qs, nqs) ||
-+				kthread_should_stop(),
-+			HZ);
-+	}
-+
-+	return 0;
++	return sprintf(buf, "%s\n", cd->version);
 +}
++static DEVICE_ATTR_RO(version);
 +
-+/* ------------------------ anybus exports ------------------------ */
-+
-+int anybuss_start_init(struct anybuss_client *client,
-+			const struct anybuss_memcfg *cfg)
++static ssize_t design_number_show(struct device *dev,
++		struct device_attribute *attr, char *buf)
 +{
-+	int ret;
-+	u16 op_mode;
-+	struct anybuss_host *cd = client->host;
-+	struct msgAnybusInit msg = {
-+		.input_io_len = cpu_to_be16(cfg->input_io),
-+		.input_dpram_len = cpu_to_be16(cfg->input_dpram),
-+		.input_total_len = cpu_to_be16(cfg->input_total),
-+		.output_io_len = cpu_to_be16(cfg->output_io),
-+		.output_dpram_len = cpu_to_be16(cfg->output_dpram),
-+		.output_total_len = cpu_to_be16(cfg->output_total),
-+		.notif_config = cpu_to_be16(0x000F),
-+		.wd_val = cpu_to_be16(0),
-+	};
++	struct bridge_priv *cd = dev_get_drvdata(dev);
 +
-+	switch (cfg->offl_mode) {
-+	case AB_OFFL_MODE_CLEAR:
-+		op_mode = 0;
-+		break;
-+	case AB_OFFL_MODE_FREEZE:
-+		op_mode = OP_MODE_FBFC;
-+		break;
-+	case AB_OFFL_MODE_SET:
-+		op_mode = OP_MODE_FBS;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+	msg.op_mode = cpu_to_be16(op_mode | OP_MODE_CD);
-+	ret = _anybus_mbox_cmd(cd, CMD_START_INIT, false, NULL, 0,
-+						NULL, 0, NULL, 0);
-+	if (ret)
-+		return ret;
-+	return _anybus_mbox_cmd(cd, CMD_ANYBUS_INIT, false,
-+			&msg, sizeof(msg), NULL, 0, NULL, 0);
++	return sprintf(buf, "%d\n", cd->design_no);
 +}
-+EXPORT_SYMBOL_GPL(anybuss_start_init);
++static DEVICE_ATTR_RO(design_number);
 +
-+int anybuss_finish_init(struct anybuss_client *client)
++static ssize_t can_power_show(struct device *dev,
++		struct device_attribute *attr, char *buf)
 +{
-+	struct anybuss_host *cd = client->host;
++	struct bridge_priv *cd = dev_get_drvdata(dev);
 +
-+	return _anybus_mbox_cmd(cd, CMD_END_INIT, false, NULL, 0,
-+					NULL, 0, NULL, 0);
++	return sprintf(buf, "%d\n",
++		!(readb(cd->cpld_base + CPLD_STATUS1) &
++					CPLD_STATUS1_CAN_POWER));
 +}
-+EXPORT_SYMBOL_GPL(anybuss_finish_init);
++static DEVICE_ATTR_RO(can_power);
 +
-+int anybuss_read_fbctrl(struct anybuss_client *client, u16 addr,
-+				void *buf, size_t count)
-+{
-+	struct anybuss_host *cd = client->host;
-+	struct ab_task *t;
-+	int ret;
-+
-+	if (count == 0)
-+		return 0;
-+	if (!area_range_ok(addr, count, FBCTRL_AREA,
-+					MAX_FBCTRL_AREA_SZ))
-+		return -EFAULT;
-+	t = create_area_reader(cd->qcache, IND_AX_FBCTRL, addr, count);
-+	if (!t)
-+		return -ENOMEM;
-+	ret = ab_task_enqueue_wait(&cd->wq, cd->areaq, t, &cd->qlock);
-+	if (ret)
-+		goto out;
-+	memcpy(buf, t->area_pd.buf, count);
-+out:
-+	ab_task_put(t);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(anybuss_read_fbctrl);
-+
-+int anybuss_write_input(struct anybuss_client *client,
-+				const char __user *buf, size_t size,
-+				loff_t *offset)
-+{
-+	ssize_t len = min_t(loff_t, MAX_DATA_AREA_SZ - *offset, size);
-+	struct anybuss_host *cd = client->host;
-+	struct ab_task *t;
-+	int ret;
-+
-+	if (len <= 0)
-+		return 0;
-+	t = create_area_user_writer(cd->qcache, IND_AX_IN,
-+		DATA_IN_AREA + *offset, buf, len);
-+	if (IS_ERR(t))
-+		return PTR_ERR(t);
-+	ret = ab_task_enqueue_wait(&cd->wq, cd->areaq, t, &cd->qlock);
-+	ab_task_put(t);
-+	if (ret)
-+		return ret;
-+	/* success */
-+	*offset += len;
-+	return len;
-+}
-+EXPORT_SYMBOL_GPL(anybuss_write_input);
-+
-+int anybuss_read_output(struct anybuss_client *client, int *dc_event,
-+				char __user *buf, size_t size,
-+				loff_t *offset)
-+{
-+	ssize_t len = min_t(loff_t, MAX_DATA_AREA_SZ - *offset, size);
-+	struct anybuss_host *cd = client->host;
-+	struct ab_task *t;
-+	int ret;
-+
-+	if (len <= 0)
-+		return 0;
-+	t = create_area_reader(cd->qcache, IND_AX_OUT,
-+		DATA_OUT_AREA + *offset, len);
-+	if (!t)
-+		return -ENOMEM;
-+	*dc_event = atomic_read(&cd->dc_event);
-+	ret = ab_task_enqueue_wait(&cd->wq, cd->areaq, t, &cd->qlock);
-+	if (ret)
-+		goto out;
-+	if (copy_to_user(buf, t->area_pd.buf, len))
-+		ret = -EFAULT;
-+out:
-+	ab_task_put(t);
-+	if (ret)
-+		return ret;
-+	/* success */
-+	*offset += len;
-+	return len;
-+}
-+EXPORT_SYMBOL_GPL(anybuss_read_output);
-+
-+unsigned int anybuss_poll(struct anybuss_client *client, int dc_event,
-+				struct file *filp, poll_table *wait)
-+{
-+	struct anybuss_host *cd = client->host;
-+	unsigned int mask = POLLIN | POLLRDNORM | POLLOUT | POLLWRNORM;
-+
-+	poll_wait(filp, &cd->dc_wq, wait);
-+	/* data changed ? */
-+	if (atomic_read(&cd->dc_event) != dc_event)
-+		mask |= POLLPRI | POLLERR;
-+	return mask;
-+}
-+EXPORT_SYMBOL_GPL(anybuss_poll);
-+
-+int anybuss_send_msg(struct anybuss_client *client, u16 cmd_num,
-+				const void *buf, size_t count)
-+{
-+	struct anybuss_host *cd = client->host;
-+
-+	return _anybus_mbox_cmd(cd, cmd_num, true, buf, count, NULL, 0,
-+					NULL, 0);
-+}
-+EXPORT_SYMBOL_GPL(anybuss_send_msg);
-+
-+int anybuss_send_ext(struct anybuss_client *client, u16 cmd_num,
-+	const void *buf, size_t count)
-+{
-+	struct anybuss_host *cd = client->host;
-+
-+	return _anybus_mbox_cmd(cd, cmd_num, true, NULL, 0, NULL, 0,
-+					buf, count);
-+}
-+EXPORT_SYMBOL_GPL(anybuss_send_ext);
-+
-+int anybuss_recv_msg(struct anybuss_client *client, u16 cmd_num,
-+	void *buf, size_t count)
-+{
-+	struct anybuss_host *cd = client->host;
-+
-+	return _anybus_mbox_cmd(cd, cmd_num, true, NULL, 0, buf, count,
-+					NULL, 0);
-+}
-+EXPORT_SYMBOL_GPL(anybuss_recv_msg);
-+
-+/* ------------------------ bus functions ------------------------ */
-+
-+static int anybus_bus_match(struct device *dev,
-+				struct device_driver *drv)
-+{
-+	struct anybuss_client_driver *adrv =
-+		to_anybuss_client_driver(drv);
-+	struct anybuss_client *adev =
-+		to_anybuss_client(dev);
-+
-+	return adrv->fieldbus_type == adev->fieldbus_type;
-+}
-+
-+static int anybus_bus_probe(struct device *dev)
-+{
-+	struct anybuss_client_driver *adrv =
-+		to_anybuss_client_driver(dev->driver);
-+	struct anybuss_client *adev =
-+		to_anybuss_client(dev);
-+
-+	if (!adrv->probe)
-+		return -ENODEV;
-+	return adrv->probe(adev);
-+}
-+
-+static int anybus_bus_remove(struct device *dev)
-+{
-+	struct anybuss_client_driver *adrv =
-+		to_anybuss_client_driver(dev->driver);
-+
-+	if (adrv->remove)
-+		return adrv->remove(to_anybuss_client(dev));
-+	return 0;
-+}
-+
-+static struct bus_type anybus_bus = {
-+	.name		= "anybuss",
-+	.match		= anybus_bus_match,
-+	.probe		= anybus_bus_probe,
-+	.remove		= anybus_bus_remove,
++static struct attribute *bridge_attributes[] = {
++	&dev_attr_version.attr,
++	&dev_attr_design_number.attr,
++	&dev_attr_can_power.attr,
++	NULL,
 +};
 +
-+int anybuss_client_driver_register(struct anybuss_client_driver *drv)
-+{
-+	drv->driver.bus = &anybus_bus;
-+	return driver_register(&drv->driver);
-+}
-+EXPORT_SYMBOL_GPL(anybuss_client_driver_register);
-+
-+void anybuss_client_driver_unregister(struct anybuss_client_driver *drv)
-+{
-+	return driver_unregister(&drv->driver);
-+}
-+EXPORT_SYMBOL_GPL(anybuss_client_driver_unregister);
-+
-+/* ------------------------ attributes ------------------------ */
-+
-+static ssize_t state_show(struct device *dev,
-+					struct device_attribute *attr,
-+					char *buf)
-+{
-+	struct anybuss_host *cd = dev_get_drvdata(dev);
-+
-+	return snprintf(buf, PAGE_SIZE, "%s\n",
-+		atomic_read(&cd->fieldbus_online) ?
-+			"online" : "offline");
-+}
-+
-+static DEVICE_ATTR_RO(state);
-+
-+static struct attribute *ctrl_attrs[] = {
-+	&dev_attr_state.attr,
-+	NULL
++static struct attribute_group bridge_attribute_group = {
++	.attrs = bridge_attributes,
 +};
 +
-+static struct attribute_group ctrl_group = { .attrs = ctrl_attrs };
++static const struct attribute_group *bridge_attribute_groups[] = {
++	&bridge_attribute_group,
++	NULL,
++};
 +
-+static void client_device_release(struct device *dev)
++static void bridge_device_release(struct device *dev)
 +{
-+	kfree(to_anybuss_client(dev));
++	kfree(dev);
 +}
 +
-+static int taskq_alloc(struct device *dev, struct kfifo *q)
-+{
-+	void *buf;
-+	size_t size = 64 * sizeof(struct ab_task *);
++static struct class *bridge_class;
++static DEFINE_IDA(bridge_index_ida);
 +
-+	buf = devm_kzalloc(dev, size, GFP_KERNEL);
-+	if (!buf)
-+		return -EIO;
-+	return kfifo_init(q, buf, size);
-+}
-+
-+static int anybus_host_probe(struct platform_device *pdev)
++static int bridge_probe(struct platform_device *pdev)
 +{
-+	int ret, i;
-+	u8 val[4];
-+	u16 fieldbus_type;
-+	struct anybuss_host *cd;
++	struct bridge_priv *cd;
 +	struct device *dev = &pdev->dev;
-+	struct device *parent = dev->parent;
-+	struct resource *res;
-+	struct anybuss_host_pdata *pdata =
-+				dev_get_platdata(&pdev->dev);
++	struct device_node *np = dev->of_node;
++	int enable_gpio, err, id;
++	struct pwm_device *pwm;
++	struct pwm_args pargs;
++	struct resource res;
++	unsigned int period;
++	u8 status1, cap;
++	anybuss_reset_t resets[2];
 +
-+	if (!pdata) {
-+		dev_err(dev, "need platform data");
-+		return -EINVAL;
-+	}
-+	if (!pdev->dev.parent) {
-+		dev_err(dev, "need parent device");
++	if (!np) {
++		dev_err(dev, "device node not found\n");
 +		return -EINVAL;
 +	}
 +	cd = devm_kzalloc(dev, sizeof(*cd), GFP_KERNEL);
 +	if (!cd)
 +		return -ENOMEM;
-+	cd->dev = dev;
-+	cd->parent = parent;
-+	init_completion(&cd->card_boot);
-+	init_waitqueue_head(&cd->wq);
-+	init_waitqueue_head(&cd->dc_wq);
-+	for (i = 0; i < ARRAY_SIZE(cd->qs); i++) {
-+		ret = taskq_alloc(dev, &cd->qs[i]);
-+		if (ret)
-+			return ret;
-+	}
-+	if (WARN_ON(ARRAY_SIZE(cd->qs) < 3))
-+		return -EINVAL;
-+	cd->powerq = &cd->qs[0];
-+	cd->mboxq = &cd->qs[1];
-+	cd->areaq = &cd->qs[2];
-+	cd->reset = pdata->reset;
-+	cd->regmap = pdata->regmap;
-+	spin_lock_init(&cd->qlock);
-+	atomic_set(&cd->dc_event, 0);
-+	atomic_set(&cd->fieldbus_online, 0);
-+	cd->qcache = kmem_cache_create(dev_name(dev),
-+		sizeof(struct ab_task), 0, 0, NULL);
-+	if (!cd->qcache)
-+		return -ENOMEM;
-+	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-+	if (!res) {
-+		dev_err(dev, "need irq resource");
-+		ret = -ENOENT;
-+		goto err_qcache;
-+	}
-+	cd->irq = res->start;
-+	/* use a dpram test to check if a card is present, this is only
-+	 * possible while in reset.
-+	 */
-+	cd->reset(parent, true);
-+	if (test_dpram(cd->regmap)) {
-+		dev_err(dev, "no Anybus-S card in slot");
-+		ret = -ENODEV;
-+		goto err_qcache;
-+	}
-+	ret = request_irq(cd->irq, irq_handler, IRQF_TRIGGER_LOW,
-+			dev_name(dev), cd);
-+	if (ret) {
-+		dev_err(dev, "could not request irq");
-+		goto err_qcache;
-+	}
-+	/* startup sequence:
-+	 *   perform dummy IND_AB read to prevent false 'init done' irq
-+	 *     (already done by test_dpram() above)
-+	 *   release reset
-+	 *   wait for first interrupt
-+	 *   interrupt came in: ready to go !
-+	 */
-+	cd->reset(parent, false);
-+	ret = wait_for_completion_timeout(&cd->card_boot, TIMEOUT);
-+	if (ret == 0)
-+		ret = -ETIMEDOUT;
-+	if (ret < 0)
-+		goto err_irq;
-+	/* according to the anybus docs, we're allowed to read these
-+	 * without handshaking / reserving the area
-+	 */
-+	dev_info(dev, "Anybus-S card detected");
-+	regmap_bulk_read(cd->regmap, REG_BOOTLOADER_V, val, 2);
-+	dev_info(dev, "Bootloader version: %02X%02X",
-+			val[0], val[1]);
-+	regmap_bulk_read(cd->regmap, REG_API_V, val, 2);
-+	dev_info(dev, "API version: %02X%02X", val[0], val[1]);
-+	regmap_bulk_read(cd->regmap, REG_FIELDBUS_V, val, 2);
-+	dev_info(dev, "Fieldbus version: %02X%02X", val[0], val[1]);
-+	regmap_bulk_read(cd->regmap, REG_SERIAL_NO, val, 4);
-+	dev_info(dev, "Serial number: %02X%02X%02X%02X",
-+		val[0], val[1], val[2], val[3]);
-+	regmap_bulk_read(cd->regmap, REG_FIELDBUS_TYPE, &fieldbus_type,
-+				sizeof(fieldbus_type));
-+	fieldbus_type = be16_to_cpu(fieldbus_type);
-+	dev_info(dev, "Fieldbus type: %04X", fieldbus_type);
-+	regmap_bulk_read(cd->regmap, REG_MODULE_SW_V, val, 2);
-+	dev_info(dev, "Module SW version: %02X%02X",
-+		val[0], val[1]);
-+	/* put card back reset until a client driver releases it */
-+	disable_irq(cd->irq);
-+	cd->reset(parent, true);
-+	atomic_set(&cd->ind_ab, IND_AB_UPDATED);
-+	/* attributes */
-+	ret = sysfs_create_group(&dev->kobj, &ctrl_group);
-+	if (ret < 0)
-+		goto err_irq;
-+	cd->fieldbus_online_sd =
-+		sysfs_get_dirent(dev->kobj.sd, "state");
-+	if (!cd->fieldbus_online_sd) {
-+		ret = -ENODEV;
-+		goto err_sysfs;
-+	}
-+	/* fire up the queue thread */
-+	cd->qthread = kthread_run(qthread_fn, cd, dev_name(dev));
-+	if (IS_ERR(cd->qthread)) {
-+		dev_err(dev, "could not create kthread");
-+		ret = PTR_ERR(cd->qthread);
-+		goto err_dirent;
-+	}
-+	/* now advertise that we've detected a client device (card).
-+	 * the bus infrastructure will match it to a client driver.
-+	 */
-+	cd->client = kzalloc(sizeof(*cd->client), GFP_KERNEL);
-+	if (!cd->client) {
-+		ret = -ENOMEM;
-+		goto err_kthread;
-+	}
-+	cd->client->fieldbus_type = fieldbus_type;
-+	cd->client->host = cd;
-+	cd->client->dev.bus = &anybus_bus;
-+	cd->client->dev.parent = dev;
-+	cd->client->dev.id = pdev->id;
-+	cd->client->dev.release = client_device_release;
-+	dev_set_name(&cd->client->dev, "%s.card0",
-+				dev_name(&pdev->dev));
-+	ret = device_register(&cd->client->dev);
-+	if (ret)
-+		goto err_client;
-+	platform_set_drvdata(pdev, cd);
 +	dev_set_drvdata(dev, cd);
++	spin_lock_init(&cd->regs_lock);
++	enable_gpio = of_get_named_gpio(np, "enable-gpios", 0);
++	if (!gpio_is_valid(enable_gpio)) {
++		dev_err(dev, "enable-gpios not found\n");
++		return -EINVAL;
++	}
++	devm_gpio_request(dev, enable_gpio, NULL);
++	gpio_direction_output(enable_gpio, 0);
++
++	/* PWM */
++	pwm = devm_pwm_get(dev, NULL);
++	if (IS_ERR(pwm)) {
++		dev_err(dev, "pwm not found\n");
++		return -EINVAL;
++	}
++	pwm_get_args(pwm, &pargs);
++	period = pargs.period;
++	err = pwm_config(pwm, period/2, period);
++	if (err)
++		return err;
++	err = pwm_enable(pwm);
++	if (err)
++		return err;
++
++	/* CPLD control memory, sits at index 0 */
++	if (of_address_to_resource(np, 0, &res)) {
++		dev_err(dev, "cpld base address not found\n");
++		return -EINVAL;
++	}
++	cd->cpld_base = devm_ioremap_resource(dev, &res);
++	if (IS_ERR(cd->cpld_base)) {
++		dev_err(dev,
++			"failed to map cpld base address\n");
++		return PTR_ERR(cd->cpld_base);
++	}
++
++	/* identify cpld */
++	status1 = readb(cd->cpld_base + CPLD_STATUS1);
++	cd->design_no = (__raw_readb(cd->cpld_base + CPLD_DESIGN_HI) << 8) |
++				__raw_readb(cd->cpld_base + CPLD_DESIGN_LO);
++	snprintf(cd->version, sizeof(cd->version), "%c%d",
++			'A' + ((status1>>5) & 0x7),
++			(status1>>2) & 0x7);
++	dev_info(dev, "Bridge is design number %d, revision %s\n",
++		cd->design_no,
++		cd->version);
++	cap = readb(cd->cpld_base + CPLD_CAP);
++	if (!(cap & CPLD_CAP_COMPAT)) {
++		dev_err(dev, "unsupported bridge [cap=0x%02X]", cap);
++		return -ENODEV;
++	}
++
++	if (status1 & CPLD_STATUS1_AB) {
++		dev_info(dev, "Bridge has anybus-S slot(s)");
++		create_resets(dev, cap, resets);
++		err = add_anybus_slots(dev, np, resets);
++		if (err)
++			return err;
++	}
++
++	id = ida_simple_get(&bridge_index_ida, 0, 0, GFP_KERNEL);
++	if (id < 0)
++		return id;
++	/* make bridge info visible to userspace */
++	cd->class_dev = kzalloc(sizeof(*cd->class_dev), GFP_KERNEL);
++	if (!cd->class_dev) {
++		err = -ENOMEM;
++		goto out_ida;
++	}
++	cd->class_dev->class = bridge_class;
++	cd->class_dev->groups = bridge_attribute_groups;
++	cd->class_dev->parent = dev;
++	cd->class_dev->id = id;
++	cd->class_dev->release = bridge_device_release;
++	dev_set_name(cd->class_dev, "bridge%d", cd->class_dev->id);
++	dev_set_drvdata(cd->class_dev, cd);
++	err = device_register(cd->class_dev);
++	if (err)
++		goto out_dev;
 +	return 0;
-+err_client:
-+	put_device(&cd->client->dev);
-+err_kthread:
-+	kthread_stop(cd->qthread);
-+err_dirent:
-+	sysfs_put(cd->fieldbus_online_sd);
-+err_sysfs:
-+	sysfs_remove_group(&dev->kobj, &ctrl_group);
-+err_irq:
-+	free_irq(cd->irq, cd);
-+	cd->reset(parent, true);
-+err_qcache:
-+	kmem_cache_destroy(cd->qcache);
-+	return ret;
++out_dev:
++	put_device(cd->class_dev);
++out_ida:
++	ida_simple_remove(&bridge_index_ida, id);
++	return err;
 +}
 +
-+static int anybus_host_remove(struct platform_device *pdev)
++static int bridge_remove(struct platform_device *pdev)
 +{
-+	struct anybuss_host *cd = platform_get_drvdata(pdev);
++	struct bridge_priv *cd = platform_get_drvdata(pdev);
++	int id = cd->class_dev->id;
 +
-+	device_unregister(&cd->client->dev);
-+	kthread_stop(cd->qthread);
-+	sysfs_put(cd->fieldbus_online_sd);
-+	sysfs_remove_group(&cd->dev->kobj, &ctrl_group);
-+	free_irq(cd->irq, cd);
-+	cd->reset(cd->parent, true);
-+	kmem_cache_destroy(cd->qcache);
++	device_unregister(cd->class_dev);
++	ida_simple_remove(&bridge_index_ida, id);
 +	return 0;
 +}
 +
-+static struct platform_driver anybus_host_driver = {
-+	.probe = anybus_host_probe,
-+	.remove = anybus_host_remove,
-+	.driver	= {
-+		.name = "anybuss-host",
++static const struct of_device_id bridge_of_match[] = {
++	{ .compatible = "arcx,anybus-bridge" },
++	{ }
++};
++
++MODULE_DEVICE_TABLE(of, bridge_of_match);
++
++static struct platform_driver bridge_driver = {
++	.probe = bridge_probe,
++	.remove = bridge_remove,
++	.driver		= {
++		.name   = "arcx-anybus-bridge",
++		.owner	= THIS_MODULE,
++		.of_match_table	= of_match_ptr(bridge_of_match),
 +	},
 +};
 +
-+static int __init anybus_init(void)
++static int __init bridge_init(void)
 +{
-+	int ret;
++	int err;
 +
-+	ret = bus_register(&anybus_bus);
-+	if (ret) {
-+		pr_err("could not register Anybus-S bus: %d\n", ret);
-+		return ret;
-+	}
-+	return platform_driver_register(&anybus_host_driver);
++	bridge_class = class_create(THIS_MODULE, "arcx_anybus_bridge");
++	if (!IS_ERR(bridge_class)) {
++		err = platform_driver_register(&bridge_driver);
++		if (err)
++			class_destroy(bridge_class);
++	} else
++		err = PTR_ERR(bridge_class);
++	return err;
 +}
-+module_init(anybus_init);
 +
-+static void __exit anybus_exit(void)
++static void __exit bridge_exit(void)
 +{
-+	platform_driver_unregister(&anybus_host_driver);
-+	bus_unregister(&anybus_bus);
++	platform_driver_unregister(&bridge_driver);
++	class_destroy(bridge_class);
 +}
-+module_exit(anybus_exit);
 +
-+MODULE_DESCRIPTION("HMS Anybus-S Host Driver");
++module_init(bridge_init);
++module_exit(bridge_exit);
++
++MODULE_DESCRIPTION("Arcx Anybus Bridge driver");
 +MODULE_AUTHOR("Sven Van Asbroeck <svendev@arcx.com>");
 +MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/anybuss-client.h b/include/linux/anybuss-client.h
+diff --git a/include/linux/anybuss-host.h b/include/linux/anybuss-host.h
 new file mode 100644
-index 000000000000..9d439d1a496f
+index 000000000000..38037833acd4
 --- /dev/null
-+++ b/include/linux/anybuss-client.h
-@@ -0,0 +1,100 @@
++++ b/include/linux/anybuss-host.h
+@@ -0,0 +1,28 @@
 +/* SPDX-License-Identifier: GPL-2.0 */
 +/*
-+ * Anybus-S client adapter definitions
++ * Anybus-S host adapter definitions
 + *
 + * Copyright 2018 Arcx Inc
 + */
 +
-+#ifndef __LINUX_ANYBUSS_CLIENT_H__
-+#define __LINUX_ANYBUSS_CLIENT_H__
++#ifndef __LINUX_ANYBUSS_HOST_H__
++#define __LINUX_ANYBUSS_HOST_H__
 +
-+#include <linux/device.h>
-+#include <linux/types.h>
-+#include <linux/poll.h>
++#include <linux/regmap.h>
 +
-+struct anybuss_host;
++typedef void (*anybuss_reset_t)(struct device *dev, bool reset);
 +
-+struct anybuss_client {
-+	struct device dev;
-+	struct anybuss_host *host;
-+	u16 fieldbus_type;
++/**
++ * Platform data of the Anybus-S host controller.
++ *
++ * @regmap: provides access to the card dpram.
++ *		MUST NOT use caching
++ *		MUST NOT sleep
++ * @reset:  controls the card reset line.
++ */
++struct anybuss_host_pdata {
++	struct regmap *regmap;
++	anybuss_reset_t reset;
 +};
 +
-+struct anybuss_client_driver {
-+	struct device_driver driver;
-+	int (*probe)(struct anybuss_client *adev);
-+	int (*remove)(struct anybuss_client *adev);
-+	u16 fieldbus_type;
-+};
-+
-+int anybuss_client_driver_register(struct anybuss_client_driver *drv);
-+void anybuss_client_driver_unregister(
-+				struct anybuss_client_driver *drv);
-+
-+static inline struct anybuss_client *to_anybuss_client(
-+					struct device *dev)
-+{
-+	return container_of(dev, struct anybuss_client, dev);
-+}
-+
-+static inline struct anybuss_client_driver *to_anybuss_client_driver(
-+					struct device_driver *drv)
-+{
-+	return container_of(drv, struct anybuss_client_driver, driver);
-+}
-+
-+static inline void *
-+anybuss_get_drvdata(const struct anybuss_client *client)
-+{
-+	return dev_get_drvdata(&client->dev);
-+}
-+
-+static inline void
-+anybuss_set_drvdata(struct anybuss_client *client, void *data)
-+{
-+	dev_set_drvdata(&client->dev, data);
-+}
-+
-+int anybuss_set_power(struct anybuss_client *client, bool power_on);
-+
-+enum anybuss_offl_mode {
-+	AB_OFFL_MODE_CLEAR = 0,
-+	AB_OFFL_MODE_FREEZE,
-+	AB_OFFL_MODE_SET
-+};
-+
-+struct anybuss_memcfg {
-+	u16 input_io;
-+	u16 input_dpram;
-+	u16 input_total;
-+
-+	u16 output_io;
-+	u16 output_dpram;
-+	u16 output_total;
-+
-+	enum anybuss_offl_mode offl_mode;
-+};
-+
-+int anybuss_start_init(struct anybuss_client *client,
-+			const struct anybuss_memcfg *cfg);
-+int anybuss_finish_init(struct anybuss_client *client);
-+int anybuss_read_fbctrl(struct anybuss_client *client, u16 addr,
-+				void *buf, size_t count);
-+int anybuss_send_msg(struct anybuss_client *client, u16 cmd_num,
-+	const void *buf, size_t count);
-+int anybuss_send_ext(struct anybuss_client *client, u16 cmd_num,
-+	const void *buf, size_t count);
-+int anybuss_recv_msg(struct anybuss_client *client, u16 cmd_num,
-+	void *buf, size_t count);
-+
-+/* these help clients make a struct file_operations */
-+int anybuss_write_input(struct anybuss_client *client,
-+				const char __user *buf, size_t size,
-+				loff_t *offset);
-+int anybuss_read_output(struct anybuss_client *client, int *dc_event,
-+				char __user *buf, size_t size,
-+				loff_t *offset);
-+unsigned int anybuss_poll(struct anybuss_client *client,
-+		int dc_event, struct file *filp, poll_table *wait);
-+
-+#endif /* __LINUX_ANYBUSS_CLIENT_H__ */
++#endif /* __LINUX_ANYBUS_S_HOST_H__ */
 -- 
 2.17.1
 
