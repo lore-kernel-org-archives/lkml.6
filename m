@@ -2,112 +2,127 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 217ADC004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 09:16:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E06FC004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 09:20:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7A0A2082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 09:16:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7A0A2082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id C7D8820824
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 09:20:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="khHj0URO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7D8820824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728095AbeJXRoH (ORCPT
+        id S1727619AbeJXRsB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 13:44:07 -0400
-Received: from www62.your-server.de ([213.133.104.62]:35458 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726256AbeJXRoC (ORCPT
+        Wed, 24 Oct 2018 13:48:01 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:38930 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726772AbeJXRsB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 13:44:02 -0400
-Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89_1)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1gFFHM-0004QM-US; Wed, 24 Oct 2018 11:16:40 +0200
-Received: from [62.203.87.61] (helo=linux.home)
-        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.89)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1gFFHM-000PG9-Ka; Wed, 24 Oct 2018 11:16:40 +0200
-Subject: Re: [PATCH] bpf: btf: Fix a missing-check bug
-To:     Y Song <ys114321@gmail.com>, wang6495@umn.edu
-Cc:     kjlu@umn.edu, Alexei Starovoitov <ast@kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <1539988191-13973-1-git-send-email-wang6495@umn.edu>
- <CAH3MdRV2qLj_3KHFYmCKYHMx2wZk_4mQrdvRJe+znXr3Astm8g@mail.gmail.com>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <ff23c4af-9e31-8a79-9c37-95766bff7619@iogearbox.net>
-Date:   Wed, 24 Oct 2018 11:16:38 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        Wed, 24 Oct 2018 13:48:01 -0400
+Received: by mail-yb1-f194.google.com with SMTP id j9-v6so1820495ybj.6;
+        Wed, 24 Oct 2018 02:20:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=skgAQdNTud5R8BgsUDGBxk9yiVRnz0ET6ePAbiX8/vY=;
+        b=khHj0URO3fX+GZa4Ucd4ZUJJCYbinGjTTtXqmTkfHfZl1UpGU1LcxpS0rJlHF+sZsL
+         O0plda2wvzK6XOOWz1UtR4WaBzXuvKlLGjL5vcc6rQupCo6CHF/Bb2J/KpX8RjFT63KR
+         J1J4g45w6ljWjMtvACfJX1X2ra8vSFq++rjvp6mEc1pgtiFAyL8nssXfFoYrxk5nRkN5
+         WWY+dDTdYzE5q+bf3PuQMIi+LwiN1Rd//GrNqzeghDyT07wR5DvWTNdYF1F/jXBYfx8S
+         Hc3ZvE9JZML7yrezZkJXxSPTHPwBTcDeSN2NFIFNkUfgZJASwViCnNgcWTefN74gbqsB
+         m44g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=skgAQdNTud5R8BgsUDGBxk9yiVRnz0ET6ePAbiX8/vY=;
+        b=bM8v9FaPLFRpNZfdn6iD01Olzbu67RD2egOohxcDTog265FWMrisLTXst5C6Sj6/Cr
+         j+PPY0Rxl9jsQupc4FW7oCgrN3Z10nWfyGkZf0giJyBvw0yYzSMpwsMW1EKLmaQHM6un
+         ByZmx74a5nteoEszQIUklRmlC/C7sam/+4KJqf9Rk24+axhoHubPUlxFpOwjjGGHeEAy
+         fY5KkzK8zp+sedaW3FowMUj9abF2mI3O3j/ksOeDizfoLdgiJKTAPiU3g+TH0kUUZX4G
+         ntWQgIypbwWZbTIWRA8mMMZNftVU/FUEQhNaxeaLSdNOCW2N5hTpgPgvvGz4p8CixHqQ
+         ffzg==
+X-Gm-Message-State: AGRZ1gIvssnOG+cKKyP03/6y1ckxDEExjf/PhC5BL0ityiNXS78AQZgq
+        MttGjNL4xSev4Mtmwn5oYUUcKakg4kQv7H2gZrI=
+X-Google-Smtp-Source: AJdET5cfk8U6QPBkCcn9VAiPIgl7oXT/TIJIaEx0bAWwBt8Ik1+iPsnAONppJuIu9glBDEErIZvzitLm8cSXBLHFMJg=
+X-Received: by 2002:a25:3a82:: with SMTP id h124-v6mr1398545yba.32.1540372841872;
+ Wed, 24 Oct 2018 02:20:41 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAH3MdRV2qLj_3KHFYmCKYHMx2wZk_4mQrdvRJe+znXr3Astm8g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.100.2/25065/Wed Oct 24 06:59:08 2018)
+References: <20181023201953.GA15687@pathfinder> <CAOQ4uxjfChxZyAUiYKQ-UiVjmxsosR+KG1ZSBu2TOeuAX3vJnA@mail.gmail.com>
+ <20181024082134.GA14565@pathfinder>
+In-Reply-To: <20181024082134.GA14565@pathfinder>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 24 Oct 2018 12:20:14 +0300
+Message-ID: <CAOQ4uxjQwE2nhS7KccL_P+jUnz4vGwTpxjQquvbaZ0zZpJqGtA@mail.gmail.com>
+Subject: Re: [RFC][PATCH v3 01/10] fs: common implementation of file type
+To:     Phillip Potter <phil@philpotter.co.uk>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wenwen,
+On Wed, Oct 24, 2018 at 11:21 AM Phillip Potter <phil@philpotter.co.uk> wrote:
+>
+> On Wed, Oct 24, 2018 at 09:16:20AM +0300, Amir Goldstein wrote:
+> > On Tue, Oct 23, 2018 at 11:19 PM Phillip Potter <phil@philpotter.co.uk> wrote:
+> > >
+> > > Many file systems use a copy&paste implementation
+> > > of dirent to on-disk file type conversions.
+> > >
+> > > Create a common implementation to be used by file systems
+> > > with some useful conversion helpers to reduce open coded
+> > > file type conversions in file system code.
+> > >
+> > > Original patch written by Amir Goldstein.
+> >
+> > Looks good.
+> > I guess you used 'git apply' or just 'patch'
+> > What you usually do when applying someone else mostly unchanged
+> > patches is use 'git am -s -3' so you preserve the original author and
+> > original commit message including the Signed-of-by line.
+> > You can edit your patch by hand to change the From: line to change the
+> > author and add
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > (you sign below me as you changed the patch last)
+> >
+>
+> Dear Amir,
+>
+> Yes, I applied each patch manually to my tree, fixed it up where needed,
+> then after rebuilding and testing each one I committed it and regenerated
+> each patch. Thank you very much for your advice, I will take it into
+> account and make the necessary changes. In the meantime, do I add other
+> tags in the order they are received also (such as Reviewed-by:) and am
+> I safe to add these in when I re-send the patches with the changes you
+> and others have suggested (or would that offend people that have
+> offered the tags)?
+>
 
-On 10/22/2018 05:57 PM, Y Song wrote:
-> On Fri, Oct 19, 2018 at 3:30 PM Wenwen Wang <wang6495@umn.edu> wrote:
->>
->> In btf_parse(), the header of the user-space btf data 'btf_data' is firstly
->> parsed and verified through btf_parse_hdr(). In btf_parse_hdr(), the header
->> is copied from user-space 'btf_data' to kernel-space 'btf->hdr' and then
->> verified. If no error happens during the verification process, the whole
->> data of 'btf_data', including the header, is then copied to 'data' in
->> btf_parse(). It is obvious that the header is copied twice here. More
->> importantly, no check is enforced after the second copy to make sure the
->> headers obtained in these two copies are same. Given that 'btf_data'
->> resides in the user space, a malicious user can race to modify the header
->> between these two copies. By doing so, the user can inject inconsistent
->> data, which can cause undefined behavior of the kernel and introduce
->> potential security risk.
->>
->> To avoid the above issue, this patch rewrites the header after the second
->> copy, using 'btf->hdr', which is obtained in the first copy.
->>
->> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
->> ---
->>  kernel/bpf/btf.c | 3 +++
->>  1 file changed, 3 insertions(+)
->>
->> diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
->> index 138f030..2a85f91 100644
->> --- a/kernel/bpf/btf.c
->> +++ b/kernel/bpf/btf.c
->> @@ -2202,6 +2202,9 @@ static struct btf *btf_parse(void __user *btf_data, u32 btf_data_size,
->>                 goto errout;
->>         }
->>
->> +       memcpy(data, &btf->hdr,
->> +               min_t(u32, btf->hdr.hdr_len, sizeof(btf->hdr)));
-> 
-> Could you restructure the code to memcpy the header followed by copying
-> the rest of btf_data with copy_from_user? This way, each byte is only
-> copied once.
-> Could you add some comments right before memcpy so later people will know
-> why we implement this way?
+Reviewed-by before of after Signed-off-by.
+I prefer Signed-off-by last which conceptually covers the entire patch,
+the commit message including all the review tags that you may have added.
 
-Thanks for the fix! Agree with Yonghong that we should rework this a bit, so
-please respin a v2 with the feedback addressed, thanks.
+Some developers add Reviewed-by after Signed-off-by signifying the
+order that things happened, so choose your own preference.
 
->> +
->>         err = btf_parse_str_sec(env);
->>         if (err)
->>                 goto errout;
->> --
->> 2.7.4
->>
+As a reviewer, and I speak only for myself, if I offered my Reviewed-by
+I expect it to be removed if a future revision of the patch has changed
+so I have an indication of patches that I need to re-review.
+But if the patch changed very lightly, like small edits to commit message
+and code nits in general, that would not invalidate my review.
+When in doubt, you can always explicitly ask the reviewer.
 
+Thanks,
+Amir.
