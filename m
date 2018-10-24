@@ -6,244 +6,220 @@ X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0ED6ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:29:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C13ECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:32:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93D872082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:29:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AB4D2082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 18:32:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZNYTV8Zv";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Ih76X+7V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93D872082E
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kY2XwqVm";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kr8QgGnr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AB4D2082E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727432AbeJYC6g (ORCPT
+        id S1726964AbeJYDB6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 22:58:36 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34948 "EHLO
+        Wed, 24 Oct 2018 23:01:58 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37548 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727009AbeJYC6f (ORCPT
+        with ESMTP id S1726521AbeJYDB6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 22:58:35 -0400
+        Wed, 24 Oct 2018 23:01:58 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 45D0D60C64; Wed, 24 Oct 2018 18:29:27 +0000 (UTC)
+        id 1F18F60C1B; Wed, 24 Oct 2018 18:32:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540405767;
-        bh=UyEHKekQrl4/k22vJPUJNSCmlCfaywG35Kx01XmjW8k=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ZNYTV8ZvsFxOY4oQNfdpUApUYKcjZB2wrYllidvy5rxmLsVExpEbUwfRvVOlIEyq6
-         GDsTKmd/JwjFlB8phZx9ghRjj8Yfce4dS8foobufq/c0CaHJ7UqPP0U76QYTbzG3uu
-         w6CkCMl56CsQYoftiMrWPNndufaUHuBp6qVq0PMg=
-Received: from [192.168.43.100] (unknown [106.206.34.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C8B4A60C64;
-        Wed, 24 Oct 2018 18:29:22 +0000 (UTC)
+        s=default; t=1540405969;
+        bh=r6fIr463GEoNFeFvkNBPZR8bR9memTwKtKrXmoWTUIo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=kY2XwqVmTl/sBxBoBhOuRNmwLJFHqev/6tsrC85EKHfeoA4sNmmXk0P1WwM6kUHku
+         veXoJZEK4CjR/UG/clQEMrsPvPM5C6XqBqf6SimFbbHJbftG8pbLmKBGMQKlqBenK1
+         aZvh+9OjrBRG3sSHFtvPJ6pHyiFoEVeuIUUFiVHs=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id D9C7360C1B;
+        Wed, 24 Oct 2018 18:32:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540405766;
-        bh=UyEHKekQrl4/k22vJPUJNSCmlCfaywG35Kx01XmjW8k=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Ih76X+7V4eoMRZtqKCS27CKIxSFatrjbnu7kWxPAnLKyr1cpyycy7VXVx0wj9NKTY
-         A3GR+L8YjlQUCdyGIKHoV01/7nRBZRM2Jey63qkHguo52npRHEZjxNBg7z7HiP7547
-         WA6OXgdUCCqeUCvPHKdZBpAPzQjuMEAfmVlpvtmw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C8B4A60C64
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Subject: Re: [PATCH v4 2/5] phy: qcom-qmp: Utilize fully-specified DT
- registers
-To:     Evan Green <evgreen@chromium.org>, Rob Herring <robh@kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Douglas Anderson <dianders@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Can Guo <cang@codeaurora.org>, linux-kernel@vger.kernel.org,
-        Manu Gautam <mgautam@codeaurora.org>
-References: <20181024172735.154304-1-evgreen@chromium.org>
- <20181024172735.154304-3-evgreen@chromium.org>
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-Message-ID: <6b3edcc1-eaca-0fac-7ec4-a7390650b13b@codeaurora.org>
-Date:   Wed, 24 Oct 2018 23:59:20 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        s=default; t=1540405967;
+        bh=r6fIr463GEoNFeFvkNBPZR8bR9memTwKtKrXmoWTUIo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=kr8QgGnrpQv4NKCDgX+4s9dDPFbPZWvmsPeQcb0X6xzlHXhkk3oN+XkMYrS2PYeqo
+         Cq9JfIR+79fKZmdtTbKZ7Ol/9II7P5eLJj211a218WJBEJvjcXk5dnmS1i5U6aBprP
+         R6OigEb3s9qKeMkuuVgt86SVKcaQYyKOGDee/9B4=
 MIME-Version: 1.0
-In-Reply-To: <20181024172735.154304-3-evgreen@chromium.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Date:   Thu, 25 Oct 2018 00:02:47 +0530
+From:   spanda@codeaurora.org
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Sean Paul <seanpaul@chromium.org>, linux-arm-msm@vger.kernel.org,
+        jsanka@codeaurora.org, ryandcase@chromium.org,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        David Airlie <airlied@linux.ie>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 2/2] drm/bridge: ti-sn65dsi86: Allow DT to set "HPD delay"
+In-Reply-To: <20181019201940.138179-2-dianders@chromium.org>
+References: <20181019201940.138179-1-dianders@chromium.org>
+ <20181019201940.138179-2-dianders@chromium.org>
+Message-ID: <9d5b42b94772fb3adb86e20eff72cd88@codeaurora.org>
+X-Sender: spanda@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Evan,
+On 2018-10-20 01:49, Douglas Anderson wrote:
+> Let's solve the mystery of commit bf1178c98930 ("drm/bridge:
+> ti-sn65dsi86: Add mystery delay to enable()").  Specifically the
+> reason we needed that mystery delay is that we weren't paying
+> attention to HPD.
+> 
+> Looking at the datasheet for the same panel that was tested for the
+> original commit, I see there's a timing "t3" that times from power on
+> to the aux channel being operational.  This time is specced as 0 - 200
+> ms.  The datasheet says that the aux channel is operational at exactly
+> the same time that HPD is asserted.
+> 
+> Scoping the signals on this board showed that HPD was asserted 84 ms
+> after power was asserted.  That very closely matches the magic 70 ms
+> delay that we had.  ...and actually, in my esting the 70 ms wasn't
+> quite enough of a delay and some percentage of the time the display
+> didn't come up until I bumped it to 100 ms.
+> 
+> To solve this, we tried to hook up the HPD signal in the bridge.
+> ...but in doing so we found that that the bridge didn't report that
+> HPD was asserted until ~280 ms after we powered it (!).  This is
+> explained by looking at the sn65dsi86 datasheet section "8.4.5.1 HPD
+> (Hot Plug/Unplug Detection)".  Reading there we see that the bridge
+> isn't even intended to report HPD until 100 ms after it's asserted.
+> ...but that would have left us at 184 ms.  The extra 100 ms
+> (presumably) comes from this part in the datasheet:
+> 
+>> The HPD state machine operates off an internal ring oscillator. The
+>> ring oscillator frequency will vary [ ... ]. The min/max range in
+>> the HPD State Diagram refers to the possible times based off
+>> variation in the ring oscillator frequency.
+> 
+> Given that the 280 ms we'll end up delaying if we hook up HPD is
+> _slower_ than the 200 ms we could just hardcode, for now we'll solve
+> the problem by just allowing boards to hardcode a value.  If someone
+> using this part finds that they can get things to work more quickly by
+> actually hooking up HPD that can always be a future patch.
+> 
+> One last note is that I tried to solve this through another way: In
+> ti_sn_bridge_enable() I tried to use various combinations of
+> dp_dpcd_writeb() and dp_dpcd_readb() to detect when the aux channel
+> was up.  In theory that would let me detect _exactly_ when I could
+> continue and do link training.  Unfortunately even if I did an aux
+> transfer w/out waiting I couldn't see any errors.  Possibly I could
+> keep looping over link training until it came back with success, but
+> that seemed a little overly hacky to me.
+> 
 
+Thanks for very detailed explanation.
 
-On 10/24/2018 10:57 PM, Evan Green wrote:
-> Utilize the newly fixed up DT bindings to get the tx2 and rx2 register
-> regions for the second lane of dual-lane PHYs. Before this change,
-> the driver was simply using lane one's register region and adding
-> 0x400, which reached well beyond the DT-specified register
-> allocation. This would have been a crash were it not for the page size
-> on ARM64. Fix the driver not to rely on the magic of virtual memory by
-> using the newly specified DT register regions for tx2 and rx2.
->
-> In order to support existing device trees, this change also contains a
-> fallback mode for when those new register regions don't exist, which
-> reverts to the original behavior of overreaching and prints a complaint.
->
-> Signed-off-by: Evan Green <evgreen@chromium.org>
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
 > ---
-> As Doug mentioned, this should land before the dts patches land, otherwise
-> the old driver code will use the tx2 register region as pcs_misc.
->
-> Changes in v4: None
-> Changes in v3: None
-> Changes in v2: None
->
->   drivers/phy/qualcomm/phy-qcom-qmp.c | 51 +++++++++++++++++++++++++++----------
->   1 file changed, 38 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c b/drivers/phy/qualcomm/phy-qcom-qmp.c
-> index a83332411026..61d5fe115d9d 100644
-> --- a/drivers/phy/qualcomm/phy-qcom-qmp.c
-> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
-> @@ -72,6 +72,9 @@
->   
->   #define MAX_PROP_NAME				32
->   
-> +/* Define the assumed distance between lanes for underspecified device trees. */
-> +#define QMP_PHY_LEGACY_LANE_STRIDE		0x400
+> 
+>  drivers/gpu/drm/bridge/ti-sn65dsi86.c | 45 ++++++++++++++++++++++-----
+>  1 file changed, 37 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+> b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+> index f8a931cf3665..5deed667480c 100644
+> --- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+> +++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+> @@ -93,6 +93,7 @@ struct ti_sn_bridge {
+>  	struct clk			*refclk;
+>  	struct drm_panel		*panel;
+>  	struct gpio_desc		*enable_gpio;
+> +	int				panel_hpd_delay_ms;
+>  	struct regulator_bulk_data	supplies[SN_REGULATOR_SUPPLY_NUM];
+>  };
+> 
+> @@ -459,16 +460,37 @@ static void ti_sn_bridge_enable(struct drm_bridge 
+> *bridge)
+>  	int ret;
+> 
+>  	/*
+> -	 * FIXME:
+> -	 * This 70ms was found necessary by experimentation. If it's not
+> -	 * present, link training fails. It seems like it can go anywhere 
+> from
+> -	 * pre_enable() up to semi-auto link training initiation below.
+> +	 * The timing diagram of some eDP panels says that you're supposed to
+> +	 * wait for HPD to be asserted before the aux channel is operational.
+>  	 *
+> -	 * Neither the datasheet for the bridge nor the panel tested mention 
+> a
+> -	 * delay of this magnitude in the timing requirements. So for now, 
+> add
+> -	 * the mystery delay until someone figures out a better fix.
+> +	 * While we could configure the bridge to report the HPD signal to us
+> +	 * and add a delay here until the HPD is asserted, it turns out 
+> that's
+> +	 * slower than just hardcoding the max delay from the panel in some
+> +	 * cases.  Why?
+> +	 *
+> +	 * The sn65dsi86 datasheet says that it only reports the debounced
+> +	 * HPD signal to software.  It will tell software about HPD assertion
+> +	 * as quickly as 100 ms after it's asserted, but sometimes it might
+> +	 * take 400 ms because it's timed with a very inaccurate ring
+> +	 * oscillator.  In practice it was measured at 200 ms on at least
+> +	 * one system.
+> +	 *
+> +	 * On a particular panel, HPD was asserted 84 ms after power was 
+> given.
+> +	 * This same panel specified that HPD would always be asserted within
+> +	 * 200 ms of applying power.  Thus on this panel with the measured
+> +	 * 84 ms to assert HPD + the 200 ms measured debounce we'd wait 284 
+> ms
+> +	 * which is 84 ms longer than just hardcoding the sleep.
+> +	 *
+> +	 * For now we don't know of any cases where paying attention to HPD
+> +	 * is better than hardcoding the value.  Thus for now only support 
+> the
+> +	 * hardcoded delay and print a warning if it wasn't specified.  Later
+> +	 * one could imagine improving the driver to enable HPD support if
+> +	 * panel-hpd-delay-ms wasn't specified in the device tree.
+>  	 */
+> -	msleep(70);
+> +	if (pdata->panel_hpd_delay_ms >= 0)
+
+Is Zero a valid option here, msleep(0) ?
+
+
+> +		msleep(pdata->panel_hpd_delay_ms);
+> +	else
+> +		DRM_WARN("HPD not supported; consider a hardcoded delay\n");
+> 
+>  	/* DSI_A lane config */
+>  	val = CHA_DSI_LANES(4 - pdata->dsi->lanes);
+> @@ -656,6 +678,7 @@ static int ti_sn_bridge_probe(struct i2c_client 
+> *client,
+>  {
+>  	struct ti_sn_bridge *pdata;
+>  	int ret;
+> +	u32 val;
+> 
+>  	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
+>  		DRM_ERROR("device doesn't support I2C\n");
+> @@ -712,6 +735,12 @@ static int ti_sn_bridge_probe(struct i2c_client 
+> *client,
+>  	if (ret)
+>  		return ret;
+> 
+> +	if (!of_property_read_u32(pdata->dev->of_node,
+> +				  "ti,panel-hpd-delay-ms", &val))
+> +		pdata->panel_hpd_delay_ms = val;
+> +	else
+> +		pdata->panel_hpd_delay_ms = -1;
+
+Same comment as above.
 > +
->   struct qmp_phy_init_tbl {
->   	unsigned int offset;
->   	unsigned int val;
-> @@ -733,9 +736,6 @@ struct qmp_phy_cfg {
->   	bool has_phy_dp_com_ctrl;
->   	/* true, if PHY has secondary tx/rx lanes to be configured */
->   	bool is_dual_lane_phy;
-> -	/* Register offset of secondary tx/rx lanes for USB DP combo PHY */
-> -	unsigned int tx_b_lane_offset;
-> -	unsigned int rx_b_lane_offset;
->   
->   	/* true, if PCS block has no separate SW_RESET register */
->   	bool no_pcs_sw_reset;
-> @@ -748,6 +748,8 @@ struct qmp_phy_cfg {
->    * @tx: iomapped memory space for lane's tx
->    * @rx: iomapped memory space for lane's rx
->    * @pcs: iomapped memory space for lane's pcs
-> + * @tx2: iomapped memory space for second lane's tx (in dual lane PHYs)
-> + * @rx2: iomapped memory space for second lane's rx (in dual lane PHYs)
->    * @pcs_misc: iomapped memory space for lane's pcs_misc
->    * @pipe_clk: pipe lock
->    * @index: lane index
-> @@ -759,6 +761,8 @@ struct qmp_phy {
->   	void __iomem *tx;
->   	void __iomem *rx;
->   	void __iomem *pcs;
-> +	void __iomem *tx2;
-> +	void __iomem *rx2;
->   	void __iomem *pcs_misc;
->   	struct clk *pipe_clk;
->   	unsigned int index;
-> @@ -975,8 +979,6 @@ static const struct qmp_phy_cfg qmp_v3_usb3phy_cfg = {
->   
->   	.has_phy_dp_com_ctrl	= true,
->   	.is_dual_lane_phy	= true,
-> -	.tx_b_lane_offset	= 0x400,
-> -	.rx_b_lane_offset	= 0x400,
->   };
->   
->   static const struct qmp_phy_cfg qmp_v3_usb3_uniphy_cfg = {
-> @@ -1031,9 +1033,6 @@ static const struct qmp_phy_cfg sdm845_ufsphy_cfg = {
->   	.mask_pcs_ready		= PCS_READY,
->   
->   	.is_dual_lane_phy	= true,
-> -	.tx_b_lane_offset	= 0x400,
-> -	.rx_b_lane_offset	= 0x400,
-> -
->   	.no_pcs_sw_reset	= true,
->   };
->   
-> @@ -1238,12 +1237,12 @@ static int qcom_qmp_phy_init(struct phy *phy)
->   	qcom_qmp_phy_configure(tx, cfg->regs, cfg->tx_tbl, cfg->tx_tbl_num);
->   	/* Configuration for other LANE for USB-DP combo PHY */
->   	if (cfg->is_dual_lane_phy)
-> -		qcom_qmp_phy_configure(tx + cfg->tx_b_lane_offset, cfg->regs,
-> +		qcom_qmp_phy_configure(qphy->tx2, cfg->regs,
->   				       cfg->tx_tbl, cfg->tx_tbl_num);
->   
->   	qcom_qmp_phy_configure(rx, cfg->regs, cfg->rx_tbl, cfg->rx_tbl_num);
->   	if (cfg->is_dual_lane_phy)
-> -		qcom_qmp_phy_configure(rx + cfg->rx_b_lane_offset, cfg->regs,
-> +		qcom_qmp_phy_configure(qphy->rx2, cfg->regs,
->   				       cfg->rx_tbl, cfg->rx_tbl_num);
->   
->   	qcom_qmp_phy_configure(pcs, cfg->regs, cfg->pcs_tbl, cfg->pcs_tbl_num);
-> @@ -1614,8 +1613,9 @@ int qcom_qmp_phy_create(struct device *dev, struct device_node *np, int id)
->   
->   	/*
->   	 * Get memory resources for each phy lane:
-> -	 * Resources are indexed as: tx -> 0; rx -> 1; pcs -> 2; and
-> -	 * pcs_misc (optional) -> 3.
-> +	 * Resources are indexed as: tx -> 0; rx -> 1; pcs -> 2.
-> +	 * For dual lane PHYs: tx2 -> 3, rx2 -> 4, pcs_misc (optional) -> 5
-> +	 * For single lane PHYs: pcs_misc (optional) -> 3.
->   	 */
->   	qphy->tx = of_iomap(np, 0);
->   	if (!qphy->tx)
-> @@ -1629,7 +1629,32 @@ int qcom_qmp_phy_create(struct device *dev, struct device_node *np, int id)
->   	if (!qphy->pcs)
->   		return -ENOMEM;
->   
-> -	qphy->pcs_misc = of_iomap(np, 3);
-> +	/*
-> +	 * If this is a dual-lane PHY, then there should be registers for the
-> +	 * second lane. Some old device trees did not specify this, so fall
-> +	 * back to old legacy behavior of assuming they can be reached at an
-> +	 * offset from the first lane.
-> +	 */
-> +	if (qmp->cfg->is_dual_lane_phy) {
-> +		qphy->tx2 = of_iomap(np, 3);
-> +		qphy->rx2 = of_iomap(np, 4);
-> +		if (!qphy->tx2 || !qphy->rx2) {
-> +			dev_warn(dev,
-> +				 "Underspecified device tree, falling back to legacy register regions\n");
-> +
-> +			/* In the old version, pcs_misc is at index 3. */
-> +			qphy->pcs_misc = qphy->tx2;
-> +			qphy->tx2 = qphy->tx + QMP_PHY_LEGACY_LANE_STRIDE;
-> +			qphy->rx2 = qphy->rx + QMP_PHY_LEGACY_LANE_STRIDE;
-> +
-> +		} else {
-> +			qphy->pcs_misc = of_iomap(np, 5);
-> +		}
-> +
-> +	} else {
-> +		qphy->pcs_misc = of_iomap(np, 3);
-> +	}
-Thanks for the patch.
-I am starting to think that the driver is heavily relying on the 
-resource indices to request
-all these areas ioremapped. Is it a good way forward that driver and the 
-dt bindings are
-chained together?
-Should we rather switch to requesting these resources by some names?
-
-Rob can comment on this possibly.
-
-In otherwise case, the change looks good to me. So, if we go ahead with 
-this patch, you can use my review.
-Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-
-Best regards
-Vivek
-
-> +
->   	if (!qphy->pcs_misc)
->   		dev_vdbg(dev, "PHY pcs_misc-reg not used\n");
->   
-
-
+>  	pm_runtime_enable(pdata->dev);
+> 
+>  	i2c_set_clientdata(client, pdata);
