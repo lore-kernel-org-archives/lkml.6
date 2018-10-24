@@ -2,100 +2,137 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C68ECDE44
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43966ECDE46
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:04:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22DB6207DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:01:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE8B0207DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 19:04:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XR2w3pRT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22DB6207DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OhGhn8SP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE8B0207DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbeJYDbL (ORCPT
+        id S1727206AbeJYDd0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 23:31:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48628 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727010AbeJYDbL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 23:31:11 -0400
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B79D2083E
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 19:01:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540407716;
-        bh=sfj+8vC2u6Lyt+aGG+gsemYrFWVJlZ/4gQs4hvBp0rg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=XR2w3pRTbPHP9niWGbciU4VYYHEJeniE01M06A6Zo+rNZ8kmNpbHVyelxASA3tqjQ
-         0tyVRZJmwoQyZTPYk5/u9aQkOdFpKiiGTWdXr2/MwszUteqCtN7gmO1tEb5SSUJApF
-         cTQf+ZCf/rwqr8cwtEDD23ZyobvyEHLf7LNtLtxU=
-Received: by mail-wr1-f52.google.com with SMTP id w5-v6so6755389wrt.2
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 12:01:56 -0700 (PDT)
-X-Gm-Message-State: AGRZ1gK7hA68rXZwpl8VUh4cYs1OkjBNAfbZlKwQlPi7rm+36Qql8JzX
-        5lLeLxQbMg3hOEBclBGj3251Fa02AlELhxNBUwJZFQ==
-X-Google-Smtp-Source: AJdET5foaZfDNc81G6KZ/8L5clR2Q7dy4FHqxGVn8T7AC4VXxLZPEN8TcGZt0pp8D6eeCXRPHV6uKpzjGUFvQK/JTUU=
-X-Received: by 2002:adf:b1db:: with SMTP id r27-v6mr1003633wra.95.1540407715056;
- Wed, 24 Oct 2018 12:01:55 -0700 (PDT)
+        Wed, 24 Oct 2018 23:33:26 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:40342 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726894AbeJYDdZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 23:33:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=vf7NmdXW31QAmWHsKby9dxcNF2xe2bxZxZLNk9O2f04=; b=OhGhn8SPqIyFRWkEHQ1MFBCWde
+        wts4gHEqpfpDaIxKcFcZQN6ZDZjs6PrzeWFYEaFj5LsCnW5bhPzcX/vf47+srb7pc4Ao064JPwv8I
+        ZTS4gbTXnW8i3rwZArsGOhjGw/VCmsn0WjwWzcuN9lsb5Hj/Ihv6R+nYzeSqWTDjV7zpC8Atar6ff
+        ajPK4v0eeU+DQzK21UN3I3UmAacJp8+Nbn56APqAWvsDq5o3/eKgF1fkkLMcdL2FhZ1fkXRf2ve2U
+        kM7IXCUUE2PSdu4vnHmCnorzFzKZS8bHJ+5CllAPEcc9ic2Tg+FIFnXBcjTZ/qTADOe6uHq51+2dQ
+        hk/m4cuA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gFORu-0001OP-8u; Wed, 24 Oct 2018 19:04:10 +0000
+Subject: Re: [PATCH] V4 init/main.c Enable watchdog_thresh control from kernel
+ line
+To:     Laurence Oberman <loberman@redhat.com>,
+        linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de
+References: <1540404366-26999-1-git-send-email-loberman@redhat.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <36049726-3d4c-f930-2081-3c958ddbc8d9@infradead.org>
+Date:   Wed, 24 Oct 2018 12:04:09 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <1537312139-5580-1-git-send-email-chang.seok.bae@intel.com> <1537312139-5580-3-git-send-email-chang.seok.bae@intel.com>
-In-Reply-To: <1537312139-5580-3-git-send-email-chang.seok.bae@intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Wed, 24 Oct 2018 12:01:43 -0700
-X-Gmail-Original-Message-ID: <CALCETrUr3DGwW8y6y_cffEKWO_KQs1J2_UvTBZsbdAzES_f-Ag@mail.gmail.com>
-Message-ID: <CALCETrUr3DGwW8y6y_cffEKWO_KQs1J2_UvTBZsbdAzES_f-Ag@mail.gmail.com>
-Subject: [regression in -rc1] Re: [PATCH v6 2/8] x86/fsgsbase/64: Introduce
- FS/GS base helper functions
-To:     "Bae, Chang Seok" <chang.seok.bae@intel.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Metzger, Markus T" <markus.t.metzger@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1540404366-26999-1-git-send-email-loberman@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Sep 18, 2018 at 4:09 PM Chang S. Bae <chang.seok.bae@intel.com> wrote:
->
-> With new helpers, FS/GS base access is centralized.
-> Eventually, when FSGSBASE instruction enabled, it will
-> be faster.
+On 10/24/18 11:06 AM, Laurence Oberman wrote:
+> Both graphics and serial consoles are exposed to hard lockups
+> when handling a large amount of messaging. The kernel watchdog_thresh
+> parameter up to now has not been available to be set on the kernel line for
+> early boot.
+> This patch allows the setting of watchdog_thresh to be increased
+> when needed to avoid the hard lockups in the console code.
+> 
+> Signed-off-by: Laurence Oberman <loberman@redhat.com>
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt | 7 +++++++
+>  init/main.c                                     | 8 ++++++++
+>  2 files changed, 15 insertions(+)
+> 
 
-Sorry for not catching this during review, but:
+Laurence,
+Here are a few more changes for you to consider.
 
-> +void x86_fsbase_write_cpu(unsigned long fsbase)
+
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 4cdcd1a..05f76b8 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -4932,6 +4932,13 @@
+>  			or other driver-specific files in the
+>  			Documentation/watchdog/ directory.
+>  
+> +	watchdog_thresh=
+> +			This parameter allows early boot to change the
+> +			value of the watchdog timeout threshold from the default
+> +			of 10 seconds to avoid hard lockups.  Example:
+> +			 watchdog_thresh=30
+
+No extra char indent above.
+
+> +			Default: 10
+> +
+>  	workqueue.watchdog_thresh=
+>  			If CONFIG_WQ_WATCHDOG is configured, workqueue can
+>  			warn stall conditions and dump internal state to
+> diff --git a/init/main.c b/init/main.c
+> index 1c3f902..ae45291 100644
+> --- a/init/main.c
+> +++ b/init/main.c
+> @@ -1038,6 +1038,14 @@ static int __init set_debug_rodata(char *str)
+>  __setup("rodata=", set_debug_rodata);
+>  #endif
+>  
+
+#ifdef CONFIG_LOCKUP_DETECTOR
+
+extern int watchdog_thresh;
+
+> +static int __init is_watchdog_thresh_setup(char *str)
 > +{
-> +       /*
-> +        * Set the selector to 0 as a notion, that the segment base is
-> +        * overwritten, which will be checked for skipping the segment load
-> +        * during context switch.
-> +        */
-> +       loadseg(FS, 0);
-
-^^^
-
-what?
-
-> +       wrmsrl(MSR_FS_BASE, fsbase);
+> +	get_option(&str, &watchdog_thresh);
+> +	return 1;
 > +}
+> +__setup("watchdog_thresh=", is_watchdog_thresh_setup);
+> +
+#endif
 
-I don't understand what the comment is trying to say, but the sole
-caller so far of this function is x86_gsbase_write_task(), and the
-code looks incorrect.
+and I would change the function name above to just watchdog_thresh_setup()
+or setup_watchdog_thresh().
 
-Ingo, I think we need to address this during this merge window,
-probably by removing the comment and the loadseg() call (and the same
-for gsbase...inactive).  But first, Chang, can you explain what
-exactly your intent is here?
+
+> +
+>  #ifdef CONFIG_STRICT_KERNEL_RWX
+>  static void mark_readonly(void)
+>  {
+> 
+
+
+-- 
+~Randy
