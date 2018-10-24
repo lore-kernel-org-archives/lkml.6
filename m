@@ -2,349 +2,272 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C263DC46475
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 02:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A999C46475
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 02:52:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51C972082F
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 02:52:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="T1FNWln6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51C972082F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 34F4A20832
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 02:52:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34F4A20832
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726732AbeJXLSH (ORCPT
+        id S1726863AbeJXLSj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 07:18:07 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:39182 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726371AbeJXLSH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 07:18:07 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9O0ENOo013049;
-        Tue, 23 Oct 2018 19:14:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1540340063;
-        bh=ZZOfZ42OhCj7GrvRGJoGFTDeOBWIP5j9I2wB5RT0kZQ=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=T1FNWln6wtaqxVp4t7HW9F/7ISK4jmFIuzX05VWd+krFS+3q+dVw3wTtH1zmhRvvN
-         fmeg4Xd0Qe21A7wPagGDfxVIoQRkV7U/zXjDX9yCxEk2SE4/q3006pyWIZIpy1kAlU
-         rohvYqwHN3Jz47UtkJC/FWsRDaeho3Z/XdGpkf9c=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9O0ENJh022807;
-        Tue, 23 Oct 2018 19:14:23 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 23
- Oct 2018 19:14:22 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 23 Oct 2018 19:14:22 -0500
-Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9O0EMMI026528;
-        Tue, 23 Oct 2018 19:14:22 -0500
-Subject: Re: [PATCH v4 12/17] remoteproc: modify vring allocation to rely on
- centralized carveout allocator
-To:     Loic Pallardy <loic.pallardy@st.com>, <bjorn.andersson@linaro.org>,
-        <ohad@wizery.com>
-CC:     <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <arnaud.pouliquen@st.com>, <benjamin.gaignard@linaro.org>
-References: <1532697292-14272-1-git-send-email-loic.pallardy@st.com>
- <1532697292-14272-13-git-send-email-loic.pallardy@st.com>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <59fad1e3-11a2-939e-c47e-4351fb636e2d@ti.com>
-Date:   Tue, 23 Oct 2018 19:14:22 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <1532697292-14272-13-git-send-email-loic.pallardy@st.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Wed, 24 Oct 2018 07:18:39 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:42450 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725952AbeJXLSi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 07:18:38 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9DF3C1A00FA;
+        Wed, 24 Oct 2018 04:15:37 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7E7591A0040;
+        Wed, 24 Oct 2018 04:15:31 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 01B92402EE;
+        Wed, 24 Oct 2018 10:15:23 +0800 (SGT)
+From:   andy.tang@nxp.com
+To:     sboyd@kernel.org, mturquette@baylibre.com, oss@buserror.net
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, benh@kernel.crashing.org,
+        paulus@samba.org, mpe@ellerman.id.au, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, Yuantian Tang <andy.tang@nxp.com>
+Subject: [PATCH 3/3 v2] clk: qoriq: update clock driver
+Date:   Wed, 24 Oct 2018 10:11:22 +0800
+Message-Id: <20181024021122.3942-3-andy.tang@nxp.com>
+X-Mailer: git-send-email 2.14.1
+In-Reply-To: <20181024021122.3942-2-andy.tang@nxp.com>
+References: <20181024021122.3942-1-andy.tang@nxp.com>
+ <20181024021122.3942-2-andy.tang@nxp.com>
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 7/27/18 8:14 AM, Loic Pallardy wrote:
-> Current version of rproc_alloc_vring function supports only dynamic vring
-> allocation.
-> 
-> This patch allows to allocate vrings based on memory region declatation.
-> Vrings are now manage like memory carveouts, to communize memory management
-> code in rproc_alloc_registered_carveouts().
-> 
-> Allocated buffer is retrieved in rp_find_vq() thanks to
-> rproc_find_carveout_by_name() functions for.
-> 
-> This patch sets vrings names to vdev"x"vring"y" with x vdev index in
-> resource table and y vring index in vdev. This will be updated when
-> name will be associated to vdev in firmware resource table.
-> 
-> Signed-off-by: Loic Pallardy <loic.pallardy@st.com>
-> ---
->  drivers/remoteproc/remoteproc_core.c     | 61 +++++++++++++++++---------------
->  drivers/remoteproc/remoteproc_internal.h |  2 ++
->  drivers/remoteproc/remoteproc_virtio.c   | 14 +++++++-
->  include/linux/remoteproc.h               |  6 ++--
->  4 files changed, 51 insertions(+), 32 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
-> index c543d04..4edc6f0 100644
-> --- a/drivers/remoteproc/remoteproc_core.c
-> +++ b/drivers/remoteproc/remoteproc_core.c
-> @@ -53,6 +53,11 @@ typedef int (*rproc_handle_resources_t)(struct rproc *rproc,
->  typedef int (*rproc_handle_resource_t)(struct rproc *rproc,
->  				 void *, int offset, int avail);
->  
-> +static int rproc_alloc_carveout(struct rproc *rproc,
-> +				struct rproc_mem_entry *mem);
-> +static int rproc_release_carveout(struct rproc *rproc,
-> +				  struct rproc_mem_entry *mem);
-> +
->  /* Unique indices for remoteproc devices */
->  static DEFINE_IDA(rproc_dev_index);
->  
-> @@ -312,21 +317,33 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
->  	struct device *dev = &rproc->dev;
->  	struct rproc_vring *rvring = &rvdev->vring[i];
->  	struct fw_rsc_vdev *rsc;
-> -	dma_addr_t dma;
-> -	void *va;
->  	int ret, size, notifyid;
-> +	struct rproc_mem_entry *mem;
->  
->  	/* actual size of vring (in bytes) */
->  	size = PAGE_ALIGN(vring_size(rvring->len, rvring->align));
->  
-> -	/*
-> -	 * Allocate non-cacheable memory for the vring. In the future
-> -	 * this call will also configure the IOMMU for us
-> -	 */
-> -	va = dma_alloc_coherent(dev->parent, size, &dma, GFP_KERNEL);
-> -	if (!va) {
-> -		dev_err(dev->parent, "dma_alloc_coherent failed\n");
-> -		return -EINVAL;
-> +	rsc = (void *)rproc->table_ptr + rvdev->rsc_offset;
-> +
-> +	/* Search for pre-registered carveout */
-> +	mem = rproc_find_carveout_by_name(rproc, "vdev%dvring%d", rvdev->index,
-> +					  i);
-> +	if (mem) {
-> +		if (rproc_check_carveout_da(rproc, mem, rsc->vring[i].da, size))
-> +			return -ENOMEM;
-> +	} else {
-> +		/* Register carveout in in list */
-> +		mem = rproc_mem_entry_init(dev, 0, 0, size, rsc->vring[i].da,
-> +					   rproc_alloc_carveout,
-> +					   rproc_release_carveout,
-> +					   "vdev%dvring%d",
-> +					   rvdev->index, i);
-> +		if (!mem) {
-> +			dev_err(dev, "Can't allocate memory entry structure\n");
-> +			return -ENOMEM;
-> +		}
-> +
-> +		rproc_add_carveout(rproc, mem);
->  	}
->  
->  	/*
-> @@ -337,7 +354,6 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
->  	ret = idr_alloc(&rproc->notifyids, rvring, 0, 0, GFP_KERNEL);
->  	if (ret < 0) {
->  		dev_err(dev, "idr_alloc failed: %d\n", ret);
-> -		dma_free_coherent(dev->parent, size, va, dma);
->  		return ret;
->  	}
->  	notifyid = ret;
-> @@ -346,21 +362,9 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
->  	if (notifyid > rproc->max_notifyid)
->  		rproc->max_notifyid = notifyid;
->  
-> -	dev_dbg(dev, "vring%d: va %pK dma %pad size 0x%x idr %d\n",
-> -		i, va, &dma, size, notifyid);
-> -
-> -	rvring->va = va;
-> -	rvring->dma = dma;
->  	rvring->notifyid = notifyid;
->  
-> -	/*
-> -	 * Let the rproc know the notifyid and da of this vring.
-> -	 * Not all platforms use dma_alloc_coherent to automatically
-> -	 * set up the iommu. In this case the device address (da) will
-> -	 * hold the physical address and not the device address.
-> -	 */
-> -	rsc = (void *)rproc->table_ptr + rvdev->rsc_offset;
-> -	rsc->vring[i].da = dma;
-> +	/* Let the rproc know the notifyid of this vring.*/
->  	rsc->vring[i].notifyid = notifyid;
->  	return 0;
->  }
-> @@ -392,12 +396,10 @@ int rproc_alloc_vring(struct rproc_vdev *rvdev, int i)
->  
->  void rproc_free_vring(struct rproc_vring *rvring)
->  {
-> -	int size = PAGE_ALIGN(vring_size(rvring->len, rvring->align));
->  	struct rproc *rproc = rvring->rvdev->rproc;
->  	int idx = rvring->rvdev->vring - rvring;
->  	struct fw_rsc_vdev *rsc;
->  
-> -	dma_free_coherent(rproc->dev.parent, size, rvring->va, rvring->dma);
->  	idr_remove(&rproc->notifyids, rvring->notifyid);
+From: Yuantian Tang <andy.tang@nxp.com>
 
-Also, I am not sure if FW_RSC_ADDR_ANY semantics were enforced
-previously on the vring da. It was simply overwritten irrespective of
-the value. Now, I am running again into the "bad carveout rsc
-configuration value" due to the iommu_domain_check if !FW_RSC_ADDR_ANY.
+Legacy bindings are deleted. So the legacy support in driver
+can be deleted safely.
+Add more chip-specific compatible as well to support more Socs.
 
-FWIW, the rproc_free_vring was actually using the value 0 when resetting.
+Signed-off-by: Tang Yuantian <andy.tang@nxp.com>
+---
+v2:
+  - remove all legacy code
 
-regards
-Suman
+ drivers/clk/clk-qoriq.c |  159 +++-------------------------------------------
+ 1 files changed, 11 insertions(+), 148 deletions(-)
 
->  
->  	/* reset resource entry info */
-> @@ -484,6 +486,7 @@ static int rproc_handle_vdev(struct rproc *rproc, struct fw_rsc_vdev *rsc,
->  
->  	rvdev->id = rsc->id;
->  	rvdev->rproc = rproc;
-> +	rvdev->index = rproc->nb_vdev++;
->  
->  	/* parse the vrings */
->  	for (i = 0; i < rsc->num_of_vrings; i++) {
-> @@ -528,9 +531,6 @@ void rproc_vdev_release(struct kref *ref)
->  
->  	for (id = 0; id < ARRAY_SIZE(rvdev->vring); id++) {
->  		rvring = &rvdev->vring[id];
-> -		if (!rvring->va)
-> -			continue;
-> -
->  		rproc_free_vring(rvring);
->  	}
->  
-> @@ -1322,6 +1322,9 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
->  	/* reset max_notifyid */
->  	rproc->max_notifyid = -1;
->  
-> +	/* reset handled vdev */
-> +	rproc->nb_vdev = 0;
-> +
->  	/* handle fw resources which are required to boot rproc */
->  	ret = rproc_handle_resources(rproc, rproc_loading_handlers);
->  	if (ret) {
-> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
-> index 7570beb..f6cad24 100644
-> --- a/drivers/remoteproc/remoteproc_internal.h
-> +++ b/drivers/remoteproc/remoteproc_internal.h
-> @@ -60,6 +60,8 @@ struct dentry *rproc_create_trace_file(const char *name, struct rproc *rproc,
->  int rproc_elf_load_rsc_table(struct rproc *rproc, const struct firmware *fw);
->  struct resource_table *rproc_elf_find_loaded_rsc_table(struct rproc *rproc,
->  						       const struct firmware *fw);
-> +struct rproc_mem_entry *
-> +rproc_find_carveout_by_name(struct rproc *rproc, const char *name, ...);
->  
->  static inline
->  int rproc_fw_sanity_check(struct rproc *rproc, const struct firmware *fw)
-> diff --git a/drivers/remoteproc/remoteproc_virtio.c b/drivers/remoteproc/remoteproc_virtio.c
-> index bbecd44..de21f62 100644
-> --- a/drivers/remoteproc/remoteproc_virtio.c
-> +++ b/drivers/remoteproc/remoteproc_virtio.c
-> @@ -76,7 +76,9 @@ static struct virtqueue *rp_find_vq(struct virtio_device *vdev,
->  	struct rproc_vdev *rvdev = vdev_to_rvdev(vdev);
->  	struct rproc *rproc = vdev_to_rproc(vdev);
->  	struct device *dev = &rproc->dev;
-> +	struct rproc_mem_entry *mem;
->  	struct rproc_vring *rvring;
-> +	struct fw_rsc_vdev *rsc;
->  	struct virtqueue *vq;
->  	void *addr;
->  	int len, size;
-> @@ -88,8 +90,14 @@ static struct virtqueue *rp_find_vq(struct virtio_device *vdev,
->  	if (!name)
->  		return NULL;
->  
-> +	/* Search allocated memory region by name */
-> +	mem = rproc_find_carveout_by_name(rproc, "vdev%dvring%d", rvdev->index,
-> +					  id);
-> +	if (!mem || !mem->va)
-> +		return ERR_PTR(-ENOMEM);
-> +
->  	rvring = &rvdev->vring[id];
-> -	addr = rvring->va;
-> +	addr = mem->va;
->  	len = rvring->len;
->  
->  	/* zero vring */
-> @@ -114,6 +122,10 @@ static struct virtqueue *rp_find_vq(struct virtio_device *vdev,
->  	rvring->vq = vq;
->  	vq->priv = rvring;
->  
-> +	/* Update vring in resource table */
-> +	rsc = (void *)rproc->table_ptr + rvdev->rsc_offset;
-> +	rsc->vring[id].da = mem->da;
-> +
->  	return vq;
->  }
->  
-> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
-> index 4cdd0c6..6b3a234 100644
-> --- a/include/linux/remoteproc.h
-> +++ b/include/linux/remoteproc.h
-> @@ -453,6 +453,7 @@ struct rproc_dump_segment {
->   * @table_sz: size of @cached_table
->   * @has_iommu: flag to indicate if remote processor is behind an MMU
->   * @dump_segments: list of segments in the firmware
-> + * @nb_vdev: number of vdev currently handled by rproc
->   */
->  struct rproc {
->  	struct list_head node;
-> @@ -485,6 +486,7 @@ struct rproc {
->  	bool has_iommu;
->  	bool auto_boot;
->  	struct list_head dump_segments;
-> +	int nb_vdev;
->  };
->  
->  /**
-> @@ -512,7 +514,6 @@ struct rproc_subdev {
->  /**
->   * struct rproc_vring - remoteproc vring state
->   * @va:	virtual address
-> - * @dma: dma address
->   * @len: length, in bytes
->   * @da: device address
->   * @align: vring alignment
-> @@ -522,7 +523,6 @@ struct rproc_subdev {
->   */
->  struct rproc_vring {
->  	void *va;
-> -	dma_addr_t dma;
->  	int len;
->  	u32 da;
->  	u32 align;
-> @@ -541,6 +541,7 @@ struct rproc_vring {
->   * @vdev: the virio device
->   * @vring: the vrings for this vdev
->   * @rsc_offset: offset of the vdev's resource entry
-> + * @index: vdev position versus other vdev declared in resource table
->   */
->  struct rproc_vdev {
->  	struct kref refcount;
-> @@ -553,6 +554,7 @@ struct rproc_vdev {
->  	struct virtio_device vdev;
->  	struct rproc_vring vring[RVDEV_NUM_VRINGS];
->  	u32 rsc_offset;
-> +	u32 index;
->  };
->  
->  struct rproc *rproc_get_by_phandle(phandle phandle);
-> 
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 3a1812f..405a9ab 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -914,43 +914,6 @@ static void __init create_muxes(struct clockgen *cg)
+ 	}
+ }
+ 
+-static void __init clockgen_init(struct device_node *np);
+-
+-/*
+- * Legacy nodes may get probed before the parent clockgen node.
+- * It is assumed that device trees with legacy nodes will not
+- * contain a "clocks" property -- otherwise the input clocks may
+- * not be initialized at this point.
+- */
+-static void __init legacy_init_clockgen(struct device_node *np)
+-{
+-	if (!clockgen.node)
+-		clockgen_init(of_get_parent(np));
+-}
+-
+-/* Legacy node */
+-static void __init core_mux_init(struct device_node *np)
+-{
+-	struct clk *clk;
+-	struct resource res;
+-	int idx, rc;
+-
+-	legacy_init_clockgen(np);
+-
+-	if (of_address_to_resource(np, 0, &res))
+-		return;
+-
+-	idx = (res.start & 0xf0) >> 5;
+-	clk = clockgen.cmux[idx];
+-
+-	rc = of_clk_add_provider(np, of_clk_src_simple_get, clk);
+-	if (rc) {
+-		pr_err("%s: Couldn't register clk provider for node %s: %d\n",
+-		       __func__, np->name, rc);
+-		return;
+-	}
+-}
+-
+ static struct clk __init
+ *sysclk_from_fixed(struct device_node *node, const char *name)
+ {
+@@ -1036,30 +999,9 @@ static void __init core_mux_init(struct device_node *np)
+ 	if (!IS_ERR(clk))
+ 		return clk;
+ 
+-	/*
+-	 * This indicates a mix of legacy nodes with the new coreclk
+-	 * mechanism, which should never happen.  If this error occurs,
+-	 * don't use the wrong input clock just because coreclk isn't
+-	 * ready yet.
+-	 */
+-	if (WARN_ON(PTR_ERR(clk) == -EPROBE_DEFER))
+-		return clk;
+-
+ 	return NULL;
+ }
+ 
+-/* Legacy node */
+-static void __init sysclk_init(struct device_node *node)
+-{
+-	struct clk *clk;
+-
+-	legacy_init_clockgen(node);
+-
+-	clk = clockgen.sysclk;
+-	if (clk)
+-		of_clk_add_provider(node, of_clk_src_simple_get, clk);
+-}
+-
+ #define PLL_KILL BIT(31)
+ 
+ static void __init create_one_pll(struct clockgen *cg, int idx)
+@@ -1162,82 +1104,6 @@ static void __init create_plls(struct clockgen *cg)
+ 		create_one_pll(cg, i);
+ }
+ 
+-static void __init legacy_pll_init(struct device_node *np, int idx)
+-{
+-	struct clockgen_pll *pll;
+-	struct clk_onecell_data *onecell_data;
+-	struct clk **subclks;
+-	int count, rc;
+-
+-	legacy_init_clockgen(np);
+-
+-	pll = &clockgen.pll[idx];
+-	count = of_property_count_strings(np, "clock-output-names");
+-
+-	BUILD_BUG_ON(ARRAY_SIZE(pll->div) < 4);
+-	subclks = kcalloc(4, sizeof(struct clk *), GFP_KERNEL);
+-	if (!subclks)
+-		return;
+-
+-	onecell_data = kmalloc(sizeof(*onecell_data), GFP_KERNEL);
+-	if (!onecell_data)
+-		goto err_clks;
+-
+-	if (count <= 3) {
+-		subclks[0] = pll->div[0].clk;
+-		subclks[1] = pll->div[1].clk;
+-		subclks[2] = pll->div[3].clk;
+-	} else {
+-		subclks[0] = pll->div[0].clk;
+-		subclks[1] = pll->div[1].clk;
+-		subclks[2] = pll->div[2].clk;
+-		subclks[3] = pll->div[3].clk;
+-	}
+-
+-	onecell_data->clks = subclks;
+-	onecell_data->clk_num = count;
+-
+-	rc = of_clk_add_provider(np, of_clk_src_onecell_get, onecell_data);
+-	if (rc) {
+-		pr_err("%s: Couldn't register clk provider for node %s: %d\n",
+-		       __func__, np->name, rc);
+-		goto err_cell;
+-	}
+-
+-	return;
+-err_cell:
+-	kfree(onecell_data);
+-err_clks:
+-	kfree(subclks);
+-}
+-
+-/* Legacy node */
+-static void __init pltfrm_pll_init(struct device_node *np)
+-{
+-	legacy_pll_init(np, PLATFORM_PLL);
+-}
+-
+-/* Legacy node */
+-static void __init core_pll_init(struct device_node *np)
+-{
+-	struct resource res;
+-	int idx;
+-
+-	if (of_address_to_resource(np, 0, &res))
+-		return;
+-
+-	if ((res.start & 0xfff) == 0xc00) {
+-		/*
+-		 * ls1021a devtree labels the platform PLL
+-		 * with the core PLL compatible
+-		 */
+-		pltfrm_pll_init(np);
+-	} else {
+-		idx = (res.start & 0xf0) >> 5;
+-		legacy_pll_init(np, CGA_PLL1 + idx);
+-	}
+-}
+-
+ static struct clk *clockgen_clk_get(struct of_phandle_args *clkspec, void *data)
+ {
+ 	struct clockgen *cg = data;
+@@ -1347,10 +1213,6 @@ static void __init clockgen_init(struct device_node *np)
+ 	int i, ret;
+ 	bool is_old_ls1021a = false;
+ 
+-	/* May have already been called by a legacy probe */
+-	if (clockgen.node)
+-		return;
+-
+ 	clockgen.node = np;
+ 	clockgen.regs = of_iomap(np, 0);
+ 	if (!clockgen.regs &&
+@@ -1418,19 +1280,20 @@ static void __init clockgen_init(struct device_node *np)
+ 
+ CLK_OF_DECLARE(qoriq_clockgen_1, "fsl,qoriq-clockgen-1.0", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_2, "fsl,qoriq-clockgen-2.0", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_b4420, "fsl,fsl,b4420-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_b4860, "fsl,fsl,b4860-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1012a, "fsl,ls1012a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1021a, "fsl,ls1021a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1043a, "fsl,ls1043a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1046a, "fsl,ls1046a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls1088a, "fsl,ls1088a-clockgen", clockgen_init);
+ CLK_OF_DECLARE(qoriq_clockgen_ls2080a, "fsl,ls2080a-clockgen", clockgen_init);
+-
+-/* Legacy nodes */
+-CLK_OF_DECLARE(qoriq_sysclk_1, "fsl,qoriq-sysclk-1.0", sysclk_init);
+-CLK_OF_DECLARE(qoriq_sysclk_2, "fsl,qoriq-sysclk-2.0", sysclk_init);
+-CLK_OF_DECLARE(qoriq_core_pll_1, "fsl,qoriq-core-pll-1.0", core_pll_init);
+-CLK_OF_DECLARE(qoriq_core_pll_2, "fsl,qoriq-core-pll-2.0", core_pll_init);
+-CLK_OF_DECLARE(qoriq_core_mux_1, "fsl,qoriq-core-mux-1.0", core_mux_init);
+-CLK_OF_DECLARE(qoriq_core_mux_2, "fsl,qoriq-core-mux-2.0", core_mux_init);
+-CLK_OF_DECLARE(qoriq_pltfrm_pll_1, "fsl,qoriq-platform-pll-1.0", pltfrm_pll_init);
+-CLK_OF_DECLARE(qoriq_pltfrm_pll_2, "fsl,qoriq-platform-pll-2.0", pltfrm_pll_init);
++CLK_OF_DECLARE(qoriq_clockgen_p2041, "fsl,p2041-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_p3041, "fsl,p3041-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_p4080, "fsl,p4080-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_p5020, "fsl,p5020-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_p5040, "fsl,p5040-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_t1023, "fsl,t1023-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_t1040, "fsl,t1040-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_t2080, "fsl,t2080-clockgen", clockgen_init);
++CLK_OF_DECLARE(qoriq_clockgen_t4240, "fsl,t4240-clockgen", clockgen_init);
+-- 
+1.7.1
 
