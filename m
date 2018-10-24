@@ -7,142 +7,116 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B8B1C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 09:41:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA9BC004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 09:45:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D96FA2082E
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 09:41:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 625AE2082E
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 09:45:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PvLSmLJ1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D96FA2082E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DC7WR3UU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 625AE2082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727075AbeJXSI1 (ORCPT
+        id S1726865AbeJXSM0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 14:08:27 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55344 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726258AbeJXSI1 (ORCPT
+        Wed, 24 Oct 2018 14:12:26 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:39766 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726258AbeJXSM0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 14:08:27 -0400
-Received: by mail-wm1-f66.google.com with SMTP id s10-v6so2574914wmc.5;
-        Wed, 24 Oct 2018 02:41:02 -0700 (PDT)
+        Wed, 24 Oct 2018 14:12:26 -0400
+Received: by mail-yw1-f67.google.com with SMTP id v1-v6so1797187ywv.6;
+        Wed, 24 Oct 2018 02:45:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=XZtgObpVvHrAsDw9OZTWexptw1jCGycSDOQHSyb17Jc=;
-        b=PvLSmLJ1DekD2dXe1U8rg+H6aWVBfURMq72Tq1g4Ai/6usKhmzlvqc4D1+/JlIviQS
-         UiB9VX8Ngcl+xSfCnEzRegbtU9GH2gl54MIsr4+V50GC6vYmHiNKGI12SJXspKB4aKVV
-         VWKnAimTm4hRXUiXi3Ejgv2PJQduG6fAHShY0z2DNfWmg2jOFwrNNyBVmDELJXDn7qud
-         Zi9EVHDIpRPJkSawcRFGaOQBxG2i62WbdmthK0B5WDWKioYyaEG8NrlQwZXaS9PRaVqw
-         zqr9S2Q+5PMNwJb5tbo55vCU779bbGKe8xRm3uemXwK2CS3/6/aruxA+YX06yZ0bEWBZ
-         kbtQ==
+        bh=y2imPrQBCleSfuoYb57UDpMgu4SBmSZqDInqIhK1wD8=;
+        b=DC7WR3UUhYcwtC2hflCwUMcGVakio78s15rq22jDRcSuQiTWwMquQwTGS/iFzas+7+
+         TU943tO2UzMK8UYGfhWtVAMO/owhGptoj2Q1bfYOOKykFB7c8Y/2updCKZjynJUokXZh
+         pZWTrmd8KIyx4vzI73tkhE7sdfBg8Qe7nay+QEeDeX4tygdPh525+XXEjrMEuCxDDXuN
+         3JUlA7HQ703tsFYAQFYzZZeTbAxTZMfnj+a0achkOPbIWasAiOZuVLHt8eBtM/857cyn
+         VpLxfn/9YcaoQHqFfeedFFXettEsZHT9O14/uh3JC5eJU5fFPKnZ6a0wgMO+cuzW7KwW
+         EWuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=XZtgObpVvHrAsDw9OZTWexptw1jCGycSDOQHSyb17Jc=;
-        b=myFbRaqbMCvmaeEvfZ79x+7xv7lIzN4wKEfXwHmS2ya634BaxICYWAdoT341+2765Q
-         sH7NJ/cokMO8djD9jpVL6AR7gU8fgkvDHhpq/KveNhWDlUtfd7PKjY7YtnKUTjZvkXWw
-         3bqsalYt2pw2OybdAvahOWPw1Z9uWyY3qEGoDfIBhXVGZ9Poxiiov1CwiPiFU82kuXnE
-         GdSx3JBE7Ox0nwTa1yOKEtc4nNcTaB8Mjipk+J2+I1rRow4w0EDUIodbQpnfehf/xB4m
-         iXHIc89ZHh2AuOk4LueF225V51BGaI62IdMwhVRbuXQCCWfX3jy7my0Ag3rYVEO0+DWc
-         Rnmw==
-X-Gm-Message-State: AGRZ1gJqa+ZO7vttc6CWRS2WzSJStTnhAHR0p6gEVk/bHwk2jTX8fjDm
-        kABxSZXF0N4hy7j9LAAqb7pf9T99Qf1kUNBvddE=
-X-Google-Smtp-Source: AJdET5c2LnyQ0LYCuDIz7YssSCqWG/cYYwIZAMjL6YAr/xqyerygPKAQcz1Vv6K8E6SX5ePWopZ47ByEJ2BHBuXq1bE=
-X-Received: by 2002:a1c:1250:: with SMTP id 77-v6mr1841177wms.70.1540374061872;
- Wed, 24 Oct 2018 02:41:01 -0700 (PDT)
+        bh=y2imPrQBCleSfuoYb57UDpMgu4SBmSZqDInqIhK1wD8=;
+        b=IiXFOKYBbGNYncBo2NoQcWNtNboxjD6dpA1N3roFuEE942HnqG5kJfORBQPE8eVJ7P
+         +PAlgjv2ibD7OW6MjAJizKRsVWZrurSwKM1LKZhwaOrWAoROt4elFI25+po8heyHh3ZM
+         e/tPJEfWulQkE3/2Xzd58x9cB0eLTzIiyFK9mA0D6e2RLFinosI2a/lUWOGu+p30tCH3
+         Mp7quo+CgXepBRdNpl593cnkc/1SU7AJM7Y1HEYjTbm90TjglnNW0BZWWwUQzLyafCRc
+         hT1AgDnXmnsgPwPBXuh/tMZfDC4YzBs4jLcKksSY4phn6DuR+m/GtDZP1RvfaS9uGlBy
+         o6ug==
+X-Gm-Message-State: AGRZ1gL2RWWA1m7HumrXgkRzCFsz176F3P3GQvshrCry/2tdWd77yYiR
+        cFb5B+jj3jhOrvURowemrrPnrYb2weqWD5Pc4Ow=
+X-Google-Smtp-Source: AJdET5fe8UyEC7PnlBa86AcY/nTwc9A1I1xDPidiEpyJoM4L3GV8YUOKlbUlP29aZEFvOF5NQWu9NgqaAa1P6X+qbHs=
+X-Received: by 2002:a0d:d181:: with SMTP id t123-v6mr1408902ywd.241.1540374301186;
+ Wed, 24 Oct 2018 02:45:01 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181023001308.GA4150@embeddedor.com> <0b3197a734f71bdfffaf717e63b17e2fe31720a2.camel@sipsolutions.net>
- <f0a240e2-cae7-07f4-757f-a8606199d29e@embeddedor.com> <c2fad584-1705-a5f2-d63c-824e9b96cf50@embeddedor.com>
- <94958073867a5bbf8161d7ea8851aaea026762b1.camel@sipsolutions.net>
-In-Reply-To: <94958073867a5bbf8161d7ea8851aaea026762b1.camel@sipsolutions.net>
-From:   Julian Calaby <julian.calaby@gmail.com>
-Date:   Wed, 24 Oct 2018 20:40:47 +1100
-Message-ID: <CAGRGNgVC6TMYRF98yp=54BNETsT9tnzVuE9y8t0+tq_jJcxRjQ@mail.gmail.com>
-Subject: Re: [PATCH v2] wireless: mark expected switch fall-throughs
-To:     gustavo@embeddedor.com
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        linux-wireless <linux-wireless@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>
+References: <20181023201953.GA15687@pathfinder> <CAOQ4uxjfChxZyAUiYKQ-UiVjmxsosR+KG1ZSBu2TOeuAX3vJnA@mail.gmail.com>
+ <20181024082134.GA14565@pathfinder> <CAOQ4uxjQwE2nhS7KccL_P+jUnz4vGwTpxjQquvbaZ0zZpJqGtA@mail.gmail.com>
+ <20181024093103.GA19623@pathfinder>
+In-Reply-To: <20181024093103.GA19623@pathfinder>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 24 Oct 2018 12:44:50 +0300
+Message-ID: <CAOQ4uxjyTtjPk1OaWCSKs3Larqog+vmqLSth1kKWdOA5oRTtAA@mail.gmail.com>
+Subject: Re: [RFC][PATCH v3 01/10] fs: common implementation of file type
+To:     Phillip Potter <phil@philpotter.co.uk>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Gustavo,
-
-On Wed, Oct 24, 2018 at 7:36 AM Johannes Berg <johannes@sipsolutions.net> wrote:
+On Wed, Oct 24, 2018 at 12:31 PM Phillip Potter <phil@philpotter.co.uk> wrote:
 >
-> On Tue, 2018-10-23 at 12:58 +0200, Gustavo A. R. Silva wrote:
-> > On 10/23/18 10:59 AM, Gustavo A. R. Silva wrote:
+> On Wed, Oct 24, 2018 at 12:20:14PM +0300, Amir Goldstein wrote:
+> > On Wed, Oct 24, 2018 at 11:21 AM Phillip Potter <phil@philpotter.co.uk> wrote:
+> > > Dear Amir,
 > > >
-> > > On 10/23/18 9:01 AM, Johannes Berg wrote:
-> > > > On Tue, 2018-10-23 at 02:13 +0200, Gustavo A. R. Silva wrote:
-> > > > > In preparation to enabling -Wimplicit-fallthrough, mark switch cases
-> > > > > where we are expecting to fall through.
-> > > > >
-> > > > > Warning level 3 was used: -Wimplicit-fallthrough=3
-> > > > >
-> > > > > This code was not tested and GCC 7.2.0 was used to compile it.
-> > > >
-> > > > Look, I'm not going to make this any clearer: I'm not applying patches
-> > > > like that where you've invested no effort whatsoever on verifying that
-> > > > they're correct.
-> > > >
-> > >
-> > > How do you suggest me to verify that every part is correct in this type
-> > > of patches?
+> > > Yes, I applied each patch manually to my tree, fixed it up where needed,
+> > > then after rebuilding and testing each one I committed it and regenerated
+> > > each patch. Thank you very much for your advice, I will take it into
+> > > account and make the necessary changes. In the meantime, do I add other
+> > > tags in the order they are received also (such as Reviewed-by:) and am
+> > > I safe to add these in when I re-send the patches with the changes you
+> > > and others have suggested (or would that offend people that have
+> > > offered the tags)?
 > > >
 > >
-> > BTW... I'm under the impression you think that I don't even look at
-> > the code. Is that correct?
+> > Reviewed-by before of after Signed-off-by.
+> > I prefer Signed-off-by last which conceptually covers the entire patch,
+> > the commit message including all the review tags that you may have added.
+> >
+> > Some developers add Reviewed-by after Signed-off-by signifying the
+> > order that things happened, so choose your own preference.
+> >
+> > As a reviewer, and I speak only for myself, if I offered my Reviewed-by
+> > I expect it to be removed if a future revision of the patch has changed
+> > so I have an indication of patches that I need to re-review.
+> > But if the patch changed very lightly, like small edits to commit message
+> > and code nits in general, that would not invalidate my review.
+> > When in doubt, you can always explicitly ask the reviewer.
+> >
+> > Thanks,
+> > Amir.
 >
-> That's what your commit log looks like, yes. This is your full commit
-> log:
+> Dear Amir,
 >
->    In preparation to enabling -Wimplicit-fallthrough, mark switch cases
->    where we are expecting to fall through.
+> Thanks - I am just going to fix up the commit messages as you suggested
+> using git am etc. The content of the patches themselves will not change
+> (until further feedback is received).
 >
->    Warning level 3 was used: -Wimplicit-fallthrough=3
->
->    This code was not tested and GCC 7.2.0 was used to compile it.
->
->    For all I know, you could've run spatch to add the comments wherever
->    there was no break, and then compiled it once.
 
-It might also help to split these up by the "type" of change. For
-example this patch contains:
-
-1. A whole lot of places where there's a "if (condition) { break; }"
-just before the fall through
-
-You could add a line describing the logic there to the commit message,
-maybe something like:
-
-As there's a conditional break at the end of the case, the fall
-through appears to be intentional.
-
-
-2. Reformatting an existing comment
-
-These should definitely be split out as they're just reformatting
-comments to match gcc's expectations. You could describe this like:
-
-Reformat existing fall through messages into the format expected by gcc.
-
+Well, I did request to change some content (the location and the comment
+above BUILD_BUG_ON section) which is relevant for several patches.
+However, so far affected patched did not get any Reviewed-by.
 
 Thanks,
-
--- 
-Julian Calaby
-
-Email: julian.calaby@gmail.com
-Profile: http://www.google.com/profiles/julian.calaby/
+Amir.
