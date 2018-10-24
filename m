@@ -2,118 +2,107 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8942AC004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E58C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:40:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51AA020824
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:38:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6BBA20834
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 10:40:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PiPYhrH0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51AA020824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="x1LoGKYM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6BBA20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727501AbeJXTFd (ORCPT
+        id S1727244AbeJXTIN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 15:05:33 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:42848 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726916AbeJXTFd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 15:05:33 -0400
-Received: by mail-ot1-f66.google.com with SMTP id c23so4484931otl.9
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 03:37:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=czyffd/8Q7c1ySXu5+NjsYfYPQIH6Hi52cZ0vgivYgc=;
-        b=PiPYhrH0iCqb37T0TtVQZpMiM76uOPydvDZwHs/lqtTgGEEayIacbWM7Q2q0dS5OCc
-         XPzU4SKhribAV3upGvsoM6H2eXFIGADLMzsXomKO/H2fZd+WAk4dmfW1FoZWR/4dJHaJ
-         RQiRzxjwjo8/sEyaOLpx12qsG0ReBep+2TBqYXHnzEFSQ+SfKS+v6OnQ2YXVfHxM+//f
-         HWg25B34caBt9X96ugzte9hGHBKJOMRONII57Nir2ZzaIck868pu7qS7ylvvN/LHe2PX
-         cmIZ5t9GIMqXEM2lcc/kVEEEdy/FJCb1DSDttZa1YJdHEi3Hku2nGgRdPrw5N44p+1MM
-         Mvaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=czyffd/8Q7c1ySXu5+NjsYfYPQIH6Hi52cZ0vgivYgc=;
-        b=nHNv3SPp86diqRoRSNaJmCOhD63YpT+WmyfKLP5ZWQipQpiDefbnjZKvCMLpdGyMrO
-         2zvzNnWQmo+B+uzSW6NeL3lS2jiIhXB1qgDW7bfJtTqy9qEle2v2QArEQdy2YZ0vli5V
-         yKd04BeORsLSxEAZrXL3mk4VzOiED+cGTVBRoC5Nn9MthVNNn2G1xRiG4cXvMXbqTgdy
-         P6fqGw1gc8gFbjPNBw/vu2QPQ4+xak2xRYe7hTjVU0Epq0XF9wS2y/ape6QTxxGcNsYo
-         QLiH3Eaopo9i5DRyzoMv6LApebOwfRyrBqRca547485WE1pRBF05FrmlqdlkCon9bXRU
-         yx3Q==
-X-Gm-Message-State: AGRZ1gIGo1r9Z4SlaEX8PBtC97Nlv81qhrJmq2SgzhqiP4kjhFZx4I3U
-        kRcSLIpaJVdYwimrMwATB6xYGG7F
-X-Google-Smtp-Source: AJdET5fYYsdb1AfWRef8iOkmRNm6qbY294YTqnAUSZQqz33X3QCkR7DuolgCbjDAFXzVzqXWLrJJ3w==
-X-Received: by 2002:a9d:4c15:: with SMTP id l21mr1331525otf.242.1540377479330;
-        Wed, 24 Oct 2018 03:37:59 -0700 (PDT)
-Received: from JosephdeMacBook-Pro.local ([47.89.83.32])
-        by smtp.gmail.com with ESMTPSA id a5sm1522364otj.46.2018.10.24.03.37.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Oct 2018 03:37:58 -0700 (PDT)
-Subject: Re: [PATCH] ocfs2: dlmfs: remove set but not used variable 'status'
-To:     zhong jiang <zhongjiang@huawei.com>, akpm@linux-foundation.org,
-        mark@fasheh.com, jlbec@evilplan.org
-Cc:     dhowells@redhat.com, piaojun@huawei.com, viro@zeniv.linux.org.uk,
-        ocfs2-devel@oss.oracle.com, linux-kernel@vger.kernel.org
-References: <1540300179-26697-1-git-send-email-zhongjiang@huawei.com>
-From:   Joseph Qi <jiangqi903@gmail.com>
-Message-ID: <ffed747e-b06e-d691-0df0-e0d39ae4ac5c@gmail.com>
-Date:   Wed, 24 Oct 2018 18:37:49 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.11; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1540300179-26697-1-git-send-email-zhongjiang@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Wed, 24 Oct 2018 15:08:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51166 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726913AbeJXTIN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 24 Oct 2018 15:08:13 -0400
+Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35B1920824;
+        Wed, 24 Oct 2018 10:40:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540377638;
+        bh=T7sgOfv6Pa9Qm0zkYYhd3EuEZxlK0I3rcidhsItzG6k=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=x1LoGKYMhKlGO+0gn4UntRWo4DD/U2mrDTUanSA3dtgU3rZ1RWzU5afLJ0sSep5hW
+         0qzICWjPdSUg+vTH3jnrfQlV5XMfjj5pnqFzsbb1gXqeymoLl7TjPIwkf4X3JShzAD
+         r8UrZmnxN0KIkZA7E0Z9nxAoveFJcoOf1iJPjpA4=
+Message-ID: <09f6038b7642f425eba162ea2239552e12da2045.camel@kernel.org>
+Subject: Re: KASAN: slab-out-of-bounds Read in string (2)
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Bruce Fields <bfields@fieldses.org>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        syzbot+376cea2b0ef340db3dd4@syzkaller.appspotmail.com,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        syzkaller-bugs@googlegroups.com, Jan Harkes <jaharkes@cs.cmu.edu>,
+        Mark Fasheh <mark@fasheh.com>
+Date:   Wed, 24 Oct 2018 06:40:35 -0400
+In-Reply-To: <CAOQ4uxi84ywY4BXJ1ZYDOQHZhbYr+GjJTrkGZvBbH4XUqR0nPw@mail.gmail.com>
+References: <0000000000003852440576ef80b2@google.com>
+         <CACT4Y+bR+9vy5ZKDN31gmvKk5hcoNojaBuD9Dz1wswfObyt0uw@mail.gmail.com>
+         <CAOQ4uxhxON4EeWqVLN68YF4v=hr5wfQk9wZEZLZLZu7B_XGuUw@mail.gmail.com>
+         <20181024090959.s5y3azpsmtswjyn5@mwanda>
+         <CAOQ4uxi84ywY4BXJ1ZYDOQHZhbYr+GjJTrkGZvBbH4XUqR0nPw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 18/10/23 21:09, zhong jiang wrote:
-> status is not used after setting its value. It is safe to remove
-> the unused variable.
+On Wed, 2018-10-24 at 12:35 +0300, Amir Goldstein wrote:
+> > > diff --git a/fs/lockd/host.c b/fs/lockd/host.c
+> > > index d35cd6be0675..93fb7cf0b92b 100644
+> > > --- a/fs/lockd/host.c
+> > > +++ b/fs/lockd/host.c
+> > > @@ -341,7 +341,7 @@ struct nlm_host *nlmsvc_lookup_host(const struct
+> > > svc_rqst *rqstp,
+> > >         };
+> > >         struct lockd_net *ln = net_generic(net, lockd_net_id);
+> > > 
+> > > -       dprintk("lockd: %s(host='%*s', vers=%u, proto=%s)\n", __func__,
+> > > +       dprintk("lockd: %s(host='%.*s', vers=%u, proto=%s)\n", __func__,
+> > >                         (int)hostname_len, hostname, rqstp->rq_vers,
+> > >                         (rqstp->rq_prot == IPPROTO_UDP ? "udp" : "tcp"));
+> > > 
+> > 
+> > Why wasn't this one applied?  It looks correct to me.  The rest seem to
+> > have been fixed already.
+> > 
 > 
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-
-Acked-by: Joseph Qi <jiangqi903@gmail.com>
-
-> ---
->  fs/ocfs2/dlmfs/dlmfs.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+> I did not send this patch to Jeff.
+> Jeff was CC'ed on the patch I sent to Miklos
+> and Miklos decided to only take the overlayfs bits:
+> https://marc.info/?l=linux-unionfs&m=153847248625015&w=2
 > 
-> diff --git a/fs/ocfs2/dlmfs/dlmfs.c b/fs/ocfs2/dlmfs/dlmfs.c
-> index 642e471..b03dd46 100644
-> --- a/fs/ocfs2/dlmfs/dlmfs.c
-> +++ b/fs/ocfs2/dlmfs/dlmfs.c
-> @@ -179,7 +179,7 @@ static int dlmfs_file_open(struct inode *inode,
->  static int dlmfs_file_release(struct inode *inode,
->  			      struct file *file)
->  {
-> -	int level, status;
-> +	int level;
->  	struct dlmfs_inode_private *ip = DLMFS_I(inode);
->  	struct dlmfs_filp_private *fp = file->private_data;
->  
-> @@ -188,7 +188,6 @@ static int dlmfs_file_release(struct inode *inode,
->  
->  	mlog(0, "close called on inode %lu\n", inode->i_ino);
->  
-> -	status = 0;
->  	if (fp) {
->  		level = fp->fp_lock_level;
->  		if (level != DLM_LOCK_IV)
+> So I guess it has fallen between the cracks.
+> Feel free to send a patch to Jeff.
 > 
+> Thanks,
+> Amir.
+
+Actually, this should probably go to Bruce, as he mostly takes care of
+lockd. Patch looks correct though.
+
+Thanks,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
