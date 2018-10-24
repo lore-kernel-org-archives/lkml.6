@@ -2,159 +2,116 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F989C67863
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:19:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB70C004D3
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:22:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B0642075D
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:19:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C543207DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 14:22:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="qs4+3AUM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B0642075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hxLZduSx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C543207DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727000AbeJXWrf (ORCPT
+        id S1726867AbeJXWu6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 18:47:35 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:3548 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726407AbeJXWrf (ORCPT
+        Wed, 24 Oct 2018 18:50:58 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:54289 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726577AbeJXWu5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 18:47:35 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bd07f5a0000>; Wed, 24 Oct 2018 07:19:06 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 24 Oct 2018 07:19:16 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 24 Oct 2018 07:19:16 -0700
-Received: from [10.21.132.148] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Wed, 24 Oct
- 2018 14:19:14 +0000
-Subject: Re: [PATCH] mfd: tps6586x: Handle interrupts on suspend
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC:     Lee Jones <lee.jones@linaro.org>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <stable@vger.kernel.org>
-References: <1539955373-13735-1-git-send-email-jonathanh@nvidia.com>
- <20181022095257.GD4014@ulmo> <366ad7c3-85e2-3526-1c0b-6d2fbde4c552@gmail.com>
- <72b80285-d6ff-9cb9-3bcd-bb3d92006323@nvidia.com>
- <3e79e753-4e63-5bf0-c9ff-40547d053c8a@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <551feb87-efb0-4bc3-2f0e-84ab55f7cbfe@nvidia.com>
-Date:   Wed, 24 Oct 2018 15:19:12 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 24 Oct 2018 18:50:57 -0400
+Received: by mail-it1-f195.google.com with SMTP id l191-v6so6379740ita.4
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 07:22:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=BLYyvct9f51IMOrQIPtchioY0a5M0Oga9MtVLwOvygg=;
+        b=hxLZduSxxTqeMUJen0NaP4zOV38iGZ9YUniB8yhvgmM3JkcjbaFB/ugfL/E6MdWEIj
+         UNVoSJ8fTd7yPOnBt7GEE46HSEfotAbgbOhmScDqpOMdfRSZ/+FWg2VvMDaDm82MCXKq
+         gkDYprZ67FCW96wMWGHSmm81GnXuO2/AV0/JI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=BLYyvct9f51IMOrQIPtchioY0a5M0Oga9MtVLwOvygg=;
+        b=dESGWcFiUDXnn9kB+bSgcRuH/J2OJdTB7wwDRuNJ40NVIQDHsMlrOjhsNe2JsR9coU
+         Cdr7QBP2RwTsjEhPe2KtKDyviGMs/CBHYOU2zx9lsJwIFDwlOitVRefGe9Sakxbfm43G
+         3367qBfTupSHz4fL3IT+IRcWmtsRD3q9JD1qahWubBgBorU/l9Go9V0wz0VywenT8dSM
+         U95zaeX0F2X3w3fSIUgGs8xkl3q80eGojr+UDtZF4aw4KHCgCUbqKytuFbVckawtUFJO
+         t6jx4CkeFSPMuJmAWjCRcSSguV8R6yift4tB8w3LroxbRF+UzVOPg/SJTq19XwLreRnM
+         LBfA==
+X-Gm-Message-State: AGRZ1gJESezcyxcqdPz/yHC3ybzopslLXAS6NzhME6u2QXjA57x5RZWw
+        XlKrOTQSfVly45ZYGdUFCpYYRAg2eWxeqw+Av9CZLg==
+X-Google-Smtp-Source: AJdET5fxrKAG58N1LO0LyrVlB+FbUS67iL5dRyCFmKo/hqzEcOtwNXjExuSMEJ4aCHY8vc4MeNDykrsr6D8WUhAbNoM=
+X-Received: by 2002:a24:6b4d:: with SMTP id v74-v6mr1577239itc.26.1540390958416;
+ Wed, 24 Oct 2018 07:22:38 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <3e79e753-4e63-5bf0-c9ff-40547d053c8a@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1540390746; bh=vYlfCnM3gIiSotkuPA2giTVwyO/fZaa1cr6X5jprbv0=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=qs4+3AUM7C441q21+5WMgce/Fg2dwm+ktKZ42Tm0X8xjMHEyow74j+9hn7dA4WxDH
-         hV1v1CrgQwAYHWE9MghnRlV+Q/qLeqBrUhmyYh1fcGuVfaUrAY6lIbkBfzxdcXzANE
-         IJP7TnKjVNhRmIEitLRjBOGKw2z66flZcM3Cf19/Koxw74/Y2LvI/nFmIJUDSz4qsD
-         XGFBlYuMl511tq0g0Glj3JyVjgFAJMcrgM8+8mup7xDSjZWUNbTQ2pGjR77cXUKUrC
-         40tUDRoPdXjqYehsLKCknTa4mr3n6SGAKOxWHgVRG5BHmkkfWgIcIxEZ3Oj9niKTy1
-         kg88f3971+01g==
+Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Wed, 24 Oct 2018 07:21:58
+ -0700 (PDT)
+In-Reply-To: <20181024141008.30312-1-michael.thalmeier@hale.at>
+References: <20181024141008.30312-1-michael.thalmeier@hale.at>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Wed, 24 Oct 2018 16:21:58 +0200
+Message-ID: <CAPDyKFoeK6uf3UGLQ0Qe+xqgGRbe-MsG2tD78EBHWfAt0uwiEg@mail.gmail.com>
+Subject: Re: [PATCH] Revert "mmc: mxs: fix card detection in case of
+ 'broken-cd' flag set"
+To:     Michael Thalmeier <michael.thalmeier@hale.at>
+Cc:     Roman Peniaev <r.peniaev@gmail.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        michael@thalmeier.at
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 24 October 2018 at 16:10, Michael Thalmeier
+<michael.thalmeier@hale.at> wrote:
+> This reverts commit 6f726f495f2d ("mmc: mxs: fix card detection in case of 'broken-cd' flag set").
+>
+> Since mxs_mmc_probe always sets MMC_CAP_NEEDS_POLL unconditionally, card
+> detect is not working properly any more since commit 6f726f495f2d.
+> Instead of querying the card detect status mxs_mmc_get_cd now always
+> returns 1 which causes probing commands being sent to the mmc card.
+>
+> The expected behaviour of commit 6f726f495f2d should be reachable by setting
+> broken_cd instead.
 
-On 24/10/2018 13:44, Dmitry Osipenko wrote:
-> On 10/24/18 1:49 PM, Jon Hunter wrote:
->>
->> On 22/10/2018 12:19, Dmitry Osipenko wrote:
->>> On 10/22/18 12:52 PM, Thierry Reding wrote:
->>>> On Fri, Oct 19, 2018 at 02:22:53PM +0100, Jon Hunter wrote:
->>>>> From: Jonathan Hunter <jonathanh@nvidia.com>
->>>>>
->>>>> The tps6586x driver creates an irqchip that is used by its various child
->>>>> devices for managing interrupts. The tps6586x-rtc device is one of its
->>>>> children that uses the tps6586x irqchip. When using the tps6586x-rtc as
->>>>> a wake-up device from suspend, the following is seen:
->>>>>
->>>>>  PM: Syncing filesystems ... done.
->>>>>  Freezing user space processes ... (elapsed 0.001 seconds) done.
->>>>>  OOM killer disabled.
->>>>>  Freezing remaining freezable tasks ... (elapsed 0.000 seconds) done.
->>>>>  Disabling non-boot CPUs ...
->>>>>  Entering suspend state LP1
->>>>>  Enabling non-boot CPUs ...
->>>>>  CPU1 is up
->>>>>  tps6586x 3-0034: failed to read interrupt status
->>>>>  tps6586x 3-0034: failed to read interrupt status
->>>>>
->>>>> The reason why the tps6586x interrupt status cannot be read is because
->>>>> the tps6586x interrupt is not masked during suspend and when the
->>>>> tps6586x-rtc interrupt occurs, to wake-up the device, the interrupt is
->>>>> seen before the i2c controller has been resumed in order to read the
->>>>> tps6586x interrupt status.
->>>>>
->>>>> The tps6586x-rtc driver sets it's interrupt as a wake-up source during
->>>>> suspend, which gets propagated to the parent tps6586x interrupt.
->>>>> However, the tps6586x-rtc driver cannot disable it's interrupt during
->>>>> suspend otherwise we would never be woken up and so the tps6586x must
->>>>> disable it's interrupt instead.
->>>>>
->>>>> Prevent the tps6586x interrupt handler from executing on exiting suspend
->>>>> before the i2c controller has been resumed by disabling the tps6586x
->>>>> interrupt on entering suspend and re-enabling it on resuming from
->>>>> suspend.
->>>>>
->>>>> Cc: stable@vger.kernel.org
->>>>>
->>>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->>>>> ---
->>>>>  drivers/mfd/tps6586x.c | 24 ++++++++++++++++++++++++
->>>>>  1 file changed, 24 insertions(+)
->>>>
->>>> So does this mean that the SPI interrupt for the PMIC can still be a
->>>> wakeup source even if it is masked? This is slightly odd because now
->>>> you're saying that this does work while it doesn't work for the RTC
->>>> interrupt. So is this an implementation quirk of the LIC/GIC on Tegra
->>>> which doesn't extend to the TPS6586x? Or am I missing something?
->>>
->>> What is the expected behaviour of IRQ disabling? Should it disable wakeup ability or only mask IRQ handling?
->>
->> I believe only mask the interrupt. However, the caveat here could be if
->> the parent interrupt controller actually supports wake-up. For Tegra it
->> is the LIC that handles the wake-up.
->>
->>> Couple months ago disabling of IRQ was disabling the wakeup, now something has been changed in kernel and wakeup isn't getting disabled. So either there was a bug before that was fixed or there is a bug now.
->>
->> Are you sure you were disabling the PMIC host interrupt? If you disable
->> the RTC interrupt in the PMIC's RTC driver, then this will prevent the
->> wake-up from occurring because you are masking the interrupt within the
->> PMIC and so it will never generate an interrupt to the host.
-> 
-> I'm pretty sure (but not 100%) that was trying the same change as in your patch and it didn't work sometime before. If disable_irq() shouldn't disable wakeup, then everything is perfect now.
+I would rather make a new fix on top, rather than reverting a four
+year old patch. Can you please look into that instead?
 
-Please note that this is very similar to the following fix where I
-experienced the same problem with another PMIC a couple years back ...
+Kind regards
+Uffe
 
-35deff7eb212 ("mfd: as3722: Handle interrupts on suspend")
-
-I did not bother setting the enable/disable_irq_wake() for the tps6586x
-host irq during resume/suspend because the irqchip for the tps6586x has
-an irq_set_wake function that propagates the wake enable/disable.
-
-Cheers
-Jon
-
--- 
-nvpublic
+>
+> Signed-off-by: Michael Thalmeier <michael.thalmeier@hale.at>
+> ---
+>  drivers/mmc/host/mxs-mmc.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/host/mxs-mmc.c b/drivers/mmc/host/mxs-mmc.c
+> index add1e70..cfdae61 100644
+> --- a/drivers/mmc/host/mxs-mmc.c
+> +++ b/drivers/mmc/host/mxs-mmc.c
+> @@ -86,8 +86,7 @@ static int mxs_mmc_get_cd(struct mmc_host *mmc)
+>         if (ret >= 0)
+>                 return ret;
+>
+> -       present = mmc->caps & MMC_CAP_NEEDS_POLL ||
+> -               !(readl(ssp->base + HW_SSP_STATUS(ssp)) &
+> +       present = !(readl(ssp->base + HW_SSP_STATUS(ssp)) &
+>                         BM_SSP_STATUS_CARD_DETECT);
+>
+>         if (mmc->caps2 & MMC_CAP2_CD_ACTIVE_HIGH)
+> --
+> 2.9.2
+>
