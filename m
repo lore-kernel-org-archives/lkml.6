@@ -2,115 +2,94 @@ Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9EA5C004D3
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:58:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A7CC67863
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:58:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 751DD20824
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:58:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40D6420824
+	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 08:58:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=globallogic.com header.i=@globallogic.com header.b="T0jxbwQ/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 751DD20824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=globallogic.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="WwE3MZqF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40D6420824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727407AbeJXRZM (ORCPT
+        id S1727840AbeJXRZ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 24 Oct 2018 13:25:12 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:38997 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727713AbeJXRZL (ORCPT
+        Wed, 24 Oct 2018 13:25:57 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:40850 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727530AbeJXRZ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 24 Oct 2018 13:25:11 -0400
-Received: by mail-qk1-f196.google.com with SMTP id e4so2650927qkh.6
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 01:57:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=globallogic.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=P5D5+wbYvFpm0tdJgRcE+2WrrJ+FHACmNE2eQnVA+Rs=;
-        b=T0jxbwQ/IMtXTPmiRhxrz1dyHOaxB0otLcS6qSCgIoj/ZIb3gqrvQ8n0BBzlqTgQtv
-         n2w94rrDc0HbzNRZo3fF9wCbHhKFY/okTC0mLazTecjsg6yeew3DOh6ZQFMB5gT8jiSm
-         fbe+ePGG5l0r9wTKn+fKuAJC1lbS5y/F81yJ8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P5D5+wbYvFpm0tdJgRcE+2WrrJ+FHACmNE2eQnVA+Rs=;
-        b=PCnhwG7tEJxVYY/9/rg9kEKiZ8oaKdGKI2a7dH4adye47Psz6pePq9pOJ4NVFZnf/9
-         owQmAOQSSdn1sfbGb2v5Y8eJxqz1qLDxfzOsrfU+hH9l2qBZnsfpYRApB4EZLP+yEdqW
-         fyWoLPF+nJTqy7LQdo2Ruf1fPimBrjFqE234davFD7eZDeUFMTDy8mrDtaXJH/nJLkBt
-         TOCUN/Xba8a626bw8899m9ZouYRnofYeg+usWFzJWCEwnCzMBQWxeGLDc4m1qyz+y3Xu
-         ZAW0HEdQ+Hra5naGFVhF0vMdtJ1SyVuSXiKs5uP5LFfzl2kfxDoYxWwB8bNOrpiNEFAg
-         6kgQ==
-X-Gm-Message-State: AGRZ1gK50sA3S5JLSJ86xpMs94k2vV4CY+QQXDPCwvxLchu1HYelfkLe
-        1cmvOQM404QqTyOXsuGOFqnQLE23aFsDIKwpGxa2Hg==
-X-Google-Smtp-Source: AJdET5e9VvhF6uwwaf7KJaXHG6ft6oCIpV7twnhvj5/91jdS+1Uk2+5SdTALGVsyBN2FJrWuHdYEDwZOODMoFMEZNEI=
-X-Received: by 2002:a37:1b46:: with SMTP id b67mr1512491qkb.144.1540371475912;
- Wed, 24 Oct 2018 01:57:55 -0700 (PDT)
+        Wed, 24 Oct 2018 13:25:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=AYjQXz6bWR7JipRLfWzRXi6RiUNUoM4GnTU6Fp8/nso=; b=WwE3MZqF54u7xkalUcVPZwax+
+        EPpJ3cJ3Se6npXOhNxieBaET0Oq/+iqGjBmoay2rtPFxktt76MdNVyrzVWAoCbicmg3LXwcvtSgvR
+        4iNDOGN4TuaOIDWQriyAFmqUz/W0vDCV6QK5dPr79Y8abhj+22fr2SWl2EuMLno3lG1EE=;
+Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:57936)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gFEyX-00018S-Cc; Wed, 24 Oct 2018 09:57:13 +0100
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gFEyP-0007Cw-2L; Wed, 24 Oct 2018 09:57:05 +0100
+Date:   Wed, 24 Oct 2018 09:57:00 +0100
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Corentin Labbe <clabbe@baylibre.com>
+Cc:     Gilles.Muller@lip6.fr, Julia.Lawall@lip6.fr, agust@denx.de,
+        airlied@linux.ie, alexandre.torgue@st.com, alistair@popple.id.au,
+        benh@kernel.crashing.org, carlo@caione.org, davem@davemloft.net,
+        galak@kernel.crashing.org, joabreu@synopsys.com,
+        khilman@baylibre.com, matthias.bgg@gmail.com,
+        maxime.ripard@bootlin.com, michal.lkml@markovi.net,
+        mpe@ellerman.id.au, mporter@kernel.crashing.org,
+        narmstrong@baylibre.com, nicolas.palix@imag.fr, oss@buserror.net,
+        paulus@samba.org, peppe.cavallaro@st.com, tj@kernel.org,
+        vitb@kernel.crashing.org, wens@csie.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-ide@vger.kernel.org, linux-sunxi@googlegroups.com,
+        linux-mediatek@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
+        cocci@systeme.lip6.fr, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 0/7] include: add
+ setbits32/clrbits32/clrsetbits32/setbits64/clrbits64/clrsetbits64
+Message-ID: <20181024085700.GR30658@n2100.armlinux.org.uk>
+References: <1540366553-18541-1-git-send-email-clabbe@baylibre.com>
 MIME-Version: 1.0
-References: <1538067309-5711-1-git-send-email-maksym.kokhan@globallogic.com>
- <20180929181725.GB27441@fifo99.com> <CAMT6-xiQ0vGcKpA+SiWHQWQFwU9Oo9j=Zin+UXDoPqKTz5fbeA@mail.gmail.com>
- <CAMT6-xj1rjVAy1AWFiMHc5wH36eu=TUSMtdKU=-qRtUbwr9bkg@mail.gmail.com> <20181023144815.GP30658@n2100.armlinux.org.uk>
-In-Reply-To: <20181023144815.GP30658@n2100.armlinux.org.uk>
-From:   Maksym Kokhan <maksym.kokhan@globallogic.com>
-Date:   Wed, 24 Oct 2018 11:57:44 +0300
-Message-ID: <CAMT6-xhvqy5PeQmkQ8tsLRiML_pNJTxyq7dizRRvZTEqc7uzgg@mail.gmail.com>
-Subject: Re: [PATCH 0/8] add generic builtin command line
-To:     Russell King <linux@armlinux.org.uk>
-Cc:     Daniel Walker <dwalker@fifo99.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Daniel Walker <danielwa@cisco.com>,
-        Andrii Bordunov <aborduno@cisco.com>,
-        Ruslan Bilovol <rbilovol@cisco.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-efi@vger.kernel.org, linux-mips@linux-mips.org,
-        linuxppc-dev@lists.ozlabs.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1540366553-18541-1-git-send-email-clabbe@baylibre.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Do you mean, that you haven't seen patch for ARM, which I sent on
-September 27 along with cover and patch 1? It is strange, because
-you was the one from recipients. If so, you can see this patch here:
-https://lore.kernel.org/patchwork/patch/992779/
-On Tue, Oct 23, 2018 at 5:48 PM Russell King - ARM Linux
-<linux@armlinux.org.uk> wrote:
->
-> On Tue, Oct 23, 2018 at 05:43:18PM +0300, Maksym Kokhan wrote:
-> > We still have no response to patches for x86, arm, arm64 and powerpc.
-> > Is current generic command line implementation appropriate for these
-> > architectures?
-> > Is it possible to merge these patches in the current form (for x86,
-> > arm, arm64 and powerpc)?
->
-> You may wish to consider your recipients - I seem to only have received
-> the cover and patch 1 (which doesn't include any ARM specific bits).
-> It may be that you're not getting responses because people haven't seen
-> your patches.
->
-> Thanks.
->
-> --
-> RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-> FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-> According to speedtest.net: 11.9Mbps down 500kbps up
+On Wed, Oct 24, 2018 at 07:35:46AM +0000, Corentin Labbe wrote:
+> This patchset adds a new set of functions which are open-coded in lot of
+> place.
+> Basicly the pattern is always the same, "read, modify a bit, write"
+> some driver and the powerpc arch already have thoses pattern them as functions. (like ahci_sunxi.c or dwmac-meson8b)
+
+The advantage of them being open-coded is that it's _obvious_ to the
+reviewer that there is a read-modify-write going on which, in a multi-
+threaded environment, may need some locking (so it should trigger a
+review of the locking around that code.)
+
+With it hidden inside a helper which has no locking itself, it becomes
+much easier to pass over in review, which means that races are much
+more likely to go unspotted - and that is bad news.
+
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
