@@ -2,106 +2,85 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F0E9C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:33:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2D97ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:33:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECDC92075D
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:33:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hcstzngy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECDC92075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 92DD72075D
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:33:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92DD72075D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727276AbeJYTFb (ORCPT
+        id S1727372AbeJYTFm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 15:05:31 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40833 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726852AbeJYTFb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 15:05:31 -0400
-Received: by mail-lf1-f66.google.com with SMTP id n3-v6so6371672lfe.7
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 03:33:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=SnEWKtwOlecDkNGg9wnFmuPPTMp4tXqYjE1sXY7dOTA=;
-        b=hcstzngyW/frle40ukBcn8B5eISoY2PlR6az5vRo+i1OZ3ppplTdVeQ+z1VLXVRiba
-         h64LmSAZg7Zx+2gPofQOBs96AvEpTbO3jUCpwlkU4F03nQghqrIFL1oENfHK4sC6tvRG
-         xXU8vvgeXU6+2eOFoexRfUL1awCrIijGcK6AMnQqGOrqeUU+nhzg7Hh61iJu6JDJ45aO
-         rnAlyiFusitj/OOWEkPpRdFEqFJL3PJNKi4KHB1eIwm+IiW4EecErxt0HhZ1Uc2i9Y58
-         l3ZQkUws9J87aM/EQgb/6+rbC+AaFXUpQFL6cu4LHL4nvgoMi6lrm6frD6HzGSr73D1I
-         LsGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SnEWKtwOlecDkNGg9wnFmuPPTMp4tXqYjE1sXY7dOTA=;
-        b=jvxGdjMkMeCZ7Fa42yPcXRP7qvJP8qD9MYg9Okonkk+G2mYrQmDd4mXVzrI58jAcYU
-         B0cdclb4WKbUzSI0ZGhARltJ3SDWKUGBcln/ohrx7J/9fTMn8aqdKUJBWlrXFQPwP+Kr
-         jboTP6GmleXe7AJa01ahs4t0uwAbGDOOe4FGvhgF0lGCsGDm1PbKb6bxN2/SQRyIfmRF
-         scDhljc2LFNevtqd+QikZD4+5OuyoBCyzNIwQSf+L6xDv5VY5BNwFXI1l5sn7LWozOIO
-         FBlvSNQVUNTLLtFrC70tcDGvMzsstvwCdUuXgyMfBRYw4zvKQK+lUvNJg3sXA02WE7eY
-         WBeg==
-X-Gm-Message-State: AGRZ1gKgR2lYXo0avidG9o13JYYtZokUJ85ef/tqvE6EWeqKO0pqJBDO
-        dog2hoCimMAgov1pCQ6Uvk0=
-X-Google-Smtp-Source: AJdET5cNzHz5wTe/sixi0pj+x8NZ7bNMlR5MBf7a66vJc/aU6fXFeAD3AlxuvVAdbCIMoARDejd89w==
-X-Received: by 2002:a19:1f46:: with SMTP id f67mr771578lff.1.1540463600784;
-        Thu, 25 Oct 2018 03:33:20 -0700 (PDT)
-Received: from pc636 ([37.139.158.167])
-        by smtp.gmail.com with ESMTPSA id l65-v6sm1209031lfe.1.2018.10.25.03.33.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Oct 2018 03:33:19 -0700 (PDT)
-From:   Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date:   Thu, 25 Oct 2018 12:33:12 +0200
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Thomas Garnier <thgarnie@google.com>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Joel Fernandes <joelaf@google.com>,
+        Thu, 25 Oct 2018 15:05:42 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:53902 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726852AbeJYTFm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 15:05:42 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 8d9ZqfS9YJb6; Thu, 25 Oct 2018 12:33:32 +0200 (CEST)
+Received: from nazgul.tnic (unknown [167.98.65.38])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 491421EC0921;
+        Thu, 25 Oct 2018 12:33:32 +0200 (CEST)
+Date:   Thu, 25 Oct 2018 12:33:45 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
+Cc:     Baoquan He <bhe@redhat.com>, Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>
-Subject: Re: [RFC PATCH 0/2] improve vmalloc allocation
-Message-ID: <20181025103312.5oamrqsrdseeatir@pc636>
-References: <20181019173538.590-1-urezki@gmail.com>
- <20181024160106.29ff3877d06fa1de520cc48a@linux-foundation.org>
+        Chao Fan <fanc.fnst@cn.fujitsu.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-efi@vger.kernel.org, linux-acpi@vger.kernel.org,
+        mingo@redhat.com, hpa@zytor.com, keescook@chromium.org,
+        rjw@rjwysocki.net, lenb@kernel.org, ard.biesheuvel@linaro.org,
+        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v8 0/3] x86/boot/KASLR: Parse ACPI table and limit kaslr
+ in immovable memory
+Message-ID: <20181025103345.GF14020@nazgul.tnic>
+References: <20181013201958.zfzv5ahhe3xz7bwi@gabell>
+ <20181013203429.GE31650@zn.tnic>
+ <20181013214550.ag5qzokhkrkwnzsy@gabell>
+ <20181013220541.GI31650@zn.tnic>
+ <20181015005035.z3xym6nx43hogdge@gabell>
+ <20181016151353.punyk7exekut2543@gabell>
+ <20181016191113.GI5212@zn.tnic>
+ <20181016195429.tovdgqq77gz3eek2@gabell>
+ <20181016195902.GK5212@zn.tnic>
+ <20181022154204.kagmdb55jtoez4ca@gabell>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181024160106.29ff3877d06fa1de520cc48a@linux-foundation.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20181022154204.kagmdb55jtoez4ca@gabell>
+User-Agent: Mutt/1.6.0 (2016-04-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 04:01:06PM -0700, Andrew Morton wrote:
-> On Fri, 19 Oct 2018 19:35:36 +0200 "Uladzislau Rezki (Sony)" <urezki@gmail.com> wrote:
+On Mon, Oct 22, 2018 at 11:42:05AM -0400, Masayoshi Mizuma wrote:
+> I'm trying to store the SRAT info and pass it to kernel_randomize_memory(),
+> looks like add_e820ext()/parse_setup_data().
 > 
-> > improving vmalloc allocator
-> 
-> It's about time ;)
-> 
-> Are you aware of https://lwn.net/Articles/285341/ ?  If not, please do
-> take a look through Nick's work and see if there are any good things
-> there which can be borrowed.
-> 
-No, i have not known about that. I will go through that work to see if
-there is something there!
+> Is the approach useful only EFI environment? I'm not sure how I
 
-Thanks :)
+Does it matter for non-EFI even?
 
+I mean, you want this code only for your use case - when you have
+movable memory and you're doing kexec, yes?
+
+And those machines are all EFI boxes I'd assume...
+
+-- 
+Regards/Gruss,
+    Boris.
+
+ECO tip #101: Trim your mails when you reply.
 --
-Vlad Rezki
