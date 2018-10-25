@@ -2,163 +2,150 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41C65C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:40:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80EA3ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:40:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFB692085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:40:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4714D2064A
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:40:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="USNy79lc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFB692085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZgySVpvg";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="m09XyD/c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4714D2064A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727826AbeJYXNk (ORCPT
+        id S1728126AbeJYXNr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 19:13:40 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:46293 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727459AbeJYXNj (ORCPT
+        Thu, 25 Oct 2018 19:13:47 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:47140 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727459AbeJYXNq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 19:13:39 -0400
-Received: by mail-yb1-f196.google.com with SMTP id o8-v6so3762815ybk.13;
-        Thu, 25 Oct 2018 07:40:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=3Pr3Agipq1HgsWB1/EX0mPKM0oZZs1CkGWymDB9IVU4=;
-        b=USNy79lcPcl7+v8ZYz4OQc76n7FOmc68XM71rGMAzdrjLq5tQbpHDACzZga9Ug+ZgD
-         C4kdAotKbyZz74nEcufCuQQuotpMqK6MZRejl0yRb72VSC5Ik037AxFemfsANWyvU8/3
-         2CYOoZsZl7T0uWY99VhCyKbDimrlnR/zKsbRrTgT5ampRG4zX1/cOBGXeeIq1fgpmI1B
-         zyBEz3iIWjjcLmeKCo+/zmWQrqoYQo3itEb2Y2rVE8gp7vZF2j0WSsxVtbJsAKNDNQxd
-         bUDtDuqnEqQ9F36AEjFbk7qYx1iymRXubKGU/jOceDQs1CsAYWOQBaxntn/QEYMEDblX
-         euGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=3Pr3Agipq1HgsWB1/EX0mPKM0oZZs1CkGWymDB9IVU4=;
-        b=hSn4pBOZ8L6TL8Y38+/ISMgX9hOredEZoYKYn5y9iUBEshFzcZiiVJG7BHqWDzkPni
-         8PAFAo3hpE82n1Bb4OLA6a9K+YW3dtzWXXlb4wnjJS87Rm2aMml15iIm/U/vIDrO+jDM
-         /IKtx8hmXHnzNsSnqt1090erwtXzK7E5oGy9R975QBz+PeTWdl3P5LRA7yBrce9UiQKT
-         c3O7dHu8E2RyxHbHlpR0j5tWiO99pWkcLXy4ibGn6p4HTWIusKF+0vq0aDGwXgAFcwA2
-         YP9EoM4mYzthdADHKeLeZ1jB+n9C4iD0jerRmHrcuUeMmVSWs57pnOmmqd3KH51BcZYc
-         dPSg==
-X-Gm-Message-State: AGRZ1gKgtCkd2sRVovlgSWaIfznu72ucx1QFX3l0m5bhfrYZFge2LDdZ
-        YaryCIqzpfBxd6mEgc15c7Y=
-X-Google-Smtp-Source: AJdET5dPa3kp8QAwkn4HZ6zzukaPIREIotnWbdqyM1pO1tVvtR0ij9hB2AGtjhx3Gsb4XZP1BJ61NA==
-X-Received: by 2002:a25:37cf:: with SMTP id e198-v6mr1658469yba.243.1540478434092;
-        Thu, 25 Oct 2018 07:40:34 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:180::1:319d])
-        by smtp.gmail.com with ESMTPSA id m65-v6sm449416ywm.42.2018.10.25.07.40.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Oct 2018 07:40:33 -0700 (PDT)
-Date:   Thu, 25 Oct 2018 07:40:29 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Subject: [GIT PULL] cgroup changes for v4.20-rc1
-Message-ID: <20181025144029.GE4182586@devbig004.ftw2.facebook.com>
+        Thu, 25 Oct 2018 19:13:46 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id B8C26601CF; Thu, 25 Oct 2018 14:40:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540478441;
+        bh=HlN903Jt49AbB3N+/1xzxoe68q8m5ov27TZYbuaUdJw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ZgySVpvgOYZ0iPawD3Mm9uBJds0ZU7uQKDkUZ34y5s/thpTkrLg3itv23fnGtLB9g
+         Yf0eFWLfz8mas3IGzSM3kHMviXi+9FXTqusxGf17RMC4q3/0c39QA+u5IUXgBMmTNn
+         LvCVuFsZZk6mVmmtNzKUpViptAqkewxbPHMFSjds=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 3DEAD60795;
+        Thu, 25 Oct 2018 14:40:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540478430;
+        bh=HlN903Jt49AbB3N+/1xzxoe68q8m5ov27TZYbuaUdJw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=m09XyD/c4Nn3DpWXaeWO1J4nnNmFZpLcrUl0UX0SJP+4Nwht1l6RA9icNejkXE7Lj
+         FZ7d26TEEoYUq2tTITTO/APFzEwPPVqEmvsCNX93PiDk5i22NLVdZxd+8jD9HNB7Jl
+         Z8+ebOZ+q8zKjzd7NfdeTAUT5UtxWDRLRJFqpi5c=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 25 Oct 2018 20:10:30 +0530
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>,
+        Dmitry Grinberg <dmitrygr@google.com>
+Subject: Re: [PATCH 2/2] Bluetooth: btqcomsmd: use
+ HCI_QUIRK_USE_BDADDR_PROPERTY
+In-Reply-To: <20181025002134.256791-3-mka@chromium.org>
+References: <20181025002134.256791-1-mka@chromium.org>
+ <20181025002134.256791-3-mka@chromium.org>
+Message-ID: <bff4f1b7d82e217f45273872eeffa77f@codeaurora.org>
+X-Sender: bgodavar@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Linus.
+Hi Matthias,
 
-All trivial changes - simplification, typo fix and adding
-cond_resched() in a netclassid update loop.
+On 2018-10-25 05:51, Matthias Kaehlcke wrote:
+> Use the HCI_QUIRK_USE_BDADDR_PROPERTY quirk to let the HCI
+> core handle the reading of 'local-bd-address'. With this there
+> is no need to set HCI_QUIRK_INVALID_BDADDR, the case of a
+> non-existing or invalid fwnode property is handled by the core
+> code.
+> 
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
+> I couldn't actually test the changes in this driver since I
+> don't have a device with this controller. Could someone
+> from Qualcomm help with this?
+> ---
+>  drivers/bluetooth/btqcomsmd.c | 28 +++-------------------------
+>  1 file changed, 3 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/btqcomsmd.c 
+> b/drivers/bluetooth/btqcomsmd.c
+> index 7df3eed1ef5e..e5841602c4f1 100644
+> --- a/drivers/bluetooth/btqcomsmd.c
+> +++ b/drivers/bluetooth/btqcomsmd.c
+> @@ -125,23 +125,10 @@ static int btqcomsmd_setup(struct hci_dev *hdev)
+>  		return PTR_ERR(skb);
+>  	kfree_skb(skb);
+> 
+> -	/* Devices do not have persistent storage for BD address. If no
+> -	 * BD address has been retrieved during probe, mark the device
+> -	 * as having an invalid BD address.
+> +	/* Devices do not have persistent storage for BD address. Retrieve
+> +	 * it from the firmware node property.
+>  	 */
+> -	if (!bacmp(&btq->bdaddr, BDADDR_ANY)) {
+> -		set_bit(HCI_QUIRK_INVALID_BDADDR, &hdev->quirks);
+> -		return 0;
+> -	}
+> -
+> -	/* When setting a configured BD address fails, mark the device
+> -	 * as having an invalid BD address.
+> -	 */
+> -	err = qca_set_bdaddr_rome(hdev, &btq->bdaddr);
+> -	if (err) {
+> -		set_bit(HCI_QUIRK_INVALID_BDADDR, &hdev->quirks);
+> -		return 0;
+> -	}
+> +	set_bit(HCI_QUIRK_USE_BDADDR_PROPERTY, &hdev->quirks);
+> 
+>  	return 0;
+>  }
+> @@ -169,15 +156,6 @@ static int btqcomsmd_probe(struct platform_device 
+> *pdev)
+>  	if (IS_ERR(btq->cmd_channel))
+>  		return PTR_ERR(btq->cmd_channel);
+> 
+> -	/* The local-bd-address property is usually injected by the
+> -	 * bootloader which has access to the allocated BD address.
+> -	 */
+> -	if (!of_property_read_u8_array(pdev->dev.of_node, "local-bd-address",
+> -				       (u8 *)&btq->bdaddr, sizeof(bdaddr_t))) {
+> -		dev_info(&pdev->dev, "BD address %pMR retrieved from device-tree",
+> -			 &btq->bdaddr);
+> -	}
+> -
+>  	hdev = hci_alloc_dev();
+>  	if (!hdev)
+>  		return -ENOMEM;
 
-Thanks.
+nit: can be remove unused "bdaddr_t bdaddr" variable.
+https://elixir.bootlin.com/linux/v4.19-rc8/source/drivers/bluetooth/btqcomsmd.c#L31
+Apart from this, It looks ok to me.
 
-The following changes since commit 02214bfc89c71bcc5167f653994cfa5c57f10ff1:
-
-  Merge tag 'media/v4.19-2' of git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media (2018-09-24 15:16:41 +0200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git for-4.20
-
-for you to fetch changes up to a90e90b7d55e789c71d85b946ffb5c1ab2f137ca:
-
-  cgroup, netclassid: add a preemption point to write_classid (2018-10-23 12:58:17 -0700)
-
-----------------------------------------------------------------
-Andrey Ignatov (1):
-      cgroup: Simplify cgroup_ancestor
-
-Michal Hocko (1):
-      cgroup, netclassid: add a preemption point to write_classid
-
-Rami Rosen (1):
-      rdmacg: fix a typo in rdmacg documentation
-
- Documentation/cgroup-v1/rdma.txt |  2 +-
- include/linux/cgroup.h           | 15 +++------------
- net/core/netclassid_cgroup.c     |  1 +
- 3 files changed, 5 insertions(+), 13 deletions(-)
-
-diff --git a/Documentation/cgroup-v1/rdma.txt b/Documentation/cgroup-v1/rdma.txt
-index af618171e0eb..9bdb7fd03f83 100644
---- a/Documentation/cgroup-v1/rdma.txt
-+++ b/Documentation/cgroup-v1/rdma.txt
-@@ -27,7 +27,7 @@ cgroup.
- Currently user space applications can easily take away all the rdma verb
- specific resources such as AH, CQ, QP, MR etc. Due to which other applications
- in other cgroup or kernel space ULPs may not even get chance to allocate any
--rdma resources. This can leads to service unavailability.
-+rdma resources. This can lead to service unavailability.
- 
- Therefore RDMA controller is needed through which resource consumption
- of processes can be limited. Through this controller different rdma
-diff --git a/include/linux/cgroup.h b/include/linux/cgroup.h
-index 32c553556bbd..e03a92430383 100644
---- a/include/linux/cgroup.h
-+++ b/include/linux/cgroup.h
-@@ -567,20 +567,11 @@ static inline bool cgroup_is_descendant(struct cgroup *cgrp,
- static inline struct cgroup *cgroup_ancestor(struct cgroup *cgrp,
- 					     int ancestor_level)
- {
--	struct cgroup *ptr;
--
- 	if (cgrp->level < ancestor_level)
- 		return NULL;
--
--	for (ptr = cgrp;
--	     ptr && ptr->level > ancestor_level;
--	     ptr = cgroup_parent(ptr))
--		;
--
--	if (ptr && ptr->level == ancestor_level)
--		return ptr;
--
--	return NULL;
-+	while (cgrp && cgrp->level > ancestor_level)
-+		cgrp = cgroup_parent(cgrp);
-+	return cgrp;
- }
- 
- /**
-diff --git a/net/core/netclassid_cgroup.c b/net/core/netclassid_cgroup.c
-index 5e4f04004a49..7bf833598615 100644
---- a/net/core/netclassid_cgroup.c
-+++ b/net/core/netclassid_cgroup.c
-@@ -106,6 +106,7 @@ static int write_classid(struct cgroup_subsys_state *css, struct cftype *cft,
- 		iterate_fd(p->files, 0, update_classid_sock,
- 			   (void *)(unsigned long)cs->classid);
- 		task_unlock(p);
-+		cond_resched();
- 	}
- 	css_task_iter_end(&it);
- 
+Reviewed-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+-- 
+Regards
+Balakrishna.
