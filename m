@@ -4,145 +4,107 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDC28C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:14:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AD27C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:14:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8623E20856
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:14:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6063020856
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:14:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="U9drnlmm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8623E20856
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iUC8wvbO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6063020856
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728149AbeJYWrY (ORCPT
+        id S1728419AbeJYWr1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:47:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55398 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:47:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727433AbeJYWrY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:47:24 -0400
+        id S1727433AbeJYWr0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:47:26 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4821620848;
-        Thu, 25 Oct 2018 14:14:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 79E862084A;
+        Thu, 25 Oct 2018 14:14:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540476868;
-        bh=ZKdDmys+nQRBq0sJRabr2Eqdg5UasF/q45lbnaasF0A=;
-        h=From:To:Cc:Subject:Date:From;
-        b=U9drnlmmAhalGOLAbXIXGda0b1fNk8pWRrYB+AZVB2nwAZV/Cr90i7VkcHfowUNCC
-         P3wv0uFxmuBWOX4z5xidrxT9awK77KLSu3fienxEnQW/eiNITClef5kx65ZOcz0Aun
-         RnXzl0pfGc5iZ2URi3VNUCxsEt+az/MOD+dJUMtQ=
+        s=default; t=1540476870;
+        bh=R4oY6kskvOrkXr6arZ58DNOMgCJTOGKov0Yw2TPlcj0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=iUC8wvbOvA77R5QPfKhwqGAUl3IP1QsgydBJAZYDZJ+qkivzSqqWO19w6Yg/ugItg
+         Jt+xYV3rX68e6iR09dloA6Tyfz99wOANCRkeozp1DcqaDfr4VeafkMXHCHyO6/N6/B
+         GUDri7E6bpb17091Pji9WwnZ0T5jZ0KBmna61Z1M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Kim Phillips <kim.phillips@arm.com>,
-        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Taeung Song <treeze.taeung@gmail.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+Cc:     zhong jiang <zhongjiang@huawei.com>,
+        Toshi Kani <toshi.kani@hpe.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 01/98] perf symbols: Fix memory corruption because of zero length symbols
-Date:   Thu, 25 Oct 2018 10:12:46 -0400
-Message-Id: <20181025141423.213774-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 02/98] mm/memory_hotplug.c: fix overflow in test_pages_in_a_zone()
+Date:   Thu, 25 Oct 2018 10:12:47 -0400
+Message-Id: <20181025141423.213774-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181025141423.213774-1-sashal@kernel.org>
+References: <20181025141423.213774-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
+From: zhong jiang <zhongjiang@huawei.com>
 
-[ Upstream commit 331c7cb307971eac38e9470340e10c87855bf4bc ]
+[ Upstream commit d6d8c8a48291b929b2e039f220f0b62958cccfea ]
 
-Perf top is often crashing at very random locations on powerpc.  After
-investigating, I found the crash only happens when sample is of zero
-length symbol. Powerpc kernel has many such symbols which does not
-contain length details in vmlinux binary and thus start and end
-addresses of such symbols are same.
+When mainline introduced commit a96dfddbcc04 ("base/memory, hotplug: fix
+a kernel oops in show_valid_zones()"), it obtained the valid start and
+end pfn from the given pfn range.  The valid start pfn can fix the
+actual issue, but it introduced another issue.  The valid end pfn will
+may exceed the given end_pfn.
 
-Structure
+Although the incorrect overflow will not result in actual problem at
+present, but I think it need to be fixed.
 
-  struct sym_hist {
-        u64                   nr_samples;
-        u64                   period;
-        struct sym_hist_entry addr[0];
-  };
-
-has last member 'addr[]' of size zero. 'addr[]' is an array of addresses
-that belongs to one symbol (function). If function consist of 100
-instructions, 'addr' points to an array of 100 'struct sym_hist_entry'
-elements. For zero length symbol, it points to the *empty* array, i.e.
-no members in the array and thus offset 0 is also invalid for such
-array.
-
-  static int __symbol__inc_addr_samples(...)
-  {
-        ...
-        offset = addr - sym->start;
-        h = annotation__histogram(notes, evidx);
-        h->nr_samples++;
-        h->addr[offset].nr_samples++;
-        h->period += sample->period;
-        h->addr[offset].period += sample->period;
-        ...
-  }
-
-Here, when 'addr' is same as 'sym->start', 'offset' becomes 0, which is
-valid for normal symbols but *invalid* for zero length symbols and thus
-updating h->addr[offset] causes memory corruption.
-
-Fix this by adding one dummy element for zero length symbols.
-
-Link: https://lkml.org/lkml/2016/10/10/148
-Fixes: edee44be5919 ("perf annotate: Don't throw error for zero length symbols")
-Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Acked-by: Namhyung Kim <namhyung@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Kim Phillips <kim.phillips@arm.com>
-Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Taeung Song <treeze.taeung@gmail.com>
-Link: http://lkml.kernel.org/r/1508854806-10542-1-git-send-email-ravi.bangoria@linux.vnet.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+[toshi.kani@hpe.com: remove assumption that end_pfn is aligned by MAX_ORDER_NR_PAGES]
+Fixes: a96dfddbcc04 ("base/memory, hotplug: fix a kernel oops in show_valid_zones()")
+Link: http://lkml.kernel.org/r/1486467299-22648-1-git-send-email-zhongjiang@huawei.com
+Signed-off-by: zhong jiang <zhongjiang@huawei.com>
+Signed-off-by: Toshi Kani <toshi.kani@hpe.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/annotate.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ mm/memory_hotplug.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index a38227eb5450..3336cbc6ec48 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -495,9 +495,19 @@ static struct ins *ins__find(const char *name)
- int symbol__alloc_hist(struct symbol *sym)
- {
- 	struct annotation *notes = symbol__annotation(sym);
--	const size_t size = symbol__size(sym);
-+	size_t size = symbol__size(sym);
- 	size_t sizeof_sym_hist;
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index c9f715b2917f..0f962cc3f1bf 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -1508,7 +1508,7 @@ int test_pages_in_a_zone(unsigned long start_pfn, unsigned long end_pfn,
+ 			while ((i < MAX_ORDER_NR_PAGES) &&
+ 				!pfn_valid_within(pfn + i))
+ 				i++;
+-			if (i == MAX_ORDER_NR_PAGES)
++			if (i == MAX_ORDER_NR_PAGES || pfn + i >= end_pfn)
+ 				continue;
+ 			page = pfn_to_page(pfn + i);
+ 			if (zone && page_zone(page) != zone)
+@@ -1522,7 +1522,7 @@ int test_pages_in_a_zone(unsigned long start_pfn, unsigned long end_pfn,
  
-+	/*
-+	 * Add buffer of one element for zero length symbol.
-+	 * When sample is taken from first instruction of
-+	 * zero length symbol, perf still resolves it and
-+	 * shows symbol name in perf report and allows to
-+	 * annotate it.
-+	 */
-+	if (size == 0)
-+		size = 1;
-+
- 	/* Check for overflow when calculating sizeof_sym_hist */
- 	if (size > (SIZE_MAX - sizeof(struct sym_hist)) / sizeof(u64))
- 		return -1;
+ 	if (zone) {
+ 		*valid_start = start;
+-		*valid_end = end;
++		*valid_end = min(end, end_pfn);
+ 		return 1;
+ 	} else {
+ 		return 0;
 -- 
 2.17.1
 
