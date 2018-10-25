@@ -2,99 +2,112 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5294C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:01:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2762EC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:03:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 615B920834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:01:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D34AC2082E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:03:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cNhWu/5u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 615B920834
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ItCjvqjC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D34AC2082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbeJYQdO (ORCPT
+        id S1727144AbeJYQeh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 12:33:14 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34140 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726497AbeJYQdO (ORCPT
+        Thu, 25 Oct 2018 12:34:37 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36637 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726497AbeJYQeh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 12:33:14 -0400
-Received: by mail-wr1-f67.google.com with SMTP id l6-v6so8255507wrt.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 01:01:36 -0700 (PDT)
+        Thu, 25 Oct 2018 12:34:37 -0400
+Received: by mail-wm1-f66.google.com with SMTP id a8-v6so498371wmf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 01:03:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=Zq2vgqQJ0aK3Haee47HLHnP8KEUcaakHLOv3bcGbD9I=;
-        b=cNhWu/5uEMF8v84LaefiaCIzNB32r8YEvUyEPqU/32kqASJA+mzCufFsnJuCorpxpq
-         9sq+c5nANC561FeRPXo5c2fW6iTcdl215c5Xaod5+bfY7ElmimpdqHCwXSfD3TkJ9sFJ
-         nxmxwxGfkokZncoBXEZohNAaQbnqlDRYROeR4=
+        bh=wZwWvAsje3SwKx4M2NaP80BUUqaUB+/cDkavNcVdzi8=;
+        b=ItCjvqjCSmBCizyrqOOCXVanXwYTwzrNS6LnkKImudHH0eFmTuDl/Nza6QJWa6X3d8
+         kNEj4VPYHQGy5OPFaNJf+VuQCdI8ilWJu4dZfpru7QdvYOlveiTHfcCSZORnkosBwJIO
+         KQGCdDHWn2r87GdpuN4b+XbzUw3zJkMTqrcYk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=Zq2vgqQJ0aK3Haee47HLHnP8KEUcaakHLOv3bcGbD9I=;
-        b=kifendyz76JTBDVWre6B91ZrfDzAe8HGNpi6bWZiQbwdO2gE09xehu7nJU0FvDIOwG
-         xUAyrR2RUB0vthugtbHFWbKikMywxVeukxucfdh58nV28PR/rxgfDcwdKGI+1CK6L8PZ
-         q0JVXTQKunIkgnHopheg6/noCFzgRsJ/yqfZ2caxUdzKEhnAe36GHigzoTifqsXQre8/
-         qFXJZLnyAoDNrRi73XgXkQqFYybcEWJk2tdD9pejddGsZ+SPQrIr0cjHwrZv/ynzwTqB
-         y/qwZUzTGSjAzZSutnKhnzKuVxdaYwJcev6zN4MQ2gfmWiaxIdW9XhWsxtmeASWX3CmX
-         2W7g==
-X-Gm-Message-State: AGRZ1gLhBpPaizWL5mBuaFjIegWD9+poGNr+L1SylLbRDYJGraUN7djT
-        pbBHYTtxSps74QAG2m2t/IF9kw==
-X-Google-Smtp-Source: AJdET5fGo+prrbcisuhzUNomFXgjEkGEIouKEdWk2grUvE9aRq7j7OQPwm3rvBQvr42P+ght6u/ZGw==
-X-Received: by 2002:adf:9d8d:: with SMTP id p13-v6mr697227wre.12.1540454495844;
-        Thu, 25 Oct 2018 01:01:35 -0700 (PDT)
+        bh=wZwWvAsje3SwKx4M2NaP80BUUqaUB+/cDkavNcVdzi8=;
+        b=QqYNVQg66TWAi0IDz7/X4nh1WzEj1+n9gYXB/7EV2vO4usnQbNLyo4/dkqxciyU+rs
+         KA1i02qxRPn963oENsKNVbWmyZPS4/6B4JaoASGAGidZVEPWRXZTgqyNZfyPG4ytoyLE
+         c7JIase6bqfMMOxh4Y14v5kYN4usRYEZ3GOAWCKaT0+L2wRcQf8q/qF1J99gECzp7Kr0
+         fNOtip8rrFkBOmTBOkG33alDLufkC1lWQkFhN8Vhfjm/oZc2YC5LAeaPIPKsVuXCcuzt
+         5MzA7pI98USwWGQODI3NR6gkrSplnXKyeEDWrOzUVNwtIkUsHM05Ol5sPJs5owpgnPsC
+         IoWg==
+X-Gm-Message-State: AGRZ1gIui7CXqun5q0p1JCsgR/88q0ANJNaXEg/q1IG9QDgJidGzfowu
+        m6SBmvsiE/ARpYJImG6ja4i65A==
+X-Google-Smtp-Source: AJdET5coumxdvkZhdRp+iSiKpxhewFkJ2PQnbncjfayeMRFLoniF3OKAqR4zUxbAl4Q1PuASxGPwiw==
+X-Received: by 2002:a1c:7508:: with SMTP id o8-v6mr749613wmc.76.1540454579160;
+        Thu, 25 Oct 2018 01:02:59 -0700 (PDT)
 Received: from dell ([2.31.167.182])
-        by smtp.gmail.com with ESMTPSA id b8sm5796113wrx.97.2018.10.25.01.01.34
+        by smtp.gmail.com with ESMTPSA id o17-v6sm7772905wro.2.2018.10.25.01.02.58
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Oct 2018 01:01:34 -0700 (PDT)
-Date:   Thu, 25 Oct 2018 09:01:33 +0100
+        Thu, 25 Oct 2018 01:02:58 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 09:02:56 +0100
 From:   Lee Jones <lee.jones@linaro.org>
-To:     Richard Fitzgerald <rf@opensource.cirrus.com>
-Cc:     tglx@linutronix.de, marc.zyngier@arm.com, jason@lakedaemon.net,
-        patches@opensource.cirrus.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v13 RESEND 1/2] mfd: madera: Add irqchip data pointer
- into struct madera
-Message-ID: <20181025080133.GG4939@dell>
-References: <20181016093839.6258-1-rf@opensource.cirrus.com>
- <20181016093839.6258-2-rf@opensource.cirrus.com>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mfd: twl-core: Fix section annotations on
+ {,un}protect_pm_master
+Message-ID: <20181025080256.GH4939@dell>
+References: <20181017171322.13572-1-natechancellor@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181016093839.6258-2-rf@opensource.cirrus.com>
+In-Reply-To: <20181017171322.13572-1-natechancellor@gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 16 Oct 2018, Richard Fitzgerald wrote:
+On Wed, 17 Oct 2018, Nathan Chancellor wrote:
 
-> Put the pointer to struct regmap_irq_chip_data into the parent
-> mfd structure so that the child irqchip driver does not need
-> a trivial private structure to store only this pointer. As
-> the irqchip child driver already has a pointer to the parent
-> struct madera it can use that to store the pointer. This also
-> means that the irqchip driver does not need a double-indirection
-> from its local struct to get at the parent struct madera.
+> When building the kernel with Clang, the following section mismatch
+> warning appears:
 > 
-> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+> WARNING: vmlinux.o(.text+0x3d84a3b): Section mismatch in reference from
+> the function twl_probe() to the function
+> .init.text:unprotect_pm_master()
+> The function twl_probe() references
+> the function __init unprotect_pm_master().
+> This is often because twl_probe lacks a __init
+> annotation or the annotation of unprotect_pm_master is wrong.
+> 
+> Remove the __init annotation on the *protect_pm_master functions so
+> there is no more mismatch.
+> 
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 > ---
->  include/linux/mfd/madera/core.h | 2 ++
->  1 file changed, 2 insertions(+)
+> 
+> Alternatively, I suppose that twl_probe could be marked as __init but
+> I'm not sure if deferral is possible or not (which I believe would cause
+> issues but not sure). I went with this more conservative approache but
+> I'm happy to respin if necessary.
+> 
+> Thanks!
+> 
+>  drivers/mfd/twl-core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+Applied for v4.21, thanks.
 
 -- 
 Lee Jones [李琼斯]
