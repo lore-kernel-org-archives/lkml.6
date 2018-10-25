@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 538ABECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10BE4C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:18:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 096AE20848
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:18:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9BB62085A
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:18:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="avg8XtLc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 096AE20848
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VZ9tvoTd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9BB62085A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729956AbeJYWvH (ORCPT
+        id S1729933AbeJYWvF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:51:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60900 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:51:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729938AbeJYWvG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:51:06 -0400
+        id S1728190AbeJYWvE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:51:04 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCC0B2085A;
-        Thu, 25 Oct 2018 14:18:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D375220868;
+        Thu, 25 Oct 2018 14:18:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477089;
-        bh=Fp2Bw3X6/3nzHSMJ2ZTAM6CPL3xDzDyudNmBshgP+7c=;
+        s=default; t=1540477087;
+        bh=o94BwEvcOJLlnMCT5U+h9xh9AnU1BQoF3rWzk/dbDsM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=avg8XtLctCTsbiEWHpnkYhliG0eEGZM67dGPEmi3y/S1qmWCMza267M9E7Q6TqQE0
-         wBOENLp/dUXv7frC0JhDWbAT3M+OO4yidSNleF5pQaIwPA9l+tkVj868r70a7q6r+R
-         1uJtMNcjvGUBUi89ZgZ2XVjS9kW5inG6PF9FYF/Y=
+        b=VZ9tvoTdE+cRO337Tq8oqBJ4ROtYNVYD6WeAo83nTouDl2qJxmBA51EmCvrMy3pqE
+         pZk08VvH+nfSvoUx2jxY/iCasLZcLL+/N7uoWq+Sd6JcgbSYQovHoKZE7RQsW1DvvG
+         IePJh4DoxaDaq7fRItA4ao5rkcWeei8oOrZWHe3k=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Emil Tantilov <emil.s.tantilov@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+Cc:     Tariq Toukan <tariqt@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 39/65] ixgbe: fix RSS limit for X550
-Date:   Thu, 25 Oct 2018 10:16:39 -0400
-Message-Id: <20181025141705.213937-39-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 37/65] net/mlx5e: Fix LRO modify
+Date:   Thu, 25 Oct 2018 10:16:37 -0400
+Message-Id: <20181025141705.213937-37-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141705.213937-1-sashal@kernel.org>
 References: <20181025141705.213937-1-sashal@kernel.org>
@@ -53,37 +54,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Emil Tantilov <emil.s.tantilov@intel.com>
+From: Tariq Toukan <tariqt@mellanox.com>
 
-[ Upstream commit e9ee3238f8a480bbca58e51d02a93628d7c1f265 ]
+[ Upstream commit ab0394fe2c258fdb5086c51a251b28f8ee7ab35c ]
 
-X550 allows for up to 64 RSS queues, but the driver can have max
-of 63 (-1 MSIX vector for link).
+Ethtool LRO enable/disable is broken, as of today we only modify TCP
+TIRs in order to apply the requested configuration.
 
-On systems with >= 64 CPUs the driver will set the redirection table
-for all 64 queues which will result in packets being dropped.
+Hardware requires that all TIRs pointing to the same RQ should share the
+same LRO configuration. For that all other TIRs' LRO fields must be
+modified as well.
 
-Signed-off-by: Emil Tantilov <emil.s.tantilov@intel.com>
-Tested-by: Phil Schmitt <phillip.j.schmitt@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Fixes: 5c50368f3831 ('net/mlx5e: Light-weight netdev open/stop')
+Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/ixgbe/ixgbe.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe.h b/drivers/net/ethernet/intel/ixgbe/ixgbe.h
-index 1d2174526a4c..18e4e4a69262 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe.h
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe.h
-@@ -312,7 +312,7 @@ enum ixgbe_ring_f_enum {
- };
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+index 90e876ecc720..765b069d6a90 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+@@ -1304,7 +1304,7 @@ static void mlx5e_build_tir_ctx_lro(void *tirc, struct mlx5e_priv *priv)
+ 			      lro_timer_supported_periods[2]));
+ }
  
- #define IXGBE_MAX_RSS_INDICES		16
--#define IXGBE_MAX_RSS_INDICES_X550	64
-+#define IXGBE_MAX_RSS_INDICES_X550	63
- #define IXGBE_MAX_VMDQ_INDICES		64
- #define IXGBE_MAX_FDIR_INDICES		63	/* based on q_vector limit */
- #define IXGBE_MAX_FCOE_INDICES		8
+-static int mlx5e_modify_tir_lro(struct mlx5e_priv *priv, int tt)
++static int mlx5e_modify_tirs_lro(struct mlx5e_priv *priv)
+ {
+ 	struct mlx5_core_dev *mdev = priv->mdev;
+ 
+@@ -1312,6 +1312,7 @@ static int mlx5e_modify_tir_lro(struct mlx5e_priv *priv, int tt)
+ 	void *tirc;
+ 	int inlen;
+ 	int err;
++	int tt;
+ 
+ 	inlen = MLX5_ST_SZ_BYTES(modify_tir_in);
+ 	in = mlx5_vzalloc(inlen);
+@@ -1323,7 +1324,11 @@ static int mlx5e_modify_tir_lro(struct mlx5e_priv *priv, int tt)
+ 
+ 	mlx5e_build_tir_ctx_lro(tirc, priv);
+ 
+-	err = mlx5_core_modify_tir(mdev, priv->tirn[tt], in, inlen);
++	for (tt = 0; tt < MLX5E_NUM_TT; tt++) {
++		err = mlx5_core_modify_tir(mdev, priv->tirn[tt], in, inlen);
++		if (err)
++			break;
++	}
+ 
+ 	kvfree(in);
+ 
+@@ -1870,8 +1875,10 @@ static int mlx5e_set_features(struct net_device *netdev,
+ 			mlx5e_close_locked(priv->netdev);
+ 
+ 		priv->params.lro_en = !!(features & NETIF_F_LRO);
+-		mlx5e_modify_tir_lro(priv, MLX5E_TT_IPV4_TCP);
+-		mlx5e_modify_tir_lro(priv, MLX5E_TT_IPV6_TCP);
++		err = mlx5e_modify_tirs_lro(priv);
++		if (err)
++			mlx5_core_warn(priv->mdev, "lro modify failed, %d\n",
++				       err);
+ 
+ 		if (was_opened)
+ 			err = mlx5e_open_locked(priv->netdev);
 -- 
 2.17.1
 
