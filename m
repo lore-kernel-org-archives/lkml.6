@@ -2,151 +2,71 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 023FFC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 12:27:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEE47C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 12:28:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B938D20831
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 12:27:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B938D20831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A57A72083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 12:28:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qhY2iKTn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A57A72083E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727475AbeJYVAV (ORCPT
+        id S1727604AbeJYVB3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 17:00:21 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50174 "EHLO mx1.redhat.com"
+        Thu, 25 Oct 2018 17:01:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727256AbeJYVAV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 17:00:21 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727357AbeJYVB3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 17:01:29 -0400
+Received: from localhost (unknown [178.225.94.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BFDAC3DBE9;
-        Thu, 25 Oct 2018 12:27:46 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-24.phx2.redhat.com [10.3.112.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8E2F3608F3;
-        Thu, 25 Oct 2018 12:27:35 +0000 (UTC)
-Date:   Thu, 25 Oct 2018 08:27:32 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     sgrubb@redhat.com, simo@redhat.com, carlos@redhat.com,
-        linux-api@vger.kernel.org, containers@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        linux-audit@redhat.com, netfilter-devel@vger.kernel.org,
-        ebiederm@xmission.com, luto@kernel.org, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH ghak90 (was ghak32) V4 03/10] audit: log container info
- of syscalls
-Message-ID: <20181025122732.4j4rbychjse3gemt@madcap2.tricolour.ca>
-References: <cover.1533065887.git.rgb@redhat.com>
- <34017c395d03a213d6b0d49b9964429bd32b283d.1533065887.git.rgb@redhat.com>
- <CAHC9VhSv4hWGHiaaOfuBrRQKdp2YG5RtqXQbFXg7j7LNEhO2XQ@mail.gmail.com>
- <20181024151439.lavhanabsyxdrdvo@madcap2.tricolour.ca>
- <CAHC9VhRF1vsxM-k0Lw-9NqS9b9rgXRRBu0tq4ajdFpMqUxiH4A@mail.gmail.com>
- <20181025004255.zl7p7j6gztouh2hh@madcap2.tricolour.ca>
- <20181025080638.771621a3@ivy-bridge>
- <CAHC9VhR02siURgadQs0EikcOm0d_TPAi4jJYCx4NkA=wQ5rjSA@mail.gmail.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id E8AA920831;
+        Thu, 25 Oct 2018 12:28:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540470536;
+        bh=eVWayPB5clUq5GpfyMBdL0CPpBgYLjBxSw5y1uatdv4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qhY2iKTn1AUDdFd4kEq2QwQ9zOVvijdLAS1pi5vkDHPmm6JUGgR9uU3CcDf5xzH6M
+         0ejrFPugRD9sou2L9n/sZNyyFjTpD7gqNATcBtHxZn9InIc2eEajjopQAy+OJmes/H
+         X6CaiJ7v1ICWVvI8NrAm4WaJhlQAvyRJ3y4vrH0A=
+Date:   Thu, 25 Oct 2018 13:28:51 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Dennis Wassenberg <dennis.wassenberg@secunet.com>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
+        Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        Bin Liu <b-liu@ti.com>,
+        Maxim Moseychuk <franchesko.salias.hudro.pedros@gmail.com>,
+        Mike Looijmans <mike.looijmans@topic.nl>,
+        Dominik Bozek <dominikx.bozek@intel.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: USB-C device hotplug issue
+Message-ID: <20181025122851.GA19541@kroah.com>
+References: <7d444d00-5144-452d-4229-e77d38a991f5@secunet.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhR02siURgadQs0EikcOm0d_TPAi4jJYCx4NkA=wQ5rjSA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 25 Oct 2018 12:27:47 +0000 (UTC)
+In-Reply-To: <7d444d00-5144-452d-4229-e77d38a991f5@secunet.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-25 06:49, Paul Moore wrote:
-> On Thu, Oct 25, 2018 at 2:06 AM Steve Grubb <sgrubb@redhat.com> wrote:
-> > On Wed, 24 Oct 2018 20:42:55 -0400
-> > Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > On 2018-10-24 16:55, Paul Moore wrote:
-> > > > On Wed, Oct 24, 2018 at 11:15 AM Richard Guy Briggs
-> > > > <rgb@redhat.com> wrote:
-> > > > > On 2018-10-19 19:16, Paul Moore wrote:
-> > > > > > On Sun, Aug 5, 2018 at 4:32 AM Richard Guy Briggs
-> > > > > > <rgb@redhat.com> wrote:
-> 
-> ...
-> 
-> > > > > > > +/*
-> > > > > > > + * audit_log_contid - report container info
-> > > > > > > + * @tsk: task to be recorded
-> > > > > > > + * @context: task or local context for record
-> > > > > > > + * @op: contid string description
-> > > > > > > + */
-> > > > > > > +int audit_log_contid(struct task_struct *tsk,
-> > > > > > > +                            struct audit_context *context,
-> > > > > > > char *op) +{
-> > > > > > > +       struct audit_buffer *ab;
-> > > > > > > +
-> > > > > > > +       if (!audit_contid_set(tsk))
-> > > > > > > +               return 0;
-> > > > > > > +       /* Generate AUDIT_CONTAINER record with container ID
-> > > > > > > */
-> > > > > > > +       ab = audit_log_start(context, GFP_KERNEL,
-> > > > > > > AUDIT_CONTAINER);
-> > > > > > > +       if (!ab)
-> > > > > > > +               return -ENOMEM;
-> > > > > > > +       audit_log_format(ab, "op=%s contid=%llu",
-> > > > > > > +                        op, audit_get_contid(tsk));
-> > > > > > > +       audit_log_end(ab);
-> > > > > > > +       return 0;
-> > > > > > > +}
-> > > > > > > +EXPORT_SYMBOL(audit_log_contid);
-> > > > > >
-> > > > > > As discussed in the previous iteration of the patch, I prefer
-> > > > > > AUDIT_CONTAINER_ID here over AUDIT_CONTAINER.  If you feel
-> > > > > > strongly about keeping it as-is with AUDIT_CONTAINER I suppose
-> > > > > > I could live with that, but it is isn't my first choice.
-> > > > >
-> > > > > I don't have a strong opinion on this one, mildly preferring the
-> > > > > shorter one only because it is shorter.
-> > > >
-> > > > We already have multiple AUDIT_CONTAINER* record types, so it seems
-> > > > as though we should use "AUDIT_CONTAINER" as a prefix of sorts,
-> > > > rather than a type itself.
-> > >
-> > > I'm fine with that.  I'd still like to hear Steve's input.  He had
-> > > stronger opinions than me.
-> >
-> > The creation event should be separate and distinct from the continuing
-> > use when its used as a supplemental record. IOW, binding the ID to a
-> > container is part of the lifecycle and needs to be kept distinct.
-> 
-> Steve's comment is pretty ambiguous when it comes to AUDIT_CONTAINER
-> vs AUDIT_CONTAINER_ID, but one could argue that AUDIT_CONTAINER_ID
-> helps distinguish the audit container id marking record and gets to
-> what I believe is the spirit of Steve's comment.  Taking this in
-> context with my previous remarks, let's switch to using
-> AUDIT_CONTAINER_ID.
+On Thu, Oct 25, 2018 at 02:20:50PM +0200, Dennis Wassenberg wrote:
+> The code change for Kernel 4.14 look as follows:
 
-I suspect Steve is mixing up AUDIT_CONTAINER_OP with AUDIT_CONTAINER_ID,
-confusing the fact that they are two seperate records.  As a summary,
-the suggested records are:
-	CONTAINER_OP	audit container identifier creation
-	CONTAINER	audit container identifier aux record to an event
+4.14 is a year old now, can you try 4.19 to see if it works better?
+Lots of good xhci fixes and features have been added since then.
 
-and what Paul is suggesting (which is fine by me) is:
-	CONTAINER_OP	audit container identifier creation event
-	CONTAINER_ID	audit container identifier aux record to an event
+thanks,
 
-Steve, please indicate you are fine with this.
-
-> paul moore
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+greg k-h
