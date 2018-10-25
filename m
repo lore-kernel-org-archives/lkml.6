@@ -2,169 +2,207 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-4.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF535C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:11:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98470C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:13:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 814A62054F
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:11:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FC682054F
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:13:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="WeHfpH+k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 814A62054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="n8keHK4b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FC682054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727634AbeJZFqP (ORCPT
+        id S1726863AbeJZFrp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 01:46:15 -0400
-Received: from mx.aristanetworks.com ([162.210.129.12]:16764 "EHLO
-        prod-mx.aristanetworks.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726387AbeJZFqO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 01:46:14 -0400
-X-Greylist: delayed 330 seconds by postgrey-1.27 at vger.kernel.org; Fri, 26 Oct 2018 01:46:14 EDT
-Received: from prod-mx.aristanetworks.com (localhost [127.0.0.1])
-        by prod-mx.aristanetworks.com (Postfix) with ESMTP id DA3399B29;
-        Thu, 25 Oct 2018 14:06:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arista.com;
-        s=Arista-A; t=1540501586;
-        bh=xR4mZNclC/aUy7eoJ8pCoJxDuL3ZMcEtlO70itgX1mA=;
-        h=From:To:Cc:Subject:Date;
-        b=WeHfpH+kbIKDLHyw3solEFbgWsDpym4Iv8ozGEtIEOcAl6QejFNRd72sEuUJlY+Iu
-         9e7LVh8Y7R8L2yknAbZdP6KW6vrzA+uDbUEHNwu54Dc3AjWFOFVBk6VxR72CdgX1Co
-         w72+ZgW+8K67oqBJoEBG1vWV6eosXrKz9814gaEbgDX0UGdmcfD/U+P92T7zTaDqha
-         Iv4l8GemBzkYWH59pnHSo5IBFa5zqpPuy8FmI0Xqz0zU/odp3PXTPsvP/lEptHkptc
-         uOr3959otMdkBPehTga+GlL3Ec3c6l0vHhUVNAGAXyn4eBzGIJqyLe3eT6+Li4z1c2
-         zk5RTMI+eZQJA==
-Received: from baptiste-eos-trunk-view.sjc.aristanetworks.com (baptiste-eos-trunk-view.sjc.aristanetworks.com [172.25.11.251])
-        by prod-mx.aristanetworks.com (Postfix) with ESMTP id D25A29783;
-        Thu, 25 Oct 2018 14:06:26 -0700 (PDT)
-From:   Baptiste Covolato <baptiste@arista.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     baptiste@arista.com, kstewart@linuxfoundation.org,
-        gregkh@linuxfoundation.org, tglx@linutronix.de,
-        pombredanne@nexb.com, yamada.masahiro@socionext.com,
-        forney@google.com, andrzej.p@samsung.com
-Subject: [PATCH] get_init_cpio: allow file mtime to be overridden
-Date:   Thu, 25 Oct 2018 14:06:12 -0700
-Message-Id: <20181025210612.19375-1-baptiste@arista.com>
-X-Mailer: git-send-email 2.19.1
+        Fri, 26 Oct 2018 01:47:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43788 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726056AbeJZFrn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 01:47:43 -0400
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 063532083E;
+        Thu, 25 Oct 2018 21:13:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540502004;
+        bh=wvEMaua9XdNX1S7F8WvyfWYk7OlmWIlhYhxZAJeKwdE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=n8keHK4bHi/xaU7wAjGjXtDkmgMY8Qagu8h7WqN7FIhYyEGhQykJZ8U0GWJsHpN/c
+         jQH5Kkd7QhNYJgyFAWFcx20GEGC/gdGKM73Pscz0htyoSgpK2JSVeEUyKcx6BUU7a2
+         sqVzAPRLSh/5ae7Jkj81s663W2+KZHMF4yR9w9og=
+Received: by mail-qt1-f174.google.com with SMTP id b22-v6so2642642qtr.11;
+        Thu, 25 Oct 2018 14:13:24 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gJKk8Sv0UjAwj4tFis/mpOtAVwqtGx3iCN5CCDtEE5LsGHncvOH
+        OO80YaDsHinEl+mvFig6ksbtBw5IpBKmvl1sKQ==
+X-Google-Smtp-Source: AJdET5dPMimUPy72Toq8ADoMpWDW5u//FVc5SZkVtwbySihlnauOZqcr3hb+YS+Sv4mS4dGpTmGh/T9QeMcbV1qAVzw=
+X-Received: by 2002:a0c:8c86:: with SMTP id p6-v6mr836511qvb.246.1540502003189;
+ Thu, 25 Oct 2018 14:13:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181024193256.23734-1-f.fainelli@gmail.com> <CAL_Jsq+KCOv6pXXHhHDZ+7-QUrmtMDvSjEVhK15yZ3qbnn61Ag@mail.gmail.com>
+ <20181025093833.GA23607@rapoport-lnx> <CAL_JsqL62ttsGSbE1BS5v-mX3pKE-p_HyvuZD6nB+GUbQyetzg@mail.gmail.com>
+ <20181025172935.GA27364@rapoport-lnx>
+In-Reply-To: <20181025172935.GA27364@rapoport-lnx>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 25 Oct 2018 16:13:10 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJrMq+QHvuOsqEdCFchmXsd4s2XKUD_TboKzeEQprJvjg@mail.gmail.com>
+Message-ID: <CAL_JsqJrMq+QHvuOsqEdCFchmXsd4s2XKUD_TboKzeEQprJvjg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] arm64: Cut rebuild time when changing CONFIG_BLK_DEV_INITRD
+To:     rppt@linux.ibm.com
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Olof Johansson <olof@lixom.net>, linux-alpha@vger.kernel.org,
+        arcml <linux-snps-arc@lists.infradead.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-c6x-dev@linux-c6x.org,
+        "moderated list:H8/300 ARCHITECTURE" 
+        <uclinux-h8-devel@lists.sourceforge.jp>,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org,
+        Linux-MIPS <linux-mips@linux-mips.org>,
+        nios2-dev@lists.rocketboards.org,
+        Openrisc <openrisc@lists.librecores.org>,
+        linux-parisc@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        SH-Linux <linux-sh@vger.kernel.org>, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
+        devicetree@vger.kernel.org,
+        "open list:GENERIC INCLUDE/ASM HEADER FILES" 
+        <linux-arch@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By default get_init_cpio uses the current time as mtime for links,
-special files and directories. We have the possibility to set this
-timestamp to a fixed value using -t. However, this timestamp doesn't
-apply to regular files. For those, the mtime returned by stat is used.
+On Thu, Oct 25, 2018 at 12:30 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
+>
+> On Thu, Oct 25, 2018 at 08:15:15AM -0500, Rob Herring wrote:
+> > +Ard
+> >
+> > On Thu, Oct 25, 2018 at 4:38 AM Mike Rapoport <rppt@linux.ibm.com> wrote:
+> > >
+> > > On Wed, Oct 24, 2018 at 02:55:17PM -0500, Rob Herring wrote:
+> > > > On Wed, Oct 24, 2018 at 2:33 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
+> > > > >
+> > > > > Hi all,
+> > > > >
+> > > > > While investigating why ARM64 required a ton of objects to be rebuilt
+> > > > > when toggling CONFIG_DEV_BLK_INITRD, it became clear that this was
+> > > > > because we define __early_init_dt_declare_initrd() differently and we do
+> > > > > that in arch/arm64/include/asm/memory.h which gets included by a fair
+> > > > > amount of other header files, and translation units as well.
+> > > >
+> > > > I scratch my head sometimes as to why some config options rebuild so
+> > > > much stuff. One down, ? to go. :)
+> > > >
+> > > > > Changing the value of CONFIG_DEV_BLK_INITRD is a common thing with build
+> > > > > systems that generate two kernels: one with the initramfs and one
+> > > > > without. buildroot is one of these build systems, OpenWrt is also
+> > > > > another one that does this.
+> > > > >
+> > > > > This patch series proposes adding an empty initrd.h to satisfy the need
+> > > > > for drivers/of/fdt.c to unconditionally include that file, and moves the
+> > > > > custom __early_init_dt_declare_initrd() definition away from
+> > > > > asm/memory.h
+> > > > >
+> > > > > This cuts the number of objects rebuilds from 1920 down to 26, so a
+> > > > > factor 73 approximately.
+> > > > >
+> > > > > Apologies for the long CC list, please let me know how you would go
+> > > > > about merging that and if another approach would be preferable, e.g:
+> > > > > introducing a CONFIG_ARCH_INITRD_BELOW_START_OK Kconfig option or
+> > > > > something like that.
+> > > >
+> > > > There may be a better way as of 4.20 because bootmem is now gone and
+> > > > only memblock is used. This should unify what each arch needs to do
+> > > > with initrd early. We need the physical address early for memblock
+> > > > reserving. Then later on we need the virtual address to access the
+> > > > initrd. Perhaps we should just change initrd_start and initrd_end to
+> > > > physical addresses (or add 2 new variables would be less invasive and
+> > > > allow for different translation than __va()). The sanity checks and
+> > > > memblock reserve could also perhaps be moved to a common location.
+> > > >
+> > > > Alternatively, given arm64 is the only oddball, I'd be fine with an
+> > > > "if (IS_ENABLED(CONFIG_ARM64))" condition in the default
+> > > > __early_init_dt_declare_initrd as long as we have a path to removing
+> > > > it like the above option.
+> > >
+> > > I think arm64 does not have to redefine __early_init_dt_declare_initrd().
+> > > Something like this might be just all we need (completely untested,
+> > > probably it won't even compile):
+> > >
+> > > diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+> > > index 9d9582c..e9ca238 100644
+> > > --- a/arch/arm64/mm/init.c
+> > > +++ b/arch/arm64/mm/init.c
+> > > @@ -62,6 +62,9 @@ s64 memstart_addr __ro_after_init = -1;
+> > >  phys_addr_t arm64_dma_phys_limit __ro_after_init;
+> > >
+> > >  #ifdef CONFIG_BLK_DEV_INITRD
+> > > +
+> > > +static phys_addr_t initrd_start_phys, initrd_end_phys;
+> > > +
+> > >  static int __init early_initrd(char *p)
+> > >  {
+> > >         unsigned long start, size;
+> > > @@ -71,8 +74,8 @@ static int __init early_initrd(char *p)
+> > >         if (*endp == ',') {
+> > >                 size = memparse(endp + 1, NULL);
+> > >
+> > > -               initrd_start = start;
+> > > -               initrd_end = start + size;
+> > > +               initrd_start_phys = start;
+> > > +               initrd_end_phys = end;
+> > >         }
+> > >         return 0;
+> > >  }
+> > > @@ -407,14 +410,27 @@ void __init arm64_memblock_init(void)
+> > >                 memblock_add(__pa_symbol(_text), (u64)(_end - _text));
+> > >         }
+> > >
+> > > -       if (IS_ENABLED(CONFIG_BLK_DEV_INITRD) && initrd_start) {
+> > > +       if (IS_ENABLED(CONFIG_BLK_DEV_INITRD) &&
+> > > +           (initrd_start || initrd_start_phys)) {
+> > > +               /*
+> > > +                * FIXME: ensure proper precendence between
+> > > +                * early_initrd and DT when both are present
+> >
+> > Command line takes precedence, so just reverse the order.
+> >
+> > > +                */
+> > > +               if (initrd_start) {
+> > > +                       initrd_start_phys = __phys_to_virt(initrd_start);
+> > > +                       initrd_end_phys = __phys_to_virt(initrd_end);
 
-This commit introduces a '-a' option, which when used, will modify the
-mtime of regular files to match the timestamp of special files,
-directories, ...
+BTW, I think you meant virt_to_phys() here?
 
-Signed-off-by: Baptiste Covolato <baptiste@arista.com>
----
- usr/gen_init_cpio.c       | 19 +++++++++++++++----
- usr/gen_initramfs_list.sh |  2 +-
- 2 files changed, 16 insertions(+), 5 deletions(-)
+> >
+> > AIUI, the original issue was doing the P2V translation was happening
+> > too early and the VA could be wrong if the linear range is adjusted.
+> > So I don't think this would work.
+>
+> Probably things have changed since then, but in the current code there is
+>
+>                 initrd_start = __phys_to_virt(initrd_start);
+>
+> and in between only the code related to CONFIG_RANDOMIZE_BASE, so I believe
+> it's safe to use __phys_to_virt() here as well.
 
-diff --git a/usr/gen_init_cpio.c b/usr/gen_init_cpio.c
-index 03b21189d58b..e2432ff31965 100644
---- a/usr/gen_init_cpio.c
-+++ b/usr/gen_init_cpio.c
-@@ -24,6 +24,7 @@
- static unsigned int offset;
- static unsigned int ino = 721;
- static time_t default_mtime;
-+static int default_mtime_all;
- 
- struct file_handler {
- 	const char *type;
-@@ -305,6 +306,7 @@ static int cpio_mkfile(const char *name, const char *location,
- 	int rc = -1;
- 	int namesize;
- 	unsigned int i;
-+	time_t mtime;
- 
- 	mode |= S_IFREG;
- 
-@@ -320,6 +322,10 @@ static int cpio_mkfile(const char *name, const char *location,
- 		goto error;
- 	}
- 
-+	mtime = buf.st_mtime;
-+	if (default_mtime_all)
-+		mtime = default_mtime;
-+
- 	filebuf = malloc(buf.st_size);
- 	if (!filebuf) {
- 		fprintf (stderr, "out of memory\n");
-@@ -348,7 +354,7 @@ static int cpio_mkfile(const char *name, const char *location,
- 			(long) uid,		/* uid */
- 			(long) gid,		/* gid */
- 			nlinks,			/* nlink */
--			(long) buf.st_mtime,	/* mtime */
-+			(long) mtime,		/* mtime */
- 			size,			/* filesize */
- 			3,			/* major */
- 			1,			/* minor */
-@@ -452,7 +458,7 @@ static int cpio_mkfile_line(const char *line)
- static void usage(const char *prog)
- {
- 	fprintf(stderr, "Usage:\n"
--		"\t%s [-t <timestamp>] <cpio_list>\n"
-+		"\t%s [-t <timestamp>] [-a] <cpio_list>\n"
- 		"\n"
- 		"<cpio_list> is a file containing newline separated entries that\n"
- 		"describe the files to be included in the initramfs archive:\n"
-@@ -487,7 +493,9 @@ static void usage(const char *prog)
- 		"\n"
- 		"<timestamp> is time in seconds since Epoch that will be used\n"
- 		"as mtime for symlinks, special files and directories. The default\n"
--		"is to use the current time for these entries.\n",
-+		"is to use the current time for these entries. If -a is specified,\n"
-+		"the same mtime will be used for files, overriding their original\n"
-+		"mtime.\n",
- 		prog);
- }
- 
-@@ -529,12 +537,15 @@ int main (int argc, char *argv[])
- 
- 	default_mtime = time(NULL);
- 	while (1) {
--		int opt = getopt(argc, argv, "t:h");
-+		int opt = getopt(argc, argv, "t:ha");
- 		char *invalid;
- 
- 		if (opt == -1)
- 			break;
- 		switch (opt) {
-+		case 'a':
-+			default_mtime_all = 1;
-+			break;
- 		case 't':
- 			default_mtime = strtol(optarg, &invalid, 10);
- 			if (!*optarg || *invalid) {
-diff --git a/usr/gen_initramfs_list.sh b/usr/gen_initramfs_list.sh
-index 0aad760fcd8c..1704e0638bcc 100755
---- a/usr/gen_initramfs_list.sh
-+++ b/usr/gen_initramfs_list.sh
-@@ -308,7 +308,7 @@ if [ ! -z ${output_file} ]; then
- 		if test -n "$KBUILD_BUILD_TIMESTAMP"; then
- 			timestamp="$(date -d"$KBUILD_BUILD_TIMESTAMP" +%s || :)"
- 			if test -n "$timestamp"; then
--				timestamp="-t $timestamp"
-+				timestamp="-a -t $timestamp"
- 			fi
- 		fi
- 		cpio_tfile="$(mktemp ${TMPDIR:-/tmp}/cpiofile.XXXXXX)"
--- 
-2.19.1
+Here is fine yes, but I believe it was the the phys to virt in the DT
+code before adjusting the linear range that was the problem.
 
+Rob
