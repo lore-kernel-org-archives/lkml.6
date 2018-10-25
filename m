@@ -2,104 +2,102 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89EB6C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:22:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63D1DC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:23:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4612E20834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:22:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4612E20834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id 286FE20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:23:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iuGzgzz1";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="d6Jjn/CM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 286FE20834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727845AbeJZB42 (ORCPT
+        id S1727705AbeJZB5Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 21:56:28 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41518 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727525AbeJZB41 (ORCPT
+        Thu, 25 Oct 2018 21:57:16 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39006 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727455AbeJZB5P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 21:56:27 -0400
-Received: by mail-pf1-f196.google.com with SMTP id a19-v6so4513935pfo.8
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 10:22:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nb6vETvNsAzFRnepdlFWVnzaZqt/YLpdCH26yR/CTeU=;
-        b=DOQQdETf5ssb2RQcv4V7ovgauL0wgZIA1NX+liFChr5fkZf7qePxvmm+waV98QwR4D
-         17WKBP25MV/vn1+jIqWqiNbu+tdgVHeHVMmgQH31UyjesCs6mj9AQrtypLhf0lL97zaD
-         7ceJqheAiG/1SVmGp7VHfiTEGvHae1/XuvpH9L6I4E13rLniDyROaSax4p3q9YXUNykQ
-         aTh9rhyu7pICeLLTYRZXXqvPH4lfPtMj2MjzHC6EtP20SSCeI8A76KsXixximudvdcur
-         idqk8joIYnVVnY2o+mRC1G1AbPI5h0Hqu0KC9FyeSjR5xVmxgwhxhTA/w2q7/a5tRuVq
-         k8dg==
-X-Gm-Message-State: AGRZ1gLqpBeuIPYAHP0k32KrQRTfCM7pJyJ63osTmRMQrQsr/7b9YZqY
-        J1ibJwdKYRGy//cR0LoCOV8=
-X-Google-Smtp-Source: AJdET5fmfZqB0nogyx+JASHE27b1uTRCm4aKuesBN49FiCKRVxG9K/Wng3ckl5CNaUZobw9h4SLsRA==
-X-Received: by 2002:a62:9702:: with SMTP id n2-v6mr111183pfe.222.1540488164502;
-        Thu, 25 Oct 2018 10:22:44 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id a14-v6sm9314172pgi.75.2018.10.25.10.22.43
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Oct 2018 10:22:43 -0700 (PDT)
-Message-ID: <1540488162.66186.35.camel@acm.org>
-Subject: Re: [PATCH 2/3] kernel/workqueue: Surround work execution with
- shared lock annotations
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Johannes Berg <johannes@sipsolutions.net>,
-        Tejun Heo <tj@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        "tytso@mit.edu" <tytso@mit.edu>
-Date:   Thu, 25 Oct 2018 10:22:42 -0700
-In-Reply-To: <256720b373cf539052d79ce3051214140820d696.camel@sipsolutions.net>
-References: <20181025150540.259281-1-bvanassche@acm.org>
-         <20181025150540.259281-3-bvanassche@acm.org>
-         <256720b373cf539052d79ce3051214140820d696.camel@sipsolutions.net>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 25 Oct 2018 21:57:15 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id A53E3606DC; Thu, 25 Oct 2018 17:23:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540488212;
+        bh=qhomB+1N/qzkk6MLiI8mt3FoRJenSzS6lPRKzBhnAfw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=iuGzgzz1fzVdD8zXji+5mm8pLpDnrGZCRwVONWd8ghNz3/Vde6CNkmWpm5F+UAhiV
+         knw0ezFB7egt8djRJmeC1mzE4KlE4c147dvd6CrUc8pbsAae577XfLl6z7YY6rzeuI
+         qS/EssA/boIDzBH2BxpqDo92I5qik0pm3GERweAA=
+Received: from mgautam-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: mgautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B8A2A606DC;
+        Thu, 25 Oct 2018 17:23:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540488211;
+        bh=qhomB+1N/qzkk6MLiI8mt3FoRJenSzS6lPRKzBhnAfw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=d6Jjn/CMhf3Xh0E1jXXQ82uO4nKfj+Yyy3FaU8Q0fwQFjL+3xxqRpcCImz8SDK6Ib
+         w99TZYErHhpe2nF6jafgUV5GMaDtGmOncEXWkiLW6qD9D7SVn3egYwRH0ai3b6OAax
+         Ch6LHDJmzSIwXC0DCvu2j2v8fKVodkTmzXuP4rQU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B8A2A606DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
+From:   Manu Gautam <mgautam@codeaurora.org>
+To:     Andy Gross <andy.gross@linaro.org>
+Cc:     Douglas Anderson <dianders@chromium.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org,
+        Manu Gautam <mgautam@codeaurora.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-soc@vger.kernel.org (open list:ARM/QUALCOMM SUPPORT),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v1] arm64: dts: qcom: sdm845: Fix pcs_misc region address for UNI PHY
+Date:   Thu, 25 Oct 2018 22:53:17 +0530
+Message-Id: <20181025172318.31353-1-mgautam@codeaurora.org>
+X-Mailer: git-send-email 2.19.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-10-25 at 18:53 +-0200, Johannes Berg wrote:
-+AD4 On Thu, 2018-10-25 at 15:05 +-0000, Bart Van Assche wrote:
-+AD4 +AD4 Surround execution of work with a shared lockdep annotation because multiple
-+AD4 +AD4 work items associated with a work queue may execute concurrently.
-+AD4 
-+AD4 Hmm. So, I'm not really entirely sure of the semantics here, but I fail
-+AD4 to see how +ACI-may execute concurrently+ACI means +ACI-can be taken recursively+ACI?
-+AD4 
-+AD4 After all, if they execute concurrently, that's in a different thread,
-+AD4 right? So each thread is really just doing something with this work. It
-+AD4 may not match mutex semantics in how mutexes would lock each other out
-+AD4 and prevent concurrency, but I don't think that matters to lockdep at
-+AD4 all.
-+AD4 
-+AD4 In fact, I'm not sure this actually changes anything, since you can't
-+AD4 really execute a work struct while executing one already?
-+AD4 
-+AD4 What's this intended to change? I currently don't see how lockdep's
-+AD4 behaviour would differ with read+AD0APQ-1, unless you actually tried to do
-+AD4 recursive locking, which isn't really possible?
-+AD4 
-+AD4 Or perhaps this is actually the right change for the issue described in
-+AD4 patch 1, where a work struct flushes another work on the same wq, and
-+AD4 that causes recursion of sorts? But that recursion should only happen if
-+AD4 the workqueues is actually marked as ordered, in which case it +ACo-is+ACo in
-+AD4 fact wrong?
+Correct address for pcs_misc register region of USB3 QMP UNI PHY.
+These registers are used during runtime-suspend/resume routines
+of phy.
 
-How about modifying the wq-+AD4-lockdep+AF8-map annotations only and not touching the
-work-+AD4-lockdep+AF8-map annotations? My comment about concurrency in the patch
-description refers to a multithreaded workqueue executing multiple different
-work items concurrently. I am aware that great care has been taken in the
-workqueue implementation to ensure that each work item is executed by exactly
-one worker.
+Fixes: ca4db2b538a1 ("arm64: dts: qcom: sdm845: Add USB-related nodes")
+Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
+---
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Bart.
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index b72bdb0a31a5..84bee81562a5 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -1156,7 +1156,7 @@
+ 				reg = <0x88eb200 0x128>,
+ 				      <0x88eb400 0x1fc>,
+ 				      <0x88eb800 0x218>,
+-				      <0x88e9600 0x70>;
++				      <0x88eb600 0x70>;
+ 				#phy-cells = <0>;
+ 				clocks = <&gcc GCC_USB3_SEC_PHY_PIPE_CLK>;
+ 				clock-names = "pipe0";
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
