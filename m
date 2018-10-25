@@ -2,122 +2,120 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA27AC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:03:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B505C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:06:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6533820665
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:03:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F71820834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:06:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="E90e7H9R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6533820665
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sHr1rJuP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F71820834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727719AbeJZCho (ORCPT
+        id S1727695AbeJZCkE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 22:37:44 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:35032 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727458AbeJZCho (ORCPT
+        Thu, 25 Oct 2018 22:40:04 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37331 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727458AbeJZCkE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 22:37:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=GwsqNua+xTDpjypJkvu2C56Zrs1eRyQsXhYdECGkBoQ=; b=E90e7H9RPo2zdIHw497QB0p5c
-        70vNfrkMcZN+QJS8udGbK+Ab/u0QGbnR8Xc05zUtYS7o5F7bIpFb8F28OKjwmosZTKWrO7jHez7ac
-        16H9K3y+g7Ysrr2D3lK0pSg5V6JKSP/pQrxDMq9yVNIs0GvPk/USv62xN0OuMda1pL+HU=;
-Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:39746)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gFjyr-0000VS-Fr; Thu, 25 Oct 2018 19:03:37 +0100
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gFjyo-0001Ly-9v; Thu, 25 Oct 2018 19:03:34 +0100
-Date:   Thu, 25 Oct 2018 19:03:32 +0100
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Andrew Lunn <andrew@lunn.ch>, linux-arm-kernel@lists.infradead.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kim Phillips <kim.phillips@arm.com>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jiri Olsa <jolsa@redhat.com>, l.stach@pengutronix.de
-Subject: Re: [PATCH 2/2] perf tests: Add a test for the ARM 32-bit [vectors]
- page
-Message-ID: <20181025180332.GD30658@n2100.armlinux.org.uk>
-References: <20181025000905.6095-1-f.fainelli@gmail.com>
- <20181025000905.6095-3-f.fainelli@gmail.com>
- <20181025021013.GA30116@lunn.ch>
- <175fd725-a97a-c282-5aa1-952014ff9023@gmail.com>
- <20181025173242.GC30658@n2100.armlinux.org.uk>
- <a6f5b6e7-4d3e-dd8f-4028-0ee370b11722@gmail.com>
+        Thu, 25 Oct 2018 22:40:04 -0400
+Received: by mail-wr1-f66.google.com with SMTP id g9-v6so10268590wrq.4;
+        Thu, 25 Oct 2018 11:06:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rBKz2T//G9OngGCPqFlxdVwY9Ric2yMKcHTmbAq8Sgg=;
+        b=sHr1rJuPzRqJkiF1vqAPT+VUCzVJNGfyWJxzM5Dzy7Fsx+6/boAOx3AbcfyLSBM5+W
+         Dk/IV/grPlz/aSKh6UvYaCJ72z3/zRhtX9c9shd0grFjcCWDFtiiVWQuH3dJHB2kLLPi
+         lsQnwbxdypLr8QFWN6GHQ5lfmEDifuimoQF1zui58aQNGWnKDvverqk7ogJRJiOyr8en
+         Lqr1viCkDQ+kiQJBFmgotqiWSIDyWNgT5HIB6+l7uD5OUCuPy3gt19HHr0YW02N/3+Pr
+         jEuGGGt5NhmlgajoCcQGhrm15YMkVOf/AUjWNcVxcitnJKUwhXEjthZJlI9d/qJNW1N4
+         R/pw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rBKz2T//G9OngGCPqFlxdVwY9Ric2yMKcHTmbAq8Sgg=;
+        b=GhRx7STgZAgxgqNJkniR8Vqaorce3l4gxQOAiJA6w507HJlt9Arq0FOznEz/vYMzUE
+         UaDpYWBetT9egjjAI6h01sqm6o8kd2nXXVaecFiGacGDNt++BZORPEDluwSK73q6sQR3
+         PSOEAsgWc7AebKJbrHg+NI4Yy4I/l/jl6UshcmaKTdQw894A35jbF1vblu+fsgG4d1tz
+         5outuOJpYyBYOdbGKdgtRqo9gBJZEdm3tZtA/ta6WF85G7WqtHbWjMbkSgxUzZ5JRaHN
+         SSEOlECnaElgGLtOs02mz4D0vF51vwzSKxu5I9rbJbVW/LC4ky6Qr9aWRvHkOAAcEOY8
+         qh+A==
+X-Gm-Message-State: AGRZ1gLwFap+0jFu4PNcLh45F1qOUvJDyt6xgl353k0e4uA0qUiRKFNN
+        XgDE6JSZEKTZopn1VnUiIGQ=
+X-Google-Smtp-Source: AJdET5dP2wRD54Y8gYRq0P762UrAEybiFTC2qP1aAlYWMoAmnWMb326VWJfrBxSxVx+xEjhedp5NbA==
+X-Received: by 2002:a5d:4d46:: with SMTP id a6-v6mr2962047wru.316.1540490773251;
+        Thu, 25 Oct 2018 11:06:13 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id j46-v6sm14732393wre.91.2018.10.25.11.06.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Oct 2018 11:06:12 -0700 (PDT)
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Michal Simek <michal.simek@xilinx.com>,
+        dmaengine@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Subject: [PATCH] dmaengine: xilinx_dma: Remove __aligned attribute on zynqmp_dma_desc_ll
+Date:   Thu, 25 Oct 2018 11:05:25 -0700
+Message-Id: <20181025180525.28378-1-natechancellor@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a6f5b6e7-4d3e-dd8f-4028-0ee370b11722@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 10:53:12AM -0700, Florian Fainelli wrote:
-> Something like this below? It does not have to be an alternative
-> solution, I would find it useful for perf to make sure the vectors page
-> is present in the virtual address space by having an explicit test. perf
-> maintains, what do you think?
+Clang warns:
 
-Yep, I'd swap the two tests merely because the check for 'sig' will be
-slightly cheaper than the mask-and-test of addr, but it probably doesn't
-make that much difference.
+drivers/dma/xilinx/zynqmp_dma.c:166:4: warning: attribute 'aligned' is
+ignored, place it after "struct" to apply attribute to type declaration
+[-Wignored-attributes]
+}; __aligned(64)
+   ^
+./include/linux/compiler_types.h:200:38: note: expanded from macro
+'__aligned'
+#define __aligned(x)            __attribute__((aligned(x)))
+                                               ^
+1 warning generated.
 
-> 
-> diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
-> index f4ea4c62c613..b045b48d368d 100644
-> --- a/arch/arm/mm/fault.c
-> +++ b/arch/arm/mm/fault.c
-> @@ -173,6 +173,11 @@ __do_user_fault(struct task_struct *tsk, unsigned
-> long addr,
->                 show_regs(regs);
->         }
->  #endif
-> +#ifndef CONFIG_KUSER_HELPERS
-> +       if (((addr & PAGE_MASK) == 0xffff0000) && (sig == SIGSEGV))
-> +               printk(KERN_DEBUG "%s: CONFIG_KUSER_HELPERS disabled at
-> 0x%08lx\n",
-> +                      tsk->comm, addr);
-> +#endif
-> 
->         tsk->thread.address = addr;
->         tsk->thread.error_code = fsr;
-> 
-> 
-> > 
-> > BTW, I note that the help text for CONFIG_KUSER_HELPERS needs to be
-> > updated.
-> > 
-> 
-> 
-> -- 
-> Florian
+As Nick pointed out in the previous version of this patch, the author
+likely intended for this struct to be 8-byte (64-bit) aligned, not
+64-byte, which is the default. Remove the hanging __aligned attribute.
 
+Fixes: b0cc417c1637 ("dmaengine: Add Xilinx zynqmp dma engine driver support")
+Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+---
+ drivers/dma/xilinx/zynqmp_dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/dma/xilinx/zynqmp_dma.c b/drivers/dma/xilinx/zynqmp_dma.c
+index c74a88b65039..73de6a6179fc 100644
+--- a/drivers/dma/xilinx/zynqmp_dma.c
++++ b/drivers/dma/xilinx/zynqmp_dma.c
+@@ -163,7 +163,7 @@ struct zynqmp_dma_desc_ll {
+ 	u32 ctrl;
+ 	u64 nxtdscraddr;
+ 	u64 rsvd;
+-}; __aligned(64)
++};
+ 
+ /**
+  * struct zynqmp_dma_desc_sw - Per Transaction structure
 -- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+2.19.1
+
