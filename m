@@ -2,201 +2,274 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A4D1C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:55:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B851DC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:56:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37C1520834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:55:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37C1520834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6814F20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:56:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="Urcqhrt9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6814F20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727623AbeJZGaM (ORCPT
+        id S1727614AbeJZGaq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 02:30:12 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41446 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725941AbeJZGaM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 02:30:12 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A5C7EC9DD8;
-        Thu, 25 Oct 2018 21:55:47 +0000 (UTC)
-Received: from ivy-bridge (ovpn-116-33.ams2.redhat.com [10.36.116.33])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A8D0F9CDB;
-        Thu, 25 Oct 2018 21:55:26 +0000 (UTC)
-Date:   Thu, 25 Oct 2018 23:55:27 +0200
-From:   Steve Grubb <sgrubb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     rgb@redhat.com, simo@redhat.com, carlos@redhat.com,
-        linux-api@vger.kernel.org, containers@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        linux-audit@redhat.com, netfilter-devel@vger.kernel.org,
-        ebiederm@xmission.com, luto@kernel.org, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH ghak90 (was ghak32) V4 03/10] audit: log container info
- of syscalls
-Message-ID: <20181025235527.15a39d75@ivy-bridge>
-In-Reply-To: <CAHC9VhScaG8aOFYRV5hPXEKob1QRth5YFEbHNY=ZgKKAKxBBsQ@mail.gmail.com>
-References: <cover.1533065887.git.rgb@redhat.com>
-        <34017c395d03a213d6b0d49b9964429bd32b283d.1533065887.git.rgb@redhat.com>
-        <CAHC9VhSv4hWGHiaaOfuBrRQKdp2YG5RtqXQbFXg7j7LNEhO2XQ@mail.gmail.com>
-        <20181024151439.lavhanabsyxdrdvo@madcap2.tricolour.ca>
-        <CAHC9VhRF1vsxM-k0Lw-9NqS9b9rgXRRBu0tq4ajdFpMqUxiH4A@mail.gmail.com>
-        <20181025004255.zl7p7j6gztouh2hh@madcap2.tricolour.ca>
-        <20181025080638.771621a3@ivy-bridge>
-        <CAHC9VhR02siURgadQs0EikcOm0d_TPAi4jJYCx4NkA=wQ5rjSA@mail.gmail.com>
-        <20181025122732.4j4rbychjse3gemt@madcap2.tricolour.ca>
-        <20181025175745.5b2b13e9@ivy-bridge>
-        <20181025173830.4yklhnrydt5qvr67@madcap2.tricolour.ca>
-        <CAHC9VhScaG8aOFYRV5hPXEKob1QRth5YFEbHNY=ZgKKAKxBBsQ@mail.gmail.com>
-Organization: Red Hat
+        Fri, 26 Oct 2018 02:30:46 -0400
+Received: from alln-iport-2.cisco.com ([173.37.142.89]:38883 "EHLO
+        alln-iport-2.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725941AbeJZGap (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 02:30:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=7299; q=dns/txt; s=iport;
+  t=1540504580; x=1541714180;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=xaLqnhuzJ3kSSJ0CpInXdN6VD0z1q83VLb7G3wEbCKE=;
+  b=Urcqhrt9NSQ9PZEZhDFMp+hLxJbjopN567i/ee0obnyN68u0qsjsg44B
+   jX6Qe6Ah0DgKv4WFz4W7s6ef5t0bLwjsO1b+Py3j7mbUMey8cMMHNwM1Q
+   aSFPQAGsOdmfN+v+BdWuU0GLg44LWk4tGSjdIn7U7HT8COQXxuBR3v+Ic
+   c=;
+X-IronPort-AV: E=Sophos;i="5.54,425,1534809600"; 
+   d="scan'208";a="191707772"
+Received: from alln-core-12.cisco.com ([173.36.13.134])
+  by alln-iport-2.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2018 21:56:20 +0000
+Received: from [10.154.208.133] ([10.154.208.133])
+        by alln-core-12.cisco.com (8.15.2/8.15.2) with ESMTP id w9PLuHgW019061;
+        Thu, 25 Oct 2018 21:56:18 GMT
+Subject: Re: [PATCH v2] kernel/signal: Signal-based pre-coredump notification
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Helge Deller <deller@gmx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <christian@brauner.io>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
+        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>,
+        Enke Chen <enkechen@cisco.com>
+References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
+ <458c04d8-d189-4a26-729a-bb1d1d751534@cisco.com>
+ <87sh0vpj5q.fsf@xmission.com>
+ <df08c74f-1027-c635-fb99-a12d23f60947@cisco.com>
+ <87zhv2md04.fsf@xmission.com>
+From:   Enke Chen <enkechen@cisco.com>
+Message-ID: <1f9128b3-7d92-9daa-fa2c-c82a53227d50@cisco.com>
+Date:   Thu, 25 Oct 2018 14:56:18 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <87zhv2md04.fsf@xmission.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 25 Oct 2018 21:55:47 +0000 (UTC)
+X-Auto-Response-Suppress: DR, OOF, AutoReply
+X-Outbound-SMTP-Client: 10.154.208.133, [10.154.208.133]
+X-Outbound-Node: alln-core-12.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 25 Oct 2018 16:40:19 -0400
-Paul Moore <paul@paul-moore.com> wrote:
+Hi, Eric:
 
-> On Thu, Oct 25, 2018 at 1:38 PM Richard Guy Briggs <rgb@redhat.com>
-> wrote:
-> > On 2018-10-25 17:57, Steve Grubb wrote:  
-> > > On Thu, 25 Oct 2018 08:27:32 -0400
-> > > Richard Guy Briggs <rgb@redhat.com> wrote:
-> > >  
-> > > > On 2018-10-25 06:49, Paul Moore wrote:  
-> > > > > On Thu, Oct 25, 2018 at 2:06 AM Steve Grubb
-> > > > > <sgrubb@redhat.com> wrote:  
-> > > > > > On Wed, 24 Oct 2018 20:42:55 -0400
-> > > > > > Richard Guy Briggs <rgb@redhat.com> wrote:  
-> > > > > > > On 2018-10-24 16:55, Paul Moore wrote:  
-> > > > > > > > On Wed, Oct 24, 2018 at 11:15 AM Richard Guy Briggs
-> > > > > > > > <rgb@redhat.com> wrote:  
-> > > > > > > > > On 2018-10-19 19:16, Paul Moore wrote:  
-> > > > > > > > > > On Sun, Aug 5, 2018 at 4:32 AM Richard Guy Briggs
-> > > > > > > > > > <rgb@redhat.com> wrote:  
-> > > > >
-> > > > > ...
-> > > > >  
-> > > > > > > > > > > +/*
-> > > > > > > > > > > + * audit_log_contid - report container info
-> > > > > > > > > > > + * @tsk: task to be recorded
-> > > > > > > > > > > + * @context: task or local context for record
-> > > > > > > > > > > + * @op: contid string description
-> > > > > > > > > > > + */
-> > > > > > > > > > > +int audit_log_contid(struct task_struct *tsk,
-> > > > > > > > > > > +                            struct audit_context
-> > > > > > > > > > > *context, char *op) +{
-> > > > > > > > > > > +       struct audit_buffer *ab;
-> > > > > > > > > > > +
-> > > > > > > > > > > +       if (!audit_contid_set(tsk))
-> > > > > > > > > > > +               return 0;
-> > > > > > > > > > > +       /* Generate AUDIT_CONTAINER record with
-> > > > > > > > > > > container ID */
-> > > > > > > > > > > +       ab = audit_log_start(context, GFP_KERNEL,
-> > > > > > > > > > > AUDIT_CONTAINER);
-> > > > > > > > > > > +       if (!ab)
-> > > > > > > > > > > +               return -ENOMEM;
-> > > > > > > > > > > +       audit_log_format(ab, "op=%s contid=%llu",
-> > > > > > > > > > > +                        op,
-> > > > > > > > > > > audit_get_contid(tsk));
-> > > > > > > > > > > +       audit_log_end(ab);
-> > > > > > > > > > > +       return 0;
-> > > > > > > > > > > +}
-> > > > > > > > > > > +EXPORT_SYMBOL(audit_log_contid);  
-> > > > > > > > > >
-> > > > > > > > > > As discussed in the previous iteration of the
-> > > > > > > > > > patch, I prefer AUDIT_CONTAINER_ID here over
-> > > > > > > > > > AUDIT_CONTAINER.  If you feel strongly about
-> > > > > > > > > > keeping it as-is with AUDIT_CONTAINER I suppose I
-> > > > > > > > > > could live with that, but it is isn't my first
-> > > > > > > > > > choice.  
-> > > > > > > > >
-> > > > > > > > > I don't have a strong opinion on this one, mildly
-> > > > > > > > > preferring the shorter one only because it is
-> > > > > > > > > shorter.  
-> > > > > > > >
-> > > > > > > > We already have multiple AUDIT_CONTAINER* record types,
-> > > > > > > > so it seems as though we should use "AUDIT_CONTAINER"
-> > > > > > > > as a prefix of sorts, rather than a type itself.  
-> > > > > > >
-> > > > > > > I'm fine with that.  I'd still like to hear Steve's
-> > > > > > > input.  He had stronger opinions than me.  
-> > > > > >
-> > > > > > The creation event should be separate and distinct from the
-> > > > > > continuing use when its used as a supplemental record. IOW,
-> > > > > > binding the ID to a container is part of the lifecycle and
-> > > > > > needs to be kept distinct.  
-> > > > >
-> > > > > Steve's comment is pretty ambiguous when it comes to
-> > > > > AUDIT_CONTAINER vs AUDIT_CONTAINER_ID, but one could argue
-> > > > > that AUDIT_CONTAINER_ID helps distinguish the audit container
-> > > > > id marking record and gets to what I believe is the spirit of
-> > > > > Steve's comment.  Taking this in context with my previous
-> > > > > remarks, let's switch to using AUDIT_CONTAINER_ID.  
-> > > >
-> > > > I suspect Steve is mixing up AUDIT_CONTAINER_OP with
-> > > > AUDIT_CONTAINER_ID, confusing the fact that they are two
-> > > > seperate records.  As a summary, the suggested records are:
-> > > >     CONTAINER_OP    audit container identifier creation
-> > > >     CONTAINER       audit container identifier aux record to an
-> > > > event
-> > > >
-> > > > and what Paul is suggesting (which is fine by me) is:
-> > > >     CONTAINER_OP    audit container identifier creation event
-> > > >     CONTAINER_ID    audit container identifier aux record to
-> > > > an event
-> > > >
-> > > > Steve, please indicate you are fine with this.  
-> > >
-> > > I thought it was:  
-> >
-> > It *was*.  It was changed at Paul's request in this v3 thread:
-> >         https://www.redhat.com/archives/linux-audit/2018-July/msg00087.html
-> >
-> > And listed in the examples and changelog to this v4 patchset:
-> >         https://www.redhat.com/archives/linux-audit/2018-July/msg00178.html
-> >
-> > It is also listed in this userspace patchset update v4 (which should
-> > also have had a changelog added to it, note to self...):
-> >         https://www.redhat.com/archives/linux-audit/2018-July/msg00189.html
-> >
-> > I realize it is hard to keep up with all the detail changes in these
-> > patchsets...
-> >  
-> > > CONTAINER_ID audit container identifier creation event
-> > > event. CONTAINER audit container identifier aux record to an
-> > > event
-> > >
-> > > Or vice versa. Don't mix up creation of the identifier with
-> > > operations.  
-> >
-> > Exactly what I'm trying to avoid...  Worded another way: "Don't mix
-> > up the creation operation with routine reporting of the identifier
-> > in events."  Steve, can you and Paul discuss and agree on what they
-> > should be called?  I don't have a horse in this race, but I need to
-> > record the result of that run.  ;-)  
+Please see my replied inline.
+
+On 10/25/18 5:23 AM, Eric W. Biederman wrote:
+> Enke Chen <enkechen@cisco.com> writes:
 > 
-> See my previous comments, I think I've been pretty clear on what I
-> would like to see.
+>> Hi, Eric:
+>>
+>> Thanks for your comments. Please see my replies inline.
+>>
+>> On 10/24/18 6:29 AM, Eric W. Biederman wrote:
+>>> Enke Chen <enkechen@cisco.com> writes:
+>>>
+>>>> For simplicity and consistency, this patch provides an implementation
+>>>> for signal-based fault notification prior to the coredump of a child
+>>>> process. A new prctl command, PR_SET_PREDUMP_SIG, is defined that can
+>>>> be used by an application to express its interest and to specify the
+>>>> signal (SIGCHLD or SIGUSR1 or SIGUSR2) for such a notification. A new
+>>>> signal code (si_code), CLD_PREDUMP, is also defined for SIGCHLD.
+>>>>
+>>>> Changes to prctl(2):
+>>>>
+>>>>    PR_SET_PREDUMP_SIG (since Linux 4.20.x)
+>>>>           Set the child pre-coredump signal of the calling process to
+>>>>           arg2 (either SIGUSR1, or SIUSR2, or SIGCHLD, or 0 to clear).
+>>>>           This is the signal that the calling process will get prior to
+>>>>           the coredump of a child process. This value is cleared across
+>>>>           execve(2), or for the child of a fork(2).
+>>>>
+>>>>           When SIGCHLD is specified, the signal code will be set to
+>>>>           CLD_PREDUMP in such an SIGCHLD signal.
+>>>
+>>> Your signal handling is still not right.  Please read and comprehend
+>>> siginfo_layout.
+>>>
+>>> You have not filled in all of the required fields for the SIGCHLD case.
+>>> For the non SIGCHLD case you are using si_code == 0 == SI_USER which is
+>>> very wrong.  This is not a user generated signal.
+>>>
+>>> Let me say this slowly.  The pair si_signo si_code determines the union
+>>> member of struct siginfo.  That needs to be handled consistently. You
+>>> aren't.  I just finished fixing this up in the entire kernel and now you
+>>> are trying to add a usage that is worst than most of the bugs I have
+>>> fixed.  I really don't appreciate having to deal with no bugs.
+>>>
+>>
+>> My apologies. I will investigate and make them consistent.
+>>
+>>>
+>>>
+>>> Further siginfo can be dropped.  Multiple signals with the same signal
+>>> number can be consolidated.  What is your plan for dealing with that?
+>>
+>> The primary application for the early notification involves a process
+>> manager which is responsible for re-spawning processes or initiating
+>> the control-plane fail-over. There are two models:
+>>
+>> One model is to have 1:1 relationship between a process manager and
+>> application process. There can only be one predump-signal (say, SIGUSR1)
+>> from the child to the parent, and will unlikely be dropped or consolidated.
+>>
+>> Another model is to have 1:N where there is only one process manager with
+>> multiple application processes. One of the RT signal can be used to help
+>> make it more reliable.
+> 
+> Which suggests you want one of the negative si_codes, and to use the _rt
+> siginfo member like sigqueue.
 
-And historically speaking setting audit loginuid produces a LOGIN
-event, so it only makes sense to consider binding container ID to
-container as a CONTAINER event. For other supplemental records, we name
-things what they are: PATH, CWD, SOCKADDR, etc. So, CONTAINER_ID makes
-sense. CONTAINER_OP sounds like its for operations on a container. Do
-we have any operations on a container?
+It seems that we do not need to touch the si_codes. A dedicated signal
+for the pre-coredump notification is simpler and more robust. There are
+enough RT signal numbers available.
 
--Steve
+> 
+>>> Other code paths pair with wait to get the information out.  There
+>>> is no equivalent of wait in your code.
+>>
+>> I was not aware of that before.  Let me investigate.
+>>
+>>>
+>>> Signals can be delayed by quite a bit, scheduling delays etc.  They can
+>>> not provide any meaningful kind of real time notification.
+>>>
+>>
+>> The timing requirement is about 50-100 msecs for BFD.  Not sure if that
+>> qualifies as "real time".  This mechanism has worked well in deployment
+>> over the years.
+> 
+> It would help if those numbers were put into the patch description so
+> people can tell if the mechanism is quick enough.
+
+I will do as suggested, but at the risk of making the patch description
+longer than the patch itself :-)
+
+> 
+>>> So between delays and loss of information signals appear to be a very
+>>> poor fit for this usecase.
+>>>
+>>> I am concerned about code that does not fit the usecase well because
+>>> such code winds up as code that no one cares about that must be
+>>> maintained indefinitely, because somewhere out there there is one use
+>>> that would break if the interface was removed.  This does not feel like
+>>> an interface people will want to use and maintain in proper working
+>>> order forever.
+>>>
+>>> Ugh.  Your test case is even using signalfd.  So you don't even want
+>>> this signal to be delivered as a signal.
+>>
+>> I actually tested sigaction()/waitpid() as well. If there is a preference,
+>> I can check in the sigaction()/waitpid() version instead.
+>>
+>>>
+>>> You add an interface that takes a pointer and you don't add a compat
+>>> interface.  See Oleg's point of just returning the signal number in the
+>>> return code.
+>>
+>> This is what Oleg said "but I won't insist, this is subjective and cosmetic".
+>>
+>> It is no big deal either way. It just seems less work if we do not keep
+>> adding exceptions to the prctl(2) manpage:
+>>  
+>> prctl(2):
+>>
+>>        On success, PR_GET_DUMPABLE,   PR_GET_KEEPCAPS,   PR_GET_NO_NEW_PRIVS,   PR_CAPBSET_READ,    PR_GET_TIMING,    PR_GET_SECUREBITS,
+>>        PR_MCE_KILL_GET,  PR_CAP_AMBIENT+PR_CAP_AMBIENT_IS_SET,  and  (if  it returns) PR_GET_SECCOMP return the nonnegative values described
+>>        above.  All other option values return 0 on success.  On error, -1 is returned, and errno is set appropriately.
+> 
+> More work in the man page versus less work in the kernel, and less code
+> to maintain.  I will vote for more work in the man page.
+
+Oleg has given me a pass on this one. It is one line. But I still
+prefer not to change back unless there is strong opinion... 
+
+> 
+>>> Now I am wondering how well prctl works from a 32bit process on a 64bit
+>>> kernel.  At first glance it looks like it probably does not work.
+>>>
+>>
+>> I am not sure which part would be problematic.
+> 
+> 32bit pointers need to be translated into 64bit pointers.  If the system
+> call does not zero extend them.  Plus structure sizes.
+> 
+> I think prctl is just inside the line where problems happen but it is so
+> close to the line of structure size differences that it makes me
+> nervous.  Typically pointers in structures are what cause system calls
+> to cross that line.
+> 
+>>> Consistency with PDEATHSIG is not a good argument for anything.
+>>> PDEATHSIG at the present time is unusable in the real world by most
+>>> applications that want something like it.
+>>
+>> Agreed, PDEATHSIG seems to have a few issues ...
+>>
+>>>
+>>> So far I see an interface that even you don't want to use as designed,
+>>> that is implemented incorrectly.
+>>>
+>>> The concern is real and deserves to be addressed.  I don't think signals
+>>> are the right way to handle it, and certainly not this patch as it
+>>> stands.
+>>
+>> I will address your concerns on the patch. Regarding the requirement and the
+>> overall solution, if there are specific questions that I have not answered,
+>> please let me know.
+> 
+> So far so good.
+> 
+
+Thanks. Reviews from folks on the list have certainly made the code shorter,
+simpler and cleaner.
+
+-- Enke
+
