@@ -5,69 +5,155 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8751CECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 15:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC374ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 15:57:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 375BD2084A
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 15:57:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 375BD2084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
+	by mail.kernel.org (Postfix) with ESMTP id 8FB012083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 15:57:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FB012083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727787AbeJZAbL (ORCPT
+        id S1727820AbeJZAbS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 20:31:11 -0400
-Received: from s3.sipsolutions.net ([144.76.43.62]:45006 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727350AbeJZAbK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 20:31:10 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.91)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1gFi12-000560-Nr; Thu, 25 Oct 2018 17:57:44 +0200
-Message-ID: <61f01315bbbec872d4173ca4a89ba0268d199aa3.camel@sipsolutions.net>
-Subject: Re: [PATCH 1/3] kernel/workqueue: Remove lockdep annotation from
- __flush_work()
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     Bart Van Assche <bvanassche@acm.org>, Tejun Heo <tj@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        "tytso@mit.edu" <tytso@mit.edu>
-Date:   Thu, 25 Oct 2018 17:57:22 +0200
-In-Reply-To: <986cb39001ee9eb11dd546b79de9e0b4b8463d19.camel@sipsolutions.net>
-References: <20181025150540.259281-1-bvanassche@acm.org>
-         <20181025150540.259281-2-bvanassche@acm.org>
-         <986cb39001ee9eb11dd546b79de9e0b4b8463d19.camel@sipsolutions.net>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
+        Thu, 25 Oct 2018 20:31:18 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50396 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727350AbeJZAbS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 20:31:18 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5D88FC71B1;
+        Thu, 25 Oct 2018 15:57:54 +0000 (UTC)
+Received: from ivy-bridge (ovpn-116-86.ams2.redhat.com [10.36.116.86])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0EE7F77E22;
+        Thu, 25 Oct 2018 15:57:48 +0000 (UTC)
+Date:   Thu, 25 Oct 2018 17:57:45 +0200
+From:   Steve Grubb <sgrubb@redhat.com>
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Paul Moore <paul@paul-moore.com>, simo@redhat.com,
+        carlos@redhat.com, linux-api@vger.kernel.org,
+        containers@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, dhowells@redhat.com,
+        linux-audit@redhat.com, netfilter-devel@vger.kernel.org,
+        ebiederm@xmission.com, luto@kernel.org, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH ghak90 (was ghak32) V4 03/10] audit: log container info
+ of syscalls
+Message-ID: <20181025175745.5b2b13e9@ivy-bridge>
+In-Reply-To: <20181025122732.4j4rbychjse3gemt@madcap2.tricolour.ca>
+References: <cover.1533065887.git.rgb@redhat.com>
+        <34017c395d03a213d6b0d49b9964429bd32b283d.1533065887.git.rgb@redhat.com>
+        <CAHC9VhSv4hWGHiaaOfuBrRQKdp2YG5RtqXQbFXg7j7LNEhO2XQ@mail.gmail.com>
+        <20181024151439.lavhanabsyxdrdvo@madcap2.tricolour.ca>
+        <CAHC9VhRF1vsxM-k0Lw-9NqS9b9rgXRRBu0tq4ajdFpMqUxiH4A@mail.gmail.com>
+        <20181025004255.zl7p7j6gztouh2hh@madcap2.tricolour.ca>
+        <20181025080638.771621a3@ivy-bridge>
+        <CAHC9VhR02siURgadQs0EikcOm0d_TPAi4jJYCx4NkA=wQ5rjSA@mail.gmail.com>
+        <20181025122732.4j4rbychjse3gemt@madcap2.tricolour.ca>
+Organization: Red Hat
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 25 Oct 2018 15:57:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-10-25 at 17:31 +0200, Johannes Berg wrote:
-> On Thu, 2018-10-25 at 15:05 +0000, Bart Van Assche wrote:
-> > As documented in a comment in start_flush_work(), calling flush_work()
-> > from a multi-threaded workqueue is safe if that workqueue is not
-> > equipped with a rescuer. Avoid that flush_work() calls from inside a
-> > work item executing on such a queue trigger a lockdep complaint.
+On Thu, 25 Oct 2018 08:27:32 -0400
+Richard Guy Briggs <rgb@redhat.com> wrote:
 
-So actually, come to think of it, certainly this will cause a false
-negative in this case?
+> On 2018-10-25 06:49, Paul Moore wrote:
+> > On Thu, Oct 25, 2018 at 2:06 AM Steve Grubb <sgrubb@redhat.com>
+> > wrote:  
+> > > On Wed, 24 Oct 2018 20:42:55 -0400
+> > > Richard Guy Briggs <rgb@redhat.com> wrote:  
+> > > > On 2018-10-24 16:55, Paul Moore wrote:  
+> > > > > On Wed, Oct 24, 2018 at 11:15 AM Richard Guy Briggs
+> > > > > <rgb@redhat.com> wrote:  
+> > > > > > On 2018-10-19 19:16, Paul Moore wrote:  
+> > > > > > > On Sun, Aug 5, 2018 at 4:32 AM Richard Guy Briggs
+> > > > > > > <rgb@redhat.com> wrote:  
+> > 
+> > ...
+> >   
+> > > > > > > > +/*
+> > > > > > > > + * audit_log_contid - report container info
+> > > > > > > > + * @tsk: task to be recorded
+> > > > > > > > + * @context: task or local context for record
+> > > > > > > > + * @op: contid string description
+> > > > > > > > + */
+> > > > > > > > +int audit_log_contid(struct task_struct *tsk,
+> > > > > > > > +                            struct audit_context
+> > > > > > > > *context, char *op) +{
+> > > > > > > > +       struct audit_buffer *ab;
+> > > > > > > > +
+> > > > > > > > +       if (!audit_contid_set(tsk))
+> > > > > > > > +               return 0;
+> > > > > > > > +       /* Generate AUDIT_CONTAINER record with
+> > > > > > > > container ID */
+> > > > > > > > +       ab = audit_log_start(context, GFP_KERNEL,
+> > > > > > > > AUDIT_CONTAINER);
+> > > > > > > > +       if (!ab)
+> > > > > > > > +               return -ENOMEM;
+> > > > > > > > +       audit_log_format(ab, "op=%s contid=%llu",
+> > > > > > > > +                        op, audit_get_contid(tsk));
+> > > > > > > > +       audit_log_end(ab);
+> > > > > > > > +       return 0;
+> > > > > > > > +}
+> > > > > > > > +EXPORT_SYMBOL(audit_log_contid);  
+> > > > > > >
+> > > > > > > As discussed in the previous iteration of the patch, I
+> > > > > > > prefer AUDIT_CONTAINER_ID here over AUDIT_CONTAINER.  If
+> > > > > > > you feel strongly about keeping it as-is with
+> > > > > > > AUDIT_CONTAINER I suppose I could live with that, but it
+> > > > > > > is isn't my first choice.  
+> > > > > >
+> > > > > > I don't have a strong opinion on this one, mildly
+> > > > > > preferring the shorter one only because it is shorter.  
+> > > > >
+> > > > > We already have multiple AUDIT_CONTAINER* record types, so it
+> > > > > seems as though we should use "AUDIT_CONTAINER" as a prefix
+> > > > > of sorts, rather than a type itself.  
+> > > >
+> > > > I'm fine with that.  I'd still like to hear Steve's input.  He
+> > > > had stronger opinions than me.  
+> > >
+> > > The creation event should be separate and distinct from the
+> > > continuing use when its used as a supplemental record. IOW,
+> > > binding the ID to a container is part of the lifecycle and needs
+> > > to be kept distinct.  
+> > 
+> > Steve's comment is pretty ambiguous when it comes to AUDIT_CONTAINER
+> > vs AUDIT_CONTAINER_ID, but one could argue that AUDIT_CONTAINER_ID
+> > helps distinguish the audit container id marking record and gets to
+> > what I believe is the spirit of Steve's comment.  Taking this in
+> > context with my previous remarks, let's switch to using
+> > AUDIT_CONTAINER_ID.  
+> 
+> I suspect Steve is mixing up AUDIT_CONTAINER_OP with
+> AUDIT_CONTAINER_ID, confusing the fact that they are two seperate
+> records.  As a summary, the suggested records are:
+> 	CONTAINER_OP	audit container identifier creation
+> 	CONTAINER	audit container identifier aux record to an
+> event
+> 
+> and what Paul is suggesting (which is fine by me) is:
+> 	CONTAINER_OP	audit container identifier creation event
+> 	CONTAINER_ID	audit container identifier aux record to
+> an event
+> 
+> Steve, please indicate you are fine with this.
 
-mutex_lock(A);
-flush_work(W);
+I thought it was:
 
-worker_W_function()
-{
-	mutex_lock(A);
-}
+CONTAINER_ID audit container identifier creation event
+CONTAINER audit container identifier aux record to an event
 
-right?
+Or vice versa. Don't mix up creation of the identifier with operations.
 
-johannes
-
+-Steve
