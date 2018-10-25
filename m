@@ -2,113 +2,194 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F59C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03223ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:50:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19B3120834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:49:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19B3120834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id BDC1020831
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:50:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDC1020831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbeJYUWN (ORCPT
+        id S1727472AbeJYUWj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 16:22:13 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58446 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727208AbeJYUWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 16:22:13 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AB6797DD26;
-        Thu, 25 Oct 2018 11:49:47 +0000 (UTC)
-Received: from localhost (holly.tpb.lab.eng.brq.redhat.com [10.43.134.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A748A5DD6C;
-        Thu, 25 Oct 2018 11:49:45 +0000 (UTC)
-Date:   Thu, 25 Oct 2018 13:49:44 +0200
-From:   Miroslav Lichvar <mlichvar@redhat.com>
-To:     Christopher Hall <christopher.s.hall@intel.com>
-Cc:     John Stultz <john.stultz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        jesus.sanchez-palencia@intel.com,
-        Gavin Hindman <gavin.hindman@intel.com>,
-        liam.r.girdwood@intel.com, Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: TSC to Mono-raw Drift
-Message-ID: <20181025114944.GH12019@localhost>
-References: <alpine.DEB.2.21.1810191720590.6075@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1810191955250.1651@nanos.tec.linutronix.de>
- <CALAqxLWHdZn9RCcYbYicKXeu3QiCuVna27mWBQPbFvaj9gm-fw@mail.gmail.com>
- <alpine.DEB.2.21.1810192050250.1651@nanos.tec.linutronix.de>
- <CALAqxLVrPH-SFacys6pWBvL79OBwiAMUOL55oy3S7C+7pNffHA@mail.gmail.com>
- <alpine.DEB.2.21.1810192244150.1651@nanos.tec.linutronix.de>
- <CALAqxLUpKU73kzBh6mxgoCX4nEueuE42REcXw6F6DYYk4Hry6Q@mail.gmail.com>
- <CALAqxLUKOYYm=bzn4owZC_UgWTqrVPiz2TSnLFm1RNak3tm8-g@mail.gmail.com>
- <20181024145113.GF12019@localhost>
- <20181024173248.GB6121@artvirt.jf.intel.com>
+        Thu, 25 Oct 2018 16:22:39 -0400
+Received: from mail-sh2.amlogic.com ([58.32.228.45]:19098 "EHLO
+        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727208AbeJYUWj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 16:22:39 -0400
+Received: from [10.18.29.185] (10.18.29.185) by mail-sh2.amlogic.com
+ (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Thu, 25 Oct
+ 2018 19:50:11 +0800
+Subject: Re: [PATCH v5 2/3] clk: meson: add DT documentation for emmc clock
+ controller
+To:     Yixun Lan <dlan@gentoo.org>, Jerome Brunet <jbrunet@baylibre.com>
+CC:     Neil Armstrong <narmstrong@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        <linux-kernel@vger.kernel.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Liang Yang <liang.yang@amlogic.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Carlo Caione <carlo@caione.org>,
+        <linux-amlogic@lists.infradead.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>
+References: <1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com>
+ <1539839245-13793-3-git-send-email-jianxin.pan@amlogic.com>
+ <ca95948abd58876a23b2eb3e52b96124e9eed793.camel@baylibre.com>
+ <20181024145513.GA6647@ofant>
+From:   Jianxin Pan <jianxin.pan@amlogic.com>
+Message-ID: <146f13c1-f309-d619-602b-b14535ab5f79@amlogic.com>
+Date:   Thu, 25 Oct 2018 19:50:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181024173248.GB6121@artvirt.jf.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 25 Oct 2018 11:49:47 +0000 (UTC)
+In-Reply-To: <20181024145513.GA6647@ofant>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.18.29.185]
+X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
+ (10.18.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 01:32:48PM -0400, Christopher Hall wrote:
-> On Wed, Oct 24, 2018 at 04:51:13PM +0200, Miroslav Lichvar wrote:
-> > The error is too large to be corrected by stepping on clock updates.
-> > For a typical TSC frequency we have multiplier in the range of few
-> > millions, so that's a frequency error of up to few hundred ppb. In the
+On 2018/10/25 15:29, Yixun Lan wrote:
+> Hi Jerome, Jianxin:
 > 
-> For this example, a i5-6600 CPU @ 3.30GHz I measured 90 ppb. That is the
-> largest I've seen since measuring this on a few platforms. 20-40 PPB seems
-> more typical.
-
-It looks like there is rounding in the calculation of the multiplier,
-so for frequencies in the range of 3-5GHz the error will be up to
-about 149 ppb. Without rounding it would be twice as much, but always
-fast or slow.
-
-> > A better fix might be to modify the calculation of time to use a
-> > second multiplier, effectively increasing its resolution. However,
+> see my comments
 > 
-> I'm not sure, I'm understanding. Like cascading transforms? While this
-> would increase the precision, I think it would still drift over days. We
-> could probably fix up every second though.
-
-I was thinking about using a wider multiplier, but avoiding a full
-64x64 bit multiplication.
-
-For example, in your case with the 3312MHz clock
-
-nsec = (cycles * 5065585) >> 24
-
-could be replaced with
-
-nsec = (cycles * 5065584) >> 24 + (cycles * 4538763) >> 47
-
-This would take few hours to drift by one nanosecond. If something
-like this was implemented for the raw clock, it would probably make
-sense to switch the other clocks too.
-
-> > that would slow down all users of the clock.
+> On 10:58 Wed 24 Oct     , Jerome Brunet wrote:
+>> On Thu, 2018-10-18 at 13:07 +0800, Jianxin Pan wrote:
+>>> From: Yixun Lan <yixun.lan@amlogic.com>
+>>>
+>>> Document the MMC sub clock controller driver, the potential consumer
+>>> of this driver is MMC or NAND. Also add four clock bindings IDs which
+>>> provided by this driver.
+>>>
+>>> Reviewed-by: Rob Herring <robh@kernel.org>
+>>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
+>>> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+>>> ---
+>>>  .../devicetree/bindings/clock/amlogic,mmc-clkc.txt | 31 ++++++++++++++++++++++
+>>>  include/dt-bindings/clock/amlogic,mmc-clkc.h       | 17 ++++++++++++
+>>>  2 files changed, 48 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+>>>  create mode 100644 include/dt-bindings/clock/amlogic,mmc-clkc.h
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+>>> new file mode 100644
+>>> index 0000000..9e6d343
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
+>>> @@ -0,0 +1,31 @@
+>>> +* Amlogic MMC Sub Clock Controller Driver
+>>> +
+>>> +The Amlogic MMC clock controller generates and supplies clock to support
+>>> +MMC and NAND controller
+>>> +
+>>> +Required Properties:
+>>> +
+>>> +- compatible: should be:
+>>> +		"amlogic,gx-mmc-clkc"
+>>> +		"amlogic,axg-mmc-clkc"
+>>> +
+>>> +- #clock-cells: should be 1.
+>>> +- clocks: phandles to clocks corresponding to the clock-names property
+>>> +- clock-names: list of parent clock names
+>>> +	- "clkin0", "clkin1"
+>>> +
+>>> +Parent node should have the following properties :
+>>> +- compatible: "amlogic,axg-mmc-clkc", "syscon".
+>>> +- reg: base address and size of the MMC control register space.
+>>
+>> I get why Stephen is confused by your description, I am too. The example
+>> contradict the documentation.
+>>
+>> The  documentation above says that the parent node should be a syscon with the
+>> mmc register space.
+>>
+>> But your example shows this in the node itself.
+>>
 > 
-> Couldn't some clocksources specify an additional multiplier/precision and
-> others use lower precision?
+> yes, I think the documentation need to be fixed
+ok, Thankyou. I will fix it in the next version.
+> 
+> for the final solution, we decide to make 'mmc-clkc' an independent node
+> instead of being a sub-node of 'mmc', so both of them may exist in parallel..
+> 
+> the DT part may like this:
+> 
+> 			sd_emmc_c_clkc: clock-controller@7000 {
+> 				compatible = "amlogic,axg-mmc-clkc", "syscon";
+> 				reg = <0x0 0x7000 0x0 0x4>;
+> 				...
+> 			};
+> 
+> 			sd_emmc_c: mmc@7000 {
+> 				compatible = "amlogic,axg-mmc";
+> 				reg = <0x0 0x7000 0x0 0x800>;
+> 				...
+> 			};
+> 
+> 
+>>> +
+>>> +Example: Clock controller node:
+>>> +
+>>> +sd_mmc_c_clkc: clock-controller@7000 {
+>>> +	compatible = "amlogic,axg-mmc-clkc", "syscon";
+>>> +	reg = <0x0 0x7000 0x0 0x4>;
+>>> +	#clock-cells = <1>;
+>>> +
+>>> +	clock-names = "clkin0", "clkin1";
+>>> +	clocks = <&clkc CLKID_SD_MMC_C_CLK0>,
+>>> +		 <&clkc CLKID_FCLK_DIV2>;
+>>> +};
+>>> diff --git a/include/dt-bindings/clock/amlogic,mmc-clkc.h b/include/dt-bindings/clock/amlogic,mmc-clkc.h
+>>> new file mode 100644
+>>> index 0000000..162b949
+>>> --- /dev/null
+>>> +++ b/include/dt-bindings/clock/amlogic,mmc-clkc.h
+>>> @@ -0,0 +1,17 @@
+>>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+>>> +/*
+>>> + * Meson MMC sub clock tree IDs
+>>> + *
+>>> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
+>>> + * Author: Yixun Lan <yixun.lan@amlogic.com>
+>>> + */
+>>> +
+>>> +#ifndef __MMC_CLKC_H
+>>> +#define __MMC_CLKC_H
+>>> +
+>>> +#define CLKID_MMC_DIV				1
+>>> +#define CLKID_MMC_PHASE_CORE			2
+>>> +#define CLKID_MMC_PHASE_TX			3
+>>> +#define CLKID_MMC_PHASE_RX			4
+>>> +
+>>> +#endif
+>>
+>>
+>>
+>> _______________________________________________
+>> linux-amlogic mailing list
+>> linux-amlogic@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-amlogic
+> 
 
-I guess it could, but I'm not sure if people here would be happy with
-the extra complexity.
-
--- 
-Miroslav Lichvar
