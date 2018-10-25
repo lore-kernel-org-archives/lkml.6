@@ -2,123 +2,106 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EF05C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 06:16:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF164C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 06:17:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D86020838
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 06:16:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71B1420838
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 06:17:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kDNRp0xv";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RcnhBHbs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D86020838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NgiuDA5o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71B1420838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbeJYOrQ (ORCPT
+        id S1727506AbeJYOsh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 10:47:16 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58490 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727090AbeJYOrQ (ORCPT
+        Thu, 25 Oct 2018 10:48:37 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:51372 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727090AbeJYOsh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 10:47:16 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4FD00602BA; Thu, 25 Oct 2018 06:16:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540448160;
-        bh=lOq98bvQ0U+kKwWrN7NM4PWPzHD0/dLKT3j8MJZLyoQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=kDNRp0xv48qcjtjatsOz40wrCXFNhYFCeSIghsujLh3z58y48lVnYmIzSUy/purn+
-         /dHGyTqeB5TSzCT7I7NI5SVczggmJLVNOZf0FjDJAym4jgoXi+8cnTOXEVg1ViOjns
-         fSYPAxW+oVALc8F4H8i+JpO3z/IBaI56icExahfc=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 649C4602BA;
-        Thu, 25 Oct 2018 06:15:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540448159;
-        bh=lOq98bvQ0U+kKwWrN7NM4PWPzHD0/dLKT3j8MJZLyoQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=RcnhBHbsv6EpnErzaGWk3awwPjCIc6Xd+wSxk+pW++bKrDL8DvtFj9nY/d1R5HDVp
-         Je8yNx2y3itb1M/50XiLDMaZpX+jk7AmUsfPkg29Y+qjdxMEbD1IAfMfXXUGkJgnag
-         RjsezDynKF6LTxHR15B6sx70GMhJAkcEW1TjOLiw=
+        Thu, 25 Oct 2018 10:48:37 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9P6DhmE151806;
+        Thu, 25 Oct 2018 06:16:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
+ bh=/Q6KS1OSazIK805TNB4UP1WPq78ibI1NSa8qOZhJYxA=;
+ b=NgiuDA5o8KeD8iXSO/PywAkZiZ03Seaye8NkpiDfxCmbR+PRJmv3iUJRA7RdBOGbuQvy
+ MSzyAaxObodcGExBTJ2CMdK4Lmc+XQ1CtBO/Ddugovu/9HvSQZCYDybHXXUGHXSqGVrF
+ 6MRaZLZhJ/hyBEFU8eFQTBPNEyhg0hDcjRp3pyTEUwaE02YEWEL8oXkeEEUvxyWAkv+N
+ oCcDOJbKL8L+KBDc2O/utYD7ddgeyDJHrBvoyFec2oAyhcoVrM8N7rXPUAhDaN2Y4gAR
+ aos4hvpb9tXZ9G1gyonkNn3AFIprWqyRUn9j/78TQMpgpWWHxvM1GZvju3usLGHJFe1R Tg== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2130.oracle.com with ESMTP id 2n7usufhrj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 25 Oct 2018 06:16:44 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9P6GhfO000509
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 25 Oct 2018 06:16:43 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9P6Ggh7024848;
+        Thu, 25 Oct 2018 06:16:42 GMT
+Received: from kili.mountain (/129.205.6.86)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 24 Oct 2018 23:16:41 -0700
+Date:   Thu, 25 Oct 2018 09:16:33 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] x86/ioremap: tighten integer overflow checking
+Message-ID: <20181025061633.t32bxslxj3h7jv2x@kili.mountain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 25 Oct 2018 11:45:59 +0530
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Evan Green <evgreen@chromium.org>, Rob Herring <robh@kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Stephen Boyd <swboyd@chromium.org>, cang@codeaurora.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Manu Gautam <mgautam@codeaurora.org>
-Subject: Re: [PATCH v4 2/5] phy: qcom-qmp: Utilize fully-specified DT
- registers
-In-Reply-To: <CAD=FV=VoBLh+SFmo8NieRT6LrOopkKRE86xiEMt_ap2gyDZXWw@mail.gmail.com>
-References: <20181024172735.154304-1-evgreen@chromium.org>
- <20181024172735.154304-3-evgreen@chromium.org>
- <6b3edcc1-eaca-0fac-7ec4-a7390650b13b@codeaurora.org>
- <CAD=FV=VoBLh+SFmo8NieRT6LrOopkKRE86xiEMt_ap2gyDZXWw@mail.gmail.com>
-Message-ID: <e4b227a63e8c803e4758c7bb8fd62d9f@codeaurora.org>
-X-Sender: vivek.gautam@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9056 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=995
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810250057
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-25 02:06, Doug Anderson wrote:
-> Hi,
-> 
-> On Wed, Oct 24, 2018 at 11:29 AM Vivek Gautam
-> <vivek.gautam@codeaurora.org> wrote:
->> Thanks for the patch.
->> I am starting to think that the driver is heavily relying on the
->> resource indices to request
->> all these areas ioremapped. Is it a good way forward that driver and 
->> the
->> dt bindings are
->> chained together?
->> Should we rather switch to requesting these resources by some names?
->> 
->> Rob can comment on this possibly.
-> 
-> I thought about suggesting that but I know that Rob really doesn't
-> like accessing register ranges by name [1].  Even in cases where you
-> reference things by name Rob likes there to be a fully defined order
-> and once you have a fully defined order you don't really need the
-> names unless you have more than one optional register range.
+The current check is a bit off in the case where "phys_addr + size"
+wraps to zero because then "last_addr" is set to ULONG_MAX which is >=
+phys_addr.
 
-Right, I second that. I was looking for options. :)
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ arch/x86/mm/ioremap.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> 
-> In any case, Rob already gave his review to Evan's bindings change.  
-> See:
-> 
-> https://lore.kernel.org/r/20181023002903.GA16854@bogus
+diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+index 5378d10f1d31..ee43df3ebe66 100644
+--- a/arch/x86/mm/ioremap.c
++++ b/arch/x86/mm/ioremap.c
+@@ -146,9 +146,9 @@ static void __iomem *__ioremap_caller(resource_size_t phys_addr,
+ 	void __iomem *ret_addr;
+ 
+ 	/* Don't allow wraparound or zero size */
+-	last_addr = phys_addr + size - 1;
+-	if (!size || last_addr < phys_addr)
++	if (!size || phys_addr + size < phys_addr)
+ 		return NULL;
++	last_addr = phys_addr + size - 1;
+ 
+ 	if (!phys_addr_valid(phys_addr)) {
+ 		printk(KERN_WARNING "ioremap: invalid physical address %llx\n",
+-- 
+2.11.0
 
-Yea, I saw that too.
-
-Best regards
-Vivek
-
-> 
-> ...so my vote would be to keep it as Evan's patch series has it and
-> not try to bikeshed it.
-> 
-> 
->> Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-> 
-> Thanks for the review!
-> 
-> 
-> [1]
-> https://lkml.kernel.org/r/CAL_Jsq+MMunmVWqeW9v2RyzsMKP+=kMzeTHNMG4JDHM7Fy0HBg@mail.gmail.com
-> 
-> -Doug
