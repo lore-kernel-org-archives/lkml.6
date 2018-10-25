@@ -2,105 +2,143 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC1F7C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 15:55:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 624CAECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 15:56:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C2172083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 15:55:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C2172083E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id 1548C2083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 15:56:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WybRtokV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1548C2083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727662AbeJZA3N (ORCPT
+        id S1727695AbeJZAaS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 20:29:13 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:45954 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727350AbeJZA3N (ORCPT
+        Thu, 25 Oct 2018 20:30:18 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:33758 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727313AbeJZAaR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 20:29:13 -0400
-Received: by mail-pl1-f193.google.com with SMTP id o19-v6so4051372pll.12
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 08:55:51 -0700 (PDT)
+        Thu, 25 Oct 2018 20:30:17 -0400
+Received: by mail-ot1-f68.google.com with SMTP id w18so6681570otk.0;
+        Thu, 25 Oct 2018 08:56:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dVC+7RFZP5CbdsC6n66TjwThFve/Ih9fSlCLZjza8GE=;
+        b=WybRtokVrXngJtExvnKubXjLdyVNvflxmK+Gfr6f+XA9TvDVpeOs/MVV2TMFg9p5UL
+         nLzSwm7x8x1mBHYiLR7kXW+7m+BWUVfQFzTzwNKi8UqOnZGsJUyPlaaoTYCRYvLUvEhB
+         SKghLomtMmI5muux/reG1huFG9NqX+X6sNMGn1sv3mtVm6MuAlAtNusb17OKv5XYZWp2
+         pftX2LKaMY+4E+p7w7MwyxPNdaytjqnHkSgFH3lSf0Iutm2KMMpRMEhSJa2yXo92bpKB
+         kfO9HRSgFjW8v2+AhB097uT73r/7Ce2GM5wK9MiFxuFJc/mCY0jO4IJSHys3bX20PyyY
+         DcvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=llbNe0hxAXv/15krlGQwJchISXs2r4Uv8+MRPxEtyLI=;
-        b=jo3O+FUzCzrkCzNlAdS8p43PdVUgmWOdwQo5OgDGNzJ3LwSLnojtwnVbDxmRGzpnGW
-         pe5tzJp7Y5zgKleXnay8DTcNuoZfgYIHUFLlQuSHscYofXF5VbJSMwoubVbs0O95FxoV
-         fdNkExxpMB4IYTt9LQir6WjAoe/mhwlwcVgir8lIDs6h+ZCZKfkPHu9jcFYZO+ZX9Jdf
-         G0PhdTRGHQlcS8p5VhSyNwK88Tmd0LmAYebzd9/3gKgxVNldeCTmtLXx+SfiWr3+9eb5
-         Lf0sgVpGekAzsaC3IQEiRQL5hweKe+Lu8nYMHTGCz4II/0ZzDmMwpvM5wK6Cme30+qUw
-         LlWg==
-X-Gm-Message-State: AGRZ1gICA0/vjaxES6DOm6EXGfaec6ebiPjWv0EO64NcDYCYn8btPeAC
-        yr2js8GZDiPOs0lec8pEF8idwL2hhHA=
-X-Google-Smtp-Source: AJdET5cthizXHBIIKgzBqR0++CdTdE069D2/tN5k9ut9bhx+UIxlMxvizibeBW2Rq9niwGeasm6urA==
-X-Received: by 2002:a17:902:2fc3:: with SMTP id t61-v6mr2034026plb.37.1540482950479;
-        Thu, 25 Oct 2018 08:55:50 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id y10-v6sm12468960pgi.85.2018.10.25.08.55.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Oct 2018 08:55:49 -0700 (PDT)
-Message-ID: <1540482948.66186.21.camel@acm.org>
-Subject: Re: [PATCH 3/3] kernel/workqueue: Suppress a false positive lockdep
- complaint
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Johannes Berg <johannes@sipsolutions.net>,
-        Tejun Heo <tj@kernel.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        "tytso@mit.edu" <tytso@mit.edu>
-Date:   Thu, 25 Oct 2018 08:55:48 -0700
-In-Reply-To: <f7e631f3957f8e4d00b1b2dbf5b660d62d9e45e3.camel@sipsolutions.net>
-References: <20181025150540.259281-1-bvanassche@acm.org>
-         <20181025150540.259281-4-bvanassche@acm.org>
-         <f7e631f3957f8e4d00b1b2dbf5b660d62d9e45e3.camel@sipsolutions.net>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dVC+7RFZP5CbdsC6n66TjwThFve/Ih9fSlCLZjza8GE=;
+        b=eeAQkNiwh/q/HDeNtAztXPZ4k2OAHOLrcvDnKMW2dPRLFs5+Ni0zImlKCK4Z48KcXi
+         d6A8r/iPrkzx7LANIMBrSU8fsWh+YBRJk46rdgF/jsLb9KKnxY+0Uw5Xncfbn3Y7wQh2
+         7vn98MU9kBLBDw7+Y5/xbwYx9BM6YrUZ4gz1cPm6wn8pjEG2BgGW6hYHvbi8niY403M1
+         l/D5G3csozb1bs59c4sk1saf4ZIsd+KR5dLTovQ3Q/knWaC+ysGiAOu8cUSe3+KzcAKD
+         ZsRwPQmqrfsT1ytA/Qh/OhMKd1aXz6ws7OzVyeB83gAtBRwd7uiemkiZraz6Tfx8eadh
+         72cg==
+X-Gm-Message-State: AGRZ1gLs7IdTy5oMUhVW6NnhSeq9YfeHuj5/GSyLN4CUB+TX/nhlW3c5
+        mq3djfPQIoiE1nCu1UKT6mqbEklml8jwxZVvdNA=
+X-Google-Smtp-Source: AJdET5drPlidRby3vuL5vALdXMPxzQz1BMB2bJoKhjwZUYO0ovyxUJly8BgJFeR1h7KL8ZlWySpaM9rJyBD3eqko134=
+X-Received: by 2002:a9d:42a:: with SMTP id 39mr1700662otc.78.1540483014309;
+ Thu, 25 Oct 2018 08:56:54 -0700 (PDT)
+MIME-Version: 1.0
+References: <1540480173-12009-1-git-send-email-alex.gonzalez@digi.com> <1540480173-12009-3-git-send-email-alex.gonzalez@digi.com>
+In-Reply-To: <1540480173-12009-3-git-send-email-alex.gonzalez@digi.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Thu, 25 Oct 2018 12:56:53 -0300
+Message-ID: <CAOMZO5B+V5OETLdye7VVB8v6fnZPwPSZjV48_TkzhawQ4zL0oA@mail.gmail.com>
+Subject: Re: [PATCH v1 2/4] ARM: dts: ccimx6ulsbcpro: Enable AUO G101EVN010
+ lcdif panel
+To:     "Gonzalez, Alex" <alex.gonzalez@digi.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        DRI mailing list <dri-devel@lists.freedesktop.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2018-10-25 at 17:34 +-0200, Johannes Berg wrote:
-+AD4 On Thu, 2018-10-25 at 15:05 +-0000, Bart Van Assche wrote:
-+AD4 
-+AD4 +AD4 +AEAAQA -2889,7 +-2893,7 +AEAAQA static bool start+AF8-flush+AF8-work(struct work+AF8-struct +ACo-work, struct wq+AF8-barrier +ACo-barr,
-+AD4 +AD4  	 +ACo workqueues the deadlock happens when the rescuer stalls, blocking
-+AD4 +AD4  	 +ACo forward progress.
-+AD4 +AD4  	 +ACo-/
-+AD4 +AD4 -	if (+ACE-from+AF8-cancel +ACYAJg
-+AD4 +AD4 +-	if (+ACE-from+AF8-cancel +ACYAJg (pwq-+AD4-wq-+AD4-flags +ACY +AF8AXw-WQ+AF8-HAS+AF8-BEEN+AF8-USED) +ACYAJg
-+AD4 +AD4  	    (pwq-+AD4-wq-+AD4-saved+AF8-max+AF8-active +AD0APQ 1 +AHwAfA pwq-+AD4-wq-+AD4-rescuer)) +AHs
-+AD4 +AD4  		lock+AF8-acquire+AF8-exclusive(+ACY-pwq-+AD4-wq-+AD4-lockdep+AF8-map, 0, 0, NULL,
-+AD4 +AD4  				       +AF8-THIS+AF8-IP+AF8)+ADs
-+AD4 
-+AD4 This also doesn't seem right to me. You shouldn't really care whether or
-+AD4 not the workqueue has been used at this point, lockdep also doesn't do
-+AD4 this for locks.
-+AD4 
-+AD4 Any dependency you cause at some point can - at a future time - be taken
-+AD4 into account when checking dependency cycles. Removing one arbitrarily
-+AD4 just because you haven't actually executed anything +ACo-yet+ACo just removes
-+AD4 knowledge from lockdep. In the general case, this isn't right. Just
-+AD4 because you haven't executd anything here doesn't mean that it's
-+AD4 +ACo-impossible+ACo to have executed something, right?
+On Thu, Oct 25, 2018 at 12:11 PM Alex Gonzalez <alex.gonzalez@digi.com> wrote:
+>
+> This change adds support for the AUO G101EVN010 lcdif panel for the
+> mxsfb DRM driver.
+>
+> Signed-off-by: Alex Gonzalez <alex.gonzalez@digi.com>
+> ---
+>  arch/arm/boot/dts/imx6ul-ccimx6ulsbcpro.dts | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+>
+> diff --git a/arch/arm/boot/dts/imx6ul-ccimx6ulsbcpro.dts b/arch/arm/boot/dts/imx6ul-ccimx6ulsbcpro.dts
+> index 11966d12af76..f6e6b2cf780b 100644
+> --- a/arch/arm/boot/dts/imx6ul-ccimx6ulsbcpro.dts
+> +++ b/arch/arm/boot/dts/imx6ul-ccimx6ulsbcpro.dts
+> @@ -24,6 +24,18 @@
+>                 status = "okay";
+>         };
+>
+> +       panel {
+> +               compatible = "auo,g101evn010", "simple-panel";
 
-Please have a look at the call trace in the description of this patch and also
-at the direct I/O code. The lockdep complaint in the description of this patch
-really is a false positive. What I think needs further discussion is on how to
-address this false positive - track whether or not a work queue has been used
-or follow Tejun's proposal that I became aware of after I posted this patch,
-namely introduce a new function for destroying a work queue that skips draining,
-e.g. destroy+AF8-workqueue+AF8-skip+AF8-drain() (https://lkml.org/lkml/2018/10/24/2).
+The "simple-panel" string could be dropped.
 
-Thanks,
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
 
-Bart.
+
+> +               power-supply = <&ldo4_ext>;
+> +               backlight = <&lcd_backlight>;
+> +
+> +               port {
+> +                       panel_in: endpoint {
+> +                               remote-endpoint = <&display_out>;
+> +                       };
+> +               };
+> +       };
+> +
+>         reg_usb_otg1_vbus: regulator-usb-otg1 {
+>                 compatible = "regulator-fixed";
+>                 regulator-name = "usb_otg1_vbus";
+> @@ -112,6 +124,12 @@
+>                      &pinctrl_lcdif_hvsync>;
+>         lcd-supply = <&ldo4_ext>;       /* BU90T82 LVDS bridge power */
+>         status = "okay";
+> +
+> +       port {
+> +               display_out: endpoint {
+> +                       remote-endpoint = <&panel_in>;
+> +               };
+> +       };
+>  };
+>
+>  &ldo4_ext {
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
