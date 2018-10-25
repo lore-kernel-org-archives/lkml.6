@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECEE6ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:14:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD89ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:14:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4F4420834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:14:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7BAF20848
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:14:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="O1Ws9hLZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4F4420834
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JqD8liXf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7BAF20848
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728672AbeJYWrs (ORCPT
+        id S1728685AbeJYWrt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:47:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55956 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:47:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728512AbeJYWrr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:47:47 -0400
+        id S1728660AbeJYWrs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:47:48 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C17422084A;
-        Thu, 25 Oct 2018 14:14:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1FDEC20854;
+        Thu, 25 Oct 2018 14:14:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540476890;
-        bh=n+Hn9L4tMvWZ0fdB2FuinQMmbqlg8r0niWewoJQyOZs=;
+        s=default; t=1540476892;
+        bh=zrPH1wC9WtalHNIKJhYdScHOCKQIqSXzX2bMfVQJkss=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O1Ws9hLZGqqAb47YaHggf3nInvKk5B8yrPZP2xbMnIDv+2onBKl/e36yrIgONRWM0
-         /iW6MxIvIy0WkR4N13Kofd1H1vL8x8megGeVWLveC49juBPFcMZ26QKWABno9fwx6H
-         +qNeR86X1m2cpvMq1oIs+LtXVt1ZIK9BrAIc7Mvg=
+        b=JqD8liXfHE5QB3q4j2lFvP18xhsA+TCEei0qIrLHgiin7GIR1YNXQuJgyNRWT3f7E
+         aDFCj1/CXrlEFAFZ7REs0fmCuzsCZaxMj695RFlr3w2a9sbsNSKbMV5Hid/JwI7I1R
+         lXbVFK3v8zNtet3lH2pDg5MOKA0+5aoHFOGdl+w4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Mike Marshall <hubcap@omnibond.com>,
+Cc:     Jia-Ju Bai <baijiaju1990@163.com>,
+        Doug Ledford <dledford@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 16/98] orangefs: off by ones in xattr size checks
-Date:   Thu, 25 Oct 2018 10:13:01 -0400
-Message-Id: <20181025141423.213774-16-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 17/98] rxe: Fix a sleep-in-atomic bug in post_one_send
+Date:   Thu, 25 Oct 2018 10:13:02 -0400
+Message-Id: <20181025141423.213774-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141423.213774-1-sashal@kernel.org>
 References: <20181025141423.213774-1-sashal@kernel.org>
@@ -53,58 +53,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Jia-Ju Bai <baijiaju1990@163.com>
 
-[ Upstream commit 5f13e58767a53ebb54265e03c0c4a67650286263 ]
+[ Upstream commit 07d432bb97f19dd5e784175152f9fce3b2646133 ]
 
-A previous patch which claimed to remove off by ones actually introduced
-them.
+The driver may sleep under a spin lock, and the function call path is:
+post_one_send (acquire the lock by spin_lock_irqsave)
+  init_send_wqe
+    copy_from_user --> may sleep
 
-strlen() returns the length of the string not including the NUL
-character.  We are using strcpy() to copy "name" into a buffer which is
-ORANGEFS_MAX_XATTR_NAMELEN characters long.  We should make sure to
-leave space for the NUL, otherwise we're writing one character beyond
-the end of the buffer.
+There is no flow that makes "qp->is_user" true, and copy_from_user may
+cause bug when a non-user pointer is used. So the lines of copy_from_user
+and check of "qp->is_user" are removed.
 
-Fixes: e675c5ec51fe ("orangefs: clean up oversize xattr validation")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Mike Marshall <hubcap@omnibond.com>
+Signed-off-by: Jia-Ju Bai <baijiaju1990@163.com>
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+Acked-by: Moni Shoua <monis@mellanox.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/orangefs/xattr.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/infiniband/sw/rxe/rxe_verbs.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/fs/orangefs/xattr.c b/fs/orangefs/xattr.c
-index 237c9c04dc3b..a34b25be39c5 100644
---- a/fs/orangefs/xattr.c
-+++ b/fs/orangefs/xattr.c
-@@ -76,7 +76,7 @@ ssize_t orangefs_inode_getxattr(struct inode *inode, const char *name,
- 	if (S_ISLNK(inode->i_mode))
- 		return -EOPNOTSUPP;
+diff --git a/drivers/infiniband/sw/rxe/rxe_verbs.c b/drivers/infiniband/sw/rxe/rxe_verbs.c
+index ced416f5dffb..ef13082d6ca1 100644
+--- a/drivers/infiniband/sw/rxe/rxe_verbs.c
++++ b/drivers/infiniband/sw/rxe/rxe_verbs.c
+@@ -729,13 +729,8 @@ static int init_send_wqe(struct rxe_qp *qp, struct ib_send_wr *ibwr,
  
--	if (strlen(name) > ORANGEFS_MAX_XATTR_NAMELEN)
-+	if (strlen(name) >= ORANGEFS_MAX_XATTR_NAMELEN)
- 		return -EINVAL;
+ 		sge = ibwr->sg_list;
+ 		for (i = 0; i < num_sge; i++, sge++) {
+-			if (qp->is_user && copy_from_user(p, (__user void *)
+-					    (uintptr_t)sge->addr, sge->length))
+-				return -EFAULT;
+-
+-			else if (!qp->is_user)
+-				memcpy(p, (void *)(uintptr_t)sge->addr,
+-				       sge->length);
++			memcpy(p, (void *)(uintptr_t)sge->addr,
++					sge->length);
  
- 	fsuid = from_kuid(&init_user_ns, current_fsuid());
-@@ -169,7 +169,7 @@ static int orangefs_inode_removexattr(struct inode *inode, const char *name,
- 	struct orangefs_kernel_op_s *new_op = NULL;
- 	int ret = -ENOMEM;
- 
--	if (strlen(name) > ORANGEFS_MAX_XATTR_NAMELEN)
-+	if (strlen(name) >= ORANGEFS_MAX_XATTR_NAMELEN)
- 		return -EINVAL;
- 
- 	down_write(&orangefs_inode->xattr_sem);
-@@ -233,7 +233,7 @@ int orangefs_inode_setxattr(struct inode *inode, const char *name,
- 
- 	if (size > ORANGEFS_MAX_XATTR_VALUELEN)
- 		return -EINVAL;
--	if (strlen(name) > ORANGEFS_MAX_XATTR_NAMELEN)
-+	if (strlen(name) >= ORANGEFS_MAX_XATTR_NAMELEN)
- 		return -EINVAL;
- 
- 	internal_flag = convert_to_internal_xattr_flags(flags);
+ 			p += sge->length;
+ 		}
 -- 
 2.17.1
 
