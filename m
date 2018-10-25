@@ -7,42 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5610ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 173D8ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:18:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43FD020870
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:18:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4E0A20868
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:18:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eToemDqc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43FD020870
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oP3LLcNF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4E0A20868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729982AbeJYWvK (ORCPT
+        id S1730008AbeJYWvN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:51:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60982 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:51:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729964AbeJYWvK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:51:10 -0400
+        id S1729974AbeJYWvM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:51:12 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87BE22085B;
-        Thu, 25 Oct 2018 14:18:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3882020848;
+        Thu, 25 Oct 2018 14:18:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477092;
-        bh=mDUsp03+3GtvGx4ZClp2sQEyjyVTwm/rWHGuayHsICI=;
+        s=default; t=1540477095;
+        bh=32OOa1IVKao5cw9RQCEy0IZwy/20WNKhrbx3/X48N3w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eToemDqchx2SGlH/3T/T1CBOYEMhaOWQWBe4Fpf8BQipL2Lk955ZtI25npXzFIJz8
-         AQBVPP+GQlHCkv/gSts611RybX9EXMetEnQwiXF2Krflk/IsPOBHR8K50KyvFy5MGD
-         NmXeXEmwPhhr+gpVnJq1QJkw9Jw3cw9xoqpWrrKs=
+        b=oP3LLcNF/RwBxXCp2s/KJK+9gXtxIzMwwaYWEQ276gbnVi8bdUg6eI4gCk9pc/BVj
+         k8TT7EAKqUNS4IXHoB40A+t6aUQQD/3ZC7W5VVCe/nALRnML07lgI7xqUFcyA3/s0k
+         sGD/0+H+TFmZm6XRgZ0NzX0TbiWVwmFzvol0TOu8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 41/65] ALSA: timer: Fix zero-division by continue of uninitialized instance
-Date:   Thu, 25 Oct 2018 10:16:41 -0400
-Message-Id: <20181025141705.213937-41-sashal@kernel.org>
+Cc:     Alexander Duyck <aduyck@mirantis.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 43/65] gro: Allow tunnel stacking in the case of FOU/GUE
+Date:   Thu, 25 Oct 2018 10:16:43 -0400
+Message-Id: <20181025141705.213937-43-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141705.213937-1-sashal@kernel.org>
 References: <20181025141705.213937-1-sashal@kernel.org>
@@ -51,95 +53,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Alexander Duyck <aduyck@mirantis.com>
 
-[ Upstream commit 9f8a7658bcafb2a7853f7a2eae8a94e87e6e695b ]
+[ Upstream commit c3483384ee511ee2af40b4076366cd82a6a47b86 ]
 
-When a user timer instance is continued without the explicit start
-beforehand, the system gets eventually zero-division error like:
+This patch should fix the issues seen with a recent fix to prevent
+tunnel-in-tunnel frames from being generated with GRO.  The fix itself is
+correct for now as long as we do not add any devices that support
+NETIF_F_GSO_GRE_CSUM.  When such a device is added it could have the
+potential to mess things up due to the fact that the outer transport header
+points to the outer UDP header and not the GRE header as would be expected.
 
-  divide error: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN
-  CPU: 1 PID: 27320 Comm: syz-executor Not tainted 4.8.0-rc3-next-20160825+ #8
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
-   task: ffff88003c9b2280 task.stack: ffff880027280000
-   RIP: 0010:[<ffffffff858e1a6c>]  [<     inline     >] ktime_divns include/linux/ktime.h:195
-   RIP: 0010:[<ffffffff858e1a6c>]  [<ffffffff858e1a6c>] snd_hrtimer_callback+0x1bc/0x3c0 sound/core/hrtimer.c:62
-  Call Trace:
-   <IRQ>
-   [<     inline     >] __run_hrtimer kernel/time/hrtimer.c:1238
-   [<ffffffff81504335>] __hrtimer_run_queues+0x325/0xe70 kernel/time/hrtimer.c:1302
-   [<ffffffff81506ceb>] hrtimer_interrupt+0x18b/0x420 kernel/time/hrtimer.c:1336
-   [<ffffffff8126d8df>] local_apic_timer_interrupt+0x6f/0xe0 arch/x86/kernel/apic/apic.c:933
-   [<ffffffff86e13056>] smp_apic_timer_interrupt+0x76/0xa0 arch/x86/kernel/apic/apic.c:957
-   [<ffffffff86e1210c>] apic_timer_interrupt+0x8c/0xa0 arch/x86/entry/entry_64.S:487
-   <EOI>
-   .....
-
-Although a similar issue was spotted and a fix patch was merged in
-commit [6b760bb2c63a: ALSA: timer: fix division by zero after
-SNDRV_TIMER_IOCTL_CONTINUE], it seems covering only a part of
-iceberg.
-
-In this patch, we fix the issue a bit more drastically.  Basically the
-continue of an uninitialized timer is supposed to be a fresh start, so
-we do it for user timers.  For the direct snd_timer_continue() call,
-there is no way to pass the initial tick value, so we kick out for the
-uninitialized case.
-
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: fac8e0f579695 ("tunnels: Don't apply GRO to multiple layers of encapsulation.")
+Signed-off-by: Alexander Duyck <aduyck@mirantis.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/core/timer.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ net/ipv4/fou.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/sound/core/timer.c b/sound/core/timer.c
-index ef850a99d64a..f989adb98a22 100644
---- a/sound/core/timer.c
-+++ b/sound/core/timer.c
-@@ -35,6 +35,9 @@
- #include <sound/initval.h>
- #include <linux/kmod.h>
+diff --git a/net/ipv4/fou.c b/net/ipv4/fou.c
+index 08d8ee124538..d83888bc33d3 100644
+--- a/net/ipv4/fou.c
++++ b/net/ipv4/fou.c
+@@ -195,6 +195,14 @@ static struct sk_buff **fou_gro_receive(struct sk_buff **head,
+ 	u8 proto = NAPI_GRO_CB(skb)->proto;
+ 	const struct net_offload **offloads;
  
-+/* internal flags */
-+#define SNDRV_TIMER_IFLG_PAUSED		0x00010000
++	/* We can clear the encap_mark for FOU as we are essentially doing
++	 * one of two possible things.  We are either adding an L4 tunnel
++	 * header to the outer L3 tunnel header, or we are are simply
++	 * treating the GRE tunnel header as though it is a UDP protocol
++	 * specific header such as VXLAN or GENEVE.
++	 */
++	NAPI_GRO_CB(skb)->encap_mark = 0;
 +
- #if IS_ENABLED(CONFIG_SND_HRTIMER)
- #define DEFAULT_TIMER_LIMIT 4
- #elif IS_ENABLED(CONFIG_SND_RTCTIMER)
-@@ -547,6 +550,10 @@ static int snd_timer_stop1(struct snd_timer_instance *timeri, bool stop)
+ 	rcu_read_lock();
+ 	offloads = NAPI_GRO_CB(skb)->is_ipv6 ? inet6_offloads : inet_offloads;
+ 	ops = rcu_dereference(offloads[proto]);
+@@ -354,6 +362,14 @@ static struct sk_buff **gue_gro_receive(struct sk_buff **head,
  		}
  	}
- 	timeri->flags &= ~(SNDRV_TIMER_IFLG_RUNNING | SNDRV_TIMER_IFLG_START);
-+	if (stop)
-+		timeri->flags &= ~SNDRV_TIMER_IFLG_PAUSED;
-+	else
-+		timeri->flags |= SNDRV_TIMER_IFLG_PAUSED;
- 	snd_timer_notify1(timeri, stop ? SNDRV_TIMER_EVENT_STOP :
- 			  SNDRV_TIMER_EVENT_PAUSE);
-  unlock:
-@@ -608,6 +615,10 @@ int snd_timer_stop(struct snd_timer_instance *timeri)
-  */
- int snd_timer_continue(struct snd_timer_instance *timeri)
- {
-+	/* timer can continue only after pause */
-+	if (!(timeri->flags & SNDRV_TIMER_IFLG_PAUSED))
-+		return -EINVAL;
+ 
++	/* We can clear the encap_mark for GUE as we are essentially doing
++	 * one of two possible things.  We are either adding an L4 tunnel
++	 * header to the outer L3 tunnel header, or we are are simply
++	 * treating the GRE tunnel header as though it is a UDP protocol
++	 * specific header such as VXLAN or GENEVE.
++	 */
++	NAPI_GRO_CB(skb)->encap_mark = 0;
 +
- 	if (timeri->flags & SNDRV_TIMER_IFLG_SLAVE)
- 		return snd_timer_start_slave(timeri, false);
- 	else
-@@ -1837,6 +1848,9 @@ static int snd_timer_user_continue(struct file *file)
- 	tu = file->private_data;
- 	if (!tu->timeri)
- 		return -EBADFD;
-+	/* start timer instead of continue if it's not used before */
-+	if (!(tu->timeri->flags & SNDRV_TIMER_IFLG_PAUSED))
-+		return snd_timer_user_start(file);
- 	tu->timeri->lost = 0;
- 	return (err = snd_timer_continue(tu->timeri)) < 0 ? err : 0;
- }
+ 	rcu_read_lock();
+ 	offloads = NAPI_GRO_CB(skb)->is_ipv6 ? inet6_offloads : inet_offloads;
+ 	ops = rcu_dereference(offloads[guehdr->proto_ctype]);
 -- 
 2.17.1
 
