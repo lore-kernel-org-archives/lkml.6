@@ -7,71 +7,70 @@ X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2762EC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:03:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 108B8ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:03:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D34AC2082E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:03:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB1712082E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:03:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ItCjvqjC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D34AC2082E
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dik2rv8U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB1712082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727144AbeJYQeh (ORCPT
+        id S1727185AbeJYQfM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 12:34:37 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:36637 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726497AbeJYQeh (ORCPT
+        Thu, 25 Oct 2018 12:35:12 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:32860 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726891AbeJYQfM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 12:34:37 -0400
-Received: by mail-wm1-f66.google.com with SMTP id a8-v6so498371wmf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 01:03:00 -0700 (PDT)
+        Thu, 25 Oct 2018 12:35:12 -0400
+Received: by mail-wr1-f65.google.com with SMTP id u1-v6so8258486wrn.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 01:03:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=wZwWvAsje3SwKx4M2NaP80BUUqaUB+/cDkavNcVdzi8=;
-        b=ItCjvqjCSmBCizyrqOOCXVanXwYTwzrNS6LnkKImudHH0eFmTuDl/Nza6QJWa6X3d8
-         kNEj4VPYHQGy5OPFaNJf+VuQCdI8ilWJu4dZfpru7QdvYOlveiTHfcCSZORnkosBwJIO
-         KQGCdDHWn2r87GdpuN4b+XbzUw3zJkMTqrcYk=
+        bh=EAemEQJe844MjkBnRg0+4whi9fHdd101VRQj4zDbdCo=;
+        b=dik2rv8UuSrbFjIqO+00MBSIb1QD4c9EYJsnNFCr07WXS6KRT2WhbCoYdLHXBWd2Gz
+         ldR20VYAql9OkY9f/VoNjgpIj0AQYNB6ryNx5uWR02z8EUm4DjMXWUSnv+gh1aClt2WW
+         bsF0ncaYuMUkJJ0p8gw4GjOoE4dI3AIPh2avw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=wZwWvAsje3SwKx4M2NaP80BUUqaUB+/cDkavNcVdzi8=;
-        b=QqYNVQg66TWAi0IDz7/X4nh1WzEj1+n9gYXB/7EV2vO4usnQbNLyo4/dkqxciyU+rs
-         KA1i02qxRPn963oENsKNVbWmyZPS4/6B4JaoASGAGidZVEPWRXZTgqyNZfyPG4ytoyLE
-         c7JIase6bqfMMOxh4Y14v5kYN4usRYEZ3GOAWCKaT0+L2wRcQf8q/qF1J99gECzp7Kr0
-         fNOtip8rrFkBOmTBOkG33alDLufkC1lWQkFhN8Vhfjm/oZc2YC5LAeaPIPKsVuXCcuzt
-         5MzA7pI98USwWGQODI3NR6gkrSplnXKyeEDWrOzUVNwtIkUsHM05Ol5sPJs5owpgnPsC
-         IoWg==
-X-Gm-Message-State: AGRZ1gIui7CXqun5q0p1JCsgR/88q0ANJNaXEg/q1IG9QDgJidGzfowu
-        m6SBmvsiE/ARpYJImG6ja4i65A==
-X-Google-Smtp-Source: AJdET5coumxdvkZhdRp+iSiKpxhewFkJ2PQnbncjfayeMRFLoniF3OKAqR4zUxbAl4Q1PuASxGPwiw==
-X-Received: by 2002:a1c:7508:: with SMTP id o8-v6mr749613wmc.76.1540454579160;
-        Thu, 25 Oct 2018 01:02:59 -0700 (PDT)
+        bh=EAemEQJe844MjkBnRg0+4whi9fHdd101VRQj4zDbdCo=;
+        b=Yl2fQtVx9cXQ2WwNoFLFI2jn19jVzRRrDJ7w8ifZSi5WPFcznMd7bOEQ1ouIU+t4wo
+         UOYJfgAL94k/pVreH8EjjgHJ5c7UKasitJgVJYrkFw6yN4rWprcW8ZzLEOz+/gBZ0Roo
+         CfmiC+q0E/O9QXT9pBc07wnh7uWGiQNMsAVtEwpsABPQD/pVAgCZA/wsegTcCgHiQq3n
+         PNXTYZn1WGQKUunN6Vobp61V3FjQuI7qqiND5zjgDcXU3GzEiegFqeB3nwJpJvRTspWD
+         GxVmVqc6x1tS6XyBOWNaHpPBtTzvmUeaZpwNjsQEQLVZDWJanueEDW37K6N0jResa58L
+         7M7A==
+X-Gm-Message-State: AGRZ1gIfypCuQeNyF1OE8RlLwvzS2ZHv/MXPssxuDZGordeyZnNAmlRl
+        Q63W6qHMDrmfXEzGcEvPO+UyOw==
+X-Google-Smtp-Source: AJdET5dKe0SRjqUmczkigmHogvy9AhvXdxMZx2xXle7eqUbg5K2vIQm2sHyHFOIEJI7hnsLXHeWIMw==
+X-Received: by 2002:adf:9102:: with SMTP id j2-v6mr720567wrj.3.1540454613062;
+        Thu, 25 Oct 2018 01:03:33 -0700 (PDT)
 Received: from dell ([2.31.167.182])
-        by smtp.gmail.com with ESMTPSA id o17-v6sm7772905wro.2.2018.10.25.01.02.58
+        by smtp.gmail.com with ESMTPSA id o130-v6sm943743wmd.11.2018.10.25.01.03.32
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Oct 2018 01:02:58 -0700 (PDT)
-Date:   Thu, 25 Oct 2018 09:02:56 +0100
+        Thu, 25 Oct 2018 01:03:32 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 09:03:30 +0100
 From:   Lee Jones <lee.jones@linaro.org>
 To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mfd: twl-core: Fix section annotations on
- {,un}protect_pm_master
-Message-ID: <20181025080256.GH4939@dell>
-References: <20181017171322.13572-1-natechancellor@gmail.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mfd: db8500-prcmu: Fix some section annotations
+Message-ID: <20181025080330.GI4939@dell>
+References: <20181018005628.8295-1-natechancellor@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181017171322.13572-1-natechancellor@gmail.com>
+In-Reply-To: <20181018005628.8295-1-natechancellor@gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -81,30 +80,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Wed, 17 Oct 2018, Nathan Chancellor wrote:
 
 > When building the kernel with Clang, the following section mismatch
-> warning appears:
+> warnings appear:
 > 
-> WARNING: vmlinux.o(.text+0x3d84a3b): Section mismatch in reference from
-> the function twl_probe() to the function
-> .init.text:unprotect_pm_master()
-> The function twl_probe() references
-> the function __init unprotect_pm_master().
-> This is often because twl_probe lacks a __init
-> annotation or the annotation of unprotect_pm_master is wrong.
+> WARNING: vmlinux.o(.text+0x7239cc): Section mismatch in reference from
+> the function db8500_prcmu_probe() to the function
+> .init.text:init_prcm_registers()
+> The function db8500_prcmu_probe() references
+> the function __init init_prcm_registers().
+> This is often because db8500_prcmu_probe lacks a __init
+> annotation or the annotation of init_prcm_registers is wrong.
 > 
-> Remove the __init annotation on the *protect_pm_master functions so
-> there is no more mismatch.
+> WARNING: vmlinux.o(.text+0x723e28): Section mismatch in reference from
+> the function db8500_prcmu_probe() to the function
+> .init.text:fw_project_name()
+> The function db8500_prcmu_probe() references
+> the function __init fw_project_name().
+> This is often because db8500_prcmu_probe lacks a __init
+> annotation or the annotation of fw_project_name is wrong.
+> 
+> db8500_prcmu_probe should not be marked as __init so remove the __init
+> annotation from fw_project_name and init_prcm_registers.
 > 
 > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 > ---
-> 
-> Alternatively, I suppose that twl_probe could be marked as __init but
-> I'm not sure if deferral is possible or not (which I believe would cause
-> issues but not sure). I went with this more conservative approache but
-> I'm happy to respin if necessary.
-> 
-> Thanks!
-> 
->  drivers/mfd/twl-core.c | 4 ++--
+>  drivers/mfd/db8500-prcmu.c | 4 ++--
 >  1 file changed, 2 insertions(+), 2 deletions(-)
 
 Applied for v4.21, thanks.
