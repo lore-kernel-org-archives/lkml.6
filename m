@@ -7,55 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C29EC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:21:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD62ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:21:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44A8B20883
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:21:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA96C214E0
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:21:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="M5CXe9iv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44A8B20883
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0g+ZR34L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA96C214E0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731395AbeJYWyJ (ORCPT
+        id S1731410AbeJYWyK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:54:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36960 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:54:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37022 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731324AbeJYWyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:54:08 -0400
+        id S1731391AbeJYWyJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:54:09 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61FAE214ED;
-        Thu, 25 Oct 2018 14:21:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89139208A3;
+        Thu, 25 Oct 2018 14:21:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477270;
-        bh=ShUGdPE98f4v+zYVXpVXH5PMveT2TiNhHAcylM4Z3w0=;
+        s=default; t=1540477271;
+        bh=iROB2lFz13Ms++6tgn5UEhtXSEDe1Nojtrp1/U3H6sQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=M5CXe9ivBgEo8tTHbriHXtjJKmtfuftRQ7n7PNoRnbFbgl4Ynha2SC6mRrmSk1Bjl
-         H/l2WAp1AVATYJH6OqWh6ZDdhHqyiVDX4PvFaSL6SUPmxq9G8xAOFvQ2MqA3vMHgkq
-         qORweJdPdIWeWA/fkRhGns9oGnD5+dx/fNhitRhE=
+        b=0g+ZR34L7u+h2AQoCLrNV9/ZPdGIRWOHOfUKFDWqRD2EY2BzJBbhumLWqBs9RJmQN
+         gCaAC0i/njR8az0tgEEfO0M5UKN6Db1o6JcNLmhYwh1BoUfL558MCbBHEVXMiCAEjU
+         C6/ZFl0wZPIZaZCe74cFHOHsaKpo3Xu3nOsWfYGs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jan Beulich <JBeulich@suse.com>, Jan Beulich <jbeulich@suse.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Andy Lutomirski <luto@kernel.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>,
-        David Vrabel <david.vrabel@citrix.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 87/98] x86/ldt: Fix small LDT allocation for Xen
-Date:   Thu, 25 Oct 2018 10:18:42 -0400
-Message-Id: <20181025141853.214051-87-sashal@kernel.org>
+Cc:     Alex Williamson <alex.williamson@redhat.com>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 88/98] PCI: Fix devfn for VPD access through function 0
+Date:   Thu, 25 Oct 2018 10:18:43 -0400
+Message-Id: <20181025141853.214051-88-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
 References: <20181025141853.214051-1-sashal@kernel.org>
@@ -64,64 +53,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Beulich <JBeulich@suse.com>
+From: Alex Williamson <alex.williamson@redhat.com>
 
-[ Upstream commit f454b478861325f067fd58ba7ee9f1b5c4a9d6a0 ]
+[ Upstream commit 9d9240756e63dd87d6cbf5da8b98ceb8f8192b55 ]
 
-While the following commit:
+Commit 932c435caba8 ("PCI: Add dev_flags bit to access VPD through function
+0") passes PCI_SLOT(devfn) for the devfn parameter of pci_get_slot().
+Generally this works because we're fairly well guaranteed that a PCIe
+device is at slot address 0, but for the general case, including
+conventional PCI, it's incorrect.  We need to get the slot and then convert
+it back into a devfn.
 
-  37868fe113 ("x86/ldt: Make modify_ldt synchronous")
-
-added a nice comment explaining that Xen needs page-aligned
-whole page chunks for guest descriptor tables, it then
-nevertheless used kzalloc() on the small size path.
-
-As I'm unaware of guarantees for kmalloc(PAGE_SIZE, ) to return
-page-aligned memory blocks, I believe this needs to be switched
-back to __get_free_page() (or better get_zeroed_page()).
-
-Signed-off-by: Jan Beulich <jbeulich@suse.com>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: David Vrabel <david.vrabel@citrix.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/55E735D6020000780009F1E6@prv-mh.provo.novell.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 932c435caba8 ("PCI: Add dev_flags bit to access VPD through function 0")
+Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
+Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
+Acked-by: Myron Stowe <myron.stowe@redhat.com>
+Acked-by: Mark Rustad <mark.d.rustad@intel.com>
+CC: stable@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/ldt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/pci/access.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kernel/ldt.c b/arch/x86/kernel/ldt.c
-index 2bcc0525f1c1..6acc9dd91f36 100644
---- a/arch/x86/kernel/ldt.c
-+++ b/arch/x86/kernel/ldt.c
-@@ -58,7 +58,7 @@ static struct ldt_struct *alloc_ldt_struct(int size)
- 	if (alloc_size > PAGE_SIZE)
- 		new_ldt->entries = vzalloc(alloc_size);
- 	else
--		new_ldt->entries = kzalloc(PAGE_SIZE, GFP_KERNEL);
-+		new_ldt->entries = (void *)get_zeroed_page(GFP_KERNEL);
+diff --git a/drivers/pci/access.c b/drivers/pci/access.c
+index 7f249b9ab2ce..2f15e7bb9f44 100644
+--- a/drivers/pci/access.c
++++ b/drivers/pci/access.c
+@@ -355,7 +355,8 @@ static const struct pci_vpd_ops pci_vpd_pci22_ops = {
+ static ssize_t pci_vpd_f0_read(struct pci_dev *dev, loff_t pos, size_t count,
+ 			       void *arg)
+ {
+-	struct pci_dev *tdev = pci_get_slot(dev->bus, PCI_SLOT(dev->devfn));
++	struct pci_dev *tdev = pci_get_slot(dev->bus,
++					    PCI_DEVFN(PCI_SLOT(dev->devfn), 0));
+ 	ssize_t ret;
  
- 	if (!new_ldt->entries) {
- 		kfree(new_ldt);
-@@ -95,7 +95,7 @@ static void free_ldt_struct(struct ldt_struct *ldt)
- 	if (ldt->size * LDT_ENTRY_SIZE > PAGE_SIZE)
- 		vfree(ldt->entries);
- 	else
--		kfree(ldt->entries);
-+		free_page((unsigned long)ldt->entries);
- 	kfree(ldt);
- }
+ 	if (!tdev)
+@@ -369,7 +370,8 @@ static ssize_t pci_vpd_f0_read(struct pci_dev *dev, loff_t pos, size_t count,
+ static ssize_t pci_vpd_f0_write(struct pci_dev *dev, loff_t pos, size_t count,
+ 				const void *arg)
+ {
+-	struct pci_dev *tdev = pci_get_slot(dev->bus, PCI_SLOT(dev->devfn));
++	struct pci_dev *tdev = pci_get_slot(dev->bus,
++					    PCI_DEVFN(PCI_SLOT(dev->devfn), 0));
+ 	ssize_t ret;
  
+ 	if (!tdev)
+@@ -388,7 +390,8 @@ static const struct pci_vpd_ops pci_vpd_f0_ops = {
+ 
+ static int pci_vpd_f0_dev_check(struct pci_dev *dev)
+ {
+-	struct pci_dev *tdev = pci_get_slot(dev->bus, PCI_SLOT(dev->devfn));
++	struct pci_dev *tdev = pci_get_slot(dev->bus,
++					    PCI_DEVFN(PCI_SLOT(dev->devfn), 0));
+ 	int ret = 0;
+ 
+ 	if (!tdev)
 -- 
 2.17.1
 
