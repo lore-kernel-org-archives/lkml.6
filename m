@@ -2,99 +2,119 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E280AC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:49:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28C93ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:49:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79F892083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:49:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fHuidPf3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79F892083E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id EABCB2075D
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:49:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EABCB2075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727350AbeJZGXr (ORCPT
+        id S1727545AbeJZGXw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 02:23:47 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39128 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726217AbeJZGXr (ORCPT
+        Fri, 26 Oct 2018 02:23:52 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:32906 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726217AbeJZGXv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 02:23:47 -0400
-Received: by mail-pg1-f196.google.com with SMTP id r9-v6so4638324pgv.6
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 14:49:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dDSXPYbgO5LmngLCgtD5Rji67KsLIdRzuYkjxNqJZ2g=;
-        b=fHuidPf3oSkpaR1R0B4yUr0NMLtZmY5ZuiiLBnIIekFxT9OmNzInR5VRdLr3bS2shV
-         H475rLOYNSY9IqDVkMST7UDTZm+bMFrVVO18yAZkcSDZHu2BUbQOryRr92RXZMsxmD9d
-         JBCQ9om7KrLWyLga6cPHKqkg8eEg1JBe3QmgVJkKzfjn4+BmQI9bNtxoGx4l+7gVs5aI
-         NfGmPefErNbXUJvCTQR+xL/87yrlPOGEgNYguAfYwieWCcBU87cQX9hEFjBGFeKSiSva
-         Lp6c5/q5We7RyTG1qFI8+qxdbn6h3hsmcLAIxL8bcdp2oT2pWmpFL0YIgJgiGuuMM3/F
-         AOSQ==
+        Fri, 26 Oct 2018 02:23:51 -0400
+Received: by mail-oi1-f195.google.com with SMTP id c25-v6so2711951oiy.0;
+        Thu, 25 Oct 2018 14:49:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dDSXPYbgO5LmngLCgtD5Rji67KsLIdRzuYkjxNqJZ2g=;
-        b=Qhv2Qx9HHKFay3wx+vC5/D9HpdkbFgHq3WdBCYtOdYBV4kVaOZc1edC4cy/l6UxsSH
-         q8KtmzNI69y57bgHdJehMi3O1uMvhcoQQeBKDfFdO37rkSSXXPCLGasrzhKZPk1OsySo
-         sjHvsbtSZiZPGdCUL8cYjyx7UJBgyuom8M1Ul/bvXozfcxwdgqmOsU2q6eI92mmvEbpU
-         w1cB+OpwEOTBRNlqoKKzq8I6LsAcqdrTDbWsn0SPAWhlZ+4V8hVrh1D3GaQWUiWaKt2z
-         2ueegakX+yJvgkVG+BjCfrWdV1BHAxTjGHEaf/4+oKpfphfNyhK5dfdnb+rAW16PBYNo
-         hDMw==
-X-Gm-Message-State: AGRZ1gKgU/tUE8YoEYgiVfGDjXxwQ2Ucxxj58Dg2J636WkejmpATQkfg
-        sZbCFWjI5uCZsBacnXMnku4eu+D6mC1dfJgBH9PX4IF4
-X-Google-Smtp-Source: AJdET5frzyQ5hXPNpvX0hAiIMSLFfOZIXxKLBcNvrVkiQxBWehU4LI7sZ0HZrLi/9P2ORTDBCEA29NFVgZi/U8MzCow=
-X-Received: by 2002:a62:f909:: with SMTP id o9-v6mr903696pfh.160.1540504163509;
- Thu, 25 Oct 2018 14:49:23 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=2XHRn0RNRmWhOHPZU8Vqp+yY/hK0PSVWmfVMKAeIH9M=;
+        b=YcEK5TTz9pRnSJZZt7K2lRb9D/nYtyh70C+SF2eFPs9C+wiO/73Bn6lKLCsY/JBpuQ
+         43Y+jOfUoPz85FYML7RHFGo5AxAPWdHU6YpOL6bqQiAGpzk9fFjWsmugg8ZOBeeFyGH9
+         E8TZmuEBRYTD9+a31ne7jKmUDG9qgynSibLKR0jNi5TWSX9ksSdjZBntgzJRC/nSoZ8k
+         4G3eiGCXOkpcJEU0gHmFNAcKjWw57BaYMP1tg4rdPxR8GvLBgDoYxzJwdHE2eIqe2M8n
+         r8S5Bamie1W9EBRgwzPAuBAoMw9EUlhrLVohq0gaPqygZKtUyuPqUTcTkpxnd7kk3opT
+         fZDQ==
+X-Gm-Message-State: AGRZ1gKERA2IjM9nZeL1gB811JUlKF3o7gIUPcqQJvb1/teCI3l0yXH4
+        q3qDBUlFxuwsVHXaZ6ljZQ==
+X-Google-Smtp-Source: AJdET5fDsKkNIFDUUs2JAJhNILXT8N9thOsCqUzj1sgWNvCkm/lFcFgUq/p3LzLXxSZN+tXsVCdJ7g==
+X-Received: by 2002:aca:6005:: with SMTP id u5-v6mr606965oib.201.1540504167242;
+        Thu, 25 Oct 2018 14:49:27 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id b185-v6sm2875471oia.12.2018.10.25.14.49.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Oct 2018 14:49:26 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 16:49:25 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     jiada_wang@mentor.com
+Cc:     geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+        horms@verge.net.au, magnus.damm@gmail.com, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH linux-next v1 2/4] clk: renesas: Add binding document for
+ AVB Counter Clock
+Message-ID: <20181025214925.GA5197@bogus>
+References: <20181025072349.15173-1-jiada_wang@mentor.com>
+ <20181025072349.15173-3-jiada_wang@mentor.com>
 MIME-Version: 1.0
-References: <20181025201221.Horde.1UXSw9cRIOdmNlpjDXbda3Y@aws-it.at>
-In-Reply-To: <20181025201221.Horde.1UXSw9cRIOdmNlpjDXbda3Y@aws-it.at>
-From:   Cong Wang <xiyou.wangcong@gmail.com>
-Date:   Thu, 25 Oct 2018 14:49:11 -0700
-Message-ID: <CAM_iQpWK7TbN10nC9QyUOacpXeiOkMP2FDiZ-1weAfgfdpqSMw@mail.gmail.com>
-Subject: Re: tc qdisc command partially broken with patch-4.14.76-77 up to patch-4.14.77-78
-To:     astx@aws-it.at
-Cc:     LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181025072349.15173-3-jiada_wang@mentor.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 1:14 PM astx <astx@aws-it.at> wrote:
->
-> tc qdisc command is partially broken after applying patch-4.14.76-77.
-> Applying patch-4.14.77-78 didn't fix it.
->
-> Test command:
->    tc qdisc add dev eth0 root handle 1: hfsc default fffd
-> Kernel answer:
->    RTNETLINK answers: Numerical result out of range
->
-> I have identified the problematic sub-patch out of patch-4.14.76-77 to
-> be the problem:
->
->     diff --git a/net/sched/sch_api.c b/net/sched/sch_api.c
->     index 22bc6fc48311..cd69aa067543 100644
->
-> Without this small patch the above "tc qdisc" command works like a charm.
+On Thu, Oct 25, 2018 at 04:23:47PM +0900, jiada_wang@mentor.com wrote:
+> From: Jiada Wang <jiada_wang@mentor.com>
+> 
+> Add device tree bindings for avb counter clock for Renesas
+> R-Car Socs.
+> 
+> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+> ---
+>  .../bindings/clock/renesas,avb-clk.txt        | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,avb-clk.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,avb-clk.txt b/Documentation/devicetree/bindings/clock/renesas,avb-clk.txt
+> new file mode 100644
+> index 000000000000..03bf50b5830c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/renesas,avb-clk.txt
+> @@ -0,0 +1,19 @@
+> +* Renesas AVB Counter Clock
+> +
+> +The AVB Counter Clocks are provided by avb_counter8 Clock Generator,
+> +avb_counter8 has dividers which operates with S0D1ϕ clock and has
+> +8 output clocks.
+> +
+> +Required Properties:
+> +  - compatible: Must be "renesas,clk-avb"
 
-Should be fixed by the following commit:
+Should be SoC specific? 
 
-commit e72bde6b66299602087c8c2350d36a525e75d06e
-Author: David Ahern <dsahern@gmail.com>
-Date:   Wed Oct 24 08:32:49 2018 -0700
+If the h/w block is called "AVB Counter" then use "avb-counter" in the 
+compatible string.
 
-    net: sched: Remove TCA_OPTIONS from policy
+> +  - reg: Base address and length of the memory resource used by the AVB
+> +  - #clock-cells: Must be 1
+> +
+> +Example
+> +-------
+> +
+> +	clk_avb: avb-clock@ec5a011c {
 
+clock-controller@...
 
-Thanks.
+> +		compatible = "renesas,clk-avb";
+> +		reg = <0 0xec5a011c 0 0x24>;
+> +		#clock-cells = <1>;
+> +	};
+> -- 
+> 2.17.0
+> 
