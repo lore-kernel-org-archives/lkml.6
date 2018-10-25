@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 243DDECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:12:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5145C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:12:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D785220847
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:12:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EEEA20848
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:12:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="n8jxNpYL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D785220847
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WWdGZtGA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EEEA20848
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728007AbeJYToU (ORCPT
+        id S1728021AbeJYToX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 15:44:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48396 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 15:44:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48468 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727459AbeJYToT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 15:44:19 -0400
+        id S1727459AbeJYToW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 15:44:22 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEA1A20840;
-        Thu, 25 Oct 2018 11:11:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B96120834;
+        Thu, 25 Oct 2018 11:12:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540465921;
-        bh=QIse9ZX8d/8j4+2E+uk2NURwda2ByK8NKaRnV0SDfmc=;
+        s=default; t=1540465923;
+        bh=uLNq8BLxV20Zqfl21vLLDSDu8lA7S1W/Ta36qW1bmnk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=n8jxNpYLjgB+Bk5xWVNUN9Q0XewF/6rzRrM71mddVStxsHxR8yZH0IlfvAaNpB1Id
-         Gq12r02mv6P61SzgXv+U2R7/U11yg655dQ+gjq50NOEjJQ9F1xTTXc1qd3bfWYYag9
-         Jcd7BtvAGMmTZW53E/T2NfxH+JmC7SulgU3wlq1M=
+        b=WWdGZtGAPzPxN4/v/DUv9BJv3xUFm2adIFlDsjLoYC+4WXotHWDfWOnTri2qvnKMP
+         pXckKS/4NfdCg2BT0llydj54PuOFT8R0ery8+aiK1R5QGcSUMF1AubtCa79mz0QEd+
+         UIA+NLFBVtvvpJG2TsU4qfyhhNuHIyXMiHv9mOE4=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -44,9 +44,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Adrian Hunter <adrian.hunter@intel.com>,
         Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 27/37] perf scripts python: call-graph-from-sql.py: Rename to exported-sql-viewer.py
-Date:   Thu, 25 Oct 2018 08:10:21 -0300
-Message-Id: <20181025111031.3440-28-acme@kernel.org>
+Subject: [PATCH 28/37] perf scripts python: exported-sql-viewer.py: Add support for multiple sub-windows
+Date:   Thu, 25 Oct 2018 08:10:22 -0300
+Message-Id: <20181025111031.3440-29-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181025111031.3440-1-acme@kernel.org>
 References: <20181025111031.3440-1-acme@kernel.org>
@@ -57,95 +57,247 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Adrian Hunter <adrian.hunter@intel.com>
 
-Additional reports will be added to the script so rename to reflect the
-more general purpose.
+Use Qt MDI (multiple document interface) to support multiple sub-windows.
+Put the data model in a cache so that each sub-window can share the same
+data. This allows mutiple views of the call-graph at the same time and
+paves the way to add more reports.
+
+Committer testing:
+
+Starts with a "File  Reports  Windows" main menu, from the "Reports" I
+can get what was available up to now, the "Context-Sensitivi Call Graph"
+option.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/20181001062853.28285-13-adrian.hunter@intel.com
+Link: http://lkml.kernel.org/r/20181001062853.28285-14-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Documentation/intel-pt.txt                               | 2 +-
- tools/perf/scripts/python/export-to-postgresql.py                   | 2 +-
- tools/perf/scripts/python/export-to-sqlite.py                       | 2 +-
- .../python/{call-graph-from-sql.py => exported-sql-viewer.py}       | 6 +++---
- 4 files changed, 6 insertions(+), 6 deletions(-)
- rename tools/perf/scripts/python/{call-graph-from-sql.py => exported-sql-viewer.py} (98%)
- mode change 100644 => 100755
+ tools/perf/scripts/python/exported-sql-viewer.py | 182 +++++++++++++++++++++--
+ 1 file changed, 173 insertions(+), 9 deletions(-)
 
-diff --git a/tools/perf/Documentation/intel-pt.txt b/tools/perf/Documentation/intel-pt.txt
-index 76971d2e4164..115eaacc455f 100644
---- a/tools/perf/Documentation/intel-pt.txt
-+++ b/tools/perf/Documentation/intel-pt.txt
-@@ -106,7 +106,7 @@ in transaction, respectively.
- While it is possible to create scripts to analyze the data, an alternative
- approach is available to export the data to a sqlite or postgresql database.
- Refer to script export-to-sqlite.py or export-to-postgresql.py for more details,
--and to script call-graph-from-sql.py for an example of using the database.
-+and to script exported-sql-viewer.py for an example of using the database.
- 
- There is also script intel-pt-events.py which provides an example of how to
- unpack the raw data for power events and PTWRITE.
-diff --git a/tools/perf/scripts/python/export-to-postgresql.py b/tools/perf/scripts/python/export-to-postgresql.py
-index e46f51b17513..0564dd7377f2 100644
---- a/tools/perf/scripts/python/export-to-postgresql.py
-+++ b/tools/perf/scripts/python/export-to-postgresql.py
-@@ -59,7 +59,7 @@ import datetime
- #	pt_example=# \q
- #
- # An example of using the database is provided by the script
--# call-graph-from-sql.py.  Refer to that script for details.
-+# exported-sql-viewer.py.  Refer to that script for details.
- #
- # Tables:
- #
-diff --git a/tools/perf/scripts/python/export-to-sqlite.py b/tools/perf/scripts/python/export-to-sqlite.py
-index e4bb82c8aba9..245caf2643ed 100644
---- a/tools/perf/scripts/python/export-to-sqlite.py
-+++ b/tools/perf/scripts/python/export-to-sqlite.py
-@@ -40,7 +40,7 @@ import datetime
- #	sqlite> .quit
- #
- # An example of using the database is provided by the script
--# call-graph-from-sql.py.  Refer to that script for details.
-+# exported-sql-viewer.py.  Refer to that script for details.
- #
- # The database structure is practically the same as created by the script
- # export-to-postgresql.py. Refer to that script for details.  A notable
-diff --git a/tools/perf/scripts/python/call-graph-from-sql.py b/tools/perf/scripts/python/exported-sql-viewer.py
-old mode 100644
-new mode 100755
-similarity index 98%
-rename from tools/perf/scripts/python/call-graph-from-sql.py
-rename to tools/perf/scripts/python/exported-sql-viewer.py
-index ee1085169a3e..03e7a1de7f31
---- a/tools/perf/scripts/python/call-graph-from-sql.py
+diff --git a/tools/perf/scripts/python/exported-sql-viewer.py b/tools/perf/scripts/python/exported-sql-viewer.py
+index 03e7a1de7f31..c2f44351821e 100755
+--- a/tools/perf/scripts/python/exported-sql-viewer.py
 +++ b/tools/perf/scripts/python/exported-sql-viewer.py
-@@ -10,12 +10,12 @@
- # Following on from the example in the export scripts, a
- # call-graph can be displayed for the pt_example database like this:
- #
--#	python tools/perf/scripts/python/call-graph-from-sql.py pt_example
-+#	python tools/perf/scripts/python/exported-sql-viewer.py pt_example
- #
- # Note that for PostgreSQL, this script supports connecting to remote databases
- # by setting hostname, port, username, password, and dbname e.g.
- #
--#	python tools/perf/scripts/python/call-graph-from-sql.py "hostname=myhost username=myuser password=mypassword dbname=pt_example"
-+#	python tools/perf/scripts/python/exported-sql-viewer.py "hostname=myhost username=myuser password=mypassword dbname=pt_example"
- #
- # The result is a GUI window with a tree representing a context-sensitive
- # call-graph.  Expanding a couple of levels of the tree and adjusting column
-@@ -365,7 +365,7 @@ class DBRef():
+@@ -47,6 +47,8 @@
+ #       functions that it calls
  
- def Main():
- 	if (len(sys.argv) < 2):
--		print >> sys.stderr, "Usage is: call-graph-from-sql.py <database name>"
-+		print >> sys.stderr, "Usage is: exported-sql-viewer.py <database name>"
- 		raise Exception("Too few arguments")
+ import sys
++import weakref
++import threading
+ from PySide.QtCore import *
+ from PySide.QtGui import *
+ from PySide.QtSql import *
+@@ -138,6 +140,23 @@ class TreeModel(QAbstractItemModel):
+ 		item = index.internalPointer()
+ 		return self.DisplayData(item, index)
  
- 	dbname = sys.argv[1]
++# Model cache
++
++model_cache = weakref.WeakValueDictionary()
++model_cache_lock = threading.Lock()
++
++def LookupCreateModel(model_name, create_fn):
++	model_cache_lock.acquire()
++	try:
++		model = model_cache[model_name]
++	except:
++		model = None
++	if model is None:
++		model = create_fn()
++		model_cache[model_name] = model
++	model_cache_lock.release()
++	return model
++
+ # Context-sensitive call graph data model item base
+ 
+ class CallGraphLevelItemBase(object):
+@@ -289,6 +308,144 @@ class CallGraphModel(TreeModel):
+ 		alignment = [ Qt.AlignLeft, Qt.AlignLeft, Qt.AlignRight, Qt.AlignRight, Qt.AlignRight, Qt.AlignRight, Qt.AlignRight ]
+ 		return alignment[column]
+ 
++# Context-sensitive call graph window
++
++class CallGraphWindow(QMdiSubWindow):
++
++	def __init__(self, glb, parent=None):
++		super(CallGraphWindow, self).__init__(parent)
++
++		self.model = LookupCreateModel("Context-Sensitive Call Graph", lambda x=glb: CallGraphModel(x))
++
++		self.view = QTreeView()
++		self.view.setModel(self.model)
++
++		for c, w in ((0, 250), (1, 100), (2, 60), (3, 70), (4, 70), (5, 100)):
++			self.view.setColumnWidth(c, w)
++
++		self.setWidget(self.view)
++
++		AddSubWindow(glb.mainwindow.mdi_area, self, "Context-Sensitive Call Graph")
++
++# Action Definition
++
++def CreateAction(label, tip, callback, parent=None, shortcut=None):
++	action = QAction(label, parent)
++	if shortcut != None:
++		action.setShortcuts(shortcut)
++	action.setStatusTip(tip)
++	action.triggered.connect(callback)
++	return action
++
++# Typical application actions
++
++def CreateExitAction(app, parent=None):
++	return CreateAction("&Quit", "Exit the application", app.closeAllWindows, parent, QKeySequence.Quit)
++
++# Typical MDI actions
++
++def CreateCloseActiveWindowAction(mdi_area):
++	return CreateAction("Cl&ose", "Close the active window", mdi_area.closeActiveSubWindow, mdi_area)
++
++def CreateCloseAllWindowsAction(mdi_area):
++	return CreateAction("Close &All", "Close all the windows", mdi_area.closeAllSubWindows, mdi_area)
++
++def CreateTileWindowsAction(mdi_area):
++	return CreateAction("&Tile", "Tile the windows", mdi_area.tileSubWindows, mdi_area)
++
++def CreateCascadeWindowsAction(mdi_area):
++	return CreateAction("&Cascade", "Cascade the windows", mdi_area.cascadeSubWindows, mdi_area)
++
++def CreateNextWindowAction(mdi_area):
++	return CreateAction("Ne&xt", "Move the focus to the next window", mdi_area.activateNextSubWindow, mdi_area, QKeySequence.NextChild)
++
++def CreatePreviousWindowAction(mdi_area):
++	return CreateAction("Pre&vious", "Move the focus to the previous window", mdi_area.activatePreviousSubWindow, mdi_area, QKeySequence.PreviousChild)
++
++# Typical MDI window menu
++
++class WindowMenu():
++
++	def __init__(self, mdi_area, menu):
++		self.mdi_area = mdi_area
++		self.window_menu = menu.addMenu("&Windows")
++		self.close_active_window = CreateCloseActiveWindowAction(mdi_area)
++		self.close_all_windows = CreateCloseAllWindowsAction(mdi_area)
++		self.tile_windows = CreateTileWindowsAction(mdi_area)
++		self.cascade_windows = CreateCascadeWindowsAction(mdi_area)
++		self.next_window = CreateNextWindowAction(mdi_area)
++		self.previous_window = CreatePreviousWindowAction(mdi_area)
++		self.window_menu.aboutToShow.connect(self.Update)
++
++	def Update(self):
++		self.window_menu.clear()
++		sub_window_count = len(self.mdi_area.subWindowList())
++		have_sub_windows = sub_window_count != 0
++		self.close_active_window.setEnabled(have_sub_windows)
++		self.close_all_windows.setEnabled(have_sub_windows)
++		self.tile_windows.setEnabled(have_sub_windows)
++		self.cascade_windows.setEnabled(have_sub_windows)
++		self.next_window.setEnabled(have_sub_windows)
++		self.previous_window.setEnabled(have_sub_windows)
++		self.window_menu.addAction(self.close_active_window)
++		self.window_menu.addAction(self.close_all_windows)
++		self.window_menu.addSeparator()
++		self.window_menu.addAction(self.tile_windows)
++		self.window_menu.addAction(self.cascade_windows)
++		self.window_menu.addSeparator()
++		self.window_menu.addAction(self.next_window)
++		self.window_menu.addAction(self.previous_window)
++		if sub_window_count == 0:
++			return
++		self.window_menu.addSeparator()
++		nr = 1
++		for sub_window in self.mdi_area.subWindowList():
++			label = str(nr) + " " + sub_window.name
++			if nr < 10:
++				label = "&" + label
++			action = self.window_menu.addAction(label)
++			action.setCheckable(True)
++			action.setChecked(sub_window == self.mdi_area.activeSubWindow())
++			action.triggered.connect(lambda x=nr: self.setActiveSubWindow(x))
++			self.window_menu.addAction(action)
++			nr += 1
++
++	def setActiveSubWindow(self, nr):
++		self.mdi_area.setActiveSubWindow(self.mdi_area.subWindowList()[nr - 1])
++
++# Unique name for sub-windows
++
++def NumberedWindowName(name, nr):
++	if nr > 1:
++		name += " <" + str(nr) + ">"
++	return name
++
++def UniqueSubWindowName(mdi_area, name):
++	nr = 1
++	while True:
++		unique_name = NumberedWindowName(name, nr)
++		ok = True
++		for sub_window in mdi_area.subWindowList():
++			if sub_window.name == unique_name:
++				ok = False
++				break
++		if ok:
++			return unique_name
++		nr += 1
++
++# Add a sub-window
++
++def AddSubWindow(mdi_area, sub_window, name):
++	unique_name = UniqueSubWindowName(mdi_area, name)
++	sub_window.setMinimumSize(200, 100)
++	sub_window.resize(800, 600)
++	sub_window.setWindowTitle(unique_name)
++	sub_window.setAttribute(Qt.WA_DeleteOnClose)
++	sub_window.setWindowIcon(sub_window.style().standardIcon(QStyle.SP_FileIcon))
++	sub_window.name = unique_name
++	mdi_area.addSubWindow(sub_window)
++	sub_window.show()
++
+ # Main window
+ 
+ class MainWindow(QMainWindow):
+@@ -298,21 +455,28 @@ class MainWindow(QMainWindow):
+ 
+ 		self.glb = glb
+ 
+-		self.setWindowTitle("Call Graph: " + glb.dbname)
+-		self.move(100, 100)
+-		self.resize(800, 600)
++		self.setWindowTitle("Exported SQL Viewer: " + glb.dbname)
+ 		self.setWindowIcon(self.style().standardIcon(QStyle.SP_ComputerIcon))
+ 		self.setMinimumSize(200, 100)
+ 
+-		self.model = CallGraphModel(glb)
++		self.mdi_area = QMdiArea()
++		self.mdi_area.setHorizontalScrollBarPolicy(Qt.ScrollBarAsNeeded)
++		self.mdi_area.setVerticalScrollBarPolicy(Qt.ScrollBarAsNeeded)
+ 
+-		self.view = QTreeView()
+-		self.view.setModel(self.model)
++		self.setCentralWidget(self.mdi_area)
+ 
+-		for c, w in ((0, 250), (1, 100), (2, 60), (3, 70), (4, 70), (5, 100)):
+-			self.view.setColumnWidth(c, w)
++		menu = self.menuBar()
++
++		file_menu = menu.addMenu("&File")
++		file_menu.addAction(CreateExitAction(glb.app, self))
++
++		reports_menu = menu.addMenu("&Reports")
++		reports_menu.addAction(CreateAction("Context-Sensitive Call &Graph", "Create a new window containing a context-sensitive call graph", self.NewCallGraph, self))
++
++		self.window_menu = WindowMenu(self.mdi_area, menu)
+ 
+-		self.setCentralWidget(self.view)
++	def NewCallGraph(self):
++		CallGraphWindow(self.glb, self)
+ 
+ # Global data
+ 
 -- 
 2.14.4
 
