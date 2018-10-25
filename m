@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CBA2C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:11:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B63AC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:11:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29C1B2075D
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:11:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F79A20840
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:11:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BHJ7X/qb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29C1B2075D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KJ8yXerc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F79A20840
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727682AbeJYTni (ORCPT
+        id S1727696AbeJYTnl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 15:43:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47466 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 15:43:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47518 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727666AbeJYTni (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 15:43:38 -0400
+        id S1727666AbeJYTnl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 15:43:41 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA4572083E;
-        Thu, 25 Oct 2018 11:11:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC57D20834;
+        Thu, 25 Oct 2018 11:11:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540465880;
-        bh=dSwlhai7v+Hm3+OghedSf/W4a2x1Rti1Np3vexRQSXY=;
+        s=default; t=1540465883;
+        bh=7BGsifh1trlqbFkyHPGsPj786te5+wjSizHZkcaBHUg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BHJ7X/qb45DZHt/DeVulcItr5LHZy/kUvYHyGjj6gBhx/idCLfkIYuLFn0j71wPNn
-         Cd5S/TAAa2WIIdKzmMJFD1hKmKAH8tcTVD7rQaeF524d3mOmxRYPEAfXogr3YlrZLD
-         +IuQRZ6A5LE7kAu6OrqH6/atTYr2QztRwsAH//fo=
+        b=KJ8yXercaU91DcTM5b/KVdGBog31o6yHO6Z8zssPt3StvbHdwwsQk6tiebYUpLFvu
+         iJfYWG/keFIHa+DnBui4R4xTkW+ysBgH0F0+lV5LK+4NKOKasIDl/AAWAmXWFqU4DP
+         gyUCQGYZFawI/9Y1kXwTYPVKKyrlHOCvFCA427ZU=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        linux-perf-users@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jin Yao <yao.jin@linux.intel.com>,
         Namhyung Kim <namhyung@kernel.org>,
-        Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 11/37] perf trace: Drop thread refcount in trace__event_handler()
-Date:   Thu, 25 Oct 2018 08:10:05 -0300
-Message-Id: <20181025111031.3440-12-acme@kernel.org>
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 12/37] perf stat: Poll for monitored tasks being alive
+Date:   Thu, 25 Oct 2018 08:10:06 -0300
+Message-Id: <20181025111031.3440-13-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181025111031.3440-1-acme@kernel.org>
 References: <20181025111031.3440-1-acme@kernel.org>
@@ -56,40 +56,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-We must pair:
+Adding the check for tasks we monitor via -p/-t options, and finish stat
+if there's no longer task to monitor.
 
-   thread = machine__findnew_thread();
-
-with thread__put(thread). Fix it.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
+Requested-by: Stephane Eranian <eranian@google.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jin Yao <yao.jin@linux.intel.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Fixes: c4191e55b874 ("perf trace: Show comm and tid for tracepoint events")
-Link: https://lkml.kernel.org/n/tip-dkxsb8cwg87rmkrzrbns1o4z@git.kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Link: http://lkml.kernel.org/r/20181022093015.9106-1-jolsa@kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/builtin-stat.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 77b8748ad5ed..589e0412652a 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -2152,8 +2152,8 @@ static int trace__event_handler(struct trace *trace, struct perf_evsel *evsel,
- 		trace__fprintf_callchain(trace, sample);
- 	else if (callchain_ret < 0)
- 		pr_err("Problem processing %s callchain, skipping...\n", perf_evsel__name(evsel));
--	thread__put(thread);
- out:
-+	thread__put(thread);
- 	return 0;
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index b86aba1c8028..d1028d7755bb 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -409,6 +409,28 @@ static struct perf_evsel *perf_evsel__reset_weak_group(struct perf_evsel *evsel)
+ 	return leader;
  }
  
++static bool is_target_alive(struct target *_target,
++			    struct thread_map *threads)
++{
++	struct stat st;
++	int i;
++
++	if (!target__has_task(_target))
++		return true;
++
++	for (i = 0; i < threads->nr; i++) {
++		char path[PATH_MAX];
++
++		scnprintf(path, PATH_MAX, "%s/%d", procfs__mountpoint(),
++			  threads->map[i].pid);
++
++		if (!stat(path, &st))
++			return true;
++	}
++
++	return false;
++}
++
+ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ {
+ 	int interval = stat_config.interval;
+@@ -579,6 +601,8 @@ static int __run_perf_stat(int argc, const char **argv, int run_idx)
+ 		enable_counters();
+ 		while (!done) {
+ 			nanosleep(&ts, NULL);
++			if (!is_target_alive(&target, evsel_list->threads))
++				break;
+ 			if (timeout)
+ 				break;
+ 			if (interval) {
 -- 
 2.14.4
 
