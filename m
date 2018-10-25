@@ -2,152 +2,157 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5BC6C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 09:51:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BA5DC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:00:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9493F20834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 09:51:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3C302082D
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:00:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ZKPHQyKc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9493F20834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aW3Q3z1g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3C302082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbeJYSX5 (ORCPT
+        id S1727302AbeJYScj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 14:23:57 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:57416 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727203AbeJYSX5 (ORCPT
+        Thu, 25 Oct 2018 14:32:39 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:47073 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727208AbeJYScj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 14:23:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=DMYUfrzGm67RQwAYb+Dc7BRuNsrESyqorLWObdoCMoU=; b=ZKPHQyKcMinQF8nTFQOsHNQ1F
-        BSmqvxTgmRJ5mU25+jB7J1Rb5qDYn1EAWyXpOfuy9jogo1jEdKT51bw9M57W4TA3fwEbFwmdWAVWs
-        DdLVmkVSpdSB3x3yV+XUtfLpmlsDDgWrDZGcYPmME/k+zfecASxYewOJKQc/gba53gulw=;
-Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:43699)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gFcIo-0006y6-5K; Thu, 25 Oct 2018 10:51:42 +0100
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gFcIj-0004rh-Kl; Thu, 25 Oct 2018 10:51:37 +0100
-Date:   Thu, 25 Oct 2018 10:51:34 +0100
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        Linux-MIPS <linux-mips@linux-mips.org>,
-        linux-ia64@vger.kernel.org, SH-Linux <linux-sh@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org,
-        sparclinux@vger.kernel.org, linux-riscv@lists.infradead.org,
-        "open list:GENERIC INCLUDE/ASM HEADER FILES" 
-        <linux-arch@vger.kernel.org>, linux-s390@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-c6x-dev@linux-c6x.org, linux-hexagon@vger.kernel.org,
-        arcml <linux-snps-arc@lists.infradead.org>,
-        "moderated list:H8/300 ARCHITECTURE" 
-        <uclinux-h8-devel@lists.sourceforge.jp>,
-        linux-xtensa@linux-xtensa.org, Arnd Bergmann <arnd@arndb.de>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        linux-um@lists.infradead.org, linux-m68k@lists.linux-m68k.org,
-        Openrisc <openrisc@lists.librecores.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-parisc@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-alpha@vger.kernel.org, Olof Johansson <olof@lixom.net>,
-        nios2-dev@lists.rocketboards.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH v2 0/2] arm64: Cut rebuild time when changing
- CONFIG_BLK_DEV_INITRD
-Message-ID: <20181025095134.GX30658@n2100.armlinux.org.uk>
-References: <20181024193256.23734-1-f.fainelli@gmail.com>
- <CAL_Jsq+KCOv6pXXHhHDZ+7-QUrmtMDvSjEVhK15yZ3qbnn61Ag@mail.gmail.com>
- <20181025093833.GA23607@rapoport-lnx>
+        Thu, 25 Oct 2018 14:32:39 -0400
+Received: by mail-vs1-f67.google.com with SMTP id l6so5084542vsj.13;
+        Thu, 25 Oct 2018 03:00:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=dR5bFwv8bOwwJs4GKudaPDmPfcxoCd5ewhF77B+pa74=;
+        b=aW3Q3z1g6uh2nr7DsgZUsDNHen6fpD1Lf72T9TFyr5C1kr6rX+O1axNf0wIzxnhz0v
+         nN+USedGRotztfjjTmvJUbPIsMBNHrMxescdqNkzLY0jA/JOwob9QNyT4+RepqC68PHk
+         uUwNHI8OZY6oiDJIU+JK+93eipyD5Ejo1s7UclYl22a179s/6GozYoASY9+YwGgS5TKr
+         q7KlA5wAjDnkjcszJ1bGUPm+WZJ44f5lVUIZc/G5GuSud7RXvtKv1M+x0t/FW16O4RP9
+         HN7mo5bPNhmE/6+L/oI81QKFhvd2c/bSu3kK/TcF1JVinHjRT7W0U2xHrpPdKH3G/0bK
+         +m2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=dR5bFwv8bOwwJs4GKudaPDmPfcxoCd5ewhF77B+pa74=;
+        b=h5fkvssf9aBkNuOKyyFLV14O/gBX24bvLCR2kiPu7c3/Sk4wRJCmZrXpgIhSXGoo12
+         Cg2/8aaZ3vvAuEKCQeMS0/c/Igxt1HhyWtKkXdIGSo9uNWFvQx8REKSPmZJM+pMsdJb1
+         NDBU+25NMP29vTQlybxoWZqkANHvdWVIOnnWHysqQwtT98pYksxQqJPJ3Q1ReCb06i4D
+         OJ1ckiUVot5v26XezShgaCnVfaFmKhcHBty5jAZZwF5hkCWIHF6FE8FJiJtST62qpVNn
+         8f7uX282k7vvNHlArRxgGNIWUDTCr1NWcvu/7VQSiTqBrWLLODcaxQP7GfXwyjcKHm8q
+         fnXA==
+X-Gm-Message-State: AGRZ1gKLq1qE+Lfra17A2rmbuQKEGZPI1oQhvHI/kYz5YTTYzdD0JbJc
+        mkci6TK/gheIoc2xINFtuDId3wfiRriBpqI0mx8=
+X-Google-Smtp-Source: AJdET5cIcMq/7jZKfe2l4J7XsJ9SL4yZEWB7R8LTBEyskJzAU27PXRGeUlVrD8fiMRFo8S+vxVY+M8Wa+bVexGgqGIU=
+X-Received: by 2002:a67:33d1:: with SMTP id z200mr383864vsz.40.1540461636798;
+ Thu, 25 Oct 2018 03:00:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181025093833.GA23607@rapoport-lnx>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <cover.1540430861.git.nickhu@andestech.com>
+In-Reply-To: <cover.1540430861.git.nickhu@andestech.com>
+From:   Greentime Hu <green.hu@gmail.com>
+Date:   Thu, 25 Oct 2018 17:59:59 +0800
+Message-ID: <CAEbi=3epEazp30TE=dgVtAU8kye49a3z7uZig88q0zngxAmitg@mail.gmail.com>
+Subject: Re: [PATCH v4 0/4] nds32: Perf support
+To:     Nickhu <nickhu@andestech.com>
+Cc:     Greentime <greentime@andestech.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
+        acme@kernel.org, alexander.shishkin@linux.intel.com,
+        jolsa@redhat.com, namhyung@kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        gregkh@linuxfoundation.org, kstewart@linuxfoundation.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        linux-arm-kernel@lists.infradead.org,
+        DTML <devicetree@vger.kernel.org>, Zong Li <zong@andestech.com>,
+        alankao@andestech.com, Vincent Chen <deanbo422@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 10:38:34AM +0100, Mike Rapoport wrote:
-> On Wed, Oct 24, 2018 at 02:55:17PM -0500, Rob Herring wrote:
-> > On Wed, Oct 24, 2018 at 2:33 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
-> > >
-> > > Hi all,
-> > >
-> > > While investigating why ARM64 required a ton of objects to be rebuilt
-> > > when toggling CONFIG_DEV_BLK_INITRD, it became clear that this was
-> > > because we define __early_init_dt_declare_initrd() differently and we do
-> > > that in arch/arm64/include/asm/memory.h which gets included by a fair
-> > > amount of other header files, and translation units as well.
-> > 
-> > I scratch my head sometimes as to why some config options rebuild so
-> > much stuff. One down, ? to go. :)
-> > 
-> > > Changing the value of CONFIG_DEV_BLK_INITRD is a common thing with build
-> > > systems that generate two kernels: one with the initramfs and one
-> > > without. buildroot is one of these build systems, OpenWrt is also
-> > > another one that does this.
-> > >
-> > > This patch series proposes adding an empty initrd.h to satisfy the need
-> > > for drivers/of/fdt.c to unconditionally include that file, and moves the
-> > > custom __early_init_dt_declare_initrd() definition away from
-> > > asm/memory.h
-> > >
-> > > This cuts the number of objects rebuilds from 1920 down to 26, so a
-> > > factor 73 approximately.
-> > >
-> > > Apologies for the long CC list, please let me know how you would go
-> > > about merging that and if another approach would be preferable, e.g:
-> > > introducing a CONFIG_ARCH_INITRD_BELOW_START_OK Kconfig option or
-> > > something like that.
-> > 
-> > There may be a better way as of 4.20 because bootmem is now gone and
-> > only memblock is used. This should unify what each arch needs to do
-> > with initrd early. We need the physical address early for memblock
-> > reserving. Then later on we need the virtual address to access the
-> > initrd. Perhaps we should just change initrd_start and initrd_end to
-> > physical addresses (or add 2 new variables would be less invasive and
-> > allow for different translation than __va()). The sanity checks and
-> > memblock reserve could also perhaps be moved to a common location.
-> >
-> > Alternatively, given arm64 is the only oddball, I'd be fine with an
-> > "if (IS_ENABLED(CONFIG_ARM64))" condition in the default
-> > __early_init_dt_declare_initrd as long as we have a path to removing
-> > it like the above option.
-> 
-> I think arm64 does not have to redefine __early_init_dt_declare_initrd().
-> Something like this might be just all we need (completely untested,
-> probably it won't even compile):
+Nick Hu <nickhu@andestech.com> =E6=96=BC 2018=E5=B9=B410=E6=9C=8825=E6=97=
+=A5 =E9=80=B1=E5=9B=9B =E4=B8=8A=E5=8D=8810:25=E5=AF=AB=E9=81=93=EF=BC=9A
+>
+> These four commits are perf supporting for nds32.
+> There are three perfomance counters in nds32, and
+> each of them can counts different events. You can
+> use 'perf list' to show the available events that
+> can be used.
+>
+> Changes in V2:
+>         1. Change the definition 'PFM_CTL_xxx' to
+> array form.
+>
+>         2. Simplify the PMU driver.
+>
+>         3. Stop all counters when handling irq
+> caused by performance counters overflow.
+>
+>         4. Rename the compatible string in
+> devicetree.
+>
+> Changes in V3:
+>         Fix the typo in Documentation/devicetree/
+> bindings/nds32/pmu.txt.
+>
+> Changes in V4:
+>         Move 'Documentation/devicetree/bindings/nds32/pmu.txt'
+> to 'Documentation/devicetree/bindings/perf/nds32v3-pmu.txt'.
+>
+> Nickhu (4):
+>   nds32: Fix bug in bitfield.h
+>   nds32: Perf porting
+>   nds32: Add perf call-graph support.
+>   nds32: Add document for NDS32 PMU.
+>
+>  .../devicetree/bindings/perf/nds32v3-pmu.txt  |   17 +
+>  arch/nds32/Kconfig                            |    1 +
+>  arch/nds32/boot/dts/ae3xx.dts                 |    5 +
+>  arch/nds32/include/asm/Kbuild                 |    1 +
+>  arch/nds32/include/asm/bitfield.h             |    4 +-
+>  arch/nds32/include/asm/perf_event.h           |   16 +
+>  arch/nds32/include/asm/pmu.h                  |  386 +++++
+>  arch/nds32/include/asm/stacktrace.h           |   39 +
+>  arch/nds32/kernel/Makefile                    |    3 +-
+>  arch/nds32/kernel/perf_event_cpu.c            | 1522 +++++++++++++++++
+>  arch/nds32/mm/fault.c                         |   13 +-
+>  tools/include/asm/barrier.h                   |    2 +
+>  tools/perf/arch/nds32/Build                   |    1 +
+>  tools/perf/arch/nds32/util/Build              |    1 +
+>  tools/perf/arch/nds32/util/header.c           |   29 +
+>  tools/perf/pmu-events/arch/nds32/mapfile.csv  |   15 +
+>  .../pmu-events/arch/nds32/n13/atcpmu.json     |  290 ++++
+>  17 files changed, 2337 insertions(+), 8 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/perf/nds32v3-pmu.tx=
+t
+>  create mode 100644 arch/nds32/include/asm/perf_event.h
+>  create mode 100644 arch/nds32/include/asm/pmu.h
+>  create mode 100644 arch/nds32/include/asm/stacktrace.h
+>  create mode 100644 arch/nds32/kernel/perf_event_cpu.c
+>  create mode 100644 tools/perf/arch/nds32/Build
+>  create mode 100644 tools/perf/arch/nds32/util/Build
+>  create mode 100644 tools/perf/arch/nds32/util/header.c
+>  create mode 100644 tools/perf/pmu-events/arch/nds32/mapfile.csv
+>  create mode 100644 tools/perf/pmu-events/arch/nds32/n13/atcpmu.json
+>
+Hi Nick,
 
-The alternative solution would be to replace initrd_start/initrd_end
-with physical address versions of these everywhere - that's what
-we're passed from DT, it's what 32-bit ARM would prefer, and seemingly
-what 64-bit ARM would also like as well.
-
-Grepping for initrd_start in arch/*/mm shows that there's lots of
-architectures that have virtual/physical conversions on these, and
-a number that have obviously been derived from 32-bit ARM's approach
-(with maintaining a phys_initrd_start variable to simplify things).
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+Thank you.
+Acked-by: Greentime Hu <greentime@andestech.com>
