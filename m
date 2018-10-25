@@ -2,183 +2,234 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A7AC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:02:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A45EC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:04:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B02142083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:02:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B02142083E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+	by mail.kernel.org (Postfix) with ESMTP id 0253020834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:04:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="IbB0GlEN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0253020834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727475AbeJZGg7 (ORCPT
+        id S1727418AbeJZGi5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 02:36:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60334 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725941AbeJZGg6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 02:36:58 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AEC45B0A0;
-        Thu, 25 Oct 2018 22:02:31 +0000 (UTC)
-From:   NeilBrown <neil@brown.name>
-To:     Laura Abbott <labbott@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 26 Oct 2018 09:02:23 +1100
-Cc:     ksummit-discuss@lists.linuxfoundation.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Olof Johansson <olof@lixom.net>, Chris Mason <clm@fb.com>,
-        Mishi Choudhary <mishi@linux.com>
-Subject: Re: Call to Action Re: [PATCH 0/7] Code of Conduct: Fix some wording, and add an interpretation document
-In-Reply-To: <c6bf1877-6e29-50ec-ffa8-314ab35ec9ce@redhat.com>
-References: <20181020134908.GA32218@kroah.com> <87y3ar80ac.fsf@notabene.neil.brown.name> <c6bf1877-6e29-50ec-ffa8-314ab35ec9ce@redhat.com>
-Message-ID: <87d0rx65xs.fsf@notabene.neil.brown.name>
+        Fri, 26 Oct 2018 02:38:57 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:32882 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725941AbeJZGi5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 02:38:57 -0400
+Received: from pps.filterd (m0044008.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9PLwvQd004269
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 15:04:31 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=C0bVDWa5ikxrQ1eeZ7hJ9sEsRIWOebCqNDKh+PWFPeI=;
+ b=IbB0GlEN/Jh0dgvZ5Hkzlibl+pGohKmKiK3x6+vr+ogKe7MOT40ShkijbzULr6p+dIxo
+ viVd0Srk5E/g3pWx3HfWKZ7l/B0nC/+U4RNBISQkuvWuEd3OB0M0Hm6zok+ji1eF6hQp
+ 1hXe7/h+11dx5ULJ4BeBUwKJ/DHXpGVnuPY= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2nbp2s81cx-5
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 15:04:31 -0700
+Received: from mx-out.facebook.com (2620:10d:c0a1:3::13) by
+ mail.thefacebook.com (2620:10d:c021:18::176) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3;
+ Thu, 25 Oct 2018 15:04:29 -0700
+Received: by devvm4117.prn2.facebook.com (Postfix, from userid 167582)
+        id F04E72DD1549; Thu, 25 Oct 2018 15:04:23 -0700 (PDT)
+Smtp-Origin-Hostprefix: devvm
+From:   Vijay Khemka <vijaykhemka@fb.com>
+Smtp-Origin-Hostname: devvm4117.prn2.facebook.com
+To:     Samuel Mendoza-Jonas <sam@mendozajonas.com>,
+        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <vijaykhemka@fb.com>,
+        "openbmc @ lists . ozlabs . org" <openbmc@lists.ozlabs.org>,
+        <Justin.Lee1@Dell.com>, <joel@jms.id.au>,
+        <linux-aspeed@lists.ozlabs.org>
+Smtp-Origin-Cluster: prn2c23
+Subject: [PATCH net-next] net/ncsi: Add NCSI Mellanox OEM command
+Date:   Thu, 25 Oct 2018 15:04:13 -0700
+Message-ID: <20181025220413.2936698-1-vijaykhemka@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-25_12:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+This patch adds OEM Mellanox commands and response handling. It also
+defines OEM Get MAC Address handler to get and configure the device.
 
-On Wed, Oct 24 2018, Laura Abbott wrote:
+ncsi_oem_gma_handler_mlx: This handler send NCSI mellanox command for
+getting mac address.
+ncsi_rsp_handler_oem_mlx: This handles response received for all
+mellanox OEM commands.
+ncsi_rsp_handler_oem_mlx_gma: This handles get mac address response and
+set it to device.
 
-> On 10/21/2018 02:20 PM, NeilBrown wrote:
->
-> <snip>
->
->> I call on the community to consider what *does* need to be said, about
->> conduct, to people outside the community and who have recently joined.
->> What is the document that you would have liked to have read as you were
->> starting out?  It is all too long ago for me to remember clearly, and so
->> much has changed.
->>=20
->
-> I joined much more recently than many and what I would have wanted
-> then is an interesting question. I probably would _not_ have wanted
-> a code of conduct when I first started working in open source. I also
-> said things in my younger years I regret and probably wouldn't have
-> said if I was held to a higher standard of conduct. Younger me frequently
-> put up with behavior I wouldn't tolerate today. Younger me also
-> greatly benefited from the experience of other kernel developers
-> giving me firm feedback in a helpful way and saying no to bad approaches.
-> I don't believe I would have continued if I hadn't been given that
-> feedback in a useful way.
+Signed-off-by: Vijay Khemka <vijaykhemka@fb.com>
+---
+ net/ncsi/internal.h    |  5 +++++
+ net/ncsi/ncsi-manage.c | 25 ++++++++++++++++++++++++-
+ net/ncsi/ncsi-pkt.h    |  9 +++++++++
+ net/ncsi/ncsi-rsp.c    | 41 ++++++++++++++++++++++++++++++++++++++++-
+ 4 files changed, 78 insertions(+), 2 deletions(-)
 
-Thanks for this thoughtful reply.  You seem to make two key points.
+diff --git a/net/ncsi/internal.h b/net/ncsi/internal.h
+index 1dae77c54009..7f3eb1360b9b 100644
+--- a/net/ncsi/internal.h
++++ b/net/ncsi/internal.h
+@@ -73,10 +73,15 @@ enum {
+ #define NCSI_OEM_MFR_BCM_ID             0x113d
+ /* Broadcom specific OEM Command */
+ #define NCSI_OEM_BCM_CMD_GMA            0x01   /* CMD ID for Get MAC */
++/* Mellanox specific OEM Command */
++#define NCSI_OEM_MLX_CMD_GMA            0x00   /* CMD ID for Get MAC */
++#define NCSI_OEM_MLX_CMD_GMA_PARAM      0x1b   /* Parameter for GMA  */
+ /* OEM Command payload lengths*/
+ #define NCSI_OEM_BCM_CMD_GMA_LEN        12
++#define NCSI_OEM_MLX_CMD_GMA_LEN        8
+ /* Mac address offset in OEM response */
+ #define BCM_MAC_ADDR_OFFSET             28
++#define MLX_MAC_ADDR_OFFSET             8
+ 
+ 
+ struct ncsi_channel_version {
+diff --git a/net/ncsi/ncsi-manage.c b/net/ncsi/ncsi-manage.c
+index bfc43b28c7a6..eacb653ff987 100644
+--- a/net/ncsi/ncsi-manage.c
++++ b/net/ncsi/ncsi-manage.c
+@@ -675,12 +675,35 @@ static int ncsi_oem_gma_handler_bcm(struct ncsi_cmd_arg *nca)
+ 	return ret;
+ }
+ 
++static int ncsi_oem_gma_handler_mlx(struct ncsi_cmd_arg *nca)
++{
++	unsigned char data[NCSI_OEM_MLX_CMD_GMA_LEN];
++	int ret = 0;
++
++	nca->payload = NCSI_OEM_MLX_CMD_GMA_LEN;
++
++	memset(data, 0, NCSI_OEM_MLX_CMD_GMA_LEN);
++	*(unsigned int *)data = ntohl(NCSI_OEM_MFR_MLX_ID);
++	data[5] = NCSI_OEM_MLX_CMD_GMA;
++	data[6] = NCSI_OEM_MLX_CMD_GMA_PARAM;
++
++	nca->data = data;
++
++	ret = ncsi_xmit_cmd(nca);
++	if (ret)
++		netdev_err(nca->ndp->ndev.dev,
++			   "NCSI: Failed to transmit cmd 0x%x during configure\n",
++			   nca->type);
++	return ret;
++}
++
+ /* OEM Command handlers initialization */
+ static struct ncsi_oem_gma_handler {
+ 	unsigned int	mfr_id;
+ 	int		(*handler)(struct ncsi_cmd_arg *nca);
+ } ncsi_oem_gma_handlers[] = {
+-	{ NCSI_OEM_MFR_BCM_ID, ncsi_oem_gma_handler_bcm }
++	{ NCSI_OEM_MFR_BCM_ID, ncsi_oem_gma_handler_bcm },
++	{ NCSI_OEM_MFR_MLX_ID, ncsi_oem_gma_handler_mlx }
+ };
+ 
+ static int ncsi_gma_handler(struct ncsi_cmd_arg *nca, unsigned int mf_id)
+diff --git a/net/ncsi/ncsi-pkt.h b/net/ncsi/ncsi-pkt.h
+index 4d3f06be38bd..2a6d83a596c9 100644
+--- a/net/ncsi/ncsi-pkt.h
++++ b/net/ncsi/ncsi-pkt.h
+@@ -165,6 +165,15 @@ struct ncsi_rsp_oem_pkt {
+ 	unsigned char           data[];      /* Payload data      */
+ };
+ 
++/* Mellanox Response Data */
++struct ncsi_rsp_oem_mlx_pkt {
++	unsigned char           cmd_rev;     /* Command Revision  */
++	unsigned char           cmd;         /* Command ID        */
++	unsigned char           param;       /* Parameter         */
++	unsigned char           optional;    /* Optional data     */
++	unsigned char           data[];      /* Data              */
++};
++
+ /* Broadcom Response Data */
+ struct ncsi_rsp_oem_bcm_pkt {
+ 	unsigned char           ver;         /* Payload Version   */
+diff --git a/net/ncsi/ncsi-rsp.c b/net/ncsi/ncsi-rsp.c
+index 77e07ba3f493..ba9a4ba97c64 100644
+--- a/net/ncsi/ncsi-rsp.c
++++ b/net/ncsi/ncsi-rsp.c
+@@ -611,6 +611,45 @@ static int ncsi_rsp_handler_snfc(struct ncsi_request *nr)
+ 	return 0;
+ }
+ 
++/* Response handler for Mellanox command Get Mac Address */
++static int ncsi_rsp_handler_oem_mlx_gma(struct ncsi_request *nr)
++{
++	struct ncsi_dev_priv *ndp = nr->ndp;
++	struct net_device *ndev = ndp->ndev.dev;
++	const struct net_device_ops *ops = ndev->netdev_ops;
++	struct ncsi_rsp_oem_pkt *rsp;
++	struct sockaddr saddr;
++	int ret = 0;
++
++	/* Get the response header */
++	rsp = (struct ncsi_rsp_oem_pkt *)skb_network_header(nr->rsp);
++
++	saddr.sa_family = ndev->type;
++	ndev->priv_flags |= IFF_LIVE_ADDR_CHANGE;
++	memcpy(saddr.sa_data, &rsp->data[MLX_MAC_ADDR_OFFSET], ETH_ALEN);
++	ret = ops->ndo_set_mac_address(ndev, &saddr);
++	if (ret < 0)
++		netdev_warn(ndev, "NCSI: 'Writing mac address to device failed\n");
++
++	return ret;
++}
++
++/* Response handler for Mellanox card */
++static int ncsi_rsp_handler_oem_mlx(struct ncsi_request *nr)
++{
++	struct ncsi_rsp_oem_mlx_pkt *mlx;
++	struct ncsi_rsp_oem_pkt *rsp;
++
++	/* Get the response header */
++	rsp = (struct ncsi_rsp_oem_pkt *)skb_network_header(nr->rsp);
++	mlx = (struct ncsi_rsp_oem_mlx_pkt *)(rsp->data);
++
++	if (mlx->cmd == NCSI_OEM_MLX_CMD_GMA &&
++	    mlx->param == NCSI_OEM_MLX_CMD_GMA_PARAM)
++		return ncsi_rsp_handler_oem_mlx_gma(nr);
++	return 0;
++}
++
+ /* Response handler for Broadcom command Get Mac Address */
+ static int ncsi_rsp_handler_oem_bcm_gma(struct ncsi_request *nr)
+ {
+@@ -655,7 +694,7 @@ static struct ncsi_rsp_oem_handler {
+ 	unsigned int	mfr_id;
+ 	int		(*handler)(struct ncsi_request *nr);
+ } ncsi_rsp_oem_handlers[] = {
+-	{ NCSI_OEM_MFR_MLX_ID, NULL },
++	{ NCSI_OEM_MFR_MLX_ID, ncsi_rsp_handler_oem_mlx },
+ 	{ NCSI_OEM_MFR_BCM_ID, ncsi_rsp_handler_oem_bcm }
+ };
+ 
+-- 
+2.17.1
 
-Firstly, you repeatedly value feedback - both positive and negative.  I
-agree.  One of the worst things that can happen when I post a patch, is
-that it get ignored (no feedback).
-This gels with what Linus said recently, as reported in
- https://lwn.net/Articles/769117/
-
-     To that end, he asked the assembled group to watch his emails and
-     let him know if things start to get close to the edge.
-
-He explicitly asked for feedback, giving people permission to speak up
-when they thought he was out of line.  I personally think this is a
-very significant statement.  Not for what it tells those maintainers
-(who probably generally knew that already) so much as for what it tells
-the broader community who don't know Linus so well: Feedback about
-behaviour is explicitly welcome.
-
-You go on to say, below, that a private e-mail can resolve things.  I
-don't actually think that a private e-mail is such a good idea because
-even though it might resolve things, it doesn't let the broader
-community know they are resolved, and doesn't set any example of how
-resolution works.  Giving feedback in public is hard, but if there was a
-clearly established mechanism, that might make it easier.  I wouldn't
-choose the wording you provided as it focuses on "you" rather than "me",
-but that sort of gentleness is definitely appropriate.
-
-Your second point is about more serious issues and particularly how they
-will be handled.  As I have said elsewhere, and will not belabor here,
-I think this is upside down: we can and should give power to the weak,
-rather than trying to curb the power of the strong.
-
-Extrapolating from the "feedback" point, I'm imagining having a document
-which starts:
-
-  In the Linux kernel community we try to be helpful and not hurtful.
-  The best way to understand how this applies in practice is to give,
-  receive, and observe feedback.
-
-  If someone says/does/writes something that you think is helpful, consider
-  saying so: "Thank you, I found that to be helpful".
-  - You can your own words if you wish.
-  - You might like to add your voice to others if the situation warrants
-    it.
-  If someone says/does/writes something that you think is hurtful
-  (whether to yourself or someone else), please consider saying
-  something:
-  "This seems hurtful to me"
-  - It is best to use exactly this wording.  In particular, don't
-    embellish or explain unless asked.
-  - Normally just one voice is sufficient.  If an individual repeats
-    the hurtful behavior, one new voice per instance is sufficient.
-
-
-It might then continue with some specifics, though there seems to be
-some debate on whether such specifics are a good idea.  I don't have a
-firm opinion.
-
-Thanks a lot,
-NeilBrown
-
-=20=20
-=20=20
-
->
-> Today, I think the code of conduct is a very important addition to
-> the community. It's a stronger assertion that the kernel community
-> is committed to raising the bar for behavior. I have no concern about
-> patch review or quality dropping because most maintainers demonstrate
-> every day that they can give effective feedback. We're all going to
-> screw that up sometimes and the Code of Conduct reminds us to do our
-> best. Most issues that arise can be resolved with a private e-mail
-> going "you might want to rethink your wording there."
->
-> What the Code of Conduct also provides is confidence that more serious
-> community issues such as harassment not related to patch
-> review can be handled. It spells out certain behaviors that won't
-> be tolerated and explains how those problems will be dealt with.
-> Will those problems actually be handled appropriately when the time
-> comes? I can't actually say for sure, but the kernel community works
-> on trust so I guess I have to trust that it will. I really hope I never
-> have to report harassment but I'm glad there's a process in place.
->
-> Thanks,
-> Laura
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlvSPW8ACgkQOeye3VZi
-gblvnA/9FikE+oTW2bq06zx5WWqim9d06F1SgjFipoO1hBl2pe7kf7fHtA5bn536
-30iNqFlEsFVdBelLVDoPkwdWI96qEXEjTVFsRIgrcO9ZhPb4MYGNfKRp6dwzCOMz
-PWVVMayvgmcGcSqW01osuqpCTb/KxBFiIYXJ1u4K/zW7QjknFknQdO8FATl+mvFO
-KkMIIfihdC1KICZccmGN/wTfMiDBkBr4RXQJqunKawG3Kqr4JD/ni4sUIIeLQYmv
-qFxVQJgR2quO0b+dM0MbTfp8bFcTM5sRYgmx8XQDeLY8IDqWtZgnFHJa7gk4bCnw
-zJLE14MSBBQp/C4mSiGR8Fc8zFSkf/ChoYZNgeijlKNV1iht1B6yn5TbtqkGg0iN
-2/4Xp2lPWrJUARXGOCoNHVQ+UAyqmJ55xbANyKmmpVbUpqTJInMQEVOjR4LFbI0Q
-lV0H9eseLaQ9aBu2rv79/nexMSCYWiTbUHD9TVd1myHLockn/gNYLXSn8iAxlH5m
-4ATfAr7Ad5NOAyKxYL4DZ4evORgIpYxvcaAoPGztQJQQgljCLlqeYJOpTxSk5VYS
-2tWnuvIjDUmxMOuCw2Aqn6pv/ropuuoGvngC+BwyUwBtkGS6rFFnWxMmNIzLGO79
-fFV7bO6JlZlMxB5Dw1AyjFhouLFXURgeX2uo3RCtb8imt2QQxTQ=
-=WzY7
------END PGP SIGNATURE-----
---=-=-=--
