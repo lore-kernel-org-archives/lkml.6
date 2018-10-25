@@ -2,97 +2,112 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E12FAECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 02:18:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C71CECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 02:20:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E99D20831
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 02:18:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E99D20831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D842120831
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 02:20:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D842120831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727236AbeJYKtD (ORCPT
+        id S1727319AbeJYKvR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 06:49:03 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58484 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726317AbeJYKtD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 06:49:03 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D7BE7227CE;
-        Thu, 25 Oct 2018 02:18:25 +0000 (UTC)
-Received: from localhost (ovpn-8-17.pek2.redhat.com [10.72.8.17])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B031876542;
-        Thu, 25 Oct 2018 02:18:19 +0000 (UTC)
-Date:   Thu, 25 Oct 2018 10:18:09 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        boris.ostrovsky@oracle.com, jgross@suse.com, willy@infradead.org,
-        x86@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 1/2] x86/mm: Move LDT remap out of KASLR region on
- 5-level paging
-Message-ID: <20181025021809.GB2120@MiWiFi-R3L-srv>
-References: <20181024125112.55999-1-kirill.shutemov@linux.intel.com>
- <20181024125112.55999-2-kirill.shutemov@linux.intel.com>
+        Thu, 25 Oct 2018 06:51:17 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:37700 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726317AbeJYKvR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 06:51:17 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gFVG7-0000YM-VH; Thu, 25 Oct 2018 02:20:28 +0000
+Date:   Thu, 25 Oct 2018 03:20:27 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Joe Perches <joe@perches.com>
+Cc:     Fengguang Wu <fengguang.wu@intel.com>, Willy Tarreau <w@1wt.eu>,
+        David Miller <davem@davemloft.net>, wanghaifine@gmail.com,
+        netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        LKP <lkp@intel.com>, Philip Li <philip.li@intel.com>
+Subject: Re: [PATCH] Change judgment len position
+Message-ID: <20181025022027.GG32577@ZenIV.linux.org.uk>
+References: <20181024154729.5312-1-wanghaifine@gmail.com>
+ <20181024.101028.1211941922121897721.davem@davemloft.net>
+ <61d94f2a5563db4d6580c8385c3b93c8eeb3669a.camel@perches.com>
+ <20181024204852.GA25509@1wt.eu>
+ <49ec92564284b5beb0a151bce1d537b51340d0a8.camel@perches.com>
+ <20181025011111.bhbstq5wtrwk26b5@wfg-t540p.sh.intel.com>
+ <dda151c160e42aeb07d158d9c7cd4c1a3341ab5f.camel@perches.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181024125112.55999-2-kirill.shutemov@linux.intel.com>
+In-Reply-To: <dda151c160e42aeb07d158d9c7cd4c1a3341ab5f.camel@perches.com>
 User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 25 Oct 2018 02:18:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kirill,
-
-Thanks for making this patchset. I have small concerns, please see the
-inline comments.
-
-On 10/24/18 at 03:51pm, Kirill A. Shutemov wrote:
-> On 5-level paging LDT remap area is placed in the middle of
-> KASLR randomization region and it can overlap with direct mapping,
-> vmalloc or vmap area.
+On Wed, Oct 24, 2018 at 06:16:31PM -0700, Joe Perches wrote:
+> On Thu, 2018-10-25 at 09:11 +0800, Fengguang Wu wrote:
+> > CC Philip and LKP team.
+> > > 	Please try to make your first patch in drivers/staging
+> > > 	to get familiar with submitting patches to the kernel.
+> > > 	https://kernelnewbies.org/FirstKernelPatch
+> > > 
+> > > Maybe there's utility in creating a filtering and auto-reply
+> > > tool for first time patch submitters for all the vger mailing
+> > > lists using some combination of previously known submitters
+> > > and the 0-day robot to point those first time submitters of
+> > > defective patches to kernelnewbies and staging.
+> > 
+> > Yeah good idea. That feature can be broken into 2 parts:
+> > 
+> > - an email script, which could be added to Linux scripts/ dir 
+> > - maintain records for telling whether someone is first-time patch submitters
 > 
-> Let's move LDT just before direct mapping which makes it safe for KASLR.
-> This also allows us to unify layout between 4- and 5-level paging.
+> Maybe run checkpatch on those first-time submitter patches too.
 
-In crash utility and makedumpfile which are used to analyze system
-memory content, PAGE_OFFSET is hardcoded as below in non-KASLR case:
+OK, now I'm certain that you are trolling...
 
-#define PAGE_OFFSET_2_6_27         0xffff880000000000
+Joe, what really pisses me off is that it's actually at the expense of original
+poster (who had nothing to do with the CoCup) *and* an invitation for a certain
+variety of kooks.  In probably vain hope of heading that off, here's the
+summary of what happened _before_ Joe started to stir the shit:
 
-Seems this time they need add another value for them. For 4-level and
-5-level, since 5-level code also exist in stable kernel. Surely this
-doesn't matter much.
-
-> 
-> We don't touch 4 pgd slot gap just before the direct mapping reserved
-> for a hypervisor, but move direct mapping by one slot instead.
-> 
-> The LDT mapping is per-mm, so we cannot move it into P4D page table next
-> to CPU_ENTRY_AREA without complicating PGD table allocation for 5-level
-> paging.
-
-Here as discussed in private thread, at the first place you also agreed
-to put it in p4d entry next to CPU_ENTRY_AREA, but finally you changd
-mind, there must be some reasons when you implemented and investigated
-further to find out. Could you please say more about how it will
-complicating PGD table allocation for 5-level paging? Or give an use
-case where it will complicate?
-
-Very sorry I am stupid, still don't get what's the point. Really
-appreciate it.
-
-Thanks
-Baoquan
+	* code in question is, indeed, (slightly) bogus in mainline.
+It reads as "reject negative values for length, truncate positive ones to 4",
+but in reality it's "treat everything outside of 0..4 as 4".  It's not broken
+per se, but it's certainly misleading.
+	* one possible fix would be to drop the "reject negative values"
+completely, another - to move checking for negatives before the truncation.
+Patch tried to do the latter.
+	* the author of the patch has moved the check *too* early -
+before the value being tested is even obtained.	It's obviously wrong - kernel
+newbie or not.
+	* I sincerely doubt that it was an attempt to introduce a backdoor,
+albeit one would've been created if that patch went in as-is.  Genuine braino
+is much more likely, and we'd all done such.
+	* such brainos can be surprisingly hard to spot in one's code.
+It's too obviously wrong, in a sense - you know what you've meant to write
+and you keep seeing that instead of what you've actually written.  If you
+are really unlucky, that might end up with a few days worth of debugging,
+with eventual embarrassed "how the fuck have I managed not to notice that
+previous twenty times I went over this function today?"  Been there,
+done that, and so has everyone who'd actually written anything (other
+than the worthless screeds, that is).
+	* one thing the author of that patch could be blamed for (and most
+of us have fucked up that way at one point or another) is not testing the
+effect of the damn thing.  Modification is local, the change of behaviour -
+simple and triggering that code is also trivial.  Checking that the patch
+has done what you expect it to do would be simple and would've caught the
+problem.
+`
+	Code of Conduct is garbage, but neither Dave nor the author
+of this patch had anything to do with that mess.  If you want to make a point,
+do so without shit splatter hitting innocent bystanders - people tend to
+get very annoyed by that kind of thing, and with a damn good reason.
+Sheesh...
