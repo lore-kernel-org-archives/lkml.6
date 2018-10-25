@@ -2,205 +2,345 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 836B6ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:11:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C32EECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:12:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 389CB205F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:11:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0756420834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:12:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="0Eu/5A5z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 389CB205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ZUYI/lOo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0756420834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbeJYQnW (ORCPT
+        id S1727231AbeJYQoa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 12:43:22 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51542 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727201AbeJYQnV (ORCPT
+        Thu, 25 Oct 2018 12:44:30 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41183 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726819AbeJYQoa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 12:43:21 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 143-v6so538883wmf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 01:11:41 -0700 (PDT)
+        Thu, 25 Oct 2018 12:44:30 -0400
+Received: by mail-wr1-f67.google.com with SMTP id q7-v6so8265425wrr.8
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 01:12:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4GvxGFKzNAUdnVvq5ALjFaJxTeQT6fedOqXQs6Nl+Cs=;
-        b=0Eu/5A5zGVIqdsitCio+oF2mJA+TBdgWEeL0O6Tb32pQvr8keCU0kESbHDtBJFEMa6
-         8/Mf736AJdLDtBGSSNJstj6VmcYxUnc/VxVrTx4yEomBqlxV2DJeWrgf4nD2csvKYY5V
-         vXplcRsNkc6XAvIL+EknLrLNuCO22RmruDzOt3apa3R8/qSvZq/dBn53kMKYPx3Qv0dw
-         ImvWH+CyWFE68PaL442YwHk5cW9KtCSYb7Zx5HembqySvGqenFooU4MAH+wfraTfrfNl
-         bksX22FEYpjB0+xxFpHzjHZirQCJHrORqLoWJYvISvvVwIZTnCuVeRDPVXj4M8XXEP5V
-         VzCQ==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=KTeD11N2vcL/PBm+5Cn40Nag7y2olhmRH2A174v2JwI=;
+        b=ZUYI/lOodPJNRh4rvtYLxhpm9HoF/T9tHT8GaJeVU38UnMrD3Dpk3wBixblysQLUWK
+         QZAqe9I1cy2CM7dX3ynWGGqfJgGwif54gFfPlSD7yh7PQwhdvLnoceWriU6o5UI7hOiP
+         HUFEqZMpKwVxz18QwI/2RVT4T4Tf8Gu09GvCrMFKrsAtNpIMC9u0lijqasb8nexk6NJl
+         DrH7WZxqJoJcQ4+IuB0WD+wGdGPofWpK/KNijXgZx260FHU+iptX9DpaAMgenfVKihXw
+         k6oQ4Aj8VQDR0O2grpKU1BDLwRW3J6h2Yuo++H9xUTW/KgXteTuAO+WoweXuNTJBVWTQ
+         umbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4GvxGFKzNAUdnVvq5ALjFaJxTeQT6fedOqXQs6Nl+Cs=;
-        b=njvzX7cJm7R6WrYHFOdydqNeurdES0HEDwE0L1Qj2YLhXyYHupy/JLQsB79csS2Q/n
-         uPGdg0ENNVptrPoMK+bkc7/RB0lwKGfzCAoQ6f2xONt7YTFC2i5zpWQ16kLjDCv7rokg
-         7ZSx+6qTDhxjV+n445puaorFQjl2lcwsZrtEDdOP5a0LLrDY21m9Fdol24oTLgBbbnc+
-         32D61qyYm2hwmNLDP2QU8zIH3nvKAxvGoKbwAfCyXLSlVk+e6C3rIah6HxlfHSaHItIX
-         WEfrj4Mr8xJ5uPGhjyWW1fY8qU1VeYInxtbV+bfyYFKlAkO+/FWQotYnqNggNqXg7HgI
-         PvAg==
-X-Gm-Message-State: AGRZ1gJGLbHy3RU4YEjhEkSQEtWOCDhlG9D4mXh+pekeCyCOp6cEdxfX
-        OyatApuMUFtEjR7cEhKm0vgyrw==
-X-Google-Smtp-Source: AJdET5dFHkVDiy1ovSxuYbIwgFzfIouC5CvV3hBvDt3kd8x5/xqf1PQy16RA4en0CsgCZfvHGlhCBA==
-X-Received: by 2002:a1c:9901:: with SMTP id b1-v6mr723909wme.15.1540455100460;
-        Thu, 25 Oct 2018 01:11:40 -0700 (PDT)
-Received: from cisco ([173.38.220.34])
-        by smtp.gmail.com with ESMTPSA id q77-v6sm420220wmd.33.2018.10.25.01.11.38
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=KTeD11N2vcL/PBm+5Cn40Nag7y2olhmRH2A174v2JwI=;
+        b=Fc0nkoPnn8qRueey/6IJQvzK46JZ0HWQbbNpWB4L7Lgd/NEmR/fVQi3CVTguEkG3V4
+         gRWAt6gP4A60PkDu2tkxSlf7+lw39x9vBqGQaoDANYA5JNPzKkf3nV+rpgxQaIxcQkVj
+         MRmi84tjb7qen5nEjNxsXPwcPqF3b8R35+HveCPOuyqXXG0UWV5Iy6N0bwK/Bpcfq+fg
+         W31vfK6OaLn12FzkeyJWiEBASEI/w95sfgf/bHdfRH8Gunrogcp6Bf6bT8/KsZMUSfxn
+         mqQy8kJWDe61c98zIHaOmkT1dz+LLtjf9WOUGvg47fHvHrUdPzfii9wLtSvX/V0jWiYj
+         sFnA==
+X-Gm-Message-State: AGRZ1gLT/TgbXunWkVO7b+ywT9AgG16hliLJpORi6Q1zjXgS82vUWgqi
+        88qXKDHZEI5wAggR75cCwDS2KA==
+X-Google-Smtp-Source: AJdET5eXT95pfSOQR0BYwdKGhUatqUlkCZpG7RLdQyouuYNMG35Ej2s1Gv3K92/eAiAwl68m8yTpKQ==
+X-Received: by 2002:adf:eec1:: with SMTP id a1-v6mr790559wrp.242.1540455168013;
+        Thu, 25 Oct 2018 01:12:48 -0700 (PDT)
+Received: from boomer ([90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id 4-v6sm3428259wrk.52.2018.10.25.01.12.46
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Oct 2018 01:11:39 -0700 (PDT)
-Date:   Thu, 25 Oct 2018 09:11:30 +0100
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Igor Stoppa <igor.stoppa@gmail.com>
-Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        kernel-hardening@lists.openwall.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        igor stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
+        Thu, 25 Oct 2018 01:12:47 -0700 (PDT)
+Message-ID: <639e0498b81edf5f39b1e73efa8a3db8188d6930.camel@baylibre.com>
+Subject: Re: [PATCH 1/6] clk: Remove recursion in clk_core_{prepare,enable}()
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     "dbasehore ." <dbasehore@chromium.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-doc@vger.kernel.org,
+        sboyd@kernel.org, Michael Turquette <mturquette@baylibre.com>,
+        Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
+        aisheng.dong@nxp.com, mchehab+samsung@kernel.org,
         Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        rostedt <rostedt@goodmis.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 14/17] prmem: llist, hlist, both plain and rcu
-Message-ID: <20181025081130.GA31945@cisco>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-15-igor.stoppa@huawei.com>
- <1634210774.446.1540381072927.JavaMail.zimbra@efficios.com>
- <243a8ff2-889c-089f-a1ff-c882933ca5c3@gmail.com>
- <20181024145606.GA9019@cisco>
- <d630474b-73a5-c6ae-2141-49c1184381b2@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d630474b-73a5-c6ae-2141-49c1184381b2@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Stephen Boyd <sboyd@codeaurora.org>
+Date:   Thu, 25 Oct 2018 10:12:45 +0200
+In-Reply-To: <CAGAzgsox7bfh4fLBCjJvFeXAJRWx9imsrFVgQYa=q1ooX2Mi1w@mail.gmail.com>
+References: <20181024013132.115907-1-dbasehore@chromium.org>
+         <20181024013132.115907-2-dbasehore@chromium.org>
+         <264adf2a81bcd602f2a58e4a46c3273cd7c77ca2.camel@baylibre.com>
+         <CAGAzgsox7bfh4fLBCjJvFeXAJRWx9imsrFVgQYa=q1ooX2Mi1w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 01:52:11AM +0300, Igor Stoppa wrote:
-> On 24/10/2018 17:56, Tycho Andersen wrote:
-> > On Wed, Oct 24, 2018 at 05:03:01PM +0300, Igor Stoppa wrote:
-> > > On 24/10/18 14:37, Mathieu Desnoyers wrote:
-> > > > Also, is it the right approach to duplicate existing APIs, or should we
-> > > > rather hook into page fault handlers and let the kernel do those "shadow"
-> > > > mappings under the hood ?
-> > > 
-> > > This question is probably a good candidate for the small Q&A section I have
-> > > in the 00/17.
-> > > 
-> > > 
-> > > > Adding a new GFP flags for dynamic allocation, and a macro mapping to
-> > > > a section attribute might suffice for allocation or definition of such
-> > > > mostly-read-only/seldom-updated data.
-> > > 
-> > > I think what you are proposing makes sense from a pure hardening standpoint.
-> > >  From a more defensive one, I'd rather minimise the chances of giving a free
-> > > pass to an attacker.
-> > > 
-> > > Maybe there is a better implementation of this, than what I have in mind.
-> > > But, based on my current understanding of what you are describing, there
-> > > would be few issues:
-> > > 
-> > > 1) where would the pool go? The pool is a way to manage multiple vmas and
-> > > express common property they share. Even before a vma is associated to the
-> > > pool.
-> > > 
-> > > 2) there would be more code that can seamlessly deal with both protected and
-> > > regular data. Based on what? Some parameter, I suppose.
-> > > That parameter would be the new target.
-> > > If the code is "duplicated", as you say, the actual differences are baked in
-> > > at compile time. The "duplication" would also allow to have always inlined
-> > > functions for write-rare and leave more freedom to the compiler for their
-> > > non-protected version.
-> > > 
-> > > Besides, I think the separate wr version also makes it very clear, to the
-> > > user of the API, that there will be a price to pay, in terms of performance.
-> > > The more seamlessly alternative might make this price less obvious.
+On Wed, 2018-10-24 at 13:36 -0700, dbasehore . wrote:
+> On Wed, Oct 24, 2018 at 2:51 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
 > > 
-> > What about something in the middle, where we move list to list_impl.h,
-> > and add a few macros where you have list_set_prev() in prlist now, so
-> > we could do,
+> > On Tue, 2018-10-23 at 18:31 -0700, Derek Basehore wrote:
+> > > From: Stephen Boyd <sboyd@codeaurora.org>
+> > > 
+> > > Enabling and preparing clocks can be written quite naturally with
+> > > recursion. We start at some point in the tree and recurse up the
+> > > tree to find the oldest parent clk that needs to be enabled or
+> > > prepared. Then we enable/prepare and return to the caller, going
+> > > back to the clk we started at and enabling/preparing along the
+> > > way.
+> > > 
+> > > The problem is recursion isn't great for kernel code where we
+> > > have a limited stack size. Furthermore, we may be calling this
+> > > code inside clk_set_rate() which also has recursion in it, so
+> > > we're really not looking good if we encounter a tall clk tree.
+> > > 
+> > > Let's create a stack instead by looping over the parent chain and
+> > > collecting clks of interest. Then the enable/prepare becomes as
+> > > simple as iterating over that list and calling enable.
 > > 
-> > // prlist.h
+> > Hi Derek,
 > > 
-> > #define list_set_next(head, next) wr_ptr(&head->next, next)
-> > #define list_set_prev(head, prev) wr_ptr(&head->prev, prev)
+> > What about unprepare() and disable() ?
 > > 
-> > #include <linux/list_impl.h>
-> > 
-> > // list.h
-> > 
-> > #define list_set_next(next) (head->next = next)
-> > #define list_set_next(prev) (head->prev = prev)
-> > 
-> > #include <linux/list_impl.h>
-> > 
-> > I wonder then if you can get rid of some of the type punning too? It's
-> > not clear exactly why that's necessary from the series, but perhaps
-> > I'm missing something obvious :)
+> > This patch removes the recursion from the enable path but keeps it for the
+> > disable path ... this is very odd. Assuming doing so works, It certainly makes
+> > CCF a lot harder to understand.
 > 
-> nothing obvious, probably there is only half a reference in the slides I
-> linked-to in the cover letter :-)
-> 
-> So far I have minimized the number of "intrinsic" write rare functions,
-> mostly because I would want first to reach an agreement on the
-> implementation of the core write-rare.
-> 
-> However, once that is done, it might be good to convert also the prlists to
-> be "intrinsics". A list node is 2 pointers.
-> If that was the alignment, i.e. __align(sizeof(list_head)), it might be
-> possible to speed up a lot the list handling even as write rare.
-> 
-> Taking as example the insertion operation, it would be probably sufficient,
-> in most cases, to have only two remappings:
-> - one covering the page with the latest two nodes
-> - one covering the page with the list head
-> 
-> That is 2 vs 8 remappings, and a good deal of memory barriers less.
-> 
-> This would be incompatible with what you are proposing, yet it would be
-> justifiable, I think, because it would provide better performance to prlist,
-> potentially widening its adoption, where performance is a concern.
+> It wasn't there in the original patch. I asked Stephen, and he thinks
+> it may have been left that way because unprepare/disable are tail
+> recursion cases, which the compiler can optimize away.
 
-I guess the writes to these are rare, right? So perhaps it's not such
-a big deal :)
+I'm sure the compiler is very clever ;) My point is more about maintainability
+and how easy it is to understand for human beings.
 
-> > I also wonder how much the actual differences being baked in at
-> > compile time makes. Most (all?) of this code is inlined.
 > 
-> If the inlined function expects to receive a prlist_head *, instead of a
-> list_head *, doesn't it help turning runtime bugs into buildtime bugs?
+> > 
+> > What about clock protection which essentially works on the same model as prepare
+> > and enable ?
+> > 
+> > Overall, this change does not look like something that should be merged as it
+> > is. If you were just seeking comments, you should add the "RFC" tag to your
+> > series.
+> > 
+> > Jerome.
+> > 
+> > > 
+> > > Cc: Jerome Brunet <jbrunet@baylibre.com>
+> > 
+> > If you don't mind, I would prefer to get the whole series next time. It helps to
+> > get the context.
+> > 
+> > > Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+> > > Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+> > > ---
+> > >  drivers/clk/clk.c | 113 ++++++++++++++++++++++++++--------------------
+> > >  1 file changed, 64 insertions(+), 49 deletions(-)
+> > > 
+> > > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> > > index af011974d4ec..95d818f5edb2 100644
+> > > --- a/drivers/clk/clk.c
+> > > +++ b/drivers/clk/clk.c
+> > > @@ -71,6 +71,8 @@ struct clk_core {
+> > >       struct hlist_head       children;
+> > >       struct hlist_node       child_node;
+> > >       struct hlist_head       clks;
+> > > +     struct list_head        prepare_list;
+> > > +     struct list_head        enable_list;
+> > >       unsigned int            notifier_count;
+> > >  #ifdef CONFIG_DEBUG_FS
+> > >       struct dentry           *dentry;
+> > > @@ -740,49 +742,48 @@ EXPORT_SYMBOL_GPL(clk_unprepare);
+> > >  static int clk_core_prepare(struct clk_core *core)
+> > >  {
+> > >       int ret = 0;
+> > > +     struct clk_core *tmp, *parent;
+> > > +     LIST_HEAD(head);
+> > > 
+> > >       lockdep_assert_held(&prepare_lock);
+> > > 
+> > > -     if (!core)
+> > > -             return 0;
+> > > +     while (core) {
+> > > +             list_add(&core->prepare_list, &head);
+> > > +             /* Stop once we see a clk that is already prepared */
+> > > +             if (core->prepare_count)
+> > > +                     break;
+> > > +             core = core->parent;
+> > > +     }
+> > > 
+> > > -     if (core->prepare_count == 0) {
+> > > -             ret = clk_pm_runtime_get(core);
+> > > -             if (ret)
+> > > -                     return ret;
+> > > +     list_for_each_entry_safe(core, tmp, &head, prepare_list) {
+> > > +             list_del_init(&core->prepare_list);
+> > 
+> > Is there any point in removing it from the list ?
+> > Maybe I missed it but it does not seems useful.
+> > 
+> > Without this, we could use list_for_each_entry()
+> > 
+> > > 
+> > > -             ret = clk_core_prepare(core->parent);
+> > > -             if (ret)
+> > > -                     goto runtime_put;
+> > > +             if (core->prepare_count == 0) {
+> > 
+> > Should we really check the count here ? You are not checking the count when the
+> > put() counterpart is called below.
+> > 
+> > Since PM runtime has ref counting as well, either way would work I guess ... but
+> > we shall be consistent
+> > 
+> > > +                     ret = clk_pm_runtime_get(core);
+> > > +                     if (ret)
+> > > +                             goto err;
+> > > 
+> > > -             trace_clk_prepare(core);
+> > > +                     trace_clk_prepare(core);
+> > > 
+> > > -             if (core->ops->prepare)
+> > > -                     ret = core->ops->prepare(core->hw);
+> > > +                     if (core->ops->prepare)
+> > > +                             ret = core->ops->prepare(core->hw);
+> > > 
+> > > -             trace_clk_prepare_complete(core);
+> > > +                     trace_clk_prepare_complete(core);
+> > > 
+> > > -             if (ret)
+> > > -                     goto unprepare;
+> > > +                     if (ret) {
+> > > +                             clk_pm_runtime_put(core);
+> > > +                             goto err;
+> > > +                     }
+> > > +             }
+> > > +             core->prepare_count++;
+> > >       }
+> > > 
+> > > -     core->prepare_count++;
+> > > -
+> > > -     /*
+> > > -      * CLK_SET_RATE_GATE is a special case of clock protection
+> > > -      * Instead of a consumer claiming exclusive rate control, it is
+> > > -      * actually the provider which prevents any consumer from making any
+> > > -      * operation which could result in a rate change or rate glitch while
+> > > -      * the clock is prepared.
+> > > -      */
+> > > -     if (core->flags & CLK_SET_RATE_GATE)
+> > > -             clk_core_rate_protect(core);
+> > 
+> > This gets removed without anything replacing it.
+> > 
+> > is CLK_SET_RATE_GATE and clock protection support dropped after this change ?
+> > 
+> > > -
+> > >       return 0;
+> > > -unprepare:
+> > > -     clk_core_unprepare(core->parent);
+> > > -runtime_put:
+> > > -     clk_pm_runtime_put(core);
+> > > +err:
+> > > +     parent = core->parent;
+> > > +     list_for_each_entry_safe_continue(core, tmp, &head, prepare_list)
+> > > +             list_del_init(&core->prepare_list);
+> > > +     clk_core_unprepare(parent);
+> > 
+> > If you get here because of failure clk_pm_runtime_get(), you will unprepare a
+> > clock which may have not been prepared first
+> > 
+> > Overall the rework of error exit path does not seem right (or necessary)
+> > 
+> > >       return ret;
+> > >  }
+> > > 
+> > > @@ -878,37 +879,49 @@ EXPORT_SYMBOL_GPL(clk_disable);
+> > >  static int clk_core_enable(struct clk_core *core)
+> > >  {
+> > >       int ret = 0;
+> > > +     struct clk_core *tmp, *parent;
+> > > +     LIST_HEAD(head);
+> > > 
+> > >       lockdep_assert_held(&enable_lock);
+> > > 
+> > > -     if (!core)
+> > > -             return 0;
+> > > -
+> > > -     if (WARN(core->prepare_count == 0,
+> > > -         "Enabling unprepared %s\n", core->name))
+> > > -             return -ESHUTDOWN;
+> > > +     while (core) {
+> > > +             list_add(&core->enable_list, &head);
+> > > +             /* Stop once we see a clk that is already enabled */
+> > > +             if (core->enable_count)
+> > > +                     break;
+> > > +             core = core->parent;
+> > > +     }
+> > > 
+> > > -     if (core->enable_count == 0) {
+> > > -             ret = clk_core_enable(core->parent);
+> > > +     list_for_each_entry_safe(core, tmp, &head, enable_list) {
+> > > +             list_del_init(&core->enable_list);
+> > > 
+> > > -             if (ret)
+> > > -                     return ret;
+> > > +             if (WARN_ON(core->prepare_count == 0)) {
+> > > +                     ret = -ESHUTDOWN;
+> > > +                     goto err;
+> > > +             }
+> > > 
+> > > -             trace_clk_enable_rcuidle(core);
+> > > +             if (core->enable_count == 0) {
+> > > +                     trace_clk_enable_rcuidle(core);
+> > > 
+> > > -             if (core->ops->enable)
+> > > -                     ret = core->ops->enable(core->hw);
+> > > +                     if (core->ops->enable)
+> > > +                             ret = core->ops->enable(core->hw);
+> > > 
+> > > -             trace_clk_enable_complete_rcuidle(core);
+> > > +                     trace_clk_enable_complete_rcuidle(core);
+> > > 
+> > > -             if (ret) {
+> > > -                     clk_core_disable(core->parent);
+> > > -                     return ret;
+> > > +                     if (ret)
+> > > +                             goto err;
+> > >               }
+> > > +
+> > > +             core->enable_count++;
+> > >       }
+> > > 
+> > > -     core->enable_count++;
+> > >       return 0;
+> > > +err:
+> > > +     parent = core->parent;
+> > > +     list_for_each_entry_safe_continue(core, tmp, &head, enable_list)
+> > > +             list_del_init(&core->enable_list);
+> > > +     clk_core_disable(parent);
+> > > +     return ret;
+> > >  }
+> > > 
+> > >  static int clk_core_enable_lock(struct clk_core *core)
+> > > @@ -3281,6 +3294,8 @@ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+> > >       core->num_parents = hw->init->num_parents;
+> > >       core->min_rate = 0;
+> > >       core->max_rate = ULONG_MAX;
+> > > +     INIT_LIST_HEAD(&core->prepare_list);
+> > > +     INIT_LIST_HEAD(&core->enable_list);
+> > >       hw->core = core;
+> > > 
+> > >       /* allocate local copy in case parent_names is __initdata */
+> > 
+> > 
 
-In principle it's not a bug to use the prmem helpers where the regular
-ones would do, it's just slower (assuming the types are the same). But
-mostly, it's a way to avoid actually copying and pasting most of the
-implementations of most of the data structures. I see some other
-replies in the thread already, but this seems not so good to me.
 
-Tycho
