@@ -2,206 +2,175 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8348C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:35:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32998C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:36:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E3552075D
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:35:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vAt0qdU6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E3552075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 01EDD2075D
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:36:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01EDD2075D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727416AbeJYTHh (ORCPT
+        id S1727450AbeJYTIK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 15:07:37 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:36439 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726852AbeJYTHh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 15:07:37 -0400
-Received: by mail-io1-f68.google.com with SMTP id o19-v6so5155605iod.3;
-        Thu, 25 Oct 2018 03:35:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=HApCBrP3GUcUQzrqXjWtOUnbeF7cKGnNY5yardXuXDg=;
-        b=vAt0qdU6s/EoYzvIYKXzTyL8a7YnPc1EXGa8YlVQtwtjbkNl7r1s2COiF+yQcLeORD
-         jUWz8CecUHDWnplpiP0Jbm2vUJFhlG2uIh71ha2AChtct5aIqHN8RI/Oc6EZRk1AkWAL
-         t/kQdW19TjqLpeCTgMxhWzAQXQXb4z/DBLwng3waoKtmRQQCsFXDde4VG0DHEX1piK7n
-         L86POEzwd+IPtPZzP7gvrbbAXeK1+TS2oNs0D+dGv0ngjxPf73kO9pBIJX1v6Bsugjru
-         YQjAT+X1PBaPDXsPnuyFWeG1oanRDf0dUrMu5uTSsXiNdh/z2UGkYS7cpHslIaEKdaLw
-         NKpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=HApCBrP3GUcUQzrqXjWtOUnbeF7cKGnNY5yardXuXDg=;
-        b=JbN9hUzjWCDoBUeqIFQI6X6DtkOmygrBMkc67HVfrni1FZezEmsYt13tPOcKLM7fzV
-         JJWaZwHqZq+P0RriY8ccbZKkAqAZMR1IgJJImRxxC/nbCaz/H/GSGWpvrdYKxPTTWZcP
-         TQ2bg12OFgmOVVTO22s7llBefpZlQrHObvXv9Yc41BiIGTzfWtL0ctQDM9OvMntnqLxg
-         dvkX+9PuDiet2qkXNYvHRVkPjXo31Zcdf1ql9NiIYwfS1lEM1156VsoYErP8RBDT7dRo
-         LU1SRhixl1owSj2VijV34fJpp9HqFEEUMfZ0BBhZr/JspT2FJJ5i4NquF4zion8xGxxw
-         EuJA==
-X-Gm-Message-State: AGRZ1gJ9k4KWxxP+4iqzXJku/jGwjuS0ePy7awvsbqNMlFVgh+l+ffWF
-        r358XB5eZBXT+iXVGly5QOMTLadSsaRk/BRdT0c=
-X-Google-Smtp-Source: AJdET5eI+lJoQ/zMWb0ovNFf1gx3FnbHUzwJHAKxC7E24Osfev5VIaOh7jg1SF5gW862ONcoQJOT6P/UOu48ziG0Cjc=
-X-Received: by 2002:a6b:8e90:: with SMTP id q138-v6mr651852iod.112.1540463727086;
- Thu, 25 Oct 2018 03:35:27 -0700 (PDT)
+        Thu, 25 Oct 2018 15:08:10 -0400
+Received: from foss.arm.com ([217.140.101.70]:54606 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726852AbeJYTIK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 15:08:10 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 590CBA78;
+        Thu, 25 Oct 2018 03:36:00 -0700 (PDT)
+Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.194.38])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1B6D43F627;
+        Thu, 25 Oct 2018 03:35:57 -0700 (PDT)
+Subject: Re: [PATCH v4 2/2] sched/fair: update scale invariance of PELT
+To:     Vincent Guittot <vincent.guittot@linaro.org>, peterz@infradead.org,
+        mingo@kernel.org, linux-kernel@vger.kernel.org
+Cc:     rjw@rjwysocki.net, Morten.Rasmussen@arm.com,
+        patrick.bellasi@arm.com, pjt@google.com, bsegall@google.com,
+        thara.gopinath@linaro.org
+References: <1539965871-22410-1-git-send-email-vincent.guittot@linaro.org>
+ <1539965871-22410-3-git-send-email-vincent.guittot@linaro.org>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <43b126ab-403b-3fb3-5951-45a107e4a14b@arm.com>
+Date:   Thu, 25 Oct 2018 12:35:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-From:   Kyungtae Kim <kt0755@gmail.com>
-Date:   Thu, 25 Oct 2018 06:35:15 -0400
-Message-ID: <CAEAjamv0P63dTXEjzbDp6ahaNRuUiRPWTnj_N2RV7monBk4bHw@mail.gmail.com>
-Subject: BUG: KMSAN: uninit-value in selinux_socket_bind, selinux_socket_connect_helper
-To:     davem@davemloft.net
-Cc:     lifeasageek@gmail.com, syzkaller@googlegroups.com,
-        threeearcat@gmail.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1539965871-22410-3-git-send-email-vincent.guittot@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We report two crashes related (in v4.19-rc8) :
-"BUG: KMSAN: uninit-value in selinux_socket_bind"
-"BUG: KMSAN: uninit-value in selinux_socket_connect_helper=E2=80=9D
+Hi Vincent,
 
-kernel config: https://kt0755.github.io/etc/config-4.19-rc2.kmsan
-repro: https://kt0755.github.io/etc/repro.b0e55.c
+On 10/19/18 6:17 PM, Vincent Guittot wrote:
+> The current implementation of load tracking invariance scales the
+> contribution with current frequency and uarch performance (only for
+> utilization) of the CPU. One main result of this formula is that the
+> figures are capped by current capacity of CPU. Another one is that the
+> load_avg is not invariant because not scaled with uarch.
+> 
+> The util_avg of a periodic task that runs r time slots every p time slots
+> varies in the range :
+> 
+>      U * (1-y^r)/(1-y^p) * y^i < Utilization < U * (1-y^r)/(1-y^p)
+> 
+> with U is the max util_avg value = SCHED_CAPACITY_SCALE
+> 
+> At a lower capacity, the range becomes:
+> 
+>      U * C * (1-y^r')/(1-y^p) * y^i' < Utilization <  U * C * (1-y^r')/(1-y^p)
+> 
+> with C reflecting the compute capacity ratio between current capacity and
+> max capacity.
+> 
+> so C tries to compensate changes in (1-y^r') but it can't be accurate.
+> 
+> Instead of scaling the contribution value of PELT algo, we should scale the
+> running time. The PELT signal aims to track the amount of computation of
+> tasks and/or rq so it seems more correct to scale the running time to
+> reflect the effective amount of computation done since the last update.
+> 
+> In order to be fully invariant, we need to apply the same amount of
+> running time and idle time whatever the current capacity. Because running
+> at lower capacity implies that the task will run longer, we have to ensure
+> that the same amount of idle time will be apply when system becomes idle
+> and no idle time has been "stolen". But reaching the maximum utilization
+> value (SCHED_CAPACITY_SCALE) means that the task is seen as an
+> always-running task whatever the capacity of the CPU (even at max compute
+> capacity). In this case, we can discard this "stolen" idle times which
+> becomes meaningless.
+> 
+> In order to achieve this time scaling, a new clock_pelt is created per rq.
+> The increase of this clock scales with current capacity when something
+> is running on rq and synchronizes with clock_task when rq is idle. With
+> this mecanism, we ensure the same running and idle time whatever the
+> current capacity. This also enables to simplify the pelt algorithm by
+> removing all references of uarch and frequency and applying the same
+> contribution to utilization and loads. Furthermore, the scaling is done
+> only once per update of clock (update_rq_clock_task()) instead of during
+> each update of sched_entities and cfs/rt/dl_rq of the rq like the current
+> implementation. This is interesting when cgroup are involved as shown in
+> the results below:
 
-Since both crashes share the same issue, we just explain one of the two.
-When the third argument of bind() (i.e., addrlen) is zero, in __sys_bind(),
-data copy from user sockaddr to kernel sockaddr does not occur
-(net/socket.c:186).
-However, a subsequent function selinux_socket_bind() tries to read
-the kernel sockaddr (address->sa_family) that was not initialized at all.
+I have a couple of questions related to the tests you ran.
 
-Crash log1
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-BUG: KMSAN: uninit-value in selinux_socket_bind+0x61b/0x1040
-security/selinux/hooks.c:4643
-CPU: 0 PID: 19070 Comm: syz-executor6 Not tainted 4.19.0-rc8+ #18
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/201=
-1
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x305/0x460 lib/dump_stack.c:113
- kmsan_report+0x1a2/0x2e0 mm/kmsan/kmsan.c:917
- __msan_warning+0x7d/0xe0 mm/kmsan/kmsan_instr.c:500
- selinux_socket_bind+0x61b/0x1040 security/selinux/hooks.c:4643
- security_socket_bind+0x127/0x200 security/security.c:1390
- __sys_bind+0x577/0x7e0 net/socket.c:1479
- __do_sys_bind net/socket.c:1494 [inline]
- __se_sys_bind+0x8d/0xb0 net/socket.c:1492
- __x64_sys_bind+0x4a/0x70 net/socket.c:1492
- do_syscall_64+0xb8/0x100 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x63/0xe7
-RIP: 0033:0x4497b9
-Code: e8 8c 9f 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48
-89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
-01 f0 ff ff 0f 83 9b 6b fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fdddf1e9c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000031
-RAX: ffffffffffffffda RBX: 00007fdddf1ea6cc RCX: 00000000004497b9
-RDX: 0000000000000000 RSI: 0000000020000040 RDI: 0000000000000013
-RBP: 000000000071bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000000004c8 R14: 00000000006e8568 R15: 00007fdddf1ea700
+> On a hikey (octo ARM platform).
+> Performance cpufreq governor and only shallowest c-state to remove variance
+> generated by those power features so we only track the impact of pelt algo.
 
-Local variable description: ----address@__sys_bind
-Variable was created at:
- __sys_bind+0x89/0x7e0 net/socket.c:1470
- __do_sys_bind net/socket.c:1494 [inline]
- __se_sys_bind+0x8d/0xb0 net/socket.c:1492
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+So you disabled c-state 'cpu-sleep' and 'cluster-sleep'?
 
-Crash log2
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-BUG: KMSAN: uninit-value in selinux_socket_connect_helper+0x55c/0x960
-security/selinux/hooks.c:4775
-CPU: 0 PID: 8234 Comm: syz-executor2 Not tainted 4.19.0-rc8+ #18
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/201=
-1
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x305/0x460 lib/dump_stack.c:113
- kmsan_report+0x1a2/0x2e0 mm/kmsan/kmsan.c:917
- __msan_warning+0x7d/0xe0 mm/kmsan/kmsan_instr.c:500
- selinux_socket_connect_helper+0x55c/0x960 security/selinux/hooks.c:4775
- selinux_socket_connect+0xbe/0x180 security/selinux/hooks.c:4834
- security_socket_connect+0x127/0x200 security/security.c:1395
- __sys_connect+0x577/0x850 net/socket.c:1660
- __do_sys_connect net/socket.c:1675 [inline]
- __se_sys_connect+0x8d/0xb0 net/socket.c:1672
- __x64_sys_connect+0x4a/0x70 net/socket.c:1672
- do_syscall_64+0xb8/0x100 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x63/0xe7
-RIP: 0033:0x4497b9
-Code: e8 8c 9f 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48
-89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
-01 f0 ff ff 0f 83 9b 6b fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ff660d67c68 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
-RAX: ffffffffffffffda RBX: 00007ff660d686cc RCX: 00000000004497b9
-RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000013
-RBP: 000000000071bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 0000000000000ae0 R14: 00000000006e8b80 R15: 00007ff660d68700
+I get 'hisi_thermal f7030700.tsensor: THERMAL ALARM: 66385 > 65000' on 
+my hikey620. Did you change the thermal configuration? Not sure if there 
+are any actions attached to this warning though.
 
-Local variable description: ----address@__sys_connect
-Variable was created at:
- __sys_connect+0x89/0x850 net/socket.c:1647
- __do_sys_connect net/socket.c:1675 [inline]
- __se_sys_connect+0x8d/0xb0 net/socket.c:1672
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> each test runs 16 times
+> 
+> ./perf bench sched pipe
+> (higher is better)
+> kernel	tip/sched/core     + patch
+>          ops/seconds        ops/seconds         diff
+> cgroup
+> root    59648(+/- 0.13%)   59785(+/- 0.24%)    +0.23%
+> level1  55570(+/- 0.21%)   56003(+/- 0.24%)    +0.78%
+> level2  52100(+/- 0.20%)   52788(+/- 0.22%)    +1.32%
+> 
+> hackbench -l 1000
 
-We provide a simple patch below to stop them.
-There are a few more lines that invoke move_addr_to_kernel(), but the
-two of them
-(bind and connect) seem to be the only cases to be corrected.
+Shouldn't this be '-l 100'?
 
+> (lower is better)
+> kernel	tip/sched/core     + patch
+>          duration(sec)      duration(sec)        diff
+> cgroup
+> root    4.472(+/- 1.86%)   4.346(+/- 2.74%)     -2.80%
+> level1  5.039(+/- 11.05%)  4.662(+/- 7.57%)     -7.47%
+> level2  5.195(+/- 10.66%)  4.877(+/- 8.90%)     -6.12%
+> 
+> The responsivness of PELT is improved when CPU is not running at max
+> capacity with this new algorithm. I have put below some examples of
+> duration to reach some typical load values according to the capacity of the
+> CPU with current implementation and with this patch.
+> 
+> Util (%)     max capacity  half capacity(mainline)  half capacity(w/ patch)
+> 972 (95%)    138ms         not reachable            276ms
+> 486 (47.5%)  30ms          138ms                     60ms
+> 256 (25%)    13ms           32ms                     26ms
 
-diff --git a/net/socket.c b/net/socket.c
-index 390a8ec..de0931c2 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -1475,7 +1475,7 @@ int __sys_bind(int fd, struct sockaddr __user
-*umyaddr, int addrlen)
-        sock =3D sockfd_lookup_light(fd, &err, &fput_needed);
-        if (sock) {
-                err =3D move_addr_to_kernel(umyaddr, addrlen, &address);
--               if (err >=3D 0) {
-+               if (err > 0) {
-                        err =3D security_socket_bind(sock,
-                                                   (struct sockaddr *)&addr=
-ess,
-                                                   addrlen);
-@@ -1653,7 +1653,7 @@ int __sys_connect(int fd, struct sockaddr __user
-*uservaddr, int addrlen)
-        if (!sock)
-                goto out;
-        err =3D move_addr_to_kernel(uservaddr, addrlen, &address);
--       if (err < 0)
-+       if (err <=3D 0)
-                goto out_put;
+Could you describe these testcases in more detail?
 
-        err =3D
+So I assume you run one 100% task (possibly pinned to one CPU) on your 
+hikey620 with userspace governor and for:
 
+  (1) max capacity:
 
-Thanks,
-Kyungtae Kim
+  echo 1200000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed
+
+  (2) half capacity:
+
+  echo 729000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed
+
+and then you measure the time till t1 reaches 25%, 47.5% and 95% 
+utilization?
+What's the initial utilization value of t1? I assume t1 starts with 
+utilization=512 (post_init_entity_util_avg()).
+
+> On my hikey (octo ARM platform) with schedutil governor, the time to reach
+> max OPP when starting from a null utilization, decreases from 223ms with
+> current scale invariance down to 121ms with the new algorithm. For this
+> test, I have enable arch_scale_freq for arm64.
+
+Isn't the arch-specific arch_scale_freq_capacity() enabled by default on 
+arm64 with cpufreq support?
+
+I would like to run the same tests so we can discuss results more easily.
