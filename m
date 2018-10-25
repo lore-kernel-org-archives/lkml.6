@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B19D8C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:11:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32210ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:11:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61B3D20847
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:11:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED43C2075D
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:11:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ILxeNxWf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61B3D20847
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2qPa5KsQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED43C2075D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727857AbeJYToE (ORCPT
+        id S1727872AbeJYToH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 15:44:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48020 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 15:44:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727206AbeJYToD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 15:44:03 -0400
+        id S1727462AbeJYToG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 15:44:06 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E14D20847;
-        Thu, 25 Oct 2018 11:11:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 020D120854;
+        Thu, 25 Oct 2018 11:11:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540465905;
-        bh=q9nDjFTZ0ujrQbjVcqicP/1vG9kQ2DzOfqfnBnCAR1c=;
+        s=default; t=1540465908;
+        bh=tPS/FREJqqSvd03owgxHOtUHd0EdWVO/vP/BX8qh4zI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ILxeNxWfglA2cjlmhfAPK5IniyhKrdOy5US9dtmFtEMYHA3fRlR6aRx6a4FkXcIW4
-         b92E+Hcs0NLXamchWuGs1KYXwUpjWBcaQ3/Cd5WvkBPDjDPQW7XIhzdQSdCnKw06vB
-         jLysEv11hpJ1sqov+ry3vwsXhOubZL7cdea+PgXg=
+        b=2qPa5KsQCOsI3QuMC9DoVcvPi6BeIwOVWYhNmUOxqzDo5tZjDg2Jb43fUZzmAMyex
+         sPCLMvseEIPsg5zWmIyxP+VVF+8Ml9zgteMEL+logb9NRHI8PKy5YJkJHPPBCJKxNZ
+         vRWqxgkjsd7R29aAhQ17Kli6ep9Eltg/gUmZZw2w=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -44,9 +44,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Adrian Hunter <adrian.hunter@intel.com>,
         Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 21/37] perf scripts python: call-graph-from-sql.py: Separate the database details into a class
-Date:   Thu, 25 Oct 2018 08:10:15 -0300
-Message-Id: <20181025111031.3440-22-acme@kernel.org>
+Subject: [PATCH 22/37] perf scripts python: call-graph-from-sql.py: Add a class for global data
+Date:   Thu, 25 Oct 2018 08:10:16 -0300
+Message-Id: <20181025111031.3440-23-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181025111031.3440-1-acme@kernel.org>
 References: <20181025111031.3440-1-acme@kernel.org>
@@ -57,100 +57,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Adrian Hunter <adrian.hunter@intel.com>
 
-Separate the database details into a class that can provide different
-connections using the same connection information.  That paves the way
-for sub-processes that require their own connection.
+Keep global data in a single object that is easy to pass around as
+needed, without polluting the global namespace.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/20181001062853.28285-7-adrian.hunter@intel.com
+Link: http://lkml.kernel.org/r/20181001062853.28285-8-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/scripts/python/call-graph-from-sql.py | 63 ++++++++++++++----------
- 1 file changed, 38 insertions(+), 25 deletions(-)
+ tools/perf/scripts/python/call-graph-from-sql.py | 26 +++++++++++++++++++-----
+ 1 file changed, 21 insertions(+), 5 deletions(-)
 
 diff --git a/tools/perf/scripts/python/call-graph-from-sql.py b/tools/perf/scripts/python/call-graph-from-sql.py
-index 2b74b94eeccc..9d056deab2b1 100644
+index 9d056deab2b1..0a4dc13d4818 100644
 --- a/tools/perf/scripts/python/call-graph-from-sql.py
 +++ b/tools/perf/scripts/python/call-graph-from-sql.py
-@@ -284,6 +284,42 @@ class MainWindow(QMainWindow):
+@@ -264,17 +264,19 @@ class TreeModel(QAbstractItemModel):
+ 
+ class MainWindow(QMainWindow):
+ 
+-	def __init__(self, db, dbname, parent=None):
++	def __init__(self, glb, parent=None):
+ 		super(MainWindow, self).__init__(parent)
+ 
++		self.glb = glb
++
+ 		self.setObjectName("MainWindow")
+-		self.setWindowTitle("Call Graph: " + dbname)
++		self.setWindowTitle("Call Graph: " + glb.dbname)
+ 		self.move(100, 100)
+ 		self.resize(800, 600)
+ 		self.setWindowIcon(self.style().standardIcon(QStyle.SP_ComputerIcon))
+ 		self.setMinimumSize(200, 100)
+ 
+-		self.model = TreeModel(db)
++		self.model = TreeModel(glb.db)
+ 
+ 		self.view = QTreeView()
+ 		self.view.setModel(self.model)
+@@ -284,6 +286,17 @@ class MainWindow(QMainWindow):
  
  		self.setCentralWidget(self.view)
  
-+# Database reference
++# Global data
 +
-+class DBRef():
++class Glb():
 +
-+	def __init__(self, is_sqlite3, dbname):
-+		self.is_sqlite3 = is_sqlite3
++	def __init__(self, dbref, db, dbname):
++		self.dbref = dbref
++		self.db = db
 +		self.dbname = dbname
++		self.app = None
++		self.mainwindow = None
 +
-+	def Open(self, connection_name):
-+		dbname = self.dbname
-+		if self.is_sqlite3:
-+			db = QSqlDatabase.addDatabase("QSQLITE", connection_name)
-+		else:
-+			db = QSqlDatabase.addDatabase("QPSQL", connection_name)
-+			opts = dbname.split()
-+			for opt in opts:
-+				if "=" in opt:
-+					opt = opt.split("=")
-+					if opt[0] == "hostname":
-+						db.setHostName(opt[1])
-+					elif opt[0] == "port":
-+						db.setPort(int(opt[1]))
-+					elif opt[0] == "username":
-+						db.setUserName(opt[1])
-+					elif opt[0] == "password":
-+						db.setPassword(opt[1])
-+					elif opt[0] == "dbname":
-+						dbname = opt[1]
-+				else:
-+					dbname = opt
-+
-+		db.setDatabaseName(dbname)
-+		if not db.open():
-+			raise Exception("Failed to open database " + dbname + " error: " + db.lastError().text())
-+		return db, dbname
-+
- # Main
+ # Database reference
  
- def Main():
-@@ -302,31 +338,8 @@ def Main():
- 	except:
- 		pass
+ class DBRef():
+@@ -340,9 +353,12 @@ def Main():
  
--	if is_sqlite3:
--		db = QSqlDatabase.addDatabase('QSQLITE')
--	else:
--		db = QSqlDatabase.addDatabase('QPSQL')
--		opts = dbname.split()
--		for opt in opts:
--			if '=' in opt:
--				opt = opt.split('=')
--				if opt[0] == 'hostname':
--					db.setHostName(opt[1])
--				elif opt[0] == 'port':
--					db.setPort(int(opt[1]))
--				elif opt[0] == 'username':
--					db.setUserName(opt[1])
--				elif opt[0] == 'password':
--					db.setPassword(opt[1])
--				elif opt[0] == 'dbname':
--					dbname = opt[1]
--			else:
--				dbname = opt
--
--	db.setDatabaseName(dbname)
--	if not db.open():
--		raise Exception("Failed to open database " + dbname + " error: " + db.lastError().text())
--
-+	dbref = DBRef(is_sqlite3, dbname)
-+	db, dbname = dbref.Open("main")
+ 	dbref = DBRef(is_sqlite3, dbname)
+ 	db, dbname = dbref.Open("main")
++	glb = Glb(dbref, db, dbname)
  	app = QApplication(sys.argv)
- 	window = MainWindow(db, dbname)
- 	window.show()
+-	window = MainWindow(db, dbname)
+-	window.show()
++	glb.app = app
++	mainwindow = MainWindow(glb)
++	glb.mainwindow = mainwindow
++	mainwindow.show()
+ 	err = app.exec_()
+ 	db.close()
+ 	sys.exit(err)
 -- 
 2.14.4
 
