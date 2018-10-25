@@ -2,196 +2,372 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C30EC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 431D1ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:45:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 060D620665
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:45:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gyLG8QLy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 060D620665
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id B4B3720665
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:45:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4B3720665
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cs.rutgers.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727606AbeJZDTV (ORCPT
+        id S1727655AbeJZDTr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 23:19:21 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:42561 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727400AbeJZDTU (ORCPT
+        Thu, 25 Oct 2018 23:19:47 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:34236 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727400AbeJZDTr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 23:19:20 -0400
-Received: by mail-vs1-f68.google.com with SMTP id e126so6191158vsc.9
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 11:45:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iVjRay9L5RYGKHqfRl6SjjXuqA1VHcELdesIXLSyj1s=;
-        b=gyLG8QLyjcN2IDdDjTpcVY5emaM+wKnqaHFhwWlft3yj2AtaOQoV8Q3RdLZqkAcrRc
-         060+VPsQZV0H8VIcMxXI9XAopk9Ir0/+kVjHvaF3IL1s2Q4qynN5bFnmbX5FesV/zZ+9
-         25R56nove04bGXXx4Shz9hvtG1k82iPZZORDw=
+        Thu, 25 Oct 2018 23:19:47 -0400
+Received: by mail-qk1-f195.google.com with SMTP id a132so1401969qkg.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 11:45:50 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iVjRay9L5RYGKHqfRl6SjjXuqA1VHcELdesIXLSyj1s=;
-        b=aRQYbHWQ2uewRAUu5WZ3ll6s7LG57+M6vQ0bvNOU/4zuoPmelENdEh/a3OeDiGcZ8P
-         /s/QuszgRbatupKtndqwK2wNvn5jFrGIspYR3PoAAgme4S/jUofN8EIBgWSOdwBu8C3g
-         GtkHj61wMLIfMeod6WcV+YLkJtXvHzw6kZGwf/htFlV+zlh3VK6BJU3ofwj179tL+eLr
-         +Lv0pEm67+/3kCoBxqnErFS2N/5yeQWaf+lnvsgzknpUe5ts/ODSXKfAFQuQjiw+6xKs
-         EGqRermU+bZ0pkpYQrh42pz6+XyPFBgQVOu8FW052huvPP5fX7+rcWPN2Sa7GhkHsoEN
-         cWgQ==
-X-Gm-Message-State: AGRZ1gL1jMwSafDk4BA7ALeNbCyIzc9dtfHttMhWXYOcYRaOrbT8oAs3
-        XzfHs0EyfcM6ZKDjvRLZ2DBCh4D0Vcw=
-X-Google-Smtp-Source: AJdET5c6+m/WXgyp/AtVp4MvQmLmEdc0VfDKPbaLIPGw6W9IXPV/FM8V5MhrM4+GcQEZt16aRus0BQ==
-X-Received: by 2002:a67:1dc4:: with SMTP id d187mr169322vsd.187.1540493123400;
-        Thu, 25 Oct 2018 11:45:23 -0700 (PDT)
-Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com. [209.85.222.53])
-        by smtp.gmail.com with ESMTPSA id m73sm1052308vsh.19.2018.10.25.11.45.21
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version;
+        bh=L1tBZpgi9fvdZylh7sdYJtxWAkZ3uUHgnrdl5ZhfKnw=;
+        b=oBsXCUtqAzWiLlhQp1Y3L7HWvn+QY+61ZfP6qmm9ALXAPv9YincdpNFFGZr/81nU0d
+         l303qGnJ7gdE/R0OCFXA6gl0xdG2dbm7t9rwmXkt0GMdEdQ3JBRTSWKwbfmCS5ZFqKoj
+         gJSh2G5fXbeTUmgNP+3Y2Q+M+bFaLLp8/zyxIlqQKNJQze1B3MezR9daAi4ZKj4LfGSP
+         41rkFWWm0bIDZN4OPdgkZTCZZSFmiiv9uttQzjawj2N9fjmd3w5h+vbHsOSxfw/pjzhn
+         lvCtAQeNZY/Qw4WxSQDgYWgW4h/Walr5CcBle1z/ANX7IsQKjR38LiDhMWZ/z8opE3kD
+         fQ3g==
+X-Gm-Message-State: AGRZ1gJkf/TPvtGWNZ52Dcd5dJ30C2ikiyhdP5Ga6yuJRCRzKMtb2hgG
+        1/jWjgZMbtHbVvyBRdkNaX1HNg==
+X-Google-Smtp-Source: AJdET5dcgqwJYMopMEhtP4lOkdY607jRRv4hbzGF8CsLl5s71w7eYDrzFuPRYxIbF1Haox79hQtykA==
+X-Received: by 2002:a37:8342:: with SMTP id f63-v6mr404123qkd.18.1540493149964;
+        Thu, 25 Oct 2018 11:45:49 -0700 (PDT)
+Received: from [172.25.136.172] (pool-128-6-37-151.nat.rutgers.edu. [128.6.37.151])
+        by smtp.gmail.com with ESMTPSA id c36-v6sm9511251qta.56.2018.10.25.11.45.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Oct 2018 11:45:21 -0700 (PDT)
-Received: by mail-ua1-f53.google.com with SMTP id m18so3655762uaq.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 11:45:21 -0700 (PDT)
-X-Received: by 2002:ab0:3f7:: with SMTP id 110mr191186uau.27.1540493121260;
- Thu, 25 Oct 2018 11:45:21 -0700 (PDT)
+        Thu, 25 Oct 2018 11:45:48 -0700 (PDT)
+From:   "Zi Yan" <zi.yan@cs.rutgers.edu>
+To:     "Anshuman Khandual" <anshuman.khandual@arm.com>
+Cc:     "Andrea Arcangeli" <aarcange@redhat.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, kirill.shutemov@linux.intel.com,
+        akpm@linux-foundation.org, mhocko@suse.com, will.deacon@arm.com,
+        "Naoya Horiguchi" <n-horiguchi@ah.jp.nec.com>
+Subject: Re: [PATCH] mm/thp: Correctly differentiate between mapped THP and
+ PMD migration entry
+Date:   Thu, 25 Oct 2018 14:45:46 -0400
+X-Mailer: MailMate (1.12r5528)
+Message-ID: <B26B3F91-BA46-479E-8030-D581F4D90D47@cs.rutgers.edu>
+In-Reply-To: <dcd972a6-a508-1fab-4ba9-04043ca9992c@arm.com>
+References: <1539057538-27446-1-git-send-email-anshuman.khandual@arm.com>
+ <7E8E6B14-D5C4-4A30-840D-A7AB046517FB@cs.rutgers.edu>
+ <84509db4-13ce-fd53-e924-cc4288d493f7@arm.com>
+ <1968F276-5D96-426B-823F-38F6A51FB465@cs.rutgers.edu>
+ <5e0e772c-7eef-e75c-2921-e80d4fbe8324@arm.com>
+ <2398C491-E1DA-4B3C-B60A-377A09A02F1A@cs.rutgers.edu>
+ <796cb545-7376-16a2-db3e-bc9a6ca9894d@arm.com>
+ <5A0A88EF-4B86-4173-A506-DE19BDB786B8@cs.rutgers.edu>
+ <dcd972a6-a508-1fab-4ba9-04043ca9992c@arm.com>
 MIME-Version: 1.0
-References: <20181022204639.8558-1-dianders@chromium.org> <20181022204639.8558-5-dianders@chromium.org>
- <20181025181349.GM154160@art_vandelay>
-In-Reply-To: <20181025181349.GM154160@art_vandelay>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 25 Oct 2018 11:45:09 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Vs7V7zN8MoyPhjAWcszfWZ0xT50ELo-2gZ-iLmjr7s7w@mail.gmail.com>
-Message-ID: <CAD=FV=Vs7V7zN8MoyPhjAWcszfWZ0xT50ELo-2gZ-iLmjr7s7w@mail.gmail.com>
-Subject: Re: [PATCH 5/6] drm/panel: simple: Innolux TV123WAM is actually P120ZDG-BF1
-To:     sean@poorly.run
-Cc:     Sean Paul <seanpaul@chromium.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sandeep Panda <spanda@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>,
-        ryandcase@chromium.org, David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed;
+ boundary="=_MailMate_5C556047-7D19-4D0F-B8E7-1368D2F5421C_=";
+ micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This is an OpenPGP/MIME signed message (RFC 3156 and 4880).
 
-On Thu, Oct 25, 2018 at 11:13 AM Sean Paul <sean@poorly.run> wrote:
+--=_MailMate_5C556047-7D19-4D0F-B8E7-1368D2F5421C_=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+On 25 Oct 2018, at 4:10, Anshuman Khandual wrote:
+
+> On 10/16/2018 08:01 PM, Zi Yan wrote:
+>> On 15 Oct 2018, at 0:06, Anshuman Khandual wrote:
+>>
+>>> On 10/15/2018 06:23 AM, Zi Yan wrote:
+>>>> On 12 Oct 2018, at 4:00, Anshuman Khandual wrote:
+>>>>
+>>>>> On 10/10/2018 06:13 PM, Zi Yan wrote:
+>>>>>> On 10 Oct 2018, at 0:05, Anshuman Khandual wrote:
+>>>>>>
+>>>>>>> On 10/09/2018 07:28 PM, Zi Yan wrote:
+>>>>>>>> cc: Naoya Horiguchi (who proposed to use !_PAGE_PRESENT && !_PAG=
+E_PSE for x86
+>>>>>>>> PMD migration entry check)
+>>>>>>>>
+>>>>>>>> On 8 Oct 2018, at 23:58, Anshuman Khandual wrote:
+>>>>>>>>
+>>>>>>>>> A normal mapped THP page at PMD level should be correctly diffe=
+rentiated
+>>>>>>>>> from a PMD migration entry while walking the page table. A mapp=
+ed THP would
+>>>>>>>>> additionally check positive for pmd_present() along with pmd_tr=
+ans_huge()
+>>>>>>>>> as compared to a PMD migration entry. This just adds a new cond=
+itional test
+>>>>>>>>> differentiating the two while walking the page table.
+>>>>>>>>>
+>>>>>>>>> Fixes: 616b8371539a6 ("mm: thp: enable thp migration in generic=
+ path")
+>>>>>>>>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>>>>>>>>> ---
+>>>>>>>>> On X86, pmd_trans_huge() and is_pmd_migration_entry() are alway=
+s mutually
+>>>>>>>>> exclusive which makes the current conditional block work for bo=
+th mapped
+>>>>>>>>> and migration entries. This is not same with arm64 where pmd_tr=
+ans_huge()
+>>>>>>>>
+>>>>>>>> !pmd_present() && pmd_trans_huge() is used to represent THPs und=
+er splitting,
+>>>>>>>
+>>>>>>> Not really if we just look at code in the conditional blocks.
+>>>>>>
+>>>>>> Yeah, I explained it wrong above. Sorry about that.
+>>>>>>
+>>>>>> In x86, pmd_present() checks (_PAGE_PRESENT | _PAGE_PROTNONE | _PA=
+GE_PSE),
+>>>>>> thus, it returns true even if the present bit is cleared but PSE b=
+it is set.
+>>>>>
+>>>>> Okay.
+>>>>>
+>>>>>> This is done so, because THPs under splitting are regarded as pres=
+ent in the kernel
+>>>>>> but not present when a hardware page table walker checks it.
+>>>>>
+>>>>> Okay.
+>>>>>
+>>>>>>
+>>>>>> For PMD migration entry, which should be regarded as not present, =
+if PSE bit
+>>>>>> is set, which makes pmd_trans_huge() returns true, like ARM64 does=
+, all
+>>>>>> PMD migration entries will be regarded as present
+>>>>>
+>>>>> Okay to make pmd_present() return false pmd_trans_huge() has to ret=
+urn false
+>>>>> as well. Is there anything which can be done to get around this pro=
+blem on
+>>>>> X86 ? pmd_trans_huge() returning true for a migration entry sounds =
+logical.
+>>>>> Otherwise we would revert the condition block order to accommodate =
+both the
+>>>>> implementation for pmd_trans_huge() as suggested by Kirill before o=
+r just
+>>>>> consider this patch forward.
+>>>>>
+>>>>> Because I am not really sure yet about the idea of getting pmd_pres=
+ent()
+>>>>> check into pmd_trans_huge() on arm64 just to make it fit into this =
+semantics
+>>>>> as suggested by Will. If a PMD is trans huge page or not should not=
+ depend on
+>>>>> whether it is present or not.
+>>>>
+>>>> In terms of THPs, we have three cases: a present THP, a THP under sp=
+litting,
+>>>> and a THP under migration. pmd_present() and pmd_trans_huge() both r=
+eturn true
+>>>> for a present THP and a THP under splitting, because they discover _=
+PAGE_PSE bit
+>>>
+>>> Then how do we differentiate between a mapped THP and a splitting THP=
+=2E
+>>
+>> AFAIK, in x86, there is no distinction between a mapped THP and a spli=
+tting THP
+>> using helper functions.
+>>
+>> A mapped THP has _PAGE_PRESENT bit and _PAGE_PSE bit set, whereas a sp=
+litting THP
+>> has only _PAGE_PSE bit set. But both pmd_present() and pmd_trans_huge(=
+) return
+>> true as long as _PAGE_PSE bit is set.
 >
-> On Mon, Oct 22, 2018 at 01:46:38PM -0700, Douglas Anderson wrote:
-> > As far as I can tell the panel that was added in commit da50bd4258db
-> > ("drm/panel: simple: Add Innolux TV123WAM panel driver support")
-> > wasn't actually an Innolux TV123WAM but was actually an Innolux
-> > P120ZDG-BF1.
-> >
-> > As far as I can tell the Innolux TV123WAM isn't a real panel and but
-> > it's a mosh between the TI TV123WAM and the Innolux P120ZDG-BF1.
-> > Let's unmosh.
-> >
-> > Here's my evidence:
-> >
-> > * Searching for TV123WAM on the Internet turns up a TI panel.  While
-> >   it's possible that an Innolux panel has the same model number as the
-> >   TI Panel, it seems a little doubtful.  Looking up the datasheet from
-> >   the TI Panel shows that it's 1920 x 1280 and 259.2 mm x 172.8 mm.
-> >
-> > * As far as I know, the patch adding the Innolux Panel was supposed to
-> >   be for the board that's sitting in front of me as I type this
-> >   (support for that board is not yet upstream).  On the back of that
-> >   panel I see Innolux P120ZDZ-EZ1 rev B1.
-> >
-> > * Someone pointed me at a datasheet that's supposed to be for the
-> >   panel in front of me (sorry, I can't share the datasheet).  That
-> >   datasheet has the string "p120zdg-bf1"
-> >
-> > * If I search for "P120ZDG-BF1" on the Internet I get hits for panels
-> >   that are 2160x1440.  They don't have datasheets, but the fact that
-> >   the resolution matches is a good sign.
-> >
-> > In any case, let's update the name and also the physical size to match
-> > the correct panel.
-> >
-> > Fixes: da50bd4258db ("drm/panel: simple: Add Innolux TV123WAM panel driver support")
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > Cc: Sandeep Panda <spanda@codeaurora.org>
-> > ---
-> >
-> >  drivers/gpu/drm/panel/panel-simple.c | 14 +++++++-------
-> >  1 file changed, 7 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-> > index 937e97490c30..7ee1abc5d81b 100644
-> > --- a/drivers/gpu/drm/panel/panel-simple.c
-> > +++ b/drivers/gpu/drm/panel/panel-simple.c
-> > @@ -1370,7 +1370,7 @@ static const struct panel_desc innolux_n156bge_l21 = {
-> >       },
-> >  };
-> >
-> > -static const struct drm_display_mode innolux_tv123wam_mode = {
-> > +static const struct drm_display_mode innolux_p120zdg_bf1_mode = {
-> >       .clock = 206016,
-> >       .hdisplay = 2160,
-> >       .hsync_start = 2160 + 48,
-> > @@ -1384,13 +1384,13 @@ static const struct drm_display_mode innolux_tv123wam_mode = {
-> >       .flags = DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC,
-> >  };
-> >
-> > -static const struct panel_desc innolux_tv123wam = {
-> > -     .modes = &innolux_tv123wam_mode,
-> > +static const struct panel_desc innolux_p120zdg_bf1 = {
-> > +     .modes = &innolux_p120zdg_bf1_mode,
-> >       .num_modes = 1,
-> >       .bpc = 8,
-> >       .size = {
-> > -             .width = 259,
-> > -             .height = 173,
-> > +             .width = 254,
-> > +             .height = 169,
-> >       },
-> >       .delay = {
-> >               .prepare = 200,
-> > @@ -2454,8 +2454,8 @@ static const struct of_device_id platform_of_match[] = {
-> >               .compatible = "innolux,n156bge-l21",
-> >               .data = &innolux_n156bge_l21,
-> >       }, {
-> > -             .compatible = "innolux,tv123wam",
+> I understand that. What I was wondering was since there is a need to di=
+fferentiate
+> between a mapped THP and a splitting THP at various places in generic T=
+HP, we would
+> need to way to identify each of them unambiguously some how. Is that pa=
+rticular
+> assumption wrong ? Dont we need to differentiate between a mapped THP a=
+nd THP under
+> splitting ?
+
+According to Andrea's explanation here: https://lore.kernel.org/patchwork=
+/patch/997412/#1184298,
+we do not distinguish between a mapped THP and a splitting THP, because p=
+md_to_page()
+can return valid pages for both cases.
+
+>>
+>>>
+>>>> is set for both cases, whereas they both return false for a THP unde=
+r migration.
+>>>> You want to change them to make pmd_trans_huge() returns true for a =
+THP under migration
+>>>> instead of false to help ARM64=E2=80=99s support for THP migration.
+>>> I am just trying to understand the rationale behind this semantics an=
+d see where
+>>> it should be fixed.
+>>>
+>>> I think the fundamental problem here is that THP under split has been=
+ difficult
+>>> to be re-presented through the available helper functions and in turn=
+ PTE bits.
+>>>
+>>> The following checks
+>>>
+>>> 1) pmd_present()
+>>> 2) pmd_trans_huge()
+>>>
+>>> Represent three THP states
+>>>
+>>> 1) Mapped THP		(pmd_present && pmd_trans_huge)
+>>> 2) Splitting THP	(pmd_present && pmd_trans_huge)
+>>> 3) Migrating THP	(!pmd_present && !pmd_trans_huge)
+>>>
+>>> The problem is if we make pmd_trans_huge() return true for all the th=
+ree states
+>>> which sounds logical because they are all still trans huge PMD, then =
+pmd_present()
+>>> can only represent two states not three as required.
+>>
+>> We are on the same page about representing three THP states in x86.
+>> I also agree with you that it is logical to use three distinct represe=
+ntations
+>> for these three states, i.e. splitting THP could be changed to (!pmd_p=
+resent && pmd_trans_huge
 >
-> I think we should update the struct, but we might want to keep this around.
-> Given the tv123wam panel is TI, we're likely not going to have a collision on
-> innolux,...
+> Right. Also we need clear wrapper around them in line with is_pmd_migra=
+tion_entry() to
+> represent three states all of which calling pmd_present() and pmd_trans=
+_huge() which
+> are exported by various architectures with exact same semantics without=
+ any ambiguity.
 >
-> That said, I'll defer to robh on this one, I'm not sure if changing names is
-> cool once the bindings have hit mainline.
+> 1) is_pmd_mapped_entry()
+> 2) is_pmd_splitting_entry()
+> 3) is_pmd_migration_entry()
 
-Whoops, I missed Rob on this patch--just had him on the bindings one.
+I think the semantics of pmd_trans_huge() is that the pmd entry is pointi=
+ng to
+a huge page. So is_pmd_mapped_entry() is the same as is_pmd_splitting_ent=
+ry()
+in terms of that.
 
-...generally I believe Rob seems to be OK with wiping out backward
-compatibility for things like this when the previous binding is super
-new and there's no evidence that anyone ever used it (like if it was
-added for a specific board and that board doesn't have a fully
-functional DT anyway).
+According to Andrea's explanation:https://lore.kernel.org/patchwork/patch=
+/997412/#1184298,
+the semantics can avoid pmd_lock serializations on all VM fast paths, whi=
+ch
+is valid IMHO.
 
-In this particular case I'm 99.9999% certain nobody is using the
-existing binding.  If someone crawls out of the woodwork and says this
-patch broke them, it would be trivially easy to add the backward
-compatible string later.
 
-Obviously Rob can feel free to correct me if I'm wrong.
+>>
+>>
+>>>>
+>>>> For x86, this change requires:
+>>>> 1. changing the condition in pmd_trans_huge(), so that it returns tr=
+ue for
+>>>> PMD migration entries;
+>>>> 2. changing the code, which calls pmd_trans_huge(), to match the new=
+ logic.
+>>> Can those be fixed with an additional check for pmd_present() as sugg=
+ested here
+>>> in this patch ? Asking because in case we could not get common semant=
+ics for
+>>> these helpers on all arch that would be a fall back option for the mo=
+ment.
+>>
+>> It would be OK for x86, since pmd_trans_huge() implies pmd_present() a=
+nd hence
+>> adding pmd_present() to pmd_trans_huge() makes no difference. But for =
+ARM64,
+>> from my understanding of the code described below, adding pmd_present(=
+) to
+>> pmd_trans_huge() seems to exclude splitting THPs from the original sem=
+antic.
+>>
+>>
+>>>>
+>>>> Another problem I see is that x86=E2=80=99s pmd_present() returns tr=
+ue for a THP under
+>>>> splitting but ARM64=E2=80=99s pmd_present() returns false for a THP =
+under splitting.
+>>>
+>>> But how did you conclude this ? I dont see any explicit helper for sp=
+litting
+>>> THP. Could you please point me in the code ?
+>>
+>> From the code I read for ARM64
+>> (https://elixir.bootlin.com/linux/v4.19-rc8/source/arch/arm64/include/=
+asm/pgtable.h#L360
+>> and https://elixir.bootlin.com/linux/v4.19-rc8/source/arch/arm64/inclu=
+de/asm/pgtable.h#L86),
+>> pmd_present() only checks _PAGE_PRESENT and _PAGE_PROTONE. During a TH=
+P splitting,
+>
+> These are PTE_VALID and PTE_PROT_NONE instead on arm64. But yes, they a=
+re equivalent
+> to __PAGE_PRESENT and __PAGE_PROTNONE on other archs.
+>
+> #define pmd_present(pmd)        pte_present(pmd_pte(pmd))
+> #define pte_present(pte)        (!!(pte_val(pte) & (PTE_VALID | PTE_PRO=
+T_NONE)))
+>
+>> pmdp_invalidate() clears _PAGE_PRESENT (https://elixir.bootlin.com/lin=
+ux/v4.19-rc8/source/mm/huge_memory.c#L2130). So pmd_present() returns fal=
+se in ARM64. Let me know
+>> if I got anything wrong.
+>>
+>
+> old_pmd =3D pmdp_invalidate(vma, haddr, pmd);
+>
+> __split_huge_pmd_locked -> pmdp_invalidate (the above mentioned instanc=
+e)
+> pmdp_invalidate -> pmd_mknotpresent
+>
+> #define pmd_mknotpresent(pmd)   (__pmd(pmd_val(pmd) & ~PMD_SECT_VALID)
+>
+> Generic pmdp invalidation removes PMD_SECT_VALID from a mapped PMD entr=
+y.
+> PMD_SECT_VALID is similar to PTE_VALID through identified separately. S=
+o you
+> are right, on arm64 pmd_present() return false for THP under splitting.=
 
-I purposely put this patch at the end of the series so we can land the
-earlier ones and we can sit on this one for a little while if desired.
 
--Doug
+This may actually cause problems in arm64, since the kernel will miss all=
+ splitting THPs.
+
+In sum, according to Andrea's explanation, I think it is better to adjust=
+
+arm64's pmd_present() and pmd_trans_huge() to match what x86's semantics.=
+
+Otherwise, arm64 might hit bugs while handling THPs.
+
+--
+Best Regards
+Yan Zi
+
+--=_MailMate_5C556047-7D19-4D0F-B8E7-1368D2F5421C_=
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename=signature.asc
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+Comment: GPGTools - https://gpgtools.org
+
+iQFKBAEBCgA0FiEEOXBxLIohamfZUwd5QYsvEZxOpswFAlvSD1oWHHppLnlhbkBj
+cy5ydXRnZXJzLmVkdQAKCRBBiy8RnE6mzLOmB/48B7fd/ribPF2FMH95EdDY+fyP
+H+Hh45bCZMAoTyC5gq2jlhCZ7XdvRp5o7XmfYXcgTaA9PIQuagfBBwqqlpYio0Y+
+V96aPJ/Vy6poHTwRg78mJmagSZUm1QHoUrTiHEf8J7d29WIKF/hhKzQbaqOtK53R
+Gf6j3xyayNbv7icfefrnUbfCCKApx5IzLdXNVcC/p2s9s77eJ9JaYKecFeA6en60
+pzORJHYpmZkxeCFBxNpiH/E+2TaZTsUTBX5zzsPvpV0jlKs4QxFGXEplABpO1MTA
+URUVsDE+jRmExnqqGzfntBHqgAtDHIVD/32Zdu3iX3wMA7BKT7TpDzet0AnC
+=oNb4
+-----END PGP SIGNATURE-----
+
+--=_MailMate_5C556047-7D19-4D0F-B8E7-1368D2F5421C_=--
