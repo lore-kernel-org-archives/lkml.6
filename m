@@ -2,83 +2,96 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46DD8C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 04:53:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69289C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 04:59:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E83032064C
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 04:52:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="LG6/trAv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E83032064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
+	by mail.kernel.org (Postfix) with ESMTP id 387982064C
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 04:59:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 387982064C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727206AbeJYNX5 (ORCPT
+        id S1727125AbeJYNa2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 09:23:57 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:45167 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726527AbeJYNX5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 09:23:57 -0400
-Received: by mail-ed1-f67.google.com with SMTP id t10-v6so7139752eds.12
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 21:52:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dgURxOrOIM6UEDItFy3ornyJhobgxSte/+4zp7Hb9vE=;
-        b=LG6/trAvtBtz+0rR1/WKCo21uImO9PGEQeJJAx3t6OcdnO/WhsCz2EKhusHg19Ubao
-         gEqeUWnjz7pHDUPwDoT+BOaJD4cSScpvxdHYwIBD7s8F4vU8Py57jS/O9bblFirKqgze
-         TUEPMI+k4bc+aurvm00OjWMCzn3WC/WsTyWtcHib0qMhKGmcSPDUVe2DICpLpZRWB8HL
-         eGiGDVTniDivWybpYjue33p1OiWB9INopy9fBuEfQhUgHdHvf2VozAOtIqK7S85g2KDv
-         otRY/itcYeq7ObAykyBB1I7GGPAI+GpZ05ycBf0dDTXvCwBUjkPSSita47GjVEL6iyhw
-         fQ5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=dgURxOrOIM6UEDItFy3ornyJhobgxSte/+4zp7Hb9vE=;
-        b=NcL5YTqnNGwRYaj+6//fdhnhDliPi5u3SyudUSAPUdqEYzrKSbPLHn1cAuhDvXib+d
-         ppXmmQ0u6wAFrMziLOdgUpIX0sW3aKK3SxqaA+iiFnbkZIbfB+VUqFLh3a4Hh3azcsM8
-         fbr5ACwK+Sare/hfgaiCxwPeu2JzvSSdiGNYx73ddkg+bOlgFAT/AQM0R0P42U9iu3Rx
-         G55cF+nc60qzoeg9ifhD/AmL2jPijmJx6bg6GlvK1Pvppm8qCwnBxumtG2rWGKJUi3C6
-         o6zV+6JdbmcI4BeZZcx+Sm437BhmfJ6SjXQ8ymXtCILv0eTP5W5AXslM86zRNdFKleMw
-         bMCw==
-X-Gm-Message-State: AGRZ1gLWD+F4z0vsosBUafIGLrc1QOnt0JP8hDgFGbfzGifJzA4/Rtsd
-        Su5PYsboCfXnRBuo+as0IBrgdw==
-X-Google-Smtp-Source: AJdET5fLlf4ZLW+MwE/kUPu5aXMVWmXbaphSpv96Up12r1PzdFUV34oCZOCSQxv5CM6IOIf6dzfGIA==
-X-Received: by 2002:a50:96d1:: with SMTP id z17-v6mr316373eda.268.1540443175175;
-        Wed, 24 Oct 2018 21:52:55 -0700 (PDT)
-Received: from [10.83.36.153] ([217.173.96.166])
-        by smtp.gmail.com with ESMTPSA id v16-v6sm2390271edm.49.2018.10.24.21.52.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Oct 2018 21:52:54 -0700 (PDT)
-Subject: Re: [PATCH] netfilter: conntrack: fix calculation of next bucket
- number in early_drop
-To:     Vasily Khoruzhick <vasilykh@arista.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     stable@vger.kernel.org
-References: <20181025034853.23573-1-vasilykh@arista.com>
-From:   Dmitry Safonov <dima@arista.com>
-Message-ID: <a2fa755a-048b-459a-b526-2fe27cbb6574@arista.com>
-Date:   Thu, 25 Oct 2018 05:52:53 +0100
+        Thu, 25 Oct 2018 09:30:28 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57730 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726332AbeJYNa2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 09:30:28 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5885AAED5;
+        Thu, 25 Oct 2018 04:59:25 +0000 (UTC)
+Subject: Re: [PATCH 2/2] mm, thp: consolidate THP gfp handling into
+ alloc_hugepage_direct_gfpmask
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Mel Gorman <mgorman@suse.de>,
+        David Rientjes <rientjes@google.com>,
+        Andrea Argangeli <andrea@kernel.org>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Stefan Priebe - Profihost AG <s.priebe@profihost.ag>,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+References: <20180925120326.24392-1-mhocko@kernel.org>
+ <20180925120326.24392-3-mhocko@kernel.org>
+ <20180926133039.y7o5x4nafovxzh2s@kshutemo-mobl1>
+ <20180926141708.GX6278@dhcp22.suse.cz> <20180926142227.GZ6278@dhcp22.suse.cz>
+ <20181018191147.33e8d5e1ebd785c06aab7b30@linux-foundation.org>
+ <20181019080657.GJ18839@dhcp22.suse.cz>
+ <583b20e5-4925-e175-1533-5c2d2bab9192@suse.cz>
+ <20181024161754.0d174e7c22113f4f8aad1940@linux-foundation.org>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ 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
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <983e0c59-99ef-796c-bfc4-00e67782d1f1@suse.cz>
+Date:   Thu, 25 Oct 2018 06:56:37 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181025034853.23573-1-vasilykh@arista.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20181024161754.0d174e7c22113f4f8aad1940@linux-foundation.org>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -86,61 +99,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/25/18 4:48 AM, Vasily Khoruzhick wrote:
-> If there's no entry to drop in bucket that corresponds to the hash,
-> early_drop() should look for it in other buckets. But since it increments
-> hash instead of bucket number, it actually looks in the same bucket 8
-> times: hsize is 16k by default (14 bits) and hash is 32-bit value, so
-> reciprocal_scale(hash, hsize) returns the same value for hash..hash+7 in
-> most cases.
+On 10/25/18 1:17 AM, Andrew Morton wrote:
+> On Mon, 22 Oct 2018 15:27:54 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
 > 
-> Fix it by increasing bucket number instead of hash and rename _hash
-> to bucket to avoid future confusion.
+>>> : Moreover the oriinal code allowed to trigger
+>>> : 	WARN_ON_ONCE(policy->mode == MPOL_BIND && (gfp & __GFP_THISNODE));
+>>> : in policy_node if the requested node (e.g. cpu local one) was outside of
+>>> : the mbind nodemask. This is not possible now. We haven't heard about any
+>>> : such warning yet so it is unlikely that it happens but still a signal of
+>>> : a wrong code layering.
+>>
+>> Ah, as I said in the other mail, I think it's inaccurate, the warning
+>> was not possible to hit.
+>>
+>> There's also a slight difference wrt MPOL_BIND. The previous code would
+>> avoid using __GFP_THISNODE if the local node was outside of
+>> policy_nodemask(). After your patch __GFP_THISNODE is avoided for all
+>> MPOL_BIND policies. So there's a difference that if local node is
+>> actually allowed by the bind policy's nodemask, previously
+>> __GFP_THISNODE would be added, but now it won't be. I don't think it
+>> matters that much though, but maybe the changelog could say that
+>> (instead of the inaccurate note about warning). Note the other policy
+>> where nodemask is relevant is MPOL_INTERLEAVE, and that's unchanged by
+>> this patch.
 > 
-> Fixes: 3e86638e9a0b ("netfilter: conntrack: consider ct netns in early_drop logic")
-> Cc: <stable@vger.kernel.org> # v4.7+
-> Signed-off-by: Vasily Khoruzhick <vasilykh@arista.com>
+> So the above could go into the changelog, yes?
 
-Nice work!
+Yeah.
 
-Reviewed-by: Dmitry Safonov <dima@arista.com>
-
-> ---
->   net/netfilter/nf_conntrack_core.c | 11 +++++++----
->   1 file changed, 7 insertions(+), 4 deletions(-)
+>> When that's addressed, you can add
 > 
-> diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
-> index ca1168d67fac..a04af246b184 100644
-> --- a/net/netfilter/nf_conntrack_core.c
-> +++ b/net/netfilter/nf_conntrack_core.c
-> @@ -1073,19 +1073,22 @@ static unsigned int early_drop_list(struct net *net,
->   	return drops;
->   }
->   
-> -static noinline int early_drop(struct net *net, unsigned int _hash)
-> +static noinline int early_drop(struct net *net, unsigned int hash)
->   {
->   	unsigned int i;
->   
->   	for (i = 0; i < NF_CT_EVICTION_RANGE; i++) {
->   		struct hlist_nulls_head *ct_hash;
-> -		unsigned int hash, hsize, drops;
-> +		unsigned int bucket, hsize, drops;
->   
->   		rcu_read_lock();
->   		nf_conntrack_get_ht(&ct_hash, &hsize);
-> -		hash = reciprocal_scale(_hash++, hsize);
-> +		if (!i)
-> +			bucket = reciprocal_scale(hash, hsize);
-> +		else
-> +			bucket = (bucket + 1) % hsize;
->   
-> -		drops = early_drop_list(net, &ct_hash[hash]);
-> +		drops = early_drop_list(net, &ct_hash[bucket]);
->   		rcu_read_unlock();
->   
->   		if (drops) {
+> What is it that you'd like to see addressed?  Purely changelog updates?
+
+Right.
+
+>> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> 
+> Thanks.
 > 
 
--- 
-           Dima
