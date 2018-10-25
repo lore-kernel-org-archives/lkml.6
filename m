@@ -2,191 +2,181 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6567AECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 07:29:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D1AC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 07:31:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35367205F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 07:29:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35367205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gentoo.org
+	by mail.kernel.org (Postfix) with ESMTP id D9076205F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 07:31:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ltJzd6yg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9076205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbeJYQAv (ORCPT
+        id S1726865AbeJYQCn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 12:00:51 -0400
-Received: from smtp.gentoo.org ([140.211.166.183]:35784 "EHLO smtp.gentoo.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726465AbeJYQAv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 12:00:51 -0400
-Received: from localhost (unknown [116.247.178.109])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: dlan)
-        by smtp.gentoo.org (Postfix) with ESMTPSA id EFF23335CCC;
-        Thu, 25 Oct 2018 07:29:19 +0000 (UTC)
-Date:   Thu, 25 Oct 2018 15:29:15 +0800
-From:   Yixun Lan <dlan@gentoo.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Jianxin Pan <jianxin.pan@amlogic.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        linux-kernel@vger.kernel.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Carlo Caione <carlo@caione.org>,
-        linux-amlogic@lists.infradead.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Qiufang Dai <qiufang.dai@amlogic.com>
-Subject: Re: [PATCH v5 2/3] clk: meson: add DT documentation for emmc clock
- controller
-Message-ID: <20181024145513.GA6647@ofant>
-References: <1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com>
- <1539839245-13793-3-git-send-email-jianxin.pan@amlogic.com>
- <ca95948abd58876a23b2eb3e52b96124e9eed793.camel@baylibre.com>
+        Thu, 25 Oct 2018 12:02:43 -0400
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:38276 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726538AbeJYQCn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 12:02:43 -0400
+Received: by mail-yw1-f68.google.com with SMTP id d126-v6so3199830ywa.5
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 00:31:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gGteqWKGyRq4CY8yG1kvZEa/GWFSb3wYHRS2RlHstxU=;
+        b=ltJzd6ygYQpXgil0F8ltZuDWZ9W/iJYRyf8NOGJuRprR9zrYWSq87RkWW5irLRtEBM
+         +dQjZMLZkINXt6tLi6NX1F15fzX/qqKKhJIduBNhiFpnnem5MjdNabKukeCnfv44MfSI
+         bnMWmRXs9I9V0sz0r6/czpmJXKGOACTa+Ev/0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gGteqWKGyRq4CY8yG1kvZEa/GWFSb3wYHRS2RlHstxU=;
+        b=fbVu1y+LRdKRb4EkR7BHc9ifnxPNtCU5DS386HVXccjpz9bRSr03A6Hsl9zenZ8Wuo
+         MMD7dSq7aR0c2YRoNTFxVmrkYjcd12bNjoq5EabSxGIqOgm50TI9z1RO3+WtLT9n4mbo
+         UkDEso2xPWP9yYal1TDQczNfa7BKUm9bcAhtCxrqMg5pzwUkGXasjtlHZ9giKXXsou+0
+         jToPSUZyiivjfeS7VOHhfs3HyHPiTF+PhQDcutL1SAj2gDF4IDLeM/+5m59/JBwrOWJX
+         HMRp2h+VLVatkebRNnZU8gywHpvq104L2VcDol+Ew6np7FxiqRfyDGcL0IqDPw6ZzqKT
+         zzPQ==
+X-Gm-Message-State: AGRZ1gIvjVZLUnagWGRsqg6Oyf9NUZLKtZq38qvkUVdkSeUH9TomtMvs
+        btJBlCwnPVZJZWUb/3ijlnYoEuJuDw4TQw==
+X-Google-Smtp-Source: AJdET5cCj7iDwlQRQYrkr01LQQHDnSUWUoMsJ1dMATOR/hAITdH0vUy/FoBTdh0am4ldK9u5GDTMPQ==
+X-Received: by 2002:a81:e4d:: with SMTP id 74-v6mr365566ywo.162.1540452671929;
+        Thu, 25 Oct 2018 00:31:11 -0700 (PDT)
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
+        by smtp.gmail.com with ESMTPSA id 80-v6sm2407500ywh.55.2018.10.25.00.31.10
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Oct 2018 00:31:10 -0700 (PDT)
+Received: by mail-yb1-f173.google.com with SMTP id n140-v6so3276073yba.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 00:31:10 -0700 (PDT)
+X-Received: by 2002:a25:b083:: with SMTP id f3-v6mr338705ybj.293.1540452670045;
+ Thu, 25 Oct 2018 00:31:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ca95948abd58876a23b2eb3e52b96124e9eed793.camel@baylibre.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1540389162-30358-1-git-send-email-mgottam@codeaurora.org>
+ <CAAFQd5CaYH-kxj+9cquObTHiRyA1VoEYHQmiQAGjdZm6J1ACfg@mail.gmail.com> <86344762e1eeab8fe8a940a1bfffa2c1@codeaurora.org>
+In-Reply-To: <86344762e1eeab8fe8a940a1bfffa2c1@codeaurora.org>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Thu, 25 Oct 2018 16:30:58 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5BhVdnmaVriBHEEvqKqO1Aiky0RpTyKWuh4+r0tPovsCA@mail.gmail.com>
+Message-ID: <CAAFQd5BhVdnmaVriBHEEvqKqO1Aiky0RpTyKWuh4+r0tPovsCA@mail.gmail.com>
+Subject: Re: [PATCH v2] media: venus: add support for key frame
+To:     vgarodia@codeaurora.org
+Cc:     mgottam@codeaurora.org,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        linux-media-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jerome, Jianxin:
+On Thu, Oct 25, 2018 at 4:23 PM Vikash Garodia <vgarodia@codeaurora.org> wrote:
+>
+> On 2018-10-24 20:02, Tomasz Figa wrote:
+> > On Wed, Oct 24, 2018 at 10:52 PM Malathi Gottam
+> > <mgottam@codeaurora.org> wrote:
+> >>
+> >> When client requests for a keyframe, set the property
+> >> to hardware to generate the sync frame.
+> >>
+> >> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
+> >> ---
+> >>  drivers/media/platform/qcom/venus/venc_ctrls.c | 16 +++++++++++++++-
+> >>  1 file changed, 15 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/media/platform/qcom/venus/venc_ctrls.c
+> >> b/drivers/media/platform/qcom/venus/venc_ctrls.c
+> >> index 45910172..6c2655d 100644
+> >> --- a/drivers/media/platform/qcom/venus/venc_ctrls.c
+> >> +++ b/drivers/media/platform/qcom/venus/venc_ctrls.c
+> >> @@ -79,8 +79,10 @@ static int venc_op_s_ctrl(struct v4l2_ctrl *ctrl)
+> >>  {
+> >>         struct venus_inst *inst = ctrl_to_inst(ctrl);
+> >>         struct venc_controls *ctr = &inst->controls.enc;
+> >> +       struct hfi_enable en = { .enable = 1 };
+> >>         u32 bframes;
+> >>         int ret;
+> >> +       u32 ptype;
+> >>
+> >>         switch (ctrl->id) {
+> >>         case V4L2_CID_MPEG_VIDEO_BITRATE_MODE:
+> >> @@ -173,6 +175,15 @@ static int venc_op_s_ctrl(struct v4l2_ctrl *ctrl)
+> >>
+> >>                 ctr->num_b_frames = bframes;
+> >>                 break;
+> >> +       case V4L2_CID_MPEG_VIDEO_FORCE_KEY_FRAME:
+> >> +               if (inst->streamon_out && inst->streamon_cap) {
+> >> +                       ptype =
+> >> HFI_PROPERTY_CONFIG_VENC_REQUEST_SYNC_FRAME;
+> >> +                       ret = hfi_session_set_property(inst, ptype,
+> >> &en);
+> >> +
+> >> +                       if (ret)
+> >> +                               return ret;
+> >> +               }
+> >> +               break;
+> >
+> > This is still not the right way to handle this.
+> >
+> > Please see the documentation of this control [1]:
+> >
+> > "V4L2_CID_MPEG_VIDEO_FORCE_KEY_FRAME (button)
+> > Force a key frame for the next queued buffer. Applicable to encoders.
+> > This is a general, codec-agnostic keyframe control."
+> >
+> > Even if the driver is not streaming, it must remember that the
+> > keyframe was requested for next buffer. The next time userspace QBUFs
+> > an OUTPUT buffer, it should ask the hardware to encode that OUTPUT
+> > buffer into a keyframe.
+>
+> That's correct. Driver can cache the client request and set it when the
+> hardware
+> is capable of accepting the property.
+> Still the issue having the requested OUTPUT buffer to be encoded as sync
+> frame will
+> be there. If there are few frames queued before streamon, driver will
+> only keep a
+> note that it has to set the request for keyframe, but not the exact one
+> which was
+> requested.
 
-see my comments
+The description (quoted above) specifies exactly that the control
+applies only to the next queued buffer. It's a "button" control, so
+when the application sets it (to 1), it triggers a call to driver's
+s_ctrl callback and then resets to 0 automatically.
 
-On 10:58 Wed 24 Oct     , Jerome Brunet wrote:
-> On Thu, 2018-10-18 at 13:07 +0800, Jianxin Pan wrote:
-> > From: Yixun Lan <yixun.lan@amlogic.com>
-> > 
-> > Document the MMC sub clock controller driver, the potential consumer
-> > of this driver is MMC or NAND. Also add four clock bindings IDs which
-> > provided by this driver.
-> > 
-> > Reviewed-by: Rob Herring <robh@kernel.org>
-> > Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
-> > Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
-> > ---
-> >  .../devicetree/bindings/clock/amlogic,mmc-clkc.txt | 31 ++++++++++++++++++++++
-> >  include/dt-bindings/clock/amlogic,mmc-clkc.h       | 17 ++++++++++++
-> >  2 files changed, 48 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
-> >  create mode 100644 include/dt-bindings/clock/amlogic,mmc-clkc.h
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
-> > new file mode 100644
-> > index 0000000..9e6d343
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
-> > @@ -0,0 +1,31 @@
-> > +* Amlogic MMC Sub Clock Controller Driver
-> > +
-> > +The Amlogic MMC clock controller generates and supplies clock to support
-> > +MMC and NAND controller
-> > +
-> > +Required Properties:
-> > +
-> > +- compatible: should be:
-> > +		"amlogic,gx-mmc-clkc"
-> > +		"amlogic,axg-mmc-clkc"
-> > +
-> > +- #clock-cells: should be 1.
-> > +- clocks: phandles to clocks corresponding to the clock-names property
-> > +- clock-names: list of parent clock names
-> > +	- "clkin0", "clkin1"
-> > +
-> > +Parent node should have the following properties :
-> > +- compatible: "amlogic,axg-mmc-clkc", "syscon".
-> > +- reg: base address and size of the MMC control register space.
-> 
-> I get why Stephen is confused by your description, I am too. The example
-> contradict the documentation.
-> 
-> The  documentation above says that the parent node should be a syscon with the
-> mmc register space.
-> 
-> But your example shows this in the node itself.
-> 
+>
+> > [1]
+> > https://www.kernel.org/doc/html/latest/media/uapi/v4l/extended-controls.html?highlight=v4l2_cid_mpeg_video_force_key_frame
+> >
+> > But generally, the proper modern way for the userspace to request a
+> > keyframe is to set the V4L2_BUF_FLAG_KEYFRAME flag in the
+> > vb2_buffer_flag when queuing an OUTPUT buffer. It's the only
+> > guaranteed way to ensure that the keyframe will be encoded exactly for
+> > the selected frame. (The V4L2 control API doesn't guarantee any
+> > synchronization between controls and buffers itself.)
+>
+> This is a better way to handle it to ensure exact buffer gets encoded as
+> sync frame.
 
-yes, I think the documentation need to be fixed
+It was created later to solve this problem. For compatibility, we have
+to keep supporting the control too.
 
-for the final solution, we decide to make 'mmc-clkc' an independent node
-instead of being a sub-node of 'mmc', so both of them may exist in parallel..
-
-the DT part may like this:
-
-			sd_emmc_c_clkc: clock-controller@7000 {
-				compatible = "amlogic,axg-mmc-clkc", "syscon";
-				reg = <0x0 0x7000 0x0 0x4>;
-				...
-			};
-
-			sd_emmc_c: mmc@7000 {
-				compatible = "amlogic,axg-mmc";
-				reg = <0x0 0x7000 0x0 0x800>;
-				...
-			};
-
-
-> > +
-> > +Example: Clock controller node:
-> > +
-> > +sd_mmc_c_clkc: clock-controller@7000 {
-> > +	compatible = "amlogic,axg-mmc-clkc", "syscon";
-> > +	reg = <0x0 0x7000 0x0 0x4>;
-> > +	#clock-cells = <1>;
-> > +
-> > +	clock-names = "clkin0", "clkin1";
-> > +	clocks = <&clkc CLKID_SD_MMC_C_CLK0>,
-> > +		 <&clkc CLKID_FCLK_DIV2>;
-> > +};
-> > diff --git a/include/dt-bindings/clock/amlogic,mmc-clkc.h b/include/dt-bindings/clock/amlogic,mmc-clkc.h
-> > new file mode 100644
-> > index 0000000..162b949
-> > --- /dev/null
-> > +++ b/include/dt-bindings/clock/amlogic,mmc-clkc.h
-> > @@ -0,0 +1,17 @@
-> > +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-> > +/*
-> > + * Meson MMC sub clock tree IDs
-> > + *
-> > + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
-> > + * Author: Yixun Lan <yixun.lan@amlogic.com>
-> > + */
-> > +
-> > +#ifndef __MMC_CLKC_H
-> > +#define __MMC_CLKC_H
-> > +
-> > +#define CLKID_MMC_DIV				1
-> > +#define CLKID_MMC_PHASE_CORE			2
-> > +#define CLKID_MMC_PHASE_TX			3
-> > +#define CLKID_MMC_PHASE_RX			4
-> > +
-> > +#endif
-> 
-> 
-> 
-> _______________________________________________
-> linux-amlogic mailing list
-> linux-amlogic@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-amlogic
-
--- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+Best regards,
+Tomasz
