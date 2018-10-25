@@ -2,100 +2,121 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB6AC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:28:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27509C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 722F9204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:28:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E157120824
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:28:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eS0Vn+aL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 722F9204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BIBBgdMw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E157120824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726901AbeJYQ7n (ORCPT
+        id S1727146AbeJYRAQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 12:59:43 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44662 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726580AbeJYQ7m (ORCPT
+        Thu, 25 Oct 2018 13:00:16 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:43972 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726580AbeJYRAP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 12:59:42 -0400
-Received: by mail-pf1-f195.google.com with SMTP id j2-v6so614862pfn.11
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 01:28:00 -0700 (PDT)
+        Thu, 25 Oct 2018 13:00:15 -0400
+Received: by mail-pl1-f193.google.com with SMTP id 30-v6so3503653plb.10;
+        Thu, 25 Oct 2018 01:28:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=aylbF+KphT/AvettPMbEwjRWJ1QIqako4887YEXm61c=;
-        b=eS0Vn+aL1jT9oV9FcXRiSVx+ak9a1dP4AoPNp/aj8EOcLhehdHLoJ4fa2ZGb9cSeFq
-         WA6sanDVxrGErQ1Avd58Z/W4GqbRMyIgjMp9BOmakA3v3OPwkbk4OQeexvjLPrDvqqni
-         bFH9Av/1POALP5FTEFlfSoFdAFSJ+PS9OZbFA=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=39nYOF2BQy0yd4uXdFMKKLMzHqQZprSRyGVyzypOxsE=;
+        b=BIBBgdMwBHNEZWEqumOhFbMlhcJ1unyfUV77L6qqVdVjGw7HTNKy3UzQCDXps6midR
+         REsd2wB/xYnC/Wqn5yFzPRnxsA2zPN8MvuaJE7w35Q451BWBk+QT3GKD6xN2jCuUb0EB
+         nODBMnkqcRJATFLUQcuBERlxYuSbmnf3O6hAJzQBScsLEoHD1J8VzbYQfxhXjQpBefab
+         3YNL6p/StrxY29DRdYLkicwJd8DqKECzKF6HY/SU+nVQ1+NXRl5rVB18zRmprIjqWN2b
+         ntrMQzEnmdrgjkae+jDYh4L3jp2it7X7TSO0hfnffQsCRqkPnVyqhIWDp2sQzm1igWIw
+         I0rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=aylbF+KphT/AvettPMbEwjRWJ1QIqako4887YEXm61c=;
-        b=pDZJwVttKdjwt0YNL+1ArFt/zjN8hCyo9kuB9ArCttV9O5prLng2jb6Uvm6Mmnffr6
-         qcUTD0rrM1RejNWFASYO1ISnPhok9gjOpxAg8Qc7fbVEEuY+arBd+iaB+ZW4l5LnHEnC
-         3ZHM4wD7/K7nlZ1ZE8i7aaFAmy0B2AIsjO+I7WeQlB8DU/loUU01WZXFN9E2gdICNxmb
-         kOKd4HFrGlQWkm02T9bUegiLLPcI8f3gesRKbeuDYrJXvEctZyHxcAbRZqG4cm06ZhNf
-         KmDm4LIA2pGxc9HSAG3xs0dxys0wtT3nJJEL21i8LSoxebwgIimbiXhSYAQfdGn8e6Yu
-         YXvA==
-X-Gm-Message-State: AGRZ1gILuOU2HOcjl8mcA6wFfwmd9u0rl/tjdfxb3+nQROUQNOGp+61P
-        XzqqEEF41eOyVk7hLeuhV5elNw==
-X-Google-Smtp-Source: AJdET5f56cD/cq5xlFx6xsPt7ylBeQ5M5cXj9ooBtpUEGdZ++37KtN6gilcuPtAiTdri27tNEyPGcA==
-X-Received: by 2002:a62:8787:: with SMTP id i129-v6mr627413pfe.150.1540456079722;
-        Thu, 25 Oct 2018 01:27:59 -0700 (PDT)
-Received: from localhost ([122.172.217.9])
-        by smtp.gmail.com with ESMTPSA id x13-v6sm20624892pge.13.2018.10.25.01.27.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Oct 2018 01:27:59 -0700 (PDT)
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     catalin.marinas@arm.com, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: arm: Fix cpu capacity mismatch in example
-Date:   Thu, 25 Oct 2018 13:57:51 +0530
-Message-Id: <138600f5d504b41202a29a1e130a7aa4e51f1925.1540451976.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.19.1.568.g152ad8e3369a
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=39nYOF2BQy0yd4uXdFMKKLMzHqQZprSRyGVyzypOxsE=;
+        b=tnlKkl/wTCIO7P/RK6EfBszwt9vNGxU+LoT81mfLSZHSUtZA+uFO6wVMSZpFUO7B08
+         A67FHa9M6k0PzFTAM0g9KY8a0785SzM8zrlA+Gef/vFcHED7PcWf+CFHuyBDCUOCmojn
+         FwkNqOGQrCywLQtaiyMKsIPYp6IZwBFuF6kVBez2aqzrYiFYreksUG3DNRhkW1vpDzqF
+         M+jqEHMLEzeWFLPzanFbVlb5xTnU754UXXft5rwDvapglvuzJA/ZvRRAc8R/tvMSlpL4
+         +t+p5wWcjFDof43ysmBp6Z8jln8RFjXSr74WGkQXJ+/YgHFDWokUyjPulS7I3xyVJLYD
+         Ro3Q==
+X-Gm-Message-State: AGRZ1gLeVVHpHh0Tekq0qDgHtDPc5pP7KB5Je97yy5YYOnqJ0pDh8yzz
+        3erkDzlX3MtWyUsxv1KkiE4=
+X-Google-Smtp-Source: AJdET5dJUYByBy+KAEOJP+pNkcz/fYkPN5TuPZijT7F4YVNDRO4BfIsv2/gX0DAmsHvtApRTqEYQWg==
+X-Received: by 2002:a17:902:148:: with SMTP id 66-v6mr614666plb.140.1540456112549;
+        Thu, 25 Oct 2018 01:28:32 -0700 (PDT)
+Received: from localhost ([175.223.22.26])
+        by smtp.gmail.com with ESMTPSA id d143-v6sm1415856pfd.58.2018.10.25.01.28.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Oct 2018 01:28:31 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 17:28:27 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>
+Subject: Re: [PATCH] s390/fault: use wake_up_klogd() in bust_spinlocks()
+Message-ID: <20181025082827.GC20702@jagdpanzerIV>
+References: <20181024043048.21248-1-sergey.senozhatsky@gmail.com>
+ <20181024043425.GA8862@jagdpanzerIV>
+ <20181025062800.GB4037@osiris>
+ <20181025070543.GB20702@jagdpanzerIV>
+ <20181025081108.GB26561@osiris>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181025081108.GB26561@osiris>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The example text says the capacity value should be 446, while the
-example have it set to 578 instead. Fix the mismatch.
+On (10/25/18 10:11), Heiko Carstens wrote:
+> > s390 is the only architecture that is using own bust_spinlocks()
+> > variant, while other arch-s seem to be OK with the common
+> > implementation.
+> > 
+> > Heiko Carstens [1] said he would prefer s390 to use the common
+> > bust_spinlocks() as well:
+> >   I did some code archaeology and this function is unchanged since ~17
+> >   years. When it was introduced it was close to identical to the x86
+> >   variant. All other architectures use the common code variant in the
+> >   meantime. So if we change this I'd prefer that we switch s390 to the
+> >   common code variant as well. Right now I can't see a reason for not
+> >   doing that
+> > 
+> > This patch removes s390 bust_spinlocks() and drops the weak attribute
+> > from the common bust_spinlocks() version.
+> > 
+> > [1] lkml.kernel.org/r/20181025062800.GB4037@osiris
+> > Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> > ---
+> >  arch/s390/mm/fault.c | 24 ------------------------
+> >  lib/bust_spinlocks.c |  6 +++---
+> >  2 files changed, 3 insertions(+), 27 deletions(-)
+> 
+> I gave this some testing and forced panic/die in interrupt as well as
+> process context with different consoles as well as single and multi
+> cpu systems. Everything still seems to work.
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- Documentation/devicetree/bindings/arm/cpu-capacity.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+That was quick ;) Thanks.
 
-diff --git a/Documentation/devicetree/bindings/arm/cpu-capacity.txt b/Documentation/devicetree/bindings/arm/cpu-capacity.txt
-index 9b5685a1d15d..7a0d6b429c8d 100644
---- a/Documentation/devicetree/bindings/arm/cpu-capacity.txt
-+++ b/Documentation/devicetree/bindings/arm/cpu-capacity.txt
-@@ -61,7 +61,7 @@ mhz values (normalized w.r.t. the highest value found while parsing the DT).
- Example 1 (ARM 64-bit, 6-cpu system, two clusters):
- capacities-dmips-mhz are scaled w.r.t. 1024 (cpu@0 and cpu@1)
- supposing cluster0@max-freq=1100 and custer1@max-freq=850,
--final capacities are 1024 for cluster0 and 446 for cluster1
-+final capacities are 1024 for cluster0 and 578 for cluster1
- 
- cpus {
- 	#address-cells = <2>;
--- 
-2.19.1.568.g152ad8e3369a
+> So I'm applying this to our internal queue first. It will hit upstream
+> latest in the next merge window if there aren't any issues found.
 
+Sure; sounds like a plan.
+
+	-ss
