@@ -7,44 +7,48 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20F3FC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:12:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7356DECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:12:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA6B920834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:12:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C41120834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:12:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xW2zWlf2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA6B920834
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IO73vL3v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C41120834
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728411AbeJYWou (ORCPT
+        id S1728508AbeJYWpW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:44:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53846 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:45:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727497AbeJYWor (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:44:47 -0400
+        id S1727537AbeJYWot (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:44:49 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29DB020848;
-        Thu, 25 Oct 2018 14:11:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7719E20854;
+        Thu, 25 Oct 2018 14:11:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540476712;
-        bh=ikPRD1fkHakiAN3lZIv6ebEw/fOaiZc24mzkwyDfWHM=;
+        s=default; t=1540476714;
+        bh=6LuiaFl9GIgTqDIYGGuBaZkR9G9a6K9ZgxmejtAk2Hw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xW2zWlf2YWReTU1ClnUGkufpTcL6X3ptF8D3iMy+2MecZ7GhcM1RyR+Cf3ndc8PTW
-         44vf02xnStvbncJwiK6dKnIDwS8LYBxK3UIO2r43xcIx3AvvSSdk2sLusxrYQuRyG7
-         GDb7p2tjWJBVKaPKAtPUdIXLFLmYNG+PFLkZUPXw=
+        b=IO73vL3vDYhuvTV6P7lqAH8zkXm7Ttgn0+892JW+Y/7S6RTtFuUflxR37AxmhO9/q
+         Ab6lg/ROQ8whPNLtZc6SSCEAudY70R3QC54nflwcfuMCh0R6NjAPontoJQY/yr7NhM
+         1GLZkjuSbacQW3C7eij+nyqwEKIKeCcN7LCBaXzg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 41/46] net: phy: phylink: Don't release NULL GPIO
-Date:   Thu, 25 Oct 2018 10:10:48 -0400
-Message-Id: <20181025141053.213330-41-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Alok Kataria <akataria@vmware.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        virtualization@lists.linux-foundation.org,
+        kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 42/46] x86/paravirt: Fix some warning messages
+Date:   Thu, 25 Oct 2018 10:10:49 -0400
+Message-Id: <20181025141053.213330-42-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141053.213330-1-sashal@kernel.org>
 References: <20181025141053.213330-1-sashal@kernel.org>
@@ -53,36 +57,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 3bcd47726c3b744fd08781795cca905cc59a1382 ]
+[ Upstream commit 571d0563c8881595f4ab027aef9ed1c55e3e7b7c ]
 
-If CONFIG_GPIOLIB is disabled, gpiod_put() becomes a stub that produces a
-warning, this helped identify that we could be attempting to release a NULL
-pl->link_gpio GPIO descriptor, so guard against that.
+The first argument to WARN_ONCE() is a condition.
 
-Fixes: daab3349ad1a ("net: phy: phylink: Release link GPIO")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 5800dc5c19f3 ("x86/paravirt: Fix spectre-v2 mitigations for paravirt guests")
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Alok Kataria <akataria@vmware.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: virtualization@lists.linux-foundation.org
+Cc: kernel-janitors@vger.kernel.org
+Link: https://lkml.kernel.org/r/20180919103553.GD9238@mwanda
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/phy/phylink.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/kernel/paravirt.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
-index e4a6ed88b9cf..79f28b9186c6 100644
---- a/drivers/net/phy/phylink.c
-+++ b/drivers/net/phy/phylink.c
-@@ -561,7 +561,7 @@ void phylink_destroy(struct phylink *pl)
- {
- 	if (pl->sfp_bus)
- 		sfp_unregister_upstream(pl->sfp_bus);
--	if (!IS_ERR(pl->link_gpio))
-+	if (!IS_ERR_OR_NULL(pl->link_gpio))
- 		gpiod_put(pl->link_gpio);
+diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
+index f3559b84cd75..04da826381c9 100644
+--- a/arch/x86/kernel/paravirt.c
++++ b/arch/x86/kernel/paravirt.c
+@@ -90,7 +90,7 @@ unsigned paravirt_patch_call(void *insnbuf,
  
- 	cancel_work_sync(&pl->resolve);
+ 	if (len < 5) {
+ #ifdef CONFIG_RETPOLINE
+-		WARN_ONCE("Failing to patch indirect CALL in %ps\n", (void *)addr);
++		WARN_ONCE(1, "Failing to patch indirect CALL in %ps\n", (void *)addr);
+ #endif
+ 		return len;	/* call too long for patch site */
+ 	}
+@@ -110,7 +110,7 @@ unsigned paravirt_patch_jmp(void *insnbuf, const void *target,
+ 
+ 	if (len < 5) {
+ #ifdef CONFIG_RETPOLINE
+-		WARN_ONCE("Failing to patch indirect JMP in %ps\n", (void *)addr);
++		WARN_ONCE(1, "Failing to patch indirect JMP in %ps\n", (void *)addr);
+ #endif
+ 		return len;	/* call too long for patch site */
+ 	}
 -- 
 2.17.1
 
