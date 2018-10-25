@@ -2,98 +2,132 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76F11C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 19:38:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3915FC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 19:39:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EC8F2082E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 19:38:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EC8F2082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=physik.fu-berlin.de
+	by mail.kernel.org (Postfix) with ESMTP id DCCAF2083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 19:39:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B3aCEXEB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCCAF2083E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726291AbeJZEME convert rfc822-to-8bit (ORCPT
+        id S1726275AbeJZENq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 00:12:04 -0400
-Received: from outpost1.zedat.fu-berlin.de ([130.133.4.66]:55642 "EHLO
-        outpost1.zedat.fu-berlin.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725790AbeJZEMD (ORCPT
+        Fri, 26 Oct 2018 00:13:46 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46714 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725784AbeJZENq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 00:12:03 -0400
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.85)
-          with esmtps (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id <1gFlS6-0038ii-Km>; Thu, 25 Oct 2018 21:37:54 +0200
-Received: from z92e7.pia.fu-berlin.de ([87.77.146.231] helo=[10.146.231.3])
-          by inpost2.zedat.fu-berlin.de (Exim 4.85)
-          with esmtpsa (TLSv1.2:AES128-SHA:128)
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id <1gFlS6-002LYn-E2>; Thu, 25 Oct 2018 21:37:54 +0200
-Subject: Re: [PATCH] ata: add Buddha PATA controller driver
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     Michael Schmitz <schmitzmic@gmail.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Jens Axboe <axboe@kernel.dk>, linux-ide@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-References: <CGME20181018122951eucas1p2be43dc17df8d2c754e771785b3ad7457@eucas1p2.samsung.com>
- <20181018122951eucas1p2be43dc17df8d2c754e771785b3ad7457~es8dn4Tg90035600356eucas1p2H@eucas1p2.samsung.com>
-From:   John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-Message-ID: <f881dd9d-b41f-9993-44fe-71db55fb679d@physik.fu-berlin.de>
-Date:   Thu, 25 Oct 2018 21:38:03 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181018122951eucas1p2be43dc17df8d2c754e771785b3ad7457~es8dn4Tg90035600356eucas1p2H@eucas1p2.samsung.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: 87.77.146.231
+        Fri, 26 Oct 2018 00:13:46 -0400
+Received: by mail-wr1-f67.google.com with SMTP id i4-v6so10490466wrr.13
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 12:39:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=N2nxlAPwxCY787lzi2fWINFuw6kMiTtSA+BaIRlVVdE=;
+        b=B3aCEXEBcnTh6hVvbSe8++jfEO58GbUBdhE07mb2CDc9QdD7yQD3g7pr8+xSEfkfkW
+         fOC+pjCrnlmXl3GEyF0i9UYoW0ODouZZA0OnGc4E0gL6HEd6TbHbX+WWaN/NWeFb5okl
+         hlyR5FOqZmirSzmK4FE5U6lDI9hCpINB0XDP3DbR2rhdmiIsG17c9fzRMcMxMG1KCLAE
+         6F1RmLq3dE+GZRQDHOGs2Seguu5uteqasmK9HXYSGuwq2PDo1dt9Rlioak19ooWfS/sE
+         GiWW71HTuYOVA4H2096WpIpUXnqTr2sIv6K8npreYh+MG24vgjFOeCTfCXEJc9Aaay/4
+         RTbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=N2nxlAPwxCY787lzi2fWINFuw6kMiTtSA+BaIRlVVdE=;
+        b=HEsTlutpUKOOTBu1jDLCWBnAE+ndrVu39l0TfxHXPSEwfsaGQarxlDGXIKCPwE3K/1
+         dzNPNcT08n9be/Kk5YJ3+GJQTDewiNab970xetp+2pqoomE7i4ViMpcrycf/xRkqj9NU
+         0THIEEY6RPs4ZDpzY3mCgh7eu7iNeTBKsTeZ5D+L972KpB1WHcITfoI/tM37mlkRuiIL
+         t9k1g9+QEKsFpPtZ7ZjgcaN5rmgDOeLME/5h1VISjiGSfa9uf60SVgRucG+AG3rg58H1
+         SVfjg4FByh5Xr2Sy4psJuM/m0eVIWE+jut7YDAvgYdf33TfzM7asndbb4RAwdRqf+FnW
+         msaQ==
+X-Gm-Message-State: AGRZ1gKAk+hzcz6ifUEQABySf8C7+jLaq3AbIGMnJ+vocrGrqpMKZpWg
+        P/Fj+MWbl9dnlg7Z6Ef2G7stY1OxpUA=
+X-Google-Smtp-Source: AJdET5fqJmb1hdL3SOuArmN8qV3ScpNIYbeEhijlIgyb9YE7yTg8dp6X/CMeTVW557/eeCEHVJvb0Q==
+X-Received: by 2002:adf:8c09:: with SMTP id z9-v6mr440384wra.82.1540496378656;
+        Thu, 25 Oct 2018 12:39:38 -0700 (PDT)
+Received: from dell.be.48ers.dk ([94.185.135.34])
+        by smtp.gmail.com with ESMTPSA id j6-v6sm3207547wmd.29.2018.10.25.12.39.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Oct 2018 12:39:37 -0700 (PDT)
+Received: from peko by dell.be.48ers.dk with local (Exim 4.89)
+        (envelope-from <peko@dell.be.48ers.dk>)
+        id 1gFlTk-0006OU-Gv; Thu, 25 Oct 2018 21:39:36 +0200
+From:   Peter Korsgaard <peter@korsgaard.com>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joe Perches <joe@perches.com>, linux-kernel@vger.kernel.org
+Cc:     Peter Korsgaard <peter@korsgaard.com>
+Subject: [RESEND PATCH v2] ttyprintk: make the printk log level configurable
+Date:   Thu, 25 Oct 2018 21:39:34 +0200
+Message-Id: <20181025193934.24534-1-peter@korsgaard.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+For some use cases it is handy to use a different printk log level than the
+default (info) for the messages written to ttyprintk, so add a Kconfig
+option similar to what we have for default console loglevel.
 
-Sorry for the delay!
+Signed-off-by: Peter Korsgaard <peter@korsgaard.com>
+---
+Changes since v1:
+- Leave [U] prefix in printk invocation and drop space before it as
+  suggested by Joe Perces.
 
-On 10/18/18 2:29 PM, Bartlomiej Zolnierkiewicz wrote:
-> John, please test if possible..
-Driver loads and detects hard drive connected to it:
+ drivers/char/Kconfig     | 8 ++++++++
+ drivers/char/ttyprintk.c | 4 +++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-[  256.110000] zorro zorro3: Buddha IDE controller
-[  256.430000] scsi host2: pata_buddha
-[  256.580000] scsi host3: pata_buddha
-[  256.590000] ata2: PATA max PIO4 cmd 0xeb0000 ctl 0xeb091a irq 2
-[  256.600000] ata3: PATA max PIO4 cmd 0xeb0000 ctl 0xeb0b1a irq 2
-[  256.790000] ata2.00: ATA-6: ST380011A, 8.01, max UDMA/100
-[  256.810000] ata2.00: 156301488 sectors, multi 16: LBA48 
-[  256.820000] ata2.00: configured for PIO
-[  256.870000] scsi 2:0:0:0: Direct-Access     ATA      ST380011A        8.01 PQ: 0 ANSI: 5
-[  257.080000] sd 2:0:0:0: [sdc] 156301488 512-byte logical blocks: (80.0 GB/74.5 GiB)
-[  257.170000] sd 2:0:0:0: [sdc] Write Protect is off
-[  257.190000] sd 2:0:0:0: [sdc] Mode Sense: 00 3a 00 00
-[  257.330000] sd 2:0:0:0: [sdc] Write cache: enabled, read cache: enabled, doesn't support DPO or FUA
-[  257.960000] sd 2:0:0:0: [sdc] Attached SCSI disk
-
-I was then able to create an MS-DOS partition table on the disk and create
-an ext2 filesystem. I copied some files onto the partition which worked
-without any problems.
-
-Tested-by: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-
-Michael wants to make some changes to the driver though, I think. He has access
-to the Amiga 4000, in any case, so he can also test them.
-
-Adrian
-
+diff --git a/drivers/char/Kconfig b/drivers/char/Kconfig
+index ce277ee0a28a..14a7f023f20b 100644
+--- a/drivers/char/Kconfig
++++ b/drivers/char/Kconfig
+@@ -66,6 +66,14 @@ config TTY_PRINTK
+ 
+ 	  If unsure, say N.
+ 
++config TTY_PRINTK_LEVEL
++	depends on TTY_PRINTK
++	int "ttyprintk log level (1-7)"
++	range 1 7
++	default "6"
++	help
++	  Printk log level to use for ttyprintk messages.
++
+ config PRINTER
+ 	tristate "Parallel printer support"
+ 	depends on PARPORT
+diff --git a/drivers/char/ttyprintk.c b/drivers/char/ttyprintk.c
+index 67549ce88cc9..88808dbba486 100644
+--- a/drivers/char/ttyprintk.c
++++ b/drivers/char/ttyprintk.c
+@@ -37,6 +37,8 @@ static struct ttyprintk_port tpk_port;
+  */
+ #define TPK_STR_SIZE 508 /* should be bigger then max expected line length */
+ #define TPK_MAX_ROOM 4096 /* we could assume 4K for instance */
++#define TPK_PREFIX KERN_SOH __stringify(CONFIG_TTY_PRINTK_LEVEL)
++
+ static int tpk_curr;
+ 
+ static char tpk_buffer[TPK_STR_SIZE + 4];
+@@ -45,7 +47,7 @@ static void tpk_flush(void)
+ {
+ 	if (tpk_curr > 0) {
+ 		tpk_buffer[tpk_curr] = '\0';
+-		pr_info("[U] %s\n", tpk_buffer);
++		printk(TPK_PREFIX "[U] %s\n", tpk_buffer);
+ 		tpk_curr = 0;
+ 	}
+ }
 -- 
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer - glaubitz@debian.org
-`. `'   Freie Universitaet Berlin - glaubitz@physik.fu-berlin.de
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+2.11.0
 
