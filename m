@@ -4,45 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F5BCC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:40:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 677B4ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:40:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 630372064A
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:40:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06F8E2064A
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:40:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZQcJRa9W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 630372064A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tcGXgpld"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06F8E2064A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729082AbeJYWsk (ORCPT
+        id S1729001AbeJYWsb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:48:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57400 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:48:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57160 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728255AbeJYWsj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:48:39 -0400
+        id S1728313AbeJYWsa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:48:30 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD92620834;
-        Thu, 25 Oct 2018 14:15:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69CB32085A;
+        Thu, 25 Oct 2018 14:15:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540476942;
-        bh=Kw2iZZ6h0mKvEzC7A4o4H3W9BeE/lbRO153/dyVuR+c=;
+        s=default; t=1540476933;
+        bh=F5VXkm2S6J+KqUvZ+j79NIwd2E/NaRDjOabMdhk1yDo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZQcJRa9We5qmWQBi/0CuSmo2qk7AzclN10ju5qbvnT/CSyzna997J01GBbjqE0Kia
-         5rpjrvpXKOlcNV/+su6K0468pMO8+DxGtx232syCUSwUwwFcIagK120PvFNERyixgG
-         LNLt4cblLAG0EcIXbQ30zl9ypFf6nc/G0Mia7lmU=
+        b=tcGXgpldDlEt+ltLocHjA/lircLRUcYLJdVle4jjvKgIkEoxPG6+7kMdb5X0nlS2y
+         h1d8zjYRJESev/JzGCLs2EjrlXOXA5nVxNwT/Dg3WcFZfw+KY/yUA9e3A+RfG2s2ZM
+         n2w5bYdsrO1zSY0ARieJQe3mnNxynoEerVI9oN4A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 53/98] ptr_ring: fix up after recent ptr_ring changes
-Date:   Thu, 25 Oct 2018 10:13:38 -0400
-Message-Id: <20181025141423.213774-53-sashal@kernel.org>
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Wang Nan <wangnan0@huawei.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 46/98] perf evsel: Fix probing of precise_ip level for default cycles event
+Date:   Thu, 25 Oct 2018 10:13:31 -0400
+Message-Id: <20181025141423.213774-46-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141423.213774-1-sashal@kernel.org>
 References: <20181025141423.213774-1-sashal@kernel.org>
@@ -51,71 +57,272 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Michael S. Tsirkin" <mst@redhat.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[ Upstream commit 5790eabc6e7c3ce2d6ca2e3bbf4de467ce2b64b3 ]
+[ Upstream commit 7a1ac110c22eb726684c837544a2d42c33e07be7 ]
 
-Add more stubs to make it build.
+Since commit 18e7a45af91a ("perf/x86: Reject non sampling events with
+precise_ip") returns -EINVAL for sys_perf_event_open() with an attribute
+with (attr.precise_ip > 0 && attr.sample_period == 0), just like is done
+in the routine used to probe the max precise level when no events were
+passed to 'perf record' or 'perf top', i.e.:
 
-Fixes: 81fbfe8a ("ptr_ring: use kmalloc_array()")
-Signed-off-by: Michael S. Tsirkin <mst@redhat.com>
+	perf_evsel__new_cycles()
+		perf_event_attr__set_max_precise_ip()
+
+The x86 code, in x86_pmu_hw_config(), which is called all the way from
+sys_perf_event_open() did, starting with the aforementioned commit:
+
+                /* There's no sense in having PEBS for non sampling events: */
+                if (!is_sampling_event(event))
+                        return -EINVAL;
+
+Which makes it fail for cycles:ppp, cycles:pp and cycles:p, always using
+just the non precise cycles variant.
+
+To make sure that this is the case, I tested it, before this patch,
+with:
+
+  # perf probe -L x86_pmu_hw_config
+  <x86_pmu_hw_config@/home/acme/git/linux/arch/x86/events/core.c:0>
+        0  int x86_pmu_hw_config(struct perf_event *event)
+        1  {
+        2         if (event->attr.precise_ip) {
+<SNIP>
+       17                 if (event->attr.precise_ip > precise)
+       18                         return -EOPNOTSUPP;
+
+                          /* There's no sense in having PEBS for non sampling events: */
+       21                 if (!is_sampling_event(event))
+       22                         return -EINVAL;
+                  }
+<SNIP>
+  # perf probe x86_pmu_hw_config:22
+  Added new events:
+    probe:x86_pmu_hw_config (on x86_pmu_hw_config:22)
+    probe:x86_pmu_hw_config_1 (on x86_pmu_hw_config:22)
+
+  You can now use it in all perf tools, such as:
+
+        perf record -e probe:x86_pmu_hw_config_1 -aR sleep 1
+
+  # perf trace -e perf_event_open,probe:x86_pmu_hwconfig*/max-stack=16/ perf record usleep 1
+     0.000 ( 0.015 ms): perf/4150 perf_event_open(attr_uptr: 0x7ffebc8ba110, cpu: -1, group_fd: -1      ) ...
+     0.015 (         ): probe:x86_pmu_hw_config:(ffffffff9c0065e1))
+                                       x86_pmu_hw_config ([kernel.kallsyms])
+                                       hsw_hw_config ([kernel.kallsyms])
+                                       x86_pmu_event_init ([kernel.kallsyms])
+                                       perf_try_init_event ([kernel.kallsyms])
+                                       perf_event_alloc ([kernel.kallsyms])
+                                       SYSC_perf_event_open ([kernel.kallsyms])
+                                       sys_perf_event_open ([kernel.kallsyms])
+                                       do_syscall_64 ([kernel.kallsyms])
+                                       return_from_SYSCALL_64 ([kernel.kallsyms])
+                                       syscall (/usr/lib64/libc-2.24.so)
+                                       perf_event_attr__set_max_precise_ip (/home/acme/bin/perf)
+                                       perf_evsel__new_cycles (/home/acme/bin/perf)
+                                       perf_evlist__add_default (/home/acme/bin/perf)
+                                       cmd_record (/home/acme/bin/perf)
+                                       run_builtin (/home/acme/bin/perf)
+                                       handle_internal_command (/home/acme/bin/perf)
+     0.000 ( 0.021 ms): perf/4150  ... [continued]: perf_event_open()) = -1 EINVAL Invalid argument
+     0.023 ( 0.002 ms): perf/4150 perf_event_open(attr_uptr: 0x7ffebc8ba110, cpu: -1, group_fd: -1      ) ...
+     0.025 (         ): probe:x86_pmu_hw_config:(ffffffff9c0065e1))
+                                       x86_pmu_hw_config ([kernel.kallsyms])
+                                       hsw_hw_config ([kernel.kallsyms])
+                                       x86_pmu_event_init ([kernel.kallsyms])
+                                       perf_try_init_event ([kernel.kallsyms])
+                                       perf_event_alloc ([kernel.kallsyms])
+                                       SYSC_perf_event_open ([kernel.kallsyms])
+                                       sys_perf_event_open ([kernel.kallsyms])
+                                       do_syscall_64 ([kernel.kallsyms])
+                                       return_from_SYSCALL_64 ([kernel.kallsyms])
+                                       syscall (/usr/lib64/libc-2.24.so)
+                                       perf_event_attr__set_max_precise_ip (/home/acme/bin/perf)
+                                       perf_evsel__new_cycles (/home/acme/bin/perf)
+                                       perf_evlist__add_default (/home/acme/bin/perf)
+                                       cmd_record (/home/acme/bin/perf)
+                                       run_builtin (/home/acme/bin/perf)
+                                       handle_internal_command (/home/acme/bin/perf)
+     0.023 ( 0.004 ms): perf/4150  ... [continued]: perf_event_open()) = -1 EINVAL Invalid argument
+     0.028 ( 0.002 ms): perf/4150 perf_event_open(attr_uptr: 0x7ffebc8ba110, cpu: -1, group_fd: -1      ) ...
+     0.030 (         ): probe:x86_pmu_hw_config:(ffffffff9c0065e1))
+                                       x86_pmu_hw_config ([kernel.kallsyms])
+                                       hsw_hw_config ([kernel.kallsyms])
+                                       x86_pmu_event_init ([kernel.kallsyms])
+                                       perf_try_init_event ([kernel.kallsyms])
+                                       perf_event_alloc ([kernel.kallsyms])
+                                       SYSC_perf_event_open ([kernel.kallsyms])
+                                       sys_perf_event_open ([kernel.kallsyms])
+                                       do_syscall_64 ([kernel.kallsyms])
+                                       return_from_SYSCALL_64 ([kernel.kallsyms])
+                                       syscall (/usr/lib64/libc-2.24.so)
+                                       perf_event_attr__set_max_precise_ip (/home/acme/bin/perf)
+                                       perf_evsel__new_cycles (/home/acme/bin/perf)
+                                       perf_evlist__add_default (/home/acme/bin/perf)
+                                       cmd_record (/home/acme/bin/perf)
+                                       run_builtin (/home/acme/bin/perf)
+                                       handle_internal_command (/home/acme/bin/perf)
+     0.028 ( 0.004 ms): perf/4150  ... [continued]: perf_event_open()) = -1 EINVAL Invalid argument
+    41.018 ( 0.012 ms): perf/4150 perf_event_open(attr_uptr: 0x7ffebc8b5dd0, pid: -1, group_fd: -1, flags: FD_CLOEXEC) = 4
+    41.065 ( 0.011 ms): perf/4150 perf_event_open(attr_uptr: 0x3c7db78, pid: -1, group_fd: -1, flags: FD_CLOEXEC) = 4
+    41.080 ( 0.006 ms): perf/4150 perf_event_open(attr_uptr: 0x3c7db78, pid: -1, group_fd: -1, flags: FD_CLOEXEC) = 4
+    41.103 ( 0.010 ms): perf/4150 perf_event_open(attr_uptr: 0x3c4e748, pid: 4151 (perf), group_fd: -1, flags: FD_CLOEXEC) = 4
+    41.115 ( 0.006 ms): perf/4150 perf_event_open(attr_uptr: 0x3c4e748, pid: 4151 (perf), cpu: 1, group_fd: -1, flags: FD_CLOEXEC) = 5
+    41.122 ( 0.004 ms): perf/4150 perf_event_open(attr_uptr: 0x3c4e748, pid: 4151 (perf), cpu: 2, group_fd: -1, flags: FD_CLOEXEC) = 6
+    41.128 ( 0.008 ms): perf/4150 perf_event_open(attr_uptr: 0x3c4e748, pid: 4151 (perf), cpu: 3, group_fd: -1, flags: FD_CLOEXEC) = 8
+  [ perf record: Woken up 1 times to write data ]
+  [ perf record: Captured and wrote 0.017 MB perf.data (2 samples) ]
+  #
+
+I.e. that return -EINVAL in x86_pmu_hw_config() is hit three times.
+
+So fix it by just setting attr.sample_period
+
+Now, after this patch:
+
+  # perf trace --max-stack=2 -e perf_event_open,probe:x86_pmu_hw_config* perf record usleep 1
+  [ perf record: Woken up 1 times to write data ]
+     0.000 ( 0.017 ms): perf/8469 perf_event_open(attr_uptr: 0x7ffe36c27d10, pid: -1, cpu: 3, group_fd: -1, flags: FD_CLOEXEC) = 4
+                                       syscall (/usr/lib64/libc-2.24.so)
+                                       perf_event_open_cloexec_flag (/home/acme/bin/perf)
+     0.050 ( 0.031 ms): perf/8469 perf_event_open(attr_uptr: 0x24ebb78, pid: -1, group_fd: -1, flags: FD_CLOEXEC) = 4
+                                       syscall (/usr/lib64/libc-2.24.so)
+                                       perf_evlist__config (/home/acme/bin/perf)
+     0.092 ( 0.040 ms): perf/8469 perf_event_open(attr_uptr: 0x24ebb78, pid: -1, group_fd: -1, flags: FD_CLOEXEC) = 4
+                                       syscall (/usr/lib64/libc-2.24.so)
+                                       perf_evlist__config (/home/acme/bin/perf)
+     0.143 ( 0.007 ms): perf/8469 perf_event_open(attr_uptr: 0x24bc748, cpu: -1, group_fd: -1           ) = 4
+                                       syscall (/usr/lib64/libc-2.24.so)
+                                       perf_event_attr__set_max_precise_ip (/home/acme/bin/perf)
+     0.161 ( 0.007 ms): perf/8469 perf_event_open(attr_uptr: 0x24bc748, pid: 8470 (perf), group_fd: -1, flags: FD_CLOEXEC) = 4
+                                       syscall (/usr/lib64/libc-2.24.so)
+                                       perf_evsel__open (/home/acme/bin/perf)
+     0.171 ( 0.005 ms): perf/8469 perf_event_open(attr_uptr: 0x24bc748, pid: 8470 (perf), cpu: 1, group_fd: -1, flags: FD_CLOEXEC) = 5
+                                       syscall (/usr/lib64/libc-2.24.so)
+                                       perf_evsel__open (/home/acme/bin/perf)
+     0.180 ( 0.007 ms): perf/8469 perf_event_open(attr_uptr: 0x24bc748, pid: 8470 (perf), cpu: 2, group_fd: -1, flags: FD_CLOEXEC) = 6
+                                       syscall (/usr/lib64/libc-2.24.so)
+                                       perf_evsel__open (/home/acme/bin/perf)
+     0.190 ( 0.005 ms): perf/8469 perf_event_open(attr_uptr: 0x24bc748, pid: 8470 (perf), cpu: 3, group_fd: -1, flags: FD_CLOEXEC) = 8
+                                       syscall (/usr/lib64/libc-2.24.so)
+                                       perf_evsel__open (/home/acme/bin/perf)
+  [ perf record: Captured and wrote 0.017 MB perf.data (7 samples) ]
+  #
+
+The probe one called from perf_event_attr__set_max_precise_ip() works
+the first time, with attr.precise_ip = 3, wit hthe next ones being the
+per cpu ones for the cycles:ppp event.
+
+And here is the text from a report and alternative proposed patch by
+Thomas-Mich Richter:
+
+ ---
+
+On s390 the counter and sampling facility do not support a precise IP
+skid level and sometimes returns EOPNOTSUPP when structure member
+precise_ip in struct perf_event_attr is not set to zero.
+
+On s390 commnd 'perf record -- true' fails with error EOPNOTSUPP.  This
+happens only when no events are specified on command line.
+
+The functions called are
+...
+  --> perf_evlist__add_default
+      --> perf_evsel__new_cycles
+          --> perf_event_attr__set_max_precise_ip
+
+The last function determines the value of structure member precise_ip by
+invoking the perf_event_open() system call and checking the return code.
+The first successful open is the value for precise_ip.
+
+However the value is determined without setting member sample_period and
+indicates no sampling.
+
+On s390 the counter facility and sampling facility are different.  The
+above procedure determines a precise_ip value of 3 using the counter
+facility. Later it uses the sampling facility with a value of 3 and
+fails with EOPNOTSUPP.
+
+ ---
+
+v2: Older compilers (e.g. gcc 4.4.7) don't support referencing members
+    of unnamed union members in the container struct initialization, so
+    move from:
+
+	struct perf_event_attr attr = {
+		...
+		.sample_period = 1,
+	};
+
+to right after it as:
+
+	struct perf_event_attr attr = {
+		...
+	};
+
+	attr.sample_period = 1;
+
+v3: We need to reset .sample_period to 0 to let the users of
+perf_evsel__new_cycles() to properly setup attr.sample_period or
+attr.sample_freq. Reported by Ingo Molnar.
+
+Reported-and-Acked-by: Thomas-Mich Richter <tmricht@linux.vnet.ibm.com>
+Acked-by: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Acked-by: Jiri Olsa <jolsa@redhat.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Fixes: 18e7a45af91a ("perf/x86: Reject non sampling events with precise_ip")
+Link: http://lkml.kernel.org/n/tip-yv6nnkl7tzqocrm0hl3x7vf1@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/virtio/ringtest/ptr_ring.c | 29 +++++++++++++++++++++++------
- 1 file changed, 23 insertions(+), 6 deletions(-)
+ tools/perf/tests/task-exit.c |  2 +-
+ tools/perf/util/evsel.c      | 12 ++++++++++++
+ 2 files changed, 13 insertions(+), 1 deletion(-)
 
-diff --git a/tools/virtio/ringtest/ptr_ring.c b/tools/virtio/ringtest/ptr_ring.c
-index 635b07b4fdd3..b4a2e6af515f 100644
---- a/tools/virtio/ringtest/ptr_ring.c
-+++ b/tools/virtio/ringtest/ptr_ring.c
-@@ -15,24 +15,41 @@
- #define unlikely(x)    (__builtin_expect(!!(x), 0))
- #define likely(x)    (__builtin_expect(!!(x), 1))
- #define ALIGN(x, a) (((x) + (a) - 1) / (a) * (a))
-+#define SIZE_MAX        (~(size_t)0)
-+
- typedef pthread_spinlock_t  spinlock_t;
+diff --git a/tools/perf/tests/task-exit.c b/tools/perf/tests/task-exit.c
+index 01a5ba2788c6..b0d005d295a9 100644
+--- a/tools/perf/tests/task-exit.c
++++ b/tools/perf/tests/task-exit.c
+@@ -82,7 +82,7 @@ int test__task_exit(int subtest __maybe_unused)
  
- typedef int gfp_t;
--static void *kmalloc(unsigned size, gfp_t gfp)
--{
--	return memalign(64, size);
--}
-+#define __GFP_ZERO 0x1
+ 	evsel = perf_evlist__first(evlist);
+ 	evsel->attr.task = 1;
+-	evsel->attr.sample_freq = 0;
++	evsel->attr.sample_freq = 1;
+ 	evsel->attr.inherit = 0;
+ 	evsel->attr.watermark = 0;
+ 	evsel->attr.wakeup_events = 1;
+diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+index 3be8c489884e..f7128c2a6386 100644
+--- a/tools/perf/util/evsel.c
++++ b/tools/perf/util/evsel.c
+@@ -263,8 +263,20 @@ struct perf_evsel *perf_evsel__new_cycles(void)
+ 	struct perf_evsel *evsel;
  
--static void *kzalloc(unsigned size, gfp_t gfp)
-+static void *kmalloc(unsigned size, gfp_t gfp)
- {
- 	void *p = memalign(64, size);
- 	if (!p)
- 		return p;
--	memset(p, 0, size);
+ 	event_attr_init(&attr);
++	/*
++	 * Unnamed union member, not supported as struct member named
++	 * initializer in older compilers such as gcc 4.4.7
++	 *
++	 * Just for probing the precise_ip:
++	 */
++	attr.sample_period = 1;
  
-+	if (gfp & __GFP_ZERO)
-+		memset(p, 0, size);
- 	return p;
- }
+ 	perf_event_attr__set_max_precise_ip(&attr);
++	/*
++	 * Now let the usual logic to set up the perf_event_attr defaults
++	 * to kick in when we return and before perf_evsel__open() is called.
++	 */
++	attr.sample_period = 0;
  
-+static inline void *kzalloc(unsigned size, gfp_t flags)
-+{
-+	return kmalloc(size, flags | __GFP_ZERO);
-+}
-+
-+static inline void *kmalloc_array(size_t n, size_t size, gfp_t flags)
-+{
-+	if (size != 0 && n > SIZE_MAX / size)
-+		return NULL;
-+	return kmalloc(n * size, flags);
-+}
-+
-+static inline void *kcalloc(size_t n, size_t size, gfp_t flags)
-+{
-+	return kmalloc_array(n, size, flags | __GFP_ZERO);
-+}
-+
- static void kfree(void *p)
- {
- 	if (p)
+ 	evsel = perf_evsel__new(&attr);
+ 	if (evsel == NULL)
 -- 
 2.17.1
 
