@@ -4,166 +4,108 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F49DECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:15:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B443C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:15:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 051EF20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:15:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5C852085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:15:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="J1gDd5+m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 051EF20854
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="V+cA465r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5C852085B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728896AbeJYWsO (ORCPT
+        id S1728906AbeJYWsP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:48:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56734 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:48:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56782 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728864AbeJYWsN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:48:13 -0400
+        id S1728864AbeJYWsP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:48:15 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9512B20834;
-        Thu, 25 Oct 2018 14:15:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1515C20848;
+        Thu, 25 Oct 2018 14:15:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540476916;
-        bh=aadg4Mpj4prdsxV0X0on3nI3wpzGrUXTOSAmVxMF568=;
+        s=default; t=1540476918;
+        bh=1QkFq/0vNibjmWLQAgQWd9NNEStAGbUXgxor7W9y5SE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J1gDd5+msK35cVFbBn2SLVNPdCwqv/qG9zORFvgXTgl9f4FSX7psn5oLpK2Uy3rbs
-         7qgFStC26lh4av3C94iH8kURZo7afuxiMZZaXME3XpUIM3Hm1SCowSX+j2GJM40kX2
-         uzCBWYEspEbUb4EiRcEd6coxOYZwkmjpvHxMqRqE=
+        b=V+cA465r62ghtQzCsnYeSQLCnVoovkiPL/zPeVJNoeged7kj4uLUzAOnPWM85q8MC
+         J0cF51k5JvwLP2XWssJ7vLyutx81Lo68VZy0IPnTnEAUlOpz4O2LneS15T7bq35Vo8
+         2VWg/bubjpbicNS/OWLllaJmOvc7diFmC+zVSPmA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "Chopra, Manish" <Manish.Chopra@cavium.com>,
-        Manish Chopra <manish.chopra@cavium.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 35/98] qlcnic: Fix tunnel offload for 82xx adapters
-Date:   Thu, 25 Oct 2018 10:13:20 -0400
-Message-Id: <20181025141423.213774-35-sashal@kernel.org>
+Cc:     =?UTF-8?q?Christian=20S=C3=BCnkenberg?= 
+        <christian.suenkenberg@student.kit.edu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 36/98] x86/cpu/cyrix: Add alternative Device ID of Geode GX1 SoC
+Date:   Thu, 25 Oct 2018 10:13:21 -0400
+Message-Id: <20181025141423.213774-36-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141423.213774-1-sashal@kernel.org>
 References: <20181025141423.213774-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Chopra, Manish" <Manish.Chopra@cavium.com>
+From: Christian Sünkenberg <christian.suenkenberg@student.kit.edu>
 
-[ Upstream commit 4bd7ef0b033721b659b9357057e76d1ced95c1da ]
+[ Upstream commit ae1d557d8f30cb097b4d1f2ab04fa294588ee1cf ]
 
-Qlogic's 82xx series adapter doesn't support
-tunnel offloads, driver incorrectly assumes that it is
-supported and causes firmware hang while running tunnel IO.
+A SoC variant of Geode GX1, notably NSC branded SC1100, seems to
+report an inverted Device ID in its DIR0 configuration register,
+specifically 0xb instead of the expected 0x4.
 
-This patch fixes this by not advertising tunnel offloads
-for 82xx adapters.
+Catch this presumably quirky version so it's properly recognized
+as GX1 and has its cache switched to write-back mode, which provides
+a significant performance boost in most workloads.
 
-Signed-off-by: Manish Chopra <manish.chopra@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+SC1100's datasheet "Geode™ SC1100 Information Appliance On a Chip",
+states in section 1.1.7.1 "Device ID" that device identification
+values are specified in SC1100's device errata. These, however,
+seem to not have been publicly released.
+
+Wading through a number of boot logs and /proc/cpuinfo dumps found on
+pastebin and blogs, this patch should mostly be relevant for a number
+of now admittedly aging Soekris NET4801 and PC Engines WRAP devices,
+the latter being the platform this issue was discovered on.
+Performance impact was verified using "openssl speed", with
+write-back caching scaling throughput between -3% and +41%.
+
+Signed-off-by: Christian Sünkenberg <christian.suenkenberg@student.kit.edu>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/1496596719.26725.14.camel@student.kit.edu
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qlcnic/qlcnic.h   | 26 +++++++++++++++++--
- .../ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c   |  2 ++
- .../net/ethernet/qlogic/qlcnic/qlcnic_main.c  |  2 ++
- .../qlogic/qlcnic/qlcnic_sriov_common.c       |  2 ++
- 4 files changed, 30 insertions(+), 2 deletions(-)
+ arch/x86/kernel/cpu/cyrix.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic.h b/drivers/net/ethernet/qlogic/qlcnic/qlcnic.h
-index 5ddadcd0c8db..f1242ab32ca6 100644
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic.h
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic.h
-@@ -1825,22 +1825,44 @@ struct qlcnic_hardware_ops {
- 	u32 (*get_cap_size)(void *, int);
- 	void (*set_sys_info)(void *, int, u32);
- 	void (*store_cap_mask)(void *, u32);
-+	bool (*encap_rx_offload) (struct qlcnic_adapter *adapter);
-+	bool (*encap_tx_offload) (struct qlcnic_adapter *adapter);
- };
+diff --git a/arch/x86/kernel/cpu/cyrix.c b/arch/x86/kernel/cpu/cyrix.c
+index 455d8ada9b9a..d39cfb2c6b63 100644
+--- a/arch/x86/kernel/cpu/cyrix.c
++++ b/arch/x86/kernel/cpu/cyrix.c
+@@ -253,6 +253,7 @@ static void init_cyrix(struct cpuinfo_x86 *c)
+ 		break;
  
- extern struct qlcnic_nic_template qlcnic_vf_ops;
- 
--static inline bool qlcnic_encap_tx_offload(struct qlcnic_adapter *adapter)
-+static inline bool qlcnic_83xx_encap_tx_offload(struct qlcnic_adapter *adapter)
- {
- 	return adapter->ahw->extra_capability[0] &
- 	       QLCNIC_83XX_FW_CAPAB_ENCAP_TX_OFFLOAD;
- }
- 
--static inline bool qlcnic_encap_rx_offload(struct qlcnic_adapter *adapter)
-+static inline bool qlcnic_83xx_encap_rx_offload(struct qlcnic_adapter *adapter)
- {
- 	return adapter->ahw->extra_capability[0] &
- 	       QLCNIC_83XX_FW_CAPAB_ENCAP_RX_OFFLOAD;
- }
- 
-+static inline bool qlcnic_82xx_encap_tx_offload(struct qlcnic_adapter *adapter)
-+{
-+	return false;
-+}
-+
-+static inline bool qlcnic_82xx_encap_rx_offload(struct qlcnic_adapter *adapter)
-+{
-+        return false;
-+}
-+
-+static inline bool qlcnic_encap_rx_offload(struct qlcnic_adapter *adapter)
-+{
-+        return adapter->ahw->hw_ops->encap_rx_offload(adapter);
-+}
-+
-+static inline bool qlcnic_encap_tx_offload(struct qlcnic_adapter *adapter)
-+{
-+        return adapter->ahw->hw_ops->encap_tx_offload(adapter);
-+}
-+
- static inline int qlcnic_start_firmware(struct qlcnic_adapter *adapter)
- {
- 	return adapter->nic_ops->start_firmware(adapter);
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
-index 05d32e86bcf7..35c5ac41c0a1 100644
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_83xx_hw.c
-@@ -242,6 +242,8 @@ static struct qlcnic_hardware_ops qlcnic_83xx_hw_ops = {
- 	.get_cap_size			= qlcnic_83xx_get_cap_size,
- 	.set_sys_info			= qlcnic_83xx_set_sys_info,
- 	.store_cap_mask			= qlcnic_83xx_store_cap_mask,
-+	.encap_rx_offload		= qlcnic_83xx_encap_rx_offload,
-+	.encap_tx_offload		= qlcnic_83xx_encap_tx_offload,
- };
- 
- static struct qlcnic_nic_template qlcnic_83xx_ops = {
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
-index 3ae3968b0edf..ebf5ead16939 100644
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_main.c
-@@ -632,6 +632,8 @@ static struct qlcnic_hardware_ops qlcnic_hw_ops = {
- 	.get_cap_size			= qlcnic_82xx_get_cap_size,
- 	.set_sys_info			= qlcnic_82xx_set_sys_info,
- 	.store_cap_mask			= qlcnic_82xx_store_cap_mask,
-+	.encap_rx_offload               = qlcnic_82xx_encap_rx_offload,
-+	.encap_tx_offload               = qlcnic_82xx_encap_tx_offload,
- };
- 
- static int qlcnic_check_multi_tx_capability(struct qlcnic_adapter *adapter)
-diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c
-index 2f656f395f39..c58180f40844 100644
---- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c
-+++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c
-@@ -77,6 +77,8 @@ static struct qlcnic_hardware_ops qlcnic_sriov_vf_hw_ops = {
- 	.free_mac_list			= qlcnic_sriov_vf_free_mac_list,
- 	.enable_sds_intr		= qlcnic_83xx_enable_sds_intr,
- 	.disable_sds_intr		= qlcnic_83xx_disable_sds_intr,
-+	.encap_rx_offload               = qlcnic_83xx_encap_rx_offload,
-+	.encap_tx_offload               = qlcnic_83xx_encap_tx_offload,
- };
- 
- static struct qlcnic_nic_template qlcnic_sriov_vf_ops = {
+ 	case 4: /* MediaGX/GXm or Geode GXM/GXLV/GX1 */
++	case 11: /* GX1 with inverted Device ID */
+ #ifdef CONFIG_PCI
+ 	{
+ 		u32 vendor, device;
 -- 
 2.17.1
 
