@@ -7,110 +7,149 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E418C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:11:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB39AC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:11:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F65120847
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:11:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 949302075D
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:11:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yx3xnIVY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F65120847
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SFuUntBp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 949302075D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727574AbeJYTnT (ORCPT
+        id S1727591AbeJYTnX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 15:43:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47088 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 15:43:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727228AbeJYTnS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 15:43:18 -0400
+        id S1727228AbeJYTnW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 15:43:22 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F3D4720840;
-        Thu, 25 Oct 2018 11:10:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87D2F2075D;
+        Thu, 25 Oct 2018 11:11:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540465861;
-        bh=uspq/S66WYC5rOMGfXLjMuVQvez+p6vKxyEwhA3VbYk=;
+        s=default; t=1540465864;
+        bh=q8Sm8mKIF/yKkXTlC7lCE1MKWcQgj2x7tFsAIefoZWM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yx3xnIVY+U4eaLJ05ruvuIuVN76TntFetg2TT9aut4nv+70LK3UsCONFaBs4qFH3o
-         WsfqX6YCWstUAnMBRZW5rNQBqjlwzyF7fQw8ocLW0VUOIGX6ZrUBr4tXAoqmQRqWqc
-         myMCmaubnMcswCV8AciD4EfMWR3JXLhQoF/bCkYM=
+        b=SFuUntBpfQxo55rPhfLjJLZfeBsT4VMnfPtRJWpVs63qln/H7lSIDvgHJCWvgJ5WN
+         XJxQlC71+o+UPBP0H5ijKZygU+SoAwNA/v1kpwEeHDuq+sLf0i8uXW2qwbrw2avuJo
+         16ThbGtIlSEhGggEZ2k6pRWd42WlZwhy689xGqsQ=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
-        Hongxu Jia <hongxu.jia@windriver.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
-        Jiri Olsa <jolsa@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
         Kim Phillips <kim.phillips@arm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
         Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>,
-        =?UTF-8?q?S=C3=A9bastien=20Boisvert?= <sboisvert@gydle.com>,
-        Thomas Richter <tmricht@linux.vnet.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 05/37] perf arm64: Fix generate system call table failed with /tmp mounted with noexec
-Date:   Thu, 25 Oct 2018 08:09:59 -0300
-Message-Id: <20181025111031.3440-6-acme@kernel.org>
+        Wang Nan <wangnan0@huawei.com>
+Subject: [PATCH 06/37] tools lib subcmd: Introduce OPTION_ULONG
+Date:   Thu, 25 Oct 2018 08:10:00 -0300
+Message-Id: <20181025111031.3440-7-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181025111031.3440-1-acme@kernel.org>
 References: <20181025111031.3440-1-acme@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hongxu Jia <hongxu.jia@windriver.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-When /tmp is mounted with noexec, mksyscalltbl fails.
+For completeness, will be used in 'perf trace --max-events'.
 
-  [snip]
-  |perf-1.0/tools/perf/arch/arm64/entry/syscalls//mksyscalltbl:
-  /tmp/create-table-6VGPSt: Permission denied
-  [snip]
-
-Add variable TMPDIR as prefix dir of the temporary file, if it is set,
-replace default /tmp.
-
-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Kim Phillips <kim.phillips@arm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: Sébastien Boisvert <sboisvert@gydle.com>
-Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Fixes: 2b5882435606 ("perf arm64: Generate system call table from asm/unistd.h")
-LPU-Reference: 1539851173-14959-1-git-send-email-hongxu.jia@windriver.com
-Link: https://lkml.kernel.org/n/tip-1qrgq840ci0c5cy4oww957ge@git.kernel.org
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-glaj3pwespxfj2fdjs9a20b6@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/arch/arm64/entry/syscalls/mksyscalltbl | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/lib/subcmd/parse-options.c | 19 +++++++++++++++++++
+ tools/lib/subcmd/parse-options.h |  2 ++
+ 2 files changed, 21 insertions(+)
 
-diff --git a/tools/perf/arch/arm64/entry/syscalls/mksyscalltbl b/tools/perf/arch/arm64/entry/syscalls/mksyscalltbl
-index 2dbb8cade048..c88fd32563eb 100755
---- a/tools/perf/arch/arm64/entry/syscalls/mksyscalltbl
-+++ b/tools/perf/arch/arm64/entry/syscalls/mksyscalltbl
-@@ -23,7 +23,7 @@ create_table_from_c()
- {
- 	local sc nr last_sc
+diff --git a/tools/lib/subcmd/parse-options.c b/tools/lib/subcmd/parse-options.c
+index cb7154eccbdc..dbb9efbf718a 100644
+--- a/tools/lib/subcmd/parse-options.c
++++ b/tools/lib/subcmd/parse-options.c
+@@ -116,6 +116,7 @@ static int get_value(struct parse_opt_ctx_t *p,
+ 		case OPTION_INTEGER:
+ 		case OPTION_UINTEGER:
+ 		case OPTION_LONG:
++		case OPTION_ULONG:
+ 		case OPTION_U64:
+ 		default:
+ 			break;
+@@ -166,6 +167,7 @@ static int get_value(struct parse_opt_ctx_t *p,
+ 		case OPTION_INTEGER:
+ 		case OPTION_UINTEGER:
+ 		case OPTION_LONG:
++		case OPTION_ULONG:
+ 		case OPTION_U64:
+ 		default:
+ 			break;
+@@ -295,6 +297,22 @@ static int get_value(struct parse_opt_ctx_t *p,
+ 			return opterror(opt, "expects a numerical value", flags);
+ 		return 0;
  
--	create_table_exe=`mktemp /tmp/create-table-XXXXXX`
-+	create_table_exe=`mktemp ${TMPDIR:-/tmp}/create-table-XXXXXX`
- 
- 	{
- 
++	case OPTION_ULONG:
++		if (unset) {
++			*(unsigned long *)opt->value = 0;
++			return 0;
++		}
++		if (opt->flags & PARSE_OPT_OPTARG && !p->opt) {
++			*(unsigned long *)opt->value = opt->defval;
++			return 0;
++		}
++		if (get_arg(p, opt, flags, &arg))
++			return -1;
++		*(unsigned long *)opt->value = strtoul(arg, (char **)&s, 10);
++		if (*s)
++			return opterror(opt, "expects a numerical value", flags);
++		return 0;
++
+ 	case OPTION_U64:
+ 		if (unset) {
+ 			*(u64 *)opt->value = 0;
+@@ -703,6 +721,7 @@ static void print_option_help(const struct option *opts, int full)
+ 	case OPTION_ARGUMENT:
+ 		break;
+ 	case OPTION_LONG:
++	case OPTION_ULONG:
+ 	case OPTION_U64:
+ 	case OPTION_INTEGER:
+ 	case OPTION_UINTEGER:
+diff --git a/tools/lib/subcmd/parse-options.h b/tools/lib/subcmd/parse-options.h
+index 92fdbe1519f6..6ca2a8bfe716 100644
+--- a/tools/lib/subcmd/parse-options.h
++++ b/tools/lib/subcmd/parse-options.h
+@@ -25,6 +25,7 @@ enum parse_opt_type {
+ 	OPTION_STRING,
+ 	OPTION_INTEGER,
+ 	OPTION_LONG,
++	OPTION_ULONG,
+ 	OPTION_CALLBACK,
+ 	OPTION_U64,
+ 	OPTION_UINTEGER,
+@@ -133,6 +134,7 @@ struct option {
+ #define OPT_INTEGER(s, l, v, h)     { .type = OPTION_INTEGER, .short_name = (s), .long_name = (l), .value = check_vtype(v, int *), .help = (h) }
+ #define OPT_UINTEGER(s, l, v, h)    { .type = OPTION_UINTEGER, .short_name = (s), .long_name = (l), .value = check_vtype(v, unsigned int *), .help = (h) }
+ #define OPT_LONG(s, l, v, h)        { .type = OPTION_LONG, .short_name = (s), .long_name = (l), .value = check_vtype(v, long *), .help = (h) }
++#define OPT_ULONG(s, l, v, h)        { .type = OPTION_ULONG, .short_name = (s), .long_name = (l), .value = check_vtype(v, unsigned long *), .help = (h) }
+ #define OPT_U64(s, l, v, h)         { .type = OPTION_U64, .short_name = (s), .long_name = (l), .value = check_vtype(v, u64 *), .help = (h) }
+ #define OPT_STRING(s, l, v, a, h)   { .type = OPTION_STRING,  .short_name = (s), .long_name = (l), .value = check_vtype(v, const char **), .argh = (a), .help = (h) }
+ #define OPT_STRING_OPTARG(s, l, v, a, h, d) \
 -- 
 2.14.4
 
