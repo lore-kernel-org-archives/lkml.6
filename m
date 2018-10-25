@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F18EAECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:15:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66010C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:15:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA5FF20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:15:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CD4F2085A
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:15:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="l/xstdmf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA5FF20854
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XP2bKZb/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CD4F2085A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728761AbeJYWr6 (ORCPT
+        id S1728775AbeJYWsA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:47:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56218 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:48:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56342 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728499AbeJYWr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:47:57 -0400
+        id S1728499AbeJYWr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:47:59 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B71520869;
-        Thu, 25 Oct 2018 14:14:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F3A92084A;
+        Thu, 25 Oct 2018 14:15:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540476900;
-        bh=b8uP/xMB7aLJi6Czq6wkSCtc2os03pmJy0S/a/gxkJk=;
+        s=default; t=1540476903;
+        bh=qnQJ5hsNho6Ag/ZvVtAJ28BwwYCSCa6S7y26aGX2KlM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l/xstdmfI4viTvYIYYFUATy6z745i8/dBCLpt+lewT2qCPzUJFzJwhP41+Ed5vmOt
-         s4z1DQYGj2QisLnDPfJqN4xR3i4NDDPVZcDSyk8fRgeAJFc8k97zbO/1kvyQBnOqC0
-         RgYGqO4fVeFjIr/Mzg/pS1FyJ3gsS59TDELao+A0=
+        b=XP2bKZb/mGi8CaRyQ9ZE9uW3hM0Ne9nC4fZJYii+ANIcsbgZurO9F+YCV0kqZ01Xj
+         pzXKMRg9oaZxNkVnHiYsi1+Is+h9UNWRoGVPbKGAGRp4kwNTEKAr8WNj0ssF46gBGt
+         0JTPQX0Omlo59rjnqjW7vd4vy6mvWH/nkuf413fU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Michael Chan <michael.chan@broadcom.com>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     Phil Elwell <phil@raspberrypi.org>, Eric Anholt <eric@anholt.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 23/98] bnxt_en: Don't use rtnl lock to protect link change logic in workqueue.
-Date:   Thu, 25 Oct 2018 10:13:08 -0400
-Message-Id: <20181025141423.213774-23-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 25/98] ARM: dts: bcm283x: Reserve first page for firmware
+Date:   Thu, 25 Oct 2018 10:13:10 -0400
+Message-Id: <20181025141423.213774-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141423.213774-1-sashal@kernel.org>
 References: <20181025141423.213774-1-sashal@kernel.org>
@@ -53,142 +52,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Chan <michael.chan@broadcom.com>
+From: Phil Elwell <phil@raspberrypi.org>
 
-[ Upstream commit e2dc9b6e38fa3919e63d6d7905da70ca41cbf908 ]
+[ Upstream commit b0804ed0cadd7e38d94d2f15cdcc0d9695818856 ]
 
-As a further improvement to the PF/VF link change logic, use a private
-mutex instead of the rtnl lock to protect link change logic.  With the
-new mutex, we don't have to take the rtnl lock in the workqueue when
-we have to handle link related functions.  If the VF and PF drivers
-are running on the same host and both take the rtnl lock and one is
-waiting for the other, it will cause timeout.  This patch fixes these
-timeouts.
+The Raspberry Pi startup stub files for multi-core BCM283X processors
+make the secondary CPUs spin until the corresponding mailbox is
+written. These stubs are loaded at physical address 0x00000xxx (as seen
+by the ARMs), but this page will be reused by the kernel unless it is
+explicitly reserved, causing the waiting cores to execute random code.
 
-Fixes: 90c694bb7181 ("bnxt_en: Fix RTNL lock usage on bnxt_update_link().")
-Signed-off-by: Michael Chan <michael.chan@broadcom.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Use the /memreserve/ Device Tree directive to mark the first page as
+off-limits to the kernel.
+
+See: https://github.com/raspberrypi/linux/issues/1989
+Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Reviewed-by: Eric Anholt <eric@anholt.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/bnxt/bnxt.c     | 25 ++++++++++---------
- drivers/net/ethernet/broadcom/bnxt/bnxt.h     |  4 +++
- .../net/ethernet/broadcom/bnxt/bnxt_ethtool.c |  4 +++
- 3 files changed, 21 insertions(+), 12 deletions(-)
+ arch/arm/boot/dts/bcm283x.dtsi | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-index 208e9dacfd34..a036f7039d76 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
-@@ -5580,7 +5580,9 @@ static int __bnxt_open_nic(struct bnxt *bp, bool irq_re_init, bool link_re_init)
- 	}
+diff --git a/arch/arm/boot/dts/bcm283x.dtsi b/arch/arm/boot/dts/bcm283x.dtsi
+index c51b88ee3cec..31563007772c 100644
+--- a/arch/arm/boot/dts/bcm283x.dtsi
++++ b/arch/arm/boot/dts/bcm283x.dtsi
+@@ -3,6 +3,11 @@
+ #include <dt-bindings/clock/bcm2835-aux.h>
+ #include <dt-bindings/gpio/gpio.h>
  
- 	if (link_re_init) {
-+		mutex_lock(&bp->link_lock);
- 		rc = bnxt_update_phy_setting(bp);
-+		mutex_unlock(&bp->link_lock);
- 		if (rc)
- 			netdev_warn(bp->dev, "failed to update phy settings\n");
- 	}
-@@ -6230,30 +6232,28 @@ static void bnxt_sp_task(struct work_struct *work)
- 	if (test_and_clear_bit(BNXT_PERIODIC_STATS_SP_EVENT, &bp->sp_event))
- 		bnxt_hwrm_port_qstats(bp);
- 
--	/* These functions below will clear BNXT_STATE_IN_SP_TASK.  They
--	 * must be the last functions to be called before exiting.
--	 */
- 	if (test_and_clear_bit(BNXT_LINK_CHNG_SP_EVENT, &bp->sp_event)) {
--		int rc = 0;
-+		int rc;
- 
-+		mutex_lock(&bp->link_lock);
- 		if (test_and_clear_bit(BNXT_LINK_SPEED_CHNG_SP_EVENT,
- 				       &bp->sp_event))
- 			bnxt_hwrm_phy_qcaps(bp);
- 
--		bnxt_rtnl_lock_sp(bp);
--		if (test_bit(BNXT_STATE_OPEN, &bp->state))
--			rc = bnxt_update_link(bp, true);
--		bnxt_rtnl_unlock_sp(bp);
-+		rc = bnxt_update_link(bp, true);
-+		mutex_unlock(&bp->link_lock);
- 		if (rc)
- 			netdev_err(bp->dev, "SP task can't update link (rc: %x)\n",
- 				   rc);
- 	}
- 	if (test_and_clear_bit(BNXT_HWRM_PORT_MODULE_SP_EVENT, &bp->sp_event)) {
--		bnxt_rtnl_lock_sp(bp);
--		if (test_bit(BNXT_STATE_OPEN, &bp->state))
--			bnxt_get_port_module_status(bp);
--		bnxt_rtnl_unlock_sp(bp);
-+		mutex_lock(&bp->link_lock);
-+		bnxt_get_port_module_status(bp);
-+		mutex_unlock(&bp->link_lock);
- 	}
-+	/* These functions below will clear BNXT_STATE_IN_SP_TASK.  They
-+	 * must be the last functions to be called before exiting.
-+	 */
- 	if (test_and_clear_bit(BNXT_RESET_TASK_SP_EVENT, &bp->sp_event))
- 		bnxt_reset(bp, false);
- 
-@@ -6788,6 +6788,7 @@ static int bnxt_probe_phy(struct bnxt *bp)
- 			   rc);
- 		return rc;
- 	}
-+	mutex_init(&bp->link_lock);
- 
- 	rc = bnxt_update_link(bp, false);
- 	if (rc) {
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.h b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-index 666bc0608ed7..017c10c53715 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.h
-@@ -1109,6 +1109,10 @@ struct bnxt {
- 	unsigned long		*ntp_fltr_bmap;
- 	int			ntp_fltr_count;
- 
-+	/* To protect link related settings during link changes and
-+	 * ethtool settings changes.
-+	 */
-+	struct mutex		link_lock;
- 	struct bnxt_link_info	link_info;
- 	struct ethtool_eee	eee;
- 	u32			lpi_tmr_lo;
-diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-index cde4b96f3153..3a352f76e633 100644
---- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-+++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
-@@ -793,6 +793,7 @@ static int bnxt_get_link_ksettings(struct net_device *dev,
- 	u32 ethtool_speed;
- 
- 	ethtool_link_ksettings_zero_link_mode(lk_ksettings, supported);
-+	mutex_lock(&bp->link_lock);
- 	bnxt_fw_to_ethtool_support_spds(link_info, lk_ksettings);
- 
- 	ethtool_link_ksettings_zero_link_mode(lk_ksettings, advertising);
-@@ -840,6 +841,7 @@ static int bnxt_get_link_ksettings(struct net_device *dev,
- 			base->port = PORT_FIBRE;
- 	}
- 	base->phy_address = link_info->phy_addr;
-+	mutex_unlock(&bp->link_lock);
- 
- 	return 0;
- }
-@@ -926,6 +928,7 @@ static int bnxt_set_link_ksettings(struct net_device *dev,
- 	if (!BNXT_SINGLE_PF(bp))
- 		return -EOPNOTSUPP;
- 
-+	mutex_lock(&bp->link_lock);
- 	if (base->autoneg == AUTONEG_ENABLE) {
- 		BNXT_ETHTOOL_TO_FW_SPDS(fw_advertising, lk_ksettings,
- 					advertising);
-@@ -970,6 +973,7 @@ static int bnxt_set_link_ksettings(struct net_device *dev,
- 		rc = bnxt_hwrm_set_link_setting(bp, set_pause, false);
- 
- set_setting_exit:
-+	mutex_unlock(&bp->link_lock);
- 	return rc;
- }
- 
++/* firmware-provided startup stubs live here, where the secondary CPUs are
++ * spinning.
++ */
++/memreserve/ 0x00000000 0x00001000;
++
+ /* This include file covers the common peripherals and configuration between
+  * bcm2835 and bcm2836 implementations, leaving the CPU configuration to
+  * bcm2835.dtsi and bcm2836.dtsi.
 -- 
 2.17.1
 
