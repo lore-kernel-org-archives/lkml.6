@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C132CECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:21:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E5FAC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:21:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85CD9214F0
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:21:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43BD120870
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:21:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vletjZDk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85CD9214F0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LgGVBhu5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43BD120870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731474AbeJYWyR (ORCPT
+        id S1731491AbeJYWyT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:54:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37188 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:54:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37204 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731391AbeJYWyQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:54:16 -0400
+        id S1731391AbeJYWyR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:54:17 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F71A20870;
-        Thu, 25 Oct 2018 14:21:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A20412085B;
+        Thu, 25 Oct 2018 14:21:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477278;
-        bh=MPWFi560yOeX4JgVSuJpYQypv0uTb7WtGvIpj3T+jTE=;
+        s=default; t=1540477279;
+        bh=46u7Ri/GaPGJJR7KCBCAUh1nLhznMM0OpHkFyk94cKU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vletjZDkq65gOUqI9IM6SX4Ogvzh5/yh20E+cp0P2PnVB2djR1R8vq/dThDckv04S
-         nP8puJ5oJ99dtGFsVfO4dlfzVg8AtDDDH8eKJMGmyVWbO+IuEad1UB1RqBHSHAQsAk
-         sLxvrpt7ccYEr/N6TdrG3ozodQjweZV5i0ak+c/c=
+        b=LgGVBhu5Int+TJoAPO5qV78xtikMUQ3bhhkjICwmBGl5fLa4O0mL76ujZWyIGZptQ
+         pHxb5AYT0RRzlP8T6WDF+YC5KZjRtaDH3tHk5EsVSTz0daE2v8k/CQv1J3NhwVnkYB
+         D+pGmzjoAKBfSx0vVcbBWznetBrPIxe6XJOANof4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jan Beulich <JBeulich@suse.com>, Jan Beulich <jbeulich@suse.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+Cc:     Eric Biggers <ebiggers@google.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <james.l.morris@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 93/98] igb: fix NULL derefs due to skipped SR-IOV enabling
-Date:   Thu, 25 Oct 2018 10:18:48 -0400
-Message-Id: <20181025141853.214051-93-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 94/98] KEYS: put keyring if install_session_keyring_to_cred() fails
+Date:   Thu, 25 Oct 2018 10:18:49 -0400
+Message-Id: <20181025141853.214051-94-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
 References: <20181025141853.214051-1-sashal@kernel.org>
@@ -52,48 +53,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Beulich <JBeulich@suse.com>
+From: Eric Biggers <ebiggers@google.com>
 
-[ Upstream commit be06998f96ecb93938ad2cce46c4289bf7cf45bc ]
+[ Upstream commit d636bd9f12a66ea3775c9fabbf3f8e118253467a ]
 
-The combined effect of commits 6423fc3416 ("igb: do not re-init SR-IOV
-during probe") and ceee3450b3 ("igb: make sure SR-IOV init uses the
-right number of queues") causes VFs no longer getting set up, leading
-to NULL pointer dereferences due to the adapter's ->vf_data being NULL
-while ->vfs_allocated_count is non-zero. The first commit not only
-neglected the side effect of igb_sriov_reinit() that the second commit
-tried to account for, but also that of setting IGB_FLAG_HAS_MSIX,
-without which igb_enable_sriov() is effectively a no-op. Calling
-igb_{,re}set_interrupt_capability() as done here seems to address this,
-but I'm not sure whether this is better than sinply reverting the other
-two commits.
+In join_session_keyring(), if install_session_keyring_to_cred() were to
+fail, we would leak the keyring reference, just like in the bug fixed by
+commit 23567fd052a9 ("KEYS: Fix keyring ref leak in
+join_session_keyring()").  Fortunately this cannot happen currently, but
+we really should be more careful.  Do this by adding and using a new
+error label at which the keyring reference is dropped.
 
-Signed-off-by: Jan Beulich <jbeulich@suse.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: James Morris <james.l.morris@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/igb/igb_main.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ security/keys/process_keys.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-index 84049078c4f0..b73c896ed184 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -2866,6 +2866,13 @@ static void igb_probe_vfs(struct igb_adapter *adapter)
- 	if ((hw->mac.type == e1000_i210) || (hw->mac.type == e1000_i211))
- 		return;
+diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
+index 85b61a3ac981..6f32ca53456a 100644
+--- a/security/keys/process_keys.c
++++ b/security/keys/process_keys.c
+@@ -808,15 +808,14 @@ long join_session_keyring(const char *name)
+ 		ret = PTR_ERR(keyring);
+ 		goto error2;
+ 	} else if (keyring == new->session_keyring) {
+-		key_put(keyring);
+ 		ret = 0;
+-		goto error2;
++		goto error3;
+ 	}
  
-+	/* Of the below we really only want the effect of getting
-+	 * IGB_FLAG_HAS_MSIX set (if available), without which
-+	 * igb_enable_sriov() has no effect.
-+	 */
-+	igb_set_interrupt_capability(adapter, true);
-+	igb_reset_interrupt_capability(adapter);
-+
- 	pci_sriov_set_totalvfs(pdev, 7);
- 	igb_enable_sriov(pdev, max_vfs);
+ 	/* we've got a keyring - now to install it */
+ 	ret = install_session_keyring_to_cred(new, keyring);
+ 	if (ret < 0)
+-		goto error2;
++		goto error3;
  
+ 	commit_creds(new);
+ 	mutex_unlock(&key_session_mutex);
+@@ -826,6 +825,8 @@ long join_session_keyring(const char *name)
+ okay:
+ 	return ret;
+ 
++error3:
++	key_put(keyring);
+ error2:
+ 	mutex_unlock(&key_session_mutex);
+ error:
 -- 
 2.17.1
 
