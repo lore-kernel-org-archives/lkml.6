@@ -2,122 +2,206 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAF2AECDE44
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 01:01:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22311ECDE44
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 01:01:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67662205F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 01:01:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XZY8gpGK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67662205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CF4BB20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 01:01:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF4BB20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727058AbeJYJbq (ORCPT
+        id S1727160AbeJYJcV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 05:31:46 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44712 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726117AbeJYJbq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 05:31:46 -0400
-Received: by mail-pl1-f196.google.com with SMTP id d23-v6so3023195pls.11;
-        Wed, 24 Oct 2018 18:01:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=01TXP9ER4UEFM4TI1z35y/RQyrwKadKZNQhGGLqmr78=;
-        b=XZY8gpGKBxj2Grj6w0P6pynLFz9U+safpHLbtZihKgjMiFBY1Jc+zbypDqs2ErcL6f
-         CcsrIN5B5zRulKVV+3H1Vvpr6RK9KbhxFJALiP5VD/8ZkHT4AdePAF/7DI6MFxNBtYu8
-         VzAd+AJVCAtDgxO9mq0NS5mWTDEmCYuCri7jY4JtwV6m21O1BvIYspTM6VIURE0shWML
-         bCuAFsaUs3J4DN2FJeIGsewCT1JixXet64m9dJU/aOdmCSkZBUOH/TZR4UR6RXrr7ZAQ
-         C66LKtHnEAO/2BKnMlQ9KKxERoE3B/zuza3Kr1QH6NZ0jJq6VDjRYofcWXDADbBTPqUS
-         cvZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=01TXP9ER4UEFM4TI1z35y/RQyrwKadKZNQhGGLqmr78=;
-        b=IIsDzJt/YZ5RDUuWJggTEF44uuGEhb56o1puEq/CndPpaQeWVBDWaFN5gzMeHwL7xJ
-         p3aJQLPkfw/piuge4yUp1Kc/hKEB4GPISg0rXj4BORQ3vDyH4emAe1VsTxMWBU0nH3Ly
-         F4EgtsvWKkeTiECjW69Vv8Aol5AphgdVJbG94VtQR/LrRJ2tAzWQ+8rOr1mrKyCeyrAr
-         BJtbdKohuE0K9zsfCzWZchn0lMUPYC6uzXIha1mrso9sKnPie1jqzEPqbxifI9T6xfnQ
-         +HeHXwPGYJkn7/Sdq+5sSQKIu0Zrsm3emFQkD+iYLF1ldqUBQNcGs3H5QpnAhqyf8weA
-         Q9HQ==
-X-Gm-Message-State: AGRZ1gKHP1kVRVCk33o+YD3OsjdnQN9ymZVpBQfYmnQBll7Hjw68+36E
-        XVCD8IWvOJKh8xJxgVTOmhvlhG1b
-X-Google-Smtp-Source: AJdET5c33adAyiDIVSesiTPtXDaYtTXS5UOm3IQiuSzvgSb1Urrdn9zasXu7+WOZv79prR9DSgJc6w==
-X-Received: by 2002:a17:902:4481:: with SMTP id l1-v6mr959484pld.123.1540429282345;
-        Wed, 24 Oct 2018 18:01:22 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id k13-v6sm5891788pgi.40.2018.10.24.18.01.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 24 Oct 2018 18:01:21 -0700 (PDT)
-Date:   Wed, 24 Oct 2018 18:01:17 -0700
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     linux@roeck-us.net
-Cc:     jdelvare@suse.com, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] hwmon: (core) Inherit power properties to hdev
-Message-ID: <20181025010116.GA4543@Asurada-Nvidia.nvidia.com>
-References: <20181024193402.16698-1-nicoleotsuka@gmail.com>
- <20181024193402.16698-2-nicoleotsuka@gmail.com>
- <20181025001301.Horde.VCevVrrSs6rOyXT41xiPOzW@cp2.active-venture.com>
+        Thu, 25 Oct 2018 05:32:21 -0400
+Received: from mga14.intel.com ([192.55.52.115]:15929 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726117AbeJYJcU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 05:32:20 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 18:01:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,422,1534834800"; 
+   d="scan'208";a="274223090"
+Received: from orsmsx108.amr.corp.intel.com ([10.22.240.6])
+  by fmsmga005.fm.intel.com with ESMTP; 24 Oct 2018 18:01:48 -0700
+Received: from orsmsx115.amr.corp.intel.com (10.22.240.11) by
+ ORSMSX108.amr.corp.intel.com (10.22.240.6) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 24 Oct 2018 18:01:48 -0700
+Received: from orsmsx112.amr.corp.intel.com ([169.254.3.23]) by
+ ORSMSX115.amr.corp.intel.com ([169.254.4.116]) with mapi id 14.03.0319.002;
+ Wed, 24 Oct 2018 18:01:47 -0700
+From:   "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>
+To:     "daniel@iogearbox.net" <daniel@iogearbox.net>,
+        "jeyu@kernel.org" <jeyu@kernel.org>,
+        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
+        "mhocko@kernel.org" <mhocko@kernel.org>
+CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "jannh@google.com" <jannh@google.com>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "arjan@linux.intel.com" <arjan@linux.intel.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "kristen@linux.intel.com" <kristen@linux.intel.com>,
+        "Dock, Deneen T" <deneen.t.dock@intel.com>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "kernel-hardening@lists.openwall.com" 
+        <kernel-hardening@lists.openwall.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "alexei.starovoitov@gmail.com" <alexei.starovoitov@gmail.com>
+Subject: Re: [PATCH RFC v3 0/3] Rlimit for module space
+Thread-Topic: [PATCH RFC v3 0/3] Rlimit for module space
+Thread-Index: AQHUZ+1spfnb1SbseUKeGPVLPr4WMaUo18SAgAOF3YCAANZLAIAByAYAgAAQFICAAJacAA==
+Date:   Thu, 25 Oct 2018 01:01:44 +0000
+Message-ID: <d1fec827d028168047eafbac56e8e47d37cf7fb5.camel@intel.com>
+References: <20181019204723.3903-1-rick.p.edgecombe@intel.com>
+         <CAKv+Gu_AgPv2o4=U0-7pnpgtSufEobnta8oKhhGfCdCxM82B5Q@mail.gmail.com>
+         <6b1017c450d163539d2b974657baaaf697f0a138.camel@intel.com>
+         <CAKv+Gu-Rk-SQVOQ63L3DkF3=EVik3pHXzpNp5r5TrgDajTM_iQ@mail.gmail.com>
+         <20181024150706.jewcclhhh756tupn@linux-8ccs>
+         <d7cb6a8c-b7d6-5c82-6721-2b5387da673f@iogearbox.net>
+In-Reply-To: <d7cb6a8c-b7d6-5c82-6721-2b5387da673f@iogearbox.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.54.75.168]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <70B26219A7338841A85E2DAD99697A14@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181025001301.Horde.VCevVrrSs6rOyXT41xiPOzW@cp2.active-venture.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 12:13:01AM +0000, linux@roeck-us.net wrote:
-
-> > +	if (dev) {
-> > +		hdev->driver = dev->driver;
-> > +		hdev->power = dev->power;
-> > +		hdev->pm_domain = dev->pm_domain;
-> > +		hdev->of_node = dev->of_node;
-> > +	}
-> 
-> We'l need to dig into this more; I suspect it may be inappropriate to do this.
-> With this change, every hwmon driver supporting (runtime ?) suspend/resume
-> will have the problem worked around in #5, and that just seems wrong.
-
-Hmm..that's true...thanks for catching it.
-
-Actually I am not sure the reason of having a child device in
-the core, but could we use the parent dev pointer in the hwmon
-core as hwmon_dev upon confirming parent dev pointer != NULL?
-
-The problem here is that the power directory under each hwmon
-directory is tied to the hwmon_dev pointer, not to the parent
-dev pointer, and the hwmon core creates all sysfs nodes based
-on the child node. So those nodes under power directory won't
-be valid unless we copy all pm information, especially PM ops.
-
-There is an option of ignoring this problem though, while all
-hwmon drivers will need to be careful of mixing using the dev
-pointers. So it'd be a lot of easier if we could just use the
-original dev pointer in the core since we mainly just need to
-create sysfs nodes.
-
-Another way of doing this might be to pass down the PM pointer
-via _info structure instead of linking it to the parent driver,
-which then will forbid all hwmon drivers having its own PM ops
-callbacks -- the very opposite way of this patch, and it does
-not sound fully reasonable and feasible to me...
-
-What do you think about?
-
-Thanks
-Nicolin
+T24gV2VkLCAyMDE4LTEwLTI0IGF0IDE4OjA0ICswMjAwLCBEYW5pZWwgQm9ya21hbm4gd3JvdGU6
+DQo+IFsgK0FsZXhlaSwgbmV0ZGV2IF0NCj4gDQo+IE9uIDEwLzI0LzIwMTggMDU6MDcgUE0sIEpl
+c3NpY2EgWXUgd3JvdGU6DQo+ID4gKysrIEFyZCBCaWVzaGV1dmVsIFsyMy8xMC8xOCAwODo1NCAt
+MDMwMF06DQo+ID4gPiBPbiAyMiBPY3RvYmVyIDIwMTggYXQgMjA6MDYsIEVkZ2Vjb21iZSwgUmlj
+ayBQDQo+ID4gPiA8cmljay5wLmVkZ2Vjb21iZUBpbnRlbC5jb20+IHdyb3RlOg0KPiANCj4gWy4u
+Ll0NCj4gPiA+IEkgdGhpbmsgaXQgaXMgd3JvbmcgdG8gY29uZmxhdGUgdGhlIHR3byB0aGluZ3Mu
+IExpbWl0aW5nIHRoZSBudW1iZXIgb2YNCj4gPiA+IEJQRiBhbGxvY2F0aW9ucyBhbmQgdGhlIGxp
+bWl0aW5nIG51bWJlciBvZiBtb2R1bGUgYWxsb2NhdGlvbnMgYXJlIHR3bw0KPiA+ID4gc2VwYXJh
+dGUgdGhpbmdzLCBhbmQgdGhlIGZhY3QgdGhhdCBCUEYgcmV1c2VzIG1vZHVsZV9hbGxvYygpIG91
+dCBvZg0KPiA+ID4gY29udmVuaWVuY2UgZG9lcyBub3QgbWVhbiBhIHNpbmdsZSBybGltaXQgZm9y
+IGJvdGggaXMgYXBwcm9wcmlhdGUuDQo+ID4gDQo+ID4gSG0sIEkgdGhpbmsgQXJkIGhhcyBhIGdv
+b2QgcG9pbnQuIEFGQUlLLCBhbmQgY29ycmVjdCBtZSBpZiBJJ20gd3JvbmcsDQo+ID4gdXNlcnMg
+b2YgbW9kdWxlX2FsbG9jKCkgaS5lLiBrcHJvYmVzLCBmdHJhY2UsIGJwZiwgc2VlbSB0byB1c2Ug
+aXQNCj4gPiBiZWNhdXNlIGl0IGlzIGFuIGVhc3kgd2F5IHRvIG9idGFpbiBleGVjdXRhYmxlIGtl
+cm5lbCBtZW1vcnkgKGFuZA0KPiA+IGRlcGVuZGluZyBvbiB0aGUgbmVlZHMgb2YgdGhlIGFyY2hp
+dGVjdHVyZSwgYmVpbmcgYWRkaXRpb25hbGx5DQo+ID4gcmVhY2hhYmxlIHZpYSByZWxhdGl2ZSBi
+cmFuY2hlcykgZHVyaW5nIHJ1bnRpbWUuIFRoZSBzaWRlIGVmZmVjdCBpcw0KPiA+IHRoYXQgYWxs
+IHRoZXNlIHVzZXJzIHNoYXJlIHRoZSAibW9kdWxlIiBtZW1vcnkgc3BhY2UsIGV2ZW4gdGhvdWdo
+IHRoaXMNCj4gPiBtZW1vcnkgcmVnaW9uIGlzIG5vdCBleGNsdXNpdmVseSB1c2VkIGJ5IG1vZHVs
+ZXMgKHdlbGwsIHBlcnNvbmFsbHkgSQ0KPiA+IHRoaW5rIGl0IHRlY2huaWNhbGx5IHNob3VsZCBi
+ZSwgYmVjYXVzZSBzZWVpbmcgbW9kdWxlX2FsbG9jKCkgdXNhZ2UNCj4gPiBvdXRzaWRlIG9mIHRo
+ZSBtb2R1bGUgbG9hZGVyIGlzIGtpbmQgb2YgYSBtaXN1c2Ugb2YgdGhlIG1vZHVsZSBBUEkgYW5k
+DQo+ID4gaXQncyBjb25mdXNpbmcgZm9yIHBlb3BsZSB3aG8gZG9uJ3Qga25vdyB0aGUgcmVhc29u
+IGJlaGluZCBpdHMgdXNhZ2UNCj4gPiBvdXRzaWRlIG9mIHRoZSBtb2R1bGUgbG9hZGVyKS4NCj4g
+PiANCj4gPiBSaWdodCBub3cgSSdtIG5vdCBzdXJlIGlmIGl0IG1ha2VzIHNlbnNlIHRvIGltcG9z
+ZSBhIGJsYW5rZXQgbGltaXQgb24NCj4gPiBhbGwgbW9kdWxlX2FsbG9jKCkgYWxsb2NhdGlvbnMg
+d2hlbiB0aGUgcmVhbCBtb3RpdmF0aW9uIGJlaGluZCB0aGUNCj4gPiBybGltaXQgaXMgcmVsYXRl
+ZCB0byBCUEYsIGkuZS4sIHRvIHN0b3AgdW5wcml2aWxlZ2VkIHVzZXJzIGZyb20NCj4gPiBob2dn
+aW5nIHVwIGFsbCB0aGUgdm1hbGxvYyBzcGFjZSBmb3IgbW9kdWxlcyB3aXRoIEpJVGVkIEJQRiBm
+aWx0ZXJzLg0KPiA+IFNvIHRoZSBybGltaXQgaGFzIG1vcmUgdG8gZG8gd2l0aCBsaW1pdGluZyB0
+aGUgbWVtb3J5IHVzYWdlIG9mIEJQRg0KPiA+IGZpbHRlcnMgdGhhbiBpdCBoYXMgdG8gZG8gd2l0
+aCBtb2R1bGVzIHRoZW1zZWx2ZXMuDQo+ID4gDQo+ID4gSSB0aGluayBBcmQncyBzdWdnZXN0aW9u
+IG9mIGhhdmluZyBhIHNlcGFyYXRlIGJwZl9hbGxvYy9mcmVlIEFQSSBtYWtlcw0KPiA+IGEgbG90
+IG9mIHNlbnNlIGlmIHdlIHdhbnQgdG8ga2VlcCB0cmFjayBvZiBicGYtcmVsYXRlZCBhbGxvY2F0
+aW9ucw0KPiA+IChhbmQgdGhlbiB0aGUgcmxpbWl0IHdvdWxkIGJlIGVuZm9yY2VkIGZvciB0aG9z
+ZSkuIE1heWJlIHBhcnQgb2YgdGhlDQo+ID4gbW9kdWxlIG1hcHBpbmcgc3BhY2UgY291bGQgYmUg
+Y2FydmVkIG91dCBmb3IgYnBmIGZpbHRlcnMgKGUuZy4gaGF2ZQ0KPiA+IEJQRl9WQUREUiwgQlBG
+X1ZTSVpFLCBldGMgbGlrZSBob3cgd2UgaGF2ZSBpdCBmb3IgbW9kdWxlcyksIG9yDQo+ID4gY29u
+dGludWUgc2hhcmluZyB0aGUgcmVnaW9uIGJ1dCBleHBsaWNpdGx5IGRlZmluZSBhIHNlcGFyYXRl
+IGJwZl9hbGxvYw0KPiA+IEFQSSwgZGVwZW5kaW5nIG9uIGFuIGFyY2hpdGVjdHVyZSdzIG5lZWRz
+LiBXaGF0IGRvIHBlb3BsZSB0aGluaz8NCj4gDQo+IEhtbSwgSSB0aGluayBoZXJlIGFyZSBzZXZl
+cmFsIGlzc3VlcyBtaXhlZCB1cCBhdCB0aGUgc2FtZSB0aW1lIHdoaWNoIGlzIGp1c3QNCj4gdmVy
+eSBjb25mdXNpbmcsIGltaG86DQo+IA0KPiAxKSBUaGUgZmFjdCB0aGF0IHRoZXJlIGFyZSBzZXZl
+cmFsIG5vbi1tb2R1bGUgdXNlcnMgb2YgbW9kdWxlX2FsbG9jKCkNCj4gYXMgSmVzc2ljYSBub3Rl
+cyBzdWNoIGFzIGtwcm9iZXMsIGZ0cmFjZSwgYnBmLCBmb3IgZXhhbXBsZS4gV2hpbGUgYWxsIG9m
+DQo+IHRoZW0gYXJlIG5vdCBiZWluZyBtb2R1bGVzLCB0aGV5IGFsbCBuZWVkIHRvIGFsbG9jIHNv
+bWUgcGllY2Ugb2YgZXhlY3V0YWJsZQ0KPiBtZW1vcnkuIEl0J3Mgbm90aGluZyBuZXcsIHRoaXMg
+ZXhpc3RzIGZvciA3IHllYXJzIG5vdyBzaW5jZSAwYTE0ODQyZjVhM2MNCj4gKCJuZXQ6IGZpbHRl
+cjogSnVzdCBJbiBUaW1lIGNvbXBpbGVyIGZvciB4ODYtNjQiKSBmcm9tIEJQRiBzaWRlOyBlZmZl
+Y3RpdmVseQ0KPiB0aGF0IGlzIGV2ZW4gL2JlZm9yZS8gZUJQRiBleGlzdGVkLiBIYXZpbmcgc29t
+ZSBkaWZmZXJlbnQgQVBJIHBlcmhhcHMgZm9yIGFsbA0KPiB0aGVzZSB1c2VycyBzZWVtcyB0byBt
+YWtlIHNlbnNlIGlmIHRoZSBnb2FsIGlzIG5vdCB0byBpbnRlcmZlcmUgd2l0aCBtb2R1bGVzDQo+
+IHRoZW1zZWx2ZXMuIEl0IG1pZ2h0IGFsc28gaGVscCBhcyBhIGJlbmVmaXQgdG8gcG90ZW50aWFs
+bHkgaW5jcmVhc2UgdGhhdA0KPiBtZW1vcnkgcG9vbCBpZiB3ZSdyZSBoaXR0aW5nIGxpbWl0cyBh
+dCBzY2FsZSB3aGljaCB3b3VsZCBub3QgYmUgYSBjb25jZXJuDQo+IGZvciBub3JtYWwga2VybmVs
+IG1vZHVsZXMgc2luY2UgdGhlcmUncyB1c3VhbGx5IGp1c3QgYSB2ZXJ5IGZldyBvZiB0aGVtDQo+
+IG5lZWRlZCAodW5saWtlIGR5bmFtaWNhbGx5IHRyYWNpbmcgdmFyaW91cyBrZXJuZWwgcGFydHMg
+MjQvNyB3LyBvciB3L28gQlBGLA0KPiBydW5uaW5nIEJQRi1zZWNjb21wIHBvbGljaWVzLCBuZXR3
+b3JraW5nIEJQRiBwb2xpY2llcywgZXRjIHdoaWNoIG5lZWQgdG8NCj4gc2NhbGUgdy8gYXBwbGlj
+YXRpb24gb3IgY29udGFpbmVyIGRlcGxveW1lbnQ7IHNvIHRoaXMgaXMgb2YgbXVjaCBtb3JlDQo+
+IGR5bmFtaWMgYW5kIHVucHJlZGljdGFibGUgbmF0dXJlKS4NCj4gDQo+IDIpIFRoZW4gdGhlcmUg
+aXMgcmxpbWl0IHdoaWNoIGlzIHByb3Bvc2luZyB0byBoYXZlIGEgImZhaXJlciIgc2hhcmUgYW1v
+bmcNCj4gdW5wcml2aWxlZ2VkIHVzZXJzLiBJJ20gbm90IGZ1bGx5IHN1cmUgeWV0IHdoZXRoZXIg
+cmxpbWl0IGlzIGFjdHVhbGx5IGENCj4gbmljZSB1c2FibGUgaW50ZXJmYWNlIGZvciBhbGwgdGhp
+cy4gSSdkIGFncmVlIHRoYXQgc29tZXRoaW5nIGlzIG5lZWRlZA0KPiBvbiB0aGF0IHJlZ2FyZCwg
+YnV0IEkgYWxzbyB0ZW5kIHRvIGxpa2UgTWljaGFsIEhvY2tvJ3MgY2dyb3VwIHByb3Bvc2FsLA0K
+PiBpb3csIHRvIGhhdmUgc3VjaCByZXNvdXJjZSBjb250cm9sIGFzIHBhcnQgb2YgbWVtb3J5IGNn
+cm91cCBjb3VsZCBiZQ0KPiBzb21ldGhpbmcgdG8gY29uc2lkZXIgX2VzcGVjaWFsbHlfIHNpbmNl
+IGl0IGFscmVhZHkgX2V4aXN0c18gZm9yIHZtYWxsb2MoKQ0KPiBiYWNrZWQgbWVtb3J5IHNvIHRo
+aXMgc2hvdWxkIGJlIG5vdCBtdWNoIGRpZmZlcmVudCB0aGFuIHRoYXQuIEl0IHNvdW5kcw0KPiBs
+aWtlIDIpIGNvbWVzIG9uIHRvcCBvZiAxKS4NCkZXSVcsIGNncm91cHMgc2VlbXMgbGlrZSBhIGJl
+dHRlciBzb2x1dGlvbiB0aGFuIHJsaW1pdCB0byBtZSB0b28uIE1heWJlIHlvdSBhbGwNCmFscmVh
+ZHkga25vdywgYnV0IGl0IGxvb2tzIGxpa2UgdGhlIGNncm91cHMgdm1hbGxvYyBjaGFyZ2UgaXMg
+ZG9uZSBpbiB0aGUgbWFpbg0KcGFnZSBhbGxvY2F0b3IgYW5kIGNvdW50cyBhZ2FpbnN0IHRoZSB3
+aG9sZSBrZXJuZWwgbWVtb3J5IGxpbWl0LiBBIHVzZXIgbWF5IHdhbnQNCnRvIGhhdmUgYSBoaWdo
+ZXIga2VybmVsIGxpbWl0IHRoYW4gdGhlIG1vZHVsZSBzcGFjZSBzaXplLCBzbyBpdCBzZWVtcyBp
+dCBpc24ndA0KZW5vdWdoIGJ5IGl0c2VsZiBhbmQgc29tZSBuZXcgbGltaXQgd291bGQgbmVlZCB0
+byBiZSBhZGRlZC4NCg0KQXMgZm9yIHdoYXQgdGhlIGxpbWl0IHNob3VsZCBiZSwgSSB3b25kZXIg
+aWYgc29tZSBvZiB0aGUgZGlzYWdyZWVtZW50IGlzIGp1c3QNCmZyb20gdGhlIG5hbWUgIm1vZHVs
+ZSBzcGFjZSIuDQoNClRoZXJlIGlzIGEgbGltaXRlZCByZXNvdXJjZSBvZiBwaHlzaWNhbCBtZW1v
+cnksIHNvIHdlIGhhdmUgbGltaXRzIGZvciBpdC4gVGhlcmUNCmlzIGEgbGltaXRlZCByZXNvdXJj
+ZSBvZiBDUFUgdGltZSwgc28gd2UgaGF2ZSBsaW1pdHMgZm9yIGl0LiBJZiB0aGVyZSBpcyBhDQps
+aW1pdGVkIHJlc291cmNlIGZvciBwcmVmZXJyZWQgYWRkcmVzcyBzcGFjZSBmb3IgZXhlY3V0YWJs
+ZSBjb2RlLCB3aHkgbm90IGp1c3QNCmNvbnRpbnVlIHRoYXQgdHJlbmQ/IElmIG90aGVyIGZvcm1z
+IG9mIHVucHJpdmlsZWdlZCBKSVQgY29tZSBhbG9uZywgd291bGQgaXQgYmUNCmJldHRlciB0byBo
+YXZlIE4gbGltaXRzIGZvciBlYWNoIHR5cGU/IFJlcXVlc3RfbW9kdWxlIHByb2JhYmx5IGNhbid0
+IGZpbGwgdGhlDQpzcGFjZSwgYnV0IHRlY2huaWNhbGx5IHRoZXJlIGFyZSBhbHJlYWR5IDIgdW5w
+cml2aWxlZ2VkIHVzZXJzLiBTbyBJTUhPLCBpdHMgYQ0KbW9yZSBmb3J3YXJkIGxvb2tpbmcgc29s
+dXRpb24uDQoNCklmIHRoZXJlIGFyZSBzb21lIHVzYWdlL2FyY2hpdGVjdHVyZSBjb21ib3MgdGhh
+dCBkb24ndCBuZWVkIHRoZSBwcmVmZXJyZWQgc3BhY2UNCnRoZXkgY2FuIGFsbG9jYXRlIGluIHZt
+YWxsb2MgYW5kIGhhdmUgaXQgbm90IGNvdW50IGFnYWluc3QgdGhlIHByZWZlcnJlZCBzcGFjZQ0K
+bGltaXQgYnV0IHN0aWxsIGNvdW50IGFnYWluc3QgdGhlIGNncm91cHMga2VybmVsIG1lbW9yeSBs
+aW1pdC4NCg0KQW5vdGhlciBiZW5lZml0IG9mIGNlbnRyYWxpemluZyB0aGUgYWxsb2NhdGlvbiBv
+ZiB0aGUgImV4ZWN1dGFibGUgbWVtb3J5DQpwcmVmZXJyZWQgc3BhY2UiIGlzIEtBU0xSLiBSaWdo
+dCBub3cgdGhhdCBpcyBvbmx5IGRvbmUgaW4gbW9kdWxlX2FsbG9jIGFuZCBzbw0KYWxsIHVzZXJz
+IG9mIGl0IGdldCByYW5kb21pemVkLiBJZiB0aGV5IGFsbCBjYWxsIHZtYWxsb2MgYnkgdGhlbXNl
+bHZlcyB0aGV5IHdpbGwNCmp1c3QgdXNlIHRoZSBub3JtYWwgYWxsb2NhdG9yLg0KDQpBbnl3YXks
+IGl0IHNlZW1zIGxpa2UgZWl0aGVyIHR5cGUgb2YgbGltaXQgKEJQRiBKSVQgb3IgYWxsIG1vZHVs
+ZSBzcGFjZSkgd2lsbA0Kc29sdmUgdGhlIHByb2JsZW0gZXF1YWxseSB3ZWxsIHRvZGF5Lg0KDQo+
+IDMpIExhc3QgYnV0IG5vdCBsZWFzdCwgdGhlcmUncyBhIHNob3J0IHRlcm0gZml4IHdoaWNoIGlz
+IG5lZWRlZCBpbmRlcGVuZGVudGx5DQo+IG9mIDEpIGFuZCAyKSBhbmQgc2hvdWxkIGJlIGRvbmUg
+aW1tZWRpYXRlbHkgd2hpY2ggaXMgdG8gYWNjb3VudCBmb3INCj4gdW5wcml2aWxlZ2VkIHVzZXJz
+IGFuZCByZXN0cmljdCB0aGVtIGJhc2VkIG9uIGEgZ2xvYmFsIGNvbmZpZ3VyYWJsZQ0KPiBsaW1p
+dCBzdWNoIHRoYXQgcHJpdmlsZWdlZCB1c2Uga2VlcHMgZnVuY3Rpb25pbmcsIGFuZCAyKSBjb3Vs
+ZCBlbmZvcmNlDQo+IGJhc2VkIG9uIHRoZSBnbG9iYWwgdXBwZXIgbGltaXQsIGZvciBleGFtcGxl
+LiBQZW5kaW5nIGZpeCBpcyB1bmRlcg0KPiBodHRwczovL3BhdGNod29yay5vemxhYnMub3JnL3Bh
+dGNoLzk4Nzk3MS8gd2hpY2ggd2UgaW50ZW5kIHRvIHNoaXAgdG8NCj4gTGludXMgYXMgc29vbiBh
+cyBwb3NzaWJsZSBhcyBzaG9ydCB0ZXJtIGZpeC4gVGhlbiBzb21ldGhpbmcgbGlrZSBtZW1jZw0K
+PiBjYW4gYmUgY29uc2lkZXJlZCBvbiB0b3Agc2luY2UgaXQgc2VlbXMgdGhpcyBtYWtlcyBtb3N0
+IHNlbnNlIGZyb20gYQ0KPiB1c2FiaWxpdHkgcG9pbnQuDQo+IA0KPiBUaGFua3MgYSBsb3QsDQo+
+IERhbmllbA0K
