@@ -2,94 +2,118 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07938ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 19:25:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7424C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 19:26:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD63E207DD
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 19:25:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD63E207DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 7596D207DD
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 19:26:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=arista.com header.i=@arista.com header.b="wngdutup"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7596D207DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=arista.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727721AbeJZD7p (ORCPT
+        id S1725950AbeJZEA2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 23:59:45 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:41552 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727502AbeJZD7o (ORCPT
+        Fri, 26 Oct 2018 00:00:28 -0400
+Received: from smtp.aristanetworks.com ([52.0.43.43]:34342 "EHLO
+        usvae2-clmxp01.aristanetworks.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725725AbeJZEA2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 23:59:44 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9PJPRIg056548;
-        Thu, 25 Oct 2018 14:25:27 -0500
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id w9PJPR3D037267
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 25 Oct 2018 14:25:27 -0500
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 25
- Oct 2018 14:25:27 -0500
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 25 Oct 2018 14:25:27 -0500
-Received: from [128.247.59.147] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9PJPRS7002329;
-        Thu, 25 Oct 2018 14:25:27 -0500
-Subject: Re: [PATCH net-next 0/4] net: ethernet: ti: cpsw: fix vlan mcast
-To:     David Miller <davem@davemloft.net>, <ivan.khoronzhuk@linaro.org>
-CC:     <linux-omap@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <alexander.h.duyck@intel.com>,
-        <bjorn@mork.no>
-References: <20181024221059.21834-1-ivan.khoronzhuk@linaro.org>
- <20181025.113441.567599603045046210.davem@davemloft.net>
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <12ca7599-e5f0-087f-674d-a887f3768913@ti.com>
-Date:   Thu, 25 Oct 2018 14:25:27 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 26 Oct 2018 00:00:28 -0400
+X-Greylist: delayed 615 seconds by postgrey-1.27 at vger.kernel.org; Fri, 26 Oct 2018 00:00:27 EDT
+Received: from usvae2-clmxp01.aristanetworks.com (localhost [127.0.0.1])
+        by usvae2-clmxp01.aristanetworks.com (Postfix) with ESMTP id 0433930A135F;
+        Thu, 25 Oct 2018 12:16:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arista.com;
+        s=Arista-A; t=1540494970;
+        bh=yPDNJSXAYgPD/xU3Ryxmt57scouPVAKI6EyRuwRZ4RQ=;
+        h=From:To:Cc:Subject:Date;
+        b=wngdutuph9iRn05Igx0rmBh20xeUpkAN22CVN6jnj7XKK/c689SZA42uv0+R5o1sh
+         icS6tIHLu9M/E5iOlOHBRKrLiVm3yHv8Voyh2RwK339Md62iVsZGTC88whM0Ub+Mej
+         F8eUoQWpT5ErRVZH+jTe2gE/KqHUU+p4XYLwUqg/FI6yRYrBk1jDP0zNCIa5lSsyFO
+         lrShjn3CcnK8PYj5oEG9chmZb96hcnpCOLq+uxrNsiTCtt7adHQ2Sm6qcQww1GyesT
+         fcldwY9tL05WVRdV8ZCsZkIVaBQ/2VRMUDJ0dj2pz54/kzZQk6QxWXMr1hTXQUnbJA
+         G7o5HHaEZVbzA==
+Received: from vasilykh-thinkpad-x1.sjc.aristanetworks.com (unknown [10.80.8.45])
+        by usvae2-clmxp01.aristanetworks.com (Postfix) with ESMTP id 3D06530A135A;
+        Thu, 25 Oct 2018 12:16:08 -0700 (PDT)
+From:   Vasily Khoruzhick <vasilykh@arista.com>
+To:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dmitry Safonov <dima@arista.com>
+Cc:     Vasily Khoruzhick <vasilykh@arista.com>, stable@vger.kernel.org
+Subject: [PATCH v2] netfilter: conntrack: fix calculation of next bucket number in early_drop
+Date:   Thu, 25 Oct 2018 12:15:43 -0700
+Message-Id: <20181025191543.15061-1-vasilykh@arista.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <20181025.113441.567599603045046210.davem@davemloft.net>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi David,
+If there's no entry to drop in bucket that corresponds to the hash,
+early_drop() should look for it in other buckets. But since it increments
+hash instead of bucket number, it actually looks in the same bucket 8
+times: hsize is 16k by default (14 bits) and hash is 32-bit value, so
+reciprocal_scale(hash, hsize) returns the same value for hash..hash+7 in
+most cases.
 
-On 10/25/18 1:34 PM, David Miller wrote:
-> From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-> Date: Thu, 25 Oct 2018 01:10:55 +0300
-> 
->> The cpsw holds separate mcast entires for vlan entries. At this moment
->> driver adds only not vlan mcast addresses, omitting vlan/mcast entries.
->> As result mcast for vlans doesn't work. It can be fixed by adding same
->> mcast entries for every created vlan, but this patchseries uses more
->> sophisticated way and allows to create mcast entries only for vlans
->> that really require it. Generic functions from this series can be
->> reused for fixing vlan and macvlan unicast.
-> 
-> This is a bug fix but targetted at net-next, and indeed it is quite
-> invasive as it adds new core infrastructure and converts the generic
-> vlan code over to using it.
-> 
-> Unfortunately net-next is closed.
-> 
-> So if you want this bug fixed in mainline you will have to come up
-> with a less invasive fix, and resubmit this net-next approach when the
-> net-next tree opens back up.
+Fix it by increasing bucket number instead of hash and rename _hash
+to bucket to avoid future confusion.
 
-I think it's ok to wait as this issue was always here, so it's not critical.
+Fixes: 3e86638e9a0b ("netfilter: conntrack: consider ct netns in early_drop logic")
+Cc: <stable@vger.kernel.org> # v4.7+
+Signed-off-by: Vasily Khoruzhick <vasilykh@arista.com>
+---
+v2: move 'bucket' outside of the loop
 
+ net/netfilter/nf_conntrack_core.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
+
+diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
+index ca1168d67fac..e92e749aff53 100644
+--- a/net/netfilter/nf_conntrack_core.c
++++ b/net/netfilter/nf_conntrack_core.c
+@@ -1073,19 +1073,22 @@ static unsigned int early_drop_list(struct net *net,
+ 	return drops;
+ }
+ 
+-static noinline int early_drop(struct net *net, unsigned int _hash)
++static noinline int early_drop(struct net *net, unsigned int hash)
+ {
+-	unsigned int i;
++	unsigned int i, bucket;
+ 
+ 	for (i = 0; i < NF_CT_EVICTION_RANGE; i++) {
+ 		struct hlist_nulls_head *ct_hash;
+-		unsigned int hash, hsize, drops;
++		unsigned int hsize, drops;
+ 
+ 		rcu_read_lock();
+ 		nf_conntrack_get_ht(&ct_hash, &hsize);
+-		hash = reciprocal_scale(_hash++, hsize);
++		if (!i)
++			bucket = reciprocal_scale(hash, hsize);
++		else
++			bucket = (bucket + 1) % hsize;
+ 
+-		drops = early_drop_list(net, &ct_hash[hash]);
++		drops = early_drop_list(net, &ct_hash[bucket]);
+ 		rcu_read_unlock();
+ 
+ 		if (drops) {
 -- 
-regards,
--grygorii
+2.19.1
+
