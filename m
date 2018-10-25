@@ -2,133 +2,223 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74ACDECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80F81C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:36:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4678D2083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:35:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4678D2083E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2D57A2083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:36:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZZFJajWa";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="m/RPXc9b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D57A2083E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727664AbeJYXIK (ORCPT
+        id S1727724AbeJYXJo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 19:08:10 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:42733 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727308AbeJYXIK (ORCPT
+        Thu, 25 Oct 2018 19:09:44 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44910 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727236AbeJYXJo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 19:08:10 -0400
-Received: by mail-ot1-f66.google.com with SMTP id c23so9308175otl.9;
-        Thu, 25 Oct 2018 07:35:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fNuX5a4hIqmhZ+hlrxfjYcf4r+Xg0w6mLnMjXvPEcFY=;
-        b=Gw+iprncuaQjXdgDnsDZg2TxNhJ+BAg8NWX4L8SuN5wxUOti25Zk13ou13uThOeGqz
-         tFhSv6+oc8lGhVaY4nI7YGkIL88pmT6qD0VroBGgZ5iXjOjA/iF5M7IYj9LZbxz859u8
-         QM4BpOgJyh9wewJcqbaBoUzf9FG7pCKa2MVb/GuPidnyS/+IZXXnJPdWqQ6lMbs51ryY
-         1B4OPxBDcdbcwDd/z4Hh/jHvdxchsvmmEJb1vpYVX+zdxblH+k7En3nmwimhYa/WhDTc
-         AolJCq0FrJWN9egSgvcPpKedK+un/2lnBdkELInxI+Sxod0jD8mSgUu6a0xzdQMlyEc9
-         z5rw==
-X-Gm-Message-State: AGRZ1gLNLsw+s66Ba/DOh8AVRCcFitheC+8d65G4kKjWGQKlkwCA8YDU
-        sd8V0Nc5PxOl0VhEnUkl1w==
-X-Google-Smtp-Source: AJdET5eXmgZpgAZnVb29HFuZ1ALX7e+s2IZfDZh3acYvoFMfydKpRRCQbJJKCZHegAoZU4IE5I1epw==
-X-Received: by 2002:a9d:2a67:: with SMTP id t94mr1636366ota.203.1540478106037;
-        Thu, 25 Oct 2018 07:35:06 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 65sm2773211ott.63.2018.10.25.07.35.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Oct 2018 07:35:05 -0700 (PDT)
-Date:   Thu, 25 Oct 2018 09:35:04 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Lucas Stach <l.stach@pengutronix.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        kernel@pengutronix.de, patchwork-lst@pengutronix.de
-Subject: Re: [PATCH 1/2] dt-bindings: irq: add binding for Freescale IRQSTEER
- multiplexer
-Message-ID: <20181025143504.GA9673@bogus>
-References: <20181016164218.3736-1-l.stach@pengutronix.de>
+        Thu, 25 Oct 2018 19:09:44 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E1AF6611F1; Thu, 25 Oct 2018 14:36:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540478200;
+        bh=3UKG10o133NKydqUq8poZ6iJlVE/J5xxD9EfCIBkGJo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ZZFJajWalZdq1wSpIjuXBoFEGV7fXZivhE9jrSeEFyE7w33jLz5YJUqxquQP8Q3Lm
+         uqSUE7sZjx+NZXAF630ZLtRaG62PPJmWZMw+M7A4/SyuOInj0yWIgd1nfRWL+yixSH
+         uyP8yTH//M+VYtg6PwcTtcNIVuBbsPpnstVbDSLw=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 3A85B60246;
+        Thu, 25 Oct 2018 14:36:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540478199;
+        bh=3UKG10o133NKydqUq8poZ6iJlVE/J5xxD9EfCIBkGJo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=m/RPXc9b5FWG7Hw10RGbIPvTrlnkFDcyrsMUzrxbOystsYYMj8XggtGxEpw5/fuia
+         /87LksqN1DccxWMj3baF5Z8K3jyDFVnpuX9cF49HR4fqPAeqb5sb9JwEoWsdvdQpbd
+         3T6nbyMziP6Wz5Guytd/KyTNnVGqf2F8gHaM5Seo=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181016164218.3736-1-l.stach@pengutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 25 Oct 2018 20:06:39 +0530
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Loic Poulain <loic.poulain@linaro.org>,
+        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Brian Norris <briannorris@chromium.org>,
+        Dmitry Grinberg <dmitrygr@google.com>
+Subject: Re: [PATCH 1/2] Bluetooth: Add quirk for reading BD_ADDR from fwnode
+ property
+In-Reply-To: <20181025002134.256791-2-mka@chromium.org>
+References: <20181025002134.256791-1-mka@chromium.org>
+ <20181025002134.256791-2-mka@chromium.org>
+Message-ID: <4041ef05cdd70d28d665d3288c4d4c43@codeaurora.org>
+X-Sender: bgodavar@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 06:42:17PM +0200, Lucas Stach wrote:
-> This adds the DT binding for the Freescale IRQSTEER interrupt
-> multiplexer found in the i.MX8 familiy SoCs.
+On 2018-10-25 05:51, Matthias Kaehlcke wrote:
+> Add HCI_QUIRK_USE_BDADDR_PROPERTY to allow controllers to retrieve
+> the public Bluetooth address from the firmware node property
+> 'local-bd-address'. If quirk is set and the property does not exist
+> or is invalid the controller is marked as unconfigured.
 > 
-> Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 > ---
->  .../interrupt-controller/fsl,irqsteer.txt     | 39 +++++++++++++++++++
->  1 file changed, 39 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/fsl,irqsteer.txt
+> hci_dev_get_bd_addr_from_property() currently assumes that the
+> firmware node with 'local-bd-address' is from hdev->dev.parent, not
+> sure if this universally true. However if it is true for existing
+> device that might use this interface we can assume this for now
+> (unless there is a clear solution now), and cross the bridge of
+> finding an alternative when we actually encounter the situation.
+> One option could be to look for the first parent that has a fwnode.
+> ---
+>  include/net/bluetooth/hci.h | 12 +++++++++++
+>  net/bluetooth/hci_core.c    | 42 +++++++++++++++++++++++++++++++++++++
+>  net/bluetooth/mgmt.c        |  6 ++++--
+>  3 files changed, 58 insertions(+), 2 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/fsl,irqsteer.txt b/Documentation/devicetree/bindings/interrupt-controller/fsl,irqsteer.txt
-> new file mode 100644
-> index 000000000000..ed2b18165591
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/fsl,irqsteer.txt
-> @@ -0,0 +1,39 @@
-> +Freescale IRQSTEER Interrupt multiplexer
-> +
-> +Required properties:
-> +
-> +- compatible: should be:
-> +	- "fsl,imx8m-irqsteer"
-> +	- "fsl,imx-irqsteer"
-> +- reg: Physical base address and size of registers.
-> +- interrupts: Should contain the parent interrupt line used to multiplex the
-> +  input interrupts.
-> +- clocks: Should contain one clock for entry in clock-names
-> +  see Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +- clock-names:
-> +   - "ipg": main logic clock
-> +- interrupt-controller: Identifies the node as an interrupt controller.
-> +- #interrupt-cells: Specifies the number of cells needed to encode an
-> +  interrupt source. The value must be 2.
-> +
-> +Optional properties:
-> +- fsl,channel: Number of channels managed by this controller. Each channel
-> +  contains up to 32 interrupt sources. If absent defaults to 1.
-
-What's a channel? Why isn't this implied by the compatible?
-
-> +- fsl,endian:
-
-The standard property for endianness doesn't work for you?
-
-> +  0: controller registers are little endian
-> +  1: controller registers are big endian
-> +  If absent defaults to 0.
-> +
-> +Example:
-> +
-> +	interrupt-controller@32e2d000 {
-> +		compatible = "fsl,imx8m-irqsteer", "fsl,imx-irqsteer";
-> +		reg = <0x32e2d000 0x1000>;
-> +		interrupts = <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>;
-> +		clocks = <&clk IMX8MQ_CLK_DISP_APB_ROOT>;
-> +		clock-names = "ipg";
-> +		fsl,channel = <2>;
-> +		fsl,endian = <1>;
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> -- 
-> 2.19.0
+> diff --git a/include/net/bluetooth/hci.h b/include/net/bluetooth/hci.h
+> index cdd9f1fe7cfa..a5d748099752 100644
+> --- a/include/net/bluetooth/hci.h
+> +++ b/include/net/bluetooth/hci.h
+> @@ -158,6 +158,18 @@ enum {
+>  	 */
+>  	HCI_QUIRK_INVALID_BDADDR,
 > 
+> +	/* When this quirk is set, the public Bluetooth address
+> +	 * initially reported by HCI Read BD Address command
+> +	 * is considered invalid. The public BD Address can be
+> +	 * specified in the fwnode property 'local-bd-address'.
+> +	 * If this property does not exist or is invalid controller
+> +	 * configuration is required before this device can be used.
+> +	 *
+> +	 * This quirk can be set before hci_register_dev is called or
+> +	 * during the hdev->setup vendor callback.
+> +	 */
+> +	HCI_QUIRK_USE_BDADDR_PROPERTY,
+> +
+>  	/* When this quirk is set, the duplicate filtering during
+>  	 * scanning is based on Bluetooth devices addresses. To allow
+>  	 * RSSI based updates, restart scanning if needed.
+> diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+> index 74b29c7d841c..97214262c4fb 100644
+> --- a/net/bluetooth/hci_core.c
+> +++ b/net/bluetooth/hci_core.c
+> @@ -30,6 +30,7 @@
+>  #include <linux/rfkill.h>
+>  #include <linux/debugfs.h>
+>  #include <linux/crypto.h>
+> +#include <linux/property.h>
+>  #include <asm/unaligned.h>
+> 
+>  #include <net/bluetooth/bluetooth.h>
+> @@ -1355,9 +1356,40 @@ int hci_inquiry(void __user *arg)
+>  	return err;
+>  }
+> 
+> +/**
+> + * hci_dev_get_bd_addr_from_property - Get the Bluetooth Device 
+> Address
+> + *				       (BD_ADDR) for a HCI device from
+> + *				       a firmware node property.
+> + * @hdev:	The HCI device
+> + *
+> + * Search the firmware node for 'local-bd-address'.
+> + *
+> + * All-zero BD addresses are rejected, because those could be 
+> properties
+> + * that exist in the firmware tables, but were not updated by the 
+> firmware. For
+> + * example, the DTS could define 'local-bd-address', with zero BD 
+> addresses.
+> + */
+> +static int hci_dev_get_bd_addr_from_property(struct hci_dev *hdev)
+> +{
+> +	struct fwnode_handle *fwnode = dev_fwnode(hdev->dev.parent);
+> +	bdaddr_t ba;
+> +	int ret;
+> +
+> +	ret = fwnode_property_read_u8_array(fwnode, "local-bd-address",
+> +					    (u8 *)&ba, sizeof(ba));
+> +	if (ret < 0)
+> +		return ret;
+> +	if (!bacmp(&ba, BDADDR_ANY))
+> +		return -ENODATA;
+> +
+> +	hdev->public_addr = ba;
+> +
+> +	return 0;
+> +}
+> +
+>  static int hci_dev_do_open(struct hci_dev *hdev)
+>  {
+>  	int ret = 0;
+> +	bool bd_addr_set = false;
+> 
+>  	BT_DBG("%s %p", hdev->name, hdev);
+> 
+> @@ -1422,6 +1454,16 @@ static int hci_dev_do_open(struct hci_dev *hdev)
+>  		if (hdev->setup)
+>  			ret = hdev->setup(hdev);
+> 
+> +		if (test_bit(HCI_QUIRK_USE_BDADDR_PROPERTY, &hdev->quirks)) {
+> +			if (!hci_dev_get_bd_addr_from_property(hdev))
+> +				if (hdev->set_bdaddr &&
+> +				    !hdev->set_bdaddr(hdev, &hdev->public_addr))
+> +					bd_addr_set = true;
+> +
+> +			if (!bd_addr_set)
+> +				hci_dev_set_flag(hdev, HCI_UNCONFIGURED);
+> +		}
+> +
+>  		/* The transport driver can set these quirks before
+>  		 * creating the HCI device or in its setup callback.
+>  		 *
+> diff --git a/net/bluetooth/mgmt.c b/net/bluetooth/mgmt.c
+> index 3bdc8f3ca259..3d9edb752403 100644
+> --- a/net/bluetooth/mgmt.c
+> +++ b/net/bluetooth/mgmt.c
+> @@ -551,7 +551,8 @@ static bool is_configured(struct hci_dev *hdev)
+>  	    !hci_dev_test_flag(hdev, HCI_EXT_CONFIGURED))
+>  		return false;
+> 
+> -	if (test_bit(HCI_QUIRK_INVALID_BDADDR, &hdev->quirks) &&
+> +	if ((test_bit(HCI_QUIRK_INVALID_BDADDR, &hdev->quirks) ||
+> +	     test_bit(HCI_QUIRK_USE_BDADDR_PROPERTY, &hdev->quirks)) &&
+>  	    !bacmp(&hdev->public_addr, BDADDR_ANY))
+>  		return false;
+> 
+> @@ -566,7 +567,8 @@ static __le32 get_missing_options(struct hci_dev 
+> *hdev)
+>  	    !hci_dev_test_flag(hdev, HCI_EXT_CONFIGURED))
+>  		options |= MGMT_OPTION_EXTERNAL_CONFIG;
+> 
+> -	if (test_bit(HCI_QUIRK_INVALID_BDADDR, &hdev->quirks) &&
+> +	if ((test_bit(HCI_QUIRK_INVALID_BDADDR, &hdev->quirks) ||
+> +	     test_bit(HCI_QUIRK_USE_BDADDR_PROPERTY, &hdev->quirks)) &&
+>  	    !bacmp(&hdev->public_addr, BDADDR_ANY))
+>  		options |= MGMT_OPTION_PUBLIC_ADDRESS;
+
+Looks fine to me.
+
+Reviewed-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+-- 
+Regards
+Balakrishna.
