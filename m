@@ -2,161 +2,170 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C39E8C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:19:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D7E9C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:20:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03BE020834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:19:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="oObn7p3I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03BE020834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mailbox.org
+	by mail.kernel.org (Postfix) with ESMTP id D14502075D
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:20:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D14502075D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727444AbeJYTv7 (ORCPT
+        id S1727454AbeJYTxG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 15:51:59 -0400
-Received: from mx1.mailbox.org ([80.241.60.212]:37454 "EHLO mx1.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727256AbeJYTv7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 15:51:59 -0400
-Received: from smtp2.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:2:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx1.mailbox.org (Postfix) with ESMTPS id 8B2E84BAEB;
-        Thu, 25 Oct 2018 13:19:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mailbox.org; h=
-        content-type:content-type:mime-version:references:in-reply-to
-        :message-id:date:date:subject:subject:from:from:received; s=
-        mail20150812; t=1540466375; bh=/n8Za6I7DOREQuWpWOmVFx7fazGHYKF7w
-        4mX4tZjkOw=; b=oObn7p3I10d4UEZnaYEtr03e4w316fkqa4kwvJ0wPqshC8d/u
-        KdZT64XepXOaACCU+p4cT6uEDM5vMwxrm+G85bByVUL2XMK22v4XOMXhZYDG4hN5
-        GZlW69BkcF2Jzsgz/Glepjl9p3Vs6b0r42Qz+87T76UA6GuxhkOSnDvVqoHZ7we7
-        2IfEqVjBINiibjXcoupj/vDD+vsHniQ+7DP4mvg7GPvrb8svZv1O5ufPAR1MFuwf
-        yc/ETW52/221wFPgyz9J+MOKFK4sknkCLoiK8j4dCWC9wNaf2gKGCbAuvZ7/617G
-        E5HA0EgEXhup4yVHOi0+8qUInyuCEPe0T1EMw==
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter02.heinlein-hosting.de (spamfilter02.heinlein-hosting.de [80.241.56.116]) (amavisd-new, port 10030)
-        with ESMTP id ErS1VCihmAar; Thu, 25 Oct 2018 13:19:35 +0200 (CEST)
-From:   Rainer Fiebig <jrf@mailbox.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     NeilBrown <neil@brown.name>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        ksummit-discuss@lists.linuxfoundation.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Olof Johansson <olof@lixom.net>, Chris Mason <clm@fb.com>,
-        Mishi Choudhary <mishi@linux.com>
-Subject: Re: Call to Action Re: [PATCH 0/7] Code of Conduct: Fix some wording, and add an interpretation document
-Date:   Thu, 25 Oct 2018 13:20:56 +0200
-Message-ID: <2341648.lzjnUGKk1z@siriux>
-In-Reply-To: <87y3ar80ac.fsf@notabene.neil.brown.name>
-References: <20181020134908.GA32218@kroah.com> <87y3ar80ac.fsf@notabene.neil.brown.name>
+        Thu, 25 Oct 2018 15:53:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40264 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727228AbeJYTxG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 15:53:06 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 071B9AEE1;
+        Thu, 25 Oct 2018 11:20:45 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 8BD5C1E06C6; Thu, 25 Oct 2018 13:20:44 +0200 (CEST)
+Date:   Thu, 25 Oct 2018 13:20:44 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Phillip Potter <phil@philpotter.co.uk>
+Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        amir73il@gmail.com, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC][PATCH v3 01/10] fs: common implementation of file type
+Message-ID: <20181025112044.GA7711@quack2.suse.cz>
+References: <20181023201953.GA15687@pathfinder>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart42791249.HQLrouHPFn"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181023201953.GA15687@pathfinder>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---nextPart42791249.HQLrouHPFn
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="us-ascii"
+On Tue 23-10-18 21:19:53, Phillip Potter wrote:
+> Many file systems use a copy&paste implementation
+> of dirent to on-disk file type conversions.
+> 
+> Create a common implementation to be used by file systems
+> with some useful conversion helpers to reduce open coded
+> file type conversions in file system code.
 
-Am Montag, 22. Oktober 2018, 08:20:11 schrieb NeilBrown:
-> On Sat, Oct 20 2018, Greg Kroah-Hartman wrote:
-> > Hi all,
-> >=20
-> > As everyone knows by now, we added a new Code of Conduct to the ker=
-nel
-> > tree a few weeks ago.
->=20
-> I wanted to stay detached from all this, but as remaining (publicly)
-> silent might be seen (publicly) as acquiescing, I hereby declare that=
-:
->    I reject, as illegitimate, this Code and the process by
->    which it is being "developed".
->=20
-> It is clear from the surrounding discussions that this is well outsid=
-e our
-> core competencies.  It will be flawed, it isn't what we need.
->=20
-> I call on any other community members who reject this process to say =
-so,
-> not to remain silent.
-> #Iobject
->=20
-> We don't need a "Code of Conduct" nearly as much as we need "Leadersh=
-ip
-> in conduct".  Without the leadership, any code looks like a joke.
->=20
-[...]
-=20
-> I call on you, Greg:
->  - to abandon this divisive attempt to impose a "Code of Conduct"
->  - to revert 8a104f8b5867c68
+Thanks for the patch. I like the cleanup. Some comments inline...
 
-Yes but this seems increasingly unlikely now. However, there may be an=20=
+> diff --git a/include/linux/file_type.h b/include/linux/file_type.h
+> new file mode 100644
+> index 000000000000..f015c41ca90c
+> --- /dev/null
+> +++ b/include/linux/file_type.h
+> @@ -0,0 +1,108 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef _LINUX_FILE_TYPE_H
+> +#define _LINUX_FILE_TYPE_H
+> +
+> +/*
+> + * This is a common implementation of dirent to fs on-disk
+> + * file type conversion.  Although the fs on-disk bits are
+> + * specific to every file system, in practice, many file systems
+> + * use the exact same on-disk format to describe the lower 3
+> + * file type bits that represent the 7 POSIX file types.
+> + * All those file systems can use this generic code for the
+> + * conversions:
+> + *  i_mode -> fs on-disk file type (ftype)
+> + *  fs on-disk file type (ftype) -> dirent file type (dtype)
+> + *  i_mode -> dirent file type (dtype)
 
-alternative.
+I don't think these three lines above are really useful. If you want to
+make it easier for fs developers, add Docbook coments at function
+implementations.
 
-Jugding by the release-message for 4.19, some people here are fans of=20=
+> + */
+> +
+> +/*
+> + * struct dirent file types
+> + * exposed to user via getdents(2), readdir(3)
+> + *
+> + * These match bits 12..15 of stat.st_mode
+> + * (ie "(i_mode >> 12) & 15").
+> + */
+> +#define S_DT_SHIFT	12
+> +#define S_DT(mode)	(((mode) & S_IFMT) >> S_DT_SHIFT)
+> +#define S_DT_MASK	(S_IFMT >> S_DT_SHIFT)
+> +
+> +#define DT_UNKNOWN	0
+> +#define DT_FIFO		S_DT(S_IFIFO) /* 1 */
+> +#define DT_CHR		S_DT(S_IFCHR) /* 2 */
+> +#define DT_DIR		S_DT(S_IFDIR) /* 4 */
+> +#define DT_BLK		S_DT(S_IFBLK) /* 6 */
+> +#define DT_REG		S_DT(S_IFREG) /* 8 */
+> +#define DT_LNK		S_DT(S_IFLNK) /* 10 */
+> +#define DT_SOCK		S_DT(S_IFSOCK) /* 12 */
 
-Monty Python's. No wonder - as those guys are famous for being unrelent=
-ing=20
-supporters of Political Correctness.
+Why not keep the original definition by absolute number. After all these
+must match glibc...
 
-So one would be on the safe side if one just supplemented "Our Pledge"=20=
+> +#define DT_WHT		14
+> +
+> +#define DT_MAX		(S_DT_MASK + 1) /* 16 */
+> +
+> +/*
+> + * fs on-disk file types.
+> + * Only the low 3 bits are used for the POSIX file types.
+> + * Other bits are reserved for fs private use.
+> + *
+> + * Note that no fs currently stores the whiteout type on-disk,
+> + * so whiteout dirents are exposed to user as DT_CHR.
+> + */
+> +#define FT_UNKNOWN	0
+> +#define FT_REG_FILE	1
+> +#define FT_DIR		2
+> +#define FT_CHRDEV	3
+> +#define FT_BLKDEV	4
+> +#define FT_FIFO		5
+> +#define FT_SOCK		6
+> +#define FT_SYMLINK	7
+> +
+> +#define FT_MAX		8
+> +
+> +/*
+> + * fs on-disk file type to dirent file type conversion
+> + */
+> +static unsigned char fs_dtype_by_ftype[FT_MAX] = {
+> +	[FT_UNKNOWN]	= DT_UNKNOWN,
+> +	[FT_REG_FILE]	= DT_REG,
+> +	[FT_DIR]	= DT_DIR,
+> +	[FT_CHRDEV]	= DT_CHR,
+> +	[FT_BLKDEV]	= DT_BLK,
+> +	[FT_FIFO]	= DT_FIFO,
+> +	[FT_SOCK]	= DT_SOCK,
+> +	[FT_SYMLINK]	= DT_LNK
+> +};
 
-with this:
+So you define static variable in a header file. That will make it appear in
+each and every object that includes this header (when not used it will get
+optimized away but still...). IMO that is not good and I don't think
+anything here is so performance super-crittical, that the cost of
+additional function call would matter (correct me if I'm wrong here). So
+I'd rather see these tables and associated functions in some C file.
 
-=09"Everybody has the right to be offended."
+> +static inline unsigned char fs_dtype(int filetype)
 
-I think, John Cleese would also welcome this.[1]
+This function name is not very descriptive and consistent with the other
+two. It should be like fs_ftype_to_dtype(), right?
 
-What do you think?
+> +{
+> +	if (filetype >= FT_MAX)
+> +		return DT_UNKNOWN;
+> +
+> +	return fs_dtype_by_ftype[filetype];
+> +}
 
-Regards!
+Otherwise the patch looks good to me.
 
-
-Rainer Fiebig
-
-
-
-[1] https://www.dailymail.co.uk/news/article-3427218/Political-correctn=
-ess-killing-comedy-says-John-Cleese-Monty-Python-star-believes-fear-off=
-ending-certain-groups-lead-1984-style-society-free-expression-not-allow=
-ed.html
-
-
-=2D-=20
-The truth always turns out to be simpler than you thought.
-Richard Feynman
---nextPart42791249.HQLrouHPFn
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE6yx5PjBNuGB2qJXG8OH3JiWK+PUFAlvRpxgACgkQ8OH3JiWK
-+PWDjRAAzzl6KYxqqlSq+q5EgB3Uy4eLnj0xZJ3SEePGvtSWwf+k78ESTZ/sU7O2
-gUGsEk+4F8N4CK0Y+J0Z5DrXdpCTu0shzojYdUmzE0unthzycVdlRbXdQd5UER0R
-o6gpHfqbPvsGhtKNyj2oaqRzwnJNWsz16LW81fr0dLRZtg+9vlUulYz3nvyf6VQC
-kHFIR//gRyyx37Loo1lpZBSBhd+MDi95wz7yWJWM9CGxR/MvEvjNGvpPSg6O/vof
-FuQqCR5k4mVSU7NkcqBgMBPGVyzMivXEIYGvSDBOHa14NiBtpqcn0P2vBQ6jwBfX
-LIO0sq2Crk91zyT7Mw32ru8CO/z3m1Pxyxs6QjZnTfLQoOdG6+sy/uSQgK0HS0aW
-lF0LdaaGTnf8ngVmhmNpVdrQS/4MZAeaiUZSFs1skf11Gd/z8cdi2IvHInunWUxx
-BOgOhlrMWA+sj4Gqxa9zchFvUQLDNAX2JZ4AJ1a8JXIDKpuEQhXs0eqWtRkXTgtU
-qOTmuSVJ/LR0WjXvXumQhqZ2y3lNAz17pzVLcq5grik4dr8+XmSkY88Imi/laNE9
-q+fpOQDaUEusmdshb5BnYxmgsA9keQE/XPEeLZUz/U6ywxHaxmo/0Y0hUOuWe9q1
-/AL+tEOirMM6xLbeHjRru5MctlId9OEtN09n29coJxd9cLwoTYI=
-=Yy1m
------END PGP SIGNATURE-----
-
---nextPart42791249.HQLrouHPFn--
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
