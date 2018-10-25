@@ -7,46 +7,43 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E1AC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5581ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DC2820868
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83A262147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WV/UVvlk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DC2820868
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="D3P+Kthz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83A262147A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730297AbeJYWwA (ORCPT
+        id S1730310AbeJYWwB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:52:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33788 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:52:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33828 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727979AbeJYWv7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:51:59 -0400
+        id S1730290AbeJYWwA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:52:00 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5C6120848;
-        Thu, 25 Oct 2018 14:19:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76E2720834;
+        Thu, 25 Oct 2018 14:19:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477142;
-        bh=pHsw4aAj1soAzow5yxAcRacW7YtrQo/D1v8/ifgA84Q=;
+        s=default; t=1540477143;
+        bh=r9FnCF9sHqjrsaxJ/g4EVS1Ym7RknKTb5922kl9Mg00=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WV/UVvlkT49Hw6SO5Z2xS9YomkpzzFUEtMIY5YVTrbZ2KwqyzV0EvtZ0BnlPM5Osj
-         gFMh0SMgTqFk5bbo1ziPTYwBEpWHizv7qWsvIqjbLq1Vutwa+Pxp2avJ5OtBdRyCR3
-         brTSWlhYUPQKiQ1cH7KbmWxaFl24MJ1XyCKdXu+E=
+        b=D3P+Kthz+aidTd4Le490SJM79N7fDhgbDSKxDXJijvqKazWvAyYeWsGiM/96cKO+G
+         sPH3zboUmmCCVro6zyFTrNMe6rh7K/gYGNkhDuGNK/PzYebS08uDYfRwfJRiugh4kf
+         JSyNXAFDIgY3n7iLLUWc4ntWt3Ac13K7NviKpIMc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     alex chen <alex.chen@huawei.com>, Joel Becker <jlbec@evilplan.org>,
-        Mark Fasheh <mfasheh@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+Cc:     Christian Borntraeger <borntraeger@de.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 02/98] ocfs2: fix journal commit deadlock in ocfs2_convert_inline_data_to_extents
-Date:   Thu, 25 Oct 2018 10:17:17 -0400
-Message-Id: <20181025141853.214051-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 03/98] s390/kvm: REPLACE barrier fixup with READ_ONCE
+Date:   Thu, 25 Oct 2018 10:17:18 -0400
+Message-Id: <20181025141853.214051-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
 References: <20181025141853.214051-1-sashal@kernel.org>
@@ -55,85 +52,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: alex chen <alex.chen@huawei.com>
+From: Christian Borntraeger <borntraeger@de.ibm.com>
 
-[ Upstream commit 15eba0fe3eeaeb1b80489c1ebb9d47d6d7003f57 ]
+[ Upstream commit 5de72a2247ac05bde7c89039631b3d0c6186fafb ]
 
-Similar to ocfs2_write_end_nolock() which is metioned at commit
-136f49b91710 ("ocfs2: fix journal commit deadlock"), we should unlock
-pages before ocfs2_commit_trans() in ocfs2_convert_inline_data_to_extents.
+ACCESS_ONCE does not work reliably on non-scalar types. For
+example gcc 4.6 and 4.7 might remove the volatile tag for such
+accesses during the SRA (scalar replacement of aggregates) step
+(https://gcc.gnu.org/bugzilla/show_bug.cgi?id=58145)
 
-Otherwise, it will cause a deadlock with journal commit threads.
+Commit 1365039d0cb3 ("KVM: s390: Fix ipte locking") replace
+ACCESS_ONCE with barriers. Lets use READ_ONCE instead.
 
-Signed-off-by: Alex Chen <alex.chen@huawei.com>
-Reviewed-by: Joseph Qi <joseph.qi@huawei.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Mark Fasheh <mfasheh@suse.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Acked-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/alloc.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ arch/s390/kvm/gaccess.c | 18 ++++++------------
+ 1 file changed, 6 insertions(+), 12 deletions(-)
 
-diff --git a/fs/ocfs2/alloc.c b/fs/ocfs2/alloc.c
-index d9db90446c9d..3564b896a92e 100644
---- a/fs/ocfs2/alloc.c
-+++ b/fs/ocfs2/alloc.c
-@@ -6871,7 +6871,7 @@ int ocfs2_convert_inline_data_to_extents(struct inode *inode,
- 	if (IS_ERR(handle)) {
- 		ret = PTR_ERR(handle);
- 		mlog_errno(ret);
--		goto out_unlock;
-+		goto out;
- 	}
- 
- 	ret = ocfs2_journal_access_di(handle, INODE_CACHE(inode), di_bh,
-@@ -6929,7 +6929,7 @@ int ocfs2_convert_inline_data_to_extents(struct inode *inode,
- 		if (ret) {
- 			mlog_errno(ret);
- 			need_free = 1;
--			goto out_commit;
-+			goto out_unlock;
+diff --git a/arch/s390/kvm/gaccess.c b/arch/s390/kvm/gaccess.c
+index 6dc0ad9c7050..8f195fa904a1 100644
+--- a/arch/s390/kvm/gaccess.c
++++ b/arch/s390/kvm/gaccess.c
+@@ -229,12 +229,10 @@ static void ipte_lock_simple(struct kvm_vcpu *vcpu)
+ 		goto out;
+ 	ic = &vcpu->kvm->arch.sca->ipte_control;
+ 	do {
+-		old = *ic;
+-		barrier();
++		old = READ_ONCE(*ic);
+ 		while (old.k) {
+ 			cond_resched();
+-			old = *ic;
+-			barrier();
++			old = READ_ONCE(*ic);
  		}
+ 		new = old;
+ 		new.k = 1;
+@@ -253,8 +251,7 @@ static void ipte_unlock_simple(struct kvm_vcpu *vcpu)
+ 		goto out;
+ 	ic = &vcpu->kvm->arch.sca->ipte_control;
+ 	do {
+-		old = *ic;
+-		barrier();
++		old = READ_ONCE(*ic);
+ 		new = old;
+ 		new.k = 0;
+ 	} while (cmpxchg(&ic->val, old.val, new.val) != old.val);
+@@ -269,12 +266,10 @@ static void ipte_lock_siif(struct kvm_vcpu *vcpu)
  
- 		page_end = PAGE_CACHE_SIZE;
-@@ -6962,12 +6962,16 @@ int ocfs2_convert_inline_data_to_extents(struct inode *inode,
- 		if (ret) {
- 			mlog_errno(ret);
- 			need_free = 1;
--			goto out_commit;
-+			goto out_unlock;
+ 	ic = &vcpu->kvm->arch.sca->ipte_control;
+ 	do {
+-		old = *ic;
+-		barrier();
++		old = READ_ONCE(*ic);
+ 		while (old.kg) {
+ 			cond_resched();
+-			old = *ic;
+-			barrier();
++			old = READ_ONCE(*ic);
  		}
+ 		new = old;
+ 		new.k = 1;
+@@ -288,8 +283,7 @@ static void ipte_unlock_siif(struct kvm_vcpu *vcpu)
  
- 		inode->i_blocks = ocfs2_inode_sector_count(inode);
- 	}
- 
-+out_unlock:
-+	if (pages)
-+		ocfs2_unlock_and_free_pages(pages, num_pages);
-+
- out_commit:
- 	if (ret < 0 && did_quota)
- 		dquot_free_space_nodirty(inode,
-@@ -6987,15 +6991,11 @@ int ocfs2_convert_inline_data_to_extents(struct inode *inode,
- 
- 	ocfs2_commit_trans(osb, handle);
- 
--out_unlock:
-+out:
- 	if (data_ac)
- 		ocfs2_free_alloc_context(data_ac);
--
--out:
--	if (pages) {
--		ocfs2_unlock_and_free_pages(pages, num_pages);
-+	if (pages)
- 		kfree(pages);
--	}
- 
- 	return ret;
- }
+ 	ic = &vcpu->kvm->arch.sca->ipte_control;
+ 	do {
+-		old = *ic;
+-		barrier();
++		old = READ_ONCE(*ic);
+ 		new = old;
+ 		new.kh--;
+ 		if (!new.kh)
 -- 
 2.17.1
 
