@@ -2,194 +2,125 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03223ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:50:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FD09ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:52:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDC1020831
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:50:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDC1020831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 6DEA82075D
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:52:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DEA82075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727472AbeJYUWj (ORCPT
+        id S1727411AbeJYUZR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 16:22:39 -0400
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:19098 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727208AbeJYUWj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 16:22:39 -0400
-Received: from [10.18.29.185] (10.18.29.185) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Thu, 25 Oct
- 2018 19:50:11 +0800
-Subject: Re: [PATCH v5 2/3] clk: meson: add DT documentation for emmc clock
- controller
-To:     Yixun Lan <dlan@gentoo.org>, Jerome Brunet <jbrunet@baylibre.com>
-CC:     Neil Armstrong <narmstrong@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        <linux-kernel@vger.kernel.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Carlo Caione <carlo@caione.org>,
-        <linux-amlogic@lists.infradead.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>
-References: <1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com>
- <1539839245-13793-3-git-send-email-jianxin.pan@amlogic.com>
- <ca95948abd58876a23b2eb3e52b96124e9eed793.camel@baylibre.com>
- <20181024145513.GA6647@ofant>
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-Message-ID: <146f13c1-f309-d619-602b-b14535ab5f79@amlogic.com>
-Date:   Thu, 25 Oct 2018 19:50:11 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 25 Oct 2018 16:25:17 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45416 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727208AbeJYUZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 16:25:16 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 514A93082B22;
+        Thu, 25 Oct 2018 11:52:50 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.106])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 85A8C4DA81;
+        Thu, 25 Oct 2018 11:52:48 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Thu, 25 Oct 2018 13:52:48 +0200 (CEST)
+Date:   Thu, 25 Oct 2018 13:52:46 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        syzbot <syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com>,
+        James Morris <jmorris@namei.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: KASAN: use-after-free Read in task_is_descendant
+Message-ID: <20181025115245.GB3725@redhat.com>
+References: <0000000000004904df0578b7d3da@google.com>
+ <bf1a083c-0d09-07fb-6ad2-4bf30ac49cd8@I-love.SAKURA.ne.jp>
+ <20181022095439.GA4613@redhat.com>
+ <CAGXu5jLxLqieLCZfAzw_xX-k3bbESUF3pjuGEDRRH1CY2O8JSA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181024145513.GA6647@ofant>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.18.29.185]
-X-ClientProxiedBy: mail-sh2.amlogic.com (10.18.11.6) To mail-sh2.amlogic.com
- (10.18.11.6)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jLxLqieLCZfAzw_xX-k3bbESUF3pjuGEDRRH1CY2O8JSA@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 25 Oct 2018 11:52:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/10/25 15:29, Yixun Lan wrote:
-> Hi Jerome, Jianxin:
-> 
-> see my comments
-> 
-> On 10:58 Wed 24 Oct     , Jerome Brunet wrote:
->> On Thu, 2018-10-18 at 13:07 +0800, Jianxin Pan wrote:
->>> From: Yixun Lan <yixun.lan@amlogic.com>
->>>
->>> Document the MMC sub clock controller driver, the potential consumer
->>> of this driver is MMC or NAND. Also add four clock bindings IDs which
->>> provided by this driver.
->>>
->>> Reviewed-by: Rob Herring <robh@kernel.org>
->>> Signed-off-by: Yixun Lan <yixun.lan@amlogic.com>
->>> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
->>> ---
->>>  .../devicetree/bindings/clock/amlogic,mmc-clkc.txt | 31 ++++++++++++++++++++++
->>>  include/dt-bindings/clock/amlogic,mmc-clkc.h       | 17 ++++++++++++
->>>  2 files changed, 48 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
->>>  create mode 100644 include/dt-bindings/clock/amlogic,mmc-clkc.h
->>>
->>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
->>> new file mode 100644
->>> index 0000000..9e6d343
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/clock/amlogic,mmc-clkc.txt
->>> @@ -0,0 +1,31 @@
->>> +* Amlogic MMC Sub Clock Controller Driver
->>> +
->>> +The Amlogic MMC clock controller generates and supplies clock to support
->>> +MMC and NAND controller
->>> +
->>> +Required Properties:
->>> +
->>> +- compatible: should be:
->>> +		"amlogic,gx-mmc-clkc"
->>> +		"amlogic,axg-mmc-clkc"
->>> +
->>> +- #clock-cells: should be 1.
->>> +- clocks: phandles to clocks corresponding to the clock-names property
->>> +- clock-names: list of parent clock names
->>> +	- "clkin0", "clkin1"
->>> +
->>> +Parent node should have the following properties :
->>> +- compatible: "amlogic,axg-mmc-clkc", "syscon".
->>> +- reg: base address and size of the MMC control register space.
->>
->> I get why Stephen is confused by your description, I am too. The example
->> contradict the documentation.
->>
->> The  documentation above says that the parent node should be a syscon with the
->> mmc register space.
->>
->> But your example shows this in the node itself.
->>
-> 
-> yes, I think the documentation need to be fixed
-ok, Thankyou. I will fix it in the next version.
-> 
-> for the final solution, we decide to make 'mmc-clkc' an independent node
-> instead of being a sub-node of 'mmc', so both of them may exist in parallel..
-> 
-> the DT part may like this:
-> 
-> 			sd_emmc_c_clkc: clock-controller@7000 {
-> 				compatible = "amlogic,axg-mmc-clkc", "syscon";
-> 				reg = <0x0 0x7000 0x0 0x4>;
-> 				...
-> 			};
-> 
-> 			sd_emmc_c: mmc@7000 {
-> 				compatible = "amlogic,axg-mmc";
-> 				reg = <0x0 0x7000 0x0 0x800>;
-> 				...
-> 			};
-> 
-> 
->>> +
->>> +Example: Clock controller node:
->>> +
->>> +sd_mmc_c_clkc: clock-controller@7000 {
->>> +	compatible = "amlogic,axg-mmc-clkc", "syscon";
->>> +	reg = <0x0 0x7000 0x0 0x4>;
->>> +	#clock-cells = <1>;
->>> +
->>> +	clock-names = "clkin0", "clkin1";
->>> +	clocks = <&clkc CLKID_SD_MMC_C_CLK0>,
->>> +		 <&clkc CLKID_FCLK_DIV2>;
->>> +};
->>> diff --git a/include/dt-bindings/clock/amlogic,mmc-clkc.h b/include/dt-bindings/clock/amlogic,mmc-clkc.h
->>> new file mode 100644
->>> index 0000000..162b949
->>> --- /dev/null
->>> +++ b/include/dt-bindings/clock/amlogic,mmc-clkc.h
->>> @@ -0,0 +1,17 @@
->>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
->>> +/*
->>> + * Meson MMC sub clock tree IDs
->>> + *
->>> + * Copyright (c) 2018 Amlogic, Inc. All rights reserved.
->>> + * Author: Yixun Lan <yixun.lan@amlogic.com>
->>> + */
->>> +
->>> +#ifndef __MMC_CLKC_H
->>> +#define __MMC_CLKC_H
->>> +
->>> +#define CLKID_MMC_DIV				1
->>> +#define CLKID_MMC_PHASE_CORE			2
->>> +#define CLKID_MMC_PHASE_TX			3
->>> +#define CLKID_MMC_PHASE_RX			4
->>> +
->>> +#endif
->>
->>
->>
->> _______________________________________________
->> linux-amlogic mailing list
->> linux-amlogic@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-amlogic
-> 
+On 10/25, Kees Cook wrote:
+>
+> task_is_descendant() is called under rcu_read_lock() in both
+> ptracer_exception_found() and yama_ptrace_access_check() so I don't
+> understand how any of the tasks could get freed? This is walking
+> group_leader and real_parent -- are these not stable under rcu_lock()?
+
+group_leader/real_parent/etc are no longer rcu-protected after the exiting
+child calls release_task() which in particular removes the child from
+children/thread_group lists.
+
+OK. Suppose you have an rcu-protected list, and each element also has a
+reference counter so you can do something
+
+	struct elt {
+		atomic_t ctr;
+		struct list_head list;
+		int pid;
+	};
+
+	rcu_read_lock();
+	list_for_each_entry(elt, &LIST, list) {
+		if (elt->pid == 100) {
+			atomic_inc(&elt->ctr);	// get_task_struct()
+			break;
+		}
+	}
+	rcu_read_unlock();
+
+	do_something(elt);
+
+This code is fine. This elt can't be freed, you have a reference. But once
+you drop rcu lock you can't trust elt->list.next! So, for example, you can
+not do
+
+	rcu_read_lock();
+	list_for_each_entry_continue_rcu(elt, &LIST, list) {
+		...
+	}
+	rcu_read_unlock();
+
+too late, elt.list.next can be already freed, or it can be freed while you
+iterate the list.
+
+Another simple example. Suppose you have a global PTR protected by rcu. So
+ignoring the necessary rcu_dereference this code is fine:
+
+	rcu_read_lock();
+	if (ptr = PTR)
+		do_something(ptr);
+	rcu_read_unlcok();
+
+But this is not:
+
+	ptr = PTR;
+	rcu_read_lock();
+	if (ptr)
+		do_something(ptr);
+	rcu_read_unlock();
+
+basically the same thing...
+
+Oleg.
 
