@@ -2,77 +2,64 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD649C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:44:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E3FC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:45:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 706B720834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:44:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Lkj5jRYL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 706B720834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	by mail.kernel.org (Postfix) with ESMTP id D4A6320848
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:45:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4A6320848
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727581AbeJZHTA (ORCPT
+        id S1727613AbeJZHUH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 03:19:00 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:43358 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727250AbeJZHTA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 03:19:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=sRzUYWbyKEufU5IhjPuexQ4WM3q4r2aEodM1kdvLuu4=;
-        b=Lkj5jRYLeQNhtm0a1ZZNDxdvEVLAU1F8Xah/l2tev3OF0bNEkSqKdWpCZwkFctnLUBjOeA2ZvYNgorhv1j1KItM+zoCZUfFKhS/CfKfy5E7RqzLYZFJGbDwaB72ONmnVwYgI23/5Xu6JnGM8SmGcJSz0dPPo9TeK9eoC1mgSPjg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gFoMc-0005aN-O6; Fri, 26 Oct 2018 00:44:26 +0200
-Date:   Fri, 26 Oct 2018 00:44:26 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Netdev <netdev@vger.kernel.org>,
-        Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+        Fri, 26 Oct 2018 03:20:07 -0400
+Received: from Chamillionaire.breakpoint.cc ([146.0.238.67]:54666 "EHLO
+        Chamillionaire.breakpoint.cc" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727250AbeJZHUG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 03:20:06 -0400
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.89)
+        (envelope-from <fw@strlen.de>)
+        id 1gFoNc-0003Y2-Li; Fri, 26 Oct 2018 00:45:28 +0200
+Date:   Fri, 26 Oct 2018 00:45:28 +0200
+From:   Florian Westphal <fw@strlen.de>
+To:     Wolfgang Walter <linux@stwm.de>
+Cc:     netdev@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         David Miller <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH net-next v8 28/28] net: WireGuard secure network tunnel
-Message-ID: <20181025224426.GC6276@lunn.ch>
-References: <20181018145712.7538-1-Jason@zx2c4.com>
- <20181018145712.7538-29-Jason@zx2c4.com>
- <20181020224706.GC14816@lunn.ch>
- <CAHmME9qMf=n7mnE-bsx86SVFBs1LrvHoc+nWrpr12vtYAgze+g@mail.gmail.com>
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        christophe.gouault@6wind.com, Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: Regression: kernel 4.14 an later very slow with many ipsec
+ tunnels
+Message-ID: <20181025224528.5k52dq4cmq3h7tyl@breakpoint.cc>
+References: <20180913135844.3ut6fxgx67t6ndtu@breakpoint.cc>
+ <20181002213536.sgjansduqenps2md@breakpoint.cc>
+ <1729915.dWWxddREcQ@stwm.de>
+ <2766296.15tpkxTHJV@stwm.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHmME9qMf=n7mnE-bsx86SVFBs1LrvHoc+nWrpr12vtYAgze+g@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <2766296.15tpkxTHJV@stwm.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > > +#if defined(CONFIG_PM_SLEEP) && !defined(CONFIG_ANDROID)
-> >
-> > I don't see any other code which uses this combination. Why is this
-> > needed?
-> 
-> WireGuard clears private key material before going to sleep, so that
-> ephemeral keys never live longer in ram than their expiration date.
-> This works well for mostly everything, except Android devices where
-> crazy out-of-tree wireless drivers (such as qcacld) will actually wake
-> and sleep the phone constantly
+Wolfgang Walter <linux@stwm.de> wrote:
+> there is now a new 4.19 which still has the big performance regression when 
+> many ipsec tunnels are configured (throughput and latency get worse by 10 to 
+> 50 times) which makes any kernel > 4.9 unusable for our routers.
 
-Hi Jason
+https://git.breakpoint.cc/cgit/fw/net-next.git/log/?h=xfrm_pol_18
 
-Out of tree is important here. To some degree, mainline does not care
-about out of tree drivers. Putting in a bandaid for them does not help
-get them fixed.
+This is mostly untested, if you want to test this anyway and
+find bugs please feel free to report them to me.
 
-I would drop this bandaid. If the Android community decides to move
-wireguard from mainline into their fork, they can put the bandaid back
-in again, or get the driver fixed.
-
-   Andrew
+Improvements to test script in patch #1 welcome as well (its what
+i've been using so far to test this).
