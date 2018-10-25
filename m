@@ -2,135 +2,239 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53301C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:05:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E502C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:07:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08B592082E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:05:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 418572075D
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:07:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ewDmsgJm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08B592082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JpWs0BtJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 418572075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727455AbeJYThw (ORCPT
+        id S1727355AbeJYTjz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 15:37:52 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:46649 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727208AbeJYThw (ORCPT
+        Thu, 25 Oct 2018 15:39:55 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:42771 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726852AbeJYTjy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 15:37:52 -0400
-Received: by mail-lj1-f194.google.com with SMTP id x3-v6so7768437lji.13;
-        Thu, 25 Oct 2018 04:05:34 -0700 (PDT)
+        Thu, 25 Oct 2018 15:39:54 -0400
+Received: by mail-vs1-f66.google.com with SMTP id e126so5208587vsc.9
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 04:07:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=x0pq+cfqta3t8LmAMvxjEl1jR9/Kl/k247PxX2X1veE=;
-        b=ewDmsgJm+8+y2KlpJrK4SG3KP4QsFOdatB4LcyvLrBrDWDDVb92iiOUOcuJk+RJhmz
-         8ShBdp+atoSlLAfpNdZfG3Uzo/kw0T2+gCJZr1kasq+EF+Bm9S9RgOZXZ2P9K7hWDbrU
-         Gk/0oLfUx9PNUzi0E3hzaJBhn4s8RjzXtzXpanztdk0yPmr3dnxTGWyNxCgH5yyoTjCS
-         63a6XWt+1ZF+2pr7O1DIBd4+Qyq72H/q7fXN/tfUvoCxXt+u2Odxx36nZts0i5eNSV0T
-         1UXJ2ntdUhY2ldYmT994ZZcfr5wMFEfoZYgfEnpFONnfKLHWF17GLhZh+VX/dA8EgS/N
-         tr+Q==
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=iCvPs9qFDcy3QsF3utDxIdDhj9/aA//khmUR4t/yu6A=;
+        b=JpWs0BtJyud2XyyQu4Np9aFQy3M5EXKBMoJCnUhFVpAqW+MJHvfMkn9sd7BpeWnoeW
+         IsoHpspuVNdpx84omxhYxkE/ZzRbpeMiXra2N/uVZO9kUqfavDHNhAK2DsJtjibv2UN9
+         7CA9vr6PCax/fpJx2giloS6QWAaQ6zl8RMjv26sTQIxxEzIi6FtDjgsdS9zB5npiP5C+
+         A9yDWEPnya7WQ7FxXbJIw+1PROuzTHOplJA1kvvl29kBQtcMKiRbpig6vlMYJKiIvjh5
+         LRG1oxj9Eq5nfN1qjDaTWAHeA0Y53d0pe07S0Ren/6GJe8MUjRSHeFHGVL61bkV6f8Ox
+         RhiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=x0pq+cfqta3t8LmAMvxjEl1jR9/Kl/k247PxX2X1veE=;
-        b=AR07kU0bq8XMdukT6brf+Rc+FREUl5lYhP9Hb4AIZbj2zu0D2qjwiMdW0isSuty+HT
-         GtDHbBDcUCRs/bZMFABXcbe586+wbo1UvO5Gab2UhLkmtq4mQHluTZbiG80Ie42e1lHs
-         pE2nKKqQz2PyUrBa2Sf2FiwPfsOnyeCZgGyaw/HOvGpXeS0b966Rld4QdMOgeLjWypYk
-         2D1q1iQ3fsNqtU7YKgnx85QiLH7KH922a0RXsEXyMpe0GnB9U1Kj94GVy+zn6jOzrZ7Q
-         5h9W7cQ3N/LeJO68uRiVV32Du3C/Z8984sLYS3b8hdM6UZXIpN107o1t1GdLW+pqcJRd
-         5jrw==
-X-Gm-Message-State: AGRZ1gIMDg20dcLJ7NjnZJGvjFoYxYpMQ7VCyyP3sXy4Mvcax3EdGgnk
-        Cx//u+oLPeh+5/f/3YghFIFKeysC
-X-Google-Smtp-Source: AJdET5eGt8IoRe+W3vcJv4I7zOLJERPvvW7m9GCRdLl01NGYE6RWFCtj+T86zFj2L+lFm7XdtKQOpQ==
-X-Received: by 2002:a2e:a28b:: with SMTP id k11-v6mr947662lja.24.1540465533793;
-        Thu, 25 Oct 2018 04:05:33 -0700 (PDT)
-Received: from maxim-H61M-D2-B3.d-systems.local ([185.75.190.112])
-        by smtp.gmail.com with ESMTPSA id x6-v6sm1103773lji.36.2018.10.25.04.05.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Oct 2018 04:05:33 -0700 (PDT)
-From:   Max Uvarov <muvarov@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     andrew@lunn.ch, f.fainelli@gmail.com, netdev@vger.kernel.org,
-        Max Uvarov <muvarov@gmail.com>
-Subject: [PATCH] dp83867: fix speed 10 in sgmii mode
-Date:   Thu, 25 Oct 2018 14:05:30 +0300
-Message-Id: <20181025110530.22826-1-muvarov@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=iCvPs9qFDcy3QsF3utDxIdDhj9/aA//khmUR4t/yu6A=;
+        b=LpQqmwKVvwJ68v161WWcT5ffD0Iv38rRkD1kUoQ2/NTxQN0oPidESDeDq8u7RKVLxU
+         IjUxIfJs9WkANmcKD78BiO3GmyjreOJCkqrJXQ2TGCl4zi/haWDLZoe0lOC7LwnIM788
+         kgUmDkML6q5p6/U3NyPnTlO12YSCaBG6G3quAoyihMLWCeSioqua0YAJoonfsRNGkqMU
+         P4skFLSjI43dzfA6Kao0ARq4xuTTcqtHGpRwytRd6D4pn6WuXiyrgwBKMFQF5cE2YkJv
+         T1iUrWDGrjV6cq98bh4vGXpSyN3uuHyowWRf/dRST90FpvZv+HmIxNgRVB0vrJKqDMBx
+         DfcQ==
+X-Gm-Message-State: AGRZ1gI30g7DFdetl8B5/cG9FxCNkJgINRV/B3CrONMmiI5K9BYOheFE
+        7tp7AHidWPV31SX2SVaVuIGEYesHoVw6I1uMUeQ1FA==
+X-Google-Smtp-Source: AJdET5c4CzCPg/uZ10CGoRnRDJrDV0OEwg9qulAXea9lNA3ub9SSJeQn5H5EMbreRG6owMaVlE/VGp6Mzaq+WpsgyV0=
+X-Received: by 2002:a67:2704:: with SMTP id n4mr462235vsn.209.1540465656905;
+ Thu, 25 Oct 2018 04:07:36 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAEAjamv0P63dTXEjzbDp6ahaNRuUiRPWTnj_N2RV7monBk4bHw@mail.gmail.com>
+In-Reply-To: <CAEAjamv0P63dTXEjzbDp6ahaNRuUiRPWTnj_N2RV7monBk4bHw@mail.gmail.com>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Thu, 25 Oct 2018 13:07:25 +0200
+Message-ID: <CAG_fn=XKKZcXq2615Ubn-sFNLvJXSPJvtsKr-zHU=pAP29FTcQ@mail.gmail.com>
+Subject: Re: BUG: KMSAN: uninit-value in selinux_socket_bind, selinux_socket_connect_helper
+To:     kt0755@gmail.com
+Cc:     David Miller <davem@davemloft.net>, lifeasageek@gmail.com,
+        syzkaller@googlegroups.com, threeearcat@gmail.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>, alexey.kodanev@oracle.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For support 10Mps sped in SGMII mode DP83867_10M_SGMII_RATE_ADAPT bit
-of DP83867_10M_SGMII_CFG register has to be cleared by software.
-That does not affect speeds 100 and 1000 so can be done on init.
+On Thu, Oct 25, 2018 at 12:35 PM Kyungtae Kim <kt0755@gmail.com> wrote:
+>
+> We report two crashes related (in v4.19-rc8) :
+> "BUG: KMSAN: uninit-value in selinux_socket_bind"
+> "BUG: KMSAN: uninit-value in selinux_socket_connect_helper=E2=80=9D
+>
+> kernel config: https://kt0755.github.io/etc/config-4.19-rc2.kmsan
+> repro: https://kt0755.github.io/etc/repro.b0e55.c
+>
+> Since both crashes share the same issue, we just explain one of the two.
+> When the third argument of bind() (i.e., addrlen) is zero, in __sys_bind(=
+),
+> data copy from user sockaddr to kernel sockaddr does not occur
+> (net/socket.c:186).
+> However, a subsequent function selinux_socket_bind() tries to read
+> the kernel sockaddr (address->sa_family) that was not initialized at all.
+>
+> Crash log1
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> BUG: KMSAN: uninit-value in selinux_socket_bind+0x61b/0x1040
+> security/selinux/hooks.c:4643
+> CPU: 0 PID: 19070 Comm: syz-executor6 Not tainted 4.19.0-rc8+ #18
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2=
+011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x305/0x460 lib/dump_stack.c:113
+>  kmsan_report+0x1a2/0x2e0 mm/kmsan/kmsan.c:917
+>  __msan_warning+0x7d/0xe0 mm/kmsan/kmsan_instr.c:500
+>  selinux_socket_bind+0x61b/0x1040 security/selinux/hooks.c:4643
+>  security_socket_bind+0x127/0x200 security/security.c:1390
+>  __sys_bind+0x577/0x7e0 net/socket.c:1479
+>  __do_sys_bind net/socket.c:1494 [inline]
+>  __se_sys_bind+0x8d/0xb0 net/socket.c:1492
+>  __x64_sys_bind+0x4a/0x70 net/socket.c:1492
+>  do_syscall_64+0xb8/0x100 arch/x86/entry/common.c:291
+>  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+> RIP: 0033:0x4497b9
+> Code: e8 8c 9f 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48
+> 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
+> 01 f0 ff ff 0f 83 9b 6b fc ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007fdddf1e9c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000031
+> RAX: ffffffffffffffda RBX: 00007fdddf1ea6cc RCX: 00000000004497b9
+> RDX: 0000000000000000 RSI: 0000000020000040 RDI: 0000000000000013
+> RBP: 000000000071bea0 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+> R13: 00000000000004c8 R14: 00000000006e8568 R15: 00007fdddf1ea700
+>
+> Local variable description: ----address@__sys_bind
+> Variable was created at:
+>  __sys_bind+0x89/0x7e0 net/socket.c:1470
+>  __do_sys_bind net/socket.c:1494 [inline]
+>  __se_sys_bind+0x8d/0xb0 net/socket.c:1492
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> Crash log2
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> BUG: KMSAN: uninit-value in selinux_socket_connect_helper+0x55c/0x960
+> security/selinux/hooks.c:4775
+> CPU: 0 PID: 8234 Comm: syz-executor2 Not tainted 4.19.0-rc8+ #18
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2=
+011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x305/0x460 lib/dump_stack.c:113
+>  kmsan_report+0x1a2/0x2e0 mm/kmsan/kmsan.c:917
+>  __msan_warning+0x7d/0xe0 mm/kmsan/kmsan_instr.c:500
+>  selinux_socket_connect_helper+0x55c/0x960 security/selinux/hooks.c:4775
+>  selinux_socket_connect+0xbe/0x180 security/selinux/hooks.c:4834
+>  security_socket_connect+0x127/0x200 security/security.c:1395
+>  __sys_connect+0x577/0x850 net/socket.c:1660
+>  __do_sys_connect net/socket.c:1675 [inline]
+>  __se_sys_connect+0x8d/0xb0 net/socket.c:1672
+>  __x64_sys_connect+0x4a/0x70 net/socket.c:1672
+>  do_syscall_64+0xb8/0x100 arch/x86/entry/common.c:291
+>  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+> RIP: 0033:0x4497b9
+> Code: e8 8c 9f 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48
+> 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d
+> 01 f0 ff ff 0f 83 9b 6b fc ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007ff660d67c68 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
+> RAX: ffffffffffffffda RBX: 00007ff660d686cc RCX: 00000000004497b9
+> RDX: 0000000000000000 RSI: 0000000020000000 RDI: 0000000000000013
+> RBP: 000000000071bea0 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+> R13: 0000000000000ae0 R14: 00000000006e8b80 R15: 00007ff660d68700
+>
+> Local variable description: ----address@__sys_connect
+> Variable was created at:
+>  __sys_connect+0x89/0x850 net/socket.c:1647
+>  __do_sys_connect net/socket.c:1675 [inline]
+>  __se_sys_connect+0x8d/0xb0 net/socket.c:1672
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+> We provide a simple patch below to stop them.
+> There are a few more lines that invoke move_addr_to_kernel(), but the
+> two of them
+> (bind and connect) seem to be the only cases to be corrected.
+>
+>
+> diff --git a/net/socket.c b/net/socket.c
+> index 390a8ec..de0931c2 100644
+> --- a/net/socket.c
+> +++ b/net/socket.c
+> @@ -1475,7 +1475,7 @@ int __sys_bind(int fd, struct sockaddr __user
+> *umyaddr, int addrlen)
+>         sock =3D sockfd_lookup_light(fd, &err, &fput_needed);
+>         if (sock) {
+>                 err =3D move_addr_to_kernel(umyaddr, addrlen, &address);
+> -               if (err >=3D 0) {
+> +               if (err > 0) {
+>                         err =3D security_socket_bind(sock,
+>                                                    (struct sockaddr *)&ad=
+dress,
+>                                                    addrlen);
+> @@ -1653,7 +1653,7 @@ int __sys_connect(int fd, struct sockaddr __user
+> *uservaddr, int addrlen)
+>         if (!sock)
+>                 goto out;
+>         err =3D move_addr_to_kernel(uservaddr, addrlen, &address);
+> -       if (err < 0)
+> +       if (err <=3D 0)
+>                 goto out_put;
+>
+>         err =3D
+I believe a better fix would be to add an |addrlen| check to
+selinux_socket_bind(), which is illegally assuming
+|address->sa_family| contains any reasonable data regardless of actual
+address length.
+I suspect the bug has been introduced in
+https://github.com/torvalds/linux/commit/0f8db8cc73df60b3de9a5eebd8f117b56e=
+ff5b03
+>
+> Thanks,
+> Kyungtae Kim
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "syzkaller" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to syzkaller+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
 
-Signed-off-by: Max Uvarov <muvarov@gmail.com>
----
- http://www.ti.com/lit/ds/symlink/dp83867e.pdf
- page 87 for register bits
- and
- page 23 last sentance that bit needs to be cleared.
 
- drivers/net/phy/dp83867.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
 
-diff --git a/drivers/net/phy/dp83867.c b/drivers/net/phy/dp83867.c
-index ab58224f897f..1df4da3f70a9 100644
---- a/drivers/net/phy/dp83867.c
-+++ b/drivers/net/phy/dp83867.c
-@@ -37,6 +37,7 @@
- #define DP83867_STRAP_STS1	0x006E
- #define DP83867_RGMIIDCTL	0x0086
- #define DP83867_IO_MUX_CFG	0x0170
-+#define DP83867_10M_SGMII_CFG  0x016F
- 
- #define DP83867_SW_RESET	BIT(15)
- #define DP83867_SW_RESTART	BIT(14)
-@@ -79,6 +80,9 @@
- /* CFG4 bits */
- #define DP83867_CFG4_PORT_MIRROR_EN              BIT(0)
- 
-+/* 10M_SGMII_CFG bits */
-+#define DP83867_10M_SGMII_RATE_ADAPT		 BIT(7)
-+
- enum {
- 	DP83867_PORT_MIRROING_KEEP,
- 	DP83867_PORT_MIRROING_EN,
-@@ -285,6 +289,24 @@ static int dp83867_config_init(struct phy_device *phydev)
- 		}
- 	}
- 
-+	if (phydev->interface == PHY_INTERFACE_MODE_SGMII) {
-+		/* For support SPEED_10 in SGMII mode
-+		 * DP83867_10M_SGMII_RATE_ADAPT bit
-+		 * has to be cleared by software. That
-+		 * does not affect SPEED_100 and
-+		 * SPEED_1000.
-+		 */
-+		val = phy_read_mmd(phydev, DP83867_DEVADDR,
-+				   DP83867_10M_SGMII_CFG);
-+		val &= ~DP83867_10M_SGMII_RATE_ADAPT;
-+		ret = phy_write_mmd(phydev, DP83867_DEVADDR,
-+				    DP83867_10M_SGMII_CFG, val);
-+		if (ret) {
-+			WARN_ONCE(1, "dp83867: error DP83867_10M_SGMII_CFG read\n");
-+			return ret;
-+		}
-+	}
-+
- 	/* Enable Interrupt output INT_OE in CFG3 register */
- 	if (phy_interrupt_is_valid(phydev)) {
- 		val = phy_read(phydev, DP83867_CFG3);
--- 
-2.17.1
+--=20
+Alexander Potapenko
+Software Engineer
 
+Google Germany GmbH
+Erika-Mann-Stra=C3=9Fe, 33
+80636 M=C3=BCnchen
+
+Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
+Registergericht und -nummer: Hamburg, HRB 86891
+Sitz der Gesellschaft: Hamburg
