@@ -2,285 +2,144 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08058C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 15:21:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA885C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 15:24:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ED3620834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 15:21:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75A502084A
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 15:24:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VpwmpnTr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ED3620834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kVRe8ZfK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75A502084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727518AbeJYXyS (ORCPT
+        id S1727521AbeJYX51 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 19:54:18 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:42354 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727400AbeJYXyS (ORCPT
+        Thu, 25 Oct 2018 19:57:27 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:58700 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727400AbeJYX51 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 19:54:18 -0400
-Received: by mail-yb1-f195.google.com with SMTP id o204-v6so3830798yba.9;
-        Thu, 25 Oct 2018 08:21:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JFY42edVAs1eg28BpgnTF/8Lqgn+1MR/kXxJW72nqSk=;
-        b=VpwmpnTr7U644k+1LEJ7uyEFizBiE4I0TAeU8tbBv5fWWwGTCX9WhWboSpDR0/ftQL
-         WGC9I223fFBGSR/MheIfq2kabN2BpDH/w9YpZgNdrvZxCdmO2ZPtEZIK3bvKq0kEaGOi
-         FIP9avz0yaxzpkAD1+5rCzVJsi16ICBpRVihpGUAOMzFyV/zpplFHB1DMURQvYwBqaOg
-         Js7OcRVUhE1XIWOZJn9vFvt4fOU/hJ0z69MsgPv7/uqFy/W39M29xi5IfQAI723NLCLR
-         Duc1YNeX1coW2fKwKphgnIAJizDMuPokGBj/1/14WPrb/1jQj69DcvFz9/kv71Ik9mWB
-         XGZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JFY42edVAs1eg28BpgnTF/8Lqgn+1MR/kXxJW72nqSk=;
-        b=pjwUpvMZMFp9dbUfX8KbMCFLEWbm/mSbwQOkK+KS7qXxeW12bFAFNmfBma8l10qknA
-         0LAQ9V3lfVXtna7+TFUBhs4BJAs3zHIc2CwyP1VaxrKqSSAVAG8p9hRx0A1QZYF5+pgn
-         2ROCPINrBTpINIKQa9fJWCFzsZaj2ENTkDd5cJwa3sYtxKKN3gRN0l0B3xmS+sGH9PLn
-         3uWmkqtx3yjWgQDIbDhpN++Og2/8ot5Akp7xUkhADwrJs15Q6SpYn0+jo34EDpDNEuJz
-         bSYZO23Cu/MSMN41W4KiPMkvHnLk0GyasWgfZWJvpPfKFy8VsvPgu991ycsvfo+v/4Om
-         VrJw==
-X-Gm-Message-State: AGRZ1gLKhuT7uP0tAH+x5d2GB+rO4YlOOqQJBL+Fy/z13zRtUGOb1uys
-        uGPA+VKVo/GyWTowNFW+Hcw=
-X-Google-Smtp-Source: AJdET5dFPWZ6mtqx6rWzZE6yD6tAj3tyXN7+mdLtpp81cA4K2uMWurw+b/X9LoReamtuGdbHFt79+A==
-X-Received: by 2002:a25:c70b:: with SMTP id w11-v6mr1969977ybe.6.1540480863004;
-        Thu, 25 Oct 2018 08:21:03 -0700 (PDT)
-Received: from localhost.localdomain ([198.52.185.227])
-        by smtp.gmail.com with ESMTPSA id s200-v6sm3864776ywg.61.2018.10.25.08.21.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Oct 2018 08:21:02 -0700 (PDT)
-From:   thesven73@gmail.com
-X-Google-Original-From: TheSven73@googlemail.com
-To:     svendev@arcx.com, lee.jones@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, afaerber@suse.de, treding@nvidia.com,
-        david@lechnology.com, noralf@tronnes.org, johan@kernel.org,
-        monstr@monstr.eu, michal.vokac@ysoft.com, arnd@arndb.de,
-        gregkh@linuxfoundation.org, john.garry@huawei.com,
-        geert+renesas@glider.be, robin.murphy@arm.com,
-        paul.gortmaker@windriver.com,
-        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
-        yuanzhichang@hisilicon.com, stuyoder@gmail.com,
-        linus.walleij@linaro.org, maxime.ripard@bootlin.com,
-        bogdan.purcareata@nxp.com
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH anybus v1 3/4] bus: support HMS Anybus-S bus.
-Date:   Thu, 25 Oct 2018 11:20:58 -0400
-Message-Id: <20181025152058.9176-1-TheSven73@googlemail.com>
-X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Thu, 25 Oct 2018 19:57:27 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181025152411euoutp02686642d995742dd5453d872d48b04bdc~g41q0to0n2073620736euoutp02F
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 15:24:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181025152411euoutp02686642d995742dd5453d872d48b04bdc~g41q0to0n2073620736euoutp02F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1540481051;
+        bh=UKrrHW45NLg3rlfVxk+0pH0sBGhR7EATxrxh/zG1CH8=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=kVRe8ZfKnvMPiQW99XqdSPogt0/UfShw0l7DzgRgcRi72psA8Jyp2F7LEGZP1WsR4
+         srWRaJY4XTxUtBjQRaVQfIeUluzvDwnbu/HoKsZOOWmpqtErM0lAE0kQuZFbxwuswg
+         a6MMEstQd5c81NB99oZYFmlky3hn9k0eAs5XB2P0=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181025152410eucas1p2afe1496101091850a16bafd9e44bf637~g41prQuAe0198101981eucas1p2X;
+        Thu, 25 Oct 2018 15:24:10 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id FF.50.04294.910E1DB5; Thu, 25
+        Oct 2018 16:24:09 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20181025152409eucas1p22b08bb21ed0de710560ec0ced77958a7~g41o9kz2u0946109461eucas1p2r;
+        Thu, 25 Oct 2018 15:24:09 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20181025152409eusmtrp212b3349a3c0b83e88d277b9ecb69ec3a~g41ouUwJH2641026410eusmtrp29;
+        Thu, 25 Oct 2018 15:24:09 +0000 (GMT)
+X-AuditID: cbfec7f4-84fff700000010c6-dc-5bd1e019ece4
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 80.84.04284.810E1DB5; Thu, 25
+        Oct 2018 16:24:08 +0100 (BST)
+Received: from AMDC2034.DIGITAL.local (unknown [106.120.51.41]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20181025152408eusmtip183ae2301083ffe1b6b107475f7238700~g41oCaJwd2540325403eusmtip1w;
+        Thu, 25 Oct 2018 15:24:08 +0000 (GMT)
+From:   Christoph Manszewski <c.manszewski@samsung.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Christoph Manszewski <c.manszewski@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Joonyoung Shim <jy0922.shim@samsung.com>,
+        Seung-Woo Kim <sw0312.kim@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        David Airlie <airlied@linux.ie>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>
+Subject: [PATCH v2 0/2] drm/exynos: fimd: Add properties
+Date:   Thu, 25 Oct 2018 17:23:48 +0200
+X-Mailer: git-send-email 2.7.4
+X-Brightmail-Tracker: H4sIAAAAAAAAA0VSbUhTYRjl3f3Ydbq6Tss3kwWLiqxcaeGNJArE9lMojBKtmRe/timbmvqn
+        oUympenCNtSyKM2Ums413cRCy6aUs2HKVPwAqflZ1lQINNt21f6d5zznvOc88BII7xEWTKTJ
+        smm5TCwR4BzU9PGP7cS+aXv8yZqnQmrstQ2jymz9LKpVp8coa2c9oL6u/sQpzVQFSs1O2lHq
+        /swCQg0OtrCpgcJFNmWYGcGoIUstTukG37KoVx8m2JTuwRx+YbfI0FSCi9rXpjHR1F0rS9T2
+        /I6o3NgERC4DPxa/zolKpiVpubRceP4mJ9VYM4xktWJ5o+pNthLUoaXAh4DkafiwrhYpBRyC
+        RzYCWNZgw5hhBcCJ2jmcGVwAqi0DrB2LvgNlFi8AHHBpwI7lWdsc8Khw8gwcn/iNe3AgeRBu
+        VDZ5RQj5BoVd/Q7vUwEkBWt7zWwPRslDcMh4D2ci+HDUVuJtBUktG06bCr0LLpkLq5TmrR7R
+        0FpfgzE4AM5bjWwGh8BNcx2LMRcBOLYygjFDBYDdzaVbh5+DBse8W0W4Ox2FeouQoS/CznW7
+        l4bkLuhY8vfQiBtqTFqEoblQXcxj1IfhgtGIb8fOulYBg0VQdY+5i0cmQFO5nlUB+NX/s54A
+        0ASC6ByFNIVWhMvo22EKsVSRI0sJu5UpNQD3p/n017rSASzrST2AJIDAj9vX8iWeh4lzFfnS
+        HgAJRBDI7Rq3x/O4yeL8AlqeeUOeI6EVPWA/gQqCuA2PW+N5ZIo4m86g6Sxavr1lET7BSqB9
+        6ezIuyzpMSj5KUnyK3ZVToZv5KIpPTavS6f/4RyukamOtR/QTsapVRFXXc6i4PD2798SCvYU
+        OHuvZaWnS8T+jtCpZd+YpaiNEF5iqu1IcWR68/vPZxvXlt9poqurNvscEct7K+OOd09mdDf+
+        soZMmXsTL836sfucq8KhmCUBqkgVnwpF5ArxP6nHotYwAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrELMWRmVeSWpSXmKPExsVy+t/xu7oSDy5GG3yeZWFxa905VovecyeZ
+        LDbOWM9qcXz3UkaLK1/fs1lMuj+BxeLFvYssFv2PXzNbnD+/gd3ibNMbdotNj6+xWlzeNYfN
+        Ysb5fUwWa4/cZbeYMfklmwO/x6ZVnWwe2789YPW4332cyWPzknqPvi2rGD0+b5ILYIvSsynK
+        Ly1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcksSy3St0vQy9gy+ypzwUbW
+        ipsd/9kbGOezdDFyckgImEhMW78DyObiEBJYyihx4+o1ZoiEjMS8s31sELawxJ9rXWwQRZ8Y
+        Je7seA6WYBMwlbh99xOYLSKgLPF34ipGkCJmgYMsEi0bzzCCJIQFLCTmHN3JDmKzCKhKXN7S
+        A9bAK+AhMfn6O6gNchI3z3UyT2DkWcDIsIpRJLW0ODc9t9hQrzgxt7g0L10vOT93EyMwvLcd
+        +7l5B+OljcGHGAU4GJV4eE9suBAtxJpYVlyZe4hRgoNZSYR37+2L0UK8KYmVValF+fFFpTmp
+        xYcYTYGWT2SWEk3OB8ZeXkm8oamhuYWlobmxubGZhZI473mDyighgfTEktTs1NSC1CKYPiYO
+        TqkGxr7NkT6WnEbnPZWsnaPfHthyauGZ4EVa+zwWVq8V0TxT79phHLt16t+nZyxeMaZHli/c
+        aPJ1jonH8aM3L9TLiJoKl4u5bOPJ/NXx7Yjf9qezGd8qPv2l7cQ/IStnfX2a706Rsr6H3aoi
+        ny5e5dL5WjZdjnXxRs2F010Mf6wMOnFl7U5V9lVnvyuxFGckGmoxFxUnAgDecSLqhQIAAA==
+Message-Id: <20181025152409eucas1p22b08bb21ed0de710560ec0ced77958a7~g41o9kz2u0946109461eucas1p2r@eucas1p2.samsung.com>
+X-CMS-MailID: 20181025152409eucas1p22b08bb21ed0de710560ec0ced77958a7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181025152409eucas1p22b08bb21ed0de710560ec0ced77958a7
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181025152409eucas1p22b08bb21ed0de710560ec0ced77958a7
+References: <CGME20181025152409eucas1p22b08bb21ed0de710560ec0ced77958a7@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus, thanks a million for the detailed patch review, you've given this
-patch a lot more attention than I was expecting. Great !!
+Hello,
 
-> What you need to add is a bit of how the driver is architected.
+This patch series adds two new configurable properties
+to exynos_drm_fimd.
 
-I agree. Written once, read/maintained 100s of times, right?
+Patch 1 add window alpha property.
+Patch 2 add pixel blend mode propery.
 
-> This is really needed because the driver is starting threads and
-> running completions and tasks and whatnot to the left and
-> right, and when random people come in to maintain this code they
-> will be puzzled. 
+Regards,
+Chris
 
-I had originally architected this driver to be much simpler, with everything
-running in the context of the userspace threads (except obviously the
-interrupt). But it stood zero chance, the presence of the soft interrupt + the
-h/w requirement to lock/unlock the region when acking the soft interrupt meant
-that there were circular locking dependencies that always resulted in
-deadlock :(
+Changes in v2:
+ - add premultiplied pixel blend mode (i. e. make it functional),
+ - correct issues from v1,
+ - refactor code in order to adapt above changes.
 
-This single-thread message-queue architecture is harder to understand,
-but much easier and safer in terms of synchronization.
+Christoph Manszewski (2):
+  drm/exynos: fimd: Make plane alpha configurable
+  drm/exynos: fimd: Make pixel blend mode configurable
 
-I find it hard myself to keep track of functions that run in userland thread
-context, and those that run in the kernel thread. Should I prefix kernel thread
-functions with kt_* just to keep them apart?
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c | 123 +++++++++++++++++++++++++------
+ include/video/samsung_fimd.h             |  10 +++
+ 2 files changed, 110 insertions(+), 23 deletions(-)
 
-> also "buss" is a germanism isn't it?  It should be just "anybus"?
+-- 
+2.7.4
 
-There are several different types of anybus:
-Anybus-M
-Anybus-S
-Anybus-CompactCOM
-
-This driver implements Anybus-S only. I had originally prefixed files and
-functions with anybus-s and anybus_s respectively, but it looked horrible
-visually:
-
-struct anybus_s_host *cd = data;
-drivers/bus/anybus-s-host.c
-include/linux/anybus-s-client.h
-
-I'm completely open to suggestions on this one.
-anybuss?
-anybus-s?
-just anybus?
-
->> +static irqreturn_t irq_handler(int irq, void *data)
->> +{
->> +       struct anybuss_host *cd = data;
->> +       int ind_ab;
->> +
->> +       /* reading the anybus indicator register acks the interrupt */
->> +       ind_ab = read_ind_ab(cd->regmap);
->> +       if (ind_ab < 0)
->> +               return IRQ_NONE;
->> +       atomic_set(&cd->ind_ab, ind_ab);
->> +       complete(&cd->card_boot);
->> +       wake_up(&cd->wq);
->> +       return IRQ_HANDLED;
->> +}
-
-> It looks a bit like you reinvent threaded interrupts but enlighten me
-> on the architecture and I might be able to get it.
-
-HMS Industrial Networks designed the anybus interrupt line to be dual purpose.
-In addition to being a 'real' interrupt during normal operation, it also signals
-that the card has initialized when coming out of reset. As this is a one-time
-thing, it needs a 'struct completion', not a wait_queue.
-
-It is of course possible to emulate a struct completion using a waitqueue and
-an atomic variable, but wasn't struct completion invented to eliminate the
-subtle dangers of this?
-
-So this is why the irq_handler has to call both complete() and wake_up(), so
-it can't be modelled by a threaded interrupt.
-
-Maybe if we use two separate irq_handlers: put the first one in place during
-initialization, then when the card is initialized, remove it and put a threaded
-one in place? Would this be a bit too complicated?
-
-> This looks complex. Why can't you just sleep() and then
-> retry this instead of shuffleing around different "tasks"?
-> Are you actually modeling a state machine? In that case
-> I can kind of understand it, then you just need one
-> thread/work and assign it an enum of states or
-> something, maybe name that "state" rather than task
-> so we see what is going on.
-
-Yes, I am modeling a state machine.
-When userspace asks the anybus to do something, it throws a task into a queue,
-and waits on the completion of that task.
-The anybus processes the tasks sequentially, each task will go through
-multiple states before completing:
-
-userspace processes 	A	B	C
-			|	|	|
-			v	v	v
-			-----------------
-			| task waiting	|
-			| task waiting	|
-			| task waiting	|
-			|---------------|
-			| task running	|
-			-----------------
-				^
-				|
-			-----------------
-			| anybus process |
-			| single-thread	 |
-			| h/w access	 |
-			------------------
-
-There is only one single kernel thread that accesses the hardware and the queue.
-This prevents various subtle synchronization/deadlock issues related to the
-soft interrupts.
-
-The tasks change state by re-assigning their own task_fn callback:
-
-function do_state_1(self) {
-	...
-	if (need state 2)
-		self->task_fn = do_state_2;
-}
-
-function do_state_2(self) {
-	...
-	if (need_state_1)
-		self->task_fn = do_state_1;
-}
-
-I could have opted for a classic state machine in a single callback:
-
-function do_state(self) {
-	switch (self->state) {
-	case state_1:
-		...
-		if (need_state_2)
-			self->state = state_2;
-		break;
-	case state_2:
-		...
-		if (need_state_1)
-			self->state = state_1;
-		break;
-	}
-}
-
-But the former seemed easier to understand.
-Obviously it's more important that it's easy to understand not to me, but to
-most developers who read the code. So tell me if the callback approach is
-too exotic.
-
->> +static void softint_ack(struct anybuss_host *cd)
->> +static void process_softint(struct anybuss_host *cd)
->
-> This looks like MSI (message signalled interrupt) and makes me think
-> that you should probably involve the irqchip maintainers. Interrupts
-> shall be represented in the irqchip abstraction.
-
-This is not a *real* software interrupt - it's just a bit in an internal
-register that gets set by the anybus on a certain condition, and needs
-to be ACKed. When the bit is set, the bus driver then tells userspace
-about it - anyone who is running poll/select on the sysfs node or devnode.
-
-The anybus documentation calls this a 'software interrupt'.
-
->> +       cd->reset = pdata->reset;
->
-> This callback thing to handle reset doesn't seem right.
-
-I agree, and I've gone through the exact same thought process before.
-
-Right now I'm using platform_data for the bus driver's dependencies:
-(the irq is passed out-of-band, via platform_get_resource())
-
-+/**
-+ * Platform data of the Anybus-S host controller.
-+ *
-+ * @regmap: provides access to the card dpram.
-+ *		MUST NOT use caching
-+ *		MUST NOT sleep
-+ * @reset:  controls the card reset line.
-+ */
-+struct anybuss_host_pdata {
-+	struct regmap *regmap;
-+	anybuss_reset_t reset;
-+};
-
-Now imagine that the underlying anybus bridge is defined as a reset controller.
-I could not find a way to pass a reset controller handle through platform_data.
-It seemed possible via the devicetree only. I was developing on 4.9 at the time.
-
-So what if we pass the dependencies not via platform_data, but via the
-devicetree? In that case, I cannot find a way to pass the struct regmap
-via the devicetree...
-
-Wait... are you talking about
-reset_controller_add_lookup() / devm_reset_control_get_exclusive() ?
-That's new to me, and only used in a single driver right now. Would that work?
