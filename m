@@ -2,105 +2,136 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EECEFC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:23:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC444C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:24:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3D962082E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:23:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3D962082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 773552082E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:24:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j9C0GWeS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 773552082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727789AbeJZC5U (ORCPT
+        id S1727805AbeJZC6X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 22:57:20 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37074 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727651AbeJZC5T (ORCPT
+        Thu, 25 Oct 2018 22:58:23 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46721 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727651AbeJZC6X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 22:57:19 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9PIJD5a040933
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 14:23:27 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2nbg1cs1xm-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 14:23:27 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
-        Thu, 25 Oct 2018 19:23:25 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 25 Oct 2018 19:23:20 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9PINJo657933892
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 25 Oct 2018 18:23:20 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DA0B711C050;
-        Thu, 25 Oct 2018 18:23:19 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0C10C11C052;
-        Thu, 25 Oct 2018 18:23:18 +0000 (GMT)
-Received: from linux.vnet.ibm.com (unknown [9.126.150.29])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with SMTP;
-        Thu, 25 Oct 2018 18:23:17 +0000 (GMT)
-Date:   Thu, 25 Oct 2018 23:53:17 +0530
-From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Rik van Riel <riel@surriel.com>,
-        Yi Wang <wang.yi59@zte.com.cn>, zhong.weidong@zte.com.cn,
-        Yi Liu <liu.yi24@zte.com.cn>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2] sched/core: Don't mix isolcpus and housekeeping CPUs
-Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-References: <1540350169-18581-1-git-send-email-srikar@linux.vnet.ibm.com>
- <20181024100323.GO3109@worktop.c.hoisthospitality.com>
- <20181024103002.GB18466@linux.vnet.ibm.com>
- <20181025000707.GR3109@worktop.c.hoisthospitality.com>
+        Thu, 25 Oct 2018 22:58:23 -0400
+Received: by mail-wr1-f67.google.com with SMTP id i4-v6so10295413wrr.13;
+        Thu, 25 Oct 2018 11:24:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=lTfnVu+HhfRJVwMWkB68Hz4tsFpDxb1yq1ep7I7iCGs=;
+        b=j9C0GWeSTmpukELzCcZP5I7A9EDgPrePbvO2GC+Uy+YVcsXeLJXrExQ3GKqJbdLlsD
+         wEef9XABUjF4QKd2xysS8SDc4in1hzd66FqPhllnnEH533T+1AFJc21NxnvGGb1g83pK
+         uHxoKleBXeedmnrgAWOpglumSrMKOJUWUd6IFN847S0ZETkepX8+vIqVkZqiaksddwH/
+         NkN8VJymlQ6Amqur4qX2i+dhSlF0jbr399YDRE2XIXYo1KrhpZa9m9fsPQtkyWdV6DDz
+         4Qu5eqbYEro+52eOVjVFw+Y3rUpNXz1+FL6KEBESLTxXmP8QFrqqnSaIut/6fwasiC66
+         aHtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=lTfnVu+HhfRJVwMWkB68Hz4tsFpDxb1yq1ep7I7iCGs=;
+        b=UYMRWeo2dPctMeX9Z/W6NxE27ocwwyMfByYocrxE0LG8aV708i9oPBgWKuvU7ycKaG
+         EjWML8dPXTfQ4x5Z1USXSpRhAzqkG64j7FscGczfnBMfjxZLfgzo1mgCwlFVGN7jdZwn
+         IVjO7nySqUWGK9zljE8ogAYKMWLXxbGDi3+8QH9h2gaM+wv5HBNXdyL2Auqf6QPbj4Wt
+         kdcjsck7L45jQKKNyZ2YfOd7n9OHaTZkxynyJC8BDFI6MiMpJY8+SD5JuF2RzdEmjPpv
+         uNHjIM5Cy8v4oZZMAyfXWT7znCezkRxaeeu4Hiq3C0J506FZqrPy8qZJma9flEPZsHH5
+         D1Gw==
+X-Gm-Message-State: AGRZ1gIiySPf1ECZmgAO/b0lsy8Ih2HAT7fxV1yzThhTymqm0YaBP4Fb
+        YuCLCYvj4AI6RcQXzuf7qXL/Ottai/9ADx0B2wE=
+X-Google-Smtp-Source: AJdET5ddw4H6Z7qGcHpDzny09xgaUCeycKwPo1WmeZxPQMgVQws7DUV6ogkzGr9BDK5I13M31PM3vT8HOzn9sD+HxE0=
+X-Received: by 2002:adf:9589:: with SMTP id p9-v6mr3064566wrp.270.1540491869751;
+ Thu, 25 Oct 2018 11:24:29 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20181025000707.GR3109@worktop.c.hoisthospitality.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-TM-AS-GCONF: 00
-x-cbid: 18102518-4275-0000-0000-000002D3C2E7
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18102518-4276-0000-0000-000037DFD358
-Message-Id: <20181025182317.GE18466@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-25_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810250153
+References: <1540116359-164086-1-git-send-email-yuehaibing@huawei.com>
+In-Reply-To: <1540116359-164086-1-git-send-email-yuehaibing@huawei.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Thu, 25 Oct 2018 14:24:17 -0400
+Message-ID: <CADnq5_OSqxu_e88dmh57eiq2y78jKrQkarDXNYpeSWCe066DrA@mail.gmail.com>
+Subject: Re: [PATCH -next] drm/radeon/kms: remove set but not used variable 'pll'
+To:     yuehaibing@huawei.com
+Cc:     "Deucher, Alexander" <alexander.deucher@amd.com>,
+        Christian Koenig <christian.koenig@amd.com>,
+        Chunming Zhou <David1.Zhou@amd.com>,
+        Dave Airlie <airlied@linux.ie>,
+        kernel-janitors@vger.kernel.org,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> 
-> You can create multiple partitions with cpusets but still have an
-> unbound task in the root cgroup. That would suffer the exact same
-> problems.
-> 
+On Sun, Oct 21, 2018 at 11:32 PM YueHaibing <yuehaibing@huawei.com> wrote:
+>
+> Fixes gcc '-Wunused-but-set-variable' warning:
+>
+> drivers/gpu/drm/radeon/radeon_legacy_tv.c: In function 'radeon_legacy_tv_init_restarts':
+> drivers/gpu/drm/radeon/radeon_legacy_tv.c:435:21: warning:
+>  variable 'pll' set but not used [-Wunused-but-set-variable]
+>   struct radeon_pll *pll;
+>
+> It never used since introduction in commit
+> 4ce001abafaf ("drm/radeon/kms: add initial radeon tv-out support.")
+> Also remove related variables 'dev, rdev, radeon_crtc'
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-I probably don't understand this. Even if the child cgroups has
-cpu_exclusive or sched_load_balance reset, the tasks in root cgroup has
-access to all cpus in system. Right?
+Applied.  thanks!
 
--- 
-Thanks and Regards
-Srikar Dronamraju
+Alex
 
+> ---
+>  drivers/gpu/drm/radeon/radeon_legacy_tv.c | 10 ----------
+>  1 file changed, 10 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/radeon/radeon_legacy_tv.c b/drivers/gpu/drm/radeon/radeon_legacy_tv.c
+> index 4278272..3dae2c4 100644
+> --- a/drivers/gpu/drm/radeon/radeon_legacy_tv.c
+> +++ b/drivers/gpu/drm/radeon/radeon_legacy_tv.c
+> @@ -421,24 +421,14 @@ static void radeon_legacy_write_tv_restarts(struct radeon_encoder *radeon_encode
+>
+>  static bool radeon_legacy_tv_init_restarts(struct drm_encoder *encoder)
+>  {
+> -       struct drm_device *dev = encoder->dev;
+> -       struct radeon_device *rdev = dev->dev_private;
+>         struct radeon_encoder *radeon_encoder = to_radeon_encoder(encoder);
+>         struct radeon_encoder_tv_dac *tv_dac = radeon_encoder->enc_priv;
+> -       struct radeon_crtc *radeon_crtc;
+>         int restart;
+>         unsigned int h_total, v_total, f_total;
+>         int v_offset, h_offset;
+>         u16 p1, p2, h_inc;
+>         bool h_changed;
+>         const struct radeon_tv_mode_constants *const_ptr;
+> -       struct radeon_pll *pll;
+> -
+> -       radeon_crtc = to_radeon_crtc(radeon_encoder->base.crtc);
+> -       if (radeon_crtc->crtc_id == 1)
+> -               pll = &rdev->clock.p2pll;
+> -       else
+> -               pll = &rdev->clock.p1pll;
+>
+>         const_ptr = radeon_legacy_tv_get_std_mode(radeon_encoder, NULL);
+>         if (!const_ptr)
+>
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
