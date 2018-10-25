@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64FD6C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 947A1ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2383920873
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50E2920883
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gEUGucry"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2383920873
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="o2wq5Gde"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50E2920883
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730612AbeJYWwd (ORCPT
+        id S1730621AbeJYWwf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:52:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34590 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:52:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34630 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730593AbeJYWwb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:52:31 -0400
+        id S1730602AbeJYWwd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:52:33 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E4E82147A;
-        Thu, 25 Oct 2018 14:19:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ECA862086D;
+        Thu, 25 Oct 2018 14:19:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477174;
-        bh=tfkPTFlnQElKZ8e73xkZntF0MimM3JHWkTahmmnhUuY=;
+        s=default; t=1540477175;
+        bh=T7sPpB8pf8Wh7F9UBSvshsMAujrfQnTTt3k70AoubrU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gEUGucrysXwJA3RVexs/wO/FhxNy2deT0jjh26jtMcgyCE1KjYdK8jn5U53uGEROj
-         P35xHrr04tVJ8EHaGDSt8NI72+DeRoOh9l1ZqnSyIP9tB+qz4uGZeUgeuwzWKt5XAY
-         HA5MyYDF4LkbweoV+oHYl18khG9AIais/Zgxc7Nc=
+        b=o2wq5Gde0+5Eq3o+B5MLGmSvNXmpaPXxYnEZWA36rNHY/9zymIeS9bHpu0BXbl8nR
+         CsXasm0JHbpSagcRlEUQIVgLATcr5bYxsbZipLWuSjSYF2ZacbIxleux4Y3BYOWwnF
+         lq89IODddn5eDANxXCuTTSe6GLwRKseRbJgnjQTo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Chuck Lever <chuck.lever@oracle.com>,
-        Trond Myklebust <trond.myklebust@primarydata.com>,
+Cc:     Trond Myklebust <trond.myklebust@primarydata.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 26/98] NFS: Ignore transport protocol when detecting server trunking
-Date:   Thu, 25 Oct 2018 10:17:41 -0400
-Message-Id: <20181025141853.214051-26-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 27/98] NFSv4: Remove incorrect check in can_open_delegated()
+Date:   Thu, 25 Oct 2018 10:17:42 -0400
+Message-Id: <20181025141853.214051-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
 References: <20181025141853.214051-1-sashal@kernel.org>
@@ -53,46 +52,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuck Lever <chuck.lever@oracle.com>
+From: Trond Myklebust <trond.myklebust@primarydata.com>
 
-[ Upstream commit 7a01edf0058df98d6cc734c5a4ecc51f929a86ec ]
+[ Upstream commit 4e379d36c050b0117b5d10048be63a44f5036115 ]
 
-Detect server trunking across transport protocols. Otherwise, an
-RDMA mount and a TCP mount of the same server will end up with
-separate nfs_clients using the same clientid4.
+Remove an incorrect check for NFS_DELEGATION_NEED_RECLAIM in
+can_open_delegated(). We are allowed to cache opens even in
+a situation where we're doing reboot recovery.
 
-Reported-by: Dai Ngo <dai.ngo@oracle.com>
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/nfs4client.c | 6 ------
- 1 file changed, 6 deletions(-)
+ fs/nfs/nfs4proc.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/fs/nfs/nfs4client.c b/fs/nfs/nfs4client.c
-index a8a9be4c6cf4..eb8777eb4d2b 100644
---- a/fs/nfs/nfs4client.c
-+++ b/fs/nfs/nfs4client.c
-@@ -495,9 +495,6 @@ int nfs40_walk_client_list(struct nfs_client *new,
- 		if (pos->rpc_ops != new->rpc_ops)
- 			continue;
- 
--		if (pos->cl_proto != new->cl_proto)
--			continue;
--
- 		if (pos->cl_minorversion != new->cl_minorversion)
- 			continue;
- 
-@@ -633,9 +630,6 @@ int nfs41_walk_client_list(struct nfs_client *new,
- 		if (pos->rpc_ops != new->rpc_ops)
- 			continue;
- 
--		if (pos->cl_proto != new->cl_proto)
--			continue;
--
- 		if (pos->cl_minorversion != new->cl_minorversion)
- 			continue;
- 
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index db8456b4ecb8..21906d2a13cc 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -1117,8 +1117,6 @@ static int can_open_delegated(struct nfs_delegation *delegation, fmode_t fmode)
+ 		return 0;
+ 	if ((delegation->type & fmode) != fmode)
+ 		return 0;
+-	if (test_bit(NFS_DELEGATION_NEED_RECLAIM, &delegation->flags))
+-		return 0;
+ 	if (test_bit(NFS_DELEGATION_RETURNING, &delegation->flags))
+ 		return 0;
+ 	nfs_mark_delegation_referenced(delegation);
 -- 
 2.17.1
 
