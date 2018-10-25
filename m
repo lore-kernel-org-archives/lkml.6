@@ -2,154 +2,120 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7753C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 12:37:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 781B9C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 12:38:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 867DB2075D
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 12:37:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 867DB2075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 302232075D
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 12:38:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="afk9Kadt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 302232075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727416AbeJYVJh (ORCPT
+        id S1727433AbeJYVLJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 17:09:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52622 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727314AbeJYVJh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 17:09:37 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AA59FAF02;
-        Thu, 25 Oct 2018 12:37:00 +0000 (UTC)
-Subject: Re: [Xen-devel] [PATCH] xen: drop writing error messages to xenstore
-To:     Joao Martins <joao.m.martins@oracle.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
-References: <20181009160959.31076-1-jgross@suse.com>
- <5126873e-ade5-86b0-4ebf-58cb47c9cbe7@oracle.com>
- <90ae453c-f018-60d3-b7a9-e69cd39c0777@suse.com>
- <b1e130bc-983f-f8df-0f5f-66971cc60454@oracle.com>
- <ff88433c-e808-9491-c5a7-ebc5600c7920@suse.com>
- <69f2a1ba-2a4b-bb03-7819-f1d0d6294539@oracle.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <80e05287-920b-3f8d-e329-2d34f7117d60@suse.com>
-Date:   Thu, 25 Oct 2018 14:36:59 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 25 Oct 2018 17:11:09 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:37836 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727240AbeJYVLJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 17:11:09 -0400
+Received: by mail-oi1-f196.google.com with SMTP id e17-v6so6478571oib.4
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 05:38:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=4qkP5+4zUpDexjeahaHUtyRiefJqAjWZn4M453yEJp0=;
+        b=afk9KadtDA8pE6+kL8w4ebZqXz3RP/tjGHRwGJPW/bUQgsViAjebd9XkKB6R5GdZdr
+         lpe7PBvWbPJCYUHvs9UkeXBZaEv58ugxVQmR1fWsWDvoyRUHjBec0WaKTfoCkNallgr8
+         wPeRRW6Ifr94AGAbEFYyP0Pw5p5XLd44KOoFc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=4qkP5+4zUpDexjeahaHUtyRiefJqAjWZn4M453yEJp0=;
+        b=DM6FapEKSLCJZxucliQGmsRV+52B/mvnLUqckgeTnIIMVVfPgt7S9D0MRBb7/sfFNE
+         4vL+yXyW/dS2o+Jc1FGI2SaeVuNlM4QbEFP1wh6hrq+3hzBafI210GXcCOwDzpXaeHfJ
+         ndR/oEVWZoPJv58VI3eZsOpx0qhP/u2vOd5LcQ24YzPqp6/u7uHUqgjWzmfO649c9tQy
+         AwjaNe9lEtLvpSdCV+39+dqSwnKfsmM3eXlPDmfGhbPHaEtfwPzgcoyBYQAARs1gSVeM
+         KKPWvwT8yxWkX5HtcW6pqTzQ42/PZT5gaBuaJkMet+lvrd9pMsVFCUxZ3QlKulSR36sg
+         Rgkg==
+X-Gm-Message-State: AGRZ1gK2lRKula9CQ2u3tLV+UYN8sSpaW7zqjr3z/FG7i4TzgKSHLiI5
+        hRkCfT3Ya+rzIfc50yIU3Y2qzetkJNEnDQ==
+X-Google-Smtp-Source: AJdET5eAALnyoTNyBzw6JjiYCwJR7MBlcYZslIqdA5hRQOJwP/+h/Hfmkb+0/+kbSxkVrh7kafeNUg==
+X-Received: by 2002:aca:5907:: with SMTP id n7-v6mr368669oib.166.1540471112964;
+        Thu, 25 Oct 2018 05:38:32 -0700 (PDT)
+Received: from mail-oi1-f181.google.com (mail-oi1-f181.google.com. [209.85.167.181])
+        by smtp.gmail.com with ESMTPSA id g20sm2683031oth.30.2018.10.25.05.38.30
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Oct 2018 05:38:31 -0700 (PDT)
+Received: by mail-oi1-f181.google.com with SMTP id 20-v6so6505652oip.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 05:38:30 -0700 (PDT)
+X-Received: by 2002:aca:c593:: with SMTP id v141-v6mr365850oif.113.1540471110165;
+ Thu, 25 Oct 2018 05:38:30 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <69f2a1ba-2a4b-bb03-7819-f1d0d6294539@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Received: by 2002:ac9:7915:0:0:0:0:0 with HTTP; Thu, 25 Oct 2018 05:37:59
+ -0700 (PDT)
+In-Reply-To: <20181025120006.GY30658@n2100.armlinux.org.uk>
+References: <20181025012745.20884-1-rafael.tinoco@linaro.org> <20181025120006.GY30658@n2100.armlinux.org.uk>
+From:   Rafael David Tinoco <rafael.tinoco@linaro.org>
+Date:   Thu, 25 Oct 2018 09:37:59 -0300
+X-Gmail-Original-Message-ID: <CABdQkv_cC4ixEFr91zyg-S21O5_7U8FV7=g7ZMRqGcQyhrwzaQ@mail.gmail.com>
+Message-ID: <CABdQkv_cC4ixEFr91zyg-S21O5_7U8FV7=g7ZMRqGcQyhrwzaQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm/zsmalloc.c: check encoded object value overflow
+ for PAE
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc:     Rafael David Tinoco <rafael.tinoco@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mm@kvack.org, Mark Brown <broonie@kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Nitin Gupta <ngupta@vflare.org>,
+        Minchan Kim <minchan@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/10/2018 13:03, Joao Martins wrote:
-> On 10/11/2018 06:05 AM, Juergen Gross wrote:
->> On 10/10/2018 18:57, Boris Ostrovsky wrote:
->>> On 10/10/18 11:53 AM, Juergen Gross wrote:
->>>> On 10/10/2018 17:09, Joao Martins wrote:
->>>>> On 10/09/2018 05:09 PM, Juergen Gross wrote:
->>>>>> xenbus_va_dev_error() will try to write error messages to Xenstore
->>>>>> under the error/<dev-name>/error node (with <dev-name> something like
->>>>>> "device/vbd/51872"). This will fail normally and another message
->>>>>> about this failure is added to dmesg.
->>>>>>
->>>>>> I believe this is a remnant from very ancient times, as it was added
->>>>>> in the first pvops rush of commits in 2007.
->>>>>>
->>>>>> So remove the additional message when writing to Xenstore failed as
->>>>>> a minimum step.
->>>>>>
->>>>>> Signed-off-by: Juergen Gross <jgross@suse.com>
->>>>>> ---
->>>>>> I am considering removing the Xenstore write altogether, but I'm
->>>>>> not sure it isn't needed e.g. by xend based installations. So please
->>>>>> speak up in case you know why this write is there.
->>>>> So this:
->>>>>
->>>>> "This will fail normally and another message about this failure is added to dmesg."
->>>>>
->>>>> Brings me to the question: What about {stub,driver}domains? Ideally you
->>>>> shouldn't be looking at domU's dmesg as a control domain no? I can't remember
->>>>> any other error node, but if something fails e.g. netfront fails to allocate an
->>>>> unbound event channel - how do you know the cause from the control domain
->>>>> perspective?
->>>>>
->>>>> Irrespective of xend or not: isn't this 'error' node the only one that
->>>>> propagates error causes per device from domU?
->>>> What does it help you in dom0 if you have an error message in Xenstore
->>>> if a frontend driver couldn't do its job? Is there anything you can do
->>>> as a Xen admin?
->>>
->>> The admin may want to know, for example, that a hotplug in the guest failed.
->>
->> Shouldn't he ask the guest for that? There are dozens of other possible
->> problems letting hotplug fail which won't write anything to Xenstore.
->>
-> But I think nothing stops people from using their own hotplug script that could
-> use this error node (or even something else).
-> 
->> This might be interesting for development/test purposes, but I really
->> question it to stay in mature code.
->>
-> You're right in all of it: it doesn't convey the error in a agnostic manner, ATM
-> doesn't report all errors involved in the device setup, and when a
-> xenbus_dev_fatal happens you might end up looking at the guest anyways. But
-> there might be users right now of this node e.g. cases where you have a bunch of
-> known/trusted Linux guests working as backends (which also use this error node,
-> it's not just frontends *I think*) which you would be able to recognize the
-> error messages to inform the admin e.g. maybe QubesOS? It is merely an
-> informative error message node, but it seems better than just a simple
-> XenbusClosed state, with many reasons that it could lead to. Anyhow, just my 2c.
+> MAX_PHYSMEM_BITS is a definition for sparsemem, and is only visible
+> when sparsemem is enabled.  When sparsemem is disabled, asm/sparsemem.h
+> is not included (and should not be included) which means there is no
+> MAX_PHYSMEM_BITS definition.
 
-If there are any users this will be in rather old Xen versions only, as
-writing the Xenstore node is _failing_ with newer Xen versions (that was
-the original reason for writing that patch).
+Missed that part :\, tks.
 
-So back to my patch: any reason not to take it? After all it will only
-remove the not very helpful kernel message that writing the Xenstore
-node failed.
+> I don't think zsmalloc.c should be (ab)using MAX_PHYSMEM_BITS, and
+> your description above makes it sound like you expect it to always be
+> defined.
+>
+> If we want to have a definition for this, we shouldn't be playing
+> fragile games like:
+>
+> #ifndef MAX_POSSIBLE_PHYSMEM_BITS
+> #ifdef MAX_PHYSMEM_BITS
+> #define MAX_POSSIBLE_PHYSMEM_BITS MAX_PHYSMEM_BITS
+> #else
+> /*
+>  * If this definition of MAX_PHYSMEM_BITS is used, OBJ_INDEX_BITS will just
+>  * be PAGE_SHIFT
+>  */
+> #define MAX_POSSIBLE_PHYSMEM_BITS BITS_PER_LONG
+> #endif
+> #endif
+>
+> but instead insist that MAX_PHYSMEM_BITS is defined _everywhere_.
 
-
-Juergen
-
+Is it okay to propose using only MAX_PHYSMEM_BITS for zsmalloc (like
+it was before commit 02390b87) instead, and make sure *at least* ARM
+32/64 and x86/x64, for now, have it defined outside sparsemem headers
+as well ? This way I can WARN_ONCE(), instead of BUG(), when specific
+arch does not define it - enforcing behavior - showing BITS_PER_LONG
+is being used instead of MAX_PHYSMEM_BITS (warning, at least once, for
+the possibility of an overflow, like the issue showed in here).
