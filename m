@@ -2,141 +2,94 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6220CC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 16:14:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04D3FECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 16:14:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B1D620848
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 16:14:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B1D620848
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id C90B720848
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 16:14:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C90B720848
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727759AbeJZArg (ORCPT
+        id S1727803AbeJZArq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 20:47:36 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:40055 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727313AbeJZArf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 20:47:35 -0400
-Received: by mail-qt1-f196.google.com with SMTP id z9-v6so10526091qto.7;
-        Thu, 25 Oct 2018 09:14:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=x3LXVVasdJKF778RgUuO4lJ6BM5jsyB1NU7WJ456Erk=;
-        b=cA7pvcCOGsAn2bTBDjr/QBquEZrpAvNASeNbo1gqpOPkIUtG4iTji8KQh5vGHxqxUN
-         rEHt/aDYq82Oev5krWZjX+GnGDTPHiuvo0AbbRg68x+uhJh3621Whdg33g+YiVAQ3NhQ
-         BE0CgFnBq/zHoA/QFRaoFKLHJ9tKCZ8NgfR6nd8BTOxWu0KpdpdMQt3feoGEwTa1fgSu
-         3Rrcw9lz0ASYQKDBd04ceU2IMq5zn790ctItsLWgTGxb6x6wpaYWbzkqcTLjVVGhiHwP
-         B88NsYj/raXWesU5AEc9N15HLCJhjAzkini1RVluEQvtkaEuu+LwgjIDI+T0E7RjFphY
-         s4EQ==
-X-Gm-Message-State: AGRZ1gLo5py+LclPB4AuJm9oZfqsSBm2lwE5vcjc2aqwAujmj9fQQNjZ
-        o88NesjBaWk2rdP2GGucumYOiJRewiis6vPM2eg=
-X-Google-Smtp-Source: AJdET5df6/3XEn4EmudjpsWG8ZOgg+8OGLpiFFIn1ZQsEMlYADTHcU7OA4zguJu/wTLx2Uh6vcJsuMvGL9l6f5Fv/GE=
-X-Received: by 2002:a0c:c68f:: with SMTP id d15-v6mr2202319qvj.40.1540484047699;
- Thu, 25 Oct 2018 09:14:07 -0700 (PDT)
+        Thu, 25 Oct 2018 20:47:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:39786 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727313AbeJZArq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 20:47:46 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 66F41AD1A;
+        Thu, 25 Oct 2018 16:14:18 +0000 (UTC)
+Date:   Thu, 25 Oct 2018 18:14:10 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Mel Gorman <mgorman@suse.de>,
+        David Rientjes <rientjes@google.com>,
+        Andrea Argangeli <andrea@kernel.org>,
+        Zi Yan <zi.yan@cs.rutgers.edu>,
+        Stefan Priebe - Profihost AG <s.priebe@profihost.ag>,
+        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] mm, thp: consolidate THP gfp handling into
+ alloc_hugepage_direct_gfpmask
+Message-ID: <20181025161410.GT18839@dhcp22.suse.cz>
+References: <20180925120326.24392-1-mhocko@kernel.org>
+ <20180925120326.24392-3-mhocko@kernel.org>
+ <20180926133039.y7o5x4nafovxzh2s@kshutemo-mobl1>
+ <20180926141708.GX6278@dhcp22.suse.cz>
+ <20180926142227.GZ6278@dhcp22.suse.cz>
+ <20181018191147.33e8d5e1ebd785c06aab7b30@linux-foundation.org>
+ <20181019080657.GJ18839@dhcp22.suse.cz>
+ <583b20e5-4925-e175-1533-5c2d2bab9192@suse.cz>
+ <20181024161754.0d174e7c22113f4f8aad1940@linux-foundation.org>
+ <983e0c59-99ef-796c-bfc4-00e67782d1f1@suse.cz>
 MIME-Version: 1.0
-References: <20181022133404.2061-1-boris.brezillon@bootlin.com>
- <20181022133404.2061-7-boris.brezillon@bootlin.com> <20181024202048.7e3534f7@bbrezillon>
- <CAK8P3a2DBgfvXs-9KzoDvbQpV+VN96xb7xHG-5=NDDgnt7ViVQ@mail.gmail.com> <20181025180720.1790f6a1@bbrezillon>
-In-Reply-To: <20181025180720.1790f6a1@bbrezillon>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 25 Oct 2018 18:13:51 +0200
-Message-ID: <CAK8P3a02ELWiMB_pe0bzbsMfdqYOG1G0bFnSHzGu3ZbQHatH2w@mail.gmail.com>
-Subject: Re: [PATCH v9 6/9] i3c: master: Add driver for Cadence IP
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Wolfram Sang <wsa@the-dreams.de>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>,
-        Peter Rosin <peda@axentia.se>,
-        Mike Shettel <mshettel@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Joe Perches <joe@perches.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <983e0c59-99ef-796c-bfc4-00e67782d1f1@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 6:07 PM Boris Brezillon
-<boris.brezillon@bootlin.com> wrote:
->
-> On Thu, 25 Oct 2018 17:30:26 +0200
-> Arnd Bergmann <arnd@arndb.de> wrote:
->
-> > On 10/24/18, Boris Brezillon <boris.brezillon@bootlin.com> wrote:
-> > > Hi Arnd,
-> > >
-> > > On Mon, 22 Oct 2018 15:34:01 +0200
-> > > Boris Brezillon <boris.brezillon@bootlin.com> wrote:
-> > >
-> > >
-> > >> +
-> > >> +static void cdns_i3c_master_rd_from_rx_fifo(struct cdns_i3c_master
-> > >> *master,
-> > >> +                                      u8 *bytes, int nbytes)
-> > >> +{
-> > >> +  readsl(master->regs + RX_FIFO, bytes, nbytes / 4);
-> > >
-> > > Vitor reported a problem with readsl(): this function expects the 2nd
-> > > argument to be aligned on 32-bit, which is not guaranteed here. Unless
-> > > you see a better solution, I'll switch back to a loop doing:
-> > >
-> > >     for (i = 0; i < nbytes; i += 4) {
-> > >             u32 tmp = __raw_readl(...);
-> > >             memcpy(bytes + i, &tmp,
-> > >                    nbytes - i  > 4 ? 4 : nbytes - i);
-> > >     }
-> >
-> > Could we maybe mandate that the buffer itself must be aligned here?
-> > What would be a reason why we see an unaligned target buffer?
->
-> Well, the buffers we pass to i3c_send_ccc_cmd() are not necessarily
-> aligned because they're not dynamically allocated (allocated on the
-> stack) and are not naturally aligned on 32-bits (either because they
-> are smaller than 32bits or because the struct is declared __packed).
->
-> I guess I could dynamically allocate the payload, but that requires
-> going over all users of i3c_send_ccc_cmd() to patch them.
+On Thu 25-10-18 06:56:37, Vlastimil Babka wrote:
+> On 10/25/18 1:17 AM, Andrew Morton wrote:
+> > On Mon, 22 Oct 2018 15:27:54 +0200 Vlastimil Babka <vbabka@suse.cz> wrote:
+> > 
+> >>> : Moreover the oriinal code allowed to trigger
+> >>> : 	WARN_ON_ONCE(policy->mode == MPOL_BIND && (gfp & __GFP_THISNODE));
+> >>> : in policy_node if the requested node (e.g. cpu local one) was outside of
+> >>> : the mbind nodemask. This is not possible now. We haven't heard about any
+> >>> : such warning yet so it is unlikely that it happens but still a signal of
+> >>> : a wrong code layering.
+> >>
+> >> Ah, as I said in the other mail, I think it's inaccurate, the warning
+> >> was not possible to hit.
+> >>
+> >> There's also a slight difference wrt MPOL_BIND. The previous code would
+> >> avoid using __GFP_THISNODE if the local node was outside of
+> >> policy_nodemask(). After your patch __GFP_THISNODE is avoided for all
+> >> MPOL_BIND policies. So there's a difference that if local node is
+> >> actually allowed by the bind policy's nodemask, previously
+> >> __GFP_THISNODE would be added, but now it won't be. I don't think it
+> >> matters that much though, but maybe the changelog could say that
+> >> (instead of the inaccurate note about warning). Note the other policy
+> >> where nodemask is relevant is MPOL_INTERLEAVE, and that's unchanged by
+> >> this patch.
+> > 
+> > So the above could go into the changelog, yes?
+> 
+> Yeah.
 
-This reminds me that Wolfram mentioned in his ELC talk that the
-buffers on i3c should all be DMA capable to make life easier for
-i3c master drivers that want to implement DMA transfers.
-
-If we have buffers here that are not aligned to cache lines
-(or even just 32 bit words), doesn't that also mean that the
-same buffers are not DMA capable either?
-
-        Arnd
+Andrew. Do you want me to repost the patch or you plan to update the
+changelog yourself?
+-- 
+Michal Hocko
+SUSE Labs
