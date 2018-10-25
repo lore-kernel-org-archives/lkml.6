@@ -2,274 +2,195 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B851DC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:56:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B6DC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:02:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6814F20834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:56:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9917620834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:02:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="Urcqhrt9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6814F20834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TOfmrMEv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9917620834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727614AbeJZGaq (ORCPT
+        id S1727179AbeJZGgv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 02:30:46 -0400
-Received: from alln-iport-2.cisco.com ([173.37.142.89]:38883 "EHLO
-        alln-iport-2.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725941AbeJZGap (ORCPT
+        Fri, 26 Oct 2018 02:36:51 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43870 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725941AbeJZGgv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 02:30:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=7299; q=dns/txt; s=iport;
-  t=1540504580; x=1541714180;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=xaLqnhuzJ3kSSJ0CpInXdN6VD0z1q83VLb7G3wEbCKE=;
-  b=Urcqhrt9NSQ9PZEZhDFMp+hLxJbjopN567i/ee0obnyN68u0qsjsg44B
-   jX6Qe6Ah0DgKv4WFz4W7s6ef5t0bLwjsO1b+Py3j7mbUMey8cMMHNwM1Q
-   aSFPQAGsOdmfN+v+BdWuU0GLg44LWk4tGSjdIn7U7HT8COQXxuBR3v+Ic
-   c=;
-X-IronPort-AV: E=Sophos;i="5.54,425,1534809600"; 
-   d="scan'208";a="191707772"
-Received: from alln-core-12.cisco.com ([173.36.13.134])
-  by alln-iport-2.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2018 21:56:20 +0000
-Received: from [10.154.208.133] ([10.154.208.133])
-        by alln-core-12.cisco.com (8.15.2/8.15.2) with ESMTP id w9PLuHgW019061;
-        Thu, 25 Oct 2018 21:56:18 GMT
-Subject: Re: [PATCH v2] kernel/signal: Signal-based pre-coredump notification
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Helge Deller <deller@gmx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian@brauner.io>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
-        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>,
-        Enke Chen <enkechen@cisco.com>
-References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
- <458c04d8-d189-4a26-729a-bb1d1d751534@cisco.com>
- <87sh0vpj5q.fsf@xmission.com>
- <df08c74f-1027-c635-fb99-a12d23f60947@cisco.com>
- <87zhv2md04.fsf@xmission.com>
-From:   Enke Chen <enkechen@cisco.com>
-Message-ID: <1f9128b3-7d92-9daa-fa2c-c82a53227d50@cisco.com>
-Date:   Thu, 25 Oct 2018 14:56:18 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Fri, 26 Oct 2018 02:36:51 -0400
+Received: by mail-pg1-f196.google.com with SMTP id n10-v6so3925637pgv.10
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 15:02:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6Qz3blf9kx56VXsxZmbsfPREzyctFc7Vdd+3BA0nHYY=;
+        b=TOfmrMEvTdiQlIo/925WRtxDnV8D5JeN39VETCNffi0wJXhagrFUqkzMo2Wi1UbF6a
+         5B7zniHfQZGW0sCXD635uLkVN7BiZjpiBAMvowUx1b+K/kJJ+tPNJUliWIxYKW5JyxSY
+         8YkZcBeP3yBP9Tf1ZbhUN4X6UCrupQybfpFxy0Oh2TkNjwAMSU6/Xhpxk7OD04dUWBVW
+         HnCigLkQjTSd4DotT+2G5Q/sht02eyEUA043gvJ+bT7+rJePoWvQNhoX49Mz1bRdxOW2
+         FDrDixpCQHBejHD1KQEmqehfY5rpLMtweZ8Mplp2A2M+we0H9R/+Ft45wqVSOMb3KP71
+         qsZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6Qz3blf9kx56VXsxZmbsfPREzyctFc7Vdd+3BA0nHYY=;
+        b=RY68hVNxRjbnR6fRlgkv2FLbl/0VQd2fkfqPwcJuE0IgofFJVvn1aEpTgpBSyyKHgg
+         b4U4Xg6b+lD1HDExFSinTFjOvVDnQCWbVe1crI31WdJhikNrCdOb0q0P4ikLXLVOEfsJ
+         dq7RBlbRT90l9af8q30Ngb5HqIIbYVbz04EnTsdiYIlzmecMN7aNWi8IKzpQjoaAu/py
+         70hk6Je+G06IBZLGpSKrgTar/fm4+VPTarsqSu1vFk76dhfRkmlYnmCznHkyf1MddFVU
+         WHi8UzDmf+8HZPhxT95PeSllRAy3qTsIZbZe9zmZrSL08BRdEUEZL1Ig1J4wbtt7q3DE
+         KQMA==
+X-Gm-Message-State: AGRZ1gIEFZ5pMNq+mIRvjCwiJ698edbXk9I10pURokWGydPK+j194CJu
+        RiJ9OQbtmT68Q0W6m02Lnjr88B9fDcyT8jJirJLZLA==
+X-Google-Smtp-Source: AJdET5dK9Qqq/0aAG7V8DikmYxT1ph5x0WMg1BRwza/KinJxtLZB5x+k+IHYeZW83nOBHaeFk4EGDKKSsxK6Ywv7wyk=
+X-Received: by 2002:a65:4683:: with SMTP id h3mr818846pgr.225.1540504945393;
+ Thu, 25 Oct 2018 15:02:25 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <87zhv2md04.fsf@xmission.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-Outbound-SMTP-Client: 10.154.208.133, [10.154.208.133]
-X-Outbound-Node: alln-core-12.cisco.com
+References: <20180930205448.26205-1-natechancellor@gmail.com>
+ <10b12992-3570-4646-374b-82cbd7276839@acm.org> <CAKwvOd=wgxB69dMxzMeH2edCn=TdQGPGkNVW1e=QHPTJtO9ZNw@mail.gmail.com>
+ <1538503063.193396.6.camel@acm.org> <CAKwvOdmsNEexQL9R8rgcRcXTZButYM6YWwG8bhVWCoJ8bOqCrA@mail.gmail.com>
+ <1538521591.193396.8.camel@acm.org> <20181025213144.GB24709@flashbox>
+In-Reply-To: <20181025213144.GB24709@flashbox>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Thu, 25 Oct 2018 15:02:13 -0700
+Message-ID: <CAKwvOdn=TvoGdFvgxX6TyXBXnhVLttriRrZEnzS6DjcjL64DPA@mail.gmail.com>
+Subject: Re: [PATCH] libosd: Remove ignored __weak attribute
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     bvanassche@acm.org, ooo@electrozaur.com,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Eric:
+On Thu, Oct 25, 2018 at 2:31 PM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> On Tue, Oct 02, 2018 at 04:06:31PM -0700, Bart Van Assche wrote:
+> > On Tue, 2018-10-02 at 15:33 -0700, Nick Desaulniers wrote:
+> > > On Tue, Oct 2, 2018 at 10:57 AM Bart Van Assche <bvanassche@acm.org> wrote:
+> > > > Explicitly initialized global and static variables end up in the .data
+> > > > section and need space in that section.
+> > >
+> > > Unless the initial value is zero.
+> > > https://godbolt.org/z/curRoO
+> > >
+> > > So you don't wind up with an increase in binary size simply by having
+> > > global variables initialized to zero, right?  Instead the kernel knows
+> > > to create a zero'd out mapping for bss.  You don't need a run of zeros
+> > > in the binary.
+> > >
+> > > So I disagree when you said earlier "zero initializers should be left
+> > > out to minimize the size of object files." I assert they don't affect
+> > > the size of the binary.
+> > >
+> > > If you had many global variables all initialized to zero, why would
+> > > you encode that many zeros in a binary, when you can just set a size
+> > > on the bss section and have the kernel create the appropriate sized
+> > > and zero'd mapping?
+> > >
+> > > > That is not the case if the
+> > > > initializer is left out and these variables end up in the .bss section.
+> > >
+> > > From my above link, gcc will put globals without initializers into "common."
+> >
+> > No matter what particular compiler versions do with explicit initialization
+> > to zero, the preferred kernel coding style is to leave out such explicit
+> > initialization.
+> >
+> > Bart.
+>
+> Hi Bart,
+>
+> I'm sorry if I didn't follow the conclusion of this conversation properly
+> but this is the below diff you were initially looking for, correct?
+>
+> If so, Boaz and Nick, do you have any objections if this is v2? I'd like
+> to get this patch accepted so the warning can be fixed for everyone.
 
-Please see my replied inline.
+Hi Nathan,
+Thanks for following up on this.  Bart's note about the one definition
+rule is important.  If you define the variable static in two different
+translation units, you've suddenly created two different copies
+accessible only to their respective translation units.  So it should
+be declared extern in one source file (but not defined/initialized),
+and defined (non-static) in another.  See below for example.
 
-On 10/25/18 5:23 AM, Eric W. Biederman wrote:
-> Enke Chen <enkechen@cisco.com> writes:
-> 
->> Hi, Eric:
->>
->> Thanks for your comments. Please see my replies inline.
->>
->> On 10/24/18 6:29 AM, Eric W. Biederman wrote:
->>> Enke Chen <enkechen@cisco.com> writes:
->>>
->>>> For simplicity and consistency, this patch provides an implementation
->>>> for signal-based fault notification prior to the coredump of a child
->>>> process. A new prctl command, PR_SET_PREDUMP_SIG, is defined that can
->>>> be used by an application to express its interest and to specify the
->>>> signal (SIGCHLD or SIGUSR1 or SIGUSR2) for such a notification. A new
->>>> signal code (si_code), CLD_PREDUMP, is also defined for SIGCHLD.
->>>>
->>>> Changes to prctl(2):
->>>>
->>>>    PR_SET_PREDUMP_SIG (since Linux 4.20.x)
->>>>           Set the child pre-coredump signal of the calling process to
->>>>           arg2 (either SIGUSR1, or SIUSR2, or SIGCHLD, or 0 to clear).
->>>>           This is the signal that the calling process will get prior to
->>>>           the coredump of a child process. This value is cleared across
->>>>           execve(2), or for the child of a fork(2).
->>>>
->>>>           When SIGCHLD is specified, the signal code will be set to
->>>>           CLD_PREDUMP in such an SIGCHLD signal.
->>>
->>> Your signal handling is still not right.  Please read and comprehend
->>> siginfo_layout.
->>>
->>> You have not filled in all of the required fields for the SIGCHLD case.
->>> For the non SIGCHLD case you are using si_code == 0 == SI_USER which is
->>> very wrong.  This is not a user generated signal.
->>>
->>> Let me say this slowly.  The pair si_signo si_code determines the union
->>> member of struct siginfo.  That needs to be handled consistently. You
->>> aren't.  I just finished fixing this up in the entire kernel and now you
->>> are trying to add a usage that is worst than most of the bugs I have
->>> fixed.  I really don't appreciate having to deal with no bugs.
->>>
->>
->> My apologies. I will investigate and make them consistent.
->>
->>>
->>>
->>> Further siginfo can be dropped.  Multiple signals with the same signal
->>> number can be consolidated.  What is your plan for dealing with that?
->>
->> The primary application for the early notification involves a process
->> manager which is responsible for re-spawning processes or initiating
->> the control-plane fail-over. There are two models:
->>
->> One model is to have 1:1 relationship between a process manager and
->> application process. There can only be one predump-signal (say, SIGUSR1)
->> from the child to the parent, and will unlikely be dropped or consolidated.
->>
->> Another model is to have 1:N where there is only one process manager with
->> multiple application processes. One of the RT signal can be used to help
->> make it more reliable.
-> 
-> Which suggests you want one of the negative si_codes, and to use the _rt
-> siginfo member like sigqueue.
+>
+> Thanks,
+> Nathan
+>
+> ================================================================================
+>
+> diff --git a/drivers/scsi/osd/osd_initiator.c b/drivers/scsi/osd/osd_initiator.c
+> index e19fa883376f..4250f739beb3 100644
+> --- a/drivers/scsi/osd/osd_initiator.c
+> +++ b/drivers/scsi/osd/osd_initiator.c
+> @@ -58,6 +58,8 @@
+>
+>  enum { OSD_REQ_RETRIES = 1 };
+>
+> +static const struct osd_obj_id osd_root_object;
 
-It seems that we do not need to touch the si_codes. A dedicated signal
-for the pre-coredump notification is simpler and more robust. There are
-enough RT signal numbers available.
+extern const struct osd_obj_id osd_root_object;
 
-> 
->>> Other code paths pair with wait to get the information out.  There
->>> is no equivalent of wait in your code.
->>
->> I was not aware of that before.  Let me investigate.
->>
->>>
->>> Signals can be delayed by quite a bit, scheduling delays etc.  They can
->>> not provide any meaningful kind of real time notification.
->>>
->>
->> The timing requirement is about 50-100 msecs for BFD.  Not sure if that
->> qualifies as "real time".  This mechanism has worked well in deployment
->> over the years.
-> 
-> It would help if those numbers were put into the patch description so
-> people can tell if the mechanism is quick enough.
+> +
+>  MODULE_AUTHOR("Boaz Harrosh <ooo@electrozaur.com>");
+>  MODULE_DESCRIPTION("open-osd initiator library libosd.ko");
+>  MODULE_LICENSE("GPL");
+> diff --git a/drivers/scsi/osd/osd_uld.c b/drivers/scsi/osd/osd_uld.c
+> index eaf36ccf58db..770c758baaa9 100644
+> --- a/drivers/scsi/osd/osd_uld.c
+> +++ b/drivers/scsi/osd/osd_uld.c
+> @@ -73,6 +73,7 @@
+>
+>  static const char osd_name[] = "osd";
+>  static const char *osd_version_string = "open-osd 0.2.1";
+> +static const struct osd_obj_id osd_root_object;
 
-I will do as suggested, but at the risk of making the patch description
-longer than the patch itself :-)
+const struct osd_obj_id osd_root_object;
 
-> 
->>> So between delays and loss of information signals appear to be a very
->>> poor fit for this usecase.
->>>
->>> I am concerned about code that does not fit the usecase well because
->>> such code winds up as code that no one cares about that must be
->>> maintained indefinitely, because somewhere out there there is one use
->>> that would break if the interface was removed.  This does not feel like
->>> an interface people will want to use and maintain in proper working
->>> order forever.
->>>
->>> Ugh.  Your test case is even using signalfd.  So you don't even want
->>> this signal to be delivered as a signal.
->>
->> I actually tested sigaction()/waitpid() as well. If there is a preference,
->> I can check in the sigaction()/waitpid() version instead.
->>
->>>
->>> You add an interface that takes a pointer and you don't add a compat
->>> interface.  See Oleg's point of just returning the signal number in the
->>> return code.
->>
->> This is what Oleg said "but I won't insist, this is subjective and cosmetic".
->>
->> It is no big deal either way. It just seems less work if we do not keep
->> adding exceptions to the prctl(2) manpage:
->>  
->> prctl(2):
->>
->>        On success, PR_GET_DUMPABLE,   PR_GET_KEEPCAPS,   PR_GET_NO_NEW_PRIVS,   PR_CAPBSET_READ,    PR_GET_TIMING,    PR_GET_SECUREBITS,
->>        PR_MCE_KILL_GET,  PR_CAP_AMBIENT+PR_CAP_AMBIENT_IS_SET,  and  (if  it returns) PR_GET_SECCOMP return the nonnegative values described
->>        above.  All other option values return 0 on success.  On error, -1 is returned, and errno is set appropriately.
-> 
-> More work in the man page versus less work in the kernel, and less code
-> to maintain.  I will vote for more work in the man page.
+>
+>  MODULE_AUTHOR("Boaz Harrosh <ooo@electrozaur.com>");
+>  MODULE_DESCRIPTION("open-osd Upper-Layer-Driver osd.ko");
+> diff --git a/include/scsi/osd_types.h b/include/scsi/osd_types.h
+> index 48e8a165e136..eb31357ec8b3 100644
+> --- a/include/scsi/osd_types.h
+> +++ b/include/scsi/osd_types.h
+> @@ -28,8 +28,6 @@ struct osd_obj_id {
+>         osd_id id;
+>  };
+>
+> -static const struct __weak osd_obj_id osd_root_object = {0, 0};
+> -
 
-Oleg has given me a pass on this one. It is one line. But I still
-prefer not to change back unless there is strong opinion... 
+LGTM
 
-> 
->>> Now I am wondering how well prctl works from a 32bit process on a 64bit
->>> kernel.  At first glance it looks like it probably does not work.
->>>
->>
->> I am not sure which part would be problematic.
-> 
-> 32bit pointers need to be translated into 64bit pointers.  If the system
-> call does not zero extend them.  Plus structure sizes.
-> 
-> I think prctl is just inside the line where problems happen but it is so
-> close to the line of structure size differences that it makes me
-> nervous.  Typically pointers in structures are what cause system calls
-> to cross that line.
-> 
->>> Consistency with PDEATHSIG is not a good argument for anything.
->>> PDEATHSIG at the present time is unusable in the real world by most
->>> applications that want something like it.
->>
->> Agreed, PDEATHSIG seems to have a few issues ...
->>
->>>
->>> So far I see an interface that even you don't want to use as designed,
->>> that is implemented incorrectly.
->>>
->>> The concern is real and deserves to be addressed.  I don't think signals
->>> are the right way to handle it, and certainly not this patch as it
->>> stands.
->>
->> I will address your concerns on the patch. Regarding the requirement and the
->> overall solution, if there are specific questions that I have not answered,
->> please let me know.
-> 
-> So far so good.
-> 
+>  struct osd_attr {
+>         u32 attr_page;
+>         u32 attr_id;
 
-Thanks. Reviews from folks on the list have certainly made the code shorter,
-simpler and cleaner.
+That way the linker knows there's only one instance of this struct in
+memory, and that the two different translation units are referring to
+the same instance.  The other maintainers may have a preference which
+translation you define osd_root_object in (I arbitrarily chose
+drivers/scsi/osd/osd_uld.c), but if they don't have additional
+feedback after some amount of time, I'd assume they're ok with the
+above suggestion.  What do you think?
 
--- Enke
-
+-- 
+Thanks,
+~Nick Desaulniers
