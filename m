@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFB33ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 07:24:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F008FECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 07:24:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94EBF205F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 07:24:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94EBF205F4
+	by mail.kernel.org (Postfix) with ESMTP id BBC4020868
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 07:24:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBC4020868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mentor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727224AbeJYPzk (ORCPT
+        id S1727293AbeJYPzm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 11:55:40 -0400
-Received: from relay1.mentorg.com ([192.94.38.131]:64947 "EHLO
+        Thu, 25 Oct 2018 11:55:42 -0400
+Received: from relay1.mentorg.com ([192.94.38.131]:64977 "EHLO
         relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726465AbeJYPzj (ORCPT
+        with ESMTP id S1726497AbeJYPzl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 11:55:39 -0400
+        Thu, 25 Oct 2018 11:55:41 -0400
 Received: from svr-orw-mbx-03.mgc.mentorg.com ([147.34.90.203])
         by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1gFZzs-0002Du-0j from Jiada_Wang@mentor.com ; Thu, 25 Oct 2018 00:24:00 -0700
+        id 1gFa03-0002FD-2r from Jiada_Wang@mentor.com ; Thu, 25 Oct 2018 00:24:11 -0700
 Received: from jiwang-OptiPlex-980.tokyo.mentorg.com (147.34.91.1) by
  svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Thu, 25 Oct 2018 00:23:56 -0700
+ (TLS) id 15.0.1320.4; Thu, 25 Oct 2018 00:24:07 -0700
 From:   <jiada_wang@mentor.com>
 To:     <geert+renesas@glider.be>, <mturquette@baylibre.com>,
         <sboyd@kernel.org>, <horms@verge.net.au>, <magnus.damm@gmail.com>,
@@ -36,15 +36,14 @@ To:     <geert+renesas@glider.be>, <mturquette@baylibre.com>,
 CC:     <linux-kernel@vger.kernel.org>,
         <linux-renesas-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <jiada_wang@mentor.com>
-Subject: [PATCH linux-next v1 1/4] clk: renesas: clk-avb: add AVB Clock driver
-Date:   Thu, 25 Oct 2018 16:23:46 +0900
-Message-ID: <20181025072349.15173-2-jiada_wang@mentor.com>
+Subject: [PATCH linux-next v1 4/4] arm64: salvator-common: Add avb counter clock
+Date:   Thu, 25 Oct 2018 16:23:49 +0900
+Message-ID: <20181025072349.15173-5-jiada_wang@mentor.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20181025072349.15173-1-jiada_wang@mentor.com>
 References: <20181025072349.15173-1-jiada_wang@mentor.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-ClientProxiedBy: svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) To
  svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -54,307 +53,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jiada Wang <jiada_wang@mentor.com>
 
-There are AVB Counter Clocks, each clock has 12bits integral
-and 8 bits fractional dividers which operates with S0D1ϕ clock.
-
-This patch adds avb clock provider, which registers all 8 AVB
-Counter Clocks, and provide them via clock provider.
+Add avb counter clock node to R-Car Salvator boards
 
 Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
 ---
- drivers/clk/renesas/Kconfig   |   6 +
- drivers/clk/renesas/Makefile  |   1 +
- drivers/clk/renesas/clk-avb.c | 257 ++++++++++++++++++++++++++++++++++
- 3 files changed, 264 insertions(+)
- create mode 100644 drivers/clk/renesas/clk-avb.c
+ arch/arm64/boot/dts/renesas/salvator-common.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
-index f998a7333acb..afa7b20b44a9 100644
---- a/drivers/clk/renesas/Kconfig
-+++ b/drivers/clk/renesas/Kconfig
-@@ -173,4 +173,10 @@ config CLK_RENESAS_CPG_MSTP
- config CLK_RENESAS_DIV6
- 	bool "DIV6 clock support" if COMPILE_TEST
+diff --git a/arch/arm64/boot/dts/renesas/salvator-common.dtsi b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+index 7f91ff524109..09a228d04b9e 100644
+--- a/arch/arm64/boot/dts/renesas/salvator-common.dtsi
++++ b/arch/arm64/boot/dts/renesas/salvator-common.dtsi
+@@ -63,6 +63,12 @@
+ 		enable-gpios = <&gpio6 7 GPIO_ACTIVE_HIGH>;
+ 	};
  
-+config CLK_RENESAS_CLK_AVB
-+	bool "Renesas AVB Counter Clocks"
-+	depends on CLK_RENESAS_CPG_MSSR
-+	default y if ARCH_R8A7795
-+	default y if ARCH_R8A7796
++	clk_avb: avb-clock@ec5a011c {
++		compatible = "renesas,clk-avb";
++		reg = <0 0xec5a011c 0 0x24>;
++		#clock-cells = <1>;
++	};
 +
- endif # CLK_RENESAS
-diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
-index 71d4cafe15c0..17b05955e4f4 100644
---- a/drivers/clk/renesas/Makefile
-+++ b/drivers/clk/renesas/Makefile
-@@ -34,3 +34,4 @@ obj-$(CONFIG_CLK_RCAR_USB2_CLOCK_SEL)	+= rcar-usb2-clock-sel.o
- obj-$(CONFIG_CLK_RENESAS_CPG_MSSR)	+= renesas-cpg-mssr.o
- obj-$(CONFIG_CLK_RENESAS_CPG_MSTP)	+= clk-mstp.o
- obj-$(CONFIG_CLK_RENESAS_DIV6)		+= clk-div6.o
-+obj-$(CONFIG_CLK_RENESAS_CLK_AVB)	+= clk-avb.o
-diff --git a/drivers/clk/renesas/clk-avb.c b/drivers/clk/renesas/clk-avb.c
-new file mode 100644
-index 000000000000..bb1eef0e9bee
---- /dev/null
-+++ b/drivers/clk/renesas/clk-avb.c
-@@ -0,0 +1,257 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2017  Mentor
-+ *
-+ * Contact: Jiada Wang <jiada_wang@mentor.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; version 2 of the License.
-+ *
-+ * avb Common Clock Framework support
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/of_address.h>
-+#include <linux/of_platform.h>
-+#include <linux/slab.h>
-+
-+struct clk_avb_data {
-+	void __iomem *base;
-+
-+	struct clk_onecell_data clk_data;
-+	/* lock reg access */
-+	spinlock_t lock;
-+};
-+
-+struct clk_avb {
-+	struct clk_hw hw;
-+	unsigned int idx;
-+	struct clk_avb_data *data;
-+};
-+
-+#define to_clk_avb(_hw) container_of(_hw, struct clk_avb, hw)
-+
-+#define AVB_DIV_MASK	0x3ffff
-+#define AVB_MAX_DIV	0x3ffc0
-+#define AVB_COUNTER_MAX_FREQ	25000000
-+#define AVB_COUNTER_NUM		8
-+#define AVB_CLK_NAME_SIZE	10
-+#define AVB_ID_TO_DIV(id)	((id) * 4)
-+
-+#define AVB_CLK_CONFIG		0x20
-+#define AVB_DIV_EN_COM		BIT(31)
-+#define AVB_CLK_NAME		"avb"
-+#define ADG_CLK_NAME		"adg"
-+
-+static int clk_avb_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_avb *avb = to_clk_avb(hw);
-+
-+	return (clk_readl(avb->data->base + AVB_CLK_CONFIG) & BIT(avb->idx));
-+}
-+
-+static int clk_avb_enabledisable(struct clk_hw *hw, int enable)
-+{
-+	struct clk_avb *avb = to_clk_avb(hw);
-+	u32 val;
-+
-+	spin_lock(&avb->data->lock);
-+
-+	val = clk_readl(avb->data->base + AVB_CLK_CONFIG);
-+	if (enable)
-+		val |= BIT(avb->idx);
-+	else
-+		val &= ~BIT(avb->idx);
-+	clk_writel(val, avb->data->base + AVB_CLK_CONFIG);
-+
-+	spin_unlock(&avb->data->lock);
-+
-+	return 0;
-+}
-+
-+static int clk_avb_enable(struct clk_hw *hw)
-+{
-+	return clk_avb_enabledisable(hw, 1);
-+}
-+
-+static void clk_avb_disable(struct clk_hw *hw)
-+{
-+	clk_avb_enabledisable(hw, 0);
-+}
-+
-+static unsigned long clk_avb_recalc_rate(struct clk_hw *hw,
-+					 unsigned long parent_rate)
-+{
-+	struct clk_avb *avb = to_clk_avb(hw);
-+	u32 div;
-+
-+	div = clk_readl(avb->data->base + AVB_ID_TO_DIV(avb->idx)) &
-+			AVB_DIV_MASK;
-+	if (!div)
-+		return parent_rate;
-+
-+	return parent_rate * 32 / div;
-+}
-+
-+static unsigned int clk_avb_calc_div(unsigned long rate,
-+				     unsigned long parent_rate)
-+{
-+	unsigned int div;
-+
-+	if (!rate)
-+		rate = 1;
-+
-+	if (rate > AVB_COUNTER_MAX_FREQ)
-+		rate = AVB_COUNTER_MAX_FREQ;
-+
-+	div = DIV_ROUND_CLOSEST(parent_rate * 32, rate);
-+
-+	if (div > AVB_MAX_DIV)
-+		div = AVB_MAX_DIV;
-+
-+	return div;
-+}
-+
-+static long clk_avb_round_rate(struct clk_hw *hw, unsigned long rate,
-+			       unsigned long *parent_rate)
-+{
-+	unsigned int div = clk_avb_calc_div(rate, *parent_rate);
-+
-+	return (*parent_rate * 32) / div;
-+}
-+
-+static int clk_avb_set_rate(struct clk_hw *hw, unsigned long rate,
-+			    unsigned long parent_rate)
-+{
-+	struct clk_avb *avb = to_clk_avb(hw);
-+	unsigned int div = clk_avb_calc_div(rate, parent_rate);
-+	u32 val;
-+
-+	val = clk_readl(avb->data->base + AVB_ID_TO_DIV(avb->idx)) &
-+			~AVB_DIV_MASK;
-+	clk_writel(val | div, avb->data->base + AVB_ID_TO_DIV(avb->idx));
-+
-+	return 0;
-+}
-+
-+static const struct clk_ops clk_avb_ops = {
-+	.enable = clk_avb_enable,
-+	.disable = clk_avb_disable,
-+	.is_enabled = clk_avb_is_enabled,
-+	.recalc_rate = clk_avb_recalc_rate,
-+	.round_rate = clk_avb_round_rate,
-+	.set_rate = clk_avb_set_rate,
-+};
-+
-+static struct clk *clk_register_avb(struct clk_avb_data *data,
-+				    unsigned int id)
-+{
-+	struct clk_init_data init;
-+	struct clk_avb *avb;
-+	struct clk *clk;
-+	char name[AVB_CLK_NAME_SIZE];
-+	const char *parent_name = ADG_CLK_NAME;
-+
-+	avb = kzalloc(sizeof(*avb), GFP_KERNEL);
-+	if (!avb)
-+		return ERR_PTR(-ENOMEM);
-+
-+	snprintf(name, AVB_CLK_NAME_SIZE, "%s.%u", AVB_CLK_NAME, id);
-+
-+	avb->idx = id;
-+	avb->data = data;
-+
-+	/* Register the clock. */
-+	init.name = name;
-+	init.ops = &clk_avb_ops;
-+	init.flags = CLK_IS_BASIC;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+
-+	avb->hw.init = &init;
-+
-+	/* init DIV to a valid state */
-+	writel(AVB_MAX_DIV, data->base + AVB_ID_TO_DIV(avb->idx));
-+
-+	clk = clk_register(NULL, &avb->hw);
-+	if (IS_ERR(clk))
-+		kfree(avb);
-+
-+	return clk;
-+}
-+
-+static void clk_unregister_avb(struct clk *clk)
-+{
-+	struct clk_avb *avb;
-+	struct clk_hw *hw;
-+
-+	if (IS_ERR(clk))
-+		return;
-+
-+	hw = __clk_get_hw(clk);
-+	if (!hw)
-+		return;
-+
-+	avb = to_clk_avb(hw);
-+
-+	clk_unregister(clk);
-+	kfree(avb);
-+}
-+
-+static void __init clk_avb_setup(struct device_node *node)
-+{
-+	struct clk_avb_data *data;
-+	struct clk_onecell_data *clk_data;
-+	int ret, i;
-+	struct resource res;
-+
-+	data = kzalloc(sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return;
-+
-+	data->base = of_io_request_and_map(node, 0, of_node_full_name(node));
-+	if (IS_ERR(data->base))
-+		goto err_data;
-+
-+	spin_lock_init(&data->lock);
-+
-+	clk_data = &data->clk_data;
-+	clk_data->clk_num = AVB_COUNTER_NUM;
-+	clk_data->clks = kmalloc_array(AVB_COUNTER_NUM,
-+				       sizeof(struct clk *),
-+				       GFP_KERNEL);
-+	if (!clk_data->clks)
-+		goto err_unmap;
-+
-+	for (i = 0; i < AVB_COUNTER_NUM; i++) {
-+		clk_data->clks[i] = clk_register_avb(data, i);
-+		if (IS_ERR(clk_data->clks[i])) {
-+			pr_err("failed to register clock %s.%d\n",
-+			       AVB_CLK_NAME, i);
-+			goto err_clks;
-+		}
-+	}
-+
-+	ret = of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+	if (ret) {
-+		pr_err("failed to register clock provider\n");
-+		goto err_clks;
-+	}
-+
-+	writel(AVB_DIV_EN_COM, data->base + AVB_CLK_CONFIG);
-+
-+	return;
-+
-+err_clks:
-+	for (i = 0; i < AVB_COUNTER_NUM; i++)
-+		clk_unregister_avb(clk_data->clks[i]);
-+err_unmap:
-+	iounmap(data->base);
-+	of_address_to_resource(node, 0, &res);
-+	release_mem_region(res.start, resource_size(&res));
-+err_data:
-+	kfree(data);
-+}
-+
-+CLK_OF_DECLARE(avb, "renesas,clk-avb", clk_avb_setup);
+ 	cvbs-in {
+ 		compatible = "composite-video-connector";
+ 		label = "CVBS IN";
 -- 
 2.17.0
 
