@@ -6,43 +6,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1919C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:33:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF38BC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:34:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2E3D2084A
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:33:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A31822084A
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:34:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WMia6d8S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2E3D2084A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oZB8VX8x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A31822084A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729884AbeJYWvA (ORCPT
+        id S1727589AbeJYXHY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:51:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60740 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 19:07:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728102AbeJYWu7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:50:59 -0400
+        id S1729798AbeJYWuu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:50:50 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C70FE20834;
-        Thu, 25 Oct 2018 14:18:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C281B20834;
+        Thu, 25 Oct 2018 14:17:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477082;
-        bh=Ijs0Jru06Rf3iGYcQ89V7n5pioWLhP3aW41sijQUZHI=;
+        s=default; t=1540477072;
+        bh=thc59NMAMwXEsx9J8JNhHe9ww4h2Y09XGKraxAOjITU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WMia6d8SRCzQjqyICR8i03YFRUgk3obH8i8Jw0BE241r9O8/0ydJJlf3ZzhZH9mk8
-         kDBSARXmXAZpQyrrV+KWVkebRWc9HUJ7y2Y0eTfNmIaeYtQJx2BkxlyVVCHl7orw8w
-         f5S7Hc48c54fusn7DmCqdvsIpMcV5OTQWvbkYCWE=
+        b=oZB8VX8xt9DJPyI13c/18OE3KIZm1kwVR1ZI545JKJcSMKhBT42av/eJamY3MKGcy
+         UeCpgB5zaIPjOOxAUVtDYW9mTBv68S9UcsfF8saApgkgrZQa7SgQzzJEb1x2I1uEKR
+         RliYyxPj9yq52oAJOXeCltrvrw3UgJ/lC5Ttx7b8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Pavel Roskin <plroskin@gmail.com>, Ben Skeggs <bskeggs@redhat.com>,
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 34/65] drm/nouveau/fbcon: fix oops without fbdev emulation
-Date:   Thu, 25 Oct 2018 10:16:34 -0400
-Message-Id: <20181025141705.213937-34-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 27/65] arm64: Fix potential race with hardware DBM in ptep_set_access_flags()
+Date:   Thu, 25 Oct 2018 10:16:27 -0400
+Message-Id: <20181025141705.213937-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141705.213937-1-sashal@kernel.org>
 References: <20181025141705.213937-1-sashal@kernel.org>
@@ -51,58 +52,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pavel Roskin <plroskin@gmail.com>
+From: Catalin Marinas <catalin.marinas@arm.com>
 
-[ Upstream commit 4813766325374af6ed0b66879ba6a0bbb05c83b6 ]
+[ Upstream commit 6d332747fa5f0a6843b56b5b129168ba909336d1 ]
 
-This is similar to an earlier commit 52dfcc5ccfbb ("drm/nouveau: fix for
-disabled fbdev emulation"), but protects all occurrences of helper.fbdev
-in the source.
+In a system with DBM (dirty bit management) capable agents there is a
+possible race between a CPU executing ptep_set_access_flags() (maybe
+non-DBM capable) and a hardware update of the dirty state (clearing of
+PTE_RDONLY). The scenario:
 
-I see oops in nouveau_fbcon_accel_save_disable() called from
-nouveau_fbcon_set_suspend_work() on Linux 3.13 when
-CONFIG_DRM_FBDEV_EMULATION option is disabled.
+a) the pte is writable (PTE_WRITE set), clean (PTE_RDONLY set) and old
+   (PTE_AF clear)
+b) ptep_set_access_flags() is called as a result of a read access and it
+   needs to set the pte to writable, clean and young (PTE_AF set)
+c) a DBM-capable agent, as a result of a different write access, is
+   marking the entry as young (setting PTE_AF) and dirty (clearing
+   PTE_RDONLY)
 
-Signed-off-by: Pavel Roskin <plroskin@gmail.com>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Signed-off-by: Ben Skeggs <bskeggs@redhat.com>
+The current ptep_set_access_flags() implementation would set the
+PTE_RDONLY bit in the resulting value overriding the DBM update and
+losing the dirty state.
+
+This patch fixes such race by setting PTE_RDONLY to the most permissive
+(lowest value) of the current entry and the new one.
+
+Fixes: 66dbd6e61a52 ("arm64: Implement ptep_set_access_flags() for hardware AF/DBM")
+Cc: Will Deacon <will.deacon@arm.com>
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+Acked-by: Steve Capper <steve.capper@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/nouveau/nouveau_fbcon.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ arch/arm64/mm/fault.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_fbcon.c b/drivers/gpu/drm/nouveau/nouveau_fbcon.c
-index e40a1b07a014..343476d15726 100644
---- a/drivers/gpu/drm/nouveau/nouveau_fbcon.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_fbcon.c
-@@ -235,7 +235,7 @@ void
- nouveau_fbcon_accel_save_disable(struct drm_device *dev)
- {
- 	struct nouveau_drm *drm = nouveau_drm(dev);
--	if (drm->fbcon) {
-+	if (drm->fbcon && drm->fbcon->helper.fbdev) {
- 		drm->fbcon->saved_flags = drm->fbcon->helper.fbdev->flags;
- 		drm->fbcon->helper.fbdev->flags |= FBINFO_HWACCEL_DISABLED;
- 	}
-@@ -245,7 +245,7 @@ void
- nouveau_fbcon_accel_restore(struct drm_device *dev)
- {
- 	struct nouveau_drm *drm = nouveau_drm(dev);
--	if (drm->fbcon) {
-+	if (drm->fbcon && drm->fbcon->helper.fbdev) {
- 		drm->fbcon->helper.fbdev->flags = drm->fbcon->saved_flags;
- 	}
- }
-@@ -257,7 +257,8 @@ nouveau_fbcon_accel_fini(struct drm_device *dev)
- 	struct nouveau_fbdev *fbcon = drm->fbcon;
- 	if (fbcon && drm->channel) {
- 		console_lock();
--		fbcon->helper.fbdev->flags |= FBINFO_HWACCEL_DISABLED;
-+		if (fbcon->helper.fbdev)
-+			fbcon->helper.fbdev->flags |= FBINFO_HWACCEL_DISABLED;
- 		console_unlock();
- 		nouveau_channel_idle(drm->channel);
- 		nvif_object_fini(&fbcon->twod);
+diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+index 86485415c5f0..be7f8416809f 100644
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -107,26 +107,27 @@ int ptep_set_access_flags(struct vm_area_struct *vma,
+ 	/* only preserve the access flags and write permission */
+ 	pte_val(entry) &= PTE_AF | PTE_WRITE | PTE_DIRTY;
+ 
+-	/*
+-	 * PTE_RDONLY is cleared by default in the asm below, so set it in
+-	 * back if necessary (read-only or clean PTE).
+-	 */
++	/* set PTE_RDONLY if actual read-only or clean PTE */
+ 	if (!pte_write(entry) || !pte_sw_dirty(entry))
+ 		pte_val(entry) |= PTE_RDONLY;
+ 
+ 	/*
+ 	 * Setting the flags must be done atomically to avoid racing with the
+-	 * hardware update of the access/dirty state.
++	 * hardware update of the access/dirty state. The PTE_RDONLY bit must
++	 * be set to the most permissive (lowest value) of *ptep and entry
++	 * (calculated as: a & b == ~(~a | ~b)).
+ 	 */
++	pte_val(entry) ^= PTE_RDONLY;
+ 	asm volatile("//	ptep_set_access_flags\n"
+ 	"	prfm	pstl1strm, %2\n"
+ 	"1:	ldxr	%0, %2\n"
+-	"	and	%0, %0, %3		// clear PTE_RDONLY\n"
++	"	eor	%0, %0, %3		// negate PTE_RDONLY in *ptep\n"
+ 	"	orr	%0, %0, %4		// set flags\n"
++	"	eor	%0, %0, %3		// negate final PTE_RDONLY\n"
+ 	"	stxr	%w1, %0, %2\n"
+ 	"	cbnz	%w1, 1b\n"
+ 	: "=&r" (old_pteval), "=&r" (tmp), "+Q" (pte_val(*ptep))
+-	: "L" (~PTE_RDONLY), "r" (pte_val(entry)));
++	: "L" (PTE_RDONLY), "r" (pte_val(entry)));
+ 
+ 	flush_tlb_fix_spurious_fault(vma, address);
+ 	return 1;
 -- 
 2.17.1
 
