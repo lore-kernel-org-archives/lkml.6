@@ -3,158 +3,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53794ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:32:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E9FDC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:34:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DE852082E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:32:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DE852082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 2979D20652
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:34:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2979D20652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727989AbeJZDGJ (ORCPT
+        id S1727497AbeJZDIf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 23:06:09 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:34862 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727660AbeJZDGJ (ORCPT
+        Thu, 25 Oct 2018 23:08:35 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:56220 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727338AbeJZDIf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 23:06:09 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9PIW9it045116;
-        Thu, 25 Oct 2018 13:32:09 -0500
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id w9PIW9qJ101312
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 25 Oct 2018 13:32:09 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 25
- Oct 2018 13:32:09 -0500
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 25 Oct 2018 13:32:09 -0500
-Received: from [172.22.66.177] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9PIW9GC003015;
-        Thu, 25 Oct 2018 13:32:09 -0500
-Subject: Re: [PATCH v4 2/7] dt-bindings: ti-lmu: Modify dt bindings for the
- LM3697
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Rob Herring <robh@kernel.org>
-CC:     Pavel Machek <pavel@ucw.cz>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>,
-        <lee.jones@linaro.org>, <tony@atomide.com>
-References: <20181023170623.31820-1-dmurphy@ti.com>
- <20181023170623.31820-2-dmurphy@ti.com> <20181024090421.GB24997@amd>
- <e8800c2e-8ada-7a0d-c1a6-14ddcbe1576d@ti.com> <20181024145434.GC9327@bogus>
- <beb1a6e1-8120-be94-b1a4-60ea6721765d@ti.com>
- <ade3121a-58ab-c0c3-6605-cf7d6a638da0@gmail.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <dfee9293-490f-2d47-c75b-971735683d41@ti.com>
-Date:   Thu, 25 Oct 2018 13:32:00 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <ade3121a-58ab-c0c3-6605-cf7d6a638da0@gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+        Thu, 25 Oct 2018 23:08:35 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id B92751478ADB8;
+        Thu, 25 Oct 2018 11:34:41 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 11:34:41 -0700 (PDT)
+Message-Id: <20181025.113441.567599603045046210.davem@davemloft.net>
+To:     ivan.khoronzhuk@linaro.org
+Cc:     grygorii.strashko@ti.com, linux-omap@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alexander.h.duyck@intel.com, bjorn@mork.no
+Subject: Re: [PATCH net-next 0/4] net: ethernet: ti: cpsw: fix vlan mcast
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181024221059.21834-1-ivan.khoronzhuk@linaro.org>
+References: <20181024221059.21834-1-ivan.khoronzhuk@linaro.org>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 25 Oct 2018 11:34:42 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jacek
+From: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Date: Thu, 25 Oct 2018 01:10:55 +0300
 
-On 10/25/2018 01:27 PM, Jacek Anaszewski wrote:
-> On 10/25/2018 08:07 PM, Dan Murphy wrote:
->> Rob
->>
->> On 10/24/2018 09:54 AM, Rob Herring wrote:
->>> On Wed, Oct 24, 2018 at 07:07:57AM -0500, Dan Murphy wrote:
->>>> Pavel
->>>>
->>>> On 10/24/2018 04:04 AM, Pavel Machek wrote:
->>>>> Hi!
->>>>>
->>>>>> The LM3697 is a single function LED driver. The single function LED
->>>>>> driver needs to reside in the LED directory as a dedicated LED driver
->>>>>> and not as a MFD device.  The device does have common brightness and ramp
->>>>>
->>>>> So it is single function LED driver. That does not mean it can not
->>>>> share bindings with the rest. Where the bindings live is not imporant.
->>>>>
->>>>
->>>> It can share bindings that are correctly done, not ones that are incomplete and incorrect.
->>>>
->>>> Where bindings live is important to new Linux kernel developers and product 
->>>> developers looking for the proper documentation on the H/W bindings.
->>>>
->>>>>> reside in the Documentation/devicetree/bindings/leds directory and follow the
->>>>>> current LED and general bindings guidelines.
->>>>>
->>>>> What you forgot to tell us in the changelog:
->>>>
->>>> I can add this to the changelog.
->>>>
->>>>>
->>>>>> +Optional child properties:
->>>>>> +	- runtime-ramp-up-msec: Current ramping from one brightness level to
->>>>>> +				the a higher brightness level.
->>>>>> +				Range from 2048 us - 117.44 s
->>>>>
->>>>> The other binding uses "ramp-up-msec". Tell us why you are changing this, or
->>>>> better don't change things needlessly.
->>>>>
->>>>> We don't want to be using "runtime-ramp-up-msec" for one device and
->>>>> "ramp-up-msec" for the other.
->>>>
->>>> This is another example of how the original bindings were incorrect and misleading.
->>>>
->>>> The LM3697 have 2 ramp implementations that can be used.
->>>>
->>>> Startup/Shutdown ramp and Runtime Ramp.  Same Ramp rates different registers and
->>>> different end user experience.
->>>>
->>>> So having a single node call ramp-up-msec is misleading and it does not
->>>> indicate what the H/W will do.
->>>
->>> The existing ones aren't documented (present in the example is not 
->>> documented). This seems like something that should be common rather than 
->>> TI specific. Though it also seems more like something the user would 
->>> want to control (i.e. sysfs) rather than fixed in DT.
->>>
->>
->> Changing the runtime ramping or startup/shutdown ramping could also be done via sysfs.
->> I am not dedicated to having it in the DT file I was following prior art.
->>
->> Jacek
->>
->> Do you have an opinion on this?
-> 
-> This is this problem with the Device Tree's scope of responsibility.
-> It is defined as a means for "describing the hardware", but often
-> this rule is abused by the properties that fall into "configuration"
-> category. E.g. default-state, retain-state-suspended from leds-gpio.txt
-> or linux-default-trigger from common LED bindings.
-> 
-> In some cases this is justified. The question is whether it is something
-> that necessarily needs to be configured on driver probing? If not, then
-> I'd go for sysfs interface.
-> 
+> The cpsw holds separate mcast entires for vlan entries. At this moment
+> driver adds only not vlan mcast addresses, omitting vlan/mcast entries.
+> As result mcast for vlans doesn't work. It can be fixed by adding same
+> mcast entries for every created vlan, but this patchseries uses more
+> sophisticated way and allows to create mcast entries only for vlans
+> that really require it. Generic functions from this series can be
+> reused for fixing vlan and macvlan unicast.
 
-Appreciate the feedback.  I think you and Rob are right. This should be a sysfs
-entry.  I can think of instances where the ramp times might want to be modified 
-or even turned off.
+This is a bug fix but targetted at net-next, and indeed it is quite
+invasive as it adds new core infrastructure and converts the generic
+vlan code over to using it.
 
-I will change that implementation.
+Unfortunately net-next is closed.
 
-Dan
+So if you want this bug fixed in mainline you will have to come up
+with a less invasive fix, and resubmit this net-next approach when the
+net-next tree opens back up.
 
--- 
-------------------
-Dan Murphy
+Thank you.
