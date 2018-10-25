@@ -2,87 +2,134 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64694C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39633C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:58:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27A2E2075D
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:55:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E045520834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:58:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VYJXLZ4f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27A2E2075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20150623.gappssmtp.com header.i=@toxicpanda-com.20150623.gappssmtp.com header.b="CMWZbZcU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E045520834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727524AbeJYW2Y (ORCPT
+        id S1727461AbeJYWbq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:28:24 -0400
-Received: from mail-lj1-f173.google.com ([209.85.208.173]:39069 "EHLO
-        mail-lj1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727458AbeJYW2Y (ORCPT
+        Thu, 25 Oct 2018 18:31:46 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:35608 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727401AbeJYWbq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:28:24 -0400
-Received: by mail-lj1-f173.google.com with SMTP id p1-v6so8309263ljg.6
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 06:55:31 -0700 (PDT)
+        Thu, 25 Oct 2018 18:31:46 -0400
+Received: by mail-yb1-f195.google.com with SMTP id k132-v6so3713584ybc.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 06:58:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pF6Ntyek8lzhI14RsHZQtcUKXPUe3XVye+Z+HZsCvU0=;
-        b=VYJXLZ4fNBBbs0hP5YoWWqI7Z5nJSveS2c1i8xY6/FuT494OAmyNGOig2YQW0m4VVX
-         SBDn1JoWNmqrtVE7zt9ufP/S8BdntMeEluxMN43QG4WY/M7dDsbZXxT7a0raZEGJ492/
-         G7CizwGBieTnGOFNuhP0pm+dCKRFIYswZzi4c=
+        d=toxicpanda-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=F5Br1vFFX8kn4xvNIYzxt6g31sDP9kyeqhPTuCAWwfE=;
+        b=CMWZbZcUk26TWxuvlEVVEnWf/u+ZmEzy51bIT2e+ufjWLux/wi3X4ip78tUOjrxqkR
+         LJ9RAHfY3Mb9f6A20FZ7p0DCVC5j83fuNU6Gj5Is/EgA4ageQy7XplwryVzzjKHitIPh
+         FHDUcmQQ2YwSpuMVMROlMuqhsprJ3hO7p0/MMTj8DYDAmqSwX573JqdT/rW3tgPpsIpZ
+         G9OA49wUsptxkeRhopoiR26uPmd62dcaoDxCKVkQsK3wV8iMvYav1yAHavVLMYvJvlNV
+         vkx2XMjov2dWaz+SkSkQlx3JKwRMamy1UZRQ6WvJshKnhxOF+SzPK+dfsIBBGK5SxaIG
+         Xj0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pF6Ntyek8lzhI14RsHZQtcUKXPUe3XVye+Z+HZsCvU0=;
-        b=JgjveIVSiPKEycJVto9ce4933MqW9z8V+Z8cefpmVCZQ0zhMZmGXKYOwT/L5y5jbpA
-         SpjWDP3QvUNLtagSm4adHmEYx3Vy90g2ejQram9wIVfbd0JS01AbUGZxvuPZPGkJzTqb
-         PsWtIYkYn4Ap+muCyjhOAFOAkKvvQktGkKHoinho1IVk9Zttw03UUS5K1dLnpoBUBQva
-         HoHZtQ0p/24DZ+8NmRsYKoghrb8jEnL59mVd5CeAlw5cqZ0j80OdUmBLDsv7PWiB5CEI
-         Su/3yoV4KRvbMgEvrvB/fE3PVNlftehthErFMd1K9ivjly2vK8R8+WP1I++lhhOcRInJ
-         KMUg==
-X-Gm-Message-State: AGRZ1gIDWDIP++zsMhFpERCbm3tnJrItYHSm3m0MaxEASB6/Ajum8N4W
-        ym4esQAV9iOBAHfg0ja4pqcDpdWMZUmB3scz
-X-Google-Smtp-Source: AJdET5cIVZCmaV+qxGVP/vzu5KVUBJgCc1mqvTIhbsjLd1Q+783Lv4z2GlvylopJM/4wfYeVw4k9hg==
-X-Received: by 2002:a2e:8989:: with SMTP id c9-v6mr1408876lji.124.1540475729919;
-        Thu, 25 Oct 2018 06:55:29 -0700 (PDT)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
-        by smtp.gmail.com with ESMTPSA id p1-v6sm1132403ljc.85.2018.10.25.06.55.28
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=F5Br1vFFX8kn4xvNIYzxt6g31sDP9kyeqhPTuCAWwfE=;
+        b=oT4S1gFhq5hvL0uHYhq/shiP7sM4fOaac+/lSxXzcfBT1XuevXWvLzovJ/bvKowNAK
+         upA397/KMfgGW3IMiJnRaiApPETxrihzqhXhCUpeEUmu3axwVmYsg9GWrjTQfy5SKw0c
+         9+TRvWW2ewk+W/M+Em9lcKyC3hAtPWUS9BKHVXTCWVE2a2DHcFi3StIf78Jeb40fdytz
+         NDNcIgZ3m4TrXqvkdEmnxTLCC9hoNXo99TC7S3AXAOJu6ZFSkeJ1DKfreB68rWwu4Sf5
+         YFVLiJl5MpCttB5rEtkvc37aaLpCdGIdsSH/pdj2FwRoLxegrn7oOCRoDHzzK89IYgE9
+         +IZA==
+X-Gm-Message-State: AGRZ1gI3KyD9mTWPYE21WQN+InCwu6PrnkgKCIKGommbRbitOnCPsZLK
+        Lpr1LD4o55Gets2TELSWXE0N9Q==
+X-Google-Smtp-Source: AJdET5dz63rgaQHVqbjRS9jGywKITkZYMc5KkmJQushTy5QwSbnMGU7jG2ymaYr6EUibqPRJJHL7wg==
+X-Received: by 2002:a25:c1c5:: with SMTP id r188-v6mr1518174ybf.260.1540475933459;
+        Thu, 25 Oct 2018 06:58:53 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:180::1:600d])
+        by smtp.gmail.com with ESMTPSA id 123-v6sm1994695ywx.15.2018.10.25.06.58.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Oct 2018 06:55:28 -0700 (PDT)
-Received: by mail-lf1-f45.google.com with SMTP id c16so6855651lfj.8
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 06:55:28 -0700 (PDT)
-X-Received: by 2002:a19:111b:: with SMTP id g27mr1293580lfi.135.1540475728189;
- Thu, 25 Oct 2018 06:55:28 -0700 (PDT)
+        Thu, 25 Oct 2018 06:58:52 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 09:58:51 -0400
+From:   Josef Bacik <josef@toxicpanda.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Josef Bacik <josef@toxicpanda.com>, kernel-team@fb.com,
+        hannes@cmpxchg.org, linux-kernel@vger.kernel.org, tj@kernel.org,
+        david@fromorbit.com, akpm@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        riel@fb.com, linux-mm@kvack.org
+Subject: Re: [PATCH 7/7] btrfs: drop mmap_sem in mkwrite for btrfs
+Message-ID: <20181025135849.bu3cmjnrvz5yysye@macbook-pro-91.dhcp.thefacebook.com>
+References: <20181018202318.9131-1-josef@toxicpanda.com>
+ <20181018202318.9131-8-josef@toxicpanda.com>
+ <20181025132230.GD7711@quack2.suse.cz>
 MIME-Version: 1.0
-References: <20181023173934.GA14918@bhelgaas-glaptop.roam.corp.google.com>
-In-Reply-To: <20181023173934.GA14918@bhelgaas-glaptop.roam.corp.google.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 25 Oct 2018 06:55:12 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiTnb=o9JomnD68ob-6wNKHbBsYKKD1XmNwDBW0NjvkPA@mail.gmail.com>
-Message-ID: <CAHk-=wiTnb=o9JomnD68ob-6wNKHbBsYKKD1XmNwDBW0NjvkPA@mail.gmail.com>
-Subject: Re: [GIT PULL] PCI changes for v4.20
-To:     helgaas@kernel.org
-Cc:     linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        lorenzo.pieralisi@arm.com, Greg KH <gregkh@linuxfoundation.org>,
-        bvanassche@acm.org, Jens Axboe <axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181025132230.GD7711@quack2.suse.cz>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 10:39 AM Bjorn Helgaas <helgaas@kernel.org> wrote:
->
-> PCI changes:
+On Thu, Oct 25, 2018 at 03:22:30PM +0200, Jan Kara wrote:
+> On Thu 18-10-18 16:23:18, Josef Bacik wrote:
+> > ->page_mkwrite is extremely expensive in btrfs.  We have to reserve
+> > space, which can take 6 lifetimes, and we could possibly have to wait on
+> > writeback on the page, another several lifetimes.  To avoid this simply
+> > drop the mmap_sem if we didn't have the cached page and do all of our
+> > work and return the appropriate retry error.  If we have the cached page
+> > we know we did all the right things to set this page up and we can just
+> > carry on.
+> > 
+> > Signed-off-by: Josef Bacik <josef@toxicpanda.com>
+> ...
+> > @@ -8828,6 +8830,29 @@ vm_fault_t btrfs_page_mkwrite(struct vm_fault *vmf)
+> >  
+> >  	reserved_space = PAGE_SIZE;
+> >  
+> > +	/*
+> > +	 * We have our cached page from a previous mkwrite, check it to make
+> > +	 * sure it's still dirty and our file size matches when we ran mkwrite
+> > +	 * the last time.  If everything is OK then return VM_FAULT_LOCKED,
+> > +	 * otherwise do the mkwrite again.
+> > +	 */
+> > +	if (vmf->flags & FAULT_FLAG_USED_CACHED) {
+> > +		lock_page(page);
+> > +		if (vmf->cached_size == i_size_read(inode) &&
+> > +		    PageDirty(page))
+> > +			return VM_FAULT_LOCKED;
+> > +		unlock_page(page);
+> > +	}
+> 
+> I guess this is similar to Dave's comment: Why is i_size so special? What
+> makes sure that file didn't get modified between time you've prepared
+> cached_page and now such that you need to do the preparation again?
+> And if indeed metadata prepared for a page cannot change, what's so special
+> about it being that particular cached_page?
+> 
+> Maybe to phrase my objections differently: Your preparations in
+> btrfs_page_mkwrite() are obviously related to your filesystem metadata. So
+> why cannot you infer from that metadata (extent tree, whatever - I'd use
+> extent status tree in ext4) whether that particular file+offset is already
+> prepared for writing and just bail out with success in that case?
+> 
 
-Pulled,
+I was just being overly paranoid, I was afraid of the case where we would
+truncate and then extend in between, but now that I actually think about it that
+would end up with the page not being on the mapping anymore so we would catch
+that case.  I've dropped this part from my current version.  I'm getting some
+testing on these patches in production and I'll post them sometime next week
+once I'm happy with them.  Thanks,
 
-                        Linus
+Josef
