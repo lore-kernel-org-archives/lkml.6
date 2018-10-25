@@ -2,183 +2,159 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22DC1ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:13:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76307ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:14:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4BA620834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:13:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31EDA20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:14:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="Xpau0iAP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4BA620834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=poorly.run
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fv90TAN0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31EDA20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727751AbeJZCrm (ORCPT
+        id S1727789AbeJZCsO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 22:47:42 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:36990 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727687AbeJZCrm (ORCPT
+        Thu, 25 Oct 2018 22:48:14 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34694 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727636AbeJZCsN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 22:47:42 -0400
-Received: by mail-yb1-f194.google.com with SMTP id d18-v6so4080637yba.4
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 11:13:51 -0700 (PDT)
+        Thu, 25 Oct 2018 22:48:13 -0400
+Received: by mail-wr1-f67.google.com with SMTP id l6-v6so10315322wrt.1;
+        Thu, 25 Oct 2018 11:14:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=x6pg4/s2+sEQTUvLHibRi2LVBl8g5s3Awm8Kd9svFoA=;
-        b=Xpau0iAPIqe9mUuHt2f4t+mAf8PXBlAA2qBxeEQ40Tw2n6iHiREb4M40PumvrgbDpR
-         lWHoT9yTBhXM6ZFH1AaQxpd559ajmCoEPAfHIxlK+AdhBlSloFq08ryJQfXSSfMLUxPI
-         sVWrzyCPC5h3/7TtNcSjygUGDxlaOxpmKscD6mdoNaYIhk3tffUYI2XKmD2Q7/IVkB1a
-         HqdY2RX9ynlrZjkN067SWazQk+7Ku1j9oDnCmWoRMFV3aU5SscG9rwCigzOhYcHKoiLM
-         leoAwsCUMes4998MEuT4mI5bmy6M0XrSfdw4CKCJkbzcHf9C2EGMpDLmBeiZLs6sFIE1
-         wH4g==
+        bh=Zek3ExevJkyED5ZqBW92iwlwpZx1bnCaOUOmCfJ19SE=;
+        b=Fv90TAN0PnfvbwtOSbKPN3Moh4mXU/OSf+kL9X1b2mRxTgPZHp+OnZZQ7rD64NFpsT
+         DMTCehDi9GBsgCbxx4DAB2ALOVOcV8Qnro/39i9Dy1r4jINkZfzTmrjk/bfLm8P5JLaL
+         btgQXw58I8GOEowtCTxae+zlFuiOJutFYuzsBM+UM9mrFK4csF+9wGTwMG5FxzyRwMPE
+         a6VJOcgpQEfoQb5oLDlMrl+SN6vrf/Sia0fmnmaV3pqfNOW1JAo8Q9hBbU3aVrTMhe1G
+         6OIp6uSO1m0ye7EkPkrlyFLxXzlACoy6o3fBqwVLifRa3XkxBAqut7X4mFqK5qeqP99B
+         Uhjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=x6pg4/s2+sEQTUvLHibRi2LVBl8g5s3Awm8Kd9svFoA=;
-        b=mhoI6UdRk54X+rts/DMmJiTlug55677itay0OIjjRA5fPT96usEuh5DD4EX4/Ze8Dv
-         j0vW5MaIobCysf3F7b+EANvCSv6zMnA51s9H8J/nQaCI/tV/nrLIKN/wIuS1IsLIFBx9
-         olVOIwz73JZrhJsVATtI/RglXhqyfYZUrIl1arubNmMHbSXQL1lguoe3UN07VfxjuOSy
-         52c28itRXm8nn1BwuAlVwq/v7SzlAvVVQGQ6KPAYaEn+O5ily+6bpx+IElcoOMerGAv0
-         Ye5NdzionR6PaLZtKu4mK6pFcWvmOzgXhG64T5FhHO7oD2HrVjXfKy9dRf/4UbPamI0V
-         1wJg==
-X-Gm-Message-State: AGRZ1gJlSnCXB06V4/J0GWhWH+3/FqQ4KWyJ74sLjTmMWyV2wRHsTE55
-        f8k8NzUlKQvY5WbyK9JBjGCU1A==
-X-Google-Smtp-Source: AJdET5fDbpXprn+Uyc+cdSAYhbC/zGh1sq8NbMxJtodUyRIYSCO+xnOAAinptRNIte0xlzV8DrII6Q==
-X-Received: by 2002:a25:be4f:: with SMTP id d15-v6mr367284ybm.156.1540491230955;
-        Thu, 25 Oct 2018 11:13:50 -0700 (PDT)
-Received: from localhost ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
-        by smtp.gmail.com with ESMTPSA id v34-v6sm4493919ywh.45.2018.10.25.11.13.50
+        bh=Zek3ExevJkyED5ZqBW92iwlwpZx1bnCaOUOmCfJ19SE=;
+        b=Bw7FJv42U3C8mcet+9zqlJqdiw8wib7cA/FmtLkjk3HSqSI8eszDLd53SStrRMCkIv
+         xmBiwDYX/oeN1JW9TTlaCQIE9ioSJt2Oi/waLPq3Eb1TNVVGVkdsVqP+3+dPkGO6rtIv
+         hRBeRD8KK5n+TNkSrtf7EOMt6RbZw+JTXO387nk4d96WGkOG4i5jaUqtc7LT/O+ts0ez
+         cnL0kGwxBY3h6S1mBHstdsyn+ek/SsDpu4q/4Ki+pGXWcOSdMTxwdyAwSZOas8Q71kNQ
+         i2J95sqmzcHUJHS7/JWUT3bp7gFHzh8PWqym7uxaFHZNYsjIZONzx2rXJD1mn6O+Fchh
+         r3wQ==
+X-Gm-Message-State: AGRZ1gLcBLksLPDVCXSsd2CsXhVhnreyVFMy3+Ul1XryL8fF4jWmD4nC
+        CNKEPlLIYg4SXzzPKxdZ9oM=
+X-Google-Smtp-Source: AJdET5dgX+B7rD244EpqmOWjAIX5gDdZ5HvkpbWfyJrEMUUph7/ALBIGxkCgp2TQMZQIvfQ7KIB/DQ==
+X-Received: by 2002:a05:6000:1cb:: with SMTP id t11mr254159wrx.146.1540491261044;
+        Thu, 25 Oct 2018 11:14:21 -0700 (PDT)
+Received: from flashbox ([2a01:4f8:10b:24a5::2])
+        by smtp.gmail.com with ESMTPSA id y138-v6sm1065858wmd.2.2018.10.25.11.14.20
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Oct 2018 11:13:50 -0700 (PDT)
-Date:   Thu, 25 Oct 2018 14:13:49 -0400
-From:   Sean Paul <sean@poorly.run>
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     Sean Paul <seanpaul@chromium.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sandeep Panda <spanda@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        jsanka@codeaurora.org, ryandcase@chromium.org,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/6] drm/panel: simple: Innolux TV123WAM is actually
- P120ZDG-BF1
-Message-ID: <20181025181349.GM154160@art_vandelay>
-References: <20181022204639.8558-1-dianders@chromium.org>
- <20181022204639.8558-5-dianders@chromium.org>
+        Thu, 25 Oct 2018 11:14:20 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 11:14:18 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     vkoul@kernel.org, dan.j.williams@intel.com,
+        michal.simek@xilinx.com, dmaengine@vger.kernel.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dmaengine: xilinx_dma: Remove __aligned attribute on
+ zynqmp_dma_desc_ll
+Message-ID: <20181025181418.GA28946@flashbox>
+References: <20181025180525.28378-1-natechancellor@gmail.com>
+ <CAKwvOdn6juo_gfbEBmL2hanOuwbth2gE6bv9_O3AjWsM-WmsWA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181022204639.8558-5-dianders@chromium.org>
+In-Reply-To: <CAKwvOdn6juo_gfbEBmL2hanOuwbth2gE6bv9_O3AjWsM-WmsWA@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 01:46:38PM -0700, Douglas Anderson wrote:
-> As far as I can tell the panel that was added in commit da50bd4258db
-> ("drm/panel: simple: Add Innolux TV123WAM panel driver support")
-> wasn't actually an Innolux TV123WAM but was actually an Innolux
-> P120ZDG-BF1.
+On Thu, Oct 25, 2018 at 11:11:22AM -0700, Nick Desaulniers wrote:
+> On Thu, Oct 25, 2018 at 11:06 AM Nathan Chancellor
+> <natechancellor@gmail.com> wrote:
+> >
+> > Clang warns:
+> >
+> > drivers/dma/xilinx/zynqmp_dma.c:166:4: warning: attribute 'aligned' is
+> > ignored, place it after "struct" to apply attribute to type declaration
+> > [-Wignored-attributes]
+> > }; __aligned(64)
+> >    ^
+> > ./include/linux/compiler_types.h:200:38: note: expanded from macro
+> > '__aligned'
+> > #define __aligned(x)            __attribute__((aligned(x)))
+> >                                                ^
+> > 1 warning generated.
+> >
+> > As Nick pointed out in the previous version of this patch, the author
+> > likely intended for this struct to be 8-byte (64-bit) aligned, not
+> > 64-byte, which is the default. Remove the hanging __aligned attribute.
 > 
-> As far as I can tell the Innolux TV123WAM isn't a real panel and but
-> it's a mosh between the TI TV123WAM and the Innolux P120ZDG-BF1.
-> Let's unmosh.
+> Here was the v1 discussion, for reference.
+> https://lkml.org/lkml/2018/9/12/4
 > 
-> Here's my evidence:
+> Thanks for sending the update Nathan.  One thing I recommend doing is
+> including the version in the [PATCH] subject line, ie. [PATCH v2].
+> `git format-patch` can do this automatically for you, ex.
+> $ git format-patch -v2 HEAD~
 > 
-> * Searching for TV123WAM on the Internet turns up a TI panel.  While
->   it's possible that an Innolux panel has the same model number as the
->   TI Panel, it seems a little doubtful.  Looking up the datasheet from
->   the TI Panel shows that it's 1920 x 1280 and 259.2 mm x 172.8 mm.
+> >
+> > Fixes: b0cc417c1637 ("dmaengine: Add Xilinx zynqmp dma engine driver support")
+> > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+> > Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
+> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > ---
 > 
-> * As far as I know, the patch adding the Innolux Panel was supposed to
->   be for the board that's sitting in front of me as I type this
->   (support for that board is not yet upstream).  On the back of that
->   panel I see Innolux P120ZDZ-EZ1 rev B1.
+> Then below this line, you can include the notes about v1 -> v2
+> changes. (interdiff notes to the reviewers that get discarded from the
+> commit message).  I think I've seen you use the versioning before, so
+> sorry if I'm restating something you already know.
 > 
-> * Someone pointed me at a datasheet that's supposed to be for the
->   panel in front of me (sorry, I can't share the datasheet).  That
->   datasheet has the string "p120zdg-bf1"
-> 
-> * If I search for "P120ZDG-BF1" on the Internet I get hits for panels
->   that are 2160x1440.  They don't have datasheets, but the fact that
->   the resolution matches is a good sign.
-> 
-> In any case, let's update the name and also the physical size to match
-> the correct panel.
-> 
-> Fixes: da50bd4258db ("drm/panel: simple: Add Innolux TV123WAM panel driver support")
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> Cc: Sandeep Panda <spanda@codeaurora.org>
-> ---
-> 
->  drivers/gpu/drm/panel/panel-simple.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-> index 937e97490c30..7ee1abc5d81b 100644
-> --- a/drivers/gpu/drm/panel/panel-simple.c
-> +++ b/drivers/gpu/drm/panel/panel-simple.c
-> @@ -1370,7 +1370,7 @@ static const struct panel_desc innolux_n156bge_l21 = {
->  	},
->  };
->  
-> -static const struct drm_display_mode innolux_tv123wam_mode = {
-> +static const struct drm_display_mode innolux_p120zdg_bf1_mode = {
->  	.clock = 206016,
->  	.hdisplay = 2160,
->  	.hsync_start = 2160 + 48,
-> @@ -1384,13 +1384,13 @@ static const struct drm_display_mode innolux_tv123wam_mode = {
->  	.flags = DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC,
->  };
->  
-> -static const struct panel_desc innolux_tv123wam = {
-> -	.modes = &innolux_tv123wam_mode,
-> +static const struct panel_desc innolux_p120zdg_bf1 = {
-> +	.modes = &innolux_p120zdg_bf1_mode,
->  	.num_modes = 1,
->  	.bpc = 8,
->  	.size = {
-> -		.width = 259,
-> -		.height = 173,
-> +		.width = 254,
-> +		.height = 169,
->  	},
->  	.delay = {
->  		.prepare = 200,
-> @@ -2454,8 +2454,8 @@ static const struct of_device_id platform_of_match[] = {
->  		.compatible = "innolux,n156bge-l21",
->  		.data = &innolux_n156bge_l21,
->  	}, {
-> -		.compatible = "innolux,tv123wam",
 
-I think we should update the struct, but we might want to keep this around.
-Given the tv123wam panel is TI, we're likely not going to have a collision on
-innolux,...
+No, that's fine, I completely forgot all the versioning for this patch
+as I was rushing, sorry about that!
 
-That said, I'll defer to robh on this one, I'm not sure if changing names is
-cool once the bindings have hit mainline.
+> Thanks for the patch.
+> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+> 
 
-> -		.data = &innolux_tv123wam,
-> +		.compatible = "innolux,p120zdg-bf1",
-> +		.data = &innolux_p120zdg_bf1,
->  	}, {
->  		.compatible = "innolux,zj070na-01p",
->  		.data = &innolux_zj070na_01p,
+Thanks for the review!
+Nathan
+
+> >  drivers/dma/xilinx/zynqmp_dma.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/dma/xilinx/zynqmp_dma.c b/drivers/dma/xilinx/zynqmp_dma.c
+> > index c74a88b65039..73de6a6179fc 100644
+> > --- a/drivers/dma/xilinx/zynqmp_dma.c
+> > +++ b/drivers/dma/xilinx/zynqmp_dma.c
+> > @@ -163,7 +163,7 @@ struct zynqmp_dma_desc_ll {
+> >         u32 ctrl;
+> >         u64 nxtdscraddr;
+> >         u64 rsvd;
+> > -}; __aligned(64)
+> > +};
+> >
+> >  /**
+> >   * struct zynqmp_dma_desc_sw - Per Transaction structure
+> > --
+> > 2.19.1
+> >
+> 
+> 
 > -- 
-> 2.19.1.568.g152ad8e336-goog
-> 
-
--- 
-Sean Paul, Software Engineer, Google / Chromium OS
+> Thanks,
+> ~Nick Desaulniers
