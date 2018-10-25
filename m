@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49377ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DFCFC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:41:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EC9420856
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:41:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E51B2064A
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:41:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uwn6Q9HX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EC9420856
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RmhpEE1k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E51B2064A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728002AbeJYXOY (ORCPT
+        id S1728154AbeJYXOg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 19:14:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56948 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 19:14:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728511AbeJYWsU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:48:20 -0400
+        id S1728864AbeJYWsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:48:17 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 040FC2085B;
-        Thu, 25 Oct 2018 14:15:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3023D20834;
+        Thu, 25 Oct 2018 14:15:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540476924;
-        bh=670edZCOoXdjUYuKpw/9yOZFCp06xEAp9ZaUUBLMTaQ=;
+        s=default; t=1540476921;
+        bh=De1kYG3U43zttpm4yxRbXwflxtux71hpDQwk6WJmLEM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Uwn6Q9HXS6+K+1Z2i++mMbgX9UEMmAI/wI1QO6Zt7fQCU6dBc96oWHhTQVSq8LBTV
-         VRkP1lmePlbhr/vAHKxON4oxpYLFe5aTJ7QPXGgmyQlVCG2IJCp/INVUr/m3EGRctZ
-         ById+Sv908gZO6QtJn3jak3UMBDxPowsRc3iIOu8=
+        b=RmhpEE1k3sY9vRljaiC1vrz80GMhHFog+9oCjHjZKXP9FmsrbqS+v+aHEoSc2W7ec
+         J6wCPo/fPBNPGp+813QVpCBQKvHyn44WmVVYKfRr8Gu0a7algqvV3B1rogLmxC7k62
+         rsI08VRqPsTtUBZBCukgJ36Xm+ocdRNg1cSN1jXo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     Marek Vasut <marex@denx.de>,
+        Steve Longerbeam <steve_longerbeam@mentor.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 40/98] net: stmmac: ensure jumbo_frm error return is correctly checked for -ve value
-Date:   Thu, 25 Oct 2018 10:13:25 -0400
-Message-Id: <20181025141423.213774-40-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 38/98] gpu: ipu-v3: Fix CSI selection for VDIC
+Date:   Thu, 25 Oct 2018 10:13:23 -0400
+Message-Id: <20181025141423.213774-38-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141423.213774-1-sashal@kernel.org>
 References: <20181025141423.213774-1-sashal@kernel.org>
@@ -53,37 +54,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Marek Vasut <marex@denx.de>
 
-[ Upstream commit 594238158bf748c285f0a73222cd9b7ccf3c525d ]
+[ Upstream commit b7dfee2433576f1f030cb84cdb04b70f36554992 ]
 
-The current comparison of entry < 0 will never be true since entry is an
-unsigned integer. Make entry an int to ensure -ve error return values
-from the call to jumbo_frm are correctly being caught.
+The description of the CSI_SEL bit in the i.MX6 reference manual is
+incorrect. It states "This bit defines which CSI is the input to the
+IC. This bit is effective only if IC_INPUT is bit cleared".
 
-Detected by CoverityScan, CID#1238760 ("Macro compares unsigned to 0")
+From experiment it was found this is in fact not correct. The CSI_SEL
+bit selects which CSI is input to _both_ the VDIC _and_ the IC. If the
+IC_INPUT bit is set so that the IC is receiving from the VDIC, the IC
+ignores the CSI_SEL bit, but CSI_SEL still selects which CSI the VDIC
+receives from in that case.
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Marek Vasut <marex@denx.de>
+Signed-off-by: Steve Longerbeam <steve_longerbeam@mentor.com>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/ipu-v3/ipu-common.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-index 0df71865fab1..65ed02bc3ea3 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -2199,7 +2199,8 @@ static netdev_tx_t stmmac_xmit(struct sk_buff *skb, struct net_device *dev)
- 	unsigned int nopaged_len = skb_headlen(skb);
- 	int i, csum_insertion = 0, is_jumbo = 0;
- 	int nfrags = skb_shinfo(skb)->nr_frags;
--	unsigned int entry, first_entry;
-+	int entry;
-+	unsigned int first_entry;
- 	struct dma_desc *desc, *first;
- 	unsigned int enh_desc;
- 	unsigned int des;
+diff --git a/drivers/gpu/ipu-v3/ipu-common.c b/drivers/gpu/ipu-v3/ipu-common.c
+index b9539f7c5e9a..99c813a4ec1f 100644
+--- a/drivers/gpu/ipu-v3/ipu-common.c
++++ b/drivers/gpu/ipu-v3/ipu-common.c
+@@ -715,15 +715,16 @@ void ipu_set_ic_src_mux(struct ipu_soc *ipu, int csi_id, bool vdi)
+ 	spin_lock_irqsave(&ipu->lock, flags);
+ 
+ 	val = ipu_cm_read(ipu, IPU_CONF);
+-	if (vdi) {
++	if (vdi)
+ 		val |= IPU_CONF_IC_INPUT;
+-	} else {
++	else
+ 		val &= ~IPU_CONF_IC_INPUT;
+-		if (csi_id == 1)
+-			val |= IPU_CONF_CSI_SEL;
+-		else
+-			val &= ~IPU_CONF_CSI_SEL;
+-	}
++
++	if (csi_id == 1)
++		val |= IPU_CONF_CSI_SEL;
++	else
++		val &= ~IPU_CONF_CSI_SEL;
++
+ 	ipu_cm_write(ipu, val, IPU_CONF);
+ 
+ 	spin_unlock_irqrestore(&ipu->lock, flags);
 -- 
 2.17.1
 
