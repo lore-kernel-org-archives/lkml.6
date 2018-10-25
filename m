@@ -6,44 +6,51 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4E52C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:17:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6073BECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:17:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BC892085A
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:17:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1948520854
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:17:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="J7cVH6Jj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BC892085A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cj/lnhW4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1948520854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729734AbeJYWui (ORCPT
+        id S1729748AbeJYWum (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:50:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60190 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:50:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60248 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727635AbeJYWui (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:50:38 -0400
+        id S1729096AbeJYWul (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:50:41 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7890C2085A;
-        Thu, 25 Oct 2018 14:17:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDBE520848;
+        Thu, 25 Oct 2018 14:17:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477061;
-        bh=SrH6G5Mixryhxa9A4qIaRxzPw1XraFOiBgEqT6Sc7Uk=;
+        s=default; t=1540477064;
+        bh=DrOvJqjAfG7T/Y2FIBjo9XF9gUpx4JepjrOzsGwwU3M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J7cVH6JjaZEB2Yta5c1RUJ+b/BVT8KEALGCcrkUhfdoOOti9YOOLOFhl0IjKZAR9o
-         P56kK4onTCF2g/ZAVyq21GeCJhLs3Ca2rESTZ3dGtgyFXyEe9TVZyAKlJuqFWex7ma
-         gXdkZ6m3QIi8biMQz111PuslsK3jsdNjHVdecAOo=
+        b=Cj/lnhW4nbdk99v2Z6SQEFTp16tqXA2C+ox/MgjlkR9mnf3kl1fgtIVSiEtA+R7o3
+         vcW9Fl9qSz5qIv0JlOHMH29+LWY2N0eBsqb3Y8nwVB05pje1cdbl4zC4K2JtnbJ2f4
+         +o4RVbceeamK8vUDs/yHITonScsEl2QR0TzqpvWc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 20/65] aacraid: Start adapter after updating number of MSIX vectors
-Date:   Thu, 25 Oct 2018 10:16:20 -0400
-Message-Id: <20181025141705.213937-20-sashal@kernel.org>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephane Eranian <eranian@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 21/65] perf/core: Don't leak event in the syscall error path
+Date:   Thu, 25 Oct 2018 10:16:21 -0400
+Message-Id: <20181025141705.213937-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141705.213937-1-sashal@kernel.org>
 References: <20181025141705.213937-1-sashal@kernel.org>
@@ -52,35 +59,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-[ Upstream commit 116d77fea02e2a5aded7d29ba4c692774cb339f1 ]
+[ Upstream commit 201c2f85bd0bc13b712d9c0b3d11251b182e06ae ]
 
-The adapter has to be started after updating the number of MSIX Vectors
+In the error path, event_file not being NULL is used to determine
+whether the event itself still needs to be free'd, so fix it up to
+avoid leaking.
 
-Fixes: ecc479e00db8 (aacraid: Set correct MSIX count for EEH recovery)
-Cc: stable@vger.kernel.org
-Signed-off-by: Raghava Aditya Renukunta <RaghavaAditya.Renukunta@microsemi.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Reported-by: Leon Yu <chianglungyu@gmail.com>
+Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Vince Weaver <vincent.weaver@maine.edu>
+Fixes: 130056275ade ("perf: Do not double free")
+Link: http://lkml.kernel.org/r/87twk06yxp.fsf@ashishki-desk.ger.corp.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/aacraid/linit.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/events/core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/scsi/aacraid/linit.c b/drivers/scsi/aacraid/linit.c
-index 8da8b46da722..1c447405ebbf 100644
---- a/drivers/scsi/aacraid/linit.c
-+++ b/drivers/scsi/aacraid/linit.c
-@@ -1416,8 +1416,8 @@ static int aac_acquire_resources(struct aac_dev *dev)
- 		/* After EEH recovery or suspend resume, max_msix count
- 		 * may change, therfore updating in init as well.
- 		 */
--		aac_adapter_start(dev);
- 		dev->init->Sa_MSIXVectors = cpu_to_le32(dev->max_msix);
-+		aac_adapter_start(dev);
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 990ac41d8a5f..68b75dfceb0c 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -8530,6 +8530,7 @@ SYSCALL_DEFINE5(perf_event_open,
+ 					f_flags);
+ 	if (IS_ERR(event_file)) {
+ 		err = PTR_ERR(event_file);
++		event_file = NULL;
+ 		goto err_context;
  	}
- 	return 0;
  
 -- 
 2.17.1
