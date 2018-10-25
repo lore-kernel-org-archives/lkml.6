@@ -7,43 +7,47 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA34ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFF06ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94A8020873
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E3C620873
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XZuFlNqm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94A8020873
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jjHWNr1C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E3C620873
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730822AbeJYWw5 (ORCPT
+        id S1730836AbeJYWxA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:52:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35178 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:53:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35310 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730693AbeJYWwy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:52:54 -0400
+        id S1730693AbeJYWw7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:52:59 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C06F2085B;
-        Thu, 25 Oct 2018 14:19:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 31DA12085B;
+        Thu, 25 Oct 2018 14:20:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477196;
-        bh=mc5sAZh2dZ39zYMDPO+bEe+o2jmvrArx7+M2pTI7+q4=;
+        s=default; t=1540477201;
+        bh=G4t2AF3onUlzYRhTSSW/W1jYUpRZNbDH8ypZpvOLpzM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XZuFlNqmEP2npLOCkaUMeNIT1Fkq9kVVU56kheBdqvRmXX1TUcqkVa4a7/o8r3DjH
-         hr+gO64uMRP1A558nZzrl6qV85GvnmVoH21umVy1caCCDnZpkoAdgo0YFowzf+j/e7
-         1w1VoFnA5segBXt+u0sKdU9b/vacYL8RJnRWdcAI=
+        b=jjHWNr1CvPtog9I+cITlFRbqCcfIYOlt4DysUY6IIiT9obdQmj3bZtqEdxIALQ2gY
+         x1Y02Ie60iEa+Q9XWmG5v44/86GEwlH79Odw4muGKPzEAT0AfOfmkNbdSbAczOjOzp
+         ttHRrvPGKcZIOfTuOMiQpT6kFwkX/PERygKgIdfQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "Steven Rostedt (Red Hat)" <rostedt@goodmis.org>,
+Cc:     Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 42/98] tracing: Fix enabling of syscall events on the command line
-Date:   Thu, 25 Oct 2018 10:17:57 -0400
-Message-Id: <20181025141853.214051-42-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 45/98] perf machine: Fix __machine__findnew_thread() error path
+Date:   Thu, 25 Oct 2018 10:18:00 -0400
+Message-Id: <20181025141853.214051-45-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
 References: <20181025141853.214051-1-sashal@kernel.org>
@@ -52,135 +56,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Steven Rostedt (Red Hat)" <rostedt@goodmis.org>
+From: Namhyung Kim <namhyung@kernel.org>
 
-[ Upstream commit ce1039bd3a89e99e4f624e75fb1777fc92d76eb3 ]
+[ Upstream commit 260d819e3abdbdaa2b88fb983d1314f1b263f9e2 ]
 
-Commit 5f893b2639b2 "tracing: Move enabling tracepoints to just after
-rcu_init()" broke the enabling of system call events from the command
-line. The reason was that the enabling of command line trace events
-was moved before PID 1 started, and the syscall tracepoints require
-that all tasks have the TIF_SYSCALL_TRACEPOINT flag set. But the
-swapper task (pid 0) is not part of that. Since the swapper task is the
-only task that is running at this early in boot, no task gets the
-flag set, and the tracepoint never gets reached.
+When thread__init_map_groups() fails, a new thread should be removed
+from the rbtree since it's gonna be freed.  Also update last match cache
+only if the function succeeded.
 
-Instead of setting the swapper task flag (there should be no reason to
-do that), re-enabled trace events again after the init thread (PID 1)
-has been started. It requires disabling all command line events and
-re-enabling them, as just enabling them again will not reset the logic
-to set the TIF_SYSCALL_TRACEPOINT flag, as the syscall tracepoint will
-be fooled into thinking that it was already set, and wont try setting
-it again. For this reason, we must first disable it and re-enable it.
-
-Link: http://lkml.kernel.org/r/1421188517-18312-1-git-send-email-mpe@ellerman.id.au
-Link: http://lkml.kernel.org/r/20150115040506.216066449@goodmis.org
-
-Reported-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
+Reported-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Link: http://lkml.kernel.org/r/1420763892-15535-1-git-send-email-namhyung@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/trace/trace_events.c | 69 +++++++++++++++++++++++++++++--------
- 1 file changed, 55 insertions(+), 14 deletions(-)
+ tools/perf/util/machine.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index 51c47bc832d4..edf6ab4d8650 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -2400,12 +2400,39 @@ static __init int event_trace_memsetup(void)
- 	return 0;
- }
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 34fc7c8672e4..84238a10c34b 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -389,7 +389,6 @@ static struct thread *__machine__findnew_thread(struct machine *machine,
+ 	if (th != NULL) {
+ 		rb_link_node(&th->rb_node, parent, p);
+ 		rb_insert_color(&th->rb_node, &machine->threads);
+-		machine->last_match = th;
  
-+static __init void
-+early_enable_events(struct trace_array *tr, bool disable_first)
-+{
-+	char *buf = bootup_event_buf;
-+	char *token;
-+	int ret;
+ 		/*
+ 		 * We have to initialize map_groups separately
+@@ -400,9 +399,12 @@ static struct thread *__machine__findnew_thread(struct machine *machine,
+ 		 * leader and that would screwed the rb tree.
+ 		 */
+ 		if (thread__init_map_groups(th, machine)) {
++			rb_erase(&th->rb_node, &machine->threads);
+ 			thread__delete(th);
+ 			return NULL;
+ 		}
 +
-+	while (true) {
-+		token = strsep(&buf, ",");
-+
-+		if (!token)
-+			break;
-+		if (!*token)
-+			continue;
-+
-+		/* Restarting syscalls requires that we stop them first */
-+		if (disable_first)
-+			ftrace_set_clr_event(tr, token, 0);
-+
-+		ret = ftrace_set_clr_event(tr, token, 1);
-+		if (ret)
-+			pr_warn("Failed to enable trace event: %s\n", token);
-+
-+		/* Put back the comma to allow this to be called again */
-+		if (buf)
-+			*(buf - 1) = ',';
-+	}
-+}
-+
- static __init int event_trace_enable(void)
- {
- 	struct trace_array *tr = top_trace_array();
- 	struct ftrace_event_call **iter, *call;
--	char *buf = bootup_event_buf;
--	char *token;
- 	int ret;
++		machine->last_match = th;
+ 	}
  
- 	if (!tr)
-@@ -2427,18 +2454,7 @@ static __init int event_trace_enable(void)
- 	 */
- 	__trace_early_add_events(tr);
- 
--	while (true) {
--		token = strsep(&buf, ",");
--
--		if (!token)
--			break;
--		if (!*token)
--			continue;
--
--		ret = ftrace_set_clr_event(tr, token, 1);
--		if (ret)
--			pr_warn("Failed to enable trace event: %s\n", token);
--	}
-+	early_enable_events(tr, false);
- 
- 	trace_printk_start_comm();
- 
-@@ -2449,6 +2465,31 @@ static __init int event_trace_enable(void)
- 	return 0;
- }
- 
-+/*
-+ * event_trace_enable() is called from trace_event_init() first to
-+ * initialize events and perhaps start any events that are on the
-+ * command line. Unfortunately, there are some events that will not
-+ * start this early, like the system call tracepoints that need
-+ * to set the TIF_SYSCALL_TRACEPOINT flag of pid 1. But event_trace_enable()
-+ * is called before pid 1 starts, and this flag is never set, making
-+ * the syscall tracepoint never get reached, but the event is enabled
-+ * regardless (and not doing anything).
-+ */
-+static __init int event_trace_enable_again(void)
-+{
-+	struct trace_array *tr;
-+
-+	tr = top_trace_array();
-+	if (!tr)
-+		return -ENODEV;
-+
-+	early_enable_events(tr, true);
-+
-+	return 0;
-+}
-+
-+early_initcall(event_trace_enable_again);
-+
- static __init int event_trace_init(void)
- {
- 	struct trace_array *tr;
+ 	return th;
 -- 
 2.17.1
 
