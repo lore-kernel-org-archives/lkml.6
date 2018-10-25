@@ -2,138 +2,110 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63A6DC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:19:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D574C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:20:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F27FA2083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:19:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 281902083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:20:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OQtc2wGd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F27FA2083E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="VOB8gsBA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 281902083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726793AbeJZFxt (ORCPT
+        id S1727421AbeJZFyr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 01:53:49 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38889 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725941AbeJZFxt (ORCPT
+        Fri, 26 Oct 2018 01:54:47 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:37264 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725941AbeJZFyr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 01:53:49 -0400
-Received: by mail-wm1-f68.google.com with SMTP id b14-v6so2871544wmj.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 14:19:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=O0xLKvkS57ApuPCnSmwFrvRxS/Ryg/owy5LT6XV2XGI=;
-        b=OQtc2wGdKX8SsLO6ukEofwSC1cL0Uosy0zWRRpCNTWM+p5h3XGF1qss5juG4FmLoCR
-         clejaqyRnsV3kN6951WwA+eHvFAlaki9IAGndDf7jJxugcL85mjO8D+8xuW3Y5Sf92Ed
-         X6Ugb4LLMLP/uG2mD0Cnvlh8EcANOmeVxp4LW1znyaPMn8QWX7iJCtTqJw5OUJApq1g7
-         u77wNllnuoxp/sk6j6p6yAZG8evgXaXpNLBiQvk9DK5A5TgWmZ5HlQ4MM2S3T8n8ywlJ
-         8/cav3b8klh9x0xcMuioFA/slKzclggfiygCeekbBBT14KfAeCG56kVe67pbFLRcZa7B
-         U7EA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=O0xLKvkS57ApuPCnSmwFrvRxS/Ryg/owy5LT6XV2XGI=;
-        b=JGh1JBkK73NFjaTZqrPwQCfp5AMZzmt/DdlxT+DKTw9187wiIaVV73nxMexxsBZ0n9
-         GGLoklwGM7bwYXI0yWjNfvRC/1H6Esjjw5taKjVU9j+Fy3C3eFS8FPJ4wEh3ENt9rd1D
-         i8pozAHDcqt+4aHLLOMmsntTVtEA/ZE8uoKfQVUt4fcc5hMjQakwRn8g0jhygAMa8ncZ
-         ZCwRzjaUycnICmAl06vNqZUCq437SRYbt/MWHtin3AANPw1S0FjWizbJwrnkhZS85EDj
-         hpQb9B2M8sozwaDibgOq8PSDEpU6MVl6QMtsJ4rrCyVhka84L+oXrbwik1qWIocNdqvq
-         ic4Q==
-X-Gm-Message-State: AGRZ1gLLDMPEyZl5P3L3xw5bNwKPj2Tq/fxrZXkedBh6NkarzvOnias1
-        FrfkRWbTJRSRNg6xKV1DauI=
-X-Google-Smtp-Source: AJdET5fNn/G96jZQn7OC3ooGg4AePeojBYVT9w19Z06wLg7pHfRA1h504AiU2OKL9on297bV/xJ8ig==
-X-Received: by 2002:a1c:f312:: with SMTP id q18-v6mr3271983wmq.14.1540502368455;
-        Thu, 25 Oct 2018 14:19:28 -0700 (PDT)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id 4-v6sm1424254wmt.16.2018.10.25.14.19.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Oct 2018 14:19:27 -0700 (PDT)
-Date:   Thu, 25 Oct 2018 14:19:25 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Boaz Harrosh <ooo@electrozaur.com>
-Subject: Re: [PATCH] fs/exofs: Remove ignored __weak attribute
-Message-ID: <20181025211925.GA24709@flashbox>
-References: <20180930205126.25840-1-natechancellor@gmail.com>
+        Fri, 26 Oct 2018 01:54:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Zhxl+oPjnB64hSK5plNHqGaPZlJgpBelFJ6taYSu7Go=; b=VOB8gsBAuPUw+n+flb4K3typH
+        +1vC8XvIZl/fBs2AbdOYFsNkd1OFmlIo1lYBvZP5D3ROjoM7oJMF9Lyc4prTvWyx9kZTaAa7ipL6f
+        wy6hlPhDJAoen7ORdHADLsu88FtpBk8kRIqSiMPFspohkgkltxDK+lbbvbRotgJ0/S+Jw=;
+Received: from n2100.armlinux.org.uk ([2002:4e20:1eda:1:214:fdff:fe10:4f86]:57582)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gFn3A-0001GC-Nd; Thu, 25 Oct 2018 22:20:16 +0100
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gFn34-0003AV-Mb; Thu, 25 Oct 2018 22:20:11 +0100
+Date:   Thu, 25 Oct 2018 22:20:06 +0100
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, Andrew Lunn <andrew@lunn.ch>,
+        ebiederm@xmission.com, Tony Lindgren <tony@atomide.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: mm: Facilitate debugging CONFIG_KUSER_HELPERS
+ disabled
+Message-ID: <20181025212006.GE30658@n2100.armlinux.org.uk>
+References: <20181025180957.7900-1-f.fainelli@gmail.com>
+ <CAFqt6zYxY+ocQPwNnV3CE7pTrUFniQETcxsq4Dsof41E91L6BQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180930205126.25840-1-natechancellor@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAFqt6zYxY+ocQPwNnV3CE7pTrUFniQETcxsq4Dsof41E91L6BQ@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Sep 30, 2018 at 01:51:26PM -0700, Nathan Chancellor wrote:
-> Clang warns that the __weak attribute is going to be ignored on
-> g_attr_inode_data because it's not in the correct location (needs to be
-> after the type).
+On Fri, Oct 26, 2018 at 12:00:09AM +0530, Souptick Joarder wrote:
+> On Thu, Oct 25, 2018 at 11:40 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
+> >
+> > Some software such as perf makes unconditional use of the special
+> > [vectors] page which is only provided when CONFIG_KUSER_HELPERS is
+> > enabled in the kernel.
+> >
+> > Facilitate the debugging of such situations by printing a debug message
+> > to the kernel log showing the task name and the faulting address.
+> >
+> > Suggested-by: Russell King <rmk+kernel@armlinux.org.uk>
+> > Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> > ---
+> >  arch/arm/mm/fault.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >
+> > diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
+> > index f4ea4c62c613..f17471fbc1c4 100644
+> > --- a/arch/arm/mm/fault.c
+> > +++ b/arch/arm/mm/fault.c
+> > @@ -173,6 +173,11 @@ __do_user_fault(struct task_struct *tsk, unsigned long addr,
+> >                 show_regs(regs);
+> >         }
+> >  #endif
+> > +#ifndef CONFIG_KUSER_HELPERS
 > 
-> In file included from fs/exofs/dir.c:35:
-> In file included from fs/exofs/exofs.h:41:
-> fs/exofs/common.h:186:21: warning: 'weak' attribute only applies to
-> variables, functions, and classes [-Wignored-attributes]
-> static const struct __weak osd_attr g_attr_inode_data = ATTR_DEF(
->                     ^
+> Just have one doubt, if the condition is "#ifdef CONFIG_KUSER_HELPER"
+> as commit message suggests the scenario is valid when CONFIG_KUSER_HELPER
+> is enabled ? No ?
 > 
-> Turns out that GCC ignores the attribute too albeit silently because
-> moving the attribute after either osd_attr or g_attr_inode_data like
-> all other uses of __weak on variables in the kernel causes a build
-> error on both GCC and Clang because static variables cannot be weak
-> since weak definitions rely on not having internal linkage:
-> 
-> In file included from fs/exofs/namei.c:34:
-> In file included from fs/exofs/exofs.h:41:
-> fs/exofs/common.h:186:30: error: weak declaration cannot have internal
-> linkage
-> static const struct osd_attr __weak g_attr_inode_data = ATTR_DEF(
->                              ^
-> 
-> Just remove the attribute because it hasn't been correct since the
-> initial addition of this file in commit b14f8ab28449 ("exofs: Kbuild,
-> Headers and osd utils").
-> 
-> Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->  fs/exofs/common.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/exofs/common.h b/fs/exofs/common.h
-> index 7d88ef566213..45da96a1528d 100644
-> --- a/fs/exofs/common.h
-> +++ b/fs/exofs/common.h
-> @@ -183,7 +183,7 @@ struct exofs_fcb {
->  #define EXOFS_INO_ATTR_SIZE	sizeof(struct exofs_fcb)
->  
->  /* This is the Attribute the fcb is stored in */
-> -static const struct __weak osd_attr g_attr_inode_data = ATTR_DEF(
-> +static const struct osd_attr g_attr_inode_data = ATTR_DEF(
->  	EXOFS_APAGE_FS_DATA,
->  	EXOFS_ATTR_INODE_DATA,
->  	EXOFS_INO_ATTR_SIZE);
-> -- 
-> 2.19.0
-> 
+> > +       if ((sig == SIGSEGV) && ((addr & PAGE_MASK) == 0xffff0000))
+> > +               printk(KERN_DEBUG "%s: CONFIG_KUSER_HELPERS disabled at 0x%08lx\n",
+> > +                      tsk->comm, addr);
+> > +#endif
 
-Hi Andrew,
+The idea is to print a message when we get a SEGV _and_ the faulting
+address is in the vectors page _and_ CONFIG_KUSER_HELPERS is _not_ set
+(which makes the page inaccessible.)  The message points users to
+enable it and/or why the application has failed.
 
-Can you take this with Boaz's ack?
-
-Thanks,
-Nathan
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
