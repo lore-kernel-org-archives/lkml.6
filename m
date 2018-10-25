@@ -4,48 +4,44 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC0AEECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6A77C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F06D20840
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2115920848
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nwKi1Zm2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F06D20840
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UkwsT0c6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2115920848
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727881AbeJYWoD (ORCPT
+        id S1727949AbeJYWoE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:44:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52554 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:44:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52596 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727518AbeJYWoC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:44:02 -0400
+        id S1727877AbeJYWoD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:44:03 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F395F20840;
-        Thu, 25 Oct 2018 14:11:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 78E9C20848;
+        Thu, 25 Oct 2018 14:11:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540476667;
-        bh=PviyBiI5cs/Wbgdh9FnHeOak49NOT3EkZg2ofT89CZ8=;
+        s=default; t=1540476668;
+        bh=kU97w5KekRBTXyIZX2L7/uyudWsVEHglUkkus9TZBrY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nwKi1Zm2vwF6IL3qiPPJB2RpH+K5YBcmhNqjqIgWfVI6Gzfy1DykxrnwBRfwUf+tl
-         2Mv6LQfJw/AFzZGWSFz4JS9dC8hz8WMYxZzGruYfmd/0lWjpsJbGrHEETsHRloEYpr
-         +zFlMejUP32ptDdf1k8afkgG0ZTDuXpxYOS+Nx08=
+        b=UkwsT0c6prVyVub1kQwnrWBUVIQqgDWFYGrfeTdh6XiGvCIDwqcWBvwL9Kts1d0vZ
+         VJ2EBgQmz5nbIotemgF74LaZpmG1ssN/JWfela/NJ+FBB8nex9VRMtO0hFzYF2hK57
+         /w2kUYZbS5lR0W9K7WL24C5AgLO+qVrkOb84SmPM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Alex Vesker <valex@mellanox.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 08/46] IB/ipoib: Fix lockdep issue found on ipoib_ib_dev_heavy_flush
-Date:   Thu, 25 Oct 2018 10:10:15 -0400
-Message-Id: <20181025141053.213330-8-sashal@kernel.org>
+Cc:     Doug Ledford <dledford@redhat.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 09/46] IB/rxe: put the pool on allocation failure
+Date:   Thu, 25 Oct 2018 10:10:16 -0400
+Message-Id: <20181025141053.213330-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141053.213330-1-sashal@kernel.org>
 References: <20181025141053.213330-1-sashal@kernel.org>
@@ -54,103 +50,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alex Vesker <valex@mellanox.com>
+From: Doug Ledford <dledford@redhat.com>
 
-[ Upstream commit 1f80bd6a6cc8358b81194e1f5fc16449947396ec ]
+[ Upstream commit 6b9f8970cd30929cb6b372fa44fa66da9e59c650 ]
 
-The locking order of vlan_rwsem (LOCK A) and then rtnl (LOCK B),
-contradicts other flows such as ipoib_open possibly causing a deadlock.
-To prevent this deadlock heavy flush is called with RTNL locked and
-only then tries to acquire vlan_rwsem.
-This deadlock is possible only when there are child interfaces.
+If the allocation of elem fails, it is not sufficient to simply check
+for NULL and return.  We need to also put our reference on the pool or
+else we will leave the pool with a permanent ref count and we will never
+be able to free it.
 
-[  140.941758] ======================================================
-[  140.946276] WARNING: possible circular locking dependency detected
-[  140.950950] 4.15.0-rc1+ #9 Tainted: G           O
-[  140.954797] ------------------------------------------------------
-[  140.959424] kworker/u32:1/146 is trying to acquire lock:
-[  140.963450]  (rtnl_mutex){+.+.}, at: [<ffffffffc083516a>] __ipoib_ib_dev_flush+0x2da/0x4e0 [ib_ipoib]
-[  140.970006]
-but task is already holding lock:
-[  140.975141]  (&priv->vlan_rwsem){++++}, at: [<ffffffffc0834ee1>] __ipoib_ib_dev_flush+0x51/0x4e0 [ib_ipoib]
-[  140.982105]
-which lock already depends on the new lock.
-[  140.990023]
-the existing dependency chain (in reverse order) is:
-[  140.998650]
--> #1 (&priv->vlan_rwsem){++++}:
-[  141.005276]        down_read+0x4d/0xb0
-[  141.009560]        ipoib_open+0xad/0x120 [ib_ipoib]
-[  141.014400]        __dev_open+0xcb/0x140
-[  141.017919]        __dev_change_flags+0x1a4/0x1e0
-[  141.022133]        dev_change_flags+0x23/0x60
-[  141.025695]        devinet_ioctl+0x704/0x7d0
-[  141.029156]        sock_do_ioctl+0x20/0x50
-[  141.032526]        sock_ioctl+0x221/0x300
-[  141.036079]        do_vfs_ioctl+0xa6/0x6d0
-[  141.039656]        SyS_ioctl+0x74/0x80
-[  141.042811]        entry_SYSCALL_64_fastpath+0x1f/0x96
-[  141.046891]
--> #0 (rtnl_mutex){+.+.}:
-[  141.051701]        lock_acquire+0xd4/0x220
-[  141.055212]        __mutex_lock+0x88/0x970
-[  141.058631]        __ipoib_ib_dev_flush+0x2da/0x4e0 [ib_ipoib]
-[  141.063160]        __ipoib_ib_dev_flush+0x71/0x4e0 [ib_ipoib]
-[  141.067648]        process_one_work+0x1f5/0x610
-[  141.071429]        worker_thread+0x4a/0x3f0
-[  141.074890]        kthread+0x141/0x180
-[  141.078085]        ret_from_fork+0x24/0x30
-[  141.081559]
-
-other info that might help us debug this:
-[  141.088967]  Possible unsafe locking scenario:
-[  141.094280]        CPU0                    CPU1
-[  141.097953]        ----                    ----
-[  141.101640]   lock(&priv->vlan_rwsem);
-[  141.104771]                                lock(rtnl_mutex);
-[  141.109207]                                lock(&priv->vlan_rwsem);
-[  141.114032]   lock(rtnl_mutex);
-[  141.116800]
- *** DEADLOCK ***
-
-Fixes: b4b678b06f6e ("IB/ipoib: Grab rtnl lock on heavy flush when calling ndo_open/stop")
-Signed-off-by: Alex Vesker <valex@mellanox.com>
-Signed-off-by: Leon Romanovsky <leon@kernel.org>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: 4831ca9e4a8e ("IB/rxe: check for allocation failure on elem")
+Suggested-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/ulp/ipoib/ipoib_ib.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/infiniband/sw/rxe/rxe_pool.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/infiniband/ulp/ipoib/ipoib_ib.c b/drivers/infiniband/ulp/ipoib/ipoib_ib.c
-index c97384c914a4..d77e8e2ae05f 100644
---- a/drivers/infiniband/ulp/ipoib/ipoib_ib.c
-+++ b/drivers/infiniband/ulp/ipoib/ipoib_ib.c
-@@ -1203,13 +1203,10 @@ static void __ipoib_ib_dev_flush(struct ipoib_dev_priv *priv,
- 		ipoib_ib_dev_down(dev);
+diff --git a/drivers/infiniband/sw/rxe/rxe_pool.c b/drivers/infiniband/sw/rxe/rxe_pool.c
+index 3b4916680018..b4a8acc7bb7d 100644
+--- a/drivers/infiniband/sw/rxe/rxe_pool.c
++++ b/drivers/infiniband/sw/rxe/rxe_pool.c
+@@ -394,23 +394,25 @@ void *rxe_alloc(struct rxe_pool *pool)
  
- 	if (level == IPOIB_FLUSH_HEAVY) {
--		rtnl_lock();
- 		if (test_bit(IPOIB_FLAG_INITIALIZED, &priv->flags))
- 			ipoib_ib_dev_stop(dev);
+ 	kref_get(&pool->rxe->ref_cnt);
  
--		result = ipoib_ib_dev_open(dev);
--		rtnl_unlock();
--		if (result)
-+		if (ipoib_ib_dev_open(dev))
- 			return;
+-	if (atomic_inc_return(&pool->num_elem) > pool->max_elem) {
+-		atomic_dec(&pool->num_elem);
+-		rxe_dev_put(pool->rxe);
+-		rxe_pool_put(pool);
+-		return NULL;
+-	}
++	if (atomic_inc_return(&pool->num_elem) > pool->max_elem)
++		goto out_put_pool;
  
- 		if (netif_queue_stopped(dev))
-@@ -1249,7 +1246,9 @@ void ipoib_ib_dev_flush_heavy(struct work_struct *work)
- 	struct ipoib_dev_priv *priv =
- 		container_of(work, struct ipoib_dev_priv, flush_heavy);
+ 	elem = kmem_cache_zalloc(pool_cache(pool),
+ 				 (pool->flags & RXE_POOL_ATOMIC) ?
+ 				 GFP_ATOMIC : GFP_KERNEL);
+ 	if (!elem)
+-		return NULL;
++		goto out_put_pool;
  
-+	rtnl_lock();
- 	__ipoib_ib_dev_flush(priv, IPOIB_FLUSH_HEAVY, 0);
-+	rtnl_unlock();
+ 	elem->pool = pool;
+ 	kref_init(&elem->ref_cnt);
+ 
+ 	return elem;
++
++out_put_pool:
++	atomic_dec(&pool->num_elem);
++	rxe_dev_put(pool->rxe);
++	rxe_pool_put(pool);
++	return NULL;
  }
  
- void ipoib_ib_dev_cleanup(struct net_device *dev)
+ void rxe_elem_release(struct kref *kref)
 -- 
 2.17.1
 
