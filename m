@@ -2,246 +2,204 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09F0CC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:09:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7863BC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:10:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 979C920834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:09:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2600220834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:10:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BRiOWuwi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 979C920834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="AW7a+YKc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2600220834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=poorly.run
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727729AbeJZCnn (ORCPT
+        id S1727780AbeJZCoK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 22:43:43 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:54660 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727458AbeJZCnn (ORCPT
+        Thu, 25 Oct 2018 22:44:10 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:38542 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727688AbeJZCoK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 22:43:43 -0400
-Received: by mail-wm1-f66.google.com with SMTP id r63-v6so2460293wma.4;
-        Thu, 25 Oct 2018 11:09:51 -0700 (PDT)
+        Thu, 25 Oct 2018 22:44:10 -0400
+Received: by mail-qt1-f194.google.com with SMTP id r22-v6so10992912qtm.5
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 11:10:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=poorly.run; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=R+cxPkbpKfADHvJ29kZRwQRMCY4jLKARDRApEhm6PUA=;
-        b=BRiOWuwiNHNheRWGvz2xPyejTnf9Ats25A4P6glwcvW7QkR8kumc8nt5Y4L0UQqNlq
-         2t3XxtwKKM3bMUYuS2P8hjB1esh6RU5R2B8ldlsUitFzZid11RNkPXQS1zBA1wI63lD6
-         7T8FK367TTMtWAD2EVEFeZnpjxyga87vr5r3OTErlzmPUJHIxPspNlkoRrf8jmUVgLDY
-         0lgX1tpynT9zxE+HIOvWgf+xj/TWCbakvj0fd2VdinLdEQq9tSp18Tfoi+5/5saGE4Wa
-         u3k1voL+zpyRnHptIwMRbU4jZ17SMbbgWQGIY7ARh7js+O+g/taP0FM9C6dcHgbQQ5nH
-         gd5g==
+        bh=jMY5gsLRtkcxaEQuO4CexL42ifisuL+7HQtoBDwmyt4=;
+        b=AW7a+YKcIhRs1tkEAYjH0UwwZNslTWTNJkb/0igQd2KkNaTZsf3KCgdVDqfbMiEPyq
+         s2nS2BBLPI7291O3NPHl+j+dBfqnHI9YcnCNokrg32/1jCa/etEoW18NLk2CQuq0Mjs6
+         uU56w3eRPJ/R/j03AcPaGu/n7oRCEf0bVpTmO+Z0pRVbqsmDd04r/YKfyNEEfNatSPsZ
+         Q7M6FFaNizwBXQ/eOjaVJdeCgK9Ep5PQqgljaPET6F51u0p5VZuFblYDJ6IucvNcGXTO
+         yvVTBRHD2JGhwi/+Xvc7OkxMNBZy9BGPWUyzdMUKSUJAwQ2gH3TWeeNGWiHQGfGwPx7b
+         MhBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=R+cxPkbpKfADHvJ29kZRwQRMCY4jLKARDRApEhm6PUA=;
-        b=tPAqAFTJfvIHRLsM54KKf5MXN8LjAQeKp8hNWebv8XBm+MDrccZOo+7APRaF4Nl5Zd
-         vXuAkEX+JA1S5Y5124N2bBJNHSiAukJ2zs0BD6fbmPd793t/XC+mPC2quX4ZtJR2xo0X
-         QXqpuksijPsbEgnjOlB88NPA6I4Ubop0YjZlEtb/t0gbo8M7fUUw+dFKrHO5gWE1vuut
-         CQd8jroIyW8PpbgN7gCkiTSwSM03Me7N8EqtsDErVnIF8j2pFW9ibReriv3p4T3w/mgI
-         vGfEC/A/sK8EVKNLnrMlYqZATZt4gsaaLiW+lqYhSvcU6bliLsOH2pj29tP/ueT7QJh1
-         N1bg==
-X-Gm-Message-State: AGRZ1gI5S2kGoVGolusCo0+0gyzqvf0FH9wp4r0DPriisnXcU4voDkHB
-        eycLB7UN81WgO9pujWiVNbXLjwm0Dek=
-X-Google-Smtp-Source: AJdET5dE0VB2SO98OavqJh2Q/66AK/yyuL8tuSrMWVUTy/S6mm/0Fwge/rsRcNJgJ/dGznk121ZAsQ==
-X-Received: by 2002:a1c:870c:: with SMTP id j12-v6mr2976039wmd.40.1540490989168;
-        Thu, 25 Oct 2018 11:09:49 -0700 (PDT)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id u191-v6sm2339415wmd.31.2018.10.25.11.09.47
+        bh=jMY5gsLRtkcxaEQuO4CexL42ifisuL+7HQtoBDwmyt4=;
+        b=e/eGOw2UgLvzGD1DyZ/bC/Uv4U43aIVnztXBD+Ru7BQnlwRW/rSXZ+HQRRpoOv3tNt
+         4xIhw7VxB2KWWiMAYEoZf6kCe14+nnA7Lyae/g1mKro6NxmSKjQ3TmcSqyeT+ZyBXFmn
+         1eQfmgKT+fAgRWQYtejAnEd+Bi4dwBcSQJsVcQjiHzuPg/ztKd3CN0ceOi/9l81Kf6gm
+         ZRJlnKC6B7fXx24rI/1MwYn0lST5HpyYolz5aYb7mIvd4ZABOqydjWVMGjoXlcd26K1K
+         Y7YgFWVkv3L4qplM6YGj4dZXhaN+0bTDq+x+kBpE6uYH+ld/jJ+Gx9V7+QmEFdbe3K54
+         8KRA==
+X-Gm-Message-State: AGRZ1gL5zBl9wR9lQBWT2aXr9AN5aybO9C0c1BiGGhAqCh0nwJd/tZfV
+        x8omQB2Xz2IzLMkkjuemocgdig==
+X-Google-Smtp-Source: AJdET5e/DdPXg91Tzyqv2ZlRJznDmLaDyA8cj+Z54qo3kQbEoXN+QDrUyczCm54SC+ejWM0L28ENwQ==
+X-Received: by 2002:a0c:8822:: with SMTP id 31mr292718qvl.5.1540491018911;
+        Thu, 25 Oct 2018 11:10:18 -0700 (PDT)
+Received: from localhost ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
+        by smtp.gmail.com with ESMTPSA id p127-v6sm5803160qkd.70.2018.10.25.11.10.18
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Oct 2018 11:09:47 -0700 (PDT)
-Date:   Thu, 25 Oct 2018 11:09:45 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] [media] dib7000p: Remove dead code
-Message-ID: <20181025180945.GA28756@flashbox>
-References: <20180915054739.14117-1-natechancellor@gmail.com>
- <CAKwvOdmQ4pbbPuvYrVYB9myD8ap36h6nLjEdL-mSbYjM37UJ_g@mail.gmail.com>
- <20180917193936.33e90d5a@coco.lan>
+        Thu, 25 Oct 2018 11:10:18 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 14:10:17 -0400
+From:   Sean Paul <sean@poorly.run>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Sean Paul <seanpaul@chromium.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sandeep Panda <spanda@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        jsanka@codeaurora.org, ryandcase@chromium.org,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        David Airlie <airlied@linux.ie>
+Subject: Re: [PATCH 4/6] drm/bridge: ti-sn65dsi86: Remove the mystery delay
+Message-ID: <20181025181017.GL154160@art_vandelay>
+References: <20181022204639.8558-1-dianders@chromium.org>
+ <20181022204639.8558-4-dianders@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180917193936.33e90d5a@coco.lan>
+In-Reply-To: <20181022204639.8558-4-dianders@chromium.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Sep 17, 2018 at 07:39:36PM -0300, Mauro Carvalho Chehab wrote:
-> Em Mon, 17 Sep 2018 10:58:32 -0700
-> Nick Desaulniers <ndesaulniers@google.com> escreveu:
+On Mon, Oct 22, 2018 at 01:46:37PM -0700, Douglas Anderson wrote:
+> Let's solve the mystery of commit bf1178c98930 ("drm/bridge:
+> ti-sn65dsi86: Add mystery delay to enable()").  Specifically the
+> reason we needed that mystery delay is that we weren't paying
+> attention to HPD.
 > 
-> > On Fri, Sep 14, 2018 at 10:47 PM Nathan Chancellor
-> > <natechancellor@gmail.com> wrote:
-> > >
-> > > Clang warns that 'interleaving' is assigned to itself in this function.
-> > >
-> > > drivers/media/dvb-frontends/dib7000p.c:1874:15: warning: explicitly
-> > > assigning value of variable of type 'int' to itself [-Wself-assign]
-> > >         interleaving = interleaving;
-> > >         ~~~~~~~~~~~~ ^ ~~~~~~~~~~~~
-> > > 1 warning generated.
-> > >
-> > > It's correct. Just removing the self-assignment would sufficiently hide
-> > > the warning but all of this code is dead because 'tmp' is zero due to
-> > > being multiplied by zero. This doesn't appear to be an issue with
-> > > dib8000, which this code was copied from in commit 041ad449683b
-> > > ("[media] dib7000p: Add DVBv5 stats support").
-> > >
-> > > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > > ---
-> > >  drivers/media/dvb-frontends/dib7000p.c | 10 ++--------
-> > >  1 file changed, 2 insertions(+), 8 deletions(-)
-> > >
-> > > diff --git a/drivers/media/dvb-frontends/dib7000p.c b/drivers/media/dvb-frontends/dib7000p.c
-> > > index 58387860b62d..25843658fc68 100644
-> > > --- a/drivers/media/dvb-frontends/dib7000p.c
-> > > +++ b/drivers/media/dvb-frontends/dib7000p.c
-> > > @@ -1800,9 +1800,8 @@ static u32 dib7000p_get_time_us(struct dvb_frontend *demod)  
-> > 
-> > Something looks wrong here (with this function).  The patch is no
-> > functional change, since as you point out `interleaving` is
-> > initialized to 0, then never updated before read, but I think there's
-> > an underlying bug here that should be fixed differently.  Thanks for
-> > the patch though, as it does raise the question.
-> > 
-> > dib7000p_get_time_us has this comment above it:
-> > 
-> >   1798 /* FIXME: may require changes - this one was borrowed from
-> > dib8000 */
+> Looking at the datasheet for the same panel that was tested for the
+> original commit, I see there's a timing "t3" that times from power on
+> to the aux channel being operational.  This time is specced as 0 - 200
+> ms.  The datasheet says that the aux channel is operational at exactly
+> the same time that HPD is asserted.
 > 
-> The goal of dib7000p_get_time_us() is to estimate how much time it
-> takes, with current tuning parameters, to have a certain number of
-> DVB-T packets. This is used for block error count. That's said,
-> on a quick look, it seems that the code is not right on many ways.
+> Scoping the signals on this board showed that HPD was asserted 84 ms
+> after power was asserted.  That very closely matches the magic 70 ms
+> delay that we had.  ...and actually, in my testing the 70 ms wasn't
+> quite enough of a delay and some percentage of the time the display
+> didn't come up until I bumped it to 100 ms (presumably 84 ms would
+> have worked too).
 > 
-> It should be aligned with the amount of data it is required for
-> dib7000 to update the block/bit error counters. There are two kinds
-> of implementation:
+> To solve this, we tried to hook up the HPD signal in the bridge.
+> ...but in doing so we found that that the bridge didn't report that
+> HPD was asserted until ~280 ms after we powered it (!).  This is
+> explained by looking at the sn65dsi86 datasheet section "8.4.5.1 HPD
+> (Hot Plug/Unplug Detection)".  Reading there we see that the bridge
+> isn't even intended to report HPD until 100 ms after it's asserted.
+> ...but that would have left us at 184 ms.  The extra 100 ms
+> (presumably) comes from this part in the datasheet:
 > 
-> 1) the frontend has an internal counter that it is shifted and made
->    available to the driver after a certain amount of received data
->    (usually in the order of 10^5 to 10^7 bits);
+> > The HPD state machine operates off an internal ring oscillator. The
+> > ring oscillator frequency will vary [ ... ]. The min/max range in
+> > the HPD State Diagram refers to the possible times based off
+> > variation in the ring oscillator frequency.
 > 
-> 2) the frontend has an internal timer that shifts the data from its
->    internal counter after a certain amount of time (usually at the
->    seconds range).
+> Given that the 280 ms we'll end up delaying if we hook up HPD is
+> _slower_ than the 200 ms we could just hardcode, for now we'll solve
+> the problem by just hardcoding a 200 ms delay in the panel driver
+> using the patch in this series ("drm/panel: simple: Support panels
+> with HPD where HPD isn't connected").
 > 
-> Different vendors opt for either one of the strategy. Some updates
-> a counter with the amount of bits taken. Unfortunately, this is not
-> the case of those dib* frontends. So, the Kernel has to estimate
-> it, based on the tuning parameters.
+> If we later find a panel that needs to use this bridge where we need
+> HPD then we'll have to come up with some new code to handle it.  Given
+> the silly debouncing in the bridge chip, though, it seems unlikely.
 > 
-> From the code, it seems that, for block errors, it waits for 1,250,000
-> bits to arrive (e. g. about 766 packets), so, it uses type (1) strategy:
+> One last note is that I tried to solve this through another way: In
+> ti_sn_bridge_enable() I tried to use various combinations of
+> dp_dpcd_writeb() and dp_dpcd_readb() to detect when the aux channel
+> was up.  In theory that would let me detect _exactly_ when I could
+> continue and do link training.  Unfortunately even if I did an aux
+> transfer w/out waiting I couldn't see any errors.  Possibly I could
+> keep looping over link training until it came back with success, but
+> that seemed a little overly hacky to me.
 > 
->                 /* Estimate the number of packets based on bitrate */
->                 if (!time_us)
->                         time_us = dib7000p_get_time_us(demod);
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+
+Awesome commit message and comment, thanks for solving the mystery!
+
+Reviewed-by: Sean Paul <sean@poorly.run>
+
+
+> ---
 > 
->                 if (time_us) {
->                         blocks = 1250000ULL * 1000000ULL;	// the multiply here is to convert to microsseconds...
->                         do_div(blocks, time_us * 8 * 204);	// As here it divides by the time in microsseconds
->                         c->block_count.stat[0].scale = FE_SCALE_COUNTER;
->                         c->block_count.stat[0].uvalue += blocks;
->                 }
+>  drivers/gpu/drm/bridge/ti-sn65dsi86.c | 29 +++++++++++++++------------
+>  1 file changed, 16 insertions(+), 13 deletions(-)
 > 
-> For BER, the logic assumes that the bit error count should be divided
-> by 10^-8:
-> 
->                 c->post_bit_count.stat[0].uvalue += 100000000;
-> 
-> and the counter is updated every second. So, it uses (2).
-> 
-> > 
-> > Wondering if it has the same bug, it seems it does not:
-> > drivers/media/dvb-frontends/dib8000.c#dib8000_get_time_us():3986
-> > 
-> > dib8000_get_time_us() seems to loop over multiple layers, and then
-> > assigns interleaving to the final layers interleaving (that looks like
-> > loop invariant code to me).
-> > 
-> > Mauro, should dib7000p_get_time_us() use c->layer[???].interleaving?
-> 
-> I don't think that time interleaving would affect the bit rate.
-> I suspect that the dead code on dib8000 is just a dead code.
-> 
-> > I don't see a single reference to `layer` in
-> > drivers/media/dvb-frontends/dib7000p.c.
-> 
-> Layers are specific for ISDB-T, but I think DVB-T (or at least DVB-T2)
-> may use time interleaving. 
-> 
-> Yet, as I said, the goal is to estimate the streaming bit rate. 
-> 
-> I don't remember anymore from where the dib8000 formula came.
-> 
-> My guts tell that time interleaving shouldn't do much changes (if any)
-> to the bit rate. I suspect that removing the dead code is likely
-> OK, but I'll try to see if I can find something related to where this
-> formula came.
+> diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi86.c b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+> index f8a931cf3665..680566d97adc 100644
+> --- a/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+> +++ b/drivers/gpu/drm/bridge/ti-sn65dsi86.c
+> @@ -458,18 +458,6 @@ static void ti_sn_bridge_enable(struct drm_bridge *bridge)
+>  	unsigned int val;
+>  	int ret;
+>  
+> -	/*
+> -	 * FIXME:
+> -	 * This 70ms was found necessary by experimentation. If it's not
+> -	 * present, link training fails. It seems like it can go anywhere from
+> -	 * pre_enable() up to semi-auto link training initiation below.
+> -	 *
+> -	 * Neither the datasheet for the bridge nor the panel tested mention a
+> -	 * delay of this magnitude in the timing requirements. So for now, add
+> -	 * the mystery delay until someone figures out a better fix.
+> -	 */
+> -	msleep(70);
+> -
+>  	/* DSI_A lane config */
+>  	val = CHA_DSI_LANES(4 - pdata->dsi->lanes);
+>  	regmap_update_bits(pdata->regmap, SN_DSI_LANES_REG,
+> @@ -536,7 +524,22 @@ static void ti_sn_bridge_pre_enable(struct drm_bridge *bridge)
+>  	/* configure bridge ref_clk */
+>  	ti_sn_bridge_set_refclk_freq(pdata);
+>  
+> -	/* in case drm_panel is connected then HPD is not supported */
+> +	/*
+> +	 * HPD on this bridge chip is a bit useless.  This is an eDP bridge
+> +	 * so the HPD is an internal signal that's only there to signal that
+> +	 * the panel is done powering up.  ...but the bridge chip debounces
+> +	 * this signal by between 100 ms and 400 ms (depending on process,
+> +	 * voltage, and temperate--I measured it at about 200 ms).  One
+> +	 * particular panel asserted HPD 84 ms after it was powered on meaning
+> +	 * that we saw HPD 284 ms after power on.  ...but the same panel said
+> +	 * that instead of looking at HPD you could just hardcode a delay of
+> +	 * 200 ms.  We'll assume that the panel driver will have the hardcoded
+> +	 * delay in its prepare and always disable HPD.
+> +	 *
+> +	 * If HPD somehow makes sense on some future panel we'll have to
+> +	 * change this to be conditional on someone specifying that HPD should
+> +	 * be used.
+> +	 */
+>  	regmap_update_bits(pdata->regmap, SN_HPD_DISABLE_REG, HPD_DISABLE,
+>  			   HPD_DISABLE);
+>  
+> -- 
+> 2.19.1.568.g152ad8e336-goog
 > 
 
-Hi Mauro,
-
-Were you able to find anything related to that formula? If not, is this
-patch acceptable?
-
-Thanks!
-Nathan
-
-> > 
-> > >  {
-> > >         struct dtv_frontend_properties *c = &demod->dtv_property_cache;
-> > >         u64 time_us, tmp64;
-> > > -       u32 tmp, denom;
-> > > -       int guard, rate_num, rate_denum = 1, bits_per_symbol;
-> > > -       int interleaving = 0, fft_div;
-> > > +       u32 denom;
-> > > +       int guard, rate_num, rate_denum = 1, bits_per_symbol, fft_div;
-> > >
-> > >         switch (c->guard_interval) {
-> > >         case GUARD_INTERVAL_1_4:
-> > > @@ -1871,8 +1870,6 @@ static u32 dib7000p_get_time_us(struct dvb_frontend *demod)
-> > >                 break;
-> > >         }
-> > >
-> > > -       interleaving = interleaving;
-> > > -
-> > >         denom = bits_per_symbol * rate_num * fft_div * 384;
-> > >
-> > >         /* If calculus gets wrong, wait for 1s for the next stats */
-> > > @@ -1887,9 +1884,6 @@ static u32 dib7000p_get_time_us(struct dvb_frontend *demod)
-> > >         time_us += denom / 2;
-> > >         do_div(time_us, denom);
-> > >
-> > > -       tmp = 1008 * 96 * interleaving;
-> > > -       time_us += tmp + tmp / guard;
-> > > -
-> > >         return time_us;
-> > >  }
-> > >
-> > > --
-> > > 2.18.0
-> > >  
-> > 
-> > 
-> 
-> 
-> 
-> Thanks,
-> Mauro
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
