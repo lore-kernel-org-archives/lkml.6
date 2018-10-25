@@ -2,105 +2,107 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60005ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:30:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF37CC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:37:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E987320824
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:30:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FFCE20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:37:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eYHc4jdt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E987320824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PPCj1j4t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FFCE20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727564AbeJZHFM (ORCPT
+        id S1727450AbeJZHMD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 03:05:12 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:39160 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726448AbeJZHFM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 03:05:12 -0400
-Received: by mail-qt1-f196.google.com with SMTP id g10-v6so11893343qtq.6;
-        Thu, 25 Oct 2018 15:30:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GOH5FTRIP3FPe1Cf6mg0NjeaY1IjAp+qJmnzPVmJk30=;
-        b=eYHc4jdtnwIaRYvfosi6txc39FCOSMUozoqneiD7TExsXsjp2Jxu7kgU3eo7K+czDg
-         GLNjpEnhfuU/KgoSFcnI4nTEOAq8hVHcwApVS+LQm95c3AoUXVIlMY5tbBCE+iRS9iv3
-         mhOEKKDUK1xTqxBw9mb1sBys+sSOeZLQ3wMJCpfDiJdnzlM82dXYDNlgkE7JuRfwhtPw
-         3Og65Tm7lubSvTp5a6xrKOmAygp82DdTh7gNoO0MJW++9JkgbvoWO9VPu86IwiovOJd8
-         6bTzb33AJXTaXbCfvU5RgfljJvB+SUICspripBI5r2YRT4HXXt8KYSo9q2pTvtcyklmM
-         +6SQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GOH5FTRIP3FPe1Cf6mg0NjeaY1IjAp+qJmnzPVmJk30=;
-        b=IChF+96d5Ym7UjLoJKgLfhQzaO+w4C2lv6Pbrjl9pZ1NkSAKbgKTKwJBUnKW8rQ8PC
-         bF8u/lLyWd6ibBi5S1AFIwhvlEgQkY30fGRu2KOtPbP+Hw+ZO8JDB6aby3RZiHSsYyl7
-         iasypbSG0egcImUr0RjY7JFq/gmlYL4FFgS4/UiY22b34CcLtEHOhbUcY1MFENLc2YuT
-         RxFVdIcNR9NjUNx2SWIz6ZmBD3sBna6IdH6q3GiL9gtLuwYijhX6ITBa1mRzxWxTQwhP
-         it6PgU91TZsuWSKtowlD5B9hyQM88uWp3pfX57Qn5zgDdOpKVKWnmx4iJpakem6LuSIk
-         gmLw==
-X-Gm-Message-State: AGRZ1gLdxj2IWjRVBrFo4zxEjsPuPEOgZEAkJNm4hEfplRvWisUDG92z
-        aZ0j/3cCsPS36iCWhdTp2Lo=
-X-Google-Smtp-Source: AJdET5dIDdEk5S3KHeIKgACmUOGGgLkpVHGThVIjJvvUi54v0k7h5tCMAJlxZg5NVijw+ZkK/MALPA==
-X-Received: by 2002:a0c:f047:: with SMTP id b7mr1037530qvl.236.1540506642441;
-        Thu, 25 Oct 2018 15:30:42 -0700 (PDT)
-Received: from renatolg ([186.220.20.163])
-        by smtp.gmail.com with ESMTPSA id n47-v6sm8983755qtc.29.2018.10.25.15.30.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Oct 2018 15:30:42 -0700 (PDT)
-Date:   Thu, 25 Oct 2018 19:30:37 -0300
-From:   Renato Lui Geh <renatogeh@gmail.com>
-To:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-        knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
-        alexandru.Ardelean@analog.com, stefan.popa@analog.com,
-        giuliano.belinassi@usp.br
-Cc:     linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
-Subject: [PATCH v2 2/2] staging: iio: ad7780: fix offset read value
-Message-ID: <ff71d89625c048601d3e3770ca3b4bcceb2068ac.1540506298.git.renatogeh@gmail.com>
-References: <cover.1540506298.git.renatogeh@gmail.com>
+        Fri, 26 Oct 2018 03:12:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41748 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726686AbeJZHMC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 03:12:02 -0400
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5658B20869
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 22:37:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540507052;
+        bh=+0/JlFJDhTwnEtcqlBZIM2OLJUYOvnK4qH9Ig9M1GJE=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=PPCj1j4tse7ZiUONhF33y6zt+3etqgt4saXdIFjtraxHwXubbgBV4lAiEeU9WMSn4
+         +Fgsmx+Neq2KLiWPpvW/TdqTXdPAGGA13/znoiU9CQX+GpetoyaiXt0r8WNkHUluNW
+         Cbsa5g/W7Jc74iygxww3xmZCI12TDbNuQtKUViCw=
+Received: by mail-wm1-f50.google.com with SMTP id w186-v6so2995979wmf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 15:37:32 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gJ+BSg5vDoSB9nRq2NqOzzfIic4rZ/L6qfaXuawm687z6ax3khE
+        2LMtWRZh5pvqIgk3AWhOpG9V9HoxGvx+brcEEobn+w==
+X-Google-Smtp-Source: AJdET5dgeahJ34DSaEpvO3CXyIvlVgP+9HR9TiXHbAQKBPHZnjA+pAxlLsw1Z7UksxBnl5hnUOlEeY4b00sL7Ceyx38=
+X-Received: by 2002:a1c:d4b:: with SMTP id 72-v6mr3670947wmn.102.1540507050639;
+ Thu, 25 Oct 2018 15:37:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <cover.1540506298.git.renatogeh@gmail.com>
-User-Agent: NeoMutt/20180716
+References: <1537312139-5580-1-git-send-email-chang.seok.bae@intel.com>
+ <1537312139-5580-3-git-send-email-chang.seok.bae@intel.com> <CALCETrUr3DGwW8y6y_cffEKWO_KQs1J2_UvTBZsbdAzES_f-Ag@mail.gmail.com>
+In-Reply-To: <CALCETrUr3DGwW8y6y_cffEKWO_KQs1J2_UvTBZsbdAzES_f-Ag@mail.gmail.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 25 Oct 2018 15:37:19 -0700
+X-Gmail-Original-Message-ID: <CALCETrUGqfpcu6gf2931f9kfkzirTCojANt3BncTY7h9usQYtA@mail.gmail.com>
+Message-ID: <CALCETrUGqfpcu6gf2931f9kfkzirTCojANt3BncTY7h9usQYtA@mail.gmail.com>
+Subject: Re: [regression in -rc1] Re: [PATCH v6 2/8] x86/fsgsbase/64:
+ Introduce FS/GS base helper functions
+To:     Andrew Lutomirski <luto@kernel.org>
+Cc:     "Bae, Chang Seok" <chang.seok.bae@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Metzger, Markus T" <markus.t.metzger@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Variable val subtracted an uninitialized value on IIO_CHAN_INFO_OFFSET.
-This was fixed by assigning the correct value instead.
+On Wed, Oct 24, 2018 at 12:01 PM Andy Lutomirski <luto@kernel.org> wrote:
+>
+> On Tue, Sep 18, 2018 at 4:09 PM Chang S. Bae <chang.seok.bae@intel.com> wrote:
+> >
+> > With new helpers, FS/GS base access is centralized.
+> > Eventually, when FSGSBASE instruction enabled, it will
+> > be faster.
+>
+> Sorry for not catching this during review, but:
+>
+> > +void x86_fsbase_write_cpu(unsigned long fsbase)
+> > +{
+> > +       /*
+> > +        * Set the selector to 0 as a notion, that the segment base is
+> > +        * overwritten, which will be checked for skipping the segment load
+> > +        * during context switch.
+> > +        */
+> > +       loadseg(FS, 0);
+>
+> ^^^
+>
+> what?
+>
+> > +       wrmsrl(MSR_FS_BASE, fsbase);
+> > +}
+>
+> I don't understand what the comment is trying to say, but the sole
+> caller so far of this function is x86_gsbase_write_task(), and the
+> code looks incorrect.
+>
+> Ingo, I think we need to address this during this merge window,
+> probably by removing the comment and the loadseg() call (and the same
+> for gsbase...inactive).  But first, Chang, can you explain what
+> exactly your intent is here?
 
-Signed-off-by: Renato Lui Geh <renatogeh@gmail.com>
----
- drivers/staging/iio/adc/ad7780.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/staging/iio/adc/ad7780.c b/drivers/staging/iio/adc/ad7780.c
-index 27972563bb6a..06700fe554a2 100644
---- a/drivers/staging/iio/adc/ad7780.c
-+++ b/drivers/staging/iio/adc/ad7780.c
-@@ -100,7 +100,7 @@ static int ad7780_read_raw(struct iio_dev *indio_dev,
- 		*val2 = chan->scan_type.realbits - 1;
- 		return IIO_VAL_FRACTIONAL_LOG2;
- 	case IIO_CHAN_INFO_OFFSET:
--		*val -= (1 << (chan->scan_type.realbits - 1));
-+		*val = -(1 << (chan->scan_type.realbits - 1));
- 		return IIO_VAL_INT;
- 	}
- 
--- 
-2.19.1
-
+It might not be a problem for the current merge window, since the one
+and only caller (I think) that hits this code is okay with it.  But it
+might still be nice to have it cleaned up in Linus' tree.
