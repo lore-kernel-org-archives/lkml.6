@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E89ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:12:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D14EC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:12:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E60B32084A
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:12:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3CDD2084A
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:12:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="J5jTTIGN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E60B32084A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="N73i3zMV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3CDD2084A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728067AbeJYTob (ORCPT
+        id S1728081AbeJYTod (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 15:44:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48676 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 15:44:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727459AbeJYToa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 15:44:30 -0400
+        id S1727459AbeJYToc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 15:44:32 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 251BB2084A;
-        Thu, 25 Oct 2018 11:12:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0DE672083E;
+        Thu, 25 Oct 2018 11:12:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540465931;
-        bh=5B1gDx8kDIoAinz/jziSHAs9REKYbSFvyj+a8ZQd/AM=;
+        s=default; t=1540465934;
+        bh=Q8JBZeBxwBDiNnMupK4ANbbHVef+wedXAa8majIaoF4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J5jTTIGNhNhi2S8ECUGKmfXFo3FPB2Ru2LlFy0ki/qMLefTZVkKhT8rRwV57fXx9B
-         Vy1FyaeKP4Ih0Jc/Xt5PXDGTgXvRtrLFVEWA0dQh+OMBu6aNgedxeH8aMCnMdk7gxP
-         W19mHhpA9lntVsejrHgfevrkkmmZaHZwXcOleNQ4=
+        b=N73i3zMVXyaZPh74Q4L2fJWd+6OFAJ/708/rxaa5Ehh4KeSKzvtttXr1Zq7XfnbcB
+         ebfuI8f4lmRntXXl9AtdLCubvK2wi6+if0gNYNQH+UkJlJiqPxx6F6mpITfmuJluUs
+         m6uQDwy25mD7DhjRWQ3yadiHY3ZAdX7kHuYPHqkI=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -44,9 +44,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Adrian Hunter <adrian.hunter@intel.com>,
         Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 31/37] perf scripts python: exported-sql-viewer.py: Add ability to display all the database tables
-Date:   Thu, 25 Oct 2018 08:10:25 -0300
-Message-Id: <20181025111031.3440-32-acme@kernel.org>
+Subject: [PATCH 32/37] perf scripts python: exported-sql-viewer.py: Add All branches report
+Date:   Thu, 25 Oct 2018 08:10:26 -0300
+Message-Id: <20181025111031.3440-33-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181025111031.3440-1-acme@kernel.org>
 References: <20181025111031.3440-1-acme@kernel.org>
@@ -57,572 +57,355 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Adrian Hunter <adrian.hunter@intel.com>
 
-Displaying all the database tables can help make the database easier to
-understand.
+Add a report to display branches in a similar fashion to perf script. The
+main purpose of this report is to display disassembly, however, presently,
+the only supported disassembler is Intel XED, and additionally the object
+code must be present in perf build ID cache.
 
-Committer testing:
-
-Opened all the tables, even the sqlite master table, which I selected
-everything and used control+C, lets see if it works...
-
-  CREATE VIEW threads_view AS SELECT id,machine_id,(SELECT host_or_guest FROM machines_view WHERE id = machine_id) AS host_or_guest,process_id,pid,tid FROM threads
-
-Humm, nope, just one of the cells got copied, even with everything selected :-)
-
-Anyway, works as advertised, useful for perusing the data.
+To use Intel XED, libxed.so must be present. To build and install
+libxed.so:
+	git clone https://github.com/intelxed/mbuild.git mbuild
+	git clone https://github.com/intelxed/xed
+	cd xed
+	./mfile.py --share
+	sudo ./mfile.py --prefix=/usr/local install
+	sudo ldconfig
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/20181001062853.28285-17-adrian.hunter@intel.com
+Link: http://lkml.kernel.org/r/20181023075949.18920-1-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/scripts/python/exported-sql-viewer.py | 694 +++++++++++++++++++++++
- 1 file changed, 694 insertions(+)
+ tools/perf/scripts/python/exported-sql-viewer.py | 547 +++++++++++++++++++++++
+ 1 file changed, 547 insertions(+)
 
 diff --git a/tools/perf/scripts/python/exported-sql-viewer.py b/tools/perf/scripts/python/exported-sql-viewer.py
-index 310ba7147583..ef822d850109 100755
+index ef822d850109..24cb0bd56afa 100755
 --- a/tools/perf/scripts/python/exported-sql-viewer.py
 +++ b/tools/perf/scripts/python/exported-sql-viewer.py
-@@ -50,10 +50,15 @@ import sys
+@@ -46,6 +46,48 @@
+ #	'Branch Count' is the total number of branches for that function and all
+ #       functions that it calls
+ 
++# There is also a "All branches" report, which displays branches and
++# possibly disassembly.  However, presently, the only supported disassembler is
++# Intel XED, and additionally the object code must be present in perf build ID
++# cache. To use Intel XED, libxed.so must be present. To build and install
++# libxed.so:
++#            git clone https://github.com/intelxed/mbuild.git mbuild
++#            git clone https://github.com/intelxed/xed
++#            cd xed
++#            ./mfile.py --share
++#            sudo ./mfile.py --prefix=/usr/local install
++#            sudo ldconfig
++#
++# Example report:
++#
++# Time           CPU  Command  PID    TID    Branch Type            In Tx  Branch
++# 8107675239590  2    ls       22011  22011  return from interrupt  No     ffffffff86a00a67 native_irq_return_iret ([kernel]) -> 7fab593ea260 _start (ld-2.19.so)
++#                                                                              7fab593ea260 48 89 e7                                        mov %rsp, %rdi
++# 8107675239899  2    ls       22011  22011  hardware interrupt     No         7fab593ea260 _start (ld-2.19.so) -> ffffffff86a012e0 page_fault ([kernel])
++# 8107675241900  2    ls       22011  22011  return from interrupt  No     ffffffff86a00a67 native_irq_return_iret ([kernel]) -> 7fab593ea260 _start (ld-2.19.so)
++#                                                                              7fab593ea260 48 89 e7                                        mov %rsp, %rdi
++#                                                                              7fab593ea263 e8 c8 06 00 00                                  callq  0x7fab593ea930
++# 8107675241900  2    ls       22011  22011  call                   No         7fab593ea263 _start+0x3 (ld-2.19.so) -> 7fab593ea930 _dl_start (ld-2.19.so)
++#                                                                              7fab593ea930 55                                              pushq  %rbp
++#                                                                              7fab593ea931 48 89 e5                                        mov %rsp, %rbp
++#                                                                              7fab593ea934 41 57                                           pushq  %r15
++#                                                                              7fab593ea936 41 56                                           pushq  %r14
++#                                                                              7fab593ea938 41 55                                           pushq  %r13
++#                                                                              7fab593ea93a 41 54                                           pushq  %r12
++#                                                                              7fab593ea93c 53                                              pushq  %rbx
++#                                                                              7fab593ea93d 48 89 fb                                        mov %rdi, %rbx
++#                                                                              7fab593ea940 48 83 ec 68                                     sub $0x68, %rsp
++#                                                                              7fab593ea944 0f 31                                           rdtsc
++#                                                                              7fab593ea946 48 c1 e2 20                                     shl $0x20, %rdx
++#                                                                              7fab593ea94a 89 c0                                           mov %eax, %eax
++#                                                                              7fab593ea94c 48 09 c2                                        or %rax, %rdx
++#                                                                              7fab593ea94f 48 8b 05 1a 15 22 00                            movq  0x22151a(%rip), %rax
++# 8107675242232  2    ls       22011  22011  hardware interrupt     No         7fab593ea94f _dl_start+0x1f (ld-2.19.so) -> ffffffff86a012e0 page_fault ([kernel])
++# 8107675242900  2    ls       22011  22011  return from interrupt  No     ffffffff86a00a67 native_irq_return_iret ([kernel]) -> 7fab593ea94f _dl_start+0x1f (ld-2.19.so)
++#                                                                              7fab593ea94f 48 8b 05 1a 15 22 00                            movq  0x22151a(%rip), %rax
++#                                                                              7fab593ea956 48 89 15 3b 13 22 00                            movq  %rdx, 0x22133b(%rip)
++# 8107675243232  2    ls       22011  22011  hardware interrupt     No         7fab593ea956 _dl_start+0x26 (ld-2.19.so) -> ffffffff86a012e0 page_fault ([kernel])
++
+ import sys
  import weakref
  import threading
- import string
-+import cPickle
-+import re
-+import os
- from PySide.QtCore import *
- from PySide.QtGui import *
- from PySide.QtSql import *
- from decimal import *
-+from ctypes import *
-+from multiprocessing import Process, Array, Value, Event
+@@ -62,6 +104,16 @@ from multiprocessing import Process, Array, Value, Event
  
  # Data formatting helpers
  
-@@ -146,6 +151,68 @@ class TreeModel(QAbstractItemModel):
- 	def DisplayData(self, item, index):
- 		return item.getData(index.column())
++def tohex(ip):
++	if ip < 0:
++		ip += 1 << 64
++	return "%x" % ip
++
++def offstr(offset):
++	if offset:
++		return "+0x%x" % offset
++	return ""
++
+ def dsoname(name):
+ 	if name == "[kernel.kallsyms]":
+ 		return "[kernel]"
+@@ -1077,6 +1129,351 @@ class FetchMoreRecordsBar():
+ 		self.in_progress = True
+ 		self.start = self.model.FetchMoreRecords(self.Target())
  
-+	def FetchIfNeeded(self, row):
-+		if row > self.last_row_read:
-+			self.last_row_read = row
-+			if row + 10 >= self.root.child_count:
-+				self.fetcher.Fetch(glb_chunk_sz)
++# Brance data model level two item
 +
-+	def columnAlignment(self, column):
-+		return Qt.AlignLeft
++class BranchLevelTwoItem():
 +
-+	def columnFont(self, column):
-+		return None
-+
-+	def data(self, index, role):
-+		if role == Qt.TextAlignmentRole:
-+			return self.columnAlignment(index.column())
-+		if role == Qt.FontRole:
-+			return self.columnFont(index.column())
-+		if role != Qt.DisplayRole:
-+			return None
-+		item = index.internalPointer()
-+		return self.DisplayData(item, index)
-+
-+# Table data model
-+
-+class TableModel(QAbstractTableModel):
-+
-+	def __init__(self, parent=None):
-+		super(TableModel, self).__init__(parent)
-+		self.child_count = 0
-+		self.child_items = []
-+		self.last_row_read = 0
-+
-+	def Item(self, parent):
-+		if parent.isValid():
-+			return parent.internalPointer()
-+		else:
-+			return self
-+
-+	def rowCount(self, parent):
-+		return self.child_count
-+
-+	def headerData(self, section, orientation, role):
-+		if role == Qt.TextAlignmentRole:
-+			return self.columnAlignment(section)
-+		if role != Qt.DisplayRole:
-+			return None
-+		if orientation != Qt.Horizontal:
-+			return None
-+		return self.columnHeader(section)
-+
-+	def index(self, row, column, parent):
-+		return self.createIndex(row, column, self.child_items[row])
-+
-+	def DisplayData(self, item, index):
-+		return item.getData(index.column())
-+
-+	def FetchIfNeeded(self, row):
-+		if row > self.last_row_read:
-+			self.last_row_read = row
-+			if row + 10 >= self.child_count:
-+				self.fetcher.Fetch(glb_chunk_sz)
-+
- 	def columnAlignment(self, column):
- 		return Qt.AlignLeft
- 
-@@ -620,6 +687,601 @@ class CallGraphWindow(QMdiSubWindow):
- 		if not found:
- 			self.find_bar.NotFound()
- 
-+# Child data item  finder
-+
-+class ChildDataItemFinder():
-+
-+	def __init__(self, root):
-+		self.root = root
-+		self.value, self.direction, self.pattern, self.last_value, self.last_pattern = (None,) * 5
-+		self.rows = []
-+		self.pos = 0
-+
-+	def FindSelect(self):
-+		self.rows = []
-+		if self.pattern:
-+			pattern = re.compile(self.value)
-+			for child in self.root.child_items:
-+				for column_data in child.data:
-+					if re.search(pattern, str(column_data)) is not None:
-+						self.rows.append(child.row)
-+						break
-+		else:
-+			for child in self.root.child_items:
-+				for column_data in child.data:
-+					if self.value in str(column_data):
-+						self.rows.append(child.row)
-+						break
-+
-+	def FindValue(self):
-+		self.pos = 0
-+		if self.last_value != self.value or self.pattern != self.last_pattern:
-+			self.FindSelect()
-+		if not len(self.rows):
-+			return -1
-+		return self.rows[self.pos]
-+
-+	def FindThread(self):
-+		if self.direction == 0 or self.value != self.last_value or self.pattern != self.last_pattern:
-+			row = self.FindValue()
-+		elif len(self.rows):
-+			if self.direction > 0:
-+				self.pos += 1
-+				if self.pos >= len(self.rows):
-+					self.pos = 0
-+			else:
-+				self.pos -= 1
-+				if self.pos < 0:
-+					self.pos = len(self.rows) - 1
-+			row = self.rows[self.pos]
-+		else:
-+			row = -1
-+		return (True, row)
-+
-+	def Find(self, value, direction, pattern, context, callback):
-+		self.value, self.direction, self.pattern, self.last_value, self.last_pattern = (value, direction,pattern, self.value, self.pattern)
-+		# Use a thread so the UI is not blocked
-+		thread = Thread(self.FindThread)
-+		thread.done.connect(lambda row, t=thread, c=callback: self.FindDone(t, c, row), Qt.QueuedConnection)
-+		thread.start()
-+
-+	def FindDone(self, thread, callback, row):
-+		callback(row)
-+
-+# Number of database records to fetch in one go
-+
-+glb_chunk_sz = 10000
-+
-+# size of pickled integer big enough for record size
-+
-+glb_nsz = 8
-+
-+# Background process for SQL data fetcher
-+
-+class SQLFetcherProcess():
-+
-+	def __init__(self, dbref, sql, buffer, head, tail, fetch_count, fetching_done, process_target, wait_event, fetched_event, prep):
-+		# Need a unique connection name
-+		conn_name = "SQLFetcher" + str(os.getpid())
-+		self.db, dbname = dbref.Open(conn_name)
-+		self.sql = sql
-+		self.buffer = buffer
-+		self.head = head
-+		self.tail = tail
-+		self.fetch_count = fetch_count
-+		self.fetching_done = fetching_done
-+		self.process_target = process_target
-+		self.wait_event = wait_event
-+		self.fetched_event = fetched_event
-+		self.prep = prep
-+		self.query = QSqlQuery(self.db)
-+		self.query_limit = 0 if "$$last_id$$" in sql else 2
-+		self.last_id = -1
-+		self.fetched = 0
-+		self.more = True
-+		self.local_head = self.head.value
-+		self.local_tail = self.tail.value
-+
-+	def Select(self):
-+		if self.query_limit:
-+			if self.query_limit == 1:
-+				return
-+			self.query_limit -= 1
-+		stmt = self.sql.replace("$$last_id$$", str(self.last_id))
-+		QueryExec(self.query, stmt)
-+
-+	def Next(self):
-+		if not self.query.next():
-+			self.Select()
-+			if not self.query.next():
-+				return None
-+		self.last_id = self.query.value(0)
-+		return self.prep(self.query)
-+
-+	def WaitForTarget(self):
-+		while True:
-+			self.wait_event.clear()
-+			target = self.process_target.value
-+			if target > self.fetched or target < 0:
-+				break
-+			self.wait_event.wait()
-+		return target
-+
-+	def HasSpace(self, sz):
-+		if self.local_tail <= self.local_head:
-+			space = len(self.buffer) - self.local_head
-+			if space > sz:
-+				return True
-+			if space >= glb_nsz:
-+				# Use 0 (or space < glb_nsz) to mean there is no more at the top of the buffer
-+				nd = cPickle.dumps(0, cPickle.HIGHEST_PROTOCOL)
-+				self.buffer[self.local_head : self.local_head + len(nd)] = nd
-+			self.local_head = 0
-+		if self.local_tail - self.local_head > sz:
-+			return True
-+		return False
-+
-+	def WaitForSpace(self, sz):
-+		if self.HasSpace(sz):
-+			return
-+		while True:
-+			self.wait_event.clear()
-+			self.local_tail = self.tail.value
-+			if self.HasSpace(sz):
-+				return
-+			self.wait_event.wait()
-+
-+	def AddToBuffer(self, obj):
-+		d = cPickle.dumps(obj, cPickle.HIGHEST_PROTOCOL)
-+		n = len(d)
-+		nd = cPickle.dumps(n, cPickle.HIGHEST_PROTOCOL)
-+		sz = n + glb_nsz
-+		self.WaitForSpace(sz)
-+		pos = self.local_head
-+		self.buffer[pos : pos + len(nd)] = nd
-+		self.buffer[pos + glb_nsz : pos + sz] = d
-+		self.local_head += sz
-+
-+	def FetchBatch(self, batch_size):
-+		fetched = 0
-+		while batch_size > fetched:
-+			obj = self.Next()
-+			if obj is None:
-+				self.more = False
-+				break
-+			self.AddToBuffer(obj)
-+			fetched += 1
-+		if fetched:
-+			self.fetched += fetched
-+			with self.fetch_count.get_lock():
-+				self.fetch_count.value += fetched
-+			self.head.value = self.local_head
-+			self.fetched_event.set()
-+
-+	def Run(self):
-+		while self.more:
-+			target = self.WaitForTarget()
-+			if target < 0:
-+				break
-+			batch_size = min(glb_chunk_sz, target - self.fetched)
-+			self.FetchBatch(batch_size)
-+		self.fetching_done.value = True
-+		self.fetched_event.set()
-+
-+def SQLFetcherFn(*x):
-+	process = SQLFetcherProcess(*x)
-+	process.Run()
-+
-+# SQL data fetcher
-+
-+class SQLFetcher(QObject):
-+
-+	done = Signal(object)
-+
-+	def __init__(self, glb, sql, prep, process_data, parent=None):
-+		super(SQLFetcher, self).__init__(parent)
-+		self.process_data = process_data
-+		self.more = True
-+		self.target = 0
-+		self.last_target = 0
-+		self.fetched = 0
-+		self.buffer_size = 16 * 1024 * 1024
-+		self.buffer = Array(c_char, self.buffer_size, lock=False)
-+		self.head = Value(c_longlong)
-+		self.tail = Value(c_longlong)
-+		self.local_tail = 0
-+		self.fetch_count = Value(c_longlong)
-+		self.fetching_done = Value(c_bool)
-+		self.last_count = 0
-+		self.process_target = Value(c_longlong)
-+		self.wait_event = Event()
-+		self.fetched_event = Event()
-+		glb.AddInstanceToShutdownOnExit(self)
-+		self.process = Process(target=SQLFetcherFn, args=(glb.dbref, sql, self.buffer, self.head, self.tail, self.fetch_count, self.fetching_done, self.process_target, self.wait_event, self.fetched_event, prep))
-+		self.process.start()
-+		self.thread = Thread(self.Thread)
-+		self.thread.done.connect(self.ProcessData, Qt.QueuedConnection)
-+		self.thread.start()
-+
-+	def Shutdown(self):
-+		# Tell the thread and process to exit
-+		self.process_target.value = -1
-+		self.wait_event.set()
-+		self.more = False
-+		self.fetching_done.value = True
-+		self.fetched_event.set()
-+
-+	def Thread(self):
-+		if not self.more:
-+			return True, 0
-+		while True:
-+			self.fetched_event.clear()
-+			fetch_count = self.fetch_count.value
-+			if fetch_count != self.last_count:
-+				break
-+			if self.fetching_done.value:
-+				self.more = False
-+				return True, 0
-+			self.fetched_event.wait()
-+		count = fetch_count - self.last_count
-+		self.last_count = fetch_count
-+		self.fetched += count
-+		return False, count
-+
-+	def Fetch(self, nr):
-+		if not self.more:
-+			# -1 inidcates there are no more
-+			return -1
-+		result = self.fetched
-+		extra = result + nr - self.target
-+		if extra > 0:
-+			self.target += extra
-+			# process_target < 0 indicates shutting down
-+			if self.process_target.value >= 0:
-+				self.process_target.value = self.target
-+			self.wait_event.set()
-+		return result
-+
-+	def RemoveFromBuffer(self):
-+		pos = self.local_tail
-+		if len(self.buffer) - pos < glb_nsz:
-+			pos = 0
-+		n = cPickle.loads(self.buffer[pos : pos + glb_nsz])
-+		if n == 0:
-+			pos = 0
-+			n = cPickle.loads(self.buffer[0 : glb_nsz])
-+		pos += glb_nsz
-+		obj = cPickle.loads(self.buffer[pos : pos + n])
-+		self.local_tail = pos + n
-+		return obj
-+
-+	def ProcessData(self, count):
-+		for i in xrange(count):
-+			obj = self.RemoveFromBuffer()
-+			self.process_data(obj)
-+		self.tail.value = self.local_tail
-+		self.wait_event.set()
-+		self.done.emit(count)
-+
-+# Fetch more records bar
-+
-+class FetchMoreRecordsBar():
-+
-+	def __init__(self, model, parent):
-+		self.model = model
-+
-+		self.label = QLabel("Number of records (x " + "{:,}".format(glb_chunk_sz) + ") to fetch:")
-+		self.label.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-+
-+		self.fetch_count = QSpinBox()
-+		self.fetch_count.setRange(1, 1000000)
-+		self.fetch_count.setValue(10)
-+		self.fetch_count.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-+
-+		self.fetch = QPushButton("Go!")
-+		self.fetch.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
-+		self.fetch.released.connect(self.FetchMoreRecords)
-+
-+		self.progress = QProgressBar()
-+		self.progress.setRange(0, 100)
-+		self.progress.hide()
-+
-+		self.done_label = QLabel("All records fetched")
-+		self.done_label.hide()
-+
-+		self.spacer = QLabel("")
-+
-+		self.close_button = QToolButton()
-+		self.close_button.setIcon(parent.style().standardIcon(QStyle.SP_DockWidgetCloseButton))
-+		self.close_button.released.connect(self.Deactivate)
-+
-+		self.hbox = QHBoxLayout()
-+		self.hbox.setContentsMargins(0, 0, 0, 0)
-+
-+		self.hbox.addWidget(self.label)
-+		self.hbox.addWidget(self.fetch_count)
-+		self.hbox.addWidget(self.fetch)
-+		self.hbox.addWidget(self.spacer)
-+		self.hbox.addWidget(self.progress)
-+		self.hbox.addWidget(self.done_label)
-+		self.hbox.addWidget(self.close_button)
-+
-+		self.bar = QWidget()
-+		self.bar.setLayout(self.hbox);
-+		self.bar.show()
-+
-+		self.in_progress = False
-+		self.model.progress.connect(self.Progress)
-+
-+		self.done = False
-+
-+		if not model.HasMoreRecords():
-+			self.Done()
-+
-+	def Widget(self):
-+		return self.bar
-+
-+	def Activate(self):
-+		self.bar.show()
-+		self.fetch.setFocus()
-+
-+	def Deactivate(self):
-+		self.bar.hide()
-+
-+	def Enable(self, enable):
-+		self.fetch.setEnabled(enable)
-+		self.fetch_count.setEnabled(enable)
-+
-+	def Busy(self):
-+		self.Enable(False)
-+		self.fetch.hide()
-+		self.spacer.hide()
-+		self.progress.show()
-+
-+	def Idle(self):
-+		self.in_progress = False
-+		self.Enable(True)
-+		self.progress.hide()
-+		self.fetch.show()
-+		self.spacer.show()
-+
-+	def Target(self):
-+		return self.fetch_count.value() * glb_chunk_sz
-+
-+	def Done(self):
-+		self.done = True
-+		self.Idle()
-+		self.label.hide()
-+		self.fetch_count.hide()
-+		self.fetch.hide()
-+		self.spacer.hide()
-+		self.done_label.show()
-+
-+	def Progress(self, count):
-+		if self.in_progress:
-+			if count:
-+				percent = ((count - self.start) * 100) / self.Target()
-+				if percent >= 100:
-+					self.Idle()
-+				else:
-+					self.progress.setValue(percent)
-+		if not count:
-+			# Count value of zero means no more records
-+			self.Done()
-+
-+	def FetchMoreRecords(self):
-+		if self.done:
-+			return
-+		self.progress.setValue(0)
-+		self.Busy()
-+		self.in_progress = True
-+		self.start = self.model.FetchMoreRecords(self.Target())
-+
-+# SQL data preparation
-+
-+def SQLTableDataPrep(query, count):
-+	data = []
-+	for i in xrange(count):
-+		data.append(query.value(i))
-+	return data
-+
-+# SQL table data model item
-+
-+class SQLTableItem():
-+
-+	def __init__(self, row, data):
++	def __init__(self, row, text, parent_item):
 +		self.row = row
-+		self.data = data
++		self.parent_item = parent_item
++		self.data = [""] * 8
++		self.data[7] = text
++		self.level = 2
++
++	def getParentItem(self):
++		return self.parent_item
++
++	def getRow(self):
++		return self.row
++
++	def childCount(self):
++		return 0
++
++	def hasChildren(self):
++		return False
 +
 +	def getData(self, column):
 +		return self.data[column]
 +
-+# SQL table data model
++# Brance data model level one item
 +
-+class SQLTableModel(TableModel):
++class BranchLevelOneItem():
++
++	def __init__(self, glb, row, data, parent_item):
++		self.glb = glb
++		self.row = row
++		self.parent_item = parent_item
++		self.child_count = 0
++		self.child_items = []
++		self.data = data[1:]
++		self.dbid = data[0]
++		self.level = 1
++		self.query_done = False
++
++	def getChildItem(self, row):
++		return self.child_items[row]
++
++	def getParentItem(self):
++		return self.parent_item
++
++	def getRow(self):
++		return self.row
++
++	def Select(self):
++		self.query_done = True
++
++		if not self.glb.have_disassembler:
++			return
++
++		query = QSqlQuery(self.glb.db)
++
++		QueryExec(query, "SELECT cpu, to_dso_id, to_symbol_id, to_sym_offset, short_name, long_name, build_id, sym_start, to_ip"
++				  " FROM samples"
++				  " INNER JOIN dsos ON samples.to_dso_id = dsos.id"
++				  " INNER JOIN symbols ON samples.to_symbol_id = symbols.id"
++				  " WHERE samples.id = " + str(self.dbid))
++		if not query.next():
++			return
++		cpu = query.value(0)
++		dso = query.value(1)
++		sym = query.value(2)
++		if dso == 0 or sym == 0:
++			return
++		off = query.value(3)
++		short_name = query.value(4)
++		long_name = query.value(5)
++		build_id = query.value(6)
++		sym_start = query.value(7)
++		ip = query.value(8)
++
++		QueryExec(query, "SELECT samples.dso_id, symbol_id, sym_offset, sym_start"
++				  " FROM samples"
++				  " INNER JOIN symbols ON samples.symbol_id = symbols.id"
++				  " WHERE samples.id > " + str(self.dbid) + " AND cpu = " + str(cpu) +
++				  " ORDER BY samples.id"
++				  " LIMIT 1")
++		if not query.next():
++			return
++		if query.value(0) != dso:
++			# Cannot disassemble from one dso to another
++			return
++		bsym = query.value(1)
++		boff = query.value(2)
++		bsym_start = query.value(3)
++		if bsym == 0:
++			return
++		tot = bsym_start + boff + 1 - sym_start - off
++		if tot <= 0 or tot > 16384:
++			return
++
++		inst = self.glb.disassembler.Instruction()
++		f = self.glb.FileFromNamesAndBuildId(short_name, long_name, build_id)
++		if not f:
++			return
++		mode = 0 if Is64Bit(f) else 1
++		self.glb.disassembler.SetMode(inst, mode)
++
++		buf_sz = tot + 16
++		buf = create_string_buffer(tot + 16)
++		f.seek(sym_start + off)
++		buf.value = f.read(buf_sz)
++		buf_ptr = addressof(buf)
++		i = 0
++		while tot > 0:
++			cnt, text = self.glb.disassembler.DisassembleOne(inst, buf_ptr, buf_sz, ip)
++			if cnt:
++				byte_str = tohex(ip).rjust(16)
++				for k in xrange(cnt):
++					byte_str += " %02x" % ord(buf[i])
++					i += 1
++				while k < 15:
++					byte_str += "   "
++					k += 1
++				self.child_items.append(BranchLevelTwoItem(0, byte_str + " " + text, self))
++				self.child_count += 1
++			else:
++				return
++			buf_ptr += cnt
++			tot -= cnt
++			buf_sz -= cnt
++			ip += cnt
++
++	def childCount(self):
++		if not self.query_done:
++			self.Select()
++			if not self.child_count:
++				return -1
++		return self.child_count
++
++	def hasChildren(self):
++		if not self.query_done:
++			return True
++		return self.child_count > 0
++
++	def getData(self, column):
++		return self.data[column]
++
++# Brance data model root item
++
++class BranchRootItem():
++
++	def __init__(self):
++		self.child_count = 0
++		self.child_items = []
++		self.level = 0
++
++	def getChildItem(self, row):
++		return self.child_items[row]
++
++	def getParentItem(self):
++		return None
++
++	def getRow(self):
++		return 0
++
++	def childCount(self):
++		return self.child_count
++
++	def hasChildren(self):
++		return self.child_count > 0
++
++	def getData(self, column):
++		return ""
++
++# Branch data preparation
++
++def BranchDataPrep(query):
++	data = []
++	for i in xrange(0, 8):
++		data.append(query.value(i))
++	data.append(tohex(query.value(8)).rjust(16) + " " + query.value(9) + offstr(query.value(10)) +
++			" (" + dsoname(query.value(11)) + ")" + " -> " +
++			tohex(query.value(12)) + " " + query.value(13) + offstr(query.value(14)) +
++			" (" + dsoname(query.value(15)) + ")")
++	return data
++
++# Branch data model
++
++class BranchModel(TreeModel):
 +
 +	progress = Signal(object)
 +
-+	def __init__(self, glb, sql, column_count, parent=None):
-+		super(SQLTableModel, self).__init__(parent)
++	def __init__(self, glb, event_id, where_clause, parent=None):
++		super(BranchModel, self).__init__(BranchRootItem(), parent)
 +		self.glb = glb
++		self.event_id = event_id
 +		self.more = True
 +		self.populated = 0
-+		self.fetcher = SQLFetcher(glb, sql, lambda x, y=column_count: SQLTableDataPrep(x, y), self.AddSample)
++		sql = ("SELECT samples.id, time, cpu, comm, pid, tid, branch_types.name,"
++			" CASE WHEN in_tx = '0' THEN 'No' ELSE 'Yes' END,"
++			" ip, symbols.name, sym_offset, dsos.short_name,"
++			" to_ip, to_symbols.name, to_sym_offset, to_dsos.short_name"
++			" FROM samples"
++			" INNER JOIN comms ON comm_id = comms.id"
++			" INNER JOIN threads ON thread_id = threads.id"
++			" INNER JOIN branch_types ON branch_type = branch_types.id"
++			" INNER JOIN symbols ON symbol_id = symbols.id"
++			" INNER JOIN symbols to_symbols ON to_symbol_id = to_symbols.id"
++			" INNER JOIN dsos ON samples.dso_id = dsos.id"
++			" INNER JOIN dsos AS to_dsos ON samples.to_dso_id = to_dsos.id"
++			" WHERE samples.id > $$last_id$$" + where_clause +
++			" AND evsel_id = " + str(self.event_id) +
++			" ORDER BY samples.id"
++			" LIMIT " + str(glb_chunk_sz))
++		self.fetcher = SQLFetcher(glb, sql, BranchDataPrep, self.AddSample)
 +		self.fetcher.done.connect(self.Update)
 +		self.fetcher.Fetch(glb_chunk_sz)
 +
++	def columnCount(self, parent=None):
++		return 8
++
++	def columnHeader(self, column):
++		return ("Time", "CPU", "Command", "PID", "TID", "Branch Type", "In Tx", "Branch")[column]
++
++	def columnFont(self, column):
++		if column != 7:
++			return None
++		return QFont("Monospace")
++
 +	def DisplayData(self, item, index):
-+		self.FetchIfNeeded(item.row)
++		if item.level == 1:
++			self.FetchIfNeeded(item.row)
 +		return item.getData(index.column())
 +
 +	def AddSample(self, data):
-+		child = SQLTableItem(self.populated, data)
-+		self.child_items.append(child)
++		child = BranchLevelOneItem(self.glb, self.populated, data, self.root)
++		self.root.child_items.append(child)
 +		self.populated += 1
 +
 +	def Update(self, fetched):
 +		if not fetched:
 +			self.more = False
 +			self.progress.emit(0)
-+		child_count = self.child_count
++		child_count = self.root.child_count
 +		count = self.populated - child_count
 +		if count > 0:
 +			parent = QModelIndex()
 +			self.beginInsertRows(parent, child_count, child_count + count - 1)
 +			self.insertRows(child_count, count, parent)
-+			self.child_count += count
++			self.root.child_count += count
 +			self.endInsertRows()
-+			self.progress.emit(self.child_count)
++			self.progress.emit(self.root.child_count)
 +
 +	def FetchMoreRecords(self, count):
-+		current = self.child_count
++		current = self.root.child_count
 +		if self.more:
 +			self.fetcher.Fetch(count)
 +		else:
@@ -632,111 +415,67 @@ index 310ba7147583..ef822d850109 100755
 +	def HasMoreRecords(self):
 +		return self.more
 +
-+# SQL automatic table data model
++# Branch window
 +
-+class SQLAutoTableModel(SQLTableModel):
++class BranchWindow(QMdiSubWindow):
 +
-+	def __init__(self, glb, table_name, parent=None):
-+		sql = "SELECT * FROM " + table_name + " WHERE id > $$last_id$$ ORDER BY id LIMIT " + str(glb_chunk_sz)
-+		if table_name == "comm_threads_view":
-+			# For now, comm_threads_view has no id column
-+			sql = "SELECT * FROM " + table_name + " WHERE comm_id > $$last_id$$ ORDER BY comm_id LIMIT " + str(glb_chunk_sz)
-+		self.column_headers = []
-+		query = QSqlQuery(glb.db)
-+		if glb.dbref.is_sqlite3:
-+			QueryExec(query, "PRAGMA table_info(" + table_name + ")")
-+			while query.next():
-+				self.column_headers.append(query.value(1))
-+			if table_name == "sqlite_master":
-+				sql = "SELECT * FROM " + table_name
-+		else:
-+			if table_name[:19] == "information_schema.":
-+				sql = "SELECT * FROM " + table_name
-+				select_table_name = table_name[19:]
-+				schema = "information_schema"
-+			else:
-+				select_table_name = table_name
-+				schema = "public"
-+			QueryExec(query, "SELECT column_name FROM information_schema.columns WHERE table_schema = '" + schema + "' and table_name = '" + select_table_name + "'")
-+			while query.next():
-+				self.column_headers.append(query.value(0))
-+		super(SQLAutoTableModel, self).__init__(glb, sql, len(self.column_headers), parent)
++	def __init__(self, glb, event_id, name, where_clause, parent=None):
++		super(BranchWindow, self).__init__(parent)
 +
-+	def columnCount(self, parent=None):
-+		return len(self.column_headers)
++		model_name = "Branch Events " + str(event_id)
++		if len(where_clause):
++			model_name = where_clause + " " + model_name
 +
-+	def columnHeader(self, column):
-+		return self.column_headers[column]
++		self.model = LookupCreateModel(model_name, lambda: BranchModel(glb, event_id, where_clause))
 +
-+# Base class for custom ResizeColumnsToContents
-+
-+class ResizeColumnsToContentsBase(QObject):
-+
-+	def __init__(self, parent=None):
-+		super(ResizeColumnsToContentsBase, self).__init__(parent)
-+
-+	def ResizeColumnToContents(self, column, n):
-+		# Using the view's resizeColumnToContents() here is extrememly slow
-+		# so implement a crude alternative
-+		font = self.view.font()
-+		metrics = QFontMetrics(font)
-+		max = 0
-+		for row in xrange(n):
-+			val = self.data_model.child_items[row].data[column]
-+			len = metrics.width(str(val) + "MM")
-+			max = len if len > max else max
-+		val = self.data_model.columnHeader(column)
-+		len = metrics.width(str(val) + "MM")
-+		max = len if len > max else max
-+		self.view.setColumnWidth(column, max)
-+
-+	def ResizeColumnsToContents(self):
-+		n = min(self.data_model.child_count, 100)
-+		if n < 1:
-+			# No data yet, so connect a signal to notify when there is
-+			self.data_model.rowsInserted.connect(self.UpdateColumnWidths)
-+			return
-+		columns = self.data_model.columnCount()
-+		for i in xrange(columns):
-+			self.ResizeColumnToContents(i, n)
-+
-+	def UpdateColumnWidths(self, *x):
-+		# This only needs to be done once, so disconnect the signal now
-+		self.data_model.rowsInserted.disconnect(self.UpdateColumnWidths)
-+		self.ResizeColumnsToContents()
-+
-+# Table window
-+
-+class TableWindow(QMdiSubWindow, ResizeColumnsToContentsBase):
-+
-+	def __init__(self, glb, table_name, parent=None):
-+		super(TableWindow, self).__init__(parent)
-+
-+		self.data_model = LookupCreateModel(table_name + " Table", lambda: SQLAutoTableModel(glb, table_name))
-+
-+		self.model = QSortFilterProxyModel()
-+		self.model.setSourceModel(self.data_model)
-+
-+		self.view = QTableView()
++		self.view = QTreeView()
++		self.view.setUniformRowHeights(True)
 +		self.view.setModel(self.model)
-+		self.view.setEditTriggers(QAbstractItemView.NoEditTriggers)
-+		self.view.verticalHeader().setVisible(False)
-+		self.view.sortByColumn(-1, Qt.AscendingOrder)
-+		self.view.setSortingEnabled(True)
 +
 +		self.ResizeColumnsToContents()
 +
 +		self.find_bar = FindBar(self, self, True)
 +
-+		self.finder = ChildDataItemFinder(self.data_model)
++		self.finder = ChildDataItemFinder(self.model.root)
 +
-+		self.fetch_bar = FetchMoreRecordsBar(self.data_model, self)
++		self.fetch_bar = FetchMoreRecordsBar(self.model, self)
 +
 +		self.vbox = VBox(self.view, self.find_bar.Widget(), self.fetch_bar.Widget())
 +
 +		self.setWidget(self.vbox.Widget())
 +
-+		AddSubWindow(glb.mainwindow.mdi_area, self, table_name + " Table")
++		AddSubWindow(glb.mainwindow.mdi_area, self, name + " Branch Events")
++
++	def ResizeColumnToContents(self, column, n):
++		# Using the view's resizeColumnToContents() here is extrememly slow
++		# so implement a crude alternative
++		mm = "MM" if column else "MMMM"
++		font = self.view.font()
++		metrics = QFontMetrics(font)
++		max = 0
++		for row in xrange(n):
++			val = self.model.root.child_items[row].data[column]
++			len = metrics.width(str(val) + mm)
++			max = len if len > max else max
++		val = self.model.columnHeader(column)
++		len = metrics.width(str(val) + mm)
++		max = len if len > max else max
++		self.view.setColumnWidth(column, max)
++
++	def ResizeColumnsToContents(self):
++		n = min(self.model.root.child_count, 100)
++		if n < 1:
++			# No data yet, so connect a signal to notify when there is
++			self.model.rowsInserted.connect(self.UpdateColumnWidths)
++			return
++		columns = self.model.columnCount()
++		for i in xrange(columns):
++			self.ResizeColumnToContents(i, n)
++
++	def UpdateColumnWidths(self, *x):
++		# This only needs to be done once, so disconnect the signal now
++		self.model.rowsInserted.disconnect(self.UpdateColumnWidths)
++		self.ResizeColumnsToContents()
 +
 +	def Find(self, value, direction, pattern, context):
 +		self.view.setFocus()
@@ -750,104 +489,203 @@ index 310ba7147583..ef822d850109 100755
 +		else:
 +			self.find_bar.NotFound()
 +
-+# Table list
++# Event list
 +
-+def GetTableList(glb):
-+	tables = []
-+	query = QSqlQuery(glb.db)
-+	if glb.dbref.is_sqlite3:
-+		QueryExec(query, "SELECT name FROM sqlite_master WHERE type IN ( 'table' , 'view' ) ORDER BY name")
-+	else:
-+		QueryExec(query, "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_type IN ( 'BASE TABLE' , 'VIEW' ) ORDER BY table_name")
++def GetEventList(db):
++	events = []
++	query = QSqlQuery(db)
++	QueryExec(query, "SELECT name FROM selected_events WHERE id > 0 ORDER BY id")
 +	while query.next():
-+		tables.append(query.value(0))
-+	if glb.dbref.is_sqlite3:
-+		tables.append("sqlite_master")
-+	else:
-+		tables.append("information_schema.tables")
-+		tables.append("information_schema.views")
-+		tables.append("information_schema.columns")
-+	return tables
++		events.append(query.value(0))
++	return events
 +
- # Action Definition
+ # SQL data preparation
  
- def CreateAction(label, tip, callback, parent=None, shortcut=None):
-@@ -779,12 +1441,15 @@ class MainWindow(QMainWindow):
- 
- 		edit_menu = menu.addMenu("&Edit")
- 		edit_menu.addAction(CreateAction("&Find...", "Find items", self.Find, self, QKeySequence.Find))
-+		edit_menu.addAction(CreateAction("Fetch &more records...", "Fetch more records", self.FetchMoreRecords, self, [QKeySequence(Qt.Key_F8)]))
- 		edit_menu.addAction(CreateAction("&Shrink Font", "Make text smaller", self.ShrinkFont, self, [QKeySequence("Ctrl+-")]))
- 		edit_menu.addAction(CreateAction("&Enlarge Font", "Make text bigger", self.EnlargeFont, self, [QKeySequence("Ctrl++")]))
- 
+ def SQLTableDataPrep(query, count):
+@@ -1448,6 +1845,8 @@ class MainWindow(QMainWindow):
  		reports_menu = menu.addMenu("&Reports")
  		reports_menu.addAction(CreateAction("Context-Sensitive Call &Graph", "Create a new window containing a context-sensitive call graph", self.NewCallGraph, self))
  
-+		self.TableMenu(GetTableList(glb), menu)
++		self.EventMenu(GetEventList(glb.db), reports_menu)
 +
+ 		self.TableMenu(GetTableList(glb), menu)
+ 
  		self.window_menu = WindowMenu(self.mdi_area, menu)
- 
- 	def Find(self):
-@@ -795,6 +1460,14 @@ class MainWindow(QMainWindow):
- 			except:
- 				pass
- 
-+	def FetchMoreRecords(self):
-+		win = self.mdi_area.activeSubWindow()
-+		if win:
-+			try:
-+				win.fetch_bar.Activate()
-+			except:
-+				pass
-+
- 	def ShrinkFont(self):
- 		win = self.mdi_area.activeSubWindow()
- 		ShrinkFont(win.view)
-@@ -803,9 +1476,17 @@ class MainWindow(QMainWindow):
+@@ -1476,6 +1875,20 @@ class MainWindow(QMainWindow):
  		win = self.mdi_area.activeSubWindow()
  		EnlargeFont(win.view)
  
-+	def TableMenu(self, tables, menu):
-+		table_menu = menu.addMenu("&Tables")
-+		for table in tables:
-+			table_menu.addAction(CreateAction(table, "Create a new window containing a table view", lambda t=table: self.NewTableView(t), self))
++	def EventMenu(self, events, reports_menu):
++		branches_events = 0
++		for event in events:
++			event = event.split(":")[0]
++			if event == "branches":
++				branches_events += 1
++		dbid = 0
++		for event in events:
++			dbid += 1
++			event = event.split(":")[0]
++			if event == "branches":
++				label = "All branches" if branches_events == 1 else "All branches " + "(id=" + dbid + ")"
++				reports_menu.addAction(CreateAction(label, "Create a new window displaying branch events", lambda x=dbid: self.NewBranchView(x), self))
 +
+ 	def TableMenu(self, tables, menu):
+ 		table_menu = menu.addMenu("&Tables")
+ 		for table in tables:
+@@ -1484,9 +1897,112 @@ class MainWindow(QMainWindow):
  	def NewCallGraph(self):
  		CallGraphWindow(self.glb, self)
  
-+	def NewTableView(self, table_name):
-+		TableWindow(self.glb, table_name, self)
++	def NewBranchView(self, event_id):
++		BranchWindow(self.glb, event_id, "", "", self)
++
+ 	def NewTableView(self, table_name):
+ 		TableWindow(self.glb, table_name, self)
+ 
++# XED Disassembler
++
++class xed_state_t(Structure):
++
++	_fields_ = [
++		("mode", c_int),
++		("width", c_int)
++	]
++
++class XEDInstruction():
++
++	def __init__(self, libxed):
++		# Current xed_decoded_inst_t structure is 192 bytes. Use 512 to allow for future expansion
++		xedd_t = c_byte * 512
++		self.xedd = xedd_t()
++		self.xedp = addressof(self.xedd)
++		libxed.xed_decoded_inst_zero(self.xedp)
++		self.state = xed_state_t()
++		self.statep = addressof(self.state)
++		# Buffer for disassembled instruction text
++		self.buffer = create_string_buffer(256)
++		self.bufferp = addressof(self.buffer)
++
++class LibXED():
++
++	def __init__(self):
++		self.libxed = CDLL("libxed.so")
++
++		self.xed_tables_init = self.libxed.xed_tables_init
++		self.xed_tables_init.restype = None
++		self.xed_tables_init.argtypes = []
++
++		self.xed_decoded_inst_zero = self.libxed.xed_decoded_inst_zero
++		self.xed_decoded_inst_zero.restype = None
++		self.xed_decoded_inst_zero.argtypes = [ c_void_p ]
++
++		self.xed_operand_values_set_mode = self.libxed.xed_operand_values_set_mode
++		self.xed_operand_values_set_mode.restype = None
++		self.xed_operand_values_set_mode.argtypes = [ c_void_p, c_void_p ]
++
++		self.xed_decoded_inst_zero_keep_mode = self.libxed.xed_decoded_inst_zero_keep_mode
++		self.xed_decoded_inst_zero_keep_mode.restype = None
++		self.xed_decoded_inst_zero_keep_mode.argtypes = [ c_void_p ]
++
++		self.xed_decode = self.libxed.xed_decode
++		self.xed_decode.restype = c_int
++		self.xed_decode.argtypes = [ c_void_p, c_void_p, c_uint ]
++
++		self.xed_format_context = self.libxed.xed_format_context
++		self.xed_format_context.restype = c_uint
++		self.xed_format_context.argtypes = [ c_int, c_void_p, c_void_p, c_int, c_ulonglong, c_void_p, c_void_p ]
++
++		self.xed_tables_init()
++
++	def Instruction(self):
++		return XEDInstruction(self)
++
++	def SetMode(self, inst, mode):
++		if mode:
++			inst.state.mode = 4 # 32-bit
++			inst.state.width = 4 # 4 bytes
++		else:
++			inst.state.mode = 1 # 64-bit
++			inst.state.width = 8 # 8 bytes
++		self.xed_operand_values_set_mode(inst.xedp, inst.statep)
++
++	def DisassembleOne(self, inst, bytes_ptr, bytes_cnt, ip):
++		self.xed_decoded_inst_zero_keep_mode(inst.xedp)
++		err = self.xed_decode(inst.xedp, bytes_ptr, bytes_cnt)
++		if err:
++			return 0, ""
++		# Use AT&T mode (2), alternative is Intel (3)
++		ok = self.xed_format_context(2, inst.xedp, inst.bufferp, sizeof(inst.buffer), ip, 0, 0)
++		if not ok:
++			return 0, ""
++		# Return instruction length and the disassembled instruction text
++		# For now, assume the length is in byte 166
++		return inst.xedd[166], inst.buffer.value
++
++def TryOpen(file_name):
++	try:
++		return open(file_name, "rb")
++	except:
++		return None
++
++def Is64Bit(f):
++	result = sizeof(c_void_p)
++	# ELF support only
++	pos = f.tell()
++	f.seek(0)
++	header = f.read(7)
++	f.seek(pos)
++	magic = header[0:4]
++	eclass = ord(header[4])
++	encoding = ord(header[5])
++	version = ord(header[6])
++	if magic == chr(127) + "ELF" and eclass > 0 and eclass < 3 and encoding > 0 and encoding < 3 and version == 1:
++		result = True if eclass == 2 else False
++	return result
 +
  # Global data
  
  class Glb():
-@@ -816,6 +1497,18 @@ class Glb():
+@@ -1495,9 +2011,40 @@ class Glb():
+ 		self.dbref = dbref
+ 		self.db = db
  		self.dbname = dbname
++		self.home_dir = os.path.expanduser("~")
++		self.buildid_dir = os.getenv("PERF_BUILDID_DIR")
++		if self.buildid_dir:
++			self.buildid_dir += "/.build-id/"
++		else:
++			self.buildid_dir = self.home_dir + "/.debug/.build-id/"
  		self.app = None
  		self.mainwindow = None
-+		self.instances_to_shutdown_on_exit = weakref.WeakSet()
+ 		self.instances_to_shutdown_on_exit = weakref.WeakSet()
++		try:
++			self.disassembler = LibXED()
++			self.have_disassembler = True
++		except:
++			self.have_disassembler = False
 +
-+	def AddInstanceToShutdownOnExit(self, instance):
-+		self.instances_to_shutdown_on_exit.add(instance)
++	def FileFromBuildId(self, build_id):
++		file_name = self.buildid_dir + build_id[0:2] + "/" + build_id[2:] + "/elf"
++		return TryOpen(file_name)
 +
-+	# Shutdown any background processes or threads
-+	def ShutdownInstances(self):
-+		for x in self.instances_to_shutdown_on_exit:
-+			try:
-+				x.Shutdown()
-+			except:
-+				pass
++	def FileFromNamesAndBuildId(self, short_name, long_name, build_id):
++		# Assume current machine i.e. no support for virtualization
++		if short_name[0:7] == "[kernel" and os.path.basename(long_name) == "kcore":
++			file_name = os.getenv("PERF_KCORE")
++			f = TryOpen(file_name) if file_name else None
++			if f:
++				return f
++			# For now, no special handling if long_name is /proc/kcore
++			f = TryOpen(long_name)
++			if f:
++				return f
++		f = self.FileFromBuildId(build_id)
++		if f:
++			return f
++		return None
  
- # Database reference
- 
-@@ -880,6 +1573,7 @@ def Main():
- 	glb.mainwindow = mainwindow
- 	mainwindow.show()
- 	err = app.exec_()
-+	glb.ShutdownInstances()
- 	db.close()
- 	sys.exit(err)
- 
+ 	def AddInstanceToShutdownOnExit(self, instance):
+ 		self.instances_to_shutdown_on_exit.add(instance)
 -- 
 2.14.4
 
