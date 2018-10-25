@@ -2,128 +2,132 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05A0EECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 19:17:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAF66C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 19:17:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA63320834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 19:17:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MUjo4QPt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA63320834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7AF9320834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 19:17:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AF9320834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727664AbeJZDvw (ORCPT
+        id S1727690AbeJZDv4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 23:51:52 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45533 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727230AbeJZDvv (ORCPT
+        Thu, 25 Oct 2018 23:51:56 -0400
+Received: from s3.sipsolutions.net ([144.76.43.62]:47456 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727230AbeJZDv4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 23:51:51 -0400
-Received: by mail-wr1-f66.google.com with SMTP id n5-v6so6690055wrw.12;
-        Thu, 25 Oct 2018 12:17:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+9WQBmlmTANT0VRkTSJ/8ARuwk8Qeuwd3Nn8D8A5U64=;
-        b=MUjo4QPtIS39gM1YY5x/GcVHkB2SSZNo5cBxSgiTdOqRMrUJGHAO4hRX0f3NYfxlvD
-         PLA0vIFQ8KMMOQKgKZNSxaINhjwvuMvb70d5SbrbgTSU0wuouEe7tUuJVF5hGH/dInb8
-         14zlRIMRd7hxD/qhnFqc9ALKNwNRi5QyRh2M/eurEZZuZYAJhJo17RBh0v6j4kXmZJ4W
-         rziSMFxadlfbBwSP72DNvPDP2rCcY3dAJ5eNOzzaj9Vt+UPlszFpn36jrCauYXlkH+RM
-         nyeRdTp12l9lsJQ6cuFGcgZBYxIqRjItBgsm8hqcAiKmIbGjA2JrV05wlKyjT/DciafA
-         J0kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+9WQBmlmTANT0VRkTSJ/8ARuwk8Qeuwd3Nn8D8A5U64=;
-        b=Up/YPcFE16X/7Jt4yw+7Nrb/TiHtTnXDV6Yy++sp6AV9NcGLFsC+qdvkPY+6dVdzYR
-         WWa5BN7hRtc+LTSJexo5DtzUu3MkZ+sTmXYOIjzNUppuxMZArsnIUEvwkp5224g9kG6I
-         xuBWUTwprcc3hYPAIuovclK1802iGfk4dmS2Rv0D1MqN4MYzFgSmYEHXSC4pSime3bYJ
-         KSZ6d8NcNUiNtRzwh7WNP1CR0a8jbsFVJwNdkDRg2GB8m2lIbmNWobkR3NKVXB+XczZN
-         WvApSa5GrAs8DySRtRE/GoEkPdApKIS8ZzzhiaX8FXJiNzdmX4wMCrG1PgBILwJb5ckg
-         RxWw==
-X-Gm-Message-State: AGRZ1gLi1wNgAm76XBnGHNzjQzUI16eO1nZ4KuMGrfh3KJhEDrLVJwE9
-        Xei6kt775zItC63cmeOfaTECh8Kq
-X-Google-Smtp-Source: AJdET5fD0StOBO4tjRKCJg27WbFKUZYg+lItVzvhNSNeF8MyVOFz3fscJ2oDzu0K9AdzYtVkiAKnDQ==
-X-Received: by 2002:a5d:6589:: with SMTP id q9-v6mr3061642wru.141.1540495067590;
-        Thu, 25 Oct 2018 12:17:47 -0700 (PDT)
-Received: from [192.168.1.18] (dnt139.neoplus.adsl.tpnet.pl. [83.24.101.139])
-        by smtp.gmail.com with ESMTPSA id g8-v6sm9387691wri.58.2018.10.25.12.17.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Oct 2018 12:17:47 -0700 (PDT)
-Subject: Re: [PATCH] Fix pattern handling optimalization
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Baolin Wang <baolin.wang@linaro.org>, rteysseyre@gmail.com,
-        bjorn.andersson@linaro.org, broonie@kernel.org,
-        linus.walleij@linaro.org, linux-leds@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <9794969ab8a5a6f62d8ac54cdebcaa3caedfc6d6.1539230481.git.baolin.wang@linaro.org>
- <d90397dd-429f-4f3f-307c-b69dccc360e0@gmail.com> <20181024083143.GA24165@amd>
- <bdadda71-f919-b6a6-4e1c-f87ed298b6b5@gmail.com> <20181024204439.GA32300@amd>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <79c29d20-ae6a-4a12-28fa-93d7305a0623@gmail.com>
-Date:   Thu, 25 Oct 2018 21:17:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181024204439.GA32300@amd>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
+        Thu, 25 Oct 2018 23:51:56 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.91)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1gFl8g-0000Hw-0V; Thu, 25 Oct 2018 21:17:50 +0200
+Message-ID: <679b4dc32eaf3c4dee3aa02175dcffa12a258dc8.camel@sipsolutions.net>
+Subject: Re: [PATCH 2/3] kernel/workqueue: Surround work execution with
+ shared lock annotations
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Bart Van Assche <bvanassche@acm.org>, Tejun Heo <tj@kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        "tytso@mit.edu" <tytso@mit.edu>
+Date:   Thu, 25 Oct 2018 21:17:29 +0200
+In-Reply-To: <1540488162.66186.35.camel@acm.org> (sfid-20181025_192247_142973_0CC4C4B6)
+References: <20181025150540.259281-1-bvanassche@acm.org>
+         <20181025150540.259281-3-bvanassche@acm.org>
+         <256720b373cf539052d79ce3051214140820d696.camel@sipsolutions.net>
+         <1540488162.66186.35.camel@acm.org> (sfid-20181025_192247_142973_0CC4C4B6)
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pavel.
+On Thu, 2018-10-25 at 10:22 -0700, Bart Van Assche wrote:
 
-Thank you for the patch.
-
-On 10/24/2018 10:44 PM, Pavel Machek wrote:
+> > What's this intended to change? I currently don't see how lockdep's
+> > behaviour would differ with read==1, unless you actually tried to do
+> > recursive locking, which isn't really possible?
+> > 
+> > Or perhaps this is actually the right change for the issue described in
+> > patch 1, where a work struct flushes another work on the same wq, and
+> > that causes recursion of sorts? But that recursion should only happen if
+> > the workqueues is actually marked as ordered, in which case it *is* in
+> > fact wrong?
 > 
-> Check for zero duration before skipping step. This fixes pattern
->     
->     echo "0 1000 10 2550 0 1000" > pattern
->     
-> which should do [  .-xXx-.] but does [   Xx-.]
->     
-> Signed-off-by: Pavel Machek <pavel@ucw.cz>
-> Suggested-by: Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> 
-> 
-> diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/ledtrig-pattern.c
-> index ce7acd1..bc5f495 100644
-> --- a/drivers/leds/trigger/ledtrig-pattern.c
-> +++ b/drivers/leds/trigger/ledtrig-pattern.c
-> @@ -87,9 +87,10 @@ static void pattern_trig_timer_function(struct timer_list *t)
->  					   data->curr->brightness);
->  			mod_timer(&data->timer,
->  				  jiffies + msecs_to_jiffies(data->curr->delta_t));
-> -
-> -			/* Skip the tuple with zero duration */
-> -			pattern_trig_update_patterns(data);
-> +			if (!data->next->delta_t) {
-> +				/* Skip the tuple with zero duration */
-> +				pattern_trig_update_patterns(data);
-> +			}
->  			/* Select next tuple */
->  			pattern_trig_update_patterns(data);
->  		} else {
-> 
+> How about modifying the wq->lockdep_map annotations only and not touching the
+> work->lockdep_map annotations? My comment about concurrency in the patch
+> description refers to a multithreaded workqueue executing multiple different
+> work items concurrently. I am aware that great care has been taken in the
+> workqueue implementation to ensure that each work item is executed by exactly
+> one worker.
 
-Yep, it fixes the issue.
+Again, I'm not sure what you'd want to achieve by that?
 
-Applied to the fixes-for-4.20-rc2 branch of linux-leds.git
+If you look at lockdep, read==1 really doesn't do all that much. Note
+read is the 4th arg to lock_acquire() via lock_acquire_shared().
 
--- 
-Best regards,
-Jacek Anaszewski
+Hold time statistics are accounted differently, but that's meaningless
+here.
+
+check_deadlock() will behave differently - if read==2 (recursive read)
+it will not complain about recursing into a previous read==1 acquire.
+Not relevant here, because you can't recurse into the workqueue while
+you're running on it.
+
+Some in-IRQ things are different, but we can't be in-IRQ here.
+
+
+Note that lockdep doesn't care about multiple threads "holding" the same
+lock. Everything it does in terms of this tracking is per-thread, afaict
+(uses "current" everywhere, and that's how the reports look like etc.).
+So ultimately the only places where this read==1 would matter cannot be
+hit (recursion within the same thread). Importantly, it doesn't try to
+track across the whole system if you're holding the same lock twice.
+That's actually impossible with most locks anyway (one would wait), but
+when it does happen like it can here, it doesn't really do anything bad.
+
+
+I don't think it actually *breaks* anything to make this a read/write
+lock, because even with a read/write lock you still get a deadlock if
+you do
+
+read(A)
+		lock(B)
+		write(A)
+lock(B)
+
+or
+
+write(A)
+		lock(B)
+		read(A)
+lock(B)
+
+
+since read/write are mutually exclusive, and you're not changing the
+flush-side to also be a readlock. If you were, I'd argue that'd be wrong
+since then you *don't* detect such deadlocks:
+
+read(A)
+		lock(B)
+		read(A)
+lock(B)
+
+would not result in a complaint (I think), but in the workqueue case it
+*should* because you can't flush the workqueue while holding a lock that
+you also hold in a work that's executing on it.
+
+
+So in the end, I just simply don't see a point in this, and I don't
+think you've sufficiently explained why this change should be made.
+
+johannes
+
