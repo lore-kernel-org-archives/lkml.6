@@ -2,156 +2,117 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E1F6C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:24:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EE7AECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:24:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2487620834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:24:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="aagCwDAM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2487620834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
+	by mail.kernel.org (Postfix) with ESMTP id 1B66720834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:24:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B66720834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726829AbeJZF6m (ORCPT
+        id S1727418AbeJZF6w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 01:58:42 -0400
-Received: from alln-iport-7.cisco.com ([173.37.142.94]:12509 "EHLO
-        alln-iport-7.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726085AbeJZF6l (ORCPT
+        Fri, 26 Oct 2018 01:58:52 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:49214 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726085AbeJZF6w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 01:58:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=2504; q=dns/txt; s=iport;
-  t=1540502661; x=1541712261;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=4sKv97fOYZgEGmMm61XnqOvfrspEo633ce9zkNjeXMY=;
-  b=aagCwDAMkv2FExUm0QWEGSuT1osphfiGD9nh4nTV4oPN0hzPaY01Iuk6
-   bRgv75cRTZtAGmGQk8DhsApqmtnHYiV+UVKJfdd3VNz/k7AKH4Uhw6VHo
-   xKfg4O4YhSSA6kTb2KpVIaJEQIjtnC0CAGTEgTphVWKyX4IHsBKmhVQCW
-   I=;
-X-IronPort-AV: E=Sophos;i="5.54,425,1534809600"; 
-   d="scan'208";a="191075932"
-Received: from rcdn-core-6.cisco.com ([173.37.93.157])
-  by alln-iport-7.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2018 21:24:21 +0000
-Received: from [10.154.208.133] ([10.154.208.133])
-        by rcdn-core-6.cisco.com (8.15.2/8.15.2) with ESMTP id w9PLOIkv007227;
-        Thu, 25 Oct 2018 21:24:19 GMT
-Subject: Re: [PATCH v2] kernel/signal: Signal-based pre-coredump notification
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Helge Deller <deller@gmx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian@brauner.io>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
-        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>,
-        Enke Chen <enkechen@cisco.com>
-References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
- <458c04d8-d189-4a26-729a-bb1d1d751534@cisco.com>
- <87sh0vpj5q.fsf@xmission.com>
- <df08c74f-1027-c635-fb99-a12d23f60947@cisco.com>
- <87zhv2md04.fsf@xmission.com>
-From:   Enke Chen <enkechen@cisco.com>
-Message-ID: <3da93f7c-972d-14e0-dae2-f0217ba03dc1@cisco.com>
-Date:   Thu, 25 Oct 2018 14:24:19 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Fri, 26 Oct 2018 01:58:52 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id CE19B8084E; Thu, 25 Oct 2018 23:24:28 +0200 (CEST)
+Date:   Thu, 25 Oct 2018 23:24:29 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Cc:     Baolin Wang <baolin.wang@linaro.org>, rteysseyre@gmail.com,
+        bjorn.andersson@linaro.org, broonie@kernel.org,
+        linus.walleij@linaro.org, linux-leds@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: More checks for patterns? was: Fix pattern handling optimalization
+Message-ID: <20181025212429.GB18016@amd>
+References: <9794969ab8a5a6f62d8ac54cdebcaa3caedfc6d6.1539230481.git.baolin.wang@linaro.org>
+ <d90397dd-429f-4f3f-307c-b69dccc360e0@gmail.com>
+ <20181024083143.GA24165@amd>
+ <bdadda71-f919-b6a6-4e1c-f87ed298b6b5@gmail.com>
+ <20181024204439.GA32300@amd>
+ <79c29d20-ae6a-4a12-28fa-93d7305a0623@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <87zhv2md04.fsf@xmission.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-Outbound-SMTP-Client: 10.154.208.133, [10.154.208.133]
-X-Outbound-Node: rcdn-core-6.cisco.com
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="4SFOXa2GPu3tIq4H"
+Content-Disposition: inline
+In-Reply-To: <79c29d20-ae6a-4a12-28fa-93d7305a0623@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Eric:
 
-I have a couple comments inlined.
+--4SFOXa2GPu3tIq4H
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> On Wed, Oct 24, 2018 at 3:30 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
->>> Enke Chen <enkechen@cisco.com> writes:
->>>> For simplicity and consistency, this patch provides an implementation
->>>> for signal-based fault notification prior to the coredump of a child
->>>> process. A new prctl command, PR_SET_PREDUMP_SIG, is defined that can
->>>> be used by an application to express its interest and to specify the
->>>> signal (SIGCHLD or SIGUSR1 or SIGUSR2) for such a notification. A new
->>>> signal code (si_code), CLD_PREDUMP, is also defined for SIGCHLD.
->>>>
->>>> Changes to prctl(2):
->>>>
->>>>    PR_SET_PREDUMP_SIG (since Linux 4.20.x)
->>>>           Set the child pre-coredump signal of the calling process to
->>>>           arg2 (either SIGUSR1, or SIUSR2, or SIGCHLD, or 0 to clear).
->>>>           This is the signal that the calling process will get prior to
->>>>           the coredump of a child process. This value is cleared across
->>>>           execve(2), or for the child of a fork(2).
->>>>
->>>>           When SIGCHLD is specified, the signal code will be set to
->>>>           CLD_PREDUMP in such an SIGCHLD signal.
->> [...]
->>> Ugh.  Your test case is even using signalfd.  So you don't even want
->>> this signal to be delivered as a signal.
->>
->> Just to make sure everyone's on the same page: You're suggesting that
->> it might make sense to deliver the pre-dump notification via a new
->> type of file instead (along the lines of signalfd, timerfd, eventfd
->> and so on)?
-> 
-> My real complaint was that the API was not being tested in the way it
-> is expected to be used.  Which makes a test pretty much useless as some
-> aspect userspace could regress and the test would not notice because it
-> is testing something different.
-> 
-> 
 
-As I stated in a prior email, I have test code for both sigaction/waipid(),
-and signefd(). As the sigaction/waitpid is more widely used and that is
-what you prefer, I will change the selftest code to reflect that in the
-next version.  Actually I should separate out the selftest code.
+We don't want brightness < 0, but this may not be best way to do
+this. We also don't want brightness > max_brightness, but I'm not sure
+this check is effective.
 
-> 
-> I do think that a file descriptor based API might be a good alternative
-> to a signal based API.  The proc connector and signals are not the only
-> API solution.
-> 
-> The common solution to this problem is that distributions defailt the
-> rlimit core file size to 0.
+We probably also don't want pattern where all the delta_t s are zero.
 
-We do need coredumps in order to have the bugs fixed.
+I came up with this so far....
+   	    	       	    	    	      	  	    Pavel
 
-Thanks.  -- Enke
+
+
+diff --git a/drivers/leds/trigger/ledtrig-pattern.c b/drivers/leds/trigger/=
+ledtrig-pattern.c
+index ce7acd1..bc5f495 100644
+--- a/drivers/leds/trigger/ledtrig-pattern.c
++++ b/drivers/leds/trigger/ledtrig-pattern.c
+@@ -250,9 +251,16 @@ static ssize_t pattern_trig_store_patterns(struct led_=
+classdev *led_cdev,
+=20
+ 	while (offset < count - 1 && data->npatterns < MAX_PATTERNS) {
+ 		cr =3D 0;
+-		ccount =3D sscanf(buf + offset, "%d %u %n",
++		ccount =3D sscanf(buf + offset, "%u %u %n",
+ 				&data->patterns[data->npatterns].brightness,
+ 				&data->patterns[data->npatterns].delta_t, &cr);
++
++		if (data->patterns[data->npatterns].brightness > data->led_cdev->max_bri=
+ghtness) {
++			data->npatterns =3D 0;
++			err =3D -EINVAL;
++			goto out;
++		}
++			=20
+ 		if (ccount !=3D 2) {
+ 			data->npatterns =3D 0;
+ 			err =3D -EINVAL;
+
+
+
+
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--4SFOXa2GPu3tIq4H
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvSNI0ACgkQMOfwapXb+vJyjgCfTl2L83kZog2c6ughpc0RXY6D
++REAn0adMKwNRz617q44ig0s9Mv0EML4
+=+wPI
+-----END PGP SIGNATURE-----
+
+--4SFOXa2GPu3tIq4H--
