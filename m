@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B103C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:24:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA74FECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:24:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4054D204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:24:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4054D204FD
+	by mail.kernel.org (Postfix) with ESMTP id A0ABA204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:24:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0ABA204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727159AbeJYQz6 (ORCPT
+        id S1727221AbeJYQ4A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 12:55:58 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:34201 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726546AbeJYQz4 (ORCPT
+        Thu, 25 Oct 2018 12:56:00 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:34208 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726473AbeJYQz7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 12:55:56 -0400
-Received: by mail-ed1-f66.google.com with SMTP id w19-v6so7626393eds.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 01:24:12 -0700 (PDT)
+        Thu, 25 Oct 2018 12:55:59 -0400
+Received: by mail-ed1-f67.google.com with SMTP id w19-v6so7626501eds.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 01:24:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ki+kngmMO/xWHfrh7zqE78qHZf4pfpYk6sGkoYfsK/w=;
-        b=fSnUIjsQzOEmKs7wCk2RyaXu1/pDtwS/a1lI1q/aqfKRdbUFisLuLi2jU9exdYrYhs
-         KV7cab0FY6UhRppEZziCzD+o4k5jIBIARB9wgvlzThDWImoPPdgHQUWF/01nWBg9PPoh
-         BUArCYn75mP4bBSktm0T/xs9LPu3kwBML5QIkUufDcu4FqrPde/yptwht+92UD9lUMY/
-         4Q7h+HW8DL85JcY9sF2OvAmdOl0imA46FH8QFtX7f6JPssEVERNb2jeTD5IP3UCyd4Bg
-         s2uSsY9XQcWcRdno85yRV9XDdh1HSxKfMavH2M7HOziSMJt3hkMlRPmW3v34L4dZuZDe
-         MDGw==
-X-Gm-Message-State: AGRZ1gIxiMmjxBMJZmj4xO5VvkxTGi2wYr4VbCv2ugmPXq6CE3WUXRAj
-        1sSbm0VEiTpWglbXZLsI1/I=
-X-Google-Smtp-Source: AJdET5cqZeAQKpBo+7lP/8xTao6kPlYSbvike08LeMNUvfJ54+Ggd+xhCdR4xl+/JbmWTdkS+VkM6A==
-X-Received: by 2002:a17:906:5044:: with SMTP id e4-v6mr606971ejk.3.1540455852208;
-        Thu, 25 Oct 2018 01:24:12 -0700 (PDT)
+        bh=LDnCjbwCU7GwgfYL0LS6gVq7nq2XeDqycf02/zMKIkE=;
+        b=J//tV1U15E3oERrwPaL2Zwoug7ixFI+u1/orPJLPuV6cet5Xqn0sjV3yCwdOAAL+pO
+         0KKRPGB9msjp4qUCF7MMs3JbytKr5QjQwuC8wCJZiK5AHR3M2xiS1uLxjmIoTMg/h4Wq
+         gmey17qWaMv/n+Lei3CexJJKPQ+ZEcnQowpmoomJs92qHWjL/MT+JF7xobLWerI/Nxpu
+         UteBvNufec2qyw6CRnEokgQQLhJqIG3PvT5SmJfJbhEITH5V3zBImLQGNfg7z3LJ/igd
+         7pnuZgHJoK9nnH/auHTguHDzvzJHMwO6pdm43IB1L4AyfZLFW1kTdS4OrVVwyF2nRe6y
+         f1bQ==
+X-Gm-Message-State: AGRZ1gLOp+do+iKbsBIVtr4UFnz2fO5x3wKcjPO1tsDkpj4FcurrM4dR
+        TB3NyEI0BL/xwJUr063cZAo=
+X-Google-Smtp-Source: AJdET5eWwbM5m/AslgFynlgkSJzNzpCqEg3ERg/iUpG6InNnqruK65CIebOemb7tvqk0eA+6j5pz1Q==
+X-Received: by 2002:a50:f00e:: with SMTP id r14-v6mr767992edl.58.1540455854130;
+        Thu, 25 Oct 2018 01:24:14 -0700 (PDT)
 Received: from tiehlicka.suse.cz (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id m24-v6sm2628277edd.31.2018.10.25.01.24.11
+        by smtp.gmail.com with ESMTPSA id m24-v6sm2628277edd.31.2018.10.25.01.24.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Oct 2018 01:24:11 -0700 (PDT)
+        Thu, 25 Oct 2018 01:24:13 -0700 (PDT)
 From:   Michal Hocko <mhocko@kernel.org>
 To:     <linux-mm@kvack.org>
 Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
@@ -53,9 +53,9 @@ Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
         Andrew Morton <akpm@linux-foundation.org>,
         LKML <linux-kernel@vger.kernel.org>,
         Michal Hocko <mhocko@suse.com>
-Subject: [RFC PATCH v2 1/3] mm, oom: rework mmap_exit vs. oom_reaper synchronization
-Date:   Thu, 25 Oct 2018 10:24:01 +0200
-Message-Id: <20181025082403.3806-2-mhocko@kernel.org>
+Subject: [RFC PATCH v2 3/3] mm, oom: hand over MMF_OOM_SKIP to exit path if it is guranteed to finish
+Date:   Thu, 25 Oct 2018 10:24:03 +0200
+Message-Id: <20181025082403.3806-4-mhocko@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181025082403.3806-1-mhocko@kernel.org>
 References: <20181025082403.3806-1-mhocko@kernel.org>
@@ -68,148 +68,192 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Michal Hocko <mhocko@suse.com>
 
-The oom_reaper cannot handle mlocked vmas right now and therefore we
-have exit_mmap to reap the memory before it clears the mlock flags on
-mappings. This is all good but we would like to have a better hand over
-protocol between the oom_reaper and exit_mmap paths.
+David Rientjes has noted that certain user space memory allocators leave
+a lot of page tables behind and the current implementation of oom_reaper
+doesn't deal with those workloads very well. In order to improve these
+workloads define a point when exit_mmap is guaranteed to finish the tear
+down without any further blocking etc. This is right after we unlink
+vmas (those still depend on locks which are held while performing memory
+allocations from other contexts) and before we start releasing page
+tables.
 
-Therefore use exclusive mmap_sem in exit_mmap whenever exit_mmap has to
-synchronize with the oom_reaper. There are two notable places. Mlocked
-vmas (munlock_vma_pages_all) and page tables tear down path. All others
-should be fine to race with oom_reap_task_mm.
-
-This is mostly a preparatory patch which shouldn't introduce functional
-changes.
+Opencode free_pgtables and explicitly unlink all vmas first. Then set
+mm->mmap to NULL (there shouldn't be anybody looking at it at this
+stage) and check for mm->mmap in the oom_reaper path. If the mm->mmap
+is NULL we rely on the exit path and won't set MMF_OOM_SKIP from the
+reaper.
 
 Changes since RFC
-- move MMF_OOM_SKIP in exit_mmap to before we are going to free page
-  tables.
+- the task is still visible to the OOM killer after exit_mmap terminates
+  so we should set MMF_OOM_SKIP from that path to be sure the oom killer
+  doesn't get stuck on this task (see d7a94e7e11badf84 for more context)
+  - per Tetsuo
+- split free_pgtables into unlinking and actual freeing part. We cannot
+  rely on free_pgd_range because of hugetlb pages on ppc resp. sparc
+  which do their own tear down
 
 Signed-off-by: Michal Hocko <mhocko@suse.com>
 ---
- include/linux/oom.h |  2 --
- mm/mmap.c           | 50 ++++++++++++++++++++++-----------------------
- mm/oom_kill.c       |  4 ++--
- 3 files changed, 27 insertions(+), 29 deletions(-)
+ mm/internal.h |  3 +++
+ mm/memory.c   | 28 ++++++++++++++++++----------
+ mm/mmap.c     | 25 +++++++++++++++++++++----
+ mm/oom_kill.c | 13 +++++++------
+ 4 files changed, 49 insertions(+), 20 deletions(-)
 
-diff --git a/include/linux/oom.h b/include/linux/oom.h
-index 69864a547663..11e26ca565a7 100644
---- a/include/linux/oom.h
-+++ b/include/linux/oom.h
-@@ -95,8 +95,6 @@ static inline vm_fault_t check_stable_address_space(struct mm_struct *mm)
- 	return 0;
+diff --git a/mm/internal.h b/mm/internal.h
+index 87256ae1bef8..35adbfec4935 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -40,6 +40,9 @@ void page_writeback_init(void);
+ 
+ vm_fault_t do_swap_page(struct vm_fault *vmf);
+ 
++void __unlink_vmas(struct vm_area_struct *vma);
++void __free_pgtables(struct mmu_gather *tlb, struct vm_area_struct *start_vma,
++		unsigned long floor, unsigned long ceiling);
+ void free_pgtables(struct mmu_gather *tlb, struct vm_area_struct *start_vma,
+ 		unsigned long floor, unsigned long ceiling);
+ 
+diff --git a/mm/memory.c b/mm/memory.c
+index c467102a5cbc..cf910ed5f283 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -612,20 +612,23 @@ void free_pgd_range(struct mmu_gather *tlb,
+ 	} while (pgd++, addr = next, addr != end);
  }
  
--bool __oom_reap_task_mm(struct mm_struct *mm);
+-void free_pgtables(struct mmu_gather *tlb, struct vm_area_struct *vma,
++void __unlink_vmas(struct vm_area_struct *vma)
++{
++	while (vma) {
++		unlink_anon_vmas(vma);
++		unlink_file_vma(vma);
++		vma = vma->vm_next;
++	}
++}
++
++/* expects that __unlink_vmas has been called already */
++void __free_pgtables(struct mmu_gather *tlb, struct vm_area_struct *vma,
+ 		unsigned long floor, unsigned long ceiling)
+ {
+ 	while (vma) {
+ 		struct vm_area_struct *next = vma->vm_next;
+ 		unsigned long addr = vma->vm_start;
+ 
+-		/*
+-		 * Hide vma from rmap and truncate_pagecache before freeing
+-		 * pgtables
+-		 */
+-		unlink_anon_vmas(vma);
+-		unlink_file_vma(vma);
 -
- extern unsigned long oom_badness(struct task_struct *p,
- 		struct mem_cgroup *memcg, const nodemask_t *nodemask,
- 		unsigned long totalpages);
+ 		if (is_vm_hugetlb_page(vma)) {
+ 			hugetlb_free_pgd_range(tlb, addr, vma->vm_end,
+ 				floor, next ? next->vm_start : ceiling);
+@@ -637,8 +640,6 @@ void free_pgtables(struct mmu_gather *tlb, struct vm_area_struct *vma,
+ 			       && !is_vm_hugetlb_page(next)) {
+ 				vma = next;
+ 				next = vma->vm_next;
+-				unlink_anon_vmas(vma);
+-				unlink_file_vma(vma);
+ 			}
+ 			free_pgd_range(tlb, addr, vma->vm_end,
+ 				floor, next ? next->vm_start : ceiling);
+@@ -647,6 +648,13 @@ void free_pgtables(struct mmu_gather *tlb, struct vm_area_struct *vma,
+ 	}
+ }
+ 
++void free_pgtables(struct mmu_gather *tlb, struct vm_area_struct *vma,
++		unsigned long floor, unsigned long ceiling)
++{
++	__unlink_vmas(vma);
++	__free_pgtables(tlb, vma, floor, ceiling);
++}
++
+ int __pte_alloc(struct mm_struct *mm, pmd_t *pmd, unsigned long address)
+ {
+ 	spinlock_t *ptl;
 diff --git a/mm/mmap.c b/mm/mmap.c
-index 5f2b2b184c60..a02b314c0546 100644
+index a02b314c0546..f4b562e21764 100644
 --- a/mm/mmap.c
 +++ b/mm/mmap.c
-@@ -3042,39 +3042,29 @@ void exit_mmap(struct mm_struct *mm)
- 	struct mmu_gather tlb;
- 	struct vm_area_struct *vma;
- 	unsigned long nr_accounted = 0;
-+	bool oom = mm_is_oom_victim(mm);
- 
- 	/* mm's last user has gone, and its about to be pulled down */
- 	mmu_notifier_release(mm);
- 
--	if (unlikely(mm_is_oom_victim(mm))) {
--		/*
--		 * Manually reap the mm to free as much memory as possible.
--		 * Then, as the oom reaper does, set MMF_OOM_SKIP to disregard
--		 * this mm from further consideration.  Taking mm->mmap_sem for
--		 * write after setting MMF_OOM_SKIP will guarantee that the oom
--		 * reaper will not run on this mm again after mmap_sem is
--		 * dropped.
--		 *
--		 * Nothing can be holding mm->mmap_sem here and the above call
--		 * to mmu_notifier_release(mm) ensures mmu notifier callbacks in
--		 * __oom_reap_task_mm() will not block.
--		 *
--		 * This needs to be done before calling munlock_vma_pages_all(),
--		 * which clears VM_LOCKED, otherwise the oom reaper cannot
--		 * reliably test it.
--		 */
--		(void)__oom_reap_task_mm(mm);
--
--		set_bit(MMF_OOM_SKIP, &mm->flags);
--		down_write(&mm->mmap_sem);
--		up_write(&mm->mmap_sem);
--	}
--
- 	if (mm->locked_vm) {
- 		vma = mm->mmap;
- 		while (vma) {
--			if (vma->vm_flags & VM_LOCKED)
-+			if (vma->vm_flags & VM_LOCKED) {
-+				/*
-+				 * oom_reaper cannot handle mlocked vmas but we
-+				 * need to serialize it with munlock_vma_pages_all
-+				 * which clears VM_LOCKED, otherwise the oom reaper
-+				 * cannot reliably test it.
-+				 */
-+				if (oom)
-+					down_write(&mm->mmap_sem);
-+
- 				munlock_vma_pages_all(vma);
-+
-+				if (oom)
-+					up_write(&mm->mmap_sem);
-+			}
- 			vma = vma->vm_next;
- 		}
- 	}
-@@ -3091,6 +3081,13 @@ void exit_mmap(struct mm_struct *mm)
- 	/* update_hiwater_rss(mm) here? but nobody should be looking */
+@@ -3082,13 +3082,26 @@ void exit_mmap(struct mm_struct *mm)
  	/* Use -1 here to ensure all VMAs in the mm are unmapped */
  	unmap_vmas(&tlb, vma, 0, -1);
-+
-+	/* oom_reaper cannot race with the page tables teardown */
-+	if (oom) {
-+		down_write(&mm->mmap_sem);
-+		set_bit(MMF_OOM_SKIP, &mm->flags);
-+	}
-+
- 	free_pgtables(&tlb, vma, FIRST_USER_ADDRESS, USER_PGTABLES_CEILING);
+ 
+-	/* oom_reaper cannot race with the page tables teardown */
++	/*
++	 * oom_reaper cannot race with the page tables teardown but we
++	 * want to make sure that the exit path can take over the full
++	 * tear down when it is safe to do so
++	 */
+ 	if (oom) {
+ 		down_write(&mm->mmap_sem);
+-		set_bit(MMF_OOM_SKIP, &mm->flags);
++		__unlink_vmas(vma);
++		/*
++		 * the exit path is guaranteed to finish the memory tear down
++		 * without any unbound blocking at this stage so make it clear
++		 * to the oom_reaper
++		 */
++		mm->mmap = NULL;
++		up_write(&mm->mmap_sem);
++		__free_pgtables(&tlb, vma, FIRST_USER_ADDRESS, USER_PGTABLES_CEILING);
++	} else {
++		free_pgtables(&tlb, vma, FIRST_USER_ADDRESS, USER_PGTABLES_CEILING);
+ 	}
+ 
+-	free_pgtables(&tlb, vma, FIRST_USER_ADDRESS, USER_PGTABLES_CEILING);
  	tlb_finish_mmu(&tlb, 0, -1);
  
-@@ -3104,6 +3101,9 @@ void exit_mmap(struct mm_struct *mm)
- 		vma = remove_vma(vma);
+ 	/*
+@@ -3102,8 +3115,12 @@ void exit_mmap(struct mm_struct *mm)
  	}
  	vm_unacct_memory(nr_accounted);
-+
-+	if (oom)
-+		up_write(&mm->mmap_sem);
+ 
++	/*
++	 * Now that the full address space is torn down, make sure the
++	 * OOM killer skips over this task
++	 */
+ 	if (oom)
+-		up_write(&mm->mmap_sem);
++		set_bit(MMF_OOM_SKIP, &mm->flags);
  }
  
  /* Insert vm structure into process list sorted by address
 diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index f10aa5360616..b3b2c2bbd8ab 100644
+index ab42717661dc..db1ebb45c66a 100644
 --- a/mm/oom_kill.c
 +++ b/mm/oom_kill.c
-@@ -488,7 +488,7 @@ static DECLARE_WAIT_QUEUE_HEAD(oom_reaper_wait);
- static struct task_struct *oom_reaper_list;
- static DEFINE_SPINLOCK(oom_reaper_lock);
+@@ -570,12 +570,10 @@ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm, unsi
+ 	}
  
--bool __oom_reap_task_mm(struct mm_struct *mm)
-+static bool __oom_reap_task_mm(struct mm_struct *mm)
- {
- 	struct vm_area_struct *vma;
- 	bool ret = true;
-@@ -554,7 +554,7 @@ static bool oom_reap_task_mm(struct task_struct *tsk, struct mm_struct *mm)
- 	 * MMF_OOM_SKIP is set by exit_mmap when the OOM reaper can't
- 	 * work on the mm anymore. The check for MMF_OOM_SKIP must run
- 	 * under mmap_sem for reading because it serializes against the
--	 * down_write();up_write() cycle in exit_mmap().
-+	 * down_write() in exit_mmap().
+ 	/*
+-	 * MMF_OOM_SKIP is set by exit_mmap when the OOM reaper can't
+-	 * work on the mm anymore. The check for MMF_OOM_SKIP must run
+-	 * under mmap_sem for reading because it serializes against the
+-	 * down_write() in exit_mmap().
++	 * If exit path clear mm->mmap then we know it will finish the tear down
++	 * and we can go and bail out here.
  	 */
- 	if (test_bit(MMF_OOM_SKIP, &mm->flags)) {
+-	if (test_bit(MMF_OOM_SKIP, &mm->flags)) {
++	if (!mm->mmap) {
  		trace_skip_task_reaping(tsk->pid);
+ 		goto out_unlock;
+ 	}
+@@ -625,8 +623,11 @@ static void oom_reap_task(struct task_struct *tsk)
+ 	/*
+ 	 * Hide this mm from OOM killer because it has been either reaped or
+ 	 * somebody can't call up_write(mmap_sem).
++	 * Leave the MMF_OOM_SKIP to the exit path if it managed to reach the
++	 * point it is guaranteed to finish without any blocking
+ 	 */
+-	set_bit(MMF_OOM_SKIP, &mm->flags);
++	if (mm->mmap)
++		set_bit(MMF_OOM_SKIP, &mm->flags);
+ 
+ 	/* Drop a reference taken by wake_oom_reaper */
+ 	put_task_struct(tsk);
 -- 
 2.19.1
 
