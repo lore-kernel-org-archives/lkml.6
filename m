@@ -4,88 +4,103 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D4CFECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:17:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE54C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:17:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C920620834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:17:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA37C20854
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:17:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HDtx+6nA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C920620834
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IQSOfFen"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA37C20854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728056AbeJYWuE (ORCPT
+        id S1728371AbeJYWuJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:50:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58984 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:50:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728092AbeJYWtk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:49:40 -0400
+        id S1727980AbeJYWuI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:50:08 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A287220848;
-        Thu, 25 Oct 2018 14:16:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C12D020834;
+        Thu, 25 Oct 2018 14:17:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477003;
-        bh=Wx16khg9vWFJw5gOXMnjXIOcAA6NliSgr6NNk1I2nFM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HDtx+6nAlEH9qa0czL6ykxSaVrOkgDW98sJ4o8Rp1XjWQzs0BhFUCMCLVw9Zo0ivz
-         t0Dc4pVAAMLaoA3MGTDX5Vpn0Ckb1njII5mqAp7vjNZLcefkH9BdAaZLlvWICoMP7f
-         FClh/DHT1+pL6D8J+a1d648Rhc8mqhW00P172doU=
+        s=default; t=1540477031;
+        bh=qp/gJ5C3BL7ckHAqyOSSdRpl8wFm2hdOtHzkxOfiR4I=;
+        h=From:To:Cc:Subject:Date:From;
+        b=IQSOfFenXONCPCafyHL7JmGVws6m/BAb+cWEeMM9tyjjPT+OQDq7FfDAQOyqNYbfm
+         fUgNgH4/WaMQxJVj63DD3sukERAcQByuNDYm77CrLzrTXOUToWyynlQDx8+PC7yxEI
+         qzv2NBnq+v3dStyvWyzmGhJTBF90lwwoLnmAh7qI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+Cc:     Eric Biggers <ebiggers@google.com>,
+        David Howells <dhowells@redhat.com>,
+        James Morris <james.l.morris@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 95/98] IB/mlx4: Fix an error handling path in 'mlx4_ib_rereg_user_mr()'
-Date:   Thu, 25 Oct 2018 10:14:20 -0400
-Message-Id: <20181025141423.213774-95-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 01/65] KEYS: put keyring if install_session_keyring_to_cred() fails
+Date:   Thu, 25 Oct 2018 10:16:01 -0400
+Message-Id: <20181025141705.213937-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181025141423.213774-1-sashal@kernel.org>
-References: <20181025141423.213774-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Jaillet <christophe.jaillet@wanadoo.fr>
+From: Eric Biggers <ebiggers@google.com>
 
-[ Upstream commit 3dc7c7badb7502ec3e3aa817a8bdd9e53aa54c52 ]
+[ Upstream commit d636bd9f12a66ea3775c9fabbf3f8e118253467a ]
 
-Before returning -EPERM we should release some resources, as already done
-in the other error handling path of the function.
+In join_session_keyring(), if install_session_keyring_to_cred() were to
+fail, we would leak the keyring reference, just like in the bug fixed by
+commit 23567fd052a9 ("KEYS: Fix keyring ref leak in
+join_session_keyring()").  Fortunately this cannot happen currently, but
+we really should be more careful.  Do this by adding and using a new
+error label at which the keyring reference is dropped.
 
-Fixes: d8f9cc328c88 ("IB/mlx4: Mark user MR as writable if actual virtual memory is writable")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: James Morris <james.l.morris@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/mlx4/mr.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ security/keys/process_keys.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/infiniband/hw/mlx4/mr.c b/drivers/infiniband/hw/mlx4/mr.c
-index 0d4878efd643..ddd3182138ac 100644
---- a/drivers/infiniband/hw/mlx4/mr.c
-+++ b/drivers/infiniband/hw/mlx4/mr.c
-@@ -247,8 +247,11 @@ int mlx4_ib_rereg_user_mr(struct ib_mr *mr, int flags,
+diff --git a/security/keys/process_keys.c b/security/keys/process_keys.c
+index ac1d5b2b1626..a7095372701e 100644
+--- a/security/keys/process_keys.c
++++ b/security/keys/process_keys.c
+@@ -808,15 +808,14 @@ long join_session_keyring(const char *name)
+ 		ret = PTR_ERR(keyring);
+ 		goto error2;
+ 	} else if (keyring == new->session_keyring) {
+-		key_put(keyring);
+ 		ret = 0;
+-		goto error2;
++		goto error3;
  	}
  
- 	if (flags & IB_MR_REREG_ACCESS) {
--		if (ib_access_writable(mr_access_flags) && !mmr->umem->writable)
--			return -EPERM;
-+		if (ib_access_writable(mr_access_flags) &&
-+		    !mmr->umem->writable) {
-+			err = -EPERM;
-+			goto release_mpt_entry;
-+		}
+ 	/* we've got a keyring - now to install it */
+ 	ret = install_session_keyring_to_cred(new, keyring);
+ 	if (ret < 0)
+-		goto error2;
++		goto error3;
  
- 		err = mlx4_mr_hw_change_access(dev->dev, *pmpt_entry,
- 					       convert_access(mr_access_flags));
+ 	commit_creds(new);
+ 	mutex_unlock(&key_session_mutex);
+@@ -826,6 +825,8 @@ long join_session_keyring(const char *name)
+ okay:
+ 	return ret;
+ 
++error3:
++	key_put(keyring);
+ error2:
+ 	mutex_unlock(&key_session_mutex);
+ error:
 -- 
 2.17.1
 
