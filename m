@@ -2,163 +2,156 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7F4FC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:06:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCAA7C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:10:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 807A22082D
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:06:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 807A22082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 653CE20856
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:10:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BIAQQIIl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 653CE20856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727319AbeJYSi3 (ORCPT
+        id S1727383AbeJYSmp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 14:38:29 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:43898 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726852AbeJYSi3 (ORCPT
+        Thu, 25 Oct 2018 14:42:45 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:38188 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726803AbeJYSmp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 14:38:29 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9PA6Ldb090205;
-        Thu, 25 Oct 2018 05:06:21 -0500
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id w9PA6Lmn072075
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 25 Oct 2018 05:06:21 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 25
- Oct 2018 05:06:20 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 25 Oct 2018 05:06:20 -0500
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9PA6Ff3003168;
-        Thu, 25 Oct 2018 05:06:18 -0500
-Subject: Re: [RFC PATCH 01/11] phy: core add phy_set_netif_mode() api
-To:     Grygorii Strashko <grygorii.strashko@ti.com>,
-        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20181008234949.15416-1-grygorii.strashko@ti.com>
- <20181008234949.15416-2-grygorii.strashko@ti.com>
- <54ba13bb-95e1-1519-a30f-8da198447489@ti.com>
- <18219d97-f86e-27ee-a116-a8febc3dcd24@ti.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <d63588f6-9ab0-848a-5ad4-8073143bd95d@ti.com>
-Date:   Thu, 25 Oct 2018 15:35:46 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 25 Oct 2018 14:42:45 -0400
+Received: by mail-wr1-f65.google.com with SMTP id d10-v6so8688560wrs.5
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 03:10:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=91Pueav4Vw9V+WXsy+uizg0dhkk5+RqR+VUJsReywuQ=;
+        b=BIAQQIIltiYMHPywmhFNNBwWuwNSkY2Att38iyzwkaZFEvIOE1e/DqPjQsK127/F2N
+         ANcx9U+iwz1qVLP+AWPZ5ptBs9kBr8SmQEHYKhCVJYD0JuwCSUVZjbntyveLC79kPfWF
+         3Ka5g42dwM3AOU6slkacAm02QqvIfJBoDAeyo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=91Pueav4Vw9V+WXsy+uizg0dhkk5+RqR+VUJsReywuQ=;
+        b=e/NRefKGbJIf8CNpjPgRPD7FYXA3+FiRFpu+gGWCsj76kwo4qPdgYZfLunYFbGTDa6
+         RMDDuiD7dRKmAA7fSNgUjpYpu7kSZo1H0r20ZRWkpUzQCTxO5SrpjBkiZGeJoawuOZUH
+         Y65Fj5hIu8ezPWy8aq9acJ/OA9rSNWYerW6FEVm4LRuhAAXPua4yWcL9tTgrCwYpthTD
+         x3Ar+nZY6K9nlxI7yjep9GsLAjI+6R1iZEMzhFiLQjhUxbxvS2PYNzarSnCiSUrBtmvh
+         QtKAjhamOp83nPogr+hurZHKOUK3PId62WbJx1fTDbR1q0zUI6pqGkJ+nnt2sTi/u1su
+         myzQ==
+X-Gm-Message-State: AGRZ1gLD/u+aaYKUnpr8TgxrciQhSZaF2jKIRco8zD6TO7qQv60p/vHv
+        Qd6nn6xICRT/ntnJptiuwYbtLOQSSxI=
+X-Google-Smtp-Source: AJdET5cZM/Evupm6zHPancrZLQCEdeXdF2FuP/hv9LfAGYcpPVVqS8H1TETVCl1RfXtyP8d7L0DNYw==
+X-Received: by 2002:adf:94a3:: with SMTP id 32-v6mr1155337wrr.98.1540462240551;
+        Thu, 25 Oct 2018 03:10:40 -0700 (PDT)
+Received: from dell ([2.31.167.182])
+        by smtp.gmail.com with ESMTPSA id v30-v6sm6844819wra.67.2018.10.25.03.10.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Oct 2018 03:10:39 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 11:10:37 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Mattias Wallin <mattias.wallin@stericsson.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH 2/2] mfd: ab8500-core: Return zero in
+ get_register_interruptible()
+Message-ID: <20181025101037.GR4939@dell>
+References: <20181018080534.yw2crvhguen5vajg@kili.mountain>
+ <20181025082508.GJ4939@dell>
+ <20181025084643.tz72tsh7fulsnnzq@mwanda>
 MIME-Version: 1.0
-In-Reply-To: <18219d97-f86e-27ee-a116-a8febc3dcd24@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181025084643.tz72tsh7fulsnnzq@mwanda>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, 25 Oct 2018, Dan Carpenter wrote:
 
-On Wednesday 10 October 2018 04:13 AM, Grygorii Strashko wrote:
+> On Thu, Oct 25, 2018 at 09:25:08AM +0100, Lee Jones wrote:
+> > On Thu, 18 Oct 2018, Dan Carpenter wrote:
+> > 
+> > > I just noticed this in review.  The get_register_interruptible() should
+> > > return zero on success but it instead returns the value that it read.
+> > > 
+> > > I looked at all the places that called this directly and they check for
+> > > negatives and treat greater than or equal to zero as success.  This
+> > > function is also called as the ->get_register() function pointer.  Some
+> > > of the callers of that treat all non-zero returns as errors, so it's
+> > > possible that this bug causes some problems in real life.
+> > > 
+> > > I could not find any callers that rely on the current behavior, and this
+> > > makes the function align with the get_register_interruptible() in
+> > > ab3100-core.c.
+> > > 
+> > > Fixes: 47c1697508f2 ("mfd: Align ab8500 with the abx500 interface")
+> > > Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+> > > ---
+> > >  drivers/mfd/ab8500-core.c | 10 ++++++----
+> > >  1 file changed, 6 insertions(+), 4 deletions(-)
+> > > 
+> > > diff --git a/drivers/mfd/ab8500-core.c b/drivers/mfd/ab8500-core.c
+> > > index 30d09d177171..66458a329127 100644
+> > > --- a/drivers/mfd/ab8500-core.c
+> > > +++ b/drivers/mfd/ab8500-core.c
+> > > @@ -252,16 +252,18 @@ static int get_register_interruptible(struct ab8500 *ab8500, u8 bank,
+> > >  	mutex_lock(&ab8500->lock);
+> > >  
+> > >  	ret = ab8500->read(ab8500, addr);
+> > > -	if (ret < 0)
+> > > +	if (ret < 0) {
+> > >  		dev_err(ab8500->dev, "failed to read reg %#x: %d\n",
+> > >  			addr, ret);
+> > > -	else
+> > > -		*value = ret;
+> > > +		return ret;
+> > 
+> > Looks like you just broke the AB8500.
+> > 
 > 
 > 
-> On 10/09/2018 12:22 AM, Kishon Vijay Abraham I wrote:
->> Hi Grygorii,
->>
->> On Tuesday 09 October 2018 05:19 AM, Grygorii Strashko wrote:
->>> Add new API phy_set_netif_mode(struct phy *phy, phy_interface_t mode) and
->>> new PHY operation callback .set_netif_mode() which intended to be implemnte
->>> by PHY drivers which supports Network interrfaces mode selection. Both
->>> accepts phy_interface_t vlaue as input parameter.
->>>
->>> Cc: Kishon Vijay Abraham I <kishon@ti.com>
->>> Cc: Tony Lindgren <tony@atomide.com>
->>> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
->>> ---
->>>   drivers/phy/phy-core.c  | 15 +++++++++++++++
->>>   include/linux/phy/phy.h | 12 ++++++++++++
->>>   2 files changed, 27 insertions(+)
->>>
->>> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
->>> index 35fd38c..d9aba1a 100644
->>> --- a/drivers/phy/phy-core.c
->>> +++ b/drivers/phy/phy-core.c
->>> @@ -377,6 +377,21 @@ int phy_set_mode(struct phy *phy, enum phy_mode mode)
->>>   }
->>>   EXPORT_SYMBOL_GPL(phy_set_mode);
->>>   
->>> +int phy_set_netif_mode(struct phy *phy, phy_interface_t mode)
->>> +{
->>> +	int ret;
->>> +
->>> +	if (!phy || !phy->ops->set_netif_mode)
->>> +		return 0;
->>> +
->>> +	mutex_lock(&phy->mutex);
->>> +	ret = phy->ops->set_netif_mode(phy, mode);
->>> +	mutex_unlock(&phy->mutex);
->>> +
->>> +	return ret;
->>> +}
->>> +EXPORT_SYMBOL_GPL(phy_set_netif_mode);
->>
->> We should try to add only generic PHY APIs and not subsystem specific APIs. In
->> this case I think phy_set_mode should suffice.
+> Oh wow.  I screwed up the locking.
 > 
 > 
-> This is what I've had in mind first, but all my guts argued against it after I've tried:
+> > What is it you're trying to achieve here?  Apart from attempting to
+> > return with the mutex still held, what semantics have you changed?
+> > 
 > 
-> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
-> index bc73d2b..961b156 100644
-> --- a/include/linux/phy/phy.h
-> +++ b/include/linux/phy/phy.h
-> @@ -41,6 +41,14 @@ enum phy_mode {
->         PHY_MODE_10GKR,
->         PHY_MODE_UFS_HS_A,
->         PHY_MODE_UFS_HS_B,
-> +       PHY_MODE_MODE_MII,
-> +       PHY_MODE_MODE_GMII,
-> +       PHY_MODE_MODE_SGMII,
-> +       PHY_MODE_MODE_RMII,
-> +       PHY_MODE_MODE_RGMII,
-> +       PHY_MODE_MODE_RGMII_ID,
-> +       PHY_MODE_MODE_RGMII_RXID,
-> +       PHY_MODE_MODE_RGMII_TXID,
->  };
+> Sorry that wasn't clear.  Here is the relevant bits from the commit
+> message.
 > 
-> above introduces ugly constants duplication and required every network phy driver
-> to maintain conversation table  phy_interface_t -> enum phy_mode.
-> More over, if above change happens third time (first time PHY_MODE_SGMII/PHY_MODE_10GKR were added,
-> second - PHY_MODE_2500SGMII) it will never ends (there are ~15 more items only in phy_interface_t).
-> As result, enum phy_mode might became a un-maintainable monster.
+> > > function is also called as the ->get_register() function pointer.  Some
+> > > of the callers of that treat all non-zero returns as errors, so it's
+> > > possible that this bug causes some problems in real life.
 > 
-> So, as per above, and considering that Network subsystem is based on standards (phy_interface_t lists standard intf)
-> I've tried to add separate PHY API.
-> 
-> As an idea:
-> - seems it could be reasonable to introduce PHY_MODE_NETWORK (or PHY_MODE_ETHERNET) and
-> add generic phy_set_submode(struct phy *phy, long submode). 
-> 
-> So, single functional PHY device can just use phy_set_submode() and
-> multi-functional devices (like serdes which can be muxed between PCIe, USB, NET), can use:
-> 
-> phy_set_mode(PHY_MODE_ETHERNET)
-> phy_set_submode(X);
+> We're returning positive non-zero values on success instead of zero.
+> It's definitely a bug, but I'm not sure if it has an impact in real
+> life.
 
-Agreed on the constant duplication comment above. We can modify set_mode to
-take submode as an additional parameter and fix all the users of phy_set_mode.
-int phy_set_mode(struct phy *phy, enum phy_mode mode, int submode)
+Oh, I see.
 
-Thanks
-Kishon
+Maybe:
+
+	return (ret > 0) ? 0 : ret;
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
