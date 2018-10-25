@@ -2,107 +2,77 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CD0FECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 15:07:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61303C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 15:07:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 837FA20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 15:07:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="AJAz/vZu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 837FA20854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id 2821D20848
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 15:07:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2821D20848
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727716AbeJYXkZ (ORCPT
+        id S1727761AbeJYXkx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 19:40:25 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:39578 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727585AbeJYXkZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 19:40:25 -0400
-Received: by mail-pl1-f193.google.com with SMTP id e67-v6so3991433plb.6
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 08:07:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=micYtTo5QVhpN/6dTLcBOD4+EYbwLN/GgclMyLGFI8o=;
-        b=AJAz/vZukC7viYZnrq/2G4+yfxAY/t9TmnoXeE1cbiuArKj+kty4X0dDyfJ6zH5iAT
-         zT/Dum8fiRulu4kJP7aGT3mvOkLt0GkmrOiJZZNXsZyTqtQI/6xCrBYgDDAzTqPVIBwb
-         ii5qRAiEvYpL8co8ghfpzyg3S7thh5+kkRBl0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=micYtTo5QVhpN/6dTLcBOD4+EYbwLN/GgclMyLGFI8o=;
-        b=CMRhpWXAVpHnOPIrljgcYHflWY+Sizvvl/feOdLp3Ld78fjrTBN8DE2SHF20yrt7n6
-         TrMURtz7iJsKQwpttYN7Djo+9SLdu3HLxFLAga4gk80ZzctZActDXD+Z42qAyrIM3JUb
-         7ok860RY7khts0qS4RBfTpHRjRM6MOFrTf3Jfv+KCrT7xAwLwc72C04iwOoLEG6AaDwD
-         irEQ/pzYgELUBnn1j9cM4Ra44SIKBrZkQUz90sMsnXlMhbhICwsxLQ8Xpch0rPpHJinw
-         0vwq4WNdsaV+IEExzx1V4M8eWJzpPG1E1kUKHrR4Sgyncm7k25GlhDfzVZgZ6SxTDMSz
-         IcXA==
-X-Gm-Message-State: AGRZ1gK0odnljltS9LgQU82hZyJND3BsWiurWlVCexL14WP1yAH9X8Hl
-        CINRWKUiOugS05xDVmux3P+2UINjpKM=
-X-Google-Smtp-Source: AJdET5cokFaU/vgx6y+4x+nQfj4h80GaC21KzcgNkFZPLdFTtQJNdFe20pDDAl93rVICY/hh+Y/iCg==
-X-Received: by 2002:a17:902:9698:: with SMTP id n24-v6mr1912336plp.9.1540480033999;
-        Thu, 25 Oct 2018 08:07:13 -0700 (PDT)
-Received: from localhost.localdomain ([183.82.230.175])
-        by smtp.gmail.com with ESMTPSA id 130-v6sm9777012pfz.174.2018.10.25.08.07.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Oct 2018 08:07:13 -0700 (PDT)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Maxime Ripard <maxime.ripard@free-electrons.com>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v2] arm64: defconfig: Enable MFD_AXP20X_I2C
-Date:   Thu, 25 Oct 2018 20:36:59 +0530
-Message-Id: <20181025150659.19657-1-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
+        Thu, 25 Oct 2018 19:40:53 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56600 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727502AbeJYXkx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 19:40:53 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 542E6AD72;
+        Thu, 25 Oct 2018 15:07:41 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id 11253DABAA; Thu, 25 Oct 2018 17:07:30 +0200 (CEST)
+Date:   Thu, 25 Oct 2018 17:07:29 +0200
+From:   David Sterba <dsterba@suse.cz>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Jiri Kosina <jkosina@suse.cz>
+Subject: Re: [PATCH AUTOSEL 4.4 08/65] btrfs: cleaner_kthread() doesn't need
+ explicit freeze
+Message-ID: <20181025150729.GD16290@suse.cz>
+Reply-To: dsterba@suse.cz
+Mail-Followup-To: dsterba@suse.cz, Sasha Levin <sashal@kernel.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Jiri Kosina <jkosina@suse.cz>
+References: <20181025141705.213937-1-sashal@kernel.org>
+ <20181025141705.213937-8-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181025141705.213937-8-sashal@kernel.org>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Allwinner H6 SoC is paired with the X-Powers AXP805 PMIC
-connected via I2C.
+On Thu, Oct 25, 2018 at 10:16:08AM -0400, Sasha Levin wrote:
+> From: Jiri Kosina <jkosina@suse.cz>
+> 
+> [ Upstream commit 838fe1887765f4cc679febea60d87d2a06bd300e ]
+> 
+> cleaner_kthread() is not marked freezable, and therefore calling
+> try_to_freeze() in its context is a pointless no-op.
+> 
+> In addition to that, as has been clearly demonstrated by 80ad623edd2d
+> ("Revert "btrfs: clear PF_NOFREEZE in cleaner_kthread()"), it's perfectly
+> valid / legal for cleaner_kthread() to stay scheduled out in an arbitrary
+> place during suspend (in that particular example that was waiting for
+> reading of extent pages), so there is no need to leave any traces of
+> freezer in this kthread.
+> 
+> Fixes: 80ad623edd2d ("Revert "btrfs: clear PF_NOFREEZE in cleaner_kthread()")
+> Fixes: 696249132158 ("btrfs: clear PF_NOFREEZE in cleaner_kthread()")
+> Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+> Signed-off-by: David Sterba <dsterba@suse.com>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 
-Enable the driver for this PMIC.
-
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Tested-by: Jagan Teki <jagan@amarulasolutions.com> # OPI-1+
----
-Changes for v2:
-- collect Maxime ack
-- add tested-by credit
-
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index b1071d42b4ca..4aebbcf70f9f 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -389,6 +389,7 @@ CONFIG_MESON_WATCHDOG=m
- CONFIG_RENESAS_WDT=y
- CONFIG_UNIPHIER_WATCHDOG=y
- CONFIG_BCM2835_WDT=y
-+CONFIG_MFD_AXP20X_I2C=y
- CONFIG_MFD_BD9571MWV=y
- CONFIG_MFD_AXP20X_RSB=y
- CONFIG_MFD_CROS_EC=y
--- 
-2.18.0.321.gffc6fa0e3
-
+IIRC it was some preparatory work for livepatching.  I did a quick check
+if this is safe for 4.4 and would say yes, but the patch does not fix
+anything so IMO this does not need to go to stable.
