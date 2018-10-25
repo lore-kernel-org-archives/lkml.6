@@ -2,94 +2,105 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	URIBL_SBL,URIBL_SBL_A autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84EFEC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:22:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EECEFC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:23:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32B8E2082E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:22:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FemoavDm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32B8E2082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B3D962082E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:23:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3D962082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727747AbeJZC4B (ORCPT
+        id S1727789AbeJZC5U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 22:56:01 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:44469 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727651AbeJZC4A (ORCPT
+        Thu, 25 Oct 2018 22:57:20 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37074 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727651AbeJZC5T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 22:56:00 -0400
-Received: by mail-lj1-f193.google.com with SMTP id v6-v6so9132354ljc.11;
-        Thu, 25 Oct 2018 11:22:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LtnuS6YFbUcH8Dc65n3b8cqE/xtgarqQX7+T4ypZq9w=;
-        b=FemoavDmOgAlv6mJzbA0vGVb+YzYvAdgCIXvdbuBlg2flSUFQbtpSOxEWBHiUnw/9Y
-         BBiSjq2xkBr7dFzuoiDzgCMIrwU38VhFUoihAcP7aG6A6abqShkh8uU9DiQvaPAmRooR
-         t90NMlP+W2a/MqW3sdXIkXO7tioX9WtVX0qB7kcBo3ONKeURyJXvvWVIXopjE8QT5X5c
-         yNsodDMh4fvXwleAdUc6uMCRiDz3jhe7Q947YCxrCHOqOkqVVjX+BN+IH/mnaC1EaJOZ
-         1i5VMHXddAZz5jJJzWxiV/nrbSxSd62NLtSoNzb0P55XwkHNEvCP1a/MpBXtpM5cClbS
-         QIpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LtnuS6YFbUcH8Dc65n3b8cqE/xtgarqQX7+T4ypZq9w=;
-        b=TavzXdi9spZsaW8ORYPN73dai2frjct7a5WSNHFhe+PHvOv2CB0fw0yDZDFkwg4Uti
-         S5JaCiAlKuq0buF8Ee8OqwyqX8a5C2DyQfQ5HZb3JduUALhb9H57yy2TgRUP5kiHSgvv
-         qE61UOc8vY56OhUMCPbKBXIBAsItXvDJzTFil4NyW4Vb5dGYPI9Oz3ovr9XT0R+ACGxT
-         4n/77+sJ+W6W+ex7cPXBnKB5og2N2MCGxkQxsIwxGFsWio2cFoKsj2z/EdsTWJ6fC6J9
-         I7kgdUOw9d8JSczBLdH084UAdUe6crJBPlIdi43sKkIuwh709D9xfSMzdVmNIluc7sSW
-         fAQg==
-X-Gm-Message-State: AGRZ1gIgFXG42K1bYNtiu/faa1XJAhWT31NEuDUIeGLFhYgqw4fXPIky
-        P2Tj2o4Ia/mpfTJFbr7sagWNOGHh
-X-Google-Smtp-Source: AJdET5fYCU2M4os/ZRRrrgVlXQQ82xzG0CSoHliQyIYnUFQj3zSLWswzpF+NJcPm+cyPydktTNL4VA==
-X-Received: by 2002:a2e:4e01:: with SMTP id c1-v6mr198810ljb.157.1540491727078;
-        Thu, 25 Oct 2018 11:22:07 -0700 (PDT)
-Received: from [192.168.2.145] (109-252-91-118.nat.spd-mgts.ru. [109.252.91.118])
-        by smtp.googlemail.com with ESMTPSA id a14-v6sm1377924lfb.22.2018.10.25.11.22.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Oct 2018 11:22:06 -0700 (PDT)
-Subject: Re: [PATCH v1] hwmon: Fix double-free in __hwmon_device_register()
-To:     linux@roeck-us.net
-Cc:     Jean Delvare <jdelvare@suse.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181025001502.Horde.ohnOCUflLESPXB4_wIk6s0-@cp2.active-venture.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <531d2ac7-b081-8d6f-e331-711d16c8c73b@gmail.com>
-Date:   Thu, 25 Oct 2018 21:22:04 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Thu, 25 Oct 2018 22:57:19 -0400
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9PIJD5a040933
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 14:23:27 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2nbg1cs1xm-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 14:23:27 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <srikar@linux.vnet.ibm.com>;
+        Thu, 25 Oct 2018 19:23:25 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 25 Oct 2018 19:23:20 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9PINJo657933892
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 25 Oct 2018 18:23:20 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DA0B711C050;
+        Thu, 25 Oct 2018 18:23:19 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0C10C11C052;
+        Thu, 25 Oct 2018 18:23:18 +0000 (GMT)
+Received: from linux.vnet.ibm.com (unknown [9.126.150.29])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with SMTP;
+        Thu, 25 Oct 2018 18:23:17 +0000 (GMT)
+Date:   Thu, 25 Oct 2018 23:53:17 +0530
+From:   Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Rik van Riel <riel@surriel.com>,
+        Yi Wang <wang.yi59@zte.com.cn>, zhong.weidong@zte.com.cn,
+        Yi Liu <liu.yi24@zte.com.cn>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2] sched/core: Don't mix isolcpus and housekeeping CPUs
+Reply-To: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+References: <1540350169-18581-1-git-send-email-srikar@linux.vnet.ibm.com>
+ <20181024100323.GO3109@worktop.c.hoisthospitality.com>
+ <20181024103002.GB18466@linux.vnet.ibm.com>
+ <20181025000707.GR3109@worktop.c.hoisthospitality.com>
 MIME-Version: 1.0
-In-Reply-To: <20181025001502.Horde.ohnOCUflLESPXB4_wIk6s0-@cp2.active-venture.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20181025000707.GR3109@worktop.c.hoisthospitality.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-TM-AS-GCONF: 00
+x-cbid: 18102518-4275-0000-0000-000002D3C2E7
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18102518-4276-0000-0000-000037DFD358
+Message-Id: <20181025182317.GE18466@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-25_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810250153
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/25/18 3:15 AM, linux@roeck-us.net wrote:
 > 
-> Quoting Dmitry Osipenko <digetx@gmail.com>:
+> You can create multiple partitions with cpusets but still have an
+> unbound task in the root cgroup. That would suffer the exact same
+> problems.
 > 
->> Fix double-free that happens when thermal zone setup fails, see KASAN log
->> below.
->>
-> 
-> Good catch. I'll apply this as soon as I manage to convince AT&T to restore
-> my internet service.
 
-Cool, thanks!
+I probably don't understand this. Even if the child cgroups has
+cpu_exclusive or sched_load_balance reset, the tasks in root cgroup has
+access to all cpus in system. Right?
+
+-- 
+Thanks and Regards
+Srikar Dronamraju
+
