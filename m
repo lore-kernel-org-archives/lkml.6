@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0790C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:16:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A311DC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:16:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6547520868
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:16:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C14E20868
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:16:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MAaqsd3j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6547520868
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dkO9S72i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C14E20868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729325AbeJYWtR (ORCPT
+        id S1729337AbeJYWtT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:49:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58318 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:49:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729294AbeJYWtQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:49:16 -0400
+        id S1729324AbeJYWtR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:49:17 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADD2F208A3;
-        Thu, 25 Oct 2018 14:16:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C28A20848;
+        Thu, 25 Oct 2018 14:16:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540476979;
-        bh=3JLCtVfHLvTJnwkceLFvxyF1yPsi0vCi/NRcZsiaXuQ=;
+        s=default; t=1540476981;
+        bh=1dJXb5Jp6q8vEzHmNR2YTXAEwyGVIVv93MW9pLXhqzE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MAaqsd3j91XjaFO+Cyion0MN+8TklglDNw+UkMwNFBKaf6kOJ6yN7g+LABZD17WlR
-         CtEel6XTGUa2HRm8z7TLLd9rLoEFex5hloOtxCr0UDiK0LrL8KzVKOK1xKFnmP8pqX
-         8QDlGUdenN5JuNz63p0dv25mm1mz+tvRD2VIbFYc=
+        b=dkO9S72ivnSrv6d9H8WwAWxufr7EUg/P63hLgWQ4SNgbqHxEjTv2zQtqUCbce9g26
+         mjsX43Nt2P5xSLhCgDJvJ1Tq0KF75XOa1sea4G3WLsl/Vl4VUiYmXKv4pw7KBH4QM7
+         un7pzO+XEfdOcQ++2+29IpPesqOfcul6HkIJKSAg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     James Chapman <jchapman@katalix.com>,
+Cc:     Sabrina Dubroca <sd@queasysnail.net>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 79/98] l2tp: remove configurable payload offset
-Date:   Thu, 25 Oct 2018 10:14:04 -0400
-Message-Id: <20181025141423.213774-79-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 80/98] macsec: fix memory leaks when skb_to_sgvec fails
+Date:   Thu, 25 Oct 2018 10:14:05 -0400
+Message-Id: <20181025141423.213774-80-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141423.213774-1-sashal@kernel.org>
 References: <20181025141423.213774-1-sashal@kernel.org>
@@ -53,154 +53,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Chapman <jchapman@katalix.com>
+From: Sabrina Dubroca <sd@queasysnail.net>
 
-[ Upstream commit 900631ee6a2651dc4fbaecb8ef9fa5f1e3378853 ]
+[ Upstream commit 5aba2ba5030b66a6f8c93049b718556f9aacd7c6 ]
 
-If L2TP_ATTR_OFFSET is set to a non-zero value in L2TPv3 tunnels, it
-results in L2TPv3 packets being transmitted which might not be
-compliant with the L2TPv3 RFC. This patch has l2tp ignore the offset
-setting and send all packets with no offset.
-
-In more detail:
-
-L2TPv2 supports a variable offset from the L2TPv2 header to the
-payload. The offset value is indicated by an optional field in the
-L2TP header.  Our L2TP implementation already detects the presence of
-the optional offset and skips that many bytes when handling data
-received packets. All transmitted packets are always transmitted with
-no offset.
-
-L2TPv3 has no optional offset field in the L2TPv3 packet
-header. Instead, L2TPv3 defines optional fields in a "Layer-2 Specific
-Sublayer". At the time when the original L2TP code was written, there
-was talk at IETF of offset being implemented in a new Layer-2 Specific
-Sublayer. A L2TP_ATTR_OFFSET netlink attribute was added so that this
-offset could be configured and the intention was to allow it to be
-also used to set the tx offset for L2TPv2. However, no L2TPv3 offset
-was ever specified and the L2TP_ATTR_OFFSET parameter was forgotten
-about.
-
-Setting L2TP_ATTR_OFFSET results in L2TPv3 packets being transmitted
-with the specified number of bytes padding between L2TPv3 header and
-payload. This is not compliant with L2TPv3 RFC3931. This change
-removes the configurable offset altogether while retaining
-L2TP_ATTR_OFFSET for backwards compatibility. Any L2TP_ATTR_OFFSET
-value is ignored.
-
-Signed-off-by: James Chapman <jchapman@katalix.com>
+Fixes: cda7ea690350 ("macsec: check return value of skb_to_sgvec always")
+Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/l2tp/l2tp_core.c    | 14 ++++----------
- net/l2tp/l2tp_core.h    |  3 ---
- net/l2tp/l2tp_debugfs.c |  4 ++--
- net/l2tp/l2tp_netlink.c |  3 ---
- 4 files changed, 6 insertions(+), 18 deletions(-)
+ drivers/net/macsec.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/net/l2tp/l2tp_core.c b/net/l2tp/l2tp_core.c
-index a5333f6cb65a..b96dbe38ecad 100644
---- a/net/l2tp/l2tp_core.c
-+++ b/net/l2tp/l2tp_core.c
-@@ -845,10 +845,8 @@ void l2tp_recv_common(struct l2tp_session *session, struct sk_buff *skb,
- 		}
+diff --git a/drivers/net/macsec.c b/drivers/net/macsec.c
+index 365a48cfcbbf..653f0b185a68 100644
+--- a/drivers/net/macsec.c
++++ b/drivers/net/macsec.c
+@@ -744,6 +744,7 @@ static struct sk_buff *macsec_encrypt(struct sk_buff *skb,
+ 	sg_init_table(sg, ret);
+ 	ret = skb_to_sgvec(skb, sg, 0, skb->len);
+ 	if (unlikely(ret < 0)) {
++		aead_request_free(req);
+ 		macsec_txsa_put(tx_sa);
+ 		kfree_skb(skb);
+ 		return ERR_PTR(ret);
+@@ -956,6 +957,7 @@ static struct sk_buff *macsec_decrypt(struct sk_buff *skb,
+ 	sg_init_table(sg, ret);
+ 	ret = skb_to_sgvec(skb, sg, 0, skb->len);
+ 	if (unlikely(ret < 0)) {
++		aead_request_free(req);
+ 		kfree_skb(skb);
+ 		return ERR_PTR(ret);
  	}
- 
--	/* Session data offset is handled differently for L2TPv2 and
--	 * L2TPv3. For L2TPv2, there is an optional 16-bit value in
--	 * the header. For L2TPv3, the offset is negotiated using AVPs
--	 * in the session setup control protocol.
-+	/* Session data offset is defined only for L2TPv2 and is
-+	 * indicated by an optional 16-bit value in the header.
- 	 */
- 	if (tunnel->version == L2TP_HDR_VER_2) {
- 		/* If offset bit set, skip it. */
-@@ -856,8 +854,7 @@ void l2tp_recv_common(struct l2tp_session *session, struct sk_buff *skb,
- 			offset = ntohs(*(__be16 *)ptr);
- 			ptr += 2 + offset;
- 		}
--	} else
--		ptr += session->offset;
-+	}
- 
- 	offset = ptr - optr;
- 	if (!pskb_may_pull(skb, offset))
-@@ -1141,8 +1138,6 @@ static int l2tp_build_l2tpv3_header(struct l2tp_session *session, void *buf)
- 		}
- 		bufp += session->l2specific_len;
- 	}
--	if (session->offset)
--		bufp += session->offset;
- 
- 	return bufp - optr;
- }
-@@ -1827,7 +1822,7 @@ void l2tp_session_set_header_len(struct l2tp_session *session, int version)
- 		if (session->send_seq)
- 			session->hdr_len += 4;
- 	} else {
--		session->hdr_len = 4 + session->cookie_len + session->l2specific_len + session->offset;
-+		session->hdr_len = 4 + session->cookie_len + session->l2specific_len;
- 		if (session->tunnel->encap == L2TP_ENCAPTYPE_UDP)
- 			session->hdr_len += 4;
- 	}
-@@ -1878,7 +1873,6 @@ struct l2tp_session *l2tp_session_create(int priv_size, struct l2tp_tunnel *tunn
- 			session->recv_seq = cfg->recv_seq;
- 			session->lns_mode = cfg->lns_mode;
- 			session->reorder_timeout = cfg->reorder_timeout;
--			session->offset = cfg->offset;
- 			session->l2specific_type = cfg->l2specific_type;
- 			session->l2specific_len = cfg->l2specific_len;
- 			session->cookie_len = cfg->cookie_len;
-diff --git a/net/l2tp/l2tp_core.h b/net/l2tp/l2tp_core.h
-index 42419f1c24cf..86356a23a0a7 100644
---- a/net/l2tp/l2tp_core.h
-+++ b/net/l2tp/l2tp_core.h
-@@ -68,7 +68,6 @@ struct l2tp_session_cfg {
- 	int			debug;		/* bitmask of debug message
- 						 * categories */
- 	u16			vlan_id;	/* VLAN pseudowire only */
--	u16			offset;		/* offset to payload */
- 	u16			l2specific_len;	/* Layer 2 specific length */
- 	u16			l2specific_type; /* Layer 2 specific type */
- 	u8			cookie[8];	/* optional cookie */
-@@ -94,8 +93,6 @@ struct l2tp_session {
- 	int			cookie_len;
- 	u8			peer_cookie[8];
- 	int			peer_cookie_len;
--	u16			offset;		/* offset from end of L2TP header
--						   to beginning of data */
- 	u16			l2specific_len;
- 	u16			l2specific_type;
- 	u16			hdr_len;
-diff --git a/net/l2tp/l2tp_debugfs.c b/net/l2tp/l2tp_debugfs.c
-index d100aed3d06f..2d2a73280ec2 100644
---- a/net/l2tp/l2tp_debugfs.c
-+++ b/net/l2tp/l2tp_debugfs.c
-@@ -181,8 +181,8 @@ static void l2tp_dfs_seq_session_show(struct seq_file *m, void *v)
- 		   session->lns_mode ? "LNS" : "LAC",
- 		   session->debug,
- 		   jiffies_to_msecs(session->reorder_timeout));
--	seq_printf(m, "   offset %hu l2specific %hu/%hu\n",
--		   session->offset, session->l2specific_type, session->l2specific_len);
-+	seq_printf(m, "   offset 0 l2specific %hu/%hu\n",
-+		   session->l2specific_type, session->l2specific_len);
- 	if (session->cookie_len) {
- 		seq_printf(m, "   cookie %02x%02x%02x%02x",
- 			   session->cookie[0], session->cookie[1],
-diff --git a/net/l2tp/l2tp_netlink.c b/net/l2tp/l2tp_netlink.c
-index ee03bc866d1b..d6fccfdca201 100644
---- a/net/l2tp/l2tp_netlink.c
-+++ b/net/l2tp/l2tp_netlink.c
-@@ -536,9 +536,6 @@ static int l2tp_nl_cmd_session_create(struct sk_buff *skb, struct genl_info *inf
- 	}
- 
- 	if (tunnel->version > 2) {
--		if (info->attrs[L2TP_ATTR_OFFSET])
--			cfg.offset = nla_get_u16(info->attrs[L2TP_ATTR_OFFSET]);
--
- 		if (info->attrs[L2TP_ATTR_DATA_SEQ])
- 			cfg.data_seq = nla_get_u8(info->attrs[L2TP_ATTR_DATA_SEQ]);
- 
 -- 
 2.17.1
 
