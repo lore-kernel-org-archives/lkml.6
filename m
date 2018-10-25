@@ -2,122 +2,106 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CBA1C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:16:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D922C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:21:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D09492082E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:16:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FLDi27HQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D09492082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 328422082E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:21:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 328422082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727384AbeJYSsv (ORCPT
+        id S1727350AbeJYSxX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 14:48:51 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:35508 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727208AbeJYSsv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 14:48:51 -0400
-Received: by mail-lf1-f67.google.com with SMTP id d7-v6so6354674lfi.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 03:16:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jBDsJGi0QVriKe8XetCb0sKJlxX1Yq3CxfATigksOKQ=;
-        b=FLDi27HQYpQ0FfuyBtfePspDlataeHTfoVfN4q74XqNfAC0H3NC6Cbq8C8wjmXIBu1
-         skfQME+3Jy+8OHIu6QbdE/L5Ptr9IG864EuU5IrirywvjgaLhtj6uBrufsrT/qnxHWD7
-         eixnO7h9Nzjqd5+/Du5Ww85QNGRkboqGpHi1c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jBDsJGi0QVriKe8XetCb0sKJlxX1Yq3CxfATigksOKQ=;
-        b=i2PtxG71l20EiXjCHb8nzKMSZsNL+fN+pn21Z/8UP4//rzRxbuBFYLRVO8n6UTH9JF
-         v7fo3Uv6verkpHgX3VVR8awWh+ryA6MKMdJR2B68/gvP9Gq9dtboqrLMVmJLXo1Tqcd8
-         /VRopEQJEOMfAQFy7rCe4nl6jN/Pw/j3UgAi7DI+mFuS+onZVwX55OsM3RnOyI6tXZxL
-         5OQnRpeWn5OhNRzJJhhXXqX7bk9fDha8IKG2ajMQZC5IvcbL+ss3DZoYtRqXuoXjG58U
-         7zYq5SvONfNX2XJNF/AFWjlV82VtK4DvIPSVDUM+NatSOEVaztkO2BW4dWK3Qw7yR4A0
-         uwAQ==
-X-Gm-Message-State: AGRZ1gJIUezB7LqkddcgrX/JIUasu0bbmWnNcuYKomWxd4jShbWOQgjU
-        AXsUtSxTGLF1bsxnzM5+T38BX6XkGbWT+ygGvPVy5A==
-X-Google-Smtp-Source: AJdET5eMczNYOopPQV8n5onsUQMPEtIbrANsZlejti+OrQEgVgELwVNqWYm/+c+z5jhsR82C5lzgCVR2jJYwdvn6QTE=
-X-Received: by 2002:a19:1549:: with SMTP id l70mr730195lfi.53.1540462604508;
- Thu, 25 Oct 2018 03:16:44 -0700 (PDT)
+        Thu, 25 Oct 2018 14:53:23 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42094 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726803AbeJYSxX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 14:53:23 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0C3CB30014D2;
+        Thu, 25 Oct 2018 10:21:17 +0000 (UTC)
+Received: from localhost.localdomain (unknown [10.33.36.108])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 27F97611D7;
+        Thu, 25 Oct 2018 10:20:43 +0000 (UTC)
+Date:   Thu, 25 Oct 2018 11:20:40 +0100
+From:   "Bryn M. Reeves" <bmr@redhat.com>
+To:     Mikulas Patocka <mpatocka@redhat.com>
+Cc:     Paul Lawrence <paullawrence@google.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>, Shaohua Li <shli@kernel.org>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-raid@vger.kernel.org, dm-devel@redhat.com,
+        kernel-team@android.com, Alasdair Kergon <agk@redhat.com>
+Subject: Re: [dm-devel] [RFC] dm-bow working prototype
+Message-ID: <20181025102039.GA9378@localhost.localdomain>
+References: <20181023212358.60292-1-paullawrence@google.com>
+ <20181023221819.GB17552@agk-dp.fab.redhat.com>
+ <296148c2-f2d9-5818-ea76-d71a0d6f5cd4@google.com>
+ <alpine.LRH.2.02.1810241514310.4080@file01.intranet.prod.int.rdu2.redhat.com>
 MIME-Version: 1.0
-References: <20181024142456.10084-1-svendev@arcx.com> <20181024142456.10084-3-svendev@arcx.com>
-In-Reply-To: <20181024142456.10084-3-svendev@arcx.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 25 Oct 2018 12:16:32 +0200
-Message-ID: <CACRpkdbXPWH4FS5205ML0UmuATuZf087Y6ueVUdp_Lfc5Nu8Hw@mail.gmail.com>
-Subject: Re: [PATCH anybus v1 2/4] dt-bindings: anybus-bridge: document
- devicetree binding.
-To:     svendev@arcx.com
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        Thierry Reding <treding@nvidia.com>,
-        David Lechner <david@lechnology.com>,
-        =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Johan Hovold <johan@kernel.org>,
-        Michal Simek <monstr@monstr.eu>, michal.vokac@ysoft.com,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg KH <gregkh@linuxfoundation.org>, john.garry@huawei.com,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>,
-        Icenowy Zheng <icenowy@aosc.io>, yuanzhichang@hisilicon.com,
-        Stuart Yoder <stuyoder@gmail.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        bogdan.purcareata@nxp.com,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.02.1810241514310.4080@file01.intranet.prod.int.rdu2.redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 25 Oct 2018 10:21:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sven,
+On Wed, Oct 24, 2018 at 03:24:29PM -0400, Mikulas Patocka wrote:
+> 
+> 
+> On Wed, 24 Oct 2018, Paul Lawrence wrote:
+> 
+> > Android has had the concept of A/B updates for since Android N, which means
+> > that if an update is unable to boot for any reason three times, we revert to
+> > the older system. However, if the failure occurs after the new system has
+> > started modifying userdata, we will be attempting to start an older system
+> > with a newer userdata, which is an unsupported state. Thus to make A/B able to
+> > fully deliver on its promise of safe updates, we need to be able to revert
+> > userdata in the event of a failure.
+> > 
+> > For those cases where the file system on userdata supports
+> > snapshots/checkpoints, we should clearly use them. However, there are many
+> > Android devices using filesystems that do not support checkpoints, so we need
+> > a generic solution. Here we had two options. One was to use overlayfs to
+> > manage the changes, then on merge have a script that copies the files to the
+> > underlying fs. This was rejected on the grounds of compatibility concerns and
+> > managing the merge through reboots, though it is definitely a plausible
+> > strategy. The second was to work at the block layer.
+> > 
+> > At the block layer, dm-snap would have given us a ready-made solution, except
+> > that there is no sufficiently large spare partition on Android devices. But in
+> > general there is free space on userdata, just scattered over the device, and
+> > of course likely to get modified as soon as userdata is written to. We also
+> > decided that the merge phase was a high risk component of any design. Since
+> > the normal path is that the update succeeds, we anticipate merges happening
+> > 99% of the time, and we want to guarantee their success even in the event of
+> > unexpected failure during the merge. Thus we decided we preferred a strategy
+> > where the device is in the committed state at all times, and rollback requires
+> > work, to one where the device remains in the original state but the merge is
+> > complex.
+> 
+> What about allocating a big file, using the FIEMAP ioctl to find the 
+> physical locations of the file, creating a dm device with many linear 
+> targets to map the big file and using it as a snapshot store? I think it 
+> would be way easier than re-implementing the snapshot functionality in a 
+> new target.
 
-thanks for your patch!
+libdevmapper already has code to handle enumerating physical file
+extents via the dm-stats file mapping support. It should be fairly easy
+to adapt this to create dm tables rather than dm-stats regions.
 
-On Wed, Oct 24, 2018 at 4:25 PM Sven Van Asbroeck <svendev@arcx.com> wrote:
+See dm_stats_create_regions_from_fd() and _stats_map_file_regions().
 
-> +  - pwms : the pwm connected to the bridge's 'pwm input'.
+Bryn.
 
-That is really unintuitive and needs a detailed explanation. What
-is a bridge doing with a PWM? Is it 100% certain this is a PWM,
-it's not just a .... clock? A pwm is a pule WIDTH modulator and
-I can't for my life understand why a bus bridge needs a signal
-with variable pulse width, but surprise me! :D
-
-> +               fsl,weim-cs-timing = <0x024400b1 0x00001010 0x20081100
-> +                               0x00000000 0xa0000240 0x00000000>;
-
-Is it just a copy/paste from
-Documentation/devicetree/bindings/bus/imx-weim.txt
-leftover?
-
-It was mentioned as undocumented but it is also pretty terse
-with these opaque hex numbers. I would never let the
-Freescale binding pass if I was reviewing it.
-
-Look at my bindings for Qualcomm EBI in
-Documentation/devicetree/bindings/bus/qcom,ebi2.txt
-for example.
-
-But maybe it's not even supposed to be there.
-
-Yours,
-Linus Walleij
