@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7E96C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7B70ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FDEB20868
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0A5920869
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xBBdGp0t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FDEB20868
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QOZC2Vn9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0A5920869
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728334AbeJYWoj (ORCPT
+        id S1728350AbeJYWok (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:44:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53602 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:44:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728299AbeJYWoi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:44:38 -0400
+        id S1728299AbeJYWoj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:44:39 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D05E220869;
-        Thu, 25 Oct 2018 14:11:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A39C2084A;
+        Thu, 25 Oct 2018 14:11:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540476702;
-        bh=/eFXsTEA2fxE0zFLjCH0fQoAEkEPbIMyq2sWv2ZakH0=;
+        s=default; t=1540476704;
+        bh=HKN3oNuGracI+/5GQOIxkiZhHbjLwgVnFvBpx4CA0VY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xBBdGp0t4BAOeHtx0nW07e4VWyLeAH/ncg8xwsh2aGI3ZWL/WgigKVinqJVRzK2xz
-         TpjT85RtSuxLcvvsyzl2VgdBffjaJHlry7VsU7fc3lLdq/a+oiuNIxlKxmCmhFAOtX
-         44qyyn67sN9eW2T3azmfjjL6NqlvqbXhXoMjyKvU=
+        b=QOZC2Vn91Tlf4TZqgGJKjyOJ4HBS7ExEMQsOsoE4Dwsnx1XIx1qdlVGHOXSTKWZ1J
+         evE4ofWV2YEyNux8eAok7UDrtqEV3bj2otktrTfdtxtmjCOe6lzyfETN6ezIezRhLe
+         BHZ3ABv8ut3NFJ1QlvNEbHQOvZG1NxEijoHRuak8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Phil Elwell <phil@raspberrypi.org>,
+Cc:     Govindarajulu Varadarajan <gvaradar@cisco.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 34/46] lan78xx: Don't reset the interface on open
-Date:   Thu, 25 Oct 2018 10:10:41 -0400
-Message-Id: <20181025141053.213330-34-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 35/46] enic: do not overwrite error code
+Date:   Thu, 25 Oct 2018 10:10:42 -0400
+Message-Id: <20181025141053.213330-35-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141053.213330-1-sashal@kernel.org>
 References: <20181025141053.213330-1-sashal@kernel.org>
@@ -53,41 +53,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Phil Elwell <phil@raspberrypi.org>
+From: Govindarajulu Varadarajan <gvaradar@cisco.com>
 
-[ Upstream commit 47b998653fea4ef69e3e89574956386f262bccca ]
+[ Upstream commit 56f772279a762984f6e9ebbf24a7c829faba5712 ]
 
-Commit 92571a1aae40 ("lan78xx: Connect phy early") moves the PHY
-initialisation into lan78xx_probe, but lan78xx_open subsequently calls
-lan78xx_reset. As well as forcing a second round of link negotiation,
-this reset frequently prevents the phy interrupt from being generated
-(even though the link is up), rendering the interface unusable.
+In failure path, we overwrite err to what vnic_rq_disable() returns. In
+case it returns 0, enic_open() returns success in case of error.
 
-Fix this issue by removing the lan78xx_reset call from lan78xx_open.
-
-Fixes: 92571a1aae40 ("lan78xx: Connect phy early")
-Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Fixes: e8588e268509 ("enic: enable rq before updating rq descriptors")
+Signed-off-by: Govindarajulu Varadarajan <gvaradar@cisco.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/lan78xx.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/net/ethernet/cisco/enic/enic_main.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index 9e3f632e22f1..a090112880fd 100644
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -2517,10 +2517,6 @@ static int lan78xx_open(struct net_device *net)
- 	if (ret < 0)
- 		goto out;
+diff --git a/drivers/net/ethernet/cisco/enic/enic_main.c b/drivers/net/ethernet/cisco/enic/enic_main.c
+index 2bfaf3e118b1..03f4fee1bbc9 100644
+--- a/drivers/net/ethernet/cisco/enic/enic_main.c
++++ b/drivers/net/ethernet/cisco/enic/enic_main.c
+@@ -1879,7 +1879,7 @@ static int enic_open(struct net_device *netdev)
+ {
+ 	struct enic *enic = netdev_priv(netdev);
+ 	unsigned int i;
+-	int err;
++	int err, ret;
  
--	ret = lan78xx_reset(dev);
--	if (ret < 0)
--		goto done;
--
- 	phy_start(net->phydev);
+ 	err = enic_request_intr(enic);
+ 	if (err) {
+@@ -1936,10 +1936,9 @@ static int enic_open(struct net_device *netdev)
  
- 	netif_dbg(dev, ifup, dev->net, "phy initialised successfully");
+ err_out_free_rq:
+ 	for (i = 0; i < enic->rq_count; i++) {
+-		err = vnic_rq_disable(&enic->rq[i]);
+-		if (err)
+-			return err;
+-		vnic_rq_clean(&enic->rq[i], enic_free_rq_buf);
++		ret = vnic_rq_disable(&enic->rq[i]);
++		if (!ret)
++			vnic_rq_clean(&enic->rq[i], enic_free_rq_buf);
+ 	}
+ 	enic_dev_notify_unset(enic);
+ err_out_free_intr:
 -- 
 2.17.1
 
