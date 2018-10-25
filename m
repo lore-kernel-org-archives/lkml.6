@@ -7,43 +7,42 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 947A1ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A63DBECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50E2920883
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F029208A3
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="o2wq5Gde"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50E2920883
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0lOIGdLj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F029208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730621AbeJYWwf (ORCPT
+        id S1730636AbeJYWwg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:52:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34630 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:52:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34704 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730602AbeJYWwd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:52:33 -0400
+        id S1728763AbeJYWwg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:52:36 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECA862086D;
-        Thu, 25 Oct 2018 14:19:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D899208A3;
+        Thu, 25 Oct 2018 14:19:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477175;
-        bh=T7sPpB8pf8Wh7F9UBSvshsMAujrfQnTTt3k70AoubrU=;
+        s=default; t=1540477178;
+        bh=bjc1o1ghS9UtN+QSDZ2lwi3YpNtKziUAtnA6tki1lLQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o2wq5Gde0+5Eq3o+B5MLGmSvNXmpaPXxYnEZWA36rNHY/9zymIeS9bHpu0BXbl8nR
-         CsXasm0JHbpSagcRlEUQIVgLATcr5bYxsbZipLWuSjSYF2ZacbIxleux4Y3BYOWwnF
-         lq89IODddn5eDANxXCuTTSe6GLwRKseRbJgnjQTo=
+        b=0lOIGdLj9O/BdAB8rP9qoPFE9GHuvXJtsMLsRzfv5BFu0GxdSOcYSocascZxpL0+C
+         mWTyzm/EXFsv9KNclw/HilAlXL0C088q2VacXM9LUEOCKqYrVKwHRMqURRPI7Pw3xv
+         mO5jMLm2BaYHmJujIGoTk5YZbuskF3bR7kc3S5o8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Trond Myklebust <trond.myklebust@primarydata.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 27/98] NFSv4: Remove incorrect check in can_open_delegated()
-Date:   Thu, 25 Oct 2018 10:17:42 -0400
-Message-Id: <20181025141853.214051-27-sashal@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 29/98] scsi: ->queue_rq can't sleep
+Date:   Thu, 25 Oct 2018 10:17:44 -0400
+Message-Id: <20181025141853.214051-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
 References: <20181025141853.214051-1-sashal@kernel.org>
@@ -52,33 +51,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trond Myklebust <trond.myklebust@primarydata.com>
+From: Christoph Hellwig <hch@lst.de>
 
-[ Upstream commit 4e379d36c050b0117b5d10048be63a44f5036115 ]
+[ Upstream commit 70a0f2c1898c6abf53670e55642b6e840b003892 ]
 
-Remove an incorrect check for NFS_DELEGATION_NEED_RECLAIM in
-can_open_delegated(). We are allowed to cache opens even in
-a situation where we're doing reboot recovery.
+The blk-mq ->queue_rq method is always called from process context,
+but might have preemption disabled.  This means we still always
+have to use GFP_ATOMIC for memory allocations, and thus need to
+revert part of commit 3c356bde1 ("scsi: stop passing a gfp_mask
+argument down the command setup path").
 
-Signed-off-by: Trond Myklebust <trond.myklebust@primarydata.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reported-by: Sasha Levin <sasha.levin@oracle.com>
+Reviewed-by: Bart Van Assche <bart.vanassche@sandisk.com>
+Tested-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/nfs4proc.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/scsi/scsi_lib.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
-index db8456b4ecb8..21906d2a13cc 100644
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -1117,8 +1117,6 @@ static int can_open_delegated(struct nfs_delegation *delegation, fmode_t fmode)
- 		return 0;
- 	if ((delegation->type & fmode) != fmode)
- 		return 0;
--	if (test_bit(NFS_DELEGATION_NEED_RECLAIM, &delegation->flags))
--		return 0;
- 	if (test_bit(NFS_DELEGATION_RETURNING, &delegation->flags))
- 		return 0;
- 	nfs_mark_delegation_referenced(delegation);
+diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+index a11837054d6c..0d5c218b7ad1 100644
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -616,7 +616,7 @@ static int scsi_alloc_sgtable(struct scsi_data_buffer *sdb, int nents,
+ 	}
+ 
+ 	ret = __sg_alloc_table(&sdb->table, nents, SCSI_MAX_SG_SEGMENTS,
+-			       first_chunk, gfp_mask, scsi_sg_alloc);
++			       first_chunk, GFP_ATOMIC, scsi_sg_alloc);
+ 	if (unlikely(ret))
+ 		scsi_free_sgtable(sdb, mq);
+ 	return ret;
 -- 
 2.17.1
 
