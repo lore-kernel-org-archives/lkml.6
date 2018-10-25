@@ -2,122 +2,157 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DF2FECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 02:26:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9339ECDE44
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 02:26:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 525B320831
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 02:26:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 525B320831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=andestech.com
+	by mail.kernel.org (Postfix) with ESMTP id 8B34220838
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 02:26:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B34220838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727261AbeJYK5L (ORCPT
+        id S1727408AbeJYK5W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 06:57:11 -0400
-Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:43141 "EHLO
-        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726344AbeJYK5L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 06:57:11 -0400
-Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
-        by ATCSQR.andestech.com with ESMTP id w9P2Q13m070247;
-        Thu, 25 Oct 2018 10:26:01 +0800 (GMT-8)
-        (envelope-from nickhu@andestech.com)
-Received: from atcsqa06.andestech.com (10.0.15.65) by ATCPCS16.andestech.com
- (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Thu, 25 Oct 2018
- 10:24:35 +0800
-From:   Nick Hu <nickhu@andestech.com>
-To:     <greentime@andestech.com>, <linux-kernel@vger.kernel.org>,
-        <arnd@arndb.de>, <linux-arch@vger.kernel.org>,
-        <will.deacon@arm.com>, <mark.rutland@arm.com>,
-        <robh+dt@kernel.org>, <peterz@infradead.org>, <mingo@redhat.com>,
-        <acme@kernel.org>, <alexander.shishkin@linux.intel.com>,
-        <jolsa@redhat.com>, <namhyung@kernel.org>, <ebiederm@xmission.com>,
-        <gregkh@linuxfoundation.org>, <kstewart@linuxfoundation.org>,
-        <tglx@linutronix.de>, <pombredanne@nexb.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <zong@andestech.com>,
-        <alankao@andestech.com>, <deanbo422@gmail.com>
-CC:     Nick Hu <nickhu@andestech.com>, <green.hu@gmail.com>
-Subject: [PATCH v4 0/4] nds32: Perf support
-Date:   Thu, 25 Oct 2018 10:24:13 +0800
-Message-ID: <cover.1540430861.git.nickhu@andestech.com>
-X-Mailer: git-send-email 2.17.0
+        Thu, 25 Oct 2018 06:57:22 -0400
+Received: from mga11.intel.com ([192.55.52.93]:16711 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726365AbeJYK5V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 06:57:21 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 19:26:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,422,1534834800"; 
+   d="scan'208";a="268574428"
+Received: from yisun1-ubuntu.bj.intel.com (HELO localhost) ([10.238.156.104])
+  by orsmga005.jf.intel.com with ESMTP; 24 Oct 2018 19:26:39 -0700
+Date:   Thu, 25 Oct 2018 10:23:55 +0800
+From:   Yi Sun <yi.y.sun@linux.intel.com>
+To:     Michael Kelley <mikelley@microsoft.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "jgross@suse.com" <jgross@suse.com>,
+        "chao.p.peng@intel.com" <chao.p.peng@intel.com>,
+        "chao.gao@intel.com" <chao.gao@intel.com>,
+        "isaku.yamahata@intel.com" <isaku.yamahata@intel.com>,
+        Tianyu Lan <Tianyu.Lan@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>
+Subject: Re: [PATCH v1 2/2] x86/hyperv: make HvNotifyLongSpinWait hypercall
+Message-ID: <20181025022354.GB15378@yi.y.sun>
+References: <1539954835-34035-1-git-send-email-yi.y.sun@linux.intel.com>
+ <1539954835-34035-3-git-send-email-yi.y.sun@linux.intel.com>
+ <CY4PR21MB07737AA8E3F7E7353D42F5C8D7F60@CY4PR21MB0773.namprd21.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.0.15.65]
-X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com w9P2Q13m070247
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CY4PR21MB07737AA8E3F7E7353D42F5C8D7F60@CY4PR21MB0773.namprd21.prod.outlook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These four commits are perf supporting for nds32.
-There are three perfomance counters in nds32, and
-each of them can counts different events. You can
-use 'perf list' to show the available events that
-can be used.
+Hi, Michael,
 
-Changes in V2:
-        1. Change the definition 'PFM_CTL_xxx' to
-array form.
+Thanks a lot for the review and comments! Let us sync with Hyper-V team
+to confirm these suspicious points.
 
-        2. Simplify the PMU driver.
+BRs,
+Sun Yi
 
-        3. Stop all counters when handling irq
-caused by performance counters overflow.
+On 18-10-24 16:53:00, Michael Kelley wrote:
+> From: Yi Sun <yi.y.sun@linux.intel.com>  Sent: Friday, October 19, 2018 6:14 AM
+> > 
+> > The HvNotifyLongSpinWait hypercall (HVCALL_NOTIFY_LONG_SPIN_WAIT)
+> > is used by a guest OS to notify the hypervisor that the calling
+> > virtual processor is attempting to acquire a resource that is
+> > potentially held by another virtual processor within the same
+> > Virtual Machine. This scheduling hint improves the scalability of
+> > VMs with more than one virtual processor on Hyper-V.
+> > 
+> > Per MSFT TLFS, the retry number (SpinWaitInfo) is sent to hypervisor
+> > only when the retry number exceeds the recommended number. If
+> > recommended number is 0xFFFFFFFF, never retry.
+> 
+> The HvNotifyLongSpinWait hypercall should be understood to be
+> advisory only.  As you noted, it is a scheduling hint to the
+> hypervisor that some virtual CPU in the VM holds a spin lock.  Even
+> though Linux knows which vCPU holds the spin lock, the hypercall
+> does not provide a way to give that information to Hyper-V.  The
+> hypercall always returns immediately.
+> 
+> The "retry number" is a bit mis-named in the Hyper-V Top Level
+> Functional Spec (TLFS).  It is essentially a threshold value.  Hyper-V is
+> saying "don't bother to advise me about the spin lock until you have
+> done a certain number of spins."  This threshold prevents
+> over-notifying Hyper-V such that the notification becomes somewhat
+> meaningless.   It's not immediately clear to me why the hypercall passes
+> that value as an input, but maybe it lets the Hyper-V scheduler prioritize
+> among vCPUs based on how many times they have spun for a lock.  I
+> think we were told that current Hyper-V implementations ignore this
+> input value anyway.
+> 
+> I believe the description of the sentinel value 0xFFFFFFFF in the
+> Hyper-V TLFS is incorrect.  Because it is the max possible threshold
+> value, that value in the EBX register just means to not ever bother to
+> notify.   The description should be "0xFFFFFFFF indicates never to notify."
+> The value does *not* indicate anything about retrying to obtain the
+> spin lock.
+> 
+I will send mail to Hyper-V team to clarify these.
 
-        4. Rename the compatible string in
-devicetree.
+> >  static bool __initdata hv_pvspin = true;
+> > 
+> > +bool hv_notify_long_spin_wait(int retry_num)
+> 
+> retry_num should probably be declared as unsigned int.  You
+> don't want it to be treated as a negative number if the high
+> order bit is set.
+> 
+Yes, I should declare it as 'unsigned int'. Thanks!
 
-Changes in V3:
-        Fix the typo in Documentation/devicetree/
-bindings/nds32/pmu.txt.
-
-Changes in V4:
-	Move 'Documentation/devicetree/bindings/nds32/pmu.txt'
-to 'Documentation/devicetree/bindings/perf/nds32v3-pmu.txt'.
-
-Nickhu (4):
-  nds32: Fix bug in bitfield.h
-  nds32: Perf porting
-  nds32: Add perf call-graph support.
-  nds32: Add document for NDS32 PMU.
-
- .../devicetree/bindings/perf/nds32v3-pmu.txt  |   17 +
- arch/nds32/Kconfig                            |    1 +
- arch/nds32/boot/dts/ae3xx.dts                 |    5 +
- arch/nds32/include/asm/Kbuild                 |    1 +
- arch/nds32/include/asm/bitfield.h             |    4 +-
- arch/nds32/include/asm/perf_event.h           |   16 +
- arch/nds32/include/asm/pmu.h                  |  386 +++++
- arch/nds32/include/asm/stacktrace.h           |   39 +
- arch/nds32/kernel/Makefile                    |    3 +-
- arch/nds32/kernel/perf_event_cpu.c            | 1522 +++++++++++++++++
- arch/nds32/mm/fault.c                         |   13 +-
- tools/include/asm/barrier.h                   |    2 +
- tools/perf/arch/nds32/Build                   |    1 +
- tools/perf/arch/nds32/util/Build              |    1 +
- tools/perf/arch/nds32/util/header.c           |   29 +
- tools/perf/pmu-events/arch/nds32/mapfile.csv  |   15 +
- .../pmu-events/arch/nds32/n13/atcpmu.json     |  290 ++++
- 17 files changed, 2337 insertions(+), 8 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/perf/nds32v3-pmu.txt
- create mode 100644 arch/nds32/include/asm/perf_event.h
- create mode 100644 arch/nds32/include/asm/pmu.h
- create mode 100644 arch/nds32/include/asm/stacktrace.h
- create mode 100644 arch/nds32/kernel/perf_event_cpu.c
- create mode 100644 tools/perf/arch/nds32/Build
- create mode 100644 tools/perf/arch/nds32/util/Build
- create mode 100644 tools/perf/arch/nds32/util/header.c
- create mode 100644 tools/perf/pmu-events/arch/nds32/mapfile.csv
- create mode 100644 tools/perf/pmu-events/arch/nds32/n13/atcpmu.json
-
--- 
-2.17.0
-
+> > +{
+> > +	/*
+> > +	 * Per MSFT TLFS, the SpinWaitInfo is sent to hypervisor only when
+> > +	 * the retry number exceeds the recommended number.
+> > +	 *
+> > +	 * If recommended number is 0xFFFFFFFF, never retry.
+> > +	 */
+> > +	if (ms_hyperv.num_spin_retry == HYPERV_SPINLOCK_RETRY_NEVER)
+> > +		return false;
+> > +
+> > +	if ((0 == retry_num % ms_hyperv.num_spin_retry) && retry_num)
+> 
+> I don't know if the "%" function is right here.  Your implementation will
+> notify Hyper-V on every multiple of num_spin_retry.   The alternative is to
+> notify once when the threshold is exceeded, and never again for this
+> particular attempt to obtain a spin lock.  We should check with the Hyper-V
+> team for which approach they expect to be used.
+> 
+> > +		hv_do_fast_hypercall8(HVCALL_NOTIFY_LONG_SPIN_WAIT,
+> > +				      retry_num);
+> 
+> The Hyper-V TLFS seems to be inconsistent on whether the input parameter
+> is 32-bits or 64-bits.   In one place it is typed as UINT64, but in another place
+> it is shown as only 4 bytes.  Need to clear this up with the Hyper-V team as
+> well.
+> 
+> > +
+> > +	return true;
+> 
+> I don't see a need for this function to return true vs. false.  Any calling code
+> should not change its behavior based on num_spin_retry.   This function will
+> either notify Hyper-V or not notify Hyper-V, depending on whether the number
+> of attempts to obtain the spinlock meets the threshold.  But calling code will
+> do the same thing regardless of whether such a notification is made. 
+> 
+> Michael
