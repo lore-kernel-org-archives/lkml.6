@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF765C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:14:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03C4FECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:15:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3DA820856
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:14:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE17220848
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:14:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yRzyUmQR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3DA820856
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="psvWZ1lj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE17220848
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728711AbeJYWrw (ORCPT
+        id S1728721AbeJYWrx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:47:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56020 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:47:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56126 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728388AbeJYWru (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:47:50 -0400
+        id S1728704AbeJYWrw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:47:52 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79BA420848;
-        Thu, 25 Oct 2018 14:14:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 272132085A;
+        Thu, 25 Oct 2018 14:14:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540476893;
-        bh=6GpEUGniTVgQUgJO05aajOgzwCK2FLXSUF4agkzUCPI=;
+        s=default; t=1540476896;
+        bh=fpvHzjiypylW1HR/O/IGKN+C3WoLRhzi+u8tB7bTkyQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yRzyUmQRrQG190pL0jVxLsfhVlxOhB1XW5ooNhWlWVlDlUp9xhtie9VxAnobDU2L7
-         zgdM4c6j6cm6l42pMmJzQJ3XHMBnP/HNkqjGlxiv0FEgKJNWGwYqKe1xbDxSsjZ6gG
-         JD/QGAT9r6VAdczX4dQnDMvbbjXiHIajk4VOz8uA=
+        b=psvWZ1ljUWQWCuECnJUjbv+XcFByrBc7pFWzaSUIL79IM2B0X0GfK2Os+wGm3fSCC
+         kiq52r1Afi8rT92uSBXxxt2Yaun/PWjoMswuCutDaiOpwpzVqlgebVVK2d4WK2FsOf
+         9oNgLuAVrjMtp06LP4eEMsGYiHbEgZ0u/B5Ls1Ew=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Max Gurtovoy <maxg@mellanox.com>, Christoph Hellwig <hch@lst.de>,
+Cc:     Moshe Shemesh <moshe@mellanox.com>, kernel-team@fb.com,
+        Saeed Mahameed <saeedm@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 18/98] nvme-pci: fix CMB sysfs file removal in reset path
-Date:   Thu, 25 Oct 2018 10:13:03 -0400
-Message-Id: <20181025141423.213774-18-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 20/98] net/mlx5: Fix command completion after timeout access invalid structure
+Date:   Thu, 25 Oct 2018 10:13:05 -0400
+Message-Id: <20181025141423.213774-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141423.213774-1-sashal@kernel.org>
 References: <20181025141423.213774-1-sashal@kernel.org>
@@ -52,64 +53,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Max Gurtovoy <maxg@mellanox.com>
+From: Moshe Shemesh <moshe@mellanox.com>
 
-[ Upstream commit 1c78f7735b2bdd0afbe5d14c5c8b6d8d381b6f13 ]
+[ Upstream commit 061870800efb4e3d1ad4082a2569363629bdfcfc ]
 
-Currently we create the sysfs entry even if we fail mapping
-it. In that case, the unmapping will not remove the sysfs created
-file. There is no good reason to create a sysfs entry for a non
-working CMB and show his characteristics.
+Completion on timeout should not free the driver command entry structure
+as it will need to access it again once real completion event from FW
+will occur.
 
-Fixes: f63572dff ("nvme: unmap CMB and remove sysfs file in reset path")
-Signed-off-by: Max Gurtovoy <maxg@mellanox.com>
-Reviewed-by: Stephen Bates <sbates@raithlin.com>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
+Fixes: 73dd3a4839c1 ('net/mlx5: Avoid using pending command interface slots')
+Signed-off-by: Moshe Shemesh <moshe@mellanox.com>
+Cc: kernel-team@fb.com
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/pci.c | 18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
+ drivers/net/ethernet/mellanox/mlx5/core/cmd.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index fadf151ce830..1ac4cec5f4f7 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -1393,11 +1393,9 @@ static inline void nvme_release_cmb(struct nvme_dev *dev)
- 	if (dev->cmb) {
- 		iounmap(dev->cmb);
- 		dev->cmb = NULL;
--		if (dev->cmbsz) {
--			sysfs_remove_file_from_group(&dev->ctrl.device->kobj,
--						     &dev_attr_cmb.attr, NULL);
--			dev->cmbsz = 0;
--		}
-+		sysfs_remove_file_from_group(&dev->ctrl.device->kobj,
-+					     &dev_attr_cmb.attr, NULL);
-+		dev->cmbsz = 0;
- 	}
- }
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
+index 9680c8805178..1d5263c46eee 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
+@@ -965,7 +965,7 @@ static int mlx5_cmd_invoke(struct mlx5_core_dev *dev, struct mlx5_cmd_msg *in,
  
-@@ -1632,16 +1630,14 @@ static int nvme_pci_enable(struct nvme_dev *dev)
+ 	err = wait_func(dev, ent);
+ 	if (err == -ETIMEDOUT)
+-		goto out_free;
++		goto out;
  
- 	/*
- 	 * CMBs can currently only exist on >=1.2 PCIe devices. We only
--	 * populate sysfs if a CMB is implemented. Note that we add the
--	 * CMB attribute to the nvme_ctrl kobj which removes the need to remove
--	 * it on exit. Since nvme_dev_attrs_group has no name we can pass
--	 * NULL as final argument to sysfs_add_file_to_group.
-+	 * populate sysfs if a CMB is implemented. Since nvme_dev_attrs_group
-+	 * has no name we can pass NULL as final argument to
-+	 * sysfs_add_file_to_group.
- 	 */
+ 	ds = ent->ts2 - ent->ts1;
+ 	op = MLX5_GET(mbox_in, in->first.data, opcode);
+@@ -1428,6 +1428,7 @@ void mlx5_cmd_comp_handler(struct mlx5_core_dev *dev, u64 vec, bool forced)
+ 					mlx5_core_err(dev, "Command completion arrived after timeout (entry idx = %d).\n",
+ 						      ent->idx);
+ 					free_ent(cmd, ent->idx);
++					free_cmd(ent);
+ 				}
+ 				continue;
+ 			}
+@@ -1486,7 +1487,8 @@ void mlx5_cmd_comp_handler(struct mlx5_core_dev *dev, u64 vec, bool forced)
+ 				free_msg(dev, ent->in);
  
- 	if (readl(dev->bar + NVME_REG_VS) >= NVME_VS(1, 2, 0)) {
- 		dev->cmb = nvme_map_cmb(dev);
--
--		if (dev->cmbsz) {
-+		if (dev->cmb) {
- 			if (sysfs_add_file_to_group(&dev->ctrl.device->kobj,
- 						    &dev_attr_cmb.attr, NULL))
- 				dev_warn(dev->dev,
+ 				err = err ? err : ent->status;
+-				free_cmd(ent);
++				if (!forced)
++					free_cmd(ent);
+ 				callback(err, context);
+ 			} else {
+ 				complete(&ent->done);
 -- 
 2.17.1
 
