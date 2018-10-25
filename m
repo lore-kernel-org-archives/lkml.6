@@ -4,51 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7356DECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:12:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FDF4C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:12:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C41120834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:12:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA86220834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:12:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IO73vL3v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C41120834
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pRXij10U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA86220834
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728508AbeJYWpW (ORCPT
+        id S1728519AbeJYWpf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:45:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53896 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:45:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727537AbeJYWot (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:44:49 -0400
+        id S1728367AbeJYWon (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:44:43 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7719E20854;
-        Thu, 25 Oct 2018 14:11:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 586EF2083E;
+        Thu, 25 Oct 2018 14:11:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540476714;
-        bh=6LuiaFl9GIgTqDIYGGuBaZkR9G9a6K9ZgxmejtAk2Hw=;
+        s=default; t=1540476708;
+        bh=3eeziPS8YGoEMsVZtZ4UZIFWtx4imf9YIg+S2rOY9OA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IO73vL3vDYhuvTV6P7lqAH8zkXm7Ttgn0+892JW+Y/7S6RTtFuUflxR37AxmhO9/q
-         Ab6lg/ROQ8whPNLtZc6SSCEAudY70R3QC54nflwcfuMCh0R6NjAPontoJQY/yr7NhM
-         1GLZkjuSbacQW3C7eij+nyqwEKIKeCcN7LCBaXzg=
+        b=pRXij10UHxM63g4ckRP/bTKnUOSNVskIaIRr9q+jgLzEJHx27j8IMFKpcfySknJLJ
+         xVnX+SFfSdvdlM4pey5Hv6hqhCaGoaVA3nhaJTuDQWNoLsF8UnHesjOfhzMT+PIwlH
+         ix1bGqlI+Oik++1L0Ku+/WfivhWPMKpYvXZYGogM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alok Kataria <akataria@vmware.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        virtualization@lists.linux-foundation.org,
-        kernel-janitors@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 42/46] x86/paravirt: Fix some warning messages
-Date:   Thu, 25 Oct 2018 10:10:49 -0400
-Message-Id: <20181025141053.213330-42-sashal@kernel.org>
+Cc:     Brian King <brking@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 38/46] scsi: ibmvfc: Avoid unnecessary port relogin
+Date:   Thu, 25 Oct 2018 10:10:45 -0400
+Message-Id: <20181025141053.213330-38-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141053.213330-1-sashal@kernel.org>
 References: <20181025141053.213330-1-sashal@kernel.org>
@@ -57,49 +52,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Brian King <brking@linux.vnet.ibm.com>
 
-[ Upstream commit 571d0563c8881595f4ab027aef9ed1c55e3e7b7c ]
+[ Upstream commit 09dd15e0d9547ca424de4043bcd429bab6f285c8 ]
 
-The first argument to WARN_ONCE() is a condition.
+Following an RSCN, ibmvfc will issue an ADISC to determine if the
+underlying target has changed, comparing the SCSI ID, WWPN, and WWNN to
+determine how to handle the rport in discovery. However, the comparison
+of the WWPN and WWNN was performing a memcmp between a big endian field
+against a CPU endian field, which resulted in the wrong answer on LE
+systems. This was observed as unexpected errors getting logged at boot
+time as targets were getting relogins when not needed.
 
-Fixes: 5800dc5c19f3 ("x86/paravirt: Fix spectre-v2 mitigations for paravirt guests")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Alok Kataria <akataria@vmware.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: virtualization@lists.linux-foundation.org
-Cc: kernel-janitors@vger.kernel.org
-Link: https://lkml.kernel.org/r/20180919103553.GD9238@mwanda
+Signed-off-by: Brian King <brking@linux.vnet.ibm.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kernel/paravirt.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/scsi/ibmvscsi/ibmvfc.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-index f3559b84cd75..04da826381c9 100644
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -90,7 +90,7 @@ unsigned paravirt_patch_call(void *insnbuf,
- 
- 	if (len < 5) {
- #ifdef CONFIG_RETPOLINE
--		WARN_ONCE("Failing to patch indirect CALL in %ps\n", (void *)addr);
-+		WARN_ONCE(1, "Failing to patch indirect CALL in %ps\n", (void *)addr);
- #endif
- 		return len;	/* call too long for patch site */
- 	}
-@@ -110,7 +110,7 @@ unsigned paravirt_patch_jmp(void *insnbuf, const void *target,
- 
- 	if (len < 5) {
- #ifdef CONFIG_RETPOLINE
--		WARN_ONCE("Failing to patch indirect JMP in %ps\n", (void *)addr);
-+		WARN_ONCE(1, "Failing to patch indirect JMP in %ps\n", (void *)addr);
- #endif
- 		return len;	/* call too long for patch site */
- 	}
+diff --git a/drivers/scsi/ibmvscsi/ibmvfc.c b/drivers/scsi/ibmvscsi/ibmvfc.c
+index b491af31a5f8..a06b24a61622 100644
+--- a/drivers/scsi/ibmvscsi/ibmvfc.c
++++ b/drivers/scsi/ibmvscsi/ibmvfc.c
+@@ -3580,11 +3580,9 @@ static void ibmvfc_tgt_implicit_logout(struct ibmvfc_target *tgt)
+ static int ibmvfc_adisc_needs_plogi(struct ibmvfc_passthru_mad *mad,
+ 				    struct ibmvfc_target *tgt)
+ {
+-	if (memcmp(&mad->fc_iu.response[2], &tgt->ids.port_name,
+-		   sizeof(tgt->ids.port_name)))
++	if (wwn_to_u64((u8 *)&mad->fc_iu.response[2]) != tgt->ids.port_name)
+ 		return 1;
+-	if (memcmp(&mad->fc_iu.response[4], &tgt->ids.node_name,
+-		   sizeof(tgt->ids.node_name)))
++	if (wwn_to_u64((u8 *)&mad->fc_iu.response[4]) != tgt->ids.node_name)
+ 		return 1;
+ 	if (be32_to_cpu(mad->fc_iu.response[6]) != tgt->scsi_id)
+ 		return 1;
 -- 
 2.17.1
 
