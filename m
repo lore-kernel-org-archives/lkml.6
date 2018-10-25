@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E70AECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:37:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ACB5ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:37:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F10F72084A
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:37:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D784620856
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:37:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QiGgq40k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F10F72084A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mHGog/Ce"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D784620856
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727947AbeJYXKU (ORCPT
+        id S1729376AbeJYWtZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 19:10:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58596 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:49:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728121AbeJYWt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:49:27 -0400
+        id S1728448AbeJYWtX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:49:23 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 591B620848;
-        Thu, 25 Oct 2018 14:16:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 121E22085B;
+        Thu, 25 Oct 2018 14:16:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540476990;
-        bh=r32V81HF3ZnRXsXtWiKa6cyCSeThcJd7sXm1y5XuwGw=;
+        s=default; t=1540476986;
+        bh=P/CyCQkzeYp1oAP9dVbNskLtqUYlFIJU2zfEXqwsLWo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QiGgq40kOuaJwaohy5tpdS3S4Fe2LgiNehlFIqcA9FYw4LboZvDhhuZsQ3HgvdC7x
-         qmmUF9PvtNfR9antlGZIgyFTFOsQtWnnpEeDRUKgumb3/QLc8Kjvz/87w0TSLIaqRt
-         zFr6mEASJ0eo2jsLvPu1K34MFgqRrq4eJ1wwbtw4=
+        b=mHGog/CeZuOs1dHF8oKf70/sW3O6HpvZ13kT8DrKmEcOptA4j9ZJCrZn35kjZF8zx
+         FdcPycDvlLnjqdbmoRAohDDjwDWaiB90v4itrVeinRLoMyz+oPbxUlhspcZtZGRSRQ
+         chNdMj2Ra1PXKwn/GOL4Ihq+BBju6/CbsZYWtxaI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Ross Lagerwall <ross.lagerwall@citrix.com>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     Jiri Slaby <jslaby@suse.cz>, Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 86/98] xen-netfront: Update features after registering netdev
-Date:   Thu, 25 Oct 2018 10:14:11 -0400
-Message-Id: <20181025141423.213774-86-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 83/98] futex: futex_wake_op, do not fail on invalid op
+Date:   Thu, 25 Oct 2018 10:14:08 -0400
+Message-Id: <20181025141423.213774-83-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141423.213774-1-sashal@kernel.org>
 References: <20181025141423.213774-1-sashal@kernel.org>
@@ -53,52 +55,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ross Lagerwall <ross.lagerwall@citrix.com>
+From: Jiri Slaby <jslaby@suse.cz>
 
-[ Upstream commit 45c8184c1bed1ca8a7f02918552063a00b909bf5 ]
+[ Upstream commit e78c38f6bdd900b2ad9ac9df8eff58b745dc5b3c ]
 
-Update the features after calling register_netdev() otherwise the
-device features are not set up correctly and it not possible to change
-the MTU of the device. After this change, the features reported by
-ethtool match the device's features before the commit which introduced
-the issue and it is possible to change the device's MTU.
+In commit 30d6e0a4190d ("futex: Remove duplicated code and fix undefined
+behaviour"), I let FUTEX_WAKE_OP to fail on invalid op.  Namely when op
+should be considered as shift and the shift is out of range (< 0 or > 31).
 
-Fixes: f599c64fdf7d ("xen-netfront: Fix race between device setup and open")
-Reported-by: Liam Shepherd <liam@dancer.es>
-Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+But strace's test suite does this madness:
+
+  futex(0x7fabd78bcffc, 0x5, 0xfacefeed, 0xb, 0x7fabd78bcffc, 0xa0caffee);
+  futex(0x7fabd78bcffc, 0x5, 0xfacefeed, 0xb, 0x7fabd78bcffc, 0xbadfaced);
+  futex(0x7fabd78bcffc, 0x5, 0xfacefeed, 0xb, 0x7fabd78bcffc, 0xffffffff);
+
+When I pick the first 0xa0caffee, it decodes as:
+
+  0x80000000 & 0xa0caffee: oparg is shift
+  0x70000000 & 0xa0caffee: op is FUTEX_OP_OR
+  0x0f000000 & 0xa0caffee: cmp is FUTEX_OP_CMP_EQ
+  0x00fff000 & 0xa0caffee: oparg is sign-extended 0xcaf = -849
+  0x00000fff & 0xa0caffee: cmparg is sign-extended 0xfee = -18
+
+That means the op tries to do this:
+
+  (futex |= (1 << (-849))) == -18
+
+which is completely bogus. The new check of op in the code is:
+
+        if (encoded_op & (FUTEX_OP_OPARG_SHIFT << 28)) {
+                if (oparg < 0 || oparg > 31)
+                        return -EINVAL;
+                oparg = 1 << oparg;
+        }
+
+which results obviously in the "Invalid argument" errno:
+
+  FAIL: futex
+  ===========
+
+  futex(0x7fabd78bcffc, 0x5, 0xfacefeed, 0xb, 0x7fabd78bcffc, 0xa0caffee) = -1: Invalid argument
+  futex.test: failed test: ../futex failed with code 1
+
+So let us soften the failure to print only a (ratelimited) message, crop
+the value and continue as if it were right.  When userspace keeps up, we
+can switch this to return -EINVAL again.
+
+[v2] Do not return 0 immediatelly, proceed with the cropped value.
+
+Fixes: 30d6e0a4190d ("futex: Remove duplicated code and fix undefined behaviour")
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Darren Hart <dvhart@infradead.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/xen-netfront.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ kernel/futex.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
-index 3c1adb38412b..c85edd161a6c 100644
---- a/drivers/net/xen-netfront.c
-+++ b/drivers/net/xen-netfront.c
-@@ -1994,10 +1994,6 @@ static int xennet_connect(struct net_device *dev)
- 	/* talk_to_netback() sets the correct number of queues */
- 	num_queues = dev->real_num_tx_queues;
+diff --git a/kernel/futex.c b/kernel/futex.c
+index c3ea6f2a6997..053d7be08be5 100644
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -1467,8 +1467,16 @@ static int futex_atomic_op_inuser(unsigned int encoded_op, u32 __user *uaddr)
+ 	int oldval, ret;
  
--	rtnl_lock();
--	netdev_update_features(dev);
--	rtnl_unlock();
--
- 	if (dev->reg_state == NETREG_UNINITIALIZED) {
- 		err = register_netdev(dev);
- 		if (err) {
-@@ -2007,6 +2003,10 @@ static int xennet_connect(struct net_device *dev)
- 		}
+ 	if (encoded_op & (FUTEX_OP_OPARG_SHIFT << 28)) {
+-		if (oparg < 0 || oparg > 31)
+-			return -EINVAL;
++		if (oparg < 0 || oparg > 31) {
++			char comm[sizeof(current->comm)];
++			/*
++			 * kill this print and return -EINVAL when userspace
++			 * is sane again
++			 */
++			pr_info_ratelimited("futex_wake_op: %s tries to shift op by %d; fix this program\n",
++					get_task_comm(comm, current), oparg);
++			oparg &= 31;
++		}
+ 		oparg = 1 << oparg;
  	}
  
-+	rtnl_lock();
-+	netdev_update_features(dev);
-+	rtnl_unlock();
-+
- 	/*
- 	 * All public and private state should now be sane.  Get
- 	 * ready to start sending and receiving packets and give the driver
 -- 
 2.17.1
 
