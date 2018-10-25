@@ -2,152 +2,171 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DB4AC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 19:08:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED73C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 19:13:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBEFF20834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 19:08:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBEFF20834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
+	by mail.kernel.org (Postfix) with ESMTP id C075F20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 19:13:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C075F20834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=supermicro.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727466AbeJZDmh (ORCPT
+        id S1727428AbeJZDre (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 23:42:37 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:43740 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726344AbeJZDmh (ORCPT
+        Thu, 25 Oct 2018 23:47:34 -0400
+Received: from mga.supermicro.com ([207.212.57.84]:49172 "EHLO
+        MGA.supermicro.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726580AbeJZDre (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 23:42:37 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id BF24D26024C
-Received: by earth.universe (Postfix, from userid 1000)
-        id 05A963C0987; Thu, 25 Oct 2018 15:30:18 +0200 (CEST)
-Date:   Thu, 25 Oct 2018 15:30:17 +0200
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     Oskari Lemmela <oskari@lemmela.net>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Lee Jones <lee.jones@linaro.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Quentin Schulz <quentin.schulz@free-electrons.com>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH v5 00/11] AXP8x3 AC and battery power supply support
-Message-ID: <20181025133017.2rdnbgmvdlx67kcz@earth.universe>
-References: <20181023185330.10472-1-oskari@lemmela.net>
+        Thu, 25 Oct 2018 23:47:34 -0400
+Received: from pps.filterd (MGA.supermicro.com [127.0.0.1])
+        by MGA.supermicro.com (8.16.0.22/8.16.0.22) with SMTP id w9PJBRc0028148;
+        Thu, 25 Oct 2018 12:13:27 -0700
+Received: from ex2013-mbx2.supermicro.com (Ex2013-MBX2.supermicro.com [10.2.1.38])
+        by MGA.supermicro.com with ESMTP id 2n83ysd3gj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Thu, 25 Oct 2018 12:13:27 -0700
+Received: from [172.16.95.100] (10.2.0.41) by Ex2013-MBX2.supermicro.com
+ (10.2.1.38) with Microsoft SMTP Server (TLS) id 15.0.1236.3; Thu, 25 Oct 2018
+ 12:13:26 -0700
+Subject: Re: [RFC] x86, tsc: Add kcmdline args for skipping tsc calibration
+ sequences
+To:     Prarit Bhargava <prarit@redhat.com>,
+        "Brown, Len" <len.brown@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     "mingo@kernel.org" <mingo@kernel.org>,
+        "Du, Alek" <alek.du@intel.com>,
+        "arjan@linux.intel.com" <arjan@linux.intel.com>,
+        "Tang, Feng" <feng.tang@intel.com>
+References: <fdf96605-a4a0-049b-51c9-1e68cc2a9b93@supermicro.com>
+ <1A7043D5F58CCB44A599DFD55ED4C94849A1AACF@FMSMSX126.amr.corp.intel.com>
+ <c7582a8c-8cc1-eff3-2452-a8d42d23fea1@supermicro.com>
+ <cb798dcd-8cd6-8a92-9f6c-50bec0afe204@supermicro.com>
+ <94bebaa1-992b-572b-0d24-e08037611358@supermicro.com>
+ <70cdf321-cef7-aa26-1ca8-33378b3afdd9@supermicro.com>
+ <18d873f6-a911-200b-7bc7-8f4b4f3c5161@supermicro.com>
+ <6e40fea8-9b42-3785-7d4d-36f120980d66@redhat.com>
+From:   patrickg <patrickg@supermicro.com>
+Message-ID: <f718c935-d5b4-111d-abe1-e7a61d08237b@supermicro.com>
+Date:   Thu, 25 Oct 2018 12:13:26 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ix4k4ufla4fevamq"
-Content-Disposition: inline
-In-Reply-To: <20181023185330.10472-1-oskari@lemmela.net>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <6e40fea8-9b42-3785-7d4d-36f120980d66@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.2.0.41]
+X-ClientProxiedBy: EX2013-CA1.supermicro.com (10.2.1.31) To
+ Ex2013-MBX2.supermicro.com (10.2.1.38)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-25_10:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Sorry for the delay; lkml folder sorting gone wrong.
 
---ix4k4ufla4fevamq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 10/25/18 11:01 AM, Prarit Bhargava wrote:
+> Patrick can you reply back with the entire patch
 
-Hi,
+Yes; watch the editor bork it even more than it originally did, though.
 
-Patches 1, 2 & 9 look good to me and do not seem to have any
-dependencies. I plan to merge them after the merge window
-for 4.20 closes.
 
--- Sebastian
+---Copypasta of first RFC patch---
 
-On Tue, Oct 23, 2018 at 09:53:19PM +0300, Oskari Lemmela wrote:
-> AXP813 AC power supply support with input current and
-> voltage limiting support.
->=20
-> AXP803 AC and battery power supply support.
->=20
-> Changes in v5:
-> * Return correct input current limit for values 0x6 and 0x7
-> * Add specific compatibles for AXP803
-> * Change commit messages
-> * Add Vasily Khoruzhick Pinebook DTS patch
->=20
-> Changes in v4:
-> * Change order of axp20x-gpio in axp20x.c
-> * Fix indentation and spaces to tabs in axp20x.c
->=20
-> Changes in v3:
-> * Reorder ac_power_supply DT node
-> * Rename axp20x_ac_power_set_property function
-> * Split mfd commit=20
->=20
-> Changes in v2:
-> * Reuse axp813 compatibles for axp803
-> * Refactor axp20x_ac_power.c
->=20
-> Oskari Lemmela (10):
->   dt-bindings: power: supply: axp20x: add AXP813 AC power DT binding
->   dt-bindings: power: supply: axp20x: add AXP803 power bindings
->   dt-bindings: gpio: gpio-axp209: add AXP803 GPIO bindings
->   dt-bindings: iio: adc: add AXP803 ADC bindings
->   ARM: dts: axp81x: add AC power supply subnode
->   arm64: dts: allwinner: axp803: add AC and battery power supplies
->   arm64: dts: allwinner: a64: sopine-baseboard: enable power supplies
->   power: supply: add AC power supply driver for AXP813
->   mfd: axp20x: Add AC power supply cell for AXP813
->   mfd: axp20x: Add supported cells for AXP803
->=20
-> Vasily Khoruzhick (1):
->   arm64: dts: allwinner: a64: pinebook: enable power supplies
->=20
->  .../devicetree/bindings/gpio/gpio-axp209.txt  |  2 +
->  .../bindings/iio/adc/axp20x_adc.txt           |  2 +
->  .../bindings/power/supply/axp20x_ac_power.txt |  4 +
->  .../bindings/power/supply/axp20x_battery.txt  |  1 +
->  arch/arm/boot/dts/axp81x.dtsi                 |  5 +
->  arch/arm64/boot/dts/allwinner/axp803.dtsi     | 33 +++++++
->  .../dts/allwinner/sun50i-a64-pinebook.dts     |  8 ++
->  .../allwinner/sun50i-a64-sopine-baseboard.dts |  8 ++
->  drivers/mfd/axp20x.c                          | 20 ++++
->  drivers/power/supply/axp20x_ac_power.c        | 94 +++++++++++++++++++
->  include/linux/mfd/axp20x.h                    |  1 +
->  11 files changed, 178 insertions(+)
->=20
-> --=20
-> 2.17.1
->=20
-
---ix4k4ufla4fevamq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlvRxWcACgkQ2O7X88g7
-+pqoYBAAml3HrRrerjuL11bRxxoJSeTc/PBvyYsHevJyPQTmFLHninb0wnrdGOJJ
-bGXD4y4w/EPusLhkGCfmVmWuPTPZG4wnf5gJfHBOmFoTOcmjF68ASShpavKbCUH/
-WEMp8mYT+o2eCSWbIuKrEb+6T+PI3ue8i+LpEx4B9i5nb2qg69zR//V1YP7CRK0E
-rp1YUX4cIuBzxGSyi3SEbJGFOhrHeckCeWAvPi8DDlP7pXssO2qquAkb2tGzvJNF
-UUz3JVlB4MOWNxhscTZIzQ2GDKGrcKNqqwK+PFPt5ewvr3bY/tJcmGc+IBPcrqls
-zWPeex8tincMb5o6f4HuBwK0EDIR4wlne88km/OSRaW065wSE6xF377IlUmEkdam
-1PNPYbGr6hckdATIgNeMtNPsd8b13zNQGWYcp718+lPo+Bbmqb5sYh8whU80s734
-h6JIbfv5H4kr/r/4qcW13QU991bz6o0cMCmw9m0IikR5WI/PGL+Lu3R4u3jPU/+U
-iCFNr5/oPBPBTg9epvSf9tGqu1PlbZtxJN2T5vpf67KKaUKczdb4+b86ZDxMcTAe
-/ruSHYohiS3FD1JGT/S/s0cn0Q5qsN3pRMOaBnuaMgD/YIQpAPMmnD3xVCLg+3wD
-ymj/0XhXTMnAXvNdasIVofcNuUmX/VtCEgCb0A/gJGiPTo9+xNA=
-=0RM0
------END PGP SIGNATURE-----
-
---ix4k4ufla4fevamq--
+---
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index 74392d9..5a07d12 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -47,6 +47,13 @@ static DEFINE_STATIC_KEY_FALSE(__use_tsc);
+ 
+ int tsc_clocksource_reliable;
+ 
++/*
++ * TSC calibration sequence disablement
++ */
++int calibrate_cpuid_khz_disabled = 0;
++int calibrate_msr_disabled = 0;
++int calibrate_quick_disabled = 0;
++
+ static u32 art_to_tsc_numerator;
+ static u32 art_to_tsc_denominator;
+ static u64 art_to_tsc_offset;
+@@ -281,6 +288,32 @@ static int __init tsc_setup(char *str)
+ 
+ __setup("tsc=", tsc_setup);
+ 
++static int __init setup_tsc_calibration_order(char *str)
++{
++        if (!str)
++                return -EINVAL;
++
++        while (*str) {
++                if (!strncmp(str, "nocpuid", 7)) {
++                        calibrate_cpuid_khz_disabled = 1;
++                        pr_info("TSC CPUID khz calibrate disabled\n");
++                } else if (!strncmp(str, "nomsr", 5)) {
++                        calibrate_msr_disabled = 1;
++                        pr_info("TSC msr calibrate disabled\n");
++                } else if (!strncmp(str, "noquick", 7)) {
++                        calibrate_quick_disabled = 1;
++                        pr_info("TSC quick calibrate disabled\n");
++                }
++
++                str += strcspn(str, ",");
++                while (*str == ',')
++                        str++;
++        }
++        return 1;
++}
++
++__setup("tsc_calibrate=", setup_tsc_calibration_order);
++
+ #define MAX_RETRIES     5
+ #define SMI_TRESHOLD    50000
+ 
+@@ -675,19 +708,25 @@ unsigned long native_calibrate_cpu(void)
+         unsigned long flags, latch, ms, fast_calibrate;
+         int hpet = is_hpet_enabled(), i, loopmin;
+ 
+-        fast_calibrate = cpu_khz_from_cpuid();
+-        if (fast_calibrate)
+-                return fast_calibrate;
++        if (!calibrate_cpuid_khz_disabled) {
++                fast_calibrate = cpu_khz_from_cpuid();
++                if (fast_calibrate)
++                        return fast_calibrate;
++        }
+ 
+-        fast_calibrate = cpu_khz_from_msr();
+-        if (fast_calibrate)
+-                return fast_calibrate;
++        if (!calibrate_msr_disabled) {
++                fast_calibrate = cpu_khz_from_msr();
++                if (fast_calibrate)
++                        return fast_calibrate;
++        }
+ 
+-        local_irq_save(flags);
+-        fast_calibrate = quick_pit_calibrate();
+-        local_irq_restore(flags);
+-        if (fast_calibrate)
+-                return fast_calibrate;
++        if (!calibrate_quick_disabled) {
++                local_irq_save(flags);
++                fast_calibrate = quick_pit_calibrate();
++                local_irq_restore(flags);
++                if (fast_calibrate)
++                        return fast_calibrate;
++        }
+ 
+         /*
+          * Run 5 calibration loops to get the lowest frequency value
+---
