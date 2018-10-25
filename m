@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F3FC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:22:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5201C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:22:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42DEE2075D
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:22:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 796BB2075D
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:22:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XnFg+twc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42DEE2075D
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OyfS1itP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 796BB2075D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727516AbeJZG4g (ORCPT
+        id S1727591AbeJZG4j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 02:56:36 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:34044 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726348AbeJZG4g (ORCPT
+        Fri, 26 Oct 2018 02:56:39 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40595 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727521AbeJZG4i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 02:56:36 -0400
-Received: by mail-pl1-f196.google.com with SMTP id f10-v6so4534002plr.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 15:22:08 -0700 (PDT)
+        Fri, 26 Oct 2018 02:56:38 -0400
+Received: by mail-pg1-f195.google.com with SMTP id o14-v6so4674261pgv.7
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 15:22:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6+LgcWkQxncFqD35FDqpvfp7mOi58SqLpjOIXD6LCUY=;
-        b=XnFg+twccYS6WPM5VAT3U7gHPAvWqMtdXR0uo97VxhfAtJAFcG6BrqhGvGrnXkHUR5
-         MQ/gYWyf9J+GZK6xEZme1/8Tzu/PrXJ00bvMR8eklmus60hhYHEK2WiiTH1ED+ilIiqz
-         fo4G7iDuiaJrq8im72wIn17mtO5EjPCysivGQ=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=mUTLNC4m4w91CHTqoAgeiiy9cnTlYaHM5XFwx8a4RBM=;
+        b=OyfS1itPdAb8tmXpSb098aUZD56GNFIBqXG/ykzMRbu8TjOESundVkDzzPFN+VIDRA
+         9hcZj4/sfohG2TviQp1JB4QNJCO/29PmUfcp5bQAl9pM0cmMzkcwECRTCG8gtFp9tGIP
+         1adNJ4iyfnhPumaMH0mFdGqIsOhWGei6hsJvg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=6+LgcWkQxncFqD35FDqpvfp7mOi58SqLpjOIXD6LCUY=;
-        b=MCikaO4nPmEAvMVFUpIkx0FsKMglujAhUDdZHQnj68r9tl4230G8Wwrg4jFzjqrlPA
-         4zf74cGFQrk9p3318U3u6MHPrDfgDKBQsvGgRD+3RPE/aC4SmO83BY3bmVGvSW1XiHbo
-         eygkYlcMq925TIKqXsDI/UEOEDE+SmflqIEvKi+XUgN6uPMU5gfdvEbCX2U05NDlTkAJ
-         nTsCBoyiCE5cEOFxOOi6yEA/P0tgw5CwtkvNvGBkJcun7IWxPYe1TTgr9HKCbSHcvqTh
-         Q5sTIiGtSeNPrQiUHov0wxRpaSHXGQHB+JjPaFdeKJ9nfK97+K44bw/EJ9UOZV7M0QHb
-         suTQ==
-X-Gm-Message-State: AGRZ1gLsOKlJCnIowVHYz04Xc41eFhpfWvljYrsFdb7orZZbrhYvDewm
-        CmlEctibAG1qU24KJbYmt/knlQ==
-X-Google-Smtp-Source: AJdET5eBvm0W+ZrjAgVekK9Dk6m4WXSwBmTEZY+9sHXXYPpvaQPioUmALvOOTipUaIPSH7SISaiPjQ==
-X-Received: by 2002:a17:902:2808:: with SMTP id e8-v6mr882658plb.327.1540506127727;
-        Thu, 25 Oct 2018 15:22:07 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=mUTLNC4m4w91CHTqoAgeiiy9cnTlYaHM5XFwx8a4RBM=;
+        b=rpKkB5Q+StpnbVM1925Aq76nkn0g85cMXPoQtoB4wJsoIhUkmi7/CIWs9upyVDdRbf
+         /gi2letguY/vNJrEUZTuGDO2oODMT9T82MisT9xhfJokQONF1+ZQ0AwAjpt7Iom0Bjtu
+         CIe40IDEPDXEB9CtiffwHMjBWFhgTnP0emw5FY+qa09gXhIRUQNqnsbcolN+cmuUnGPL
+         10KJ0SBWFZilC3hAwpPRd9X2/XTP2sxhTy4229L94zC8kCxr8k8qjY6u8Bq2FVWE46I8
+         S/XtwhXlyr8VJYVJdE38PsaXgOUdaBvVeiBVHHgzRNZu4cPavJTLpU0Pt3Klddl439s2
+         cIHg==
+X-Gm-Message-State: AGRZ1gICGqhldD8Fe1p9BftRrv80JT+HilIj8SQL92VfJRPfMuGG46Lz
+        AuousNTyB3HzvPs9N2NuNJO8ug==
+X-Google-Smtp-Source: AJdET5eAmWwOpqlvNaQuJlA6+B/OvhGVojTC6uUiER7tFKGjFhb9dCQMXm7X69CgldH8dSmkRY+ruQ==
+X-Received: by 2002:a63:5ec6:: with SMTP id s189mr871280pgb.357.1540506130519;
+        Thu, 25 Oct 2018 15:22:10 -0700 (PDT)
 Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
-        by smtp.gmail.com with ESMTPSA id x73-v6sm19813778pfk.139.2018.10.25.15.22.06
+        by smtp.gmail.com with ESMTPSA id x73-v6sm19813778pfk.139.2018.10.25.15.22.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Oct 2018 15:22:06 -0700 (PDT)
+        Thu, 25 Oct 2018 15:22:09 -0700 (PDT)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     Sean Paul <seanpaul@chromium.org>,
         Thierry Reding <thierry.reding@gmail.com>,
@@ -64,14 +64,14 @@ Cc:     linux-arm-msm@vger.kernel.org,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         jsanka@codeaurora.org, ryandcase@chromium.org,
         Douglas Anderson <dianders@chromium.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>,
         David Airlie <airlied@linux.ie>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH v2 1/6] dt-bindings: drm/panel: simple: Add no-hpd property
-Date:   Thu, 25 Oct 2018 15:21:29 -0700
-Message-Id: <20181025222134.174583-1-dianders@chromium.org>
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 3/6] drm/panel: simple: Add "no-hpd" delay for Innolux TV123WAM
+Date:   Thu, 25 Oct 2018 15:21:31 -0700
+Message-Id: <20181025222134.174583-3-dianders@chromium.org>
 X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
+In-Reply-To: <20181025222134.174583-1-dianders@chromium.org>
+References: <20181025222134.174583-1-dianders@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -79,42 +79,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some eDP panels that are designed to be always connected to a board
-use their HPD signal to signal that they've finished powering on and
-they're ready to be talked to.
-
-However, for various reasons it's possible that the HPD signal from
-the panel isn't actually hooked up.  In the case where the HPD isn't
-hooked up you can look at the timing diagram on the panel datasheet
-and insert a delay for the maximum amount of time that the HPD might
-take to come up.
-
-Let's add a property in the device tree for this concept.
+If the HPD signal isn't hooked up to this panel we need a 200 ms
+delay.  In the datasheet this is shown as the maximum time that HPD
+will take to be asserted after power is given to the panel.
 
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Sean Paul <sean@poorly.run>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
 
-Changes in v2: None
+Changes in v2:
+- Use "hpd_absent_delay" property instead of a bool + prepare delay
 
- .../devicetree/bindings/display/panel/simple-panel.txt         | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/panel/panel-simple.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/display/panel/simple-panel.txt b/Documentation/devicetree/bindings/display/panel/simple-panel.txt
-index 45a457ad38f0..b2b872c710f2 100644
---- a/Documentation/devicetree/bindings/display/panel/simple-panel.txt
-+++ b/Documentation/devicetree/bindings/display/panel/simple-panel.txt
-@@ -11,6 +11,9 @@ Optional properties:
- - ddc-i2c-bus: phandle of an I2C controller used for DDC EDID probing
- - enable-gpios: GPIO pin to enable or disable the panel
- - backlight: phandle of the backlight device attached to the panel
-+- no-hpd: This panel is supposed to communicate that it's ready via HPD
-+  (hot plug detect) signal, but the signal isn't hooked up so we should
-+  hardcode the max delay from the panel spec when powering up the panel.
- 
- Example:
- 
+diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
+index 687fd087b9fc..88592f9a0018 100644
+--- a/drivers/gpu/drm/panel/panel-simple.c
++++ b/drivers/gpu/drm/panel/panel-simple.c
+@@ -1396,6 +1396,7 @@ static const struct panel_desc innolux_tv123wam = {
+ 		.height = 173,
+ 	},
+ 	.delay = {
++		.hpd_absent_delay = 200,
+ 		.unprepare = 500,
+ 	},
+ };
 -- 
 2.19.1.568.g152ad8e336-goog
 
