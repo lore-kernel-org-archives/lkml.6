@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A23ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58954C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C33EB208A3
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15CBD2086D
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="menLpbNa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C33EB208A3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BXG9u/Tc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15CBD2086D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730675AbeJYWwk (ORCPT
+        id S1730689AbeJYWwn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:52:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34828 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:52:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730655AbeJYWwj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:52:39 -0400
+        id S1730655AbeJYWwl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:52:41 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F43C2146E;
-        Thu, 25 Oct 2018 14:19:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA9D82085B;
+        Thu, 25 Oct 2018 14:19:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477182;
-        bh=8zsI32S7eOFA4HVWpgqgd9N4CNVvXXQDMvTb56u++M4=;
+        s=default; t=1540477183;
+        bh=rUrAf0FGpMb1NDQwbKCBgD7/1d8w8QOyBroHFGOrD10=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=menLpbNaAaWeJPzbrsL1j+9v1lFta2i4pdrQXKV6G7KNrF9t52VdZpRITXIAM+xJu
-         TBvYb5rT6udPUG6USyq7iYyum49chg/x1vat4WB6gN+GXvH2f2uDKxIx3+DaAC8cEC
-         zO3ICHQn8fJ6kSUWR4FRy39isA6UPI3Wr++3KMhw=
+        b=BXG9u/TcpkFu1i4CSIF9OYVKAOAExPI1jcvxGP8f10/K5cfspyyBvg3DkyqAbbIgV
+         18IPxagLy0iYbUqrxepmUnwfrPuycmOwEmUkeloEmzB+qCcl2Fxwsie7C/Oeakv6+4
+         NNNdd8SYGse9qiE41WYSQFxmHuPbWJYXKVSl5eUI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Vince Hsu <vinceh@nvidia.com>,
+Cc:     Peter Hurley <peter@hurleysoftware.com>,
+        Francesco Ruggeri <fruggeri@arista.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 32/98] usb: host: ehci-tegra: request deferred probe when failing to get phy
-Date:   Thu, 25 Oct 2018 10:17:47 -0400
-Message-Id: <20181025141853.214051-32-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 33/98] Revert "tty: Fix pty master poll() after slave closes v2"
+Date:   Thu, 25 Oct 2018 10:17:48 -0400
+Message-Id: <20181025141853.214051-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
 References: <20181025141853.214051-1-sashal@kernel.org>
@@ -53,36 +54,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vince Hsu <vinceh@nvidia.com>
+From: Peter Hurley <peter@hurleysoftware.com>
 
-[ Upstream commit f56e67f0a880a5b795cdb5f62614aafe264c5304 ]
+[ Upstream commit 2ce3c10c0c3e0d418c1a7a4c838319ba42c75388 ]
 
-The commit 1290a958d48e ("usb: phy: propagate __of_usb_find_phy()'s error on
-failure") changed the condition to return -EPROBE_DEFER to host driver.
-Originally the Tegra host driver depended on the returned -EPROBE_DEFER to
-get the phy device later when booting. Now we have to do that explicitly.
+This reverts commit c4dc304677e8d566572c4738d95c48be150c6606.
+This fix is superseded by commit 52bce7f8d4fc633c9a9d0646eef58ba6ae9a3b73,
+'pty, n_tty: Simplify input processing on final close'.
 
-Signed-off-by: Vince Hsu <vinceh@nvidia.com>
-Tested-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+The final close now waits for input processing to complete before
+destroying the pty, so poll() does not need to special case this
+condition.
+
+Cc: Francesco Ruggeri <fruggeri@arista.com>
+Signed-off-by: Peter Hurley <peter@hurleysoftware.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/host/ehci-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/n_tty.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
-index aad253559bcd..b4cc4c90b8e3 100644
---- a/drivers/usb/host/ehci-tegra.c
-+++ b/drivers/usb/host/ehci-tegra.c
-@@ -451,7 +451,7 @@ static int tegra_ehci_probe(struct platform_device *pdev)
+diff --git a/drivers/tty/n_tty.c b/drivers/tty/n_tty.c
+index 6acdd553b707..0ed99ad74bee 100644
+--- a/drivers/tty/n_tty.c
++++ b/drivers/tty/n_tty.c
+@@ -2472,17 +2472,12 @@ static unsigned int n_tty_poll(struct tty_struct *tty, struct file *file,
  
- 	u_phy = devm_usb_get_phy_by_phandle(&pdev->dev, "nvidia,phy", 0);
- 	if (IS_ERR(u_phy)) {
--		err = PTR_ERR(u_phy);
-+		err = -EPROBE_DEFER;
- 		goto cleanup_clk_en;
- 	}
- 	hcd->usb_phy = u_phy;
+ 	poll_wait(file, &tty->read_wait, wait);
+ 	poll_wait(file, &tty->write_wait, wait);
+-	if (test_bit(TTY_OTHER_CLOSED, &tty->flags))
+-		mask |= POLLHUP;
+ 	if (input_available_p(tty, 1))
+ 		mask |= POLLIN | POLLRDNORM;
+-	else if (mask & POLLHUP) {
+-		tty_flush_to_ldisc(tty);
+-		if (input_available_p(tty, 1))
+-			mask |= POLLIN | POLLRDNORM;
+-	}
+ 	if (tty->packet && tty->link->ctrl_status)
+ 		mask |= POLLPRI | POLLIN | POLLRDNORM;
++	if (test_bit(TTY_OTHER_CLOSED, &tty->flags))
++		mask |= POLLHUP;
+ 	if (tty_hung_up_p(file))
+ 		mask |= POLLHUP;
+ 	if (!(mask & (POLLHUP | POLLIN | POLLRDNORM))) {
 -- 
 2.17.1
 
