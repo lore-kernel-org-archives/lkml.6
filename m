@@ -2,74 +2,75 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC2D6C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 05:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D00BAECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 05:53:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 599A020831
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 05:53:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97E2E20831
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 05:53:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="V7Src/0/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 599A020831
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WK2e5x/w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97E2E20831
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727199AbeJYOY0 (ORCPT
+        id S1727338AbeJYOYa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 10:24:26 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:40333 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726652AbeJYOY0 (ORCPT
+        Thu, 25 Oct 2018 10:24:30 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:39836 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726652AbeJYOY3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 10:24:26 -0400
-Received: by mail-pl1-f193.google.com with SMTP id b9-v6so3024217pls.7
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 22:53:16 -0700 (PDT)
+        Thu, 25 Oct 2018 10:24:29 -0400
+Received: by mail-pg1-f195.google.com with SMTP id r9-v6so3480155pgv.6
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 22:53:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Tzyi/ZGPplqRmySLR5Ad2qLNX4GQSjbXCHd3ssSxWeE=;
-        b=V7Src/0/TBHZBBC2eNOYWhLGf65tST2WcKGTKD4+UsOc3sRKSDgbKrRHpnOHbW3pzt
-         hjRF2UsTf7j16UD9jQ+Trmp3Qbr0Z9VU++e4PKVWrDWhV2ruRempaheDab/dG2VDCI90
-         nyW5YYwNOU9HJ/jIR6I4qst1gx3/IGdSL/FSk=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=avYgO8zmRu0z6skuS/KZQ7OfLu1Dauo/53ZC7TuTX1M=;
+        b=WK2e5x/wn+DwVaY2TkDftoOK6YXeok4Q7tIFiLxlLuvd4DXc5H9FTxJA28BuoHtlSI
+         WHYPTDWP68I50uP3WuV8h5sRuYyZJK4TO1yGIsapNDahoRUMbEvGsUJ6AJL5q2dgSJmz
+         74tmhRxNd0MJO+2aWquQlgnXhHG4O3WCE1CGQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Tzyi/ZGPplqRmySLR5Ad2qLNX4GQSjbXCHd3ssSxWeE=;
-        b=LzwORJXlzwAAZV1TqYsKldoLvuZuOp1GY4IfmviaVYBcEy1UCCbhqxU1Z/bH7sIdg+
-         B17kjBeZ1RwDTzzyl58WQ29zezORUFQmm6Y7ylyHwNCSSriTeClVjxIh4dhyhqStTEhO
-         lwIexcz9ABjFmPBfKtkQTM3yPM6aCktIpfbRaRByaYJzpjXiwN2KssLIwG1uAvmP0mAW
-         raVsVpiuraVBC2+SPN5vYxnMXI4IIFjj8A5987QL5a3NAp+Sq9691H4v8ksmBTDKDou1
-         89ChYdM90SUYVOJ7nlIUvR7ERYwJ0sou7VVchyKWzt+HQNnXDooqtrz36nqQu3lx8f7N
-         9tvQ==
-X-Gm-Message-State: AGRZ1gIKqvPjDqljCYtzTKI+b8RblPUodtDzfaT8X73r51m4Y7PyV0B1
-        EcjAXeHXVdIHcYyhbS/24jw9eA==
-X-Google-Smtp-Source: AJdET5eL3SojRQHSZ25pFl9gCEyRG0qOWarST9ECNlqTqAUF1oIjZE6abc/FOhBU5gNiwmf/vhN+0A==
-X-Received: by 2002:a17:902:b03:: with SMTP id 3-v6mr187573plq.141.1540446795558;
-        Wed, 24 Oct 2018 22:53:15 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=avYgO8zmRu0z6skuS/KZQ7OfLu1Dauo/53ZC7TuTX1M=;
+        b=BJQ1QpYigETqvIeKh4KOb4d7qtf/Mlnq3IYpWLnZzngYG4fpamN+iPtfY8k709NOWl
+         yXKJziGc7MtaXF0tkmBukpoZNvtUouIbIEq1HR+B43gaLwzDDX82OITaQRIaxjQ3X73v
+         2L2X7VBOqANP4hOOeqtMl9aAgng5PEIGeJtrMUag4fkqQfEqokDKqqbKJkZaQHL3jZNZ
+         8RyUOD83+JlXktrqUP2wT9Vlfi0dIXP/sOLMuHP52qVeJ/JK6H31Dury8g1EykdoqBB1
+         uPPS2h4M99VKppOdQm2g3rGmGvQNRihndpZILVpNKKWQDvxOicyeGpYj2RECAgJlarJP
+         JGXw==
+X-Gm-Message-State: AGRZ1gITTahgV+SJfO5FcAGuaS9+w4rgNVevVkhts2JiI8RUYay9VTqI
+        vX+MirfHSVf4guuLg7l9+p2+0w==
+X-Google-Smtp-Source: AJdET5dXWUCegHBd2H47A49LjZusMv03QTMBh+fOrwTNQi9NpllG8Rok9K7iJfgJarzHTRr0RgOQ3w==
+X-Received: by 2002:a63:194a:: with SMTP id 10-v6mr211043pgz.192.1540446798805;
+        Wed, 24 Oct 2018 22:53:18 -0700 (PDT)
 Received: from localhost ([122.172.217.9])
-        by smtp.gmail.com with ESMTPSA id y8-v6sm18558016pfd.168.2018.10.24.22.53.14
+        by smtp.gmail.com with ESMTPSA id o75-v6sm14923493pfg.0.2018.10.24.22.53.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Oct 2018 22:53:14 -0700 (PDT)
+        Wed, 24 Oct 2018 22:53:18 -0700 (PDT)
 From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     ulf.hansson@linaro.org, Kevin Hilman <khilman@kernel.org>,
-        Len Brown <len.brown@intel.com>, Nishanth Menon <nm@ti.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Viresh Kumar <vireshk@kernel.org>
+To:     ulf.hansson@linaro.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Len Brown <len.brown@intel.com>
 Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
         Vincent Guittot <vincent.guittot@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
         niklas.cassel@linaro.org, rnayak@codeaurora.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V3 00/10] OPP: Support multiple power-domains per device
-Date:   Thu, 25 Oct 2018 11:22:37 +0530
-Message-Id: <cover.1540446493.git.viresh.kumar@linaro.org>
+Subject: [PATCH V3 01/10] PM / Domains: Rename genpd virtual devices as virt_dev
+Date:   Thu, 25 Oct 2018 11:22:38 +0530
+Message-Id: <d5f993001c97895d82bb68e246f6eaafce6dc795.1540446493.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.19.1.568.g152ad8e3369a
+In-Reply-To: <cover.1540446493.git.viresh.kumar@linaro.org>
+References: <cover.1540446493.git.viresh.kumar@linaro.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -77,64 +78,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+There are several struct device instances that genpd core handles. The
+most common one is the consumer device structure, which is named
+(correctly) as "dev" within genpd core. The second one is the genpd's
+device structure, referenced as genpd->dev. The third one is the virtual
+device structures created by the genpd core to represent the consumer
+device for multiple power domain case, currently named as genpd_dev. The
+naming of these virtual devices isn't very clear or readable and it
+looks more like the genpd->dev.
 
-This series improves the OPP core (and a bit of genpd core as well) to
-support multiple phandles in the "required-opps" property, which are
-only used for multiple power-domains per device for now.
+Rename the virtual device instances within the genpd core as "virt_dev".
 
-We still don't propagate the changes to master domains for the
-sub-domains, but this patchset is an important stepping stone for that
-to happen.
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ drivers/base/power/domain.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-Tested on Hikey960 after faking some power domains for CPUs.
-
-V2->V3:
-- Gained an additional patch to properly name the virtual device (1/10)
-- Renamed the virtual device as virt_dev instead of genpd_dev.
-- Few helpers renamed as well accordingly.
-- Use container_of() instead of traversing list of genpd.
-- Included tags received from Ulf.
-
-V1->V2:
-- Had a discussion at Linaro connect with Ulf regarding the changes V1
-  did in the genpd core and what his objections are to them. Based on
-  his suggestions many changes are made.
-- The OPP core still needs the virtual device pointers to set the
-  performance state for multiple domains, but the genpd core doesn't
-  provide them automatically to the OPP core. One of the reasons behind
-  this is to give more power to the consumer drivers which may not want
-  to enable all the genpds at once.
-- The consumer drivers would now need to call the APIs
-  dev_pm_opp_{set|put}_genpd_device() in order to set/reset these
-  virtual device pointers.
-- More locking is put in place to protect the genpd device pointers in
-  OPP core.
-- Reorg of the code at many places to make code less redundant.
-
---
-viresh
-
-Viresh Kumar (10):
-  PM / Domains: Rename genpd virtual devices as virt_dev
-  OPP: Identify and mark genpd OPP tables
-  OPP: Separate out custom OPP handler specific code
-  OPP: Populate required opp tables from "required-opps" property
-  OPP: Populate OPPs from "required-opps" property
-  PM / Domains: Add genpd_opp_to_performance_state()
-  OPP: Add dev_pm_opp_{set|put}_genpd_virt_dev() helper
-  OPP: Configure all required OPPs
-  OPP: Rename and relocate of_genpd_opp_to_performance_state()
-  OPP: Remove of_dev_pm_opp_find_required_opp()
-
- drivers/base/power/domain.c |  70 ++++----
- drivers/opp/core.c          | 261 ++++++++++++++++++++++--------
- drivers/opp/of.c            | 313 +++++++++++++++++++++++++++++++-----
- drivers/opp/opp.h           |  20 +++
- include/linux/pm_domain.h   |   8 +-
- include/linux/pm_opp.h      |  16 +-
- 6 files changed, 526 insertions(+), 162 deletions(-)
-
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index 7f38a92b444a..fe9b0527b161 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -2338,7 +2338,7 @@ EXPORT_SYMBOL_GPL(genpd_dev_pm_attach);
+ struct device *genpd_dev_pm_attach_by_id(struct device *dev,
+ 					 unsigned int index)
+ {
+-	struct device *genpd_dev;
++	struct device *virt_dev;
+ 	int num_domains;
+ 	int ret;
+ 
+@@ -2352,31 +2352,31 @@ struct device *genpd_dev_pm_attach_by_id(struct device *dev,
+ 		return NULL;
+ 
+ 	/* Allocate and register device on the genpd bus. */
+-	genpd_dev = kzalloc(sizeof(*genpd_dev), GFP_KERNEL);
+-	if (!genpd_dev)
++	virt_dev = kzalloc(sizeof(*virt_dev), GFP_KERNEL);
++	if (!virt_dev)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	dev_set_name(genpd_dev, "genpd:%u:%s", index, dev_name(dev));
+-	genpd_dev->bus = &genpd_bus_type;
+-	genpd_dev->release = genpd_release_dev;
++	dev_set_name(virt_dev, "genpd:%u:%s", index, dev_name(dev));
++	virt_dev->bus = &genpd_bus_type;
++	virt_dev->release = genpd_release_dev;
+ 
+-	ret = device_register(genpd_dev);
++	ret = device_register(virt_dev);
+ 	if (ret) {
+-		kfree(genpd_dev);
++		kfree(virt_dev);
+ 		return ERR_PTR(ret);
+ 	}
+ 
+ 	/* Try to attach the device to the PM domain at the specified index. */
+-	ret = __genpd_dev_pm_attach(genpd_dev, dev->of_node, index, false);
++	ret = __genpd_dev_pm_attach(virt_dev, dev->of_node, index, false);
+ 	if (ret < 1) {
+-		device_unregister(genpd_dev);
++		device_unregister(virt_dev);
+ 		return ret ? ERR_PTR(ret) : NULL;
+ 	}
+ 
+-	pm_runtime_enable(genpd_dev);
+-	genpd_queue_power_off_work(dev_to_genpd(genpd_dev));
++	pm_runtime_enable(virt_dev);
++	genpd_queue_power_off_work(dev_to_genpd(virt_dev));
+ 
+-	return genpd_dev;
++	return virt_dev;
+ }
+ EXPORT_SYMBOL_GPL(genpd_dev_pm_attach_by_id);
+ 
 -- 
 2.19.1.568.g152ad8e3369a
 
