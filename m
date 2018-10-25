@@ -2,111 +2,117 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C591C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:36:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35BD9C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:38:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A3732075D
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:36:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qs1BaRq4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A3732075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DFFD420831
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:38:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFFD420831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=metafoo.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727564AbeJYWIs (ORCPT
+        id S1727610AbeJYWLa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:08:48 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:33948 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727293AbeJYWIs (ORCPT
+        Thu, 25 Oct 2018 18:11:30 -0400
+Received: from www381.your-server.de ([78.46.137.84]:43548 "EHLO
+        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727504AbeJYWLa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:08:48 -0400
-Received: by mail-yw1-f66.google.com with SMTP id v199-v6so3604277ywg.1;
-        Thu, 25 Oct 2018 06:36:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Mpq87yEn2sSwaHy6aAXJROgtcKjKyEWtuX91nRHJ/ME=;
-        b=Qs1BaRq4xoYa648E9eacTKM/lpMw6F2JgbMPMiAo0KNX6g0jibQkbdnI195Rpx3kiM
-         Fybb5s61uAje3DB1UhkKzOrhfmfyKU6e2L6Tn92WN+90Km51XYI3kzI9o61n6D3ZF1S3
-         3aim1nJSusDCEvkXnD+BKoUrI5aKMZSZt29+8S3V+oaCyPUCqZ5UqUJOEYm9qn1V/cpP
-         urX+4XTVRS4E+eD0Z3erkBoTqJycAK47FeROEvX2HyzOFbtKOhcapAaO3mcatgPKzZNI
-         Oo8fmymgJ53h0LPUPnGkl4K87kpYWJJYbk+wxS4gpjPMEwQrljCiLYdN8yW4jCWeg0S/
-         FrGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Mpq87yEn2sSwaHy6aAXJROgtcKjKyEWtuX91nRHJ/ME=;
-        b=iOg8Cut0oH9tF+E7m8oUQ7Bm3lo8dpidRlQudn18S3jIBQYvRuBXaNwfE3YihkSAD7
-         omnr1Fz6lfjM9BQNl/j+pQolqjYu4LiqI1XsftOEogG6He58Lfl3Y9kA0jWpfm9j0GUS
-         xEmDFI9U9URKKHKB7RI8asnJ6Xq/a1P/1dPeyaW6vwYRdj7e8bfA9lVimuyqY9n+xovO
-         FKK3nLy6GdxGIR+chLKmXcXOjIazaYXVHiprG5nHnoD95pI3uiBU9KWzDvvbjojtXhx4
-         KKEaCB1odFAng7W0uXhS+cajM1Di6i+429bOd2wQtEU/QZ+LpnLJbff90vdFlscbVmq0
-         DsKg==
-X-Gm-Message-State: AGRZ1gJxJnDSws206aE8booqnXLsgjZ75RbolBwb9khSxo9fqPwOYAK4
-        I12IvOHKE1irTvEThhUFcPE=
-X-Google-Smtp-Source: AJdET5cNutJBLxd4tW9imqEpJgtiqDvbs7FOCzKBbymQ6Cdz09aqpr+k9CpnvHj0iifvrCJ/IVoaHQ==
-X-Received: by 2002:a81:7a07:: with SMTP id v7-v6mr1354055ywc.429.1540474560268;
-        Thu, 25 Oct 2018 06:36:00 -0700 (PDT)
-Received: from localhost.localdomain ([198.52.185.227])
-        by smtp.gmail.com with ESMTPSA id v34-v6sm3487982ywh.45.2018.10.25.06.35.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Oct 2018 06:35:59 -0700 (PDT)
-From:   thesven73@gmail.com
-X-Google-Original-From: TheSven73@googlemail.com
-To:     svendev@arcx.com, lee.jones@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, afaerber@suse.de, treding@nvidia.com,
-        david@lechnology.com, noralf@tronnes.org, johan@kernel.org,
-        monstr@monstr.eu, michal.vokac@ysoft.com, arnd@arndb.de,
-        gregkh@linuxfoundation.org, john.garry@huawei.com,
-        geert+renesas@glider.be, robin.murphy@arm.com,
-        paul.gortmaker@windriver.com,
-        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
-        yuanzhichang@hisilicon.com, stuyoder@gmail.com,
-        linus.walleij@linaro.org, maxime.ripard@bootlin.com,
-        bogdan.purcareata@nxp.com
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH anybus v1 2/4] dt-bindings: anybus-bridge: document devicetree binding.
-Date:   Thu, 25 Oct 2018 09:35:54 -0400
-Message-Id: <20181025133554.8050-1-TheSven73@googlemail.com>
-X-Mailer: git-send-email 2.17.1
+        Thu, 25 Oct 2018 18:11:30 -0400
+Received: from [88.198.220.132] (helo=sslproxy03.your-server.de)
+        by www381.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <lars@metafoo.de>)
+        id 1gFfqO-0000Pk-P4; Thu, 25 Oct 2018 15:38:36 +0200
+Received: from [2003:93:4d12:1e00:8200:bff:fe9b:6612]
+        by sslproxy03.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <lars@metafoo.de>)
+        id 1gFfqO-0008PH-GZ; Thu, 25 Oct 2018 15:38:36 +0200
+Subject: Re: [PATCH] staging: iio: ad7780: update voltage on read
+To:     Renato Lui Geh <renatogeh@gmail.com>, Michael.Hennerich@analog.com,
+        jic23@kernel.org, knaack.h@gmx.de, pmeerw@pmeerw.net,
+        gregkh@linuxfoundation.org, alexandru.Ardelean@analog.com,
+        stefan.popa@analog.com, giuliano.belinassi@usp.br
+Cc:     linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
+References: <20181025133223.kn7cjlyep7bmx2mm@renatolg>
+From:   Lars-Peter Clausen <lars@metafoo.de>
+Message-ID: <c958f5fc-2a58-8471-62a4-20b0c7267bd0@metafoo.de>
+Date:   Thu, 25 Oct 2018 15:38:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20181025133223.kn7cjlyep7bmx2mm@renatolg>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: lars@metafoo.de
+X-Virus-Scanned: Clear (ClamAV 0.100.2/25067/Wed Oct 24 23:01:03 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob, thank you so much for taking a look at this patch !
+On 10/25/2018 03:32 PM, Renato Lui Geh wrote:
+> The ad7780 driver previously did not read the correct device output.
+> This patch fixes two issues.
+> 
+> - The driver read an outdated value set at initialization. It now
+> updates its voltage on read.
+> - Variable val subtracted an uninitialized value on
+> IIO_CHAN_INFO_OFFSET. This was fixed by assiging the correct value
+> instead.
+> 
+> Signed-off-by: Renato Lui Geh <renatogeh@gmail.com>
 
->> +This chip communicates with the SoC over the WEIM bus. It is
->> +expected that its Device Tree node is specified as the child of a node
->> +corresponding to the WEIM bus used for communication.
->
->By WEIM you are referring to i.MX external parallel bus? Presumably this 
->can work on any parallel bus, not just i.MX.
+Hi,
 
-That's right, in theory this hardware could work with any parallel bus, if
-timed correctly. The driver also has no code dependencies on the WEIM driver.
-You'll only find it in the field on top of the i.MX's WEIM bus, however.
+Thanks for the patch, this looks good.
 
-Do you think it would be 'nicer' to drop references to i.MX and WEIM? Can do.
+But please create one patch per issue and do not put unrelated changes into
+the same patch.
 
->> +  - compatible : The following chip-specific string:
->> +        "arcx,anybus-bridge"
->
->No version or part number?
+Also your mail client seems to have replaced tabs in the patch with spaces,
+this means the patch will not apply cleanly. Check the
+Documentation/email-clients.txt file for some hints how to configure your
+mail client so it will not break patches.
 
-We have id and capability registers in the chip for that. This driver is
-generic, both forwards and backwards compatible. Is it ok to leave out
-version/part number in this case?
+- Lars
 
-The rest of your feedback will go into v2. Thanks :)
+> ---
+> drivers/staging/iio/adc/ad7780.c | 6 +++++-
+> 1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/iio/adc/ad7780.c
+> b/drivers/staging/iio/adc/ad7780.c
+> index b67412db0318..06700fe554a2 100644
+> --- a/drivers/staging/iio/adc/ad7780.c
+> +++ b/drivers/staging/iio/adc/ad7780.c
+> @@ -87,16 +87,20 @@ static int ad7780_read_raw(struct iio_dev *indio_dev,
+>                long m)
+> {
+>     struct ad7780_state *st = iio_priv(indio_dev);
+> +    int voltage_uv = 0;
+> 
+>     switch (m) {
+>     case IIO_CHAN_INFO_RAW:
+>         return ad_sigma_delta_single_conversion(indio_dev, chan, val);
+>     case IIO_CHAN_INFO_SCALE:
+> +        voltage_uv = regulator_get_voltage(st->reg);
+> +        if (voltage_uv)
+> +            st->int_vref_mv = voltage_uv/1000;
+>         *val = st->int_vref_mv * st->gain;
+>         *val2 = chan->scan_type.realbits - 1;
+>         return IIO_VAL_FRACTIONAL_LOG2;
+>     case IIO_CHAN_INFO_OFFSET:
+> -        *val -= (1 << (chan->scan_type.realbits - 1));
+> +        *val = -(1 << (chan->scan_type.realbits - 1));
+>         return IIO_VAL_INT;
+>     }
+> 
+
