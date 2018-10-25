@@ -2,122 +2,101 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 504CFC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 20:47:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1165DC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 20:48:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D975C20834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 20:47:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="CjAG2xiZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D975C20834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id D38BD20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 20:48:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D38BD20834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726159AbeJZFWA (ORCPT
+        id S1726379AbeJZFWg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 01:22:00 -0400
-Received: from imap.thunk.org ([74.207.234.97]:58336 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725842AbeJZFWA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 01:22:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:To:From:Date:Sender:Reply-To:Cc:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=vVoSaGpWrucJl55zuX2EOIj/joLeutl2zJYuIw2yUWQ=; b=CjAG2xiZd6JVxyDunMnWooCKvJ
-        1zMKWrR2dwsmLJC4+GMlu/8qZeH4jAGDEIy/kFzmWhpquGzhjDXM1sEB4r3RFVnI7r0vJktLvALZv
-        2xXkBtWldyYvdO3+yxs0Ue+BcxLeDbhripD47HJFcK/nG6tIH2aixDDq9y/2SMGFRX9A=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1gFmXH-0004Cp-NE; Thu, 25 Oct 2018 20:47:19 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id B8B4C7A447E; Thu, 25 Oct 2018 16:47:18 -0400 (EDT)
-Date:   Thu, 25 Oct 2018 16:47:18 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     esr@thyrsus.com, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        visionsofalice@redchan.it,
-        linux-kernel <linux-kernel@vger.kernel.org>, rms@gnu.org,
-        bruce@perens.com, moglen@columbia.edu, bkuhn@sfconservancy.org,
-        editor@lwn.net, NeilBrown <neil@brown.name>,
-        Laura Abbott <labbott@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        ksummit-discuss@lists.linuxfoundation.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Olof Johansson <olof@lixom.net>, Chris Mason <clm@fb.com>,
-        Mishi Choudhary <mishi@linux.com>,
-        linux-kernel-owner@vger.kernel.org
-Subject: Re: The linux devs can rescind their license grant.
-Message-ID: <20181025204718.GB25649@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>, esr@thyrsus.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        visionsofalice@redchan.it,
-        linux-kernel <linux-kernel@vger.kernel.org>, rms@gnu.org,
-        bruce@perens.com, moglen@columbia.edu, bkuhn@sfconservancy.org,
-        editor@lwn.net, NeilBrown <neil@brown.name>,
-        Laura Abbott <labbott@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        ksummit-discuss@lists.linuxfoundation.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Olof Johansson <olof@lixom.net>, Chris Mason <clm@fb.com>,
-        Mishi Choudhary <mishi@linux.com>,
-        linux-kernel-owner@vger.kernel.org
-References: <20181020134908.GA32218@kroah.com>
- <87y3ar80ac.fsf@notabene.neil.brown.name>
- <c6bf1877-6e29-50ec-ffa8-314ab35ec9ce@redhat.com>
- <185b786a2bd6e8d527dca161dc42e4f1@redchan.it>
- <20181025081911.GB11343@kroah.com>
- <20181025193901.GD26403@thyrsus.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181025193901.GD26403@thyrsus.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+        Fri, 26 Oct 2018 01:22:36 -0400
+Received: from s3.sipsolutions.net ([144.76.43.62]:48486 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725842AbeJZFWg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 01:22:36 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.91)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1gFmYE-0001rY-2i; Thu, 25 Oct 2018 22:48:18 +0200
+Message-ID: <c6e666eb6bcd84caa0affacd7e994bb413c82950.camel@sipsolutions.net>
+Subject: Re: [PATCH 3/3] kernel/workqueue: Suppress a false positive lockdep
+ complaint
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Bart Van Assche <bvanassche@acm.org>, Tejun Heo <tj@kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        "tytso@mit.edu" <tytso@mit.edu>
+Date:   Thu, 25 Oct 2018 22:47:58 +0200
+In-Reply-To: <1540499971.66186.51.camel@acm.org> (sfid-20181025_223935_800776_222DDCFE)
+References: <20181025150540.259281-1-bvanassche@acm.org>
+         <20181025150540.259281-4-bvanassche@acm.org>
+         <2cebeb88640433ce473bc40f9a5c7e06d0661e4d.camel@sipsolutions.net>
+         <1540487511.66186.31.camel@acm.org>
+         (sfid-20181025_191156_926182_FF0802A9) <11db45f85e2f763c23ae32834dcd016adfce8ad6.camel@sipsolutions.net>
+         <1540499971.66186.51.camel@acm.org> (sfid-20181025_223935_800776_222DDCFE)
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 03:39:01PM -0400, Eric S. Raymond wrote:
+On Thu, 2018-10-25 at 13:39 -0700, Bart Van Assche wrote:
 > 
-> Under Jacobsen vs. Katzer (535 f 3d 1373 fed cir 2008) authors of
-> GPLed software have a specific right to relief (including injunctive
-> relief) against misappropriation of their software. That ruling (which
-> was the case of first impression on the binding status of the GPL)
-> reputational damage is *specifically* recognized as grounds for relief.
+> > +void flush_workqueue_nested(struct workqueue_struct *wq, int subclass)
+> >  {
+> >  	struct wq_flusher this_flusher = {
+> >  		.list = LIST_HEAD_INIT(this_flusher.list),
+> > @@ -2652,7 +2653,7 @@ void flush_workqueue(struct workqueue_struct *wq)
+> >  	if (WARN_ON(!wq_online))
+> >  		return;
+> >  
+> > -	lock_map_acquire(&wq->lockdep_map);
+> > +	lock_acquire_exclusive(&wq->lockdep_map, subclass, 0, NULL, _THIS_IP_);
+> >  	lock_map_release(&wq->lockdep_map);
+> >  
+> >  	mutex_lock(&wq->mutex);
+> > [ ... ]
+> 
+> I don't like this approach because it doesn't match how other kernel code uses
+> lockdep annotations. All other kernel code I know of only annotates lock depmaps
+> as nested if the same kernel thread calls lock_acquire() twice for the same depmap
+> without intervening lock_release(). My understanding is that with your patch
+> applied flush_workqueue_nested(wq, 1) calls lock_acquire() only once and with the
+> subclass argument set to one. I think this will confuse other people who will read
+> the workqueue implementation and who have not followed this conversation.
 
-I've read the legal briefs, and I'm pretty sure they don't say what
-you are claiming they say.  Yes, I'm not a lawyer --- but that's OK
---- neither are you.
+Hmm, yeah, that's a reasonable complaint. My mental model is more along
+the lines of
+	"this is a different nested (layered) object instance"
+rather than
+	"I'm nesting the locks",
+so this code change fits well into my model. However, code like
+infiniband/core/cma.c does in fact use it with nested object instances
+*and* actually (and directly in the code) nested locks.
 
-> The anti-CoC dissidents don't have to rescind their license grant to
-> cause a great deal of trouble.
+I think the "actual nesting" could possibly come up with workqueues,
+like I described earlier: you have two objects with a workqueue each,
+and the objects are somehow layered (like cma.c's listen_id and
+conn_id), and each contains a workqueue, and some work running on the
+listen_id's workqueue wants to destroy all the conn_id's workqueue(s).
+In that case, you do end up really having the nesting.
 
-The *vast* majority of the "anti-CoC dissidents" who have been
-advancing this argument, have, as near as I can tell, little or no
-copyright ownership in the kernel.  They are external trolls who are
-not members of the kernel development community, to the best of my
-belief and knowledge.
+So in that sense, I still think this API may still be required, and
+(perhaps with an appropriate comment) could be used in the dio case even
+if there's no actual nesting, without introducing the - IMHO single-use
+and more dangerous - destroy_workqueue_no_drain().
 
-In short; they are adding noise to the conversation, and have been
-presuming that in fact people are going to be regularly and summarily
-ejected from the community.  In short, they are adding FUD, probably
-because they have their own agenda.
+johannes
 
-I would recommend that before people respond such provocation
-messages, that they do a quick "git log" and find out whether they
-have in fact contributed code to the kernel at all, and if so, how
-long ago it was.
-
-Regards,
-
-						- Ted
