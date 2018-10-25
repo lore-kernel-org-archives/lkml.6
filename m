@@ -2,114 +2,173 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 108B8ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D384DC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:05:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB1712082E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:03:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8136A2082E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:05:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dik2rv8U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB1712082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="Xl0/HPHy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8136A2082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=natalenko.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727185AbeJYQfM (ORCPT
+        id S1727126AbeJYQhC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 12:35:12 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:32860 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726891AbeJYQfM (ORCPT
+        Thu, 25 Oct 2018 12:37:02 -0400
+Received: from vulcan.natalenko.name ([104.207.131.136]:10166 "EHLO
+        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726471AbeJYQhB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 12:35:12 -0400
-Received: by mail-wr1-f65.google.com with SMTP id u1-v6so8258486wrn.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 01:03:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=EAemEQJe844MjkBnRg0+4whi9fHdd101VRQj4zDbdCo=;
-        b=dik2rv8UuSrbFjIqO+00MBSIb1QD4c9EYJsnNFCr07WXS6KRT2WhbCoYdLHXBWd2Gz
-         ldR20VYAql9OkY9f/VoNjgpIj0AQYNB6ryNx5uWR02z8EUm4DjMXWUSnv+gh1aClt2WW
-         bsF0ncaYuMUkJJ0p8gw4GjOoE4dI3AIPh2avw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=EAemEQJe844MjkBnRg0+4whi9fHdd101VRQj4zDbdCo=;
-        b=Yl2fQtVx9cXQ2WwNoFLFI2jn19jVzRRrDJ7w8ifZSi5WPFcznMd7bOEQ1ouIU+t4wo
-         UOYJfgAL94k/pVreH8EjjgHJ5c7UKasitJgVJYrkFw6yN4rWprcW8ZzLEOz+/gBZ0Roo
-         CfmiC+q0E/O9QXT9pBc07wnh7uWGiQNMsAVtEwpsABPQD/pVAgCZA/wsegTcCgHiQq3n
-         PNXTYZn1WGQKUunN6Vobp61V3FjQuI7qqiND5zjgDcXU3GzEiegFqeB3nwJpJvRTspWD
-         GxVmVqc6x1tS6XyBOWNaHpPBtTzvmUeaZpwNjsQEQLVZDWJanueEDW37K6N0jResa58L
-         7M7A==
-X-Gm-Message-State: AGRZ1gIfypCuQeNyF1OE8RlLwvzS2ZHv/MXPssxuDZGordeyZnNAmlRl
-        Q63W6qHMDrmfXEzGcEvPO+UyOw==
-X-Google-Smtp-Source: AJdET5dKe0SRjqUmczkigmHogvy9AhvXdxMZx2xXle7eqUbg5K2vIQm2sHyHFOIEJI7hnsLXHeWIMw==
-X-Received: by 2002:adf:9102:: with SMTP id j2-v6mr720567wrj.3.1540454613062;
-        Thu, 25 Oct 2018 01:03:33 -0700 (PDT)
-Received: from dell ([2.31.167.182])
-        by smtp.gmail.com with ESMTPSA id o130-v6sm943743wmd.11.2018.10.25.01.03.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Oct 2018 01:03:32 -0700 (PDT)
-Date:   Thu, 25 Oct 2018 09:03:30 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mfd: db8500-prcmu: Fix some section annotations
-Message-ID: <20181025080330.GI4939@dell>
-References: <20181018005628.8295-1-natechancellor@gmail.com>
+        Thu, 25 Oct 2018 12:37:01 -0400
+Received: from mail.natalenko.name (vulcan.natalenko.name [IPv6:fe80::5400:ff:fe0c:dfa0])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by vulcan.natalenko.name (Postfix) with ESMTPSA id 803FB446137;
+        Thu, 25 Oct 2018 10:05:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+        s=dkim-20170712; t=1540454721;
+        h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=yrDaViNM/ozBGUFoJuB3YqIafMFMW0Yq+z3k1wdK3rE=;
+        b=Xl0/HPHy5eIkk9CwWWc76jeOOyjnK5TMleP1JKKaTzGVBgUetfiGAYNEAw3500Ha9I6g4l
+        URo0AaF9qNf1znp9OQB/8qp3V0A3UJ7VvkZhtPA3yJ6ypSe83YkTjYAp8W4NujIryPJzD3
+        cGnmz66XLV2P1jktv92ZC+4bCgZl8EE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 803FB446137
+Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181018005628.8295-1-natechancellor@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 25 Oct 2018 10:05:21 +0200
+From:   Oleksandr Natalenko <oleksandr@natalenko.name>
+To:     Paolo Valente <paolo.valente@linaro.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ulf.hansson@linaro.org,
+        linus.walleij@linaro.org, broonie@kernel.org,
+        bfq-iosched@googlegroups.com, Federico Motta <federico@willer.it>
+Subject: Re: [PATCH BUGFIX] block, bfq: fix asymmetric scenarios detection
+In-Reply-To: <20181024171325.7154-1-paolo.valente@linaro.org>
+References: <20181024171325.7154-1-paolo.valente@linaro.org>
+Message-ID: <b747250df5e1d93175ac0a56e697d611@natalenko.name>
+X-Sender: oleksandr@natalenko.name
+User-Agent: Roundcube Webmail/1.3.7
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+        s=arc-20170712; t=1540454721;
+        h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=yrDaViNM/ozBGUFoJuB3YqIafMFMW0Yq+z3k1wdK3rE=;
+        b=nwzFssDix/eOMRiMcI9LjdHDVjxAqcLc99hC/F2fcMwZ0ZSxYXrfBSaeEbY0r7+J14Ghf2
+        iKc7HRZ6+OwUmp+9z56gwXi7gR7dsLKFnz8bV8pr22PU2emfKLshEzXglDnCDfhg+vaBod
+        kbMQ+pbbEGfjAJmm7hEJrSvS6wskZzs=
+ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1540454721; a=rsa-sha256;
+        cv=none;
+        b=wdRP27VBCCn8MTfsJwlL6YXwSV0WaSOJ+2zWGZnW79n0lKSVOIRoLVQ+dQhoiYxZSTvtvHj9qNSvE6ETKwl2e82iY2ZX8E+4BxecNcOxrClDUEBsPpzjvSt7vZgvRkuxrUxHUc1YP2M2gARHiBYYmAdhySsP2U8Y3TMM9iAMbcQ=
+ARC-Authentication-Results: i=1;
+        vulcan.natalenko.name;
+        auth=pass smtp.auth=oleksandr@natalenko.name smtp.mailfrom=oleksandr@natalenko.name
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 17 Oct 2018, Nathan Chancellor wrote:
+Hi.
 
-> When building the kernel with Clang, the following section mismatch
-> warnings appear:
+On 24.10.2018 19:13, Paolo Valente wrote:
+> From: Federico Motta <federico@willer.it>
 > 
-> WARNING: vmlinux.o(.text+0x7239cc): Section mismatch in reference from
-> the function db8500_prcmu_probe() to the function
-> .init.text:init_prcm_registers()
-> The function db8500_prcmu_probe() references
-> the function __init init_prcm_registers().
-> This is often because db8500_prcmu_probe lacks a __init
-> annotation or the annotation of init_prcm_registers is wrong.
+> Since commit 2d29c9f89fcd ("block, bfq: improve asymmetric scenarios
+> detection"), a scenario is defined asymmetric when one of the
+> following conditions holds:
+> - active bfq_queues have different weights
+> - one or more group of entities (bfq_queue or other groups of entities)
+>   are active
+> bfq grants fairness and low latency also in such asymmetric scenarios,
+> by plugging the dispatching of I/O if the bfq_queue in service happens
+> to be temporarily idle. This plugging may lower throughput, so it is
+> important to do it only when strictly needed.
 > 
-> WARNING: vmlinux.o(.text+0x723e28): Section mismatch in reference from
-> the function db8500_prcmu_probe() to the function
-> .init.text:fw_project_name()
-> The function db8500_prcmu_probe() references
-> the function __init fw_project_name().
-> This is often because db8500_prcmu_probe lacks a __init
-> annotation or the annotation of fw_project_name is wrong.
+> By mystake, in commit '2d29c9f89fcd' ("block, bfq: improve asymmetric
+> scenarios detection") the num_active_groups counter was firstly
+> incremented and subsequently decremented at any entity (group or
+> bfq_queue) weight change.
 > 
-> db8500_prcmu_probe should not be marked as __init so remove the __init
-> annotation from fw_project_name and init_prcm_registers.
+> This is useless, because only transitions from active to inactive and
+> vice versa matter for that counter. Unfortunately this is also
+> incorrect in the following case: the entity at issue is a bfq_queue
+> and it is under weight raising. In fact in this case there is a
+> spurious increment of the num_active_groups counter.
 > 
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> This spurious increment may cause scenarios to be wrongly detected as
+> asymmetric, thus causing useless plugging and loss of throughput.
+> 
+> This commit fixes this issue by simply removing the above useless and
+> wrong increments and decrements.
+> 
+> Fixes: 2d29c9f89fcd ("block, bfq: improve asymmetric scenarios 
+> detection")
+> Signed-off-by: Federico Motta <federico@willer.it>
+> Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
 > ---
->  drivers/mfd/db8500-prcmu.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  block/bfq-wf2q.c | 18 ++++++------------
+>  1 file changed, 6 insertions(+), 12 deletions(-)
+> 
+> diff --git a/block/bfq-wf2q.c b/block/bfq-wf2q.c
+> index 476b5a90a5a4..4b0d5fb69160 100644
+> --- a/block/bfq-wf2q.c
+> +++ b/block/bfq-wf2q.c
+> @@ -792,24 +792,18 @@ __bfq_entity_update_weight_prio(struct
+> bfq_service_tree *old_st,
+>  		 * queue, remove the entity from its old weight counter (if
+>  		 * there is a counter associated with the entity).
+>  		 */
+> -		if (prev_weight != new_weight) {
+> -			if (bfqq) {
+> -				root = &bfqd->queue_weights_tree;
+> -				__bfq_weights_tree_remove(bfqd, bfqq, root);
+> -			} else
+> -				bfqd->num_active_groups--;
+> +		if (prev_weight != new_weight && bfqq) {
+> +			root = &bfqd->queue_weights_tree;
+> +			__bfq_weights_tree_remove(bfqd, bfqq, root);
+>  		}
+>  		entity->weight = new_weight;
+>  		/*
+>  		 * Add the entity, if it is not a weight-raised queue,
+>  		 * to the counter associated with its new weight.
+>  		 */
+> -		if (prev_weight != new_weight) {
+> -			if (bfqq && bfqq->wr_coeff == 1) {
+> -				/* If we get here, root has been initialized. */
+> -				bfq_weights_tree_add(bfqd, bfqq, root);
+> -			} else
+> -				bfqd->num_active_groups++;
+> +		if (prev_weight != new_weight && bfqq && bfqq->wr_coeff == 1) {
+> +			/* If we get here, root has been initialized. */
+> +			bfq_weights_tree_add(bfqd, bfqq, root);
+>  		}
+> 
+>  		new_st->wsum += entity->weight;
 
-Applied for v4.21, thanks.
+I'm running this patch on 3 machines ATM with no visible smoke. I don't 
+do performance comparison here, just checking that nothing is obviously 
+broken.
+
+With regard to that,
+
+Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+
+Thanks.
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+   Oleksandr Natalenko (post-factum)
