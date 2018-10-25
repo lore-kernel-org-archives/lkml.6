@@ -7,156 +7,103 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8479AECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89CCFC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A446208A3
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46C802085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EGg0tb2t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A446208A3
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tw/jb0iq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46C802085B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730337AbeJYWwE (ORCPT
+        id S1730350AbeJYWwF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:52:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33846 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:52:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33948 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730290AbeJYWwC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:52:02 -0400
+        id S1730290AbeJYWwE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:52:04 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA86F2086D;
-        Thu, 25 Oct 2018 14:19:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A46720868;
+        Thu, 25 Oct 2018 14:19:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477144;
-        bh=jUDEOz+4hOjFo/kCO84R5YCx+Dn+pkLtkURv9wqVWMM=;
+        s=default; t=1540477147;
+        bh=tByDmkvUt5YA1pwmKrgoEmDvSdrFHzU5oxj+vejuYhA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EGg0tb2taqpJeaHYYO0bJPO1PCSv4vxQbIn6Jg179Io+7uSFP11c45H6Sfqpgca6Z
-         wj/n9I+Q6pwZAzhZyzknxPBV0mKjrO0oDuAcKpPcnzPaXPoQCSrc1Wr30V3hR8kzRS
-         ONkhJOJCJTPn0l6rQVOYh+CZ5LPdaTA+T5oSa/O8=
+        b=tw/jb0iqMBZMDWFmKEF+cCHs8Vlv+SeG1YfbRoqCT1jt8wNCyAEiGfsbIv8uvcCxV
+         OBC+6K2rP4vtJG0Hhn3JTc2KijW9Vpqpwyy4w4Cga26dbQoc9ixJ/MANi4tdP21KY4
+         Zn1mceKEaOtnhjOc3scxRqCMtUKch4INKY8veD3E=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
-        Johan Hovold <johan@kernel.org>,
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 04/98] USB: qcserial: Fix support for HP lt4112 LTE/HSPA+ Gobi 4G Modem
-Date:   Thu, 25 Oct 2018 10:17:19 -0400
-Message-Id: <20181025141853.214051-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 06/98] s390/ftrace/jprobes: Fix conflict between jprobes and function graph tracing
+Date:   Thu, 25 Oct 2018 10:17:21 -0400
+Message-Id: <20181025141853.214051-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
 References: <20181025141853.214051-1-sashal@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjørn Mork <bjorn@mork.no>
+From: Jiri Olsa <jolsa@kernel.org>
 
-[ Upstream commit 59536da34513c594af2a6fd35ba65ea45b6960a1 ]
+[ Upstream commit e64a5470dcd2900ab8f8f83638c00098b10e6300 ]
 
-The DEVICE_HWI type was added under the faulty assumption that Huawei
-devices based on Qualcomm chipsets and firmware use the static USB
-interface numbering known from Gobi devices.  But this model does
-not apply to Huawei devices like the HP branded lt4112 (Huawei me906e).
-Huawei firmwares will dynamically assign interface numbers. Functions
-are renumbered when the firmware is reconfigured.
+This fixes the same issue Steven already fixed for x86
+in following commit:
 
-Fix by changing the DEVICE_HWI type to use a simplified version
-of Huawei's subclass + protocol scheme: Blacklisting known network
-interface combinations and assuming the rest are serial.
+  237d28db036e ftrace/jprobes/x86: Fix conflict between jprobes and function graph tracing
 
-Reported-and-tested-by: Muri Nicanor <muri+libqmi@immerda.ch>
-Tested-by: Martin Hauke <mardnh@gmx.de>
-Cc: <stable@vger.kernel.org>
-Fixes: e7181d005e84 ("USB: qcserial: Add support for HP lt4112 LTE/HSPA+ Gobi 4G Modem")
-Signed-off-by: Bjørn Mork <bjorn@mork.no>
-Signed-off-by: Johan Hovold <johan@kernel.org>
+It fixes the crash, that happens when function graph tracing
+and jprobes are used simultaneously. Please refer to above
+commit for details.
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Acked-by: Steven Rostedt <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/serial/qcserial.c | 54 ++++++++++++++++++++++-------------
- 1 file changed, 34 insertions(+), 20 deletions(-)
+ arch/s390/kernel/kprobes.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/usb/serial/qcserial.c b/drivers/usb/serial/qcserial.c
-index adc372411019..7e8014304b33 100644
---- a/drivers/usb/serial/qcserial.c
-+++ b/drivers/usb/serial/qcserial.c
-@@ -190,6 +190,10 @@ static int qcprobe(struct usb_serial *serial, const struct usb_device_id *id)
- 	__u8 ifnum;
- 	int altsetting = -1;
+diff --git a/arch/s390/kernel/kprobes.c b/arch/s390/kernel/kprobes.c
+index 014d4729b134..ee03d8f0ee60 100644
+--- a/arch/s390/kernel/kprobes.c
++++ b/arch/s390/kernel/kprobes.c
+@@ -633,6 +633,15 @@ int __kprobes setjmp_pre_handler(struct kprobe *p, struct pt_regs *regs)
+ 	stack = (unsigned long) regs->gprs[15];
  
-+	/* we only support vendor specific functions */
-+	if (intf->desc.bInterfaceClass != USB_CLASS_VENDOR_SPEC)
-+		goto done;
+ 	memcpy(kcb->jprobes_stack, (void *) stack, MIN_STACK_SIZE(stack));
 +
- 	nintf = serial->dev->actconfig->desc.bNumInterfaces;
- 	dev_dbg(dev, "Num Interfaces = %d\n", nintf);
- 	ifnum = intf->desc.bInterfaceNumber;
-@@ -309,29 +313,39 @@ static int qcprobe(struct usb_serial *serial, const struct usb_device_id *id)
- 		break;
- 	case QCSERIAL_HWI:
- 		/*
--		 * Huawei layout:
--		 * 0: AT-capable modem port
--		 * 1: DM/DIAG
--		 * 2: AT-capable modem port
--		 * 3: CCID-compatible PCSC interface
--		 * 4: QMI/net
--		 * 5: NMEA
-+		 * Huawei devices map functions by subclass + protocol
-+		 * instead of interface numbers. The protocol identify
-+		 * a specific function, while the subclass indicate a
-+		 * specific firmware source
-+		 *
-+		 * This is a blacklist of functions known to be
-+		 * non-serial.  The rest are assumed to be serial and
-+		 * will be handled by this driver
- 		 */
--		switch (ifnum) {
--		case 0:
--		case 2:
--			dev_dbg(dev, "Modem port found\n");
--			break;
--		case 1:
--			dev_dbg(dev, "DM/DIAG interface found\n");
--			break;
--		case 5:
--			dev_dbg(dev, "NMEA GPS interface found\n");
--			break;
--		default:
--			/* don't claim any unsupported interface */
-+		switch (intf->desc.bInterfaceProtocol) {
-+			/* QMI combined (qmi_wwan) */
-+		case 0x07:
-+		case 0x37:
-+		case 0x67:
-+			/* QMI data (qmi_wwan) */
-+		case 0x08:
-+		case 0x38:
-+		case 0x68:
-+			/* QMI control (qmi_wwan) */
-+		case 0x09:
-+		case 0x39:
-+		case 0x69:
-+			/* NCM like (huawei_cdc_ncm) */
-+		case 0x16:
-+		case 0x46:
-+		case 0x76:
- 			altsetting = -1;
- 			break;
-+		default:
-+			dev_dbg(dev, "Huawei type serial port found (%02x/%02x/%02x)\n",
-+				intf->desc.bInterfaceClass,
-+				intf->desc.bInterfaceSubClass,
-+				intf->desc.bInterfaceProtocol);
- 		}
- 		break;
- 	default:
++	/*
++	 * jprobes use jprobe_return() which skips the normal return
++	 * path of the function, and this messes up the accounting of the
++	 * function graph tracer to get messed up.
++	 *
++	 * Pause function graph tracing while performing the jprobe function.
++	 */
++	pause_graph_tracing();
+ 	return 1;
+ }
+ 
+@@ -646,6 +655,9 @@ int __kprobes longjmp_break_handler(struct kprobe *p, struct pt_regs *regs)
+ 	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
+ 	unsigned long stack;
+ 
++	/* It's OK to start function graph tracing again */
++	unpause_graph_tracing();
++
+ 	stack = (unsigned long) kcb->jprobe_saved_regs.gprs[15];
+ 
+ 	/* Put the regs back */
 -- 
 2.17.1
 
