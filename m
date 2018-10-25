@@ -6,170 +6,118 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02486ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C416C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9DCB21479
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7D86208A3
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="P9hoHSkf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9DCB21479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hd9gh55s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7D86208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731003AbeJYWxW (ORCPT
+        id S1731015AbeJYWxW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 25 Oct 2018 18:53:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35828 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:35874 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729116AbeJYWxU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:53:20 -0400
+        id S1730997AbeJYWxW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:53:22 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1AAC82085B;
-        Thu, 25 Oct 2018 14:20:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BBFD2086D;
+        Thu, 25 Oct 2018 14:20:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477223;
-        bh=rzIYP/HxjVSvM6JjY20sjazP/W8+Kraft4kpjxdt3+E=;
+        s=default; t=1540477224;
+        bh=AABa03m5XFXWk3ATUnUG532r2aenK6OLMTyTPU4GEE0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P9hoHSkf3OgGLVf2tmq43d61TLHhObALk946mZA1B5DulN4nnJL+U2l2jcCzVgCQz
-         Pfr+T9hVUHFweWN/sepL2sTw7VAncMexqYFnE8QXYUN1XvdsOQKdL50+nXqXZ/BHs1
-         5zPPIOtJN4Qxw6/Uc6U5594ek7gcQwN1ivknznWE=
+        b=hd9gh55sSmot+0UM8ogxZmd3g0GKSWjK+YzvUDLN/WjiHIh7nfke1H3Iffe9/Jpb4
+         0iFvZZMcyI7nTxwBbLyJTaaarUgK/Ndeys9GZAot6nn6oXlt7n7Lgfdu2JpDMkdpSS
+         94wN2VaFnRoJlkIh5+pnpPFs4a9R9ThXlY+F9rpY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Filipe Manana <fdmanana@suse.com>, Chris Mason <clm@fb.com>,
+Cc:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 58/98] Btrfs: avoid syncing log in the fast fsync path when not necessary
-Date:   Thu, 25 Oct 2018 10:18:13 -0400
-Message-Id: <20181025141853.214051-58-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 59/98] pinctrl: imx25: ensure that a pin with id i is at position i in the info array
+Date:   Thu, 25 Oct 2018 10:18:14 -0400
+Message-Id: <20181025141853.214051-59-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
 References: <20181025141853.214051-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-[ Upstream commit b659ef027792219b590d67a2baf1643a93727d29 ]
+[ Upstream commit 9911a2d5e9d14e39692b751929a92cb5a1d9d0e0 ]
 
-Commit 3a8b36f37806 ("Btrfs: fix data loss in the fast fsync path") added
-a performance regression for that causes an unnecessary sync of the log
-trees (fs/subvol and root log trees) when 2 consecutive fsyncs are done
-against a file, without no writes or any metadata updates to the inode in
-between them and if a transaction is committed before the second fsync is
-called.
+The code in pinctrl-imx.c only works correctly if in the
+imx_pinctrl_soc_info passed to imx_pinctrl_probe we have:
 
-Huang Ying reported this to lkml (https://lkml.org/lkml/2015/3/18/99)
-after a test sysbench test that measured a -62% decrease of file io
-requests per second for that tests' workload.
+	info->pins[i].number = i
+	conf_reg(info->pins[i]) = 4 * i
 
-The test is:
+(which conf_reg(pin) being the offset of the pin's configuration
+register).
 
-  echo performance > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-  echo performance > /sys/devices/system/cpu/cpu1/cpufreq/scaling_governor
-  echo performance > /sys/devices/system/cpu/cpu2/cpufreq/scaling_governor
-  echo performance > /sys/devices/system/cpu/cpu3/cpufreq/scaling_governor
-  mkfs -t btrfs /dev/sda2
-  mount -t btrfs /dev/sda2 /fs/sda2
-  cd /fs/sda2
-  for ((i = 0; i < 1024; i++)); do fallocate -l 67108864 testfile.$i; done
-  sysbench --test=fileio --max-requests=0 --num-threads=4 --max-time=600 \
-    --file-test-mode=rndwr --file-total-size=68719476736 --file-io-mode=sync \
-    --file-num=1024 run
+When the imx25 specific part was introduced in b4a87c9b966f ("pinctrl:
+pinctrl-imx: add imx25 pinctrl driver") we had:
 
-A test on kvm guest, running a debug kernel gave me the following results:
+	info->pins[i].number = i + 1
+	conf_reg(info->pins[i]) = 4 * i
 
-Without 3a8b36f378060d:             16.01 reqs/sec
-With 3a8b36f378060d:                 3.39 reqs/sec
-With 3a8b36f378060d and this patch: 16.04 reqs/sec
+. Commit 34027ca2bbc6 ("pinctrl: imx25: fix numbering for pins") tried
+to fix that but made the situation:
 
-Reported-by: Huang Ying <ying.huang@intel.com>
-Tested-by: Huang, Ying <ying.huang@intel.com>
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Chris Mason <clm@fb.com>
+	info->pins[i-1].number = i
+	conf_reg(info->pins[i-1]) = 4 * i
+
+which is hardly better but fixed the error seen back then.
+
+So insert another reserved entry in the array to finally yield:
+
+	info->pins[i].number = i
+	conf_reg(info->pins[i]) = 4 * i
+
+Fixes: 34027ca2bbc6 ("pinctrl: imx25: fix numbering for pins")
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/file.c         |  9 ++++++---
- fs/btrfs/ordered-data.c | 14 ++++++++++++++
- fs/btrfs/ordered-data.h |  3 +++
- 3 files changed, 23 insertions(+), 3 deletions(-)
+ drivers/pinctrl/freescale/pinctrl-imx25.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/file.c b/fs/btrfs/file.c
-index 2ad4cb3da8f6..ba37ec6263ca 100644
---- a/fs/btrfs/file.c
-+++ b/fs/btrfs/file.c
-@@ -1879,6 +1879,7 @@ int btrfs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
- 	struct btrfs_log_ctx ctx;
- 	int ret = 0;
- 	bool full_sync = 0;
-+	const u64 len = end - start + 1;
+diff --git a/drivers/pinctrl/freescale/pinctrl-imx25.c b/drivers/pinctrl/freescale/pinctrl-imx25.c
+index b5fabf684632..23e480b5da3e 100644
+--- a/drivers/pinctrl/freescale/pinctrl-imx25.c
++++ b/drivers/pinctrl/freescale/pinctrl-imx25.c
+@@ -26,7 +26,8 @@
+ #include "pinctrl-imx.h"
  
- 	trace_btrfs_sync_file(file, datasync);
- 
-@@ -1907,7 +1908,7 @@ int btrfs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
- 		 * all extents are persisted and the respective file extent
- 		 * items are in the fs/subvol btree.
- 		 */
--		ret = btrfs_wait_ordered_range(inode, start, end - start + 1);
-+		ret = btrfs_wait_ordered_range(inode, start, len);
- 	} else {
- 		/*
- 		 * Start any new ordered operations before starting to log the
-@@ -1979,8 +1980,10 @@ int btrfs_sync_file(struct file *file, loff_t start, loff_t end, int datasync)
- 	 */
- 	smp_mb();
- 	if (btrfs_inode_in_log(inode, root->fs_info->generation) ||
--	    (full_sync && BTRFS_I(inode)->last_trans <=
--	     root->fs_info->last_trans_committed)) {
-+	    (BTRFS_I(inode)->last_trans <=
-+	     root->fs_info->last_trans_committed &&
-+	     (full_sync ||
-+	      !btrfs_have_ordered_extents_in_range(inode, start, len)))) {
- 		/*
- 		 * We'v had everything committed since the last time we were
- 		 * modified so clear this flag in case it was set for whatever
-diff --git a/fs/btrfs/ordered-data.c b/fs/btrfs/ordered-data.c
-index b23d024c0234..4c20199cef62 100644
---- a/fs/btrfs/ordered-data.c
-+++ b/fs/btrfs/ordered-data.c
-@@ -848,6 +848,20 @@ struct btrfs_ordered_extent *btrfs_lookup_ordered_range(struct inode *inode,
- 	return entry;
- }
- 
-+bool btrfs_have_ordered_extents_in_range(struct inode *inode,
-+					 u64 file_offset,
-+					 u64 len)
-+{
-+	struct btrfs_ordered_extent *oe;
-+
-+	oe = btrfs_lookup_ordered_range(inode, file_offset, len);
-+	if (oe) {
-+		btrfs_put_ordered_extent(oe);
-+		return true;
-+	}
-+	return false;
-+}
-+
- /*
-  * lookup and return any extent before 'file_offset'.  NULL is returned
-  * if none is found
-diff --git a/fs/btrfs/ordered-data.h b/fs/btrfs/ordered-data.h
-index 0124bffc775f..a1bce0a5cccc 100644
---- a/fs/btrfs/ordered-data.h
-+++ b/fs/btrfs/ordered-data.h
-@@ -191,6 +191,9 @@ btrfs_lookup_first_ordered_extent(struct inode * inode, u64 file_offset);
- struct btrfs_ordered_extent *btrfs_lookup_ordered_range(struct inode *inode,
- 							u64 file_offset,
- 							u64 len);
-+bool btrfs_have_ordered_extents_in_range(struct inode *inode,
-+					 u64 file_offset,
-+					 u64 len);
- int btrfs_ordered_update_i_size(struct inode *inode, u64 offset,
- 				struct btrfs_ordered_extent *ordered);
- int btrfs_find_ordered_sum(struct inode *inode, u64 offset, u64 disk_bytenr,
+ enum imx25_pads {
+-	MX25_PAD_RESERVE0 = 1,
++	MX25_PAD_RESERVE0 = 0,
++	MX25_PAD_RESERVE1 = 1,
+ 	MX25_PAD_A10 = 2,
+ 	MX25_PAD_A13 = 3,
+ 	MX25_PAD_A14 = 4,
+@@ -169,6 +170,7 @@ enum imx25_pads {
+ /* Pad names for the pinmux subsystem */
+ static const struct pinctrl_pin_desc imx25_pinctrl_pads[] = {
+ 	IMX_PINCTRL_PIN(MX25_PAD_RESERVE0),
++	IMX_PINCTRL_PIN(MX25_PAD_RESERVE1),
+ 	IMX_PINCTRL_PIN(MX25_PAD_A10),
+ 	IMX_PINCTRL_PIN(MX25_PAD_A13),
+ 	IMX_PINCTRL_PIN(MX25_PAD_A14),
 -- 
 2.17.1
 
