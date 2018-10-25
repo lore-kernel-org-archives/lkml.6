@@ -2,159 +2,182 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76307ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:14:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9CFFECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:15:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31EDA20834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:14:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D29C20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:15:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fv90TAN0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31EDA20834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="MLadpXzW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D29C20834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=poorly.run
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727789AbeJZCsO (ORCPT
+        id S1727809AbeJZCtD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 22:48:14 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34694 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727636AbeJZCsN (ORCPT
+        Thu, 25 Oct 2018 22:49:03 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:38560 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727636AbeJZCtD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 22:48:13 -0400
-Received: by mail-wr1-f67.google.com with SMTP id l6-v6so10315322wrt.1;
-        Thu, 25 Oct 2018 11:14:22 -0700 (PDT)
+        Thu, 25 Oct 2018 22:49:03 -0400
+Received: by mail-yb1-f195.google.com with SMTP id v92-v6so4086776ybi.5
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 11:15:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=poorly.run; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=Zek3ExevJkyED5ZqBW92iwlwpZx1bnCaOUOmCfJ19SE=;
-        b=Fv90TAN0PnfvbwtOSbKPN3Moh4mXU/OSf+kL9X1b2mRxTgPZHp+OnZZQ7rD64NFpsT
-         DMTCehDi9GBsgCbxx4DAB2ALOVOcV8Qnro/39i9Dy1r4jINkZfzTmrjk/bfLm8P5JLaL
-         btgQXw58I8GOEowtCTxae+zlFuiOJutFYuzsBM+UM9mrFK4csF+9wGTwMG5FxzyRwMPE
-         a6VJOcgpQEfoQb5oLDlMrl+SN6vrf/Sia0fmnmaV3pqfNOW1JAo8Q9hBbU3aVrTMhe1G
-         6OIp6uSO1m0ye7EkPkrlyFLxXzlACoy6o3fBqwVLifRa3XkxBAqut7X4mFqK5qeqP99B
-         Uhjw==
+        bh=zjL5I9aGOHDTwkatgCVbcie6gKdYigmRcMl+3giZKcE=;
+        b=MLadpXzWw0eZkTgBFZnR33DO3CT1qRccSYZEZj2NmSi5yg5vIIzkzG2hOohf++4nVj
+         s7YDemIkJi31WwwfBwHXYKDSrG4cSVzJHrIIkWvAxEyVPikINUG57cYexCNICxhnHggD
+         8YkWcXwDOqmcfMx+64f2JwM5MSBY0HSUwJuQNFeetan24xKMekDs2p9R63kFvVuZypv6
+         G2iTqe+U0HJywXuu/vi42HtQGwCEMeRqQDVPOtmAoHOSp74YL9L1e4LpeGJmu4VQUjcZ
+         JIfNGJy2sPb5JkmRZ8RzZ+8j274wpU3QEZPs60X36OSRYvjf5y/XF7YxfcSl1oFchI98
+         EblA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Zek3ExevJkyED5ZqBW92iwlwpZx1bnCaOUOmCfJ19SE=;
-        b=Bw7FJv42U3C8mcet+9zqlJqdiw8wib7cA/FmtLkjk3HSqSI8eszDLd53SStrRMCkIv
-         xmBiwDYX/oeN1JW9TTlaCQIE9ioSJt2Oi/waLPq3Eb1TNVVGVkdsVqP+3+dPkGO6rtIv
-         hRBeRD8KK5n+TNkSrtf7EOMt6RbZw+JTXO387nk4d96WGkOG4i5jaUqtc7LT/O+ts0ez
-         cnL0kGwxBY3h6S1mBHstdsyn+ek/SsDpu4q/4Ki+pGXWcOSdMTxwdyAwSZOas8Q71kNQ
-         i2J95sqmzcHUJHS7/JWUT3bp7gFHzh8PWqym7uxaFHZNYsjIZONzx2rXJD1mn6O+Fchh
-         r3wQ==
-X-Gm-Message-State: AGRZ1gLcBLksLPDVCXSsd2CsXhVhnreyVFMy3+Ul1XryL8fF4jWmD4nC
-        CNKEPlLIYg4SXzzPKxdZ9oM=
-X-Google-Smtp-Source: AJdET5dgX+B7rD244EpqmOWjAIX5gDdZ5HvkpbWfyJrEMUUph7/ALBIGxkCgp2TQMZQIvfQ7KIB/DQ==
-X-Received: by 2002:a05:6000:1cb:: with SMTP id t11mr254159wrx.146.1540491261044;
-        Thu, 25 Oct 2018 11:14:21 -0700 (PDT)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id y138-v6sm1065858wmd.2.2018.10.25.11.14.20
+        bh=zjL5I9aGOHDTwkatgCVbcie6gKdYigmRcMl+3giZKcE=;
+        b=Cg5oMMpEbZNvPIXjM1Us+dkT4TL+NRcnqMAEwktv1ihqR4+bYz3jbY/aUPWmlPAAXe
+         8GN08LscGvvOodJbStZ8A7j8yQC02UJdMVGPZ8Rd+epYKpFkeOkvRQmhUPxSt6fZrQ8c
+         JxqIj300smZrOh72bMbMUcaRRgjdOYpoEWEbEg0fthXyEbcL9I5vDLihqj+hOJq1zCC3
+         yjYBKbVcYKjHnTuSS7HWhNdyclQG1wlDrC8JsVUqBVP1J9IQTEm/h2ggqe1sZcMWUi7P
+         cf1AJlYrUdkXjeUhpFAbqNMIaSofjoYpgqw4X3hBjhJK+Qbxd69uJR4WQ+dF7xWBe2pI
+         hiXQ==
+X-Gm-Message-State: AGRZ1gJGyc7tJSZeYK0E2LkDWRkUaZ5EDtpjM7sdsEp6qpJj3l4fjMwE
+        0WY/nztW6++DJpd9WQFQNUefDw==
+X-Google-Smtp-Source: AJdET5fX0clxwfsWIn1mWwOdyBHuyWVM3ghjPwq9Mq3wgUMOiNKFhbBXwNE9eCK5P0S07agJlpKnRA==
+X-Received: by 2002:a25:a509:: with SMTP id h9-v6mr362623ybi.312.1540491312053;
+        Thu, 25 Oct 2018 11:15:12 -0700 (PDT)
+Received: from localhost ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
+        by smtp.gmail.com with ESMTPSA id b19-v6sm3584046ywh.29.2018.10.25.11.15.11
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Oct 2018 11:14:20 -0700 (PDT)
-Date:   Thu, 25 Oct 2018 11:14:18 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     vkoul@kernel.org, dan.j.williams@intel.com,
-        michal.simek@xilinx.com, dmaengine@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] dmaengine: xilinx_dma: Remove __aligned attribute on
- zynqmp_dma_desc_ll
-Message-ID: <20181025181418.GA28946@flashbox>
-References: <20181025180525.28378-1-natechancellor@gmail.com>
- <CAKwvOdn6juo_gfbEBmL2hanOuwbth2gE6bv9_O3AjWsM-WmsWA@mail.gmail.com>
+        Thu, 25 Oct 2018 11:15:11 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 14:15:10 -0400
+From:   Sean Paul <sean@poorly.run>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Sean Paul <seanpaul@chromium.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sandeep Panda <spanda@codeaurora.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        ryandcase@chromium.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 6/6] dt-bindings: drm/panel: simple: Innolux TV123WAM is
+ actually P120ZDG-BF1
+Message-ID: <20181025181510.GN154160@art_vandelay>
+References: <20181022204639.8558-1-dianders@chromium.org>
+ <20181022204639.8558-6-dianders@chromium.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKwvOdn6juo_gfbEBmL2hanOuwbth2gE6bv9_O3AjWsM-WmsWA@mail.gmail.com>
+In-Reply-To: <20181022204639.8558-6-dianders@chromium.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 11:11:22AM -0700, Nick Desaulniers wrote:
-> On Thu, Oct 25, 2018 at 11:06 AM Nathan Chancellor
-> <natechancellor@gmail.com> wrote:
-> >
-> > Clang warns:
-> >
-> > drivers/dma/xilinx/zynqmp_dma.c:166:4: warning: attribute 'aligned' is
-> > ignored, place it after "struct" to apply attribute to type declaration
-> > [-Wignored-attributes]
-> > }; __aligned(64)
-> >    ^
-> > ./include/linux/compiler_types.h:200:38: note: expanded from macro
-> > '__aligned'
-> > #define __aligned(x)            __attribute__((aligned(x)))
-> >                                                ^
-> > 1 warning generated.
-> >
-> > As Nick pointed out in the previous version of this patch, the author
-> > likely intended for this struct to be 8-byte (64-bit) aligned, not
-> > 64-byte, which is the default. Remove the hanging __aligned attribute.
+On Mon, Oct 22, 2018 at 01:46:39PM -0700, Douglas Anderson wrote:
+> As far as I can tell the bindings that were added in commit
+> 9c04400f7ea6 ("dt-bindings: drm/panel: Document Innolux TV123WAM panel
+> bindings") weren't actually for Innolux TV123WAM but were actually for
+> Innolux P120ZDG-BF1.
 > 
-> Here was the v1 discussion, for reference.
-> https://lkml.org/lkml/2018/9/12/4
+> As far as I can tell the Innolux TV123WAM isn't a real panel and but
+> it's a mosh between the TI TV123WAM and the Innolux P120ZDG-BF1.
+> Let's unmosh.
 > 
-> Thanks for sending the update Nathan.  One thing I recommend doing is
-> including the version in the [PATCH] subject line, ie. [PATCH v2].
-> `git format-patch` can do this automatically for you, ex.
-> $ git format-patch -v2 HEAD~
+> Here's my evidence:
 > 
-> >
-> > Fixes: b0cc417c1637 ("dmaengine: Add Xilinx zynqmp dma engine driver support")
-> > Reported-by: Nick Desaulniers <ndesaulniers@google.com>
-> > Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
-> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> > ---
+> * Searching for TV123WAM on the Internet turns up a TI panel.  While
+>   it's possible that an Innolux panel has the same model number as the
+>   TI Panel, it seems a little doubtful.  Looking up the datasheet from
+>   the TI Panel shows that it's 1920 x 1280 and 259.2 mm x 172.8 mm.
 > 
-> Then below this line, you can include the notes about v1 -> v2
-> changes. (interdiff notes to the reviewers that get discarded from the
-> commit message).  I think I've seen you use the versioning before, so
-> sorry if I'm restating something you already know.
+> * As far as I know, the patch adding the Innolux Panel was supposed to
+>   be for the board that's sitting in front of me as I type this
+>   (support for that board is not yet upstream).  On the back of that
+>   panel I see Innolux P120ZDZ-EZ1 rev B1.
 > 
+> * Someone pointed me at a datasheet that's supposed to be for the
+>   panel in front of me (sorry, I can't share the datasheet).  That
+>   datasheet has the string "p120zdg-bf1"
+> 
+> * If I search for "P120ZDG-BF1" on the Internet I get hits for panels
+>   that are 2160x1440.  They don't have datasheets, but the fact that
+>   the resolution matches is a good sign.
+> 
+> While we doing the rename, also mention that no-hpd can be used with
+> this panel.  See the previous patch in this series ("drm/panel:
+> simple: Add "no-hpd" delay for Innolux TV123WAM").
+> 
+> Fixes: 9c04400f7ea6 ("dt-bindings: drm/panel: Document Innolux TV123WAM panel bindings")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> Cc: Sandeep Panda <spanda@codeaurora.org>
+> ---
+> 
+>  .../{innolux,tv123wam.txt => innolux,p120zdg-bf1.txt}     | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+>  rename Documentation/devicetree/bindings/display/panel/{innolux,tv123wam.txt => innolux,p120zdg-bf1.txt} (70%)
+> 
+> diff --git a/Documentation/devicetree/bindings/display/panel/innolux,tv123wam.txt b/Documentation/devicetree/bindings/display/panel/innolux,p120zdg-bf1.txt
+> similarity index 70%
+> rename from Documentation/devicetree/bindings/display/panel/innolux,tv123wam.txt
+> rename to Documentation/devicetree/bindings/display/panel/innolux,p120zdg-bf1.txt
 
-No, that's fine, I completely forgot all the versioning for this patch
-as I was rushing, sorry about that!
+Same concerns here, you might consider leaving a breadcrumb here to point to
+p120zdg-bf1 (noting that the old compatible string will continue to work).
 
-> Thanks for the patch.
-> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-> 
+Again, if robh is Ok with wiping innolux,tv123wam from existance, please ignore
+:)
 
-Thanks for the review!
-Nathan
+Sean
 
-> >  drivers/dma/xilinx/zynqmp_dma.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/dma/xilinx/zynqmp_dma.c b/drivers/dma/xilinx/zynqmp_dma.c
-> > index c74a88b65039..73de6a6179fc 100644
-> > --- a/drivers/dma/xilinx/zynqmp_dma.c
-> > +++ b/drivers/dma/xilinx/zynqmp_dma.c
-> > @@ -163,7 +163,7 @@ struct zynqmp_dma_desc_ll {
-> >         u32 ctrl;
-> >         u64 nxtdscraddr;
-> >         u64 rsvd;
-> > -}; __aligned(64)
-> > +};
-> >
-> >  /**
-> >   * struct zynqmp_dma_desc_sw - Per Transaction structure
-> > --
-> > 2.19.1
-> >
-> 
-> 
+> index a9b35265fa13..513f03466aba 100644
+> --- a/Documentation/devicetree/bindings/display/panel/innolux,tv123wam.txt
+> +++ b/Documentation/devicetree/bindings/display/panel/innolux,p120zdg-bf1.txt
+> @@ -1,20 +1,22 @@
+> -Innolux TV123WAM 12.3 inch eDP 2K display panel
+> +Innolux P120ZDG-BF1 12.02 inch eDP 2K display panel
+>  
+>  This binding is compatible with the simple-panel binding, which is specified
+>  in simple-panel.txt in this directory.
+>  
+>  Required properties:
+> -- compatible: should be "innolux,tv123wam"
+> +- compatible: should be "innolux,p120zdg-bf1"
+>  - power-supply: regulator to provide the supply voltage
+>  
+>  Optional properties:
+>  - enable-gpios: GPIO pin to enable or disable the panel
+>  - backlight: phandle of the backlight device attached to the panel
+> +- no-hpd: If HPD isn't hooked up; add this property.
+>  
+>  Example:
+>  	panel_edp: panel-edp {
+> -		compatible = "innolux,tv123wam";
+> +		compatible = "innolux,p120zdg-bf1";
+>  		enable-gpios = <&msmgpio 31 GPIO_ACTIVE_LOW>;
+>  		power-supply = <&pm8916_l2>;
+>  		backlight = <&backlight>;
+> +		no-hpd;
+>  	};
 > -- 
-> Thanks,
-> ~Nick Desaulniers
+> 2.19.1.568.g152ad8e336-goog
+> 
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
