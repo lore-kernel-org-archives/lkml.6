@@ -2,91 +2,93 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0D70C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:15:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1EA0C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:15:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDB0720831
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:15:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDB0720831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 9AA4120831
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:15:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AA4120831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727363AbeJYVsG (ORCPT
+        id S1727460AbeJYVsK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 17:48:06 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:42204 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727125AbeJYVsG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 17:48:06 -0400
-Received: from fsav404.sakura.ne.jp (fsav404.sakura.ne.jp [133.242.250.103])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9PDF4X2024317;
-        Thu, 25 Oct 2018 22:15:04 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav404.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav404.sakura.ne.jp);
- Thu, 25 Oct 2018 22:15:04 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav404.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157065137.bbtec.net [60.157.65.137])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w9PDExVI024230
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Thu, 25 Oct 2018 22:15:04 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: KASAN: use-after-free Read in task_is_descendant
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     serge@hallyn.com,
-        syzbot <syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com>,
-        jmorris@namei.org, keescook@chromium.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-References: <76013c9e-0664-ef5e-b6c0-d48f6ce5db3c@i-love.sakura.ne.jp>
- <20181022134634.GA7358@redhat.com>
- <201810250215.w9P2Fm2M078167@www262.sakura.ne.jp>
- <20181025111355.GA3725@redhat.com>
- <b0ac67e6-4279-91b3-0178-3176876abe70@i-love.sakura.ne.jp>
- <20181025121709.GD3725@redhat.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <d11bc954-5a30-e6bd-1668-866a187e0aac@i-love.sakura.ne.jp>
-Date:   Thu, 25 Oct 2018 22:14:59 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 25 Oct 2018 17:48:10 -0400
+Received: from mga05.intel.com ([192.55.52.43]:43838 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727125AbeJYVsK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 17:48:10 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2018 06:15:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,424,1534834800"; 
+   d="scan'208";a="102592435"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga001.jf.intel.com with ESMTP; 25 Oct 2018 06:15:24 -0700
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andy.shevchenko@gmail.com>)
+        id 1gFfTv-0003Nh-5x; Thu, 25 Oct 2018 16:15:23 +0300
+Date:   Thu, 25 Oct 2018 16:15:23 +0300
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Dan O'Donovan <dan@emutex.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        carlos.iglesias@emutex.com, Javier Arteaga <javier@emutex.com>
+Subject: Re: [PATCH v2 1/3] mfd: upboard: Add UP2 platform controller driver
+Message-ID: <20181025131523.GY10650@smile.fi.intel.com>
+References: <20180421085009.28773-1-javier@emutex.com>
+ <1539969334-24577-1-git-send-email-dan@emutex.com>
+ <1539969334-24577-2-git-send-email-dan@emutex.com>
+ <CAHp75VdkwfcPdSmB0dYBF_xwwXMqkrLOa1tL0xkOJ4DVcx8h8g@mail.gmail.com>
+ <20181025110505.GA4870@dell>
 MIME-Version: 1.0
-In-Reply-To: <20181025121709.GD3725@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181025110505.GA4870@dell>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/10/25 21:17, Oleg Nesterov wrote:
->>> And yes, task_is_descendant() can hit the dead child, if nothing else it can
->>> be killed. This can explain the kasan report.
->>
->> The kasan is reporting that child->real_parent (or maybe child->real_parent->real_parent
->> or child->real_parent->real_parent->real_parent ...) was pointing to already freed memory,
->> isn't it?
+On Thu, Oct 25, 2018 at 12:05:05PM +0100, Lee Jones wrote:
+> On Sat, 20 Oct 2018, Andy Shevchenko wrote:
+> > On Fri, Oct 19, 2018 at 8:26 PM Dan O'Donovan <dan@emutex.com> wrote:
+
+> > > +       ret = upboard_init_gpio(dev);
+> > > +       if (ret) {
+> > > +               if (ret != -EPROBE_DEFER)
+> > > +                       dev_err(dev, "failed to init GPIOs: %d", ret);
+> > > +               return ret;
+> > > +       }
+> > 
+> > I don't know if probe_err() helper is going to be a part of v4.21
+> > (which this series targets), it would be good to use it.
 > 
-> Yes. and you know, I am all confused. I no longer can understand you :/
+> Interesting.  What does it do?
 
-Why don't we need to check every time like shown below?
-Why checking only once is sufficient?
+The code will tell better than I
+https://lore.kernel.org/lkml/20181017132205.5204-1-a.hajda@samsung.com/
 
---- a/security/yama/yama_lsm.c
-+++ b/security/yama/yama_lsm.c
-@@ -285,7 +285,7 @@ static int task_is_descendant(struct task_struct *parent,
- 	rcu_read_lock();
- 	if (!thread_group_leader(parent))
- 		parent = rcu_dereference(parent->group_leader);
--	while (walker->pid > 0) {
-+	while (pid_alive(walker) && walker->pid > 0) {
- 		if (!thread_group_leader(walker))
- 			walker = rcu_dereference(walker->group_leader);
- 		if (walker == parent) {
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
