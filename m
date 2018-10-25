@@ -2,117 +2,99 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43F09C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 19:59:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 800FFC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 20:00:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFC2020834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 19:59:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFC2020834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3C10720834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 20:00:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C10720834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727543AbeJZEdS (ORCPT
+        id S1727574AbeJZEeK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 00:33:18 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:45455 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725871AbeJZEdS (ORCPT
+        Fri, 26 Oct 2018 00:34:10 -0400
+Received: from s3.sipsolutions.net ([144.76.43.62]:47972 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbeJZEeK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 00:33:18 -0400
-Received: by mail-oi1-f193.google.com with SMTP id e14-v6so4825200oie.12;
-        Thu, 25 Oct 2018 12:59:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=v63zYMrQVkYufRJ7KC8EXtkiQleAdQACsw3XM22niBQ=;
-        b=knLuVGBJfI7PPo9AuXJXmAuDE0n9UsOJo2kLyS30sV2HpA1pyWE7Ms2lCnGvoW/L9F
-         L5evwLycL3wQDfHDe3A//5ORh1i15hjx+VW6QMBxg+GtaaxWpevXOc8RPImvDA/SZBL/
-         C8egKyXSi0g1DwOSv/sA0XUvIrCuvJfujrnT7OcgCQCkI424iVrN2EJHQbZ2FbW9rycx
-         +yoYt3EAcW9F+ORC8kEmQHnRVjvzvzIJ6w1mDLNfGk8J1JgMQOvIbRA//+VvHFiWFpm0
-         Ftme/TWyl1PoQq/AOj27a5gUEAQQmJbMz/nVvB3MI0GR248yPi3IQuCkb9QKde8GKHwP
-         I+PA==
-X-Gm-Message-State: AGRZ1gIYUtnnr9yZvTdBa1UuDYm9w/Sq4uKtaq9FVJfAx0X3P+Hmftf7
-        BR0qXhCWqXxNZC+QdMZ0LA==
-X-Google-Smtp-Source: AJdET5da3h0YFN/u/8it1qgGvjaRObDMJfcJXkXVCc3yQ+iwPouDjlSN+g8MIEgKctijNyo37peYMA==
-X-Received: by 2002:aca:3904:: with SMTP id g4-v6mr360557oia.145.1540497549114;
-        Thu, 25 Oct 2018 12:59:09 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id z199-v6sm3302684oig.32.2018.10.25.12.59.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Oct 2018 12:59:07 -0700 (PDT)
-Date:   Thu, 25 Oct 2018 14:59:07 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Keiji Hayashibara <hayashibara.keiji@socionext.com>
-Cc:     broonie@kernel.org, mark.rutland@arm.com,
-        yamada.masahiro@socionext.com, linux-spi@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        stable@vger.kernel.org, masami.hiramatsu@linaro.org,
-        jaswinder.singh@linaro.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] spi: uniphier: fix incorrect property items
-Message-ID: <20181025195906.GA22391@bogus>
-References: <1540373669-18969-1-git-send-email-hayashibara.keiji@socionext.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1540373669-18969-1-git-send-email-hayashibara.keiji@socionext.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 26 Oct 2018 00:34:10 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.91)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1gFlnS-00011P-M5; Thu, 25 Oct 2018 21:59:58 +0200
+Message-ID: <ea0342ec3d6b9b3504e1110cf1e0d3b1af28d877.camel@sipsolutions.net>
+Subject: Re: [PATCH 3/3] kernel/workqueue: Suppress a false positive lockdep
+ complaint
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Bart Van Assche <bvanassche@acm.org>, Tejun Heo <tj@kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        "tytso@mit.edu" <tytso@mit.edu>
+Date:   Thu, 25 Oct 2018 21:59:38 +0200
+In-Reply-To: <1540482948.66186.21.camel@acm.org> (sfid-20181025_175553_256485_FAC088A9)
+References: <20181025150540.259281-1-bvanassche@acm.org>
+         <20181025150540.259281-4-bvanassche@acm.org>
+         <f7e631f3957f8e4d00b1b2dbf5b660d62d9e45e3.camel@sipsolutions.net>
+         <1540482948.66186.21.camel@acm.org> (sfid-20181025_175553_256485_FAC088A9)
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 06:34:29PM +0900, Keiji Hayashibara wrote:
-> This commit fixes incorrect property because it was different
-> from the actual.
-> The parameters of '#address-cells' and '#size-cells' were removed,
-> and 'interrupts', 'pinctrl-names' and 'pinctrl-0' were added.
-> 
-> Fixes: 4dcd5c2781f3 ("spi: add DT bindings for UniPhier SPI controller")
-> Signed-off-by: Keiji Hayashibara <hayashibara.keiji@socionext.com>
-> ---
->  Documentation/devicetree/bindings/spi/spi-uniphier.txt | 14 ++++++++------
->  1 file changed, 8 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/spi/spi-uniphier.txt b/Documentation/devicetree/bindings/spi/spi-uniphier.txt
-> index 504a4ec..b04e66a 100644
-> --- a/Documentation/devicetree/bindings/spi/spi-uniphier.txt
-> +++ b/Documentation/devicetree/bindings/spi/spi-uniphier.txt
-> @@ -5,18 +5,20 @@ UniPhier SoCs have SCSSI which supports SPI single channel.
->  Required properties:
->   - compatible: should be "socionext,uniphier-scssi"
->   - reg: address and length of the spi master registers
-> - - #address-cells: must be <1>, see spi-bus.txt
-> - - #size-cells: must be <0>, see spi-bus.txt
+On Thu, 2018-10-25 at 08:55 -0700, Bart Van Assche wrote:
 
-How is removing these correct? They are needed if you have any child 
-devices.
+> Please have a look at the call trace in the description of this patch and also
+> at the direct I/O code. The lockdep complaint in the description of this patch
+> really is a false positive. 
 
-> - - clocks: A phandle to the clock for the device.
-> - - resets: A phandle to the reset control for the device.
-> + - interrupts: a single interrupt specifier
-> + - pinctrl-names: should be "default"
-> + - pinctrl-0: pin control state for the default mode
-> + - clocks: a phandle to the clock for the device
-> + - resets: a phandle to the reset control for the device
->  
->  Example:
->  
->  spi0: spi@54006000 {
->  	compatible = "socionext,uniphier-scssi";
->  	reg = <0x54006000 0x100>;
-> -	#address-cells = <1>;
-> -	#size-cells = <0>;
-> +	interrupts = <0 39 4>;
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&pinctrl_spi0>;
->  	clocks = <&peri_clk 11>;
->  	resets = <&peri_rst 11>;
->  };
-> -- 
-> 2.7.4
-> 
+I agree. I just don't agree that it's a false positive because of the
+lockdep tracking of workqueues (which you're essentially saying since
+you want to change it), I think it's a false positive because the user
+isn't telling lockdep properly what it's doing.
+
+> What I think needs further discussion is on how to
+> address this false positive - track whether or not a work queue has been used
+> or follow Tejun's proposal that I became aware of after I posted this patch,
+> namely introduce a new function for destroying a work queue that skips draining,
+> e.g. destroy_workqueue_skip_drain() (https://lkml.org/lkml/2018/10/24/2).
+
+Agree. Ted's suggestion is basically what I meant in my other email when
+I said:
+
+> So, thinking about this more, can you guarantee (somehow) that the
+> workqueue is empty at this point?
+
+(I hadn't looked at the code then - obviously that's guaranteed)
+
+> Perhaps then we should encode that
+> guarantee into the API, and actually make it WARN_ON() if something is
+> scheduled on it at that point? And then skip lockdep in this case.
+
+So that API I'm talking about is what Ted suggests with
+destroy_never_used_workqueue() or Tejun's suggestion of
+destroy_workqueue_skip_drain(). Either is fine with me, though I'd
+probably think it would make sense to actually check that it really was
+never used, or at least is actually empty right now and thus doesn't
+need the train.
+
+However, I think more generally useful would be the
+destroy_workqueue_nested() API I've proposed in my other reply just
+moments ago, since that could be used in other code with non-empty
+workqueues, as long as you can ensure that there's a guaranteed layering
+of them. Then you could even have two objects A and B of the same class,
+but separate instances, and flush B's workqueue from a work executing on
+A's workqueue, which may come in handy in other places to address false
+positives similar to this one.
+
+johannes
+
