@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C67ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D6DFC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:17:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E62B720834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:17:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D78A20868
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:17:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="E/j238ck"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E62B720834
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y0YbOERi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D78A20868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729561AbeJYWuN (ORCPT
+        id S1727975AbeJYWuP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:50:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59418 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:50:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59440 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729545AbeJYWuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:50:13 -0400
+        id S1729545AbeJYWuO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:50:14 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1590A2085A;
-        Thu, 25 Oct 2018 14:17:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7219620834;
+        Thu, 25 Oct 2018 14:17:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477036;
-        bh=zU+N7MlslCDSZH+rxJAkqz/BOgYYtvHZErf3f9iTFD4=;
+        s=default; t=1540477037;
+        bh=CdOC0fcT4YLQ4Yxvrs37xiOrGnlLn+mI+B+l7gBH6do=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E/j238ckKxGKz6ztXK5hCUoYszyh3ntD/0JYYDuXd9Z1UvIZJfmBaT7GCLZiw1yBC
-         pUpg8J2k8BaabFB/2gsf/7WqJ5KHRUBlNO50fkbHvTLl63UWM2g10hMY/5ZdmjSJ9K
-         0bRen22mK0khlavCeDQbpgS/Svjoa3nwZXEiX23s=
+        b=y0YbOERiUytLd4oN1yoypbeaNR3M1vmUln2jOgMtDhAgfo30pOcUlcZ66BYOPl19U
+         YcmF7cdx1yitU9/BBKSkaukXB8FeA3mH6eyMJUPhgn2B56lnlG9hlgOo3Wx6779Vwu
+         0xspeykqApsvZBqHaXbUGGH88t4kg9YkTuPVUO2I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Paul Bolle <pebolle@tiscali.nl>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     "Steven Rostedt (Red Hat)" <rostedt@goodmis.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 04/65] ser_gigaset: use container_of() instead of detour
-Date:   Thu, 25 Oct 2018 10:16:04 -0400
-Message-Id: <20181025141705.213937-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 05/65] tracing: Skip more functions when doing stack tracing of events
+Date:   Thu, 25 Oct 2018 10:16:05 -0400
+Message-Id: <20181025141705.213937-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141705.213937-1-sashal@kernel.org>
 References: <20181025141705.213937-1-sashal@kernel.org>
@@ -53,73 +52,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Bolle <pebolle@tiscali.nl>
+From: "Steven Rostedt (Red Hat)" <rostedt@goodmis.org>
 
-[ Upstream commit 8d2c3ab4445640957d136caa3629857d63544a2a ]
+[ Upstream commit be54f69c26193de31053190761e521903b89d098 ]
 
-The purpose of gigaset_device_release() is to kfree() the struct
-ser_cardstate that contains our struct device. This is done via a bit of
-a detour. First we make our struct device's driver_data point to the
-container of our struct ser_cardstate (which is a struct cardstate). In
-gigaset_device_release() we then retrieve that driver_data again. And
-after that we finally kfree() the struct ser_cardstate that was saved in
-the struct cardstate.
+ # echo 1 > options/stacktrace
+ # echo 1 > events/sched/sched_switch/enable
+ # cat trace
+          <idle>-0     [002] d..2  1982.525169: <stack trace>
+ => save_stack_trace
+ => __ftrace_trace_stack
+ => trace_buffer_unlock_commit_regs
+ => event_trigger_unlock_commit
+ => trace_event_buffer_commit
+ => trace_event_raw_event_sched_switch
+ => __schedule
+ => schedule
+ => schedule_preempt_disabled
+ => cpu_startup_entry
+ => start_secondary
 
-All of this can be achieved much easier by using container_of() to get
-from our struct device to its container, struct ser_cardstate. Do so.
+The above shows that we are seeing 6 functions before ever making it to the
+caller of the sched_switch event.
 
-Note that at the time the detour was implemented commit b8b2c7d845d5
-("base/platform: assert that dev_pm_domain callbacks are called
-unconditionally") had just entered the tree. That commit disconnected
-our platform_device and our platform_driver. These were reconnected
-again in v4.5-rc2 through commit 25cad69f21f5 ("base/platform: Fix
-platform drivers with no probe callback"). And one of the consequences
-of that fix was that it broke the detour via driver_data. That's because
-it made __device_release_driver() stop being a NOP for our struct device
-and actually do stuff again. One of the things it now does, is setting
-our driver_data to NULL. That, in turn, makes it impossible for
-gigaset_device_release() to get to our struct cardstate. Which has the
-net effect of leaking a struct ser_cardstate at every call of this
-driver's tty close() operation. So using container_of() has the
-additional benefit of actually working.
+ # echo stacktrace > events/sched/sched_switch/trigger
+ # cat trace
+          <idle>-0     [002] d..3  2146.335208: <stack trace>
+ => trace_event_buffer_commit
+ => trace_event_raw_event_sched_switch
+ => __schedule
+ => schedule
+ => schedule_preempt_disabled
+ => cpu_startup_entry
+ => start_secondary
 
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Tested-by: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
-Acked-by: Tilman Schmidt <tilman@imap.cc>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+The stacktrace trigger isn't as bad, because it adds its own skip to the
+stacktracing, but still has two events extra.
+
+One issue is that if the stacktrace passes its own "regs" then there should
+be no addition to the skip, as the regs will not include the functions being
+called. This was an issue that was fixed by commit 7717c6be6999 ("tracing:
+Fix stacktrace skip depth in trace_buffer_unlock_commit_regs()" as adding
+the skip number for kprobes made the probes not have any stack at all.
+
+But since this is only an issue when regs is being used, a skip should be
+added if regs is NULL. Now we have:
+
+ # echo 1 > options/stacktrace
+ # echo 1 > events/sched/sched_switch/enable
+ # cat trace
+          <idle>-0     [000] d..2  1297.676333: <stack trace>
+ => __schedule
+ => schedule
+ => schedule_preempt_disabled
+ => cpu_startup_entry
+ => rest_init
+ => start_kernel
+ => x86_64_start_reservations
+ => x86_64_start_kernel
+
+ # echo stacktrace > events/sched/sched_switch/trigger
+ # cat trace
+          <idle>-0     [002] d..3  1370.759745: <stack trace>
+ => __schedule
+ => schedule
+ => schedule_preempt_disabled
+ => cpu_startup_entry
+ => start_secondary
+
+And kprobes are not touched.
+
+Reported-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/isdn/gigaset/ser-gigaset.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ kernel/trace/trace.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/isdn/gigaset/ser-gigaset.c b/drivers/isdn/gigaset/ser-gigaset.c
-index 74bf1a17ae7c..b90776ef56ec 100644
---- a/drivers/isdn/gigaset/ser-gigaset.c
-+++ b/drivers/isdn/gigaset/ser-gigaset.c
-@@ -373,13 +373,7 @@ static void gigaset_freecshw(struct cardstate *cs)
- 
- static void gigaset_device_release(struct device *dev)
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index e409ddce8754..1a47a64d623f 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -1757,7 +1757,17 @@ void trace_buffer_unlock_commit_regs(struct trace_array *tr,
  {
--	struct cardstate *cs = dev_get_drvdata(dev);
--
--	if (!cs)
--		return;
--	dev_set_drvdata(dev, NULL);
--	kfree(cs->hw.ser);
--	cs->hw.ser = NULL;
-+	kfree(container_of(dev, struct ser_cardstate, dev.dev));
+ 	__buffer_unlock_commit(buffer, event);
+ 
+-	ftrace_trace_stack(tr, buffer, flags, 0, pc, regs);
++	/*
++	 * If regs is not set, then skip the following callers:
++	 *   trace_buffer_unlock_commit_regs
++	 *   event_trigger_unlock_commit
++	 *   trace_event_buffer_commit
++	 *   trace_event_raw_event_sched_switch
++	 * Note, we can still get here via blktrace, wakeup tracer
++	 * and mmiotrace, but that's ok if they lose a function or
++	 * two. They are that meaningful.
++	 */
++	ftrace_trace_stack(tr, buffer, flags, regs ? 0 : 4, pc, regs);
+ 	ftrace_trace_userstack(buffer, flags, pc);
  }
+ EXPORT_SYMBOL_GPL(trace_buffer_unlock_commit_regs);
+@@ -1815,6 +1825,13 @@ static void __ftrace_trace_stack(struct ring_buffer *buffer,
+ 	trace.nr_entries	= 0;
+ 	trace.skip		= skip;
  
- /*
-@@ -408,7 +402,6 @@ static int gigaset_initcshw(struct cardstate *cs)
- 		cs->hw.ser = NULL;
- 		return rc;
- 	}
--	dev_set_drvdata(&cs->hw.ser->dev.dev, cs);
- 
- 	tasklet_init(&cs->write_tasklet,
- 		     gigaset_modem_fill, (unsigned long) cs);
++	/*
++	 * Add two, for this function and the call to save_stack_trace()
++	 * If regs is set, then these functions will not be in the way.
++	 */
++	if (!regs)
++		trace.skip += 2;
++
+ 	/*
+ 	 * Since events can happen in NMIs there's no safe way to
+ 	 * use the per cpu ftrace_stacks. We reserve it and if an interrupt
 -- 
 2.17.1
 
