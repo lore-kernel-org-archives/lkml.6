@@ -2,49 +2,49 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BCD0ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA2E4C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37BD321479
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7156F21479
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VFtT8zUh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37BD321479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="V3HZFBgQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7156F21479
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730519AbeJYWwY (ORCPT
+        id S1730546AbeJYWw0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:52:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34392 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:52:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730453AbeJYWwX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:52:23 -0400
+        id S1728337AbeJYWwZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:52:25 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 91DAE2086D;
-        Thu, 25 Oct 2018 14:19:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E44C42147A;
+        Thu, 25 Oct 2018 14:19:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477165;
-        bh=pWkrmpjONz3J2UxsOyS2hjVuhB66z3RrMORSIDhVbB4=;
+        s=default; t=1540477166;
+        bh=p8r4hgwYwReitI8QUbb/fKtyAeLijvCjr1HhmXDv2Ew=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VFtT8zUhHonLJDf9RrhT71p3ZILoQ79AF1YXsjVSy8Z/tdnEPaPfifRVb1zWzMLAj
-         5F10IeduTchVkA6VkekqxkxlV2HoSNCxo1R1X/BU3NdVrfteS3l22sBYBe4JnEGLeX
-         8ms6fiCWrS7A+OjY2uiviMYHEkIBLpfvK8ZBB8tY=
+        b=V3HZFBgQTwGy/cwd7sm7sNZa/6wgxrHTUCR3Ht91xhFDlEEJRpCcURj/HGVeFDemI
+         XQH3GYtfDHdiIvVU8pob0h+Tyfj0qpnf48TQk7Ymjr/6YTn7i/H8OdczmjSG9lXdzP
+         HAbydaANQU42nlN157FjH9C+gSkfqz24KEtzrgm4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Hans de Goede <hdegoede@redhat.com>,
+Cc:     Vignesh R <vigneshr@ti.com>,
         Kishon Vijay Abraham I <kishon@ti.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 19/98] phy-sun4i-usb: Change disconnect threshold value for sun6i
-Date:   Thu, 25 Oct 2018 10:17:34 -0400
-Message-Id: <20181025141853.214051-19-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 20/98] phy: phy-ti-pipe3: fix inconsistent enumeration of PCIe gen2 cards
+Date:   Thu, 25 Oct 2018 10:17:35 -0400
+Message-Id: <20181025141853.214051-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
 References: <20181025141853.214051-1-sashal@kernel.org>
@@ -53,37 +53,156 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Vignesh R <vigneshr@ti.com>
 
-[ Upstream commit 372400344afb60e275a271f3f5ccce17af0e45cb ]
+[ Upstream commit 0bc09f9cdc589e0b54724096138996a00b19babb ]
 
-The allwinner SDK uses a value of 3 for the disconnect threshold setting on
-sun6i, do the same in the kernel.
+Prior to DRA74x silicon rev 1.1, pcie_pcs register bits 8-15 and bits 16-23
+were used to configure RC delay count for phy1 and phy2 respectively.
+phyid was used as index to distinguish the phys and to configure the delay
+values appropriately.
 
-In my previous experience with sun5i problems getting the threshold right
-is important to avoid usb2 devices being unplugged sometimes going unnoticed.
+As of DRA74x silicon rev 1.1, pcie_pcs register definition has changed.
+Bits 16-23 are used to configure delay values for *both* phy1 and phy2.
 
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+Hence phyid is no longer required.
+
+So, drop id field from ti_pipe3 structure and its subsequent references
+for configuring pcie_pcs register.
+
+Also, pcie_pcs register now needs to be configured with delay value of 0x96
+at bit positions 16-23. See register description of CTRL_CORE_PCIE_PCS in
+ARM572x TRM, SPRUHZ6, October 2014, section 18.5.2.2, table 18-1804.
+
+This is needed to ensure Gen2 cards are enumerated consistently.
+
+DRA72x silicon behaves same way as DRA74x rev 1.1 as far as this functionality
+is considered.
+
+Test results on DRA74x and DRA72x EVMs:
+
+Before patch
+------------
+DRA74x ES 1.0: Gen1 cards work, Gen2 cards do not work (expected result due to
+silicon errata)
+DRA74x ES 1.1: Gen1 cards work, Gen2 cards do not work sometimes due to incorrect
+programming of register
+
+DRA72x: Gen1 cards work, Gen2 cards do not work sometimes due to incorrect
+programming of register
+
+After patch
+-----------
+DRA74x ES 1.0: Gen1 cards work, Gen2 cards do not work (expected result due to
+silicon errata)
+DRA74x ES 1.1: Gen1 cards work, Gen2 cards work consistently.
+
+DRA72x: Gen1 and Gen2 cards enumerate consistently.
+
+Signed-off-by: Vignesh R <vigneshr@ti.com>
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/phy/phy-sun4i-usb.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/phy/phy-omap-control.c       |  7 +++----
+ drivers/phy/phy-ti-pipe3.c           | 10 ++++++----
+ include/linux/phy/omap_control_phy.h |  6 +++---
+ 3 files changed, 12 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/phy/phy-sun4i-usb.c b/drivers/phy/phy-sun4i-usb.c
-index 0baf5efc8a40..1a2b045d6a67 100644
---- a/drivers/phy/phy-sun4i-usb.c
-+++ b/drivers/phy/phy-sun4i-usb.c
-@@ -240,7 +240,8 @@ static int sun4i_usb_phy_probe(struct platform_device *pdev)
- 	else
- 		data->num_phys = 3;
+diff --git a/drivers/phy/phy-omap-control.c b/drivers/phy/phy-omap-control.c
+index c96e8183a8ff..efe724f97e02 100644
+--- a/drivers/phy/phy-omap-control.c
++++ b/drivers/phy/phy-omap-control.c
+@@ -29,10 +29,9 @@
+ /**
+  * omap_control_pcie_pcs - set the PCS delay count
+  * @dev: the control module device
+- * @id: index of the pcie PHY (should be 1 or 2)
+  * @delay: 8 bit delay value
+  */
+-void omap_control_pcie_pcs(struct device *dev, u8 id, u8 delay)
++void omap_control_pcie_pcs(struct device *dev, u8 delay)
+ {
+ 	u32 val;
+ 	struct omap_control_phy	*control_phy;
+@@ -55,8 +54,8 @@ void omap_control_pcie_pcs(struct device *dev, u8 id, u8 delay)
  
--	if (of_device_is_compatible(np, "allwinner,sun4i-a10-usb-phy"))
-+	if (of_device_is_compatible(np, "allwinner,sun4i-a10-usb-phy") ||
-+	    of_device_is_compatible(np, "allwinner,sun6i-a31-usb-phy"))
- 		data->disc_thresh = 3;
- 	else
- 		data->disc_thresh = 2;
+ 	val = readl(control_phy->pcie_pcs);
+ 	val &= ~(OMAP_CTRL_PCIE_PCS_MASK <<
+-		(id * OMAP_CTRL_PCIE_PCS_DELAY_COUNT_SHIFT));
+-	val |= delay << (id * OMAP_CTRL_PCIE_PCS_DELAY_COUNT_SHIFT);
++		OMAP_CTRL_PCIE_PCS_DELAY_COUNT_SHIFT);
++	val |= (delay << OMAP_CTRL_PCIE_PCS_DELAY_COUNT_SHIFT);
+ 	writel(val, control_phy->pcie_pcs);
+ }
+ EXPORT_SYMBOL_GPL(omap_control_pcie_pcs);
+diff --git a/drivers/phy/phy-ti-pipe3.c b/drivers/phy/phy-ti-pipe3.c
+index ab1e22d9a1e8..fd92fc64f5da 100644
+--- a/drivers/phy/phy-ti-pipe3.c
++++ b/drivers/phy/phy-ti-pipe3.c
+@@ -82,7 +82,6 @@ struct ti_pipe3 {
+ 	struct clk		*refclk;
+ 	struct clk		*div_clk;
+ 	struct pipe3_dpll_map	*dpll_map;
+-	u8			id;
+ };
+ 
+ static struct pipe3_dpll_map dpll_map_usb[] = {
+@@ -217,8 +216,13 @@ static int ti_pipe3_init(struct phy *x)
+ 	u32 val;
+ 	int ret = 0;
+ 
++	/*
++	 * Set pcie_pcs register to 0x96 for proper functioning of phy
++	 * as recommended in AM572x TRM SPRUHZ6, section 18.5.2.2, table
++	 * 18-1804.
++	 */
+ 	if (of_device_is_compatible(phy->dev->of_node, "ti,phy-pipe3-pcie")) {
+-		omap_control_pcie_pcs(phy->control_dev, phy->id, 0xF1);
++		omap_control_pcie_pcs(phy->control_dev, 0x96);
+ 		return 0;
+ 	}
+ 
+@@ -347,8 +351,6 @@ static int ti_pipe3_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	if (of_device_is_compatible(node, "ti,phy-pipe3-pcie")) {
+-		if (of_property_read_u8(node, "id", &phy->id) < 0)
+-			phy->id = 1;
+ 
+ 		clk = devm_clk_get(phy->dev, "dpll_ref");
+ 		if (IS_ERR(clk)) {
+diff --git a/include/linux/phy/omap_control_phy.h b/include/linux/phy/omap_control_phy.h
+index e9e6cfbfbb58..eb7d4a135a9e 100644
+--- a/include/linux/phy/omap_control_phy.h
++++ b/include/linux/phy/omap_control_phy.h
+@@ -66,7 +66,7 @@ enum omap_control_usb_mode {
+ #define	OMAP_CTRL_PIPE3_PHY_TX_RX_POWEROFF	0x0
+ 
+ #define	OMAP_CTRL_PCIE_PCS_MASK			0xff
+-#define	OMAP_CTRL_PCIE_PCS_DELAY_COUNT_SHIFT	0x8
++#define	OMAP_CTRL_PCIE_PCS_DELAY_COUNT_SHIFT	16
+ 
+ #define OMAP_CTRL_USB2_PHY_PD		BIT(28)
+ 
+@@ -79,7 +79,7 @@ enum omap_control_usb_mode {
+ void omap_control_phy_power(struct device *dev, int on);
+ void omap_control_usb_set_mode(struct device *dev,
+ 			       enum omap_control_usb_mode mode);
+-void omap_control_pcie_pcs(struct device *dev, u8 id, u8 delay);
++void omap_control_pcie_pcs(struct device *dev, u8 delay);
+ #else
+ 
+ static inline void omap_control_phy_power(struct device *dev, int on)
+@@ -91,7 +91,7 @@ static inline void omap_control_usb_set_mode(struct device *dev,
+ {
+ }
+ 
+-static inline void omap_control_pcie_pcs(struct device *dev, u8 id, u8 delay)
++static inline void omap_control_pcie_pcs(struct device *dev, u8 delay)
+ {
+ }
+ #endif
 -- 
 2.17.1
 
