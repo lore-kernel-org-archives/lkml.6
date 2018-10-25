@@ -7,54 +7,48 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3E59ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:21:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C48ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:21:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69C3120883
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:21:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 758F6214F0
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:21:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ftXH+y9E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69C3120883
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EknW+fKf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 758F6214F0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731351AbeJYWyB (ORCPT
+        id S1731366AbeJYWyE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:54:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36798 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:54:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731324AbeJYWyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:54:00 -0400
+        id S1731324AbeJYWyD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:54:03 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 85AFA20870;
-        Thu, 25 Oct 2018 14:21:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D69120873;
+        Thu, 25 Oct 2018 14:21:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477263;
-        bh=V5XLa/ujWXTx9o5wX86QaxiVenlJpKNxuOvxoCJ3Dvs=;
+        s=default; t=1540477265;
+        bh=MYBLxyrQuMoboMSsB+yel0RZzyLaCVOjytqwrSSLp8w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ftXH+y9EKnwAYrlkNjCC0isLG83Y5+Zw4Joq0ePr3WligGlYWt1pTIgdBJwJ15O5g
-         SEFtB5+TDFK7aSw09p9lEWuyw4BeUnhXNtFH3ZHCDrICK2xAjl3YExMwcJKco6UnQC
-         PjLtYKVZMJH9amJc3NMToGRAhNIJtdSbtHuchLcU=
+        b=EknW+fKfB4a2AZu7G5gC3kJv4cOus8G9saaIxNp1scSegTRvg19AujXWd7CRPaR2q
+         72lD6GvPPZGmraPm3wSfeWjf2eCIHHBkj7f0P8J7SJuU7rnjbnoVgnvkgYiw5OO+A4
+         SIuCzPh/kN6JOsbnVPDQ68GxlFZB8y+thICJJR8c=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Alexander Potapenko <glider@google.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Kostya Serebryany <kcc@google.com>,
+Cc:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Michal Hocko <mhocko@suse.cz>,
+        Andi Kleen <andi@firstfloor.org>,
+        Hugh Dickins <hughd@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sasha.levin@oracle.com>,
-        Stephane Eranian <eranian@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 84/98] perf: Fix PERF_EVENT_IOC_PERIOD deadlock
-Date:   Thu, 25 Oct 2018 10:18:39 -0400
-Message-Id: <20181025141853.214051-84-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 85/98] mm: migrate: hugetlb: putback destination hugepage to active list
+Date:   Thu, 25 Oct 2018 10:18:40 -0400
+Message-Id: <20181025141853.214051-85-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
 References: <20181025141853.214051-1-sashal@kernel.org>
@@ -63,57 +57,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Zijlstra <peterz@infradead.org>
+From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 
-[ Upstream commit 642c2d671ceff40e9453203ea0c66e991e11e249 ]
+[ Upstream commit 3aaa76e125c1dd58c9b599baa8c6021896874c12 ]
 
-Dmitry reported a fairly silly recursive lock deadlock for
-PERF_EVENT_IOC_PERIOD, fix this by explicitly doing the inactive part of
-__perf_event_period() instead of calling that function.
+Since commit bcc54222309c ("mm: hugetlb: introduce page_huge_active")
+each hugetlb page maintains its active flag to avoid a race condition
+betwe= en multiple calls of isolate_huge_page(), but current kernel
+doesn't set the f= lag on a hugepage allocated by migration because the
+proper putback routine isn= 't called.  This means that users could
+still encounter the race referred to by bcc54222309c in this special
+case, so this patch fixes it.
 
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: <stable@vger.kernel.org>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Eric Dumazet <edumazet@google.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Kostya Serebryany <kcc@google.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Sasha Levin <sasha.levin@oracle.com>
-Cc: Stephane Eranian <eranian@google.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Vince Weaver <vincent.weaver@maine.edu>
-Fixes: c7999c6f3fed ("perf: Fix PERF_EVENT_IOC_PERIOD migration race")
-Link: http://lkml.kernel.org/r/20151130115615.GJ17308@twins.programming.kicks-ass.net
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: bcc54222309c ("mm: hugetlb: introduce page_huge_active")
+Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc: Michal Hocko <mhocko@suse.cz>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: <stable@vger.kernel.org>  [4.1.x]
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/events/core.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ mm/migrate.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 1f08f691de59..7b2f9d432fe7 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -3929,7 +3929,14 @@ static int perf_event_period(struct perf_event *event, u64 __user *arg)
- 		goto retry;
- 	}
+diff --git a/mm/migrate.c b/mm/migrate.c
+index 4d743bce5a23..57559f9295f9 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -1077,7 +1077,7 @@ static int unmap_and_move_huge_page(new_page_t get_new_page,
+ 	if (rc != MIGRATEPAGE_SUCCESS && put_new_page)
+ 		put_new_page(new_hpage, private);
+ 	else
+-		put_page(new_hpage);
++		putback_active_hugepage(new_hpage);
  
--	__perf_event_period(&pe);
-+	if (event->attr.freq) {
-+		event->attr.sample_freq = value;
-+	} else {
-+		event->attr.sample_period = value;
-+		event->hw.sample_period = value;
-+	}
-+
-+	local64_set(&event->hw.period_left, 0);
- 	raw_spin_unlock_irq(&ctx->lock);
- 
- 	return 0;
+ 	if (result) {
+ 		if (rc)
 -- 
 2.17.1
 
