@@ -4,147 +4,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76433ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:18:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A985C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4000120834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:18:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04A7D2085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zDnftyW/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4000120834
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DZkriySr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04A7D2085B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730288AbeJYWvp (ORCPT
+        id S1728028AbeJYWv6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:51:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33616 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:51:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33766 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728038AbeJYWvo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:51:44 -0400
+        id S1727979AbeJYWv5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:51:57 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C5312086D;
-        Thu, 25 Oct 2018 14:18:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 889FB20834;
+        Thu, 25 Oct 2018 14:18:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477126;
-        bh=hIvPKx2oc/McEQE50nc1HYzqMBR+VVEEC3YMY/QE7vQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zDnftyW/A3FxGxfJyRxBd8yWI9xz+aRkETQnWMvKz1AD+9r3X2TK4rsYgxacqnjcp
-         pbZEolyHUir/iHi7G/Mr88oIAo20un8A0rZWqjU1Pq2pGxxH9aXrrqQOuuClI5VBEY
-         Cg4JCDc25e9qkovwreqQNxGRVEAyo96QMM6249QM=
+        s=default; t=1540477140;
+        bh=X2F1ddpW/cHBJAuyRJJ8YajEfKByzGL8STVjE7OVe2M=;
+        h=From:To:Cc:Subject:Date:From;
+        b=DZkriySrwkJL54amfxrRc7lZ9JGDWOuMrexNL2Mwxe54INzRgnkiCOm3WS1XIoeT2
+         GxzW+TurD4Oj5uNwWlRNB9FF0oQoh6zm+l+1Wj2gObtVGawtq+7N/djmFw0SP2Evmv
+         kSL15Ft2NHzISW2jNTyZ8vepS15JerDVtgb2yrC0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "Maciej W. Rozycki" <macro@linux-mips.org>,
-        linux-mips@linux-mips.org, Ralf Baechle <ralf@linux-mips.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 65/65] MIPS: DEC: Fix an int-handler.S CPU_DADDI_WORKAROUNDS regression
-Date:   Thu, 25 Oct 2018 10:17:05 -0400
-Message-Id: <20181025141705.213937-65-sashal@kernel.org>
+Cc:     Mike Snitzer <snitzer@redhat.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 01/98] dm thin: restore requested 'error_if_no_space' setting on OODS to WRITE transition
+Date:   Thu, 25 Oct 2018 10:17:16 -0400
+Message-Id: <20181025141853.214051-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181025141705.213937-1-sashal@kernel.org>
-References: <20181025141705.213937-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Maciej W. Rozycki" <macro@linux-mips.org>
+From: Mike Snitzer <snitzer@redhat.com>
 
-[ Upstream commit 68fe55680d0f3342969f49412fceabb90bdfadba ]
+[ Upstream commit 172c238612ebf81cabccc86b788c9209af591f61 ]
 
-Fix a commit 3021773c7c3e ("MIPS: DEC: Avoid la pseudo-instruction in
-delay slots") regression and remove assembly errors:
+A thin-pool that is in out-of-data-space (OODS) mode may transition back
+to write mode -- without the admin adding more space to the thin-pool --
+if/when blocks are released (either by deleting thin devices or
+discarding provisioned blocks).
 
-arch/mips/dec/int-handler.S: Assembler messages:
-arch/mips/dec/int-handler.S:162: Error: Macro used $at after ".set noat"
-arch/mips/dec/int-handler.S:163: Error: Macro used $at after ".set noat"
-arch/mips/dec/int-handler.S:229: Error: Macro used $at after ".set noat"
-arch/mips/dec/int-handler.S:230: Error: Macro used $at after ".set noat"
+But as part of the thin-pool's earlier transition to out-of-data-space
+mode the thin-pool may have set the 'error_if_no_space' flag to true if
+the no_space_timeout expires without more space having been made
+available.  That implementation detail, of changing the pool's
+error_if_no_space setting, needs to be reset back to the default that
+the user specified when the thin-pool's table was loaded.
 
-triggering with with the CPU_DADDI_WORKAROUNDS option set and the DADDIU
-instruction.  This is because with that option in place the instruction
-becomes a macro, which expands to an LI/DADDU (or actually ADDIU/DADDU)
-sequence that uses $at as a temporary register.
+Otherwise we'll drop the user requested behaviour on the floor when this
+out-of-data-space to write mode transition occurs.
 
-With CPU_DADDI_WORKAROUNDS we only support `-msym32' compilation though,
-and this is already enforced in arch/mips/Makefile, so choose the 32-bit
-expansion variant for the supported configurations and then replace the
-64-bit variant with #error just in case.
-
-Fixes: 3021773c7c3e ("MIPS: DEC: Avoid la pseudo-instruction in delay slots")
-Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: stable@vger.kernel.org # 4.8+
-Patchwork: https://patchwork.linux-mips.org/patch/16893/
-Signed-off-by: Ralf Baechle <ralf@linux-mips.org>
+Reported-by: Vivek Goyal <vgoyal@redhat.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+Acked-by: Joe Thornber <ejt@redhat.com>
+Fixes: 2c43fd26e4 ("dm thin: fix missing out-of-data-space to write mode transition if blocks are released")
+Cc: stable@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/dec/int-handler.S | 34 ++++++----------------------------
- 1 file changed, 6 insertions(+), 28 deletions(-)
+ drivers/md/dm-thin.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/mips/dec/int-handler.S b/arch/mips/dec/int-handler.S
-index 554d1da97743..21f4a9fe82fa 100644
---- a/arch/mips/dec/int-handler.S
-+++ b/arch/mips/dec/int-handler.S
-@@ -147,23 +147,12 @@
- 		 * Find irq with highest priority
- 		 */
- 		# open coded PTR_LA t1, cpu_mask_nr_tbl
--#if (_MIPS_SZPTR == 32)
-+#if defined(CONFIG_32BIT) || defined(KBUILD_64BIT_SYM32)
- 		# open coded la t1, cpu_mask_nr_tbl
- 		lui	t1, %hi(cpu_mask_nr_tbl)
- 		addiu	t1, %lo(cpu_mask_nr_tbl)
--
--#endif
--#if (_MIPS_SZPTR == 64)
--		# open coded dla t1, cpu_mask_nr_tbl
--		.set	push
--		.set	noat
--		lui	t1, %highest(cpu_mask_nr_tbl)
--		lui	AT, %hi(cpu_mask_nr_tbl)
--		daddiu	t1, t1, %higher(cpu_mask_nr_tbl)
--		daddiu	AT, AT, %lo(cpu_mask_nr_tbl)
--		dsll	t1, 32
--		daddu	t1, t1, AT
--		.set	pop
-+#else
-+#error GCC `-msym32' option required for 64-bit DECstation builds
- #endif
- 1:		lw	t2,(t1)
- 		nop
-@@ -214,23 +203,12 @@
- 		 * Find irq with highest priority
- 		 */
- 		# open coded PTR_LA t1,asic_mask_nr_tbl
--#if (_MIPS_SZPTR == 32)
-+#if defined(CONFIG_32BIT) || defined(KBUILD_64BIT_SYM32)
- 		# open coded la t1, asic_mask_nr_tbl
- 		lui	t1, %hi(asic_mask_nr_tbl)
- 		addiu	t1, %lo(asic_mask_nr_tbl)
--
--#endif
--#if (_MIPS_SZPTR == 64)
--		# open coded dla t1, asic_mask_nr_tbl
--		.set	push
--		.set	noat
--		lui	t1, %highest(asic_mask_nr_tbl)
--		lui	AT, %hi(asic_mask_nr_tbl)
--		daddiu	t1, t1, %higher(asic_mask_nr_tbl)
--		daddiu	AT, AT, %lo(asic_mask_nr_tbl)
--		dsll	t1, 32
--		daddu	t1, t1, AT
--		.set	pop
-+#else
-+#error GCC `-msym32' option required for 64-bit DECstation builds
- #endif
- 2:		lw	t2,(t1)
- 		nop
+diff --git a/drivers/md/dm-thin.c b/drivers/md/dm-thin.c
+index 68c7102a64c8..936c57b57539 100644
+--- a/drivers/md/dm-thin.c
++++ b/drivers/md/dm-thin.c
+@@ -1909,6 +1909,7 @@ static void set_pool_mode(struct pool *pool, enum pool_mode new_mode)
+ 	case PM_WRITE:
+ 		if (old_mode != new_mode)
+ 			notify_of_pool_mode_change(pool, "write");
++		pool->pf.error_if_no_space = pt->requested_pf.error_if_no_space;
+ 		dm_pool_metadata_read_write(pool->pmd);
+ 		pool->process_bio = process_bio;
+ 		pool->process_discard = process_discard;
 -- 
 2.17.1
 
