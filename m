@@ -4,45 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 624CEECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10684ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:16:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 205222086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:16:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C430820870
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:16:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RlrfKg1/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 205222086D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YPBMu4jo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C430820870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729222AbeJYWs7 (ORCPT
+        id S1729232AbeJYWtC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:48:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57920 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:49:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728175AbeJYWs6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:48:58 -0400
+        id S1728175AbeJYWtB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:49:01 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8174D20848;
-        Thu, 25 Oct 2018 14:16:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC78820854;
+        Thu, 25 Oct 2018 14:16:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540476962;
-        bh=QVOnltH6ZMYEEl1XaQ4h1QFniEtcO+XNrgbkl4lwbJg=;
+        s=default; t=1540476964;
+        bh=fGcguVREpC4h5QJpOQF3U868aKHV1gVM99OwZJtkxjE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RlrfKg1/Ct3CVYNvQGTEfHOEYu2a66rFERYjgh0URAgha8WfbTmu4MiBI0Y3Ioyxo
-         MntPt2mD73bzOlh30HsscB+E2r7EC02l6wZogkHR5BPpxLqnifaqbG7bI+dH06mL1U
-         hKkPAFHMzMXYF6MytUkzZBRsOtlBwEkvf0uJY2L8=
+        b=YPBMu4jo0GvpRDLP/eoKHZ7ByTQYtlLmwJou2yn5/+X4WgbPqKPuPBEXVSoSPMHD9
+         XqAqilBD53qHV6NFCZQDLIpRROxHBctmm6OGLZHwu+ym/CJa6rJXwHM/GBdkHGrNrb
+         qYhHHfsEqowM2oQEiGfN8Ggxrz4ycMTYDoLKyuIE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Josef Bacik <jbacik@fb.com>, Jens Axboe <axboe@fb.com>,
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        David Sterba <dsterba@suse.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 67/98] nbd: only set MSG_MORE when we have more to send
-Date:   Thu, 25 Oct 2018 10:13:52 -0400
-Message-Id: <20181025141423.213774-67-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 68/98] mm/frame_vector.c: release a semaphore in 'get_vaddr_frames()'
+Date:   Thu, 25 Oct 2018 10:13:53 -0400
+Message-Id: <20181025141423.213774-68-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141423.213774-1-sashal@kernel.org>
 References: <20181025141423.213774-1-sashal@kernel.org>
@@ -51,55 +58,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Josef Bacik <jbacik@fb.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-[ Upstream commit d61b7f972dab2a7d187c38254845546dfc8eed85 ]
+[ Upstream commit 1f704fd0d14043e76e80f6b8b2251b9b2cedcca6 ]
 
-A user noticed that write performance was horrible over loopback and we
-traced it to an inversion of when we need to set MSG_MORE.  It should be
-set when we have more bvec's to send, not when we are on the last bvec.
-This patch made the test go from 20 iops to 78k iops.
+A semaphore is acquired before this check, so we must release it before
+leaving.
 
-Signed-off-by: Josef Bacik <jbacik@fb.com>
-Fixes: 429a787be679 ("nbd: fix use-after-free of rq/bio in the xmit path")
-Signed-off-by: Jens Axboe <axboe@fb.com>
+Link: http://lkml.kernel.org/r/20171211211009.4971-1-christophe.jaillet@wanadoo.fr
+Fixes: b7f0554a56f2 ("mm: fail get_vaddr_frames() for filesystem-dax mappings")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Christian Borntraeger <borntraeger@de.ibm.com>
+Cc: David Sterba <dsterba@suse.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/nbd.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ mm/frame_vector.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index 4d30da269060..42a53956aefe 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -269,7 +269,7 @@ static inline int sock_send_bvec(struct nbd_device *nbd, struct bio_vec *bvec,
- static int nbd_send_cmd(struct nbd_device *nbd, struct nbd_cmd *cmd)
- {
- 	struct request *req = blk_mq_rq_from_pdu(cmd);
--	int result, flags;
-+	int result;
- 	struct nbd_request request;
- 	unsigned long size = blk_rq_bytes(req);
- 	struct bio *bio;
-@@ -309,7 +309,6 @@ static int nbd_send_cmd(struct nbd_device *nbd, struct nbd_cmd *cmd)
- 	if (type != NBD_CMD_WRITE)
- 		return 0;
+diff --git a/mm/frame_vector.c b/mm/frame_vector.c
+index 375a103d7a56..d73eed0443f6 100644
+--- a/mm/frame_vector.c
++++ b/mm/frame_vector.c
+@@ -61,8 +61,10 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
+ 	 * get_user_pages_longterm() and disallow it for filesystem-dax
+ 	 * mappings.
+ 	 */
+-	if (vma_is_fsdax(vma))
+-		return -EOPNOTSUPP;
++	if (vma_is_fsdax(vma)) {
++		ret = -EOPNOTSUPP;
++		goto out;
++	}
  
--	flags = 0;
- 	bio = req->bio;
- 	while (bio) {
- 		struct bio *next = bio->bi_next;
-@@ -318,9 +317,8 @@ static int nbd_send_cmd(struct nbd_device *nbd, struct nbd_cmd *cmd)
- 
- 		bio_for_each_segment(bvec, bio, iter) {
- 			bool is_last = !next && bio_iter_last(bvec, iter);
-+			int flags = is_last ? 0 : MSG_MORE;
- 
--			if (is_last)
--				flags = MSG_MORE;
- 			dev_dbg(nbd_to_dev(nbd), "request %p: sending %d bytes data\n",
- 				cmd, bvec.bv_len);
- 			result = sock_send_bvec(nbd, &bvec, flags);
+ 	if (!(vma->vm_flags & (VM_IO | VM_PFNMAP))) {
+ 		vec->got_ref = true;
 -- 
 2.17.1
 
