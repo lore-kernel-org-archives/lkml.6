@@ -2,116 +2,120 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19EA6ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:26:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE9FECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:28:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3B2620824
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:26:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GAENQegQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3B2620824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id BCB2F20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:28:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCB2F20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727236AbeJYI43 (ORCPT
+        id S1726652AbeJYI6b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 04:56:29 -0400
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:38975 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726117AbeJYI42 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 04:56:28 -0400
-Received: by mail-ua1-f67.google.com with SMTP id j38so2583490uae.6
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 17:26:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VfaDUHETRy8/0Wh/vIwSpCThnNBKJKuvSaiBs8l7RiU=;
-        b=GAENQegQFp2kSFQw2iZotCEyEMUCoXLegLYeNCiITfL54JwUbs3Na0cLB//qv0Mf1i
-         lM5r6kzrbVam8BL4KSdMyRbOLy2DZhB50KfIjdZcKr1YyRPGasSs424ISEMqXR2ujWuw
-         G2xjFac0aPwDr9CPk5EzaoLQIN818oVkkusS9+A4CMXitgOom5FFgxHNjV5AKVfWPU1R
-         WWEkCX6iTccupIeTdkwCPUI2sECf4sVpOMhp59mHe0kJiwqBDRvfORi7ypM37MkfSkKZ
-         pSyilKN7AzQ55GNEF4ix5AKeCldPL7N90Sd7+hgz4+XP5c0PK0WgtXrTcsUs0Sn9xIHj
-         yWNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VfaDUHETRy8/0Wh/vIwSpCThnNBKJKuvSaiBs8l7RiU=;
-        b=rNbB/cW85KF08KzWefHuEPcHi8xmKZMQaUPnPtXupyvtvRr/Gm1p0EmvGUHZI6izWv
-         QKr6XrpFZqbY+F8MyFrprdNy54VziyKWsH9ZbXBP8IUiwCDBQ++t8h7fV02HlJfPRGCS
-         h+eaqn3Davu+dp6mFmrFaPbf9NXKTU+W1oktFhY3fLmb/5kel17oIUt2bQZNu9tjl6V1
-         ckIeFQKuxOBoE5uPGWnUgLYO99mAAOHsrvdwja9titYwURcdirqvN3VjmxOr2mkDdfMR
-         nWvEEhzQcourxzlBqG/QQ8n5K0bGnxPsoqfSnepqlCOLZ35LbuRUiwSNsB6DfsAgUL9f
-         CNfg==
-X-Gm-Message-State: AGRZ1gJJr02Pc850Yr0hIt058aoyclzCcW1LDFW5QGre3f+8kBwgkwmL
-        sOqB5rXpWEX8kiQ0tBohWjM25dKvmVjHy9FOuOL3TvgQS/4=
-X-Google-Smtp-Source: AJdET5dje4/Tsr8IcN70uxPSlemqSMBQstiH4E6ED+/MlKfQ707S2VKCc4fxKcdiYhSD4SFPKYjgas5Vyq453eRI9VQ=
-X-Received: by 2002:a9f:3b27:: with SMTP id i39mr2313865uah.101.1540427171082;
- Wed, 24 Oct 2018 17:26:11 -0700 (PDT)
+        Thu, 25 Oct 2018 04:58:31 -0400
+Received: from mga01.intel.com ([192.55.52.88]:62983 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726019AbeJYI6a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 04:58:30 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 17:28:13 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,422,1534834800"; 
+   d="scan'208";a="102425444"
+Received: from chgehman-mobl2.amr.corp.intel.com (HELO [10.251.13.14]) ([10.251.13.14])
+  by orsmga001.jf.intel.com with ESMTP; 24 Oct 2018 17:28:12 -0700
+Subject: Re: [PATCH 05/17] prmem: shorthands for write rare on common types
+To:     Igor Stoppa <igor.stoppa@gmail.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        kernel-hardening@lists.openwall.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     igor.stoppa@huawei.com, Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-6-igor.stoppa@huawei.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <fbb38802-3dc3-4890-c981-724b9096a6be@intel.com>
+Date:   Wed, 24 Oct 2018 17:28:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181024151116.30935-1-kan.liang@linux.intel.com>
- <CABPqkBQEp9SLQuAonW7-c9HzH4bSgUyJGJ5ZZNXHy-0phHvvZQ@mail.gmail.com> <20181025002312.GS3109@worktop.c.hoisthospitality.com>
-In-Reply-To: <20181025002312.GS3109@worktop.c.hoisthospitality.com>
-From:   Stephane Eranian <eranian@google.com>
-Date:   Wed, 24 Oct 2018 17:25:59 -0700
-Message-ID: <CABPqkBR1NTcpD3WxFsk4XZ6mT+jteec3kZBgBTxR5gFUL9Zffw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] perf: Add munmap callback
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     "Liang, Kan" <kan.liang@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Borislav Petkov <bp@alien8.de>, Andi Kleen <ak@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181023213504.28905-6-igor.stoppa@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 5:23 PM Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Wed, Oct 24, 2018 at 12:30:52PM -0700, Stephane Eranian wrote:
-> > Hi,
-> >
-> > On Wed, Oct 24, 2018 at 8:12 AM <kan.liang@linux.intel.com> wrote:
-> > >
-> > > From: Kan Liang <kan.liang@linux.intel.com>
-> > >
-> > > To calculate the physical address, perf needs to walk the pages tables.
-> > > The related mapping may has already been removed from pages table in
-> > > some cases (e.g. large PEBS). The virtual address recorded in the first
-> > > PEBS records may already be unmapped before draining PEBS buffers.
-> > >
-> > > Add a munmap callback to notify the PMU of any unmapping, which only be
-> > > invoked when the munmap is implemented.
-> > >
-> > The need for this new record type extends beyond physical address conversions
-> > and PEBS. A long while ago, someone reported issues with symbolization related
-> > to perf lacking munmap tracking. It had to do with vma merging. I think the
-> > sequence of mmaps was as follows in the problematic case:
-> > 1.   addr1 = mmap(8192);
-> > 2.   munmap(addr1 + 4096, 4096)
-> > 3.   addr2 = mmap(addr1+4096, 4096)
-> >
-> > If successful, that yields addr2 = addr1 + 4096 (could also get the
-> > same without forcing the address).
->
-> That is actually a different problem. And you're right, we never did fix
-> that.
->
-it is a different problem but the solution is the same: PERF_RECORD_UNMAP!
-That's why I mentioned it here. To show that this is needed for more
-than one reason ;-)
+On 10/23/18 2:34 PM, Igor Stoppa wrote:
+> Wrappers around the basic write rare functionality, addressing several
+> common data types found in the kernel, allowing to specify the new
+> values through immediates, like constants and defines.
 
-
-> I agree with you that Kan's Changelog is somewhat cryptic; it took me at
-> least 3 times reading and looking at what the patches actually do to
-> understand :/
+I have to wonder whether this is the right way, or whether a
+size-agnostic function like put_user() is the right way.  put_user() is
+certainly easier to use.
