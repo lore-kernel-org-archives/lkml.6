@@ -2,120 +2,95 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDE9FECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B97E2ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:31:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCB2F20834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:28:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCB2F20834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 567EB20824
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:31:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FErjD/W7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 567EB20824
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726652AbeJYI6b (ORCPT
+        id S1726508AbeJYJB7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 04:58:31 -0400
-Received: from mga01.intel.com ([192.55.52.88]:62983 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726019AbeJYI6a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 04:58:30 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 17:28:13 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,422,1534834800"; 
-   d="scan'208";a="102425444"
-Received: from chgehman-mobl2.amr.corp.intel.com (HELO [10.251.13.14]) ([10.251.13.14])
-  by orsmga001.jf.intel.com with ESMTP; 24 Oct 2018 17:28:12 -0700
-Subject: Re: [PATCH 05/17] prmem: shorthands for write rare on common types
-To:     Igor Stoppa <igor.stoppa@gmail.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        kernel-hardening@lists.openwall.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     igor.stoppa@huawei.com, Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-6-igor.stoppa@huawei.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <fbb38802-3dc3-4890-c981-724b9096a6be@intel.com>
-Date:   Wed, 24 Oct 2018 17:28:12 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 25 Oct 2018 05:01:59 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:42890 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726117AbeJYJB7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 05:01:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=CgC4g0mll3ZZWqx4PkJGZeMlKrBWbcp3tZ2wKgX2aUo=; b=FErjD/W7EKmLANk8bT0AXqQ+9
+        N/uKe1/Ar/eRnaJopl3bSIim2cjjpHkiSiVWZ+gLX3LyxnGWAKSq9IxJee06CfapnuoNclAeBngkn
+        fnw+opUE+jYK/C/gHD4SIADzFji43Ozv+6FEEycAyW3NlxjtXKXK0kzY1GBFZ2FyKR2ouGbMOGAr0
+        Tlef1J0AC+6Yf4XUDeU0Yp7hV7zzCGWqK8cJW48msC4Q9Vd1q/ib00Fid+2mZ6PveCpJuxqnGu54G
+        Sgez83uTTZb5xP6SZVNRhb+jYzxVYZUFSq50JrbhynlUT4eONvG03m/ZfxVrVWw+gNIktzoLITd96
+        MQz9HwqEw==;
+Received: from [167.98.65.38] (helo=worktop)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gFTYj-0002Up-Dm; Thu, 25 Oct 2018 00:31:33 +0000
+Received: by worktop (Postfix, from userid 1000)
+        id C92CD6E0794; Thu, 25 Oct 2018 02:31:30 +0200 (CEST)
+Date:   Thu, 25 Oct 2018 02:31:30 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Andi Kleen <ak@linux.intel.com>
+Cc:     "Liang, Kan" <kan.liang@linux.intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org,
+        bp@alien8.de, Stephane Eranian <eranian@google.com>
+Subject: Re: [PATCH 1/2] perf: Add munmap callback
+Message-ID: <20181025003130.GU3109@worktop.c.hoisthospitality.com>
+References: <20181024151116.30935-1-kan.liang@linux.intel.com>
+ <20181024162334.GG6218@tassilo.jf.intel.com>
+ <20181024163208.GC15106@kernel.org>
+ <18d5fcf4-84b2-806c-eb2c-787b96e0fb90@linux.intel.com>
+ <20181024182854.GH6218@tassilo.jf.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20181023213504.28905-6-igor.stoppa@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181024182854.GH6218@tassilo.jf.intel.com>
+User-Agent: Mutt/1.5.22.1 (2013-10-16)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/23/18 2:34 PM, Igor Stoppa wrote:
-> Wrappers around the basic write rare functionality, addressing several
-> common data types found in the kernel, allowing to specify the new
-> values through immediates, like constants and defines.
+On Wed, Oct 24, 2018 at 11:28:54AM -0700, Andi Kleen wrote:
+> > > void perf_event_mmap(struct vm_area_struct *vma)
+> > > {
+> > >          struct perf_mmap_event mmap_event;
+> > > 
+> > >          if (!atomic_read(&nr_mmap_events))
+> > >                  return;
+> > > <SNIP>
+> > > }
+> > > 
+> > 
+> > Thanks. I'll add the nr_mmap_events check in V2.
+> 
+> No, that's the wrong check here. The PEBS flush is independent of mmap
+> events being requested.
+> 
+> If anything would need to check for any PEBS events active, which
+> would need a new counter.  I think the easiest is to just check if 
+> this_cpu_ptr(&sched_cb_list)
+> is empty, which should be good enough.
 
-I have to wonder whether this is the right way, or whether a
-size-agnostic function like put_user() is the right way.  put_user() is
-certainly easier to use.
+It is just the CLI+STI, not PUSHF;CLI+POPF that are required and that is
+a lot cheaper already. Also, you need to have preemption disabled in
+order to check the per-cpu cb list.
+
+So I don't think it really makes much sense to try and frob a fast path
+in there.
