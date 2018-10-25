@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1EA2ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3C1AC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B2A920883
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B382A214E0
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WLmf06Ld"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B2A920883
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vOF2C+lZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B382A214E0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731201AbeJYWxq (ORCPT
+        id S1731230AbeJYWxs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:53:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36348 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:53:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731163AbeJYWxo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:53:44 -0400
+        id S1731177AbeJYWxq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:53:46 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 589FE20883;
-        Thu, 25 Oct 2018 14:20:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 063E72146E;
+        Thu, 25 Oct 2018 14:20:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477245;
-        bh=XHpsIHIpyVL7vf9C+lA0UdvojbaiVRRNTLpi5oKumPw=;
+        s=default; t=1540477248;
+        bh=wMe0aFY0e7klt9rOMgeXIbLJQc3RKQTBjiDF/Dc/aU4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WLmf06LdNfp519sSJRDbaGjI9gLFtXjbmjiSbvbGEls1jtPB2dVZCd0ur3DEY/fh4
-         Mg9sAysP1gAuBhMNXk7h8JnDRM1qFGu4lrM5Fi6/tqriNXntboP9iexgqpjekXzWuA
-         yLASnPmuU12sZkWXnWFHIsCQR3gVFn0EUB25Z+Q0=
+        b=vOF2C+lZOFvs22z7d7D36OX1eEiAeqcROlOtdMv3gNtQgT1ywsXjDUBZ6QUFDgNqA
+         7z6tZLXPFV69DOXju0fTtXn3dhhzARNGu4vZV8xwiQNpTBdQvmN636YqCoS4t0XtI2
+         wGk6idLkfGEnAAlcLcoYr2NHDsYj2qo9PPsQuOdo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Brian Norris <computersforpeace@gmail.com>,
+Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 73/98] mtd: blkdevs: fix potential deadlock + lockdep warnings
-Date:   Thu, 25 Oct 2018 10:18:28 -0400
-Message-Id: <20181025141853.214051-73-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 75/98] rtlwifi: rtl8821ae: Fix system lockups on boot
+Date:   Thu, 25 Oct 2018 10:18:30 -0400
+Message-Id: <20181025141853.214051-75-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
 References: <20181025141853.214051-1-sashal@kernel.org>
@@ -52,172 +53,140 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Norris <computersforpeace@gmail.com>
+From: Larry Finger <Larry.Finger@lwfinger.net>
 
-[ Upstream commit f3c63795e90f0c6238306883b6c72f14d5355721 ]
+[ Upstream commit 54328e64047a54b8fc2362c2e1f0fa16c90f739f ]
 
-Commit 073db4a51ee4 ("mtd: fix: avoid race condition when accessing
-mtd->usecount") fixed a race condition but due to poor ordering of the
-mutex acquisition, introduced a potential deadlock.
+In commit 1277fa2ab2f9 ("rtlwifi: Remove the clear interrupt routine from all
+drivers"), the code that cleared all interrupt enable bits before setting them
+was removed for all PCI drivers. This fixed an issue that caused TX to be
+blocked for 3-5 seconds. On some RTL8821AE units, this change causes soft
+lockups to occur on boot. For that reason, the portion of the earlier commit
+that applied to rtl8821ae is reverted. Kernels 4.1 and newer are affected.
 
-The deadlock can occur, for example, when rmmod'ing the m25p80 module, which
-will delete one or more MTDs, along with any corresponding mtdblock
-devices. This could potentially race with an acquisition of the block
-device as follows.
+See http://marc.info/?l=linux-wireless&m=144373370103285&w=2 and
+https://bugzilla.opensuse.org/show_bug.cgi?id=944978 for two cases where
+this regression affected user systems. Note that this bug does not appear on
+any of the developer's setups. For those users whose systems are affected
+by the TX blockage, but do not lock up on boot, a module parameter is added
+to disable the interrupt clear
 
- -> blktrans_open()
-    ->  mutex_lock(&dev->lock);
-    ->  mutex_lock(&mtd_table_mutex);
-
- -> del_mtd_device()
-    ->  mutex_lock(&mtd_table_mutex);
-    ->  blktrans_notify_remove() -> del_mtd_blktrans_dev()
-       ->  mutex_lock(&dev->lock);
-
-This is a classic (potential) ABBA deadlock, which can be fixed by
-making the A->B ordering consistent everywhere. There was no real
-purpose to the ordering in the original patch, AFAIR, so this shouldn't
-be a problem. This ordering was actually already present in
-del_mtd_blktrans_dev(), for one, where the function tried to ensure that
-its caller already held mtd_table_mutex before it acquired &dev->lock:
-
-        if (mutex_trylock(&mtd_table_mutex)) {
-                mutex_unlock(&mtd_table_mutex);
-                BUG();
-        }
-
-So, reverse the ordering of acquisition of &dev->lock and &mtd_table_mutex so
-we always acquire mtd_table_mutex first.
-
-Snippets of the lockdep output follow:
-
-  # modprobe -r m25p80
-  [   53.419251]
-  [   53.420838] ======================================================
-  [   53.427300] [ INFO: possible circular locking dependency detected ]
-  [   53.433865] 4.3.0-rc6 #96 Not tainted
-  [   53.437686] -------------------------------------------------------
-  [   53.444220] modprobe/372 is trying to acquire lock:
-  [   53.449320]  (&new->lock){+.+...}, at: [<c043fe4c>] del_mtd_blktrans_dev+0x80/0xdc
-  [   53.457271]
-  [   53.457271] but task is already holding lock:
-  [   53.463372]  (mtd_table_mutex){+.+.+.}, at: [<c0439994>] del_mtd_device+0x18/0x100
-  [   53.471321]
-  [   53.471321] which lock already depends on the new lock.
-  [   53.471321]
-  [   53.479856]
-  [   53.479856] the existing dependency chain (in reverse order) is:
-  [   53.487660]
-  -> #1 (mtd_table_mutex){+.+.+.}:
-  [   53.492331]        [<c043fc5c>] blktrans_open+0x34/0x1a4
-  [   53.497879]        [<c01afce0>] __blkdev_get+0xc4/0x3b0
-  [   53.503364]        [<c01b0bb8>] blkdev_get+0x108/0x320
-  [   53.508743]        [<c01713c0>] do_dentry_open+0x218/0x314
-  [   53.514496]        [<c0180454>] path_openat+0x4c0/0xf9c
-  [   53.519959]        [<c0182044>] do_filp_open+0x5c/0xc0
-  [   53.525336]        [<c0172758>] do_sys_open+0xfc/0x1cc
-  [   53.530716]        [<c000f740>] ret_fast_syscall+0x0/0x1c
-  [   53.536375]
-  -> #0 (&new->lock){+.+...}:
-  [   53.540587]        [<c063f124>] mutex_lock_nested+0x38/0x3cc
-  [   53.546504]        [<c043fe4c>] del_mtd_blktrans_dev+0x80/0xdc
-  [   53.552606]        [<c043f164>] blktrans_notify_remove+0x7c/0x84
-  [   53.558891]        [<c04399f0>] del_mtd_device+0x74/0x100
-  [   53.564544]        [<c043c670>] del_mtd_partitions+0x80/0xc8
-  [   53.570451]        [<c0439aa0>] mtd_device_unregister+0x24/0x48
-  [   53.576637]        [<c046ce6c>] spi_drv_remove+0x1c/0x34
-  [   53.582207]        [<c03de0f0>] __device_release_driver+0x88/0x114
-  [   53.588663]        [<c03de19c>] device_release_driver+0x20/0x2c
-  [   53.594843]        [<c03dd9e8>] bus_remove_device+0xd8/0x108
-  [   53.600748]        [<c03dacc0>] device_del+0x10c/0x210
-  [   53.606127]        [<c03dadd0>] device_unregister+0xc/0x20
-  [   53.611849]        [<c046d878>] __unregister+0x10/0x20
-  [   53.617211]        [<c03da868>] device_for_each_child+0x50/0x7c
-  [   53.623387]        [<c046eae8>] spi_unregister_master+0x58/0x8c
-  [   53.629578]        [<c03e12f0>] release_nodes+0x15c/0x1c8
-  [   53.635223]        [<c03de0f8>] __device_release_driver+0x90/0x114
-  [   53.641689]        [<c03de900>] driver_detach+0xb4/0xb8
-  [   53.647147]        [<c03ddc78>] bus_remove_driver+0x4c/0xa0
-  [   53.652970]        [<c00cab50>] SyS_delete_module+0x11c/0x1e4
-  [   53.658976]        [<c000f740>] ret_fast_syscall+0x0/0x1c
-  [   53.664621]
-  [   53.664621] other info that might help us debug this:
-  [   53.664621]
-  [   53.672979]  Possible unsafe locking scenario:
-  [   53.672979]
-  [   53.679169]        CPU0                    CPU1
-  [   53.683900]        ----                    ----
-  [   53.688633]   lock(mtd_table_mutex);
-  [   53.692383]                                lock(&new->lock);
-  [   53.698306]                                lock(mtd_table_mutex);
-  [   53.704658]   lock(&new->lock);
-  [   53.707946]
-  [   53.707946]  *** DEADLOCK ***
-
-Fixes: 073db4a51ee4 ("mtd: fix: avoid race condition when accessing mtd->usecount")
-Reported-by: Felipe Balbi <balbi@ti.com>
-Tested-by: Felipe Balbi <balbi@ti.com>
-Signed-off-by: Brian Norris <computersforpeace@gmail.com>
-Cc: <stable@vger.kernel.org>
+Fixes: 1277fa2ab2f9 ("rtlwifi: Remove the clear interrupt routine from all drivers")
+Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
+Cc: Stable <stable@vger.kernel.org> [V4.1+]
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mtd/mtd_blkdevs.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/net/wireless/rtlwifi/pci.h          |  2 ++
+ drivers/net/wireless/rtlwifi/rtl8821ae/hw.c | 17 +++++++++++++++++
+ drivers/net/wireless/rtlwifi/rtl8821ae/sw.c |  5 +++++
+ drivers/net/wireless/rtlwifi/wifi.h         |  3 +++
+ 4 files changed, 27 insertions(+)
 
-diff --git a/drivers/mtd/mtd_blkdevs.c b/drivers/mtd/mtd_blkdevs.c
-index 3e3aa17ee3bd..6368300f3fbe 100644
---- a/drivers/mtd/mtd_blkdevs.c
-+++ b/drivers/mtd/mtd_blkdevs.c
-@@ -195,8 +195,8 @@ static int blktrans_open(struct block_device *bdev, fmode_t mode)
- 	if (!dev)
- 		return -ERESTARTSYS; /* FIXME: busy loop! -arnd*/
+diff --git a/drivers/net/wireless/rtlwifi/pci.h b/drivers/net/wireless/rtlwifi/pci.h
+index d4567d12e07e..5da6703942d9 100644
+--- a/drivers/net/wireless/rtlwifi/pci.h
++++ b/drivers/net/wireless/rtlwifi/pci.h
+@@ -247,6 +247,8 @@ struct rtl_pci {
+ 	/* MSI support */
+ 	bool msi_support;
+ 	bool using_msi;
++	/* interrupt clear before set */
++	bool int_clear;
+ };
  
--	mutex_lock(&dev->lock);
- 	mutex_lock(&mtd_table_mutex);
-+	mutex_lock(&dev->lock);
- 
- 	if (dev->open)
- 		goto unlock;
-@@ -220,8 +220,8 @@ static int blktrans_open(struct block_device *bdev, fmode_t mode)
- 
- unlock:
- 	dev->open++;
--	mutex_unlock(&mtd_table_mutex);
- 	mutex_unlock(&dev->lock);
-+	mutex_unlock(&mtd_table_mutex);
- 	blktrans_dev_put(dev);
- 	return ret;
- 
-@@ -231,8 +231,8 @@ static int blktrans_open(struct block_device *bdev, fmode_t mode)
- error_put:
- 	module_put(dev->tr->owner);
- 	kref_put(&dev->ref, blktrans_dev_release);
--	mutex_unlock(&mtd_table_mutex);
- 	mutex_unlock(&dev->lock);
-+	mutex_unlock(&mtd_table_mutex);
- 	blktrans_dev_put(dev);
- 	return ret;
- }
-@@ -244,8 +244,8 @@ static void blktrans_release(struct gendisk *disk, fmode_t mode)
- 	if (!dev)
- 		return;
- 
--	mutex_lock(&dev->lock);
- 	mutex_lock(&mtd_table_mutex);
-+	mutex_lock(&dev->lock);
- 
- 	if (--dev->open)
- 		goto unlock;
-@@ -259,8 +259,8 @@ static void blktrans_release(struct gendisk *disk, fmode_t mode)
- 		__put_mtd_device(dev->mtd);
+ struct mp_adapter {
+diff --git a/drivers/net/wireless/rtlwifi/rtl8821ae/hw.c b/drivers/net/wireless/rtlwifi/rtl8821ae/hw.c
+index e17b728a21aa..28b8b6a25f6d 100644
+--- a/drivers/net/wireless/rtlwifi/rtl8821ae/hw.c
++++ b/drivers/net/wireless/rtlwifi/rtl8821ae/hw.c
+@@ -2253,11 +2253,28 @@ void rtl8821ae_set_qos(struct ieee80211_hw *hw, int aci)
  	}
- unlock:
--	mutex_unlock(&mtd_table_mutex);
- 	mutex_unlock(&dev->lock);
-+	mutex_unlock(&mtd_table_mutex);
- 	blktrans_dev_put(dev);
  }
  
++static void rtl8821ae_clear_interrupt(struct ieee80211_hw *hw)
++{
++	struct rtl_priv *rtlpriv = rtl_priv(hw);
++	u32 tmp = rtl_read_dword(rtlpriv, REG_HISR);
++
++	rtl_write_dword(rtlpriv, REG_HISR, tmp);
++
++	tmp = rtl_read_dword(rtlpriv, REG_HISRE);
++	rtl_write_dword(rtlpriv, REG_HISRE, tmp);
++
++	tmp = rtl_read_dword(rtlpriv, REG_HSISR);
++	rtl_write_dword(rtlpriv, REG_HSISR, tmp);
++}
++
+ void rtl8821ae_enable_interrupt(struct ieee80211_hw *hw)
+ {
+ 	struct rtl_priv *rtlpriv = rtl_priv(hw);
+ 	struct rtl_pci *rtlpci = rtl_pcidev(rtl_pcipriv(hw));
+ 
++	if (!rtlpci->int_clear)
++		rtl8821ae_clear_interrupt(hw);/*clear it here first*/
++
+ 	rtl_write_dword(rtlpriv, REG_HIMR, rtlpci->irq_mask[0] & 0xFFFFFFFF);
+ 	rtl_write_dword(rtlpriv, REG_HIMRE, rtlpci->irq_mask[1] & 0xFFFFFFFF);
+ 	rtlpci->irq_enabled = true;
+diff --git a/drivers/net/wireless/rtlwifi/rtl8821ae/sw.c b/drivers/net/wireless/rtlwifi/rtl8821ae/sw.c
+index fc92dd6a0d07..80307d187c0a 100644
+--- a/drivers/net/wireless/rtlwifi/rtl8821ae/sw.c
++++ b/drivers/net/wireless/rtlwifi/rtl8821ae/sw.c
+@@ -142,6 +142,7 @@ int rtl8821ae_init_sw_vars(struct ieee80211_hw *hw)
+ 
+ 	rtl8821ae_bt_reg_init(hw);
+ 	rtlpci->msi_support = rtlpriv->cfg->mod_params->msi_support;
++	rtlpci->int_clear = rtlpriv->cfg->mod_params->int_clear;
+ 	rtlpriv->btcoexist.btc_ops = rtl_btc_get_ops_pointer();
+ 
+ 	rtlpriv->dm.dm_initialgain_enable = 1;
+@@ -213,6 +214,7 @@ int rtl8821ae_init_sw_vars(struct ieee80211_hw *hw)
+ 	rtlpriv->psc.swctrl_lps = rtlpriv->cfg->mod_params->swctrl_lps;
+ 	rtlpriv->psc.fwctrl_lps = rtlpriv->cfg->mod_params->fwctrl_lps;
+ 	rtlpci->msi_support = rtlpriv->cfg->mod_params->msi_support;
++	rtlpci->msi_support = rtlpriv->cfg->mod_params->int_clear;
+ 	if (rtlpriv->cfg->mod_params->disable_watchdog)
+ 		pr_info("watchdog disabled\n");
+ 	rtlpriv->psc.reg_fwctrl_lps = 3;
+@@ -334,6 +336,7 @@ static struct rtl_mod_params rtl8821ae_mod_params = {
+ 	.swctrl_lps = false,
+ 	.fwctrl_lps = true,
+ 	.msi_support = true,
++	.int_clear = true,
+ 	.debug = DBG_EMERG,
+ 	.disable_watchdog = 0,
+ };
+@@ -463,6 +466,7 @@ module_param_named(fwlps, rtl8821ae_mod_params.fwctrl_lps, bool, 0444);
+ module_param_named(msi, rtl8821ae_mod_params.msi_support, bool, 0444);
+ module_param_named(disable_watchdog, rtl8821ae_mod_params.disable_watchdog,
+ 		   bool, 0444);
++module_param_named(int_clear, rtl8821ae_mod_params.int_clear, bool, 0444);
+ MODULE_PARM_DESC(swenc, "Set to 1 for software crypto (default 0)\n");
+ MODULE_PARM_DESC(ips, "Set to 0 to not use link power save (default 1)\n");
+ MODULE_PARM_DESC(swlps, "Set to 1 to use SW control power save (default 0)\n");
+@@ -470,6 +474,7 @@ MODULE_PARM_DESC(fwlps, "Set to 1 to use FW control power save (default 1)\n");
+ MODULE_PARM_DESC(msi, "Set to 1 to use MSI interrupts mode (default 1)\n");
+ MODULE_PARM_DESC(debug, "Set debug level (0-5) (default 0)");
+ MODULE_PARM_DESC(disable_watchdog, "Set to 1 to disable the watchdog (default 0)\n");
++MODULE_PARM_DESC(int_clear, "Set to 1 to disable interrupt clear before set (default 0)\n");
+ 
+ static SIMPLE_DEV_PM_OPS(rtlwifi_pm_ops, rtl_pci_suspend, rtl_pci_resume);
+ 
+diff --git a/drivers/net/wireless/rtlwifi/wifi.h b/drivers/net/wireless/rtlwifi/wifi.h
+index 27822fe34d9a..318078645e64 100644
+--- a/drivers/net/wireless/rtlwifi/wifi.h
++++ b/drivers/net/wireless/rtlwifi/wifi.h
+@@ -2212,6 +2212,9 @@ struct rtl_mod_params {
+ 
+ 	/* default 0: 1 means disable */
+ 	bool disable_watchdog;
++
++	/* default 0: 1 means do not disable interrupts */
++	bool int_clear;
+ };
+ 
+ struct rtl_hal_usbint_cfg {
 -- 
 2.17.1
 
