@@ -2,218 +2,102 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 055D7C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 07:59:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5294C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:01:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8F712082D
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 07:59:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8F712082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 615B920834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:01:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cNhWu/5u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 615B920834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727010AbeJYQbS (ORCPT
+        id S1727046AbeJYQdO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 12:31:18 -0400
-Received: from mga18.intel.com ([134.134.136.126]:57475 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726497AbeJYQbR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 12:31:17 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2018 00:59:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,423,1534834800"; 
-   d="scan'208";a="103148211"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga002.jf.intel.com with ESMTP; 25 Oct 2018 00:59:40 -0700
-Received: from [10.125.251.241] (abudanko-mobl.ccr.corp.intel.com [10.125.251.241])
-        by linux.intel.com (Postfix) with ESMTP id 4E2545802E4;
-        Thu, 25 Oct 2018 00:59:38 -0700 (PDT)
-Subject: Re: [PATCH v14 0/3]: perf: reduce data loss when profiling highly
- parallel CPU bound workloads
-To:     Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <d6bd3626-8c7c-ca12-8adf-31fe15726446@linux.intel.com>
- <20181015101748.GB29504@krava>
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <f61f8e1f-c411-923f-96bc-c8075a3a698c@linux.intel.com>
-Date:   Thu, 25 Oct 2018 10:59:36 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 25 Oct 2018 12:33:14 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34140 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726497AbeJYQdO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 12:33:14 -0400
+Received: by mail-wr1-f67.google.com with SMTP id l6-v6so8255507wrt.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 01:01:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=Zq2vgqQJ0aK3Haee47HLHnP8KEUcaakHLOv3bcGbD9I=;
+        b=cNhWu/5uEMF8v84LaefiaCIzNB32r8YEvUyEPqU/32kqASJA+mzCufFsnJuCorpxpq
+         9sq+c5nANC561FeRPXo5c2fW6iTcdl215c5Xaod5+bfY7ElmimpdqHCwXSfD3TkJ9sFJ
+         nxmxwxGfkokZncoBXEZohNAaQbnqlDRYROeR4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=Zq2vgqQJ0aK3Haee47HLHnP8KEUcaakHLOv3bcGbD9I=;
+        b=kifendyz76JTBDVWre6B91ZrfDzAe8HGNpi6bWZiQbwdO2gE09xehu7nJU0FvDIOwG
+         xUAyrR2RUB0vthugtbHFWbKikMywxVeukxucfdh58nV28PR/rxgfDcwdKGI+1CK6L8PZ
+         q0JVXTQKunIkgnHopheg6/noCFzgRsJ/yqfZ2caxUdzKEhnAe36GHigzoTifqsXQre8/
+         qFXJZLnyAoDNrRi73XgXkQqFYybcEWJk2tdD9pejddGsZ+SPQrIr0cjHwrZv/ynzwTqB
+         y/qwZUzTGSjAzZSutnKhnzKuVxdaYwJcev6zN4MQ2gfmWiaxIdW9XhWsxtmeASWX3CmX
+         2W7g==
+X-Gm-Message-State: AGRZ1gLhBpPaizWL5mBuaFjIegWD9+poGNr+L1SylLbRDYJGraUN7djT
+        pbBHYTtxSps74QAG2m2t/IF9kw==
+X-Google-Smtp-Source: AJdET5fGo+prrbcisuhzUNomFXgjEkGEIouKEdWk2grUvE9aRq7j7OQPwm3rvBQvr42P+ght6u/ZGw==
+X-Received: by 2002:adf:9d8d:: with SMTP id p13-v6mr697227wre.12.1540454495844;
+        Thu, 25 Oct 2018 01:01:35 -0700 (PDT)
+Received: from dell ([2.31.167.182])
+        by smtp.gmail.com with ESMTPSA id b8sm5796113wrx.97.2018.10.25.01.01.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Oct 2018 01:01:34 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 09:01:33 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc:     tglx@linutronix.de, marc.zyngier@arm.com, jason@lakedaemon.net,
+        patches@opensource.cirrus.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v13 RESEND 1/2] mfd: madera: Add irqchip data pointer
+ into struct madera
+Message-ID: <20181025080133.GG4939@dell>
+References: <20181016093839.6258-1-rf@opensource.cirrus.com>
+ <20181016093839.6258-2-rf@opensource.cirrus.com>
 MIME-Version: 1.0
-In-Reply-To: <20181015101748.GB29504@krava>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181016093839.6258-2-rf@opensource.cirrus.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Tue, 16 Oct 2018, Richard Fitzgerald wrote:
 
-On 15.10.2018 13:17, Jiri Olsa wrote:
-> On Mon, Oct 15, 2018 at 09:26:09AM +0300, Alexey Budankov wrote:
->>
->> Currently in record mode the tool implements trace writing serially. 
->> The algorithm loops over mapped per-cpu data buffers and stores 
->> ready data chunks into a trace file using write() system call.
->>
->> At some circumstances the kernel may lack free space in a buffer 
->> because the other buffer's half is not yet written to disk due to 
->> some other buffer's data writing by the tool at the moment.
->>
->> Thus serial trace writing implementation may cause the kernel 
->> to loose profiling data and that is what observed when profiling 
->> highly parallel CPU bound workloads on machines with big number 
->> of cores.
->>
->> Experiment with profiling matrix multiplication code executing 128 
->> threads on Intel Xeon Phi (KNM) with 272 cores, like below,
->> demonstrates data loss metrics value of 98%:
->>
->> /usr/bin/time perf record -o /tmp/perf-ser.data -a -N -B -T -R -g \
->>     --call-graph dwarf,1024 --user-regs=IP,SP,BP --switch-events \
->>     -e cycles,instructions,ref-cycles,software/period=1,name=cs,config=0x3/Duk -- \
->>     matrix.gcc
+> Put the pointer to struct regmap_irq_chip_data into the parent
+> mfd structure so that the child irqchip driver does not need
+> a trivial private structure to store only this pointer. As
+> the irqchip child driver already has a pointer to the parent
+> struct madera it can use that to store the pointer. This also
+> means that the irqchip driver does not need a double-indirection
+> from its local struct to get at the parent struct madera.
 > 
-> I ran above on 24 cpu server and could not see the gain,
-> but I guess I'd need much bigger server to see that
-> 
-> anyway, the code is now nicely separated, and given the
-> advertised results below I have no objections
-> 
-> Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+> Signed-off-by: Richard Fitzgerald <rf@opensource.cirrus.com>
+> ---
+>  include/linux/mfd/madera/core.h | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Is the plan Jiri mentioned earlier to have it as a stand alone patch kit 
-or upstream the changes into mainline?
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
-Thanks,
-Alexey
-
-> 
-> thanks,
-> jirka
-> 
-> 
->>
->> Data loss metrics is the ratio lost_time/elapsed_time where 
->> lost_time is the sum of time intervals containing PERF_RECORD_LOST 
->> records and elapsed_time is the elapsed application run time 
->> under profiling.
->>
->> Applying asynchronous trace streaming thru Posix AIO API [1] lowers 
->> data loss metrics value providing 2x improvement (from 98% to ~1%)
->>
->> Asynchronous trace streaming is currently limited to glibc linkage.
->> musl libc [5] also provides Posix AIO API implementation, however 
->> the patchkit is not tested with it. There may be other libc libraries 
->> linked by Perf tool that currently lack Posix AIO API support [2], 
->> [3], [4] so NO_AIO define may be used to limit Perf tool binary to 
->> serial streaming only.
->>
->> ---
->>  Alexey Budankov (3):
->> 	perf util: map data buffer for preserving collected data
->> 	perf record: enable asynchronous trace writing
->> 	perf record: extend trace writing to multi AIO
->>
->>  tools/perf/Documentation/perf-record.txt |   5 +
->>  tools/perf/Makefile.config               |   5 +
->>  tools/perf/Makefile.perf                 |   7 +-
->>  tools/perf/builtin-record.c              | 252 ++++++++++++++++++++++++++++++-
->>  tools/perf/perf.h                        |   1 +
->>  tools/perf/util/evlist.c                 |   6 +-
->>  tools/perf/util/evlist.h                 |   2 +-
->>  tools/perf/util/mmap.c                   | 146 +++++++++++++++++-
->>  tools/perf/util/mmap.h                   |  26 +++-
->>  9 files changed, 439 insertions(+), 11 deletions(-)
->>
->> ---
->>  Changes in v14:
->>  - implement default nr_cblocks_default variable
->>  - fix --aio option handling
->>  Changes in v13:
->>  - named new functions with _aio_ word
->>  - grouped aio functions under single #ifdef HAVE_AIO_SUPPORT
->>  - moved perf_mmap__aio_push() stub into header
->>  - removed trailed white space
->>  Changes in v12:
->>  - applied stub functions design for the whole patch kit
->>  - grouped AIO related data into a struct under struct perf_mmap
->>  - implemented record__aio_get/set_pos(), record__aio_enabled()
->>  - implemented simple --aio option
->>  - extended --aio option to --aio-cblocks=<n>
->>  Changes in v11:
->>  - replacing the both lseek() syscalls in every loop iteration by the only 
->>    two syscalls just before and after the loop at record__mmap_read_evlist() 
->>    and advancing *in-flight* off file pos value at perf_mmap__aio_push()
->>  Changes in v10:
->>  - moved specific code to perf_mmap__aio_mmap(), perf_mmap__aio_munmap();
->>  - adjusted error reporting by using %m
->>  - avoided lseek() setting file pos back in case of record__aio_write() failure
->>  - compacted code selecting between serial and AIO streaming
->>  - optimized call places of record__mmap_read_sync()
->>  - added description of aio-cblocks option into perf-record.txt
->>  Changes in v9:
->>  - enable AIO streaming only when --aio-cblocks option is specified explicitly
->>  - enable AIO based implementation when linking with glibc only
->>  - define NO_AIO to limit Perf binary to serial implementation
->>  Changes in v8:
->>  - run the whole thing thru checkpatch.pl and corrected found issues except
->>    lines longer than 80 symbols
->>  - corrected comments alignment and formatting
->>  - moved multi AIO implementation into 3rd patch in the series
->>  - implemented explicit cblocks array allocation
->>  - split AIO completion check into separate record__aio_complete()
->>  - set nr_cblocks default to 1 and max allowed value to 4
->>  Changes in v7:
->>  - implemented handling record.aio setting from perfconfig file
->>  Changes in v6:
->>  - adjusted setting of priorities for cblocks;
->>  - handled errno == EAGAIN case from aio_write() return;
->>  Changes in v5:
->>  - resolved livelock on perf record -e intel_pt// -- dd if=/dev/zero of=/dev/null count=100000
->>  - data loss metrics decreased from 25% to 2x in trialed configuration;
->>  - reshaped layout of data structures;
->>  - implemented --aio option;
->>  - avoided nanosleep() prior calling aio_suspend();
->>  - switched to per-cpu aio multi buffer record__aio_sync();
->>  - record_mmap_read_sync() now does global sync just before 
->>    switching trace file or collection stop;
->>  Changes in v4:
->>  - converted mmap()/munmap() to malloc()/free() for mmap->data buffer management
->>  - converted void *bf to struct perf_mmap *md in signatures
->>  - written comment in perf_mmap__push() just before perf_mmap__get();
->>  - written comment in record__mmap_read_sync() on possible restarting 
->>    of aio_write() operation and releasing perf_mmap object after all;
->>  - added perf_mmap__put() for the cases of failed aio_write();
->>  Changes in v3:
->>  - written comments about nanosleep(0.5ms) call prior aio_suspend()
->>    to cope with intrusiveness of its implementation in glibc;
->>  - written comments about rationale behind coping profiling data 
->>    into mmap->data buffer;
->>  Changes in v2:
->>  - converted zalloc() to calloc() for allocation of mmap_aio array,
->>  - cleared typo and adjusted fallback branch code;
->>
->> ---
->>
->> [1] http://man7.org/linux/man-pages/man7/aio.7.html
->> [2] https://android.googlesource.com/platform/bionic/+/master/docs/status.md
->> [3] https://www.uclibc.org/
->> [4] https://uclibc-ng.org/
->> [5] https://www.musl-libc.org/
-> 
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
