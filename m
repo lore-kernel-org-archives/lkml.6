@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9CF5ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:16:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E65ADECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:16:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4A972086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:16:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB11D2085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:16:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WiYML2bu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4A972086D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YA9yK2jD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB11D2085B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729198AbeJYWs4 (ORCPT
+        id S1729213AbeJYWs6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:48:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57810 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:48:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728220AbeJYWsz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:48:55 -0400
+        id S1729199AbeJYWs5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:48:57 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F5FB2086D;
-        Thu, 25 Oct 2018 14:15:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D29CA2085B;
+        Thu, 25 Oct 2018 14:15:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540476958;
-        bh=W1qnUrLTwmzQkmX2FdGZ2pBJbNn8wkLInXajz+xyM2E=;
+        s=default; t=1540476960;
+        bh=/KliAhdLhstVlNIk/n02+ifXRuZ2/fSGwMYtLjmr7xo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WiYML2bumWcAdEv2Mxdq5exfcvCLH+Fgjmu8+1Heqjl9JUEvRAFFz0oqRPN7oO31S
-         8wUorLaB40o1dCkOfLiUm4iwf6Q+9drx+MR6XLPL7J4pDcsIulmAUfbfD+qohgmcrr
-         9TSqrghxT5MdRnTbOadCmrKWGJy/YrenV1CYr+ds=
+        b=YA9yK2jDSbE/e5uq2FCTSR61zhjRkcxaiZjc8iuzTSILredOMcMpQ6Zrl3mS4q0s9
+         toNkS9ACETh3Y6QXsP96lkf4XxgKQcIHv58XMtmLPx13R9em+/Q20j9JE7SyPEVXLy
+         VayDOYR3E9wBsAGOJQfqk3bZ6hpwI8tTKXdWYiVg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sabrina Dubroca <sd@queasysnail.net>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     Alex Vesker <valex@mellanox.com>,
+        Leon Romanovsky <leon@kernel.org>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 64/98] ipv6: fix cleanup ordering for ip6_mr failure
-Date:   Thu, 25 Oct 2018 10:13:49 -0400
-Message-Id: <20181025141423.213774-64-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 65/98] IB/ipoib: Fix lockdep issue found on ipoib_ib_dev_heavy_flush
+Date:   Thu, 25 Oct 2018 10:13:50 -0400
+Message-Id: <20181025141423.213774-65-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141423.213774-1-sashal@kernel.org>
 References: <20181025141423.213774-1-sashal@kernel.org>
@@ -53,65 +53,103 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sabrina Dubroca <sd@queasysnail.net>
+From: Alex Vesker <valex@mellanox.com>
 
-[ Upstream commit afe49de44c27a89e8e9631c44b5ffadf6ace65e2 ]
+[ Upstream commit 1f80bd6a6cc8358b81194e1f5fc16449947396ec ]
 
-Commit 15e668070a64 ("ipv6: reorder icmpv6_init() and ip6_mr_init()")
-moved the cleanup label for ipmr_fail, but should have changed the
-contents of the cleanup labels as well. Now we can end up cleaning up
-icmpv6 even though it hasn't been initialized (jump to icmp_fail or
-ipmr_fail).
+The locking order of vlan_rwsem (LOCK A) and then rtnl (LOCK B),
+contradicts other flows such as ipoib_open possibly causing a deadlock.
+To prevent this deadlock heavy flush is called with RTNL locked and
+only then tries to acquire vlan_rwsem.
+This deadlock is possible only when there are child interfaces.
 
-Simply undo things in the reverse order of their initialization.
+[  140.941758] ======================================================
+[  140.946276] WARNING: possible circular locking dependency detected
+[  140.950950] 4.15.0-rc1+ #9 Tainted: G           O
+[  140.954797] ------------------------------------------------------
+[  140.959424] kworker/u32:1/146 is trying to acquire lock:
+[  140.963450]  (rtnl_mutex){+.+.}, at: [<ffffffffc083516a>] __ipoib_ib_dev_flush+0x2da/0x4e0 [ib_ipoib]
+[  140.970006]
+but task is already holding lock:
+[  140.975141]  (&priv->vlan_rwsem){++++}, at: [<ffffffffc0834ee1>] __ipoib_ib_dev_flush+0x51/0x4e0 [ib_ipoib]
+[  140.982105]
+which lock already depends on the new lock.
+[  140.990023]
+the existing dependency chain (in reverse order) is:
+[  140.998650]
+-> #1 (&priv->vlan_rwsem){++++}:
+[  141.005276]        down_read+0x4d/0xb0
+[  141.009560]        ipoib_open+0xad/0x120 [ib_ipoib]
+[  141.014400]        __dev_open+0xcb/0x140
+[  141.017919]        __dev_change_flags+0x1a4/0x1e0
+[  141.022133]        dev_change_flags+0x23/0x60
+[  141.025695]        devinet_ioctl+0x704/0x7d0
+[  141.029156]        sock_do_ioctl+0x20/0x50
+[  141.032526]        sock_ioctl+0x221/0x300
+[  141.036079]        do_vfs_ioctl+0xa6/0x6d0
+[  141.039656]        SyS_ioctl+0x74/0x80
+[  141.042811]        entry_SYSCALL_64_fastpath+0x1f/0x96
+[  141.046891]
+-> #0 (rtnl_mutex){+.+.}:
+[  141.051701]        lock_acquire+0xd4/0x220
+[  141.055212]        __mutex_lock+0x88/0x970
+[  141.058631]        __ipoib_ib_dev_flush+0x2da/0x4e0 [ib_ipoib]
+[  141.063160]        __ipoib_ib_dev_flush+0x71/0x4e0 [ib_ipoib]
+[  141.067648]        process_one_work+0x1f5/0x610
+[  141.071429]        worker_thread+0x4a/0x3f0
+[  141.074890]        kthread+0x141/0x180
+[  141.078085]        ret_from_fork+0x24/0x30
+[  141.081559]
 
-Example of panic (triggered by faking a failure of icmpv6_init):
+other info that might help us debug this:
+[  141.088967]  Possible unsafe locking scenario:
+[  141.094280]        CPU0                    CPU1
+[  141.097953]        ----                    ----
+[  141.101640]   lock(&priv->vlan_rwsem);
+[  141.104771]                                lock(rtnl_mutex);
+[  141.109207]                                lock(&priv->vlan_rwsem);
+[  141.114032]   lock(rtnl_mutex);
+[  141.116800]
+ *** DEADLOCK ***
 
-    kasan: GPF could be caused by NULL-ptr deref or user memory access
-    general protection fault: 0000 [#1] PREEMPT SMP KASAN PTI
-    [...]
-    RIP: 0010:__list_del_entry_valid+0x79/0x160
-    [...]
-    Call Trace:
-     ? lock_release+0x8a0/0x8a0
-     unregister_pernet_operations+0xd4/0x560
-     ? ops_free_list+0x480/0x480
-     ? down_write+0x91/0x130
-     ? unregister_pernet_subsys+0x15/0x30
-     ? down_read+0x1b0/0x1b0
-     ? up_read+0x110/0x110
-     ? kmem_cache_create_usercopy+0x1b4/0x240
-     unregister_pernet_subsys+0x1d/0x30
-     icmpv6_cleanup+0x1d/0x30
-     inet6_init+0x1b5/0x23f
-
-Fixes: 15e668070a64 ("ipv6: reorder icmpv6_init() and ip6_mr_init()")
-Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: b4b678b06f6e ("IB/ipoib: Grab rtnl lock on heavy flush when calling ndo_open/stop")
+Signed-off-by: Alex Vesker <valex@mellanox.com>
+Signed-off-by: Leon Romanovsky <leon@kernel.org>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv6/af_inet6.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/infiniband/ulp/ipoib/ipoib_ib.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/net/ipv6/af_inet6.c b/net/ipv6/af_inet6.c
-index 421379014995..f7b425615c12 100644
---- a/net/ipv6/af_inet6.c
-+++ b/net/ipv6/af_inet6.c
-@@ -1045,11 +1045,11 @@ static int __init inet6_init(void)
- igmp_fail:
- 	ndisc_cleanup();
- ndisc_fail:
--	ip6_mr_cleanup();
-+	icmpv6_cleanup();
- icmp_fail:
--	unregister_pernet_subsys(&inet6_net_ops);
-+	ip6_mr_cleanup();
- ipmr_fail:
--	icmpv6_cleanup();
-+	unregister_pernet_subsys(&inet6_net_ops);
- register_pernet_fail:
- 	sock_unregister(PF_INET6);
- 	rtnl_unregister_all(PF_INET6);
+diff --git a/drivers/infiniband/ulp/ipoib/ipoib_ib.c b/drivers/infiniband/ulp/ipoib/ipoib_ib.c
+index 34122c96522b..3dd5bf6c6c7a 100644
+--- a/drivers/infiniband/ulp/ipoib/ipoib_ib.c
++++ b/drivers/infiniband/ulp/ipoib/ipoib_ib.c
+@@ -1190,13 +1190,10 @@ static void __ipoib_ib_dev_flush(struct ipoib_dev_priv *priv,
+ 		ipoib_ib_dev_down(dev);
+ 
+ 	if (level == IPOIB_FLUSH_HEAVY) {
+-		rtnl_lock();
+ 		if (test_bit(IPOIB_FLAG_INITIALIZED, &priv->flags))
+ 			ipoib_ib_dev_stop(dev);
+ 
+-		result = ipoib_ib_dev_open(dev);
+-		rtnl_unlock();
+-		if (result)
++		if (ipoib_ib_dev_open(dev))
+ 			return;
+ 
+ 		if (netif_queue_stopped(dev))
+@@ -1236,7 +1233,9 @@ void ipoib_ib_dev_flush_heavy(struct work_struct *work)
+ 	struct ipoib_dev_priv *priv =
+ 		container_of(work, struct ipoib_dev_priv, flush_heavy);
+ 
++	rtnl_lock();
+ 	__ipoib_ib_dev_flush(priv, IPOIB_FLUSH_HEAVY, 0);
++	rtnl_unlock();
+ }
+ 
+ void ipoib_ib_dev_cleanup(struct net_device *dev)
 -- 
 2.17.1
 
