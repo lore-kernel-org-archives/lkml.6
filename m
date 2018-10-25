@@ -2,128 +2,125 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BA14C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 16:26:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B85C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 16:26:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D5F020834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 16:26:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="LS3N+ZUb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D5F020834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 1452320834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 16:26:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1452320834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbeJZA7c (ORCPT
+        id S1727750AbeJZBAH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 20:59:32 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:35048 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727497AbeJZA7b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 20:59:31 -0400
-Received: by mail-it1-f196.google.com with SMTP id p64-v6so2531484itp.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 09:26:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Fi1Lxx0k/XQuElJKRTZXwVZiXmz5uvY6jGwK0zrGB+8=;
-        b=LS3N+ZUbVZAp3gGncd9Bsb72uAZO9AKHtUdqjK4wet8m6UZag++y47BMCbowOY35XT
-         HK3V8AR+/RvU60jEm+4KYaOb8Z3Iuk8mkRMq+SAE4VAyagkZIveoA2oquq1bKz3mGP15
-         vbq7iQyEBwcbaLeSfjPYh8hluIqBDgbXOemVSz3Jc63nIJLmkljW6nXrpLbjBExOX6T1
-         Ypq3TiFfqByHBAuE74z7WobD8Zh6i0Xb3VNvdo1Wuewt7SsvHafKzCQ+xFaGDui6vDbk
-         egyq7k7NH3eD39O8s1DEiTyeu5xtPYdDi2xVYmeH51WdblBKdi2n1E5wivzFq2cfO8qZ
-         5omw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Fi1Lxx0k/XQuElJKRTZXwVZiXmz5uvY6jGwK0zrGB+8=;
-        b=LJs+CaiGcGyK9SqhnxM3y0T8tC62SjC3lfFmISnLLcEjHSJooLbmrhIqxSB+dSPgSN
-         zXwNJepewQP+BNzQakDtIt9xlVZtfPamnbHtgkY7SAQ2oM1y9F4y2qamYBEIlQvY+IdM
-         CqkLejswMJfjurj4cg/tD8plWQ8K0Qp5tfm9QyMeG+RMAgtxu9Te0u9qlPddfrYY4yyE
-         87ma3cm7Uc+yKbWsdnnQCbTgGfZpJdASB7SRtpYtHVu7a+XzABmiO0Rreymaj56bU4L0
-         DD8QTj7JDut/XayZUoPhvK5LyCOutfouGEfIgLD91xF2P/mh8XWI9yGMwMzR+RtEzew0
-         N9Kg==
-X-Gm-Message-State: AGRZ1gIeSEaAtpPCHXhpPp+qQ62/qElJrtzSODOM+OsNvx6x+B9McA/W
-        pczEdFG6CVhgdRTgb0P8hwY9GT1zBNi3og==
-X-Google-Smtp-Source: AJdET5eBWJZiwGR8Z1Rg7H5MWq1PVmli64GNiDx5VsesRsX+38lmOXJA7HxL7SWZLh3+meulI+hAwA==
-X-Received: by 2002:a02:3f5d:: with SMTP id c29-v6mr1698286jaf.107.1540484760092;
-        Thu, 25 Oct 2018 09:26:00 -0700 (PDT)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id u4-v6sm3013526iob.0.2018.10.25.09.25.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Oct 2018 09:25:58 -0700 (PDT)
-Subject: Re: [PATCH] blk-mq: ensure hctx to be ran on mapped cpu when issue
- directly
-To:     Jianchao Wang <jianchao.w.wang@oracle.com>
-Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1540394407-20769-1-git-send-email-jianchao.w.wang@oracle.com>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <a25dbb6a-2ffe-a843-abc4-1a6608c17a49@kernel.dk>
-Date:   Thu, 25 Oct 2018 10:25:57 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 25 Oct 2018 21:00:07 -0400
+Received: from anholt.net ([50.246.234.109]:33146 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727411AbeJZBAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 21:00:07 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id 8D60510A12E8;
+        Thu, 25 Oct 2018 09:26:37 -0700 (PDT)
+X-Virus-Scanned: Debian amavisd-new at anholt.net
+Received: from anholt.net ([127.0.0.1])
+        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id GCgBB5lDSKhn; Thu, 25 Oct 2018 09:26:36 -0700 (PDT)
+Received: from eliezer.anholt.net (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id 5BD3310A0F99;
+        Thu, 25 Oct 2018 09:26:36 -0700 (PDT)
+Received: by eliezer.anholt.net (Postfix, from userid 1000)
+        id E3EA82FE1BF0; Thu, 25 Oct 2018 09:26:35 -0700 (PDT)
+From:   Eric Anholt <eric@anholt.net>
+To:     dri-devel@lists.freedesktop.org,
+        =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>
+Cc:     linux-kernel@vger.kernel.org, Eric Anholt <eric@anholt.net>
+Subject: [PATCH] drm/tinydrm: Advertise that we can do only DRM_FORMAT_MOD_LINEAR.
+Date:   Thu, 25 Oct 2018 09:26:35 -0700
+Message-Id: <20181025162635.6689-1-eric@anholt.net>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <1540394407-20769-1-git-send-email-jianchao.w.wang@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/24/18 9:20 AM, Jianchao Wang wrote:
-> When issue request directly and the task is migrated out of the
-> original cpu where it allocates request, hctx could be ran on
-> the cpu where it is not mapped. To fix this, insert the request
-> if BLK_MQ_F_BLOCKING is set, check whether the current is mapped
-> to the hctx and invoke __blk_mq_issue_directly under preemption
-> disabled.
-> 
-> Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
-> ---
->  block/blk-mq.c | 17 ++++++++++++++++-
->  1 file changed, 16 insertions(+), 1 deletion(-)
-> 
-> diff --git a/block/blk-mq.c b/block/blk-mq.c
-> index e3c39ea..0cdc306 100644
-> --- a/block/blk-mq.c
-> +++ b/block/blk-mq.c
-> @@ -1717,6 +1717,12 @@ static blk_status_t __blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
->  {
->  	struct request_queue *q = rq->q;
->  	bool run_queue = true;
-> +	blk_status_t ret;
-> +
-> +	if (hctx->flags & BLK_MQ_F_BLOCKING) {
-> +		bypass_insert = false;
-> +		goto insert;
-> +	}
+Without this, the xserver relies on what the 3D driver exposes and
+assumes that the display can handle it, and then the DRM driver
+happily tries to scan out a tiled format.
 
-I'd do a prep patch that moves the insert logic out of this function,
-and just have the caller do it by return BLK_STS_RESOURCE, for instance.
-It's silly that we have that in both the caller and inside this function.
+Signed-off-by: Eric Anholt <eric@anholt.net>
+---
+ drivers/gpu/drm/drm_simple_kms_helper.c     | 8 ++++++++
+ drivers/gpu/drm/tinydrm/core/tinydrm-core.c | 1 +
+ drivers/gpu/drm/tinydrm/core/tinydrm-pipe.c | 6 +++++-
+ 3 files changed, 14 insertions(+), 1 deletion(-)
 
-> @@ -1734,6 +1740,11 @@ static blk_status_t __blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
->  	if (q->elevator && !bypass_insert)
->  		goto insert;
->  
-> +	if (!cpumask_test_cpu(get_cpu(), hctx->cpumask)) {
-> +		bypass_insert = false;
-> +		goto insert;
-> +	}
-
-Should be fine to just do smp_processor_id() here, as we're inside
-hctx_lock() here.
-
+diff --git a/drivers/gpu/drm/drm_simple_kms_helper.c b/drivers/gpu/drm/drm_simple_kms_helper.c
+index 51fa978f0d23..917812448d1b 100644
+--- a/drivers/gpu/drm/drm_simple_kms_helper.c
++++ b/drivers/gpu/drm/drm_simple_kms_helper.c
+@@ -190,6 +190,13 @@ static void drm_simple_kms_plane_cleanup_fb(struct drm_plane *plane,
+ 	pipe->funcs->cleanup_fb(pipe, state);
+ }
+ 
++static bool drm_simple_kms_format_mod_supported(struct drm_plane *plane,
++						uint32_t format,
++						uint64_t modifier)
++{
++	return modifier == DRM_FORMAT_MOD_LINEAR;
++}
++
+ static const struct drm_plane_helper_funcs drm_simple_kms_plane_helper_funcs = {
+ 	.prepare_fb = drm_simple_kms_plane_prepare_fb,
+ 	.cleanup_fb = drm_simple_kms_plane_cleanup_fb,
+@@ -204,6 +211,7 @@ static const struct drm_plane_funcs drm_simple_kms_plane_funcs = {
+ 	.reset			= drm_atomic_helper_plane_reset,
+ 	.atomic_duplicate_state	= drm_atomic_helper_plane_duplicate_state,
+ 	.atomic_destroy_state	= drm_atomic_helper_plane_destroy_state,
++	.format_mod_supported   = drm_simple_kms_format_mod_supported,
+ };
+ 
+ /**
+diff --git a/drivers/gpu/drm/tinydrm/core/tinydrm-core.c b/drivers/gpu/drm/tinydrm/core/tinydrm-core.c
+index 255341ee4eb9..9af51d982a33 100644
+--- a/drivers/gpu/drm/tinydrm/core/tinydrm-core.c
++++ b/drivers/gpu/drm/tinydrm/core/tinydrm-core.c
+@@ -146,6 +146,7 @@ static int tinydrm_init(struct device *parent, struct tinydrm_device *tdev,
+ 	drm->dev_private = tdev;
+ 	drm_mode_config_init(drm);
+ 	drm->mode_config.funcs = &tinydrm_mode_config_funcs;
++	drm->mode_config.allow_fb_modifiers = true;
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/tinydrm/core/tinydrm-pipe.c b/drivers/gpu/drm/tinydrm/core/tinydrm-pipe.c
+index 7e8e24d0b7a7..eacfc0ec8ff1 100644
+--- a/drivers/gpu/drm/tinydrm/core/tinydrm-pipe.c
++++ b/drivers/gpu/drm/tinydrm/core/tinydrm-pipe.c
+@@ -184,6 +184,10 @@ tinydrm_display_pipe_init(struct tinydrm_device *tdev,
+ 	struct drm_display_mode mode_copy;
+ 	struct drm_connector *connector;
+ 	int ret;
++	static const uint64_t modifiers[] = {
++		DRM_FORMAT_MOD_LINEAR,
++		DRM_FORMAT_MOD_INVALID
++	};
+ 
+ 	drm_mode_copy(&mode_copy, mode);
+ 	ret = tinydrm_rotate_mode(&mode_copy, rotation);
+@@ -202,6 +206,6 @@ tinydrm_display_pipe_init(struct tinydrm_device *tdev,
+ 		return PTR_ERR(connector);
+ 
+ 	return drm_simple_display_pipe_init(drm, &tdev->pipe, funcs, formats,
+-					    format_count, NULL, connector);
++					    format_count, modifiers, connector);
+ }
+ EXPORT_SYMBOL(tinydrm_display_pipe_init);
 -- 
-Jens Axboe
+2.19.1
 
