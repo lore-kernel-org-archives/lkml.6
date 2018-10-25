@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D939C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E77FDECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D05F2085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A598C2085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RabTINq8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D05F2085B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="A+NFFibS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A598C2085B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730886AbeJYWxI (ORCPT
+        id S1730899AbeJYWxJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:53:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35482 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:53:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730254AbeJYWxH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:53:07 -0400
+        id S1730875AbeJYWxI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:53:08 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A046C208A3;
-        Thu, 25 Oct 2018 14:20:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 018612146E;
+        Thu, 25 Oct 2018 14:20:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477209;
-        bh=akc4dMTs9TtQepmontKA627ZOmmO2od+TePIoHcsMXE=;
+        s=default; t=1540477211;
+        bh=kZ5L9bCb2XBc8LgJY/nUEJvcb0N8PcXHe251ztlQ/TQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RabTINq8JsCfhi7Xi6fnM4N06i09CBFSv/8YgxcmTvk2OQE+xY8zbQiX5LbqAfCAR
-         x6uL2h0ZH7PEPDOnExnv8SfFQB5ukpjcPSFyBu0fq+1y28MM3vMKRTHJR3l7TGUHpK
-         dTR+KvFs/KirZrogrvIAYD+Cd0UAjz/JQh0FfccU=
+        b=A+NFFibSRStKgJkBmsSwNobPXqSTeqZdSm+B0jlZXB/pww7DldN0ZNJNTB/UiVb4o
+         sNKennt/+at6auqpvq0I04W2j6rqS0I/klbC03/uQ1TBGHZomeE+skYuanEoyxYuuh
+         XccsorNKiR/yD44HmZg1got81lgwRr6omZQmYCcs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Abhilash Kesavan <a.kesavan@samsung.com>,
         Olof Johansson <olof@lixom.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 49/98] drivers: bus: check cci device tree node status
-Date:   Thu, 25 Oct 2018 10:18:04 -0400
-Message-Id: <20181025141853.214051-49-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 50/98] ARM: dts: disable CCI on exynos5420 based arndale-octa
+Date:   Thu, 25 Oct 2018 10:18:05 -0400
+Message-Id: <20181025141853.214051-50-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
 References: <20181025141853.214051-1-sashal@kernel.org>
@@ -55,37 +55,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Abhilash Kesavan <a.kesavan@samsung.com>
 
-[ Upstream commit 896ddd600ba4a3426aeb11710ae9c28dd7ce68ce ]
+[ Upstream commit 25217fef355174209eff68c0eb438a8af5d7b01c ]
 
-The arm-cci driver completes the probe sequence even if the cci node is
-marked as disabled. Add a check in the driver to honour the cci status
-in the device tree.
+The arndale-octa board was giving "imprecise external aborts" during
+boot-up with MCPM enabled. CCI enablement of the boot cluster was found
+to be the cause of these aborts (possibly because the secure f/w was not
+allowing it). Hence, disable CCI for the arndale-octa board.
 
 Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
-Acked-by: Nicolas Pitre <nico@linaro.org>
-Tested-by: Sudeep Holla <sudeep.holla@arm.com>
+Tested-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
 Tested-by: Kevin Hilman <khilman@linaro.org>
+Tested-by: Tyler Baker <tyler.baker@linaro.org>
 Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/bus/arm-cci.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/exynos5420-arndale-octa.dts | 4 ++++
+ arch/arm/boot/dts/exynos5420.dtsi             | 2 +-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/bus/arm-cci.c b/drivers/bus/arm-cci.c
-index 7af78df241f2..99cad3ac38f2 100644
---- a/drivers/bus/arm-cci.c
-+++ b/drivers/bus/arm-cci.c
-@@ -976,6 +976,9 @@ static int cci_probe(void)
- 	if (!np)
- 		return -ENODEV;
- 
-+	if (!of_device_is_available(np))
-+		return -ENODEV;
+diff --git a/arch/arm/boot/dts/exynos5420-arndale-octa.dts b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+index aa7a7d727a7e..db2c1c4cd900 100644
+--- a/arch/arm/boot/dts/exynos5420-arndale-octa.dts
++++ b/arch/arm/boot/dts/exynos5420-arndale-octa.dts
+@@ -372,3 +372,7 @@
+ &usbdrd_dwc3_1 {
+ 	dr_mode = "host";
+ };
 +
- 	cci_config = of_match_node(arm_cci_matches, np)->data;
- 	if (!cci_config)
- 		return -ENODEV;
++&cci {
++	status = "disabled";
++};
+diff --git a/arch/arm/boot/dts/exynos5420.dtsi b/arch/arm/boot/dts/exynos5420.dtsi
+index 1353a092134f..9655a3efbd15 100644
+--- a/arch/arm/boot/dts/exynos5420.dtsi
++++ b/arch/arm/boot/dts/exynos5420.dtsi
+@@ -120,7 +120,7 @@
+ 		};
+ 	};
+ 
+-	cci@10d20000 {
++	cci: cci@10d20000 {
+ 		compatible = "arm,cci-400";
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
 -- 
 2.17.1
 
