@@ -2,63 +2,62 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75FB5C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:24:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACE0AECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:24:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 387A020840
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:24:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71C0120834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:24:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="flgpJDpI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 387A020840
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FG/AC4Xr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71C0120834
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727475AbeJYS4E (ORCPT
+        id S1727508AbeJYS42 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 14:56:04 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40747 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727437AbeJYS4D (ORCPT
+        Thu, 25 Oct 2018 14:56:28 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53656 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727361AbeJYS42 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 14:56:03 -0400
-Received: by mail-wr1-f67.google.com with SMTP id d2-v6so8714598wro.7
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 03:23:56 -0700 (PDT)
+        Thu, 25 Oct 2018 14:56:28 -0400
+Received: by mail-wm1-f65.google.com with SMTP id l26-v6so968503wmh.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 03:24:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=IFTJBIqkm5uhvn71bhSAZXj0DCHQvpLAR+sphKQTGcw=;
-        b=flgpJDpISvo5WpuJUaeOkjKIiPRByog+BVjwENMM2GR7CAbVgNzu7sB90OdQQr9SZ8
-         HkQ+V93EBJYOXQ+Cu/yDSPRNygPV8RTOvac9osv9RbAJbco7XFjTClX939szK6Q8lr4e
-         /z3Wq4IeFyOfc8hIL4reEKokHAKWPQ0I2bD/Y=
+        bh=F7IVSazowHUBrL5M2zKnkNpecKKgG+YiCxDfdV/9uj4=;
+        b=FG/AC4XrjawLfcygaInCKJwEAav7nv0v+tqcBki6oxLik5uVcKlOp4zCakR1n11w1C
+         skbIXfVjUyqWOf6a6rA/AnC3LKomN1tU8bFCEX1UV7V0nOo54bKXNnXB7H+bQIN9hiAU
+         a1x60RqgQFIxliDMbjFZ9rIeqzHetywXbyCKs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=IFTJBIqkm5uhvn71bhSAZXj0DCHQvpLAR+sphKQTGcw=;
-        b=Ya9tpdPU9Iz2JKtSeguwcSuVJkpl3H3EKvlvXdcvoYZsTpFi0OjMmaSeDiKN2/oEBt
-         rtwA/3M9ndF7z8Z64PnRIaDo3A61lupHhzeFqavhhKUBCx7YF1OHiWfJbt1E9F9atlhb
-         FGCi1p+akAoKXjsAuC2lhoyFUPa2/oMnCvOSEOyyBOOyKiFNebhLLWCWzyogYHExAoXI
-         xbUMHLXlWfBUjRGVoPMOxx7iPSNSm1PIN0J85PP/s0DP+mm1cQ3CFduSx8sLfPbAzpBa
-         wCzQk/AYRhBUByJkntcMTXa91Tzal+UK0sUYhGWZG+HjrEFS3GKcgDUPkDX+LIHaCwV6
-         JVfQ==
-X-Gm-Message-State: AGRZ1gLAe2jcUuy2MFuaJyMOSY89+EQQAuumHEIRMmwUSHAkytolvLWl
-        pHEpe/2YGISILryuqmD8IqJlFA==
-X-Google-Smtp-Source: AJdET5cqtByrIwaSmLazUSk9nvl8CvSCiLAXFUyX7hxBLkxoYkZmPn9OuMuUfNEQKndTTrNdY7gDSw==
-X-Received: by 2002:adf:9563:: with SMTP id 90-v6mr1324412wrs.60.1540463035417;
-        Thu, 25 Oct 2018 03:23:55 -0700 (PDT)
+        bh=F7IVSazowHUBrL5M2zKnkNpecKKgG+YiCxDfdV/9uj4=;
+        b=MnoH4uXeH0CFBdTnaXTOFU332ZvZfj06/tYyKfW08H8xbECWSl6uHCwnjL1wFlnGi3
+         DE5cKjr+8BAvLv7sH/J1qUCRecp51/G9vak98p6/l037Nu2Ft57jsAxjDGDfiF1lBrDI
+         G5hKFmIsdDLdqtfvDm25lGVoOuVpkp0Onb9WKGgz8+JXgDgzdFHtBmYJvpsyAJdM9Tkv
+         VDUtuXs1wEZqcx8/agAnwRwCaL+XfxPMeAzlaXYHmQMrMVCHwQahh3vs1nx3FSqmm/qH
+         RSiYHi9hZDp9YOi7xoOHWpjbhzXs/1DWk9/rIieZ+zWu3AgBtuM++SvbhR1vAZEEN3/v
+         GyZw==
+X-Gm-Message-State: AGRZ1gKd3Zps73jZDxG3OfxdlziN/zj2+huoaGG3mANOilde6EptCkwu
+        LBk/girjWlK2Sgh1AFuAqOEFwA==
+X-Google-Smtp-Source: AJdET5ePZA/3SssiJXkxXGotzX15bnttjCnHlylKuVPkHVGm1NNZ3BAeDJvt/SdckAKQm2c/JwjpuA==
+X-Received: by 2002:a1c:6655:: with SMTP id a82-v6mr1319383wmc.10.1540463059810;
+        Thu, 25 Oct 2018 03:24:19 -0700 (PDT)
 Received: from dell ([2.31.167.182])
-        by smtp.gmail.com with ESMTPSA id z4-v6sm1350337wmz.14.2018.10.25.03.23.53
+        by smtp.gmail.com with ESMTPSA id q77-v6sm900376wmd.33.2018.10.25.03.24.18
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Oct 2018 03:23:54 -0700 (PDT)
-Date:   Thu, 25 Oct 2018 11:23:51 +0100
+        Thu, 25 Oct 2018 03:24:19 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 11:24:16 +0100
 From:   Lee Jones <lee.jones@linaro.org>
 To:     Oskari Lemmela <oskari@lemmela.net>
 Cc:     Linus Walleij <linus.walleij@linaro.org>,
@@ -75,15 +74,15 @@ Cc:     Linus Walleij <linus.walleij@linaro.org>,
         linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org
-Subject: Re: [PATCH v5 10/11] mfd: axp20x: Add AC power supply cell for AXP813
-Message-ID: <20181025102351.GT4939@dell>
+Subject: Re: [PATCH v5 11/11] mfd: axp20x: Add supported cells for AXP803
+Message-ID: <20181025102416.GU4939@dell>
 References: <20181023185330.10472-1-oskari@lemmela.net>
- <20181023185330.10472-11-oskari@lemmela.net>
+ <20181023185330.10472-12-oskari@lemmela.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181023185330.10472-11-oskari@lemmela.net>
+In-Reply-To: <20181023185330.10472-12-oskari@lemmela.net>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -92,15 +91,15 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Tue, 23 Oct 2018, Oskari Lemmela wrote:
 
-> As axp20x-ac-power-supply now supports AXP813, add a cell for it.
+> Parts of the AXP803 are compatible with their counterparts on the AXP813.
+> These include the GPIO, ADC, AC and battery power supplies.
 > 
 > Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
-> Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
 > Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 > Tested-by: Vasily Khoruzhick <anarsoul@gmail.com>
 > ---
->  drivers/mfd/axp20x.c | 5 +++++
->  1 file changed, 5 insertions(+)
+>  drivers/mfd/axp20x.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
 
 For my own reference:
   Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
