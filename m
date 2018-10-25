@@ -2,111 +2,148 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4920FC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:15:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C68C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:16:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0225D20834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:15:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VpXkM9Y/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0225D20834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9544D20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:16:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9544D20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727845AbeJZCtO (ORCPT
+        id S1727942AbeJZCtw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 22:49:14 -0400
-Received: from mail-it1-f181.google.com ([209.85.166.181]:35876 "EHLO
-        mail-it1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727458AbeJZCtN (ORCPT
+        Thu, 25 Oct 2018 22:49:52 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:45816 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727722AbeJZCtw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 22:49:13 -0400
-Received: by mail-it1-f181.google.com with SMTP id h14-v6so2971114itf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 11:15:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=N3boceHdvwF+yl7uVwQWtms95Pe8vsglnDYg55Hv+Yw=;
-        b=VpXkM9Y/QujWBPmVySqxdx6t9qC8CiOBshQDlLdb7erAxJ7pr8fvwAuuNHrDgCXMli
-         0yshfSNo05gqOyTVWtaDucFPppgmrnQDCS1X4NIlFFXFLCe/w8ATQkOlcjiJ+rEmt13+
-         vLoCZDr6nZ1tL96IntbEp1gPNXb174f4T82sjP9WsuuX9rDSm/hv1Uxj+0pytx6UdMRR
-         hFJ2R8ZU7pWmEZidN9Y10yo2tq1NxvZM/WOSJ3EY1+dnvix7Ak1u8FwdonjeOVv5ZdRL
-         DxMnKkHgu7A4/1zFm+eSSNte8GgfTZUnT0YHyUp2my1cLBzE/DkHzKnpGwf8Ej9igoxd
-         mZtw==
+        Thu, 25 Oct 2018 22:49:52 -0400
+Received: by mail-ot1-f68.google.com with SMTP id z15so10024538otm.12;
+        Thu, 25 Oct 2018 11:16:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=N3boceHdvwF+yl7uVwQWtms95Pe8vsglnDYg55Hv+Yw=;
-        b=hZCnyS+acZg+h9AjlcvXacmeZciuhDCFY7k0RLnqHRgpgCWGqH7xmoWYAmOBiw/o5i
-         Ns0onlKZ2A7s02R2NvYogG21XG/VXVUFLr/51F/C6VSJtJe8pf32V23tCZp3lkW3r8T9
-         ajdkb7YTq1AP6Cef+Z+SgaRcjfRdZXlkKKhHoTILX7E1cEJ7FOaTA+mtstjkTjp6u2Lz
-         Yaf0O5w57YTA9BeBg4jW5S6zjkk3vRw7U1PxdQ0Sat0TrzhXOmibFB8qqv3q9C4TfXH1
-         Iu97BE3t8fOc+kP+gbvsFrSfbV2FvxvZCf7X4wyR6/Ag2RFcuqgGtyDzN5Vd/EgBbjKy
-         SMPQ==
-X-Gm-Message-State: AGRZ1gLC5JEbM4PMQoyMHo5Ljso2yP6guMezGbLdAZ7mzzSAK6A+h9ve
-        E22q92vX+mC/fBkeoopssIOGDerM
-X-Google-Smtp-Source: AJdET5eILoUbTN6JvEcV/PDNYggtOH5SVHzlAmRNqWnUypCZnclrvk9A5SjscqAqNTj18XMBVd5OxQ==
-X-Received: by 2002:a24:92d5:: with SMTP id l204-v6mr1694124itd.84.1540491322529;
-        Thu, 25 Oct 2018 11:15:22 -0700 (PDT)
-Received: from svens-asus.arcx.com ([184.94.50.30])
-        by smtp.gmail.com with ESMTPSA id t10-v6sm5198935iod.8.2018.10.25.11.15.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Oct 2018 11:15:22 -0700 (PDT)
-From:   thesven73@gmail.com
-X-Google-Original-From: TheSven73@googlemail.com
-To:     svendev@arcx.com, p.zabel@pengutronix.de, denis@eukrea.com,
-        rmk+kernel@arm.linux.org.uk
-Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
-Subject: Re: [RFC v1 0/1] imx-drm: match ipu_di_signal_cfg's clk_pol with its observed behaviour.
-Date:   Thu, 25 Oct 2018 14:15:18 -0400
-Message-Id: <20181025181518.4433-1-TheSven73@googlemail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=t1fMO9AdLKwAri/Xx9eWeS0vK5xfhHmhOmKxzTBYlR0=;
+        b=KBGIv+3DGwsYL2FDWD0XILjdN9WLWjxsbWIunmekuvKkTictwLg0Cmz0nY706rPrra
+         7qQqsRAf+DgpHBvwjsyzKl3mLBHgCRgTeKQogYXc/M6ODoxArLoGvfXRDCZU+JmpwWN+
+         gJ8R8ScP/SBGYt3Wf7DV0Rix2zjJuhIbABiWt62zmeR47bElt2zGN6Ew4Nem5cghH6FB
+         S0F8Xt7KxM+GYZp6vA9GD/m1WEVVniR+YuPNIYoi7Lf9UnM9pYV80ltzbZh2R2o87YSY
+         0wNVNuADwQ0qTYtJsCmbNWeDd4aoY51YXUOJHHynsf5jpFyFZ+QnGdhXnPzKdf8NWSMH
+         c7Yw==
+X-Gm-Message-State: AGRZ1gK1mpw6/gbI5HCZz9SYlpqmAGclu6ZSZmIge+cjnhrqwXqlwr9x
+        ZjkAiZGCvQ4wabSmI9vsug==
+X-Google-Smtp-Source: AJdET5fXqCnNHIIw1LMP19cku1Sgh7f5URvwpw/cFC3WESgPSO/RCsPN0T6VYRgAmvmEnZ9w17WhpQ==
+X-Received: by 2002:a9d:7c90:: with SMTP id q16mr222930otn.166.1540491360623;
+        Thu, 25 Oct 2018 11:16:00 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id 65sm2992799ott.63.2018.10.25.11.15.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Oct 2018 11:16:00 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 13:15:58 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     AnilKumar Chimata <anilc@codeaurora.org>
+Cc:     andy.gross@linaro.org, david.brown@linaro.org,
+        mark.rutland@arm.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] dt-bindings: Add ICE device specific parameters
+Message-ID: <20181025181558.GC30244@bogus>
+References: <1539789476-6098-1-git-send-email-anilc@codeaurora.org>
+ <1539789476-6098-3-git-send-email-anilc@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1539789476-6098-3-git-send-email-anilc@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Russell, thanks for looking at the RFC !
+On Wed, Oct 17, 2018 at 08:47:55PM +0530, AnilKumar Chimata wrote:
+> Add dt parameters information specific to the Inline
+> Crypto Engine (ICE) device.
+> 
+> Signed-off-by: AnilKumar Chimata <anilc@codeaurora.org>
+> ---
+>  .../devicetree/bindings/crypto/msm/ice.txt         | 34 ++++++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/crypto/msm/ice.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/crypto/msm/ice.txt b/Documentation/devicetree/bindings/crypto/msm/ice.txt
+> new file mode 100644
+> index 0000000..86eed5e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/crypto/msm/ice.txt
+> @@ -0,0 +1,34 @@
+> +* Inline Crypto Engine (ICE)
+> +
+> +Required properties:
+> +  - compatible			: should be "qcom,ice"
 
-> Given what's in the documentation, I'd opt for it describing the
-> edge that the output data changes, not the latch edge.  With that
-> interpretation, the existing code is correct.
+Only 1 version ever? Probably not and this needs an SoC specific 
+compatible string. Does this follow any standard or ICE is a QCom thing?
 
-The clock polarity is reversed in Freescale's non-mainline fbdev code,
-which we were using previously, contributing to the confusion.
+> +  - reg 			: <register mapping>
 
-Yes, I think your interpretation is the correct one. Let's double-check.
+No need to define standard properties. You need to say how many register 
+ranges.
 
-Suppose we set this bus flag in the panel/mode definition:
+> +
+> +Optional properties:
+> +  - interrupt-names     	: name describing the interrupts for ICE IRQ
 
-drm/drm_connector.h:
-/* drive data on pos. edge */
-#define DRM_BUS_FLAG_PIXDATA_POSEDGE	(1<<2)
+No point to this if there is only 1 IRQ.
 
-According to your interpretation, this means we're asking the data to change
-on the positive edge, and be stable on the negative edge. Correct?
+> +  - interrupts          	: <interrupt mapping for ICE IRQ>
+> +  - qcom,enable-ice-clk 	: should enable clocks for ICE HW
 
-then clk_pol == 1:
-drivers/gpu/drm/imx/ipuv3-crtc.c:
-	sig_cfg.clk_pol = !!(imx_crtc_state->bus_flags &
-			     DRM_BUS_FLAG_PIXDATA_POSEDGE);
+This shouldn't be needed.
 
-then DI_GENERAL bit 17 is set:
-drivers/gpu/ipu-v3/ipu-di.c:
-	if (sig->clk_pol)
-		di_gen |= DI_GEN_POLARITY_DISP_CLK;
+> +  - clocks              	: List of phandle and clock specifier pairs
+> +  - clock-names         	: List of clock input name strings sorted in the same
+> +				  order as the clocks property.
 
-and data is stable on the pixel clock's falling edge, as we observed on
-the oscilloscope.
+How many?  You need to give the 
+> +  - qcom,op-freq-hz     	: max clock speed sorted in the same order as the clocks
+> +				  property.
 
-All good. Thank you !
+Use the assigned-clocks properties for this.
+
+> +  - qcom,instance-type  	: describe the storage type for which ICE node is defined
+> +				  currently, only "ufs" and "sdcc" are supported storage type
+
+What if there is more than one instance of ufs or SD? Do you need to 
+know which ICE goes with which controller?
+
+> +  - power-domains		: regulator supply to be used by ICE HW
+> +
+> +Example:
+> +	ufs_ice: ufsice@1d90000 {
+
+crytpo@...
+
+> +		compatible = "qcom,ice";
+> +		reg = <0x1d90000 0x8000>;
+> +		qcom,enable-ice-clk;
+> +		clock-names = "ufs_core_clk", "bus_clk",
+> +				"iface_clk", "ice_core_clk";
+> +		clocks = <&gcc GCC_UFS_PHY_AXI_CLK>,
+> +			 <&gcc GCC_UFS_MEM_CLKREF_CLK>,
+> +			 <&gcc GCC_UFS_PHY_AHB_CLK>,
+> +			 <&gcc GCC_UFS_PHY_ICE_CORE_CLK>;
+> +		qcom,op-freq-hz = <0>, <0>, <0>, <300000000>;
+> +		power-domains = <&gcc UFS_PHY_GDSC>;
+> +		qcom,instance-type = "ufs";
+> +	};
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
