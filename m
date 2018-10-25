@@ -1,110 +1,85 @@
-Return-Path: <SRS0=AzW9=NE=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A9D7ECDE46
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 23:57:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9575ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:01:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A053720834
-	for <linux-kernel@archiver.kernel.org>; Wed, 24 Oct 2018 23:57:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A053720834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7D62920831
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:01:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D62920831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726797AbeJYI1T (ORCPT
+        id S1726972AbeJYIbk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 04:27:19 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:41482 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726378AbeJYI1T (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 04:27:19 -0400
-Received: by mail-ot1-f68.google.com with SMTP id c32so6861283otb.8;
-        Wed, 24 Oct 2018 16:57:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MTVznae+akc6QY8XO51ygXNZquOMNkrNc+AHFN5Uoy4=;
-        b=gvCK28AVlPzsICbwWR31zhdeIjNqNPloQww768NizE9KSwBRMem1nuxmPcYyt71UOR
-         lbJqsAd+qRwgDCNKueRYQNE6BBUeafCB7KfWq2Ez5z282kFYjIndfN/BJ0kfL25ePxO+
-         mfXSeekPDI0HkNQxqXnfzUJEaTPG5RPGSutiJvyBCeQg72DUnPoi+vMHysm6iyj6rk8A
-         MuMecavLn3dcnGtfPeRBkpliZLw8ryc/kvU4N368rZkP7lcIx8kfm/96VwpwI9NdtO3Q
-         VcEboKP7l/WI420p/gK5p7vPUBpvRbe2gdPdxzx1edEnsaBTPqwTC9X7bqM2NOSs5SAP
-         cdjw==
-X-Gm-Message-State: AGRZ1gI8u5RiYJCFkHcFDV0GMZ+ctAkHmjhCabStFfoRcMsWN1/k5lM7
-        80JLda1B5CALCxMzbFKsEA==
-X-Google-Smtp-Source: AJdET5dy8OKS8H+HHecpMSiYFONszvysG+SLpFhzSZqG5ZcH2xEBJC9nLTSFf9hLz9JRpBRWCiI9ag==
-X-Received: by 2002:a9d:460e:: with SMTP id y14mr3256543ote.199.1540425428074;
-        Wed, 24 Oct 2018 16:57:08 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 111sm3648927otf.51.2018.10.24.16.57.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 24 Oct 2018 16:57:07 -0700 (PDT)
-Date:   Wed, 24 Oct 2018 18:57:06 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Joakim Zhang <qiangqing.zhang@nxp.com>
-Cc:     "linux-can@vger.kernel.org" <linux-can@vger.kernel.org>,
-        "wg@grandegger.com" <wg@grandegger.com>,
-        "mkl@pengutronix.de" <mkl@pengutronix.de>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: Re: [PATCH V1 2/2] Documentation: can: flexcan: Add stop-mode
- property to device tree
-Message-ID: <20181024235706.GA22938@bogus>
-References: <20181023051449.2116-1-qiangqing.zhang@nxp.com>
- <20181023051449.2116-3-qiangqing.zhang@nxp.com>
+        Thu, 25 Oct 2018 04:31:40 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:36334 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726497AbeJYIbk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 04:31:40 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1D33AC05090A;
+        Thu, 25 Oct 2018 00:01:29 +0000 (UTC)
+Received: from agk-dp.fab.redhat.com (agk-dp.fab.redhat.com [10.33.15.10])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 274775D75D;
+        Thu, 25 Oct 2018 00:01:25 +0000 (UTC)
+Received: from agk by agk-dp.fab.redhat.com with local (Exim 4.69)
+        (envelope-from <agk@redhat.com>)
+        id 1gFT5X-00067Y-Qf; Thu, 25 Oct 2018 01:01:23 +0100
+Date:   Thu, 25 Oct 2018 01:01:23 +0100
+From:   Alasdair G Kergon <agk@redhat.com>
+To:     Paul Lawrence <paullawrence@google.com>
+Cc:     Mikulas Patocka <mpatocka@redhat.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@redhat.com>, linux-doc@vger.kernel.org,
+        kernel-team@android.com, Jonathan Corbet <corbet@lwn.net>,
+        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
+        dm-devel@redhat.com, Shaohua Li <shli@kernel.org>
+Subject: Re: [dm-devel] [RFC] dm-bow working prototype
+Message-ID: <20181025000123.GB22722@agk-dp.fab.redhat.com>
+Mail-Followup-To: Paul Lawrence <paullawrence@google.com>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@redhat.com>,
+        linux-doc@vger.kernel.org, kernel-team@android.com,
+        Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+        linux-raid@vger.kernel.org, dm-devel@redhat.com,
+        Shaohua Li <shli@kernel.org>
+References: <20181023212358.60292-1-paullawrence@google.com> <20181023221819.GB17552@agk-dp.fab.redhat.com> <296148c2-f2d9-5818-ea76-d71a0d6f5cd4@google.com> <alpine.LRH.2.02.1810241514310.4080@file01.intranet.prod.int.rdu2.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181023051449.2116-3-qiangqing.zhang@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <alpine.LRH.2.02.1810241514310.4080@file01.intranet.prod.int.rdu2.redhat.com>
+Organization: Red Hat UK Ltd. Registered in England and Wales, number
+        03798903. Registered Office: Peninsular House, 30-36 Monument
+        Street, 4th Floor, London, England, EC3R 8NB.
+User-Agent: Mutt/1.5.18 (2008-05-17)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 25 Oct 2018 00:01:29 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 05:17:10AM +0000, Joakim Zhang wrote:
-> From: Dong Aisheng <aisheng.dong@nxp.com>
-> 
-> The FlexCAN controller can parse the stop-mode property to enable CAN
-> self wakeup feature.
-> 
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> Signed-off-by: Joakim Zhang <qiangqing.zhang@nxp.com>
-> ---
->  Documentation/devicetree/bindings/net/can/fsl-flexcan.txt | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/can/fsl-flexcan.txt b/Documentation/devicetree/bindings/net/can/fsl-flexcan.txt
-> index bfc0c433654f..b5ccfc9c14fb 100644
-> --- a/Documentation/devicetree/bindings/net/can/fsl-flexcan.txt
-> +++ b/Documentation/devicetree/bindings/net/can/fsl-flexcan.txt
-> @@ -24,6 +24,14 @@ Optional properties:
->                if this property is present then controller is assumed to be big
->                endian.
->  
-> +- stop-mode: register bits of stop mode control, the format is
+On Wed, Oct 24, 2018 at 03:24:29PM -0400, Mikulas Patocka wrote:
+> What about allocating a big file, using the FIEMAP ioctl to find the 
 
-Should have a vendor prefix: fsl,stop-mode
+For reference, dmfilemapd in the lvm2 tree (in daemons/) uses FIEMAP
+(in libdm/libdm-stats.c) for monitoring I/O by file.
 
-> +			<&gpr req_gpr req_bit ack_gpr ack_bit>.
-> +			gpr is the phandle to general purpose register node.
-> +			req_gpr is the gpr register offset of CAN stop request.
-> +			req_bit is the bit offset of CAN stop request.
-> +			ack_gpr is the gpr register offset of CAN stop acknowledge.
-> +			ack_bit is the bit offset of CAN stop acknowledge.
-> +
->  Example:
->  
->  	can@1c000 {
-> -- 
-> 2.17.1
-> 
+> If you decide that rollback is no longer needed, you just unload the 
+> snapshot target and delete the big file. If you decide that you want to 
+> rollback, you can use the snapshot merge functionality (or you can write a 
+> userspace utility that does offline merge).
+ 
+There's some old code from Mark McLoughlin for userspace snapshot merging here:
+  https://people.gnome.org/~markmc/code/merge-dm-snapshot.c
+
+Alasdair
+
