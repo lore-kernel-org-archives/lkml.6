@@ -2,332 +2,216 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5318CECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 16:30:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41251C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 16:40:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 890E12085A
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 16:30:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF8922083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 16:40:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G0qFWuUD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 890E12085A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jggDIX9U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF8922083E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728512AbeJZBDs (ORCPT
+        id S1727877AbeJZBNi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 21:03:48 -0400
-Received: from mail-vs1-f43.google.com ([209.85.217.43]:44388 "EHLO
-        mail-vs1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728483AbeJZBDs (ORCPT
+        Thu, 25 Oct 2018 21:13:38 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46665 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727363AbeJZBNi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 21:03:48 -0400
-Received: by mail-vs1-f43.google.com with SMTP id w194so5896916vsc.11;
-        Thu, 25 Oct 2018 09:30:16 -0700 (PDT)
+        Thu, 25 Oct 2018 21:13:38 -0400
+Received: by mail-pf1-f193.google.com with SMTP id r64-v6so4449998pfb.13;
+        Thu, 25 Oct 2018 09:40:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MMgK6B+b+QZx2dGqpBKUiNd7h34bPQ/TYWL5Czto3Kk=;
-        b=G0qFWuUDUJXS2/kLbpt4ULYtT8LU8jidJw99ROgxOHSuz0F9/uJ1P9dWAzWaVeHG9w
-         z2dqhMpvgyildrJhRnQYO6Nz9Vwhne/Tia2vKe3JfQYb8ZY6iQcTLRv3ARhQJ5B/k/MP
-         NLRKrOn7Ltnq0uAycarF8LaKJ7OOh1lT/XEzJe7PrQvUYRQVRDou72QykCjkYDK01mSw
-         klhtSLdTPyI9nZTL4uU9+bhC2xCGe3XgxvJ4ZfICz7aXdc2/DNpBs4tRtoME3sNdnrme
-         xhXlDeFvpXl5/I+e9KdIsQoFeiPFPwKnLyvB13aIR1A7VN+MdhM5pLArLMlwpBlwNYCU
-         BZaA==
+        h=from:to:cc:subject:date:message-id;
+        bh=A7MWvFm33AV6bMca1yv+aRiIsR0DVJ9uj6IokFumh2A=;
+        b=jggDIX9UOs9dh6b9w26h4LZXHVQpLgtGcOrnReyoAkeVbL+IWusW3mq/Zj3+6L9CLD
+         Z2pcSMpD/vix+T1jp9BWqWqUFL0CMqeRiduN0bT6SrUxCx9McqCXrEDsf9LDpZWRKm1q
+         xbTj2f3hOF23fHD3LX6VyoNJMkKIy4seLWL0ATbhyEeB7WCelDXBPU77OiveE4tSOzy0
+         7jlptmHrrkgEsuLK9Nwa1Zvbna+oiUgZJoZaV1TWidBSuBorwCVigCpKYhA9jV1jeCMw
+         xiF00tIjpSbmAo/XIQ2HzMuG3YjJkQOBlAreNB1MePdj9oZrjUTS39TTFxSkTAWJkvIP
+         qtAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MMgK6B+b+QZx2dGqpBKUiNd7h34bPQ/TYWL5Czto3Kk=;
-        b=q/MvjovXvVDZQzwFiaW7nfLkbehAf2DzLVoGwq1x2J6ED1gkF+vXcwTvstEbnmTIEc
-         xv3b0LrPo6pjsEmQXmse7xlgQc+tAzDKXAn0NUFyAEvIskC5wMawhyOSXMYhO052mwmT
-         voSG5LPpMn7bXBMy2LUeE1fMFFS9vNJjBPtb2qMP/GaN7RZgnG+2NPPNFgIqO/8B4uq0
-         Fj0fCpflogrRKsp4QFihE7vOazIPc/GXOEGDj9s9VjiIMk9swlcUZyzURa/PP56vFwWR
-         27nmeZge+4Wan4bGAqJ2EBdKU3WA61kyT9UFp4BUNdq8VUc2yl1Pf9M1pnThtxCr6AIb
-         M6hA==
-X-Gm-Message-State: AGRZ1gJeljnPmOAv8iUB9IRfSoeBg2JGqpM5H2bjfRiKesof5ZL+a4oE
-        2ho2gc6hmrq25m8vuFCn69+YQ8BVioELbD/KoYo=
-X-Google-Smtp-Source: AJdET5co7AvcagEDal55euChUQgoPgDKFpILS6Lxx1vWU2W3EMvdoppOjOQrPwNc3+2KlYVbcpf+vqy5gaGlQFmOYOI=
-X-Received: by 2002:a67:2ed2:: with SMTP id u201mr1010397vsu.100.1540485015085;
- Thu, 25 Oct 2018 09:30:15 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181023212358.60292-1-paullawrence@google.com>
-In-Reply-To: <20181023212358.60292-1-paullawrence@google.com>
-From:   MegaBrutal <megabrutal@gmail.com>
-Date:   Thu, 25 Oct 2018 18:30:00 +0200
-Message-ID: <CAE8gLhmtrfprc93-XfomNEK5ZgxA_RFA0DnFrEnHjB0q31wkyg@mail.gmail.com>
-Subject: Re: [RFC] dm-bow working prototype
-To:     paullawrence@google.com
-Cc:     agk@redhat.com, snitzer@redhat.com, dm-devel@redhat.com,
-        corbet@lwn.net, shli@kernel.org, linux-doc@vger.kernel.org,
-        Linux kernel <linux-kernel@vger.kernel.org>,
-        linux-raid@vger.kernel.org
-Content-Type: multipart/mixed; boundary="0000000000001b52d00579101e8f"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=A7MWvFm33AV6bMca1yv+aRiIsR0DVJ9uj6IokFumh2A=;
+        b=T4Gx0F1CMpUXFqRwHwqWpp5cgUaeb+Xe7fdjGxDWAEeNo89clhkA2n1DS7dIP3WZVc
+         MPmNKjk8PDKKrRQebPkk7JHM/Adpu438kC7vddoPWBiZaxMIq3AhGKGcQ06IM49VI8TX
+         h8o88caKJ22N0OZBY4/L+/gMQ85zq67Eex6T1srJa+gmd9Rsbh84q2J1+GqQ9BHu27LJ
+         fPvHFS8VqzJ+Fc8RtKSTJJ4ItdnBBcMAVS/gelQXVU5ux0U8OpWUCTUvMGq5Q8gwj4/y
+         H6DllQtA0k6H1jL6nBX4o17/cj518Ihpf4C52QEM7Tom1ucxubNfeOGI48XyX7yw1+T2
+         /GQw==
+X-Gm-Message-State: AGRZ1gLe+h1pLZpmQlzVb7kfjdYiWv9SY2V9nHNOfC9B4KJvyYVId3s6
+        BYYooC+dd+B8mu5pUdf90GU=
+X-Google-Smtp-Source: AJdET5de62UHEtFP+pQfvbYDWjOC45P6Jj9rK//sNRj7dJoZWVsAB5ai1xPNF12lATcgnaFsvEVJjA==
+X-Received: by 2002:a63:6bc1:: with SMTP id g184mr2186161pgc.25.1540485604622;
+        Thu, 25 Oct 2018 09:40:04 -0700 (PDT)
+Received: from localhost.localdomain ([49.171.224.30])
+        by smtp.gmail.com with ESMTPSA id f1-v6sm13537100pfg.71.2018.10.25.09.40.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 25 Oct 2018 09:40:03 -0700 (PDT)
+From:   Jaewon Kim <jaewon02.kim@gmail.com>
+X-Google-Original-From: Jaewon Kim <jaewon02.kim@samsung.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Jaewon Kim <jaewon02.kim@samsung.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] of/platform: Support dynamic device tree on AMBA bus
+Date:   Fri, 26 Oct 2018 01:39:57 +0900
+Message-Id: <1540485597-12240-1-git-send-email-jaewon02.kim@samsung.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---0000000000001b52d00579101e8f
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+This patch supports dynamic device-tree for AMBA device.
+The AMBA device must be registered on the AMBA bus, not the platform bus.
 
-Paul Lawrence <paullawrence@google.com> ezt =C3=ADrta (id=C5=91pont: 2018. =
-okt.
-23., K, 23:27):
->
-> bow =3D=3D backup on write
->
-> Similar to dm-snap, add the ability to take a snapshot of a device.
-> Unlike dm-snap, a separate volume is not required.
->
+Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
+---
+ drivers/of/platform.c | 93 ++++++++++++++++++++++++++++++++++++++++-----------
+ 1 file changed, 73 insertions(+), 20 deletions(-)
 
-The concept intrigued me, so I actually went on to try your prototype.
-I could apply it on v4.12 mainline (newer kernel versions introduce
-changes in "struct bio" in "include/linux/blk_types.h" those don't let
-the module compile =E2=80=93 I think minor changes would be necessary to ad=
-apt
-to the new struct, though I didn't go into that).
+diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+index 04ad312..b9ac105 100644
+--- a/drivers/of/platform.c
++++ b/drivers/of/platform.c
+@@ -286,6 +286,22 @@ static struct amba_device *of_amba_device_create(struct device_node *node,
+ 	of_node_clear_flag(node, OF_POPULATED);
+ 	return NULL;
+ }
++
++/**
++ * of_find_amba_device_by_node - Find the amba_device associated with a node
++ * @np: Pointer to device tree node
++ *
++ * Returns amba_device pointer, or NULL if not found
++ */
++struct amba_device *of_find_amba_device_by_node(struct device_node *np)
++{
++	struct device *dev;
++
++	dev = bus_find_device(&amba_bustype, NULL, np, of_dev_node_match);
++	return dev ? to_amba_device(dev) : NULL;
++}
++EXPORT_SYMBOL(of_find_amba_device_by_node);
++
+ #else /* CONFIG_ARM_AMBA */
+ static struct amba_device *of_amba_device_create(struct device_node *node,
+ 						 const char *bus_id,
+@@ -294,6 +310,12 @@ static struct amba_device *of_amba_device_create(struct device_node *node,
+ {
+ 	return NULL;
+ }
++
++struct amba_device *of_find_amba_device_by_node(struct device_node *np)
++{
++	return NULL;
++}
++EXPORT_SYMBOL(of_find_amba_device_by_node);
+ #endif /* CONFIG_ARM_AMBA */
+ 
+ /**
+@@ -665,6 +687,7 @@ static int of_platform_notify(struct notifier_block *nb,
+ {
+ 	struct of_reconfig_data *rd = arg;
+ 	struct platform_device *pdev_parent, *pdev;
++	struct amba_device *adev_p, *adev;
+ 	bool children_left;
+ 
+ 	switch (of_reconfig_get_state_change(action, rd)) {
+@@ -677,17 +700,34 @@ static int of_platform_notify(struct notifier_block *nb,
+ 		if (of_node_check_flag(rd->dn, OF_POPULATED))
+ 			return NOTIFY_OK;
+ 
+-		/* pdev_parent may be NULL when no bus platform device */
+-		pdev_parent = of_find_device_by_node(rd->dn->parent);
+-		pdev = of_platform_device_create(rd->dn, NULL,
+-				pdev_parent ? &pdev_parent->dev : NULL);
+-		of_dev_put(pdev_parent);
+-
+-		if (pdev == NULL) {
+-			pr_err("%s: failed to create for '%pOF'\n",
+-					__func__, rd->dn);
+-			/* of_platform_device_create tosses the error code */
+-			return notifier_from_errno(-EINVAL);
++		if (of_device_is_compatible(rd->dn, "arm,primecell")) {
++			/* adev_p may be NULL when no bus amba device */
++			adev_p = of_find_amba_device_by_node(rd->dn->parent);
++			adev = of_amba_device_create(rd->dn, NULL, NULL,
++					adev_p ? &adev_p->dev : NULL);
++
++			if (adev_p)
++				put_device(&adev_p->dev);
++
++			if (adev == NULL) {
++				pr_err("%s: failed to create for '%s'\n",
++						__func__, rd->dn->full_name);
++				/* of_amba_device_create tosses the error */
++				return notifier_from_errno(-EINVAL);
++			}
++		} else {
++			/* pdev_parent may be NULL when no bus platform device*/
++			pdev_parent = of_find_device_by_node(rd->dn->parent);
++			pdev = of_platform_device_create(rd->dn, NULL,
++					pdev_parent ? &pdev_parent->dev : NULL);
++			of_dev_put(pdev_parent);
++
++			if (pdev == NULL) {
++				pr_err("%s: failed to create for '%pOF'\n",
++						__func__, rd->dn);
++				/* of_platform_device_create tosses the error */
++				return notifier_from_errno(-EINVAL);
++			}
+ 		}
+ 		break;
+ 
+@@ -698,15 +738,28 @@ static int of_platform_notify(struct notifier_block *nb,
+ 			return NOTIFY_OK;
+ 
+ 		/* find our device by node */
+-		pdev = of_find_device_by_node(rd->dn);
+-		if (pdev == NULL)
+-			return NOTIFY_OK;	/* no? not meant for us */
+-
+-		/* unregister takes one ref away */
+-		of_platform_device_destroy(&pdev->dev, &children_left);
+-
+-		/* and put the reference of the find */
+-		of_dev_put(pdev);
++		if (of_device_is_compatible(rd->dn, "arm,primecell")) {
++			adev = of_find_amba_device_by_node(rd->dn);
++			if (adev == NULL)
++				return NOTIFY_OK; /* no? not meant for us */
++
++			/* unregister takes one ref away */
++			of_platform_device_destroy(&adev->dev, &children_left);
++
++			/* and put the reference of the find */
++			if (adev)
++				put_device(&adev->dev);
++		} else {
++			pdev = of_find_device_by_node(rd->dn);
++			if (pdev == NULL)
++				return NOTIFY_OK; /* no? not meant for us */
++
++			/* unregister takes one ref away */
++			of_platform_device_destroy(&pdev->dev, &children_left);
++
++			/* and put the reference of the find */
++			of_dev_put(pdev);
++		}
+ 		break;
+ 	}
+ 
+-- 
+2.7.4
 
-My test scenario:
-On a KVM, I created a 64M partition and formatted it to ext4, then put
-some random files on it and unmounted the FS. I then called "dmsetup
-create bowdev --table "0 131072 bow /dev/vdb1"". The
-"/dev/mapper/bowdev" file appeared as expected. I mounted it in
-read-only mode ("mount -vo ro /dev/mapper/bowdev /mnt") and run
-"fstrim -v /mnt". At this point, I tried to advance to STATE 1 ("echo
-1 > /sys/block/dm-2/bow/state"), but I got a kernel BUG alert. The
-STATE did not change. I unmounted bowdev and removed the device
-("dmsetup remove bowdev") which resulted in 2 subsequent kernel
-alerts. The device disappeared but it brought the kernel to an
-unstable state (various actions, like sync or trying to recreate the
-bow device, resulted in a hang). I could not get any further than
-this. I attached all the 3 kernel alerts in "dm-bow.dmesg.log".
-
-I have some questions about dm-bow:
-=E2=80=93 How file system agnostic this feature is planned to be? While it =
-is
-designed with ext4 in mind, is it going to work when used over other
-file systems, like FAT or BTRFS for example?
-=E2=80=93 Especially that BTRFS uses a CoW mechanism for even overwriting
-files (overwritten segments are written to a free area and only then
-gets the old data freed =E2=80=93 except some specific conditions when
-NO_COW/nodatacow is involved). Won't BTRFS CoW mechanism confuse BoW,
-e.g. BTRFS will try to use space that BoW wants to use for backups?
-Note however, using BoW on BTRFS wouldn't have much point, since BTRFS
-has built-in features for snapshots. This leads me to my next
-question.
-=E2=80=93 Why don't you just use BTRFS on Android? It basically provides a
-similar feature like BoW, and it is matured enough, switching
-snapshots are easy, etc.. However I see why it wouldn't be feasible
-for you, e.g. it is slower than ext4, which would matter for an
-Android device.
-=E2=80=93 What if you run out of free disk space while updating? I guess yo=
-u
-can just revert to the original state with BoW, but an update might
-require more disk space with BoW (and this is a thing, my Android
-always complains about not having enough space).
-=E2=80=93 Can I really expect dm-bow to work on non-Android systems (like I
-tried it on an Ubuntu KVM)?
-=E2=80=93 Do you have any prototype for the command line utility to be used
-for recovery?
-
-
-MegaBrutal
-
---0000000000001b52d00579101e8f
-Content-Type: text/x-log; charset="US-ASCII"; name="dm-bow.dmesg.log"
-Content-Disposition: attachment; filename="dm-bow.dmesg.log"
-Content-Transfer-Encoding: base64
-Content-ID: <f_jnooge490>
-X-Attachment-Id: f_jnooge490
-
-WyAgMTc0LjIwNjczNV0gYXRrYmQgc2VyaW8wOiBVbmtub3duIGtleSBwcmVzc2VkICh0cmFuc2xh
-dGVkIHNldCAyLCBjb2RlIDB4NjMgb24gaXNhMDA2MC9zZXJpbzApLgpbICAxNzQuMjA2NzQ1XSBh
-dGtiZCBzZXJpbzA6IFVzZSAnc2V0a2V5Y29kZXMgNjMgPGtleWNvZGU+JyB0byBtYWtlIGl0IGtu
-b3duLgpbICAxNzQuMjE1OTgxXSBhdGtiZCBzZXJpbzA6IFVua25vd24ga2V5IHJlbGVhc2VkICh0
-cmFuc2xhdGVkIHNldCAyLCBjb2RlIDB4NjMgb24gaXNhMDA2MC9zZXJpbzApLgpbICAxNzQuMjE1
-OTgzXSBhdGtiZCBzZXJpbzA6IFVzZSAnc2V0a2V5Y29kZXMgNjMgPGtleWNvZGU+JyB0byBtYWtl
-IGl0IGtub3duLgpbICAxODcuOTc2ODc1XSBFWFQ0LWZzIChkbS0yKTogbW91bnRlZCBmaWxlc3lz
-dGVtIHdpdGggb3JkZXJlZCBkYXRhIG1vZGUuIE9wdHM6IChudWxsKQpbICAyMzEuNjMzNjM0XSBk
-ZXZpY2UtbWFwcGVyOiBib3c6IFN3aXRjaGluZyB0byBzdGF0ZSBDaGVja3BvaW50ClsgIDIzMS42
-Mzk1NDFdIC0tLS0tLS0tLS0tLVsgY3V0IGhlcmUgXS0tLS0tLS0tLS0tLQpbICAyMzEuNjM5NTQz
-XSBrZXJuZWwgQlVHIGF0IGRyaXZlcnMvbWQvZG0tYm93LmM6MjI0IQpbICAyMzEuNjM5OTkwXSBp
-bnZhbGlkIG9wY29kZTogMDAwMCBbIzFdIFNNUApbICAyMzEuNjQwMzIwXSBNb2R1bGVzIGxpbmtl
-ZCBpbjogZG1fYm93IGRtX2J1ZmlvIG5sc19pc284ODU5XzEgc25kX2hkYV9jb2RlY19nZW5lcmlj
-IHNuZF9oZGFfaW50ZWwgc25kX2hkYV9jb2RlYyBzbmRfaGRhX2NvcmUgc25kX2h3ZGVwIHNuZF9w
-Y20gam95ZGV2IHNuZF90aW1lciBzbmQgcHBkZXYgaW5wdXRfbGVkcyBzb3VuZGNvcmUgc2VyaW9f
-cmF3IHBhcnBvcnRfcGMgcGFycG9ydCBxZW11X2Z3X2NmZyBtYWNfaGlkIHNjaF9mcV9jb2RlbCBp
-Yl9pc2VyIHJkbWFfY20gaXdfY20gaWJfY20gaWJfY29yZSBpc2NzaV90Y3AgbGliaXNjc2lfdGNw
-IGxpYmlzY3NpIHNjc2lfdHJhbnNwb3J0X2lzY3NpIGlwX3RhYmxlcyB4X3RhYmxlcyBhdXRvZnM0
-IGJ0cmZzIHJhaWQxMCByYWlkNDU2IGFzeW5jX3JhaWQ2X3JlY292IGFzeW5jX21lbWNweSBhc3lu
-Y19wcSBhc3luY194b3IgYXN5bmNfdHggeG9yIHJhaWQ2X3BxIGxpYmNyYzMyYyByYWlkMSByYWlk
-MCBtdWx0aXBhdGggbGluZWFyIGhpZF9nZW5lcmljIHVzYmhpZCBoaWQgcXhsIHR0bSBkcm1fa21z
-X2hlbHBlciBzeXNjb3B5YXJlYSBzeXNmaWxscmVjdCBzeXNpbWdibHQgZmJfc3lzX2ZvcHMgcHNt
-b3VzZSB2aXJ0aW9fYmxrIGFoY2kgbGliYWhjaSBmbG9wcHkgaTJjX3BpaXg0IHBhdGFfYWNwaSBk
-cm0gdmlydGlvX25ldApbICAyMzEuNjQyMTk3XSBDUFU6IDEgUElEOiAxMTgyIENvbW06IGJhc2gg
-Tm90IHRhaW50ZWQgNC4xMi4wLWRtYm93ICMxMDkKWyAgMjMxLjY0MjQ5Nl0gSGFyZHdhcmUgbmFt
-ZTogUUVNVSBTdGFuZGFyZCBQQyAoaTQ0MEZYICsgUElJWCwgMTk5NiksIEJJT1MgMC4wLjAgMDIv
-MDYvMjAxNQpbICAyMzEuNjQyODYwXSB0YXNrOiBmZmZmOWYzNzU2OGFkNTAwIHRhc2suc3RhY2s6
-IGZmZmZiOTI1NDA1YzQwMDAKWyAgMjMxLjY0NTU1MV0gUklQOiAwMDEwOnNlY3Rvcl90b19wYWdl
-LnBhcnQuNSsweDkvMHgxMCBbZG1fYm93XQpbICAyMzEuNjQ1OTM4XSBSU1A6IDAwMTg6ZmZmZmI5
-MjU0MDVjN2QyMCBFRkxBR1M6IDAwMDEwMjAyClsgIDIzMS42NDYyMjldIFJBWDogZmZmZjlmMzc1
-NmFiYWYwMCBSQlg6IDAwMDAwMDAwMDAwMDAwMDAgUkNYOiAwMDAwMDAwMDAwMDAwMDAwClsgIDIz
-MS42NDY0ODldIFJEWDogMDAwMDAwMDAwMDAwMDAwMCBSU0k6IDAwMDAwMDAwMDAwMDEyNDIgUkRJ
-OiBmZmZmOWYzNzVlNzFiZjAwClsgIDIzMS42NDY3NTBdIFJCUDogZmZmZmI5MjU0MDVjN2QyMCBS
-MDg6IDAwMDAwMDM1ZWVjYTAwMDAgUjA5OiAwMDAwMDAwMDAwMDAwMDAwClsgIDIzMS42NDcwNzdd
-IFIxMDogMDAwMDAwMDAwMDAwMDAwMCBSMTE6IDAwMDAwMDAwMDAwMDAyNzggUjEyOiBmZmZmOWYz
-NzU2YWJhOWMwClsgIDIzMS42NDczNDVdIFIxMzogMDAwMDAwMDAwMDAwMDAwMCBSMTQ6IDAwMDAw
-MDAwMDAwMDAwMDAgUjE1OiBmZmZmOWYzNzU2OGM1MDAwClsgIDIzMS42NDc2MjhdIEZTOiAgMDAw
-MDdmOWYxYjhhMDc0MCgwMDAwKSBHUzpmZmZmOWYzNzVlNzAwMDAwKDAwMDApIGtubEdTOjAwMDAw
-MDAwMDAwMDAwMDAKWyAgMjMxLjY0ODA3N10gQ1M6ICAwMDEwIERTOiAwMDAwIEVTOiAwMDAwIENS
-MDogMDAwMDAwMDA4MDA1MDAzMwpbICAyMzEuNjQ4NTAxXSBDUjI6IDAwMDA3ZjA4YzQzMWFmNzgg
-Q1IzOiAwMDAwMDAwMDE2OGZmMDAwIENSNDogMDAwMDAwMDAwMDAwMDZlMApbICAyMzEuNjQ4OTI5
-XSBDYWxsIFRyYWNlOgpbICAyMzEuNjQ5NDE3XSAgY29weV9kYXRhKzB4MTZmLzB4MWUwIFtkbV9i
-b3ddClsgIDIzMS42NDk3OTRdICBzdGF0ZV9zdG9yZSsweDIxNi8weDMyMCBbZG1fYm93XQpbICAy
-MzEuNjUwMTI3XSAgPyBkb193cF9wYWdlKzB4MTM1LzB4NGUwClsgIDIzMS42NTA0MjddICA/IF9f
-aGFuZGxlX21tX2ZhdWx0KzB4ODg5LzB4ZjcwClsgIDIzMS42NTA3MDRdICBrb2JqX2F0dHJfc3Rv
-cmUrMHhmLzB4MjAKWyAgMjMxLjY1MTAxMl0gIHN5c2ZzX2tmX3dyaXRlKzB4MzcvMHg0MApbICAy
-MzEuNjUxMjY4XSAga2VybmZzX2ZvcF93cml0ZSsweDExYy8weDFhMApbICAyMzEuNjUxNTI3XSAg
-X192ZnNfd3JpdGUrMHgyOC8weDEzMApbICAyMzEuNjUxNzY3XSAgPyBoYW5kbGVfbW1fZmF1bHQr
-MHhkOC8weDIzMApbICAyMzEuNjUyMTI3XSAgPyByd192ZXJpZnlfYXJlYSsweDRlLzB4YjAKWyAg
-MjMxLjY1MjM5Ml0gIHZmc193cml0ZSsweGIxLzB4MWEwClsgIDIzMS42NTI2NDhdICBTeVNfd3Jp
-dGUrMHg0Ni8weGEwClsgIDIzMS42NTI4OTNdICBlbnRyeV9TWVNDQUxMXzY0X2Zhc3RwYXRoKzB4
-MWUvMHhhOQpbICAyMzEuNjUzMTExXSBSSVA6IDAwMzM6MHg3ZjlmMWFmNzUxNTQKWyAgMjMxLjY1
-MzM5NF0gUlNQOiAwMDJiOjAwMDA3ZmZlY2NiYThkYjggRUZMQUdTOiAwMDAwMDI0NiBPUklHX1JB
-WDogMDAwMDAwMDAwMDAwMDAwMQpbICAyMzEuNjUzNjkyXSBSQVg6IGZmZmZmZmZmZmZmZmZmZGEg
-UkJYOiAwMDAwN2Y5ZjFiMjUxNzYwIFJDWDogMDAwMDdmOWYxYWY3NTE1NApbICAyMzEuNjU0MDA5
-XSBSRFg6IDAwMDAwMDAwMDAwMDAwMDIgUlNJOiAwMDAwNTVlMTY4NTU1MzkwIFJESTogMDAwMDAw
-MDAwMDAwMDAwMQpbICAyMzEuNjU0MzI0XSBSQlA6IDAwMDAwMDAwMDAwMDAwMDEgUjA4OiAwMDAw
-MDAwMDAwMDAwMDBhIFIwOTogMDAwMDAwMDAwMDAwMDAwMQpbICAyMzEuNjU0NjE4XSBSMTA6IDAw
-MDAwMDAwMDAwMDAwMGEgUjExOiAwMDAwMDAwMDAwMDAwMjQ2IFIxMjogMDAwMDAwMDAwMDAwMDAw
-MQpbICAyMzEuNjU0OTI5XSBSMTM6IDAwMDA1NWUxNjg0NDg3ODEgUjE0OiAwMDAwMDAwMDAwMDAw
-MDAwIFIxNTogMDAwMDAwMDAwMDAwMDAwMApbICAyMzEuNjU1MTYzXSBDb2RlOiA3ZSA2NyBhZCBm
-MyA0OCA4NSBjMCA3NSAwZiBlYiAxNSA0OCA4OSBjNyBlOCBmZiA2OCBhZCBmMyA0OCA4NSBjMCA3
-NCAwOCA4MyA3OCAyMCAwMSA3NSBlZCA1ZCBjMyAwZiAwYiA2NiA2NiA2NiA2NiA5MCA1NSA0OCA4
-OSBlNSA8MGY+IDBiIDBmIDFmIDQ0IDAwIDAwIDY2IDY2IDY2IDY2IDkwIDU1IDQ4IDg5IGU1IDQx
-IDU3IDQxIDU2IDQxIApbICAyMzEuNjU1NjE5XSBSSVA6IHNlY3Rvcl90b19wYWdlLnBhcnQuNSsw
-eDkvMHgxMCBbZG1fYm93XSBSU1A6IGZmZmZiOTI1NDA1YzdkMjAKWyAgMjMxLjY1NTg5Nl0gLS0t
-WyBlbmQgdHJhY2UgNGEwNmY0M2JjMjczMmI2OSBdLS0tClsgIDM1Mi4yNDU0NzhdIC0tLS0tLS0t
-LS0tLVsgY3V0IGhlcmUgXS0tLS0tLS0tLS0tLQpbICAzNTIuMjQ1OTE0XSBXQVJOSU5HOiBDUFU6
-IDAgUElEOiAxMjMzIGF0IGRyaXZlcnMvbWQvZG0tYnVmaW8uYzoxNTEzIGRtX2J1ZmlvX2NsaWVu
-dF9kZXN0cm95KzB4MjNkLzB4MjUwIFtkbV9idWZpb10KWyAgMzUyLjI0NjI0NF0gTW9kdWxlcyBs
-aW5rZWQgaW46IGRtX2JvdyBkbV9idWZpbyBubHNfaXNvODg1OV8xIHNuZF9oZGFfY29kZWNfZ2Vu
-ZXJpYyBzbmRfaGRhX2ludGVsIHNuZF9oZGFfY29kZWMgc25kX2hkYV9jb3JlIHNuZF9od2RlcCBz
-bmRfcGNtIGpveWRldiBzbmRfdGltZXIgc25kIHBwZGV2IGlucHV0X2xlZHMgc291bmRjb3JlIHNl
-cmlvX3JhdyBwYXJwb3J0X3BjIHBhcnBvcnQgcWVtdV9md19jZmcgbWFjX2hpZCBzY2hfZnFfY29k
-ZWwgaWJfaXNlciByZG1hX2NtIGl3X2NtIGliX2NtIGliX2NvcmUgaXNjc2lfdGNwIGxpYmlzY3Np
-X3RjcCBsaWJpc2NzaSBzY3NpX3RyYW5zcG9ydF9pc2NzaSBpcF90YWJsZXMgeF90YWJsZXMgYXV0
-b2ZzNCBidHJmcyByYWlkMTAgcmFpZDQ1NiBhc3luY19yYWlkNl9yZWNvdiBhc3luY19tZW1jcHkg
-YXN5bmNfcHEgYXN5bmNfeG9yIGFzeW5jX3R4IHhvciByYWlkNl9wcSBsaWJjcmMzMmMgcmFpZDEg
-cmFpZDAgbXVsdGlwYXRoIGxpbmVhciBoaWRfZ2VuZXJpYyB1c2JoaWQgaGlkIHF4bCB0dG0gZHJt
-X2ttc19oZWxwZXIgc3lzY29weWFyZWEgc3lzZmlsbHJlY3Qgc3lzaW1nYmx0IGZiX3N5c19mb3Bz
-IHBzbW91c2UgdmlydGlvX2JsayBhaGNpIGxpYmFoY2kgZmxvcHB5IGkyY19waWl4NCBwYXRhX2Fj
-cGkgZHJtIHZpcnRpb19uZXQKWyAgMzUyLjI0Nzk3Nl0gQ1BVOiAwIFBJRDogMTIzMyBDb21tOiBk
-bXNldHVwIFRhaW50ZWQ6IEcgICAgICBEICAgICAgICAgNC4xMi4wLWRtYm93ICMxMDkKWyAgMzUy
-LjI0ODIxM10gSGFyZHdhcmUgbmFtZTogUUVNVSBTdGFuZGFyZCBQQyAoaTQ0MEZYICsgUElJWCwg
-MTk5NiksIEJJT1MgMC4wLjAgMDIvMDYvMjAxNQpbICAzNTIuMjQ4NDU2XSB0YXNrOiBmZmZmOWYz
-NzU2YWYxNTQwIHRhc2suc3RhY2s6IGZmZmZiOTI1NDA4ODQwMDAKWyAgMzUyLjI0ODcxM10gUklQ
-OiAwMDEwOmRtX2J1ZmlvX2NsaWVudF9kZXN0cm95KzB4MjNkLzB4MjUwIFtkbV9idWZpb10KWyAg
-MzUyLjI0ODk1M10gUlNQOiAwMDE4OmZmZmZiOTI1NDA4ODdiZTAgRUZMQUdTOiAwMDAxMDI0Ngpb
-ICAzNTIuMjQ5MjU1XSBSQVg6IGZmZmY5ZjM3NWIyYmU2MTggUkJYOiBmZmZmOWYzNzU2NzNkYzAw
-IFJDWDogMDAwMDAwMDAwMDAwMDAwMQpbICAzNTIuMjQ5NTY5XSBSRFg6IDAwMDAwMDAwMDAwMDAw
-MDAgUlNJOiAwMDAwMDAwMDAwMDAwMDAwIFJESTogZmZmZjlmMzc1NjczZGMwMApbICAzNTIuMjQ5
-ODc4XSBSQlA6IGZmZmZiOTI1NDA4ODdjMTAgUjA4OiBmZmZmZmZmZmMwNGZmNDMwIFIwOTogMDAw
-MDAwMDAwMDAwMDAwMQpbICAzNTIuMjUwMTk1XSBSMTA6IGZmZmZiOTI1NDA4ODdiYjAgUjExOiAw
-MDAwMDAwMDAwMDAwMWJlIFIxMjogZmZmZjlmMzc1NjczZGMyMApbICAzNTIuMjUwNDgxXSBSMTM6
-IGZmZmY5ZjM3NTY5MmUwMDAgUjE0OiAwMDAwMDAwMDAwMDAwMDAwIFIxNTogZmZmZjlmMzc1Njcz
-ZGMyMApbICAzNTIuMjUwNzk5XSBGUzogIDAwMDA3ZmRhMWQyZDcwNDAoMDAwMCkgR1M6ZmZmZjlm
-Mzc1ZTYwMDAwMCgwMDAwKSBrbmxHUzowMDAwMDAwMDAwMDAwMDAwClsgIDM1Mi4yNTExMTddIENT
-OiAgMDAxMCBEUzogMDAwMCBFUzogMDAwMCBDUjA6IDAwMDAwMDAwODAwNTAwMzMKWyAgMzUyLjI1
-MTQwOF0gQ1IyOiAwMDAwN2ZmZGMxMTQyZmY4IENSMzogMDAwMDAwMDAxNmZiMzAwMCBDUjQ6IDAw
-MDAwMDAwMDAwMDA2ZjAKWyAgMzUyLjI1MTY5OV0gQ2FsbCBUcmFjZToKWyAgMzUyLjI1MjAxM10g
-IGRtX2Jvd19kdHIrMHg1Zi8weDkwIFtkbV9ib3ddClsgIDM1Mi4yNTIzMjBdICBkbV90YWJsZV9k
-ZXN0cm95KzB4NjMvMHgxMjAKWyAgMzUyLjI1MjU4MF0gIF9fZG1fZGVzdHJveSsweDE0MS8weDIz
-MApbICAzNTIuMjUyODI4XSAgZG1fZGVzdHJveSsweDEzLzB4MjAKWyAgMzUyLjI1MzA5Ml0gIGRl
-dl9yZW1vdmUrMHhkZS8weDEyMApbICAzNTIuMjUzNDI1XSAgPyByZW1vdmVfYWxsKzB4MzAvMHgz
-MApbICAzNTIuMjUzNjkzXSAgY3RsX2lvY3RsKzB4MWMyLzB4NGEwClsgIDM1Mi4yNTM5MTldICBk
-bV9jdGxfaW9jdGwrMHgxMy8weDIwClsgIDM1Mi4yNTQxNTNdICBkb192ZnNfaW9jdGwrMHg5Mi8w
-eDVkMApbICAzNTIuMjU0MzgzXSAgPyBfX19fZnB1dCsweGUvMHgxMApbICAzNTIuMjU0NjMwXSAg
-PyB0YXNrX3dvcmtfcnVuKzB4N2IvMHg5MApbICAzNTIuMjU0ODM3XSAgU3lTX2lvY3RsKzB4Nzkv
-MHg5MApbICAzNTIuMjU1MDM0XSAgZW50cnlfU1lTQ0FMTF82NF9mYXN0cGF0aCsweDFlLzB4YTkK
-WyAgMzUyLjI1NTIzOF0gUklQOiAwMDMzOjB4N2ZkYTFjYjc1NWQ3ClsgIDM1Mi4yNTU0MzBdIFJT
-UDogMDAyYjowMDAwN2ZmZTk3NGVlOWI4IEVGTEFHUzogMDAwMDAyMDYgT1JJR19SQVg6IDAwMDAw
-MDAwMDAwMDAwMTAKWyAgMzUyLjI1NTYzMF0gUkFYOiBmZmZmZmZmZmZmZmZmZmRhIFJCWDogMDAw
-MDAwMDAwMDAwMDAwMCBSQ1g6IDAwMDA3ZmRhMWNiNzU1ZDcKWyAgMzUyLjI1NTgyOF0gUkRYOiAw
-MDAwNTYxZTkxNjc1YzkwIFJTSTogMDAwMDAwMDBjMTM4ZmQwNCBSREk6IDAwMDAwMDAwMDAwMDAw
-MDMKWyAgMzUyLjI1NjAyNl0gUkJQOiAwMDAwN2ZmZTk3NGVlYTUwIFIwODogMDAwMDdmZGExY2Vh
-YzEyMCBSMDk6IDAwMDA3ZmZlOTc0ZWU4MjAKWyAgMzUyLjI1NjI0Nl0gUjEwOiAwMDAwNTYxZTkx
-Njc1ZDQwIFIxMTogMDAwMDAwMDAwMDAwMDIwNiBSMTI6IDAwMDA1NjFlOTBkNmI4ZTAKWyAgMzUy
-LjI1NjUwNF0gUjEzOiAwMDAwN2ZmZTk3NGVlZDIwIFIxNDogMDAwMDAwMDAwMDAwMDAwMCBSMTU6
-IDAwMDAwMDAwMDAwMDAwMDAKWyAgMzUyLjI1Njg0MF0gQ29kZTogMGYgODQgNzAgZmYgZmYgZmYg
-MGYgMGIgMzEgZjYgNDggYzcgYzcgNzggZjQgNGYgYzAgZTggZmEgMTEgOGEgZjMgNDggOGIgNTMg
-NDggNDggODUgZDIgNzUgYzQgNDggODMgN2IgNDAgMDAgNzUgZTAgZTkgNGIgZmYgZmYgZmYgPDBm
-PiBmZiBlOSA3YiBmZiBmZiBmZiA2NiA5MCA2NiAyZSAwZiAxZiA4NCAwMCAwMCAwMCAwMCAwMCA2
-NiA2NiAKWyAgMzUyLjI1NzQ2NF0gLS0tWyBlbmQgdHJhY2UgNGEwNmY0M2JjMjczMmI2YSBdLS0t
-ClsgIDM1Mi4yNTc5MjldIGRldmljZS1tYXBwZXI6IGJ1ZmlvOiBsZWFrZWQgYnVmZmVyIDAsIGhv
-bGQgY291bnQgMSwgbGlzdCAwClsgIDM1Mi4yNTg3MTFdIC0tLS0tLS0tLS0tLVsgY3V0IGhlcmUg
-XS0tLS0tLS0tLS0tLQpbICAzNTIuMjU5MDk0XSBrZXJuZWwgQlVHIGF0IGRyaXZlcnMvbWQvZG0t
-YnVmaW8uYzoxNTI5IQpbICAzNTIuMjU5Mzg0XSBpbnZhbGlkIG9wY29kZTogMDAwMCBbIzJdIFNN
-UApbICAzNTIuMjU5NzA4XSBNb2R1bGVzIGxpbmtlZCBpbjogZG1fYm93IGRtX2J1ZmlvIG5sc19p
-c284ODU5XzEgc25kX2hkYV9jb2RlY19nZW5lcmljIHNuZF9oZGFfaW50ZWwgc25kX2hkYV9jb2Rl
-YyBzbmRfaGRhX2NvcmUgc25kX2h3ZGVwIHNuZF9wY20gam95ZGV2IHNuZF90aW1lciBzbmQgcHBk
-ZXYgaW5wdXRfbGVkcyBzb3VuZGNvcmUgc2VyaW9fcmF3IHBhcnBvcnRfcGMgcGFycG9ydCBxZW11
-X2Z3X2NmZyBtYWNfaGlkIHNjaF9mcV9jb2RlbCBpYl9pc2VyIHJkbWFfY20gaXdfY20gaWJfY20g
-aWJfY29yZSBpc2NzaV90Y3AgbGliaXNjc2lfdGNwIGxpYmlzY3NpIHNjc2lfdHJhbnNwb3J0X2lz
-Y3NpIGlwX3RhYmxlcyB4X3RhYmxlcyBhdXRvZnM0IGJ0cmZzIHJhaWQxMCByYWlkNDU2IGFzeW5j
-X3JhaWQ2X3JlY292IGFzeW5jX21lbWNweSBhc3luY19wcSBhc3luY194b3IgYXN5bmNfdHggeG9y
-IHJhaWQ2X3BxIGxpYmNyYzMyYyByYWlkMSByYWlkMCBtdWx0aXBhdGggbGluZWFyIGhpZF9nZW5l
-cmljIHVzYmhpZCBoaWQgcXhsIHR0bSBkcm1fa21zX2hlbHBlciBzeXNjb3B5YXJlYSBzeXNmaWxs
-cmVjdCBzeXNpbWdibHQgZmJfc3lzX2ZvcHMgcHNtb3VzZSB2aXJ0aW9fYmxrIGFoY2kgbGliYWhj
-aSBmbG9wcHkgaTJjX3BpaXg0IHBhdGFfYWNwaSBkcm0gdmlydGlvX25ldApbICAzNTIuMjYxNjIw
-XSBDUFU6IDAgUElEOiAxMjMzIENvbW06IGRtc2V0dXAgVGFpbnRlZDogRyAgICAgIEQgVyAgICAg
-ICA0LjEyLjAtZG1ib3cgIzEwOQpbICAzNTIuMjYxOTY0XSBIYXJkd2FyZSBuYW1lOiBRRU1VIFN0
-YW5kYXJkIFBDIChpNDQwRlggKyBQSUlYLCAxOTk2KSwgQklPUyAwLjAuMCAwMi8wNi8yMDE1Clsg
-IDM1Mi4yNjIyODVdIHRhc2s6IGZmZmY5ZjM3NTZhZjE1NDAgdGFzay5zdGFjazogZmZmZmI5MjU0
-MDg4NDAwMApbICAzNTIuMjYyNTUyXSBSSVA6IDAwMTA6ZG1fYnVmaW9fY2xpZW50X2Rlc3Ryb3kr
-MHgxYjMvMHgyNTAgW2RtX2J1ZmlvXQpbICAzNTIuMjYyODA4XSBSU1A6IDAwMTg6ZmZmZmI5MjU0
-MDg4N2JlMCBFRkxBR1M6IDAwMDEwMjkzClsgIDM1Mi4yNjMwODVdIFJBWDogZmZmZjlmMzc1YjJi
-ZTYxOCBSQlg6IGZmZmY5ZjM3NTY3M2RjMDAgUkNYOiAwMDAwMDAwMDAwMDAwMDA2ClsgIDM1Mi4y
-NjMzMzNdIFJEWDogMDAwMDAwMDAwMDAwMDAwMSBSU0k6IDAwMDAwMDAwMDAwMDAwOTYgUkRJOiBm
-ZmZmOWYzNzVlNjBkY2MwClsgIDM1Mi4yNjM1NTRdIFJCUDogZmZmZmI5MjU0MDg4N2MxMCBSMDg6
-IGZmZmZmZmZmYzA0ZmY0MzAgUjA5OiAwMDAwMDAwMDAwMDAwMmIzClsgIDM1Mi4yNjM3NzNdIFIx
-MDogZmZmZmI5MjU0MDg4N2JiMCBSMTE6IDAwMDAwMDAwZmZmZmZmZmYgUjEyOiBmZmZmOWYzNzU2
-NzNkYzQwClsgIDM1Mi4yNjQwMThdIFIxMzogZmZmZjlmMzc1NjczZGMwOCBSMTQ6IDAwMDAwMDAw
-MDAwMDAwMDEgUjE1OiBmZmZmOWYzNzU2NzNkYzIwClsgIDM1Mi4yNjQyNzNdIEZTOiAgMDAwMDdm
-ZGExZDJkNzA0MCgwMDAwKSBHUzpmZmZmOWYzNzVlNjAwMDAwKDAwMDApIGtubEdTOjAwMDAwMDAw
-MDAwMDAwMDAKWyAgMzUyLjI2NDQ5N10gQ1M6ICAwMDEwIERTOiAwMDAwIEVTOiAwMDAwIENSMDog
-MDAwMDAwMDA4MDA1MDAzMwpbICAzNTIuMjY0NzM0XSBDUjI6IDAwMDA3ZmZkYzExNDJmZjggQ1Iz
-OiAwMDAwMDAwMDE2ZmIzMDAwIENSNDogMDAwMDAwMDAwMDAwMDZmMApbICAzNTIuMjY0OTk4XSBD
-YWxsIFRyYWNlOgpbICAzNTIuMjY1MjQ4XSAgZG1fYm93X2R0cisweDVmLzB4OTAgW2RtX2Jvd10K
-WyAgMzUyLjI2NTUyMF0gIGRtX3RhYmxlX2Rlc3Ryb3krMHg2My8weDEyMApbICAzNTIuMjY1Nzcx
-XSAgX19kbV9kZXN0cm95KzB4MTQxLzB4MjMwClsgIDM1Mi4yNjYwMDhdICBkbV9kZXN0cm95KzB4
-MTMvMHgyMApbICAzNTIuMjY2MzIxXSAgZGV2X3JlbW92ZSsweGRlLzB4MTIwClsgIDM1Mi4yNjY2
-NTddICA/IHJlbW92ZV9hbGwrMHgzMC8weDMwClsgIDM1Mi4yNjcwMDBdICBjdGxfaW9jdGwrMHgx
-YzIvMHg0YTAKWyAgMzUyLjI2NzM0NF0gIGRtX2N0bF9pb2N0bCsweDEzLzB4MjAKWyAgMzUyLjI2
-NzcwMF0gIGRvX3Zmc19pb2N0bCsweDkyLzB4NWQwClsgIDM1Mi4yNjgwNzFdICA/IF9fX19mcHV0
-KzB4ZS8weDEwClsgIDM1Mi4yNjgzNzVdICA/IHRhc2tfd29ya19ydW4rMHg3Yi8weDkwClsgIDM1
-Mi4yNjg2NThdICBTeVNfaW9jdGwrMHg3OS8weDkwClsgIDM1Mi4yNjg5MDFdICBlbnRyeV9TWVND
-QUxMXzY0X2Zhc3RwYXRoKzB4MWUvMHhhOQpbICAzNTIuMjY5MTIxXSBSSVA6IDAwMzM6MHg3ZmRh
-MWNiNzU1ZDcKWyAgMzUyLjI2OTM2MV0gUlNQOiAwMDJiOjAwMDA3ZmZlOTc0ZWU5YjggRUZMQUdT
-OiAwMDAwMDIwNiBPUklHX1JBWDogMDAwMDAwMDAwMDAwMDAxMApbICAzNTIuMjY5NTk5XSBSQVg6
-IGZmZmZmZmZmZmZmZmZmZGEgUkJYOiAwMDAwMDAwMDAwMDAwMDAwIFJDWDogMDAwMDdmZGExY2I3
-NTVkNwpbICAzNTIuMjY5ODIwXSBSRFg6IDAwMDA1NjFlOTE2NzVjOTAgUlNJOiAwMDAwMDAwMGMx
-MzhmZDA0IFJESTogMDAwMDAwMDAwMDAwMDAwMwpbICAzNTIuMjcwMDM4XSBSQlA6IDAwMDA3ZmZl
-OTc0ZWVhNTAgUjA4OiAwMDAwN2ZkYTFjZWFjMTIwIFIwOTogMDAwMDdmZmU5NzRlZTgyMApbICAz
-NTIuMjcwMjUzXSBSMTA6IDAwMDA1NjFlOTE2NzVkNDAgUjExOiAwMDAwMDAwMDAwMDAwMjA2IFIx
-MjogMDAwMDU2MWU5MGQ2YjhlMApbICAzNTIuMjcwNDg4XSBSMTM6IDAwMDA3ZmZlOTc0ZWVkMjAg
-UjE0OiAwMDAwMDAwMDAwMDAwMDAwIFIxNTogMDAwMDAwMDAwMDAwMDAwMApbICAzNTIuMjcwNzM5
-XSBDb2RlOiA0OCA4YiA3YiA3OCBlOCBjZiBiMiBlMCBmMyA0OCA4OSBkZiBlOCAxNyBkNSA5MCBm
-MyA0OCA4MyBjNCAwOCA1YiA0MSA1YyA0MSA1ZCA0MSA1ZSA0MSA1ZiA1ZCBjMyA0MSBiZSAwMSAw
-MCAwMCAwMCBlOSBiNCBmZSBmZiBmZiA8MGY+IDBiIDBmIDBiIDBmIDBiIDBmIDBiIDg0IGQyIDc0
-IDdlIDRjIDhkIDY4IGU4IDQxIDhiIDU1IDQwIDQ5IApbICAzNTIuMjcxMjE3XSBSSVA6IGRtX2J1
-ZmlvX2NsaWVudF9kZXN0cm95KzB4MWIzLzB4MjUwIFtkbV9idWZpb10gUlNQOiBmZmZmYjkyNTQw
-ODg3YmUwClsgIDM1Mi4yNzE0ODldIC0tLVsgZW5kIHRyYWNlIDRhMDZmNDNiYzI3MzJiNmIgXS0t
-LQo=
---0000000000001b52d00579101e8f--
