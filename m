@@ -2,84 +2,118 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99812ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 532ACC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:23:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 534702075D
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:22:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="YToJQCb5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 534702075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 11EA320834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:23:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11EA320834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727596AbeJYVzY (ORCPT
+        id S1727604AbeJYV4U convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 17:55:24 -0400
-Received: from mail-lf1-f53.google.com ([209.85.167.53]:43736 "EHLO
-        mail-lf1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727234AbeJYVzX (ORCPT
+        Thu, 25 Oct 2018 17:56:20 -0400
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:48506 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727234AbeJYV4U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 17:55:23 -0400
-Received: by mail-lf1-f53.google.com with SMTP id p34-v6so6761563lfg.10
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 06:22:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GKReeOsO9rTSX2/+HD0dTwfMN38P7ZVcm3lVI26+qyI=;
-        b=YToJQCb5jrdKGWvooa6wDyqoNJSoDRE0RGoAXcj5Ibq/g4xl26amIml3MDOxMatYa9
-         D14N0NgSlmNVpOHGKAAvFF7e1YKPwKEcnvt78rv68x6YEULulRmL6Qlc+I+QLU++3rhN
-         xIbV7O6E9FPf0N4ydqpPwDsT+F6vpbHxOjxzk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GKReeOsO9rTSX2/+HD0dTwfMN38P7ZVcm3lVI26+qyI=;
-        b=UsMZ0CPfdiIPs1UsL3e1zVeWDj3T+EnQyg8forMG+VkyOqYbRoI7E5STpLf0iVTgU0
-         VIii51x4oRL9DKkjcxDuxX3xf4A4vxZL7VXsx4GHMv928f72bbKYNwwJJw8eaLoguhH9
-         tD3Ddh11gw38GVfGMpc15l8RrTUPlmyI+0etwu/1T7zQdSkvQNyiir+3nl2XwinCCdZ8
-         plmiIBrtjK1g6HHdtIkweDyqk/zFSwl+z0MhN540BkaLpbXPNh+qd6hLRfhA6extE5g2
-         ccpVWXSufq8KF0tWr3Zp9TQWkTVfYXiTgu1l2rEUq0D6NNPtk+Q5WDrS1syU9cTOOPqQ
-         Y4Dg==
-X-Gm-Message-State: AGRZ1gJ6g/oMi5KodHTBM1jdzOSp+lwzYYibDlRVp+TQJe9l1fHD3J+L
-        VKWQ++6tmejFxCeTOqTsRlIRgM2ff1ABGPRD
-X-Google-Smtp-Source: AJdET5fZPx3oKh/cYFKq2Rw/XY4O+r3nnlo0KfJyiRtg4Y0bpPR/6ciHUgJ4pURn12xEEWq+SuB9eQ==
-X-Received: by 2002:a19:d155:: with SMTP id i82-v6mr1155006lfg.127.1540473757455;
-        Thu, 25 Oct 2018 06:22:37 -0700 (PDT)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
-        by smtp.gmail.com with ESMTPSA id i11-v6sm257782ljg.84.2018.10.25.06.22.36
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Oct 2018 06:22:36 -0700 (PDT)
-Received: by mail-lj1-f172.google.com with SMTP id z9-v6so3356990ljk.9
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 06:22:36 -0700 (PDT)
-X-Received: by 2002:a2e:9d89:: with SMTP id c9-v6mr1175083ljj.120.1540473756147;
- Thu, 25 Oct 2018 06:22:36 -0700 (PDT)
+        Thu, 25 Oct 2018 17:56:20 -0400
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w9PDFYxl024912;
+        Thu, 25 Oct 2018 15:23:10 +0200
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2nb80933hm-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 25 Oct 2018 15:23:10 +0200
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id BEC2E31;
+        Thu, 25 Oct 2018 13:23:08 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag6node1.st.com [10.75.127.16])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8A19D5096;
+        Thu, 25 Oct 2018 13:23:08 +0000 (GMT)
+Received: from SFHDAG6NODE2.st.com (10.75.127.17) by SFHDAG6NODE1.st.com
+ (10.75.127.16) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 25 Oct
+ 2018 15:23:08 +0200
+Received: from SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6]) by
+ SFHDAG6NODE2.st.com ([fe80::a56f:c186:bab7:13d6%20]) with mapi id
+ 15.00.1347.000; Thu, 25 Oct 2018 15:23:08 +0200
+From:   Pascal PAILLET-LME <p.paillet@st.com>
+To:     Mark Brown <broonie@kernel.org>
+CC:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
+        "eballetbo@gmail.com" <eballetbo@gmail.com>
+Subject: Re: [PATCH v4 4/8] regulator: stpmic1: add stpmic1 regulator driver
+Thread-Topic: [PATCH v4 4/8] regulator: stpmic1: add stpmic1 regulator driver
+Thread-Index: AQHUZsFCff0rP/nvtUWEQ9H/MMA/OQ==
+Date:   Thu, 25 Oct 2018 13:23:08 +0000
+Message-ID: <5BD1C3BB.6060500@st.com>
+References: <1539853324-29051-1-git-send-email-p.paillet@st.com>
+ <1539853324-29051-5-git-send-email-p.paillet@st.com>
+ <20181019115015.GC5895@sirena.org.uk> <5BD06B96.3080809@st.com>
+ <20181024131716.GQ2103@sirena.org.uk>
+In-Reply-To: <20181024131716.GQ2103@sirena.org.uk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.3.0
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.45]
+Content-Type: text/plain; charset="Windows-1252"
+Content-ID: <AF637F4DFBD7E54B9A25F414B9E1D73B@st.com>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <20181023111355.GY4939@dell>
-In-Reply-To: <20181023111355.GY4939@dell>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 25 Oct 2018 06:22:20 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whdOoh6WueWuZc+==jP1geZLNdXaCyPcMfs=BFW=WUi-Q@mail.gmail.com>
-Message-ID: <CAHk-=whdOoh6WueWuZc+==jP1geZLNdXaCyPcMfs=BFW=WUi-Q@mail.gmail.com>
-Subject: Re: [GIT PULL] Backlight for v4.20
-To:     lee.jones@linaro.org
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-25_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 4:14 AM Lee Jones <lee.jones@linaro.org> wrote:
+Hello Mark,
+
+Le 10/24/2018 03:17 PM, Mark Brown a écrit :
+> On Wed, Oct 24, 2018 at 12:54:46PM +0000, Pascal PAILLET-LME wrote:
 >
->   git://git.kernel.org/pub/scm/linux/kernel/git/lee/backlight.git backlight-next-4.20
+>> I'm sorry, I'm not sure to understand. Would you prefer to not register
+>> regulators that
+>> are not described in the device-tree ?
+> No, I'm saying register all regulators regardless of if they are in the
+> device tree - you shouldn't be looking at the init data at all here,
+> just let the framework match them using of_match.
+I have reworked the code so that we don't touch any more to the init_data.
+the new loop to register the regulators is below:
 
-Pulled,
+     for (i = 0; i < ARRAY_SIZE(stpmic1_regulator_cfgs); i++) {
+         ret = stpmic1_regulator_register(pdev, i, &stpmic1_matches[i],
+                          regul);
+         if (ret < 0)
+             return ret;
+         regul++;
+     }
 
-               Linus
+Each regulator is registered, even is it is not described in the 
+device-tree.
+
+stpmic1_regulator_parse_dt() and stpmic1_regulator_init() are now merged 
+inside
+stpmic1_regulator_register() function.
+
+Thank You,
+pascal
