@@ -2,194 +2,231 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2FECC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 09:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F04CC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 09:39:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97D322064A
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 09:38:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="a7lJOjQh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97D322064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 19C2820838
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 09:39:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19C2820838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727125AbeJYSKa (ORCPT
+        id S1727162AbeJYSKz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 14:10:30 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37810 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726676AbeJYSKa (ORCPT
+        Thu, 25 Oct 2018 14:10:55 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40282 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726913AbeJYSKy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 14:10:30 -0400
-Received: by mail-wm1-f67.google.com with SMTP id p2-v6so798703wmc.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 02:38:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=+HnnKwjZQssUkWhx+voXqgMEfZW8Kz+WvT1CBBer8XI=;
-        b=a7lJOjQhAqEFyJ+LTTccF0vyfUJcWHKSu8xpGg6Zy58Sj/6afJ1vONr5S5JYtIVUH/
-         iDNhb0GT5pqufAsqh6l+sRONGio4BHyGZ0WK+6vMxN9TGF66HIV7wW+uQ3SVJeOOeQJk
-         l/0QRVuRYOVxGlgIDRfXfiUl8WyT0suPEbfG4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=+HnnKwjZQssUkWhx+voXqgMEfZW8Kz+WvT1CBBer8XI=;
-        b=fYuVp9RJA25YFmkcMTgyVyWKVGpFEPcZ26Nm2pNQqEprpojj0Yu0woi0VwFEnArFmw
-         2Zqum0UTwKFx3fEwQ1I0gw73l0QIUVltmRZmfs8Dc4waVpoabwoZ7O2wDxci3xSLaHMm
-         gqZYZhpc/zUI9W9VBFok/s/qoz/7KB1vSq/MhIFa91gu5JUS9WYEB8vYlI9C0RmtNzNi
-         Euw1toMx+ZpKtEnzl2VZ7G8CW16Q6ez7y4W/4zjtTHfFWBc5hn+L8IfWotGoMDeEKV6T
-         lDK4jtFaIZrnUTVb0aQx6HInYa2lVHCpM+wkBGEShTEcg0O0u009dffw25qM7rQCVtte
-         ApxQ==
-X-Gm-Message-State: AGRZ1gK0I6XCy0Ls1PtKUfo47+VKSOKi1ow8jbO47NLAlmixxuV3SXXG
-        u9PzvYchW8Vm+2I9tuy3rwAWSQ==
-X-Google-Smtp-Source: AJdET5dcrxQnLTyr6PNW9FquzlWa4TIvrm3JG12ofDpoZ9gxq2PEUaLU6v5y6kvba+hotIMHQ127iQ==
-X-Received: by 2002:a1c:3a92:: with SMTP id h140-v6mr1040460wma.69.1540460311058;
-        Thu, 25 Oct 2018 02:38:31 -0700 (PDT)
-Received: from dell ([2.31.167.182])
-        by smtp.gmail.com with ESMTPSA id b143-v6sm1318839wma.28.2018.10.25.02.38.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Oct 2018 02:38:30 -0700 (PDT)
-Date:   Thu, 25 Oct 2018 10:38:27 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Tony Xie <tony.xie@rock-chips.com>
-Cc:     heiko@sntech.de, broonie@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
-        xsf@rock-chips.com, zhangqing@rock-chips.com,
-        huangtao@rock-chips.com
-Subject: Re: [PATCH v5 3/5] dt-bindings: mfd: rk808: Add binding information
- for RK809 and RK817.
-Message-ID: <20181025093827.GP4939@dell>
-References: <1540294467-25813-1-git-send-email-tony.xie@rock-chips.com>
- <1540294467-25813-4-git-send-email-tony.xie@rock-chips.com>
+        Thu, 25 Oct 2018 14:10:54 -0400
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9P9conD013383
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 05:38:56 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2nbbb983j5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 05:38:56 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Thu, 25 Oct 2018 10:38:53 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 25 Oct 2018 10:38:45 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9P9cijR35061846
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 25 Oct 2018 09:38:44 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 11E1C4C052;
+        Thu, 25 Oct 2018 09:38:44 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8AD0C4C046;
+        Thu, 25 Oct 2018 09:38:37 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.206.29])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 25 Oct 2018 09:38:37 +0000 (GMT)
+Date:   Thu, 25 Oct 2018 10:38:34 +0100
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Olof Johansson <olof@lixom.net>, linux-alpha@vger.kernel.org,
+        arcml <linux-snps-arc@lists.infradead.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-c6x-dev@linux-c6x.org,
+        "moderated list:H8/300 ARCHITECTURE" 
+        <uclinux-h8-devel@lists.sourceforge.jp>,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org,
+        Linux-MIPS <linux-mips@linux-mips.org>,
+        nios2-dev@lists.rocketboards.org,
+        Openrisc <openrisc@lists.librecores.org>,
+        linux-parisc@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        SH-Linux <linux-sh@vger.kernel.org>, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
+        devicetree@vger.kernel.org,
+        "open list:GENERIC INCLUDE/ASM HEADER FILES" 
+        <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH v2 0/2] arm64: Cut rebuild time when changing
+ CONFIG_BLK_DEV_INITRD
+References: <20181024193256.23734-1-f.fainelli@gmail.com>
+ <CAL_Jsq+KCOv6pXXHhHDZ+7-QUrmtMDvSjEVhK15yZ3qbnn61Ag@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1540294467-25813-4-git-send-email-tony.xie@rock-chips.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAL_Jsq+KCOv6pXXHhHDZ+7-QUrmtMDvSjEVhK15yZ3qbnn61Ag@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18102509-4275-0000-0000-000002D37AFD
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18102509-4276-0000-0000-000037DF8880
+Message-Id: <20181025093833.GA23607@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-25_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810250088
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 23 Oct 2018, Tony Xie wrote:
-
-> Add device tree bindings documentation for Rockchip's RK809 & RK817 PMIC.
+On Wed, Oct 24, 2018 at 02:55:17PM -0500, Rob Herring wrote:
+> On Wed, Oct 24, 2018 at 2:33 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
+> >
+> > Hi all,
+> >
+> > While investigating why ARM64 required a ton of objects to be rebuilt
+> > when toggling CONFIG_DEV_BLK_INITRD, it became clear that this was
+> > because we define __early_init_dt_declare_initrd() differently and we do
+> > that in arch/arm64/include/asm/memory.h which gets included by a fair
+> > amount of other header files, and translation units as well.
 > 
-> Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
->  Documentation/devicetree/bindings/mfd/rk808.txt | 44 +++++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
+> I scratch my head sometimes as to why some config options rebuild so
+> much stuff. One down, ? to go. :)
 > 
-> diff --git a/Documentation/devicetree/bindings/mfd/rk808.txt b/Documentation/devicetree/bindings/mfd/rk808.txt
-> index 91b6522..d575780 100644
-> --- a/Documentation/devicetree/bindings/mfd/rk808.txt
-> +++ b/Documentation/devicetree/bindings/mfd/rk808.txt
-> @@ -3,11 +3,15 @@ RK8XX Power Management Integrated Circuit
->  The rk8xx family current members:
->  rk805
->  rk808
-> +rk809
-> +rk817
->  rk818
->  
->  Required properties:
->  - compatible: "rockchip,rk805"
->  - compatible: "rockchip,rk808"
-> +- compatible: "rockchip,rk809"
-> +- compatible: "rockchip,rk817"
->  - compatible: "rockchip,rk818"
->  - reg: I2C slave address
->  - interrupt-parent: The parent interrupt controller.
-> @@ -46,6 +50,23 @@ Optional RK808 properties:
->    the gpio controller. If DVS GPIOs aren't present, voltage changes will happen
->    very quickly with no slow ramp time.
->  
-> +Optional shared RK809 and RK817 properties:
-> +- vcc1-supply:  The input supply for DCDC_REG1
-> +- vcc2-supply:  The input supply for DCDC_REG2
-> +- vcc3-supply:  The input supply for DCDC_REG3
-> +- vcc4-supply:  The input supply for DCDC_REG4
-> +- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
-> +- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
-> +- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
-> +
-> +Optional RK809 properties:
-> +- vcc8-supply:  The input supply for SWITCH_REG1
-> +- vcc9-supply:  The input supply for DCDC_REG5, SWITCH_REG2
-> +
-> +Optional RK817 properties:
-> +- vcc8-supply:  The input supply for BOOST
-> +- vcc9-supply:  The input supply for OTG_SWITCH
-> +
->  Optional RK818 properties:
->  - vcc1-supply:  The input supply for DCDC_REG1
->  - vcc2-supply:  The input supply for DCDC_REG2
-> @@ -87,6 +108,21 @@ number as described in RK808 datasheet.
->  	- SWITCH_REGn
->  		- valid values for n are 1 to 2
->  
-> +Following regulators of the RK809 and RK817 PMIC blocks are supported. Note that
-> +the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
-> +number as described in RK809 and RK817 datasheets.
-> +
-> +	- DCDC_REGn
-> +		- valid values for n are 1 to 5 for RK809.
-> +		- valid values for n are 1 to 4 for RK817.
-> +	- LDO_REGn
-> +		- valid values for n are 1 to 9 for RK809.
-> +		- valid values for n are 1 to 9 for RK817.
-> +	- SWITCH_REGn
-> +		- valid values for n are 1 to 2 for RK809.
-> +	- BOOST for RK817
-> +	- OTG_SWITCH for RK817
-> +
->  Following regulators of the RK818 PMIC block are supported. Note that
->  the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
->  number as described in RK818 datasheet.
-> @@ -99,6 +135,14 @@ number as described in RK818 datasheet.
->  	- HDMI_SWITCH
->  	- OTG_SWITCH
->  
-> +There are three pins needed to config for each of RK809 and RK817,
+> > Changing the value of CONFIG_DEV_BLK_INITRD is a common thing with build
+> > systems that generate two kernels: one with the initramfs and one
+> > without. buildroot is one of these build systems, OpenWrt is also
+> > another one that does this.
+> >
+> > This patch series proposes adding an empty initrd.h to satisfy the need
+> > for drivers/of/fdt.c to unconditionally include that file, and moves the
+> > custom __early_init_dt_declare_initrd() definition away from
+> > asm/memory.h
+> >
+> > This cuts the number of objects rebuilds from 1920 down to 26, so a
+> > factor 73 approximately.
+> >
+> > Apologies for the long CC list, please let me know how you would go
+> > about merging that and if another approach would be preferable, e.g:
+> > introducing a CONFIG_ARCH_INITRD_BELOW_START_OK Kconfig option or
+> > something like that.
+> 
+> There may be a better way as of 4.20 because bootmem is now gone and
+> only memblock is used. This should unify what each arch needs to do
+> with initrd early. We need the physical address early for memblock
+> reserving. Then later on we need the virtual address to access the
+> initrd. Perhaps we should just change initrd_start and initrd_end to
+> physical addresses (or add 2 new variables would be less invasive and
+> allow for different translation than __va()). The sanity checks and
+> memblock reserve could also perhaps be moved to a common location.
+>
+> Alternatively, given arm64 is the only oddball, I'd be fine with an
+> "if (IS_ENABLED(CONFIG_ARM64))" condition in the default
+> __early_init_dt_declare_initrd as long as we have a path to removing
+> it like the above option.
 
-Nit: "configure" in full please.
+I think arm64 does not have to redefine __early_init_dt_declare_initrd().
+Something like this might be just all we need (completely untested,
+probably it won't even compile):
 
-Actually: "It is necessary to configure three pins for both the RK809 and RK817"
-
-> +named "gpio_ts" "gpio_gt" "gpio_slp".
-> +	The gpio_gt and gpio_ts pins support the gpio function.
-> +	The gpio_slp pin is for controlling the pmic states, as below:
-> +		- reset
-> +		- power down
-> +		- sleep
-> +
->  Standard regulator bindings are used inside regulator subnodes. Check
->    Documentation/devicetree/bindings/regulator/regulator.txt
->  for more details
-
-Once that's fixed, please apply my:
-
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+index 9d9582c..e9ca238 100644
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -62,6 +62,9 @@ s64 memstart_addr __ro_after_init = -1;
+ phys_addr_t arm64_dma_phys_limit __ro_after_init;
+ 
+ #ifdef CONFIG_BLK_DEV_INITRD
++
++static phys_addr_t initrd_start_phys, initrd_end_phys;
++
+ static int __init early_initrd(char *p)
+ {
+ 	unsigned long start, size;
+@@ -71,8 +74,8 @@ static int __init early_initrd(char *p)
+ 	if (*endp == ',') {
+ 		size = memparse(endp + 1, NULL);
+ 
+-		initrd_start = start;
+-		initrd_end = start + size;
++		initrd_start_phys = start;
++		initrd_end_phys = end;
+ 	}
+ 	return 0;
+ }
+@@ -407,14 +410,27 @@ void __init arm64_memblock_init(void)
+ 		memblock_add(__pa_symbol(_text), (u64)(_end - _text));
+ 	}
+ 
+-	if (IS_ENABLED(CONFIG_BLK_DEV_INITRD) && initrd_start) {
++	if (IS_ENABLED(CONFIG_BLK_DEV_INITRD) &&
++	    (initrd_start || initrd_start_phys)) {
++		/*
++		 * FIXME: ensure proper precendence between
++		 * early_initrd and DT when both are present
++		 */
++		if (initrd_start) {
++			initrd_start_phys = __phys_to_virt(initrd_start);
++			initrd_end_phys = __phys_to_virt(initrd_end);
++		} else if (initrd_start_phys) {
++			initrd_start = __va(initrd_start_phys);
++			initrd_end = __va(initrd_start_phys);
++		}
++
+ 		/*
+ 		 * Add back the memory we just removed if it results in the
+ 		 * initrd to become inaccessible via the linear mapping.
+ 		 * Otherwise, this is a no-op
+ 		 */
+-		u64 base = initrd_start & PAGE_MASK;
+-		u64 size = PAGE_ALIGN(initrd_end) - base;
++		u64 base = initrd_start_phys & PAGE_MASK;
++		u64 size = PAGE_ALIGN(initrd_end_phys) - base;
+ 
+ 		/*
+ 		 * We can only add back the initrd memory if we don't end up
+@@ -458,7 +474,7 @@ void __init arm64_memblock_init(void)
+ 	 * pagetables with memblock.
+ 	 */
+ 	memblock_reserve(__pa_symbol(_text), _end - _text);
+-#ifdef CONFIG_BLK_DEV_INITRD
++#if 0
+ 	if (initrd_start) {
+ 		memblock_reserve(initrd_start, initrd_end - initrd_start);
+ 
+ 
+> Rob
+> 
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Sincerely yours,
+Mike.
+
