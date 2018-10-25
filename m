@@ -5,155 +5,91 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC374ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 15:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B04ABC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 16:01:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FB012083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 15:57:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FB012083E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 82AD22083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 16:01:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82AD22083E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=metafoo.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbeJZAbS (ORCPT
+        id S1727648AbeJZAec (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 20:31:18 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50396 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727350AbeJZAbS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 20:31:18 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 5D88FC71B1;
-        Thu, 25 Oct 2018 15:57:54 +0000 (UTC)
-Received: from ivy-bridge (ovpn-116-86.ams2.redhat.com [10.36.116.86])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0EE7F77E22;
-        Thu, 25 Oct 2018 15:57:48 +0000 (UTC)
-Date:   Thu, 25 Oct 2018 17:57:45 +0200
-From:   Steve Grubb <sgrubb@redhat.com>
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Paul Moore <paul@paul-moore.com>, simo@redhat.com,
-        carlos@redhat.com, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        linux-audit@redhat.com, netfilter-devel@vger.kernel.org,
-        ebiederm@xmission.com, luto@kernel.org, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH ghak90 (was ghak32) V4 03/10] audit: log container info
- of syscalls
-Message-ID: <20181025175745.5b2b13e9@ivy-bridge>
-In-Reply-To: <20181025122732.4j4rbychjse3gemt@madcap2.tricolour.ca>
-References: <cover.1533065887.git.rgb@redhat.com>
-        <34017c395d03a213d6b0d49b9964429bd32b283d.1533065887.git.rgb@redhat.com>
-        <CAHC9VhSv4hWGHiaaOfuBrRQKdp2YG5RtqXQbFXg7j7LNEhO2XQ@mail.gmail.com>
-        <20181024151439.lavhanabsyxdrdvo@madcap2.tricolour.ca>
-        <CAHC9VhRF1vsxM-k0Lw-9NqS9b9rgXRRBu0tq4ajdFpMqUxiH4A@mail.gmail.com>
-        <20181025004255.zl7p7j6gztouh2hh@madcap2.tricolour.ca>
-        <20181025080638.771621a3@ivy-bridge>
-        <CAHC9VhR02siURgadQs0EikcOm0d_TPAi4jJYCx4NkA=wQ5rjSA@mail.gmail.com>
-        <20181025122732.4j4rbychjse3gemt@madcap2.tricolour.ca>
-Organization: Red Hat
+        Thu, 25 Oct 2018 20:34:32 -0400
+Received: from www381.your-server.de ([78.46.137.84]:50080 "EHLO
+        www381.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727319AbeJZAec (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 20:34:32 -0400
+Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
+        by www381.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <lars@metafoo.de>)
+        id 1gFi4D-0000yd-Vu; Thu, 25 Oct 2018 18:01:02 +0200
+Received: from [2003:93:4d12:1e00:8200:bff:fe9b:6612]
+        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <lars@metafoo.de>)
+        id 1gFi4D-000WEv-Oi; Thu, 25 Oct 2018 18:01:01 +0200
+Subject: Re: [PATCH] staging: iio: ad7780: update voltage on read
+To:     Himanshu Jha <himanshujha199640@gmail.com>,
+        Renato Lui Geh <renatogeh@gmail.com>
+Cc:     Michael.Hennerich@analog.com, jic23@kernel.org, knaack.h@gmx.de,
+        pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+        alexandru.Ardelean@analog.com, stefan.popa@analog.com,
+        giuliano.belinassi@usp.br, linux-iio@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        kernel-usp@googlegroups.com
+References: <20181025133223.kn7cjlyep7bmx2mm@renatolg>
+ <c958f5fc-2a58-8471-62a4-20b0c7267bd0@metafoo.de>
+ <20181025142635.3apgyaxzhr73kehc@renatolg>
+ <20181025145520.GA16950@himanshu-Vostro-3559>
+From:   Lars-Peter Clausen <lars@metafoo.de>
+Message-ID: <2007f2b3-5d1a-14c6-4c98-1d9faf6d21bf@metafoo.de>
+Date:   Thu, 25 Oct 2018 18:01:00 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20181025145520.GA16950@himanshu-Vostro-3559>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 25 Oct 2018 15:57:55 +0000 (UTC)
+X-Authenticated-Sender: lars@metafoo.de
+X-Virus-Scanned: Clear (ClamAV 0.100.2/25067/Wed Oct 24 23:01:03 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 25 Oct 2018 08:27:32 -0400
-Richard Guy Briggs <rgb@redhat.com> wrote:
-
-> On 2018-10-25 06:49, Paul Moore wrote:
-> > On Thu, Oct 25, 2018 at 2:06 AM Steve Grubb <sgrubb@redhat.com>
-> > wrote:  
-> > > On Wed, 24 Oct 2018 20:42:55 -0400
-> > > Richard Guy Briggs <rgb@redhat.com> wrote:  
-> > > > On 2018-10-24 16:55, Paul Moore wrote:  
-> > > > > On Wed, Oct 24, 2018 at 11:15 AM Richard Guy Briggs
-> > > > > <rgb@redhat.com> wrote:  
-> > > > > > On 2018-10-19 19:16, Paul Moore wrote:  
-> > > > > > > On Sun, Aug 5, 2018 at 4:32 AM Richard Guy Briggs
-> > > > > > > <rgb@redhat.com> wrote:  
-> > 
-> > ...
-> >   
-> > > > > > > > +/*
-> > > > > > > > + * audit_log_contid - report container info
-> > > > > > > > + * @tsk: task to be recorded
-> > > > > > > > + * @context: task or local context for record
-> > > > > > > > + * @op: contid string description
-> > > > > > > > + */
-> > > > > > > > +int audit_log_contid(struct task_struct *tsk,
-> > > > > > > > +                            struct audit_context
-> > > > > > > > *context, char *op) +{
-> > > > > > > > +       struct audit_buffer *ab;
-> > > > > > > > +
-> > > > > > > > +       if (!audit_contid_set(tsk))
-> > > > > > > > +               return 0;
-> > > > > > > > +       /* Generate AUDIT_CONTAINER record with
-> > > > > > > > container ID */
-> > > > > > > > +       ab = audit_log_start(context, GFP_KERNEL,
-> > > > > > > > AUDIT_CONTAINER);
-> > > > > > > > +       if (!ab)
-> > > > > > > > +               return -ENOMEM;
-> > > > > > > > +       audit_log_format(ab, "op=%s contid=%llu",
-> > > > > > > > +                        op, audit_get_contid(tsk));
-> > > > > > > > +       audit_log_end(ab);
-> > > > > > > > +       return 0;
-> > > > > > > > +}
-> > > > > > > > +EXPORT_SYMBOL(audit_log_contid);  
-> > > > > > >
-> > > > > > > As discussed in the previous iteration of the patch, I
-> > > > > > > prefer AUDIT_CONTAINER_ID here over AUDIT_CONTAINER.  If
-> > > > > > > you feel strongly about keeping it as-is with
-> > > > > > > AUDIT_CONTAINER I suppose I could live with that, but it
-> > > > > > > is isn't my first choice.  
-> > > > > >
-> > > > > > I don't have a strong opinion on this one, mildly
-> > > > > > preferring the shorter one only because it is shorter.  
-> > > > >
-> > > > > We already have multiple AUDIT_CONTAINER* record types, so it
-> > > > > seems as though we should use "AUDIT_CONTAINER" as a prefix
-> > > > > of sorts, rather than a type itself.  
-> > > >
-> > > > I'm fine with that.  I'd still like to hear Steve's input.  He
-> > > > had stronger opinions than me.  
-> > >
-> > > The creation event should be separate and distinct from the
-> > > continuing use when its used as a supplemental record. IOW,
-> > > binding the ID to a container is part of the lifecycle and needs
-> > > to be kept distinct.  
-> > 
-> > Steve's comment is pretty ambiguous when it comes to AUDIT_CONTAINER
-> > vs AUDIT_CONTAINER_ID, but one could argue that AUDIT_CONTAINER_ID
-> > helps distinguish the audit container id marking record and gets to
-> > what I believe is the spirit of Steve's comment.  Taking this in
-> > context with my previous remarks, let's switch to using
-> > AUDIT_CONTAINER_ID.  
+On 10/25/2018 04:55 PM, Himanshu Jha wrote:
+> On Thu, Oct 25, 2018 at 11:26:36AM -0300, Renato Lui Geh wrote:
+>> Hi,
+>>
+>> Thanks for the quick review. :)
+>>
+>>> But please create one patch per issue and do not put unrelated changes into
+>>> the same patch.
+>>
+>> Should I resend this patch as a patchset containing the two changes?
 > 
-> I suspect Steve is mixing up AUDIT_CONTAINER_OP with
-> AUDIT_CONTAINER_ID, confusing the fact that they are two seperate
-> records.  As a summary, the suggested records are:
-> 	CONTAINER_OP	audit container identifier creation
-> 	CONTAINER	audit container identifier aux record to an
-> event
+> Yes! "One patch per change policy"
 > 
-> and what Paul is suggesting (which is fine by me) is:
-> 	CONTAINER_OP	audit container identifier creation event
-> 	CONTAINER_ID	audit container identifier aux record to
-> an event
+>>> Also your mail client seems to have replaced tabs in the patch with spaces,
+>>> this means the patch will not apply cleanly. Check the
+>>> Documentation/email-clients.txt file for some hints how to configure your
+>>> mail client so it will not break patches.
+>>
+>> From my end my original email patch appears to have tabs instead of
+>> spaces. I redownloaded my email and vim shows that the indentation has
+>> the ^I tab characters. But when downloading your reply it was converted
+>> to spaces. Am I missing something?
 > 
-> Steve, please indicate you are fine with this.
+> Your patch applies fine.
+> 
+> I think the problem is on Lars end due to Thunderbird.
 
-I thought it was:
+Yeah, looks like I need to read email-clients.txt...
 
-CONTAINER_ID audit container identifier creation event
-CONTAINER audit container identifier aux record to an event
-
-Or vice versa. Don't mix up creation of the identifier with operations.
-
--Steve
+I think it is mis-rendered on my side due to the "Content-Type: ...
+format=flowed" in the header.
