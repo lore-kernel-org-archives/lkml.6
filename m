@@ -4,47 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42BDDC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DA4AECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F344920848
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A6BC20870
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="y0Zmxu1P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F344920848
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AQx4WmVW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A6BC20870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730364AbeJYWwH (ORCPT
+        id S1730377AbeJYWwI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:52:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34000 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:52:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34012 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730290AbeJYWwG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:52:06 -0400
+        id S1727992AbeJYWwH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:52:07 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC8422085B;
-        Thu, 25 Oct 2018 14:19:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 168A820848;
+        Thu, 25 Oct 2018 14:19:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477148;
-        bh=21Ks0DfgFNjClGDMQ+ItP2+sz5lw4/BqrtX2RT/696s=;
+        s=default; t=1540477150;
+        bh=x3Sq3kVWrOZd6+qgj8SB7cRu3yavIH7tGfm3q/KK8iw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y0Zmxu1P8FhEiy+U2/nlU0a/rr1grdwBMpYIxgdvxSuce4wcTTw6+/TM7bxOtn5uj
-         45MiF7D3eSqxalpYSX97Kbgc6/+K46GNJ1+CxdYQslOCAXmJLBTGDXhqWyjsnoMlA+
-         yOsQ5t3gLpnLwj4B3sfQKY8EE/XFcPtQco+zNyNs=
+        b=AQx4WmVW+wp2IitZz5MGHZ0CT94aJr7I+ts2QqU3CZSfczoNfppEIFpFtdf9g59f1
+         OQL/YFf0l3E1temw+5jHxPSbn7xUqTvgG5//23YymBQ1nmoSviDsk5Ojcz8GppjgxT
+         v/WDuUgzJAM/Kn57l0Jt6WB/Xg638+T/GMnfra9k=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jisheng Zhang <jszhang@marvell.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+Cc:     Matthijs van Duin <matthijsvanduin@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 07/98] mmc: sdhci: restore behavior when setting VDD via external regulator
-Date:   Thu, 25 Oct 2018 10:17:22 -0400
-Message-Id: <20181025141853.214051-7-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 08/98] ARM: OMAP5 / DRA7: Fix HYP mode boot for thumb2 build
+Date:   Thu, 25 Oct 2018 10:17:23 -0400
+Message-Id: <20181025141853.214051-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
 References: <20181025141853.214051-1-sashal@kernel.org>
@@ -53,81 +52,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jisheng Zhang <jszhang@marvell.com>
+From: Matthijs van Duin <matthijsvanduin@gmail.com>
 
-[ Upstream commit 918f4cbd4340ddd1eb389cd8efa3b07ac74ec4c0 ]
+[ Upstream commit 448c077eeb02240c430db2a2c3bf5285a4c65d66 ]
 
-After commit 52221610dd84 ("mmc: sdhci: Improve external VDD regulator
-support"), for the VDD is supplied via external regulators, we ignore
-the code to convert a VDD voltage request into one of the standard
-SDHCI voltage levels, then program it in the SDHCI_POWER_CONTROL. This
-brings two issues:
+'adr' yields a data-pointer, not a function-pointer.
 
-1. SDHCI_QUIRK2_CARD_ON_NEEDS_BUS_ON quirk isn't handled properly any
-more.
-
-2. What's more, once SDHCI_POWER_ON bit is set, some controllers such
-as the sdhci-pxav3 used in marvell berlin SoCs require the voltage
-levels programming in the SDHCI_POWER_CONTROL register, even the VDD
-is supplied by external regulator. So the host in marvell berlin SoCs
-still works fine after the commit. However, commit 3cbc6123a93d ("mmc:
-sdhci: Set SDHCI_POWER_ON with external vmmc") sets the SDHCI_POWER_ON
-bit, this would make the host in marvell berlin SoCs won't work any
-more with external vmmc.
-
-This patch restores the behavior when setting VDD through external
-regulator by moving the call of mmc_regulator_set_ocr() to the end
-of sdhci_set_power() function.
-
-After this patch, the sdcard on Marvell Berlin SoC boards work again.
-
-Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
-Fixes: 52221610dd84 ("mmc: sdhci: Improve external VDD ...")
-Reviewed-by: Ludovic Desroches <ludovic.desroches@atmel.com>
-Tested-by: Ludovic Desroches <ludovic.desroches@atmel.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Fixes: 999f934de195 ("ARM: omap5/dra7xx: Enable booting secondary
+CPU in HYP mode")
+Signed-off-by: Matthijs van Duin <matthijsvanduin@gmail.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/sdhci.c | 19 ++++++-------------
- 1 file changed, 6 insertions(+), 13 deletions(-)
+ arch/arm/mach-omap2/omap-headsmp.S | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 56578504fd24..2295bf6e94a1 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -1248,19 +1248,6 @@ static void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
- 	struct mmc_host *mmc = host->mmc;
- 	u8 pwr = 0;
+diff --git a/arch/arm/mach-omap2/omap-headsmp.S b/arch/arm/mach-omap2/omap-headsmp.S
+index 6d1dffca6c7b..748dde9fa4a5 100644
+--- a/arch/arm/mach-omap2/omap-headsmp.S
++++ b/arch/arm/mach-omap2/omap-headsmp.S
+@@ -17,6 +17,7 @@
  
--	if (!IS_ERR(mmc->supply.vmmc)) {
--		spin_unlock_irq(&host->lock);
--		mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, vdd);
--		spin_lock_irq(&host->lock);
--
--		if (mode != MMC_POWER_OFF)
--			sdhci_writeb(host, SDHCI_POWER_ON, SDHCI_POWER_CONTROL);
--		else
--			sdhci_writeb(host, 0, SDHCI_POWER_CONTROL);
--
--		return;
--	}
--
- 	if (mode != MMC_POWER_OFF) {
- 		switch (1 << vdd) {
- 		case MMC_VDD_165_195:
-@@ -1319,6 +1306,12 @@ static void sdhci_set_power(struct sdhci_host *host, unsigned char mode,
- 		if (host->quirks & SDHCI_QUIRK_DELAY_AFTER_POWER)
- 			mdelay(10);
- 	}
-+
-+	if (!IS_ERR(mmc->supply.vmmc)) {
-+		spin_unlock_irq(&host->lock);
-+		mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, vdd);
-+		spin_lock_irq(&host->lock);
-+	}
- }
+ #include <linux/linkage.h>
+ #include <linux/init.h>
++#include <asm/assembler.h>
  
- /*****************************************************************************\
+ #include "omap44xx.h"
+ 
+@@ -56,7 +57,7 @@ wait_2:	ldr	r2, =AUX_CORE_BOOT0_PA	@ read from AuxCoreBoot0
+ 	cmp	r0, r4
+ 	bne	wait_2
+ 	ldr	r12, =API_HYP_ENTRY
+-	adr	r0, hyp_boot
++	badr	r0, hyp_boot
+ 	smc	#0
+ hyp_boot:
+ 	b	secondary_startup
 -- 
 2.17.1
 
