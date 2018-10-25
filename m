@@ -2,199 +2,112 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4787BC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 05:31:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A95DFECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 05:40:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D86A220838
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 05:31:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EEAE20824
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 05:40:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IuZcJ9mr";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UiIdugMf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D86A220838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wd7ixMhL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EEAE20824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727369AbeJYOCu (ORCPT
+        id S1727261AbeJYOLY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 10:02:50 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59872 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726909AbeJYOCt (ORCPT
+        Thu, 25 Oct 2018 10:11:24 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55296 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726804AbeJYOLY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 10:02:49 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id C582C602BA; Thu, 25 Oct 2018 05:31:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540445502;
-        bh=veWBQpMVpPklvc99nzVyn74lBus8U7yE6n+wgi2BPzA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=IuZcJ9mrFSuXW46Vu5Kr0in5aiJh/YAz0OWKsgOMEkMk02/IVAsYy5ucqKMfwS1tf
-         cKjjBK6yXaQrVd+5ySHQq2zzuLZAN6jTKW/LidLVOi4dfzXqVbF0FNgOr41lUwNd2u
-         QUcLalYPb2UN78TX+fjfeJWw45jYKFozqAc3KRt0=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id B0ACF602BA;
-        Thu, 25 Oct 2018 05:31:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540445501;
-        bh=veWBQpMVpPklvc99nzVyn74lBus8U7yE6n+wgi2BPzA=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=UiIdugMfGD4Lbjyh23pVXxbvK9cQyhOH84GeRHVfHHBFDptGDMf5MtmIp0l+bJD8O
-         8jIEXVNbSvrivin3/lFF/kvWnFMLTeBYcVgC8301mmqHcwRQvYNv/1I6TBZW1OGcbs
-         Bd9MIqddEqOPHwud/TrYF09CUZoIWa0p5H/UyaHY=
+        Thu, 25 Oct 2018 10:11:24 -0400
+Received: by mail-wm1-f66.google.com with SMTP id s10-v6so147842wmc.5;
+        Wed, 24 Oct 2018 22:40:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=t+bLT3fIPKhqWO7xUh+hzxzAin5FMHbuAN0zrznYnV8=;
+        b=Wd7ixMhLdrILA2zNr3cmdn2L/5T6eBZJl+heEZmjelG+Upp1K/c5ubfBurkjhLvtWI
+         ReAss10rXghWdjzqGHQhA3CBvromIg3KJ6m6HFjirdelFxo2/RFcAGaqjxqys2OTbZcz
+         5x009nDAXtOUwXXeXBHRtK+4vJ0VLSnGuHIz5b0dY0NwloIxV0ho9TdyFYx1Nqcm8i54
+         m6MIywG7jUYhufpBMlSbCecQQwVltTN2IgZQFWxC39VVzghhhz9sjxUpXig0HZc9SruH
+         jdFg/bgrfOAJOmMy+LyHlSgcXEexJQoW5m/VJ4OOZwkDE8odCxcGNcEY2Z/cWu6MApZu
+         jCIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=t+bLT3fIPKhqWO7xUh+hzxzAin5FMHbuAN0zrznYnV8=;
+        b=KI36+fBSd12wWkPYQ3HBq0NN7PiYY7IFgd09D17UhwSq7nyxLakZZjwvC7ZwEe+1j6
+         /qasgodRH5lGCbuzKhYO+Gk8zaA++7cs3GuPkf6cbhSK7sezBr2/hFdE7q5IPO7z5eRz
+         v6UuQVq1BoORjn2iQjtHNGMZXtdfxFKfgxLhZ2IvlOFgfSvLofOLxNzw7LjzjJw/INm6
+         2KmpeSC+Fy9LI/5SnJ0owH3NDrN5+LwzqGLPDrQyATB0DDpwA1nv6Hddzi1NB2oStRiY
+         TMM7Dr/gfROLSvoWFbA2a7tBT54s8dlHfYyKtSk0XATORGAto3px7Bbp/9Foev8QVoUr
+         XZww==
+X-Gm-Message-State: AGRZ1gJCUeId4sCZMafUw9z6AJvnj90pQpBaOQS0owCQ6STmtUUZCSXU
+        pEYEUE4+U+3t7Zs2Hx7Cyvc=
+X-Google-Smtp-Source: AJdET5ftELGcQLGWcfokWOm6MQs2tofxC6053yflvrf7/V1l9BZ9bsRhl19nTWvWJ4c9/xK0BVJAzQ==
+X-Received: by 2002:a1c:5d54:: with SMTP id r81-v6mr241384wmb.88.1540446014793;
+        Wed, 24 Oct 2018 22:40:14 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id x8-v6sm15254814wrd.54.2018.10.24.22.40.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 24 Oct 2018 22:40:13 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 07:40:11 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-pci@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: Add x86 early-quirks.c file pattern to PCI
+ subsystem
+Message-ID: <20181025054011.GA55187@gmail.com>
+References: <154041923937.26247.17083948926896599419.stgit@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 25 Oct 2018 11:01:41 +0530
-From:   Arun KS <arunks@codeaurora.org>
-To:     Julia Lawall <julia.lawall@lip6.fr>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Arun Sudhilal <getarunks@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
-        Minchan Kim <minchan@kernel.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] mm: convert totalram_pages, totalhigh_pages and
- managed_pages to atomic.
-In-Reply-To: <alpine.DEB.2.21.1810230711220.2343@hadrien>
-References: <1540229092-25207-1-git-send-email-arunks@codeaurora.org>
- <20181022181122.GK18839@dhcp22.suse.cz>
- <CABOM9Zpq41Ox8wQvsNjgfCtwuqh6CnyeW1B09DWa1TQN+JKf0w@mail.gmail.com>
- <20181023053359.GL18839@dhcp22.suse.cz>
- <alpine.DEB.2.21.1810230711220.2343@hadrien>
-Message-ID: <9bd14fb3c0ce8ca9a33c33ce81e66037@codeaurora.org>
-X-Sender: arunks@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154041923937.26247.17083948926896599419.stgit@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-23 11:43, Julia Lawall wrote:
-> On Tue, 23 Oct 2018, Michal Hocko wrote:
+
+* Bjorn Helgaas <helgaas@kernel.org> wrote:
+
+> From: Bjorn Helgaas <bhelgaas@google.com>
 > 
->> [Trimmed CC list + Julia - there is indeed no need to CC everybody 
->> maintain a
->> file you are updating for the change like this]
->> 
->> On Tue 23-10-18 10:16:51, Arun Sudhilal wrote:
->> > On Mon, Oct 22, 2018 at 11:41 PM Michal Hocko <mhocko@kernel.org> wrote:
->> > >
->> > > On Mon 22-10-18 22:53:22, Arun KS wrote:
->> > > > Remove managed_page_count_lock spinlock and instead use atomic
->> > > > variables.
->> > >
->> >
->> > Hello Michal,
->> > > I assume this has been auto-generated. If yes, it would be better to
->> > > mention the script so that people can review it and regenerate for
->> > > comparision. Such a large change is hard to review manually.
->> >
->> > Changes were made partially with script.  For totalram_pages and
->> > totalhigh_pages,
->> >
->> > find dir -type f -exec sed -i
->> > 's/totalram_pages/atomic_long_read(\&totalram_pages)/g' {} \;
->> > find dir -type f -exec sed -i
->> > 's/totalhigh_pages/atomic_long_read(\&totalhigh_pages)/g' {} \;
->> >
->> > For managed_pages it was mostly manual edits after using,
->> > find mm/ -type f -exec sed -i
->> > 's/zone->managed_pages/atomic_long_read(\&zone->managed_pages)/g' {}
->> > \;
->> 
->> I guess we should be able to use coccinelle for this kind of change 
->> and
->> reduce the amount of manual intervention to absolute minimum.
+> arch/x86/kernel/early-quirks.c contains special PCI quirks that need to
+> run even before the usual DECLARE_PCI_FIXUP_EARLY() quirks.  These have
+> typically been merged by the x86 maintainers, which is fine, but PCI folks
+> should at least see what's happening, so add a file pattern to the PCI
+> subsystem entry.
 > 
-> Coccinelle looks like it would be desirable, especially in case the 
-> word
-> zone is not always used.
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> ---
+>  MAINTAINERS |    1 +
+>  1 file changed, 1 insertion(+)
 > 
-> Arun, please feel free to contact me if you want to try it and need 
-> help.
-Hello Julia,
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 4ece30f15777..63cb7f3dbbb4 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11249,6 +11249,7 @@ F:	include/uapi/linux/pci*
+>  F:	lib/pci*
+>  F:	arch/x86/pci/
+>  F:	arch/x86/kernel/quirks.c
+> +F:	arch/x86/kernel/early-quirks.c
 
-I was able to come up .cocci for replacing managed_pages,
+Good idea!
 
-@@
-struct zone *z;
-@@
-(
-z->managed_pages = ...
-|
-- z->managed_pages
-+ atomic_long_read(&z->managed_pages)
-)
+Acked-by: Ingo Molnar <mingo@kernel.org>
 
-@@
-struct zone *z;
-expression e1;
-@@
-- z->managed_pages = e1
-+ atomic_long_set(&z->managed_pages, e1)
+Thanks,
 
-@@
-expression e,e1;
-@@
-- e->managed_pages += e1
-+ atomic_long_add(e1, &e->managed_pages)
-
-@@
-expression z;
-@@
-- z.managed_pages
-+ atomic_long_read(&z.managed_pages)
-
-But I m not able to use same method for unsigned long 
-variables(totalram_pages)
-
-@@
-unsigned long totalram_pages;
-@@
-(
-totalram_pages = ...
-|
--totalram_pages
-+atomic_long_read(&totalram_pages)
-)
-
-This throws error,
-
-spatch test1.cocci mm/page_alloc.c
-init_defs_builtins: /usr/lib/coccinelle/standard.h
-HANDLING: mm/page_alloc.c
-
-previous modification:
-MINUS
-   >>> atomic_long_read(&rule starting on line 1:totalram_pages)
-
-According to environment 1:
-    rule starting on line 1.totalram_pages -> page_idx ^ (1 <<
-order)
-
-current modification:
-MINUS
-   >>> atomic_long_read(&rule starting on line 1:totalram_pages)
-
-According to environment 1:
-    rule starting on line 1.totalram_pages -> page_idx
-
-Fatal error: exception Failure("rule starting on line 1: already tagged 
-token:
-C code context
-File "mm/internal.h", line 175, column 8,  charpos = 5368
-     around = 'page_idx', whole content =        return page_idx ^ (1 << 
-order);")
-
-Regards,
-Arun
-
-
-> 
-> julia
+	Ingo
