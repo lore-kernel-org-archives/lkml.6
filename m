@@ -7,50 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14D0EC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55037ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0E5D2147A
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F35620883
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="neO7xi8I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0E5D2147A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G08Rp2mw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F35620883
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731158AbeJYWxl (ORCPT
+        id S1730253AbeJYWxn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:53:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36314 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:53:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729488AbeJYWxl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1729491AbeJYWxl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 25 Oct 2018 18:53:41 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C99612085B;
-        Thu, 25 Oct 2018 14:20:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00D2920873;
+        Thu, 25 Oct 2018 14:20:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477242;
-        bh=gcsCV2QfUVXOiJX/Mol1NAyCX2Eh0FHnWXPs6s0Db+c=;
+        s=default; t=1540477244;
+        bh=CIHqw0/4NBhvW71AY1KjYce+F6Lcb50bkkVc5qPfFZc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=neO7xi8I3I/yIshFdu4uLcdMnmDJdTsB+rWv8ljzLzPPZB/Frr0xi/Zaz4hQGgUBK
-         VEfuloyRBC+4xLg/4nzSqbUv4vMIpw7zrN4/8HrsqY0cG9W5RytbsHdriyZSFQmSC3
-         /FTqIjwaQplzakN1CFN7gDGw2XkZlzL+wC9O1oJs=
+        b=G08Rp2mwG+K6s/fqmx4xkXTDbY3Y/aCvfs6GvOcNwRs0YhT5juPMhReNqvdKGBSyJ
+         goBpG3Um4du3v3Jc4pj+UwjWh2UT/e3U3jxDEwHabTnKiOjfcVwz2z+IfrugutncAz
+         KBX81WM3q3y7HMa6GwcudgtwARsICJpmnzZNBEd0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Stephan Mueller <smueller@chronox.de>,
-        Hannes Frederic Sowa <hannes@stressinduktion.org>,
-        mancha security <mancha1@zoho.com>,
-        Mark Charlebois <charlebm@gmail.com>,
-        Behan Webster <behanw@converseincode.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 71/98] lib: make memzero_explicit more robust against dead store elimination
-Date:   Thu, 25 Oct 2018 10:18:26 -0400
-Message-Id: <20181025141853.214051-71-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 72/98] ASoC: dapm: Don't add prefix to widget stream name
+Date:   Thu, 25 Oct 2018 10:18:27 -0400
+Message-Id: <20181025141853.214051-72-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
 References: <20181025141853.214051-1-sashal@kernel.org>
@@ -59,171 +53,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Lars-Peter Clausen <lars@metafoo.de>
 
-[ Upstream commit 7829fb09a2b4268b30dd9bc782fa5ebee278b137 ]
+[ Upstream commit a798c24a69b64f09e2d323ac8155a36373e5d5fd ]
 
-In commit 0b053c951829 ("lib: memzero_explicit: use barrier instead
-of OPTIMIZER_HIDE_VAR"), we made memzero_explicit() more robust in
-case LTO would decide to inline memzero_explicit() and eventually
-find out it could be elimiated as dead store.
+Commit fdb6eb0a1287 ("ASoC: dapm: Modify widget stream name according to
+prefix") fixed the case where a DAPM route between a DAI widget and a
+DAC/ADC/AIF widget with a matching stream name was not created when the
+DAPM context was using a prefix.
 
-While using barrier() works well for the case of gcc, recent efforts
-from LLVMLinux people suggest to use llvm as an alternative to gcc,
-and there, Stephan found in a simple stand-alone user space example
-that llvm could nevertheless optimize and thus elimitate the memset().
-A similar issue has been observed in the referenced llvm bug report,
-which is regarded as not-a-bug.
+Unfortunately the patch introduced a few issues on its own like leaking the
+dynamically allocated stream name memory and also not checking whether the
+allocation succeeded in the first place.
 
-Based on some experiments, icc is a bit special on its own, while it
-doesn't seem to eliminate the memset(), it could do so with an own
-implementation, and then result in similar findings as with llvm.
+It is also incomplete in that it still does not handle the case where
+stream name of the widget is a substring of the stream name of the DAI,
+which is explicitly allowed and works fine if no DAPM prefix is used.
 
-The fix in this patch now works for all three compilers (also tested
-with more aggressive optimization levels). Arguably, in the current
-kernel tree it's more of a theoretical issue, but imho, it's better
-to be pedantic about it.
+Revert the commit and take a slightly different approach to solving the
+issue. Instead of comparing the widget's stream name to the name of the DAI
+widget compare it to the stream name of the DAI widget. The stream name of
+the DAI widget is identical to the name of the DAI widget except that it
+wont have the DAPM prefix added. So this approach behaves identical
+regardless to whether the DAPM context uses a prefix or not.
 
-It's clearly visible with gcc/llvm though, with the below code: if we
-would have used barrier() only here, llvm would have omitted clearing,
-not so with barrier_data() variant:
+We don't have to worry about potentially matching with a widget with the
+same stream name, but from a different DAPM context with a different
+prefix, since the code already makes sure that both the DAI widget and the
+matched widget are from the same DAPM context.
 
-  static inline void memzero_explicit(void *s, size_t count)
-  {
-    memset(s, 0, count);
-    barrier_data(s);
-  }
-
-  int main(void)
-  {
-    char buff[20];
-    memzero_explicit(buff, sizeof(buff));
-    return 0;
-  }
-
-  $ gcc -O2 test.c
-  $ gdb a.out
-  (gdb) disassemble main
-  Dump of assembler code for function main:
-   0x0000000000400400  <+0>: lea   -0x28(%rsp),%rax
-   0x0000000000400405  <+5>: movq  $0x0,-0x28(%rsp)
-   0x000000000040040e <+14>: movq  $0x0,-0x20(%rsp)
-   0x0000000000400417 <+23>: movl  $0x0,-0x18(%rsp)
-   0x000000000040041f <+31>: xor   %eax,%eax
-   0x0000000000400421 <+33>: retq
-  End of assembler dump.
-
-  $ clang -O2 test.c
-  $ gdb a.out
-  (gdb) disassemble main
-  Dump of assembler code for function main:
-   0x00000000004004f0  <+0>: xorps  %xmm0,%xmm0
-   0x00000000004004f3  <+3>: movaps %xmm0,-0x18(%rsp)
-   0x00000000004004f8  <+8>: movl   $0x0,-0x8(%rsp)
-   0x0000000000400500 <+16>: lea    -0x18(%rsp),%rax
-   0x0000000000400505 <+21>: xor    %eax,%eax
-   0x0000000000400507 <+23>: retq
-  End of assembler dump.
-
-As gcc, clang, but also icc defines __GNUC__, it's sufficient to define
-this in compiler-gcc.h only to be picked up. For a fallback or otherwise
-unsupported compiler, we define it as a barrier. Similarly, for ecc which
-does not support gcc inline asm.
-
-Reference: https://llvm.org/bugs/show_bug.cgi?id=15495
-Reported-by: Stephan Mueller <smueller@chronox.de>
-Tested-by: Stephan Mueller <smueller@chronox.de>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Theodore Ts'o <tytso@mit.edu>
-Cc: Stephan Mueller <smueller@chronox.de>
-Cc: Hannes Frederic Sowa <hannes@stressinduktion.org>
-Cc: mancha security <mancha1@zoho.com>
-Cc: Mark Charlebois <charlebm@gmail.com>
-Cc: Behan Webster <behanw@converseincode.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: fdb6eb0a1287 ("ASoC: dapm: Modify widget stream name according to prefix")
+Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Cc: stable@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/compiler-gcc.h   | 16 +++++++++++++++-
- include/linux/compiler-intel.h |  3 +++
- include/linux/compiler.h       |  4 ++++
- lib/string.c                   |  2 +-
- 4 files changed, 23 insertions(+), 2 deletions(-)
+ sound/soc/soc-dapm.c | 12 +++---------
+ 1 file changed, 3 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-index 633716ef19b0..4d9e673bd76c 100644
---- a/include/linux/compiler-gcc.h
-+++ b/include/linux/compiler-gcc.h
-@@ -9,10 +9,24 @@
- 		   + __GNUC_MINOR__ * 100 \
- 		   + __GNUC_PATCHLEVEL__)
+diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
+index d8ac9e5e2c00..d15c34e2f04f 100644
+--- a/sound/soc/soc-dapm.c
++++ b/sound/soc/soc-dapm.c
+@@ -3087,16 +3087,10 @@ snd_soc_dapm_new_control(struct snd_soc_dapm_context *dapm,
+ 	}
  
--
- /* Optimization barrier */
-+
- /* The "volatile" is due to gcc bugs */
- #define barrier() __asm__ __volatile__("": : :"memory")
-+/*
-+ * This version is i.e. to prevent dead stores elimination on @ptr
-+ * where gcc and llvm may behave differently when otherwise using
-+ * normal barrier(): while gcc behavior gets along with a normal
-+ * barrier(), llvm needs an explicit input variable to be assumed
-+ * clobbered. The issue is as follows: while the inline asm might
-+ * access any memory it wants, the compiler could have fit all of
-+ * @ptr into memory registers instead, and since @ptr never escaped
-+ * from that, it proofed that the inline asm wasn't touching any of
-+ * it. This version works well with both compilers, i.e. we're telling
-+ * the compiler that the inline asm absolutely may see the contents
-+ * of @ptr. See also: https://llvm.org/bugs/show_bug.cgi?id=15495
-+ */
-+#define barrier_data(ptr) __asm__ __volatile__("": :"r"(ptr) :"memory")
+ 	prefix = soc_dapm_prefix(dapm);
+-	if (prefix) {
++	if (prefix)
+ 		w->name = kasprintf(GFP_KERNEL, "%s %s", prefix, widget->name);
+-		if (widget->sname)
+-			w->sname = kasprintf(GFP_KERNEL, "%s %s", prefix,
+-					     widget->sname);
+-	} else {
++	else
+ 		w->name = kasprintf(GFP_KERNEL, "%s", widget->name);
+-		if (widget->sname)
+-			w->sname = kasprintf(GFP_KERNEL, "%s", widget->sname);
+-	}
+ 	if (w->name == NULL) {
+ 		kfree(w);
+ 		return NULL;
+@@ -3422,7 +3416,7 @@ int snd_soc_dapm_link_dai_widgets(struct snd_soc_card *card)
+ 				break;
+ 			}
  
- /*
-  * This macro obfuscates arithmetic on a variable address so that gcc
-diff --git a/include/linux/compiler-intel.h b/include/linux/compiler-intel.h
-index ba147a1727e6..0c9a2f2c2802 100644
---- a/include/linux/compiler-intel.h
-+++ b/include/linux/compiler-intel.h
-@@ -13,9 +13,12 @@
- /* Intel ECC compiler doesn't support gcc specific asm stmts.
-  * It uses intrinsics to do the equivalent things.
-  */
-+#undef barrier_data
- #undef RELOC_HIDE
- #undef OPTIMIZER_HIDE_VAR
+-			if (!w->sname || !strstr(w->sname, dai_w->name))
++			if (!w->sname || !strstr(w->sname, dai_w->sname))
+ 				continue;
  
-+#define barrier_data(ptr) barrier()
-+
- #define RELOC_HIDE(ptr, off)					\
-   ({ unsigned long __ptr;					\
-      __ptr = (unsigned long) (ptr);				\
-diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-index 8cf7a33e1b72..78b27883744c 100644
---- a/include/linux/compiler.h
-+++ b/include/linux/compiler.h
-@@ -165,6 +165,10 @@ void ftrace_likely_update(struct ftrace_branch_data *f, int val, int expect);
- # define barrier() __memory_barrier()
- #endif
- 
-+#ifndef barrier_data
-+# define barrier_data(ptr) barrier()
-+#endif
-+
- /* Unreachable code */
- #ifndef unreachable
- # define unreachable() do { } while (1)
-diff --git a/lib/string.c b/lib/string.c
-index 8e8a2e9e9522..de4bf3778958 100644
---- a/lib/string.c
-+++ b/lib/string.c
-@@ -699,7 +699,7 @@ EXPORT_SYMBOL(memset);
- void memzero_explicit(void *s, size_t count)
- {
- 	memset(s, 0, count);
--	barrier();
-+	barrier_data(s);
- }
- EXPORT_SYMBOL(memzero_explicit);
- 
+ 			if (dai_w->id == snd_soc_dapm_dai_in) {
 -- 
 2.17.1
 
