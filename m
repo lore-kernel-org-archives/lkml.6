@@ -2,96 +2,108 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6098BECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:08:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F1A6ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:09:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2223520831
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:08:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2223520831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=videotron.qc.ca
+	by mail.kernel.org (Postfix) with ESMTP id F23E120832
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:09:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HlW9hkwa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F23E120832
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726826AbeJYIiR (ORCPT
+        id S1726803AbeJYIjl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 04:38:17 -0400
-Received: from alt14.smtp-out.videotron.ca ([135.19.0.27]:15133 "EHLO
-        alt14.smtp-out.videotron.ca" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726019AbeJYIiR (ORCPT
+        Thu, 25 Oct 2018 04:39:41 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44169 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726019AbeJYIjl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 04:38:17 -0400
-Received: from [192.168.122.131] ([70.81.202.49])
-        by Videotron with SMTP
-        id FSx6glmwgg9eoFSxSgxoqK; Wed, 24 Oct 2018 19:53:03 -0400
-X-Authority-Analysis: v=2.3 cv=evbxMLhX c=1 sm=1 tr=0
- a=WHmR/RjFJjHp+qGai9ucMg==:117 a=WHmR/RjFJjHp+qGai9ucMg==:17
- a=IkcTkHD0fZMA:10 a=VwQbUJbxAAAA:8 a=8LccymvpPOanfCBx0qUA:9 a=QEXdDO2ut3YA:10
- a=AjGcO6oz07-iQ99wixmX:22
-Subject: Re: [PATCH] pfn_t: force '~' to be parsed as an unary operator
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Dan Williams <dan.j.williams@intel.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, acme@redhat.com,
-        tz.stoyanov@gmail.com, Namhyung Kim <namhyung@kernel.org>,
-        zwisler@kernel.org, arangradient@gmail.com,
-        linux-perf-users@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181021145939.8760-1-sebhtml@videotron.qc.ca>
- <CAPcyv4iJ_bfzOtV_GAQg_tdLLuebE_1Gp420LMG0xbR2ZQdV7g@mail.gmail.com>
- <FRrzgp7InaOtKFRs0geay1@videotron.ca>
-From:   sebhtml <sebhtml@videotron.qc.ca>
-Message-ID: <d48b2b1b-201a-d350-6bda-943a66f1abfb@videotron.qc.ca>
-Date:   Wed, 24 Oct 2018 19:52:40 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <FRrzgp7InaOtKFRs0geay1@videotron.ca>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfEYpD8IQosAAam0Ac8NNjp9LUuFtrsIgz16/c0a3T8eHJl9y3HMso7GYbuGZoqhfVF7T8jkalRrPlgfIONkFvZOvFzhNuXvVg9TQJbun5n2ScJSgzn74
- g3qAtJU3P8dZzNnai2gJ8dEgoXJy57SHbklTSFYTQNHoBaFRiCudGCNA38mnyjTfU/A9BTdCOf/Fm7vIH+MRoxl60ulvYTdTN5RuD/e8jHH3tbCN4kGsu16x
- PPxjYbF5SMsmu6s/3+2td5j11IlVoNfcy9F8ra2v9m7FDWOkM7lQTq1UTPN5/Fvv1dZ5GDrNQqByZjb2m56cL2pHb/95v7weUeyaTG+Lqh86/ts5ZQKKrc3a
- YlndW7Q16U4GaCR7hU75ET1IHL8h3N6oiLVc7fJcZhjKXKBVhn8c/nVdWYUgPk8ATqmtHoEBmMFQAiFse+wA+9f2dIkOtg7GalH6emW9yiTIt90kb/nBTRVd
- HQRFo8e54VhCrEGgNfvzEJKTFPdFNXxvwdrlNw==
+        Thu, 25 Oct 2018 04:39:41 -0400
+Received: by mail-pf1-f196.google.com with SMTP id j2-v6so52768pfn.11
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 17:09:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Dd9htmrIBxK1xqDAJaYeWVH09dIkotWYFY1BayV7uKA=;
+        b=HlW9hkwaNyJ/JdKbXExQLNeggX0cy/VXQ73SduopQcEyFKm09gNU4OShy/l2Io36bq
+         YT0ZK8aaZyAnsjb84v5T7Ez+4n0bEP9ZA/LUiX4vuWcLup8g9DxG8RTp2H5BI8g/OG8Z
+         ucX3TygGxOEU5zOW2Fc9dwtdv8+9lErn9C/dUo7lAOh6dnrJ1NymGKoIDLHplYUMk1b/
+         rfc4IRRQiJoJYI92E0pDnppkNjmRCwn15yyXegRX/dstJcHPlN6DJ9Fk1Vv8CqHceXF4
+         rUM7vk+NxcALDmXCevjeFVkqnaNYfRtxAnuiOdKj8nHTMLMzjdL8aH8O3VXaD/ad6+18
+         F7qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Dd9htmrIBxK1xqDAJaYeWVH09dIkotWYFY1BayV7uKA=;
+        b=Oxiehn+RaKRKrWTb/Dk2vlt++e/k97XvMiIdiYp0WRhzxNQ5tXVyyHT9twQC/iO9nx
+         vy5h5+jnQQYgd834+i2H2A28USqqJpEvdoN7I6bmLpJikx9cGiiYRVIP3OuD95v84bFf
+         Y8nY+irLtQRmiho7Lj/7v4itGP/eYQZjrfoxhrsFog+ow3ijRGogsMwX2exJY8FH/KVk
+         PuZBJt8WVYmpVI23fUYUjzEmmyQkb7oEDg1ZTWYNqLPYLpRNj+K73cdaeF4sn6rNeLaP
+         utR8aGxHf1wOOpgPXGwGDdHFAxYP0SMFhBCkipC4OA9L4+dcs7OGUZ99uDi2G5W8fzbQ
+         m26A==
+X-Gm-Message-State: AGRZ1gLLE2Q3ic9cIUI7rq4Q5oAvwPC0Lc/vCpYKx/7/iaB/iv8QgcJx
+        YIRZpYQaoIzWa2qxEQXi8v8=
+X-Google-Smtp-Source: AJdET5dWD+lGoGYAUQTVrhXMNJt+nvl332OkqlnCCCnewretH44k6shb+PCLABEtYh9TXr9mo3JqOw==
+X-Received: by 2002:a62:9402:: with SMTP id m2-v6mr4683115pfe.255.1540426168261;
+        Wed, 24 Oct 2018 17:09:28 -0700 (PDT)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id o9-v6sm12008598pgn.30.2018.10.24.17.09.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 24 Oct 2018 17:09:27 -0700 (PDT)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Kim Phillips <kim.phillips@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        linux-kernel@vger.kernel.org (open list),
+        rmk+kernel@armlinux.org.uk, l.stach@pengutronix.de
+Subject: [PATCH 0/2] perf tests: Check for ARM [vectors] page
+Date:   Wed, 24 Oct 2018 17:09:03 -0700
+Message-Id: <20181025000905.6095-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-24 6:43 p.m., Andrew Morton wrote:
-> 
-> I grabbed it, and added cc:stable.
-> 
-> But aren't we fixing this in the wrong place?  That's a valid
-> expression and if this isn't addressed in perf then we may hit a
-> similar issue elsewhere...
-> 
+Hi all,
 
-Right.
+I just painfully learned that perf would segfault when
+CONFIG_KUSER_HELPERS is disabled because it unconditionally makes use of
+it. This patch series adds an ARM test for that by leveraging the
+existing find_vdso_map() function and making it more generic and capable
+of location any map within /proc/self/maps.
 
-Based on:
-     git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git 01aa9d518eae8a4d75cd3049defc6ed0b6d0a658
+Florian Fainelli (2):
+  perf tools: Make find_vdso_map() more modular
+  perf tests: Add a test for the ARM 32-bit [vectors] page
 
-In perf, the warning
-       [fs_dax:dax_pmd_insert_mapping] unknown op '~'
-comes from tools/lib/traceevent/event-parse.c at line 2045:
-                 do_warning_event(event, "unknown op '%s'", token);
+ tools/perf/arch/arm/tests/Build          |  1 +
+ tools/perf/arch/arm/tests/arch-tests.c   |  4 +++
+ tools/perf/arch/arm/tests/vectors-page.c | 20 +++++++++++++++
+ tools/perf/tests/tests.h                 |  5 ++++
+ tools/perf/util/find-map.c               | 31 ++++++++++++++++++++++++
+ tools/perf/util/find-vdso-map.c          | 30 +++--------------------
+ 6 files changed, 64 insertions(+), 27 deletions(-)
+ create mode 100644 tools/perf/arch/arm/tests/vectors-page.c
+ create mode 100644 tools/perf/util/find-map.c
 
-This is in this function:
+-- 
+2.17.1
 
-static enum tep_event_type
-process_op(struct tep_event_format *event, struct tep_print_arg *arg, char **tok);
-
-The code path to reach the good '~' case needs:
-         if (arg->type == TEP_PRINT_OP && !arg->op.left) {
-
-I assume that here arg->op.left is not NULL because of (u64) on the left.
-
-~(((u64) ~(~(((1UL) << 12)-1)))
-          ^
-
-However, I fail to see where '~' is parsed as a binary operator though.
-
-Any pointer would be welcome.
