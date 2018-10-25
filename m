@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58954C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AACFECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15CBD2086D
+	by mail.kernel.org (Postfix) with ESMTP id C7C8720873
 	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BXG9u/Tc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15CBD2086D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yXoyDUVP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7C8720873
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730689AbeJYWwn (ORCPT
+        id S1730703AbeJYWwo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:52:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34860 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:52:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730655AbeJYWwl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:52:41 -0400
+        id S1727962AbeJYWwn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:52:43 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA9D82085B;
-        Thu, 25 Oct 2018 14:19:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3CA1120883;
+        Thu, 25 Oct 2018 14:19:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477183;
-        bh=rUrAf0FGpMb1NDQwbKCBgD7/1d8w8QOyBroHFGOrD10=;
+        s=default; t=1540477185;
+        bh=D0Dh1yG3iOxNcNy3n2Cv0NQ5+h7zo4mXf05Az25dia4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BXG9u/TcpkFu1i4CSIF9OYVKAOAExPI1jcvxGP8f10/K5cfspyyBvg3DkyqAbbIgV
-         18IPxagLy0iYbUqrxepmUnwfrPuycmOwEmUkeloEmzB+qCcl2Fxwsie7C/Oeakv6+4
-         NNNdd8SYGse9qiE41WYSQFxmHuPbWJYXKVSl5eUI=
+        b=yXoyDUVPGNJwlTFgUUPzY9vlXRJEvvxrdU5rxhWX3+ZO1t9rYNYTlelX/06tPVNJF
+         FvCZk6TInIIVm0PYQ+a6lYpzsD0+L25tptNnM3uBx4s3vPnknMP0pSrHzUHKrxQvpQ
+         HjOQFsdbxwtlz9/saxLUY1Xu00aqLGvNOq9zYMUo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Peter Hurley <peter@hurleysoftware.com>,
-        Francesco Ruggeri <fruggeri@arista.com>,
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.cz>, linux-serial@vger.kernel.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 33/98] Revert "tty: Fix pty master poll() after slave closes v2"
-Date:   Thu, 25 Oct 2018 10:17:48 -0400
-Message-Id: <20181025141853.214051-33-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 34/98] serial: samsung: Add the support for Exynos5433 SoC
+Date:   Thu, 25 Oct 2018 10:17:49 -0400
+Message-Id: <20181025141853.214051-34-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
 References: <20181025141853.214051-1-sashal@kernel.org>
@@ -54,50 +54,112 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Hurley <peter@hurleysoftware.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
 
-[ Upstream commit 2ce3c10c0c3e0d418c1a7a4c838319ba42c75388 ]
+[ Upstream commit 31ec77aca72ee5920ed3ec3d047734dc0bc43342 ]
 
-This reverts commit c4dc304677e8d566572c4738d95c48be150c6606.
-This fix is superseded by commit 52bce7f8d4fc633c9a9d0646eef58ba6ae9a3b73,
-'pty, n_tty: Simplify input processing on final close'.
+This patch adds new s3c24xx_serial_drv_data structure for Exynos5433 SoC
+because Exynos5433 has different fifo size from existing Exynos4 SoC.
 
-The final close now waits for input processing to complete before
-destroying the pty, so poll() does not need to special case this
-condition.
-
-Cc: Francesco Ruggeri <fruggeri@arista.com>
-Signed-off-by: Peter Hurley <peter@hurleysoftware.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.cz>
+Cc: linux-serial@vger.kernel.org
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+Acked-by: Inki Dae <inki.dae@samsung.com>
+Acked-by: Geunsik Lim <geunsik.lim@samsung.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/n_tty.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+ drivers/tty/serial/samsung.c | 56 +++++++++++++++++++++++-------------
+ 1 file changed, 36 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/tty/n_tty.c b/drivers/tty/n_tty.c
-index 6acdd553b707..0ed99ad74bee 100644
---- a/drivers/tty/n_tty.c
-+++ b/drivers/tty/n_tty.c
-@@ -2472,17 +2472,12 @@ static unsigned int n_tty_poll(struct tty_struct *tty, struct file *file,
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index ba59a76edc8b..957992ceba0a 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -1785,32 +1785,43 @@ static struct s3c24xx_serial_drv_data s5pv210_serial_drv_data = {
+ #endif
  
- 	poll_wait(file, &tty->read_wait, wait);
- 	poll_wait(file, &tty->write_wait, wait);
--	if (test_bit(TTY_OTHER_CLOSED, &tty->flags))
--		mask |= POLLHUP;
- 	if (input_available_p(tty, 1))
- 		mask |= POLLIN | POLLRDNORM;
--	else if (mask & POLLHUP) {
--		tty_flush_to_ldisc(tty);
--		if (input_available_p(tty, 1))
--			mask |= POLLIN | POLLRDNORM;
--	}
- 	if (tty->packet && tty->link->ctrl_status)
- 		mask |= POLLPRI | POLLIN | POLLRDNORM;
-+	if (test_bit(TTY_OTHER_CLOSED, &tty->flags))
-+		mask |= POLLHUP;
- 	if (tty_hung_up_p(file))
- 		mask |= POLLHUP;
- 	if (!(mask & (POLLHUP | POLLIN | POLLRDNORM))) {
+ #if defined(CONFIG_ARCH_EXYNOS)
++#define EXYNOS_COMMON_SERIAL_DRV_DATA				\
++	.info = &(struct s3c24xx_uart_info) {			\
++		.name		= "Samsung Exynos UART",	\
++		.type		= PORT_S3C6400,			\
++		.has_divslot	= 1,				\
++		.rx_fifomask	= S5PV210_UFSTAT_RXMASK,	\
++		.rx_fifoshift	= S5PV210_UFSTAT_RXSHIFT,	\
++		.rx_fifofull	= S5PV210_UFSTAT_RXFULL,	\
++		.tx_fifofull	= S5PV210_UFSTAT_TXFULL,	\
++		.tx_fifomask	= S5PV210_UFSTAT_TXMASK,	\
++		.tx_fifoshift	= S5PV210_UFSTAT_TXSHIFT,	\
++		.def_clk_sel	= S3C2410_UCON_CLKSEL0,		\
++		.num_clks	= 1,				\
++		.clksel_mask	= 0,				\
++		.clksel_shift	= 0,				\
++	},							\
++	.def_cfg = &(struct s3c2410_uartcfg) {			\
++		.ucon		= S5PV210_UCON_DEFAULT,		\
++		.ufcon		= S5PV210_UFCON_DEFAULT,	\
++		.has_fracval	= 1,				\
++	}							\
++
+ static struct s3c24xx_serial_drv_data exynos4210_serial_drv_data = {
+-	.info = &(struct s3c24xx_uart_info) {
+-		.name		= "Samsung Exynos4 UART",
+-		.type		= PORT_S3C6400,
+-		.has_divslot	= 1,
+-		.rx_fifomask	= S5PV210_UFSTAT_RXMASK,
+-		.rx_fifoshift	= S5PV210_UFSTAT_RXSHIFT,
+-		.rx_fifofull	= S5PV210_UFSTAT_RXFULL,
+-		.tx_fifofull	= S5PV210_UFSTAT_TXFULL,
+-		.tx_fifomask	= S5PV210_UFSTAT_TXMASK,
+-		.tx_fifoshift	= S5PV210_UFSTAT_TXSHIFT,
+-		.def_clk_sel	= S3C2410_UCON_CLKSEL0,
+-		.num_clks	= 1,
+-		.clksel_mask	= 0,
+-		.clksel_shift	= 0,
+-	},
+-	.def_cfg = &(struct s3c2410_uartcfg) {
+-		.ucon		= S5PV210_UCON_DEFAULT,
+-		.ufcon		= S5PV210_UFCON_DEFAULT,
+-		.has_fracval	= 1,
+-	},
++	EXYNOS_COMMON_SERIAL_DRV_DATA,
+ 	.fifosize = { 256, 64, 16, 16 },
+ };
++
++static struct s3c24xx_serial_drv_data exynos5433_serial_drv_data = {
++	EXYNOS_COMMON_SERIAL_DRV_DATA,
++	.fifosize = { 64, 256, 16, 256 },
++};
++
+ #define EXYNOS4210_SERIAL_DRV_DATA ((kernel_ulong_t)&exynos4210_serial_drv_data)
++#define EXYNOS5433_SERIAL_DRV_DATA ((kernel_ulong_t)&exynos5433_serial_drv_data)
+ #else
+ #define EXYNOS4210_SERIAL_DRV_DATA (kernel_ulong_t)NULL
++#define EXYNOS5433_SERIAL_DRV_DATA (kernel_ulong_t)NULL
+ #endif
+ 
+ static struct platform_device_id s3c24xx_serial_driver_ids[] = {
+@@ -1832,6 +1843,9 @@ static struct platform_device_id s3c24xx_serial_driver_ids[] = {
+ 	}, {
+ 		.name		= "exynos4210-uart",
+ 		.driver_data	= EXYNOS4210_SERIAL_DRV_DATA,
++	}, {
++		.name		= "exynos5433-uart",
++		.driver_data	= EXYNOS5433_SERIAL_DRV_DATA,
+ 	},
+ 	{ },
+ };
+@@ -1851,6 +1865,8 @@ static const struct of_device_id s3c24xx_uart_dt_match[] = {
+ 		.data = (void *)S5PV210_SERIAL_DRV_DATA },
+ 	{ .compatible = "samsung,exynos4210-uart",
+ 		.data = (void *)EXYNOS4210_SERIAL_DRV_DATA },
++	{ .compatible = "samsung,exynos5433-uart",
++		.data = (void *)EXYNOS5433_SERIAL_DRV_DATA },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, s3c24xx_uart_dt_match);
 -- 
 2.17.1
 
