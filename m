@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03C4FECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:15:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC3B5C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:15:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE17220848
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:14:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 818C82147A
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:15:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="psvWZ1lj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE17220848
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DFRth27l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 818C82147A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728721AbeJYWrx (ORCPT
+        id S1728736AbeJYWrz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:47:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56126 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:47:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728704AbeJYWrw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:47:52 -0400
+        id S1728704AbeJYWrx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:47:53 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 272132085A;
-        Thu, 25 Oct 2018 14:14:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3BAE20848;
+        Thu, 25 Oct 2018 14:14:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540476896;
-        bh=fpvHzjiypylW1HR/O/IGKN+C3WoLRhzi+u8tB7bTkyQ=;
+        s=default; t=1540476897;
+        bh=s8WLDJ7qM2OAUOJ9g91MXT/XYSWvOnHUBQyz9s45d9I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=psvWZ1ljUWQWCuECnJUjbv+XcFByrBc7pFWzaSUIL79IM2B0X0GfK2Os+wGm3fSCC
-         kiq52r1Afi8rT92uSBXxxt2Yaun/PWjoMswuCutDaiOpwpzVqlgebVVK2d4WK2FsOf
-         9oNgLuAVrjMtp06LP4eEMsGYiHbEgZ0u/B5Ls1Ew=
+        b=DFRth27lykv5MsdJquy1zL7z1UARBU7aOgt8s8sUONpfMqSvIMiv+/X1ErrMDihkY
+         eqZgk+o6C5AvrT+7Oj/LZuVEgISunDjZBiTWamayUxFLKydbcPOwKm9ic2filNXIbp
+         gtAK5XOArttaBhvZSyxv7TQRQo35JAzHnMErug6U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Moshe Shemesh <moshe@mellanox.com>, kernel-team@fb.com,
-        Saeed Mahameed <saeedm@mellanox.com>,
+Cc:     Bob Peterson <rpeterso@redhat.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 20/98] net/mlx5: Fix command completion after timeout access invalid structure
-Date:   Thu, 25 Oct 2018 10:13:05 -0400
-Message-Id: <20181025141423.213774-20-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 21/98] tipc: Fix tipc_sk_reinit handling of -EAGAIN
+Date:   Thu, 25 Oct 2018 10:13:06 -0400
+Message-Id: <20181025141423.213774-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141423.213774-1-sashal@kernel.org>
 References: <20181025141423.213774-1-sashal@kernel.org>
@@ -53,54 +53,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Moshe Shemesh <moshe@mellanox.com>
+From: Bob Peterson <rpeterso@redhat.com>
 
-[ Upstream commit 061870800efb4e3d1ad4082a2569363629bdfcfc ]
+[ Upstream commit 6c7e983b220f89e03286dc70a41c7ef3a8b409df ]
 
-Completion on timeout should not free the driver command entry structure
-as it will need to access it again once real completion event from FW
-will occur.
+In 9dbbfb0ab6680c6a85609041011484e6658e7d3c function tipc_sk_reinit
+had additional logic added to loop in the event that function
+rhashtable_walk_next() returned -EAGAIN. No worries.
 
-Fixes: 73dd3a4839c1 ('net/mlx5: Avoid using pending command interface slots')
-Signed-off-by: Moshe Shemesh <moshe@mellanox.com>
-Cc: kernel-team@fb.com
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+However, if rhashtable_walk_start returns -EAGAIN, it does "continue",
+and therefore skips the call to rhashtable_walk_stop(). That has
+the effect of calling rcu_read_lock() without its paired call to
+rcu_read_unlock(). Since rcu_read_lock() may be nested, the problem
+may not be apparent for a while, especially since resize events may
+be rare. But the comments to rhashtable_walk_start() state:
+
+ * ...Note that we take the RCU lock in all
+ * cases including when we return an error.  So you must always call
+ * rhashtable_walk_stop to clean up.
+
+This patch replaces the continue with a goto and label to ensure a
+matching call to rhashtable_walk_stop().
+
+Signed-off-by: Bob Peterson <rpeterso@redhat.com>
+Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/cmd.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ net/tipc/socket.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-index 9680c8805178..1d5263c46eee 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/cmd.c
-@@ -965,7 +965,7 @@ static int mlx5_cmd_invoke(struct mlx5_core_dev *dev, struct mlx5_cmd_msg *in,
+diff --git a/net/tipc/socket.c b/net/tipc/socket.c
+index 25bc5c30d7fb..9d3f047305ce 100644
+--- a/net/tipc/socket.c
++++ b/net/tipc/socket.c
+@@ -2277,8 +2277,8 @@ void tipc_sk_reinit(struct net *net)
  
- 	err = wait_func(dev, ent);
- 	if (err == -ETIMEDOUT)
--		goto out_free;
-+		goto out;
+ 	do {
+ 		tsk = ERR_PTR(rhashtable_walk_start(&iter));
+-		if (tsk)
+-			continue;
++		if (IS_ERR(tsk))
++			goto walk_stop;
  
- 	ds = ent->ts2 - ent->ts1;
- 	op = MLX5_GET(mbox_in, in->first.data, opcode);
-@@ -1428,6 +1428,7 @@ void mlx5_cmd_comp_handler(struct mlx5_core_dev *dev, u64 vec, bool forced)
- 					mlx5_core_err(dev, "Command completion arrived after timeout (entry idx = %d).\n",
- 						      ent->idx);
- 					free_ent(cmd, ent->idx);
-+					free_cmd(ent);
- 				}
- 				continue;
- 			}
-@@ -1486,7 +1487,8 @@ void mlx5_cmd_comp_handler(struct mlx5_core_dev *dev, u64 vec, bool forced)
- 				free_msg(dev, ent->in);
- 
- 				err = err ? err : ent->status;
--				free_cmd(ent);
-+				if (!forced)
-+					free_cmd(ent);
- 				callback(err, context);
- 			} else {
- 				complete(&ent->done);
+ 		while ((tsk = rhashtable_walk_next(&iter)) && !IS_ERR(tsk)) {
+ 			spin_lock_bh(&tsk->sk.sk_lock.slock);
+@@ -2287,7 +2287,7 @@ void tipc_sk_reinit(struct net *net)
+ 			msg_set_orignode(msg, tn->own_addr);
+ 			spin_unlock_bh(&tsk->sk.sk_lock.slock);
+ 		}
+-
++walk_stop:
+ 		rhashtable_walk_stop(&iter);
+ 	} while (tsk == ERR_PTR(-EAGAIN));
+ }
 -- 
 2.17.1
 
