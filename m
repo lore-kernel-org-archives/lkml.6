@@ -2,138 +2,119 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E36BC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:21:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F3FC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:22:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8B322084A
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:21:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42DEE2075D
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:22:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rjK7Pyf8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8B322084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XnFg+twc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42DEE2075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727475AbeJZGzi (ORCPT
+        id S1727516AbeJZG4g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 02:55:38 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:34538 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726348AbeJZGzi (ORCPT
+        Fri, 26 Oct 2018 02:56:36 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:34044 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726348AbeJZG4g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 02:55:38 -0400
-Received: by mail-pf1-f195.google.com with SMTP id f78-v6so4898587pfe.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 15:21:10 -0700 (PDT)
+        Fri, 26 Oct 2018 02:56:36 -0400
+Received: by mail-pl1-f196.google.com with SMTP id f10-v6so4534002plr.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 15:22:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=P30d+GNq1b5I9TUOe1WdRWkpPmbYz+WuBXZwmJhEab0=;
-        b=rjK7Pyf8s0VG0DvHTmK13vnxOkoLh/JCevekS9hu2xZM2TPv/ewCiRwhXYB1gVY5aF
-         bA5HcbIxXmoWeqbg7nv0zgZwDymyoqhtpPK8r+5h4Yv9ibS8pWzZgy66PFseDyAVwEly
-         JuFu9LkVtOMzJPSboJASqrYLMA3kGgdoY+SYeQ6HmlLfjVgxcS8O86lRZ2KRrf+FpF9E
-         fQv20nn0EP/PROlLfcG/MNQS7oZieW6MCeF1DS5YQGydAS031zX7+WCsP+KMetCX8vJR
-         nfsBotjvdSniL6KpRTjPnxti+7x2FcD5QVRoeAvlroUJURMjMcLL4hg647BzmW9lYqIy
-         MSDA==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6+LgcWkQxncFqD35FDqpvfp7mOi58SqLpjOIXD6LCUY=;
+        b=XnFg+twccYS6WPM5VAT3U7gHPAvWqMtdXR0uo97VxhfAtJAFcG6BrqhGvGrnXkHUR5
+         MQ/gYWyf9J+GZK6xEZme1/8Tzu/PrXJ00bvMR8eklmus60hhYHEK2WiiTH1ED+ilIiqz
+         fo4G7iDuiaJrq8im72wIn17mtO5EjPCysivGQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=P30d+GNq1b5I9TUOe1WdRWkpPmbYz+WuBXZwmJhEab0=;
-        b=AQs9++BFkAO2qiJImmtO/AVT5h32CYxJsW5bmFC3j8e3pFkctGCbR/wnPLQFDOqkvH
-         8CpY6jSWVe9hJ8mhxP8tlkvXYwLjqe3tdSSAkzmHjZXOdzSXuyI+y0uLG1cdCX82Aaa+
-         5OXjpY1I4yr2vXXSm96QXVpOjmTMTZnFcdLSb5Xp3Hyl5g759KuBpUQ1FDdvqQn8hixf
-         iHdqLNZaiP5+a/LkJ9aH1DV4xViEqDpDo0XWHgCD+uCXLPGMzxFw42GI3kMoX2JM8VsM
-         /1Fv+72xCQrEUZXSMLfsYK90h/1bJ8Dh/4fFbCdXTN6koZCcqgs6dBq48u5MEc6skgw7
-         KdYQ==
-X-Gm-Message-State: AGRZ1gLhC1w7hDh9IOXXGFR2gtXJ8gq5Qjd/8/ASJA2bhL4ardxr7o9Z
-        iVmOd8UWTNctVrCsltOo6bVEJmZyo4GXLjB9oP4j2A==
-X-Google-Smtp-Source: AJdET5fcNv3fxVi9Sfi57rChQEAi1qYUxRdROp3hzu0ZUSJHnxPyEqP2wxVCOS4uWekNvVgj35um1syWTnyvQqp/JOI=
-X-Received: by 2002:a65:4683:: with SMTP id h3mr873754pgr.225.1540506069520;
- Thu, 25 Oct 2018 15:21:09 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6+LgcWkQxncFqD35FDqpvfp7mOi58SqLpjOIXD6LCUY=;
+        b=MCikaO4nPmEAvMVFUpIkx0FsKMglujAhUDdZHQnj68r9tl4230G8Wwrg4jFzjqrlPA
+         4zf74cGFQrk9p3318U3u6MHPrDfgDKBQsvGgRD+3RPE/aC4SmO83BY3bmVGvSW1XiHbo
+         eygkYlcMq925TIKqXsDI/UEOEDE+SmflqIEvKi+XUgN6uPMU5gfdvEbCX2U05NDlTkAJ
+         nTsCBoyiCE5cEOFxOOi6yEA/P0tgw5CwtkvNvGBkJcun7IWxPYe1TTgr9HKCbSHcvqTh
+         Q5sTIiGtSeNPrQiUHov0wxRpaSHXGQHB+JjPaFdeKJ9nfK97+K44bw/EJ9UOZV7M0QHb
+         suTQ==
+X-Gm-Message-State: AGRZ1gLsOKlJCnIowVHYz04Xc41eFhpfWvljYrsFdb7orZZbrhYvDewm
+        CmlEctibAG1qU24KJbYmt/knlQ==
+X-Google-Smtp-Source: AJdET5eBvm0W+ZrjAgVekK9Dk6m4WXSwBmTEZY+9sHXXYPpvaQPioUmALvOOTipUaIPSH7SISaiPjQ==
+X-Received: by 2002:a17:902:2808:: with SMTP id e8-v6mr882658plb.327.1540506127727;
+        Thu, 25 Oct 2018 15:22:07 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
+        by smtp.gmail.com with ESMTPSA id x73-v6sm19813778pfk.139.2018.10.25.15.22.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Oct 2018 15:22:06 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Sean Paul <seanpaul@chromium.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sandeep Panda <spanda@codeaurora.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        jsanka@codeaurora.org, ryandcase@chromium.org,
+        Douglas Anderson <dianders@chromium.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH v2 1/6] dt-bindings: drm/panel: simple: Add no-hpd property
+Date:   Thu, 25 Oct 2018 15:21:29 -0700
+Message-Id: <20181025222134.174583-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
 MIME-Version: 1.0
-References: <20181025193601.11746-1-natechancellor@gmail.com>
-In-Reply-To: <20181025193601.11746-1-natechancellor@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Thu, 25 Oct 2018 15:20:58 -0700
-Message-ID: <CAKwvOdm2r8bfXQCBiUjnQNnCs8ETxzYQHK4ZjMrfLyRvw77zAQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/i915: Disable -Wuninitialized for intel_breadcrumbs.o
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     jani.nikula@linux.intel.com, joonas.lahtinen@linux.intel.com,
-        rodrigo.vivi@intel.com, intel-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Chris Wilson <chris@chris-wilson.co.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 12:36 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> This warning is disabled by default in scripts/Makefile.extrawarn when
-> W= is not provided but this Makefile adds -Wall after this warning is
-> disabled so it shows up in the build when it shouldn't:
->
-> In file included from drivers/gpu/drm/i915/intel_breadcrumbs.c:895:
-> drivers/gpu/drm/i915/selftests/intel_breadcrumbs.c:350:34: error:
-> variable 'wq' is uninitialized when used within its own initialization
-> [-Werror,-Wuninitialized]
->         DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
->                                         ^~
-> ./include/linux/wait.h:74:63: note: expanded from macro
-> 'DECLARE_WAIT_QUEUE_HEAD_ONSTACK'
->         struct wait_queue_head name = __WAIT_QUEUE_HEAD_INIT_ONSTACK(name)
->                                ~~~~                                  ^~~~
-> ./include/linux/wait.h:72:33: note: expanded from macro
-> '__WAIT_QUEUE_HEAD_INIT_ONSTACK'
->         ({ init_waitqueue_head(&name); name; })
->                                        ^~~~
-> 1 error generated.
->
-> This warning looks to be a false positive given that init_waitqueue_head
-> initializes name before it is used. Rather than disable the warning for
-> the full folder like commit 46e2068081e9 ("drm/i915: Disable some extra
+Some eDP panels that are designed to be always connected to a board
+use their HPD signal to signal that they've finished powering on and
+they're ready to be talked to.
 
-cc author/reviewer of 46e2068081e9.
+However, for various reasons it's possible that the HPD signal from
+the panel isn't actually hooked up.  In the case where the HPD isn't
+hooked up you can look at the timing diagram on the panel datasheet
+and insert a delay for the maximum amount of time that the HPD might
+take to come up.
 
-I'm fine with the patch as is, unless others prefer to disable it for
-the whole subdir?  We could be playing whack-a-mole in the future
-disabling this warning for other translation units.
+Let's add a property in the device tree for this concept.
 
-> clang warnings"), just disable it for the one problematic file because
-> it could be a useful warning for other cases.
->
-> Link: https://github.com/ClangBuiltLinux/linux/issues/220
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->  drivers/gpu/drm/i915/Makefile | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/gpu/drm/i915/Makefile b/drivers/gpu/drm/i915/Makefile
-> index 1c2857f13ad4..f36c420afb99 100644
-> --- a/drivers/gpu/drm/i915/Makefile
-> +++ b/drivers/gpu/drm/i915/Makefile
-> @@ -26,6 +26,7 @@ subdir-ccflags-$(CONFIG_DRM_I915_WERROR) += -Werror
->
->  # Fine grained warnings disable
->  CFLAGS_i915_pci.o = $(call cc-disable-warning, override-init)
-> +CFLAGS_intel_breadcrumbs.o = $(call cc-disable-warning, uninitialized)
->  CFLAGS_intel_fbdev.o = $(call cc-disable-warning, override-init)
->
->  subdir-ccflags-y += \
-> --
-> 2.19.1
->
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Sean Paul <sean@poorly.run>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
 
+Changes in v2: None
 
+ .../devicetree/bindings/display/panel/simple-panel.txt         | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/display/panel/simple-panel.txt b/Documentation/devicetree/bindings/display/panel/simple-panel.txt
+index 45a457ad38f0..b2b872c710f2 100644
+--- a/Documentation/devicetree/bindings/display/panel/simple-panel.txt
++++ b/Documentation/devicetree/bindings/display/panel/simple-panel.txt
+@@ -11,6 +11,9 @@ Optional properties:
+ - ddc-i2c-bus: phandle of an I2C controller used for DDC EDID probing
+ - enable-gpios: GPIO pin to enable or disable the panel
+ - backlight: phandle of the backlight device attached to the panel
++- no-hpd: This panel is supposed to communicate that it's ready via HPD
++  (hot plug detect) signal, but the signal isn't hooked up so we should
++  hardcode the max delay from the panel spec when powering up the panel.
+ 
+ Example:
+ 
 -- 
-Thanks,
-~Nick Desaulniers
+2.19.1.568.g152ad8e336-goog
+
