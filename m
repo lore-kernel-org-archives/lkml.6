@@ -2,126 +2,106 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4249C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:56:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49064ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:56:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 871352082E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:56:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="iZQxSlEb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 871352082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id 0BAD320834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:56:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BAD320834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727512AbeJYT20 (ORCPT
+        id S1727534AbeJYT2w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 15:28:26 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:35084 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726852AbeJYT20 (ORCPT
+        Thu, 25 Oct 2018 15:28:52 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:33190 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726852AbeJYT2w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 15:28:26 -0400
-Received: by mail-it1-f196.google.com with SMTP id p64-v6so1169482itp.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 03:56:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4ZSHoP/QNHkrQ1G3/y91mk+ensvzovTW1aj0lbtU5h0=;
-        b=iZQxSlEbX48llLjY8w6aqJKaVBoq8luj55v28K8hBk77XOkkrJ/Yu9d21tzIPA67mN
-         7Lau6mAgaCEBZjACmS1ZJXCZUgRfYtfPf3kkwqBEuFVzX4B5Q7cJr1dQT7tIoRRgeswb
-         QWqd6DYjGBs+jKtHpDIezSQ3PBU8fzXPoRicI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4ZSHoP/QNHkrQ1G3/y91mk+ensvzovTW1aj0lbtU5h0=;
-        b=hpuIRRlKp6cgBa3JVpNftqbZriqI9l2RdLLH0XEgA91KB9tosik70fwUyJKb3/5u7E
-         b15bDPUzj/Z3Ka5wIpwYHSXMEusHa4tjfyDhWH1Pc5SYyF5bxHj0tTDwgb5Lum54WUYy
-         Xb7yeYYz13yFEJ/Pg2xROVdp1dko2IUro4fIlHbLTHzCpoTSfjSxG3d7qh0KG8tgYTKl
-         Nyvy0e9vYlmamUyBcNpXAsNDRg1+wXzznc6ve7dcumfqeMAL36p6qDHQGTQ22nIR5o7H
-         6/bE8k7u4SBhU7Lk9ltAFq3fdhbOegItauySjUUYPRbiTuqm5F0btabjvU067BaNA6V1
-         v0aw==
-X-Gm-Message-State: AGRZ1gKVUQz+6vG1st1PrqwFdXn250iPcjBTbLACtwkMx2yGJLSUdIFK
-        edtOQ7YM8PvejxPLy7QNvAinN/YoqWfdY5PbrCaxeA==
-X-Google-Smtp-Source: AJdET5dik+r+/EXqyu5FNxPXUe1z3vpDHrTtD0FRMOnBszZ803nRraubkSA6snFnrK5HAl6CkQlYpETAXO5pY0/4vXQ=
-X-Received: by 2002:a24:9f82:: with SMTP id c124-v6mr599069ite.32.1540464971232;
- Thu, 25 Oct 2018 03:56:11 -0700 (PDT)
+        Thu, 25 Oct 2018 15:28:52 -0400
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.23/8.16.0.23) with SMTP id w9PAsBDB012370;
+        Thu, 25 Oct 2018 05:56:28 -0500
+Authentication-Results: ppops.net;
+        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from mail1.cirrus.com (mail1.cirrus.com [141.131.3.20])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2n80speg0x-1;
+        Thu, 25 Oct 2018 05:56:28 -0500
+Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
+        by mail1.cirrus.com (Postfix) with ESMTP id D2226611E124;
+        Thu, 25 Oct 2018 05:56:27 -0500 (CDT)
+Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
+ (172.20.9.81) with Microsoft SMTP Server id 14.3.408.0; Thu, 25 Oct 2018
+ 11:56:27 +0100
+Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
+        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w9PAuQmK007651; Thu,
+ 25 Oct 2018 11:56:26 +0100
+Date:   Thu, 25 Oct 2018 11:56:26 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     Mark Brown <broonie@kernel.org>
+CC:     Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Lee Jones <lee.jones@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <linus.walleij@linaro.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <lgirdwood@gmail.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>,
+        <linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>
+Subject: Re: [PATCH v2 2/5] mfd: lochnagar: Add support for the Cirrus Logic
+ Lochnagar
+Message-ID: <20181025105626.GE16508@imbe.wolfsonmicro.main>
+References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
+ <20181008132542.19775-2-ckeepax@opensource.cirrus.com>
+ <20181025074459.GF4939@dell>
+ <20181025082621.GD16508@imbe.wolfsonmicro.main>
+ <b2f85f45-cbe9-5a27-e9e8-ad28f2bd9bd6@opensource.cirrus.com>
+ <20181025101248.GT2103@sirena.org.uk>
 MIME-Version: 1.0
-References: <20181023155035.9101-1-jagan@amarulasolutions.com>
- <20181023155035.9101-3-jagan@amarulasolutions.com> <20181024180436.5n3i3z6h2yezc4cv@flea>
-In-Reply-To: <20181024180436.5n3i3z6h2yezc4cv@flea>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Thu, 25 Oct 2018 16:25:59 +0530
-Message-ID: <CAMty3ZC2wn-DjR+93yc-n-bAmVCHaEqR_=4XPddoo+7LjebTEg@mail.gmail.com>
-Subject: Re: [PATCH v2 02/15] clk: sunxi-ng: Add check for minimal rate to NKM PLLs
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20181025101248.GT2103@sirena.org.uk>
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
+ definitions=main-1810250098
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 11:34 PM Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
->
-> On Tue, Oct 23, 2018 at 09:20:22PM +0530, Jagan Teki wrote:
-> > Some NKM PLLs doesn't work well when their output clock rate is set below
-> > certain rate.
-> >
-> > So, add support for minimal rate for relevant PLLs.
-> >
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > ---
-> > Changes for v2:
-> > - new patch
-> >
-> >  drivers/clk/sunxi-ng/ccu_nkm.c | 7 +++++++
-> >  drivers/clk/sunxi-ng/ccu_nkm.h | 1 +
-> >  2 files changed, 8 insertions(+)
-> >
-> > diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
-> > index 841840e35e61..d17539dc88dd 100644
-> > --- a/drivers/clk/sunxi-ng/ccu_nkm.c
-> > +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-> > @@ -125,6 +125,13 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
-> >       if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> >               rate *= nkm->fixed_post_div;
-> >
-> > +     if (rate < nkm->min_rate) {
-> > +             rate = nkm->min_rate;
-> > +             if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
-> > +                     rate /= nkm->fixed_post_div;
->
-> I'm not sure this is right. Is the post divider taken into account to
-> calculate the minimum, or is the minimum on the rate before the fixed
-> post divider.
+On Thu, Oct 25, 2018 at 11:12:48AM +0100, Mark Brown wrote:
+> On Thu, Oct 25, 2018 at 10:28:16AM +0100, Richard Fitzgerald wrote:
+> > On 25/10/18 09:26, Charles Keepax wrote:
+> > > On Thu, Oct 25, 2018 at 08:44:59AM +0100, Lee Jones wrote:
+> > > I really feel this isn't the driver you are objecting to as such
+> > > but the way regmap operates and also we seem to always have the same
+> > > discussions around regmap every time we push a driver. Is there
+> > > any way me, you and Mark could hash this out and find out a way to
+> > > handle regmaps that is acceptable to you? I don't suppose you are
+> > > in Edinburgh at the moment for ELCE?
+> 
+> > I suppose if Mark was willing to promote the regmap drivers to be a
+> > top-level subsystem that could contain the regmap definitions of devices
+> > then we could dump our regmap definitions in there, where Mark can review
+> > it as he's familiar with regmap and the chips and the reasons why things
+> > are done the way they are, rather than Lee having to stress about it every
+> > time we need to create an MFD device that uses regmap. Though that would
+> > make the initialization of an MFD rather awkward with the code required
+> > to init the MFD it not actually being in the MFD tree.
+> 
+> I'm not totally against dumping the data tables in some other directory
+> (we could do ../regmap/tables or whatever) but I fear it's going to
+> cause otherwise needless cross tree issues.
 
-Since we are returning from here, we need to take care post div which
-is actually doing at the end of round_rate.
+I guess there is a question here, if i split the regmap stuff
+into a separate file within mfd would that be enough? Is it just
+the mixing of these tables and the code you object to Lee or is
+it the fact the tables exist at all?
 
->
-> How did you test this?
-
-I've not used this on PLL_MIPI atleast, so I didn't test this.
+Thanks,
+Charles
