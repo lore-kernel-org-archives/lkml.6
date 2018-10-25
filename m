@@ -2,622 +2,111 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFCC1ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 23:12:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A4C8C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 23:14:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C6892064C
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 23:12:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C6892064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2ED4C20848
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 23:14:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="liZ/JfMV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ED4C20848
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727828AbeJZHqo (ORCPT
+        id S1727586AbeJZHtE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 03:46:44 -0400
-Received: from mga12.intel.com ([192.55.52.136]:21052 "EHLO mga12.intel.com"
+        Fri, 26 Oct 2018 03:49:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727377AbeJZHqo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 03:46:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2018 16:11:06 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,425,1534834800"; 
-   d="scan'208";a="268852826"
-Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by orsmga005.jf.intel.com with ESMTP; 25 Oct 2018 16:11:06 -0700
-From:   Fenghua Yu <fenghua.yu@intel.com>
-To:     "Thomas Gleixner" <tglx@linutronix.de>,
-        "Ingo Molnar" <mingo@redhat.com>, "H Peter Anvin" <hpa@zytor.com>,
-        "Tony Luck" <tony.luck@intel.com>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        "Reinette Chatre" <reinette.chatre@intel.com>,
-        "Babu Moger" <babu.moger@amd.com>,
-        "James Morse" <james.morse@arm.com>,
-        "Ravi V Shankar" <ravi.v.shankar@intel.com>,
-        "Sai Praneeth Prakhya" <sai.praneeth.prakhya@intel.com>,
-        "Arshiya Hayatkhan Pathan" <arshiya.hayatkhan.pathan@intel.com>
-Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
-        Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH v2 2/8] selftests/resctrl: Add basic resctrl file system operations and data
-Date:   Thu, 25 Oct 2018 16:07:00 -0700
-Message-Id: <1540508826-144502-3-git-send-email-fenghua.yu@intel.com>
-X-Mailer: git-send-email 2.5.0
-In-Reply-To: <1540508826-144502-1-git-send-email-fenghua.yu@intel.com>
-References: <1540508826-144502-1-git-send-email-fenghua.yu@intel.com>
+        id S1726796AbeJZHtE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 03:49:04 -0400
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C9F120848
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 23:14:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540509268;
+        bh=sanClo23U4iow7KnRInfHdOX9E10uWIJM4CLFB2TFQI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=liZ/JfMVoH3OAHXN5gszAlwN/FG0CwFu40LQe+MH1Y4X6YG1UyuTWkt7FYNm2CuvE
+         4N+LdeOLmwCgyGsVR0QYp+tbHgS8dzHSK0jn+42DRiGkylVNJZdCcUhFWpxwCxRMEP
+         azHt/Q+rEcEvCqNvYfG92tZZRW+kvyo+zDTZfREg=
+Received: by mail-wr1-f48.google.com with SMTP id w5-v6so10974550wrt.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 16:14:28 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gIiv1DBkagKkMA7HuSCoRlJL6b12BU6Usxlhyl3SqFU65R5DugX
+        DfQvXZZp/bI4R+UrVY08Hu0vWxvIFp7Ax11kaawrmg==
+X-Google-Smtp-Source: AJdET5dPeBOCfb2x/JZqPr3+Qvv9y7qkD24QjyU9J2wDs9g+fINqXPmQLuXO0jSz0dconRqAELyAWYjekS7mJxshoFM=
+X-Received: by 2002:adf:82c9:: with SMTP id 67-v6mr3488291wrc.131.1540509267132;
+ Thu, 25 Oct 2018 16:14:27 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181023184234.14025-1-chang.seok.bae@intel.com>
+ <20181023184234.14025-4-chang.seok.bae@intel.com> <CALCETrWWBYgaJfPykTpJ9=TsptVL_ieOR3JdYVVW02=O9CM17Q@mail.gmail.com>
+ <20181024192137.GI6218@tassilo.jf.intel.com>
+In-Reply-To: <20181024192137.GI6218@tassilo.jf.intel.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Thu, 25 Oct 2018 16:14:15 -0700
+X-Gmail-Original-Message-ID: <CALCETrUmD0jAzVMAUJ=9Vpih56Q4t9U5DJLnUxQdeMwZ3RAECA@mail.gmail.com>
+Message-ID: <CALCETrUmD0jAzVMAUJ=9Vpih56Q4t9U5DJLnUxQdeMwZ3RAECA@mail.gmail.com>
+Subject: Re: [v3 03/12] x86/fsgsbase/64: Add intrinsics/macros for FSGSBASE instructions
+To:     Andi Kleen <ak@linux.intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andrew Lutomirski <luto@kernel.org>,
+        "Bae, Chang Seok" <chang.seok.bae@intel.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Metzger, Markus T" <markus.t.metzger@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+On Wed, Oct 24, 2018 at 12:21 PM Andi Kleen <ak@linux.intel.com> wrote:
+>
+> On Wed, Oct 24, 2018 at 11:53:54AM -0700, Andy Lutomirski wrote:
+> > On Tue, Oct 23, 2018 at 11:43 AM Chang S. Bae <chang.seok.bae@intel.com> wrote:
+> > >
+> > > From: Andi Kleen <ak@linux.intel.com>
+> > >
+> > > Add C intrinsics and assembler macros for the new FSBASE and GSBASE
+> > > instructions.
+> > >
+> > > Very straight forward. Used in followon patches.
+> > >
+> > > [ luto: Rename the variables from FS and GS to FSBASE and GSBASE and
+> > >   make <asm/fsgsbase.h> safe to include on 32-bit kernels. ]
+> > >
+> > > v2: Use __always_inline
+> > >
+> > > [ chang: Revise the changelog. Place them in <asm/fsgsbase.h>. Replace
+> > >   the macros with GAS-compatible ones. ]
+> > >
+> > > If GCC supports it, we can add -mfsgsbase to CFLAGS and use the builtins
+> > > here for extra performance.
+> >
+> > Reviewed-by: Andy Lutomirski <luto@kernel.org> # C parts only
+> >
+> > With the caveat that I'm not convinced that the memory clobbers are
+> > needed.  The __force_order trick in special_insns.h would probably be
+> > more appropriate.
+> >
+> > I don't feel qualified to review the asm part without some research.
+> > Whereas hpa or Boris could probably review it with their eyes closed.
+>
+> BTW the other option would be to update the min-binutils requirement
+> to 2.21 (currently it is 2.20) and then write it directly without .byte.
+> I believe 2.21 added support for these instructions.
+>
+> (It's only a binutils requirement, don't need gcc support)
+>
 
-The basic resctrl file system operations and data are added for future
-usage by resctrl selftest tool.
-
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Signed-off-by: Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>
-Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
----
- tools/testing/selftests/resctrl/Makefile    |  10 +
- tools/testing/selftests/resctrl/resctrl.h   |  53 ++++
- tools/testing/selftests/resctrl/resctrlfs.c | 465 ++++++++++++++++++++++++++++
- 3 files changed, 528 insertions(+)
- create mode 100644 tools/testing/selftests/resctrl/Makefile
- create mode 100644 tools/testing/selftests/resctrl/resctrl.h
- create mode 100644 tools/testing/selftests/resctrl/resctrlfs.c
-
-diff --git a/tools/testing/selftests/resctrl/Makefile b/tools/testing/selftests/resctrl/Makefile
-new file mode 100644
-index 000000000000..bd5c5418961e
---- /dev/null
-+++ b/tools/testing/selftests/resctrl/Makefile
-@@ -0,0 +1,10 @@
-+CC = gcc
-+CFLAGS = -g -Wall
-+
-+*.o: *.c
-+	$(CC) $(CFLAGS) -c *.c
-+
-+.PHONY: clean
-+
-+clean:
-+	$(RM) *.o *~
-diff --git a/tools/testing/selftests/resctrl/resctrl.h b/tools/testing/selftests/resctrl/resctrl.h
-new file mode 100644
-index 000000000000..fe3c3434df97
---- /dev/null
-+++ b/tools/testing/selftests/resctrl/resctrl.h
-@@ -0,0 +1,53 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#define _GNU_SOURCE
-+#ifndef RESCTRL_H
-+#define RESCTRL_H
-+#include <stdio.h>
-+#include <errno.h>
-+#include <sched.h>
-+#include <stdlib.h>
-+#include <unistd.h>
-+#include <string.h>
-+#include <signal.h>
-+#include <dirent.h>
-+#include <stdbool.h>
-+#include <sys/stat.h>
-+#include <sys/ioctl.h>
-+#include <sys/mount.h>
-+#include <sys/types.h>
-+#include <asm/unistd.h>
-+#include <linux/perf_event.h>
-+
-+#define MB			(1024 * 1024)
-+#define RESCTRL_PATH		"/sys/fs/resctrl"
-+#define PHYS_ID_PATH		"/sys/devices/system/cpu/cpu"
-+#define RESCTRL_MBM		"L3 monitoring detected"
-+#define RESCTRL_MBA		"MB allocation detected"
-+#define MAX_RESCTRL_FEATURES	2
-+#define RM_SIG_FILE		"rm -rf sig"
-+
-+#define PARENT_EXIT(err_msg)			\
-+	do {					\
-+		perror(err_msg);		\
-+		kill(ppid, SIGKILL);		\
-+		exit(EXIT_FAILURE);		\
-+	} while (0)
-+
-+pid_t bm_pid, ppid;
-+int ben_count;
-+
-+int remount_resctrlfs(bool mum_resctrlfs);
-+char get_sock_num(int cpu_no);
-+int validate_bw_report_request(char *bw_report);
-+int validate_resctrl_feature_request(char *resctrl_val);
-+int taskset_benchmark(pid_t bm_pid, int cpu_no);
-+void run_benchmark(int signum, siginfo_t *info, void *ucontext);
-+int write_schemata(char *ctrlgrp, char *schemata, int cpu_no,
-+		   char *resctrl_val);
-+int write_bm_pid_to_resctrl(pid_t bm_pid, char *ctrlgrp, char *mongrp,
-+			    char *resctrl_val);
-+int perf_event_open(struct perf_event_attr *hw_event, pid_t pid, int cpu,
-+		    int group_fd, unsigned long flags);
-+int run_fill_buf(int span, int malloc_and_init_memory, int memflush, int op);
-+
-+#endif /* RESCTRL_H */
-diff --git a/tools/testing/selftests/resctrl/resctrlfs.c b/tools/testing/selftests/resctrl/resctrlfs.c
-new file mode 100644
-index 000000000000..d73726ef2002
---- /dev/null
-+++ b/tools/testing/selftests/resctrl/resctrlfs.c
-@@ -0,0 +1,465 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Basic resctrl file system operations
-+ *
-+ * Copyright (C) 2018 Intel Corporation
-+ *
-+ * Authors:
-+ *    Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>
-+ *    Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-+ *    Fenghua Yu <fenghua.yu@intel.com>
-+ */
-+#include "resctrl.h"
-+
-+/*
-+ * remount_resctrlfs:	Remount resctrl FS at /sys/fs/resctrl
-+ * @mum_resctrlfs:	Should the resctrl FS be remounted?
-+ *
-+ * If not mounted, mount it.
-+ * If mounted and mum_resctrlfs then remount resctrl FS.
-+ * If mounted and !mum_resctrlfs then noop
-+ *
-+ * Return: 0 on success, non-zero on failure
-+ */
-+int remount_resctrlfs(bool mum_resctrlfs)
-+{
-+	DIR *dp;
-+	struct dirent *ep;
-+	unsigned int count = 0;
-+
-+	/*
-+	 * If kernel is built with CONFIG_RESCTRL, then /sys/fs/resctrl should
-+	 * be present by default
-+	 */
-+	dp = opendir(RESCTRL_PATH);
-+	if (dp) {
-+		while ((ep = readdir(dp)) != NULL)
-+			count++;
-+		closedir(dp);
-+	} else {
-+		perror("Unable to read /sys/fs/resctrl");
-+
-+		return errno;
-+	}
-+
-+	/*
-+	 * If resctrl FS has more than two entries, it means that resctrl FS has
-+	 * already been mounted. The two default entries are "." and "..", these
-+	 * are present even when resctrl FS is not mounted
-+	 */
-+	if (count > 2) {
-+		if (mum_resctrlfs) {
-+			if (umount(RESCTRL_PATH) != 0) {
-+				perror("Unable to umount resctrl");
-+
-+				return errno;
-+			}
-+			printf("Remount: done!\n");
-+		} else {
-+			printf("Mounted already. Not remounting!\n");
-+
-+			return 0;
-+		}
-+	}
-+
-+	if (mount("resctrl", RESCTRL_PATH, "resctrl", 0, NULL) != 0) {
-+		perror("Unable to mount resctrl FS at /sys/fs/resctrl");
-+
-+		return errno;
-+	}
-+
-+	return 0;
-+}
-+
-+int umount_resctrlfs(void)
-+{
-+	if (umount(RESCTRL_PATH)) {
-+		perror("Unable to umount resctrl");
-+
-+		return errno;
-+	}
-+
-+	return 0;
-+}
-+
-+char get_sock_num(int cpu_no)
-+{
-+	char sock_num, phys_pkg_path[1024];
-+	FILE *fp;
-+
-+	sprintf(phys_pkg_path, "%s%d/topology/physical_package_id",
-+		PHYS_ID_PATH, cpu_no);
-+	fp = fopen(phys_pkg_path, "r");
-+	if (!fp || fscanf(fp, "%c", &sock_num) <= 0 || fclose(fp) == EOF) {
-+		perror("Could not get socket number");
-+
-+		return -1;
-+	}
-+
-+	return sock_num;
-+}
-+
-+/*
-+ * taskset_benchmark:	Taskset PID (i.e. benchmark) to a specified cpu
-+ * @bm_pid:		PID that should be binded
-+ * @cpu_no:		CPU number at which the PID would be binded
-+ *
-+ * Return: 0 on success, non-zero on failure
-+ */
-+int taskset_benchmark(pid_t bm_pid, int cpu_no)
-+{
-+	cpu_set_t my_set;
-+
-+	CPU_ZERO(&my_set);
-+	CPU_SET(cpu_no, &my_set);
-+
-+	if (sched_setaffinity(bm_pid, sizeof(cpu_set_t), &my_set)) {
-+		perror("Unable to taskset benchmark");
-+
-+		return -1;
-+	}
-+
-+	printf("Taskset benchmark: done!\n");
-+
-+	return 0;
-+}
-+
-+/*
-+ * Run a specified benchmark or fill_buf (default benchmark). Direct
-+ * benchmark stdio to /dev/null
-+ */
-+void run_benchmark(int signum, siginfo_t *info, void *ucontext)
-+{
-+	char **benchmark_cmd;
-+	int span, operation, ret;
-+
-+	benchmark_cmd = info->si_ptr;
-+
-+	/*
-+	 * Direct stdio of child to /dev/null, so that only parent writes to
-+	 * stdio (console)
-+	 */
-+	if (!freopen("/dev/null", "w", stdout))
-+		PARENT_EXIT("Unable to direct BM op to /dev/null");
-+
-+	if (strcmp(benchmark_cmd[0], "fill_buf") == 0) {
-+		/* Execute default fill_buf benchmark */
-+		span = atoi(benchmark_cmd[1]);
-+		operation = atoi(benchmark_cmd[4]);
-+		if (run_fill_buf(span, 1, 1, operation))
-+			fprintf(stderr, "Error in running fill buffer\n");
-+	} else {
-+		/* Execute specified benchmark */
-+		ret = execvp(benchmark_cmd[0], benchmark_cmd);
-+		if (ret)
-+			perror("wrong\n");
-+	}
-+
-+	PARENT_EXIT("Unable to run specified benchmark");
-+}
-+
-+/*
-+ * create_con_mon_grp:	Create a con_mon group *only* if one doesn't exist
-+ * @ctrlgrp:		Name of the con_mon group
-+ * @controlgroup:	Path at which it should be created
-+ *
-+ * Return: 0 on success, non-zero on failure
-+ */
-+static int create_con_mon_grp(const char *ctrlgrp, const char *controlgroup)
-+{
-+	int found_ctrl_grp = 0;
-+	struct dirent *ep;
-+	DIR *dp;
-+
-+	/*
-+	 * At this point, we are guaranteed to have resctrl FS mounted and if
-+	 * ctrlgrp == NULL, it means, user wants to use root con_mon grp, so do
-+	 * nothing
-+	 */
-+	if (!ctrlgrp)
-+		return 0;
-+
-+	/* Check if requested con_mon grp exists or not */
-+	dp = opendir(RESCTRL_PATH);
-+	if (dp) {
-+		while ((ep = readdir(dp)) != NULL) {
-+			if (strcmp(ep->d_name, ctrlgrp) == 0)
-+				found_ctrl_grp = 1;
-+		}
-+		closedir(dp);
-+	} else {
-+		perror("Unable to open resctrlfs for con_mon grp");
-+
-+		return errno;
-+	}
-+
-+	/* Requested con_mon grp doesn't exist, hence create it */
-+	if (found_ctrl_grp == 0) {
-+		if (mkdir(controlgroup, 0) == -1) {
-+			perror("Unable to create con_mon group");
-+
-+			return errno;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * create_mon_grp:	Create a monitor group *only* if one doesn't exist
-+ * @mongrp:		Name of the monitor group
-+ * @controlgroup:	Path of con_mon grp at which the mon grp will be created
-+ *
-+ * Return: 0 on success, non-zero on failure
-+ */
-+static int create_mon_grp(const char *mongrp, const char *controlgroup)
-+{
-+	char monitorgroup[1024];
-+	int found_mon_grp = 0;
-+	struct dirent *ep;
-+	DIR *dp;
-+
-+	/* Check if requested mon grp exists or not */
-+	sprintf(monitorgroup, "%s/mon_groups", controlgroup);
-+	dp = opendir(monitorgroup);
-+	if (dp) {
-+		while ((ep = readdir(dp)) != NULL) {
-+			if (strcmp(ep->d_name, mongrp) == 0)
-+				found_mon_grp = 1;
-+		}
-+		closedir(dp);
-+	} else {
-+		perror("Unable to open resctrl FS for mon group");
-+
-+		return -1;
-+	}
-+
-+	/* Requested mon grp doesn't exist, hence create it */
-+	sprintf(monitorgroup, "%s/mon_groups/%s", controlgroup, mongrp);
-+	if (found_mon_grp == 0) {
-+		if (mkdir(monitorgroup, 0) == -1) {
-+			perror("Unable to create mon group");
-+
-+			return -1;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * write_bm_pid_to_resctrl:	Write a PID (i.e. benchmark) to resctrl FS
-+ * @bm_pid:			PID that should be written
-+ * @ctrlgrp:			Name of the control monitor group (con_mon grp)
-+ * @mongrp:			Name of the monitor group (mon grp)
-+ * @resctrl_val:		Resctrl feature (Eg: mbm, mba.. etc)
-+ *
-+ * If a con_mon grp is requested, create it and write pid to it, otherwise
-+ * write pid to root con_mon grp.
-+ * If a mon grp is requested, create it and write pid to it, otherwise
-+ * pid is not written, this means that pid is in con_mon grp and hence
-+ * should consult con_mon grp's mon_data directory for results.
-+ *
-+ * Return: 0 on success, non-zero on failure
-+ */
-+int write_bm_pid_to_resctrl(pid_t bm_pid, char *ctrlgrp, char *mongrp,
-+			    char *resctrl_val)
-+{
-+	char controlgroup[1024], monitorgroup[1024];
-+	FILE *fp;
-+	int ret;
-+
-+	if (ctrlgrp)
-+		sprintf(controlgroup, "%s/%s", RESCTRL_PATH, ctrlgrp);
-+	else
-+		sprintf(controlgroup, "%s", RESCTRL_PATH);
-+
-+	ret = create_con_mon_grp(ctrlgrp, controlgroup);
-+	if (ret)
-+		return ret;
-+
-+	/* Create mon grp, only for monitoring features like "mbm" */
-+	if ((strcmp(resctrl_val, "mbm") == 0)) {
-+		if (mongrp) {
-+			ret = create_mon_grp(mongrp, controlgroup);
-+			if (ret)
-+				return ret;
-+
-+			sprintf(monitorgroup, "%s/mon_groups/%s/tasks",
-+				controlgroup, mongrp);
-+		}
-+	}
-+
-+	strcat(controlgroup, "/tasks");
-+
-+	/* Write child pid to con_mon grp */
-+	fp = fopen(controlgroup, "w");
-+	if (!fp || fprintf(fp, "%d\n", bm_pid) <= 0 || fclose(fp) == EOF) {
-+		perror("Failed to write child to con_mon grp");
-+
-+		return errno;
-+	}
-+
-+	/* Write child pid to mon grp, only for "mbm" */
-+	if ((strcmp(resctrl_val, "mbm") == 0)) {
-+		if (mongrp) {
-+			fp = fopen(monitorgroup, "w");
-+			if (!fp || fprintf(fp, "%d\n", bm_pid) <= 0 ||
-+			    fclose(fp) == EOF) {
-+				perror("Failed to write child to mon grp");
-+
-+				return errno;
-+			}
-+		}
-+	}
-+
-+	printf("Write benchmark to resctrl FS: done!\n");
-+
-+	return 0;
-+}
-+
-+/*
-+ * write_schemata:	Update schemata of a con_mon grp
-+ * @ctrlgrp:		Name of the con_mon grp
-+ * @schemata:		Schemata that should be updated to
-+ * @cpu_no:		CPU number that the benchmark PID is binded to
-+ * @resctrl_val:	Resctrl feature (Eg: mbm, mba.. etc)
-+ *
-+ * Update schemata of a con_mon grp *only* if requested resctrl feature is
-+ * allocation type
-+ *
-+ * Return: 0 on success, non-zero on failure
-+ */
-+int write_schemata(char *ctrlgrp, char *schemata, int cpu_no, char *resctrl_val)
-+{
-+	char sock_num, controlgroup[1024], schema[1024];
-+	FILE *fp;
-+
-+	if (strcmp(resctrl_val, "mba") == 0) {
-+		if (!schemata) {
-+			printf("Schemata empty, so not updating\n");
-+
-+			return 0;
-+		}
-+		sock_num = get_sock_num(cpu_no);
-+		if (sock_num < 0)
-+			return -1;
-+
-+		if (ctrlgrp)
-+			sprintf(controlgroup, "%s/%s/schemata", RESCTRL_PATH,
-+				ctrlgrp);
-+		else
-+			sprintf(controlgroup, "%s/schemata", RESCTRL_PATH);
-+		sprintf(schema, "%s%c%c%s", "MB:", sock_num, '=', schemata);
-+
-+		fp = fopen(controlgroup, "w");
-+		if (!fp || fprintf(fp, "%s\n", schema) <= 0 ||
-+		    fclose(fp) == EOF) {
-+			perror("Unable to write schemata to con_mon grp");
-+
-+			return errno;
-+		}
-+		printf("Write schemata to resctrl FS: done!\n");
-+	}
-+
-+	return 0;
-+}
-+
-+/*
-+ * Check if the requested feature is a valid resctrl feature or not.
-+ * If yes, check if it's supported by this platform or not.
-+ *
-+ * Return: 0 on success, non-zero on failure
-+ */
-+int validate_resctrl_feature_request(char *resctrl_val)
-+{
-+	const char *resctrl_features_list[MAX_RESCTRL_FEATURES] = {
-+			"mbm", "mba"};
-+	int resctrl_features_supported[MAX_RESCTRL_FEATURES] = {0, 0};
-+	int i, valid_resctrl_feature = -1;
-+	char line[1024];
-+	FILE *fp;
-+
-+	if (!resctrl_val) {
-+		fprintf(stderr, "resctrl feature cannot be NULL\n");
-+
-+		return -1;
-+	}
-+
-+	/* Is the resctrl feature request valid? */
-+	for (i = 0; i < MAX_RESCTRL_FEATURES; i++) {
-+		if (strcmp(resctrl_features_list[i], resctrl_val) == 0)
-+			valid_resctrl_feature = i;
-+	}
-+	if (valid_resctrl_feature == -1) {
-+		fprintf(stderr, "Not a valid resctrl feature request\n");
-+
-+		return -1;
-+	}
-+
-+	/* Enumerate resctrl features supported by this platform */
-+	if (system("dmesg > dmesg") != 0) {
-+		perror("Could not create custom dmesg file");
-+
-+		return errno;
-+	}
-+
-+	fp = fopen("dmesg", "r");
-+	if (!fp) {
-+		perror("Could not read custom created dmesg");
-+
-+		return errno;
-+	}
-+
-+	while (fgets(line, 1024, fp)) {
-+		if ((strstr(line, RESCTRL_MBM)) != NULL)
-+			resctrl_features_supported[0] = 1;
-+		if ((strstr(line, RESCTRL_MBA)) != NULL)
-+			resctrl_features_supported[1] = 1;
-+	}
-+	if (fclose(fp) == EOF) {
-+		perror("Error in closing file");
-+
-+		return errno;
-+	}
-+
-+	if (system("rm -rf dmesg") != 0)
-+		perror("Unable to remove 'dmesg' file");
-+
-+	/* Is the resctrl feature request supported? */
-+	if (!resctrl_features_supported[valid_resctrl_feature]) {
-+		fprintf(stderr, "resctrl feature not supported!");
-+
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
-+int validate_bw_report_request(char *bw_report)
-+{
-+	if (strcmp(bw_report, "reads") == 0)
-+		return 0;
-+	if (strcmp(bw_report, "writes") == 0)
-+		return 0;
-+	if (strcmp(bw_report, "nt-writes") == 0) {
-+		strcpy(bw_report, "writes");
-+		return 0;
-+	}
-+	if (strcmp(bw_report, "total") == 0)
-+		return 0;
-+
-+	fprintf(stderr, "Requested iMC B/W report type unavailable\n");
-+
-+	return -1;
-+}
-+
-+int perf_event_open(struct perf_event_attr *hw_event, pid_t pid, int cpu,
-+		    int group_fd, unsigned long flags)
-+{
-+	int ret;
-+
-+	ret = syscall(__NR_perf_event_open, hw_event, pid, cpu,
-+		      group_fd, flags);
-+	return ret;
-+}
--- 
-2.5.0
-
+I'd personally be fine with this.  Linus? Thomas? Ingo?
