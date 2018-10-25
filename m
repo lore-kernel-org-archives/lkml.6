@@ -2,76 +2,119 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BDF3C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:27:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F4B8ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:27:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CF2620824
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:27:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CF2620824
+	by mail.kernel.org (Postfix) with ESMTP id 6343020824
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:27:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6343020824
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727250AbeJZHBn (ORCPT
+        id S1727497AbeJZHBp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 03:01:43 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34714 "EHLO mx1.redhat.com"
+        Fri, 26 Oct 2018 03:01:45 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:52146 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726448AbeJZHBn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 03:01:43 -0400
+        id S1726448AbeJZHBp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 03:01:45 -0400
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 53DD3307D865;
-        Thu, 25 Oct 2018 22:27:15 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9D3D064DAF;
+        Thu, 25 Oct 2018 22:27:16 +0000 (UTC)
 Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id AD9321823B;
-        Thu, 25 Oct 2018 22:27:11 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9B4C91823B;
+        Thu, 25 Oct 2018 22:27:15 +0000 (UTC)
 From:   Lyude Paul <lyude@redhat.com>
 To:     intel-gfx@lists.freedesktop.org
-Cc:     "David Airlie" <airlied@linux.ie>,
-        "Rodrigo Vivi" <rodrigo.vivi@intel.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        "Jani Nikula" <jani.nikula@linux.intel.com>,
-        "Joonas Lahtinen" <joonas.lahtinen@linux.intel.com>
-Subject: [PATCH 0/2] drm/i915: HPD IRQ storm detection fixes
-Date:   Thu, 25 Oct 2018 18:26:55 -0400
-Message-Id: <20181025222657.9241-1-lyude@redhat.com>
+Cc:     =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] drm/i915: Fix NULL deref when re-enabling HPD IRQs on systems with MST
+Date:   Thu, 25 Oct 2018 18:26:56 -0400
+Message-Id: <20181025222657.9241-2-lyude@redhat.com>
+In-Reply-To: <20181025222657.9241-1-lyude@redhat.com>
+References: <20181025222657.9241-1-lyude@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Thu, 25 Oct 2018 22:27:15 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 25 Oct 2018 22:27:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
----- IMPORTANT -----
-As a note: I have not had the customer who this second patch is for test
-this yet, I'm sending this ahead of time to make sure this is something
-that isn't too crazy for upstream to accept. I'm not planning on pushing
-this after review until I've verified this actually fixes their
-problems.
---------------------
+Turns out that if you trigger an HPD storm on a system that has an MST
+topology connected to it, you'll end up causing the kernel to eventually
+hit a NULL deref:
 
-This series contains a fix for a problem which is very difficult to
-reproduce under normal circumstances without specialized testing
-hardware, along with a fix that seems to be required for some especially
-rebellious GM45 laptops.
+[  332.339041] BUG: unable to handle kernel NULL pointer dereference at 00000000000000ec
+[  332.340906] PGD 0 P4D 0
+[  332.342750] Oops: 0000 [#1] SMP PTI
+[  332.344579] CPU: 2 PID: 25 Comm: kworker/2:0 Kdump: loaded Tainted: G           O      4.18.0-rc3short-hpd-storm+ #2
+[  332.346453] Hardware name: LENOVO 20BWS1KY00/20BWS1KY00, BIOS JBET71WW (1.35 ) 09/14/2018
+[  332.348361] Workqueue: events intel_hpd_irq_storm_reenable_work [i915]
+[  332.350301] RIP: 0010:intel_hpd_irq_storm_reenable_work.cold.3+0x2f/0x86 [i915]
+[  332.352213] Code: 00 00 ba e8 00 00 00 48 c7 c6 c0 aa 5f a0 48 c7 c7 d0 73 62 a0 4c 89 c1 4c 89 04 24 e8 7f f5 af e0 4c 8b 04 24 44 89 f8 29 e8 <41> 39 80 ec 00 00 00 0f 85 43 13 fc ff 41 0f b6 86 b8 04 00 00 41
+[  332.354286] RSP: 0018:ffffc90000147e48 EFLAGS: 00010006
+[  332.356344] RAX: 0000000000000005 RBX: ffff8802c226c9d4 RCX: 0000000000000006
+[  332.358404] RDX: 0000000000000000 RSI: 0000000000000082 RDI: ffff88032dc95570
+[  332.360466] RBP: 0000000000000005 R08: 0000000000000000 R09: ffff88031b3dc840
+[  332.362528] R10: 0000000000000000 R11: 000000031a069602 R12: ffff8802c226ca20
+[  332.364575] R13: ffff8802c2268000 R14: ffff880310661000 R15: 000000000000000a
+[  332.366615] FS:  0000000000000000(0000) GS:ffff88032dc80000(0000) knlGS:0000000000000000
+[  332.368658] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  332.370690] CR2: 00000000000000ec CR3: 000000000200a003 CR4: 00000000003606e0
+[  332.372724] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[  332.374773] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+[  332.376798] Call Trace:
+[  332.378809]  process_one_work+0x1a1/0x350
+[  332.380806]  worker_thread+0x30/0x380
+[  332.382777]  ? wq_update_unbound_numa+0x10/0x10
+[  332.384772]  kthread+0x112/0x130
+[  332.386740]  ? kthread_create_worker_on_cpu+0x70/0x70
+[  332.388706]  ret_from_fork+0x35/0x40
+[  332.390651] Modules linked in: i915(O) vfat fat joydev btusb btrtl btbcm btintel bluetooth ecdh_generic iTCO_wdt wmi_bmof i2c_algo_bit drm_kms_helper intel_rapl syscopyarea sysfillrect x86_pkg_temp_thermal sysimgblt coretemp fb_sys_fops crc32_pclmul drm psmouse pcspkr mei_me mei i2c_i801 lpc_ich mfd_core i2c_core tpm_tis tpm_tis_core thinkpad_acpi wmi tpm rfkill video crc32c_intel serio_raw ehci_pci xhci_pci ehci_hcd xhci_hcd [last unloaded: i915]
+[  332.394963] CR2: 00000000000000ec
 
-Lyude Paul (2):
-  drm/i915: Fix NULL deref when re-enabling HPD IRQs on systems with MST
-  drm/i915: Add short HPD IRQ storm detection for non-MST systems
+This appears to be due to the fact that with an MST topology, not all
+intel_connector structs will have ->encoder set. So, fix this by
+skipping connectors without encoders in
+intel_hpd_irq_storm_reenable_work().
 
- drivers/gpu/drm/i915/i915_debugfs.c  | 89 +++++++++++++++++++++++-----
- drivers/gpu/drm/i915/i915_drv.h      | 15 +++--
- drivers/gpu/drm/i915/i915_irq.c      | 14 ++++-
- drivers/gpu/drm/i915/intel_hotplug.c | 87 ++++++++++++++++-----------
- 4 files changed, 152 insertions(+), 53 deletions(-)
+For those wondering, this bug was found on accident while simulating HPD
+storms using a Chamelium connected to a ThinkPad T450s (Broadwell).
 
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+---
+ drivers/gpu/drm/i915/intel_hotplug.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/i915/intel_hotplug.c b/drivers/gpu/drm/i915/intel_hotplug.c
+index 648a13c6043c..7d21aac10d16 100644
+--- a/drivers/gpu/drm/i915/intel_hotplug.c
++++ b/drivers/gpu/drm/i915/intel_hotplug.c
+@@ -228,7 +228,8 @@ static void intel_hpd_irq_storm_reenable_work(struct work_struct *work)
+ 		drm_for_each_connector_iter(connector, &conn_iter) {
+ 			struct intel_connector *intel_connector = to_intel_connector(connector);
+ 
+-			if (intel_connector->encoder->hpd_pin == pin) {
++			if (intel_connector->encoder &&
++			    intel_connector->encoder->hpd_pin == pin) {
+ 				if (connector->polled != intel_connector->polled)
+ 					DRM_DEBUG_DRIVER("Reenabling HPD on connector %s\n",
+ 							 connector->name);
 -- 
 2.17.2
 
