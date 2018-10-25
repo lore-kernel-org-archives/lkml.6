@@ -2,111 +2,122 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D12D7ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9FEFC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:45:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 991A420834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:45:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9029720834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:45:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SBGS+OUh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 991A420834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GdZClevA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9029720834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727449AbeJYWSP (ORCPT
+        id S1727472AbeJYWSq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:18:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44580 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727236AbeJYWSP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:18:15 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 339C920831;
-        Thu, 25 Oct 2018 13:45:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540475125;
-        bh=9IRKv4QjckEAESzxZFcqmCetyj/ofEetZojH9TZmEAI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SBGS+OUhF8ZhaVSBiuZZfiyWn2KAMhjcskRNeLSBraE5jwozxspdrBnPAr9OBwKE5
-         ga6Q7wj6RvPlTQ4/v2taRkYCp4DfG/Uscrkh46OhhH+FoOQCK4JNYUxIm3P4m0ME/C
-         /wVGyfBamO/6BFTr36YmQJyLxfzUjaTqKbQf33Es=
-Date:   Thu, 25 Oct 2018 08:45:22 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
-Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        Roy Zang <roy.zang@nxp.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>
-Subject: Re: [PATCH] PCI/Layerscape: fix wrongly invoking of outbound window
- disable accessor
-Message-ID: <20181025134522.GE214775@bhelgaas-glaptop.roam.corp.google.com>
-References: <20181025085323.8819-1-Zhiqiang.Hou@nxp.com>
+        Thu, 25 Oct 2018 18:18:46 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:44246 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727236AbeJYWSq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:18:46 -0400
+Received: by mail-oi1-f195.google.com with SMTP id k19-v6so652829oic.11
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 06:45:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CAKsmhGwphcLYdeKebciBpfeYA9rdDjFD/uow+o+w7A=;
+        b=GdZClevAy3MNu2TJeFu7kepEgmq1B32RuMQD9DsMWFqcCzRBOVYR5A8QkJ9KhxoVaD
+         E/kVsOF0uSy+WMYG7+VqGtHJ3azsK4EKIi9U0v31VRvvvcU9WXLJqvVQsKhDap4k4MUn
+         K7CUF2Pjcnb+fiiP8jJ4J0Cdc4msZGI4ZZ6hcAGnkWRun21IIxl3WkM9k/RiRu8VT1t0
+         oXqC7AgULC8Brm+hJSCQ+T8+b6NudVa2fF4al0RlWmLapodQ1xpsxZmUVXGGr7tnYZL5
+         MwOHoD4eponJOiaLfaN8G/5lpa7Gi0F4/YStKqZNxl4a8RtVqbXMsF5QeEJQJMi+NIJm
+         oc5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CAKsmhGwphcLYdeKebciBpfeYA9rdDjFD/uow+o+w7A=;
+        b=EqUbR2ZgfwTlBIHY1SR5RWbH8KLuacG45OeQOk92JWKWiUgE9nI1tX7X7NSEJsiuZF
+         XlQ1pUmRNWw1Q9zWp3Ej8uMTVzDnrhgGhV8dXt/uC3bnjZciuJZCGkPTo/NouQ+i8a+5
+         rD2ki/8jnrJwZ8LXKXJS8iLe4B8N0DnkonZonAWc+O0vmjRw+RAUemkvME1Ce0Ubo+Bs
+         P/pVOKN/QgzsSi1v3yiT9M+ygdFeiDQLI+0nLtTK4cxHHZoC4g4bcJsmXO/6h2ufcqqE
+         BiaUVMvPLLLpaCHtCxOoFpEF6BSITc5mhyO6ZPSbMjoV5GpZEpvbZbNB/lLhbckNdapZ
+         0sPg==
+X-Gm-Message-State: AGRZ1gIgfyvWnilMosPllowbM4/8KbTXF9WvE1xroz5DktbCTaDfyLXP
+        bjtXwF7SGJWaiJCCm1TGizJVjOrYo6E33gVLroxmPQ==
+X-Google-Smtp-Source: AJdET5fGp0p353JoApjSX6xR2DJrXZ6uTr/JXfeJBtQubpgUGxl/mzLuUYALqSN15nNFJ9mW0zFcGpJaorSrF0gBxoQ=
+X-Received: by 2002:aca:c045:: with SMTP id q66-v6mr518965oif.22.1540475155893;
+ Thu, 25 Oct 2018 06:45:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181025085323.8819-1-Zhiqiang.Hou@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
+ <458c04d8-d189-4a26-729a-bb1d1d751534@cisco.com> <87sh0vpj5q.fsf@xmission.com>
+In-Reply-To: <87sh0vpj5q.fsf@xmission.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Thu, 25 Oct 2018 15:45:29 +0200
+Message-ID: <CAG48ez2aJD1wcz3UjhaQvgqhg5UMeQ_-iMZesA=SfhYwUdGGyA@mail.gmail.com>
+Subject: Re: [PATCH v2] kernel/signal: Signal-based pre-coredump notification
+To:     "Eric W. Biederman" <ebiederm@xmission.com>
+Cc:     enkechen@cisco.com, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>, deller@gmx.de,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        christian@brauner.io, Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, Dave.Martin@arm.com,
+        mchehab+samsung@kernel.org, Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        guro@fb.com, Marcos Souza <marcos.souza.org@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, linux@dominikbrodowski.net,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        yang.shi@linux.alibaba.com, Kees Cook <keescook@chromium.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Victor Kamensky <kamensky@cisco.com>,
+        xe-linux-external@cisco.com, sstrogin@cisco.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  $ git log --oneline --follow drivers/pci/controller/dwc/pci-layerscape.c | head
-  6e0832fa432e PCI: Collect all native drivers under drivers/pci/controller/
-  3f43ccc4ea1b PCI: dwc: Remove old MSI IRQs API
-  8cfab3cf63cf PCI: Add SPDX GPL-2.0 to replace GPL v2 boilerplate
-  84d897d69938 PCI: layerscape: Change default error response behavior
-  a335b122ba27 PCI: layerscape: Add support for ls1012a
-  03fc6134c260 PCI: layerscape: Add support for ls1088a
-  8f89357094e6 PCI: layerscape: Add support for ls2088a
-  c3f909398827 PCI: layerscape: Remove unnecessary class code fixup
-  e44abfed6fcb PCI: dwc: Add accessors for write permission of DBI read-only registers
-  4a2745d760fa PCI: layerscape: Disable outbound windows configured by bootloader
+On Wed, Oct 24, 2018 at 3:30 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
+> Enke Chen <enkechen@cisco.com> writes:
+> > For simplicity and consistency, this patch provides an implementation
+> > for signal-based fault notification prior to the coredump of a child
+> > process. A new prctl command, PR_SET_PREDUMP_SIG, is defined that can
+> > be used by an application to express its interest and to specify the
+> > signal (SIGCHLD or SIGUSR1 or SIGUSR2) for such a notification. A new
+> > signal code (si_code), CLD_PREDUMP, is also defined for SIGCHLD.
+> >
+> > Changes to prctl(2):
+> >
+> >    PR_SET_PREDUMP_SIG (since Linux 4.20.x)
+> >           Set the child pre-coredump signal of the calling process to
+> >           arg2 (either SIGUSR1, or SIUSR2, or SIGCHLD, or 0 to clear).
+> >           This is the signal that the calling process will get prior to
+> >           the coredump of a child process. This value is cleared across
+> >           execve(2), or for the child of a fork(2).
+> >
+> >           When SIGCHLD is specified, the signal code will be set to
+> >           CLD_PREDUMP in such an SIGCHLD signal.
+[...]
+> Ugh.  Your test case is even using signalfd.  So you don't even want
+> this signal to be delivered as a signal.
 
-Make yours match, e.g., "PCI: layerscape: Call dw_pcie_disable_atu()
-correctly"
-
-On Thu, Oct 25, 2018 at 08:53:37AM +0000, Z.q. Hou wrote:
-> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-> 
-> This issue is introduced by commit 4a2745d760fac ("PCI: layerscape: Disable
-> outbound windows configured by bootloader").
-
-Conventional commit reference:
-
-  $ git --no-pager show -s --abbrev-commit --abbrev=12 --pretty=format:"%h (\"%s\")%n" 4a2745d760fac
-  4a2745d760fa ("PCI: layerscape: Disable outbound windows configured by bootloader")
-
-Holy cow, this has been broken since v4.14.  If fixing this makes a
-difference, you might want to tag it for stable.
-
-> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-> ---
->  drivers/pci/controller/dwc/pci-layerscape.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-layerscape.c b/drivers/pci/controller/dwc/pci-layerscape.c
-> index 69f3f1a5a782..b2085988dbee 100644
-> --- a/drivers/pci/controller/dwc/pci-layerscape.c
-> +++ b/drivers/pci/controller/dwc/pci-layerscape.c
-> @@ -88,7 +88,7 @@ static void ls_pcie_disable_outbound_atus(struct ls_pcie *pcie)
->  	int i;
->  
->  	for (i = 0; i < PCIE_IATU_NUM; i++)
-> -		dw_pcie_disable_atu(pcie->pci, DW_PCIE_REGION_OUTBOUND, i);
-> +		dw_pcie_disable_atu(pcie->pci, i, DW_PCIE_REGION_OUTBOUND);
->  }
->  
->  static int ls1021_pcie_link_up(struct dw_pcie *pci)
-> -- 
-> 2.17.1
-> 
+Just to make sure everyone's on the same page: You're suggesting that
+it might make sense to deliver the pre-dump notification via a new
+type of file instead (along the lines of signalfd, timerfd, eventfd
+and so on)?
