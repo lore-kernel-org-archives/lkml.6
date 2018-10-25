@@ -6,44 +6,47 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD27ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6203BECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93DC320847
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2883D20848
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ELoXrFZO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93DC320847
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pMIlBNKF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2883D20848
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727808AbeJYWnz (ORCPT
+        id S1727828AbeJYWn6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:43:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52388 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:43:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727781AbeJYWnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:43:55 -0400
+        id S1727699AbeJYWn5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:43:57 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4BDE2054F;
-        Thu, 25 Oct 2018 14:10:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EA262083E;
+        Thu, 25 Oct 2018 14:10:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540476659;
-        bh=MPCeHQAwh0yKoP35Ko4SAVfo9UUme7RMUtYsWCuxmGo=;
+        s=default; t=1540476661;
+        bh=i5uOvyglvWNt+vZl/nI8/GZEViwwpoNlfavDownWPvs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ELoXrFZOia7iwuW229MkIrxg+PLi7X3/yAyMwH2/kPvI2yfL4MLfTldXLtnerVcFd
-         Y3tPW2CYjQU4hJEGkz+grTcS+faB/AT6AjejBp+l4HnnOK9pYd+v+84MSsCKG+VxMj
-         d4z+Y5uR21Yx2tyRvETsfofgby1QW81r7dfQnjds=
+        b=pMIlBNKFl0ojmVTwqxzcRIOkDTd0YdxVv6iLhzxO+1Il5pAtIhuQHHqo2Oohs0aPP
+         /h6MWEPuBT58LtNFYC46mB/E69OHvo8oROJYjUWPDNT6RfNMspGbJZ/1yAfQE9i3gQ
+         BzO5/7x1PZQ6ww4kfrbnlpptjcPI0b/KJ0Mg8UBo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 03/46] iwlwifi: fix the ALIVE notification layout
-Date:   Thu, 25 Oct 2018 10:10:10 -0400
-Message-Id: <20181025141053.213330-3-sashal@kernel.org>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Borislav Petkov <bp@alien8.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 04/46] x86/power: Fix some ordering bugs in __restore_processor_context()
+Date:   Thu, 25 Oct 2018 10:10:11 -0400
+Message-Id: <20181025141053.213330-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141053.213330-1-sashal@kernel.org>
 References: <20181025141053.213330-1-sashal@kernel.org>
@@ -52,46 +55,128 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+From: Andy Lutomirski <luto@kernel.org>
 
-[ Upstream commit 5cd2d8fc6c6bca979ac5dd8ad0e41153f1f982f9 ]
+[ Upstream commit 5b06bbcfc2c621da3009da8decb7511500c293ed ]
 
-The ucode_major and ucode_minor were swapped. This has
-no practical consequences since those fields are not used.
-Same goes for umac_major and umac_minor which were only
-printed under certain debug flags.
+__restore_processor_context() had a couple of ordering bugs.  It
+restored GSBASE after calling load_gs_index(), and the latter can
+call into tracing code.  It also tried to restore segment registers
+before restoring the LDT, which is straight-up wrong.
 
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Reorder the code so that we restore GSBASE, then the descriptor
+tables, then the segments.
+
+This fixes two bugs.  First, it fixes a regression that broke resume
+under certain configurations due to irqflag tracing in
+native_load_gs_index().  Second, it fixes resume when the userspace
+process that initiated suspect had funny segments.  The latter can be
+reproduced by compiling this:
+
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * ldt_echo.c - Echo argv[1] while using an LDT segment
+ */
+
+int main(int argc, char **argv)
+{
+	int ret;
+	size_t len;
+	char *buf;
+
+	const struct user_desc desc = {
+                .entry_number    = 0,
+                .base_addr       = 0,
+                .limit           = 0xfffff,
+                .seg_32bit       = 1,
+                .contents        = 0, /* Data, grow-up */
+                .read_exec_only  = 0,
+                .limit_in_pages  = 1,
+                .seg_not_present = 0,
+                .useable         = 0
+        };
+
+	if (argc != 2)
+		errx(1, "Usage: %s STRING", argv[0]);
+
+	len = asprintf(&buf, "%s\n", argv[1]);
+	if (len < 0)
+		errx(1, "Out of memory");
+
+	ret = syscall(SYS_modify_ldt, 1, &desc, sizeof(desc));
+	if (ret < -1)
+		errno = -ret;
+	if (ret)
+		err(1, "modify_ldt");
+
+	asm volatile ("movw %0, %%es" :: "rm" ((unsigned short)7));
+	write(1, buf, len);
+	return 0;
+}
+
+and running ldt_echo >/sys/power/mem
+
+Without the fix, the latter causes a triple fault on resume.
+
+Fixes: ca37e57bbe0c ("x86/entry/64: Add missing irqflags tracing to native_load_gs_index()")
+Reported-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Jarkko Nikula <jarkko.nikula@linux.intel.com>
+Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lkml.kernel.org/r/6b31721ea92f51ea839e79bd97ade4a75b1eeea2.1512057304.git.luto@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/fw/api/alive.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/power/cpu.c | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/fw/api/alive.h b/drivers/net/wireless/intel/iwlwifi/fw/api/alive.h
-index 3684a3e180e5..007bfe7656a4 100644
---- a/drivers/net/wireless/intel/iwlwifi/fw/api/alive.h
-+++ b/drivers/net/wireless/intel/iwlwifi/fw/api/alive.h
-@@ -95,8 +95,8 @@ enum {
- #define IWL_ALIVE_FLG_RFKILL	BIT(0)
+diff --git a/arch/x86/power/cpu.c b/arch/x86/power/cpu.c
+index 04d5157fe7f8..a51d2dfb57d1 100644
+--- a/arch/x86/power/cpu.c
++++ b/arch/x86/power/cpu.c
+@@ -228,8 +228,20 @@ static void notrace __restore_processor_state(struct saved_context *ctxt)
+ 	load_idt((const struct desc_ptr *)&ctxt->idt_limit);
+ #endif
  
- struct iwl_lmac_alive {
--	__le32 ucode_minor;
- 	__le32 ucode_major;
-+	__le32 ucode_minor;
- 	u8 ver_subtype;
- 	u8 ver_type;
- 	u8 mac;
-@@ -113,8 +113,8 @@ struct iwl_lmac_alive {
- } __packed; /* UCODE_ALIVE_NTFY_API_S_VER_3 */
++#ifdef CONFIG_X86_64
+ 	/*
+-	 * segment registers
++	 * We need GSBASE restored before percpu access can work.
++	 * percpu access can happen in exception handlers or in complicated
++	 * helpers like load_gs_index().
++	 */
++	wrmsrl(MSR_GS_BASE, ctxt->gs_base);
++#endif
++
++	fix_processor_context();
++
++	/*
++	 * Restore segment registers.  This happens after restoring the GDT
++	 * and LDT, which happen in fix_processor_context().
+ 	 */
+ #ifdef CONFIG_X86_32
+ 	loadsegment(es, ctxt->es);
+@@ -250,13 +262,14 @@ static void notrace __restore_processor_state(struct saved_context *ctxt)
+ 	load_gs_index(ctxt->gs);
+ 	asm volatile ("movw %0, %%ss" :: "r" (ctxt->ss));
  
- struct iwl_umac_alive {
--	__le32 umac_minor;		/* UMAC version: minor */
- 	__le32 umac_major;		/* UMAC version: major */
-+	__le32 umac_minor;		/* UMAC version: minor */
- 	__le32 error_info_addr;		/* SRAM address for UMAC error log */
- 	__le32 dbg_print_buff_addr;
- } __packed; /* UMAC_ALIVE_DATA_API_S_VER_2 */
++	/*
++	 * Restore FSBASE and user GSBASE after reloading the respective
++	 * segment selectors.
++	 */
+ 	wrmsrl(MSR_FS_BASE, ctxt->fs_base);
+-	wrmsrl(MSR_GS_BASE, ctxt->gs_base);
+ 	wrmsrl(MSR_KERNEL_GS_BASE, ctxt->gs_kernel_base);
+ #endif
+ 
+-	fix_processor_context();
+-
+ 	do_fpu_end();
+ 	tsc_verify_tsc_adjust(true);
+ 	x86_platform.restore_sched_clock_state();
 -- 
 2.17.1
 
