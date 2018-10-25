@@ -2,117 +2,182 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE7FEECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F3A3ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:43:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 998BA204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:42:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 998BA204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D6F65204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:43:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6F65204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726972AbeJYJNQ (ORCPT
+        id S1727140AbeJYJNf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 05:13:16 -0400
-Received: from mga18.intel.com ([134.134.136.126]:18265 "EHLO mga18.intel.com"
+        Thu, 25 Oct 2018 05:13:35 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47382 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726238AbeJYJNP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 05:13:15 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 17:42:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,422,1534834800"; 
-   d="scan'208";a="83932225"
-Received: from yhuang-dev.sh.intel.com (HELO yhuang-dev) ([10.239.13.27])
-  by orsmga007.jf.intel.com with ESMTP; 24 Oct 2018 17:42:52 -0700
-From:   "Huang\, Ying" <ying.huang@intel.com>
-To:     Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Shaohua Li <shli@kernel.org>, Hugh Dickins <hughd@google.com>,
-        Minchan Kim <minchan@kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Zi Yan <zi.yan@cs.rutgers.edu>
-Subject: Re: [PATCH -V6 00/21] swap: Swapout/swapin THP in one piece
-References: <20181010071924.18767-1-ying.huang@intel.com>
-        <20181023122738.a5j2vk554tsx4f6i@ca-dmjordan1.us.oracle.com>
-        <87sh0wuijl.fsf@yhuang-dev.intel.com>
-        <20181024172410.a3pibijoc2u2awwo@ca-dmjordan1.us.oracle.com>
-Date:   Thu, 25 Oct 2018 08:42:51 +0800
-In-Reply-To: <20181024172410.a3pibijoc2u2awwo@ca-dmjordan1.us.oracle.com>
-        (Daniel Jordan's message of "Wed, 24 Oct 2018 10:24:10 -0700")
-Message-ID: <87ftwuvotw.fsf@yhuang-dev.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
+        id S1726238AbeJYJNf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 05:13:35 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9E6F13082B4B;
+        Thu, 25 Oct 2018 00:43:14 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-24.phx2.redhat.com [10.3.112.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D737160A9B;
+        Thu, 25 Oct 2018 00:42:58 +0000 (UTC)
+Date:   Wed, 24 Oct 2018 20:42:55 -0400
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        linux-audit@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
+        luto@kernel.org, carlos@redhat.com, dhowells@redhat.com,
+        viro@zeniv.linux.org.uk, simo@redhat.com,
+        Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>
+Subject: Re: [PATCH ghak90 (was ghak32) V4 03/10] audit: log container info
+ of syscalls
+Message-ID: <20181025004255.zl7p7j6gztouh2hh@madcap2.tricolour.ca>
+References: <cover.1533065887.git.rgb@redhat.com>
+ <34017c395d03a213d6b0d49b9964429bd32b283d.1533065887.git.rgb@redhat.com>
+ <CAHC9VhSv4hWGHiaaOfuBrRQKdp2YG5RtqXQbFXg7j7LNEhO2XQ@mail.gmail.com>
+ <20181024151439.lavhanabsyxdrdvo@madcap2.tricolour.ca>
+ <CAHC9VhRF1vsxM-k0Lw-9NqS9b9rgXRRBu0tq4ajdFpMqUxiH4A@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHC9VhRF1vsxM-k0Lw-9NqS9b9rgXRRBu0tq4ajdFpMqUxiH4A@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 25 Oct 2018 00:43:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Daniel Jordan <daniel.m.jordan@oracle.com> writes:
+On 2018-10-24 16:55, Paul Moore wrote:
+> On Wed, Oct 24, 2018 at 11:15 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > On 2018-10-19 19:16, Paul Moore wrote:
+> > > On Sun, Aug 5, 2018 at 4:32 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > Create a new audit record AUDIT_CONTAINER to document the audit
+> > > > container identifier of a process if it is present.
+> > > >
+> > > > Called from audit_log_exit(), syscalls are covered.
+> > > >
+> > > > A sample raw event:
+> > > > type=SYSCALL msg=audit(1519924845.499:257): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=56374e1cef30 a2=241 a3=1b6 items=2 ppid=606 pid=635 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=3 comm="bash" exe="/usr/bin/bash" subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key="tmpcontainerid"
+> > > > type=CWD msg=audit(1519924845.499:257): cwd="/root"
+> > > > type=PATH msg=audit(1519924845.499:257): item=0 name="/tmp/" inode=13863 dev=00:27 mode=041777 ouid=0 ogid=0 rdev=00:00 obj=system_u:object_r:tmp_t:s0 nametype= PARENT cap_fp=0000000000000000 cap_fi=0000000000000000 cap_fe=0 cap_fver=0
+> > > > type=PATH msg=audit(1519924845.499:257): item=1 name="/tmp/tmpcontainerid" inode=17729 dev=00:27 mode=0100644 ouid=0 ogid=0 rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0 nametype=CREATE cap_fp=0000000000000000 cap_fi=0000000000000000 cap_fe=0 cap_fver=0
+> > > > type=PROCTITLE msg=audit(1519924845.499:257): proctitle=62617368002D6300736C65657020313B206563686F2074657374203E202F746D702F746D70636F6E7461696E65726964
+> > > > type=CONTAINER msg=audit(1519924845.499:257): op=task contid=123458
+> > > >
+> > > > See: https://github.com/linux-audit/audit-kernel/issues/90
+> > > > See: https://github.com/linux-audit/audit-userspace/issues/51
+> > > > See: https://github.com/linux-audit/audit-testsuite/issues/64
+> > > > See: https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
+> > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > > Acked-by: Serge Hallyn <serge@hallyn.com>
+> > > > Acked-by: Steve Grubb <sgrubb@redhat.com>
+> > > > ---
+> > > >  include/linux/audit.h      |  7 +++++++
+> > > >  include/uapi/linux/audit.h |  1 +
+> > > >  kernel/audit.c             | 24 ++++++++++++++++++++++++
+> > > >  kernel/auditsc.c           |  3 +++
+> > > >  4 files changed, 35 insertions(+)
+> > >
+> > > ...
+> > >
+> > > > @@ -2045,6 +2045,30 @@ void audit_log_session_info(struct audit_buffer *ab)
+> > > >         audit_log_format(ab, " auid=%u ses=%u", auid, sessionid);
+> > > >  }
+> > > >
+> > > > +/*
+> > > > + * audit_log_contid - report container info
+> > > > + * @tsk: task to be recorded
+> > > > + * @context: task or local context for record
+> > > > + * @op: contid string description
+> > > > + */
+> > > > +int audit_log_contid(struct task_struct *tsk,
+> > > > +                            struct audit_context *context, char *op)
+> > > > +{
+> > > > +       struct audit_buffer *ab;
+> > > > +
+> > > > +       if (!audit_contid_set(tsk))
+> > > > +               return 0;
+> > > > +       /* Generate AUDIT_CONTAINER record with container ID */
+> > > > +       ab = audit_log_start(context, GFP_KERNEL, AUDIT_CONTAINER);
+> > > > +       if (!ab)
+> > > > +               return -ENOMEM;
+> > > > +       audit_log_format(ab, "op=%s contid=%llu",
+> > > > +                        op, audit_get_contid(tsk));
+> > > > +       audit_log_end(ab);
+> > > > +       return 0;
+> > > > +}
+> > > > +EXPORT_SYMBOL(audit_log_contid);
+> > >
+> > > As discussed in the previous iteration of the patch, I prefer
+> > > AUDIT_CONTAINER_ID here over AUDIT_CONTAINER.  If you feel strongly
+> > > about keeping it as-is with AUDIT_CONTAINER I suppose I could live
+> > > with that, but it is isn't my first choice.
+> >
+> > I don't have a strong opinion on this one, mildly preferring the shorter
+> > one only because it is shorter.
+> 
+> We already have multiple AUDIT_CONTAINER* record types, so it seems as
+> though we should use "AUDIT_CONTAINER" as a prefix of sorts, rather
+> than a type itself.
 
-> On Wed, Oct 24, 2018 at 11:31:42AM +0800, Huang, Ying wrote:
->> Hi, Daniel,
->> 
->> Daniel Jordan <daniel.m.jordan@oracle.com> writes:
->> 
->> > On Wed, Oct 10, 2018 at 03:19:03PM +0800, Huang Ying wrote:
->> >> And for all, Any comment is welcome!
->> >> 
->> >> This patchset is based on the 2018-10-3 head of mmotm/master.
->> >
->> > There seems to be some infrequent memory corruption with THPs that have been
->> > swapped out: page contents differ after swapin.
->> 
->> Thanks a lot for testing this!  I know there were big effort behind this
->> and it definitely will improve the quality of the patchset greatly!
->
-> You're welcome!  Hopefully I'll have more results and tests to share in the
-> next two weeks.
->
->> 
->> > Reproducer at the bottom.  Part of some tests I'm writing, had to separate it a
->> > little hack-ily.  Basically it writes the word offset _at_ each word offset in
->> > a memory blob, tries to push it to swap, and verifies the offset is the same
->> > after swapin.
->> >
->> > I ran with THP enabled=always.  THP swapin_enabled could be always or never, it
->> > happened with both.  Every time swapping occurred, a single THP-sized chunk in
->> > the middle of the blob had different offsets.  Example:
->> >
->> > ** > word corruption gap
->> > ** corruption detected 14929920 bytes in (got 15179776, expected 14929920) **
->> > ** corruption detected 14929928 bytes in (got 15179784, expected 14929928) **
->> > ** corruption detected 14929936 bytes in (got 15179792, expected 14929936) **
->> > ...pattern continues...
->> > ** corruption detected 17027048 bytes in (got 15179752, expected 17027048) **
->> > ** corruption detected 17027056 bytes in (got 15179760, expected 17027056) **
->> > ** corruption detected 17027064 bytes in (got 15179768, expected 17027064) **
->> 
->> 15179776 < 15179xxx <= 17027064
->> 
->> 15179776 % 4096 = 0
->> 
->> And 15179776 = 15179768 + 8
->> 
->> So I guess we have some alignment bug.  Could you try the patches
->> attached?  It deal with some alignment issue.
->
-> That fixed it.  And removed three lines of code.  Nice :)
+I'm fine with that.  I'd still like to hear Steve's input.  He had
+stronger opinions than me.
 
-Thanks!  I will merge the fixes into the patchset.
+> > > However, I do care about the "op" field in this record.  It just
+> > > doesn't make any sense; the way you are using it it is more of a
+> > > context field than an operations field, and even then why is the
+> > > context important from a logging and/or security perspective?  Drop it
+> > > please.
+> >
+> > I'll rename it to whatever you like.  I'd suggest "ref=".  The reason I
+> > think it is important is there are multiple sources that aren't always
+> > obvious from the other records to which it is associated.  In the case
+> > of ptrace and signals, there can be many target tasks listed (OBJ_PID)
+> > with no other way to distinguish the matching audit container identifier
+> > records all for one event.  This is in addition to the default syscall
+> > container identifier record.  I'm not currently happy with the text
+> > content to link the two, but that should be solvable (most obvious is
+> > taret PID).  Throwing away this information seems shortsighted.
+> 
+> It would be helpful if you could generate real audit events
+> demonstrating the problems you are describing, as well as a more
+> standard syscall event, so we can discuss some possible solutions.
 
-Best Regards,
-Huang, Ying
+If the auditted process is in a container and it ptraces or signals
+another process in a container, there will be two AUDIT_CONTAINER
+records for the same event that won't be identified as to which record
+belongs to which process or other record (SYSCALL vs 1+ OBJ_PID
+records).  There could be many signals recorded, each with their own
+OBJ_PID record.  The first is stored in the audit context and additional
+ones are stored in a chained struct that can accommodate 16 entries each.
+
+(See audit_signal_info(), __audit_ptrace().)
+
+(As a side note, on code inspection it appears that a signal target
+would get overwritten by a ptrace action if they were to happen in that
+order.)
+
+> paul moore
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
