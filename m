@@ -7,48 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8FAECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D939C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4424120870
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D05F2085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="laNglynV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4424120870
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RabTINq8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D05F2085B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730872AbeJYWxH (ORCPT
+        id S1730886AbeJYWxI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:53:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35464 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:53:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730254AbeJYWxG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:53:06 -0400
+        id S1730254AbeJYWxH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:53:07 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 98EEA20883;
-        Thu, 25 Oct 2018 14:20:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A046C208A3;
+        Thu, 25 Oct 2018 14:20:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477208;
-        bh=iQjQNNIs9vsB+VPE1SKiWWp25NvEEILcCig6mdIzkl4=;
+        s=default; t=1540477209;
+        bh=akc4dMTs9TtQepmontKA627ZOmmO2od+TePIoHcsMXE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=laNglynVbdRblHrmErEBq7+L8gD7mj7dyH4DHBHhGmOvGfEaFr7FgoFmUxyHI5Jfd
-         Cz2VgOArrvaOVSOUds/tw27cCp85H9crUAgcDj+oGxbpVxA1UXPkOU97/f+RzIVlUH
-         nalJ+nOYvZwerMTzXoVVBjb7iLxyFsbX8LN11d9o=
+        b=RabTINq8JsCfhi7Xi6fnM4N06i09CBFSv/8YgxcmTvk2OQE+xY8zbQiX5LbqAfCAR
+         x6uL2h0ZH7PEPDOnExnv8SfFQB5ukpjcPSFyBu0fq+1y28MM3vMKRTHJR3l7TGUHpK
+         dTR+KvFs/KirZrogrvIAYD+Cd0UAjz/JQh0FfccU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-        Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+Cc:     Abhilash Kesavan <a.kesavan@samsung.com>,
+        Olof Johansson <olof@lixom.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 48/98] perf tools: Fix segfault for symbol annotation on TUI
-Date:   Thu, 25 Oct 2018 10:18:03 -0400
-Message-Id: <20181025141853.214051-48-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 49/98] drivers: bus: check cci device tree node status
+Date:   Thu, 25 Oct 2018 10:18:04 -0400
+Message-Id: <20181025141853.214051-49-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
 References: <20181025141853.214051-1-sashal@kernel.org>
@@ -57,67 +53,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Namhyung Kim <namhyung@kernel.org>
+From: Abhilash Kesavan <a.kesavan@samsung.com>
 
-[ Upstream commit 813ccd15452ed34e97aa526ffc70d6d8e6c466c5 ]
+[ Upstream commit 896ddd600ba4a3426aeb11710ae9c28dd7ce68ce ]
 
-Currently the symbol structure is allocated with symbol_conf.priv_size
-to carry sideband information like annotation, map browser on TUI and
-sort-by-name tree node.  So retrieving these information from symbol
-needs to care about the details of such placement.
+The arm-cci driver completes the probe sequence even if the cci node is
+marked as disabled. Add a check in the driver to honour the cci status
+in the device tree.
 
-However the annotation code just assumes that the symbol is placed after
-the struct annotation.  But actually there's other info between them.
-So accessing those struct will lead to an undefined behavior (usually a
-crash) after they write their info to the same location.
-
-To reproduce the problem, please follow the steps below:
-
-  1. run perf report (TUI of course) with -v option
-  2. open map browser (by pressing right arrow key for any entry)
-  3. search any function (by pressing '/' key and input whatever..)
-  4. return to the hist browser (by pressing 'q' or left arrow key)
-  5. open annotation window for the same entry (by pressing 'a' key)
-
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Link: http://lkml.kernel.org/r/1421234288-22758-1-git-send-email-namhyung@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+Acked-by: Sudeep Holla <sudeep.holla@arm.com>
+Acked-by: Nicolas Pitre <nico@linaro.org>
+Tested-by: Sudeep Holla <sudeep.holla@arm.com>
+Tested-by: Kevin Hilman <khilman@linaro.org>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/annotate.h | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/bus/arm-cci.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-index 112d6e268150..dfa6c4c36b3e 100644
---- a/tools/perf/util/annotate.h
-+++ b/tools/perf/util/annotate.h
-@@ -115,11 +115,6 @@ struct annotation {
- 	struct annotated_source *src;
- };
+diff --git a/drivers/bus/arm-cci.c b/drivers/bus/arm-cci.c
+index 7af78df241f2..99cad3ac38f2 100644
+--- a/drivers/bus/arm-cci.c
++++ b/drivers/bus/arm-cci.c
+@@ -976,6 +976,9 @@ static int cci_probe(void)
+ 	if (!np)
+ 		return -ENODEV;
  
--struct sannotation {
--	struct annotation annotation;
--	struct symbol	  symbol;
--};
--
- static inline struct sym_hist *annotation__histogram(struct annotation *notes, int idx)
- {
- 	return (((void *)&notes->src->histograms) +
-@@ -128,8 +123,7 @@ static inline struct sym_hist *annotation__histogram(struct annotation *notes, i
- 
- static inline struct annotation *symbol__annotation(struct symbol *sym)
- {
--	struct sannotation *a = container_of(sym, struct sannotation, symbol);
--	return &a->annotation;
-+	return (void *)sym - symbol_conf.priv_size;
- }
- 
- int addr_map_symbol__inc_samples(struct addr_map_symbol *ams, int evidx);
++	if (!of_device_is_available(np))
++		return -ENODEV;
++
+ 	cci_config = of_match_node(arm_cci_matches, np)->data;
+ 	if (!cci_config)
+ 		return -ENODEV;
 -- 
 2.17.1
 
