@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51A1BECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:21:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39933ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:21:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11CDE21479
+	by mail.kernel.org (Postfix) with ESMTP id DFCFB214E0
 	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:21:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FKFelYWl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11CDE21479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s2Lz1ErL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFCFB214E0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731317AbeJYWx4 (ORCPT
+        id S1731322AbeJYWx5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:53:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36650 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:53:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730386AbeJYWxz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:53:55 -0400
+        id S1731305AbeJYWx4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:53:56 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5CB10214ED;
-        Thu, 25 Oct 2018 14:20:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B68D421479;
+        Thu, 25 Oct 2018 14:20:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477257;
-        bh=leyCJ8JPbvjvU1MqH+dq3Knrq/O28mba7F+CXLOq6uU=;
+        s=default; t=1540477258;
+        bh=DFj2vPUdIJ0F4tkD/+rAV590YYMY8c4guCnyOnIRghM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FKFelYWlmRCisLz0W3mjO6190DAHf3IRMJ0tpXXsdJ6tP85J6UKUb0NS88fwlIfoj
-         UT9uCH6wcqvELvfbn5WOuyBgpDwTvJ6mScAzNwP4Svs5WxWCJIp2i7cPp8Y9nB8FUS
-         SNh6bxDAVRaM0sCu+DI0uACOP8QSTiPLbP2yU7Lc=
+        b=s2Lz1ErLKiXOXQdbBL4den2+zL4UYLNodjSWpHI3mCZnRo/RJqpbnFUCw6TMBWTF1
+         jUSclThWkf0qKdmhDyguvXrGPT07YTb0knGCLSKCq0d55kaKCQcxDo2cncaow1+55H
+         2JAwJnqidmkblJrID957koxwDHNyP0BHX4Dh+Uh8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Filipe Manana <fdmanana@suse.com>, Chris Mason <clm@fb.com>,
+Cc:     Shota Suzuki <suzuki_shota_t3@lab.ntt.co.jp>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 81/98] Btrfs: do not ignore errors from btrfs_lookup_xattr in do_setxattr
-Date:   Thu, 25 Oct 2018 10:18:36 -0400
-Message-Id: <20181025141853.214051-81-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 82/98] igb: Unpair the queues when changing the number of queues
+Date:   Thu, 25 Oct 2018 10:18:37 -0400
+Message-Id: <20181025141853.214051-82-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
 References: <20181025141853.214051-1-sashal@kernel.org>
@@ -52,49 +53,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filipe Manana <fdmanana@suse.com>
+From: Shota Suzuki <suzuki_shota_t3@lab.ntt.co.jp>
 
-[ Upstream commit 5cdf83edb8e41cad1ec8eab2d402b4f9d9eb7ee0 ]
+[ Upstream commit 37a5d163fb447b39f7960d0534de30e88ad395bb ]
 
-The return value from btrfs_lookup_xattr() can be a pointer encoding an
-error, therefore deal with it. This fixes commit 5f5bc6b1e2d5
-("Btrfs: make xattr replace operations atomic").
+By the commit 72ddef0506da ("igb: Fix oops caused by missing queue
+pairing"), the IGB_FLAG_QUEUE_PAIRS flag can now be set when changing the
+number of queues by "ethtool -L", but it is never cleared unless the igb
+driver is reloaded.
+This patch clears it if queue pairing becomes unnecessary as a result of
+"ethtool -L".
 
-Signed-off-by: Filipe Manana <fdmanana@suse.com>
-Signed-off-by: Chris Mason <clm@fb.com>
+Signed-off-by: Shota Suzuki <suzuki_shota_t3@lab.ntt.co.jp>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/xattr.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/intel/igb/igb_main.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/fs/btrfs/xattr.c b/fs/btrfs/xattr.c
-index fbb0533e977f..de5d69a63e3f 100644
---- a/fs/btrfs/xattr.c
-+++ b/fs/btrfs/xattr.c
-@@ -111,6 +111,8 @@ static int do_setxattr(struct btrfs_trans_handle *trans,
- 					name, name_len, -1);
- 		if (!di && (flags & XATTR_REPLACE))
- 			ret = -ENODATA;
-+		else if (IS_ERR(di))
-+			ret = PTR_ERR(di);
- 		else if (di)
- 			ret = btrfs_delete_one_dir_name(trans, root, path, di);
- 		goto out;
-@@ -127,10 +129,12 @@ static int do_setxattr(struct btrfs_trans_handle *trans,
- 		ASSERT(mutex_is_locked(&inode->i_mutex));
- 		di = btrfs_lookup_xattr(NULL, root, path, btrfs_ino(inode),
- 					name, name_len, 0);
--		if (!di) {
-+		if (!di)
- 			ret = -ENODATA;
-+		else if (IS_ERR(di))
-+			ret = PTR_ERR(di);
-+		if (ret)
- 			goto out;
--		}
- 		btrfs_release_path(path);
- 		di = NULL;
+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
+index 1ffad88e8a29..84049078c4f0 100644
+--- a/drivers/net/ethernet/intel/igb/igb_main.c
++++ b/drivers/net/ethernet/intel/igb/igb_main.c
+@@ -2941,6 +2941,8 @@ void igb_set_flag_queue_pairs(struct igb_adapter *adapter,
+ 		 */
+ 		if (adapter->rss_queues > (max_rss_queues / 2))
+ 			adapter->flags |= IGB_FLAG_QUEUE_PAIRS;
++		else
++			adapter->flags &= ~IGB_FLAG_QUEUE_PAIRS;
+ 		break;
  	}
+ }
 -- 
 2.17.1
 
