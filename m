@@ -2,124 +2,98 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C590C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 09:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7492AC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 09:10:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B71D2064A
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 09:06:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B71D2064A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 0141520834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 09:10:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TpH2ZZrf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0141520834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726973AbeJYRhz (ORCPT
+        id S1726809AbeJYRl5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 13:37:55 -0400
-Received: from mx2.suse.de ([195.135.220.15]:45710 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726546AbeJYRhz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 13:37:55 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7D5F3ABE2;
-        Thu, 25 Oct 2018 09:06:04 +0000 (UTC)
-Date:   Thu, 25 Oct 2018 11:06:03 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-        Daniel Wang <wonderfly@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
-        Jiri Slaby <jslaby@suse.com>,
-        Peter Feiner <pfeiner@google.com>,
-        linux-serial@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC][PATCHv2 1/4] panic: avoid deadlocks in re-entrant console
- drivers
-Message-ID: <20181025090603.7gkevv5l3zg7dj5e@pathway.suse.cz>
-References: <20181016050428.17966-1-sergey.senozhatsky@gmail.com>
- <20181016050428.17966-2-sergey.senozhatsky@gmail.com>
- <20181023110751.un2u67bc7dpo4ska@pathway.suse.cz>
- <20181023115433.GA10251@jagdpanzerIV>
- <20181023120441.GB10251@jagdpanzerIV>
- <20181023121057.GC10251@jagdpanzerIV>
+        Thu, 25 Oct 2018 13:41:57 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43535 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726546AbeJYRl5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 13:41:57 -0400
+Received: by mail-wr1-f66.google.com with SMTP id t10-v6so8441287wrn.10
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 02:10:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=l+S5Ceyy8Ac56dhSROdqlF1bBhZT3O0dybbDGWYjPvs=;
+        b=TpH2ZZrfqdrTcuCzU/0Dx7ZvAgpCxuZHzLupRNJMJtQjyq9VJoZIbRdMLyjG0zBEox
+         qmJUDViOScdxSPhadSpXYkmBxkN0IDUKwapYh9TYxFq2ViOdtJaJ9AcuoZqskbfEDbzo
+         tangj4I7iVHximQzra2QGqsIPG0L1QCRWc29M=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=l+S5Ceyy8Ac56dhSROdqlF1bBhZT3O0dybbDGWYjPvs=;
+        b=q8cdTmUMQdKBsqFP5TbzGSgksdBGnWq7a4XZhUy3YbuyC28NaFYIx18P4B2ReacCuO
+         0q+dd2fGNyyEaFHHqlNCAaPyj29Fo+if9a5XpLZDyZm1tViuDJjqVAtoO0kT8M7gW/Hp
+         3dU2LfdjZhiI06ABMTCCasQbSZnQgJkBy3ESl47cs82KNVA5xXJ5DEjsH9pEzySmFP//
+         4WvL0UerVAlKfM2jSeO42CYRxzkevUHSBLl2//mOPIei4D98v2ZEeDkiJHr3HnQT4IWm
+         54xViEz0Ay/V7vycOTy07aKSLPVLoXg94o/Az1pGkjdTTvbICr7MUC6ZQchFXh10FURq
+         WtkQ==
+X-Gm-Message-State: AGRZ1gLzNMK0uRdtx8sED/OlqVFcELcvZz6O9UjGDvRwMEJaULB11O/o
+        xS5lfLzgTu2G1t4fh5dhfejnTlGTEfc=
+X-Google-Smtp-Source: AJdET5cC6cTVQ/jtquP9JfgAzgnLD+qYMEQkIOluLzQNYH/an5KJ0UeEQQUAUlSagsQxtFgr/P5Djg==
+X-Received: by 2002:adf:dc4a:: with SMTP id m10-v6mr951555wrj.84.1540458605109;
+        Thu, 25 Oct 2018 02:10:05 -0700 (PDT)
+Received: from dell ([2.31.167.182])
+        by smtp.gmail.com with ESMTPSA id o13sm6286090wrx.53.2018.10.25.02.10.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Oct 2018 02:10:04 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 10:10:01 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Nicolas Boichat <drinkcat@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] mfd: mt6397: Do not call irq_domain_remove if PMIC
+ unsupported
+Message-ID: <20181025091001.GM4939@dell>
+References: <20181022025505.27919-1-drinkcat@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181023121057.GC10251@jagdpanzerIV>
-User-Agent: NeoMutt/20170421 (1.8.2)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181022025505.27919-1-drinkcat@chromium.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2018-10-23 21:12:30, Sergey Senozhatsky wrote:
-> On (10/23/18 21:04), Sergey Senozhatsky wrote:
-> > 
-> > Seems that s390 is the only arch which defines its own bust_spinlocks().
-> > Not sure why... Just to play games with console_loglevel?
-> > 
-> > ---
-> > 
-> > void bust_spinlocks(int yes)
-> > {
-> > 	if (yes) {
-> > 		oops_in_progress = 1;
-> > 	} else {
-> > 		int loglevel_save = console_loglevel;
-> > 		console_unblank();
-> > 		oops_in_progress = 0;
-> > 		/*
-> > 		 * OK, the message is on the console.  Now we call printk()
-> > 		 * without oops_in_progress set so that printk will give klogd
-> > 		 * a poke.  Hold onto your hats...
-> > 		 */
-> > 		console_loglevel = 15;
-> > 		printk(" ");
-> > 		console_loglevel = loglevel_save;
-> > 	}
-> > }
-> > 
-> > ---
-> > 
-> > The "printk(" "); without oops_in_progress" part is a bit worrisome.
-> > This thing technically can deadlock. Unless s390 has no NMI panic().
+On Mon, 22 Oct 2018, Nicolas Boichat wrote:
 
-The comment suggests that the main purpose it is to wake up
-klogd(). It is done in the generic bust_spinlocks() a safe way.
+> If the PMIC ID is unknown, the current code would call
+> irq_domain_remove and panic, as pmic->irq_domain is only
+> initialized by mt6397_irq_init.
+> 
+> Return immediately with an error, if the chip ID is unsupported.
+> 
+> Signed-off-by: Nicolas Boichat <drinkcat@chromium.org>
+> ---
+>  drivers/mfd/mt6397-core.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 
-The games with console_loglevel do not make much sense because
-console_unblank() calls console_unlock() when it was able to
-take the console_lock. It means that either console_unblank()
-flush all messages to the console or console_trylock() would
-most likely fail also in that extra printk().
+Applied for v4.21, thanks.
 
-IMHO, the custom s390 implementation can get removed.
-The generic code should do the same job these days.
-
-
-> And console_unblank() is not guaranteed to print anything (unlike
-> console_flush_on_panic(), but oops is not panic() yet, so we can't
-> replace it with flush_on_panic()) - console_sem can be locked, so
-> console_unblank() would do nothing.
-
-I see. I missed that console_unblank() returns early when
-down_trylock_console_sem() fails.
-
-I still would like to refactor the code somehow to avoid
-the bust_spinlocks(0)/bust_spinlocks(1) ping-pong.
-
-It might make sense to call console_unblank() from
-console_flush_on_panic().
-
-I wonder if it would make sense to call unblank_screen() in
-console_unblank()...
-
-Best Regards,
-Petr
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
