@@ -2,120 +2,194 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A7A0C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 09:38:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2FECC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 09:38:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B2C22064A
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 09:38:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B2C22064A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stwm.de
+	by mail.kernel.org (Postfix) with ESMTP id 97D322064A
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 09:38:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="a7lJOjQh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97D322064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbeJYSKS convert rfc822-to-8bit (ORCPT
+        id S1727125AbeJYSKa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 14:10:18 -0400
-Received: from dresden.studentenwerk.mhn.de ([141.84.225.229]:35704 "EHLO
-        email.studentenwerk.mhn.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726652AbeJYSKR (ORCPT
+        Thu, 25 Oct 2018 14:10:30 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37810 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726676AbeJYSKa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 14:10:17 -0400
-Received: from mailhub.studentenwerk.mhn.de (mailhub.studentenwerk.mhn.de [127.0.0.1])
-        by email.studentenwerk.mhn.de (Postfix) with ESMTP id 42ghrW6RFMzMkwB;
-        Thu, 25 Oct 2018 11:38:19 +0200 (CEST)
-From:   Wolfgang Walter <linux@stwm.de>
-To:     netdev@vger.kernel.org
-Cc:     Florian Westphal <fw@strlen.de>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        David Miller <davem@davemloft.net>,
-        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        christophe.gouault@6wind.com, Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: Regression: kernel 4.14 an later very slow with many ipsec tunnels
-Date:   Thu, 25 Oct 2018 11:38:19 +0200
-Message-ID: <2766296.15tpkxTHJV@stwm.de>
-User-Agent: KMail/4.14.3 (Linux/4.18.12-041812-generic; KDE/4.14.13; x86_64; ; )
-In-Reply-To: <1729915.dWWxddREcQ@stwm.de>
-References: <20180913135844.3ut6fxgx67t6ndtu@breakpoint.cc> <20181002213536.sgjansduqenps2md@breakpoint.cc> <1729915.dWWxddREcQ@stwm.de>
+        Thu, 25 Oct 2018 14:10:30 -0400
+Received: by mail-wm1-f67.google.com with SMTP id p2-v6so798703wmc.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 02:38:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=+HnnKwjZQssUkWhx+voXqgMEfZW8Kz+WvT1CBBer8XI=;
+        b=a7lJOjQhAqEFyJ+LTTccF0vyfUJcWHKSu8xpGg6Zy58Sj/6afJ1vONr5S5JYtIVUH/
+         iDNhb0GT5pqufAsqh6l+sRONGio4BHyGZ0WK+6vMxN9TGF66HIV7wW+uQ3SVJeOOeQJk
+         l/0QRVuRYOVxGlgIDRfXfiUl8WyT0suPEbfG4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=+HnnKwjZQssUkWhx+voXqgMEfZW8Kz+WvT1CBBer8XI=;
+        b=fYuVp9RJA25YFmkcMTgyVyWKVGpFEPcZ26Nm2pNQqEprpojj0Yu0woi0VwFEnArFmw
+         2Zqum0UTwKFx3fEwQ1I0gw73l0QIUVltmRZmfs8Dc4waVpoabwoZ7O2wDxci3xSLaHMm
+         gqZYZhpc/zUI9W9VBFok/s/qoz/7KB1vSq/MhIFa91gu5JUS9WYEB8vYlI9C0RmtNzNi
+         Euw1toMx+ZpKtEnzl2VZ7G8CW16Q6ez7y4W/4zjtTHfFWBc5hn+L8IfWotGoMDeEKV6T
+         lDK4jtFaIZrnUTVb0aQx6HInYa2lVHCpM+wkBGEShTEcg0O0u009dffw25qM7rQCVtte
+         ApxQ==
+X-Gm-Message-State: AGRZ1gK0I6XCy0Ls1PtKUfo47+VKSOKi1ow8jbO47NLAlmixxuV3SXXG
+        u9PzvYchW8Vm+2I9tuy3rwAWSQ==
+X-Google-Smtp-Source: AJdET5dcrxQnLTyr6PNW9FquzlWa4TIvrm3JG12ofDpoZ9gxq2PEUaLU6v5y6kvba+hotIMHQ127iQ==
+X-Received: by 2002:a1c:3a92:: with SMTP id h140-v6mr1040460wma.69.1540460311058;
+        Thu, 25 Oct 2018 02:38:31 -0700 (PDT)
+Received: from dell ([2.31.167.182])
+        by smtp.gmail.com with ESMTPSA id b143-v6sm1318839wma.28.2018.10.25.02.38.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Oct 2018 02:38:30 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 10:38:27 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Tony Xie <tony.xie@rock-chips.com>
+Cc:     heiko@sntech.de, broonie@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com
+Subject: Re: [PATCH v5 3/5] dt-bindings: mfd: rk808: Add binding information
+ for RK809 and RK817.
+Message-ID: <20181025093827.GP4939@dell>
+References: <1540294467-25813-1-git-send-email-tony.xie@rock-chips.com>
+ <1540294467-25813-4-git-send-email-tony.xie@rock-chips.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1540294467-25813-4-git-send-email-tony.xie@rock-chips.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Tue, 23 Oct 2018, Tony Xie wrote:
 
-there is now a new 4.19 which still has the big performance regression when 
-many ipsec tunnels are configured (throughput and latency get worse by 10 to 
-50 times) which makes any kernel > 4.9 unusable for our routers.
+> Add device tree bindings documentation for Rockchip's RK809 & RK817 PMIC.
+> 
+> Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/mfd/rk808.txt | 44 +++++++++++++++++++++++++
+>  1 file changed, 44 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/rk808.txt b/Documentation/devicetree/bindings/mfd/rk808.txt
+> index 91b6522..d575780 100644
+> --- a/Documentation/devicetree/bindings/mfd/rk808.txt
+> +++ b/Documentation/devicetree/bindings/mfd/rk808.txt
+> @@ -3,11 +3,15 @@ RK8XX Power Management Integrated Circuit
+>  The rk8xx family current members:
+>  rk805
+>  rk808
+> +rk809
+> +rk817
+>  rk818
+>  
+>  Required properties:
+>  - compatible: "rockchip,rk805"
+>  - compatible: "rockchip,rk808"
+> +- compatible: "rockchip,rk809"
+> +- compatible: "rockchip,rk817"
+>  - compatible: "rockchip,rk818"
+>  - reg: I2C slave address
+>  - interrupt-parent: The parent interrupt controller.
+> @@ -46,6 +50,23 @@ Optional RK808 properties:
+>    the gpio controller. If DVS GPIOs aren't present, voltage changes will happen
+>    very quickly with no slow ramp time.
+>  
+> +Optional shared RK809 and RK817 properties:
+> +- vcc1-supply:  The input supply for DCDC_REG1
+> +- vcc2-supply:  The input supply for DCDC_REG2
+> +- vcc3-supply:  The input supply for DCDC_REG3
+> +- vcc4-supply:  The input supply for DCDC_REG4
+> +- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
+> +- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
+> +- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
+> +
+> +Optional RK809 properties:
+> +- vcc8-supply:  The input supply for SWITCH_REG1
+> +- vcc9-supply:  The input supply for DCDC_REG5, SWITCH_REG2
+> +
+> +Optional RK817 properties:
+> +- vcc8-supply:  The input supply for BOOST
+> +- vcc9-supply:  The input supply for OTG_SWITCH
+> +
+>  Optional RK818 properties:
+>  - vcc1-supply:  The input supply for DCDC_REG1
+>  - vcc2-supply:  The input supply for DCDC_REG2
+> @@ -87,6 +108,21 @@ number as described in RK808 datasheet.
+>  	- SWITCH_REGn
+>  		- valid values for n are 1 to 2
+>  
+> +Following regulators of the RK809 and RK817 PMIC blocks are supported. Note that
+> +the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
+> +number as described in RK809 and RK817 datasheets.
+> +
+> +	- DCDC_REGn
+> +		- valid values for n are 1 to 5 for RK809.
+> +		- valid values for n are 1 to 4 for RK817.
+> +	- LDO_REGn
+> +		- valid values for n are 1 to 9 for RK809.
+> +		- valid values for n are 1 to 9 for RK817.
+> +	- SWITCH_REGn
+> +		- valid values for n are 1 to 2 for RK809.
+> +	- BOOST for RK817
+> +	- OTG_SWITCH for RK817
+> +
+>  Following regulators of the RK818 PMIC block are supported. Note that
+>  the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
+>  number as described in RK818 datasheet.
+> @@ -99,6 +135,14 @@ number as described in RK818 datasheet.
+>  	- HDMI_SWITCH
+>  	- OTG_SWITCH
+>  
+> +There are three pins needed to config for each of RK809 and RK817,
 
-I still don't understand why a revert of the flow cache removal at least for 
-the longterm kernels is that a bad option (maybe as a compile time option), 
-especially as there is no workaround available.
+Nit: "configure" in full please.
 
-We use linux in that scenario since more than 10 years so I'm really rather 
-unhappy if not to say despaired that we will be stucked with 4.9 for an 
-unforeseeable future.
+Actually: "It is necessary to configure three pins for both the RK809 and RK817"
 
-We would have detected and reported that performance regression much earlier 
-if not another bug in ipsec had prevented us from running 4.14 and later until 
-end of august 2018 (See kernels > v4.12 oops/crash with ipsec-traffic: 
-bisected to b838d5e1c5b6e57b10ec8af2268824041e3ea911: ipv4: mark DST_NOGC and 
-remove the operation of dst_free()).
+> +named "gpio_ts" "gpio_gt" "gpio_slp".
+> +	The gpio_gt and gpio_ts pins support the gpio function.
+> +	The gpio_slp pin is for controlling the pmic states, as below:
+> +		- reset
+> +		- power down
+> +		- sleep
+> +
+>  Standard regulator bindings are used inside regulator subnodes. Check
+>    Documentation/devicetree/bindings/regulator/regulator.txt
+>  for more details
 
-Am Donnerstag, 4. Oktober 2018, 15:57:52 schrieb Wolfgang Walter:
-> Am Dienstag, 2. Oktober 2018, 23:35:36 schrieb Florian Westphal:
+Once that's fixed, please apply my:
 
-[snip]
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
-> > Well, I'm not going to send a revert of the flowcache removal.
-> >
-> > 
-> > I'm willing to experiment with alternatives to a full iteration of the
-> > inexact list but thats it.
-> 
-> If this brings performance back to pre-removal, I'm fine with that. I'm even
-> fine if it is slower by a factor of 2.
-> 
-> I think it is a serious regression, and there is no workaround, and therefor
-> it cannot stay like that.
-> 
-> So I still hope that reverting is an option if no acceptable solution can be
-> found.
-> 
-> > > correctly done, as it still would have to obey the original order of the
-> > > rules (their priority).
-> > 
-> > Except that neither the priority or the order in which it was added
-> > matters in case the selector doesn't match.
-> 
-> To match a packet one has to find all matching rules and chose that one with
-> the lowest priority.
-> 
-> "indexing" by dst will not help much if you have a ruleset where a lot of
-> rules sharing a dst. You also have to replicate rules with dsts that have a
-> prefix oft another dst as they may habe a higher priority even if they are
-> less specific.
-> 
-> Every such entry may again have such an "indexing" by dst. Only then this
-> would be efficient.
->
-
-[snip]
- 
-> 
-> I wonder why there is no such thing for netfilter or the rules list in
-> routing. nf does not have such a thing, either. This is the reason why I
-> think that this is not that easy and for longterm kernel 4.14 the best
-> solution will be a revert anyway.
-> 
-> Regards,
-
-Regards,
 -- 
-Wolfgang Walter
-Studentenwerk M�nchen
-Anstalt des �ffentlichen Rechts
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
