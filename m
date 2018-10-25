@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B46C2C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:17:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F8DDECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:18:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6322C20848
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:17:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9A822085B
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:18:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="p+7eyGf4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6322C20848
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZAWToL0h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9A822085B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729832AbeJYWuy (ORCPT
+        id S1729846AbeJYWuz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:50:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60568 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:50:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729815AbeJYWux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:50:53 -0400
+        id S1728616AbeJYWuy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:50:54 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A69C2085A;
-        Thu, 25 Oct 2018 14:17:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE1742085B;
+        Thu, 25 Oct 2018 14:17:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477075;
-        bh=e7/s0/B0rbw2QkaUz/C3ojJAoSNtlILFmUNTRWA7Cg4=;
+        s=default; t=1540477076;
+        bh=e1bVWYncBIZezakR+r3Al7i8Ub1lCDlgclauFQaY6ag=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p+7eyGf42DbyZMYxqn3v7mUXejSQdo9BhaFBiN062j2EEpj2iBqQV5HsChytTgAzJ
-         HYTF+EP7Oyf1mOCraGvrmZ7VBucjgicloeLrx8L8FypeKnelrG84G8J3mWVRWmKoEL
-         r/qW8xeMJ2K2s0luuaOsjNNh/SbUHyq10pqDXRDM=
+        b=ZAWToL0higPXqlJMvN4TBd20DTTM8fuwikvHDxthNtOdrmFt44r40i+5WiDcyhYCW
+         II2SQpk0t9LBlvHNt7KX4UUz3iP+O/t/ElMwU0ZJSFLZ1k1sU/y4/hnbNVt7ckvy2m
+         jb8i9oHwwWibeELT8TNHXtRhPiVA53Y/CiWjhaWc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "Ewan D. Milne" <emilne@redhat.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
+Cc:     Sowmini Varadhan <sowmini.varadhan@oracle.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 29/65] scsi: Add STARGET_CREATED_REMOVE state to scsi_target_state
-Date:   Thu, 25 Oct 2018 10:16:29 -0400
-Message-Id: <20181025141705.213937-29-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 30/65] sparc/pci: Refactor dev_archdata initialization into pci_init_dev_archdata
+Date:   Thu, 25 Oct 2018 10:16:30 -0400
+Message-Id: <20181025141705.213937-30-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141705.213937-1-sashal@kernel.org>
 References: <20181025141705.213937-1-sashal@kernel.org>
@@ -53,140 +53,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Ewan D. Milne" <emilne@redhat.com>
+From: Sowmini Varadhan <sowmini.varadhan@oracle.com>
 
-[ Upstream commit f9279c968c257ee39b0d7bd2571a4d231a67bcc1 ]
+[ Upstream commit 9a78d4fc28904785ffe4c2d361e25b251b479704 ]
 
-The addition of the STARGET_REMOVE state had the side effect of
-introducing a race condition that can cause a crash.
+The function pcibios_add_device() added by commit d0c31e020057
+("sparc/PCI: Fix for panic while enabling SR-IOV") initializes
+the dev_archdata by doing a memcpy from the PF. This has the
+problem that it erroneously copies the OF device without
+explicitly refcounting it.
 
-scsi_target_reap_ref_release() checks the starget->state to
-see if it still in STARGET_CREATED, and if so, skips calling
-transport_remove_device() and device_del(), because the starget->state
-is only set to STARGET_RUNNING after scsi_target_add() has called
-device_add() and transport_add_device().
+As David Miller pointed out: "Generally speaking we don't
+really support hot-plug for OF probed devices, but if we did
+all of the device tree pointers have to be refcounted properly."
 
-However, if an rport loss occurs while a target is being scanned,
-it can happen that scsi_remove_target() will be called while the
-starget is still in the STARGET_CREATED state.  In this case, the
-starget->state will be set to STARGET_REMOVE, and as a result,
-scsi_target_reap_ref_release() will take the wrong path.  The end
-result is a panic:
+To fix this error, and also avoid code duplication, this patch
+creates a new helper function, pci_init_dev_archdata(), that
+initializes the fields in dev_archdata, and can be invoked
+by callers after they have taken the needed refcounts
 
-[ 1255.356653] Oops: 0000 [#1] SMP
-[ 1255.360154] Modules linked in: x86_pkg_temp_thermal kvm_intel kvm irqbypass crc32c_intel ghash_clmulni_i
-[ 1255.393234] CPU: 5 PID: 149 Comm: kworker/u96:4 Tainted: G        W       4.11.0+ #8
-[ 1255.401879] Hardware name: Dell Inc. PowerEdge R320/08VT7V, BIOS 2.0.22 11/19/2013
-[ 1255.410327] Workqueue: scsi_wq_6 fc_scsi_scan_rport [scsi_transport_fc]
-[ 1255.417720] task: ffff88060ca8c8c0 task.stack: ffffc900048a8000
-[ 1255.424331] RIP: 0010:kernfs_find_ns+0x13/0xc0
-[ 1255.429287] RSP: 0018:ffffc900048abbf0 EFLAGS: 00010246
-[ 1255.435123] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
-[ 1255.443083] RDX: 0000000000000000 RSI: ffffffff8188d659 RDI: 0000000000000000
-[ 1255.451043] RBP: ffffc900048abc10 R08: 0000000000000000 R09: 0000012433fe0025
-[ 1255.459005] R10: 0000000025e5a4b5 R11: 0000000025e5a4b5 R12: ffffffff8188d659
-[ 1255.466972] R13: 0000000000000000 R14: ffff8805f55e5088 R15: 0000000000000000
-[ 1255.474931] FS:  0000000000000000(0000) GS:ffff880616b40000(0000) knlGS:0000000000000000
-[ 1255.483959] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[ 1255.490370] CR2: 0000000000000068 CR3: 0000000001c09000 CR4: 00000000000406e0
-[ 1255.498332] Call Trace:
-[ 1255.501058]  kernfs_find_and_get_ns+0x31/0x60
-[ 1255.505916]  sysfs_unmerge_group+0x1d/0x60
-[ 1255.510498]  dpm_sysfs_remove+0x22/0x60
-[ 1255.514783]  device_del+0xf4/0x2e0
-[ 1255.518577]  ? device_remove_file+0x19/0x20
-[ 1255.523241]  attribute_container_class_device_del+0x1a/0x20
-[ 1255.529457]  transport_remove_classdev+0x4e/0x60
-[ 1255.534607]  ? transport_add_class_device+0x40/0x40
-[ 1255.540046]  attribute_container_device_trigger+0xb0/0xc0
-[ 1255.546069]  transport_remove_device+0x15/0x20
-[ 1255.551025]  scsi_target_reap_ref_release+0x25/0x40
-[ 1255.556467]  scsi_target_reap+0x2e/0x40
-[ 1255.560744]  __scsi_scan_target+0xaa/0x5b0
-[ 1255.565312]  scsi_scan_target+0xec/0x100
-[ 1255.569689]  fc_scsi_scan_rport+0xb1/0xc0 [scsi_transport_fc]
-[ 1255.576099]  process_one_work+0x14b/0x390
-[ 1255.580569]  worker_thread+0x4b/0x390
-[ 1255.584651]  kthread+0x109/0x140
-[ 1255.588251]  ? rescuer_thread+0x330/0x330
-[ 1255.592730]  ? kthread_park+0x60/0x60
-[ 1255.596815]  ret_from_fork+0x29/0x40
-[ 1255.600801] Code: 24 08 48 83 42 40 01 5b 41 5c 5d c3 66 66 66 2e 0f 1f 84 00 00 00 00 00 66 66 66 66 90
-[ 1255.621876] RIP: kernfs_find_ns+0x13/0xc0 RSP: ffffc900048abbf0
-[ 1255.628479] CR2: 0000000000000068
-[ 1255.632756] ---[ end trace 34a69ba0477d036f ]---
-
-Fix this by adding another scsi_target state STARGET_CREATED_REMOVE
-to distinguish this case.
-
-Fixes: f05795d3d771 ("scsi: Add intermediate STARGET_REMOVE state to scsi_target_state")
-Reported-by: David Jeffery <djeffery@redhat.com>
-Signed-off-by: Ewan D. Milne <emilne@redhat.com>
-Cc: <stable@vger.kernel.org>
-Reviewed-by: Laurence Oberman <loberman@redhat.com>
-Tested-by: Laurence Oberman <loberman@redhat.com>
-Reviewed-by: Johannes Thumshirn <jthumshirn@suse.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sowmini Varadhan <sowmini.varadhan@oracle.com>
+Tested-by: Babu Moger <babu.moger@oracle.com>
+Reviewed-by: Khalid Aziz <khalid.aziz@oracle.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/scsi_scan.c   | 5 +++--
- drivers/scsi/scsi_sysfs.c  | 8 ++++++--
- include/scsi/scsi_device.h | 1 +
- 3 files changed, 10 insertions(+), 4 deletions(-)
+ arch/sparc/kernel/pci.c | 29 +++++++++++++++++++++--------
+ 1 file changed, 21 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/scsi/scsi_scan.c b/drivers/scsi/scsi_scan.c
-index 692445bcca6f..850ddc5fac04 100644
---- a/drivers/scsi/scsi_scan.c
-+++ b/drivers/scsi/scsi_scan.c
-@@ -381,11 +381,12 @@ static void scsi_target_reap_ref_release(struct kref *kref)
- 		= container_of(kref, struct scsi_target, reap_ref);
- 
- 	/*
--	 * if we get here and the target is still in the CREATED state that
-+	 * if we get here and the target is still in a CREATED state that
- 	 * means it was allocated but never made visible (because a scan
- 	 * turned up no LUNs), so don't call device_del() on it.
- 	 */
--	if (starget->state != STARGET_CREATED) {
-+	if ((starget->state != STARGET_CREATED) &&
-+	    (starget->state != STARGET_CREATED_REMOVE)) {
- 		transport_remove_device(&starget->dev);
- 		device_del(&starget->dev);
+diff --git a/arch/sparc/kernel/pci.c b/arch/sparc/kernel/pci.c
+index 9f9614df9e1e..c2b202d763a1 100644
+--- a/arch/sparc/kernel/pci.c
++++ b/arch/sparc/kernel/pci.c
+@@ -245,6 +245,18 @@ static void pci_parse_of_addrs(struct platform_device *op,
  	}
-diff --git a/drivers/scsi/scsi_sysfs.c b/drivers/scsi/scsi_sysfs.c
-index 8db0c48943d6..085e470d1c49 100644
---- a/drivers/scsi/scsi_sysfs.c
-+++ b/drivers/scsi/scsi_sysfs.c
-@@ -1212,11 +1212,15 @@ void scsi_remove_target(struct device *dev)
- 	spin_lock_irqsave(shost->host_lock, flags);
- 	list_for_each_entry(starget, &shost->__targets, siblings) {
- 		if (starget->state == STARGET_DEL ||
--		    starget->state == STARGET_REMOVE)
-+		    starget->state == STARGET_REMOVE ||
-+		    starget->state == STARGET_CREATED_REMOVE)
- 			continue;
- 		if (starget->dev.parent == dev || &starget->dev == dev) {
- 			kref_get(&starget->reap_ref);
--			starget->state = STARGET_REMOVE;
-+			if (starget->state == STARGET_CREATED)
-+				starget->state = STARGET_CREATED_REMOVE;
-+			else
-+				starget->state = STARGET_REMOVE;
- 			spin_unlock_irqrestore(shost->host_lock, flags);
- 			__scsi_remove_target(starget);
- 			scsi_target_reap(starget);
-diff --git a/include/scsi/scsi_device.h b/include/scsi/scsi_device.h
-index 293b9a7f53bc..fb53a94a5e8b 100644
---- a/include/scsi/scsi_device.h
-+++ b/include/scsi/scsi_device.h
-@@ -240,6 +240,7 @@ enum scsi_target_state {
- 	STARGET_CREATED = 1,
- 	STARGET_RUNNING,
- 	STARGET_REMOVE,
-+	STARGET_CREATED_REMOVE,
- 	STARGET_DEL,
- };
+ }
  
++static void pci_init_dev_archdata(struct dev_archdata *sd, void *iommu,
++				  void *stc, void *host_controller,
++				  struct platform_device  *op,
++				  int numa_node)
++{
++	sd->iommu = iommu;
++	sd->stc = stc;
++	sd->host_controller = host_controller;
++	sd->op = op;
++	sd->numa_node = numa_node;
++}
++
+ static struct pci_dev *of_create_pci_dev(struct pci_pbm_info *pbm,
+ 					 struct device_node *node,
+ 					 struct pci_bus *bus, int devfn)
+@@ -259,13 +271,10 @@ static struct pci_dev *of_create_pci_dev(struct pci_pbm_info *pbm,
+ 	if (!dev)
+ 		return NULL;
+ 
++	op = of_find_device_by_node(node);
+ 	sd = &dev->dev.archdata;
+-	sd->iommu = pbm->iommu;
+-	sd->stc = &pbm->stc;
+-	sd->host_controller = pbm;
+-	sd->op = op = of_find_device_by_node(node);
+-	sd->numa_node = pbm->numa_node;
+-
++	pci_init_dev_archdata(sd, pbm->iommu, &pbm->stc, pbm, op,
++			      pbm->numa_node);
+ 	sd = &op->dev.archdata;
+ 	sd->iommu = pbm->iommu;
+ 	sd->stc = &pbm->stc;
+@@ -1003,9 +1012,13 @@ int pcibios_add_device(struct pci_dev *dev)
+ 	 * Copy dev_archdata from PF to VF
+ 	 */
+ 	if (dev->is_virtfn) {
++		struct dev_archdata *psd;
++
+ 		pdev = dev->physfn;
+-		memcpy(&dev->dev.archdata, &pdev->dev.archdata,
+-		       sizeof(struct dev_archdata));
++		psd = &pdev->dev.archdata;
++		pci_init_dev_archdata(&dev->dev.archdata, psd->iommu,
++				      psd->stc, psd->host_controller, NULL,
++				      psd->numa_node);
+ 	}
+ 	return 0;
+ }
 -- 
 2.17.1
 
