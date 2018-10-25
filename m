@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 271B7ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:12:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A5ABC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:12:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C182A2075D
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:12:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E657D20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:12:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kEug6g4P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C182A2075D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="U1s86O7q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E657D20834
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728129AbeJYToo (ORCPT
+        id S1728145AbeJYToq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 15:44:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48962 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 15:44:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49026 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727308AbeJYTon (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 15:44:43 -0400
+        id S1728126AbeJYTop (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 15:44:45 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B279F20834;
-        Thu, 25 Oct 2018 11:12:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 04CB220847;
+        Thu, 25 Oct 2018 11:12:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540465944;
-        bh=eKTgOkik8eZgjl4ZeYPbOdXc96/Rnc98ZlmA300ysjg=;
+        s=default; t=1540465946;
+        bh=5vlh4ix0GcE8cKbO/iyamQhuqFlg/TX/ybVqcMjehGU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kEug6g4PTuHrRi9Zb7ecHP/hURFMnK/MCKeTP6U1Y/FSZ08kjAHf+EwVUR4Z4rCm0
-         75QM6FZeMajYOOg92oTzydPnzc2QypCSyINap8KABOAa+du4n4bqpj/hvx/bBn9Oqe
-         7bGezi3GSQdLfQwlVxmKgrqjw7/Vi/sqYlbpkJ+k=
+        b=U1s86O7qCkgTFvjmZag0arpGmnJmVU05F2dn5n/KvTgjKRYyCb9i8GYc25tzfaf8K
+         3cH26TfbeYkgHkvrWo5o/aBZbKp1yQVbVlqC4GNGGmloHAg9JT+pkYRDDt/3mja8ut
+         uFxiGL6xk3QqhXTuleWhMgNmVX2QLP+L5rGoHajI=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
-        Kim Phillips <kim.phillips@arm.com>,
+        Andi Kleen <andi@firstfloor.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 36/37] perf script: Implement --graph-function
-Date:   Thu, 25 Oct 2018 08:10:30 -0300
-Message-Id: <20181025111031.3440-37-acme@kernel.org>
+Subject: [PATCH 37/37] perf script: Support total cycles count
+Date:   Thu, 25 Oct 2018 08:10:31 -0300
+Message-Id: <20181025111031.3440-38-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181025111031.3440-1-acme@kernel.org>
 References: <20181025111031.3440-1-acme@kernel.org>
@@ -56,252 +56,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andi Kleen <ak@linux.intel.com>
 
-Add a ftrace style --graph-function argument to 'perf script' that
-allows to print itrace function calls only below a given function. This
-makes it easier to find the code of interest in a large trace.
+For 'perf script' brstackinsn also print a running cycles count.  This
+makes it easier to calculate cycle deltas for code sections measured
+with LBRs.
 
-% perf record -e intel_pt//k -a sleep 1
-% perf script --graph-function group_sched_in --call-trace
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])          group_sched_in
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])              __x86_indirect_thunk_rax
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])              event_sched_in.isra.107
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                  perf_event_set_state.part.71
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                      perf_event_update_time
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                  perf_pmu_disable
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                  perf_log_itrace_start
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                  __x86_indirect_thunk_rax
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                      perf_event_update_userpage
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                          calc_timer_values
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                              sched_clock_cpu
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                          __x86_indirect_thunk_rax
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                          arch_perf_update_userpage
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                              __fentry__
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                              using_native_sched_clock
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                              sched_clock_stable
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])                  perf_pmu_enable
-            perf   900 [000] 194167.205652203: ([kernel.kallsyms])              __x86_indirect_thunk_rax
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])          group_sched_in
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])              __x86_indirect_thunk_rax
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])              event_sched_in.isra.107
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])                  perf_event_set_state.part.71
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])                      perf_event_update_time
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])                  perf_pmu_disable
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])                  perf_log_itrace_start
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])                  __x86_indirect_thunk_rax
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])                      perf_event_update_userpage
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])                          calc_timer_values
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])                              sched_clock_cpu
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])                          __x86_indirect_thunk_rax
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])                          arch_perf_update_userpage
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])                              __fentry__
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])                              using_native_sched_clock
-         swapper     0 [001] 194167.205660693: ([kernel.kallsyms])                              sched_clock_stable
+% perf record -b -a sleep 1
+% perf script -F +brstackinsn
+...
+        00007f73ecc41083        insn: 74 06                     # PRED 9 cycles [17] 1.11 IPC
+        00007f73ecc4108b        insn: a8 10
+        00007f73ecc4108d        insn: 74 71                     # PRED 1 cycles [18] 1.00 IPC
+        00007f73ecc41100        insn: 48 8b 46 10
+        00007f73ecc41104        insn: 4c 8b 38
+        00007f73ecc41107        insn: 4d 85 ff
+        00007f73ecc4110a        insn: 0f 84 b0 00 00 00
+        00007f73ecc41110        insn: 83 43 58 01
+        00007f73ecc41114        insn: 48 89 df
+        00007f73ecc41117        insn: e8 94 73 04 00            # PRED 6 cycles [24] 1.00 IPC
 
 Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Tested-by: Leo Yan <leo.yan@linaro.org>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Kim Phillips <kim.phillips@arm.com>
-Link: http://lkml.kernel.org/r/20180920180540.14039-5-andi@firstfloor.org
+Cc: Andi Kleen <andi@firstfloor.org>
+Link: http://lkml.kernel.org/r/20180924170732.GA28040@tassilo.jf.intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/Documentation/perf-script.txt |  4 ++
- tools/perf/builtin-script.c              | 96 ++++++++++++++++++++++++++------
- tools/perf/util/symbol.h                 |  3 +-
- tools/perf/util/thread.h                 |  2 +
- 4 files changed, 86 insertions(+), 19 deletions(-)
+ tools/perf/builtin-script.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/Documentation/perf-script.txt b/tools/perf/Documentation/perf-script.txt
-index 805baabd238e..a2b37ce48094 100644
---- a/tools/perf/Documentation/perf-script.txt
-+++ b/tools/perf/Documentation/perf-script.txt
-@@ -397,6 +397,10 @@ include::itrace.txt[]
- --call-ret-trace::
- 	Show call and return stream for intel_pt traces.
- 
-+--graph-function::
-+	For itrace only show specified functions and their callees for
-+	itrace. Multiple functions can be separated by comma.
-+
- SEE ALSO
- --------
- linkperf:perf-record[1], linkperf:perf-script-perl[1],
 diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 566e1450898a..9d2249ea75e3 100644
+index 9d2249ea75e3..b5bc85bd0bbe 100644
 --- a/tools/perf/builtin-script.c
 +++ b/tools/perf/builtin-script.c
-@@ -1105,6 +1105,35 @@ static int perf_sample__fprintf_addr(struct perf_sample *sample,
- 	return printed;
- }
+@@ -913,7 +913,7 @@ static int grab_bb(u8 *buffer, u64 start, u64 end,
  
-+static const char *resolve_branch_sym(struct perf_sample *sample,
-+				      struct perf_evsel *evsel,
-+				      struct thread *thread,
-+				      struct addr_location *al,
-+				      u64 *ip)
-+{
-+	struct addr_location addr_al;
-+	struct perf_event_attr *attr = &evsel->attr;
-+	const char *name = NULL;
-+
-+	if (sample->flags & (PERF_IP_FLAG_CALL | PERF_IP_FLAG_TRACE_BEGIN)) {
-+		if (sample_addr_correlates_sym(attr)) {
-+			thread__resolve(thread, &addr_al, sample);
-+			if (addr_al.sym)
-+				name = addr_al.sym->name;
-+			else
-+				*ip = sample->addr;
-+		} else {
-+			*ip = sample->addr;
-+		}
-+	} else if (sample->flags & (PERF_IP_FLAG_RETURN | PERF_IP_FLAG_TRACE_END)) {
-+		if (al->sym)
-+			name = al->sym->name;
-+		else
-+			*ip = sample->ip;
-+	}
-+	return name;
-+}
-+
- static int perf_sample__fprintf_callindent(struct perf_sample *sample,
- 					   struct perf_evsel *evsel,
- 					   struct thread *thread,
-@@ -1112,7 +1141,6 @@ static int perf_sample__fprintf_callindent(struct perf_sample *sample,
+ static int ip__fprintf_jump(uint64_t ip, struct branch_entry *en,
+ 			    struct perf_insn *x, u8 *inbuf, int len,
+-			    int insn, FILE *fp)
++			    int insn, FILE *fp, int *total_cycles)
  {
- 	struct perf_event_attr *attr = &evsel->attr;
- 	size_t depth = thread_stack__depth(thread);
--	struct addr_location addr_al;
- 	const char *name = NULL;
- 	static int spacing;
- 	int len = 0;
-@@ -1126,22 +1154,7 @@ static int perf_sample__fprintf_callindent(struct perf_sample *sample,
- 	if (thread->ts && sample->flags & PERF_IP_FLAG_RETURN)
- 		depth += 1;
- 
--	if (sample->flags & (PERF_IP_FLAG_CALL | PERF_IP_FLAG_TRACE_BEGIN)) {
--		if (sample_addr_correlates_sym(attr)) {
--			thread__resolve(thread, &addr_al, sample);
--			if (addr_al.sym)
--				name = addr_al.sym->name;
--			else
--				ip = sample->addr;
--		} else {
--			ip = sample->addr;
--		}
--	} else if (sample->flags & (PERF_IP_FLAG_RETURN | PERF_IP_FLAG_TRACE_END)) {
--		if (al->sym)
--			name = al->sym->name;
--		else
--			ip = sample->ip;
--	}
-+	name = resolve_branch_sym(sample, evsel, thread, al, &ip);
- 
- 	if (PRINT_FIELD(DSO) && !(PRINT_FIELD(IP) || PRINT_FIELD(ADDR))) {
- 		dlen += fprintf(fp, "(");
-@@ -1647,6 +1660,47 @@ static void perf_sample__fprint_metric(struct perf_script *script,
+ 	int printed = fprintf(fp, "\t%016" PRIx64 "\t%-30s\t#%s%s%s%s", ip,
+ 			      dump_insn(x, ip, inbuf, len, NULL),
+@@ -922,7 +922,8 @@ static int ip__fprintf_jump(uint64_t ip, struct branch_entry *en,
+ 			      en->flags.in_tx ? " INTX" : "",
+ 			      en->flags.abort ? " ABORT" : "");
+ 	if (en->flags.cycles) {
+-		printed += fprintf(fp, " %d cycles", en->flags.cycles);
++		*total_cycles += en->flags.cycles;
++		printed += fprintf(fp, " %d cycles [%d]", en->flags.cycles, *total_cycles);
+ 		if (insn)
+ 			printed += fprintf(fp, " %.2f IPC", (float)insn / en->flags.cycles);
  	}
- }
+@@ -979,6 +980,7 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
+ 	u8 buffer[MAXBB];
+ 	unsigned off;
+ 	struct symbol *lastsym = NULL;
++	int total_cycles = 0;
  
-+static bool show_event(struct perf_sample *sample,
-+		       struct perf_evsel *evsel,
-+		       struct thread *thread,
-+		       struct addr_location *al)
-+{
-+	int depth = thread_stack__depth(thread);
-+
-+	if (!symbol_conf.graph_function)
-+		return true;
-+
-+	if (thread->filter) {
-+		if (depth <= thread->filter_entry_depth) {
-+			thread->filter = false;
-+			return false;
-+		}
-+		return true;
-+	} else {
-+		const char *s = symbol_conf.graph_function;
-+		u64 ip;
-+		const char *name = resolve_branch_sym(sample, evsel, thread, al,
-+				&ip);
-+		unsigned nlen;
-+
-+		if (!name)
-+			return false;
-+		nlen = strlen(name);
-+		while (*s) {
-+			unsigned len = strcspn(s, ",");
-+			if (nlen == len && !strncmp(name, s, len)) {
-+				thread->filter = true;
-+				thread->filter_entry_depth = depth;
-+				return true;
-+			}
-+			s += len;
-+			if (*s == ',')
-+				s++;
-+		}
-+		return false;
-+	}
-+}
-+
- static void process_event(struct perf_script *script,
- 			  struct perf_sample *sample, struct perf_evsel *evsel,
- 			  struct addr_location *al,
-@@ -1661,6 +1715,9 @@ static void process_event(struct perf_script *script,
- 	if (output[type].fields == 0)
- 		return;
+ 	if (!(br && br->nr))
+ 		return 0;
+@@ -999,7 +1001,7 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
+ 		printed += ip__fprintf_sym(br->entries[nr - 1].from, thread,
+ 					   x.cpumode, x.cpu, &lastsym, attr, fp);
+ 		printed += ip__fprintf_jump(br->entries[nr - 1].from, &br->entries[nr - 1],
+-					    &x, buffer, len, 0, fp);
++					    &x, buffer, len, 0, fp, &total_cycles);
+ 	}
  
-+	if (!show_event(sample, evsel, thread, al))
-+		return;
-+
- 	++es->samples;
+ 	/* Print all blocks */
+@@ -1027,7 +1029,8 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
  
- 	perf_sample__fprintf_start(sample, thread, evsel,
-@@ -3237,6 +3294,8 @@ int cmd_script(int argc, const char **argv)
- 			"Decode calls from from itrace", parse_call_trace),
- 	OPT_CALLBACK_OPTARG(0, "call-ret-trace", &itrace_synth_opts, NULL, NULL,
- 			"Decode calls and returns from itrace", parse_callret_trace),
-+	OPT_STRING(0, "graph-function", &symbol_conf.graph_function, "symbol[,symbol...]",
-+			"Only print symbols and callees with --call-trace/--call-ret-trace"),
- 	OPT_STRING(0, "stop-bt", &symbol_conf.bt_stop_list_str, "symbol[,symbol...]",
- 		   "Stop display of callgraph at these symbols"),
- 	OPT_STRING('C', "cpu", &cpu_list, "cpu", "list of cpus to profile"),
-@@ -3494,7 +3553,8 @@ int cmd_script(int argc, const char **argv)
- 	script.session = session;
- 	script__setup_sample_type(&script);
- 
--	if (output[PERF_TYPE_HARDWARE].fields & PERF_OUTPUT_CALLINDENT)
-+	if ((output[PERF_TYPE_HARDWARE].fields & PERF_OUTPUT_CALLINDENT) ||
-+	    symbol_conf.graph_function)
- 		itrace_synth_opts.thread_stack = true;
- 
- 	session->itrace_synth_opts = &itrace_synth_opts;
-diff --git a/tools/perf/util/symbol.h b/tools/perf/util/symbol.h
-index f25fae4b5743..d726a8a7bb1b 100644
---- a/tools/perf/util/symbol.h
-+++ b/tools/perf/util/symbol.h
-@@ -123,7 +123,8 @@ struct symbol_conf {
- 	const char	*vmlinux_name,
- 			*kallsyms_name,
- 			*source_prefix,
--			*field_sep;
-+			*field_sep,
-+			*graph_function;
- 	const char	*default_guest_vmlinux_name,
- 			*default_guest_kallsyms,
- 			*default_guest_modules;
-diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
-index 07606aa6998d..36c09a9904e6 100644
---- a/tools/perf/util/thread.h
-+++ b/tools/perf/util/thread.h
-@@ -42,6 +42,8 @@ struct thread {
- 	void				*addr_space;
- 	struct unwind_libunwind_ops	*unwind_libunwind_ops;
- #endif
-+	bool			filter;
-+	int			filter_entry_depth;
- };
- 
- struct machine;
+ 			printed += ip__fprintf_sym(ip, thread, x.cpumode, x.cpu, &lastsym, attr, fp);
+ 			if (ip == end) {
+-				printed += ip__fprintf_jump(ip, &br->entries[i], &x, buffer + off, len - off, insn, fp);
++				printed += ip__fprintf_jump(ip, &br->entries[i], &x, buffer + off, len - off, insn, fp,
++							    &total_cycles);
+ 				break;
+ 			} else {
+ 				printed += fprintf(fp, "\t%016" PRIx64 "\t%s\n", ip,
 -- 
 2.14.4
 
