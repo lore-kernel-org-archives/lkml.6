@@ -2,86 +2,79 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42FA3ECDE44
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 01:47:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0983ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 01:56:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4253207DD
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 01:47:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4253207DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 65A7B204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 01:56:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65A7B204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726803AbeJYKRc (ORCPT
+        id S1727126AbeJYK1S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 06:17:32 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:52127 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726204AbeJYKRc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 06:17:32 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id F3C86E5250499;
-        Thu, 25 Oct 2018 09:46:57 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.408.0; Thu, 25 Oct 2018
- 09:46:50 +0800
-Subject: Re: [PATCH] f2fs: change segment to section in f2fs_ioc_gc_range
-To:     Yunlong Song <yunlong.song@huawei.com>, <jaegeuk@kernel.org>,
-        <chao@kernel.org>, <yunlong.song@icloud.com>
-CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
-        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-References: <1540391736-20714-1-git-send-email-yunlong.song@huawei.com>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <1dedda7c-edf5-82ae-787b-c2276e7c7275@huawei.com>
-Date:   Thu, 25 Oct 2018 09:46:50 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <1540391736-20714-1-git-send-email-yunlong.song@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+        Thu, 25 Oct 2018 06:27:18 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:9620 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726204AbeJYK1S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 06:27:18 -0400
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 7AB8C7A97BBBCD38F250;
+        Thu, 25 Oct 2018 09:56:43 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id w9P1ucEd027159;
+        Thu, 25 Oct 2018 09:56:38 +0800 (GMT-8)
+        (envelope-from peng.hao2@zte.com.cn)
+Received: from localhost.localdomain.localdomain ([10.74.120.59])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018102509570555-6579950 ;
+          Thu, 25 Oct 2018 09:57:05 +0800 
+From:   Peng Hao <peng.hao2@zte.com.cn>
+To:     pbonzini@redhat.com, rkrcmar@redhat.com, joro@8bytes.org
+Cc:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org, x86@kernel.org,
+        Peng Hao <peng.hao2@zte.com.cn>
+Subject: [PATCH]  kvm/x86 : remove unused struct definition
+Date:   Thu, 25 Oct 2018 18:07:40 +0800
+Message-Id: <1540462060-84390-1-git-send-email-peng.hao2@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-10-25 09:57:05,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-10-25 09:56:26,
+        Serialize complete at 2018-10-25 09:56:26
+X-MAIL: mse01.zte.com.cn w9P1ucEd027159
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/10/24 22:35, Yunlong Song wrote:
-> f2fs_ioc_gc_range skips blocks_per_seg each time, however, f2fs_gc moves
-> blocks of section each time, so fix it from segment to section.
+structure svm_init_data is never used. So remove it.
 
-I'm okay with this change, BTW, I notice that I need to change it to use
-sbi->blocks_per_seg * sbi->migration_granularity in my patchset if this
-patch being merged firstly.
+Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+---
+ arch/x86/kvm/svm.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-> 
-> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-> ---
->  fs/f2fs/file.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 88b1246..8c06724 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -2155,7 +2155,7 @@ static int f2fs_ioc_gc_range(struct file *filp, unsigned long arg)
->  	}
->  
->  	ret = f2fs_gc(sbi, range.sync, true, GET_SEGNO(sbi, range.start));
-> -	range.start += sbi->blocks_per_seg;
-> +	range.start += sbi->blocks_per_seg * sbi->segs_per_sec;
-
-use BLKS_PER_SEC() for cleanup?
-
->  	if (range.start <= end)
->  		goto do_more;
->  out:
-> 
+diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+index 61ccfb1..5c7dc8b 100644
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -675,11 +675,6 @@ struct svm_cpu_data {
+ 
+ static DEFINE_PER_CPU(struct svm_cpu_data *, svm_data);
+ 
+-struct svm_init_data {
+-	int cpu;
+-	int r;
+-};
+-
+ static const u32 msrpm_ranges[] = {0, 0xc0000000, 0xc0010000};
+ 
+ #define NUM_MSR_MAPS ARRAY_SIZE(msrpm_ranges)
+-- 
+1.8.3.1
 
