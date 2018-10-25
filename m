@@ -4,203 +4,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FABCC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F16ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 484D620868
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E98F20840
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="b3ap9b+j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 484D620868
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="f2inf8dx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E98F20840
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728112AbeJYWoU (ORCPT
+        id S1728128AbeJYWoV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:44:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53008 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:44:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728095AbeJYWoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728110AbeJYWoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 25 Oct 2018 18:44:20 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78A6A20834;
-        Thu, 25 Oct 2018 14:11:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD53D20848;
+        Thu, 25 Oct 2018 14:11:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540476684;
-        bh=HMKTH6EH3uUR2lf5WHlB91yM32of85lbXICGyHPcEQc=;
+        s=default; t=1540476685;
+        bh=oBILSpFjPQVIx8vSZXYdE9YuEdMisgHIni1h9IC6BCM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b3ap9b+jxEowq8IUWkwfoJbtN76oVWyB3jcipBBBJj52wVfaD4qrm1FguD80P7iR2
-         j6n6cVxvrGLnpJcSoc31dtY4wlSINNpFN/3en5y3geCVSrl8qfqrJsJUADTBlapOqj
-         9FrrpPLTmRLRJ8RaKya5d5pe/vnkD3TU3WKwjIWU=
+        b=f2inf8dxDnt+eBzMzfBMyb9fLKCDtffSuC8gxDXtql72EeM5DGdkp7Z+ctC5BUpdb
+         mD6fN1BXcu251QuWCLqNAk6O4aW/gNE8DRM9kqQkB8ajdZPtfcXwiu34hGxvOfe2jW
+         cnLajarDK+HgNkQ/EgjcRkasRjHvaOe+UCCDW4yQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     James Chapman <jchapman@katalix.com>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Steve French <stfrench@microsoft.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 21/46] l2tp: remove configurable payload offset
-Date:   Thu, 25 Oct 2018 10:10:28 -0400
-Message-Id: <20181025141053.213330-21-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 22/46] cifs: Use ULL suffix for 64-bit constant
+Date:   Thu, 25 Oct 2018 10:10:29 -0400
+Message-Id: <20181025141053.213330-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141053.213330-1-sashal@kernel.org>
 References: <20181025141053.213330-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Chapman <jchapman@katalix.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
 
-[ Upstream commit 900631ee6a2651dc4fbaecb8ef9fa5f1e3378853 ]
+[ Upstream commit 3995bbf53bd2047f2720c6fdd4bf38f6d942a0c0 ]
 
-If L2TP_ATTR_OFFSET is set to a non-zero value in L2TPv3 tunnels, it
-results in L2TPv3 packets being transmitted which might not be
-compliant with the L2TPv3 RFC. This patch has l2tp ignore the offset
-setting and send all packets with no offset.
+On 32-bit (e.g. with m68k-linux-gnu-gcc-4.1):
 
-In more detail:
+    fs/cifs/inode.c: In function ‘simple_hashstr’:
+    fs/cifs/inode.c:713: warning: integer constant is too large for ‘long’ type
 
-L2TPv2 supports a variable offset from the L2TPv2 header to the
-payload. The offset value is indicated by an optional field in the
-L2TP header.  Our L2TP implementation already detects the presence of
-the optional offset and skips that many bytes when handling data
-received packets. All transmitted packets are always transmitted with
-no offset.
-
-L2TPv3 has no optional offset field in the L2TPv3 packet
-header. Instead, L2TPv3 defines optional fields in a "Layer-2 Specific
-Sublayer". At the time when the original L2TP code was written, there
-was talk at IETF of offset being implemented in a new Layer-2 Specific
-Sublayer. A L2TP_ATTR_OFFSET netlink attribute was added so that this
-offset could be configured and the intention was to allow it to be
-also used to set the tx offset for L2TPv2. However, no L2TPv3 offset
-was ever specified and the L2TP_ATTR_OFFSET parameter was forgotten
-about.
-
-Setting L2TP_ATTR_OFFSET results in L2TPv3 packets being transmitted
-with the specified number of bytes padding between L2TPv3 header and
-payload. This is not compliant with L2TPv3 RFC3931. This change
-removes the configurable offset altogether while retaining
-L2TP_ATTR_OFFSET for backwards compatibility. Any L2TP_ATTR_OFFSET
-value is ignored.
-
-Signed-off-by: James Chapman <jchapman@katalix.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 7ea884c77e5c97f1 ("smb3: Fix root directory when server returns inode number of zero")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Aurelien Aptel <aaptel@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/l2tp/l2tp_core.c    | 14 ++++----------
- net/l2tp/l2tp_core.h    |  3 ---
- net/l2tp/l2tp_debugfs.c |  4 ++--
- net/l2tp/l2tp_netlink.c |  3 ---
- 4 files changed, 6 insertions(+), 18 deletions(-)
+ fs/cifs/inode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/l2tp/l2tp_core.c b/net/l2tp/l2tp_core.c
-index 5c87f1d3e525..33ea389ee015 100644
---- a/net/l2tp/l2tp_core.c
-+++ b/net/l2tp/l2tp_core.c
-@@ -808,10 +808,8 @@ void l2tp_recv_common(struct l2tp_session *session, struct sk_buff *skb,
- 		}
- 	}
+diff --git a/fs/cifs/inode.c b/fs/cifs/inode.c
+index 2cd0b3053439..d01cbca84701 100644
+--- a/fs/cifs/inode.c
++++ b/fs/cifs/inode.c
+@@ -712,7 +712,7 @@ cifs_get_file_info(struct file *filp)
+ /* Simple function to return a 64 bit hash of string.  Rarely called */
+ static __u64 simple_hashstr(const char *str)
+ {
+-	const __u64 hash_mult =  1125899906842597L; /* a big enough prime */
++	const __u64 hash_mult =  1125899906842597ULL; /* a big enough prime */
+ 	__u64 hash = 0;
  
--	/* Session data offset is handled differently for L2TPv2 and
--	 * L2TPv3. For L2TPv2, there is an optional 16-bit value in
--	 * the header. For L2TPv3, the offset is negotiated using AVPs
--	 * in the session setup control protocol.
-+	/* Session data offset is defined only for L2TPv2 and is
-+	 * indicated by an optional 16-bit value in the header.
- 	 */
- 	if (tunnel->version == L2TP_HDR_VER_2) {
- 		/* If offset bit set, skip it. */
-@@ -819,8 +817,7 @@ void l2tp_recv_common(struct l2tp_session *session, struct sk_buff *skb,
- 			offset = ntohs(*(__be16 *)ptr);
- 			ptr += 2 + offset;
- 		}
--	} else
--		ptr += session->offset;
-+	}
- 
- 	offset = ptr - optr;
- 	if (!pskb_may_pull(skb, offset))
-@@ -1104,8 +1101,6 @@ static int l2tp_build_l2tpv3_header(struct l2tp_session *session, void *buf)
- 		}
- 		bufp += session->l2specific_len;
- 	}
--	if (session->offset)
--		bufp += session->offset;
- 
- 	return bufp - optr;
- }
-@@ -1779,7 +1774,7 @@ void l2tp_session_set_header_len(struct l2tp_session *session, int version)
- 		if (session->send_seq)
- 			session->hdr_len += 4;
- 	} else {
--		session->hdr_len = 4 + session->cookie_len + session->l2specific_len + session->offset;
-+		session->hdr_len = 4 + session->cookie_len + session->l2specific_len;
- 		if (session->tunnel->encap == L2TP_ENCAPTYPE_UDP)
- 			session->hdr_len += 4;
- 	}
-@@ -1830,7 +1825,6 @@ struct l2tp_session *l2tp_session_create(int priv_size, struct l2tp_tunnel *tunn
- 			session->recv_seq = cfg->recv_seq;
- 			session->lns_mode = cfg->lns_mode;
- 			session->reorder_timeout = cfg->reorder_timeout;
--			session->offset = cfg->offset;
- 			session->l2specific_type = cfg->l2specific_type;
- 			session->l2specific_len = cfg->l2specific_len;
- 			session->cookie_len = cfg->cookie_len;
-diff --git a/net/l2tp/l2tp_core.h b/net/l2tp/l2tp_core.h
-index 9e2f1fda1b03..0a58c0754526 100644
---- a/net/l2tp/l2tp_core.h
-+++ b/net/l2tp/l2tp_core.h
-@@ -59,7 +59,6 @@ struct l2tp_session_cfg {
- 	int			debug;		/* bitmask of debug message
- 						 * categories */
- 	u16			vlan_id;	/* VLAN pseudowire only */
--	u16			offset;		/* offset to payload */
- 	u16			l2specific_len;	/* Layer 2 specific length */
- 	u16			l2specific_type; /* Layer 2 specific type */
- 	u8			cookie[8];	/* optional cookie */
-@@ -86,8 +85,6 @@ struct l2tp_session {
- 	int			cookie_len;
- 	u8			peer_cookie[8];
- 	int			peer_cookie_len;
--	u16			offset;		/* offset from end of L2TP header
--						   to beginning of data */
- 	u16			l2specific_len;
- 	u16			l2specific_type;
- 	u16			hdr_len;
-diff --git a/net/l2tp/l2tp_debugfs.c b/net/l2tp/l2tp_debugfs.c
-index 53bae54c4d6e..534cad03b9e9 100644
---- a/net/l2tp/l2tp_debugfs.c
-+++ b/net/l2tp/l2tp_debugfs.c
-@@ -180,8 +180,8 @@ static void l2tp_dfs_seq_session_show(struct seq_file *m, void *v)
- 		   session->lns_mode ? "LNS" : "LAC",
- 		   session->debug,
- 		   jiffies_to_msecs(session->reorder_timeout));
--	seq_printf(m, "   offset %hu l2specific %hu/%hu\n",
--		   session->offset, session->l2specific_type, session->l2specific_len);
-+	seq_printf(m, "   offset 0 l2specific %hu/%hu\n",
-+		   session->l2specific_type, session->l2specific_len);
- 	if (session->cookie_len) {
- 		seq_printf(m, "   cookie %02x%02x%02x%02x",
- 			   session->cookie[0], session->cookie[1],
-diff --git a/net/l2tp/l2tp_netlink.c b/net/l2tp/l2tp_netlink.c
-index c28223d8092b..001797ce4084 100644
---- a/net/l2tp/l2tp_netlink.c
-+++ b/net/l2tp/l2tp_netlink.c
-@@ -549,9 +549,6 @@ static int l2tp_nl_cmd_session_create(struct sk_buff *skb, struct genl_info *inf
- 	}
- 
- 	if (tunnel->version > 2) {
--		if (info->attrs[L2TP_ATTR_OFFSET])
--			cfg.offset = nla_get_u16(info->attrs[L2TP_ATTR_OFFSET]);
--
- 		if (info->attrs[L2TP_ATTR_DATA_SEQ])
- 			cfg.data_seq = nla_get_u8(info->attrs[L2TP_ATTR_DATA_SEQ]);
- 
+ 	while (*str)
 -- 
 2.17.1
 
