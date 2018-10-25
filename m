@@ -2,130 +2,147 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.9 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 538E2C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:08:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E8FEC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:09:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AC3320834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:08:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AC3320834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-sky.com
+	by mail.kernel.org (Postfix) with ESMTP id E86BE20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:09:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="slmExzFp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E86BE20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727793AbeJZBm0 (ORCPT
+        id S1727977AbeJZBnB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 21:42:26 -0400
-Received: from smtp2200-217.mail.aliyun.com ([121.197.200.217]:40261 "EHLO
-        smtp2200-217.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727505AbeJZBm0 (ORCPT
+        Thu, 25 Oct 2018 21:43:01 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:35375 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727505AbeJZBnB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 21:42:26 -0400
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07482173|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03298;MF=ren_guo@c-sky.com;NM=1;PH=DS;RN=16;RT=16;SR=0;TI=SMTPD_---.D7uleCF_1540487293;
-Received: from localhost(mailfrom:ren_guo@c-sky.com fp:SMTPD_---.D7uleCF_1540487293)
-          by smtp.aliyun-inc.com(10.147.40.44);
-          Fri, 26 Oct 2018 01:08:14 +0800
-Date:   Fri, 26 Oct 2018 01:08:13 +0800
-From:   Guo Ren <ren_guo@c-sky.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        David Miller <davem@davemloft.net>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>,
+        Thu, 25 Oct 2018 21:43:01 -0400
+Received: by mail-it1-f194.google.com with SMTP id p64-v6so2711168itp.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 10:09:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ZYi+EgnoFVRMV/WJxW/n1ofzzda+MhmlkHTFsWOPWUg=;
+        b=slmExzFpNjHmGoboh0UhDs1k6p160FvM9iztNN+xGmm4sslkC3+wVWuEyXOXx6cz/C
+         M8IZRSjJzFHAVzJRoSA6fGeVTNth/5qd4EsP25bZEFp1sXbf6NTlVs6aZ3FJ6WK3VFGy
+         F4wgAd4Ysg9/vt8F74VeU/geH8WCo1onohTdQ4oBxCPkg3Ucou0+9MmwLgla0wQVMw7F
+         9QSX9iaqbSpSiGPDXBNdYDOnKkES/+jeuZLiB0dVMyNvLc8jpPuUv7331SzufxYrIihx
+         1a/M5DpxCvg8ciovsrgGLdZZwx+gdYQA1px25Z75sp4T/6DSibdzLekOHj3Q0bxJrPYt
+         of0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZYi+EgnoFVRMV/WJxW/n1ofzzda+MhmlkHTFsWOPWUg=;
+        b=bbIJNSXowiBSNRjL+zmJzQSWCZ31cNQBUGykbbOK+yEyw0LrLJCC0dLIPjEiDQp+eM
+         f8JeuHFmqnbQzrnk9xTNhN5IozKKSUnk4KUwCfdmtVwXu2Wlpt6F4TxoK/aTAX+JkshX
+         bYSbSBV1bj5DUUoUdgtyNpLY2TTq086BPF84W7fPPzlDkgyqjoO+26kz+t5SsKs5O8R3
+         6ztFpOFBEsT6JyiictL38sZJx8A2EeJoeikB7cdZ8AM16zH2KUVo6IfXdmKgXEGiIWVQ
+         XFkHvRVjaa7rLxyQ0hQctUa4F8tbPe1wdoXUpOMCBNvT8Cx7kE0t8leWTAy6ALlP4XC5
+         v3oA==
+X-Gm-Message-State: AGRZ1gIV7moar/jROTqS5e+DtDVx5GpacIaARyMf+CUr7fzsjpq2wr3d
+        MvFTSR7O29Wd5h6d2Ix1Bz1Ot12iY3+20ZCh
+X-Google-Smtp-Source: AJdET5cLHOP9onKugiIxN7WIVXS/GNiHfXGZCvny0Ch68rHo0qdDflF9NXsjAHqd0PXWhIuUkssT3w==
+X-Received: by 2002:a02:8c8b:: with SMTP id f11-v6mr50415jak.37.1540487360089;
+        Thu, 25 Oct 2018 10:09:20 -0700 (PDT)
+Received: from vorpal.bld.corp.google.com ([2620:15c:183:0:d68b:e645:8da4:bbe1])
+        by smtp.gmail.com with ESMTPSA id w134-v6sm827219itc.12.2018.10.25.10.09.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Oct 2018 10:09:19 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 11:09:17 -0600
+From:   Benjamin Gordon <bmgordon@google.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     John Stultz <john.stultz@linaro.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, c-sky_gcc_upstream@c-sky.com
-Subject: Re: [PATCH V9 21/21] csky: support dword access for get_user_size()
-Message-ID: <20181025170813.GB9747@guoren-Inspiron-7460>
-References: <cover.1539655731.git.ren_guo@c-sky.com>
- <4bc11ff0cff5960892a464189605f9bc808383fc.1539655732.git.ren_guo@c-sky.com>
- <CAK8P3a1wfeWboHvU1o_kooMc2hML8iWcNrz=mp6tYT52iGwfjw@mail.gmail.com>
- <20181018034117.GD15088@guoren-Inspiron-7460>
- <CAK8P3a0cFhBE1tX0xisP__MYiBfaAUQHsW6ZhkmTPocRf1Zb6w@mail.gmail.com>
- <20181018085751.GA21934@guoren-Inspiron-7460>
- <CAK8P3a28SLy85pCq9eS-xnLuFo4XAJmnKCiy0XF9ZZtLxfaUDw@mail.gmail.com>
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Oren Laadan <orenl@cellrox.com>,
+        Ruchi Kandoi <kandoiruchi@google.com>,
+        Rom Lemarchand <romlem@android.com>,
+        Todd Kjos <tkjos@google.com>, Colin Cross <ccross@android.com>,
+        Nick Kralevich <nnk@google.com>,
+        Dmitry Shmidt <dimitrysh@google.com>,
+        Elliott Hughes <enh@google.com>,
+        Android Kernel Team <kernel-team@android.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH] proc: use ns_capable instead of capable for timerslack_ns
+Message-ID: <20181025170916.GA170325@vorpal.bld.corp.google.com>
+References: <20181017224738.193598-1-bmgordon@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a28SLy85pCq9eS-xnLuFo4XAJmnKCiy0XF9ZZtLxfaUDw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181017224738.193598-1-bmgordon@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 08:17:47AM +0100, Arnd Bergmann wrote:
-> On Thu, Oct 18, 2018 at 9:57 AM Guo Ren <ren_guo@c-sky.com> wrote:
-> >
-> > On Thu, Oct 18, 2018 at 10:34:00AM +0200, Arnd Bergmann wrote:
-> > > On Thu, Oct 18, 2018 at 5:41 AM Guo Ren <ren_guo@c-sky.com> wrote:
-> > > >
-> > > > On Wed, Oct 17, 2018 at 05:44:17PM +0200, Arnd Bergmann wrote:
-> > > > > On Tue, Oct 16, 2018 at 5:33 AM Guo Ren <ren_guo@c-sky.com> wrote:
-> > > > > >
-> > > > > > Support dword access for get_user_size and redesign put_user_size with
-> > > > > > the same style of get_user_size. It's Ok to use xxx_user_asm_common for
-> > > > > > all size of variable with ldb, ldh, ldw, ld.d
-> > > > > >
-> > > > > > ld.d rx, (addr, 0) could "rx <= addr" "and r(x+1) <= addr+4" and this also
-> > > > > > follow abiv2 gcc ABI for dword access.
-> > > > >
-> > > > > Are you sure this is correct for this?
-> > > > >
-> > > > > static inline u32 get_64_to_32(__u64 __user *p)
-> > > > > {
-> > > > >       u32 ret;
-> > > > >       get_user(ret, p);
-> > > > >       return ret;
-> > > > > }
-> > > > >
-> > > > > If I read __get_user_asm_common() right, the ld.d would overwrite
-> > > > > two registers, but the caller only expects one, so it clobbers one
-> > > > > that might be in use.
-> > > > Ah... BUG! I only consider the get_user(u64, u64 *) :P
-> > > >
-> > > > Change to:
-> > > > case 8:                                                 \
-> > > > __get_user_asm_dword((x), ptr, "ld.d", retval);         \
-> > > > break;
-> > > >
-> > > > #define __get_user_asm_dword(x, ptr, err)               \
-> > > > do {                                                    \
-> > > >         u64 tmp;                                        \
-> > > >         __get_user_asm_common(tmp, ptr, "ld.d", err);   \
-> > > >         x = typeof(x) tmp;                              \
-> > > > } while(0)
-> > > >
-> > > > #define __put_user_asm_dword(x, ptr, err)               \
-> > > > do {                                                    \
-> > > >         u64 tmp = (u64) x;                              \
-> > > >         __put_user_asm_common(tmp, ptr, "st.d", err);   \
-> > > > } while(0)
-> > > >
-> > >
-> > > I think this will cause warnings for code that passes a pointer.
-> > >
-> > > The 64-bit __get_user() is really hard, and most 32-bit architectures don't
-> > > implement it at all. If you really want to add it, have a look at what
-> > > x86 and arm do. IIRC they both use __builtin_choose_expr(),
-> > Thx for the tips and I'll drop the patch first for the upstream.
-> >
-> > I want to implement it because of make allmodconfig and
-> > drivers/android/binder.c need it. I'll learn __builtin_choose_expr()
-> > and prepare patch next.
+On Wed, Oct 17, 2018 at 04:47:38PM -0600, bmgordon@google.com wrote:
+> Access to timerslack_ns is controlled by a process having CAP_SYS_NICE
+> in its effective capability set, but the current check looks in the root
+> namespace instead of the process' user namespace.  Since a process is
+> allowed to do other activities controlled by CAP_SYS_NICE inside a
+> namespace, it should also be able to adjust timerslack_ns.
 > 
-> I think we should fix binder.c instead. Many other architectures
-> have the same problem.
-Yes, and I'll study the file.
+> Signed-off-by: Benjamin Gordon <bmgordon@google.com>
+> Cc: John Stultz <john.stultz@linaro.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Arjan van de Ven <arjan@linux.intel.com>
+> Cc: Oren Laadan <orenl@cellrox.com>
+> Cc: Ruchi Kandoi <kandoiruchi@google.com>
+> Cc: Rom Lemarchand <romlem@android.com>
+> Cc: Todd Kjos <tkjos@google.com>
+> Cc: Colin Cross <ccross@android.com>
+> Cc: Nick Kralevich <nnk@google.com>
+> Cc: Dmitry Shmidt <dimitrysh@google.com>
+> Cc: Elliott Hughes <enh@google.com>
+> Cc: Android Kernel Team <kernel-team@android.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> ---
+>  fs/proc/base.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index 7e9f07bf260d..4b50937dff80 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -2356,7 +2356,7 @@ static ssize_t timerslack_ns_write(struct file *file, const char __user *buf,
+>  		return -ESRCH;
+>  
+>  	if (p != current) {
+> -		if (!capable(CAP_SYS_NICE)) {
+> +		if (!ns_capable(file->f_cred->user_ns, CAP_SYS_NICE)) {
+>  			count = -EPERM;
+>  			goto out;
+>  		}
+> @@ -2393,7 +2393,7 @@ static int timerslack_ns_show(struct seq_file *m, void *v)
+>  
+>  	if (p != current) {
+>  
+> -		if (!capable(CAP_SYS_NICE)) {
+> +		if (!ns_capable(seq_user_ns(m), CAP_SYS_NICE)) {
+>  			err = -EPERM;
+>  			goto out;
+>  		}
+> -- 
+> 2.19.1.331.ge82ca0e54c-goog
+> 
 
-Best Regards
- Guo Ren
+Friendly ping.  Does anybody have time to take a look at this?
+
+Thanks,
+Benjamin
