@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C4BC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:22:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F4D9ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:22:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DC5A2075D
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:22:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BBCC2083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:22:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="H1V/+lTJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DC5A2075D
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MShnanCg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BBCC2083E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727661AbeJZG4o (ORCPT
+        id S1727567AbeJZG4j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 02:56:44 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34454 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727521AbeJZG4m (ORCPT
+        Fri, 26 Oct 2018 02:56:39 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:35762 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726348AbeJZG4h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 02:56:42 -0400
-Received: by mail-pg1-f193.google.com with SMTP id g12-v6so4692782pgs.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 15:22:15 -0700 (PDT)
+        Fri, 26 Oct 2018 02:56:37 -0400
+Received: by mail-pf1-f196.google.com with SMTP id l17-v6so4898359pff.2
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 15:22:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=10BVyy4o/nnNTuseCYU3plL0bCCn/tw0RLzPJVkyKRc=;
-        b=H1V/+lTJrK3gkHL0ufphYEaj9kDUJRpjDlzionDcUCrYXR7w1M3yueNz9qO6Zwh0WY
-         AvTHZlduNw6sA+bZXTwnKkvpybZxA6c5x4UUvoEQ16edaxAo5yOIHff3gEYFWAWdZ5Db
-         xZnAYanMKM6R/ZGRiVkKDc/y+W5eY/PiOmjUw=
+        bh=neUKq1cuoz4/oKiks/GsHVXngMnTcPnfmEeTBUxyFyg=;
+        b=MShnanCg69KmxODEm+UD+bcmQMTz4pzjVCGBcXmoP7oKfcst2ZTAgw9Ubo8bm1EwpA
+         sHjX+BoGsmck7iFweAoCrQF6pOxBmLCQTBDg46RCtvuyE9tCWfM0/TI7K9nYtxbFf5so
+         i2RXA1fQUmDluKfru+9GuZXhokVFARfSq6zSU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=10BVyy4o/nnNTuseCYU3plL0bCCn/tw0RLzPJVkyKRc=;
-        b=gSD2RtiIn7JPBJup+Z5riX3JLMGpVkA/6NqZz0r7121OqPxWvVCK3IgQwGHJCZENiD
-         yH29Wg/xI15+W9cZCDZvhybkx5JRCIU5PUiNCvwcWWTWRyDhytyfpIcmGPYSnjrFXkZH
-         tEPYYHYfn7RyIM5nF8SSvBwswoepnkNV9AsDKt/p8sTbTAqFIy2l9+BGgGxxA6diO7iV
-         ugRPuTPZuSjTIdB+mxYEHw3695WjExCxfw8elEh6465jsbr2BkBiwfW3Ke4YNYYKkxAp
-         jJcfMj9T/hVWDjrjxlXzH7P5GN3QHGDBpVi1VBSxzjDmutQmxhKkJrMJmpoPD5s4qP2s
-         ZVTQ==
-X-Gm-Message-State: AGRZ1gLe/0hGse8HEOZgKeIEKaCuFLVugMDUdzKnXRJdbBDjNEuYb8Js
-        zq13S6x2l1jbsm5RRT12VpRZam1UZHU=
-X-Google-Smtp-Source: AJdET5csPAFX3Wdl3ImPp9rZFIaCrBRRhRyvL2msAO6v/HOlJAYTLREkM+CllxyyPYDoCrpHlM9Rtw==
-X-Received: by 2002:a63:455e:: with SMTP id u30-v6mr944989pgk.30.1540506134690;
-        Thu, 25 Oct 2018 15:22:14 -0700 (PDT)
+        bh=neUKq1cuoz4/oKiks/GsHVXngMnTcPnfmEeTBUxyFyg=;
+        b=GgGkPC0yqxrZml+PZ9nUoVEvuFvqdUzIcvS0m1IMITrb8Ypc4kD5JPL3Iq1QDveuxw
+         L7/j8xnTnLNNkBLjRkvjwe6+uSHvIYPytCRBVkU1QxKUGFn4fKwFfIHuvfs05qqD5nma
+         ZadhwIgQVx/oEZBbBH0TrwR6r4ytgZyl7sRAXaLNvRKSJXRBtsRKHazl0u3ozg6bJy92
+         +HmZ8d9KfizK+dcr30svx/BJZYYihalxmlBCaWedWSfvimVRq5Y8mmoO97nSijb1zsj9
+         IeW7IFC85/PkD20aTuHp23fZShvQ1/wfrXUTOQjsfGhQf8eJBF76cFVJ//sH7LRTtcmG
+         lVfw==
+X-Gm-Message-State: AGRZ1gIrccyRC3Jpu8t7eyGv9CFnz+q8Q/8PJCgkalZ3fPReFnl+CPol
+        M6zQ1ye/7Vh/FMrkkZYUoTj0vg==
+X-Google-Smtp-Source: AJdET5dTvtSUFcfnEqsE47nbgEmd/VJ9nhPqfZeCLGcdyEot1aGHtkJlLeEzIzTqRmdWS/eqfcs07A==
+X-Received: by 2002:a63:9343:: with SMTP id w3-v6mr883015pgm.343.1540506129169;
+        Thu, 25 Oct 2018 15:22:09 -0700 (PDT)
 Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
-        by smtp.gmail.com with ESMTPSA id x73-v6sm19813778pfk.139.2018.10.25.15.22.13
+        by smtp.gmail.com with ESMTPSA id x73-v6sm19813778pfk.139.2018.10.25.15.22.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Oct 2018 15:22:13 -0700 (PDT)
+        Thu, 25 Oct 2018 15:22:08 -0700 (PDT)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     Sean Paul <seanpaul@chromium.org>,
         Thierry Reding <thierry.reding@gmail.com>,
@@ -66,9 +66,9 @@ Cc:     linux-arm-msm@vger.kernel.org,
         Douglas Anderson <dianders@chromium.org>,
         David Airlie <airlied@linux.ie>,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 6/6] drm/panel: simple: Innolux TV123WAM is actually P120ZDG-BF1
-Date:   Thu, 25 Oct 2018 15:21:34 -0700
-Message-Id: <20181025222134.174583-6-dianders@chromium.org>
+Subject: [PATCH v2 2/6] drm/panel: simple: Support panels with HPD where HPD isn't connected
+Date:   Thu, 25 Oct 2018 15:21:30 -0700
+Message-Id: <20181025222134.174583-2-dianders@chromium.org>
 X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
 In-Reply-To: <20181025222134.174583-1-dianders@chromium.org>
 References: <20181025222134.174583-1-dianders@chromium.org>
@@ -79,91 +79,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As far as I can tell the panel that was added in commit da50bd4258db
-("drm/panel: simple: Add Innolux TV123WAM panel driver support")
-wasn't actually an Innolux TV123WAM but was actually an Innolux
-P120ZDG-BF1.
+Some eDP panels that are designed to be always connected to a board
+use their HPD signal to signal that they've finished powering on and
+they're ready to be talked to.
 
-As far as I can tell the Innolux TV123WAM isn't a real panel and but
-it's a mosh between the TI TV123WAM and the Innolux P120ZDG-BF1.
-Let's unmosh.
+However, for various reasons it's possible that the HPD signal from
+the panel isn't actually hooked up.  In the case where the HPD isn't
+hooked up you can look at the timing diagram on the panel datasheet
+and insert a delay for the maximum amount of time that the HPD might
+take to come up.
 
-Here's my evidence:
+Let's add support in simple-panel for this concept.
 
-* Searching for TV123WAM on the Internet turns up a TI panel.  While
-  it's possible that an Innolux panel has the same model number as the
-  TI Panel, it seems a little doubtful.  Looking up the datasheet from
-  the TI Panel shows that it's 1920 x 1280 and 259.2 mm x 172.8 mm.
+At the moment we will co-opt the existing "prepare" delay to keep
+track of the delay and we'll use a boolean to specify that a given
+panel should only apply the delay if the "no-hpd" property was
+specified.
 
-* As far as I know, the patch adding the Innolux Panel was supposed to
-  be for the board that's sitting in front of me as I type this
-  (support for that board is not yet upstream).  On the back of that
-  panel I see Innolux P120ZDZ-EZ1 rev B1.
-
-* Someone pointed me at a datasheet that's supposed to be for the
-  panel in front of me (sorry, I can't share the datasheet).  That
-  datasheet has the string "p120zdg-bf1"
-
-* If I search for "P120ZDG-BF1" on the Internet I get hits for panels
-  that are 2160x1440.  They don't have datasheets, but the fact that
-  the resolution matches is a good sign.
-
-In any case, let's update the name and also the physical size to match
-the correct panel.
-
-Fixes: da50bd4258db ("drm/panel: simple: Add Innolux TV123WAM panel driver support")
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Abhinav Kumar <abhinavk@codeaurora.org>
-Cc: Sandeep Panda <spanda@codeaurora.org>
 ---
 
-Changes in v2: None
+Changes in v2:
+- Use "hpd_absent_delay" property instead of a bool + prepare delay
 
- drivers/gpu/drm/panel/panel-simple.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/panel/panel-simple.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-index 88592f9a0018..a04ffb3b2174 100644
+index 97964f7f2ace..687fd087b9fc 100644
 --- a/drivers/gpu/drm/panel/panel-simple.c
 +++ b/drivers/gpu/drm/panel/panel-simple.c
-@@ -1373,7 +1373,7 @@ static const struct panel_desc innolux_n156bge_l21 = {
- 	},
- };
+@@ -56,6 +56,8 @@ struct panel_desc {
+ 	/**
+ 	 * @prepare: the time (in milliseconds) that it takes for the panel to
+ 	 *           become ready and start receiving video data
++	 * @hpd_absent_delay: Add this to the prepare delay if we know Hot
++	 *                    Plug Detect isn't used.
+ 	 * @enable: the time (in milliseconds) that it takes for the panel to
+ 	 *          display the first valid frame after starting to receive
+ 	 *          video data
+@@ -66,6 +68,7 @@ struct panel_desc {
+ 	 */
+ 	struct {
+ 		unsigned int prepare;
++		unsigned int hpd_absent_delay;
+ 		unsigned int enable;
+ 		unsigned int disable;
+ 		unsigned int unprepare;
+@@ -79,6 +82,7 @@ struct panel_simple {
+ 	struct drm_panel base;
+ 	bool prepared;
+ 	bool enabled;
++	bool no_hpd;
  
--static const struct drm_display_mode innolux_tv123wam_mode = {
-+static const struct drm_display_mode innolux_p120zdg_bf1_mode = {
- 	.clock = 206016,
- 	.hdisplay = 2160,
- 	.hsync_start = 2160 + 48,
-@@ -1387,13 +1387,13 @@ static const struct drm_display_mode innolux_tv123wam_mode = {
- 	.flags = DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC,
- };
+ 	const struct panel_desc *desc;
  
--static const struct panel_desc innolux_tv123wam = {
--	.modes = &innolux_tv123wam_mode,
-+static const struct panel_desc innolux_p120zdg_bf1 = {
-+	.modes = &innolux_p120zdg_bf1_mode,
- 	.num_modes = 1,
- 	.bpc = 8,
- 	.size = {
--		.width = 259,
--		.height = 173,
-+		.width = 254,
-+		.height = 169,
- 	},
- 	.delay = {
- 		.hpd_absent_delay = 200,
-@@ -2456,8 +2456,8 @@ static const struct of_device_id platform_of_match[] = {
- 		.compatible = "innolux,n156bge-l21",
- 		.data = &innolux_n156bge_l21,
- 	}, {
--		.compatible = "innolux,tv123wam",
--		.data = &innolux_tv123wam,
-+		.compatible = "innolux,p120zdg-bf1",
-+		.data = &innolux_p120zdg_bf1,
- 	}, {
- 		.compatible = "innolux,zj070na-01p",
- 		.data = &innolux_zj070na_01p,
+@@ -202,6 +206,7 @@ static int panel_simple_unprepare(struct drm_panel *panel)
+ static int panel_simple_prepare(struct drm_panel *panel)
+ {
+ 	struct panel_simple *p = to_panel_simple(panel);
++	unsigned int delay;
+ 	int err;
+ 
+ 	if (p->prepared)
+@@ -215,8 +220,11 @@ static int panel_simple_prepare(struct drm_panel *panel)
+ 
+ 	gpiod_set_value_cansleep(p->enable_gpio, 1);
+ 
+-	if (p->desc->delay.prepare)
+-		msleep(p->desc->delay.prepare);
++	delay = p->desc->delay.prepare;
++	if (p->no_hpd)
++		delay += p->desc->delay.hpd_absent_delay;
++	if (delay)
++		msleep(delay);
+ 
+ 	p->prepared = true;
+ 
+@@ -305,6 +313,8 @@ static int panel_simple_probe(struct device *dev, const struct panel_desc *desc)
+ 	panel->prepared = false;
+ 	panel->desc = desc;
+ 
++	panel->no_hpd = of_property_read_bool(dev->of_node, "no-hpd");
++
+ 	panel->supply = devm_regulator_get(dev, "power");
+ 	if (IS_ERR(panel->supply))
+ 		return PTR_ERR(panel->supply);
 -- 
 2.19.1.568.g152ad8e336-goog
 
