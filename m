@@ -2,106 +2,112 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D922C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:21:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81655C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:23:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 328422082E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:21:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 328422082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3076A20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:23:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bjic2nMh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3076A20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727350AbeJYSxX (ORCPT
+        id S1727399AbeJYSzf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 14:53:23 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42094 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726803AbeJYSxX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 14:53:23 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0C3CB30014D2;
-        Thu, 25 Oct 2018 10:21:17 +0000 (UTC)
-Received: from localhost.localdomain (unknown [10.33.36.108])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 27F97611D7;
-        Thu, 25 Oct 2018 10:20:43 +0000 (UTC)
-Date:   Thu, 25 Oct 2018 11:20:40 +0100
-From:   "Bryn M. Reeves" <bmr@redhat.com>
-To:     Mikulas Patocka <mpatocka@redhat.com>
-Cc:     Paul Lawrence <paullawrence@google.com>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>, Shaohua Li <shli@kernel.org>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-raid@vger.kernel.org, dm-devel@redhat.com,
-        kernel-team@android.com, Alasdair Kergon <agk@redhat.com>
-Subject: Re: [dm-devel] [RFC] dm-bow working prototype
-Message-ID: <20181025102039.GA9378@localhost.localdomain>
-References: <20181023212358.60292-1-paullawrence@google.com>
- <20181023221819.GB17552@agk-dp.fab.redhat.com>
- <296148c2-f2d9-5818-ea76-d71a0d6f5cd4@google.com>
- <alpine.LRH.2.02.1810241514310.4080@file01.intranet.prod.int.rdu2.redhat.com>
+        Thu, 25 Oct 2018 14:55:35 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:41468 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727265AbeJYSzf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 14:55:35 -0400
+Received: by mail-wr1-f68.google.com with SMTP id q7-v6so8708317wrr.8
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 03:23:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=EBLRSkpQSau4aA1QfJ8E5nbsqXuPlwhDWiem3KyCFXw=;
+        b=bjic2nMhkrMfTNc0UmPvpA73o1e+xEL7bLITHvuY/tsPnpxP1nlCD4FbZ3+oPHD3An
+         hQHnArIle/Za/0yAqT3jqE4Qd6J2D9FL2bdTgSddUo1b58rKzLGirvxmP+hZd4jUalzh
+         FlnGMixNA6I4GUqSTp16BSscWExhyRCvoOwfY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=EBLRSkpQSau4aA1QfJ8E5nbsqXuPlwhDWiem3KyCFXw=;
+        b=pFjdebtw8wbBxprtoFrF1LYcc+OCggK8YubusSvOsReThjqZzJdJ746DuSv3q4DE1A
+         5yEJ/8+JVsgt/IBDs7WkfzgMkjQwjPQ7haf97sMBEohzv8qlhgT9ciw8ItDhN7/S2xGw
+         WpVvpyYeCecY28NITzmAox7szjjkRcrG/Xxqu+sazBs+RgzEFaeLeRhwZASMulBVCzNi
+         qAI0zH1T34pU37RbpCOm+GzCkNBlzjN/PzQyjZnNByBy4oT1//4CdCwRd5crEvxdgBT1
+         W+Kc6Kz8lgIxSprJ8Qn81j5Fu0ums4SvXZBeI+WhovvA6kmtcL7VeqJ+FcPXaH6Dmnea
+         rKww==
+X-Gm-Message-State: AGRZ1gJkWuj+aQnqLJyIV4tH/Gr0Iaa4m5NFlq6XxOItLcg/scyoXcwt
+        PUBwG9OYIwrVaYkFmwkXSq2dXQ==
+X-Google-Smtp-Source: AJdET5eUQJFWoyA2vgF6U54/ASTC/Xe9rKyzOXS08Udxzzb57hqJukX/9Gn+ClIMIDWscFMWUu4a2A==
+X-Received: by 2002:a05:6000:111:: with SMTP id o17mr1270421wrx.279.1540463007831;
+        Thu, 25 Oct 2018 03:23:27 -0700 (PDT)
+Received: from dell ([2.31.167.182])
+        by smtp.gmail.com with ESMTPSA id u13-v6sm4711211wrn.11.2018.10.25.03.23.26
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Oct 2018 03:23:26 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 11:23:24 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Oskari Lemmela <oskari@lemmela.net>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH v5 09/11] power: supply: add AC power supply driver for
+ AXP813
+Message-ID: <20181025102324.GS4939@dell>
+References: <20181023185330.10472-1-oskari@lemmela.net>
+ <20181023185330.10472-10-oskari@lemmela.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <alpine.LRH.2.02.1810241514310.4080@file01.intranet.prod.int.rdu2.redhat.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 25 Oct 2018 10:21:17 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181023185330.10472-10-oskari@lemmela.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 03:24:29PM -0400, Mikulas Patocka wrote:
-> 
-> 
-> On Wed, 24 Oct 2018, Paul Lawrence wrote:
-> 
-> > Android has had the concept of A/B updates for since Android N, which means
-> > that if an update is unable to boot for any reason three times, we revert to
-> > the older system. However, if the failure occurs after the new system has
-> > started modifying userdata, we will be attempting to start an older system
-> > with a newer userdata, which is an unsupported state. Thus to make A/B able to
-> > fully deliver on its promise of safe updates, we need to be able to revert
-> > userdata in the event of a failure.
-> > 
-> > For those cases where the file system on userdata supports
-> > snapshots/checkpoints, we should clearly use them. However, there are many
-> > Android devices using filesystems that do not support checkpoints, so we need
-> > a generic solution. Here we had two options. One was to use overlayfs to
-> > manage the changes, then on merge have a script that copies the files to the
-> > underlying fs. This was rejected on the grounds of compatibility concerns and
-> > managing the merge through reboots, though it is definitely a plausible
-> > strategy. The second was to work at the block layer.
-> > 
-> > At the block layer, dm-snap would have given us a ready-made solution, except
-> > that there is no sufficiently large spare partition on Android devices. But in
-> > general there is free space on userdata, just scattered over the device, and
-> > of course likely to get modified as soon as userdata is written to. We also
-> > decided that the merge phase was a high risk component of any design. Since
-> > the normal path is that the update succeeds, we anticipate merges happening
-> > 99% of the time, and we want to guarantee their success even in the event of
-> > unexpected failure during the merge. Thus we decided we preferred a strategy
-> > where the device is in the committed state at all times, and rollback requires
-> > work, to one where the device remains in the original state but the merge is
-> > complex.
-> 
-> What about allocating a big file, using the FIEMAP ioctl to find the 
-> physical locations of the file, creating a dm device with many linear 
-> targets to map the big file and using it as a snapshot store? I think it 
-> would be way easier than re-implementing the snapshot functionality in a 
-> new target.
+On Tue, 23 Oct 2018, Oskari Lemmela wrote:
 
-libdevmapper already has code to handle enumerating physical file
-extents via the dm-stats file mapping support. It should be fairly easy
-to adapt this to create dm tables rather than dm-stats regions.
+> AXP813 and AXP803 PMICs can control input current and minimum voltage.
+> 
+> Both of these values are configurable.
+> 
+> Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
+> Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
+> ---
+>  drivers/power/supply/axp20x_ac_power.c | 94 ++++++++++++++++++++++++++
 
-See dm_stats_create_regions_from_fd() and _stats_map_file_regions().
+>  include/linux/mfd/axp20x.h             |  1 +
 
-Bryn.
+Acked-by: Lee Jones <lee.jones@linaro.org>
 
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
