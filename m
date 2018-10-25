@@ -2,228 +2,1053 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4066FC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 07:42:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CAC7ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 07:45:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5D1C2054F
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 07:42:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B50002054F
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 07:45:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cern.onmicrosoft.com header.i=@cern.onmicrosoft.com header.b="Ydjv38M5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5D1C2054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cern.ch
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SygGN/r/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B50002054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726748AbeJYQO3 (ORCPT
+        id S1727106AbeJYQQj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 12:14:29 -0400
-Received: from mail-eopbgr00045.outbound.protection.outlook.com ([40.107.0.45]:14045
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726465AbeJYQO3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 12:14:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.onmicrosoft.com;
- s=selector1-cern-ch;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ToKa62wY4qL+lZ0lUED3jO6vw7AYK+/jzt3E1+7JBN0=;
- b=Ydjv38M5/gHKKX/G4BuWp1cBfH5ZZgz+sd6Uj4G6yIIRtc2qOO56+PxtI861ldL1qIGCRAQEUzqYazwORMS6LiuCJuCGpszgfWu2TCy20DXr8IQIbgpn8CDyTtGCDiIQc7ToiJiM5CfPxQ9YCg00/9wRabQiu43PL8W+FGhwR+I=
-Received: from VI1PR06CA0155.eurprd06.prod.outlook.com (2603:10a6:803:a0::48)
- by VI1PR0602MB3533.eurprd06.prod.outlook.com (2603:10a6:803:a::30) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1273.18; Thu, 25 Oct
- 2018 07:42:51 +0000
-Received: from HE1EUR02FT035.eop-EUR02.prod.protection.outlook.com
- (2a01:111:f400:7e05::206) by VI1PR06CA0155.outlook.office365.com
- (2603:10a6:803:a0::48) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1273.19 via Frontend
- Transport; Thu, 25 Oct 2018 07:42:51 +0000
-Authentication-Results: spf=pass (sender IP is 188.184.36.48)
- smtp.mailfrom=cern.ch; korsgaard.com; dkim=none (message not signed)
- header.d=none;korsgaard.com; dmarc=temperror action=none header.from=cern.ch;
-Received-SPF: Pass (protection.outlook.com: domain of cern.ch designates
- 188.184.36.48 as permitted sender) receiver=protection.outlook.com;
- client-ip=188.184.36.48; helo=cernmxgwlb4.cern.ch;
-Received: from cernmxgwlb4.cern.ch (188.184.36.48) by
- HE1EUR02FT035.mail.protection.outlook.com (10.152.10.127) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1273.13 via Frontend Transport; Thu, 25 Oct 2018 07:42:50 +0000
-Received: from cernfe04.cern.ch (188.184.36.41) by cernmxgwlb4.cern.ch
- (188.184.36.48) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 25 Oct
- 2018 09:42:21 +0200
-Received: from pcbe13614.localnet (2001:1458:202:121::100:40) by smtp.cern.ch
- (2001:1458:201:66::100:14) with Microsoft SMTP Server (TLS) id 14.3.408.0;
- Thu, 25 Oct 2018 09:42:21 +0200
-From:   Federico Vaga <federico.vaga@cern.ch>
-To:     Peter Korsgaard <peter@korsgaard.com>
-Reply-To: <federico.vaga@cern.ch>
-CC:     linux-i2c <linux-i2c@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3] i2c:ocores: stop transfer on timeout
-Date:   Thu, 25 Oct 2018 09:42:21 +0200
-Message-ID: <2970900.LV2nBjgqHh@pcbe13614>
-In-Reply-To: <CACXmVia0vStmBwd4ndFk6UjE9wGsjp7Y75ej0AGq68H8-XkZqw@mail.gmail.com>
-References: <20180625161303.7991-1-federico.vaga@cern.ch> <20180625161303.7991-2-federico.vaga@cern.ch> <CACXmVia0vStmBwd4ndFk6UjE9wGsjp7Y75ej0AGq68H8-XkZqw@mail.gmail.com>
+        Thu, 25 Oct 2018 12:16:39 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45439 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726981AbeJYQQi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 12:16:38 -0400
+Received: by mail-wr1-f67.google.com with SMTP id n5-v6so4397521wrw.12
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 00:45:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=/pk9QJYQJPzS/CLgZ5LyfHgDm6JIlan4FocA4X86OXA=;
+        b=SygGN/r/4ZVjSt3/5o0h6IhfpSgbG7BjyUP8tKXwz7P/3U6vWurnphHLvM9kOcgIPu
+         ILvnYRcwtn/Xqy86FA/T5hTQS3tdrQloWYTnm2tgLLoYnANREv5N5LRmfFoEYGhOgqiv
+         qCbzZIoS6zn2nREk4edDJigxFulr1m47iAMdc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=/pk9QJYQJPzS/CLgZ5LyfHgDm6JIlan4FocA4X86OXA=;
+        b=h+av6zN9IXyjHH8P/N8UaMiaKWx5w3iD8I47L4Z72s1Eot0U3deWXLOy5NSE3m1PvW
+         XwDI9yIHPVgwmsiM0zdtveukNY+OppXcjBnhRGjuiUROlp1SX7xMRG4z2hHSrUaoqk2m
+         hQDtRdQaPsszAgOpFQLFk87ihRTZS/3kzT8OQ/Tvyp5go6T+XOFwYlOHMrQsWO0Wqfgg
+         wiu4RnmUUWBcZuL4Iv7TUQ0o3/p3+B4H3O0yV6A3GoH16ZkEWwp/ZMxGvIDDq3NrYMx2
+         HxnVckCtEjwBq2pIo0wbbKAN9ILwrqFTtKAjcrCKsT/Hzsgq694gmn3phFe8o3wDDEay
+         mbFQ==
+X-Gm-Message-State: AGRZ1gLCDsTzSDdtvmM9hCtl1Vu6VAQsh7wGSEMyoZt4kbO+tw3sPLqp
+        v1BvYipmGTN+YwU86f0aGqI6FQ==
+X-Google-Smtp-Source: AJdET5eJfcv4zjTo4FssR0NjjKkuH2+UaBrL5P5ZbNloNyDhw6l03ZDQkPurtLj1JkkYUc3G9AAd0g==
+X-Received: by 2002:adf:9102:: with SMTP id j2-v6mr653211wrj.3.1540453502273;
+        Thu, 25 Oct 2018 00:45:02 -0700 (PDT)
+Received: from dell ([2.31.167.182])
+        by smtp.gmail.com with ESMTPSA id r2-v6sm3960963wrq.1.2018.10.25.00.45.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Oct 2018 00:45:01 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 08:44:59 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, broonie@kernel.org,
+        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        lgirdwood@gmail.com, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] mfd: lochnagar: Add support for the Cirrus Logic
+ Lochnagar
+Message-ID: <20181025074459.GF4939@dell>
+References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
+ <20181008132542.19775-2-ckeepax@opensource.cirrus.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Originating-IP: [2001:1458:202:121::100:40]
-X-EOPAttributedMessage: 0
-X-Forefront-Antispam-Report: CIP:188.184.36.48;IPV:NLI;CTRY:CH;EFV:NLI;SFV:NSPM;SFS:(10009020)(39860400002)(346002)(136003)(376002)(396003)(2980300002)(438002)(189003)(199004)(5660300001)(6916009)(74482002)(3450700001)(575784001)(86362001)(486006)(47776003)(63370400001)(336012)(11346002)(426003)(126002)(186003)(476003)(44832011)(76176011)(43066004)(106466001)(97756001)(316002)(7736002)(305945005)(9576002)(7636002)(33896004)(246002)(8936002)(26005)(8676002)(106002)(50466002)(478600001)(54906003)(16526019)(33716001)(53546011)(356004)(446003)(9686003)(4326008)(786003)(230700001)(14444005)(229853002)(46406003)(6246003)(6116002)(2906002)(23726003)(39026011);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0602MB3533;H:cernmxgwlb4.cern.ch;FPR:;SPF:Pass;LANG:en;PTR:cernmx12.cern.ch;MX:1;A:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f7e0e845-46d5-456f-a911-08d63a4d773a
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:VI1PR0602MB3533;
-X-MS-TrafficTypeDiagnostic: VI1PR0602MB3533:
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0602MB3533;20:N/VKGENAe+w/OPCiMnVjHsIr4yWSxRNxktOSRQGll3sPyG9yAMN3MRNVKmHcyLuxfBz1J1rta/e+JjTTkkpwmObtdmZDm5wPmSbuC5hVL6wqjaQTDso2bOOWRhNw3r94sqEJHAhSjBPi7VdQ6yyf9fPdVaHfHlcm96ZUZPEFe+Sun/SjiHuCvSxyfhhhbcvEBkSKFhkCAYhScxNliOI1fqavi1dqaHgDbIkV+0YMHZPTiD6yFpLJ1O3PZLyvA+nwlq33n3B4eG9XHzJxJVYiJSQZh3HCELwkJ+/j9cZNYQeXiA2inNbz/xtaHfZSatgBWzZQWxhURQAKeYRRkeav+RtAfoC+Koi3LJjhwlAzLTxNyxkg327WO4BT+uLFgiWIEw8SaoK8HkSXUYPSjlS3THduQJO8gD0j7eFtI00nFlFp2Nh/X2KrLoV2tJ9/9xRVgTwGReynQ14EJ3yP4e3jy4elbWjfngWol29Iijhka7z5VHkBAYjijCRYZgX7zZsB;4:YI6c8+SquYel0eJ32FyUtxrjOgY1DDz25d5wg1LWc2VZfhtN6/3/edNGHsMk+D+qyQxN01w1HhdjWER7+46VbVly6+X6DCNyky4Jc72xxN9aHsu2fdoiJDbp85RdJNjPKEctvPgRISdJ2+1Bzus1yv3IhD0Z+JncuTlU01qESjfGfd/pigQrRWOm9WngnSKnslcbpkSN08ehkRTNJ/nBQNSM0mcm1Zhbm2uA3q4i+kruZFc6vtYOkFfyMCKBYNNffhuVKQxuxKEXw367XAGdaw==
-X-Microsoft-Antispam-PRVS: <VI1PR0602MB35337A222BDB67A31A25372EEFF70@VI1PR0602MB3533.eurprd06.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93004095)(10201501046)(3231355)(944501410)(52105095)(3002001)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281529075)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:VI1PR0602MB3533;BCL:0;PCL:0;RULEID:;SRVR:VI1PR0602MB3533;
-X-Forefront-PRVS: 083691450C
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;VI1PR0602MB3533;23:L8kaEHbhGgEyFjN2AZFYKuBF6jLWwjgzNU927Cj?=
- =?us-ascii?Q?8EPDn8CHwOwJy+DOvMyUePRAA8sQ23UDBbE0pJhQcaH7hmYhR8ZT7FKsghod?=
- =?us-ascii?Q?apU89RI+Dx2/Q9seliCwhfsTpNP/SAEnl1c8wTwGGC/DTyMFClM3aSPceP2o?=
- =?us-ascii?Q?c7bcFAxdYE6CJwpsfhiYJUyt+oCgshiNgrIi5Z6H1rByoO5YL85vKCJb9lxR?=
- =?us-ascii?Q?Y7dvH4yRExecklIAV/75QZ9h3q1c/Yyaftu0BLbLf4scdVdXtGQpInphNvN+?=
- =?us-ascii?Q?u8rDFlhgzHX68rVvxo4KVKh/1WQt8Qdl73TCzrZcy4xZ0Gzh1nWhsTqzxqJr?=
- =?us-ascii?Q?It2n0gcUUpt/kCQSNcgFzAraW7NlbkGu0d3JOV8kuhBSQI64l7r6/ndiaSd8?=
- =?us-ascii?Q?UA3xq4r+TtABO57fi++8oP5TA2k0RaAoaEK/GWXqSB5pwyp8N1a0CZSRNA2Y?=
- =?us-ascii?Q?W9gvIXk2kD+FNy5IE5aNbBKRGd7MTrxsKEPfApqe42w5bBOlNMBj3iWzmg1b?=
- =?us-ascii?Q?ea0GF7xFw0GHvAsaNn92VdEEqnKxf/TP/ubKIWbjqnD0cpJ48KtpUN8S6OH9?=
- =?us-ascii?Q?R/fwdq2dMsX9+pghcNvQW0kRr6XrvpHTO7Z4OVRnJlQxEGTbnutE7O1so/Wn?=
- =?us-ascii?Q?pyMoIC/9HtiAcsS9GJ6lAL3uyWMQ0+UcMefoHm7ulxr6+iHg4er0vZTSDeit?=
- =?us-ascii?Q?WKz5yK4EUeOOAD4lHCQxRqaPczL2LpBSzLmK+Wz2vLVs2IuwDxxpxx7TrOAK?=
- =?us-ascii?Q?W+T+cGnzrSjSCNa7nV8L3vTF503FqomQtRB0xoFeZK9N0Bkt5CEPfSn7mawz?=
- =?us-ascii?Q?SYYt1ld80g0pHeKXEU2S0GL4KYq2Hh35cun41KUfBO9CmjIAefG0FCiXHarC?=
- =?us-ascii?Q?ubxhTlO7Eu7hQE5lDCAuq0LVVv43NDoo26Z9ZvYiHPRW34AEsF0eWHdr6o7j?=
- =?us-ascii?Q?Gm98nxcAVFYfqWCljORbKrpv3WAU21NYrxrxwWqZxAcEV8S8mX4MDRrJbf93?=
- =?us-ascii?Q?FhV8I0rBUGaA8hnZmasmLTTVs/iM3fIDusj8yeKBYanhUs77LnIxQGLsQsxL?=
- =?us-ascii?Q?1wO+mVfN3ipuc2MCLC9kjH8OylLlQHA59/YXkpZv2pvNaMx+2ycMW9Q99bO+?=
- =?us-ascii?Q?m2A0z264OmgVSXq6ezBUeGPVC37HlGSeX2SIYScB0jxG3OkkA+8mEyeqDMbb?=
- =?us-ascii?Q?/7ZRm6WGWuY3tmuTaiDjkZ3Cuc39d5z/dvapLC3m6U+h5Oo/kvctf0XZdb8C?=
- =?us-ascii?Q?34EoonWUWYPeGPANo5P7qFOdFpV6RX7LmHw1nZ+0/5PwkL1mcUfVa/hs0+bA?=
- =?us-ascii?Q?pZigx/qCxcv+GWgiLz/WphDc=3D?=
-X-Microsoft-Antispam-Message-Info: eoe6yOYrUeeTK/UO9oqSQYKJY7ETdwNe/MBAg66ziJxqiBhcGEOphnQ4AUjM8xYFIQJbAC5++zAlZwOK0h8O1V6vieT02h5vhJnkYS/cqkDx12oJ7aardYvtZvFnl4GveCJ25E9+1WjIuds32L3AP3mUVYg9U6QL7fq7qRHc7hLtYbkgBNJozbWXAilLYMEp83sS8ZmsL8+6e2Eo0J6uCUwbSZFHHraByOF8Qfc+LbXTXcCawrr5wdiEWJ4IicGRvVVYBCZLmDd8epHhRNCqPbms8A55oVatkF9wZhmHnHJlyo6Sg52k/EbWnSRDips+ViDNKoMoOrPNuuC6LJMaCBAvmkywsshS3Q6A5b1nhhI=
-X-Microsoft-Exchange-Diagnostics: 1;VI1PR0602MB3533;6:4uAW94ZTG2X6W2J2QCpANPJvfPjw1RxFdvY7RwNnrhyIQngA6HAEb+vQiRTqw+gA0HtgL6tQGQMhcgCpYTIlfbk39zh0IUydCi7hcR02Yag5t8aiUS0CvINGHZhnVaATunhedYqQ+oPhvszy099JQgCximkKVW7OgQ8NxfgPH0kABbdEf1qirBjUlaCwl7N9N1hVAUxy+3XASvx2dSbDvk7B7pt6qXAgD6W2qSRhDucnMf1UORTyyqNVeUlLa8JtHPkBCzUBBIeF7L632iMLD5oWit9EI3hmWZyf7+BSgqD2/4gH31LdBTCR4TyMCOQOrBQN7n7c0mae3isMTjBCfzt59zOpxfz5Dh4/F7upYzDGNqpn58OXPl7SCmcpD1Qr37ppOgKiG7X8ot9e0tTeLa2LDnxBFifg9feUaI6zD1KQDbd/1mrwXLxrAVqml7Y+E6KiYAY9Oqr9yiBNHDsFDg==;5:D0vLPgjAv+FJrQ1Ffkgbu2Mlo3GQjj02wD+79SlAzJTaJ2BKFa6WaVGcEmkSEayAKC2Ey0/RJtfZtGnlTZaJ5KcMqNgQzhnkL4xOgG29CuNuRUB8dg85LPbi4QP4rHH2f+S5vFS+61i6J5zK5TiFonmql81+3Za8y66cnHIsGK0=;7:IDAXg6UnPE2w5GeDJZ0zE1bQyEJHWsExNZX0qxVVsGo/TORliM6ztDPSeu6zIfE7XBxFlC/6bGgoazhytC7a/QeyOcfPdo/5/YWgRI7F1ENBl86dAvlXYb3wB0PTgYhlfDlXHrtxvBZX9mAUUtJMrw==
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: cern.ch
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2018 07:42:50.3760
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f7e0e845-46d5-456f-a911-08d63a4d773a
-X-MS-Exchange-CrossTenant-Id: c80d3499-4a40-4a8c-986e-abce017d6b19
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[188.184.36.48];Helo=[cernmxgwlb4.cern.ch]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0602MB3533
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181008132542.19775-2-ckeepax@opensource.cirrus.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(sorry for the noise, peter's email I had does not exist, so I'm resending 
-this email with the correct address)
+On Mon, 08 Oct 2018, Charles Keepax wrote:
 
-On Sunday, October 21, 2018 4:10:30 PM CEST Peter Korsgaard wrote:
-> On Mon, Jun 25, 2018 at 6:14 PM Federico Vaga <federico.vaga@cern.ch> wrote:
+> From: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
 > 
-> Hi, and sorry for the slow response.
+> Lochnagar is an evaluation and development board for Cirrus
+> Logic Smart CODEC and Amp devices. It allows the connection of
+> most Cirrus Logic devices on mini-cards, as well as allowing
+> connection of various application processor systems to provide a
+> full evaluation platform. This driver supports the board
+> controller chip on the Lochnagar board. Audio system topology,
+> clocking and power can all be controlled through the Lochnagar
+> controller chip, allowing the device under test to be used in
+> a variety of possible use cases.
 > 
-> > Detecting a timeout is ok, but we also need to assert a STOP command on
-> > the bus in order to prevent it from generating interrupts when there are
-> > no on going transfers.
-> > 
-> > Example: very long transmission.
-> > 
-> > 1. ocores_xfer: START a transfer
-> > 2. ocores_isr : handle byte by byte the transfer
-> > 3. ocores_xfer: goes in timeout [[bugfix here]]
-> > 4. ocores_xfer: return to I2C subsystem and to the I2C driver
-> > 5. I2C driver : it may clean up the i2c_msg memory
-> > 6. ocores_isr : receives another interrupt (pending bytes to be
-> > 
-> >                 transferred) but the i2c_msg memory is invalid now
-> > 
-> > So, since the transfer was too long, we have to detect the timeout and
-> > STOP the transfer.
-> > 
-> > Another point is that we have a critical region here. When handling the
-> > timeout condition we may have a running IRQ handler. For this reason I
-> > introduce a spinlock. In the IRQ handler we can just use trylock because
-> > if the lock is taken is because we are in timeout, so there is no need to
-> > process the IRQ.
-> > 
-> > Signed-off-by: Federico Vaga <federico.vaga@cern.ch>
-> > ---
-> > 
-> >  drivers/i2c/busses/i2c-ocores.c | 28 ++++++++++++++++++++++++++--
-> >  1 file changed, 26 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/i2c/busses/i2c-ocores.c
-> > b/drivers/i2c/busses/i2c-ocores.c index 88444ef74943..98c0ef74882b 100644
-> > --- a/drivers/i2c/busses/i2c-ocores.c
-> > +++ b/drivers/i2c/busses/i2c-ocores.c
-> > @@ -25,6 +25,7 @@
-> > 
-> >  #include <linux/slab.h>
-> >  #include <linux/io.h>
-> >  #include <linux/log2.h>
-> > 
-> > +#include <linux/spinlock.h>
-> > 
-> >  struct ocores_i2c {
-> >  
-> >         void __iomem *base;
-> > 
-> > @@ -36,6 +37,7 @@ struct ocores_i2c {
-> > 
-> >         int pos;
-> >         int nmsgs;
-> >         int state; /* see STATE_ */
-> > 
-> > +       spinlock_t xfer_lock;
-> > 
-> >         struct clk *clk;
-> >         int ip_clock_khz;
-> >         int bus_clock_khz;
-> > 
-> > @@ -207,15 +209,30 @@ static void ocores_process(struct ocores_i2c *i2c)
-> > 
-> >  static irqreturn_t ocores_isr(int irq, void *dev_id)
-> >  {
-> >  
-> >         struct ocores_i2c *i2c = dev_id;
-> > 
-> > +       unsigned long flags;
-> > +       int ret;
-> > +
-> > +       /*
-> > +        * We need to protect i2c against a timeout event (see
-> > ocores_xfer()) +        * If we cannot take this lock, it means that we
-> > are already in +        * timeout, so it's pointless to handle this
-> > interrupt because we +        * are going to abort the current transfer.
-> > +        */
-> > +       ret = spin_trylock_irqsave(&i2c->xfer_lock, flags);
+> As the Lochnagar is a fairly complex device this MFD driver
+> allows the drivers for the various features to be bound
+> in. Initially clocking, regulator and pinctrl will be added as
+> these are necessary to configure the system. But in time at least
+> audio and voltage/current monitoring will also be added.
 > 
-> This is very old code, so I might be missing something - But I still
-> don't quite understand this trylock logic. If we end up here with the
-> lock taken, then that must mean that we are on SMP system. We still
-> need to ack the interrupt, so just spinning until the other CPU
-> releases the lock seems more sensible?
+> Signed-off-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
+> ---
+> 
+> Changes since v1:
+>  - Update Kconfig to correctly specify dependencies
+>  - Update commit message a little
+> 
+> Thanks,
+> Charles
+> 
+>  MAINTAINERS                         |  13 +
+>  drivers/mfd/Kconfig                 |   8 +
+>  drivers/mfd/Makefile                |   2 +
+>  drivers/mfd/lochnagar-i2c.c         | 732 ++++++++++++++++++++++++++++++++++++
+>  include/linux/mfd/lochnagar.h       |  48 +++
+>  include/linux/mfd/lochnagar1_regs.h | 157 ++++++++
+>  include/linux/mfd/lochnagar2_regs.h | 253 +++++++++++++
+>  7 files changed, 1213 insertions(+)
+>  create mode 100644 drivers/mfd/lochnagar-i2c.c
+>  create mode 100644 include/linux/mfd/lochnagar.h
+>  create mode 100644 include/linux/mfd/lochnagar1_regs.h
+>  create mode 100644 include/linux/mfd/lochnagar2_regs.h
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index d9e6d86488df4..f1f3494ac5cd8 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -3557,6 +3557,19 @@ L:	netdev@vger.kernel.org
+>  S:	Maintained
+>  F:	drivers/net/ethernet/cirrus/ep93xx_eth.c
+>  
+> +CIRRUS LOGIC LOCHNAGAR DRIVER
+> +M:	Charles Keepax <ckeepax@opensource.cirrus.com>
+> +M:	Richard Fitzgerald <rf@opensource.cirrus.com>
+> +L:	patches@opensource.cirrus.com
+> +S:	Supported
+> +F:	drivers/clk/clk-lochnagar.c
+> +F:	drivers/mfd/lochnagar-i2c.c
+> +F:	drivers/pinctrl/cirrus/pinctrl-lochnagar.c
+> +F:	drivers/regulator/lochnagar-regulator.c
+> +F:	include/dt-bindings/clk/lochnagar.h
+> +F:	include/dt-bindings/pinctrl/lochnagar.h
+> +F:	include/linux/mfd/lochnagar*
+> +
+>  CISCO FCOE HBA DRIVER
+>  M:	Satish Kharat <satishkh@cisco.com>
+>  M:	Sesidhar Baddela <sebaddel@cisco.com>
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index f3a5f8d027906..dc64151373714 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -1676,6 +1676,14 @@ config MFD_VX855
+>  	  VIA VX855/VX875 south bridge. You will need to enable the vx855_spi
+>  	  and/or vx855_gpio drivers for this to do anything useful.
+>  
+> +config MFD_LOCHNAGAR
+> +	bool "Cirrus Logic Lochnagar Audio Development Board"
+> +	select MFD_CORE
+> +	select REGMAP_I2C
+> +	depends on I2C=y && OF
+> +	help
+> +	  Support for Cirrus Logic Lochnagar audio development board.
+> +
+>  config MFD_ARIZONA
+>  	select REGMAP
+>  	select REGMAP_IRQ
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index 5856a9489cbd8..f16773cb887ff 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -37,6 +37,8 @@ obj-$(CONFIG_MFD_T7L66XB)	+= t7l66xb.o tmio_core.o
+>  obj-$(CONFIG_MFD_TC6387XB)	+= tc6387xb.o tmio_core.o
+>  obj-$(CONFIG_MFD_TC6393XB)	+= tc6393xb.o tmio_core.o
+>  
+> +obj-$(CONFIG_MFD_LOCHNAGAR)	+= lochnagar-i2c.o
+> +
+>  obj-$(CONFIG_MFD_ARIZONA)	+= arizona-core.o
+>  obj-$(CONFIG_MFD_ARIZONA)	+= arizona-irq.o
+>  obj-$(CONFIG_MFD_ARIZONA_I2C)	+= arizona-i2c.o
+> diff --git a/drivers/mfd/lochnagar-i2c.c b/drivers/mfd/lochnagar-i2c.c
+> new file mode 100644
+> index 0000000000000..7ac7af9e3130b
+> --- /dev/null
+> +++ b/drivers/mfd/lochnagar-i2c.c
+> @@ -0,0 +1,732 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Lochnagar I2C bus interface
+> + *
+> + * Copyright (c) 2012-2018 Cirrus Logic, Inc. and
+> + *                         Cirrus Logic International Semiconductor Ltd.
+> + *
+> + * Author: Charles Keepax <ckeepax@opensource.cirrus.com>
+> + */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/device.h>
+> +#include <linux/err.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/i2c.h>
+> +#include <linux/mfd/core.h>
+> +#include <linux/mutex.h>
+> +#include <linux/of.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/regmap.h>
+> +
+> +#include <linux/mfd/lochnagar.h>
+> +
+> +#define LOCHNAGAR_BOOT_RETRIES		10
+> +#define LOCHNAGAR_BOOT_DELAY_MS		350
+> +
+> +#define LOCHNAGAR_CONFIG_POLL_US	10000
+> +
+> +static bool lochnagar1_readable_register(struct device *dev, unsigned int reg)
+> +{
+> +	switch (reg) {
+> +	case LOCHNAGAR_SOFTWARE_RESET:
+> +	case LOCHNAGAR_FIRMWARE_ID1:
+> +	case LOCHNAGAR_FIRMWARE_ID2:
+> +	case LOCHNAGAR1_CDC_AIF1_SEL:
+> +	case LOCHNAGAR1_CDC_AIF2_SEL:
+> +	case LOCHNAGAR1_CDC_AIF3_SEL:
+> +	case LOCHNAGAR1_CDC_MCLK1_SEL:
+> +	case LOCHNAGAR1_CDC_MCLK2_SEL:
+> +	case LOCHNAGAR1_CDC_AIF_CTRL1:
+> +	case LOCHNAGAR1_CDC_AIF_CTRL2:
+> +	case LOCHNAGAR1_EXT_AIF_CTRL:
+> +	case LOCHNAGAR1_DSP_AIF1_SEL:
+> +	case LOCHNAGAR1_DSP_AIF2_SEL:
+> +	case LOCHNAGAR1_DSP_CLKIN_SEL:
+> +	case LOCHNAGAR1_DSP_AIF:
+> +	case LOCHNAGAR1_GF_AIF1:
+> +	case LOCHNAGAR1_GF_AIF2:
+> +	case LOCHNAGAR1_PSIA_AIF:
+> +	case LOCHNAGAR1_PSIA1_SEL:
+> +	case LOCHNAGAR1_PSIA2_SEL:
+> +	case LOCHNAGAR1_SPDIF_AIF_SEL:
+> +	case LOCHNAGAR1_GF_AIF3_SEL:
+> +	case LOCHNAGAR1_GF_AIF4_SEL:
+> +	case LOCHNAGAR1_GF_CLKOUT1_SEL:
+> +	case LOCHNAGAR1_GF_AIF1_SEL:
+> +	case LOCHNAGAR1_GF_AIF2_SEL:
+> +	case LOCHNAGAR1_GF_GPIO2:
+> +	case LOCHNAGAR1_GF_GPIO3:
+> +	case LOCHNAGAR1_GF_GPIO7:
+> +	case LOCHNAGAR1_RST:
+> +	case LOCHNAGAR1_LED1:
+> +	case LOCHNAGAR1_LED2:
+> +	case LOCHNAGAR1_I2C_CTRL:
+> +		return true;
+> +	default:
+> +		return false;
+> +	}
+> +}
+> +
+> +static const struct reg_default lochnagar1_reg_defaults[] = {
+> +	{ LOCHNAGAR1_CDC_AIF1_SEL,    0x00 },
+> +	{ LOCHNAGAR1_CDC_AIF2_SEL,    0x00 },
+> +	{ LOCHNAGAR1_CDC_AIF3_SEL,    0x00 },
+> +	{ LOCHNAGAR1_CDC_MCLK1_SEL,   0x00 },
+> +	{ LOCHNAGAR1_CDC_MCLK2_SEL,   0x00 },
+> +	{ LOCHNAGAR1_CDC_AIF_CTRL1,   0x00 },
+> +	{ LOCHNAGAR1_CDC_AIF_CTRL2,   0x00 },
+> +	{ LOCHNAGAR1_EXT_AIF_CTRL,    0x00 },
+> +	{ LOCHNAGAR1_DSP_AIF1_SEL,    0x00 },
+> +	{ LOCHNAGAR1_DSP_AIF2_SEL,    0x00 },
+> +	{ LOCHNAGAR1_DSP_CLKIN_SEL,   0x01 },
+> +	{ LOCHNAGAR1_DSP_AIF,         0x08 },
+> +	{ LOCHNAGAR1_GF_AIF1,         0x00 },
+> +	{ LOCHNAGAR1_GF_AIF2,         0x00 },
+> +	{ LOCHNAGAR1_PSIA_AIF,        0x00 },
+> +	{ LOCHNAGAR1_PSIA1_SEL,       0x00 },
+> +	{ LOCHNAGAR1_PSIA2_SEL,       0x00 },
+> +	{ LOCHNAGAR1_SPDIF_AIF_SEL,   0x00 },
+> +	{ LOCHNAGAR1_GF_AIF3_SEL,     0x00 },
+> +	{ LOCHNAGAR1_GF_AIF4_SEL,     0x00 },
+> +	{ LOCHNAGAR1_GF_CLKOUT1_SEL,  0x00 },
+> +	{ LOCHNAGAR1_GF_AIF1_SEL,     0x00 },
+> +	{ LOCHNAGAR1_GF_AIF2_SEL,     0x00 },
+> +	{ LOCHNAGAR1_GF_GPIO2,        0x00 },
+> +	{ LOCHNAGAR1_GF_GPIO3,        0x00 },
+> +	{ LOCHNAGAR1_GF_GPIO7,        0x00 },
+> +	{ LOCHNAGAR1_RST,             0x00 },
+> +	{ LOCHNAGAR1_LED1,            0x00 },
+> +	{ LOCHNAGAR1_LED2,            0x00 },
+> +	{ LOCHNAGAR1_I2C_CTRL,        0x01 },
+> +};
 
-I think you are right.
+Why do you need to specify each register value?
 
-When I wrote that, I had the idea the STOP command stops the ongoing I2C 
-transfer and clear IACK automatically (I do not remember why I had this idea 
-in mind, unfortunately I did not take notes about this). So in that case, 
-having done STOP on time out, makes IACK useless: that's why "try".
+> +static const struct regmap_config lochnagar1_i2c_regmap = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +	.reg_format_endian = REGMAP_ENDIAN_BIG,
+> +	.val_format_endian = REGMAP_ENDIAN_BIG,
+> +
+> +	.max_register = 0x50,
+> +	.readable_reg = lochnagar1_readable_register,
+> +
+> +	.use_single_rw = true,
+> +
+> +	.cache_type = REGCACHE_RBTREE,
+> +
+> +	.reg_defaults = lochnagar1_reg_defaults,
+> +	.num_reg_defaults = ARRAY_SIZE(lochnagar1_reg_defaults),
+> +};
+> +
+> +static const struct reg_sequence lochnagar1_patch[] = {
+> +	{ 0x40, 0x0083 },
+> +	{ 0x46, 0x0001 },
+> +	{ 0x47, 0x0018 },
+> +	{ 0x50, 0x0000 },
+> +};
 
-I had another look at the HDL code and apparently my assumption was wrong, and 
-STOP just do stop, and IACK is still necessary.
+I'm really not a fan of these so call 'patches'.
 
-So, yes, without try is better because we save an extra, useless, IRQ call
+Can't you set the registers up proper way?
 
+> +static struct mfd_cell lochnagar1_devs[] = {
+> +	{
+> +		.name = "lochnagar-pinctrl"
+> +	},
+> +	{
+> +		.name = "lochnagar-clk"
+> +	},
 
+This should each be on a single line.
 
+> +};
+> +
+> +static bool lochnagar2_readable_register(struct device *dev, unsigned int reg)
+> +{
+> +	switch (reg) {
+> +	case LOCHNAGAR_SOFTWARE_RESET:
+> +	case LOCHNAGAR_FIRMWARE_ID1:
+> +	case LOCHNAGAR_FIRMWARE_ID2:
+> +	case LOCHNAGAR2_CDC_AIF1_CTRL:
+> +	case LOCHNAGAR2_CDC_AIF2_CTRL:
+> +	case LOCHNAGAR2_CDC_AIF3_CTRL:
+> +	case LOCHNAGAR2_DSP_AIF1_CTRL:
+> +	case LOCHNAGAR2_DSP_AIF2_CTRL:
+> +	case LOCHNAGAR2_PSIA1_CTRL:
+> +	case LOCHNAGAR2_PSIA2_CTRL:
+> +	case LOCHNAGAR2_GF_AIF3_CTRL:
+> +	case LOCHNAGAR2_GF_AIF4_CTRL:
+> +	case LOCHNAGAR2_GF_AIF1_CTRL:
+> +	case LOCHNAGAR2_GF_AIF2_CTRL:
+> +	case LOCHNAGAR2_SPDIF_AIF_CTRL:
+> +	case LOCHNAGAR2_USB_AIF1_CTRL:
+> +	case LOCHNAGAR2_USB_AIF2_CTRL:
+> +	case LOCHNAGAR2_ADAT_AIF_CTRL:
+> +	case LOCHNAGAR2_CDC_MCLK1_CTRL:
+> +	case LOCHNAGAR2_CDC_MCLK2_CTRL:
+> +	case LOCHNAGAR2_DSP_CLKIN_CTRL:
+> +	case LOCHNAGAR2_PSIA1_MCLK_CTRL:
+> +	case LOCHNAGAR2_PSIA2_MCLK_CTRL:
+> +	case LOCHNAGAR2_SPDIF_MCLK_CTRL:
+> +	case LOCHNAGAR2_GF_CLKOUT1_CTRL:
+> +	case LOCHNAGAR2_GF_CLKOUT2_CTRL:
+> +	case LOCHNAGAR2_ADAT_MCLK_CTRL:
+> +	case LOCHNAGAR2_SOUNDCARD_MCLK_CTRL:
+> +	case LOCHNAGAR2_GPIO_FPGA_GPIO1:
+> +	case LOCHNAGAR2_GPIO_FPGA_GPIO2:
+> +	case LOCHNAGAR2_GPIO_FPGA_GPIO3:
+> +	case LOCHNAGAR2_GPIO_FPGA_GPIO4:
+> +	case LOCHNAGAR2_GPIO_FPGA_GPIO5:
+> +	case LOCHNAGAR2_GPIO_FPGA_GPIO6:
+> +	case LOCHNAGAR2_GPIO_CDC_GPIO1:
+> +	case LOCHNAGAR2_GPIO_CDC_GPIO2:
+> +	case LOCHNAGAR2_GPIO_CDC_GPIO3:
+> +	case LOCHNAGAR2_GPIO_CDC_GPIO4:
+> +	case LOCHNAGAR2_GPIO_CDC_GPIO5:
+> +	case LOCHNAGAR2_GPIO_CDC_GPIO6:
+> +	case LOCHNAGAR2_GPIO_CDC_GPIO7:
+> +	case LOCHNAGAR2_GPIO_CDC_GPIO8:
+> +	case LOCHNAGAR2_GPIO_DSP_GPIO1:
+> +	case LOCHNAGAR2_GPIO_DSP_GPIO2:
+> +	case LOCHNAGAR2_GPIO_DSP_GPIO3:
+> +	case LOCHNAGAR2_GPIO_DSP_GPIO4:
+> +	case LOCHNAGAR2_GPIO_DSP_GPIO5:
+> +	case LOCHNAGAR2_GPIO_DSP_GPIO6:
+> +	case LOCHNAGAR2_GPIO_GF_GPIO2:
+> +	case LOCHNAGAR2_GPIO_GF_GPIO3:
+> +	case LOCHNAGAR2_GPIO_GF_GPIO7:
+> +	case LOCHNAGAR2_GPIO_CDC_AIF1_BCLK:
+> +	case LOCHNAGAR2_GPIO_CDC_AIF1_RXDAT:
+> +	case LOCHNAGAR2_GPIO_CDC_AIF1_LRCLK:
+> +	case LOCHNAGAR2_GPIO_CDC_AIF1_TXDAT:
+> +	case LOCHNAGAR2_GPIO_CDC_AIF2_BCLK:
+> +	case LOCHNAGAR2_GPIO_CDC_AIF2_RXDAT:
+> +	case LOCHNAGAR2_GPIO_CDC_AIF2_LRCLK:
+> +	case LOCHNAGAR2_GPIO_CDC_AIF2_TXDAT:
+> +	case LOCHNAGAR2_GPIO_CDC_AIF3_BCLK:
+> +	case LOCHNAGAR2_GPIO_CDC_AIF3_RXDAT:
+> +	case LOCHNAGAR2_GPIO_CDC_AIF3_LRCLK:
+> +	case LOCHNAGAR2_GPIO_CDC_AIF3_TXDAT:
+> +	case LOCHNAGAR2_GPIO_DSP_AIF1_BCLK:
+> +	case LOCHNAGAR2_GPIO_DSP_AIF1_RXDAT:
+> +	case LOCHNAGAR2_GPIO_DSP_AIF1_LRCLK:
+> +	case LOCHNAGAR2_GPIO_DSP_AIF1_TXDAT:
+> +	case LOCHNAGAR2_GPIO_DSP_AIF2_BCLK:
+> +	case LOCHNAGAR2_GPIO_DSP_AIF2_RXDAT:
+> +	case LOCHNAGAR2_GPIO_DSP_AIF2_LRCLK:
+> +	case LOCHNAGAR2_GPIO_DSP_AIF2_TXDAT:
+> +	case LOCHNAGAR2_GPIO_PSIA1_BCLK:
+> +	case LOCHNAGAR2_GPIO_PSIA1_RXDAT:
+> +	case LOCHNAGAR2_GPIO_PSIA1_LRCLK:
+> +	case LOCHNAGAR2_GPIO_PSIA1_TXDAT:
+> +	case LOCHNAGAR2_GPIO_PSIA2_BCLK:
+> +	case LOCHNAGAR2_GPIO_PSIA2_RXDAT:
+> +	case LOCHNAGAR2_GPIO_PSIA2_LRCLK:
+> +	case LOCHNAGAR2_GPIO_PSIA2_TXDAT:
+> +	case LOCHNAGAR2_GPIO_GF_AIF3_BCLK:
+> +	case LOCHNAGAR2_GPIO_GF_AIF3_RXDAT:
+> +	case LOCHNAGAR2_GPIO_GF_AIF3_LRCLK:
+> +	case LOCHNAGAR2_GPIO_GF_AIF3_TXDAT:
+> +	case LOCHNAGAR2_GPIO_GF_AIF4_BCLK:
+> +	case LOCHNAGAR2_GPIO_GF_AIF4_RXDAT:
+> +	case LOCHNAGAR2_GPIO_GF_AIF4_LRCLK:
+> +	case LOCHNAGAR2_GPIO_GF_AIF4_TXDAT:
+> +	case LOCHNAGAR2_GPIO_GF_AIF1_BCLK:
+> +	case LOCHNAGAR2_GPIO_GF_AIF1_RXDAT:
+> +	case LOCHNAGAR2_GPIO_GF_AIF1_LRCLK:
+> +	case LOCHNAGAR2_GPIO_GF_AIF1_TXDAT:
+> +	case LOCHNAGAR2_GPIO_GF_AIF2_BCLK:
+> +	case LOCHNAGAR2_GPIO_GF_AIF2_RXDAT:
+> +	case LOCHNAGAR2_GPIO_GF_AIF2_LRCLK:
+> +	case LOCHNAGAR2_GPIO_GF_AIF2_TXDAT:
+> +	case LOCHNAGAR2_GPIO_DSP_UART1_RX:
+> +	case LOCHNAGAR2_GPIO_DSP_UART1_TX:
+> +	case LOCHNAGAR2_GPIO_DSP_UART2_RX:
+> +	case LOCHNAGAR2_GPIO_DSP_UART2_TX:
+> +	case LOCHNAGAR2_GPIO_GF_UART2_RX:
+> +	case LOCHNAGAR2_GPIO_GF_UART2_TX:
+> +	case LOCHNAGAR2_GPIO_USB_UART_RX:
+> +	case LOCHNAGAR2_GPIO_CDC_PDMCLK1:
+> +	case LOCHNAGAR2_GPIO_CDC_PDMDAT1:
+> +	case LOCHNAGAR2_GPIO_CDC_PDMCLK2:
+> +	case LOCHNAGAR2_GPIO_CDC_PDMDAT2:
+> +	case LOCHNAGAR2_GPIO_CDC_DMICCLK1:
+> +	case LOCHNAGAR2_GPIO_CDC_DMICDAT1:
+> +	case LOCHNAGAR2_GPIO_CDC_DMICCLK2:
+> +	case LOCHNAGAR2_GPIO_CDC_DMICDAT2:
+> +	case LOCHNAGAR2_GPIO_CDC_DMICCLK3:
+> +	case LOCHNAGAR2_GPIO_CDC_DMICDAT3:
+> +	case LOCHNAGAR2_GPIO_CDC_DMICCLK4:
+> +	case LOCHNAGAR2_GPIO_CDC_DMICDAT4:
+> +	case LOCHNAGAR2_GPIO_DSP_DMICCLK1:
+> +	case LOCHNAGAR2_GPIO_DSP_DMICDAT1:
+> +	case LOCHNAGAR2_GPIO_DSP_DMICCLK2:
+> +	case LOCHNAGAR2_GPIO_DSP_DMICDAT2:
+> +	case LOCHNAGAR2_GPIO_I2C2_SCL:
+> +	case LOCHNAGAR2_GPIO_I2C2_SDA:
+> +	case LOCHNAGAR2_GPIO_I2C3_SCL:
+> +	case LOCHNAGAR2_GPIO_I2C3_SDA:
+> +	case LOCHNAGAR2_GPIO_I2C4_SCL:
+> +	case LOCHNAGAR2_GPIO_I2C4_SDA:
+> +	case LOCHNAGAR2_GPIO_DSP_STANDBY:
+> +	case LOCHNAGAR2_GPIO_CDC_MCLK1:
+> +	case LOCHNAGAR2_GPIO_CDC_MCLK2:
+> +	case LOCHNAGAR2_GPIO_DSP_CLKIN:
+> +	case LOCHNAGAR2_GPIO_PSIA1_MCLK:
+> +	case LOCHNAGAR2_GPIO_PSIA2_MCLK:
+> +	case LOCHNAGAR2_GPIO_GF_GPIO1:
+> +	case LOCHNAGAR2_GPIO_GF_GPIO5:
+> +	case LOCHNAGAR2_GPIO_DSP_GPIO20:
+> +	case LOCHNAGAR2_GPIO_CHANNEL1:
+> +	case LOCHNAGAR2_GPIO_CHANNEL2:
+> +	case LOCHNAGAR2_GPIO_CHANNEL3:
+> +	case LOCHNAGAR2_GPIO_CHANNEL4:
+> +	case LOCHNAGAR2_GPIO_CHANNEL5:
+> +	case LOCHNAGAR2_GPIO_CHANNEL6:
+> +	case LOCHNAGAR2_GPIO_CHANNEL7:
+> +	case LOCHNAGAR2_GPIO_CHANNEL8:
+> +	case LOCHNAGAR2_GPIO_CHANNEL9:
+> +	case LOCHNAGAR2_GPIO_CHANNEL10:
+> +	case LOCHNAGAR2_GPIO_CHANNEL11:
+> +	case LOCHNAGAR2_GPIO_CHANNEL12:
+> +	case LOCHNAGAR2_GPIO_CHANNEL13:
+> +	case LOCHNAGAR2_GPIO_CHANNEL14:
+> +	case LOCHNAGAR2_GPIO_CHANNEL15:
+> +	case LOCHNAGAR2_GPIO_CHANNEL16:
+> +	case LOCHNAGAR2_MINICARD_RESETS:
+> +	case LOCHNAGAR2_ANALOGUE_PATH_CTRL1:
+> +	case LOCHNAGAR2_ANALOGUE_PATH_CTRL2:
+> +	case LOCHNAGAR2_COMMS_CTRL4:
+> +	case LOCHNAGAR2_SPDIF_CTRL:
+> +	case LOCHNAGAR2_POWER_CTRL:
+> +	case LOCHNAGAR2_MICVDD_CTRL1:
+> +	case LOCHNAGAR2_MICVDD_CTRL2:
+> +	case LOCHNAGAR2_VDDCORE_CDC_CTRL1:
+> +	case LOCHNAGAR2_VDDCORE_CDC_CTRL2:
+> +	case LOCHNAGAR2_SOUNDCARD_AIF_CTRL:
+> +		return true;
+> +	default:
+> +		return false;
+> +	}
+> +}
+> +
+> +static bool lochnagar2_volatile_register(struct device *dev, unsigned int reg)
+> +{
+> +	switch (reg) {
+> +	case LOCHNAGAR2_GPIO_CHANNEL1:
+> +	case LOCHNAGAR2_GPIO_CHANNEL2:
+> +	case LOCHNAGAR2_GPIO_CHANNEL3:
+> +	case LOCHNAGAR2_GPIO_CHANNEL4:
+> +	case LOCHNAGAR2_GPIO_CHANNEL5:
+> +	case LOCHNAGAR2_GPIO_CHANNEL6:
+> +	case LOCHNAGAR2_GPIO_CHANNEL7:
+> +	case LOCHNAGAR2_GPIO_CHANNEL8:
+> +	case LOCHNAGAR2_GPIO_CHANNEL9:
+> +	case LOCHNAGAR2_GPIO_CHANNEL10:
+> +	case LOCHNAGAR2_GPIO_CHANNEL11:
+> +	case LOCHNAGAR2_GPIO_CHANNEL12:
+> +	case LOCHNAGAR2_GPIO_CHANNEL13:
+> +	case LOCHNAGAR2_GPIO_CHANNEL14:
+> +	case LOCHNAGAR2_GPIO_CHANNEL15:
+> +	case LOCHNAGAR2_GPIO_CHANNEL16:
+> +	case LOCHNAGAR2_ANALOGUE_PATH_CTRL1:
+> +		return true;
+> +	default:
+> +		return false;
+> +	}
+> +}
+
+This is getting silly now.  Can't you use ranges?
+
+> +static const struct reg_default lochnagar2_reg_defaults[] = {
+> +	{ LOCHNAGAR2_CDC_AIF1_CTRL,         0x0000 },
+> +	{ LOCHNAGAR2_CDC_AIF2_CTRL,         0x0000 },
+> +	{ LOCHNAGAR2_CDC_AIF3_CTRL,         0x0000 },
+> +	{ LOCHNAGAR2_DSP_AIF1_CTRL,         0x0000 },
+> +	{ LOCHNAGAR2_DSP_AIF2_CTRL,         0x0000 },
+> +	{ LOCHNAGAR2_PSIA1_CTRL,            0x0000 },
+> +	{ LOCHNAGAR2_PSIA2_CTRL,            0x0000 },
+> +	{ LOCHNAGAR2_GF_AIF3_CTRL,          0x0000 },
+> +	{ LOCHNAGAR2_GF_AIF4_CTRL,          0x0000 },
+> +	{ LOCHNAGAR2_GF_AIF1_CTRL,          0x0000 },
+> +	{ LOCHNAGAR2_GF_AIF2_CTRL,          0x0000 },
+> +	{ LOCHNAGAR2_SPDIF_AIF_CTRL,        0x0000 },
+> +	{ LOCHNAGAR2_USB_AIF1_CTRL,         0x0000 },
+> +	{ LOCHNAGAR2_USB_AIF2_CTRL,         0x0000 },
+> +	{ LOCHNAGAR2_ADAT_AIF_CTRL,         0x0000 },
+> +	{ LOCHNAGAR2_CDC_MCLK1_CTRL,        0x0000 },
+> +	{ LOCHNAGAR2_CDC_MCLK2_CTRL,        0x0000 },
+> +	{ LOCHNAGAR2_DSP_CLKIN_CTRL,        0x0000 },
+> +	{ LOCHNAGAR2_PSIA1_MCLK_CTRL,       0x0000 },
+> +	{ LOCHNAGAR2_PSIA2_MCLK_CTRL,       0x0000 },
+> +	{ LOCHNAGAR2_SPDIF_MCLK_CTRL,       0x0000 },
+> +	{ LOCHNAGAR2_GF_CLKOUT1_CTRL,       0x0000 },
+> +	{ LOCHNAGAR2_GF_CLKOUT2_CTRL,       0x0000 },
+> +	{ LOCHNAGAR2_ADAT_MCLK_CTRL,        0x0000 },
+> +	{ LOCHNAGAR2_SOUNDCARD_MCLK_CTRL,   0x0000 },
+> +	{ LOCHNAGAR2_GPIO_FPGA_GPIO1,       0x0000 },
+> +	{ LOCHNAGAR2_GPIO_FPGA_GPIO2,       0x0000 },
+> +	{ LOCHNAGAR2_GPIO_FPGA_GPIO3,       0x0000 },
+> +	{ LOCHNAGAR2_GPIO_FPGA_GPIO4,       0x0000 },
+> +	{ LOCHNAGAR2_GPIO_FPGA_GPIO5,       0x0000 },
+> +	{ LOCHNAGAR2_GPIO_FPGA_GPIO6,       0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_GPIO1,        0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_GPIO2,        0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_GPIO3,        0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_GPIO4,        0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_GPIO5,        0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_GPIO6,        0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_GPIO7,        0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_GPIO8,        0x0000 },
+> +	{ LOCHNAGAR2_GPIO_DSP_GPIO1,        0x0000 },
+> +	{ LOCHNAGAR2_GPIO_DSP_GPIO2,        0x0000 },
+> +	{ LOCHNAGAR2_GPIO_DSP_GPIO3,        0x0000 },
+> +	{ LOCHNAGAR2_GPIO_DSP_GPIO4,        0x0000 },
+> +	{ LOCHNAGAR2_GPIO_DSP_GPIO5,        0x0000 },
+> +	{ LOCHNAGAR2_GPIO_DSP_GPIO6,        0x0000 },
+> +	{ LOCHNAGAR2_GPIO_GF_GPIO2,         0x0000 },
+> +	{ LOCHNAGAR2_GPIO_GF_GPIO3,         0x0000 },
+> +	{ LOCHNAGAR2_GPIO_GF_GPIO7,         0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_AIF1_BCLK,    0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_AIF1_RXDAT,   0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_AIF1_LRCLK,   0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_AIF1_TXDAT,   0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_AIF2_BCLK,    0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_AIF2_RXDAT,   0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_AIF2_LRCLK,   0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_AIF2_TXDAT,   0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_AIF3_BCLK,    0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_AIF3_RXDAT,   0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_AIF3_LRCLK,   0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_AIF3_TXDAT,   0x0000 },
+> +	{ LOCHNAGAR2_GPIO_DSP_AIF1_BCLK,    0x0000 },
+> +	{ LOCHNAGAR2_GPIO_DSP_AIF1_RXDAT,   0x0000 },
+> +	{ LOCHNAGAR2_GPIO_DSP_AIF1_LRCLK,   0x0000 },
+> +	{ LOCHNAGAR2_GPIO_DSP_AIF1_TXDAT,   0x0000 },
+> +	{ LOCHNAGAR2_GPIO_DSP_AIF2_BCLK,    0x0000 },
+> +	{ LOCHNAGAR2_GPIO_DSP_AIF2_RXDAT,   0x0000 },
+> +	{ LOCHNAGAR2_GPIO_DSP_AIF2_LRCLK,   0x0000 },
+> +	{ LOCHNAGAR2_GPIO_DSP_AIF2_TXDAT,   0x0000 },
+> +	{ LOCHNAGAR2_GPIO_PSIA1_BCLK,       0x0000 },
+> +	{ LOCHNAGAR2_GPIO_PSIA1_RXDAT,      0x0000 },
+> +	{ LOCHNAGAR2_GPIO_PSIA1_LRCLK,      0x0000 },
+> +	{ LOCHNAGAR2_GPIO_PSIA1_TXDAT,      0x0000 },
+> +	{ LOCHNAGAR2_GPIO_PSIA2_BCLK,       0x0000 },
+> +	{ LOCHNAGAR2_GPIO_PSIA2_RXDAT,      0x0000 },
+> +	{ LOCHNAGAR2_GPIO_PSIA2_LRCLK,      0x0000 },
+> +	{ LOCHNAGAR2_GPIO_PSIA2_TXDAT,      0x0000 },
+> +	{ LOCHNAGAR2_GPIO_GF_AIF3_BCLK,     0x0000 },
+> +	{ LOCHNAGAR2_GPIO_GF_AIF3_RXDAT,    0x0000 },
+> +	{ LOCHNAGAR2_GPIO_GF_AIF3_LRCLK,    0x0000 },
+> +	{ LOCHNAGAR2_GPIO_GF_AIF3_TXDAT,    0x0000 },
+> +	{ LOCHNAGAR2_GPIO_GF_AIF4_BCLK,     0x0000 },
+> +	{ LOCHNAGAR2_GPIO_GF_AIF4_RXDAT,    0x0000 },
+> +	{ LOCHNAGAR2_GPIO_GF_AIF4_LRCLK,    0x0000 },
+> +	{ LOCHNAGAR2_GPIO_GF_AIF4_TXDAT,    0x0000 },
+> +	{ LOCHNAGAR2_GPIO_GF_AIF1_BCLK,     0x0000 },
+> +	{ LOCHNAGAR2_GPIO_GF_AIF1_RXDAT,    0x0000 },
+> +	{ LOCHNAGAR2_GPIO_GF_AIF1_LRCLK,    0x0000 },
+> +	{ LOCHNAGAR2_GPIO_GF_AIF1_TXDAT,    0x0000 },
+> +	{ LOCHNAGAR2_GPIO_GF_AIF2_BCLK,     0x0000 },
+> +	{ LOCHNAGAR2_GPIO_GF_AIF2_RXDAT,    0x0000 },
+> +	{ LOCHNAGAR2_GPIO_GF_AIF2_LRCLK,    0x0000 },
+> +	{ LOCHNAGAR2_GPIO_GF_AIF2_TXDAT,    0x0000 },
+> +	{ LOCHNAGAR2_GPIO_DSP_UART1_RX,     0x0000 },
+> +	{ LOCHNAGAR2_GPIO_DSP_UART1_TX,     0x0000 },
+> +	{ LOCHNAGAR2_GPIO_DSP_UART2_RX,     0x0000 },
+> +	{ LOCHNAGAR2_GPIO_DSP_UART2_TX,     0x0000 },
+> +	{ LOCHNAGAR2_GPIO_GF_UART2_RX,      0x0000 },
+> +	{ LOCHNAGAR2_GPIO_GF_UART2_TX,      0x0000 },
+> +	{ LOCHNAGAR2_GPIO_USB_UART_RX,      0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_PDMCLK1,      0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_PDMDAT1,      0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_PDMCLK2,      0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_PDMDAT2,      0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_DMICCLK1,     0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_DMICDAT1,     0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_DMICCLK2,     0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_DMICDAT2,     0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_DMICCLK3,     0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_DMICDAT3,     0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_DMICCLK4,     0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_DMICDAT4,     0x0000 },
+> +	{ LOCHNAGAR2_GPIO_DSP_DMICCLK1,     0x0000 },
+> +	{ LOCHNAGAR2_GPIO_DSP_DMICDAT1,     0x0000 },
+> +	{ LOCHNAGAR2_GPIO_DSP_DMICCLK2,     0x0000 },
+> +	{ LOCHNAGAR2_GPIO_DSP_DMICDAT2,     0x0000 },
+> +	{ LOCHNAGAR2_GPIO_I2C2_SCL,         0x0000 },
+> +	{ LOCHNAGAR2_GPIO_I2C2_SDA,         0x0000 },
+> +	{ LOCHNAGAR2_GPIO_I2C3_SCL,         0x0000 },
+> +	{ LOCHNAGAR2_GPIO_I2C3_SDA,         0x0000 },
+> +	{ LOCHNAGAR2_GPIO_I2C4_SCL,         0x0000 },
+> +	{ LOCHNAGAR2_GPIO_I2C4_SDA,         0x0000 },
+> +	{ LOCHNAGAR2_GPIO_DSP_STANDBY,      0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_MCLK1,        0x0000 },
+> +	{ LOCHNAGAR2_GPIO_CDC_MCLK2,        0x0000 },
+> +	{ LOCHNAGAR2_GPIO_DSP_CLKIN,        0x0000 },
+> +	{ LOCHNAGAR2_GPIO_PSIA1_MCLK,       0x0000 },
+> +	{ LOCHNAGAR2_GPIO_PSIA2_MCLK,       0x0000 },
+> +	{ LOCHNAGAR2_GPIO_GF_GPIO1,         0x0000 },
+> +	{ LOCHNAGAR2_GPIO_GF_GPIO5,         0x0000 },
+> +	{ LOCHNAGAR2_GPIO_DSP_GPIO20,       0x0000 },
+> +	{ LOCHNAGAR2_MINICARD_RESETS,       0x0000 },
+> +	{ LOCHNAGAR2_ANALOGUE_PATH_CTRL2,   0x0000 },
+> +	{ LOCHNAGAR2_COMMS_CTRL4,           0x0001 },
+> +	{ LOCHNAGAR2_SPDIF_CTRL,            0x0008 },
+> +	{ LOCHNAGAR2_POWER_CTRL,            0x0001 },
+> +	{ LOCHNAGAR2_SOUNDCARD_AIF_CTRL,    0x0000 },
+> +};
+
+OMG!  Vile, vile vile!
+
+> +static const struct regmap_config lochnagar2_i2c_regmap = {
+> +	.reg_bits = 16,
+> +	.val_bits = 16,
+> +	.reg_format_endian = REGMAP_ENDIAN_BIG,
+> +	.val_format_endian = REGMAP_ENDIAN_BIG,
+> +
+> +	.max_register = 0x1F1F,
+> +	.readable_reg = lochnagar2_readable_register,
+> +	.volatile_reg = lochnagar2_volatile_register,
+> +
+> +	.cache_type = REGCACHE_RBTREE,
+> +
+> +	.reg_defaults = lochnagar2_reg_defaults,
+> +	.num_reg_defaults = ARRAY_SIZE(lochnagar2_reg_defaults),
+> +};
+> +
+> +static const struct reg_sequence lochnagar2_patch[] = {
+> +	{ 0x00EE, 0x0000 },
+> +	{ 0x00F0, 0x0001 },
+> +};
+> +
+> +static struct mfd_cell lochnagar2_devs[] = {
+> +	{
+> +		.name = "lochnagar-pinctrl"
+> +	},
+> +	{
+> +		.name = "lochnagar-clk"
+> +	},
+> +	{
+> +		.name = "lochnagar-regulator"
+> +	},
+> +	{
+> +		.name = "lochnagar2-sound-card",
+> +	},
+> +};
+
+All the same as above.
+
+> +static struct lochnagar_config {
+> +	int id;
+> +	const char * const name;
+> +	enum lochnagar_type type;
+> +	const struct regmap_config *regmap;
+> +	struct mfd_cell *devs;
+> +	int ndevs;
+> +	const struct reg_sequence *patch;
+> +	int npatch;
+> +} lochnagar_configs[] = {
+
+Not a fan of this syntax.
+
+Please separate the struct declaration and its use.
+
+> +	{
+> +		.id = 0x50,
+> +		.name = "lochnagar1",
+> +		.type = LOCHNAGAR1,
+> +		.regmap = &lochnagar1_i2c_regmap,
+> +		.devs = lochnagar1_devs,
+> +		.ndevs = ARRAY_SIZE(lochnagar1_devs),
+> +		.patch = lochnagar1_patch,
+> +		.npatch = ARRAY_SIZE(lochnagar1_patch),
+> +	},
+> +	{
+> +		.id = 0xCB58,
+> +		.name = "lochnagar2",
+> +		.type = LOCHNAGAR2,
+> +		.regmap = &lochnagar2_i2c_regmap,
+> +		.devs = lochnagar2_devs,
+> +		.ndevs = ARRAY_SIZE(lochnagar2_devs),
+> +		.patch = lochnagar2_patch,
+> +		.npatch = ARRAY_SIZE(lochnagar2_patch),
+> +	},
+> +};
+> +
+> +static const struct of_device_id lochnagar_of_match[] = {
+> +	{ .compatible = "cirrus,lochnagar1", .data = &lochnagar_configs[0] },
+> +	{ .compatible = "cirrus,lochnagar2", .data = &lochnagar_configs[1] },
+> +	{},
+> +};
+> +
+> +static int lochnagar_wait_for_boot(struct regmap *regmap, unsigned int *id)
+> +{
+> +	int i, ret;
+> +
+> +	for (i = 0; i < LOCHNAGAR_BOOT_RETRIES; ++i) {
+> +		msleep(LOCHNAGAR_BOOT_DELAY_MS);
+> +
+> +		ret = regmap_read(regmap, LOCHNAGAR_SOFTWARE_RESET, id);
+> +		if (!ret)
+> +			return ret;
+> +	}
+> +
+> +	return -ETIMEDOUT;
+> +}
+> +
+> +int lochnagar_update_config(struct lochnagar *lochnagar)
+> +{
+> +	struct regmap *regmap = lochnagar->regmap;
+> +	unsigned int done = LOCHNAGAR2_ANALOGUE_PATH_UPDATE_STS_MASK;
+> +	int timeout_ms = LOCHNAGAR_BOOT_DELAY_MS * LOCHNAGAR_BOOT_RETRIES;
+> +	unsigned int val = 0;
+> +	int ret;
+> +
+> +	switch (lochnagar->type) {
+> +	case LOCHNAGAR1:
+> +		return 0;
+> +	case LOCHNAGAR2:
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+
+This can be done with a simple if () statement:
+
+if (lochnagar->type != LOCHNAGAR2)
+   return 0;
+
+> +	ret = regmap_write(regmap, LOCHNAGAR2_ANALOGUE_PATH_CTRL1, 0);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = regmap_write(regmap, LOCHNAGAR2_ANALOGUE_PATH_CTRL1,
+> +			   LOCHNAGAR2_ANALOGUE_PATH_UPDATE_MASK);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = regmap_read_poll_timeout(regmap,
+> +				       LOCHNAGAR2_ANALOGUE_PATH_CTRL1, val,
+> +				       (val & done), LOCHNAGAR_CONFIG_POLL_US,
+> +				       timeout_ms * 1000);
+> +	if (ret < 0)
+> +		return ret;
+
+What does all this do then?  You need a comment.
+
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(lochnagar_update_config);
+> +
+> +static int lochnagar_i2c_probe(struct i2c_client *i2c)
+> +{
+> +	struct device *dev = &i2c->dev;
+> +	const struct lochnagar_config *config = NULL;
+> +	const struct of_device_id *of_id;
+> +	struct lochnagar *lochnagar;
+> +	unsigned int val;
+> +	struct gpio_desc *reset, *present;
+
+Put this up higher in the list to keep the simple 'int's together.
+
+> +	unsigned int firmwareid;
+> +	int devid, rev;
+
+Why do these need to be signed?
+
+> +	int ret;
+> +
+> +	lochnagar = devm_kzalloc(dev, sizeof(*lochnagar), GFP_KERNEL);
+> +	if (!lochnagar)
+> +		return -ENOMEM;
+> +
+> +	of_id = of_match_device(lochnagar_of_match, dev);
+> +	if (!of_id)
+> +		return -EINVAL;
+> +
+> +	config = of_id->data;
+> +
+> +	lochnagar->dev = dev;
+> +	mutex_init(&lochnagar->analogue_config_lock);
+> +
+> +	dev_set_drvdata(dev, lochnagar);
+> +
+> +	reset = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
+> +	if (IS_ERR(reset)) {
+> +		ret = PTR_ERR(reset);
+> +		dev_err(dev, "Failed to get reset GPIO: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	present = devm_gpiod_get_optional(dev, "present", GPIOD_OUT_HIGH);
+> +	if (IS_ERR(present)) {
+> +		ret = PTR_ERR(present);
+> +		dev_err(dev, "Failed to get present GPIO: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	msleep(20);
+
+What's this for?
+
+> +	/* Bring Lochnagar out of reset */
+> +	gpiod_set_value_cansleep(reset, 1);
+> +
+> +	/* Identify Lochnagar */
+> +	lochnagar->type = config->type;
+
+'\n'
+
+> +	lochnagar->regmap = devm_regmap_init_i2c(i2c, config->regmap);
+> +	if (IS_ERR(lochnagar->regmap)) {
+> +		ret = PTR_ERR(lochnagar->regmap);
+> +		dev_err(dev, "Failed to allocate register map: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/* Wait for Lochnagar to boot */
+> +	ret = lochnagar_wait_for_boot(lochnagar->regmap, &val);
+> +	if (ret < 0) {
+> +		dev_err(dev, "Failed to read device ID: %d\n", ret);
+
+Eh?
+
+So you read the LOCHNAGAR_SOFTWARE_RESET register and out pops the
+device/revision IDs?  That's just random!
+
+> +		return ret;
+> +	}
+> +
+> +	devid = val & LOCHNAGAR_DEVICE_ID_MASK;
+> +	rev = val & LOCHNAGAR_REV_ID_MASK;
+> +
+> +	if (devid != config->id) {
+> +		dev_err(dev,
+> +			"ID does not match %s (expected 0x%x got 0x%x)\n",
+> +			config->name, config->id, devid);
+> +		return -ENODEV;
+> +	}
+> +
+> +	/* Identify firmware */
+> +	ret = regmap_read(lochnagar->regmap, LOCHNAGAR_FIRMWARE_ID1, &val);
+> +	if (ret < 0) {
+> +		dev_err(dev, "Failed to read firmware id 1: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	firmwareid = val;
+> +
+> +	ret = regmap_read(lochnagar->regmap, LOCHNAGAR_FIRMWARE_ID2, &val);
+> +	if (ret < 0) {
+> +		dev_err(dev, "Failed to read firmware id 2: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	firmwareid |= (val << config->regmap->val_bits);
+> +
+> +	dev_info(dev, "Found %s (0x%x) revision %d firmware 0x%.6x\n",
+> +		 config->name, devid, rev + 1, firmwareid);
+> +
+> +	ret = regmap_register_patch(lochnagar->regmap, config->patch,
+> +				    config->npatch);
+> +	if (ret < 0) {
+> +		dev_err(dev, "Failed to register patch: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE, config->devs,
+> +				   config->ndevs, NULL, 0, NULL);
+> +	if (ret != 0) {
+
+if (ret)
+
+> +		dev_err(dev, "Failed to add subdevices: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	ret = devm_of_platform_populate(dev);
+> +	if (ret < 0) {
+> +		dev_err(dev, "Failed to populate child nodes: %d\n", ret);
+> +		return ret;
+> +	}
+
+Please do not mix OF and MFD device registration strategies.
+
+Pick one and register all devices through your chosen method.
+
+> +	return ret;
+> +}
+> +
+> +static struct i2c_driver lochnagar_i2c_driver = {
+> +	.driver = {
+> +		.name = "lochnagar",
+> +		.of_match_table = of_match_ptr(lochnagar_of_match),
+> +		.suppress_bind_attrs = true,
+> +	},
+> +
+
+No need for '\n'.
+
+> +	.probe_new = lochnagar_i2c_probe,
+
+Hasn't this been replaced yet?
+
+> +};
+> +
+> +static int __init lochnagar_i2c_init(void)
+> +{
+> +	int ret;
+> +
+> +	ret = i2c_add_driver(&lochnagar_i2c_driver);
+> +	if (ret != 0)
+
+if (ret)
+
+> +		pr_err("Failed to register Lochnagar driver: %d\n", ret);
+> +
+> +	return ret;
+> +}
+> +subsys_initcall(lochnagar_i2c_init);
+> diff --git a/include/linux/mfd/lochnagar.h b/include/linux/mfd/lochnagar.h
+> new file mode 100644
+> index 0000000000000..be485d6714f7c
+> --- /dev/null
+> +++ b/include/linux/mfd/lochnagar.h
+> @@ -0,0 +1,48 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Lochnagar internals
+> + *
+> + * Copyright (c) 2013-2018 Cirrus Logic, Inc. and
+> + *                         Cirrus Logic International Semiconductor Ltd.
+> + *
+> + * Author: Charles Keepax <ckeepax@opensource.cirrus.com>
+> + */
+> +
+> +#ifndef CIRRUS_LOCHNAGAR_H
+> +#define CIRRUS_LOCHNAGAR_H
+> +
+> +#include "lochnagar1_regs.h"
+> +#include "lochnagar2_regs.h"
+
+Why are you including these here?
+
+> +struct device;
+> +struct regmap;
+> +struct mutex;
+
+Just add the include files.
+
+> +enum lochnagar_type {
+> +	LOCHNAGAR1,
+> +	LOCHNAGAR2,
+> +};
+> +
+> +struct lochnagar {
+> +	enum lochnagar_type type;
+> +	struct device *dev;
+> +	struct regmap *regmap;
+> +
+> +	/* Lock to protect updates to the analogue configuration */
+> +	struct mutex analogue_config_lock;
+> +};
+
+Kerneldoc header please.
+
+> +/* Register Addresses */
+> +#define LOCHNAGAR_SOFTWARE_RESET                             0x00
+> +#define LOCHNAGAR_FIRMWARE_ID1                               0x01
+> +#define LOCHNAGAR_FIRMWARE_ID2                               0x02
+> +
+> +/* (0x0000)  Software Reset */
+> +#define LOCHNAGAR_DEVICE_ID_MASK                           0xFFFC
+> +#define LOCHNAGAR_DEVICE_ID_SHIFT                               2
+> +#define LOCHNAGAR_REV_ID_MASK                              0x0003
+> +#define LOCHNAGAR_REV_ID_SHIFT                                  0
+> +
+> +int lochnagar_update_config(struct lochnagar *lochnagar);
+> +
+> +#endif
+
+> diff --git a/include/linux/mfd/lochnagar1_regs.h b/include/linux/mfd/lochnagar1_regs.h
+> diff --git a/include/linux/mfd/lochnagar2_regs.h b/include/linux/mfd/lochnagar2_regs.h
+
+So Lochnagar 1 and 2 are completely different devices?
+
+What do they do?
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
