@@ -2,112 +2,203 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14066ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:12:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6D49C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:13:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFFA22075D
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:12:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dIuAY5VI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFFA22075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9C9412075D
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:13:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C9412075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728151AbeJYTo6 (ORCPT
+        id S1727677AbeJYTpi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 15:44:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49244 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 15:45:38 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:46856 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727308AbeJYTo6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 15:44:58 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D81BA2075D;
-        Thu, 25 Oct 2018 11:12:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540465960;
-        bh=8eCAFtS3OEr+w/IQgXAQ8+ULC7/p1fVM8Joz0csrUDY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=dIuAY5VI81zLaP63GKZ1BY8pS2Di1s4aUiaUYHrIoW6u3SXv6EQQEBZKlonzLiBwj
-         s3+sQdN9SmQustMBEnEJTzbY438xDb6EhqOXZHfmLJAxQOq0Lb+QCkCZpc299lWf3O
-         0X+XmrE7Ph7pd1OPImJshf7aDlWPCxV4795ZMjlQ=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id CC0D1142C5F; Thu, 25 Oct 2018 08:12:37 -0300 (-03)
-Date:   Thu, 25 Oct 2018 08:12:37 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v14 0/3]: perf: reduce data loss when profiling highly
- parallel CPU bound workloads
-Message-ID: <20181025111237.GA3782@kernel.org>
-References: <d6bd3626-8c7c-ca12-8adf-31fe15726446@linux.intel.com>
- <20181015101748.GB29504@krava>
- <f61f8e1f-c411-923f-96bc-c8075a3a698c@linux.intel.com>
- <20181025085439.GA4722@krava>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181025085439.GA4722@krava>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S1727567AbeJYTph (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 15:45:37 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 386AF1A0148;
+        Thu, 25 Oct 2018 13:13:17 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0E5B31A0146;
+        Thu, 25 Oct 2018 13:13:07 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id BC9F4402BE;
+        Thu, 25 Oct 2018 19:12:54 +0800 (SGT)
+From:   Xiaowei Bao <xiaowei.bao@nxp.com>
+To:     bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        shawnguo@kernel.org, leoyang.li@nxp.com, kishon@ti.com,
+        lorenzo.pieralisi@arm.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org, minghuan.Lian@nxp.com,
+        mingkai.hu@nxp.com, roy.zang@nxp.com, kstewart@linuxfoundation.org,
+        cyrille.pitchen@free-electrons.com, pombredanne@nexb.com,
+        shawn.lin@rock-chips.com, niklas.cassel@axis.com,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org
+Cc:     Bao Xiaowei <xiaowei.bao@nxp.com>
+Subject: [PATCH 1/6] arm64: dts: Add the status property disable PCIe
+Date:   Thu, 25 Oct 2018 19:08:56 +0800
+Message-Id: <20181025110901.5680-1-xiaowei.bao@nxp.com>
+X-Mailer: git-send-email 2.14.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Oct 25, 2018 at 10:54:39AM +0200, Jiri Olsa escreveu:
-> On Thu, Oct 25, 2018 at 10:59:36AM +0300, Alexey Budankov wrote:
-> > Hi,
-> > 
-> > On 15.10.2018 13:17, Jiri Olsa wrote:
-> > > On Mon, Oct 15, 2018 at 09:26:09AM +0300, Alexey Budankov wrote:
-> > >>
-> > >> Currently in record mode the tool implements trace writing serially. 
-> > >> The algorithm loops over mapped per-cpu data buffers and stores 
-> > >> ready data chunks into a trace file using write() system call.
-> > >>
-> > >> At some circumstances the kernel may lack free space in a buffer 
-> > >> because the other buffer's half is not yet written to disk due to 
-> > >> some other buffer's data writing by the tool at the moment.
-> > >>
-> > >> Thus serial trace writing implementation may cause the kernel 
-> > >> to loose profiling data and that is what observed when profiling 
-> > >> highly parallel CPU bound workloads on machines with big number 
-> > >> of cores.
-> > >>
-> > >> Experiment with profiling matrix multiplication code executing 128 
-> > >> threads on Intel Xeon Phi (KNM) with 272 cores, like below,
-> > >> demonstrates data loss metrics value of 98%:
-> > >>
-> > >> /usr/bin/time perf record -o /tmp/perf-ser.data -a -N -B -T -R -g \
-> > >>     --call-graph dwarf,1024 --user-regs=IP,SP,BP --switch-events \
-> > >>     -e cycles,instructions,ref-cycles,software/period=1,name=cs,config=0x3/Duk -- \
-> > >>     matrix.gcc
-> > > 
-> > > I ran above on 24 cpu server and could not see the gain,
-> > > but I guess I'd need much bigger server to see that
-> > > 
-> > > anyway, the code is now nicely separated, and given the
-> > > advertised results below I have no objections
-> > > 
-> > > Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-> > 
-> > Is the plan Jiri mentioned earlier to have it as a stand alone patch kit 
-> > or upstream the changes into mainline?
-> 
-> I haven't heard from Arnaldo yet, but I'd like to have this merged in
+From: Bao Xiaowei <xiaowei.bao@nxp.com>
 
-I'll try and go over it today.
+Add the status property disable the PCIe, the property will be enable
+by bootloader.
 
-- Arnaldo
+Signed-off-by: Bao Xiaowei <xiaowei.bao@nxp.com>
+---
+ arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi |    1 +
+ arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi |    3 +++
+ arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi |    3 +++
+ arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi |    3 +++
+ arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi |    4 ++++
+ 5 files changed, 14 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
+index 5da732f..21f2b3b 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
+@@ -496,6 +496,7 @@
+ 					<0000 0 0 2 &gic 0 111 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 3 &gic 0 112 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 4 &gic 0 113 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
+ 		};
+ 	};
+ 
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+index 3fed504..760d510 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+@@ -683,6 +683,7 @@
+ 					<0000 0 0 2 &gic 0 111 0x4>,
+ 					<0000 0 0 3 &gic 0 112 0x4>,
+ 					<0000 0 0 4 &gic 0 113 0x4>;
++			status = "disabled";
+ 		};
+ 
+ 		pcie@3500000 {
+@@ -708,6 +709,7 @@
+ 					<0000 0 0 2 &gic 0 121 0x4>,
+ 					<0000 0 0 3 &gic 0 122 0x4>,
+ 					<0000 0 0 4 &gic 0 123 0x4>;
++			status = "disabled";
+ 		};
+ 
+ 		pcie@3600000 {
+@@ -733,6 +735,7 @@
+ 					<0000 0 0 2 &gic 0 155 0x4>,
+ 					<0000 0 0 3 &gic 0 156 0x4>,
+ 					<0000 0 0 4 &gic 0 157 0x4>;
++			status = "disabled";
+ 		};
+ 	};
+ 
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+index 51cbd50..64d334c 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+@@ -652,6 +652,7 @@
+ 					<0000 0 0 2 &gic GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 3 &gic GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 4 &gic GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
+ 		};
+ 
+ 		pcie@3500000 {
+@@ -677,6 +678,7 @@
+ 					<0000 0 0 2 &gic GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 3 &gic GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 4 &gic GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
+ 		};
+ 
+ 		pcie@3600000 {
+@@ -702,6 +704,7 @@
+ 					<0000 0 0 2 &gic GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 3 &gic GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 4 &gic GIC_SPI 154 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
+ 		};
+ 
+ 	};
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
+index a07f612..9deb9cb 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
+@@ -533,6 +533,7 @@
+ 					<0000 0 0 2 &gic 0 0 0 110 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 3 &gic 0 0 0 111 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 4 &gic 0 0 0 112 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
+ 		};
+ 
+ 		pcie@3500000 {
+@@ -557,6 +558,7 @@
+ 					<0000 0 0 2 &gic 0 0 0 115 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 3 &gic 0 0 0 116 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 4 &gic 0 0 0 117 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
+ 		};
+ 
+ 		pcie@3600000 {
+@@ -581,6 +583,7 @@
+ 					<0000 0 0 2 &gic 0 0 0 120 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 3 &gic 0 0 0 121 IRQ_TYPE_LEVEL_HIGH>,
+ 					<0000 0 0 4 &gic 0 0 0 122 IRQ_TYPE_LEVEL_HIGH>;
++			status = "disabled";
+ 		};
+ 
+ 		cluster1_core0_watchdog: wdt@c000000 {
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
+index d188774..5732e3b 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
+@@ -648,6 +648,7 @@
+ 					<0000 0 0 2 &gic 0 0 0 110 4>,
+ 					<0000 0 0 3 &gic 0 0 0 111 4>,
+ 					<0000 0 0 4 &gic 0 0 0 112 4>;
++			status = "disabled";
+ 		};
+ 
+ 		pcie2: pcie@3500000 {
+@@ -669,6 +670,7 @@
+ 					<0000 0 0 2 &gic 0 0 0 115 4>,
+ 					<0000 0 0 3 &gic 0 0 0 116 4>,
+ 					<0000 0 0 4 &gic 0 0 0 117 4>;
++			status = "disabled";
+ 		};
+ 
+ 		pcie3: pcie@3600000 {
+@@ -690,6 +692,7 @@
+ 					<0000 0 0 2 &gic 0 0 0 120 4>,
+ 					<0000 0 0 3 &gic 0 0 0 121 4>,
+ 					<0000 0 0 4 &gic 0 0 0 122 4>;
++			status = "disabled";
+ 		};
+ 
+ 		pcie4: pcie@3700000 {
+@@ -711,6 +714,7 @@
+ 					<0000 0 0 2 &gic 0 0 0 125 4>,
+ 					<0000 0 0 3 &gic 0 0 0 126 4>,
+ 					<0000 0 0 4 &gic 0 0 0 127 4>;
++			status = "disabled";
+ 		};
+ 
+ 		sata0: sata@3200000 {
+-- 
+1.7.1
+
