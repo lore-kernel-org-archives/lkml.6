@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 409F0ECDE46
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F711C46475
 	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09D7920870
+	by mail.kernel.org (Postfix) with ESMTP id 4280A21479
 	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="K9wL3Jau"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09D7920870
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JllnNF1I"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4280A21479
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730479AbeJYWwU (ORCPT
+        id S1730493AbeJYWwV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:52:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34236 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:52:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34316 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730432AbeJYWwR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:52:17 -0400
+        id S1730453AbeJYWwU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:52:20 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2773C2085B;
-        Thu, 25 Oct 2018 14:19:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C60A3208A3;
+        Thu, 25 Oct 2018 14:19:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477160;
-        bh=pZ0LopufCPj98I+pErMges8QBFY34MAjoIVHUQJw/kA=;
+        s=default; t=1540477162;
+        bh=z9kOXNNHOiwJZkyxo2GAHP07xzIJTmqr5xMFQBRSaMs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K9wL3JauaLQC3do4rNUnhd2JDd0ZYm+rZVcXLn5PKRvlhT6TIT+w+cM5M+rQYzR1/
-         aGreJnqkRMYCR0VYvCeogHbwjUusNnmMmSX0HSYNZHo9LZFFoM4ppzw6R9IcKZUdSR
-         gN9646Y4YHeIs7ZIM/+eclNP9gNAQTjtO3B8ZqOc=
+        b=JllnNF1IJT5oO95hqsJTR3bvh9vxBdM9caK8c2mXopBPgPTygwKZ9PHF9sjU4N28E
+         uYJpEtcbOSF4gj9wVWbLnFpfWucoZYoKk5J4PqaVwW2kDPI2OqZ4HNJEV1xVeAPE1L
+         ntqUnwPU56WE17hQG86UDPgwCUvk9tvRLxSH+lyc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+Cc:     Tony Lindgren <tony@atomide.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Felipe Balbi <balbi@ti.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 15/98] usb: musb: Fix a few off-by-one lengths
-Date:   Thu, 25 Oct 2018 10:17:30 -0400
-Message-Id: <20181025141853.214051-15-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 17/98] usb: musb: Fix randconfig build issues for Kconfig options
+Date:   Thu, 25 Oct 2018 10:17:32 -0400
+Message-Id: <20181025141853.214051-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
 References: <20181025141853.214051-1-sashal@kernel.org>
@@ -52,86 +53,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+From: Tony Lindgren <tony@atomide.com>
 
-[ Upstream commit e87c3f80ad0490d26ffe04754b7d094463b40f30 ]
+[ Upstream commit c0442479652b99b62dd1ffccb34231caff25751c ]
 
-!strncmp(buf, "force host", 9) is true if and only if buf starts with
-"force hos". This was obviously not what was intended. The same error
-exists for "force full-speed", "force high-speed" and "test
-packet". Using strstarts avoids the error-prone hardcoding of the
-prefix length.
+Commit 82c02f58ba3a ("usb: musb: Allow multiple glue layers to be
+built in") enabled selecting multiple glue layers, which in turn
+exposed things more for randconfig builds. If NOP_USB_XCEIV is
+built-in and TUSB6010 is a loadable module, we will get:
 
-For consistency, also change the other occurences of the !strncmp
-idiom.
+drivers/built-in.o: In function `tusb_remove':
+tusb6010.c:(.text+0x16a817): undefined reference to `usb_phy_generic_unregister'
+drivers/built-in.o: In function `tusb_probe':
+tusb6010.c:(.text+0x16b24e): undefined reference to `usb_phy_generic_register'
+make: *** [vmlinux] Error 1
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Let's fix this the same way as commit 70c1ff4b3c86 ("usb: musb:
+tusb-dma can't be built-in if tusb is not").
+
+And while at it, let's not allow selecting the glue layers except
+on platforms really using them unless COMPILE_TEST is specified:
+
+- TUSB6010 is in practise only used on omaps
+
+- DSPS is only used on TI platforms
+
+- UX500 is only used on STE platforms
+
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Reported-by: Jim Davis <jim.epost@gmail.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Felipe Balbi <balbi@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/musb/musb_cppi41.c  |  4 ++--
- drivers/usb/musb/musb_debugfs.c | 16 ++++++++--------
- 2 files changed, 10 insertions(+), 10 deletions(-)
+ drivers/usb/musb/Kconfig | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/usb/musb/musb_cppi41.c b/drivers/usb/musb/musb_cppi41.c
-index 2a535b70af21..3d69971156ea 100644
---- a/drivers/usb/musb/musb_cppi41.c
-+++ b/drivers/usb/musb/musb_cppi41.c
-@@ -629,9 +629,9 @@ static int cppi41_dma_controller_start(struct cppi41_dma_controller *controller)
- 		ret = of_property_read_string_index(np, "dma-names", i, &str);
- 		if (ret)
- 			goto err;
--		if (!strncmp(str, "tx", 2))
-+		if (strstarts(str, "tx"))
- 			is_tx = 1;
--		else if (!strncmp(str, "rx", 2))
-+		else if (strstarts(str, "rx"))
- 			is_tx = 0;
- 		else {
- 			dev_err(dev, "Wrong dmatype %s\n", str);
-diff --git a/drivers/usb/musb/musb_debugfs.c b/drivers/usb/musb/musb_debugfs.c
-index 4c216790e86b..05d1b203f0d0 100644
---- a/drivers/usb/musb/musb_debugfs.c
-+++ b/drivers/usb/musb/musb_debugfs.c
-@@ -194,30 +194,30 @@ static ssize_t musb_test_mode_write(struct file *file,
- 	if (copy_from_user(&buf, ubuf, min_t(size_t, sizeof(buf) - 1, count)))
- 		return -EFAULT;
+diff --git a/drivers/usb/musb/Kconfig b/drivers/usb/musb/Kconfig
+index dbc56eb5eee4..5ab24cd38f37 100644
+--- a/drivers/usb/musb/Kconfig
++++ b/drivers/usb/musb/Kconfig
+@@ -73,6 +73,8 @@ config USB_MUSB_DA8XX
  
--	if (!strncmp(buf, "force host", 9))
-+	if (strstarts(buf, "force host"))
- 		test = MUSB_TEST_FORCE_HOST;
+ config USB_MUSB_TUSB6010
+ 	tristate "TUSB6010"
++	depends on ARCH_OMAP2PLUS || COMPILE_TEST
++	depends on NOP_USB_XCEIV = USB_MUSB_HDRC # both built-in or both modules
  
--	if (!strncmp(buf, "fifo access", 11))
-+	if (strstarts(buf, "fifo access"))
- 		test = MUSB_TEST_FIFO_ACCESS;
+ config USB_MUSB_OMAP2PLUS
+ 	tristate "OMAP2430 and onwards"
+@@ -86,6 +88,7 @@ config USB_MUSB_AM35X
+ config USB_MUSB_DSPS
+ 	tristate "TI DSPS platforms"
+ 	select USB_MUSB_AM335X_CHILD
++	depends on ARCH_OMAP2PLUS || COMPILE_TEST
+ 	depends on OF_IRQ
  
--	if (!strncmp(buf, "force full-speed", 15))
-+	if (strstarts(buf, "force full-speed"))
- 		test = MUSB_TEST_FORCE_FS;
+ config USB_MUSB_BLACKFIN
+@@ -94,6 +97,7 @@ config USB_MUSB_BLACKFIN
  
--	if (!strncmp(buf, "force high-speed", 15))
-+	if (strstarts(buf, "force high-speed"))
- 		test = MUSB_TEST_FORCE_HS;
+ config USB_MUSB_UX500
+ 	tristate "Ux500 platforms"
++	depends on ARCH_U8500 || COMPILE_TEST
  
--	if (!strncmp(buf, "test packet", 10)) {
-+	if (strstarts(buf, "test packet")) {
- 		test = MUSB_TEST_PACKET;
- 		musb_load_testpacket(musb);
- 	}
- 
--	if (!strncmp(buf, "test K", 6))
-+	if (strstarts(buf, "test K"))
- 		test = MUSB_TEST_K;
- 
--	if (!strncmp(buf, "test J", 6))
-+	if (strstarts(buf, "test J"))
- 		test = MUSB_TEST_J;
- 
--	if (!strncmp(buf, "test SE0 NAK", 12))
-+	if (strstarts(buf, "test SE0 NAK"))
- 		test = MUSB_TEST_SE0_NAK;
- 
- 	musb_writeb(musb->mregs, MUSB_TESTMODE, test);
+ config USB_MUSB_JZ4740
+ 	tristate "JZ4740"
 -- 
 2.17.1
 
