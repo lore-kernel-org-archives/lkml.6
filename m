@@ -2,117 +2,118 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DA05C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 20:36:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40DF4ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 20:37:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB4512083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 20:36:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F124620834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 20:37:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="UQvFa6o8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB4512083E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JtDYxtk5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F124620834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726013AbeJZFLI (ORCPT
+        id S1726198AbeJZFMH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 01:11:08 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34895 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725842AbeJZFLI (ORCPT
+        Fri, 26 Oct 2018 01:12:07 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:34509 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726065AbeJZFMH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 01:11:08 -0400
-Received: by mail-lf1-f66.google.com with SMTP id d7-v6so7859435lfi.2
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 13:36:53 -0700 (PDT)
+        Fri, 26 Oct 2018 01:12:07 -0400
+Received: by mail-pg1-f193.google.com with SMTP id g12-v6so4577889pgs.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 13:37:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qwqH7ghNRicmHmNn8jgoDXxPtuAHgcO+Zu5ALu+7dIc=;
-        b=UQvFa6o8oFPjOEiJSKFKSTdILmiF+kjVao6/040Fpqp79qCxtTkkDV2CxL75qegIlH
-         eP9kU1GGu9nX/Oi8oow3/iHcQdWWYuoxgqxv0PUZM26QjV9Yj7CRPftujB3VM5WaESIs
-         VjA2Z4aq/QpFu9892sE3wcKMpptnvx+JftvBrJnXbC7W5/L6LdFWB/HqRasPsFhE+UW3
-         hyB9CANtd22SZhR6kNShl+bel4AidQ2VK2PXfl4immH37h+apFy2lKItsKyYznIjcfJz
-         QQ/0wbxYKzyJDd3N3lRJwObNpPHZeN0eLfRSrd3WJ5NRkrKcAY49QkCH5lXxlw/R247k
-         TBGA==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=iuhhLYWtDtX4hqesnv7GhJsIsubIoHe/yfabGPoTWwk=;
+        b=JtDYxtk5ANxr/0mKAfzuycN55DUd8qEWYfV4MsjLVQ8MmSYGGYOTQNEnuVm5M0mF/X
+         X9ZwqLDK5jmhdsmBLrOSkMe8EbjyvvKbY6zP0/JdnM8ia5r4ohpzRAN/9DMWQuRBNLT2
+         lC0WWKkS/a8jcCHSTeie2RoI9fo5rucuqWRwY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qwqH7ghNRicmHmNn8jgoDXxPtuAHgcO+Zu5ALu+7dIc=;
-        b=abzXSjFJITZ/TvjL5Wcz8MJ4e/c/DkOErvUV6wWmZZfvo4aNTWfu6aMv3MsAojCkI7
-         qIK5sZxZ7fJf77pAm56nub95gJkchbrz37BWDnoqb2khsMWwxktelY8Twf6g511S54CN
-         66+PesUsBUGvoYDiUsQLTb+Zb7HWr1jQ2H3eqxRmHIFjRyXnS3tuGxT5NWkoNXIjjnni
-         RCpNDFxFgZcX+NWSp78iNau66Z7CK37VbQNFT+fx/Men/uBBlbVc6x8sNwd+PAzWd2Yc
-         xZsq5uYpA0dZGIkCOHxdZYCdW+mK8fDLkbd6GJ/wLnJ68daJ+P95UvqUqBwU3NpOkY7H
-         5XDA==
-X-Gm-Message-State: AGRZ1gKO+XniO6gN/Nu6iUOtQkBB/4OAB9gWU5DzKGfwdSyLU36GAXJJ
-        ce5CursiiTB9v1bD8bsRKctdUsS9V5tpV37AjNDT
-X-Google-Smtp-Source: AJdET5f7fV+cRqfoVPAH4NhWEqidjIT/QQeQo1vp6GspyypWfF9p3/32tTdiffFsP8U8rURqmSphRQcGZHT+Ot++HAE=
-X-Received: by 2002:a19:e601:: with SMTP id d1mr455742lfh.71.1540499812266;
- Thu, 25 Oct 2018 13:36:52 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=iuhhLYWtDtX4hqesnv7GhJsIsubIoHe/yfabGPoTWwk=;
+        b=LkBgZIBy+u3hDSJGqrj3Abfykv4jU4u55ZNu6jqp7jaYNXZuIa/kmy4btslCcLS31h
+         7xZoAfDhHe5VPLu4pbKaUaZjbNYc4tFL4MPBj0VNBTBZjQy9RJ7dlsWJyykotSeYnneu
+         R/O1z3M/YxdJ5FBRmOV9ctpdWG+EjMGibWHfWRMN9ECdUSErulBDRim9f183K4jIBIbN
+         viVPRFOar8w2V7sH8XvhRRtXQRjiG3EU05aF+98YTKsUut2MtN2oJ57tZRUDL3YDNFl7
+         vU1ON87K2pIMiHM61EfBYStEj9tc5R7c4FSY8XWbVRS2z7cgX/1npGSBLdJpeGBtbsRu
+         +VRA==
+X-Gm-Message-State: AGRZ1gKSgaPFPJ2l9PUhYdQPDP0zlwfyooaPPMhJ8QDpQgPeQJeQtjyf
+        CeBUgnxDTETlOJbb6OsahBOPUA==
+X-Google-Smtp-Source: AJdET5etVOaIOBxo2MAAHqmC8HxLofqJKqD54fh83ScPkw0H4jl/8OxjxvzqWfiiPTJjaZaNU6UyLw==
+X-Received: by 2002:a63:cc:: with SMTP id 195-v6mr653903pga.44.1540499873506;
+        Thu, 25 Oct 2018 13:37:53 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id p11-v6sm10286639pfo.65.2018.10.25.13.37.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Oct 2018 13:37:52 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 13:37:52 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        smohanad@codeaurora.org, Andy Gross <andy.gross@linaro.org>,
+        Doug Anderson <dianders@chromium.org>,
+        David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v3 16/16] arm64: dts: sdm845: enable tsens thermal zones
+Message-ID: <20181025203752.GA22824@google.com>
+References: <cover.1536744310.git.amit.kucheria@linaro.org>
+ <5e2d5fc463a5f5623c4fc1b18ccdf62adc954758.1536744310.git.amit.kucheria@linaro.org>
+ <20181025192501.GZ22824@google.com>
+ <CAP245DUFi1UWqnVfgxdeZHVHSx9Sn3z3AqVp_x5GGHHAvwAjyA@mail.gmail.com>
 MIME-Version: 1.0
-References: <CAEn-LTqbEmWovu4t7Rs4C211+GRRU4V3B=+WmW0SOhX_b8db5Q@mail.gmail.com>
- <20181024204036.8799-1-palmer@sifive.com> <20181024204036.8799-3-palmer@sifive.com>
- <CAEn-LTovzRncSKCGv8wUTL6FkzcC+Hw1EBGe+Rc4GQyEgcK1uA@mail.gmail.com>
-In-Reply-To: <CAEn-LTovzRncSKCGv8wUTL6FkzcC+Hw1EBGe+Rc4GQyEgcK1uA@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Thu, 25 Oct 2018 16:36:41 -0400
-Message-ID: <CAHC9VhT015tz4qZZ=vM6FowsUXLv-RYeBrH4C8d6jvg=XHumHA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] RISC-V: Add support for SECCOMP
-To:     david.abdurachmanov@gmail.com
-Cc:     palmer@sifive.com, linux-riscv@lists.infradead.org,
-        aou@eecs.berkeley.edu, Eric Paris <eparis@redhat.com>,
-        keescook@chromium.org, luto@amacapital.net, wad@chromium.org,
-        wesley@sifive.com, dhowells@redhat.com, tglx@linutronix.de,
-        pombredanne@nexb.com, gregkh@linuxfoundation.org,
-        kstewart@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        linux-audit@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAP245DUFi1UWqnVfgxdeZHVHSx9Sn3z3AqVp_x5GGHHAvwAjyA@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 2:31 PM David Abdurachmanov
-<david.abdurachmanov@gmail.com> wrote:
-> On Wed, Oct 24, 2018 at 10:40 PM Palmer Dabbelt <palmer@sifive.com> wrote:
-> > From: "Wesley W. Terpstra" <wesley@sifive.com>
+On Fri, Oct 26, 2018 at 01:33:40AM +0530, Amit Kucheria wrote:
+> On Fri, Oct 26, 2018 at 12:55 AM Matthias Kaehlcke <mka@chromium.org> wrote:
+> >
+> > Hi Amit,
+> >
+> > vaguely related question, since you are working on SDM845 thermal
+> > stuff: Do you have plans to add CPU cooling devices? I raised the
+> > point during the review of the CPUfreq HW, however there was no
+> > clear answer: https://lore.kernel.org/patchwork/patch/966833/#1164748
+> > The driver is still under development/review, but I wonder what the
+> > path forward is.
+> >
+> 
+> Hi Matthias,
+> 
+> I plan to
 
-...
+Great!
 
-> Palmer,
->
-> Half of the patch seems to touch audit parts. I started working on audit
-> support this morning, and I can boot Fedora with audit traces.
->
-> [root@fedora-riscv ~]# dmesg | grep audit
-> [    0.312000] audit: initializing netlink subsys (disabled)
-> [    0.316000] audit: type=2000 audit(0.316:1): state=initialized
-> audit_enabled=0 res=1
-> [    7.288000] audit: type=1130 audit(1529665913.772:2): pid=1 uid=0
-> auid=4294967295 ses=4294967295 msg='unit=systemd-remount-fs
-> comm="systemd" exe="/usr/lib/systemd/systemd" hostname=? addr=?
-> terminal=? res=success'
-> [    7.684000] audit: type=1130 audit(1529665914.176:3): pid=1 uid=0
-> auid=4294967295 ses=4294967295 msg='unit=systemd-sysctl comm="systemd"
-> exe="/usr/lib/systemd/systemd" hostname=? addr=? terminal=?
-> res=success'
-> [..]
->
-> I am still working on audit user-space support for better testing.
->
-> I suggest we first implement audit and then seccomp.
+> but the OSM driver doesn't work well enough for me to send
+> out that patch yet. I responded with my findings on the v9 posting
+> where it seems to get stuck at the high OPP. It'd be nice if somebody
+> else could confirm (or refute) this behaviour.
 
-FYI, while small and far from comprehensive, we do have a test suite
-we use for basic validation of the audit kernel bits which may be
-helpful while you're working on the audit enablement:
+Ok, we aren't using the latest version yet, I'll try to repro and
+report back.
 
-* https://github.com/linux-audit/audit-testsuite
+Cheers
 
--- 
-paul moore
-www.paul-moore.com
+Matthias
