@@ -2,106 +2,99 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21BFBC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:47:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E280AC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:49:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A1942075D
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:47:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79F892083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:49:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LVk+HWxW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A1942075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fHuidPf3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79F892083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727466AbeJZGVZ (ORCPT
+        id S1727350AbeJZGXr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 02:21:25 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:38155 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726275AbeJZGVZ (ORCPT
+        Fri, 26 Oct 2018 02:23:47 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39128 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726217AbeJZGXr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 02:21:25 -0400
-Received: by mail-oi1-f196.google.com with SMTP id k19-v6so8033357oiw.5
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 14:47:02 -0700 (PDT)
+        Fri, 26 Oct 2018 02:23:47 -0400
+Received: by mail-pg1-f196.google.com with SMTP id r9-v6so4638324pgv.6
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 14:49:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=x09gQi54aERPFy6DLYU0hJUZ+AhWmZkO0Y3K+S+fsn0=;
-        b=LVk+HWxWYFidNVirDU2GQQH6uAV0aPl4sBojHu4Vu9SzDmDXqN4g3lhXh9AXrgXw7e
-         t55m2/S4+KNkn/Nydxi8g/LajCL/l2IKVzYpc6BOD0Nz8BNXur5CsXza8TiNdG9hqX7f
-         iS0X+bFd5STxAUkeO94+3uFRgzTSvkpXWAn+8BcbaVIHn6rFxq+3cfTSHLemCuZKsnZM
-         QYrNeCJvNhVFKjGkv6z1vE9gzEqwof/+pwF5kUFe48/pdwr3kDuV3QB04nHVSGZerq50
-         rY+De4Gb6DnnnSPDsHVSlqdymZBVbHauHbpy/ATN1JUQuTRLGTx7zQNSWKLMHGrHifOw
-         Insw==
+        bh=dDSXPYbgO5LmngLCgtD5Rji67KsLIdRzuYkjxNqJZ2g=;
+        b=fHuidPf3oSkpaR1R0B4yUr0NMLtZmY5ZuiiLBnIIekFxT9OmNzInR5VRdLr3bS2shV
+         H475rLOYNSY9IqDVkMST7UDTZm+bMFrVVO18yAZkcSDZHu2BUbQOryRr92RXZMsxmD9d
+         JBCQ9om7KrLWyLga6cPHKqkg8eEg1JBe3QmgVJkKzfjn4+BmQI9bNtxoGx4l+7gVs5aI
+         NfGmPefErNbXUJvCTQR+xL/87yrlPOGEgNYguAfYwieWCcBU87cQX9hEFjBGFeKSiSva
+         Lp6c5/q5We7RyTG1qFI8+qxdbn6h3hsmcLAIxL8bcdp2oT2pWmpFL0YIgJgiGuuMM3/F
+         AOSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=x09gQi54aERPFy6DLYU0hJUZ+AhWmZkO0Y3K+S+fsn0=;
-        b=sODJC6vh/jYUp/Xq0Nv8LJC3mT57W5dlso2FBagdubGxTOe9TCQ0vT1P642aPH9ocK
-         /+3v5ROxrKNa07w9GYtJZe/kvS+s0zREFH9Brlk+SvsbrBi+U7dXqK/MO5roAIhRfTj8
-         8uSt/0rxkY0qISCpLbkpFWXnxv1vFbZ7mUYVsjR4fTETBuDTlS8mgBh5DJ5tbUbUZgRP
-         ZkEZOCN9jdf5Jhrl6tS4I0n935PTEgu5QaZ8GEeEAZOV6hvH4GYAxiezFv2SZcnT7KaD
-         gRIG4jjbPfufo767HM1PAFaRyRS/GYL1pB2KdnEvt0igWT3FOZRPKW/l/H2j5Lj49cSy
-         JI3Q==
-X-Gm-Message-State: AGRZ1gLDgy7SIKQKMeF1J7Nt8sFq9BiGeruXL9NyvQpx+c3T0QrzYEO3
-        uPHufmRhvv7eb5YR0sDA7QrR/kSl9c8K/X49Db5cN5yVDNE=
-X-Google-Smtp-Source: AJdET5doKOmK4y/RQoXw3noBaKStltCe2E9pW+YDG+31ywQCnsaLpP1cuwukJ+Pfi1PZ1bpwbEmK9Gdl2kUU6LUHltQ=
-X-Received: by 2002:aca:ebcd:: with SMTP id j196-v6mr575518oih.206.1540504021928;
- Thu, 25 Oct 2018 14:47:01 -0700 (PDT)
+        bh=dDSXPYbgO5LmngLCgtD5Rji67KsLIdRzuYkjxNqJZ2g=;
+        b=Qhv2Qx9HHKFay3wx+vC5/D9HpdkbFgHq3WdBCYtOdYBV4kVaOZc1edC4cy/l6UxsSH
+         q8KtmzNI69y57bgHdJehMi3O1uMvhcoQQeBKDfFdO37rkSSXXPCLGasrzhKZPk1OsySo
+         sjHvsbtSZiZPGdCUL8cYjyx7UJBgyuom8M1Ul/bvXozfcxwdgqmOsU2q6eI92mmvEbpU
+         w1cB+OpwEOTBRNlqoKKzq8I6LsAcqdrTDbWsn0SPAWhlZ+4V8hVrh1D3GaQWUiWaKt2z
+         2ueegakX+yJvgkVG+BjCfrWdV1BHAxTjGHEaf/4+oKpfphfNyhK5dfdnb+rAW16PBYNo
+         hDMw==
+X-Gm-Message-State: AGRZ1gKgU/tUE8YoEYgiVfGDjXxwQ2Ucxxj58Dg2J636WkejmpATQkfg
+        sZbCFWjI5uCZsBacnXMnku4eu+D6mC1dfJgBH9PX4IF4
+X-Google-Smtp-Source: AJdET5frzyQ5hXPNpvX0hAiIMSLFfOZIXxKLBcNvrVkiQxBWehU4LI7sZ0HZrLi/9P2ORTDBCEA29NFVgZi/U8MzCow=
+X-Received: by 2002:a62:f909:: with SMTP id o9-v6mr903696pfh.160.1540504163509;
+ Thu, 25 Oct 2018 14:49:23 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181025211352.112096-1-brendanhiggins@google.com> <d787249c-0679-065a-62cb-ee9f87b1fba3@gmail.com>
-In-Reply-To: <d787249c-0679-065a-62cb-ee9f87b1fba3@gmail.com>
-From:   Brendan Higgins <brendanhiggins@google.com>
-Date:   Thu, 25 Oct 2018 14:46:50 -0700
-Message-ID: <CAFd5g44jmpDyeh--=Hd2fAexzik4gMYLMdNhAMqxWqnjSh4KeA@mail.gmail.com>
-Subject: Re: [PATCH v1] net: ipv6: fix racey clock check in route cache aging logic
-To:     eric.dumazet@gmail.com
-Cc:     "David S . Miller" <davem@davemloft.net>, kuznet@ms2.inr.ac.ru,
-        yoshfuji@linux-ipv6.org, netdev@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181025201221.Horde.1UXSw9cRIOdmNlpjDXbda3Y@aws-it.at>
+In-Reply-To: <20181025201221.Horde.1UXSw9cRIOdmNlpjDXbda3Y@aws-it.at>
+From:   Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Thu, 25 Oct 2018 14:49:11 -0700
+Message-ID: <CAM_iQpWK7TbN10nC9QyUOacpXeiOkMP2FDiZ-1weAfgfdpqSMw@mail.gmail.com>
+Subject: Re: tc qdisc command partially broken with patch-4.14.76-77 up to patch-4.14.77-78
+To:     astx@aws-it.at
+Cc:     LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 2:40 PM Eric Dumazet <eric.dumazet@gmail.com> wrote:
-> On 10/25/2018 02:13 PM, Brendan Higgins wrote:
-<snip>
-> >
-> > diff --git a/net/ipv6/route.c b/net/ipv6/route.c
-> > index 2a7423c394560..54d28b91fd840 100644
-> > --- a/net/ipv6/route.c
-> > +++ b/net/ipv6/route.c
-> > @@ -1734,7 +1734,7 @@ static void rt6_age_examine_exception(struct rt6_exception_bucket *bucket,
-> >                       rt6_remove_exception(bucket, rt6_ex);
-> >                       return;
-> >               }
-> > -     } else if (time_after(jiffies, rt->dst.expires)) {
-> > +     } else if (time_after(now, rt->dst.expires)) {
-> >               RT6_TRACE("purging expired route %p\n", rt);
-> >               rt6_remove_exception(bucket, rt6_ex);
-> >               return;
-> >
+On Thu, Oct 25, 2018 at 1:14 PM astx <astx@aws-it.at> wrote:
 >
+> tc qdisc command is partially broken after applying patch-4.14.76-77.
+> Applying patch-4.14.77-78 didn't fix it.
 >
-> I do not think there is a bug here ?
+> Test command:
+>    tc qdisc add dev eth0 root handle 1: hfsc default fffd
+> Kernel answer:
+>    RTNETLINK answers: Numerical result out of range
 >
-> As a matter of fact, using the latest value of jiffies is probably better,
-> since in some cases the @now variable could be quite in the past.
+> I have identified the problematic sub-patch out of patch-4.14.76-77 to
+> be the problem:
+>
+>     diff --git a/net/sched/sch_api.c b/net/sched/sch_api.c
+>     index 22bc6fc48311..cd69aa067543 100644
+>
+> Without this small patch the above "tc qdisc" command works like a charm.
 
-Then why do we pass the `now` parameter in at all and use it at all,
-like here: https://elixir.bootlin.com/linux/latest/source/net/ipv6/route.c#L1764
-?
+Should be fixed by the following commit:
 
-I am still skeptical that we should check jiffies in each check, but
-we should at least be consistent.
+commit e72bde6b66299602087c8c2350d36a525e75d06e
+Author: David Ahern <dsahern@gmail.com>
+Date:   Wed Oct 24 08:32:49 2018 -0700
 
-Cheers
+    net: sched: Remove TCA_OPTIONS from policy
+
+
+Thanks.
