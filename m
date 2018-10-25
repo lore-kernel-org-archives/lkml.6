@@ -5,73 +5,74 @@ X-Spam-Level:
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC444C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:24:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0E27C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:25:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 773552082E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:24:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77D9E2084A
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:25:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j9C0GWeS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 773552082E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TqC5nMYG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77D9E2084A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727805AbeJZC6X (ORCPT
+        id S1727817AbeJZC7o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 22:58:23 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46721 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727651AbeJZC6X (ORCPT
+        Thu, 25 Oct 2018 22:59:44 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37322 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727651AbeJZC7o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 22:58:23 -0400
-Received: by mail-wr1-f67.google.com with SMTP id i4-v6so10295413wrr.13;
-        Thu, 25 Oct 2018 11:24:30 -0700 (PDT)
+        Thu, 25 Oct 2018 22:59:44 -0400
+Received: by mail-wr1-f66.google.com with SMTP id g9-v6so10322041wrq.4
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 11:25:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=lTfnVu+HhfRJVwMWkB68Hz4tsFpDxb1yq1ep7I7iCGs=;
-        b=j9C0GWeSTmpukELzCcZP5I7A9EDgPrePbvO2GC+Uy+YVcsXeLJXrExQ3GKqJbdLlsD
-         wEef9XABUjF4QKd2xysS8SDc4in1hzd66FqPhllnnEH533T+1AFJc21NxnvGGb1g83pK
-         uHxoKleBXeedmnrgAWOpglumSrMKOJUWUd6IFN847S0ZETkepX8+vIqVkZqiaksddwH/
-         NkN8VJymlQ6Amqur4qX2i+dhSlF0jbr399YDRE2XIXYo1KrhpZa9m9fsPQtkyWdV6DDz
-         4Qu5eqbYEro+52eOVjVFw+Y3rUpNXz1+FL6KEBESLTxXmP8QFrqqnSaIut/6fwasiC66
-         aHtg==
+        bh=bFyIVhS1TAjrbNxkCDq8K5hHnjiHT8CLdCBzxz+SOLE=;
+        b=TqC5nMYGUawD+2yNAPGcstdN82MSnOzOl2MF+fvJeM/qKbcZmrFevhIjdxpx5octnh
+         ybuhOWzuKncDwFTL9KXMc2wFKqM6Ct/9H69fkco6QgtJQay2ukeY+XSJHJ9AklIK7UoR
+         amT+flWi8p4vi+/Y0zd0QLbJ4c+i6KO80ybgEJH7hGd4muRtEhP3MAgSNjUVo/enuH/l
+         ihHKUk7wQ0dPm8Oww75c1i2geR9phI4lykChLRh2MDHh4rlke0ti13wazhuW+8Kfnpnb
+         fGCAWm+Y+oiojvcgoScrzMAbFmVenvCJdf//iEjWDeZTn6j4LL/lTciOL9xKa733vNY6
+         i1eA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=lTfnVu+HhfRJVwMWkB68Hz4tsFpDxb1yq1ep7I7iCGs=;
-        b=UYMRWeo2dPctMeX9Z/W6NxE27ocwwyMfByYocrxE0LG8aV708i9oPBgWKuvU7ycKaG
-         EjWML8dPXTfQ4x5Z1USXSpRhAzqkG64j7FscGczfnBMfjxZLfgzo1mgCwlFVGN7jdZwn
-         IVjO7nySqUWGK9zljE8ogAYKMWLXxbGDi3+8QH9h2gaM+wv5HBNXdyL2Auqf6QPbj4Wt
-         kdcjsck7L45jQKKNyZ2YfOd7n9OHaTZkxynyJC8BDFI6MiMpJY8+SD5JuF2RzdEmjPpv
-         uNHjIM5Cy8v4oZZMAyfXWT7znCezkRxaeeu4Hiq3C0J506FZqrPy8qZJma9flEPZsHH5
-         D1Gw==
-X-Gm-Message-State: AGRZ1gIiySPf1ECZmgAO/b0lsy8Ih2HAT7fxV1yzThhTymqm0YaBP4Fb
-        YuCLCYvj4AI6RcQXzuf7qXL/Ottai/9ADx0B2wE=
-X-Google-Smtp-Source: AJdET5ddw4H6Z7qGcHpDzny09xgaUCeycKwPo1WmeZxPQMgVQws7DUV6ogkzGr9BDK5I13M31PM3vT8HOzn9sD+HxE0=
-X-Received: by 2002:adf:9589:: with SMTP id p9-v6mr3064566wrp.270.1540491869751;
- Thu, 25 Oct 2018 11:24:29 -0700 (PDT)
+        bh=bFyIVhS1TAjrbNxkCDq8K5hHnjiHT8CLdCBzxz+SOLE=;
+        b=cybk9STOS27JNa4wzKrxMGOQVeAJQxrc3QgWiz5AwfeNTLYJq8t3tftaZ+bLQWCsSH
+         sDbwpHnpmzPMS8JlW/MFOy+W7L68IH37a4GhmPCiknSFDz0cvoFxKcythosLkha+a09R
+         kIKH9AmzwPuU9au4KbI9/KQXAPLpxDoG+hotBLb3IfqdBBjvbQqwzEsgvXsg/ArPYIFh
+         oAihUpHsOcmX68m5Py+zJ168qNLjvsHOPPlfgnW4EmXi5mdzHH+AmDf5rDokAiVFyLZZ
+         77y//lEro6pEUYKeZy5WEB+RKbB8oJIxpP+g+dhuJ4H3DHH5YTJoTFssA67TNyM58AnO
+         4J/Q==
+X-Gm-Message-State: AGRZ1gKGcND89ft8ndxZEFiT5wlctJa9Y/gAcui+uzgmxSXmppJ0WRs2
+        FsVKbQ6CTFFGdHmwEpE6DHsJ5UdP8q+j/aq4xRXuaQ==
+X-Google-Smtp-Source: AJdET5eJF4zdzSAfk17Tvc3OmXgAYcgVEjHVChDfNlbimKuZhX+yR/s7yIZrhcub/F4OSv+yu6HhgR+gjY9EAuCo8wE=
+X-Received: by 2002:adf:f852:: with SMTP id d18-v6mr2931194wrq.125.1540491950577;
+ Thu, 25 Oct 2018 11:25:50 -0700 (PDT)
 MIME-Version: 1.0
-References: <1540116359-164086-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1540116359-164086-1-git-send-email-yuehaibing@huawei.com>
+References: <20181021103958.12892-1-yuehaibing@huawei.com>
+In-Reply-To: <20181021103958.12892-1-yuehaibing@huawei.com>
 From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Thu, 25 Oct 2018 14:24:17 -0400
-Message-ID: <CADnq5_OSqxu_e88dmh57eiq2y78jKrQkarDXNYpeSWCe066DrA@mail.gmail.com>
-Subject: Re: [PATCH -next] drm/radeon/kms: remove set but not used variable 'pll'
+Date:   Thu, 25 Oct 2018 14:25:36 -0400
+Message-ID: <CADnq5_P=0yUepxenN8NbdCGZhe6S2g+RsZnbLDFpzysB01_mEA@mail.gmail.com>
+Subject: Re: [PATCH -next] drm/amd/powerplay: remove duplicated includes
 To:     yuehaibing@huawei.com
-Cc:     "Deucher, Alexander" <alexander.deucher@amd.com>,
+Cc:     Rex Zhu <rex.zhu@amd.com>, "Quan, Evan" <evan.quan@amd.com>,
         Christian Koenig <christian.koenig@amd.com>,
         Chunming Zhou <David1.Zhou@amd.com>,
         Dave Airlie <airlied@linux.ie>,
-        kernel-janitors@vger.kernel.org,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
+        Hawking Zhang <Hawking.Zhang@amd.com>,
+        Huang Rui <ray.huang@amd.com>,
         amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        LKML <linux-kernel@vger.kernel.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -80,56 +81,88 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Sun, Oct 21, 2018 at 11:32 PM YueHaibing <yuehaibing@huawei.com> wrote:
 >
-> Fixes gcc '-Wunused-but-set-variable' warning:
->
-> drivers/gpu/drm/radeon/radeon_legacy_tv.c: In function 'radeon_legacy_tv_init_restarts':
-> drivers/gpu/drm/radeon/radeon_legacy_tv.c:435:21: warning:
->  variable 'pll' set but not used [-Wunused-but-set-variable]
->   struct radeon_pll *pll;
->
-> It never used since introduction in commit
-> 4ce001abafaf ("drm/radeon/kms: add initial radeon tv-out support.")
-> Also remove related variables 'dev, rdev, radeon_crtc'
+> Remove some duplicated include.
 >
 > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Applied.  thanks!
+Applied.  Thanks!
 
 Alex
 
 > ---
->  drivers/gpu/drm/radeon/radeon_legacy_tv.c | 10 ----------
->  1 file changed, 10 deletions(-)
+>  drivers/gpu/drm/amd/powerplay/inc/hwmgr.h               | 1 -
+>  drivers/gpu/drm/amd/powerplay/inc/smu7_common.h         | 4 ----
+>  drivers/gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c | 1 -
+>  drivers/gpu/drm/amd/powerplay/smumgr/smu10_smumgr.c     | 1 -
+>  drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c     | 1 -
+>  5 files changed, 8 deletions(-)
 >
-> diff --git a/drivers/gpu/drm/radeon/radeon_legacy_tv.c b/drivers/gpu/drm/radeon/radeon_legacy_tv.c
-> index 4278272..3dae2c4 100644
-> --- a/drivers/gpu/drm/radeon/radeon_legacy_tv.c
-> +++ b/drivers/gpu/drm/radeon/radeon_legacy_tv.c
-> @@ -421,24 +421,14 @@ static void radeon_legacy_write_tv_restarts(struct radeon_encoder *radeon_encode
+> diff --git a/drivers/gpu/drm/amd/powerplay/inc/hwmgr.h b/drivers/gpu/drm/amd/powerplay/inc/hwmgr.h
+> index e5a60aa..07d180ce 100644
+> --- a/drivers/gpu/drm/amd/powerplay/inc/hwmgr.h
+> +++ b/drivers/gpu/drm/amd/powerplay/inc/hwmgr.h
+> @@ -28,7 +28,6 @@
+>  #include "hardwaremanager.h"
+>  #include "hwmgr_ppt.h"
+>  #include "ppatomctrl.h"
+> -#include "hwmgr_ppt.h"
+>  #include "power_state.h"
+>  #include "smu_helper.h"
 >
->  static bool radeon_legacy_tv_init_restarts(struct drm_encoder *encoder)
->  {
-> -       struct drm_device *dev = encoder->dev;
-> -       struct radeon_device *rdev = dev->dev_private;
->         struct radeon_encoder *radeon_encoder = to_radeon_encoder(encoder);
->         struct radeon_encoder_tv_dac *tv_dac = radeon_encoder->enc_priv;
-> -       struct radeon_crtc *radeon_crtc;
->         int restart;
->         unsigned int h_total, v_total, f_total;
->         int v_offset, h_offset;
->         u16 p1, p2, h_inc;
->         bool h_changed;
->         const struct radeon_tv_mode_constants *const_ptr;
-> -       struct radeon_pll *pll;
+> diff --git a/drivers/gpu/drm/amd/powerplay/inc/smu7_common.h b/drivers/gpu/drm/amd/powerplay/inc/smu7_common.h
+> index 65eb630..94bf7b6 100644
+> --- a/drivers/gpu/drm/amd/powerplay/inc/smu7_common.h
+> +++ b/drivers/gpu/drm/amd/powerplay/inc/smu7_common.h
+> @@ -40,10 +40,6 @@
+>  #include "bif/bif_5_0_d.h"
+>  #include "bif/bif_5_0_sh_mask.h"
+>
 > -
-> -       radeon_crtc = to_radeon_crtc(radeon_encoder->base.crtc);
-> -       if (radeon_crtc->crtc_id == 1)
-> -               pll = &rdev->clock.p2pll;
-> -       else
-> -               pll = &rdev->clock.p1pll;
+> -#include "bif/bif_5_0_d.h"
+> -#include "bif/bif_5_0_sh_mask.h"
+> -
+>  #include "dce/dce_10_0_d.h"
+>  #include "dce/dce_10_0_sh_mask.h"
 >
->         const_ptr = radeon_legacy_tv_get_std_mode(radeon_encoder, NULL);
->         if (!const_ptr)
+> diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c
+> index 872d382..2b2c266 100644
+> --- a/drivers/gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c
+> +++ b/drivers/gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c
+> @@ -44,7 +44,6 @@
+>
+>  #include "smu7_hwmgr.h"
+>  #include "hardwaremanager.h"
+> -#include "ppatomctrl.h"
+>  #include "atombios.h"
+>  #include "pppcielanes.h"
+>
+> diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/smu10_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/smu10_smumgr.c
+> index d0eb8ab..d111dd4 100644
+> --- a/drivers/gpu/drm/amd/powerplay/smumgr/smu10_smumgr.c
+> +++ b/drivers/gpu/drm/amd/powerplay/smumgr/smu10_smumgr.c
+> @@ -29,7 +29,6 @@
+>  #include "rv_ppsmc.h"
+>  #include "smu10_driver_if.h"
+>  #include "smu10.h"
+> -#include "ppatomctrl.h"
+>  #include "pp_debug.h"
+>
+>
+> diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
+> index 9f71512..1e69300 100644
+> --- a/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
+> +++ b/drivers/gpu/drm/amd/powerplay/smumgr/vegam_smumgr.c
+> @@ -40,7 +40,6 @@
+>
+>  #include "smu7_hwmgr.h"
+>  #include "hardwaremanager.h"
+> -#include "ppatomctrl.h"
+>  #include "atombios.h"
+>  #include "pppcielanes.h"
+>
+> --
+> 1.8.3.1
+>
 >
 > _______________________________________________
 > amd-gfx mailing list
