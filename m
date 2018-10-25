@@ -2,182 +2,101 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F3A3ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C003DECDE44
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:44:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6F65204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:43:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6F65204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7132F204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:44:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dcxCxqJG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7132F204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727140AbeJYJNf (ORCPT
+        id S1727159AbeJYJOm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 05:13:35 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:47382 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726238AbeJYJNf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 05:13:35 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9E6F13082B4B;
-        Thu, 25 Oct 2018 00:43:14 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-24.phx2.redhat.com [10.3.112.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D737160A9B;
-        Thu, 25 Oct 2018 00:42:58 +0000 (UTC)
-Date:   Wed, 24 Oct 2018 20:42:55 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        linux-audit@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
-        luto@kernel.org, carlos@redhat.com, dhowells@redhat.com,
-        viro@zeniv.linux.org.uk, simo@redhat.com,
-        Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>
-Subject: Re: [PATCH ghak90 (was ghak32) V4 03/10] audit: log container info
- of syscalls
-Message-ID: <20181025004255.zl7p7j6gztouh2hh@madcap2.tricolour.ca>
-References: <cover.1533065887.git.rgb@redhat.com>
- <34017c395d03a213d6b0d49b9964429bd32b283d.1533065887.git.rgb@redhat.com>
- <CAHC9VhSv4hWGHiaaOfuBrRQKdp2YG5RtqXQbFXg7j7LNEhO2XQ@mail.gmail.com>
- <20181024151439.lavhanabsyxdrdvo@madcap2.tricolour.ca>
- <CAHC9VhRF1vsxM-k0Lw-9NqS9b9rgXRRBu0tq4ajdFpMqUxiH4A@mail.gmail.com>
+        Thu, 25 Oct 2018 05:14:42 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:43009 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726117AbeJYJOl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 05:14:41 -0400
+Received: by mail-vs1-f68.google.com with SMTP id k14so2517738vsm.10
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 17:44:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=62cdOIV1L9nQC9Ob55U8Yfb1Ux9VJAu/jXLY0usxbUo=;
+        b=dcxCxqJGYloCnwWS5TycdMRZMrxAYWi67ZAXLX7rC/34GmjD8Ee7WNeqXdezQ6mD7j
+         Rsc3PGxxd9aAXB1uBiQyO9uxLP4KpcISDVfxi6Q4t5/t3XtNlPEjx1nP1sP17d01+EJ3
+         FHE4i0mIdwbIC8Qzh5WcR+LZN8Jyz9jj7AHTidX8X748HTMyT2oAXoXVZnGRWm2yZKvi
+         zZeQTh2k8eJHqFQL9F7+0btbBgIjm8L9lF/j2dWGIu4FzrrDQzRCyeM4uVrH8hcbF5zM
+         Arl69giYh0OrOEC+dy58ANy7DhVJzqCxReflSlad5Db2D2lzkLxLpS1Gn6obdTX+aJ6n
+         SHSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=62cdOIV1L9nQC9Ob55U8Yfb1Ux9VJAu/jXLY0usxbUo=;
+        b=Lgare45UDLNoNdYrBd6GI9/CHrwz/u+6/9EkQKT232H+7qeiibP19BvXbntdDWnglX
+         DGb4wEokoJUVz/2nlHswpwr5c0L7DsSFkja8BIBCSRTqJ+W++8BGZ2bY+2NfR7sJNCg1
+         QagHMuX80r/YFBl68kPkWKRnr9Z/5ynWUX7KatcPNP6XpueKZG0HViKUYTJzzNZTgVIj
+         4LqVW5Wd/D0Ed9CHRAJ2lYHIvXXg/XwGsvZlgMfPUixn5OlYH8F0BByKvws8s6uPxlab
+         aa+KcU0eKMArO8we0xgsa/pXT7k77Blp1Jacxri948A9+51JQLGyzPO1EBe17Jp9bFdA
+         13Fg==
+X-Gm-Message-State: AGRZ1gIILGdf5bkCqqQFgvdFR2Ih4JoeoxbPZXqnAfrN1/1muUNLBQfu
+        9DUV/giKRTWWe+DTFp7yntiHZV22rt5RS4nkr66LQw==
+X-Google-Smtp-Source: AJdET5cWMvhMn7rbktQwPwDqY68HKkI/MfGoCXhom2zNdeKcxN90hmzQV7LmZTa8bAj02zoqosABc0Iq1MTPYIMD0ts=
+X-Received: by 2002:a67:7a49:: with SMTP id v70mr2155145vsc.165.1540428260580;
+ Wed, 24 Oct 2018 17:44:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHC9VhRF1vsxM-k0Lw-9NqS9b9rgXRRBu0tq4ajdFpMqUxiH4A@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 25 Oct 2018 00:43:14 +0000 (UTC)
+References: <20181024151116.30935-1-kan.liang@linux.intel.com>
+ <CABPqkBQEp9SLQuAonW7-c9HzH4bSgUyJGJ5ZZNXHy-0phHvvZQ@mail.gmail.com>
+ <20181025002312.GS3109@worktop.c.hoisthospitality.com> <CABPqkBR1NTcpD3WxFsk4XZ6mT+jteec3kZBgBTxR5gFUL9Zffw@mail.gmail.com>
+ <20181025003444.GV3109@worktop.c.hoisthospitality.com>
+In-Reply-To: <20181025003444.GV3109@worktop.c.hoisthospitality.com>
+From:   Stephane Eranian <eranian@google.com>
+Date:   Wed, 24 Oct 2018 17:44:09 -0700
+Message-ID: <CABPqkBQYbQV86dWCHMZX0sMspkHXSpYOB6G+c2kSOf3d4R7dNQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] perf: Add munmap callback
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     "Liang, Kan" <kan.liang@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Borislav Petkov <bp@alien8.de>, Andi Kleen <ak@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-24 16:55, Paul Moore wrote:
-> On Wed, Oct 24, 2018 at 11:15 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > On 2018-10-19 19:16, Paul Moore wrote:
-> > > On Sun, Aug 5, 2018 at 4:32 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > > > Create a new audit record AUDIT_CONTAINER to document the audit
-> > > > container identifier of a process if it is present.
-> > > >
-> > > > Called from audit_log_exit(), syscalls are covered.
-> > > >
-> > > > A sample raw event:
-> > > > type=SYSCALL msg=audit(1519924845.499:257): arch=c000003e syscall=257 success=yes exit=3 a0=ffffff9c a1=56374e1cef30 a2=241 a3=1b6 items=2 ppid=606 pid=635 auid=0 uid=0 gid=0 euid=0 suid=0 fsuid=0 egid=0 sgid=0 fsgid=0 tty=pts0 ses=3 comm="bash" exe="/usr/bin/bash" subj=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023 key="tmpcontainerid"
-> > > > type=CWD msg=audit(1519924845.499:257): cwd="/root"
-> > > > type=PATH msg=audit(1519924845.499:257): item=0 name="/tmp/" inode=13863 dev=00:27 mode=041777 ouid=0 ogid=0 rdev=00:00 obj=system_u:object_r:tmp_t:s0 nametype= PARENT cap_fp=0000000000000000 cap_fi=0000000000000000 cap_fe=0 cap_fver=0
-> > > > type=PATH msg=audit(1519924845.499:257): item=1 name="/tmp/tmpcontainerid" inode=17729 dev=00:27 mode=0100644 ouid=0 ogid=0 rdev=00:00 obj=unconfined_u:object_r:user_tmp_t:s0 nametype=CREATE cap_fp=0000000000000000 cap_fi=0000000000000000 cap_fe=0 cap_fver=0
-> > > > type=PROCTITLE msg=audit(1519924845.499:257): proctitle=62617368002D6300736C65657020313B206563686F2074657374203E202F746D702F746D70636F6E7461696E65726964
-> > > > type=CONTAINER msg=audit(1519924845.499:257): op=task contid=123458
-> > > >
-> > > > See: https://github.com/linux-audit/audit-kernel/issues/90
-> > > > See: https://github.com/linux-audit/audit-userspace/issues/51
-> > > > See: https://github.com/linux-audit/audit-testsuite/issues/64
-> > > > See: https://github.com/linux-audit/audit-kernel/wiki/RFE-Audit-Container-ID
-> > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > > Acked-by: Serge Hallyn <serge@hallyn.com>
-> > > > Acked-by: Steve Grubb <sgrubb@redhat.com>
-> > > > ---
-> > > >  include/linux/audit.h      |  7 +++++++
-> > > >  include/uapi/linux/audit.h |  1 +
-> > > >  kernel/audit.c             | 24 ++++++++++++++++++++++++
-> > > >  kernel/auditsc.c           |  3 +++
-> > > >  4 files changed, 35 insertions(+)
+On Wed, Oct 24, 2018 at 5:34 PM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Wed, Oct 24, 2018 at 05:25:59PM -0700, Stephane Eranian wrote:
+> > On Wed, Oct 24, 2018 at 5:23 PM Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> > > That is actually a different problem. And you're right, we never did fix
+> > > that.
 > > >
-> > > ...
-> > >
-> > > > @@ -2045,6 +2045,30 @@ void audit_log_session_info(struct audit_buffer *ab)
-> > > >         audit_log_format(ab, " auid=%u ses=%u", auid, sessionid);
-> > > >  }
-> > > >
-> > > > +/*
-> > > > + * audit_log_contid - report container info
-> > > > + * @tsk: task to be recorded
-> > > > + * @context: task or local context for record
-> > > > + * @op: contid string description
-> > > > + */
-> > > > +int audit_log_contid(struct task_struct *tsk,
-> > > > +                            struct audit_context *context, char *op)
-> > > > +{
-> > > > +       struct audit_buffer *ab;
-> > > > +
-> > > > +       if (!audit_contid_set(tsk))
-> > > > +               return 0;
-> > > > +       /* Generate AUDIT_CONTAINER record with container ID */
-> > > > +       ab = audit_log_start(context, GFP_KERNEL, AUDIT_CONTAINER);
-> > > > +       if (!ab)
-> > > > +               return -ENOMEM;
-> > > > +       audit_log_format(ab, "op=%s contid=%llu",
-> > > > +                        op, audit_get_contid(tsk));
-> > > > +       audit_log_end(ab);
-> > > > +       return 0;
-> > > > +}
-> > > > +EXPORT_SYMBOL(audit_log_contid);
-> > >
-> > > As discussed in the previous iteration of the patch, I prefer
-> > > AUDIT_CONTAINER_ID here over AUDIT_CONTAINER.  If you feel strongly
-> > > about keeping it as-is with AUDIT_CONTAINER I suppose I could live
-> > > with that, but it is isn't my first choice.
-> >
-> > I don't have a strong opinion on this one, mildly preferring the shorter
-> > one only because it is shorter.
-> 
-> We already have multiple AUDIT_CONTAINER* record types, so it seems as
-> though we should use "AUDIT_CONTAINER" as a prefix of sorts, rather
-> than a type itself.
+> > it is a different problem but the solution is the same: PERF_RECORD_UNMAP!
+>
+> But he's not actually doing PERF_RECORD_UNMAP, nor is his perf_munmap()
+> hook sufficient to actually generate those.
+>
+You're right. But I saw that and thought, this is going in the right
+direction: tracking munmap.
+I agree with you that we should use this opportunity to track unmap
+for his purpose but also
+the issue I raised, which needs a new record type based on the new unmap hook.
 
-I'm fine with that.  I'd still like to hear Steve's input.  He had
-stronger opinions than me.
-
-> > > However, I do care about the "op" field in this record.  It just
-> > > doesn't make any sense; the way you are using it it is more of a
-> > > context field than an operations field, and even then why is the
-> > > context important from a logging and/or security perspective?  Drop it
-> > > please.
-> >
-> > I'll rename it to whatever you like.  I'd suggest "ref=".  The reason I
-> > think it is important is there are multiple sources that aren't always
-> > obvious from the other records to which it is associated.  In the case
-> > of ptrace and signals, there can be many target tasks listed (OBJ_PID)
-> > with no other way to distinguish the matching audit container identifier
-> > records all for one event.  This is in addition to the default syscall
-> > container identifier record.  I'm not currently happy with the text
-> > content to link the two, but that should be solvable (most obvious is
-> > taret PID).  Throwing away this information seems shortsighted.
-> 
-> It would be helpful if you could generate real audit events
-> demonstrating the problems you are describing, as well as a more
-> standard syscall event, so we can discuss some possible solutions.
-
-If the auditted process is in a container and it ptraces or signals
-another process in a container, there will be two AUDIT_CONTAINER
-records for the same event that won't be identified as to which record
-belongs to which process or other record (SYSCALL vs 1+ OBJ_PID
-records).  There could be many signals recorded, each with their own
-OBJ_PID record.  The first is stored in the audit context and additional
-ones are stored in a chained struct that can accommodate 16 entries each.
-
-(See audit_signal_info(), __audit_ptrace().)
-
-(As a side note, on code inspection it appears that a signal target
-would get overwritten by a ptrace action if they were to happen in that
-order.)
-
-> paul moore
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+> Now I agree that if he's going to do an munmap hook, he should do it
+> 'right' and at the very least allow for PERF_RECORD_UNMAP to be done,
+> but ideally simply pick up and finish that patch we had back then.
+Agreed.
