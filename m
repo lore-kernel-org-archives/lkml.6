@@ -2,101 +2,68 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88995ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:52:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC3B7ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:52:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F4B020834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:52:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F4B020834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 95B002083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:52:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95B002083E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=youngman.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727696AbeJZG1M (ORCPT
+        id S1727706AbeJZG1R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 02:27:12 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:37513 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726174AbeJZG1M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 02:27:12 -0400
-Received: by mail-oi1-f193.google.com with SMTP id e17-v6so8041220oib.4;
-        Thu, 25 Oct 2018 14:52:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iqbQl5ihR/SM/+0e/deIgeI7mi+Rh+Z/cWXJhlKJTSk=;
-        b=WJH6+QSRTx7PekurNxivYfhjp4m6tHun1lUqNNG5zQLn9g/wLoBDYcTJ8knZpdLXQn
-         ePZCrpy2Xbyvw5dFISrm74nw4c/MQ8cVqdBnAhxphnZhSyvWf4Z5D64spdnJvYjUeGRS
-         sdbuaySLMYaK+cxxFIr5+du1CnT/uzW9fTgUOrTKdgWcpIWD1b1P2AA692gGh7r+uVZj
-         qPpbmbJQNiyse7Ul0LBa9ABAj1jQHoeAsk0l0v6wexYCjxRpotDze3H0JmtVmBKBN+4W
-         eCeAjIW349c1qatL8RUnM3Limwrl53WPa2tFp2hkyw72OVMxCfv2H6HMmg2nIf5Dpopj
-         XkSA==
-X-Gm-Message-State: AGRZ1gKxmTfrj1qlSJW8ynL1yOd2swY6H1mDSXyss2IuXVJ0HkojtIW1
-        3EZtfXWiMg6Zp0cxV+JkmA==
-X-Google-Smtp-Source: AJdET5e/v/ewadxX7/s7dgp0flO1DICwZqrullxD2vkDwAhBG75EfP6NMelbZSwQqcD9Ihicu10SvQ==
-X-Received: by 2002:aca:a6d1:: with SMTP id t78-v6mr598067oij.341.1540504367881;
-        Thu, 25 Oct 2018 14:52:47 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id n63-v6sm2822805oia.52.2018.10.25.14.52.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Oct 2018 14:52:47 -0700 (PDT)
-Date:   Thu, 25 Oct 2018 16:52:46 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Xiaowei Bao <xiaowei.bao@nxp.com>
-Cc:     bhelgaas@google.com, mark.rutland@arm.com, shawnguo@kernel.org,
-        leoyang.li@nxp.com, kishon@ti.com, lorenzo.pieralisi@arm.com,
-        arnd@arndb.de, gregkh@linuxfoundation.org, minghuan.Lian@nxp.com,
-        mingkai.hu@nxp.com, roy.zang@nxp.com, kstewart@linuxfoundation.org,
-        cyrille.pitchen@free-electrons.com, pombredanne@nexb.com,
-        shawn.lin@rock-chips.com, niklas.cassel@axis.com,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 3/6] PCI: layerscape: Add the EP mode support
-Message-ID: <20181025215246.GA14861@bogus>
-References: <20181025110901.5680-1-xiaowei.bao@nxp.com>
- <20181025110901.5680-3-xiaowei.bao@nxp.com>
+        Fri, 26 Oct 2018 02:27:17 -0400
+Received: from smtp.hosts.co.uk ([85.233.160.19]:38782 "EHLO smtp.hosts.co.uk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726174AbeJZG1Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 02:27:16 -0400
+X-Greylist: delayed 2236 seconds by postgrey-1.27 at vger.kernel.org; Fri, 26 Oct 2018 02:27:16 EDT
+Received: from [81.157.153.73] (helo=[192.168.1.82])
+        by smtp.hosts.co.uk with esmtpa (Exim)
+        (envelope-from <antlists@youngman.org.uk>)
+        id 1gFmyi-0005Bd-Ac; Thu, 25 Oct 2018 22:15:40 +0100
+Subject: Re: [RFC] dm-bow working prototype
+To:     Paul Lawrence <paullawrence@google.com>
+References: <20181023212358.60292-1-paullawrence@google.com>
+ <CAE8gLhmtrfprc93-XfomNEK5ZgxA_RFA0DnFrEnHjB0q31wkyg@mail.gmail.com>
+ <d00e361b-b849-3139-7e7a-02f05f3794c3@google.com>
+Cc:     dm-devel@redhat.com, Linux kernel <linux-kernel@vger.kernel.org>,
+        linux-raid@vger.kernel.org
+From:   Wols Lists <antlists@youngman.org.uk>
+Message-ID: <5BD2327B.1040908@youngman.org.uk>
+Date:   Thu, 25 Oct 2018 22:15:39 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181025110901.5680-3-xiaowei.bao@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <d00e361b-b849-3139-7e7a-02f05f3794c3@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 07:08:58PM +0800, Xiaowei Bao wrote:
-> Add the EP mode support.
-> 
-> Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
-> ---
->  .../devicetree/bindings/pci/layerscape-pci.txt     |    3 +++
->  1 files changed, 3 insertions(+), 0 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/layerscape-pci.txt b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
-> index 66df1e8..d3d7be1 100644
-> --- a/Documentation/devicetree/bindings/pci/layerscape-pci.txt
-> +++ b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
-> @@ -13,12 +13,15 @@ information.
->  
->  Required properties:
->  - compatible: should contain the platform identifier such as:
-> +  RC mode:
->          "fsl,ls1021a-pcie", "snps,dw-pcie"
->          "fsl,ls2080a-pcie", "fsl,ls2085a-pcie", "snps,dw-pcie"
->          "fsl,ls2088a-pcie"
->          "fsl,ls1088a-pcie"
->          "fsl,ls1046a-pcie"
->          "fsl,ls1012a-pcie"
-> +  EP mode:
-> +        "fsl,ls-pcie-ep"
+On 25/10/18 19:13, Paul Lawrence wrote:
+>> I have some questions about dm-bow:
+>> – How file system agnostic this feature is planned to be? While it is
+>> designed with ext4 in mind, is it going to work when used over other
+>> file systems, like FAT or BTRFS for example?
 
-You need SoC specific compatibles for the same reasons as the RC.
+> So long as the file system supports fstrim, it should work. If the file
+> system creates a lot of churn say by running garbage collection, I'd not
+> recommend it. And I really don't see the use case if the file system has
+> any sort of snapshot capability - that will always be a superior
+> solution to a block level one IMO.
 
-Rob
+Sorry for being dense, but why is this posted to linux-raid, then? Raid
+does not support fstrim, and is filesystem-agnostic.
+
+I can imagine people here being interested, but it feels to me as though
+your functionality is completely orthogonal to raid. Sorry.
+
+Cheers,
+Wol
