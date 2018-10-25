@@ -7,105 +7,135 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 612DCECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:14:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26439ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:14:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27A5B20868
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:14:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2CF420848
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:14:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EWWvLIV2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27A5B20868
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wSREQMt+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2CF420848
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728563AbeJYWre (ORCPT
+        id S1728577AbeJYWrf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:47:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55596 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:47:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728532AbeJYWrd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:47:33 -0400
+        id S1727505AbeJYWre (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:47:34 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1360820856;
-        Thu, 25 Oct 2018 14:14:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6484320834;
+        Thu, 25 Oct 2018 14:14:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540476877;
-        bh=r+BP4uZoLG1zK5wUhXp9vFFcPCLQIBwbaCPHVBnpjKY=;
+        s=default; t=1540476878;
+        bh=HOvhvjNEja1LRwcsVhy0zeJYAsMBNh9RjFDVdWSW4Qs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EWWvLIV2lrAl5IysfXGhQxO4pHNR5L6EXVb5HyVc0UEAhQ9qyezenQLbYnOBudUIe
-         4kTEynoaOi2pV5HtCcWJKB07OGrSSLcM/MlHKui2norX+U6egBySBIhDsZCXnQEEh3
-         v1ujCrCaKAYCTgVHipzGP7ML2MhtxVn4oCxh1I/s=
+        b=wSREQMt+GF/IEekEjQks/j1Yw+BWb+H1gjPrAKqj7gsRSXleunQ3URtxK2GRebEZ5
+         wJBITparD2bDZKn01qLyNTcK36PNkS3ehh2LzIgjOJrnRv4/ONuDzq5kkrFe2SO68N
+         h/QM81W+Ei4jMX+ctPxhPWQLSkhVr6XI6RKOr8s8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sheng Yong <shengyong1@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
+Cc:     =?UTF-8?q?Christian=20Gr=C3=B6nke?= <c.groenke@infodas.de>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 06/98] f2fs: fix multiple f2fs_add_link() having same name for inline dentry
-Date:   Thu, 25 Oct 2018 10:12:51 -0400
-Message-Id: <20181025141423.213774-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 07/98] igb: Remove superfluous reset to PHY and page 0 selection
+Date:   Thu, 25 Oct 2018 10:12:52 -0400
+Message-Id: <20181025141423.213774-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141423.213774-1-sashal@kernel.org>
 References: <20181025141423.213774-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sheng Yong <shengyong1@huawei.com>
+From: Christian Grönke <c.groenke@infodas.de>
 
-[ Upstream commit d3bb910c15d75ee3340311c64a1c05985bb663a3 ]
+[ Upstream commit 2a83fba6cae89dd9c0625e68ff8ffff791c67ac0 ]
 
-Commit 88c5c13a5027 (f2fs: fix multiple f2fs_add_link() calls having
-same name) does not cover the scenario where inline dentry is enabled.
-In that case, F2FS_I(dir)->task will be NULL, and __f2fs_add_link will
-lookup dentries one more time.
+This patch reverts two previous applied patches to fix an issue
+that appeared when using SGMII based SFP modules. In the current
+state the driver will try to reset the PHY before obtaining the
+phy_addr of the SGMII attached PHY. That leads to an error in
+e1000_write_phy_reg_sgmii_82575. Causing the initialization to
+fail:
 
-This patch fixes it by moving the assigment of current task to a upper
-level to cover both normal and inline dentry.
+    igb: Intel(R) Gigabit Ethernet Network Driver - version 5.4.0-k
+    igb: Copyright (c) 2007-2014 Intel Corporation.
+    igb: probe of ????:??:??.? failed with error -3
 
-Cc: <stable@vger.kernel.org>
-Fixes: 88c5c13a5027 (f2fs: fix multiple f2fs_add_link() calls having same name)
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+The patches being reverted are:
+
+    commit 182785335447957409282ca745aa5bc3968facee
+    Author: Aaron Sierra <asierra@xes-inc.com>
+    Date:   Tue Nov 29 10:03:56 2016 -0600
+
+        igb: reset the PHY before reading the PHY ID
+
+    commit 440aeca4b9858248d8f16d724d9fa87a4f65fa33
+    Author: Matwey V Kornilov <matwey@sai.msu.ru>
+    Date:   Thu Nov 24 13:32:48 2016 +0300
+
+         igb: Explicitly select page 0 at initialization
+
+The first reverted patch directly causes the problem mentioned above.
+In case of SGMII the phy_addr is not known at this point and will
+only be obtained by 'igb_get_phy_id_82575' further down in the code.
+The second removed patch selects forces selection of page 0 in the
+PHY. Something that the reset tries to address as well.
+
+As pointed out by Alexander Duzck, the patch below fixes the same
+issue but in the proper location:
+
+    commit 4e684f59d760a2c7c716bb60190783546e2d08a1
+    Author: Chris J Arges <christopherarges@gmail.com>
+    Date:   Wed Nov 2 09:13:42 2016 -0500
+
+        igb: Workaround for igb i210 firmware issue
+
+Reverts: 440aeca4b9858248d8f16d724d9fa87a4f65fa33.
+Reverts: 182785335447957409282ca745aa5bc3968facee.
+
+Signed-off-by: Christian Grönke <c.groenke@infodas.de>
+Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/dir.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ drivers/net/ethernet/intel/igb/e1000_82575.c | 12 ------------
+ 1 file changed, 12 deletions(-)
 
-diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
-index 8add4e8bab99..af719d93507e 100644
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -212,13 +212,9 @@ static struct f2fs_dir_entry *find_in_level(struct inode *dir,
- 		f2fs_put_page(dentry_page, 0);
- 	}
+diff --git a/drivers/net/ethernet/intel/igb/e1000_82575.c b/drivers/net/ethernet/intel/igb/e1000_82575.c
+index 4a50870e0fa7..a61447fd778e 100644
+--- a/drivers/net/ethernet/intel/igb/e1000_82575.c
++++ b/drivers/net/ethernet/intel/igb/e1000_82575.c
+@@ -245,19 +245,7 @@ static s32 igb_init_phy_params_82575(struct e1000_hw *hw)
+ 	hw->bus.func = (rd32(E1000_STATUS) & E1000_STATUS_FUNC_MASK) >>
+ 			E1000_STATUS_FUNC_SHIFT;
  
--	/* This is to increase the speed of f2fs_create */
--	if (!de && room) {
--		F2FS_I(dir)->task = current;
--		if (F2FS_I(dir)->chash != namehash) {
--			F2FS_I(dir)->chash = namehash;
--			F2FS_I(dir)->clevel = level;
--		}
-+	if (!de && room && F2FS_I(dir)->chash != namehash) {
-+		F2FS_I(dir)->chash = namehash;
-+		F2FS_I(dir)->clevel = level;
- 	}
- 
- 	return de;
-@@ -259,6 +255,9 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
- 			break;
- 	}
- out:
-+	/* This is to increase the speed of f2fs_create */
-+	if (!de)
-+		F2FS_I(dir)->task = current;
- 	return de;
- }
- 
+-	/* Make sure the PHY is in a good state. Several people have reported
+-	 * firmware leaving the PHY's page select register set to something
+-	 * other than the default of zero, which causes the PHY ID read to
+-	 * access something other than the intended register.
+-	 */
+-	ret_val = hw->phy.ops.reset(hw);
+-	if (ret_val) {
+-		hw_dbg("Error resetting the PHY.\n");
+-		goto out;
+-	}
+-
+ 	/* Set phy->phy_addr and phy->id. */
+-	igb_write_phy_reg_82580(hw, I347AT4_PAGE_SELECT, 0);
+ 	ret_val = igb_get_phy_id_82575(hw);
+ 	if (ret_val)
+ 		return ret_val;
 -- 
 2.17.1
 
