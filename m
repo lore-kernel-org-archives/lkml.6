@@ -7,172 +7,104 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7938DECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDA3CC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EF7120883
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CCD920873
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oma9YBXI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EF7120883
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SSdp3F6C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CCD920873
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731119AbeJYWxe (ORCPT
+        id S1731132AbeJYWxh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:53:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36132 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:53:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36174 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728023AbeJYWxd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:53:33 -0400
+        id S1728023AbeJYWxf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:53:35 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A2F9D20883;
-        Thu, 25 Oct 2018 14:20:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 239482148E;
+        Thu, 25 Oct 2018 14:20:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477235;
-        bh=GzQQssWj+vwvgP7yLm+ItKkQ/L4GpmpQxQ4JnxtollU=;
+        s=default; t=1540477237;
+        bh=fQ0VW0zLV5ICMogiUHv2eTy26CDEsla9M+N7n/LiBJE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oma9YBXIsY4ZIaZV6VtpvqbtwR9V5jqAdfEKx1Xk+pspZdwHgdxawmhVphX+De7ju
-         rFUJLJhCgcYtyh8BEWY1ve5FfBe/duJp33RvRxOBvDtjF+mme+tzdkZE+JRrFlPE18
-         8UEuGAfi0A3o/RyHwhRFZyHJ4TIRMYiiBGHAAHKc=
+        b=SSdp3F6C8nfkpPMYAtavHXQxxqZZRKtbgHrBC/zNWJ5WEd04Wc7hNBYoZ6K+tHZGL
+         WL9Cnzpz7BaQPLqCp66cO8plRiB3orRNitxXkLwYzlfdQiACVAVbnCQZmvQqfxc6pu
+         5qaLiwhgywyj0qP5Ju8GMOVzCYxo6UUEcL9/XmKU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Robert Jarzmik <robert.jarzmik@free.fr>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Vinson Lee <vlee@twitter.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 67/98] net: ethernet: davicom: fix devicetree irq resource
-Date:   Thu, 25 Oct 2018 10:18:22 -0400
-Message-Id: <20181025141853.214051-67-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 68/98] perf bench numa: Fix to show proper convergence stats
+Date:   Thu, 25 Oct 2018 10:18:23 -0400
+Message-Id: <20181025141853.214051-68-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
 References: <20181025141853.214051-1-sashal@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Robert Jarzmik <robert.jarzmik@free.fr>
+From: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
 
-[ Upstream commit b5a099c67a1c36b91356624ce86eb3f9f48a82c7 ]
+[ Upstream commit 2b42b09b88c831ba4da2d669581dde371c38c2af ]
 
-The dm9000 driver doesn't work in at least one device-tree
-configuration, spitting an error message on irq resource :
-[    1.062495] dm9000 8000000.ethernet: insufficient resources
-[    1.068439] dm9000 8000000.ethernet: not found (-2).
-[    1.073451] dm9000: probe of 8000000.ethernet failed with error -2
+With commit: e1e455f4f4d3 (perf tools: Work around lack of sched_getcpu
+in glibc < 2.6), perf_bench numa mem with -c or -m option is not able to
+correctly calculate convergence.
 
-The reason behind is that the interrupt might be provided by a gpio
-controller, not probed when dm9000 is probed, and needing the probe
-deferral mechanism to apply.
+With the above commit, sched_getcpu always seems to return -1. The
+intention of commit e1e455f was to add a sched_getcpu in glibc < 2.6.
+Hence keep the sched_getcpu definition under an ifdef.
 
-Currently, the interrupt is directly taken from resources. This patch
-changes this to use the more generic platform_get_irq(), which handles
-the deferral.
+This regression happened occurred between v4.0 and v4.1
 
-Moreover, since commit Fixes: 7085a7401ba5 ("drivers: platform: parse
-IRQ flags from resources"), the interrupt trigger flags are honored in
-platform_get_irq(), so remove the needless code in dm9000.
-
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Acked-by: Marcel Ziswiler <marcel@ziswiler.com>
-Cc: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Tested-by: Sergei Ianovich <ynvich@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Acked-by: Ingo Molnar <mingo@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Vinson Lee <vlee@twitter.com>
+Fixes:  e1e455f4f4d3 ("perf tools: Work around lack of sched_getcpu in glibc < 2.6")
+Link: http://lkml.kernel.org/r/20150624111004.GA5220@linux.vnet.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/davicom/dm9000.c | 34 +++++++++++++--------------
- 1 file changed, 17 insertions(+), 17 deletions(-)
+ tools/perf/util/cloexec.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/net/ethernet/davicom/dm9000.c b/drivers/net/ethernet/davicom/dm9000.c
-index f3ba840cbf7b..ef24b60b4d3f 100644
---- a/drivers/net/ethernet/davicom/dm9000.c
-+++ b/drivers/net/ethernet/davicom/dm9000.c
-@@ -125,7 +125,6 @@ struct board_info {
- 	struct resource *data_res;
- 	struct resource	*addr_req;   /* resources requested */
- 	struct resource *data_req;
--	struct resource *irq_res;
+diff --git a/tools/perf/util/cloexec.c b/tools/perf/util/cloexec.c
+index 85b523885f9d..2babddaa2481 100644
+--- a/tools/perf/util/cloexec.c
++++ b/tools/perf/util/cloexec.c
+@@ -7,11 +7,15 @@
  
- 	int		 irq_wake;
+ static unsigned long flag = PERF_FLAG_FD_CLOEXEC;
  
-@@ -1297,22 +1296,16 @@ static int
- dm9000_open(struct net_device *dev)
++#ifdef __GLIBC_PREREQ
++#if !__GLIBC_PREREQ(2, 6)
+ int __weak sched_getcpu(void)
  {
- 	struct board_info *db = netdev_priv(dev);
--	unsigned long irqflags = db->irq_res->flags & IRQF_TRIGGER_MASK;
+ 	errno = ENOSYS;
+ 	return -1;
+ }
++#endif
++#endif
  
- 	if (netif_msg_ifup(db))
- 		dev_dbg(db->dev, "enabling %s\n", dev->name);
- 
--	/* If there is no IRQ type specified, default to something that
--	 * may work, and tell the user that this is a problem */
--
--	if (irqflags == IRQF_TRIGGER_NONE)
--		irqflags = irq_get_trigger_type(dev->irq);
--
--	if (irqflags == IRQF_TRIGGER_NONE)
-+	/* If there is no IRQ type specified, tell the user that this is a
-+	 * problem
-+	 */
-+	if (irq_get_trigger_type(dev->irq) == IRQF_TRIGGER_NONE)
- 		dev_warn(db->dev, "WARNING: no IRQ resource flags set.\n");
- 
--	irqflags |= IRQF_SHARED;
--
- 	/* GPIO0 on pre-activate PHY, Reg 1F is not set by reset */
- 	iow(db, DM9000_GPR, 0);	/* REG_1F bit0 activate phyxcer */
- 	mdelay(1); /* delay needs by DM9000B */
-@@ -1320,7 +1313,8 @@ dm9000_open(struct net_device *dev)
- 	/* Initialize DM9000 board */
- 	dm9000_init_dm9000(dev);
- 
--	if (request_irq(dev->irq, dm9000_interrupt, irqflags, dev->name, dev))
-+	if (request_irq(dev->irq, dm9000_interrupt, IRQF_SHARED,
-+			dev->name, dev))
- 		return -EAGAIN;
- 	/* Now that we have an interrupt handler hooked up we can unmask
- 	 * our interrupts
-@@ -1460,15 +1454,22 @@ dm9000_probe(struct platform_device *pdev)
- 
- 	db->addr_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	db->data_res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	db->irq_res  = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
- 
--	if (db->addr_res == NULL || db->data_res == NULL ||
--	    db->irq_res == NULL) {
--		dev_err(db->dev, "insufficient resources\n");
-+	if (!db->addr_res || !db->data_res) {
-+		dev_err(db->dev, "insufficient resources addr=%p data=%p\n",
-+			db->addr_res, db->data_res);
- 		ret = -ENOENT;
- 		goto out;
- 	}
- 
-+	ndev->irq = platform_get_irq(pdev, 0);
-+	if (ndev->irq < 0) {
-+		dev_err(db->dev, "interrupt resource unavailable: %d\n",
-+			ndev->irq);
-+		ret = ndev->irq;
-+		goto out;
-+	}
-+
- 	db->irq_wake = platform_get_irq(pdev, 1);
- 	if (db->irq_wake >= 0) {
- 		dev_dbg(db->dev, "wakeup irq %d\n", db->irq_wake);
-@@ -1530,7 +1531,6 @@ dm9000_probe(struct platform_device *pdev)
- 
- 	/* fill in parameters for net-dev structure */
- 	ndev->base_addr = (unsigned long)db->io_addr;
--	ndev->irq	= db->irq_res->start;
- 
- 	/* ensure at least we have a default set of IO routines */
- 	dm9000_set_io(db, iosize);
+ static int perf_flag_probe(void)
+ {
 -- 
 2.17.1
 
