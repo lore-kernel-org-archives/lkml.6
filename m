@@ -3,32 +3,32 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A9BEC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 23:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C4C6ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 23:11:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0586120652
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 23:11:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0586120652
+	by mail.kernel.org (Postfix) with ESMTP id E47812084A
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 23:11:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E47812084A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727747AbeJZHpp (ORCPT
+        id S1727726AbeJZHpp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 26 Oct 2018 03:45:45 -0400
-Received: from mga12.intel.com ([192.55.52.136]:21053 "EHLO mga12.intel.com"
+Received: from mga12.intel.com ([192.55.52.136]:21058 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727653AbeJZHpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727671AbeJZHpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 26 Oct 2018 03:45:44 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2018 16:11:08 -0700
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2018 16:11:09 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,425,1534834800"; 
-   d="scan'208";a="268852845"
+   d="scan'208";a="268852849"
 Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
   by orsmga005.jf.intel.com with ESMTP; 25 Oct 2018 16:11:08 -0700
 From:   Fenghua Yu <fenghua.yu@intel.com>
@@ -44,9 +44,9 @@ To:     "Thomas Gleixner" <tglx@linutronix.de>,
         "Arshiya Hayatkhan Pathan" <arshiya.hayatkhan.pathan@intel.com>
 Cc:     "linux-kernel" <linux-kernel@vger.kernel.org>,
         Fenghua Yu <fenghua.yu@intel.com>
-Subject: [PATCH v2 6/8] selftests/resctrl: Add mbm test
-Date:   Thu, 25 Oct 2018 16:07:04 -0700
-Message-Id: <1540508826-144502-7-git-send-email-fenghua.yu@intel.com>
+Subject: [PATCH v2 7/8] selftests/resctrl: Add mba test
+Date:   Thu, 25 Oct 2018 16:07:05 -0700
+Message-Id: <1540508826-144502-8-git-send-email-fenghua.yu@intel.com>
 X-Mailer: git-send-email 2.5.0
 In-Reply-To: <1540508826-144502-1-git-send-email-fenghua.yu@intel.com>
 References: <1540508826-144502-1-git-send-email-fenghua.yu@intel.com>
@@ -57,62 +57,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>
 
-mbm test is the first implemented selftest. It starts a stressful
-memory bandwidth benchmark and assigns the bandwidth pid in a
-resctrl monitoring group. Read and compare perf IMC counter and mbm
-total bytes for the benchmark. The numbers should be close enough
-to pass the test.
+mba test starts a stressful memory bandwidth benchmark and allocates
+memory bandwidth from 100% down to 10% for the benchmark process. For
+each allocation, compare perf IMC counter and mbm total bytes from
+resctrl. The difference between the two values should be within a
+threshold to pass the test.
 
 Default benchmark is built-in fill_buf. But users can specify their
 own benchmark by option "-b".
 
-We can add memory bandwidth monitoring for multiple processes in the
+We can add memory bandwidth allocation for multiple processes in the
 future.
 
 Signed-off-by: Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>
 Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
 Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
 ---
- tools/testing/selftests/resctrl/Makefile        |   8 +-
- tools/testing/selftests/resctrl/mbm_test.c      | 143 ++++++++++++++++++++++++
- tools/testing/selftests/resctrl/membw.c         |   2 +
+ tools/testing/selftests/resctrl/Makefile        |   2 +-
+ tools/testing/selftests/resctrl/mba_test.c      | 175 ++++++++++++++++++++++++
  tools/testing/selftests/resctrl/resctrl.h       |   4 +
- tools/testing/selftests/resctrl/resctrl_tests.c | 124 ++++++++++++++++++++
- 5 files changed, 280 insertions(+), 1 deletion(-)
- create mode 100644 tools/testing/selftests/resctrl/mbm_test.c
- create mode 100644 tools/testing/selftests/resctrl/resctrl_tests.c
+ tools/testing/selftests/resctrl/resctrl_tests.c |  16 ++-
+ 4 files changed, 195 insertions(+), 2 deletions(-)
+ create mode 100644 tools/testing/selftests/resctrl/mba_test.c
 
 diff --git a/tools/testing/selftests/resctrl/Makefile b/tools/testing/selftests/resctrl/Makefile
-index bd5c5418961e..51165f9f8a9d 100644
+index 51165f9f8a9d..bf9f55e71d0c 100644
 --- a/tools/testing/selftests/resctrl/Makefile
 +++ b/tools/testing/selftests/resctrl/Makefile
-@@ -1,10 +1,16 @@
- CC = gcc
- CFLAGS = -g -Wall
+@@ -8,7 +8,7 @@ all: resctrl_tests
  
-+all: resctrl_tests
-+
- *.o: *.c
- 	$(CC) $(CFLAGS) -c *.c
+ resctrl_tests: *.o
+ 	$(CC) $(CFLAGS) -o resctrl_tests resctrl_tests.o resctrlfs.o \
+-		 membw.o fill_buf.o mbm_test.o
++		 membw.o fill_buf.o mbm_test.o mba_test.o
  
-+resctrl_tests: *.o
-+	$(CC) $(CFLAGS) -o resctrl_tests resctrl_tests.o resctrlfs.o \
-+		 membw.o fill_buf.o mbm_test.o
-+
  .PHONY: clean
  
- clean:
--	$(RM) *.o *~
-+	$(RM) *.o *~ resctrl_tests
-diff --git a/tools/testing/selftests/resctrl/mbm_test.c b/tools/testing/selftests/resctrl/mbm_test.c
+diff --git a/tools/testing/selftests/resctrl/mba_test.c b/tools/testing/selftests/resctrl/mba_test.c
 new file mode 100644
-index 000000000000..f98f4e20a021
+index 000000000000..f78ebc53a0ca
 --- /dev/null
-+++ b/tools/testing/selftests/resctrl/mbm_test.c
-@@ -0,0 +1,143 @@
++++ b/tools/testing/selftests/resctrl/mba_test.c
+@@ -0,0 +1,175 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Memory Bandwidth Monitoring (MBM) test
++ * Memory Bandwidth Allocation (MBA) test
 + *
 + * Copyright (C) 2018 Intel Corporation
 + *
@@ -123,50 +112,101 @@ index 000000000000..f98f4e20a021
 + */
 +#include "resctrl.h"
 +
-+#define RESULT_FILE_NAME	"result_mbm"
-+#define MAX_DIFF		300
++#define RESULT_FILE_NAME	"result_mba"
 +#define NUM_OF_RUNS		5
++#define MAX_DIFF		300
++#define ALLOCATION_MAX		100
++#define ALLOCATION_MIN		10
++#define ALLOCATION_STEP		10
 +
-+static void
-+show_bw_info(unsigned long *bw_imc, unsigned long *bw_resc, int span)
++/*
++ * Change schemata percentage from 100 to 10%. Write schemata to specified
++ * con_mon grp, mon_grp in resctrl FS.
++ * For each allocation, run 5 times in order to get average values.
++ */
++static int mba_setup(int num, ...)
 +{
-+	unsigned long avg_bw_imc = 0, avg_bw_resc = 0, avg_diff = 0;
-+	int runs, sum_bw_imc = 0, sum_bw_resc = 0;
++	static int runs_per_allocation, allocation = 100;
++	char allocation_str[64];
++	va_list param;
++	int cpu_no;
 +
-+	/*
-+	 * Discard the first value which is inaccurate due to monitoring setup
-+	 * transition phase.
-+	 */
-+	for (runs = 1; runs < NUM_OF_RUNS ; runs++) {
-+		sum_bw_imc += bw_imc[runs];
-+		sum_bw_resc += bw_resc[runs];
-+	}
++	va_start(param, num);
++	cpu_no = va_arg(param, int);
++	va_end(param);
 +
-+	avg_bw_imc = sum_bw_imc / 4;
-+	avg_bw_resc = sum_bw_resc / 4;
-+	avg_diff = avg_bw_resc - avg_bw_imc;
++	if (runs_per_allocation >= NUM_OF_RUNS)
++		runs_per_allocation = 0;
 +
-+	printf("\nSpan (MB): %d \t", span);
-+	printf("avg_bw_imc: %ld\t", avg_bw_imc);
-+	printf("avg_bw_resc: %ld\t", avg_bw_resc);
-+	printf("avg_diff: %d \t", abs(avg_diff));
++	/* Only set up schemata once every NUM_OF_RUNS of allocations */
++	if (runs_per_allocation++ != 0)
++		return 0;
 +
-+	if (abs(avg_diff) > MAX_DIFF)
-+		printf(" failed\n");
-+	else
-+		printf(" passed\n");
++	if (allocation < ALLOCATION_MIN || allocation > ALLOCATION_MAX)
++		return -1;
++
++	sprintf(allocation_str, "%d", allocation);
++
++	write_schemata("c1", allocation_str, cpu_no, "mba");
++	printf("changed schemata to : %d\n", allocation);
++	allocation -= ALLOCATION_STEP;
++
++	return 0;
 +}
 +
-+static int check_results(int span)
++static void show_mba_info(unsigned long *bw_imc, unsigned long *bw_resc)
 +{
-+	unsigned long bw_imc[NUM_OF_RUNS], bw_resc[NUM_OF_RUNS];
-+	char temp[1024], *token_array[8];
-+	char output[] = RESULT_FILE_NAME;
++	int allocation, failed, runs;
++
++	/* Memory bandwidth from 100% down to 10% */
++	for (allocation = 0; allocation < ALLOCATION_MAX / ALLOCATION_STEP;
++	     allocation++) {
++		unsigned long avg_bw_imc = 0, avg_bw_resc = 0, avg_diff = 0;
++		int sum_bw_imc = 0, sum_bw_resc = 0;
++
++		/*
++		 * The first run is discarded due to inaccurate value from
++		 * phase transition.
++		 */
++		for (runs = NUM_OF_RUNS * allocation + 1;
++		     runs < NUM_OF_RUNS * allocation + NUM_OF_RUNS ; runs++) {
++			sum_bw_imc += bw_imc[runs];
++			sum_bw_resc += bw_resc[runs];
++		}
++
++		avg_bw_imc = sum_bw_imc / (NUM_OF_RUNS - 1);
++		avg_bw_resc = sum_bw_resc / (NUM_OF_RUNS - 1);
++		avg_diff = avg_bw_resc - avg_bw_imc;
++
++		printf("\nschemata percentage: %d \t",
++		       ALLOCATION_MAX - ALLOCATION_STEP * allocation);
++		printf("avg_bw_imc: %ld\t", avg_bw_imc);
++		printf("avg_bw_resc: %ld\t", avg_bw_resc);
++		printf("avg_diff: %d \t", abs(avg_diff));
++		if (abs(avg_diff) > MAX_DIFF) {
++			printf("failed\n");
++			failed = 1;
++		} else {
++			printf("passed\n");
++		}
++	}
++
++	if (failed) {
++		printf("\nTest for schemata change using MBA failed");
++		printf("as atleast one test failed!\n");
++	} else {
++		printf("\nTests for changing schemata using MBA passed!\n\n");
++	}
++}
++
++static int check_results(void)
++{
++	char *token_array[8], output[] = RESULT_FILE_NAME, temp[512];
++	unsigned long bw_imc[1024], bw_resc[1024];
 +	int runs;
 +	FILE *fp;
 +
-+	printf("\nChecking for pass/fail\n");
-+
++	printf("\nchecking for pass/fail\n");
 +	fp = fopen(output, "r");
 +	if (!fp) {
 +		perror("Error in opening file\n");
@@ -177,54 +217,35 @@ index 000000000000..f98f4e20a021
 +	runs = 0;
 +	while (fgets(temp, 1024, fp)) {
 +		char *token = strtok(temp, ":\t");
-+		int i = 0;
++		int fields = 0;
 +
 +		while (token) {
-+			token_array[i++] = token;
++			token_array[fields++] = token;
 +			token = strtok(NULL, ":\t");
 +		}
 +
-+		bw_resc[runs] = atoll(token_array[5]);
++		/* Field 3 is perf imc value */
 +		bw_imc[runs] = atoll(token_array[3]);
++		/* Field 5 is resctrl value */
++		bw_resc[runs] = atoll(token_array[5]);
 +		runs++;
 +	}
 +
-+	show_bw_info(bw_imc, bw_resc, span);
-+
 +	fclose(fp);
++
++	show_mba_info(bw_imc, bw_resc);
 +
 +	return 0;
 +}
 +
-+static int mbm_setup(int num, ...)
-+{
-+	struct resctrl_val_param *p;
-+	static int num_of_runs;
-+	va_list param;
-+	int ret = 0;
-+
-+	/* Run NUM_OF_RUNS times */
-+	if (num_of_runs++ >= NUM_OF_RUNS)
-+		return -1;
-+
-+	va_start(param, num);
-+	p = va_arg(param, struct resctrl_val_param *);
-+	va_end(param);
-+
-+	/* Set up shemata with 100% allocation on the first run. */
-+	if (num_of_runs == 0)
-+		ret = write_schemata(p->ctrlgrp, "100", p->cpu_no, "mbm");
-+
-+	return ret;
-+}
-+
-+void mbm_test_cleanup(void)
++void mba_test_cleanup(void)
 +{
 +	remove(RESULT_FILE_NAME);
 +}
 +
-+int mbm_bw_change(char *resctrl_val_type, int core_id, int span,
-+		  char *bw_report, char *bm_type, char **benchmark_cmd)
++int mba_schemata_change(char *resctrl_val_type, int core_id, int span,
++			char *bw_report, char *bm_type,
++			char **benchmark_cmd)
 +{
 +	struct resctrl_val_param param = {
 +		.resctrl_val	= resctrl_val_type,
@@ -235,7 +256,7 @@ index 000000000000..f98f4e20a021
 +		.filename	= RESULT_FILE_NAME,
 +		.bw_report	=  bw_report,
 +		.bm_type	= bm_type,
-+		.setup		= mbm_setup
++		.setup		= mba_setup
 +	};
 +	int ret;
 +
@@ -245,171 +266,77 @@ index 000000000000..f98f4e20a021
 +	if (ret)
 +		return ret;
 +
-+	ret = check_results(span);
++	ret = check_results();
 +	if (ret)
 +		return ret;
 +
-+	mbm_test_cleanup();
++	mba_test_cleanup();
 +
 +	return 0;
 +}
-diff --git a/tools/testing/selftests/resctrl/membw.c b/tools/testing/selftests/resctrl/membw.c
-index dfcd9c1244d8..78d0689022a1 100644
---- a/tools/testing/selftests/resctrl/membw.c
-+++ b/tools/testing/selftests/resctrl/membw.c
-@@ -407,6 +407,8 @@ pid_t bm_pid, ppid;
- static void ctrlc_handler(int signum, siginfo_t *info, void *ptr)
- {
- 	kill(bm_pid, SIGKILL);
-+	umount_resctrlfs();
-+	tests_cleanup();
- 	printf("Ending\n\n");
- 
- 	exit(EXIT_SUCCESS);
 diff --git a/tools/testing/selftests/resctrl/resctrl.h b/tools/testing/selftests/resctrl/resctrl.h
-index f1de2dee8f50..8d3623062ce0 100644
+index 8d3623062ce0..5021349be5cd 100644
 --- a/tools/testing/selftests/resctrl/resctrl.h
 +++ b/tools/testing/selftests/resctrl/resctrl.h
-@@ -76,5 +76,9 @@ int perf_event_open(struct perf_event_attr *hw_event, pid_t pid, int cpu,
- 		    int group_fd, unsigned long flags);
- int run_fill_buf(int span, int malloc_and_init_memory, int memflush, int op);
- int membw_val(char **benchmark_cmd, struct resctrl_val_param *param);
-+int mbm_bw_change(char *resctrl_val_type, int core_id, int span,
-+		  char *bw_report, char *bm_type, char **benchmark_cmd);
-+void tests_cleanup(void);
-+void mbm_test_cleanup(void);
+@@ -80,5 +80,9 @@ int mbm_bw_change(char *resctrl_val_type, int core_id, int span,
+ 		  char *bw_report, char *bm_type, char **benchmark_cmd);
+ void tests_cleanup(void);
+ void mbm_test_cleanup(void);
++int mba_schemata_change(char *resctrl_val_type, int core_id, int span,
++			char *bw_report, char *bm_type,
++			char **benchmark_cmd);
++void mba_test_cleanup(void);
  
  #endif /* RESCTRL_H */
 diff --git a/tools/testing/selftests/resctrl/resctrl_tests.c b/tools/testing/selftests/resctrl/resctrl_tests.c
-new file mode 100644
-index 000000000000..2044b6b79f5b
---- /dev/null
+index 2044b6b79f5b..5fa07a00ffeb 100644
+--- a/tools/testing/selftests/resctrl/resctrl_tests.c
 +++ b/tools/testing/selftests/resctrl/resctrl_tests.c
-@@ -0,0 +1,124 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Resctrl tests
-+ *
-+ * Copyright (C) 2018 Intel Corporation
-+ *
-+ * Authors:
-+ *    Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>
-+ *    Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-+ *    Fenghua Yu <fenghua.yu@intel.com>
-+ */
-+#include "resctrl.h"
-+
-+#define BENCHMARK_ARGS		64
-+#define BENCHMARK_ARG_SIZE	64
-+
-+int ben_count;
-+
-+static void cmd_help(void)
-+{
-+	printf("usage: resctrl_tests [-h] [-b \"benchmark_cmd [options]\"] [-t test list]\n");
-+	printf("\t-b benchmark_cmd [options]: run specified benchmark\n");
-+	printf("\t default benchmark is builtin fill_buf\n");
-+	printf("\t-t test list: run tests specified in the test list, ");
-+	printf("e.g. -t mbm,mba\n");
-+	printf("\t-h: help\n");
-+}
-+
-+void tests_cleanup(void)
-+{
-+	mbm_test_cleanup();
-+}
-+
-+int main(int argc, char **argv)
-+{
-+	char benchmark_cmd_area[BENCHMARK_ARGS][BENCHMARK_ARG_SIZE];
-+	int res, c, core_id = 0, span = 250, argc_new = argc, i;
-+	bool has_ben = false, mbm_test = true;
-+	char *benchmark_cmd[BENCHMARK_ARGS];
-+	char bw_report[64], bm_type[64];
-+
-+	while ((c = getopt(argc_new, argv, "ht:b:")) != -1) {
-+		char *token;
-+
-+		switch (c) {
-+		case 't':
-+			token = strtok(optarg, ",");
-+
-+			mbm_test = false;
-+			while (token) {
-+				if (!strcmp(token, "mbm")) {
-+					mbm_test = true;
-+				} else {
-+					printf("invalid argument\n");
-+
-+					return -1;
-+				}
-+				token = strtok(NULL, ":\t");
-+			}
-+			break;
-+		case 'b':
-+			/* Extract benchmark command from command line. */
-+			token = strtok(optarg, " ");
-+			i = 0;
-+			while (token) {
-+				benchmark_cmd[i] = benchmark_cmd_area[i];
-+				strcpy(benchmark_cmd[i++], token);
-+				if (i >= BENCHMARK_ARGS) {
-+					printf("Too many benchmark args\n");
-+
-+					return -1;
-+				}
-+				token = strtok(NULL, " ");
-+			}
-+			benchmark_cmd[i] = NULL;
-+			has_ben = true;
-+			break;
-+		case 'h':
-+			cmd_help();
-+
-+			return 0;
-+		default:
-+			printf("invalid argument\n");
-+
-+			return -1;
-+		}
-+	}
-+
-+	/*
-+	 * We need root privileges to run because
-+	 * 1. We write to resctrl FS
-+	 * 2. We execute perf commands
-+	 */
-+	if (geteuid() != 0) {
-+		perror("Please run this program as root\n");
-+
-+		return errno;
-+	}
-+
-+	if (!has_ben) {
-+		/* If no benchmark is given by "-b" argument, use fill_buf. */
-+		for (i = 0; i < 5; i++)
-+			benchmark_cmd[i] = benchmark_cmd_area[i];
-+		strcpy(benchmark_cmd[0], "fill_buf");
-+		sprintf(benchmark_cmd[1], "%d", span);
-+		strcpy(benchmark_cmd[2], "1");
-+		strcpy(benchmark_cmd[3], "1");
-+		strcpy(benchmark_cmd[4], "0");
-+		benchmark_cmd[5] = NULL;
-+	}
-+
-+	sprintf(bw_report, "reads");
-+	sprintf(bm_type, "fill_buf");
-+
-+	if (mbm_test) {
-+		printf("\nMBM BW Change Starting..\n");
-+		res = mbm_bw_change("mbm", core_id, span, bw_report, bm_type,
-+				    benchmark_cmd);
+@@ -29,13 +29,14 @@ static void cmd_help(void)
+ void tests_cleanup(void)
+ {
+ 	mbm_test_cleanup();
++	mba_test_cleanup();
+ }
+ 
+ int main(int argc, char **argv)
+ {
+ 	char benchmark_cmd_area[BENCHMARK_ARGS][BENCHMARK_ARG_SIZE];
+ 	int res, c, core_id = 0, span = 250, argc_new = argc, i;
+-	bool has_ben = false, mbm_test = true;
++	bool has_ben = false, mbm_test = true, mba_test = true;
+ 	char *benchmark_cmd[BENCHMARK_ARGS];
+ 	char bw_report[64], bm_type[64];
+ 
+@@ -47,9 +48,12 @@ int main(int argc, char **argv)
+ 			token = strtok(optarg, ",");
+ 
+ 			mbm_test = false;
++			mba_test = false;
+ 			while (token) {
+ 				if (!strcmp(token, "mbm")) {
+ 					mbm_test = true;
++				} else if (!strcmp(token, "mba")) {
++					mba_test = true;
+ 				} else {
+ 					printf("invalid argument\n");
+ 
+@@ -120,5 +124,15 @@ int main(int argc, char **argv)
+ 			printf("Error in running tests for mbm bw change!\n");
+ 	}
+ 
++	if (mba_test) {
++		printf("\nMBA Schemata Change Starting..\n");
++		if (!has_ben)
++			sprintf(benchmark_cmd[1], "%d", span);
++		res = mba_schemata_change("mba", core_id, span, bw_report,
++					  bm_type, benchmark_cmd);
 +		if (res)
-+			printf("Error in running tests for mbm bw change!\n");
++			printf("Error in tests for mba-change-schemata!\n");
 +	}
 +
-+	return 0;
-+}
+ 	return 0;
+ }
 -- 
 2.5.0
 
