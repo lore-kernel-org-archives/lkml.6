@@ -2,112 +2,121 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A95DFECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 05:40:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F91BC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 05:47:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EEAE20824
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 05:40:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wd7ixMhL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EEAE20824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E89B72082E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 05:47:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E89B72082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727261AbeJYOLY (ORCPT
+        id S1727126AbeJYOSL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 10:11:24 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55296 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726804AbeJYOLY (ORCPT
+        Thu, 25 Oct 2018 10:18:11 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:51075 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726633AbeJYOSL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 10:11:24 -0400
-Received: by mail-wm1-f66.google.com with SMTP id s10-v6so147842wmc.5;
-        Wed, 24 Oct 2018 22:40:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=t+bLT3fIPKhqWO7xUh+hzxzAin5FMHbuAN0zrznYnV8=;
-        b=Wd7ixMhLdrILA2zNr3cmdn2L/5T6eBZJl+heEZmjelG+Upp1K/c5ubfBurkjhLvtWI
-         ReAss10rXghWdjzqGHQhA3CBvromIg3KJ6m6HFjirdelFxo2/RFcAGaqjxqys2OTbZcz
-         5x009nDAXtOUwXXeXBHRtK+4vJ0VLSnGuHIz5b0dY0NwloIxV0ho9TdyFYx1Nqcm8i54
-         m6MIywG7jUYhufpBMlSbCecQQwVltTN2IgZQFWxC39VVzghhhz9sjxUpXig0HZc9SruH
-         jdFg/bgrfOAJOmMy+LyHlSgcXEexJQoW5m/VJ4OOZwkDE8odCxcGNcEY2Z/cWu6MApZu
-         jCIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=t+bLT3fIPKhqWO7xUh+hzxzAin5FMHbuAN0zrznYnV8=;
-        b=KI36+fBSd12wWkPYQ3HBq0NN7PiYY7IFgd09D17UhwSq7nyxLakZZjwvC7ZwEe+1j6
-         /qasgodRH5lGCbuzKhYO+Gk8zaA++7cs3GuPkf6cbhSK7sezBr2/hFdE7q5IPO7z5eRz
-         v6UuQVq1BoORjn2iQjtHNGMZXtdfxFKfgxLhZ2IvlOFgfSvLofOLxNzw7LjzjJw/INm6
-         2KmpeSC+Fy9LI/5SnJ0owH3NDrN5+LwzqGLPDrQyATB0DDpwA1nv6Hddzi1NB2oStRiY
-         TMM7Dr/gfROLSvoWFbA2a7tBT54s8dlHfYyKtSk0XATORGAto3px7Bbp/9Foev8QVoUr
-         XZww==
-X-Gm-Message-State: AGRZ1gJCUeId4sCZMafUw9z6AJvnj90pQpBaOQS0owCQ6STmtUUZCSXU
-        pEYEUE4+U+3t7Zs2Hx7Cyvc=
-X-Google-Smtp-Source: AJdET5ftELGcQLGWcfokWOm6MQs2tofxC6053yflvrf7/V1l9BZ9bsRhl19nTWvWJ4c9/xK0BVJAzQ==
-X-Received: by 2002:a1c:5d54:: with SMTP id r81-v6mr241384wmb.88.1540446014793;
-        Wed, 24 Oct 2018 22:40:14 -0700 (PDT)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id x8-v6sm15254814wrd.54.2018.10.24.22.40.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 24 Oct 2018 22:40:13 -0700 (PDT)
-Date:   Thu, 25 Oct 2018 07:40:11 +0200
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-pci@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: Add x86 early-quirks.c file pattern to PCI
- subsystem
-Message-ID: <20181025054011.GA55187@gmail.com>
-References: <154041923937.26247.17083948926896599419.stgit@bhelgaas-glaptop.roam.corp.google.com>
+        Thu, 25 Oct 2018 10:18:11 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9P5jxJW3842797
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 24 Oct 2018 22:45:59 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9P5jw7w3842794;
+        Wed, 24 Oct 2018 22:45:58 -0700
+Date:   Wed, 24 Oct 2018 22:45:58 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Fenghua Yu <tipbot@zytor.com>
+Message-ID: <tip-33823f4d63f7a010653d219800539409a78ef4be@git.kernel.org>
+Cc:     torvalds@linux-foundation.org, brgerst@gmail.com,
+        linux-kernel@vger.kernel.org, luto@amacapital.net,
+        dvlasenk@redhat.com, ashok.raj@intel.com, bp@alien8.de,
+        fenghua.yu@intel.com, tglx@linutronix.de, ravi.v.shankar@intel.com,
+        peterz@infradead.org, hpa@zytor.com, mingo@kernel.org
+Reply-To: ravi.v.shankar@intel.com, mingo@kernel.org, peterz@infradead.org,
+          hpa@zytor.com, fenghua.yu@intel.com, tglx@linutronix.de,
+          bp@alien8.de, dvlasenk@redhat.com, ashok.raj@intel.com,
+          linux-kernel@vger.kernel.org, brgerst@gmail.com,
+          luto@amacapital.net, torvalds@linux-foundation.org
+In-Reply-To: <1540418237-125817-2-git-send-email-fenghua.yu@intel.com>
+References: <1540418237-125817-2-git-send-email-fenghua.yu@intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/cpufeatures: Enumerate MOVDIRI instruction
+Git-Commit-ID: 33823f4d63f7a010653d219800539409a78ef4be
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <154041923937.26247.17083948926896599419.stgit@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Commit-ID:  33823f4d63f7a010653d219800539409a78ef4be
+Gitweb:     https://git.kernel.org/tip/33823f4d63f7a010653d219800539409a78ef4be
+Author:     Fenghua Yu <fenghua.yu@intel.com>
+AuthorDate: Wed, 24 Oct 2018 14:57:16 -0700
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Thu, 25 Oct 2018 07:42:48 +0200
 
-* Bjorn Helgaas <helgaas@kernel.org> wrote:
+x86/cpufeatures: Enumerate MOVDIRI instruction
 
-> From: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> arch/x86/kernel/early-quirks.c contains special PCI quirks that need to
-> run even before the usual DECLARE_PCI_FIXUP_EARLY() quirks.  These have
-> typically been merged by the x86 maintainers, which is fine, but PCI folks
-> should at least see what's happening, so add a file pattern to the PCI
-> subsystem entry.
-> 
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> ---
->  MAINTAINERS |    1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 4ece30f15777..63cb7f3dbbb4 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -11249,6 +11249,7 @@ F:	include/uapi/linux/pci*
->  F:	lib/pci*
->  F:	arch/x86/pci/
->  F:	arch/x86/kernel/quirks.c
-> +F:	arch/x86/kernel/early-quirks.c
+MOVDIRI moves doubleword or quadword from register to memory through
+direct store which is implemented by using write combining (WC) for
+writing data directly into memory without caching the data.
 
-Good idea!
+Programmable agents can handle streaming offload (e.g. high speed packet
+processing in network). Hardware implements a doorbell (tail pointer)
+register that is updated by software when adding new work-elements to
+the streaming offload work-queue.
 
-Acked-by: Ingo Molnar <mingo@kernel.org>
+MOVDIRI can be used as the doorbell write which is a 4-byte or 8-byte
+uncachable write to MMIO. MOVDIRI has lower overhead than other ways
+to write the doorbell.
 
-Thanks,
+Availability of the MOVDIRI instruction is indicated by the presence of
+the CPUID feature flag MOVDIRI(CPUID.0x07.0x0:ECX[bit 27]).
 
-	Ingo
+Please check the latest Intel Architecture Instruction Set Extensions
+and Future Features Programming Reference for more details on the CPUID
+feature MOVDIRI flag.
+
+Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ravi V Shankar <ravi.v.shankar@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/1540418237-125817-2-git-send-email-fenghua.yu@intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/include/asm/cpufeatures.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index 89a048c2faec..90934ee7b79a 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -331,6 +331,7 @@
+ #define X86_FEATURE_LA57		(16*32+16) /* 5-level page tables */
+ #define X86_FEATURE_RDPID		(16*32+22) /* RDPID instruction */
+ #define X86_FEATURE_CLDEMOTE		(16*32+25) /* CLDEMOTE instruction */
++#define X86_FEATURE_MOVDIRI		(16*32+27) /* MOVDIRI instruction */
+ 
+ /* AMD-defined CPU features, CPUID level 0x80000007 (EBX), word 17 */
+ #define X86_FEATURE_OVERFLOW_RECOV	(17*32+ 0) /* MCA overflow recovery support */
