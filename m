@@ -7,135 +7,135 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26439ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:14:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1319EC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:14:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2CF420848
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:14:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCFD42084A
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:14:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wSREQMt+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2CF420848
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ih8BCj+p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCFD42084A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728577AbeJYWrf (ORCPT
+        id S1728592AbeJYWrh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:47:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55640 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:47:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727505AbeJYWre (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:47:34 -0400
+        id S1728565AbeJYWrg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:47:36 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6484320834;
-        Thu, 25 Oct 2018 14:14:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B85AA2084A;
+        Thu, 25 Oct 2018 14:14:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540476878;
-        bh=HOvhvjNEja1LRwcsVhy0zeJYAsMBNh9RjFDVdWSW4Qs=;
+        s=default; t=1540476879;
+        bh=6S13dGVu7fyyO0kHmmj6FPNmb2tcYTvpAPR0LOGelkw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wSREQMt+GF/IEekEjQks/j1Yw+BWb+H1gjPrAKqj7gsRSXleunQ3URtxK2GRebEZ5
-         wJBITparD2bDZKn01qLyNTcK36PNkS3ehh2LzIgjOJrnRv4/ONuDzq5kkrFe2SO68N
-         h/QM81W+Ei4jMX+ctPxhPWQLSkhVr6XI6RKOr8s8=
+        b=ih8BCj+p0DupWu7P0rNLvLpvmMBChX0b0pIkusCd5Anth30t0NSwIctjv8gY7koJ/
+         SmpLC4aIfC160lgzeGdeLSbLk9HZpCTShTLxwjpZOZvhz1Fd2jH0sD+EaWSfuHFXhn
+         5dq4JOwvAlp2DqQ4v83gmrWhvamlTT1C50UwM69s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Christian=20Gr=C3=B6nke?= <c.groenke@infodas.de>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+Cc:     Prarit Bhargava <prarit@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 07/98] igb: Remove superfluous reset to PHY and page 0 selection
-Date:   Thu, 25 Oct 2018 10:12:52 -0400
-Message-Id: <20181025141423.213774-7-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 08/98] ACPI: sysfs: Make ACPI GPE mask kernel parameter cover all GPEs
+Date:   Thu, 25 Oct 2018 10:12:53 -0400
+Message-Id: <20181025141423.213774-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141423.213774-1-sashal@kernel.org>
 References: <20181025141423.213774-1-sashal@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christian Grönke <c.groenke@infodas.de>
+From: Prarit Bhargava <prarit@redhat.com>
 
-[ Upstream commit 2a83fba6cae89dd9c0625e68ff8ffff791c67ac0 ]
+[ Upstream commit 0f27cff8597d86f881ea8274b49b63b678c14a3c ]
 
-This patch reverts two previous applied patches to fix an issue
-that appeared when using SGMII based SFP modules. In the current
-state the driver will try to reset the PHY before obtaining the
-phy_addr of the SGMII attached PHY. That leads to an error in
-e1000_write_phy_reg_sgmii_82575. Causing the initialization to
-fail:
+The acpi_mask_gpe= kernel parameter documentation states that the range
+of mask is 128 GPEs (0x00 to 0x7F).  The acpi_masked_gpes mask is a u64 so
+only 64 GPEs (0x00 to 0x3F) can really be masked.
 
-    igb: Intel(R) Gigabit Ethernet Network Driver - version 5.4.0-k
-    igb: Copyright (c) 2007-2014 Intel Corporation.
-    igb: probe of ????:??:??.? failed with error -3
+Use a bitmap of size 0xFF instead of a u64 for the GPE mask so 256
+GPEs can be masked.
 
-The patches being reverted are:
-
-    commit 182785335447957409282ca745aa5bc3968facee
-    Author: Aaron Sierra <asierra@xes-inc.com>
-    Date:   Tue Nov 29 10:03:56 2016 -0600
-
-        igb: reset the PHY before reading the PHY ID
-
-    commit 440aeca4b9858248d8f16d724d9fa87a4f65fa33
-    Author: Matwey V Kornilov <matwey@sai.msu.ru>
-    Date:   Thu Nov 24 13:32:48 2016 +0300
-
-         igb: Explicitly select page 0 at initialization
-
-The first reverted patch directly causes the problem mentioned above.
-In case of SGMII the phy_addr is not known at this point and will
-only be obtained by 'igb_get_phy_id_82575' further down in the code.
-The second removed patch selects forces selection of page 0 in the
-PHY. Something that the reset tries to address as well.
-
-As pointed out by Alexander Duzck, the patch below fixes the same
-issue but in the proper location:
-
-    commit 4e684f59d760a2c7c716bb60190783546e2d08a1
-    Author: Chris J Arges <christopherarges@gmail.com>
-    Date:   Wed Nov 2 09:13:42 2016 -0500
-
-        igb: Workaround for igb i210 firmware issue
-
-Reverts: 440aeca4b9858248d8f16d724d9fa87a4f65fa33.
-Reverts: 182785335447957409282ca745aa5bc3968facee.
-
-Signed-off-by: Christian Grönke <c.groenke@infodas.de>
-Reviewed-by: Alexander Duyck <alexander.h.duyck@intel.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Fixes: 9c4aa1eecb48 (ACPI / sysfs: Provide quirk mechanism to prevent GPE flooding)
+Signed-off-by: Prarit Bharava <prarit@redhat.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/igb/e1000_82575.c | 12 ------------
- 1 file changed, 12 deletions(-)
+ Documentation/kernel-parameters.txt |  1 -
+ drivers/acpi/sysfs.c                | 26 ++++++++------------------
+ 2 files changed, 8 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/igb/e1000_82575.c b/drivers/net/ethernet/intel/igb/e1000_82575.c
-index 4a50870e0fa7..a61447fd778e 100644
---- a/drivers/net/ethernet/intel/igb/e1000_82575.c
-+++ b/drivers/net/ethernet/intel/igb/e1000_82575.c
-@@ -245,19 +245,7 @@ static s32 igb_init_phy_params_82575(struct e1000_hw *hw)
- 	hw->bus.func = (rd32(E1000_STATUS) & E1000_STATUS_FUNC_MASK) >>
- 			E1000_STATUS_FUNC_SHIFT;
+diff --git a/Documentation/kernel-parameters.txt b/Documentation/kernel-parameters.txt
+index f9f67be8d3c3..c708a50b060e 100644
+--- a/Documentation/kernel-parameters.txt
++++ b/Documentation/kernel-parameters.txt
+@@ -313,7 +313,6 @@ bytes respectively. Such letter suffixes can also be entirely omitted.
+ 			This facility can be used to prevent such uncontrolled
+ 			GPE floodings.
+ 			Format: <int>
+-			Support masking of GPEs numbered from 0x00 to 0x7f.
  
--	/* Make sure the PHY is in a good state. Several people have reported
--	 * firmware leaving the PHY's page select register set to something
--	 * other than the default of zero, which causes the PHY ID read to
--	 * access something other than the intended register.
--	 */
--	ret_val = hw->phy.ops.reset(hw);
--	if (ret_val) {
--		hw_dbg("Error resetting the PHY.\n");
--		goto out;
--	}
+ 	acpi_no_auto_serialize	[HW,ACPI]
+ 			Disable auto-serialization of AML methods
+diff --git a/drivers/acpi/sysfs.c b/drivers/acpi/sysfs.c
+index cf05ae973381..a36d0739dbfe 100644
+--- a/drivers/acpi/sysfs.c
++++ b/drivers/acpi/sysfs.c
+@@ -724,14 +724,8 @@ static ssize_t counter_set(struct kobject *kobj,
+  * interface:
+  *   echo unmask > /sys/firmware/acpi/interrupts/gpe00
+  */
 -
- 	/* Set phy->phy_addr and phy->id. */
--	igb_write_phy_reg_82580(hw, I347AT4_PAGE_SELECT, 0);
- 	ret_val = igb_get_phy_id_82575(hw);
- 	if (ret_val)
- 		return ret_val;
+-/*
+- * Currently, the GPE flooding prevention only supports to mask the GPEs
+- * numbered from 00 to 7f.
+- */
+-#define ACPI_MASKABLE_GPE_MAX	0x80
+-
+-static u64 __initdata acpi_masked_gpes;
++#define ACPI_MASKABLE_GPE_MAX	0xFF
++static DECLARE_BITMAP(acpi_masked_gpes_map, ACPI_MASKABLE_GPE_MAX) __initdata;
+ 
+ static int __init acpi_gpe_set_masked_gpes(char *val)
+ {
+@@ -739,7 +733,7 @@ static int __init acpi_gpe_set_masked_gpes(char *val)
+ 
+ 	if (kstrtou8(val, 0, &gpe) || gpe > ACPI_MASKABLE_GPE_MAX)
+ 		return -EINVAL;
+-	acpi_masked_gpes |= ((u64)1<<gpe);
++	set_bit(gpe, acpi_masked_gpes_map);
+ 
+ 	return 1;
+ }
+@@ -751,15 +745,11 @@ void __init acpi_gpe_apply_masked_gpes(void)
+ 	acpi_status status;
+ 	u8 gpe;
+ 
+-	for (gpe = 0;
+-	     gpe < min_t(u8, ACPI_MASKABLE_GPE_MAX, acpi_current_gpe_count);
+-	     gpe++) {
+-		if (acpi_masked_gpes & ((u64)1<<gpe)) {
+-			status = acpi_get_gpe_device(gpe, &handle);
+-			if (ACPI_SUCCESS(status)) {
+-				pr_info("Masking GPE 0x%x.\n", gpe);
+-				(void)acpi_mask_gpe(handle, gpe, TRUE);
+-			}
++	for_each_set_bit(gpe, acpi_masked_gpes_map, ACPI_MASKABLE_GPE_MAX) {
++		status = acpi_get_gpe_device(gpe, &handle);
++		if (ACPI_SUCCESS(status)) {
++			pr_info("Masking GPE 0x%x.\n", gpe);
++			(void)acpi_mask_gpe(handle, gpe, TRUE);
+ 		}
+ 	}
+ }
 -- 
 2.17.1
 
