@@ -2,49 +2,49 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA2E4C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6AB6ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7156F21479
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B029E20883
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="V3HZFBgQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7156F21479
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HAkukYdA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B029E20883
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730546AbeJYWw0 (ORCPT
+        id S1730558AbeJYWw1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:52:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34412 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:52:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728337AbeJYWwZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:52:25 -0400
+        id S1730541AbeJYWw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:52:27 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E44C42147A;
-        Thu, 25 Oct 2018 14:19:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D602208A3;
+        Thu, 25 Oct 2018 14:19:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477166;
-        bh=p8r4hgwYwReitI8QUbb/fKtyAeLijvCjr1HhmXDv2Ew=;
+        s=default; t=1540477169;
+        bh=drrP7nlw6KiJXkiZKNbj4TWRTeAwc+IgiRbWsKpnb9o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V3HZFBgQTwGy/cwd7sm7sNZa/6wgxrHTUCR3Ht91xhFDlEEJRpCcURj/HGVeFDemI
-         XQH3GYtfDHdiIvVU8pob0h+Tyfj0qpnf48TQk7Ymjr/6YTn7i/H8OdczmjSG9lXdzP
-         HAbydaANQU42nlN157FjH9C+gSkfqz24KEtzrgm4=
+        b=HAkukYdAdggoNKwdz5BIYJTrO9loaShZEo37/ZT5xiNgapeXvNdgl0n8owsF07Izn
+         h+21dc2lPa66mvXUhGyyeMl5/VTIud3rZv7zm3uKSWkKjHsl+h8sUD9/Cet0m2/1UW
+         w1TxXlijHQbez5xRA4POS0SMpnh5juagaX4Xmsog=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Vignesh R <vigneshr@ti.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
+Cc:     Lennart Sorensen <lsorense@csclub.uwaterloo.ca>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 20/98] phy: phy-ti-pipe3: fix inconsistent enumeration of PCIe gen2 cards
-Date:   Thu, 25 Oct 2018 10:17:35 -0400
-Message-Id: <20181025141853.214051-20-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 22/98] ARM: dra7xx: Fix counter frequency drift for AM572x errata i856
+Date:   Thu, 25 Oct 2018 10:17:37 -0400
+Message-Id: <20181025141853.214051-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
 References: <20181025141853.214051-1-sashal@kernel.org>
@@ -53,156 +53,124 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vignesh R <vigneshr@ti.com>
+From: Lennart Sorensen <lsorense@csclub.uwaterloo.ca>
 
-[ Upstream commit 0bc09f9cdc589e0b54724096138996a00b19babb ]
+[ Upstream commit afc9d590b8a150cfeaac0078ef5de6fb21a5ea6a ]
 
-Prior to DRA74x silicon rev 1.1, pcie_pcs register bits 8-15 and bits 16-23
-were used to configure RC delay count for phy1 and phy2 respectively.
-phyid was used as index to distinguish the phys and to configure the delay
-values appropriately.
+Errata i856 for the AM572x (DRA7xx) points out that the 32.768KHz external
+crystal is not enabled at power up.  Instead the CPU falls back to using
+an emulation for the 32KHz clock which is SYSCLK1/610.  SYSCLK1 is usually
+20MHz on boards so far (which gives an emulated frequency of 32.786KHz),
+but can also be 19.2 or 27MHz which result in much larger drift.
 
-As of DRA74x silicon rev 1.1, pcie_pcs register definition has changed.
-Bits 16-23 are used to configure delay values for *both* phy1 and phy2.
+Since this is used to drive the master counter at 32.768KHz * 375 /
+2 = 6.144MHz, the emulated speed for 20MHz is of by 570ppm, or about 43
+seconds per day, and more than the 500ppm NTP is able to tolerate.
 
-Hence phyid is no longer required.
+Checking the CTRL_CORE_BOOTSTRAP register can determine if the CPU
+is using the real 32.768KHz crystal or the emulated SYSCLK1/610, and
+by known that the real counter frequency can be determined and used.
+The real speed is then SYSCLK1 / 610 * 375 / 2 or SYSCLK1 * 75 / 244.
 
-So, drop id field from ti_pipe3 structure and its subsequent references
-for configuring pcie_pcs register.
-
-Also, pcie_pcs register now needs to be configured with delay value of 0x96
-at bit positions 16-23. See register description of CTRL_CORE_PCIE_PCS in
-ARM572x TRM, SPRUHZ6, October 2014, section 18.5.2.2, table 18-1804.
-
-This is needed to ensure Gen2 cards are enumerated consistently.
-
-DRA72x silicon behaves same way as DRA74x rev 1.1 as far as this functionality
-is considered.
-
-Test results on DRA74x and DRA72x EVMs:
-
-Before patch
-------------
-DRA74x ES 1.0: Gen1 cards work, Gen2 cards do not work (expected result due to
-silicon errata)
-DRA74x ES 1.1: Gen1 cards work, Gen2 cards do not work sometimes due to incorrect
-programming of register
-
-DRA72x: Gen1 cards work, Gen2 cards do not work sometimes due to incorrect
-programming of register
-
-After patch
------------
-DRA74x ES 1.0: Gen1 cards work, Gen2 cards do not work (expected result due to
-silicon errata)
-DRA74x ES 1.1: Gen1 cards work, Gen2 cards work consistently.
-
-DRA72x: Gen1 and Gen2 cards enumerate consistently.
-
-Signed-off-by: Vignesh R <vigneshr@ti.com>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-
+Signed-off-by: Len Sorensen <lsorense@csclub.uwaterloo.ca>
+Tested-by: Lokesh Vutla <lokeshvutla@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/phy/phy-omap-control.c       |  7 +++----
- drivers/phy/phy-ti-pipe3.c           | 10 ++++++----
- include/linux/phy/omap_control_phy.h |  6 +++---
- 3 files changed, 12 insertions(+), 11 deletions(-)
+ arch/arm/mach-omap2/control.h |  4 ++++
+ arch/arm/mach-omap2/timer.c   | 36 +++++++++++++++++++++++++++++++++--
+ 2 files changed, 38 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/phy/phy-omap-control.c b/drivers/phy/phy-omap-control.c
-index c96e8183a8ff..efe724f97e02 100644
---- a/drivers/phy/phy-omap-control.c
-+++ b/drivers/phy/phy-omap-control.c
-@@ -29,10 +29,9 @@
- /**
-  * omap_control_pcie_pcs - set the PCS delay count
-  * @dev: the control module device
-- * @id: index of the pcie PHY (should be 1 or 2)
-  * @delay: 8 bit delay value
-  */
--void omap_control_pcie_pcs(struct device *dev, u8 id, u8 delay)
-+void omap_control_pcie_pcs(struct device *dev, u8 delay)
- {
- 	u32 val;
- 	struct omap_control_phy	*control_phy;
-@@ -55,8 +54,8 @@ void omap_control_pcie_pcs(struct device *dev, u8 id, u8 delay)
+diff --git a/arch/arm/mach-omap2/control.h b/arch/arm/mach-omap2/control.h
+index a3c013345c45..a80ac2d70bb1 100644
+--- a/arch/arm/mach-omap2/control.h
++++ b/arch/arm/mach-omap2/control.h
+@@ -286,6 +286,10 @@
+ #define OMAP5XXX_CONTROL_STATUS                0x134
+ #define OMAP5_DEVICETYPE_MASK          (0x7 << 6)
  
- 	val = readl(control_phy->pcie_pcs);
- 	val &= ~(OMAP_CTRL_PCIE_PCS_MASK <<
--		(id * OMAP_CTRL_PCIE_PCS_DELAY_COUNT_SHIFT));
--	val |= delay << (id * OMAP_CTRL_PCIE_PCS_DELAY_COUNT_SHIFT);
-+		OMAP_CTRL_PCIE_PCS_DELAY_COUNT_SHIFT);
-+	val |= (delay << OMAP_CTRL_PCIE_PCS_DELAY_COUNT_SHIFT);
- 	writel(val, control_phy->pcie_pcs);
- }
- EXPORT_SYMBOL_GPL(omap_control_pcie_pcs);
-diff --git a/drivers/phy/phy-ti-pipe3.c b/drivers/phy/phy-ti-pipe3.c
-index ab1e22d9a1e8..fd92fc64f5da 100644
---- a/drivers/phy/phy-ti-pipe3.c
-+++ b/drivers/phy/phy-ti-pipe3.c
-@@ -82,7 +82,6 @@ struct ti_pipe3 {
- 	struct clk		*refclk;
- 	struct clk		*div_clk;
- 	struct pipe3_dpll_map	*dpll_map;
--	u8			id;
- };
++/* DRA7XX CONTROL CORE BOOTSTRAP */
++#define DRA7_CTRL_CORE_BOOTSTRAP	0x6c4
++#define DRA7_SPEEDSELECT_MASK		(0x3 << 8)
++
+ /*
+  * REVISIT: This list of registers is not comprehensive - there are more
+  * that should be added.
+diff --git a/arch/arm/mach-omap2/timer.c b/arch/arm/mach-omap2/timer.c
+index fb0cb2b817a9..7d45c84c69ba 100644
+--- a/arch/arm/mach-omap2/timer.c
++++ b/arch/arm/mach-omap2/timer.c
+@@ -54,6 +54,7 @@
  
- static struct pipe3_dpll_map dpll_map_usb[] = {
-@@ -217,8 +216,13 @@ static int ti_pipe3_init(struct phy *x)
- 	u32 val;
- 	int ret = 0;
+ #include "soc.h"
+ #include "common.h"
++#include "control.h"
+ #include "powerdomain.h"
+ #include "omap-secure.h"
  
-+	/*
-+	 * Set pcie_pcs register to 0x96 for proper functioning of phy
-+	 * as recommended in AM572x TRM SPRUHZ6, section 18.5.2.2, table
-+	 * 18-1804.
-+	 */
- 	if (of_device_is_compatible(phy->dev->of_node, "ti,phy-pipe3-pcie")) {
--		omap_control_pcie_pcs(phy->control_dev, phy->id, 0xF1);
-+		omap_control_pcie_pcs(phy->control_dev, 0x96);
- 		return 0;
+@@ -496,7 +497,8 @@ static void __init realtime_counter_init(void)
+ 	void __iomem *base;
+ 	static struct clk *sys_clk;
+ 	unsigned long rate;
+-	unsigned int reg, num, den;
++	unsigned int reg;
++	unsigned long long num, den;
+ 
+ 	base = ioremap(REALTIME_COUNTER_BASE, SZ_32);
+ 	if (!base) {
+@@ -511,6 +513,35 @@ static void __init realtime_counter_init(void)
  	}
  
-@@ -347,8 +351,6 @@ static int ti_pipe3_probe(struct platform_device *pdev)
+ 	rate = clk_get_rate(sys_clk);
++
++	if (soc_is_dra7xx()) {
++		/*
++		 * Errata i856 says the 32.768KHz crystal does not start at
++		 * power on, so the CPU falls back to an emulated 32KHz clock
++		 * based on sysclk / 610 instead. This causes the master counter
++		 * frequency to not be 6.144MHz but at sysclk / 610 * 375 / 2
++		 * (OR sysclk * 75 / 244)
++		 *
++		 * This affects at least the DRA7/AM572x 1.0, 1.1 revisions.
++		 * Of course any board built without a populated 32.768KHz
++		 * crystal would also need this fix even if the CPU is fixed
++		 * later.
++		 *
++		 * Either case can be detected by using the two speedselect bits
++		 * If they are not 0, then the 32.768KHz clock driving the
++		 * coarse counter that corrects the fine counter every time it
++		 * ticks is actually rate/610 rather than 32.768KHz and we
++		 * should compensate to avoid the 570ppm (at 20MHz, much worse
++		 * at other rates) too fast system time.
++		 */
++		reg = omap_ctrl_readl(DRA7_CTRL_CORE_BOOTSTRAP);
++		if (reg & DRA7_SPEEDSELECT_MASK) {
++			num = 75;
++			den = 244;
++			goto sysclk1_based;
++		}
++	}
++
+ 	/* Numerator/denumerator values refer TRM Realtime Counter section */
+ 	switch (rate) {
+ 	case 12000000:
+@@ -545,6 +576,7 @@ static void __init realtime_counter_init(void)
+ 		break;
  	}
  
- 	if (of_device_is_compatible(node, "ti,phy-pipe3-pcie")) {
--		if (of_property_read_u8(node, "id", &phy->id) < 0)
--			phy->id = 1;
++sysclk1_based:
+ 	/* Program numerator and denumerator registers */
+ 	reg = readl_relaxed(base + INCREMENTER_NUMERATOR_OFFSET) &
+ 			NUMERATOR_DENUMERATOR_MASK;
+@@ -556,7 +588,7 @@ static void __init realtime_counter_init(void)
+ 	reg |= den;
+ 	writel_relaxed(reg, base + INCREMENTER_DENUMERATOR_RELOAD_OFFSET);
  
- 		clk = devm_clk_get(phy->dev, "dpll_ref");
- 		if (IS_ERR(clk)) {
-diff --git a/include/linux/phy/omap_control_phy.h b/include/linux/phy/omap_control_phy.h
-index e9e6cfbfbb58..eb7d4a135a9e 100644
---- a/include/linux/phy/omap_control_phy.h
-+++ b/include/linux/phy/omap_control_phy.h
-@@ -66,7 +66,7 @@ enum omap_control_usb_mode {
- #define	OMAP_CTRL_PIPE3_PHY_TX_RX_POWEROFF	0x0
+-	arch_timer_freq = (rate / den) * num;
++	arch_timer_freq = DIV_ROUND_UP_ULL(rate * num, den);
+ 	set_cntfreq();
  
- #define	OMAP_CTRL_PCIE_PCS_MASK			0xff
--#define	OMAP_CTRL_PCIE_PCS_DELAY_COUNT_SHIFT	0x8
-+#define	OMAP_CTRL_PCIE_PCS_DELAY_COUNT_SHIFT	16
- 
- #define OMAP_CTRL_USB2_PHY_PD		BIT(28)
- 
-@@ -79,7 +79,7 @@ enum omap_control_usb_mode {
- void omap_control_phy_power(struct device *dev, int on);
- void omap_control_usb_set_mode(struct device *dev,
- 			       enum omap_control_usb_mode mode);
--void omap_control_pcie_pcs(struct device *dev, u8 id, u8 delay);
-+void omap_control_pcie_pcs(struct device *dev, u8 delay);
- #else
- 
- static inline void omap_control_phy_power(struct device *dev, int on)
-@@ -91,7 +91,7 @@ static inline void omap_control_usb_set_mode(struct device *dev,
- {
- }
- 
--static inline void omap_control_pcie_pcs(struct device *dev, u8 id, u8 delay)
-+static inline void omap_control_pcie_pcs(struct device *dev, u8 delay)
- {
- }
- #endif
+ 	iounmap(base);
 -- 
 2.17.1
 
