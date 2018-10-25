@@ -2,159 +2,264 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EB0BC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:30:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17BB9C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:31:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D429B2082E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:30:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D429B2082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B2A0D2082E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:31:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2A0D2082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727802AbeJZDD7 (ORCPT
+        id S1727830AbeJZDFe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 23:03:59 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:33727 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727688AbeJZDD7 (ORCPT
+        Thu, 25 Oct 2018 23:05:34 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54580 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727651AbeJZDFe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 23:03:59 -0400
-Received: by mail-ot1-f68.google.com with SMTP id g25so330893otl.0;
-        Thu, 25 Oct 2018 11:30:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=cbAsnv1AyMNVii+EEFGeMzHngWxMm3A6iMUt2ujqc+E=;
-        b=AC9TrrVDQmo+viaqkWPNrE40ITFlR8pLGYYyC/diGJKJy1a+hNpW8K6PC+Q4Ir91Ot
-         o37rKUG8pyLzW0eUaHNOu4Zn7X0EiaaRnyfav2d0N6P4gxf/vtpyNGJ9phKrc9sDc/Fc
-         K34TIdGbUbCf4OQ+NRImhETCDljaGdbt8U9+V5JZ9wgg82QVvHHwuPJtx0LcRiGnMF21
-         WTuRg+V+q5Kfca+F0qdD9zyHVIbv9g8ryZ3hNwSBwRZrJMLfqabm4m7UVstwAZDbHros
-         DSGIb6XSYr325o09xsQPUSHnmbI0u9Y0dx+eY5TIIFfoFtZNEctasu88uOIdItsAN7sI
-         UopA==
-X-Gm-Message-State: AGRZ1gJ8bYNTiiTFJp03cL0chvjGatzluqwm1LH2gSujgNNLE8IB7tL9
-        QsK3jdozgwTzW/3yUWZhKA==
-X-Google-Smtp-Source: AJdET5frMn8BgzFM3CSLJxtfSoWrUNVGmnpzoPaf9hDRQni4t3sO8RBRrxem1DzZ10Dzwar73hAKtA==
-X-Received: by 2002:a9d:6254:: with SMTP id i20mr201985otk.249.1540492205476;
-        Thu, 25 Oct 2018 11:30:05 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id y29sm252311oty.8.2018.10.25.11.30.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Oct 2018 11:30:04 -0700 (PDT)
-Date:   Thu, 25 Oct 2018 13:30:03 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Icenowy Zheng <icenowy@aosc.io>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        devicetree@vger.kernel.org, Archit Taneja <architt@codeaurora.org>,
-        David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        linux-sunxi@googlegroups.com,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 4/9] dt-bindings: Add ANX6345 DP/eDP transmitter binding
-Message-ID: <20181025183003.GA12672@bogus>
-References: <20181018073327.64942-1-icenowy@aosc.io>
- <1886367.eljNk7jKYl@avalon>
- <c68f0da9607805e1f6673a9a16a7dcfff4d8fe91.camel@aosc.io>
- <2778638.na8ndVNUfi@avalon>
- <f71d442412f31828c466e3483e9d42f5e96ddc1d.camel@aosc.io>
+        Thu, 25 Oct 2018 23:05:34 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9PHOBHM124997
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 13:29:58 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nbg0mpwnj-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 13:29:58 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Thu, 25 Oct 2018 18:29:55 +0100
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 25 Oct 2018 18:29:48 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9PHTliA66322434
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 25 Oct 2018 17:29:47 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F2622AE055;
+        Thu, 25 Oct 2018 17:29:46 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F0EADAE045;
+        Thu, 25 Oct 2018 17:29:39 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.204.85])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 25 Oct 2018 17:29:39 +0000 (GMT)
+Date:   Thu, 25 Oct 2018 18:29:36 +0100
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Olof Johansson <olof@lixom.net>, linux-alpha@vger.kernel.org,
+        arcml <linux-snps-arc@lists.infradead.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-c6x-dev@linux-c6x.org,
+        "moderated list:H8/300 ARCHITECTURE" 
+        <uclinux-h8-devel@lists.sourceforge.jp>,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org,
+        Linux-MIPS <linux-mips@linux-mips.org>,
+        nios2-dev@lists.rocketboards.org,
+        Openrisc <openrisc@lists.librecores.org>,
+        linux-parisc@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        SH-Linux <linux-sh@vger.kernel.org>, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
+        devicetree@vger.kernel.org,
+        "open list:GENERIC INCLUDE/ASM HEADER FILES" 
+        <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH v2 0/2] arm64: Cut rebuild time when changing
+ CONFIG_BLK_DEV_INITRD
+References: <20181024193256.23734-1-f.fainelli@gmail.com>
+ <CAL_Jsq+KCOv6pXXHhHDZ+7-QUrmtMDvSjEVhK15yZ3qbnn61Ag@mail.gmail.com>
+ <20181025093833.GA23607@rapoport-lnx>
+ <CAL_JsqL62ttsGSbE1BS5v-mX3pKE-p_HyvuZD6nB+GUbQyetzg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f71d442412f31828c466e3483e9d42f5e96ddc1d.camel@aosc.io>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAL_JsqL62ttsGSbE1BS5v-mX3pKE-p_HyvuZD6nB+GUbQyetzg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18102517-4275-0000-0000-000002D3BEBD
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18102517-4276-0000-0000-000037DFCF19
+Message-Id: <20181025172935.GA27364@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-25_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810250146
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 18, 2018 at 08:40:11PM +0800, Icenowy Zheng wrote:
-> 在 2018-10-18四的 14:23 +0300，Laurent Pinchart写道：
-> > Hi Icenowy,
-> > 
-> > On Thursday, 18 October 2018 13:00:05 EEST Icenowy Zheng wrote:
-> > > 在 2018-10-18四的 11:53 +0300，Laurent Pinchart写道：
-> > > > On Thursday, 18 October 2018 10:33:22 EEST Icenowy Zheng wrote:
-> > > > > The ANX6345 is an ultra-low power DisplayPort/eDP transmitter
-> > > > > designed
-> > > > > for portable devices.
-> > > > > 
-> > > > > Add a binding document for it.
-> > > > > 
-> > > > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> > > > > ---
-> > > > > 
-> > > > >  .../bindings/display/bridge/anx6345.txt       | 39
-> > > > > +++++++++++++++++++
-> > > > > 
-> > > > >  1 file changed, 39 insertions(+)
-> > > > >  create mode 100644
-> > > > > 
-> > > > > Documentation/devicetree/bindings/display/bridge/anx6345.txt
-> > > > > 
-> > > > > diff --git
-> > > > > a/Documentation/devicetree/bindings/display/bridge/anx6345.txt
-> > > > > b/Documentation/devicetree/bindings/display/bridge/anx6345.txt
-> > > > > new
-> > > > > file
-> > > > > mode 100644
-> > > > > index 000000000000..0689d4eb5f65
-> > > > > --- /dev/null
-> > > > > +++
-> > > > > b/Documentation/devicetree/bindings/display/bridge/anx6345.txt
-> > > > > @@ -0,0 +1,39 @@
-> > > > > +Analogix ANX6345 eDP Transmitter
-> > > > > +--------------------------------
-> > > > > +
-> > > > > +The ANX6345 is an ultra-low power Full-HD eDP transmitter
-> > > > > designed
-> > > > > for
-> > > > > +portable devices.
-> > > > > +
-> > > > > +Required properties:
-> > > > > +
-> > > > > + - compatible		: "analogix,anx6345"
-> > > > > + - reg			: I2C address of the device
-> > > > > + - reset-gpios		: Which GPIO to use for reset
-> > > > > +
-> > > > > +Optional properties:
-> > > > > +
-> > > > > + - dvdd12-supply	: Regulator for 1.2V digital core
-> > > > > power.
-> > > > > + - dvdd25-supply	: Regulator for 2.5V digital core
-> > > > > power.
-> > > > 
-> > > > Shouldn't these to supplies be mandatory ?
-> > > 
-> > > Yes they should.
-> > > 
-> > > > > + - panel-supply		: Regulator for the power of
-> > > > > the panel.
-> > > > 
-> > > > Shouldn't the panel supply for specified in the DT node of the
-> > > > panel
-> > > > ?
-> > > 
-> > > However, eDP panel can be probed, may vary on the same device, and
-> > > we
-> > > don't have a generic binding for it...
-> > 
-> > Shouldn't we fix that ? :-)
+On Thu, Oct 25, 2018 at 08:15:15AM -0500, Rob Herring wrote:
+> +Ard
 > 
-> Maybe we should create a connector binding instead of a panel binding?
+> On Thu, Oct 25, 2018 at 4:38 AM Mike Rapoport <rppt@linux.ibm.com> wrote:
+> >
+> > On Wed, Oct 24, 2018 at 02:55:17PM -0500, Rob Herring wrote:
+> > > On Wed, Oct 24, 2018 at 2:33 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
+> > > >
+> > > > Hi all,
+> > > >
+> > > > While investigating why ARM64 required a ton of objects to be rebuilt
+> > > > when toggling CONFIG_DEV_BLK_INITRD, it became clear that this was
+> > > > because we define __early_init_dt_declare_initrd() differently and we do
+> > > > that in arch/arm64/include/asm/memory.h which gets included by a fair
+> > > > amount of other header files, and translation units as well.
+> > >
+> > > I scratch my head sometimes as to why some config options rebuild so
+> > > much stuff. One down, ? to go. :)
+> > >
+> > > > Changing the value of CONFIG_DEV_BLK_INITRD is a common thing with build
+> > > > systems that generate two kernels: one with the initramfs and one
+> > > > without. buildroot is one of these build systems, OpenWrt is also
+> > > > another one that does this.
+> > > >
+> > > > This patch series proposes adding an empty initrd.h to satisfy the need
+> > > > for drivers/of/fdt.c to unconditionally include that file, and moves the
+> > > > custom __early_init_dt_declare_initrd() definition away from
+> > > > asm/memory.h
+> > > >
+> > > > This cuts the number of objects rebuilds from 1920 down to 26, so a
+> > > > factor 73 approximately.
+> > > >
+> > > > Apologies for the long CC list, please let me know how you would go
+> > > > about merging that and if another approach would be preferable, e.g:
+> > > > introducing a CONFIG_ARCH_INITRD_BELOW_START_OK Kconfig option or
+> > > > something like that.
+> > >
+> > > There may be a better way as of 4.20 because bootmem is now gone and
+> > > only memblock is used. This should unify what each arch needs to do
+> > > with initrd early. We need the physical address early for memblock
+> > > reserving. Then later on we need the virtual address to access the
+> > > initrd. Perhaps we should just change initrd_start and initrd_end to
+> > > physical addresses (or add 2 new variables would be less invasive and
+> > > allow for different translation than __va()). The sanity checks and
+> > > memblock reserve could also perhaps be moved to a common location.
+> > >
+> > > Alternatively, given arm64 is the only oddball, I'd be fine with an
+> > > "if (IS_ENABLED(CONFIG_ARM64))" condition in the default
+> > > __early_init_dt_declare_initrd as long as we have a path to removing
+> > > it like the above option.
+> >
+> > I think arm64 does not have to redefine __early_init_dt_declare_initrd().
+> > Something like this might be just all we need (completely untested,
+> > probably it won't even compile):
+> >
+> > diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+> > index 9d9582c..e9ca238 100644
+> > --- a/arch/arm64/mm/init.c
+> > +++ b/arch/arm64/mm/init.c
+> > @@ -62,6 +62,9 @@ s64 memstart_addr __ro_after_init = -1;
+> >  phys_addr_t arm64_dma_phys_limit __ro_after_init;
+> >
+> >  #ifdef CONFIG_BLK_DEV_INITRD
+> > +
+> > +static phys_addr_t initrd_start_phys, initrd_end_phys;
+> > +
+> >  static int __init early_initrd(char *p)
+> >  {
+> >         unsigned long start, size;
+> > @@ -71,8 +74,8 @@ static int __init early_initrd(char *p)
+> >         if (*endp == ',') {
+> >                 size = memparse(endp + 1, NULL);
+> >
+> > -               initrd_start = start;
+> > -               initrd_end = start + size;
+> > +               initrd_start_phys = start;
+> > +               initrd_end_phys = end;
+> >         }
+> >         return 0;
+> >  }
+> > @@ -407,14 +410,27 @@ void __init arm64_memblock_init(void)
+> >                 memblock_add(__pa_symbol(_text), (u64)(_end - _text));
+> >         }
+> >
+> > -       if (IS_ENABLED(CONFIG_BLK_DEV_INITRD) && initrd_start) {
+> > +       if (IS_ENABLED(CONFIG_BLK_DEV_INITRD) &&
+> > +           (initrd_start || initrd_start_phys)) {
+> > +               /*
+> > +                * FIXME: ensure proper precendence between
+> > +                * early_initrd and DT when both are present
+> 
+> Command line takes precedence, so just reverse the order.
+> 
+> > +                */
+> > +               if (initrd_start) {
+> > +                       initrd_start_phys = __phys_to_virt(initrd_start);
+> > +                       initrd_end_phys = __phys_to_virt(initrd_end);
+> 
+> AIUI, the original issue was doing the P2V translation was happening
+> too early and the VA could be wrong if the linear range is adjusted.
+> So I don't think this would work.
 
-There's not any such thing as a standard eDP connector, is there? 
-Otherwise, that's just creating a generic panel binding in disguise. 
-Maybe if eDP interface is standardized enough in terms of power control, 
-control lines, EDID at least sometimes present, etc., then we could have 
-some sort of generic eDP panel/connector binding.
+Probably things have changed since then, but in the current code there is
 
-Rob
+		initrd_start = __phys_to_virt(initrd_start);
+
+and in between only the code related to CONFIG_RANDOMIZE_BASE, so I believe
+it's safe to use __phys_to_virt() here as well.
+ 
+> I suppose you could convert the VA back to a PA before any adjustments
+> and then back to a VA again after. But that's kind of hacky. 2 wrongs
+> making a right.
+> 
+> > +               } else if (initrd_start_phys) {
+> > +                       initrd_start = __va(initrd_start_phys);
+> > +                       initrd_end = __va(initrd_start_phys);
+> > +               }
+> > +
+> >                 /*
+> >                  * Add back the memory we just removed if it results in the
+> >                  * initrd to become inaccessible via the linear mapping.
+> >                  * Otherwise, this is a no-op
+> >                  */
+> > -               u64 base = initrd_start & PAGE_MASK;
+> > -               u64 size = PAGE_ALIGN(initrd_end) - base;
+> > +               u64 base = initrd_start_phys & PAGE_MASK;
+> > +               u64 size = PAGE_ALIGN(initrd_end_phys) - base;
+> >
+> >                 /*
+> >                  * We can only add back the initrd memory if we don't end up
+> > @@ -458,7 +474,7 @@ void __init arm64_memblock_init(void)
+> >          * pagetables with memblock.
+> >          */
+> >         memblock_reserve(__pa_symbol(_text), _end - _text);
+> > -#ifdef CONFIG_BLK_DEV_INITRD
+> > +#if 0
+> >         if (initrd_start) {
+> >                 memblock_reserve(initrd_start, initrd_end - initrd_start);
+> >
+> >
+> > > Rob
+> > >
+> >
+> > --
+> > Sincerely yours,
+> > Mike.
+> >
+> 
+
+-- 
+Sincerely yours,
+Mike.
+
