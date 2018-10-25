@@ -2,95 +2,85 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26FD2C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:29:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72476ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:29:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B508E2075D
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:29:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B508E2075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lemonage.de
+	by mail.kernel.org (Postfix) with ESMTP id 28E992083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:29:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="N5x63xjT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28E992083E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727477AbeJYWBu (ORCPT
+        id S1727538AbeJYWCK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:01:50 -0400
-Received: from smtp3-1.goneo.de ([85.220.129.38]:41213 "EHLO smtp3-1.goneo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727234AbeJYWBt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:01:49 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp3.goneo.de (Postfix) with ESMTP id 5804323F072;
-        Thu, 25 Oct 2018 15:29:01 +0200 (CEST)
-X-Virus-Scanned: by goneo
-Received: from smtp3.goneo.de ([127.0.0.1])
-        by localhost (smtp3.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Ydqys9l-vPVl; Thu, 25 Oct 2018 15:29:00 +0200 (CEST)
-Received: from lem-wkst-02.lemonage (hq.lemonage.de [87.138.178.34])
-        by smtp3.goneo.de (Postfix) with ESMTPSA id 3E4BC23EFF1;
-        Thu, 25 Oct 2018 15:29:00 +0200 (CEST)
-Date:   Thu, 25 Oct 2018 15:28:55 +0200
-From:   Lars Poeschel <poeschel@lemonage.de>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Marcel Holtmann <marcel@holtmann.org>, devicetree@vger.kernel.org,
-        Samuel Ortiz <sameo@linux.intel.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:NFC SUBSYSTEM" <linux-wireless@vger.kernel.org>
-Subject: Re: [PATCH v2 1/4] nfc: pn533: add UART phy driver
-Message-ID: <20181025132854.GA24350@lem-wkst-02.lemonage>
-References: <20181018144251.30028-1-poeschel@lemonage.de>
- <6CB47B97-F58D-4162-98C1-8C8C88CE2914@holtmann.org>
- <20181019085728.GA26696@lem-wkst-02.lemonage>
- <20181020092733.GV3383@localhost>
+        Thu, 25 Oct 2018 18:02:10 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:43302 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727234AbeJYWCJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:02:09 -0400
+Received: by mail-lf1-f65.google.com with SMTP id p34-v6so6779947lfg.10
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 06:29:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7Nc/59QmCpddwSBjBIU9Sf7LrqzG7lNd8pUyVSBiZXU=;
+        b=N5x63xjT+xLoIMNFRzpW86FavIVnoJHxQKzvuluGS3Ary57+d/gd42QnXp8sfmAZel
+         l2bGbYeSRfvHnLJ/PwL0A44FKSzeGX69fwhnTwygN53Nxu/mILn/tRpmP6RW3A00HRb7
+         3xYSzgiOz7HgAFuZJ20AyH2AqOAfwWNQJNTSA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7Nc/59QmCpddwSBjBIU9Sf7LrqzG7lNd8pUyVSBiZXU=;
+        b=IKCu4HstXwOTzw5CI04uyICoI/h7IkT1JdOhT9asHG7n+0RKO1KEa/t+tqWtXHtPlH
+         JSD07grWFbix9UDBIvQNgoiUEl8jUcUtOVmZtVArKyMPqaadAIKINHx90tRWgSqd7E44
+         vBiVyEl9EO5D6ZqyxWYFH1Y/cDLbsKIzSOUWaZyqaateaMeZhIXoapS/OHYvE9+SBZTp
+         FEW8T+1jLcixg1Ypbj4JHV5qk3t0fOy7eAKrFa06FO+fSdJVkYXRP90tp1E5CFpMCi85
+         bNY3QHiTK5hW8d3oe+9c2A2GwdF011V1kViJs3j3WmuzJAZxTLuUcpEVb2Wxg3bsqidD
+         yueA==
+X-Gm-Message-State: AGRZ1gKZstNiFgiW+FQt5vYK7gLC7amTEyxZNdPeSWviKUeTnvLUotVs
+        1bRGF+HU0e4Jsnd1XYRD3kNB/XYcRn1MfV0A
+X-Google-Smtp-Source: AJdET5d9qwmWVWXGM2xF9ZTNy4yqKrxFOfQXU55KyU373al9YpQntkqaOTzWwLgdzOjaLn9IyZu91A==
+X-Received: by 2002:a19:be16:: with SMTP id o22mr1206149lff.22.1540474162527;
+        Thu, 25 Oct 2018 06:29:22 -0700 (PDT)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id t7-v6sm1132549ljh.1.2018.10.25.06.29.21
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Oct 2018 06:29:21 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id x3-v6so8199394lji.13
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 06:29:21 -0700 (PDT)
+X-Received: by 2002:a2e:7f14:: with SMTP id a20-v6mr1264657ljd.148.1540474161171;
+ Thu, 25 Oct 2018 06:29:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181020092733.GV3383@localhost>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181024181121.3pw6o3qqcx6zd7ob@earth.universe>
+In-Reply-To: <20181024181121.3pw6o3qqcx6zd7ob@earth.universe>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 25 Oct 2018 06:29:05 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whRnOwTLrOO98CexTChnBeoVRFELoEUinvmXECwuOLTHA@mail.gmail.com>
+Message-ID: <CAHk-=whRnOwTLrOO98CexTChnBeoVRFELoEUinvmXECwuOLTHA@mail.gmail.com>
+Subject: Re: [GIT PULL] power-supply changes for 4.20
+To:     sre@kernel.org
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 20, 2018 at 11:27:33AM +0200, Johan Hovold wrote:
-> On Fri, Oct 19, 2018 at 10:57:28AM +0200, Lars Poeschel wrote:
-> > On Thu, Oct 18, 2018 at 05:00:28PM +0200, Marcel Holtmann wrote:
-> 
-> > > > --- a/drivers/nfc/pn533/Kconfig
-> > > > +++ b/drivers/nfc/pn533/Kconfig
-> > > > @@ -25,3 +25,13 @@ config NFC_PN533_I2C
-> > > > 
-> > > > 	  If you choose to build a module, it'll be called pn533_i2c.
-> > > > 	  Say N if unsure.
-> > > > +
-> > > > +config NFC_PN532_UART
-> > > > +	tristate "NFC PN532 device support (UART)”
-> > > 
-> > > you are missing the "depends on SERIAL_DEV_BUS” here.
-> > 
-> > Yes, absolutely right. I missed that. I will post a follow-up.
-> > 
-> > BTW a question:
-> > Only enabling SERIAL_DEV_BUS did not suffice for me. I also had to
-> > enable SERIAL_DEV_CTRL_TTYPORT, otherwise the probe of the driver was
-> > not called. This seems a bit odd to me. This option seems unrelated, but
-> > without it, it did not work.
-> > 
-> > Should I better depend on SERIAL_DEV_CTRL_TTYPORT then ?
-> 
-> No, SERIAL_DEV_BUS is the correct (build-time) dependency.
-> 
-> In principle, your driver will work with any serdev-controller
-> implementation even if we currently only have one of those in the kernel
-> (and SERIAL_DEV_CTRL_TTYPORT therefore default to Y whenever
-> SERIAL_DEV_BUS is selected).
+On Wed, Oct 24, 2018 at 11:11 AM Sebastian Reichel <sre@kernel.org> wrote:
+>
+> power supply and reset changes for the v4.20 series
 
-Thanks, this makes sense for me now.
-I will post a follow-up patchset shortly.
+Pulled,
 
-Regards,
-Lars
+                  Linus
