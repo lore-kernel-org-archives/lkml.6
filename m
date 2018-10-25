@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6EB3ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA34ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 728FF20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94A8020873
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ttlugx/k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 728FF20870
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XZuFlNqm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94A8020873
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730797AbeJYWwx (ORCPT
+        id S1730822AbeJYWw5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:52:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35130 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:52:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730693AbeJYWww (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:52:52 -0400
+        id S1730693AbeJYWwy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:52:54 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CA4402086D;
-        Thu, 25 Oct 2018 14:19:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C06F2085B;
+        Thu, 25 Oct 2018 14:19:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477194;
-        bh=hcTycQFxvU2bzPapE8+3QeBmcEqAuqCSGv5HE6+JyF4=;
+        s=default; t=1540477196;
+        bh=mc5sAZh2dZ39zYMDPO+bEe+o2jmvrArx7+M2pTI7+q4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ttlugx/kY+Q4jzbjtTDLHBWR6OkMKIx7Um3H5sIitm9tYyZTgHRnnirWhkg1rU46q
-         OIros8TpEhv01yd+l4xErr+JVsrMl6etYIEl1mr6Jb1acpMIz67wDkuGWRi9KC/5In
-         naNP5JTt/TNe2uidMt60fUQnHNfftUptLScBVbAE=
+        b=XZuFlNqmEP2npLOCkaUMeNIT1Fkq9kVVU56kheBdqvRmXX1TUcqkVa4a7/o8r3DjH
+         hr+gO64uMRP1A558nZzrl6qV85GvnmVoH21umVy1caCCDnZpkoAdgo0YFowzf+j/e7
+         1w1VoFnA5segBXt+u0sKdU9b/vacYL8RJnRWdcAI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+Cc:     "Steven Rostedt (Red Hat)" <rostedt@goodmis.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 41/98] fbdev/broadsheetfb: fix memory leak
-Date:   Thu, 25 Oct 2018 10:17:56 -0400
-Message-Id: <20181025141853.214051-41-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 42/98] tracing: Fix enabling of syscall events on the command line
+Date:   Thu, 25 Oct 2018 10:17:57 -0400
+Message-Id: <20181025141853.214051-42-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
 References: <20181025141853.214051-1-sashal@kernel.org>
@@ -53,62 +52,135 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: "Steven Rostedt (Red Hat)" <rostedt@goodmis.org>
 
-[ Upstream commit ef6899cdc8608e2f018e590683f04bb04a069704 ]
+[ Upstream commit ce1039bd3a89e99e4f624e75fb1777fc92d76eb3 ]
 
-static code analysis from cppcheck reports:
+Commit 5f893b2639b2 "tracing: Move enabling tracepoints to just after
+rcu_init()" broke the enabling of system call events from the command
+line. The reason was that the enabling of command line trace events
+was moved before PID 1 started, and the syscall tracepoints require
+that all tasks have the TIF_SYSCALL_TRACEPOINT flag set. But the
+swapper task (pid 0) is not part of that. Since the swapper task is the
+only task that is running at this early in boot, no task gets the
+flag set, and the tracepoint never gets reached.
 
-[drivers/video/fbdev/broadsheetfb.c:673]:
-  (error) Memory leak: sector_buffer
+Instead of setting the swapper task flag (there should be no reason to
+do that), re-enabled trace events again after the init thread (PID 1)
+has been started. It requires disabling all command line events and
+re-enabling them, as just enabling them again will not reset the logic
+to set the TIF_SYSCALL_TRACEPOINT flag, as the syscall tracepoint will
+be fooled into thinking that it was already set, and wont try setting
+it again. For this reason, we must first disable it and re-enable it.
 
-sector_buffer is not being kfree'd on each call to
-broadsheet_spiflash_rewrite_sector(), so free it.
+Link: http://lkml.kernel.org/r/1421188517-18312-1-git-send-email-mpe@ellerman.id.au
+Link: http://lkml.kernel.org/r/20150115040506.216066449@goodmis.org
 
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Reported-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/video/fbdev/broadsheetfb.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ kernel/trace/trace_events.c | 69 +++++++++++++++++++++++++++++--------
+ 1 file changed, 55 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/video/fbdev/broadsheetfb.c b/drivers/video/fbdev/broadsheetfb.c
-index 8556264b16b7..235542f42da9 100644
---- a/drivers/video/fbdev/broadsheetfb.c
-+++ b/drivers/video/fbdev/broadsheetfb.c
-@@ -636,7 +636,7 @@ static int broadsheet_spiflash_rewrite_sector(struct broadsheetfb_par *par,
- 		err = broadsheet_spiflash_read_range(par, start_sector_addr,
- 						data_start_addr, sector_buffer);
- 		if (err)
--			return err;
-+			goto out;
- 	}
- 
- 	/* now we copy our data into the right place in the sector buffer */
-@@ -657,7 +657,7 @@ static int broadsheet_spiflash_rewrite_sector(struct broadsheetfb_par *par,
- 		err = broadsheet_spiflash_read_range(par, tail_start_addr,
- 			tail_len, sector_buffer + tail_start_addr);
- 		if (err)
--			return err;
-+			goto out;
- 	}
- 
- 	/* if we got here we have the full sector that we want to rewrite. */
-@@ -665,11 +665,13 @@ static int broadsheet_spiflash_rewrite_sector(struct broadsheetfb_par *par,
- 	/* first erase the sector */
- 	err = broadsheet_spiflash_erase_sector(par, start_sector_addr);
- 	if (err)
--		return err;
-+		goto out;
- 
- 	/* now write it */
- 	err = broadsheet_spiflash_write_sector(par, start_sector_addr,
- 					sector_buffer, sector_size);
-+out:
-+	kfree(sector_buffer);
- 	return err;
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index 51c47bc832d4..edf6ab4d8650 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -2400,12 +2400,39 @@ static __init int event_trace_memsetup(void)
+ 	return 0;
  }
  
++static __init void
++early_enable_events(struct trace_array *tr, bool disable_first)
++{
++	char *buf = bootup_event_buf;
++	char *token;
++	int ret;
++
++	while (true) {
++		token = strsep(&buf, ",");
++
++		if (!token)
++			break;
++		if (!*token)
++			continue;
++
++		/* Restarting syscalls requires that we stop them first */
++		if (disable_first)
++			ftrace_set_clr_event(tr, token, 0);
++
++		ret = ftrace_set_clr_event(tr, token, 1);
++		if (ret)
++			pr_warn("Failed to enable trace event: %s\n", token);
++
++		/* Put back the comma to allow this to be called again */
++		if (buf)
++			*(buf - 1) = ',';
++	}
++}
++
+ static __init int event_trace_enable(void)
+ {
+ 	struct trace_array *tr = top_trace_array();
+ 	struct ftrace_event_call **iter, *call;
+-	char *buf = bootup_event_buf;
+-	char *token;
+ 	int ret;
+ 
+ 	if (!tr)
+@@ -2427,18 +2454,7 @@ static __init int event_trace_enable(void)
+ 	 */
+ 	__trace_early_add_events(tr);
+ 
+-	while (true) {
+-		token = strsep(&buf, ",");
+-
+-		if (!token)
+-			break;
+-		if (!*token)
+-			continue;
+-
+-		ret = ftrace_set_clr_event(tr, token, 1);
+-		if (ret)
+-			pr_warn("Failed to enable trace event: %s\n", token);
+-	}
++	early_enable_events(tr, false);
+ 
+ 	trace_printk_start_comm();
+ 
+@@ -2449,6 +2465,31 @@ static __init int event_trace_enable(void)
+ 	return 0;
+ }
+ 
++/*
++ * event_trace_enable() is called from trace_event_init() first to
++ * initialize events and perhaps start any events that are on the
++ * command line. Unfortunately, there are some events that will not
++ * start this early, like the system call tracepoints that need
++ * to set the TIF_SYSCALL_TRACEPOINT flag of pid 1. But event_trace_enable()
++ * is called before pid 1 starts, and this flag is never set, making
++ * the syscall tracepoint never get reached, but the event is enabled
++ * regardless (and not doing anything).
++ */
++static __init int event_trace_enable_again(void)
++{
++	struct trace_array *tr;
++
++	tr = top_trace_array();
++	if (!tr)
++		return -ENODEV;
++
++	early_enable_events(tr, true);
++
++	return 0;
++}
++
++early_initcall(event_trace_enable_again);
++
+ static __init int event_trace_init(void)
+ {
+ 	struct trace_array *tr;
 -- 
 2.17.1
 
