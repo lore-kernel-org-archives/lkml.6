@@ -4,47 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE638ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:16:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3990DECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:16:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F8C32083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:16:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF69320840
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:16:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OYV0zRGZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F8C32083E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dy9OiAzF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF69320840
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729513AbeJYWto (ORCPT
+        id S1729522AbeJYWtq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:49:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59018 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:49:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729497AbeJYWtn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:49:43 -0400
+        id S1728006AbeJYWtq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:49:46 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52FC720854;
-        Thu, 25 Oct 2018 14:16:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A49B620883;
+        Thu, 25 Oct 2018 14:16:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477006;
-        bh=ZjC4RfkoJylmjn9gL07CNBsD2hvCSxQ1aBsnK4Z+wZ8=;
+        s=default; t=1540477008;
+        bh=xpxHVs+djavXaiYW/i6DO0E1PQ0mhI9GxTh81pOgSoA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OYV0zRGZFNBQ1LPKt7HPf0lMgcGiB2o86heYrvOpMfheTpUQHs87h6deQhBua6iQi
-         kmmrzdYPWK1XA/8+gV5kv3C6X0GuBakltq3bcc5sJc369LV+HDsT28nY1Keso2b7to
-         7R95P+30zIajgPqv1WIyZzM8JM6Yyv9gpJkXDd4w=
+        b=dy9OiAzFY2tpzo+l0foMKoBFQ/ybIkK4SEqGXP9HfdEs0k8lspbr4xIuDwuekJD5y
+         aeZcFWt0H92B3K25X34mWmC/4aE+2Nzm5RD1HDdRNandeuAehPVpQj8yO4M7UONR4Q
+         YpJ21N85VOXtGTLDTnoWIm1DoKd6ev44u6kaCkfA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     Sandipan Das <sandipan@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Hendrik Brueckner <brueckner@linux.ibm.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        "Naveen N . Rao" <naveen.n.rao@linux.vnet.ibm.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 97/98] xhci: Fix USB3 NULL pointer dereference at logical disconnect.
-Date:   Thu, 25 Oct 2018 10:14:22 -0400
-Message-Id: <20181025141423.213774-97-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 98/98] perf tests: Fix indexing when invoking subtests
+Date:   Thu, 25 Oct 2018 10:14:23 -0400
+Message-Id: <20181025141423.213774-98-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141423.213774-1-sashal@kernel.org>
 References: <20181025141423.213774-1-sashal@kernel.org>
@@ -53,63 +59,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+From: Sandipan Das <sandipan@linux.ibm.com>
 
-[ Upstream commit 2278446e2b7cd33ad894b32e7eb63afc7db6c86e ]
+[ Upstream commit aa90f9f9554616d5738f7bedb4a8f0e5e14d1bc6 ]
 
-Hub driver will try to disable a USB3 device twice at logical disconnect,
-racing with xhci_free_dev() callback from the first port disable.
+Recently, the subtest numbering was changed to start from 1.  While it
+is fine for displaying results, this should not be the case when the
+subtests are actually invoked.
 
-This can be triggered with "udisksctl power-off --block-device <disk>"
-or by writing "1" to the "remove" sysfs file for a USB3 device
-in 4.17-rc4.
+Typically, the subtests are stored in zero-indexed arrays and invoked
+based on the index passed to the main test function.  Since the index
+now starts from 1, the second subtest in the array (index 1) gets
+invoked instead of the first (index 0).  This applies to all of the
+following subtests but for the last one, the subtest always fails
+because it does not meet the boundary condition of the subtest index
+being lesser than the number of subtests.
 
-USB3 devices don't have a similar disabled link state as USB2 devices,
-and use a U3 suspended link state instead. In this state the port
-is still enabled and connected.
+This can be observed on powerpc64 and x86_64 systems running Fedora 28
+as shown below.
 
-hub_port_connect() first disconnects the device, then later it notices
-that device is still enabled (due to U3 states) it will try to disable
-the port again (set to U3).
+Before:
 
-The xhci_free_dev() called during device disable is async, so checking
-for existing xhci->devs[i] when setting link state to U3 the second time
-was successful, even if device was being freed.
+  # perf test "builtin clang support"
+  55: builtin clang support                                 :
+  55.1: builtin clang compile C source to IR                : Ok
+  55.2: builtin clang compile C source to ELF object        : FAILED!
 
-The regression was caused by, and whole thing revealed by,
-Commit 44a182b9d177 ("xhci: Fix use-after-free in xhci_free_virt_device")
-which sets xhci->devs[i]->udev to NULL before xhci_virt_dev() returned.
-and causes a NULL pointer dereference the second time we try to set U3.
+  # perf test "LLVM search and compile"
+  38: LLVM search and compile                               :
+  38.1: Basic BPF llvm compile                              : Ok
+  38.2: kbuild searching                                    : Ok
+  38.3: Compile source for BPF prologue generation          : Ok
+  38.4: Compile source for BPF relocation                   : FAILED!
 
-Fix this by checking xhci->devs[i]->udev exists before setting link state.
+  # perf test "BPF filter"
+  40: BPF filter                                            :
+  40.1: Basic BPF filtering                                 : Ok
+  40.2: BPF pinning                                         : Ok
+  40.3: BPF prologue generation                             : Ok
+  40.4: BPF relocation checker                              : FAILED!
 
-The original patch went to stable so this fix needs to be applied there as
-well.
+After:
 
-Fixes: 44a182b9d177 ("xhci: Fix use-after-free in xhci_free_virt_device")
-Cc: <stable@vger.kernel.org>
-Reported-by: Jordan Glover <Golden_Miller83@protonmail.ch>
-Tested-by: Jordan Glover <Golden_Miller83@protonmail.ch>
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+  # perf test "builtin clang support"
+  55: builtin clang support                                 :
+  55.1: builtin clang compile C source to IR                : Ok
+  55.2: builtin clang compile C source to ELF object        : Ok
+
+  # perf test "LLVM search and compile"
+  38: LLVM search and compile                               :
+  38.1: Basic BPF llvm compile                              : Ok
+  38.2: kbuild searching                                    : Ok
+  38.3: Compile source for BPF prologue generation          : Ok
+  38.4: Compile source for BPF relocation                   : Ok
+
+  # perf test "BPF filter"
+  40: BPF filter                                            :
+  40.1: Basic BPF filtering                                 : Ok
+  40.2: BPF pinning                                         : Ok
+  40.3: BPF prologue generation                             : Ok
+  40.4: BPF relocation checker                              : Ok
+
+Signed-off-by: Sandipan Das <sandipan@linux.ibm.com>
+Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+Cc: Hendrik Brueckner <brueckner@linux.ibm.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Cc: Naveen N. Rao <naveen.n.rao@linux.vnet.ibm.com>
+Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+Cc: Thomas Richter <tmricht@linux.ibm.com>
+Fixes: 9ef0112442bd ("perf test: Fix subtest number when showing results")
+Link: http://lkml.kernel.org/r/20180726171733.33208-1-sandipan@linux.ibm.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/host/xhci-hub.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/tests/builtin-test.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-hub.c b/drivers/usb/host/xhci-hub.c
-index 45a03eff4db1..0f09ab5399f4 100644
---- a/drivers/usb/host/xhci-hub.c
-+++ b/drivers/usb/host/xhci-hub.c
-@@ -366,7 +366,7 @@ int xhci_find_slot_id_by_port(struct usb_hcd *hcd, struct xhci_hcd *xhci,
+diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
+index ade7213943ad..03239956987f 100644
+--- a/tools/perf/tests/builtin-test.c
++++ b/tools/perf/tests/builtin-test.c
+@@ -335,7 +335,7 @@ static int test_and_print(struct test *t, bool force_skip, int subtest)
+ 	if (!t->subtest.get_nr)
+ 		pr_debug("%s:", t->desc);
+ 	else
+-		pr_debug("%s subtest %d:", t->desc, subtest);
++		pr_debug("%s subtest %d:", t->desc, subtest + 1);
  
- 	slot_id = 0;
- 	for (i = 0; i < MAX_HC_SLOTS; i++) {
--		if (!xhci->devs[i])
-+		if (!xhci->devs[i] || !xhci->devs[i]->udev)
- 			continue;
- 		speed = xhci->devs[i]->udev->speed;
- 		if (((speed >= USB_SPEED_SUPER) == (hcd->speed >= HCD_USB3))
+ 	switch (err) {
+ 	case TEST_OK:
+@@ -413,7 +413,7 @@ static int __cmd_test(int argc, const char *argv[], struct intlist *skiplist)
+ 			for (subi = 0; subi < subn; subi++) {
+ 				pr_info("%2d.%1d: %-*s:", i, subi + 1, subw,
+ 					t->subtest.get_desc(subi));
+-				err = test_and_print(t, skip, subi + 1);
++				err = test_and_print(t, skip, subi);
+ 				if (err != TEST_OK && t->subtest.skip_if_fail)
+ 					skip = true;
+ 			}
 -- 
 2.17.1
 
