@@ -2,239 +2,220 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89FD9C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 12:24:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 025D7ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 12:24:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20D4C20831
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 12:24:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20D4C20831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id 4DD1C20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 12:24:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DD1C20834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727458AbeJYU4g (ORCPT
+        id S1727476AbeJYU5C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 16:56:36 -0400
-Received: from out01.mta.xmission.com ([166.70.13.231]:38540 "EHLO
-        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727228AbeJYU4g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 16:56:36 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gFeg0-00045G-KM; Thu, 25 Oct 2018 06:23:48 -0600
-Received: from 67-3-154-154.omah.qwest.net ([67.3.154.154] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1gFefl-0001QP-6o; Thu, 25 Oct 2018 06:23:48 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Enke Chen <enkechen@cisco.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Helge Deller <deller@gmx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian@brauner.io>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        "Victor Kamensky \(kamensky\)" <kamensky@cisco.com>,
-        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>
-References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
-        <458c04d8-d189-4a26-729a-bb1d1d751534@cisco.com>
-        <87sh0vpj5q.fsf@xmission.com>
-        <df08c74f-1027-c635-fb99-a12d23f60947@cisco.com>
-Date:   Thu, 25 Oct 2018 07:23:07 -0500
-In-Reply-To: <df08c74f-1027-c635-fb99-a12d23f60947@cisco.com> (Enke Chen's
-        message of "Wed, 24 Oct 2018 16:50:26 -0700")
-Message-ID: <87zhv2md04.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+        Thu, 25 Oct 2018 16:57:02 -0400
+Received: from a.mx.secunet.com ([62.96.220.36]:40802 "EHLO a.mx.secunet.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727228AbeJYU5B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 16:57:01 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by a.mx.secunet.com (Postfix) with ESMTP id E90C3201D9;
+        Thu, 25 Oct 2018 14:24:27 +0200 (CEST)
+X-Virus-Scanned: by secunet
+Received: from a.mx.secunet.com ([127.0.0.1])
+        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id q8ByWkGsa2LX; Thu, 25 Oct 2018 14:24:24 +0200 (CEST)
+Received: from mail-essen-01.secunet.de (mail-essen-01.secunet.de [10.53.40.204])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by a.mx.secunet.com (Postfix) with ESMTPS id 523C3201CF;
+        Thu, 25 Oct 2018 14:24:24 +0200 (CEST)
+Received: from [10.182.7.41] (10.182.7.41) by mail-essen-01.secunet.de
+ (10.53.40.204) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 25 Oct
+ 2018 14:24:23 +0200
+From:   Dennis Wassenberg <dennis.wassenberg@secunet.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dennis.wassenberg@secunet.com; keydata=
+ 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
+ YPsSSSBN/R6Xmw==
+Organization: secunet Security Networks AG
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
+        Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        Bin Liu <b-liu@ti.com>,
+        "Maxim Moseychuk" <franchesko.salias.hudro.pedros@gmail.com>,
+        Mike Looijmans <mike.looijmans@topic.nl>,
+        Dominik Bozek <dominikx.bozek@intel.com>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: USB-C device hotplug issue
+Message-ID: <7d444d00-5144-452d-4229-e77d38a991f5@secunet.com>
+Date:   Thu, 25 Oct 2018 14:20:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1gFefl-0001QP-6o;;;mid=<87zhv2md04.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=67.3.154.154;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1/LtjS9Fcc+DHWaV6YDmpqliZiKuzg+BD4=
-X-SA-Exim-Connect-IP: 67.3.154.154
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v2] kernel/signal: Signal-based pre-coredump notification
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-G-Data-MailSecurity-for-Exchange-State: 0
+X-G-Data-MailSecurity-for-Exchange-Error: 0
+X-G-Data-MailSecurity-for-Exchange-Sender: 23
+X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
+X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+X-G-Data-MailSecurity-for-Exchange-Guid: 523B41F7-128C-40BA-BC11-617919484B70
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enke Chen <enkechen@cisco.com> writes:
+Hi all,
 
-> Hi, Eric:
->
-> Thanks for your comments. Please see my replies inline.
->
-> On 10/24/18 6:29 AM, Eric W. Biederman wrote:
->> Enke Chen <enkechen@cisco.com> writes:
->> 
->>> For simplicity and consistency, this patch provides an implementation
->>> for signal-based fault notification prior to the coredump of a child
->>> process. A new prctl command, PR_SET_PREDUMP_SIG, is defined that can
->>> be used by an application to express its interest and to specify the
->>> signal (SIGCHLD or SIGUSR1 or SIGUSR2) for such a notification. A new
->>> signal code (si_code), CLD_PREDUMP, is also defined for SIGCHLD.
->>>
->>> Changes to prctl(2):
->>>
->>>    PR_SET_PREDUMP_SIG (since Linux 4.20.x)
->>>           Set the child pre-coredump signal of the calling process to
->>>           arg2 (either SIGUSR1, or SIUSR2, or SIGCHLD, or 0 to clear).
->>>           This is the signal that the calling process will get prior to
->>>           the coredump of a child process. This value is cleared across
->>>           execve(2), or for the child of a fork(2).
->>>
->>>           When SIGCHLD is specified, the signal code will be set to
->>>           CLD_PREDUMP in such an SIGCHLD signal.
->> 
->> Your signal handling is still not right.  Please read and comprehend
->> siginfo_layout.
->> 
->> You have not filled in all of the required fields for the SIGCHLD case.
->> For the non SIGCHLD case you are using si_code == 0 == SI_USER which is
->> very wrong.  This is not a user generated signal.
->> 
->> Let me say this slowly.  The pair si_signo si_code determines the union
->> member of struct siginfo.  That needs to be handled consistently. You
->> aren't.  I just finished fixing this up in the entire kernel and now you
->> are trying to add a usage that is worst than most of the bugs I have
->> fixed.  I really don't appreciate having to deal with no bugs.
->> 
->
-> My apologies. I will investigate and make them consistent.
->
->> 
->> 
->> Further siginfo can be dropped.  Multiple signals with the same signal
->> number can be consolidated.  What is your plan for dealing with that?
->
-> The primary application for the early notification involves a process
-> manager which is responsible for re-spawning processes or initiating
-> the control-plane fail-over. There are two models:
->
-> One model is to have 1:1 relationship between a process manager and
-> application process. There can only be one predump-signal (say, SIGUSR1)
-> from the child to the parent, and will unlikely be dropped or consolidated.
->
-> Another model is to have 1:N where there is only one process manager with
-> multiple application processes. One of the RT signal can be used to help
-> make it more reliable.
+I have a question regarding the usb hub driver (drivers/usb/core/hub.c).
 
-Which suggests you want one of the negative si_codes, and to use the _rt
-siginfo member like sigqueue.
+There is the following scenario. I am using the Lenovo T580 device with the Lenovo UltraDock CS18 docking station. If I plug an usb-c device to the docking station there is one device which will not be recognized (SanDisk Ultra USB-C Flash Drive, https://www.sandisk.com/home/mobile-device-storage/ultra-usb-type-c). An other usb-c devices (SanDisk Extreme 900 SSD, https://www.sandisk.com/home/ssd/extreme-900-ssd) works fine. I don’t have that much USB-C devices available, so there is one device working and the other one not.
 
->> Other code paths pair with wait to get the information out.  There
->> is no equivalent of wait in your code.
->
-> I was not aware of that before.  Let me investigate.
->
->> 
->> Signals can be delayed by quite a bit, scheduling delays etc.  They can
->> not provide any meaningful kind of real time notification.
->> 
->
-> The timing requirement is about 50-100 msecs for BFD.  Not sure if that
-> qualifies as "real time".  This mechanism has worked well in deployment
-> over the years.
+I made some analysis of the situation where I attached the SanDisk Ultra USB-C Flash Drive.
+I added some debug logs in drivers/usb/core/hub.c in port_event and hub_port_reset and activated all dynamic debug prints in hub.c. The output is the following:
 
-It would help if those numbers were put into the patch description so
-people can tell if the mechanism is quick enough.
+[  724.110784] usb 4-1-port1: XXX: port_event: portstatus: 0x2c0, portchange: 0x40!
+[  724.110789] usb 4-1-port1: link state change
+[  724.114953] usb 4-1-port1: do warm reset
+[  724.168109] usb 4-1-port1: not warm reset yet, waiting 50ms
+[  724.220768] usb 4-1-port1: not warm reset yet, waiting 200ms
+[  724.425188] usb 4-1-port1: XXX: hub_port_reset (before clear USB_PORT_FEAT_C_CONNECTION): 0x203, portchange: 0x1!
+[  724.425906] usb 4-1-port1: XXX: hub_port_reset (after clear USB_PORT_FEAT_C_CONNECTION): 0x203, portchange: 0x0!
+[  724.477429] hub 4-1:1.0: state 7 ports 4 chg 0000 evt 0002
+[  724.477980] usb 4-1-port1: XXX: port_event: portstatus: 0x203, portchange: 0x0!
 
->> So between delays and loss of information signals appear to be a very
->> poor fit for this usecase.
->> 
->> I am concerned about code that does not fit the usecase well because
->> such code winds up as code that no one cares about that must be
->> maintained indefinitely, because somewhere out there there is one use
->> that would break if the interface was removed.  This does not feel like
->> an interface people will want to use and maintain in proper working
->> order forever.
->> 
->> Ugh.  Your test case is even using signalfd.  So you don't even want
->> this signal to be delivered as a signal.
->
-> I actually tested sigaction()/waitpid() as well. If there is a preference,
-> I can check in the sigaction()/waitpid() version instead.
->
->> 
->> You add an interface that takes a pointer and you don't add a compat
->> interface.  See Oleg's point of just returning the signal number in the
->> return code.
->
-> This is what Oleg said "but I won't insist, this is subjective and cosmetic".
->
-> It is no big deal either way. It just seems less work if we do not keep
-> adding exceptions to the prctl(2) manpage:
->  
-> prctl(2):
->
->        On success, PR_GET_DUMPABLE,   PR_GET_KEEPCAPS,   PR_GET_NO_NEW_PRIVS,   PR_CAPBSET_READ,    PR_GET_TIMING,    PR_GET_SECUREBITS,
->        PR_MCE_KILL_GET,  PR_CAP_AMBIENT+PR_CAP_AMBIENT_IS_SET,  and  (if  it returns) PR_GET_SECCOMP return the nonnegative values described
->        above.  All other option values return 0 on success.  On error, -1 is returned, and errno is set appropriately.
+The same situation with SanDisk Extreme 900 SSD:
 
-More work in the man page versus less work in the kernel, and less code
-to maintain.  I will vote for more work in the man page.
+[  863.647484] hub 4-1:1.0: state 7 ports 4 chg 0000 evt 0002
+[  863.647965] usb 4-1-port1: XXX: port_event: portstatus: 0x203, portchange: 0x1!
+[  863.648305] usb 4-1-port1: status 0203, change 0001, 10.0 Gb/s
+[  863.758573] usb 4-1-port1: debounce total 100ms stable 100ms status 0x203
+[  863.773495] usb 4-1-port1: XXX: hub_port_reset (before clear USB_PORT_FEAT_C_CONNECTION): 0x203, portchange: 0x0!
+[  863.773699] usb 4-1-port1: XXX: hub_port_reset (after clear USB_PORT_FEAT_C_CONNECTION): 0x203, portchange: 0x0!
+[  863.826311] usb 4-1.1: new SuperSpeedPlus USB device number 6 using xhci_hcd
+[  863.840002] usb 4-1.1: udev 6, busnum 4, minor = 389
+[  863.840010] usb 4-1.1: New USB device found, idVendor=0781, idProduct=5593
+[  863.840014] usb 4-1.1: New USB device strings: Mfr=2, Product=3, SerialNumber=1
+[  863.840018] usb 4-1.1: Product: EXTREME900
+[  863.840022] usb 4-1.1: Manufacturer: SanDisk
+[  863.840026] usb 4-1.1: SerialNumber: 10000019DF56
 
->> Now I am wondering how well prctl works from a 32bit process on a 64bit
->> kernel.  At first glance it looks like it probably does not work.
->>
->
-> I am not sure which part would be problematic.
+So, at first I am wondering if the usb hub port was in USB_SS_PORT_LS_U3 if I attach the SanDisk Ultra USB-C Flash Drive. In case of the SanDisk Extreme 900 the usb hub port is in USB_SS_PORT_LS_U0. What’ the reason for that?
 
-32bit pointers need to be translated into 64bit pointers.  If the system
-call does not zero extend them.  Plus structure sizes.
+I read https://www.kernel.org/doc/html/v4.14/driver-api/usb/power-management.html. In this test usb core was bootet wird autosuspend=-1.Additionally the <hubdev-portX>/power/pm_qos_no_power_off sysfs variable is always set to 1. Nevertheless the hub port is in LS U3, but only using SanDisk Ultra USB-C Flash Drive.
 
-I think prctl is just inside the line where problems happen but it is so
-close to the line of structure size differences that it makes me
-nervous.  Typically pointers in structures are what cause system calls
-to cross that line.
+I looked through the code and wondered why the USB_PORT_FEAT_C_CONNECTION bit is cleared at successful warm usb 3 reset in hub_port_reset.
+In case of the Ultra USB-C Flash Drive at first the link state change is detected. Directly after executing the actual hub_port_reset the USB_PORT_FEAT_C_CONNECTION bit will change to 1. But the hub_port_reset code will set this bit to 0. At the next run the bit remains 0 and the connect_change flag in port_event will not be set. That  means the USB_PORT_FEAT_C_CONNECTION flag will be cleared without taking it into account. That’s why this device will not be detected correctly.
 
->> Consistency with PDEATHSIG is not a good argument for anything.
->> PDEATHSIG at the present time is unusable in the real world by most
->> applications that want something like it.
->
-> Agreed, PDEATHSIG seems to have a few issues ...
->
->> 
->> So far I see an interface that even you don't want to use as designed,
->> that is implemented incorrectly.
->> 
->> The concern is real and deserves to be addressed.  I don't think signals
->> are the right way to handle it, and certainly not this patch as it
->> stands.
->
-> I will address your concerns on the patch. Regarding the requirement and the
-> overall solution, if there are specific questions that I have not answered,
-> please let me know.
+If I modify the code in this way that I did’t clear the USB_PORT_FEAT_C_CONNECTION bit in hub_port_reset on warm usb3 reset this flag is still set during the next run. This makes sure that the connect_change flag in port_event is set and the usb device is detected correctly.
+Is this code change correct or will it break other use cases? Are there any other ways to make the kernel detect that usb device at the docking station?
 
-So far so good.
+Please refer to the output of the modified usb_hub_reset code:
 
-Eric
+[  121.566344] hub 4-1:1.0: state 7 ports 4 chg 0000 evt 0002
+[  121.566805] usb 4-1-port1: XXX: port_event: portstatus: 0x2c0, portchange: 0x40!
+[  121.566810] usb 4-1-port1: link state change
+[  121.573481] usb 4-1-port1: do warm reset
+[  121.625297] usb 4-1-port1: not warm reset yet, waiting 50ms
+[  121.677854] usb 4-1-port1: not warm reset yet, waiting 200ms
+[  121.881091] usb 4-1-port1: XXX: hub_port_reset (before clear USB_PORT_FEAT_C_CONNECTION): 0x203, portchange: 0x1!
+[  121.881454] usb 4-1-port1: XXX: hub_port_reset (after clear USB_PORT_FEAT_C_CONNECTION): 0x203, portchange: 0x1!
+[  121.933109] hub 4-1:1.0: state 7 ports 4 chg 0000 evt 0002
+[  121.933407] usb 4-1-port1: XXX: port_event: portstatus: 0x203, portchange: 0x1!
+[  121.933861] usb 4-1-port1: status 0203, change 0001, 10.0 Gb/s
+[  122.042540] usb 4-1-port1: debounce total 100ms stable 100ms status 0x203
+[  122.056865] usb 4-1-port1: XXX: hub_port_reset (before clear USB_PORT_FEAT_C_CONNECTION): 0x203, portchange: 0x0!
+[  122.057230] usb 4-1-port1: XXX: hub_port_reset (after clear USB_PORT_FEAT_C_CONNECTION): 0x203, portchange: 0x0!
+[  122.109166] usb 4-1.1: new SuperSpeed USB device number 5 using xhci_hcd
+[  122.122392] usb 4-1.1: udev 5, busnum 4, minor = 388
+[  122.122399] usb 4-1.1: New USB device found, idVendor=0781, idProduct=5596
+[  122.122404] usb 4-1.1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[  122.122408] usb 4-1.1: Product: Ultra T C
+[  122.122412] usb 4-1.1: Manufacturer: SanDisk
+[  122.122415] usb 4-1.1: SerialNumber: 4C531001400624115002
+[  122.124151] hub 4-1:1.0: state 7 ports 4 chg 0000 evt 0002
+[  122.125042] usb 4-1-port1: XXX: port_event: portstatus: 0x203, portchange: 0x0!
+
+
+The code change for Kernel 4.14 look as follows:
+
+Subject: [PATCH] usb: core: do not clear USB_PORT_FEAT_C_CONNECTION on warm
+ hub port reset
+
+Signed-off-by: Dennis Wassenberg <dennis.wassenberg@secunet.com>
+---
+ drivers/usb/core/hub.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index a9db0887edca..9b4dfe6c8829 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -2815,7 +2815,9 @@ static int hub_port_reset(struct usb_hub *hub, int port1,
+ 					USB_PORT_FEAT_C_BH_PORT_RESET);
+ 			usb_clear_port_feature(hub->hdev, port1,
+ 					USB_PORT_FEAT_C_PORT_LINK_STATE);
+-			usb_clear_port_feature(hub->hdev, port1,
++
++			if (!warm)
++				usb_clear_port_feature(hub->hdev, port1,
+ 					USB_PORT_FEAT_C_CONNECTION);
+ 
+ 			/*
+-- 
+2.17.1
+
+
+Thank you for your help!
+
+Best regards,
+
+Dennis
