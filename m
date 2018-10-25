@@ -2,322 +2,152 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E1EDECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 09:49:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5BC6C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 09:51:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E95ED2064C
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 09:49:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9493F20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 09:51:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="dtZqLLJR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E95ED2064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="ZKPHQyKc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9493F20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbeJYSVx (ORCPT
+        id S1727472AbeJYSX5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 14:21:53 -0400
-Received: from mail-eopbgr00087.outbound.protection.outlook.com ([40.107.0.87]:17216
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727355AbeJYSVw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 14:21:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xJUdBl5mWdqngLAQuiIGkP13OW+TDnHvvXvuZG5v0QE=;
- b=dtZqLLJRpAgYRRFbakMPzsJ/mIhOTOiHOo0aG+oOPNxb96ejxmvKn3cxmh4iI7kVqL1LETgMda9WTxZAiicEItKVfHK3+Lxl2Y7D1bFco98T67Wix1aAFUhhAQVKUaaLyFkB9tKYjBk8QtTUf8QKa1aRonsGRtNYeflcp/AOu9w=
-Received: from DB5PR04MB1221.eurprd04.prod.outlook.com (10.162.155.27) by
- DB5PR04MB1208.eurprd04.prod.outlook.com (10.162.155.26) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1250.30; Thu, 25 Oct 2018 09:49:49 +0000
-Received: from DB5PR04MB1221.eurprd04.prod.outlook.com
- ([fe80::6c36:f4cb:26c2:e8cb]) by DB5PR04MB1221.eurprd04.prod.outlook.com
- ([fe80::6c36:f4cb:26c2:e8cb%2]) with mapi id 15.20.1250.028; Thu, 25 Oct 2018
- 09:49:49 +0000
-From:   "Z.q. Hou" <zhiqiang.hou@nxp.com>
-To:     "linux-arm-kernel@lists.infradead.org" 
+        Thu, 25 Oct 2018 14:23:57 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:57416 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727203AbeJYSX5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 14:23:57 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=DMYUfrzGm67RQwAYb+Dc7BRuNsrESyqorLWObdoCMoU=; b=ZKPHQyKcMinQF8nTFQOsHNQ1F
+        BSmqvxTgmRJ5mU25+jB7J1Rb5qDYn1EAWyXpOfuy9jogo1jEdKT51bw9M57W4TA3fwEbFwmdWAVWs
+        DdLVmkVSpdSB3x3yV+XUtfLpmlsDDgWrDZGcYPmME/k+zfecASxYewOJKQc/gba53gulw=;
+Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:43699)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1gFcIo-0006y6-5K; Thu, 25 Oct 2018 10:51:42 +0100
+Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
+        (envelope-from <linux@n2100.armlinux.org.uk>)
+        id 1gFcIj-0004rh-Kl; Thu, 25 Oct 2018 10:51:37 +0100
+Date:   Thu, 25 Oct 2018 10:51:34 +0100
+From:   Russell King - ARM Linux <linux@armlinux.org.uk>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Rob Herring <robh@kernel.org>,
+        Linux-MIPS <linux-mips@linux-mips.org>,
+        linux-ia64@vger.kernel.org, SH-Linux <linux-sh@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-riscv@lists.infradead.org,
+        "open list:GENERIC INCLUDE/ASM HEADER FILES" 
+        <linux-arch@vger.kernel.org>, linux-s390@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-c6x-dev@linux-c6x.org, linux-hexagon@vger.kernel.org,
+        arcml <linux-snps-arc@lists.infradead.org>,
+        "moderated list:H8/300 ARCHITECTURE" 
+        <uclinux-h8-devel@lists.sourceforge.jp>,
+        linux-xtensa@linux-xtensa.org, Arnd Bergmann <arnd@arndb.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        linux-um@lists.infradead.org, linux-m68k@lists.linux-m68k.org,
+        Openrisc <openrisc@lists.librecores.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
         <linux-arm-kernel@lists.infradead.org>,
+        linux-parisc@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>
-CC:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
-Subject: [PATCH v2 4/4] dts/arm64/layerscape: Clean PCIe controller compatible
- strings
-Thread-Topic: [PATCH v2 4/4] dts/arm64/layerscape: Clean PCIe controller
- compatible strings
-Thread-Index: AQHUbEgRWnyDPCIxcEiiyEbZ9rKt3w==
-Date:   Thu, 25 Oct 2018 09:49:49 +0000
-Message-ID: <20181025094929.29481-5-Zhiqiang.Hou@nxp.com>
-References: <20181025094929.29481-1-Zhiqiang.Hou@nxp.com>
-In-Reply-To: <20181025094929.29481-1-Zhiqiang.Hou@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HK0PR03CA0051.apcprd03.prod.outlook.com
- (2603:1096:203:52::15) To DB5PR04MB1221.eurprd04.prod.outlook.com
- (2a01:111:e400:51c2::27)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=zhiqiang.hou@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB5PR04MB1208;6:T8U96M4Yu2YxdnxN6BP4SanKzlkEDp9XuzwrbqCA4onr+36BfQmKfOXKiWw3yVU9Z0isO8XzEZISkEehXz0MYIoCBybg9lrU5mtHbX6W6y/ZANADl4fHpS9n3zCh66Wb7PTXWb5FvAl70y1j69jjvoHhBviPr8trkQeyUDnqO8U+CiHaHc2s5DVLk570CsfmirUMb6RK9j4rfwAYIXZlKjVoFobw5SfOtWIBT69bYQFI8Stx74xLnSjYXVLf1CGf3BGwBIS2/JJRYmVtFgFvLlJnresKJu/WV7qdxNnVX2MisAuCqbKGDshwFdgJJRz6pCAkdwrY2YAnygBNcQUdHr35evopc/iDQrIxvM9rBKnfm/B7j0VaB1LcSJ2WIrTwQTu1/Hu7feDlTN1PfKJMtX1EGk7AISmpzLXvCXN//eEtZYW2iQ07JjkF+3lCsl0+0wYTUEJXcou8mD/o1af/zw==;5:+Nc37Tfe2tvddXu/9Nvvs7Qv8xThPh3Q5UvJT8ibYHl4DYpmzGH8tOHUUTCmDNniVwbug2m6X9O2sHxT6XhKv31+GVb4mb1wWEKQ5ltvN/pB8ZgW2vxPVfIshg1wQexqgE322fO9eg++ro+VWpyvP/H8/72Ja59qb5XLUqzudNg=;7:IZdJ06kuHxzqhLq3QTRwikYpJ0Y0Tb7nriffp2L8IXbTvRgNsAYrZ/aSVoSO8fQwKKai4wp2LCcwwWe8nFhkl4UmnzWR9smFHAZOXSqCeXcfFRqDJ/wCE3k0/YBKgNwghz10j2YgNm+0JJlymIzGVzfyNVcAj/6LsJfkk9gPn/LNTY2qPL7anQJ3XjDxWLMHqlZ3h+KeB6K4zD0Zybh49HKECX/ddoUKu4+wQqQa/GoNLI7FQR04pb2iZ/9P7azz
-x-ms-office365-filtering-correlation-id: 71eecd60-c4c5-494a-ee08-08d63a5f3417
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB5PR04MB1208;
-x-ms-traffictypediagnostic: DB5PR04MB1208:
-x-microsoft-antispam-prvs: <DB5PR04MB1208B7E116A07DD04E0A063F84F70@DB5PR04MB1208.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:DB5PR04MB1208;BCL:0;PCL:0;RULEID:;SRVR:DB5PR04MB1208;
-x-forefront-prvs: 083691450C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(366004)(396003)(136003)(39860400002)(199004)(189003)(446003)(486006)(6116002)(3846002)(102836004)(5660300001)(6636002)(6506007)(386003)(256004)(99286004)(6486002)(1076002)(76176011)(86362001)(110136005)(7736002)(305945005)(52116002)(2501003)(5250100002)(2201001)(26005)(71200400001)(71190400001)(316002)(478600001)(2900100001)(4326008)(25786009)(68736007)(97736004)(81156014)(53936002)(6512007)(8936002)(81166006)(6436002)(14454004)(105586002)(186003)(8676002)(2616005)(11346002)(476003)(36756003)(66066001)(106356001)(2906002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB5PR04MB1208;H:DB5PR04MB1221.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 9hzxh/qGrWB45/lID8fYIAlPqWEi0KnRsW8ycvQCt459ar1ES28i0W++TCqb3irGtGk3NtycKSDcCPJQyK4TmCG97Se00C+o8TZVk68VszwRvNfU11bsRMFnVIXLnYTlWWlOf+R3tsAOon98B45QPRdEdoPaKevvdTDnOJKjbEbKy5UBlPXU53z05fp9sPJquLRuOInYeAwH+7IzZPLKjCzVB/OHcHjmItj/XxnXQ9hLJhg3bmWBCYxOzvqSKoiosdhvGN6bEzrY9vdSBzuyzadRBXXIi1zHfHK8WUm45NSBqyARBVQinMHBhPreH0TWLp+cW1grXaFnm5P1FkRhv7ayp+0GWusZ8InTxcsUsn8=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        linux-alpha@vger.kernel.org, Olof Johansson <olof@lixom.net>,
+        nios2-dev@lists.rocketboards.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH v2 0/2] arm64: Cut rebuild time when changing
+ CONFIG_BLK_DEV_INITRD
+Message-ID: <20181025095134.GX30658@n2100.armlinux.org.uk>
+References: <20181024193256.23734-1-f.fainelli@gmail.com>
+ <CAL_Jsq+KCOv6pXXHhHDZ+7-QUrmtMDvSjEVhK15yZ3qbnn61Ag@mail.gmail.com>
+ <20181025093833.GA23607@rapoport-lnx>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71eecd60-c4c5-494a-ee08-08d63a5f3417
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Oct 2018 09:49:49.3541
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR04MB1208
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181025093833.GA23607@rapoport-lnx>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+On Thu, Oct 25, 2018 at 10:38:34AM +0100, Mike Rapoport wrote:
+> On Wed, Oct 24, 2018 at 02:55:17PM -0500, Rob Herring wrote:
+> > On Wed, Oct 24, 2018 at 2:33 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
+> > >
+> > > Hi all,
+> > >
+> > > While investigating why ARM64 required a ton of objects to be rebuilt
+> > > when toggling CONFIG_DEV_BLK_INITRD, it became clear that this was
+> > > because we define __early_init_dt_declare_initrd() differently and we do
+> > > that in arch/arm64/include/asm/memory.h which gets included by a fair
+> > > amount of other header files, and translation units as well.
+> > 
+> > I scratch my head sometimes as to why some config options rebuild so
+> > much stuff. One down, ? to go. :)
+> > 
+> > > Changing the value of CONFIG_DEV_BLK_INITRD is a common thing with build
+> > > systems that generate two kernels: one with the initramfs and one
+> > > without. buildroot is one of these build systems, OpenWrt is also
+> > > another one that does this.
+> > >
+> > > This patch series proposes adding an empty initrd.h to satisfy the need
+> > > for drivers/of/fdt.c to unconditionally include that file, and moves the
+> > > custom __early_init_dt_declare_initrd() definition away from
+> > > asm/memory.h
+> > >
+> > > This cuts the number of objects rebuilds from 1920 down to 26, so a
+> > > factor 73 approximately.
+> > >
+> > > Apologies for the long CC list, please let me know how you would go
+> > > about merging that and if another approach would be preferable, e.g:
+> > > introducing a CONFIG_ARCH_INITRD_BELOW_START_OK Kconfig option or
+> > > something like that.
+> > 
+> > There may be a better way as of 4.20 because bootmem is now gone and
+> > only memblock is used. This should unify what each arch needs to do
+> > with initrd early. We need the physical address early for memblock
+> > reserving. Then later on we need the virtual address to access the
+> > initrd. Perhaps we should just change initrd_start and initrd_end to
+> > physical addresses (or add 2 new variables would be less invasive and
+> > allow for different translation than __va()). The sanity checks and
+> > memblock reserve could also perhaps be moved to a common location.
+> >
+> > Alternatively, given arm64 is the only oddball, I'd be fine with an
+> > "if (IS_ENABLED(CONFIG_ARM64))" condition in the default
+> > __early_init_dt_declare_initrd as long as we have a path to removing
+> > it like the above option.
+> 
+> I think arm64 does not have to redefine __early_init_dt_declare_initrd().
+> Something like this might be just all we need (completely untested,
+> probably it won't even compile):
 
-Removed the wrong compatible string "snps,dw-pcie", in case
-match incorrect driver.
+The alternative solution would be to replace initrd_start/initrd_end
+with physical address versions of these everywhere - that's what
+we're passed from DT, it's what 32-bit ARM would prefer, and seemingly
+what 64-bit ARM would also like as well.
 
-Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
----
-V2:
- - no change
+Grepping for initrd_start in arch/*/mm shows that there's lots of
+architectures that have virtual/physical conversions on these, and
+a number that have obviously been derived from 32-bit ARM's approach
+(with maintaining a phys_initrd_start variable to simplify things).
 
- arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi |  2 +-
- arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi |  6 +++---
- arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi |  6 +++---
- arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi |  6 +++---
- arch/arm64/boot/dts/freescale/fsl-ls2088a.dtsi |  8 ++++----
- arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi | 12 ++++--------
- 6 files changed, 18 insertions(+), 22 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi b/arch/arm64/bo=
-ot/dts/freescale/fsl-ls1012a.dtsi
-index 5da732f82fa0..028a6daa5597 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
-@@ -475,7 +475,7 @@
- 		};
-=20
- 		pcie@3400000 {
--			compatible =3D "fsl,ls1012a-pcie", "snps,dw-pcie";
-+			compatible =3D "fsl,ls1012a-pcie";
- 			reg =3D <0x00 0x03400000 0x0 0x00100000   /* controller registers */
- 			       0x40 0x00000000 0x0 0x00002000>; /* configuration space */
- 			reg-names =3D "regs", "config";
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/bo=
-ot/dts/freescale/fsl-ls1043a.dtsi
-index 3fed504b5381..5480d6c4c548 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-@@ -661,7 +661,7 @@
- 		};
-=20
- 		pcie@3400000 {
--			compatible =3D "fsl,ls1043a-pcie", "snps,dw-pcie";
-+			compatible =3D "fsl,ls1043a-pcie";
- 			reg =3D <0x00 0x03400000 0x0 0x00100000   /* controller registers */
- 			       0x40 0x00000000 0x0 0x00002000>; /* configuration space */
- 			reg-names =3D "regs", "config";
-@@ -686,7 +686,7 @@
- 		};
-=20
- 		pcie@3500000 {
--			compatible =3D "fsl,ls1043a-pcie", "snps,dw-pcie";
-+			compatible =3D "fsl,ls1043a-pcie";
- 			reg =3D <0x00 0x03500000 0x0 0x00100000   /* controller registers */
- 			       0x48 0x00000000 0x0 0x00002000>; /* configuration space */
- 			reg-names =3D "regs", "config";
-@@ -711,7 +711,7 @@
- 		};
-=20
- 		pcie@3600000 {
--			compatible =3D "fsl,ls1043a-pcie", "snps,dw-pcie";
-+			compatible =3D "fsl,ls1043a-pcie";
- 			reg =3D <0x00 0x03600000 0x0 0x00100000   /* controller registers */
- 			       0x50 0x00000000 0x0 0x00002000>; /* configuration space */
- 			reg-names =3D "regs", "config";
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi b/arch/arm64/bo=
-ot/dts/freescale/fsl-ls1046a.dtsi
-index 51cbd50012d6..519315c5d507 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-@@ -630,7 +630,7 @@
- 		};
-=20
- 		pcie@3400000 {
--			compatible =3D "fsl,ls1046a-pcie", "snps,dw-pcie";
-+			compatible =3D "fsl,ls1046a-pcie";
- 			reg =3D <0x00 0x03400000 0x0 0x00100000   /* controller registers */
- 			       0x40 0x00000000 0x0 0x00002000>; /* configuration space */
- 			reg-names =3D "regs", "config";
-@@ -655,7 +655,7 @@
- 		};
-=20
- 		pcie@3500000 {
--			compatible =3D "fsl,ls1046a-pcie", "snps,dw-pcie";
-+			compatible =3D "fsl,ls1046a-pcie";
- 			reg =3D <0x00 0x03500000 0x0 0x00100000   /* controller registers */
- 			       0x48 0x00000000 0x0 0x00002000>; /* configuration space */
- 			reg-names =3D "regs", "config";
-@@ -680,7 +680,7 @@
- 		};
-=20
- 		pcie@3600000 {
--			compatible =3D "fsl,ls1046a-pcie", "snps,dw-pcie";
-+			compatible =3D "fsl,ls1046a-pcie";
- 			reg =3D <0x00 0x03600000 0x0 0x00100000   /* controller registers */
- 			       0x50 0x00000000 0x0 0x00002000>; /* configuration space */
- 			reg-names =3D "regs", "config";
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi b/arch/arm64/bo=
-ot/dts/freescale/fsl-ls1088a.dtsi
-index a07f612ab56b..10b253c88a16 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-@@ -512,7 +512,7 @@
- 		};
-=20
- 		pcie@3400000 {
--			compatible =3D "fsl,ls1088a-pcie", "snps,dw-pcie";
-+			compatible =3D "fsl,ls1088a-pcie";
- 			reg =3D <0x00 0x03400000 0x0 0x00100000   /* controller registers */
- 			       0x20 0x00000000 0x0 0x00002000>; /* configuration space */
- 			reg-names =3D "regs", "config";
-@@ -536,7 +536,7 @@
- 		};
-=20
- 		pcie@3500000 {
--			compatible =3D "fsl,ls1088a-pcie", "snps,dw-pcie";
-+			compatible =3D "fsl,ls1088a-pcie";
- 			reg =3D <0x00 0x03500000 0x0 0x00100000   /* controller registers */
- 			       0x28 0x00000000 0x0 0x00002000>; /* configuration space */
- 			reg-names =3D "regs", "config";
-@@ -560,7 +560,7 @@
- 		};
-=20
- 		pcie@3600000 {
--			compatible =3D "fsl,ls1088a-pcie", "snps,dw-pcie";
-+			compatible =3D "fsl,ls1088a-pcie";
- 			reg =3D <0x00 0x03600000 0x0 0x00100000   /* controller registers */
- 			       0x30 0x00000000 0x0 0x00002000>; /* configuration space */
- 			reg-names =3D "regs", "config";
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls2088a.dtsi b/arch/arm64/bo=
-ot/dts/freescale/fsl-ls2088a.dtsi
-index 7c882da3f6b0..a5f668d786b8 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls2088a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls2088a.dtsi
-@@ -119,7 +119,7 @@
- };
-=20
- &pcie1 {
--	compatible =3D "fsl,ls2088a-pcie", "snps,dw-pcie";
-+	compatible =3D "fsl,ls2088a-pcie";
- 	reg =3D <0x00 0x03400000 0x0 0x00100000   /* controller registers */
- 	       0x20 0x00000000 0x0 0x00002000>; /* configuration space */
-=20
-@@ -128,7 +128,7 @@
- };
-=20
- &pcie2 {
--	compatible =3D "fsl,ls2088a-pcie", "snps,dw-pcie";
-+	compatible =3D "fsl,ls2088a-pcie";
- 	reg =3D <0x00 0x03500000 0x0 0x00100000   /* controller registers */
- 	       0x28 0x00000000 0x0 0x00002000>; /* configuration space */
-=20
-@@ -137,7 +137,7 @@
- };
-=20
- &pcie3 {
--	compatible =3D "fsl,ls2088a-pcie", "snps,dw-pcie";
-+	compatible =3D "fsl,ls2088a-pcie";
- 	reg =3D <0x00 0x03600000 0x0 0x00100000   /* controller registers */
- 	       0x30 0x00000000 0x0 0x00002000>; /* configuration space */
-=20
-@@ -146,7 +146,7 @@
- };
-=20
- &pcie4 {
--	compatible =3D "fsl,ls2088a-pcie", "snps,dw-pcie";
-+	compatible =3D "fsl,ls2088a-pcie";
- 	reg =3D <0x00 0x03700000 0x0 0x00100000   /* controller registers */
- 	       0x38 0x00000000 0x0 0x00002000>; /* configuration space */
-=20
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi b/arch/arm64/bo=
-ot/dts/freescale/fsl-ls208xa.dtsi
-index d188774a36e8..80cc40f76a4a 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
-@@ -630,8 +630,7 @@
- 		};
-=20
- 		pcie1: pcie@3400000 {
--			compatible =3D "fsl,ls2080a-pcie", "fsl,ls2085a-pcie",
--				     "snps,dw-pcie";
-+			compatible =3D "fsl,ls2080a-pcie", "fsl,ls2085a-pcie";
- 			reg-names =3D "regs", "config";
- 			interrupts =3D <0 108 0x4>; /* Level high type */
- 			interrupt-names =3D "intr";
-@@ -651,8 +650,7 @@
- 		};
-=20
- 		pcie2: pcie@3500000 {
--			compatible =3D "fsl,ls2080a-pcie", "fsl,ls2085a-pcie",
--				     "snps,dw-pcie";
-+			compatible =3D "fsl,ls2080a-pcie", "fsl,ls2085a-pcie";
- 			reg-names =3D "regs", "config";
- 			interrupts =3D <0 113 0x4>; /* Level high type */
- 			interrupt-names =3D "intr";
-@@ -672,8 +670,7 @@
- 		};
-=20
- 		pcie3: pcie@3600000 {
--			compatible =3D "fsl,ls2080a-pcie", "fsl,ls2085a-pcie",
--				     "snps,dw-pcie";
-+			compatible =3D "fsl,ls2080a-pcie", "fsl,ls2085a-pcie";
- 			reg-names =3D "regs", "config";
- 			interrupts =3D <0 118 0x4>; /* Level high type */
- 			interrupt-names =3D "intr";
-@@ -693,8 +690,7 @@
- 		};
-=20
- 		pcie4: pcie@3700000 {
--			compatible =3D "fsl,ls2080a-pcie", "fsl,ls2085a-pcie",
--				     "snps,dw-pcie";
-+			compatible =3D "fsl,ls2080a-pcie", "fsl,ls2085a-pcie";
- 			reg-names =3D "regs", "config";
- 			interrupts =3D <0 123 0x4>; /* Level high type */
- 			interrupt-names =3D "intr";
---=20
-2.17.1
-
+-- 
+RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
