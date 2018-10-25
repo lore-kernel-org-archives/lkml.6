@@ -2,126 +2,239 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3972DC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 12:23:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89FD9C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 12:24:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AA4020831
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 12:23:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AA4020831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 20D4C20831
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 12:24:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20D4C20831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbeJYUzm (ORCPT
+        id S1727458AbeJYU4g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 16:55:42 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:56805 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727228AbeJYUzl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 16:55:41 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 63E4785362;
-        Thu, 25 Oct 2018 12:23:09 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-24.phx2.redhat.com [10.3.112.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D188D5C1B5;
-        Thu, 25 Oct 2018 12:22:55 +0000 (UTC)
-Date:   Thu, 25 Oct 2018 08:22:52 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
-        linux-audit@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        netfilter-devel@vger.kernel.org, ebiederm@xmission.com,
-        luto@kernel.org, carlos@redhat.com, dhowells@redhat.com,
-        viro@zeniv.linux.org.uk, simo@redhat.com,
-        Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>
-Subject: Re: [PATCH ghak90 (was ghak32) V4 03/10] audit: log container info
- of syscalls
-Message-ID: <20181025122252.dsqcmkguuro3krzg@madcap2.tricolour.ca>
-References: <cover.1533065887.git.rgb@redhat.com>
- <34017c395d03a213d6b0d49b9964429bd32b283d.1533065887.git.rgb@redhat.com>
- <CAHC9VhSv4hWGHiaaOfuBrRQKdp2YG5RtqXQbFXg7j7LNEhO2XQ@mail.gmail.com>
- <20181024151439.lavhanabsyxdrdvo@madcap2.tricolour.ca>
- <CAHC9VhRF1vsxM-k0Lw-9NqS9b9rgXRRBu0tq4ajdFpMqUxiH4A@mail.gmail.com>
- <20181025004255.zl7p7j6gztouh2hh@madcap2.tricolour.ca>
- <166a9dae538.280e.85c95baa4474aabc7814e68940a78392@paul-moore.com>
+        Thu, 25 Oct 2018 16:56:36 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:38540 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727228AbeJYU4g (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 16:56:36 -0400
+Received: from in02.mta.xmission.com ([166.70.13.52])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gFeg0-00045G-KM; Thu, 25 Oct 2018 06:23:48 -0600
+Received: from 67-3-154-154.omah.qwest.net ([67.3.154.154] helo=x220.xmission.com)
+        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1gFefl-0001QP-6o; Thu, 25 Oct 2018 06:23:48 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     Enke Chen <enkechen@cisco.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Helge Deller <deller@gmx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <christian@brauner.io>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        "Victor Kamensky \(kamensky\)" <kamensky@cisco.com>,
+        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>
+References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
+        <458c04d8-d189-4a26-729a-bb1d1d751534@cisco.com>
+        <87sh0vpj5q.fsf@xmission.com>
+        <df08c74f-1027-c635-fb99-a12d23f60947@cisco.com>
+Date:   Thu, 25 Oct 2018 07:23:07 -0500
+In-Reply-To: <df08c74f-1027-c635-fb99-a12d23f60947@cisco.com> (Enke Chen's
+        message of "Wed, 24 Oct 2018 16:50:26 -0700")
+Message-ID: <87zhv2md04.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <166a9dae538.280e.85c95baa4474aabc7814e68940a78392@paul-moore.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 25 Oct 2018 12:23:09 +0000 (UTC)
+Content-Type: text/plain
+X-XM-SPF: eid=1gFefl-0001QP-6o;;;mid=<87zhv2md04.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=67.3.154.154;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/LtjS9Fcc+DHWaV6YDmpqliZiKuzg+BD4=
+X-SA-Exim-Connect-IP: 67.3.154.154
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH v2] kernel/signal: Signal-based pre-coredump notification
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-25 07:13, Paul Moore wrote:
-> On October 25, 2018 1:43:16 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> > On 2018-10-24 16:55, Paul Moore wrote:
-> >> On Wed, Oct 24, 2018 at 11:15 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> >>> On 2018-10-19 19:16, Paul Moore wrote:
-> >>>> On Sun, Aug 5, 2018 at 4:32 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> >
-> 
-> ...
-> 
-> >
-> >>>> However, I do care about the "op" field in this record.  It just
-> >>>> doesn't make any sense; the way you are using it it is more of a
-> >>>> context field than an operations field, and even then why is the
-> >>>> context important from a logging and/or security perspective?  Drop it
-> >>>> please.
-> >>>
-> >>> I'll rename it to whatever you like.  I'd suggest "ref=".  The reason I
-> >>> think it is important is there are multiple sources that aren't always
-> >>> obvious from the other records to which it is associated.  In the case
-> >>> of ptrace and signals, there can be many target tasks listed (OBJ_PID)
-> >>> with no other way to distinguish the matching audit container identifier
-> >>> records all for one event.  This is in addition to the default syscall
-> >>> container identifier record.  I'm not currently happy with the text
-> >>> content to link the two, but that should be solvable (most obvious is
-> >>> taret PID).  Throwing away this information seems shortsighted.
-> >>
-> >> It would be helpful if you could generate real audit events
-> >> demonstrating the problems you are describing, as well as a more
-> >> standard syscall event, so we can discuss some possible solutions.
-> >
-> > If the auditted process is in a container and it ptraces or signals
-> > another process in a container, there will be two AUDIT_CONTAINER
-> > records for the same event that won't be identified as to which record
-> > belongs to which process or other record (SYSCALL vs 1+ OBJ_PID
-> > records).  There could be many signals recorded, each with their own
-> > OBJ_PID record.  The first is stored in the audit context and additional
-> > ones are stored in a chained struct that can accommodate 16 entries each.
-> >
-> > (See audit_signal_info(), __audit_ptrace().)
-> >
-> > (As a side note, on code inspection it appears that a signal target
-> > would get overwritten by a ptrace action if they were to happen in that
-> > order.)
-> 
-> As requested above, please respond with real audit events generated by
-> this patchset so that we can discuss possible solutions.
+Enke Chen <enkechen@cisco.com> writes:
 
-Ok, then we should be developping a test to test ptrace and signal
-auditting in general since we don't have current experience/evidence
-that those even work (or rip them out if not).
+> Hi, Eric:
+>
+> Thanks for your comments. Please see my replies inline.
+>
+> On 10/24/18 6:29 AM, Eric W. Biederman wrote:
+>> Enke Chen <enkechen@cisco.com> writes:
+>> 
+>>> For simplicity and consistency, this patch provides an implementation
+>>> for signal-based fault notification prior to the coredump of a child
+>>> process. A new prctl command, PR_SET_PREDUMP_SIG, is defined that can
+>>> be used by an application to express its interest and to specify the
+>>> signal (SIGCHLD or SIGUSR1 or SIGUSR2) for such a notification. A new
+>>> signal code (si_code), CLD_PREDUMP, is also defined for SIGCHLD.
+>>>
+>>> Changes to prctl(2):
+>>>
+>>>    PR_SET_PREDUMP_SIG (since Linux 4.20.x)
+>>>           Set the child pre-coredump signal of the calling process to
+>>>           arg2 (either SIGUSR1, or SIUSR2, or SIGCHLD, or 0 to clear).
+>>>           This is the signal that the calling process will get prior to
+>>>           the coredump of a child process. This value is cleared across
+>>>           execve(2), or for the child of a fork(2).
+>>>
+>>>           When SIGCHLD is specified, the signal code will be set to
+>>>           CLD_PREDUMP in such an SIGCHLD signal.
+>> 
+>> Your signal handling is still not right.  Please read and comprehend
+>> siginfo_layout.
+>> 
+>> You have not filled in all of the required fields for the SIGCHLD case.
+>> For the non SIGCHLD case you are using si_code == 0 == SI_USER which is
+>> very wrong.  This is not a user generated signal.
+>> 
+>> Let me say this slowly.  The pair si_signo si_code determines the union
+>> member of struct siginfo.  That needs to be handled consistently. You
+>> aren't.  I just finished fixing this up in the entire kernel and now you
+>> are trying to add a usage that is worst than most of the bugs I have
+>> fixed.  I really don't appreciate having to deal with no bugs.
+>> 
+>
+> My apologies. I will investigate and make them consistent.
+>
+>> 
+>> 
+>> Further siginfo can be dropped.  Multiple signals with the same signal
+>> number can be consolidated.  What is your plan for dealing with that?
+>
+> The primary application for the early notification involves a process
+> manager which is responsible for re-spawning processes or initiating
+> the control-plane fail-over. There are two models:
+>
+> One model is to have 1:1 relationship between a process manager and
+> application process. There can only be one predump-signal (say, SIGUSR1)
+> from the child to the parent, and will unlikely be dropped or consolidated.
+>
+> Another model is to have 1:N where there is only one process manager with
+> multiple application processes. One of the RT signal can be used to help
+> make it more reliable.
 
-> paul moore
+Which suggests you want one of the negative si_codes, and to use the _rt
+siginfo member like sigqueue.
 
-- RGB
+>> Other code paths pair with wait to get the information out.  There
+>> is no equivalent of wait in your code.
+>
+> I was not aware of that before.  Let me investigate.
+>
+>> 
+>> Signals can be delayed by quite a bit, scheduling delays etc.  They can
+>> not provide any meaningful kind of real time notification.
+>> 
+>
+> The timing requirement is about 50-100 msecs for BFD.  Not sure if that
+> qualifies as "real time".  This mechanism has worked well in deployment
+> over the years.
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+It would help if those numbers were put into the patch description so
+people can tell if the mechanism is quick enough.
+
+>> So between delays and loss of information signals appear to be a very
+>> poor fit for this usecase.
+>> 
+>> I am concerned about code that does not fit the usecase well because
+>> such code winds up as code that no one cares about that must be
+>> maintained indefinitely, because somewhere out there there is one use
+>> that would break if the interface was removed.  This does not feel like
+>> an interface people will want to use and maintain in proper working
+>> order forever.
+>> 
+>> Ugh.  Your test case is even using signalfd.  So you don't even want
+>> this signal to be delivered as a signal.
+>
+> I actually tested sigaction()/waitpid() as well. If there is a preference,
+> I can check in the sigaction()/waitpid() version instead.
+>
+>> 
+>> You add an interface that takes a pointer and you don't add a compat
+>> interface.  See Oleg's point of just returning the signal number in the
+>> return code.
+>
+> This is what Oleg said "but I won't insist, this is subjective and cosmetic".
+>
+> It is no big deal either way. It just seems less work if we do not keep
+> adding exceptions to the prctl(2) manpage:
+>  
+> prctl(2):
+>
+>        On success, PR_GET_DUMPABLE,   PR_GET_KEEPCAPS,   PR_GET_NO_NEW_PRIVS,   PR_CAPBSET_READ,    PR_GET_TIMING,    PR_GET_SECUREBITS,
+>        PR_MCE_KILL_GET,  PR_CAP_AMBIENT+PR_CAP_AMBIENT_IS_SET,  and  (if  it returns) PR_GET_SECCOMP return the nonnegative values described
+>        above.  All other option values return 0 on success.  On error, -1 is returned, and errno is set appropriately.
+
+More work in the man page versus less work in the kernel, and less code
+to maintain.  I will vote for more work in the man page.
+
+>> Now I am wondering how well prctl works from a 32bit process on a 64bit
+>> kernel.  At first glance it looks like it probably does not work.
+>>
+>
+> I am not sure which part would be problematic.
+
+32bit pointers need to be translated into 64bit pointers.  If the system
+call does not zero extend them.  Plus structure sizes.
+
+I think prctl is just inside the line where problems happen but it is so
+close to the line of structure size differences that it makes me
+nervous.  Typically pointers in structures are what cause system calls
+to cross that line.
+
+>> Consistency with PDEATHSIG is not a good argument for anything.
+>> PDEATHSIG at the present time is unusable in the real world by most
+>> applications that want something like it.
+>
+> Agreed, PDEATHSIG seems to have a few issues ...
+>
+>> 
+>> So far I see an interface that even you don't want to use as designed,
+>> that is implemented incorrectly.
+>> 
+>> The concern is real and deserves to be addressed.  I don't think signals
+>> are the right way to handle it, and certainly not this patch as it
+>> stands.
+>
+> I will address your concerns on the patch. Regarding the requirement and the
+> overall solution, if there are specific questions that I have not answered,
+> please let me know.
+
+So far so good.
+
+Eric
