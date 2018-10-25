@@ -6,158 +6,121 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 719BBECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86BB5C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BD7720840
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C9C620840
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MdOR2Xjg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BD7720840
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="neYNSLCe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C9C620840
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728168AbeJYWoZ (ORCPT
+        id S1728184AbeJYWo0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:44:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53156 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:44:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53226 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728144AbeJYWoY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:44:24 -0400
+        id S1728157AbeJYWoZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:44:25 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7993320856;
-        Thu, 25 Oct 2018 14:11:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA49D2054F;
+        Thu, 25 Oct 2018 14:11:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540476689;
-        bh=ryFFmc8m3IhT39Uair1ODzkgWhAmmyNxWRd96wOD5dg=;
+        s=default; t=1540476690;
+        bh=h1w5tdTsbdXfAsIibCjoy1TvzkcnIJqMT7N1lLwz2iw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MdOR2Xjgd+rjzgj1mPDW1mSdAqkcSCfNemI80fOsLsXQDAID72OmGa9fmDz/5d/rX
-         EKKauJWNqUBRpWhveZ78Qg6m9Y0GNby0DdsCCntoXx8HK1RK6eMGNPoZBgbiIhTtpA
-         7/VW+EjZ3WBcCNMMeSrRPezLgrg8aQJKFPhLPj5g=
+        b=neYNSLCe7/Xb0mbQGzuh4yP0llLvLDDcXb7xhDWKoIKIFLsiWnJF9Uk/Z+OphjE53
+         Z1nWMNBBxMfTEPxiIhsu0x6x6YgdYhfPUEQr+ecmdW7TsT9M4Sh6R9Optgcki5Osep
+         tORa2IXqQrod5bGIeRp5GRGc/XacmjapDcKIZNvA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     KarimAllah Ahmed <karahmed@amazon.de>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        kvm@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 24/46] KVM: x86: Update the exit_qualification access bits while walking an address
-Date:   Thu, 25 Oct 2018 10:10:31 -0400
-Message-Id: <20181025141053.213330-24-sashal@kernel.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 25/46] sparc64: Fix regression in pmdp_invalidate().
+Date:   Thu, 25 Oct 2018 10:10:32 -0400
+Message-Id: <20181025141053.213330-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141053.213330-1-sashal@kernel.org>
 References: <20181025141053.213330-1-sashal@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: KarimAllah Ahmed <karahmed@amazon.de>
+From: "David S. Miller" <davem@davemloft.net>
 
-[ Upstream commit ddd6f0e94d3153951580d5b88b9d97c7e26a0e00 ]
+[ Upstream commit cfb61b5e3e09f8b49bc4d685429df75f45127adc ]
 
-... to avoid having a stale value when handling an EPT misconfig for MMIO
-regions.
+pmdp_invalidate() was changed to update the pmd atomically
+(to not lose dirty/access bits) and return the original pmd
+value.
 
-MMIO regions that are not passed-through to the guest are handled through
-EPT misconfigs. The first time a certain MMIO page is touched it causes an
-EPT violation, then KVM marks the EPT entry to cause an EPT misconfig
-instead. Any subsequent accesses to the entry will generate an EPT
-misconfig.
+However, in doing so, we lost a lot of the essential work that
+set_pmd_at() does, namely to update hugepage mapping counts and
+queuing up the batched TLB flush entry.
 
-Things gets slightly complicated with nested guest handling for MMIO
-regions that are not passed through from L0 (i.e. emulated by L0
-user-space).
+Thus we were not flushing entries out of the TLB when making
+such PMD changes.
 
-An EPT violation for one of these MMIO regions from L2, exits to L0
-hypervisor. L0 would then look at the EPT12 mapping for L1 hypervisor and
-realize it is not present (or not sufficient to serve the request). Then L0
-injects an EPT violation to L1. L1 would then update its EPT mappings. The
-EXIT_QUALIFICATION value for L1 would come from exit_qualification variable
-in "struct vcpu". The problem is that this variable is only updated on EPT
-violation and not on EPT misconfig. So if an EPT violation because of a
-read happened first, then an EPT misconfig because of a write happened
-afterwards. The L0 hypervisor will still contain exit_qualification value
-from the previous read instead of the write and end up injecting an EPT
-violation to the L1 hypervisor with an out of date EXIT_QUALIFICATION.
+Fix this by abstracting the accounting work of set_pmd_at() out into a
+separate function, and call it from pmdp_establish().
 
-The EPT violation that is injected from L0 to L1 needs to have the correct
-EXIT_QUALIFICATION specially for the access bits because the individual
-access bits for MMIO EPTs are updated only on actual access of this
-specific type. So for the example above, the L1 hypervisor will keep
-updating only the read bit in the EPT then resume the L2 guest. The L2
-guest would end up causing another exit where the L0 *again* will inject
-another EPT violation to L1 hypervisor with *again* an out of date
-exit_qualification which indicates a read and not a write. Then this
-ping-pong just keeps happening without making any forward progress.
-
-The behavior of mapping MMIO regions changed in:
-
-   commit a340b3e229b24 ("kvm: Map PFN-type memory regions as writable (if possible)")
-
-... where an EPT violation for a read would also fixup the write bits to
-avoid another EPT violation which by acciddent would fix the bug mentioned
-above.
-
-This commit fixes this situation and ensures that the access bits for the
-exit_qualifcation is up to date. That ensures that even L1 hypervisor
-running with a KVM version before the commit mentioned above would still
-work.
-
-( The description above assumes EPT to be available and used by L1
-  hypervisor + the L1 hypervisor is passing through the MMIO region to the L2
-  guest while this MMIO region is emulated by the L0 user-space ).
-
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: x86@kernel.org
-Cc: kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: KarimAllah Ahmed <karahmed@amazon.de>
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+Fixes: a8e654f01cb7 ("sparc64: update pmdp_invalidate() to return old pmd value")
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/paging_tmpl.h | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ arch/sparc/mm/tlb.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
 
-diff --git a/arch/x86/kvm/paging_tmpl.h b/arch/x86/kvm/paging_tmpl.h
-index 5abae72266b7..6288e9d7068e 100644
---- a/arch/x86/kvm/paging_tmpl.h
-+++ b/arch/x86/kvm/paging_tmpl.h
-@@ -452,14 +452,21 @@ static int FNAME(walk_addr_generic)(struct guest_walker *walker,
- 	 * done by is_rsvd_bits_set() above.
- 	 *
- 	 * We set up the value of exit_qualification to inject:
--	 * [2:0] - Derive from [2:0] of real exit_qualification at EPT violation
-+	 * [2:0] - Derive from the access bits. The exit_qualification might be
-+	 *         out of date if it is serving an EPT misconfiguration.
- 	 * [5:3] - Calculated by the page walk of the guest EPT page tables
- 	 * [7:8] - Derived from [7:8] of real exit_qualification
- 	 *
- 	 * The other bits are set to 0.
- 	 */
- 	if (!(errcode & PFERR_RSVD_MASK)) {
--		vcpu->arch.exit_qualification &= 0x187;
-+		vcpu->arch.exit_qualification &= 0x180;
-+		if (write_fault)
-+			vcpu->arch.exit_qualification |= EPT_VIOLATION_ACC_WRITE;
-+		if (user_fault)
-+			vcpu->arch.exit_qualification |= EPT_VIOLATION_ACC_READ;
-+		if (fetch_fault)
-+			vcpu->arch.exit_qualification |= EPT_VIOLATION_ACC_INSTR;
- 		vcpu->arch.exit_qualification |= (pte_access & 0x7) << 3;
+diff --git a/arch/sparc/mm/tlb.c b/arch/sparc/mm/tlb.c
+index 847ddffbf38a..b5cfab711651 100644
+--- a/arch/sparc/mm/tlb.c
++++ b/arch/sparc/mm/tlb.c
+@@ -163,13 +163,10 @@ static void tlb_batch_pmd_scan(struct mm_struct *mm, unsigned long vaddr,
+ 	pte_unmap(pte);
+ }
+ 
+-void set_pmd_at(struct mm_struct *mm, unsigned long addr,
+-		pmd_t *pmdp, pmd_t pmd)
+-{
+-	pmd_t orig = *pmdp;
+-
+-	*pmdp = pmd;
+ 
++static void __set_pmd_acct(struct mm_struct *mm, unsigned long addr,
++			   pmd_t orig, pmd_t pmd)
++{
+ 	if (mm == &init_mm)
+ 		return;
+ 
+@@ -219,6 +216,15 @@ void set_pmd_at(struct mm_struct *mm, unsigned long addr,
  	}
- #endif
+ }
+ 
++void set_pmd_at(struct mm_struct *mm, unsigned long addr,
++		pmd_t *pmdp, pmd_t pmd)
++{
++	pmd_t orig = *pmdp;
++
++	*pmdp = pmd;
++	__set_pmd_acct(mm, addr, orig, pmd);
++}
++
+ static inline pmd_t pmdp_establish(struct vm_area_struct *vma,
+ 		unsigned long address, pmd_t *pmdp, pmd_t pmd)
+ {
+@@ -227,6 +233,7 @@ static inline pmd_t pmdp_establish(struct vm_area_struct *vma,
+ 	do {
+ 		old = *pmdp;
+ 	} while (cmpxchg64(&pmdp->pmd, old.pmd, pmd.pmd) != old.pmd);
++	__set_pmd_acct(vma->vm_mm, address, old, pmd);
+ 
+ 	return old;
+ }
 -- 
 2.17.1
 
