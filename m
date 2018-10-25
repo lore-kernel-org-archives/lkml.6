@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E404ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72777ECDE48
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:37:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E84220665
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:37:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E84220665
+	by mail.kernel.org (Postfix) with ESMTP id 46271208A3
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:37:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46271208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727662AbeJZDLm (ORCPT
+        id S1727702AbeJZDLo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 23:11:42 -0400
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:43608 "EHLO
+        Thu, 25 Oct 2018 23:11:44 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:43632 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727333AbeJZDLl (ORCPT
+        with ESMTP id S1727615AbeJZDLm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 23:11:41 -0400
+        Thu, 25 Oct 2018 23:11:42 -0400
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: robertfoss)
-        with ESMTPSA id A76482756E8
+        with ESMTPSA id 9B3BF27A4BE
 From:   Robert Foss <robert.foss@collabora.com>
 To:     airlied@linux.ie, kraxel@redhat.com,
         dri-devel@lists.freedesktop.org,
@@ -34,9 +34,9 @@ To:     airlied@linux.ie, kraxel@redhat.com,
         Gustavo Padovan <gustavo.padovan@collabora.com>,
         Emil Velikov <emil.velikov@collabora.com>
 Cc:     Robert Foss <robert.foss@collabora.com>
-Subject: [PATCH 2/5] drm/virtio: add uapi for in and out explicit fences
-Date:   Thu, 25 Oct 2018 20:37:36 +0200
-Message-Id: <20181025183739.9375-3-robert.foss@collabora.com>
+Subject: [PATCH 4/5] drm/virtio: add out-fences support for explicit synchronization
+Date:   Thu, 25 Oct 2018 20:37:38 +0200
+Message-Id: <20181025183739.9375-5-robert.foss@collabora.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025183739.9375-1-robert.foss@collabora.com>
 References: <20181025183739.9375-1-robert.foss@collabora.com>
@@ -45,94 +45,142 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a new field called fence_fd that will be used by userspace to send
-in-fences to the kernel and receive out-fences created by the kernel.
+From: Gustavo Padovan <gustavo.padovan@collabora.com>
 
-This uapi enables virtio to take advantage of explicit synchronization of
-dma-bufs.
-
-There are two new flags:
-
-* VIRTGPU_EXECBUF_FENCE_FD_IN to be used when passing an in-fence fd.
-* VIRTGPU_EXECBUF_FENCE_FD_OUT to be used when requesting an out-fence fd
-
-The execbuffer IOCTL is now read-write to allow the userspace to read the
-out-fence.
-
-On error -1 should be returned in the fence_fd field.
+On the out-fence side we get fence returned by the submitted draw call
+and attach it to a sync_file and send the sync_file fd to userspace. On
+error -1 is returned to userspace.
 
 Signed-off-by: Gustavo Padovan <gustavo.padovan@collabora.com>
 Signed-off-by: Robert Foss <robert.foss@collabora.com>
+Suggested-by: Rob Herring <robh@kernel.org>
 ---
-Changes since v2:
- - Since exbuf-flags is a new flag, check that unsupported
-   flags aren't set.
-
- drivers/gpu/drm/virtio/virtgpu_ioctl.c |  5 +++++
- include/uapi/drm/virtgpu_drm.h         | 13 ++++++++++---
- 2 files changed, 15 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/virtio/virtgpu_ioctl.c | 50 +++++++++++++++++++-------
+ 1 file changed, 38 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/gpu/drm/virtio/virtgpu_ioctl.c b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-index d01a9ed100d1..1af289b28fc4 100644
+index 0368195966aa..32e714a1c753 100644
 --- a/drivers/gpu/drm/virtio/virtgpu_ioctl.c
 +++ b/drivers/gpu/drm/virtio/virtgpu_ioctl.c
-@@ -116,9 +116,14 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
+@@ -106,7 +106,7 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
+ 	struct virtio_gpu_device *vgdev = dev->dev_private;
+ 	struct virtio_gpu_fpriv *vfpriv = drm_file->driver_priv;
+ 	struct drm_gem_object *gobj;
+-	struct virtio_gpu_fence *fence;
++	struct virtio_gpu_fence *out_fence;
+ 	struct virtio_gpu_object *qobj;
+ 	int ret;
+ 	uint32_t *bo_handles = NULL;
+@@ -116,7 +116,9 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
+ 	int i;
  	struct ww_acquire_ctx ticket;
+ 	struct dma_fence *in_fence = NULL;
++	struct sync_file *sync_file;
+ 	int in_fence_fd = exbuf->fence_fd;
++	int out_fence_fd = -1;
  	void *buf;
  
-+	exbuf->fence_fd = -1;
-+
- 	if (vgdev->has_virgl_3d == false)
- 		return -ENOSYS;
+ 	exbuf->fence_fd = -1;
+@@ -143,6 +145,14 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
+ 		}
+ 	}
  
-+	if ((exbuf->flags & ~VIRTGPU_EXECBUF_FLAGS))
-+		return -EINVAL;
++	if (exbuf->flags & VIRTGPU_EXECBUF_FENCE_FD_OUT) {
++		out_fence_fd = get_unused_fd_flags(O_CLOEXEC);
++		if (out_fence_fd < 0) {
++			ret = out_fence_fd;
++			goto out_in_fence;
++		}
++	}
 +
  	INIT_LIST_HEAD(&validate_list);
  	if (exbuf->num_bo_handles) {
  
-diff --git a/include/uapi/drm/virtgpu_drm.h b/include/uapi/drm/virtgpu_drm.h
-index 9a781f0611df..91062f4ac7c5 100644
---- a/include/uapi/drm/virtgpu_drm.h
-+++ b/include/uapi/drm/virtgpu_drm.h
-@@ -47,6 +47,13 @@ extern "C" {
- #define DRM_VIRTGPU_WAIT     0x08
- #define DRM_VIRTGPU_GET_CAPS  0x09
+@@ -153,21 +163,21 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
+ 					   GFP_KERNEL | __GFP_ZERO);
+ 		if (!bo_handles || !buflist) {
+ 			ret = -ENOMEM;
+-			goto out_in_fence;
++			goto out_unused_fd;
+ 		}
  
-+#define VIRTGPU_EXECBUF_FENCE_FD_IN	0x01
-+#define VIRTGPU_EXECBUF_FENCE_FD_OUT	0x02
-+#define VIRTGPU_EXECBUF_FLAGS  (\
-+		VIRTGPU_EXECBUF_FENCE_FD_IN |\
-+		VIRTGPU_EXECBUF_FENCE_FD_OUT |\
-+		0)
+ 		user_bo_handles = (void __user *)(uintptr_t)exbuf->bo_handles;
+ 		if (copy_from_user(bo_handles, user_bo_handles,
+ 				   exbuf->num_bo_handles * sizeof(uint32_t))) {
+ 			ret = -EFAULT;
+-			goto out_in_fence;
++			goto out_unused_fd;
+ 		}
+ 
+ 		for (i = 0; i < exbuf->num_bo_handles; i++) {
+ 			gobj = drm_gem_object_lookup(drm_file, bo_handles[i]);
+ 			if (!gobj) {
+ 				ret = -ENOENT;
+-				goto out_in_fence;
++				goto out_unused_fd;
+ 			}
+ 
+ 			qobj = gem_to_virtio_gpu_obj(gobj);
+@@ -190,11 +200,22 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
+ 		goto out_unresv;
+ 	}
+ 
+-	fence = virtio_gpu_fence_alloc(vgdev);
+-	if (!fence) {
+-		kfree(buf);
++	out_fence = virtio_gpu_fence_alloc(vgdev);
++	if(!out_fence) {
+ 		ret = -ENOMEM;
+-		goto out_unresv;
++		goto out_memdup;
++	}
 +
- struct drm_virtgpu_map {
- 	__u64 offset; /* use for mmap system call */
- 	__u32 handle;
-@@ -54,12 +61,12 @@ struct drm_virtgpu_map {
- };
++	if (out_fence_fd >= 0) {
++		sync_file = sync_file_create(&out_fence->f);
++		if (!sync_file) {
++			dma_fence_put(&out_fence->f);
++			ret = -ENOMEM;
++			goto out_memdup;
++		}
++
++		exbuf->fence_fd = out_fence_fd;
++		fd_install(out_fence_fd, sync_file->file);
+ 	}
  
- struct drm_virtgpu_execbuffer {
--	__u32		flags;		/* for future use */
-+	__u32 flags;
- 	__u32 size;
- 	__u64 command; /* void* */
- 	__u64 bo_handles;
- 	__u32 num_bo_handles;
--	__u32 pad;
-+	__s32 fence_fd;
- };
+ 	if (in_fence) {
+@@ -203,23 +224,28 @@ static int virtio_gpu_execbuffer_ioctl(struct drm_device *dev, void *data,
+ 	}
  
- #define VIRTGPU_PARAM_3D_FEATURES 1 /* do we have 3D features in the hw */
-@@ -137,7 +144,7 @@ struct drm_virtgpu_get_caps {
- 	DRM_IOWR(DRM_COMMAND_BASE + DRM_VIRTGPU_MAP, struct drm_virtgpu_map)
+ 	virtio_gpu_cmd_submit(vgdev, buf, exbuf->size,
+-			      vfpriv->ctx_id, fence);
++			      vfpriv->ctx_id, out_fence);
  
- #define DRM_IOCTL_VIRTGPU_EXECBUFFER \
--	DRM_IOW(DRM_COMMAND_BASE + DRM_VIRTGPU_EXECBUFFER,\
-+	DRM_IOWR(DRM_COMMAND_BASE + DRM_VIRTGPU_EXECBUFFER,\
- 		struct drm_virtgpu_execbuffer)
+-	ttm_eu_fence_buffer_objects(&ticket, &validate_list, &fence->f);
++	ttm_eu_fence_buffer_objects(&ticket, &validate_list, &out_fence->f);
  
- #define DRM_IOCTL_VIRTGPU_GETPARAM \
+ 	/* fence the command bo */
+ 	virtio_gpu_unref_list(&validate_list);
+ 	kvfree(buflist);
+-	dma_fence_put(&fence->f);
+ 	return 0;
+ 
++out_memdup:
++	kfree(buf);
+ out_unresv:
+ 	ttm_eu_backoff_reservation(&ticket, &validate_list);
+ out_free:
+ 	virtio_gpu_unref_list(&validate_list);
+-out_in_fence:
++out_unused_fd:
+ 	kvfree(bo_handles);
+ 	kvfree(buflist);
++
++	if (out_fence_fd >= 0)
++		put_unused_fd(out_fence_fd);
++out_in_fence:
+ 	dma_fence_put(in_fence);
+ 	return ret;
+ }
 -- 
 2.17.1
 
