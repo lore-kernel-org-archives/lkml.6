@@ -2,166 +2,89 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EDABC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:14:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCAE0C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:16:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26EBE2075D
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:14:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26EBE2075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 684F320834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:16:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="F7rtxyJm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 684F320834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727820AbeJYTqU (ORCPT
+        id S1727561AbeJYTs0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 15:46:20 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34898 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727350AbeJYTqT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 15:46:19 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 215234AD58;
-        Thu, 25 Oct 2018 11:14:01 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.106])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 7ACB2611CF;
-        Thu, 25 Oct 2018 11:13:58 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Thu, 25 Oct 2018 13:13:58 +0200 (CEST)
-Date:   Thu, 25 Oct 2018 13:13:56 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     serge@hallyn.com,
-        syzbot <syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com>,
-        jmorris@namei.org, keescook@chromium.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: KASAN: use-after-free Read in task_is_descendant
-Message-ID: <20181025111355.GA3725@redhat.com>
-References: <76013c9e-0664-ef5e-b6c0-d48f6ce5db3c@i-love.sakura.ne.jp>
- <20181022134634.GA7358@redhat.com>
- <201810250215.w9P2Fm2M078167@www262.sakura.ne.jp>
+        Thu, 25 Oct 2018 15:48:26 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45397 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727506AbeJYTs0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 15:48:26 -0400
+Received: by mail-lj1-f194.google.com with SMTP id j4-v6so7801567ljc.12
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 04:16:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=D6SD6/jujQg1CursZ8OklcDodhHHy6xFN5ju3b8fGxQ=;
+        b=F7rtxyJm2llV4fY39L0oVln4ufKXn5x6jwgjwDbjAsWsTZotRr5S0P6O/i407SSIi+
+         xZLqN4vC8iuBwS/cyffVsgX/YviEi/wrxsKC67J7qcNa4ER7FmDIQFRd4pblxvAeYLWd
+         7dQJOqDdP/qd9dJlwURQtcvr94DCDDSj/1Ueo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=D6SD6/jujQg1CursZ8OklcDodhHHy6xFN5ju3b8fGxQ=;
+        b=N/43CxXeF87SV2zlOGpHjSY8dMoxs9rHKsod8fC9UVLM5zSE4XynkWgu0Mr3wesz61
+         iQlyb+opmCQGja0juxwVuAvHoiCvCWCrz4iILlaBdnWC8DVnhy6AQEWrCLtkWLBS2g8d
+         YhkWvusE1CF3VB4EeO6SdC96l2LLvNyUpa1OAc0ZdxbcIPj59vLQqksYWkKeqplMXFDQ
+         p80PZAiJMllS5suoncAx3CKci8+Db/O19c2rfpU6SphijsxJOYitMRTa30g6yJ7akQTk
+         JkUh6UUY6FShKG/w2HorQrC8H47y8zzot/iMyxM96ERuBh57f/5R+owyH2wTXLx0y9Zj
+         mrEQ==
+X-Gm-Message-State: AGRZ1gK/jGHDXavQP+YYBzZ0kfWpRJCiB97KXzopPQGW1sj747vzIAtW
+        ZdNyAj0aEuDstigxkChSsrtJJ+pkUE+32HOFfKA78psTEsY=
+X-Google-Smtp-Source: AJdET5fbstZrfrwfVhap+wFQJfGr038Fb0sErhWKW4VlaIXEwCYC3QkszPfrUnKaLcEtTYDdO0CYRNpVetQaefV4Ejs=
+X-Received: by 2002:a2e:90d8:: with SMTP id o24-v6mr940750ljg.97.1540466165170;
+ Thu, 25 Oct 2018 04:16:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201810250215.w9P2Fm2M078167@www262.sakura.ne.jp>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 25 Oct 2018 11:14:01 +0000 (UTC)
+References: <20181024153843.16021-1-brgl@bgdev.pl>
+In-Reply-To: <20181024153843.16021-1-brgl@bgdev.pl>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 25 Oct 2018 13:15:52 +0200
+Message-ID: <CACRpkdbzQ1chqGPWj2wSrsOBc75ZKPfFGu0hqvMeo+x=s9S1BA@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: add myself as co-maintainer of gpiolib
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/25, Tetsuo Handa wrote:
+On Wed, Oct 24, 2018 at 5:39 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 >
-> Oleg Nesterov wrote:
-> > On 10/22, Tetsuo Handa wrote:
-> > > > And again, I do not know how/if yama ensures that child is rcu-protected, perhaps
-> > > > task_is_descendant() needs to check pid_alive(child) right after rcu_read_lock() ?
-> > >
-> > > Since the caller (ptrace() path) called get_task_struct(child), child itself can't be
-> > > released. Do we still need pid_alive(child) ?
-> >
-> > get_task_struct(child) can only ensure that this task_struct can't be freed.
+> As discussed with Linus Walleij - I'm adding myself as
+> the co-maintainer.
 >
-> The report says that it is a use-after-free read at
->
->   walker = rcu_dereference(walker->real_parent);
->
-> which means that walker was already released.
+> Cc: Beno=C3=AEt Cousson <bcousson@baylibre.com>
+> Cc: Kevin Hilman <khilman@baylibre.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-quite possibly I missed something, but I am not sure I understand your concerns...
+Excellent, patch applied for fixes. Welcome aboard! :D
 
-So again, suppose that "child" is already dead. Its task_struct can't be freed,
-but child->real_parent can point to the already freed memory.
-
-This means that the 1st walker = rcu_dereference(walker->real_parent) is fine,
-this simply reads the child->real_parent pointer, but on the second iteration
-
-	walker = rcu_dereference(walker->real_parent);
-
-reads the alredy freed memory.
-
-> I wonder whether pid_alive() test helps.
->
-> We can get
->
-> [   40.620318] parent or walker is dead.
-> [   40.624146] tracee is dead.
->
-> messages using below patch and reproducer.
-
-again, I do not understand, this all looks correct...
-
-> ----------
-> diff --git a/kernel/ptrace.c b/kernel/ptrace.c
-> index 99cfddd..0d9d786 100644
-> --- a/kernel/ptrace.c
-> +++ b/kernel/ptrace.c
-> @@ -385,6 +385,7 @@ static int ptrace_attach(struct task_struct *task, long request,
->  	if (mutex_lock_interruptible(&task->signal->cred_guard_mutex))
->  		goto out;
->
-> +	schedule_timeout_killable(HZ);
->  	task_lock(task);
->  	retval = __ptrace_may_access(task, PTRACE_MODE_ATTACH_REALCREDS);
->  	task_unlock(task);
-> diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
-> index ffda91a..a231ec6 100644
-> --- a/security/yama/yama_lsm.c
-> +++ b/security/yama/yama_lsm.c
-> @@ -283,6 +283,11 @@ static int task_is_descendant(struct task_struct *parent,
->  		return 0;
->
->  	rcu_read_lock();
-> +	if (!pid_alive(parent) || !pid_alive(walker)) {
-> +		rcu_read_unlock();
-> +		printk("parent or walker is dead.\n");
-
-This is what we need to do, except I think we should change yama_ptrace_access_check().
-And iiuc parent == current, pid_alive(parent) looks unnecessary. Although we need to
-check ptracer_exception_found(), may be it needs some changes too.
-
-And yes, task_is_descendant() can hit the dead child, if nothing else it can
-be killed. This can explain the kasan report.
-
-> @@ -315,6 +320,10 @@ static int ptracer_exception_found(struct task_struct *tracer,
->  	bool found = false;
->
->  	rcu_read_lock();
-> +	if (!pid_alive(tracee)) {
-> +		printk("tracee is dead.\n");
-> +		goto unlock;
-
-Sure, this is possible too.
-
-> But since "child" has at least one reference, reading "child->real_parent" should
-> be safe. Therefore, I think that bailing out due to pid_is_alive(child) == false
-> (like above patch does) cannot avoid this problem...
-
-Why?
-
-OK. Lets ignore ptracer_exception_found() for the moment. Why do you think the
-patch below can't help?
-
-Oleg.
-
---- x/security/yama/yama_lsm.c
-+++ x/security/yama/yama_lsm.c
-@@ -368,7 +368,8 @@ static int yama_ptrace_access_check(stru
- 			break;
- 		case YAMA_SCOPE_RELATIONAL:
- 			rcu_read_lock();
--			if (!task_is_descendant(current, child) &&
-+			if (!pid_alive(child) ||
-+			    !task_is_descendant(current, child) &&
- 			    !ptracer_exception_found(current, child) &&
- 			    !ns_capable(__task_cred(child)->user_ns, CAP_SYS_PTRACE))
- 				rc = -EPERM;
-
+Yours,
+Linus Walleij
