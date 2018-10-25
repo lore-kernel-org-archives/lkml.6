@@ -2,140 +2,104 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2244ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89EB6C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:22:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68DBC2083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:20:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="D2R7sD3j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68DBC2083E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 4612E20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:22:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4612E20834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728045AbeJZByC (ORCPT
+        id S1727845AbeJZB42 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 21:54:02 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44950 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727401AbeJZByC (ORCPT
+        Thu, 25 Oct 2018 21:56:28 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:41518 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727525AbeJZB41 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 21:54:02 -0400
-Received: by mail-wr1-f66.google.com with SMTP id q6-v6so10132563wrw.11
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 10:20:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=1bJs3q1wp8WqpHBYXRCtRsUapjWa79UF45pDkektjFM=;
-        b=D2R7sD3j91f2Ca5iUU4T8nVOL5FlvnHfzOcMpW8Bjrm3nF7iPO6x+2TMGukTXawDKR
-         Xq4JsJdjHhjFInDFcNlJg/15npPZeIsR2lOw0JjD1OY/Hp28TuCMOSrbTeQ5fHRnyLi8
-         2zO3SKxWPxY+x1PJ18DjtNXRH9QhyChQBr4A0=
+        Thu, 25 Oct 2018 21:56:27 -0400
+Received: by mail-pf1-f196.google.com with SMTP id a19-v6so4513935pfo.8
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 10:22:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=1bJs3q1wp8WqpHBYXRCtRsUapjWa79UF45pDkektjFM=;
-        b=HC+Wxf5iKpxi8Axqq4rHElWkiM63ITaYJzjQzFzEyL9XkqwRUraWvAu/astn5EbkBP
-         lwhoZUPV9583xJKG/0t4boj66o48NLBJ+y/Rex+EMkhjYZcNzs07CaNzlLm8wr0muf/r
-         db/CZAsSjUUmSw/r477iErppZjZyyonRGpZFySctC++mqQxNRUfSmCncCXxB2MRaCMwx
-         mN6Z4/W2K8vnzqVrJICM5C5G7YBV4uTXm+io7iq0Pi/DRSWDiW76kHn1zAuN8WrMO8bm
-         RwMDkQaJUWp9hjbgvuEnN3IJFymhj/JRDat/wgpkjgrDl0ZQ8u18VAE/VxggdRERWVRB
-         G88g==
-X-Gm-Message-State: AGRZ1gJABtlZZS9RT8GkSMPrl5zCio4nG+3tEJBOKDOAM+U+h6gq1kWb
-        9aPpZz2/ENXxaDkj9jCb29nj/lcFX5IIbtWgPK4xDw==
-X-Google-Smtp-Source: AJdET5dfBHPB5FPqT5RvRWYd3NGWr1FOe6jvPdBb9cS9JzXGAFpA3lH7CRBBbP4TXniCzevm2K1k8rBKq8M/8qFOjCY=
-X-Received: by 2002:a5d:4f0d:: with SMTP id c13-v6mr2790323wru.50.1540488019347;
- Thu, 25 Oct 2018 10:20:19 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a1c:4054:0:0:0:0:0 with HTTP; Thu, 25 Oct 2018 10:20:18
- -0700 (PDT)
-In-Reply-To: <20181017224738.193598-1-bmgordon@google.com>
-References: <20181017224738.193598-1-bmgordon@google.com>
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Thu, 25 Oct 2018 10:20:18 -0700
-Message-ID: <CALAqxLVUYEKXs2ATieTd-3Zs4AbhSPpeGQS=PMiSGbXGkx_JAA@mail.gmail.com>
-Subject: Re: [PATCH] proc: use ns_capable instead of capable for timerslack_ns
-To:     bmgordon@google.com
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Oren Laadan <orenl@cellrox.com>,
-        Ruchi Kandoi <kandoiruchi@google.com>,
-        Rom Lemarchand <romlem@android.com>,
-        Todd Kjos <tkjos@google.com>, Colin Cross <ccross@android.com>,
-        Nick Kralevich <nnk@google.com>,
-        Dmitry Shmidt <dimitrysh@google.com>,
-        Elliott Hughes <enh@google.com>,
-        Android Kernel Team <kernel-team@android.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=nb6vETvNsAzFRnepdlFWVnzaZqt/YLpdCH26yR/CTeU=;
+        b=DOQQdETf5ssb2RQcv4V7ovgauL0wgZIA1NX+liFChr5fkZf7qePxvmm+waV98QwR4D
+         17WKBP25MV/vn1+jIqWqiNbu+tdgVHeHVMmgQH31UyjesCs6mj9AQrtypLhf0lL97zaD
+         7ceJqheAiG/1SVmGp7VHfiTEGvHae1/XuvpH9L6I4E13rLniDyROaSax4p3q9YXUNykQ
+         aTh9rhyu7pICeLLTYRZXXqvPH4lfPtMj2MjzHC6EtP20SSCeI8A76KsXixximudvdcur
+         idqk8joIYnVVnY2o+mRC1G1AbPI5h0Hqu0KC9FyeSjR5xVmxgwhxhTA/w2q7/a5tRuVq
+         k8dg==
+X-Gm-Message-State: AGRZ1gLqpBeuIPYAHP0k32KrQRTfCM7pJyJ63osTmRMQrQsr/7b9YZqY
+        J1ibJwdKYRGy//cR0LoCOV8=
+X-Google-Smtp-Source: AJdET5fmfZqB0nogyx+JASHE27b1uTRCm4aKuesBN49FiCKRVxG9K/Wng3ckl5CNaUZobw9h4SLsRA==
+X-Received: by 2002:a62:9702:: with SMTP id n2-v6mr111183pfe.222.1540488164502;
+        Thu, 25 Oct 2018 10:22:44 -0700 (PDT)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id a14-v6sm9314172pgi.75.2018.10.25.10.22.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Oct 2018 10:22:43 -0700 (PDT)
+Message-ID: <1540488162.66186.35.camel@acm.org>
+Subject: Re: [PATCH 2/3] kernel/workqueue: Surround work execution with
+ shared lock annotations
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Johannes Berg <johannes@sipsolutions.net>,
+        Tejun Heo <tj@kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        "tytso@mit.edu" <tytso@mit.edu>
+Date:   Thu, 25 Oct 2018 10:22:42 -0700
+In-Reply-To: <256720b373cf539052d79ce3051214140820d696.camel@sipsolutions.net>
+References: <20181025150540.259281-1-bvanassche@acm.org>
+         <20181025150540.259281-3-bvanassche@acm.org>
+         <256720b373cf539052d79ce3051214140820d696.camel@sipsolutions.net>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 3:47 PM,  <bmgordon@google.com> wrote:
-> From: Benjamin Gordon <bmgordon@google.com>
->
-> Access to timerslack_ns is controlled by a process having CAP_SYS_NICE
-> in its effective capability set, but the current check looks in the root
-> namespace instead of the process' user namespace.  Since a process is
-> allowed to do other activities controlled by CAP_SYS_NICE inside a
-> namespace, it should also be able to adjust timerslack_ns.
->
-> Signed-off-by: Benjamin Gordon <bmgordon@google.com>
-> Cc: John Stultz <john.stultz@linaro.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: "Serge E. Hallyn" <serge@hallyn.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Arjan van de Ven <arjan@linux.intel.com>
-> Cc: Oren Laadan <orenl@cellrox.com>
-> Cc: Ruchi Kandoi <kandoiruchi@google.com>
-> Cc: Rom Lemarchand <romlem@android.com>
-> Cc: Todd Kjos <tkjos@google.com>
-> Cc: Colin Cross <ccross@android.com>
-> Cc: Nick Kralevich <nnk@google.com>
-> Cc: Dmitry Shmidt <dimitrysh@google.com>
-> Cc: Elliott Hughes <enh@google.com>
-> Cc: Android Kernel Team <kernel-team@android.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> ---
->  fs/proc/base.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index 7e9f07bf260d..4b50937dff80 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -2356,7 +2356,7 @@ static ssize_t timerslack_ns_write(struct file *file, const char __user *buf,
->                 return -ESRCH;
->
->         if (p != current) {
-> -               if (!capable(CAP_SYS_NICE)) {
-> +               if (!ns_capable(file->f_cred->user_ns, CAP_SYS_NICE)) {
->                         count = -EPERM;
->                         goto out;
->                 }
-> @@ -2393,7 +2393,7 @@ static int timerslack_ns_show(struct seq_file *m, void *v)
->
->         if (p != current) {
->
-> -               if (!capable(CAP_SYS_NICE)) {
-> +               if (!ns_capable(seq_user_ns(m), CAP_SYS_NICE)) {
->                         err = -EPERM;
->                         goto out;
->                 }
+On Thu, 2018-10-25 at 18:53 +-0200, Johannes Berg wrote:
++AD4 On Thu, 2018-10-25 at 15:05 +-0000, Bart Van Assche wrote:
++AD4 +AD4 Surround execution of work with a shared lockdep annotation because multiple
++AD4 +AD4 work items associated with a work queue may execute concurrently.
++AD4 
++AD4 Hmm. So, I'm not really entirely sure of the semantics here, but I fail
++AD4 to see how +ACI-may execute concurrently+ACI means +ACI-can be taken recursively+ACI?
++AD4 
++AD4 After all, if they execute concurrently, that's in a different thread,
++AD4 right? So each thread is really just doing something with this work. It
++AD4 may not match mutex semantics in how mutexes would lock each other out
++AD4 and prevent concurrency, but I don't think that matters to lockdep at
++AD4 all.
++AD4 
++AD4 In fact, I'm not sure this actually changes anything, since you can't
++AD4 really execute a work struct while executing one already?
++AD4 
++AD4 What's this intended to change? I currently don't see how lockdep's
++AD4 behaviour would differ with read+AD0APQ-1, unless you actually tried to do
++AD4 recursive locking, which isn't really possible?
++AD4 
++AD4 Or perhaps this is actually the right change for the issue described in
++AD4 patch 1, where a work struct flushes another work on the same wq, and
++AD4 that causes recursion of sorts? But that recursion should only happen if
++AD4 the workqueues is actually marked as ordered, in which case it +ACo-is+ACo in
++AD4 fact wrong?
 
-Looks reasonable to me.
-Acked-by: John Stultz <john.stultz@linaro.org>
+How about modifying the wq-+AD4-lockdep+AF8-map annotations only and not touching the
+work-+AD4-lockdep+AF8-map annotations? My comment about concurrency in the patch
+description refers to a multithreaded workqueue executing multiple different
+work items concurrently. I am aware that great care has been taken in the
+workqueue implementation to ensure that each work item is executed by exactly
+one worker.
 
-thanks
--john
+Bart.
