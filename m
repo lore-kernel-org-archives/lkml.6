@@ -2,286 +2,111 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7281AECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:23:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75FB5C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:24:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 376722085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:23:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 376722085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 387A020840
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:24:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="flgpJDpI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 387A020840
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727431AbeJYS4B (ORCPT
+        id S1727475AbeJYS4E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 14:56:01 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:53504 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727221AbeJYS4A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 14:56:00 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id DYTCy6TTecNK; Thu, 25 Oct 2018 12:23:52 +0200 (CEST)
-Received: from nazgul.tnic (unknown [167.98.65.38])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0123C1EC06CA;
-        Thu, 25 Oct 2018 12:23:52 +0200 (CEST)
-Date:   Thu, 25 Oct 2018 12:24:05 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Segher Boessenkool <segher@kernel.crashing.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Richard Biener <rguenther@suse.de>,
-        Michael Matz <matz@suse.de>, gcc@gcc.gnu.org,
-        Nadav Amit <namit@vmware.com>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Alok Kataria <akataria@vmware.com>,
-        Christopher Li <sparse@chrisli.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Jan Beulich <JBeulich@suse.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-sparse@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        virtualization@lists.linux-foundation.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        linux-xtensa@linux-xtensa.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: PROPOSAL: Extend inline asm syntax with size spec
-Message-ID: <20181025102405.GE14020@nazgul.tnic>
-References: <20181008073128.GL29268@gate.crashing.org>
- <alpine.LSU.2.20.1810081105350.16707@zhemvz.fhfr.qr>
- <20181009145330.GT29268@gate.crashing.org>
- <alpine.LSU.2.20.1810100909140.16707@zhemvz.fhfr.qr>
- <20181010072240.GB103159@gmail.com>
- <20181010080324.GV29268@gate.crashing.org>
- <20181010081906.GA5533@zn.tnic>
- <20181010185432.GB29268@gate.crashing.org>
- <20181010191427.GF5533@zn.tnic>
- <20181013193335.GD31650@zn.tnic>
+        Thu, 25 Oct 2018 14:56:04 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:40747 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727437AbeJYS4D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 14:56:03 -0400
+Received: by mail-wr1-f67.google.com with SMTP id d2-v6so8714598wro.7
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 03:23:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=IFTJBIqkm5uhvn71bhSAZXj0DCHQvpLAR+sphKQTGcw=;
+        b=flgpJDpISvo5WpuJUaeOkjKIiPRByog+BVjwENMM2GR7CAbVgNzu7sB90OdQQr9SZ8
+         HkQ+V93EBJYOXQ+Cu/yDSPRNygPV8RTOvac9osv9RbAJbco7XFjTClX939szK6Q8lr4e
+         /z3Wq4IeFyOfc8hIL4reEKokHAKWPQ0I2bD/Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=IFTJBIqkm5uhvn71bhSAZXj0DCHQvpLAR+sphKQTGcw=;
+        b=Ya9tpdPU9Iz2JKtSeguwcSuVJkpl3H3EKvlvXdcvoYZsTpFi0OjMmaSeDiKN2/oEBt
+         rtwA/3M9ndF7z8Z64PnRIaDo3A61lupHhzeFqavhhKUBCx7YF1OHiWfJbt1E9F9atlhb
+         FGCi1p+akAoKXjsAuC2lhoyFUPa2/oMnCvOSEOyyBOOyKiFNebhLLWCWzyogYHExAoXI
+         xbUMHLXlWfBUjRGVoPMOxx7iPSNSm1PIN0J85PP/s0DP+mm1cQ3CFduSx8sLfPbAzpBa
+         wCzQk/AYRhBUByJkntcMTXa91Tzal+UK0sUYhGWZG+HjrEFS3GKcgDUPkDX+LIHaCwV6
+         JVfQ==
+X-Gm-Message-State: AGRZ1gLAe2jcUuy2MFuaJyMOSY89+EQQAuumHEIRMmwUSHAkytolvLWl
+        pHEpe/2YGISILryuqmD8IqJlFA==
+X-Google-Smtp-Source: AJdET5cqtByrIwaSmLazUSk9nvl8CvSCiLAXFUyX7hxBLkxoYkZmPn9OuMuUfNEQKndTTrNdY7gDSw==
+X-Received: by 2002:adf:9563:: with SMTP id 90-v6mr1324412wrs.60.1540463035417;
+        Thu, 25 Oct 2018 03:23:55 -0700 (PDT)
+Received: from dell ([2.31.167.182])
+        by smtp.gmail.com with ESMTPSA id z4-v6sm1350337wmz.14.2018.10.25.03.23.53
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Oct 2018 03:23:54 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 11:23:51 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Oskari Lemmela <oskari@lemmela.net>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Quentin Schulz <quentin.schulz@free-electrons.com>,
+        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org
+Subject: Re: [PATCH v5 10/11] mfd: axp20x: Add AC power supply cell for AXP813
+Message-ID: <20181025102351.GT4939@dell>
+References: <20181023185330.10472-1-oskari@lemmela.net>
+ <20181023185330.10472-11-oskari@lemmela.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181013193335.GD31650@zn.tnic>
-User-Agent: Mutt/1.6.0 (2016-04-01)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181023185330.10472-11-oskari@lemmela.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ping.
+On Tue, 23 Oct 2018, Oskari Lemmela wrote:
 
-This is a good point in time, methinks, where kernel folk on CC here
-should have a look at this and speak up whether it is useful for us in
-this form.
+> As axp20x-ac-power-supply now supports AXP813, add a cell for it.
+> 
+> Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
+> Reviewed-by: Quentin Schulz <quentin.schulz@bootlin.com>
+> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> Tested-by: Vasily Khoruzhick <anarsoul@gmail.com>
+> ---
+>  drivers/mfd/axp20x.c | 5 +++++
+>  1 file changed, 5 insertions(+)
 
-Frankly, I'm a bit unsure on the aspect of us using this and supporting
-old compilers which don't have it and new compilers which do. Because
-the old compilers should get to see the now upstreamed assembler macros
-and the new compilers will simply inline the "asm volatile inline"
-constructs. And how ugly that would become...
-
-I guess we can try this with smaller macros first and keep them all
-nicely hidden in header files.
-
-On Sat, Oct 13, 2018 at 09:33:35PM +0200, Borislav Petkov wrote:
-> Ok,
-> 
-> with Segher's help I've been playing with his patch ontop of bleeding
-> edge gcc 9 and here are my observations. Please double-check me for
-> booboos so that they can be addressed while there's time.
-> 
-> So here's what I see ontop of 4.19-rc7:
-> 
-> First marked the alternative asm() as inline and undeffed the "inline"
-> keyword. I need to do that because of the funky games we do with
-> "inline" redefinitions in include/linux/compiler_types.h.
-> 
-> And Segher hinted at either doing:
-> 
-> asm volatile inline(...
-> 
-> or
-> 
-> asm volatile __inline__(...
-> 
-> but both "inline" variants are defined as macros in that file.
-> 
-> Which means we either need to #undef inline before using it in asm() or
-> come up with something cleverer.
-> 
-> Anyway, did this:
-> 
-> ---
-> diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/alternative.h
-> index 4cd6a3b71824..7c0639087da7 100644
-> --- a/arch/x86/include/asm/alternative.h
-> +++ b/arch/x86/include/asm/alternative.h
-> @@ -165,11 +165,13 @@ static inline int alternatives_text_reserved(void *start, void *end)
->   * For non barrier like inlines please define new variants
->   * without volatile and memory clobber.
->   */
-> +
-> +#undef inline
->  #define alternative(oldinstr, newinstr, feature)                       \
-> -       asm volatile (ALTERNATIVE(oldinstr, newinstr, feature) : : : "memory")
-> +       asm volatile inline(ALTERNATIVE(oldinstr, newinstr, feature) : : : "memory")
->  
->  #define alternative_2(oldinstr, newinstr1, feature1, newinstr2, feature2) \
-> -       asm volatile(ALTERNATIVE_2(oldinstr, newinstr1, feature1, newinstr2, feature2) ::: "memory")
-> +       asm volatile inline(ALTERNATIVE_2(oldinstr, newinstr1, feature1, newinstr2, feature2) ::: "memory")
->  
->  /*
->   * Alternative inline assembly with input.
-> ---
-> 
-> Build failed at link time with:
-> 
-> arch/x86/boot/compressed/cmdline.o: In function `native_save_fl':
-> cmdline.c:(.text+0x0): multiple definition of `native_save_fl'
-> arch/x86/boot/compressed/misc.o:misc.c:(.text+0x1e0): first defined here
-> arch/x86/boot/compressed/cmdline.o: In function `native_restore_fl':
-> cmdline.c:(.text+0x10): multiple definition of `native_restore_fl'
-> arch/x86/boot/compressed/misc.o:misc.c:(.text+0x1f0): first defined here
-> arch/x86/boot/compressed/error.o: In function `native_save_fl':
-> error.c:(.text+0x0): multiple definition of `native_save_fl'
-> 
-> which I had to fix with this:
-> 
-> ---
-> diff --git a/arch/x86/include/asm/irqflags.h b/arch/x86/include/asm/irqflags.h
-> index 15450a675031..0d772598c37c 100644
-> --- a/arch/x86/include/asm/irqflags.h
-> +++ b/arch/x86/include/asm/irqflags.h
-> @@ -14,8 +14,7 @@
->   */
->  
->  /* Declaration required for gcc < 4.9 to prevent -Werror=missing-prototypes */
-> -extern inline unsigned long native_save_fl(void);
-> -extern inline unsigned long native_save_fl(void)
-> +static inline unsigned long native_save_fl(void)
->  {
->         unsigned long flags;
->  
-> @@ -33,8 +32,7 @@ ex
-> ---
-> 
-> That "extern inline" declaration looks fishy to me anyway, maybe not really
-> needed ? Apparently, gcc < 4.9 complains with -Werror=missing-prototypes...
-> 
-> Then the build worked and the results look like this:
-> 
->    text    data     bss     dec     hex filename
-> 17287384        5040656 2019532 24347572        17383b4 vmlinux-before
-> 17288020        5040656 2015436 24344112        1737630 vmlinux-2nd-version
-> 
-> so some inlining must be happening.
-> 
-> Then I did this:
-> 
-> ---
-> diff --git a/arch/x86/lib/usercopy_64.c b/arch/x86/lib/usercopy_64.c
-> index 9c5606d88f61..a0170344cf08 100644
-> --- a/arch/x86/lib/usercopy_64.c
-> +++ b/arch/x86/lib/usercopy_64.c
-> @@ -20,7 +20,7 @@ unsigned long __clear_user(void __user *addr, unsigned long size)
->         /* no memory constraint because it doesn't change any memory gcc knows
->            about */
->         stac();
-> -       asm volatile(
-> +       asm volatile inline(
->                 "       testq  %[size8],%[size8]\n"
->                 "       jz     4f\n"
->                 "0:     movq $0,(%[dst])\n"
-> ---
-> 
-> to force inlining of a somewhat bigger asm() statement. And yap, more
-> got inlined:
-> 
->    text    data     bss     dec     hex filename
-> 17287384        5040656 2019532 24347572        17383b4 vmlinux-before
-> 17288020        5040656 2015436 24344112        1737630 vmlinux-2nd-version
-> 17288076        5040656 2015436 24344168        1737668 vmlinux-2nd-version__clear_user
-> 
-> so more stuff gets inlined.
-> 
-> Looking at the asm output, it had before:
-> 
-> ---
-> clear_user:
-> # ./arch/x86/include/asm/current.h:15:  return this_cpu_read_stable(current_task);
-> #APP
-> # 15 "./arch/x86/include/asm/current.h" 1
->         movq %gs:current_task,%rax      #, pfo_ret__
-> # 0 "" 2
-> # arch/x86/lib/usercopy_64.c:51:        if (access_ok(VERIFY_WRITE, to, n))
-> #NO_APP
->         movq    2520(%rax), %rdx        # pfo_ret___12->thread.addr_limit.seg, _1
->         movq    %rdi, %rax      # to, tmp93
->         addq    %rsi, %rax      # n, tmp93
->         jc      .L3     #,
-> # arch/x86/lib/usercopy_64.c:51:        if (access_ok(VERIFY_WRITE, to, n))
->         cmpq    %rax, %rdx      # tmp93, _1
->         jb      .L3     #,
-> # arch/x86/lib/usercopy_64.c:52:                return __clear_user(to, n);
->         jmp     __clear_user    #
-> ---
-> 
-> note the JMP to __clear_user. After marking the asm() in __clear_user() as
-> inline, clear_user() inlines __clear_user() directly:
-> 
-> ---
-> clear_user:
-> # ./arch/x86/include/asm/current.h:15:  return this_cpu_read_stable(current_task);
-> #APP
-> # 15 "./arch/x86/include/asm/current.h" 1
->         movq %gs:current_task,%rax      #, pfo_ret__
-> # 0 "" 2
-> # arch/x86/lib/usercopy_64.c:51:        if (access_ok(VERIFY_WRITE, to, n))
-> #NO_APP
->         movq    2520(%rax), %rdx        # pfo_ret___12->thread.addr_limit.seg, _1
->         movq    %rdi, %rax      # to, tmp95
->         addq    %rsi, %rax      # n, tmp95
->         jc      .L8     #,
-> # arch/x86/lib/usercopy_64.c:51:        if (access_ok(VERIFY_WRITE, to, n))
->         cmpq    %rax, %rdx      # tmp95, _1
->         jb      .L8     #,
-> # ./arch/x86/include/asm/smap.h:58:     alternative("", __stringify(__ASM_STAC), X86_FEATURE_SMAP);
-> ...
-> 
-> this last line is the stac() macro which gets inlined due to the
-> alternative() inlined macro above.
-> 
-> So I guess this all looks like what we wanted.
-> 
-> And if this lands in gcc9, we would need to do a asm_volatile() macro
-> which is defined differently based on the compiler used.
-> 
-> Thoughts, suggestions, etc are most welcome.
-> 
-> Thx.
-> 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> Good mailing practices for 400: avoid top-posting and trim the reply.
+For my own reference:
+  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 
 -- 
-Regards/Gruss,
-    Boris.
-
-ECO tip #101: Trim your mails when you reply.
---
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
