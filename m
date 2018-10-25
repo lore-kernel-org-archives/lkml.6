@@ -2,153 +2,109 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A91F0C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 16:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31086C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 16:17:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64D8420848
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 16:16:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64D8420848
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DBBA120848
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 16:17:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bm/sZjQp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBBA120848
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727543AbeJZAtb (ORCPT
+        id S1727633AbeJZAus (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 20:49:31 -0400
-Received: from mga11.intel.com ([192.55.52.93]:8884 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727319AbeJZAtb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 20:49:31 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2018 09:16:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,424,1534834800"; 
-   d="scan'208";a="244339326"
-Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.143]) ([10.7.153.143])
-  by orsmga004.jf.intel.com with ESMTP; 25 Oct 2018 09:16:01 -0700
-Subject: Re: [PATCH v8 08/12] mfd: intel-peci-client: Add PECI client MFD
- driver
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>, Wu Hao <hao.wu@intel.com>,
-        Tomohiro Kusumi <kusumi.tomohiro@gmail.com>,
-        "Bryant G . Ly" <bryantly@linux.vnet.ibm.com>,
-        Frederic Barrat <fbarrat@linux.vnet.ibm.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Vinod Koul <vkoul@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        David Kershner <david.kershner@unisys.com>,
-        Uwe Kleine-Konig <u.kleine-koenig@pengutronix.de>,
-        Sagar Dharia <sdharia@codeaurora.org>,
-        Johan Hovold <johan@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Juergen Gross <jgross@suse.com>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-doc@vger.kernel.org,
-        openbmc@lists.ozlabs.org,
-        James Feist <james.feist@linux.intel.com>,
-        Jason M Biils <jason.m.bills@linux.intel.com>,
-        Vernon Mauery <vernon.mauery@linux.intel.com>
-References: <20180918215124.14003-1-jae.hyun.yoo@linux.intel.com>
- <20180918215124.14003-9-jae.hyun.yoo@linux.intel.com>
- <20181024105903.GB4939@dell>
- <db7570cb-8f63-b551-d119-c54270ce6139@linux.intel.com>
- <20181025053030.GD4939@dell>
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Message-ID: <509c4c0e-eabb-2276-3ffd-3fc675801142@linux.intel.com>
-Date:   Thu, 25 Oct 2018 09:16:01 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181025053030.GD4939@dell>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 25 Oct 2018 20:50:48 -0400
+Received: from mail-yb1-f170.google.com ([209.85.219.170]:46803 "EHLO
+        mail-yb1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727319AbeJZAus (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 20:50:48 -0400
+Received: by mail-yb1-f170.google.com with SMTP id o8-v6so3908765ybk.13
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 09:17:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=uNYrhB8InvHfItUHkU2voCkYIm4nm7FupVEQyUBT2L4=;
+        b=bm/sZjQpOwgsUp3DPTzG6ksVtluwxHjvJZR3drnBl/SNs6JKiP29WGMTbXkj8KnbHA
+         eEzu95bAXxXe56r44NEKw+jCP/1sSGpfG4R9rl9ntG0BXgtNwpSZsvNJrEjuzX0qy+/g
+         XHgqrirj2k1djcL/eYkym96ChagYKo/LylPHfz4bEEhEK/59Ne0uHcO4dCON+1Uzs3W+
+         uGByRS1NpmOPSaT6rRt/145yovPDpJZOgwclWD2g9NySjXYzwgPGzdqF/l/a3VsoSJAu
+         Il/NMvto9c4czJD6D1tRoEipTF2dMnygNNG+q4t5UfOdDvkeEV7o6Pg/L0E7f/JyZdTx
+         q/1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=uNYrhB8InvHfItUHkU2voCkYIm4nm7FupVEQyUBT2L4=;
+        b=iJQmNge9RyYgAQu+liJ6sT/26VihTjfAkWS9mWHfEahgOVQ8jnRkSbSVI7fFscd8pk
+         dXWG/PguYyo0XMzDY+S2d8fQqV+t30DAllXFYh61oB3fAdgluHaQsZMRJTP3ODXQMFp5
+         CRhUA51h/xCcwr48ejPxP/6QG8Q8Tdd0HMLhjRQ64lm+Twb99EA5Ky5Y5lzgJEp47jyT
+         88qomeU1UaUvG9AG4mbXqOMaAJ7i4A4DtoUWxrD+1OVXNUekOz4fW1qn95w2JXRX2OD+
+         sj56H/uOLinlVNy8nKFvJoDzJ2x+Iiob74jqhaa+UfxMiT3IEDfU1c5J3SkIyIiL2ytf
+         ENZw==
+X-Gm-Message-State: AGRZ1gJVRBqST195CicwIyB1ROffD+wHq9lkB3ddWmK0H9zO2I3rLhNP
+        cQrWUFODZQtSZkYj0F653zg=
+X-Google-Smtp-Source: AJdET5eFCRiKn9KVPHhRVC14PatUAhdwRZnGE+0rBI1kCpFZcNV023KUZkRRLntv5nmP1quzm++iQA==
+X-Received: by 2002:a25:c1c6:: with SMTP id r189-v6mr2110638ybf.29.1540484240105;
+        Thu, 25 Oct 2018 09:17:20 -0700 (PDT)
+Received: from localhost.localdomain ([198.52.185.227])
+        by smtp.gmail.com with ESMTPSA id n62-v6sm1937069ywf.105.2018.10.25.09.17.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Oct 2018 09:17:19 -0700 (PDT)
+From:   thesven73@gmail.com
+X-Google-Original-From: TheSven73@googlemail.com
+To:     svendev@arcx.com, p.zabel@pengutronix.de, denis@eukrea.com,
+        rmk+kernel@arm.linux.org.uk
+Cc:     linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: [RFC v1 0/1] imx-drm: match ipu_di_signal_cfg's clk_pol with its observed behaviour.
+Date:   Thu, 25 Oct 2018 12:17:10 -0400
+Message-Id: <20181025161711.13727-1-TheSven73@googlemail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/24/2018 10:30 PM, Lee Jones wrote:
-> On Wed, 24 Oct 2018, Jae Hyun Yoo wrote:
->> On 10/24/2018 3:59 AM, Lee Jones wrote:
->>> On Tue, 18 Sep 2018, Jae Hyun Yoo wrote:
->>>
->>>> This commit adds PECI client MFD driver.
->>>>
->>
->> <snip>
-> 
-> [...]
-> 
->>>> +bool peci_temp_need_update(struct temp_data *temp)
->>>> +{
->>>> +	if (temp->valid &&
->>>> +	    time_before(jiffies, temp->last_updated + UPDATE_INTERVAL))
->>>> +		return false;
->>>> +
->>>> +	return true;
->>>> +}
->>>> +EXPORT_SYMBOL_GPL(peci_temp_need_update);
->>>> +
->>>> +void peci_temp_mark_updated(struct temp_data *temp)
->>>> +{
->>>> +	temp->valid = 1;
->>>> +	temp->last_updated = jiffies;
->>>> +}
->>>> +EXPORT_SYMBOL_GPL(peci_temp_mark_updated);
->>>
->>> These are probably better suited as inline functions to be placed in
->>> a header file.  No need to export them, since they only use their own
->>> data.
-> 
-> Also move them into the HWMON header file.
-> 
-> They have no business in MFD.
-> 
+From: Sven Van Asbroeck <svendev@arcx.com>
 
-Agreed. I'll move them into the HWMON header.
+Request For Comments
 
-> [...]
-> 
->>>> +int peci_client_rd_pkg_cfg_cmd(struct peci_mfd *priv, u8 mbx_idx,
->>>
->>> This is gobbledegook.  What's rd?  Read?
->>>
->>
->> Yes, the 'rd' means 'read'. I intended to keep command names as listed
->> in the PECI specification such as RdPkgConfig, WrPkgConfig and so on.
->> Should I change it to 'peci_client_read_package_config_command' ?
-> 
-> I looks/reads a lot nicer, don't you think?
-> 
+We believe that the ipuv3 DI's pixel clock polarity is possibly being
+misconfigured by the imx-drm driver.
 
-Okay. I'll change it too.
+We used an oscilloscope the observe the actual behaviour on our hardware,
+and it is the opposite of what the driver is supposed to configure.
 
-Thanks again for your review, Lee!
+Some confusion could arise because the Freescale documentation does not
+speak about data stable on rising or falling edge, but only of clock active
+high / active low:
 
-Jae
+i.MX 6Dual/6Quad Applications Processor Reference Manual, Rev. 3, 07/2015,
+page 3298)
+  bit 17 DI0 Output Clock's polarity
+  This bits define the polarity of the DI0's clock.
+    1 The output clock is active high
+    0 The output clock is active low
 
-> [...]
-> 
+However, the supposedly wrong behaviour has been in place since April 2014,
+and no-one has complained so far.
+See commit 85de9d17c485c4196f74d45de2206d4802f8a3be
+
+What are we missing ?
+
+Sven Van Asbroeck (1):
+  imx-drm: match ipu_di_signal_cfg's clk_pol with its observed
+    behaviour.
+
+ drivers/gpu/ipu-v3/ipu-di.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+-- 
+2.17.1
+
