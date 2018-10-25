@@ -2,181 +2,116 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42D1AC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 07:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71539C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 07:32:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9076205F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 07:31:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ltJzd6yg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9076205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 1EA55205F4
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 07:32:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EA55205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726865AbeJYQCn (ORCPT
+        id S1726973AbeJYQEF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 12:02:43 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:38276 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726538AbeJYQCn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 12:02:43 -0400
-Received: by mail-yw1-f68.google.com with SMTP id d126-v6so3199830ywa.5
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 00:31:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gGteqWKGyRq4CY8yG1kvZEa/GWFSb3wYHRS2RlHstxU=;
-        b=ltJzd6ygYQpXgil0F8ltZuDWZ9W/iJYRyf8NOGJuRprR9zrYWSq87RkWW5irLRtEBM
-         +dQjZMLZkINXt6tLi6NX1F15fzX/qqKKhJIduBNhiFpnnem5MjdNabKukeCnfv44MfSI
-         bnMWmRXs9I9V0sz0r6/czpmJXKGOACTa+Ev/0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gGteqWKGyRq4CY8yG1kvZEa/GWFSb3wYHRS2RlHstxU=;
-        b=fbVu1y+LRdKRb4EkR7BHc9ifnxPNtCU5DS386HVXccjpz9bRSr03A6Hsl9zenZ8Wuo
-         MMD7dSq7aR0c2YRoNTFxVmrkYjcd12bNjoq5EabSxGIqOgm50TI9z1RO3+WtLT9n4mbo
-         UkDEso2xPWP9yYal1TDQczNfa7BKUm9bcAhtCxrqMg5pzwUkGXasjtlHZ9giKXXsou+0
-         jToPSUZyiivjfeS7VOHhfs3HyHPiTF+PhQDcutL1SAj2gDF4IDLeM/+5m59/JBwrOWJX
-         HMRp2h+VLVatkebRNnZU8gywHpvq104L2VcDol+Ew6np7FxiqRfyDGcL0IqDPw6ZzqKT
-         zzPQ==
-X-Gm-Message-State: AGRZ1gIvjVZLUnagWGRsqg6Oyf9NUZLKtZq38qvkUVdkSeUH9TomtMvs
-        btJBlCwnPVZJZWUb/3ijlnYoEuJuDw4TQw==
-X-Google-Smtp-Source: AJdET5cCj7iDwlQRQYrkr01LQQHDnSUWUoMsJ1dMATOR/hAITdH0vUy/FoBTdh0am4ldK9u5GDTMPQ==
-X-Received: by 2002:a81:e4d:: with SMTP id 74-v6mr365566ywo.162.1540452671929;
-        Thu, 25 Oct 2018 00:31:11 -0700 (PDT)
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com. [209.85.219.173])
-        by smtp.gmail.com with ESMTPSA id 80-v6sm2407500ywh.55.2018.10.25.00.31.10
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Oct 2018 00:31:10 -0700 (PDT)
-Received: by mail-yb1-f173.google.com with SMTP id n140-v6so3276073yba.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 00:31:10 -0700 (PDT)
-X-Received: by 2002:a25:b083:: with SMTP id f3-v6mr338705ybj.293.1540452670045;
- Thu, 25 Oct 2018 00:31:10 -0700 (PDT)
+        Thu, 25 Oct 2018 12:04:05 -0400
+Received: from mga06.intel.com ([134.134.136.31]:49030 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726471AbeJYQEF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 12:04:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2018 00:32:32 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,423,1534834800"; 
+   d="scan'208";a="94869712"
+Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
+  by orsmga003.jf.intel.com with ESMTP; 25 Oct 2018 00:32:31 -0700
+Received: from fmsmsx114.amr.corp.intel.com (10.18.116.8) by
+ FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Thu, 25 Oct 2018 00:32:31 -0700
+Received: from crsmsx103.amr.corp.intel.com (172.18.63.31) by
+ FMSMSX114.amr.corp.intel.com (10.18.116.8) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Thu, 25 Oct 2018 00:32:31 -0700
+Received: from crsmsx101.amr.corp.intel.com ([169.254.1.85]) by
+ CRSMSX103.amr.corp.intel.com ([169.254.4.139]) with mapi id 14.03.0415.000;
+ Thu, 25 Oct 2018 01:32:28 -0600
+From:   "Bae, Chang Seok" <chang.seok.bae@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+CC:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "Metzger, Markus T" <markus.t.metzger@intel.com>,
+        "Shankar, Ravi V" <ravi.v.shankar@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [v3 04/12] x86/fsgsbase/64: Enable FSGSBASE instructions in the
+ helper functions
+Thread-Topic: [v3 04/12] x86/fsgsbase/64: Enable FSGSBASE instructions in
+ the helper functions
+Thread-Index: AQHUawBO9chRqp+c5EKJrUo1DG8ZGaUvKsMAgADNk4A=
+Date:   Thu, 25 Oct 2018 07:32:27 +0000
+Message-ID: <1EE75BE7-12C6-4BD9-9D31-E9C396D2015B@intel.com>
+References: <20181023184234.14025-1-chang.seok.bae@intel.com>
+ <20181023184234.14025-5-chang.seok.bae@intel.com>
+ <CALCETrVcJ08c6yf6y3ruOA_Hx_7srkHw5iYfx1c2p8_ySiL2WA@mail.gmail.com>
+In-Reply-To: <CALCETrVcJ08c6yf6y3ruOA_Hx_7srkHw5iYfx1c2p8_ySiL2WA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.255.78.140]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B7BDF3AA38B8144BA47A4B78884EAB1E@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <1540389162-30358-1-git-send-email-mgottam@codeaurora.org>
- <CAAFQd5CaYH-kxj+9cquObTHiRyA1VoEYHQmiQAGjdZm6J1ACfg@mail.gmail.com> <86344762e1eeab8fe8a940a1bfffa2c1@codeaurora.org>
-In-Reply-To: <86344762e1eeab8fe8a940a1bfffa2c1@codeaurora.org>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Thu, 25 Oct 2018 16:30:58 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5BhVdnmaVriBHEEvqKqO1Aiky0RpTyKWuh4+r0tPovsCA@mail.gmail.com>
-Message-ID: <CAAFQd5BhVdnmaVriBHEEvqKqO1Aiky0RpTyKWuh4+r0tPovsCA@mail.gmail.com>
-Subject: Re: [PATCH v2] media: venus: add support for key frame
-To:     vgarodia@codeaurora.org
-Cc:     mgottam@codeaurora.org,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        linux-media-owner@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 4:23 PM Vikash Garodia <vgarodia@codeaurora.org> wrote:
->
-> On 2018-10-24 20:02, Tomasz Figa wrote:
-> > On Wed, Oct 24, 2018 at 10:52 PM Malathi Gottam
-> > <mgottam@codeaurora.org> wrote:
-> >>
-> >> When client requests for a keyframe, set the property
-> >> to hardware to generate the sync frame.
-> >>
-> >> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
-> >> ---
-> >>  drivers/media/platform/qcom/venus/venc_ctrls.c | 16 +++++++++++++++-
-> >>  1 file changed, 15 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/media/platform/qcom/venus/venc_ctrls.c
-> >> b/drivers/media/platform/qcom/venus/venc_ctrls.c
-> >> index 45910172..6c2655d 100644
-> >> --- a/drivers/media/platform/qcom/venus/venc_ctrls.c
-> >> +++ b/drivers/media/platform/qcom/venus/venc_ctrls.c
-> >> @@ -79,8 +79,10 @@ static int venc_op_s_ctrl(struct v4l2_ctrl *ctrl)
-> >>  {
-> >>         struct venus_inst *inst = ctrl_to_inst(ctrl);
-> >>         struct venc_controls *ctr = &inst->controls.enc;
-> >> +       struct hfi_enable en = { .enable = 1 };
-> >>         u32 bframes;
-> >>         int ret;
-> >> +       u32 ptype;
-> >>
-> >>         switch (ctrl->id) {
-> >>         case V4L2_CID_MPEG_VIDEO_BITRATE_MODE:
-> >> @@ -173,6 +175,15 @@ static int venc_op_s_ctrl(struct v4l2_ctrl *ctrl)
-> >>
-> >>                 ctr->num_b_frames = bframes;
-> >>                 break;
-> >> +       case V4L2_CID_MPEG_VIDEO_FORCE_KEY_FRAME:
-> >> +               if (inst->streamon_out && inst->streamon_cap) {
-> >> +                       ptype =
-> >> HFI_PROPERTY_CONFIG_VENC_REQUEST_SYNC_FRAME;
-> >> +                       ret = hfi_session_set_property(inst, ptype,
-> >> &en);
-> >> +
-> >> +                       if (ret)
-> >> +                               return ret;
-> >> +               }
-> >> +               break;
-> >
-> > This is still not the right way to handle this.
-> >
-> > Please see the documentation of this control [1]:
-> >
-> > "V4L2_CID_MPEG_VIDEO_FORCE_KEY_FRAME (button)
-> > Force a key frame for the next queued buffer. Applicable to encoders.
-> > This is a general, codec-agnostic keyframe control."
-> >
-> > Even if the driver is not streaming, it must remember that the
-> > keyframe was requested for next buffer. The next time userspace QBUFs
-> > an OUTPUT buffer, it should ask the hardware to encode that OUTPUT
-> > buffer into a keyframe.
->
-> That's correct. Driver can cache the client request and set it when the
-> hardware
-> is capable of accepting the property.
-> Still the issue having the requested OUTPUT buffer to be encoded as sync
-> frame will
-> be there. If there are few frames queued before streamon, driver will
-> only keep a
-> note that it has to set the request for keyframe, but not the exact one
-> which was
-> requested.
-
-The description (quoted above) specifies exactly that the control
-applies only to the next queued buffer. It's a "button" control, so
-when the application sets it (to 1), it triggers a call to driver's
-s_ctrl callback and then resets to 0 automatically.
-
->
-> > [1]
-> > https://www.kernel.org/doc/html/latest/media/uapi/v4l/extended-controls.html?highlight=v4l2_cid_mpeg_video_force_key_frame
-> >
-> > But generally, the proper modern way for the userspace to request a
-> > keyframe is to set the V4L2_BUF_FLAG_KEYFRAME flag in the
-> > vb2_buffer_flag when queuing an OUTPUT buffer. It's the only
-> > guaranteed way to ensure that the keyframe will be encoded exactly for
-> > the selected frame. (The V4L2 control API doesn't guarantee any
-> > synchronization between controls and buffers itself.)
->
-> This is a better way to handle it to ensure exact buffer gets encoded as
-> sync frame.
-
-It was created later to solve this problem. For compatibility, we have
-to keep supporting the control too.
-
-Best regards,
-Tomasz
+DQo+IE9uIE9jdCAyNCwgMjAxOCwgYXQgMTI6MTYsIEFuZHkgTHV0b21pcnNraSA8bHV0b0BrZXJu
+ZWwub3JnPiB3cm90ZToNCj4gDQo+IE9uIFR1ZSwgT2N0IDIzLCAyMDE4IGF0IDExOjQzIEFNIENo
+YW5nIFMuIEJhZSA8Y2hhbmcuc2Vvay5iYWVAaW50ZWwuY29tPiB3cm90ZToNCj4+IHZvaWQgeDg2
+X2ZzYmFzZV93cml0ZV9jcHUodW5zaWduZWQgbG9uZyBmc2Jhc2UpDQo+PiB7DQo+PiAtICAgICAg
+IC8qDQo+PiAtICAgICAgICAqIFNldCB0aGUgc2VsZWN0b3IgdG8gMCBhcyBhIG5vdGlvbiwgdGhh
+dCB0aGUgc2VnbWVudCBiYXNlIGlzDQo+PiAtICAgICAgICAqIG92ZXJ3cml0dGVuLCB3aGljaCB3
+aWxsIGJlIGNoZWNrZWQgZm9yIHNraXBwaW5nIHRoZSBzZWdtZW50IGxvYWQNCj4+IC0gICAgICAg
+ICogZHVyaW5nIGNvbnRleHQgc3dpdGNoLg0KPj4gLSAgICAgICAgKi8NCj4+IC0gICAgICAgbG9h
+ZHNlZyhGUywgMCk7DQo+PiAtICAgICAgIHdybXNybChNU1JfRlNfQkFTRSwgZnNiYXNlKTsNCj4+
+ICsgICAgICAgaWYgKHN0YXRpY19jcHVfaGFzKFg4Nl9GRUFUVVJFX0ZTR1NCQVNFKSkgew0KPj4g
+KyAgICAgICAgICAgICAgIHdyZnNiYXNlKGZzYmFzZSk7DQo+PiArICAgICAgIH0gZWxzZSB7DQo+
+PiArICAgICAgICAgICAgICAgLyoNCj4+ICsgICAgICAgICAgICAgICAgKiBTZXQgdGhlIHNlbGVj
+dG9yIHRvIDAgYXMgYSBub3Rpb24sIHRoYXQgdGhlIHNlZ21lbnQgYmFzZSBpcw0KPj4gKyAgICAg
+ICAgICAgICAgICAqIG92ZXJ3cml0dGVuLCB3aGljaCB3aWxsIGJlIGNoZWNrZWQgZm9yIHNraXBw
+aW5nIHRoZSBzZWdtZW50IGxvYWQNCj4+ICsgICAgICAgICAgICAgICAgKiBkdXJpbmcgY29udGV4
+dCBzd2l0Y2guDQo+PiArICAgICAgICAgICAgICAgICovDQo+PiArICAgICAgICAgICAgICAgbG9h
+ZHNlZyhGUywgMCk7DQo+PiArICAgICAgICAgICAgICAgd3Jtc3JsKE1TUl9GU19CQVNFLCBmc2Jh
+c2UpOw0KPj4gKyAgICAgICB9DQo+PiB9DQo+PiANCj4+IHZvaWQgeDg2X2dzYmFzZV93cml0ZV9j
+cHVfaW5hY3RpdmUodW5zaWduZWQgbG9uZyBnc2Jhc2UpDQo+PiB7DQo+PiAtICAgICAgIC8qIFNl
+dCB0aGUgc2VsZWN0b3IgdG8gMCBmb3IgdGhlIHNhbWUgcmVhc29uIGFzICVmcyBhYm92ZS4gKi8N
+Cj4+IC0gICAgICAgbG9hZHNlZyhHUywgMCk7DQo+PiAtICAgICAgIHdybXNybChNU1JfS0VSTkVM
+X0dTX0JBU0UsIGdzYmFzZSk7DQo+PiArICAgICAgIGlmIChzdGF0aWNfY3B1X2hhcyhYODZfRkVB
+VFVSRV9GU0dTQkFTRSkpIHsNCj4+ICsgICAgICAgICAgICAgICB3cl9pbmFjdGl2ZV9nc2Jhc2Uo
+Z3NiYXNlKTsNCj4+ICsgICAgICAgfSBlbHNlIHsNCj4+ICsgICAgICAgICAgICAgICAvKiBTZXQg
+dGhlIHNlbGVjdG9yIHRvIDAgZm9yIHRoZSBzYW1lIHJlYXNvbiBhcyAlZnMgYWJvdmUuICovDQo+
+PiArICAgICAgICAgICAgICAgbG9hZHNlZyhHUywgMCk7DQo+PiArICAgICAgICAgICAgICAgd3Jt
+c3JsKE1TUl9LRVJORUxfR1NfQkFTRSwgZ3NiYXNlKTsNCj4gDQo+IEkgc3RpbGwgZG9uJ3QgZ2V0
+IHdoYXQgdGhpcyBjb2RlIGlzIHRyeWluZyB0byBkby4gIFNlZSBvdGhlciBlbWFpbC4gIEkNCj4g
+dGhpbmsgaXQgd2lsbCBzdHJhaWdodCB1cCBjcmFzaCB0aGUga2VybmVsIG9uIHNvbWUgQ1BVcywg
+c2luY2Ugd3JpdGluZw0KPiAwIHRvICUlZ3Mgd2lsbCB6ZXJvIG91dCB0aGUgKmFjdGl2ZSogYmFz
+ZSBvbiBzb21lIENQVXMuDQo+IA0KDQpPbiB0aG9zZSBDUFVzLCBob3cgdGhlIG9sZCBkb19hcmNo
+X3ByY3RsXzY0KCkgd29ya2VkPw0KbG9hZHNlZyhHUywgMCkgZXZlbnR1YWxseSBoaXRzIHRoZSBu
+YXRpdmVfbG9hZF9nc19pbmRleCBlbnRyeSwgd2hlcmUgYWN0dWFsDQptb3Yg4oCmLCAlZ3MgaXMg
+d3JhcHBlZCBieSB0d28gU1dBUEdTZXMuIFNvLCBpdCB3b27igJl0IGNhdXNlIHRoZSBzaWRlIGVm
+ZmVjdA0Kb2Ygb3ZlcndyaXRpbmcgdGhlICphY3RpdmUqIGJhc2UsIEkgdGhpbmsuDQoNCj4gSSB0
+aGluayB0aGF0LCBpZiB5b3UgcmVhbGx5IHdhbnQgc29tZSBmYW5jeSBvcHRpbWl6YXRpb24gZm9y
+IHRoZQ0KPiBub24tRlNHU0JBU0UgY2FzZSwgeW91IG5lZWQgdG8gcHVsbCB0aGF0IG91dCBpbnRv
+IHRoZSBjYWxsZXJzIG9mIHRoZXNlDQo+IGhlbHBlcnMuDQoNCg==
