@@ -7,44 +7,42 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95AF2ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:18:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5610ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:18:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55B582085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:18:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43FD020870
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:18:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PUENT0wy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55B582085B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="eToemDqc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43FD020870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729967AbeJYWvJ (ORCPT
+        id S1729982AbeJYWvK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:51:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60934 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:51:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60982 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729938AbeJYWvI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:51:08 -0400
+        id S1729964AbeJYWvK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:51:10 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F4A220834;
-        Thu, 25 Oct 2018 14:18:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87BE22085B;
+        Thu, 25 Oct 2018 14:18:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477091;
-        bh=XrMTcRXYTKE1V5+Cp2WbuAQ98boZq75maFD179dBbcM=;
+        s=default; t=1540477092;
+        bh=mDUsp03+3GtvGx4ZClp2sQEyjyVTwm/rWHGuayHsICI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PUENT0wyLISvq+rE6y5Xt/uOLEV3iQ85v+a033Znb9qTKFUp4cVtMYrblVXGuPcsB
-         b0fVkoG51xgCqiLl7oSENTVHlVATl3nAOe7CDPbAZ76ocOsZO0qfE8ww3RxXRmLeD1
-         C3POxgfAmz+vQ3X451Xshs0ip0ySVEXcd9MjcaxY=
+        b=eToemDqchx2SGlH/3T/T1CBOYEMhaOWQWBe4Fpf8BQipL2Lk955ZtI25npXzFIJz8
+         AQBVPP+GQlHCkv/gSts611RybX9EXMetEnQwiXF2Krflk/IsPOBHR8K50KyvFy5MGD
+         NmXeXEmwPhhr+gpVnJq1QJkw9Jw3cw9xoqpWrrKs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Mark Rustad <mark.d.rustad@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 40/65] ixgbe: Correct X550EM_x revision check
-Date:   Thu, 25 Oct 2018 10:16:40 -0400
-Message-Id: <20181025141705.213937-40-sashal@kernel.org>
+Cc:     Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 41/65] ALSA: timer: Fix zero-division by continue of uninitialized instance
+Date:   Thu, 25 Oct 2018 10:16:41 -0400
+Message-Id: <20181025141705.213937-41-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141705.213937-1-sashal@kernel.org>
 References: <20181025141705.213937-1-sashal@kernel.org>
@@ -53,64 +51,95 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mark Rustad <mark.d.rustad@intel.com>
+From: Takashi Iwai <tiwai@suse.de>
 
-[ Upstream commit 3ca2b2506ec9a3b1615930a6810d30ec9aba10a1 ]
+[ Upstream commit 9f8a7658bcafb2a7853f7a2eae8a94e87e6e695b ]
 
-The X550EM_x revision check needs to check a value, not just a bit.
-Use a mask and check the value. Also remove the redundant check
-inside the ixgbe_enter_lplu_t_x550em, because it can only be called
-when both the mac type and revision check pass.
+When a user timer instance is continued without the explicit start
+beforehand, the system gets eventually zero-division error like:
 
-Signed-off-by: Mark Rustad <mark.d.rustad@intel.com>
-Tested-by: Phil Schmitt <phillip.j.schmitt@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+  divide error: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN
+  CPU: 1 PID: 27320 Comm: syz-executor Not tainted 4.8.0-rc3-next-20160825+ #8
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
+   task: ffff88003c9b2280 task.stack: ffff880027280000
+   RIP: 0010:[<ffffffff858e1a6c>]  [<     inline     >] ktime_divns include/linux/ktime.h:195
+   RIP: 0010:[<ffffffff858e1a6c>]  [<ffffffff858e1a6c>] snd_hrtimer_callback+0x1bc/0x3c0 sound/core/hrtimer.c:62
+  Call Trace:
+   <IRQ>
+   [<     inline     >] __run_hrtimer kernel/time/hrtimer.c:1238
+   [<ffffffff81504335>] __hrtimer_run_queues+0x325/0xe70 kernel/time/hrtimer.c:1302
+   [<ffffffff81506ceb>] hrtimer_interrupt+0x18b/0x420 kernel/time/hrtimer.c:1336
+   [<ffffffff8126d8df>] local_apic_timer_interrupt+0x6f/0xe0 arch/x86/kernel/apic/apic.c:933
+   [<ffffffff86e13056>] smp_apic_timer_interrupt+0x76/0xa0 arch/x86/kernel/apic/apic.c:957
+   [<ffffffff86e1210c>] apic_timer_interrupt+0x8c/0xa0 arch/x86/entry/entry_64.S:487
+   <EOI>
+   .....
+
+Although a similar issue was spotted and a fix patch was merged in
+commit [6b760bb2c63a: ALSA: timer: fix division by zero after
+SNDRV_TIMER_IOCTL_CONTINUE], it seems covering only a part of
+iceberg.
+
+In this patch, we fix the issue a bit more drastically.  Basically the
+continue of an uninitialized timer is supposed to be a fresh start, so
+we do it for user timers.  For the direct snd_timer_continue() call,
+there is no way to pass the initial tick value, so we kick out for the
+uninitialized case.
+
+Reported-by: Dmitry Vyukov <dvyukov@google.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/ixgbe/ixgbe_type.h | 2 +-
- drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c | 9 +++------
- 2 files changed, 4 insertions(+), 7 deletions(-)
+ sound/core/timer.c | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_type.h b/drivers/net/ethernet/intel/ixgbe/ixgbe_type.h
-index 995f03107eac..04bc4df82fa7 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_type.h
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_type.h
-@@ -3508,7 +3508,7 @@ struct ixgbe_info {
+diff --git a/sound/core/timer.c b/sound/core/timer.c
+index ef850a99d64a..f989adb98a22 100644
+--- a/sound/core/timer.c
++++ b/sound/core/timer.c
+@@ -35,6 +35,9 @@
+ #include <sound/initval.h>
+ #include <linux/kmod.h>
  
- #define IXGBE_FUSES0_GROUP(_i)		(0x11158 + ((_i) * 4))
- #define IXGBE_FUSES0_300MHZ		BIT(5)
--#define IXGBE_FUSES0_REV1		BIT(6)
-+#define IXGBE_FUSES0_REV_MASK		(3 << 6)
- 
- #define IXGBE_KRM_PORT_CAR_GEN_CTRL(P)	((P) ? 0x8010 : 0x4010)
- #define IXGBE_KRM_LINK_CTRL_1(P)	((P) ? 0x820C : 0x420C)
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
-index a75f2e3ce86f..ffd2e74e5638 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_x550.c
-@@ -1873,10 +1873,6 @@ static s32 ixgbe_enter_lplu_t_x550em(struct ixgbe_hw *hw)
- 	u32 save_autoneg;
- 	bool link_up;
- 
--	/* SW LPLU not required on later HW revisions. */
--	if (IXGBE_FUSES0_REV1 & IXGBE_READ_REG(hw, IXGBE_FUSES0_GROUP(0)))
--		return 0;
--
- 	/* If blocked by MNG FW, then don't restart AN */
- 	if (ixgbe_check_reset_blocked(hw))
- 		return 0;
-@@ -2030,8 +2026,9 @@ static s32 ixgbe_init_phy_ops_X550em(struct ixgbe_hw *hw)
++/* internal flags */
++#define SNDRV_TIMER_IFLG_PAUSED		0x00010000
++
+ #if IS_ENABLED(CONFIG_SND_HRTIMER)
+ #define DEFAULT_TIMER_LIMIT 4
+ #elif IS_ENABLED(CONFIG_SND_RTCTIMER)
+@@ -547,6 +550,10 @@ static int snd_timer_stop1(struct snd_timer_instance *timeri, bool stop)
  		}
- 
- 		/* setup SW LPLU only for first revision */
--		if (!(IXGBE_FUSES0_REV1 & IXGBE_READ_REG(hw,
--							IXGBE_FUSES0_GROUP(0))))
-+		if (hw->mac.type == ixgbe_mac_X550EM_x &&
-+		    !(IXGBE_READ_REG(hw, IXGBE_FUSES0_GROUP(0)) &
-+		      IXGBE_FUSES0_REV_MASK))
- 			phy->ops.enter_lplu = ixgbe_enter_lplu_t_x550em;
- 
- 		phy->ops.handle_lasi = ixgbe_handle_lasi_ext_t_x550em;
+ 	}
+ 	timeri->flags &= ~(SNDRV_TIMER_IFLG_RUNNING | SNDRV_TIMER_IFLG_START);
++	if (stop)
++		timeri->flags &= ~SNDRV_TIMER_IFLG_PAUSED;
++	else
++		timeri->flags |= SNDRV_TIMER_IFLG_PAUSED;
+ 	snd_timer_notify1(timeri, stop ? SNDRV_TIMER_EVENT_STOP :
+ 			  SNDRV_TIMER_EVENT_PAUSE);
+  unlock:
+@@ -608,6 +615,10 @@ int snd_timer_stop(struct snd_timer_instance *timeri)
+  */
+ int snd_timer_continue(struct snd_timer_instance *timeri)
+ {
++	/* timer can continue only after pause */
++	if (!(timeri->flags & SNDRV_TIMER_IFLG_PAUSED))
++		return -EINVAL;
++
+ 	if (timeri->flags & SNDRV_TIMER_IFLG_SLAVE)
+ 		return snd_timer_start_slave(timeri, false);
+ 	else
+@@ -1837,6 +1848,9 @@ static int snd_timer_user_continue(struct file *file)
+ 	tu = file->private_data;
+ 	if (!tu->timeri)
+ 		return -EBADFD;
++	/* start timer instead of continue if it's not used before */
++	if (!(tu->timeri->flags & SNDRV_TIMER_IFLG_PAUSED))
++		return snd_timer_user_start(file);
+ 	tu->timeri->lost = 0;
+ 	return (err = snd_timer_continue(tu->timeri)) < 0 ? err : 0;
+ }
 -- 
 2.17.1
 
