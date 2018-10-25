@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3810C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD27ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA5432084A
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93DC320847
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mHAokU4+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA5432084A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ELoXrFZO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93DC320847
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbeJYWny (ORCPT
+        id S1727808AbeJYWnz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:43:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52362 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:43:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727699AbeJYWnx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:43:53 -0400
+        id S1727781AbeJYWnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:43:55 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 76C3F20834;
-        Thu, 25 Oct 2018 14:10:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4BDE2054F;
+        Thu, 25 Oct 2018 14:10:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540476658;
-        bh=r0K3yHq+ZRm6DwY7LPP3K3WxyBUiTgutfizntv/k8WU=;
+        s=default; t=1540476659;
+        bh=MPCeHQAwh0yKoP35Ko4SAVfo9UUme7RMUtYsWCuxmGo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mHAokU4+DoopFTArWlek3mstbpOMkMPlvm0mlfSjGxmgPYnyAMBy+FIe+fsPNrTsv
-         UYm3V/IhReLeer0ykKPtRLon08vttYfUn/VFeVJYr0Y0cQfFaqZHhQ/H3mkcyUpIS7
-         BzWenjHwE7pRzGHtQfiP8KisITRW1lNTvPC4tOjk=
+        b=ELoXrFZOia7iwuW229MkIrxg+PLi7X3/yAyMwH2/kPvI2yfL4MLfTldXLtnerVcFd
+         Y3tPW2CYjQU4hJEGkz+grTcS+faB/AT6AjejBp+l4HnnOK9pYd+v+84MSsCKG+VxMj
+         d4z+Y5uR21Yx2tyRvETsfofgby1QW81r7dfQnjds=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Liad Kaufman <liad.kaufman@intel.com>,
+Cc:     Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
         Luca Coelho <luciano.coelho@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 02/46] iwlwifi: dbg: allow wrt collection before ALIVE
-Date:   Thu, 25 Oct 2018 10:10:09 -0400
-Message-Id: <20181025141053.213330-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 03/46] iwlwifi: fix the ALIVE notification layout
+Date:   Thu, 25 Oct 2018 10:10:10 -0400
+Message-Id: <20181025141053.213330-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141053.213330-1-sashal@kernel.org>
 References: <20181025141053.213330-1-sashal@kernel.org>
@@ -52,46 +52,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Liad Kaufman <liad.kaufman@intel.com>
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-[ Upstream commit dfd4b08cf44f27587e2053e006e43a1603328006 ]
+[ Upstream commit 5cd2d8fc6c6bca979ac5dd8ad0e41153f1f982f9 ]
 
-Even if no ALIVE was received, the WRT data can still
-be collected. Add this.
+The ucode_major and ucode_minor were swapped. This has
+no practical consequences since those fields are not used.
+Same goes for umac_major and umac_minor which were only
+printed under certain debug flags.
 
-Signed-off-by: Liad Kaufman <liad.kaufman@intel.com>
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/intel/iwlwifi/fw/dbg.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
+ drivers/net/wireless/intel/iwlwifi/fw/api/alive.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/fw/dbg.c b/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
-index 2fa7ec466275..839010417241 100644
---- a/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
-+++ b/drivers/net/wireless/intel/iwlwifi/fw/dbg.c
-@@ -950,7 +950,20 @@ int iwl_fw_dbg_collect_desc(struct iwl_fw_runtime *fwrt,
- 	if (trigger)
- 		delay = msecs_to_jiffies(le32_to_cpu(trigger->stop_delay));
+diff --git a/drivers/net/wireless/intel/iwlwifi/fw/api/alive.h b/drivers/net/wireless/intel/iwlwifi/fw/api/alive.h
+index 3684a3e180e5..007bfe7656a4 100644
+--- a/drivers/net/wireless/intel/iwlwifi/fw/api/alive.h
++++ b/drivers/net/wireless/intel/iwlwifi/fw/api/alive.h
+@@ -95,8 +95,8 @@ enum {
+ #define IWL_ALIVE_FLG_RFKILL	BIT(0)
  
--	if (WARN(fwrt->trans->state == IWL_TRANS_NO_FW,
-+	/*
-+	 * If the loading of the FW completed successfully, the next step is to
-+	 * get the SMEM config data. Thus, if fwrt->smem_cfg.num_lmacs is non
-+	 * zero, the FW was already loaded successully. If the state is "NO_FW"
-+	 * in such a case - WARN and exit, since FW may be dead. Otherwise, we
-+	 * can try to collect the data, since FW might just not be fully
-+	 * loaded (no "ALIVE" yet), and the debug data is accessible.
-+	 *
-+	 * Corner case: got the FW alive but crashed before getting the SMEM
-+	 *	config. In such a case, due to HW access problems, we might
-+	 *	collect garbage.
-+	 */
-+	if (WARN((fwrt->trans->state == IWL_TRANS_NO_FW) &&
-+		 fwrt->smem_cfg.num_lmacs,
- 		 "Can't collect dbg data when FW isn't alive\n"))
- 		return -EIO;
+ struct iwl_lmac_alive {
+-	__le32 ucode_minor;
+ 	__le32 ucode_major;
++	__le32 ucode_minor;
+ 	u8 ver_subtype;
+ 	u8 ver_type;
+ 	u8 mac;
+@@ -113,8 +113,8 @@ struct iwl_lmac_alive {
+ } __packed; /* UCODE_ALIVE_NTFY_API_S_VER_3 */
  
+ struct iwl_umac_alive {
+-	__le32 umac_minor;		/* UMAC version: minor */
+ 	__le32 umac_major;		/* UMAC version: major */
++	__le32 umac_minor;		/* UMAC version: minor */
+ 	__le32 error_info_addr;		/* SRAM address for UMAC error log */
+ 	__le32 dbg_print_buff_addr;
+ } __packed; /* UMAC_ALIVE_DATA_API_S_VER_2 */
 -- 
 2.17.1
 
