@@ -6,43 +6,51 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B3AECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FB63ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCDFB2085B
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 369D9208A3
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nAhsAmTG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCDFB2085B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rQECTnwZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 369D9208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730965AbeJYWxQ (ORCPT
+        id S1730977AbeJYWxS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:53:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35662 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:53:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730942AbeJYWxP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:53:15 -0400
+        id S1729507AbeJYWxS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:53:18 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A26202085B;
-        Thu, 25 Oct 2018 14:20:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D533C20873;
+        Thu, 25 Oct 2018 14:20:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477217;
-        bh=9CXAaSh5CMkZ5Z1fHYLCLLb/NaGCfCRaAKtFoMrnmZQ=;
+        s=default; t=1540477220;
+        bh=O87FaVKY7Q/D8ZbEAh2M45CmJlx61mK4FegaOQ7QCeg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nAhsAmTGkyofTcp7meP4T8DWTSoyApNxFH80NE+nTuj8Sj5PbPW+Dkpr4TD5+n2+r
-         wfCyRYMGpd5M6eNaBDLWNVcbU2Li6PXGRYxwQGnZjogQ07/jKqOIaFIqMrewptWpEz
-         TVK/vY+UMfbauon9CPNRzyHNmuafRvpjgv8CmoU4=
+        b=rQECTnwZHn8bbgBSL0pStrkYugaBkYo81J/sxC3izZdujEAbQTHYiQexRiK88pVTM
+         ugbXvX/eMIEYsSPxwICxLBrNwDCefqvoeoTgkZ7z6FsixLSEdSkmxfHNjtXYLNAzey
+         VbtQ7ZA1fSdiPHY9+yYmKvB1druq4oFBew3X24vU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+Cc:     Joerg Roedel <jroedel@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, Jan Beulich <JBeulich@suse.com>,
+        "K . Y . Srinivasan" <kys@microsoft.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Prarit Bhargava <prarit@redhat.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Yinghai Lu <yinghai@kernel.org>, alnovak@suse.com,
+        joro@8bytes.org, Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 55/98] rcu: Clear need_qs flag to prevent splat
-Date:   Thu, 25 Oct 2018 10:18:10 -0400
-Message-Id: <20181025141853.214051-55-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 56/98] x86/irq: Check for valid irq descriptor in check_irq_vectors_for_cpu_disable()
+Date:   Thu, 25 Oct 2018 10:18:11 -0400
+Message-Id: <20181025141853.214051-56-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
 References: <20181025141853.214051-1-sashal@kernel.org>
@@ -51,90 +59,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+From: Joerg Roedel <jroedel@suse.de>
 
-[ Upstream commit c0135d07b013fa8f7ba9ec91b4369c372e6a28cb ]
+[ Upstream commit d97eb8966c91f2c9d05f0a22eb89ed5b76d966d1 ]
 
-If the scheduling-clock interrupt sets the current tasks need_qs flag,
-but if the current CPU passes through a quiescent state in the meantime,
-then rcu_preempt_qs() will fail to clear the need_qs flag, which can fool
-RCU into thinking that additional rcu_read_unlock_special() processing
-is needed.  This commit therefore clears the need_qs flag before checking
-for additional processing.
+When an interrupt is migrated away from a cpu it will stay
+in its vector_irq array until smp_irq_move_cleanup_interrupt
+succeeded. The cfg->move_in_progress flag is cleared already
+when the IPI was sent.
 
-For this problem to occur, we need rcu_preempt_data.passed_quiesce equal
-to true and current->rcu_read_unlock_special.b.need_qs also equal to true.
-This condition can occur as follows:
+When the interrupt is destroyed after migration its 'struct
+irq_desc' is freed and the vector_irq arrays are cleaned up.
+But since cfg->move_in_progress is already 0 the references
+at cpus before the last migration will not be cleared. So
+this would leave a reference to an already destroyed irq
+alive.
 
-1.	CPU 0 is aware of the current preemptible RCU grace period,
-	but has not yet passed through a quiescent state.  Among other
-	things, this means that rcu_preempt_data.passed_quiesce is false.
+When the cpu is taken down at this point, the
+check_irq_vectors_for_cpu_disable() function finds a valid irq
+number in the vector_irq array, but gets NULL for its
+descriptor and dereferences it, causing a kernel panic.
 
-2.	Task A running on CPU 0 enters a preemptible RCU read-side
-	critical section.
+This has been observed on real systems at shutdown. Add a
+check to check_irq_vectors_for_cpu_disable() for a valid
+'struct irq_desc' to prevent this issue.
 
-3.	CPU 0 takes a scheduling-clock interrupt, which notices the
-	RCU read-side critical section and the need for a quiescent state,
-	and thus sets current->rcu_read_unlock_special.b.need_qs to true.
-
-4.	Task A is preempted, enters the scheduler, eventually invoking
-	rcu_preempt_note_context_switch() which in turn invokes
-	rcu_preempt_qs().
-
-	Because rcu_preempt_data.passed_quiesce is false,
-	control enters the body of the "if" statement, which sets
-	rcu_preempt_data.passed_quiesce to true.
-
-5.	At this point, CPU 0 takes an interrupt.  The interrupt
-	handler contains an RCU read-side critical section, and
-	the rcu_read_unlock() notes that current->rcu_read_unlock_special
-	is nonzero, and thus invokes rcu_read_unlock_special().
-
-6.	Once in rcu_read_unlock_special(), the fact that
-	current->rcu_read_unlock_special.b.need_qs is true becomes
-	apparent, so rcu_read_unlock_special() invokes rcu_preempt_qs().
-	Recursively, given that we interrupted out of that same
-	function in the preceding step.
-
-7.	Because rcu_preempt_data.passed_quiesce is now true,
-	rcu_preempt_qs() does nothing, and simply returns.
-
-8.	Upon return to rcu_read_unlock_special(), it is noted that
-	current->rcu_read_unlock_special is still nonzero (because
-	the interrupted rcu_preempt_qs() had not yet gotten around
-	to clearing current->rcu_read_unlock_special.b.need_qs).
-
-9.	Execution proceeds to the WARN_ON_ONCE(), which notes that
-	we are in an interrupt handler and thus duly splats.
-
-The solution, as noted above, is to make rcu_read_unlock_special()
-clear out current->rcu_read_unlock_special.b.need_qs after calling
-rcu_preempt_qs().  The interrupted rcu_preempt_qs() will clear it again,
-but this is harmless.  The worst that happens is that we clobber another
-attempt to set this field, but this is not a problem because we just
-got done reporting a quiescent state.
-
-Reported-by: Sasha Levin <sasha.levin@oracle.com>
-Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-[ paulmck: Fix embarrassing build bug noted by Sasha Levin. ]
-Tested-by: Sasha Levin <sasha.levin@oracle.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Reviewed-by: Jiang Liu <jiang.liu@linux.intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Jan Beulich <JBeulich@suse.com>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Prarit Bhargava <prarit@redhat.com>
+Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Yinghai Lu <yinghai@kernel.org>
+Cc: alnovak@suse.com
+Cc: joro@8bytes.org
+Link: http://lkml.kernel.org/r/20150204132754.GA10078@suse.de
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/rcu/tree_plugin.h | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kernel/irq.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index c1d7f27bd38f..c038831bfa57 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -328,6 +328,7 @@ void rcu_read_unlock_special(struct task_struct *t)
- 	special = t->rcu_read_unlock_special;
- 	if (special.b.need_qs) {
- 		rcu_preempt_qs();
-+		t->rcu_read_unlock_special.b.need_qs = false;
- 		if (!t->rcu_read_unlock_special.s) {
- 			local_irq_restore(flags);
- 			return;
+diff --git a/arch/x86/kernel/irq.c b/arch/x86/kernel/irq.c
+index 37907756fc41..1d6e2946a3da 100644
+--- a/arch/x86/kernel/irq.c
++++ b/arch/x86/kernel/irq.c
+@@ -302,6 +302,9 @@ int check_irq_vectors_for_cpu_disable(void)
+ 		irq = __this_cpu_read(vector_irq[vector]);
+ 		if (irq >= 0) {
+ 			desc = irq_to_desc(irq);
++			if (!desc)
++				continue;
++
+ 			data = irq_desc_get_irq_data(desc);
+ 			cpumask_copy(&affinity_new, data->affinity);
+ 			cpu_clear(this_cpu, affinity_new);
 -- 
 2.17.1
 
