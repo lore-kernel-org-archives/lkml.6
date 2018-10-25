@@ -2,225 +2,165 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 565F8C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:46:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E77C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:48:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D134B20831
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:46:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="AlYUb4Hq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D134B20831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 32B1020831
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:48:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32B1020831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727369AbeJYUSe (ORCPT
+        id S1727408AbeJYUUf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 16:18:34 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:43722 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727208AbeJYUSd (ORCPT
+        Thu, 25 Oct 2018 16:20:35 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:61968 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727236AbeJYUUf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 16:18:33 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9PBi9Ek040211;
-        Thu, 25 Oct 2018 11:46:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=2js05GJHcLoEjTUZz0fKGBdhFoNi1AeytWa6jt3j0Yo=;
- b=AlYUb4Hql3ZDxl48bO/C72wa2pNA+FPb7qUdpsI9W5qCv9Wy19Vwhiy5UGLQI7jnmWD0
- dnuP5ciWglrh3VlU4wnYBKMSgsobrBTY2hm3CurGcDsr1vavX82X0dv5LcpK7k67KVfC
- 2Mvjkdmo77d5Cx/H9iBVpa6M+BQeh4KotzRAEWcLF3b5Q+y8CFAZTGwsGG61bibrYrEd
- kTDo8PNw+m0/ncVe7uKLiEOCNqfePOxIfRFPSrI/5ztZvtHoWUs9+X76/qzURFHqv+ZH
- /ab0+Cekj9nU+iZydBSPHNecW+QUy07FNzVRHAom2dl+/0BC20nA+8v0m/rzXT6iOPIi 4A== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2120.oracle.com with ESMTP id 2n7vaq915c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 25 Oct 2018 11:46:02 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9PBk2N6002403
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 25 Oct 2018 11:46:02 GMT
-Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9PBk1Vm004899;
-        Thu, 25 Oct 2018 11:46:02 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 25 Oct 2018 04:45:57 -0700
-Subject: Re: [PATCH] xen-swiotlb: exchange memory with Xen only when pages are
- contiguous
-To:     Joe Jin <joe.jin@oracle.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc:     "DONGLI.ZHANG" <dongli.zhang@oracle.com>, konrad@kernel.org,
-        Christoph Helwig <hch@lst.de>,
-        John Sobecki <john.sobecki@oracle.com>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "linux-kernel@vger.kernel.org\"" <linux-kernel@vger.kernel.org>
-References: <bb6d87b4-c371-c6c0-8c48-bc95df018ad1@oracle.com>
- <20181024130246.GA22616@localhost.localdomain>
- <83900cf4-690c-9725-d022-d427fdeb4f7d@oracle.com>
- <581cb7ea-3112-791d-918d-9bb887e4744f@oracle.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <24a62522-1629-5d0b-398e-6d2c1a0b97f7@oracle.com>
-Date:   Thu, 25 Oct 2018 07:45:54 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 25 Oct 2018 16:20:35 -0400
+Received: from fsav404.sakura.ne.jp (fsav404.sakura.ne.jp [133.242.250.103])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9PBllOZ057925;
+        Thu, 25 Oct 2018 20:47:47 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav404.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav404.sakura.ne.jp);
+ Thu, 25 Oct 2018 20:47:46 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav404.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank060157065137.bbtec.net [60.157.65.137])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w9PBlgTA057893
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Thu, 25 Oct 2018 20:47:46 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: KASAN: use-after-free Read in task_is_descendant
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     serge@hallyn.com,
+        syzbot <syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com>,
+        jmorris@namei.org, keescook@chromium.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+References: <76013c9e-0664-ef5e-b6c0-d48f6ce5db3c@i-love.sakura.ne.jp>
+ <20181022134634.GA7358@redhat.com>
+ <201810250215.w9P2Fm2M078167@www262.sakura.ne.jp>
+ <20181025111355.GA3725@redhat.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <b0ac67e6-4279-91b3-0178-3176876abe70@i-love.sakura.ne.jp>
+Date:   Thu, 25 Oct 2018 20:47:42 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <581cb7ea-3112-791d-918d-9bb887e4744f@oracle.com>
+In-Reply-To: <20181025111355.GA3725@redhat.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9056 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810250105
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/24/18 10:43 AM, Joe Jin wrote:
-> On 10/24/18 6:57 AM, Boris Ostrovsky wrote:
->> On 10/24/18 9:02 AM, Konrad Rzeszutek Wilk wrote:
->>> On Tue, Oct 23, 2018 at 08:09:04PM -0700, Joe Jin wrote:
->>>> Commit 4855c92dbb7 "xen-swiotlb: fix the check condition for
->>>> xen_swiotlb_free_coherent" only fixed memory address check condition
->>>> on xen_swiotlb_free_coherent(), when memory was not physically
->>>> contiguous and tried to exchanged with Xen via 
->>>> xen_destroy_contiguous_region it will lead kernel panic.
->>> s/it will lead/which lead to/?
->>>
->>>> The correct check condition should be memory is in DMA area and
->>>> physically contiguous.
->>> "The correct check condition to make Xen hypercall to revert the
->>> memory back from its 32-bit pool is if it is:
->>>  1) Above its DMA bit mask (for example 32-bit devices can only address
->>> up to 4GB, and we may want 4GB+2K), and
->> Is this "and' or 'or'?
+On 2018/10/25 20:13, Oleg Nesterov wrote:
+> On 10/25, Tetsuo Handa wrote:
 >>
->>>  2) If it not physically contingous
->>>
->>> N.B. The logic in the code is inverted, which leads to all sorts of
->>> confusions."
->>
->> I would, in fact, suggest to make the logic the same in both
->> xen_swiotlb_alloc_coherent() and xen_swiotlb_free_coherent() to avoid
->> this. This will involve swapping if and else in the former.
->>
->>
->>> Does that sound correct?
->>>
->>>> Thank you Boris for pointing it out.
+>> Oleg Nesterov wrote:
+>>> On 10/22, Tetsuo Handa wrote:
+>>>>> And again, I do not know how/if yama ensures that child is rcu-protected, perhaps
+>>>>> task_is_descendant() needs to check pid_alive(child) right after rcu_read_lock() ?
 >>>>
->>> Fixes: 4855c92dbb7 ("xen-sw..") ?
+>>>> Since the caller (ptrace() path) called get_task_struct(child), child itself can't be
+>>>> released. Do we still need pid_alive(child) ?
 >>>
->>>> Signed-off-by: Joe Jin <joe.jin@oracle.com>
->>>> Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
->>>> Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
->>> Reported-by: Boris Ostrovs... ?
->>>> Cc: Christoph Helwig <hch@lst.de>
->>>> Cc: Dongli Zhang <dongli.zhang@oracle.com>
->>>> Cc: John Sobecki <john.sobecki@oracle.com>
->>>> ---
->>>>  drivers/xen/swiotlb-xen.c | 4 ++--
->>>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/drivers/xen/swiotlb-xen.c b/drivers/xen/swiotlb-xen.c
->>>> index f5c1af4ce9ab..aed92fa019f9 100644
->>>> --- a/drivers/xen/swiotlb-xen.c
->>>> +++ b/drivers/xen/swiotlb-xen.c
->>>> @@ -357,8 +357,8 @@ xen_swiotlb_free_coherent(struct device *hwdev, size_t size, void *vaddr,
->>>>  	/* Convert the size to actually allocated. */
->>>>  	size = 1UL << (order + XEN_PAGE_SHIFT);
->>>>  
->>>> -	if (((dev_addr + size - 1 <= dma_mask)) ||
->>>> -	    range_straddles_page_boundary(phys, size))
->>>> +	if ((dev_addr + size - 1 <= dma_mask) &&
->>>> +	    !range_straddles_page_boundary(phys, size))
->>>>  		xen_destroy_contiguous_region(phys, order);
+>>> get_task_struct(child) can only ensure that this task_struct can't be freed.
 >>
->> I don't think this is right.
+>> The report says that it is a use-after-free read at
 >>
->> if ((dev_addr + size - 1 > dma_mask) || range_straddles_page_boundary(phys, size))
+>>   walker = rcu_dereference(walker->real_parent);
 >>
->> No?
-> No this is not correct.
->
-> When allocate memory, it tried to allocated from Dom0/Guest, then check if physical
-> address is DMA memory also contiguous, if no, exchange with Hypervisor, code as below:
->
-> 326         phys = *dma_handle;                                                     
-> 327         dev_addr = xen_phys_to_bus(phys);                                       
-> 328         if (((dev_addr + size - 1 <= dma_mask)) &&                              
-> 329             !range_straddles_page_boundary(phys, size))                         
-> 330                 *dma_handle = dev_addr;                                         
-> 331         else {                                                                  
-> 332                 if (xen_create_contiguous_region(phys, order,                   
-> 333                                                  fls64(dma_mask), dma_handle) != 0) {
-> 334                         xen_free_coherent_pages(hwdev, size, ret, (dma_addr_t)phys, attrs);
-> 335                         return NULL;                                            
-> 336                 }                                                               
-> 337         }                                                                       
->                                                                      
->
-> On freeing, need to return the memory to Xen, otherwise DMA memory will be used
-> up(this is the issue the patch intend to fix), so when memory is DMAable and
-> contiguous then call xen_destroy_contiguous_region(), return DMA memory to Xen.
+>> which means that walker was already released.
+> 
+> quite possibly I missed something, but I am not sure I understand your concerns...
+> 
+> So again, suppose that "child" is already dead. Its task_struct can't be freed,
+> but child->real_parent can point to the already freed memory.
 
-So if you want to allocate 1 byte at address 0 (and dev_addr=phys),
-xen_create_contiguous_region() will not be called. And yet you will call
-xen_destroy_contiguous_region() in the free path.
+Yes.
 
-Is this the expected behavior?
+But if child->real_parent is pointing to the already freed memory,
+why does pid_alive(child) == true help?
 
--boris
+> 
+> This means that the 1st walker = rcu_dereference(walker->real_parent) is fine,
+> this simply reads the child->real_parent pointer,
+
+Yes.
+
+>                                                   but on the second iteration
+> 
+> 	walker = rcu_dereference(walker->real_parent);
+> 
+> reads the alredy freed memory.
+
+Yes.
+
+> 
+>> I wonder whether pid_alive() test helps.
+>>
+>> We can get
+>>
+>> [   40.620318] parent or walker is dead.
+>> [   40.624146] tracee is dead.
+>>
+>> messages using below patch and reproducer.
+> 
+> again, I do not understand, this all looks correct...
+> 
+>> ----------
+>> diff --git a/kernel/ptrace.c b/kernel/ptrace.c
+>> index 99cfddd..0d9d786 100644
+>> --- a/kernel/ptrace.c
+>> +++ b/kernel/ptrace.c
+>> @@ -385,6 +385,7 @@ static int ptrace_attach(struct task_struct *task, long request,
+>>  	if (mutex_lock_interruptible(&task->signal->cred_guard_mutex))
+>>  		goto out;
+>>
+>> +	schedule_timeout_killable(HZ);
+>>  	task_lock(task);
+>>  	retval = __ptrace_may_access(task, PTRACE_MODE_ATTACH_REALCREDS);
+>>  	task_unlock(task);
+>> diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
+>> index ffda91a..a231ec6 100644
+>> --- a/security/yama/yama_lsm.c
+>> +++ b/security/yama/yama_lsm.c
+>> @@ -283,6 +283,11 @@ static int task_is_descendant(struct task_struct *parent,
+>>  		return 0;
+>>
+>>  	rcu_read_lock();
+>> +	if (!pid_alive(parent) || !pid_alive(walker)) {
+>> +		rcu_read_unlock();
+>> +		printk("parent or walker is dead.\n");
+> 
+> This is what we need to do, except I think we should change yama_ptrace_access_check().
+> And iiuc parent == current, pid_alive(parent) looks unnecessary. Although we need to
+> check ptracer_exception_found(), may be it needs some changes too.
+
+There are two task_is_descendant() callers, and one of them is not passing current.
+
+> 
+> And yes, task_is_descendant() can hit the dead child, if nothing else it can
+> be killed. This can explain the kasan report.
+
+The kasan is reporting that child->real_parent (or maybe child->real_parent->real_parent
+or child->real_parent->real_parent->real_parent ...) was pointing to already freed memory,
+isn't it?
+
+How can we check that that pointer is pointing to already freed memory? As soon as
+
+  walker = rcu_dereference(walker->real_parent);
+
+is executed, task_alive(walker) will try to read from already freed memory...
+
