@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B35FECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22763C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:15:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C97A2086D
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:15:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD57920834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:15:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zz2kC/g1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C97A2086D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sBqCWH7x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD57920834
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728815AbeJYWsF (ORCPT
+        id S1728830AbeJYWsG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:48:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56446 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:48:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728790AbeJYWsD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:48:03 -0400
+        id S1728494AbeJYWsF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:48:05 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34D7320854;
-        Thu, 25 Oct 2018 14:15:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89FCB20834;
+        Thu, 25 Oct 2018 14:15:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540476907;
-        bh=aNYpF3/knIOBXUM41FZ2SEOMHpehelsVNA5yxxBDWJE=;
+        s=default; t=1540476908;
+        bh=5Afv3zS4JqP/UqiI2CQgD83lzE06dD20br3jizt800o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zz2kC/g1p+/BVy7OrkzYiYff2tRUxBtmZrPrYgkLyjMS5rP5IGk5LUSBFaII+eGl2
-         HDYjf9SaO9Zv45Vj4LERTjUQb6mm/RUhM8Jugh86qYu1CpPWzxXR6FrbXC0c2UUUvO
-         Lnxod+8K3O133oxIjlHjcDaY8oFxp2J0YswkUxhc=
+        b=sBqCWH7xgSS3msAOzDHEMDoZMSd5TxT0fT4BEk6c7I8kTooOJ181wcUVIcVhxN67V
+         Icz1dey6ecqtOQrgvDomctp6NNo0SjF3BZzxfb6EQNupuLmseS9NtNhc9BoZGVh2So
+         GW3Dm0WwCtCO8HmSiwDapWZAI0TBKoQweoXhySt0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jeremy Linton <lintonrjeremy@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
+Cc:     Shreyas NC <shreyas.nc@intel.com>,
+        "Subhransu S . Prusty" <subhransu.s.prusty@intel.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 28/98] reset: hi6220: Set module license so that it can be loaded
-Date:   Thu, 25 Oct 2018 10:13:13 -0400
-Message-Id: <20181025141423.213774-28-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 29/98] ASoC: Intel: Skylake: Fix to parse consecutive string tkns in manifest
+Date:   Thu, 25 Oct 2018 10:13:14 -0400
+Message-Id: <20181025141423.213774-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141423.213774-1-sashal@kernel.org>
 References: <20181025141423.213774-1-sashal@kernel.org>
@@ -53,34 +54,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeremy Linton <lintonrjeremy@gmail.com>
+From: Shreyas NC <shreyas.nc@intel.com>
 
-[ Upstream commit 4497a224f759cd8350e07382307b55f870ef0df2 ]
+[ Upstream commit 0a716776914ed9d7ca90b48041e6767693bfb672 ]
 
-The hi6220_reset driver can be built as a standalone module
-yet it cannot be loaded because it depends on GPL exported symbols.
+Element size in the manifest should be updated for each token, so that the
+loop can parse all the string elements in the manifest. This was not
+happening when more than two string elements appear consecutively, as it is
+not updated with correct string element size. Fixed with this patch.
 
-Lets set the module license so that the module loads, and things like
-the on-board kirin drm starts working.
-
-Signed-off-by: Jeremy Linton <lintonrjeremy@gmail.com>
-Reviewed-by: Xinliang Liu <xinliang.liu@linaro.org>
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Shreyas NC <shreyas.nc@intel.com>
+Signed-off-by: Subhransu S. Prusty <subhransu.s.prusty@intel.com>
+Acked-by: Vinod Koul <vinod.koul@intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/reset/hisilicon/hi6220_reset.c | 2 ++
- 1 file changed, 2 insertions(+)
+ sound/soc/intel/skylake/skl-topology.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/reset/hisilicon/hi6220_reset.c b/drivers/reset/hisilicon/hi6220_reset.c
-index 35ce53edabf9..d5e5229308f2 100644
---- a/drivers/reset/hisilicon/hi6220_reset.c
-+++ b/drivers/reset/hisilicon/hi6220_reset.c
-@@ -155,3 +155,5 @@ static int __init hi6220_reset_init(void)
- }
+diff --git a/sound/soc/intel/skylake/skl-topology.c b/sound/soc/intel/skylake/skl-topology.c
+index bef8a4546c12..b0c154d5924b 100644
+--- a/sound/soc/intel/skylake/skl-topology.c
++++ b/sound/soc/intel/skylake/skl-topology.c
+@@ -2325,7 +2325,7 @@ static int skl_tplg_get_manifest_tkn(struct device *dev,
  
- postcore_initcall(hi6220_reset_init);
-+
-+MODULE_LICENSE("GPL v2");
+ 			if (ret < 0)
+ 				return ret;
+-			tkn_count += ret;
++			tkn_count = ret;
+ 
+ 			tuple_size += tkn_count *
+ 				sizeof(struct snd_soc_tplg_vendor_string_elem);
 -- 
 2.17.1
 
