@@ -2,157 +2,163 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BA5DC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7F4FC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:06:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3C302082D
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:00:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aW3Q3z1g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3C302082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 807A22082D
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:06:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 807A22082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727302AbeJYScj (ORCPT
+        id S1727319AbeJYSi3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 14:32:39 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:47073 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727208AbeJYScj (ORCPT
+        Thu, 25 Oct 2018 14:38:29 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:43898 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726852AbeJYSi3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 14:32:39 -0400
-Received: by mail-vs1-f67.google.com with SMTP id l6so5084542vsj.13;
-        Thu, 25 Oct 2018 03:00:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=dR5bFwv8bOwwJs4GKudaPDmPfcxoCd5ewhF77B+pa74=;
-        b=aW3Q3z1g6uh2nr7DsgZUsDNHen6fpD1Lf72T9TFyr5C1kr6rX+O1axNf0wIzxnhz0v
-         nN+USedGRotztfjjTmvJUbPIsMBNHrMxescdqNkzLY0jA/JOwob9QNyT4+RepqC68PHk
-         uUwNHI8OZY6oiDJIU+JK+93eipyD5Ejo1s7UclYl22a179s/6GozYoASY9+YwGgS5TKr
-         q7KlA5wAjDnkjcszJ1bGUPm+WZJ44f5lVUIZc/G5GuSud7RXvtKv1M+x0t/FW16O4RP9
-         HN7mo5bPNhmE/6+L/oI81QKFhvd2c/bSu3kK/TcF1JVinHjRT7W0U2xHrpPdKH3G/0bK
-         +m2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=dR5bFwv8bOwwJs4GKudaPDmPfcxoCd5ewhF77B+pa74=;
-        b=h5fkvssf9aBkNuOKyyFLV14O/gBX24bvLCR2kiPu7c3/Sk4wRJCmZrXpgIhSXGoo12
-         Cg2/8aaZ3vvAuEKCQeMS0/c/Igxt1HhyWtKkXdIGSo9uNWFvQx8REKSPmZJM+pMsdJb1
-         NDBU+25NMP29vTQlybxoWZqkANHvdWVIOnnWHysqQwtT98pYksxQqJPJ3Q1ReCb06i4D
-         OJ1ckiUVot5v26XezShgaCnVfaFmKhcHBty5jAZZwF5hkCWIHF6FE8FJiJtST62qpVNn
-         8f7uX282k7vvNHlArRxgGNIWUDTCr1NWcvu/7VQSiTqBrWLLODcaxQP7GfXwyjcKHm8q
-         fnXA==
-X-Gm-Message-State: AGRZ1gKLq1qE+Lfra17A2rmbuQKEGZPI1oQhvHI/kYz5YTTYzdD0JbJc
-        mkci6TK/gheIoc2xINFtuDId3wfiRriBpqI0mx8=
-X-Google-Smtp-Source: AJdET5cIcMq/7jZKfe2l4J7XsJ9SL4yZEWB7R8LTBEyskJzAU27PXRGeUlVrD8fiMRFo8S+vxVY+M8Wa+bVexGgqGIU=
-X-Received: by 2002:a67:33d1:: with SMTP id z200mr383864vsz.40.1540461636798;
- Thu, 25 Oct 2018 03:00:36 -0700 (PDT)
+        Thu, 25 Oct 2018 14:38:29 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9PA6Ldb090205;
+        Thu, 25 Oct 2018 05:06:21 -0500
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id w9PA6Lmn072075
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 25 Oct 2018 05:06:21 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 25
+ Oct 2018 05:06:20 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 25 Oct 2018 05:06:20 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9PA6Ff3003168;
+        Thu, 25 Oct 2018 05:06:18 -0500
+Subject: Re: [RFC PATCH 01/11] phy: core add phy_set_netif_mode() api
+To:     Grygorii Strashko <grygorii.strashko@ti.com>,
+        "David S. Miller" <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20181008234949.15416-1-grygorii.strashko@ti.com>
+ <20181008234949.15416-2-grygorii.strashko@ti.com>
+ <54ba13bb-95e1-1519-a30f-8da198447489@ti.com>
+ <18219d97-f86e-27ee-a116-a8febc3dcd24@ti.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <d63588f6-9ab0-848a-5ad4-8073143bd95d@ti.com>
+Date:   Thu, 25 Oct 2018 15:35:46 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <cover.1540430861.git.nickhu@andestech.com>
-In-Reply-To: <cover.1540430861.git.nickhu@andestech.com>
-From:   Greentime Hu <green.hu@gmail.com>
-Date:   Thu, 25 Oct 2018 17:59:59 +0800
-Message-ID: <CAEbi=3epEazp30TE=dgVtAU8kye49a3z7uZig88q0zngxAmitg@mail.gmail.com>
-Subject: Re: [PATCH v4 0/4] nds32: Perf support
-To:     Nickhu <nickhu@andestech.com>
-Cc:     Greentime <greentime@andestech.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, mingo@redhat.com,
-        acme@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, namhyung@kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        gregkh@linuxfoundation.org, kstewart@linuxfoundation.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        linux-arm-kernel@lists.infradead.org,
-        DTML <devicetree@vger.kernel.org>, Zong Li <zong@andestech.com>,
-        alankao@andestech.com, Vincent Chen <deanbo422@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <18219d97-f86e-27ee-a116-a8febc3dcd24@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Nick Hu <nickhu@andestech.com> =E6=96=BC 2018=E5=B9=B410=E6=9C=8825=E6=97=
-=A5 =E9=80=B1=E5=9B=9B =E4=B8=8A=E5=8D=8810:25=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> These four commits are perf supporting for nds32.
-> There are three perfomance counters in nds32, and
-> each of them can counts different events. You can
-> use 'perf list' to show the available events that
-> can be used.
->
-> Changes in V2:
->         1. Change the definition 'PFM_CTL_xxx' to
-> array form.
->
->         2. Simplify the PMU driver.
->
->         3. Stop all counters when handling irq
-> caused by performance counters overflow.
->
->         4. Rename the compatible string in
-> devicetree.
->
-> Changes in V3:
->         Fix the typo in Documentation/devicetree/
-> bindings/nds32/pmu.txt.
->
-> Changes in V4:
->         Move 'Documentation/devicetree/bindings/nds32/pmu.txt'
-> to 'Documentation/devicetree/bindings/perf/nds32v3-pmu.txt'.
->
-> Nickhu (4):
->   nds32: Fix bug in bitfield.h
->   nds32: Perf porting
->   nds32: Add perf call-graph support.
->   nds32: Add document for NDS32 PMU.
->
->  .../devicetree/bindings/perf/nds32v3-pmu.txt  |   17 +
->  arch/nds32/Kconfig                            |    1 +
->  arch/nds32/boot/dts/ae3xx.dts                 |    5 +
->  arch/nds32/include/asm/Kbuild                 |    1 +
->  arch/nds32/include/asm/bitfield.h             |    4 +-
->  arch/nds32/include/asm/perf_event.h           |   16 +
->  arch/nds32/include/asm/pmu.h                  |  386 +++++
->  arch/nds32/include/asm/stacktrace.h           |   39 +
->  arch/nds32/kernel/Makefile                    |    3 +-
->  arch/nds32/kernel/perf_event_cpu.c            | 1522 +++++++++++++++++
->  arch/nds32/mm/fault.c                         |   13 +-
->  tools/include/asm/barrier.h                   |    2 +
->  tools/perf/arch/nds32/Build                   |    1 +
->  tools/perf/arch/nds32/util/Build              |    1 +
->  tools/perf/arch/nds32/util/header.c           |   29 +
->  tools/perf/pmu-events/arch/nds32/mapfile.csv  |   15 +
->  .../pmu-events/arch/nds32/n13/atcpmu.json     |  290 ++++
->  17 files changed, 2337 insertions(+), 8 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/perf/nds32v3-pmu.tx=
-t
->  create mode 100644 arch/nds32/include/asm/perf_event.h
->  create mode 100644 arch/nds32/include/asm/pmu.h
->  create mode 100644 arch/nds32/include/asm/stacktrace.h
->  create mode 100644 arch/nds32/kernel/perf_event_cpu.c
->  create mode 100644 tools/perf/arch/nds32/Build
->  create mode 100644 tools/perf/arch/nds32/util/Build
->  create mode 100644 tools/perf/arch/nds32/util/header.c
->  create mode 100644 tools/perf/pmu-events/arch/nds32/mapfile.csv
->  create mode 100644 tools/perf/pmu-events/arch/nds32/n13/atcpmu.json
->
-Hi Nick,
+Hi,
 
-Thank you.
-Acked-by: Greentime Hu <greentime@andestech.com>
+On Wednesday 10 October 2018 04:13 AM, Grygorii Strashko wrote:
+> 
+> 
+> On 10/09/2018 12:22 AM, Kishon Vijay Abraham I wrote:
+>> Hi Grygorii,
+>>
+>> On Tuesday 09 October 2018 05:19 AM, Grygorii Strashko wrote:
+>>> Add new API phy_set_netif_mode(struct phy *phy, phy_interface_t mode) and
+>>> new PHY operation callback .set_netif_mode() which intended to be implemnte
+>>> by PHY drivers which supports Network interrfaces mode selection. Both
+>>> accepts phy_interface_t vlaue as input parameter.
+>>>
+>>> Cc: Kishon Vijay Abraham I <kishon@ti.com>
+>>> Cc: Tony Lindgren <tony@atomide.com>
+>>> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>>> ---
+>>>   drivers/phy/phy-core.c  | 15 +++++++++++++++
+>>>   include/linux/phy/phy.h | 12 ++++++++++++
+>>>   2 files changed, 27 insertions(+)
+>>>
+>>> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+>>> index 35fd38c..d9aba1a 100644
+>>> --- a/drivers/phy/phy-core.c
+>>> +++ b/drivers/phy/phy-core.c
+>>> @@ -377,6 +377,21 @@ int phy_set_mode(struct phy *phy, enum phy_mode mode)
+>>>   }
+>>>   EXPORT_SYMBOL_GPL(phy_set_mode);
+>>>   
+>>> +int phy_set_netif_mode(struct phy *phy, phy_interface_t mode)
+>>> +{
+>>> +	int ret;
+>>> +
+>>> +	if (!phy || !phy->ops->set_netif_mode)
+>>> +		return 0;
+>>> +
+>>> +	mutex_lock(&phy->mutex);
+>>> +	ret = phy->ops->set_netif_mode(phy, mode);
+>>> +	mutex_unlock(&phy->mutex);
+>>> +
+>>> +	return ret;
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(phy_set_netif_mode);
+>>
+>> We should try to add only generic PHY APIs and not subsystem specific APIs. In
+>> this case I think phy_set_mode should suffice.
+> 
+> 
+> This is what I've had in mind first, but all my guts argued against it after I've tried:
+> 
+> diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+> index bc73d2b..961b156 100644
+> --- a/include/linux/phy/phy.h
+> +++ b/include/linux/phy/phy.h
+> @@ -41,6 +41,14 @@ enum phy_mode {
+>         PHY_MODE_10GKR,
+>         PHY_MODE_UFS_HS_A,
+>         PHY_MODE_UFS_HS_B,
+> +       PHY_MODE_MODE_MII,
+> +       PHY_MODE_MODE_GMII,
+> +       PHY_MODE_MODE_SGMII,
+> +       PHY_MODE_MODE_RMII,
+> +       PHY_MODE_MODE_RGMII,
+> +       PHY_MODE_MODE_RGMII_ID,
+> +       PHY_MODE_MODE_RGMII_RXID,
+> +       PHY_MODE_MODE_RGMII_TXID,
+>  };
+> 
+> above introduces ugly constants duplication and required every network phy driver
+> to maintain conversation table  phy_interface_t -> enum phy_mode.
+> More over, if above change happens third time (first time PHY_MODE_SGMII/PHY_MODE_10GKR were added,
+> second - PHY_MODE_2500SGMII) it will never ends (there are ~15 more items only in phy_interface_t).
+> As result, enum phy_mode might became a un-maintainable monster.
+> 
+> So, as per above, and considering that Network subsystem is based on standards (phy_interface_t lists standard intf)
+> I've tried to add separate PHY API.
+> 
+> As an idea:
+> - seems it could be reasonable to introduce PHY_MODE_NETWORK (or PHY_MODE_ETHERNET) and
+> add generic phy_set_submode(struct phy *phy, long submode). 
+> 
+> So, single functional PHY device can just use phy_set_submode() and
+> multi-functional devices (like serdes which can be muxed between PCIe, USB, NET), can use:
+> 
+> phy_set_mode(PHY_MODE_ETHERNET)
+> phy_set_submode(X);
+
+Agreed on the constant duplication comment above. We can modify set_mode to
+take submode as an additional parameter and fix all the users of phy_set_mode.
+int phy_set_mode(struct phy *phy, enum phy_mode mode, int submode)
+
+Thanks
+Kishon
