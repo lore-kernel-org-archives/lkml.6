@@ -7,67 +7,65 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D00BAECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 05:53:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35E24ECDE48
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 05:53:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97E2E20831
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 05:53:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F092520831
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 05:53:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WK2e5x/w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97E2E20831
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TByAGHbk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F092520831
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727338AbeJYOYa (ORCPT
+        id S1727394AbeJYOYd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 10:24:30 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:39836 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726652AbeJYOY3 (ORCPT
+        Thu, 25 Oct 2018 10:24:33 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45303 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727350AbeJYOYd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 10:24:29 -0400
-Received: by mail-pg1-f195.google.com with SMTP id r9-v6so3480155pgv.6
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 22:53:19 -0700 (PDT)
+        Thu, 25 Oct 2018 10:24:33 -0400
+Received: by mail-pg1-f196.google.com with SMTP id s3-v6so3469021pga.12
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 22:53:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=avYgO8zmRu0z6skuS/KZQ7OfLu1Dauo/53ZC7TuTX1M=;
-        b=WK2e5x/wn+DwVaY2TkDftoOK6YXeok4Q7tIFiLxlLuvd4DXc5H9FTxJA28BuoHtlSI
-         WHYPTDWP68I50uP3WuV8h5sRuYyZJK4TO1yGIsapNDahoRUMbEvGsUJ6AJL5q2dgSJmz
-         74tmhRxNd0MJO+2aWquQlgnXhHG4O3WCE1CGQ=
+        bh=iFMPg2Y477Eixw34Pr/S9pCpksPj3HUPJVaQkzWELow=;
+        b=TByAGHbk7rgoR87DUWV9J3RXadVqjbsoOsoUaThuHgJdg0z9Og9n8AwSIbRFsJk3uJ
+         bXYPvH4fcnsdMnZEdCDnqO69TaKjWDm1FQ2NqvuCJNB9MyWm9yQ1FCSxydLKQAaTrjr2
+         UQ74d4lTe4d7fRB+B9bEiEKUzZ73731uaHsD4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=avYgO8zmRu0z6skuS/KZQ7OfLu1Dauo/53ZC7TuTX1M=;
-        b=BJQ1QpYigETqvIeKh4KOb4d7qtf/Mlnq3IYpWLnZzngYG4fpamN+iPtfY8k709NOWl
-         yXKJziGc7MtaXF0tkmBukpoZNvtUouIbIEq1HR+B43gaLwzDDX82OITaQRIaxjQ3X73v
-         2L2X7VBOqANP4hOOeqtMl9aAgng5PEIGeJtrMUag4fkqQfEqokDKqqbKJkZaQHL3jZNZ
-         8RyUOD83+JlXktrqUP2wT9Vlfi0dIXP/sOLMuHP52qVeJ/JK6H31Dury8g1EykdoqBB1
-         uPPS2h4M99VKppOdQm2g3rGmGvQNRihndpZILVpNKKWQDvxOicyeGpYj2RECAgJlarJP
-         JGXw==
-X-Gm-Message-State: AGRZ1gITTahgV+SJfO5FcAGuaS9+w4rgNVevVkhts2JiI8RUYay9VTqI
-        vX+MirfHSVf4guuLg7l9+p2+0w==
-X-Google-Smtp-Source: AJdET5dXWUCegHBd2H47A49LjZusMv03QTMBh+fOrwTNQi9NpllG8Rok9K7iJfgJarzHTRr0RgOQ3w==
-X-Received: by 2002:a63:194a:: with SMTP id 10-v6mr211043pgz.192.1540446798805;
-        Wed, 24 Oct 2018 22:53:18 -0700 (PDT)
+        bh=iFMPg2Y477Eixw34Pr/S9pCpksPj3HUPJVaQkzWELow=;
+        b=lWGvJz1T/g7Bly6VXSuTXdnPTIGfIzsgLQr9J5EvBp24IoxhGCtg7oF/9c1dtIwgtr
+         3GdxQguib8shBfFVIIxsnX0scJvDDCTRpHFUj/gC93IQVwmQ3MzqwZADdhr/lS70tAPs
+         /+bGS5EW8+kIGTVtifxyEmhK1Tn/FtnRIAqV1mGj6gx8Lo3qJDdbQOLvUvmyKCwjmHN4
+         SurEHvBfsq94iVMngGXI38YQZ4JsgAbBoXAkzYWxu/Pxa+ZkQ8C+Yvx+oiqf3F/nkPN/
+         u7KW4ONRTO5XNfrJbatMC1qjmE3nZl5PGXQYpJ00RPtMNHoIizNVQZmChboCi3Rf21dx
+         GXRA==
+X-Gm-Message-State: AGRZ1gIfnuCWXnVxqu9rTSfH9sCSaCJaW/cmYFzKGiB3BM+kicYt+vxC
+        XoThuBBljBYtPARIXqThbdlkUg==
+X-Google-Smtp-Source: AJdET5cxHtAaoKd64fqXgA4t8daiRJkloPI8Kvxnbj+KR8oo4nloBI838LHmzQaH8B9GeZBN083rgQ==
+X-Received: by 2002:a62:8301:: with SMTP id h1-v6mr206832pfe.29.1540446802327;
+        Wed, 24 Oct 2018 22:53:22 -0700 (PDT)
 Received: from localhost ([122.172.217.9])
-        by smtp.gmail.com with ESMTPSA id o75-v6sm14923493pfg.0.2018.10.24.22.53.17
+        by smtp.gmail.com with ESMTPSA id u7-v6sm585161pfl.34.2018.10.24.22.53.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Oct 2018 22:53:18 -0700 (PDT)
+        Wed, 24 Oct 2018 22:53:21 -0700 (PDT)
 From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     ulf.hansson@linaro.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Len Brown <len.brown@intel.com>
+To:     ulf.hansson@linaro.org, Viresh Kumar <vireshk@kernel.org>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>
 Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
         Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
-        niklas.cassel@linaro.org, rnayak@codeaurora.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V3 01/10] PM / Domains: Rename genpd virtual devices as virt_dev
-Date:   Thu, 25 Oct 2018 11:22:38 +0530
-Message-Id: <d5f993001c97895d82bb68e246f6eaafce6dc795.1540446493.git.viresh.kumar@linaro.org>
+        Rafael Wysocki <rjw@rjwysocki.net>, niklas.cassel@linaro.org,
+        rnayak@codeaurora.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V3 02/10] OPP: Identify and mark genpd OPP tables
+Date:   Thu, 25 Oct 2018 11:22:39 +0530
+Message-Id: <320abb3732333763c6d87e5e6aa81aa80dbace8d.1540446493.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.19.1.568.g152ad8e3369a
 In-Reply-To: <cover.1540446493.git.viresh.kumar@linaro.org>
 References: <cover.1540446493.git.viresh.kumar@linaro.org>
@@ -78,79 +76,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are several struct device instances that genpd core handles. The
-most common one is the consumer device structure, which is named
-(correctly) as "dev" within genpd core. The second one is the genpd's
-device structure, referenced as genpd->dev. The third one is the virtual
-device structures created by the genpd core to represent the consumer
-device for multiple power domain case, currently named as genpd_dev. The
-naming of these virtual devices isn't very clear or readable and it
-looks more like the genpd->dev.
+We need to handle genpd OPP tables differently, this is already the case
+at one location and will be extended going forward. Add another field to
+the OPP table to check if the table belongs to a genpd or not.
 
-Rename the virtual device instances within the genpd core as "virt_dev".
-
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- drivers/base/power/domain.c | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ drivers/opp/of.c  | 6 ++++--
+ drivers/opp/opp.h | 2 ++
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-index 7f38a92b444a..fe9b0527b161 100644
---- a/drivers/base/power/domain.c
-+++ b/drivers/base/power/domain.c
-@@ -2338,7 +2338,7 @@ EXPORT_SYMBOL_GPL(genpd_dev_pm_attach);
- struct device *genpd_dev_pm_attach_by_id(struct device *dev,
- 					 unsigned int index)
- {
--	struct device *genpd_dev;
-+	struct device *virt_dev;
- 	int num_domains;
- 	int ret;
+diff --git a/drivers/opp/of.c b/drivers/opp/of.c
+index 5a4b47958073..5f114cd3d88c 100644
+--- a/drivers/opp/of.c
++++ b/drivers/opp/of.c
+@@ -92,6 +92,9 @@ void _of_init_opp_table(struct opp_table *opp_table, struct device *dev,
+ 	of_property_read_u32(np, "voltage-tolerance",
+ 			     &opp_table->voltage_tolerance_v1);
  
-@@ -2352,31 +2352,31 @@ struct device *genpd_dev_pm_attach_by_id(struct device *dev,
- 		return NULL;
++	if (of_find_property(np, "#power-domain-cells", NULL))
++		opp_table->is_genpd = true;
++
+ 	/* Get OPP table node */
+ 	opp_np = _opp_of_get_opp_desc_node(np, index);
+ 	of_node_put(np);
+@@ -326,8 +329,7 @@ static struct dev_pm_opp *_opp_add_static_v2(struct opp_table *opp_table,
+ 	ret = of_property_read_u64(np, "opp-hz", &rate);
+ 	if (ret < 0) {
+ 		/* "opp-hz" is optional for devices like power domains. */
+-		if (!of_find_property(dev->of_node, "#power-domain-cells",
+-				      NULL)) {
++		if (!opp_table->is_genpd) {
+ 			dev_err(dev, "%s: opp-hz not found\n", __func__);
+ 			goto free_opp;
+ 		}
+diff --git a/drivers/opp/opp.h b/drivers/opp/opp.h
+index 9c6544b4f4f9..cdb0c2b095e2 100644
+--- a/drivers/opp/opp.h
++++ b/drivers/opp/opp.h
+@@ -140,6 +140,7 @@ enum opp_table_access {
+  * @regulators: Supply regulators
+  * @regulator_count: Number of power supply regulators
+  * @genpd_performance_state: Device's power domain support performance state.
++ * @is_genpd: Marks if the OPP table belongs to a genpd.
+  * @set_opp: Platform specific set_opp callback
+  * @set_opp_data: Data to be passed to set_opp callback
+  * @dentry:	debugfs dentry pointer of the real device directory (not links).
+@@ -178,6 +179,7 @@ struct opp_table {
+ 	struct regulator **regulators;
+ 	unsigned int regulator_count;
+ 	bool genpd_performance_state;
++	bool is_genpd;
  
- 	/* Allocate and register device on the genpd bus. */
--	genpd_dev = kzalloc(sizeof(*genpd_dev), GFP_KERNEL);
--	if (!genpd_dev)
-+	virt_dev = kzalloc(sizeof(*virt_dev), GFP_KERNEL);
-+	if (!virt_dev)
- 		return ERR_PTR(-ENOMEM);
- 
--	dev_set_name(genpd_dev, "genpd:%u:%s", index, dev_name(dev));
--	genpd_dev->bus = &genpd_bus_type;
--	genpd_dev->release = genpd_release_dev;
-+	dev_set_name(virt_dev, "genpd:%u:%s", index, dev_name(dev));
-+	virt_dev->bus = &genpd_bus_type;
-+	virt_dev->release = genpd_release_dev;
- 
--	ret = device_register(genpd_dev);
-+	ret = device_register(virt_dev);
- 	if (ret) {
--		kfree(genpd_dev);
-+		kfree(virt_dev);
- 		return ERR_PTR(ret);
- 	}
- 
- 	/* Try to attach the device to the PM domain at the specified index. */
--	ret = __genpd_dev_pm_attach(genpd_dev, dev->of_node, index, false);
-+	ret = __genpd_dev_pm_attach(virt_dev, dev->of_node, index, false);
- 	if (ret < 1) {
--		device_unregister(genpd_dev);
-+		device_unregister(virt_dev);
- 		return ret ? ERR_PTR(ret) : NULL;
- 	}
- 
--	pm_runtime_enable(genpd_dev);
--	genpd_queue_power_off_work(dev_to_genpd(genpd_dev));
-+	pm_runtime_enable(virt_dev);
-+	genpd_queue_power_off_work(dev_to_genpd(virt_dev));
- 
--	return genpd_dev;
-+	return virt_dev;
- }
- EXPORT_SYMBOL_GPL(genpd_dev_pm_attach_by_id);
- 
+ 	int (*set_opp)(struct dev_pm_set_opp_data *data);
+ 	struct dev_pm_set_opp_data *set_opp_data;
 -- 
 2.19.1.568.g152ad8e3369a
 
