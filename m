@@ -6,133 +6,120 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 423DCC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 06:28:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06941C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 06:28:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D35752083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 06:28:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D35752083E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id C39222083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 06:28:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C39222083E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727520AbeJYO7Z (ORCPT
+        id S1726647AbeJYPAG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 10:59:25 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43064 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727185AbeJYO7Z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 10:59:25 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9P6Pnpu049160
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 02:28:06 -0400
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2nb8j8g2t2-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 02:28:06 -0400
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
-        Thu, 25 Oct 2018 07:28:04 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 25 Oct 2018 07:28:02 +0100
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9P6S1Oj65994932
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 25 Oct 2018 06:28:01 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9CD7A4C044;
-        Thu, 25 Oct 2018 06:28:01 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 64E8E4C046;
-        Thu, 25 Oct 2018 06:28:01 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.171])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 25 Oct 2018 06:28:01 +0000 (GMT)
-Date:   Thu, 25 Oct 2018 08:28:00 +0200
-From:   Heiko Carstens <heiko.carstens@de.ibm.com>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Peter Oberparleiter <oberpar@linux.ibm.com>
-Subject: Re: [PATCH] s390/fault: use wake_up_klogd() in bust_spinlocks()
-References: <20181024043048.21248-1-sergey.senozhatsky@gmail.com>
- <20181024043425.GA8862@jagdpanzerIV>
+        Thu, 25 Oct 2018 11:00:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44734 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726374AbeJYPAF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 11:00:05 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3652AAE58;
+        Thu, 25 Oct 2018 06:28:46 +0000 (UTC)
+Subject: Re: [PATCH] x86/ioremap: tighten integer overflow checking
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20181025061633.t32bxslxj3h7jv2x@kili.mountain>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <eaaddd4a-5ed0-9b58-f4be-994ec38ed660@suse.com>
+Date:   Thu, 25 Oct 2018 08:28:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181024043425.GA8862@jagdpanzerIV>
-X-TM-AS-GCONF: 00
-x-cbid: 18102506-0008-0000-0000-000002854C2F
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18102506-0009-0000-0000-000021EF4E6F
-Message-Id: <20181025062800.GB4037@osiris>
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-25_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810250059
+In-Reply-To: <20181025061633.t32bxslxj3h7jv2x@kili.mountain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 01:34:25PM +0900, Sergey Senozhatsky wrote:
-> On (10/24/18 13:30), Sergey Senozhatsky wrote:
-> From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> Subject: [PATCH] s390/fault: use wake_up_klogd() in bust_spinlocks()
+On 25/10/2018 08:16, Dan Carpenter wrote:
+> The current check is a bit off in the case where "phys_addr + size"
+> wraps to zero because then "last_addr" is set to ULONG_MAX which is >=
+> phys_addr.
 
-...
+And -2 would be okay?
 
-> From the comment it seems that s390 wants to just poke klogd.
-> There is wake_up_klogd() for this purpose, so we can replace
-> that printk(" ").
+For 32-bit systems I believe ULONG_MAX is a perfectly valid physical
+address.
+
 > 
-> Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 > ---
->  arch/s390/mm/fault.c | 12 ++++--------
->  1 file changed, 4 insertions(+), 8 deletions(-)
+>  arch/x86/mm/ioremap.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/arch/s390/mm/fault.c b/arch/s390/mm/fault.c
-> index 2b8f32f56e0c..53915c61ad95 100644
-> --- a/arch/s390/mm/fault.c
-> +++ b/arch/s390/mm/fault.c
-> @@ -92,16 +92,12 @@ void bust_spinlocks(int yes)
->  		oops_in_progress = 1;
->  	} else {
->  		int loglevel_save = console_loglevel;
-> -		console_unblank();
-> -		oops_in_progress = 0;
-> -		/*
-> -		 * OK, the message is on the console.  Now we call printk()
-> -		 * without oops_in_progress set so that printk will give klogd
-> -		 * a poke.  Hold onto your hats...
-> -		 */
-> +
->  		console_loglevel = 15;
-> -		printk(" ");
-> +		console_unblank();
->  		console_loglevel = loglevel_save;
-> +		oops_in_progress = 0;
-> +		wake_up_klogd();
->  	}
+> diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+> index 5378d10f1d31..ee43df3ebe66 100644
+> --- a/arch/x86/mm/ioremap.c
+> +++ b/arch/x86/mm/ioremap.c
+> @@ -146,9 +146,9 @@ static void __iomem *__ioremap_caller(resource_size_t phys_addr,
+>  	void __iomem *ret_addr;
+>  
+>  	/* Don't allow wraparound or zero size */
+> -	last_addr = phys_addr + size - 1;
+> -	if (!size || last_addr < phys_addr)
+> +	if (!size || phys_addr + size < phys_addr)
+>  		return NULL;
+> +	last_addr = phys_addr + size - 1;
+>  
+>  	if (!phys_addr_valid(phys_addr)) {
 
-With your patch this looks nearly like the common code variant. I did
-some code archaeology and this function is unchanged since ~17 years.
-When it was introduced it was close to identical to the x86 variant.
-All other architectures use the common code variant in the
-meantime. So if we change this I'd prefer that we switch s390 to the
-common code variant as well.
+Wouldn't it make more sense to test last_addr for being a valid physical
+address here?
 
-Right now I can't see a reason for not doing that, but I might be
-wrong of course. So, could you please provide a new version which just
-removes this variant and makes s390 use the generic one too.
+>  		printk(KERN_WARNING "ioremap: invalid physical address %llx\n",
+> 
 
-We'll see if there is any fallout...
 
+Juergen
