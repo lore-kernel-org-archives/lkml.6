@@ -2,155 +2,150 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C008C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:57:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9987AC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:58:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01C2320854
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:57:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PcPc2im/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01C2320854
+	by mail.kernel.org (Postfix) with ESMTP id 673B120848
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:58:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 673B120848
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727668AbeJYXa2 (ORCPT
+        id S1727640AbeJYXby (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 19:30:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47568 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727394AbeJYXa1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 19:30:27 -0400
-Received: from [192.168.1.9] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6094320848;
-        Thu, 25 Oct 2018 14:57:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540479438;
-        bh=SKEZjI02Nw42/EG6nrAVnMioIczeZ+Y2/YcqWjMlsG0=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=PcPc2im/p1h6NeNzjO1JCJZ1/n0vQ5wJZd+nElw8LSvVJfj//rHLtdRcZwFVQR+JR
-         1P+O36LpezCdlv4F/IO3Q98yFA3CEWBjOO03DpjGoZD/L0Ezw39JauDDlzeK4jimDl
-         I1rPZGyfQhFydfz1ZzI29caLVCRkzmaOKs9RJu3s=
-Subject: Re: [PATCH] ARM: debug: enable UART1 for socfpga Cyclone5
-To:     =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
-        u.kleine-koenig@pengutronix.de
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20181009112837.2517-1-peron.clem@gmail.com>
- <e761c76d-a806-402a-b25b-04aee9329dbc@kernel.org>
- <CAJiuCceZr8NsDgBJgA2y61VHdQ3JYQ6_3r4jKooKLbVfRD8eJQ@mail.gmail.com>
- <74512aef-d551-30af-b4cf-25f48047a4ac@kernel.org>
- <20181024065152.yinlj4axprtwdzku@pengutronix.de>
- <CAJiuCcfZ7+gaxA5iGhS48eODPsTaZc5-Bd2zXqaAgtNd0fwSKg@mail.gmail.com>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <2f4d939f-ab25-bab5-8f1c-b919adf4977c@kernel.org>
-Date:   Thu, 25 Oct 2018 09:57:16 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 25 Oct 2018 19:31:54 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:44012 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727381AbeJYXbx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 19:31:53 -0400
+Received: by mail-oi1-f196.google.com with SMTP id s69-v6so6903848oie.10;
+        Thu, 25 Oct 2018 07:58:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=H3KLghIatITsGO1bPqIs9wSjWGrC0u7BIppJy2GjADY=;
+        b=c2H4LYuBsAwJbrY2DtHfnT8iej4Ssjj40v33ta8KJRyANzRtQpSdBg21UmUheVpSbP
+         gautOC3DiSzp/DdV+RcxuG+74Jrme5DLWRJWl//CH0qSKy5VdcA0ehNOd4CzzA16hQkP
+         xerOQRlRW9wrn9BYD2Kq4hZ9RpOKjll2jusMQhQjGeNrEOzxcugwndJxHCGDwzcha6wQ
+         6rx4zj/uo/9geqAbA/SSJjgW7tVvdQcqkt+GRhdSRMTbyaZzhdAu1pwKuPFGdnZMQZhk
+         ezxZQO4AnWhBAD/3GRvui0daEGkHjJPpE89aoloDteabRnXLG1Z9rVtcVM8oy1bqKD5c
+         b/PA==
+X-Gm-Message-State: AGRZ1gKOmkbTdTYsomBt9P4ZPrKMmGRKDbrHinnqmfwEFUuL3Je6uXUS
+        wqQEdQjvRRG1oz33qIkqUw==
+X-Google-Smtp-Source: AJdET5dPHlUE0QUD7fkb7UXzgQPN/9JD9lH+lZsewfoB5aUC/A4ThMmcgYMgbL1+ljMrAPZG1ZOmeQ==
+X-Received: by 2002:aca:e804:: with SMTP id f4-v6mr639668oih.38.1540479523318;
+        Thu, 25 Oct 2018 07:58:43 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id w7-v6sm525164oif.22.2018.10.25.07.58.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Oct 2018 07:58:42 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 09:58:41 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     anilc@codeaurora.org
+Cc:     kbuild test robot <lkp@intel.com>, kbuild-all@01.org,
+        andy.gross@linaro.org, david.brown@linaro.org,
+        mark.rutland@arm.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] crypto: qce: ice: Add support for Inline Crypto
+ Engine
+Message-ID: <20181025145841.GB30244@bogus>
+References: <1539789476-6098-4-git-send-email-anilc@codeaurora.org>
+ <201810181902.44DQrfDL%fengguang.wu@intel.com>
+ <d6f1930a618f6539a4c3e53d239fdd90@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <CAJiuCcfZ7+gaxA5iGhS48eODPsTaZc5-Bd2zXqaAgtNd0fwSKg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d6f1930a618f6539a4c3e53d239fdd90@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
-
-On 10/24/2018 09:11 AM, Clément Péron wrote:
+On Wed, Oct 24, 2018 at 04:44:37PM +0530, anilc@codeaurora.org wrote:
 > Hi,
 > 
-> On Wed, 24 Oct 2018 at 08:51, Uwe Kleine-König
-> <u.kleine-koenig@pengutronix.de> wrote:
->>
->> On Tue, Oct 23, 2018 at 03:35:31PM -0500, Dinh Nguyen wrote:
->>>
->>>
->>> On 10/23/2018 09:44 AM, Clément Péron wrote:
->>>> HI Dinh,
->>>>
->>>> On Tue, 23 Oct 2018 at 16:04, Dinh Nguyen <dinguyen@kernel.org> wrote:
->>>>>
->>>>> Hi Clément,
->>>>>
->>>>> On 10/09/2018 06:28 AM, Clément Péron wrote:
->>>>>> Cyclone5 and Arria10 doesn't have the same memory map for UART1.
->>>>>>
->>>>>> Split the SOCFPGA_UART1 into 2 options to allow debugging on UART1 for Cylone5.
->>>>>>
->>>>>
->>>>> I'm not sure the need for this patch. Are there any cyclone5 based
->>>>> boards that has UART1 as the debug uart? I see that all of them are
->>>>> using UART0.
->>>>
->>>> There is no upstream device with this UART used. But the board I have
->>>> use it, and there is no limitation to not have it available upstream
->>>> no ?
->>>>
->>>
->>> I see. Then I don't think the patch is applicable because none of the
->>> upstream devices need it. Now, if you were to upstream your board that
->>> uses UART1, then there will be a case for this patch. Do you agree?
-> 
-> I don't think my board is upstreamable it's not a devkit and not
-> really interesting for the community.
-> 
-> It's really a trivial patch and it will avoid wasting time  to another
-> owner of CycloneV board who would like to have debug on UART1
-> 
+> Thanks for the comments, response inline.
 
-I'll apply this after the merge window.
+FYI, this was from a bot.
 
-Thanks,
-Dinh
+> 
+> Thanks,
+> AnilKumar
+> 
+> 
+> On 2018-10-18 17:13, kbuild test robot wrote:
+> > Hi AnilKumar,
+> > 
+> > Thank you for the patch! Yet something to improve:
+> > 
+> > [auto build test ERROR on cryptodev/master]
+> > [also build test ERROR on v4.19-rc8 next-20181018]
+> > [if your patch is applied to the wrong git tree, please drop us a note
+> > to help improve the system]
+> > 
+> > url:
+> > https://github.com/0day-ci/linux/commits/AnilKumar-Chimata/firmware-qcom-scm-Update-qcom_scm_call-signature/20181018-182318
+> > base:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git
+> > master
+> > config: sh-allmodconfig (attached as .config)
+> > compiler: sh4-linux-gnu-gcc (Debian 7.2.0-11) 7.2.0
+> > reproduce:
+> >         wget
+> > https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross
+> > -O ~/bin/make.cross
+> >         chmod +x ~/bin/make.cross
+> >         # save the attached .config to linux build tree
+> >         GCC_VERSION=7.2.0 make.cross ARCH=sh
+> > 
+> > All errors (new ones prefixed by >>):
+> > 
+> > > > drivers/crypto/qce/ice.c:1372:5: error: redefinition of
+> > > > 'qcom_ice_setup_ice_hw'
+> >     int qcom_ice_setup_ice_hw(const char *storage_type, int enable)
+> >         ^~~~~~~~~~~~~~~~~~~~~
+> >    In file included from drivers/crypto/qce/ice.c:25:0:
+> >    include/crypto/ice.h:60:19: note: previous definition of
+> > 'qcom_ice_setup_ice_hw' was here
+> >     static inline int qcom_ice_setup_ice_hw(const char *storage_type,
+> > int enable)
+> >                       ^~~~~~~~~~~~~~~~~~~~~
+> > 
+> > vim +/qcom_ice_setup_ice_hw +1372 drivers/crypto/qce/ice.c
+> > 
+> >   1371
+> > > 1372	int qcom_ice_setup_ice_hw(const char *storage_type, int enable)
+> >   1373	{
+> >   1374		struct ice_device *ice_dev = NULL;
+> >   1375		int ret = -1;
+> >   1376
+> >   1377		ice_dev = get_ice_device_from_storage_type(storage_type);
+> >   1378		if (ice_dev == ERR_PTR(-EPROBE_DEFER))
+> >   1379			return -EPROBE_DEFER;
+> >   1380
+> >   1381		if (!ice_dev)
+> >   1382			return ret;
+> >   1383
+> >   1384		if (enable)
+> >   1385			return enable_ice_setup(ice_dev);
+> >   1386
+> >   1387		return disable_ice_setup(ice_dev);
+> >   1388	}
+> >   1389
+> 
+> We will check and get back on the compilation. What is the idea behind for
+> this
+> effort, is this for testing the ICE driver?
+
+The purpose is to make sure changes don't break builds that you likely 
+haven't tested. Either different architectures or configurations.
+
+Rob
