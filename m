@@ -7,43 +7,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94FBCC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:44:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0BE5C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:45:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2787F20856
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:44:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67E3020848
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:45:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QA4OjXiy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2787F20856
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sIpT5Vtc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67E3020848
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728018AbeJYXR4 (ORCPT
+        id S1728065AbeJYXSW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 19:17:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52680 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 19:18:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727950AbeJYWoG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:44:06 -0400
+        id S1727781AbeJYWn6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:43:58 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 20CB22083E;
-        Thu, 25 Oct 2018 14:11:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03CB92054F;
+        Thu, 25 Oct 2018 14:11:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540476670;
-        bh=4qo/YMrltvhL4vKdd3OLpzUXkvc6d/exEyH1AAOHmM8=;
+        s=default; t=1540476663;
+        bh=226aN9mZBFXH7rJIjAk2+e+Iv0fmnLYMuL9nyU2tCSI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QA4OjXiyxOo7TnaJwlIy8aDxUY4o6mjmznsw7X3/Rn45m4FNE9Lr11mM1gJHd2yjt
-         rJLzxrYkHpdI+joiVd11LVLXQQIsUnmVI4uU/0+sxYfK2Wjmv4e+hH0sV4Ps65Uyfc
-         P/qnSJELsE9ljqAVJLjg3ZY0nkNus/ebsSANrrfg=
+        b=sIpT5Vtc0W4oWSGDLP/qaHaWcXDQ08Sn6E/edst7fAXCrTBBeATXKagThX0no6Omx
+         1jrqnyl6wSHSVMq17NvsO3ikSN/8vtVl1ZhVItlXU04R3BnkAr3yw2qfJvNAvxzmkK
+         K8abyBgNB3FVJRJbUHT7sxYKigHqieuN23gCJp7g=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Israel Rukshin <israelr@mellanox.com>,
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Vishal Verma <vishal.l.verma@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 11/46] net/mlx5: Fix mlx5_get_vector_affinity function
-Date:   Thu, 25 Oct 2018 10:10:18 -0400
-Message-Id: <20181025141053.213330-11-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 05/46] tools/testing/nvdimm: unit test clear-error commands
+Date:   Thu, 25 Oct 2018 10:10:12 -0400
+Message-Id: <20181025141053.213330-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141053.213330-1-sashal@kernel.org>
 References: <20181025141053.213330-1-sashal@kernel.org>
@@ -52,77 +53,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Israel Rukshin <israelr@mellanox.com>
+From: Dan Williams <dan.j.williams@intel.com>
 
-[ Upstream commit 6082d9c9c94a408d7409b5f2e4e42ac9e8b16d0d ]
+[ Upstream commit fb2a1748355161e050e9f49f1ea9a0ae707a148b ]
 
-Adding the vector offset when calling to mlx5_vector2eqn() is wrong.
-This is because mlx5_vector2eqn() checks if EQ index is equal to vector number
-and the fact that the internal completion vectors that mlx5 allocates
-don't get an EQ index.
+Validate command parsing in acpi_nfit_ctl for the clear error command.
+This tests for a crash condition introduced by commit 4b27db7e26cd
+"acpi, nfit: add support for the _LSI, _LSR, and _LSW label methods".
 
-The second problem here is that using effective_affinity_mask gives the same
-CPU for different vectors.
-This leads to unmapped queues when calling it from blk_mq_rdma_map_queues().
-This doesn't happen when using affinity_hint mask.
-
-Fixes: 2572cf57d75a ("mlx5: fix mlx5_get_vector_affinity to start from completion vector 0")
-Fixes: 05e0cc84e00c ("net/mlx5: Fix get vector affinity helper function")
-Signed-off-by: Israel Rukshin <israelr@mellanox.com>
-Reviewed-by: Max Gurtovoy <maxg@mellanox.com>
-Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Cc: Vishal Verma <vishal.l.verma@intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/mlx5/main.c |  2 +-
- include/linux/mlx5/driver.h       | 12 +++---------
- 2 files changed, 4 insertions(+), 10 deletions(-)
+ tools/testing/nvdimm/test/nfit.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/infiniband/hw/mlx5/main.c b/drivers/infiniband/hw/mlx5/main.c
-index ab70194a73db..c3a4f5d92391 100644
---- a/drivers/infiniband/hw/mlx5/main.c
-+++ b/drivers/infiniband/hw/mlx5/main.c
-@@ -3911,7 +3911,7 @@ mlx5_ib_get_vector_affinity(struct ib_device *ibdev, int comp_vector)
- {
- 	struct mlx5_ib_dev *dev = to_mdev(ibdev);
+diff --git a/tools/testing/nvdimm/test/nfit.c b/tools/testing/nvdimm/test/nfit.c
+index bef419d4266d..3ad0b3a3317b 100644
+--- a/tools/testing/nvdimm/test/nfit.c
++++ b/tools/testing/nvdimm/test/nfit.c
+@@ -1589,6 +1589,7 @@ static int nfit_ctl_test(struct device *dev)
+ 	unsigned long mask, cmd_size, offset;
+ 	union {
+ 		struct nd_cmd_get_config_size cfg_size;
++		struct nd_cmd_clear_error clear_err;
+ 		struct nd_cmd_ars_status ars_stat;
+ 		struct nd_cmd_ars_cap ars_cap;
+ 		char buf[sizeof(struct nd_cmd_ars_status)
+@@ -1767,6 +1768,23 @@ static int nfit_ctl_test(struct device *dev)
+ 		return -EIO;
+ 	}
  
--	return mlx5_get_vector_affinity(dev->mdev, comp_vector);
-+	return mlx5_get_vector_affinity_hint(dev->mdev, comp_vector);
++	/* test clear error */
++	cmd_size = sizeof(cmds.clear_err);
++	cmds.clear_err = (struct nd_cmd_clear_error) {
++		.length = 512,
++		.cleared = 512,
++	};
++	rc = setup_result(cmds.buf, cmd_size);
++	if (rc)
++		return rc;
++	rc = acpi_nfit_ctl(&acpi_desc->nd_desc, NULL, ND_CMD_CLEAR_ERROR,
++			cmds.buf, cmd_size, &cmd_rc);
++	if (rc < 0 || cmd_rc) {
++		dev_dbg(dev, "%s: failed at: %d rc: %d cmd_rc: %d\n",
++				__func__, __LINE__, rc, cmd_rc);
++		return -EIO;
++	}
++
+ 	return 0;
  }
  
- static void *mlx5_ib_add(struct mlx5_core_dev *mdev)
-diff --git a/include/linux/mlx5/driver.h b/include/linux/mlx5/driver.h
-index c4d19e77fea8..5eff332092bc 100644
---- a/include/linux/mlx5/driver.h
-+++ b/include/linux/mlx5/driver.h
-@@ -1193,25 +1193,19 @@ enum {
- };
- 
- static inline const struct cpumask *
--mlx5_get_vector_affinity(struct mlx5_core_dev *dev, int vector)
-+mlx5_get_vector_affinity_hint(struct mlx5_core_dev *dev, int vector)
- {
--	const struct cpumask *mask;
- 	struct irq_desc *desc;
- 	unsigned int irq;
- 	int eqn;
- 	int err;
- 
--	err = mlx5_vector2eqn(dev, MLX5_EQ_VEC_COMP_BASE + vector, &eqn, &irq);
-+	err = mlx5_vector2eqn(dev, vector, &eqn, &irq);
- 	if (err)
- 		return NULL;
- 
- 	desc = irq_to_desc(irq);
--#ifdef CONFIG_GENERIC_IRQ_EFFECTIVE_AFF_MASK
--	mask = irq_data_get_effective_affinity_mask(&desc->irq_data);
--#else
--	mask = desc->irq_common_data.affinity;
--#endif
--	return mask;
-+	return desc->affinity_hint;
- }
- 
- #endif /* MLX5_DRIVER_H */
 -- 
 2.17.1
 
