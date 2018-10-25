@@ -2,90 +2,78 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 103FFC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 16:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FBE3C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 16:54:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B010320848
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 16:53:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZGoddWcw";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZGoddWcw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B010320848
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id BE42020848
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 16:54:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE42020848
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727878AbeJZB0l (ORCPT
+        id S1727959AbeJZB1m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 21:26:41 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48526 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727319AbeJZB0k (ORCPT
+        Thu, 25 Oct 2018 21:27:42 -0400
+Received: from s3.sipsolutions.net ([144.76.43.62]:45680 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727319AbeJZB1m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 21:26:40 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 8073B60C5F; Thu, 25 Oct 2018 16:53:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540486384;
-        bh=xVseYqk9plG4FbTOUKZlnWxKU4W86Ty1/1ePQCHPU2Y=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ZGoddWcwMegLRO+wgLdf+pOk4CVWkWTJD6qL5h2qO7vfwwqUDwEa7S+xM0bXKMabl
-         VCKwhIZqNdEZVhXTn+7xjlKE/Sk0GXSuO0Pkf/y83HqX10NMaqESpIXPg2gyCX+mKy
-         bwBsW6c4EXhClHeFL8pe0RY71df4zOjUeQFF5Ljw=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 0BFB760792;
-        Thu, 25 Oct 2018 16:53:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540486384;
-        bh=xVseYqk9plG4FbTOUKZlnWxKU4W86Ty1/1ePQCHPU2Y=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ZGoddWcwMegLRO+wgLdf+pOk4CVWkWTJD6qL5h2qO7vfwwqUDwEa7S+xM0bXKMabl
-         VCKwhIZqNdEZVhXTn+7xjlKE/Sk0GXSuO0Pkf/y83HqX10NMaqESpIXPg2gyCX+mKy
-         bwBsW6c4EXhClHeFL8pe0RY71df4zOjUeQFF5Ljw=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+        Thu, 25 Oct 2018 21:27:42 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.91)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1gFitX-00067J-7e; Thu, 25 Oct 2018 18:54:03 +0200
+Message-ID: <256720b373cf539052d79ce3051214140820d696.camel@sipsolutions.net>
+Subject: Re: [PATCH 2/3] kernel/workqueue: Surround work execution with
+ shared lock annotations
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Bart Van Assche <bvanassche@acm.org>, Tejun Heo <tj@kernel.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        "tytso@mit.edu" <tytso@mit.edu>
+Date:   Thu, 25 Oct 2018 18:53:44 +0200
+In-Reply-To: <20181025150540.259281-3-bvanassche@acm.org>
+References: <20181025150540.259281-1-bvanassche@acm.org>
+         <20181025150540.259281-3-bvanassche@acm.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Date:   Thu, 25 Oct 2018 22:23:04 +0530
-From:   alokc@codeaurora.org
-To:     swboyd@chromium.org, dianders@chromium.org,
-        Mark Brown <broonie@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-arm-msm-owner@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/2] spi-geni-qcom: Cleanup nitpicks and simplify probe
- function
-In-Reply-To: <1540485629-5970-1-git-send-email-alokc@codeaurora.org>
-References: <1540485629-5970-1-git-send-email-alokc@codeaurora.org>
-Message-ID: <b391e2df12e31be9ba5e48f197a86471@codeaurora.org>
-X-Sender: alokc@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-25 22:10, Alok Chauhan wrote:
-> This patch series fixed the following:
-> * nitpicks from the previous review
->  (https://patchwork.kernel.org/patch/10624849/)
-> * Cleanup probe function by re-arranging existing APIs to starting of
->   function and hence avoiding one goto jump and remove few redundant
->   variables.
-> 
-> Alok Chauhan (2):
->   spi: spi-geni-qcom: fix nitpicks
->   spi: spi-geni-qcom: Simplify probe function
-> 
->  drivers/spi/spi-geni-qcom.c | 64 
-> +++++++++++++++++++++------------------------
->  1 file changed, 30 insertions(+), 34 deletions(-)
+On Thu, 2018-10-25 at 15:05 +0000, Bart Van Assche wrote:
+> Surround execution of work with a shared lockdep annotation because multiple
+> work items associated with a work queue may execute concurrently.
 
-Added more folks as some them got missed by get_maintainer.pl for this 
-patch.
+Hmm. So, I'm not really entirely sure of the semantics here, but I fail
+to see how "may execute concurrently" means "can be taken recursively"?
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora 
-Forum,a Linux Foundation Collaborative Project
+After all, if they execute concurrently, that's in a different thread,
+right? So each thread is really just doing something with this work. It
+may not match mutex semantics in how mutexes would lock each other out
+and prevent concurrency, but I don't think that matters to lockdep at
+all.
+
+In fact, I'm not sure this actually changes anything, since you can't
+really execute a work struct while executing one already?
+
+What's this intended to change? I currently don't see how lockdep's
+behaviour would differ with read==1, unless you actually tried to do
+recursive locking, which isn't really possible?
+
+Or perhaps this is actually the right change for the issue described in
+patch 1, where a work struct flushes another work on the same wq, and
+that causes recursion of sorts? But that recursion should only happen if
+the workqueues is actually marked as ordered, in which case it *is* in
+fact wrong?
+
+johannes
+
+
