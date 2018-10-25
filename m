@@ -7,138 +7,97 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 458BFECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:15:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9096C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:15:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AE9220869
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:15:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 713C720868
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:15:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="es0ZK75X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AE9220869
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DMIm+sAD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 713C720868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728918AbeJYWsS (ORCPT
+        id S1728930AbeJYWsU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:48:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56832 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:48:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728907AbeJYWsQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:48:16 -0400
+        id S1728919AbeJYWsS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:48:18 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D43032085A;
-        Thu, 25 Oct 2018 14:15:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6C0520854;
+        Thu, 25 Oct 2018 14:15:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540476919;
-        bh=CIBOZAugqCEte1nJc7quNpkpOjQXgdyjfJLJNtl9xhs=;
+        s=default; t=1540476922;
+        bh=SbngomlX9o96OXBRAGaak/c/3XUg6WWxxcIvJhG/xnU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=es0ZK75X5ZwMvu+aG+fdYUfwxS3pXa4rMa4PawUBPFxihp/3V2JYSDJ5c+I69YdWz
-         Fdk3tpXdJ5nDp8ci1MSOA0BhnZG9SE9IOay5CQhTI0/oOTL99vm8ZQ1UYKqRl5umxR
-         BjC1MpXCTubHhDpgjeeGdy0AAEfdbVFdK0PCs8B8=
+        b=DMIm+sADkSTsRA/itSdwEGAHaDL4dRnDx46VTzhJlzIjKSvl0pD2/bb3x2LpAifeE
+         rFxT0Zvg7swLd/ky8Kw8geRMn841aeOtaAux07SaEsPUfTGIaSJUYrptrZBRZDreDh
+         yJcz+n2RvD8OSNP66NhChAkKj/6KKl41WNPagLOc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
+Cc:     Eric Biggers <ebiggers@google.com>, Jens Axboe <axboe@fb.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 37/98] ARM: 8677/1: boot/compressed: fix decompressor header layout for v7-M
-Date:   Thu, 25 Oct 2018 10:13:22 -0400
-Message-Id: <20181025141423.213774-37-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 39/98] elevator: fix truncation of icq_cache_name
+Date:   Thu, 25 Oct 2018 10:13:24 -0400
+Message-Id: <20181025141423.213774-39-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141423.213774-1-sashal@kernel.org>
 References: <20181025141423.213774-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+From: Eric Biggers <ebiggers@google.com>
 
-[ Upstream commit 06a4b6d009a1b74a6ec46c5418b46cc53a79fcb8 ]
+[ Upstream commit 9bd2bbc01d17ddd567cc0f81f77fe1163e497462 ]
 
-As reported by Patrice, the header layout of the decompressor is
-incorrect when building for v7-M. In this case, the __nop macro
-resolves to 'mov r0, r0', which is emitted as a narrow encoding,
-resulting in the header data fields to end up at lower offsets than
-required.
+gcc 7.1 reports the following warning:
 
-Given the variety of targets we need to support with the same code,
-the startup sequence is a bit of a jumble, and uses instructions
-and macros whose encoding widths cannot be specified (badr), or only
-exist in a narrow encoding (bx)
+    block/elevator.c: In function ‘elv_register’:
+    block/elevator.c:898:5: warning: ‘snprintf’ output may be truncated before the last format character [-Wformat-truncation=]
+         "%s_io_cq", e->elevator_name);
+         ^~~~~~~~~~
+    block/elevator.c:897:3: note: ‘snprintf’ output between 7 and 22 bytes into a destination of size 21
+       snprintf(e->icq_cache_name, sizeof(e->icq_cache_name),
+       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         "%s_io_cq", e->elevator_name);
+         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-So force the use of a wide encoding in __nop, and replace the start
-sequence with a simple jump to the label marking the start of code,
-preceded by a Thumb2 mode switch if required (using explicit wide
-encodings where appropriate). The label itself can be moved to the
-start of code [where it belongs] due to the larger range of branch
-instructions as compared to adr instructions.
+The bug is that the name of the icq_cache is 6 characters longer than
+the elevator name, but only ELV_NAME_MAX + 5 characters were reserved
+for it --- so in the case of a maximum-length elevator name, the 'q'
+character in "_io_cq" would be truncated by snprintf().  Fix it by
+reserving ELV_NAME_MAX + 6 characters instead.
 
-Reported-by: Patrice CHOTARD <patrice.chotard@st.com>
-Acked-by: Nicolas Pitre <nico@linaro.org>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Reviewed-by: Bart Van Assche <Bart.VanAssche@sandisk.com>
+Signed-off-by: Jens Axboe <axboe@fb.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/compressed/efi-header.S |  4 +---
- arch/arm/boot/compressed/head.S       | 17 ++++++++++-------
- 2 files changed, 11 insertions(+), 10 deletions(-)
+ include/linux/elevator.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/compressed/efi-header.S b/arch/arm/boot/compressed/efi-header.S
-index 9d5dc4fda3c1..3f7d1b74c5e0 100644
---- a/arch/arm/boot/compressed/efi-header.S
-+++ b/arch/arm/boot/compressed/efi-header.S
-@@ -17,14 +17,12 @@
- 		@ there.
- 		.inst	'M' | ('Z' << 8) | (0x1310 << 16)   @ tstne r0, #0x4d000
- #else
--		mov	r0, r0
-+		W(mov)	r0, r0
- #endif
- 		.endm
+diff --git a/include/linux/elevator.h b/include/linux/elevator.h
+index e7f358d2e5fc..eaa58c0f894b 100644
+--- a/include/linux/elevator.h
++++ b/include/linux/elevator.h
+@@ -102,7 +102,7 @@ struct elevator_type
+ 	struct module *elevator_owner;
  
- 		.macro	__EFI_HEADER
- #ifdef CONFIG_EFI_STUB
--		b	__efi_start
--
- 		.set	start_offset, __efi_start - start
- 		.org	start + 0x3c
- 		@
-diff --git a/arch/arm/boot/compressed/head.S b/arch/arm/boot/compressed/head.S
-index fc6d541549a2..2d7f2bb0d66a 100644
---- a/arch/arm/boot/compressed/head.S
-+++ b/arch/arm/boot/compressed/head.S
-@@ -130,19 +130,22 @@ start:
- 		.rept	7
- 		__nop
- 		.endr
--   ARM(		mov	r0, r0		)
--   ARM(		b	1f		)
-- THUMB(		badr	r12, 1f		)
-- THUMB(		bx	r12		)
-+#ifndef CONFIG_THUMB2_KERNEL
-+		mov	r0, r0
-+#else
-+ AR_CLASS(	sub	pc, pc, #3	)	@ A/R: switch to Thumb2 mode
-+  M_CLASS(	nop.w			)	@ M: already in Thumb2 mode
-+		.thumb
-+#endif
-+		W(b)	1f
+ 	/* managed by elevator core */
+-	char icq_cache_name[ELV_NAME_MAX + 5];	/* elvname + "_io_cq" */
++	char icq_cache_name[ELV_NAME_MAX + 6];	/* elvname + "_io_cq" */
+ 	struct list_head list;
+ };
  
- 		.word	_magic_sig	@ Magic numbers to help the loader
- 		.word	_magic_start	@ absolute load/run zImage address
- 		.word	_magic_end	@ zImage end address
- 		.word	0x04030201	@ endianness flag
- 
-- THUMB(		.thumb			)
--1:		__EFI_HEADER
--
-+		__EFI_HEADER
-+1:
-  ARM_BE8(	setend	be		)	@ go BE8 if compiled for BE8
-  AR_CLASS(	mrs	r9, cpsr	)
- #ifdef CONFIG_ARM_VIRT_EXT
 -- 
 2.17.1
 
