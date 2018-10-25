@@ -2,207 +2,127 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98470C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:13:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 399DDC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:15:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FC682054F
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:13:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="n8keHK4b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FC682054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id EBDDE2054F
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:15:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBDDE2054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726863AbeJZFrp (ORCPT
+        id S1726556AbeJZFtX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 01:47:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43788 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726056AbeJZFrn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 01:47:43 -0400
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 063532083E;
-        Thu, 25 Oct 2018 21:13:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540502004;
-        bh=wvEMaua9XdNX1S7F8WvyfWYk7OlmWIlhYhxZAJeKwdE=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=n8keHK4bHi/xaU7wAjGjXtDkmgMY8Qagu8h7WqN7FIhYyEGhQykJZ8U0GWJsHpN/c
-         jQH5Kkd7QhNYJgyFAWFcx20GEGC/gdGKM73Pscz0htyoSgpK2JSVeEUyKcx6BUU7a2
-         sqVzAPRLSh/5ae7Jkj81s663W2+KZHMF4yR9w9og=
-Received: by mail-qt1-f174.google.com with SMTP id b22-v6so2642642qtr.11;
-        Thu, 25 Oct 2018 14:13:24 -0700 (PDT)
-X-Gm-Message-State: AGRZ1gJKk8Sv0UjAwj4tFis/mpOtAVwqtGx3iCN5CCDtEE5LsGHncvOH
-        OO80YaDsHinEl+mvFig6ksbtBw5IpBKmvl1sKQ==
-X-Google-Smtp-Source: AJdET5dPMimUPy72Toq8ADoMpWDW5u//FVc5SZkVtwbySihlnauOZqcr3hb+YS+Sv4mS4dGpTmGh/T9QeMcbV1qAVzw=
-X-Received: by 2002:a0c:8c86:: with SMTP id p6-v6mr836511qvb.246.1540502003189;
- Thu, 25 Oct 2018 14:13:23 -0700 (PDT)
+        Fri, 26 Oct 2018 01:49:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54042 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726075AbeJZFtW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 01:49:22 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7EEE4AF0D;
+        Thu, 25 Oct 2018 21:15:02 +0000 (UTC)
+From:   NeilBrown <neil@brown.name>
+To:     Josh Triplett <josh@joshtriplett.org>
+Date:   Fri, 26 Oct 2018 08:14:51 +1100
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        ksummit-discuss@lists.linuxfoundation.org,
+        Mishi Choudhary <mishi@linux.com>
+Subject: Re: [Ksummit-discuss] Call to Action Re: [PATCH 0/7] Code of Conduct: Fix some wording, and add an interpretation document
+In-Reply-To: <20181024121622.GA10942@localhost>
+References: <20181020134908.GA32218@kroah.com> <87y3ar80ac.fsf@notabene.neil.brown.name> <20181021222608.GA24845@localhost> <875zxt919d.fsf@notabene.neil.brown.name> <20181024121622.GA10942@localhost>
+Message-ID: <87ftwt6850.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-References: <20181024193256.23734-1-f.fainelli@gmail.com> <CAL_Jsq+KCOv6pXXHhHDZ+7-QUrmtMDvSjEVhK15yZ3qbnn61Ag@mail.gmail.com>
- <20181025093833.GA23607@rapoport-lnx> <CAL_JsqL62ttsGSbE1BS5v-mX3pKE-p_HyvuZD6nB+GUbQyetzg@mail.gmail.com>
- <20181025172935.GA27364@rapoport-lnx>
-In-Reply-To: <20181025172935.GA27364@rapoport-lnx>
-From:   Rob Herring <robh@kernel.org>
-Date:   Thu, 25 Oct 2018 16:13:10 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJrMq+QHvuOsqEdCFchmXsd4s2XKUD_TboKzeEQprJvjg@mail.gmail.com>
-Message-ID: <CAL_JsqJrMq+QHvuOsqEdCFchmXsd4s2XKUD_TboKzeEQprJvjg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] arm64: Cut rebuild time when changing CONFIG_BLK_DEV_INITRD
-To:     rppt@linux.ibm.com
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Olof Johansson <olof@lixom.net>, linux-alpha@vger.kernel.org,
-        arcml <linux-snps-arc@lists.infradead.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-c6x-dev@linux-c6x.org,
-        "moderated list:H8/300 ARCHITECTURE" 
-        <uclinux-h8-devel@lists.sourceforge.jp>,
-        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org,
-        Linux-MIPS <linux-mips@linux-mips.org>,
-        nios2-dev@lists.rocketboards.org,
-        Openrisc <openrisc@lists.librecores.org>,
-        linux-parisc@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        SH-Linux <linux-sh@vger.kernel.org>, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
-        devicetree@vger.kernel.org,
-        "open list:GENERIC INCLUDE/ASM HEADER FILES" 
-        <linux-arch@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 12:30 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
->
-> On Thu, Oct 25, 2018 at 08:15:15AM -0500, Rob Herring wrote:
-> > +Ard
-> >
-> > On Thu, Oct 25, 2018 at 4:38 AM Mike Rapoport <rppt@linux.ibm.com> wrote:
-> > >
-> > > On Wed, Oct 24, 2018 at 02:55:17PM -0500, Rob Herring wrote:
-> > > > On Wed, Oct 24, 2018 at 2:33 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
-> > > > >
-> > > > > Hi all,
-> > > > >
-> > > > > While investigating why ARM64 required a ton of objects to be rebuilt
-> > > > > when toggling CONFIG_DEV_BLK_INITRD, it became clear that this was
-> > > > > because we define __early_init_dt_declare_initrd() differently and we do
-> > > > > that in arch/arm64/include/asm/memory.h which gets included by a fair
-> > > > > amount of other header files, and translation units as well.
-> > > >
-> > > > I scratch my head sometimes as to why some config options rebuild so
-> > > > much stuff. One down, ? to go. :)
-> > > >
-> > > > > Changing the value of CONFIG_DEV_BLK_INITRD is a common thing with build
-> > > > > systems that generate two kernels: one with the initramfs and one
-> > > > > without. buildroot is one of these build systems, OpenWrt is also
-> > > > > another one that does this.
-> > > > >
-> > > > > This patch series proposes adding an empty initrd.h to satisfy the need
-> > > > > for drivers/of/fdt.c to unconditionally include that file, and moves the
-> > > > > custom __early_init_dt_declare_initrd() definition away from
-> > > > > asm/memory.h
-> > > > >
-> > > > > This cuts the number of objects rebuilds from 1920 down to 26, so a
-> > > > > factor 73 approximately.
-> > > > >
-> > > > > Apologies for the long CC list, please let me know how you would go
-> > > > > about merging that and if another approach would be preferable, e.g:
-> > > > > introducing a CONFIG_ARCH_INITRD_BELOW_START_OK Kconfig option or
-> > > > > something like that.
-> > > >
-> > > > There may be a better way as of 4.20 because bootmem is now gone and
-> > > > only memblock is used. This should unify what each arch needs to do
-> > > > with initrd early. We need the physical address early for memblock
-> > > > reserving. Then later on we need the virtual address to access the
-> > > > initrd. Perhaps we should just change initrd_start and initrd_end to
-> > > > physical addresses (or add 2 new variables would be less invasive and
-> > > > allow for different translation than __va()). The sanity checks and
-> > > > memblock reserve could also perhaps be moved to a common location.
-> > > >
-> > > > Alternatively, given arm64 is the only oddball, I'd be fine with an
-> > > > "if (IS_ENABLED(CONFIG_ARM64))" condition in the default
-> > > > __early_init_dt_declare_initrd as long as we have a path to removing
-> > > > it like the above option.
-> > >
-> > > I think arm64 does not have to redefine __early_init_dt_declare_initrd().
-> > > Something like this might be just all we need (completely untested,
-> > > probably it won't even compile):
-> > >
-> > > diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-> > > index 9d9582c..e9ca238 100644
-> > > --- a/arch/arm64/mm/init.c
-> > > +++ b/arch/arm64/mm/init.c
-> > > @@ -62,6 +62,9 @@ s64 memstart_addr __ro_after_init = -1;
-> > >  phys_addr_t arm64_dma_phys_limit __ro_after_init;
-> > >
-> > >  #ifdef CONFIG_BLK_DEV_INITRD
-> > > +
-> > > +static phys_addr_t initrd_start_phys, initrd_end_phys;
-> > > +
-> > >  static int __init early_initrd(char *p)
-> > >  {
-> > >         unsigned long start, size;
-> > > @@ -71,8 +74,8 @@ static int __init early_initrd(char *p)
-> > >         if (*endp == ',') {
-> > >                 size = memparse(endp + 1, NULL);
-> > >
-> > > -               initrd_start = start;
-> > > -               initrd_end = start + size;
-> > > +               initrd_start_phys = start;
-> > > +               initrd_end_phys = end;
-> > >         }
-> > >         return 0;
-> > >  }
-> > > @@ -407,14 +410,27 @@ void __init arm64_memblock_init(void)
-> > >                 memblock_add(__pa_symbol(_text), (u64)(_end - _text));
-> > >         }
-> > >
-> > > -       if (IS_ENABLED(CONFIG_BLK_DEV_INITRD) && initrd_start) {
-> > > +       if (IS_ENABLED(CONFIG_BLK_DEV_INITRD) &&
-> > > +           (initrd_start || initrd_start_phys)) {
-> > > +               /*
-> > > +                * FIXME: ensure proper precendence between
-> > > +                * early_initrd and DT when both are present
-> >
-> > Command line takes precedence, so just reverse the order.
-> >
-> > > +                */
-> > > +               if (initrd_start) {
-> > > +                       initrd_start_phys = __phys_to_virt(initrd_start);
-> > > +                       initrd_end_phys = __phys_to_virt(initrd_end);
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-BTW, I think you meant virt_to_phys() here?
+On Wed, Oct 24 2018, Josh Triplett wrote:
 
-> >
-> > AIUI, the original issue was doing the P2V translation was happening
-> > too early and the VA could be wrong if the linear range is adjusted.
-> > So I don't think this would work.
+> On Tue, Oct 23, 2018 at 07:26:06AM +1100, NeilBrown wrote:
+>> On Sun, Oct 21 2018, Josh Triplett wrote:
+>>=20
+>> > On Mon, Oct 22, 2018 at 08:20:11AM +1100, NeilBrown wrote:
+>> >> I call on you, Greg:
+>> >>  - to abandon this divisive attempt to impose a "Code of Conduct"
+>> >>  - to revert 8a104f8b5867c68
+>> >>  - to return to your core competence of building a great team around
+>> >>    a great kernel
+>> >>=20
+>> >>  #Isupportreversion
+>> >>=20
+>> >> I call on the community to consider what *does* need to be said, about
+>> >> conduct, to people outside the community and who have recently joined.
+>> >> What is the document that you would have liked to have read as you we=
+re
+>> >> starting out?  It is all too long ago for me to remember clearly, and=
+ so
+>> >> much has changed.
+>> >
+>> > The document I would have liked to have read when starting out is
+>> > currently checked into the source tree in
+>> > Documentation/process/code-of-conduct.rst .
+>>=20
+>> I'm curious - what would you have gained by reading that document?
 >
-> Probably things have changed since then, but in the current code there is
->
->                 initrd_start = __phys_to_virt(initrd_start);
->
-> and in between only the code related to CONFIG_RANDOMIZE_BASE, so I believe
-> it's safe to use __phys_to_virt() here as well.
+> I would have then had rather less of a pervasive feeling of "if I make
+> even a single mistake I get made an example of in ways that will feed
+> people's quotes files for years to come".
 
-Here is fine yes, but I believe it was the the phys to virt in the DT
-code before adjusting the linear range that was the problem.
+Thanks for your reply.  Certainly feeling safe is important, and having
+clear statements that the community values and promotes psychological
+safety is valuable.
 
-Rob
+The old "code of conflict" said
+   If however, anyone feels personally abused, threatened, or otherwise
+   uncomfortable due to this process, that is not acceptable.=20
+
+would you have not found this a strong enough statement to ward off that
+pervasive feeling?
+
+In the current code, would The "Our Pledge" section have been
+sufficient, or do you think the other sections would have actually
+helped you?
+
+>
+> See
+> https://hbr.org/2017/08/high-performing-teams-need-psychological-safety-h=
+eres-how-to-create-it
+> for more on the benefits of that.
+
+Thanks for the link.
+
+NeilBrown
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlvSMkwACgkQOeye3VZi
+gblbqxAAxHLxaEPR964HG/HkxGC7q+P2Eve9bvQII+JykbmmvyUrwmAz97vvk/jo
+yKR5eQWsm/zNQPnLQCHQilF+v35dtE0qOqHCEqcza6aJepB1lTbwx5af2o5ZnkNk
+KA9SSLcfdyYfP8Pq8GpmlS/c+53qNt6OIYhYJngudxbP6VpgysRl79vaAcEHuVfi
+6ToYJzKMm/ZsJLqOQuaTQsvhEmF/e6yrdXFbCCQQzuZAjnwvKKMUkSGpnRaux3wi
+1GTlRJflJKr1rI9XWQptRwfJu0esrH00q2BxuLc2UQqO4FcDpLwpDlJUecXVoClm
+6lXE7cV/pjq7IghfpsCplLHWd7e/3xJWvc4xe9g8jHTbqnTkeCGDAZLEaKPCBTXi
+CSXIoVV/2i80wNONQgUm3OUYg4MXcoOtp/lr/eS0c6OO3xa8BLIKFvgtKjDKxaZP
+yGfe3viXpt1IyRlnli80+79HS4YNc2abM/hQwFhV2eRc04M5nZNfZHp36xVwyYoA
+5qO906UTcBxW2+mz5aY4Zc2PRT6keBkHRAKQuJuQuL1yq/d9oM9rPq/9L+3K2aMS
+8YjlU0Y76lA4B4GKBJ5/nyunLxxYDb5ZM2/QJSXOqGx76pJyTWfki9okjLLyc+Hu
+t2O6b+GoQts7rNwj4G6KPL+Q104u1DVQBX9dClAuVoRwk4TLUQc=
+=qLBs
+-----END PGP SIGNATURE-----
+--=-=-=--
