@@ -2,130 +2,159 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E15ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 20:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62BDBC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 20:54:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FA4F2075D
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 20:52:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FA4F2075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0907F2075D
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 20:54:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XuCH3M+w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0907F2075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726142AbeJZF0V (ORCPT
+        id S1726243AbeJZF2S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 01:26:21 -0400
-Received: from mga17.intel.com ([192.55.52.151]:32228 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725941AbeJZF0U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 01:26:20 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2018 13:52:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,425,1534834800"; 
-   d="scan'208";a="102705564"
-Received: from ray.jf.intel.com (HELO [10.7.201.18]) ([10.7.201.18])
-  by orsmga001.jf.intel.com with ESMTP; 25 Oct 2018 13:52:04 -0700
-Subject: Re: [PATCH v3] x86/numa_emulation: Fix uniform-split numa emulation
-To:     Dan Williams <dan.j.williams@intel.com>, mingo@redhat.com
-Cc:     x86@kernel.org, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        stable@vger.kernel.org, Dave Jiang <dave.jiang@intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-References: <154049911459.2685845.9210186007479774286.stgit@dwillia2-desk3.amr.corp.intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <d2987470-3680-9923-d114-a7d7b08c06e7@intel.com>
-Date:   Thu, 25 Oct 2018 13:52:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 26 Oct 2018 01:28:18 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:34185 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725842AbeJZF2R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 01:28:17 -0400
+Received: by mail-lj1-f196.google.com with SMTP id c21-v6so3653660ljj.1;
+        Thu, 25 Oct 2018 13:54:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-transfer-encoding:content-language;
+        bh=EWU+DMnWQo8TjpoUKtT4KbxdOWtfme8ZyaFJEKj2sYA=;
+        b=XuCH3M+wqzuBmB6+F/kn+zYMofl1vVMBRe/b2KzOLCC892m5DdOAp/jSbOQy/zPY3u
+         +EaUv9f9+AwEMfXK6up2/cnnz3te+zN+h045fqgpyh0AsXC5UlVrQ5laQgFMWVGCfzq4
+         rMXOdgKNMv31d1kOWwKe8JiAAbgD0gRkQjY6HiVxlwdzqIyzPLRnisrUqi+1QYPfLzMx
+         MOKDEy0apAeaworYM37EwRmNF+qKGsSZVUXf5mBASZegvF8aoxuZk8TmHYSaUdhZSS0M
+         WkWjJz+y9HfQMB8N8Zf8qFbY4MPBUzVNEYS221BRn6wZs62MfVcZW5CDo0w5oYeSp1w9
+         Z/2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=EWU+DMnWQo8TjpoUKtT4KbxdOWtfme8ZyaFJEKj2sYA=;
+        b=eX27z3z/DQUqONYTMJ3lqqLj7t2+CfLcIwbBEcvMK/XLE3xXlRx4UHkOqc64J89ffA
+         j+nqmyR+i8TlNXfybxpO9GTURsZQC6OHo2ia0tKHSem/ixCtJJ2ZfzXc3WEjC4f9Fivv
+         p/9v2qto8/rPX29z/3QK49BoPVT+rDFy/F8fZCw9dngnBsvioO1ngAfMJ8FdAZrGZfWF
+         OwnbmPSJWkHrPT8B4o0d9nRnNx6B0OjA+t1ugz19wystzphchUcJ2uIGjUkvx8EHMs5k
+         QKAbDygBCoEqT0dmo+AcF/PD5FU/Bt6BaZlkhmH3SIq/LR2JCNpsXU5JdpJepkab1B6a
+         URBA==
+X-Gm-Message-State: AGRZ1gK/9bgEGqixNi5o6r4Ug+PvF6qUX1kcXZarrTY7w+/GA5UrK+U+
+        UW8j8ALF3hnVzX4JJ09sp7E=
+X-Google-Smtp-Source: AJdET5cv+HYPg/UlTQX0vH8QZesxftTfwBHFEvupgFhtKmvhUqFsdOI7hCX8Hk+iU3adIkP31uFqvA==
+X-Received: by 2002:a2e:81d3:: with SMTP id s19-v6mr444846ljg.138.1540500839571;
+        Thu, 25 Oct 2018 13:53:59 -0700 (PDT)
+Received: from ?IPv6:2001:14ba:8017:3300:313a:d550:4603:9163? (dtynxhybvjnm1yvtdwgvt-3.rev.dnainternet.fi. [2001:14ba:8017:3300:313a:d550:4603:9163])
+        by smtp.googlemail.com with ESMTPSA id h26-v6sm512870lfc.40.2018.10.25.13.53.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Oct 2018 13:53:58 -0700 (PDT)
+Subject: Re: [PATCH v2 3/3] reset: reset-zynqmp: Adding support for Xilinx
+ zynqmp reset controller.
+To:     Nava kishore Manne <nava.manne@xilinx.com>, p.zabel@pengutronix.de,
+        robh+dt@kernel.org, mark.rutland@arm.com, michal.simek@xilinx.com,
+        rajanv@xilinx.com, jollys@xilinx.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        chinnikishore369@gmail.com
+References: <20181026122424.30831-1-nava.manne@xilinx.com>
+ <20181026122424.30831-4-nava.manne@xilinx.com>
+From:   =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>
+Message-ID: <437c1bc9-8d5b-7b2a-f612-993151c23f7c@gmail.com>
+Date:   Thu, 25 Oct 2018 23:53:56 +0300
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <154049911459.2685845.9210186007479774286.stgit@dwillia2-desk3.amr.corp.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20181026122424.30831-4-nava.manne@xilinx.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/25/18 1:26 PM, Dan Williams wrote:
-> --- a/arch/x86/mm/numa_emulation.c
-> +++ b/arch/x86/mm/numa_emulation.c
-> @@ -400,9 +400,17 @@ void __init numa_emulation(struct numa_meminfo *numa_meminfo, int numa_dist_cnt)
->  		n = simple_strtoul(emu_cmdline, &emu_cmdline, 0);
->  		ret = -1;
->  		for_each_node_mask(i, physnode_mask) {
-> +			/*
-> +			 * The reason we pass in blk[0] is due to
-> +			 * numa_remove_memblk_from() called by
-> +			 * emu_setup_memblk() will delete entry 0
-> +			 * and then move everything else up in the pi.blk
-> +			 * array. Therefore we should always be looking
-> +			 * at blk[0].
-> +			 */
->  			ret = split_nodes_size_interleave_uniform(&ei, &pi,
-> -					pi.blk[i].start, pi.blk[i].end, 0,
-> -					n, &pi.blk[i], nid);
-> +					pi.blk[0].start, pi.blk[0].end, 0,
-> +					n, &pi.blk[0], nid);
+Hi,
 
-So, has this *ever* worked on a multi-socket configuration?  Or has it
-just never been run on a multi-socket configuration?
+Some comments below.
 
-Either way, nice changelog, and nice comments.  I'd have some minor nits
-if you have to respin it, but otherwise:
+On 26/10/2018 15.24, Nava kishore Manne wrote:
+> Add a reset controller driver for Xilinx Zynq UltraScale+ MPSoC.
+> The zynqmp reset-controller has the ability to reset lines
+> connected to different blocks and peripheral in the Soc.
+>
+> Signed-off-by: Nava kishore Manne <nava.manne@xilinx.com>
+> ---
+> Changes for v2:
+> 		-Fixed some minor coding issues as suggested
+> 		 by philipp.
+>
+> Changes for v1:
+> 		-None.
+>
+> Changes for RFC-V3:
+> 		-None.
+>
+> Changes for RFC-V2:
+> 		-Moved eemi_ops into a priv struct as suggested
+> 		 by philipp.
+>
+>   drivers/reset/Makefile       |   1 +
+>   drivers/reset/reset-zynqmp.c | 114 +++++++++++++++++++++++++++++++++++++++++++
+>   2 files changed, 115 insertions(+)
+>   create mode 100644 drivers/reset/reset-zynqmp.c
+>
+> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> index 4243c38..eb315d1 100644
+> --- a/drivers/reset/Makefile
+> +++ b/drivers/reset/Makefile
+> @@ -24,4 +24,5 @@ obj-$(CONFIG_RESET_TI_SYSCON) += reset-ti-syscon.o
+>   obj-$(CONFIG_RESET_UNIPHIER) += reset-uniphier.o
+>   obj-$(CONFIG_RESET_UNIPHIER_USB3) += reset-uniphier-usb3.o
+>   obj-$(CONFIG_RESET_ZYNQ) += reset-zynq.o
+> +obj-$(CONFIG_ARCH_ZYNQMP) += reset-zynqmp.o
+>   
+> diff --git a/drivers/reset/reset-zynqmp.c b/drivers/reset/reset-zynqmp.c
+> new file mode 100644
+> index 0000000..cff63d9
+> --- /dev/null
+> +++ b/drivers/reset/reset-zynqmp.c
+> @@ -0,0 +1,114 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Copyright (C) 2018 Xilinx, Inc.
+> + *
+> + */
+> +
+> +#include <linux/err.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/reset-controller.h>
+> +#include <linux/firmware/xlnx-zynqmp.h>
+> +
+> +#define ZYNQMP_NR_RESETS (ZYNQMP_PM_RESET_END - ZYNQMP_PM_RESET_START - 2)
+Probably should be:
 
-Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
++#define ZYNQMP_NR_RESETS (ZYNQMP_PM_RESET_END - ZYNQMP_PM_RESET_START - 1)
+
+or if START is moved one forward:
+
++#define ZYNQMP_NR_RESETS (ZYNQMP_PM_RESET_END - ZYNQMP_PM_RESET_START)
+
+> +#define ZYNQMP_RESET_ID (ZYNQMP_PM_RESET_START + 1)
+If you move start forward then you don't need +1 here. Or you can get 
+rid of the define altogether and just use ZYNQMP_PM_RESET_START in it's 
+place..
+
+Thanks,
+Vesa Jääskeläinen
