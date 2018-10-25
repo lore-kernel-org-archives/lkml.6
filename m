@@ -7,247 +7,304 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8028FC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:10:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A4DC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:10:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DC8C2083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:10:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E468720840
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:10:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zzit6cbW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DC8C2083E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lue5j4W/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E468720840
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727418AbeJYTnG (ORCPT
+        id S1727501AbeJYTnI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 15:43:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46800 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 15:43:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727228AbeJYTnF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 15:43:05 -0400
+        id S1727228AbeJYTnH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 15:43:07 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 92B2320834;
-        Thu, 25 Oct 2018 11:10:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA8FE20840;
+        Thu, 25 Oct 2018 11:10:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540465847;
-        bh=TvNmFp8hSHp/wcm5YBdyYWQ6VGQpV0yKmZmHDvKLd3Q=;
+        s=default; t=1540465849;
+        bh=rFr+CU84yvXVQS6QDaz6qjL0HIxfEJefDUgOpki3jwg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zzit6cbWy554PhpadZhgil976sjP1uRkfznixHVWehX2TRHz92xxyj4yTwB2nsYMn
-         fuM6G7N4iCdUDZpH5llh6yHsdx7oEIbUbm+M7FT7XsV+lAVVVfpYIWEnYH4q4zxmka
-         2ynBkjgQtB7q8fheq2IWyhKRJYCjyH+VUDVSHKNA=
+        b=lue5j4W/cAnNpeLVRNQMHilANDTJorwO6BsuiY+Q2CXBUEi+VuToNHmNGfbbbfxbl
+         dOqRngzMogm/sl0Xai7/CO1M/7rQFSIfJCXuSK9zYHep7d9vc+kKM4dIekHOfHhuZq
+         0QIKXWIGVqqCP6d47i97O8/hqTGr7DiiiiOm7nVQ=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
+        David Miller <davem@davemloft.net>,
         Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 01/37] perf record: Encode -k clockid frequency into Perf trace
-Date:   Thu, 25 Oct 2018 08:09:55 -0300
-Message-Id: <20181025111031.3440-2-acme@kernel.org>
+Subject: [PATCH 02/37] perf annotate: Add Sparc support
+Date:   Thu, 25 Oct 2018 08:09:56 -0300
+Message-Id: <20181025111031.3440-3-acme@kernel.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181025111031.3440-1-acme@kernel.org>
 References: <20181025111031.3440-1-acme@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexey Budankov <alexey.budankov@linux.intel.com>
+From: David Miller <davem@davemloft.net>
 
-Store -k clockid frequency into Perf trace to enable timestamps
-derived metrics conversion into wall clock time on reporting stage.
+E.g.:
 
-Below is the example of perf report output:
+  $ perf annotate --stdio2
+  Samples: 7K of event 'cycles:ppp', 4000 Hz, Event count (approx.): 3086733887
+  __gettimeofday  /lib32/libc-2.27.so [Percent: local period]
+  Percent│
+         │
+         │
+         │    Disassembly of section .text:
+         │
+         │    000a6fa0 <__gettimeofday@@GLIBC_2.0>:
+    0.47 │      save   %sp, -96, %sp
+    0.73 │      sethi  %hi(0xe9000), %l7
+         │    → call   __frame_state_for@@GLIBC_2.0+0x480
+    0.30 │      add    %l7, 0x58, %l7     ! e9058 <nftw64@@GLIBC_2.3.3+0x818>
+    1.33 │      mov    %i0, %o0
+         │      mov    %i1, %o1
+    0.43 │      mov    0x74, %g1
+         │      ta     0x10
+   88.92 │    ↓ bcc    30
+    2.95 │      clr    %g1
+         │      neg    %o0
+         │      mov    1, %g1
+    0.31 │30:   cmp    %g1, 0
+         │      bne,pn %icc, a6fe4 <__gettimeofday@@GLIBC_2.0+0x44>
+         │      mov    %o0, %i0
+    1.96 │    ← return %i7 + 8
+    2.62 │      nop
+         │      sethi  %hi(0), %g1
+         │      neg    %o0, %g2
+         │      add    %g1, 0x160, %g1
+         │      ld     [ %l7 + %g1 ], %g1
+         │      st     %g2, [ %g7 + %g1 ]
+         │    ← return %i7 + 8
+         │      mov    -1, %o0
 
-  tools/perf/perf record -k raw -- ../../matrix/linux/matrix.gcc
-  ...
-  [ perf record: Captured and wrote 31.222 MB perf.data (818054 samples) ]
-
-  tools/perf/perf report --header
-  # ========
-  ...
-  # event : name = cycles:ppp, , size = 112, { sample_period, sample_freq } = 4000, sample_type = IP|TID|TIME|PERIOD, disabled = 1, inherit = 1, mmap = 1, comm = 1, freq = 1, enable_on_exec = 1, task = 1, precise_ip = 3, sample_id_all = 1, exclude_guest = 1, mmap2 = 1, comm_exec = 1, use_clockid = 1, clockid = 4
-  ...
-  # clockid frequency: 1000 MHz
-  ...
-  # ========
-
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/23a4a1dc-b160-85a0-347d-40a2ed6d007b@linux.intel.com
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: http://lkml.kernel.org/r/20181016.205555.1070918198627611771.davem@davemloft.net
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-record.c | 24 ++++++++++++++++++++++--
- tools/perf/perf.h           |  1 +
- tools/perf/util/env.h       |  1 +
- tools/perf/util/header.c    | 23 +++++++++++++++++++++++
- tools/perf/util/header.h    |  1 +
- 5 files changed, 48 insertions(+), 2 deletions(-)
+ tools/perf/arch/sparc/annotate/instructions.c | 169 ++++++++++++++++++++++++++
+ tools/perf/util/annotate.c                    |   8 ++
+ 2 files changed, 177 insertions(+)
+ create mode 100644 tools/perf/arch/sparc/annotate/instructions.c
 
-diff --git a/tools/perf/builtin-record.c b/tools/perf/builtin-record.c
-index 0980dfe3396b..10cf889c6d75 100644
---- a/tools/perf/builtin-record.c
-+++ b/tools/perf/builtin-record.c
-@@ -592,6 +592,9 @@ static void record__init_features(struct record *rec)
- 	if (!rec->opts.full_auxtrace)
- 		perf_header__clear_feat(&session->header, HEADER_AUXTRACE);
- 
-+	if (!(rec->opts.use_clockid && rec->opts.clockid_res_ns))
-+		perf_header__clear_feat(&session->header, HEADER_CLOCKID);
+diff --git a/tools/perf/arch/sparc/annotate/instructions.c b/tools/perf/arch/sparc/annotate/instructions.c
+new file mode 100644
+index 000000000000..2614c010c235
+--- /dev/null
++++ b/tools/perf/arch/sparc/annotate/instructions.c
+@@ -0,0 +1,169 @@
++// SPDX-License-Identifier: GPL-2.0
 +
- 	perf_header__clear_feat(&session->header, HEADER_STAT);
- }
- 
-@@ -897,6 +900,9 @@ static int __cmd_record(struct record *rec, int argc, const char **argv)
- 
- 	record__init_features(rec);
- 
-+	if (rec->opts.use_clockid && rec->opts.clockid_res_ns)
-+		session->header.env.clockid_res_ns = rec->opts.clockid_res_ns;
-+
- 	if (forks) {
- 		err = perf_evlist__prepare_workload(rec->evlist, &opts->target,
- 						    argv, data->is_pipe,
-@@ -1337,6 +1343,19 @@ static const struct clockid_map clockids[] = {
- 	CLOCKID_END,
- };
- 
-+static int get_clockid_res(clockid_t clk_id, u64 *res_ns)
++static int is_branch_cond(const char *cond)
 +{
-+	struct timespec res;
++	if (cond[0] == '\0')
++		return 1;
 +
-+	*res_ns = 0;
-+	if (!clock_getres(clk_id, &res))
-+		*res_ns = res.tv_nsec + res.tv_sec * NSEC_PER_SEC;
-+	else
-+		pr_warning("WARNING: Failed to determine specified clock resolution.\n");
++	if (cond[0] == 'a' && cond[1] == '\0')
++		return 1;
++
++	if (cond[0] == 'c' &&
++	    (cond[1] == 'c' || cond[1] == 's') &&
++	    cond[2] == '\0')
++		return 1;
++
++	if (cond[0] == 'e' &&
++	    (cond[1] == '\0' ||
++	     (cond[1] == 'q' && cond[2] == '\0')))
++		return 1;
++
++	if (cond[0] == 'g' &&
++	    (cond[1] == '\0' ||
++	     (cond[1] == 't' && cond[2] == '\0') ||
++	     (cond[1] == 'e' && cond[2] == '\0') ||
++	     (cond[1] == 'e' && cond[2] == 'u' && cond[3] == '\0')))
++		return 1;
++
++	if (cond[0] == 'l' &&
++	    (cond[1] == '\0' ||
++	     (cond[1] == 't' && cond[2] == '\0') ||
++	     (cond[1] == 'u' && cond[2] == '\0') ||
++	     (cond[1] == 'e' && cond[2] == '\0') ||
++	     (cond[1] == 'e' && cond[2] == 'u' && cond[3] == '\0')))
++		return 1;
++
++	if (cond[0] == 'n' &&
++	    (cond[1] == '\0' ||
++	     (cond[1] == 'e' && cond[2] == '\0') ||
++	     (cond[1] == 'z' && cond[2] == '\0') ||
++	     (cond[1] == 'e' && cond[2] == 'g' && cond[3] == '\0')))
++		return 1;
++
++	if (cond[0] == 'b' &&
++	    cond[1] == 'p' &&
++	    cond[2] == 'o' &&
++	    cond[3] == 's' &&
++	    cond[4] == '\0')
++		return 1;
++
++	if (cond[0] == 'v' &&
++	    (cond[1] == 'c' || cond[1] == 's') &&
++	    cond[2] == '\0')
++		return 1;
++
++	if (cond[0] == 'b' &&
++	    cond[1] == 'z' &&
++	    cond[2] == '\0')
++		return 1;
 +
 +	return 0;
 +}
 +
- static int parse_clockid(const struct option *opt, const char *str, int unset)
- {
- 	struct record_opts *opts = (struct record_opts *)opt->value;
-@@ -1360,7 +1379,7 @@ static int parse_clockid(const struct option *opt, const char *str, int unset)
- 
- 	/* if its a number, we're done */
- 	if (sscanf(str, "%d", &opts->clockid) == 1)
--		return 0;
-+		return get_clockid_res(opts->clockid, &opts->clockid_res_ns);
- 
- 	/* allow a "CLOCK_" prefix to the name */
- 	if (!strncasecmp(str, "CLOCK_", 6))
-@@ -1369,7 +1388,8 @@ static int parse_clockid(const struct option *opt, const char *str, int unset)
- 	for (cm = clockids; cm->name; cm++) {
- 		if (!strcasecmp(str, cm->name)) {
- 			opts->clockid = cm->clockid;
--			return 0;
-+			return get_clockid_res(opts->clockid,
-+					       &opts->clockid_res_ns);
- 		}
- 	}
- 
-diff --git a/tools/perf/perf.h b/tools/perf/perf.h
-index 21bf7f5a3cf5..0ed4a34c74c4 100644
---- a/tools/perf/perf.h
-+++ b/tools/perf/perf.h
-@@ -81,6 +81,7 @@ struct record_opts {
- 	unsigned     initial_delay;
- 	bool         use_clockid;
- 	clockid_t    clockid;
-+	u64          clockid_res_ns;
- 	unsigned int proc_map_timeout;
- };
- 
-diff --git a/tools/perf/util/env.h b/tools/perf/util/env.h
-index 1f3ccc368530..d01b8355f4ca 100644
---- a/tools/perf/util/env.h
-+++ b/tools/perf/util/env.h
-@@ -63,6 +63,7 @@ struct perf_env {
- 	struct numa_node	*numa_nodes;
- 	struct memory_node	*memory_nodes;
- 	unsigned long long	 memory_bsize;
-+	u64                     clockid_res_ns;
- };
- 
- extern struct perf_env perf_env;
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index 1ec1d9bc2d63..4fd45be95a43 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -1034,6 +1034,13 @@ static int write_auxtrace(struct feat_fd *ff,
- 	return err;
- }
- 
-+static int write_clockid(struct feat_fd *ff,
-+			 struct perf_evlist *evlist __maybe_unused)
++static int is_branch_reg_cond(const char *cond)
 +{
-+	return do_write(ff, &ff->ph->env.clockid_res_ns,
-+			sizeof(ff->ph->env.clockid_res_ns));
-+}
++	if ((cond[0] == 'n' || cond[0] == 'l') &&
++	    cond[1] == 'z' &&
++	    cond[2] == '\0')
++		return 1;
 +
- static int cpu_cache_level__sort(const void *a, const void *b)
- {
- 	struct cpu_cache_level *cache_a = (struct cpu_cache_level *)a;
-@@ -1508,6 +1515,12 @@ static void print_cpu_topology(struct feat_fd *ff, FILE *fp)
- 		fprintf(fp, "# Core ID and Socket ID information is not available\n");
- }
- 
-+static void print_clockid(struct feat_fd *ff, FILE *fp)
-+{
-+	fprintf(fp, "# clockid frequency: %"PRIu64" MHz\n",
-+		ff->ph->env.clockid_res_ns * 1000);
-+}
++	if (cond[0] == 'z' &&
++	    cond[1] == '\0')
++		return 1;
 +
- static void free_event_desc(struct perf_evsel *events)
- {
- 	struct perf_evsel *evsel;
-@@ -2531,6 +2544,15 @@ static int process_mem_topology(struct feat_fd *ff,
- 	return ret;
- }
- 
-+static int process_clockid(struct feat_fd *ff,
-+			   void *data __maybe_unused)
-+{
-+	if (do_read_u64(ff, &ff->ph->env.clockid_res_ns))
-+		return -1;
++	if ((cond[0] == 'g' || cond[0] == 'l') &&
++	    cond[1] == 'e' &&
++	    cond[2] == 'z' &&
++	    cond[3] == '\0')
++		return 1;
++
++	if (cond[0] == 'g' &&
++	    cond[1] == 'z' &&
++	    cond[2] == '\0')
++		return 1;
 +
 +	return 0;
 +}
 +
- struct feature_ops {
- 	int (*write)(struct feat_fd *ff, struct perf_evlist *evlist);
- 	void (*print)(struct feat_fd *ff, FILE *fp);
-@@ -2590,6 +2612,7 @@ static const struct feature_ops feat_ops[HEADER_LAST_FEATURE] = {
- 	FEAT_OPN(CACHE,		cache,		true),
- 	FEAT_OPR(SAMPLE_TIME,	sample_time,	false),
- 	FEAT_OPR(MEM_TOPOLOGY,	mem_topology,	true),
-+	FEAT_OPR(CLOCKID,       clockid,        false)
++static int is_branch_float_cond(const char *cond)
++{
++	if (cond[0] == '\0')
++		return 1;
++
++	if ((cond[0] == 'a' || cond[0] == 'e' ||
++	     cond[0] == 'z' || cond[0] == 'g' ||
++	     cond[0] == 'l' || cond[0] == 'n' ||
++	     cond[0] == 'o' || cond[0] == 'u') &&
++	    cond[1] == '\0')
++		return 1;
++
++	if (((cond[0] == 'g' && cond[1] == 'e') ||
++	     (cond[0] == 'l' && (cond[1] == 'e' ||
++				 cond[1] == 'g')) ||
++	     (cond[0] == 'n' && (cond[1] == 'e' ||
++				 cond[1] == 'z')) ||
++	     (cond[0] == 'u' && (cond[1] == 'e' ||
++				 cond[1] == 'g' ||
++				 cond[1] == 'l'))) &&
++	    cond[2] == '\0')
++		return 1;
++
++	if (cond[0] == 'u' &&
++	    (cond[1] == 'g' || cond[1] == 'l') &&
++	    cond[2] == 'e' &&
++	    cond[3] == '\0')
++		return 1;
++
++	return 0;
++}
++
++static struct ins_ops *sparc__associate_instruction_ops(struct arch *arch, const char *name)
++{
++	struct ins_ops *ops = NULL;
++
++	if (!strcmp(name, "call") ||
++	    !strcmp(name, "jmp") ||
++	    !strcmp(name, "jmpl")) {
++		ops = &call_ops;
++	} else if (!strcmp(name, "ret") ||
++		   !strcmp(name, "retl") ||
++		   !strcmp(name, "return")) {
++		ops = &ret_ops;
++	} else if (!strcmp(name, "mov")) {
++		ops = &mov_ops;
++	} else {
++		if (name[0] == 'c' &&
++		    (name[1] == 'w' || name[1] == 'x'))
++			name += 2;
++
++		if (name[0] == 'b') {
++			const char *cond = name + 1;
++
++			if (cond[0] == 'r') {
++				if (is_branch_reg_cond(cond + 1))
++					ops = &jump_ops;
++			} else if (is_branch_cond(cond)) {
++				ops = &jump_ops;
++			}
++		} else if (name[0] == 'f' && name[1] == 'b') {
++			if (is_branch_float_cond(name + 2))
++				ops = &jump_ops;
++		}
++	}
++
++	if (ops)
++		arch__associate_ins_ops(arch, name, ops);
++
++	return ops;
++}
++
++static int sparc__annotate_init(struct arch *arch, char *cpuid __maybe_unused)
++{
++	if (!arch->initialized) {
++		arch->initialized = true;
++		arch->associate_instruction_ops = sparc__associate_instruction_ops;
++		arch->objdump.comment_char = '#';
++	}
++
++	return 0;
++}
+diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
+index 28cd6a17491b..6936daf89ddd 100644
+--- a/tools/perf/util/annotate.c
++++ b/tools/perf/util/annotate.c
+@@ -139,6 +139,7 @@ static int arch__associate_ins_ops(struct arch* arch, const char *name, struct i
+ #include "arch/x86/annotate/instructions.c"
+ #include "arch/powerpc/annotate/instructions.c"
+ #include "arch/s390/annotate/instructions.c"
++#include "arch/sparc/annotate/instructions.c"
+ 
+ static struct arch architectures[] = {
+ 	{
+@@ -170,6 +171,13 @@ static struct arch architectures[] = {
+ 			.comment_char = '#',
+ 		},
+ 	},
++	{
++		.name = "sparc",
++		.init = sparc__annotate_init,
++		.objdump = {
++			.comment_char = '#',
++		},
++	},
  };
  
- struct header_print_data {
-diff --git a/tools/perf/util/header.h b/tools/perf/util/header.h
-index e17903caa71d..0d553ddca0a3 100644
---- a/tools/perf/util/header.h
-+++ b/tools/perf/util/header.h
-@@ -38,6 +38,7 @@ enum {
- 	HEADER_CACHE,
- 	HEADER_SAMPLE_TIME,
- 	HEADER_MEM_TOPOLOGY,
-+	HEADER_CLOCKID,
- 	HEADER_LAST_FEATURE,
- 	HEADER_FEAT_BITS	= 256,
- };
+ static void ins__delete(struct ins_operands *ops)
 -- 
 2.14.4
 
