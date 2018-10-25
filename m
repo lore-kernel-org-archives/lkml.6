@@ -2,171 +2,114 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C66ADECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:55:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B69D1C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:56:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87CC72083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:55:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aBnvA7ny"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87CC72083E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A20A2083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:56:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A20A2083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727743AbeJZC3g (ORCPT
+        id S1727765AbeJZCag (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 22:29:36 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42313 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727537AbeJZC3f (ORCPT
+        Thu, 25 Oct 2018 22:30:36 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:57548 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727543AbeJZCag (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 22:29:35 -0400
-Received: by mail-pf1-f194.google.com with SMTP id f26-v6so4549804pfn.9
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 10:55:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=9mhHGO13bVohChjIAZJCbUoJwXKO5hCdLnoJYxQkBt4=;
-        b=aBnvA7nyGeekzL6FXSynAVgUWdilQs42jXOk5S9OBuFSInFOg0G4aZ4/g0+F4Pydlb
-         m4liS3F7g2t0CKkqlYN/IsIqmum5wAKy4VkXtkwd2G1Xd8XnvumdHy775plMKQatSmsz
-         1buzrUlnorB6CQqYcs58oEMHO0PS0bBxvBXZdFmrlm8jpC7hrNJxtjFfGC3pwdciVO18
-         HJe0kY4BBjQtKQQYZRbZBVs9kK3RKqx66BC63aEVYfUDGvWmU8/BpJzlVW17SiROWWKA
-         VrJlOHOHQHkaOQZLKM5OxmqV1XzXnDNIFpDo78ShzKMa8cDLd+qc1pJQ+U0nDPJYggzo
-         3DXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=9mhHGO13bVohChjIAZJCbUoJwXKO5hCdLnoJYxQkBt4=;
-        b=pv5BPq72I9VUbVSYu1Y5N671+tTEN4Mm3OKHjqyAJQoZs/Ys1T704yQgbBeUevUTse
-         s2WGuaQoGwn6LSt1vvxKMPrMylW0iIyDzEVgV2DHn3f+CDxki/JTyOM3UjrkK/edE29m
-         PvUMo3tHa4bCUpdZNjXXHjqx5pyHGDFsx78tHNIy+eCqoh4Z8a7bkECgwuI3Fra9inB0
-         OceL3NKgkWbpeaaPjXyv9TJjel5narmCJBWfARDYsUXbE4l8ZCpPrvPrSLpS4eGCqmlj
-         2LRJgx4XSt/GbIoWdqoMwp1rkqS4H5rcGyXVfwEesi4u7e0SU3LMgGZKbSAhP98VSn+a
-         CPZQ==
-X-Gm-Message-State: AGRZ1gIIVmsyhoxbMGT9mrZkPErDgAx0/riTLh+08Hb1kIgwqFxUjrUI
-        AfayZYb/iq/QCDC3lcejNkCAMdYL
-X-Google-Smtp-Source: AJdET5cZDiEAnSIfD0JZmh4kj+Ib3UgyxJYFWCVw1OMDQLL7q2pswCfGzPZZk/4m+08RqE3gQW8Srw==
-X-Received: by 2002:a62:67c3:: with SMTP id t64-v6mr232262pfj.76.1540490146303;
-        Thu, 25 Oct 2018 10:55:46 -0700 (PDT)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id p19-v6sm2261885pff.172.2018.10.25.10.55.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Oct 2018 10:55:45 -0700 (PDT)
-From:   Florian Fainelli <f.fainelli@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Kim Phillips <kim.phillips@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        rmk+kernel@armlinux.org.uk, l.stach@pengutronix.de
-Subject: [PATCH v2 2/2] perf tests: Add a test for the ARM 32-bit [vectors] page
-Date:   Thu, 25 Oct 2018 10:55:08 -0700
-Message-Id: <20181025175508.6967-3-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181025175508.6967-1-f.fainelli@gmail.com>
-References: <20181025175508.6967-1-f.fainelli@gmail.com>
+        Thu, 25 Oct 2018 22:30:36 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9PHufit035247;
+        Thu, 25 Oct 2018 12:56:41 -0500
+Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id w9PHufjh067504
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 25 Oct 2018 12:56:41 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 25
+ Oct 2018 12:56:40 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 25 Oct 2018 12:56:40 -0500
+Received: from [172.22.66.177] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9PHuepe026446;
+        Thu, 25 Oct 2018 12:56:40 -0500
+Subject: Re: [PATCH v4 2/7] dt-bindings: ti-lmu: Modify dt bindings for the
+ LM3697
+To:     Rob Herring <robh@kernel.org>
+CC:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-leds@vger.kernel.org>, <lee.jones@linaro.org>,
+        <tony@atomide.com>
+References: <20181023170623.31820-1-dmurphy@ti.com>
+ <20181023170623.31820-2-dmurphy@ti.com> <20181024144951.GB9327@bogus>
+From:   Dan Murphy <dmurphy@ti.com>
+Message-ID: <10220e05-c4e0-e2a5-a288-836f5b13e112@ti.com>
+Date:   Thu, 25 Oct 2018 12:56:32 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181024144951.GB9327@bogus>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-perf on ARM requires CONFIG_KUSER_HELPERS to be turned on to allow some
-independance with respect to the ARM CPU being used. Add a test which
-tries to locate the [vectors] page, created when CONFIG_KUSER_HELPERS is
-turned on to help asses the system's health.
 
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
----
- tools/perf/arch/arm/tests/Build          |  1 +
- tools/perf/arch/arm/tests/arch-tests.c   |  4 ++++
- tools/perf/arch/arm/tests/vectors-page.c | 24 ++++++++++++++++++++++++
- tools/perf/tests/tests.h                 |  5 +++++
- 4 files changed, 34 insertions(+)
- create mode 100644 tools/perf/arch/arm/tests/vectors-page.c
+Rob
 
-diff --git a/tools/perf/arch/arm/tests/Build b/tools/perf/arch/arm/tests/Build
-index 883c57ff0c08..d9ae2733f9cc 100644
---- a/tools/perf/arch/arm/tests/Build
-+++ b/tools/perf/arch/arm/tests/Build
-@@ -1,4 +1,5 @@
- libperf-y += regs_load.o
- libperf-y += dwarf-unwind.o
-+libperf-y += vectors-page.o
- 
- libperf-y += arch-tests.o
-diff --git a/tools/perf/arch/arm/tests/arch-tests.c b/tools/perf/arch/arm/tests/arch-tests.c
-index 5b1543c98022..6848101a855f 100644
---- a/tools/perf/arch/arm/tests/arch-tests.c
-+++ b/tools/perf/arch/arm/tests/arch-tests.c
-@@ -10,6 +10,10 @@ struct test arch_tests[] = {
- 		.func = test__dwarf_unwind,
- 	},
- #endif
-+	{
-+		.desc = "Vectors page",
-+		.func = test__vectors_page,
-+	},
- 	{
- 		.func = NULL,
- 	},
-diff --git a/tools/perf/arch/arm/tests/vectors-page.c b/tools/perf/arch/arm/tests/vectors-page.c
-new file mode 100644
-index 000000000000..7ffdd79971c8
---- /dev/null
-+++ b/tools/perf/arch/arm/tests/vectors-page.c
-@@ -0,0 +1,24 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <stdio.h>
-+#include <string.h>
-+#include <linux/compiler.h>
-+
-+#include "debug.h"
-+#include "tests/tests.h"
-+#include "util/find-map.c"
-+
-+#define VECTORS__MAP_NAME "[vectors]"
-+
-+int test__vectors_page(struct test *test __maybe_unused,
-+		       int subtest __maybe_unused)
-+{
-+	void *start, *end;
-+
-+	if (find_map(&start, &end, VECTORS__MAP_NAME)) {
-+		pr_err("%s not found, is CONFIG_KUSER_HELPERS enabled?\n",
-+		       VECTORS__MAP_NAME);
-+		return TEST_FAIL;
-+	}
-+
-+	return TEST_OK;
-+}
-diff --git a/tools/perf/tests/tests.h b/tools/perf/tests/tests.h
-index b82f55fcc294..399f18ca71a3 100644
---- a/tools/perf/tests/tests.h
-+++ b/tools/perf/tests/tests.h
-@@ -119,4 +119,9 @@ int test__arch_unwind_sample(struct perf_sample *sample,
- 			     struct thread *thread);
- #endif
- #endif
-+
-+#if defined(__arm__)
-+int test__vectors_page(struct test *test, int subtest);
-+#endif
-+
- #endif /* TESTS_H */
+Thanks
+
+On 10/24/2018 09:49 AM, Rob Herring wrote:
+> On Tue, Oct 23, 2018 at 12:06:18PM -0500, Dan Murphy wrote:
+>> The LM3697 is a single function LED driver. The single function LED
+>> driver needs to reside in the LED directory as a dedicated LED driver
+>> and not as a MFD device.  The device does have common brightness and ramp
+>> features and those can be accomodated by a TI LMU framework.
+>>
+>> The LM3697 dt binding needs to be moved from the ti-lmu.txt and a dedicated
+>> LED dt binding needs to be added.  The new LM3697 LED dt binding will then
+>> reside in the Documentation/devicetree/bindings/leds directory and follow the
+>> current LED and general bindings guidelines.
+>>
+>> Signed-off-by: Dan Murphy <dmurphy@ti.com>
+>> ---
+>>
+>> v4 - Squashed removal and addition of the dt bindings into a single patch - https://lore.kernel.org/patchwork/patch/998703/
+> 
+> Still not really the sequence I'd like to see and what I think would 
+> help the discussion move along.
+> 
+> Patch 1: move all the devices out of ti-lmu.txt into the grouping which 
+> makes sense. IOW, no functional changes. Probably only strict 
+> sub/supersets of each other should be shared.
+> 
+> Patch 2-N: Make binding changes. Then we discuss things like ramp time 
+> properties separately from binding structure.
+> 
+
+OK I will re-work the patchset.
+
+Dan
+
+>>
+>>  .../devicetree/bindings/leds/leds-lm3697.txt  | 98 +++++++++++++++++++
+>>  .../devicetree/bindings/mfd/ti-lmu.txt        | 26 +----
+>>  2 files changed, 99 insertions(+), 25 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/leds/leds-lm3697.txt
+
+
 -- 
-2.17.1
-
+------------------
+Dan Murphy
