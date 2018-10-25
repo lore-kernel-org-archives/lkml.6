@@ -2,154 +2,140 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCFEDC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2244ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:20:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EEDE20834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:20:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68DBC2083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:20:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bkZvV9Nt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EEDE20834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="D2R7sD3j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68DBC2083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728024AbeJZBxq (ORCPT
+        id S1728045AbeJZByC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 21:53:46 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:43047 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727401AbeJZBxq (ORCPT
+        Thu, 25 Oct 2018 21:54:02 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44950 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727401AbeJZByC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 21:53:46 -0400
-Received: by mail-pl1-f196.google.com with SMTP id 30-v6so4160609plb.10
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 10:20:03 -0700 (PDT)
+        Thu, 25 Oct 2018 21:54:02 -0400
+Received: by mail-wr1-f66.google.com with SMTP id q6-v6so10132563wrw.11
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 10:20:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=pEfABltU7vYm5S0hDIPXm2W3dLw5de7ieA4PWnHAd3s=;
-        b=bkZvV9NtyyjaGTWFtvEI1rBL2g5nhjl5Nip3aK+/pEtewSWgnJrbs+OtJMhrciUXYc
-         xswx/TRR7MZ2oildK3u9xnI/bafkQ0fgQgwB8CGMz+Osrh4GxQ3E5WpJ1QJhIoK8YLcd
-         vALxs+v/8mAVNiPI0QOROYybc6XPZh76h0hu8RnI0eyepTiiN06IZpT7HHwPMg4m/275
-         ZeieMcjSKJOSvd3xDW6N8o+3SmvC7NPy7TOYwJUmvVSraLWLTynG9xab/5c3FRGGlF0U
-         aXQTynsES7SPI0NIHyufO2OovIlmlPCxsdWuUKdIQkkf1uKlJShQzSkab3bZh4K1VOGs
-         qX3A==
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=1bJs3q1wp8WqpHBYXRCtRsUapjWa79UF45pDkektjFM=;
+        b=D2R7sD3j91f2Ca5iUU4T8nVOL5FlvnHfzOcMpW8Bjrm3nF7iPO6x+2TMGukTXawDKR
+         Xq4JsJdjHhjFInDFcNlJg/15npPZeIsR2lOw0JjD1OY/Hp28TuCMOSrbTeQ5fHRnyLi8
+         2zO3SKxWPxY+x1PJ18DjtNXRH9QhyChQBr4A0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=pEfABltU7vYm5S0hDIPXm2W3dLw5de7ieA4PWnHAd3s=;
-        b=eqNXSt94SOXN9EMdTWFIatOtjpwDt52AxIsuc27VgjuU5UrU8abH6Sd/s5311wGTu7
-         +nKGoNfHjuQZTwGNA4fKehavK/4kZ0bzLF/iBrp1F54Zj2RUzfBgLlS0ryOq4XRFAvSL
-         DjjUugct4nnib7fA8kOfTRrsgEX/mBtAKJ0NQk6xSOQWYjhtBlPB2I6J2Hd6e+6vcJeB
-         OFTEoCYJG97q4C/jw6R+QzZVMvSPbiLT7HJvzNfzM5DS2HyWFNUqts1utN8azNccvv0j
-         UFwhFdCDA7MoPX1+BzG+BXbsOI3DHyykzS+Mpfwr+wJuSS6/GMa+Y5/Kx30PI2p0MVjR
-         8EoQ==
-X-Gm-Message-State: AGRZ1gL5kxq0us1qOYy6dwkMoUsB65M2eWGF1mndFHf7ho5Atv9k5vk9
-        SggFklmTdDSnsT3h1ujRijI=
-X-Google-Smtp-Source: AJdET5dk9GOjbLZYS2B0LNvWllIwbMV/YFrpanv92s1YkgHSNdzRflftNkhl/eBkmkIePI7qyTy7cg==
-X-Received: by 2002:a17:902:54d:: with SMTP id 71-v6mr113218plf.80.1540488003183;
-        Thu, 25 Oct 2018 10:20:03 -0700 (PDT)
-Received: from [10.67.49.121] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id x36-v6sm7254226pgl.43.2018.10.25.10.20.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Oct 2018 10:20:02 -0700 (PDT)
-Subject: Re: [PATCH 2/2] perf tests: Add a test for the ARM 32-bit [vectors]
- page
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     linux-arm-kernel@lists.infradead.org,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Kim Phillips <kim.phillips@arm.com>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        rmk+kernel@armlinux.org.uk, Ingo Molnar <mingo@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jiri Olsa <jolsa@redhat.com>, l.stach@pengutronix.de
-References: <20181025000905.6095-1-f.fainelli@gmail.com>
- <20181025000905.6095-3-f.fainelli@gmail.com> <20181025021013.GA30116@lunn.ch>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <175fd725-a97a-c282-5aa1-952014ff9023@gmail.com>
-Date:   Thu, 25 Oct 2018 10:19:54 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=1bJs3q1wp8WqpHBYXRCtRsUapjWa79UF45pDkektjFM=;
+        b=HC+Wxf5iKpxi8Axqq4rHElWkiM63ITaYJzjQzFzEyL9XkqwRUraWvAu/astn5EbkBP
+         lwhoZUPV9583xJKG/0t4boj66o48NLBJ+y/Rex+EMkhjYZcNzs07CaNzlLm8wr0muf/r
+         db/CZAsSjUUmSw/r477iErppZjZyyonRGpZFySctC++mqQxNRUfSmCncCXxB2MRaCMwx
+         mN6Z4/W2K8vnzqVrJICM5C5G7YBV4uTXm+io7iq0Pi/DRSWDiW76kHn1zAuN8WrMO8bm
+         RwMDkQaJUWp9hjbgvuEnN3IJFymhj/JRDat/wgpkjgrDl0ZQ8u18VAE/VxggdRERWVRB
+         G88g==
+X-Gm-Message-State: AGRZ1gJABtlZZS9RT8GkSMPrl5zCio4nG+3tEJBOKDOAM+U+h6gq1kWb
+        9aPpZz2/ENXxaDkj9jCb29nj/lcFX5IIbtWgPK4xDw==
+X-Google-Smtp-Source: AJdET5dfBHPB5FPqT5RvRWYd3NGWr1FOe6jvPdBb9cS9JzXGAFpA3lH7CRBBbP4TXniCzevm2K1k8rBKq8M/8qFOjCY=
+X-Received: by 2002:a5d:4f0d:: with SMTP id c13-v6mr2790323wru.50.1540488019347;
+ Thu, 25 Oct 2018 10:20:19 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181025021013.GA30116@lunn.ch>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a1c:4054:0:0:0:0:0 with HTTP; Thu, 25 Oct 2018 10:20:18
+ -0700 (PDT)
+In-Reply-To: <20181017224738.193598-1-bmgordon@google.com>
+References: <20181017224738.193598-1-bmgordon@google.com>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Thu, 25 Oct 2018 10:20:18 -0700
+Message-ID: <CALAqxLVUYEKXs2ATieTd-3Zs4AbhSPpeGQS=PMiSGbXGkx_JAA@mail.gmail.com>
+Subject: Re: [PATCH] proc: use ns_capable instead of capable for timerslack_ns
+To:     bmgordon@google.com
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Oren Laadan <orenl@cellrox.com>,
+        Ruchi Kandoi <kandoiruchi@google.com>,
+        Rom Lemarchand <romlem@android.com>,
+        Todd Kjos <tkjos@google.com>, Colin Cross <ccross@android.com>,
+        Nick Kralevich <nnk@google.com>,
+        Dmitry Shmidt <dimitrysh@google.com>,
+        Elliott Hughes <enh@google.com>,
+        Android Kernel Team <kernel-team@android.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/24/18 7:10 PM, Andrew Lunn wrote:
-> On Wed, Oct 24, 2018 at 05:09:05PM -0700, Florian Fainelli wrote:
->> perf on ARM requires CONFIG_KUSER_HELPERS to be turned on to allow some
->> independance with respect to the ARM CPU being used. Add a test which
->> tries to locate the [vectors] page, created when CONFIG_KUSER_HELPERS is
->> turned on to help asses the system's health.
-> 
-> Hi Florian
-> 
-> I've suffered the pain from missing CONFIG_KUSER_HELPERS. The
-> segfaults give little clue as to what is going wrong,and gdb is not
-> much use either.
+On Wed, Oct 17, 2018 at 3:47 PM,  <bmgordon@google.com> wrote:
+> From: Benjamin Gordon <bmgordon@google.com>
+>
+> Access to timerslack_ns is controlled by a process having CAP_SYS_NICE
+> in its effective capability set, but the current check looks in the root
+> namespace instead of the process' user namespace.  Since a process is
+> allowed to do other activities controlled by CAP_SYS_NICE inside a
+> namespace, it should also be able to adjust timerslack_ns.
+>
+> Signed-off-by: Benjamin Gordon <bmgordon@google.com>
+> Cc: John Stultz <john.stultz@linaro.org>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: "Serge E. Hallyn" <serge@hallyn.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Arjan van de Ven <arjan@linux.intel.com>
+> Cc: Oren Laadan <orenl@cellrox.com>
+> Cc: Ruchi Kandoi <kandoiruchi@google.com>
+> Cc: Rom Lemarchand <romlem@android.com>
+> Cc: Todd Kjos <tkjos@google.com>
+> Cc: Colin Cross <ccross@android.com>
+> Cc: Nick Kralevich <nnk@google.com>
+> Cc: Dmitry Shmidt <dimitrysh@google.com>
+> Cc: Elliott Hughes <enh@google.com>
+> Cc: Android Kernel Team <kernel-team@android.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> ---
+>  fs/proc/base.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/fs/proc/base.c b/fs/proc/base.c
+> index 7e9f07bf260d..4b50937dff80 100644
+> --- a/fs/proc/base.c
+> +++ b/fs/proc/base.c
+> @@ -2356,7 +2356,7 @@ static ssize_t timerslack_ns_write(struct file *file, const char __user *buf,
+>                 return -ESRCH;
+>
+>         if (p != current) {
+> -               if (!capable(CAP_SYS_NICE)) {
+> +               if (!ns_capable(file->f_cred->user_ns, CAP_SYS_NICE)) {
+>                         count = -EPERM;
+>                         goto out;
+>                 }
+> @@ -2393,7 +2393,7 @@ static int timerslack_ns_show(struct seq_file *m, void *v)
+>
+>         if (p != current) {
+>
+> -               if (!capable(CAP_SYS_NICE)) {
+> +               if (!ns_capable(seq_user_ns(m), CAP_SYS_NICE)) {
+>                         err = -EPERM;
+>                         goto out;
+>                 }
 
-If you have a working backtrace, you can typically see the virtual
-address being in 0xffff_xxxx which gives a bit of a clue, but yes, this
-is not particularly helpful.
+Looks reasonable to me.
+Acked-by: John Stultz <john.stultz@linaro.org>
 
-> 
-> What i don't see here is any clue to CONFIG_KUSER_HELPERS. If the test
-> fails, could you print a message suggesting CONFIG_KUSER_HELPERS on
-> ARM?
-
-Sure, sounds reasonable, thanks for taking a look.
--- 
-Florian
+thanks
+-john
