@@ -5,67 +5,70 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D22E0C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:33:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 879C2C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:34:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A487720834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:33:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A487720834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=supermicro.com
+	by mail.kernel.org (Postfix) with ESMTP id 269D720834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:34:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 269D720834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727760AbeJZCHJ (ORCPT
+        id S1727614AbeJZCIi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 22:07:09 -0400
-Received: from mga.supermicro.com ([207.212.57.84]:36996 "EHLO
-        MGA.supermicro.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727455AbeJZCHI (ORCPT
+        Thu, 25 Oct 2018 22:08:38 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:55320 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727455AbeJZCIh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 22:07:08 -0400
-X-Greylist: delayed 1279 seconds by postgrey-1.27 at vger.kernel.org; Thu, 25 Oct 2018 22:07:08 EDT
-Received: from pps.filterd (MGA.supermicro.com [127.0.0.1])
-        by MGA.supermicro.com (8.16.0.22/8.16.0.22) with SMTP id w9PHAoUp021036;
-        Thu, 25 Oct 2018 10:12:05 -0700
-Received: from ex2013-mbx2.supermicro.com (Ex2013-MBX2.supermicro.com [10.2.1.38])
-        by MGA.supermicro.com with ESMTP id 2n83yscv9p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Thu, 25 Oct 2018 10:12:05 -0700
-Received: from [172.16.95.100] (10.2.0.41) by Ex2013-MBX2.supermicro.com
- (10.2.1.38) with Microsoft SMTP Server (TLS) id 15.0.1236.3; Thu, 25 Oct 2018
- 10:12:04 -0700
-Subject: Re: [RFC] x86, tsc: Add kcmdline args for skipping tsc calibration
- sequences
-From:   patrickg <patrickg@supermicro.com>
-To:     "Brown, Len" <len.brown@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        <prarit@redhat.com>
-CC:     "mingo@kernel.org" <mingo@kernel.org>,
-        "Du, Alek" <alek.du@intel.com>,
-        "arjan@linux.intel.com" <arjan@linux.intel.com>,
-        "Tang, Feng" <feng.tang@intel.com>
-References: <fdf96605-a4a0-049b-51c9-1e68cc2a9b93@supermicro.com>
- <1A7043D5F58CCB44A599DFD55ED4C94849A1AACF@FMSMSX126.amr.corp.intel.com>
- <c7582a8c-8cc1-eff3-2452-a8d42d23fea1@supermicro.com>
- <cb798dcd-8cd6-8a92-9f6c-50bec0afe204@supermicro.com>
- <94bebaa1-992b-572b-0d24-e08037611358@supermicro.com>
- <70cdf321-cef7-aa26-1ca8-33378b3afdd9@supermicro.com>
-Message-ID: <18d873f6-a911-200b-7bc7-8f4b4f3c5161@supermicro.com>
-Date:   Thu, 25 Oct 2018 10:12:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <70cdf321-cef7-aa26-1ca8-33378b3afdd9@supermicro.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+        Thu, 25 Oct 2018 22:08:37 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 9E90114786F34;
+        Thu, 25 Oct 2018 10:34:52 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 10:34:50 -0700 (PDT)
+Message-Id: <20181025.103450.1966639999117342457.davem@davemloft.net>
+To:     linux@stwm.de
+Cc:     netdev@vger.kernel.org, fw@strlen.de, steffen.klassert@secunet.com,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        christophe.gouault@6wind.com, gregkh@linuxfoundation.org
+Subject: Re: Regression: kernel 4.14 an later very slow with many ipsec
+ tunnels
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <2766296.15tpkxTHJV@stwm.de>
+References: <20181002213536.sgjansduqenps2md@breakpoint.cc>
+        <1729915.dWWxddREcQ@stwm.de>
+        <2766296.15tpkxTHJV@stwm.de>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.2.0.41]
-X-ClientProxiedBy: EX2013-CA1.supermicro.com (10.2.1.31) To
- Ex2013-MBX2.supermicro.com (10.2.1.38)
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-25_09:,,
- signatures=0
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 25 Oct 2018 10:34:52 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Resurrecting w/ +prarit who was handling mentions in a RHEL bug report regarding this.
+From: Wolfgang Walter <linux@stwm.de>
+Date: Thu, 25 Oct 2018 11:38:19 +0200
+
+> there is now a new 4.19 which still has the big performance regression when 
+> many ipsec tunnels are configured (throughput and latency get worse by 10 to 
+> 50 times) which makes any kernel > 4.9 unusable for our routers.
+> 
+> I still don't understand why a revert of the flow cache removal at least for 
+> the longterm kernels is that a bad option (maybe as a compile time option), 
+> especially as there is no workaround available.
+
+You do know that the flow cache is DDoS targettable, right?
+
+That's why we removed it, we did not make the change lightly.
+
+Adding a DDoS vector back into the kernel is not an option sorry.
+
+Please work diligently with Florian and others to try and find ways to
+soften the performance hit.
+
+Thank you.
