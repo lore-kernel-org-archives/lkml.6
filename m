@@ -2,118 +2,193 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F847ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:50:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15D88C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:53:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40ABA2082E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:50:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40ABA2082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B1A602083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:53:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="scIOzfpP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1A602083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727659AbeJZCXp (ORCPT
+        id S1727690AbeJZC1Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 22:23:45 -0400
-Received: from mga11.intel.com ([192.55.52.93]:16893 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727439AbeJZCXp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 22:23:45 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Oct 2018 10:49:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,425,1534834800"; 
-   d="scan'208";a="98668910"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by fmsmga002.fm.intel.com with ESMTP; 25 Oct 2018 10:49:55 -0700
-Received: from andy by smile with local (Exim 4.91)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1gFjla-0004jB-JM; Thu, 25 Oct 2018 20:49:54 +0300
-Date:   Thu, 25 Oct 2018 20:49:54 +0300
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Dan O'Donovan <dan@emutex.com>
-Cc:     linux-kernel@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        linux-iio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        Carlos Iglesias <carlos.iglesias@emutex.com>
-Subject: Re: [PATCH v3 0/3] iio: adc128s052: add matching options
-Message-ID: <20181025174954.GC10650@smile.fi.intel.com>
-References: <20180423213805.12591-1-javier@emutex.com>
- <1540481742-23596-1-git-send-email-dan@emutex.com>
+        Thu, 25 Oct 2018 22:27:16 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:39340 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727537AbeJZC1Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 22:27:16 -0400
+Received: by mail-wr1-f65.google.com with SMTP id r10-v6so9345498wrv.6
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 10:53:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=nayb9YKm+CcpdX85dekwriIkRn3Uc7TlJumxM/+zS+A=;
+        b=scIOzfpPuIMwe9TlH8pLBRQf5xPb5w3pfcMtOoxsUUO3aOjhWWFF6RHEhaUOxdzmBK
+         fVjEz22K3gBIdnbjJtm8KonqyGtenZbPtqRq/L0BAZxgN7XfuvpbAW5yGYHyTDrgNUhZ
+         absnlEvYqrMhw+izVztVpJbGekiqUGeJ/5HPgY4n5BjdgC06oThjwcYe2UpVYfJQpRxy
+         eju4sFWMjM0PQRvkuVrAIqgWje2IshtQAosoyTSQTflCGT9ilZDmuTxdigxjpI0cri9G
+         Tj/wWHFCIRodGFOEbcIlH6vsX1S20OWOr8Oy0N2xAH2Ye6jittK2//iMjUOtV4mGcvKk
+         CmwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=nayb9YKm+CcpdX85dekwriIkRn3Uc7TlJumxM/+zS+A=;
+        b=R15W0fqrILePlyAXChq0jTdLjfzSmhbxw2UbQ4HW32UdU7go6mZzNMspcHGYRtokRN
+         9ueCefbxKjt07Ejpa4m4STCIBf/Bji6H9/13QdPJnluBn9xX6Zg6oOFmrQGH0DCZIekl
+         kxra4xv4BIiVUR7FtSAwpoSKZHvxLcJj0gfCJmfhl9tkRT3bzAtTqvg1RUd95yz3VYpY
+         QPHJAHWnv8tQBQ8Uvx5I1OTK9DqPOGSnuBozQQY3zNJp4Fb5pCVl8FZwCEVkQHg2bvE9
+         +TKiPv+WduVq3rUPSPhEL/ivf8VeZes2zLDnz1XwjYgig+JxoQu0rTLnzkbl3S5FtA/v
+         dzOQ==
+X-Gm-Message-State: AGRZ1gK1SFjETIHiD08KTjedkipuAcdfbEXmMXgziV9MZrTdlm8qw+Sm
+        duyr1aFNL5WfvXDDlGMRcIc=
+X-Google-Smtp-Source: AJdET5fHjjK2ofStax4WP7AukrDrfIAd3m84jO92eYOR60bKVSBZ4sALkz5+ppLZA441x9+kWO+Rrw==
+X-Received: by 2002:a05:6000:51:: with SMTP id k17mr2854952wrx.114.1540490006442;
+        Thu, 25 Oct 2018 10:53:26 -0700 (PDT)
+Received: from [10.67.49.121] ([192.19.223.250])
+        by smtp.googlemail.com with ESMTPSA id c24-v6sm13332746wre.44.2018.10.25.10.53.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Oct 2018 10:53:25 -0700 (PDT)
+Subject: Re: [PATCH 2/2] perf tests: Add a test for the ARM 32-bit [vectors]
+ page
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>
+Cc:     Andrew Lunn <andrew@lunn.ch>, linux-arm-kernel@lists.infradead.org,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Kim Phillips <kim.phillips@arm.com>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jiri Olsa <jolsa@redhat.com>, l.stach@pengutronix.de
+References: <20181025000905.6095-1-f.fainelli@gmail.com>
+ <20181025000905.6095-3-f.fainelli@gmail.com> <20181025021013.GA30116@lunn.ch>
+ <175fd725-a97a-c282-5aa1-952014ff9023@gmail.com>
+ <20181025173242.GC30658@n2100.armlinux.org.uk>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <a6f5b6e7-4d3e-dd8f-4028-0ee370b11722@gmail.com>
+Date:   Thu, 25 Oct 2018 10:53:12 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1540481742-23596-1-git-send-email-dan@emutex.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181025173242.GC30658@n2100.armlinux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 04:35:39PM +0100, Dan O'Donovan wrote:
-> Hi all,
+On 10/25/18 10:32 AM, Russell King - ARM Linux wrote:
+> On Thu, Oct 25, 2018 at 10:19:54AM -0700, Florian Fainelli wrote:
+>> On 10/24/18 7:10 PM, Andrew Lunn wrote:
+>>> On Wed, Oct 24, 2018 at 05:09:05PM -0700, Florian Fainelli wrote:
+>>>> perf on ARM requires CONFIG_KUSER_HELPERS to be turned on to allow some
+>>>> independance with respect to the ARM CPU being used. Add a test which
+>>>> tries to locate the [vectors] page, created when CONFIG_KUSER_HELPERS is
+>>>> turned on to help asses the system's health.
+>>>
+>>> Hi Florian
+>>>
+>>> I've suffered the pain from missing CONFIG_KUSER_HELPERS. The
+>>> segfaults give little clue as to what is going wrong,and gdb is not
+>>> much use either.
+>>
+>> If you have a working backtrace, you can typically see the virtual
+>> address being in 0xffff_xxxx which gives a bit of a clue, but yes, this
+>> is not particularly helpful.
+>>
+>>>
+>>> What i don't see here is any clue to CONFIG_KUSER_HELPERS. If the test
+>>> fails, could you print a message suggesting CONFIG_KUSER_HELPERS on
+>>> ARM?
+>>
+>> Sure, sounds reasonable, thanks for taking a look.
 > 
-> On some SKUs of AAEON's UP Squared board, there is an ADC124S101
-> enumerated via ACPI. This is a pin-compatible variant of ADC124S021,
-> which is already supported by the adc128s052 driver.
-> 
-> This patchset adds missing DT compatible strings for ADC124S021 (and
-> ADC122S021) variants, adds AAEON's allocated ACPI HID, and adds the
-> SPDX GPL identifier to the driver.
-> 
-> v2 was posted at:
-> https://lore.kernel.org/lkml/20180423213805.12591-1-javier@emutex.com/
+> An alternative would be rather than adding this to user programs, to
+> have the kernel detect it and print a warning itself.
 
-Overall LGTM
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Something like this below? It does not have to be an alternative
+solution, I would find it useful for perf to make sure the vectors page
+is present in the virtual address space by having an explicit test. perf
+maintains, what do you think?
+
+diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
+index f4ea4c62c613..b045b48d368d 100644
+--- a/arch/arm/mm/fault.c
++++ b/arch/arm/mm/fault.c
+@@ -173,6 +173,11 @@ __do_user_fault(struct task_struct *tsk, unsigned
+long addr,
+                show_regs(regs);
+        }
+ #endif
++#ifndef CONFIG_KUSER_HELPERS
++       if (((addr & PAGE_MASK) == 0xffff0000) && (sig == SIGSEGV))
++               printk(KERN_DEBUG "%s: CONFIG_KUSER_HELPERS disabled at
+0x%08lx\n",
++                      tsk->comm, addr);
++#endif
+
+        tsk->thread.address = addr;
+        tsk->thread.error_code = fsr;
+
 
 > 
-> Changes from v2:
-> * Added device-tree bindings documentation for new chip variants
-> * Simplified code to get ACPI match data
-> * Dropped redundant patch to facilitate OF matching via ACPI _DSD
-> * Added patch to replace GPL license text with SPDX identifier
+> BTW, I note that the help text for CONFIG_KUSER_HELPERS needs to be
+> updated.
 > 
-> Changes from v1:
-> * Improved patch descriptions and series title
-> * Added an initial commit introducing new compatible strings
->   (as per Jonathan's suggestion)
-> * Moved of_match_ptr removal last as this patch is less important to us
-> 
-> Dan O'Donovan (1):
->   iio: adc128s052: use SPDX-License-Identifier
-> 
-> Javier Arteaga (1):
->   iio: adc128s052: Add pin-compatible IDs
-> 
-> Nicola Lunghi (1):
->   iio: adc128s052: add ACPI _HID AANT1280
-> 
->  .../devicetree/bindings/iio/adc/ti-adc128s052.txt  |  9 ++++-
->  drivers/iio/adc/ti-adc128s052.c                    | 39 +++++++++++++++++-----
->  2 files changed, 38 insertions(+), 10 deletions(-)
-> 
-> -- 
-> 2.7.4
-> 
-> 
-> ------
-> This email has been scanned for spam and malware by The Email Laundry.
-> 
+
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Florian
