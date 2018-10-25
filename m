@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE572ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E326C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A64522086C
+	by mail.kernel.org (Postfix) with ESMTP id DED2A20868
 	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:11:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VgmbkGPj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A64522086C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zm2uhnj2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DED2A20868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728234AbeJYWoa (ORCPT
+        id S1728251AbeJYWob (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:44:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53298 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:44:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727531AbeJYWo3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:44:29 -0400
+        id S1727531AbeJYWob (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:44:31 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2FA0220848;
-        Thu, 25 Oct 2018 14:11:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9DD420868;
+        Thu, 25 Oct 2018 14:11:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540476693;
-        bh=CayU1PeIyciP/UMMnVLIWDmf3xqeTylmprLAt5eaFyw=;
+        s=default; t=1540476695;
+        bh=0cxbgjxg22jFj49zjD77FNVZidUJ6PeA+VNHqT+fcOU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VgmbkGPj0GWNsWkIHLJvM/SNMYf6E+9fIKyF2sKIcBVHioF1MhU3G54V14BAU2u39
-         ukGRHv8EIPdEoi6YITky9HBafQNlZxihvLbsidBRGL57MFLMimSMpwhUACnsBNWagj
-         HAakmpsWWXOfupWQwthINKqF7NCl3agwH9Z4d+qo=
+        b=Zm2uhnj2Rzv1oPIXmKBtHyfi3kVgyxGV83qXiMAl0nA0B5yGnCDs2frU12hVce3T4
+         DdtxuzPi/hOrXYI+Ljus2mFw192X7JnFdfy3paM9Q9dTJIZY/ScBR9Ylur0Yn4qoGb
+         5D12yZ35DqMHnzSwmtbwcgU7rrtwMB6WRhH7m2DA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     John Fastabend <john.fastabend@gmail.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+Cc:     Ross Lagerwall <ross.lagerwall@citrix.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 27/46] bpf: sockmap, map_release does not hold refcnt for pinned maps
-Date:   Thu, 25 Oct 2018 10:10:34 -0400
-Message-Id: <20181025141053.213330-27-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 29/46] xen-netfront: Update features after registering netdev
+Date:   Thu, 25 Oct 2018 10:10:36 -0400
+Message-Id: <20181025141053.213330-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141053.213330-1-sashal@kernel.org>
 References: <20181025141053.213330-1-sashal@kernel.org>
@@ -52,108 +52,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Fastabend <john.fastabend@gmail.com>
+From: Ross Lagerwall <ross.lagerwall@citrix.com>
 
-[ Upstream commit ba6b8de423f8d0dee48d6030288ed81c03ddf9f0 ]
+[ Upstream commit 45c8184c1bed1ca8a7f02918552063a00b909bf5 ]
 
-Relying on map_release hook to decrement the reference counts when a
-map is removed only works if the map is not being pinned. In the
-pinned case the ref is decremented immediately and the BPF programs
-released. After this BPF programs may not be in-use which is not
-what the user would expect.
+Update the features after calling register_netdev() otherwise the
+device features are not set up correctly and it not possible to change
+the MTU of the device. After this change, the features reported by
+ethtool match the device's features before the commit which introduced
+the issue and it is possible to change the device's MTU.
 
-This patch moves the release logic into bpf_map_put_uref() and brings
-sockmap in-line with how a similar case is handled in prog array maps.
-
-Fixes: 3d9e952697de ("bpf: sockmap, fix leaking maps with attached but not detached progs")
-Signed-off-by: John Fastabend <john.fastabend@gmail.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Fixes: f599c64fdf7d ("xen-netfront: Fix race between device setup and open")
+Reported-by: Liam Shepherd <liam@dancer.es>
+Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/bpf.h   | 2 +-
- kernel/bpf/arraymap.c | 3 ++-
- kernel/bpf/sockmap.c  | 4 ++--
- kernel/bpf/syscall.c  | 4 ++--
- 4 files changed, 7 insertions(+), 6 deletions(-)
+ drivers/net/xen-netfront.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/bpf.h b/include/linux/bpf.h
-index 5c5be80ce802..c9d2a1a3ef11 100644
---- a/include/linux/bpf.h
-+++ b/include/linux/bpf.h
-@@ -27,6 +27,7 @@ struct bpf_map_ops {
- 	void (*map_release)(struct bpf_map *map, struct file *map_file);
- 	void (*map_free)(struct bpf_map *map);
- 	int (*map_get_next_key)(struct bpf_map *map, void *key, void *next_key);
-+	void (*map_release_uref)(struct bpf_map *map);
+diff --git a/drivers/net/xen-netfront.c b/drivers/net/xen-netfront.c
+index 1a40fc3517a8..ca239912c0e6 100644
+--- a/drivers/net/xen-netfront.c
++++ b/drivers/net/xen-netfront.c
+@@ -1964,10 +1964,6 @@ static int xennet_connect(struct net_device *dev)
+ 	/* talk_to_netback() sets the correct number of queues */
+ 	num_queues = dev->real_num_tx_queues;
  
- 	/* funcs callable from userspace and from eBPF programs */
- 	void *(*map_lookup_elem)(struct bpf_map *map, void *key);
-@@ -300,7 +301,6 @@ int bpf_stackmap_copy(struct bpf_map *map, void *key, void *value);
- int bpf_fd_array_map_update_elem(struct bpf_map *map, struct file *map_file,
- 				 void *key, void *value, u64 map_flags);
- int bpf_fd_array_map_lookup_elem(struct bpf_map *map, void *key, u32 *value);
--void bpf_fd_array_map_clear(struct bpf_map *map);
- int bpf_fd_htab_map_update_elem(struct bpf_map *map, struct file *map_file,
- 				void *key, void *value, u64 map_flags);
- int bpf_fd_htab_map_lookup_elem(struct bpf_map *map, void *key, u32 *value);
-diff --git a/kernel/bpf/arraymap.c b/kernel/bpf/arraymap.c
-index f57d0bdf3c9e..a8f55ea4146b 100644
---- a/kernel/bpf/arraymap.c
-+++ b/kernel/bpf/arraymap.c
-@@ -467,7 +467,7 @@ static u32 prog_fd_array_sys_lookup_elem(void *ptr)
- }
- 
- /* decrement refcnt of all bpf_progs that are stored in this map */
--void bpf_fd_array_map_clear(struct bpf_map *map)
-+static void bpf_fd_array_map_clear(struct bpf_map *map)
- {
- 	struct bpf_array *array = container_of(map, struct bpf_array, map);
- 	int i;
-@@ -485,6 +485,7 @@ const struct bpf_map_ops prog_array_map_ops = {
- 	.map_fd_get_ptr = prog_fd_array_get_ptr,
- 	.map_fd_put_ptr = prog_fd_array_put_ptr,
- 	.map_fd_sys_lookup_elem = prog_fd_array_sys_lookup_elem,
-+	.map_release_uref = bpf_fd_array_map_clear,
- };
- 
- static struct bpf_event_entry *bpf_event_entry_gen(struct file *perf_file,
-diff --git a/kernel/bpf/sockmap.c b/kernel/bpf/sockmap.c
-index 20eaddfa691c..22991e19c01c 100644
---- a/kernel/bpf/sockmap.c
-+++ b/kernel/bpf/sockmap.c
-@@ -875,7 +875,7 @@ static int sock_map_update_elem(struct bpf_map *map,
- 	return err;
- }
- 
--static void sock_map_release(struct bpf_map *map, struct file *map_file)
-+static void sock_map_release(struct bpf_map *map)
- {
- 	struct bpf_stab *stab = container_of(map, struct bpf_stab, map);
- 	struct bpf_prog *orig;
-@@ -895,7 +895,7 @@ const struct bpf_map_ops sock_map_ops = {
- 	.map_get_next_key = sock_map_get_next_key,
- 	.map_update_elem = sock_map_update_elem,
- 	.map_delete_elem = sock_map_delete_elem,
--	.map_release = sock_map_release,
-+	.map_release_uref = sock_map_release,
- };
- 
- BPF_CALL_4(bpf_sock_map_update, struct bpf_sock_ops_kern *, bpf_sock,
-diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
-index 4e933219fec6..ea22d0b6a9f0 100644
---- a/kernel/bpf/syscall.c
-+++ b/kernel/bpf/syscall.c
-@@ -214,8 +214,8 @@ static void bpf_map_free_deferred(struct work_struct *work)
- static void bpf_map_put_uref(struct bpf_map *map)
- {
- 	if (atomic_dec_and_test(&map->usercnt)) {
--		if (map->map_type == BPF_MAP_TYPE_PROG_ARRAY)
--			bpf_fd_array_map_clear(map);
-+		if (map->ops->map_release_uref)
-+			map->ops->map_release_uref(map);
+-	rtnl_lock();
+-	netdev_update_features(dev);
+-	rtnl_unlock();
+-
+ 	if (dev->reg_state == NETREG_UNINITIALIZED) {
+ 		err = register_netdev(dev);
+ 		if (err) {
+@@ -1977,6 +1973,10 @@ static int xennet_connect(struct net_device *dev)
+ 		}
  	}
- }
  
++	rtnl_lock();
++	netdev_update_features(dev);
++	rtnl_unlock();
++
+ 	/*
+ 	 * All public and private state should now be sane.  Get
+ 	 * ready to start sending and receiving packets and give the driver
 -- 
 2.17.1
 
