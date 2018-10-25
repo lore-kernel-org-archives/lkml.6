@@ -2,87 +2,161 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87DCEC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 15:54:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2638ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 15:55:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CAE82083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 15:54:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CAE82083E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id C3C6D2083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 15:55:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3C6D2083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727477AbeJZA2A (ORCPT
+        id S1727595AbeJZA2b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 20:28:00 -0400
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:50479 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727350AbeJZA17 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 20:27:59 -0400
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by eu-smtp-1.mimecast.com with ESMTP id
- uk-mta-180-L-rkvJ8BPW-MRMR4QGAbbQ-1; Thu, 25 Oct 2018 16:54:35 +0100
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
- (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu,
- 25 Oct 2018 16:54:39 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Thu, 25 Oct 2018 16:54:39 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'James Bottomley' <jejb@linux.vnet.ibm.com>,
-        Colin King <colin.king@canonical.com>,
-        Hannes Reinecke <hare@suse.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
-CC:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] scsi: aic7xxx: Fix unintended sign extension issue
-Thread-Topic: [PATCH] scsi: aic7xxx: Fix unintended sign extension issue
-Thread-Index: AQHUbHgO9MgUOGstgUqTCovE+/PvzqUwG1Fg
-Date:   Thu, 25 Oct 2018 15:54:38 +0000
-Message-ID: <483f04b2ad5a4858b56c2be52cea625e@AcuMS.aculab.com>
-References: <20181025151334.15622-1-colin.king@canonical.com>
- <1540481569.3006.5.camel@linux.vnet.ibm.com>
-In-Reply-To: <1540481569.3006.5.camel@linux.vnet.ibm.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Thu, 25 Oct 2018 20:28:31 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60434 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727350AbeJZA2a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 20:28:30 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 540783001A6F;
+        Thu, 25 Oct 2018 15:55:08 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.106])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 3B3495B69D;
+        Thu, 25 Oct 2018 15:55:05 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Thu, 25 Oct 2018 17:55:06 +0200 (CEST)
+Date:   Thu, 25 Oct 2018 17:55:04 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     serge@hallyn.com,
+        syzbot <syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com>,
+        jmorris@namei.org, keescook@chromium.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: KASAN: use-after-free Read in task_is_descendant
+Message-ID: <20181025155503.GF3725@redhat.com>
+References: <76013c9e-0664-ef5e-b6c0-d48f6ce5db3c@i-love.sakura.ne.jp>
+ <20181022134634.GA7358@redhat.com>
+ <201810250215.w9P2Fm2M078167@www262.sakura.ne.jp>
+ <20181025111355.GA3725@redhat.com>
+ <b0ac67e6-4279-91b3-0178-3176876abe70@i-love.sakura.ne.jp>
+ <20181025121709.GD3725@redhat.com>
+ <d11bc954-5a30-e6bd-1668-866a187e0aac@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-X-MC-Unique: L-rkvJ8BPW-MRMR4QGAbbQ-1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d11bc954-5a30-e6bd-1668-866a187e0aac@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 25 Oct 2018 15:55:08 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogSmFtZXMgQm90dG9tbGV5DQo+IFNlbnQ6IDI1IE9jdG9iZXIgMjAxOCAxNjozMw0KPiAN
-Cj4gT24gVGh1LCAyMDE4LTEwLTI1IGF0IDE2OjEzICswMTAwLCBDb2xpbiBLaW5nIHdyb3RlOg0K
-PiA+IEZyb206IENvbGluIElhbiBLaW5nIDxjb2xpbi5raW5nQGNhbm9uaWNhbC5jb20+DQo+ID4N
-Cj4gPiBJbiB0aGUgZXhwcmVzc2lvbiAiYWhjX2luYihhaGMsIHBvcnQrMykgPDwgMjQiLCB0aGUg
-aW5pdGlhbCB2YWx1ZSBpcw0KPiA+IGEgdTgsIGJ1dCBpcyBwcm9tb3RlZCB0byBhIHNpZ25lZCBp
-bnQsIHRoZW4gc2lnbi1leHRlbmRlZCB0bw0KPiA+IHVpbnQ2NF90Lg0KPiANCj4gV2h5IGlzIHRo
-aXMsIHRoYXQncyBoaWdobHkgbm9uIGludHVpdGl2ZT8gIFRoZSBjb21waWxlciBpcyBzdXBwb3Nl
-ZCB0bw0KPiBwcm9tb3RlIHRvIHRoZSBiaWdnZXN0IHR5cGUsIHdoaWNoIGlzIHVpbnQ2NF90IGFu
-ZCB0aGVuIGRvIHRoZQ0KPiBjYWxjdWxhdGlvbg0KDQpEbyBub3QgZG91YnQgdGhlIHdpc2RvbSBv
-biB0aGUgQU5TSSBDIGNvbW1pdHRlZSB0aGF0IGRlY2lkZWQgdG8gZG8NCid2YWx1ZSBwcmVzZXJ2
-aW5nJyBpbnRlZ2VyIHByb21vdGlvbnMgaW5zdGVhZCBvZiB0aGUgJ3NpZ24gcHJlc2VydmluZycN
-Cm9uZXMgb2YgSyZSIEMuDQoNClNvICd1bnNpZ25lZCBjaGFyJyBpcyBwcm9tb3RlZCB0byAnaW50
-JyBhbG1vc3QgZXZlcnl3aGVyZSBpdCBpcyB1c2VkDQoodW5sZXNzIHRoZXkgYXJlIGJvdGggdGhl
-IHNhbWUgc2l6ZSAtIHdoaWNoIGlzIGFsbG93ZWQpLg0KVGhpcyBtZWFucyB0aGF0IGFoY19pbmIo
-KSA8PCAyNCBpcyBhY3R1YWxseSB1bmRlZmluZWQgKHNpZ25lZCBpbnRlZ2VyDQpvdmVyZmxvdyBj
-YW4gZG8gYW55dGhpbmcgaXQgbGlrZXMpLg0KDQpCeSBmYXIgdGhlIGJlc3QgZml4IGlzIHRvIGNo
-YW5nZSB0aGUgcmV0dXJuIHR5cGUgb2YgYWhjX2luYigpIHRvDQpiZSAndW5zaWduZWQgaW50Jy4N
-Ck9uIHN5c3RlbXMgd2l0aG91dCBieXRlIHNpemVkIHJlZ2lzdGVycyAoYWJvdXQgZXZlcnl0aGlu
-ZyBleGNlcHQgeDg2KQ0KdGhpcyB3aWxsIGFsbW9zdCBjZXJ0YWlubHkgZ2VuZXJhdGUgYmV0dGVy
-IGNvZGUuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1s
-ZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJh
-dGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
+On 10/25, Tetsuo Handa wrote:
+>
+> On 2018/10/25 21:17, Oleg Nesterov wrote:
+> >>> And yes, task_is_descendant() can hit the dead child, if nothing else it can
+> >>> be killed. This can explain the kasan report.
+> >>
+> >> The kasan is reporting that child->real_parent (or maybe child->real_parent->real_parent
+> >> or child->real_parent->real_parent->real_parent ...) was pointing to already freed memory,
+> >> isn't it?
+> >
+> > Yes. and you know, I am all confused. I no longer can understand you :/
+>
+> Why don't we need to check every time like shown below?
+> Why checking only once is sufficient?
+
+Why do you think it is not sufficient?
+
+Again, I can be easily wrong, rcu is not simple, but so far I think we need
+a single check at the start.
+
+> --- a/security/yama/yama_lsm.c
+> +++ b/security/yama/yama_lsm.c
+> @@ -285,7 +285,7 @@ static int task_is_descendant(struct task_struct *parent,
+>  	rcu_read_lock();
+>  	if (!thread_group_leader(parent))
+>  		parent = rcu_dereference(parent->group_leader);
+> -	while (walker->pid > 0) {
+> +	while (pid_alive(walker) && walker->pid > 0) {
+
+OK. To simplify, ets suppose that task_is_descendant() is called with tasklist
+lock held. And lets suppose that all tasks are single-threaded.
+
+Then we obviously need a single check at the start, we need to ensure that the
+child was not removed from its ->real_parent->children list. The latter means
+that if ->real_parent exits, the child will be re-parented and its ->real_parent
+will be updated.
+
+So we could do
+
+	read_lock(tasklist);
+
+	if (list_empty(child->sibling))
+		// it is dead, removed from ->children list, we can't trust
+		// child->real_parent
+		return -EWHATEVER;
+
+	task_is_descendant(current, child);
+
+But note that we can safely use pid_alive(child) instead, detach_pid() and
+list_del_init(&p->sibling) happen "at the same time" since we hold tasklist.
+
+(And btw, I suggested several times to rename it, or add another helper with
+ a better name. Note also that we could check, say, ->sighand != NULL with
+ the same effect.)
+
+
+Now. Why do you think rcu_read_lock() differs in that we need to check
+pid_alive() at every step?
+
+Suppose that one of the grand parents exits, and it is going to be freed. Again,
+to (over)simplify the things, lets suppose that release_task() does
+
+	synchronize_rcu();
+	free_task(p);
+
+at the end. Now, can
+
+	rcu_read_lock();
+	if (pid_alive(child)) {
+		while (child->pid)
+			child = child->real_parent;
+	}
+	rcu_read_unlock();
+
+hit the already freed ->real_parent ? Say, the freed child->real_parent->real_parent.
+
+Lets denote P1 = child->real_parent, P2 = P1->real_parent. Can P2 be already freed?
+
+This is only possible if synchronize_rcu() above was called before rcu_read_lock(),
+see the last sentence below.
+
+If P1->real_parent is still P2, then P1 has already exited too. And we still observe
+that child->real_parent == P1, this too is only possible if child has exited, so we
+must see pid_alive() == F.
+
+Why must we see pid_alive() == F without tasklist? It must be true, release_task()
+is serialized by tasklist_lock, but why we can't get the stale value under
+rcu_read_lock() ?
+
+Because our rcu read-lock critical section extends beyond the return from
+synchronize_rcu(), and thus we must have a full memory barrier _between_
+that synchronize_rcu() and our rcu_read_lock(). We must see all memory updates,
+including thread_pid = NULL which makes pid_alive() == F.
+
+Do you see any hole?
+
+Oleg.
 
