@@ -2,103 +2,112 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EE45ECDE44
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:12:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 893CFECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:13:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CA7E20831
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:12:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CA7E20831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 536DF20831
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 00:13:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 536DF20831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726546AbeJYImh (ORCPT
+        id S1726709AbeJYInP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 04:42:37 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:36442 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbeJYImh (ORCPT
+        Thu, 25 Oct 2018 04:43:15 -0400
+Received: from linux-outbound-1.webhostbox.net ([207.174.213.190]:41789 "EHLO
+        linux-outbound-1.webhostbox.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725829AbeJYInP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 04:42:37 -0400
-Received: by mail-ot1-f67.google.com with SMTP id x4so6904104otg.3;
-        Wed, 24 Oct 2018 17:12:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=57BwhvJgAONqp86MA65flk7liXcHcEV4roLBN+EJKsk=;
-        b=GWR8E+J1o9cIRw00K9fsPrjlDzMjLQIwBrX+4Cxoc0tNaz0PQO61KXYg8eqiU8p7LR
-         v0Snbdx/c9lFC3DtuesnBmNWKndvtHN4npC2bwjuTZDyw3DhkKubIbf6frohs4L+jXI2
-         ve21bJrSjRZ0+bS55Fzaw7rxZCZl6r2Kg+YSuGii3Rmfb2k6nytiODIPUrKTh127nnlk
-         Um/2xyKAbqPwu7nzArXjT2jfjfAgKSf17GowqMey+JGvsKQQ3IsaTnHYtsRKlZ1WSeEy
-         N3RlSJqe7Nu4D6vpZBEmAuqbHyKoYJECcSm3Dj7Gh9Kw7U2mrr8tdqnTO/ZeBH4rqgKG
-         15Ng==
-X-Gm-Message-State: AGRZ1gIZpeAZT8wMsIb7BqH/wmYPmhwllGi4EPwprXTPkH8Y2ZR9fOfE
-        SfIqsZejvClsXTmBwk6QfAlmngs=
-X-Google-Smtp-Source: AJdET5dydwMCBP493ClTHIOKB/4FBJJULoftOnSyAD+O/xmJ41IwwQNdBvnd0BeEruncEJ1qHyLrjw==
-X-Received: by 2002:a9d:2607:: with SMTP id a7mr3189941otb.283.1540426343138;
-        Wed, 24 Oct 2018 17:12:23 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id c29sm1799912otj.58.2018.10.24.17.12.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 24 Oct 2018 17:12:22 -0700 (PDT)
-Date:   Wed, 24 Oct 2018 19:12:21 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Gilad Ben-Yossef <gilad@benyossef.com>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ofir Drang <Ofir.Drang@arm.com>,
-        Yael Chemla <Yael.Chemla@arm.com>,
-        linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+        Thu, 25 Oct 2018 04:43:15 -0400
+Received: from bh-25.webhostbox.net (unknown [172.16.210.78])
+        by linux-outbound-1.webhostbox.net (Postfix) with ESMTP id 83AF3240F26;
+        Wed, 24 Oct 2018 22:26:11 +0000 (GMT)
+Received: from [127.0.0.1] (port=54704 helo=bh-25.webhostbox.net)
+        by bh-25.webhostbox.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <linux@roeck-us.net>)
+        id 1gFTGn-00AHVG-Hl; Thu, 25 Oct 2018 00:13:02 +0000
+Received: from 81.145.148.99 ([81.145.148.99]) by cp2.active-venture.com
+ (Horde Framework) with HTTP; Thu, 25 Oct 2018 00:13:01 +0000
+Date:   Thu, 25 Oct 2018 00:13:01 +0000
+Message-ID: <20181025001301.Horde.VCevVrrSs6rOyXT41xiPOzW@cp2.active-venture.com>
+From:   linux@roeck-us.net
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+Cc:     jdelvare@suse.com, linux-hwmon@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] crypto: ccree: add dt bindings for ccree 713
-Message-ID: <20181025001221.GA12740@bogus>
-References: <1539696935-4433-1-git-send-email-gilad@benyossef.com>
- <1539696935-4433-3-git-send-email-gilad@benyossef.com>
+Subject: Re: [PATCH v3 1/5] hwmon: (core) Inherit power properties to hdev
+References: <20181024193402.16698-1-nicoleotsuka@gmail.com>
+ <20181024193402.16698-2-nicoleotsuka@gmail.com>
+In-Reply-To: <20181024193402.16698-2-nicoleotsuka@gmail.com>
+User-Agent: Horde Application Framework 5
+Content-Type: text/plain; charset=utf-8; format=flowed; DelSp=Yes
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1539696935-4433-3-git-send-email-gilad@benyossef.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Authenticated_sender: linux@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 16, 2018 at 02:35:32PM +0100, Gilad Ben-Yossef wrote:
-> Add device tree bindings associating Arm TrustZone CryptoCell 713 with the
-> ccree driver.
 
-"dt-bindings: crypto: ..." for the subject.
-> 
-> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+Quoting Nicolin Chen <nicoleotsuka@gmail.com>:
+
+> The new hdev is a child device related to the original parent
+> hwmon driver and its device. However, it doesn't support the
+> power features, typically being defined in the parent driver.
+>
+> So this patch inherits three necessary power properties from
+> the parent dev to hdev: power, pm_domain and driver pointers.
+>
+> Note that the dev->driver pointer is the place that contains
+> a dev_pm_ops pointer defined in the parent device driver and
+> the pm runtime core also checks this pointer:
+>        if (!cb && dev->driver && dev->driver->pm)
+>
+> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
 > ---
->  Documentation/devicetree/bindings/crypto/arm-cryptocell.txt | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/crypto/arm-cryptocell.txt b/Documentation/devicetree/bindings/crypto/arm-cryptocell.txt
-> index 999fb2a..880de07 100644
-> --- a/Documentation/devicetree/bindings/crypto/arm-cryptocell.txt
-> +++ b/Documentation/devicetree/bindings/crypto/arm-cryptocell.txt
-> @@ -1,8 +1,9 @@
->  Arm TrustZone CryptoCell cryptographic engine
->  
->  Required properties:
-> -- compatible: Should be one of: "arm,cryptocell-712-ree",
-> -  "arm,cryptocell-710-ree" or "arm,cryptocell-630p-ree".
-> +- compatible: Should be one of: "arm,cryptocell-713-ree",
-> +  "arm,cryptocell-712-ree", "arm,cryptocell-710-ree" or
-> +  "arm,cryptocell-630p-ree".
+> Changelog
+> v2->v3:
+>  * N/A
+> v1->v2:
+>  * Added device pointers
+>
+>  drivers/hwmon/hwmon.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
+> index 975c95169884..14cfab64649f 100644
+> --- a/drivers/hwmon/hwmon.c
+> +++ b/drivers/hwmon/hwmon.c
+> @@ -625,7 +625,12 @@ __hwmon_device_register(struct device *dev,  
+> const char *name, void *drvdata,
+>  	hwdev->name = name;
+>  	hdev->class = &hwmon_class;
+>  	hdev->parent = dev;
+> -	hdev->of_node = dev ? dev->of_node : NULL;
+> +	if (dev) {
+> +		hdev->driver = dev->driver;
+> +		hdev->power = dev->power;
+> +		hdev->pm_domain = dev->pm_domain;
+> +		hdev->of_node = dev->of_node;
+> +	}
 
-Please format 1 per line.
+We'l need to dig into this more; I suspect it may be inappropriate to do this.
+With this change, every hwmon driver supporting (runtime ?) suspend/resume
+will have the problem worked around in #5, and that just seems wrong.
 
->  - reg: Base physical address of the engine and length of memory mapped region.
->  - interrupts: Interrupt number for the device.
->  
-> -- 
-> 2.7.4
-> 
+Guenter
+
+>  	hwdev->chip = chip;
+>  	dev_set_drvdata(hdev, drvdata);
+>  	dev_set_name(hdev, HWMON_ID_FORMAT, id);
+> --
+> 2.17.1
+
+
+
