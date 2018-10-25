@@ -2,81 +2,117 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B31CC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 19:57:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43F09C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 19:59:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F145820834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 19:57:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Se32HkTJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F145820834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id EFC2020834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 19:59:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFC2020834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727150AbeJZEbu (ORCPT
+        id S1727543AbeJZEdS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 00:31:50 -0400
-Received: from mail-lj1-f178.google.com ([209.85.208.178]:34717 "EHLO
-        mail-lj1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725871AbeJZEbu (ORCPT
+        Fri, 26 Oct 2018 00:33:18 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:45455 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725871AbeJZEdS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 00:31:50 -0400
-Received: by mail-lj1-f178.google.com with SMTP id c21-v6so3512767ljj.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 12:57:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aaKB1wdqehfUx/31EJMMpxGFKPnJ61f4bKzng+Laxe8=;
-        b=Se32HkTJTXUqfQMZykD4psozzUDiW3HUuLrhdI8IOEShKKH4WmMI++Iil7PGqFxwPj
-         Mo/GhRfqXOwPOzXIx7SzRACIdvhyVUSurlHI4pazGm7DZNHmZJNRAJZVDhjk5jRZdkAW
-         4djMnEALHRP30ELy60gEkNXTFdEOdMM7ji5HE=
+        Fri, 26 Oct 2018 00:33:18 -0400
+Received: by mail-oi1-f193.google.com with SMTP id e14-v6so4825200oie.12;
+        Thu, 25 Oct 2018 12:59:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aaKB1wdqehfUx/31EJMMpxGFKPnJ61f4bKzng+Laxe8=;
-        b=KgbU5p3670u5xoPY2rOPP4KYfeyLrwZmoHWBgFkaNeJxluowMCFHI+AJQgbdzSnrRJ
-         WnqHTart6ztYG0pGrtHvg36s5Gt/bn6BRCUm0SIPEi4A0SdWNMistEVA4NE1rnt6EhGH
-         cUbrHREnHmXeM18aj80//E7Z2cZUh8b8Uu1+REhNyWPYcab51OVLSYXGUqMjjwps0CKw
-         jMoBCivZpTeNmVOE+4+dvfW167xh2so6ob7Nucw5yvF0HNWA4G6yyu8aSsnToJVDUrlk
-         gO84ZV8ZT/TXUh0s/n2b4e3c0XkRYOD/4Xhhbtj11yW1Ja4HcERLK5Vm5N+mUeO7HrOZ
-         PGjw==
-X-Gm-Message-State: AGRZ1gKZmlSwCIwZVi6kRXtNhxYkce4sRnsMSClBHGK4PCFtl5wXvPx3
-        qoUbxDKLi9P8xzBbTVLp1vyHNe17LVPapA==
-X-Google-Smtp-Source: AJdET5e0m+lV6pIE795H7LDgouyKIglRKIYqeG+5dR7OFNAWX2JtZ9da6CnH8ldwR6ZBmvjnotkI7Q==
-X-Received: by 2002:a2e:908:: with SMTP id 8-v6mr378135ljj.1.1540497459889;
-        Thu, 25 Oct 2018 12:57:39 -0700 (PDT)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
-        by smtp.gmail.com with ESMTPSA id f197-v6sm1411203lfe.49.2018.10.25.12.57.38
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Oct 2018 12:57:39 -0700 (PDT)
-Received: by mail-lj1-f173.google.com with SMTP id y22-v6so2765453lji.10
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 12:57:38 -0700 (PDT)
-X-Received: by 2002:a2e:7f14:: with SMTP id a20-v6mr388062ljd.148.1540497458343;
- Thu, 25 Oct 2018 12:57:38 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=v63zYMrQVkYufRJ7KC8EXtkiQleAdQACsw3XM22niBQ=;
+        b=knLuVGBJfI7PPo9AuXJXmAuDE0n9UsOJo2kLyS30sV2HpA1pyWE7Ms2lCnGvoW/L9F
+         L5evwLycL3wQDfHDe3A//5ORh1i15hjx+VW6QMBxg+GtaaxWpevXOc8RPImvDA/SZBL/
+         C8egKyXSi0g1DwOSv/sA0XUvIrCuvJfujrnT7OcgCQCkI424iVrN2EJHQbZ2FbW9rycx
+         +yoYt3EAcW9F+ORC8kEmQHnRVjvzvzIJ6w1mDLNfGk8J1JgMQOvIbRA//+VvHFiWFpm0
+         Ftme/TWyl1PoQq/AOj27a5gUEAQQmJbMz/nVvB3MI0GR248yPi3IQuCkb9QKde8GKHwP
+         I+PA==
+X-Gm-Message-State: AGRZ1gIYUtnnr9yZvTdBa1UuDYm9w/Sq4uKtaq9FVJfAx0X3P+Hmftf7
+        BR0qXhCWqXxNZC+QdMZ0LA==
+X-Google-Smtp-Source: AJdET5da3h0YFN/u/8it1qgGvjaRObDMJfcJXkXVCc3yQ+iwPouDjlSN+g8MIEgKctijNyo37peYMA==
+X-Received: by 2002:aca:3904:: with SMTP id g4-v6mr360557oia.145.1540497549114;
+        Thu, 25 Oct 2018 12:59:09 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id z199-v6sm3302684oig.32.2018.10.25.12.59.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Oct 2018 12:59:07 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 14:59:07 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Keiji Hayashibara <hayashibara.keiji@socionext.com>
+Cc:     broonie@kernel.org, mark.rutland@arm.com,
+        yamada.masahiro@socionext.com, linux-spi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        stable@vger.kernel.org, masami.hiramatsu@linaro.org,
+        jaswinder.singh@linaro.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] spi: uniphier: fix incorrect property items
+Message-ID: <20181025195906.GA22391@bogus>
+References: <1540373669-18969-1-git-send-email-hayashibara.keiji@socionext.com>
 MIME-Version: 1.0
-References: <20181025001857.GD32577@ZenIV.linux.org.uk>
-In-Reply-To: <20181025001857.GD32577@ZenIV.linux.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 25 Oct 2018 12:57:22 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiZNoi3q0sewCiX1LCUFhp33C+kOJEVY0b9o4wuHUJHAg@mail.gmail.com>
-Message-ID: <CAHk-=wiZNoi3q0sewCiX1LCUFhp33C+kOJEVY0b9o4wuHUJHAg@mail.gmail.com>
-Subject: Re: [git pull] more ->lookup() cleanups
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1540373669-18969-1-git-send-email-hayashibara.keiji@socionext.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This (along with your alpha syscall cleanup and compat_ioctl cleanups) pulled,
+On Wed, Oct 24, 2018 at 06:34:29PM +0900, Keiji Hayashibara wrote:
+> This commit fixes incorrect property because it was different
+> from the actual.
+> The parameters of '#address-cells' and '#size-cells' were removed,
+> and 'interrupts', 'pinctrl-names' and 'pinctrl-0' were added.
+> 
+> Fixes: 4dcd5c2781f3 ("spi: add DT bindings for UniPhier SPI controller")
+> Signed-off-by: Keiji Hayashibara <hayashibara.keiji@socionext.com>
+> ---
+>  Documentation/devicetree/bindings/spi/spi-uniphier.txt | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/spi/spi-uniphier.txt b/Documentation/devicetree/bindings/spi/spi-uniphier.txt
+> index 504a4ec..b04e66a 100644
+> --- a/Documentation/devicetree/bindings/spi/spi-uniphier.txt
+> +++ b/Documentation/devicetree/bindings/spi/spi-uniphier.txt
+> @@ -5,18 +5,20 @@ UniPhier SoCs have SCSSI which supports SPI single channel.
+>  Required properties:
+>   - compatible: should be "socionext,uniphier-scssi"
+>   - reg: address and length of the spi master registers
+> - - #address-cells: must be <1>, see spi-bus.txt
+> - - #size-cells: must be <0>, see spi-bus.txt
 
-              Linus
+How is removing these correct? They are needed if you have any child 
+devices.
+
+> - - clocks: A phandle to the clock for the device.
+> - - resets: A phandle to the reset control for the device.
+> + - interrupts: a single interrupt specifier
+> + - pinctrl-names: should be "default"
+> + - pinctrl-0: pin control state for the default mode
+> + - clocks: a phandle to the clock for the device
+> + - resets: a phandle to the reset control for the device
+>  
+>  Example:
+>  
+>  spi0: spi@54006000 {
+>  	compatible = "socionext,uniphier-scssi";
+>  	reg = <0x54006000 0x100>;
+> -	#address-cells = <1>;
+> -	#size-cells = <0>;
+> +	interrupts = <0 39 4>;
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_spi0>;
+>  	clocks = <&peri_clk 11>;
+>  	resets = <&peri_rst 11>;
+>  };
+> -- 
+> 2.7.4
+> 
