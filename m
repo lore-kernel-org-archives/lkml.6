@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77E3BECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 05:53:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5817C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 05:53:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33D9620831
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 05:53:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 587A120831
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 05:53:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hUXeVMx2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33D9620831
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="K3rHbutL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 587A120831
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727433AbeJYOYg (ORCPT
+        id S1727461AbeJYOYk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 10:24:36 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:46931 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727398AbeJYOYg (ORCPT
+        Thu, 25 Oct 2018 10:24:40 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:32802 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727398AbeJYOYj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 10:24:36 -0400
-Received: by mail-pg1-f195.google.com with SMTP id a5-v6so2585532pgt.13
-        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 22:53:26 -0700 (PDT)
+        Thu, 25 Oct 2018 10:24:39 -0400
+Received: by mail-pg1-f194.google.com with SMTP id z2-v6so3500451pgp.0
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 22:53:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=v6vTXca6A3jKCvhjLn/Zkg1XwrbNhbzSf4hVfEVdJtU=;
-        b=hUXeVMx2vJv4cDWT3aDqmKMh8MrnV1gvyYapkFPqtEb8Pip/4mZFIbSVilElNRNIp6
-         tp4qNVM1kQMIIShXmui4NV4yxUcpCllUnLAhy8J+h5rgIoavfKoT73/wVVY0wDDt05+u
-         XKVhwjFGgfPcUKXSI5cz5s879uMPHZ7kTA5uc=
+        bh=F8xBBQz3Vz3UwvoiZVxTM/564LZrnNByj53ag4krqco=;
+        b=K3rHbutL1/HAKJ2lweceEiVcP69NSP4LXIqIF0iFslTDVYygiTACPcAfmmXXfmHdlM
+         4xUUmkH49Qhloy/zycCOZgM6OdO/1nv13Fyv1hWx8Oz9HdNINpWeWAspNGghQYE2wO8m
+         Xk7i90qPObNraHpIX1+ut4cziLDaJC2Udko2U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=v6vTXca6A3jKCvhjLn/Zkg1XwrbNhbzSf4hVfEVdJtU=;
-        b=i4w79uLM22SJ8BzFLXeUWkqKrgst4vfflTQtXbr+OzNxDbY0iwD3X5ZWMN3MgEbK9V
-         HK2GezgDqjvXKGI+92g/RYAZNHDRrKAk1tJigzXjoq3T14CgPe5F1v6vZcl1n0PpDYor
-         nuv9bDzeRlQ2T7xtmB9rXKySXV03aUEdBZiLCncDISc+IYoNI2dYo6mDSG8BOl2i80Ws
-         HAsEEwfanINMDy7X2uCluhzZMjMo/q17UXKL3WB8J8ExyiGsLidPvHts8nNV4aEECRq7
-         lmp36h6bR6roP+bl+hALeadmp2xARPDV4dfFcYRLzSTznSdwKPriTacg4g0gvzywAPJ8
-         9ITg==
-X-Gm-Message-State: AGRZ1gII2kSxaL479CUnDzul0A2b6zLN+8irzy/l8O4SrEG8vSzm/0x+
-        gxL8hRnUYMQ4ZTlBtHBE6wtyEg==
-X-Google-Smtp-Source: AJdET5feprQcIvXzJ7hzZe/9bjU9Y6n6swqOu8YUwO1iNu2yTQDd+73lymL933jiJ/aQz/2bv9U1yw==
-X-Received: by 2002:a62:9015:: with SMTP id a21-v6mr203519pfe.49.1540446805510;
-        Wed, 24 Oct 2018 22:53:25 -0700 (PDT)
+        bh=F8xBBQz3Vz3UwvoiZVxTM/564LZrnNByj53ag4krqco=;
+        b=gzMJtEFo5KwsuyRvKNLOW3mG9he6OZwJZNyLuYumTGO8fBDSK/SQIBmk/uGsT+9ozg
+         6PGIdCc5DRz8ZwlfSz/nOZIhWEjLrwgV6lhu9ckgbWYJm3FmbKHMC+n+G0hIzOOMNYEa
+         2zrhXnDbTUBLXyNY6xde9eIviPYuiLrsgZdQCHO3hf5z+OC9RyBHNzYlru0FbTykFkjm
+         2kS4elro5ymBkT++dhlFLM862ZGccWWKm03HG4LMYullU4rGlL6JMJgaWRaCFBAOP2b8
+         CcZk7UPKfSJLLgDizWLfQNu/ZBjgKns4basjTE8X/BBg8Y3W/ExW1b8ZNd1KbIBHtyHG
+         ZaSQ==
+X-Gm-Message-State: AGRZ1gKw0pUKaDWFAY8sozww9OosrMZJIc7OV9o8iJQh4LrQ8EN8TGV/
+        KShFHHFNfRc2j2xQZodN7//sCQ==
+X-Google-Smtp-Source: AJdET5fQyIID3yJ4wFI6lllqvVBlWDIe1q+j2MTl5tx7OHB+ujRSyEbK5C652dJrD4EjLqQVgdJaog==
+X-Received: by 2002:a63:ac46:: with SMTP id z6mr209602pgn.162.1540446808933;
+        Wed, 24 Oct 2018 22:53:28 -0700 (PDT)
 Received: from localhost ([122.172.217.9])
-        by smtp.gmail.com with ESMTPSA id z14-v6sm8826137pfi.4.2018.10.24.22.53.24
+        by smtp.gmail.com with ESMTPSA id v26-v6sm8243825pfg.43.2018.10.24.22.53.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 24 Oct 2018 22:53:24 -0700 (PDT)
+        Wed, 24 Oct 2018 22:53:28 -0700 (PDT)
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     ulf.hansson@linaro.org, Viresh Kumar <vireshk@kernel.org>,
         Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>
@@ -63,9 +63,9 @@ Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
         Vincent Guittot <vincent.guittot@linaro.org>,
         Rafael Wysocki <rjw@rjwysocki.net>, niklas.cassel@linaro.org,
         rnayak@codeaurora.org, linux-kernel@vger.kernel.org
-Subject: [PATCH V3 03/10] OPP: Separate out custom OPP handler specific code
-Date:   Thu, 25 Oct 2018 11:22:40 +0530
-Message-Id: <2b94b3d1454a5e5da9e1a984a1a87cc852b44213.1540446493.git.viresh.kumar@linaro.org>
+Subject: [PATCH V3 04/10] OPP: Populate required opp tables from "required-opps" property
+Date:   Thu, 25 Oct 2018 11:22:41 +0530
+Message-Id: <345bedbbf99afac2f1c961bcbe87f7b6f53b4f8b.1540446493.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.19.1.568.g152ad8e3369a
 In-Reply-To: <cover.1540446493.git.viresh.kumar@linaro.org>
 References: <cover.1540446493.git.viresh.kumar@linaro.org>
@@ -76,114 +76,239 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Create a separate routine to take care of custom set_opp() handler
-specific stuff.
+The current implementation works only for the case where a single
+phandle is present in the "required-opps" property, while DT allows
+multiple phandles to be present there.
+
+This patch adds new infrastructure to parse all the phandles present in
+"required-opps" property and save pointers of the required OPP's OPP
+tables. These will be used by later commits.
 
 Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- drivers/opp/core.c | 67 +++++++++++++++++++++++++++-------------------
- 1 file changed, 40 insertions(+), 27 deletions(-)
+ drivers/opp/core.c |   2 +
+ drivers/opp/of.c   | 147 +++++++++++++++++++++++++++++++++++++++++++++
+ drivers/opp/opp.h  |   8 +++
+ 3 files changed, 157 insertions(+)
 
 diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-index 2c2df4e4fc14..ebb3b648e0fd 100644
+index ebb3b648e0fd..85174a5c4850 100644
 --- a/drivers/opp/core.c
 +++ b/drivers/opp/core.c
-@@ -635,6 +635,34 @@ static int _generic_set_opp_regulator(const struct opp_table *opp_table,
- 	return ret;
+@@ -901,6 +901,8 @@ static void _opp_table_kref_release(struct kref *kref)
+ 	struct opp_table *opp_table = container_of(kref, struct opp_table, kref);
+ 	struct opp_device *opp_dev, *temp;
+ 
++	_of_clear_opp_table(opp_table);
++
+ 	/* Release clk */
+ 	if (!IS_ERR(opp_table->clk))
+ 		clk_put(opp_table->clk);
+diff --git a/drivers/opp/of.c b/drivers/opp/of.c
+index 5f114cd3d88c..b5605196122a 100644
+--- a/drivers/opp/of.c
++++ b/drivers/opp/of.c
+@@ -73,6 +73,147 @@ struct opp_table *_managed_opp(struct device *dev, int index)
+ 	return managed_table;
  }
  
-+static int _set_opp_custom(const struct opp_table *opp_table,
-+			   struct device *dev, unsigned long old_freq,
-+			   unsigned long freq,
-+			   struct dev_pm_opp_supply *old_supply,
-+			   struct dev_pm_opp_supply *new_supply)
++/* The caller must call dev_pm_opp_put() after the OPP is used */
++static struct dev_pm_opp *_find_opp_of_np(struct opp_table *opp_table,
++					  struct device_node *opp_np)
 +{
-+	struct dev_pm_set_opp_data *data;
-+	int size;
++	struct dev_pm_opp *opp;
 +
-+	data = opp_table->set_opp_data;
-+	data->regulators = opp_table->regulators;
-+	data->regulator_count = opp_table->regulator_count;
-+	data->clk = opp_table->clk;
-+	data->dev = dev;
++	lockdep_assert_held(&opp_table_lock);
 +
-+	data->old_opp.rate = old_freq;
-+	size = sizeof(*old_supply) * opp_table->regulator_count;
-+	if (IS_ERR(old_supply))
-+		memset(data->old_opp.supplies, 0, size);
-+	else
-+		memcpy(data->old_opp.supplies, old_supply, size);
++	mutex_lock(&opp_table->lock);
 +
-+	data->new_opp.rate = freq;
-+	memcpy(data->new_opp.supplies, new_supply, size);
++	list_for_each_entry(opp, &opp_table->opp_list, node) {
++		if (opp->np == opp_np) {
++			dev_pm_opp_get(opp);
++			mutex_unlock(&opp_table->lock);
++			return opp;
++		}
++	}
 +
-+	return opp_table->set_opp(data);
++	mutex_unlock(&opp_table->lock);
++
++	return NULL;
 +}
 +
- /**
-  * dev_pm_opp_set_rate() - Configure new OPP based on frequency
-  * @dev:	 device for which we do this operation
-@@ -649,7 +677,7 @@ int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq)
- 	unsigned long freq, old_freq;
- 	struct dev_pm_opp *old_opp, *opp;
- 	struct clk *clk;
--	int ret, size;
-+	int ret;
- 
- 	if (unlikely(!target_freq)) {
- 		dev_err(dev, "%s: Invalid target frequency %lu\n", __func__,
-@@ -702,8 +730,17 @@ int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq)
- 	dev_dbg(dev, "%s: switching OPP: %lu Hz --> %lu Hz\n", __func__,
- 		old_freq, freq);
- 
--	/* Only frequency scaling */
--	if (!opp_table->regulators) {
-+	if (opp_table->set_opp) {
-+		ret = _set_opp_custom(opp_table, dev, old_freq, freq,
-+				      IS_ERR(old_opp) ? NULL : old_opp->supplies,
-+				      opp->supplies);
-+	} else if (opp_table->regulators) {
-+		ret = _generic_set_opp_regulator(opp_table, dev, old_freq, freq,
-+						 IS_ERR(old_opp) ? NULL : old_opp->supplies,
-+						 opp->supplies);
-+	} else {
-+		/* Only frequency scaling */
++static struct device_node *of_parse_required_opp(struct device_node *np,
++						 int index)
++{
++	struct device_node *required_np;
 +
- 		/*
- 		 * We don't support devices with both regulator and
- 		 * domain performance-state for now.
-@@ -714,30 +751,6 @@ int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq)
- 						      opp->pstate);
- 		else
- 			ret = _generic_set_opp_clk_only(dev, clk, old_freq, freq);
--	} else if (!opp_table->set_opp) {
--		ret = _generic_set_opp_regulator(opp_table, dev, old_freq, freq,
--						 IS_ERR(old_opp) ? NULL : old_opp->supplies,
--						 opp->supplies);
--	} else {
--		struct dev_pm_set_opp_data *data;
--
--		data = opp_table->set_opp_data;
--		data->regulators = opp_table->regulators;
--		data->regulator_count = opp_table->regulator_count;
--		data->clk = clk;
--		data->dev = dev;
--
--		data->old_opp.rate = old_freq;
--		size = sizeof(*opp->supplies) * opp_table->regulator_count;
--		if (IS_ERR(old_opp))
--			memset(data->old_opp.supplies, 0, size);
--		else
--			memcpy(data->old_opp.supplies, old_opp->supplies, size);
--
--		data->new_opp.rate = freq;
--		memcpy(data->new_opp.supplies, opp->supplies, size);
--
--		ret = opp_table->set_opp(data);
- 	}
++	required_np = of_parse_phandle(np, "required-opps", index);
++	if (unlikely(!required_np)) {
++		pr_err("%s: Unable to parse required-opps: %pOF, index: %d\n",
++		       __func__, np, index);
++	}
++
++	return required_np;
++}
++
++/* The caller must call dev_pm_opp_put_opp_table() after the table is used */
++static struct opp_table *_find_table_of_opp_np(struct device_node *opp_np)
++{
++	struct opp_table *opp_table;
++	struct dev_pm_opp *opp;
++
++	lockdep_assert_held(&opp_table_lock);
++
++	list_for_each_entry(opp_table, &opp_tables, node) {
++		opp = _find_opp_of_np(opp_table, opp_np);
++		if (opp) {
++			dev_pm_opp_put(opp);
++			_get_opp_table_kref(opp_table);
++			return opp_table;
++		}
++	}
++
++	return ERR_PTR(-ENODEV);
++}
++
++/* Free resources previously acquired by _opp_table_alloc_required_tables() */
++static void _opp_table_free_required_tables(struct opp_table *opp_table)
++{
++	struct opp_table **required_opp_tables = opp_table->required_opp_tables;
++	int i;
++
++	if (!required_opp_tables)
++		return;
++
++	for (i = 0; i < opp_table->required_opp_count; i++) {
++		if (IS_ERR_OR_NULL(required_opp_tables[i]))
++			break;
++
++		dev_pm_opp_put_opp_table(required_opp_tables[i]);
++	}
++
++	kfree(required_opp_tables);
++
++	opp_table->required_opp_count = 0;
++	opp_table->required_opp_tables = NULL;
++}
++
++/*
++ * Populate all devices and opp tables which are part of "required-opps" list.
++ * Checking only the first OPP node should be enough.
++ */
++static void _opp_table_alloc_required_tables(struct opp_table *opp_table,
++					     struct device *dev,
++					     struct device_node *opp_np)
++{
++	struct opp_table **required_opp_tables;
++	struct device_node *required_np, *np;
++	int count, i;
++
++	/* Traversing the first OPP node is all we need */
++	np = of_get_next_available_child(opp_np, NULL);
++	if (!np) {
++		dev_err(dev, "Empty OPP table\n");
++		return;
++	}
++
++	count = of_count_phandle_with_args(np, "required-opps", NULL);
++	if (!count)
++		goto put_np;
++
++	required_opp_tables = kcalloc(count, sizeof(*required_opp_tables),
++				      GFP_KERNEL);
++	if (!required_opp_tables)
++		goto put_np;
++
++	opp_table->required_opp_tables = required_opp_tables;
++	opp_table->required_opp_count = count;
++
++	for (i = 0; i < count; i++) {
++		required_np = of_parse_required_opp(np, i);
++		if (!required_np)
++			goto free_required_tables;
++
++		required_opp_tables[i] = _find_table_of_opp_np(required_np);
++		of_node_put(required_np);
++
++		if (IS_ERR(required_opp_tables[i]))
++			goto free_required_tables;
++
++		/*
++		 * We only support genpd's OPPs in the "required-opps" for now,
++		 * as we don't know how much about other cases. Error out if the
++		 * required OPP doesn't belong to a genpd.
++		 */
++		if (!required_opp_tables[i]->is_genpd) {
++			dev_err(dev, "required-opp doesn't belong to genpd: %pOF\n",
++				required_np);
++			goto free_required_tables;
++		}
++	}
++
++	goto put_np;
++
++free_required_tables:
++	_opp_table_free_required_tables(opp_table);
++put_np:
++	of_node_put(np);
++}
++
+ void _of_init_opp_table(struct opp_table *opp_table, struct device *dev,
+ 			int index)
+ {
+@@ -109,9 +250,15 @@ void _of_init_opp_table(struct opp_table *opp_table, struct device *dev,
  
- 	dev_pm_opp_put(opp);
+ 	opp_table->np = opp_np;
+ 
++	_opp_table_alloc_required_tables(opp_table, dev, opp_np);
+ 	of_node_put(opp_np);
+ }
+ 
++void _of_clear_opp_table(struct opp_table *opp_table)
++{
++	_opp_table_free_required_tables(opp_table);
++}
++
+ static bool _opp_is_supported(struct device *dev, struct opp_table *opp_table,
+ 			      struct device_node *np)
+ {
+diff --git a/drivers/opp/opp.h b/drivers/opp/opp.h
+index cdb0c2b095e2..024e1be23d37 100644
+--- a/drivers/opp/opp.h
++++ b/drivers/opp/opp.h
+@@ -133,6 +133,9 @@ enum opp_table_access {
+  * @parsed_static_opps: True if OPPs are initialized from DT.
+  * @shared_opp: OPP is shared between multiple devices.
+  * @suspend_opp: Pointer to OPP to be used during device suspend.
++ * @required_opp_tables: List of device OPP tables that are required by OPPs in
++ *		this table.
++ * @required_opp_count: Number of required devices.
+  * @supported_hw: Array of version number to support.
+  * @supported_hw_count: Number of elements in supported_hw array.
+  * @prop_name: A name to postfix to many DT properties, while parsing them.
+@@ -172,6 +175,9 @@ struct opp_table {
+ 	enum opp_table_access shared_opp;
+ 	struct dev_pm_opp *suspend_opp;
+ 
++	struct opp_table **required_opp_tables;
++	unsigned int required_opp_count;
++
+ 	unsigned int *supported_hw;
+ 	unsigned int supported_hw_count;
+ 	const char *prop_name;
+@@ -208,9 +214,11 @@ void _put_opp_list_kref(struct opp_table *opp_table);
+ 
+ #ifdef CONFIG_OF
+ void _of_init_opp_table(struct opp_table *opp_table, struct device *dev, int index);
++void _of_clear_opp_table(struct opp_table *opp_table);
+ struct opp_table *_managed_opp(struct device *dev, int index);
+ #else
+ static inline void _of_init_opp_table(struct opp_table *opp_table, struct device *dev, int index) {}
++static inline void _of_clear_opp_table(struct opp_table *opp_table) {}
+ static inline struct opp_table *_managed_opp(struct device *dev, int index) { return NULL; }
+ #endif
+ 
 -- 
 2.19.1.568.g152ad8e3369a
 
