@@ -3,74 +3,119 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DDE0ECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 09:37:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A7A0C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 09:38:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F5532064A
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 09:37:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F5532064A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=namei.org
+	by mail.kernel.org (Postfix) with ESMTP id 4B2C22064A
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 09:38:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B2C22064A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stwm.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726815AbeJYSJj (ORCPT
+        id S1727041AbeJYSKS convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 14:09:39 -0400
-Received: from namei.org ([65.99.196.166]:49102 "EHLO namei.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726637AbeJYSJj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 14:09:39 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by namei.org (8.14.4/8.14.4) with ESMTP id w9P9bf5a031528;
-        Thu, 25 Oct 2018 09:37:41 GMT
-Date:   Thu, 25 Oct 2018 20:37:41 +1100 (AEDT)
-From:   James Morris <jmorris@namei.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-cc:     linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] security: Smack updates for v4.20
-Message-ID: <alpine.LRH.2.21.1810252035220.30470@namei.org>
-User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+        Thu, 25 Oct 2018 14:10:18 -0400
+Received: from dresden.studentenwerk.mhn.de ([141.84.225.229]:35704 "EHLO
+        email.studentenwerk.mhn.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726652AbeJYSKR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 14:10:17 -0400
+Received: from mailhub.studentenwerk.mhn.de (mailhub.studentenwerk.mhn.de [127.0.0.1])
+        by email.studentenwerk.mhn.de (Postfix) with ESMTP id 42ghrW6RFMzMkwB;
+        Thu, 25 Oct 2018 11:38:19 +0200 (CEST)
+From:   Wolfgang Walter <linux@stwm.de>
+To:     netdev@vger.kernel.org
+Cc:     Florian Westphal <fw@strlen.de>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        David Miller <davem@davemloft.net>,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        christophe.gouault@6wind.com, Greg KH <gregkh@linuxfoundation.org>
+Subject: Re: Regression: kernel 4.14 an later very slow with many ipsec tunnels
+Date:   Thu, 25 Oct 2018 11:38:19 +0200
+Message-ID: <2766296.15tpkxTHJV@stwm.de>
+User-Agent: KMail/4.14.3 (Linux/4.18.12-041812-generic; KDE/4.14.13; x86_64; ; )
+In-Reply-To: <1729915.dWWxddREcQ@stwm.de>
+References: <20180913135844.3ut6fxgx67t6ndtu@breakpoint.cc> <20181002213536.sgjansduqenps2md@breakpoint.cc> <1729915.dWWxddREcQ@stwm.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="iso-8859-1"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Please pull.
+Hello,
 
-From Casey: "Here are three patches for Smack for 4.20. Two clean up 
-warnings and one is a rarely encountered ptrace capability check."
+there is now a new 4.19 which still has the big performance regression when 
+many ipsec tunnels are configured (throughput and latency get worse by 10 to 
+50 times) which makes any kernel > 4.9 unusable for our routers.
 
----
+I still don't understand why a revert of the flow cache removal at least for 
+the longterm kernels is that a bad option (maybe as a compile time option), 
+especially as there is no workaround available.
 
-The following changes since commit 0d42d73a37ff91028785e42a6bf12fc020a277c1:
+We use linux in that scenario since more than 10 years so I'm really rather 
+unhappy if not to say despaired that we will be stucked with 4.9 for an 
+unforeseeable future.
 
-  seccomp: remove unnecessary unlikely() (2018-09-06 13:29:59 -0700)
+We would have detected and reported that performance regression much earlier 
+if not another bug in ipsec had prevented us from running 4.14 and later until 
+end of august 2018 (See kernels > v4.12 oops/crash with ipsec-traffic: 
+bisected to b838d5e1c5b6e57b10ec8af2268824041e3ea911: ipv4: mark DST_NOGC and 
+remove the operation of dst_free()).
 
-are available in the Git repository at:
+Am Donnerstag, 4. Oktober 2018, 15:57:52 schrieb Wolfgang Walter:
+> Am Dienstag, 2. Oktober 2018, 23:35:36 schrieb Florian Westphal:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git next-smack
+[snip]
 
-for you to fetch changes up to f0f9756b7260f4e78a2e4e412a55167178721ca2:
+> > Well, I'm not going to send a revert of the flowcache removal.
+> >
+> > 
+> > I'm willing to experiment with alternatives to a full iteration of the
+> > inexact list but thats it.
+> 
+> If this brings performance back to pre-removal, I'm fine with that. I'm even
+> fine if it is slower by a factor of 2.
+> 
+> I think it is a serious regression, and there is no workaround, and therefor
+> it cannot stay like that.
+> 
+> So I still hope that reverting is an option if no acceptable solution can be
+> found.
+> 
+> > > correctly done, as it still would have to obey the original order of the
+> > > rules (their priority).
+> > 
+> > Except that neither the priority or the order in which it was added
+> > matters in case the selector doesn't match.
+> 
+> To match a packet one has to find all matching rules and chose that one with
+> the lowest priority.
+> 
+> "indexing" by dst will not help much if you have a ruleset where a lot of
+> rules sharing a dst. You also have to replicate rules with dsts that have a
+> prefix oft another dst as they may habe a higher priority even if they are
+> less specific.
+> 
+> Every such entry may again have such an "indexing" by dst. Only then this
+> would be efficient.
+>
 
-  Merge branch 'smack-for-4.20' of https://github.com/cschaufler/next-smack into next-smack (2018-09-25 11:15:12 -0700)
+[snip]
+ 
+> 
+> I wonder why there is no such thing for netfilter or the rules list in
+> routing. nf does not have such a thing, either. This is the reason why I
+> think that this is not that easy and for longterm kernel 4.14 the best
+> solution will be a revert anyway.
+> 
+> Regards,
 
-----------------------------------------------------------------
-Casey Schaufler (1):
-      Smack: ptrace capability use fixes
-
-Gustavo A. R. Silva (1):
-      Smack: Mark expected switch fall-through
-
-James Morris (1):
-      Merge branch 'smack-for-4.20' of https://github.com/cschaufler/next-smack into next-smack
-
-YueHaibing (1):
-      Smack: remove set but not used variable 'root_inode'
-
- security/smack/smack_lsm.c | 15 +++++++++++----
- security/smack/smackfs.c   |  3 ---
- 2 files changed, 11 insertions(+), 7 deletions(-)
+Regards,
+-- 
+Wolfgang Walter
+Studentenwerk München
+Anstalt des öffentlichen Rechts
