@@ -2,148 +2,166 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C68C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:16:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F2BEC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:16:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9544D20834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:16:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9544D20834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D4E2F20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 18:16:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UbtMX54F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4E2F20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727942AbeJZCtw (ORCPT
+        id S1727780AbeJZCui (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 22:49:52 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:45816 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727722AbeJZCtw (ORCPT
+        Thu, 25 Oct 2018 22:50:38 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44614 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727653AbeJZCui (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 22:49:52 -0400
-Received: by mail-ot1-f68.google.com with SMTP id z15so10024538otm.12;
-        Thu, 25 Oct 2018 11:16:01 -0700 (PDT)
+        Thu, 25 Oct 2018 22:50:38 -0400
+Received: by mail-pl1-f193.google.com with SMTP id d23-v6so4214966pls.11
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 11:16:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=RPOZBbzyjbHOPhK8IbljRcHoNrKUr7CmrN5SSf/RjRQ=;
+        b=UbtMX54FxCSZrM36Kbe/uISzTjzzFZF/hJsovQCRTiQoTxr7q9yiEI+7P/YuVIJ9p5
+         L6TaoQjbpXyiyXtBWsGPvomYtptRhylEdUWu+ZUX+pp3sbjSHIUtDIkdnrA8BoZhFNSV
+         /+KozqCX+VRt0CFOgKG+I6RcFWsZfJ8Jh9fmY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=t1fMO9AdLKwAri/Xx9eWeS0vK5xfhHmhOmKxzTBYlR0=;
-        b=KBGIv+3DGwsYL2FDWD0XILjdN9WLWjxsbWIunmekuvKkTictwLg0Cmz0nY706rPrra
-         7qQqsRAf+DgpHBvwjsyzKl3mLBHgCRgTeKQogYXc/M6ODoxArLoGvfXRDCZU+JmpwWN+
-         gJ8R8ScP/SBGYt3Wf7DV0Rix2zjJuhIbABiWt62zmeR47bElt2zGN6Ew4Nem5cghH6FB
-         S0F8Xt7KxM+GYZp6vA9GD/m1WEVVniR+YuPNIYoi7Lf9UnM9pYV80ltzbZh2R2o87YSY
-         0wNVNuADwQ0qTYtJsCmbNWeDd4aoY51YXUOJHHynsf5jpFyFZ+QnGdhXnPzKdf8NWSMH
-         c7Yw==
-X-Gm-Message-State: AGRZ1gK1mpw6/gbI5HCZz9SYlpqmAGclu6ZSZmIge+cjnhrqwXqlwr9x
-        ZjkAiZGCvQ4wabSmI9vsug==
-X-Google-Smtp-Source: AJdET5fXqCnNHIIw1LMP19cku1Sgh7f5URvwpw/cFC3WESgPSO/RCsPN0T6VYRgAmvmEnZ9w17WhpQ==
-X-Received: by 2002:a9d:7c90:: with SMTP id q16mr222930otn.166.1540491360623;
-        Thu, 25 Oct 2018 11:16:00 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 65sm2992799ott.63.2018.10.25.11.15.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Oct 2018 11:16:00 -0700 (PDT)
-Date:   Thu, 25 Oct 2018 13:15:58 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     AnilKumar Chimata <anilc@codeaurora.org>
-Cc:     andy.gross@linaro.org, david.brown@linaro.org,
-        mark.rutland@arm.com, herbert@gondor.apana.org.au,
-        davem@davemloft.net, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: Add ICE device specific parameters
-Message-ID: <20181025181558.GC30244@bogus>
-References: <1539789476-6098-1-git-send-email-anilc@codeaurora.org>
- <1539789476-6098-3-git-send-email-anilc@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1539789476-6098-3-git-send-email-anilc@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=RPOZBbzyjbHOPhK8IbljRcHoNrKUr7CmrN5SSf/RjRQ=;
+        b=KEtOgppw0JKeT7gMkHKo+XnCPRNxhCe+SG4oWh5xifn9NupUT16rTWX/1PcJheueTo
+         0MtvluCsO0d+QTB5Dkz2Pd4T5S6Y6DmEV4w3vBzlsBjZFyz2aZ0AlQJmUTijCP/Pb/zg
+         b7fXt2LJWD24VjCiBOIeh7Ppe96T83zYgOI0+Qs2Be2QNp5/Pt0+vAi159KijOBsQb9L
+         DeivY9zPIJNQAsFevrFMMwiUWlm5C+IaC8QNKCKU2o0ZZcABPw+sYKswRURQI+TvoIsP
+         XIgxkQ9eLgTS0vKqVMBvjsM2kkK8v+Ql/qEeUw++oT62k6vhyIFsfNtrFc14VZ2lHy4c
+         7ksA==
+X-Gm-Message-State: AGRZ1gLkL9CnHuQqEdrx8D17jtF66CTNPtu3TzAgJXx4D0pwoMYW9neQ
+        I7wq0klgNEPbgol8UJtbhZDMW46l71g=
+X-Google-Smtp-Source: AJdET5fqjgSF01pZk95UDUiCSU/XjMr4rjUj24/84mGflZfFCoEdUXU/OEe4P6RxZ50L+Aw4kCTaMw==
+X-Received: by 2002:a17:902:8d88:: with SMTP id v8-v6mr254674plo.21.1540491406315;
+        Thu, 25 Oct 2018 11:16:46 -0700 (PDT)
+Received: from localhost.localdomain ([2601:1c2:680:1319:4e72:b9ff:fe99:466a])
+        by smtp.gmail.com with ESMTPSA id r23-v6sm10725700pgm.48.2018.10.25.11.16.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 25 Oct 2018 11:16:44 -0700 (PDT)
+From:   John Stultz <john.stultz@linaro.org>
+To:     lkml <linux-kernel@vger.kernel.org>
+Cc:     Wei Li <liwei213@huawei.com>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, Dmitry Shmidt <dimitrysh@google.com>,
+        John Stultz <john.stultz@linaro.org>
+Subject: [PATCH v3] scsi: ufs: Fix hynix ufs bug with quirk on hi36xx SoC
+Date:   Thu, 25 Oct 2018 11:16:40 -0700
+Message-Id: <1540491400-16141-1-git-send-email-john.stultz@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 08:47:55PM +0530, AnilKumar Chimata wrote:
-> Add dt parameters information specific to the Inline
-> Crypto Engine (ICE) device.
-> 
-> Signed-off-by: AnilKumar Chimata <anilc@codeaurora.org>
-> ---
->  .../devicetree/bindings/crypto/msm/ice.txt         | 34 ++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/crypto/msm/ice.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/crypto/msm/ice.txt b/Documentation/devicetree/bindings/crypto/msm/ice.txt
-> new file mode 100644
-> index 0000000..86eed5e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/crypto/msm/ice.txt
-> @@ -0,0 +1,34 @@
-> +* Inline Crypto Engine (ICE)
-> +
-> +Required properties:
-> +  - compatible			: should be "qcom,ice"
+From: Wei Li <liwei213@huawei.com>
 
-Only 1 version ever? Probably not and this needs an SoC specific 
-compatible string. Does this follow any standard or ICE is a QCom thing?
+Hynix ufs has deviations on hi36xx platform which will result in
+ufs bursts transfer failures.
 
-> +  - reg 			: <register mapping>
+To fix the problem, the Hynix device must set the register
+VS_DebugSaveConfigTime to 0x10, which will set time reference
+for SaveConfigTime is 250 ns. The time reference for SaveConfigTime
+is 40 ns by default.
 
-No need to define standard properties. You need to say how many register 
-ranges.
+This patch is necessary to boot on HiKey960 boards that use
+Hynix UFS chips (H28U62301AMR model: hB8aL1).
 
-> +
-> +Optional properties:
-> +  - interrupt-names     	: name describing the interrupts for ICE IRQ
+Cc: Vinayak Holikatti <vinholikatti@gmail.com>
+Cc: "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org
+Signed-off-by: Wei Li <liwei213@huawei.com>
+Signed-off-by: Dmitry Shmidt <dimitrysh@google.com>
+[jstultz: Forward ported from older code, slight tweak to commit message]
+Signed-off-by: John Stultz <john.stultz@linaro.org>
+---
+v2:
+* Narrowed the UFS chip model to the specific model where
+  the issue has been seen. (SKhynix  H28U62301AMR model: hB8aL1)
+* Reworked logic to be contained in ufs-hisi.c since it seems to
+  be a controller issue that crops up with this specific chip
+v3:
+* Reworked back to using generic hba quriks which we then key on
+  in the hisi driver.
+---
+ drivers/scsi/ufs/ufs-hisi.c   | 9 +++++++++
+ drivers/scsi/ufs/ufs_quirks.h | 6 ++++++
+ drivers/scsi/ufs/ufshcd.c     | 2 ++
+ 3 files changed, 17 insertions(+)
 
-No point to this if there is only 1 IRQ.
+diff --git a/drivers/scsi/ufs/ufs-hisi.c b/drivers/scsi/ufs/ufs-hisi.c
+index 46df707..452e19f 100644
+--- a/drivers/scsi/ufs/ufs-hisi.c
++++ b/drivers/scsi/ufs/ufs-hisi.c
+@@ -20,6 +20,7 @@
+ #include "unipro.h"
+ #include "ufs-hisi.h"
+ #include "ufshci.h"
++#include "ufs_quirks.h"
+ 
+ static int ufs_hisi_check_hibern8(struct ufs_hba *hba)
+ {
+@@ -390,6 +391,14 @@ static void ufs_hisi_set_dev_cap(struct ufs_hisi_dev_params *hisi_param)
+ 
+ static void ufs_hisi_pwr_change_pre_change(struct ufs_hba *hba)
+ {
++	if (hba->dev_quirks & UFS_DEVICE_QUIRK_HOST_VS_DEBUGSAVECONFIGTIME) {
++		pr_info("ufs flash device must set VS_DebugSaveConfigTime 0x10\n");
++		/* VS_DebugSaveConfigTime */
++		ufshcd_dme_set(hba, UIC_ARG_MIB(0xD0A0), 0x10);
++		/* sync length */
++		ufshcd_dme_set(hba, UIC_ARG_MIB(0x1556), 0x48);
++	}
++
+ 	/* update */
+ 	ufshcd_dme_set(hba, UIC_ARG_MIB(0x15A8), 0x1);
+ 	/* PA_TxSkip */
+diff --git a/drivers/scsi/ufs/ufs_quirks.h b/drivers/scsi/ufs/ufs_quirks.h
+index 71f73d1..5d2dfdb 100644
+--- a/drivers/scsi/ufs/ufs_quirks.h
++++ b/drivers/scsi/ufs/ufs_quirks.h
+@@ -131,4 +131,10 @@ struct ufs_dev_fix {
+  */
+ #define UFS_DEVICE_QUIRK_HOST_PA_SAVECONFIGTIME	(1 << 8)
+ 
++/*
++ * Some UFS devices require VS_DebugSaveConfigTime is 0x10,
++ * enabling this quirk ensure this.
++ */
++#define UFS_DEVICE_QUIRK_HOST_VS_DEBUGSAVECONFIGTIME	(1 << 9)
++
+ #endif /* UFS_QUIRKS_H_ */
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index c55f38e..9c6cac9 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -230,6 +230,8 @@ static struct ufs_dev_fix ufs_fixups[] = {
+ 	UFS_FIX(UFS_VENDOR_SKHYNIX, UFS_ANY_MODEL, UFS_DEVICE_NO_VCCQ),
+ 	UFS_FIX(UFS_VENDOR_SKHYNIX, UFS_ANY_MODEL,
+ 		UFS_DEVICE_QUIRK_HOST_PA_SAVECONFIGTIME),
++	UFS_FIX(UFS_VENDOR_SKHYNIX, "hB8aL1" /*H28U62301AMR*/,
++		UFS_DEVICE_QUIRK_HOST_VS_DEBUGSAVECONFIGTIME),
+ 
+ 	END_FIX
+ };
+-- 
+2.7.4
 
-> +  - interrupts          	: <interrupt mapping for ICE IRQ>
-> +  - qcom,enable-ice-clk 	: should enable clocks for ICE HW
-
-This shouldn't be needed.
-
-> +  - clocks              	: List of phandle and clock specifier pairs
-> +  - clock-names         	: List of clock input name strings sorted in the same
-> +				  order as the clocks property.
-
-How many?  You need to give the 
-> +  - qcom,op-freq-hz     	: max clock speed sorted in the same order as the clocks
-> +				  property.
-
-Use the assigned-clocks properties for this.
-
-> +  - qcom,instance-type  	: describe the storage type for which ICE node is defined
-> +				  currently, only "ufs" and "sdcc" are supported storage type
-
-What if there is more than one instance of ufs or SD? Do you need to 
-know which ICE goes with which controller?
-
-> +  - power-domains		: regulator supply to be used by ICE HW
-> +
-> +Example:
-> +	ufs_ice: ufsice@1d90000 {
-
-crytpo@...
-
-> +		compatible = "qcom,ice";
-> +		reg = <0x1d90000 0x8000>;
-> +		qcom,enable-ice-clk;
-> +		clock-names = "ufs_core_clk", "bus_clk",
-> +				"iface_clk", "ice_core_clk";
-> +		clocks = <&gcc GCC_UFS_PHY_AXI_CLK>,
-> +			 <&gcc GCC_UFS_MEM_CLKREF_CLK>,
-> +			 <&gcc GCC_UFS_PHY_AHB_CLK>,
-> +			 <&gcc GCC_UFS_PHY_ICE_CORE_CLK>;
-> +		qcom,op-freq-hz = <0>, <0>, <0>, <300000000>;
-> +		power-domains = <&gcc UFS_PHY_GDSC>;
-> +		qcom,instance-type = "ufs";
-> +	};
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
