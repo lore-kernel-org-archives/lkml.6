@@ -2,123 +2,120 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58CDFECDE44
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 02:41:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3263ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 02:41:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DB802064A
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 02:41:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="LWnHY2KX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DB802064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 946952082E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 02:41:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 946952082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727498AbeJYLLx (ORCPT
+        id S1727524AbeJYLMh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 07:11:53 -0400
-Received: from mail-eopbgr50078.outbound.protection.outlook.com ([40.107.5.78]:54048
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726236AbeJYLLw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 07:11:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kk2lotEIWq7oeYwndfb1mhYXEhvqy2TiGAIdhDRyqJM=;
- b=LWnHY2KXKfuFPYefY81hhpetAgIAit6wJ1u2nJu15dXH6wBZgtXJHQaV5cDKJf/7HFJYe098N3GxuvNtWasiXHCvF+rV8+wUqUia1/+shtJuUNM4SshbceFudoQD2gGg5B7Pj1Way9zJbZWEsFG32hA7h/EDnh1ZCSTaJm3d7HM=
-Received: from DB5PR0401MB2213.eurprd04.prod.outlook.com (10.166.173.8) by
- DB5PR0401MB1974.eurprd04.prod.outlook.com (10.166.11.11) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1273.19; Thu, 25 Oct 2018 02:41:08 +0000
-Received: from DB5PR0401MB2213.eurprd04.prod.outlook.com
- ([fe80::24b9:d390:896d:12f7]) by DB5PR0401MB2213.eurprd04.prod.outlook.com
- ([fe80::24b9:d390:896d:12f7%3]) with mapi id 15.20.1250.028; Thu, 25 Oct 2018
- 02:41:08 +0000
-From:   Andy Tang <andy.tang@nxp.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "oss@buserror.net" <oss@buserror.net>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "benh@kernel.crashing.org" <benh@kernel.crashing.org>,
-        "paulus@samba.org" <paulus@samba.org>,
-        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Subject: RE: [PATCH 2/3 v2] clk: qoriq: remove legacy bindings and add more
- compatibles
-Thread-Topic: [PATCH 2/3 v2] clk: qoriq: remove legacy bindings and add more
- compatibles
-Thread-Index: AQHUaz9zfmIqfB/QlU6ZOKoagJZjgKUu9kSAgABLZ0A=
-Date:   Thu, 25 Oct 2018 02:41:07 +0000
-Message-ID: <DB5PR0401MB2213F740D94F937BB9470396F3F70@DB5PR0401MB2213.eurprd04.prod.outlook.com>
-References: <20181024021122.3942-1-andy.tang@nxp.com>
- <20181024021122.3942-2-andy.tang@nxp.com> <20181024221033.GA5876@bogus>
-In-Reply-To: <20181024221033.GA5876@bogus>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=andy.tang@nxp.com; 
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DB5PR0401MB1974;6:7bVqFF80XbwV9W7Sdhl87twwbiVNq9QCbtIMk+YMRI01v1vR4vOM7NTGAOIzwKvxV6ZtZIbw/1GaKIWAVnXzc/zfb0RQ2GTULrrey/G+z2wgXxXdhtyoZORw22d2SsVRkjgZIpkBXwB8Qa1jOgfYuu5yLCMBJy5y9eISyNEBUOTIypgQxaqr61cK/p0L2wdZEdamz/z4nrhEk4b3LISPYCIewy6KQDLSXhCfjBWqBdan/OSWqhDI+KLNjruldAYONDa5XxqFPBN411z5xhTstGtIweObV+aFkHwSCgxuSNBC4NGgpQBAU9xgaxVUOiNWZkc0A5g8AVOw7S1W1C69HYCfhuj5CHzeadr/JfUnyVknJ9Gl9PZ/J5p9T7CFs8yWwio3x0eysXCyzVEbDoCBAaeCxUO9Z8xf+SepLa48rQuKbdVe0qnai/pgfLzOOdC9qOWzJwI9J9Gl0unDiympVg==;5:mNpgOhw6uD9qxdf8S2i5hTtT98AKkUtB1VbA1T/bEAl/1pjDG6dly4wIz1r5sGQW9OaM4E7SjoELZFEnShAwLiBWcdYhYe6VfUayfh0QeJoh5D8J2JnJ4BwAr9yRHqNpVh1aGo/D7WvtnWz2owD0xSk6KCa6p0XVDHeZAIvDjgo=;7:g5wmuPIImxJOcHi8lGYE9LFlx5V48X+2uTt83WOwHM1VZtin3p5zBuzy7P2x5NuKiGKzk2DAmeUzMeZiKcuiHK5Ptn9LA+m/sDP7wnNbYkf+l84YnhTp20Itq3rsjJYWilw+kLIOZWEiTPTqRdJoKg==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 11906024-f733-41eb-6ebd-08d63a235132
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB5PR0401MB1974;
-x-ms-traffictypediagnostic: DB5PR0401MB1974:
-x-microsoft-antispam-prvs: <DB5PR0401MB197402A7AC5AF97343ED278FF3F70@DB5PR0401MB1974.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(65623756079841)(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231355)(944501410)(52105095)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:DB5PR0401MB1974;BCL:0;PCL:0;RULEID:;SRVR:DB5PR0401MB1974;
-x-forefront-prvs: 083691450C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(136003)(366004)(346002)(396003)(189003)(199004)(13464003)(14444005)(66066001)(7416002)(74316002)(2906002)(71200400001)(305945005)(256004)(478600001)(7736002)(71190400001)(229853002)(6116002)(3846002)(54906003)(316002)(106356001)(44832011)(7696005)(4326008)(81166006)(8936002)(99286004)(81156014)(76176011)(446003)(11346002)(68736007)(5660300001)(2900100001)(476003)(486006)(25786009)(33656002)(97736004)(186003)(86362001)(102836004)(53546011)(8676002)(105586002)(6506007)(6436002)(26005)(6246003)(5250100002)(55016002)(53936002)(9686003)(6916009)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:DB5PR0401MB1974;H:DB5PR0401MB2213.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 9GHbbo8Qg03cWiytoCzFHdmx6MrDgFVcCXNk8csJWsnWr7D54xCFZH7cSXWw80sRM+fVo/ClmqlXbFMbnzFlmDh8TwjfRON4ibOwwxE0p6WGrVBS0K2+q8DWSVyMsUtcPes+t0n4ouJh5Q4SwG6xv8H0WXSAU9XTPeF+DfCPa5nE2IDi1e7jZUPqNV0xUGdqygXXc+C78cxD7QoTt9NV41Sfa18bL7WFBn6TMTLf3+yiMvaEpob/LJRa6KVRKkwlDMrFg9aNJDjtVg6aOS7eojfkfmfZFEHGIBkRONxLb4vgzkeKy0bCpLmSt6A3fJ6HKO3F4Xzy45wlKrbsDpRIy7zNbIxH+vCF3LJhHXk4vck=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 11906024-f733-41eb-6ebd-08d63a235132
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Oct 2018 02:41:07.9092
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB5PR0401MB1974
+        Thu, 25 Oct 2018 07:12:37 -0400
+Received: from smtprelay0118.hostedemail.com ([216.40.44.118]:59886 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726236AbeJYLMh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 07:12:37 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id F055B18224090;
+        Thu, 25 Oct 2018 02:41:54 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: alarm45_2d9aa58673542
+X-Filterd-Recvd-Size: 3939
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf03.hostedemail.com (Postfix) with ESMTPA;
+        Thu, 25 Oct 2018 02:41:53 +0000 (UTC)
+Message-ID: <4664b8b350ed35ee24746fd34fb0e600ced776a5.camel@perches.com>
+Subject: Re: [PATCH] Change judgment len position
+From:   Joe Perches <joe@perches.com>
+To:     Al Viro <viro@ZenIV.linux.org.uk>
+Cc:     Fengguang Wu <fengguang.wu@intel.com>, Willy Tarreau <w@1wt.eu>,
+        David Miller <davem@davemloft.net>, wanghaifine@gmail.com,
+        netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        LKP <lkp@intel.com>, Philip Li <philip.li@intel.com>
+Date:   Wed, 24 Oct 2018 19:41:52 -0700
+In-Reply-To: <20181025022027.GG32577@ZenIV.linux.org.uk>
+References: <20181024154729.5312-1-wanghaifine@gmail.com>
+         <20181024.101028.1211941922121897721.davem@davemloft.net>
+         <61d94f2a5563db4d6580c8385c3b93c8eeb3669a.camel@perches.com>
+         <20181024204852.GA25509@1wt.eu>
+         <49ec92564284b5beb0a151bce1d537b51340d0a8.camel@perches.com>
+         <20181025011111.bhbstq5wtrwk26b5@wfg-t540p.sh.intel.com>
+         <dda151c160e42aeb07d158d9c7cd4c1a3341ab5f.camel@perches.com>
+         <20181025022027.GG32577@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBSb2IgSGVycmluZyA8cm9iaEBr
-ZXJuZWwub3JnPg0KPiBTZW50OiAyMDE4xOoxMNTCMjXI1SA2OjExDQo+IFRvOiBBbmR5IFRhbmcg
-PGFuZHkudGFuZ0BueHAuY29tPg0KPiBDYzogc2JveWRAa2VybmVsLm9yZzsgbXR1cnF1ZXR0ZUBi
-YXlsaWJyZS5jb207IG9zc0BidXNlcnJvci5uZXQ7DQo+IG1hcmsucnV0bGFuZEBhcm0uY29tOyBi
-ZW5oQGtlcm5lbC5jcmFzaGluZy5vcmc7IHBhdWx1c0BzYW1iYS5vcmc7DQo+IG1wZUBlbGxlcm1h
-bi5pZC5hdTsgbGludXgtY2xrQHZnZXIua2VybmVsLm9yZzsNCj4gZGV2aWNldHJlZUB2Z2VyLmtl
-cm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4cHBjLWRldkBs
-aXN0cy5vemxhYnMub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMi8zIHYyXSBjbGs6IHFvcmlx
-OiByZW1vdmUgbGVnYWN5IGJpbmRpbmdzIGFuZCBhZGQNCj4gbW9yZSBjb21wYXRpYmxlcw0KPiAN
-Cj4gT24gV2VkLCBPY3QgMjQsIDIwMTggYXQgMTA6MTE6MjFBTSArMDgwMCwgYW5keS50YW5nQG54
-cC5jb20gd3JvdGU6DQo+ID4gRnJvbTogWXVhbnRpYW4gVGFuZyA8YW5keS50YW5nQG54cC5jb20+
-DQo+ID4NCj4gPiBUaGUgbmV3IGJpbmRpbmdzIHdpbGwgYmUgdXNlZCwgc28gZGVsZXRlIHRoZSBv
-bGQgYmluZGluZ3MuDQo+ID4gQWRkIG1vcmUgU09DIGNvbXBhdGlibGVzIGFzIG5lZWRlZCBhcyB3
-ZWxsLg0KPiANCj4gSSdtIGEgYml0IGNvbmZ1c2VkIGJ5IHRoaXMgc2VyaWVzLiBOb3JtYWxseSB5
-b3Ugd2FudCB0byB1cGRhdGUgdGhlIGR0cyBmaWxlcw0KPiBmaXJzdCBhbmQgd2FpdCBzb21lIHBl
-cmlvZCBvZiB0aW1lIGJlZm9yZSByZW1vdmluZyBkcml2ZXIgc3VwcG9ydCAoYW5kDQo+IGJpbmRp
-bmdzKS4NClRoYW5rcywgZ290IHlvdXIgcG9pbnRzLg0KDQpCUiwNCkFuZHkNCj4gDQo+IFJvYg0K
-PiANCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFRhbmcgWXVhbnRpYW4gPGFuZHkudGFuZ0BueHAu
-Y29tPg0KPiA+IC0tLQ0KPiA+IHYyOg0KPiA+ICAgLSBpbnZvbHZlIG1vcmUgY2hpcHMNCj4gPg0K
-PiA+ICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9jbG9jay9xb3JpcS1jbG9jay50eHQgICAgICB8
-ICAxMTINCj4gKy0tLS0tLS0tLS0tLS0tLS0tLQ0KPiA+ICAxIGZpbGVzIGNoYW5nZWQsIDYgaW5z
-ZXJ0aW9ucygrKSwgMTA2IGRlbGV0aW9ucygtKQ0K
+On Thu, 2018-10-25 at 03:20 +0100, Al Viro wrote:
+> On Wed, Oct 24, 2018 at 06:16:31PM -0700, Joe Perches wrote:
+> > On Thu, 2018-10-25 at 09:11 +0800, Fengguang Wu wrote:
+> > > CC Philip and LKP team.
+> > > > 	Please try to make your first patch in drivers/staging
+> > > > 	to get familiar with submitting patches to the kernel.
+> > > > 	https://kernelnewbies.org/FirstKernelPatch
+> > > > 
+> > > > Maybe there's utility in creating a filtering and auto-reply
+> > > > tool for first time patch submitters for all the vger mailing
+> > > > lists using some combination of previously known submitters
+> > > > and the 0-day robot to point those first time submitters of
+> > > > defective patches to kernelnewbies and staging.
+> > > 
+> > > Yeah good idea. That feature can be broken into 2 parts:
+> > > 
+> > > - an email script, which could be added to Linux scripts/ dir 
+> > > - maintain records for telling whether someone is first-time patch submitters
+> > 
+> > Maybe run checkpatch on those first-time submitter patches too.
+> 
+> OK, now I'm certain that you are trolling...
+
+Nope, the process suggestions above are sincere.
+
+> Joe, what really pisses me off is that it's actually at the expense of original
+> poster (who had nothing to do with the CoCup)
+
+CoCup?  No doubt pronounced cock-up.
+
+>  *and* an invitation for a certain
+> variety of kooks.  In probably vain hope of heading that off, here's the
+> summary of what happened _before_ Joe started to stir the shit: 
+> 
+> 	* code in question is, indeed, (slightly) bogus in mainline.
+> It reads as "reject negative values for length, truncate positive ones to 4",
+> but in reality it's "treat everything outside of 0..4 as 4".  It's not broken
+> per se, but it's certainly misleading.
+> 	* one possible fix would be to drop the "reject negative values"
+> completely, another - to move checking for negatives before the truncation.
+> Patch tried to do the latter.
+
+Umm, I suggested an appropriate mechanism to fix the patch
+in this thread immediately after reading it.
+
+> 	Code of Conduct is garbage, but neither Dave nor the author
+> of this patch had anything to do with that mess.  If you want to make a point,
+> do so without shit splatter hitting innocent bystanders - people tend to
+> get very annoyed by that kind of thing, and with a damn good reason.
+
+The Code of Conduct, if it exists at all, should apply
+to all of the kernel.
+
+And no, as I have previously posted, I don't agree with
+it nor the method that was used to introduce it.
+
+But it does exist.
+Its splatter affects us all.
+
