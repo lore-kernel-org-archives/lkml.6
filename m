@@ -2,81 +2,142 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA7FDECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:11:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8218C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:11:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84EAD205F4
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:11:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84EAD205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6E9C92083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:11:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E9C92083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727228AbeJYQmn (ORCPT
+        id S1727308AbeJYQm5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 12:42:43 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34102 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726674AbeJYQmn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 12:42:43 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0A2C63082A38;
-        Thu, 25 Oct 2018 08:11:04 +0000 (UTC)
-Received: from localhost (ovpn-8-17.pek2.redhat.com [10.72.8.17])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3FB695DD6C;
-        Thu, 25 Oct 2018 08:11:02 +0000 (UTC)
-Date:   Thu, 25 Oct 2018 16:11:00 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-        boris.ostrovsky@oracle.com, jgross@suse.com, willy@infradead.org,
-        x86@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 1/2] x86/mm: Move LDT remap out of KASLR region on
- 5-level paging
-Message-ID: <20181025081100.GA31346@MiWiFi-R3L-srv>
-References: <20181024125112.55999-1-kirill.shutemov@linux.intel.com>
- <20181024125112.55999-2-kirill.shutemov@linux.intel.com>
- <20181025021809.GB2120@MiWiFi-R3L-srv>
- <20181025072429.k54aem37sefqonqy@kshutemo-mobl1>
+        Thu, 25 Oct 2018 12:42:57 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58938 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727230AbeJYQm5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 12:42:57 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9P84aL8093431
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 04:11:17 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nb965tpxt-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 04:11:16 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Thu, 25 Oct 2018 09:11:14 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 25 Oct 2018 09:11:10 +0100
+Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9P8B9683932496
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 25 Oct 2018 08:11:09 GMT
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A29614C040;
+        Thu, 25 Oct 2018 08:11:09 +0000 (GMT)
+Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 69DFD4C044;
+        Thu, 25 Oct 2018 08:11:09 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.171])
+        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 25 Oct 2018 08:11:09 +0000 (GMT)
+Date:   Thu, 25 Oct 2018 10:11:08 +0200
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Peter Oberparleiter <oberpar@linux.ibm.com>
+Subject: Re: [PATCH] s390/fault: use wake_up_klogd() in bust_spinlocks()
+References: <20181024043048.21248-1-sergey.senozhatsky@gmail.com>
+ <20181024043425.GA8862@jagdpanzerIV>
+ <20181025062800.GB4037@osiris>
+ <20181025070543.GB20702@jagdpanzerIV>
 MIME-Version: 1.0
+In-Reply-To: <20181025070543.GB20702@jagdpanzerIV>
+X-TM-AS-GCONF: 00
+x-cbid: 18102508-4275-0000-0000-000002D36AE6
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18102508-4276-0000-0000-000037DF7793
+Message-Id: <20181025081108.GB26561@osiris>
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
-In-Reply-To: <20181025072429.k54aem37sefqonqy@kshutemo-mobl1>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 25 Oct 2018 08:11:04 +0000 (UTC)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-25_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=854 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810250075
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/25/18 at 10:24am, Kirill A. Shutemov wrote:
-> On Thu, Oct 25, 2018 at 10:18:09AM +0800, Baoquan He wrote:
-> > > We don't touch 4 pgd slot gap just before the direct mapping reserved
-> > > for a hypervisor, but move direct mapping by one slot instead.
-> > > 
-> > > The LDT mapping is per-mm, so we cannot move it into P4D page table next
-> > > to CPU_ENTRY_AREA without complicating PGD table allocation for 5-level
-> > > paging.
+On Thu, Oct 25, 2018 at 04:05:43PM +0900, Sergey Senozhatsky wrote:
+> On (10/25/18 08:28), Heiko Carstens wrote:
 > > 
-> > Here as discussed in private thread, at the first place you also agreed
-> > to put it in p4d entry next to CPU_ENTRY_AREA, but finally you changd
-> > mind, there must be some reasons when you implemented and investigated
-> > further to find out. Could you please say more about how it will
-> > complicating PGD table allocation for 5-level paging? Or give an use
-> > case where it will complicate?
+> > With your patch this looks nearly like the common code variant. I did
+> > some code archaeology and this function is unchanged since ~17 years.
+> > When it was introduced it was close to identical to the x86 variant.
+> > All other architectures use the common code variant in the
+> > meantime. So if we change this I'd prefer that we switch s390 to the
+> > common code variant as well.
+> > 
+> > Right now I can't see a reason for not doing that, but I might be
+> > wrong of course. So, could you please provide a new version which just
+> > removes this variant and makes s390 use the generic one too.
+> > 
+> > We'll see if there is any fallout...
 > 
-> On 5-level machine all memory starting from CPU_ENTRY_AREA (and part of
-> KASAN memory) is in the same P4D page table. All this memory is shared
-> across all processes, we just copy PGD entry -- all proceses point to the
-> same P4D page table. (I leave out PTI from the picture for simplicity.)
+> Heiko, if this one works for you then I'll submit a format patch.
+> Let me know. Thanks.
+> 
+> ====
+> 
+> From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> Subject: [PATCH] arch/s390: use common bust_spinlocks()
+> 
+> s390 is the only architecture that is using own bust_spinlocks()
+> variant, while other arch-s seem to be OK with the common
+> implementation.
+> 
+> Heiko Carstens [1] said he would prefer s390 to use the common
+> bust_spinlocks() as well:
+>   I did some code archaeology and this function is unchanged since ~17
+>   years. When it was introduced it was close to identical to the x86
+>   variant. All other architectures use the common code variant in the
+>   meantime. So if we change this I'd prefer that we switch s390 to the
+>   common code variant as well. Right now I can't see a reason for not
+>   doing that
+> 
+> This patch removes s390 bust_spinlocks() and drops the weak attribute
+> from the common bust_spinlocks() version.
+> 
+> [1] lkml.kernel.org/r/20181025062800.GB4037@osiris
+> Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+> ---
+>  arch/s390/mm/fault.c | 24 ------------------------
+>  lib/bust_spinlocks.c |  6 +++---
+>  2 files changed, 3 insertions(+), 27 deletions(-)
 
-Yes, got it, I didn't notice this, thanks a lot.
+I gave this some testing and forced panic/die in interrupt as well as
+process context with different consoles as well as single and multi
+cpu systems. Everything still seems to work.
+
+So I'm applying this to our internal queue first. It will hit upstream
+latest in the next merge window if there aren't any issues found.
+
+Thanks!
 
