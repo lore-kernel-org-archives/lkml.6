@@ -2,156 +2,101 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B0B8ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:19:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ACEFC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:24:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E53620834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:19:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Gb11VYnc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E53620834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id B278220838
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 08:24:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B278220838
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727156AbeJYQv3 (ORCPT
+        id S1726759AbeJYQzy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 12:51:29 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:44388 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726497AbeJYQv3 (ORCPT
+        Thu, 25 Oct 2018 12:55:54 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:34200 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726473AbeJYQzy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 12:51:29 -0400
-Received: by mail-yb1-f194.google.com with SMTP id p144-v6so3305170yba.11
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 01:19:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=A3SL80mL39iVIj/yWo+0mJZddveN6mpgQU9LfmZY+rs=;
-        b=Gb11VYncwaoXe3WL3BwW8U7og/Fel4XkJiRfA/rGlMdnaiadeDtgelU+JO8PZSTOkT
-         xT0zH4X0PNazioZqBmHzFsx/3SKx0Vki6jXg84f71G5iJwV2GM9TX5BX+ghU/KCA09fN
-         2xg2hTKp4NQTgAYXJtW3jZkQUfFRg8lTMEdIA=
+        Thu, 25 Oct 2018 12:55:54 -0400
+Received: by mail-ed1-f66.google.com with SMTP id w19-v6so7626361eds.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 01:24:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=A3SL80mL39iVIj/yWo+0mJZddveN6mpgQU9LfmZY+rs=;
-        b=At5czbsc/ncx0PTrax1HaCvtod9iMhhf8TK8Ul9Q0KZ7UQcdvkblbOhhFEPGKWeZVj
-         +zfIcy6uecUxqSaGuc/8E/HLpbMewPT4EdZHkXu43uS7JzjIdOXGYc6MD24a1VNw9d/G
-         ALF+/e9kvZIN3FO7g9BNltWLcmTErbggkUQu7jkJu2NH+v6Z162Ivhrsy8GAxdPinI+I
-         FVbtihexDtxGBqLNVPMYm38wlw5nbbOPcIMavTwgNAdlmWvfkzO+9E/pyK0Hg5L3lKs6
-         BzX8rojycOhqDofwW44u6VaEHrZ9Q1NP50xixKjb40gb86QcJUVUkFy/IB+6JtfCIpGx
-         5A4w==
-X-Gm-Message-State: AGRZ1gI84szT+TcZcEFzCUMQixTG58ZjIjMMWIy2TJ3wZAPuuC3R043W
-        eVRjarLeD4mIFuAzPv8QGJF5EovXVMA=
-X-Google-Smtp-Source: AJdET5dI9t6IGYFlHWqI3/D4tpX0v2yX6QscHnoGdtmYAFNQZ7EkDL/DDocx2u6As8j4fa7tZmd7dQ==
-X-Received: by 2002:a25:9349:: with SMTP id g9-v6mr439587ybo.181.1540455587600;
-        Thu, 25 Oct 2018 01:19:47 -0700 (PDT)
-Received: from mail-yw1-f52.google.com (mail-yw1-f52.google.com. [209.85.161.52])
-        by smtp.gmail.com with ESMTPSA id f11-v6sm1404421ywk.78.2018.10.25.01.19.46
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2r80qbszvU6jBT+csI7xjz9erJcqYEzjVONob5JYS1M=;
+        b=QvBBBbtIfh4oYtMiT3pCQkPfHIdb4bNRCupA07zbFr0DK2N5eIQqCkuKR8e8HBTCLD
+         NVCdEfnXC+JYK7y7X3+w97U1CymP9i5UwYCWytZdbjnD3DLPll/ejM01aXMJqn6mjCpZ
+         HdRttASlp+BdvMDu6ClMuVbkFAPxRujZyfPEsAfl/wVz0QMyIj869TfFGrd9Xdb34ifp
+         Q6hdqXhm7yOHlR+wj3Cdg49Bb/6ZUYVqh9v/cGOAd8mCNzD+WT70+fpGE2sm4m1lciCD
+         b4J0b2B6c5X+mAtRYSFRCjGWKTgbar3TLM7EUqqK3amQfqZs5UAcOYeg63rSlktGuaB6
+         POsw==
+X-Gm-Message-State: AGRZ1gI/DnjjP2wkgw+eLdTLqJ1mhj+zVm//BK5y5QAz5qgWKsP9gr0m
+        jW3lDEWYkXILmPtibyMiBrWSzz/B
+X-Google-Smtp-Source: AJdET5fGcYKyZv8ex2yrOwj4TS8MCBfyJLYB62vWBp5fl5xOFbqzY28fUJCZStZa0CZ+iC8c1ECYdQ==
+X-Received: by 2002:a17:906:66cd:: with SMTP id k13-v6mr628496ejp.152.1540455851270;
+        Thu, 25 Oct 2018 01:24:11 -0700 (PDT)
+Received: from tiehlicka.suse.cz (prg-ext-pat.suse.com. [213.151.95.130])
+        by smtp.gmail.com with ESMTPSA id m24-v6sm2628277edd.31.2018.10.25.01.24.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Oct 2018 01:19:46 -0700 (PDT)
-Received: by mail-yw1-f52.google.com with SMTP id v1-v6so3242830ywv.6
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 01:19:46 -0700 (PDT)
-X-Received: by 2002:a81:98cb:: with SMTP id p194-v6mr434415ywg.353.1540455585842;
- Thu, 25 Oct 2018 01:19:45 -0700 (PDT)
+        Thu, 25 Oct 2018 01:24:10 -0700 (PDT)
+From:   Michal Hocko <mhocko@kernel.org>
+To:     <linux-mm@kvack.org>
+Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Roman Gushchin <guro@fb.com>,
+        David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH v2 0/3] oom: rework oom_reaper vs. exit_mmap handoff
+Date:   Thu, 25 Oct 2018 10:24:00 +0200
+Message-Id: <20181025082403.3806-1-mhocko@kernel.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Thu, 25 Oct 2018 01:19:45
- -0700 (PDT)
-In-Reply-To: <20181022095439.GA4613@redhat.com>
-References: <0000000000004904df0578b7d3da@google.com> <bf1a083c-0d09-07fb-6ad2-4bf30ac49cd8@I-love.SAKURA.ne.jp>
- <20181022095439.GA4613@redhat.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Thu, 25 Oct 2018 09:19:45 +0100
-X-Gmail-Original-Message-ID: <CAGXu5jLxLqieLCZfAzw_xX-k3bbESUF3pjuGEDRRH1CY2O8JSA@mail.gmail.com>
-Message-ID: <CAGXu5jLxLqieLCZfAzw_xX-k3bbESUF3pjuGEDRRH1CY2O8JSA@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in task_is_descendant
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        syzbot <syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com>,
-        James Morris <jmorris@namei.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 22, 2018 at 10:54 AM, Oleg Nesterov <oleg@redhat.com> wrote:
-> On 10/21, Tetsuo Handa wrote:
->>
->> On 2018/10/21 16:10, syzbot wrote:
->> > BUG: KASAN: use-after-free in __read_once_size include/linux/compiler.h:188 [inline]
->> > BUG: KASAN: use-after-free in task_is_descendant.part.2+0x610/0x670 security/yama/yama_lsm.c:295
->> > Read of size 8 at addr ffff8801c4666b20 by task syz-executor3/12722
->> >
->> > CPU: 1 PID: 12722 Comm: syz-executor3 Not tainted 4.19.0-rc8+ #70
->> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
->> > Call Trace:
->> >  __dump_stack lib/dump_stack.c:77 [inline]
->> >  dump_stack+0x1c4/0x2b4 lib/dump_stack.c:113
->> >  print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
->> >  kasan_report_error mm/kasan/report.c:354 [inline]
->> >  kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
->> >  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
->> >  __read_once_size include/linux/compiler.h:188 [inline]
->> >  task_is_descendant.part.2+0x610/0x670 security/yama/yama_lsm.c:295
->>
->> Do we need to hold
->>
->>   write_lock_irq(&tasklist_lock);
->>
->> rather than
->>
->>   rcu_read_lock();
->>
->> when accessing
->>
->>   "struct task_struct"->real_parent
->
-> Well, if "task" is stable (can't exit), then I think
->
->         rcu_dereference(task->real_parent)
->
-> is fine, we know that ->real_parent did not pass exit_notif() yet.
->
-> However, task_is_descendant() looks unnecessarily complicated, it could be
->
->         static int task_is_descendant(struct task_struct *parent,
->                                       struct task_struct *child)
->         {
->                 int rc = 0;
->                 struct task_struct *walker;
->
->                 if (!parent || !child)
->                         return 0;
->
->                 rcu_read_lock();
->                 for (walker = child; walker->pid; walker = rcu_dereference(walker->real_parent))
->                         if (same_thread_group(parent, walker)) {
->                                 rc = 1;
->                                 break;
->                         }
->                 rcu_read_unlock();
->
->                 return rc;
->         }
->
-> And again, I do not know how/if yama ensures that child is rcu-protected, perhaps
-> task_is_descendant() needs to check pid_alive(child) right after rcu_read_lock() ?
+The previous version of this RFC has been posted here [1]. I have fixed
+few issues spotted during the review and by 0day bot. I have also reworked
+patch 2 to be ratio rather than an absolute number based.
 
-task_is_descendant() is called under rcu_read_lock() in both
-ptracer_exception_found() and yama_ptrace_access_check() so I don't
-understand how any of the tasks could get freed? This is walking
-group_leader and real_parent -- are these not stable under rcu_lock()?
+With this series applied the locking protocol between the oom_reaper and
+the exit path is as follows.
 
--- 
-Kees Cook
+All parts which cannot race should use the exclusive lock on the exit
+path. Once the exit path has passed the moment when no blocking locks
+are taken then it clears mm->mmap under the exclusive lock. oom_reaper
+checks for this and sets MMF_OOM_SKIP only if the exit path is not guaranteed
+to finish the job. This is patch 3 so see the changelog for all the details.
+
+I would really appreciate if David could give this a try and see how
+this behaves in workloads where the oom_reaper falls flat now. I have
+been playing with sparsely allocated memory with a high pte/real memory
+ratio and large mlocked processes and it worked reasonably well.
+
+There is still some room for tuning here of course. We can change the
+number of retries for the oom_reaper as well as the threshold when the
+keep retrying.
+
+Michal Hocko (3):
+      mm, oom: rework mmap_exit vs. oom_reaper synchronization
+      mm, oom: keep retrying the oom_reap operation as long as there is substantial memory left
+      mm, oom: hand over MMF_OOM_SKIP to exit path if it is guranteed to finish
+
+Diffstat:
+ include/linux/oom.h |  2 --
+ mm/internal.h       |  3 +++
+ mm/memory.c         | 28 ++++++++++++++--------
+ mm/mmap.c           | 69 +++++++++++++++++++++++++++++++++--------------------
+ mm/oom_kill.c       | 45 ++++++++++++++++++++++++----------
+ 5 files changed, 97 insertions(+), 50 deletions(-)
+
+[1] http://lkml.kernel.org/r/20180910125513.311-1-mhocko@kernel.org
+
+
