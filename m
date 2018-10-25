@@ -2,79 +2,90 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C93DECDE48
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:01:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE7BC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:08:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D93242082D
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:01:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D93242082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 61B6820831
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:08:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61B6820831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727547AbeJYVeO (ORCPT
+        id S1727465AbeJYVlE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 17:34:14 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49422 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727125AbeJYVeO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 17:34:14 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 385F03003BD9;
-        Thu, 25 Oct 2018 13:01:34 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.106])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 733F218A6F;
-        Thu, 25 Oct 2018 13:01:32 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Thu, 25 Oct 2018 15:01:32 +0200 (CEST)
-Date:   Thu, 25 Oct 2018 15:01:30 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     serge@hallyn.com,
-        syzbot <syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com>,
-        jmorris@namei.org, keescook@chromium.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Subject: Re: KASAN: use-after-free Read in task_is_descendant
-Message-ID: <20181025130129.GE3725@redhat.com>
-References: <76013c9e-0664-ef5e-b6c0-d48f6ce5db3c@i-love.sakura.ne.jp>
- <20181022134634.GA7358@redhat.com>
- <201810250215.w9P2Fm2M078167@www262.sakura.ne.jp>
- <20181025111355.GA3725@redhat.com>
- <b0ac67e6-4279-91b3-0178-3176876abe70@i-love.sakura.ne.jp>
- <20181025121709.GD3725@redhat.com>
+        Thu, 25 Oct 2018 17:41:04 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:36105 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727125AbeJYVlE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 17:41:04 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id C055F80848; Thu, 25 Oct 2018 15:08:19 +0200 (CEST)
+Date:   Thu, 25 Oct 2018 15:08:20 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Liviu Dudau <liviu@dudau.co.uk>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-leds@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] leds: gpio: set led_dat->gpiod pointer for OF defined
+ GPIO leds
+Message-ID: <20181025130820.GA10294@amd>
+References: <20181018001432.710-1-liviu@dudau.co.uk>
+ <20181023111842.GA29083@bart.dudau.co.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="vtzGhvizbBRQ85DL"
 Content-Disposition: inline
-In-Reply-To: <20181025121709.GD3725@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 25 Oct 2018 13:01:34 +0000 (UTC)
+In-Reply-To: <20181023111842.GA29083@bart.dudau.co.uk>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/25, Oleg Nesterov wrote:
->
-> As I said below, please ignore ptracer_exception_found(), another caller for now,
-> perhaps it needs some changes too. I even have a vague feeling that I have already
-> blamed this function some time ago...
 
-Heh, yes, 3 years ago ;)
+--vtzGhvizbBRQ85DL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-https://lore.kernel.org/lkml/20150106184427.GA18153@redhat.com/
+On Tue 2018-10-23 12:18:44, Liviu Dudau wrote:
+> On Thu, Oct 18, 2018 at 01:14:32AM +0100, Liviu Dudau wrote:
+> > Commit 45d4c6de4e49 ("leds: gpio: Try to lookup gpiod from device")
+> > removed the common code path that set the led_dat->gpiod pointer in
+> > create_gpio_led(), but only added it back for the devices that have
+> > a valid gpio_led_platform_data structure. Calling gpio_leds_create()
+> > in gpio_led_probe() is not enough to get a valid gpiod pointer.
+> >=20
+> > Fortunately enough, gpio_leds_create() already gets the needed pointer,
+> > we just need to assign it to the relevant gpio_led_data structure.
+> >=20
+> > Fixes: 45d4c6de4e49 ("leds: gpio: Try to lookup gpiod from device")
+> > Cc: Linus Walleij <linus.walleij@linaro.org>
+> > Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> > Signed-off-by: Liviu Dudau <liviu@dudau.co.uk>
 
-I can't understand my email today, but note that I tried to point out that
-task_is_descendant() can dereference the freed mem.
+Acked-by: Pavel Machek <pavel@ucw.cz>
 
-And yes, task_is_descendant() is overcompicated for no reason, afaics.
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-Oleg.
+--vtzGhvizbBRQ85DL
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvRwEQACgkQMOfwapXb+vLnlQCfVuN9x6W44LTDBA8LOvC3ydfe
+PGEAn114L8PUMDo1fD6c3sbODcP4JeA/
+=8K2O
+-----END PGP SIGNATURE-----
+
+--vtzGhvizbBRQ85DL--
