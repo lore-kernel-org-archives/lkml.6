@@ -2,700 +2,376 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2637FECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 07:47:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DC5C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 07:48:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4B5E204FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 07:47:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B992204FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 07:48:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G1tFRGs7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4B5E204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=cern.onmicrosoft.com header.i=@cern.onmicrosoft.com header.b="pKyAgn7z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B992204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cern.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726866AbeJYQTA (ORCPT
+        id S1727009AbeJYQUL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 12:19:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39954 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726497AbeJYQTA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 12:19:00 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63B7C204FD;
-        Thu, 25 Oct 2018 07:47:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540453645;
-        bh=8XlOUXZjqh2L4RkSJ2Y44kwzjK9DePNzUBh63n8s/00=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=G1tFRGs7Euafc8OiLw5gkMM/dEBjxseg+DHQM4KwoZv18Nj1cm3O1lVOK6OIw7Ys2
-         aHRXRfWXwKNZfLDvrpAStLju3cJeYa5lzmKNzw5Drn5daFyb4b9WGJ36loecejAFEw
-         /l4GT28MAniepV6ZmqahfczARyhXqb9JTGZ8GgXU=
-Content-Type: text/plain; charset="utf-8"
+        Thu, 25 Oct 2018 12:20:11 -0400
+Received: from mail-eopbgr40057.outbound.protection.outlook.com ([40.107.4.57]:61344
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726497AbeJYQUK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 12:20:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.onmicrosoft.com;
+ s=selector1-cern-ch;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3DLqdRZfJcqcCllLuI5C3Kes0PfKAwddMVh+UFqU+Aw=;
+ b=pKyAgn7z7qV+pdCXzC9GlEWmJrNuBUgo2dGP9Ff+BoRTFNO3AsqH5yqZHVmrWlEF81bbMktln2dZjaK7O3qqWrcRXwegk3jFwOvEE/dv74l+EqDG7DtZUjhLHgGcVATU9XtexVefSLL4rqFfM35OpEURH1R5ICGb16nc3KzRcIw=
+Received: from DB6PR0601CA0043.eurprd06.prod.outlook.com (2603:10a6:4:17::29)
+ by AM0PR0602MB3521.eurprd06.prod.outlook.com (2603:10a6:208:22::28) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1273.21; Thu, 25 Oct
+ 2018 07:47:48 +0000
+Received: from HE1EUR02FT021.eop-EUR02.prod.protection.outlook.com
+ (2a01:111:f400:7e05::201) by DB6PR0601CA0043.outlook.office365.com
+ (2603:10a6:4:17::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1273.19 via Frontend
+ Transport; Thu, 25 Oct 2018 07:47:48 +0000
+Authentication-Results: spf=pass (sender IP is 188.184.36.50)
+ smtp.mailfrom=cern.ch; korsgaard.com; dkim=none (message not signed)
+ header.d=none;korsgaard.com; dmarc=bestguesspass action=none
+ header.from=cern.ch;
+Received-SPF: Pass (protection.outlook.com: domain of cern.ch designates
+ 188.184.36.50 as permitted sender) receiver=protection.outlook.com;
+ client-ip=188.184.36.50; helo=cernmxgwlb4.cern.ch;
+Received: from cernmxgwlb4.cern.ch (188.184.36.50) by
+ HE1EUR02FT021.mail.protection.outlook.com (10.152.10.85) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1273.13 via Frontend Transport; Thu, 25 Oct 2018 07:47:47 +0000
+Received: from cernfe04.cern.ch (188.184.36.41) by cernmxgwlb4.cern.ch
+ (188.184.36.50) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 25 Oct
+ 2018 09:47:46 +0200
+Received: from pcbe13614.localnet (2001:1458:202:121::100:40) by smtp.cern.ch
+ (2001:1458:201:66::100:14) with Microsoft SMTP Server (TLS) id 14.3.408.0;
+ Thu, 25 Oct 2018 09:47:46 +0200
+From:   Federico Vaga <federico.vaga@cern.ch>
+To:     Peter Korsgaard <peter@korsgaard.com>
+Reply-To: <federico.vaga@cern.ch>
+CC:     linux-i2c <linux-i2c@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/3] i2c:ocores: add polling interface
+Date:   Thu, 25 Oct 2018 09:47:46 +0200
+Message-ID: <13515533.pzSJtVrg2o@pcbe13614>
+In-Reply-To: <CACXmViZK=4dXYN-399=U6UDJDv4NuTQ2LHEfgh8UbeUJLJp_QQ@mail.gmail.com>
+References: <20180625161303.7991-1-federico.vaga@cern.ch> <20180625161303.7991-4-federico.vaga@cern.ch> <CACXmViZK=4dXYN-399=U6UDJDv4NuTQ2LHEfgh8UbeUJLJp_QQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Paul Walmsley <paul.walmsley@sifive.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181020135024.28573-2-paul.walmsley@sifive.com>
-Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
-        Wesley Terpstra <wesley@sifive.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Megan Wachs <megan@sifive.com>, linux-kernel@vger.kernel.org,
-        Paul Walmsley <paul@pwsan.com>
-References: <20181020135024.28573-1-paul.walmsley@sifive.com>
- <20181020135024.28573-2-paul.walmsley@sifive.com>
-Message-ID: <154045364470.53599.7774255558661483303@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v2 1/3] clk: analogbits: add Wide-Range PLL library
-Date:   Thu, 25 Oct 2018 00:47:24 -0700
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Originating-IP: [2001:1458:202:121::100:40]
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:188.184.36.50;IPV:NLI;CTRY:CH;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(136003)(346002)(39860400002)(376002)(2980300002)(438002)(189003)(199004)(76176011)(74482002)(33896004)(8936002)(230700001)(26005)(478600001)(9576002)(53546011)(186003)(16526019)(786003)(316002)(2906002)(8676002)(33716001)(5660300001)(54906003)(9686003)(4326008)(229853002)(6246003)(356004)(11346002)(44832011)(446003)(7636002)(426003)(305945005)(7736002)(97756001)(486006)(106002)(6916009)(46406003)(336012)(3450700001)(50466002)(6116002)(23726003)(47776003)(246002)(43066004)(106466001)(14444005)(126002)(476003)(86362001)(39026011);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR0602MB3521;H:cernmxgwlb4.cern.ch;FPR:;SPF:Pass;LANG:en;PTR:cernmx11.cern.ch;MX:1;A:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 7d128587-8f85-4562-1e5c-08d63a4e2835
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4608076)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR0602MB3521;
+X-MS-TrafficTypeDiagnostic: AM0PR0602MB3521:
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR0602MB3521;20:+xkwKq2T7neKAmB1N0NLnxraa6rpjwUz0kvGDJVNfnZwFu7SOMoQpsrXCMO7fFljtSUOBx1wMSAbjxwz8j07Ud2Y4hQS45/hfW46QFRPHWo7uwo4TDmEBLSeEev0IpD/i3QL4fAHeULPavhmfxDFPA1zN1ilLv1q82hIOx/1CHZ5RsCqF/UsiQQ7xK8/yqUrYo3mraaksTvjA7c3X/IjhDdF70S1eu7FgX1loI7HpkoemvkO+Diq/8EMZyjGn4VaqJNjzVOrh1+O/31qtoOJBFkl9ugV1He4JaKaq+0f+jeRU5jU3K+z1L4is881Z/06Roggw2kFJ1NYUlzPEUb666xXM5HOGDuTdnxDGvFBGOh98l4uha5ed69DOTTfNFA3jPwSvrJH8wqzzmZ8tnQiHpqKrms0SxwXkRWu4VSKKtr39Ng5+oO52sfmxEMW3ug12P/btu/SRNqjn3Mebx7VXZEsaPWZ+B4M2hoopfMWIDIwN4kpAGTK4yYDXvyvyH+j;4:8aHcpR5MzrmRs6tFtv3QRd4YBf7ki2tYKI/eCSQ8E3por4SMUABr9NeOnpixUyA1H2WJqgnqMOmwTJA7GobpSX95MA+Q9EHQxPa42dfMEAQ0ziE94CXlOlRru1mAq7dc4yc2x4R0bhhpFd6Ribtb3VRvpJU3juGPqNoSc9nbaFtIZyOU96Jmnwdl8j/AWb9mGzEgwj7QrVbySD3iZbUqJUtHSeJyFa2/u14CD8n/RBmZfhc/sdU6qiO2lBlutG9zEkXbkH2h9sPCCxA9fEmz/w==
+X-Microsoft-Antispam-PRVS: <AM0PR0602MB3521B20D7A87087559B7861DEFF70@AM0PR0602MB3521.eurprd06.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93004095)(10201501046)(3002001)(3231355)(944501410)(52105095)(148016)(149066)(150057)(6041310)(201703131423095)(201702281529075)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:AM0PR0602MB3521;BCL:0;PCL:0;RULEID:;SRVR:AM0PR0602MB3521;
+X-Forefront-PRVS: 083691450C
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM0PR0602MB3521;23:AXrL9HQE69CYBuydZXkS82rbYF+y/E4+o/GfKh/?=
+ =?us-ascii?Q?jVb9UEfwNLomrEG0Y/m0GllgPgtLMxYnkdhQkPkM0mh8KWsCGK2Ey6x9eqq6?=
+ =?us-ascii?Q?UdzxcgIbwG2+HL/465HdWqV5Ki0qUM7tU2w3EOy9KRU4HcnynYSLDOpS6+fB?=
+ =?us-ascii?Q?vEiq7DaVjYXKwic7ikY6CLHcd+OGNG1o5Y/Yry5972y2nmwLk57gvfeiygsS?=
+ =?us-ascii?Q?GFMPNqd1AzzsHTnZIj1OgAWztcawuS09p2ZMXG3wfapQfe0XBVZ4DHLTaDo/?=
+ =?us-ascii?Q?r1sWp1BshFRXjAdLGJOGR2wGKd68mtU8IfxpUpCu4ccF6hcubvciGCupQPL7?=
+ =?us-ascii?Q?elpVhyp0gJe1cP+kpSplWNi9slTDBxUZ926tmjo5beCnE43gw4rEQHiT/YTC?=
+ =?us-ascii?Q?iGOT5+iQiME9fxAbB7F5CrqZNAizOUb5zNPvI1ZMfqgpY1lBVfECshvzeESw?=
+ =?us-ascii?Q?y0G4BeJjUoQzyiHJS5vfaF0+3J3FDDy7OZRVk2XrYCIE3AOKdtMkzL45k4El?=
+ =?us-ascii?Q?dVD+OQYuGBXe3clcC3t73RaqxelTX8HMC9NQD0zSKWK9QFhJINdAi0au9Z9D?=
+ =?us-ascii?Q?brN6+SMz0FTFYFODCRetVlkOdYOtHCCV/TuH/iP5X5uE64r3WIcaO5OkvSZr?=
+ =?us-ascii?Q?YX5h+C6E+CbCb85TSU3Gp9tRgLW2cKKzaeqqTV1oBlZpyGv3ArBh7G1mZBm/?=
+ =?us-ascii?Q?GGpwS6das94Yyb1tkz5er+0Sqec9ZAv12R4THCf3e3DEVkwtnXhphwljzm5e?=
+ =?us-ascii?Q?RtOpTa3XRWMfKjpfIPEer0L21N8Ax+27L+9eYIaVt4ba+PKusUBCeh94po4b?=
+ =?us-ascii?Q?7FFTEUxpXXJNGHVBvRW5iV4cYKqecJtlGQwULwML3ykjwKClGsZMh4r0O9ia?=
+ =?us-ascii?Q?9bGnGjfEQHh3eYWIvuc8W/l4wtA5XnX9A8felP7HLWySpB4AvrJ+JFuzPCql?=
+ =?us-ascii?Q?DKCovHmqylKsS1mhTYepb1YLh2yGCZ2TPsbaJlMaRaXr0RZNr+c1LULr2FCW?=
+ =?us-ascii?Q?+rWV6MhYmmRhPwiOh/sb/Mu/uJIS+7bO0/kbM2+KxE5IPNpnytimlqfnMwZX?=
+ =?us-ascii?Q?GkeC6Lw/00TlW6Dt9WL746GDC99jYEIUDyKloZnDUDf6jRcu9nsqPJCP2NG5?=
+ =?us-ascii?Q?k4YoaIUYB4KQ5aFax2EDVV4JdBOwWJiqdUQ3KNSLZdVWff7nLFpvRnEv7mtQ?=
+ =?us-ascii?Q?F/HJ+W6JBSBYUXPaFe9WaPl5LfY8/RufBtcUMScyeBrL4jfW7zi6IkqSUY1G?=
+ =?us-ascii?Q?6vLU1f/c8D97PbrhnjPzArLDebwHKcpCuGw1PSs4/?=
+X-Microsoft-Antispam-Message-Info: czMu9weIrkgGlsshru4vhPwJteJX1W7i0pLPrW8itiy0Rzw49Kgp7An9ojn8vee8Tykz4j5iW0XQFoQc6EQVAAeUsIO4Ip0WgFo6YzHsEQewC/ax5qefmtunLCpvA1Bde3oORAzycUIwGRb7U2eu8oTapalYJFKiTz1hSnrmWj65I1wDsoF0ZTugKKfd0ZA1srNlLXNBBPW5u2FkGMKSXz3/pVUlECWFgOcH8HmdFkNz3ARc+CDUC/OOx/llS3JhEsULmDk2Y0avoYyiLxL/fbi3FJJUspzWr0OKdreX8jsjYJDafXV6qJ6xhlpRKZuDonu5MBH/mZvUEWI7REJLSrh1EVVag7dXm3Ku50IG8yE=
+X-Microsoft-Exchange-Diagnostics: 1;AM0PR0602MB3521;6:9rHE8g8hW+AiIpNtUuzkJDkjN+XzffAhP5BAdv6SOmkyceqVTnu5MguzSj1sd2F4DE2BqG1SYZ1/iQzZ2hChqj08bDtb6ryS28h5xBKbVPGXwkj2qLPU80mgX0nGJQx8T0/YsN0rcT3zUdNvuETuITQctuGZofKVxYP7ObqxuHo4YsyC+IMyRukP1zDwyzmHh0U+yK6WgJiYha0h4S8FsdIPssqH+M9fris7CtTNeCyPlVPDY0UrmETAg1OUVKKw6PPj+DAPAUkE++Zbl0tjGPF/imG3AF2+sclT7LEpmlcolDiauX0nk7GSD+oM9fMIIZVWwodfVxwvhL192U+xXDgs0xZZVgiJqixR/ElRtNxi78BIOXssm7Lnjfs7aI6YgIZDOSTCKc+WPpvyHIeYTIBYMpUrzmbzU0XKlO032FiGi8l8Y1uMzwxfyI1nV7a6xe4gwom2uMvYp5QhiDM6mg==;5:qcn3fMMbImgT+tangQ851Xemc6e0kvvkvRhn5Pl/WGem5w7//2idexeQ4pV7kBdE0z33CvXlwLyHZSbJIBA9ckxKBhRZ0XoS1Ns2MA/H6RM2Sv8xi1zDk60fe4WzSyl/mwWca0aqFrFvVo6OqhMU/AJUPC/tmIyWvZRYXUFaJyE=;7:DQ+zwF3CGjGMkFVoc/UEiJzroPLR/Y6i01Xi5WS6TVpE9lTZyfdiXRqJ4wg7S1MUU+7o+XMhZsfbHKWkpBGoE2e0IoT6rbLHWpnHwNSLo3dnkkn7OkCS167tki7cTlK+bJKXzZrDkOyBxMBTddXKsw==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-OriginatorOrg: cern.ch
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Oct 2018 07:47:47.2496
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7d128587-8f85-4562-1e5c-08d63a4e2835
+X-MS-Exchange-CrossTenant-Id: c80d3499-4a40-4a8c-986e-abce017d6b19
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[188.184.36.50];Helo=[cernmxgwlb4.cern.ch]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR0602MB3521
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Paul Walmsley (2018-10-20 06:50:22)
-> Add common library code for the Analog Bits Wide-Range PLL (WRPLL) as
-> implemented in TSMC CLN28HPC.
-> =
+(sorry for the noise, peter's email I had does not exist, so I'm resending 
+this email with the correct address)
 
-> There is no bus interface or register target associated with this PLL.
-> This library is intended to be used by drivers for IP blocks that
-> expose registers connected to the PLL configuration and status
-> signals.
-> =
+On Sunday, October 21, 2018 4:39:07 PM CEST Peter Korsgaard wrote:
+> On Mon, Jun 25, 2018 at 6:14 PM Federico Vaga <federico.vaga@cern.ch> wrote:
+> > This driver assumes that an interrupt line is always available for
+> > the I2C master. This is not always the case and this patch adds support
+> > for a polling version based on workqueue.
+>
+> It probably makes sense to make it the switch between irq/irqless mode
+> dynamic to support the upcoming master_xfer_irqless logic.
+>
+> > Signed-off-by: Federico Vaga <federico.vaga@cern.ch>
+> > ---
+> >
+> > drivers/i2c/busses/i2c-ocores.c | 94
+> > ++++++++++++++++++++++++++++++++++------- 1 file changed, 79
+> > insertions(+), 15 deletions(-)
+> >
+> > diff --git a/drivers/i2c/busses/i2c-ocores.c
+> > b/drivers/i2c/busses/i2c-ocores.c index 274d6eb22a2c..0dad1a512ef5 100644
+> > --- a/drivers/i2c/busses/i2c-ocores.c
+> > +++ b/drivers/i2c/busses/i2c-ocores.c
+> > @@ -13,6 +13,7 @@
+> >
+> > */
+> >
+> > #include <linux/clk.h>
+> >
+> > +#include <linux/delay.h>
+> >
+> > #include <linux/err.h>
+> > #include <linux/kernel.h>
+> > #include <linux/module.h>
+> >
+> > @@ -26,14 +27,19 @@
+> >
+> > #include <linux/io.h>
+> > #include <linux/log2.h>
+> > #include <linux/spinlock.h>
+> >
+> > +#include <linux/workqueue.h>
+> > +
+> > +#define OCORES_FLAG_POLL BIT(0)
+> >
+> > struct ocores_i2c {
+> >
+> > void __iomem *base;
+> > u32 reg_shift;
+> > u32 reg_io_width;
+> >
+> > +       unsigned long flags;
+> >
+> > wait_queue_head_t wait;
+> > struct i2c_adapter adap;
+> > struct i2c_msg *msg;
+> >
+> > +       struct work_struct xfer_work;
+> >
+> > int pos;
+> > int nmsgs;
+> > int state; /* see STATE_ */
+> >
+> > @@ -166,8 +172,9 @@ static void ocores_process(struct ocores_i2c *i2c, u8
+> > stat)> 
+> > oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_STOP);
+> > return;
+> >
+> > }
+> >
+> > -       } else
+> > +       } else {
+> >
+> > msg->buf[i2c->pos++] = oc_getreg(i2c, OCI2C_DATA);
+> >
+> > +       }
+>
+> This looks unrelated to $SUBJECT.
 
-> Based on code originally written by Wesley Terpstra
-> <wesley@sifive.com>:
-> https://github.com/riscv/riscv-linux/commit/999529edf517ed75b56659d456d22=
-1b2ee56bb60
+Do you prefer a different patch just for styling?
 
-I will take a deeper review next week.
+>
+> > /* end of msg? */
+> > if (i2c->pos == msg->len) {
+> >
+> > @@ -232,6 +239,50 @@ static irqreturn_t ocores_isr(int irq, void *dev_id)
+> >
+> > return IRQ_HANDLED;
+> >
+> > }
+> >
+> > +
+> > +/**
+> > + * It waits until is possible to process some data
+>
+> Please don't use "It waits ..", but rather "wait until ..". Same for
+> the other function comments.
 
-> =
+ok
 
-> Cc: Wesley Terpstra <wesley@sifive.com>
-> Cc: Palmer Dabbelt <palmer@sifive.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Megan Wachs <megan@sifive.com>                                       =
-                                                                           =
-  Cc: linux-clk@vger.kernel.org
+> > + * @i2c: ocores I2C device instance
+> > + *
+> > + * This is used when the device is in polling mode (interrupts disabled).
+> > + * It sleeps for the time necessary to send 8bits (one transfer over
+> > + * the I2C bus), then it permanently ping the ip-core until is possible
+> > + * to process data. The idea is that we sleep for most of the time at the
+> > + * beginning because we are sure that the ip-core is not ready yet.
+> > + */
+> > +static void ocores_poll_wait(struct ocores_i2c *i2c)
+> > +{
+> > +       int sleep_min = (8/i2c->bus_clock_khz) * 1000; /* us for 8bits */
+> > +       u8 loop_on;
+> > +
+> > +       usleep_range(sleep_min, sleep_min + 10);
+>
+> Where does this 10 come from?
 
-Weird tab ^?
+It's true, it's just a random number. It can be zero as well, and we ask the 
+system to just sleep for that amount of time. 
 
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-> Signed-off-by: Paul Walmsley <paul@pwsan.com>
-> diff --git a/drivers/clk/analogbits/wrpll-cln28hpc.c b/drivers/clk/analog=
-bits/wrpll-cln28hpc.c
-> new file mode 100644
-> index 000000000000..ebdef859cbf5
-> --- /dev/null
-> +++ b/drivers/clk/analogbits/wrpll-cln28hpc.c
-> @@ -0,0 +1,387 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2018 SiFive, Inc.
-> + * Wesley Terpstra
-> + * Paul Walmsley
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + *
+(1) usleep_range(sleep_min, sleep_min);
 
-Can you drop these two paragraphs? It's duplicated from the SPDX tag.
+I noticed that it is a common practice to just put numbers that sounds 
+correct, indeed there are many random numbers (not commented at least, so they 
+are random numbers for the reader) in drivers/i2c/busses when they use this 
+function.
 
-> + * This library supports configuration parsing and reprogramming of
-> + * the CLN28HPC variant of the Analog Bits Wide Range PLL.  The
-> + * intention is for this library to be reusable for any device that
-> + * integrates this PLL; thus the register structure and programming
-> + * details are expected to be provided by a separate IP block driver.
-> + *
-> + * The bulk of this code is primarily useful for clock configurations
-> + * that must operate at arbitrary rates, as opposed to clock configurati=
-ons
-> + * that are restricted by software or manufacturer guidance to a small,
-> + * pre-determined set of performance points.
-> + *
-> + * References:
-> + * - Analog Bits "Wide Range PLL Datasheet", version 2015.10.01
-> + * - SiFive FU540-C000 Manual v1p0, Chapter 7 "Clocking and Reset"
+This magic number can be also something like:
+ 
+(2) usleep_range(sleep_min, sleep_min * 1.10);
 
-Any html links?
+to give a 10% (again random choice) extra margin before starting to actively 
+poll.
 
-> + */
-> +
-> +#include <linux/bug.h>
+But I agree that random numbers are not good. So I'm ok with option (1). I did 
+not try it, but I think is fine to give a zero delta (delta=max-min=0).
 
-Is this used?
+>
+> > +       if (i2c->state == STATE_DONE || i2c->state == STATE_ERROR)
+> > +               loop_on = OCI2C_STAT_BUSY;
+> > +       else
+> > +               loop_on = OCI2C_STAT_TIP;
+> > +       while (oc_getreg(i2c, OCI2C_STATUS) & loop_on)
+> > +               ;
+>
+> How would an I2C transmission timeout be handled here?
 
-> +#include <linux/err.h>
-> +#include <linux/log2.h>
-> +#include <linux/math64.h>
-> +#include <linux/clk/analogbits-wrpll-cln28hpc.h>
-> +
-> +/* MIN_INPUT_FREQ: minimum input clock frequency, in Hz (Fref_min) */
-> +#define MIN_INPUT_FREQ                 7000000
-> +
-> +/* MAX_INPUT_FREQ: maximum input clock frequency, in Hz (Fref_max) */
-> +#define MAX_INPUT_FREQ                 600000000
-> +
-> +/* MIN_POST_DIVIDE_REF_FREQ: minimum post-divider reference frequency, i=
-n Hz */
-> +#define MIN_POST_DIVR_FREQ             7000000
-> +
-> +/* MAX_POST_DIVIDE_REF_FREQ: maximum post-divider reference frequency, i=
-n Hz */
-> +#define MAX_POST_DIVR_FREQ             200000000
-> +
-> +/* MIN_VCO_FREQ: minimum VCO frequency, in Hz (Fvco_min) */
-> +#define MIN_VCO_FREQ                   2400000000UL
-> +
-> +/* MAX_VCO_FREQ: maximum VCO frequency, in Hz (Fvco_max) */
-> +#define MAX_VCO_FREQ                   4800000000ULL
-> +
-> +/* MAX_DIVQ_DIVISOR: maximum output divisor.  Selected by DIVQ =3D 6 */
-> +#define MAX_DIVQ_DIVISOR               64
-> +
-> +/* MAX_DIVR_DIVISOR: maximum reference divisor.  Selected by DIVR =3D 63=
- */
-> +#define MAX_DIVR_DIVISOR               64
-> +
-> +/* MAX_LOCK_US: maximum PLL lock time, in microseconds (tLOCK_max) */
-> +#define MAX_LOCK_US                    70
-> +
-> +/*
-> + * ROUND_SHIFT: number of bits to shift to avoid precision loss in the r=
-ounding
-> + *              algorithm
-> + */
-> +#define ROUND_SHIFT                    20
-> +
-> +/*
-> + * Private functions
-> + */
-> +
-> +/**
-> + * __wrpll_calc_filter_range() - determine PLL loop filter bandwidth
-> + * @post_divr_freq: input clock rate after the R divider
-> + *
-> + * Select the value to be presented to the PLL RANGE input signals, based
-> + * on the input clock frequency after the post-R-divider @post_divr_freq.
-> + * This code follows the recommendations in the PLL datasheet for filter
-> + * range selection.
-> + *
-> + * Return: The RANGE value to be presented to the PLL configuration inpu=
-ts,
-> + *         or -1 upon error.
-> + */
-> +static int __wrpll_calc_filter_range(unsigned long post_divr_freq)
-> +{
-> +       u8 range;
-> +
-> +       if (post_divr_freq < MIN_POST_DIVR_FREQ ||
-> +           post_divr_freq > MAX_POST_DIVR_FREQ) {
-> +               WARN(1, "%s: post-divider reference freq out of range: %l=
-u",
-> +                    __func__, post_divr_freq);
-> +               return -1;
-> +       }
-> +
-> +       if (post_divr_freq < 11000000)
-> +               range =3D 1;
-> +       else if (post_divr_freq < 18000000)
-> +               range =3D 2;
-> +       else if (post_divr_freq < 30000000)
-> +               range =3D 3;
-> +       else if (post_divr_freq < 50000000)
-> +               range =3D 4;
-> +       else if (post_divr_freq < 80000000)
-> +               range =3D 5;
-> +       else if (post_divr_freq < 130000000)
-> +               range =3D 6;
-> +       else
-> +               range =3D 7;
-> +
-> +       return range;
-> +}
-> +
-> +/**
-> + * __wrpll_calc_fbdiv() - return feedback fixed divide value
-> + * @c: ptr to a struct analogbits_wrpll_cfg record to read from
-> + *
-> + * The internal feedback path includes a fixed by-two divider; the
-> + * external feedback path does not.  Return the appropriate divider
-> + * value (2 or 1) depending on whether internal or external feedback
-> + * is enabled.  This code doesn't test for invalid configurations
-> + * (e.g. both or neither of WRPLL_FLAGS_*_FEEDBACK are set); it relies
-> + * on the caller to do so.
-> + *
-> + * Context: Any context.  Caller must protect the memory pointed to by
-> + *          @c from simultaneous modification.
+There is the assumption that the hardware is alive and what we read from 
+oc_getreg() is correct. With this assumption, when there is a timeout this 
+will happen:
+1. STOP command (previous patch)
+2. both TIP and BUSY will become zero at some point and we get out from the 
+loop
 
-Would that ever be needed? Presumably the flag isn't changing.
+I can see now that there are cases when it may loop forever: for example if 
+the device is broken and it does answer always with 0xFFFF: we should not 
+break the host as well 
 
-> + *
-> + * Return: 2 if internal feedback is enabled or 1 if external feedback
-> + *         is enabled.
-> + */
-> +static u8 __wrpll_calc_fbdiv(struct analogbits_wrpll_cfg *c)
+I can fix this.
+ 
+> > +}
+> > +
+> > +
+> > +/**
+> > + * It implements the polling logic
+> > + * @work: work instance descriptor
+> > + *
+> > + * Here we try to re-use as much as possible from the IRQ logic
+> > + */
+> > +static void ocores_work(struct work_struct *work)
+> > +{
+> > +       struct ocores_i2c *i2c = container_of(work,
+> > +                                             struct ocores_i2c,
+> > xfer_work); +       irqreturn_t ret;
+> > +
+> > +       do {
+> > +               ocores_poll_wait(i2c);
+> > +               ret = ocores_isr(-1, i2c);
+> > +       } while (ret != IRQ_NONE);
+>
+> Might as well drop the negation, E.G. while (ret == IRQ_HANDLED);
 
-const c?
+ok
 
-> +{
-> +       return (c->flags & WRPLL_FLAGS_INT_FEEDBACK_MASK) ? 2 : 1;
-> +}
-> +
-> +/**
-> + * __wrpll_calc_divq() - determine DIVQ based on target PLL output clock=
- rate
-> + * @target_rate: target PLL output clock rate
-> + * @vco_rate: pointer to a u64 to store the computed VCO rate into
-> + *
-> + * Determine a reasonable value for the PLL Q post-divider, based on the
-> + * target output rate @target_rate for the PLL.  Along with returning the
-> + * computed Q divider value as the return value, this function stores the
-> + * desired target VCO rate into the variable pointed to by @vco_rate.
-> + *
-> + * Context: Any context.  Caller must protect the memory pointed to by
-> + *          @vco_rate from simultaneous access or modification.
-> + *
-> + * Return: a positive integer DIVQ value to be programmed into the hardw=
-are
-> + *         upon success, or 0 upon error (since 0 is an invalid DIVQ val=
-ue)
-> + */
-> +static u8 __wrpll_calc_divq(u32 target_rate, u64 *vco_rate)
+> > +}
+> > +
+> >
+> > static int ocores_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
+> > int num) {
+> >
+> > struct ocores_i2c *i2c = i2c_get_adapdata(adap);
+> >
+> > @@ -245,6 +296,9 @@ static int ocores_xfer(struct i2c_adapter *adap,
+> > struct i2c_msg *msgs, int num)> 
+> > oc_setreg(i2c, OCI2C_DATA, i2c_8bit_addr_from_msg(i2c->msg));
+> > oc_setreg(i2c, OCI2C_CMD, OCI2C_CMD_START);
+> >
+> > +       if (i2c->flags & OCORES_FLAG_POLL)
+> > +               schedule_work(&i2c->xfer_work);
+> > +
+> >
+> > if (wait_event_timeout(i2c->wait, (i2c->state == STATE_ERROR) ||
+> >
+> > (i2c->state == STATE_DONE), HZ)) {
+> >
+> > return (i2c->state == STATE_DONE) ? num : -EIO;
+> >
+> > @@ -264,7 +318,8 @@ static int ocores_init(struct device *dev, struct
+> > ocores_i2c *i2c)> 
+> > u8 ctrl = oc_getreg(i2c, OCI2C_CONTROL);
+> >
+> > /* make sure the device is disabled */
+> >
+> > -       oc_setreg(i2c, OCI2C_CONTROL, ctrl &
+> > ~(OCI2C_CTRL_EN|OCI2C_CTRL_IEN));
+> > +       ctrl &= ~(OCI2C_CTRL_EN|OCI2C_CTRL_IEN);
+> > +       oc_setreg(i2c, OCI2C_CONTROL, ctrl);
+>
+> This looks unrelated to $SUBJECT
+>
+>
+> > prescale = (i2c->ip_clock_khz / (5 * i2c->bus_clock_khz)) - 1;
+> > prescale = clamp(prescale, 0, 0xffff);
+> >
+> > @@ -277,12 +332,16 @@ static int ocores_init(struct device *dev, struct
+> > ocores_i2c *i2c)> 
+> > return -EINVAL;
+> >
+> > }
+> >
+> > +
+>
+> Here as well.
+>
+>
+> > @@ -538,6 +600,8 @@ static int ocores_i2c_remove(struct platform_device
+> > *pdev)> 
+> > {
+> >
+> > struct ocores_i2c *i2c = platform_get_drvdata(pdev);
+> >
+> > +       flush_scheduled_work();
+> > +
+>
+> Why not cancel_work_sync(&i2c->xfer_work)?
 
-Nitpick: Why so much underscore in this code?
+you are right!
 
-> +{
-> +       u64 s;
-> +       u8 divq =3D 0;
-> +
-> +       if (!vco_rate) {
-> +               WARN_ON(1);
-> +               goto wcd_out;
 
-Just return here, There aren't any locks so no need for goto.
 
-Also, don't check anything? The caller is bad if this happens, and this
-is a static function so it can pretty much be found by visual
-inspection or during development?
 
-> +       }
-> +
-> +       s =3D div_u64(MAX_VCO_FREQ, target_rate);
-> +       if (s <=3D 1) {
-> +               divq =3D 1;
-> +               *vco_rate =3D MAX_VCO_FREQ;
-> +       } else if (s > MAX_DIVQ_DIVISOR) {
-> +               divq =3D ilog2(MAX_DIVQ_DIVISOR);
-> +               *vco_rate =3D MIN_VCO_FREQ;
-> +       } else {
-> +               divq =3D ilog2(s);
-> +               *vco_rate =3D target_rate << divq;
-> +       }
-> +
-> +wcd_out:
-> +       return divq;
-> +}
-> +
-> +/**
-> + * __wrpll_update_parent_rate() - update PLL data when parent rate chang=
-es
-> + * @c: ptr to a struct analogbits_wrpll_cfg record to write PLL data to
-> + * @parent_rate: PLL input refclk rate (pre-R-divider)
-> + *
-> + * Pre-compute some data used by the PLL configuration algorithm when
-> + * the PLL's reference clock rate changes.  The intention is to avoid
-> + * computation when the parent rate remains constant - expected to be
-> + * the common case.
-> + *
-> + * Returns: 0 upon success or -1 if the reference clock rate is out of r=
-ange.
-> + */
-> +static int __wrpll_update_parent_rate(struct analogbits_wrpll_cfg *c,
-> +                                     unsigned long parent_rate)
-> +{
-> +       u8 max_r_for_parent;
 
-Does this need to be a u8? It makes the min_t below required instead of
-using an unsigned int.
-
-> +
-> +       if (parent_rate > MAX_INPUT_FREQ || parent_rate < MIN_POST_DIVR_F=
-REQ)
-> +               return -1;
-
-Please pick some valid error code instead of -1 (I thought checkpatch
-complained about this?). Is this case even possible? It would be nicer
-if this function just returned void.
-
-> +
-> +       c->_parent_rate =3D parent_rate;
-> +       max_r_for_parent =3D div_u64(parent_rate, MIN_POST_DIVR_FREQ);
-> +       c->_max_r =3D min_t(u8, MAX_DIVR_DIVISOR, max_r_for_parent);
-> +
-> +       /* Round up */
-> +       c->_init_r =3D div_u64(parent_rate + MAX_POST_DIVR_FREQ - 1,
-> +                            MAX_POST_DIVR_FREQ);
-> +
-> +       return 0;
-> +}
-> +
-> +/*
-> + * Public functions
-> + */
-> +
-> +/**
-> + * analogbits_wrpll_configure() - compute PLL configuration for a target=
- rate
-> + * @c: ptr to a struct analogbits_wrpll_cfg record to write into
-> + * @target_rate: target PLL output clock rate (post-Q-divider)
-> + * @parent_rate: PLL input refclk rate (pre-R-divider)
-> + *
-> + * Given a pointer to a PLL context @c, a desired PLL target output
-> + * rate @target_rate, and a reference clock input rate @parent_rate,
-> + * compute the appropriate PLL signal configuration values.  PLL
-> + * reprogramming is not glitchless, so the caller should switch any
-> + * downstream logic to a different clock source or clock-gate it
-> + * before presenting these values to the PLL configuration signals.
-> + *
-> + * The caller must pass this function a pre-initialized struct
-> + * analogbits_wrpll_cfg record: either initialized to zero (with the
-> + * exception of the .name and .flags fields) or read from the PLL.
-> + *
-> + * Context: Any context.  Caller must protect the memory pointed to by @c
-> + *          from simultaneous access or modification.
-> + *
-> + * Return: 0 upon success; anything else upon failure.
-> + */
-> +int analogbits_wrpll_configure_for_rate(struct analogbits_wrpll_cfg *c,
-> +                                       u32 target_rate,
-> +                                       unsigned long parent_rate)
-> +{
-> +       unsigned long ratio;
-> +       u64 target_vco_rate, delta, best_delta, f_pre_div, vco, vco_pre;
-> +       u32 best_f, f, post_divr_freq, fbcfg;
-> +       u8 fbdiv, divq, best_r, r;
-> +
-> +       if (!c)
-> +               return -1;
-
--EINVAL? Of course, it's probably better to just not care and blow up if
-the user of the API passes in NULL.
-
-> +
-> +       if (c->flags =3D=3D 0) {
-> +               WARN(1, "%s called with uninitialized PLL config", __func=
-__);
-
-Do we really need the stacktrace in this case? Or can this be downgraded
-to a pr_warn() and return some error value that isn't -1?
-
-> +               return -1;
-> +       }
-> +
-> +       fbcfg =3D WRPLL_FLAGS_INT_FEEDBACK_MASK | WRPLL_FLAGS_EXT_FEEDBAC=
-K_MASK;
-> +       if ((c->flags & fbcfg) =3D=3D fbcfg) {
-> +               WARN(1, "%s called with invalid PLL config", __func__);
-> +               return -1;
-> +       }
-> +
-> +       if (c->flags =3D=3D WRPLL_FLAGS_EXT_FEEDBACK_MASK) {
-> +               WARN(1, "%s: external feedback mode not currently support=
-ed",
-> +                    __func__);
-> +               return -1;
-> +       }
-
-Like a bunch of this stuff, why are we checking things that the caller
-should know to do itself? I'd prefer we keep things simple and assume
-the caller knows what they're doing.
-
-> +
-> +       /* Initialize rounding data if it hasn't been initialized already=
- */
-> +       if (parent_rate !=3D c->_parent_rate) {
-> +               if (__wrpll_update_parent_rate(c, parent_rate)) {
-> +                       pr_err("%s: PLL input rate is out of range\n",
-> +                              __func__);
-> +                       return -1;
-> +               }
-> +       }
-> +
-> +       c->flags &=3D ~WRPLL_FLAGS_RESET_MASK;
-> +
-> +       /* Put the PLL into bypass if the user requests the parent clock =
-rate */
-> +       if (target_rate =3D=3D parent_rate) {
-> +               c->flags |=3D WRPLL_FLAGS_BYPASS_MASK;
-> +               return 0;
-> +       }
-> +       c->flags &=3D ~WRPLL_FLAGS_BYPASS_MASK;
-> +
-> +       /* Calculate the Q shift and target VCO rate */
-> +       divq =3D __wrpll_calc_divq(target_rate, &target_vco_rate);
-> +       if (divq =3D=3D 0)
-> +               return -1;
-> +       c->divq =3D divq;
-> +
-> +       /* Precalculate the pre-Q divider target ratio */
-> +       ratio =3D div64_u64((target_vco_rate << ROUND_SHIFT), parent_rate=
-);
-> +
-> +       fbdiv =3D __wrpll_calc_fbdiv(c);
-> +       best_r =3D 0;
-> +       best_f =3D 0;
-> +       best_delta =3D MAX_VCO_FREQ;
-> +
-> +       /*
-> +        * Consider all values for R which land within
-> +        * [MIN_POST_DIVR_FREQ, MAX_POST_DIVR_FREQ]; prefer smaller R
-> +        */
-> +       for (r =3D c->_init_r; r <=3D c->_max_r; ++r) {
-> +               /* What is the best F we can pick in this case? */
-> +               f_pre_div =3D ratio * r;
-> +               f =3D (f_pre_div + (1 << ROUND_SHIFT)) >> ROUND_SHIFT;
-> +               f >>=3D (fbdiv - 1);
-> +
-> +               post_divr_freq =3D div_u64(parent_rate, r);
-> +               vco_pre =3D fbdiv * post_divr_freq;
-> +               vco =3D vco_pre * f;
-> +
-> +               /* Ensure rounding didn't take us out of range */
-> +               if (vco > target_vco_rate) {
-> +                       --f;
-> +                       vco =3D vco_pre * f;
-> +               } else if (vco < MIN_VCO_FREQ) {
-> +                       ++f;
-> +                       vco =3D vco_pre * f;
-> +               }
-> +
-> +               delta =3D abs(target_rate - vco);
-> +               if (delta < best_delta) {
-> +                       best_delta =3D delta;
-> +                       best_r =3D r;
-> +                       best_f =3D f;
-> +               }
-> +       }
-> +
-> +       c->divr =3D best_r - 1;
-> +       c->divf =3D best_f - 1;
-> +
-> +       post_divr_freq =3D div_u64(parent_rate, best_r);
-> +
-> +       /* Pick the best PLL jitter filter */
-> +       c->range =3D __wrpll_calc_filter_range(post_divr_freq);
-> +
-> +       return 0;
-> +}
-> +
-> +/**
-> + * analogbits_wrpll_calc_output_rate() - calculate the PLL's target outp=
-ut rate
-> + * @c: ptr to a struct analogbits_wrpll_cfg record to read from
-> + * @parent_rate: PLL refclk rate
-> + *
-> + * Given a pointer to the PLL's current input configuration @c and the
-> + * PLL's input reference clock rate @parent_rate (before the R
-> + * pre-divider), calculate the PLL's output clock rate (after the Q
-> + * post-divider)
-> + *
-> + * Context: Any context.  Caller must protect the memory pointed to by @c
-> + *          from simultaneous modification.
-> + *
-> + * Return: the PLL's output clock rate, in Hz.
-> + */
-> +unsigned long analogbits_wrpll_calc_output_rate(struct analogbits_wrpll_=
-cfg *c,
-> +                                               unsigned long parent_rate)
-> +{
-> +       u8 fbdiv;
-> +       u64 n;
-> +
-> +       WARN(c->flags & WRPLL_FLAGS_EXT_FEEDBACK_MASK,
-> +            "external feedback mode not yet supported");
-> +
-> +       fbdiv =3D __wrpll_calc_fbdiv(c);
-> +       n =3D parent_rate * fbdiv * (c->divf + 1);
-> +       n =3D div_u64(n, (c->divr + 1));
-> +       n >>=3D c->divq;
-> +
-> +       return n;
-> +}
-> +
-> +/**
-> + * analogbits_wrpll_calc_max_lock_us() - return the time for the PLL to =
-lock
-> + * @c: ptr to a struct analogbits_wrpll_cfg record to read from
-> + *
-> + * Return the minimum amount of time (in microseconds) that the caller
-> + * must wait after reprogramming the PLL to ensure that it is locked
-> + * to the input frequency and stable.  This is likely to depend on the D=
-IVR
-> + * value; this is under discussion with the manufacturer.
-> + *
-> + * Return: the minimum amount of time the caller must wait for the PLL
-> + *         to lock (in microseconds)
-> + */
-> +unsigned int analogbits_wrpll_calc_max_lock_us(struct analogbits_wrpll_c=
-fg *c)
-
-const c?
-
-> +{
-> +       return MAX_LOCK_US;
-
-And we're planning to change this in the future?
-
-> +}
-> diff --git a/include/linux/clk/analogbits-wrpll-cln28hpc.h b/include/linu=
-x/clk/analogbits-wrpll-cln28hpc.h
-> new file mode 100644
-> index 000000000000..cc4268f16067
-> --- /dev/null
-> +++ b/include/linux/clk/analogbits-wrpll-cln28hpc.h
-> @@ -0,0 +1,99 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (C) 2018 SiFive, Inc.
-> + * Wesley Terpstra
-> + * Paul Walmsley
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
-> +
-> +#ifndef __LINUX_CLK_ANALOGBITS_WRPLL_CLN28HPC_H
-> +#define __LINUX_CLK_ANALOGBITS_WRPLL_CLN28HPC_H
-> +
-> +#include <linux/types.h>
-> +
-> +/* DIVQ_VALUES: number of valid DIVQ values */
-> +#define DIVQ_VALUES                            6
-> +
-> +/*
-> + * Bit definitions for struct analogbits_wrpll_cfg.flags
-> + *
-> + * WRPLL_FLAGS_BYPASS_FLAG: if set, the PLL is either in bypass, or shou=
-ld be
-> + *     programmed to enter bypass
-> + * WRPLL_FLAGS_RESET_FLAG: if set, the PLL is in reset
-> + * WRPLL_FLAGS_INT_FEEDBACK_FLAG: if set, the PLL is configured for inte=
-rnal
-> + *     feedback mode
-> + * WRPLL_FLAGS_EXT_FEEDBACK_FLAG: if set, the PLL is configured for exte=
-rnal
-> + *     feedback mode (not yet supported by this driver)
-> + *
-> + * The flags WRPLL_FLAGS_INT_FEEDBACK_FLAG and WRPLL_FLAGS_EXT_FEEDBACK_=
-FLAG are
-> + * mutually exclusive.  If both bits are set, or both are zero, the stru=
-ct
-> + * analogbits_wrpll_cfg record is uninitialized or corrupt.
-> + */
-> +#define WRPLL_FLAGS_BYPASS_SHIFT               0
-> +#define WRPLL_FLAGS_BYPASS_MASK                BIT(WRPLL_FLAGS_BYPASS_SH=
-IFT)
-> +#define WRPLL_FLAGS_RESET_SHIFT                1
-> +#define WRPLL_FLAGS_RESET_MASK         BIT(WRPLL_FLAGS_RESET_SHIFT)
-> +#define WRPLL_FLAGS_INT_FEEDBACK_SHIFT 2
-> +#define WRPLL_FLAGS_INT_FEEDBACK_MASK  BIT(WRPLL_FLAGS_INT_FEEDBACK_SHIF=
-T)
-> +#define WRPLL_FLAGS_EXT_FEEDBACK_SHIFT 3
-> +#define WRPLL_FLAGS_EXT_FEEDBACK_MASK  BIT(WRPLL_FLAGS_EXT_FEEDBACK_SHIF=
-T)
-> +
-> +/**
-> + * struct analogbits_wrpll_cfg - WRPLL configuration values
-> + * @divr: reference divider value (6 bits), as presented to the PLL sign=
-als.
-> + * @divf: feedback divider value (9 bits), as presented to the PLL signa=
-ls.
-> + * @divq: output divider value (3 bits), as presented to the PLL signals.
-> + * @flags: PLL configuration flags.  See above for more information.
-> + * @range: PLL loop filter range.  See below for more information.
-> + * @_output_rate_cache: cached output rates, swept across DIVQ.
-> + * @_parent_rate: PLL refclk rate for which values are valid
-> + * @_max_r: maximum possible R divider value, given @parent_rate
-> + * @_init_r: initial R divider value to start the search from
-> + *
-> + * @divr, @divq, @divq, @range represent what the PLL expects to see
-> + * on its input signals.  Thus @divr and @divf are the actual divisors
-> + * minus one.  @divq is a power-of-two divider; for example, 1 =3D
-> + * divide-by-2 and 6 =3D divide-by-64.  0 is an invalid @divq value.
-> + *
-> + * When initially passing a struct analogbits_wrpll_cfg record, the
-> + * record should be zero-initialized with the exception of the @flags
-> + * field.  The only flag bits that need to be set are either
-> + * WRPLL_FLAGS_INT_FEEDBACK or WRPLL_FLAGS_EXT_FEEDBACK.
-> + *
-> + * Field names beginning with an underscore should be considered
-> + * private to the wrpll-cln28hpc.c code.
-
-Ah ok. Are the functions also done this way for a private/public API
-split. We don't typically care about this in the kernel, just mark it
-static if it's private and non-static if it's public for functions.
-Underscores just make lines longer. And for struct members we have
-kernel doc 'private' tag that can tell users to not do something. Or
-worst case, an opaque pointer is stored and only defined in the C file.
-
-> + */
-> +struct analogbits_wrpll_cfg {
-> +       u8 divr;
-> +       u8 divq;
-> +       u8 range;
-> +       u8 flags;
-> +       u16 divf;
-> +       u32 _output_rate_cache[DIVQ_VALUES];
-> +       unsigned long _parent_rate;
-> +       u8 _max_r;
-> +       u8 _init_r;
-> +};
-> +
-> +/*
-> + * Function prototypes
-> + */
-
-Please don't have these types of comments. They don't help.
-
-> +
-> +int analogbits_wrpll_configure_for_rate(struct analogbits_wrpll_cfg *c,
-> +                                       u32 target_rate,
-> +                                       unsigned long parent_rate);
-> +
-> +unsigned int analogbits_wrpll_calc_max_lock_us(struct analogbits_wrpll_c=
-fg *c);
-> +
-> +unsigned long analogbits_wrpll_calc_output_rate(struct analogbits_wrpll_=
-cfg *c,
-> +                                               unsigned long parent_rate=
-);
-> +
-> +#endif /* __LINUX_CLK_ANALOGBITS_WRPLL_CLN28HPC_H */
-> -- =
-
-> 2.19.1
->=20
