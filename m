@@ -2,157 +2,411 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9339ECDE44
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E7DAECDE46
 	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 02:26:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B34220838
+	by mail.kernel.org (Postfix) with ESMTP id 4A5C120831
 	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 02:26:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B34220838
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A5C120831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=andestech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727408AbeJYK5W (ORCPT
+        id S1727365AbeJYK5Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 06:57:22 -0400
-Received: from mga11.intel.com ([192.55.52.93]:16711 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726365AbeJYK5V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 06:57:21 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Oct 2018 19:26:42 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,422,1534834800"; 
-   d="scan'208";a="268574428"
-Received: from yisun1-ubuntu.bj.intel.com (HELO localhost) ([10.238.156.104])
-  by orsmga005.jf.intel.com with ESMTP; 24 Oct 2018 19:26:39 -0700
-Date:   Thu, 25 Oct 2018 10:23:55 +0800
-From:   Yi Sun <yi.y.sun@linux.intel.com>
-To:     Michael Kelley <mikelley@microsoft.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "jgross@suse.com" <jgross@suse.com>,
-        "chao.p.peng@intel.com" <chao.p.peng@intel.com>,
-        "chao.gao@intel.com" <chao.gao@intel.com>,
-        "isaku.yamahata@intel.com" <isaku.yamahata@intel.com>,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>
-Subject: Re: [PATCH v1 2/2] x86/hyperv: make HvNotifyLongSpinWait hypercall
-Message-ID: <20181025022354.GB15378@yi.y.sun>
-References: <1539954835-34035-1-git-send-email-yi.y.sun@linux.intel.com>
- <1539954835-34035-3-git-send-email-yi.y.sun@linux.intel.com>
- <CY4PR21MB07737AA8E3F7E7353D42F5C8D7F60@CY4PR21MB0773.namprd21.prod.outlook.com>
+        Thu, 25 Oct 2018 06:57:16 -0400
+Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:45703 "EHLO
+        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726365AbeJYK5P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 06:57:15 -0400
+Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
+        by ATCSQR.andestech.com with ESMTP id w9P2QGIZ070298;
+        Thu, 25 Oct 2018 10:26:16 +0800 (GMT-8)
+        (envelope-from nickhu@andestech.com)
+Received: from atcsqa06.andestech.com (10.0.15.65) by ATCPCS16.andestech.com
+ (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Thu, 25 Oct 2018
+ 10:24:50 +0800
+From:   Nick Hu <nickhu@andestech.com>
+To:     <greentime@andestech.com>, <linux-kernel@vger.kernel.org>,
+        <arnd@arndb.de>, <linux-arch@vger.kernel.org>,
+        <will.deacon@arm.com>, <mark.rutland@arm.com>,
+        <robh+dt@kernel.org>, <peterz@infradead.org>, <mingo@redhat.com>,
+        <acme@kernel.org>, <alexander.shishkin@linux.intel.com>,
+        <jolsa@redhat.com>, <namhyung@kernel.org>, <ebiederm@xmission.com>,
+        <gregkh@linuxfoundation.org>, <kstewart@linuxfoundation.org>,
+        <tglx@linutronix.de>, <pombredanne@nexb.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <zong@andestech.com>,
+        <alankao@andestech.com>, <deanbo422@gmail.com>
+CC:     Nickhu <nickhu@andestech.com>, <green.hu@gmail.com>
+Subject: [PATCH v4 3/4] nds32: Add perf call-graph support.
+Date:   Thu, 25 Oct 2018 10:24:16 +0800
+Message-ID: <2e5e0aab98fe54fc96cb2d3c2dd62c3396c1abd9.1540430862.git.nickhu@andestech.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <cover.1540430861.git.nickhu@andestech.com>
+References: <cover.1540430861.git.nickhu@andestech.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CY4PR21MB07737AA8E3F7E7353D42F5C8D7F60@CY4PR21MB0773.namprd21.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
+X-Originating-IP: [10.0.15.65]
+X-DNSRBL: 
+X-MAIL: ATCSQR.andestech.com w9P2QGIZ070298
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Michael,
+From: Nickhu <nickhu@andestech.com>
 
-Thanks a lot for the review and comments! Let us sync with Hyper-V team
-to confirm these suspicious points.
+The perf call-graph option can trace the callchain
+between functions. This commit add the perf callchain
+for nds32. There are kerenl callchain and user callchain.
+The kerenl callchain can trace the function in kernel
+space. There are two type for user callchain. One for the
+'optimize for size' config is set, and another one for the
+config is not set. The difference between two types is that
+the index of frame-pointer in user stack is not the same.
 
-BRs,
-Sun Yi
+For example:
+	With optimize for size:
+		User Stack:
+			---------
+			|   lp	|
+			---------
+			|	gp	|
+			---------
+			|	fp	|
 
-On 18-10-24 16:53:00, Michael Kelley wrote:
-> From: Yi Sun <yi.y.sun@linux.intel.com>  Sent: Friday, October 19, 2018 6:14 AM
-> > 
-> > The HvNotifyLongSpinWait hypercall (HVCALL_NOTIFY_LONG_SPIN_WAIT)
-> > is used by a guest OS to notify the hypervisor that the calling
-> > virtual processor is attempting to acquire a resource that is
-> > potentially held by another virtual processor within the same
-> > Virtual Machine. This scheduling hint improves the scalability of
-> > VMs with more than one virtual processor on Hyper-V.
-> > 
-> > Per MSFT TLFS, the retry number (SpinWaitInfo) is sent to hypervisor
-> > only when the retry number exceeds the recommended number. If
-> > recommended number is 0xFFFFFFFF, never retry.
-> 
-> The HvNotifyLongSpinWait hypercall should be understood to be
-> advisory only.  As you noted, it is a scheduling hint to the
-> hypervisor that some virtual CPU in the VM holds a spin lock.  Even
-> though Linux knows which vCPU holds the spin lock, the hypercall
-> does not provide a way to give that information to Hyper-V.  The
-> hypercall always returns immediately.
-> 
-> The "retry number" is a bit mis-named in the Hyper-V Top Level
-> Functional Spec (TLFS).  It is essentially a threshold value.  Hyper-V is
-> saying "don't bother to advise me about the spin lock until you have
-> done a certain number of spins."  This threshold prevents
-> over-notifying Hyper-V such that the notification becomes somewhat
-> meaningless.   It's not immediately clear to me why the hypercall passes
-> that value as an input, but maybe it lets the Hyper-V scheduler prioritize
-> among vCPUs based on how many times they have spun for a lock.  I
-> think we were told that current Hyper-V implementations ignore this
-> input value anyway.
-> 
-> I believe the description of the sentinel value 0xFFFFFFFF in the
-> Hyper-V TLFS is incorrect.  Because it is the max possible threshold
-> value, that value in the EBX register just means to not ever bother to
-> notify.   The description should be "0xFFFFFFFF indicates never to notify."
-> The value does *not* indicate anything about retrying to obtain the
-> spin lock.
-> 
-I will send mail to Hyper-V team to clarify these.
+	Without optimize for size:
+		User Stack:
+		1. non-leaf function:
+			---------
+			|	lp	|
+			---------
+			|	fp	|
 
-> >  static bool __initdata hv_pvspin = true;
-> > 
-> > +bool hv_notify_long_spin_wait(int retry_num)
-> 
-> retry_num should probably be declared as unsigned int.  You
-> don't want it to be treated as a negative number if the high
-> order bit is set.
-> 
-Yes, I should declare it as 'unsigned int'. Thanks!
+		2. leaf	function:
+			---------
+			|	fp	|
 
-> > +{
-> > +	/*
-> > +	 * Per MSFT TLFS, the SpinWaitInfo is sent to hypervisor only when
-> > +	 * the retry number exceeds the recommended number.
-> > +	 *
-> > +	 * If recommended number is 0xFFFFFFFF, never retry.
-> > +	 */
-> > +	if (ms_hyperv.num_spin_retry == HYPERV_SPINLOCK_RETRY_NEVER)
-> > +		return false;
-> > +
-> > +	if ((0 == retry_num % ms_hyperv.num_spin_retry) && retry_num)
-> 
-> I don't know if the "%" function is right here.  Your implementation will
-> notify Hyper-V on every multiple of num_spin_retry.   The alternative is to
-> notify once when the threshold is exceeded, and never again for this
-> particular attempt to obtain a spin lock.  We should check with the Hyper-V
-> team for which approach they expect to be used.
-> 
-> > +		hv_do_fast_hypercall8(HVCALL_NOTIFY_LONG_SPIN_WAIT,
-> > +				      retry_num);
-> 
-> The Hyper-V TLFS seems to be inconsistent on whether the input parameter
-> is 32-bits or 64-bits.   In one place it is typed as UINT64, but in another place
-> it is shown as only 4 bytes.  Need to clear this up with the Hyper-V team as
-> well.
-> 
-> > +
-> > +	return true;
-> 
-> I don't see a need for this function to return true vs. false.  Any calling code
-> should not change its behavior based on num_spin_retry.   This function will
-> either notify Hyper-V or not notify Hyper-V, depending on whether the number
-> of attempts to obtain the spinlock meets the threshold.  But calling code will
-> do the same thing regardless of whether such a notification is made. 
-> 
-> Michael
+Signed-off-by: Nickhu <nickhu@andestech.com>
+---
+ arch/nds32/kernel/perf_event_cpu.c | 299 +++++++++++++++++++++++++++++
+ 1 file changed, 299 insertions(+)
+
+diff --git a/arch/nds32/kernel/perf_event_cpu.c b/arch/nds32/kernel/perf_event_cpu.c
+index a6e723d0fdbc..5e00ce54d0ff 100644
+--- a/arch/nds32/kernel/perf_event_cpu.c
++++ b/arch/nds32/kernel/perf_event_cpu.c
+@@ -1193,6 +1193,305 @@ static int __init register_pmu_driver(void)
+ 
+ device_initcall(register_pmu_driver);
+ 
++/*
++ * References: arch/nds32/kernel/traps.c:__dump()
++ * You will need to know the NDS ABI first.
++ */
++static int unwind_frame_kernel(struct stackframe *frame)
++{
++	int graph = 0;
++#ifdef CONFIG_FRAME_POINTER
++	/* 0x3 means misalignment */
++	if (!kstack_end((void *)frame->fp) &&
++	    !((unsigned long)frame->fp & 0x3) &&
++	    ((unsigned long)frame->fp >= TASK_SIZE)) {
++		/*
++		 *	The array index is based on the ABI, the below graph
++		 *	illustrate the reasons.
++		 *	Function call procedure: "smw" and "lmw" will always
++		 *	update SP and FP for you automatically.
++		 *
++		 *	Stack                                 Relative Address
++		 *	|  |                                          0
++		 *	----
++		 *	|LP| <-- SP(before smw)  <-- FP(after smw)   -1
++		 *	----
++		 *	|FP|                                         -2
++		 *	----
++		 *	|  | <-- SP(after smw)                       -3
++		 */
++		frame->lp = ((unsigned long *)frame->fp)[-1];
++		frame->fp = ((unsigned long *)frame->fp)[FP_OFFSET];
++		/* make sure CONFIG_FUNCTION_GRAPH_TRACER is turned on */
++		if (__kernel_text_address(frame->lp))
++			frame->lp = ftrace_graph_ret_addr
++						(NULL, &graph, frame->lp, NULL);
++
++		return 0;
++	} else {
++		return -EPERM;
++	}
++#else
++	/*
++	 * You can refer to arch/nds32/kernel/traps.c:__dump()
++	 * Treat "sp" as "fp", but the "sp" is one frame ahead of "fp".
++	 * And, the "sp" is not always correct.
++	 *
++	 *   Stack                                 Relative Address
++	 *   |  |                                          0
++	 *   ----
++	 *   |LP| <-- SP(before smw)                      -1
++	 *   ----
++	 *   |  | <-- SP(after smw)                       -2
++	 *   ----
++	 */
++	if (!kstack_end((void *)frame->sp)) {
++		frame->lp = ((unsigned long *)frame->sp)[1];
++		/* TODO: How to deal with the value in first
++		 * "sp" is not correct?
++		 */
++		if (__kernel_text_address(frame->lp))
++			frame->lp = ftrace_graph_ret_addr
++						(tsk, &graph, frame->lp, NULL);
++
++		frame->sp = ((unsigned long *)frame->sp) + 1;
++
++		return 0;
++	} else {
++		return -EPERM;
++	}
++#endif
++}
++
++static void notrace
++walk_stackframe(struct stackframe *frame,
++		int (*fn_record)(struct stackframe *, void *),
++		void *data)
++{
++	while (1) {
++		int ret;
++
++		if (fn_record(frame, data))
++			break;
++
++		ret = unwind_frame_kernel(frame);
++		if (ret < 0)
++			break;
++	}
++}
++
++/*
++ * Gets called by walk_stackframe() for every stackframe. This will be called
++ * whist unwinding the stackframe and is like a subroutine return so we use
++ * the PC.
++ */
++static int callchain_trace(struct stackframe *fr, void *data)
++{
++	struct perf_callchain_entry_ctx *entry = data;
++
++	perf_callchain_store(entry, fr->lp);
++	return 0;
++}
++
++/*
++ * Get the return address for a single stackframe and return a pointer to the
++ * next frame tail.
++ */
++static unsigned long
++user_backtrace(struct perf_callchain_entry_ctx *entry, unsigned long fp)
++{
++	struct frame_tail buftail;
++	unsigned long lp = 0;
++	unsigned long *user_frame_tail =
++		(unsigned long *)(fp - (unsigned long)sizeof(buftail));
++
++	/* Check accessibility of one struct frame_tail beyond */
++	if (!access_ok(VERIFY_READ, user_frame_tail, sizeof(buftail)))
++		return 0;
++	if (__copy_from_user_inatomic
++		(&buftail, user_frame_tail, sizeof(buftail)))
++		return 0;
++
++	/*
++	 * Refer to unwind_frame_kernel() for more illurstration
++	 */
++	lp = buftail.stack_lp;  /* ((unsigned long *)fp)[-1] */
++	fp = buftail.stack_fp;  /* ((unsigned long *)fp)[FP_OFFSET] */
++	perf_callchain_store(entry, lp);
++	return fp;
++}
++
++static unsigned long
++user_backtrace_opt_size(struct perf_callchain_entry_ctx *entry,
++			unsigned long fp)
++{
++	struct frame_tail_opt_size buftail;
++	unsigned long lp = 0;
++
++	unsigned long *user_frame_tail =
++		(unsigned long *)(fp - (unsigned long)sizeof(buftail));
++
++	/* Check accessibility of one struct frame_tail beyond */
++	if (!access_ok(VERIFY_READ, user_frame_tail, sizeof(buftail)))
++		return 0;
++	if (__copy_from_user_inatomic
++		(&buftail, user_frame_tail, sizeof(buftail)))
++		return 0;
++
++	/*
++	 * Refer to unwind_frame_kernel() for more illurstration
++	 */
++	lp = buftail.stack_lp;  /* ((unsigned long *)fp)[-1] */
++	fp = buftail.stack_fp;  /* ((unsigned long *)fp)[FP_OFFSET] */
++
++	perf_callchain_store(entry, lp);
++	return fp;
++}
++
++/*
++ * This will be called when the target is in user mode
++ * This function will only be called when we use
++ * "PERF_SAMPLE_CALLCHAIN" in
++ * kernel/events/core.c:perf_prepare_sample()
++ *
++ * How to trigger perf_callchain_[user/kernel] :
++ * $ perf record -e cpu-clock --call-graph fp ./program
++ * $ perf report --call-graph
++ */
++unsigned long leaf_fp;
++void
++perf_callchain_user(struct perf_callchain_entry_ctx *entry,
++		    struct pt_regs *regs)
++{
++	unsigned long fp = 0;
++	unsigned long gp = 0;
++	unsigned long lp = 0;
++	unsigned long sp = 0;
++	unsigned long *user_frame_tail;
++
++	leaf_fp = 0;
++
++	if (perf_guest_cbs && perf_guest_cbs->is_in_guest()) {
++		/* We don't support guest os callchain now */
++		return;
++	}
++
++	perf_callchain_store(entry, regs->ipc);
++	fp = regs->fp;
++	gp = regs->gp;
++	lp = regs->lp;
++	sp = regs->sp;
++	if (entry->nr < PERF_MAX_STACK_DEPTH &&
++	    (unsigned long)fp && !((unsigned long)fp & 0x7) && fp > sp) {
++		user_frame_tail =
++			(unsigned long *)(fp - (unsigned long)sizeof(fp));
++
++		if (!access_ok(VERIFY_READ, user_frame_tail, sizeof(fp)))
++			return;
++
++		if (__copy_from_user_inatomic
++			(&leaf_fp, user_frame_tail, sizeof(fp)))
++			return;
++
++		if (leaf_fp == lp) {
++			/*
++			 * Maybe this is non leaf function
++			 * with optimize for size,
++			 * or maybe this is the function
++			 * with optimize for size
++			 */
++			struct frame_tail buftail;
++
++			user_frame_tail =
++				(unsigned long *)(fp -
++					(unsigned long)sizeof(buftail));
++
++			if (!access_ok
++				(VERIFY_READ, user_frame_tail, sizeof(buftail)))
++				return;
++
++			if (__copy_from_user_inatomic
++				(&buftail, user_frame_tail, sizeof(buftail)))
++				return;
++
++			if (buftail.stack_fp == gp) {
++				/* non leaf function with optimize
++				 * for size condition
++				 */
++				struct frame_tail_opt_size buftail_opt_size;
++
++				user_frame_tail =
++					(unsigned long *)(fp - (unsigned long)
++						sizeof(buftail_opt_size));
++
++				if (!access_ok(VERIFY_READ, user_frame_tail,
++					       sizeof(buftail_opt_size)))
++					return;
++
++				if (__copy_from_user_inatomic
++				   (&buftail_opt_size, user_frame_tail,
++				   sizeof(buftail_opt_size)))
++					return;
++
++				perf_callchain_store(entry, lp);
++				fp = buftail_opt_size.stack_fp;
++
++				while ((entry->nr < PERF_MAX_STACK_DEPTH) &&
++				       (unsigned long)fp &&
++						!((unsigned long)fp & 0x7) &&
++						fp > sp) {
++					sp = fp;
++					fp = user_backtrace_opt_size(entry, fp);
++				}
++
++			} else {
++				/* this is the function
++				 * without optimize for size
++				 */
++				fp = buftail.stack_fp;
++				perf_callchain_store(entry, lp);
++				while ((entry->nr < PERF_MAX_STACK_DEPTH) &&
++				       (unsigned long)fp &&
++						!((unsigned long)fp & 0x7) &&
++						fp > sp) {
++					sp = fp;
++					fp = user_backtrace(entry, fp);
++				}
++			}
++		} else {
++			/* this is leaf function */
++			fp = leaf_fp;
++			perf_callchain_store(entry, lp);
++
++			/* previous function callcahin  */
++			while ((entry->nr < PERF_MAX_STACK_DEPTH) &&
++			       (unsigned long)fp &&
++				   !((unsigned long)fp & 0x7) && fp > sp) {
++				sp = fp;
++				fp = user_backtrace(entry, fp);
++			}
++		}
++		return;
++	}
++}
++
++/* This will be called when the target is in kernel mode */
++void
++perf_callchain_kernel(struct perf_callchain_entry_ctx *entry,
++		      struct pt_regs *regs)
++{
++	struct stackframe fr;
++
++	if (perf_guest_cbs && perf_guest_cbs->is_in_guest()) {
++		/* We don't support guest os callchain now */
++		return;
++	}
++	fr.fp = regs->fp;
++	fr.lp = regs->lp;
++	fr.sp = regs->sp;
++	walk_stackframe(&fr, callchain_trace, entry);
++}
++
+ unsigned long perf_instruction_pointer(struct pt_regs *regs)
+ {
+ 	/* However, NDS32 does not support virtualization */
+-- 
+2.17.0
+
