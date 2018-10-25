@@ -2,113 +2,101 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F80CECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88995ECDE47
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:52:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6181B20834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:52:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6181B20834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tronnes.org
+	by mail.kernel.org (Postfix) with ESMTP id 4F4B020834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 21:52:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F4B020834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727661AbeJZG1E (ORCPT
+        id S1727696AbeJZG1M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 02:27:04 -0400
-Received: from smtp.domeneshop.no ([194.63.252.55]:41836 "EHLO
-        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726174AbeJZG1E (ORCPT
+        Fri, 26 Oct 2018 02:27:12 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:37513 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726174AbeJZG1M (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 02:27:04 -0400
-Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:52845 helo=[192.168.10.175])
-        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <noralf@tronnes.org>)
-        id 1gFnYT-0006AI-Q8; Thu, 25 Oct 2018 23:52:37 +0200
-Subject: Re: [PATCH 0/3] drm: tinydrm driver for adafruit PiTFT 3.5"
- touchscreen
-To:     Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Heiner Kallweit <hkallweit1@gmail.com>
-References: <20181024184313.2967-1-eric@anholt.net>
- <87h8harnv4.fsf@anholt.net>
-From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-Message-ID: <2e548bd7-81f3-5952-b5de-96c26c9f6b19@tronnes.org>
-Date:   Thu, 25 Oct 2018 23:52:35 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 26 Oct 2018 02:27:12 -0400
+Received: by mail-oi1-f193.google.com with SMTP id e17-v6so8041220oib.4;
+        Thu, 25 Oct 2018 14:52:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=iqbQl5ihR/SM/+0e/deIgeI7mi+Rh+Z/cWXJhlKJTSk=;
+        b=WJH6+QSRTx7PekurNxivYfhjp4m6tHun1lUqNNG5zQLn9g/wLoBDYcTJ8knZpdLXQn
+         ePZCrpy2Xbyvw5dFISrm74nw4c/MQ8cVqdBnAhxphnZhSyvWf4Z5D64spdnJvYjUeGRS
+         sdbuaySLMYaK+cxxFIr5+du1CnT/uzW9fTgUOrTKdgWcpIWD1b1P2AA692gGh7r+uVZj
+         qPpbmbJQNiyse7Ul0LBa9ABAj1jQHoeAsk0l0v6wexYCjxRpotDze3H0JmtVmBKBN+4W
+         eCeAjIW349c1qatL8RUnM3Limwrl53WPa2tFp2hkyw72OVMxCfv2H6HMmg2nIf5Dpopj
+         XkSA==
+X-Gm-Message-State: AGRZ1gKxmTfrj1qlSJW8ynL1yOd2swY6H1mDSXyss2IuXVJ0HkojtIW1
+        3EZtfXWiMg6Zp0cxV+JkmA==
+X-Google-Smtp-Source: AJdET5e/v/ewadxX7/s7dgp0flO1DICwZqrullxD2vkDwAhBG75EfP6NMelbZSwQqcD9Ihicu10SvQ==
+X-Received: by 2002:aca:a6d1:: with SMTP id t78-v6mr598067oij.341.1540504367881;
+        Thu, 25 Oct 2018 14:52:47 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id n63-v6sm2822805oia.52.2018.10.25.14.52.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Oct 2018 14:52:47 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 16:52:46 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Xiaowei Bao <xiaowei.bao@nxp.com>
+Cc:     bhelgaas@google.com, mark.rutland@arm.com, shawnguo@kernel.org,
+        leoyang.li@nxp.com, kishon@ti.com, lorenzo.pieralisi@arm.com,
+        arnd@arndb.de, gregkh@linuxfoundation.org, minghuan.Lian@nxp.com,
+        mingkai.hu@nxp.com, roy.zang@nxp.com, kstewart@linuxfoundation.org,
+        cyrille.pitchen@free-electrons.com, pombredanne@nexb.com,
+        shawn.lin@rock-chips.com, niklas.cassel@axis.com,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 3/6] PCI: layerscape: Add the EP mode support
+Message-ID: <20181025215246.GA14861@bogus>
+References: <20181025110901.5680-1-xiaowei.bao@nxp.com>
+ <20181025110901.5680-3-xiaowei.bao@nxp.com>
 MIME-Version: 1.0
-In-Reply-To: <87h8harnv4.fsf@anholt.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181025110901.5680-3-xiaowei.bao@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Oct 25, 2018 at 07:08:58PM +0800, Xiaowei Bao wrote:
+> Add the EP mode support.
+> 
+> Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
+> ---
+>  .../devicetree/bindings/pci/layerscape-pci.txt     |    3 +++
+>  1 files changed, 3 insertions(+), 0 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/layerscape-pci.txt b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
+> index 66df1e8..d3d7be1 100644
+> --- a/Documentation/devicetree/bindings/pci/layerscape-pci.txt
+> +++ b/Documentation/devicetree/bindings/pci/layerscape-pci.txt
+> @@ -13,12 +13,15 @@ information.
+>  
+>  Required properties:
+>  - compatible: should contain the platform identifier such as:
+> +  RC mode:
+>          "fsl,ls1021a-pcie", "snps,dw-pcie"
+>          "fsl,ls2080a-pcie", "fsl,ls2085a-pcie", "snps,dw-pcie"
+>          "fsl,ls2088a-pcie"
+>          "fsl,ls1088a-pcie"
+>          "fsl,ls1046a-pcie"
+>          "fsl,ls1012a-pcie"
+> +  EP mode:
+> +        "fsl,ls-pcie-ep"
 
-Den 25.10.2018 18.29, skrev Eric Anholt:
-> Eric Anholt <eric@anholt.net> writes:
->
->> I was going to start working on making the vc4 driver work with
->> tinydrm panels, but it turned out tinydrm didn't have the panel I had
->> previously bought.  So, last night I ported the fbtft staging
->> driver over to DRM.
->>
->> It seems to work (with DT at
->> https://github.com/anholt/linux/commits/drm-misc-next-hx8357d) --
->> fbdev works great including rotated, and so does modetest.  However,
->> when X11 comes up at 16bpp, I get:
->>
->> https://photos.app.goo.gl/8tuhzPFFoDGamEfk8
->>
->> If I have tinydrm set a preferred bpp of 24, X looks great.  Noralf,
->> any ideas?
-> Also, with these patches and the format modifier patch I just sent, mesa
-> with vc4 is now working with this driver on this branch:
->
-> https://gitlab.freedesktop.org/anholt/mesa/commits/kmsro
+You need SoC specific compatibles for the same reasons as the RC.
 
-Ah, nice to see this happening!
-Getting hw rendering was one of the advantages I saw DRM could provide
-over fbdev on these displays. Little did I know how complicated graphics
-was outside fbdev, so I was unable to realise this myself.
-
-The current solution to get hw rendering is to have a userspace process
-that continously copies the framebuffer:
-https://github.com/tasanakorn/rpi-fbcp
-
-It's used by some of the small DIY handheld game consoles that run
-emulators which requires hw rendering.
-
-> Now I wonder how we can improve performance of the SPI updates.
-
-At what SPI speed are you running? The datasheet for most of these
-display controllers list the max speed as 10MHz, but almost all of them
-can go faster. Some are reported going as high as 70-80MHz. That's for
-the pixel data transfer, not the commands. tinydrm/mipi-dbi.c sends
-commands at 10MHz and pixels at full speed (mipi_dbi_spi_cmd_max_speed()).
-Most panels I have run at 32MHz or 48MHz.
-
-Almost all the time is spent in the SPI transfer, so every hz counts. On
-the Pi there's byte swapping because the DMA capable SPI controller can't
-do 16-bit (tinydrm_swab16()). If I remember correctly this has negligible
-impact on performance.
-
-The SPI controller/driver on the Pi has some restrictions on the speeds
-to choose from because the divisor has to be a multiple of two
-(bcm2835_spi_transfer_one()).
-
-A full update on a 320x480 RGB565 panel is 262.5kB, so it's a lot to push
-over SPI. A 2.8" 320x240 panel is more suitable for video fps, because of
-the lower resolution.
-
-I'll look at the patches during the weekend.
-
-Noralf.
-
-
+Rob
