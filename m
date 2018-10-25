@@ -2,221 +2,170 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44511ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 01:23:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38224ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 01:27:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB1D72075D
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 01:23:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB1D72075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
+	by mail.kernel.org (Postfix) with ESMTP id CE27A2075D
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 01:27:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SrQiVam+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE27A2075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727125AbeJYJyB (ORCPT
+        id S1726685AbeJYJ6W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 05:54:01 -0400
-Received: from mail.cn.fujitsu.com ([183.91.158.132]:34448 "EHLO
-        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726317AbeJYJyA (ORCPT
+        Thu, 25 Oct 2018 05:58:22 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:40298 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726204AbeJYJ6W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 05:54:00 -0400
-X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
-   d="scan'208";a="46678276"
-Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
-  by heian.cn.fujitsu.com with ESMTP; 25 Oct 2018 09:23:31 +0800
-Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
-        by cn.fujitsu.com (Postfix) with ESMTP id D80604B7117F;
-        Thu, 25 Oct 2018 09:23:30 +0800 (CST)
-Received: from localhost.localdomain (10.167.225.56) by
- G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 25 Oct 2018 09:23:37 +0800
-Date:   Thu, 25 Oct 2018 09:22:35 +0800
-From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
-To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
-CC:     Borislav Petkov <bp@alien8.de>, Baoquan He <bhe@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-        <linux-efi@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-        <mingo@redhat.com>, <hpa@zytor.com>, <keescook@chromium.org>,
-        <rjw@rjwysocki.net>, <lenb@kernel.org>,
-        <ard.biesheuvel@linaro.org>, <indou.takao@jp.fujitsu.com>,
-        <caoj.fnst@cn.fujitsu.com>
-Subject: Re: [PATCH v8 0/3] x86/boot/KASLR: Parse ACPI table and limit kaslr
- in immovable memory
-Message-ID: <20181025012235.GA1905@localhost.localdomain>
-References: <20181013214550.ag5qzokhkrkwnzsy@gabell>
- <20181013220541.GI31650@zn.tnic>
- <20181015005035.z3xym6nx43hogdge@gabell>
- <20181016151353.punyk7exekut2543@gabell>
- <20181016191113.GI5212@zn.tnic>
- <20181016195429.tovdgqq77gz3eek2@gabell>
- <20181016195902.GK5212@zn.tnic>
- <20181022154204.kagmdb55jtoez4ca@gabell>
- <20181023024801.GA25978@localhost.localdomain>
- <20181024192135.7qhhfbbrgb4ojgqe@gabell>
+        Thu, 25 Oct 2018 05:58:22 -0400
+Received: by mail-qt1-f193.google.com with SMTP id z9-v6so8004516qto.7
+        for <linux-kernel@vger.kernel.org>; Wed, 24 Oct 2018 18:27:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ti4MDF9979DMD/586tRYIueeMdaiFl0KtuS7MeNcMD0=;
+        b=SrQiVam+Gqw4blhB2ENKcEf/DqjBBJYyiJSpd+OJEidU44Quqj5377QkoWaUuO/Ia9
+         vHGO8wmj13eOS0WP6JkoDi82FOVWqTfV1anRYlvpiTyt6KzlWjFPWl6S7hOVQxMAiN1Z
+         0BSlrO+fGRTrqWVcGpTfcXXaAWPmir14beqoQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ti4MDF9979DMD/586tRYIueeMdaiFl0KtuS7MeNcMD0=;
+        b=kG3VMG2AuInksR43RVoe+45iEOaCdrutDgs9URLQf1M9QZBTVHBSx5ENjx6K502OT2
+         YglWea/rNY1iRLksh89WL11xjCWdTYyKTsbjcbBtp2ILeA+HqT6TJ28RIWK6C4BUJFNx
+         pQnPQIaJ6rGXh/Di+4M+ebl6k5dA1bjF9LS7oxOGYvYqp47lKC5qWUDaEdJ2eLcQ5ca7
+         H5EOGZ2KHOI0oZbnsDp8LccQHrwZPLEGv+5Q8j9Rf5dwjfid+Kr8tjCCimV3k/R0docr
+         fzUcvCqkDMiQuJWxyu53rGp8fJdHpeN8HMnopEK6SNOEnksOuKtghxi0mjNQ0pY7rZgZ
+         46Vg==
+X-Gm-Message-State: AGRZ1gLHIfk+FwS/uNwKn4j29Lq0plcCda7hhqC062g14j0SIaKWqsAK
+        WrGLaIOuCgb80X/S+J969W/QY1/ULXQM8w==
+X-Google-Smtp-Source: AJdET5cdiofEiy4gc+9VWRrh1nG2NFbH5dHruvbYqxulJBP1r0A3tJ9/ryM+D0XpfoPbSZYSX9crAw==
+X-Received: by 2002:a0c:fcca:: with SMTP id i10mr4580914qvq.69.1540430872434;
+        Wed, 24 Oct 2018 18:27:52 -0700 (PDT)
+Received: from workstation.celeiro.br ([138.204.25.17])
+        by smtp.gmail.com with ESMTPSA id m6-v6sm5338994qta.50.2018.10.24.18.27.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 24 Oct 2018 18:27:51 -0700 (PDT)
+From:   Rafael David Tinoco <rafael.tinoco@linaro.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-mm@kvack.org,
+        Rafael David Tinoco <rafael.tinoco@linaro.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Mark Brown <broonie@kernel.org>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Nitin Gupta <ngupta@vflare.org>,
+        Minchan Kim <minchan@kernel.org>
+Subject: [PATCH 1/2] mm/zsmalloc.c: check encoded object value overflow for PAE
+Date:   Wed, 24 Oct 2018 22:27:44 -0300
+Message-Id: <20181025012745.20884-1-rafael.tinoco@linaro.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20181024192135.7qhhfbbrgb4ojgqe@gabell>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Originating-IP: [10.167.225.56]
-X-yoursite-MailScanner-ID: D80604B7117F.AA278
-X-yoursite-MailScanner: Found to be clean
-X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 03:21:36PM -0400, Masayoshi Mizuma wrote:
->On Tue, Oct 23, 2018 at 10:48:02AM +0800, Chao Fan wrote:
->> On Mon, Oct 22, 2018 at 11:42:05AM -0400, Masayoshi Mizuma wrote:
->> >Hi Boris,
->> 
->> Hi Mizuma-san,
->> 
->> I have several questions:
->
->Thank you for your comments! I think your suggestions are
->right.
->However, the prototype patch works EFI environment only.
+On 32-bit systems, zsmalloc uses HIGHMEM and, when PAE is enabled, the
+physical frame number might be so big that zsmalloc obj encoding (to
+location) will break IF architecture does not re-define
+MAX_PHYSMEM_BITS, causing:
 
-Yes, I agree. But I think this method is much better than
-adding code to arch/x86/mm/kaslr.c.
+[  497.097843] ==================================================================
+[  497.102365] BUG: KASAN: null-ptr-deref in zs_map_object+0xa4/0x2bc
+[  497.105933] Read of size 4 at addr 00000000 by task mkfs.ext4/623
+[  497.109684]
+[  497.110722] CPU: 2 PID: 623 Comm: mkfs.ext4 Not tainted 4.19.0-rc8-00017-g8239bc6d3307-dirty #15
+[  497.116098] Hardware name: Generic DT based system
+[  497.119094] [<c0418f7c>] (unwind_backtrace) from [<c0410ca4>] (show_stack+0x20/0x24)
+[  497.123819] [<c0410ca4>] (show_stack) from [<c16bd540>] (dump_stack+0xbc/0xe8)
+[  497.128299] [<c16bd540>] (dump_stack) from [<c06cab74>] (kasan_report+0x248/0x390)
+[  497.132928] [<c06cab74>] (kasan_report) from [<c06c94e8>] (__asan_load4+0x78/0xb4)
+[  497.137530] [<c06c94e8>] (__asan_load4) from [<c06ddc24>] (zs_map_object+0xa4/0x2bc)
+[  497.142335] [<c06ddc24>] (zs_map_object) from [<bf0bbbd8>] (zram_bvec_rw.constprop.2+0x324/0x8e4 [zram])
+[  497.148294] [<bf0bbbd8>] (zram_bvec_rw.constprop.2 [zram]) from [<bf0bc3cc>] (zram_make_request+0x234/0x46c [zram])
+[  497.154653] [<bf0bc3cc>] (zram_make_request [zram]) from [<c09aff9c>] (generic_make_request+0x304/0x63c)
+[  497.160413] [<c09aff9c>] (generic_make_request) from [<c09b0320>] (submit_bio+0x4c/0x1c8)
+[  497.165379] [<c09b0320>] (submit_bio) from [<c0743570>] (submit_bh_wbc.constprop.15+0x238/0x26c)
+[  497.170775] [<c0743570>] (submit_bh_wbc.constprop.15) from [<c0746cf8>] (__block_write_full_page+0x524/0x76c)
+[  497.176776] [<c0746cf8>] (__block_write_full_page) from [<c07472c4>] (block_write_full_page+0x1bc/0x1d4)
+[  497.182549] [<c07472c4>] (block_write_full_page) from [<c0748eb4>] (blkdev_writepage+0x24/0x28)
+[  497.187849] [<c0748eb4>] (blkdev_writepage) from [<c064a780>] (__writepage+0x44/0x78)
+[  497.192633] [<c064a780>] (__writepage) from [<c064b50c>] (write_cache_pages+0x3b8/0x800)
+[  497.197616] [<c064b50c>] (write_cache_pages) from [<c064dd78>] (generic_writepages+0x74/0xa0)
+[  497.202807] [<c064dd78>] (generic_writepages) from [<c0748e64>] (blkdev_writepages+0x18/0x1c)
+[  497.208022] [<c0748e64>] (blkdev_writepages) from [<c064e890>] (do_writepages+0x68/0x134)
+[  497.213002] [<c064e890>] (do_writepages) from [<c06368a4>] (__filemap_fdatawrite_range+0xb0/0xf4)
+[  497.218447] [<c06368a4>] (__filemap_fdatawrite_range) from [<c0636b68>] (file_write_and_wait_range+0x64/0xd0)
+[  497.224416] [<c0636b68>] (file_write_and_wait_range) from [<c0747af8>] (blkdev_fsync+0x54/0x84)
+[  497.229749] [<c0747af8>] (blkdev_fsync) from [<c0739dac>] (vfs_fsync_range+0x70/0xd4)
+[  497.234549] [<c0739dac>] (vfs_fsync_range) from [<c0739e98>] (do_fsync+0x4c/0x80)
+[  497.239159] [<c0739e98>] (do_fsync) from [<c073a26c>] (sys_fsync+0x1c/0x20)
+[  497.243407] [<c073a26c>] (sys_fsync) from [<c0401000>] (ret_fast_syscall+0x0/0x2c)
 
->The memory hot-plug affinity in SRAT and KASLR are also available
->on legacy BIOS environment, so I need to get the patch useful
->for legacy BIOS as well, but I have no idea to add such things...
->If you have ideas, could you let me know?
+like in this ARM 32-bit (LPAE enabled), example.
 
-I have no idea. I will work on it, try to help figure out the BIOS issue.
+That occurs because, if not set, MAX_POSSIBLE_PHYSMEM_BITS will default
+to BITS_PER_LONG (32) in most cases, and, for PAE, _PFN_BITS will be
+wrong: which may cause obj variable to overflow if PFN is HIGHMEM and
+referencing any page above the 4GB watermark.
 
-Thanks,
-Chao Fan
+This commit exposes the BUG IF the architecture supports PAE AND does
+not explicitly set MAX_POSSIBLE_PHYSMEM_BITS to supported value.
 
->
->Probably I should have another idea, for example,
->add the SRAT parsing code, looks like you are adding to
->arch/x86/boot/compressed/acpitb.c, to arch/x86/mm/kaslr.c.
->
->Thanks,
->Masa
->
->> 
->> >+static void store_possible_addr(unsigned long long possible)
->> >+{
->> >+	struct setup_data *data;
->> >+
->> >+	data = (struct setup_data *)(unsigned long)boot_params->hdr.setup_data;
->> I suggest you add check:
->> 
->> 	if (!data) {
->> 		debug_putstr("No setup_data found.\n");
->> 		return;
->> 	}
->> 
->> >+	while (data) {
->> >+		if (data->type == SETUP_KASLR) {
->> >+			*(unsigned long long *)data->data = possible;
->> >+			return;
->> >+		}
->> >+		data = (struct setup_data *)(unsigned long)data->next;
->> >+	}
->> >+}
->> >+
->> > /*
->> >  * According to ACPI table, filter the immvoable memory regions
->> >  * and store them in immovable_mem[].
->> >@@ -319,6 +333,7 @@ void get_immovable_mem(void)
->> > 	struct acpi_subtable_header *table;
->> > 	struct acpi_srat_mem_affinity *ma;
->> > 	unsigned long table_end;
->> >+	unsigned long long possible_addr, max_possible_addr = 0;
->> > 	int i = 0;
->> >
->> > 	if (!cmdline_find_option_bool("movable_node") ||
->> >@@ -338,7 +353,12 @@ void get_immovable_mem(void)
->> > 		       sizeof(struct acpi_subtable_header) < table_end) {
->> > 		if (table->type == ACPI_SRAT_TYPE_MEMORY_AFFINITY) {
->> > 			ma = (struct acpi_srat_mem_affinity *)table;
->> >-			if (!(ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE)) {
->> >+
->> >+			if (ma->flags & ACPI_SRAT_MEM_HOT_PLUGGABLE) {
->> >+				possible_addr = ma->base_address + ma->length;
->> >+				if (possible_addr > max_possible_addr)
->> >+					max_possible_addr = possible_addr;
->> >+			} else {
->> > 				immovable_mem[i].start = ma->base_address;
->> > 				immovable_mem[i].size = ma->length;
->> > 				i++;
->> >@@ -351,4 +371,5 @@ void get_immovable_mem(void)
->> > 			((unsigned long)table + table->length);
->> > 	}
->> > 	num_immovable_mem = i;
->> >+	store_possible_addr(max_possible_addr);
->> > }
->> >diff --git a/arch/x86/boot/compressed/eboot.c b/arch/x86/boot/compressed/eboot.c
->> >index 1458b17..9b95fba 100644
->> >--- a/arch/x86/boot/compressed/eboot.c
->> >+++ b/arch/x86/boot/compressed/eboot.c
->> >@@ -192,6 +192,40 @@ static void setup_efi_pci(struct boot_params *params)
->> > 	efi_call_early(free_pool, pci_handle);
->> > }
->> >
->> >+#ifdef CONFIG_RANDOMIZE_MEMORY
->> >+static void setup_kaslr(struct boot_params *params)
->> >+{
->> >+	struct setup_data *kaslr_data = NULL;
->> >+	struct setup_data *data;
->> >+	unsigned long size;
->> >+	efi_status_t status;
->> >+
->> >+	size = sizeof(struct setup_data) + sizeof(unsigned long long);
->> >+
->> >+	status = efi_call_early(allocate_pool, EFI_LOADER_DATA,
->> >+			size, (void **)&kaslr_data);
->> >+	if (status != EFI_SUCCESS) {
->> >+		efi_printk(sys_table, "Failed to allocate memory for 'kaslr_data'\n");
->> >+		return;
->> >+	}
->> >+
->> >+	kaslr_data->type = SETUP_KASLR;
->> >+	kaslr_data->next = 0;
->> >+	kaslr_data->len = size;
->> >+
->> >+	data = (struct setup_data *)(unsigned long)params->hdr.setup_data;
->> >+	if (data)
->> >+		data->next = (unsigned long)kaslr_data;
->> Why just put the kaslr_data in data->next. You can't make sure
->> data->next was NULL.
->> >+	else {
->> If data is NULL, go to this else{}, so these two lines below work?
->> >+		while (data->next)
->> >+			data = (struct setup_data *)(unsigned long)data->next;
->> >+		data->next = (unsigned long)kaslr_data;
->> >+	}
->> If my understanding is not wrong, it should be:
->> 
->> 	data = (struct setup_data *)(unsigned long)params->hdr.setup_data;
->> 	if (!data)
->> 		params->hdr.setup_data = (unsigned long)kaslr_data;
->> 	else {
->> 		while (data->next)
->> 			data = (struct setup_data *)(unsigned long)data->next;
->> 		data->next = (unsigned long)kaslr_data;
->> 	}
->> 
->> If I misunderstand something, please tell me.
->> 
->> Thanks,
->> Chao Fan
->> 
->> 
->
->
+Link: https://bugs.linaro.org/show_bug.cgi?id=3765#c17
+Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
+---
+ mm/zsmalloc.c | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
 
+diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+index 9da65552e7ca..9c3ff8c2ccbc 100644
+--- a/mm/zsmalloc.c
++++ b/mm/zsmalloc.c
+@@ -119,6 +119,15 @@
+ #define OBJ_INDEX_BITS	(BITS_PER_LONG - _PFN_BITS - OBJ_TAG_BITS)
+ #define OBJ_INDEX_MASK	((_AC(1, UL) << OBJ_INDEX_BITS) - 1)
+ 
++/*
++ * When using PAE, the obj encoding might overflow if arch does
++ * not re-define MAX_PHYSMEM_BITS, since zsmalloc uses HIGHMEM.
++ * This checks for a future bad page access, when de-coding obj.
++ */
++#define OBJ_OVERFLOW(_pfn) \
++	(((unsigned long long) _pfn << (OBJ_INDEX_BITS + OBJ_TAG_BITS)) >= \
++	((_AC(1, ULL)) << MAX_POSSIBLE_PHYSMEM_BITS) ? 1 : 0)
++
+ #define FULLNESS_BITS	2
+ #define CLASS_BITS	8
+ #define ISOLATED_BITS	3
+@@ -871,9 +880,14 @@ static void obj_to_location(unsigned long obj, struct page **page,
+  */
+ static unsigned long location_to_obj(struct page *page, unsigned int obj_idx)
+ {
+-	unsigned long obj;
++	unsigned long obj, pfn;
++
++	pfn = page_to_pfn(page);
++
++	if (unlikely(OBJ_OVERFLOW(pfn)))
++		BUG();
+ 
+-	obj = page_to_pfn(page) << OBJ_INDEX_BITS;
++	obj = pfn << OBJ_INDEX_BITS;
+ 	obj |= obj_idx & OBJ_INDEX_MASK;
+ 	obj <<= OBJ_TAG_BITS;
+ 
+-- 
+2.19.1
 
