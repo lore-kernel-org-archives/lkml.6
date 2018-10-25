@@ -2,195 +2,183 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08B6DC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:02:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A7AC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:02:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9917620834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:02:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TOfmrMEv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9917620834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id B02142083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:02:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B02142083E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727179AbeJZGgv (ORCPT
+        id S1727475AbeJZGg7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 02:36:51 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43870 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725941AbeJZGgv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 02:36:51 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n10-v6so3925637pgv.10
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 15:02:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6Qz3blf9kx56VXsxZmbsfPREzyctFc7Vdd+3BA0nHYY=;
-        b=TOfmrMEvTdiQlIo/925WRtxDnV8D5JeN39VETCNffi0wJXhagrFUqkzMo2Wi1UbF6a
-         5B7zniHfQZGW0sCXD635uLkVN7BiZjpiBAMvowUx1b+K/kJJ+tPNJUliWIxYKW5JyxSY
-         8YkZcBeP3yBP9Tf1ZbhUN4X6UCrupQybfpFxy0Oh2TkNjwAMSU6/Xhpxk7OD04dUWBVW
-         HnCigLkQjTSd4DotT+2G5Q/sht02eyEUA043gvJ+bT7+rJePoWvQNhoX49Mz1bRdxOW2
-         FDrDixpCQHBejHD1KQEmqehfY5rpLMtweZ8Mplp2A2M+we0H9R/+Ft45wqVSOMb3KP71
-         qsZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6Qz3blf9kx56VXsxZmbsfPREzyctFc7Vdd+3BA0nHYY=;
-        b=RY68hVNxRjbnR6fRlgkv2FLbl/0VQd2fkfqPwcJuE0IgofFJVvn1aEpTgpBSyyKHgg
-         b4U4Xg6b+lD1HDExFSinTFjOvVDnQCWbVe1crI31WdJhikNrCdOb0q0P4ikLXLVOEfsJ
-         dq7RBlbRT90l9af8q30Ngb5HqIIbYVbz04EnTsdiYIlzmecMN7aNWi8IKzpQjoaAu/py
-         70hk6Je+G06IBZLGpSKrgTar/fm4+VPTarsqSu1vFk76dhfRkmlYnmCznHkyf1MddFVU
-         WHi8UzDmf+8HZPhxT95PeSllRAy3qTsIZbZe9zmZrSL08BRdEUEZL1Ig1J4wbtt7q3DE
-         KQMA==
-X-Gm-Message-State: AGRZ1gIEFZ5pMNq+mIRvjCwiJ698edbXk9I10pURokWGydPK+j194CJu
-        RiJ9OQbtmT68Q0W6m02Lnjr88B9fDcyT8jJirJLZLA==
-X-Google-Smtp-Source: AJdET5dK9Qqq/0aAG7V8DikmYxT1ph5x0WMg1BRwza/KinJxtLZB5x+k+IHYeZW83nOBHaeFk4EGDKKSsxK6Ywv7wyk=
-X-Received: by 2002:a65:4683:: with SMTP id h3mr818846pgr.225.1540504945393;
- Thu, 25 Oct 2018 15:02:25 -0700 (PDT)
+        Fri, 26 Oct 2018 02:36:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60334 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725941AbeJZGg6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 02:36:58 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AEC45B0A0;
+        Thu, 25 Oct 2018 22:02:31 +0000 (UTC)
+From:   NeilBrown <neil@brown.name>
+To:     Laura Abbott <labbott@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 26 Oct 2018 09:02:23 +1100
+Cc:     ksummit-discuss@lists.linuxfoundation.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Olof Johansson <olof@lixom.net>, Chris Mason <clm@fb.com>,
+        Mishi Choudhary <mishi@linux.com>
+Subject: Re: Call to Action Re: [PATCH 0/7] Code of Conduct: Fix some wording, and add an interpretation document
+In-Reply-To: <c6bf1877-6e29-50ec-ffa8-314ab35ec9ce@redhat.com>
+References: <20181020134908.GA32218@kroah.com> <87y3ar80ac.fsf@notabene.neil.brown.name> <c6bf1877-6e29-50ec-ffa8-314ab35ec9ce@redhat.com>
+Message-ID: <87d0rx65xs.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-References: <20180930205448.26205-1-natechancellor@gmail.com>
- <10b12992-3570-4646-374b-82cbd7276839@acm.org> <CAKwvOd=wgxB69dMxzMeH2edCn=TdQGPGkNVW1e=QHPTJtO9ZNw@mail.gmail.com>
- <1538503063.193396.6.camel@acm.org> <CAKwvOdmsNEexQL9R8rgcRcXTZButYM6YWwG8bhVWCoJ8bOqCrA@mail.gmail.com>
- <1538521591.193396.8.camel@acm.org> <20181025213144.GB24709@flashbox>
-In-Reply-To: <20181025213144.GB24709@flashbox>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Thu, 25 Oct 2018 15:02:13 -0700
-Message-ID: <CAKwvOdn=TvoGdFvgxX6TyXBXnhVLttriRrZEnzS6DjcjL64DPA@mail.gmail.com>
-Subject: Re: [PATCH] libosd: Remove ignored __weak attribute
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     bvanassche@acm.org, ooo@electrozaur.com,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 2:31 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> On Tue, Oct 02, 2018 at 04:06:31PM -0700, Bart Van Assche wrote:
-> > On Tue, 2018-10-02 at 15:33 -0700, Nick Desaulniers wrote:
-> > > On Tue, Oct 2, 2018 at 10:57 AM Bart Van Assche <bvanassche@acm.org> wrote:
-> > > > Explicitly initialized global and static variables end up in the .data
-> > > > section and need space in that section.
-> > >
-> > > Unless the initial value is zero.
-> > > https://godbolt.org/z/curRoO
-> > >
-> > > So you don't wind up with an increase in binary size simply by having
-> > > global variables initialized to zero, right?  Instead the kernel knows
-> > > to create a zero'd out mapping for bss.  You don't need a run of zeros
-> > > in the binary.
-> > >
-> > > So I disagree when you said earlier "zero initializers should be left
-> > > out to minimize the size of object files." I assert they don't affect
-> > > the size of the binary.
-> > >
-> > > If you had many global variables all initialized to zero, why would
-> > > you encode that many zeros in a binary, when you can just set a size
-> > > on the bss section and have the kernel create the appropriate sized
-> > > and zero'd mapping?
-> > >
-> > > > That is not the case if the
-> > > > initializer is left out and these variables end up in the .bss section.
-> > >
-> > > From my above link, gcc will put globals without initializers into "common."
-> >
-> > No matter what particular compiler versions do with explicit initialization
-> > to zero, the preferred kernel coding style is to leave out such explicit
-> > initialization.
-> >
-> > Bart.
->
-> Hi Bart,
->
-> I'm sorry if I didn't follow the conclusion of this conversation properly
-> but this is the below diff you were initially looking for, correct?
->
-> If so, Boaz and Nick, do you have any objections if this is v2? I'd like
-> to get this patch accepted so the warning can be fixed for everyone.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Hi Nathan,
-Thanks for following up on this.  Bart's note about the one definition
-rule is important.  If you define the variable static in two different
-translation units, you've suddenly created two different copies
-accessible only to their respective translation units.  So it should
-be declared extern in one source file (but not defined/initialized),
-and defined (non-static) in another.  See below for example.
+On Wed, Oct 24 2018, Laura Abbott wrote:
 
+> On 10/21/2018 02:20 PM, NeilBrown wrote:
+>
+> <snip>
+>
+>> I call on the community to consider what *does* need to be said, about
+>> conduct, to people outside the community and who have recently joined.
+>> What is the document that you would have liked to have read as you were
+>> starting out?  It is all too long ago for me to remember clearly, and so
+>> much has changed.
+>>=20
+>
+> I joined much more recently than many and what I would have wanted
+> then is an interesting question. I probably would _not_ have wanted
+> a code of conduct when I first started working in open source. I also
+> said things in my younger years I regret and probably wouldn't have
+> said if I was held to a higher standard of conduct. Younger me frequently
+> put up with behavior I wouldn't tolerate today. Younger me also
+> greatly benefited from the experience of other kernel developers
+> giving me firm feedback in a helpful way and saying no to bad approaches.
+> I don't believe I would have continued if I hadn't been given that
+> feedback in a useful way.
+
+Thanks for this thoughtful reply.  You seem to make two key points.
+
+Firstly, you repeatedly value feedback - both positive and negative.  I
+agree.  One of the worst things that can happen when I post a patch, is
+that it get ignored (no feedback).
+This gels with what Linus said recently, as reported in
+ https://lwn.net/Articles/769117/
+
+     To that end, he asked the assembled group to watch his emails and
+     let him know if things start to get close to the edge.
+
+He explicitly asked for feedback, giving people permission to speak up
+when they thought he was out of line.  I personally think this is a
+very significant statement.  Not for what it tells those maintainers
+(who probably generally knew that already) so much as for what it tells
+the broader community who don't know Linus so well: Feedback about
+behaviour is explicitly welcome.
+
+You go on to say, below, that a private e-mail can resolve things.  I
+don't actually think that a private e-mail is such a good idea because
+even though it might resolve things, it doesn't let the broader
+community know they are resolved, and doesn't set any example of how
+resolution works.  Giving feedback in public is hard, but if there was a
+clearly established mechanism, that might make it easier.  I wouldn't
+choose the wording you provided as it focuses on "you" rather than "me",
+but that sort of gentleness is definitely appropriate.
+
+Your second point is about more serious issues and particularly how they
+will be handled.  As I have said elsewhere, and will not belabor here,
+I think this is upside down: we can and should give power to the weak,
+rather than trying to curb the power of the strong.
+
+Extrapolating from the "feedback" point, I'm imagining having a document
+which starts:
+
+  In the Linux kernel community we try to be helpful and not hurtful.
+  The best way to understand how this applies in practice is to give,
+  receive, and observe feedback.
+
+  If someone says/does/writes something that you think is helpful, consider
+  saying so: "Thank you, I found that to be helpful".
+  - You can your own words if you wish.
+  - You might like to add your voice to others if the situation warrants
+    it.
+  If someone says/does/writes something that you think is hurtful
+  (whether to yourself or someone else), please consider saying
+  something:
+  "This seems hurtful to me"
+  - It is best to use exactly this wording.  In particular, don't
+    embellish or explain unless asked.
+  - Normally just one voice is sufficient.  If an individual repeats
+    the hurtful behavior, one new voice per instance is sufficient.
+
+
+It might then continue with some specifics, though there seems to be
+some debate on whether such specifics are a good idea.  I don't have a
+firm opinion.
+
+Thanks a lot,
+NeilBrown
+
+=20=20
+=20=20
+
+>
+> Today, I think the code of conduct is a very important addition to
+> the community. It's a stronger assertion that the kernel community
+> is committed to raising the bar for behavior. I have no concern about
+> patch review or quality dropping because most maintainers demonstrate
+> every day that they can give effective feedback. We're all going to
+> screw that up sometimes and the Code of Conduct reminds us to do our
+> best. Most issues that arise can be resolved with a private e-mail
+> going "you might want to rethink your wording there."
+>
+> What the Code of Conduct also provides is confidence that more serious
+> community issues such as harassment not related to patch
+> review can be handled. It spells out certain behaviors that won't
+> be tolerated and explains how those problems will be dealt with.
+> Will those problems actually be handled appropriately when the time
+> comes? I can't actually say for sure, but the kernel community works
+> on trust so I guess I have to trust that it will. I really hope I never
+> have to report harassment but I'm glad there's a process in place.
 >
 > Thanks,
-> Nathan
->
-> ================================================================================
->
-> diff --git a/drivers/scsi/osd/osd_initiator.c b/drivers/scsi/osd/osd_initiator.c
-> index e19fa883376f..4250f739beb3 100644
-> --- a/drivers/scsi/osd/osd_initiator.c
-> +++ b/drivers/scsi/osd/osd_initiator.c
-> @@ -58,6 +58,8 @@
->
->  enum { OSD_REQ_RETRIES = 1 };
->
-> +static const struct osd_obj_id osd_root_object;
+> Laura
 
-extern const struct osd_obj_id osd_root_object;
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +
->  MODULE_AUTHOR("Boaz Harrosh <ooo@electrozaur.com>");
->  MODULE_DESCRIPTION("open-osd initiator library libosd.ko");
->  MODULE_LICENSE("GPL");
-> diff --git a/drivers/scsi/osd/osd_uld.c b/drivers/scsi/osd/osd_uld.c
-> index eaf36ccf58db..770c758baaa9 100644
-> --- a/drivers/scsi/osd/osd_uld.c
-> +++ b/drivers/scsi/osd/osd_uld.c
-> @@ -73,6 +73,7 @@
->
->  static const char osd_name[] = "osd";
->  static const char *osd_version_string = "open-osd 0.2.1";
-> +static const struct osd_obj_id osd_root_object;
+-----BEGIN PGP SIGNATURE-----
 
-const struct osd_obj_id osd_root_object;
-
->
->  MODULE_AUTHOR("Boaz Harrosh <ooo@electrozaur.com>");
->  MODULE_DESCRIPTION("open-osd Upper-Layer-Driver osd.ko");
-> diff --git a/include/scsi/osd_types.h b/include/scsi/osd_types.h
-> index 48e8a165e136..eb31357ec8b3 100644
-> --- a/include/scsi/osd_types.h
-> +++ b/include/scsi/osd_types.h
-> @@ -28,8 +28,6 @@ struct osd_obj_id {
->         osd_id id;
->  };
->
-> -static const struct __weak osd_obj_id osd_root_object = {0, 0};
-> -
-
-LGTM
-
->  struct osd_attr {
->         u32 attr_page;
->         u32 attr_id;
-
-That way the linker knows there's only one instance of this struct in
-memory, and that the two different translation units are referring to
-the same instance.  The other maintainers may have a preference which
-translation you define osd_root_object in (I arbitrarily chose
-drivers/scsi/osd/osd_uld.c), but if they don't have additional
-feedback after some amount of time, I'd assume they're ok with the
-above suggestion.  What do you think?
-
--- 
-Thanks,
-~Nick Desaulniers
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlvSPW8ACgkQOeye3VZi
+gblvnA/9FikE+oTW2bq06zx5WWqim9d06F1SgjFipoO1hBl2pe7kf7fHtA5bn536
+30iNqFlEsFVdBelLVDoPkwdWI96qEXEjTVFsRIgrcO9ZhPb4MYGNfKRp6dwzCOMz
+PWVVMayvgmcGcSqW01osuqpCTb/KxBFiIYXJ1u4K/zW7QjknFknQdO8FATl+mvFO
+KkMIIfihdC1KICZccmGN/wTfMiDBkBr4RXQJqunKawG3Kqr4JD/ni4sUIIeLQYmv
+qFxVQJgR2quO0b+dM0MbTfp8bFcTM5sRYgmx8XQDeLY8IDqWtZgnFHJa7gk4bCnw
+zJLE14MSBBQp/C4mSiGR8Fc8zFSkf/ChoYZNgeijlKNV1iht1B6yn5TbtqkGg0iN
+2/4Xp2lPWrJUARXGOCoNHVQ+UAyqmJ55xbANyKmmpVbUpqTJInMQEVOjR4LFbI0Q
+lV0H9eseLaQ9aBu2rv79/nexMSCYWiTbUHD9TVd1myHLockn/gNYLXSn8iAxlH5m
+4ATfAr7Ad5NOAyKxYL4DZ4evORgIpYxvcaAoPGztQJQQgljCLlqeYJOpTxSk5VYS
+2tWnuvIjDUmxMOuCw2Aqn6pv/ropuuoGvngC+BwyUwBtkGS6rFFnWxMmNIzLGO79
+fFV7bO6JlZlMxB5Dw1AyjFhouLFXURgeX2uo3RCtb8imt2QQxTQ=
+=WzY7
+-----END PGP SIGNATURE-----
+--=-=-=--
