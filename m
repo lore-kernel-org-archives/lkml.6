@@ -7,67 +7,66 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4049C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:55:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B208C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:55:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 997E62082E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:55:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB06D2082E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:55:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QGjHI+lm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 997E62082E
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bLAd60ld"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB06D2082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727398AbeJYT1c (ORCPT
+        id S1727418AbeJYT1j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 15:27:32 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:55985 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727313AbeJYT1c (ORCPT
+        Thu, 25 Oct 2018 15:27:39 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:53371 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727224AbeJYT1j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 15:27:32 -0400
-Received: by mail-it1-f194.google.com with SMTP id c23-v6so1092475itd.5
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 03:55:18 -0700 (PDT)
+        Thu, 25 Oct 2018 15:27:39 -0400
+Received: by mail-it1-f193.google.com with SMTP id q70-v6so1101833itb.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 03:55:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=Fvo08d12bCoZ7G4p669cOQobeYejwLsNWhgfABG3FJA=;
-        b=QGjHI+lmb8d0lwmdS8WckRObeO9X3BphURFzbX46OXCu0Jag3mI8a4gOaojT7ouNeO
-         fbNknaFpIe8sRvp91aNjYLYOnL1a9YCIAURxApWQ6xPaVoozOagU1Ey3chfQ0UynYU27
-         GBAzRRYdBaKMjaL7hhCeoKqWlexaer/7pXmAk=
+        bh=+9efLu04qrLs+69mBJH3OSOAGyBdESHIF60yhNhNKi4=;
+        b=bLAd60ldFX+MhDXr3FbPdFGXT+F4D5LX0RlPdutHgTrd4BtmivWkBvsjeFRVb/e8dE
+         v0AwX5/sq6GYFGSLqpgjFBEc0XEMJr24qBSJmPE+H039VCmmo6D0i6Ehx5S7osjxzH0h
+         we6aRC9h4J7sWK2CATpuyEWZxItPhTvcduW6k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=Fvo08d12bCoZ7G4p669cOQobeYejwLsNWhgfABG3FJA=;
-        b=bWLt9HfVqchJqP1YgMlNsq4y4G1iRo9vXTxHy1FSR2s7o8tZEtQoF7NaxZZGvv2AxE
-         Ku41xtQCy0Pq5SeWH7Z6UPLbLlkIst/CqnNTMHlBPGhvKjuHS/oM+W2vJ3zc7h9J7zuB
-         zk//fPwJrqfPuFdVgQzuKffez5QQvWu0PoOPAP3Ee4tNScxoiDu6Bixn3hsmnj/RfH+Y
-         MWuCy/+JeZfZjqwTY8Q55QRU2gxCAbY4DGG9kMujiMDNyj2+/t0sDwSdL+3P1TC/AjfS
-         XHVih2evV78YgDeEvV7nZ6o+vF6tywHitSLmZW+WnQmwN7tvwy8GJGX6EGlLaB0gaq4a
-         IiDA==
-X-Gm-Message-State: AGRZ1gK6qdVCD5WNC3bbNCeg4H4DpQySUlcEAomV400gYDkwbSMggRa+
-        4H8F3Nip7aShcdYDSwf7TxIHVII2J47upf7qG2LoPA==
-X-Google-Smtp-Source: AJdET5c8N7NHtZZygJGgAFBSN8Ixuc9dRg6PHU7n3naCO2B8uNuu+qmctWputFg3GGYOgtW+yDJMwxEqRaXYrmTdzFU=
-X-Received: by 2002:a24:6b4d:: with SMTP id v74-v6mr586394itc.26.1540464917813;
- Thu, 25 Oct 2018 03:55:17 -0700 (PDT)
+        bh=+9efLu04qrLs+69mBJH3OSOAGyBdESHIF60yhNhNKi4=;
+        b=lGziJXySn05fXJjnMNyNqpTyyNHCZTA40kUpuQKSmxh7OQCeLE25OcfXw70ftZBbOi
+         jj05diHiphXznUD/19pr3Gy/r71Zsuu5/jdbImEzTyilu1bcJgTyCeeFRKkPVrdjQF+Z
+         VK51YJuBSksvi8Za5yStO5Iocb14FdkFIVI+3MI/F32Owdf9Qs8MY8AtSqz5N6KiUJg3
+         BOmywqmwsn74FIqNb4GQaQv988TMzWM/4B5Q9QRuLFbzFNBk12NtK4RWokBwwOVW7ZNI
+         dyrIxVEWfeFQDdjtsTqNIiHShhhLsE9peSNGoOPRrk+eIMig91COrzwPYZBwfG35NjDC
+         vw+Q==
+X-Gm-Message-State: AGRZ1gKpmcjupzt7qaaqArrIpNAPwVm33sBEuF6LnpK66SYdY0vSuUa7
+        +x8PXPlGxCymxQnxrCOm5U6sf4uDqKWaoew1Db1O3A==
+X-Google-Smtp-Source: AJdET5fbBkM8HZOafUfyQd0+77zK9P1d33aOogHD+4mq+T5cRf6qh9Hu29Y2aPtySbdXuA2QmameJsAsBlS/65mVTlQ=
+X-Received: by 2002:a02:2b29:: with SMTP id h41-v6mr667503jaa.12.1540464924806;
+ Thu, 25 Oct 2018 03:55:24 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Thu, 25 Oct 2018 03:54:37
+Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Thu, 25 Oct 2018 03:54:44
  -0700 (PDT)
-In-Reply-To: <e09b2960614c70e38347d52bd4093ab93af1da47.1540446493.git.viresh.kumar@linaro.org>
-References: <cover.1540446493.git.viresh.kumar@linaro.org> <e09b2960614c70e38347d52bd4093ab93af1da47.1540446493.git.viresh.kumar@linaro.org>
+In-Reply-To: <6a9919dba23fe0d28bfb3a72aef980ec5c3c539b.1540446493.git.viresh.kumar@linaro.org>
+References: <cover.1540446493.git.viresh.kumar@linaro.org> <6a9919dba23fe0d28bfb3a72aef980ec5c3c539b.1540446493.git.viresh.kumar@linaro.org>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 25 Oct 2018 12:54:37 +0200
-Message-ID: <CAPDyKFqrbMRjpf8Siy3-43q0Jd+mY1jo2N+uRaoDeaq9Q-5T2w@mail.gmail.com>
-Subject: Re: [PATCH V3 06/10] PM / Domains: Add genpd_opp_to_performance_state()
+Date:   Thu, 25 Oct 2018 12:54:44 +0200
+Message-ID: <CAPDyKFoJ1uM-bvF5B3VA+OHKO6SzDXGde=0a_-DLjxXjiY0kfw@mail.gmail.com>
+Subject: Re: [PATCH V3 07/10] OPP: Add dev_pm_opp_{set|put}_genpd_virt_dev() helper
 To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Len Brown <len.brown@intel.com>,
+Cc:     Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Linux PM <linux-pm@vger.kernel.org>,
         Vincent Guittot <vincent.guittot@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>, Nishanth Menon <nm@ti.com>,
         Niklas Cassel <niklas.cassel@linaro.org>,
         Rajendra Nayak <rnayak@codeaurora.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
@@ -78,13 +77,37 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 25 October 2018 at 07:52, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> The OPP core currently stores the performance state in the consumer
-> device's OPP table, but that is going to change going forward and
-> performance state will rather be set directly in the genpd's OPP table.
+> Multiple generic power domains for a consumer device are supported with
+> the help of virtual devices, which are created for each consumer device
+> - genpd pair. These are the device structures which are attached to the
+> power domain and are required by the OPP core to set the performance
+> state of the genpd.
 >
-> For that we need to get the performance state for genpd's device
-> structure (genpd->dev) instead of the consumer device's structure. Add a
-> new helper to do that.
+> The helpers added by this commit are required to be called once for each
+> of these virtual devices. These are required only if multiple domains
+> are available for a device, otherwise the actual device structure will
+> be used instead by the OPP core.
+>
+> The new helpers also support the complex cases where the consumer device
+> wouldn't always require all the domains. For example, a camera may
+> require only one power domain during normal operations but two during
+> high resolution operations. The consumer driver can call
+> dev_pm_opp_put_genpd_virt_dev(high_resolution_genpd_virt_dev) if it is
+> currently operating in the normal mode and doesn't have any performance
+> requirements from the genpd which manages high resolution power
+> requirements. The consumer driver can later call
+> dev_pm_opp_set_genpd_virt_dev(high_resolution_genpd_virt_dev) once it
+> switches back to the high resolution mode.
+>
+> The new helpers differ from other OPP set/put helpers as the new ones
+> can be called with OPPs initialized for the table as we may need to call
+> them on the fly because of the complex case explained above. For this
+> reason it is possible that the genpd virt_dev structure may be used in
+> parallel while the new helpers are running and a new mutex is added to
+> protect against that. We didn't use the existing opp_table->lock mutex
+> as that is widely used in the OPP core and we will need this lock in the
+> dev_pm_opp_set_rate() helper while changing OPP and we need to make sure
+> there is not much contention while doing that as that's the hotpath.
 >
 > Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 
@@ -94,80 +117,227 @@ Kind regards
 Uffe
 
 > ---
->  drivers/base/power/domain.c | 32 ++++++++++++++++++++++++++++++++
->  include/linux/pm_domain.h   |  9 +++++++++
->  2 files changed, 41 insertions(+)
+>  drivers/opp/core.c     | 88 ++++++++++++++++++++++++++++++++++++++++++
+>  drivers/opp/of.c       | 16 +++++++-
+>  drivers/opp/opp.h      |  4 ++
+>  include/linux/pm_opp.h |  8 ++++
+>  4 files changed, 115 insertions(+), 1 deletion(-)
 >
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index fe9b0527b161..7be8c94c6b7f 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -2520,6 +2520,38 @@ int of_genpd_parse_idle_states(struct device_node *dn,
+> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
+> index 02a69a62dac8..cef2ccda355d 100644
+> --- a/drivers/opp/core.c
+> +++ b/drivers/opp/core.c
+> @@ -823,6 +823,7 @@ static struct opp_table *_allocate_opp_table(struct device *dev, int index)
+>                 return NULL;
+>
+>         mutex_init(&opp_table->lock);
+> +       mutex_init(&opp_table->genpd_virt_dev_lock);
+>         INIT_LIST_HEAD(&opp_table->dev_list);
+>
+>         opp_dev = _add_opp_dev(dev, opp_table);
+> @@ -920,6 +921,7 @@ static void _opp_table_kref_release(struct kref *kref)
+>                 _remove_opp_dev(opp_dev, opp_table);
+>         }
+>
+> +       mutex_destroy(&opp_table->genpd_virt_dev_lock);
+>         mutex_destroy(&opp_table->lock);
+>         list_del(&opp_table->node);
+>         kfree(opp_table);
+> @@ -1602,6 +1604,92 @@ void dev_pm_opp_unregister_set_opp_helper(struct opp_table *opp_table)
 >  }
->  EXPORT_SYMBOL_GPL(of_genpd_parse_idle_states);
+>  EXPORT_SYMBOL_GPL(dev_pm_opp_unregister_set_opp_helper);
 >
 > +/**
-> + * pm_genpd_opp_to_performance_state - Gets performance state of the genpd from its OPP node.
+> + * dev_pm_opp_set_genpd_virt_dev - Set virtual genpd device for an index
+> + * @dev: Consumer device for which the genpd device is getting set.
+> + * @virt_dev: virtual genpd device.
+> + * @index: index.
 > + *
-> + * @genpd_dev: Genpd's device for which the performance-state needs to be found.
-> + * @opp: struct dev_pm_opp of the OPP for which we need to find performance
-> + *     state.
+> + * Multiple generic power domains for a device are supported with the help of
+> + * virtual genpd devices, which are created for each consumer device - genpd
+> + * pair. These are the device structures which are attached to the power domain
+> + * and are required by the OPP core to set the performance state of the genpd.
 > + *
-> + * Returns performance state encoded in the OPP of the genpd. This calls
-> + * platform specific genpd->opp_to_performance_state() callback to translate
-> + * power domain OPP to performance state.
+> + * This helper will normally be called by the consumer driver of the device
+> + * "dev", as only that has details of the genpd devices.
 > + *
-> + * Returns performance state on success and 0 on failure.
+> + * This helper needs to be called once for each of those virtual devices, but
+> + * only if multiple domains are available for a device. Otherwise the original
+> + * device structure will be used instead by the OPP core.
 > + */
-> +unsigned int pm_genpd_opp_to_performance_state(struct device *genpd_dev,
-> +                                              struct dev_pm_opp *opp)
+> +struct opp_table *dev_pm_opp_set_genpd_virt_dev(struct device *dev,
+> +                                               struct device *virt_dev,
+> +                                               int index)
 > +{
-> +       struct generic_pm_domain *genpd = NULL;
-> +       int state;
+> +       struct opp_table *opp_table;
 > +
-> +       genpd = container_of(genpd_dev, struct generic_pm_domain, dev);
+> +       opp_table = dev_pm_opp_get_opp_table(dev);
+> +       if (!opp_table)
+> +               return ERR_PTR(-ENOMEM);
 > +
-> +       if (unlikely(!genpd->opp_to_performance_state))
-> +               return 0;
+> +       mutex_lock(&opp_table->genpd_virt_dev_lock);
 > +
-> +       genpd_lock(genpd);
-> +       state = genpd->opp_to_performance_state(genpd, opp);
-> +       genpd_unlock(genpd);
+> +       if (unlikely(!opp_table->genpd_virt_devs ||
+> +                    index >= opp_table->required_opp_count ||
+> +                    opp_table->genpd_virt_devs[index])) {
 > +
-> +       return state;
+> +               dev_err(dev, "Invalid request to set required device\n");
+> +               dev_pm_opp_put_opp_table(opp_table);
+> +               mutex_unlock(&opp_table->genpd_virt_dev_lock);
+> +
+> +               return ERR_PTR(-EINVAL);
+> +       }
+> +
+> +       opp_table->genpd_virt_devs[index] = virt_dev;
+> +       mutex_unlock(&opp_table->genpd_virt_dev_lock);
+> +
+> +       return opp_table;
 > +}
-> +EXPORT_SYMBOL_GPL(pm_genpd_opp_to_performance_state);
+> +
+> +/**
+> + * dev_pm_opp_put_genpd_virt_dev() - Releases resources blocked for genpd device.
+> + * @opp_table: OPP table returned by dev_pm_opp_set_genpd_virt_dev().
+> + * @virt_dev: virtual genpd device.
+> + *
+> + * This releases the resource previously acquired with a call to
+> + * dev_pm_opp_set_genpd_virt_dev(). The consumer driver shall call this helper
+> + * if it doesn't want OPP core to update performance state of a power domain
+> + * anymore.
+> + */
+> +void dev_pm_opp_put_genpd_virt_dev(struct opp_table *opp_table,
+> +                                  struct device *virt_dev)
+> +{
+> +       int i;
+> +
+> +       /*
+> +        * Acquire genpd_virt_dev_lock to make sure virt_dev isn't getting
+> +        * used in parallel.
+> +        */
+> +       mutex_lock(&opp_table->genpd_virt_dev_lock);
+> +
+> +       for (i = 0; i < opp_table->required_opp_count; i++) {
+> +               if (opp_table->genpd_virt_devs[i] != virt_dev)
+> +                       continue;
+> +
+> +               opp_table->genpd_virt_devs[i] = NULL;
+> +               dev_pm_opp_put_opp_table(opp_table);
+> +
+> +               /* Drop the vote */
+> +               dev_pm_genpd_set_performance_state(virt_dev, 0);
+> +               break;
+> +       }
+> +
+> +       mutex_unlock(&opp_table->genpd_virt_dev_lock);
+> +
+> +       if (unlikely(i == opp_table->required_opp_count))
+> +               dev_err(virt_dev, "Failed to find required device entry\n");
+> +}
 > +
 >  /**
->   * of_genpd_opp_to_performance_state- Gets performance state of device's
->   * power domain corresponding to a DT node's "required-opps" property.
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index 3b5d7280e52e..4f803f934308 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -258,6 +258,8 @@ int of_genpd_add_subdomain(struct of_phandle_args *parent,
->  struct generic_pm_domain *of_genpd_remove_last(struct device_node *np);
->  int of_genpd_parse_idle_states(struct device_node *dn,
->                                struct genpd_power_state **states, int *n);
-> +unsigned int pm_genpd_opp_to_performance_state(struct device *genpd_dev,
-> +                                              struct dev_pm_opp *opp);
->  unsigned int of_genpd_opp_to_performance_state(struct device *dev,
->                                 struct device_node *np);
+>   * dev_pm_opp_add()  - Add an OPP table from a table definitions
+>   * @dev:       device for which we do this operation
+> diff --git a/drivers/opp/of.c b/drivers/opp/of.c
+> index ffaeefef98ce..71aef28953c2 100644
+> --- a/drivers/opp/of.c
+> +++ b/drivers/opp/of.c
+> @@ -134,6 +134,7 @@ static struct opp_table *_find_table_of_opp_np(struct device_node *opp_np)
+>  static void _opp_table_free_required_tables(struct opp_table *opp_table)
+>  {
+>         struct opp_table **required_opp_tables = opp_table->required_opp_tables;
+> +       struct device **genpd_virt_devs = opp_table->genpd_virt_devs;
+>         int i;
 >
-> @@ -299,6 +301,13 @@ static inline int of_genpd_parse_idle_states(struct device_node *dn,
->         return -ENODEV;
+>         if (!required_opp_tables)
+> @@ -147,8 +148,10 @@ static void _opp_table_free_required_tables(struct opp_table *opp_table)
+>         }
+>
+>         kfree(required_opp_tables);
+> +       kfree(genpd_virt_devs);
+>
+>         opp_table->required_opp_count = 0;
+> +       opp_table->genpd_virt_devs = NULL;
+>         opp_table->required_opp_tables = NULL;
 >  }
 >
-> +static inline unsigned int
-> +pm_genpd_opp_to_performance_state(struct device *genpd_dev,
-> +                                 struct dev_pm_opp *opp)
+> @@ -161,6 +164,7 @@ static void _opp_table_alloc_required_tables(struct opp_table *opp_table,
+>                                              struct device_node *opp_np)
+>  {
+>         struct opp_table **required_opp_tables;
+> +       struct device **genpd_virt_devs = NULL;
+>         struct device_node *required_np, *np;
+>         int count, i;
+>
+> @@ -175,11 +179,21 @@ static void _opp_table_alloc_required_tables(struct opp_table *opp_table,
+>         if (!count)
+>                 goto put_np;
+>
+> +       if (count > 1) {
+> +               genpd_virt_devs = kcalloc(count, sizeof(*genpd_virt_devs),
+> +                                       GFP_KERNEL);
+> +               if (!genpd_virt_devs)
+> +                       goto put_np;
+> +       }
+> +
+>         required_opp_tables = kcalloc(count, sizeof(*required_opp_tables),
+>                                       GFP_KERNEL);
+> -       if (!required_opp_tables)
+> +       if (!required_opp_tables) {
+> +               kfree(genpd_virt_devs);
+>                 goto put_np;
+> +       }
+>
+> +       opp_table->genpd_virt_devs = genpd_virt_devs;
+>         opp_table->required_opp_tables = required_opp_tables;
+>         opp_table->required_opp_count = count;
+>
+> diff --git a/drivers/opp/opp.h b/drivers/opp/opp.h
+> index 24b340ad18d1..8aec38792cae 100644
+> --- a/drivers/opp/opp.h
+> +++ b/drivers/opp/opp.h
+> @@ -135,6 +135,8 @@ enum opp_table_access {
+>   * @parsed_static_opps: True if OPPs are initialized from DT.
+>   * @shared_opp: OPP is shared between multiple devices.
+>   * @suspend_opp: Pointer to OPP to be used during device suspend.
+> + * @genpd_virt_dev_lock: Mutex protecting the genpd virtual device pointers.
+> + * @genpd_virt_devs: List of virtual devices for multiple genpd support.
+>   * @required_opp_tables: List of device OPP tables that are required by OPPs in
+>   *             this table.
+>   * @required_opp_count: Number of required devices.
+> @@ -177,6 +179,8 @@ struct opp_table {
+>         enum opp_table_access shared_opp;
+>         struct dev_pm_opp *suspend_opp;
+>
+> +       struct mutex genpd_virt_dev_lock;
+> +       struct device **genpd_virt_devs;
+>         struct opp_table **required_opp_tables;
+>         unsigned int required_opp_count;
+>
+> diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
+> index 5d399eeef172..8fed222c089b 100644
+> --- a/include/linux/pm_opp.h
+> +++ b/include/linux/pm_opp.h
+> @@ -126,6 +126,8 @@ struct opp_table *dev_pm_opp_set_clkname(struct device *dev, const char * name);
+>  void dev_pm_opp_put_clkname(struct opp_table *opp_table);
+>  struct opp_table *dev_pm_opp_register_set_opp_helper(struct device *dev, int (*set_opp)(struct dev_pm_set_opp_data *data));
+>  void dev_pm_opp_unregister_set_opp_helper(struct opp_table *opp_table);
+> +struct opp_table *dev_pm_opp_set_genpd_virt_dev(struct device *dev, struct device *virt_dev, int index);
+> +void dev_pm_opp_put_genpd_virt_dev(struct opp_table *opp_table, struct device *virt_dev);
+>  int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq);
+>  int dev_pm_opp_set_sharing_cpus(struct device *cpu_dev, const struct cpumask *cpumask);
+>  int dev_pm_opp_get_sharing_cpus(struct device *cpu_dev, struct cpumask *cpumask);
+> @@ -272,6 +274,12 @@ static inline struct opp_table *dev_pm_opp_set_clkname(struct device *dev, const
+>
+>  static inline void dev_pm_opp_put_clkname(struct opp_table *opp_table) {}
+>
+> +static inline struct opp_table *dev_pm_opp_set_genpd_virt_dev(struct device *dev, struct device *virt_dev, int index)
 > +{
-> +       return 0;
+> +       return ERR_PTR(-ENOTSUPP);
 > +}
 > +
->  static inline unsigned int
->  of_genpd_opp_to_performance_state(struct device *dev,
->                                   struct device_node *np)
+> +static inline void dev_pm_opp_put_genpd_virt_dev(struct opp_table *opp_table, struct device *virt_dev) {}
+>  static inline int dev_pm_opp_set_rate(struct device *dev, unsigned long target_freq)
+>  {
+>         return -ENOTSUPP;
 > --
 > 2.19.1.568.g152ad8e3369a
 >
