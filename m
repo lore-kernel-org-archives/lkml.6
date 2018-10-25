@@ -2,172 +2,123 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10253C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:29:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59C16ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:29:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFD782083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:29:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FAD62083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:29:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1P52DEIY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFD782083E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jzQN1b2B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FAD62083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730466AbeJYWwU (ORCPT
+        id S1730654AbeJYXCp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:52:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34276 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730452AbeJYWwT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:52:19 -0400
-Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7684A20870;
-        Thu, 25 Oct 2018 14:19:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477161;
-        bh=QkC3JftL/YMbJwdCjY4pzA5uWrlIj+HhvnsMLuLOsFQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1P52DEIYGLo53R6tQfQaCyIDIn+OV/grPh6QocMOr0opdk1rmhz/GmcwNoUMcCTBW
-         XRCDcy2ZR+jfK6EG8rj9E7CFwniJpXJaXScZH2UQnAkvdXXoCMlmD4i9CpK01/46vv
-         JLtgt47gNncn7WGUIr/NfzUiU3HCwhTTPO1XfSO0=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Peter Chen <peter.chen@freescale.com>, Felipe Balbi <balbi@ti.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 16/98] usb: gadget: f_uac1: access freed memory at f_audio_free_inst
-Date:   Thu, 25 Oct 2018 10:17:31 -0400
-Message-Id: <20181025141853.214051-16-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
-References: <20181025141853.214051-1-sashal@kernel.org>
+        Thu, 25 Oct 2018 19:02:45 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:40124 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727501AbeJYXCp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 19:02:45 -0400
+Received: by mail-wm1-f66.google.com with SMTP id b203-v6so1746130wme.5;
+        Thu, 25 Oct 2018 07:29:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=dimqwly2VbTS9LWCPKDZJRS2Dz/xOSE+EtdDGpWFtrQ=;
+        b=jzQN1b2BBckaRpljTs5dAd2LEZdd5k6LjrvU9WnMmQKuGpFYkikR4MZjOByG2EH0Q0
+         mvTHHMnpR/CXVkgp+yUkUl/7x5dXTW4VolTbcr6e4KvIaW9WnYA+jVhTv0RyZK/JhvPW
+         P4tF2eZftx7qkTxJ0o97kjR344RmBnPOtV6Uon90i0wr24ZA0Gx4Acx2DqVRNvdhcS1T
+         IYKnKcaK5dnRaGCrcZr8USxMLGa2U1p7rb3L3Q0atXroTJsH+DCMUuPnXUyFeZmFZPkA
+         DuC1geXMUGg7YlCnx4KpP2K8BwCtv0wWPUjYnzp9yPJTyac0avm1hgLMQ49xFkGW/6VH
+         e/RQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dimqwly2VbTS9LWCPKDZJRS2Dz/xOSE+EtdDGpWFtrQ=;
+        b=MxEv5zzWxqyc3KEz0PaqqF8H9Gcv9AMhYS9/zK4hbllNBxRLBAk90Como0sFeCAaYq
+         Ybs1EkE8R144oVL5C2sBP5Ei/hINzP8tpdiXKnMKvgfb4j9CdoxX+NTlwL0ve55o7lcG
+         SN71LX1vxsk8LUB0vIONxYhht3lc2DbbnR5uAGzI+lGTE3vGXTGdx//HLhVI3DGi6LvT
+         DTXiJ2/fXN9G5E0KWrLgw2gVkNNZA9QhOF5yOUgGmVVa9iHYqaV0xPJRs+j56y4WbMee
+         IKKOmljOyP1aRayccphRIyMy9QPf40Bt0a+BDpXFRqzToud1pG2p74x3SgBSj9HBXiBq
+         n/Dg==
+X-Gm-Message-State: AGRZ1gJZr1+tKqumlQkpy4GBp47C4EfQ8E7+dhnVoJH2mNb4sv2XP9Rd
+        sQBrWKt3bUWbLL+ALth1vis=
+X-Google-Smtp-Source: AJdET5e8aVLPOSoariSE4QXGk2M77WsZvznu7bP+2XBPTu01DUyYC3pWpkoOY+a6E1TAZXHJgC95rA==
+X-Received: by 2002:a1c:8fcc:: with SMTP id r195-v6mr2232759wmd.44.1540477781774;
+        Thu, 25 Oct 2018 07:29:41 -0700 (PDT)
+Received: from localhost (pD9E511F8.dip0.t-ipconnect.de. [217.229.17.248])
+        by smtp.gmail.com with ESMTPSA id x3-v6sm5704516wrp.27.2018.10.25.07.29.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 25 Oct 2018 07:29:41 -0700 (PDT)
+Date:   Thu, 25 Oct 2018 16:29:40 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 5/8] ARM: dts: tegra20: Add clock entry to External
+ Memory Controller
+Message-ID: <20181025142940.GI21521@ulmo>
+References: <20181021183052.32023-1-digetx@gmail.com>
+ <20181021183052.32023-6-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="PMULwz+zIGJzpDN9"
+Content-Disposition: inline
+In-Reply-To: <20181021183052.32023-6-digetx@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Chen <peter.chen@freescale.com>
 
-[ Upstream commit 4fde6204df052bb89ba3d915ed6ed9f306f3cfa1 ]
+--PMULwz+zIGJzpDN9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-At f_audio_free_inst, it tries to access struct gaudio *card which is
-freed at f_audio_free, it causes below oops if the audio device is not
-there (do unload module may trigger the same problem). The gaudio_cleanup
-is related to function, so it is better move to f_audio_free.
+On Sun, Oct 21, 2018 at 09:30:49PM +0300, Dmitry Osipenko wrote:
+> Add clock entry into the EMC DT node.
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  arch/arm/boot/dts/tegra20.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
 
-root@freescale ~$ modprobe g_audio
-[  751.968931] g_audio gadget: unable to open sound control device file: /dev/snd/controlC0
-[  751.977134] g_audio gadget: we need at least one control device
-[  751.988633] Unable to handle kernel paging request at virtual address 455f448e
-[  751.995963] pgd = bd42c000
-[  751.998681] [455f448e] *pgd=00000000
-[  752.002383] Internal error: Oops: 5 [#1] SMP ARM
-[  752.007008] Modules linked in: usb_f_uac1 g_audio(+) usb_f_mass_storage libcomposite configfs [last unloaded: g_mass_storage]
-[  752.018427] CPU: 0 PID: 692 Comm: modprobe Not tainted 3.18.0-rc4-00345-g842f57b #10
-[  752.026176] task: bdb3ba80 ti: bd41a000 task.ti: bd41a000
-[  752.031590] PC is at filp_close+0xc/0x84
-[  752.035530] LR is at gaudio_cleanup+0x28/0x54 [usb_f_uac1]
-[  752.041023] pc : [<800ec94c>]    lr : [<7f03c63c>]    psr: 20000013
-[  752.041023] sp : bd41bcc8  ip : bd41bce8  fp : bd41bce4
-[  752.052504] r10: 7f036234  r9 : 7f036220  r8 : 7f036500
-[  752.057732] r7 : bd456480  r6 : 7f036500  r5 : 7f03626c  r4 : bd441000
-[  752.064264] r3 : 7f03b3dc  r2 : 7f03cab0  r1 : 00000000  r0 : 455f4456
-[  752.070798] Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment user
-[  752.077938] Control: 10c5387d  Table: bd42c04a  DAC: 00000015
-[  752.083688] Process modprobe (pid: 692, stack limit = 0xbd41a240)
-[  752.089786] Stack: (0xbd41bcc8 to 0xbd41c000)
-[  752.094152] bcc0:                   7f03b3dc bd441000 7f03626c 7f036500 bd41bcfc bd41bce8
-[  752.102337] bce0: 7f03c63c 800ec94c 7f03b3dc bdaa6b00 bd41bd14 bd41bd00 7f03b3f4 7f03c620
-[  752.110521] bd00: 7f03b3dc 7f03cbd4 bd41bd2c bd41bd18 7f00f88c 7f03b3e8 00000000 fffffffe
-[  752.118705] bd20: bd41bd5c bd41bd30 7f0380d8 7f00f874 7f038000 bd456480 7f036364 be392240
-[  752.126889] bd40: 00000000 7f00f620 7f00f638 bd41a008 bd41bd94 bd41bd60 7f00f6d4 7f03800c
-[  752.135073] bd60: 00000001 00000000 8047438c be3a4000 7f036364 7f036364 7f00db28 7f00f620
-[  752.143257] bd80: 7f00f638 bd41a008 bd41bdb4 bd41bd98 804742ac 7f00f644 00000000 809adde0
-[  752.151442] bda0: 7f036364 7f036364 bd41bdcc bd41bdb8 804743c8 80474284 7f03633c 7f036200
-[  752.159626] bdc0: bd41bdf4 bd41bdd0 7f00d5b4 8047435c bd41a000 80974060 7f038158 00000000
-[  752.167811] bde0: 80974060 bdaa9940 bd41be04 bd41bdf8 7f03816c 7f00d518 bd41be8c bd41be08
-[  752.175995] be00: 80008a5c 7f038164 be001f00 7f0363c4 bd41bf48 00000000 bd41be54 bd41be28
-[  752.184179] be20: 800e9498 800e8e74 00000002 00000003 bd4129c0 c0a07000 00000001 7f0363c4
-[  752.192363] be40: bd41bf48 00000000 bd41be74 bd41be58 800de780 800e9320 bd41a000 7f0363d0
-[  752.200547] be60: 00000000 bd41a000 7f0363d0 00000000 bd41beec 7f0363c4 bd41bf48 00000000
-[  752.208731] be80: bd41bf44 bd41be90 80093e54 800089e0 ffff8000 00007fff 80091390 0000065f
-[  752.216915] bea0: 00000000 c0a0834c bd41bf7c 00000086 bd41bf50 00000000 7f03651c 00000086
-[  752.225099] bec0: bd41a010 00c28758 800ddcc4 800ddae0 000000d2 bd412a00 bd41bf24 00000000
-[  752.233283] bee0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[  752.241467] bf00: 00000000 00000000 00000000 00000000 00000000 00000000 bd41bf44 000025b0
-[  752.249651] bf20: 00c28a08 00c28758 00000080 8000edc4 bd41a000 00000000 bd41bfa4 bd41bf48
-[  752.257835] bf40: 800943e4 800932ec c0a07000 000025b0 c0a07f8c c0a07ea4 c0a08e5c 0000051c
-[  752.266019] bf60: 0000088c 00000000 00000000 00000000 00000018 00000019 00000010 0000000b
-[  752.274203] bf80: 00000009 00000000 00000000 000025b0 00000000 00c28758 00000000 bd41bfa8
-[  752.282387] bfa0: 8000ec00 8009430c 000025b0 00000000 00c28a08 000025b0 00c28758 00c28980
-[  752.290571] bfc0: 000025b0 00000000 00c28758 00000080 000a6a78 00000007 00c28718 00c28980
-[  752.298756] bfe0: 7ebc1af0 7ebc1ae0 0001a32c 76e9c490 60000010 00c28a08 22013510 ecebffff
-[  752.306933] Backtrace:
-[  752.309414] [<800ec940>] (filp_close) from [<7f03c63c>] (gaudio_cleanup+0x28/0x54 [usb_f_uac1])
-[  752.318115]  r6:7f036500 r5:7f03626c r4:bd441000 r3:7f03b3dc
-[  752.323851] [<7f03c614>] (gaudio_cleanup [usb_f_uac1]) from [<7f03b3f4>] (f_audio_free_inst+0x18/0x68 [usb_f_uac1])
-[  752.334288]  r4:bdaa6b00 r3:7f03b3dc
-[  752.337931] [<7f03b3dc>] (f_audio_free_inst [usb_f_uac1]) from [<7f00f88c>] (usb_put_function_instance+0x24/0x30 [libcomposite])
-[  752.349498]  r4:7f03cbd4 r3:7f03b3dc
-[  752.353127] [<7f00f868>] (usb_put_function_instance [libcomposite]) from [<7f0380d8>] (audio_bind+0xd8/0xfc [g_audio])
-[  752.363824]  r4:fffffffe r3:00000000
-[  752.367456] [<7f038000>] (audio_bind [g_audio]) from [<7f00f6d4>] (composite_bind+0x9c/0x1e8 [libcomposite])
-[  752.377284]  r10:bd41a008 r9:7f00f638 r8:7f00f620 r7:00000000 r6:be392240 r5:7f036364
-[  752.385193]  r4:bd456480 r3:7f038000
-[  752.388825] [<7f00f638>] (composite_bind [libcomposite]) from [<804742ac>] (udc_bind_to_driver+0x34/0xd8)
-[  752.398394]  r10:bd41a008 r9:7f00f638 r8:7f00f620 r7:7f00db28 r6:7f036364 r5:7f036364
-[  752.406302]  r4:be3a4000
-[  752.408860] [<80474278>] (udc_bind_to_driver) from [<804743c8>] (usb_gadget_probe_driver+0x78/0xa8)
-[  752.417908]  r6:7f036364 r5:7f036364 r4:809adde0 r3:00000000
-[  752.423649] [<80474350>] (usb_gadget_probe_driver) from [<7f00d5b4>] (usb_composite_probe+0xa8/0xd4 [libcomposite])
-[  752.434086]  r5:7f036200 r4:7f03633c
-[  752.437713] [<7f00d50c>] (usb_composite_probe [libcomposite]) from [<7f03816c>] (audio_driver_init+0x14/0x1c [g_audio])
-[  752.448498]  r9:bdaa9940 r8:80974060 r7:00000000 r6:7f038158 r5:80974060 r4:bd41a000
-[  752.456330] [<7f038158>] (audio_driver_init [g_audio]) from [<80008a5c>] (do_one_initcall+0x88/0x1d4)
-[  752.465564] [<800089d4>] (do_one_initcall) from [<80093e54>] (load_module+0xb74/0x1020)
-[  752.473571]  r10:00000000 r9:bd41bf48 r8:7f0363c4 r7:bd41beec r6:00000000 r5:7f0363d0
-[  752.481478]  r4:bd41a000
-[  752.484037] [<800932e0>] (load_module) from [<800943e4>] (SyS_init_module+0xe4/0xf8)
-[  752.491781]  r10:00000000 r9:bd41a000 r8:8000edc4 r7:00000080 r6:00c28758 r5:00c28a08
-[  752.499689]  r4:000025b0
-[  752.502252] [<80094300>] (SyS_init_module) from [<8000ec00>] (ret_fast_syscall+0x0/0x48)
-[  752.510345]  r6:00c28758 r5:00000000 r4:000025b0
-[  752.515013] Code: 808475b4 e1a0c00d e92dd878 e24cb004 (e5904038)
-[  752.521223] ---[ end trace 70babe34de4ab99b ]---
-Segmentation fault
+Applied to for-4.21/arm/dt, thanks.
 
-Signed-off-by: Peter Chen <peter.chen@freescale.com>
-Signed-off-by: Felipe Balbi <balbi@ti.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/usb/gadget/function/f_uac1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thierry
 
-diff --git a/drivers/usb/gadget/function/f_uac1.c b/drivers/usb/gadget/function/f_uac1.c
-index f7b203293205..e9715845f82e 100644
---- a/drivers/usb/gadget/function/f_uac1.c
-+++ b/drivers/usb/gadget/function/f_uac1.c
-@@ -897,7 +897,6 @@ static void f_audio_free_inst(struct usb_function_instance *f)
- 	struct f_uac1_opts *opts;
- 
- 	opts = container_of(f, struct f_uac1_opts, func_inst);
--	gaudio_cleanup(opts->card);
- 	if (opts->fn_play_alloc)
- 		kfree(opts->fn_play);
- 	if (opts->fn_cap_alloc)
-@@ -935,6 +934,7 @@ static void f_audio_free(struct usb_function *f)
- 	struct f_audio *audio = func_to_audio(f);
- 	struct f_uac1_opts *opts;
- 
-+	gaudio_cleanup(&audio->card);
- 	opts = container_of(f->fi, struct f_uac1_opts, func_inst);
- 	kfree(audio);
- 	mutex_lock(&opts->lock);
--- 
-2.17.1
+--PMULwz+zIGJzpDN9
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvR01QACgkQ3SOs138+
+s6FUiRAAvpc81LLj0px2mgpDGg2rV4oVXDTtBUJ7t0K6JPKsd38NIuQVVlHpRSPe
+HbckwG/anIthCOV3rF/mzspz6d/w9Kf8tbewszz42rENn3jQ2GOoZXU1i8lX/Avf
+0IJvd3YBPLZMXMa8WG87n/uzQIVKorHXxWNf4eMBNwkjEpRKz5tBZR5eQbcakDqh
+46fgZc74WuphT9A0lcPZULNYrCAaoRBCAB3LYcspTFeVWovjATGg4i9dJeX8Wx2i
+Wh0R5Mq+/6DVG+qAt5dqNvGf0BTAcSXzHSsAA5OoI8HIaJiek/V7fBozsWmvqkGS
+s+h0m4Y4Zw1NpjDFeJx5EokXxhXZ0vHppN8mxRH+n89V8qMfbBXozmN0fLWs48UH
+Zi9UHN7B2EVdezbQSGMyOa54HUz9s+5KTYRiAa0ys1GGHRaZ3O0T+JKS0JeDmpFB
++W3/HbNGLoOVCSixNglz1tNxokkdJN7sgbBEjsMFV0HK3tnjZdie3njrEQ7B2EG5
+kekn7T1O5bXSZranf7OZBQxadQG4gYBU/MiikZp2cYF/tLSIvGoKHC5TmMZgRjR7
+pvxe4qyS7caUj0Sj7TwKo68cYhIWEQdXSzalw0DuauB5LZNcqlQpovSTlgfvIZp5
+2dDrru99qT29XFDNX590/LeYAN9cGj26uQEM98YRehbDQFtT0qE=
+=i15n
+-----END PGP SIGNATURE-----
+
+--PMULwz+zIGJzpDN9--
