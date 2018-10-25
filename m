@@ -2,162 +2,259 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 224A4C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A105CECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:08:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D65C22075D
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:08:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D65C22075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 54A6F20834
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:08:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ih4pQnJE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54A6F20834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727458AbeJYTlH (ORCPT
+        id S1727494AbeJYTlK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 15:41:07 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55170 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727398AbeJYTlH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 15:41:07 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 371D9A78;
-        Thu, 25 Oct 2018 04:08:50 -0700 (PDT)
-Received: from [0.0.0.0] (e107985-lin.cambridge.arm.com [10.1.194.38])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 027893F627;
-        Thu, 25 Oct 2018 04:08:47 -0700 (PDT)
-Subject: Re: [PATCH v4 2/2] sched/fair: update scale invariance of PELT
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Paul Turner <pjt@google.com>, Ben Segall <bsegall@google.com>,
-        Thara Gopinath <thara.gopinath@linaro.org>
-References: <1539965871-22410-1-git-send-email-vincent.guittot@linaro.org>
- <1539965871-22410-3-git-send-email-vincent.guittot@linaro.org>
- <43b126ab-403b-3fb3-5951-45a107e4a14b@arm.com>
- <CAKfTPtCypUSMu8JG_tdqwK4EnAjCbunDXzJvsPwBjqm+D5iG9g@mail.gmail.com>
-From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
-Message-ID: <395c9d6d-e717-69a5-f54c-5b3c3845f0ef@arm.com>
-Date:   Thu, 25 Oct 2018 13:08:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 25 Oct 2018 15:41:10 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:39731 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727392AbeJYTlJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 15:41:09 -0400
+Received: by mail-lf1-f66.google.com with SMTP id p11-v6so6431712lfc.6
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 04:08:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=duKLKQnRkBZ0ojpGj9+M/BPo3ZbsI4zGe5/wO8u6Pxg=;
+        b=Ih4pQnJExfEXA3bP1h/K007axxJoYKBfbegXnKEt9dpsISL/vssfVhqhXo+jnertny
+         Bah8JwJmXh6VVNN2Aqn8ceJ/R05qBuaE+ydyjXN/SKMDApyw711u9lYLKbbK+t/ynGa5
+         jnMns7jOs1oaaIY69B7xzCU+Fzds3UqmtwoRE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=duKLKQnRkBZ0ojpGj9+M/BPo3ZbsI4zGe5/wO8u6Pxg=;
+        b=h8YHJA45Or+9mzRxppXCRvtONNpgw123/KvUiFxA4Hc7SFPH3H/X8iCmG0ScLexqiV
+         2vveg9oImlYGk/Q9yyNk4Rp6z7pE8jERSNuqxApdE0xKWcF3jXKslHAxMy73eU3Pj5BT
+         xUdfHLsbL0yFQxqIrJkbMC7H8tm4cLCeVKKdG+j0jlwxQlfWr1kBELFU2y0ALatG9a/C
+         2i24jW8x7JndPXX1NGQ1Uq86jdOq8zV7Y9tfg6utriZn/1LroytHRqFQ0qYNN2eq5q/e
+         rIByiD64ETol5QnwX9PglAUDFofFGp7NHQa8CQYDr1KRDyFvau/lsKrgVVkitReqKMAh
+         VyWw==
+X-Gm-Message-State: AGRZ1gJg5qf7r51DnKc1It6GG36s1tX7tr/O+K16ofE2adc3B1HhDv2M
+        gj+prMpP48SuYpr0DSxWl4TVnk0tTX26sHamhnQbhw==
+X-Google-Smtp-Source: AJdET5cf7jqKAZHeqWsCmBdnI++5HsurX8ol4chiREZI7XV93audK1WhfSYDhzyb4llFsRfZ/qi8kGrER4g1oHgN2rc=
+X-Received: by 2002:a19:1549:: with SMTP id l70mr843031lfi.53.1540465729373;
+ Thu, 25 Oct 2018 04:08:49 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAKfTPtCypUSMu8JG_tdqwK4EnAjCbunDXzJvsPwBjqm+D5iG9g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20181024142456.10084-1-svendev@arcx.com> <20181024142456.10084-4-svendev@arcx.com>
+In-Reply-To: <20181024142456.10084-4-svendev@arcx.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 25 Oct 2018 13:08:35 +0200
+Message-ID: <CACRpkdbtR7mi1VPhA6dpX05-gqDQABKGLRVV7-tmRYzDfP+SQg@mail.gmail.com>
+Subject: Re: [PATCH anybus v1 3/4] bus: support HMS Anybus-S bus.
+To:     svendev@arcx.com
+Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Thierry Reding <treding@nvidia.com>,
+        David Lechner <david@lechnology.com>,
+        =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        Johan Hovold <johan@kernel.org>,
+        Michal Simek <monstr@monstr.eu>, michal.vokac@ysoft.com,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg KH <gregkh@linuxfoundation.org>, john.garry@huawei.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>,
+        Icenowy Zheng <icenowy@aosc.io>, yuanzhichang@hisilicon.com,
+        Stuart Yoder <stuyoder@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        bogdan.purcareata@nxp.com,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/25/18 12:43 PM, Vincent Guittot wrote:
-> On Thu, 25 Oct 2018 at 12:36, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
+Hi Sven,
 
-[...]
+thanks for your patch!
 
->> I have a couple of questions related to the tests you ran.
->>
->>> On a hikey (octo ARM platform).
->>> Performance cpufreq governor and only shallowest c-state to remove variance
->>> generated by those power features so we only track the impact of pelt algo.
->>
->> So you disabled c-state 'cpu-sleep' and 'cluster-sleep'?
-> 
-> yes
-> 
->>
->> I get 'hisi_thermal f7030700.tsensor: THERMAL ALARM: 66385 > 65000' on
->> my hikey620. Did you change the thermal configuration? Not sure if there
->> are any actions attached to this warning though.
-> 
-> I have a fan to ensure that no thermal mitigation will bias the measurement.
+On Wed, Oct 24, 2018 at 4:25 PM Sven Van Asbroeck <svendev@arcx.com> wrote:
 
-Great, with a fan they disappear here as well.
+> This driver implementation is designed to be almost completely independent
+> from the way the Anybus-S hardware is accessed by the SoC. All it needs is:
+>
+> - a regmap which accesses the underlying Anybus-S dpram by whatever means;
+> - an interrupt line, ultimately connected to the Anybus-S card;
+> - a reset function.
 
->>> each test runs 16 times
->>>
->>> ./perf bench sched pipe
->>> (higher is better)
->>> kernel        tip/sched/core     + patch
->>>           ops/seconds        ops/seconds         diff
->>> cgroup
->>> root    59648(+/- 0.13%)   59785(+/- 0.24%)    +0.23%
->>> level1  55570(+/- 0.21%)   56003(+/- 0.24%)    +0.78%
->>> level2  52100(+/- 0.20%)   52788(+/- 0.22%)    +1.32%
->>>
->>> hackbench -l 1000
->>
->> Shouldn't this be '-l 100'?
-> 
-> I have re checked and it's -l 1000
+Overall this commit message is a good start! You explain what this thing is
+and what it does.
 
-Strange, when I run hackbench on this board (performance governor) I get 
-values like:
+What you need to add is a bit of how the driver is architected. That can also
+be added as comment in the header of the driver file, maybe that is even
+better, i.e. here:
 
-root@h620:/# hackbench -l 100
-Running in process mode with 10 groups using 40 file descriptors each 
-(== 400 tasks)
-Each sender will pass 100 messages of 100 bytes
-Time: 4.023
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * HMS Anybus-S Host Driver
 
-root@h620:/# hackbench -l 1000
-Running in process mode with 10 groups using 40 file descriptors each 
-(== 400 tasks)
-Each sender will pass 1000 messages of 100 bytes
-Time: 37.883
+<architecture description goes here>
 
-Since you have values in the range of 4-6 secs in your hackbench table? 
-Maybe different hackbench versions?
+This is really needed because the driver is starting threads and
+running completions and tasks and whatnot to the left and
+right, and when random people come in to maintain this code they
+will be puzzled. You need an overarching description of how the
+driver is constructed here.
 
->>> (lower is better)
->>> kernel        tip/sched/core     + patch
->>>           duration(sec)      duration(sec)        diff
->>> cgroup
->>> root    4.472(+/- 1.86%)   4.346(+/- 2.74%)     -2.80%
->>> level1  5.039(+/- 11.05%)  4.662(+/- 7.57%)     -7.47%
->>> level2  5.195(+/- 10.66%)  4.877(+/- 8.90%)     -6.12%
->>>
->>> The responsivness of PELT is improved when CPU is not running at max
->>> capacity with this new algorithm. I have put below some examples of
->>> duration to reach some typical load values according to the capacity of the
->>> CPU with current implementation and with this patch.
->>>
->>> Util (%)     max capacity  half capacity(mainline)  half capacity(w/ patch)
->>> 972 (95%)    138ms         not reachable            276ms
->>> 486 (47.5%)  30ms          138ms                     60ms
->>> 256 (25%)    13ms           32ms                     26ms
->>
->> Could you describe these testcases in more detail?
-> 
-> You don't need to run test case. These numbers are computed based on
-> geometric series and half period value
+Please add proper kerneldoc to the struct anybus_host
+also "buss" is a germanism isn't it?  It should be just "anybus"?
 
-Ah, ok, maybe you can mention this explicitly.
+> +struct anybuss_host {
+> +       struct device *dev;
+> +       struct device *parent;
+> +       struct anybuss_client *client;
 
-[...]
+There as well?
 
->> What's the initial utilization value of t1? I assume t1 starts with
->> utilization=512 (post_init_entity_util_avg()).
+Just search/replace "s/buss/bus/g" everywhere I suspect.
 
-OK, then it's starts at 0.
+> +static irqreturn_t irq_handler(int irq, void *data)
+> +{
+> +       struct anybuss_host *cd = data;
+> +       int ind_ab;
+> +
+> +       /* reading the anybus indicator register acks the interrupt */
+> +       ind_ab = read_ind_ab(cd->regmap);
+> +       if (ind_ab < 0)
+> +               return IRQ_NONE;
+> +       atomic_set(&cd->ind_ab, ind_ab);
+> +       complete(&cd->card_boot);
+> +       wake_up(&cd->wq);
+> +       return IRQ_HANDLED;
+> +}
 
->>> On my hikey (octo ARM platform) with schedutil governor, the time to reach
->>> max OPP when starting from a null utilization, decreases from 223ms with
->>> current scale invariance down to 121ms with the new algorithm. For this
->>> test, I have enable arch_scale_freq for arm64.
->>
->> Isn't the arch-specific arch_scale_freq_capacity() enabled by default on
->> arm64 with cpufreq support?
-> 
-> Yes. that's a remain of previous version when arch_scale_freq was not yet merged
+It looks a bit like you reinvent threaded interrupts but enlighten me
+on the architecture and I might be able to get it.
 
-OK.
+> +static int task_fn_power_on_2(struct anybuss_host *cd,
+> +                               struct ab_task *t)
+> +{
+> +       if (completion_done(&cd->card_boot)) {
+> +               cd->power_on = true;
+> +               return 0;
+> +       }
+> +       if (time_after(jiffies, t->start_jiffies + TIMEOUT)) {
+> +               disable_irq(cd->irq);
+> +               ab_reset(cd, true);
+> +               dev_err(cd->dev, "power on timed out");
+> +               return -ETIMEDOUT;
+> +       }
+> +       return -EINPROGRESS;
+> +}
+> +
+> +static int task_fn_power_on(struct anybuss_host *cd,
+> +                               struct ab_task *t)
+> +{
+> +       unsigned int dummy;
+> +
+> +       if (cd->power_on)
+> +               return 0;
+> +       /* anybus docs: prevent false 'init done' interrupt by
+> +        * doing a dummy read of IND_AB register while in reset.
+> +        */
+> +       regmap_read(cd->regmap, REG_IND_AB, &dummy);
+> +       reinit_completion(&cd->card_boot);
+> +       enable_irq(cd->irq);
+> +       ab_reset(cd, false);
+> +       t->task_fn = task_fn_power_on_2;
+> +       return -EINPROGRESS;
+> +}
 
-[...]
+This looks complex. Why can't you just sleep() and then
+retry this instead of shuffleing around different "tasks"?
+Are you actually modeling a state machine? In that case
+I can kind of understand it, then you just need one
+thread/work and assign it an enum of states or
+something, maybe name that "state" rather than task
+so we see what is going on.
+
+> +static int task_fn_area_3(struct anybuss_host *cd, struct ab_task *t)
+> +static int task_fn_area_2(struct anybuss_host *cd, struct ab_task *t)
+> +static int task_fn_area(struct anybuss_host *cd, struct ab_task *t)
+> +static struct ab_task *
+> +create_area_reader(struct kmem_cache *qcache, u16 flags, u16 addr,
+> +                               size_t count)
+> +static struct ab_task *
+> +create_area_writer(struct kmem_cache *qcache, u16 flags, u16 addr,
+> +                               const void *buf, size_t count)
+> +static struct ab_task *
+> +create_area_user_writer(struct kmem_cache *qcache, u16 flags, u16 addr,
+> +                               const void __user *buf, size_t count)
+
+So there are many different tasks going on.
+
+Are they just created to get something going in process context?
+
+> +static void softint_ack(struct anybuss_host *cd)
+> +static void process_softint(struct anybuss_host *cd)
+
+This looks like MSI (message signalled interrupt) and makes me think
+that you should probably involve the irqchip maintainers. Interrupts
+shall be represented in the irqchip abstraction.
+
+> +int anybuss_client_driver_register(struct anybuss_client_driver *drv)
+> +{
+> +       drv->driver.bus = &anybus_bus;
+> +       return driver_register(&drv->driver);
+> +}
+
+There is nice use of the bus abstractions here.
+
+> +       cd->reset = pdata->reset;
+
+This callback thing to handle reset doesn't seem right.
+
+The kernel has a reset for assert/deassert och just assert()
+reset handling that you can find in
+drivers/reset/*
+
+Maybe that is what you should be using instead of
+rolling your own reset handling?
+
+> +       cd->reset(parent, true);
+
+So this would just be something like
+#include <linux/reset.h>
+
+r = devm_reset_control_get_exclusive(dev, id);
+ret = reset_control_assert(r);
+
+> +       regmap_bulk_read(cd->regmap, REG_SERIAL_NO, val, 4);
+> +       dev_info(dev, "Serial number: %02X%02X%02X%02X",
+> +               val[0], val[1], val[2], val[3]);
+
+This looks like device-unique data so please do this:
+
+#include <linux/random.h>
+
+add_device_randomness(val, 4);
+
+I guess I can provide better review once you add some
+information on this task state machine business and how
+it is engineered, looking forward to the next iteration!
+
+Yours,
+Linus Walleij
