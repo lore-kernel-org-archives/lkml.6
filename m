@@ -2,109 +2,155 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC0BC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:55:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C008C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:57:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B46E20665
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:55:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B46E20665
+	by mail.kernel.org (Postfix) with ESMTP id 01C2320854
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:57:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PcPc2im/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01C2320854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727660AbeJYX3A (ORCPT
+        id S1727668AbeJYXa2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 19:29:00 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:46419 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727394AbeJYX3A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 19:29:00 -0400
-Received: by mail-ot1-f68.google.com with SMTP id u26so8256148otk.13;
-        Thu, 25 Oct 2018 07:55:51 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ioOKISUF5Ltb3HIGA8lUFEj/p+nb14Da/Zssjeyg40I=;
-        b=QZoR/bZDSEIYsf4PXYc3CQmBz+N9rPrh1m61Mcld7QTEgjC31/xzzqpAE+HypamjNw
-         LKGy5mWTK1zwjP7zp1vKBQXkfKi9FTD9T2vIuF5nuTp7Eu5MZibO/oCzxZ+LrOdz6s4R
-         VKtHC6Nrq1m34LFNIGSwUBtF9HSBBjVn3vKzAhQeXYN/omVRAdVKP+LgizdLZAYfP8Qv
-         +Nc1rf0OK6BKxv11yQ2ZjYwSZ3YLjz9VSKFyT9o5wiN94T8c0BB2iQanCBnwHRvEwfZe
-         wG8RX0LCX++f9ErxvLDXmYlJslJWZtWiaOvbsyy3Nf2s3x24gnvOo5wnYUW04wEK5u+9
-         tpHg==
-X-Gm-Message-State: AGRZ1gJA7/7g+w8GkHf5NBpH0EFATkhTqS1P0pa79VK9JExneLu7/Qb/
-        sGTqpShIJxnSBXGTYBNafA==
-X-Google-Smtp-Source: AJdET5eU9scyL7hlIlnSdDv0zwJZv/QB7QM524qtW74Lg1xD0bicwJeB/t2bpH167frbV8S0SACU7Q==
-X-Received: by 2002:a9d:2da1:: with SMTP id g30mr1566018otb.12.1540479350222;
-        Thu, 25 Oct 2018 07:55:50 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id v74sm2320334ota.76.2018.10.25.07.55.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Oct 2018 07:55:49 -0700 (PDT)
-Date:   Thu, 25 Oct 2018 09:55:48 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     AnilKumar Chimata <anilc@codeaurora.org>
-Cc:     andy.gross@linaro.org, david.brown@linaro.org,
-        mark.rutland@arm.com, herbert@gondor.apana.org.au,
-        davem@davemloft.net, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] crypto: qce: ice: Add support for Inline Crypto
- Engine
-Message-ID: <20181025145548.GA30244@bogus>
-References: <1539789476-6098-1-git-send-email-anilc@codeaurora.org>
- <1539789476-6098-4-git-send-email-anilc@codeaurora.org>
+        Thu, 25 Oct 2018 19:30:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47568 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727394AbeJYXa1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 19:30:27 -0400
+Received: from [192.168.1.9] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6094320848;
+        Thu, 25 Oct 2018 14:57:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540479438;
+        bh=SKEZjI02Nw42/EG6nrAVnMioIczeZ+Y2/YcqWjMlsG0=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=PcPc2im/p1h6NeNzjO1JCJZ1/n0vQ5wJZd+nElw8LSvVJfj//rHLtdRcZwFVQR+JR
+         1P+O36LpezCdlv4F/IO3Q98yFA3CEWBjOO03DpjGoZD/L0Ezw39JauDDlzeK4jimDl
+         I1rPZGyfQhFydfz1ZzI29caLVCRkzmaOKs9RJu3s=
+Subject: Re: [PATCH] ARM: debug: enable UART1 for socfpga Cyclone5
+To:     =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>,
+        u.kleine-koenig@pengutronix.de
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20181009112837.2517-1-peron.clem@gmail.com>
+ <e761c76d-a806-402a-b25b-04aee9329dbc@kernel.org>
+ <CAJiuCceZr8NsDgBJgA2y61VHdQ3JYQ6_3r4jKooKLbVfRD8eJQ@mail.gmail.com>
+ <74512aef-d551-30af-b4cf-25f48047a4ac@kernel.org>
+ <20181024065152.yinlj4axprtwdzku@pengutronix.de>
+ <CAJiuCcfZ7+gaxA5iGhS48eODPsTaZc5-Bd2zXqaAgtNd0fwSKg@mail.gmail.com>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <2f4d939f-ab25-bab5-8f1c-b919adf4977c@kernel.org>
+Date:   Thu, 25 Oct 2018 09:57:16 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1539789476-6098-4-git-send-email-anilc@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAJiuCcfZ7+gaxA5iGhS48eODPsTaZc5-Bd2zXqaAgtNd0fwSKg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 08:47:56PM +0530, AnilKumar Chimata wrote:
-> This patch adds support for Inline Crypto Engine (ICE), which
-> is embedded into storage device/controller such as UFS/eMMC.
-> ICE is intended for high throughput cryptographic encryption
-> or decryption of storage data.
-> 
-> Signed-off-by: AnilKumar Chimata <anilc@codeaurora.org>
-> ---
->  Documentation/crypto/msm/ice.txt |  235 ++++++
->  drivers/crypto/Kconfig           |   10 +
->  drivers/crypto/qce/Makefile      |    1 +
->  drivers/crypto/qce/ice.c         | 1613 ++++++++++++++++++++++++++++++++++++++
->  drivers/crypto/qce/iceregs.h     |  159 ++++
->  include/crypto/ice.h             |   80 ++
->  6 files changed, 2098 insertions(+)
->  create mode 100644 Documentation/crypto/msm/ice.txt
->  create mode 100644 drivers/crypto/qce/ice.c
->  create mode 100644 drivers/crypto/qce/iceregs.h
->  create mode 100644 include/crypto/ice.h
-> 
-> diff --git a/Documentation/crypto/msm/ice.txt b/Documentation/crypto/msm/ice.txt
-> new file mode 100644
-> index 0000000..58f7081
-> --- /dev/null
-> +++ b/Documentation/crypto/msm/ice.txt
-> @@ -0,0 +1,235 @@
-> +Introduction:
-> +=============
-> +Storage encryption has been one of the most required feature from security
-> +point of view. QTI based storage encryption solution uses general purpose
-> +crypto engine. While this kind of solution provide a decent amount of
-> +performance, it falls short as storage speed is improving significantly
-> +continuously. To overcome performance degradation, newer chips are going to
-> +have Inline Crypto Engine (ICE) embedded into storage device. ICE is supposed
-> +to meet the line speed of storage devices.
+Hi
 
-Is ICE part of the storage device or part of the host as the binding 
-suggests?
+On 10/24/2018 09:11 AM, Clément Péron wrote:
+> Hi,
+> 
+> On Wed, 24 Oct 2018 at 08:51, Uwe Kleine-König
+> <u.kleine-koenig@pengutronix.de> wrote:
+>>
+>> On Tue, Oct 23, 2018 at 03:35:31PM -0500, Dinh Nguyen wrote:
+>>>
+>>>
+>>> On 10/23/2018 09:44 AM, Clément Péron wrote:
+>>>> HI Dinh,
+>>>>
+>>>> On Tue, 23 Oct 2018 at 16:04, Dinh Nguyen <dinguyen@kernel.org> wrote:
+>>>>>
+>>>>> Hi Clément,
+>>>>>
+>>>>> On 10/09/2018 06:28 AM, Clément Péron wrote:
+>>>>>> Cyclone5 and Arria10 doesn't have the same memory map for UART1.
+>>>>>>
+>>>>>> Split the SOCFPGA_UART1 into 2 options to allow debugging on UART1 for Cylone5.
+>>>>>>
+>>>>>
+>>>>> I'm not sure the need for this patch. Are there any cyclone5 based
+>>>>> boards that has UART1 as the debug uart? I see that all of them are
+>>>>> using UART0.
+>>>>
+>>>> There is no upstream device with this UART used. But the board I have
+>>>> use it, and there is no limitation to not have it available upstream
+>>>> no ?
+>>>>
+>>>
+>>> I see. Then I don't think the patch is applicable because none of the
+>>> upstream devices need it. Now, if you were to upstream your board that
+>>> uses UART1, then there will be a case for this patch. Do you agree?
+> 
+> I don't think my board is upstreamable it's not a devkit and not
+> really interesting for the community.
+> 
+> It's really a trivial patch and it will avoid wasting time  to another
+> owner of CycloneV board who would like to have debug on UART1
+> 
 
-Rob
+I'll apply this after the merge window.
+
+Thanks,
+Dinh
