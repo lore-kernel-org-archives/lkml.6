@@ -2,84 +2,120 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05726C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:21:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF77BC46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:21:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA6532083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:21:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9619220831
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 13:21:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CzR9n/da"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA6532083E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Qf3MX/oB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9619220831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727502AbeJYVyK (ORCPT
+        id S1727547AbeJYVyM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 17:54:10 -0400
-Received: from mail-lj1-f178.google.com ([209.85.208.178]:36686 "EHLO
-        mail-lj1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727234AbeJYVyJ (ORCPT
+        Thu, 25 Oct 2018 17:54:12 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:50527 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727504AbeJYVyL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 17:54:09 -0400
-Received: by mail-lj1-f178.google.com with SMTP id s15-v6so8208252lji.3
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 06:21:25 -0700 (PDT)
+        Thu, 25 Oct 2018 17:54:11 -0400
+Received: by mail-it1-f194.google.com with SMTP id k206-v6so1601645ite.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 06:21:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=amarulasolutions.com; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=u84YuxG0qsepQ+OAH1YrPHS+zxp2d+oy7f4Ep7QIlLg=;
-        b=CzR9n/da/6PChr7RgZxMvgefViRaCO/Eik8ztx6ksISwQ3LZvve4BX/s6kMpqMzn8Z
-         8hHHFxuy3Ecq3s9swKBQJ7Yc8MZtcDpRVqHy0IoguqA1v99CCSXFoi/d60OnFGyG+skw
-         /U0UHhvwtZvUmJrCDsdxvq2fms8M/rcqSmPE8=
+        bh=+3Pr8Azj5r/pI/vbTSs4zjZ/yuzS5RwX1G1t8Tl5W2M=;
+        b=Qf3MX/oB0IGyH3oCDsG10VwJb4T4oz/U1wwn4EA+ZQtk4/j5qnTvwgrC1S6oek8Tau
+         /IhlgDhmagy3YJ33vEPk8MwPdxhYtbo7Tt/HzcEDC30SPSwD2Jn8GUYdEwtj6n2It8Si
+         5OPe7gADLM/EJ4MhNVV4VHoYEvHwIJWtre/qA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=u84YuxG0qsepQ+OAH1YrPHS+zxp2d+oy7f4Ep7QIlLg=;
-        b=MRcEDtds5WPOk3TDOFb3jnvFTuam8CNApvGl8n/+prUNsiww6grpAFmUOYgrVSxT62
-         agEM7B4HuV+mrApPDOfpV5UYSWqXWY4Vq0GBJrksEJl9uGk0PxUly/8AxC8lpHYYikH8
-         MgXBHvC6Svcg562ZY6beBp6vq8XFYV/vloS/BvR1EvROq7YZokcchXkR95xsN9RwQIA3
-         pNwEd2mp85R4WJosvHbzPpaDjD2GKayAhkyXxeFbpRRqpLTHksSU+z/GIQxe/TKisvwm
-         /b2u2pjCJddoHnhYzOVFrbXPmF8G85dPiNxivBxQ7O701BDRqi+w/2n9Idy6B3Bjh0pu
-         85pQ==
-X-Gm-Message-State: AGRZ1gIhqnJRPY2mbS1Ut0MM43AA305niFkgdKQH6PfUOLCpDtltuFhb
-        ZKtwhGJt/lIZgntgJS3jVjwou2zWQmJ9Quhx
-X-Google-Smtp-Source: AJdET5dpJa9DFDCTLQ6CPZV3476PIla2WyrSYcfPLY/6DzVkrBed/Al8mPJP/GCYjMEqRjj0yPp/gA==
-X-Received: by 2002:a2e:501c:: with SMTP id e28-v6mr1262236ljb.45.1540473683735;
-        Thu, 25 Oct 2018 06:21:23 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id q2-v6sm1227288lfc.67.2018.10.25.06.21.22
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Oct 2018 06:21:22 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id c21-v6so2314489ljj.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 06:21:22 -0700 (PDT)
-X-Received: by 2002:a2e:8743:: with SMTP id q3-v6mr1355387ljj.80.1540473682329;
- Thu, 25 Oct 2018 06:21:22 -0700 (PDT)
+        bh=+3Pr8Azj5r/pI/vbTSs4zjZ/yuzS5RwX1G1t8Tl5W2M=;
+        b=N4t+TKqZkwzlEvjjPV70YzVwZCQlwCgfY9QzlnukEdP2+uLDQmkRc6CJaaGA8+AnKK
+         ntqciKhworizjQ7NddLptdXO1Vu9Xke2/D6yCYMQkA64OXLhy/96aBVgpVdvviy3q3SL
+         QjzT/4RSbyQCezzuXDiJBhdHDvCeasoEmd23D7JqVhByvAwHabSxfWfyCMnspw9MCGgc
+         tE8HeO26/NCvdlcE2vENHd/4lhpvQaFt5ACV/BwonDqo+f+PCqUeJvj8Fo42BNDOdehQ
+         SzfG49FtmCIwydDSBwHQmLEmmeMqpIn2ZjLc2Aorz97MrOKTtYgWB7WM8JbGvhW/e/lN
+         K8bQ==
+X-Gm-Message-State: AGRZ1gI+2sRLHnDaW5dZXgzaudFoqJGpsqw+eWKBRf1u10iG8SjaoPZs
+        /jKLrIRcvX1jUFli3gaUvJnP6rVMRyv1xS/RrV3QIg==
+X-Google-Smtp-Source: AJdET5cysqjMYmkkQx0ddTWAM9DK/YmVZL9cxII5nWg2cBRWg0pr8BJVR+StE4m6JQiHRJ8wUl+OAwZxwksR0AEENfg=
+X-Received: by 2002:a24:8a44:: with SMTP id v65-v6mr952325itd.173.1540473687071;
+ Thu, 25 Oct 2018 06:21:27 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181023104616.GX4939@dell>
-In-Reply-To: <20181023104616.GX4939@dell>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 25 Oct 2018 06:21:06 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjooEEnj+wS3gEqA8XfzWyZKC4P0j5Rby5zcUV6NZg-bw@mail.gmail.com>
-Message-ID: <CAHk-=wjooEEnj+wS3gEqA8XfzWyZKC4P0j5Rby5zcUV6NZg-bw@mail.gmail.com>
-Subject: Re: [GIT PULL] MFD for v4.20
-To:     lee.jones@linaro.org
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181023155035.9101-1-jagan@amarulasolutions.com>
+ <20181023155035.9101-15-jagan@amarulasolutions.com> <20181024181048.w4iwebtac6wzmgt4@flea>
+In-Reply-To: <20181024181048.w4iwebtac6wzmgt4@flea>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Thu, 25 Oct 2018 18:51:14 +0530
+Message-ID: <CAMty3ZC1jCfuP8tFKvgcdJ5R_Ou0ejAT_VYv=fV1Kh4UanLWcg@mail.gmail.com>
+Subject: Re: [PATCH v2 14/15] arm64: dts: allwinner: a64: Add DSI pipeline
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 3:46 AM Lee Jones <lee.jones@linaro.org> wrote:
+On Wed, Oct 24, 2018 at 11:40 PM Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
 >
->   git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git mfd-next-4.20
+> On Tue, Oct 23, 2018 at 09:20:34PM +0530, Jagan Teki wrote:
+> > The A64 has a MIPI-DSI block which is similar to A31
+> > without mod clock.
+> >
+> > So, add dsi node with A64 compatible, dphy node with
+> > A31 compatible and finally connect dsi to tcon0 to
+> > make proper DSI pipeline.
+> >
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > ---
+> > Changes for v2:
+> > - use A64 dphy compatible
+> >
+> >  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 45 +++++++++++++++++++
+> >  1 file changed, 45 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> > index f3a66f888205..f82e6b165d57 100644
+> > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> > @@ -320,6 +320,11 @@
+> >                                       #address-cells = <1>;
+> >                                       #size-cells = <0>;
+> >                                       reg = <1>;
+> > +
+> > +                                     tcon0_out_dsi: endpoint@1 {
+> > +                                             reg = <1>;
+> > +                                             remote-endpoint = <&dsi_in_tcon0>;
+>
+> You need to set the allwinner,channel property there.
 
-Pulled,
-
-                   Linus
+Are you referring to allwinner,tcon-channel = <1> ?
