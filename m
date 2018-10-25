@@ -6,85 +6,82 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCAE0C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:16:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46090C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:18:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 684F320834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:16:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB3162075D
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 11:18:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="F7rtxyJm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 684F320834
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HrXTww0b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB3162075D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727561AbeJYTs0 (ORCPT
+        id S1727428AbeJYTun (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 15:48:26 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:45397 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727506AbeJYTs0 (ORCPT
+        Thu, 25 Oct 2018 15:50:43 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:34287 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727261AbeJYTun (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 15:48:26 -0400
-Received: by mail-lj1-f194.google.com with SMTP id j4-v6so7801567ljc.12
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 04:16:06 -0700 (PDT)
+        Thu, 25 Oct 2018 15:50:43 -0400
+Received: by mail-lf1-f65.google.com with SMTP id n26-v6so6477970lfl.1
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 04:18:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=D6SD6/jujQg1CursZ8OklcDodhHHy6xFN5ju3b8fGxQ=;
-        b=F7rtxyJm2llV4fY39L0oVln4ufKXn5x6jwgjwDbjAsWsTZotRr5S0P6O/i407SSIi+
-         xZLqN4vC8iuBwS/cyffVsgX/YviEi/wrxsKC67J7qcNa4ER7FmDIQFRd4pblxvAeYLWd
-         7dQJOqDdP/qd9dJlwURQtcvr94DCDDSj/1Ueo=
+         :cc;
+        bh=0pQuybqbBvnNwsXOTAGuS0DG+GY4NTtpSJsTobw7y1A=;
+        b=HrXTww0bn7i/k5CeqjEUgfGfT9585qcdQ0hRu747371HHH1if5UfDTXnJ++VfRWhdO
+         ZDvWet6ztdLWKNu1ISFqmcsDR2EdN3UyOl19WG7JI0Q3dGKO0tUJfcsds62gGjoR9oQm
+         PrJ5QvCM77/i+4lYKfs4kQmKR6YOpfLfmmBec=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=D6SD6/jujQg1CursZ8OklcDodhHHy6xFN5ju3b8fGxQ=;
-        b=N/43CxXeF87SV2zlOGpHjSY8dMoxs9rHKsod8fC9UVLM5zSE4XynkWgu0Mr3wesz61
-         iQlyb+opmCQGja0juxwVuAvHoiCvCWCrz4iILlaBdnWC8DVnhy6AQEWrCLtkWLBS2g8d
-         YhkWvusE1CF3VB4EeO6SdC96l2LLvNyUpa1OAc0ZdxbcIPj59vLQqksYWkKeqplMXFDQ
-         p80PZAiJMllS5suoncAx3CKci8+Db/O19c2rfpU6SphijsxJOYitMRTa30g6yJ7akQTk
-         JkUh6UUY6FShKG/w2HorQrC8H47y8zzot/iMyxM96ERuBh57f/5R+owyH2wTXLx0y9Zj
-         mrEQ==
-X-Gm-Message-State: AGRZ1gK/jGHDXavQP+YYBzZ0kfWpRJCiB97KXzopPQGW1sj747vzIAtW
-        ZdNyAj0aEuDstigxkChSsrtJJ+pkUE+32HOFfKA78psTEsY=
-X-Google-Smtp-Source: AJdET5fbstZrfrwfVhap+wFQJfGr038Fb0sErhWKW4VlaIXEwCYC3QkszPfrUnKaLcEtTYDdO0CYRNpVetQaefV4Ejs=
-X-Received: by 2002:a2e:90d8:: with SMTP id o24-v6mr940750ljg.97.1540466165170;
- Thu, 25 Oct 2018 04:16:05 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=0pQuybqbBvnNwsXOTAGuS0DG+GY4NTtpSJsTobw7y1A=;
+        b=mZAKDzDD20OoKvfxu0HQZCENmr3O+Z6omNxbF8JDzMmY8CNRUpbqU2Bdbz0P0VblCh
+         MfDOmXDmNwDlBMzwFANsnFir62e4cRq1H4EQlMsssqCeqs22ctx+FHOK2iDyXKBTthJL
+         YGzL29FceCAkLKmhDUhtHrTkeP7pBWw7hgIBPvMsHLSLvZKbKqkeyDMOCIhc9Xnnd3yP
+         dt6aEfPxz1RgCjzrgoibqiJr9KDzM+kFepz8ehKHYC4goFZt8paXk+WNIqZjJz7HYn3J
+         C3V4HVGpdhoLAH7JcWGk+Sl1YMElIPWXcrjT75LR4Rrwi3yDDE7A50NtMGzJbQ3jp7Qt
+         GHqg==
+X-Gm-Message-State: AGRZ1gK+JsYJ+VBKAM+3fWYW6V5iRdcXJcozOK0rzoIVBE18PUbLVwz5
+        jxNLuyvyawGhj0nT///D3xRMEIqPQ8tvon3YAlOUjZrtNpg=
+X-Google-Smtp-Source: AJdET5diUqL27KNq0Z39NewfCFtgIqL9RMVtLApYYnW8Z0ld08/rZeTO/vqVi67z4y9yK7ug1XT7u4Of2NfBbkDSsCI=
+X-Received: by 2002:a19:9a0e:: with SMTP id c14-v6mr953477lfe.11.1540466301686;
+ Thu, 25 Oct 2018 04:18:21 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181024153843.16021-1-brgl@bgdev.pl>
-In-Reply-To: <20181024153843.16021-1-brgl@bgdev.pl>
+References: <1540365564-30645-1-git-send-email-zhang.chunyan@linaro.org>
+In-Reply-To: <1540365564-30645-1-git-send-email-zhang.chunyan@linaro.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 25 Oct 2018 13:15:52 +0200
-Message-ID: <CACRpkdbzQ1chqGPWj2wSrsOBc75ZKPfFGu0hqvMeo+x=s9S1BA@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: add myself as co-maintainer of gpiolib
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+Date:   Thu, 25 Oct 2018 13:18:09 +0200
+Message-ID: <CACRpkdb3uwW+UoeeivAP-+67kMKGD9dP0rh2nk=WTHhpgnkJ1A@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhci: Conver sdhci_allocate_bounce_buffer() to
+ return void
+To:     Chunyan Zhang <zhang.chunyan@linaro.org>
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Lyra Zhang <zhang.lyra@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 5:39 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+On Wed, Oct 24, 2018 at 9:19 AM Chunyan Zhang <zhang.chunyan@linaro.org> wrote:
 
-> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> The function sdhci_allocate_bounce_buffer() always return zero at
+> present, so there's no need to have a return value, that will also make
+> error path easier.
 >
-> As discussed with Linus Walleij - I'm adding myself as
-> the co-maintainer.
->
-> Cc: Beno=C3=AEt Cousson <bcousson@baylibre.com>
-> Cc: Kevin Hilman <khilman@baylibre.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+> CC: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
 
-Excellent, patch applied for fixes. Welcome aboard! :D
+Good catch!
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
