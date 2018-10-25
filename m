@@ -2,101 +2,142 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D35CC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 15:40:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF322C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 15:41:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E5E620834
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 15:40:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="QUDBLCG4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E5E620834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id 98BC720848
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 15:41:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98BC720848
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=emutex.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727656AbeJZANk (ORCPT
+        id S1727441AbeJZAPH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 20:13:40 -0400
-Received: from imap.thunk.org ([74.207.234.97]:57300 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727367AbeJZANk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 20:13:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=//ygogdN1tbhh7RbM60T5sXv4fskOMmTEjXlvuXrZX8=; b=QUDBLCG48hj9B7R/W60qVOggJA
-        vfiA7us4R06Lk10nu3/S+9w0yDScUA+Q3LYCm0lOzIAhi4GwkXx8GJu5b9pfT+7I/GGhXKCI9L1uk
-        avIgca6gKqCqDVuhB3PrFLVCVIKESWzWMCbhV1PQxS4uon6xeyI03w7i2RLEye1Fis58=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1gFhjw-0001xD-06; Thu, 25 Oct 2018 15:40:04 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 2EAF57A447E; Thu, 25 Oct 2018 11:40:03 -0400 (EDT)
-Date:   Thu, 25 Oct 2018 11:40:03 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     Tejun Heo <tj@kernel.org>, linux-kernel@vger.kernel.org,
-        Johannes Berg <johannes.berg@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>
-Subject: Re: [PATCH 3/3] kernel/workqueue: Suppress a false positive lockdep
- complaint
-Message-ID: <20181025154003.GE4970@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Bart Van Assche <bvanassche@acm.org>, Tejun Heo <tj@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Johannes Berg <johannes.berg@intel.com>,
-        Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>
-References: <20181025150540.259281-1-bvanassche@acm.org>
- <20181025150540.259281-4-bvanassche@acm.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181025150540.259281-4-bvanassche@acm.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+        Thu, 25 Oct 2018 20:15:07 -0400
+Received: from mr33.theemaillaundry.net ([176.9.125.106]:37218 "EHLO
+        mr33.theemaillaundry.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727313AbeJZAPH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 20:15:07 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mr33.theemaillaundry.net (Postfix) with ESMTP id 675FB51C1FF6;
+        Thu, 25 Oct 2018 16:41:44 +0100 (IST)
+X-Amavis-Modified: Mail body modified (using disclaimer) -
+        mr33.theemaillaundry.net
+X-Virus-Scanned: amavisd-new at theemaillaundry.net
+Received: from mr33.theemaillaundry.net ([127.0.0.1])
+        by localhost (mr33.theemaillaundry.net [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id GwdVFCAvZcVR; Thu, 25 Oct 2018 16:41:43 +0100 (IST)
+Received: from statler.emutex.com (unknown [92.51.199.138])
+        (using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mr33.theemaillaundry.net (Postfix) with ESMTPS id 9180C51C1D25;
+        Thu, 25 Oct 2018 16:36:05 +0100 (IST)
+Received: from [10.10.68.81] (helo=dan-Latitude-E5450.emutex.com)
+        by statler.emutex.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_CBC_SHA256:128)
+        (Exim 4.84)
+        (envelope-from <dan@emutex.com>)
+        id 1gFhg1-0008BR-TS; Thu, 25 Oct 2018 16:36:02 +0100
+From:   Dan O'Donovan <dan@emutex.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        Carlos Iglesias <carlos.iglesias@emutex.com>,
+        Javier Arteaga <javier@emutex.com>,
+        Dan O'Donovan <dan@emutex.com>
+Subject: [PATCH v3 1/3] iio: adc128s052: Add pin-compatible IDs
+Date:   Thu, 25 Oct 2018 16:35:40 +0100
+Message-Id: <1540481742-23596-2-git-send-email-dan@emutex.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1540481742-23596-1-git-send-email-dan@emutex.com>
+References: <20180423213805.12591-1-javier@emutex.com>
+ <1540481742-23596-1-git-send-email-dan@emutex.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 08:05:40AM -0700, Bart Van Assche wrote:
-> diff --git a/kernel/workqueue.c b/kernel/workqueue.c
-> index fc9129d5909e..0ef275fe526c 100644
-> --- a/kernel/workqueue.c
-> +++ b/kernel/workqueue.c
-> @@ -1383,6 +1383,10 @@ static void __queue_work(int cpu, struct workqueue_struct *wq,
->  	if (unlikely(wq->flags & __WQ_DRAINING) &&
->  	    WARN_ON_ONCE(!is_chained_work(wq)))
->  		return;
-> +
-> +	if (!(wq->flags & __WQ_HAS_BEEN_USED))
-> +		wq->flags |= __WQ_HAS_BEEN_USED;
-> +
->  retry:
->  	if (req_cpu == WORK_CPU_UNBOUND)
->  		cpu = wq_select_unbound_cpu(raw_smp_processor_id());
+From: Javier Arteaga <javier@emutex.com>
 
-I was looking to fix this problem as well, and I thought about doing
-this, but I thought wq->mutex had to be taken in order to modify
-wq->flags --- and that would destroy the scalability of the
-add-to-work-to-queue functions.
+The datasheets for ADC122S021 and ADC124S021 list two more
+pin-compatible alternatives for each device.
 
-We could switch all of wq->flags to use the {test,set,clear}_bits()
-family of operations, but that seemed like a very large change.
+Add their IDs as compatible strings.
 
-Tejun seemed to be ok with creating a destroy_workqueue_no_drain()
-function and using that instead of destroy_workqueue() for the losers
-of the cmpxchg lockless initialization code in sb_init_dio_done_wq()
-in fs/direct_io.c.
+Suggested-by: Jonathan Cameron <jic23@kernel.org>
+Signed-off-by: Javier Arteaga <javier@emutex.com>
+Signed-off-by: Dan O'Donovan <dan@emutex.com>
+---
+ .../devicetree/bindings/iio/adc/ti-adc128s052.txt        |  9 ++++++++-
+ drivers/iio/adc/ti-adc128s052.c                          | 16 ++++++++++++----
+ 2 files changed, 20 insertions(+), 5 deletions(-)
 
-						- Ted
+diff --git a/Documentation/devicetree/bindings/iio/adc/ti-adc128s052.txt b/Documentation/devicetree/bindings/iio/adc/ti-adc128s052.txt
+index daa2b2c..c07ce1a 100644
+--- a/Documentation/devicetree/bindings/iio/adc/ti-adc128s052.txt
++++ b/Documentation/devicetree/bindings/iio/adc/ti-adc128s052.txt
+@@ -1,7 +1,14 @@
+ * Texas Instruments' ADC128S052, ADC122S021 and ADC124S021 ADC chip
+ 
+ Required properties:
+- - compatible: Should be "ti,adc128s052", "ti,adc122s021" or "ti,adc124s021"
++ - compatible: Should be one of:
++   - "ti,adc128s052"
++   - "ti,adc122s021"
++   - "ti,adc122s051"
++   - "ti,adc122s101"
++   - "ti,adc124s021"
++   - "ti,adc124s051"
++   - "ti,adc124s101"
+  - reg: spi chip select number for the device
+  - vref-supply: The regulator supply for ADC reference voltage
+ 
+diff --git a/drivers/iio/adc/ti-adc128s052.c b/drivers/iio/adc/ti-adc128s052.c
+index 7cf39b3..e6716c3 100644
+--- a/drivers/iio/adc/ti-adc128s052.c
++++ b/drivers/iio/adc/ti-adc128s052.c
+@@ -186,15 +186,23 @@ static int adc128_remove(struct spi_device *spi)
+ static const struct of_device_id adc128_of_match[] = {
+ 	{ .compatible = "ti,adc128s052", },
+ 	{ .compatible = "ti,adc122s021", },
++	{ .compatible = "ti,adc122s051", },
++	{ .compatible = "ti,adc122s101", },
+ 	{ .compatible = "ti,adc124s021", },
+-	{ /* sentinel */ },
++	{ .compatible = "ti,adc124s051", },
++	{ .compatible = "ti,adc124s101", },
++	{ }
+ };
+ MODULE_DEVICE_TABLE(of, adc128_of_match);
+ 
+ static const struct spi_device_id adc128_id[] = {
+-	{ "adc128s052", 0},	/* index into adc128_config */
+-	{ "adc122s021",	1},
+-	{ "adc124s021", 2},
++	{ "adc128s052", 0 },	/* index into adc128_config */
++	{ "adc122s021",	1 },
++	{ "adc122s051",	1 },
++	{ "adc122s101",	1 },
++	{ "adc124s021", 2 },
++	{ "adc124s051", 2 },
++	{ "adc124s101", 2 },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(spi, adc128_id);
+-- 
+2.7.4
+
+
+------
+This email has been scanned for spam and malware by The Email Laundry.
+
