@@ -6,44 +6,43 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DA4AECDE47
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16EC9ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A6BC20870
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C839520868
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:19:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AQx4WmVW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A6BC20870
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bknw5XKq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C839520868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730377AbeJYWwI (ORCPT
+        id S1730389AbeJYWwK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:52:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34012 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:52:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727992AbeJYWwH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:52:07 -0400
+        id S1727992AbeJYWwI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:52:08 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 168A820848;
-        Thu, 25 Oct 2018 14:19:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 64C1820868;
+        Thu, 25 Oct 2018 14:19:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477150;
-        bh=x3Sq3kVWrOZd6+qgj8SB7cRu3yavIH7tGfm3q/KK8iw=;
+        s=default; t=1540477151;
+        bh=G6J3ZOKCkA/A/NL5Kd33pMK396ZXIcXdJutYipJqa3w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AQx4WmVW+wp2IitZz5MGHZ0CT94aJr7I+ts2QqU3CZSfczoNfppEIFpFtdf9g59f1
-         OQL/YFf0l3E1temw+5jHxPSbn7xUqTvgG5//23YymBQ1nmoSviDsk5Ojcz8GppjgxT
-         v/WDuUgzJAM/Kn57l0Jt6WB/Xg638+T/GMnfra9k=
+        b=Bknw5XKq8BT0NOHYScTAXYuM37T1++euGJKJ0pryTvpY9sFiUkEOyp/OdRlyhDtwy
+         nX0sMvbTs8XTjkSG0wa2LvtPt5NoOxwSMlRHinAQ6tDWYNRrlSeAFZIP6hkRI4NYil
+         fssAGQWI1WfZHLohT4SZBFG8l5i4uErg8ipLr0/k=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Matthijs van Duin <matthijsvanduin@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 08/98] ARM: OMAP5 / DRA7: Fix HYP mode boot for thumb2 build
-Date:   Thu, 25 Oct 2018 10:17:23 -0400
-Message-Id: <20181025141853.214051-8-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Felipe Balbi <balbi@ti.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 09/98] usb: gadget: gadgetfs: fix an oops in ep_write()
+Date:   Thu, 25 Oct 2018 10:17:24 -0400
+Message-Id: <20181025141853.214051-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
 References: <20181025141853.214051-1-sashal@kernel.org>
@@ -52,42 +51,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthijs van Duin <matthijsvanduin@gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 448c077eeb02240c430db2a2c3bf5285a4c65d66 ]
+[ Upstream commit 42d6cfa0caec4b68a7f17147fbf13a36e94a8bf2 ]
 
-'adr' yields a data-pointer, not a function-pointer.
+We try to free an ERR_PTR on this error path.
 
-Fixes: 999f934de195 ("ARM: omap5/dra7xx: Enable booting secondary
-CPU in HYP mode")
-Signed-off-by: Matthijs van Duin <matthijsvanduin@gmail.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Fixes: b44be2462dbe ('usb: gadget: gadgetfs: Free memory allocated by memdup_user()')
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Felipe Balbi <balbi@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-omap2/omap-headsmp.S | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/usb/gadget/legacy/inode.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-omap2/omap-headsmp.S b/arch/arm/mach-omap2/omap-headsmp.S
-index 6d1dffca6c7b..748dde9fa4a5 100644
---- a/arch/arm/mach-omap2/omap-headsmp.S
-+++ b/arch/arm/mach-omap2/omap-headsmp.S
-@@ -17,6 +17,7 @@
+diff --git a/drivers/usb/gadget/legacy/inode.c b/drivers/usb/gadget/legacy/inode.c
+index e2d57e3d67c7..7974956e8ded 100644
+--- a/drivers/usb/gadget/legacy/inode.c
++++ b/drivers/usb/gadget/legacy/inode.c
+@@ -442,6 +442,7 @@ ep_write (struct file *fd, const char __user *buf, size_t len, loff_t *ptr)
+ 	kbuf = memdup_user(buf, len);
+ 	if (IS_ERR(kbuf)) {
+ 		value = PTR_ERR(kbuf);
++		kbuf = NULL;
+ 		goto free1;
+ 	}
  
- #include <linux/linkage.h>
- #include <linux/init.h>
-+#include <asm/assembler.h>
- 
- #include "omap44xx.h"
- 
-@@ -56,7 +57,7 @@ wait_2:	ldr	r2, =AUX_CORE_BOOT0_PA	@ read from AuxCoreBoot0
- 	cmp	r0, r4
- 	bne	wait_2
- 	ldr	r12, =API_HYP_ENTRY
--	adr	r0, hyp_boot
-+	badr	r0, hyp_boot
- 	smc	#0
- hyp_boot:
- 	b	secondary_startup
 -- 
 2.17.1
 
