@@ -2,189 +2,126 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98FD4C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:38:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 429C7C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:40:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6208420848
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:38:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6208420848
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EE7EF2084A
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 17:40:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bvKQ6245"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE7EF2084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727667AbeJZCMf (ORCPT
+        id S1727582AbeJZCOH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 22:12:35 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:51536 "EHLO mx1.redhat.com"
+        Thu, 25 Oct 2018 22:14:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727466AbeJZCMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 22:12:34 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727455AbeJZCOG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 22:14:06 -0400
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CD03B307C713;
-        Thu, 25 Oct 2018 17:38:48 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-24.phx2.redhat.com [10.3.112.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2F68E1974A;
-        Thu, 25 Oct 2018 17:38:32 +0000 (UTC)
-Date:   Thu, 25 Oct 2018 13:38:30 -0400
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Steve Grubb <sgrubb@redhat.com>
-Cc:     Paul Moore <paul@paul-moore.com>, simo@redhat.com,
-        carlos@redhat.com, linux-api@vger.kernel.org,
-        containers@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, dhowells@redhat.com,
-        linux-audit@redhat.com, netfilter-devel@vger.kernel.org,
-        ebiederm@xmission.com, luto@kernel.org, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>,
-        Serge Hallyn <serge@hallyn.com>, viro@zeniv.linux.org.uk
-Subject: Re: [PATCH ghak90 (was ghak32) V4 03/10] audit: log container info
- of syscalls
-Message-ID: <20181025173830.4yklhnrydt5qvr67@madcap2.tricolour.ca>
-References: <cover.1533065887.git.rgb@redhat.com>
- <34017c395d03a213d6b0d49b9964429bd32b283d.1533065887.git.rgb@redhat.com>
- <CAHC9VhSv4hWGHiaaOfuBrRQKdp2YG5RtqXQbFXg7j7LNEhO2XQ@mail.gmail.com>
- <20181024151439.lavhanabsyxdrdvo@madcap2.tricolour.ca>
- <CAHC9VhRF1vsxM-k0Lw-9NqS9b9rgXRRBu0tq4ajdFpMqUxiH4A@mail.gmail.com>
- <20181025004255.zl7p7j6gztouh2hh@madcap2.tricolour.ca>
- <20181025080638.771621a3@ivy-bridge>
- <CAHC9VhR02siURgadQs0EikcOm0d_TPAi4jJYCx4NkA=wQ5rjSA@mail.gmail.com>
- <20181025122732.4j4rbychjse3gemt@madcap2.tricolour.ca>
- <20181025175745.5b2b13e9@ivy-bridge>
+        by mail.kernel.org (Postfix) with ESMTPSA id F365E20848;
+        Thu, 25 Oct 2018 17:40:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540489220;
+        bh=U48X9J3guf2EYSwQQlXhqVffpPp1CbXHPz9u+aBKczs=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=bvKQ6245U8SUc4OOUBqieKelFzgCQX44nlGWiTPuYhHEhGRXgrkBBNa0MlWfrFx4T
+         Pa94CFQ9r02rXzOs3HbsLP+UWnbQd65lY0tBpLTlBK7PHTvTNh6XEGR5vLa8SbKpwf
+         9MUvs5tx2HP6XWqqcb0ImhRwM5Mz+PZYAhLhhsnw=
+Subject: Re: [RFC v2 00/14] kunit: introduce KUnit, the Linux kernel unit
+ testing framework
+To:     Brendan Higgins <brendanhiggins@google.com>,
+        gregkh@linuxfoundation.org, keescook@google.com, mcgrof@kernel.org
+Cc:     joel@jms.id.au, mpe@ellerman.id.au, joe@perches.com, brakmo@fb.com,
+        rostedt@goodmis.org, Tim.Bird@sony.com, khilman@baylibre.com,
+        julia.lawall@lip6.fr, linux-kselftest@vger.kernel.org,
+        kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+        jdike@addtoit.com, richard@nod.at, linux-um@lists.infradead.org,
+        daniel@ffwll.ch, dri-devel@lists.freedesktop.org, robh@kernel.org,
+        dan.j.williams@intel.com, linux-nvdimm@lists.01.org,
+        kieran.bingham@ideasonboard.com, Shuah Khan <shuah@kernel.org>
+References: <20181023235750.103146-1-brendanhiggins@google.com>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <4b6eb273-8fe0-75be-dea0-fbbf17a7158c@kernel.org>
+Date:   Thu, 25 Oct 2018 11:40:18 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181025175745.5b2b13e9@ivy-bridge>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 25 Oct 2018 17:38:49 +0000 (UTC)
+In-Reply-To: <20181023235750.103146-1-brendanhiggins@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-25 17:57, Steve Grubb wrote:
-> On Thu, 25 Oct 2018 08:27:32 -0400
-> Richard Guy Briggs <rgb@redhat.com> wrote:
+On 10/23/2018 05:57 PM, Brendan Higgins wrote:
+> This patch set proposes KUnit, a lightweight unit testing and mocking
+> framework for the Linux kernel.
 > 
-> > On 2018-10-25 06:49, Paul Moore wrote:
-> > > On Thu, Oct 25, 2018 at 2:06 AM Steve Grubb <sgrubb@redhat.com>
-> > > wrote:  
-> > > > On Wed, 24 Oct 2018 20:42:55 -0400
-> > > > Richard Guy Briggs <rgb@redhat.com> wrote:  
-> > > > > On 2018-10-24 16:55, Paul Moore wrote:  
-> > > > > > On Wed, Oct 24, 2018 at 11:15 AM Richard Guy Briggs
-> > > > > > <rgb@redhat.com> wrote:  
-> > > > > > > On 2018-10-19 19:16, Paul Moore wrote:  
-> > > > > > > > On Sun, Aug 5, 2018 at 4:32 AM Richard Guy Briggs
-> > > > > > > > <rgb@redhat.com> wrote:  
-> > > 
-> > > ...
-> > >   
-> > > > > > > > > +/*
-> > > > > > > > > + * audit_log_contid - report container info
-> > > > > > > > > + * @tsk: task to be recorded
-> > > > > > > > > + * @context: task or local context for record
-> > > > > > > > > + * @op: contid string description
-> > > > > > > > > + */
-> > > > > > > > > +int audit_log_contid(struct task_struct *tsk,
-> > > > > > > > > +                            struct audit_context
-> > > > > > > > > *context, char *op) +{
-> > > > > > > > > +       struct audit_buffer *ab;
-> > > > > > > > > +
-> > > > > > > > > +       if (!audit_contid_set(tsk))
-> > > > > > > > > +               return 0;
-> > > > > > > > > +       /* Generate AUDIT_CONTAINER record with
-> > > > > > > > > container ID */
-> > > > > > > > > +       ab = audit_log_start(context, GFP_KERNEL,
-> > > > > > > > > AUDIT_CONTAINER);
-> > > > > > > > > +       if (!ab)
-> > > > > > > > > +               return -ENOMEM;
-> > > > > > > > > +       audit_log_format(ab, "op=%s contid=%llu",
-> > > > > > > > > +                        op, audit_get_contid(tsk));
-> > > > > > > > > +       audit_log_end(ab);
-> > > > > > > > > +       return 0;
-> > > > > > > > > +}
-> > > > > > > > > +EXPORT_SYMBOL(audit_log_contid);  
-> > > > > > > >
-> > > > > > > > As discussed in the previous iteration of the patch, I
-> > > > > > > > prefer AUDIT_CONTAINER_ID here over AUDIT_CONTAINER.  If
-> > > > > > > > you feel strongly about keeping it as-is with
-> > > > > > > > AUDIT_CONTAINER I suppose I could live with that, but it
-> > > > > > > > is isn't my first choice.  
-> > > > > > >
-> > > > > > > I don't have a strong opinion on this one, mildly
-> > > > > > > preferring the shorter one only because it is shorter.  
-> > > > > >
-> > > > > > We already have multiple AUDIT_CONTAINER* record types, so it
-> > > > > > seems as though we should use "AUDIT_CONTAINER" as a prefix
-> > > > > > of sorts, rather than a type itself.  
-> > > > >
-> > > > > I'm fine with that.  I'd still like to hear Steve's input.  He
-> > > > > had stronger opinions than me.  
-> > > >
-> > > > The creation event should be separate and distinct from the
-> > > > continuing use when its used as a supplemental record. IOW,
-> > > > binding the ID to a container is part of the lifecycle and needs
-> > > > to be kept distinct.  
-> > > 
-> > > Steve's comment is pretty ambiguous when it comes to AUDIT_CONTAINER
-> > > vs AUDIT_CONTAINER_ID, but one could argue that AUDIT_CONTAINER_ID
-> > > helps distinguish the audit container id marking record and gets to
-> > > what I believe is the spirit of Steve's comment.  Taking this in
-> > > context with my previous remarks, let's switch to using
-> > > AUDIT_CONTAINER_ID.  
-> > 
-> > I suspect Steve is mixing up AUDIT_CONTAINER_OP with
-> > AUDIT_CONTAINER_ID, confusing the fact that they are two seperate
-> > records.  As a summary, the suggested records are:
-> > 	CONTAINER_OP	audit container identifier creation
-> > 	CONTAINER	audit container identifier aux record to an
-> > event
-> > 
-> > and what Paul is suggesting (which is fine by me) is:
-> > 	CONTAINER_OP	audit container identifier creation event
-> > 	CONTAINER_ID	audit container identifier aux record to
-> > an event
-> > 
-> > Steve, please indicate you are fine with this.
+> Unlike Autotest and kselftest, KUnit is a true unit testing framework;
+> it does not require installing the kernel on a test machine or in a VM
+> and does not require tests to be written in userspace running on a host
+> kernel. Additionally, KUnit is fast: From invocation to completion KUnit
+> can run several dozen tests in under a second. Currently, the entire
+> KUnit test suite for KUnit runs in under a second from the initial
+> invocation (build time excluded).
 > 
-> I thought it was:
-
-It *was*.  It was changed at Paul's request in this v3 thread:
-	https://www.redhat.com/archives/linux-audit/2018-July/msg00087.html
-
-And listed in the examples and changelog to this v4 patchset:
-	https://www.redhat.com/archives/linux-audit/2018-July/msg00178.html
-
-It is also listed in this userspace patchset update v4 (which should
-also have had a changelog added to it, note to self...):
-	https://www.redhat.com/archives/linux-audit/2018-July/msg00189.html
-
-I realize it is hard to keep up with all the detail changes in these
-patchsets...
-
-> CONTAINER_ID audit container identifier creation event
-> CONTAINER audit container identifier aux record to an event
+> KUnit is heavily inspired by JUnit, Python's unittest.mock, and
+> Googletest/Googlemock for C++. KUnit provides facilities for defining
+> unit test cases, grouping related test cases into test suites, providing
+> common infrastructure for running tests, mocking, spying, and much more.
 > 
-> Or vice versa. Don't mix up creation of the identifier with operations.
+> ## What's so special about unit testing?
+> 
+> A unit test is supposed to test a single unit of code in isolation,
+> hence the name. There should be no dependencies outside the control of
+> the test; this means no external dependencies, which makes tests orders
+> of magnitudes faster. Likewise, since there are no external dependencies,
+> there are no hoops to jump through to run the tests. Additionally, this
+> makes unit tests deterministic: a failing unit test always indicates a
+> problem. Finally, because unit tests necessarily have finer granularity,
+> they are able to test all code paths easily solving the classic problem
+> of difficulty in exercising error handling code.
+> 
+> ## Is KUnit trying to replace other testing frameworks for the kernel?
+> 
+> No. Most existing tests for the Linux kernel are end-to-end tests, which
+> have their place. A well tested system has lots of unit tests, a
+> reasonable number of integration tests, and some end-to-end tests. KUnit
+> is just trying to address the unit test space which is currently not
+> being addressed.
+> 
+> ## More information on KUnit
+> 
+> There is a bunch of documentation near the end of this patch set that
+> describes how to use KUnit and best practices for writing unit tests.
+> For convenience I am hosting the compiled docs here:
+> https://google.github.io/kunit-docs/third_party/kernel/docs/
+> 
+> ## Changes Since Last Version
+> 
+>  - Updated patchset to apply cleanly on 4.19.
+>  - Stripped down patchset to focus on just the core features (I dropped
+>    mocking, spying, and the MMIO stuff for now; you can find these
+>    patches here: https://kunit-review.googlesource.com/c/linux/+/1132),
+>    as suggested by Rob.
+>  - Cleaned up some of the commit messages and tweaked commit order a
+>    bit based on suggestions.
+> 
 
-Exactly what I'm trying to avoid...  Worded another way: "Don't mix up
-the creation operation with routine reporting of the identifier in
-events."  Steve, can you and Paul discuss and agree on what they should
-be called?  I don't have a horse in this race, but I need to record the
-result of that run.  ;-)
+I am a bit behind on reviewing this patch series.
 
-> -Steve
+Just a quick note that I will start looking at these early next week.
 
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+thanks,
+-- Shuah
