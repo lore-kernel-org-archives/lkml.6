@@ -2,98 +2,84 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD1AECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:30:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B1E1ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:30:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 773C42083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:30:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pEAxnrWS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 773C42083E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C33612083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:30:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C33612083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730398AbeJYWwN (ORCPT
+        id S1730326AbeJYWwD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:52:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34136 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:52:03 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42012 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727977AbeJYWwM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:52:12 -0400
-Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727534AbeJYWwC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:52:02 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14B072085B;
-        Thu, 25 Oct 2018 14:19:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477154;
-        bh=Js0JCaSlY4m+sfhSWIcLC/5xrKO8CY1U/CJnCcevlTo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pEAxnrWSJcIw1KBZvOyphLrOv1fpblULLawTYtcqNqLI+zgR8E5SZHxCkMvW5OgnM
-         Jl7Sg1Kz+jka+O6/tzGOX9gcNShsS3gnNlY8NMF9Fb/eHAH7TVxiEGJQm28tIz7nza
-         LHm33z+MoVqG6rdQ+QfkakP9Wc4vz1sm52OdvJQk=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Chris Wilson <chris@chris-wilson.co.uk>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jani Nikula <jani.nikula@intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 11/98] Revert "drm/i915: Fix mutex->owner inspection race under DEBUG_MUTEXES"
-Date:   Thu, 25 Oct 2018 10:17:26 -0400
-Message-Id: <20181025141853.214051-11-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
-References: <20181025141853.214051-1-sashal@kernel.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id 6399283F3F;
+        Thu, 25 Oct 2018 14:19:05 +0000 (UTC)
+Received: from asgard.redhat.com (ovpn-200-51.brq.redhat.com [10.40.200.51])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7820F612B2;
+        Thu, 25 Oct 2018 14:19:02 +0000 (UTC)
+Date:   Thu, 25 Oct 2018 16:19:27 +0200
+From:   Eugene Syromiatnikov <esyr@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ingo Molnar <mingo@kernel.org>, Shaohua Li <shli@kernel.org>,
+        Jens Axboe <axboe@kernel.dk>, linux-raid@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 0/2] Fix typo in RWH_WRITE_LIFE_NOT_SET constant name
+Message-ID: <20181025141927.GB19512@asgard.redhat.com>
+References: <20181006175114.GA10435@asgard.redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181006175114.GA10435@asgard.redhat.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 25 Oct 2018 14:19:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Wilson <chris@chris-wilson.co.uk>
+On Sat, Oct 06, 2018 at 07:51:14PM +0200, Eugene Syromiatnikov wrote:
+> Hello.
+> 
+> This is a small fix of a typo (or, more specifically, some remnant of
+> the old patch version spelling) in RWH_WRITE_LIFE_NOT_SET constant,
+> which is named as RWF_WRITE_LIFE_NOT_SET currently.  Since the name
+> with "H" is used in man page and everywhere else, it's probably worth
+> to make the name used in the fcntl.h UAPI header in line with it.
+> Second follow-up patch updates (the sole) usage site of this constant
+> in kernel to use the new spelling.
+> 
+> The old name is retained as it is part of UAPI now.
 
-[ Upstream commit a50940510e94f5fb65ffd79877a60592d85598a9 ]
+Hello, are there issues with the patches?
 
-The core fix was applied in
-
-commit a63b03e2d2477586440741677ecac45bcf28d7b1
-Author: Chris Wilson <chris@chris-wilson.co.uk>
-Date:   Tue Jan 6 10:29:35 2015 +0000
-
-    mutex: Always clear owner field upon mutex_unlock()
-
-(note the absence of stable@ tag)
-
-so we can now revert our band-aid commit 226e5ae9e5f910 for -next.
-
-Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Jani Nikula <jani.nikula@intel.com>
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpu/drm/i915/i915_gem.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/i915/i915_gem.c b/drivers/gpu/drm/i915/i915_gem.c
-index d88dbedeaa77..d0f0a7943d88 100644
---- a/drivers/gpu/drm/i915/i915_gem.c
-+++ b/drivers/gpu/drm/i915/i915_gem.c
-@@ -5144,7 +5144,7 @@ static bool mutex_is_locked_by(struct mutex *mutex, struct task_struct *task)
- 	if (!mutex_is_locked(mutex))
- 		return false;
- 
--#if defined(CONFIG_SMP) && !defined(CONFIG_DEBUG_MUTEXES)
-+#if defined(CONFIG_SMP) || defined(CONFIG_DEBUG_MUTEXES)
- 	return mutex->owner == task;
- #else
- 	/* Since UP may be pre-empted, we cannot assume that we own the lock */
--- 
-2.17.1
-
+> Eugene Syromiatnikov (2):
+>   fcntl: fix typo in RWH_WRITE_LIFE_NOT_SET r/w hint
+>   drivers/md/raid5.c: use the new spelling of RWH_WRITE_LIFE_NOT_SET
+> 
+>  drivers/md/raid5.c               | 4 ++--
+>  fs/fcntl.c                       | 2 +-
+>  include/uapi/linux/fcntl.h       | 9 ++++++++-
+>  tools/include/uapi/linux/fcntl.h | 9 ++++++++-
+>  4 files changed, 19 insertions(+), 5 deletions(-)
+> 
+> -- 
+> 2.1.4
+> 
