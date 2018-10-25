@@ -2,183 +2,126 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC73ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:55:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4249C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:56:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5F742082E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:55:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 871352082E
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 10:56:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AYyw3eyA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5F742082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="iZQxSlEb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 871352082E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727498AbeJYT1x (ORCPT
+        id S1727512AbeJYT20 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 15:27:53 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:33320 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727420AbeJYT1w (ORCPT
+        Thu, 25 Oct 2018 15:28:26 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:35084 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726852AbeJYT20 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 15:27:52 -0400
-Received: by mail-it1-f194.google.com with SMTP id h6-v6so1851921ith.0
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 03:55:38 -0700 (PDT)
+        Thu, 25 Oct 2018 15:28:26 -0400
+Received: by mail-it1-f196.google.com with SMTP id p64-v6so1169482itp.0
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 03:56:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=pcxsBOUqf7jB+ycXPk9VXpTvvTVpdenL7acA5++7KMc=;
-        b=AYyw3eyAWV6KKJz1pBK0t0ik0TGcHASACzsemXBCja0VW6AIpvm+b6dF9Qb55GOJyd
-         ln8lKveFoZOdDqNBqWA9vOikrL94FphJkhU83C33QAv28YBBYD0GMsIBvvg6KJgv4niX
-         7EEy+MGICZXQFE6ktAANDbwbmU9L5GljerKUk=
+        bh=4ZSHoP/QNHkrQ1G3/y91mk+ensvzovTW1aj0lbtU5h0=;
+        b=iZQxSlEbX48llLjY8w6aqJKaVBoq8luj55v28K8hBk77XOkkrJ/Yu9d21tzIPA67mN
+         7Lau6mAgaCEBZjACmS1ZJXCZUgRfYtfPf3kkwqBEuFVzX4B5Q7cJr1dQT7tIoRRgeswb
+         QWqd6DYjGBs+jKtHpDIezSQ3PBU8fzXPoRicI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=pcxsBOUqf7jB+ycXPk9VXpTvvTVpdenL7acA5++7KMc=;
-        b=a63pWXDHQVXaeVIrpz8ywsVNlshIumPtjfuNVIdLhD2vI42JeAeOeiRBwhGrESxcm3
-         k9y/lHxwvJ0BpHjlPYJPj4gx9L/uVy7jAOi2wIFQ9+Wsl1onrjDIlfr6X5w9dRBhUA8p
-         w1zdF+wpx9M+kf+i5PbBpKmbMqDntnv6Hjwse7VwB8LFkOIqRwtQWx4IDTGr3tf48jug
-         pc+P4zU25Ao8gaM9Xl/diLoS5WDCgj/BlBZff/H9d+7OIFWNCG3kobVmscw7XVjQFasp
-         kLuBjrPd+gofDjcSuT+7ckjaRm/Lz/lpoVJQaSpQ/2r8jUHIuO/ixsyc7YxdtclIoP8W
-         kIdQ==
-X-Gm-Message-State: AGRZ1gJFeSd8MOw5doa/irNj6NRtCB/oyzltsMm/+UcNgt5dY5Oui4By
-        tiugaU/FG/UE6fCaWIRY7izQlSvB+u3f+j3tWDpoNQ==
-X-Google-Smtp-Source: AJdET5dRDAzU/HnUw4DwW+OVqbcX8nxVyj5FVPkt+GzmslfQLeNNrfmeXki+nbGlcUXuJ+NmKfdIuE8HHdjyHE7efYQ=
-X-Received: by 2002:a24:47c5:: with SMTP id t188-v6mr583882itb.78.1540464938157;
- Thu, 25 Oct 2018 03:55:38 -0700 (PDT)
+        bh=4ZSHoP/QNHkrQ1G3/y91mk+ensvzovTW1aj0lbtU5h0=;
+        b=hpuIRRlKp6cgBa3JVpNftqbZriqI9l2RdLLH0XEgA91KB9tosik70fwUyJKb3/5u7E
+         b15bDPUzj/Z3Ka5wIpwYHSXMEusHa4tjfyDhWH1Pc5SYyF5bxHj0tTDwgb5Lum54WUYy
+         Xb7yeYYz13yFEJ/Pg2xROVdp1dko2IUro4fIlHbLTHzCpoTSfjSxG3d7qh0KG8tgYTKl
+         Nyvy0e9vYlmamUyBcNpXAsNDRg1+wXzznc6ve7dcumfqeMAL36p6qDHQGTQ22nIR5o7H
+         6/bE8k7u4SBhU7Lk9ltAFq3fdhbOegItauySjUUYPRbiTuqm5F0btabjvU067BaNA6V1
+         v0aw==
+X-Gm-Message-State: AGRZ1gKVUQz+6vG1st1PrqwFdXn250iPcjBTbLACtwkMx2yGJLSUdIFK
+        edtOQ7YM8PvejxPLy7QNvAinN/YoqWfdY5PbrCaxeA==
+X-Google-Smtp-Source: AJdET5dik+r+/EXqyu5FNxPXUe1z3vpDHrTtD0FRMOnBszZ803nRraubkSA6snFnrK5HAl6CkQlYpETAXO5pY0/4vXQ=
+X-Received: by 2002:a24:9f82:: with SMTP id c124-v6mr599069ite.32.1540464971232;
+ Thu, 25 Oct 2018 03:56:11 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a02:3941:0:0:0:0:0 with HTTP; Thu, 25 Oct 2018 03:54:57
- -0700 (PDT)
-In-Reply-To: <db0789a3048dd659ce8bf3f0fafb1c1dcf392791.1540446493.git.viresh.kumar@linaro.org>
-References: <cover.1540446493.git.viresh.kumar@linaro.org> <db0789a3048dd659ce8bf3f0fafb1c1dcf392791.1540446493.git.viresh.kumar@linaro.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 25 Oct 2018 12:54:57 +0200
-Message-ID: <CAPDyKFrR4k5xNRGCcHx48N6bZQAZHN5K-4ioM9FAmz_UYKzz-w@mail.gmail.com>
-Subject: Re: [PATCH V3 10/10] OPP: Remove of_dev_pm_opp_find_required_opp()
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+References: <20181023155035.9101-1-jagan@amarulasolutions.com>
+ <20181023155035.9101-3-jagan@amarulasolutions.com> <20181024180436.5n3i3z6h2yezc4cv@flea>
+In-Reply-To: <20181024180436.5n3i3z6h2yezc4cv@flea>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Thu, 25 Oct 2018 16:25:59 +0530
+Message-ID: <CAMty3ZC2wn-DjR+93yc-n-bAmVCHaEqR_=4XPddoo+7LjebTEg@mail.gmail.com>
+Subject: Re: [PATCH v2 02/15] clk: sunxi-ng: Add check for minimal rate to NKM PLLs
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25 October 2018 at 07:52, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> This isn't used anymore, remove it.
+On Wed, Oct 24, 2018 at 11:34 PM Maxime Ripard
+<maxime.ripard@bootlin.com> wrote:
 >
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> On Tue, Oct 23, 2018 at 09:20:22PM +0530, Jagan Teki wrote:
+> > Some NKM PLLs doesn't work well when their output clock rate is set below
+> > certain rate.
+> >
+> > So, add support for minimal rate for relevant PLLs.
+> >
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > ---
+> > Changes for v2:
+> > - new patch
+> >
+> >  drivers/clk/sunxi-ng/ccu_nkm.c | 7 +++++++
+> >  drivers/clk/sunxi-ng/ccu_nkm.h | 1 +
+> >  2 files changed, 8 insertions(+)
+> >
+> > diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
+> > index 841840e35e61..d17539dc88dd 100644
+> > --- a/drivers/clk/sunxi-ng/ccu_nkm.c
+> > +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+> > @@ -125,6 +125,13 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
+> >       if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+> >               rate *= nkm->fixed_post_div;
+> >
+> > +     if (rate < nkm->min_rate) {
+> > +             rate = nkm->min_rate;
+> > +             if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+> > +                     rate /= nkm->fixed_post_div;
+>
+> I'm not sure this is right. Is the post divider taken into account to
+> calculate the minimum, or is the minimum on the rate before the fixed
+> post divider.
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Since we are returning from here, we need to take care post div which
+is actually doing at the end of round_rate.
 
-Kind regards
-Uffe
+>
+> How did you test this?
 
-> ---
->  drivers/opp/of.c       | 54 ------------------------------------------
->  include/linux/pm_opp.h |  5 ----
->  2 files changed, 59 deletions(-)
->
-> diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-> index 0755ee307b1a..da31874c7fe9 100644
-> --- a/drivers/opp/of.c
-> +++ b/drivers/opp/of.c
-> @@ -1013,60 +1013,6 @@ unsigned int of_get_required_opp_performance_state(struct device_node *np,
->  }
->  EXPORT_SYMBOL_GPL(of_get_required_opp_performance_state);
->
-> -/**
-> - * of_dev_pm_opp_find_required_opp() - Search for required OPP.
-> - * @dev: The device whose OPP node is referenced by the 'np' DT node.
-> - * @np: Node that contains the "required-opps" property.
-> - *
-> - * Returns the OPP of the device 'dev', whose phandle is present in the "np"
-> - * node. Although the "required-opps" property supports having multiple
-> - * phandles, this helper routine only parses the very first phandle in the list.
-> - *
-> - * Return: Matching opp, else returns ERR_PTR in case of error and should be
-> - * handled using IS_ERR.
-> - *
-> - * The callers are required to call dev_pm_opp_put() for the returned OPP after
-> - * use.
-> - */
-> -struct dev_pm_opp *of_dev_pm_opp_find_required_opp(struct device *dev,
-> -                                                  struct device_node *np)
-> -{
-> -       struct dev_pm_opp *temp_opp, *opp = ERR_PTR(-ENODEV);
-> -       struct device_node *required_np;
-> -       struct opp_table *opp_table;
-> -
-> -       opp_table = _find_opp_table(dev);
-> -       if (IS_ERR(opp_table))
-> -               return ERR_CAST(opp_table);
-> -
-> -       required_np = of_parse_phandle(np, "required-opps", 0);
-> -       if (unlikely(!required_np)) {
-> -               dev_err(dev, "Unable to parse required-opps\n");
-> -               goto put_opp_table;
-> -       }
-> -
-> -       mutex_lock(&opp_table->lock);
-> -
-> -       list_for_each_entry(temp_opp, &opp_table->opp_list, node) {
-> -               if (temp_opp->available && temp_opp->np == required_np) {
-> -                       opp = temp_opp;
-> -
-> -                       /* Increment the reference count of OPP */
-> -                       dev_pm_opp_get(opp);
-> -                       break;
-> -               }
-> -       }
-> -
-> -       mutex_unlock(&opp_table->lock);
-> -
-> -       of_node_put(required_np);
-> -put_opp_table:
-> -       dev_pm_opp_put_opp_table(opp_table);
-> -
-> -       return opp;
-> -}
-> -EXPORT_SYMBOL_GPL(of_dev_pm_opp_find_required_opp);
-> -
->  /**
->   * dev_pm_opp_get_of_node() - Gets the DT node corresponding to an opp
->   * @opp:       opp for which DT node has to be returned for
-> diff --git a/include/linux/pm_opp.h b/include/linux/pm_opp.h
-> index 889bb347fbd9..2b2c3fd985ab 100644
-> --- a/include/linux/pm_opp.h
-> +++ b/include/linux/pm_opp.h
-> @@ -313,7 +313,6 @@ int dev_pm_opp_of_cpumask_add_table(const struct cpumask *cpumask);
->  void dev_pm_opp_of_cpumask_remove_table(const struct cpumask *cpumask);
->  int dev_pm_opp_of_get_sharing_cpus(struct device *cpu_dev, struct cpumask *cpumask);
->  struct device_node *dev_pm_opp_of_get_opp_desc_node(struct device *dev);
-> -struct dev_pm_opp *of_dev_pm_opp_find_required_opp(struct device *dev, struct device_node *np);
->  struct device_node *dev_pm_opp_get_of_node(struct dev_pm_opp *opp);
->  unsigned int of_get_required_opp_performance_state(struct device_node *np, int index);
->  #else
-> @@ -350,10 +349,6 @@ static inline struct device_node *dev_pm_opp_of_get_opp_desc_node(struct device
->         return NULL;
->  }
->
-> -static inline struct dev_pm_opp *of_dev_pm_opp_find_required_opp(struct device *dev, struct device_node *np)
-> -{
-> -       return NULL;
-> -}
->  static inline struct device_node *dev_pm_opp_get_of_node(struct dev_pm_opp *opp)
->  {
->         return NULL;
-> --
-> 2.19.1.568.g152ad8e3369a
->
+I've not used this on PLL_MIPI atleast, so I didn't test this.
