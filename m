@@ -7,44 +7,48 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3C1AC46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74869ECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B382A214E0
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C7B7214E0
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 14:20:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vOF2C+lZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B382A214E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mj5ksQx7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C7B7214E0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731230AbeJYWxs (ORCPT
+        id S1731245AbeJYWxu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 18:53:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36436 "EHLO mail.kernel.org"
+        Thu, 25 Oct 2018 18:53:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36510 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731177AbeJYWxq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 18:53:46 -0400
+        id S1729445AbeJYWxt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 18:53:49 -0400
 Received: from sasha-vm.mshome.net (unknown [167.98.65.38])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 063E72146E;
-        Thu, 25 Oct 2018 14:20:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B38B42086D;
+        Thu, 25 Oct 2018 14:20:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540477248;
-        bh=wMe0aFY0e7klt9rOMgeXIbLJQc3RKQTBjiDF/Dc/aU4=;
+        s=default; t=1540477251;
+        bh=cbSHfCGldFQfgA6G4YXr5JHdOoC7UICgr8ILQAwk9C8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vOF2C+lZOFvs22z7d7D36OX1eEiAeqcROlOtdMv3gNtQgT1ywsXjDUBZ6QUFDgNqA
-         7z6tZLXPFV69DOXju0fTtXn3dhhzARNGu4vZV8xwiQNpTBdQvmN636YqCoS4t0XtI2
-         wGk6idLkfGEnAAlcLcoYr2NHDsYj2qo9PPsQuOdo=
+        b=mj5ksQx7R8mS/OUUGpqMTZSg7Lyw5sqYa0pUMRIBTPo3xnM0WFCqMAWD7slkjC4cl
+         5H7RwJ02CA2fkOm//zLO1Ud4LURpAL0n3vU2DaZfUgGponMeUh6CDzPfc9uj7Y+l75
+         nYu46Rb7oB+CAzmbGBvvH5IUixrAcmLlDBrsDdsk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Larry Finger <Larry.Finger@lwfinger.net>,
-        Kalle Valo <kvalo@codeaurora.org>,
+Cc:     Joonyoung Shim <jy0922.shim@samsung.com>,
+        linux-samsung-soc@vger.kernel.org, cw00.choi@samsung.com,
+        daniel.lezcano@linaro.org, javier@osg.samsung.com,
+        kgene@kernel.org, krzk@kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Thomas Gleixner <tglx@linutronix.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 75/98] rtlwifi: rtl8821ae: Fix system lockups on boot
-Date:   Thu, 25 Oct 2018 10:18:30 -0400
-Message-Id: <20181025141853.214051-75-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 77/98] clocksource/exynos_mct: Clear interrupt when cpu is shut down
+Date:   Thu, 25 Oct 2018 10:18:32 -0400
+Message-Id: <20181025141853.214051-77-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181025141853.214051-1-sashal@kernel.org>
 References: <20181025141853.214051-1-sashal@kernel.org>
@@ -53,140 +57,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Larry Finger <Larry.Finger@lwfinger.net>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
 
-[ Upstream commit 54328e64047a54b8fc2362c2e1f0fa16c90f739f ]
+[ Upstream commit bc7c36eedb0c7004aa06c2afc3c5385adada8fa3 ]
 
-In commit 1277fa2ab2f9 ("rtlwifi: Remove the clear interrupt routine from all
-drivers"), the code that cleared all interrupt enable bits before setting them
-was removed for all PCI drivers. This fixed an issue that caused TX to be
-blocked for 3-5 seconds. On some RTL8821AE units, this change causes soft
-lockups to occur on boot. For that reason, the portion of the earlier commit
-that applied to rtl8821ae is reverted. Kernels 4.1 and newer are affected.
+When a CPU goes offline a potentially pending timer interrupt is not
+cleared. When the CPU comes online again then the pending interrupt is
+delivered before the per cpu clockevent device is initialized. As a
+consequence the tick interrupt handler dereferences a NULL pointer.
 
-See http://marc.info/?l=linux-wireless&m=144373370103285&w=2 and
-https://bugzilla.opensuse.org/show_bug.cgi?id=944978 for two cases where
-this regression affected user systems. Note that this bug does not appear on
-any of the developer's setups. For those users whose systems are affected
-by the TX blockage, but do not lock up on boot, a module parameter is added
-to disable the interrupt clear
+[   51.251378] Unable to handle kernel NULL pointer dereference at virtual address 00000040
+[   51.289348] task: ee942d00 task.stack: ee960000
+[   51.293861] PC is at tick_periodic+0x38/0xb0
+[   51.298102] LR is at tick_handle_periodic+0x1c/0x90
 
-Fixes: 1277fa2ab2f9 ("rtlwifi: Remove the clear interrupt routine from all drivers")
-Signed-off-by: Larry Finger <Larry.Finger@lwfinger.net>
-Cc: Stable <stable@vger.kernel.org> [V4.1+]
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Clear the pending interrupt in the cpu dying path.
+
+Fixes: 56a94f13919c ("clocksource: exynos_mct: Avoid blocking calls in the cpu hotplug notifier")
+Reported-by: Seung-Woo Kim <sw0312.kim@samsung.com>
+Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: cw00.choi@samsung.com
+Cc: daniel.lezcano@linaro.org
+Cc: stable@vger.kernel.org
+Cc: javier@osg.samsung.com
+Cc: kgene@kernel.org
+Cc: krzk@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/1484628876-22065-1-git-send-email-jy0922.shim@samsung.com
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/rtlwifi/pci.h          |  2 ++
- drivers/net/wireless/rtlwifi/rtl8821ae/hw.c | 17 +++++++++++++++++
- drivers/net/wireless/rtlwifi/rtl8821ae/sw.c |  5 +++++
- drivers/net/wireless/rtlwifi/wifi.h         |  3 +++
- 4 files changed, 27 insertions(+)
+ drivers/clocksource/exynos_mct.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/wireless/rtlwifi/pci.h b/drivers/net/wireless/rtlwifi/pci.h
-index d4567d12e07e..5da6703942d9 100644
---- a/drivers/net/wireless/rtlwifi/pci.h
-+++ b/drivers/net/wireless/rtlwifi/pci.h
-@@ -247,6 +247,8 @@ struct rtl_pci {
- 	/* MSI support */
- 	bool msi_support;
- 	bool using_msi;
-+	/* interrupt clear before set */
-+	bool int_clear;
- };
- 
- struct mp_adapter {
-diff --git a/drivers/net/wireless/rtlwifi/rtl8821ae/hw.c b/drivers/net/wireless/rtlwifi/rtl8821ae/hw.c
-index e17b728a21aa..28b8b6a25f6d 100644
---- a/drivers/net/wireless/rtlwifi/rtl8821ae/hw.c
-+++ b/drivers/net/wireless/rtlwifi/rtl8821ae/hw.c
-@@ -2253,11 +2253,28 @@ void rtl8821ae_set_qos(struct ieee80211_hw *hw, int aci)
+diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
+index c844616028d2..714f9a767b17 100644
+--- a/drivers/clocksource/exynos_mct.c
++++ b/drivers/clocksource/exynos_mct.c
+@@ -487,6 +487,7 @@ static void exynos4_local_timer_stop(struct clock_event_device *evt)
+ 	if (mct_int_type == MCT_INT_SPI) {
+ 		if (evt->irq != -1)
+ 			disable_irq_nosync(evt->irq);
++		exynos4_mct_write(0x1, mevt->base + MCT_L_INT_CSTAT_OFFSET);
+ 	} else {
+ 		disable_percpu_irq(mct_irqs[MCT_L0_IRQ]);
  	}
- }
- 
-+static void rtl8821ae_clear_interrupt(struct ieee80211_hw *hw)
-+{
-+	struct rtl_priv *rtlpriv = rtl_priv(hw);
-+	u32 tmp = rtl_read_dword(rtlpriv, REG_HISR);
-+
-+	rtl_write_dword(rtlpriv, REG_HISR, tmp);
-+
-+	tmp = rtl_read_dword(rtlpriv, REG_HISRE);
-+	rtl_write_dword(rtlpriv, REG_HISRE, tmp);
-+
-+	tmp = rtl_read_dword(rtlpriv, REG_HSISR);
-+	rtl_write_dword(rtlpriv, REG_HSISR, tmp);
-+}
-+
- void rtl8821ae_enable_interrupt(struct ieee80211_hw *hw)
- {
- 	struct rtl_priv *rtlpriv = rtl_priv(hw);
- 	struct rtl_pci *rtlpci = rtl_pcidev(rtl_pcipriv(hw));
- 
-+	if (!rtlpci->int_clear)
-+		rtl8821ae_clear_interrupt(hw);/*clear it here first*/
-+
- 	rtl_write_dword(rtlpriv, REG_HIMR, rtlpci->irq_mask[0] & 0xFFFFFFFF);
- 	rtl_write_dword(rtlpriv, REG_HIMRE, rtlpci->irq_mask[1] & 0xFFFFFFFF);
- 	rtlpci->irq_enabled = true;
-diff --git a/drivers/net/wireless/rtlwifi/rtl8821ae/sw.c b/drivers/net/wireless/rtlwifi/rtl8821ae/sw.c
-index fc92dd6a0d07..80307d187c0a 100644
---- a/drivers/net/wireless/rtlwifi/rtl8821ae/sw.c
-+++ b/drivers/net/wireless/rtlwifi/rtl8821ae/sw.c
-@@ -142,6 +142,7 @@ int rtl8821ae_init_sw_vars(struct ieee80211_hw *hw)
- 
- 	rtl8821ae_bt_reg_init(hw);
- 	rtlpci->msi_support = rtlpriv->cfg->mod_params->msi_support;
-+	rtlpci->int_clear = rtlpriv->cfg->mod_params->int_clear;
- 	rtlpriv->btcoexist.btc_ops = rtl_btc_get_ops_pointer();
- 
- 	rtlpriv->dm.dm_initialgain_enable = 1;
-@@ -213,6 +214,7 @@ int rtl8821ae_init_sw_vars(struct ieee80211_hw *hw)
- 	rtlpriv->psc.swctrl_lps = rtlpriv->cfg->mod_params->swctrl_lps;
- 	rtlpriv->psc.fwctrl_lps = rtlpriv->cfg->mod_params->fwctrl_lps;
- 	rtlpci->msi_support = rtlpriv->cfg->mod_params->msi_support;
-+	rtlpci->msi_support = rtlpriv->cfg->mod_params->int_clear;
- 	if (rtlpriv->cfg->mod_params->disable_watchdog)
- 		pr_info("watchdog disabled\n");
- 	rtlpriv->psc.reg_fwctrl_lps = 3;
-@@ -334,6 +336,7 @@ static struct rtl_mod_params rtl8821ae_mod_params = {
- 	.swctrl_lps = false,
- 	.fwctrl_lps = true,
- 	.msi_support = true,
-+	.int_clear = true,
- 	.debug = DBG_EMERG,
- 	.disable_watchdog = 0,
- };
-@@ -463,6 +466,7 @@ module_param_named(fwlps, rtl8821ae_mod_params.fwctrl_lps, bool, 0444);
- module_param_named(msi, rtl8821ae_mod_params.msi_support, bool, 0444);
- module_param_named(disable_watchdog, rtl8821ae_mod_params.disable_watchdog,
- 		   bool, 0444);
-+module_param_named(int_clear, rtl8821ae_mod_params.int_clear, bool, 0444);
- MODULE_PARM_DESC(swenc, "Set to 1 for software crypto (default 0)\n");
- MODULE_PARM_DESC(ips, "Set to 0 to not use link power save (default 1)\n");
- MODULE_PARM_DESC(swlps, "Set to 1 to use SW control power save (default 0)\n");
-@@ -470,6 +474,7 @@ MODULE_PARM_DESC(fwlps, "Set to 1 to use FW control power save (default 1)\n");
- MODULE_PARM_DESC(msi, "Set to 1 to use MSI interrupts mode (default 1)\n");
- MODULE_PARM_DESC(debug, "Set debug level (0-5) (default 0)");
- MODULE_PARM_DESC(disable_watchdog, "Set to 1 to disable the watchdog (default 0)\n");
-+MODULE_PARM_DESC(int_clear, "Set to 1 to disable interrupt clear before set (default 0)\n");
- 
- static SIMPLE_DEV_PM_OPS(rtlwifi_pm_ops, rtl_pci_suspend, rtl_pci_resume);
- 
-diff --git a/drivers/net/wireless/rtlwifi/wifi.h b/drivers/net/wireless/rtlwifi/wifi.h
-index 27822fe34d9a..318078645e64 100644
---- a/drivers/net/wireless/rtlwifi/wifi.h
-+++ b/drivers/net/wireless/rtlwifi/wifi.h
-@@ -2212,6 +2212,9 @@ struct rtl_mod_params {
- 
- 	/* default 0: 1 means disable */
- 	bool disable_watchdog;
-+
-+	/* default 0: 1 means do not disable interrupts */
-+	bool int_clear;
- };
- 
- struct rtl_hal_usbint_cfg {
 -- 
 2.17.1
 
