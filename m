@@ -2,159 +2,97 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=CHARSET_FARAWAY_HEADER,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E98ECDE46
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 02:15:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E12FAECDE46
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 02:18:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 414F020831
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 02:15:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 414F020831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 8E99D20831
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 02:18:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E99D20831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727221AbeJYKq0 (ORCPT
+        id S1727236AbeJYKtD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 25 Oct 2018 06:46:26 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:26502 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726310AbeJYKq0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 25 Oct 2018 06:46:26 -0400
-Received: from fsav107.sakura.ne.jp (fsav107.sakura.ne.jp [27.133.134.234])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9P2Fn1Z078174;
-        Thu, 25 Oct 2018 11:15:49 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav107.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav107.sakura.ne.jp);
- Thu, 25 Oct 2018 11:15:49 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav107.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9P2Fmg6078169;
-        Thu, 25 Oct 2018 11:15:48 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: (from i-love@localhost)
-        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id w9P2Fm2M078167;
-        Thu, 25 Oct 2018 11:15:48 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Message-Id: <201810250215.w9P2Fm2M078167@www262.sakura.ne.jp>
-X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
-Subject: Re: KASAN: use-after-free Read in =?ISO-2022-JP?B?dGFza19pc19kZXNjZW5k?=
- =?ISO-2022-JP?B?YW50?=
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     serge@hallyn.com,
-        syzbot <syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com>,
-        jmorris@namei.org, keescook@chromium.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
+        Thu, 25 Oct 2018 06:49:03 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58484 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726317AbeJYKtD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 25 Oct 2018 06:49:03 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D7BE7227CE;
+        Thu, 25 Oct 2018 02:18:25 +0000 (UTC)
+Received: from localhost (ovpn-8-17.pek2.redhat.com [10.72.8.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B031876542;
+        Thu, 25 Oct 2018 02:18:19 +0000 (UTC)
+Date:   Thu, 25 Oct 2018 10:18:09 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+        boris.ostrovsky@oracle.com, jgross@suse.com, willy@infradead.org,
+        x86@kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 1/2] x86/mm: Move LDT remap out of KASLR region on
+ 5-level paging
+Message-ID: <20181025021809.GB2120@MiWiFi-R3L-srv>
+References: <20181024125112.55999-1-kirill.shutemov@linux.intel.com>
+ <20181024125112.55999-2-kirill.shutemov@linux.intel.com>
 MIME-Version: 1.0
-Date:   Thu, 25 Oct 2018 11:15:48 +0900
-References: <76013c9e-0664-ef5e-b6c0-d48f6ce5db3c@i-love.sakura.ne.jp> <20181022134634.GA7358@redhat.com>
-In-Reply-To: <20181022134634.GA7358@redhat.com>
-Content-Type: text/plain; charset="ISO-2022-JP"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181024125112.55999-2-kirill.shutemov@linux.intel.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 25 Oct 2018 02:18:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Oleg Nesterov wrote:
-> On 10/22, Tetsuo Handa wrote:
-> > > And again, I do not know how/if yama ensures that child is rcu-protected, perhaps
-> > > task_is_descendant() needs to check pid_alive(child) right after rcu_read_lock() ?
-> >
-> > Since the caller (ptrace() path) called get_task_struct(child), child itself can't be
-> > released. Do we still need pid_alive(child) ?
+Hi Kirill,
+
+Thanks for making this patchset. I have small concerns, please see the
+inline comments.
+
+On 10/24/18 at 03:51pm, Kirill A. Shutemov wrote:
+> On 5-level paging LDT remap area is placed in the middle of
+> KASLR randomization region and it can overlap with direct mapping,
+> vmalloc or vmap area.
 > 
-> get_task_struct(child) can only ensure that this task_struct can't be freed.
+> Let's move LDT just before direct mapping which makes it safe for KASLR.
+> This also allows us to unify layout between 4- and 5-level paging.
 
-The report says that it is a use-after-free read at
+In crash utility and makedumpfile which are used to analyze system
+memory content, PAGE_OFFSET is hardcoded as below in non-KASLR case:
 
-  walker = rcu_dereference(walker->real_parent);
+#define PAGE_OFFSET_2_6_27         0xffff880000000000
 
-which means that walker was already released.
+Seems this time they need add another value for them. For 4-level and
+5-level, since 5-level code also exist in stable kernel. Surely this
+doesn't matter much.
 
 > 
-> Suppose that this child exits after get_task_struct(), then its real_parent exits
-> too and calls call_rcu(delayed_put_task_struct).
+> We don't touch 4 pgd slot gap just before the direct mapping reserved
+> for a hypervisor, but move direct mapping by one slot instead.
 > 
-> Now, when task_is_descendant() is called, rcu_read_lock() can happen after rcu gp,
-> iow child->parent can be already freed/reused/unmapped.
-> 
-> We need to ensure that child is still protected by RCU.
+> The LDT mapping is per-mm, so we cannot move it into P4D page table next
+> to CPU_ENTRY_AREA without complicating PGD table allocation for 5-level
+> paging.
 
-I wonder whether pid_alive() test helps.
+Here as discussed in private thread, at the first place you also agreed
+to put it in p4d entry next to CPU_ENTRY_AREA, but finally you changd
+mind, there must be some reasons when you implemented and investigated
+further to find out. Could you please say more about how it will
+complicating PGD table allocation for 5-level paging? Or give an use
+case where it will complicate?
 
-We can get
+Very sorry I am stupid, still don't get what's the point. Really
+appreciate it.
 
-[   40.620318] parent or walker is dead.
-[   40.624146] tracee is dead.
-
-messages using below patch and reproducer.
-
-----------
-diff --git a/kernel/ptrace.c b/kernel/ptrace.c
-index 99cfddd..0d9d786 100644
---- a/kernel/ptrace.c
-+++ b/kernel/ptrace.c
-@@ -385,6 +385,7 @@ static int ptrace_attach(struct task_struct *task, long request,
- 	if (mutex_lock_interruptible(&task->signal->cred_guard_mutex))
- 		goto out;
- 
-+	schedule_timeout_killable(HZ);
- 	task_lock(task);
- 	retval = __ptrace_may_access(task, PTRACE_MODE_ATTACH_REALCREDS);
- 	task_unlock(task);
-diff --git a/security/yama/yama_lsm.c b/security/yama/yama_lsm.c
-index ffda91a..a231ec6 100644
---- a/security/yama/yama_lsm.c
-+++ b/security/yama/yama_lsm.c
-@@ -283,6 +283,11 @@ static int task_is_descendant(struct task_struct *parent,
- 		return 0;
- 
- 	rcu_read_lock();
-+	if (!pid_alive(parent) || !pid_alive(walker)) {
-+		rcu_read_unlock();
-+		printk("parent or walker is dead.\n");
-+		return 0;
-+	}
- 	if (!thread_group_leader(parent))
- 		parent = rcu_dereference(parent->group_leader);
- 	while (walker->pid > 0) {
-@@ -315,6 +320,10 @@ static int ptracer_exception_found(struct task_struct *tracer,
- 	bool found = false;
- 
- 	rcu_read_lock();
-+	if (!pid_alive(tracee)) {
-+		printk("tracee is dead.\n");
-+		goto unlock;
-+	}
- 
- 	/*
- 	 * If there's already an active tracing relationship, then make an
-----------
-
-----------
-#include <unistd.h>
-#include <sys/ptrace.h>
-#include <poll.h>
-
-int main(int argc, char *argv[])
-{
-	if (fork() == 0) {
-		ptrace(PTRACE_ATTACH, getppid(), NULL, NULL);
-		_exit(0);
-	}
-	poll(NULL, 0, 100);
-	return 0;
-}
-----------
-
-But since "child" has at least one reference, reading "child->real_parent" should
-be safe. Therefore, I think that bailing out due to pid_is_alive(child) == false
-(like above patch does) cannot avoid this problem...
-
+Thanks
+Baoquan
