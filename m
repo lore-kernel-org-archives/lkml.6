@@ -2,143 +2,128 @@ Return-Path: <SRS0=k9B+=NF=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B35C2C46475
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:12:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 716B8C46475
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:15:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E3F42083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:12:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E3F42083E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+	by mail.kernel.org (Postfix) with ESMTP id 14EC8207DD
+	for <linux-kernel@archiver.kernel.org>; Thu, 25 Oct 2018 22:15:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CnLLLqD+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14EC8207DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727487AbeJZGrC (ORCPT
+        id S1727514AbeJZGtd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 02:47:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33518 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726348AbeJZGrC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 02:47:02 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 77E19B0CD;
-        Thu, 25 Oct 2018 22:12:33 +0000 (UTC)
-From:   NeilBrown <neil@brown.name>
-To:     esr@thyrsus.com, "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        visionsofalice@redchan.it,
-        linux-kernel <linux-kernel@vger.kernel.org>, rms@gnu.org,
-        bruce@perens.com, moglen@columbia.edu, bkuhn@sfconservancy.org,
-        editor@lwn.net, Laura Abbott <labbott@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        ksummit-discuss@lists.linuxfoundation.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Olof Johansson <olof@lixom.net>, Chris Mason <clm@fb.com>,
-        Mishi Choudhary <mishi@linux.com>,
-        linux-kernel-owner@vger.kernel.org
-Date:   Fri, 26 Oct 2018 09:12:21 +1100
-Subject: Re: The linux devs can rescind their license grant.
-In-Reply-To: <20181025214123.GA2448@thyrsus.com>
-References: <20181020134908.GA32218@kroah.com> <87y3ar80ac.fsf@notabene.neil.brown.name> <c6bf1877-6e29-50ec-ffa8-314ab35ec9ce@redhat.com> <185b786a2bd6e8d527dca161dc42e4f1@redchan.it> <20181025081911.GB11343@kroah.com> <20181025193901.GD26403@thyrsus.com> <20181025204718.GB25649@thunk.org> <20181025214123.GA2448@thyrsus.com>
-Message-ID: <87a7n165h6.fsf@notabene.neil.brown.name>
+        Fri, 26 Oct 2018 02:49:33 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40157 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726348AbeJZGtd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 02:49:33 -0400
+Received: by mail-pg1-f196.google.com with SMTP id o14-v6so4667082pgv.7;
+        Thu, 25 Oct 2018 15:15:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Pwz6Qvrx0sA6mwWj5Vh1b5fHZFctycd/Ce9grbu7wwE=;
+        b=CnLLLqD+bjah7D238vPTMTk9sC0zc3HKcK0Z9IfvsXfB5hr+lKf1z4SiHIcuAPVTC4
+         V8El90b2nn/b+7broLGXA2Uvm+3nbghrjBlmdRzVxfnHPxM7S5VGDMEGwDEBIPJtZUWM
+         xbke9cw849kesDO53en8HHgZR0godkc3PXw4d3dkkpp45AdS31xAAxAz/clhzZm+uYyG
+         7KBAUHzJe/f5Tr9X/5+OPBY1UhDFdgAbbXj4UXtj4bJW/EjSMZVFAPeVhzXNbUJJbniy
+         QA97Wq8/Osinxch3yjgrmZxv4qojWaUCT9fWdyF13cfju11Knp4fQmVbpqKuBnM+Q3/f
+         1pbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Pwz6Qvrx0sA6mwWj5Vh1b5fHZFctycd/Ce9grbu7wwE=;
+        b=kx+g2Hj/D+vXZNmPEZGJDIgAjjSqxb3HSlrsf8UOvsXDYOFGOvArGLT6ECtJA/NWAC
+         oHiFTQzmwBDPY29T7sHACxsH38qFvqbemkDWL/VBpijNLG59uSEIJNLHUXn8MTi024/C
+         /I/wChOl/kS4nB9XLpWHPCaTjjNmBkAg6qHCB/RG028muerAAbBEIMO30mpNfrbTqw+7
+         beNZYWfVLhD1PUK/K+HN8vu0V9nnXDWPQaBBHDDcPGBKUwXDAJp2F9AU0vNTFCmPZygy
+         BSA+rculUAYaVNXaeCMjhpXVKeWY8Ie4oGlov4WZXM8ijVF/riJ14rvPHPjTvcGnWJWb
+         YABw==
+X-Gm-Message-State: AGRZ1gJBC5q+lvouYQVstQ3ucGAO3y/2fZ6AkkW3dz6q7Nux0JBktXHL
+        k0SIKuwbO1uxqylVu3osLBi3Hptj
+X-Google-Smtp-Source: AJdET5d2HdnbwDAXTqbYTLQEf0XKxXcNqtO1ANwUVFb/5tcPOT/d1JUR0+Y3r8oHYbJ5eEQuHGyeIA==
+X-Received: by 2002:a63:2447:: with SMTP id k68-v6mr896717pgk.156.1540505705580;
+        Thu, 25 Oct 2018 15:15:05 -0700 (PDT)
+Received: from ?IPv6:2620:15c:2c1:200:55c7:81e6:c7d8:94b? ([2620:15c:2c1:200:55c7:81e6:c7d8:94b])
+        by smtp.gmail.com with ESMTPSA id n64-v6sm6545550pfh.166.2018.10.25.15.15.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Oct 2018 15:15:04 -0700 (PDT)
+Subject: Re: [PATCH v1] net: ipv6: fix racey clock check in route cache aging
+ logic
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     "David S . Miller" <davem@davemloft.net>, kuznet@ms2.inr.ac.ru,
+        yoshfuji@linux-ipv6.org, netdev@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20181025211352.112096-1-brendanhiggins@google.com>
+ <d787249c-0679-065a-62cb-ee9f87b1fba3@gmail.com>
+ <CAFd5g44jmpDyeh--=Hd2fAexzik4gMYLMdNhAMqxWqnjSh4KeA@mail.gmail.com>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <9ce74f5b-387d-b02f-2efa-f12c1450577c@gmail.com>
+Date:   Thu, 25 Oct 2018 15:15:04 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+In-Reply-To: <CAFd5g44jmpDyeh--=Hd2fAexzik4gMYLMdNhAMqxWqnjSh4KeA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Oct 25 2018, Eric S. Raymond wrote:
-
-> Theodore Y. Ts'o <tytso@mit.edu>:
->> On Thu, Oct 25, 2018 at 03:39:01PM -0400, Eric S. Raymond wrote:
->> > Under Jacobsen vs. Katzer (535 f 3d 1373 fed cir 2008) authors of
->> > GPLed software have a specific right to relief (including injunctive
->> > relief) against misappropriation of their software. That ruling (which
->> > was the case of first impression on the binding status of the GPL)
->> > reputational damage is *specifically* recognized as grounds for relief.
->>=20
->> I've read the legal briefs, and I'm pretty sure they don't say what
->> you are claiming they say.  Yes, I'm not a lawyer --- but that's OK
->> --- neither are you.
->
-> How much are you willing to gamble on not being wrong?
->
->> The *vast* majority of the "anti-CoC dissidents" who have been
->> advancing this argument, have, as near as I can tell, little or no
->> copyright ownership in the kernel.
->
-> I do not have any facts with which to dispute this specific claim.
-> However, I do notice that a significant number of long-time
-> contributors have put themselves in the anti-CoC camp. I note Al Viro
-> as a recent example.
-
-I think you are blurring two groups here.
-Ted describes "anti-CoC dissidents" as people who are advancing an
-argument about rescinding their license.  This is a smaller groups than
-the "ant-CoC camp" who don't really like the CoC.  I suspect is it is a
-much smaller group when restricting to actual copyright holders.
-
-I am against the CoC as it stands, but rescinding any license is such an
-enormous over-reaction, I find the concept laughable.
-
-NeilBrown
 
 
->
-> Even supposing you are right about most of the anti-Coc people being
-> outsiders, a tiny minority of people with a genuine IP stake could do a
-> lot of damage.  I ask again: how much are you willing to gamble on not
-> being wrong?
->
-> I definitely do not want to see the kind of explosion we could witness.
-> I think you are making it more likely rather than less by appearing
-> high-handed and dismissive.   Because, whatever the merits of the
-> CoC itself, there has been a process failure here.  It doesn't look
-> good to be defending that failure.
->
-> A change like the CoC adoption was not a good thing to do without
-> proper public notice, discussion, and consensus-building *beforehand*.
-> This was an unforced error on the part of the leadership group;
-> please, *please* don't compound it by digging in around the error.  Do
-> you really think you're going to win hearts and minds among insider
-> dissidents - people with a genuine stake - by dismissing the
-> opposition as a troll job?
->
-> Instead of declaiming about "trolls", how about we fix the process
-> failure instead?
-> --=20
-> 		<a href=3D"http://www.catb.org/~esr/">Eric S. Raymond</a>
->
-> My work is funded by the Internet Civil Engineering Institute: https://ic=
-ei.org
-> Please visit their site and donate: the civilization you save might be yo=
-ur own.
+On 10/25/2018 02:46 PM, Brendan Higgins wrote:
+> On Thu, Oct 25, 2018 at 2:40 PM Eric Dumazet <eric.dumazet@gmail.com> wrote:
+>> On 10/25/2018 02:13 PM, Brendan Higgins wrote:
+> <snip>
+>>>
+>>> diff --git a/net/ipv6/route.c b/net/ipv6/route.c
+>>> index 2a7423c394560..54d28b91fd840 100644
+>>> --- a/net/ipv6/route.c
+>>> +++ b/net/ipv6/route.c
+>>> @@ -1734,7 +1734,7 @@ static void rt6_age_examine_exception(struct rt6_exception_bucket *bucket,
+>>>                       rt6_remove_exception(bucket, rt6_ex);
+>>>                       return;
+>>>               }
+>>> -     } else if (time_after(jiffies, rt->dst.expires)) {
+>>> +     } else if (time_after(now, rt->dst.expires)) {
+>>>               RT6_TRACE("purging expired route %p\n", rt);
+>>>               rt6_remove_exception(bucket, rt6_ex);
+>>>               return;
+>>>
+>>
+>>
+>> I do not think there is a bug here ?
+>>
+>> As a matter of fact, using the latest value of jiffies is probably better,
+>> since in some cases the @now variable could be quite in the past.
+> 
+> Then why do we pass the `now` parameter in at all and use it at all,
+> like here: https://elixir.bootlin.com/linux/latest/source/net/ipv6/route.c#L1764
+> ?
+> 
+> I am still skeptical that we should check jiffies in each check, but
+> we should at least be consistent.
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+Well, this is a case where we do not really care.
 
------BEGIN PGP SIGNATURE-----
+When a bug is fixed (you added a Fixes: tag which is good), we want
+to understand the real problem that needs to be fixed on stable kernels.
 
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlvSP8UACgkQOeye3VZi
-gbnBgg//YXyTrRXBoJyJ2fTlvsnSfCK5x4sGdV3Ni/kQ/XVL7A9SjO5ZGgWrZNc3
-HYkAq7Gq4eYBYPB7guAEhnMsX8ctjUf/ryYn/IkXmJ7YrSdzzZrME0q2TVDjoDnZ
-27+l5avDrJVdrUIOYKZOdati2mC4s7eZRegAodIa6JPbYYkQOvckWDqLb0DzFHMj
-bZSWIevDbEG3VOOirAnY/6pUIJEseYyC5mmHefIi3kM1lP6Tm1ANEuhn0xj7yy4d
-0JfdpdaZH7iwABC672nOFRACgx+u7eHVUCRwHjPrkGIEYCkYlpOCe3QFlqZIPJgw
-03vhgQLsdKrm2gT44usGYI2IXN5IlQ7sv8fULc0BbPLnLT7O94Js5hGpyrbiINnq
-7DS04c9EZC8pSx3+rEqoFmqKo0MLJcaaBOXiIkPX4njeTbkxPgnyB7Xp/7HWycrj
-yqKTYmFCG6cFNDz/O7YVT1baCpNF4I8iYpRIXvSCisC/pXx2ZIYDfZwuBYWcbqDc
-+f+vl8/ifdLB2pLLex3gTN+soBFQVX0V+0nXeWFqtkdaT2IML4uig+J7b1t94a56
-4XLNGLdS3q1J62hk8T3GJsZ8YUSBUli91Ux2v0Do18CLjM5gParf4glZwavl9L0Y
-tt8kooluX5EMsCRcqsYWzcbCyTZJ2r3ek7V+R3ZAcnvW7n1HqQ4=
-=0+s7
------END PGP SIGNATURE-----
---=-=-=--
+Since this does not seem to be a real issue, I would suggest you send a cleanup
+patch when net-next is open (few days after linux-4.20-rc1 is release)
+
