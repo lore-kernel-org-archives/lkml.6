@@ -2,563 +2,159 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89771C6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:44:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EAB5ECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:44:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43D5420651
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:44:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43D5420651
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 369AE20651
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:44:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="jP95xZZa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 369AE20651
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727776AbeJZXVb (ORCPT
+        id S1727802AbeJZXVe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 19:21:31 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:46300 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727562AbeJZXVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 19:21:05 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 7070E209BC; Fri, 26 Oct 2018 16:43:41 +0200 (CEST)
-Received: from localhost.localdomain (aaubervilliers-681-1-12-210.w90-88.abo.wanadoo.fr [90.88.133.210])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 9D58B20794;
-        Fri, 26 Oct 2018 16:43:40 +0200 (CEST)
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
+        Fri, 26 Oct 2018 19:21:34 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42090 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727781AbeJZXVd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 19:21:33 -0400
+Received: by mail-pg1-f195.google.com with SMTP id i4-v6so635061pgq.9
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 07:44:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eZqm0CFEdgNM2tKHjKivQNx4i6KhyKtyrSoJgQ5hCEE=;
+        b=jP95xZZarKPxRpcTk4yOQdHhh67H3biXbiHdakPyEF9FUDJlTSCMnO0xUYhEyW1TkN
+         OV2Iag5L9QtyFR2U3nFaC+SzME8X1lihgttwy1Q8Uq27FIr6KQHi+0Pt8xRJHSbF9Fda
+         GdyDSWFclhbRhzqTwa56E/bRXuJ6B+2do8XZA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=eZqm0CFEdgNM2tKHjKivQNx4i6KhyKtyrSoJgQ5hCEE=;
+        b=deRgguYlOwy60ctuonPS9l/1ht6+z2q0ixhx+0IJSGAU1v3lSmlAn/DGQG137ZeKMk
+         Rq5FwCFPj1tmrNNrxff03vqvWTFrlhM2+Y6/2qSPERF9D+iaDh6Z3NID9KXr2IbTntEr
+         1XwO+NiAbRa6O15+xZfFUbZZEvNk68JNDsTlIqvGWMcOiqM8+V3f+B3t+YmmB/ivd7aL
+         +w6eqaJVL74+bfpokIvOjRUaRi6SjIUyATjhHJP3hzG7GzVe9Stc8puGmewvw5dv4iFK
+         WI2j28Z7DZn7EQYq95GK/X+HGVthsA8N4dz4vLX0FANsgXQqhDJOCSoITfCDeONcWEaa
+         G3FA==
+X-Gm-Message-State: AGRZ1gIZCdi3xdWhQuPg/5QzC9RVzKsLPXefmuET5cj9PvSmuxnwYMcH
+        Mdj3Pq6CqAK0ElbqAKyLCkOVJQ==
+X-Google-Smtp-Source: AJdET5e09G5gEekKHPpWwXEsKeq6RP2nzY9YZ94thvyr9Xp6iJ8drFkIPbwp/kbr+AukXMI/VITHJw==
+X-Received: by 2002:a63:224f:: with SMTP id t15mr3730017pgm.69.1540565052740;
+        Fri, 26 Oct 2018 07:44:12 -0700 (PDT)
+Received: from localhost.localdomain ([27.7.51.1])
+        by smtp.gmail.com with ESMTPSA id z22-v6sm12044467pgv.24.2018.10.26.07.44.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 26 Oct 2018 07:44:12 -0700 (PDT)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>,
-        Peter Rosin <peda@axentia.se>,
-        Mike Shettel <mshettel@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Subject: [PATCH v10 8/9] gpio: Add a driver for Cadence I3C GPIO expander
-Date:   Fri, 26 Oct 2018 16:43:32 +0200
-Message-Id: <20181026144333.12276-9-boris.brezillon@bootlin.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181026144333.12276-1-boris.brezillon@bootlin.com>
-References: <20181026144333.12276-1-boris.brezillon@bootlin.com>
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Cc:     Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v3 00/25] drm/sun4i: Allwinner A64 MIPI-DSI support 
+Date:   Fri, 26 Oct 2018 20:13:19 +0530
+Message-Id: <20181026144344.27778-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a driver for Cadence I3C GPIO expander.
+This series fixed the issues related to work DSI on 2-lane panel
+which is reported on previous version[1].
 
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
----
-Changes in v10:
-- None
+Few comments from previous version still in discussion, but I just
+send this version just to group all working changes together.
+anyway I will fix in this in next version if any.
 
-Changes in v9:
-- None
+PLL_MIPI min rate is still weird, I tried many possible dclock rate
+from panel driver to satisfy manual suggested min rate 500MHz but
+none working so eventually moved 300MHz. any inputs on this area
+are welcome.
 
-Changes in v8:
-- None
+All these changes are tested in 2-lane, 4-lane MIPI-DSI panels.
 
-Changes in v7:
-- None
+If anyone wants to test, use this repo [2] with WIP-A64-DSI branch.
 
-Changes in v6:
-- Use kmalloc_array() instead of kmalloc(N * sizeof(X))
-- Add Linus' ack
+Any inputs,
+Jagan.
 
-Changes in v5:
-- Use the !! operator to return 0 or 1 in cdns_i3c_gpio_get_direction()
-- Use a scratch buffer to make sure the buffers passed to
-  i3c_device_do_priv_xfers() are DMA-able
-- Fix errors reported by checkpatch
+[2] https://github.com/amarula/linux-amarula
+[1] https://patchwork.kernel.org/cover/10653275/
 
-Changes in v4:
-- none
+Jagan Teki (25):
+  clk: sunxi-ng: a64: Fix gate bit of DSI DPHY
+  clk: sunxi-ng: Add check for minimal rate to NKM PLLs
+  clk: sunxi-ng: Add check for maximum rate to NKM PLLs
+  drm/sun4i: sun6i_mipi_dsi: Add Allwinner A64 MIPI DSI support
+  dt-bindings: sun6i-dsi: Add compatible for A64 MIPI DSI
+  drm/sun4i: sun6i_mipi_dsi: Add DSI Generic short write 2 param
+    transfer
+  drm/sun4i: sun6i_mipi_dsi: Fix VBP size calculation
+  drm/sun4i: sun6i_mipi_dsi: Fix TCON DRQ set bits
+  drm/sun4i: sun6i_mipi_dsi: Refactor vertical video start delay
+  drm/sun4i: sun6i_mipi_dsi: Fix DSI hbp timing value
+  drm/sun4i: sun6i_mipi_dsi: Fix DSI hblk timing calculation
+  drm/sun4i: sun6i_mipi_dsi: Add DSI hblk packet overhead
+  drm/sun4i: sun6i_mipi_dsi: Fix DSI hfp timing value
+  drm/sun4i: sun6i_mipi_dsi: Increase hfp packet overhead
+  drm/sun4i: sun6i_mipi_dsi: Set proper vblk timing calculation
+  drm/sun4i: sun6i_mipi_dsi: Add support for VCC-DSI voltage regulator
+  dt-bindings: panel: Add Bananapi S070WV20-CT16 ICN6211 MIPI-DSI to RGB
+    bridge
+  drm/panel: Add Bananapi S070WV20-CT16 ICN6211 MIPI-DSI to RGB bridge
+  dt-bindings: panel: Add Techstar TS8550B MIPI DSI panel
+  drm/panel: Add Techstar TS8550B MIPI-DSI LCD panel
+  clk: sunxi-ng: a64: Add min and max rate for PLL_MIPI
+  dt-bindings: sun6i-dsi: Add compatible for A64 DPHY
+  arm64: dts: allwinner: a64: Add DSI pipeline
+  [DO NOT MERGE] arm64: dts: allwinner: bananapi-m64: Bananapi S070WV20-CT16 DSI panel
+  arm64: dts: allwinner: a64-amarula-relic: Enable Techstar TS8550B
+    MIPI-DSI panel
 
-Changes in v3:
-- new
----
- drivers/gpio/Kconfig         |  11 +
- drivers/gpio/Makefile        |   1 +
- drivers/gpio/gpio-cdns-i3c.c | 411 +++++++++++++++++++++++++++++++++++
- 3 files changed, 423 insertions(+)
- create mode 100644 drivers/gpio/gpio-cdns-i3c.c
+ .../display/panel/bananapi,s070wv20-ct16.txt  |  31 +-
+ .../display/panel/techstar,ts8550b.txt        |  20 +
+ .../bindings/display/sunxi/sun6i-dsi.txt      |   3 +-
+ .../allwinner/sun50i-a64-amarula-relic.dts    |  46 +++
+ .../dts/allwinner/sun50i-a64-bananapi-m64.dts |  42 +++
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  45 +++
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c         |   4 +-
+ drivers/clk/sunxi-ng/ccu_nkm.c                |  14 +
+ drivers/clk/sunxi-ng/ccu_nkm.h                |   2 +
+ drivers/gpu/drm/panel/Kconfig                 |  18 +
+ drivers/gpu/drm/panel/Makefile                |   2 +
+ .../panel/panel-bananapi-s070wv20-icn6211.c   | 336 +++++++++++++++++
+ .../gpu/drm/panel/panel-techstar-ts8550b.c    | 346 ++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c        | 122 ++++--
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h        |   8 +
+ 15 files changed, 1009 insertions(+), 30 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/techstar,ts8550b.txt
+ create mode 100644 drivers/gpu/drm/panel/panel-bananapi-s070wv20-icn6211.c
+ create mode 100644 drivers/gpu/drm/panel/panel-techstar-ts8550b.c
 
-diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-index 4f52c3a8ec99..a941601bf448 100644
---- a/drivers/gpio/Kconfig
-+++ b/drivers/gpio/Kconfig
-@@ -908,6 +908,17 @@ config GPIO_TS4900
- 
- endmenu
- 
-+menu "I3C GPIO expanders"
-+	depends on I3C
-+
-+config GPIO_CDNS_I3C
-+	tristate "Cadence I3C GPIO expander"
-+	select GPIOLIB_IRQCHIP
-+	help
-+	  Say yes here to enabled the driver for Cadence I3C GPIO expander.
-+
-+endmenu
-+
- menu "MFD GPIO expanders"
- 
- config GPIO_ADP5520
-diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-index c256aff66a65..12fa0ace618e 100644
---- a/drivers/gpio/Makefile
-+++ b/drivers/gpio/Makefile
-@@ -37,6 +37,7 @@ obj-$(CONFIG_GPIO_BCM_KONA)	+= gpio-bcm-kona.o
- obj-$(CONFIG_GPIO_BD9571MWV)	+= gpio-bd9571mwv.o
- obj-$(CONFIG_GPIO_BRCMSTB)	+= gpio-brcmstb.o
- obj-$(CONFIG_GPIO_BT8XX)	+= gpio-bt8xx.o
-+obj-$(CONFIG_GPIO_CDNS_I3C)	+= gpio-cdns-i3c.o
- obj-$(CONFIG_GPIO_CLPS711X)	+= gpio-clps711x.o
- obj-$(CONFIG_GPIO_CS5535)	+= gpio-cs5535.o
- obj-$(CONFIG_GPIO_CRYSTAL_COVE)	+= gpio-crystalcove.o
-diff --git a/drivers/gpio/gpio-cdns-i3c.c b/drivers/gpio/gpio-cdns-i3c.c
-new file mode 100644
-index 000000000000..37c9d57a2fbb
---- /dev/null
-+++ b/drivers/gpio/gpio-cdns-i3c.c
-@@ -0,0 +1,411 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2018 Cadence Design Systems Inc.
-+ *
-+ * Author: Boris Brezillon <boris.brezillon@bootlin.com>
-+ */
-+
-+#include <linux/gpio/driver.h>
-+#include <linux/i3c/device.h>
-+#include <linux/module.h>
-+
-+#define OVR		0x0
-+#define IVR		0x1
-+#define DIR_MODE	0x2
-+#define IMR		0x3
-+#define ISR		0x4
-+#define ITR(x)		(0x5 + (x))
-+
-+struct cdns_i3c_gpio {
-+	struct gpio_chip gpioc;
-+	struct irq_chip irqc;
-+	struct i3c_device *i3cdev;
-+	struct mutex irq_lock;
-+	u8 dir;
-+	u8 ovr;
-+	u8 imr;
-+	u8 itr[3];
-+};
-+
-+static struct cdns_i3c_gpio *gpioc_to_cdns_gpioc(struct gpio_chip *gpioc)
-+{
-+	return container_of(gpioc, struct cdns_i3c_gpio, gpioc);
-+}
-+
-+static int cdns_i3c_gpio_read_reg(struct cdns_i3c_gpio *gpioc, u8 reg,
-+				  u8 *val)
-+{
-+	struct i3c_priv_xfer xfers[2] = { };
-+	u8 *scratchbuf;
-+	int ret;
-+
-+	/*
-+	 * i3c_device_do_priv_xfers() mandates that buffers passed in xfers be
-+	 * DMA-able. This prevents us from using reg and val directly since
-+	 * reg is on the stack, and val might be too.
-+	 * Allocate a temporary buffer with kmalloc() to solve the problem.
-+	 */
-+	scratchbuf = kmalloc(sizeof(*scratchbuf), GFP_KERNEL);
-+	if (!scratchbuf)
-+		return -ENOMEM;
-+
-+	scratchbuf[0] = reg;
-+	xfers[0].data.out = scratchbuf;
-+	xfers[0].len = 1;
-+	xfers[1].data.in = scratchbuf;
-+	xfers[1].len = 1;
-+	xfers[1].rnw = true;
-+
-+	ret = i3c_device_do_priv_xfers(gpioc->i3cdev, xfers,
-+				       ARRAY_SIZE(xfers));
-+	if (!ret)
-+		*val = *scratchbuf;
-+
-+	kfree(scratchbuf);
-+
-+	return ret;
-+}
-+
-+static int cdns_i3c_gpio_write_reg(struct cdns_i3c_gpio *gpioc, u8 reg,
-+				   u8 val)
-+{
-+	struct i3c_priv_xfer xfers[2] = { };
-+	u8 *scratchbuf;
-+	int ret;
-+
-+	/*
-+	 * i3c_device_do_priv_xfers() mandates that buffers passed in xfers be
-+	 * DMA-able. This prevents us from using reg and val directly since
-+	 * reg is on the stack, and val might be too.
-+	 * Allocate a temporary buffer with kmalloc() to solve the problem.
-+	 */
-+	scratchbuf = kmalloc_array(2, sizeof(*scratchbuf), GFP_KERNEL);
-+	if (!scratchbuf)
-+		return -ENOMEM;
-+
-+	scratchbuf[0] = reg;
-+	scratchbuf[1] = val;
-+	xfers[0].data.out = scratchbuf;
-+	xfers[0].len = 1;
-+	xfers[1].data.out = scratchbuf + 1;
-+	xfers[1].len = 1;
-+
-+	ret = i3c_device_do_priv_xfers(gpioc->i3cdev, xfers,
-+				       ARRAY_SIZE(xfers));
-+
-+	kfree(scratchbuf);
-+
-+	return ret;
-+}
-+
-+static int cdns_i3c_gpio_get_direction(struct gpio_chip *g,
-+				       unsigned int offset)
-+{
-+	struct cdns_i3c_gpio *gpioc = gpioc_to_cdns_gpioc(g);
-+
-+	return !!(gpioc->dir & BIT(offset));
-+}
-+
-+static void cdns_i3c_gpio_set_multiple(struct gpio_chip *g,
-+				       unsigned long *mask,
-+				       unsigned long *bits)
-+{
-+	struct cdns_i3c_gpio *gpioc = gpioc_to_cdns_gpioc(g);
-+	u8 newovr;
-+	int ret;
-+
-+	newovr = (gpioc->ovr & ~(*mask)) | (*bits & *mask);
-+	if (newovr == gpioc->ovr)
-+		return;
-+
-+	ret = cdns_i3c_gpio_write_reg(gpioc, OVR, newovr);
-+	if (!ret)
-+		gpioc->ovr = newovr;
-+}
-+
-+static void cdns_i3c_gpio_set(struct gpio_chip *g, unsigned int offset,
-+			      int value)
-+{
-+	unsigned long mask = BIT(offset), bits = value ? BIT(offset) : 0;
-+
-+	cdns_i3c_gpio_set_multiple(g, &mask, &bits);
-+}
-+
-+static int cdns_i3c_gpio_set_dir(struct cdns_i3c_gpio *gpioc, unsigned int pin,
-+				 bool in)
-+{
-+	u8 newdir;
-+	int ret;
-+
-+	newdir = gpioc->dir;
-+	if (in)
-+		newdir |= BIT(pin);
-+	else
-+		newdir &= ~BIT(pin);
-+
-+	if (newdir == gpioc->dir)
-+		return 0;
-+
-+	gpioc->dir = newdir;
-+	ret = cdns_i3c_gpio_write_reg(gpioc, DIR_MODE, newdir);
-+	if (!ret)
-+		gpioc->dir = newdir;
-+
-+	return ret;
-+}
-+
-+static int cdns_i3c_gpio_dir_input(struct gpio_chip *g, unsigned int offset)
-+{
-+	struct cdns_i3c_gpio *gpioc = gpioc_to_cdns_gpioc(g);
-+
-+	return cdns_i3c_gpio_set_dir(gpioc, offset, true);
-+}
-+
-+static int cdns_i3c_gpio_dir_output(struct gpio_chip *g, unsigned int offset,
-+				    int val)
-+{
-+	struct cdns_i3c_gpio *gpioc = gpioc_to_cdns_gpioc(g);
-+
-+	cdns_i3c_gpio_set(g, offset, val);
-+
-+	return cdns_i3c_gpio_set_dir(gpioc, offset, true);
-+}
-+
-+static int cdns_i3c_gpio_get_multiple(struct gpio_chip *g,
-+				      unsigned long *mask,
-+				      unsigned long *bits)
-+{
-+	struct cdns_i3c_gpio *gpioc = gpioc_to_cdns_gpioc(g);
-+	int ret;
-+	u8 ivr;
-+
-+	ret = cdns_i3c_gpio_read_reg(gpioc, IVR, &ivr);
-+	if (ret)
-+		return ret;
-+
-+	*bits = ivr & *mask & gpioc->dir;
-+	*bits |= gpioc->ovr & *mask & ~gpioc->dir;
-+
-+	return 0;
-+}
-+
-+static int cdns_i3c_gpio_get(struct gpio_chip *g, unsigned int offset)
-+{
-+	unsigned long mask = BIT(offset), bits = 0;
-+	int ret;
-+
-+	ret = cdns_i3c_gpio_get_multiple(g, &mask, &bits);
-+	if (ret)
-+		return ret;
-+
-+	return mask & bits;
-+}
-+
-+static void cdns_i3c_gpio_ibi_handler(struct i3c_device *i3cdev,
-+				      const struct i3c_ibi_payload *payload)
-+{
-+	struct cdns_i3c_gpio *gpioc = i3cdev_get_drvdata(i3cdev);
-+	u8 isr = 0;
-+	int i;
-+
-+	cdns_i3c_gpio_read_reg(gpioc, ISR, &isr);
-+	for (i = 0; i < 8; i++) {
-+		unsigned int irq;
-+
-+		if (!(BIT(i) & isr & gpioc->imr))
-+			continue;
-+
-+		irq = irq_find_mapping(gpioc->gpioc.irq.domain, i);
-+		handle_nested_irq(irq);
-+	}
-+}
-+
-+static void cdns_i3c_gpio_irq_lock(struct irq_data *data)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
-+	struct cdns_i3c_gpio *gpioc = gpiochip_get_data(gc);
-+
-+	mutex_lock(&gpioc->irq_lock);
-+}
-+
-+static void cdns_i3c_gpio_irq_sync_unlock(struct irq_data *data)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
-+	struct cdns_i3c_gpio *gpioc = gpiochip_get_data(gc);
-+	int i;
-+
-+	cdns_i3c_gpio_write_reg(gpioc, IMR, gpioc->imr);
-+	for (i = 0; i < 3; i++)
-+		cdns_i3c_gpio_write_reg(gpioc, ITR(i), gpioc->itr[i]);
-+
-+	mutex_unlock(&gpioc->irq_lock);
-+}
-+
-+static void cdns_i3c_gpio_irq_unmask(struct irq_data *data)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
-+	struct cdns_i3c_gpio *gpioc = gpiochip_get_data(gc);
-+
-+	gpioc->imr |= BIT(data->hwirq);
-+}
-+
-+static void cdns_i3c_gpio_irq_mask(struct irq_data *data)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
-+	struct cdns_i3c_gpio *gpioc = gpiochip_get_data(gc);
-+
-+	gpioc->imr &= ~BIT(data->hwirq);
-+}
-+
-+static int cdns_i3c_gpio_irq_set_type(struct irq_data *data, unsigned int type)
-+{
-+	struct gpio_chip *gc = irq_data_get_irq_chip_data(data);
-+	struct cdns_i3c_gpio *gpioc = gpiochip_get_data(gc);
-+
-+	switch (type) {
-+	case IRQ_TYPE_LEVEL_HIGH:
-+		gpioc->itr[0] |= BIT(data->hwirq);
-+		gpioc->itr[1] |= BIT(data->hwirq);
-+		break;
-+
-+	case IRQ_TYPE_LEVEL_LOW:
-+		gpioc->itr[0] |= BIT(data->hwirq);
-+		gpioc->itr[1] &= ~BIT(data->hwirq);
-+		break;
-+
-+	case IRQ_TYPE_EDGE_BOTH:
-+		gpioc->itr[0] &= ~BIT(data->hwirq);
-+		gpioc->itr[2] |= BIT(data->hwirq);
-+		break;
-+
-+	case IRQ_TYPE_EDGE_RISING:
-+		gpioc->itr[0] &= ~BIT(data->hwirq);
-+		gpioc->itr[1] |= BIT(data->hwirq);
-+		gpioc->itr[2] &= ~BIT(data->hwirq);
-+		break;
-+
-+	case IRQ_TYPE_EDGE_FALLING:
-+		gpioc->itr[0] &= ~BIT(data->hwirq);
-+		gpioc->itr[1] &= ~BIT(data->hwirq);
-+		gpioc->itr[2] &= ~BIT(data->hwirq);
-+		break;
-+
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int cdns_i3c_gpio_probe(struct i3c_device *i3cdev)
-+{
-+	struct cdns_i3c_gpio *gpioc;
-+	struct device *parent = i3cdev_to_dev(i3cdev);
-+	struct i3c_ibi_setup ibisetup = {
-+		.max_payload_len = 2,
-+		.num_slots = 1,
-+		.handler = cdns_i3c_gpio_ibi_handler,
-+	};
-+	int ret;
-+
-+	gpioc = devm_kzalloc(parent, sizeof(*gpioc), GFP_KERNEL);
-+	if (!gpioc)
-+		return -ENOMEM;
-+
-+	gpioc->i3cdev = i3cdev;
-+	i3cdev_set_drvdata(i3cdev, gpioc);
-+
-+	/* Mask all interrupts. */
-+	ret = cdns_i3c_gpio_write_reg(gpioc, IMR, 0);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Clear the ISR after reading it, not when the IBI is is Acked by the
-+	 * I3C master. This way we make sure we don't lose events.
-+	 */
-+	ret = cdns_i3c_gpio_write_reg(gpioc, ITR(3), 0xff);
-+	if (ret)
-+		return ret;
-+
-+	ret = cdns_i3c_gpio_read_reg(gpioc, DIR_MODE, &gpioc->dir);
-+	if (ret)
-+		return ret;
-+
-+	ret = cdns_i3c_gpio_read_reg(gpioc, OVR, &gpioc->ovr);
-+	if (ret)
-+		return ret;
-+
-+	ret = i3c_device_request_ibi(i3cdev, &ibisetup);
-+	if (ret)
-+		return ret;
-+
-+	gpioc->gpioc.label = dev_name(parent);
-+	gpioc->gpioc.owner = THIS_MODULE;
-+	gpioc->gpioc.parent = parent;
-+	gpioc->gpioc.base = -1;
-+	gpioc->gpioc.ngpio = 8;
-+	gpioc->gpioc.can_sleep = true;
-+	gpioc->gpioc.get_direction = cdns_i3c_gpio_get_direction;
-+	gpioc->gpioc.direction_input = cdns_i3c_gpio_dir_input;
-+	gpioc->gpioc.direction_output = cdns_i3c_gpio_dir_output;
-+	gpioc->gpioc.get = cdns_i3c_gpio_get;
-+	gpioc->gpioc.get_multiple = cdns_i3c_gpio_get_multiple;
-+	gpioc->gpioc.set = cdns_i3c_gpio_set;
-+	gpioc->gpioc.set_multiple = cdns_i3c_gpio_set_multiple;
-+
-+	ret = devm_gpiochip_add_data(parent, &gpioc->gpioc, gpioc);
-+	if (ret)
-+		return ret;
-+
-+	gpioc->irqc.name = dev_name(parent);
-+	gpioc->irqc.parent_device = parent;
-+	gpioc->irqc.irq_unmask = cdns_i3c_gpio_irq_unmask;
-+	gpioc->irqc.irq_mask = cdns_i3c_gpio_irq_mask;
-+	gpioc->irqc.irq_bus_lock = cdns_i3c_gpio_irq_lock;
-+	gpioc->irqc.irq_bus_sync_unlock = cdns_i3c_gpio_irq_sync_unlock;
-+	gpioc->irqc.irq_set_type = cdns_i3c_gpio_irq_set_type;
-+	gpioc->irqc.flags = IRQCHIP_SET_TYPE_MASKED | IRQCHIP_MASK_ON_SUSPEND;
-+
-+	ret = gpiochip_irqchip_add_nested(&gpioc->gpioc, &gpioc->irqc, 0,
-+					  handle_simple_irq, IRQ_TYPE_NONE);
-+	if (ret)
-+		goto err_free_ibi;
-+
-+	ret = i3c_device_enable_ibi(i3cdev);
-+	if (ret)
-+		goto err_free_ibi;
-+
-+	return 0;
-+
-+err_free_ibi:
-+	i3c_device_free_ibi(i3cdev);
-+
-+	return ret;
-+}
-+
-+static int cdns_i3c_gpio_remove(struct i3c_device *i3cdev)
-+{
-+	i3c_device_disable_ibi(i3cdev);
-+	i3c_device_free_ibi(i3cdev);
-+
-+	return 0;
-+}
-+
-+static const struct i3c_device_id cdns_i3c_gpio_ids[] = {
-+	I3C_DEVICE(0x1c9, 0x0, NULL),
-+	{ /* sentinel */ },
-+};
-+MODULE_DEVICE_TABLE(i3c, cdns_i3c_gpio_ids);
-+
-+static struct i3c_driver cdns_i3c_gpio = {
-+	.driver.name = "cdns-i3c-gpio",
-+	.id_table = cdns_i3c_gpio_ids,
-+	.probe = cdns_i3c_gpio_probe,
-+	.remove = cdns_i3c_gpio_remove,
-+};
-+module_i3c_driver(cdns_i3c_gpio);
-+
-+MODULE_AUTHOR("Boris Brezillon <boris.brezillon@bootlin.com>");
-+MODULE_DESCRIPTION("Driver for Cadence I3C GPIO expander");
-+MODULE_LICENSE("GPL v2");
 -- 
-2.17.1
+2.18.0.321.gffc6fa0e3
 
