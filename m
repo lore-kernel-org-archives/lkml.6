@@ -2,75 +2,73 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82D47C6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 05:49:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79AAAC6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 05:59:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECB7F20834
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 05:49:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECB7F20834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 30DA22082B
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 05:59:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 30DA22082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726037AbeJZOZX (ORCPT
+        id S1726111AbeJZOel (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 10:25:23 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:56600 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725867AbeJZOZX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 10:25:23 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gFv04-0000hM-VK; Fri, 26 Oct 2018 05:49:37 +0000
-Date:   Fri, 26 Oct 2018 06:49:36 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     esr@thyrsus.com, "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        visionsofalice@redchan.it,
-        linux-kernel <linux-kernel@vger.kernel.org>, rms@gnu.org,
-        bruce@perens.com, moglen@columbia.edu, bkuhn@sfconservancy.org,
-        editor@lwn.net, NeilBrown <neil@brown.name>,
-        Laura Abbott <labbott@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        ksummit-discuss@lists.linuxfoundation.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Olof Johansson <olof@lixom.net>, Chris Mason <clm@fb.com>,
-        Mishi Choudhary <mishi@linux.com>,
-        linux-kernel-owner@vger.kernel.org
-Subject: Re: The linux devs can rescind their license grant.
-Message-ID: <20181026054936.GK32577@ZenIV.linux.org.uk>
-References: <20181020134908.GA32218@kroah.com>
- <87y3ar80ac.fsf@notabene.neil.brown.name>
- <c6bf1877-6e29-50ec-ffa8-314ab35ec9ce@redhat.com>
- <185b786a2bd6e8d527dca161dc42e4f1@redchan.it>
- <20181025081911.GB11343@kroah.com>
- <20181025193901.GD26403@thyrsus.com>
- <20181025204718.GB25649@thunk.org>
- <20181025214123.GA2448@thyrsus.com>
- <20181025230656.GJ32577@ZenIV.linux.org.uk>
- <20181026022836.GA12924@thyrsus.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181026022836.GA12924@thyrsus.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+        Fri, 26 Oct 2018 10:34:41 -0400
+Received: from mx.socionext.com ([202.248.49.38]:44527 "EHLO mx.socionext.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725867AbeJZOel (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 10:34:41 -0400
+Received: from unknown (HELO kinkan-ex.css.socionext.com) ([172.31.9.52])
+  by mx.socionext.com with ESMTP; 26 Oct 2018 14:59:02 +0900
+Received: from mail.mfilter.local (m-filter-1 [10.213.24.61])
+        by kinkan-ex.css.socionext.com (Postfix) with ESMTP id 1F635180B67;
+        Fri, 26 Oct 2018 14:59:02 +0900 (JST)
+Received: from 172.31.9.53 (172.31.9.53) by m-FILTER with ESMTP; Fri, 26 Oct 2018 14:59:02 +0900
+Received: from yuzu.css.socionext.com (yuzu [172.31.8.45])
+        by iyokan.css.socionext.com (Postfix) with ESMTP id A55F440394;
+        Fri, 26 Oct 2018 14:59:01 +0900 (JST)
+Received: from hamster.e01.socionext.com (unknown [10.213.134.20])
+        by yuzu.css.socionext.com (Postfix) with ESMTP id 5E967120144;
+        Fri, 26 Oct 2018 14:59:01 +0900 (JST)
+From:   Keiji Hayashibara <hayashibara.keiji@socionext.com>
+To:     broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        yamada.masahiro@socionext.com, linux-spi@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Cc:     stable@vger.kernel.org, masami.hiramatsu@linaro.org,
+        jaswinder.singh@linaro.org, linux-kernel@vger.kernel.org,
+        hayashibara.keiji@socionext.com
+Subject: [PATCH v2 0/2] spi: fix incorrect property items
+Date:   Fri, 26 Oct 2018 14:58:43 +0900
+Message-Id: <1540533525-1816-1-git-send-email-hayashibara.keiji@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 10:28:36PM -0400, Eric S. Raymond wrote:
-> Al Viro <viro@ZenIV.linux.org.uk>:
-> > 	* in case it needs to be spelled out: I am not at all interested
-> > in that kind of stunts.  One of the reasons I thoroughly despise RMS
-> > and his bunch is the leverage game they tried to play with GPLv3;
-> > damned if I'm going to lower myself to their level.
-> 
-> Sorry, I did not mean to imply that you are one with the license-revokers.
-> More like "if even Al Viro thinks you fucked up your process, it would be
-> unwise to dismiss the opposition to the CoC as mere trolls".
+This series fixes incorrect property because it was different
+from the actual.
 
-Kindly stop conflating opposition to CoC with that kind of idiocy.
+The commit 71b8dfc691a3 ("spi: uniphier: re-add addressing properties")
+is the updated patch, therefore, it must be applied after
+the commit 7662d1dc17d4 ("spi: uniphier: fix incorrect property items").
+
+Changes since v1:
+- Add commit 71b8dfc691a3 ("spi: uniphier: re-add addressing properties")
+  The addressing properties of #address-cells and #size-cells
+  are back again.
+
+Keiji Hayashibara (2):
+  spi: uniphier: fix incorrect property items
+  spi: uniphier: re-add addressing properties
+
+ Documentation/devicetree/bindings/spi/spi-uniphier.txt | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+-- 
+2.7.4
+
