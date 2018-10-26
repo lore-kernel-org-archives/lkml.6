@@ -2,111 +2,126 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC32ECDE46
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5301CECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:51:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 181A520848
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:49:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0646520868
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:51:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="EIKQLJCp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 181A520848
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eKDCUBJY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0646520868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728059AbeJ0D1n (ORCPT
+        id S1727854AbeJ0D3Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 23:27:43 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45856 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727986AbeJ0D1m (ORCPT
+        Fri, 26 Oct 2018 23:29:16 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40699 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727614AbeJ0D3P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 23:27:42 -0400
-Received: by mail-lj1-f193.google.com with SMTP id j4-v6so2059878ljc.12
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 11:49:32 -0700 (PDT)
+        Fri, 26 Oct 2018 23:29:15 -0400
+Received: by mail-pf1-f193.google.com with SMTP id g21-v6so973112pfi.7;
+        Fri, 26 Oct 2018 11:51:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9eOI13aG3Owne4W1tN8Px2rCml38s/QfTsNL6mWlDxM=;
-        b=EIKQLJCpFryl7wwTlpAAYIWI/AMdvXiy5oKEt+tYOUsQeII55gOtqZcOXTGsJoJoOa
-         E9qlfHMKntqeKbUB+qpR4PzuXIpvgOKDHONm/sQsqGhhMWJhMSBTxl8BOJYJkU6yAOng
-         8I3MjJadrt3ZclqDJs6tT91WaWdUyWY9l4Icu3W7AVtekN1NI2er83UZI8gjGAAWBdGs
-         QJvHszKfHOPR5ifn38PR7EYkwJv+vU5X8WzKaNQsmp95c/n/8WRnUAnJxbAUaoLUbq0g
-         Ej5jof5xgAbt6eGbJG0Jettrn/O+muo2PbEuASkp57JZMBGk5nxeoxB9R+FH53OTyTP5
-         aNlA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CNrmm2Cd0/IzU63bnK+ak3meqD0hHgGMcdSZm5jtCkc=;
+        b=eKDCUBJYPT85nO+yQFleQiNGil5xUTcby+XI4B8WCgNLz4Q6ZQwbiswI9J1NJnf7F2
+         /W/CmOKiAQh2i+rWdErE4BJ2/lIE1Es7DhMMQ2ijOzO65Wh+KrzFofrT/JFQhA69nphJ
+         HTY543xuQBFYObgMfBEOcYupZlIB0eoC3cBcRD/2RWzf0u9JPZ8jpH4iGI0+7ZO0PYr4
+         9QtoR9cui1FsyDgSVTzgixJu3EH2FGVSpCHM0ZGOfgy8vAMrYnsVGAzZXq59PIxK+vZE
+         WSU5j3GFVGcI/Xzr+Jh1HwZiq4Kf4uMf3IzCZ5ih/b9CrxmOXMLBbKEA3spBNYCk+dz+
+         hdZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9eOI13aG3Owne4W1tN8Px2rCml38s/QfTsNL6mWlDxM=;
-        b=Ly1i7XzjHSUKlBdmBNjc0hZ//TU8B9MketeKHe81cuKUROrpOw+LlL5KgSS5llcpzH
-         BymFHHs5mhe1FmHCAh5hrJBUnqe0tfOJ/LUBErcC/qCgHJl6x3eqpZwFK2a6KFJViRcY
-         aIe4C+o0xZ+hbb+uC8+Dm+BBkL54yEwyiuQzSasSdH8kpgCRO4Gvd1oAW8MJirrXBOsY
-         uLOxPWfSLGWMvum0kn3gKDSy6TzEu5TFKbuHQWVdsmz/9dKy7LyCH1R6MLIp3RjpmOCh
-         t/LOeR11kNj9yTLyzRDW+DcVfhjvjdBnPfVD5qkNpzN1nBblvv3sfVkmm7+vgU6aEi5j
-         FdyA==
-X-Gm-Message-State: AGRZ1gLhr4z+IOSErJlLMi5zMJ+A28gOm+06yUKJzKeVAoq785aFvEdP
-        D7lu1vgINXly45g4gcIDrP9N9Q==
-X-Google-Smtp-Source: AJdET5ctUp1SHzG9z2bzqOEBqTwem3SfQ/HsLD8HDBGl8vqj9WYBweA4Lfg95PPKW5LQtxT7YsKepg==
-X-Received: by 2002:a2e:4e01:: with SMTP id c1-v6mr3388818ljb.157.1540579771668;
-        Fri, 26 Oct 2018 11:49:31 -0700 (PDT)
-Received: from [192.168.0.36] (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
-        by smtp.googlemail.com with ESMTPSA id k72-v6sm548894lfg.5.2018.10.26.11.49.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 11:49:30 -0700 (PDT)
-Subject: Re: [PATCH] lightnvm: pblk: fix chunk close trace event check
-To:     hans@owltronix.com
-Cc:     linux-block@vger.kernel.org, javier@cnexlabs.com,
-        linux-kernel@vger.kernel.org, hans.holmberg@cnexlabs.com
-References: <1540541544-7761-1-git-send-email-hans.holmberg@cnexlabs.com>
-From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <e884c6c9-d875-e282-59dd-f1733ffc38fb@lightnvm.io>
-Date:   Fri, 26 Oct 2018 20:49:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CNrmm2Cd0/IzU63bnK+ak3meqD0hHgGMcdSZm5jtCkc=;
+        b=E3V47yV9Xg5uwZ0YySWToAO59WgwaGHxOnDAImdqVtNcR+dYoRCkkIb+Ev1iN6QIph
+         LMewpT4TC63oBmQ7JQUbDeE+1ZCekaLTZzGb8U8O0oocHOQT7rD+8HA3jn2uT4A3VDHW
+         5MQA+fofpk3LL7B1qRFf9GGJL3RAE96IzCFw/esW0t+9JlmL85Pm24YunWiAKhrDs6fT
+         ZQs5WlkE+mwXGlfibbOyZpSIqiMSBUMl8/HhgV0zL5MrpzTdZNvDwxv/CbR3I2f0nQs+
+         aRiwETRorF8CxvcQ4+AXMTz/x5pPQJ7KMxiyyWfB6ty+lC6zJQmmxEjs7AFc9llZ1i0I
+         Z1HQ==
+X-Gm-Message-State: AGRZ1gJVtHohKqEGUFadAhGL7eUvR1fWd7dt4TNW63SlfR//rhtSToti
+        t66LhbMrk+dKSrMtnJB0hCdRxHmWONzETgTCSxE=
+X-Google-Smtp-Source: AJdET5dSJi5Rlzuzkm9t3GfdnbNgK93ikRXcdWA+EGcv1+wZ4eTseDu+32bdZIR5WsFj0pTPTSuyGIz9NP3MIy0iR7U=
+X-Received: by 2002:a63:61c8:: with SMTP id v191mr4635847pgb.242.1540579865257;
+ Fri, 26 Oct 2018 11:51:05 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1540541544-7761-1-git-send-email-hans.holmberg@cnexlabs.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20181026180721.5040-1-colin.king@canonical.com>
+In-Reply-To: <20181026180721.5040-1-colin.king@canonical.com>
+From:   Steve French <smfrench@gmail.com>
+Date:   Fri, 26 Oct 2018 13:50:54 -0500
+Message-ID: <CAH2r5mtPEj04VutE44Dwdk+UtRM0PuT6_teMrOU44XCk3CirQA@mail.gmail.com>
+Subject: Re: [PATCH] cifs: fix spelling mistake, EACCESS -> EACCES
+To:     Colin King <colin.king@canonical.com>
+Cc:     Steve French <sfrench@samba.org>,
+        CIFS <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        kernel-janitors <kernel-janitors@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/26/2018 10:12 AM, Hans Holmberg wrote:
-> The check for chunk closes suffers from an off-by-one issue, leading
-> to chunk close events not being traced. Fix this.
-> 
-> Fixes: 4c44abf43d00 ("lightnvm: pblk: add trace events for chunk states")
-> 
-> Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+merged into cifs-2.6.git for-next
+On Fri, Oct 26, 2018 at 1:10 PM Colin King <colin.king@canonical.com> wrote:
+>
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Trivial fix to a spelling mistake of the error access name EACCESS,
+> rename to EACCES
+>
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 > ---
-> 
->   drivers/lightnvm/pblk-core.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
-> index 6944aac43b01..6581c35f51ee 100644
-> --- a/drivers/lightnvm/pblk-core.c
-> +++ b/drivers/lightnvm/pblk-core.c
-> @@ -531,7 +531,7 @@ void pblk_check_chunk_state_update(struct pblk *pblk, struct nvm_rq *rqd)
->   		if (caddr == 0)
->   			trace_pblk_chunk_state(pblk_disk_name(pblk),
->   							ppa, NVM_CHK_ST_OPEN);
-> -		else if (caddr == chunk->cnlb)
-> +		else if (caddr == (chunk->cnlb - 1))
->   			trace_pblk_chunk_state(pblk_disk_name(pblk),
->   							ppa, NVM_CHK_ST_CLOSED);
->   	}
-> 
+>  fs/cifs/file.c  | 2 +-
+>  fs/cifs/inode.c | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+> index 84477e995246..6894d071850a 100644
+> --- a/fs/cifs/file.c
+> +++ b/fs/cifs/file.c
+> @@ -1003,7 +1003,7 @@ cifs_lock_add(struct cifsFileInfo *cfile, struct cifsLockInfo *lock)
+>   * Set the byte-range lock (mandatory style). Returns:
+>   * 1) 0, if we set the lock and don't need to request to the server;
+>   * 2) 1, if no locks prevent us but we need to request to the server;
+> - * 3) -EACCESS, if there is a lock that prevents us and wait is false.
+> + * 3) -EACCES, if there is a lock that prevents us and wait is false.
+>   */
+>  static int
+>  cifs_lock_add_if(struct cifsFileInfo *cfile, struct cifsLockInfo *lock,
+> diff --git a/fs/cifs/inode.c b/fs/cifs/inode.c
+> index 0945d40030eb..3685e2c25205 100644
+> --- a/fs/cifs/inode.c
+> +++ b/fs/cifs/inode.c
+> @@ -1305,8 +1305,8 @@ cifs_drop_nlink(struct inode *inode)
+>  /*
+>   * If d_inode(dentry) is null (usually meaning the cached dentry
+>   * is a negative dentry) then we would attempt a standard SMB delete, but
+> - * if that fails we can not attempt the fall back mechanisms on EACCESS
+> - * but will return the EACCESS to the caller. Note that the VFS does not call
+> + * if that fails we can not attempt the fall back mechanisms on EACCES
+> + * but will return the EACCES to the caller. Note that the VFS does not call
+>   * unlink on negative dentries currently.
+>   */
+>  int cifs_unlink(struct inode *dir, struct dentry *dentry)
+> --
+> 2.19.1
+>
 
-Thanks Hans, Applied for 4.21/5.1. Note that you're sending from your 
-owntronix email account. Checkpatch complains that sender and author 
-doesn't match.
+
+-- 
+Thanks,
+
+Steve
