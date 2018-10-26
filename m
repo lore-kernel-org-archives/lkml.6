@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 138B5ECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:48:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65F2DECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:48:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1F0C20869
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:48:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1F0C20869
+	by mail.kernel.org (Postfix) with ESMTP id 352D920868
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:48:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 352D920868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727671AbeJZWZt (ORCPT
+        id S1727709AbeJZWZ7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 18:25:49 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44840 "EHLO mx1.suse.de"
+        Fri, 26 Oct 2018 18:25:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44790 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726113AbeJZWZt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727520AbeJZWZt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 26 Oct 2018 18:25:49 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 76520B057;
-        Fri, 26 Oct 2018 13:48:39 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id AABCCB05B;
+        Fri, 26 Oct 2018 13:48:40 +0000 (UTC)
 From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 To:     stefan.wahren@i2se.com, eric@anholt.net,
         dave.stevenson@raspberrypi.org
 Cc:     nsaenzjulienne@suse.de, linux-rpi-kernel@lists.infradead.org,
         gregkh@linuxfoundation.org, linux-arm-kernel@lists.infradead.org,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH RFC 16/18] staging: vchiq_arm: rework probe and init functions
-Date:   Fri, 26 Oct 2018 15:48:11 +0200
-Message-Id: <20181026134813.7775-17-nsaenzjulienne@suse.de>
+Subject: [PATCH RFC 18/18] staging: vchiq: add more tasks to the TODO list
+Date:   Fri, 26 Oct 2018 15:48:13 +0200
+Message-Id: <20181026134813.7775-19-nsaenzjulienne@suse.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181026134813.7775-1-nsaenzjulienne@suse.de>
 References: <20181026134813.7775-1-nsaenzjulienne@suse.de>
@@ -45,136 +45,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some operations performed in the probe function should have been
-implemented in the init function. Namely class and dev region creations.
+The more the better.
 
 Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 ---
- .../interface/vchiq_arm/vchiq_arm.c           | 71 ++++++++++++-------
- 1 file changed, 45 insertions(+), 26 deletions(-)
+ .../staging/vc04_services/interface/vchi/TODO | 46 ++++++++++++++++++-
+ 1 file changed, 44 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-index 383013a92939..a7dcced79980 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-@@ -166,7 +166,6 @@ static struct cdev    vchiq_cdev;
- static dev_t          vchiq_devid;
- static VCHIQ_STATE_T g_state;
- static struct class  *vchiq_class;
--static struct device *vchiq_dev;
- static DEFINE_SPINLOCK(msg_queue_spinlock);
- static struct platform_device *bcm2835_camera;
+diff --git a/drivers/staging/vc04_services/interface/vchi/TODO b/drivers/staging/vc04_services/interface/vchi/TODO
+index 0b3ec75ff627..bf2135826431 100644
+--- a/drivers/staging/vc04_services/interface/vchi/TODO
++++ b/drivers/staging/vc04_services/interface/vchi/TODO
+@@ -27,8 +27,8 @@ unused.
+ 3) Make driver more portable
  
-@@ -3552,34 +3551,19 @@ static int vchiq_probe(struct platform_device *pdev)
- 	if (err != 0)
- 		goto failed_platform_init;
+ Building this driver with arm/multi_v7_defconfig or arm64/defconfig
+-leads to data corruption during the following command: 
+-  
++leads to data corruption during the following command:
++
+   vchiq_test -f 1
  
--	err = alloc_chrdev_region(&vchiq_devid, VCHIQ_MINOR, 1, DEVICE_NAME);
--	if (err != 0) {
--		vchiq_log_error(vchiq_arm_log_level,
--			"Unable to allocate device number");
--		goto failed_platform_init;
--	}
- 	cdev_init(&vchiq_cdev, &vchiq_fops);
- 	vchiq_cdev.owner = THIS_MODULE;
- 	err = cdev_add(&vchiq_cdev, vchiq_devid, 1);
- 	if (err != 0) {
- 		vchiq_log_error(vchiq_arm_log_level,
- 			"Unable to register device");
--		goto failed_cdev_add;
-+		goto failed_platform_init;
- 	}
+ This should be fixed.
+@@ -49,3 +49,45 @@ such as dev_info, dev_dbg, and friends.
  
--	/* create sysfs entries */
--	vchiq_class = class_create(THIS_MODULE, DEVICE_NAME);
--	err = PTR_ERR(vchiq_class);
--	if (IS_ERR(vchiq_class))
--		goto failed_class_create;
--
--	vchiq_dev = device_create(vchiq_class, NULL,
--		vchiq_devid, NULL, "vchiq");
--	err = PTR_ERR(vchiq_dev);
--	if (IS_ERR(vchiq_dev))
-+	if (IS_ERR(device_create(vchiq_class, &pdev->dev, vchiq_devid,
-+				 NULL, "vchiq")))
- 		goto failed_device_create;
- 
--	/* create debugfs entries */
- 	vchiq_debugfs_init();
- 
- 	vchiq_log_info(vchiq_arm_log_level,
-@@ -3594,11 +3578,7 @@ static int vchiq_probe(struct platform_device *pdev)
- 	return 0;
- 
- failed_device_create:
--	class_destroy(vchiq_class);
--failed_class_create:
- 	cdev_del(&vchiq_cdev);
--failed_cdev_add:
--	unregister_chrdev_region(vchiq_devid, 1);
- failed_platform_init:
- 	vchiq_log_warning(vchiq_arm_log_level, "could not load vchiq");
- 	return err;
-@@ -3609,9 +3589,7 @@ static int vchiq_remove(struct platform_device *pdev)
- 	platform_device_unregister(bcm2835_camera);
- 	vchiq_debugfs_deinit();
- 	device_destroy(vchiq_class, vchiq_devid);
--	class_destroy(vchiq_class);
- 	cdev_del(&vchiq_cdev);
--	unregister_chrdev_region(vchiq_devid, 1);
- 
- 	return 0;
- }
-@@ -3624,7 +3602,48 @@ static struct platform_driver vchiq_driver = {
- 	.probe = vchiq_probe,
- 	.remove = vchiq_remove,
- };
--module_platform_driver(vchiq_driver);
+ A short top-down description of this driver's architecture (function of
+ kthreads, userspace, limitations) could be very helpful for reviewers.
 +
-+static int __init vchiq_driver_init(void)
-+{
-+	int ret;
++7) Review and comment memory barriers
 +
-+	vchiq_class = class_create(THIS_MODULE, DEVICE_NAME);
-+	if (IS_ERR(vchiq_class)) {
-+		pr_err("Failed to create vchiq class\n");
-+		return PTR_ERR(vchiq_class);
-+	}
++There is a heavy use of memory barriers in this driver, it would be very
++beneficial to go over all of them and, if correct, comment on their merits.
++Extra points to whomever confidently reviews the remote_event_*() family of
++functions.
 +
-+	ret = alloc_chrdev_region(&vchiq_devid, VCHIQ_MINOR, 1, DEVICE_NAME);
-+	if (ret) {
-+		pr_err("Failed to allocate vchiq's chrdev region\n");
-+		goto class_destroy;
-+	}
++8) Get rid of custom function return values
 +
-+	ret = platform_driver_register(&vchiq_driver);
-+	if (ret) {
-+		pr_err("Failed to register vchiq driver\n");
-+		goto region_unregister;
-+	}
++Most functions use a custom set of return values, we should force proper Linux
++error numbers. Special care is needed for VCHIQ_RETRY.
 +
-+	return 0;
++9) Reformat core code with more sane indentations
 +
-+region_unregister:
-+	platform_driver_unregister(&vchiq_driver);
++The code follows the 80 characters limitation yet tends to go 3 or 4 levels of
++indentation deep making it very unpleasant to read. This is specially relevant
++in the character driver ioctl code and in the core thread functions.
 +
-+class_destroy:
-+	class_destroy(vchiq_class);
++10) Reorganize file structure: Move char driver to it's own file and join both
++platform files
 +
-+	return ret;
-+}
-+module_init(vchiq_driver_init);
++The cdev is defined alongside with the platform code in vchiq_arm.c. It would
++be nice to completely decouple it from the actual core code. For instance to be
++able to use bcm2835-audio without having /dev/vchiq created. One could argue
++it's better for security reasons or general cleanliness. It could even be
++interesting to create two different kernel modules, something the likes of
++vchiq-core.ko and vchiq-dev.ko. This would also ease the upstreaming process.
 +
-+static void __exit vchiq_driver_exit(void)
-+{
-+	platform_driver_unregister(&vchiq_driver);
-+	unregister_chrdev_region(vchiq_devid, 1);
-+	class_destroy(vchiq_class);
-+}
-+module_exit(vchiq_driver_exit);
- 
- MODULE_LICENSE("Dual BSD/GPL");
- MODULE_DESCRIPTION("Videocore VCHIQ driver");
++The code in vchiq_bcm2835_arm.c should fit in the generic platform file.
++
++12) Get rid of all the struct typedefs
++
++Most structs are typedefd, it's not encouraged in the kernel.
++
++13) Get rid of all non essential global structures and create a proper per
++device structure
++
++The first thing one generally sees in a probe function is a memory allocation
++for all the device specific data. This structure is then passed all over the
++driver. This is good practice since it makes the driver work regardless of the
++number of devices probed.
 -- 
 2.19.1
 
