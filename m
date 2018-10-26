@@ -6,46 +6,45 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A0A8ECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B58BC6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:33:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0509920834
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:32:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0509920834
+	by mail.kernel.org (Postfix) with ESMTP id BCAD120834
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:33:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCAD120834
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726592AbeJZQIW (ORCPT
+        id S1726998AbeJZQIw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 12:08:22 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:48343 "EHLO
+        Fri, 26 Oct 2018 12:08:52 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:48201 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbeJZQIV (ORCPT
+        with ESMTP id S1726028AbeJZQIw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 12:08:21 -0400
+        Fri, 26 Oct 2018 12:08:52 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9Q7WIAM136832
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9Q7WotN136864
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 26 Oct 2018 00:32:18 -0700
+        Fri, 26 Oct 2018 00:32:50 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9Q7WIS3136829;
-        Fri, 26 Oct 2018 00:32:18 -0700
-Date:   Fri, 26 Oct 2018 00:32:18 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9Q7WnDu136861;
+        Fri, 26 Oct 2018 00:32:49 -0700
+Date:   Fri, 26 Oct 2018 00:32:49 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-uzufuxws4hufigx07ue1dpv6@git.kernel.org>
-Cc:     adrian.hunter@intel.com, acme@redhat.com,
-        linux-kernel@vger.kernel.org, dsahern@gmail.com,
-        tglx@linutronix.de, wangnan0@huawei.com, mingo@kernel.org,
-        namhyung@kernel.org, hpa@zytor.com, jolsa@kernel.org
-Reply-To: dsahern@gmail.com, namhyung@kernel.org, mingo@kernel.org,
-          tglx@linutronix.de, wangnan0@huawei.com, jolsa@kernel.org,
-          hpa@zytor.com, adrian.hunter@intel.com, acme@redhat.com,
-          linux-kernel@vger.kernel.org
+Message-ID: <tip-ivg9hifzeuokb1f5jxc2wob4@git.kernel.org>
+Cc:     acme@redhat.com, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        hpa@zytor.com, mingo@kernel.org, dsahern@gmail.com,
+        wangnan0@huawei.com, namhyung@kernel.org, adrian.hunter@intel.com,
+        jolsa@kernel.org
+Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          acme@redhat.com, adrian.hunter@intel.com, jolsa@kernel.org,
+          namhyung@kernel.org, hpa@zytor.com, dsahern@gmail.com,
+          mingo@kernel.org, wangnan0@huawei.com
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf evsel: Mark a evsel as disabled when asking
- the kernel do disable it
-Git-Commit-ID: b7e8452b860c299f342a012922bdd9ab8f2bb722
+Subject: [tip:perf/urgent] perf trace: Drop addr_location refcounts
+Git-Commit-ID: 4291bf5cb93918232f88a3a70d8f70a72fbb6ab0
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,94 +58,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  b7e8452b860c299f342a012922bdd9ab8f2bb722
-Gitweb:     https://git.kernel.org/tip/b7e8452b860c299f342a012922bdd9ab8f2bb722
+Commit-ID:  4291bf5cb93918232f88a3a70d8f70a72fbb6ab0
+Gitweb:     https://git.kernel.org/tip/4291bf5cb93918232f88a3a70d8f70a72fbb6ab0
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Sat, 20 Oct 2018 09:04:41 -0300
+AuthorDate: Sat, 20 Oct 2018 09:18:50 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 22 Oct 2018 12:37:45 -0300
+CommitDate: Mon, 22 Oct 2018 12:37:51 -0300
 
-perf evsel: Mark a evsel as disabled when asking the kernel do disable it
+perf trace: Drop addr_location refcounts
 
-Because there may be more such events in the ring buffer that should be
-discarded when an app decides to stop considering them.
-
-At some point we'll do this with eBPF, this way we stop them at origin,
-before they are placed in the ring buffer.
+When we use machine__resolve() we grab a reference to
+addr_location.thread (and in the future to other elements there) via
+machine__findnew_thread(), so we must pair that with
+addr_location__put(), else we'll never drop that thread when it exits
+and no other remaining data structures have pointers to it. Fix it.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: David Ahern <dsahern@gmail.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-uzufuxws4hufigx07ue1dpv6@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-ivg9hifzeuokb1f5jxc2wob4@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/evlist.c |  2 +-
- tools/perf/util/evsel.c  | 23 +++++++++++++++++------
- tools/perf/util/evsel.h  |  1 +
- 3 files changed, 19 insertions(+), 7 deletions(-)
+ tools/perf/builtin-trace.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index be440df29615..e88e6f9b1463 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -358,7 +358,7 @@ void perf_evlist__disable(struct perf_evlist *evlist)
- 	struct perf_evsel *pos;
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 74638034861c..77b8748ad5ed 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -1814,12 +1814,14 @@ static int trace__resolve_callchain(struct trace *trace, struct perf_evsel *evse
+ 	int max_stack = evsel->attr.sample_max_stack ?
+ 			evsel->attr.sample_max_stack :
+ 			trace->max_stack;
++	int err;
  
- 	evlist__for_each_entry(evlist, pos) {
--		if (!perf_evsel__is_group_leader(pos) || !pos->fd)
-+		if (pos->disabled || !perf_evsel__is_group_leader(pos) || !pos->fd)
- 			continue;
- 		perf_evsel__disable(pos);
- 	}
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 7e95ec1c19a8..6d187059a373 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -1207,16 +1207,27 @@ int perf_evsel__append_addr_filter(struct perf_evsel *evsel, const char *filter)
+-	if (machine__resolve(trace->host, &al, sample) < 0 ||
+-	    thread__resolve_callchain(al.thread, cursor, evsel, sample, NULL, NULL, max_stack))
++	if (machine__resolve(trace->host, &al, sample) < 0)
+ 		return -1;
  
- int perf_evsel__enable(struct perf_evsel *evsel)
- {
--	return perf_evsel__run_ioctl(evsel,
--				     PERF_EVENT_IOC_ENABLE,
--				     0);
-+	int err = perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_ENABLE, 0);
-+
-+	if (!err)
-+		evsel->disabled = false;
-+
+-	return 0;
++	err = thread__resolve_callchain(al.thread, cursor, evsel, sample, NULL, NULL, max_stack);
++	addr_location__put(&al);
 +	return err;
  }
  
- int perf_evsel__disable(struct perf_evsel *evsel)
- {
--	return perf_evsel__run_ioctl(evsel,
--				     PERF_EVENT_IOC_DISABLE,
--				     0);
-+	int err = perf_evsel__run_ioctl(evsel, PERF_EVENT_IOC_DISABLE, 0);
-+	/*
-+	 * We mark it disabled here so that tools that disable a event can
-+	 * ignore events after they disable it. I.e. the ring buffer may have
-+	 * already a few more events queued up before the kernel got the stop
-+	 * request.
-+	 */
-+	if (!err)
-+		evsel->disabled = true;
-+
-+	return err;
- }
- 
- int perf_evsel__alloc_id(struct perf_evsel *evsel, int ncpus, int nthreads)
-diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
-index ad5d615c6db6..4ef50f157b50 100644
---- a/tools/perf/util/evsel.h
-+++ b/tools/perf/util/evsel.h
-@@ -122,6 +122,7 @@ struct perf_evsel {
- 	bool			snapshot;
- 	bool 			supported;
- 	bool 			needs_swap;
-+	bool 			disabled;
- 	bool			no_aux_samples;
- 	bool			immediate;
- 	bool			system_wide;
+ static int trace__fprintf_callchain(struct trace *trace, struct perf_sample *sample)
