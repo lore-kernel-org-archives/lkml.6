@@ -6,42 +6,40 @@ X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34970ECDE47
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:57:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D7A3ECDE46
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:57:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 054FE2082D
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:57:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 054FE2082D
+	by mail.kernel.org (Postfix) with ESMTP id D9CED20869
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:57:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9CED20869
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727991AbeJ0Efm (ORCPT
+        id S1727959AbeJ0Efk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 00:35:42 -0400
-Received: from mga03.intel.com ([134.134.136.65]:50067 "EHLO mga03.intel.com"
+        Sat, 27 Oct 2018 00:35:40 -0400
+Received: from mga06.intel.com ([134.134.136.31]:18772 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725965AbeJ0Efl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 00:35:41 -0400
+        id S1725965AbeJ0Efk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Oct 2018 00:35:40 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Oct 2018 12:57:21 -0700
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Oct 2018 12:57:19 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,429,1534834800"; 
-   d="scan'208";a="103608979"
+   d="scan'208";a="102992382"
 Received: from viggo.jf.intel.com (HELO localhost.localdomain) ([10.54.77.144])
-  by orsmga002.jf.intel.com with ESMTP; 26 Oct 2018 12:57:21 -0700
-Subject: [PATCH 2/2] x86/selftests/pkeys: fork() to check for state being preserved
+  by orsmga001.jf.intel.com with ESMTP; 26 Oct 2018 12:57:19 -0700
+Subject: [PATCH 1/2] x86/pkeys: copy pkey state at fork()
 To:     linux-kernel@vger.kernel.org
 Cc:     Dave Hansen <dave.hansen@linux.intel.com>, tglx@linutronix.de,
         mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
         peterz@infradead.org, mpe@ellerman.id.au, will.deacon@arm.com,
         luto@kernel.org, jroedel@suse.de
 From:   Dave Hansen <dave.hansen@linux.intel.com>
-Date:   Fri, 26 Oct 2018 12:51:47 -0700
-References: <20181026195146.9C7C1136@viggo.jf.intel.com>
-In-Reply-To: <20181026195146.9C7C1136@viggo.jf.intel.com>
-Message-Id: <20181026195147.78D4C275@viggo.jf.intel.com>
+Date:   Fri, 26 Oct 2018 12:51:46 -0700
+Message-Id: <20181026195146.9C7C1136@viggo.jf.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -50,15 +48,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dave Hansen <dave.hansen@linux.intel.com>
 
-There was a bug where the per-mm pkey state was not being preserved
-across fork() in the child.  fork() is performed in the pkey
-selftests, but all of our pkey activity is performed in the parent.
-The child does not perform any actions sensitive to pkey state.
+Our creation of new mm's is a bit convoluted.  At fork(), the code
+does:
 
-To make the test more sensitive to these kinds of bugs, add a
-fork() where we let the parent exit, and continue execution in
-the child.
+	1. memcpy() the parent mm to initialize child
+	2. mm_init() to initalize some select stuff stuff
+	3. dup_mmap() to create true copies that memcpy()
+	   did not do right.
 
+For pkeys, we need to preserve two bits of state across a fork:
+'execute_only_pkey' and 'pkey_allocation_map'.  Those are preserved by
+the memcpy(), which I thought did the right thing.  But, mm_init()
+calls init_new_context(), which I thought was *only* for execve()-time
+and overwrites 'execute_only_pkey' and 'pkey_allocation_map' with
+"new" values.
+
+The result is that, after a fork(), the child's pkey state ends up
+looking like it does after an execve(), which is totally wrong.  pkeys
+that are already allocated can be allocated again, for instance.
+
+To fix this, add code called by dup_mmap() to copy the pkey state from
+parent to child explicitly.  Also add a comment above init_new_context()
+to make it more clear to the next poor sod what this code is used for.
+
+Fixes: e8c24d3a23a ("x86/pkeys: Allocation/free syscalls")
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: Ingo Molnar <mingo@redhat.com>
@@ -73,62 +86,44 @@ Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Joerg Roedel <jroedel@suse.de>
 ---
 
- b/tools/testing/selftests/x86/protection_keys.c |   30 ++++++++++++++++++++----
- 1 file changed, 26 insertions(+), 4 deletions(-)
+ b/arch/x86/include/asm/mmu_context.h |   18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff -puN tools/testing/selftests/x86/protection_keys.c~x86-pkeys-no-init-at-fork-selftests tools/testing/selftests/x86/protection_keys.c
---- a/tools/testing/selftests/x86/protection_keys.c~x86-pkeys-no-init-at-fork-selftests	2018-10-26 09:26:51.970102217 -0700
-+++ b/tools/testing/selftests/x86/protection_keys.c	2018-10-26 09:26:51.974102217 -0700
-@@ -1133,6 +1133,21 @@ void test_pkey_syscalls_bad_args(int *pt
- 	pkey_assert(err);
- }
+diff -puN arch/x86/include/asm/mmu_context.h~x86-pkeys-no-init-at-fork arch/x86/include/asm/mmu_context.h
+--- a/arch/x86/include/asm/mmu_context.h~x86-pkeys-no-init-at-fork	2018-10-26 09:24:09.444102622 -0700
++++ b/arch/x86/include/asm/mmu_context.h	2018-10-26 09:24:09.451102622 -0700
+@@ -178,6 +178,10 @@ static inline void switch_ldt(struct mm_
  
-+void become_child(void)
+ void enter_lazy_tlb(struct mm_struct *mm, struct task_struct *tsk);
+ 
++/*
++ * Init a new mm.  Used on mm copies, like at fork()
++ * and on mm's that are brand-new, like at execve().
++ */
+ static inline int init_new_context(struct task_struct *tsk,
+ 				   struct mm_struct *mm)
+ {
+@@ -228,8 +232,22 @@ do {						\
+ } while (0)
+ #endif
+ 
++static inline void arch_dup_pkeys(struct mm_struct *oldmm,
++				  struct mm_struct *mm)
 +{
-+	pid_t forkret;
-+
-+	forkret = fork();
-+	pkey_assert(forkret >= 0);
-+	dprintf3("[%d] fork() ret: %d\n", getpid(), forkret);
-+
-+	if (!forkret) {
-+		/* in the child */
++#ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
++	if (!cpu_feature_enabled(X86_FEATURE_OSPKE))
 +		return;
-+	}
-+	exit(0);
++
++	/* Duplicate the oldmm pkey state in mm: */
++	mm->context.pkey_allocation_map = oldmm->context.pkey_allocation_map;
++	mm->context.execute_only_pkey   = oldmm->context.execute_only_pkey;
++#endif
 +}
 +
- /* Assumes that all pkeys other than 'pkey' are unallocated */
- void test_pkey_alloc_exhaust(int *ptr, u16 pkey)
+ static inline int arch_dup_mmap(struct mm_struct *oldmm, struct mm_struct *mm)
  {
-@@ -1141,7 +1156,7 @@ void test_pkey_alloc_exhaust(int *ptr, u
- 	int nr_allocated_pkeys = 0;
- 	int i;
- 
--	for (i = 0; i < NR_PKEYS*2; i++) {
-+	for (i = 0; i < NR_PKEYS*3; i++) {
- 		int new_pkey;
- 		dprintf1("%s() alloc loop: %d\n", __func__, i);
- 		new_pkey = alloc_pkey();
-@@ -1152,10 +1167,17 @@ void test_pkey_alloc_exhaust(int *ptr, u
- 		if ((new_pkey == -1) && (errno == ENOSPC)) {
- 			dprintf2("%s() failed to allocate pkey after %d tries\n",
- 				__func__, nr_allocated_pkeys);
--			break;
-+		} else {
-+			pkey_assert(nr_allocated_pkeys < NR_PKEYS);
-+			allocated_pkeys[nr_allocated_pkeys++] = new_pkey;
- 		}
--		pkey_assert(nr_allocated_pkeys < NR_PKEYS);
--		allocated_pkeys[nr_allocated_pkeys++] = new_pkey;
-+
-+		/*
-+		 * Make sure that allocation state is properly
-+		 * preserved across fork().
-+		 */
-+		if (i == NR_PKEYS*2)
-+			become_child();
- 	}
- 
- 	dprintf3("%s()::%d\n", __func__, __LINE__);
++	arch_dup_pkeys(oldmm, mm);
+ 	paravirt_arch_dup_mmap(oldmm, mm);
+ 	return ldt_dup_context(oldmm, mm);
+ }
 _
