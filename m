@@ -2,140 +2,123 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EDA7C6786E
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC99ECDE46
 	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 09:56:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 085E72082E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 09:56:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 085E72082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 3585520848
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 09:56:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tWrEqNJ+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3585520848
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727008AbeJZSdP (ORCPT
+        id S1727350AbeJZSdQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 26 Oct 2018 14:33:16 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:33250 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbeJZSdP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 26 Oct 2018 14:33:15 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:35546 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726128AbeJZSdP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 14:33:15 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A238D200172;
-        Fri, 26 Oct 2018 11:56:47 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id F0B82200075;
-        Fri, 26 Oct 2018 11:56:40 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 0E2C04028B;
-        Fri, 26 Oct 2018 17:56:32 +0800 (SGT)
-From:   Peng Ma <peng.ma@nxp.com>
-To:     vkoul@kernel.org
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        leoyang.li@nxp.com, dan.j.williams@intel.com, zw@zh-kernel.org,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, Wen He <wen.he_1@nxp.com>,
-        Peng Ma <peng.ma@nxp.com>
-Subject: [PATCH 1/7] dmaengine: fsldma: Replace DMA_IN/OUT by FSL_DMA_IN/OUT
-Date:   Fri, 26 Oct 2018 17:52:34 +0800
-Message-Id: <20181026095240.33668-1-peng.ma@nxp.com>
-X-Mailer: git-send-email 2.14.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=7xgOBhIV84R3NpYql/jkh1mbbx8m+kry9kTYf0pKJ4Q=; b=tWrEqNJ+UI1qQvK1coEIG27bZ
+        lWi0ep0c8oURa7uP0nZ95XzDiEjL+KFLVHZPhNXb70m58UMqKitVtmilaYjYm7gBVlkHVV4Sruirb
+        h2fnbJO2BXL8LUj07r+EyiVEyHpVWD5XuxmshFxlx6CfZV+B+lSGazyKV3rHzkT6G5Rcj94c5zINL
+        tSx2KBo1iRMM8Xm8fkG/90AZjoNMZri4TZuW+7ekgpUyM0D1r2pDhmt+Gm5FLgmXpPUk57Vxnu1Px
+        w4nHohYZK4h402lMFbL7EW+Ut+Ggjd43TZJe6bfyAiozmTzrgpUG+GQC0/xL0zt9M2gmyn4FPq4Dv
+        f8E0B17kw==;
+Received: from [167.98.65.38] (helo=worktop)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gFyqk-0001HE-V6; Fri, 26 Oct 2018 09:56:15 +0000
+Received: by worktop (Postfix, from userid 1000)
+        id CF15C6E07BE; Fri, 26 Oct 2018 11:38:04 +0200 (CEST)
+Date:   Fri, 26 Oct 2018 11:38:04 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Igor Stoppa <igor.stoppa@gmail.com>
+Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        kernel-hardening@lists.openwall.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, igor.stoppa@huawei.com,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 14/17] prmem: llist, hlist, both plain and rcu
+Message-ID: <20181026093804.GD3126@worktop.c.hoisthospitality.com>
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-15-igor.stoppa@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181023213504.28905-15-igor.stoppa@huawei.com>
+User-Agent: Mutt/1.5.22.1 (2013-10-16)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wen He <wen.he_1@nxp.com>
+On Wed, Oct 24, 2018 at 12:35:01AM +0300, Igor Stoppa wrote:
+> In some cases, all the data needing protection can be allocated from a pool
+> in one go, as directly writable, then initialized and protected.
+> The sequence is relatively short and it's acceptable to leave the entire
+> data set unprotected.
+> 
+> In other cases, this is not possible, because the data will trickle over
+> a relatively long period of time, in a non predictable way, possibly for
+> the entire duration of the operations.
+> 
+> For these cases, the safe approach is to have the memory already write
+> protected, when allocated. However, this will require replacing any
+> direct assignment with calls to functions that can perform write rare.
+> 
+> Since lists are one of the most commonly used data structures in kernel,
+> they are a the first candidate for receiving write rare extensions.
+> 
+> This patch implements basic functionality for altering said lists.
+> 
+> Signed-off-by: Igor Stoppa <igor.stoppa@huawei.com>
+> CC: Thomas Gleixner <tglx@linutronix.de>
+> CC: Kate Stewart <kstewart@linuxfoundation.org>
+> CC: "David S. Miller" <davem@davemloft.net>
+> CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> CC: Philippe Ombredanne <pombredanne@nexb.com>
+> CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+> CC: Josh Triplett <josh@joshtriplett.org>
+> CC: Steven Rostedt <rostedt@goodmis.org>
+> CC: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> CC: Lai Jiangshan <jiangshanlai@gmail.com>
+> CC: linux-kernel@vger.kernel.org
+> ---
+>  MAINTAINERS            |   1 +
+>  include/linux/prlist.h | 934 +++++++++++++++++++++++++++++++++++++++++
 
-This patch implement a standard macro call functions is
-used to NXP dma drivers.
+I'm not at all sure I understand the Changelog, or how it justifies
+duplicating almost 1k lines of code.
 
-Signed-off-by: Wen He <wen.he_1@nxp.com>
-Signed-off-by: Peng Ma <peng.ma@nxp.com>
----
-change in v10:
-	- no
-
- drivers/dma/fsldma.c |   16 ++++++++--------
- drivers/dma/fsldma.h |    4 ++--
- 2 files changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/dma/fsldma.c b/drivers/dma/fsldma.c
-index 1117b51..39871e0 100644
---- a/drivers/dma/fsldma.c
-+++ b/drivers/dma/fsldma.c
-@@ -53,42 +53,42 @@
- 
- static void set_sr(struct fsldma_chan *chan, u32 val)
- {
--	DMA_OUT(chan, &chan->regs->sr, val, 32);
-+	FSL_DMA_OUT(chan, &chan->regs->sr, val, 32);
- }
- 
- static u32 get_sr(struct fsldma_chan *chan)
- {
--	return DMA_IN(chan, &chan->regs->sr, 32);
-+	return FSL_DMA_IN(chan, &chan->regs->sr, 32);
- }
- 
- static void set_mr(struct fsldma_chan *chan, u32 val)
- {
--	DMA_OUT(chan, &chan->regs->mr, val, 32);
-+	FSL_DMA_OUT(chan, &chan->regs->mr, val, 32);
- }
- 
- static u32 get_mr(struct fsldma_chan *chan)
- {
--	return DMA_IN(chan, &chan->regs->mr, 32);
-+	return FSL_DMA_IN(chan, &chan->regs->mr, 32);
- }
- 
- static void set_cdar(struct fsldma_chan *chan, dma_addr_t addr)
- {
--	DMA_OUT(chan, &chan->regs->cdar, addr | FSL_DMA_SNEN, 64);
-+	FSL_DMA_OUT(chan, &chan->regs->cdar, addr | FSL_DMA_SNEN, 64);
- }
- 
- static dma_addr_t get_cdar(struct fsldma_chan *chan)
- {
--	return DMA_IN(chan, &chan->regs->cdar, 64) & ~FSL_DMA_SNEN;
-+	return FSL_DMA_IN(chan, &chan->regs->cdar, 64) & ~FSL_DMA_SNEN;
- }
- 
- static void set_bcr(struct fsldma_chan *chan, u32 val)
- {
--	DMA_OUT(chan, &chan->regs->bcr, val, 32);
-+	FSL_DMA_OUT(chan, &chan->regs->bcr, val, 32);
- }
- 
- static u32 get_bcr(struct fsldma_chan *chan)
- {
--	return DMA_IN(chan, &chan->regs->bcr, 32);
-+	return FSL_DMA_IN(chan, &chan->regs->bcr, 32);
- }
- 
- /*
-diff --git a/drivers/dma/fsldma.h b/drivers/dma/fsldma.h
-index 4787d48..982845b 100644
---- a/drivers/dma/fsldma.h
-+++ b/drivers/dma/fsldma.h
-@@ -223,10 +223,10 @@ static void out_le64(u64 __iomem *addr, u64 val)
- }
- #endif
- 
--#define DMA_IN(fsl_chan, addr, width)					\
-+#define FSL_DMA_IN(fsl_chan, addr, width)				\
- 		(((fsl_chan)->feature & FSL_DMA_BIG_ENDIAN) ?		\
- 			in_be##width(addr) : in_le##width(addr))
--#define DMA_OUT(fsl_chan, addr, val, width)				\
-+#define FSL_DMA_OUT(fsl_chan, addr, val, width)			\
- 		(((fsl_chan)->feature & FSL_DMA_BIG_ENDIAN) ?		\
- 			out_be##width(addr, val) : out_le##width(addr, val))
- 
--- 
-1.7.1
-
+Sure lists aren't the most complicated thing we have, but duplicating
+that much is still very _very_ bad form. Why are we doing this?
