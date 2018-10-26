@@ -2,89 +2,111 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FE61ECDE46
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:20:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5953ECDE46
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:22:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 238C820868
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:20:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F8FA20868
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:22:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XkO369SI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 238C820868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="iI2f9sfv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F8FA20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728002AbeJ0C62 (ORCPT
+        id S1727974AbeJ0DAZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 22:58:28 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41974 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727734AbeJ0C62 (ORCPT
+        Fri, 26 Oct 2018 23:00:25 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:40567 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727741AbeJ0DAY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 22:58:28 -0400
-Received: by mail-lj1-f196.google.com with SMTP id u21-v6so1996735lja.8;
-        Fri, 26 Oct 2018 11:20:23 -0700 (PDT)
+        Fri, 26 Oct 2018 23:00:24 -0400
+Received: by mail-pf1-f194.google.com with SMTP id g21-v6so940323pfi.7
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 11:22:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=T56q1WFOtYNSeaP64ZTRRqTdS6w1Bc+ijJta1+x82Qk=;
-        b=XkO369SIZ60TFFWgesTcdetuDj2QB7WRtVPtpTB4xytqLmNAIBrZn2x1EnQjWSEfee
-         l+Sdg9H0MI7wqmFl4ECVG7UIIr3SYv2PdgFqUiGzLDXgAk5UmyaWhy5zgCt8A7WNJSuS
-         tjEP0fj7LXmQP5dAbmsM+Vzq78z9qermJUJCcs2tVId9tO8YYcA1eJDdUt+ty9c1d0Rc
-         ECu14JrsKDN6Zdyc7iUk2eGl5CxSd520bbbR2zkt4CNqLsFY0mTXOObgSr/RtYDFCu9X
-         6N7/AMgdKOfhCflYzznIfvTl1iAPgrSvHquqK538W8qhu11etZBUc2ecgXGJCsrYYA31
-         whKQ==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=dPkVkEIpK+5pbXWFCO64RlYk5FcCpaa9dN09DMSorR4=;
+        b=iI2f9sfv+dB6oBmEdmfCJ5tk8ChIcyXiwBbFlb4+IVao6zmXUXaw0iZ0kYMHjnZnmW
+         7p301FDTnC0Nrj4tVci27oLwmRuyXkZHi9u8X7orMyIr8lz/QQs/sv9Tw+w5HCCEqwvW
+         di7X3qNTenVYJWbpI0B0uYVjaok6/eU0+GxyE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=T56q1WFOtYNSeaP64ZTRRqTdS6w1Bc+ijJta1+x82Qk=;
-        b=rEZwdlSegzaT4amqisLcm1+SDMREmkNoe1vH9mnmeMZi2X9d+YSxUGGOL9x+rYnLRs
-         BidE8yonWBOnfI8vnNch5GDnUE3wCmPnF/s/JIwJScxZ7JH4ABMHZqIY93GFpVEto3Q7
-         4wA+Gh4GuFOz8TlA9QDKbeh3kEdZFEkz8QdfrSzmijGtxuLscU0FJv49GYKpWsEAhCI2
-         01AmCNoSnfUVNplqn9O+zU9grT0HrhPdMLZRMFpI5Fyx8YYNu2NGfjGw3O3ZqK7nHxJ5
-         svDOJpCJYr1eYMBLkizAgbhkELYwqScIPfZQ6x1lLuxfaXLJ4TbHImWZi/X3vy1pyy1q
-         5zdw==
-X-Gm-Message-State: AGRZ1gIUU8OIrNSPHZIM5MFUGZTeT8UP7zlDvRdH0LklbvbZ6TKyMjU1
-        7jTadKlfkwoGSAU5DA48VL8Wo/jJWG/BPCfJ2SM=
-X-Google-Smtp-Source: AJdET5djV3qCBBz+Am4ofKk8nvp7aX8mrHg4ZeqwTTv4xhxojmBX0n6Mvm3k4FkDlOHXlVQsJmJenqUuHARFYuadFc4=
-X-Received: by 2002:a2e:c52:: with SMTP id o18-v6mr3117652ljd.94.1540578023113;
- Fri, 26 Oct 2018 11:20:23 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dPkVkEIpK+5pbXWFCO64RlYk5FcCpaa9dN09DMSorR4=;
+        b=thg/Oll1hjuJQaaIgGSrjav1Ivp5imPXuRPpnyhjIw3lBhmPWUgEV105AcZoClslkl
+         PFLld8DxdPG0A9Q232L23KRVhoyBiF3+voyyvU7KkBAjKE5WdEh5iCFr/yAwJLb/S+kA
+         612ZJbVeA7iXhp+eLrnbeC/xLlA/xAsNYHUmM6IWSihFovRXHVow89+CAPEV/EkKifVz
+         llZcBMMnS0XeTWRB5EE9fGLLOl75M/6mcqNya9o7ghrCR0+EIWwGR5CYvNFzjaLWwTeD
+         H2ZtzV3Xh+K1jYoMAmKtLaTzDxJpScu3h2QSWsoMdWPvgbN2B11tG6vkCWbmMAZaLn4p
+         DTnw==
+X-Gm-Message-State: AGRZ1gKTUqnFD18ScvZO4b+8kJBjeVA91YfAqHJf3kRX60UuDXDCFXBW
+        reiCkmBNwOK22k6czMsGOvr9sg/+hig=
+X-Google-Smtp-Source: AJdET5erdRVECfSb/PiwuyA+0DPjWvQj5uEduu5BNX0qnaeQPAtUf6aqjYOvpkGPlVDIn1QmCVb1Ew==
+X-Received: by 2002:a63:1444:: with SMTP id 4mr4278247pgu.430.1540578140697;
+        Fri, 26 Oct 2018 11:22:20 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id p64-v6sm9899373pfi.22.2018.10.26.11.22.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 26 Oct 2018 11:22:19 -0700 (PDT)
+Date:   Fri, 26 Oct 2018 11:22:18 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>
+Subject: Re: [RFC 6/6] Revert "pstore/ram_core: Do not reset restored zone's
+ position and size"
+Message-ID: <20181026182218.GB187415@joelaf.mtv.corp.google.com>
+References: <20181026180042.52199-1-joel@joelfernandes.org>
+ <20181026180042.52199-6-joel@joelfernandes.org>
+ <CAGXu5jLoMhBKuxhSqbgitfOYkO0gU34L4asn9iQEdHqJPxfDSA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20181026172549.3628-1-colin.king@canonical.com>
-In-Reply-To: <20181026172549.3628-1-colin.king@canonical.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Fri, 26 Oct 2018 20:20:12 +0200
-Message-ID: <CANiq72nFZS=3KGaQpGjRbprh8HTBiTcSpxScE2uacDmg-xqDGA@mail.gmail.com>
-Subject: Re: [PATCH] Documentation: fix spelling mistake, EACCESS -> EACCES
-To:     colin.king@canonical.com
-Cc:     jk@ozlabs.org, Jonathan Corbet <corbet@lwn.net>,
-        Dave Airlie <airlied@linux.ie>,
-        maarten.lankhorst@linux.intel.com, maxime.ripard@bootlin.com,
-        sean@poorly.run, linuxppc-dev@lists.ozlabs.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jLoMhBKuxhSqbgitfOYkO0gU34L4asn9iQEdHqJPxfDSA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 7:27 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Trivial fix to a spelling mistake of the error access name EACCESS,
-> rename to EACCES
+On Fri, Oct 26, 2018 at 07:16:28PM +0100, Kees Cook wrote:
+> On Fri, Oct 26, 2018 at 7:00 PM, Joel Fernandes (Google)
+> <joel@joelfernandes.org> wrote:
+> > This reverts commit 25b63da64708212985c06c7f8b089d356efdd9cf.
+> >
+> > Due to the commit which is being reverted here, it is not possible to
+> > know if pstore's messages were from a previous boot, or from very old
+> > boots. This creates an awkard situation where its unclear if crash or
+> > other logs are from the previous boot or from very old boots. Also
+> > typically we dump the pstore buffers after one reboot and are interested
+> > in only the previous boot's crash so let us reset the buffer after we
+> > save them.
+> >
+> > Lastly, if we don't zap them, then I think it is possible that part of
+> > the buffer will be from this boot and the other parts will be from
+> > previous boots. So this revert fixes all of this by calling
+> > persistent_ram_zap always.
+> 
+> I like the other patches (comments coming), but not this one: it's
+> very intentional to keep all crashes around until they're explicitly
+> unlinked from the pstore filesystem from userspace. Especially true
+> for catching chains of kernel crashes, or a failed log collection,
+> etc. Surviving multiple reboots is the expected behavior on Chrome OS
+> too.
 
-? It is not a typo, it is the name of the error (POSIX). Same thing
-for the rest of the patches.
+Oh, ok. Hence the RFC tag ;-) We can drop this one then. I forgot that
+unlinking was another way to clear the logs.
 
-Cheers,
-Miguel
+thanks!
+
+- Joel
+
