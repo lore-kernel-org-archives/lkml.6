@@ -2,126 +2,181 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5301CECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:51:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A920AECDE46
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:53:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0646520868
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:51:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 287122085B
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:53:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eKDCUBJY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0646520868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SXT/0O+j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 287122085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727854AbeJ0D3Q (ORCPT
+        id S1727980AbeJ0Db0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 23:29:16 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40699 "EHLO
+        Fri, 26 Oct 2018 23:31:26 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39059 "EHLO
         mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727614AbeJ0D3P (ORCPT
+        with ESMTP id S1727762AbeJ0Db0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 23:29:15 -0400
-Received: by mail-pf1-f193.google.com with SMTP id g21-v6so973112pfi.7;
-        Fri, 26 Oct 2018 11:51:05 -0700 (PDT)
+        Fri, 26 Oct 2018 23:31:26 -0400
+Received: by mail-pf1-f193.google.com with SMTP id c25-v6so978912pfe.6
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 11:53:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CNrmm2Cd0/IzU63bnK+ak3meqD0hHgGMcdSZm5jtCkc=;
-        b=eKDCUBJYPT85nO+yQFleQiNGil5xUTcby+XI4B8WCgNLz4Q6ZQwbiswI9J1NJnf7F2
-         /W/CmOKiAQh2i+rWdErE4BJ2/lIE1Es7DhMMQ2ijOzO65Wh+KrzFofrT/JFQhA69nphJ
-         HTY543xuQBFYObgMfBEOcYupZlIB0eoC3cBcRD/2RWzf0u9JPZ8jpH4iGI0+7ZO0PYr4
-         9QtoR9cui1FsyDgSVTzgixJu3EH2FGVSpCHM0ZGOfgy8vAMrYnsVGAzZXq59PIxK+vZE
-         WSU5j3GFVGcI/Xzr+Jh1HwZiq4Kf4uMf3IzCZ5ih/b9CrxmOXMLBbKEA3spBNYCk+dz+
-         hdZw==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=cQmOOJ/rN1/JPprUB1D77Z8TtrDa67iiG6AT33srIeg=;
+        b=SXT/0O+jlxYauE+2Mnh1ke5s7xV9ZKtVTE9P7F2MKKWJJtnxBtt6Cu3b6kzMXHa0C+
+         EtJLHabKJY4Mi+nq6cOZ35S59we5QdT/7ikZ36o6BaiuEnA1H3UXVxVK2pNVw+/FeMFO
+         0Vw18mzUCxh6R/EY9SxtRpr2UDscIgH5HYLXg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CNrmm2Cd0/IzU63bnK+ak3meqD0hHgGMcdSZm5jtCkc=;
-        b=E3V47yV9Xg5uwZ0YySWToAO59WgwaGHxOnDAImdqVtNcR+dYoRCkkIb+Ev1iN6QIph
-         LMewpT4TC63oBmQ7JQUbDeE+1ZCekaLTZzGb8U8O0oocHOQT7rD+8HA3jn2uT4A3VDHW
-         5MQA+fofpk3LL7B1qRFf9GGJL3RAE96IzCFw/esW0t+9JlmL85Pm24YunWiAKhrDs6fT
-         ZQs5WlkE+mwXGlfibbOyZpSIqiMSBUMl8/HhgV0zL5MrpzTdZNvDwxv/CbR3I2f0nQs+
-         aRiwETRorF8CxvcQ4+AXMTz/x5pPQJ7KMxiyyWfB6ty+lC6zJQmmxEjs7AFc9llZ1i0I
-         Z1HQ==
-X-Gm-Message-State: AGRZ1gJVtHohKqEGUFadAhGL7eUvR1fWd7dt4TNW63SlfR//rhtSToti
-        t66LhbMrk+dKSrMtnJB0hCdRxHmWONzETgTCSxE=
-X-Google-Smtp-Source: AJdET5dSJi5Rlzuzkm9t3GfdnbNgK93ikRXcdWA+EGcv1+wZ4eTseDu+32bdZIR5WsFj0pTPTSuyGIz9NP3MIy0iR7U=
-X-Received: by 2002:a63:61c8:: with SMTP id v191mr4635847pgb.242.1540579865257;
- Fri, 26 Oct 2018 11:51:05 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cQmOOJ/rN1/JPprUB1D77Z8TtrDa67iiG6AT33srIeg=;
+        b=h8pUl/WVJxci1rfg5DuYK+YdNrx14L1Q4yy/Gjrf3IJjkk66Jekr1YoGTQROE1053p
+         OMaJvc9uiATK+Kh7OtH97WBDH4y69mgcohCXb+MqlH3F/pEn5c6rtnKlyVKSwgXz71hX
+         s/bxdWMmIs8MK/tlOJeE3/KE3CUCnxLL5befciGTpbpbtxFeqwmSJwn0TlBMKq6/c+5a
+         tEez0usoKQm74x+CDI7wYxUHEjOb8axiuuINljfFRr5WD/ixel4kIreyZCa1S6I9qKhD
+         9LFPs2KUr/rnN2cF3Z5WZ8TfCMP57pgdLK0AIrL1T3GWSQ1gId32eUpirERGSDGKFY/v
+         i1UQ==
+X-Gm-Message-State: AGRZ1gIOFbtwxTDSJ75l00pBDHYUIvUNcru6Sj9DqOl7whnEeNim0g6m
+        qT4WV6Fqa+BTfVtcPZMRWxihog==
+X-Google-Smtp-Source: AJdET5c+AfeQMduHXJyy0OY05zwR0t7Hs5iA74giJaPi5YklZ1ZN6UMpZ3OF+88e9RUSllFNsKlQPw==
+X-Received: by 2002:a63:561b:: with SMTP id k27mr4590475pgb.271.1540579995569;
+        Fri, 26 Oct 2018 11:53:15 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id p7-v6sm15940835pfb.101.2018.10.26.11.53.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 26 Oct 2018 11:53:15 -0700 (PDT)
+Date:   Fri, 26 Oct 2018 11:53:14 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v1] Bluetooth: hci_qca: Add helper to set device address.
+Message-ID: <20181026185314.GD22824@google.com>
+References: <20181026140450.13172-1-bgodavar@codeaurora.org>
 MIME-Version: 1.0
-References: <20181026180721.5040-1-colin.king@canonical.com>
-In-Reply-To: <20181026180721.5040-1-colin.king@canonical.com>
-From:   Steve French <smfrench@gmail.com>
-Date:   Fri, 26 Oct 2018 13:50:54 -0500
-Message-ID: <CAH2r5mtPEj04VutE44Dwdk+UtRM0PuT6_teMrOU44XCk3CirQA@mail.gmail.com>
-Subject: Re: [PATCH] cifs: fix spelling mistake, EACCESS -> EACCES
-To:     Colin King <colin.king@canonical.com>
-Cc:     Steve French <sfrench@samba.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        kernel-janitors <kernel-janitors@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181026140450.13172-1-bgodavar@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-merged into cifs-2.6.git for-next
-On Fri, Oct 26, 2018 at 1:10 PM Colin King <colin.king@canonical.com> wrote:
->
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Trivial fix to a spelling mistake of the error access name EACCESS,
-> rename to EACCES
->
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+On Fri, Oct 26, 2018 at 07:34:50PM +0530, Balakrishna Godavarthi wrote:
+> This patch add qca_set_device_bdaddr() to set the device
+> address for latest Qualcomm Bluetooth chipset wcn3990 and above.
+> 
+> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
 > ---
->  fs/cifs/file.c  | 2 +-
->  fs/cifs/inode.c | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-> index 84477e995246..6894d071850a 100644
-> --- a/fs/cifs/file.c
-> +++ b/fs/cifs/file.c
-> @@ -1003,7 +1003,7 @@ cifs_lock_add(struct cifsFileInfo *cfile, struct cifsLockInfo *lock)
->   * Set the byte-range lock (mandatory style). Returns:
->   * 1) 0, if we set the lock and don't need to request to the server;
->   * 2) 1, if no locks prevent us but we need to request to the server;
-> - * 3) -EACCESS, if there is a lock that prevents us and wait is false.
-> + * 3) -EACCES, if there is a lock that prevents us and wait is false.
->   */
->  static int
->  cifs_lock_add_if(struct cifsFileInfo *cfile, struct cifsLockInfo *lock,
-> diff --git a/fs/cifs/inode.c b/fs/cifs/inode.c
-> index 0945d40030eb..3685e2c25205 100644
-> --- a/fs/cifs/inode.c
-> +++ b/fs/cifs/inode.c
-> @@ -1305,8 +1305,8 @@ cifs_drop_nlink(struct inode *inode)
->  /*
->   * If d_inode(dentry) is null (usually meaning the cached dentry
->   * is a negative dentry) then we would attempt a standard SMB delete, but
-> - * if that fails we can not attempt the fall back mechanisms on EACCESS
-> - * but will return the EACCESS to the caller. Note that the VFS does not call
-> + * if that fails we can not attempt the fall back mechanisms on EACCES
-> + * but will return the EACCES to the caller. Note that the VFS does not call
->   * unlink on negative dentries currently.
->   */
->  int cifs_unlink(struct inode *dir, struct dentry *dentry)
-> --
-> 2.19.1
->
+>  drivers/bluetooth/btqca.c   | 21 +++++++++++++++++++++
+>  drivers/bluetooth/btqca.h   |  9 ++++++++-
+>  drivers/bluetooth/hci_qca.c |  5 ++++-
+>  3 files changed, 33 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/btqca.c b/drivers/bluetooth/btqca.c
+> index ec9e03a6b778..132dc6ceb174 100644
+> --- a/drivers/bluetooth/btqca.c
+> +++ b/drivers/bluetooth/btqca.c
+> @@ -391,6 +391,27 @@ int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+>  }
+>  EXPORT_SYMBOL_GPL(qca_uart_setup);
+>  
+> +int qca_set_device_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr)
 
+nit: just qca_set_bdaddr() ? That would be consistent with
+qca_set_bdaddr_rome() and ->set_bdaddr().
 
--- 
-Thanks,
+> +{
+> +	struct sk_buff *skb;
+> +	u8 cmd[6];
 
-Steve
+nit: this doesn't really contain the command (which is
+EDL_WRITE_BD_ADDR_OPCODE). Name it 'buf', 'ba' or similar?
+
+re-nit: in the memcpy below 'sizeof(bdaddr_t)' is used, do the same in
+the declaration?
+
+> +	int err;
+> +
+> +	memcpy(cmd, bdaddr, sizeof(bdaddr_t));
+> +	skb = __hci_cmd_sync_ev(hdev, EDL_WRITE_BD_ADDR_OPCODE, sizeof(cmd),
+> +				cmd, HCI_EV_VENDOR, HCI_INIT_TIMEOUT);
+> +	if (IS_ERR(skb)) {
+> +		err = PTR_ERR(skb);
+> +		bt_dev_err(hdev, "QCA Change address cmd failed (%d)", err);
+> +		return err;
+> +	}
+> +
+> +	kfree_skb(skb);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(qca_set_device_bdaddr);
+> +
+>  MODULE_AUTHOR("Ben Young Tae Kim <ytkim@qca.qualcomm.com>");
+>  MODULE_DESCRIPTION("Bluetooth support for Qualcomm Atheros family ver " VERSION);
+>  MODULE_VERSION(VERSION);
+> diff --git a/drivers/bluetooth/btqca.h b/drivers/bluetooth/btqca.h
+> index 0c01f375fe83..8771fc2b193d 100644
+> --- a/drivers/bluetooth/btqca.h
+> +++ b/drivers/bluetooth/btqca.h
+> @@ -20,6 +20,7 @@
+>  
+>  #define EDL_PATCH_CMD_OPCODE		(0xFC00)
+>  #define EDL_NVM_ACCESS_OPCODE		(0xFC0B)
+> +#define EDL_WRITE_BD_ADDR_OPCODE	(0xFC14)
+>  #define EDL_PATCH_CMD_LEN		(1)
+>  #define EDL_PATCH_VER_REQ_CMD		(0x19)
+>  #define EDL_PATCH_TLV_REQ_CMD		(0x1E)
+> @@ -140,7 +141,7 @@ int qca_set_bdaddr_rome(struct hci_dev *hdev, const bdaddr_t *bdaddr);
+>  int qca_uart_setup(struct hci_dev *hdev, uint8_t baudrate,
+>  		   enum qca_btsoc_type soc_type, u32 soc_ver);
+>  int qca_read_soc_version(struct hci_dev *hdev, u32 *soc_version);
+> -
+> +int qca_set_device_bdaddr(struct hci_dev *hdev, const bdaddr_t *bdaddr);
+>  #else
+>  
+>  static inline int qca_set_bdaddr_rome(struct hci_dev *hdev, const bdaddr_t *bdaddr)
+> @@ -159,4 +160,10 @@ static inline int qca_read_soc_version(struct hci_dev *hdev, u32 *soc_version)
+>  	return -EOPNOTSUPP;
+>  }
+>  
+> +static inline int qca_set_device_bdaddr(struct hci_dev *hdev,
+> +					const bdaddr_t *bdaddr)
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +
+>  #endif
+> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+> index f036c8f98ea3..f18d9f5a7782 100644
+> --- a/drivers/bluetooth/hci_qca.c
+> +++ b/drivers/bluetooth/hci_qca.c
+> @@ -1241,7 +1241,10 @@ static int qca_setup(struct hci_uart *hu)
+>  	}
+>  
+>  	/* Setup bdaddr */
+> -	hu->hdev->set_bdaddr = qca_set_bdaddr_rome;
+> +	if (qcadev->btsoc_type == QCA_WCN3990)
+> +		hu->hdev->set_bdaddr = qca_set_device_bdaddr;
+> +	else
+> +		hu->hdev->set_bdaddr = qca_set_bdaddr_rome;
+>  
+>  	return ret;
+>  }
+
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Tested-by: Matthias Kaehlcke <mka@chromium.org>
