@@ -2,155 +2,145 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F9D2C6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:22:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF26DC6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:23:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD5E620868
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:22:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD5E620868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=columbia.edu
+	by mail.kernel.org (Postfix) with ESMTP id 739CB20869
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:23:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Az1wPMEL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 739CB20869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726905AbeJZV7n (ORCPT
+        id S1727162AbeJZWAI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 17:59:43 -0400
-Received: from moglen4.apt.columbia.edu ([160.39.60.15]:47413 "EHLO
-        moglen4.apt.columbia.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbeJZV7n (ORCPT
+        Fri, 26 Oct 2018 18:00:08 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:40534 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726014AbeJZWAI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 17:59:43 -0400
-X-Greylist: delayed 424 seconds by postgrey-1.27 at vger.kernel.org; Fri, 26 Oct 2018 17:59:43 EDT
-Received: from localhost (moglen1.apt.columbia.edu [160.39.60.12])
-        by moglen4.apt.columbia.edu (Postfix) with ESMTPSA id 368512E01F2;
-        Fri, 26 Oct 2018 13:15:34 +0000 (UTC)
-Date:   Fri, 26 Oct 2018 09:15:33 -0400
-Message-Id: <849-Fri26Oct2018091533-0400-eben@harlan.sflc-vpn>
-X-Mailer: emacs 23;
-        VM 8.1.0 under 23.2.1 (i486-pc-linux-gnu)
+        Fri, 26 Oct 2018 18:00:08 -0400
+Received: by mail-io1-f66.google.com with SMTP id a23-v6so679706iod.7;
+        Fri, 26 Oct 2018 06:23:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vkpl1HLHviktElyquNSyHDdm6EOk3q6jgkJanttgAgs=;
+        b=Az1wPMELvXIjeDI03ZS2QBtCFkoxQBJbpmZFiRIn1yDsWYJWtqsvKM3zZVTdBsou/I
+         dD6W6q1R3vUOoUCaLPMNfT2Y2PJuNUxbb/e07MRdoPPtubT/zrtlCtNJL8OD+a+XYtwr
+         MpG/DgnusSLCPvUs/0yAwGuNPGCAhkmhpolIEGjlCIigzzTKVifnmcima2olME8dBxDS
+         5La4FZnDk5wT71kJzxXRtRIkjqlBbmbBCy0E07p2JXU0bcqUMaVu8jN6qtT71XlEZhU9
+         itblBNJodQbf0z6xAS38NsFCdbCexANVNrQzUkpJaI4lBT086Yzp1v547dPEX0vD6jtN
+         vPqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vkpl1HLHviktElyquNSyHDdm6EOk3q6jgkJanttgAgs=;
+        b=QH2HOtar3oEJ3GqGQqKhYmFxQO9+vv6NwbmyFFyccb8k6HVod/2UbO+dpCctZ9V2K3
+         6G36Vto6p0DPlL9LpkVfAfA/qth5BJTFNkOnRD5NqWP5gMnCDxbGU72lmzbbEOCWzvma
+         I7JO3xTqYeKj1AVsvmy1oG08WNtvVB8ObrXJMivzydQ/E5gtIj1p2EF/E9tkmw34OV6M
+         3igMMf8+ZcXdyoX4sPAJqk8kI+mPEuuBmX6nO9mGb4ayznUOKCylc+8aeAvaIm06JFIu
+         WLW8ozjKX/4e7YPjhkHkLN7L4DnxSu6qqrs9+MrLy1y9UZfJsJYtmjFskdPjSOW/th85
+         ipug==
+X-Gm-Message-State: AGRZ1gIttHx768asJBfKiLAIp5z1GvheBWH9MmJ5TIKbmKETE1fxYnN3
+        RHFBgtGLmKOR3TdLjcWK1Y9/coYQqMWVCR015lU=
+X-Google-Smtp-Source: AJdET5feM6D0PFmC+k1/8I44B0TV2LeDxEBSHG61aoqfZr+XVeoPLtY9efzZ/5XMjvDgC4JF/lBHg/QcVE2pn9OsYfM=
+X-Received: by 2002:a6b:8e90:: with SMTP id q138-v6mr2367934iod.112.1540560182974;
+ Fri, 26 Oct 2018 06:23:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-To:     esr@thyrsus.com
-Cc:     gregkh@linuxfoundation.org, visionsofalice@redchan.it,
-        linux-kernel@vger.kernel.org, rms@gnu.org, bruce@perens.com,
-        bkuhn@sfconservancy.org, editor@lwn.net, neil@brown.name,
-        labbott@redhat.com, torvalds@linux-foundation.org,
-        ksummit-discuss@lists.linuxfoundation.org, tglx@linutronix.de,
-        olof@lixom.net, clm@fb.com, mishi@linux.com,
-        linux-kernel-owner@vger.kernel.org
-Subject: Re: The linux devs can rescind their license grant.
-In-Reply-To: Eric S. Raymond's message of Thu, 25 Oct 2018 15:39:01 -0400
-      <20181025193901.GD26403@thyrsus.com>
-References: <20181020134908.GA32218@kroah.com>
-        <87y3ar80ac.fsf@notabene.neil.brown.name>
-        <c6bf1877-6e29-50ec-ffa8-314ab35ec9ce@redhat.com>
-        <185b786a2bd6e8d527dca161dc42e4f1@redchan.it>
-        <20181025081911.GB11343@kroah.com>
-        <20181025193901.GD26403@thyrsus.com>
-From:   Eben Moglen <moglen@columbia.edu>
-Reply-To: Eben Moglen <moglen@columbia.edu>
+References: <CAEAjamtML1yMLL0DsV5JkD1H6P0Yg19F2DVq+_c-u09RaCKuDw@mail.gmail.com>
+ <fcad3085-6801-71f9-b2cf-4c1702889d70@kernel.dk> <CAEAjamtJrbLZyN+f97Y+LOMbogveYNBdxM-pVvfqUMhaGsH2uw@mail.gmail.com>
+ <CAEAjams3Y4PE-yDP0FyipCAohOepSF9WgXw3h_CEd1YW+mjS0g@mail.gmail.com> <ad9f11b6-1e3c-8412-ecce-d04a1c8c317a@kernel.dk>
+In-Reply-To: <ad9f11b6-1e3c-8412-ecce-d04a1c8c317a@kernel.dk>
+From:   Kyungtae Kim <kt0755@gmail.com>
+Date:   Fri, 26 Oct 2018 09:22:51 -0400
+Message-ID: <CAEAjamu-MmtPF0_kqyPKJBcZSWz=SGi_1VjLq7z9MMm5-t7Oog@mail.gmail.com>
+Subject: Re: UBSAN: Undefined behaviour in drivers/block/floppy.c:1495:32
+To:     axboe@kernel.dk
+Cc:     jikos@kernel.org, Byoungyoung Lee <lifeasageek@gmail.com>,
+        DaeRyong Jeong <threeearcat@gmail.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thursday, 25 October 2018, Eric S. Raymond wrote:
+I corrected the patch as follows:
 
-  Under Jacobsen vs. Katzer (535 f 3d 1373 fed cir 2008) authors of
-  GPLed software have a specific right to relief (including injunctive
-  relief) against misappropriation of their software. That ruling (which
-  was the case of first impression on the binding status of the GPL)
- 
-No, Eric, _Jacobsen_ v. _Katzer_ has nothing to do with GPL.  The
-license terms on the software at issue were Artistic 1.0.  The GPL is
-mentioned in an informational footnote only.  The case has little
-legal weight, for procedural reasons, and is most certainly not "the
-case of first impression on the binding status of the GPL."
+[PATCH] floppy: Avoid memory access beyond the array bounds in setup_rw_floppy()
 
- reputational damage is *specifically* recognized as grounds for relief.
-  
-No.  Reputational damage is not mentioned at all, let alone
-specifically recognized.  The District Court opinion that was
-overturned in the Court of Appeals had held that licenses that don't
-require payment of royalties are unenforceable, which was not
-copyright law of any kind.  The CAFC, guessing about the content of
-Ninth Circuit law under the jurisdictional rules of the appeal (a
-state of affairs which leaves no real precedential weight at all
-behind the opinion) rightly discovered that there are "economic
-interests" furthered by free licensing.  Reputational interests are
-not among those mentioned.  This is a <a
-href="https://caselaw.findlaw.com/us-federal-circuit/1189790.html">public
-document</a> anyone can read.  I'm a little surprised you didn't check
-before asserting.
+setup_rw_floppy() writes some bytes of array cmd to the floppy disk
+controller, depending on cmd_count.
+Although the size of array cmd is fixed like 16, cmd_count can be much
+larger through raw_cmd_ioctl().
+Noticed there is no bound check for this, thereby leading to invalid
+memory access.
 
-  The anti-CoC dissidents don't have to rescind their license grant to
-  cause a great deal of trouble. Instead they can invoke the doctrine
-  established in Jacobsen vs. Katzer, seeking restraining orders.
+This patch adds a bound check for cmd_count when initialized for the
+first time.
 
-They can do neither.  There is no "doctrine established in Jacobsen."
-The license terms of the GPLv2, GPLv3, and all related licenses
-provide a mode of termination---for imposition of additional
-restrictions or violation of other terms.  This termination provision,
-being explicit, is therefore the sole form of termination recognized
-under the terms of the Copyright Act.
+The crash log is as follows:
+UBSAN: Undefined behaviour in drivers/block/floppy.c:1495:32
+index 16 is out of range for type 'unsigned char [16]'
+CPU: 0 PID: 2420 Comm: kworker/u4:3 Not tainted 4.19.0-rc2 #1
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
+Workqueue: floppy fd_timer_workfn
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0xd2/0x148 lib/dump_stack.c:113
+ ubsan_epilogue+0x12/0x94 lib/ubsan.c:159
+ __ubsan_handle_out_of_bounds+0x174/0x1b8 lib/ubsan.c:386
+ setup_rw_floppy+0xbd9/0xe60 drivers/block/floppy.c:1495
+ seek_floppy drivers/block/floppy.c:1605 [inline]
+ floppy_ready+0x61a/0x2230 drivers/block/floppy.c:1917
+ fd_timer_workfn+0x1a/0x20 drivers/block/floppy.c:994
+ process_one_work+0xa0c/0x1820 kernel/workqueue.c:2153
+ worker_thread+0x8f/0xd20 kernel/workqueue.c:2296
+ kthread+0x3a3/0x470 kernel/kthread.c:246
+ ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:413
 
-  The line of argument is so simple that I could probably brief it
-  myself, and I'm not a lawyer
+Signed-off-by: Kyungtae Kim <kt0755@gmail.com>
+---
+ drivers/block/floppy.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Law school exists to give people who are not yet lawyers a healthy
-respect for what they cannot do.  This discussion has been a riot of
-amateur opining, but practicing law without a license is always a bad
-idea.
+diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
+index a8cfa01..41160a1 100644
+--- a/drivers/block/floppy.c
++++ b/drivers/block/floppy.c
+@@ -3146,6 +3146,9 @@ static int raw_cmd_copyin(int cmd, void __user *param,
+                         */
+                return -EINVAL;
 
-  For that matter, I don't think the question of whether the GPL can be
-  rescinded is settled - nor does my wife Cathy Raymond, Esq., a practicing
-  attorney who has also studied the relevant law.
++       if (ptr->cmd_count > ARRAY_SIZE(ptr->cmd))
++         return -EINVAL;
++
+        for (i = 0; i < 16; i++)
+                ptr->reply[i] = 0;
+        ptr->resultcode = 0;
+--
+2.7.4
 
-It is settled.  Indeed, it was never in doubt.  When Jerry Cohen made
-GPLv2 he was of course asked by Richard to make an irrevocable
-license.  He did so.  The US law provides that this license cannot be
-terminated except on its stated terms.  But the basis of that rule,
-which is statutory, was not reliable under non-US law, so in GPLv3 I
-"codified" the US result in the license terms, as we did with various
-other features in which GPLv2 assumed the US law background.
 
-What the discussion set off by the present CoC controversy showed me
-was that there was no accessible, legally-accurate description of US
-copyright license termination law as it affects the various FOSS
-licenses in particular.  I wrote such an article and began preparing
-it for publication, but was interrupted in that work by my mother's
-last illness and death.
-
-In the meantime everything said on all sides, for and against, has
-been wrong.  The correct legal analysis has been offered nowhere.  As
-I am beginning to return to work, I will publish the article soon.
-For now, the headline is that Greg is correct.  There is nothing in
-the repeated assertions that some form of withdrawal of licensed rights
-or attacks on the copyright status of the kernel are a possible
-response to disagreement over changes in internal project governance.
-
-It's a small point---and like all the other supposed points raised so
-far, irrelevant---but I should say in passing, after years of teaching
-the basic Property course at Columbia and Harvard law schools, that
-Bruce Perens gave as succinct a description of the "rule against
-perpetuities" as I ever hear from a beginner in the classroom.  In the
-English legal history course that I also teach (almost the only place
-in a modern law school in which the law of future interests is
-seriously considered), more is said.  But the key point is that the
-"rule against perpetuities" is not a rule against perpetuities.  The
-confusion on this point is one of the clearest signs that the writer
-or writers using various pseudonyms is/are not, whatever s/he claims,
-a US or UK lawyer at all.
-
-Eben
-
--- 
- Eben Moglen                            v: 212-461-1901 
- Professor of Law, Columbia Law School  f: 212-854-7946       moglen@
- 435 West 116th Street, New York City, NY 10027            columbia.edu
- Founding Director, Software Freedom Law Center        softwarefreedom.org
- 
+On Wed, Oct 24, 2018 at 5:27 AM Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 10/24/18 12:33 AM, Kyungtae Kim wrote:
+> > Corrected.
+>
+> You'll want to read Documentation/process/submitting-patches.rst as
+> your patch is lacking in several areas.
+>
+>
+> --
+> Jens Axboe
+>
