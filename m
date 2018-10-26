@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E26ECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:46:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90C43C6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:46:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1625D20651
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:46:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55C9C20868
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:46:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Jyj6k50f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1625D20651
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="jLHJFckw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55C9C20868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728192AbeJZXXc (ORCPT
+        id S1728205AbeJZXXi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 19:23:32 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41872 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727804AbeJZXXc (ORCPT
+        Fri, 26 Oct 2018 19:23:38 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43432 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727819AbeJZXXh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 19:23:32 -0400
-Received: by mail-pl1-f195.google.com with SMTP id p5-v6so616104plq.8
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 07:46:11 -0700 (PDT)
+        Fri, 26 Oct 2018 19:23:37 -0400
+Received: by mail-pf1-f196.google.com with SMTP id h4-v6so656565pfi.10
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 07:46:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=n0i8hVr1HP7XLYiUrhAKpcC+p7UJ+a7PvBsZMlOyWQg=;
-        b=Jyj6k50fMheXG0QrecuU6ptwpUp49kRk1iermMfawhZOURbTZPrMz0RSVUQN63lVky
-         0g3GYJ5kcVuv9Rth752gPEoF8TPJj8q0cJ/DwFIJ4S5OqZNgTAx9T85/LN4JhUTAuLfq
-         U8vg4lBvc3uiUshTqaq5N34JlRMfC9O+GNwxY=
+        bh=RdfPEPfFwzCV6ddXPOybIcNiGRmn4J/B+TPYYURh+3s=;
+        b=jLHJFckwiXWYW5W7twLkdqf55MPpoFpXWfDu8RtGcEu22pyL+bZ2t42p8m/miVowPP
+         2Ur3f+fDuKV9XntcCwKQgtRKPREdEcQuikwhSgUJ45kBI5AW6SI+Pipb6Bpf10dnX8iU
+         JEGnb9SQ0JgZbbkYOZJJxSaRTCPmcTF0/gypM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=n0i8hVr1HP7XLYiUrhAKpcC+p7UJ+a7PvBsZMlOyWQg=;
-        b=PyAX8FLTCfNw59QGyxiy1H7CKFwtJJl3G1se278oXbg4b7uT0u6yo6FRVFesydLL6n
-         vDl0PlseqQjgdDqeqy0no1TM85eNnWXfaiFIILKa6dpjCUZkA0SIUsenvCqD7QUFUx75
-         Ow23Az6ZoMKB8bLu2CZ0svSR16tzKpMvtvBb/cQ1S8tcmzgLkCXUBFtfx/VEr20lgleO
-         QYQgM08d2gIAH2+l8PdarxJrgQVUvuI4bsfjW13ffXct85qAMdZrfbRoIMIurwy+dlGH
-         zXtAWR+BRp5xgpjGKcVJNgxQ+5JJVnFtXmQcOgMlvGLgZ+KSh4IKJMaSCPNBrn9N/sJS
-         BD8w==
-X-Gm-Message-State: AGRZ1gJBJmCRz1dcRr3dvrps+PJKEAxqGj9bXG72W2H5t5fFuTOeh09C
-        Irqlae/LsZzWhCRBXMtSiF+ayw==
-X-Google-Smtp-Source: AJdET5dlKpiD4p4HlpJuoB3vwRCoSCL+d2k+aWjgIKETuEcEw3+TUhPBfyKp6hMumO9lOdckqFBJfw==
-X-Received: by 2002:a17:902:8342:: with SMTP id z2-v6mr3744544pln.147.1540565171026;
-        Fri, 26 Oct 2018 07:46:11 -0700 (PDT)
+        bh=RdfPEPfFwzCV6ddXPOybIcNiGRmn4J/B+TPYYURh+3s=;
+        b=H9mxOMRCOsDUp3KUr7t+R3TQqxFKTvAgbviY+87lBKQrl7c5+Exk7HCHRZWNEbz8B3
+         ymLpybKCLkSbWJevgYyqb/lUOCYZwH+XlJcxH35Q8eHCjOGkbBHFPD993xv5rzFH7Kjy
+         J15aEHyrKvH/1LKS6auG9IEJOxW/hzsiPQA8ouViKFZdsKgBr9sS/Zn4vWoEAcW2ARr7
+         Qagh4CDH23AuI5U3cRpThK3aFULymUdjlq7VtZsQ69c5KXGmFcw94+RZvJwEG8XE5fW5
+         Dlaja0Kw9+U+XPUwF3inEbOA4DPk3mS6ogV6HsqPZYrL0dla8Vx7sfF7mW2r/RKg3fZT
+         tEWQ==
+X-Gm-Message-State: AGRZ1gLbqvPuICnp1k7ssvMFin1lnFcIE84hG6nX5ZjdKiQu/r7PX3iG
+        j+JqkBkwUP6LHPTBYRCGnCOkKQ==
+X-Google-Smtp-Source: AJdET5fLyo88zmi8dqWGYaZuIpyR30572ALOlL0bU6B1PADW0HSSm30WqlRSfNuLDgHITt5SdPLqaQ==
+X-Received: by 2002:a63:d444:: with SMTP id i4-v6mr3720532pgj.194.1540565176628;
+        Fri, 26 Oct 2018 07:46:16 -0700 (PDT)
 Received: from localhost.localdomain ([27.7.51.1])
-        by smtp.gmail.com with ESMTPSA id z22-v6sm12044467pgv.24.2018.10.26.07.46.05
+        by smtp.gmail.com with ESMTPSA id z22-v6sm12044467pgv.24.2018.10.26.07.46.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 07:46:10 -0700 (PDT)
+        Fri, 26 Oct 2018 07:46:16 -0700 (PDT)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -73,9 +73,9 @@ To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v3 21/25] clk: sunxi-ng: a64: Add min and max rate for PLL_MIPI
-Date:   Fri, 26 Oct 2018 20:13:40 +0530
-Message-Id: <20181026144344.27778-22-jagan@amarulasolutions.com>
+Subject: [PATCH v3 22/25] dt-bindings: sun6i-dsi: Add compatible for A64 DPHY
+Date:   Fri, 26 Oct 2018 20:13:41 +0530
+Message-Id: <20181026144344.27778-23-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20181026144344.27778-1-jagan@amarulasolutions.com>
 References: <20181026144344.27778-1-jagan@amarulasolutions.com>
@@ -86,37 +86,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Manual noted to use PLL_MIPI rate 500MHz to 1.4GHz,
-but lowering the min rate by 300MHz can result proper
-working nkms divider with the help of desired dclock
-rate from panel driver.
+The MIPI DSI PHY HDMI controller on Allwinner A64 is similar
+on the one on A31.
+
+Add A64 compatible and append A31 compatible as fallback.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Tested-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
 Changes for v3:
-- collect Stephen Ack
-- add tested credit
-Changes for v2:
 - none
+Changes for v2:
+- new patch
 
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 2 ++
- 1 file changed, 2 insertions(+)
+ Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-index 019d67bf97c4..5a3a5b821f8b 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-@@ -167,6 +167,8 @@ static struct ccu_nkm pll_mipi_clk = {
- 	.n		= _SUNXI_CCU_MULT(8, 4),
- 	.k		= _SUNXI_CCU_MULT_MIN(4, 2, 2),
- 	.m		= _SUNXI_CCU_DIV(0, 4),
-+	.min_rate	= 300000000,		/* Actual rate is 500MHz */
-+	.max_rate	= 1400000000UL,
- 	.common		= {
- 		.reg		= 0x040,
- 		.hw.init	= CLK_HW_INIT("pll-mipi", "pll-video0",
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+index 9fa6e7a758ad..704fb31962f2 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+@@ -36,7 +36,7 @@ D-PHY
+ 
+ Required properties:
+   - compatible: value must be one of:
+-    * allwinner,sun6i-a31-mipi-dphy
++    * "allwinner,sun50i-a64-mipi-dphy", "allwinner,sun6i-a31-mipi-dphy"
+   - reg: base address and size of memory-mapped region
+   - clocks: phandles to the clocks feeding the DSI encoder
+     * bus: the DSI interface clock
 -- 
 2.18.0.321.gffc6fa0e3
 
