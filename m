@@ -2,125 +2,105 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03EA2ECDE46
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:54:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37BA3ECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:56:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A07ED20868
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:54:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4D952085B
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:56:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ORZKyNPn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A07ED20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=usp-br.20150623.gappssmtp.com header.i=@usp-br.20150623.gappssmtp.com header.b="Lr2nCuKs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4D952085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=usp.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728057AbeJ0DdH (ORCPT
+        id S1728047AbeJ0Dep (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 23:33:07 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:45308 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727762AbeJ0DdH (ORCPT
+        Fri, 26 Oct 2018 23:34:45 -0400
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:34100 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727772AbeJ0Dep (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 23:33:07 -0400
-Received: by mail-lf1-f66.google.com with SMTP id c24-v6so1657741lfi.12;
-        Fri, 26 Oct 2018 11:54:55 -0700 (PDT)
+        Fri, 26 Oct 2018 23:34:45 -0400
+Received: by mail-ua1-f67.google.com with SMTP id e16so748087uam.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 11:56:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=usp-br.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=H3/rtYUf+SrLjFlYeukVasmyKDPkiWYtZfhjXv3OPmY=;
-        b=ORZKyNPnrPVezXgJkrrMYib2bo794VdzE+HII45gV+qO2mjSGn9YnuP5cqCL19jn/u
-         Xyi0xxsFBR1uDM2MykgB8x/ZScq6i2uMOH8HOr3ET7lC5veriVMDBfxe/gc5pKKVnCtX
-         fywm6LYRp6L6p3zwb1vQlsAg2z0g281Js8JbOoK1Yqgqbu3X2vUnhrKnKm9wvmHC0YiY
-         nYlAlrlOaA9t5S8EUMGmr9cKPHPKxcah26/UTR8SY8oZRachI4PbdiYbQ0zaDlsrfWiz
-         qeK2IQ1c8ps0o0tCdAskHs795nATXMx+FfIswZNRPhB5oSjMcn7E/tuoNjcnPGRLv43W
-         nUNw==
+         :cc;
+        bh=RiAZyIg20J8F4FG2smIiyk53xruTQooAwEseJ4vnSDY=;
+        b=Lr2nCuKsq5I4Y2zxC0KoGMcMEKJ0SQrmtDu7VJaW9UKBGeke8mtVuQ7d3Z65Bn0/5/
+         OgNjcfAjkvwUVWRM5a+nvFnLqkREZB7/A8v5L1YLn4VYRfQAPh+XXyjmwcv4PJrlAW6w
+         jDDca5cgIWhNJk1OfI2cuZ7WveoSTYI74QeZkuZkCE6Dx9fyB5kDGXqYcvsYwImJH4X0
+         02jFJI/x7YW2t25lGzTMnhW2Wp9t4AUNaLjqF6bN9KG5CWt0yUcSFWXosA2jG2o7f9C4
+         1AOHRQDSqMw/+Pql/on0i9Yx/7qCXx4/H5/ohdZgep5bOeU17Lj8lfnuD6ykzHVCsKIf
+         qj+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=H3/rtYUf+SrLjFlYeukVasmyKDPkiWYtZfhjXv3OPmY=;
-        b=o/KC1tLZJH9yMtSzfR1BNNtD8LvhNHjai5ocHewOCI7WdH+sriJ1c3olhlwb9eFw2o
-         H8yIwSQRtvcgC7Ln9cRSOmwAswFW1gNqaJMeCTkRBet4bSqahAlgLkJ5IUm+62JMCuAB
-         y2URwMlCVuXcJjAwgridHOMCEKVrqPJF7CdDEDktS/rnUhNzK2FyIsGCLjBv4oWsDp1J
-         0dnMqTQNZKrxg1qKC+d0RQLXpcJdGR3DbzYfmVhUexB/GZ9A02o76Uz2vxFCfthmM3Qu
-         A3O55RfQWZDCWzioZExG4vU1yWkO6zyP0EXnf6G+3T8ORpRHrz7wC9d8yfAynn2g/hrC
-         HKLg==
-X-Gm-Message-State: AGRZ1gLpnb78An1kbsGMgmU1IAHnBICDwNb3OwdGwF56NbPR1Q/NAgtN
-        yT9iwjnLVTcZHL3PuNReEzjeNipVloeougDrSHMTF8UH
-X-Google-Smtp-Source: AJdET5eqPpX8HxT50dGk9bbcjc74e0WMlZcU+88c+0VCXcRLVWOTwkDKaj9VNAImwKujSCZAVQT2mqvr7w/YH3sxR0o=
-X-Received: by 2002:a19:4bc9:: with SMTP id y192mr2911291lfa.49.1540580094890;
- Fri, 26 Oct 2018 11:54:54 -0700 (PDT)
+         :message-id:subject:to:cc;
+        bh=RiAZyIg20J8F4FG2smIiyk53xruTQooAwEseJ4vnSDY=;
+        b=oZswk2E0v5CQ8QA3Ebm88jl+Y8OWa7M2wx0ynnsVrMz0WSeBAg0RC+r/y/MpP6x20i
+         r3hUej1uYHqiAkIrCPiutoSn7ShDCMt3AiskukhyGgqw2tSwMENm7u5MD+mhdrwt1XPR
+         C6BLJka3FlRK/Czxss4b3a9ezRuM96+U2zjpWa+wAEgtDcA5B8DKJjVxcCqejKgpUPp+
+         El9P7iJnurWnksMX+BOBqJnUc0zW7bqPG19p9+n03ICTv29KpZ/5Xu0ZG8rd/Nn9wGxq
+         3pryboF36mIPw33PnrUuycMC3R3U4jgsMZ6EdsQYD/tQIVivxALSmVLexS6aic4vCFTb
+         vVMA==
+X-Gm-Message-State: AGRZ1gI++5Ave6j9IZiR71WijEYgT8ZGGDl2r+4TLpUMfRFYUaMXYZ3f
+        Xufjtozn//YcK9CPLe6lk8YJtxFqM/QNBATUnSb4QQ==
+X-Google-Smtp-Source: AJdET5dSgxYK/GVORGEmv0CsV0K7U74fDFhD3ZL1Tw7/bhLXkyz3CGrExlM4s1rPIc6TyLDPPV8sGQyHz8gyTXmwccI=
+X-Received: by 2002:ab0:15a1:: with SMTP id i30mr2198412uae.11.1540580193552;
+ Fri, 26 Oct 2018 11:56:33 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181026172549.3628-1-colin.king@canonical.com>
- <CANiq72nFZS=3KGaQpGjRbprh8HTBiTcSpxScE2uacDmg-xqDGA@mail.gmail.com>
- <20181026184009.GV25444@bombadil.infradead.org> <CANiq72m-2FU7ioqj9sqsfWk4nSp2FO9S_8kYcbnGReXNAXYM2w@mail.gmail.com>
-In-Reply-To: <CANiq72m-2FU7ioqj9sqsfWk4nSp2FO9S_8kYcbnGReXNAXYM2w@mail.gmail.com>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Fri, 26 Oct 2018 20:54:43 +0200
-Message-ID: <CANiq72=4KUL60=_T_VEUZmjoRFkuRmT5WCfbXO9mJ5bZoVgZ+Q@mail.gmail.com>
-Subject: Re: [PATCH] Documentation: fix spelling mistake, EACCESS -> EACCES
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     colin.king@canonical.com, jk@ozlabs.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Dave Airlie <airlied@linux.ie>,
-        maarten.lankhorst@linux.intel.com, maxime.ripard@bootlin.com,
-        sean@poorly.run, linuxppc-dev@lists.ozlabs.org,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20181026004512.31012-1-matheus.bernardino@usp.br>
+ <20181026004512.31012-6-matheus.bernardino@usp.br> <20181026100422.lvz2avowd6ddix54@mwanda>
+In-Reply-To: <20181026100422.lvz2avowd6ddix54@mwanda>
+From:   Matheus Tavares Bernardino <matheus.bernardino@usp.br>
+Date:   Fri, 26 Oct 2018 15:56:21 -0300
+Message-ID: <CAHd-oW5gePV54sEsrbcGdZo=hvcV5rqKVRS_Oq=vxvMCwzSwhA@mail.gmail.com>
+Subject: Re: [PATCH 5/6] staging:iio:ad2s90: Add IIO_CHAN_INFO_SCALE to
+ channel spec and read_raw
+To:     dan.carpenter@oracle.com
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        Victor Colombo <victorcolombo@gmail.com>,
+        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 8:53 PM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
+On Fri, Oct 26, 2018 at 7:04 AM Dan Carpenter <dan.carpenter@oracle.com> wrote:
 >
-> On Fri, Oct 26, 2018 at 8:40 PM Matthew Wilcox <willy@infradead.org> wrot=
-e:
+> On Thu, Oct 25, 2018 at 09:45:11PM -0300, Matheus Tavares wrote:
+> > From: Victor Colombo <victorcolombo@gmail.com>
 > >
-> > On Fri, Oct 26, 2018 at 08:20:12PM +0200, Miguel Ojeda wrote:
-> > > On Fri, Oct 26, 2018 at 7:27 PM Colin King <colin.king@canonical.com>=
- wrote:
-> > > >
-> > > > From: Colin Ian King <colin.king@canonical.com>
-> > > >
-> > > > Trivial fix to a spelling mistake of the error access name EACCESS,
-> > > > rename to EACCES
-> > >
-> > > ? It is not a typo, it is the name of the error (POSIX). Same thing
-> > > for the rest of the patches.
+> > This patch adds the IIO_CHAN_INFO_SCALE mask to ad2s90_chan and
+> > implements the relative read behavior at ad2s90_read_raw.
 > >
-> > Are you sure?  From open(2):
-> >
-> >        EACCES The  requested access to the file is not allowed, or sear=
-ch per=E2=80=90
-> >               mission is denied for one of the directories in the path =
- prefix
-> >               of  pathname,  or the file did not exist yet and write ac=
-cess to
-> >               the parent directory is not  allowed.   (See  also  path_=
-resolu=E2=80=90
-> >               tion(7).)
-> >
-> > include/uapi/asm-generic/errno-base.h:#define   EACCES          13     =
- /* Permission denied */
+> > Signed-off-by: Victor Colombo <victorcolombo@gmail.com>
+> > ---
 >
-> I thought you were doing the reverse change. Never mind! :-)
->
-> (Btw, the POSIX reference is
-> http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/errno.h.html#tag=
-_13_09,
-> in case you want to include it or are curious)
+> You should be adding your S-o-B here as well because the patch is
+> passing through your hands.
 
-Sorry Matthew, thought I was answering to Colin. I should go to rest.
+Thanks for the review! I'll be sending a v2 with my S-o-B there.
 
-Cheers,
-Miguel
+> regards,
+> dan carpenter
+>
+> --
+> You received this message because you are subscribed to the Google Groups "Kernel USP" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to kernel-usp+unsubscribe@googlegroups.com.
+> To post to this group, send email to kernel-usp@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/kernel-usp/20181026100422.lvz2avowd6ddix54%40mwanda.
+> For more options, visit https://groups.google.com/d/optout.
