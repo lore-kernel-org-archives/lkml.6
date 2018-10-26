@@ -2,173 +2,107 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A24BC6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 11:46:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B850C6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 12:00:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21825205F4
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 11:46:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ENOYDFrZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21825205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id E54F22084D
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 12:00:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E54F22084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727651AbeJZUXL (ORCPT
+        id S1727600AbeJZUgt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 16:23:11 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40787 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727613AbeJZUXK (ORCPT
+        Fri, 26 Oct 2018 16:36:49 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:43310 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727469AbeJZUgt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 16:23:10 -0400
-Received: by mail-wm1-f68.google.com with SMTP id b203-v6so1143814wme.5
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 04:46:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=NwG1Hi1zJtxPRjgtkYXVxzAQH2n3wxiUQmfEO2YaZvw=;
-        b=ENOYDFrZeZj3BZUAWtV+l6jr7XghTErAnGGl8DIce1ay3RMyNck9urv/L1AD+9gD0G
-         b55g8FZtDuRJFJm31OApW05QCxx9482JD+/a7Eon3bxmeFsjImxxqbs+wDut2CIv9IGp
-         +sXkND1Bqez3pswrru2cXq/FFX0CqfCsamSzA=
+        Fri, 26 Oct 2018 16:36:49 -0400
+Received: by mail-ed1-f68.google.com with SMTP id y20-v6so1038467eds.10
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 04:59:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=NwG1Hi1zJtxPRjgtkYXVxzAQH2n3wxiUQmfEO2YaZvw=;
-        b=GLs8LzbrTYJo21TUuT5TsIOHz/iwMGdVX5w8IN7zjdUfCocSwp//hjHUnOA3wHWwSX
-         7vnubGCxoDs98ylKxisOcgiiaEmVNt5T2qAxGEOaH3oFp8WSZfZVhc7XPWW4SSpaJ/Iu
-         iWUskOcPDdqfHhdgRHa8sQskcJlDtWKwv3nesfi1Pz3zeqC0uQxTbp1EzK8vKgqOekKU
-         RKhSPuT7J+cgrIllD4OkEctbGtsNU7F9lhO5BMnovVL3LxljmB2EnyLr8QrDjv8J5AnD
-         yAx/tyArKMQdeFrbKdXzXJ+r9hMnnlh9+gKdTrCaD3GFUNVBO4DbTfDV0DfJKqeInP39
-         d0IA==
-X-Gm-Message-State: AGRZ1gJcnMzsJ+FYJuWnopJlyvKSa+OiNZPhM26SvQjvgjha99JLU5no
-        0XYDX+kbsyhdHLZtEQY7FLN3SA==
-X-Google-Smtp-Source: AJdET5fnH5JIkEEzmhMCpTWnV9Mwepw68B9kgnT/pnz1vXZJpfwNQX6G5UjdJUy1qJ3SFJ60E3UH+w==
-X-Received: by 2002:a1c:8288:: with SMTP id e130-v6mr5073464wmd.84.1540554381168;
-        Fri, 26 Oct 2018 04:46:21 -0700 (PDT)
-Received: from dell ([2.31.167.182])
-        by smtp.gmail.com with ESMTPSA id a1-v6sm8896545wrt.79.2018.10.26.04.46.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 26 Oct 2018 04:46:20 -0700 (PDT)
-Date:   Fri, 26 Oct 2018 12:46:18 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Pascal PAILLET-LME <p.paillet@st.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        LINUX-WATCHDOG <linux-watchdog@vger.kernel.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Enric Balletbo i Serra <eballetbo@gmail.com>
-Subject: Re: [PATCH v4 1/8] dt-bindings: mfd: document stpmic1
-Message-ID: <20181026114618.GR4870@dell>
-References: <1539853324-29051-1-git-send-email-p.paillet@st.com>
- <1539853324-29051-2-git-send-email-p.paillet@st.com>
- <20181025094430.GQ4939@dell>
- <CAL_JsqKsp8kTK2v_cBrNm+enzieQSEh2G7KMxsBdidr+XhDwTg@mail.gmail.com>
- <20181026064614.GG4870@dell>
- <5BD2E2DB.5090305@st.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ufNMSKXsGrw7NLY9abX36SfLrM0GOGrXhLBX2SeJOH0=;
+        b=m69N9FXrLTYAE2DfLhQdgsNVigtg+dBSt61NXi/kH4G8gVHgSooqrbNgCxtl2DztHi
+         1TWo5FPA4+OmU9ZcYtvkR8aR8er598RoDgMFPwhdkeMeYVFHeRjVmZ9bMTzDVSGtgzc8
+         wbXZP+GRrVUvFZdzCI7Layv1+uIWB/YIwYYNWqKlw9KJDMTuSAOgN7iy9EUK729u+B/I
+         GjdoS+XEHs3PdCim5d7PsLxvBxxbRlf+6TqxQpkjsArAg0OTqomTb7mUY9hG3CgIzwR8
+         Ht2y60HKM4q1vQq0r0Cv3VfBpBcjqx1bKI+eniJMr99WsmPSQNe73aVdALY/4QP7RRgv
+         nsfg==
+X-Gm-Message-State: AGRZ1gKl5p1GuWmWuF9It3T0zBTQQvPn6VNKA6Gz6XNDu7IRxx4fT6zr
+        PBkN3qCDO28bFBYvWhvNKrtIfWLINSc=
+X-Google-Smtp-Source: AJdET5eBwRAi9Q+7fymRnffczjKH71mie479RxifLxu4vFUfZWMrmgdXnXq/lhC0KvDobpCWrGjGbA==
+X-Received: by 2002:a17:906:1cd0:: with SMTP id i16-v6mr2122735ejh.195.1540555198307;
+        Fri, 26 Oct 2018 04:59:58 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id i38-v6sm5129198ede.83.2018.10.26.04.59.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 26 Oct 2018 04:59:57 -0700 (PDT)
+Subject: Re: [PATCH v2] libata: Apply NOLPM quirk for SAMSUNG
+ MZ7TD256HAFV-000L9
+To:     Diego Viola <diego.viola@gmail.com>
+Cc:     axboe@kernel.dk, tj@kernel.org, linux-kernel@vger.kernel.org
+References: <20181026015804.4120-1-diego.viola@gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <6749376c-930a-3392-6a02-386431a9a432@redhat.com>
+Date:   Fri, 26 Oct 2018 13:59:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5BD2E2DB.5090305@st.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181026015804.4120-1-diego.viola@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 26 Oct 2018, Pascal PAILLET-LME wrote:
+Hi,
 
-> Hello Lee,
+On 26-10-18 03:58, Diego Viola wrote:
+> med_power_with_dipm causes my T450 to freeze with a SAMSUNG
+> MZ7TD256HAFV-000L9 SSD (firmware DXT02L5Q).
 > 
-> Le 10/26/2018 08:46 AM, Lee Jones a écrit :
-> > On Thu, 25 Oct 2018, Rob Herring wrote:
-> >
-> >> On Thu, Oct 25, 2018 at 4:44 AM Lee Jones <lee.jones@linaro.org> wrote:
-> >>> Rob: please grep your name for some feedback.
-> > [Moved to the top]
-> >
-> >>> I'm surprised Rob allowed you to add register bits in a DT property?
-> >> Yeah, they are certainly questionable and not something we encourage,
-> >> but the alternative would be dozens of properties which only apply for
-> >> this one device and just get translated back to register values.
-> > I don't see how this device is any different to the 100's of devices
-> > which are already supported in DT.
-> >
-> >>> On Thu, 18 Oct 2018, Pascal PAILLET-LME wrote:
-> >>>
-> >>>> From: pascal paillet <p.paillet@st.com>
-> >>>> +Optional parent device properties:
-> >>>> +- st,main-control-register:
-> >>>> +     -bit 1: Power cycling will be performed on turn OFF condition
-> >>>> +     -bit 2: PWRCTRL is functional
-> >>>> +     -bit 3: PWRCTRL active high
-> >>>> +- st,pads-pull-register:
-> >>>> +     -bit 1: WAKEUP pull down is not active
-> >>>> +     -bit 2: PWRCTRL pull up is active
-> >>>> +     -bit 3: PWRCTRL pull down is active
-> >>>> +     -bit 4: WAKEUP detector is disabled
-> > This should be part of the Pinctrl configuration/driver.
-> >
-> > And Pinctrl probably already has properties for this?
-> I will remove this in the next version.
-> >>>> +- st,vin-control-register:
-> >>>> +     -bit 0: VINLOW monitoring is enabled
-> >>>> +     -bit [1...3]: VINLOW rising threshold
-> >>>> +             000 VINOK_f + 50mV
-> >>>> +             001 VINOK_f + 100mV
-> >>>> +             010 VINOK_f + 150mV
-> >>>> +             011 VINOK_f + 200mV
-> >>>> +             100 VINOK_f + 250mV
-> >>>> +             101 VINOK_f + 300mV
-> >>>> +             110 VINOK_f + 350mV
-> >>>> +             111 VINOK_f + 400mV
-> >>>> +     -bit [4...5]: VINLOW hyst
-> >>>> +             00 100mV
-> >>>> +             01 200mV
-> >>>> +             10 300mV
-> >>>> +             11 400mV
-> >>>> +     -bit 6: SW_OUT detector is disabled
-> >>>> +     -bit 7: SW_IN detector is enabled.
-> > This should be part of the Regulator configuration/driver?
-> I will also remove this in the next version. I think this could be 
-> handled by an hardware monitor future driver.
-> >>>> +- st,usb-control-register:
-> >>>> +     -bit 3: SW_OUT current limit
-> >>>> +             0: 600mA
-> >>>> +             1: 1.1A
-> >>>> +     -bit 4: VBUS_OTG discharge is enabled
-> >>>> +     -bit 5: SW_OUT discharge is enabled
-> >>>> +     -bit 6: VBUS_OTG detection is enabled
-> >>>> +     -bit 7: BOOST_OVP is disabled
-> > This should be part of the USB configuration/driver?
-> >
-> I will also remove this in the next version. And I'm going to add active 
-> discharge ops in the regulator driver.
+> Switching the LPM to max_performance fixes this issue.
+> 
+> Signed-off-by: Diego Viola <diego.viola@gmail.com>
 
-And unless this device is in any way special, these subsystems should
-already have generic bindings to set these hardware configuration
-options.
+Thank you for the patch, have you updated the firmware and
+confirmed that this happens with the latest firmware version too ?
 
-I would say that passing raw register values is not the way to go.
+If not please send a new version limiting the blacklist to your
+firmware version.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Regards,
+
+Hans
+
+
+
+
+> ---
+>   drivers/ata/libata-core.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+> index a9dd4ea7467d..a7f5202a4815 100644
+> --- a/drivers/ata/libata-core.c
+> +++ b/drivers/ata/libata-core.c
+> @@ -4553,6 +4553,7 @@ static const struct ata_blacklist_entry ata_device_blacklist [] = {
+>   	/* These specific Samsung models/firmware-revs do not handle LPM well */
+>   	{ "SAMSUNG MZMPC128HBFU-000MV", "CXM14M1Q", ATA_HORKAGE_NOLPM, },
+>   	{ "SAMSUNG SSD PM830 mSATA *",  "CXM13D1Q", ATA_HORKAGE_NOLPM, },
+> +	{ "SAMSUNG MZ7TD256HAFV-000L9", NULL,       ATA_HORKAGE_NOLPM, },
+>   
+>   	/* devices that don't properly handle queued TRIM commands */
+>   	{ "Micron_M500IT_*",		"MU01",	ATA_HORKAGE_NO_NCQ_TRIM |
+> 
