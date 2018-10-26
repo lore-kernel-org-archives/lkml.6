@@ -2,102 +2,109 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A544BC6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 15:49:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D46C6ECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 15:49:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5984B20665
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 15:49:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B7BF20870
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 15:49:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bkt3CilG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5984B20665
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="H0F+v72a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B7BF20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727573AbeJ0A04 (ORCPT
+        id S1727636AbeJ0A1a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 20:26:56 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:54567 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726113AbeJ0A04 (ORCPT
+        Fri, 26 Oct 2018 20:27:30 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:41392 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726159AbeJ0A1a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 20:26:56 -0400
-Received: by mail-it1-f196.google.com with SMTP id l191-v6so2055259ita.4;
-        Fri, 26 Oct 2018 08:49:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=12bmE5QnwITRe19O+4Lh8FzmnBXQCECHHswUc0rYW9I=;
-        b=Bkt3CilGSZANlYi1+AqA15/MuOk6WAtGe5lzuk0LSwRpJuIAqvcCf5gDDfqdPgLU41
-         c/o1cOTsssDyHPMA3FuQJKxbgtczj7yNMftO+91ajSfk3AqllaS0ycUDkeQMl6PUntor
-         UTG5os7PuXcFcdGtwxm//IhiUm1ZyCoqxg1HNyFZwVTLK1NriANRrFce175rCnPnHV9x
-         x6u9Ekoxw0jN6iG12tJwqV5o5Bs2WsCHgDArykaS23UoV25RkjVQeBiCkEYqxYWyc/VG
-         b9MLyaIcxPdaoq3zVvuYuKAbUF/pT6UJJfYZ1k3Oe71s8aH4nV2K9sO8w8ryYSCyPGpp
-         fa+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=12bmE5QnwITRe19O+4Lh8FzmnBXQCECHHswUc0rYW9I=;
-        b=VMI0sjjBXtXjoxYhgCFsSAa9enp/yBD3oflLa9cb+S39nsg9SyLp8nJLGQGF1n/JEi
-         MHxlcJWenUlf8IfhrJkNJG52L7cw+pDz3Nb0STI1GPy7tWaCOx8Y5pLFuXNN6bYDPCi2
-         SP4OoOT/6fTi7cLEDizNSTGW+ti1l+rGOGneL+KRHupZrP3ylUSXBYKrfyxj4RGLtSYV
-         wZiSI4+PWpzORbbHhaYYvXeKBYsFzqj9E5mKIrx9HVkllBNklZSNl7GB2yZyMSFiQwz2
-         F5IrYtngPOL600kgt+ephPg71tomVziceemX/hHoqCHXPKk6dLzJ++qsGmeBlVBcrfoj
-         3mrw==
-X-Gm-Message-State: AGRZ1gLLD4+eV8iiWs2mik2ysaIV5xC2G5yWy44FdMMH9Ah9rszJXS86
-        okR2xrF8IXZcAesQvBCO53PtBAB9NU3GtCXtkSc=
-X-Google-Smtp-Source: AJdET5crwffZ5m8dA9R2lOop4dS0zZPzb1FytjJnUq8mhyD1BlUj1WRXqcF8C/zj9C+D3j6MKPWgBxIqEdZRlWB1fks=
-X-Received: by 2002:a02:8a74:: with SMTP id e49-v6mr2978673jal.81.1540568962339;
- Fri, 26 Oct 2018 08:49:22 -0700 (PDT)
+        Fri, 26 Oct 2018 20:27:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=PRgV+FKftVz6tRkk9BLMxLe+S+GCm+0zLaEE23Jl2u4=; b=H0F+v72aSRRQEhOC9brrySIT5
+        Ga6fHY8ZkVKtTbQzWmX7ZOcr7sRbB6kKElaBrP3/cX/WMAB6JtcVby4WqLuEtMFRbM3jgMXNd7lqQ
+        aUNSDr+8MHE51Kd0avHR263I9cTGFBlQ87BuAM+5KLwM8NpgXl1g8867b4rieQkFru8CA=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gG4My-0003ov-G9; Fri, 26 Oct 2018 15:49:52 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 3A43D1122667; Fri, 26 Oct 2018 16:49:52 +0100 (BST)
+Date:   Fri, 26 Oct 2018 16:49:52 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Richard Fitzgerald <rf@opensource.cirrus.com>
+Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Lee Jones <lee.jones@linaro.org>, mturquette@baylibre.com,
+        sboyd@kernel.org, linus.walleij@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, lgirdwood@gmail.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        patches@opensource.cirrus.com, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v2 2/5] mfd: lochnagar: Add support for the Cirrus Logic
+ Lochnagar
+Message-ID: <20181026154952.GB27137@sirena.org.uk>
+References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
+ <20181008132542.19775-2-ckeepax@opensource.cirrus.com>
+ <20181025074459.GF4939@dell>
+ <20181025082621.GD16508@imbe.wolfsonmicro.main>
+ <b2f85f45-cbe9-5a27-e9e8-ad28f2bd9bd6@opensource.cirrus.com>
+ <20181025114205.GC4870@dell>
+ <20181025124905.GF16508@imbe.wolfsonmicro.main>
+ <20181025132043.GG16508@imbe.wolfsonmicro.main>
+ <d0e76752-1b31-e9e3-d684-9d78ddc98172@opensource.cirrus.com>
 MIME-Version: 1.0
-References: <CAEAjamtxZRiFUYb4re3jRf9naoSyJO7sskChfEgcBh-m-uEKWQ@mail.gmail.com>
- <1540567279.66186.99.camel@acm.org>
-In-Reply-To: <1540567279.66186.99.camel@acm.org>
-From:   Kyungtae Kim <kt0755@gmail.com>
-Date:   Fri, 26 Oct 2018 11:49:10 -0400
-Message-ID: <CAEAjamuJjjyWFw9Fn4_6-97WDhpWTfvLNQdPHT-AZ843yese9g@mail.gmail.com>
-Subject: Re: [PATCH] floppy: Avoid memory access beyond the array bounds in setup_rw_floppy()
-To:     bvanassche@acm.org
-Cc:     Jens Axboe <axboe@kernel.dk>, jikos@kernel.org,
-        Byoungyoung Lee <lifeasageek@gmail.com>,
-        DaeRyong Jeong <threeearcat@gmail.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="+g7M9IMkV8truYOl"
+Content-Disposition: inline
+In-Reply-To: <d0e76752-1b31-e9e3-d684-9d78ddc98172@opensource.cirrus.com>
+X-Cookie: Kin, n.:
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thank you for your reply.
 
-> Against which kernel tree did you prepare this patch? Just above the code
-> you want to insert I found the following:
->
->         if (ptr->cmd_count > 33) ...
+--+g7M9IMkV8truYOl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Yes, I saw that code as well. But I find out there is no more
-additional code relevant to it.
-So I guess, that is for like reserved ones for the future work (e.g.,  RESTORE).
-And such code cannot solve this crash issue because the crash happens
-even when cmd_count is less than 33.
+On Thu, Oct 25, 2018 at 02:47:59PM +0100, Richard Fitzgerald wrote:
 
-> or not? Anyway, I don't think it makes sense first to compare cmd_count against
-> 33 and next to compare it against 16 ...
+> access. What does regmap debugfs do if you don't have a readables
+> list? Just reading a debugfs shouldn't be able to kill the hardware.
+> You might need to add a precious list which is more error prone
+> than listing the valid readables we are using.
 
-I agree. So far, seems that removing if (ptr->cmd_count > 33) looks better.
-Please let me know if you have better ideas.
+It assumes everything is readable unless it's explicitly told otherwise
+or the register map is overall write only (like a 7x9 one).  You could
+mark the registers as precious to cause it to only do explicit I/O
+operations on them but that's not what you mean and won't be as good a
+guarantee that nothing can trigger a read.
 
-> This comparison looks suspicious to me. Almost every comparison of the type
-> "... > ARRAY_SIZE()" I have seen so far was wrong and should be changed into
-> "... >= ARRAY_SIZE()" instead.
+--+g7M9IMkV8truYOl
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Well, let me check this part again.
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
-Kyungtae Kim
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvTN58ACgkQJNaLcl1U
+h9DKSAf8DrGd/YKE8uiDncD7yHUOAm5PmrEulBdc2Kx0IjDAheyuOQdPuEBzwipb
+E3rAWQartSyoTM4K3fgxJm45N1Be73cqlt271sdxrVuagBOqz/UJFXtUSGr80dlo
+/KY2l7w/Z7LPatZT1QvnBuMop/0sZ5FDCB9a2rbAJ7RWoyJaY0uMC4SrznNEn60g
+Ac0ppAPREE9oZqlaCLFNCGGC6jYig20LjH27kR4ZdW36mDo9IoRuoBMRpWlIoHZ/
+yYcSyo/f2aKGWHosiOZ4Bfe8kodcxkDHjX0uMX5G+nacdY1y2IFfNYg0zOZwrI69
+OJkiD2i4sLZ6cJBK9MI8O4X2wpCYkA==
+=i4X0
+-----END PGP SIGNATURE-----
+
+--+g7M9IMkV8truYOl--
