@@ -8,58 +8,58 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E629C6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 11:17:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 995A6ECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 11:17:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0495C20824
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 11:17:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6163C207DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 11:17:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t9lBg1rd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0495C20824
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pASvG5zW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6163C207DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727817AbeJZTxx (ORCPT
+        id S1727706AbeJZTxe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 15:53:53 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:38644 "EHLO
+        Fri, 26 Oct 2018 15:53:34 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42941 "EHLO
         mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727686AbeJZTxi (ORCPT
+        with ESMTP id S1727502AbeJZTxd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 15:53:38 -0400
-Received: by mail-wr1-f67.google.com with SMTP id d10-v6so950941wrs.5;
-        Fri, 26 Oct 2018 04:16:56 -0700 (PDT)
+        Fri, 26 Oct 2018 15:53:33 -0400
+Received: by mail-wr1-f67.google.com with SMTP id y15-v6so929446wru.9;
+        Fri, 26 Oct 2018 04:16:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=KjXTlb8qK+gg2OxZSgtIJOZvzKIY8RWxIBzJQUft5ac=;
-        b=t9lBg1rdvjGf728DRA88/EWUliUgK+9j1kmSzJk9ylUsQasLDX+0W7bgZ63ejlgYxB
-         ugaMwnmQ4k8N22dQ3LkmtauzaVKRTB/3T0y/zYyQvOboo8BrqsFcHqRw1nZlcwqQI5DL
-         klDPsvEB0nlIR/ahoEsYWOznitNM+1iAMcnXaSV5vCY2xXuxHXM19ldCX0TSn7JBV5Co
-         LL2some5UbfM1O1K07idOM/FyEIhdhe/C+0I+WbZ0ECerRYNXVhoxKhsRWzo+kK6RyAH
-         pERg1jd+/Rr9olWFoFEqU4UQgqZMHlnzv/8epCi1mZbbH8tGlCzmQ1PrKMibDNTgpB2g
-         RbSQ==
+        bh=2sZwP3mlc7VxxXlW13/auVGX7x7GQ4BVbqowzB5gMCg=;
+        b=pASvG5zWUBOpsGY2JT9/6cknbvnC7WYynrEcIvv/AfzfW1m+vZhzTfHFXIvAgCCwav
+         ylmvlSrGc42yZ47+pb092xmPd4aREgPAQo0QG+4QpkBt0HPjvrg0rxlBD75c12htHPU9
+         rGAqiaEcOfGY1xTFqx3rMv06Tx5jkLdiP+2pqRuB2rAh+GCY+Ltw5uv8ykZodzgigO9W
+         Xxb6CD7bFU4TbiOWvsq3/xI+hdYELe4HRPXlJRJcZjU2K0YGOA2YeIWb213yz0sAZsVs
+         ORtQWekQ/yCaZGDY3dKf79fBe/e5AyZHvpo8M3hn14kpNGicFfmbVhYM8HmThTntLUaa
+         bO+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=KjXTlb8qK+gg2OxZSgtIJOZvzKIY8RWxIBzJQUft5ac=;
-        b=b3c5p3umNvpudIzgNU8VoU+5OooE/6MSjHfs6Wkso67/zA8gukF69/BqDKnJFiMUOO
-         QBppPBMF3Hm4gK+4wsIVgZjBEh9JCasy6SlxdO+WCKmkfmGM3CC1JACzxN5lrcASlJl+
-         hJXlq+LFtq1HFnRSmMS/5uZUV+PIoAUfnmCOKNeg3crsQUvF0l6zfbSpXCmuZk4U27vj
-         gcbtWBAXvmOmI1+0FjJjbabvA+zCQ4kD/UH4ZL3E+aRi7HXmioJgrTGqp9ctSli6f2ko
-         PJMJQhVHyrBkoZ2+MQj8SyQ6P0fW3cQFopm+qwRRudD8NS2CaGF6J94dH+IZxM+8FQl4
-         d9bg==
-X-Gm-Message-State: AGRZ1gIhOOnewK5FdGOLsv7E+MvLCitPMEonqDkZ18ZCrtF0bo0oJMLV
-        S4lynhJSz5QFKm7a+/cNpwY=
-X-Google-Smtp-Source: AJdET5fV7TABOAvk6FyuKKKc6ge5+0h8BO9Hdo/tZdzWW6A3rSgb3o+irg/H0xMZrSxB7dVijAmpXA==
-X-Received: by 2002:adf:b716:: with SMTP id l22-v6mr5781182wre.157.1540552615106;
-        Fri, 26 Oct 2018 04:16:55 -0700 (PDT)
+        bh=2sZwP3mlc7VxxXlW13/auVGX7x7GQ4BVbqowzB5gMCg=;
+        b=EAGOgL2McqFU8nM/iK2Xa216v4u2jMH3qr9ugZD/1QY9ijMk37ompG5Ul0nAcevD0B
+         JkdNY16h7xgYiPZiNljXOrfPqWGi0Z8hckZn4BQF8LVdNiCnTI5yqqbM1QBVqDvXG3FP
+         aGUdxsd9N4mcQ00yZSwzzRr8CJ1PmGAXZlREGdoH5+XIG9Ur4UH5uw6Lvv81P8xtZLOI
+         /tSmoweyc4Z1AmH4FyVbIgMdMSEIrUxNo886Lpvtz1GWjpt/ukDw9KzotvC5Oj0qL8sZ
+         4GE7EVCDGdlUGrjhsKt4Lz/DXSW4X0VV/RcPdX0GLoe0zT/nyhHK7T7xg0S8f+q3FMYB
+         wgWg==
+X-Gm-Message-State: AGRZ1gLRuWSxs9mN3DbtZwe4xX2gRJd2K8XeRuA7PIfDLj4Lu2A6XCq2
+        JRHi+AlM0MtyNR865m3seSo=
+X-Google-Smtp-Source: AJdET5cUmTiwi5a/EEOSbpLZjBgpKvmVAZd7+401Zl3v8ZujdGTBUrIWf/uWZ/J1UQhmhRB/PAh2EQ==
+X-Received: by 2002:adf:cd0c:: with SMTP id w12-v6mr5496264wrm.67.1540552610102;
+        Fri, 26 Oct 2018 04:16:50 -0700 (PDT)
 Received: from localhost (pD9E511F8.dip0.t-ipconnect.de. [217.229.17.248])
-        by smtp.gmail.com with ESMTPSA id y195-v6sm4485038wme.22.2018.10.26.04.16.54
+        by smtp.gmail.com with ESMTPSA id a2-v6sm1743870wmf.12.2018.10.26.04.16.49
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 26 Oct 2018 04:16:54 -0700 (PDT)
+        Fri, 26 Oct 2018 04:16:49 -0700 (PDT)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jassi Brar <jassisinghbrar@gmail.com>,
@@ -72,9 +72,9 @@ Cc:     Jiri Slaby <jslaby@suse.com>,
         linux-tegra@vger.kernel.org, linux-serial@vger.kernel.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 8/9] arm64: tegra: Add nodes for TCU on Tegra194
-Date:   Fri, 26 Oct 2018 13:16:37 +0200
-Message-Id: <20181026111638.10759-9-thierry.reding@gmail.com>
+Subject: [PATCH 5/9] mailbox: tegra-hsp: Add suspend/resume support
+Date:   Fri, 26 Oct 2018 13:16:34 +0200
+Message-Id: <20181026111638.10759-6-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181026111638.10759-1-thierry.reding@gmail.com>
 References: <20181026111638.10759-1-thierry.reding@gmail.com>
@@ -85,78 +85,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mikko Perttunen <mperttunen@nvidia.com>
+From: Thierry Reding <treding@nvidia.com>
 
-Add nodes required for communication through the Tegra Combined UART.
-This includes the AON HSP instance, addition of shared interrupts
-for the TOP0 HSP instance, and finally the TCU node itself. Also
-mark the HSP instances as compatible to tegra194-hsp, as the hardware
-is not identical but is compatible to tegra186-hsp.
+Upon resuming from a system sleep state, the interrupts for all active
+shared mailboxes need to be reenabled, otherwise they will not work.
 
-Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra194.dtsi | 38 ++++++++++++++++++++++--
- 1 file changed, 35 insertions(+), 3 deletions(-)
+ drivers/mailbox/tegra-hsp.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra194.dtsi b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-index c2091bb16546..521d13be0457 100644
---- a/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra194.dtsi
-@@ -340,10 +340,35 @@
- 		};
+diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+index d070c8e38375..043f7173af8f 100644
+--- a/drivers/mailbox/tegra-hsp.c
++++ b/drivers/mailbox/tegra-hsp.c
+@@ -18,6 +18,7 @@
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
++#include <linux/pm.h>
+ #include <linux/slab.h>
  
- 		hsp_top0: hsp@3c00000 {
--			compatible = "nvidia,tegra186-hsp";
-+			compatible = "nvidia,tegra194-hsp", "nvidia,tegra186-hsp";
- 			reg = <0x03c00000 0xa0000>;
--			interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>;
--			interrupt-names = "doorbell";
-+			interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>,
-+			             <GIC_SPI 120 IRQ_TYPE_LEVEL_HIGH>,
-+			             <GIC_SPI 121 IRQ_TYPE_LEVEL_HIGH>,
-+			             <GIC_SPI 122 IRQ_TYPE_LEVEL_HIGH>,
-+			             <GIC_SPI 123 IRQ_TYPE_LEVEL_HIGH>,
-+			             <GIC_SPI 124 IRQ_TYPE_LEVEL_HIGH>,
-+			             <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
-+			             <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>,
-+			             <GIC_SPI 127 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "doorbell", "shared0", "shared1", "shared2",
-+			                  "shared3", "shared4", "shared5", "shared6",
-+			                  "shared7";
-+			#mbox-cells = <2>;
-+		};
+ #include <dt-bindings/mailbox/tegra186-hsp.h>
+@@ -802,6 +803,23 @@ static int tegra_hsp_remove(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static int tegra_hsp_resume(struct device *dev)
++{
++	struct tegra_hsp *hsp = dev_get_drvdata(dev);
++	unsigned int i;
 +
-+		hsp_aon: hsp@c150000 {
-+			compatible = "nvidia,tegra194-hsp", "nvidia,tegra186-hsp";
-+			reg = <0x0c150000 0xa0000>;
-+			interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>,
-+			             <GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>,
-+			             <GIC_SPI 135 IRQ_TYPE_LEVEL_HIGH>,
-+			             <GIC_SPI 136 IRQ_TYPE_LEVEL_HIGH>;
-+			/*
-+			 * Shared interrupt 0 is routed only to AON/SPE, so
-+			 * we only have 4 shared interrupts for the CCPLEX.
-+			 */
-+			interrupt-names = "shared1", "shared2", "shared3", "shared4";
- 			#mbox-cells = <2>;
- 		};
- 
-@@ -531,6 +556,13 @@
- 		method = "smc";
- 	};
- 
-+	tcu: tcu {
-+		compatible = "nvidia,tegra194-tcu";
-+		mboxes = <&hsp_top0 TEGRA_HSP_MBOX_TYPE_SM 0>,
-+		         <&hsp_aon TEGRA_HSP_MBOX_TYPE_SM 1>;
-+		mbox-names = "rx", "tx";
-+	};
++	for (i = 0; i < hsp->num_sm; i++) {
++		struct tegra_hsp_mailbox *mb = &hsp->mailboxes[i];
 +
- 	timer {
- 		compatible = "arm,armv8-timer";
- 		interrupts = <GIC_PPI 13
++		if (mb->channel.chan->cl)
++			tegra_hsp_mailbox_startup(mb->channel.chan);
++	}
++
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(tegra_hsp_pm_ops, NULL, tegra_hsp_resume);
++
+ static const struct tegra_hsp_db_map tegra186_hsp_db_map[] = {
+ 	{ "ccplex", TEGRA_HSP_DB_MASTER_CCPLEX, HSP_DB_CCPLEX, },
+ 	{ "bpmp",   TEGRA_HSP_DB_MASTER_BPMP,   HSP_DB_BPMP,   },
+@@ -821,6 +839,7 @@ static struct platform_driver tegra_hsp_driver = {
+ 	.driver = {
+ 		.name = "tegra-hsp",
+ 		.of_match_table = tegra_hsp_match,
++		.pm = &tegra_hsp_pm_ops,
+ 	},
+ 	.probe = tegra_hsp_probe,
+ 	.remove = tegra_hsp_remove,
 -- 
 2.19.1
 
