@@ -2,240 +2,100 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E550BC6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 08:12:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFEF9C6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 08:12:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E97220834
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 08:12:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E97220834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8529620834
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 08:12:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="d1vYLkVg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8529620834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726330AbeJZQsy (ORCPT
+        id S1726408AbeJZQs6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 12:48:54 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53108 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726113AbeJZQsx (ORCPT
+        Fri, 26 Oct 2018 12:48:58 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:40219 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726180AbeJZQsx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 26 Oct 2018 12:48:53 -0400
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9Q89vMX100093
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 04:12:48 -0400
-Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2nbvecxwcv-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 04:12:48 -0400
-Received: from localhost
-        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Fri, 26 Oct 2018 09:12:45 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 26 Oct 2018 09:12:36 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9Q8CZGQ20119794
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 26 Oct 2018 08:12:35 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0CA9542042;
-        Fri, 26 Oct 2018 08:12:35 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5C81E4203F;
-        Fri, 26 Oct 2018 08:12:28 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.204.85])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Fri, 26 Oct 2018 08:12:28 +0000 (GMT)
-Date:   Fri, 26 Oct 2018 09:12:25 +0100
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Olof Johansson <olof@lixom.net>, linux-alpha@vger.kernel.org,
-        arcml <linux-snps-arc@lists.infradead.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-c6x-dev@linux-c6x.org,
-        "moderated list:H8/300 ARCHITECTURE" 
-        <uclinux-h8-devel@lists.sourceforge.jp>,
-        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org,
-        Linux-MIPS <linux-mips@linux-mips.org>,
-        nios2-dev@lists.rocketboards.org,
-        Openrisc <openrisc@lists.librecores.org>,
-        linux-parisc@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        SH-Linux <linux-sh@vger.kernel.org>, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
-        devicetree@vger.kernel.org,
-        "open list:GENERIC INCLUDE/ASM HEADER FILES" 
-        <linux-arch@vger.kernel.org>
-Subject: Re: [PATCH v2 0/2] arm64: Cut rebuild time when changing
- CONFIG_BLK_DEV_INITRD
-References: <20181024193256.23734-1-f.fainelli@gmail.com>
- <CAL_Jsq+KCOv6pXXHhHDZ+7-QUrmtMDvSjEVhK15yZ3qbnn61Ag@mail.gmail.com>
- <20181025093833.GA23607@rapoport-lnx>
- <CAL_JsqL62ttsGSbE1BS5v-mX3pKE-p_HyvuZD6nB+GUbQyetzg@mail.gmail.com>
- <20181025172935.GA27364@rapoport-lnx>
- <CAL_JsqJrMq+QHvuOsqEdCFchmXsd4s2XKUD_TboKzeEQprJvjg@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqJrMq+QHvuOsqEdCFchmXsd4s2XKUD_TboKzeEQprJvjg@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18102608-0020-0000-0000-000002DA8D36
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18102608-0021-0000-0000-00002129C562
-Message-Id: <20181026081224.GB27364@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-26_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810260073
+Received: by mail-it1-f195.google.com with SMTP id i191-v6so678510iti.5
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 01:12:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=owltronix-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=ZSk+vaI/1PdBVCuPWBLaeX/wD8mWlhTzJ8mRM+gr6n0=;
+        b=d1vYLkVgHBieLHu7bmTiu7ussyvllHywUObgx3oSYPgrirOVfnPe/SzhSCrBy481OC
+         H0iwbw5ls+8gJeDe8zaKzSOEt40rpa09ihGJ3/8ndk/8BA7QrT834brsYpzkA5PPXsry
+         rvqMJV4Wlp0k3LxT8XNP6g6KNLLmpFzYMLO7F2IxYRNV2ISLcDJWqbG/49pYnz9/6jP9
+         K8KQlh55bqUugao6fe3tMrDzy6AGHyhPBGplRIX0dqQ0obHCwlO0YXW8e4hMGmSvRwwu
+         eww3hCqQStgUhH/JLsaSnQFqYAAg2i+fN35TyskzkuabUT9gc5V6gc/k6htrZ1237KeR
+         3x/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ZSk+vaI/1PdBVCuPWBLaeX/wD8mWlhTzJ8mRM+gr6n0=;
+        b=Vf1lnoSQCQjn7NH1OiWWOfBBprQVfQFBZoSYSkN5/lsAmJ/JkGBQAlQQe0bWr5reYW
+         XaJgGqy/5jBtpv4j+fk2+i88SkwsPp6SLC6iITJrYvXItwWMqbh2gNs0SyC0bSTF9HKE
+         y21LMmfkOUxB+hJo0edE9IINhW80lLWQYsBMf0/mF5TwAweubKEX0P8p8v6K6mPX/UP5
+         C+0ujFwRVa4wpaTHQVtpUL1vX+/lnaCTvLLKybj5jDDaSgER7MGlFMsxJw3KLGHBwAJz
+         Fn1j2ukn4gSQMimbFkA5U4yeozAiBsltrMndzZP/N659I3In2hk3pmx20K+iMlGGFo1W
+         7aIA==
+X-Gm-Message-State: AGRZ1gIPLtMbffO2ssC6chdvtNlltKT+7Q5LIV7D4EBIoVbkTVVK47Nf
+        pCr4Gqom5jDEds16gblV0HLbLg==
+X-Google-Smtp-Source: AJdET5c5rhtvgCjNSUGFiZSEk6/gFKCm83GxoJOgwyRtDHnNpOx9hTSNH3LPNkCWuL9ZYiJaUJl9uw==
+X-Received: by 2002:a24:1706:: with SMTP id 6-v6mr3336366ith.16.1540541569917;
+        Fri, 26 Oct 2018 01:12:49 -0700 (PDT)
+Received: from titan.cnexlabs.com (6164211-cl69.boa.fiberby.dk. [193.106.164.211])
+        by smtp.gmail.com with ESMTPSA id v193-v6sm1580973ita.2.2018.10.26.01.12.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 26 Oct 2018 01:12:49 -0700 (PDT)
+From:   Hans Holmberg <hans@owltronix.com>
+X-Google-Original-From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+To:     Matias Bjorling <mb@lightnvm.io>
+Cc:     linux-block@vger.kernel.org, Javier Gonzales <javier@cnexlabs.com>,
+        linux-kernel@vger.kernel.org,
+        Hans Holmberg <hans.holmberg@cnexlabs.com>
+Subject: [PATCH] lightnvm: pblk: fix chunk close trace event check
+Date:   Fri, 26 Oct 2018 10:12:24 +0200
+Message-Id: <1540541544-7761-1-git-send-email-hans.holmberg@cnexlabs.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 04:13:10PM -0500, Rob Herring wrote:
-> On Thu, Oct 25, 2018 at 12:30 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
-> >
-> > On Thu, Oct 25, 2018 at 08:15:15AM -0500, Rob Herring wrote:
-> > > +Ard
-> > >
-> > > On Thu, Oct 25, 2018 at 4:38 AM Mike Rapoport <rppt@linux.ibm.com> wrote:
-> > > >
-> > > > On Wed, Oct 24, 2018 at 02:55:17PM -0500, Rob Herring wrote:
-> > > > > On Wed, Oct 24, 2018 at 2:33 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
-> > > > > >
-> > > > > > Hi all,
-> > > > > >
-> > > > > > While investigating why ARM64 required a ton of objects to be rebuilt
-> > > > > > when toggling CONFIG_DEV_BLK_INITRD, it became clear that this was
-> > > > > > because we define __early_init_dt_declare_initrd() differently and we do
-> > > > > > that in arch/arm64/include/asm/memory.h which gets included by a fair
-> > > > > > amount of other header files, and translation units as well.
-> > > > >
-> > > > > I scratch my head sometimes as to why some config options rebuild so
-> > > > > much stuff. One down, ? to go. :)
-> > > > >
-> > > > > > Changing the value of CONFIG_DEV_BLK_INITRD is a common thing with build
-> > > > > > systems that generate two kernels: one with the initramfs and one
-> > > > > > without. buildroot is one of these build systems, OpenWrt is also
-> > > > > > another one that does this.
-> > > > > >
-> > > > > > This patch series proposes adding an empty initrd.h to satisfy the need
-> > > > > > for drivers/of/fdt.c to unconditionally include that file, and moves the
-> > > > > > custom __early_init_dt_declare_initrd() definition away from
-> > > > > > asm/memory.h
-> > > > > >
-> > > > > > This cuts the number of objects rebuilds from 1920 down to 26, so a
-> > > > > > factor 73 approximately.
-> > > > > >
-> > > > > > Apologies for the long CC list, please let me know how you would go
-> > > > > > about merging that and if another approach would be preferable, e.g:
-> > > > > > introducing a CONFIG_ARCH_INITRD_BELOW_START_OK Kconfig option or
-> > > > > > something like that.
-> > > > >
-> > > > > There may be a better way as of 4.20 because bootmem is now gone and
-> > > > > only memblock is used. This should unify what each arch needs to do
-> > > > > with initrd early. We need the physical address early for memblock
-> > > > > reserving. Then later on we need the virtual address to access the
-> > > > > initrd. Perhaps we should just change initrd_start and initrd_end to
-> > > > > physical addresses (or add 2 new variables would be less invasive and
-> > > > > allow for different translation than __va()). The sanity checks and
-> > > > > memblock reserve could also perhaps be moved to a common location.
-> > > > >
-> > > > > Alternatively, given arm64 is the only oddball, I'd be fine with an
-> > > > > "if (IS_ENABLED(CONFIG_ARM64))" condition in the default
-> > > > > __early_init_dt_declare_initrd as long as we have a path to removing
-> > > > > it like the above option.
-> > > >
-> > > > I think arm64 does not have to redefine __early_init_dt_declare_initrd().
-> > > > Something like this might be just all we need (completely untested,
-> > > > probably it won't even compile):
-> > > >
-> > > > diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-> > > > index 9d9582c..e9ca238 100644
-> > > > --- a/arch/arm64/mm/init.c
-> > > > +++ b/arch/arm64/mm/init.c
-> > > > @@ -62,6 +62,9 @@ s64 memstart_addr __ro_after_init = -1;
-> > > >  phys_addr_t arm64_dma_phys_limit __ro_after_init;
-> > > >
-> > > >  #ifdef CONFIG_BLK_DEV_INITRD
-> > > > +
-> > > > +static phys_addr_t initrd_start_phys, initrd_end_phys;
-> > > > +
-> > > >  static int __init early_initrd(char *p)
-> > > >  {
-> > > >         unsigned long start, size;
-> > > > @@ -71,8 +74,8 @@ static int __init early_initrd(char *p)
-> > > >         if (*endp == ',') {
-> > > >                 size = memparse(endp + 1, NULL);
-> > > >
-> > > > -               initrd_start = start;
-> > > > -               initrd_end = start + size;
-> > > > +               initrd_start_phys = start;
-> > > > +               initrd_end_phys = end;
-> > > >         }
-> > > >         return 0;
-> > > >  }
-> > > > @@ -407,14 +410,27 @@ void __init arm64_memblock_init(void)
-> > > >                 memblock_add(__pa_symbol(_text), (u64)(_end - _text));
-> > > >         }
-> > > >
-> > > > -       if (IS_ENABLED(CONFIG_BLK_DEV_INITRD) && initrd_start) {
-> > > > +       if (IS_ENABLED(CONFIG_BLK_DEV_INITRD) &&
-> > > > +           (initrd_start || initrd_start_phys)) {
-> > > > +               /*
-> > > > +                * FIXME: ensure proper precendence between
-> > > > +                * early_initrd and DT when both are present
-> > >
-> > > Command line takes precedence, so just reverse the order.
-> > >
-> > > > +                */
-> > > > +               if (initrd_start) {
-> > > > +                       initrd_start_phys = __phys_to_virt(initrd_start);
-> > > > +                       initrd_end_phys = __phys_to_virt(initrd_end);
-> 
-> BTW, I think you meant virt_to_phys() here?
+The check for chunk closes suffers from an off-by-one issue, leading
+to chunk close events not being traced. Fix this.
 
-Right, and then there is no problem at all do the conversion here :)
- 
-> > >
-> > > AIUI, the original issue was doing the P2V translation was happening
-> > > too early and the VA could be wrong if the linear range is adjusted.
-> > > So I don't think this would work.
-> >
-> > Probably things have changed since then, but in the current code there is
-> >
-> >                 initrd_start = __phys_to_virt(initrd_start);
-> >
-> > and in between only the code related to CONFIG_RANDOMIZE_BASE, so I believe
-> > it's safe to use __phys_to_virt() here as well.
-> 
-> Here is fine yes, but I believe it was the the phys to virt in the DT
-> code before adjusting the linear range that was the problem.
-> 
-> Rob
-> 
+Fixes: 4c44abf43d00 ("lightnvm: pblk: add trace events for chunk states")
 
+Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+---
+
+ drivers/lightnvm/pblk-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+index 6944aac43b01..6581c35f51ee 100644
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -531,7 +531,7 @@ void pblk_check_chunk_state_update(struct pblk *pblk, struct nvm_rq *rqd)
+ 		if (caddr == 0)
+ 			trace_pblk_chunk_state(pblk_disk_name(pblk),
+ 							ppa, NVM_CHK_ST_OPEN);
+-		else if (caddr == chunk->cnlb)
++		else if (caddr == (chunk->cnlb - 1))
+ 			trace_pblk_chunk_state(pblk_disk_name(pblk),
+ 							ppa, NVM_CHK_ST_CLOSED);
+ 	}
 -- 
-Sincerely yours,
-Mike.
+2.7.4
 
