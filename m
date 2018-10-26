@@ -2,113 +2,88 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6475C6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB3E7C6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:50:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B5E02054F
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:48:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83D2F20651
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:50:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="yD5aawgX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B5E02054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NOoVA4ah"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83D2F20651
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727751AbeJZXZi (ORCPT
+        id S1727450AbeJZX1u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 19:25:38 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:39740 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726243AbeJZXZi (ORCPT
+        Fri, 26 Oct 2018 19:27:50 -0400
+Received: from mail-lf1-f44.google.com ([209.85.167.44]:43882 "EHLO
+        mail-lf1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbeJZX1u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 19:25:38 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9QEclBp130283;
-        Fri, 26 Oct 2018 14:48:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=CC0IBocFSsNMaDpJz1cHicVYSmQwD9NiE4PRlK9uIp0=;
- b=yD5aawgXrkCw3wW/h5CnMIXeuIH5D8Gku2iLfkXi4odRtJ7GeRz9e6HpwIQUjz69XScW
- 2/UWPPI/o/fEvggR7bFjsyggCzTvEPhtBo4xflV/oTfH/347rk11K+LJ6Wz1yoLX2/K2
- IrpxkeuENXCB7RohbEi4JaXi4ivAnkrkA+b//Z6kqyVhd8WKx/xKr2wPT42RLXP7aR+r
- 5bqwFExy9atg3IqGvf0GWsz91ORy2RAj18VJh7sR0HC7fClMfR9HJn5E9bkQHEcfD0Kz
- A5f2b/JF5nBZhSI6qNivGCkCetRL4M1Fbzf7IUBDtkY79+x5N4C5gTE+9bwzvcnoSl9C gQ== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2120.oracle.com with ESMTP id 2n7vaqfnxb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 26 Oct 2018 14:48:11 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9QEmAnM003122
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 26 Oct 2018 14:48:10 GMT
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9QEmAPJ023196;
-        Fri, 26 Oct 2018 14:48:10 GMT
-Received: from [10.211.46.56] (/10.211.46.56)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 26 Oct 2018 07:48:09 -0700
-Subject: Re: [PATCH] xen-swiotlb: exchange memory with Xen only when pages are
- contiguous
-To:     Dongli Zhang <dongli.zhang@oracle.com>
-Cc:     Christoph Helwig <hch@lst.de>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        konrad@kernel.org, John Sobecki <john.sobecki@oracle.com>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <bb6d87b4-c371-c6c0-8c48-bc95df018ad1@oracle.com>
- <20181024130246.GA22616@localhost.localdomain>
- <83900cf4-690c-9725-d022-d427fdeb4f7d@oracle.com>
- <581cb7ea-3112-791d-918d-9bb887e4744f@oracle.com>
- <24a62522-1629-5d0b-398e-6d2c1a0b97f7@oracle.com>
- <922914c9-22db-c5d1-33da-d07691ebd7d7@oracle.com>
- <a47fabe8-53d1-47b8-0efc-f9f1e5b4898a@oracle.com>
- <45f5ffe8-3f48-4485-53f0-5a056be69b0c@oracle.com>
- <5b64850f-9142-0360-fe4e-9e7bc74d2368@oracle.com>
- <20181026074802.GA4768@lst.de>
- <10301c25-5bbf-51b6-6cb2-77e30bcd9a99@oracle.com>
-From:   Joe Jin <joe.jin@oracle.com>
-Message-ID: <dac26047-7426-fec5-0360-fbfd6e211d69@oracle.com>
-Date:   Fri, 26 Oct 2018 07:48:09 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Fri, 26 Oct 2018 19:27:50 -0400
+Received: by mail-lf1-f44.google.com with SMTP id u18so1111787lff.10
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 07:50:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=T9WXY3sKGxX/0H0/CxqPYfAosSsj/FF5MfUxTXwGkqA=;
+        b=NOoVA4ahsfe3+HOhvvJYaeqli6MvCLFTl0znwkP49IjpenRGRIkj1PsESAExAe4ycH
+         waIupocx1yfhsR5hzmcjW/lBdZzGXGOHm3UzP9pL5jy/Us4ef8/gl8zfEyX1933q8jNP
+         /yKi2VsznmShuoH35xdGeoQxUBPDzl2Hg/BXs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=T9WXY3sKGxX/0H0/CxqPYfAosSsj/FF5MfUxTXwGkqA=;
+        b=dGuG9DBcWgouLv1IZZSmujNlgBbDBjQ4jFrvf+vtRA53QOIpG6fZfrnFN2syd5gBps
+         O0TOggSW43vZKBmP1xTpaK1W83/0NGwy1rEzmqf2RJbC9mYS2lY54/qX1ujW3gXXJeS5
+         5caklWY6MmneodAnbtCWAlkQXs98aoqxmGwloO2Cil6b8gYBKIKi1BOKu3iYSeflLKAu
+         idXox1weHJh1OmH+TK27KhZaNkAb5yDE7HIvUJCHzk/jTRtuxdx2pWIe7q9/VNwA6XYS
+         aIvhWLDhiYvhyM4zF5rd7sFTHNlA7l6955ZH5LgGIKkGfGv3X5xLE3Oa+faImrfVEUhY
+         Jkew==
+X-Gm-Message-State: AGRZ1gL7B4cXOsY0YnMEhNDQXnvQbMpWEkbhfrHJ/8olfNhWtQfVj+y9
+        Dm0GuZK7GbpxC7F0vQufe1xVLWLC5u97hQ==
+X-Google-Smtp-Source: AJdET5dp1uve0GaN3eX7W/+URUW0HldTY9O639wiVQS7XGJ6x8kyTOk3DeTfoaNYRfSD5zDPrLsnXw==
+X-Received: by 2002:a19:e01e:: with SMTP id x30mr2355064lfg.89.1540565425975;
+        Fri, 26 Oct 2018 07:50:25 -0700 (PDT)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id f95-v6sm1650193lji.76.2018.10.26.07.50.24
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 26 Oct 2018 07:50:24 -0700 (PDT)
+Received: by mail-lj1-f176.google.com with SMTP id c21-v6so1423324ljj.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 07:50:24 -0700 (PDT)
+X-Received: by 2002:a2e:9584:: with SMTP id w4-v6mr2688995ljh.118.1540565424074;
+ Fri, 26 Oct 2018 07:50:24 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <10301c25-5bbf-51b6-6cb2-77e30bcd9a99@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9057 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=614
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810260126
+References: <20181025212112.GA1747@ziepe.ca>
+In-Reply-To: <20181025212112.GA1747@ziepe.ca>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 26 Oct 2018 07:50:08 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wi+fn7y9Ya-2-Q01FdrwfC4YxLhc4Cujfe=0StzuMDKAw@mail.gmail.com>
+Message-ID: <CAHk-=wi+fn7y9Ya-2-Q01FdrwfC4YxLhc4Cujfe=0StzuMDKAw@mail.gmail.com>
+Subject: Re: [GIT PULL] Please pull RDMA subsystem changes
+To:     jgg@mellanox.com
+Cc:     dledford@redhat.com, linux-rdma@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/26/18 1:54 AM, Dongli Zhang wrote:
-> If dom0 (or any domain) is happy, although it could try to exchange all its
-> continuous dma pages back to xen hypervisor. From the perspective of each
-> domain, they always would like to keep as much continuous dma page as possible.
-> 
-> I am thinking something different. If there is malicious domU keep exchanging
-> memory and allocating continuous pages from xen hypervisor, will the
-> continuously dma pages be used up (sort of DoS attack)?
+On Thu, Oct 25, 2018 at 2:21 PM Jason Gunthorpe <jgg@mellanox.com> wrote:
+>
+> This pull request is following your recommendation from 4.19, the
+> for-linus tag has no merge, a for-linus-merged tag has my merge
+> resolution for your reference, and the diffstat below has been
+> replaced with the diffstat from the for-linus-merged tag.
 
-This is a problem.
+Thanks, looks good.  Pulled,
 
-> 
-> I am not sure if there is anything in xen hypervisor to prevent such behavior?
-
-I'm not sure but I guess it hard to prevent it, xen hypervisor could not identify
-if the requirement is reasonable or no.
-
-Maybe Xen reserve some low memory for guest start?
-
-Thanks,
-Joe
+                Linus
