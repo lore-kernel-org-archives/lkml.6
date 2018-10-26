@@ -2,150 +2,132 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 274F4ECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:25:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E67C8ECDE46
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:28:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E19A62085B
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:25:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZAKqk9qc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E19A62085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B4A9B207DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:28:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4A9B207DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728276AbeJ0FEM (ORCPT
+        id S1728268AbeJ0FHO convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 01:04:12 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:38087 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727811AbeJ0FEL (ORCPT
+        Sat, 27 Oct 2018 01:07:14 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:46324 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728019AbeJ0FHO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 01:04:11 -0400
-Received: by mail-qt1-f195.google.com with SMTP id r22-v6so2730099qtm.5;
-        Fri, 26 Oct 2018 13:25:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=2EqpVwwRHYa9CYLap5UB3RrJPc4qSO0d23QDEEqDXYs=;
-        b=ZAKqk9qc/xKY2IgOWoFgKXUa/TxIduoxbNEuDeQJm2urKhlwHBEuqScS/1fCvRjnKe
-         B+MhrRJrZiE+dvG5yWZTVLOYdtRl0GgJqHPEEafuWNpfF2SVabs9ULFzeJI2v7M+a2DX
-         MZFfqcrnR6/8fpaX5JqH7yi1Gr8+K/jWylP6HF4BphdvAay02s2SY1gXQ9RwfBUpEU9T
-         Z9iK7qjzCgkgDGbPDWdCpfrM7+kCtVohBzATs1WXuDtgR9sJlXR72f4/xAZOAzN22D2B
-         tk1aB9rUo0d4EI/wjqKV5vSzkv3nYaOFuselLnWq1Iwgs8qXZCoInvarifMvl5ofkUal
-         kKzg==
+        Sat, 27 Oct 2018 01:07:14 -0400
+Received: by mail-oi1-f193.google.com with SMTP id k64-v6so2116324oia.13;
+        Fri, 26 Oct 2018 13:28:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=2EqpVwwRHYa9CYLap5UB3RrJPc4qSO0d23QDEEqDXYs=;
-        b=GZgEdoA0UD590t8jAr2Zc6nd9XC4Xsx7NIm1D233ZsAB8oy7ZjyWChyqoc4Req0RPV
-         QX8lQ7k+juIMLAAO4WZhFgsTPDq/4+L6kCiR7NbLmE97iqv61IVuCQWJnZQQv+yCcmR2
-         LiQK3Lcl5ohxeIlFwVxCIhZBUXeFnaadHANHdIMT2WZHJ2jVqJqzJr6j9v+Z4GyIhWtO
-         XdxkRLKMB4Xbv6juA9jGV+GI5KDsg+cssVs/K76iasUkDbEcIF4j2WMQD7gZ69zISzny
-         xQdHmFM4FyBcZYOg+VwZdREEGT3jW3PAXp+NYTy/vJ2C0Xrirx6EGmiLxVUlxtcUp+R8
-         oJ5g==
-X-Gm-Message-State: AGRZ1gLhPjVEVWtgM9KoG+dGeKF+jVkSMblRLw4nBKrNJNgpgbccHyVj
-        fYyTcvlSjCONZDJijbuusI/kXPkMBkm5qx5Jbfdyxw==
-X-Google-Smtp-Source: AJdET5dPZgC3dcC5K8lYdDngde3k3xZJoz89WGfSGJbSlwW0y1IQ25Bq9rks8sTQ/ku+6mwQ9Bk5t1FWMFI0TikDno4=
-X-Received: by 2002:ac8:97:: with SMTP id c23-v6mr4594669qtg.376.1540585545106;
- Fri, 26 Oct 2018 13:25:45 -0700 (PDT)
+        bh=o1J+Vua8+v3VyCFKW1e5R0do6+wn43nklh3RHSZ8CoI=;
+        b=LjBfjK7+LNLkHo8ACHKzrD9Krl1bzRtCBGdmA1/blttG1wg1uqUjhl0wIOmM0HX/MK
+         vdNBhiyx37w91mm61c2BrbNV4zE2VXvsRb0zo4W+n58wDW0BiQTShPqelwPlgeCAs2N1
+         4TrgARbJ44B5yeEZljIVQe4ZwiZcmNJjM6p56Madw8quKlSRvDvc1WI088lC30EBbvrj
+         sO+Jg8BMbAPj31rlaB6MHBSD6K5ircFbXzppJ/bkz/2Tav56Vao5xatb7VM3ShiqKkvC
+         aNCxZmiXB6cQSLo5ZZbjCtUfLiSdTK3XQvoCU+9J1NEtWeCMX/Ib9PsgBT7eA/cT/tFu
+         56rg==
+X-Gm-Message-State: AGRZ1gJYnMyWtozc94Ui6zwKLe2ykP9VEllnoRP3VjabBGMLFjJPRx5U
+        IhUK9cta1pHORih7iimqsSp/U9L5/wE=
+X-Google-Smtp-Source: AJdET5cKqa2jkF2dUA/+2bNDBg/AA/YzxANYprUFuJDQZNo8pb+sW7/eAamw137HiZc1FN767OKwFg==
+X-Received: by 2002:aca:ce47:: with SMTP id e68-v6mr3184317oig.83.1540585726877;
+        Fri, 26 Oct 2018 13:28:46 -0700 (PDT)
+Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com. [209.85.210.48])
+        by smtp.gmail.com with ESMTPSA id f5-v6sm4448491oih.51.2018.10.26.13.28.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 26 Oct 2018 13:28:46 -0700 (PDT)
+Received: by mail-ot1-f48.google.com with SMTP id c32so2255182otb.8;
+        Fri, 26 Oct 2018 13:28:45 -0700 (PDT)
+X-Received: by 2002:a9d:3cd0:: with SMTP id t16mr3143200otf.158.1540585724826;
+ Fri, 26 Oct 2018 13:28:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <61d09f0db41f269cc9ee13dd68a5c285@natalenko.name> <fbd7f0b8-10c8-be17-fce6-327a95d8ea2e@gmail.com>
-In-Reply-To: <fbd7f0b8-10c8-be17-fce6-327a95d8ea2e@gmail.com>
-From:   Dave Taht <dave.taht@gmail.com>
-Date:   Fri, 26 Oct 2018 13:25:33 -0700
-Message-ID: <CAA93jw7xoaokrN4oGAyqh6JHAn8nJpUpp_wj-iy+GWNoV-ipNA@mail.gmail.com>
-Subject: Re: CAKE and r8169 cause panic on upload in v4.19
-To:     hkallweit1@gmail.com
-Cc:     Oleksandr Natalenko <oleksandr@natalenko.name>,
-        =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@toke.dk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        =?UTF-8?B?SmnFmcOtIFDDrXJrbw==?= <jiri@resnulli.us>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
+References: <20181025110901.5680-1-xiaowei.bao@nxp.com> <20181025110901.5680-3-xiaowei.bao@nxp.com>
+ <20181025215246.GA14861@bogus> <HE1PR04MB149735C7EF2A23AEE982BB9FF5F00@HE1PR04MB1497.eurprd04.prod.outlook.com>
+ <CAK8P3a3Ty4bRuHiVHY6dh55b1ms8z7RpG2sALM0Dn_8Yd39-xQ@mail.gmail.com> <HE1PR04MB14972C9176E68EEDBD3AD64BF5F00@HE1PR04MB1497.eurprd04.prod.outlook.com>
+In-Reply-To: <HE1PR04MB14972C9176E68EEDBD3AD64BF5F00@HE1PR04MB1497.eurprd04.prod.outlook.com>
+From:   Li Yang <leoyang.li@nxp.com>
+Date:   Fri, 26 Oct 2018 15:28:33 -0500
+X-Gmail-Original-Message-ID: <CADRPPNRP5RORVr0O59=O-PhRRerirFkPeOmAcKq3pNumf4Mriw@mail.gmail.com>
+Message-ID: <CADRPPNRP5RORVr0O59=O-PhRRerirFkPeOmAcKq3pNumf4Mriw@mail.gmail.com>
+Subject: Re: [PATCH 3/6] PCI: layerscape: Add the EP mode support
+To:     xiaowei.bao@nxp.com
+Cc:     Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>, kishon@ti.com,
+        lorenzo.pieralisi@arm.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Minghuan Lian <minghuan.lian@nxp.com>,
+        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        cyrille.pitchen@free-electrons.com,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        shawn.lin@rock-chips.com, niklas.cassel@axis.com,
+        linux-pci@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, lkml <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 1:21 PM Heiner Kallweit <hkallweit1@gmail.com> wrot=
-e:
+On Fri, Oct 26, 2018 at 2:43 AM Xiaowei Bao <xiaowei.bao@nxp.com> wrote:
 >
-> On 26.10.2018 21:26, Oleksandr Natalenko wrote:
-> > Hello.
-> >
-> > I was excited regarding the fact that v4.19 introduced CAKE, so I've de=
-ployed it on my home router.
-> >
-> > I used this script of mine [1]:
-> >
-> > # bufferbloat enp3s0.100 20 20
-> >
-> > to do its job on the VLAN interface, where 20/20 ISP link is switched f=
-rom the home switch. Basically, it just follows [2] with simple bandwidth r=
-estriction and egress mirroring using ifb.
-> >
-> > Then I thought it would be nice to run speedtest-cli on one of the comp=
-uter in the home LAN, connected to this router. Download stage went fine, b=
-ut immediately after upload started I've got a panic on the router: [3] (so=
-rry, it is a photo, netconsole didn't work because, I assume, the panic hap=
-pened in the networking code). I rebooted the router and tried once more, a=
-nd got the same result, again during upload stage. Then I rebooted again, r=
-eplaced CAKE script with my former HTB script, and after running speedtest-=
-cli a couple of times there's no panic.
-> >
-> > Before running speedtest-cli I was using CAKE for a couple of days with=
-out generating much traffic just fine. It seems it crashes only if lots of =
-traffic is generated with tools like this.
-> >
-> > My sysctl: [4] and ethtool -k: [5]
-> >
-> > So far, I've found something similar only here: [6] [7]. The common thi=
-ng is r8169 driver in use, so, maybe, it is a driver issue, and CAKE is jus=
-t happy to reveal it.
-> >
-> > If it is something known, please point me to a possible fix. If it is s=
-omething new, I'm open to provide more info on your request, try patches et=
-c (as usual).
-> >
-> It seems to be the same problem as described here: https://bugzilla.kerne=
-l.org/show_bug.cgi?id=3D201063
-> As I commented in bugzilla, the GPF in dev_hard_start_xmit and the values=
- of R12/R15 make me think
-> that a poisoned list pointer is accessed. It's so deep in the network sta=
-ck that I can not really
-> imagine the network driver is to blame. One screenshot attached to the bu=
-g report shows that the
-> GPF also happened with the igb driver. Most likely we find out only once =
-somebody spends effort
-> on bisecting the issue.
-> d4546c2509b1 ("net: Convert GRO SKB handling to list_head.") and some sub=
-sequent changes deal with
-> skb list processing, maybe the issue is related to one of these changes.
-
-Can you repeat your test, disabling gro splitting in cake?
-
-the option is "no-split-gso"
-
 >
-> > Thanks.
+>
+> -----Original Message-----
+> From: arndbergmann@gmail.com <arndbergmann@gmail.com> On Behalf Of Arnd Bergmann
+> Sent: 2018年10月26日 15:01
+> To: Xiaowei Bao <xiaowei.bao@nxp.com>
+> Cc: Rob Herring <robh@kernel.org>; bhelgaas@google.com; mark.rutland@arm.com; shawnguo@kernel.org; Leo Li <leoyang.li@nxp.com>; kishon@ti.com; lorenzo.pieralisi@arm.com; gregkh@linuxfoundation.org; M.h. Lian <minghuan.lian@nxp.com>; Mingkai Hu <mingkai.hu@nxp.com>; Roy Zang <roy.zang@nxp.com>; kstewart@linuxfoundation.org; cyrille.pitchen@free-electrons.com; pombredanne@nexb.com; shawn.lin@rock-chips.com; niklas.cassel@axis.com; linux-pci@vger.kernel.org; devicetree@vger.kernel.org; linux-kernel@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linuxppc-dev@lists.ozlabs.org
+> Subject: Re: [PATCH 3/6] PCI: layerscape: Add the EP mode support
+>
+> On 10/26/18, Xiaowei Bao <xiaowei.bao@nxp.com> wrote:
+> > From: Rob Herring <robh@kernel.org>
+> >> On Thu, Oct 25, 2018 at 07:08:58PM +0800, Xiaowei Bao wrote:
+> >>>          "fsl,ls2080a-pcie", "fsl,ls2085a-pcie", "snps,dw-pcie"
+> >>>          "fsl,ls2088a-pcie"
+> >>>          "fsl,ls1088a-pcie"
+> >>>          "fsl,ls1046a-pcie"
+> >>>          "fsl,ls1012a-pcie
+> >>> +  EP mode:
+> >>> +        "fsl,ls-pcie-ep"
+> >>
+> > > You need SoC specific compatibles for the same reasons as the RC.
 > >
+> > [Xiaowei Bao] I want to contains all layerscape platform use one
+> > compatible if the PCIe controller work in EP mode.
+>
+> Do you mean only one of the SoCs that support RC mode has EP mode?
+> I think you still need a SoC specific compatible as Rob explained, in case there will be a second one in the future.
+>
+> If you want to ensure that you don't have to update the device driver for each new chip that comes in when the EP mode is compatible, the way this is handled is to list multiple values in the compatible property, listing the first SoC that introduced the specific version of that IP block as the most generic type, e.g.
+>
+>   copatible = "fsl,ls2088a-pcie-ep", "fsl,ls1012a-pcie-ep", "snps,dw-pcie-ep";
+>
+> For consistency, it probably is best to match each RC mode value with the corresponding EP mode string for each device that can support both (if there is more than one).
+>
+>       Arnd
+> [Xiaowei Bao] My mean is that the ls-pcie-ep compatibles will contain all layerscape SOCs of NXP, e.g: ls1046a-pcie-ep, fsl,ls2088a-pcie-ep, ls2088a-pcie-ep and so on, other layerscape SOCs have not test except the ls1046a, I think it is compatible if the new chip or other SOCs use the DW core, OK, I will discuss this issue internally, and reply to you later.
 
+You can define a generic compatible string for the EP mode of all
+these platforms.  But like Rob and Arnd mentioned, it is good to also
+define the SoC specific compatible strings just in case that we need
+special treatment for certain SoCs in the future.
 
-
---=20
-
-Dave T=C3=A4ht
-CTO, TekLibre, LLC
-http://www.teklibre.com
-Tel: 1-831-205-9740
+Regards,
+Leo
