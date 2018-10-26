@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2E42ECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:49:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A5F0C6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:50:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A23EE20831
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:49:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A23EE20831
+	by mail.kernel.org (Postfix) with ESMTP id CD2B120868
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:50:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD2B120868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727800AbeJZW06 (ORCPT
+        id S1727350AbeJZWZm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 18:26:58 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44840 "EHLO mx1.suse.de"
+        Fri, 26 Oct 2018 18:25:42 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44772 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727008AbeJZWZn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 18:25:43 -0400
+        id S1726014AbeJZWZl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 18:25:41 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 35833B020;
-        Fri, 26 Oct 2018 13:48:33 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id CDC45AFB2;
+        Fri, 26 Oct 2018 13:48:30 +0000 (UTC)
 From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 To:     stefan.wahren@i2se.com, eric@anholt.net,
         dave.stevenson@raspberrypi.org
 Cc:     nsaenzjulienne@suse.de, linux-rpi-kernel@lists.infradead.org,
         gregkh@linuxfoundation.org, linux-arm-kernel@lists.infradead.org,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH RFC 06/18] staging: vchiq_arm: rework vchiq_ioc_copy_element_data
-Date:   Fri, 26 Oct 2018 15:48:01 +0200
-Message-Id: <20181026134813.7775-7-nsaenzjulienne@suse.de>
+Subject: [PATCH RFC 02/18] staging: vchiq_arm: rework close/remove_service IOCTLS
+Date:   Fri, 26 Oct 2018 15:47:57 +0200
+Message-Id: <20181026134813.7775-3-nsaenzjulienne@suse.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181026134813.7775-1-nsaenzjulienne@suse.de>
 References: <20181026134813.7775-1-nsaenzjulienne@suse.de>
@@ -45,147 +45,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function is passed to vchiq_core.c for it to go trough all the
-transfer elements (an array of pointers to data) and copy them into the
-actual transfer memory (contiguous memory).
-
-The logic in the function was "copy an element and return, except when
-the element is empty, in which case look for the next non-empty element
-and copy it. The function will be called as many times as necessary until
-all the elements are copied".
-
-Now, this approach already forces the function to loop around elements
-and felt convoluted, so it was changed to a more straightforward "Copy
-all the elements into memory as long as they fit".
-
-The resulting function is shorter and simpler.
+The implementation of both IOCTLS was the same except for one function
+call. This joins both implementations and updates the code to avoid
+unneeded indentations.
 
 Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 ---
- .../interface/vchiq_arm/vchiq_arm.c           | 89 +++++++------------
- 1 file changed, 31 insertions(+), 58 deletions(-)
+ .../interface/vchiq_arm/vchiq_arm.c           | 66 +++++++------------
+ 1 file changed, 24 insertions(+), 42 deletions(-)
 
 diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-index 34160cc3b8bd..1cdfdb714abc 100644
+index 6d503392341e..d88dd7415e1e 100644
 --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
 +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-@@ -752,74 +752,48 @@ static void close_delivered(USER_SERVICE_T *user_service)
- }
+@@ -1019,55 +1019,37 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 		}
+ 	} break;
  
- struct vchiq_io_copy_callback_context {
--	struct vchiq_element *current_element;
--	size_t current_element_offset;
-+	struct vchiq_element *element;
-+	size_t element_offset;
- 	unsigned long elements_to_go;
--	size_t current_offset;
- };
+-	case VCHIQ_IOC_CLOSE_SERVICE: {
++	case VCHIQ_IOC_CLOSE_SERVICE:
++	case VCHIQ_IOC_REMOVE_SERVICE: {
+ 		VCHIQ_SERVICE_HANDLE_T handle = (VCHIQ_SERVICE_HANDLE_T)arg;
++		USER_SERVICE_T *user_service;
  
--static ssize_t
--vchiq_ioc_copy_element_data(
--	void *context,
--	void *dest,
--	size_t offset,
--	size_t maxsize)
-+static ssize_t vchiq_ioc_copy_element_data(void *context, void *dest,
-+					   size_t offset, size_t maxsize)
- {
--	long res;
-+	struct vchiq_io_copy_callback_context *cc = context;
-+	size_t total_bytes_copied = 0;
- 	size_t bytes_this_round;
--	struct vchiq_io_copy_callback_context *copy_context =
--		(struct vchiq_io_copy_callback_context *)context;
+ 		service = find_service_for_instance(instance, handle);
+-		if (service != NULL) {
+-			USER_SERVICE_T *user_service =
+-				(USER_SERVICE_T *)service->base.userdata;
+-			/* close_pending is false on first entry, and when the
+-			   wait in vchiq_close_service has been interrupted. */
+-			if (!user_service->close_pending) {
+-				status = vchiq_close_service(service->handle);
+-				if (status != VCHIQ_SUCCESS)
+-					break;
+-			}
 -
--	if (offset != copy_context->current_offset)
--		return 0;
--
--	if (!copy_context->elements_to_go)
--		return 0;
--
--	/*
--	 * Complex logic here to handle the case of 0 size elements
--	 * in the middle of the array of elements.
--	 *
--	 * Need to skip over these 0 size elements.
--	 */
--	while (1) {
--		bytes_this_round = min(copy_context->current_element->size -
--				       copy_context->current_element_offset,
--				       maxsize);
--
--		if (bytes_this_round)
--			break;
- 
--		copy_context->elements_to_go--;
--		copy_context->current_element++;
--		copy_context->current_element_offset = 0;
-+	while (total_bytes_copied < maxsize) {
-+		if (!cc->elements_to_go)
-+			return total_bytes_copied;
- 
--		if (!copy_context->elements_to_go)
--			return 0;
--	}
-+		if (!cc->element->size) {
-+			cc->elements_to_go--;
-+			cc->element++;
-+			cc->element_offset = 0;
-+			continue;
+-			/* close_pending is true once the underlying service
+-			   has been closed until the client library calls the
+-			   CLOSE_DELIVERED ioctl, signalling close_event. */
+-			if (user_service->close_pending &&
+-				down_interruptible(&user_service->close_event))
+-				status = VCHIQ_RETRY;
+-		} else
++		if (!service) {
+ 			ret = -EINVAL;
+-	} break;
++			break;
 +		}
  
--	res = copy_from_user(dest,
--			     copy_context->current_element->data +
--			     copy_context->current_element_offset,
--			     bytes_this_round);
-+		bytes_this_round = min(cc->element->size - cc->element_offset,
-+				       maxsize - total_bytes_copied);
+-	case VCHIQ_IOC_REMOVE_SERVICE: {
+-		VCHIQ_SERVICE_HANDLE_T handle = (VCHIQ_SERVICE_HANDLE_T)arg;
++		user_service = service->base.userdata;
  
--	if (res != 0)
--		return -EFAULT;
-+		if (copy_from_user(dest + total_bytes_copied,
-+				  cc->element->data + cc->element_offset,
-+				  bytes_this_round))
-+			return -EFAULT;
- 
--	copy_context->current_element_offset += bytes_this_round;
--	copy_context->current_offset += bytes_this_round;
-+		cc->element_offset += bytes_this_round;
-+		total_bytes_copied += bytes_this_round;
- 
--	/*
--	 * Check if done with current element, and if so advance to the next.
--	 */
--	if (copy_context->current_element_offset ==
--	    copy_context->current_element->size) {
--		copy_context->elements_to_go--;
--		copy_context->current_element++;
--		copy_context->current_element_offset = 0;
-+		if (cc->element_offset == cc->element->size) {
-+			cc->elements_to_go--;
-+			cc->element++;
-+			cc->element_offset = 0;
+-		service = find_service_for_instance(instance, handle);
+-		if (service != NULL) {
+-			USER_SERVICE_T *user_service =
+-				(USER_SERVICE_T *)service->base.userdata;
+-			/* close_pending is false on first entry, and when the
+-			   wait in vchiq_close_service has been interrupted. */
+-			if (!user_service->close_pending) {
+-				status = vchiq_remove_service(service->handle);
+-				if (status != VCHIQ_SUCCESS)
+-					break;
+-			}
++		/* close_pending is false on first entry, and when the
++		   wait in vchiq_close_service has been interrupted. */
++		if (!user_service->close_pending) {
++			status = (cmd == VCHIQ_IOC_CLOSE_SERVICE) ?
++				 vchiq_close_service(service->handle) :
++				 vchiq_remove_service(service->handle);
++			if (status != VCHIQ_SUCCESS)
++				break;
 +		}
- 	}
  
--	return bytes_this_round;
-+	return maxsize;
- }
+-			/* close_pending is true once the underlying service
+-			   has been closed until the client library calls the
+-			   CLOSE_DELIVERED ioctl, signalling close_event. */
+-			if (user_service->close_pending &&
+-				down_interruptible(&user_service->close_event))
+-				status = VCHIQ_RETRY;
+-		} else
+-			ret = -EINVAL;
+-	} break;
++		/* close_pending is true once the underlying service
++		   has been closed until the client library calls the
++		   CLOSE_DELIVERED ioctl, signalling close_event. */
++		if (user_service->close_pending &&
++			down_interruptible(&user_service->close_event))
++			status = VCHIQ_RETRY;
++		break;
++	}
  
- /**************************************************************************
-@@ -836,10 +810,9 @@ vchiq_ioc_queue_message(VCHIQ_SERVICE_HANDLE_T handle,
- 	unsigned long i;
- 	size_t total_size = 0;
- 
--	context.current_element = elements;
--	context.current_element_offset = 0;
-+	context.element = elements;
-+	context.element_offset = 0;
- 	context.elements_to_go = count;
--	context.current_offset = 0;
- 
- 	for (i = 0; i < count; i++) {
- 		if (!elements[i].data && elements[i].size != 0)
+ 	case VCHIQ_IOC_USE_SERVICE:
+ 	case VCHIQ_IOC_RELEASE_SERVICE:	{
 -- 
 2.19.1
 
