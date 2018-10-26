@@ -2,124 +2,176 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A56EECDE46
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:39:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA924ECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:40:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBE562085B
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:39:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F66E2085B
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:40:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="irAVEsgZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBE562085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="peyKUMG6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F66E2085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727856AbeJ0ERg (ORCPT
+        id S1727874AbeJ0ESu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 00:17:36 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:38407 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726565AbeJ0ERg (ORCPT
+        Sat, 27 Oct 2018 00:18:50 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34684 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725965AbeJ0ESt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 00:17:36 -0400
-Received: by mail-yw1-f65.google.com with SMTP id d126-v6so924861ywa.5
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 12:39:17 -0700 (PDT)
+        Sat, 27 Oct 2018 00:18:49 -0400
+Received: by mail-pf1-f194.google.com with SMTP id f78-v6so1040902pfe.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 12:40:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=mXdfZEjoJu02sLfhwsZo7dmcaw5jh/4mpH+k4B3M32M=;
-        b=irAVEsgZHcyCQ+8spbLqPx4vUt3bc0RxxuUDUah3myPMqRaDZrGoinxkSwpGDR8+c4
-         cVfsLJ9pCMmx4E7nmSAHplDP9+k5xqVGJsiAg0CU1bPTU+Ywmo1l+Iduv6mAtCrQoZlI
-         KPWkOSVcFNkzEllcI0VaoupLSBYGZB2PxpkeQ=
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ZheKteR0sX4Zz6NkyjhvbqLTkdxzWgikFogagzdCKsE=;
+        b=peyKUMG6gvQaaJ6Xp2ic9hZwZnLfRI4t3xjkxYlVADtNhovvZd8xoEKNUjWTXLkC10
+         CvZ13GxBkK3s4xNpH3yfSVkgOwhuWJw159bdPUtik+9w80Ch3RaqVrrSR6ifCFpBoD85
+         8/ThayRgYU41vpM6BVOiYbbZqDvIBFzH2b2fs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=mXdfZEjoJu02sLfhwsZo7dmcaw5jh/4mpH+k4B3M32M=;
-        b=rAwid65GzS5WuouQiv7xshqA5CjjARLOqSP6elL8D6MqHc1P4CbwEChigZDUAha1ZY
-         MI5kklRvShWPUkX49n+tpFEaPG1G5hLGadfhfhdraV2E+DWWbq89MZaBBP/QU7XoPGr6
-         Ag14P6PYB084ou5AKkaneloM4CcipS8L2bGfvqNkwH9WndnDcbTJ/IyvZHUfXPkFA3Mh
-         KZnXUY0/s6rN3XABb5HpUeKHPhtIvig8q5LTuMdqbskkZ+ZFRhlc9AUNoMKan5LDTJ48
-         ItSzOacwyUBHJ3/ZEPctJ8aSKAvieg86AjCwrZcdEhfMkOjXl8M3BlkLLvgwMdRtvJ41
-         sdwQ==
-X-Gm-Message-State: AGRZ1gK0HlcPfpexAQ3RShj2qUaDGMI+k497Tn7xKQ81IhdLZBtXHQgL
-        zVDmSN42hSHG1HxSTnkuPqeYZ4Dc+10KgA==
-X-Google-Smtp-Source: AJdET5dmPXizQHh7nDMQptRfZ6CClXbUoS01eHlXOwV9nqLYVNSdqYSmY9SfEXEHBDwZqBBuiKmHLg==
-X-Received: by 2002:a81:2bc6:: with SMTP id r189-v6mr5015106ywr.118.1540582756544;
-        Fri, 26 Oct 2018 12:39:16 -0700 (PDT)
-Received: from mail-yw1-f48.google.com (mail-yw1-f48.google.com. [209.85.161.48])
-        by smtp.gmail.com with ESMTPSA id v19-v6sm4595585ywv.19.2018.10.26.12.39.14
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 12:39:15 -0700 (PDT)
-Received: by mail-yw1-f48.google.com with SMTP id x185-v6so932894ywa.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 12:39:14 -0700 (PDT)
-X-Received: by 2002:a0d:cd84:: with SMTP id p126-v6mr5059785ywd.288.1540582754351;
- Fri, 26 Oct 2018 12:39:14 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Fri, 26 Oct 2018 12:39:13
- -0700 (PDT)
-In-Reply-To: <20181026180042.52199-5-joel@joelfernandes.org>
-References: <20181026180042.52199-1-joel@joelfernandes.org> <20181026180042.52199-5-joel@joelfernandes.org>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Fri, 26 Oct 2018 20:39:13 +0100
-X-Gmail-Original-Message-ID: <CAGXu5jKtZjZVr=7dAHQPU0OGtBpEKDZBO68-RTvFLbK6qB+cEA@mail.gmail.com>
-Message-ID: <CAGXu5jKtZjZVr=7dAHQPU0OGtBpEKDZBO68-RTvFLbK6qB+cEA@mail.gmail.com>
-Subject: Re: [RFC 5/6] pstore: donot treat empty buffers as valid
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZheKteR0sX4Zz6NkyjhvbqLTkdxzWgikFogagzdCKsE=;
+        b=CnJE2ttzAR2lmNd5Z/ozr1S7e8uQ2C9JfkZkJoCD01bIOuwUy0BqoGbi8O5ZnOE4Jj
+         UkqQUywyywvlKmbBwDSkGCssHM9vg5zAZJlgOIkdvJN1uavjs7u52y0BvAxSlq60fXfu
+         5X34IuniOWRV1OO5SJwhmcZ+EhSEdy0yG7jAHRuTKHFFbNaOmJ0WDMmhVL63G7ejWLEI
+         BPh811BXzw4swZEawPmarkBXF9bOaqdKsasdggEsfq+1Iq6lUJjuioz3U3rYlYKf+cCl
+         r5+qEi2RH2/MTyZbsG1w/3W7+1AnR5XaRDsSAe/k7YzLoLseFbphkXETVhD7UXYUqoKd
+         AYbw==
+X-Gm-Message-State: AGRZ1gIi2dQXo5JlVn/ELCjmcyihdxeMUNUfZqSUGAykvbPWxpluZXX0
+        tU4pCIIbzYcRJwf5wMr46ACfrw==
+X-Google-Smtp-Source: AJdET5c5qH78QJuGxA2e2xbK3HPgkaFVQCSmPcs4OqbEA6/cJ9UjNb3jrXW98iVEghDld9JuOSGUeA==
+X-Received: by 2002:a62:e414:: with SMTP id r20-v6mr5081209pfh.25.1540582830590;
+        Fri, 26 Oct 2018 12:40:30 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id 17-v6sm3103548pfm.36.2018.10.26.12.40.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 26 Oct 2018 12:40:29 -0700 (PDT)
+Date:   Fri, 26 Oct 2018 12:40:28 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Kees Cook <keescook@chromium.org>
 Cc:     LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com,
         Anton Vorontsov <anton@enomsg.org>,
         Colin Cross <ccross@android.com>,
         Tony Luck <tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [RFC 3/6] pstore: remove max argument from ramoops_get_next_prz
+Message-ID: <20181026194028.GB122104@joelaf.mtv.corp.google.com>
+References: <20181026180042.52199-1-joel@joelfernandes.org>
+ <20181026180042.52199-3-joel@joelfernandes.org>
+ <20181026192206.GC187415@joelaf.mtv.corp.google.com>
+ <CAGXu5jL38TrNzTefG=0qD25oue3xh_LR-Ky0xaejFa0HJt24dw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jL38TrNzTefG=0qD25oue3xh_LR-Ky0xaejFa0HJt24dw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 7:00 PM, Joel Fernandes (Google)
-<joel@joelfernandes.org> wrote:
-> pstore currently calls persistent_ram_save_old even if a buffer is
-> empty. While this appears to work, it is simply not the right thing to
-> do and could lead to bugs so lets avoid that. It also prevent misleading
-> prints in the logs which claim the buffer is valid.
+On Fri, Oct 26, 2018 at 08:27:49PM +0100, Kees Cook wrote:
+> On Fri, Oct 26, 2018 at 8:22 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
+> > On Fri, Oct 26, 2018 at 11:00:39AM -0700, Joel Fernandes (Google) wrote:
+> >> From the code flow, the 'max' checks are already being done on the prz
+> >> passed to ramoops_get_next_prz. Lets remove it to simplify this function
+> >> and reduce its arguments.
+> >>
+> >> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> >> ---
+> >>  fs/pstore/ram.c | 14 ++++++--------
+> >>  1 file changed, 6 insertions(+), 8 deletions(-)
+> >>
+> >> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+> >> index cbfdf4b8e89d..3055e05acab1 100644
+> >> --- a/fs/pstore/ram.c
+> >> +++ b/fs/pstore/ram.c
+> >> @@ -124,14 +124,14 @@ static int ramoops_pstore_open(struct pstore_info *psi)
+> >>  }
+> >>
+> >>  static struct persistent_ram_zone *
+> >> -ramoops_get_next_prz(struct persistent_ram_zone *przs[], uint *c, uint max,
+> >> +ramoops_get_next_prz(struct persistent_ram_zone *przs[], uint *c,
+> >>                    u64 *id, enum pstore_type_id *typep, bool update)
+> >>  {
+> >>       struct persistent_ram_zone *prz;
+> >>       int i = (*c)++;
+> >>
+> >>       /* Give up if we never existed or have hit the end. */
+> >> -     if (!przs || i >= max)
+> >> +     if (!przs)
+> >>               return NULL;
+> >>
+> >>       prz = przs[i];
+> >
+> > Ah, looks like I may have introduced an issue here since 'i' isn't checked by
+> > the caller for the single prz case, its only checked for the multiple prz
+> > cases, so something like below could be folded in. I still feel its better
+> > than passing the max argument.
+> >
+> > Another thought is, even better we could have a different function when
+> > there's only one prz and not have to pass an array, just pass the first
+> > element? Something like...
+> >
+> > ramoops_get_next_prz_single(struct persistent_ram_zone *prz, uint *c,
+> >                             enum pstore_type_id *typep, bool update)
+> > And for the _single  case, we also wouldn't need to pass id so that's another
+> > argument less.
+> >
+> > Let me know what you think, otherwise something like the below will need to
+> > be folded in to fix this patch... thanks.
+> >
+> > ----8<---
+> >
+> > diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+> > index 5702b692bdb9..061d2af2485b 100644
+> > --- a/fs/pstore/ram.c
+> > +++ b/fs/pstore/ram.c
+> > @@ -268,17 +268,19 @@ static ssize_t ramoops_pstore_read(struct pstore_record *record)
+> >                 }
+> >         }
+> >
+> > -       if (!prz_ok(prz))
+> > +       if (!prz_ok(prz) && !cxt->console_read_cnt) {
+> >                 prz = ramoops_get_next_prz(&cxt->cprz, &cxt->console_read_cnt,
+> >                                            record, 0);
+> > +       }
+> >
+> > -       if (!prz_ok(prz))
+> > +       if (!prz_ok(prz) && !cxt->pmsg_read_cnt)
+> >                 prz = ramoops_get_next_prz(&cxt->mprz, &cxt->pmsg_read_cnt,
+> >                                            record, 0);
+> >
+> >         /* ftrace is last since it may want to dynamically allocate memory. */
+> >         if (!prz_ok(prz)) {
+> > -               if (!(cxt->flags & RAMOOPS_FLAG_FTRACE_PER_CPU)) {
+> > +               if (!(cxt->flags & RAMOOPS_FLAG_FTRACE_PER_CPU) &&
+> > +                   !cxt->ftrace_read_cnt) {
+> >                         prz = ramoops_get_next_prz(cxt->fprzs,
+> >                                         &cxt->ftrace_read_cnt, record, 0);
+> >                 } else {
+> 
+> Ah yeah, good catch! I think your added fix is right. I was pondering
+> asking you to remove the & on the *_read_cnt and having the caller do
+> the increment:
+> 
+>         while (cxt->dump_read_cnt < cxt->max_dump_cnt && !prz) {
+>                 prz = ramoops_get_next_prz(cxt->dprzs, cxt->dump_read_cnt++,
+>                                            &record->id,
+>                                            &record->type,
+>                                            PSTORE_TYPE_DMESG, 1);
 
-I need to be better convinced that a present zero length record is the
-same as a non-present record. This seems true, but there is
-potentially still metadata available from a backend. What were the
-misleading prints in logs?
+Sure, that's better, I'll do that. That we don't have to pass a pointer, the
+caller knows about the increment, and its a local variable less. thanks!
 
--Kees
+ - Joel
 
->
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> ---
->  fs/pstore/ram_core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/pstore/ram_core.c b/fs/pstore/ram_core.c
-> index 0792595ebcfb..1299aa3ea734 100644
-> --- a/fs/pstore/ram_core.c
-> +++ b/fs/pstore/ram_core.c
-> @@ -495,7 +495,7 @@ static int persistent_ram_post_init(struct persistent_ram_zone *prz, u32 sig,
->
->         sig ^= PERSISTENT_RAM_SIG;
->
-> -       if (prz->buffer->sig == sig) {
-> +       if (prz->buffer->sig == sig && buffer_size(prz)) {
->                 if (buffer_size(prz) > prz->buffer_size ||
->                     buffer_start(prz) > buffer_size(prz))
->                         pr_info("found existing invalid buffer, size %zu, start %zu\n",
-> --
-> 2.19.1.568.g152ad8e336-goog
->
-
-
-
--- 
-Kees Cook
