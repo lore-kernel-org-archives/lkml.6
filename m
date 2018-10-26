@@ -2,107 +2,262 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD44FC6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 05:14:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92BE6ECDE46
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 05:30:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E399207DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 05:14:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NcJIvYQh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E399207DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 63A9E208A3
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 05:30:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63A9E208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727436AbeJZNtn (ORCPT
+        id S1726056AbeJZOGG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 09:49:43 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:39464 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725849AbeJZNtm (ORCPT
+        Fri, 26 Oct 2018 10:06:06 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:54768 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725857AbeJZOGG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 09:49:42 -0400
-Received: by mail-pl1-f194.google.com with SMTP id e67-v6so4918439plb.6
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 22:14:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0PBH0SiDBTS5A/xCIVzOHbzcxzD+kYNUD3TokR7YxPA=;
-        b=NcJIvYQhdNJIAO6MZvPj9r2/cUbrsbW8Rm7RoSXpJuMhu++5LQ/txBjKU4qOKn1H/H
-         ZLhkQb+aFVPPGhwukC35V8RckOXwWbT/PwCBEnN825YKze/yzZ+Ce/GTBSaD1ybyP50k
-         rK3xYQiDUKdPpW+pIMqwjagkCMuZJZCCtNRhI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=0PBH0SiDBTS5A/xCIVzOHbzcxzD+kYNUD3TokR7YxPA=;
-        b=ddu1bCFWEOmWQkWT/uaH3ecGFWDDDACAHDErm04rfbDivfe5HMh37vofyFA9zIhAuS
-         +2VaionQTb6VB51fEat1g0tbaRRURrmpITc4yx1ki3mtpIIDP1Jaubv0BBDSrbj4D83W
-         aEOBqZg/n/uOtO9HBzDa/khdut2DkH6j0zOEJWQT74Wipq7XItnPR2otwCN7SCRySsCl
-         NN6F0zWJQTp6KH9fS0nLAl7387qhS7Scw3enBIxpfg9qx+Ii87vao4Ro5Si5A+SdoIQ3
-         fkYhNKlHQxuxbCg6VWkXip6sQC+btr4j2dT+c4GJp45HheZFLGxNIBcMd2DVNappGMgD
-         IAjQ==
-X-Gm-Message-State: AGRZ1gJl0QZdTVNErgIERXZ94U1jRJUWynCYb74SETyn98wXIAN9JoM/
-        ZIBqLWMReaKLathZYyBfjPEQ8bIzmHo=
-X-Google-Smtp-Source: AJdET5fE83mDgW7QXknmg5fmbtPhZFGm9JbVqLfaydVTvIxpHYgHsR3f/lFBNqGZBZmhZiqt9MGhKw==
-X-Received: by 2002:a17:902:7683:: with SMTP id m3-v6mr2155878pll.180.1540530851576;
-        Thu, 25 Oct 2018 22:14:11 -0700 (PDT)
-Received: from qualcomm-HP-ZBook-14-G2.domain.name ([49.207.61.165])
-        by smtp.gmail.com with ESMTPSA id m16-v6sm3329302pff.173.2018.10.25.22.14.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 25 Oct 2018 22:14:11 -0700 (PDT)
-From:   Firoz Khan <firoz.khan@linaro.org>
-To:     linux-parisc@vger.kernel.org,
-        "James E . J . Bottomley" <jejb@parisc-linux.org>,
-        Helge Deller <deller@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
-        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH v6 5/5] parisc: syscalls: ignore nfsservctl for other architectures
-Date:   Fri, 26 Oct 2018 10:43:11 +0530
-Message-Id: <1540530791-3961-6-git-send-email-firoz.khan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1540530791-3961-1-git-send-email-firoz.khan@linaro.org>
-References: <1540530791-3961-1-git-send-email-firoz.khan@linaro.org>
+        Fri, 26 Oct 2018 10:06:06 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9Q5Tluv095673;
+        Fri, 26 Oct 2018 00:29:47 -0500
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id w9Q5Tl3w082906
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 26 Oct 2018 00:29:47 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 26
+ Oct 2018 00:29:46 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Fri, 26 Oct 2018 00:29:46 -0500
+Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9Q5TckJ027516;
+        Fri, 26 Oct 2018 00:29:39 -0500
+Subject: Re: [PATCH 5/6] pci: layerscape: Add the EP mode support.
+To:     Xiaowei Bao <xiaowei.bao@nxp.com>, <bhelgaas@google.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <shawnguo@kernel.org>, <leoyang.li@nxp.com>,
+        <lorenzo.pieralisi@arm.com>, <arnd@arndb.de>,
+        <gregkh@linuxfoundation.org>, <minghuan.Lian@nxp.com>,
+        <mingkai.hu@nxp.com>, <roy.zang@nxp.com>,
+        <kstewart@linuxfoundation.org>,
+        <cyrille.pitchen@free-electrons.com>, <pombredanne@nexb.com>,
+        <shawn.lin@rock-chips.com>, <niklas.cassel@axis.com>,
+        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linuxppc-dev@lists.ozlabs.org>
+References: <20181025110901.5680-1-xiaowei.bao@nxp.com>
+ <20181025110901.5680-5-xiaowei.bao@nxp.com>
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+Message-ID: <d9d07e05-556b-a56d-bb7f-eaec9fb739b8@ti.com>
+Date:   Fri, 26 Oct 2018 10:59:08 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181025110901.5680-5-xiaowei.bao@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds an exception to the syscall table checking script.
+Hi,
 
-nfsservctl entry is only provided on x86, and there is no
-reason to add it elsewhere. However, including it on the
-syscall table caused a warning for most configurations on
-non-x86.
+On Thursday 25 October 2018 04:39 PM, Xiaowei Bao wrote:
+> Add the PCIe EP mode support for layerscape platform.
+> 
+> Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
+> ---
+>  drivers/pci/controller/dwc/Makefile            |    2 +-
+>  drivers/pci/controller/dwc/pci-layerscape-ep.c |  161 ++++++++++++++++++++++++
+>  2 files changed, 162 insertions(+), 1 deletions(-)
+>  create mode 100644 drivers/pci/controller/dwc/pci-layerscape-ep.c
+> 
+> diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
+> index 5d2ce72..b26d617 100644
+> --- a/drivers/pci/controller/dwc/Makefile
+> +++ b/drivers/pci/controller/dwc/Makefile
+> @@ -8,7 +8,7 @@ obj-$(CONFIG_PCI_EXYNOS) += pci-exynos.o
+>  obj-$(CONFIG_PCI_IMX6) += pci-imx6.o
+>  obj-$(CONFIG_PCIE_SPEAR13XX) += pcie-spear13xx.o
+>  obj-$(CONFIG_PCI_KEYSTONE) += pci-keystone-dw.o pci-keystone.o
+> -obj-$(CONFIG_PCI_LAYERSCAPE) += pci-layerscape.o
+> +obj-$(CONFIG_PCI_LAYERSCAPE) += pci-layerscape.o pci-layerscape-ep.o
+>  obj-$(CONFIG_PCIE_QCOM) += pcie-qcom.o
+>  obj-$(CONFIG_PCIE_ARMADA_8K) += pcie-armada8k.o
+>  obj-$(CONFIG_PCIE_ARTPEC6) += pcie-artpec6.o
+> diff --git a/drivers/pci/controller/dwc/pci-layerscape-ep.c b/drivers/pci/controller/dwc/pci-layerscape-ep.c
+> new file mode 100644
+> index 0000000..3b33bbc
+> --- /dev/null
+> +++ b/drivers/pci/controller/dwc/pci-layerscape-ep.c
+> @@ -0,0 +1,161 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * PCIe controller EP driver for Freescale Layerscape SoCs
+> + *
+> + * Copyright (C) 2018 NXP Semiconductor.
+> + *
+> + * Author: Xiaowei Bao <xiaowei.bao@nxp.com>
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/init.h>
+> +#include <linux/of_pci.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/of_address.h>
+> +#include <linux/pci.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/resource.h>
+> +
+> +#include "pcie-designware.h"
+> +
+> +#define PCIE_DBI2_OFFSET		0x1000	/* DBI2 base address*/
 
-<stdin>:696:2: warning: #warning syscall nfsservctl not implemented [-Wcpp]
+The base address should come from dt.
+> +
+> +struct ls_pcie_ep {
+> +	struct dw_pcie		*pci;
+> +};
+> +
+> +#define to_ls_pcie_ep(x)	dev_get_drvdata((x)->dev)
+> +
+> +static bool ls_pcie_is_bridge(struct ls_pcie_ep *pcie)
+> +{
+> +	struct dw_pcie *pci = pcie->pci;
+> +	u32 header_type;
+> +
+> +	header_type = ioread8(pci->dbi_base + PCI_HEADER_TYPE);
+> +	header_type &= 0x7f;
+> +
+> +	return header_type == PCI_HEADER_TYPE_BRIDGE;
+> +}
+> +
+> +static int ls_pcie_establish_link(struct dw_pcie *pci)
+> +{
+> +	return 0;
+> +}
 
-Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
----
- scripts/checksyscalls.sh | 1 +
- 1 file changed, 1 insertion(+)
+There should be some way by which EP should tell RC that it is not configured
+yet. Are there no bits to control LTSSM state initialization or Configuration
+retry status enabling?
+> +
+> +static const struct dw_pcie_ops ls_pcie_ep_ops = {
+> +	.start_link = ls_pcie_establish_link,
+> +};
+> +
+> +static const struct of_device_id ls_pcie_ep_of_match[] = {
+> +	{ .compatible = "fsl,ls-pcie-ep",},
+> +	{ },
+> +};
+> +
+> +static void ls_pcie_ep_init(struct dw_pcie_ep *ep)
+> +{
+> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+> +	struct pci_epc *epc = ep->epc;
+> +	enum pci_barno bar;
+> +
+> +	for (bar = BAR_0; bar <= BAR_5; bar++)
+> +		dw_pcie_ep_reset_bar(pci, bar);
+> +
+> +	epc->features |= EPC_FEATURE_NO_LINKUP_NOTIFIER;
+> +}
+> +
+> +static int ls_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+> +				  enum pci_epc_irq_type type, u16 interrupt_num)
+> +{
+> +	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+> +
+> +	switch (type) {
+> +	case PCI_EPC_IRQ_LEGACY:
+> +		return dw_pcie_ep_raise_legacy_irq(ep, func_no);
+> +	case PCI_EPC_IRQ_MSI:
+> +		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
+> +	case PCI_EPC_IRQ_MSIX:
+> +		return dw_pcie_ep_raise_msix_irq(ep, func_no, interrupt_num);
+> +	default:
+> +		dev_err(pci->dev, "UNKNOWN IRQ type\n");
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static struct dw_pcie_ep_ops pcie_ep_ops = {
+> +	.ep_init = ls_pcie_ep_init,
+> +	.raise_irq = ls_pcie_ep_raise_irq,
+> +};
+> +
+> +static int __init ls_add_pcie_ep(struct ls_pcie_ep *pcie,
+> +					struct platform_device *pdev)
+> +{
+> +	struct dw_pcie *pci = pcie->pci;
+> +	struct device *dev = pci->dev;
+> +	struct dw_pcie_ep *ep;
+> +	struct resource *res;
+> +	int ret;
+> +
+> +	ep = &pci->ep;
+> +	ep->ops = &pcie_ep_ops;
+> +
+> +	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "addr_space");
+> +	if (!res)
+> +		return -EINVAL;
+> +
+> +	ep->phys_base = res->start;
+> +	ep->addr_size = resource_size(res);
+> +
+> +	ret = dw_pcie_ep_init(ep);
+> +	if (ret) {
+> +		dev_err(dev, "failed to initialize endpoint\n");
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int __init ls_pcie_ep_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct dw_pcie *pci;
+> +	struct ls_pcie_ep *pcie;
+> +	struct resource *dbi_base;
+> +	int ret;
+> +
+> +	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
+> +	if (!pcie)
+> +		return -ENOMEM;
+> +
+> +	pci = devm_kzalloc(dev, sizeof(*pci), GFP_KERNEL);
+> +	if (!pci)
+> +		return -ENOMEM;
+> +
+> +	dbi_base = platform_get_resource_byname(pdev, IORESOURCE_MEM, "regs");
+> +	pci->dbi_base = devm_pci_remap_cfg_resource(dev, dbi_base);
+> +	if (IS_ERR(pci->dbi_base))
+> +		return PTR_ERR(pci->dbi_base);
+> +
+> +	pci->dbi_base2 = pci->dbi_base + PCIE_DBI2_OFFSET;
+> +	pci->dev = dev;
+> +	pci->ops = &ls_pcie_ep_ops;
+> +	pcie->pci = pci;
+> +
+> +	if (ls_pcie_is_bridge(pcie))
+> +		return -ENODEV;
 
-diff --git a/scripts/checksyscalls.sh b/scripts/checksyscalls.sh
-index ee3dfb5..cf93100 100755
---- a/scripts/checksyscalls.sh
-+++ b/scripts/checksyscalls.sh
-@@ -150,6 +150,7 @@ cat << EOF
- #define __IGNORE_uselib
- #define __IGNORE__sysctl
- #define __IGNORE_arch_prctl
-+#define __IGNORE_nfsservctl
- 
- /* ... including the "new" 32-bit uid syscalls */
- #define __IGNORE_lchown32
--- 
-1.9.1
+For an endpoint this condition should never occur. This should only mean, a
+wrong compatible has been used in dt.
 
+Thanks
+Kishon
