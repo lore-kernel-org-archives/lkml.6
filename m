@@ -2,142 +2,121 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78326ECDE46
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 22:07:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA6B3ECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 22:12:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 266182085B
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 22:07:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7467E2085B
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 22:12:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wxddaoza"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 266182085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="GUNZ0oRu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7467E2085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728569AbeJ0Gqg (ORCPT
+        id S1727986AbeJ0GvH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 02:46:36 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34480 "EHLO
+        Sat, 27 Oct 2018 02:51:07 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:47017 "EHLO
         mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726048AbeJ0Gqg (ORCPT
+        with ESMTP id S1726418AbeJ0GvH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 02:46:36 -0400
-Received: by mail-pf1-f196.google.com with SMTP id f78-v6so1190898pfe.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 15:07:51 -0700 (PDT)
+        Sat, 27 Oct 2018 02:51:07 -0400
+Received: by mail-pf1-f196.google.com with SMTP id r64-v6so1168151pfb.13
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 15:12:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PL/iMNOuaAoLj2j7N9O3YEJAutdwZwjrJLQ1IJVm4Dw=;
-        b=Wxddaoza/LhCpSdo87szfmV6TDYkPxlxiK1rxLEKne6FiS+73bE1LUH+1mc+PuRWMn
-         neUleb+V48o8qcN6WWjo3FvoG9dAVdWnm/ImYnuDvEvemGp3UKdgNeVmC/4stLTHhSog
-         T6lYPldl/uw7/zoeyTMvK/HPAW1r+PO4DsmlvWx16y4NkT6JIc8cCTftN7saOFRZ63hL
-         NImY8l0i9XyKTKazq6QR8yRwerYwjV24bXoAW8cAsxCoZs6XEu5XiuW2QSX6d8pHTRte
-         RObZAF8HxgIoY7gmkiz+qx6MM/zp6Rw2wBmytNurx8/lo+wa40Qz6GqeYOfNQldPQlMD
-         6U0A==
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=a4UC4yKFcXdXacrJcB52mxNOCfLa+dsVv9PFieIFAtI=;
+        b=GUNZ0oRuo+hP0p3TJrKS7sW6+O5E3Uh6RpfVHOqs8zAn/u16Z3bnKPdNwbKleoUUWX
+         NgcgI8sGW+SvRkCgVJAoJH4aZKxCyi5lMk8YtCngv+pgvVy98ETiU1yLD9UitGdrjbK5
+         Pww3ZH6dgMlj1NUiwMF52RcGuSkIqKz0ClN8MVmJWezt1mFrINfVE5QfMOWXjbERUicC
+         7HnCIFvyqKb5iD0LhlNqHm6bXxq/gxwc1kmXEj2IdA8Gsb+5EPpIc9W0ycieCz1Ya5QM
+         a0NbvUGzR8HBOVmL+xElUXJCu8FrV2uXc08OWiN0wqzmSb7Ciz2tmstboFBOfamllKH/
+         K+wQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PL/iMNOuaAoLj2j7N9O3YEJAutdwZwjrJLQ1IJVm4Dw=;
-        b=PEDn5tnNr3wds/l+qDwH0mEM0rp+ke3Hpao7DzKcE1IoDI0ORSwr9az6eTDqPp9HI6
-         N3Or9EEB8XICSnWjv8WMZGjThuy8DSH0+azHCdC7CkUVd/q8Z2W7EZWXmjkbqHG1ubhD
-         AEh4dDw3rCRxRflcAgpQWbeEYodh6J9Qvd++CUdlFy+TvapLRjbsmHO3nnzmus+bmhqA
-         WzD5vRi71yYKWTt7qtC2ruoNE7oBIaJFyaLXndrpr/OCO/ndhVEpFtvt6KOVhb09shzk
-         INv8hKb7MCxhaik3EBkxpK44LAIg0jtOqvhfNcuXf29SXiD49Xj5ohuNvyBbb0eMIerv
-         CX3Q==
-X-Gm-Message-State: AGRZ1gLO6ChH1mCjWynVmaDSrN982TVEMC93GuOtrHt/3AOQXU6FbPuQ
-        rh38n6aDd2u9o7H9WjPAyPN/DFxpdXQVMwkJpjqNQg==
-X-Google-Smtp-Source: AJdET5eA4kb9369Ob3AClZWazhdKGWiiAAJ9N9ejhkfWy7uusqi1MQeTerGsD1Ljts8Mz9fmsewMUaExXzMfAiiJic0=
-X-Received: by 2002:a62:4b09:: with SMTP id y9-v6mr5505283pfa.93.1540591670211;
- Fri, 26 Oct 2018 15:07:50 -0700 (PDT)
-MIME-Version: 1.0
-References: <20180930205448.26205-1-natechancellor@gmail.com>
- <10b12992-3570-4646-374b-82cbd7276839@acm.org> <CAKwvOd=wgxB69dMxzMeH2edCn=TdQGPGkNVW1e=QHPTJtO9ZNw@mail.gmail.com>
- <1538503063.193396.6.camel@acm.org> <CAKwvOdmsNEexQL9R8rgcRcXTZButYM6YWwG8bhVWCoJ8bOqCrA@mail.gmail.com>
- <1538521591.193396.8.camel@acm.org> <20181025213144.GB24709@flashbox>
- <CAKwvOdn=TvoGdFvgxX6TyXBXnhVLttriRrZEnzS6DjcjL64DPA@mail.gmail.com>
- <20181025225548.GA10326@flashbox> <CAKwvOdnwmf47_m_0K5OCLmXbrkLNnekpNOPCCMeJqkuqKUbQ-A@mail.gmail.com>
- <1540576908.66186.103.camel@acm.org> <CAKwvOdnYx60JkJHJkD7CYA9yx5Oa7Tn9q4aZ3-tcZGx++yoduQ@mail.gmail.com>
- <1540589437.66186.124.camel@acm.org> <CAKwvOdm-xYRqCBXhLC1ceC44_rEmggW4qiSgGpRkpL+p-NadVg@mail.gmail.com>
- <1540591147.66186.127.camel@acm.org>
-In-Reply-To: <1540591147.66186.127.camel@acm.org>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Fri, 26 Oct 2018 15:07:39 -0700
-Message-ID: <CAKwvOdmUhtK10cbYFoEJJp4O8LA_F-+f68A_NcL_fm_FH6QodA@mail.gmail.com>
-Subject: Re: [PATCH] libosd: Remove ignored __weak attribute
-To:     bvanassche@acm.org, Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     ooo@electrozaur.com, Nathan Chancellor <natechancellor@gmail.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        hch@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=a4UC4yKFcXdXacrJcB52mxNOCfLa+dsVv9PFieIFAtI=;
+        b=IPZ6jvgMPlIfWe+ukhEbHGpkEMs4qf4rkB34dbxe2ANZYlupAmStoGJ6fZrUridaH1
+         wqIpLPal5cUyvQskGHIbw/745kZtghT09NYE5qoBG5Twsd6e40n+qgTewl2qrnBOKIpF
+         RzEBVvbAK2a1OtHdz0jaeeCL1Q1QtjUWzt9+zh2Cp/cpDCbYWExdjLj8f8HIsMSPRKyC
+         stldIUKsIpK+3nuL/98WxdRaEa4obOhUpQfZaEFmZThNYjkpSiBRRek7XwT6JsBotQUF
+         c7h9Nougvb6xAVQfZEbzodcX4sMf3MSj7weHnY4zF+wHOOry7gV0XUG6xmdW93DVgqdT
+         alNA==
+X-Gm-Message-State: AGRZ1gKXVuRw9EFbMH0nmEIBCEk3Fr2Nu2yfyBNHuL0KT6GzBU1xO4Rh
+        Y41IHWePHhAtpre4B1rqbTg2Qw==
+X-Google-Smtp-Source: AJdET5dyIH0Xd4GhcMhcu6t3VWZebG0JorOQtL0PhRGSf+Hf7ptZksqgYar73pZWPZWoDgQUSuHKTQ==
+X-Received: by 2002:a63:3287:: with SMTP id y129mr5173696pgy.337.1540591940720;
+        Fri, 26 Oct 2018 15:12:20 -0700 (PDT)
+Received: from ?IPv6:2601:646:c200:7429:2c01:d6c7:c113:66a2? ([2601:646:c200:7429:2c01:d6c7:c113:66a2])
+        by smtp.gmail.com with ESMTPSA id t11-v6sm15402577pgn.38.2018.10.26.15.12.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 26 Oct 2018 15:12:19 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH 1/2] x86/pkeys: copy pkey state at fork()
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16A404)
+In-Reply-To: <CA+DvKQLpizz2LJppOts1fB6ujQNqj0fii8mo-UfosoYpQWRb5g@mail.gmail.com>
+Date:   Fri, 26 Oct 2018 15:12:17 -0700
+Cc:     Dave Hansen <dave.hansen@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Will Deacon <will.deacon@arm.com>,
+        Andy Lutomirski <luto@kernel.org>, jroedel@suse.de
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <FA6429E0-C480-47AA-AAF0-95E615D8265B@amacapital.net>
+References: <20181026195146.9C7C1136@viggo.jf.intel.com> <0e5fd8bc-0b18-ea88-ed95-ec81a44d0783@intel.com> <CA+DvKQLpizz2LJppOts1fB6ujQNqj0fii8mo-UfosoYpQWRb5g@mail.gmail.com>
+To:     Daniel Micay <danielmicay@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 2:59 PM Bart Van Assche <bvanassche@acm.org> wrote:
->
-> On Fri, 2018-10-26 at 14:36 -0700, Nick Desaulniers wrote:
-> > On Fri, Oct 26, 2018 at 2:30 PM Bart Van Assche <bvanassche@acm.org> wrote:
-> > >
-> > > On Fri, 2018-10-26 at 14:00 -0700, Nick Desaulniers wrote:
-> > > > On Fri, Oct 26, 2018 at 11:01 AM Bart Van Assche <bvanassche@acm.org> wrote:
-> > > > >
-> > > > > On Fri, 2018-10-26 at 10:54 -0700, Nick Desaulniers wrote:
-> > > > > > If creating one instance of this variable is a functional change, I
-> > > > > > can't help but suspect the original code was wrong.  But maybe Bart,
-> > > > > > Boaz, or Christoph can clarify or have more thoughts on this?  Looks
-> > > > > > like Boaz added this header in commit de258bf5e638 ("[SCSI] libosd:
-> > > > > > OSDv1 Headers").
-> > > > >
-> > > > > Hi Nick and Nathan,
-> > > > >
-> > > > > Had you noticed the following e-mail from early October:
-> > > > > https://marc.info/?l=linux-kernel&m=153849955503249?
-> > > >
-> > > > From this subthread with Linus, removal of the exofs fs and scsi osd
-> > > > code would be a user visible change and is not an option. See:
-> > > > https://lkml.org/lkml/2018/10/27/3
-> > > > https://lkml.org/lkml/2018/10/27/44
-> > >
-> > > Hi Nick,
-> > >
-> > > Linus wrote that removing a filesystem is considered a userspace breakage
-> > > if a user notices. The key part is "if a user notices". Who are the exofs
-> > > users?
-> >
-> > See my thoughts on this in https://lkml.org/lkml/2018/10/27/27.
-> > Particularly the part about the IMO catch 22.
-> >
-> > Neither you nor I can claim "there are none."
->
-> That's not completely correct. The standard approach to check whether or not
-> a driver is still being used is to check its git history. If the number of
-> contributors is low and it was several years ago that a new feature was added
-> or a bug has been fixed it is likely that nobody is using that driver anymore.
->
-> Bart.
->
 
-Bart,
-I don't disagree with you, I just don't see how what you state can be
-reconciled with Linus' response in
-https://lkml.org/lkml/2018/10/27/44.  Those two viewpoints seem
-incompatible to me, but maybe there's a nuance I'm missing?
 
-Nathan and I are just pointing out a small fix to eliminate a small
-warning, deleting all this code does kind of feels like "throwing out
-the baby with the bath water." A nuclear option for what would be a
-small change otherwise.  Maybe it's good to discuss the EOL for
-exofs/osd, but can we please decouple that conversation from the small
-change Nathan and I are proposing?
--- 
-Thanks,
-~Nick Desaulniers
+> On Oct 26, 2018, at 2:39 PM, Daniel Micay <danielmicay@gmail.com> wrote:
+>=20
+> I ended up working around this with a pthread_atfork handler disabling
+> my usage of the feature in the child process for the time being. I
+> don't have an easy way to detect if the bug is present within a
+> library so
+
+Can you not just make sure that the fix is backported to all relevant kernel=
+s?
+
+I suppose we could add a new flag for pkey_get() or something.
+
+> I'm going to need a kernel version check with a table of
+> kernel releases fixing the problem for each stable branch.
+
+That won=E2=80=99t work right on district kernels. Please don=E2=80=99t go t=
+here.
+
+>=20
+> It would be helpful if there was a new cpuinfo flag to check if the
+> MPK state is preserved on fork in addition to the existing ospke flag.
+> The problem will fade away over time but in my experience there are a
+> lot of people using distributions with kernels not incorporating all
+> of the stable fixes. I expect other people will run into the problem
+> once hardware with MPK is more widely available and other people try
+> to use it for various things like moving GC or assorted security
+> features. Someone will end up running software adopting it on an older
+> kernel with the problem.
+>=20
+> The clobbering issue I found with MAP_FIXED_NOREPLACE isn't quite
+> as annoying because it was easy to make a runtime test usable in a library=
+
+> to see if the feature works properly.
