@@ -2,35 +2,36 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C7DECDE47
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 09:56:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CED93C6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 09:56:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D46A2082E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 09:56:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D46A2082E
+	by mail.kernel.org (Postfix) with ESMTP id 9F5AB2082E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 09:56:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F5AB2082E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727450AbeJZSdR (ORCPT
+        id S1727514AbeJZSdT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 14:33:17 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:53202 "EHLO inva020.nxp.com"
+        Fri, 26 Oct 2018 14:33:19 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:35620 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726149AbeJZSdQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 14:33:16 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3BA821A0168;
-        Fri, 26 Oct 2018 11:56:49 +0200 (CEST)
+        id S1726149AbeJZSdS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 14:33:18 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E7C922001E3;
+        Fri, 26 Oct 2018 11:56:51 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4DAAE1A0097;
-        Fri, 26 Oct 2018 11:56:42 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 42FCC200059;
+        Fri, 26 Oct 2018 11:56:45 +0200 (CEST)
 Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 61AEF402D8;
-        Fri, 26 Oct 2018 17:56:34 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 4D2C8402EE;
+        Fri, 26 Oct 2018 17:56:37 +0800 (SGT)
 From:   Peng Ma <peng.ma@nxp.com>
 To:     vkoul@kernel.org
 Cc:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
@@ -39,9 +40,9 @@ Cc:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linuxppc-dev@lists.ozlabs.org, Peng Ma <peng.ma@nxp.com>,
         Wen He <wen.he_1@nxp.com>
-Subject: [PATCH 2/7] dmaengine: fsldma: Adding macro FSL_DMA_IN/OUT implement for ARM platform
-Date:   Fri, 26 Oct 2018 17:52:35 +0800
-Message-Id: <20181026095240.33668-2-peng.ma@nxp.com>
+Subject: [PATCH 4/7] arm: dts: ls1021a: add qdma device tree nodes
+Date:   Fri, 26 Oct 2018 17:52:37 +0800
+Message-Id: <20181026095240.33668-4-peng.ma@nxp.com>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20181026095240.33668-1-peng.ma@nxp.com>
 References: <20181026095240.33668-1-peng.ma@nxp.com>
@@ -51,103 +52,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch add the macro FSL_DMA_IN/OUT implement for ARM platform.
+add the qDMA device tree nodes for LS1021A devices.
 
 Signed-off-by: Wen He <wen.he_1@nxp.com>
 Signed-off-by: Peng Ma <peng.ma@nxp.com>
 ---
 change in v10:
-	- fixed compile warning on powerpc
+	- no
 
- drivers/dma/fsldma.h |   61 ++++++++++++++++++++++++++++++++++---------------
- 1 files changed, 42 insertions(+), 19 deletions(-)
+ arch/arm/boot/dts/ls1021a.dtsi |   20 ++++++++++++++++++++
+ 1 files changed, 20 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/dma/fsldma.h b/drivers/dma/fsldma.h
-index 982845b..88db939 100644
---- a/drivers/dma/fsldma.h
-+++ b/drivers/dma/fsldma.h
-@@ -196,39 +196,62 @@ struct fsldma_chan {
- #define to_fsl_desc(lh) container_of(lh, struct fsl_desc_sw, node)
- #define tx_to_fsl_desc(tx) container_of(tx, struct fsl_desc_sw, async_tx)
- 
-+#ifdef	CONFIG_PPC
-+#define fsl_ioread32(p)		in_le32(p)
-+#define fsl_ioread32be(p)	in_be32(p)
-+#define fsl_iowrite32(v, p)	out_le32(p, v)
-+#define fsl_iowrite32be(v, p)	out_be32(p, v)
+diff --git a/arch/arm/boot/dts/ls1021a.dtsi b/arch/arm/boot/dts/ls1021a.dtsi
+index f184905..c0ed6be 100644
+--- a/arch/arm/boot/dts/ls1021a.dtsi
++++ b/arch/arm/boot/dts/ls1021a.dtsi
+@@ -806,5 +806,25 @@
+ 			#size-cells = <1>;
+ 			ranges = <0x0 0x0 0x10010000 0x10000>;
+ 		};
 +
- #ifndef __powerpc64__
--static u64 in_be64(const u64 __iomem *addr)
-+static u64 fsl_ioread64(const u64 __iomem *addr)
- {
--	return ((u64)in_be32((u32 __iomem *)addr) << 32) |
--		(in_be32((u32 __iomem *)addr + 1));
-+	u32 fsl_addr = lower_32_bits(addr);
-+	u64 fsl_addr_hi = (u64)in_le32((u32 *)(fsl_addr + 1)) << 32;
++		qdma: dma-controller@8390000 {
++			compatible = "fsl,ls1021a-qdma";
++			reg = <0x0 0x8388000 0x0 0x1000>, /* Controller regs */
++			      <0x0 0x8389000 0x0 0x1000>, /* Status regs */
++			      <0x0 0x838a000 0x0 0x2000>; /* Block regs */
++			interrupts = <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "qdma-error",
++				"qdma-queue0", "qdma-queue1";
++			dma-channels = <8>;
++			block-number = <1>;
++			block-offset = <0x1000>;
++			fsl,dma-queues = <2>;
++			status-sizes = <64>;
++			queue-sizes = <64 64>;
++			big-endian;
++		};
 +
-+	return fsl_addr_hi | in_le32((u32 *)fsl_addr);
- }
- 
--static void out_be64(u64 __iomem *addr, u64 val)
-+static void fsl_iowrite64(u64 val, u64 __iomem *addr)
- {
--	out_be32((u32 __iomem *)addr, val >> 32);
--	out_be32((u32 __iomem *)addr + 1, (u32)val);
-+	out_le32((u32 __iomem *)addr + 1, val >> 32);
-+	out_le32((u32 __iomem *)addr, (u32)val);
- }
- 
--/* There is no asm instructions for 64 bits reverse loads and stores */
--static u64 in_le64(const u64 __iomem *addr)
-+static u64 fsl_ioread64be(const u64 __iomem *addr)
- {
--	return ((u64)in_le32((u32 __iomem *)addr + 1) << 32) |
--		(in_le32((u32 __iomem *)addr));
-+	u32 fsl_addr = lower_32_bits(addr);
-+	u64 fsl_addr_hi = (u64)in_be32((u32 *)fsl_addr) << 32;
-+
-+	return fsl_addr_hi | in_be32((u32 *)(fsl_addr + 1));
- }
- 
--static void out_le64(u64 __iomem *addr, u64 val)
-+static void fsl_iowrite64be(u64 val, u64 __iomem *addr)
- {
--	out_le32((u32 __iomem *)addr + 1, val >> 32);
--	out_le32((u32 __iomem *)addr, (u32)val);
-+	out_be32((u32 __iomem *)addr, val >> 32);
-+	out_be32((u32 __iomem *)addr + 1, (u32)val);
- }
- #endif
-+#endif
- 
--#define FSL_DMA_IN(fsl_chan, addr, width)				\
--		(((fsl_chan)->feature & FSL_DMA_BIG_ENDIAN) ?		\
--			in_be##width(addr) : in_le##width(addr))
--#define FSL_DMA_OUT(fsl_chan, addr, val, width)			\
--		(((fsl_chan)->feature & FSL_DMA_BIG_ENDIAN) ?		\
--			out_be##width(addr, val) : out_le##width(addr, val))
-+#if defined(CONFIG_ARM64) || defined(CONFIG_ARM)
-+#define fsl_ioread32(p)		ioread32(p)
-+#define fsl_ioread32be(p)	ioread32be(p)
-+#define fsl_iowrite32(v, p)	iowrite32(v, p)
-+#define fsl_iowrite32be(v, p)	iowrite32be(v, p)
-+#define fsl_ioread64(p)		ioread64(p)
-+#define fsl_ioread64be(p)	ioread64be(p)
-+#define fsl_iowrite64(v, p)	iowrite64(v, p)
-+#define fsl_iowrite64be(v, p)	iowrite64be(v, p)
-+#endif
-+
-+#define FSL_DMA_IN(fsl_dma, addr, width)			\
-+		(((fsl_dma)->feature & FSL_DMA_BIG_ENDIAN) ?	\
-+			fsl_ioread##width##be(addr) : fsl_ioread##width(addr))
-+
-+#define FSL_DMA_OUT(fsl_dma, addr, val, width)			\
-+		(((fsl_dma)->feature & FSL_DMA_BIG_ENDIAN) ?	\
-+			fsl_iowrite##width##be(val, addr) : fsl_iowrite	\
-+		##width(val, addr))
- 
- #define DMA_TO_CPU(fsl_chan, d, width)					\
- 		(((fsl_chan)->feature & FSL_DMA_BIG_ENDIAN) ?		\
+ 	};
+ };
 -- 
 1.7.1
 
