@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30865C6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:43:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E806BC6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:44:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE14720665
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:43:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE14720665
+	by mail.kernel.org (Postfix) with ESMTP id 6F1DB20665
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:44:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F1DB20665
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbeJZQT1 (ORCPT
+        id S1726180AbeJZQUe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 12:19:27 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:57881 "EHLO
+        Fri, 26 Oct 2018 12:20:34 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:46647 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbeJZQT0 (ORCPT
+        with ESMTP id S1725907AbeJZQUe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 12:19:26 -0400
+        Fri, 26 Oct 2018 12:20:34 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9Q7hLXm139423
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9Q7iSOJ140991
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 26 Oct 2018 00:43:21 -0700
+        Fri, 26 Oct 2018 00:44:28 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9Q7hK84139420;
-        Fri, 26 Oct 2018 00:43:20 -0700
-Date:   Fri, 26 Oct 2018 00:43:20 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9Q7iRvU140988;
+        Fri, 26 Oct 2018 00:44:27 -0700
+Date:   Fri, 26 Oct 2018 00:44:27 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-ebd70c7dc2f5f57315e19d959ddc9cb05e9d48e1@git.kernel.org>
-Cc:     ak@linux.intel.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
-        acme@redhat.com, tglx@linutronix.de, mingo@kernel.org,
-        jolsa@redhat.com, adrian.hunter@intel.com
-Reply-To: linux-kernel@vger.kernel.org, ak@linux.intel.com, hpa@zytor.com,
-          adrian.hunter@intel.com, jolsa@redhat.com, tglx@linutronix.de,
-          acme@redhat.com, mingo@kernel.org
-In-Reply-To: <20181001062853.28285-15-adrian.hunter@intel.com>
-References: <20181001062853.28285-15-adrian.hunter@intel.com>
+Message-ID: <tip-8392b74b575c38fa5d50d1fe07fa9a4bcea93862@git.kernel.org>
+Cc:     acme@redhat.com, adrian.hunter@intel.com, jolsa@redhat.com,
+        ak@linux.intel.com, mingo@kernel.org, hpa@zytor.com,
+        tglx@linutronix.de, linux-kernel@vger.kernel.org
+Reply-To: acme@redhat.com, adrian.hunter@intel.com, jolsa@redhat.com,
+          ak@linux.intel.com, hpa@zytor.com, mingo@kernel.org,
+          tglx@linutronix.de, linux-kernel@vger.kernel.org
+In-Reply-To: <20181001062853.28285-17-adrian.hunter@intel.com>
+References: <20181001062853.28285-17-adrian.hunter@intel.com>
 To:     linux-tip-commits@vger.kernel.org
 Subject: [tip:perf/urgent] perf scripts python: exported-sql-viewer.py: Add
- ability to find symbols in the call-graph
-Git-Commit-ID: ebd70c7dc2f5f57315e19d959ddc9cb05e9d48e1
+ ability to display all the database tables
+Git-Commit-ID: 8392b74b575c38fa5d50d1fe07fa9a4bcea93862
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,122 +59,435 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  ebd70c7dc2f5f57315e19d959ddc9cb05e9d48e1
-Gitweb:     https://git.kernel.org/tip/ebd70c7dc2f5f57315e19d959ddc9cb05e9d48e1
+Commit-ID:  8392b74b575c38fa5d50d1fe07fa9a4bcea93862
+Gitweb:     https://git.kernel.org/tip/8392b74b575c38fa5d50d1fe07fa9a4bcea93862
 Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Mon, 1 Oct 2018 09:28:48 +0300
+AuthorDate: Mon, 1 Oct 2018 09:28:50 +0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 23 Oct 2018 14:30:33 -0300
+CommitDate: Tue, 23 Oct 2018 14:39:18 -0300
 
-perf scripts python: exported-sql-viewer.py: Add ability to find symbols in the call-graph
+perf scripts python: exported-sql-viewer.py: Add ability to display all the database tables
 
-Add a Find bar that appears at the bottom of the call-graph window.
+Displaying all the database tables can help make the database easier to
+understand.
 
 Committer testing:
 
-Using:
+Opened all the tables, even the sqlite master table, which I selected
+everything and used control+C, lets see if it works...
 
-  python tools/perf/scripts/python/exported-sql-viewer.py pt_example branches calls
+  CREATE VIEW threads_view AS SELECT id,machine_id,(SELECT host_or_guest FROM machines_view WHERE id = machine_id) AS host_or_guest,process_id,pid,tid FROM threads
 
-Using the database built in the first "Committer Testing" section in
-this patch series I was able to:
+Humm, nope, just one of the cells got copied, even with everything selected :-)
 
-  "Reports"
-      "Context-Sensitive Call Graphs"
-           Control+F or select "Edit" in the top menu then "Find"
-                __poll<ENTER>
-
-and find the first place where the "__poll" function appears, then
-press the down arrow in the lower right corner and go to the next, etc.
+Anyway, works as advertised, useful for perusing the data.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/20181001062853.28285-15-adrian.hunter@intel.com
+Link: http://lkml.kernel.org/r/20181001062853.28285-17-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/scripts/python/exported-sql-viewer.py | 306 ++++++++++++++++++++++-
- 1 file changed, 305 insertions(+), 1 deletion(-)
+ tools/perf/scripts/python/exported-sql-viewer.py | 694 +++++++++++++++++++++++
+ 1 file changed, 694 insertions(+)
 
 diff --git a/tools/perf/scripts/python/exported-sql-viewer.py b/tools/perf/scripts/python/exported-sql-viewer.py
-index c2f44351821e..0386a600ffc7 100755
+index 310ba7147583..ef822d850109 100755
 --- a/tools/perf/scripts/python/exported-sql-viewer.py
 +++ b/tools/perf/scripts/python/exported-sql-viewer.py
-@@ -49,6 +49,7 @@
- import sys
+@@ -50,10 +50,15 @@ import sys
  import weakref
  import threading
-+import string
+ import string
++import cPickle
++import re
++import os
  from PySide.QtCore import *
  from PySide.QtGui import *
  from PySide.QtSql import *
-@@ -76,6 +77,27 @@ def QueryExec(query, stmt):
- 	if not ret:
- 		raise Exception("Query failed: " + query.lastError().text())
+ from decimal import *
++from ctypes import *
++from multiprocessing import Process, Array, Value, Event
  
-+# Background thread
+ # Data formatting helpers
+ 
+@@ -146,6 +151,68 @@ class TreeModel(QAbstractItemModel):
+ 	def DisplayData(self, item, index):
+ 		return item.getData(index.column())
+ 
++	def FetchIfNeeded(self, row):
++		if row > self.last_row_read:
++			self.last_row_read = row
++			if row + 10 >= self.root.child_count:
++				self.fetcher.Fetch(glb_chunk_sz)
 +
-+class Thread(QThread):
++	def columnAlignment(self, column):
++		return Qt.AlignLeft
++
++	def columnFont(self, column):
++		return None
++
++	def data(self, index, role):
++		if role == Qt.TextAlignmentRole:
++			return self.columnAlignment(index.column())
++		if role == Qt.FontRole:
++			return self.columnFont(index.column())
++		if role != Qt.DisplayRole:
++			return None
++		item = index.internalPointer()
++		return self.DisplayData(item, index)
++
++# Table data model
++
++class TableModel(QAbstractTableModel):
++
++	def __init__(self, parent=None):
++		super(TableModel, self).__init__(parent)
++		self.child_count = 0
++		self.child_items = []
++		self.last_row_read = 0
++
++	def Item(self, parent):
++		if parent.isValid():
++			return parent.internalPointer()
++		else:
++			return self
++
++	def rowCount(self, parent):
++		return self.child_count
++
++	def headerData(self, section, orientation, role):
++		if role == Qt.TextAlignmentRole:
++			return self.columnAlignment(section)
++		if role != Qt.DisplayRole:
++			return None
++		if orientation != Qt.Horizontal:
++			return None
++		return self.columnHeader(section)
++
++	def index(self, row, column, parent):
++		return self.createIndex(row, column, self.child_items[row])
++
++	def DisplayData(self, item, index):
++		return item.getData(index.column())
++
++	def FetchIfNeeded(self, row):
++		if row > self.last_row_read:
++			self.last_row_read = row
++			if row + 10 >= self.child_count:
++				self.fetcher.Fetch(glb_chunk_sz)
++
+ 	def columnAlignment(self, column):
+ 		return Qt.AlignLeft
+ 
+@@ -620,6 +687,601 @@ class CallGraphWindow(QMdiSubWindow):
+ 		if not found:
+ 			self.find_bar.NotFound()
+ 
++# Child data item  finder
++
++class ChildDataItemFinder():
++
++	def __init__(self, root):
++		self.root = root
++		self.value, self.direction, self.pattern, self.last_value, self.last_pattern = (None,) * 5
++		self.rows = []
++		self.pos = 0
++
++	def FindSelect(self):
++		self.rows = []
++		if self.pattern:
++			pattern = re.compile(self.value)
++			for child in self.root.child_items:
++				for column_data in child.data:
++					if re.search(pattern, str(column_data)) is not None:
++						self.rows.append(child.row)
++						break
++		else:
++			for child in self.root.child_items:
++				for column_data in child.data:
++					if self.value in str(column_data):
++						self.rows.append(child.row)
++						break
++
++	def FindValue(self):
++		self.pos = 0
++		if self.last_value != self.value or self.pattern != self.last_pattern:
++			self.FindSelect()
++		if not len(self.rows):
++			return -1
++		return self.rows[self.pos]
++
++	def FindThread(self):
++		if self.direction == 0 or self.value != self.last_value or self.pattern != self.last_pattern:
++			row = self.FindValue()
++		elif len(self.rows):
++			if self.direction > 0:
++				self.pos += 1
++				if self.pos >= len(self.rows):
++					self.pos = 0
++			else:
++				self.pos -= 1
++				if self.pos < 0:
++					self.pos = len(self.rows) - 1
++			row = self.rows[self.pos]
++		else:
++			row = -1
++		return (True, row)
++
++	def Find(self, value, direction, pattern, context, callback):
++		self.value, self.direction, self.pattern, self.last_value, self.last_pattern = (value, direction,pattern, self.value, self.pattern)
++		# Use a thread so the UI is not blocked
++		thread = Thread(self.FindThread)
++		thread.done.connect(lambda row, t=thread, c=callback: self.FindDone(t, c, row), Qt.QueuedConnection)
++		thread.start()
++
++	def FindDone(self, thread, callback, row):
++		callback(row)
++
++# Number of database records to fetch in one go
++
++glb_chunk_sz = 10000
++
++# size of pickled integer big enough for record size
++
++glb_nsz = 8
++
++# Background process for SQL data fetcher
++
++class SQLFetcherProcess():
++
++	def __init__(self, dbref, sql, buffer, head, tail, fetch_count, fetching_done, process_target, wait_event, fetched_event, prep):
++		# Need a unique connection name
++		conn_name = "SQLFetcher" + str(os.getpid())
++		self.db, dbname = dbref.Open(conn_name)
++		self.sql = sql
++		self.buffer = buffer
++		self.head = head
++		self.tail = tail
++		self.fetch_count = fetch_count
++		self.fetching_done = fetching_done
++		self.process_target = process_target
++		self.wait_event = wait_event
++		self.fetched_event = fetched_event
++		self.prep = prep
++		self.query = QSqlQuery(self.db)
++		self.query_limit = 0 if "$$last_id$$" in sql else 2
++		self.last_id = -1
++		self.fetched = 0
++		self.more = True
++		self.local_head = self.head.value
++		self.local_tail = self.tail.value
++
++	def Select(self):
++		if self.query_limit:
++			if self.query_limit == 1:
++				return
++			self.query_limit -= 1
++		stmt = self.sql.replace("$$last_id$$", str(self.last_id))
++		QueryExec(self.query, stmt)
++
++	def Next(self):
++		if not self.query.next():
++			self.Select()
++			if not self.query.next():
++				return None
++		self.last_id = self.query.value(0)
++		return self.prep(self.query)
++
++	def WaitForTarget(self):
++		while True:
++			self.wait_event.clear()
++			target = self.process_target.value
++			if target > self.fetched or target < 0:
++				break
++			self.wait_event.wait()
++		return target
++
++	def HasSpace(self, sz):
++		if self.local_tail <= self.local_head:
++			space = len(self.buffer) - self.local_head
++			if space > sz:
++				return True
++			if space >= glb_nsz:
++				# Use 0 (or space < glb_nsz) to mean there is no more at the top of the buffer
++				nd = cPickle.dumps(0, cPickle.HIGHEST_PROTOCOL)
++				self.buffer[self.local_head : self.local_head + len(nd)] = nd
++			self.local_head = 0
++		if self.local_tail - self.local_head > sz:
++			return True
++		return False
++
++	def WaitForSpace(self, sz):
++		if self.HasSpace(sz):
++			return
++		while True:
++			self.wait_event.clear()
++			self.local_tail = self.tail.value
++			if self.HasSpace(sz):
++				return
++			self.wait_event.wait()
++
++	def AddToBuffer(self, obj):
++		d = cPickle.dumps(obj, cPickle.HIGHEST_PROTOCOL)
++		n = len(d)
++		nd = cPickle.dumps(n, cPickle.HIGHEST_PROTOCOL)
++		sz = n + glb_nsz
++		self.WaitForSpace(sz)
++		pos = self.local_head
++		self.buffer[pos : pos + len(nd)] = nd
++		self.buffer[pos + glb_nsz : pos + sz] = d
++		self.local_head += sz
++
++	def FetchBatch(self, batch_size):
++		fetched = 0
++		while batch_size > fetched:
++			obj = self.Next()
++			if obj is None:
++				self.more = False
++				break
++			self.AddToBuffer(obj)
++			fetched += 1
++		if fetched:
++			self.fetched += fetched
++			with self.fetch_count.get_lock():
++				self.fetch_count.value += fetched
++			self.head.value = self.local_head
++			self.fetched_event.set()
++
++	def Run(self):
++		while self.more:
++			target = self.WaitForTarget()
++			if target < 0:
++				break
++			batch_size = min(glb_chunk_sz, target - self.fetched)
++			self.FetchBatch(batch_size)
++		self.fetching_done.value = True
++		self.fetched_event.set()
++
++def SQLFetcherFn(*x):
++	process = SQLFetcherProcess(*x)
++	process.Run()
++
++# SQL data fetcher
++
++class SQLFetcher(QObject):
 +
 +	done = Signal(object)
 +
-+	def __init__(self, task, param=None, parent=None):
-+		super(Thread, self).__init__(parent)
-+		self.task = task
-+		self.param = param
++	def __init__(self, glb, sql, prep, process_data, parent=None):
++		super(SQLFetcher, self).__init__(parent)
++		self.process_data = process_data
++		self.more = True
++		self.target = 0
++		self.last_target = 0
++		self.fetched = 0
++		self.buffer_size = 16 * 1024 * 1024
++		self.buffer = Array(c_char, self.buffer_size, lock=False)
++		self.head = Value(c_longlong)
++		self.tail = Value(c_longlong)
++		self.local_tail = 0
++		self.fetch_count = Value(c_longlong)
++		self.fetching_done = Value(c_bool)
++		self.last_count = 0
++		self.process_target = Value(c_longlong)
++		self.wait_event = Event()
++		self.fetched_event = Event()
++		glb.AddInstanceToShutdownOnExit(self)
++		self.process = Process(target=SQLFetcherFn, args=(glb.dbref, sql, self.buffer, self.head, self.tail, self.fetch_count, self.fetching_done, self.process_target, self.wait_event, self.fetched_event, prep))
++		self.process.start()
++		self.thread = Thread(self.Thread)
++		self.thread.done.connect(self.ProcessData, Qt.QueuedConnection)
++		self.thread.start()
 +
-+	def run(self):
++	def Shutdown(self):
++		# Tell the thread and process to exit
++		self.process_target.value = -1
++		self.wait_event.set()
++		self.more = False
++		self.fetching_done.value = True
++		self.fetched_event.set()
++
++	def Thread(self):
++		if not self.more:
++			return True, 0
 +		while True:
-+			if self.param is None:
-+				done, result = self.task()
-+			else:
-+				done, result = self.task(self.param)
-+			self.done.emit(result)
-+			if done:
++			self.fetched_event.clear()
++			fetch_count = self.fetch_count.value
++			if fetch_count != self.last_count:
 +				break
++			if self.fetching_done.value:
++				self.more = False
++				return True, 0
++			self.fetched_event.wait()
++		count = fetch_count - self.last_count
++		self.last_count = fetch_count
++		self.fetched += count
++		return False, count
 +
- # Tree data model
- 
- class TreeModel(QAbstractItemModel):
-@@ -157,6 +179,125 @@ def LookupCreateModel(model_name, create_fn):
- 	model_cache_lock.release()
- 	return model
- 
-+# Find bar
++	def Fetch(self, nr):
++		if not self.more:
++			# -1 inidcates there are no more
++			return -1
++		result = self.fetched
++		extra = result + nr - self.target
++		if extra > 0:
++			self.target += extra
++			# process_target < 0 indicates shutting down
++			if self.process_target.value >= 0:
++				self.process_target.value = self.target
++			self.wait_event.set()
++		return result
 +
-+class FindBar():
++	def RemoveFromBuffer(self):
++		pos = self.local_tail
++		if len(self.buffer) - pos < glb_nsz:
++			pos = 0
++		n = cPickle.loads(self.buffer[pos : pos + glb_nsz])
++		if n == 0:
++			pos = 0
++			n = cPickle.loads(self.buffer[0 : glb_nsz])
++		pos += glb_nsz
++		obj = cPickle.loads(self.buffer[pos : pos + n])
++		self.local_tail = pos + n
++		return obj
 +
-+	def __init__(self, parent, finder, is_reg_expr=False):
-+		self.finder = finder
-+		self.context = []
-+		self.last_value = None
-+		self.last_pattern = None
++	def ProcessData(self, count):
++		for i in xrange(count):
++			obj = self.RemoveFromBuffer()
++			self.process_data(obj)
++		self.tail.value = self.local_tail
++		self.wait_event.set()
++		self.done.emit(count)
 +
-+		label = QLabel("Find:")
-+		label.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
++# Fetch more records bar
 +
-+		self.textbox = QComboBox()
-+		self.textbox.setEditable(True)
-+		self.textbox.currentIndexChanged.connect(self.ValueChanged)
++class FetchMoreRecordsBar():
++
++	def __init__(self, model, parent):
++		self.model = model
++
++		self.label = QLabel("Number of records (x " + "{:,}".format(glb_chunk_sz) + ") to fetch:")
++		self.label.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
++
++		self.fetch_count = QSpinBox()
++		self.fetch_count.setRange(1, 1000000)
++		self.fetch_count.setValue(10)
++		self.fetch_count.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
++
++		self.fetch = QPushButton("Go!")
++		self.fetch.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
++		self.fetch.released.connect(self.FetchMoreRecords)
 +
 +		self.progress = QProgressBar()
-+		self.progress.setRange(0, 0)
++		self.progress.setRange(0, 100)
 +		self.progress.hide()
 +
-+		if is_reg_expr:
-+			self.pattern = QCheckBox("Regular Expression")
-+		else:
-+			self.pattern = QCheckBox("Pattern")
-+		self.pattern.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
++		self.done_label = QLabel("All records fetched")
++		self.done_label.hide()
 +
-+		self.next_button = QToolButton()
-+		self.next_button.setIcon(parent.style().standardIcon(QStyle.SP_ArrowDown))
-+		self.next_button.released.connect(lambda: self.NextPrev(1))
-+
-+		self.prev_button = QToolButton()
-+		self.prev_button.setIcon(parent.style().standardIcon(QStyle.SP_ArrowUp))
-+		self.prev_button.released.connect(lambda: self.NextPrev(-1))
++		self.spacer = QLabel("")
 +
 +		self.close_button = QToolButton()
 +		self.close_button.setIcon(parent.style().standardIcon(QStyle.SP_DockWidgetCloseButton))
@@ -183,277 +496,366 @@ index c2f44351821e..0386a600ffc7 100755
 +		self.hbox = QHBoxLayout()
 +		self.hbox.setContentsMargins(0, 0, 0, 0)
 +
-+		self.hbox.addWidget(label)
-+		self.hbox.addWidget(self.textbox)
++		self.hbox.addWidget(self.label)
++		self.hbox.addWidget(self.fetch_count)
++		self.hbox.addWidget(self.fetch)
++		self.hbox.addWidget(self.spacer)
 +		self.hbox.addWidget(self.progress)
-+		self.hbox.addWidget(self.pattern)
-+		self.hbox.addWidget(self.next_button)
-+		self.hbox.addWidget(self.prev_button)
++		self.hbox.addWidget(self.done_label)
 +		self.hbox.addWidget(self.close_button)
 +
 +		self.bar = QWidget()
 +		self.bar.setLayout(self.hbox);
-+		self.bar.hide()
++		self.bar.show()
++
++		self.in_progress = False
++		self.model.progress.connect(self.Progress)
++
++		self.done = False
++
++		if not model.HasMoreRecords():
++			self.Done()
 +
 +	def Widget(self):
 +		return self.bar
 +
 +	def Activate(self):
 +		self.bar.show()
-+		self.textbox.setFocus()
++		self.fetch.setFocus()
 +
 +	def Deactivate(self):
 +		self.bar.hide()
 +
++	def Enable(self, enable):
++		self.fetch.setEnabled(enable)
++		self.fetch_count.setEnabled(enable)
++
 +	def Busy(self):
-+		self.textbox.setEnabled(False)
-+		self.pattern.hide()
-+		self.next_button.hide()
-+		self.prev_button.hide()
++		self.Enable(False)
++		self.fetch.hide()
++		self.spacer.hide()
 +		self.progress.show()
 +
 +	def Idle(self):
-+		self.textbox.setEnabled(True)
++		self.in_progress = False
++		self.Enable(True)
 +		self.progress.hide()
-+		self.pattern.show()
-+		self.next_button.show()
-+		self.prev_button.show()
++		self.fetch.show()
++		self.spacer.show()
 +
-+	def Find(self, direction):
-+		value = self.textbox.currentText()
-+		pattern = self.pattern.isChecked()
-+		self.last_value = value
-+		self.last_pattern = pattern
-+		self.finder.Find(value, direction, pattern, self.context)
++	def Target(self):
++		return self.fetch_count.value() * glb_chunk_sz
 +
-+	def ValueChanged(self):
-+		value = self.textbox.currentText()
-+		pattern = self.pattern.isChecked()
-+		index = self.textbox.currentIndex()
-+		data = self.textbox.itemData(index)
-+		# Store the pattern in the combo box to keep it with the text value
-+		if data == None:
-+			self.textbox.setItemData(index, pattern)
++	def Done(self):
++		self.done = True
++		self.Idle()
++		self.label.hide()
++		self.fetch_count.hide()
++		self.fetch.hide()
++		self.spacer.hide()
++		self.done_label.show()
++
++	def Progress(self, count):
++		if self.in_progress:
++			if count:
++				percent = ((count - self.start) * 100) / self.Target()
++				if percent >= 100:
++					self.Idle()
++				else:
++					self.progress.setValue(percent)
++		if not count:
++			# Count value of zero means no more records
++			self.Done()
++
++	def FetchMoreRecords(self):
++		if self.done:
++			return
++		self.progress.setValue(0)
++		self.Busy()
++		self.in_progress = True
++		self.start = self.model.FetchMoreRecords(self.Target())
++
++# SQL data preparation
++
++def SQLTableDataPrep(query, count):
++	data = []
++	for i in xrange(count):
++		data.append(query.value(i))
++	return data
++
++# SQL table data model item
++
++class SQLTableItem():
++
++	def __init__(self, row, data):
++		self.row = row
++		self.data = data
++
++	def getData(self, column):
++		return self.data[column]
++
++# SQL table data model
++
++class SQLTableModel(TableModel):
++
++	progress = Signal(object)
++
++	def __init__(self, glb, sql, column_count, parent=None):
++		super(SQLTableModel, self).__init__(parent)
++		self.glb = glb
++		self.more = True
++		self.populated = 0
++		self.fetcher = SQLFetcher(glb, sql, lambda x, y=column_count: SQLTableDataPrep(x, y), self.AddSample)
++		self.fetcher.done.connect(self.Update)
++		self.fetcher.Fetch(glb_chunk_sz)
++
++	def DisplayData(self, item, index):
++		self.FetchIfNeeded(item.row)
++		return item.getData(index.column())
++
++	def AddSample(self, data):
++		child = SQLTableItem(self.populated, data)
++		self.child_items.append(child)
++		self.populated += 1
++
++	def Update(self, fetched):
++		if not fetched:
++			self.more = False
++			self.progress.emit(0)
++		child_count = self.child_count
++		count = self.populated - child_count
++		if count > 0:
++			parent = QModelIndex()
++			self.beginInsertRows(parent, child_count, child_count + count - 1)
++			self.insertRows(child_count, count, parent)
++			self.child_count += count
++			self.endInsertRows()
++			self.progress.emit(self.child_count)
++
++	def FetchMoreRecords(self, count):
++		current = self.child_count
++		if self.more:
++			self.fetcher.Fetch(count)
 +		else:
-+			self.pattern.setChecked(data)
-+		self.Find(0)
++			self.progress.emit(0)
++		return current
 +
-+	def NextPrev(self, direction):
-+		value = self.textbox.currentText()
-+		pattern = self.pattern.isChecked()
-+		if value != self.last_value:
-+			index = self.textbox.findText(value)
-+			# Allow for a button press before the value has been added to the combo box
-+			if index < 0:
-+				index = self.textbox.count()
-+				self.textbox.addItem(value, pattern)
-+				self.textbox.setCurrentIndex(index)
-+				return
++	def HasMoreRecords(self):
++		return self.more
++
++# SQL automatic table data model
++
++class SQLAutoTableModel(SQLTableModel):
++
++	def __init__(self, glb, table_name, parent=None):
++		sql = "SELECT * FROM " + table_name + " WHERE id > $$last_id$$ ORDER BY id LIMIT " + str(glb_chunk_sz)
++		if table_name == "comm_threads_view":
++			# For now, comm_threads_view has no id column
++			sql = "SELECT * FROM " + table_name + " WHERE comm_id > $$last_id$$ ORDER BY comm_id LIMIT " + str(glb_chunk_sz)
++		self.column_headers = []
++		query = QSqlQuery(glb.db)
++		if glb.dbref.is_sqlite3:
++			QueryExec(query, "PRAGMA table_info(" + table_name + ")")
++			while query.next():
++				self.column_headers.append(query.value(1))
++			if table_name == "sqlite_master":
++				sql = "SELECT * FROM " + table_name
++		else:
++			if table_name[:19] == "information_schema.":
++				sql = "SELECT * FROM " + table_name
++				select_table_name = table_name[19:]
++				schema = "information_schema"
 +			else:
-+				self.textbox.setItemData(index, pattern)
-+		elif pattern != self.last_pattern:
-+			# Keep the pattern recorded in the combo box up to date
-+			index = self.textbox.currentIndex()
-+			self.textbox.setItemData(index, pattern)
-+		self.Find(direction)
++				select_table_name = table_name
++				schema = "public"
++			QueryExec(query, "SELECT column_name FROM information_schema.columns WHERE table_schema = '" + schema + "' and table_name = '" + select_table_name + "'")
++			while query.next():
++				self.column_headers.append(query.value(0))
++		super(SQLAutoTableModel, self).__init__(glb, sql, len(self.column_headers), parent)
 +
-+	def NotFound(self):
-+		QMessageBox.information(self.bar, "Find", "'" + self.textbox.currentText() + "' not found")
++	def columnCount(self, parent=None):
++		return len(self.column_headers)
 +
- # Context-sensitive call graph data model item base
- 
- class CallGraphLevelItemBase(object):
-@@ -308,6 +449,123 @@ class CallGraphModel(TreeModel):
- 		alignment = [ Qt.AlignLeft, Qt.AlignLeft, Qt.AlignRight, Qt.AlignRight, Qt.AlignRight, Qt.AlignRight, Qt.AlignRight ]
- 		return alignment[column]
- 
-+	def FindSelect(self, value, pattern, query):
-+		if pattern:
-+			# postgresql and sqlite pattern patching differences:
-+			#   postgresql LIKE is case sensitive but sqlite LIKE is not
-+			#   postgresql LIKE allows % and _ to be escaped with \ but sqlite LIKE does not
-+			#   postgresql supports ILIKE which is case insensitive
-+			#   sqlite supports GLOB (text only) which uses * and ? and is case sensitive
-+			if not self.glb.dbref.is_sqlite3:
-+				# Escape % and _
-+				s = value.replace("%", "\%")
-+				s = s.replace("_", "\_")
-+				# Translate * and ? into SQL LIKE pattern characters % and _
-+				trans = string.maketrans("*?", "%_")
-+				match = " LIKE '" + str(s).translate(trans) + "'"
-+			else:
-+				match = " GLOB '" + str(value) + "'"
-+		else:
-+			match = " = '" + str(value) + "'"
-+		QueryExec(query, "SELECT call_path_id, comm_id, thread_id"
-+						" FROM calls"
-+						" INNER JOIN call_paths ON calls.call_path_id = call_paths.id"
-+						" INNER JOIN symbols ON call_paths.symbol_id = symbols.id"
-+						" WHERE symbols.name" + match +
-+						" GROUP BY comm_id, thread_id, call_path_id"
-+						" ORDER BY comm_id, thread_id, call_path_id")
++	def columnHeader(self, column):
++		return self.column_headers[column]
 +
-+	def FindPath(self, query):
-+		# Turn the query result into a list of ids that the tree view can walk
-+		# to open the tree at the right place.
-+		ids = []
-+		parent_id = query.value(0)
-+		while parent_id:
-+			ids.insert(0, parent_id)
-+			q2 = QSqlQuery(self.glb.db)
-+			QueryExec(q2, "SELECT parent_id"
-+					" FROM call_paths"
-+					" WHERE id = " + str(parent_id))
-+			if not q2.next():
-+				break
-+			parent_id = q2.value(0)
-+		# The call path root is not used
-+		if ids[0] == 1:
-+			del ids[0]
-+		ids.insert(0, query.value(2))
-+		ids.insert(0, query.value(1))
-+		return ids
++# Base class for custom ResizeColumnsToContents
 +
-+	def Found(self, query, found):
-+		if found:
-+			return self.FindPath(query)
-+		return []
++class ResizeColumnsToContentsBase(QObject):
 +
-+	def FindValue(self, value, pattern, query, last_value, last_pattern):
-+		if last_value == value and pattern == last_pattern:
-+			found = query.first()
-+		else:
-+			self.FindSelect(value, pattern, query)
-+			found = query.next()
-+		return self.Found(query, found)
++	def __init__(self, parent=None):
++		super(ResizeColumnsToContentsBase, self).__init__(parent)
 +
-+	def FindNext(self, query):
-+		found = query.next()
-+		if not found:
-+			found = query.first()
-+		return self.Found(query, found)
++	def ResizeColumnToContents(self, column, n):
++		# Using the view's resizeColumnToContents() here is extrememly slow
++		# so implement a crude alternative
++		font = self.view.font()
++		metrics = QFontMetrics(font)
++		max = 0
++		for row in xrange(n):
++			val = self.data_model.child_items[row].data[column]
++			len = metrics.width(str(val) + "MM")
++			max = len if len > max else max
++		val = self.data_model.columnHeader(column)
++		len = metrics.width(str(val) + "MM")
++		max = len if len > max else max
++		self.view.setColumnWidth(column, max)
 +
-+	def FindPrev(self, query):
-+		found = query.previous()
-+		if not found:
-+			found = query.last()
-+		return self.Found(query, found)
++	def ResizeColumnsToContents(self):
++		n = min(self.data_model.child_count, 100)
++		if n < 1:
++			# No data yet, so connect a signal to notify when there is
++			self.data_model.rowsInserted.connect(self.UpdateColumnWidths)
++			return
++		columns = self.data_model.columnCount()
++		for i in xrange(columns):
++			self.ResizeColumnToContents(i, n)
 +
-+	def FindThread(self, c):
-+		if c.direction == 0 or c.value != c.last_value or c.pattern != c.last_pattern:
-+			ids = self.FindValue(c.value, c.pattern, c.query, c.last_value, c.last_pattern)
-+		elif c.direction > 0:
-+			ids = self.FindNext(c.query)
-+		else:
-+			ids = self.FindPrev(c.query)
-+		return (True, ids)
++	def UpdateColumnWidths(self, *x):
++		# This only needs to be done once, so disconnect the signal now
++		self.data_model.rowsInserted.disconnect(self.UpdateColumnWidths)
++		self.ResizeColumnsToContents()
 +
-+	def Find(self, value, direction, pattern, context, callback):
-+		class Context():
-+			def __init__(self, *x):
-+				self.value, self.direction, self.pattern, self.query, self.last_value, self.last_pattern = x
-+			def Update(self, *x):
-+				self.value, self.direction, self.pattern, self.last_value, self.last_pattern = x + (self.value, self.pattern)
-+		if len(context):
-+			context[0].Update(value, direction, pattern)
-+		else:
-+			context.append(Context(value, direction, pattern, QSqlQuery(self.glb.db), None, None))
-+		# Use a thread so the UI is not blocked during the SELECT
-+		thread = Thread(self.FindThread, context[0])
-+		thread.done.connect(lambda ids, t=thread, c=callback: self.FindDone(t, c, ids), Qt.QueuedConnection)
-+		thread.start()
++# Table window
 +
-+	def FindDone(self, thread, callback, ids):
-+		callback(ids)
++class TableWindow(QMdiSubWindow, ResizeColumnsToContentsBase):
 +
-+# Vertical widget layout
++	def __init__(self, glb, table_name, parent=None):
++		super(TableWindow, self).__init__(parent)
 +
-+class VBox():
++		self.data_model = LookupCreateModel(table_name + " Table", lambda: SQLAutoTableModel(glb, table_name))
 +
-+	def __init__(self, w1, w2, w3=None):
-+		self.vbox = QWidget()
-+		self.vbox.setLayout(QVBoxLayout());
++		self.model = QSortFilterProxyModel()
++		self.model.setSourceModel(self.data_model)
 +
-+		self.vbox.layout().setContentsMargins(0, 0, 0, 0)
++		self.view = QTableView()
++		self.view.setModel(self.model)
++		self.view.setEditTriggers(QAbstractItemView.NoEditTriggers)
++		self.view.verticalHeader().setVisible(False)
++		self.view.sortByColumn(-1, Qt.AscendingOrder)
++		self.view.setSortingEnabled(True)
 +
-+		self.vbox.layout().addWidget(w1)
-+		self.vbox.layout().addWidget(w2)
-+		if w3:
-+			self.vbox.layout().addWidget(w3)
++		self.ResizeColumnsToContents()
 +
-+	def Widget(self):
-+		return self.vbox
++		self.find_bar = FindBar(self, self, True)
 +
- # Context-sensitive call graph window
- 
- class CallGraphWindow(QMdiSubWindow):
-@@ -323,10 +581,45 @@ class CallGraphWindow(QMdiSubWindow):
- 		for c, w in ((0, 250), (1, 100), (2, 60), (3, 70), (4, 70), (5, 100)):
- 			self.view.setColumnWidth(c, w)
- 
--		self.setWidget(self.view)
-+		self.find_bar = FindBar(self, self)
++		self.finder = ChildDataItemFinder(self.data_model)
 +
-+		self.vbox = VBox(self.view, self.find_bar.Widget())
++		self.fetch_bar = FetchMoreRecordsBar(self.data_model, self)
++
++		self.vbox = VBox(self.view, self.find_bar.Widget(), self.fetch_bar.Widget())
 +
 +		self.setWidget(self.vbox.Widget())
- 
- 		AddSubWindow(glb.mainwindow.mdi_area, self, "Context-Sensitive Call Graph")
- 
-+	def DisplayFound(self, ids):
-+		if not len(ids):
-+			return False
-+		parent = QModelIndex()
-+		for dbid in ids:
-+			found = False
-+			n = self.model.rowCount(parent)
-+			for row in xrange(n):
-+				child = self.model.index(row, 0, parent)
-+				if child.internalPointer().dbid == dbid:
-+					found = True
-+					self.view.setCurrentIndex(child)
-+					parent = child
-+					break
-+			if not found:
-+				break
-+		return found
++
++		AddSubWindow(glb.mainwindow.mdi_area, self, table_name + " Table")
 +
 +	def Find(self, value, direction, pattern, context):
 +		self.view.setFocus()
 +		self.find_bar.Busy()
-+		self.model.Find(value, direction, pattern, context, self.FindDone)
++		self.finder.Find(value, direction, pattern, context, self.FindDone)
 +
-+	def FindDone(self, ids):
-+		found = True
-+		if not self.DisplayFound(ids):
-+			found = False
++	def FindDone(self, row):
 +		self.find_bar.Idle()
-+		if not found:
++		if row >= 0:
++			self.view.setCurrentIndex(self.model.index(row, 0, QModelIndex()))
++		else:
 +			self.find_bar.NotFound()
++
++# Table list
++
++def GetTableList(glb):
++	tables = []
++	query = QSqlQuery(glb.db)
++	if glb.dbref.is_sqlite3:
++		QueryExec(query, "SELECT name FROM sqlite_master WHERE type IN ( 'table' , 'view' ) ORDER BY name")
++	else:
++		QueryExec(query, "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_type IN ( 'BASE TABLE' , 'VIEW' ) ORDER BY table_name")
++	while query.next():
++		tables.append(query.value(0))
++	if glb.dbref.is_sqlite3:
++		tables.append("sqlite_master")
++	else:
++		tables.append("information_schema.tables")
++		tables.append("information_schema.views")
++		tables.append("information_schema.columns")
++	return tables
 +
  # Action Definition
  
  def CreateAction(label, tip, callback, parent=None, shortcut=None):
-@@ -470,11 +763,22 @@ class MainWindow(QMainWindow):
- 		file_menu = menu.addMenu("&File")
- 		file_menu.addAction(CreateExitAction(glb.app, self))
+@@ -779,12 +1441,15 @@ class MainWindow(QMainWindow):
  
-+		edit_menu = menu.addMenu("&Edit")
-+		edit_menu.addAction(CreateAction("&Find...", "Find items", self.Find, self, QKeySequence.Find))
-+
+ 		edit_menu = menu.addMenu("&Edit")
+ 		edit_menu.addAction(CreateAction("&Find...", "Find items", self.Find, self, QKeySequence.Find))
++		edit_menu.addAction(CreateAction("Fetch &more records...", "Fetch more records", self.FetchMoreRecords, self, [QKeySequence(Qt.Key_F8)]))
+ 		edit_menu.addAction(CreateAction("&Shrink Font", "Make text smaller", self.ShrinkFont, self, [QKeySequence("Ctrl+-")]))
+ 		edit_menu.addAction(CreateAction("&Enlarge Font", "Make text bigger", self.EnlargeFont, self, [QKeySequence("Ctrl++")]))
+ 
  		reports_menu = menu.addMenu("&Reports")
  		reports_menu.addAction(CreateAction("Context-Sensitive Call &Graph", "Create a new window containing a context-sensitive call graph", self.NewCallGraph, self))
  
++		self.TableMenu(GetTableList(glb), menu)
++
  		self.window_menu = WindowMenu(self.mdi_area, menu)
  
-+	def Find(self):
+ 	def Find(self):
+@@ -795,6 +1460,14 @@ class MainWindow(QMainWindow):
+ 			except:
+ 				pass
+ 
++	def FetchMoreRecords(self):
 +		win = self.mdi_area.activeSubWindow()
 +		if win:
 +			try:
-+				win.find_bar.Activate()
++				win.fetch_bar.Activate()
 +			except:
 +				pass
 +
+ 	def ShrinkFont(self):
+ 		win = self.mdi_area.activeSubWindow()
+ 		ShrinkFont(win.view)
+@@ -803,9 +1476,17 @@ class MainWindow(QMainWindow):
+ 		win = self.mdi_area.activeSubWindow()
+ 		EnlargeFont(win.view)
+ 
++	def TableMenu(self, tables, menu):
++		table_menu = menu.addMenu("&Tables")
++		for table in tables:
++			table_menu.addAction(CreateAction(table, "Create a new window containing a table view", lambda t=table: self.NewTableView(t), self))
++
  	def NewCallGraph(self):
  		CallGraphWindow(self.glb, self)
+ 
++	def NewTableView(self, table_name):
++		TableWindow(self.glb, table_name, self)
++
+ # Global data
+ 
+ class Glb():
+@@ -816,6 +1497,18 @@ class Glb():
+ 		self.dbname = dbname
+ 		self.app = None
+ 		self.mainwindow = None
++		self.instances_to_shutdown_on_exit = weakref.WeakSet()
++
++	def AddInstanceToShutdownOnExit(self, instance):
++		self.instances_to_shutdown_on_exit.add(instance)
++
++	# Shutdown any background processes or threads
++	def ShutdownInstances(self):
++		for x in self.instances_to_shutdown_on_exit:
++			try:
++				x.Shutdown()
++			except:
++				pass
+ 
+ # Database reference
+ 
+@@ -880,6 +1573,7 @@ def Main():
+ 	glb.mainwindow = mainwindow
+ 	mainwindow.show()
+ 	err = app.exec_()
++	glb.ShutdownInstances()
+ 	db.close()
+ 	sys.exit(err)
  
