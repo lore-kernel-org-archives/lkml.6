@@ -2,59 +2,60 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EAB5ECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:44:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D23C5ECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:44:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 369AE20651
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:44:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D72920651
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:44:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="jP95xZZa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 369AE20651
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Z/54ZxHS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D72920651
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727802AbeJZXVe (ORCPT
+        id S1727818AbeJZXVj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 19:21:34 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42090 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727781AbeJZXVd (ORCPT
+        Fri, 26 Oct 2018 19:21:39 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:39048 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727781AbeJZXVi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 19:21:33 -0400
-Received: by mail-pg1-f195.google.com with SMTP id i4-v6so635061pgq.9
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 07:44:13 -0700 (PDT)
+        Fri, 26 Oct 2018 19:21:38 -0400
+Received: by mail-pl1-f195.google.com with SMTP id b5-v6so3238pla.6
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 07:44:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eZqm0CFEdgNM2tKHjKivQNx4i6KhyKtyrSoJgQ5hCEE=;
-        b=jP95xZZarKPxRpcTk4yOQdHhh67H3biXbiHdakPyEF9FUDJlTSCMnO0xUYhEyW1TkN
-         OV2Iag5L9QtyFR2U3nFaC+SzME8X1lihgttwy1Q8Uq27FIr6KQHi+0Pt8xRJHSbF9Fda
-         GdyDSWFclhbRhzqTwa56E/bRXuJ6B+2do8XZA=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=D7lpI0032ckljqWxd5MKeqF8bO9v9lcI3LVfhs/Q60g=;
+        b=Z/54ZxHSCcZEI10NsF/NUqaNHrhdZ7pQLL/DAAQN0ge47Tmdp9F4pe9l2N08LJhE6p
+         XwgGqBY7/WXh4fFqAquiSszal8LDiQHZAG+c20B9lZjgMDNyuEHq5GRWSExMursGffXD
+         3AB4nsv3DxMVq7o7n0z1tONzEME6kO66+G9lQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=eZqm0CFEdgNM2tKHjKivQNx4i6KhyKtyrSoJgQ5hCEE=;
-        b=deRgguYlOwy60ctuonPS9l/1ht6+z2q0ixhx+0IJSGAU1v3lSmlAn/DGQG137ZeKMk
-         Rq5FwCFPj1tmrNNrxff03vqvWTFrlhM2+Y6/2qSPERF9D+iaDh6Z3NID9KXr2IbTntEr
-         1XwO+NiAbRa6O15+xZfFUbZZEvNk68JNDsTlIqvGWMcOiqM8+V3f+B3t+YmmB/ivd7aL
-         +w6eqaJVL74+bfpokIvOjRUaRi6SjIUyATjhHJP3hzG7GzVe9Stc8puGmewvw5dv4iFK
-         WI2j28Z7DZn7EQYq95GK/X+HGVthsA8N4dz4vLX0FANsgXQqhDJOCSoITfCDeONcWEaa
-         G3FA==
-X-Gm-Message-State: AGRZ1gIZCdi3xdWhQuPg/5QzC9RVzKsLPXefmuET5cj9PvSmuxnwYMcH
-        Mdj3Pq6CqAK0ElbqAKyLCkOVJQ==
-X-Google-Smtp-Source: AJdET5e09G5gEekKHPpWwXEsKeq6RP2nzY9YZ94thvyr9Xp6iJ8drFkIPbwp/kbr+AukXMI/VITHJw==
-X-Received: by 2002:a63:224f:: with SMTP id t15mr3730017pgm.69.1540565052740;
-        Fri, 26 Oct 2018 07:44:12 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=D7lpI0032ckljqWxd5MKeqF8bO9v9lcI3LVfhs/Q60g=;
+        b=nhTznw3SoOzP6+CIssilGg0bIGzOT5FrFNS29Fz9B7fUmLtX2ubIatuy+5yLW4gY+A
+         s6RbVGdYH/6AlbMt10Vbr1SYx2n7KNyHfNEFCdheoOw0URanGl7ZljlbTAaSmvdv5/BQ
+         i0uig2Fi+YY+11IrppInQCkJyThI3byaooL7GRTHIX86zY7EBsL1Z7ihfXqw1sdvm+0c
+         SM6zHZbxaOtmkCI4o/JqfQOA+jsrE0P6fXFXJB+V1iCfbT8ehb7Os09UaZo5LrRhzevp
+         fnBO2WhTvfM7fTfOf0ygtUjsoPoGLsyYUoBiy1Y+YDD79W3W0kHZ3SZZIbKvnjp9WJ7U
+         2OoA==
+X-Gm-Message-State: AGRZ1gIiyua62rtQ7lYc34NiQsuIsrMVEe+cfALlQFasBPuDKlqYVtAk
+        iuxtw76KtcNFGPHV/EuLFwpmvQ==
+X-Google-Smtp-Source: AJdET5dJ5LJZm4D61hO5lp28Zm+zdXyFPxQUFWzENOd9cvfV3l6atMx85qUxmJwtg7YSMX6gt8mKjQ==
+X-Received: by 2002:a17:902:f01:: with SMTP id 1-v6mr3831894ply.8.1540565058294;
+        Fri, 26 Oct 2018 07:44:18 -0700 (PDT)
 Received: from localhost.localdomain ([27.7.51.1])
-        by smtp.gmail.com with ESMTPSA id z22-v6sm12044467pgv.24.2018.10.26.07.44.07
+        by smtp.gmail.com with ESMTPSA id z22-v6sm12044467pgv.24.2018.10.26.07.44.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 07:44:12 -0700 (PDT)
+        Fri, 26 Oct 2018 07:44:17 -0700 (PDT)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -72,10 +73,12 @@ To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v3 00/25] drm/sun4i: Allwinner A64 MIPI-DSI support 
-Date:   Fri, 26 Oct 2018 20:13:19 +0530
-Message-Id: <20181026144344.27778-1-jagan@amarulasolutions.com>
+Subject: [PATCH v3 01/25] clk: sunxi-ng: a64: Fix gate bit of DSI DPHY
+Date:   Fri, 26 Oct 2018 20:13:20 +0530
+Message-Id: <20181026144344.27778-2-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
+In-Reply-To: <20181026144344.27778-1-jagan@amarulasolutions.com>
+References: <20181026144344.27778-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -83,78 +86,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series fixed the issues related to work DSI on 2-lane panel
-which is reported on previous version[1].
+DSI DPHY gate bit on MIPI DSI clock register is bit 15
+not bit 30.
 
-Few comments from previous version still in discussion, but I just
-send this version just to group all working changes together.
-anyway I will fix in this in next version if any.
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Tested-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+Changes for v3:
+- collect Stephen Ack
+- add tested credit
+Changes for v2:
+- none
 
-PLL_MIPI min rate is still weird, I tried many possible dclock rate
-from panel driver to satisfy manual suggested min rate 500MHz but
-none working so eventually moved 300MHz. any inputs on this area
-are welcome.
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-All these changes are tested in 2-lane, 4-lane MIPI-DSI panels.
-
-If anyone wants to test, use this repo [2] with WIP-A64-DSI branch.
-
-Any inputs,
-Jagan.
-
-[2] https://github.com/amarula/linux-amarula
-[1] https://patchwork.kernel.org/cover/10653275/
-
-Jagan Teki (25):
-  clk: sunxi-ng: a64: Fix gate bit of DSI DPHY
-  clk: sunxi-ng: Add check for minimal rate to NKM PLLs
-  clk: sunxi-ng: Add check for maximum rate to NKM PLLs
-  drm/sun4i: sun6i_mipi_dsi: Add Allwinner A64 MIPI DSI support
-  dt-bindings: sun6i-dsi: Add compatible for A64 MIPI DSI
-  drm/sun4i: sun6i_mipi_dsi: Add DSI Generic short write 2 param
-    transfer
-  drm/sun4i: sun6i_mipi_dsi: Fix VBP size calculation
-  drm/sun4i: sun6i_mipi_dsi: Fix TCON DRQ set bits
-  drm/sun4i: sun6i_mipi_dsi: Refactor vertical video start delay
-  drm/sun4i: sun6i_mipi_dsi: Fix DSI hbp timing value
-  drm/sun4i: sun6i_mipi_dsi: Fix DSI hblk timing calculation
-  drm/sun4i: sun6i_mipi_dsi: Add DSI hblk packet overhead
-  drm/sun4i: sun6i_mipi_dsi: Fix DSI hfp timing value
-  drm/sun4i: sun6i_mipi_dsi: Increase hfp packet overhead
-  drm/sun4i: sun6i_mipi_dsi: Set proper vblk timing calculation
-  drm/sun4i: sun6i_mipi_dsi: Add support for VCC-DSI voltage regulator
-  dt-bindings: panel: Add Bananapi S070WV20-CT16 ICN6211 MIPI-DSI to RGB
-    bridge
-  drm/panel: Add Bananapi S070WV20-CT16 ICN6211 MIPI-DSI to RGB bridge
-  dt-bindings: panel: Add Techstar TS8550B MIPI DSI panel
-  drm/panel: Add Techstar TS8550B MIPI-DSI LCD panel
-  clk: sunxi-ng: a64: Add min and max rate for PLL_MIPI
-  dt-bindings: sun6i-dsi: Add compatible for A64 DPHY
-  arm64: dts: allwinner: a64: Add DSI pipeline
-  [DO NOT MERGE] arm64: dts: allwinner: bananapi-m64: Bananapi S070WV20-CT16 DSI panel
-  arm64: dts: allwinner: a64-amarula-relic: Enable Techstar TS8550B
-    MIPI-DSI panel
-
- .../display/panel/bananapi,s070wv20-ct16.txt  |  31 +-
- .../display/panel/techstar,ts8550b.txt        |  20 +
- .../bindings/display/sunxi/sun6i-dsi.txt      |   3 +-
- .../allwinner/sun50i-a64-amarula-relic.dts    |  46 +++
- .../dts/allwinner/sun50i-a64-bananapi-m64.dts |  42 +++
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  45 +++
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c         |   4 +-
- drivers/clk/sunxi-ng/ccu_nkm.c                |  14 +
- drivers/clk/sunxi-ng/ccu_nkm.h                |   2 +
- drivers/gpu/drm/panel/Kconfig                 |  18 +
- drivers/gpu/drm/panel/Makefile                |   2 +
- .../panel/panel-bananapi-s070wv20-icn6211.c   | 336 +++++++++++++++++
- .../gpu/drm/panel/panel-techstar-ts8550b.c    | 346 ++++++++++++++++++
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c        | 122 ++++--
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h        |   8 +
- 15 files changed, 1009 insertions(+), 30 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/display/panel/techstar,ts8550b.txt
- create mode 100644 drivers/gpu/drm/panel/panel-bananapi-s070wv20-icn6211.c
- create mode 100644 drivers/gpu/drm/panel/panel-techstar-ts8550b.c
-
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+index f7d297368eb2..019d67bf97c4 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
+@@ -581,7 +581,7 @@ static const char * const dsi_dphy_parents[] = { "pll-video0", "pll-periph0" };
+ static const u8 dsi_dphy_table[] = { 0, 2, };
+ static SUNXI_CCU_M_WITH_MUX_TABLE_GATE(dsi_dphy_clk, "dsi-dphy",
+ 				       dsi_dphy_parents, dsi_dphy_table,
+-				       0x168, 0, 4, 8, 2, BIT(31), CLK_SET_RATE_PARENT);
++				       0x168, 0, 4, 8, 2, BIT(15), CLK_SET_RATE_PARENT);
+ 
+ static SUNXI_CCU_M_WITH_GATE(gpu_clk, "gpu", "pll-gpu",
+ 			     0x1a0, 0, 3, BIT(31), CLK_SET_RATE_PARENT);
 -- 
 2.18.0.321.gffc6fa0e3
 
