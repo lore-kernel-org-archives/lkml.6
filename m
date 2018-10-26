@@ -2,192 +2,191 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F0D9C6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 09:05:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71407C6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 09:11:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EADDC2082E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 09:05:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EADDC2082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 29E0C2082E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 09:11:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aU+eaxue"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29E0C2082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbeJZRmB (ORCPT
+        id S1726217AbeJZRr3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 13:42:01 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:37027 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbeJZRmB (ORCPT
+        Fri, 26 Oct 2018 13:47:29 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:38957 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726065AbeJZRr3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 13:42:01 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 9DB33808B1; Fri, 26 Oct 2018 11:05:42 +0200 (CEST)
-Date:   Fri, 26 Oct 2018 11:05:43 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: Re: [PATCH AUTOSEL 4.14 02/15] s390/hibernate: fix error handling
- when suspend cpu != resume cpu
-Message-ID: <20181026090543.GC20200@amd>
-References: <20181022102026.40869-1-sashal@kernel.org>
- <20181022102026.40869-2-sashal@kernel.org>
+        Fri, 26 Oct 2018 13:47:29 -0400
+Received: by mail-yb1-f196.google.com with SMTP id j9-v6so175123ybj.6
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 02:11:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BzGBy8sLu4yFakj0y/8JMgMJj+/8R1L+vCMIIfyuc0E=;
+        b=aU+eaxueqNEgp21o6cX7Wa19Vg3x2ma8Tagrvta9njIVG5ny+BK95ojxinio1oMIAV
+         A19UL71wPE2AbyWaS4XInKmGNEYpl8TtrtRKsCW9zWrxUYXLhJzwS+HxEPyox5hrM0Fz
+         9eajiNjjXgTAXrjbFufYe+jFmZQBedESRHPys=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BzGBy8sLu4yFakj0y/8JMgMJj+/8R1L+vCMIIfyuc0E=;
+        b=pakBoittrf+XjFsh5WmOyju27pGi0U1ktxVjmsprTCeG74IqV22ozeTkAE7UqG1MKO
+         IeLAJ2AFIUyeF3g3vWxfo5C29nDG68zFB6pyKqCtfDF0W9VKKZR0QOHe27ty8IQv1GlA
+         YcDvdI+W8rzT36R0t1mz9Lm0i3LqLDaNJVye7fJoAhwemMIJzfOKfxHI6n4/Vv/t7+E+
+         5ZowGnFK/hNg7ybHIlsQO74MMMXdHLgAklfcoGnJtjznm8+BmAyoDuu5pg4sCF9PK0yj
+         YyEVcEZd984GQKg6I4SlewzHTio5QuBBngPA8d6qk9IRh6fPqicAnWDkSpUC1i+Jcjkb
+         Cz9Q==
+X-Gm-Message-State: AGRZ1gJnkKIdikWPS8Yp1c1+rY0CFTPz2DEBM7/wa8ovgCJ4q5NjtdU0
+        Q/hcYQsQ5RflCarDj3ZddL0K+9rN2/TEARCqToNGGA==
+X-Google-Smtp-Source: AJdET5dp2oODpsdUV7+sTD5urbrpShbH5clO7lE7fEVWHvFsn8SNLN2FZb2qljheRllkFQqTqafO4rhAe5gsEpBz4JY=
+X-Received: by 2002:a25:7c83:: with SMTP id x125-v6mr2512083ybc.195.1540545072956;
+ Fri, 26 Oct 2018 02:11:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="3siQDZowHQqNOShm"
-Content-Disposition: inline
-In-Reply-To: <20181022102026.40869-2-sashal@kernel.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <1540490241-32021-1-git-send-email-john.stultz@linaro.org>
+In-Reply-To: <1540490241-32021-1-git-send-email-john.stultz@linaro.org>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Fri, 26 Oct 2018 11:11:01 +0200
+Message-ID: <CADYN=9KYZeKv6ygA9-dyTZR4HR7dXKff2M_85MTUomtCek0wtg@mail.gmail.com>
+Subject: Re: [RFC][PATCH] wlcore: Fixup "Add support for optional wakeirq"
+To:     John Stultz <john.stultz@linaro.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tony Lindgren <tony@atomide.com>, kvalo@codeaurora.org,
+        eyalr@ti.com, linux-wireless@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 25 Oct 2018 at 19:57, John Stultz <john.stultz@linaro.org> wrote:
+>
+> After commit 3c83dd577c7f ("wlcore: Add support for optional
+> wakeirq") landed upstream, I started seeing the following oops
+> on my HiKey board:
+>
+> [    1.870279] Unable to handle kernel read from unreadable memory at virtual address 0000000000000010
+> [    1.870283] Mem abort info:
+> [    1.870287]   ESR = 0x96000005
+> [    1.870292]   Exception class = DABT (current EL), IL = 32 bits
+> [    1.870296]   SET = 0, FnV = 0
+> [    1.870299]   EA = 0, S1PTW = 0
+> [    1.870302] Data abort info:
+> [    1.870306]   ISV = 0, ISS = 0x00000005
+> [    1.870309]   CM = 0, WnR = 0
+> [    1.870312] [0000000000000010] user address but active_mm is swapper
+> [    1.870318] Internal error: Oops: 96000005 [#1] PREEMPT SMP
+> [    1.870327] CPU: 0 PID: 5 Comm: kworker/0:0 Not tainted 4.19.0-05129-gb3d1e8e #48
+> [    1.870331] Hardware name: HiKey Development Board (DT)
+> [    1.870350] Workqueue: events_freezable mmc_rescan
+> [    1.870358] pstate: 60400005 (nZCv daif +PAN -UAO)
+> [    1.870366] pc : wl1271_probe+0x210/0x350
+> [    1.870371] lr : wl1271_probe+0x210/0x350
+> [    1.870374] sp : ffffff80080739b0
+> [    1.870377] x29: ffffff80080739b0 x28: 0000000000000000
+> [    1.870384] x27: 0000000000000000 x26: 0000000000000000
+> [    1.870391] x25: 0000000000000036 x24: ffffffc074ecb598
+> [    1.870398] x23: ffffffc07ffdce78 x22: ffffffc0744ed808
+> [    1.870404] x21: ffffffc074ecbb98 x20: ffffff8008ff9000
+> [    1.870411] x19: ffffffc0744ed800 x18: ffffff8008ff9a48
+> [    1.870418] x17: 0000000000000000 x16: 0000000000000000
+> [    1.870425] x15: ffffffc074ecb503 x14: ffffffffffffffff
+> [    1.870431] x13: ffffffc074ecb502 x12: 0000000000000030
+> [    1.870438] x11: 0101010101010101 x10: 0000000000000040
+> [    1.870444] x9 : ffffffc075400248 x8 : ffffffc075400270
+> [    1.870451] x7 : 0000000000000000 x6 : 0000000000000000
+> [    1.870457] x5 : 0000000000000000 x4 : 0000000000000000
+> [    1.870463] x3 : 0000000000000000 x2 : 0000000000000000
+> [    1.870469] x1 : 0000000000000028 x0 : 0000000000000000
+> [    1.870477] Process kworker/0:0 (pid: 5, stack limit = 0x(____ptrval____))
+> [    1.870480] Call trace:
+> [    1.870485]  wl1271_probe+0x210/0x350
+> [    1.870491]  sdio_bus_probe+0x100/0x128
+> [    1.870500]  really_probe+0x1a8/0x2b8
+> [    1.870506]  driver_probe_device+0x58/0x100
+> [    1.870511]  __device_attach_driver+0x94/0xd8
+> [    1.870517]  bus_for_each_drv+0x70/0xc8
+> [    1.870522]  __device_attach+0xe0/0x140
+> [    1.870527]  device_initial_probe+0x10/0x18
+> [    1.870532]  bus_probe_device+0x94/0xa0
+> [    1.870537]  device_add+0x374/0x5b8
+> [    1.870542]  sdio_add_func+0x60/0x88
+> [    1.870546]  mmc_attach_sdio+0x1b0/0x358
+> [    1.870551]  mmc_rescan+0x2cc/0x390
+> [    1.870558]  process_one_work+0x12c/0x320
+> [    1.870563]  worker_thread+0x48/0x458
+> [    1.870569]  kthread+0xf8/0x128
+> [    1.870575]  ret_from_fork+0x10/0x18
+> [    1.870583] Code: 92400c21 b2760021 a90687a2 97e95bf9 (f9400803)
+> [    1.870587] ---[ end trace 1e15f81d3c139ca9 ]---
+>
+> It seems since we don't have a wakeirq value in the dts, the wakeirq
+> value in wl1271_probe() is zero, which then causes trouble in
+> irqd_get_trigger_type(irq_get_irq_data(wakeirq)).
+>
+> This patch tries to address this by checking if wakeirq is zero,
+> and not trying to add it to the resources if that is the case.
+>
+> Cc: Tony Lindgren <tony@atomide.com>
+> Cc: Kalle Valo <kvalo@codeaurora.org>
+> Cc: Eyal Reizer <eyalr@ti.com>
+> Cc: Anders Roxell <anders.roxell@linaro.org>
+> Cc: linux-wireless@vger.kernel.org
+> Acked-by: Tony Lindgren <tony@atomide.com>
+> Signed-off-by: John Stultz <john.stultz@linaro.org>
 
---3siQDZowHQqNOShm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Tested-by: Anders Roxell <anders.roxell@linaro.org>
 
-On Mon 2018-10-22 06:20:13, Sasha Levin wrote:
-> From: Gerald Schaefer <gerald.schaefer@de.ibm.com>
->=20
-> [ Upstream commit 55a5542a546238354d1f209f794414168cf8c71d ]
->=20
-> The resume code checks if the resume cpu is the same as the suspend cpu.
-> If not, and if it is also not possible to switch to the suspend cpu, an
-> error message should be printed and the resume process should be stopped
-> by loading a disabled wait psw.
->=20
-> The current logic is broken in multiple ways, the message is never printe=
-d,
-> and the disabled wait psw never loaded because the kernel panics before t=
-hat:
-> - sam31 and SIGP_SET_ARCHITECTURE to ESA mode is wrong, this will break
->   on the first 64bit instruction in sclp_early_printk().
-> - The init stack should be used, but the stack pointer is not set up corr=
-ectly
->   (missing aghi %r15,-STACK_FRAME_OVERHEAD).
-> - __sclp_early_printk() checks the sclp_init_state. If it is not
->   sclp_init_state_uninitialized, it simply returns w/o printing anything.
->   In the resumed kernel however, sclp_init_state will never be uninitiali=
-zed.
-
-Stable patches should fix one bug, and one bug only.
-
-									pavel
 > ---
->  arch/s390/include/asm/sclp.h        |  3 ++-
->  arch/s390/kernel/early_printk.c     |  2 +-
->  arch/s390/kernel/swsusp.S           |  8 +++-----
->  drivers/s390/char/sclp_early_core.c | 11 ++++++++---
->  4 files changed, 14 insertions(+), 10 deletions(-)
->=20
-> diff --git a/arch/s390/include/asm/sclp.h b/arch/s390/include/asm/sclp.h
-> index d3c1a8a2e3ad..d90a84770ce5 100644
-> --- a/arch/s390/include/asm/sclp.h
-> +++ b/arch/s390/include/asm/sclp.h
-> @@ -107,7 +107,8 @@ int sclp_early_get_core_info(struct sclp_core_info *i=
-nfo);
->  void sclp_early_get_ipl_info(struct sclp_ipl_info *info);
->  void sclp_early_detect(void);
->  void sclp_early_printk(const char *s);
-> -void __sclp_early_printk(const char *s, unsigned int len);
-> +void sclp_early_printk_force(const char *s);
-> +void __sclp_early_printk(const char *s, unsigned int len, unsigned int f=
-orce);
-> =20
->  int _sclp_get_core_info(struct sclp_core_info *info);
->  int sclp_core_configure(u8 core);
-> diff --git a/arch/s390/kernel/early_printk.c b/arch/s390/kernel/early_pri=
-ntk.c
-> index 9431784d7796..40c1dfec944e 100644
-> --- a/arch/s390/kernel/early_printk.c
-> +++ b/arch/s390/kernel/early_printk.c
-> @@ -10,7 +10,7 @@
-> =20
->  static void sclp_early_write(struct console *con, const char *s, unsigne=
-d int len)
->  {
-> -	__sclp_early_printk(s, len);
-> +	__sclp_early_printk(s, len, 0);
->  }
-> =20
->  static struct console sclp_early_console =3D {
-> diff --git a/arch/s390/kernel/swsusp.S b/arch/s390/kernel/swsusp.S
-> index a049a7b9d6e8..c1a080b11ae9 100644
-> --- a/arch/s390/kernel/swsusp.S
-> +++ b/arch/s390/kernel/swsusp.S
-> @@ -198,12 +198,10 @@ pgm_check_entry:
-> =20
->  	/* Suspend CPU not available -> panic */
->  	larl	%r15,init_thread_union
-> -	ahi	%r15,1<<(PAGE_SHIFT+THREAD_SIZE_ORDER)
-> +	aghi	%r15,1<<(PAGE_SHIFT+THREAD_SIZE_ORDER)
-> +	aghi	%r15,-STACK_FRAME_OVERHEAD
->  	larl	%r2,.Lpanic_string
-> -	lghi	%r1,0
-> -	sam31
-> -	sigp	%r1,%r0,SIGP_SET_ARCHITECTURE
-> -	brasl	%r14,sclp_early_printk
-> +	brasl	%r14,sclp_early_printk_force
->  	larl	%r3,.Ldisabled_wait_31
->  	lpsw	0(%r3)
->  4:
-> diff --git a/drivers/s390/char/sclp_early_core.c b/drivers/s390/char/sclp=
-_early_core.c
-> index edeb2597b0b8..4daf797a6423 100644
-> --- a/drivers/s390/char/sclp_early_core.c
-> +++ b/drivers/s390/char/sclp_early_core.c
-> @@ -188,11 +188,11 @@ static int sclp_early_setup(int disable, int *have_=
-linemode, int *have_vt220)
->   * Output one or more lines of text on the SCLP console (VT220 and /
->   * or line-mode).
->   */
-> -void __sclp_early_printk(const char *str, unsigned int len)
-> +void __sclp_early_printk(const char *str, unsigned int len, unsigned int=
- force)
->  {
->  	int have_linemode, have_vt220;
-> =20
-> -	if (sclp_init_state !=3D sclp_init_state_uninitialized)
-> +	if (!force && sclp_init_state !=3D sclp_init_state_uninitialized)
->  		return;
->  	if (sclp_early_setup(0, &have_linemode, &have_vt220) !=3D 0)
->  		return;
-> @@ -205,5 +205,10 @@ void __sclp_early_printk(const char *str, unsigned i=
-nt len)
-> =20
->  void sclp_early_printk(const char *str)
->  {
-> -	__sclp_early_printk(str, strlen(str));
-> +	__sclp_early_printk(str, strlen(str), 0);
-> +}
-> +
-> +void sclp_early_printk_force(const char *str)
-> +{
-> +	__sclp_early_printk(str, strlen(str), 1);
->  }
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---3siQDZowHQqNOShm
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlvS2OcACgkQMOfwapXb+vIZ0wCguIpVQeN2lRWaGkbVeIza//0/
-je0AnjqVJ5PkubMO0vMvHHHwBIJA3Dpt
-=l/ve
------END PGP SIGNATURE-----
-
---3siQDZowHQqNOShm--
+>  drivers/net/wireless/ti/wlcore/sdio.c | 17 +++++++++++------
+>  1 file changed, 11 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/net/wireless/ti/wlcore/sdio.c b/drivers/net/wireless/ti/wlcore/sdio.c
+> index 4c2154b..bd10165 100644
+> --- a/drivers/net/wireless/ti/wlcore/sdio.c
+> +++ b/drivers/net/wireless/ti/wlcore/sdio.c
+> @@ -285,7 +285,7 @@ static int wl1271_probe(struct sdio_func *func,
+>         struct resource res[2];
+>         mmc_pm_flag_t mmcflags;
+>         int ret = -ENOMEM;
+> -       int irq, wakeirq;
+> +       int irq, wakeirq, num_irqs;
+>         const char *chip_family;
+>
+>         /* We are only able to handle the wlan function */
+> @@ -353,12 +353,17 @@ static int wl1271_probe(struct sdio_func *func,
+>                        irqd_get_trigger_type(irq_get_irq_data(irq));
+>         res[0].name = "irq";
+>
+> -       res[1].start = wakeirq;
+> -       res[1].flags = IORESOURCE_IRQ |
+> -                      irqd_get_trigger_type(irq_get_irq_data(wakeirq));
+> -       res[1].name = "wakeirq";
+>
+> -       ret = platform_device_add_resources(glue->core, res, ARRAY_SIZE(res));
+> +       if (wakeirq > 0) {
+> +               res[1].start = wakeirq;
+> +               res[1].flags = IORESOURCE_IRQ |
+> +                              irqd_get_trigger_type(irq_get_irq_data(wakeirq));
+> +               res[1].name = "wakeirq";
+> +               num_irqs = 2;
+> +       } else {
+> +               num_irqs = 1;
+> +       }
+> +       ret = platform_device_add_resources(glue->core, res, num_irqs);
+>         if (ret) {
+>                 dev_err(glue->dev, "can't add resources\n");
+>                 goto out_dev_put;
+> --
+> 2.7.4
+>
