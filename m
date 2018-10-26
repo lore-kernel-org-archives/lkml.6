@@ -2,331 +2,162 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC8AECDE46
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:04:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B074EECDE46
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:04:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D47CC20868
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:04:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7891C2086B
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:04:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JE/EvnHQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D47CC20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rEkwOTjy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7891C2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbeJ0Dmm (ORCPT
+        id S1727727AbeJ0DnD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 23:42:42 -0400
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:45294 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726195AbeJ0Dml (ORCPT
+        Fri, 26 Oct 2018 23:43:03 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:37183 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726195AbeJ0DnD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 23:42:41 -0400
-Received: by mail-yw1-f68.google.com with SMTP id i185-v6so869936ywa.12
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 12:04:28 -0700 (PDT)
+        Fri, 26 Oct 2018 23:43:03 -0400
+Received: by mail-qt1-f193.google.com with SMTP id d14-v6so2455212qto.4
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 12:04:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=ASRa0PLo0MQ8W2WPVtvFTYJmIDsri9QltaJjOZZ6SW0=;
-        b=JE/EvnHQHolbSz3/Gooz5PzTN7NeZnEi7cpN0DWM7SvvOkAMxLQvardBMewUSq5Qqh
-         iquNeksS1kscq2p3GeuqyNuOaZWfVpTdFcAe/Slnas9p3ehcnSp9/M+6A6EU60qVmkl1
-         h6bp1fLvVygy2Np7iFBUys/zEyYqb2q9vZAU8=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=VvHu1C5zv0/vYjXlEVVxM7J02J9JLPYpPuqNHakxEEw=;
+        b=rEkwOTjyXZBu9Q2isZSyKRPcOQ/Yzd5Xb1IHBoqC42mKcz3zOeT9lyDkGjG3GmwSiI
+         +lkzLADQWhe7WONV7svoPj0mjVeX9B5Wo+0dbtVGKkvNZK/nP3j8PaXBFe5tiI6l1ac9
+         Zv7bUFcpYemF4nEHLaHNPKn/HhRWg3u0tDEBBKQJFC4dgAgML8+9Ecuac8QFfcQs+dib
+         icVTnq9naPA8+yVYQVIhE2LXVCqiNwTgYDRi8n+KF4OkuRMH5jAo+pgT42zGLs0ts6n3
+         5kE1f82zkT17gf41YrqjtBT7gQJ5isHKqs+qcAyUSVofWAISscAgIgOD4UyL2p6IV6ym
+         ckKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=ASRa0PLo0MQ8W2WPVtvFTYJmIDsri9QltaJjOZZ6SW0=;
-        b=pA+KrQgMLMkNsP1WAoc6ymMHIDNgn/LoIl/qpFn9MC98vkG4/toEAa1/9XcvGDSYtq
-         mu1/pjGZJsgjAl+TVx4b5HB1rTWvZ4gI5ZhFQA0tnrKXr8WK/BjUmjIEo2lXENDPMRiz
-         uqoH/pVvt1rkWsILkC4hEhwz1jT8kTcRRKvR8SoVcAyt95fdcDxjvbC3jvvVYVy5uVUs
-         vymBbRt4eeyN7w4P/uu/N9+yOaup7tf015SgxuYXwXWC0LFZoLMckGYv9UAx2DF0o9Nh
-         /nrR2XAHOIcXt1wCbQ4MScUQ9YP0nDHAzJ8kCTtTQNHSHHdBTsKnFBu21DUgr8Msbk9c
-         3sIA==
-X-Gm-Message-State: AGRZ1gLMRztpLnDd94l6DqgUa5hhn0T+8aDaAzT1Kjzy/a3A54K2amlR
-        kbdce5CbkofNzmaclMZElgM+Pz8iNhikZw==
-X-Google-Smtp-Source: AJdET5cWRPnqhiwAbLbfuGbS3ukxiqG5Mg/d3LzRgmw13XRI4D1JK1uwufaB0Z6o53gzGPqvce3NSw==
-X-Received: by 2002:a81:1c47:: with SMTP id c68-v6mr4765047ywc.247.1540580667720;
-        Fri, 26 Oct 2018 12:04:27 -0700 (PDT)
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
-        by smtp.gmail.com with ESMTPSA id w188-v6sm2718797ywf.59.2018.10.26.12.04.26
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 12:04:26 -0700 (PDT)
-Received: by mail-yb1-f175.google.com with SMTP id p144-v6so892940yba.11
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 12:04:26 -0700 (PDT)
-X-Received: by 2002:a25:ac8e:: with SMTP id x14-v6mr5015603ybi.141.1540580665754;
- Fri, 26 Oct 2018 12:04:25 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VvHu1C5zv0/vYjXlEVVxM7J02J9JLPYpPuqNHakxEEw=;
+        b=HVd6+YysenHXNqd5201Qqs6JdP3l5FT34Hmlk1srdUZouz1bS55OmRqqxG+fCd7yej
+         mDbHEAsRyBfP9fSafntN2IEpv4yqZgCPKjFtKHzpRnqOkMkd25tC8L1ob2KFIMhmHTso
+         r9E64MrJfsr8rb7LURn1gSDReirulUkubtiiiNZ8NZGTzID78o9vfx2xO26oUZ7zexHf
+         k/OoI0ka7H2bZTq5Lyf9npcAlwqQW5lNWnCuOULHAlmoCZWgfdrzMfHWQY2tAFl2IJMq
+         MTxqLLcm3rvZphQDsENpG9EMxUU8I+G+uAfL3IULA98r7YiPyKmR0uftmsfNnyVWw/I5
+         mgSg==
+X-Gm-Message-State: AGRZ1gLTY+AkNqyLaE0EGwM/l3IUVvUJ6N67xmx+yz/a/jKZku7l8NW6
+        rFYR0uEBXCDQXVw6n1hoxMo=
+X-Google-Smtp-Source: AJdET5eCHki3BCBPTOLxpTvyHjx+V68NvxnHIYf2o627s1gDiU14zCND4BOKSkv63+swMJe65Fm1Kw==
+X-Received: by 2002:ac8:1c43:: with SMTP id j3-v6mr4521728qtk.320.1540580689979;
+        Fri, 26 Oct 2018 12:04:49 -0700 (PDT)
+Received: from smtp.gmail.com ([143.107.45.1])
+        by smtp.gmail.com with ESMTPSA id y42-v6sm1950937qty.42.2018.10.26.12.04.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 26 Oct 2018 12:04:49 -0700 (PDT)
+Date:   Fri, 26 Oct 2018 16:04:45 -0300
+From:   Shayenne da Luz Moura <shayenneluzmoura@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Michael Thayer <michael.thayer@oracle.com>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        outreachy-kernel@googlegroups.com
+Subject: [RESEND PATCH 2/2] staging: vboxvideo: Use unsigned int instead bool
+Message-ID: <211701e4ae42acd95afb24713314bce5a4c58ecf.1540580493.git.shayenneluzmoura@gmail.com>
+References: <cover.1540580493.git.shayenneluzmoura@gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Fri, 26 Oct 2018 12:04:24
- -0700 (PDT)
-In-Reply-To: <20181026180042.52199-1-joel@joelfernandes.org>
-References: <20181026180042.52199-1-joel@joelfernandes.org>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Fri, 26 Oct 2018 20:04:24 +0100
-X-Gmail-Original-Message-ID: <CAGXu5jLKLKDwVgRoMx57Y76V9FVJqQ+EeTHB2CnxAN5CnC2Jmw@mail.gmail.com>
-Message-ID: <CAGXu5jLKLKDwVgRoMx57Y76V9FVJqQ+EeTHB2CnxAN5CnC2Jmw@mail.gmail.com>
-Subject: Re: [RFC 1/6] pstore: map pstore types to names
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1540580493.git.shayenneluzmoura@gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 7:00 PM, Joel Fernandes (Google)
-<joel@joelfernandes.org> wrote:
-> In later patches we will need to map types to names, so create a table
-> for that which can also be used and reused in different parts of old and
-> new code. Also use it to save the type in the PRZ which will be useful
-> in later patches.
+This change was suggested by checkpath.pl. Use unsigned int with bitfield
+allocate only one bit to the boolean variable.
 
-Yes, I like it. :) Comments below...
+CHECK: Avoid using bool structure members because of possible alignment
+issues
 
->
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> ---
->  fs/pstore/inode.c          | 44 ++++++++++++++++++++------------------
->  fs/pstore/ram.c            |  4 +++-
->  include/linux/pstore.h     | 29 +++++++++++++++++++++++++
->  include/linux/pstore_ram.h |  2 ++
->  4 files changed, 57 insertions(+), 22 deletions(-)
->
-> diff --git a/fs/pstore/inode.c b/fs/pstore/inode.c
-> index 5fcb845b9fec..43757049d384 100644
-> --- a/fs/pstore/inode.c
-> +++ b/fs/pstore/inode.c
-> @@ -304,6 +304,7 @@ int pstore_mkfile(struct dentry *root, struct pstore_record *record)
->         struct dentry           *dentry;
->         struct inode            *inode;
->         int                     rc = 0;
-> +       enum pstore_type_id     type;
->         char                    name[PSTORE_NAMELEN];
->         struct pstore_private   *private, *pos;
->         unsigned long           flags;
-> @@ -335,43 +336,44 @@ int pstore_mkfile(struct dentry *root, struct pstore_record *record)
->                 goto fail_alloc;
->         private->record = record;
->
-> -       switch (record->type) {
-> +       type = record->type;
+Signed-off-by: Shayenne da Luz Moura <shayenneluzmoura@gmail.com>
+---
+ drivers/staging/vboxvideo/vbox_drv.h        | 14 +++++++-------
+ drivers/staging/vboxvideo/vboxvideo_guest.h |  2 +-
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-Let's rename PSTORE_TYPE_UNKNOWN in the enum to be PSTORE_TYPE_MAX and
-!= 255 (just leave it at the end). The value is never exposed to
-userspace (nor to backend storage), so we can instead use it as the
-bounds-check for doing type -> name mappings. (The one use in erst can
-just be renamed.)
-
-Then we can add a function to do the bounds checking and mapping
-(instead of using a bare array lookup).
-
-> +       switch (type) {
->         case PSTORE_TYPE_DMESG:
-> -               scnprintf(name, sizeof(name), "dmesg-%s-%llu%s",
-> -                         record->psi->name, record->id,
-> -                         record->compressed ? ".enc.z" : "");
-> +               scnprintf(name, sizeof(name), "%s-%s-%llu%s",
-> +                        pstore_names[type], record->psi->name, record->id,
-> +                        record->compressed ? ".enc.z" : "");
->                 break;
->         case PSTORE_TYPE_CONSOLE:
-> -               scnprintf(name, sizeof(name), "console-%s-%llu",
-> -                         record->psi->name, record->id);
-> +               scnprintf(name, sizeof(name), "%s-%s-%llu",
-> +                         pstore_names[type], record->psi->name, record->id);
->                 break;
->         case PSTORE_TYPE_FTRACE:
-> -               scnprintf(name, sizeof(name), "ftrace-%s-%llu",
-> -                         record->psi->name, record->id);
-> +               scnprintf(name, sizeof(name), "%s-%s-%llu",
-> +                         pstore_names[type], record->psi->name, record->id);
->                 break;
->         case PSTORE_TYPE_MCE:
-> -               scnprintf(name, sizeof(name), "mce-%s-%llu",
-> -                         record->psi->name, record->id);
-> +               scnprintf(name, sizeof(name), "%s-%s-%llu",
-> +                         pstore_names[type], record->psi->name, record->id);
->                 break;
->         case PSTORE_TYPE_PPC_RTAS:
-> -               scnprintf(name, sizeof(name), "rtas-%s-%llu",
-> -                         record->psi->name, record->id);
-> +               scnprintf(name, sizeof(name), "%s-%s-%llu",
-> +                         pstore_names[type], record->psi->name, record->id);
->                 break;
->         case PSTORE_TYPE_PPC_OF:
-> -               scnprintf(name, sizeof(name), "powerpc-ofw-%s-%llu",
-> -                         record->psi->name, record->id);
-> +               scnprintf(name, sizeof(name), "%s-%s-%llu",
-> +                         pstore_names[type], record->psi->name, record->id);
->                 break;
->         case PSTORE_TYPE_PPC_COMMON:
-> -               scnprintf(name, sizeof(name), "powerpc-common-%s-%llu",
-> -                         record->psi->name, record->id);
-> +               scnprintf(name, sizeof(name), "%s-%s-%llu",
-> +                         pstore_names[type], record->psi->name, record->id);
->                 break;
->         case PSTORE_TYPE_PMSG:
-> -               scnprintf(name, sizeof(name), "pmsg-%s-%llu",
-> -                         record->psi->name, record->id);
-> +               scnprintf(name, sizeof(name), "%s-%s-%llu",
-> +                         pstore_names[type], record->psi->name, record->id);
->                 break;
->         case PSTORE_TYPE_PPC_OPAL:
-> -               scnprintf(name, sizeof(name), "powerpc-opal-%s-%llu",
-> -                         record->psi->name, record->id);
-> +               scnprintf(name, sizeof(name), "%s-%s-%llu",
-> +                         pstore_names[type], record->psi->name, record->id);
->                 break;
->         case PSTORE_TYPE_UNKNOWN:
->                 scnprintf(name, sizeof(name), "unknown-%s-%llu",
-
-All of these, including PSTORE_TYPE_UNKNOWN are now identical (you can
-include the .enc.z logic in for all of them. I think the entire switch
-can be dropped, yes?
-
-scnprintf(name, sizeof(name), "%s-%s-%llu%s",
-               pstore_name(record->type), record->psi->name, record->id,
-               record->compressed ? ".enc.z" : "")
-
-> @@ -379,7 +381,7 @@ int pstore_mkfile(struct dentry *root, struct pstore_record *record)
->                 break;
->         default:
->                 scnprintf(name, sizeof(name), "type%d-%s-%llu",
-> -                         record->type, record->psi->name, record->id);
-> +                         type, record->psi->name, record->id);
->                 break;
->         }
->
-> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-> index f4fd2e72add4..c7cd858adce7 100644
-> --- a/fs/pstore/ram.c
-> +++ b/fs/pstore/ram.c
-> @@ -604,6 +604,7 @@ static int ramoops_init_przs(const char *name,
->                         goto fail;
->                 }
->                 *paddr += zone_sz;
-> +               prz_ar[i]->type = pstore_name_to_type(name);
->         }
->
->         *przs = prz_ar;
-> @@ -642,6 +643,7 @@ static int ramoops_init_prz(const char *name,
->         persistent_ram_zap(*prz);
->
->         *paddr += sz;
-> +       (*prz)->type = pstore_name_to_type(name);
->
->         return 0;
->  }
-> @@ -777,7 +779,7 @@ static int ramoops_probe(struct platform_device *pdev)
->
->         dump_mem_sz = cxt->size - cxt->console_size - cxt->ftrace_size
->                         - cxt->pmsg_size;
-> -       err = ramoops_init_przs("dump", dev, cxt, &cxt->dprzs, &paddr,
-> +       err = ramoops_init_przs("dmesg", dev, cxt, &cxt->dprzs, &paddr,
-
-Yup. That's a funny mismatch. Not exposed to userspace in a released kernel. ;)
-
->                                 dump_mem_sz, cxt->record_size,
->                                 &cxt->max_dump_cnt, 0, 0);
->         if (err)
-> diff --git a/include/linux/pstore.h b/include/linux/pstore.h
-> index a15bc4d48752..4a3dbdffd8d3 100644
-> --- a/include/linux/pstore.h
-> +++ b/include/linux/pstore.h
-> @@ -47,6 +47,21 @@ enum pstore_type_id {
->         PSTORE_TYPE_UNKNOWN     = 255
->  };
->
-> +/* names should be in the same order as the above table */
-> +static char __maybe_unused *pstore_names[] = {
-
-This should be static const char * const pstore_names[], I think?
-
-> +       "dmesg",
-> +       "mce",
-> +       "console",
-> +       "ftrace",
-> +       "rtas",
-> +       "powerpc-ofw",
-> +       "powerpc-common",
-> +       "pmsg",
-> +       "powerpc-opal",
-> +       "event",
-> +       "unknown", /* unknown should be the last string */
-
-End this with a NULL for a cheaper compare below.
-
-> +};
-> +
->  struct pstore_info;
->  /**
->   * struct pstore_record - details of a pstore record entry
-> @@ -274,4 +289,18 @@ pstore_ftrace_write_timestamp(struct pstore_ftrace_record *rec, u64 val)
->  }
->  #endif
->
-> +static inline enum pstore_type_id pstore_name_to_type(const char *name)
-> +{
-> +       char *str;
-> +       int i = 0;
-> +
-> +       for (; strncmp(pstore_names[i], "unknown", 7); i++) {
-char **ptr;
-
-for (ptr = pstores_names; *ptr; ptr++) {
-
-> +               str = pstore_names[i];
-> +               if (!strncmp(name, str, strlen(str)))
-
-"n" version not needed: the LHS is controlled and we want full matching:
-
-    if (!strcmp(*ptr, name))
-
-> +                       return (enum pstore_type_id)i;
-
-I don't think this cast is needed?
-
-        return (ptr - pstores_names);
-
-> +       }
-> +
-> +       return PSTORE_TYPE_UNKNOWN;
-> +}
-> +
->  #endif /*_LINUX_PSTORE_H*/
-> diff --git a/include/linux/pstore_ram.h b/include/linux/pstore_ram.h
-> index e6d226464838..ee0f493254dd 100644
-> --- a/include/linux/pstore_ram.h
-> +++ b/include/linux/pstore_ram.h
-> @@ -22,6 +22,7 @@
->  #include <linux/init.h>
->  #include <linux/kernel.h>
->  #include <linux/list.h>
-> +#include <linux/pstore.h>
->  #include <linux/types.h>
->
->  /*
-> @@ -47,6 +48,7 @@ struct persistent_ram_zone {
->         size_t size;
->         void *vaddr;
->         struct persistent_ram_buffer *buffer;
-> +       enum pstore_type_id type;
->         size_t buffer_size;
->         u32 flags;
->         raw_spinlock_t buffer_lock;
-> --
-> 2.19.1.568.g152ad8e336-goog
->
-
-
-
+diff --git a/drivers/staging/vboxvideo/vbox_drv.h b/drivers/staging/vboxvideo/vbox_drv.h
+index 594f84272957..7d3e329a6b1c 100644
+--- a/drivers/staging/vboxvideo/vbox_drv.h
++++ b/drivers/staging/vboxvideo/vbox_drv.h
+@@ -81,7 +81,7 @@ struct vbox_private {
+ 	u8 __iomem *vbva_buffers;
+ 	struct gen_pool *guest_pool;
+ 	struct vbva_buf_ctx *vbva_info;
+-	bool any_pitch;
++	unsigned int any_pitch:1;
+ 	u32 num_crtcs;
+ 	/** Amount of available VRAM, including space used for buffers. */
+ 	u32 full_vram_size;
+@@ -106,7 +106,7 @@ struct vbox_private {
+ 	 * depending on whether they react to a hot-plug event after the initial
+ 	 * mode query.
+ 	 */
+-	bool initial_mode_queried;
++	unsigned int initial_mode_queried:1;
+ 	struct work_struct hotplug_work;
+ 	u32 input_mapping_width;
+ 	u32 input_mapping_height;
+@@ -114,7 +114,7 @@ struct vbox_private {
+ 	 * Is user-space using an X.Org-style layout of one large frame-buffer
+ 	 * encompassing all screen ones or is the fbdev console active?
+ 	 */
+-	bool single_framebuffer;
++	unsigned int single_framebuffer:1;
+ 	u32 cursor_width;
+ 	u32 cursor_height;
+ 	u32 cursor_hot_x;
+@@ -139,17 +139,17 @@ struct vbox_connector {
+ 	struct {
+ 		u32 width;
+ 		u32 height;
+-		bool disconnected;
++		unsigned int disconnected:1;
+ 	} mode_hint;
+ };
+ 
+ struct vbox_crtc {
+ 	struct drm_crtc base;
+-	bool blanked;
+-	bool disconnected;
++	unsigned int blanked:1;
++	unsigned int disconnected:1;
+ 	unsigned int crtc_id;
+ 	u32 fb_offset;
+-	bool cursor_enabled;
++	unsigned int cursor_enabled:1;
+ 	u32 x_hint;
+ 	u32 y_hint;
+ };
+diff --git a/drivers/staging/vboxvideo/vboxvideo_guest.h b/drivers/staging/vboxvideo/vboxvideo_guest.h
+index d09da841711a..7a98fb4fb108 100644
+--- a/drivers/staging/vboxvideo/vboxvideo_guest.h
++++ b/drivers/staging/vboxvideo/vboxvideo_guest.h
+@@ -36,7 +36,7 @@ struct vbva_buf_ctx {
+ 	/** Length of the buffer in bytes */
+ 	u32 buffer_length;
+ 	/** Set if we wrote to the buffer faster than the host could read it */
+-	bool buffer_overflow;
++	unsigned int buffer_overflow:1;
+ 	/** VBVA record that we are currently preparing for the host, or NULL */
+ 	struct vbva_record *record;
+ 	/**
 -- 
-Kees Cook
+2.19.1
+
