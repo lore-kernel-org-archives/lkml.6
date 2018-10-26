@@ -2,98 +2,135 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE75ECDE46
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 21:39:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7309FECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 21:40:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 567052064C
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 21:39:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ks/sREue"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 567052064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3DF562064C
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 21:40:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DF562064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728388AbeJ0GSQ (ORCPT
+        id S1728402AbeJ0GS7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 02:18:16 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40473 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725782AbeJ0GSP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 02:18:15 -0400
-Received: by mail-wr1-f66.google.com with SMTP id i17-v6so2644195wre.7
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 14:39:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+2Fr/obd7V28HzoYdZ6z+FLfu7ToUWLx849Ocj/fx4s=;
-        b=Ks/sREuel8dbYSRusmjkUgfjdYSPRS7mj6qSzEB7p9dhiFqioP2lOBEm5VkbGYklWV
-         Z+E4VU0y9fW525Fvx320ub/e67ZRtCMQn6WJwdEGEbUWDQXR6CTsTkkhsa2rUSjxr71m
-         ClQe+Bos0s7EgvhcAJTOatbfJrQeXVG3szzowhh1A9h1yFFDNhr1REEYFW7ul91Unxob
-         z5ha8ZizxwwYS+4JQ1G0+otqFLLf0649Vz8oY8Mmx6yK9dK+H6ynAPVNeFGJ/v+irX0T
-         CNbJF0wc9ve4pivqZFZo795fQ/6DJKRNbqgnxrBJfGI/1Jo3AM4z07vUspwinVW6i8e7
-         ZstA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+2Fr/obd7V28HzoYdZ6z+FLfu7ToUWLx849Ocj/fx4s=;
-        b=KLrYd60qA8KZlS/22OS9VgSwREDjQHYsRHjJhFY5WT764O1hGZyzEuvN4ken01T/bJ
-         +E4S9dRReKGfvdu6Gn6NVv9BzleoIc9TBc55uDQ8F8Oo0hk0CAWyDXeRzoeFFFCKB4Pl
-         J3WrPFCCQRh/68QgcEACMCHIR5K3e2sSZTO2GEilwlYcAEJ3zpaKZh3g3G6RVc+YkFnu
-         dahFM+9UTh6/Y0oZCgc5bZqkl4HRlogFmiV0QgUiZ/3audX/u0r92MBLLx7dRpfWRGax
-         1SO54awzEgVYgFgIeoPCTDLoy/kge0ZUWMzFSQ6h+hTdg4irxOPdD1wL+y196SGfaLdf
-         xLMA==
-X-Gm-Message-State: AGRZ1gINABXHDabZ4CAy0mrSZi9NIrTc/5MnI1E7hR8n2rPP78bvTPpk
-        2qXGp1UkKfsxIiFiZnnKqiOdJMP8SaddDBzCjfs=
-X-Google-Smtp-Source: AJdET5dSzKQ7NqSij8TiQv0jKIlZ7NU6hlSnsJY6gv/KsD1+XnoWfx6JL3jacrmeEYBGZtnRDMkT3Q/Os4HzN3eAkjQ=
-X-Received: by 2002:adf:d4c6:: with SMTP id w6-v6mr6739573wrk.119.1540589975001;
- Fri, 26 Oct 2018 14:39:35 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181026195146.9C7C1136@viggo.jf.intel.com> <0e5fd8bc-0b18-ea88-ed95-ec81a44d0783@intel.com>
-In-Reply-To: <0e5fd8bc-0b18-ea88-ed95-ec81a44d0783@intel.com>
-From:   Daniel Micay <danielmicay@gmail.com>
-Date:   Fri, 26 Oct 2018 17:39:08 -0400
-Message-ID: <CA+DvKQLpizz2LJppOts1fB6ujQNqj0fii8mo-UfosoYpQWRb5g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] x86/pkeys: copy pkey state at fork()
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Dave Hansen <dave.hansen@linux.intel.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
+        Sat, 27 Oct 2018 02:18:59 -0400
+Received: from mga06.intel.com ([134.134.136.31]:25644 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725782AbeJ0GS7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Oct 2018 02:18:59 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Oct 2018 14:40:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,429,1534834800"; 
+   d="scan'208";a="91559240"
+Received: from sai-dev-mach.sc.intel.com ([143.183.140.153])
+  by FMSMGA003.fm.intel.com with ESMTP; 26 Oct 2018 14:40:19 -0700
+From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+To:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org
+Cc:     Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Will Deacon <will.deacon@arm.com>,
-        Andy Lutomirski <luto@kernel.org>, jroedel@suse.de
-Content-Type: text/plain; charset="UTF-8"
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: [PATCH V2 0/2] Unmap EFI boot services code/data regions after boot.
+Date:   Fri, 26 Oct 2018 14:38:43 -0700
+Message-Id: <20181026213845.28166-1-sai.praneeth.prakhya@intel.com>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I ended up working around this with a pthread_atfork handler disabling
-my usage of the feature in the child process for the time being. I
-don't have an easy way to detect if the bug is present within a
-library so I'm going to need a kernel version check with a table of
-kernel releases fixing the problem for each stable branch.
+CC'ing x86 folks because this patch touches x86/mm which I am no expert of.
 
-It would be helpful if there was a new cpuinfo flag to check if the
-MPK state is preserved on fork in addition to the existing ospke flag.
-The problem will fade away over time but in my experience there are a
-lot of people using distributions with kernels not incorporating all
-of the stable fixes. I expect other people will run into the problem
-once hardware with MPK is more widely available and other people try
-to use it for various things like moving GC or assorted security
-features. Someone will end up running software adopting it on an older
-kernel with the problem.
+[Copied from Patch 1]
+Ideally, after kernel assumes control of the platform, firmware shouldn't access
+EFI boot services code/data regions. But, it's noticed that this is not so true
+in many x86 platforms. Hence, during boot, kernel reserves EFI boot services
+code/data regions [1] and maps [2] them to efi_pgd so that call to
+set_virtual_address_map() doesn't fail. After returning from
+set_virtual_address_map(), kernel frees the reserved regions [3] but they still
+remain mapped.
 
-The clobbering issue I found with MAP_FIXED_NOREPLACE isn't quite
-as annoying because it was easy to make a runtime test usable in a library
-to see if the feature works properly.
+This means that any code that's running in efi_pgd address space (e.g: any EFI
+runtime service) would still be able to access EFI boot services code/data
+regions but the contents of these regions would have long been over written by
+someone else as they are freed by efi_free_boot_services(). So, it's important
+to unmap these regions. After unmapping EFI boot services code/data regions, any
+illegal access by buggy firmware to these regions would result in page fault
+which will be handled by efi specific fault handler.
+
+Unmapping EFI boot services code/data regions will result in clearing
+PAGE_PRESENT bit and it shouldn't bother L1TF cases because it's already handled
+by protnone_mask() at arch/x86/include/asm/pgtable-invert.h.
+
+[1] Please see efi_reserve_boot_services()
+[2] Please see efi_map_region() -> __map_region()
+[3] Please see efi_free_boot_services()
+
+Testing the patch set:
+----------------------
+1. Download buggy firmware (which accesses boot regions even after kernel has
+booted) from here [1].
+2. Without the patch set, you shouldn't see any kernel warning/error messages
+(i.e. kernel allows accesses to EFI boot services code/data regions even after
+call to set_virtual_address_map()).
+3. With the patch set, you should see a kernel warning about buggy firmware,
+efi_rts_wq beeing freezed and disabling runtime services forever.
+
+Please note that this patch will change kernel's existing behavior for some EFI
+runtime services but I think it's OK because kernel should have never allowed
+those accesses in the first place.
+
+Also please note that this patch set needs lot of real time trashing as I just
+tested it out with OVMF.
+
+Note:
+-----
+Patch set based on "next" branch in efi tree.
+
+Changes from V1 -> v2:
+----------------------
+1. Rewrite the cpa initializer in a more readable fashion.
+2. Don't use cpa->pfn while unmapping, as it's not useful.
+3. Unmap regions before freeing them up.
+4. Fix spelling nits.
+
+Sai Praneeth (2):
+  x86/efi: Unmap EFI boot services code/data regions from efi_pgd
+  x86/efi: Move efi_<reserve/free>_boot_services() to arch/x86
+
+ arch/x86/include/asm/efi.h           |  2 ++
+ arch/x86/include/asm/pgtable_types.h |  2 ++
+ arch/x86/mm/pageattr.c               | 26 ++++++++++++++++++++++++++
+ arch/x86/platform/efi/efi.c          |  2 ++
+ arch/x86/platform/efi/quirks.c       | 25 +++++++++++++++++++++++++
+ include/linux/efi.h                  |  3 ---
+ init/main.c                          |  4 ----
+ 7 files changed, 57 insertions(+), 7 deletions(-)
+
+Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Bhupesh Sharma <bhsharma@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+
+-- 
+2.19.1
+
