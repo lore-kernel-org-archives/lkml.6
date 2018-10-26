@@ -2,91 +2,117 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D8D0ECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:41:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF3DECDE46
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:42:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D289A20856
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:41:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93FA32085B
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:42:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aSfMHpzm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D289A20856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OE4U6iUQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93FA32085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726460AbeJ0FUT (ORCPT
+        id S1726815AbeJ0FUv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 01:20:19 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:43988 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725759AbeJ0FUS (ORCPT
+        Sat, 27 Oct 2018 01:20:51 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:38311 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725808AbeJ0FUv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 01:20:18 -0400
-Received: by mail-yb1-f196.google.com with SMTP id g75-v6so1010341yba.10
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 13:41:49 -0700 (PDT)
+        Sat, 27 Oct 2018 01:20:51 -0400
+Received: by mail-lf1-f67.google.com with SMTP id x24-v6so1893431lfe.5
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 13:42:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=/oFUXqbUlULWkv8TQPpU3W+zt9ot6s8qj6/llzzBxgY=;
-        b=aSfMHpzm4+375r3cGyqGXFm5Ej1A/zD7ntt92Kro0fxd99dEsSk/NdMNmuLXGIr+Js
-         zXa3asBVjmTwBVuOcqFG97Qin7nhdT9/JBhowbfHqQXACUsqVuzXe2eF1tgivrHcSr69
-         Rv7iRCv+odbSlE6oqQbpXky7rU177sXkgGUZo=
+        bh=qVHuF2pQ7n/iYrqE81jlHPL+f1/5Mbp50K/TF++woLQ=;
+        b=OE4U6iUQCbdp9WyVBV/t/NuyATDx7l7gYTjNDkP1D9NOQ21pPCBxOesG4/Jzfb4Tep
+         AQGLLKUhLJ/cjKpUTulkIhkkoJgco1pElP/OdtcviNdyIAaNq/BfgvHHVo7CZPDwaXQ0
+         aqppZ2baATIGB0kn9vI9PNLNvidfkq8wo3s5c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=/oFUXqbUlULWkv8TQPpU3W+zt9ot6s8qj6/llzzBxgY=;
-        b=iWjhOppjZ9dQG8Fz7Q1+q7mTD09w2VnGdtdgISK6GERmuk52S8OF00FEx3rijwOiO3
-         b7Qv5eNEhrHo4uZF9YAxE1N2Zr+pbqK9CpIPNw4EJ1ZhALOXFmfbbLJEM/lKnJDSKskf
-         RxurSTcgqqWKzKPkmLwV8G+Xh4aNzZQ+3PNZSjL0gt9soTfJvUcGDnrUYXCEXKdbrHki
-         +DVyMTOD6rSJgdi+nDJb0LAVtwoEHlMBDKSiSFYppH0HhyrDUzdrMVNHFZ8zvs6P9WqA
-         RZXLK4eFT9AvCjgq4k4oPr4+3Qgq5RfA0eWf4018bBm6+Nfs+ssP+BGzFTFxsc0Q4hdn
-         iQxQ==
-X-Gm-Message-State: AGRZ1gK2oxv4TQuBRg6bYJKNctRk/WrmnUaX3AoBTBBFHUK2jP0KIm8X
-        OD145Cj21Ef3Wi7dO1wvylFIO5pU+fPg5w==
-X-Google-Smtp-Source: AJdET5fqxiGz/SChwdYlFJPJMTM0IcmbqBqtXGPj4kg5Y41hpB4e2RmpQBK1KCUfnbHIbRpawK7B7w==
-X-Received: by 2002:a25:4bc3:: with SMTP id y186-v6mr5031860yba.18.1540586508830;
-        Fri, 26 Oct 2018 13:41:48 -0700 (PDT)
-Received: from mail-yw1-f42.google.com (mail-yw1-f42.google.com. [209.85.161.42])
-        by smtp.gmail.com with ESMTPSA id 123-v6sm3045263ywx.15.2018.10.26.13.41.47
+        bh=qVHuF2pQ7n/iYrqE81jlHPL+f1/5Mbp50K/TF++woLQ=;
+        b=skw6JUKyLZbEfYKvxqC/3ZUJBw+MHLPOMIazv42aVvIffasAhB31toEJKySTE4AyAh
+         m5r+Q+YJeR4P0HqqTaalE7G+CHumx3hv9gNAfM3sG0A0SCninKtPEgeqjqMVg/nD5UQd
+         NuVeasp5S22s5TswrqQFLQIu2yY4zbXf0rNXXsILyXLkJzu++IluyKx9xcY/rVVOkmc0
+         bYGWUlceaw9NkPgyyMbcZ9dXp3HhclboDkYgxfWrdoQl/KzWtTo6ngboay7f7PYEu2Ts
+         fSlYGzkXsd98sv8WQw+PeLKC5xBGeTSbtk2OSiYOQE/uNrRKLHGsnHEMkc0Xl8mgyOZE
+         3C4w==
+X-Gm-Message-State: AGRZ1gJV/0qOk0xaKScnh0JNhpdPAMj8ozlLWOYW2RyLJEp73hRItPMq
+        cjcd3g535qPRLrgSP/0PBfOjz74GkBsxzA==
+X-Google-Smtp-Source: AJdET5diJmb0c2Dp4YhS/kOfuYtRB3bBsS63c8jBaE3Ns4Q5xYja3zJYjFyX12dHIS3yRS79cyqlDQ==
+X-Received: by 2002:a19:d8ea:: with SMTP id r103mr2544301lfi.146.1540586539847;
+        Fri, 26 Oct 2018 13:42:19 -0700 (PDT)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
+        by smtp.gmail.com with ESMTPSA id z89-v6sm949211ljb.71.2018.10.26.13.42.18
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 13:41:47 -0700 (PDT)
-Received: by mail-yw1-f42.google.com with SMTP id a128-v6so984763ywg.9
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 13:41:47 -0700 (PDT)
-X-Received: by 2002:a81:98cb:: with SMTP id p194-v6mr5138497ywg.353.1540586507011;
- Fri, 26 Oct 2018 13:41:47 -0700 (PDT)
+        Fri, 26 Oct 2018 13:42:18 -0700 (PDT)
+Received: by mail-lf1-f52.google.com with SMTP id m18-v6so1875217lfl.11
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 13:42:18 -0700 (PDT)
+X-Received: by 2002:a19:288c:: with SMTP id o134-v6mr3304130lfo.124.1540586537634;
+ Fri, 26 Oct 2018 13:42:17 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Fri, 26 Oct 2018 13:41:46
- -0700 (PDT)
-In-Reply-To: <20181026203514.GC129228@joelaf.mtv.corp.google.com>
-References: <20181026180042.52199-1-joel@joelfernandes.org>
- <CAGXu5jLKLKDwVgRoMx57Y76V9FVJqQ+EeTHB2CnxAN5CnC2Jmw@mail.gmail.com> <20181026203514.GC129228@joelaf.mtv.corp.google.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Fri, 26 Oct 2018 21:41:46 +0100
-X-Gmail-Original-Message-ID: <CAGXu5jLYSU-P+QQCwZ2D1Wr-6TcwdKLTVVR1_0hVdRA-qQWXWA@mail.gmail.com>
-Message-ID: <CAGXu5jLYSU-P+QQCwZ2D1Wr-6TcwdKLTVVR1_0hVdRA-qQWXWA@mail.gmail.com>
-Subject: Re: [RFC 1/6] pstore: map pstore types to names
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>
+References: <10b12992-3570-4646-374b-82cbd7276839@acm.org> <CAKwvOd=wgxB69dMxzMeH2edCn=TdQGPGkNVW1e=QHPTJtO9ZNw@mail.gmail.com>
+ <1538503063.193396.6.camel@acm.org> <CAKwvOdmsNEexQL9R8rgcRcXTZButYM6YWwG8bhVWCoJ8bOqCrA@mail.gmail.com>
+ <1538521591.193396.8.camel@acm.org> <20181025213144.GB24709@flashbox>
+ <CAKwvOdn=TvoGdFvgxX6TyXBXnhVLttriRrZEnzS6DjcjL64DPA@mail.gmail.com>
+ <20181025225548.GA10326@flashbox> <CAKwvOdnwmf47_m_0K5OCLmXbrkLNnekpNOPCCMeJqkuqKUbQ-A@mail.gmail.com>
+ <1540576908.66186.103.camel@acm.org> <20181026180515.GA12129@flashbox>
+ <CAKwvOdnEHCmNjm-P068KQrbU0K+Dzyw_+_j7XLKJET0LWSz86A@mail.gmail.com>
+ <CAHk-=wh0LsuM+kAZGbDaogDdSbdCk3GvXmjYVAMkpmLj2=VF=g@mail.gmail.com> <CAKwvOd=c9RG2s3f-PgM1T84sHc5N9zcjrVpG5is+mGbTOxvtrQ@mail.gmail.com>
+In-Reply-To: <CAKwvOd=c9RG2s3f-PgM1T84sHc5N9zcjrVpG5is+mGbTOxvtrQ@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 26 Oct 2018 13:42:01 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whazvE2VnJiSFeQ_BzU2iUUt=v8BxhgJyq92ecDayJ14g@mail.gmail.com>
+Message-ID: <CAHk-=whazvE2VnJiSFeQ_BzU2iUUt=v8BxhgJyq92ecDayJ14g@mail.gmail.com>
+Subject: Re: [PATCH] libosd: Remove ignored __weak attribute
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     bvanassche@acm.org, ooo@electrozaur.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Kees Cook <keescook@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 9:35 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
-> But I have the index variable, so it would be cleaner to just return that? I
-> believe I can just drop the cast and do that.
+On Fri, Oct 26, 2018 at 1:06 PM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+>
+> Is removing a filesystem considered a userspace breakage?
 
-Yeah, that should be fine.
+Yes - if a user notices.
 
--- 
-Kees Cook
+The key word is *USER*.
+
+Note that it's not "user space". It's not about _programs_ noticing,
+it's literally about users and their workflows.
+
+If some change breaks a real user workflow, it needs to be reverted.
+
+So this is not about ABI or anything like that. We've had cases where
+the ABI stayed the same, but the order of device probing changed, and
+that broke peoples setups (because now /dev/sdb and /dev/sda switched
+places), and we had to revert.
+
+It's literally about "if a user upgrades a kernel, and something no
+longer works, it's a regression".
+
+In general, a good idea is "if you have to wonder about it, just don't
+do it".  Because it turns out that users are odd, and often do odd
+things much after you'd have thought they'd have long since switched
+to more modern hardware or filesystems.
+
+                      Linus
