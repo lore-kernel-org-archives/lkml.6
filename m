@@ -2,109 +2,154 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 123BCC6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 06:39:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27615C6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 06:39:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE32720834
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 06:39:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D85DB2084D
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 06:39:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="j2JaxOH4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE32720834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ERLoHuSO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D85DB2084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726295AbeJZPPK (ORCPT
+        id S1726796AbeJZPP1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 11:15:10 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:51301 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725950AbeJZPPK (ORCPT
+        Fri, 26 Oct 2018 11:15:27 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:35902 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726330AbeJZPP0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 11:15:10 -0400
-Received: by mail-wm1-f67.google.com with SMTP id 143-v6so311126wmf.1
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 23:39:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=MqqE0Xu44TkqUL0xiIYfULybT4mQAynRwnheqAI4sAA=;
-        b=j2JaxOH4nEkPdjznlEUUptZHLVN8VwmTe5EuSojqANUq3dW5dWeFt8rhj6xS8upQ3I
-         9TT9+6WKNrpp44MQJYBcnnS57MBG7l0fCbG+goHAszfK67si7yRPXJy1Ro8d1Snqv+8q
-         Zdc1N3yOjS/XgnrysNV4IYbS+6D7XbspVQGss=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=MqqE0Xu44TkqUL0xiIYfULybT4mQAynRwnheqAI4sAA=;
-        b=p4+TgbV4H4cbxqXoP+yqfV7wLVuqSyw3s8PbzZI5ItXXhDlxLzPB28ghR4H4jxnYTX
-         o5Cn7TEhWitAe0XKr34nh3Q5aAqS1u8NxDPMQWoAK6mtw1cW8+6AXm6pu334pT0wfdgS
-         Jr9HFnAQEg1VxJza/DSSR1bAIYkl3V2EHHLtzi8McJPL5luGb27SIK3JcKzfvwx6h6w7
-         t2msOPsMG29aFePVN3Z+ScE/b5see0sd+HnLaST+Ju7Pw1rF14izHTd/f23IZlpIsnBU
-         Xw/x6dxapZ7oWMgX+BTA1yBzvpWDUPzZhAZ8+yJh1fCBwZoIIZdpSs2evbBeA9RdUreA
-         2grg==
-X-Gm-Message-State: AGRZ1gKAk2aLLNo4kxeTvSYOMMyB0CZl+pMLxCWfB5dhH+8g9oC7KDFH
-        f3+1Dq6LQ6lWzsYU80uAY99Wvw==
-X-Google-Smtp-Source: AJdET5esqbrcD17icGGVGHQKEdYLKuj3dxCetrZ3PlWH7htFZvAA7/cNgVY44v3jZMhNVonvV5SOnw==
-X-Received: by 2002:a1c:5505:: with SMTP id j5-v6mr4179367wmb.146.1540535964826;
-        Thu, 25 Oct 2018 23:39:24 -0700 (PDT)
-Received: from dell ([2.31.167.182])
-        by smtp.gmail.com with ESMTPSA id s11-v6sm287188wrq.41.2018.10.25.23.39.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 25 Oct 2018 23:39:23 -0700 (PDT)
-Date:   Fri, 26 Oct 2018 07:39:21 +0100
-From:   Lee Jones <lee.jones@linaro.org>
-To:     thesven73@gmail.com
-Cc:     svendev@arcx.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        afaerber@suse.de, treding@nvidia.com, david@lechnology.com,
-        noralf@tronnes.org, johan@kernel.org, monstr@monstr.eu,
-        michal.vokac@ysoft.com, arnd@arndb.de, gregkh@linuxfoundation.org,
-        john.garry@huawei.com, geert+renesas@glider.be,
-        robin.murphy@arm.com, paul.gortmaker@windriver.com,
-        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
-        stuyoder@gmail.com, linus.walleij@linaro.org,
-        maxime.ripard@bootlin.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH anybus v1 2/4] dt-bindings: anybus-bridge: document
- devicetree binding.
-Message-ID: <20181026063921.GF4870@dell>
-References: <20181025154656.10153-1-TheSven73@googlemail.com>
+        Fri, 26 Oct 2018 11:15:26 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9Q6dFej110669;
+        Fri, 26 Oct 2018 01:39:15 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1540535955;
+        bh=pCkj2CpV6KyQInSURrePVpuBjqLx1TxMXat3GZqhwyE=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=ERLoHuSO7n+uRgepy49WibXLqkcawSfy+n0mlyLo4xQh0kLMhusSLQ4FnH72sHAEx
+         mBxXlBhMTOAREVmw2KHXyGRGQco98vejhwik+iL4MtIj9ZjxqqiJIOGc3j80WIbnvc
+         fEScHzvAf086dFSAs5XEFDF5O0dvA2IUhB/0bVmA=
+Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id w9Q6dFkZ104398
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 26 Oct 2018 01:39:15 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 26
+ Oct 2018 01:39:14 -0500
+Received: from dflp32.itg.ti.com (10.64.6.15) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Fri, 26 Oct 2018 01:39:14 -0500
+Received: from [172.24.190.117] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9Q6dAlv019504;
+        Fri, 26 Oct 2018 01:39:11 -0500
+Subject: Re: [PATCH v2 00/10] Add support for TISCI irqchip drivers
+To:     Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        <marc.zyngier@arm.com>
+CC:     Santosh Shilimkar <ssantosh@kernel.org>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Device Tree Mailing List <devicetree@vger.kernel.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>
+References: <20181018154017.7112-1-lokeshvutla@ti.com>
+ <942981b8-7536-2b6b-ad49-dc59671cbda6@oracle.com>
+ <050161aa-a257-9bf8-b3c9-35b13925b556@ti.com>
+ <38811dd7-0645-0439-092d-6759ab52cb0a@oracle.com>
+From:   Lokesh Vutla <lokeshvutla@ti.com>
+Message-ID: <bc7312c2-b068-ddda-b183-54e6bc3f8219@ti.com>
+Date:   Fri, 26 Oct 2018 12:09:01 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <38811dd7-0645-0439-092d-6759ab52cb0a@oracle.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181025154656.10153-1-TheSven73@googlemail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 25 Oct 2018, thesven73@gmail.com wrote:
+Hi Santosh,
 
-> >> This is why the bridge driver has a dependency on a pwm.
-> >> If the pwm could be enabled individually, I could drop this dependency.
-> >> Can you think of a way?
-> >
-> > How about using the pwm-clock device tree binding to turn the PWM into
-> > a clock?
-> > Documentation/devicetree/bindings/clock/pwm-clock.txt
+On Tuesday 23 October 2018 11:04 PM, Santosh Shilimkar wrote:
+> On 10/23/2018 1:17 AM, Lokesh Vutla wrote:
+>> Hi Santosh,
+>>
+>> On Tuesday 23 October 2018 02:09 AM, Santosh Shilimkar wrote:
+>>> On 10/18/2018 8:40 AM, Lokesh Vutla wrote:
+>>>> TISCI abstracts the handling of IRQ routes where interrupt sources
+>>>> are not directly connected to host interrupt controller. This series
+>>>> adds support for:
+>>>> - TISCI commands needed for IRQ configuration
+>>>> - Interrupt Router(INTR) and Interrupt Aggregator(INTA) drivers
+>>>>
+>>>> More information on TISCI IRQ management can be found here[1].
+>>>> Complete TISCI resource management information can be found here[2].
+>>>> AM65x SoC related TISCI information can be found here[3].
+>>>> INTR and INTA related information can be found in TRM[4].
+>>>>
+>>> I didn't read the specs but from what you described in
+>>> INTA and INTR bindings, does the flow of IRQs like below ?
+>>>
+>>> Device IRQ(e.g USB) -->INTR-->INTA--->HOST IRQ controller(GIC)
+>>
+>> Not all devices in SoC are connected to INTA. Only the devices that are
+>> capable of generating events are connected to INTA. And INTA is
+>> connected to INTR.
+>>
+>> So there are three ways in which IRQ can flow in AM65x SoC:
+>> 1) Device directly connected to GIC
+>>       - Device IRQ --> GIC
+>>       - (Most legacy peripherals like MMC, UART falls in this case)
+>> 2) Device connected to INTR.
+>>       - Device IRQ --> INTR --> GIC
+>>       - This is cases where you want to mux IRQs. Used for GPIOs and
+>> Mailboxes
+>>       - (This is somewhat similar to crossbar on DRA7 devices)
+>> 3) Devices connected to INTA.
+>>       - Device Event --> INTA --> INTR --> GIC
+>>       - Used for DMA and networking devices.
+>>
+>> Events are messages based on a hw protocol, sent by a master over a
+>> dedicated Event transport lane. Events are highly precise that no
+>> under/over flow of data transfer occurs at source/destination regardless
+>> of distance and latency. So this is mostly preferred in DMA and
+>> networking usecases. Now Interrupt Aggregator(IA) has the logic to
+>> converts these events to Interrupts.
+>>
+> This helps but none of the kernel doc you added, makes this clear so
+> perhaps you want to add this info to make that clear for reviewers
+> as well as for future reference.
+
+Sure will add it.
+
 > 
-> Looks like a winner. Thanks !!
+> Now regarding the events, no matter how they are routed/processed
+> within SOC, they are essentially interrupts so I do agree with
+> Marc's other comment.
 
-Could you fix your mailed to reply to mails 'threaded' please?
+Agreed. Marc suggested to use MSI in this scenario. Currently working in that 
+direction. Will repost the series once it is done.
 
-Your mails are now spread far and wide across my Inbox.
+Thanks and regards,
+Lokesh
 
-Thanks.
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+> 
+> Thanks for explanation again !!
+> 
+> regards,
+> Santosh
+> 
