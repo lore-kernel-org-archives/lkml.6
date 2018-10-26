@@ -2,119 +2,136 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C862DC6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 12:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1C90C6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 12:40:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E42020824
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 12:32:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E42020824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 525C320868
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 12:40:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bXzqn74p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 525C320868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727677AbeJZVJW (ORCPT
+        id S1727704AbeJZVRI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 17:09:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60282 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727555AbeJZVJV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 17:09:21 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0AB2E30820C8;
-        Fri, 26 Oct 2018 12:32:26 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-142.pek2.redhat.com [10.72.12.142])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C4E8165F54;
-        Fri, 26 Oct 2018 12:32:16 +0000 (UTC)
-Subject: Re: [PATCH] kdump, vmcoreinfo: Export sme_me_mask value to vmcoreinfo
-To:     Boris Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org
-Cc:     kexec@lists.infradead.org, tglx@linutronix.de, mingo@redhat.com,
-        x86@kernel.org, bhe@redhat.com, dyoung@redhat.com
-References: <20181026093630.8520-1-lijiang@redhat.com>
- <053CC83A-9A95-4C12-9627-AABD1427DA9C@alien8.de>
-From:   lijiang <lijiang@redhat.com>
-Message-ID: <1263471c-a27d-a698-15f0-b5947f13ea93@redhat.com>
-Date:   Fri, 26 Oct 2018 20:32:11 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 26 Oct 2018 17:17:08 -0400
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:36607 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727607AbeJZVRH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 17:17:07 -0400
+Received: by mail-ua1-f65.google.com with SMTP id w19so348304uaj.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 05:40:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=apzQIfOMYkBRdFDQicKtJQZxISE1oyAEMzJBC+wIUYw=;
+        b=bXzqn74pbWKX3ruLLEWAAmVn9AK0FcrTKzoW5V5IEOhC+xCdiuXnNCdywn0fPQDzBR
+         Z0Q52EjUxpeQkM+iLDNX7cxJ9KbQMVWRcBuw7rEEYQToTjbCNmxEJmCK5ohkhqj0ZVaW
+         DKAHfLoB4BPPh4FXiTBwXkngM2wy9195vz0zk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=apzQIfOMYkBRdFDQicKtJQZxISE1oyAEMzJBC+wIUYw=;
+        b=L7IHRXXMDXRlt7WzEG88CgYflSzk8KTfnq+Fm2UWvC2aEv5Le9D0XqAg2XxreBsTau
+         +EMDFDdICzIUzL0p67+UuKkCGpfe7F2kVvfLBW9GEszlLMEUtSKk0d3P/VV9QXom57Gz
+         rSVbz03AUJTMsJXEhHxZKjUL+hayznwV2rUXZj2LMI+17jJXwK6x50TcliBBzRjc/+am
+         nYsu1kpauXES92VEBZkrd5Pd1h5BokMy0gto88W9mz9nndBmitU8xrupe4cI0nXplt4N
+         Zjka6EsWz0zDk0DNmovT6guZAG6s7F0rP5klIULUiq7rBrUD7yzoSO0M5ZGWluUSLKm2
+         yXiQ==
+X-Gm-Message-State: AGRZ1gKARHs1hTPbWLbCOuYG0AI7LUwemin75sczpoVMAgjgjfCpDKHq
+        7uy7ZyeAb4nE+mxh7v/RDUYhqWeVgNQyfkpsnsAbgg==
+X-Google-Smtp-Source: AJdET5ew8YDwYFD2V7Z99xZ186QPvNw6VM0z69FOHP7IGXPuR6OtdZBL1AezDFKdCJyT2FpRF3glpSGRd59VyEl0dPQ=
+X-Received: by 2002:a9f:35a2:: with SMTP id t31mr1396288uad.98.1540557609298;
+ Fri, 26 Oct 2018 05:40:09 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <053CC83A-9A95-4C12-9627-AABD1427DA9C@alien8.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 26 Oct 2018 12:32:26 +0000 (UTC)
+References: <CGME20181017155403epcas2p1ed9777e96c6b2c77c2c5b67466be9843@epcas2p1.samsung.com>
+ <1539791563-5959-1-git-send-email-b.zolnierkie@samsung.com>
+ <1539791563-5959-9-git-send-email-b.zolnierkie@samsung.com> <CAHLCerNsdhG1OjiRiy5s4uSRGB6dUCVe7mvknCqWqMeQzxCb7Q@mail.gmail.com>
+In-Reply-To: <CAHLCerNsdhG1OjiRiy5s4uSRGB6dUCVe7mvknCqWqMeQzxCb7Q@mail.gmail.com>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Fri, 26 Oct 2018 18:09:58 +0530
+Message-ID: <CAHLCerOqgLep=sPvODyEY8sUr=xxkVU+BkWU5ipTX6w_j6dWtQ@mail.gmail.com>
+Subject: Re: [PATCH v2 08/17] thermal: qcom: tsens: enable+check sensor after
+ its setup is finished
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Markus Mayer <mmayer@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Heiko Stuebner <heiko@sntech.de>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Keerthy <j-keerthy@ti.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jun Nie <jun.nie@linaro.org>,
+        Baoyou Xie <baoyou.xie@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018年10月26日 17:43, Boris Petkov 写道:
-> On October 26, 2018 10:36:30 AM GMT+01:00, Lianbo Jiang <lijiang@redhat.com> wrote:
->> For AMD machine with SME feature, makedumpfile tools need to know
->> whether the crash kernel was encrypted or not. 
-> 
-> Why?
-> 
+On Fri, Oct 26, 2018 at 5:41 PM Amit Kucheria <amit.kucheria@linaro.org> wrote:
+>
+> On Wed, Oct 17, 2018 at 9:24 PM Bartlomiej Zolnierkiewicz
+> <b.zolnierkie@samsung.com> wrote:
+> >
+> > Enable+check sensor after setting tmdev->sensor[i].tzd and calling
+> > chipset specific enable operation.
+> >
+> > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > ---
+> >  drivers/thermal/qcom/tsens.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/thermal/qcom/tsens.c b/drivers/thermal/qcom/tsens.c
+> > index dbd2556..01bff96 100644
+> > --- a/drivers/thermal/qcom/tsens.c
+> > +++ b/drivers/thermal/qcom/tsens.c
+> > @@ -105,13 +105,13 @@ static int tsens_register(struct tsens_device *tmdev)
+> >                 if (IS_ERR(tzd))
+> >                         continue;
+> >
+> > -               thermal_zone_set_mode(tzd, THERMAL_DEVICE_ENABLED);
+> > -               thermal_zone_device_check(tzd);
+> > -
+>
+> I don't quite understand why you're making this move explicitly in a
+> separate patch for each of the drivers? You added it here in patch 4
+> in the first place, why not add it in the correct place there itself?
 
-If SME is enabled in the first kernel, the crash kernel's page table(pgd/pud/pmd/pte)
-contains the memory encryption mask, so i have to remove the sme mask to obtain the
-true physical address when dump vmcore. 
+I think I understand now. You wanted to separate patches causing
+functional changes from ones that didn't.
 
->> So it is necessary
->> to write the sme_me_mask to vmcoreinfo.
->>
->> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
->> ---
->> arch/x86/kernel/machine_kexec_64.c | 2 ++
->> 1 file changed, 2 insertions(+)
->>
->> diff --git a/arch/x86/kernel/machine_kexec_64.c
->> b/arch/x86/kernel/machine_kexec_64.c
->> index 4c8acdfdc5a7..dcfdb64d1097 100644
->> --- a/arch/x86/kernel/machine_kexec_64.c
->> +++ b/arch/x86/kernel/machine_kexec_64.c
->> @@ -357,6 +357,8 @@ void arch_crash_save_vmcoreinfo(void)
->> 	vmcoreinfo_append_str("NUMBER(pgtable_l5_enabled)=%d\n",
->> 			pgtable_l5_enabled());
->>
->> +	VMCOREINFO_NUMBER(sme_me_mask);
-> 
-> No we're not going to expose a kernel-internal mask to userspace. 
-> 
+IMHO, it makes the series a bit hard to read but I have no better
+suggestion than to squash everything (patches 3-16), but that will
+make it harder to collect Acks.
 
-If so, can i set a variable flag for the 'sme_me_mask' and export the
-variable flag? For example:
-
-void arch_crash_save_vmcoreinfo(void) {
-
-    ....
-
-    if (sme_active())
-        sme_enabled = 1;
-
-    VMCOREINFO_NUMBER(sme_enabled);
-....
-}
-
-> If at all needed, add functions to kexec which figure out whether we are encrypted or not and export that result as a kexec variable.
-> 
-> 
-
-For AMD machine with the SME feature, the msr 'MSR_K8_SYSCFG' can examine
-whether SME is enabled in kernel, but the kexec is also userspace tool,
-it has no permission to access the msr.
-
-Furthermore, i also tried to read the "/dev/cpu/cpu[number]/msr", but
-the value depends on BIOS's configuration. That is to say, if SME is
-set in BIOS, the value of msr is always 0xF40000 whatever the kernel
-commandline parameter is "mem_encrypt=on" or "mem_encrypt=off".
-
-If i made a mistake, please help to point it out.
-
-Thanks.
-Lianbo
+> >                 tmdev->sensor[i].tzd = tzd;
+> >
+> >                 if (tmdev->ops->enable)
+> >                         tmdev->ops->enable(tmdev, i);
+> > +
+> > +               thermal_zone_set_mode(tzd, THERMAL_DEVICE_ENABLED);
+> > +               thermal_zone_device_check(tzd);
+> >
+> >         }
+> >         return 0;
+> >  }
+> > --
+> > 1.9.1
+> >
