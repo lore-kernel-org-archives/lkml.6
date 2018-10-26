@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2692ECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:48:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA104C6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:48:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B76E420869
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:48:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B76E420869
+	by mail.kernel.org (Postfix) with ESMTP id AA06920869
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:48:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA06920869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727498AbeJZWZn (ORCPT
+        id S1727562AbeJZWZp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 18:25:43 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44822 "EHLO mx1.suse.de"
+        Fri, 26 Oct 2018 18:25:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44790 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726998AbeJZWZn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 18:25:43 -0400
+        id S1727431AbeJZWZo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 18:25:44 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 05961B01F;
-        Fri, 26 Oct 2018 13:48:33 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 8398EB049;
+        Fri, 26 Oct 2018 13:48:34 +0000 (UTC)
 From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 To:     stefan.wahren@i2se.com, eric@anholt.net,
         dave.stevenson@raspberrypi.org
 Cc:     nsaenzjulienne@suse.de, linux-rpi-kernel@lists.infradead.org,
         gregkh@linuxfoundation.org, linux-arm-kernel@lists.infradead.org,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH RFC 04/18] stagning: vchiq_arm: use list_for_each_entry when accessing bulk_waiter_list
-Date:   Fri, 26 Oct 2018 15:47:59 +0200
-Message-Id: <20181026134813.7775-5-nsaenzjulienne@suse.de>
+Subject: [PATCH RFC 08/18] staging: vchiq_core: remove unnecessary safety checks in vchiq_init_state
+Date:   Fri, 26 Oct 2018 15:48:03 +0200
+Message-Id: <20181026134813.7775-9-nsaenzjulienne@suse.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181026134813.7775-1-nsaenzjulienne@suse.de>
 References: <20181026134813.7775-1-nsaenzjulienne@suse.de>
@@ -45,112 +45,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The resulting code is way more readeable and intuitive compared to plain
-list_for_each.
+vchiq_init_state() checks the initial contents of slot_zero are correct.
+These are set in vchiq_init_slots(), using the same hard-coded defaults
+as the checks. Both functions are called sequentially and Video Core
+isn't yet aware of the slot's address. There is no way the contents of
+slot_zero changed in between functions, making the checks useless.
 
 Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 ---
- .../interface/vchiq_arm/vchiq_arm.c           | 52 ++++++-------------
- 1 file changed, 16 insertions(+), 36 deletions(-)
+ .../interface/vchiq_arm/vchiq_core.c          | 59 -------------------
+ 1 file changed, 59 deletions(-)
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-index d88dd7415e1e..5f55c708ade8 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-@@ -280,16 +280,11 @@ VCHIQ_STATUS_T vchiq_shutdown(VCHIQ_INSTANCE_T instance)
- 		"%s(%p): returning %d", __func__, instance, status);
- 
- 	if (status == VCHIQ_SUCCESS) {
--		struct list_head *pos, *next;
-+		struct bulk_waiter_node *waiter, *next;
- 
--		list_for_each_safe(pos, next,
--				&instance->bulk_waiter_list) {
--			struct bulk_waiter_node *waiter;
--
--			waiter = list_entry(pos,
--					struct bulk_waiter_node,
--					list);
--			list_del(pos);
-+		list_for_each_entry_safe(waiter, next,
-+					 &instance->bulk_waiter_list, list) {
-+			list_del(&waiter->list);
- 			vchiq_log_info(vchiq_arm_log_level,
- 					"bulk_waiter - cleaned up %pK for pid %d",
- 					waiter, waiter->pid);
-@@ -473,7 +468,6 @@ vchiq_blocking_bulk_transfer(VCHIQ_SERVICE_HANDLE_T handle, void *data,
- 	VCHIQ_SERVICE_T *service;
- 	VCHIQ_STATUS_T status;
- 	struct bulk_waiter_node *waiter = NULL;
--	struct list_head *pos;
- 
- 	service = find_service_by_handle(handle);
- 	if (!service)
-@@ -484,13 +478,9 @@ vchiq_blocking_bulk_transfer(VCHIQ_SERVICE_HANDLE_T handle, void *data,
- 	unlock_service(service);
- 
- 	mutex_lock(&instance->bulk_waiter_list_mutex);
--	list_for_each(pos, &instance->bulk_waiter_list) {
--		if (list_entry(pos, struct bulk_waiter_node,
--				list)->pid == current->pid) {
--			waiter = list_entry(pos,
--				struct bulk_waiter_node,
--				list);
--			list_del(pos);
-+	list_for_each_entry(waiter, &instance->bulk_waiter_list, list) {
-+		if (waiter->pid == current->pid) {
-+			list_del(&waiter->list);
- 			break;
- 		}
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+index 34a892011296..dee5ea7bfe4f 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+@@ -2170,65 +2170,6 @@ vchiq_init_state(VCHIQ_STATE_T *state, VCHIQ_SLOT_ZERO_T *slot_zero)
+ 		return VCHIQ_ERROR;
  	}
-@@ -1135,21 +1125,16 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 				ret = -ENOMEM;
- 				break;
- 			}
-+
- 			args.userdata = &waiter->bulk_waiter;
- 		} else if (args.mode == VCHIQ_BULK_MODE_WAITING) {
--			struct list_head *pos;
--
- 			mutex_lock(&instance->bulk_waiter_list_mutex);
--			list_for_each(pos, &instance->bulk_waiter_list) {
--				if (list_entry(pos, struct bulk_waiter_node,
--					list)->pid == current->pid) {
--					waiter = list_entry(pos,
--						struct bulk_waiter_node,
--						list);
--					list_del(pos);
-+			list_for_each_entry(waiter, &instance->bulk_waiter_list,
-+					    list) {
-+				if (waiter->pid == current->pid) {
-+					list_del(&waiter->list);
- 					break;
- 				}
--
- 			}
- 			mutex_unlock(&instance->bulk_waiter_list_mutex);
- 			if (!waiter) {
-@@ -2158,16 +2143,11 @@ vchiq_release(struct inode *inode, struct file *file)
- 		vchiq_release_internal(instance->state, NULL);
  
- 		{
--			struct list_head *pos, *next;
+-	/* Check the input configuration */
 -
--			list_for_each_safe(pos, next,
--				&instance->bulk_waiter_list) {
--				struct bulk_waiter_node *waiter;
-+			struct bulk_waiter_node *waiter, *next;
+-	if (slot_zero->magic != VCHIQ_MAGIC) {
+-		vchiq_loud_error_header();
+-		vchiq_loud_error("Invalid VCHIQ magic value found.");
+-		vchiq_loud_error("slot_zero=%pK: magic=%x (expected %x)",
+-			slot_zero, slot_zero->magic, VCHIQ_MAGIC);
+-		vchiq_loud_error_footer();
+-		return VCHIQ_ERROR;
+-	}
+-
+-	if (slot_zero->version < VCHIQ_VERSION_MIN) {
+-		vchiq_loud_error_header();
+-		vchiq_loud_error("Incompatible VCHIQ versions found.");
+-		vchiq_loud_error("slot_zero=%pK: VideoCore version=%d (minimum %d)",
+-			slot_zero, slot_zero->version, VCHIQ_VERSION_MIN);
+-		vchiq_loud_error("Restart with a newer VideoCore image.");
+-		vchiq_loud_error_footer();
+-		return VCHIQ_ERROR;
+-	}
+-
+-	if (VCHIQ_VERSION < slot_zero->version_min) {
+-		vchiq_loud_error_header();
+-		vchiq_loud_error("Incompatible VCHIQ versions found.");
+-		vchiq_loud_error("slot_zero=%pK: version=%d (VideoCore minimum %d)",
+-			slot_zero, VCHIQ_VERSION, slot_zero->version_min);
+-		vchiq_loud_error("Restart with a newer kernel.");
+-		vchiq_loud_error_footer();
+-		return VCHIQ_ERROR;
+-	}
+-
+-	if ((slot_zero->slot_zero_size != sizeof(VCHIQ_SLOT_ZERO_T)) ||
+-		 (slot_zero->slot_size != VCHIQ_SLOT_SIZE) ||
+-		 (slot_zero->max_slots != VCHIQ_MAX_SLOTS) ||
+-		 (slot_zero->max_slots_per_side != VCHIQ_MAX_SLOTS_PER_SIDE)) {
+-		vchiq_loud_error_header();
+-		if (slot_zero->slot_zero_size != sizeof(VCHIQ_SLOT_ZERO_T))
+-			vchiq_loud_error("slot_zero=%pK: slot_zero_size=%d (expected %d)",
+-				slot_zero, slot_zero->slot_zero_size,
+-				(int)sizeof(VCHIQ_SLOT_ZERO_T));
+-		if (slot_zero->slot_size != VCHIQ_SLOT_SIZE)
+-			vchiq_loud_error("slot_zero=%pK: slot_size=%d (expected %d)",
+-				slot_zero, slot_zero->slot_size,
+-				VCHIQ_SLOT_SIZE);
+-		if (slot_zero->max_slots != VCHIQ_MAX_SLOTS)
+-			vchiq_loud_error("slot_zero=%pK: max_slots=%d (expected %d)",
+-				slot_zero, slot_zero->max_slots,
+-				VCHIQ_MAX_SLOTS);
+-		if (slot_zero->max_slots_per_side != VCHIQ_MAX_SLOTS_PER_SIDE)
+-			vchiq_loud_error("slot_zero=%pK: max_slots_per_side=%d (expected %d)",
+-				slot_zero, slot_zero->max_slots_per_side,
+-				VCHIQ_MAX_SLOTS_PER_SIDE);
+-		vchiq_loud_error_footer();
+-		return VCHIQ_ERROR;
+-	}
+-
+-	if (VCHIQ_VERSION < slot_zero->version)
+-		slot_zero->version = VCHIQ_VERSION;
+-
+ 	local = &slot_zero->slave;
+ 	remote = &slot_zero->master;
  
--				waiter = list_entry(pos,
--					struct bulk_waiter_node,
--					list);
--				list_del(pos);
-+			list_for_each_entry_safe(waiter, next,
-+					&instance->bulk_waiter_list, list) {
-+				list_del(&waiter->list);
- 				vchiq_log_info(vchiq_arm_log_level,
- 					"bulk_waiter - cleaned up %pK for pid %d",
- 					waiter, waiter->pid);
 -- 
 2.19.1
 
