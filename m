@@ -2,139 +2,113 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EED0C6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:20:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D900CC6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:20:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA0D02085B
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:20:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA0D02085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 7EAD42085B
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:20:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="HUc4JIKi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EAD42085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726570AbeJZW5Z (ORCPT
+        id S1727221AbeJZW53 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 18:57:25 -0400
-Received: from verein.lst.de ([213.95.11.211]:37724 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726159AbeJZW5Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 18:57:25 -0400
-Received: by newverein.lst.de (Postfix, from userid 2005)
-        id D922868C94; Fri, 26 Oct 2018 16:20:08 +0200 (CEST)
-To:     Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        live-patching@vger.kernel.org
-Subject: [PATCH v4 0/3] arm64 live patching
-Message-Id: <20181026142008.D922868C94@newverein.lst.de>
-Date:   Fri, 26 Oct 2018 16:20:08 +0200 (CEST)
-From:   duwe@lst.de (Torsten Duwe)
+        Fri, 26 Oct 2018 18:57:29 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:50206 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726686AbeJZW52 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 18:57:28 -0400
+Received: by mail-it1-f195.google.com with SMTP id k206-v6so1716756ite.0
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 07:20:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0zCMwBAm09F25IZwarKsjQDcRDxEIhwYjtSkPUkHv/s=;
+        b=HUc4JIKiqQfJgYrtEWqe9AyPXO+cav146N/2ddXWCrR/9dItBi1h0KEI7p0KHRsdMF
+         5PwweDmU34+Awtcx2727aR3RbUBibrUzp3sr8lT9nzhvWlZA8AdRj56tiNaPmR/6ZoxY
+         UNCJMmxeKZAzuS5Q160C1aNIPpkMUCI4Dc78kpIdXNXvU7sn6E/DmAw1XC7JLZ7y8wYF
+         DYR6Rnsql+nebdh5PorkigHwPKNz8WlsKFthExvsueRbjEdx0LPaAmd8zppriJlxRAuD
+         LJfqnQVBLHGG7L463kuEXp6u5TDI+FNzTEk3JartFiQwFPDUJZ7rP8A1DtSPozAAnEpt
+         f/4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0zCMwBAm09F25IZwarKsjQDcRDxEIhwYjtSkPUkHv/s=;
+        b=Sp9/0XNmiOnkxlXiyRufQFask2u88mMvzv6Rdp2/Palm8rbaJfmvmaJPC5CGFDaMPv
+         Cch0DouXn3pqModhJ3td5fyGoQF+/7zUpOu/QREs3/Pyref59rYMPpGP7nLeDl0+u3rO
+         z1xN+GSCyTPkdXrIdjSSUN1M8HozahpTeXyNoV16+0ab5rHumDmwoHp3BAIcyRs6mKEK
+         4GjLCuSRHFdyb3Kwx1S55enjFKipRXkl4uEzavyhLSwc4H6KRlHHWxO347BvHG9gyRgK
+         66HMSbGz5V4/tdlgAQr+1RdSsxsk2aPNG/4Xe93KO+R8ZdInGZqgFvqtwcUeEPYpZTep
+         49nQ==
+X-Gm-Message-State: AGRZ1gLGufGUFFRL71LvkzEEr3TyATuB1dTyNZuP66U08kPTzTeXqrke
+        yP9j9Z4kWq7/VIjhIWjhF2GmUA==
+X-Google-Smtp-Source: AJdET5cPiPd5YYsBTPQaRKs8QdX27bn85o1VnKlQ7G1h3QJmRyOKRvklba7Kj6ztDYpBKayq7SE/iA==
+X-Received: by 2002:a24:e20e:: with SMTP id q14-v6mr440669ith.55.1540563612674;
+        Fri, 26 Oct 2018 07:20:12 -0700 (PDT)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id d21-v6sm3820526ioc.32.2018.10.26.07.20.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 26 Oct 2018 07:20:10 -0700 (PDT)
+Subject: Re: UBSAN: Undefined behaviour in drivers/block/floppy.c:1495:32
+To:     Kyungtae Kim <kt0755@gmail.com>
+Cc:     jikos@kernel.org, Byoungyoung Lee <lifeasageek@gmail.com>,
+        DaeRyong Jeong <threeearcat@gmail.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller@googlegroups.com
+References: <CAEAjamtML1yMLL0DsV5JkD1H6P0Yg19F2DVq+_c-u09RaCKuDw@mail.gmail.com>
+ <fcad3085-6801-71f9-b2cf-4c1702889d70@kernel.dk>
+ <CAEAjamtJrbLZyN+f97Y+LOMbogveYNBdxM-pVvfqUMhaGsH2uw@mail.gmail.com>
+ <CAEAjams3Y4PE-yDP0FyipCAohOepSF9WgXw3h_CEd1YW+mjS0g@mail.gmail.com>
+ <ad9f11b6-1e3c-8412-ecce-d04a1c8c317a@kernel.dk>
+ <CAEAjamu-MmtPF0_kqyPKJBcZSWz=SGi_1VjLq7z9MMm5-t7Oog@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <9206bb2f-b11f-cd57-819a-81438b388124@kernel.dk>
+Date:   Fri, 26 Oct 2018 08:20:09 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <CAEAjamu-MmtPF0_kqyPKJBcZSWz=SGi_1VjLq7z9MMm5-t7Oog@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi again!
+On 10/26/18 7:22 AM, Kyungtae Kim wrote:
+> I corrected the patch as follows:
 
-V4 should include all your requested changes. Since only Julien
-commented "OK" on the reliable stacktrace part, I finished it on my
-own. This set now passes the relevant tests in Libor's test suite, so
-livepatching the kernel proper does work.
+OK, we're getting there! Please resend as a separate email, so that
+the subject line is the patch header, and just the commit message
+in the body. I'd fix that up for this one, but you also need to
+fix up:
 
-Remember to apply Jessica's addendum in order to livepatch functions
-that live in modules.
+> diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
+> index a8cfa01..41160a1 100644
+> --- a/drivers/block/floppy.c
+> +++ b/drivers/block/floppy.c
+> @@ -3146,6 +3146,9 @@ static int raw_cmd_copyin(int cmd, void __user *param,
+>                          */
+>                 return -EINVAL;
+> 
+> +       if (ptr->cmd_count > ARRAY_SIZE(ptr->cmd))
+> +         return -EINVAL;
+> +
 
-[Changes from v3]:
+This needs to use tabs, not two spaces. Look at the surrounding
+code - if yours looks differently, then you should correct that.
 
-* Compiler support for -fpatchable-function-entry now automagically
-  selects _WITH_REGS when DYNAMIC_FTRACE is switched on. Consequently,
-  CONFIG_DYNAMIC_FTRACE_WITH_REGS is the only preprocessor symbol
-  set by this feature (as asked for by Takahiro in v2)
+-- 
+Jens Axboe
 
-* The dynamic ftrace caller creates 2 stack frames, as suggested by Ard:
-  first a "preliminary" for the callee, and another for ftrace_caller
-  itself. This gives the stack layout really a clean look.
-
-* Because the ftrace-clobbered x9 is now saved immediately in the
-  "callee" frame, it can be used to base pt_regs access. Much prettier now.
-
-* Dynamic replacement insn "mov x9, lr" is generated using the common
-  framework; a hopefully meaningful macro name is used for abbreviation.
-
-* The use_ftrace_trampoline() helper introduced in v3 got renamed
-  and streamlined with a reference variable, both as pointed out by Mark.
-
-* Superflous barriers during trace application removed.
-
-* #ifdef replaced by IS_ENABLED() where possible.
-
-* Made stuff compile with gcc7 or older, too ;-)
-
-* Fix my misguided .text.ftrace_regs_trampoline section assumption.
-  the second trampoline goes into .text.ftrace_trampoline as well.
-
-* Properly detect the bottom of kthread stacks, by setting a global
-  symbol to the address where their LR points to and compare against it.
-
-* Rewrote many comments to hopefully clear things up.
-
-[Changes from v2]:
-
-* ifeq($(CONFIG_DYNAMIC_FTRACE_WITH_REGS),y) instead of ifdef
-
-* "fix" commit 06aeaaeabf69da4. (new patch 1)
-  Made DYNAMIC_FTRACE_WITH_REGS a real choice. The current situation
-  would be that a linux-4.20 kernel on arm64 should be built with
-  gcc >= 8; as in this case, as well as all other archs, the "default y"
-  works. Only kernels >= 4.20, arm64, gcc < 8, must change this to "n"
-  in order to not be stopped by the Makefile $(error) from patch 2/4.
-  You'll then fall back to the DYNAMIC_FTRACE, if selected, like before.
-
-* use some S_X* constants to refer to offsets into pt_regs in assembly.
-
-* have the compiler/assembler generate the mov x9,x30 instruction that
-  saves LR at compile time, rather than generate it repeatedly at runtime.
-
-* flip the ftrace_regs_caller stack frame so that it is no longer
-  upside down, as Ard remarked. This change broke the graph caller somehow.
-
-* extend handling of the module arch-dependent ftrace trampoline with
-  a companion "regs" version.
-  
-* clear the _TIF_PATCH_PENDING on do_notify_resume()
-
-* took care of arch/arm64/kernel/time.c when changing stack unwinder
-  semantics
-
-[Changes from v1]:
-
-* Missing compiler support is now a Makefile error, instead
-  of a warning. This will keep the compile log shorter and
-  it will thus be easier to spot the problem.
-
-* A separate ftrace_regs_caller. Only that one will write out
-  a complete pt_regs, for efficiency.
-
-* Replace the use of X19 with X28 to remember the old PC during
-  live patch detection, as only that is saved&restored now for
-  non-regs ftrace.
-
-* CONFIG_DYNAMIC_FTRACE_WITH_REGS and CONFIG_DYNAMIC_FTRACE_WITH_REGS
-  are currently synonymous on arm64, but differentiate better for
-  the future when this is no longer the case.
-
-* Clean up "old"/"new" insn value setting vs. #ifdefs.
-
-* #define a INSN_MOV_X9_X30 with suggested aarch64_insn_gen call
-  and use that instead of an immediate hex value.
-
-	Torsten
