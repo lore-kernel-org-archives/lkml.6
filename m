@@ -2,89 +2,89 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C55BDC6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 10:56:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACF38C6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 10:57:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 761E92085B
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 10:56:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MdgAYYHH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 761E92085B
+	by mail.kernel.org (Postfix) with ESMTP id 7BA6220856
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 10:57:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BA6220856
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727431AbeJZTc7 (ORCPT
+        id S1727503AbeJZTdg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 15:32:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36166 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726275AbeJZTc6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 15:32:58 -0400
-Received: from localhost (unknown [167.98.65.38])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C0EDC20856;
-        Fri, 26 Oct 2018 10:56:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540551382;
-        bh=aGATmLcXOagDPQFZuTeqfQE2MZY+inZuSEiSB2Sg2uo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MdgAYYHHXFHymFE6jkRTHtn4jCqJqfiJ4/LlF7FU9MN3YwbYw5Z/HsNIoDO53HLoe
-         Eig+Z5eCkW7shb3fW0PQJmcfZd5LQxy310RPZOjheXHBJWOIbTycBK/8DKPCPssdco
-         FAdr92XSMDlZ7K/N8LTUQlSPwPBme13HAZtkMUxg=
-Date:   Fri, 26 Oct 2018 06:56:20 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Daniel Drake <drake@endlessm.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH AUTOSEL 4.14 03/15] Input: i8042 - enable keyboard
- wakeups by default when s2idle is used
-Message-ID: <20181026105620.GC2015@sasha-vm>
-References: <20181022102026.40869-1-sashal@kernel.org>
- <20181022102026.40869-3-sashal@kernel.org>
- <20181026090452.GB20200@amd>
+        Fri, 26 Oct 2018 15:33:36 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47588 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726275AbeJZTdg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 15:33:36 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 76A82AE86;
+        Fri, 26 Oct 2018 10:56:58 +0000 (UTC)
+Date:   Fri, 26 Oct 2018 12:56:56 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     miles.chen@mediatek.com, Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        wsd_upstream@mediatek.com, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] mm/page_owner: use vmalloc instead of kmalloc
+Message-ID: <20181026085410.GA8277@dhcp22.suse.cz>
+References: <1540492481-4144-1-git-send-email-miles.chen@mediatek.com>
+ <20181025192701.GK25444@bombadil.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181026090452.GB20200@amd>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181025192701.GK25444@bombadil.infradead.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 11:04:52AM +0200, Pavel Machek wrote:
->On Mon 2018-10-22 06:20:14, Sasha Levin wrote:
->> From: Daniel Drake <drake@endlessm.com>
->>
->> [ Upstream commit 684bec1092b6991ff2a7751e8a763898576eb5c2 ]
->>
->> Previously, on typical consumer laptops, pressing a key on the keyboard
->> when the system is in suspend would cause it to wake up (default or
->> unconditional behaviour). This happens because the EC generates a SCI
->> interrupt in this scenario.
->>
->> That is no longer true on modern laptops based on Intel WhiskeyLake,
->> including Acer Swift SF314-55G, Asus UX333FA, Asus UX433FN and Asus
->> UX533FD. We confirmed with Asus EC engineers that the "Modern Standby"
->> design has been modified so that the EC no longer generates a SCI
->> in this case; the keyboard controller itself should be used for wakeup.
->>
->> In order to retain the standard behaviour of being able to use the
->> keyboard to wake up the system, enable serio wakeups by default on
->> platforms that are using s2idle.
->
->Behaviour change, not a bugfix. Someone may like their laptop sleeping
->after keypress, we should not change it in the middle of -stable
->series.
+On Thu 25-10-18 12:27:01, Matthew Wilcox wrote:
+> On Fri, Oct 26, 2018 at 02:34:41AM +0800, miles.chen@mediatek.com wrote:
+> > The kbuf used by page owner is allocated by kmalloc(),
+> > which means it can use only normal memory and there might
+> > be a "out of memory" issue when we're out of normal memory.
+> > 
+> > Use vmalloc() so we can also allocate kbuf from highmem
+> > on 32bit kernel.
+> 
+> ... hang on, there's a bigger problem here.
+> 
+> static const struct file_operations proc_page_owner_operations = {
+>         .read           = read_page_owner,
+> };
+> 
+> read_page_owner(struct file *file, char __user *buf, size_t count, loff_t *ppos)
+> {
+> ...
+>                 return print_page_owner(buf, count, pfn, page,
+>                                 page_owner, handle);
+> }
+> 
+> static ssize_t
+> print_page_owner(char __user *buf, size_t count, unsigned long pfn,
+>                 struct page *page, struct page_owner *page_owner,
+>                 depot_stack_handle_t handle)
+> {
+> ...
+>       kbuf = kmalloc(count, GFP_KERNEL);
+> 
+> So I can force the kernel to make an arbitrary size allocation, triggering
+> OOMs and forcing swapping if I can get a file handle to this file.
+> The only saving grace is that (a) this is a debugfs file and (b) it's
+> root-only (mode 0400).  Nevertheless, I feel some clamping is called
+> for here.  Do we really need to output more than 4kB worth of text here?
 
-Dmitry already asked for it to be dropped, so it's gone.
+Completely agreed. Let's just clamp it to a single page. Userspace can
+easily loop around the syscall.
 
---
-Thanks,
-Sasha
+-- 
+Michal Hocko
+SUSE Labs
