@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 875F2ECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:45:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADB90C6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:45:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AFC620651
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:45:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 766A620868
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:45:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="a+9DETh0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AFC620651
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="cc1ITzOq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 766A620868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728022AbeJZXWS (ORCPT
+        id S1728037AbeJZXWY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 19:22:18 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36048 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727502AbeJZXWS (ORCPT
+        Fri, 26 Oct 2018 19:22:24 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:37373 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727502AbeJZXWX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 19:22:18 -0400
-Received: by mail-pf1-f194.google.com with SMTP id l81-v6so673229pfg.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 07:44:57 -0700 (PDT)
+        Fri, 26 Oct 2018 19:22:23 -0400
+Received: by mail-pl1-f196.google.com with SMTP id bh10-v6so627530plb.4
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 07:45:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=WMs9eO77nl0Eah3EaCbogJZGiro2jRBYTgO70Xm449I=;
-        b=a+9DETh0u939w4jAirodb/qnd2j+apuSoNCYkyoljf3MVh9k2qQLRJT6MtcUrZeG/J
-         B1jZoo4ZbiLlLfeWF1Z2uekx/+cvkX/06qBnPtnHdgwa6mbvkuM5x55QoKhGPKhTK1m1
-         Q9gDBJzgc3Ktf2GgDb81jjw9cZcConF+pzBtQ=
+        bh=ygp+3SnprJhnbmLUgRdGawXUPjC/BTULTbCFbZ067cc=;
+        b=cc1ITzOq6renkXS39VEzpzI9qforSXwKRu53A3Jcd2aCV7FRFjv31cecPUaNvVxUoL
+         vb93mpt2cy4W48WhC3IIdA1VhwXjL11I7qAOmITITn5nM8BLtMby3xvQ4GVbMg1hPp4g
+         I71GuCE7HLRpkqcMqlpl34E9OTCvPCgTWLQhI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=WMs9eO77nl0Eah3EaCbogJZGiro2jRBYTgO70Xm449I=;
-        b=ox7+XOk4cl+A/SwmHX/h3EYBoHmIigdSDJZwjn1/2s9/Q+rCnITqWUQzwSnr45HsdL
-         zJeQbeiSmukD2q1bTwFjZsMKjKQOiYRA67PgREPJrq0yMH4IgLaIeTe8AtPY/PIy4YMU
-         gaH62AkpKraRIiXYj0Z4049GLJKXOJy7jZqZu3x60saF4ByBM89ylO20Pnf+HN4rygnu
-         mrbThOZTTX3TAGkO5vErpqyq2irWvrjQ9KXA90P6h/jNOag/QFQo4FU2yyK0bwUfceTv
-         qPSFgcylIWhPBUzE7slfOBrrBAvhuOZKiJrmBMIQyQbhdbA7uYAoNxcDUsDTjx77PQ/r
-         WAIQ==
-X-Gm-Message-State: AGRZ1gLCEja5yWjy9NemQkKFmyrsok6sQsTtptQmcuRNedjbBv2Sr+8o
-        GYRo+UFbGVADLlHp4zvNaWTlAQ==
-X-Google-Smtp-Source: AJdET5dgwl8AGfxA5UhLunN3uxeVtMs9gaT+XpatQelxAyvZpuQ46W7uxHtqkj7NCXxoK7BKPBpvPw==
-X-Received: by 2002:a62:b802:: with SMTP id p2-v6mr629099pfe.1.1540565097511;
-        Fri, 26 Oct 2018 07:44:57 -0700 (PDT)
+        bh=ygp+3SnprJhnbmLUgRdGawXUPjC/BTULTbCFbZ067cc=;
+        b=CQOlyP4pNgMtNbZE3A3bvaed4RJ0GqUJHB/pzQOHLzP4Cq3oNeq9dEGA/ZFzeNL1e9
+         a7nhS+2Gsu0OiNORT8yamwN+EXyrMsOhAu7fIoW7t61ox5g+xWusxbpig8R23Y6iUi+1
+         diTqKGqyayKxYR69QXhUkCALQt0yrlxvm+nsvhmDCsLksSjE5sQ9YVXViYbhXi9eitcM
+         DbY3p0yu4/yZjPbm3zHX2aDic/CXY9AQwjVYmxlVSxgYLayztXnZo00/ftDR0KJyAZ1a
+         Sqvsve2JMRh1PCQ+38vGJbzfUNRVi1DdH+oxuhtIeEMzHYRhdWgRx6fN0K1j7LyHU3Zt
+         Fxtg==
+X-Gm-Message-State: AGRZ1gIvprXC7j9lMLnvD5mhqQvFG/db5SJrnnzXRNNy5zbfSHe4f7C4
+        /moK9xt13LwcZaGgWmpxQ/9ZIQ==
+X-Google-Smtp-Source: AJdET5f7igh1BKVvkMSAzIy+VfsF+TBLbwiw5FU55gW9N+8bQAN/icqoyRMN9cvvaQDvln/5hpjAyw==
+X-Received: by 2002:a17:902:aa45:: with SMTP id c5-v6mr3889262plr.100.1540565103086;
+        Fri, 26 Oct 2018 07:45:03 -0700 (PDT)
 Received: from localhost.localdomain ([27.7.51.1])
-        by smtp.gmail.com with ESMTPSA id z22-v6sm12044467pgv.24.2018.10.26.07.44.52
+        by smtp.gmail.com with ESMTPSA id z22-v6sm12044467pgv.24.2018.10.26.07.44.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 07:44:56 -0700 (PDT)
+        Fri, 26 Oct 2018 07:45:02 -0700 (PDT)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -73,9 +73,9 @@ To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v3 08/25] drm/sun4i: sun6i_mipi_dsi: Fix TCON DRQ set bits
-Date:   Fri, 26 Oct 2018 20:13:27 +0530
-Message-Id: <20181026144344.27778-9-jagan@amarulasolutions.com>
+Subject: [PATCH v3 09/25] drm/sun4i: sun6i_mipi_dsi: Refactor vertical video start delay
+Date:   Fri, 26 Oct 2018 20:13:28 +0530
+Message-Id: <20181026144344.27778-10-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20181026144344.27778-1-jagan@amarulasolutions.com>
 References: <20181026144344.27778-1-jagan@amarulasolutions.com>
@@ -86,20 +86,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TCON DRQ set bits for non-burst DSI mode can computed via
-horizontal front porch instead of front porch + sync timings.
+Video start delay can be computed by subtracting total vertical
+timing with front porch timing and with adding 1 delay line for TCON.
 
-BSP code form BPI-M64-bsp is computing TCON DRQ set bits
-for non-burts as
+BSP code form BPI-M64-bsp is computing video start delay as
 (in linux-sunxi/drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
 
-=> panel->lcd_ht -    panel->lcd_x - panel->lcd_hbp
-=> (timmings->hor_front_porch + panel->lcd_hbp + panel->lcd_x)
-   - panel->lcd_x - panel->hbp
-=> timmings->hor_front_porch
-=> mode->hsync_start - mode->hdisplay
+u32 vfp = panel->lcd_vt - panel->lcd_y - panel->lcd_vbp;
+=> (panel->lcd_vt) - panel->lcd_y - (panel->lcd_vbp)
+=> (timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y)
+   - panel->lcd_y - (panel->lcd_vbp)
+=> timmings->ver_front_porch + panel->lcd_vbp + panel->lcd_y
+  			     - panel->lcd_y - panel->lcd_vbp
+=> timmings->ver_front_porch
 
-So, update the DRQ set bits accordingly.
+So, update the start delay computation accordingly.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 Tested-by: Jagan Teki <jagan@amarulasolutions.com>
@@ -110,25 +111,32 @@ Changes for v3:
 Changes for v2:
 - none
 
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index 3a1d48bc1996..8d154cf2e6d6 100644
+index 8d154cf2e6d6..6bece492b1f7 100644
 --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
 +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -367,9 +367,9 @@ static void sun6i_dsi_setup_burst(struct sun6i_dsi *dsi,
- 	struct mipi_dsi_device *device = dsi->device;
- 	u32 val = 0;
+@@ -358,7 +358,17 @@ static void sun6i_dsi_inst_init(struct sun6i_dsi *dsi,
+ static u16 sun6i_dsi_get_video_start_delay(struct sun6i_dsi *dsi,
+ 					   struct drm_display_mode *mode)
+ {
+-	return mode->vtotal - (mode->vsync_end - mode->vdisplay) + 1;
++	u32 vfp = mode->vsync_start - mode->vdisplay;
++	u32 start_delay;
++
++	start_delay = mode->vtotal - vfp + 1;
++	if (start_delay > mode->vtotal)
++		start_delay -= mode->vtotal;
++
++	if (!start_delay)
++		start_delay = 1;
++
++	return start_delay;
+ }
  
--	if ((mode->hsync_end - mode->hdisplay) > 20) {
-+	if ((mode->hsync_start - mode->hdisplay) > 20) {
- 		/* Maaaaaagic */
--		u16 drq = (mode->hsync_end - mode->hdisplay) - 20;
-+		u16 drq = (mode->hsync_start - mode->hdisplay) - 20;
- 
- 		drq *= mipi_dsi_pixel_format_to_bpp(device->format);
- 		drq /= 32;
+ static void sun6i_dsi_setup_burst(struct sun6i_dsi *dsi,
 -- 
 2.18.0.321.gffc6fa0e3
 
