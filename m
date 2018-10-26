@@ -2,162 +2,109 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD513ECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC01ECDE47
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:21:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E5882064A
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:20:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E5882064A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 300342064A
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:21:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b="Iwypzchz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 300342064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=hammerspace.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728078AbeJ0E7C (ORCPT
+        id S1728174AbeJ0E7Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 00:59:02 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:57174 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727636AbeJ0E7C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 00:59:02 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9QKJtDA080384;
-        Fri, 26 Oct 2018 15:19:55 -0500
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id w9QKJt6f036800
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 26 Oct 2018 15:19:55 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 26
- Oct 2018 15:19:55 -0500
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Fri, 26 Oct 2018 15:19:55 -0500
-Received: from [172.24.190.117] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9QKJomV000948;
-        Fri, 26 Oct 2018 15:19:51 -0500
-Subject: Re: [PATCH v2 09/10] irqchip: ti-sci-inta: Add support for Interrupt
- Aggregator driver
-From:   Lokesh Vutla <lokeshvutla@ti.com>
-To:     Marc Zyngier <marc.zyngier@arm.com>
-CC:     Nishanth Menon <nm@ti.com>,
-        Device Tree Mailing List <devicetree@vger.kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        <jason@lakedaemon.net>, Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
-        Tero Kristo <t-kristo@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>, <tglx@linutronix.de>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>
-References: <20181018154017.7112-1-lokeshvutla@ti.com>
- <20181018154017.7112-10-lokeshvutla@ti.com>
- <b20127dc-be43-3b00-9960-663738df0069@arm.com>
- <9969f24c-cdb0-1f5c-d0f4-b1c1f587325c@ti.com>
- <86va5ssrfm.wl-marc.zyngier@arm.com>
- <b3a71622-7734-04be-0b0c-38e9dc6542d4@ti.com>
-Message-ID: <63ba5353-8470-b4c1-64a8-a1df5bf48614@ti.com>
-Date:   Sat, 27 Oct 2018 01:49:41 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <b3a71622-7734-04be-0b0c-38e9dc6542d4@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+        Sat, 27 Oct 2018 00:59:24 -0400
+Received: from mail-sn1nam02on0096.outbound.protection.outlook.com ([104.47.36.96]:30688
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727636AbeJ0E7Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Oct 2018 00:59:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cRecLh1r7RdUDuEBCYpbl8WJrJ/4WgIGqbmlJbnYXZI=;
+ b=IwypzchzrxOjGbRFRUVdq1CkOoej1kLwoJbwNwzhzliiEScab4Pg9u4Z/qIFGgHS67gzbsxr2tpM3QnGnnKL4wpOCSlVTf0E8gjhv09+Jmn6DATg8WkCpbtKHXadYoN6Z1+P9Si8X77X4hdm4qQ4qo6d/B2fAeX+hRrVP7ofEyY=
+Received: from SN6PR13MB2494.namprd13.prod.outlook.com (52.135.95.148) by
+ SN6PR13MB2238.namprd13.prod.outlook.com (52.135.93.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.12; Fri, 26 Oct 2018 20:20:55 +0000
+Received: from SN6PR13MB2494.namprd13.prod.outlook.com
+ ([fe80::205a:69c2:1cf5:b475]) by SN6PR13MB2494.namprd13.prod.outlook.com
+ ([fe80::205a:69c2:1cf5:b475%3]) with mapi id 15.20.1294.014; Fri, 26 Oct 2018
+ 20:20:55 +0000
+From:   Trond Myklebust <trondmy@hammerspace.com>
+To:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
+Subject: Re: [GIT PULL] Please pull NFS client changes for Linux 4.20.
+Thread-Topic: [GIT PULL] Please pull NFS client changes for Linux 4.20.
+Thread-Index: AQHUbULmNFtCgrNwxU+PaaX/lXso7aUx9UwAgAAC8oA=
+Date:   Fri, 26 Oct 2018 20:20:54 +0000
+Message-ID: <bafa9f6ca7da84e710bc9e1af8fa7428a8331bb6.camel@hammerspace.com>
+References: <6bbed95d83465dde644c6f66acc73e3cd94f123e.camel@hammerspace.com>
+         <CAHk-=wheW3hFQ8Jy5YYnNL1V+ZqA_qQoA63q2uK9ngz4=pXCqw@mail.gmail.com>
+In-Reply-To: <CAHk-=wheW3hFQ8Jy5YYnNL1V+ZqA_qQoA63q2uK9ngz4=pXCqw@mail.gmail.com>
+Accept-Language: en-US, en-GB
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [68.40.195.73]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN6PR13MB2238;6:S7JZx3LSfBReWWuFdab2ke9h1jOZjP+SCAQj5COSgy/UyYvSvbQ0LGA5iHu+5puCIykqGq0gXBwtx3H/Hn1Xt3faq9/rFuXBROG87v9espxH4m750FUM/sPYwFnU8LW4+SpKRtSwkbSA+H6eQCp3396jpskx8W1/vfTi30j/NujWcZK74fBIzZCVzjE+JEYoZKE28GvfMAOthAN2f2+pYOEqb3lx8RgeuMci59M6DEQNWlqhdTONrUQCFjoRaLHcVA2tD5DjBj1518fXiKgZihgcBEmBeMfOv4iu1aCbF9egnXdvIB8Oj8rW2ovHFose1H7l6kFLDB5izTjjavvKMQ185MrYHrz/kxpj7AgUwIPiLYeylufXoqLDD4RKVQAijgoU0XpQmWCHRneob7DJ3wnFX8KAFEZskAHjuV7mbSBG1scFtk8AMNLMVmkM4L6Be3K9yN4egNCuPgJEqsaDuQ==;5:NFdO1XXDCQS+SQr6OV5mO8+8x4i53xlqOHnFVYvrAmMZz79yHSRBv+sBP33Ynyea6jgg0DDSEN0HftcXrGvpRtKlNFnsFYDAKNpdnCDveR8RcLIXVoA4srbWm0czTgveH/9g44UM5zsE1HkcQHSIkKSl/ztxfz3jOWdIt6A1JyM=;7:pRDVIJmX8FFes6RTlZtkBKnUNkT4QAHB65/xzdJdhsHfsrDJp4cIL7ZeV1k1/HkX14idsuYuWzj2FOj2kqf3QsuRDUOr+XvPrQmscyeX/t1UJ0L2rzKuq3Z3O7zm+ERokvNCWnRHIn7H/UhT4Y4B8g==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: a926e4e1-1e42-4a9c-4850-08d63b80887e
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:SN6PR13MB2238;
+x-ms-traffictypediagnostic: SN6PR13MB2238:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=trondmy@hammerspace.com; 
+x-microsoft-antispam-prvs: <SN6PR13MB2238F001056908427959987FB8F00@SN6PR13MB2238.namprd13.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231371)(944501410)(52105095)(93006095)(93001095)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:SN6PR13MB2238;BCL:0;PCL:0;RULEID:;SRVR:SN6PR13MB2238;
+x-forefront-prvs: 083751FCA6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39830400003)(396003)(136003)(366004)(376002)(199004)(189003)(97736004)(478600001)(68736007)(6246003)(4001150100001)(36756003)(105586002)(102836004)(6486002)(53546011)(6506007)(6436002)(2351001)(53936002)(6512007)(76176011)(99286004)(106356001)(5640700003)(26005)(4326008)(86362001)(6916009)(8676002)(476003)(2616005)(446003)(11346002)(486006)(25786009)(186003)(81156014)(81166006)(1730700003)(229853002)(54906003)(316002)(5660300001)(8936002)(66066001)(256004)(2501003)(2906002)(6116002)(118296001)(5250100002)(3846002)(71190400001)(7736002)(305945005)(71200400001)(2900100001)(14454004);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR13MB2238;H:SN6PR13MB2494.namprd13.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: hammerspace.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: AgmLZuwRu2BZ9+WFvIlwDrQgPPkpDcmqvPu7Um6p2BJUiWRNvF4980+fFxxETtghduabbiRYNKmPSxeF7plENxl3UQgSwAyz5C+Ab5c/gq3gdKzv2Z5gOceHw5FqHjAFIeZzH2v+0itxsjzgsyikJ4NZvU0OekN4tbQcKPm7j+RdEMcdsBKTn/hvtr1incnrnV0S5OuJSozmwFv7KGAAo+qx0z0tfmKB9YxulhbsAE6+2+xPJOJa8fgOL4p4+AFpfe2NoC2XaZf9k0h8uYIUPU8ZneTY/qPdUf/JR2QUK1Sy+RMejIxnEyL9wSXh45jmK8pvebW1Z56aL6Lb//JnwWto2EoD+luw4tAqf7qxfKk=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <79EFFBE6D3D25847A3FC2D448492D6D9@namprd13.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: hammerspace.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a926e4e1-1e42-4a9c-4850-08d63b80887e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Oct 2018 20:20:54.9672
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR13MB2238
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
-
-[..snip..]
->> [...]
->>
->>>>> +/**
->>>>> + * ti_sci_inta_register_event() - Register a event to an interrupt aggregator
->>>>> + * @dev:	Device pointer to source generating the event
->>>>> + * @src_id:	TISCI device ID of the event source
->>>>> + * @src_index:	Event source index within the device.
->>>>> + * @virq:	Linux Virtual IRQ number
->>>>> + * @flags:	Corresponding IRQ flags
->>>>> + * @ack_needed:	If explicit clearing of event is required.
->>>>> + *
->>>>> + * Creates a new irq and attaches to IA domain if virq is not specified
->>>>> + * else attaches the event to vint corresponding to virq.
->>>>> + * When using TISCI within the client drivers, source indexes are always
->>>>> + * generated dynamically and cannot be represented in DT. So client
->>>>> + * drivers should call this API instead of platform_get_irq().
->>>>
->>>> NAK. Either this fits in the standard model, or we adapt the standard
->>>> model to catter for your particular use case. But we don't define a new,
->>>> TI specific API.
->>>>
->>>> I have a hunch that if the IDs are generated dynamically, then the model
->>>> we use for MSIs would fit this thing. I also want to understand what
->>>
->>> hmm..I haven't thought about using MSI. Will try to explore it. But
->>> the "struct msi_msg" is not applicable in this case as device does not
->>> write to a specific location.
->>
->> It doesn't need to. You can perfectly ignore the address field and
->> only be concerned with the data. We already have MSI users that do not
->> need programming of the doorbell address, just the data.
-> 
-
-Just one more clarification.
-
-First let me explain the IRQ routes a bit deeply. As I said earlier there are 
-three ways in which IRQ can flow in AM65x SoC
-1) Device directly connected to GIC
-	- Device IRQ --> GIC
-2) Device connected to INTR.
-	- Device IRQ --> INTR --> GIC
-3) Devices connected to INTA.
-	- Device IRQ --> INTA --> INTR --> GIC
-
-1 and 2 are straight forward and we use DT for IRQ representation. Coming to 3 
-the trickier part is that Input to INTA and output from INTA and dynamically 
-managed. To be more specific:
-- By hardware design there are certain set of physical global events(interrupts) 
-attached to an INTA. Out of which a certain range are assigned to the current 
-linux host that can be queried from system-controller.
-- Similarly out of all the INTA outputs(referenced as vints) a certain range can 
-be used by the current linux host.
-
-
-So for configuring an IRQ route in case 3, the following steps are needed:
-- Device id and device resource index for which the interrupt is needed
-- A free event id from the range assigned to the INTA in this host context
-- A free vint from the range assigned to the INTA in this host context
-- A free gic IRQ from the range assigned to the INTR in this host context.
-
-With the above information, linux should send a message to system-controller 
-using TISCI protocol. After policing the given information, system-controller 
-does the following:
-- Attaches the interrupt(INTA input) to the device resource index
-- Muxes the interrupt(INTA input) to corresponding vint(INTA output)
-- Muxes the vint(INTR input) to GIC irq(INTR output).
-
-For grouping of interrupts, the same vint number is to be passed to 
-system-controller for all the requests.
-
-Keeping all the above in mind, I see the following as software IRQ Domain Hierarchy:
-
-1) INTA multi MSI --> 2)INTA  -->3) MSI --> 4) INTR  -->5) GIC
-
-INTA driver has to set a chained IRQ using virq allocated from its parent MSI. 
-This is to differentiate the grouped interrupts within INTA.
-
-Inorder to cover the above two MSI domains, a new bus driver has to be created 
-as I couldn't find a fit with the existing bus drivers.
-
-Does the above approach make sense? Please correct me if i am wrong.
-
-Thanks and regards,
-Lokesh
+T24gRnJpLCAyMDE4LTEwLTI2IGF0IDEzOjEwIC0wNzAwLCBMaW51cyBUb3J2YWxkcyB3cm90ZToN
+Cj4gT24gRnJpLCBPY3QgMjYsIDIwMTggYXQgODo0NSBBTSBUcm9uZCBNeWtsZWJ1c3QgPA0KPiB0
+cm9uZG15QGhhbW1lcnNwYWNlLmNvbT4gd3JvdGU6DQo+ID4gDQo+ID4gTkZTIGNsaWVudCB1cGRh
+dGVzIGZvciBMaW51eCA0LjIwDQo+IA0KPiBQdWxsZWQuDQoNClRoYW5rIHlvdSENCg0KPiBCdHcs
+IGp1c3Qgb3V0IG9mIGN1cmlvc2l0eSAtIGlzIHRoZXJlIHNvbWUgcGF0dGVybiB0byB3aGVuIEkg
+Z2V0IHRoZQ0KPiBwdWxsIHJlcXVlc3RzIGZyb20geW91IHZzIEFubmE/IE9yIGlzIGl0IGp1c3Qg
+Indob2V2ZXIgaGFwcGVucyB0bw0KPiBoYXZlDQo+IHRoZSBiYXRvbiI/IE5vdCB0aGF0IGl0IG1h
+dHRlcnMsIGJ1dCBJIHdhcyB3b25kZXJpbmcgaWYgdGhlcmUgd2FzDQo+IHNvbWUNCj4gbG9naWMg
+dG8gaXQgdGhhdCBJJ3ZlIG1pc3NlZC4uDQoNCldlIGFncmVlZCBhYm91dCBhIHllYXIgb3Igc28g
+YWdvIHRvIHRha2UgdHVybnMgbWFpbnRhaW5pbmcgdGhlIGxpbnV4LQ0KbmV4dCBicmFuY2hlcy4g
+U28gaW4gcHJhY3RpY2UgdGhhdCBtZWFucyBBbm5hIGhhcyBiZWVuIHNlbmRpbmcgeW91IHRoZQ0K
+cHVsbCByZXF1ZXN0cyBmb3IgdGhlIG9kZCBrZXJuZWwgbWlub3IgbnVtYmVycywgYW5kIEkndmUg
+YmVlbiBzZW5kaW5nDQp5b3UgdGhlIG9uZXMgZm9yIHRoZSBldmVuIG51bWJlcnMuDQpXZSBzdGls
+bCBzaGFyZSB0aGUgYnVyZGVuIG9mIHJldmlld2luZyB0aGUgY29kZSwgdGhvdWdoLCBzbyBpZg0K
+c29tZXRoaW5nIHNsaXBzIHRocm91Z2ggdGhlIGNyYWNrcywgd2UgZ2V0IHRvIHNoYXJlIHRoZSBi
+bGFtZS4uLiDimLoNCg0KQ2hlZXJzDQogIFRyb25kDQoNCi0tIA0KVHJvbmQgTXlrbGVidXN0DQpM
+aW51eCBORlMgY2xpZW50IG1haW50YWluZXIsIEhhbW1lcnNwYWNlDQp0cm9uZC5teWtsZWJ1c3RA
+aGFtbWVyc3BhY2UuY29tDQoNCg0K
