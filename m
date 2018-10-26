@@ -2,351 +2,138 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2420BC6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 11:01:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D68C6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 11:05:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF83B20856
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 11:01:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF83B20856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 6B92B205F4
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 11:05:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="R+ge6HCJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B92B205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727716AbeJZTiZ (ORCPT
+        id S1727524AbeJZTmN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 15:38:25 -0400
-Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:40783 "EHLO
-        alexa-out-blr.qualcomm.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727020AbeJZTiI (ORCPT
+        Fri, 26 Oct 2018 15:42:13 -0400
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:46478 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726612AbeJZTmN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 15:38:08 -0400
-X-IronPort-AV: E=Sophos;i="5.54,427,1534789800"; 
-   d="scan'208";a="219923"
-Received: from ironmsg03-blr.qualcomm.com ([10.86.208.132])
-  by alexa-out-blr.qualcomm.com with ESMTP/TLS/AES256-SHA; 26 Oct 2018 16:31:27 +0530
-X-IronPort-AV: E=McAfee;i="5900,7806,9057"; a="1798196"
-Received: from blr-ubuntu-104.ap.qualcomm.com (HELO blr-ubuntu-104.qualcomm.com) ([10.79.40.64])
-  by ironmsg03-blr.qualcomm.com with ESMTP; 26 Oct 2018 16:31:26 +0530
-Received: by blr-ubuntu-104.qualcomm.com (Postfix, from userid 346745)
-        id DE3872F13; Fri, 26 Oct 2018 16:31:25 +0530 (IST)
-From:   Arun KS <arunks@codeaurora.org>
-Cc:     keescook@chromium.org, khlebnikov@yandex-team.ru,
-        minchan@kernel.org, getarunks@gmail.com,
-        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
-        mhocko@kernel.org, vbabka@suse.cz, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Arun KS <arunks@codeaurora.org>
-Subject: [PATCH v1 1/4] mm: Fix multiple evaluvations of totalram_pages and managed_pages
-Date:   Fri, 26 Oct 2018 16:30:59 +0530
-Message-Id: <1540551662-26458-2-git-send-email-arunks@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1540551662-26458-1-git-send-email-arunks@codeaurora.org>
-References: <1540551662-26458-1-git-send-email-arunks@codeaurora.org>
-To:     unlisted-recipients:; (no To-header on input)
+        Fri, 26 Oct 2018 15:42:13 -0400
+X-IronPort-AV: E=Sophos;i="5.54,427,1534834800"; 
+   d="scan'208";a="23111601"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 26 Oct 2018 04:05:33 -0700
+Received: from NAM03-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.107) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Fri, 26 Oct 2018 04:05:32 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RmQVjw43B98zlMHz/cGZ8eWJIrihAQyMTO6ZSRd7eYA=;
+ b=R+ge6HCJs/hvtXc8ZyPmuxzGbC+kSNBLKvWSB/D6NHpomrL0rdlLYYOrm1y0581ZWHjjSjf5ojoYd6t2nXd2rhSXLM6bzPzaTDnuEAvQABdKuSRkRloG9CtLD6Dn2r7Oopqb5/7j0MT9XjlitUQ2uEjLoNs3kHIkbtZVJPXpOvI=
+Received: from BY2PR11MB0744.namprd11.prod.outlook.com (10.163.112.142) by
+ BY2PR11MB0616.namprd11.prod.outlook.com (10.163.159.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1273.25; Fri, 26 Oct 2018 11:05:30 +0000
+Received: from BY2PR11MB0744.namprd11.prod.outlook.com
+ ([fe80::d0a5:29e0:506a:76a8]) by BY2PR11MB0744.namprd11.prod.outlook.com
+ ([fe80::d0a5:29e0:506a:76a8%7]) with mapi id 15.20.1273.021; Fri, 26 Oct 2018
+ 11:05:30 +0000
+From:   <Claudiu.Beznea@microchip.com>
+To:     <jonas@orbital-systems.com>
+CC:     <alexander.stein@systec-electronic.com>,
+        <linux-kernel@vger.kernel.org>, <sre@kernel.org>,
+        <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <linux-pm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] power: reset: at91-reset: enable I-cache for
+ at91sam9260_reset
+Thread-Topic: [PATCH] power: reset: at91-reset: enable I-cache for
+ at91sam9260_reset
+Thread-Index: AQHUZVRe/70fNEEmkkyQnDUBwInNrg==
+Date:   Fri, 26 Oct 2018 11:05:30 +0000
+Message-ID: <f8ed781a-2ee7-9d0e-1220-b23ccf3fdbb2@microchip.com>
+References: <20181007125815.8392-1-jonas@threetimestwo.org>
+ <80993f04-c8ce-5a71-4f04-7edab5e1857b@microchip.com>
+ <2351196.3BzoFE0xYq@ws-140106>
+ <CALDOjzhZg3X1y22KE1yw_0ZFjuvaa=3GhEF2iU=KUk6-eRZN2g@mail.gmail.com>
+ <11b4bcb4-8882-bdd2-c7f7-6a74d0758cbc@microchip.com>
+ <CALDOjzhgqcx5XEWon9EQXEGxt9J280Z6AvuFQcBa=nh-9VA6PQ@mail.gmail.com>
+In-Reply-To: <CALDOjzhgqcx5XEWon9EQXEGxt9J280Z6AvuFQcBa=nh-9VA6PQ@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR0302CA0011.eurprd03.prod.outlook.com
+ (2603:10a6:800:e9::21) To BY2PR11MB0744.namprd11.prod.outlook.com
+ (2a01:111:e400:52de::14)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Claudiu.Beznea@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BY2PR11MB0616;6:RjJPqzGvK3GQgvUbv3EdmgQMFn/cQTif/86TNxfogW/FHLbLHaEFaLPGGliK4l9r/wcYNedrx5Oc9ZnROviTZmF3gU/7t5CJpu71WPiyYUWneH13QwCb+8/HUxOWM9bZikrZ0PqiDHfKJGXdo67Evq6yzOBdFB85F80c4ubwhYCGBSglGtPh52kSyBfj5W69YLRFCkxQTLvAhC2Ypd0Db5A6a1fg7GMrKT82pruqk6b1mRaHQK88Yo0WmwzCNFZQGsBakL1HokZGk9XHB7itNrKZZKXi6j102XMUE5cF9tstV7+VGi1MTEyctnfpNDRrloplCkiPM10MKhOl6vFVMCyyEXQS+tnAchRsBpXsnnfn/WPV5m0K9nmcOFueuvv7RkOL/qFlBLOEVIwyq5HN2/2Cd8dILUNYzKem4Z3CrXH+pKOGRV7a09+tVL+I+3vBa7leh4U5obR2HGjAWAuOElD6PoVnHVf3D0kZGh3QifA=;5:jec7sZ9e8lJFSBqMm2MF7XkqLrE8Rtr35JT6TX5MWHQxTF65fu3m1FaQjyVJHAhvZ1Ga1mnGvp0h9v9SUhC6TI9VRpcAX5TFoDrvIj4eUH1kHQK60ziQyRlKd7vc7vLS80sC6U4q51+1K17GJzF6AKiyXVkBBJQcxzn4ZLqyEzs=;7:lddOLo7hu1GelB79NY+L/yDiNslLqr01iqbz6OYGIynPxx7UxFunKyNAJqa9Sunq1vV8KXJtU4gzamm9qZ4Ry5DP9YBBzuTXjTdl/ue4962u7a+noS8PYaT2SrOAlnWel2uY1yooAOjLTUjPsoCpvw==
+x-ms-office365-filtering-correlation-id: 274b5e64-a301-477d-7f13-08d63b32f082
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BY2PR11MB0616;
+x-ms-traffictypediagnostic: BY2PR11MB0616:
+x-microsoft-antispam-prvs: <BY2PR11MB06167A0475185E5B604175C087F00@BY2PR11MB0616.namprd11.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(4982022)(52105095)(3002001)(10201501046)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:BY2PR11MB0616;BCL:0;PCL:0;RULEID:;SRVR:BY2PR11MB0616;
+x-forefront-prvs: 083751FCA6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(136003)(346002)(366004)(396003)(199004)(189003)(186003)(316002)(15188155005)(14444005)(256004)(446003)(478600001)(25786009)(71190400001)(31686004)(486006)(71200400001)(476003)(11346002)(2616005)(31696002)(2900100001)(14454004)(4326008)(93886005)(86362001)(54906003)(106356001)(72206003)(105586002)(966005)(2906002)(5250100002)(99286004)(6916009)(36756003)(7736002)(76176011)(68736007)(305945005)(229853002)(15760500003)(81156014)(8676002)(97736004)(81166006)(6116002)(8936002)(3846002)(52116002)(66066001)(5660300001)(6436002)(16799955002)(53936002)(6512007)(6306002)(26005)(6486002)(53546011)(102836004)(6246003)(386003)(6506007)(19623215001);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR11MB0616;H:BY2PR11MB0744.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: kHCj+qT/8Zd3pndYgevVUyfZuIQA1FBgovRkejrkOY3StSRuJo1DiAP6DIGX4R9IcLeOv8U+xWSk+9g+CK8qz1JpcxzcMl6UpnBqbpkqoY9j3Ltg5sttd2DB1vVZgoRAwuBcmeF69KYtck8GFELRxKx2HIaz4kA6kXXknsr+F2MwSfNOk6o8Hsh8/tXMa97+dKkKtsLMHK6SClO0LShDqxUtB6fp7I/Nl7GFQbsDTqzfwhbjV58O7OF24QIPAeULFM+Q3jNLGJoB1JFd2KokaKPJT8yzYONnfNGF5Igsuvw+fRvEq4ZBD3mMsJkEickn09Q1szla3vG1KVxObXU/MqBEp5YoUyBeA6JyMzO4t5Y=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <6CE50F7A6BBA94469B3C48A38106DC97@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 274b5e64-a301-477d-7f13-08d63b32f082
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Oct 2018 11:05:30.2593
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR11MB0616
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch is in preparation to a later patch which converts totalram_pages
-and zone->managed_pages to atomic variables. This patch does not introduce
-any functional changes.
-
-Signed-off-by: Arun KS <arunks@codeaurora.org>
----
- arch/um/kernel/mem.c                 |  3 +--
- arch/x86/kernel/cpu/microcode/core.c |  5 +++--
- drivers/hv/hv_balloon.c              | 19 ++++++++++---------
- fs/file_table.c                      |  7 ++++---
- kernel/fork.c                        |  5 +++--
- kernel/kexec_core.c                  |  5 +++--
- mm/page_alloc.c                      |  5 +++--
- mm/shmem.c                           |  3 ++-
- net/dccp/proto.c                     |  7 ++++---
- net/netfilter/nf_conntrack_core.c    |  7 ++++---
- net/netfilter/xt_hashlimit.c         |  5 +++--
- net/sctp/protocol.c                  |  7 ++++---
- 12 files changed, 44 insertions(+), 34 deletions(-)
-
-diff --git a/arch/um/kernel/mem.c b/arch/um/kernel/mem.c
-index 1067469..134d3fd 100644
---- a/arch/um/kernel/mem.c
-+++ b/arch/um/kernel/mem.c
-@@ -51,8 +51,7 @@ void __init mem_init(void)
- 
- 	/* this will put all low memory onto the freelists */
- 	memblock_free_all();
--	max_low_pfn = totalram_pages;
--	max_pfn = totalram_pages;
-+	max_pfn = max_low_pfn = totalram_pages;
- 	mem_init_print_info(NULL);
- 	kmalloc_ok = 1;
- }
-diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
-index 2637ff0..99c67ca 100644
---- a/arch/x86/kernel/cpu/microcode/core.c
-+++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -434,9 +434,10 @@ static ssize_t microcode_write(struct file *file, const char __user *buf,
- 			       size_t len, loff_t *ppos)
- {
- 	ssize_t ret = -EINVAL;
-+	unsigned long totalram_pgs = totalram_pages;
- 
--	if ((len >> PAGE_SHIFT) > totalram_pages) {
--		pr_err("too much data (max %ld pages)\n", totalram_pages);
-+	if ((len >> PAGE_SHIFT) > totalram_pgs) {
-+		pr_err("too much data (max %ld pages)\n", totalram_pgs);
- 		return ret;
- 	}
- 
-diff --git a/drivers/hv/hv_balloon.c b/drivers/hv/hv_balloon.c
-index c5bc0b5..2a60f9a 100644
---- a/drivers/hv/hv_balloon.c
-+++ b/drivers/hv/hv_balloon.c
-@@ -1092,6 +1092,7 @@ static void process_info(struct hv_dynmem_device *dm, struct dm_info_msg *msg)
- static unsigned long compute_balloon_floor(void)
- {
- 	unsigned long min_pages;
-+	unsigned long totalram_pgs = totalram_pages;
- #define MB2PAGES(mb) ((mb) << (20 - PAGE_SHIFT))
- 	/* Simple continuous piecewiese linear function:
- 	 *  max MiB -> min MiB  gradient
-@@ -1104,16 +1105,16 @@ static unsigned long compute_balloon_floor(void)
- 	 *    8192       744    (1/16)
- 	 *   32768      1512	(1/32)
- 	 */
--	if (totalram_pages < MB2PAGES(128))
--		min_pages = MB2PAGES(8) + (totalram_pages >> 1);
--	else if (totalram_pages < MB2PAGES(512))
--		min_pages = MB2PAGES(40) + (totalram_pages >> 2);
--	else if (totalram_pages < MB2PAGES(2048))
--		min_pages = MB2PAGES(104) + (totalram_pages >> 3);
--	else if (totalram_pages < MB2PAGES(8192))
--		min_pages = MB2PAGES(232) + (totalram_pages >> 4);
-+	if (totalram_pgs < MB2PAGES(128))
-+		min_pages = MB2PAGES(8) + (totalram_pgs >> 1);
-+	else if (totalram_pgs < MB2PAGES(512))
-+		min_pages = MB2PAGES(40) + (totalram_pgs >> 2);
-+	else if (totalram_pgs < MB2PAGES(2048))
-+		min_pages = MB2PAGES(104) + (totalram_pgs >> 3);
-+	else if (totalram_pgs < MB2PAGES(8192))
-+		min_pages = MB2PAGES(232) + (totalram_pgs >> 4);
- 	else
--		min_pages = MB2PAGES(488) + (totalram_pages >> 5);
-+		min_pages = MB2PAGES(488) + (totalram_pgs >> 5);
- #undef MB2PAGES
- 	return min_pages;
- }
-diff --git a/fs/file_table.c b/fs/file_table.c
-index e03c8d1..5d36655 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -383,10 +383,11 @@ void __init files_init(void)
- void __init files_maxfiles_init(void)
- {
- 	unsigned long n;
--	unsigned long memreserve = (totalram_pages - nr_free_pages()) * 3/2;
-+	unsigned long totalram_pgs = totalram_pages;
-+	unsigned long memreserve = (totalram_pgs - nr_free_pages()) * 3/2;
- 
--	memreserve = min(memreserve, totalram_pages - 1);
--	n = ((totalram_pages - memreserve) * (PAGE_SIZE / 1024)) / 10;
-+	memreserve = min(memreserve, totalram_pgs - 1);
-+	n = ((totalram_pgs - memreserve) * (PAGE_SIZE / 1024)) / 10;
- 
- 	files_stat.max_files = max_t(unsigned long, n, NR_FILE);
- }
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 2f78d32..63d57f7 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -739,15 +739,16 @@ void __init __weak arch_task_cache_init(void) { }
- static void set_max_threads(unsigned int max_threads_suggested)
- {
- 	u64 threads;
-+	unsigned long totalram_pgs = totalram_pages;
- 
- 	/*
- 	 * The number of threads shall be limited such that the thread
- 	 * structures may only consume a small part of the available memory.
- 	 */
--	if (fls64(totalram_pages) + fls64(PAGE_SIZE) > 64)
-+	if (fls64(totalram_pgs) + fls64(PAGE_SIZE) > 64)
- 		threads = MAX_THREADS;
- 	else
--		threads = div64_u64((u64) totalram_pages * (u64) PAGE_SIZE,
-+		threads = div64_u64((u64) totalram_pgs * (u64) PAGE_SIZE,
- 				    (u64) THREAD_SIZE * 8UL);
- 
- 	if (threads > max_threads_suggested)
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index 86ef06d..dff217c 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -152,6 +152,7 @@ int sanity_check_segment_list(struct kimage *image)
- 	int i;
- 	unsigned long nr_segments = image->nr_segments;
- 	unsigned long total_pages = 0;
-+	unsigned long totalram_pgs = totalram_pages;
- 
- 	/*
- 	 * Verify we have good destination addresses.  The caller is
-@@ -217,13 +218,13 @@ int sanity_check_segment_list(struct kimage *image)
- 	 * wasted allocating pages, which can cause a soft lockup.
- 	 */
- 	for (i = 0; i < nr_segments; i++) {
--		if (PAGE_COUNT(image->segment[i].memsz) > totalram_pages / 2)
-+		if (PAGE_COUNT(image->segment[i].memsz) > totalram_pgs / 2)
- 			return -EINVAL;
- 
- 		total_pages += PAGE_COUNT(image->segment[i].memsz);
- 	}
- 
--	if (total_pages > totalram_pages / 2)
-+	if (total_pages > totalram_pgs / 2)
- 		return -EINVAL;
- 
- 	/*
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 4bd858d..f045191 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -7243,6 +7243,7 @@ static void calculate_totalreserve_pages(void)
- 		for (i = 0; i < MAX_NR_ZONES; i++) {
- 			struct zone *zone = pgdat->node_zones + i;
- 			long max = 0;
-+			unsigned long managed_pages = zone->managed_pages;
- 
- 			/* Find valid and maximum lowmem_reserve in the zone */
- 			for (j = i; j < MAX_NR_ZONES; j++) {
-@@ -7253,8 +7254,8 @@ static void calculate_totalreserve_pages(void)
- 			/* we treat the high watermark as reserved pages. */
- 			max += high_wmark_pages(zone);
- 
--			if (max > zone->managed_pages)
--				max = zone->managed_pages;
-+			if (max > managed_pages)
-+				max = managed_pages;
- 
- 			pgdat->totalreserve_pages += max;
- 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index a6964ba..6556e86 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -114,7 +114,8 @@ static unsigned long shmem_default_max_blocks(void)
- 
- static unsigned long shmem_default_max_inodes(void)
- {
--	return min(totalram_pages - totalhigh_pages, totalram_pages / 2);
-+	unsigned long totalram_pgs = totalram_pages;
-+	return min(totalram_pgs - totalhigh_pages, totalram_pgs / 2);
- }
- #endif
- 
-diff --git a/net/dccp/proto.c b/net/dccp/proto.c
-index 875858c..0cef31e 100644
---- a/net/dccp/proto.c
-+++ b/net/dccp/proto.c
-@@ -1131,6 +1131,7 @@ static inline void dccp_mib_exit(void)
- static int __init dccp_init(void)
- {
- 	unsigned long goal;
-+	unsigned long totalram_pgs = totalram_pages;
- 	int ehash_order, bhash_order, i;
- 	int rc;
- 
-@@ -1154,10 +1155,10 @@ static int __init dccp_init(void)
- 	 *
- 	 * The methodology is similar to that of the buffer cache.
- 	 */
--	if (totalram_pages >= (128 * 1024))
--		goal = totalram_pages >> (21 - PAGE_SHIFT);
-+	if (totalram_pgs >= (128 * 1024))
-+		goal = totalram_pgs >> (21 - PAGE_SHIFT);
- 	else
--		goal = totalram_pages >> (23 - PAGE_SHIFT);
-+		goal = totalram_pgs >> (23 - PAGE_SHIFT);
- 
- 	if (thash_entries)
- 		goal = (thash_entries *
-diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
-index ca1168d..0b1801e 100644
---- a/net/netfilter/nf_conntrack_core.c
-+++ b/net/netfilter/nf_conntrack_core.c
-@@ -2248,6 +2248,7 @@ static __always_inline unsigned int total_extension_size(void)
- 
- int nf_conntrack_init_start(void)
- {
-+	unsigned long totalram_pgs = totalram_pages;
- 	int max_factor = 8;
- 	int ret = -ENOMEM;
- 	int i;
-@@ -2267,11 +2268,11 @@ int nf_conntrack_init_start(void)
- 		 * >= 4GB machines have 65536 buckets.
- 		 */
- 		nf_conntrack_htable_size
--			= (((totalram_pages << PAGE_SHIFT) / 16384)
-+			= (((totalram_pgs << PAGE_SHIFT) / 16384)
- 			   / sizeof(struct hlist_head));
--		if (totalram_pages > (4 * (1024 * 1024 * 1024 / PAGE_SIZE)))
-+		if (totalram_pgs > (4 * (1024 * 1024 * 1024 / PAGE_SIZE)))
- 			nf_conntrack_htable_size = 65536;
--		else if (totalram_pages > (1024 * 1024 * 1024 / PAGE_SIZE))
-+		else if (totalram_pgs > (1024 * 1024 * 1024 / PAGE_SIZE))
- 			nf_conntrack_htable_size = 16384;
- 		if (nf_conntrack_htable_size < 32)
- 			nf_conntrack_htable_size = 32;
-diff --git a/net/netfilter/xt_hashlimit.c b/net/netfilter/xt_hashlimit.c
-index 3e7d259..6cb9a74 100644
---- a/net/netfilter/xt_hashlimit.c
-+++ b/net/netfilter/xt_hashlimit.c
-@@ -274,14 +274,15 @@ static int htable_create(struct net *net, struct hashlimit_cfg3 *cfg,
- 	struct xt_hashlimit_htable *hinfo;
- 	const struct seq_operations *ops;
- 	unsigned int size, i;
-+	unsigned long totalram_pgs = totalram_pages;
- 	int ret;
- 
- 	if (cfg->size) {
- 		size = cfg->size;
- 	} else {
--		size = (totalram_pages << PAGE_SHIFT) / 16384 /
-+		size = (totalram_pgs << PAGE_SHIFT) / 16384 /
- 		       sizeof(struct hlist_head);
--		if (totalram_pages > 1024 * 1024 * 1024 / PAGE_SIZE)
-+		if (totalram_pgs > 1024 * 1024 * 1024 / PAGE_SIZE)
- 			size = 8192;
- 		if (size < 16)
- 			size = 16;
-diff --git a/net/sctp/protocol.c b/net/sctp/protocol.c
-index 9b277bd..7128f85 100644
---- a/net/sctp/protocol.c
-+++ b/net/sctp/protocol.c
-@@ -1368,6 +1368,7 @@ static __init int sctp_init(void)
- 	int status = -EINVAL;
- 	unsigned long goal;
- 	unsigned long limit;
-+	unsigned long totalram_pages;
- 	int max_share;
- 	int order;
- 	int num_entries;
-@@ -1426,10 +1427,10 @@ static __init int sctp_init(void)
- 	 * The methodology is similar to that of the tcp hash tables.
- 	 * Though not identical.  Start by getting a goal size
- 	 */
--	if (totalram_pages >= (128 * 1024))
--		goal = totalram_pages >> (22 - PAGE_SHIFT);
-+	if (totalram_pgs >= (128 * 1024))
-+		goal = totalram_pgs >> (22 - PAGE_SHIFT);
- 	else
--		goal = totalram_pages >> (24 - PAGE_SHIFT);
-+		goal = totalram_pgs >> (24 - PAGE_SHIFT);
- 
- 	/* Then compute the page order for said goal */
- 	order = get_order(goal);
--- 
-1.9.1
-
+DQoNCk9uIDE5LjEwLjIwMTggMTM6MzAsIEpvbmFzIERhbmllbHNzb24gd3JvdGU6DQo+IE9uIFdl
+ZCwgT2N0IDE3LCAyMDE4IGF0IDM6MTAgUE0gPENsYXVkaXUuQmV6bmVhQG1pY3JvY2hpcC5jb20+
+IHdyb3RlOg0KPj4NCj4+Pg0KPj4+IFdlIHRha2UgdGhlIG5vcm1hbCBwYXRoIG9mIHN5c19yZWJv
+b3QgPT4ga2VybmVsX3Jlc3RhcnQgPT4gbWFjaGluZV9yZXN0YXJ0IC4uLg0KPj4+DQo+Pj4gSSBh
+ZGRlZCBjb2RlIHRvIHByaW50IHRoZSBjMSByZWdpc3RlciBpbiBkaWZmZXJlbnQgcGF0aHMuIEFu
+ZCBJLWNhY2hlDQo+Pj4gaXMgZW5hYmxlZC4NCj4+PiBTbyBub3cgSSBhbSByZWFsbHkgY29uZnVz
+ZWQgYWJvdXQgd2h5IHRoZSBwYXRjaCB3b3JrZWQuDQo+Pg0KPj4gSnVzdCBzYXlpbmcuLi4gbWF5
+YmUgeW91ciBpbnN0cnVjdGlvbnMgYWRkIHNvbWUgZGVsYXkgb24gdGhlIGV4ZWN1dGlvbiBwYXRo
+DQo+PiBhbmQgdGhpcyBpcyB3aHkgaXQgaGVscHMuLi4gdHJ5IHRvIGFjY2VzcyBjcDE1IGNvLXBy
+b2Nlc3NvciBmb3IgcmVhZCBhbmQNCj4+IHdyaXRlIGJhY2sgdGhlIHZhbHVlIHlvdSByZWFkIHdp
+dGhvdXQgYWN0dWFsbHkgdG8gbW9kaWZ5IGl0LCB0byBzZWUgaWYgdGhpcw0KPj4gY291bGQgYmUg
+dGhlIHJlYXNvbjogZS5nLjoNCj4+DQo+PiBtcmMgICAgIHAxNSwgMCwgcjAsIGMxLCBjMCwgMA0K
+Pj4gb3JyICAgICByMSwgcjEsICM0MDk2ICAgICAgICAgICAvLyB3aGF0ZXZlciBpcyBpbiByMSwg
+ZG9lc24ndCBtYXR0ZXINCj4+IG1jciAgICAgcDE1LCAwLCByMCwgYzEsIGMwLCAwDQo+Pg0KPiAN
+Cj4gWWVzLCB0aGlzIGFsc28gc2VlbXMgdG8gd29yay4gSSBoYXZlIG92ZXIgMTAwIHJlYm9vdHMg
+Y29tcGxldGVkIHdpdGggdGhpcyBjb2RlLg0KPiBTbyB3aGF0IGNvdWxkIGJlIHRoZSBpc3N1ZSBo
+ZXJlPyBJdCBzZWVtIHJlbGF0ZWQgdG8gdGhlIHBvd2VyaW5nIGRvd24NCj4gb2YgdGhlIHNkcmFt
+IGF0IGxlYXN0Lg0KDQpJIGRvbid0IGtub3cgd2hhdCBjb3VsZCBiZSB0aGUgaXNzdWUgaGVyZS4g
+DQoNCj4gDQo+IFRoaXMgdGhyZWFkIG9uIHRoZSBBVDkxU0FNIGNvbW11bml0eSBkZWFscyB3aXRo
+IHRoZSBzYW1lIGlzc3VlOg0KPiBodHRwOi8vd3d3LmF0OTEuY29tL3ZpZXd0b3BpYy5waHA/dD0y
+NTgzMA0KPiBUaGVyZSB0aGUgc29sdXRpb24gcGVvcGxlIGNob3NlIHdhcyByZW1vdmluZyB0aGUg
+U0RSQU0gcG93ZXJpbmcgZG93bi4NCj4gQnV0IHRoYXQgbGVhdmVzIG9uZSBvcGVuIHRvIHRoZSBj
+YXVzZSBvZiB0aGUgZXJyYXRhLg0KPiANCj4gRG8geW91IGhhdmUgYW55IHRob3VnaHQgb24gaG93
+IHRvIGFwcHJvYWNoIHRoaXM/DQoNCkZvciBub3csIG5vLiBJIGRpZG4ndCBkdWcgdGhpcyBpc3N1
+ZS4NCg0KVGhhbmsgeW91LA0KQ2xhdWRpdQ0KDQo+IA0KPj4gVGhhbmsgeW91LA0KPj4gQ2xhdWRp
+dSBCZXpuZWENCj4+DQo+IA0KPiBSZWdhcmRzDQo+IEpvbmFzDQo+IA0KPiANCj4+Pg0KPj4+PiBC
+ZXN0IHJlZ2FyZHMsDQo+Pj4+IEFsZXhhbmRlcg0KPj4+DQo+Pj4gSm9uYXMNCj4+Pg0KPj4+Pg0K
+Pj4+Pg0KPj4+Pg0KPj4+DQo+Pj4NCj4gDQo+IA0KPiANCg==
