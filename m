@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D632BECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDEF2ECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:43:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9821920651
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:43:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9821920651
+	by mail.kernel.org (Postfix) with ESMTP id 904E120868
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:43:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 904E120868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727636AbeJZXVC (ORCPT
+        id S1727659AbeJZXVE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 19:21:02 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:46237 "EHLO mail.bootlin.com"
+        Fri, 26 Oct 2018 19:21:04 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:46285 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726458AbeJZXVA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 19:21:00 -0400
+        id S1727535AbeJZXVD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 19:21:03 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A97B12099B; Fri, 26 Oct 2018 16:43:38 +0200 (CEST)
+        id B0C88209B4; Fri, 26 Oct 2018 16:43:40 +0200 (CEST)
 Received: from localhost.localdomain (aaubervilliers-681-1-12-210.w90-88.abo.wanadoo.fr [90.88.133.210])
-        by mail.bootlin.com (Postfix) with ESMTPSA id DF01720794;
-        Fri, 26 Oct 2018 16:43:37 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 0016C208CE;
+        Fri, 26 Oct 2018 16:43:39 +0200 (CEST)
 From:   Boris Brezillon <boris.brezillon@bootlin.com>
 To:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
         Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
@@ -57,11 +57,10 @@ Cc:     Przemyslaw Sroka <psroka@cadence.com>,
         Peter Rosin <peda@axentia.se>,
         Mike Shettel <mshettel@codeaurora.org>,
         Stephen Boyd <swboyd@chromium.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v10 4/9] dt-bindings: i3c: Document core bindings
-Date:   Fri, 26 Oct 2018 16:43:28 +0200
-Message-Id: <20181026144333.12276-5-boris.brezillon@bootlin.com>
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Subject: [PATCH v10 7/9] dt-bindings: i3c: Document Cadence I3C master bindings
+Date:   Fri, 26 Oct 2018 16:43:31 +0200
+Message-Id: <20181026144333.12276-8-boris.brezillon@bootlin.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181026144333.12276-1-boris.brezillon@bootlin.com>
 References: <20181026144333.12276-1-boris.brezillon@bootlin.com>
@@ -70,21 +69,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A new I3C subsystem has been added and a generic description has been
-created to represent the I3C bus and the devices connected on it.
+Document Cadence I3C master DT bindings.
 
-Document this generic representation.
-
-Cc: Rob Herring <robh@kernel.org>
 Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Arnd Bergmann <arnd@arndb.de>
 ---
 Changes in v10:
-- Fix mistakes in the example (reported by Rob)
+- None
 
 Changes in v9:
-- Rework the way we encode the I2C vs I3C device in the reg property
-  so that we don't need the funky macros to define and I3C or I2C dev
-- Drop Rob's Reviewed-by
+- Add Arnd's R-b
 
 Changes in v8:
 - None
@@ -99,167 +94,59 @@ Changes in v5:
 - Add Rob's R-b
 
 Changes in v4:
-- Clarify the fact that static address == I3C address and dynamic
-  address == I3C address
-- Use i2c-scl-hz in the example
-
-Changes in v3:
-- Rename {i2c,i3c}-scl-frequency DT prop into {i2c,i3c}-scl-hz
-- Rework the way we expose the provisional ID and LVR information
-- Rename dynamic-address into assigned-address
-- Enforce the I3C master node name
-
-Changes in v2:
-- Define how to describe I3C devices in the DT and when it should be
-  used. Note that the parsing of I3C devices is not yet implemented in
-  the framework. Will be added when someone really needs it.
+- Fix example to match the new representation
 ---
- Documentation/devicetree/bindings/i3c/i3c.txt | 139 ++++++++++++++++++
- 1 file changed, 139 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/i3c/i3c.txt
+ .../bindings/i3c/cdns,i3c-master.txt          | 44 +++++++++++++++++++
+ 1 file changed, 44 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/i3c/cdns,i3c-master.txt
 
-diff --git a/Documentation/devicetree/bindings/i3c/i3c.txt b/Documentation/devicetree/bindings/i3c/i3c.txt
+diff --git a/Documentation/devicetree/bindings/i3c/cdns,i3c-master.txt b/Documentation/devicetree/bindings/i3c/cdns,i3c-master.txt
 new file mode 100644
-index 000000000000..9774b48ef439
+index 000000000000..0e2b8b8770bf
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/i3c/i3c.txt
-@@ -0,0 +1,139 @@
-+Generic device tree bindings for I3C busses
-+===========================================
++++ b/Documentation/devicetree/bindings/i3c/cdns,i3c-master.txt
+@@ -0,0 +1,44 @@
++Bindings for cadence I3C master block
++=====================================
 +
-+This document describes generic bindings that should be used to describe I3C
-+busses in a device tree.
++Required properties:
++--------------------
++- compatible: shall be "cdns,i3c-master"
++- clocks: shall reference the pclk and sysclk
++- clock-names: shall contain "pclk" and "sysclk"
++- interrupts: the interrupt line connected to this I3C master
++- reg: I3C master registers
 +
-+Required properties
-+-------------------
++Mandatory properties defined by the generic binding (see
++Documentation/devicetree/bindings/i3c/i3c.txt for more details):
 +
-+- #address-cells  - should be <3>. Read more about addresses below.
-+- #size-cells     - should be <0>.
-+- compatible      - name of the I3C master controller driving the I3C bus
++- #address-cells: shall be set to 1
++- #size-cells: shall be set to 0
 +
-+For other required properties e.g. to describe register sets,
-+clocks, etc. check the binding documentation of the specific driver.
-+The node describing an I3C bus should be named i3c-master.
++Optional properties defined by the generic binding (see
++Documentation/devicetree/bindings/i3c/i3c.txt for more details):
 +
-+Optional properties
-+-------------------
++- i2c-scl-hz
++- i3c-scl-hz
 +
-+These properties may not be supported by all I3C master drivers. Each I3C
-+master bindings should specify which of them are supported.
-+
-+- i3c-scl-hz: frequency of the SCL signal used for I3C transfers.
-+	      When undefined the core sets it to 12.5MHz.
-+
-+- i2c-scl-hz: frequency of the SCL signal used for I2C transfers.
-+	      When undefined, the core looks at LVR (Legacy Virtual Register)
-+	      values of I2C devices described in the device tree to determine
-+	      the maximum I2C frequency.
-+
-+I2C devices
-+===========
-+
-+Each I2C device connected to the bus should be described in a subnode. All
-+properties described in Documentation/devicetree/bindings/i2c/i2c.txt are
-+valid here, but several new properties have been added.
-+
-+New constraint on existing properties:
-+--------------------------------------
-+- reg: contains 3 cells
-+  + first cell : still encoding the I2C address
-+
-+  + second cell: shall be 0
-+
-+  + third cell: shall encode the I3C LVR (Legacy Virtual Register)
-+	bit[31:8]: unused/ignored
-+	bit[7:5]: I2C device index. Possible values
-+	* 0: I2C device has a 50 ns spike filter
-+	* 1: I2C device does not have a 50 ns spike filter but supports high
-+	     frequency on SCL
-+	* 2: I2C device does not have a 50 ns spike filter and is not tolerant
-+	     to high frequencies
-+	* 3-7: reserved
-+
-+	bit[4]: tell whether the device operates in FM (Fast Mode) or FM+ mode
-+	* 0: FM+ mode
-+	* 1: FM mode
-+
-+	bit[3:0]: device type
-+	* 0-15: reserved
-+
-+The I2C node unit-address should always match the first cell of the reg
-+property: <device-type>@<i2c-address>.
-+
-+I3C devices
-+===========
-+
-+All I3C devices are supposed to support DAA (Dynamic Address Assignment), and
-+are thus discoverable. So, by default, I3C devices do not have to be described
-+in the device tree.
-+This being said, one might want to attach extra resources to these devices,
-+and those resources may have to be described in the device tree, which in turn
-+means we have to describe I3C devices.
-+
-+Another use case for describing an I3C device in the device tree is when this
-+I3C device has a static I2C address and we want to assign it a specific I3C
-+dynamic address before the DAA takes place (so that other devices on the bus
-+can't take this dynamic address).
-+
-+The I3C device should be names <device-type>@<static-i2c-address>,<i3c-pid>,
-+where device-type is describing the type of device connected on the bus
-+(gpio-controller, sensor, ...).
-+
-+Required properties
-+-------------------
-+- reg: contains 3 cells
-+  + first cell : encodes the static I2C address. Should be 0 if the device does
-+		 not have one (0 is not a valid I2C address).
-+
-+  + second and third cells: should encode the ProvisionalID. The second cell
-+			    contains the manufacturer ID left-shifted by 1.
-+			    The third cell contains ORing of the part ID
-+			    left-shifted by 16, the instance ID left-shifted
-+			    by 12 and the extra information. This encoding is
-+			    following the PID definition provided by the I3C
-+			    specification.
-+
-+Optional properties
-+-------------------
-+- assigned-address: dynamic address to be assigned to this device. This
-+		    property is only valid if the I3C device has a static
-+		    address (first cell of the reg property != 0).
-+
++I3C device connected on the bus follow the generic description (see
++Documentation/devicetree/bindings/i3c/i3c.txt for more details).
 +
 +Example:
 +
-+	i3c-master@d040000 {
++	i3c-master@0d040000 {
 +		compatible = "cdns,i3c-master";
 +		clocks = <&coreclock>, <&i3csysclock>;
 +		clock-names = "pclk", "sysclk";
 +		interrupts = <3 0>;
 +		reg = <0x0d040000 0x1000>;
-+		#address-cells = <3>;
++		#address-cells = <1>;
 +		#size-cells = <0>;
 +		i2c-scl-hz = <100000>;
 +
-+		/* I2C device. */
 +		nunchuk: nunchuk@52 {
 +			compatible = "nintendo,nunchuk";
-+			reg = <0x52 0x0 0x10>;
-+		};
-+
-+		/* I3C device with a static I2C address. */
-+		thermal_sensor: sensor@68,39200144004 {
-+			reg = <0x68 0x392 0x144004>;
-+			assigned-address = <0xa>;
-+		};
-+
-+		/*
-+		 * I3C device without a static I2C address but requiring
-+		 * resources described in the DT.
-+		 */
-+		sensor@0,39200154004 {
-+			reg = <0x0 0x392 0x154004>;
-+			clocks = <&clock_provider 0>;
++			reg = <0x52 0x80000010 0>;
 +		};
 +	};
 +
