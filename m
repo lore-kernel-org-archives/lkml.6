@@ -7,60 +7,59 @@ X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E99EC6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 12:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1526EC6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 12:11:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38AB720856
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 12:11:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B8AD82064C
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 12:11:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y/z0Gza6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38AB720856
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RCcR9U4N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8AD82064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727630AbeJZUsM (ORCPT
+        id S1727662AbeJZUsT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 16:48:12 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:42817 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727491AbeJZUsM (ORCPT
+        Fri, 26 Oct 2018 16:48:19 -0400
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:46441 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727491AbeJZUsT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 16:48:12 -0400
-Received: by mail-vs1-f66.google.com with SMTP id e126so539397vsc.9
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 05:11:20 -0700 (PDT)
+        Fri, 26 Oct 2018 16:48:19 -0400
+Received: by mail-vs1-f67.google.com with SMTP id l6so532474vsj.13
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 05:11:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=C69vTy5yCnmW8KDKcklUcRVhtwRjBrqphYmxYMdm68A=;
-        b=Y/z0Gza6b2ZIHP7gk7KhT4Qh/EFEc+2rkN0L9zPjxm2B4GQzbAuipRRqeIKy93GNOA
-         CIzRRsVqYBpkqwhXZFR9uopyPAdPiO4DUZP5WfU/9H9inRc0LhPFbBRZRwZ7QuC1xBEB
-         fFVJLPtsH/81BjKzKnzHQkz2sKDT96VF+qaWc=
+        bh=QvHFjfYwLiJ1bSGARMprZvPl9/SgcifNpT4cGn8Nils=;
+        b=RCcR9U4N/OYinID9SLzwGmFdYIfn5icGyPEDZwnGorHKKXdqv6bFEDtU31tPWUO5GR
+         k4TObZdB2e9ua78EP99+wZ1o0JRaqD2QxxOjkJ9DKHMc6DP5TWZ5EDnhYPn7KwPdOwgi
+         otAw8jMXQpslAPLxu/nCuzJ+LED0nl+M+mKQo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=C69vTy5yCnmW8KDKcklUcRVhtwRjBrqphYmxYMdm68A=;
-        b=WCJj79ZGuoj91Y7nRWXx3bQJLIyHhpAvBlf6intnQmctMNUBt1AZMBVfFvp/0poppw
-         7Ev9o7A9ZxIRBzOl79OodgHHavzWGpH2aiwhcpwpGlc8p7HC2FLjUV5+Pb8NUPGzCu3E
-         ZmsqE21zaOH58v/EpDv/pezNInykEo7vIIY8vdwOfbT/jGFgnAMaq2ttW4yCpMrYymqU
-         z/EL4ihGSXvdFBMwnfKzKpFeqkSaAN5mp/oRvtwQcs8/8vMVInFCoDQ7pUqYxDc2W1fp
-         KW/9bhPOkoxjeZjcB+7JQ2TPhM4tir52nsqWnGfZ/Z6q2+Od/bP8gfN0/xgj8nJMqKxz
-         gE0A==
-X-Gm-Message-State: AGRZ1gLDgPfRaH7f4NbAmO5B6Kg1c+pESiJ7Nhuvv2JNm7nO1ktsNN8n
-        sMsHcQDdaZK+X8Bub5VMMNJd3C4HebSUfjByBcB1HQ==
-X-Google-Smtp-Source: AJdET5cU0MQSzkdTwXTow83a/nONVImmIW2WsdXg2jtqVzOC+JhoxVy53yGtUlNTWjwmb6wX4WnDxAgGCowRFNasHPQ=
-X-Received: by 2002:a67:4719:: with SMTP id u25mr1382818vsa.27.1540555879206;
- Fri, 26 Oct 2018 05:11:19 -0700 (PDT)
+        bh=QvHFjfYwLiJ1bSGARMprZvPl9/SgcifNpT4cGn8Nils=;
+        b=dEo7UsuTm5J4XWO3gzzSSPB/XVQozSSl2lyGLB+6dBrFchbURNc0psOS8KfWbArHZJ
+         cj9uf8CwBjUC9mAHzx6UiufFJctZnvEanaOOQBYFoT+HeJfS3H+ASeKypI5piWRlW87O
+         vgVU2uwdkLHJ/8Hwq1+ldoxUYiCw47kPkC0kk6E3JxmUudAjayD7FhGaKfrS5ClMDQb3
+         q7Pn9xZoK97YdPZ583kSghnnlONjEB9f4SyWpjM1jUjK20X4XrxwPkzdwLBX4m9Et9K1
+         YgKk9FW+r4+LPRBPLl73Pg4mSdhej3uOLGRrzQm02bkVCC2BFK3YR3yL4B4Nl3M7zrbG
+         lRvw==
+X-Gm-Message-State: AGRZ1gJMe4lm2V9MNZO8gpdBpkdGV64hvc4TY1LSEZORX4BOlsCB5p3i
+        vi/Fw+zU6NkVt7bBcZgsh0XYOclfiTmNk2jUivFCTQ==
+X-Google-Smtp-Source: AJdET5eMy9EwE0xScvPAH0VM1VSjNHTvRuwzwGXBZG+WwqW9bavMAuincogd2sOhjS+dUmHGd15rY5HPMx188YThCKE=
+X-Received: by 2002:a67:e31a:: with SMTP id j26mr1319194vsf.95.1540555885656;
+ Fri, 26 Oct 2018 05:11:25 -0700 (PDT)
 MIME-Version: 1.0
-References: <CGME20181017155403epcas2p1ed9777e96c6b2c77c2c5b67466be9843@epcas2p1.samsung.com>
- <1539791563-5959-1-git-send-email-b.zolnierkie@samsung.com> <1539791563-5959-9-git-send-email-b.zolnierkie@samsung.com>
-In-Reply-To: <1539791563-5959-9-git-send-email-b.zolnierkie@samsung.com>
+References: <CGME20181017155332epcas2p499ac9d53678d82a9984b3533e723a0dd@epcas2p4.samsung.com>
+ <1539791563-5959-1-git-send-email-b.zolnierkie@samsung.com> <1539791563-5959-4-git-send-email-b.zolnierkie@samsung.com>
+In-Reply-To: <1539791563-5959-4-git-send-email-b.zolnierkie@samsung.com>
 From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Fri, 26 Oct 2018 17:41:08 +0530
-Message-ID: <CAHLCerNsdhG1OjiRiy5s4uSRGB6dUCVe7mvknCqWqMeQzxCb7Q@mail.gmail.com>
-Subject: Re: [PATCH v2 08/17] thermal: qcom: tsens: enable+check sensor after
- its setup is finished
+Date:   Fri, 26 Oct 2018 17:41:14 +0530
+Message-ID: <CAHLCerNisNkLptW3sHaue_eR8siy3-6VGo=80A9svtYfmdoiTQ@mail.gmail.com>
+Subject: Re: [PATCH v2 03/17] thermal: separate sensor enable and check operations
 To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Cc:     Zhang Rui <rui.zhang@intel.com>,
         Eduardo Valentin <edubezval@gmail.com>,
@@ -84,45 +83,292 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 17, 2018 at 9:24 PM Bartlomiej Zolnierkiewicz
+On Wed, Oct 17, 2018 at 9:23 PM Bartlomiej Zolnierkiewicz
 <b.zolnierkie@samsung.com> wrote:
 >
-> Enable+check sensor after setting tmdev->sensor[i].tzd and calling
-> chipset specific enable operation.
+> [devm]_thermal_zone_of_sensor_register() is used to register
+> thermal sensor by thermal drivers using DeviceTree. Besides
+> registering sensor this function also immediately:
+>
+> - enables it:
+>
+>   tzd->ops->set_mode(tzd, THERMAL_DEVICE_ENABLED)
+>   (->set_mode is set to of_thermal_set_mode() in of-thermal.c)
+>
+> - checks it (indirectly by using of_thermal_set_mode()):
+>
+>   thermal_zone_device_update(tz, THERMAL_EVENT_UNSPECIFIED);
+>   (which in turn ends up using ->get_temp method).
+>
+> For many DT thermal drivers this causes a problem because:
+>
+> - [devm]_thermal_zone_of_sensor_register() need to be called in
+>   order to obtain data about thermal trips which are then used to
+>   finish hardware sensor setup (only after which ->get_temp can
+>   be used)
+>
+> There is also related issue for DT thermal drivers that support
+> IRQ (i.e. exynos and rockchip ones):
+>
+> - sensor hardware should be enabled only after IRQ handler is
+>   requested (because otherwise we might get IRQs that we can't
+>   handle)
+>
+> - IRQ handler needs tzd structure which is obtained from
+>   [devm_]thermal_zone_of_sensor_register()
+>
+> - after [devm_]thermal_zone_of_sensor_register() call core
+>   thermal code assumes that sensor is enabled and ready to use
+>   (i.e. that IRQ handler has been requested and sensor hardware
+>   has been enabled)
+>
+> In order to prepare for fixing all abovementioned issues separate
+> sensor enable and check operations in the core thermal code and
+> update thermal drivers accordingly:
+
+The commit message on this patch and patch 4 are identical upto here.
+Perhaps consider moving the actual difference in the commit message to
+the top and post the TL;DR version below it?
+
+> * Add set_mode_skip_check flag to struct thermal_zone_device_ops and
+>   set it in drivers that don't check the thermal zone device in their
+>   ->set_mode method implementations.
+>
+> * Move thermal_zone_device_check() from ->set_mode implementations to
+>   the users of thermal_zone_set_mode() (only place which calls
+>   ->set_mode). Modify mode_store() in thermal_sysfs.c accordingly.
+>
+> There should be no functional changes caused by this patch.
 >
 > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 > ---
->  drivers/thermal/qcom/tsens.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+>  drivers/acpi/thermal.c                             |  2 ++
+>  drivers/net/ethernet/mellanox/mlxsw/core_thermal.c |  2 --
+>  drivers/platform/x86/acerhdf.c                     |  2 ++
+>  drivers/thermal/db8500_thermal.c                   |  2 ++
+>  drivers/thermal/hisi_thermal.c                     |  2 ++
+>  drivers/thermal/imx_thermal.c                      |  2 --
+>  drivers/thermal/int340x_thermal/int3400_thermal.c  |  1 +
+>  drivers/thermal/of-thermal.c                       |  6 +++---
+>  drivers/thermal/rockchip_thermal.c                 | 16 ++++++++++++----
+>  drivers/thermal/thermal_sysfs.c                    |  3 +++
+>  include/linux/thermal.h                            |  2 ++
+>  11 files changed, 29 insertions(+), 11 deletions(-)
 >
-> diff --git a/drivers/thermal/qcom/tsens.c b/drivers/thermal/qcom/tsens.c
-> index dbd2556..01bff96 100644
-> --- a/drivers/thermal/qcom/tsens.c
-> +++ b/drivers/thermal/qcom/tsens.c
-> @@ -105,13 +105,13 @@ static int tsens_register(struct tsens_device *tmdev)
->                 if (IS_ERR(tzd))
->                         continue;
->
-> -               thermal_zone_set_mode(tzd, THERMAL_DEVICE_ENABLED);
-> -               thermal_zone_device_check(tzd);
-> -
-
-I don't quite understand why you're making this move explicitly in a
-separate patch for each of the drivers? You added it here in patch 4
-in the first place, why not add it in the correct place there itself?
-
-
->                 tmdev->sensor[i].tzd = tzd;
->
->                 if (tmdev->ops->enable)
->                         tmdev->ops->enable(tmdev, i);
+> diff --git a/drivers/acpi/thermal.c b/drivers/acpi/thermal.c
+> index b8b275e1..a7e3d9e 100644
+> --- a/drivers/acpi/thermal.c
+> +++ b/drivers/acpi/thermal.c
+> @@ -879,6 +879,8 @@ static int acpi_thermal_cooling_device_cb(struct thermal_zone_device *thermal,
+>         .get_crit_temp = thermal_get_crit_temp,
+>         .get_trend = thermal_get_trend,
+>         .notify = thermal_notify,
 > +
-> +               thermal_zone_set_mode(tzd, THERMAL_DEVICE_ENABLED);
-> +               thermal_zone_device_check(tzd);
+> +       .set_mode_skip_check = true,
+>  };
 >
->         }
+>  static int acpi_thermal_register_thermal_zone(struct acpi_thermal *tz)
+> diff --git a/drivers/net/ethernet/mellanox/mlxsw/core_thermal.c b/drivers/net/ethernet/mellanox/mlxsw/core_thermal.c
+> index b0afd36..5f4b3bd 100644
+> --- a/drivers/net/ethernet/mellanox/mlxsw/core_thermal.c
+> +++ b/drivers/net/ethernet/mellanox/mlxsw/core_thermal.c
+> @@ -170,8 +170,6 @@ static int mlxsw_thermal_set_mode(struct thermal_zone_device *tzdev,
+>
+>         thermal->mode = mode;
+>
+> -       thermal_zone_device_check(tzdev);
+> -
 >         return 0;
 >  }
+>
+> diff --git a/drivers/platform/x86/acerhdf.c b/drivers/platform/x86/acerhdf.c
+> index 5a2b93a..884fd83 100644
+> --- a/drivers/platform/x86/acerhdf.c
+> +++ b/drivers/platform/x86/acerhdf.c
+> @@ -507,6 +507,8 @@ static int acerhdf_get_crit_temp(struct thermal_zone_device *thermal,
+>         .get_trip_hyst = acerhdf_get_trip_hyst,
+>         .get_trip_temp = acerhdf_get_trip_temp,
+>         .get_crit_temp = acerhdf_get_crit_temp,
+> +
+> +       .set_mode_skip_check = true,
+>  };
+>
+>
+> diff --git a/drivers/thermal/db8500_thermal.c b/drivers/thermal/db8500_thermal.c
+> index ab66b2d7..c4d0fb1 100644
+> --- a/drivers/thermal/db8500_thermal.c
+> +++ b/drivers/thermal/db8500_thermal.c
+> @@ -220,6 +220,8 @@ static int db8500_sys_get_crit_temp(struct thermal_zone_device *thermal,
+>         .get_trip_type = db8500_sys_get_trip_type,
+>         .get_trip_temp = db8500_sys_get_trip_temp,
+>         .get_crit_temp = db8500_sys_get_crit_temp,
+> +
+> +       .set_mode_skip_check = true,
+>  };
+>
+>  static void db8500_thermal_update_config(struct db8500_thermal_zone *pzone,
+> diff --git a/drivers/thermal/hisi_thermal.c b/drivers/thermal/hisi_thermal.c
+> index 63d4fc3..6151e55 100644
+> --- a/drivers/thermal/hisi_thermal.c
+> +++ b/drivers/thermal/hisi_thermal.c
+> @@ -561,6 +561,7 @@ static int hisi_thermal_probe(struct platform_device *pdev)
+>         }
+>
+>         thermal_zone_set_mode((&data->sensor)->tzd, THERMAL_DEVICE_ENABLED);
+> +       thermal_zone_device_check((&data->sensor)->tzd);
+>
+>         return 0;
+>  }
+> @@ -570,6 +571,7 @@ static int hisi_thermal_remove(struct platform_device *pdev)
+>         struct hisi_thermal_data *data = platform_get_drvdata(pdev);
+>
+>         thermal_zone_set_mode((&data->sensor)->tzd, THERMAL_DEVICE_DISABLED);
+> +       thermal_zone_device_check((&data->sensor)->tzd);
+>
+>         data->disable_sensor(data);
+>
+> diff --git a/drivers/thermal/imx_thermal.c b/drivers/thermal/imx_thermal.c
+> index 22f57ef..7abad6c 100644
+> --- a/drivers/thermal/imx_thermal.c
+> +++ b/drivers/thermal/imx_thermal.c
+> @@ -385,8 +385,6 @@ static int imx_set_mode(struct thermal_zone_device *tz,
+>
+>         data->mode = mode;
+>
+> -       thermal_zone_device_check(tz);
+> -
+>         return 0;
+>  }
+>
+> diff --git a/drivers/thermal/int340x_thermal/int3400_thermal.c b/drivers/thermal/int340x_thermal/int3400_thermal.c
+> index e26b01c..d1f0641 100644
+> --- a/drivers/thermal/int340x_thermal/int3400_thermal.c
+> +++ b/drivers/thermal/int340x_thermal/int3400_thermal.c
+> @@ -305,6 +305,7 @@ static int int3400_thermal_probe(struct platform_device *pdev)
+>         if (priv->uuid_bitmap & 1 << INT3400_THERMAL_PASSIVE_1) {
+>                 int3400_thermal_ops.get_mode = int3400_thermal_get_mode;
+>                 int3400_thermal_ops.set_mode = int3400_thermal_set_mode;
+> +               int3400_thermal_ops.set_mode_skip_check = true;
+>         }
+>         priv->thermal = thermal_zone_device_register("INT3400 Thermal", 0, 0,
+>                                                 priv, &int3400_thermal_ops,
+> diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-thermal.c
+> index c422b08..f1dcb7d 100644
+> --- a/drivers/thermal/of-thermal.c
+> +++ b/drivers/thermal/of-thermal.c
+> @@ -272,8 +272,6 @@ static int of_thermal_set_mode(struct thermal_zone_device *tz,
+>
+>         data->mode = mode;
+>
+> -       thermal_zone_device_check(tz);
+> -
+>         return 0;
+>  }
+>
+> @@ -496,9 +494,11 @@ struct thermal_zone_device *
+>                 if (sensor_specs.np == sensor_np && id == sensor_id) {
+>                         tzd = thermal_zone_of_add_sensor(child, sensor_np,
+>                                                          data, ops);
+> -                       if (!IS_ERR(tzd))
+> +                       if (!IS_ERR(tzd)) {
+>                                 thermal_zone_set_mode(tzd,
+>                                                       THERMAL_DEVICE_ENABLED);
+> +                               thermal_zone_device_check(tzd);
+> +                       }
+
+You add this here and then remove it in patch 4. I'm guessing this is
+to help with git-bisect. But...
+
+>                         of_node_put(sensor_specs.np);
+>                         of_node_put(child);
+> diff --git a/drivers/thermal/rockchip_thermal.c b/drivers/thermal/rockchip_thermal.c
+> index 5640675..715f4cd 100644
+> --- a/drivers/thermal/rockchip_thermal.c
+> +++ b/drivers/thermal/rockchip_thermal.c
+> @@ -1281,9 +1281,11 @@ static int rockchip_thermal_probe(struct platform_device *pdev)
+>
+>         thermal->chip->control(thermal->regs, true);
+>
+> -       for (i = 0; i < thermal->chip->chn_num; i++)
+> +       for (i = 0; i < thermal->chip->chn_num; i++) {
+>                 thermal_zone_set_mode((&thermal->sensors[i])->tzd,
+>                                       THERMAL_DEVICE_ENABLED);
+> +               thermal_zone_device_check((&thermal->sensors[i])->tzd);
+> +       }
+
+Similarly, most of patch 4 are about calling set_mode and device_check
+after the registration across all drivers. So it seems to be that it
+might be easier to just merge these two patches to make it easier to
+understand what is happening.
+
+>         platform_set_drvdata(pdev, thermal);
+>
+> @@ -1302,9 +1304,11 @@ static int rockchip_thermal_remove(struct platform_device *pdev)
+>         struct rockchip_thermal_data *thermal = platform_get_drvdata(pdev);
+>         int i;
+>
+> -       for (i = 0; i < thermal->chip->chn_num; i++)
+> +       for (i = 0; i < thermal->chip->chn_num; i++) {
+>                 thermal_zone_set_mode((&thermal->sensors[i])->tzd,
+>                                       THERMAL_DEVICE_DISABLED);
+> +               thermal_zone_device_check((&thermal->sensors[i])->tzd);
+> +       }
+>
+>         thermal->chip->control(thermal->regs, false);
+>
+> @@ -1320,9 +1324,11 @@ static int __maybe_unused rockchip_thermal_suspend(struct device *dev)
+>         struct rockchip_thermal_data *thermal = platform_get_drvdata(pdev);
+>         int i;
+>
+> -       for (i = 0; i < thermal->chip->chn_num; i++)
+> +       for (i = 0; i < thermal->chip->chn_num; i++) {
+>                 thermal_zone_set_mode((&thermal->sensors[i])->tzd,
+>                                       THERMAL_DEVICE_DISABLED);
+> +               thermal_zone_device_check((&thermal->sensors[i])->tzd);
+> +       }
+>
+>         thermal->chip->control(thermal->regs, false);
+>
+> @@ -1372,9 +1378,11 @@ static int __maybe_unused rockchip_thermal_resume(struct device *dev)
+>
+>         thermal->chip->control(thermal->regs, true);
+>
+> -       for (i = 0; i < thermal->chip->chn_num; i++)
+> +       for (i = 0; i < thermal->chip->chn_num; i++) {
+>                 thermal_zone_set_mode((&thermal->sensors[i])->tzd,
+>                                       THERMAL_DEVICE_ENABLED);
+> +               thermal_zone_device_check((&thermal->sensors[i])->tzd);
+> +       }
+>
+>         pinctrl_pm_select_default_state(dev);
+>
+> diff --git a/drivers/thermal/thermal_sysfs.c b/drivers/thermal/thermal_sysfs.c
+> index 3b38fb9..ac39fb6 100644
+> --- a/drivers/thermal/thermal_sysfs.c
+> +++ b/drivers/thermal/thermal_sysfs.c
+> @@ -85,6 +85,9 @@
+>         if (result)
+>                 return result;
+>
+> +       if (!tz->ops->set_mode_skip_check)
+> +               thermal_zone_device_check(tz);
+> +
+>         return count;
+>  }
+>
+> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+> index 3e325b3..92c460e 100644
+> --- a/include/linux/thermal.h
+> +++ b/include/linux/thermal.h
+> @@ -113,6 +113,8 @@ struct thermal_zone_device_ops {
+>                           enum thermal_trend *);
+>         int (*notify) (struct thermal_zone_device *, int,
+>                        enum thermal_trip_type);
+> +
+> +       bool set_mode_skip_check;
+>  };
+>
+>  struct thermal_cooling_device_ops {
 > --
 > 1.9.1
 >
