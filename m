@@ -2,86 +2,97 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C9C1ECDE46
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:30:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FB62ECDE46
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:31:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C2FF2085B
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:30:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hBO42Eyg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C2FF2085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id F3A582085B
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:31:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3A582085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=columbia.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728039AbeJ0DIp (ORCPT
+        id S1728043AbeJ0DJh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 23:08:45 -0400
-Received: from mail-lj1-f175.google.com ([209.85.208.175]:44515 "EHLO
-        mail-lj1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726815AbeJ0DIo (ORCPT
+        Fri, 26 Oct 2018 23:09:37 -0400
+Received: from moglen4.apt.columbia.edu ([160.39.60.15]:47738 "EHLO
+        moglen4.apt.columbia.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726815AbeJ0DJh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 23:08:44 -0400
-Received: by mail-lj1-f175.google.com with SMTP id v6-v6so2010125ljc.11
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 11:30:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=q/Y4SmCfdfFyBdNkHNeBtD+aXA8o6vymANiVuTZmD+E=;
-        b=hBO42EyggHSoryq4ws1d7n6jthF9WF6NyCfTmlQDJn8+aX/LHo49XurWNh1+GJjf58
-         IOAaYc9CgT/u/QlgFHFO7d14f5lOysrbQ1cbU/ocXlWGMC7/iaIk1yZbzwofTKSF46hb
-         HAg1eyus+kke11Ar9I4wRT7KfaRlbXJIP5Olw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=q/Y4SmCfdfFyBdNkHNeBtD+aXA8o6vymANiVuTZmD+E=;
-        b=msRM7hlCR6hb/ZWdh7y+/zJ85YWK6+xe25PQUty0OUHEKw3Y5kT7BIsuNALDIRcplx
-         ZO1AGnHrCMQd4pgPC8upxv/bbTMiEZM6/JC7jy0sq4Pc4dUlgHBzLJb+OyDstfK3xb/J
-         oRt43P+OaYSgv+AQP3cHXUKrk+z5B3OeZ06KOCbNm3ObSTnPxdCgAX1jiN8dpZy1Qa17
-         IcjnD28FMmcn4rdV7kGQ33KUw11uEtmt/TMKPGHiNBVyh4+Z4sCIvOrNPbT6F5/gmETq
-         /piXsiBfK/1LK1p5RDhZA+Pg5n9qJLYK/fOsklxXngHgJoPq69/2glC4inQVTf4ZzT5y
-         O7rw==
-X-Gm-Message-State: AGRZ1gKqsuJZPs6YIvyYflpMp5vx9+ehtYu/YeX5660FkbjsxP8+u1bb
-        PXbhkMQ3qFcc8uszidLfZDAL+ovtBnSVGg==
-X-Google-Smtp-Source: AJdET5fY3bDbBDLbPy/CZIkgTH4K994yoqP+HSOQ9hmNwNbgm6ZM22oNMxNGQDsWuOpuiz5SYsqPvw==
-X-Received: by 2002:a2e:5317:: with SMTP id h23-v6mr3017773ljb.26.1540578637312;
-        Fri, 26 Oct 2018 11:30:37 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id f197-v6sm1880166lfe.49.2018.10.26.11.30.36
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 11:30:36 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id p1-v6so2027966ljg.6
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 11:30:36 -0700 (PDT)
-X-Received: by 2002:a2e:8743:: with SMTP id q3-v6mr3349134ljj.80.1540578635848;
- Fri, 26 Oct 2018 11:30:35 -0700 (PDT)
+        Fri, 26 Oct 2018 23:09:37 -0400
+Received: from localhost (moglen1.apt.columbia.edu [160.39.60.12])
+        by moglen4.apt.columbia.edu (Postfix) with ESMTPSA id B8DD32E0158;
+        Fri, 26 Oct 2018 18:31:30 +0000 (UTC)
+Date:   Fri, 26 Oct 2018 14:31:30 -0400
+Message-Id: <3068-Fri26Oct2018143130-0400-eben@harlan.sflc-vpn>
+X-Mailer: emacs 23;
+        VM 8.1.0 under 23.2.1 (i486-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20181026132403.GA23693@infradead.org>
-In-Reply-To: <20181026132403.GA23693@infradead.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 26 Oct 2018 11:30:19 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjPr1PLVcCpXDMUqu1FcyFBp4XOw9i9zue8hkJY8fZgOg@mail.gmail.com>
-Message-ID: <CAHk-=wjPr1PLVcCpXDMUqu1FcyFBp4XOw9i9zue8hkJY8fZgOg@mail.gmail.com>
-Subject: Re: [GIT PULL] second round of dma mapping updates for 4.20
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     iommu@lists.linux-foundation.org, robin.murphy@arm.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        konrad.wilk@oracle.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+To:     visionsofalice@redchan.it
+Cc:     linux-kernel@vger.kernel.org, esr@thyrsus.com,
+        gregkh@linuxfoundation.org, rms@gnu.org, bruce@perens.com,
+        bkuhn@sfconservancy.org, editor@lwn.net, neil@brown.name,
+        labbott@redhat.com, torvalds@linux-foundation.org,
+        ksummit-discuss@lists.linuxfoundation.org, tglx@linutronix.de,
+        olof@lixom.net, clm@fb.com, mishi@linux.com,
+        linux-kernel-owner@vger.kernel.org
+Subject: Re: The linux devs can rescind their license grant.
+In-Reply-To: visionsofalice@redchan.it's message of Fri, 26 Oct 2018 17:32:58 +0000
+      <4c023302875de71cc58007301b180940@redchan.it>
+References: <20181020134908.GA32218@kroah.com>
+        <87y3ar80ac.fsf@notabene.neil.brown.name>
+        <c6bf1877-6e29-50ec-ffa8-314ab35ec9ce@redhat.com>
+        <185b786a2bd6e8d527dca161dc42e4f1@redchan.it>
+        <20181025081911.GB11343@kroah.com>
+        <20181025193901.GD26403@thyrsus.com>
+        <849-Fri26Oct2018091533-0400-eben@harlan.sflc-vpn>
+        <4c023302875de71cc58007301b180940@redchan.it>
+From:   Eben Moglen <moglen@columbia.edu>
+Reply-To: Eben Moglen <moglen@columbia.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 6:24 AM Christoph Hellwig <hch@infradead.org> wrote:
->
-> Second batch of dma-mapping updates for 4.20:
+On Friday, 26 October 2018, visionsofalice@redchan.it wrote:
 
-Pulled,
+  You are conflating case law dealing with commercial software and 
+  non-gratuitous licenses with the present situation, which would likely 
+  be a case of first-impression in nearly any jurisdiction.
 
-                Linus
+I think the best procedure would be for me to publish my analysis and
+for you then to tell me what is wrong with it.  What you say here
+sounds like what a lawyer might say, but isn't.  I have been teaching
+this stuff for about thirty years, so if I am conflating or confusing
+anything I will be grateful for help in seeing my mistake.
+  
+  The rule for gratuitous licenses is that they are revocable at the will 
+  of the grantor.
+
+That's not actually "the rule."  It sounds like it might be the rule,
+but it so happens that it's not.  When I have given the explanation as
+I have learned, taught and depended on it, you will be able to show me
+what I am wrong about.
+
+  Raymond Nimmer (God rest his soul) was in agreement on this point, 
+  vis-a-vis the GPL and similar licenses.
+
+You have your Nimmers confused.  The primary author of the treatise
+Nimmer on Copyright (a book about the law, not in itself an authority)
+was Melville Nimmer.  The treatise is continued by his son, David, a
+fine lawyer with whom I do from time to time politely disagree about
+something.  Ray Nimmer is quite another person.
+
+Eben
+
+-- 
+ Eben Moglen                            v: 212-461-1901 
+ Professor of Law, Columbia Law School  f: 212-854-7946       moglen@
+ 435 West 116th Street, New York City, NY 10027            columbia.edu
+ Founding Director, Software Freedom Law Center        softwarefreedom.org
+ 
