@@ -2,157 +2,134 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E479EECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:06:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F698ECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:09:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84EE020856
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:06:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB5D820824
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:09:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P4J1+2j8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84EE020856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="cl2dRMtc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB5D820824
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727340AbeJ0EoZ (ORCPT
+        id S1726730AbeJ0EsG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 00:44:25 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44375 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725861AbeJ0EoZ (ORCPT
+        Sat, 27 Oct 2018 00:48:06 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45590 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725861AbeJ0EsG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 00:44:25 -0400
-Received: by mail-pf1-f195.google.com with SMTP id j2-v6so1042205pfn.11
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 13:06:03 -0700 (PDT)
+        Sat, 27 Oct 2018 00:48:06 -0400
+Received: by mail-pf1-f196.google.com with SMTP id v6-v6so754246pfm.12
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 13:09:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=2rQYg0Ei3Z+g2eWBiookOM+RCW1fS/B3c+BTE3JJ7Wo=;
-        b=P4J1+2j8vWYJ2pcCXUq8rZQczZi9bYSHVgBnUwlkVjhzqEAfOaHJCj2K31MAcCKGpA
-         Yb9EInL99zjaKKwASHjGIUc1AnMQXOoVwk0KEmZzp0HJ7JxJG1Wz1Gv8K48H2qjDN5Oq
-         gREE8bs7iqQrlR3g1uOxhkaW3jFpU3X28P129ZnCiRaI19ohYg+h3FqOWMWFsDV7jWRa
-         G+3aTww+IVQLwY8d71JC7rk0VHS5NJcrJxHh1268Tt0lK/Y+JeBhL0fv9FJqA0XaeDxF
-         kUmpb0MbS4EInHAlNLmlkOYcaFyylqzhOClXQ48jBHyBAXNXT/wdEBrZ/AiOMK6ksuN8
-         klxg==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=mCf0LNVayN601XqDnApH7l/ZthIM8O7U7fSOJAuzawI=;
+        b=cl2dRMtcCpaB0VaUt4cj5nZ0mu1GyrC0+/GvxNd+V7F4L1EHZ06UXfDlZonZTTNZEs
+         bq78hYx39kyvJl0FpNHguw9TbqqFC659ayAwBqe0CM9u0W67f8xI350mXttHvIQ21O89
+         mgsEEOKODyHrDhCJgHiFi8jKWmjYV39hmItkk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=2rQYg0Ei3Z+g2eWBiookOM+RCW1fS/B3c+BTE3JJ7Wo=;
-        b=rg1D2G4KcUHztQR6uPLaOTpeVLI7OuowxXxxZsuTY7JUxQgVuq2UW9jSfFfg3fxQtp
-         TN06cpWR3ZvU0OK7Z9nVd+PsAtNAS6Z172llnoQt2bTTFGjsdcnxtrh3iDuB6+GxMuoq
-         ZEdgyZQ6Tzc7qHKupp9Al9Oa/4QbyedWLb4u64v69dMOvtgxHkWmCf44nW4YusOqCEeQ
-         f1Q2PLWFp4nNZ5qMxYBFhSYO1SPPWkzfs84IyWPYVaFmtsYgZSUgGm2/ooaroFo2UpVw
-         PoM40Oznw3qMSs2efwEbY4ytqOmHnFPlnzNrpiJtIOMsTsihtcRciiU73hFtj5INM9zB
-         jZGQ==
-X-Gm-Message-State: AGRZ1gKgj2uP+i2XDNNmrXrbHSILMOImJjoojYEB0NSAL/g9Gg1lFsLY
-        B0AV0GAn+6fSkkdO1Nw9/Zy7l9NdAMk7pfhOy4/PbA==
-X-Google-Smtp-Source: AJdET5dROaeU7uPALW5e8xQ4a3b7DNoxVuG9SULxa4l5+R7AZSWMUSHmipROOh8LYM+6AIu9V25ZugmMfi/ExdgCOkM=
-X-Received: by 2002:a63:9e02:: with SMTP id s2-v6mr4907320pgd.302.1540584362686;
- Fri, 26 Oct 2018 13:06:02 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=mCf0LNVayN601XqDnApH7l/ZthIM8O7U7fSOJAuzawI=;
+        b=Leuax4Hk/f1WSUTx2n9Xc3q2VqNQAPMqAFHRuPk7dNV+BaXV4vFwzocChVOuym2dT8
+         mmoOclbWMMBi4RMiLEVy2e5fdebtSyOqEz7eDKjwslXFf7rIBWjcOno5ESAD76fKg+gO
+         sfmmJiiLu+GcGrs2uPGCg3PKhdGZntvm41RB0fXBKlRXBfqQWQf7tjH2YSqygcxbySDO
+         IHxi+EbmbyGb5vd4BULKljnWzBUY3C3RbKnpRThaWGpASb46c/cke1PIC8s6/xhQHUrE
+         IL6f9WqrUyAgKkkd/iNvRA9aVoEDkW1CqWx94du87pG5lCwZx8MZAQtJw+hUHkfITfug
+         sqaQ==
+X-Gm-Message-State: AGRZ1gJgcvJQMeemEUJluWHJhjmIS2e0cCbG1l6skaSIp5PTX7HdH8oM
+        7MLfPRuYr3TeUg4dztlIdkOEHQ==
+X-Google-Smtp-Source: AJdET5fUZl4bwCrD0DDTOP7KnLFPuzInjJVzDQasYrgAybB9vayxPTNq05U0EFGDHgrnJzVW0g2gFw==
+X-Received: by 2002:a63:5ec6:: with SMTP id s189mr4605613pgb.357.1540584582842;
+        Fri, 26 Oct 2018 13:09:42 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id o29-v6sm5592138pgl.68.2018.10.26.13.09.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 26 Oct 2018 13:09:41 -0700 (PDT)
+Date:   Fri, 26 Oct 2018 13:09:40 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>
+Subject: Re: [RFC 6/6] Revert "pstore/ram_core: Do not reset restored zone's
+ position and size"
+Message-ID: <20181026200940.GA129228@joelaf.mtv.corp.google.com>
+References: <20181026180042.52199-1-joel@joelfernandes.org>
+ <20181026180042.52199-6-joel@joelfernandes.org>
+ <CAGXu5jLoMhBKuxhSqbgitfOYkO0gU34L4asn9iQEdHqJPxfDSA@mail.gmail.com>
+ <20181026182218.GB187415@joelaf.mtv.corp.google.com>
+ <CAGXu5j+w+3VPMPHWNQi8UbTCRgbP1YSpjP2xct8hJEdyXdKYRw@mail.gmail.com>
 MIME-Version: 1.0
-References: <10b12992-3570-4646-374b-82cbd7276839@acm.org> <CAKwvOd=wgxB69dMxzMeH2edCn=TdQGPGkNVW1e=QHPTJtO9ZNw@mail.gmail.com>
- <1538503063.193396.6.camel@acm.org> <CAKwvOdmsNEexQL9R8rgcRcXTZButYM6YWwG8bhVWCoJ8bOqCrA@mail.gmail.com>
- <1538521591.193396.8.camel@acm.org> <20181025213144.GB24709@flashbox>
- <CAKwvOdn=TvoGdFvgxX6TyXBXnhVLttriRrZEnzS6DjcjL64DPA@mail.gmail.com>
- <20181025225548.GA10326@flashbox> <CAKwvOdnwmf47_m_0K5OCLmXbrkLNnekpNOPCCMeJqkuqKUbQ-A@mail.gmail.com>
- <1540576908.66186.103.camel@acm.org> <20181026180515.GA12129@flashbox>
- <CAKwvOdnEHCmNjm-P068KQrbU0K+Dzyw_+_j7XLKJET0LWSz86A@mail.gmail.com> <CAHk-=wh0LsuM+kAZGbDaogDdSbdCk3GvXmjYVAMkpmLj2=VF=g@mail.gmail.com>
-In-Reply-To: <CAHk-=wh0LsuM+kAZGbDaogDdSbdCk3GvXmjYVAMkpmLj2=VF=g@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Fri, 26 Oct 2018 13:05:51 -0700
-Message-ID: <CAKwvOd=c9RG2s3f-PgM1T84sHc5N9zcjrVpG5is+mGbTOxvtrQ@mail.gmail.com>
-Subject: Re: [PATCH] libosd: Remove ignored __weak attribute
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     bvanassche@acm.org, ooo@electrozaur.com,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        hch@infradead.org, Kees Cook <keescook@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5j+w+3VPMPHWNQi8UbTCRgbP1YSpjP2xct8hJEdyXdKYRw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 12:22 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Fri, Oct 26, 2018 at 11:32 AM Nick Desaulniers
-> <ndesaulniers@google.com> wrote:
+On Fri, Oct 26, 2018 at 08:42:12PM +0100, Kees Cook wrote:
+> On Fri, Oct 26, 2018 at 7:22 PM, Joel Fernandes <joel@joelfernandes.org> wrote:
+> > On Fri, Oct 26, 2018 at 07:16:28PM +0100, Kees Cook wrote:
+> >> On Fri, Oct 26, 2018 at 7:00 PM, Joel Fernandes (Google)
+> >> <joel@joelfernandes.org> wrote:
+> >> > This reverts commit 25b63da64708212985c06c7f8b089d356efdd9cf.
+> >> >
+> >> > Due to the commit which is being reverted here, it is not possible to
+> >> > know if pstore's messages were from a previous boot, or from very old
+> >> > boots. This creates an awkard situation where its unclear if crash or
+> >> > other logs are from the previous boot or from very old boots. Also
+> >> > typically we dump the pstore buffers after one reboot and are interested
+> >> > in only the previous boot's crash so let us reset the buffer after we
+> >> > save them.
+> >> >
+> >> > Lastly, if we don't zap them, then I think it is possible that part of
+> >> > the buffer will be from this boot and the other parts will be from
+> >> > previous boots. So this revert fixes all of this by calling
+> >> > persistent_ram_zap always.
+> >>
+> >> I like the other patches (comments coming), but not this one: it's
+> >> very intentional to keep all crashes around until they're explicitly
+> >> unlinked from the pstore filesystem from userspace. Especially true
+> >> for catching chains of kernel crashes, or a failed log collection,
+> >> etc. Surviving multiple reboots is the expected behavior on Chrome OS
+> >> too.
 > >
-> > + Linus
-> > I'm not about the process of removing code from the kernel.  Doesn't
-> > that violate the "thou shalt not break userspace" rule?
->
-> The only thing that breaks the "thou shalt not break userspace" rule
-> is fairly simple: things that break user space.
+> > Oh, ok. Hence the RFC tag ;-) We can drop this one then. I forgot that
+> > unlinking was another way to clear the logs.
+> 
+> In another thread I discovered that the "single prz" ones actually
+> _are_ zapped at boot. I didn't realize, but it explains why pmsg would
+> vanish on me sometimes. ;) I always thought I was just doing something
+> wrong with it. (And I wonder if it's actually a bug that pmsg is
+> zapped -- console doesn't matter: it's overwritten every boot by
+> design.)
 
-Is removing a filesystem considered a userspace breakage?  If you have
-an exofs mount, and you upgrade to a kernel with the RFC patch, you
-will no longer be able to mount that type of FS.  Userspace code that
-expects to mount an exofs FS would now always fail.  Maybe this is
-equivalent to removing a previously supported mount option.
-/proc/filesystems might have one less option.
+Oh yeah they are. So seems like some are zapped on boot and some aren't then.
+Hmm, I would think it makes sense not to boot-zap dmesg ever, since that's
+crash logs someone may want to see after many reboots. But console and pmsg
+should be since those just "what happened on the last boot". I guess it
+should be made clear in some structure or something which types are zapped on
+boot, and which ones aren't. That'll make it clear when adding a new type
+about that behavior, instead of relying on the assumption that single prz are
+zapped and multiple ones aren't. Like for ftrace, since the per-cpu
+configuration was added, it will now be zapped on boot if it is using a
+per-cpu configuration and not zapped on boot if it isn't right?  That would
+seem a bit inconsistent.
 
-So I guess this is different than dropping support for an architecture
-since you cannot produce an updated kernel image, as opposed to this
-RFC which would make existing drives fail to mount?
+thanks!
+-Joel
 
->
-> Does removing the code break for somebody? If so we don't do it. But
-> if nobody notices because nobody uses, it's fine.
 
-Right, but it seems like a catch 22; it's not possible to prove that
-nobody will notice because they are not using it.
-
-Like the expression:
-If a tree falls in a forest and no one is around to hear it, does it
-make a sound?
-
-If no one is using a kernel feature and its removed, will anyone notice?
-
-If the maintainer would like to remove support for their subsystem,
-should it continue to remain in the tree?  Code is never truly
-deleted, and is relatively painless to resurrect with git.
-
-Solutions that come to mind immediately:
-* Just land the small fix discussed earlier in the thread. These
-subsystems continue to exist.  Maybe this question comes up again for
-this subsystem in a few years.  Christoph alludes to my question not
-being the first time this was asked of this subsystem.
-* Put out some kind of intent to deprecate, hoping to get feedback on
-possible users that would be affected. Land the deletion patches in
--next.  This approach always runs the risk of not posting in the right
-venue; and users can't be bothered to check for intent to deprecate
-notices.
-* Just delete it. Resurrect if users report use of this FS.
-
-What are your thoughts?
-
->
-> Basically, there is no "theoretical" rule about what breaks user space
-> or not. In particular, the rule is *not* that you can't change ABI.
-> You can do any change you want that changes a kernel exported ABI,
-> just as long as nobody actually notices the change.
->
-> But in practice, it's often _much_ more work to try to figure out
-> whether something breaks somebody than it is to just say "don't change
-> behavior", so 99% of the time, the rule ends up being just "try to
-> avoid intentionally changing behavior, because you'll likely get it
-> wrong".
-
-I agree semantic changes to an existing API are problematic (not just
-within the kernel), but do you consider deletion or removal of
-parameters in the same category?
-
-Thank you for your insight on this.
--- 
-Thanks,
-~Nick Desaulniers
