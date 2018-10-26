@@ -2,87 +2,101 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93E92C6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 08:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 104D1C6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 08:50:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A7DA2082D
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 08:50:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RtxI3C4Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A7DA2082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id D093B2084D
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 08:50:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D093B2084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726549AbeJZRZ7 (ORCPT
+        id S1727224AbeJZR0S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 13:25:59 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:60424 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726096AbeJZRZ7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 13:25:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Dqf5Ck5G8GYPCVzecdaI2lG/tCscd/Epzbc+OFt1exs=; b=RtxI3C4Y9eNwtNB5aJbArNPLX
-        PPmMH7vhAWHJgIYsFvO0bx1BCDzhrUc7aZfj8zhW2vb2ehVnXS/BeGXNROmVnlyjK4pOGlGydS0/V
-        dgJuBGAukHs0C2xcwcsKSq4e0VyIQMcfcMzqXnitSrJWJxfp6LNJmcGCHJnCxFXU7KkA0mn1vqYOY
-        jci9lxiFzSNt6zBVwzNmowXG0TRNL/oXtsLau4bKLJ7HHbsp/pvnWHHsHmlX2mM1zJs6x56qTT2gF
-        1xkxuH0wkqnEpONYWTSPPDcwHnEZvRG8bNKT5HQc6GySI4Hmi6+mvRd9Y5LdfxGY7Wl6zDSWNtwRr
-        d5P7QE5Aw==;
-Received: from [167.98.65.38] (helo=worktop)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gFxoN-0000yr-UH; Fri, 26 Oct 2018 08:49:44 +0000
-Received: by worktop (Postfix, from userid 1000)
-        id 3C3336E07D9; Fri, 26 Oct 2018 10:42:55 +0200 (CEST)
-Date:   Fri, 26 Oct 2018 10:42:55 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Rik van Riel <riel@surriel.com>,
-        Yi Wang <wang.yi59@zte.com.cn>, zhong.weidong@zte.com.cn,
-        Yi Liu <liu.yi24@zte.com.cn>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2] sched/core: Don't mix isolcpus and housekeeping CPUs
-Message-ID: <20181026084255.GZ3109@worktop.c.hoisthospitality.com>
-References: <1540350169-18581-1-git-send-email-srikar@linux.vnet.ibm.com>
- <20181024100323.GO3109@worktop.c.hoisthospitality.com>
- <20181024103002.GB18466@linux.vnet.ibm.com>
- <20181025000707.GR3109@worktop.c.hoisthospitality.com>
- <20181025182317.GE18466@linux.vnet.ibm.com>
+        Fri, 26 Oct 2018 13:26:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53338 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726348AbeJZR0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 13:26:17 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 29A5FAD00;
+        Fri, 26 Oct 2018 08:50:06 +0000 (UTC)
+Date:   Fri, 26 Oct 2018 10:46:36 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "xishi.qiuxishi@alibaba-inc.com" <xishi.qiuxishi@alibaba-inc.com>,
+        "zy.zhengyi@alibaba-inc.com" <zy.zhengyi@alibaba-inc.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Subject: Re: [PATCH v2 0/2] mm: soft-offline: fix race against page allocation
+Message-ID: <20181026084636.GY18839@dhcp22.suse.cz>
+References: <1531805552-19547-1-git-send-email-n-horiguchi@ah.jp.nec.com>
+ <20180815154334.f3eecd1029a153421631413a@linux-foundation.org>
+ <20180822013748.GA10343@hori1.linux.bs1.fc.nec.co.jp>
+ <20180822080025.GD29735@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181025182317.GE18466@linux.vnet.ibm.com>
-User-Agent: Mutt/1.5.22.1 (2013-10-16)
+In-Reply-To: <20180822080025.GD29735@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 11:53:17PM +0530, Srikar Dronamraju wrote:
+On Wed 22-08-18 10:00:25, Michal Hocko wrote:
+> On Wed 22-08-18 01:37:48, Naoya Horiguchi wrote:
+> > On Wed, Aug 15, 2018 at 03:43:34PM -0700, Andrew Morton wrote:
+> > > On Tue, 17 Jul 2018 14:32:30 +0900 Naoya Horiguchi <n-horiguchi@ah.jp.nec.com> wrote:
+> > > 
+> > > > I've updated the patchset based on feedbacks:
+> > > > 
+> > > > - updated comments (from Andrew),
+> > > > - moved calling set_hwpoison_free_buddy_page() from mm/migrate.c to mm/memory-failure.c,
+> > > >   which is necessary to check the return code of set_hwpoison_free_buddy_page(),
+> > > > - lkp bot reported a build error when only 1/2 is applied.
+> > > > 
+> > > >   >    mm/memory-failure.c: In function 'soft_offline_huge_page':
+> > > >   > >> mm/memory-failure.c:1610:8: error: implicit declaration of function
+> > > >   > 'set_hwpoison_free_buddy_page'; did you mean 'is_free_buddy_page'?
+> > > >   > [-Werror=implicit-function-declaration]
+> > > >   >        if (set_hwpoison_free_buddy_page(page))
+> > > >   >            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > > >   >            is_free_buddy_page
+> > > >   >    cc1: some warnings being treated as errors
+> > > > 
+> > > >   set_hwpoison_free_buddy_page() is defined in 2/2, so we can't use it
+> > > >   in 1/2. Simply doing s/set_hwpoison_free_buddy_page/!TestSetPageHWPoison/
+> > > >   will fix this.
+> > > > 
+> > > > v1: https://lkml.org/lkml/2018/7/12/968
+> > > > 
+> > > 
+> > > Quite a bit of discussion on these two, but no actual acks or
+> > > review-by's?
 > > 
-> > You can create multiple partitions with cpusets but still have an
-> > unbound task in the root cgroup. That would suffer the exact same
-> > problems.
-> > 
+> > Really sorry for late response.
+> > Xishi provided feedback on previous version, but no final ack/reviewed-by.
+> > This fix should work on the reported issue, but rewriting soft-offlining
+> > without PageHWPoison flag would be the better fix (no actual patch yet.)
 > 
-> I probably don't understand this. Even if the child cgroups has
-> cpu_exclusive or sched_load_balance reset, the tasks in root cgroup has
-> access to all cpus in system. Right?
+> If we can go with the later the I would obviously prefer that. I cannot
+> promise to work on the patch though. I can help with reviewing of
+> course.
+> 
+> If this is important enough that people are hitting the issue in normal
+> workloads then sure, let's go with the simple fix and continue on top of
+> that.
 
-The crucial word being 'access'. The root group will not impose a limit
-on the affinity of tasks. So you can indeed have affinities that span
-load balancing domains.
-
-And yes, that leads to 'interesting' but specified behaviour.
+Naoya, did you have any chance to look at this or have any plans to look?
+I am willing to review and help with the overal design but I cannot
+really promise to work on the code.
+-- 
+Michal Hocko
+SUSE Labs
