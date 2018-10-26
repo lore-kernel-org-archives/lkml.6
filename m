@@ -2,118 +2,115 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01AB7ECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:21:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC7DECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:22:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5A90207DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:21:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AB5B2085B
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:22:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aLjZDXmt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5A90207DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="KwhMjbOS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AB5B2085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728385AbeJ0FAR (ORCPT
+        id S1728393AbeJ0FAe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 01:00:17 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:39577 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727636AbeJ0FAR (ORCPT
+        Sat, 27 Oct 2018 01:00:34 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34974 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727636AbeJ0FAe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 01:00:17 -0400
-Received: by mail-wm1-f67.google.com with SMTP id y144-v6so2535373wmd.4;
-        Fri, 26 Oct 2018 13:21:51 -0700 (PDT)
+        Sat, 27 Oct 2018 01:00:34 -0400
+Received: by mail-pf1-f195.google.com with SMTP id l17-v6so1088859pff.2
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 13:22:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=7GCJWMCBji8YwOd3rDPsOh2yDzMWJQYrZ1d3QdRERU4=;
-        b=aLjZDXmtarMtRNWeZuxm52m3YPJ0s7y6SL9L0Fel4ardPZ3NfnSJ3dUcgrmkXwvYQE
-         PZwxGtolPjU6iOpwf/0Unb0apGoFbobU3dgl2BJDUH/ICP3ksXAnPN8ZmVFJrISUfpNY
-         rn+e23qZSMkUsS24uEbmvEmjUq2xAeNSrGorQUHEHAPZBhs4GsWprsdFpCIeVCQa+/1+
-         5AmWXFKd5ZNBxLeDN1QIBAflZ2oe8YRozgNrXVFoOJXKa1+qtVZw7keXMlPq/mBawik7
-         UG4nr7ATYnWsmBBbZ1dT9nsZcvyJ/uyScqWSaaQyzwQ3WlbvBFaGJ2UnlQ3JqG2KpXc+
-         v+2g==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=pqVgULwRW+OGf6K4lu81tzNyYIbVseg9dapkgcAUZko=;
+        b=KwhMjbOSnYQnqfsMRbhvCG1ZN5vbp0kVABo/sSHuiKHJgtfHSxD31pHyI4C4cqx23Y
+         d/l3Zm246saXYzsYwbcV/ZtJhFY3Ut+/Pj1Pnrq/VH/f03H9WQ2tWJvNdag0TbLvIU1M
+         ezmD7xgA4xbizvxGjgBcTTBEpQFSIxUGIjx14=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=7GCJWMCBji8YwOd3rDPsOh2yDzMWJQYrZ1d3QdRERU4=;
-        b=dQ0pIzFmDfueEdBnvT5GVi7YcQ0VQ+eCuKSZOU3LQBl1sqMbFYwYTT4//KB4biciGH
-         vBaPQIrhjZ3H7OwGh1BlOUTXr2IMk0/EMBRAOOdy6xtH7KG3B/SNTNaiWd6bS4q8qJZn
-         ynggLYotPOMTMM67TbZmsWPg1GpaUM0xVwaC/h/d/zGYqvKDkvnajZGG47kcvLdTSC5s
-         ErhJp5SpoZl3itq0Q4bHCQxtowN4a4103yRQEB50EpKxLXluCj2eKCLZ82svp+qHAQLT
-         rppB+gL4xaQjYAasmpFa/RyCk7GcvLszu+RDZ7cXlunNL4gprXSybDWsH4cSX0Vq5fth
-         Dstg==
-X-Gm-Message-State: AGRZ1gJGiBxRa7wIefeVGl4WNHMtNS+IxeK3nswxTRClgr6BAriD+jll
-        9il0FjXCA0G5jA/65jrxasuxWIyK
-X-Google-Smtp-Source: AJdET5cQCU0Iw9UAJx9nqj8b0RSG4APg3bDO1p89PtMuw2G6p/8YgFJoG0bFyn7RTYWedvz267I9Cw==
-X-Received: by 2002:a1c:bce:: with SMTP id 197-v6mr6307171wml.15.1540585310285;
-        Fri, 26 Oct 2018 13:21:50 -0700 (PDT)
-Received: from ?IPv6:2003:ea:8bd4:3f00:808d:9bd7:b50:2001? (p200300EA8BD43F00808D9BD70B502001.dip0.t-ipconnect.de. [2003:ea:8bd4:3f00:808d:9bd7:b50:2001])
-        by smtp.googlemail.com with ESMTPSA id o13-v6sm8266854wrw.93.2018.10.26.13.21.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 13:21:49 -0700 (PDT)
-Subject: Re: CAKE and r8169 cause panic on upload in v4.19
-To:     Oleksandr Natalenko <oleksandr@natalenko.name>,
-        =?UTF-8?Q?Toke_H=c3=b8iland-J=c3=b8rgensen?= <toke@toke.dk>
-Cc:     Dave Taht <dave.taht@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        Jiri Pirko <jiri@resnulli.us>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <61d09f0db41f269cc9ee13dd68a5c285@natalenko.name>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <fbd7f0b8-10c8-be17-fce6-327a95d8ea2e@gmail.com>
-Date:   Fri, 26 Oct 2018 22:21:32 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pqVgULwRW+OGf6K4lu81tzNyYIbVseg9dapkgcAUZko=;
+        b=MItIH6poauPHWxSt4eLMtHlbg12Tf7OWfx51S28+9WVpMsZ14TSe9+LJ3u7P+2EbYq
+         ksF5/0YLoMebcudKVAVeLNY4WEJcaNi+dVwZM2sgsxfL3figvsG0OhgdoWi+itpC/9Zk
+         tgeoNzMdzsIWfABNsTNR4WRMr8Y43IagmPG9P4qyegBaBYwmzEjGHrSNUJs67WBYphDW
+         SHh+82zzMUXD7N3I5MUJvpIf0P0vW+MBcPV4fmAjxjx0aoVf4BjDad0QUf0CVPerIQVO
+         wjqV2CXj+Ho0uhjTHgp4SBcOIuSE8B/ODNOz76RWOZ7qGv51ZhcI3WV4Oubgki2ZrelL
+         Q63g==
+X-Gm-Message-State: AGRZ1gJxZ2g17CEqn7BV33/aqc//C+rDa9AwAT+C6lhcys4bnN7vq+Oq
+        ScVXled3gP1hO5KAuGRYp6jtOw==
+X-Google-Smtp-Source: AJdET5f4qY2D8x55WcSW/ezZgcFT7m7uBGsIKjfPQmkf8E9KsXOob5ZMDOo5g95whPp1Eid4ipZOGw==
+X-Received: by 2002:a65:4c8d:: with SMTP id m13-v6mr4510988pgt.83.1540585328049;
+        Fri, 26 Oct 2018 13:22:08 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id v189-v6sm17294270pfb.54.2018.10.26.13.22.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 26 Oct 2018 13:22:06 -0700 (PDT)
+Date:   Fri, 26 Oct 2018 13:22:05 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>
+Subject: Re: [RFC 5/6] pstore: donot treat empty buffers as valid
+Message-ID: <20181026202205.GB129228@joelaf.mtv.corp.google.com>
+References: <20181026180042.52199-1-joel@joelfernandes.org>
+ <20181026180042.52199-5-joel@joelfernandes.org>
+ <CAGXu5jKtZjZVr=7dAHQPU0OGtBpEKDZBO68-RTvFLbK6qB+cEA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <61d09f0db41f269cc9ee13dd68a5c285@natalenko.name>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jKtZjZVr=7dAHQPU0OGtBpEKDZBO68-RTvFLbK6qB+cEA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26.10.2018 21:26, Oleksandr Natalenko wrote:
-> Hello.
+On Fri, Oct 26, 2018 at 08:39:13PM +0100, Kees Cook wrote:
+> On Fri, Oct 26, 2018 at 7:00 PM, Joel Fernandes (Google)
+> <joel@joelfernandes.org> wrote:
+> > pstore currently calls persistent_ram_save_old even if a buffer is
+> > empty. While this appears to work, it is simply not the right thing to
+> > do and could lead to bugs so lets avoid that. It also prevent misleading
+> > prints in the logs which claim the buffer is valid.
 > 
-> I was excited regarding the fact that v4.19 introduced CAKE, so I've deployed it on my home router.
-> 
-> I used this script of mine [1]:
-> 
-> # bufferbloat enp3s0.100 20 20
-> 
-> to do its job on the VLAN interface, where 20/20 ISP link is switched from the home switch. Basically, it just follows [2] with simple bandwidth restriction and egress mirroring using ifb.
-> 
-> Then I thought it would be nice to run speedtest-cli on one of the computer in the home LAN, connected to this router. Download stage went fine, but immediately after upload started I've got a panic on the router: [3] (sorry, it is a photo, netconsole didn't work because, I assume, the panic happened in the networking code). I rebooted the router and tried once more, and got the same result, again during upload stage. Then I rebooted again, replaced CAKE script with my former HTB script, and after running speedtest-cli a couple of times there's no panic.
-> 
-> Before running speedtest-cli I was using CAKE for a couple of days without generating much traffic just fine. It seems it crashes only if lots of traffic is generated with tools like this.
-> 
-> My sysctl: [4] and ethtool -k: [5]
-> 
-> So far, I've found something similar only here: [6] [7]. The common thing is r8169 driver in use, so, maybe, it is a driver issue, and CAKE is just happy to reveal it.
-> 
-> If it is something known, please point me to a possible fix. If it is something new, I'm open to provide more info on your request, try patches etc (as usual).
-> 
-It seems to be the same problem as described here: https://bugzilla.kernel.org/show_bug.cgi?id=201063
-As I commented in bugzilla, the GPF in dev_hard_start_xmit and the values of R12/R15 make me think
-that a poisoned list pointer is accessed. It's so deep in the network stack that I can not really
-imagine the network driver is to blame. One screenshot attached to the bug report shows that the
-GPF also happened with the igb driver. Most likely we find out only once somebody spends effort
-on bisecting the issue.
-d4546c2509b1 ("net: Convert GRO SKB handling to list_head.") and some subsequent changes deal with
-skb list processing, maybe the issue is related to one of these changes.
+> I need to be better convinced that a present zero length record is the
+> same as a non-present record. This seems true, but there is
+> potentially still metadata available from a backend. What were the
+> misleading prints in logs?
 
-> Thanks.
-> 
+I got something like:
+found existing buffer, size 0, start 0
+
+When I was expecting:
+no valid data in buffer (sig = ...)
+
+The other thing is a call to persistent_ram_zap is also prevented on the
+buffer, which prevent zero-initialize prz->ecc_info.par. Since we are
+dropping patch 6/6, the zap will not happen. But I'm not super familiar with
+the ecc bits of this code to say that if that's an issue.
+
+About the present zero-length record, I would argue that it should not be
+"present" at all. When the system first boots, the record is not present but
+the signatures are initialized, then on reboots because the signatures were
+initialized, the buffer appears as valid even if it was unused. So for dmesg,
+all the max_dump_cnt number of buffers would appear as if they are valid
+which is a bit strange because there was no crash at all so it should be in
+the same state on reboot, as if there was no crash. That could be a matter of
+perspective though so I leave it you how you prefer to do it :)
+
+thanks,
+
+- Joel
+
