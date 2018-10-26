@@ -2,191 +2,119 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71407C6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 09:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CFD7C6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 09:11:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29E0C2082E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 09:11:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 346762082E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 09:11:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aU+eaxue"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29E0C2082E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SyQKPceA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 346762082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726217AbeJZRr3 (ORCPT
+        id S1726396AbeJZRrs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 13:47:29 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:38957 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726065AbeJZRr3 (ORCPT
+        Fri, 26 Oct 2018 13:47:48 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:43557 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726065AbeJZRrr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 13:47:29 -0400
-Received: by mail-yb1-f196.google.com with SMTP id j9-v6so175123ybj.6
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 02:11:13 -0700 (PDT)
+        Fri, 26 Oct 2018 13:47:47 -0400
+Received: by mail-lj1-f196.google.com with SMTP id y22-v6so435947lji.10;
+        Fri, 26 Oct 2018 02:11:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BzGBy8sLu4yFakj0y/8JMgMJj+/8R1L+vCMIIfyuc0E=;
-        b=aU+eaxueqNEgp21o6cX7Wa19Vg3x2ma8Tagrvta9njIVG5ny+BK95ojxinio1oMIAV
-         A19UL71wPE2AbyWaS4XInKmGNEYpl8TtrtRKsCW9zWrxUYXLhJzwS+HxEPyox5hrM0Fz
-         9eajiNjjXgTAXrjbFufYe+jFmZQBedESRHPys=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=HCMdC6HtqwsUWuIHcmvcGrVj+BYFnTU4ijoQ+qwyhEw=;
+        b=SyQKPceAC6P00V3bNeWzCtAdukRa8xi39EEp53RxmNDD0j2LYaZhH70QzebgRg6CwD
+         VOLMmtFc9cCPr7TZ8QKgAlNNMOoeinPb5VRTj/XHoqInY3eIye6jmU6Kyh+Ixs1OIh0Q
+         oV7n7X7XAnfuERXxg5XwJIw8KnaUDxwl500MbBU6ORgRn8YvACbh1DGeriJOdUzwcSdt
+         DG3tbVtqRve3fC4aaCA3+vTumlDP8UCvx4edxvCt+fwHG7Q4ra8hlcRSe1k0NYO0Pu2J
+         cIc89/HZuWI8QX1m2XB7tpdKiuaK0T6Y1oMIjmKX8k5d7WGkG63QXdG3GmpY49rX8srU
+         E57w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BzGBy8sLu4yFakj0y/8JMgMJj+/8R1L+vCMIIfyuc0E=;
-        b=pakBoittrf+XjFsh5WmOyju27pGi0U1ktxVjmsprTCeG74IqV22ozeTkAE7UqG1MKO
-         IeLAJ2AFIUyeF3g3vWxfo5C29nDG68zFB6pyKqCtfDF0W9VKKZR0QOHe27ty8IQv1GlA
-         YcDvdI+W8rzT36R0t1mz9Lm0i3LqLDaNJVye7fJoAhwemMIJzfOKfxHI6n4/Vv/t7+E+
-         5ZowGnFK/hNg7ybHIlsQO74MMMXdHLgAklfcoGnJtjznm8+BmAyoDuu5pg4sCF9PK0yj
-         YyEVcEZd984GQKg6I4SlewzHTio5QuBBngPA8d6qk9IRh6fPqicAnWDkSpUC1i+Jcjkb
-         Cz9Q==
-X-Gm-Message-State: AGRZ1gJnkKIdikWPS8Yp1c1+rY0CFTPz2DEBM7/wa8ovgCJ4q5NjtdU0
-        Q/hcYQsQ5RflCarDj3ZddL0K+9rN2/TEARCqToNGGA==
-X-Google-Smtp-Source: AJdET5dp2oODpsdUV7+sTD5urbrpShbH5clO7lE7fEVWHvFsn8SNLN2FZb2qljheRllkFQqTqafO4rhAe5gsEpBz4JY=
-X-Received: by 2002:a25:7c83:: with SMTP id x125-v6mr2512083ybc.195.1540545072956;
- Fri, 26 Oct 2018 02:11:12 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=HCMdC6HtqwsUWuIHcmvcGrVj+BYFnTU4ijoQ+qwyhEw=;
+        b=IYdgOQwJrMrGA1VZqmKMM6t/SBPydqFjaQJpTzb/lFNCsD5m59MC6hyMhYDKAF9ADY
+         NDInHsCgBAu/oEuawReLx19wz2kiIu9Tr2yDPUrobwxvIaB5CpoCpY8IGWGrSa8ITxIG
+         a9kg23DuhgjiOwA7MB92My9nxw4Gt69QV3bJvELGVX5C1ETUsH23rJiU1QPMzW4tXijG
+         mL1IQAdJB3QMUY9CVCk0/zCM15sEEWZkkHk38cTaxa8xyhlibEq+fFSQ42fEOtYmGjrM
+         JClNSZ18NI+R9tuCmwTNIlIB4cGqCSPEJpArY94yPe5o2hc7szw7CHIjZisi/Sgb0OEc
+         JFfQ==
+X-Gm-Message-State: AGRZ1gJSlbXQgryU4Kj/D+ozQxFm4wh9ZBbHTw1US5I9pzS72a4Pu118
+        l+pyxNH7dN1gmnwcyTOi/Zc=
+X-Google-Smtp-Source: AJdET5c8ASYNBuW3OqZ9OCOar4Sr0ccJqj9kugI9BI/jS80z4L8BiQD7vzKjb+MFIcb6uBBcFWwiqA==
+X-Received: by 2002:a2e:5703:: with SMTP id l3-v6mr931687ljb.106.1540545090163;
+        Fri, 26 Oct 2018 02:11:30 -0700 (PDT)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id b22sm642982lfg.32.2018.10.26.02.11.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 26 Oct 2018 02:11:29 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1gFy9P-0003c2-GU; Fri, 26 Oct 2018 11:11:27 +0200
+Date:   Fri, 26 Oct 2018 11:11:27 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     =?iso-8859-1?Q?Bj=F8rn?= Mork <bjorn@mork.no>
+Cc:     Johan Hovold <johan@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 3.18 04/98] USB: qcserial: Fix support for HP
+ lt4112 LTE/HSPA+ Gobi 4G Modem
+Message-ID: <20181026091127.GD27852@localhost>
+References: <20181025141853.214051-1-sashal@kernel.org>
+ <20181025141853.214051-4-sashal@kernel.org>
+ <20181026084920.GB27852@localhost>
+ <87ftwt5bdr.fsf@miraculix.mork.no>
 MIME-Version: 1.0
-References: <1540490241-32021-1-git-send-email-john.stultz@linaro.org>
-In-Reply-To: <1540490241-32021-1-git-send-email-john.stultz@linaro.org>
-From:   Anders Roxell <anders.roxell@linaro.org>
-Date:   Fri, 26 Oct 2018 11:11:01 +0200
-Message-ID: <CADYN=9KYZeKv6ygA9-dyTZR4HR7dXKff2M_85MTUomtCek0wtg@mail.gmail.com>
-Subject: Re: [RFC][PATCH] wlcore: Fixup "Add support for optional wakeirq"
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tony Lindgren <tony@atomide.com>, kvalo@codeaurora.org,
-        eyalr@ti.com, linux-wireless@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87ftwt5bdr.fsf@miraculix.mork.no>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 25 Oct 2018 at 19:57, John Stultz <john.stultz@linaro.org> wrote:
->
-> After commit 3c83dd577c7f ("wlcore: Add support for optional
-> wakeirq") landed upstream, I started seeing the following oops
-> on my HiKey board:
->
-> [    1.870279] Unable to handle kernel read from unreadable memory at virtual address 0000000000000010
-> [    1.870283] Mem abort info:
-> [    1.870287]   ESR = 0x96000005
-> [    1.870292]   Exception class = DABT (current EL), IL = 32 bits
-> [    1.870296]   SET = 0, FnV = 0
-> [    1.870299]   EA = 0, S1PTW = 0
-> [    1.870302] Data abort info:
-> [    1.870306]   ISV = 0, ISS = 0x00000005
-> [    1.870309]   CM = 0, WnR = 0
-> [    1.870312] [0000000000000010] user address but active_mm is swapper
-> [    1.870318] Internal error: Oops: 96000005 [#1] PREEMPT SMP
-> [    1.870327] CPU: 0 PID: 5 Comm: kworker/0:0 Not tainted 4.19.0-05129-gb3d1e8e #48
-> [    1.870331] Hardware name: HiKey Development Board (DT)
-> [    1.870350] Workqueue: events_freezable mmc_rescan
-> [    1.870358] pstate: 60400005 (nZCv daif +PAN -UAO)
-> [    1.870366] pc : wl1271_probe+0x210/0x350
-> [    1.870371] lr : wl1271_probe+0x210/0x350
-> [    1.870374] sp : ffffff80080739b0
-> [    1.870377] x29: ffffff80080739b0 x28: 0000000000000000
-> [    1.870384] x27: 0000000000000000 x26: 0000000000000000
-> [    1.870391] x25: 0000000000000036 x24: ffffffc074ecb598
-> [    1.870398] x23: ffffffc07ffdce78 x22: ffffffc0744ed808
-> [    1.870404] x21: ffffffc074ecbb98 x20: ffffff8008ff9000
-> [    1.870411] x19: ffffffc0744ed800 x18: ffffff8008ff9a48
-> [    1.870418] x17: 0000000000000000 x16: 0000000000000000
-> [    1.870425] x15: ffffffc074ecb503 x14: ffffffffffffffff
-> [    1.870431] x13: ffffffc074ecb502 x12: 0000000000000030
-> [    1.870438] x11: 0101010101010101 x10: 0000000000000040
-> [    1.870444] x9 : ffffffc075400248 x8 : ffffffc075400270
-> [    1.870451] x7 : 0000000000000000 x6 : 0000000000000000
-> [    1.870457] x5 : 0000000000000000 x4 : 0000000000000000
-> [    1.870463] x3 : 0000000000000000 x2 : 0000000000000000
-> [    1.870469] x1 : 0000000000000028 x0 : 0000000000000000
-> [    1.870477] Process kworker/0:0 (pid: 5, stack limit = 0x(____ptrval____))
-> [    1.870480] Call trace:
-> [    1.870485]  wl1271_probe+0x210/0x350
-> [    1.870491]  sdio_bus_probe+0x100/0x128
-> [    1.870500]  really_probe+0x1a8/0x2b8
-> [    1.870506]  driver_probe_device+0x58/0x100
-> [    1.870511]  __device_attach_driver+0x94/0xd8
-> [    1.870517]  bus_for_each_drv+0x70/0xc8
-> [    1.870522]  __device_attach+0xe0/0x140
-> [    1.870527]  device_initial_probe+0x10/0x18
-> [    1.870532]  bus_probe_device+0x94/0xa0
-> [    1.870537]  device_add+0x374/0x5b8
-> [    1.870542]  sdio_add_func+0x60/0x88
-> [    1.870546]  mmc_attach_sdio+0x1b0/0x358
-> [    1.870551]  mmc_rescan+0x2cc/0x390
-> [    1.870558]  process_one_work+0x12c/0x320
-> [    1.870563]  worker_thread+0x48/0x458
-> [    1.870569]  kthread+0xf8/0x128
-> [    1.870575]  ret_from_fork+0x10/0x18
-> [    1.870583] Code: 92400c21 b2760021 a90687a2 97e95bf9 (f9400803)
-> [    1.870587] ---[ end trace 1e15f81d3c139ca9 ]---
->
-> It seems since we don't have a wakeirq value in the dts, the wakeirq
-> value in wl1271_probe() is zero, which then causes trouble in
-> irqd_get_trigger_type(irq_get_irq_data(wakeirq)).
->
-> This patch tries to address this by checking if wakeirq is zero,
-> and not trying to add it to the resources if that is the case.
->
-> Cc: Tony Lindgren <tony@atomide.com>
-> Cc: Kalle Valo <kvalo@codeaurora.org>
-> Cc: Eyal Reizer <eyalr@ti.com>
-> Cc: Anders Roxell <anders.roxell@linaro.org>
-> Cc: linux-wireless@vger.kernel.org
-> Acked-by: Tony Lindgren <tony@atomide.com>
-> Signed-off-by: John Stultz <john.stultz@linaro.org>
+On Fri, Oct 26, 2018 at 11:02:24AM +0200, Bjørn Mork wrote:
+> Johan Hovold <johan@kernel.org> writes:
+> 
+> > Note that the stable tag above lacks a version comment (e.g. "# 4.19"),
+> > but I can see how that may be too subtle to convey this (and not all
+> > maintainers use those). Perhaps an explicit comment should just be added
+> > in such cases.
+> 
+> I have always thought that the inclusion of a "Fixes" tag made such
+> comments redundant. A simple "git tag --contains .." returns the same
+> info, and is more likely to be correct...
+> 
+> Or am I missing something?
 
-Tested-by: Anders Roxell <anders.roxell@linaro.org>
+No, you're right. I also assume a Fixes tag to be sufficient these days
+and any version comment to be more of a hint for humans.
 
-> ---
->  drivers/net/wireless/ti/wlcore/sdio.c | 17 +++++++++++------
->  1 file changed, 11 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/net/wireless/ti/wlcore/sdio.c b/drivers/net/wireless/ti/wlcore/sdio.c
-> index 4c2154b..bd10165 100644
-> --- a/drivers/net/wireless/ti/wlcore/sdio.c
-> +++ b/drivers/net/wireless/ti/wlcore/sdio.c
-> @@ -285,7 +285,7 @@ static int wl1271_probe(struct sdio_func *func,
->         struct resource res[2];
->         mmc_pm_flag_t mmcflags;
->         int ret = -ENOMEM;
-> -       int irq, wakeirq;
-> +       int irq, wakeirq, num_irqs;
->         const char *chip_family;
->
->         /* We are only able to handle the wlan function */
-> @@ -353,12 +353,17 @@ static int wl1271_probe(struct sdio_func *func,
->                        irqd_get_trigger_type(irq_get_irq_data(irq));
->         res[0].name = "irq";
->
-> -       res[1].start = wakeirq;
-> -       res[1].flags = IORESOURCE_IRQ |
-> -                      irqd_get_trigger_type(irq_get_irq_data(wakeirq));
-> -       res[1].name = "wakeirq";
->
-> -       ret = platform_device_add_resources(glue->core, res, ARRAY_SIZE(res));
-> +       if (wakeirq > 0) {
-> +               res[1].start = wakeirq;
-> +               res[1].flags = IORESOURCE_IRQ |
-> +                              irqd_get_trigger_type(irq_get_irq_data(wakeirq));
-> +               res[1].name = "wakeirq";
-> +               num_irqs = 2;
-> +       } else {
-> +               num_irqs = 1;
-> +       }
-> +       ret = platform_device_add_resources(glue->core, res, num_irqs);
->         if (ret) {
->                 dev_err(glue->dev, "can't add resources\n");
->                 goto out_dev_put;
-> --
-> 2.7.4
->
+> I see the problem with matching up fixes to backported commits, but I've
+> assumed the stable maintainers all keep a small "database" of backported
+> commits to make such tasks easier.  That's what I would have done, and
+> they are much smarter than me ;-)
+
+Indeed, and that would also catch things like dependencies and other
+commits that eventually end up in the stable trees. This could also be
+automated based on the
+
+	commit 59536da34513c594af2a6fd35ba65ea45b6960a1 upstream
+
+that gets added to the commit message during backporting.
+
+Thanks,
+Johan
