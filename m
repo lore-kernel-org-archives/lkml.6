@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AB6BECDE46
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 00:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 432A9ECDE46
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 00:45:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CCF82084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 00:45:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02CCB20856
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 00:45:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=usp-br.20150623.gappssmtp.com header.i=@usp-br.20150623.gappssmtp.com header.b="IfrNsM4A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CCF82084A
+	dkim=pass (2048-bit key) header.d=usp-br.20150623.gappssmtp.com header.i=@usp-br.20150623.gappssmtp.com header.b="ARIBD8Ty"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02CCB20856
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=usp.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbeJZJUY (ORCPT
+        id S1727428AbeJZJU1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 05:20:24 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:41290 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726556AbeJZJUX (ORCPT
+        Fri, 26 Oct 2018 05:20:27 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:39547 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726949AbeJZJU0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 05:20:23 -0400
-Received: by mail-qt1-f195.google.com with SMTP id l41-v6so12182218qtl.8
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 17:45:33 -0700 (PDT)
+        Fri, 26 Oct 2018 05:20:26 -0400
+Received: by mail-qk1-f194.google.com with SMTP id e4so6929620qkh.6
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 17:45:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=usp-br.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=J5RxTErJXoIN4DFbUXbMSG5XxKyOAlaWHaLsxy5wXNA=;
-        b=IfrNsM4AxhSnWDdkSFRcz+w1o9OyzWXIeRS2LPgnU7cZLE9hG5iC0jvLMFjgMBGhn8
-         0TbvVqWOYBEDT2nlu79IZr00SAKUIWO5JetEbgEDG4Si/oWDsZQa7+iLrNEtZ6zFpYac
-         b7AntHRcyWJ3PVU0nGXAj8UwPUljobOHT81AOj95nI9WE52hlHVkmTWL/mVdq9gypnk/
-         bEtiIGGy2aOd7Dg+heGWJx8Fv/7zGefZatjN1VZ973bxIHVE1LsqipFHBHJiTdxV57gF
-         iYE6097l/3sBWivydTAST5U69a5Lck4id7trI14crXdMUV/rjvPvQf3XMVEr1428f4/8
-         TR1g==
+        bh=Z2LHH9F5OJ0rvYdq5SDRuLDudXHduK0q/J3//KKhqZw=;
+        b=ARIBD8TyH/vpvD17XO4fYyhxRcRMRUvKgZ4q1+hMMFlBmr61E4PU6cFWl4PtpMc6q8
+         9EU9JxHvK8ih9rwuQehPzA6ybyj7s+qp8MuwLs5Up4CokYEYmTEjPoSuUGh/4/cnwRdH
+         YFkR0t+gLuemnErWZYo88pG604blVLtCZazqjmo+6So8ScvAhi29csFxtoCSsO7n+7XM
+         nvtj4HEK3OZ8uYR7xAvznNXolK/6KAUvRZNrl/IYoj8dN5bns1170bVdBZb2pjcRmelp
+         LyChpy8ajnNf8tBK77ITL+14kL5435LaRizJsbQ4K7OZysRWzmAexJcj1tnSd49VQCsT
+         IlkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=J5RxTErJXoIN4DFbUXbMSG5XxKyOAlaWHaLsxy5wXNA=;
-        b=qYevPOYnyvuj1EJVS6i4IO89fk2z74NL8uxJSQqq8Gh3lwBwZd+VndqbvPJrPIoSCD
-         AbW+i5rAXZSoFSHrpnUMPBX3GpBBtZJ7xala/9Kdh2kPF8ZXnguWsP4fAJ7XSo2v4p0F
-         /jRYh/jntNLgXCzWWM6/aO6PqIvb+UxewAn7Co07cfVojt/hC9+P0n2LgPEvW0m39CAk
-         C54kdH6I5W2is7iZVUkFE7hPVXztc2sBwzE1ZAIXV1AvNRHeTzxl0ojvkQTpzJI02t4M
-         unsKX6IUZurbBCutOXsYb2v4T2kgfqPujWt3lzhPcD7hHldzRsptmxyyOdEn1M+C10Ia
-         60Zg==
-X-Gm-Message-State: AGRZ1gLDCeq0h5we/T4YU5QNJIeBZ4nV1wxVAF/CSGOFCUJipAfEGqh2
-        J4/o99V9NC6nMXWReZIjiOe3wXUbUZgbwQ==
-X-Google-Smtp-Source: AJdET5eYrL3B/6dDzP8IGUjwaVecsh3FNyp3rV8oNHMSnHyIglObGdVoGIhMr03WixV2ngY3+yxZIg==
-X-Received: by 2002:ac8:4506:: with SMTP id q6-v6mr1422639qtn.68.1540514732803;
-        Thu, 25 Oct 2018 17:45:32 -0700 (PDT)
+        bh=Z2LHH9F5OJ0rvYdq5SDRuLDudXHduK0q/J3//KKhqZw=;
+        b=H5XPOvaEoXUYJcUMLsCfgeKVxB+taSBJi5y8m2zgkUYCZqtik/DKyjHysiUQtxS5bo
+         pjw8OSo/oN7CZ+Dgxv5GWlR3QN2t8/CsE4dOx5Y6P8izycjkpbRkAy1kTX0V4TfWVOSl
+         u+CjLgeinc8pCOnldHVxF2jRZASwCQ92RWS0kAL1MK289kRB+WrJZqIzoV3WXSxktC4h
+         lHC28MYwBjSgfrlbyWi0R9DUzk7Vf/i20Uc8CL976O7s7VaqXmisnFw2lwY7IBMn9m4q
+         INNL2oyo9Wd/vC/m5HzAsXJozVPGDL0aSrG1Tpk/kY/IW8F35/O+xiecg9BAHFaibj1v
+         6vDg==
+X-Gm-Message-State: AGRZ1gJkdAeka0GPLfJnSjN58LKNYRUHV/g0K5aHGqJV8HRFueQ1mmoi
+        ypCyPMNcURzk2wZ8PHqMOxiIMA==
+X-Google-Smtp-Source: AJdET5cyOAOdtWKoBifkV5+tKIEVZG0aqfjFItFDEFk4bPtY2o/Muy9NaJuascOIMXxZNHldf1jHlQ==
+X-Received: by 2002:a37:8d06:: with SMTP id p6-v6mr1273181qkd.4.1540514735667;
+        Thu, 25 Oct 2018 17:45:35 -0700 (PDT)
 Received: from mango.spo.virtua.com.br ([2804:14c:81:942d::1])
-        by smtp.gmail.com with ESMTPSA id y3-v6sm2371735qti.27.2018.10.25.17.45.30
+        by smtp.gmail.com with ESMTPSA id y3-v6sm2371735qti.27.2018.10.25.17.45.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Oct 2018 17:45:32 -0700 (PDT)
+        Thu, 25 Oct 2018 17:45:35 -0700 (PDT)
 From:   Matheus Tavares <matheus.bernardino@usp.br>
 To:     Lars-Peter Clausen <lars@metafoo.de>,
         Michael Hennerich <Michael.Hennerich@analog.com>,
@@ -67,9 +67,9 @@ To:     Lars-Peter Clausen <lars@metafoo.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
-Subject: [PATCH 3/6] staging:iio:ad2s90: Remove always overwritten assignment
-Date:   Thu, 25 Oct 2018 21:45:09 -0300
-Message-Id: <20181026004512.31012-4-matheus.bernardino@usp.br>
+Subject: [PATCH 4/6] staging:iio:ad2s90: Move device registration to the end of probe
+Date:   Thu, 25 Oct 2018 21:45:10 -0300
+Message-Id: <20181026004512.31012-5-matheus.bernardino@usp.br>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20181026004512.31012-1-matheus.bernardino@usp.br>
 References: <20181026004512.31012-1-matheus.bernardino@usp.br>
@@ -78,27 +78,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch removes an initial assignment to the variable ret at probe,
-that was always overwritten.
+Previously, devm_iio_device_register was being called before the
+spi_setup call and the spi_device's max_speed_hz and mode assignments.
+This could lead to a race condition since the driver was still being
+set up after it was already made ready to use. To fix it, this patch
+moves the device registration to the end of ad2s90_probe.
 
 Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
 ---
- drivers/staging/iio/resolver/ad2s90.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/iio/resolver/ad2s90.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
 diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/staging/iio/resolver/ad2s90.c
-index d6a42e3f1bd8..c20d37dc065a 100644
+index c20d37dc065a..b4a6a89c11b0 100644
 --- a/drivers/staging/iio/resolver/ad2s90.c
 +++ b/drivers/staging/iio/resolver/ad2s90.c
-@@ -64,7 +64,7 @@ static int ad2s90_probe(struct spi_device *spi)
- {
- 	struct iio_dev *indio_dev;
- 	struct ad2s90_state *st;
--	int ret = 0;
-+	int ret;
+@@ -81,10 +81,6 @@ static int ad2s90_probe(struct spi_device *spi)
+ 	indio_dev->num_channels = 1;
+ 	indio_dev->name = spi_get_device_id(spi)->name;
  
- 	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
- 	if (!indio_dev)
+-	ret = devm_iio_device_register(indio_dev->dev.parent, indio_dev);
+-	if (ret)
+-		return ret;
+-
+ 	/* need 600ns between CS and the first falling edge of SCLK */
+ 	spi->max_speed_hz = 830000;
+ 	spi->mode = SPI_MODE_3;
+@@ -95,7 +91,7 @@ static int ad2s90_probe(struct spi_device *spi)
+ 		return ret;
+ 	}
+ 
+-	return 0;
++	return devm_iio_device_register(indio_dev->dev.parent, indio_dev);
+ }
+ 
+ static const struct spi_device_id ad2s90_id[] = {
 -- 
 2.18.0
 
