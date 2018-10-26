@@ -2,57 +2,59 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E1B5ECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 05:11:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC697C6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 05:11:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5E26207DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 05:11:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D084207DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 05:11:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OqvyMeBz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5E26207DD
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YKF6u4GB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D084207DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726111AbeJZNrL (ORCPT
+        id S1726373AbeJZNrR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 09:47:11 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:43696 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725876AbeJZNrL (ORCPT
+        Fri, 26 Oct 2018 09:47:17 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:36105 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725925AbeJZNrR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 09:47:11 -0400
-Received: by mail-pl1-f194.google.com with SMTP id 30-v6so4914641plb.10
-        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 22:11:41 -0700 (PDT)
+        Fri, 26 Oct 2018 09:47:17 -0400
+Received: by mail-pg1-f193.google.com with SMTP id z17-v6so1772939pgv.3
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 22:11:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=k8JL1g3woiiKaimfddLgG722nPrW6K3PY1HWBJoweZc=;
-        b=OqvyMeBzzydNL+wteXueSeXUYHxOz6WcReT37ODpTnErT6uIAe63YL87YHzQUx3rIF
-         L54mBqZV/SDhT8N4q3i5KkKdxBrHqFZ1mY2HiudZw+t0cPHZCd7EXrtSTnj0LM/eNgbb
-         kXasClzBXNSAkCDa2kRyjy+rNubuBctV1ct7k=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=1L7LTEmOplJ0dgGgsahfwyq4YoVWgFKdhmm3eA4hf8A=;
+        b=YKF6u4GBTDEaFLACGG3Uhw0OcunjYHTay6n303PnfDJiy8seJt9dgucfApjCQdEsHU
+         6GmBGb3lr3miwIuJ3NkCrrlHoLzeRJWehOMtidPO81limxAr7jirghncJEeRCWq+ICju
+         6kiifEraNVten4T7E47k2H0P2NYRUVixvJQ/M=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=k8JL1g3woiiKaimfddLgG722nPrW6K3PY1HWBJoweZc=;
-        b=ARDa5peBFOZVi0PEwX0QZB0/q+2z/aCkWMMgOfSQ3okAn9/bgYfp2l0cqnj9Rq0bj8
-         xXDStRs2CV239oeiU/CYgGGJ+Tkwpr8vDNW9stXGNBrtf4oIpoaC+oYaxaVOsWkQ0559
-         xmqKHZEyoPZ1z48eef7QLxjg9p3vI7ZidscdZKLGz8axQPNo3WGiwvKugy7Ld50p3IHc
-         s9N44p4XA1/vZSawm32e4F0cmMNZ5nNB8w2xXP3HDcstH1v3G5kg29iXlqRAmQQzTPkk
-         kNmgbCARV3waEnl2S06rIP4Mxz0p7x6cK9T1KLfhJU+86DPltNGUkhJtFFFEiZmdHA6G
-         lw3w==
-X-Gm-Message-State: AGRZ1gL5054+xbNjHDj4S/Qwe4N4hjrnauILFbHVipOatBeJT0fwmAib
-        i07Gr/tfNZJMfa1thp5+kZdx4Q==
-X-Google-Smtp-Source: AJdET5eqUSsHU3rx4jRSrY4nkibMMCWx5/TGM6iigVvsWor54l5fX48CvF8TPECogoqydIAKjlNEwg==
-X-Received: by 2002:a17:902:b106:: with SMTP id q6-v6mr2102386plr.238.1540530701491;
-        Thu, 25 Oct 2018 22:11:41 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=1L7LTEmOplJ0dgGgsahfwyq4YoVWgFKdhmm3eA4hf8A=;
+        b=sUDZ3yElNIoyQCOsd81ow693YJ1t7rS9YQ59qs9ToLNCib88pHACla68h+kDBraE6W
+         rfadnwqyxr6/210iGxQIlmCPiP7rjZ+kuLIUE58qfcSbmBhFdquy5CctWeRkpmAx1tcF
+         DlahEvHq+g2d08DqJWOPaKlPu31HKkxXwqXEumaYaZtJKjt8l+fY0fNv8/yuMeTHXdoC
+         fIzRoC5p+WbOjMA1scX3RLxGoS5IfCIeuxRTxTns0yzAqthUaodOyd5ocZ+iY/wM1QKY
+         SxmoUe4zwyUd6C36WbM04pU26/ZiVtEWlcgYKPsT19vfX+s/q0UUyzZGwlTfdSGM/u2s
+         rIDw==
+X-Gm-Message-State: AGRZ1gJmMhlWAZI2P54FgDwIQblfb4PvM9Cb14Hb+NL8aJ4blU6gfDsD
+        o+I0iEg2aZ+xqgOE1Q9QzSi7Bg==
+X-Google-Smtp-Source: AJdET5d33rGdw4A7hmKkb3bdlWfMKl/EhO1O2HHd1stmdDbQdvXynS5mpamI2PL0yllNrMQa1LTKPQ==
+X-Received: by 2002:a62:a50d:: with SMTP id v13-v6mr2217739pfm.18.1540530707259;
+        Thu, 25 Oct 2018 22:11:47 -0700 (PDT)
 Received: from qualcomm-HP-ZBook-14-G2.domain.name ([49.207.61.165])
-        by smtp.gmail.com with ESMTPSA id u13-v6sm9608912pgp.18.2018.10.25.22.11.35
+        by smtp.gmail.com with ESMTPSA id u13-v6sm9608912pgp.18.2018.10.25.22.11.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 25 Oct 2018 22:11:40 -0700 (PDT)
+        Thu, 25 Oct 2018 22:11:46 -0700 (PDT)
 From:   Firoz Khan <firoz.khan@linaro.org>
 To:     linux-ia64@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
         Fenghua Yu <fenghua.yu@intel.com>,
@@ -63,74 +65,43 @@ To:     linux-ia64@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
 Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
         linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
         marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH v4 0/5] ia64: system call table generation support
-Date:   Fri, 26 Oct 2018 10:41:09 +0530
-Message-Id: <1540530674-3824-1-git-send-email-firoz.khan@linaro.org>
+Subject: [PATCH v4 1/5] ia64: add __NR_old_getpagesize in uapi header file
+Date:   Fri, 26 Oct 2018 10:41:10 +0530
+Message-Id: <1540530674-3824-2-git-send-email-firoz.khan@linaro.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1540530674-3824-1-git-send-email-firoz.khan@linaro.org>
+References: <1540530674-3824-1-git-send-email-firoz.khan@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The purpose of this patch series is, we can easily add/modify/delete
-system call table support by changing entry in syscall.tbl file 
-instead of manually changing many files. The other goal is to unify 
-the system call table generation support implementation across all 
-the architectures. 
+sys_getpagesize entry is present in kernel/entry.S file to
+support for old user interface. So we need to add an uapi
+entry too.
 
-The system call tables are in different format in all architecture. 
-It will be difficult to manually add, modify or delete the system 
-calls in the respective files manually. To make it easy by keeping
-a script and which'll generate uapi header file and syscall table 
-file.
+Add __NR_old_getpagesize in uapi/asm/unistd.h in order to
+not break old user space as it is reserved for backwards
+compatibility with old __NR_getpagesize.
 
-syscall.tbl contains the list of available system calls along with 
-system call number and corresponding entry point. Add a new system 
-call in this architecture will be possible by adding new entry in 
-the syscall.tbl file.
+Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
+---
+ arch/ia64/include/uapi/asm/unistd.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Adding a new table entry consisting of:
-        - System call number.
-        - ABI.
-        - System call name.
-        - Entry point name.
-
-ARM, s390 and x86 architecuture does exist the similar support. I 
-leverage their implementation to come up with a generic solution.
-
-I have done the same support for work for alpha, m68k, microblaze,
-mips, parisc, powerpc, sh, sparc, and xtensa. Below mentioned git
-repository contains more details.
-Git repo:- https://github.com/frzkhn/system_call_table_generator/
-
-Finally, this is the ground work to solve the Y2038 issue. We need 
-to add two dozen of system calls to solve Y2038 issue. So this patch
-series will help to add new system calls easily by adding new entry 
-in the syscall.tbl.
-
-Firoz Khan (5):
-  ia64: add __NR_old_getpagesize in uapi header file
-  ia64: add __NR_syscalls along with NR_syscalls
-  ia64: add an offset for system call number
-  ia64: add system call table generation support
-  ia64: generate uapi header and system call table files
-
- arch/ia64/Makefile                      |   3 +
- arch/ia64/include/asm/Kbuild            |   1 +
- arch/ia64/include/asm/unistd.h          |   4 +-
- arch/ia64/include/uapi/asm/Kbuild       |   1 +
- arch/ia64/include/uapi/asm/unistd.h     | 332 +------------------------------
- arch/ia64/kernel/entry.S                | 331 +------------------------------
- arch/ia64/kernel/syscalls/Makefile      |  40 ++++
- arch/ia64/kernel/syscalls/syscall.tbl   | 337 ++++++++++++++++++++++++++++++++
- arch/ia64/kernel/syscalls/syscallhdr.sh |  36 ++++
- arch/ia64/kernel/syscalls/syscalltbl.sh |  32 +++
- 10 files changed, 457 insertions(+), 660 deletions(-)
- create mode 100644 arch/ia64/kernel/syscalls/Makefile
- create mode 100644 arch/ia64/kernel/syscalls/syscall.tbl
- create mode 100644 arch/ia64/kernel/syscalls/syscallhdr.sh
- create mode 100644 arch/ia64/kernel/syscalls/syscalltbl.sh
-
+diff --git a/arch/ia64/include/uapi/asm/unistd.h b/arch/ia64/include/uapi/asm/unistd.h
+index 5fe71d4..4d590c9 100644
+--- a/arch/ia64/include/uapi/asm/unistd.h
++++ b/arch/ia64/include/uapi/asm/unistd.h
+@@ -161,7 +161,7 @@
+ #define __NR_nanosleep			1168
+ #define __NR_nfsservctl			1169
+ #define __NR_prctl			1170
+-/* 1171 is reserved for backwards compatibility with old __NR_getpagesize */
++#define __NR_old_getpagesize            1171
+ #define __NR_mmap2			1172
+ #define __NR_pciconfig_read		1173
+ #define __NR_pciconfig_write		1174
 -- 
 1.9.1
 
