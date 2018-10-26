@@ -2,161 +2,104 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 624AFECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EF44ECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:37:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 272F620665
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:37:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 272F620665
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0C6C020665
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:37:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C6C020665
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727203AbeJZQM5 (ORCPT
+        id S1726511AbeJZQNS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 12:12:57 -0400
-Received: from mail-io1-f72.google.com ([209.85.166.72]:36384 "EHLO
-        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726096AbeJZQM5 (ORCPT
+        Fri, 26 Oct 2018 12:13:18 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:45079 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725983AbeJZQNS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 12:12:57 -0400
-Received: by mail-io1-f72.google.com with SMTP id u2-v6so178509iol.3
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 00:37:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to
-         :content-transfer-encoding;
-        bh=B38gIDNMp9Vhzp105ap2P1JYdGU2mu+NBIYBRkhWenQ=;
-        b=bxTFZe9GcUwG/LmbB1TT6aB1ZO9QLeGsKXRT/YbcVLeZEARo1VXvuf9qrkm6b+bfCQ
-         Pj7L1sfEqsVA82iiAF5zvNz8hMSpK5WI6bU/r6xbY6tZ/v4woyesODVqV8xXNG0l4zhV
-         e682OX7gq9AOethmUBtmxu37EvgaknS2seK1UYHz7DhLleoDN/zzgqqkf0Sq3s6m+q/F
-         iER75Y/t0NW4JgOBoFpN3lkBmwBc8eW7GAaxj8w5PePkTgUv3b5OZ4dx9IcK7XZvIThp
-         YAQsAs4VQJkKQlL6bia82WC+z/dEIWy1s/zn9d25i/cGfGEI2yKcG77aRlYUzQts9Kuo
-         Lu1A==
-X-Gm-Message-State: AGRZ1gI9uSyP8O+bBjoDvoW3drsPKEHnVzEtNGzzA0awACqeJY02sNzo
-        ec9dsjqAprV17zmfw5aRbmgpvwivInykulw1eZOdhF1xz6Hc
-X-Google-Smtp-Source: AJdET5feo3BSOI7T6M2PzyfwinkTuScZFeWMVhjXc5MnWd1UX/dMhpABPR/QjHMc8IwpJ6JspatI37tDtl2sKsrjatDMMZ7wdk+c
+        Fri, 26 Oct 2018 12:13:18 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9Q7bHYY137754
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 26 Oct 2018 00:37:17 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9Q7bHKn137751;
+        Fri, 26 Oct 2018 00:37:17 -0700
+Date:   Fri, 26 Oct 2018 00:37:17 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
+Message-ID: <tip-3c4ef451506897a15aff76ff141c995c6cd32f4d@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de, acme@redhat.com,
+        ak@linux.intel.com, mingo@kernel.org, adrian.hunter@intel.com,
+        hpa@zytor.com, jolsa@redhat.com
+Reply-To: linux-kernel@vger.kernel.org, tglx@linutronix.de,
+          ak@linux.intel.com, mingo@kernel.org, acme@redhat.com,
+          adrian.hunter@intel.com, jolsa@redhat.com, hpa@zytor.com
+In-Reply-To: <20181001062853.28285-4-adrian.hunter@intel.com>
+References: <20181001062853.28285-4-adrian.hunter@intel.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf scripts python: call-graph-from-sql.py: Set
+ a minimum window size
+Git-Commit-ID: 3c4ef451506897a15aff76ff141c995c6cd32f4d
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-X-Received: by 2002:a02:58c:: with SMTP id 12-v6mr1983987jal.19.1540539421632;
- Fri, 26 Oct 2018 00:37:01 -0700 (PDT)
-Date:   Fri, 26 Oct 2018 00:37:01 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fd342e05791cc86f@google.com>
-Subject: KASAN: use-after-free Read in sk_psock_unlink
-From:   syzbot <syzbot+3acd9f67a6a15766686e@syzkaller.appspotmail.com>
-To:     daniel@iogearbox.net, davem@davemloft.net,
-        john.fastabend@gmail.com, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8sDQoNCnN5emJvdCBmb3VuZCB0aGUgZm9sbG93aW5nIGNyYXNoIG9uOg0KDQpIRUFEIGNv
-bW1pdDogICAgOGM2MGMzNmQwYjhjIEFkZCBsaW51eC1uZXh0IHNwZWNpZmljIGZpbGVzIGZvciAy
-MDE4MTAxOQ0KZ2l0IHRyZWU6ICAgICAgIGxpbnV4LW5leHQNCmNvbnNvbGUgb3V0cHV0OiBodHRw
-czovL3N5emthbGxlci5hcHBzcG90LmNvbS94L2xvZy50eHQ/eD0xNzM1NmRiZDQwMDAwMA0Ka2Vy
-bmVsIGNvbmZpZzogIGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvLmNvbmZpZz94PThi
-NmQ3YzRjODE1MzVlODkNCmRhc2hib2FyZCBsaW5rOiBodHRwczovL3N5emthbGxlci5hcHBzcG90
-LmNvbS9idWc/ZXh0aWQ9M2FjZDlmNjdhNmExNTc2NjY4NmUNCmNvbXBpbGVyOiAgICAgICBnY2Mg
-KEdDQykgOC4wLjEgMjAxODA0MTMgKGV4cGVyaW1lbnRhbCkNCg0KVW5mb3J0dW5hdGVseSwgSSBk
-b24ndCBoYXZlIGFueSByZXByb2R1Y2VyIGZvciB0aGlzIGNyYXNoIHlldC4NCg0KSU1QT1JUQU5U
-OiBpZiB5b3UgZml4IHRoZSBidWcsIHBsZWFzZSBhZGQgdGhlIGZvbGxvd2luZyB0YWcgdG8gdGhl
-IGNvbW1pdDoNClJlcG9ydGVkLWJ5OiBzeXpib3QrM2FjZDlmNjdhNmExNTc2NjY4NmVAc3l6a2Fs
-bGVyLmFwcHNwb3RtYWlsLmNvbQ0KDQpFWFQ0LWZzIChsb29wNSk6IGNvdWxkbid0IG1vdW50IFJE
-V1IgYmVjYXVzZSBvZiB1bnN1cHBvcnRlZCBvcHRpb25hbCAgDQpmZWF0dXJlcyAoODApDQpFWFQ0
-LWZzIChsb29wNSk6IGNvdWxkbid0IG1vdW50IFJEV1IgYmVjYXVzZSBvZiB1bnN1cHBvcnRlZCBv
-cHRpb25hbCAgDQpmZWF0dXJlcyAoODApDQppbnB1dDogAiBhcyAvZGV2aWNlcy92aXJ0dWFsL2lu
-cHV0L2lucHV0MjENCj09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PQ0KQlVHOiBLQVNBTjogdXNlLWFmdGVyLWZyZWUgaW4gc2tf
-cHNvY2tfdW5saW5rKzB4NGQ4LzB4NzAwICANCm5ldC9jb3JlL3NvY2tfbWFwLmM6OTkyDQpSZWFk
-IG9mIHNpemUgNCBhdCBhZGRyIGZmZmY4ODAxYjdmYzEwMTggYnkgdGFzayBzeXotZXhlY3V0b3I0
-LzIxNDA5DQoNCkNQVTogMCBQSUQ6IDIxNDA5IENvbW06IHN5ei1leGVjdXRvcjQgTm90IHRhaW50
-ZWQgNC4xOS4wLXJjOC1uZXh0LTIwMTgxMDE5KyAgDQojOTgNCkhhcmR3YXJlIG5hbWU6IEdvb2ds
-ZSBHb29nbGUgQ29tcHV0ZSBFbmdpbmUvR29vZ2xlIENvbXB1dGUgRW5naW5lLCBCSU9TICANCkdv
-b2dsZSAwMS8wMS8yMDExDQpDYWxsIFRyYWNlOg0KICBfX2R1bXBfc3RhY2sgbGliL2R1bXBfc3Rh
-Y2suYzo3NyBbaW5saW5lXQ0KICBkdW1wX3N0YWNrKzB4MjQ0LzB4MzlkIGxpYi9kdW1wX3N0YWNr
-LmM6MTEzDQogIHByaW50X2FkZHJlc3NfZGVzY3JpcHRpb24uY29sZC43KzB4OS8weDFmZiBtbS9r
-YXNhbi9yZXBvcnQuYzoyNTYNCiAga2FzYW5fcmVwb3J0X2Vycm9yIG1tL2thc2FuL3JlcG9ydC5j
-OjM1NCBbaW5saW5lXQ0KICBrYXNhbl9yZXBvcnQuY29sZC44KzB4MjQyLzB4MzA5IG1tL2thc2Fu
-L3JlcG9ydC5jOjQxMg0KICBfX2FzYW5fcmVwb3J0X2xvYWQ0X25vYWJvcnQrMHgxNC8weDIwIG1t
-L2thc2FuL3JlcG9ydC5jOjQzMg0KICBza19wc29ja191bmxpbmsrMHg0ZDgvMHg3MDAgbmV0L2Nv
-cmUvc29ja19tYXAuYzo5OTINCiAgdGNwX2JwZl9yZW1vdmUrMHhkMC8weDEzMCBuZXQvaXB2NC90
-Y3BfYnBmLmM6NTExDQogIHRjcF9icGZfY2xvc2UrMHgxYzYvMHg0YTAgbmV0L2lwdjQvdGNwX2Jw
-Zi5jOjU1MQ0KICBpbmV0X3JlbGVhc2UrMHgxMDQvMHgxZjAgbmV0L2lwdjQvYWZfaW5ldC5jOjQy
-OA0KICBfX3NvY2tfcmVsZWFzZSsweGQ3LzB4MjUwIG5ldC9zb2NrZXQuYzo1ODANCiAgc29ja19j
-bG9zZSsweDE5LzB4MjAgbmV0L3NvY2tldC5jOjExNDINCiAgX19mcHV0KzB4M2JjLzB4YTcwIGZz
-L2ZpbGVfdGFibGUuYzoyNzkNCiAgX19fX2ZwdXQrMHgxNS8weDIwIGZzL2ZpbGVfdGFibGUuYzoz
-MTINCiAgdGFza193b3JrX3J1bisweDFlOC8weDJhMCBrZXJuZWwvdGFza193b3JrLmM6MTEzDQog
-IGdldF9zaWduYWwrMHgxNTUwLzB4MTk3MCBrZXJuZWwvc2lnbmFsLmM6MjM0Nw0KICBkb19zaWdu
-YWwrMHg5Yy8weDIxYzAgYXJjaC94ODYva2VybmVsL3NpZ25hbC5jOjgxNg0KICBleGl0X3RvX3Vz
-ZXJtb2RlX2xvb3ArMHgyZTUvMHgzODAgYXJjaC94ODYvZW50cnkvY29tbW9uLmM6MTYyDQogIHBy
-ZXBhcmVfZXhpdF90b191c2VybW9kZSBhcmNoL3g4Ni9lbnRyeS9jb21tb24uYzoxOTcgW2lubGlu
-ZV0NCiAgc3lzY2FsbF9yZXR1cm5fc2xvd3BhdGggYXJjaC94ODYvZW50cnkvY29tbW9uLmM6MjY4
-IFtpbmxpbmVdDQogIGRvX3N5c2NhbGxfNjQrMHg2YmUvMHg4MjAgYXJjaC94ODYvZW50cnkvY29t
-bW9uLmM6MjkzDQogIGVudHJ5X1NZU0NBTExfNjRfYWZ0ZXJfaHdmcmFtZSsweDQ5LzB4YmUNClJJ
-UDogMDAzMzoweDQ1NzU2OQ0KQ29kZTogZmQgYjMgZmIgZmYgYzMgNjYgMmUgMGYgMWYgODQgMDAg
-MDAgMDAgMDAgMDAgNjYgOTAgNDggODkgZjggNDggODkgZjcgIA0KNDggODkgZDYgNDggODkgY2Eg
-NGQgODkgYzIgNGQgODkgYzggNGMgOGIgNGMgMjQgMDggMGYgMDUgPDQ4PiAzZCAwMSBmMCBmZiAg
-DQpmZiAwZiA4MyBjYiBiMyBmYiBmZiBjMyA2NiAyZSAwZiAxZiA4NCAwMCAwMCAwMCAwMA0KUlNQ
-OiAwMDJiOjAwMDA3ZmQ4ODk2NWVjNzggRUZMQUdTOiAwMDAwMDI0NiBPUklHX1JBWDogMDAwMDAw
-MDAwMDAwMDAyYw0KUkFYOiAwMDAwMDAwMDAwMjgwMDAwIFJCWDogMDAwMDAwMDAwMDAwMDAwNiBS
-Q1g6IDAwMDAwMDAwMDA0NTc1NjkNClJEWDogZmZmZmZmZmZmZmZmZmU2ZSBSU0k6IDAwMDAwMDAw
-MjBhODhmODggUkRJOiAwMDAwMDAwMDAwMDAwMDAzDQpSQlA6IDAwMDAwMDAwMDA3MmJmMDAgUjA4
-OiAwMDAwMDAwMDIwZTY4MDAwIFIwOTogMDAwMDAwMDAwMDAwMDAxMA0KUjEwOiAwMDAwMDAwMDIw
-MDAwMDAwIFIxMTogMDAwMDAwMDAwMDAwMDI0NiBSMTI6IDAwMDA3ZmQ4ODk2NWY2ZDQNClIxMzog
-MDAwMDAwMDAwMDRjMzkxNSBSMTQ6IDAwMDAwMDAwMDA0ZDU3YzAgUjE1OiAwMDAwMDAwMGZmZmZm
-ZmZmDQoNCkFsbG9jYXRlZCBieSB0YXNrIDIxNDIzOg0KICBzYXZlX3N0YWNrKzB4NDMvMHhkMCBt
-bS9rYXNhbi9rYXNhbi5jOjQ0OA0KICBzZXRfdHJhY2sgbW0va2FzYW4va2FzYW4uYzo0NjAgW2lu
-bGluZV0NCiAga2FzYW5fa21hbGxvYysweGM3LzB4ZTAgbW0va2FzYW4va2FzYW4uYzo1NTMNCiAg
-a21lbV9jYWNoZV9hbGxvY190cmFjZSsweDE1Mi8weDc1MCBtbS9zbGFiLmM6MzYyMA0KICBrbWFs
-bG9jIGluY2x1ZGUvbGludXgvc2xhYi5oOjU0NiBbaW5saW5lXQ0KICBremFsbG9jIGluY2x1ZGUv
-bGludXgvc2xhYi5oOjc0MSBbaW5saW5lXQ0KICBzb2NrX2hhc2hfYWxsb2MrMHgxZWIvMHg1YTAg
-bmV0L2NvcmUvc29ja19tYXAuYzo4MDENCiAgZmluZF9hbmRfYWxsb2NfbWFwIGtlcm5lbC9icGYv
-c3lzY2FsbC5jOjEyOSBbaW5saW5lXQ0KICBtYXBfY3JlYXRlKzB4M2JkLzB4MTEwMCBrZXJuZWwv
-YnBmL3N5c2NhbGwuYzo1MDkNCiAgX19kb19zeXNfYnBmIGtlcm5lbC9icGYvc3lzY2FsbC5jOjIz
-OTQgW2lubGluZV0NCiAgX19zZV9zeXNfYnBmIGtlcm5lbC9icGYvc3lzY2FsbC5jOjIzNzEgW2lu
-bGluZV0NCiAgX194NjRfc3lzX2JwZisweDMwMy8weDUxMCBrZXJuZWwvYnBmL3N5c2NhbGwuYzoy
-MzcxDQogIGRvX3N5c2NhbGxfNjQrMHgxYjkvMHg4MjAgYXJjaC94ODYvZW50cnkvY29tbW9uLmM6
-MjkwDQogIGVudHJ5X1NZU0NBTExfNjRfYWZ0ZXJfaHdmcmFtZSsweDQ5LzB4YmUNCg0KRnJlZWQg
-YnkgdGFzayAxMDEwOToNCiAgc2F2ZV9zdGFjaysweDQzLzB4ZDAgbW0va2FzYW4va2FzYW4uYzo0
-NDgNCiAgc2V0X3RyYWNrIG1tL2thc2FuL2thc2FuLmM6NDYwIFtpbmxpbmVdDQogIF9fa2FzYW5f
-c2xhYl9mcmVlKzB4MTAyLzB4MTUwIG1tL2thc2FuL2thc2FuLmM6NTIxDQogIGthc2FuX3NsYWJf
-ZnJlZSsweGUvMHgxMCBtbS9rYXNhbi9rYXNhbi5jOjUyOA0KICBfX2NhY2hlX2ZyZWUgbW0vc2xh
-Yi5jOjM0OTggW2lubGluZV0NCiAga2ZyZWUrMHhjZi8weDIzMCBtbS9zbGFiLmM6MzgxNw0KICBz
-b2NrX2hhc2hfZnJlZSsweDQ1MC8weDY0MCBuZXQvY29yZS9zb2NrX21hcC5jOjg2NA0KICBicGZf
-bWFwX2ZyZWVfZGVmZXJyZWQrMHhkOS8weDExMCBrZXJuZWwvYnBmL3N5c2NhbGwuYzoyOTANCiAg
-cHJvY2Vzc19vbmVfd29yaysweGM4Yi8weDFjNDAga2VybmVsL3dvcmtxdWV1ZS5jOjIxNTMNCiAg
-d29ya2VyX3RocmVhZCsweDE3Zi8weDEzOTAga2VybmVsL3dvcmtxdWV1ZS5jOjIyOTYNCiAga3Ro
-cmVhZCsweDM1YS8weDQ0MCBrZXJuZWwva3RocmVhZC5jOjI0Ng0KICByZXRfZnJvbV9mb3JrKzB4
-M2EvMHg1MCBhcmNoL3g4Ni9lbnRyeS9lbnRyeV82NC5TOjM1Mg0KDQpUaGUgYnVnZ3kgYWRkcmVz
-cyBiZWxvbmdzIHRvIHRoZSBvYmplY3QgYXQgZmZmZjg4MDFiN2ZjMTAwMA0KICB3aGljaCBiZWxv
-bmdzIHRvIHRoZSBjYWNoZSBrbWFsbG9jLTUxMiBvZiBzaXplIDUxMg0KVGhlIGJ1Z2d5IGFkZHJl
-c3MgaXMgbG9jYXRlZCAyNCBieXRlcyBpbnNpZGUgb2YNCiAgNTEyLWJ5dGUgcmVnaW9uIFtmZmZm
-ODgwMWI3ZmMxMDAwLCBmZmZmODgwMWI3ZmMxMjAwKQ0KVGhlIGJ1Z2d5IGFkZHJlc3MgYmVsb25n
-cyB0byB0aGUgcGFnZToNCnBhZ2U6ZmZmZmVhMDAwNmRmZjA0MCBjb3VudDoxIG1hcGNvdW50OjAg
-bWFwcGluZzpmZmZmODgwMWRhODAwOTQwIGluZGV4OjB4MA0KZmxhZ3M6IDB4MmZmZmMwMDAwMDAw
-MjAwKHNsYWIpDQpyYXc6IDAyZmZmYzAwMDAwMDAyMDAgZmZmZmVhMDAwNmVlNTg4OCBmZmZmZWEw
-MDA3MWZjNmM4IGZmZmY4ODAxZGE4MDA5NDANCnJhdzogMDAwMDAwMDAwMDAwMDAwMCBmZmZmODgw
-MWI3ZmMxMDAwIDAwMDAwMDAxMDAwMDAwMDYgMDAwMDAwMDAwMDAwMDAwMA0KcGFnZSBkdW1wZWQg
-YmVjYXVzZToga2FzYW46IGJhZCBhY2Nlc3MgZGV0ZWN0ZWQNCg0KTWVtb3J5IHN0YXRlIGFyb3Vu
-ZCB0aGUgYnVnZ3kgYWRkcmVzczoNCiAgZmZmZjg4MDFiN2ZjMGYwMDogMDAgMDAgMDAgMDAgMDAg
-MDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDANCiAgZmZmZjg4MDFiN2ZjMGY4MDogMDAg
-MDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDANCj4gZmZmZjg4MDFi
-N2ZjMTAwMDogZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmIN
-CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXg0KICBmZmZmODgwMWI3ZmMxMDgwOiBmYiBm
-YiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYg0KICBmZmZmODgwMWI3
-ZmMxMTAwOiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYg0K
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09DQoNCg0KLS0tDQpUaGlzIGJ1ZyBpcyBnZW5lcmF0ZWQgYnkgYSBib3QuIEl0IG1h
-eSBjb250YWluIGVycm9ycy4NClNlZSBodHRwczovL2dvby5nbC90cHNtRUogZm9yIG1vcmUgaW5m
-b3JtYXRpb24gYWJvdXQgc3l6Ym90Lg0Kc3l6Ym90IGVuZ2luZWVycyBjYW4gYmUgcmVhY2hlZCBh
-dCBzeXprYWxsZXJAZ29vZ2xlZ3JvdXBzLmNvbS4NCg0Kc3l6Ym90IHdpbGwga2VlcCB0cmFjayBv
-ZiB0aGlzIGJ1ZyByZXBvcnQuIFNlZToNCmh0dHBzOi8vZ29vLmdsL3Rwc21FSiNidWctc3RhdHVz
-LXRyYWNraW5nIGZvciBob3cgdG8gY29tbXVuaWNhdGUgd2l0aCAgDQpzeXpib3QuDQo=
+Commit-ID:  3c4ef451506897a15aff76ff141c995c6cd32f4d
+Gitweb:     https://git.kernel.org/tip/3c4ef451506897a15aff76ff141c995c6cd32f4d
+Author:     Adrian Hunter <adrian.hunter@intel.com>
+AuthorDate: Mon, 1 Oct 2018 09:28:37 +0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Tue, 23 Oct 2018 14:19:30 -0300
+
+perf scripts python: call-graph-from-sql.py: Set a minimum window size
+
+Prevent weirdly small window size.
+
+Committer testing:
+
+Seems to work, but even before this patch, on my system, it always
+started with:
+
+xwininfo: Window id: 0x1e00002 "Call Graph: pt_example"
+<SNIP>
+  Width: 800
+  Height: 600
+<SNIP>
+
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Link: http://lkml.kernel.org/r/20181001062853.28285-4-adrian.hunter@intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/scripts/python/call-graph-from-sql.py | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tools/perf/scripts/python/call-graph-from-sql.py b/tools/perf/scripts/python/call-graph-from-sql.py
+index e1014f2628a7..68153fa1b4d1 100644
+--- a/tools/perf/scripts/python/call-graph-from-sql.py
++++ b/tools/perf/scripts/python/call-graph-from-sql.py
+@@ -274,6 +274,7 @@ class MainWindow(QMainWindow):
+ 		style = self.style()
+ 		icon = style.standardIcon(QStyle.SP_MessageBoxInformation)
+ 		self.setWindowIcon(icon);
++		self.setMinimumSize(200, 100)
+ 
+ 		self.model = TreeModel(db)
+ 
