@@ -2,120 +2,96 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C39DC6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:20:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2941C6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:22:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 575D720834
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:20:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="IQGAQP9B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 575D720834
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 84CFD2084D
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:22:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84CFD2084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726592AbeJZPz4 (ORCPT
+        id S1726193AbeJZP6i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 11:55:56 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:42002 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725983AbeJZPz4 (ORCPT
+        Fri, 26 Oct 2018 11:58:38 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:47167 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725907AbeJZP6i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 11:55:56 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9Q7J5fj161141;
-        Fri, 26 Oct 2018 07:20:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2018-07-02;
- bh=Pln7Xdqipy1GQLUnKM/seD/AaC4dlgXoa8BuKp9XFlk=;
- b=IQGAQP9BLEOlkcdw50uFAVoxnz/ZOBbNn5NKtOj5PjfeHfPVaY/MbvWAblbudjcJkVmj
- VD0FJJw1Km7c5zaayDWf957RPHjelE8mFdQDnNQkXOjqaJjD9IjYCGxlPluKa2d1h3qM
- 6nozwKLCGyF64atK5cCvquGC15hgjDbVNwjcrHEMn2boHVWXx4Pj48pnvvWTn7vJTApe
- dZ/WiklMsAWcjlBoFWNIpPV1OCPe4crgSDMT8BQ7E4r0xAA2u4LfC5ARyCx3hgPvCR2B
- P0CMeRj8IOV2razaOGrVXolSANPrDHbRUTpdeZBrs1ydYQhfVLVstAm72rRe2+dPEwDI Dg== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2n7vaqdk3s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 26 Oct 2018 07:20:03 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9Q7K2jf003321
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 26 Oct 2018 07:20:02 GMT
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9Q7K1nE018843;
-        Fri, 26 Oct 2018 07:20:01 GMT
-Received: from kili.mountain (/129.205.6.86)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 26 Oct 2018 00:20:01 -0700
-Date:   Fri, 26 Oct 2018 10:19:51 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mathias Thore <Mathias.Thore@infinera.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] uio: Fix an Oops on load
-Message-ID: <20181026071951.fzapvcruvzknkmo6@kili.mountain>
+        Fri, 26 Oct 2018 11:58:38 -0400
+X-UUID: ad7a88e7757649708a23e9b44ad18bb7-20181026
+X-UUID: ad7a88e7757649708a23e9b44ad18bb7-20181026
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 2037085050; Fri, 26 Oct 2018 15:22:36 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 26 Oct 2018 15:22:29 +0800
+Received: from mtkslt305.mediatek.inc (10.21.14.140) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 26 Oct 2018 15:22:29 +0800
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, CK Hu <ck.hu@mediatek.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
+Subject: [PATCH 0/3] Mediatek drm driver use drm_gem_cma_object instead of mtk_drm_gem_obj
+Date:   Fri, 26 Oct 2018 15:22:00 +0800
+Message-ID: <1540538523-1973-1-git-send-email-ck.hu@mediatek.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9057 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=833
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810260066
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I was trying to solve a double free but I introduced a more serious
-NULL dereference bug.  The problem is that if there is an IRQ which
-triggers immediately, then we need "info->uio_dev" but it's not set yet.
 
-This patch puts the original initialization back to how it was and just
-sets info->uio_dev to NULL on the error path so it should solve both
-the Oops and the double free.
+Because there are many similar code in drm_gem_cma_helper.c and mtk_drm_gem.c,
+merging these two files would reduce code size and be easier to maintain. The
+major difference between these two gem object is that drm_gem_cma_object is for
+CMA buffer and mtk_drm_gem_obj is for iommu buffer. This series just add two
+iommu feature which is used by mediatek drm driver into cma helper, so there
+is still some feature just support CMA buffer. The first feature is making sub
+device as dma device for dma operation. So far drm core treat drm device as
+dma device, but mediatek drm device is not a dma device and it use sub device
+as dma device. The second feature is providing interface to create dumb buffer
+without mapping kernel virtual address. For iommu buffer, mapping kernel virtual
+address would reduce free virtual memory area. Some feature still support only
+CMA buffer, for example, drm_gem_cma_prime_vmap(), so we still treat these
+helper function as 'cma' helper function.
 
-Fixes: f019f07ecf6a ("uio: potential double frees if __uio_register_device() fails")
-Reported-by: Mathias Thore <Mathias.Thore@infinera.com>
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- drivers/uio/uio.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+CK Hu (3):
+  drm: Add dma_dev in struct drm_device
+  drm: Add drm_gem_cma_dumb_create_no_kmap() helper function
+  drm/mediatek: Use drm_gem_cma_object instead of mtk_drm_gem_obj
 
-diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-index 85644669fbe7..0a357db4b31b 100644
---- a/drivers/uio/uio.c
-+++ b/drivers/uio/uio.c
-@@ -961,6 +961,8 @@ int __uio_register_device(struct module *owner,
- 	if (ret)
- 		goto err_uio_dev_add_attributes;
- 
-+	info->uio_dev = idev;
-+
- 	if (info->irq && (info->irq != UIO_IRQ_CUSTOM)) {
- 		/*
- 		 * Note that we deliberately don't use devm_request_irq
-@@ -972,11 +974,12 @@ int __uio_register_device(struct module *owner,
- 		 */
- 		ret = request_irq(info->irq, uio_interrupt,
- 				  info->irq_flags, info->name, idev);
--		if (ret)
-+		if (ret) {
-+			info->uio_dev = NULL;
- 			goto err_request_irq;
-+		}
- 	}
- 
--	info->uio_dev = idev;
- 	return 0;
- 
- err_request_irq:
+ drivers/gpu/drm/drm_gem_cma_helper.c     | 110 +++++++++++---
+ drivers/gpu/drm/mediatek/Makefile        |   1 -
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c  |   1 -
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c   |  15 +-
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h   |   1 -
+ drivers/gpu/drm/mediatek/mtk_drm_fb.c    |   1 -
+ drivers/gpu/drm/mediatek/mtk_drm_gem.c   | 243 -------------------------------
+ drivers/gpu/drm/mediatek/mtk_drm_gem.h   |  56 -------
+ drivers/gpu/drm/mediatek/mtk_drm_plane.c |   8 +-
+ include/drm/drm_device.h                 |   1 +
+ include/drm/drm_gem_cma_helper.h         |   7 +
+ 11 files changed, 110 insertions(+), 334 deletions(-)
+ delete mode 100644 drivers/gpu/drm/mediatek/mtk_drm_gem.c
+ delete mode 100644 drivers/gpu/drm/mediatek/mtk_drm_gem.h
+
 -- 
-2.11.0
-
+1.9.1
