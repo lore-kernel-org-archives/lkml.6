@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A5F0C6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCE20ECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:50:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD2B120868
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:50:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD2B120868
+	by mail.kernel.org (Postfix) with ESMTP id 9B52B20831
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:50:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B52B20831
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727350AbeJZWZm (ORCPT
+        id S1727815AbeJZW1S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 18:25:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44772 "EHLO mx1.suse.de"
+        Fri, 26 Oct 2018 18:27:18 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44790 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726014AbeJZWZl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 18:25:41 -0400
+        id S1726570AbeJZWZk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 18:25:40 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CDC45AFB2;
-        Fri, 26 Oct 2018 13:48:30 +0000 (UTC)
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 63759AFBE;
+        Fri, 26 Oct 2018 13:48:31 +0000 (UTC)
 From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 To:     stefan.wahren@i2se.com, eric@anholt.net,
         dave.stevenson@raspberrypi.org
 Cc:     nsaenzjulienne@suse.de, linux-rpi-kernel@lists.infradead.org,
         gregkh@linuxfoundation.org, linux-arm-kernel@lists.infradead.org,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH RFC 02/18] staging: vchiq_arm: rework close/remove_service IOCTLS
-Date:   Fri, 26 Oct 2018 15:47:57 +0200
-Message-Id: <20181026134813.7775-3-nsaenzjulienne@suse.de>
+Subject: [PATCH RFC 03/18] staging: vchiq_shim: delete vchi_service_create
+Date:   Fri, 26 Oct 2018 15:47:58 +0200
+Message-Id: <20181026134813.7775-4-nsaenzjulienne@suse.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181026134813.7775-1-nsaenzjulienne@suse.de>
 References: <20181026134813.7775-1-nsaenzjulienne@suse.de>
@@ -45,99 +45,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The implementation of both IOCTLS was the same except for one function
-call. This joins both implementations and updates the code to avoid
-unneeded indentations.
+No one is using the API neither in the actual staging tree nor in the
+downstream tree (https://github.com/raspberrypi/linux).
 
 Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 ---
- .../interface/vchiq_arm/vchiq_arm.c           | 66 +++++++------------
- 1 file changed, 24 insertions(+), 42 deletions(-)
+ .../vc04_services/interface/vchi/vchi.h       |  5 ---
+ .../interface/vchiq_arm/vchiq_shim.c          | 32 -------------------
+ 2 files changed, 37 deletions(-)
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-index 6d503392341e..d88dd7415e1e 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-@@ -1019,55 +1019,37 @@ vchiq_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 		}
- 	} break;
- 
--	case VCHIQ_IOC_CLOSE_SERVICE: {
-+	case VCHIQ_IOC_CLOSE_SERVICE:
-+	case VCHIQ_IOC_REMOVE_SERVICE: {
- 		VCHIQ_SERVICE_HANDLE_T handle = (VCHIQ_SERVICE_HANDLE_T)arg;
-+		USER_SERVICE_T *user_service;
- 
- 		service = find_service_for_instance(instance, handle);
--		if (service != NULL) {
--			USER_SERVICE_T *user_service =
--				(USER_SERVICE_T *)service->base.userdata;
--			/* close_pending is false on first entry, and when the
--			   wait in vchiq_close_service has been interrupted. */
--			if (!user_service->close_pending) {
--				status = vchiq_close_service(service->handle);
--				if (status != VCHIQ_SUCCESS)
--					break;
--			}
+diff --git a/drivers/staging/vc04_services/interface/vchi/vchi.h b/drivers/staging/vc04_services/interface/vchi/vchi.h
+index 01381904775d..379a16ebfd5b 100644
+--- a/drivers/staging/vc04_services/interface/vchi/vchi.h
++++ b/drivers/staging/vc04_services/interface/vchi/vchi.h
+@@ -113,11 +113,6 @@ extern uint32_t vchi_current_time(VCHI_INSTANCE_T instance_handle);
+ /******************************************************************************
+  Global service API
+  *****************************************************************************/
+-// Routine to create a named service
+-extern int32_t vchi_service_create(VCHI_INSTANCE_T instance_handle,
+-				   SERVICE_CREATION_T *setup,
+-				   VCHI_SERVICE_HANDLE_T *handle);
 -
--			/* close_pending is true once the underlying service
--			   has been closed until the client library calls the
--			   CLOSE_DELIVERED ioctl, signalling close_event. */
--			if (user_service->close_pending &&
--				down_interruptible(&user_service->close_event))
--				status = VCHIQ_RETRY;
--		} else
-+		if (!service) {
- 			ret = -EINVAL;
--	} break;
-+			break;
-+		}
+ // Routine to destroy a service
+ extern int32_t vchi_service_destroy(const VCHI_SERVICE_HANDLE_T handle);
  
--	case VCHIQ_IOC_REMOVE_SERVICE: {
--		VCHIQ_SERVICE_HANDLE_T handle = (VCHIQ_SERVICE_HANDLE_T)arg;
-+		user_service = service->base.userdata;
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_shim.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_shim.c
+index c3223fcdaf87..81cac68f4b78 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_shim.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_shim.c
+@@ -660,38 +660,6 @@ int32_t vchi_service_open(VCHI_INSTANCE_T instance_handle,
+ }
+ EXPORT_SYMBOL(vchi_service_open);
  
--		service = find_service_for_instance(instance, handle);
--		if (service != NULL) {
--			USER_SERVICE_T *user_service =
--				(USER_SERVICE_T *)service->base.userdata;
--			/* close_pending is false on first entry, and when the
--			   wait in vchiq_close_service has been interrupted. */
--			if (!user_service->close_pending) {
--				status = vchiq_remove_service(service->handle);
--				if (status != VCHIQ_SUCCESS)
--					break;
--			}
-+		/* close_pending is false on first entry, and when the
-+		   wait in vchiq_close_service has been interrupted. */
-+		if (!user_service->close_pending) {
-+			status = (cmd == VCHIQ_IOC_CLOSE_SERVICE) ?
-+				 vchiq_close_service(service->handle) :
-+				 vchiq_remove_service(service->handle);
-+			if (status != VCHIQ_SUCCESS)
-+				break;
-+		}
- 
--			/* close_pending is true once the underlying service
--			   has been closed until the client library calls the
--			   CLOSE_DELIVERED ioctl, signalling close_event. */
--			if (user_service->close_pending &&
--				down_interruptible(&user_service->close_event))
--				status = VCHIQ_RETRY;
--		} else
--			ret = -EINVAL;
--	} break;
-+		/* close_pending is true once the underlying service
-+		   has been closed until the client library calls the
-+		   CLOSE_DELIVERED ioctl, signalling close_event. */
-+		if (user_service->close_pending &&
-+			down_interruptible(&user_service->close_event))
-+			status = VCHIQ_RETRY;
-+		break;
-+	}
- 
- 	case VCHIQ_IOC_USE_SERVICE:
- 	case VCHIQ_IOC_RELEASE_SERVICE:	{
+-int32_t vchi_service_create(VCHI_INSTANCE_T instance_handle,
+-	SERVICE_CREATION_T *setup,
+-	VCHI_SERVICE_HANDLE_T *handle)
+-{
+-	VCHIQ_INSTANCE_T instance = (VCHIQ_INSTANCE_T)instance_handle;
+-	struct shim_service *service = service_alloc(instance, setup);
+-
+-	*handle = (VCHI_SERVICE_HANDLE_T)service;
+-
+-	if (service) {
+-		VCHIQ_SERVICE_PARAMS_T params;
+-		VCHIQ_STATUS_T status;
+-
+-		memset(&params, 0, sizeof(params));
+-		params.fourcc = setup->service_id;
+-		params.callback = shim_callback;
+-		params.userdata = service;
+-		params.version = setup->version.version;
+-		params.version_min = setup->version.version_min;
+-		status = vchiq_add_service(instance, &params, &service->handle);
+-
+-		if (status != VCHIQ_SUCCESS) {
+-			service_free(service);
+-			service = NULL;
+-			*handle = NULL;
+-		}
+-	}
+-
+-	return (service != NULL) ? 0 : -1;
+-}
+-EXPORT_SYMBOL(vchi_service_create);
+-
+ int32_t vchi_service_close(const VCHI_SERVICE_HANDLE_T handle)
+ {
+ 	int32_t ret = -1;
 -- 
 2.19.1
 
