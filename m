@@ -2,312 +2,495 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B34BECDE46
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 17:54:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE178ECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 17:56:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A51A820848
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 17:54:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="egc+x/wL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A51A820848
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 972A720848
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 17:56:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 972A720848
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727629AbeJ0CcM (ORCPT
+        id S1727684AbeJ0CeZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 22:32:12 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43700 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727450AbeJ0CcM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 22:32:12 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n10-v6so865570pgv.10
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 10:54:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=t19IEKNExiBzCqkfFY2/SKyzCSnixPvD2l/X+sj5C0c=;
-        b=egc+x/wLSqHUQvpG/HXo1CCJ+vsjPZsv4/BtS0upVuQUc7HCUH+0aaApnfd1P71Bbd
-         QLoafwP8bKTBv9EcdmNWmzf5p/ADQ/CrdcY7dMAYayRerlgG4YXSoV4mfTkQuuJm+oxc
-         /WX1OVvzrwTWRajETf54oP9+yJQVNxtIe/+L2iISG8uebwj/qKLpVUKxqGKJgANk/M7d
-         lkxRnLdBbWnD2KC3dmELagNkyu+w9MYS9tVvBPHdxDL/nMMiiIZdM1tTS7ZM98fiPzOf
-         LHmcG7dSyT9wmaccpoqw4KVNogr7uc3tALm3BDTFMz2Fr4P7OJ/JtD8DiLt1PVujIGjU
-         PC6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=t19IEKNExiBzCqkfFY2/SKyzCSnixPvD2l/X+sj5C0c=;
-        b=OB2R3eDKOHslFdU1YGDFlywskw5dMOM2tqRKcsVZt1I8G7yT8KjmqlzRMSJH/pS1Rf
-         x6PJbdIvi0oHUxp0HRIODc1x1U+JAvc8eYb1pkDs6niKHI2FDJ+jZ/3IVKDbGdiNYHEx
-         bBFFTOtTdg35IzbSWcwiLHOWLerMi00vm3/B1BPxZtyvjoJ3BAs4xmnuQm+FzGltYLhm
-         7dBS1533OhefQPJCoeQeGggE0nCUeAI+q331qxQ7VvchfmlrQOF4+EUwu60ZNBZLflbn
-         qvHJZRS35VlDKiVEeI8kHgolfl04ao2tzao8q4voZJ6QIkq1JXFJ729mjNgCYO9F4WG/
-         CN5g==
-X-Gm-Message-State: AGRZ1gIVNNsbxHoHLreQf8mEQ2u9WT83P0foE0qpZ6awP6IlN683tqga
-        5ASEM85aebPEaOsfX3Z8e9gxJ3vkeh1rIviGS46yXQ==
-X-Google-Smtp-Source: AJdET5f8pvTEOmszImfeD0c5FRjGhBfgjK1sbGcptVLExJMUTYnF1CJBKqCCPL2o3xF/QWIGDp6Rwrg8AGlzG2VI1cc=
-X-Received: by 2002:a62:1095:: with SMTP id 21-v6mr4654386pfq.227.1540576454849;
- Fri, 26 Oct 2018 10:54:14 -0700 (PDT)
+        Fri, 26 Oct 2018 22:34:25 -0400
+Received: from mga03.intel.com ([134.134.136.65]:41213 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726815AbeJ0CeZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 22:34:25 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Oct 2018 10:52:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,428,1534834800"; 
+   d="scan'208";a="84744602"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by orsmga008.jf.intel.com with SMTP; 26 Oct 2018 10:52:22 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Fri, 26 Oct 2018 20:52:21 +0300
+Date:   Fri, 26 Oct 2018 20:52:21 +0300
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Lyude Paul <lyude@redhat.com>
+Cc:     intel-gfx@lists.freedesktop.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] drm/i915: Add short HPD IRQ storm detection for
+ non-MST systems
+Message-ID: <20181026175221.GG9144@intel.com>
+References: <20181025222657.9241-1-lyude@redhat.com>
+ <20181025222657.9241-3-lyude@redhat.com>
 MIME-Version: 1.0
-References: <20180930205448.26205-1-natechancellor@gmail.com>
- <10b12992-3570-4646-374b-82cbd7276839@acm.org> <CAKwvOd=wgxB69dMxzMeH2edCn=TdQGPGkNVW1e=QHPTJtO9ZNw@mail.gmail.com>
- <1538503063.193396.6.camel@acm.org> <CAKwvOdmsNEexQL9R8rgcRcXTZButYM6YWwG8bhVWCoJ8bOqCrA@mail.gmail.com>
- <1538521591.193396.8.camel@acm.org> <20181025213144.GB24709@flashbox>
- <CAKwvOdn=TvoGdFvgxX6TyXBXnhVLttriRrZEnzS6DjcjL64DPA@mail.gmail.com> <20181025225548.GA10326@flashbox>
-In-Reply-To: <20181025225548.GA10326@flashbox>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Fri, 26 Oct 2018 10:54:02 -0700
-Message-ID: <CAKwvOdnwmf47_m_0K5OCLmXbrkLNnekpNOPCCMeJqkuqKUbQ-A@mail.gmail.com>
-Subject: Re: [PATCH] libosd: Remove ignored __weak attribute
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     bvanassche@acm.org, ooo@electrozaur.com,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        hch@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181025222657.9241-3-lyude@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 3:55 PM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> On Thu, Oct 25, 2018 at 03:02:13PM -0700, Nick Desaulniers wrote:
-> > On Thu, Oct 25, 2018 at 2:31 PM Nathan Chancellor
-> > <natechancellor@gmail.com> wrote:
-> > >
-> > > On Tue, Oct 02, 2018 at 04:06:31PM -0700, Bart Van Assche wrote:
-> > > > On Tue, 2018-10-02 at 15:33 -0700, Nick Desaulniers wrote:
-> > > > > On Tue, Oct 2, 2018 at 10:57 AM Bart Van Assche <bvanassche@acm.org> wrote:
-> > > > > > Explicitly initialized global and static variables end up in the .data
-> > > > > > section and need space in that section.
-> > > > >
-> > > > > Unless the initial value is zero.
-> > > > > https://godbolt.org/z/curRoO
-> > > > >
-> > > > > So you don't wind up with an increase in binary size simply by having
-> > > > > global variables initialized to zero, right?  Instead the kernel knows
-> > > > > to create a zero'd out mapping for bss.  You don't need a run of zeros
-> > > > > in the binary.
-> > > > >
-> > > > > So I disagree when you said earlier "zero initializers should be left
-> > > > > out to minimize the size of object files." I assert they don't affect
-> > > > > the size of the binary.
-> > > > >
-> > > > > If you had many global variables all initialized to zero, why would
-> > > > > you encode that many zeros in a binary, when you can just set a size
-> > > > > on the bss section and have the kernel create the appropriate sized
-> > > > > and zero'd mapping?
-> > > > >
-> > > > > > That is not the case if the
-> > > > > > initializer is left out and these variables end up in the .bss section.
-> > > > >
-> > > > > From my above link, gcc will put globals without initializers into "common."
-> > > >
-> > > > No matter what particular compiler versions do with explicit initialization
-> > > > to zero, the preferred kernel coding style is to leave out such explicit
-> > > > initialization.
-> > > >
-> > > > Bart.
-> > >
-> > > Hi Bart,
-> > >
-> > > I'm sorry if I didn't follow the conclusion of this conversation properly
-> > > but this is the below diff you were initially looking for, correct?
-> > >
-> > > If so, Boaz and Nick, do you have any objections if this is v2? I'd like
-> > > to get this patch accepted so the warning can be fixed for everyone.
-> >
-> > Hi Nathan,
-> > Thanks for following up on this.  Bart's note about the one definition
-> > rule is important.  If you define the variable static in two different
-> > translation units, you've suddenly created two different copies
-> > accessible only to their respective translation units.  So it should
-> > be declared extern in one source file (but not defined/initialized),
-> > and defined (non-static) in another.  See below for example.
-> >
->
-> Hi Nick,
->
-> I just want to make sure I understand what is going on here.
->
-> Doesn't the first part already happen because osd_root_object is
-> declared static in osd_types.h? I tried this little simple example of
-> adding a 'static const' variable to a header file and using it in two
-> separate files/functions. When compiled together, they point to two
-> different locations in memory.
->
-> ==============================================
->
-> $ clang -std=gnu89 main.c test1.c test2.c
-> $ ./a.out
-> test in test1(): 0x55b4df3a001c
-> test in test2(): 0x55b4df3a003c
->
-> ==============================================
->
-> main.c:
->
-> #include "test.h"
->
-> int main(void) {
->         test1();
->         test2();
-> }
->
-> ==============================================
->
-> test1.c:
->
-> #include <stdio.h>
-> #include "test.h"
->
-> void test1() {
->     printf("test in test1(): %p\n", &test);
-> }
->
-> ==============================================
->
-> test2.c:
->
-> #include <stdio.h>
-> #include "test.h"
->
-> void test2() {
->     printf("test in test2(): %p\n", &test);
-> }
->
-> ==============================================
->
-> test.h:
->
-> struct test_struct {
->     int a;
->     int b;
-> };
->
-> static const struct test_struct test = {0, 0};
-> void test1();
-> void test2();
->
-> ==============================================
->
-> If that is the case, could your suggested change result in a functional
-> change given that the code would now refer to the same osd_root_object?
+On Thu, Oct 25, 2018 at 06:26:57PM -0400, Lyude Paul wrote:
+> Unfortunately, it seems that the HPD IRQ storm problem from the early
+> days of Intel GPUs was never entirely solved, only mostly. Within the
+> last couple of days, I got a bug report from one of our customers who
+> had been having issues with their machine suddenly booting up very
+> slowly after having updated. The amount of time it took to boot went
+> from around 30 seconds, to over 6 minutes consistently.
+> 
+> After some investigation, I discovered that i915 was reporting massive
+> amounts of short HPD IRQ spam on this system from the DisplayPort port,
+> despite there not being anything actually connected. The symptoms would
+> start with one "long" HPD IRQ being detected at boot:
+> 
+> [    1.891398] [drm:intel_get_hpd_pins [i915]] hotplug event received, stat 0x00440000, dig 0x00440000, pins 0x000000a0
+> [    1.891436] [drm:intel_hpd_irq_handler [i915]] digital hpd port B - long
+> [    1.891472] [drm:intel_hpd_irq_handler [i915]] Received HPD interrupt on PIN 5 - cnt: 0
+> [    1.891508] [drm:intel_hpd_irq_handler [i915]] digital hpd port D - long
+> [    1.891544] [drm:intel_hpd_irq_handler [i915]] Received HPD interrupt on PIN 7 - cnt: 0
+> [    1.891592] [drm:intel_dp_hpd_pulse [i915]] got hpd irq on port B - long
+> [    1.891628] [drm:intel_dp_hpd_pulse [i915]] got hpd irq on port D - long
+> …
+> 
+> followed by constant short IRQs afterwards:
+> 
+> [    1.895091] [drm:intel_encoder_hotplug [i915]] [CONNECTOR:66:DP-1] status updated from unknown to disconnected
+> [    1.895129] [drm:i915_hotplug_work_func [i915]] Connector DP-3 (pin 7) received hotplug event.
+> [    1.895165] [drm:intel_dp_detect [i915]] [CONNECTOR:72:DP-3]
+> [    1.895275] [drm:intel_get_hpd_pins [i915]] hotplug event received, stat 0x00200000, dig 0x00200000, pins 0x00000080
+> [    1.895312] [drm:intel_hpd_irq_handler [i915]] digital hpd port D - short
+> [    1.895762] [drm:intel_get_hpd_pins [i915]] hotplug event received, stat 0x00200000, dig 0x00200000, pins 0x00000080
+> [    1.895799] [drm:intel_hpd_irq_handler [i915]] digital hpd port D - short
+> [    1.896239] [drm:intel_dp_aux_xfer [i915]] dp_aux_ch timeout status 0x71450085
+> [    1.896293] [drm:intel_get_hpd_pins [i915]] hotplug event received, stat 0x00200000, dig 0x00200000, pins 0x00000080
+> [    1.896330] [drm:intel_hpd_irq_handler [i915]] digital hpd port D - short
+> [    1.896781] [drm:intel_get_hpd_pins [i915]] hotplug event received, stat 0x00200000, dig 0x00200000, pins 0x00000080
+> [    1.896817] [drm:intel_hpd_irq_handler [i915]] digital hpd port D - short
+> [    1.897275] [drm:intel_get_hpd_pins [i915]] hotplug event received, stat 0x00200000, dig 0x00200000, pins 0x00000080
+> 
+> The customer's system in question has a GM45 GPU, which is apparently
+> well known for hotplugging storms.
+> 
+> So, workaround this impressively broken hardware by detecting short IRQ
+> storms using a separate threshold and count, one that is much higher
+> then the threshold for long IRQs. We default to a threshold of 50 short
+> pulses within the timespan of a second, which should amount to about
+> 100ms of constant pulsing. This should be a good middle ground between
+> avoiding detecting false IRQ storms, while still catching short IRQ
+> storms quickly enough to minimize the amount of time we'll stutter every
+> time hotplugging gets re-enabled and immediately disabled by another
+> short IRQ storm.
+> 
+> And just to be extra safe: we don't enable this by default on systems
+> with MST support. There's too high of a chance of MST support triggering
+> storm detection, and systems that are new enough to support MST are a
+> lot less likely to have issues with IRQ storms anyway.
+> 
+> As a note: this patch was tested using a ThinkPad T450s and a Chamelium
+> to simulate the short IRQ storms.
+> 
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> ---
+>  drivers/gpu/drm/i915/i915_debugfs.c  | 89 +++++++++++++++++++++++-----
+>  drivers/gpu/drm/i915/i915_drv.h      | 15 +++--
+>  drivers/gpu/drm/i915/i915_irq.c      | 14 ++++-
+>  drivers/gpu/drm/i915/intel_hotplug.c | 84 ++++++++++++++++----------
+>  4 files changed, 150 insertions(+), 52 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/i915_debugfs.c b/drivers/gpu/drm/i915/i915_debugfs.c
+> index b4744a68cd88..84e89fbd55fb 100644
+> --- a/drivers/gpu/drm/i915/i915_debugfs.c
+> +++ b/drivers/gpu/drm/i915/i915_debugfs.c
+> @@ -4566,21 +4566,24 @@ static const struct file_operations i915_forcewake_fops = {
+>  	.release = i915_forcewake_release,
+>  };
+>  
+> -static int i915_hpd_storm_ctl_show(struct seq_file *m, void *data)
+> +static int i915_hpd_storm_show(struct seq_file *m, bool long_hpd)
+>  {
+>  	struct drm_i915_private *dev_priv = m->private;
+>  	struct i915_hotplug *hotplug = &dev_priv->hotplug;
+> +	const unsigned int threshold = long_hpd ?
+> +		hotplug->long_hpd_storm_threshold :
+> +		hotplug->short_hpd_storm_threshold;
+>  
+> -	seq_printf(m, "Threshold: %d\n", hotplug->hpd_storm_threshold);
+> +	seq_printf(m, "Threshold: %d\n", threshold);
+>  	seq_printf(m, "Detected: %s\n",
+>  		   yesno(delayed_work_pending(&hotplug->reenable_work)));
+>  
+>  	return 0;
+>  }
+>  
+> -static ssize_t i915_hpd_storm_ctl_write(struct file *file,
+> -					const char __user *ubuf, size_t len,
+> -					loff_t *offp)
+> +static ssize_t i915_hpd_storm_write(struct file *file,
+> +				    const char __user *ubuf, size_t len,
+> +				    loff_t *offp, bool long_hpd)
+>  {
+>  	struct seq_file *m = file->private_data;
+>  	struct drm_i915_private *dev_priv = m->private;
+> @@ -4589,6 +4592,7 @@ static ssize_t i915_hpd_storm_ctl_write(struct file *file,
+>  	int i;
+>  	char *newline;
+>  	char tmp[16];
+> +	const char *name = long_hpd ? "long" : "short";
+>  
+>  	if (len >= sizeof(tmp))
+>  		return -EINVAL;
+> @@ -4603,22 +4607,36 @@ static ssize_t i915_hpd_storm_ctl_write(struct file *file,
+>  	if (newline)
+>  		*newline = '\0';
+>  
+> -	if (strcmp(tmp, "reset") == 0)
+> -		new_threshold = HPD_STORM_DEFAULT_THRESHOLD;
+> -	else if (kstrtouint(tmp, 10, &new_threshold) != 0)
+> +	if (strcmp(tmp, "reset") == 0) {
+> +		if (long_hpd)
+> +			new_threshold = HPD_STORM_DEFAULT_THRESHOLD_LONG;
+> +		else if (!HAS_DP_MST(dev_priv))
+> +			new_threshold = HPD_STORM_DEFAULT_THRESHOLD_SHORT;
+> +		else
+> +			new_threshold = 0;
+> +	} else if (kstrtouint(tmp, 10, &new_threshold) != 0) {
+>  		return -EINVAL;
+> +	}
+>  
+>  	if (new_threshold > 0)
+> -		DRM_DEBUG_KMS("Setting HPD storm detection threshold to %d\n",
+> -			      new_threshold);
+> +		DRM_DEBUG_KMS("Setting %s HPD storm detection threshold to %d\n",
+> +			      name, new_threshold);
+>  	else
+> -		DRM_DEBUG_KMS("Disabling HPD storm detection\n");
+> +		DRM_DEBUG_KMS("Disabling %s HPD storm detection\n", name);
+>  
+>  	spin_lock_irq(&dev_priv->irq_lock);
+> -	hotplug->hpd_storm_threshold = new_threshold;
+> +	if (long_hpd)
+> +		hotplug->long_hpd_storm_threshold = new_threshold;
+> +	else
+> +		hotplug->short_hpd_storm_threshold = new_threshold;
+> +
+>  	/* Reset the HPD storm stats so we don't accidentally trigger a storm */
+> -	for_each_hpd_pin(i)
+> -		hotplug->stats[i].count = 0;
+> +	for_each_hpd_pin(i) {
+> +		if (long_hpd)
+> +			hotplug->stats[i].long_irq.count = 0;
+> +		else
+> +			hotplug->stats[i].short_irq.count = 0;
+> +	}
+>  	spin_unlock_irq(&dev_priv->irq_lock);
+>  
+>  	/* Re-enable hpd immediately if we were in an irq storm */
+> @@ -4627,6 +4645,18 @@ static ssize_t i915_hpd_storm_ctl_write(struct file *file,
+>  	return len;
+>  }
+>  
+> +static ssize_t
+> +i915_hpd_storm_ctl_write(struct file *file, const char __user *ubuf,
+> +			 size_t len, loff_t *offp)
+> +{
+> +	return i915_hpd_storm_write(file, ubuf, len, offp, true);
+> +}
+> +
+> +static int i915_hpd_storm_ctl_show(struct seq_file *m, void *data)
+> +{
+> +	return i915_hpd_storm_show(m, true);
+> +}
+> +
+>  static int i915_hpd_storm_ctl_open(struct inode *inode, struct file *file)
+>  {
+>  	return single_open(file, i915_hpd_storm_ctl_show, inode->i_private);
+> @@ -4638,7 +4668,35 @@ static const struct file_operations i915_hpd_storm_ctl_fops = {
+>  	.read = seq_read,
+>  	.llseek = seq_lseek,
+>  	.release = single_release,
+> -	.write = i915_hpd_storm_ctl_write
+> +	.write = i915_hpd_storm_ctl_write,
+> +};
+> +
+> +static ssize_t
+> +i915_short_hpd_storm_ctl_write(struct file *file, const char __user *ubuf,
+> +			       size_t len, loff_t *offp)
+> +{
+> +	return i915_hpd_storm_write(file, ubuf, len, offp, false);
+> +}
+> +
+> +static int i915_short_hpd_storm_ctl_show(struct seq_file *m, void *data)
+> +{
+> +	return i915_hpd_storm_show(m, false);
+> +}
+> +
+> +static int
+> +i915_short_hpd_storm_ctl_open(struct inode *inode, struct file *file)
+> +{
+> +	return single_open(file, i915_short_hpd_storm_ctl_show,
+> +			   inode->i_private);
+> +}
+> +
+> +static const struct file_operations i915_short_hpd_storm_ctl_fops = {
+> +	.owner = THIS_MODULE,
+> +	.open = i915_short_hpd_storm_ctl_open,
+> +	.read = seq_read,
+> +	.llseek = seq_lseek,
+> +	.release = single_release,
+> +	.write = i915_short_hpd_storm_ctl_write,
+>  };
+>  
+>  static int i915_drrs_ctl_set(void *data, u64 val)
+> @@ -4818,6 +4876,7 @@ static const struct i915_debugfs_files {
+>  	{"i915_guc_log_level", &i915_guc_log_level_fops},
+>  	{"i915_guc_log_relay", &i915_guc_log_relay_fops},
+>  	{"i915_hpd_storm_ctl", &i915_hpd_storm_ctl_fops},
+> +	{"i915_short_hpd_storm_ctl", &i915_short_hpd_storm_ctl_fops},
+>  	{"i915_ipc_status", &i915_ipc_status_fops},
+>  	{"i915_drrs_ctl", &i915_drrs_ctl_fops},
+>  	{"i915_edp_psr_debug", &i915_edp_psr_debug_fops}
+> diff --git a/drivers/gpu/drm/i915/i915_drv.h b/drivers/gpu/drm/i915/i915_drv.h
+> index 808204a7ca7c..ef38baf50299 100644
+> --- a/drivers/gpu/drm/i915/i915_drv.h
+> +++ b/drivers/gpu/drm/i915/i915_drv.h
+> @@ -282,14 +282,20 @@ enum hpd_pin {
+>  #define for_each_hpd_pin(__pin) \
+>  	for ((__pin) = (HPD_NONE + 1); (__pin) < HPD_NUM_PINS; (__pin)++)
+>  
+> -#define HPD_STORM_DEFAULT_THRESHOLD 5
+> +#define HPD_STORM_DEFAULT_THRESHOLD_LONG	5
+> +#define HPD_STORM_DEFAULT_THRESHOLD_SHORT	50
 
-It's hard to say without knowing the original intent of the code.
-From the variable's identifier and fact that it's global, I *assume*
-that we want only 1 struct osd_obj_id which is the root, hence the
-identifier `osd_root_object`.  It has 4 references in the entire
-kernel; it doesn't make sense to my why those references would want to
-be referring to two different instances of `osd_root_object`.  Maybe
-the maintainers can clarify if 2 instances is the intent?
+Hmm. Maybe we could stick to the one counter and make each
+long hpd contribute 10 and each short hpd contribute 1
+(or whatever seems appropriate)?
 
-Further complicated is the use of the __weak attribute AND the
-compiler flag -fno-common (which the kernel sets in the top level
-Makefile).  Also, it seems that ODR is a C++ concept; it's not clear
-to me if there's semantic differences with C or not (I don't think so
-in this case, but I've learned not to bet on subtle semantic
-differences between the languages not existing).
-
-__attribute__((weak)) AND static on a global variable declared in a
-header raises many red flags to me.  Was weak added to work around an
-ODR link error?
-
-If creating one instance of this variable is a functional change, I
-can't help but suspect the original code was wrong.  But maybe Bart,
-Boaz, or Christoph can clarify or have more thoughts on this?  Looks
-like Boaz added this header in commit de258bf5e638 ("[SCSI] libosd:
-OSDv1 Headers").
-
-> This isn't necessarily a problem, especially since it sounds like not
-> referring to the same object could be a bug, but I want to make sure
-> that's what is intended by these changes, which I'll be happy to spin up
-> in a v2.
->
-> If I am thinking about this incorrectly or my example is wrong in any
-> way, please let me know. I'm trying to soak up all of this knowledge
-> so I can be a better contributor.
->
-> Thanks for the reply and explanation!
-> Nathan
->
-> > >
-> > > Thanks,
-> > > Nathan
-> > >
-> > > ================================================================================
-> > >
-> > > diff --git a/drivers/scsi/osd/osd_initiator.c b/drivers/scsi/osd/osd_initiator.c
-> > > index e19fa883376f..4250f739beb3 100644
-> > > --- a/drivers/scsi/osd/osd_initiator.c
-> > > +++ b/drivers/scsi/osd/osd_initiator.c
-> > > @@ -58,6 +58,8 @@
-> > >
-> > >  enum { OSD_REQ_RETRIES = 1 };
-> > >
-> > > +static const struct osd_obj_id osd_root_object;
-> >
-> > extern const struct osd_obj_id osd_root_object;
-> >
-> > > +
-> > >  MODULE_AUTHOR("Boaz Harrosh <ooo@electrozaur.com>");
-> > >  MODULE_DESCRIPTION("open-osd initiator library libosd.ko");
-> > >  MODULE_LICENSE("GPL");
-> > > diff --git a/drivers/scsi/osd/osd_uld.c b/drivers/scsi/osd/osd_uld.c
-> > > index eaf36ccf58db..770c758baaa9 100644
-> > > --- a/drivers/scsi/osd/osd_uld.c
-> > > +++ b/drivers/scsi/osd/osd_uld.c
-> > > @@ -73,6 +73,7 @@
-> > >
-> > >  static const char osd_name[] = "osd";
-> > >  static const char *osd_version_string = "open-osd 0.2.1";
-> > > +static const struct osd_obj_id osd_root_object;
-> >
-> > const struct osd_obj_id osd_root_object;
-> >
-> > >
-> > >  MODULE_AUTHOR("Boaz Harrosh <ooo@electrozaur.com>");
-> > >  MODULE_DESCRIPTION("open-osd Upper-Layer-Driver osd.ko");
-> > > diff --git a/include/scsi/osd_types.h b/include/scsi/osd_types.h
-> > > index 48e8a165e136..eb31357ec8b3 100644
-> > > --- a/include/scsi/osd_types.h
-> > > +++ b/include/scsi/osd_types.h
-> > > @@ -28,8 +28,6 @@ struct osd_obj_id {
-> > >         osd_id id;
-> > >  };
-> > >
-> > > -static const struct __weak osd_obj_id osd_root_object = {0, 0};
-> > > -
-> >
-> > LGTM
-> >
-> > >  struct osd_attr {
-> > >         u32 attr_page;
-> > >         u32 attr_id;
-> >
-> > That way the linker knows there's only one instance of this struct in
-> > memory, and that the two different translation units are referring to
-> > the same instance.  The other maintainers may have a preference which
-> > translation you define osd_root_object in (I arbitrarily chose
-> > drivers/scsi/osd/osd_uld.c), but if they don't have additional
-> > feedback after some amount of time, I'd assume they're ok with the
-> > above suggestion.  What do you think?
-> >
-> > --
-> > Thanks,
-> > ~Nick Desaulniers
-
-
+> +
+> +struct intel_hpd_irq_stats {
+> +	unsigned long last_jiffies;
+> +	int count;
+> +};
+>  
+>  struct i915_hotplug {
+>  	struct work_struct hotplug_work;
+>  
+>  	struct {
+> -		unsigned long last_jiffies;
+> -		int count;
+> +		struct intel_hpd_irq_stats long_irq;
+> +		struct intel_hpd_irq_stats short_irq;
+>  		enum {
+>  			HPD_ENABLED = 0,
+>  			HPD_DISABLED = 1,
+> @@ -306,7 +312,8 @@ struct i915_hotplug {
+>  	struct work_struct poll_init_work;
+>  	bool poll_enabled;
+>  
+> -	unsigned int hpd_storm_threshold;
+> +	unsigned int long_hpd_storm_threshold;
+> +	unsigned int short_hpd_storm_threshold;
+>  
+>  	/*
+>  	 * if we get a HPD irq from DP and a HPD irq from non-DP
+> diff --git a/drivers/gpu/drm/i915/i915_irq.c b/drivers/gpu/drm/i915/i915_irq.c
+> index 10f28a2ee2e6..28a937f3e8e0 100644
+> --- a/drivers/gpu/drm/i915/i915_irq.c
+> +++ b/drivers/gpu/drm/i915/i915_irq.c
+> @@ -4842,7 +4842,19 @@ void intel_irq_init(struct drm_i915_private *dev_priv)
+>  	if (IS_VALLEYVIEW(dev_priv) || IS_CHERRYVIEW(dev_priv))
+>  		dev_priv->display_irqs_enabled = false;
+>  
+> -	dev_priv->hotplug.hpd_storm_threshold = HPD_STORM_DEFAULT_THRESHOLD;
+> +	dev_priv->hotplug.long_hpd_storm_threshold =
+> +		HPD_STORM_DEFAULT_THRESHOLD_LONG;
+> +
+> +	/* If we have MST support, we want to avoid doing short HPD IRQ storm
+> +	 * detection, as short HPD storms will occur as a natural part of
+> +	 * sideband messaging with MST.
+> +	 * On older platforms however, IRQ storms can occur with both long and
+> +	 * short pulses, as seen on some G4x systems.
+> +	 */
+> +	if (!HAS_DP_MST(dev_priv)) {
+> +		dev_priv->hotplug.short_hpd_storm_threshold =
+> +			HPD_STORM_DEFAULT_THRESHOLD_SHORT;
+> +	}
+>  
+>  	dev->driver->get_vblank_timestamp = drm_calc_vbltimestamp_from_scanoutpos;
+>  	dev->driver->get_scanout_position = i915_get_crtc_scanoutpos;
+> diff --git a/drivers/gpu/drm/i915/intel_hotplug.c b/drivers/gpu/drm/i915/intel_hotplug.c
+> index 7d21aac10d16..74798c920909 100644
+> --- a/drivers/gpu/drm/i915/intel_hotplug.c
+> +++ b/drivers/gpu/drm/i915/intel_hotplug.c
+> @@ -118,41 +118,64 @@ enum hpd_pin intel_hpd_pin_default(struct drm_i915_private *dev_priv,
+>   * @dev_priv: private driver data pointer
+>   * @pin: the pin to gather stats on
+>   *
+> - * Gather stats about HPD irqs from the specified @pin, and detect irq
+> + * Gather stats about HPD IRQs from the specified @pin, and detect IRQ
+>   * storms. Only the pin specific stats and state are changed, the caller is
+>   * responsible for further action.
+>   *
+> - * The number of irqs that are allowed within @HPD_STORM_DETECT_PERIOD is
+> - * stored in @dev_priv->hotplug.hpd_storm_threshold which defaults to
+> - * @HPD_STORM_DEFAULT_THRESHOLD. If this threshold is exceeded, it's
+> - * considered an irq storm and the irq state is set to @HPD_MARK_DISABLED.
+> + * IRQ storm detection can happen for both long and short IRQs. The number of
+> + * short or long IRQs that are allowed within @HPD_STORM_DETECT_PERIOD are
+> + * stored in @dev_priv->hotplug.long_hpd_storm_threshold and
+> + * @dev_priv->hotplug.short_hpd_storm_threshold respectively. For long IRQs,
+> + * the threshold defaults to @HPD_STORM_DEFAULT_THRESHOLD_LONG on all systems.
+> + * For short IRQs however, the default threshold varies. On systems that are
+> + * too old to support MST, the threshold will default to
+> + * @HPD_STORM_DEFAULT_THRESHOLD_SHORT. Systems which do support MST will not
+> + * have short IRQ storm detection enabled by default, as doing so would likely
+> + * interfere with the short IRQ bursts caused by sideband transactions.
+> + * This is fine, as systems new enough to support MST are unlikely to rely on
+> + * HPD storm protection as much as older systems may.
+>   *
+> - * The HPD threshold can be controlled through i915_hpd_storm_ctl in debugfs,
+> - * and should only be adjusted for automated hotplug testing.
+> + * The HPD threshold can be controlled through i915_hpd_storm_ctl in debugfs
+> + * for long IRQs, and i915_short_hpd_storm_ctl for short IRQs. This should
+> + * only ever be adjusted for automated hotplug testing.
+>   *
+>   * Return true if an irq storm was detected on @pin.
+>   */
+>  static bool intel_hpd_irq_storm_detect(struct drm_i915_private *dev_priv,
+> -				       enum hpd_pin pin)
+> +				       enum hpd_pin pin, bool long_hpd)
+>  {
+> -	unsigned long start = dev_priv->hotplug.stats[pin].last_jiffies;
+> -	unsigned long end = start + msecs_to_jiffies(HPD_STORM_DETECT_PERIOD);
+> -	const int threshold = dev_priv->hotplug.hpd_storm_threshold;
+> +	struct intel_hpd_irq_stats *stats;
+> +	const char *name;
+> +	unsigned long start, end;
+> +	int threshold;
+>  	bool storm = false;
+>  
+> +	if (long_hpd) {
+> +		stats = &dev_priv->hotplug.stats[pin].long_irq;
+> +		threshold = dev_priv->hotplug.long_hpd_storm_threshold;
+> +		name = "long";
+> +	} else {
+> +		stats = &dev_priv->hotplug.stats[pin].short_irq;
+> +		threshold = dev_priv->hotplug.short_hpd_storm_threshold;
+> +		name = "short";
+> +	}
+> +	start = stats->last_jiffies;
+> +	end = start + msecs_to_jiffies(HPD_STORM_DETECT_PERIOD);
+> +
+>  	if (!time_in_range(jiffies, start, end)) {
+> -		dev_priv->hotplug.stats[pin].last_jiffies = jiffies;
+> -		dev_priv->hotplug.stats[pin].count = 0;
+> -		DRM_DEBUG_KMS("Received HPD interrupt on PIN %d - cnt: 0\n", pin);
+> -	} else if (dev_priv->hotplug.stats[pin].count > threshold &&
+> -		   threshold) {
+> +		stats->last_jiffies = jiffies;
+> +		stats->count = 0;
+> +		DRM_DEBUG_KMS("Received %s HPD interrupt on PIN %d - cnt: 0\n",
+> +			      name, pin);
+> +	} else if (stats->count > threshold && threshold) {
+>  		dev_priv->hotplug.stats[pin].state = HPD_MARK_DISABLED;
+> -		DRM_DEBUG_KMS("HPD interrupt storm detected on PIN %d\n", pin);
+> +		DRM_DEBUG_KMS("Detected %s HPD interrupt storm on PIN %d\n",
+> +			      name, pin);
+>  		storm = true;
+>  	} else {
+> -		dev_priv->hotplug.stats[pin].count++;
+> -		DRM_DEBUG_KMS("Received HPD interrupt on PIN %d - cnt: %d\n", pin,
+> -			      dev_priv->hotplug.stats[pin].count);
+> +		stats->count++;
+> +		DRM_DEBUG_KMS("Received %s HPD interrupt on PIN %d - cnt: %d\n",
+> +			      name, pin, stats->count);
+>  	}
+>  
+>  	return storm;
+> @@ -404,28 +427,24 @@ void intel_hpd_irq_handler(struct drm_i915_private *dev_priv,
+>  	for_each_intel_encoder(&dev_priv->drm, encoder) {
+>  		enum hpd_pin pin = encoder->hpd_pin;
+>  		bool has_hpd_pulse = intel_encoder_has_hpd_pulse(encoder);
+> +		bool long_hpd = true;
+>  
+>  		if (!(BIT(pin) & pin_mask))
+>  			continue;
+>  
+>  		if (has_hpd_pulse) {
+> -			bool long_hpd = long_mask & BIT(pin);
+>  			enum port port = encoder->port;
+>  
+> +			long_hpd = !!(long_mask & BIT(pin));
+> +
+>  			DRM_DEBUG_DRIVER("digital hpd port %c - %s\n", port_name(port),
+>  					 long_hpd ? "long" : "short");
+> -			/*
+> -			 * For long HPD pulses we want to have the digital queue happen,
+> -			 * but we still want HPD storm detection to function.
+> -			 */
+>  			queue_dig = true;
+> -			if (long_hpd) {
+> +			if (long_hpd)
+>  				dev_priv->hotplug.long_port_mask |= (1 << port);
+> -			} else {
+> -				/* for short HPD just trigger the digital queue */
+> +			else
+>  				dev_priv->hotplug.short_port_mask |= (1 << port);
+> -				continue;
+> -			}
+> +
+>  		}
+>  
+>  		if (dev_priv->hotplug.stats[pin].state == HPD_DISABLED) {
+> @@ -448,7 +467,7 @@ void intel_hpd_irq_handler(struct drm_i915_private *dev_priv,
+>  			queue_hp = true;
+>  		}
+>  
+> -		if (intel_hpd_irq_storm_detect(dev_priv, pin)) {
+> +		if (intel_hpd_irq_storm_detect(dev_priv, pin, long_hpd)) {
+>  			dev_priv->hotplug.event_bits &= ~BIT(pin);
+>  			storm_detected = true;
+>  		}
+> @@ -489,7 +508,8 @@ void intel_hpd_init(struct drm_i915_private *dev_priv)
+>  	int i;
+>  
+>  	for_each_hpd_pin(i) {
+> -		dev_priv->hotplug.stats[i].count = 0;
+> +		dev_priv->hotplug.stats[i].long_irq.count = 0;
+> +		dev_priv->hotplug.stats[i].short_irq.count = 0;
+>  		dev_priv->hotplug.stats[i].state = HPD_ENABLED;
+>  	}
+>  
+> -- 
+> 2.17.2
 
 -- 
-Thanks,
-~Nick Desaulniers
+Ville Syrjälä
+Intel
