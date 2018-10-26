@@ -2,154 +2,97 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28EADECDE46
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 17:46:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26FCBECDE46
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 17:46:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D16712086C
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 17:46:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E54EA2084D
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 17:46:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sOxvdFqg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D16712086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pHizfILV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E54EA2084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727706AbeJ0CYZ (ORCPT
+        id S1727751AbeJ0CYl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 22:24:25 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:34337 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726458AbeJ0CYY (ORCPT
+        Fri, 26 Oct 2018 22:24:41 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:45448 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726458AbeJ0CYl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 22:24:24 -0400
-Received: by mail-qk1-f195.google.com with SMTP id a132so1187223qkg.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 10:46:29 -0700 (PDT)
+        Fri, 26 Oct 2018 22:24:41 -0400
+Received: by mail-ed1-f65.google.com with SMTP id t10-v6so1995107eds.12;
+        Fri, 26 Oct 2018 10:46:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=+qQIQ9Lma18WDkP1IDbcit9GHSv4XLjifXKMP8+lZuE=;
-        b=sOxvdFqgNjBwZCy0bad9nuOuoG4WWH7ATJJWkzdLDQNtEEPQTUk/zwOrN3yqTui3Ta
-         ErVb03O3+Gni3IzjTLpOwJS3m2YnPczUfksSPv3SnjiqOA95lI2HWsJQRzxLq6klxkiK
-         47Iz2e28Ky8h8gQpoIPKyM6+Em4X3bI/dLg+LBrsfBfO+Nmgdtk4G5sUjPHhupyvU5zl
-         KiBW6kfwwz2jjstbkO+OzJEtsMveac5QNU5PpF3xSAsHWPALWUdpsP+z9xkbO156nH6p
-         xHiBdVNzQQsWvYEF9veMhyJY1OwmqAYDU7vSMO3rXJEURbUJlXxoEZWNAvvKXiQdvpuL
-         MD8w==
+        h=sender:from:to:cc:subject:references:date:in-reply-to:message-id
+         :user-agent:mime-version;
+        bh=If/IGptPHzILpFx3PL9PXPUun8Jex1Kxx4Z0rpFyb2Y=;
+        b=pHizfILVGF5evrQgQ6GArOnl2BdWTTT0dqXZTnKsiX6s6/NvUyyvgkdv0Cu5nSWtyo
+         x4xGhqp0+j8VyFSZxU64bFHZCSPJEkKkeUiIWp2+YJkKux++wtMfUBAur92I9HdwkOds
+         E5phvYMSzCY/vsBmXE2U6JGZGmWpVqp6ahU4eM1KGY3O05THYpp2WZGnjzLna9/OZESW
+         1oyA+guqbmzqiidql3TBUxJy2kWeqJAP5PY1pp8tsDXZ6WnCJ23vG2oPff/YWKy5LIsS
+         ds+eP4UbhvdxxgINeDf/M6aqqjE+YEM5A3SNjzBvnzKCfEuwjFnIZsjvFYN8tZulfZaK
+         nNdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=+qQIQ9Lma18WDkP1IDbcit9GHSv4XLjifXKMP8+lZuE=;
-        b=T3IAiwjOFMPEwndhdDuo0HRrMQmfymtZ/9LSiWFJ86YHeuXbJsybfx8Fom7YI2/+I0
-         BhBa+6h+w6B3aQ1JZDT6Ly4XngTgEFO6mx65SEOmRIQW6gf1cBENwfgupNq4bgBzy2bH
-         2Cw3hCFTdSANwXsRYMhWpTwhVfufFryrCkjGlO/mzQK/1tU5AwR+ag2lNSHv4zSamRse
-         PjV0ocDpnBRb7ekFAvmVnE4O2Z2Dhx9MjSXttpPRO1LbnzBwL5ruKeGtMS+0sRbnFFC8
-         LD6kVaXfH1iU8vh78JCwrfyCW60gM9PjmkDGjQzmG+3LcclLeP8Ej0qtN+PU+otlWWtC
-         XLpQ==
-X-Gm-Message-State: AGRZ1gJPmTFM7UMFAyTvouw7C6Kw06BGGxCjJKb/E1ArYZ+yV2BdKmV8
-        cdWBfXelFd+NgQPB6aX2Hcw=
-X-Google-Smtp-Source: AJdET5dfDSbOIMjSytHOu4ze0VgUEMPlIhQ/9tnHjScJgeG640wLPJxsIAw7br/Z5Q2pK4dkYT+dmQ==
-X-Received: by 2002:a37:8282:: with SMTP id e124-v6mr3962306qkd.76.1540575988622;
-        Fri, 26 Oct 2018 10:46:28 -0700 (PDT)
-Received: from llong.remote.csb (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id h49-v6sm9250343qth.32.2018.10.26.10.46.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 10:46:27 -0700 (PDT)
-Subject: Re: [Patch v3 12/13] x86/speculation: Protect non-dumpable processes
- against Spectre v2 attack
-To:     Tim Chen <tim.c.chen@linux.intel.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Tom Lendacky <thomas.lendacky@amd.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org
-References: <cover.1539798901.git.tim.c.chen@linux.intel.com>
- <e36e964567beed0a2769d84c8d4144870e922655.1539798901.git.tim.c.chen@linux.intel.com>
-From:   Waiman Long <longman9394@gmail.com>
-Message-ID: <83fff257-57f3-06db-91ac-7f072bc93b23@gmail.com>
-Date:   Fri, 26 Oct 2018 13:46:26 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
+        h=x-gm-message-state:sender:from:to:cc:subject:references:date
+         :in-reply-to:message-id:user-agent:mime-version;
+        bh=If/IGptPHzILpFx3PL9PXPUun8Jex1Kxx4Z0rpFyb2Y=;
+        b=fLX0WEV928uV7WnRn9ar3icftqGzmCjOuvgJ5MWAIBz0pBSkq/hbw1TxieEr0t+FvY
+         SDng3hcL6O60qlYLw4pgBmPoyz/nAIR0a0UAXDSeXxN8Zgi1KbhWbvUywxIQU33HbW8v
+         Do79X99xpV2/epxu872FzGDbh5KiLIAGM/J6hsBF8tziDTa2y1eFM/JcVpch6lPdAfoQ
+         gQc7Erxqug3/WYBqramI8c1QnPTODFMZPwJoW+tetTyNPKI1k4zlXUluAGiCHqMTqLqX
+         CPEXba3esvOJZDnmVgoJ/z4S+QM16ofDAqZy1cvxjhFQOaoV8qhDX7KGR4VZrY84VZyH
+         dNZw==
+X-Gm-Message-State: AGRZ1gIHCAxlo5cuBuS1uzfOnIVZZ3S76uBRY2KkJmg9gj0DFcxcRHAN
+        MdLnZVYqSV/+QmGZTKzpDzY=
+X-Google-Smtp-Source: AJdET5db2MkgAXyyw4vLPVEAZ4TTxJQod2XwkMYJ8OiohFEG4BBbsQSESMl7sam7riiKnyreubdfhw==
+X-Received: by 2002:a05:6402:168f:: with SMTP id a15mr3763841edv.135.1540576004362;
+        Fri, 26 Oct 2018 10:46:44 -0700 (PDT)
+Received: from dell.be.48ers.dk ([84.198.244.197])
+        by smtp.gmail.com with ESMTPSA id i25-v6sm1221227ejd.19.2018.10.26.10.46.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 26 Oct 2018 10:46:42 -0700 (PDT)
+Received: from peko by dell.be.48ers.dk with local (Exim 4.89)
+        (envelope-from <peter@korsgaard.com>)
+        id 1gG6C2-00074J-1D; Fri, 26 Oct 2018 19:46:42 +0200
+From:   Peter Korsgaard <peter@korsgaard.com>
+To:     Federico Vaga <federico.vaga@cern.ch>
+Cc:     Peter Korsgaard <jacmet@sunsite.dk>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] i2c:ocores: stop transfer on timeout
+References: <20180625161303.7991-1-federico.vaga@cern.ch>
+        <20180625161303.7991-2-federico.vaga@cern.ch>
+        <CACXmVia0vStmBwd4ndFk6UjE9wGsjp7Y75ej0AGq68H8-XkZqw@mail.gmail.com>
+        <1549360.saVjYH78Bt@pcbe13614>
+Date:   Fri, 26 Oct 2018 19:46:41 +0200
+In-Reply-To: <1549360.saVjYH78Bt@pcbe13614> (Federico Vaga's message of "Wed,
+        24 Oct 2018 16:51:04 +0200")
+Message-ID: <87sh0s38ji.fsf@dell.be.48ers.dk>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <e36e964567beed0a2769d84c8d4144870e922655.1539798901.git.tim.c.chen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/17/2018 01:59 PM, Tim Chen wrote:
-> Mark the non-dumpable processes with TIF_STIBP flag so they will
-> use STIBP and IBPB defenses against Spectre v2 attack from
-> processes in user space.
->
-> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
-> ---
->  arch/x86/kernel/cpu/bugs.c | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
->
-> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-> index 1d317f2..cc77b9e 100644
-> --- a/arch/x86/kernel/cpu/bugs.c
-> +++ b/arch/x86/kernel/cpu/bugs.c
-> @@ -14,6 +14,7 @@
->  #include <linux/module.h>
->  #include <linux/nospec.h>
->  #include <linux/prctl.h>
-> +#include <linux/sched/coredump.h>
->  
->  #include <asm/spec-ctrl.h>
->  #include <asm/cmdline.h>
-> @@ -773,6 +774,26 @@ int arch_prctl_spec_ctrl_set(struct task_struct *task, unsigned long which,
->  	}
->  }
->  
-> +void arch_set_dumpable(struct task_struct *tsk, unsigned int value)
-> +{
-> +	bool update;
-> +
-> +	if (!static_branch_unlikely(&spectre_v2_app_lite))
-> +		return;
-> +	if (!static_cpu_has(X86_FEATURE_STIBP))
-> +		return;
-> +	if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_NONE)
-> +		return;
+>>>>> "Federico" == Federico Vaga <federico.vaga@cern.ch> writes:
 
-The third if above seems to be a subset of the first one. Do you need to
-do the check one more time?
+Hi,
 
-Cheers,
-Longman
+ > I had another look at the HDL code and apparently my assumption was wrong, and 
+ > STOP just do stop, and IACK is still necessary.
 
-> +
-> +	if (tsk->mm && value != SUID_DUMP_USER)
-> +		update = !test_and_set_tsk_thread_flag(tsk, TIF_STIBP);
-> +	else
-> +		update = test_and_clear_tsk_thread_flag(tsk, TIF_STIBP);
-> +
-> +	if (tsk == current && update)
-> +		speculation_ctrl_update_current();
-> +}
-> +
->  #ifdef CONFIG_SECCOMP
->  void arch_seccomp_spec_mitigate(struct task_struct *task)
->  {
+ > So, yes, without try is better because we save an extra, useless, IRQ call
 
+Ok, great!
 
+-- 
+Bye, Peter Korsgaard
