@@ -2,85 +2,133 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54401C6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 16:24:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4013C6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 16:29:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12ABF20665
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 16:24:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12ABF20665
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 8456F20868
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 16:29:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bhKUJYHF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8456F20868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727614AbeJ0BCY (ORCPT
+        id S1727595AbeJ0BHc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 21:02:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44234 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727457AbeJ0BCY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 21:02:24 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 08455B015;
-        Fri, 26 Oct 2018 16:24:43 +0000 (UTC)
-Date:   Fri, 26 Oct 2018 18:24:40 +0200
-From:   Petr Tesarik <ptesarik@suse.cz>
-To:     lijiang <lijiang@redhat.com>
-Cc:     Boris Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
-        bhe@redhat.com, x86@kernel.org, kexec@lists.infradead.org,
-        mingo@redhat.com, tglx@linutronix.de, dyoung@redhat.com
-Subject: Re: [PATCH] kdump, vmcoreinfo: Export sme_me_mask value to
- vmcoreinfo
-Message-ID: <20181026182440.20a4b107@ezekiel.suse.cz>
-In-Reply-To: <1263471c-a27d-a698-15f0-b5947f13ea93@redhat.com>
-References: <20181026093630.8520-1-lijiang@redhat.com>
-        <053CC83A-9A95-4C12-9627-AABD1427DA9C@alien8.de>
-        <1263471c-a27d-a698-15f0-b5947f13ea93@redhat.com>
-Organization: SUSE Linux, s.r.o.
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-suse-linux-gnu)
+        Fri, 26 Oct 2018 21:07:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57606 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726195AbeJ0BHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 21:07:32 -0400
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18BB520870;
+        Fri, 26 Oct 2018 16:29:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540571389;
+        bh=8x0AOKbXfnBl4is7vZ/h0omAyDdFWkEPt4F+WGzPt0w=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=bhKUJYHFfM06vd7D3xi7wyhJpa/NT/Ck6vFv5owUXxEyUeZZw+9JQNe8WVXbPh9lG
+         Yfl15JKhDcof69oCdAnB7JV3EP7sK/3hEqw0w2W2AN2hyHiGSypoD/G5uRitLd8ZgG
+         0hs/7vzxCrBH9zuPH7fJbpEafdFvTgRZcBBFIkHY=
+Received: by mail-qt1-f182.google.com with SMTP id z2-v6so1914009qts.1;
+        Fri, 26 Oct 2018 09:29:49 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gJjXfUneD8RYT5fkMJKOO910z0de5rKQmPgPsZQvbZk0u9NlIFM
+        nyVohOyeQt5MxOF/UV9eccx9q1wkIC458bFZjQ==
+X-Google-Smtp-Source: AJdET5cFlWUE625/CSiKz0xw8XHwq5nI7ue8kakmCCixmCf6D4fqorjcL/CumqbCnWqkQFU/fQd2n+yv2C4LF1FXc4I=
+X-Received: by 2002:ac8:5414:: with SMTP id b20-v6mr3932000qtq.144.1540571388241;
+ Fri, 26 Oct 2018 09:29:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20181016164218.3736-1-l.stach@pengutronix.de> <20181025143504.GA9673@bogus>
+ <1540570298.2245.13.camel@pengutronix.de>
+In-Reply-To: <1540570298.2245.13.camel@pengutronix.de>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 26 Oct 2018 11:29:36 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+f+TyeuStN4NLrq1E_xMS8_QqUW1jfami0+NnUChRKLA@mail.gmail.com>
+Message-ID: <CAL_Jsq+f+TyeuStN4NLrq1E_xMS8_QqUW1jfami0+NnUChRKLA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: irq: add binding for Freescale IRQSTEER multiplexer
+To:     Lucas Stach <l.stach@pengutronix.de>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>,
+        patchwork-lst@pengutronix.de
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 26 Oct 2018 20:32:11 +0800
-lijiang <lijiang@redhat.com> wrote:
+On Fri, Oct 26, 2018 at 11:11 AM Lucas Stach <l.stach@pengutronix.de> wrote:
+>
+> Hi Rob,
+>
+> Am Donnerstag, den 25.10.2018, 09:35 -0500 schrieb Rob Herring:
+> > On Tue, Oct 16, 2018 at 06:42:17PM +0200, Lucas Stach wrote:
+> > > This adds the DT binding for the Freescale IRQSTEER interrupt
+> > > multiplexer found in the i.MX8 familiy SoCs.
+> > >
+> > > > > Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
+> > > ---
+> > >  .../interrupt-controller/fsl,irqsteer.txt     | 39 +++++++++++++++++++
+> > >  1 file changed, 39 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/fsl,irqsteer.txt
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/interrupt-controller/fsl,irqsteer.txt b/Documentation/devicetree/bindings/interrupt-controller/fsl,irqsteer.txt
+> > > new file mode 100644
+> > > index 000000000000..ed2b18165591
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/interrupt-controller/fsl,irqsteer.txt
+> > > @@ -0,0 +1,39 @@
+> > > +Freescale IRQSTEER Interrupt multiplexer
+> > > +
+> > > +Required properties:
+> > > +
+> > > +- compatible: should be:
+> > > > > +       - "fsl,imx8m-irqsteer"
+> > > > > +       - "fsl,imx-irqsteer"
+> > > +- reg: Physical base address and size of registers.
+> > > +- interrupts: Should contain the parent interrupt line used to multiplex the
+> > > +  input interrupts.
+> > > +- clocks: Should contain one clock for entry in clock-names
+> > > +  see Documentation/devicetree/bindings/clock/clock-bindings.txt
+> > > +- clock-names:
+> > > +   - "ipg": main logic clock
+> > > +- interrupt-controller: Identifies the node as an interrupt controller.
+> > > +- #interrupt-cells: Specifies the number of cells needed to encode an
+> > > +  interrupt source. The value must be 2.
+> > > +
+> > > +Optional properties:
+> > > +- fsl,channel: Number of channels managed by this controller. Each channel
+> > > +  contains up to 32 interrupt sources. If absent defaults to 1.
+> >
+> > What's a channel? Why isn't this implied by the compatible?
+>
+> The documentation calls the mux outputs a channel. Basically the
+> irqsteer IP block can mux up to 512 input interrupts onto up to 8
+> output interrupt lines (just noticed that the 32 in the description is
+> wrong and should be 64).
 
->[...]
-> For AMD machine with the SME feature, the msr 'MSR_K8_SYSCFG' can examine
-> whether SME is enabled in kernel, but the kexec is also userspace tool,
-> it has no permission to access the msr.
+Then shouldn't you have up to 8 int specifiers in 'interrupts' property?
 
-But we need the MSR value from the panic kernel environment, not while
-the production kernel is still running, right?
+> So the channel count defines the number of input IRQs in steps of 64
+> and the output IRQs in steps of 1. The register layout/offsets don't
+> change with different number of channels, as those are always laid out
+> as if the controller supported the maximum count of 8 channels. It's
+> just the actual implemented number of registers that change.
 
-If so, then this reminds me that I have wanted for a long time to store
-more of the hardware state in a vmcore NOTE after a kernel crash ...
-control registers, MSRs and whatnot. Of course, this would be a
-long-term project, but I wonder what other people think about it in
-general.
+So do you actually need to know how many channels? We don't typically
+put into DT what interrupt lines are actually connected. We assume the
+interrupt connections in DT are correct.
 
-Just my 2 cents,
-Petr T
+Also, if 'interrupts' listed all the muxed output connections, then
+you could get the same information from there.
 
-> Furthermore, i also tried to read the "/dev/cpu/cpu[number]/msr", but
-> the value depends on BIOS's configuration. That is to say, if SME is
-> set in BIOS, the value of msr is always 0xF40000 whatever the kernel
-> commandline parameter is "mem_encrypt=on" or "mem_encrypt=off".
-> 
-> If i made a mistake, please help to point it out.
-> 
-> Thanks.
-> Lianbo
-> 
-> _______________________________________________
-> kexec mailing list
-> kexec@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/kexec
-
+Rob
