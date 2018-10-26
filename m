@@ -6,51 +6,47 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF86AC6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:30:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B4CCC6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:30:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CED920834
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:30:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CED920834
+	by mail.kernel.org (Postfix) with ESMTP id F014D20834
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:30:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F014D20834
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726763AbeJZQGf (ORCPT
+        id S1726949AbeJZQGs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 12:06:35 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:34305 "EHLO
+        Fri, 26 Oct 2018 12:06:48 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:52825 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725914AbeJZQGf (ORCPT
+        with ESMTP id S1725914AbeJZQGr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 12:06:35 -0400
+        Fri, 26 Oct 2018 12:06:47 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9Q7U8n4136578
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9Q7UfaJ136645
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 26 Oct 2018 00:30:08 -0700
+        Fri, 26 Oct 2018 00:30:41 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9Q7U8WJ136573;
-        Fri, 26 Oct 2018 00:30:08 -0700
-Date:   Fri, 26 Oct 2018 00:30:08 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9Q7Uf0p136642;
+        Fri, 26 Oct 2018 00:30:41 -0700
+Date:   Fri, 26 Oct 2018 00:30:41 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Hongxu Jia <tipbot@zytor.com>
-Message-ID: <tip-1qrgq840ci0c5cy4oww957ge@git.kernel.org>
-Cc:     sboisvert@gydle.com, tmricht@linux.vnet.ibm.com, acme@redhat.com,
-        mingo@kernel.org, tglx@linutronix.de, namhyung@kernel.org,
-        brueckner@linux.vnet.ibm.com, alexander.shishkin@linux.intel.com,
-        linux-kernel@vger.kernel.org, mpe@ellerman.id.au, jolsa@redhat.com,
-        kim.phillips@arm.com, ravi.bangoria@linux.vnet.ibm.com,
-        hpa@zytor.com, peterz@infradead.org, hongxu.jia@windriver.com
-Reply-To: acme@redhat.com, tmricht@linux.vnet.ibm.com, sboisvert@gydle.com,
-          alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org,
-          tglx@linutronix.de, namhyung@kernel.org,
-          brueckner@linux.vnet.ibm.com, mingo@kernel.org,
-          mpe@ellerman.id.au, kim.phillips@arm.com, jolsa@redhat.com,
-          hongxu.jia@windriver.com, peterz@infradead.org, hpa@zytor.com,
-          ravi.bangoria@linux.vnet.ibm.com
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-glaj3pwespxfj2fdjs9a20b6@git.kernel.org>
+Cc:     hpa@zytor.com, wangnan0@huawei.com, ak@linux.intel.com,
+        tglx@linutronix.de, adrian.hunter@intel.com, namhyung@kernel.org,
+        dsahern@gmail.com, kim.phillips@arm.com, mingo@kernel.org,
+        acme@redhat.com, jpoimboe@redhat.com, linux-kernel@vger.kernel.org,
+        jolsa@kernel.org
+Reply-To: hpa@zytor.com, wangnan0@huawei.com, tglx@linutronix.de,
+          ak@linux.intel.com, adrian.hunter@intel.com, namhyung@kernel.org,
+          dsahern@gmail.com, kim.phillips@arm.com, mingo@kernel.org,
+          acme@redhat.com, jpoimboe@redhat.com,
+          linux-kernel@vger.kernel.org, jolsa@kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf arm64: Fix generate system call table failed
- with /tmp mounted with noexec
-Git-Commit-ID: 389373d3306553896a9e218493e5b6175c844eb0
+Subject: [tip:perf/urgent] tools lib subcmd: Introduce OPTION_ULONG
+Git-Commit-ID: 4ba8b3ebf4f8f583c2c01da20e4d110a5881ffdd
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -64,54 +60,100 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  389373d3306553896a9e218493e5b6175c844eb0
-Gitweb:     https://git.kernel.org/tip/389373d3306553896a9e218493e5b6175c844eb0
-Author:     Hongxu Jia <hongxu.jia@windriver.com>
-AuthorDate: Thu, 18 Oct 2018 16:26:13 +0800
+Commit-ID:  4ba8b3ebf4f8f583c2c01da20e4d110a5881ffdd
+Gitweb:     https://git.kernel.org/tip/4ba8b3ebf4f8f583c2c01da20e4d110a5881ffdd
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Thu, 18 Oct 2018 15:24:07 -0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 19 Oct 2018 11:56:57 -0300
+CommitDate: Fri, 19 Oct 2018 11:56:58 -0300
 
-perf arm64: Fix generate system call table failed with /tmp mounted with noexec
+tools lib subcmd: Introduce OPTION_ULONG
 
-When /tmp is mounted with noexec, mksyscalltbl fails.
+For completeness, will be used in 'perf trace --max-events'.
 
-  [snip]
-  |perf-1.0/tools/perf/arch/arm64/entry/syscalls//mksyscalltbl:
-  /tmp/create-table-6VGPSt: Permission denied
-  [snip]
-
-Add variable TMPDIR as prefix dir of the temporary file, if it is set,
-replace default /tmp.
-
-Signed-off-by: Hongxu Jia <hongxu.jia@windriver.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Kim Phillips <kim.phillips@arm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-Cc: Sébastien Boisvert <sboisvert@gydle.com>
-Cc: Thomas Richter <tmricht@linux.vnet.ibm.com>
-Fixes: 2b5882435606 ("perf arm64: Generate system call table from asm/unistd.h")
-LPU-Reference: 1539851173-14959-1-git-send-email-hongxu.jia@windriver.com
-Link: https://lkml.kernel.org/n/tip-1qrgq840ci0c5cy4oww957ge@git.kernel.org
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-glaj3pwespxfj2fdjs9a20b6@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/arch/arm64/entry/syscalls/mksyscalltbl | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/lib/subcmd/parse-options.c | 19 +++++++++++++++++++
+ tools/lib/subcmd/parse-options.h |  2 ++
+ 2 files changed, 21 insertions(+)
 
-diff --git a/tools/perf/arch/arm64/entry/syscalls/mksyscalltbl b/tools/perf/arch/arm64/entry/syscalls/mksyscalltbl
-index 2dbb8cade048..c88fd32563eb 100755
---- a/tools/perf/arch/arm64/entry/syscalls/mksyscalltbl
-+++ b/tools/perf/arch/arm64/entry/syscalls/mksyscalltbl
-@@ -23,7 +23,7 @@ create_table_from_c()
- {
- 	local sc nr last_sc
+diff --git a/tools/lib/subcmd/parse-options.c b/tools/lib/subcmd/parse-options.c
+index cb7154eccbdc..dbb9efbf718a 100644
+--- a/tools/lib/subcmd/parse-options.c
++++ b/tools/lib/subcmd/parse-options.c
+@@ -116,6 +116,7 @@ static int get_value(struct parse_opt_ctx_t *p,
+ 		case OPTION_INTEGER:
+ 		case OPTION_UINTEGER:
+ 		case OPTION_LONG:
++		case OPTION_ULONG:
+ 		case OPTION_U64:
+ 		default:
+ 			break;
+@@ -166,6 +167,7 @@ static int get_value(struct parse_opt_ctx_t *p,
+ 		case OPTION_INTEGER:
+ 		case OPTION_UINTEGER:
+ 		case OPTION_LONG:
++		case OPTION_ULONG:
+ 		case OPTION_U64:
+ 		default:
+ 			break;
+@@ -295,6 +297,22 @@ static int get_value(struct parse_opt_ctx_t *p,
+ 			return opterror(opt, "expects a numerical value", flags);
+ 		return 0;
  
--	create_table_exe=`mktemp /tmp/create-table-XXXXXX`
-+	create_table_exe=`mktemp ${TMPDIR:-/tmp}/create-table-XXXXXX`
- 
- 	{
- 
++	case OPTION_ULONG:
++		if (unset) {
++			*(unsigned long *)opt->value = 0;
++			return 0;
++		}
++		if (opt->flags & PARSE_OPT_OPTARG && !p->opt) {
++			*(unsigned long *)opt->value = opt->defval;
++			return 0;
++		}
++		if (get_arg(p, opt, flags, &arg))
++			return -1;
++		*(unsigned long *)opt->value = strtoul(arg, (char **)&s, 10);
++		if (*s)
++			return opterror(opt, "expects a numerical value", flags);
++		return 0;
++
+ 	case OPTION_U64:
+ 		if (unset) {
+ 			*(u64 *)opt->value = 0;
+@@ -703,6 +721,7 @@ static void print_option_help(const struct option *opts, int full)
+ 	case OPTION_ARGUMENT:
+ 		break;
+ 	case OPTION_LONG:
++	case OPTION_ULONG:
+ 	case OPTION_U64:
+ 	case OPTION_INTEGER:
+ 	case OPTION_UINTEGER:
+diff --git a/tools/lib/subcmd/parse-options.h b/tools/lib/subcmd/parse-options.h
+index 92fdbe1519f6..6ca2a8bfe716 100644
+--- a/tools/lib/subcmd/parse-options.h
++++ b/tools/lib/subcmd/parse-options.h
+@@ -25,6 +25,7 @@ enum parse_opt_type {
+ 	OPTION_STRING,
+ 	OPTION_INTEGER,
+ 	OPTION_LONG,
++	OPTION_ULONG,
+ 	OPTION_CALLBACK,
+ 	OPTION_U64,
+ 	OPTION_UINTEGER,
+@@ -133,6 +134,7 @@ struct option {
+ #define OPT_INTEGER(s, l, v, h)     { .type = OPTION_INTEGER, .short_name = (s), .long_name = (l), .value = check_vtype(v, int *), .help = (h) }
+ #define OPT_UINTEGER(s, l, v, h)    { .type = OPTION_UINTEGER, .short_name = (s), .long_name = (l), .value = check_vtype(v, unsigned int *), .help = (h) }
+ #define OPT_LONG(s, l, v, h)        { .type = OPTION_LONG, .short_name = (s), .long_name = (l), .value = check_vtype(v, long *), .help = (h) }
++#define OPT_ULONG(s, l, v, h)        { .type = OPTION_ULONG, .short_name = (s), .long_name = (l), .value = check_vtype(v, unsigned long *), .help = (h) }
+ #define OPT_U64(s, l, v, h)         { .type = OPTION_U64, .short_name = (s), .long_name = (l), .value = check_vtype(v, u64 *), .help = (h) }
+ #define OPT_STRING(s, l, v, a, h)   { .type = OPTION_STRING,  .short_name = (s), .long_name = (l), .value = check_vtype(v, const char **), .argh = (a), .help = (h) }
+ #define OPT_STRING_OPTARG(s, l, v, a, h, d) \
