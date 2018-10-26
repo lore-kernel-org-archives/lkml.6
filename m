@@ -2,158 +2,216 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20E6BC6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 11:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0FF5C6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 11:27:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5330207DD
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 11:20:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5330207DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 46B262064C
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 11:27:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46B262064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727581AbeJZT5B (ORCPT
+        id S1727573AbeJZUEC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 15:57:01 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41151 "EHLO mail.bootlin.com"
+        Fri, 26 Oct 2018 16:04:02 -0400
+Received: from 8bytes.org ([81.169.241.247]:33488 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727291AbeJZT5A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 15:57:00 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id C8A91208BE; Fri, 26 Oct 2018 13:20:15 +0200 (CEST)
-Received: from localhost (unknown [31.221.87.75])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 8DE6F20731;
-        Fri, 26 Oct 2018 13:20:15 +0200 (CEST)
-Date:   Fri, 26 Oct 2018 12:20:15 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Paul Kocialkowski <contact@paulk.fr>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        David Airlie <airlied@linux.ie>, linux-sunxi@googlegroups.com,
-        Mark Van den Borre <mark@fosdem.org>,
-        Gerry Demaret <gerry@fosdem.org>,
-        Luc Verhaegen <libv@skynet.be>
-Subject: Re: [PATCH 1/4] drm/sun4i: tcon: Support an active-low DE signal
- with RGB interface
-Message-ID: <20181026112015.55wa4f6b7odpuusw@flea>
-References: <20181010114134.8211-1-contact@paulk.fr>
- <20181010145736.l6zpohvvd4b5qngr@flea>
- <224ec158bf627b4d2f577b1dadf10bd87891e2a7.camel@paulk.fr>
- <20181024164758.iqnlie4witckzauy@flea>
- <265be8b3daab5b9fedcf7646c68c4319a2564b3c.camel@paulk.fr>
+        id S1727330AbeJZUEB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 16:04:01 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id EDF452C6; Fri, 26 Oct 2018 13:27:16 +0200 (CEST)
+Date:   Fri, 26 Oct 2018 13:27:15 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
+Subject: [git pull] IOMMU Updates for Linux v4.20
+Message-ID: <20181026112710.iot2ti47chcf6w5f@8bytes.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="6skzxuasedco4yjk"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <265be8b3daab5b9fedcf7646c68c4319a2564b3c.camel@paulk.fr>
-User-Agent: NeoMutt/20180716
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 07:24:32PM +0200, Paul Kocialkowski wrote:
-> Hi,
-> 
-> Le mercredi 24 octobre 2018 à 17:47 +0100, Maxime Ripard a écrit :
-> > On Tue, Oct 23, 2018 at 11:33:10AM +0200, Paul Kocialkowski wrote:
-> > > Hi,
-> > > 
-> > > Le mercredi 10 octobre 2018 à 16:57 +0200, Maxime Ripard a écrit :
-> > > > On Wed, Oct 10, 2018 at 01:41:31PM +0200, Paul Kocialkowski wrote:
-> > > > > Some panels need an active-low data enable (DE) signal for the RGB
-> > > > > interface. This requires flipping a bit in the TCON0 polarity register
-> > > > > when setting up the mode for the RGB interface.
-> > > > > 
-> > > > > Add a new helper function to match specific bus flags and use it to set
-> > > > > the polarity inversion bit for the DE signal when required.
-> > > > > 
-> > > > > Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
-> > > > > ---
-> > > > >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 28 ++++++++++++++++++++++++++--
-> > > > >  drivers/gpu/drm/sun4i/sun4i_tcon.h |  1 +
-> > > > >  2 files changed, 27 insertions(+), 2 deletions(-)
-> > > > > 
-> > > > > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > > > > index 3fb084f802e2..d249a462ec09 100644
-> > > > > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > > > > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > > > > @@ -78,6 +78,24 @@ static int sun4i_tcon_get_pixel_depth(const struct drm_encoder *encoder)
-> > > > >  	return -EINVAL;
-> > > > >  }
-> > > > >  
-> > > > > +static bool sun4i_tcon_match_bus_flags(const struct drm_encoder *encoder,
-> > > > > +				       u32 bus_flags)
-> > > > > +{
-> > > > > +	struct drm_connector *connector;
-> > > > > +	struct drm_display_info *info;
-> > > > > +
-> > > > > +	connector = sun4i_tcon_get_connector(encoder);
-> > > > > +	if (!connector)
-> > > > > +		return false;
-> > > > > +
-> > > > > +	info = &connector->display_info;
-> > > > > +
-> > > > > +	if ((info->bus_flags & bus_flags) == bus_flags)
-> > > > > +		return true;
-> > > > > +
-> > > > > +	return false;
-> > > > > +}
-> > > > > +
-> > > > >  static void sun4i_tcon_channel_set_status(struct sun4i_tcon *tcon, int channel,
-> > > > >  					  bool enabled)
-> > > > >  {
-> > > > > @@ -415,6 +433,7 @@ static void sun4i_tcon0_mode_set_lvds(struct sun4i_tcon *tcon,
-> > > > >  }
-> > > > >  
-> > > > >  static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
-> > > > > +				     const struct drm_encoder *encoder,
-> > > > >  				     const struct drm_display_mode *mode)
-> > > > >  {
-> > > > >  	unsigned int bp, hsync, vsync;
-> > > > > @@ -474,8 +493,13 @@ static void sun4i_tcon0_mode_set_rgb(struct sun4i_tcon *tcon,
-> > > > >  	if (mode->flags & DRM_MODE_FLAG_PVSYNC)
-> > > > >  		val |= SUN4I_TCON0_IO_POL_VSYNC_POSITIVE;
-> > > > >  
-> > > > > +	if (sun4i_tcon_match_bus_flags(encoder, DRM_BUS_FLAG_DE_LOW))
-> > > > > +		val |= SUN4I_TCON0_IO_POL_DE_NEGATIVE;
-> > > > > +
-> > > > 
-> > > > There's other flags in use in that function, you should also migrate
-> > > > them (ideally by splitting that new function into a separate patch).
-> > > 
-> > > Actually, these other flags are not DRM bus flags but DRM mode flags,
-> > > which can be accessed directly from the mode pointer passed as
-> > > argument. Thus, they don't require a helper.
-> > 
-> > I was talking about DRM_BUS_FLAG_PIXDATA_POSEDGE and
-> > DRM_BUS_FLAG_PIXDATA_NEGEDGE, which are in the current tree.
-> 
-> Thanks, I guess I need to rebase these patches atop the current tree!
-> 
-> Looking at how these flags are used in the current tree, I see that the
-> connector's display_info structure (that contains the bus flags) is
-> retreived from tcon->panel.
-> 
-> Would it make sense to change this and retreive it from the encoder,
-> passed as argument to that function (as I've done in this patch)
-> instead? This way, this wouldn't only apply to panels, but also to
-> external bridges. It would also somewhat streamline the logic.
-> 
-> What do you think?
 
-That looks like a good idea :)
+--6skzxuasedco4yjk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Maxime
+Hi Linus,
 
--- 
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+The following changes since commit 0238df646e6224016a45505d2c111a24669ebe21:
+
+  Linux 4.19-rc7 (2018-10-07 17:26:02 +0200)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git tags/iommu-updates-v4.20
+
+for you to fetch changes up to 2f2fbfb71ecc221352d84ae6430b42031ae5b654:
+
+  Merge branches 'arm/renesas', 'arm/smmu', 'ppc/pamu', 'x86/vt-d', 'x86/amd' and 'core' into next (2018-10-10 18:09:37 +0200)
+
+----------------------------------------------------------------
+IOMMU Updates for Linux v4.20
+
+These updates bring:
+
+	- Debugfs support for the Intel VT-d driver. When enabled, it
+	  now also exposes some of its internal data structures to
+	  user-space for debugging purposes.
+
+	- ARM-SMMU driver now uses the generic deferred flushing
+	  and fast-path iova allocation code. This is expected to be a
+	  major performance improvement, as this allocation path scales
+	  a lot better.
+
+	- Support for r8a7744 in the Renesas iommu driver
+
+	- Couple of minor fixes and improvements all over the place
+
+----------------------------------------------------------------
+Andrew Murray (2):
+      iommu/arm-smmu-v3: Add SPDX header
+      iommu/arm-smmu-v3: Remove unnecessary wrapper function
+
+Biju Das (1):
+      dt-bindings: iommu: ipmmu-vmsa: Add r8a7744 support
+
+Colin Ian King (1):
+      iommu/fsl: Fix spelling mistake pci_endpt_partioning -> pci_endpt_partitioning
+
+Ganapatrao Kulkarni (1):
+      iommu/iova: Optimise attempts to allocate iova from 32bit address range
+
+Gayatri Kammela (1):
+      iommu/vt-d: Add debugfs support to show register contents
+
+Joerg Roedel (3):
+      Merge branch 'for-joerg/arm-smmu/updates' of git://git.kernel.org/.../will/linux into arm/smmu
+      iommu/amd: Move iommu_init_pci() to .init section
+      Merge branches 'arm/renesas', 'arm/smmu', 'ppc/pamu', 'x86/vt-d', 'x86/amd' and 'core' into next
+
+John Garry (1):
+      iommu/arm-smmu-v3: Fix a couple of minor comment typos
+
+Kuninori Morimoto (1):
+      iommu/ipmmu-vmsa: Convert to SPDX identifiers
+
+Lu Baolu (1):
+      iommu/amd: Add default branch in amd_iommu_capable()
+
+Nipun Gupta (7):
+      Documentation: fsl-mc: add iommu-map device-tree binding for fsl-mc bus
+      iommu/of: make of_pci_map_rid() available for other devices too
+      iommu/of: support iommu configuration for fsl-mc devices
+      iommu/arm-smmu: Add support for the fsl-mc bus
+      bus/fsl-mc: support dma configure for devices on fsl-mc bus
+      bus/fsl-mc: set coherent dma mask for devices on fsl-mc bus
+      arm64: dts: ls208xa: comply with the iommu map binding for fsl_mc
+
+Rami Rosen (1):
+      iommu: Fix a typo
+
+Robin Murphy (8):
+      iommu: Add fast hook for getting DMA domains
+      iommu/dma: Use fast DMA domain lookup
+      arm64/dma-mapping: Mildly optimise non-coherent IOMMU ops
+      iommu: Tidy up window attributes
+      iommu: Remove .domain_{get,set}_windows
+      iommu/io-pgtable-arm: Fix race handling in split_blk_unmap()
+      iommu/io-pgtable-arm-v7s: Add support for non-strict mode
+      iommu/arm-smmu: Support non-strict mode
+
+Sohil Mehta (5):
+      iommu/vt-d: Relocate struct/function declarations to its header files
+      iommu/vt-d: Update register definitions to VT-d 3.0 specification
+      iommu/vt-d: Enable base Intel IOMMU debugfs support
+      iommu/vt-d: Add debugfs support for Interrupt remapping
+      iommu/vt-d: Add debugfs support to show context internals
+
+Will Deacon (1):
+      iommu/arm-smmu: Ensure that page-table updates are visible before TLBI
+
+Zhen Lei (7):
+      iommu/arm-smmu-v3: Fix unexpected CMD_SYNC timeout
+      iommu/arm-smmu-v3: Avoid back-to-back CMD_SYNC operations
+      iommu/arm-smmu-v3: Implement flush_iotlb_all hook
+      iommu/dma: Add support for non-strict mode
+      iommu: Add "iommu.strict" command line option
+      iommu/io-pgtable-arm: Add support for non-strict mode
+      iommu/arm-smmu-v3: Add support for non-strict mode
+
+ Documentation/admin-guide/kernel-parameters.txt    |  12 +
+ .../bindings/iommu/renesas,ipmmu-vmsa.txt          |   1 +
+ .../devicetree/bindings/misc/fsl,qoriq-mc.txt      |  39 +++
+ arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi     |   7 +-
+ arch/arm64/mm/dma-mapping.c                        |  10 +-
+ arch/x86/include/asm/irq_remapping.h               |   2 +
+ drivers/bus/fsl-mc/fsl-mc-bus.c                    |  16 +-
+ drivers/iommu/Kconfig                              |  13 +
+ drivers/iommu/Makefile                             |   1 +
+ drivers/iommu/amd_iommu.c                          |   2 +
+ drivers/iommu/amd_iommu_init.c                     |   2 +-
+ drivers/iommu/arm-smmu-v3.c                        | 140 +++++----
+ drivers/iommu/arm-smmu.c                           | 106 +++++--
+ drivers/iommu/dma-iommu.c                          |  55 +++-
+ drivers/iommu/fsl_pamu_domain.c                    | 119 ++++----
+ drivers/iommu/intel-iommu-debugfs.c                | 314 +++++++++++++++++++++
+ drivers/iommu/intel-iommu.c                        |  32 +--
+ drivers/iommu/intel_irq_remapping.c                |   2 +-
+ drivers/iommu/io-pgtable-arm-v7s.c                 |  11 +-
+ drivers/iommu/io-pgtable-arm.c                     |  23 +-
+ drivers/iommu/io-pgtable.h                         |   5 +
+ drivers/iommu/iommu.c                              |  58 ++--
+ drivers/iommu/iova.c                               |  22 +-
+ drivers/iommu/ipmmu-vmsa.c                         |   5 +-
+ drivers/iommu/of_iommu.c                           |  25 +-
+ drivers/of/base.c                                  | 102 +++++++
+ drivers/of/irq.c                                   |   5 +-
+ drivers/pci/of.c                                   | 101 -------
+ include/linux/fsl/mc.h                             |   8 +
+ include/linux/intel-iommu.h                        |  72 +++++
+ include/linux/iommu.h                              |  10 +-
+ include/linux/iova.h                               |   1 +
+ include/linux/of.h                                 |  11 +
+ include/linux/of_pci.h                             |  10 -
+ 34 files changed, 986 insertions(+), 356 deletions(-)
+ create mode 100644 drivers/iommu/intel-iommu-debugfs.c
+
+Please pull.
+
+Thanks,
+
+	Joerg
+
+--6skzxuasedco4yjk
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBAgAGBQJb0voOAAoJECvwRC2XARrjJ78QALz/U3srKR6wKPMO8Gk1EXaG
+J2eMTvrN6em/YsnsYMOWoPpMWnlOUYJC2rorau2PPBK5VpugFJAmsk4mFTaDVaZP
+nEMIGYBq89zI6PQ3UikJ+GO3IuREexkfBXUK2CmZRCepawH4FUhc6T2gCGR/JTRM
+LN+ZRTaPBwnyHeThn3LMp+0cJ/7dw2nPNTJ6zlscrImXNo0UTVlDgjiyMIEDobYu
+WawS+7A6YCJxcOWY+CspQfJy8tlnMo0Ums52OYMANkumOiC7lgYxu6jdy4nLKYWW
+3kKnfWRNT+jXwhsvPni2NZI8eLjDFPnUneyW+q96/CNZ4/7wYMfCXAzcWLmYdWpc
+C7CbjEcrtHFiaM5kCgWRkaB+6WUwuIoYuvmExdVdMS79ZczjQcZ7KSO+dah5VsAh
+o0S3jUdH6LL4R8+PH4YkBzy5PLIVJ8laELE2mp2hIM4+xnFOTOAqmVp2ZLIFHV7j
+Xbfi2vv5tEAv5gEbg/k7mPfsvw2/LToYwl5CmC7fPNL2od9jZ1dx9ZlnVRH+h3S2
+OcjRFgt54tVjry8XyOnaj1HExcbP7aIeeiflVmGjY9PnGJrgyJgqizm67BT8Kdc6
+yjAsMgTIxzP45U5DqxYz99fMB6MCpUPKjeEZbbrqvmHp3ZNyB+jkvjp7zhhYrHCk
+N6gWQfIVOFP2I++a0c9y
+=kQ3Q
+-----END PGP SIGNATURE-----
+
+--6skzxuasedco4yjk--
