@@ -2,101 +2,143 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B681DECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:33:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F68ECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:36:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6362B20868
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:33:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F16320868
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:36:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yl2UCMAg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6362B20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="kQK+4upo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F16320868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727832AbeJ0ELz (ORCPT
+        id S1726481AbeJ0EO7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 00:11:55 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:37412 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725749AbeJ0ELy (ORCPT
+        Sat, 27 Oct 2018 00:14:59 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46590 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725749AbeJ0EO6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 00:11:54 -0400
-Received: by mail-lf1-f68.google.com with SMTP id a82-v6so1756219lfa.4;
-        Fri, 26 Oct 2018 12:33:36 -0700 (PDT)
+        Sat, 27 Oct 2018 00:14:58 -0400
+Received: by mail-pl1-f194.google.com with SMTP id bb7-v6so938073plb.13
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 12:36:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=GJOhQPWjNJWc47h5RHXoaFfzyEX612uR9+ckyp4oTqQ=;
-        b=Yl2UCMAg10fQIFyI4EeL2uyrtHP2ZYxCq/IfHzlJG6J/Pg/mDYKx5GO3JbrfbwUYAe
-         f51y5TlIL7x3FW590eTW9gZzOXMZmg1vOSIhht2jWcpO7ev6a8dp1hEbdlkR46qFDj5G
-         wsxRxR9OeJXiJTkMwrGXZzgwm6v4LS44ZS/Z01KoVjskTtkmEUeqOOAhYXCsD5GhfCNh
-         yUIFMxyApNFF9fMtUbiJB21h7l7nZKI/Af87NQJvEDW0m07AxjIDvKME8RgCEeM2W30j
-         oyhyAmTBRuPSqbGVmWmSWmnt2QRi4vhMzrarPgddpNYp53LNiWig2HxHNxFA8ZEGP7hT
-         mOTA==
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=RLfbN2Awm/nbZRtKB5rKsnhkaxypfw45GKk2pCoHfbM=;
+        b=kQK+4upoNTPt4s5PMuJFIJcKjKAcSKn912G4B//QSM9RlQuTn7e7HlHzB/jNxobmDx
+         B1cQgA+Auojy9uniB7DRCsztnOVxAkojAP8RzI7jZHdp1Te2ypfb1KU5AaHoaqutgeRz
+         ZDnRVOAEfIUSNMPeXnZpSnBV5VGvk5dZ7u9yc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=GJOhQPWjNJWc47h5RHXoaFfzyEX612uR9+ckyp4oTqQ=;
-        b=QpqPemybOiaID0lO8XgLqrEwx1bW9ECfL//xopuE6bc5UypuJ5rdyn4OuV7AV0RulO
-         DqsRvH1yaSxxIctO580HqgXgNM7DjypXfMfIepNF4zJuyvS9BKW63kvXXS0/tjuCLUQs
-         hp+irtUY/QB3uKy8O4rjAX3DB8Mm/8h91wYsz11SAb4ySNbshu/qjfApMRfMB5FBRisq
-         HBnLID5tj3w4P+rMrA8zyF2YFKCWDVmW1QzLImrrrAoBLtHSt6nEEjFdD+5dOvgVZdGM
-         7tIJCi84oT6WBhaMaUcH+jNvStBkIe7oQP4Led1Il9eIKv3kDO7k6Ha93wgntqIbsbDV
-         QMsQ==
-X-Gm-Message-State: AGRZ1gKFugEgjqAU1Vd4Ob8iT/ImYkb1uAZCmzs+6qVVQp3KpjSl/anQ
-        r1QBZM9Aw7DUaAUKJkBLOJw=
-X-Google-Smtp-Source: AJdET5fXCmISywzPcLPpKVqNDPs5kPHqwBBpIZpKoyWQDIlZ9sQr57g/C9hyw3Rxc68H4dU1eWizMQ==
-X-Received: by 2002:a19:641d:: with SMTP id y29mr662452lfb.14.1540582415268;
-        Fri, 26 Oct 2018 12:33:35 -0700 (PDT)
-Received: from i4790k.home (bfy71.neoplus.adsl.tpnet.pl. [83.28.62.71])
-        by smtp.gmail.com with ESMTPSA id l25-v6sm1684662ljg.52.2018.10.26.12.33.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 26 Oct 2018 12:33:34 -0700 (PDT)
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-        jacek.anaszewski@gmail.com, liviu@dudau.co.uk
-Subject: [GIT PULL] LED fix for 4.20-rc1
-Date:   Fri, 26 Oct 2018 21:33:28 +0200
-Message-Id: <1540582408-6422-1-git-send-email-jacek.anaszewski@gmail.com>
-X-Mailer: git-send-email 2.1.4
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RLfbN2Awm/nbZRtKB5rKsnhkaxypfw45GKk2pCoHfbM=;
+        b=Jvb5lT+yUkM9ta80veajdcounYcKjhZgZYoe0Tw5mN5ELNGUh0oEwk3IcS/24QP38R
+         Lf317qk7OjxoAIgqWYr1N/3as5au8qQTYIo7UvzH3t867jumHqBiC0/mcAaFgtsi2TXB
+         hXm3PehrehQ/M/injqvJ/Shx+LoAmqyET86KuyL4Qnhguf9varB0P88nxE/s5lQj1r0D
+         a/+AiNwaVGFuxNGFS8mf+vC56TJ2smrggsaM/Lw0qhJeW7zjcIQL0QzmXpZ8HctDjFxl
+         HxYahUr3fKzV6Z55HC/CAJQkVZ7WiVpuaDItCRhDoOyt1Z1mHXYwZ8rKdiXIo9wziFpj
+         fc8Q==
+X-Gm-Message-State: AGRZ1gK+WIl00yqgIYpOgjedjOYg3G2PQfcSEl23r/HX9+pSbkC/jSHn
+        Mk5rZzLo20uAOHnyv6ZPWe6jtA==
+X-Google-Smtp-Source: AJdET5dejHkhK6PQojSK3e202V60YxLR+wwirS1N1JwdmIJdHoRNZW8uFCF2/X0ITVPtCLgKIzk6Eg==
+X-Received: by 2002:a17:902:5a8b:: with SMTP id r11-v6mr4886766pli.305.1540582600069;
+        Fri, 26 Oct 2018 12:36:40 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id r124-v6sm6821393pfr.151.2018.10.26.12.36.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 26 Oct 2018 12:36:38 -0700 (PDT)
+Date:   Fri, 26 Oct 2018 12:36:37 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>
+Subject: Re: [RFC 4/6] pstore: further reduce ramoops_get_next_prz arguments
+ by passing record
+Message-ID: <20181026193637.GA122104@joelaf.mtv.corp.google.com>
+References: <20181026180042.52199-1-joel@joelfernandes.org>
+ <20181026180042.52199-4-joel@joelfernandes.org>
+ <CAGXu5jJi5M+wfF8X7ud2jTjdJZRE4sCnZgv9OA9ZX-wwpZ5PnA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jJi5M+wfF8X7ud2jTjdJZRE4sCnZgv9OA9ZX-wwpZ5PnA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Fri, Oct 26, 2018 at 08:32:16PM +0100, Kees Cook wrote:
+> On Fri, Oct 26, 2018 at 7:00 PM, Joel Fernandes (Google)
+> <joel@joelfernandes.org> wrote:
+> > Both the id and type fields of a pstore_record are set by
+> > ramoops_get_next_prz. So we can just pass a pointer to the pstore_record
+> > instead of passing individual elements. This results in cleaner more
+> > readable code and fewer lines.
+> >
+> > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> > ---
+> >  fs/pstore/ram.c | 18 ++++++++----------
+> >  1 file changed, 8 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+> > index 3055e05acab1..710c3d30bac0 100644
+> > --- a/fs/pstore/ram.c
+> > +++ b/fs/pstore/ram.c
+> > @@ -125,7 +125,7 @@ static int ramoops_pstore_open(struct pstore_info *psi)
+> >
+> >  static struct persistent_ram_zone *
+> >  ramoops_get_next_prz(struct persistent_ram_zone *przs[], uint *c,
+> > -                    u64 *id, enum pstore_type_id *typep, bool update)
+> > +                    struct pstore_record *record, bool update)
+> >  {
+> >         struct persistent_ram_zone *prz;
+> >         int i = (*c)++;
+> > @@ -145,8 +145,8 @@ ramoops_get_next_prz(struct persistent_ram_zone *przs[], uint *c,
+> >         if (!persistent_ram_old_size(prz))
+> >                 return NULL;
+> >
+> > -       *typep = prz->type;
+> > -       *id = i;
+> > +       record->type = prz->type;
+> > +       record->id = i;
+> 
+> Yes yes. I've been meaning to get all this cleaned up after I
+> refactored everything to actually HAVE record at all. :P
+> 
+> >
+> >         return prz;
+> >  }
+> > @@ -254,7 +254,7 @@ static ssize_t ramoops_pstore_read(struct pstore_record *record)
+> >         /* Find the next valid persistent_ram_zone for DMESG */
+> >         while (cxt->dump_read_cnt < cxt->max_dump_cnt && !prz) {
+> >                 prz = ramoops_get_next_prz(cxt->dprzs, &cxt->dump_read_cnt,
+> > -                                          &record->id, &record->type, 1);
+> > +                                          record, 1);
+> 
+> In another patch, I think you could drop the "update" field too, and
+> use the record->type instead to determine if update is needed. Like:
+> 
+> static struct persistent_ram_zone *
+> ramoops_get_next_prz(struct persistent_ram_zone *przs[], uint c,
+>                                       struct pstore_record *record)
+> {
+>     bool update = (record->type == PSTORE_TYPE_DMESG);
+> ...
 
-Please pull one LED fix for 4.20-rc1.
+Yes, I agree, I'll do that :)
 
-The patch fixes regression introduced by the commit
-45d4c6de4e49 ("leds: gpio: Try to lookup gpiod from device").
+thanks!
 
-The following changes since commit 8dbac65f5c181e4723586ab738b703bb23bc3f2a:
-
-  leds: sc27xx: Add pattern_set/clear interfaces for LED controller (2018-10-11 21:59:11 +0200)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/j.anaszewski/linux-leds.git tags/led-fix-for-4.20-rc1
-
-for you to fetch changes up to 72b8ad40e14302f869382656a914bb803796b4ed:
-
-  leds: gpio: set led_dat->gpiod pointer for OF defined GPIO leds (2018-10-26 20:51:36 +0200)
-
-Thanks,
-Jacek Anaszewski
-
-----------------------------------------------------------------
-LED fix for 4-20-rc1
-----------------------------------------------------------------
-Liviu Dudau (1):
-      leds: gpio: set led_dat->gpiod pointer for OF defined GPIO leds
-
- drivers/leds/leds-gpio.c | 2 ++
- 1 file changed, 2 insertions(+)
+ - Joel
