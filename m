@@ -2,100 +2,174 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A67A7C6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 10:05:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C172C6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 10:13:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DFF620848
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 10:05:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XZXAs3bc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DFF620848
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id B9D752084D
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 10:13:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9D752084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=emutex.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727461AbeJZSlk (ORCPT
+        id S1727111AbeJZStg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 14:41:40 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:42840 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726128AbeJZSlj (ORCPT
+        Fri, 26 Oct 2018 14:49:36 -0400
+Received: from mr30.theemaillaundry.net ([78.46.72.43]:38966 "EHLO
+        mr30.theemaillaundry.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726278AbeJZStf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 14:41:39 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9Q9wtAK098725;
-        Fri, 26 Oct 2018 10:04:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=Wsj5/8QDwK08mozjt7PQ/9KjsstK8akmd5TCS7h+aFQ=;
- b=XZXAs3bcNVRaVKlM4+s7Mg7qu9V3uSfWSNFRy0Dszt052MCKEEDl9IKRyILEd90X3xPA
- ohqnsRdU7idiP7g2g/nZhu3vm5GCJNZINjWAuiRzInXTWe432OtjjaMIUI0ev6lk9RwL
- xHEi8liyMGjs/z/s/xdKlUKzM7tfRa/ZNV2tE4Q8fXq7wxHZ1kyeuhc8jsIlQ+VHaamW
- 91O7oQOfXEplhnT8EqEhfuJ+Py1ieEra4XmpWkJ1z4l6QKmYDaNmroKcnX6nM2NsX440
- w50VSXTVYK4u1m3hSX9AKi6xHQYK48omfVrfpGlMt59Wrz8hlefWITiFNIsQUWTg7HnO BQ== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2n7vaqecrm-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 26 Oct 2018 10:04:39 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9QA4Xkn008096
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 26 Oct 2018 10:04:33 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9QA4W8A006695;
-        Fri, 26 Oct 2018 10:04:32 GMT
-Received: from mwanda (/129.205.6.86)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 26 Oct 2018 03:04:31 -0700
-Date:   Fri, 26 Oct 2018 13:04:22 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Matheus Tavares <matheus.bernardino@usp.br>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
+        Fri, 26 Oct 2018 14:49:35 -0400
+X-Greylist: delayed 67211 seconds by postgrey-1.27 at vger.kernel.org; Fri, 26 Oct 2018 14:49:34 EDT
+Received: from localhost (localhost [127.0.0.1])
+        by mr30.theemaillaundry.net (Postfix) with ESMTP id B841D24190D;
+        Fri, 26 Oct 2018 11:13:04 +0100 (IST)
+X-Amavis-Modified: Mail body modified (using disclaimer) -
+        mr30.theemaillaundry.net
+X-Virus-Scanned: amavisd-new at theemaillaundry.net
+Received: from mr30.theemaillaundry.net ([127.0.0.1])
+        by localhost (mr30.theemaillaundry.net [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 7gssIuot5ojI; Fri, 26 Oct 2018 11:13:04 +0100 (IST)
+Received: from statler.emutex.com (unknown [92.51.199.138])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mr30.theemaillaundry.net (Postfix) with ESMTPS id 0B9F8241135;
+        Fri, 26 Oct 2018 11:13:02 +0100 (IST)
+Received: from [10.10.68.81]
+        by statler.emutex.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84)
+        (envelope-from <dan@emutex.com>)
+        id 1gFz70-0002Mc-0E; Fri, 26 Oct 2018 11:13:02 +0100
+Subject: Re: [PATCH v3 2/3] iio: adc128s052: add ACPI _HID AANT1280
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
         Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
         Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        Victor Colombo <victorcolombo@gmail.com>,
-        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
-Subject: Re: [PATCH 5/6] staging:iio:ad2s90: Add IIO_CHAN_INFO_SCALE to
- channel spec and read_raw
-Message-ID: <20181026100422.lvz2avowd6ddix54@mwanda>
-References: <20181026004512.31012-1-matheus.bernardino@usp.br>
- <20181026004512.31012-6-matheus.bernardino@usp.br>
+        linux-iio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org,
+        Carlos Iglesias <carlos.iglesias@emutex.com>,
+        Nicola Lunghi <nicola.lunghi@emutex.com>,
+        Javier Arteaga <javier@emutex.com>
+References: <20180423213805.12591-1-javier@emutex.com>
+ <1540481742-23596-1-git-send-email-dan@emutex.com>
+ <1540481742-23596-3-git-send-email-dan@emutex.com>
+ <20181025174638.GB10650@smile.fi.intel.com>
+From:   Dan O'Donovan <dan@emutex.com>
+Message-ID: <c17cf6de-846b-aed3-7745-4f635495873e@emutex.com>
+Date:   Fri, 26 Oct 2018 11:13:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181026004512.31012-6-matheus.bernardino@usp.br>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9057 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=569
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810260089
+In-Reply-To: <20181025174638.GB10650@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 09:45:11PM -0300, Matheus Tavares wrote:
-> From: Victor Colombo <victorcolombo@gmail.com>
-> 
-> This patch adds the IIO_CHAN_INFO_SCALE mask to ad2s90_chan and
-> implements the relative read behavior at ad2s90_read_raw.
-> 
-> Signed-off-by: Victor Colombo <victorcolombo@gmail.com>
-> ---
 
-You should be adding your S-o-B here as well because the patch is
-passing through your hands.
 
-regards,
-dan carpenter
+On 10/25/2018 06:46 PM, Andy Shevchenko wrote:
+> On Thu, Oct 25, 2018 at 04:35:41PM +0100, Dan O'Donovan wrote:
+>> From: Nicola Lunghi <nicola.lunghi@emutex.com>
+>>
+>> ACPI _HID AANT1280 matches an ADC124S101 present on E3940 SKUs of the UP
+>> Squared board.
+>>
+>> Add it to the driver.
+>>
+>> Signed-off-by: Nicola Lunghi <nicola.lunghi@emutex.com>
+>> [javier@emutex.com: fix up commit message and one checkpatch warning]
+>> Signed-off-by: Javier Arteaga <javier@emutex.com>
+>> Signed-off-by: Dan O'Donovan <dan@emutex.com>
+>> ---
+>>  drivers/iio/adc/ti-adc128s052.c | 18 +++++++++++++++++-
+>>  1 file changed, 17 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/iio/adc/ti-adc128s052.c b/drivers/iio/adc/ti-adc128s052.c
+>> index e6716c3..c2d1453 100644
+>> --- a/drivers/iio/adc/ti-adc128s052.c
+>> +++ b/drivers/iio/adc/ti-adc128s052.c
+>> @@ -12,10 +12,12 @@
+>>   * published by the Free Software Foundation.
+>>   */
+>>  
+>> +#include <linux/acpi.h>
+>>  #include <linux/err.h>
+>>  #include <linux/spi/spi.h>
+>>  #include <linux/module.h>
+>>  #include <linux/iio/iio.h>
+>> +#include <linux/property.h>
+>>  #include <linux/regulator/consumer.h>
+>>  
+>>  struct adc128_configuration {
+>> @@ -135,10 +137,15 @@ static const struct iio_info adc128_info = {
+>>  static int adc128_probe(struct spi_device *spi)
+>>  {
+>>  	struct iio_dev *indio_dev;
+>> +	unsigned int config;
+>>  	struct adc128 *adc;
+>> -	int config = spi_get_device_id(spi)->driver_data;
+>>  	int ret;
+>>  
+>> +	if (dev_fwnode(&spi->dev))
+>> +		config = (unsigned long) device_get_match_data(&spi->dev);
+>> +	else
+>> +		config = spi_get_device_id(spi)->driver_data;
+>> +
+>>  	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*adc));
+>>  	if (!indio_dev)
+>>  		return -ENOMEM;
+>> @@ -207,10 +214,19 @@ static const struct spi_device_id adc128_id[] = {
+>>  };
+>>  MODULE_DEVICE_TABLE(spi, adc128_id);
+>>  
+>> +#ifdef CONFIG_ACPI
+>> +static const struct acpi_device_id adc128_acpi_match[] = {
+> 
+>> +	{ "AANT1280", 2 }, /* ADC124S021 compatible ACPI ID */
+> 
+> Looking how driver is organized and what ACPI can provide I would highly
+> recommend to look forward to PTYP field for utilization of the type of the HW.
+> 
+> Maybe it would not work with published BIOSes, but would be good for the future
+> (in that case anybody can utilize that _HID + PTYP pair on their platforms).
+> 
+Thanks Andy for your review and feedback.  Your _HID + PTYP suggestion sounds
+interesting, but I couldn't find any information in the ACPI spec or elsewhere
+about how/when/where to use it.  It isn't used in the UP Squared ACPI tables.
+Do you have any links or other information you could share about it? Thanks!
+
+>> +	{ }
+>> +};
+>> +MODULE_DEVICE_TABLE(acpi, adc128_acpi_match);
+>> +#endif
+>> +
+>>  static struct spi_driver adc128_driver = {
+>>  	.driver = {
+>>  		.name = "adc128s052",
+> 
+>>  		.of_match_table = of_match_ptr(adc128_of_match),
+>> +		.acpi_match_table = ACPI_PTR(adc128_acpi_match),
+>>  	},
+>>  	.probe = adc128_probe,
+>>  	.remove = adc128_remove,
+>> -- 
+>> 2.7.4
+>>
+>>
+>> ------
+>> This email has been scanned for spam and malware by The Email Laundry.
+>>
+> 
+
+------
+This email has been scanned for spam and malware by The Email Laundry.
 
