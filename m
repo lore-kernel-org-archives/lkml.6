@@ -2,145 +2,90 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29139C6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:48:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC35EC6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:50:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE3EF20834
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:48:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE3EF20834
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 545A62082E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:50:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KiHqVOvm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 545A62082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727231AbeJZQYJ (ORCPT
+        id S1726149AbeJZQ0b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 12:24:09 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:35081 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725907AbeJZQYJ (ORCPT
+        Fri, 26 Oct 2018 12:26:31 -0400
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:43349 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725907AbeJZQ0b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 12:24:09 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9Q7loKV141689
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 26 Oct 2018 00:47:50 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9Q7lou2141686;
-        Fri, 26 Oct 2018 00:47:50 -0700
-Date:   Fri, 26 Oct 2018 00:47:50 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Andi Kleen <tipbot@zytor.com>
-Message-ID: <tip-fe57120e18a1f9124ca758c89cc54f91333d1847@git.kernel.org>
-Cc:     andi@firstfloor.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, hpa@zytor.com, acme@redhat.com,
-        ak@linux.intel.com, mingo@kernel.org, jolsa@kernel.org
-Reply-To: hpa@zytor.com, ak@linux.intel.com, acme@redhat.com,
-          mingo@kernel.org, jolsa@kernel.org, andi@firstfloor.org,
-          tglx@linutronix.de, linux-kernel@vger.kernel.org
-In-Reply-To: <20180924170732.GA28040@tassilo.jf.intel.com>
-References: <20180924170732.GA28040@tassilo.jf.intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf script: Support total cycles count
-Git-Commit-ID: fe57120e18a1f9124ca758c89cc54f91333d1847
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 26 Oct 2018 12:26:31 -0400
+Received: by mail-vk1-f193.google.com with SMTP id y20so53665vkb.10;
+        Fri, 26 Oct 2018 00:50:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ifUczU4je9oCDszSdIMUeOP/LoKljHatRCRPELagqZE=;
+        b=KiHqVOvmg6olCWZ4x+6hmsXiVPhuG0U70mFVj9fE8QGNH+91qAAwrPxXOmk4hSYaKf
+         AtIQE1kmtvhAUzPzACpZclUfi71jdz7BulfxvhOc5VXWq57o2iqKC939lVxuXtsF7NJJ
+         2nZqsdp6GfHvGhQzBhsSqbIGfEObnvof0zqdhOaX1dAYE4FSqIgvjb5dMpJzaV1Ht7p1
+         IPuI9zOWjLPNFI4EUcUSAKECichYEljBD15lxiEkfNbB7z8ioSFhq3pDG9/1kv3zAPou
+         nQbLOvOxzFkZRl1Y/Pu2HscVfDTydWaQMvBoncGzZ1E1RLMtpNpLDQSEBRcp+vSi+Jwc
+         rPFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ifUczU4je9oCDszSdIMUeOP/LoKljHatRCRPELagqZE=;
+        b=baePKwwp76YDOvzw2FR1IACk9gnFh5s3Ths08e4uL8zJJ42+c1CaRNvtvcj02xPPO7
+         OAF7CHvxeNJRGqgfgOieWErsSggfTG4riMGz9Atb7rCEuOj3GAns4g0xl2II8TRsS8Eo
+         7wX/R3afihHUjWhYUKx+iUmtNSE7JFznQSV5qvMIcuMm6vnz0xboq1sc77vAfyR7clPM
+         9s6PGBWhJjkeK61Rpn2Htg7OV9LAVkBJNTtIM1luIkD3L7u7XSlQmjDgJombYO3IA92W
+         442i3kZ3K32Bmn0ExmBONUQLy8PnQAi38EgJZiemO+k/QzLlTCDBM9+8hW36QuhxJiH2
+         S22g==
+X-Gm-Message-State: AGRZ1gKxOuH3/VR5FwYU7+2gY/g9cRpjYroXnufGLnhQWESsuEv3QIHt
+        WczYp0S4TblfzYTTWLYD4Jqcie8hXRVzi8vLGA==
+X-Google-Smtp-Source: AJdET5d1tYe21XCUdXiRl7QrM7BRNPKj0byQkjnuWwtKlZN7gwW6kADt1zv76/zioHmX4OubjSGPLTf4PgUVCQV1H5M=
+X-Received: by 2002:a1f:250a:: with SMTP id l10mr1114984vkl.5.1540540231822;
+ Fri, 26 Oct 2018 00:50:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+References: <CALjTZvapU2xc84D7Nqjk+vrF35cAOPzDTd6dRaXpuO=Lcap5Sg@mail.gmail.com>
+ <20181026062743.GA21483@ming.t460p>
+In-Reply-To: <20181026062743.GA21483@ming.t460p>
+From:   Rui Salvaterra <rsalvaterra@gmail.com>
+Date:   Fri, 26 Oct 2018 08:50:20 +0100
+Message-ID: <CALjTZvaAc1HBXWHuhaCMsWwJLZEvPy_gvX2U2Lzcj6iVVktWNQ@mail.gmail.com>
+Subject: Re: Bug: swap discard issue with zram caused by "block: don't deal
+ with discard limit in blkdev_issue_discard()"
+To:     ming.lei@redhat.com
+Cc:     axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  fe57120e18a1f9124ca758c89cc54f91333d1847
-Gitweb:     https://git.kernel.org/tip/fe57120e18a1f9124ca758c89cc54f91333d1847
-Author:     Andi Kleen <ak@linux.intel.com>
-AuthorDate: Mon, 24 Sep 2018 10:07:32 -0700
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Wed, 24 Oct 2018 15:29:56 -0300
+On Fri, 26 Oct 2018 at 07:27, Ming Lei <ming.lei@redhat.com> wrote:
+>
+> The patch titled with 'block: make sure discard bio is aligned with logical block size'
+> in the list may fix this issue, please test and see if it works.
+>
+> Thanks,
+> Ming
 
-perf script: Support total cycles count
+Hi, Ming,
 
-For 'perf script' brstackinsn also print a running cycles count.  This
-makes it easier to calculate cycle deltas for code sections measured
-with LBRs.
+Thanks for the quick reply. Unfortunately, it doesn't seem to apply
+cleanly to 4.19. To which tree/tag/commit should I apply the series?
 
-% perf record -b -a sleep 1
-% perf script -F +brstackinsn
-...
-        00007f73ecc41083        insn: 74 06                     # PRED 9 cycles [17] 1.11 IPC
-        00007f73ecc4108b        insn: a8 10
-        00007f73ecc4108d        insn: 74 71                     # PRED 1 cycles [18] 1.00 IPC
-        00007f73ecc41100        insn: 48 8b 46 10
-        00007f73ecc41104        insn: 4c 8b 38
-        00007f73ecc41107        insn: 4d 85 ff
-        00007f73ecc4110a        insn: 0f 84 b0 00 00 00
-        00007f73ecc41110        insn: 83 43 58 01
-        00007f73ecc41114        insn: 48 89 df
-        00007f73ecc41117        insn: e8 94 73 04 00            # PRED 6 cycles [24] 1.00 IPC
+Thanks,
 
-Signed-off-by: Andi Kleen <ak@linux.intel.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Andi Kleen <andi@firstfloor.org>
-Link: http://lkml.kernel.org/r/20180924170732.GA28040@tassilo.jf.intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-script.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
-
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index 9d2249ea75e3..b5bc85bd0bbe 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -913,7 +913,7 @@ static int grab_bb(u8 *buffer, u64 start, u64 end,
- 
- static int ip__fprintf_jump(uint64_t ip, struct branch_entry *en,
- 			    struct perf_insn *x, u8 *inbuf, int len,
--			    int insn, FILE *fp)
-+			    int insn, FILE *fp, int *total_cycles)
- {
- 	int printed = fprintf(fp, "\t%016" PRIx64 "\t%-30s\t#%s%s%s%s", ip,
- 			      dump_insn(x, ip, inbuf, len, NULL),
-@@ -922,7 +922,8 @@ static int ip__fprintf_jump(uint64_t ip, struct branch_entry *en,
- 			      en->flags.in_tx ? " INTX" : "",
- 			      en->flags.abort ? " ABORT" : "");
- 	if (en->flags.cycles) {
--		printed += fprintf(fp, " %d cycles", en->flags.cycles);
-+		*total_cycles += en->flags.cycles;
-+		printed += fprintf(fp, " %d cycles [%d]", en->flags.cycles, *total_cycles);
- 		if (insn)
- 			printed += fprintf(fp, " %.2f IPC", (float)insn / en->flags.cycles);
- 	}
-@@ -979,6 +980,7 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
- 	u8 buffer[MAXBB];
- 	unsigned off;
- 	struct symbol *lastsym = NULL;
-+	int total_cycles = 0;
- 
- 	if (!(br && br->nr))
- 		return 0;
-@@ -999,7 +1001,7 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
- 		printed += ip__fprintf_sym(br->entries[nr - 1].from, thread,
- 					   x.cpumode, x.cpu, &lastsym, attr, fp);
- 		printed += ip__fprintf_jump(br->entries[nr - 1].from, &br->entries[nr - 1],
--					    &x, buffer, len, 0, fp);
-+					    &x, buffer, len, 0, fp, &total_cycles);
- 	}
- 
- 	/* Print all blocks */
-@@ -1027,7 +1029,8 @@ static int perf_sample__fprintf_brstackinsn(struct perf_sample *sample,
- 
- 			printed += ip__fprintf_sym(ip, thread, x.cpumode, x.cpu, &lastsym, attr, fp);
- 			if (ip == end) {
--				printed += ip__fprintf_jump(ip, &br->entries[i], &x, buffer + off, len - off, insn, fp);
-+				printed += ip__fprintf_jump(ip, &br->entries[i], &x, buffer + off, len - off, insn, fp,
-+							    &total_cycles);
- 				break;
- 			} else {
- 				printed += fprintf(fp, "\t%016" PRIx64 "\t%s\n", ip,
+Rui
