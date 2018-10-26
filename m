@@ -2,117 +2,118 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF3DECDE46
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E55B7ECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:42:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93FA32085B
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:42:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9E7202085B
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:42:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OE4U6iUQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93FA32085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hhE9nvAq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E7202085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726815AbeJ0FUv (ORCPT
+        id S1727547AbeJ0FU5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 01:20:51 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:38311 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725808AbeJ0FUv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 01:20:51 -0400
-Received: by mail-lf1-f67.google.com with SMTP id x24-v6so1893431lfe.5
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 13:42:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qVHuF2pQ7n/iYrqE81jlHPL+f1/5Mbp50K/TF++woLQ=;
-        b=OE4U6iUQCbdp9WyVBV/t/NuyATDx7l7gYTjNDkP1D9NOQ21pPCBxOesG4/Jzfb4Tep
-         AQGLLKUhLJ/cjKpUTulkIhkkoJgco1pElP/OdtcviNdyIAaNq/BfgvHHVo7CZPDwaXQ0
-         aqppZ2baATIGB0kn9vI9PNLNvidfkq8wo3s5c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qVHuF2pQ7n/iYrqE81jlHPL+f1/5Mbp50K/TF++woLQ=;
-        b=skw6JUKyLZbEfYKvxqC/3ZUJBw+MHLPOMIazv42aVvIffasAhB31toEJKySTE4AyAh
-         m5r+Q+YJeR4P0HqqTaalE7G+CHumx3hv9gNAfM3sG0A0SCninKtPEgeqjqMVg/nD5UQd
-         NuVeasp5S22s5TswrqQFLQIu2yY4zbXf0rNXXsILyXLkJzu++IluyKx9xcY/rVVOkmc0
-         bYGWUlceaw9NkPgyyMbcZ9dXp3HhclboDkYgxfWrdoQl/KzWtTo6ngboay7f7PYEu2Ts
-         fSlYGzkXsd98sv8WQw+PeLKC5xBGeTSbtk2OSiYOQE/uNrRKLHGsnHEMkc0Xl8mgyOZE
-         3C4w==
-X-Gm-Message-State: AGRZ1gJV/0qOk0xaKScnh0JNhpdPAMj8ozlLWOYW2RyLJEp73hRItPMq
-        cjcd3g535qPRLrgSP/0PBfOjz74GkBsxzA==
-X-Google-Smtp-Source: AJdET5diJmb0c2Dp4YhS/kOfuYtRB3bBsS63c8jBaE3Ns4Q5xYja3zJYjFyX12dHIS3yRS79cyqlDQ==
-X-Received: by 2002:a19:d8ea:: with SMTP id r103mr2544301lfi.146.1540586539847;
-        Fri, 26 Oct 2018 13:42:19 -0700 (PDT)
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com. [209.85.167.52])
-        by smtp.gmail.com with ESMTPSA id z89-v6sm949211ljb.71.2018.10.26.13.42.18
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 13:42:18 -0700 (PDT)
-Received: by mail-lf1-f52.google.com with SMTP id m18-v6so1875217lfl.11
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 13:42:18 -0700 (PDT)
-X-Received: by 2002:a19:288c:: with SMTP id o134-v6mr3304130lfo.124.1540586537634;
- Fri, 26 Oct 2018 13:42:17 -0700 (PDT)
+        Sat, 27 Oct 2018 01:20:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38494 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725808AbeJ0FU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Oct 2018 01:20:57 -0400
+Received: from localhost (unknown [167.98.65.38])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47D1C20856;
+        Fri, 26 Oct 2018 20:42:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540586547;
+        bh=y6GHLD3iTfoUWTyAENeES4MoLFw0vJUADnQ3lSdtbhk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hhE9nvAq/8DD2EwHleLGhktokBMxiQspgqXH8QJtPNQ0JDIYI27gisXZK81Jvo52G
+         fj7sCIkZ2YRYWLnVYD6CSnJHxT3hVSObtJjWgy1UXNfKCq0pXHJpbCqere9dyG3wPO
+         MFQBn8QnRkv/WK3SlajbUhB2uT40b1g5IcQtzmW8=
+Date:   Fri, 26 Oct 2018 16:42:25 -0400
+From:   Sasha Levin <sashal@kernel.org>
+To:     Shayenne da Luz Moura <shayenneluzmoura@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Michael Thayer <michael.thayer@oracle.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        outreachy-kernel@googlegroups.com
+Subject: Re: [Outreachy kernel] [RESEND PATCH 2/2] staging: vboxvideo: Use
+ unsigned int instead bool
+Message-ID: <20181026204225.GH2015@sasha-vm>
+References: <cover.1540580493.git.shayenneluzmoura@gmail.com>
+ <211701e4ae42acd95afb24713314bce5a4c58ecf.1540580493.git.shayenneluzmoura@gmail.com>
 MIME-Version: 1.0
-References: <10b12992-3570-4646-374b-82cbd7276839@acm.org> <CAKwvOd=wgxB69dMxzMeH2edCn=TdQGPGkNVW1e=QHPTJtO9ZNw@mail.gmail.com>
- <1538503063.193396.6.camel@acm.org> <CAKwvOdmsNEexQL9R8rgcRcXTZButYM6YWwG8bhVWCoJ8bOqCrA@mail.gmail.com>
- <1538521591.193396.8.camel@acm.org> <20181025213144.GB24709@flashbox>
- <CAKwvOdn=TvoGdFvgxX6TyXBXnhVLttriRrZEnzS6DjcjL64DPA@mail.gmail.com>
- <20181025225548.GA10326@flashbox> <CAKwvOdnwmf47_m_0K5OCLmXbrkLNnekpNOPCCMeJqkuqKUbQ-A@mail.gmail.com>
- <1540576908.66186.103.camel@acm.org> <20181026180515.GA12129@flashbox>
- <CAKwvOdnEHCmNjm-P068KQrbU0K+Dzyw_+_j7XLKJET0LWSz86A@mail.gmail.com>
- <CAHk-=wh0LsuM+kAZGbDaogDdSbdCk3GvXmjYVAMkpmLj2=VF=g@mail.gmail.com> <CAKwvOd=c9RG2s3f-PgM1T84sHc5N9zcjrVpG5is+mGbTOxvtrQ@mail.gmail.com>
-In-Reply-To: <CAKwvOd=c9RG2s3f-PgM1T84sHc5N9zcjrVpG5is+mGbTOxvtrQ@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 26 Oct 2018 13:42:01 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whazvE2VnJiSFeQ_BzU2iUUt=v8BxhgJyq92ecDayJ14g@mail.gmail.com>
-Message-ID: <CAHk-=whazvE2VnJiSFeQ_BzU2iUUt=v8BxhgJyq92ecDayJ14g@mail.gmail.com>
-Subject: Re: [PATCH] libosd: Remove ignored __weak attribute
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     bvanassche@acm.org, ooo@electrozaur.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Kees Cook <keescook@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <211701e4ae42acd95afb24713314bce5a4c58ecf.1540580493.git.shayenneluzmoura@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 1:06 PM Nick Desaulniers
-<ndesaulniers@google.com> wrote:
+On Fri, Oct 26, 2018 at 04:04:45PM -0300, Shayenne da Luz Moura wrote:
+>This change was suggested by checkpath.pl. Use unsigned int with bitfield
+>allocate only one bit to the boolean variable.
 >
-> Is removing a filesystem considered a userspace breakage?
+>CHECK: Avoid using bool structure members because of possible alignment
+>issues
+>
+>Signed-off-by: Shayenne da Luz Moura <shayenneluzmoura@gmail.com>
+>---
+> drivers/staging/vboxvideo/vbox_drv.h        | 14 +++++++-------
+> drivers/staging/vboxvideo/vboxvideo_guest.h |  2 +-
+> 2 files changed, 8 insertions(+), 8 deletions(-)
+>
+>diff --git a/drivers/staging/vboxvideo/vbox_drv.h b/drivers/staging/vboxvideo/vbox_drv.h
+>index 594f84272957..7d3e329a6b1c 100644
+>--- a/drivers/staging/vboxvideo/vbox_drv.h
+>+++ b/drivers/staging/vboxvideo/vbox_drv.h
+>@@ -81,7 +81,7 @@ struct vbox_private {
+> 	u8 __iomem *vbva_buffers;
+> 	struct gen_pool *guest_pool;
+> 	struct vbva_buf_ctx *vbva_info;
+>-	bool any_pitch;
+>+	unsigned int any_pitch:1;
+> 	u32 num_crtcs;
+> 	/** Amount of available VRAM, including space used for buffers. */
+> 	u32 full_vram_size;
 
-Yes - if a user notices.
+Using bitfields for booleans in these cases is less efficient than just
+using "regular" booleans for two reasons:
 
-The key word is *USER*.
+1. It will use the same amount of space. Due to alignment requirements,
+the compiler can't squeeze in anything into the 7 bits that are now
+"free". Each member, unless it's another bitfield, must start at a whole
+byte.
 
-Note that it's not "user space". It's not about _programs_ noticing,
-it's literally about users and their workflows.
+2. This is actually less efficient (slower) for the compiler to work
+with. The smallest granularity we have to access memory is 1 byte; we
+can't set individual bits directly in memory. For the original code, the
+assembly for 'vbox_private.any_pitch = true' would look something like
+this:
 
-If some change breaks a real user workflow, it needs to be reverted.
+	movl   $0x1,-0x10(%rsp)
 
-So this is not about ABI or anything like that. We've had cases where
-the ABI stayed the same, but the order of device probing changed, and
-that broke peoples setups (because now /dev/sdb and /dev/sda switched
-places), and we had to revert.
+As you can see, the compiler can directly write into the variable.
+However, when we switch to using bitfields, the compiler must preserve
+the original value of the other 7 bits, so it must first read them from
+memory, manipulate the value and write it back. The assembly would
+look something like this:
 
-It's literally about "if a user upgrades a kernel, and something no
-longer works, it's a regression".
+	movzbl -0x10(%rsp),%eax
+	or     $0x1,%eax
+	mov    %al,-0x10(%rsp)
 
-In general, a good idea is "if you have to wonder about it, just don't
-do it".  Because it turns out that users are odd, and often do odd
-things much after you'd have thought they'd have long since switched
-to more modern hardware or filesystems.
+Which is less efficient than what was previously happening.
 
-                      Linus
+--
+Thanks,
+Sasha
