@@ -2,162 +2,275 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4917ECDE46
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:23:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3D94ECDE46
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:23:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63C532086C
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:23:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D88520868
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:23:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Cw6dr+7W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63C532086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uWW6wj3D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D88520868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726828AbeJ0EBQ (ORCPT
+        id S1727450AbeJ0EBS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 00:01:16 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:39929 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbeJ0EBP (ORCPT
+        Sat, 27 Oct 2018 00:01:18 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:46785 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726452AbeJ0EBR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 00:01:15 -0400
-Received: by mail-yw1-f67.google.com with SMTP id v1-v6so901268ywv.6
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 12:22:59 -0700 (PDT)
+        Sat, 27 Oct 2018 00:01:17 -0400
+Received: by mail-qt1-f196.google.com with SMTP id c16-v6so2484919qtj.13
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 12:23:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=H5/lGFkybpU7XwHBFpQN5l9sD9arVHPcGsmxTGmk2iU=;
-        b=Cw6dr+7WpTQ4rBUJF6mWoq1O4fQ4K/N9EN3cX/e5KOhkL5B6mdkOeX51Ww46KGHxRP
-         2huLvlIUBxv7niBo/03WSk6YgzfBOG5j4wYmIft0UfwyGLKB5JL0eQzAeNi/otpjZ6Pd
-         OXaDrUuV7V7OyTo45/PvH7DCwptGmNubjnB2k=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bKcX80lQXDdmu5r13AK26upe74/ntuER0HZxy3FtDKU=;
+        b=uWW6wj3DjIcQhFBj9VMLViOff4pQsNTcRbHTKzM+ZDHi5AJL2xP5M2o8lekZCa7JtD
+         ap45vd8DZXXKC/PCMxz764BjquloKp8PLjYo6E34uYIQIqh6L63/zt3kKy4gI1RCRT/Q
+         sZ6dnzjHOThMb5BqcEZdZgiB4csGcbqvjDX024GLNCRswvr0iAUIFjGHQlkc9waEBQiu
+         zL9Y3Ran5FpYcfllsiKuYohshL9OtbElUTrpHmAgeP5bPDfLsw+LxITs6ofPbjiKAcSs
+         LUU5elKauSDGkhpZkwNT9Fztb27NMc436F+Z6QhfNG6rYJxGTrLiJMqihg37mk0MYbXz
+         bMSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=H5/lGFkybpU7XwHBFpQN5l9sD9arVHPcGsmxTGmk2iU=;
-        b=dXiTuLnuHtW2LXrmtaJLZ+r5S1mHTeBWoHy4e6fB5zcn2KrHtm0D23OdhVNUpp56Nf
-         mprSrP+768bISFOsbh8AG4d4BRs1FpPOwVJgO8iDnYM1ApLiUkK+VQwf5KPepas98ump
-         vVbLxcNAZikYhSWH0407Yzs/MZQ+0usS+3m8mKs+SvaTtM9AOWSyLL4T1bNC2Ge3+rOE
-         TinIlzuqKMoYeKUp6rhzVl67880d+tMltIbtOIWZOUn7whJS7NE1PF0lySYixee7sRk3
-         rySAJRliDP/8fdKc5fQiGn2gZMXXbN1Dwy6rgcIlH2ImLZAQSIiIGoVI831mb9YZAHR9
-         WTog==
-X-Gm-Message-State: AGRZ1gK3ejosnRYaEbX15Gcd6Mln9do9ARW0Pi21z/JAPPsGZkpxoCR9
-        XqFwlwQ2Dql8mP1GAuBzgULPurEjsxARqg==
-X-Google-Smtp-Source: AJdET5cF0Rqn/+oyXsxgm7gWeiWEBgnDjz/AE/nbbon9zytxY6zNNSOP5hEvf/9cVkDcQfdHXeUzXQ==
-X-Received: by 2002:a81:90f:: with SMTP id 15-v6mr2956229ywj.70.1540581778465;
-        Fri, 26 Oct 2018 12:22:58 -0700 (PDT)
-Received: from mail-yw1-f50.google.com (mail-yw1-f50.google.com. [209.85.161.50])
-        by smtp.gmail.com with ESMTPSA id f68-v6sm2173413ywh.60.2018.10.26.12.22.56
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 12:22:57 -0700 (PDT)
-Received: by mail-yw1-f50.google.com with SMTP id v199-v6so910348ywg.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 12:22:56 -0700 (PDT)
-X-Received: by 2002:a0d:d302:: with SMTP id v2-v6mr5051360ywd.124.1540581776272;
- Fri, 26 Oct 2018 12:22:56 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bKcX80lQXDdmu5r13AK26upe74/ntuER0HZxy3FtDKU=;
+        b=HvMGhI9Rkc2OSz7XRrCix/4RORTyNmQ71iTW/UXq6QHkbzYo7JIrFKM+2HD2r44nPa
+         LRSVHm7WkoMCLBg7M5W6gSGymUHJ8yEsc0TFHPtJYJfMMLpJur2yRdTZ0lZ9YfTbAcbu
+         QVKLj5LLfqQ/Ii0bG4lBS0wppsBmVr0PgVodPdDYITRplzWEl77iLmyVEbsOF2Ep7jlB
+         Y/AktJ1BX0ygWyJMto6LDvwgVHPjIF3HwO6K7JrA3cbyvdKto0MboCTg6ETwMb4o5Yjp
+         tMO5dGOGrzKaRs0IomtLk7kHddfymwmyLwAfKUDB1QQ3bV270BO5bLJO0m0LFbf6j7Ti
+         RViw==
+X-Gm-Message-State: AGRZ1gK/51ojwZ2o9bYnOdGU3XdY63H/EzpfhU4AvF5NWjuEkyfQuCns
+        zG7ICq7VP/BU8WLF6mm2PUs=
+X-Google-Smtp-Source: AJdET5d+JxSCoTWy4Ef6KLzRw1exntUCvcSLImukirRfj/jLRN2tuEEUtXf88zACg5IeLZBxJCuGqw==
+X-Received: by 2002:a0c:aa4e:: with SMTP id e14-v6mr3520280qvb.158.1540581780135;
+        Fri, 26 Oct 2018 12:23:00 -0700 (PDT)
+Received: from smtp.gmail.com ([143.107.45.1])
+        by smtp.gmail.com with ESMTPSA id f11-v6sm6759982qkb.47.2018.10.26.12.22.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 26 Oct 2018 12:22:59 -0700 (PDT)
+Date:   Fri, 26 Oct 2018 16:22:55 -0300
+From:   Shayenne da Luz Moura <shayenneluzmoura@gmail.com>
+To:     Dave Airlie <airlied@redhat.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        David Airlie <airlied@linux.ie>
+Cc:     virtualization@lists.linux-foundation.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        outreachy-kernel@googlegroups.com
+Subject: [PATCH 2/6] drm/qxl: Add line after variable declarations
+Message-ID: <a1d44c4a30f9b52d0aa7113e4e5093e843f9913b.1540579956.git.shayenneluzmoura@gmail.com>
+References: <cover.1540579956.git.shayenneluzmoura@gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Fri, 26 Oct 2018 12:22:55
- -0700 (PDT)
-In-Reply-To: <20181026180042.52199-3-joel@joelfernandes.org>
-References: <20181026180042.52199-1-joel@joelfernandes.org> <20181026180042.52199-3-joel@joelfernandes.org>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Fri, 26 Oct 2018 20:22:55 +0100
-X-Gmail-Original-Message-ID: <CAGXu5jKqVJeCeOkBsEjjc5ZzieW-N1iRZ7Qjt7KL_NWLiPLaGg@mail.gmail.com>
-Message-ID: <CAGXu5jKqVJeCeOkBsEjjc5ZzieW-N1iRZ7Qjt7KL_NWLiPLaGg@mail.gmail.com>
-Subject: Re: [RFC 3/6] pstore: remove max argument from ramoops_get_next_prz
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1540579956.git.shayenneluzmoura@gmail.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 7:00 PM, Joel Fernandes (Google)
-<joel@joelfernandes.org> wrote:
-> From the code flow, the 'max' checks are already being done on the prz
-> passed to ramoops_get_next_prz. Lets remove it to simplify this function
-> and reduce its arguments.
->
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> ---
->  fs/pstore/ram.c | 14 ++++++--------
->  1 file changed, 6 insertions(+), 8 deletions(-)
->
-> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-> index cbfdf4b8e89d..3055e05acab1 100644
-> --- a/fs/pstore/ram.c
-> +++ b/fs/pstore/ram.c
-> @@ -124,14 +124,14 @@ static int ramoops_pstore_open(struct pstore_info *psi)
->  }
->
->  static struct persistent_ram_zone *
-> -ramoops_get_next_prz(struct persistent_ram_zone *przs[], uint *c, uint max,
-> +ramoops_get_next_prz(struct persistent_ram_zone *przs[], uint *c,
->                      u64 *id, enum pstore_type_id *typep, bool update)
->  {
->         struct persistent_ram_zone *prz;
->         int i = (*c)++;
->
->         /* Give up if we never existed or have hit the end. */
-> -       if (!przs || i >= max)
-> +       if (!przs)
->                 return NULL;
->
->         prz = przs[i];
-> @@ -254,8 +254,7 @@ static ssize_t ramoops_pstore_read(struct pstore_record *record)
->         /* Find the next valid persistent_ram_zone for DMESG */
->         while (cxt->dump_read_cnt < cxt->max_dump_cnt && !prz) {
->                 prz = ramoops_get_next_prz(cxt->dprzs, &cxt->dump_read_cnt,
-> -                                          cxt->max_dump_cnt, &record->id,
-> -                                          &record->type, 1);
-> +                                          &record->id, &record->type, 1);
->                 if (!prz_ok(prz))
->                         continue;
->                 header_length = ramoops_read_kmsg_hdr(persistent_ram_old(prz),
-> @@ -271,17 +270,17 @@ static ssize_t ramoops_pstore_read(struct pstore_record *record)
->
->         if (!prz_ok(prz))
->                 prz = ramoops_get_next_prz(&cxt->cprz, &cxt->console_read_cnt,
-> -                                          1, &record->id, &record->type, 0);
-> +                                          &record->id, &record->type, 0);
->
->         if (!prz_ok(prz))
->                 prz = ramoops_get_next_prz(&cxt->mprz, &cxt->pmsg_read_cnt,
-> -                                          1, &record->id, &record->type, 0);
-> +                                          &record->id, &record->type, 0);
->
->         /* ftrace is last since it may want to dynamically allocate memory. */
->         if (!prz_ok(prz)) {
->                 if (!(cxt->flags & RAMOOPS_FLAG_FTRACE_PER_CPU)) {
->                         prz = ramoops_get_next_prz(cxt->fprzs,
-> -                                       &cxt->ftrace_read_cnt, 1, &record->id,
-> +                                       &cxt->ftrace_read_cnt, &record->id,
->                                         &record->type, 0);
->                 } else {
->                         /*
-> @@ -299,7 +298,6 @@ static ssize_t ramoops_pstore_read(struct pstore_record *record)
->                         while (cxt->ftrace_read_cnt < cxt->max_ftrace_cnt) {
->                                 prz_next = ramoops_get_next_prz(cxt->fprzs,
->                                                 &cxt->ftrace_read_cnt,
-> -                                               cxt->max_ftrace_cnt,
->                                                 &record->id,
->                                                 &record->type, 0);
->
-> --
-> 2.19.1.568.g152ad8e336-goog
->
+Add whiteline after variable declarations to remove the checkpath.pl
+warning:
 
-Yup, looks good.
+WARNING: Missing a blank line after declarations
 
+Signed-off-by: Shayenne da Luz Moura <shayenneluzmoura@gmail.com>
+---
+ drivers/gpu/drm/qxl/qxl_cmd.c     | 4 ++++
+ drivers/gpu/drm/qxl/qxl_display.c | 2 ++
+ drivers/gpu/drm/qxl/qxl_draw.c    | 2 ++
+ drivers/gpu/drm/qxl/qxl_dumb.c    | 1 +
+ drivers/gpu/drm/qxl/qxl_image.c   | 2 ++
+ drivers/gpu/drm/qxl/qxl_ioctl.c   | 2 ++
+ drivers/gpu/drm/qxl/qxl_kms.c     | 1 +
+ drivers/gpu/drm/qxl/qxl_object.c  | 1 +
+ drivers/gpu/drm/qxl/qxl_object.h  | 2 ++
+ 9 files changed, 17 insertions(+)
+
+diff --git a/drivers/gpu/drm/qxl/qxl_cmd.c b/drivers/gpu/drm/qxl/qxl_cmd.c
+index 208af9f37914..25ec8e6544ee 100644
+--- a/drivers/gpu/drm/qxl/qxl_cmd.c
++++ b/drivers/gpu/drm/qxl/qxl_cmd.c
+@@ -84,6 +84,7 @@ static int qxl_check_header(struct qxl_ring *ring)
+ 	int ret;
+ 	struct qxl_ring_header *header = &(ring->ring->header);
+ 	unsigned long flags;
++
+ 	spin_lock_irqsave(&ring->lock, flags);
+ 	ret = header->prod - header->cons < header->num_items;
+ 	if (ret == 0)
+@@ -97,6 +98,7 @@ int qxl_check_idle(struct qxl_ring *ring)
+ 	int ret;
+ 	struct qxl_ring_header *header = &(ring->ring->header);
+ 	unsigned long flags;
++
+ 	spin_lock_irqsave(&ring->lock, flags);
+ 	ret = header->prod == header->cons;
+ 	spin_unlock_irqrestore(&ring->lock, flags);
+@@ -110,6 +112,7 @@ int qxl_ring_push(struct qxl_ring *ring,
+ 	uint8_t *elt;
+ 	int idx, ret;
+ 	unsigned long flags;
++
+ 	spin_lock_irqsave(&ring->lock, flags);
+ 	if (header->prod - header->cons == header->num_items) {
+ 		header->notify_on_cons = header->cons + 1;
+@@ -156,6 +159,7 @@ static bool qxl_ring_pop(struct qxl_ring *ring,
+ 	volatile uint8_t *ring_elt;
+ 	int idx;
+ 	unsigned long flags;
++
+ 	spin_lock_irqsave(&ring->lock, flags);
+ 	if (header->cons == header->prod) {
+ 		header->notify_on_prod = header->cons + 1;
+diff --git a/drivers/gpu/drm/qxl/qxl_display.c b/drivers/gpu/drm/qxl/qxl_display.c
+index 87d16a0ce01e..b7421dcdeeb6 100644
+--- a/drivers/gpu/drm/qxl/qxl_display.c
++++ b/drivers/gpu/drm/qxl/qxl_display.c
+@@ -259,6 +259,7 @@ static int qxl_add_common_modes(struct drm_connector *connector,
+ 	struct drm_device *dev = connector->dev;
+ 	struct drm_display_mode *mode = NULL;
+ 	int i;
++
+ 	for (i = 0; i < ARRAY_SIZE(common_modes); i++) {
+ 		mode = drm_cvt_mode(dev, common_modes[i].w, common_modes[i].h,
+ 				    60, false, false, false);
+@@ -315,6 +316,7 @@ static void qxl_crtc_update_monitors_config(struct drm_crtc *crtc,
+ 	oldcount = qdev->monitors_config->count;
+ 	if (crtc->state->active) {
+ 		struct drm_display_mode *mode = &crtc->mode;
++
+ 		head.width = mode->hdisplay;
+ 		head.height = mode->vdisplay;
+ 		head.x = crtc->x;
+diff --git a/drivers/gpu/drm/qxl/qxl_draw.c b/drivers/gpu/drm/qxl/qxl_draw.c
+index cc5b32e749ce..ed08e9ec4827 100644
+--- a/drivers/gpu/drm/qxl/qxl_draw.c
++++ b/drivers/gpu/drm/qxl/qxl_draw.c
+@@ -168,6 +168,7 @@ void qxl_draw_opaque_fb(const struct qxl_fb_image *qxl_fb_image,
+ 	int ret;
+ 	struct qxl_drm_image *dimage;
+ 	struct qxl_bo *palette_bo = NULL;
++
+ 	if (stride == 0)
+ 		stride = depth * width / 8;
+ 
+@@ -214,6 +215,7 @@ void qxl_draw_opaque_fb(const struct qxl_fb_image *qxl_fb_image,
+ 
+ 	if (depth == 1) {
+ 		void *ptr;
++
+ 		ret = qxl_palette_create_1bit(palette_bo, release, qxl_fb_image);
+ 
+ 		ptr = qxl_bo_kmap_atomic_page(qdev, dimage->bo, 0);
+diff --git a/drivers/gpu/drm/qxl/qxl_dumb.c b/drivers/gpu/drm/qxl/qxl_dumb.c
+index 089e5fcf80e0..e3765739c396 100644
+--- a/drivers/gpu/drm/qxl/qxl_dumb.c
++++ b/drivers/gpu/drm/qxl/qxl_dumb.c
+@@ -38,6 +38,7 @@ int qxl_mode_dumb_create(struct drm_file *file_priv,
+ 	int r;
+ 	struct qxl_surface surf;
+ 	uint32_t pitch, format;
++
+ 	pitch = args->width * ((args->bpp + 1) / 8);
+ 	args->size = pitch * args->height;
+ 	args->size = ALIGN(args->size, PAGE_SIZE);
+diff --git a/drivers/gpu/drm/qxl/qxl_image.c b/drivers/gpu/drm/qxl/qxl_image.c
+index 7fbcc35e8ad3..13b9a18ccde5 100644
+--- a/drivers/gpu/drm/qxl/qxl_image.c
++++ b/drivers/gpu/drm/qxl/qxl_image.c
+@@ -136,6 +136,7 @@ qxl_image_init_helper(struct qxl_device *qdev,
+ 		int remain;
+ 		int page;
+ 		int size;
++
+ 		if (stride == linesize && chunk_stride == stride) {
+ 			remain = linesize * height;
+ 			page = 0;
+@@ -163,6 +164,7 @@ qxl_image_init_helper(struct qxl_device *qdev,
+ 			}
+ 		} else {
+ 			unsigned page_base, page_offset, out_offset;
++
+ 			for (i = 0 ; i < height ; ++i) {
+ 				i_data = (void *)data + i * stride;
+ 				remain = linesize;
+diff --git a/drivers/gpu/drm/qxl/qxl_ioctl.c b/drivers/gpu/drm/qxl/qxl_ioctl.c
+index 6cc9f3367fa0..6e828158bcb0 100644
+--- a/drivers/gpu/drm/qxl/qxl_ioctl.c
++++ b/drivers/gpu/drm/qxl/qxl_ioctl.c
+@@ -85,6 +85,7 @@ static void
+ apply_reloc(struct qxl_device *qdev, struct qxl_reloc_info *info)
+ {
+ 	void *reloc_page;
++
+ 	reloc_page = qxl_bo_kmap_atomic_page(qdev, info->dst_bo, info->dst_offset & PAGE_MASK);
+ 	*(uint64_t *)(reloc_page + (info->dst_offset & ~PAGE_MASK)) = qxl_bo_physical_address(qdev,
+ 											      info->src_bo,
+@@ -189,6 +190,7 @@ static int qxl_process_single_command(struct qxl_device *qdev,
+ 
+ 	{
+ 		struct qxl_drawable *draw = fb_cmd;
++
+ 		draw->mm_time = qdev->rom->mm_clock;
+ 	}
+ 
+diff --git a/drivers/gpu/drm/qxl/qxl_kms.c b/drivers/gpu/drm/qxl/qxl_kms.c
+index e25c589d5f50..d1ba0ab1be82 100644
+--- a/drivers/gpu/drm/qxl/qxl_kms.c
++++ b/drivers/gpu/drm/qxl/qxl_kms.c
+@@ -92,6 +92,7 @@ void qxl_reinit_memslots(struct qxl_device *qdev)
+ static void qxl_gc_work(struct work_struct *work)
+ {
+ 	struct qxl_device *qdev = container_of(work, struct qxl_device, gc_work);
++
+ 	qxl_garbage_collect(qdev);
+ }
+ 
+diff --git a/drivers/gpu/drm/qxl/qxl_object.c b/drivers/gpu/drm/qxl/qxl_object.c
+index 6a30196e9d6c..e1f2404b8f6f 100644
+--- a/drivers/gpu/drm/qxl/qxl_object.c
++++ b/drivers/gpu/drm/qxl/qxl_object.c
+@@ -335,6 +335,7 @@ void qxl_bo_fini(struct qxl_device *qdev)
+ int qxl_bo_check_id(struct qxl_device *qdev, struct qxl_bo *bo)
+ {
+ 	int ret;
++
+ 	if (bo->type == QXL_GEM_DOMAIN_SURFACE && bo->surface_id == 0) {
+ 		/* allocate a surface id for this surface now */
+ 		ret = qxl_surface_id_alloc(qdev, bo);
+diff --git a/drivers/gpu/drm/qxl/qxl_object.h b/drivers/gpu/drm/qxl/qxl_object.h
+index 0374fd93f4d6..b40fc9a10406 100644
+--- a/drivers/gpu/drm/qxl/qxl_object.h
++++ b/drivers/gpu/drm/qxl/qxl_object.h
+@@ -35,6 +35,7 @@ static inline int qxl_bo_reserve(struct qxl_bo *bo, bool no_wait)
+ 	if (unlikely(r != 0)) {
+ 		if (r != -ERESTARTSYS) {
+ 			struct drm_device *ddev = bo->gem_base.dev;
++
+ 			dev_err(ddev->dev, "%p reserve failed\n", bo);
+ 		}
+ 		return r;
+@@ -71,6 +72,7 @@ static inline int qxl_bo_wait(struct qxl_bo *bo, u32 *mem_type,
+ 	if (unlikely(r != 0)) {
+ 		if (r != -ERESTARTSYS) {
+ 			struct drm_device *ddev = bo->gem_base.dev;
++
+ 			dev_err(ddev->dev, "%p reserve failed for wait\n",
+ 				bo);
+ 		}
 -- 
-Kees Cook
+2.19.1
+
