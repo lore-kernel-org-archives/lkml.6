@@ -2,82 +2,75 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D900CC6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C06DC6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:21:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EAD42085B
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:20:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2AE6A20665
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:21:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="HUc4JIKi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EAD42085B
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="oaMBpIOm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AE6A20665
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727221AbeJZW53 (ORCPT
+        id S1727417AbeJZW6i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 18:57:29 -0400
-Received: from mail-it1-f195.google.com ([209.85.166.195]:50206 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726686AbeJZW52 (ORCPT
+        Fri, 26 Oct 2018 18:58:38 -0400
+Received: from mail-it1-f194.google.com ([209.85.166.194]:34163 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbeJZW6i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 18:57:28 -0400
-Received: by mail-it1-f195.google.com with SMTP id k206-v6so1716756ite.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 07:20:13 -0700 (PDT)
+        Fri, 26 Oct 2018 18:58:38 -0400
+Received: by mail-it1-f194.google.com with SMTP id e81-v6so4709647itc.1
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 07:21:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0zCMwBAm09F25IZwarKsjQDcRDxEIhwYjtSkPUkHv/s=;
-        b=HUc4JIKiqQfJgYrtEWqe9AyPXO+cav146N/2ddXWCrR/9dItBi1h0KEI7p0KHRsdMF
-         5PwweDmU34+Awtcx2727aR3RbUBibrUzp3sr8lT9nzhvWlZA8AdRj56tiNaPmR/6ZoxY
-         UNCJMmxeKZAzuS5Q160C1aNIPpkMUCI4Dc78kpIdXNXvU7sn6E/DmAw1XC7JLZ7y8wYF
-         DYR6Rnsql+nebdh5PorkigHwPKNz8WlsKFthExvsueRbjEdx0LPaAmd8zppriJlxRAuD
-         LJfqnQVBLHGG7L463kuEXp6u5TDI+FNzTEk3JartFiQwFPDUJZ7rP8A1DtSPozAAnEpt
-         f/4g==
+        bh=j1TvbJnptUDqMo9gDt7Ey7HHVnSuK3Q1eC9ovbm5gGI=;
+        b=oaMBpIOmd6AdwBbp+I+iYZalscMdD3YugqGwPoErtTAZq0H9c9sk7jnkcgdVS4vFBN
+         JZGA2X1bpQ3omFYnMIquTz2XMGtdURiF6TNFls47AWcM9myKT8ULHBuIPM+V7fV1D+mx
+         UU4Jwzjzd0v1MVAwVb018AbFoyp/M2w09fZJWXz3haz0A0LW9xZCGWN9zjuDU60Ejqlj
+         c2Gx2WC0KCLq9rzDo6w8dKneqIQ119eDeiiVN/3tZJDM6LiixSKulKS9vXkrtbOA/Jou
+         vIO+b0LnBX0PKzoY8vQ/Rz7KxjVfCyFbIK0m2CD6oFr9gHYmj4o2BncEVb4BUwkjVxi9
+         kdyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=0zCMwBAm09F25IZwarKsjQDcRDxEIhwYjtSkPUkHv/s=;
-        b=Sp9/0XNmiOnkxlXiyRufQFask2u88mMvzv6Rdp2/Palm8rbaJfmvmaJPC5CGFDaMPv
-         Cch0DouXn3pqModhJ3td5fyGoQF+/7zUpOu/QREs3/Pyref59rYMPpGP7nLeDl0+u3rO
-         z1xN+GSCyTPkdXrIdjSSUN1M8HozahpTeXyNoV16+0ab5rHumDmwoHp3BAIcyRs6mKEK
-         4GjLCuSRHFdyb3Kwx1S55enjFKipRXkl4uEzavyhLSwc4H6KRlHHWxO347BvHG9gyRgK
-         66HMSbGz5V4/tdlgAQr+1RdSsxsk2aPNG/4Xe93KO+R8ZdInGZqgFvqtwcUeEPYpZTep
-         49nQ==
-X-Gm-Message-State: AGRZ1gLGufGUFFRL71LvkzEEr3TyATuB1dTyNZuP66U08kPTzTeXqrke
-        yP9j9Z4kWq7/VIjhIWjhF2GmUA==
-X-Google-Smtp-Source: AJdET5cPiPd5YYsBTPQaRKs8QdX27bn85o1VnKlQ7G1h3QJmRyOKRvklba7Kj6ztDYpBKayq7SE/iA==
-X-Received: by 2002:a24:e20e:: with SMTP id q14-v6mr440669ith.55.1540563612674;
-        Fri, 26 Oct 2018 07:20:12 -0700 (PDT)
+        bh=j1TvbJnptUDqMo9gDt7Ey7HHVnSuK3Q1eC9ovbm5gGI=;
+        b=aemHJWl7OWEJ/FWad6x9Z1TBz6vFADSNt81gkvz5/9vWawdpvTdGvseyCCDkMaUz2+
+         zCpQMCK7FAZUZZx/gErb4UwtDpSnS9TBUYY3h3CiX640m30iysD056mbMeejB6JsKen7
+         EQATVbG9le5QMge2aC68zAJiOLxLbe+NtUOyqgGyeSjWJO8ORvV5Cqx+twGok4XD2i82
+         cdIdxEiEZNuQW5PJH/Yyb79yazmpKegzSNV52ndxCHdWcaWWuxFkKzSjYCqM1UJ9Xu5D
+         2Xy7ZEl/w4dAMcy3YBxUArAgaDEuz9VUpXTSSxEYw72Q5Y73hESBIbrYM/MQA8RbjPS5
+         PcQg==
+X-Gm-Message-State: AGRZ1gKepxJCXY6yQkShg/PScW2sJG1syxW/2mgRbd3/zIO+NPphCiVH
+        GZ/x6BlnuByxjqvGiiNlp9A/Jw==
+X-Google-Smtp-Source: AJdET5crIPuvfzizga3m5teH0s0mpG03CL+GzE3bXeQmCzpMmb4+Yw6aXrv1sPuIXRi/bGXpWL75Aw==
+X-Received: by 2002:a24:3383:: with SMTP id k125-v6mr4018192itk.14.1540563682440;
+        Fri, 26 Oct 2018 07:21:22 -0700 (PDT)
 Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id d21-v6sm3820526ioc.32.2018.10.26.07.20.10
+        by smtp.gmail.com with ESMTPSA id s15-v6sm1776393ioe.70.2018.10.26.07.21.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 07:20:10 -0700 (PDT)
-Subject: Re: UBSAN: Undefined behaviour in drivers/block/floppy.c:1495:32
-To:     Kyungtae Kim <kt0755@gmail.com>
-Cc:     jikos@kernel.org, Byoungyoung Lee <lifeasageek@gmail.com>,
-        DaeRyong Jeong <threeearcat@gmail.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller@googlegroups.com
-References: <CAEAjamtML1yMLL0DsV5JkD1H6P0Yg19F2DVq+_c-u09RaCKuDw@mail.gmail.com>
- <fcad3085-6801-71f9-b2cf-4c1702889d70@kernel.dk>
- <CAEAjamtJrbLZyN+f97Y+LOMbogveYNBdxM-pVvfqUMhaGsH2uw@mail.gmail.com>
- <CAEAjams3Y4PE-yDP0FyipCAohOepSF9WgXw3h_CEd1YW+mjS0g@mail.gmail.com>
- <ad9f11b6-1e3c-8412-ecce-d04a1c8c317a@kernel.dk>
- <CAEAjamu-MmtPF0_kqyPKJBcZSWz=SGi_1VjLq7z9MMm5-t7Oog@mail.gmail.com>
+        Fri, 26 Oct 2018 07:21:21 -0700 (PDT)
+Subject: Re: [PATCH v3] libata: Apply NOLPM quirk for SAMSUNG
+ MZ7TD256HAFV-000L9
+To:     Diego Viola <diego.viola@gmail.com>, hdegoede@redhat.com
+Cc:     tj@kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20181026134516.1234-1-diego.viola@gmail.com>
 From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <9206bb2f-b11f-cd57-819a-81438b388124@kernel.dk>
-Date:   Fri, 26 Oct 2018 08:20:09 -0600
+Message-ID: <3d9dd60b-7bfe-bc1c-b971-0935a84dcf45@kernel.dk>
+Date:   Fri, 26 Oct 2018 08:21:19 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <CAEAjamu-MmtPF0_kqyPKJBcZSWz=SGi_1VjLq7z9MMm5-t7Oog@mail.gmail.com>
+In-Reply-To: <20181026134516.1234-1-diego.viola@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -86,28 +79,13 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/26/18 7:22 AM, Kyungtae Kim wrote:
-> I corrected the patch as follows:
-
-OK, we're getting there! Please resend as a separate email, so that
-the subject line is the patch header, and just the commit message
-in the body. I'd fix that up for this one, but you also need to
-fix up:
-
-> diff --git a/drivers/block/floppy.c b/drivers/block/floppy.c
-> index a8cfa01..41160a1 100644
-> --- a/drivers/block/floppy.c
-> +++ b/drivers/block/floppy.c
-> @@ -3146,6 +3146,9 @@ static int raw_cmd_copyin(int cmd, void __user *param,
->                          */
->                 return -EINVAL;
+On 10/26/18 7:45 AM, Diego Viola wrote:
+> med_power_with_dipm causes my T450 to freeze with a SAMSUNG
+> MZ7TD256HAFV-000L9 SSD (firmware DXT02L5Q).
 > 
-> +       if (ptr->cmd_count > ARRAY_SIZE(ptr->cmd))
-> +         return -EINVAL;
-> +
+> Switching the LPM to max_performance fixes this issue.
 
-This needs to use tabs, not two spaces. Look at the surrounding
-code - if yours looks differently, then you should correct that.
+Applied, thanks.
 
 -- 
 Jens Axboe
