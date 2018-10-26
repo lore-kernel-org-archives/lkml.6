@@ -2,178 +2,117 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DATE_IN_PAST_03_06,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DA48ECDE46
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:34:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62219ECDE46
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:38:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8796F2085B
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:34:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8796F2085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 27CDA20868
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:38:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="m7k/pKwn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27CDA20868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728016AbeJ0DMb (ORCPT
+        id S1728018AbeJ0DQP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 23:12:31 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60800 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727881AbeJ0DMb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 23:12:31 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9QITLKo057758
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 14:34:24 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nc5b4yhma-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 14:34:24 -0400
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Fri, 26 Oct 2018 14:34:23 -0400
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 26 Oct 2018 14:34:19 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9QIYIoW31653906
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 26 Oct 2018 18:34:18 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4CBA9B2064;
-        Fri, 26 Oct 2018 18:34:18 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1609CB2067;
-        Fri, 26 Oct 2018 18:34:18 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.185.180])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 26 Oct 2018 18:34:18 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 8232816C27F1; Fri, 26 Oct 2018 07:48:35 -0700 (PDT)
-Date:   Fri, 26 Oct 2018 07:48:35 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     "Krein, Dennis" <Dennis.Krein@netapp.com>
-Cc:     linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        hch@infradead.org, bvanassche@acm.org
-Subject: Re: srcu hung task panic
-Reply-To: paulmck@linux.ibm.com
-References: <20181023141415.GJ4170@linux.ibm.com>
- <SN6PR06MB433307629C43832973E0F882E5F50@SN6PR06MB4333.namprd06.prod.outlook.com>
- <20181024105326.GL4170@linux.ibm.com>
- <SN6PR06MB4333940F6EE46EDDB20934EDE5F00@SN6PR06MB4333.namprd06.prod.outlook.com>
+        Fri, 26 Oct 2018 23:16:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58122 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727734AbeJ0DQP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 23:16:15 -0400
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3117020848;
+        Fri, 26 Oct 2018 18:38:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540579088;
+        bh=7xnAamRb1BqS3LPH+pN93yAoPOEnz578jiiNWDaMYM8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=m7k/pKwnjCTngQxilg9/rZYEMnhzmXEonZs4p3or2lbDHr0uCmicSuzmvrQpz7tIt
+         5+ARXgkrlNiGjYOFYyW4FGXubp8ZltfbvJZwmUdCAGDf8/s7iPWZDB7+6/bN1Vh++J
+         OATnt89gY5Ouoy6cqr03NgPRIsx8TlGxPZtH5otE=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id C7739142C5F; Fri, 26 Oct 2018 15:38:05 -0300 (-03)
+Date:   Fri, 26 Oct 2018 15:38:05 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     David Miller <davem@davemloft.net>
+Cc:     linux-kernel@vger.kernel.org, Wang Nan <wangnan0@huawei.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: Re: A concern about overflow ring buffer mode
+Message-ID: <20181026183805.GD3353@kernel.org>
+References: <20181026.104513.2239058788450235574.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <SN6PR06MB4333940F6EE46EDDB20934EDE5F00@SN6PR06MB4333.namprd06.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18102618-2213-0000-0000-0000030B0F8A
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009940; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01108356; UDB=6.00574125; IPR=6.00888442;
- MB=3.00023919; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-26 18:34:21
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18102618-2214-0000-0000-00005C084CEA
-Message-Id: <20181026144835.GW4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-26_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810260155
+In-Reply-To: <20181026.104513.2239058788450235574.davem@davemloft.net>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 04:00:53AM +0000, Krein, Dennis wrote:
-> I have a patch attached that fixes the problem for us.  I also tried a
-> version with an smb_mb() call added at end of rcu_segcblist_enqueue()
-> - but that turned out not to be needed.  I think the key part of
-> this is locking srcu_data in srcu_gp_start().  I also put in the
-> preempt_disable/enable in __call_srcu() so that it couldn't get scheduled
-> out and possibly moved to another CPU.  I had one hung task panic where
-> the callback that would complete the wait was properly set up but for some
-> reason the delayed work never happened.  Only thing I could determine to
-> cause that was if __call_srcu() got switched out after dropping spin lock.
+Addind a few folks to the CC list, Wang implemented the backwards ring
+buffer code.
 
-Good show!!!
+Em Fri, Oct 26, 2018 at 10:45:13AM -0700, David Miller escreveu:
+> Since the last time I looked deeply into perf I notice that
+> perf top now uses a new ring buffer mode by default.
+> 
+> Basically, events are written in reverse order, and when fetching
+> events the tool uses an ioctl to "pause" the ring buffer.
+> 
+> I understand some of the reasons for pursing this kind of scheme but I
+> think there may be a huge downside to this design.
+> 
+> Yes, if the tool can't keep up with the kernel, we'd rather see newer
+> rather than older events.
+> 
+> However, pausing the ring buffer during the fetch is going to
+> virtually guaratee that we lose critical events that impact
+> interpretation of future events in a non-recoverable way.
+> 
+> The thing is, the new scheme causes events to be lost even if the tool
+> can keep up with the kernel.
+> 
+> Any event that happens while the tool is fetching the ring entries
+> will be lost forever.  The kernel simply skips queuing up the event
+> and increments a lost counter.  During a kernel build, I typically see
+> 9 or so events lost each fetch.
+> 
+> Ok, if this is just a SAMPLE then fine, it's not a big deal.
+> 
+> But what if the lost event is a FORK or an EXEC or the worst one to
+> lose, an MMAP?
 
-You are quite right, the srcu_data structure's ->lock
-must be held across the calls to rcu_segcblist_advance() and
-rcu_segcblist_accelerate().  Color me blind, given that I repeatedly
-looked at the "lockdep_assert_held(&ACCESS_PRIVATE(sp, lock));" and
-repeatedly misread it as "lockdep_assert_held(&ACCESS_PRIVATE(sdp,
-lock));".
+Right, we can't lose those, so for using this, we need something like
+the intel_pt tooling code does, i.e. add an extra event to the mix, a
+software event, "dummy", that then gets used to track just the
+PERF_RECORD_!SAMPLE metadata events and then this one never gets paused.
 
-A few questions and comments:
+The intel pt motivation is different, but the technique perhaps will
+allow for using the backward code while not losing metadata events.
 
-o	Are you OK with my adding your Signed-off-by as shown in the
-	updated patch below?
+wdyt? Wang?
 
-o	I removed the #ifdefs because this is needed everywhere.
-	However, I do agree that it can be quite helpful to use these
-	while experimenting with different potential solutions.
-
-o	Preemption is already disabled across all of srcu_gp_start()
-	because the sp->lock is an interrupt-disabling lock.  This means
-	that disabling preemption would have no effect.  I therefore
-	removed the preempt_disable() and preempt_enable().
-
-o	What sequence of events would lead to the work item never being
-	executed?  Last I knew, workqueues were supposed to be robust
-	against preemption.
-
-I have added Christoph and Bart on CC (along with their Reported-by tags)
-because they were recently seeing an intermittent failure that might
-have been caused gby tyhis same bug.  Could you please check to see if
-the below patch fixes your problem, give or take the workqueue issue?
-
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
-commit 1c1d315dfb7049d0233b89948a3fbcb61ea15d26
-Author: Dennis Krein <Dennis.Krein@netapp.com>
-Date:   Fri Oct 26 07:38:24 2018 -0700
-
-    srcu: Lock srcu_data structure in srcu_gp_start()
-    
-    The srcu_gp_start() function is called with the srcu_struct structure's
-    ->lock held, but not with the srcu_data structure's ->lock.  This is
-    problematic because this function accesses and updates the srcu_data
-    structure's ->srcu_cblist, which is protected by that lock.  Failing to
-    hold this lock can result in corruption of the SRCU callback lists,
-    which in turn can result in arbitrarily bad results.
-    
-    This commit therefore makes srcu_gp_start() acquire the srcu_data
-    structure's ->lock across the calls to rcu_segcblist_advance() and
-    rcu_segcblist_accelerate(), thus preventing this corruption.
-    
-    Reported-by: Bart Van Assche <bvanassche@acm.org>
-    Reported-by: Christoph Hellwig <hch@infradead.org>
-    Signed-off-by: Dennis Krein <Dennis.Krein@netapp.com>
-    Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-
-diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
-index 60f3236beaf7..697a2d7e8e8a 100644
---- a/kernel/rcu/srcutree.c
-+++ b/kernel/rcu/srcutree.c
-@@ -451,10 +451,12 @@ static void srcu_gp_start(struct srcu_struct *sp)
+- Arnaldo
  
- 	lockdep_assert_held(&ACCESS_PRIVATE(sp, lock));
- 	WARN_ON_ONCE(ULONG_CMP_GE(sp->srcu_gp_seq, sp->srcu_gp_seq_needed));
-+	spin_lock_rcu_node(sdp);  /* Interrupts already disabled. */
- 	rcu_segcblist_advance(&sdp->srcu_cblist,
- 			      rcu_seq_current(&sp->srcu_gp_seq));
- 	(void)rcu_segcblist_accelerate(&sdp->srcu_cblist,
- 				       rcu_seq_snap(&sp->srcu_gp_seq));
-+	spin_unlock_rcu_node(sdp);  /* Interrupts remain disabled. */
- 	smp_mb(); /* Order prior store to ->srcu_gp_seq_needed vs. GP start. */
- 	rcu_seq_start(&sp->srcu_gp_seq);
- 	state = rcu_seq_state(READ_ONCE(sp->srcu_gp_seq));
+> Now we can't even match up events properly and we get tons of those
+> dreaded "Unknown" symbols and DSOs.  The output looks terrible and the
+> tool becomes useless.
+> 
+> And yes this happens frequently.
+> 
+> I think the overwrite ring buffer mode should be seriously
+> reconsidered.  The "I'd rather see new than old events" part is fine,
+> but the "pause" part is not.  You can't turn event recording off on
 
+> the kernel side while you fetch some events, because it means that
+> critical events that allow us to properly interpret future events will
+> be lost.
