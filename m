@@ -2,140 +2,87 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE1CECDE46
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 17:38:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAA4CECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 17:45:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1BF42084D
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 17:38:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1BF42084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 774902084D
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 17:45:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 774902084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727636AbeJ0CQo (ORCPT
+        id S1727629AbeJ0CXJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 22:16:44 -0400
-Received: from mga04.intel.com ([192.55.52.120]:58801 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726949AbeJ0CQo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 22:16:44 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Oct 2018 10:38:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,428,1534834800"; 
-   d="scan'208";a="85858303"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by orsmga006.jf.intel.com with SMTP; 26 Oct 2018 10:38:47 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Fri, 26 Oct 2018 20:38:46 +0300
-Date:   Fri, 26 Oct 2018 20:38:46 +0300
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Lyude Paul <lyude@redhat.com>
-Cc:     intel-gfx@lists.freedesktop.org,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] drm/i915: Fix NULL deref when re-enabling HPD IRQs
- on systems with MST
-Message-ID: <20181026173846.GF9144@intel.com>
-References: <20181025222657.9241-1-lyude@redhat.com>
- <20181025222657.9241-2-lyude@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181025222657.9241-2-lyude@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 26 Oct 2018 22:23:09 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:47062 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727256AbeJ0CXJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 22:23:09 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 8E52E148A4D2E;
+        Fri, 26 Oct 2018 10:45:14 -0700 (PDT)
+Date:   Fri, 26 Oct 2018 10:45:13 -0700 (PDT)
+Message-Id: <20181026.104513.2239058788450235574.davem@davemloft.net>
+To:     acme@kernel.org
+CC:     linux-kernel@vger.kernel.org
+Subject: A concern about overflow ring buffer mode
+From:   David Miller <davem@davemloft.net>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 26 Oct 2018 10:45:14 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 06:26:56PM -0400, Lyude Paul wrote:
-> Turns out that if you trigger an HPD storm on a system that has an MST
-> topology connected to it, you'll end up causing the kernel to eventually
-> hit a NULL deref:
-> 
-> [  332.339041] BUG: unable to handle kernel NULL pointer dereference at 00000000000000ec
-> [  332.340906] PGD 0 P4D 0
-> [  332.342750] Oops: 0000 [#1] SMP PTI
-> [  332.344579] CPU: 2 PID: 25 Comm: kworker/2:0 Kdump: loaded Tainted: G           O      4.18.0-rc3short-hpd-storm+ #2
-> [  332.346453] Hardware name: LENOVO 20BWS1KY00/20BWS1KY00, BIOS JBET71WW (1.35 ) 09/14/2018
-> [  332.348361] Workqueue: events intel_hpd_irq_storm_reenable_work [i915]
-> [  332.350301] RIP: 0010:intel_hpd_irq_storm_reenable_work.cold.3+0x2f/0x86 [i915]
-> [  332.352213] Code: 00 00 ba e8 00 00 00 48 c7 c6 c0 aa 5f a0 48 c7 c7 d0 73 62 a0 4c 89 c1 4c 89 04 24 e8 7f f5 af e0 4c 8b 04 24 44 89 f8 29 e8 <41> 39 80 ec 00 00 00 0f 85 43 13 fc ff 41 0f b6 86 b8 04 00 00 41
-> [  332.354286] RSP: 0018:ffffc90000147e48 EFLAGS: 00010006
-> [  332.356344] RAX: 0000000000000005 RBX: ffff8802c226c9d4 RCX: 0000000000000006
-> [  332.358404] RDX: 0000000000000000 RSI: 0000000000000082 RDI: ffff88032dc95570
-> [  332.360466] RBP: 0000000000000005 R08: 0000000000000000 R09: ffff88031b3dc840
-> [  332.362528] R10: 0000000000000000 R11: 000000031a069602 R12: ffff8802c226ca20
-> [  332.364575] R13: ffff8802c2268000 R14: ffff880310661000 R15: 000000000000000a
-> [  332.366615] FS:  0000000000000000(0000) GS:ffff88032dc80000(0000) knlGS:0000000000000000
-> [  332.368658] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  332.370690] CR2: 00000000000000ec CR3: 000000000200a003 CR4: 00000000003606e0
-> [  332.372724] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> [  332.374773] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> [  332.376798] Call Trace:
-> [  332.378809]  process_one_work+0x1a1/0x350
-> [  332.380806]  worker_thread+0x30/0x380
-> [  332.382777]  ? wq_update_unbound_numa+0x10/0x10
-> [  332.384772]  kthread+0x112/0x130
-> [  332.386740]  ? kthread_create_worker_on_cpu+0x70/0x70
-> [  332.388706]  ret_from_fork+0x35/0x40
-> [  332.390651] Modules linked in: i915(O) vfat fat joydev btusb btrtl btbcm btintel bluetooth ecdh_generic iTCO_wdt wmi_bmof i2c_algo_bit drm_kms_helper intel_rapl syscopyarea sysfillrect x86_pkg_temp_thermal sysimgblt coretemp fb_sys_fops crc32_pclmul drm psmouse pcspkr mei_me mei i2c_i801 lpc_ich mfd_core i2c_core tpm_tis tpm_tis_core thinkpad_acpi wmi tpm rfkill video crc32c_intel serio_raw ehci_pci xhci_pci ehci_hcd xhci_hcd [last unloaded: i915]
-> [  332.394963] CR2: 00000000000000ec
-> 
-> This appears to be due to the fact that with an MST topology, not all
-> intel_connector structs will have ->encoder set. So, fix this by
-> skipping connectors without encoders in
-> intel_hpd_irq_storm_reenable_work().
-> 
-> For those wondering, this bug was found on accident while simulating HPD
-> storms using a Chamelium connected to a ThinkPad T450s (Broadwell).
-> 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
-> ---
->  drivers/gpu/drm/i915/intel_hotplug.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/intel_hotplug.c b/drivers/gpu/drm/i915/intel_hotplug.c
-> index 648a13c6043c..7d21aac10d16 100644
-> --- a/drivers/gpu/drm/i915/intel_hotplug.c
-> +++ b/drivers/gpu/drm/i915/intel_hotplug.c
-> @@ -228,7 +228,8 @@ static void intel_hpd_irq_storm_reenable_work(struct work_struct *work)
->  		drm_for_each_connector_iter(connector, &conn_iter) {
->  			struct intel_connector *intel_connector = to_intel_connector(connector);
->  
-> -			if (intel_connector->encoder->hpd_pin == pin) {
-> +			if (intel_connector->encoder &&
-> +			    intel_connector->encoder->hpd_pin == pin) {
 
-Hmm. Yeah, with MST that assignment happens at enable time. I guess we
-currently don't clear that pointer ever, so this seems safe. If we start
-to clear it this becomes racy.
+Since the last time I looked deeply into perf I notice that
+perf top now uses a new ring buffer mode by default.
 
-Maybe it would be better to just skip MST connectors entirely? Ah,
-i915_hpd_poll_init_work() already used ->mst_port for just that. So
-probabloy better follow the same example here.
+Basically, events are written in reverse order, and when fetching
+events the tool uses an ioctl to "pause" the ring buffer.
 
-Hmm. That seems a bit racy as well though. We'd need to
-reorder intel_dp_add_mst_connector() to assign ->mst_port
-before connector_init() to prevent that race.
+I understand some of the reasons for pursing this kind of scheme but I
+think there may be a huge downside to this design.
 
->  				if (connector->polled != intel_connector->polled)
->  					DRM_DEBUG_DRIVER("Reenabling HPD on connector %s\n",
->  							 connector->name);
-> -- 
-> 2.17.2
+Yes, if the tool can't keep up with the kernel, we'd rather see newer
+rather than older events.
 
--- 
-Ville Syrjälä
-Intel
+However, pausing the ring buffer during the fetch is going to
+virtually guaratee that we lose critical events that impact
+interpretation of future events in a non-recoverable way.
+
+The thing is, the new scheme causes events to be lost even if the tool
+can keep up with the kernel.
+
+Any event that happens while the tool is fetching the ring entries
+will be lost forever.  The kernel simply skips queuing up the event
+and increments a lost counter.  During a kernel build, I typically see
+9 or so events lost each fetch.
+
+Ok, if this is just a SAMPLE then fine, it's not a big deal.
+
+But what if the lost event is a FORK or an EXEC or the worst one to
+lose, an MMAP?
+
+Now we can't even match up events properly and we get tons of those
+dreaded "Unknown" symbols and DSOs.  The output looks terrible and the
+tool becomes useless.
+
+And yes this happens frequently.
+
+I think the overwrite ring buffer mode should be seriously
+reconsidered.  The "I'd rather see new than old events" part is fine,
+but the "pause" part is not.  You can't turn event recording off on
+the kernel side while you fetch some events, because it means that
+critical events that allow us to properly interpret future events will
+be lost.
