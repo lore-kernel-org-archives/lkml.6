@@ -3,104 +3,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF34EC6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 15:05:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1437EECDE46
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 15:05:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1E6F2084D
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 15:05:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1E6F2084D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id D09F12064C
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 15:05:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D09F12064C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lwn.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727531AbeJZXm1 (ORCPT
+        id S1727581AbeJZXmr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 19:42:27 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:62195 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726159AbeJZXm0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 19:42:26 -0400
-Received: from fsav105.sakura.ne.jp (fsav105.sakura.ne.jp [27.133.134.232])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9QF4d5D032461;
-        Sat, 27 Oct 2018 00:04:39 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav105.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp);
- Sat, 27 Oct 2018 00:04:39 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav105.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157065137.bbtec.net [60.157.65.137])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w9QF4cmM032457
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sat, 27 Oct 2018 00:04:39 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: KASAN: use-after-free Read in task_is_descendant
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     serge@hallyn.com,
-        syzbot <syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com>,
-        jmorris@namei.org, keescook@chromium.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-References: <20181022134634.GA7358@redhat.com>
- <201810250215.w9P2Fm2M078167@www262.sakura.ne.jp>
- <20181025111355.GA3725@redhat.com>
- <b0ac67e6-4279-91b3-0178-3176876abe70@i-love.sakura.ne.jp>
- <20181025121709.GD3725@redhat.com>
- <d11bc954-5a30-e6bd-1668-866a187e0aac@i-love.sakura.ne.jp>
- <20181025155503.GF3725@redhat.com>
- <3423a470-c152-0dbf-c7a7-2775a9679194@i-love.sakura.ne.jp>
- <20181026130442.GB10581@redhat.com>
- <522c4993-4d98-be98-def2-452ed28098f9@i-love.sakura.ne.jp>
- <20181026143937.GA18848@redhat.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <4264173d-4947-9fad-97e6-5269defb6eb4@i-love.sakura.ne.jp>
-Date:   Sat, 27 Oct 2018 00:04:32 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 26 Oct 2018 19:42:47 -0400
+Received: from ms.lwn.net ([45.79.88.28]:48812 "EHLO ms.lwn.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726159AbeJZXmr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 19:42:47 -0400
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ms.lwn.net (Postfix) with ESMTPSA id 36A822B7;
+        Fri, 26 Oct 2018 15:05:20 +0000 (UTC)
+Date:   Fri, 26 Oct 2018 09:05:18 -0600
+From:   Jonathan Corbet <corbet@lwn.net>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Igor Stoppa <igor.stoppa@gmail.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        kernel-hardening@lists.openwall.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, igor.stoppa@huawei.com,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 10/17] prmem: documentation
+Message-ID: <20181026090518.6f3c064e@lwn.net>
+In-Reply-To: <20181026092609.GB3159@worktop.c.hoisthospitality.com>
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+        <20181023213504.28905-11-igor.stoppa@huawei.com>
+        <20181026092609.GB3159@worktop.c.hoisthospitality.com>
+Organization: LWN.net
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20181026143937.GA18848@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/10/26 23:39, Oleg Nesterov wrote:
-> On 10/26, Tetsuo Handa wrote:
->> Suppose p1 == p2->real_parent and p2 == p3->real_parent, and p1 exited
->> when someone tried to attach on p2, p2->real_parent was pointing to already
->> (or about to be) freed p1.
-> 
-> I don't see a difference.
-> 
-> If p1 exits it will re-parent p2, p2->real_parent will be updated.
-> 
->> So, the puzzle part is why p2->real_parent was still pointing p1 even after
->> p1 was freed...
-> 
-> I don't understand the question.
-> 
-> Once again. TASK->real_parent can point to the freed mem only if a) TASK exits,
-> and b) _after_ that its parent TASK->real_parent exits too.
+On Fri, 26 Oct 2018 11:26:09 +0200
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-Oh, p2 exited and then p1 also exited when someone tried to attach on p2.
-Then, p2->real_parent can point to already (or about to be) freed p1.
-
+> Jon,
 > 
->>> Again, did you read my previous email?
->>
->> Yes. But I still can't be convinced that pid_alive() test helps.
+> So the below document is a prime example for why I think RST sucks. As a
+> text document readability is greatly diminished by all the markup
+> nonsense.
+
+Please don't confused RST with the uses of it.  The fact that one can do
+amusing things with the C preprocessor doesn't, on its own, make C
+suck... 
 > 
-> Well, I don't understand which part of my explanations is not clear to you.
+> This stuff should not become write-only content like html and other
+> gunk. The actual text file is still the primary means of reading this.
 
-OK. Checking pid_alive() should help.
+I agree that the text file comes first, and I agree that the markup in
+this particular document is excessive.
 
-(By the way, if p->real_parent were updated to point to init_task when p exits,
-we could omit pid_alive() check?)
+Igor, just like #ifdef's make code hard to read, going overboard with RST
+markup makes text hard to read.  It's a common trap to fall into, because
+it lets you make slick-looking web pages, but that is not our primary
+goal here.  Many thanks for writing documentation for this feature, that
+already puts you way ahead of a discouraging number of contributors.  But
+could I ask you, please, to make a pass over it and reduce the markup to
+a minimum?  Using lists as suggested by Markus would help here.
 
+Thanks,
+
+jon
