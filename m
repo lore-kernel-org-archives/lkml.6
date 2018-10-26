@@ -2,149 +2,90 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7530CC6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 15:19:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 469B0ECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 15:21:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E1A620831
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 15:19:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fnuy5daA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E1A620831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E0EC72084D
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 15:21:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0EC72084D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727693AbeJZX43 (ORCPT
+        id S1727020AbeJZX6w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 19:56:29 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38950 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726254AbeJZX42 (ORCPT
+        Fri, 26 Oct 2018 19:58:52 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36176 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726159AbeJZX6v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 19:56:28 -0400
-Received: by mail-wr1-f68.google.com with SMTP id r10-v6so1749900wrv.6;
-        Fri, 26 Oct 2018 08:19:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:in-reply-to:references;
-        bh=yE/YW6fK24VOhbIjt3XPpOViKqn92I+EGRJYSjO4hqg=;
-        b=Fnuy5daA47mKSFuxswUk3qDfHCTbtlSFXMbP+RMdhCukppkmlS6mj6bPnfdMuwJino
-         A+sa3lfvkb7o4LfPFDPLx+8RfgqBOHspU/V7bPT4HtLjHEGp+DGHOV2JfGToIgaKfsgc
-         Z8km+ee4mx1nNKn/YUfYGKPshTEoy1meXXpUnqANqFj2JaKiGW63HjY+pa/BVKhJKxpQ
-         gHN3HtO0w4qvsZFlzVKLqrb/5Tx0wvoRu2NrSrCNAoOZADtsKjH/s3fttM1uE7YRx+He
-         5Cw/mNPGz/gbGFnQblq5ULZzafdKWTEGhCwHnXkHs+Iqi3ei9B9iQb/yFbqJNcu2bcbE
-         1RXQ==
+        Fri, 26 Oct 2018 19:58:51 -0400
+Received: by mail-pg1-f195.google.com with SMTP id z17-v6so698573pgv.3;
+        Fri, 26 Oct 2018 08:21:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references;
-        bh=yE/YW6fK24VOhbIjt3XPpOViKqn92I+EGRJYSjO4hqg=;
-        b=AWswBPl7hJlcbQlLFEgDu2Y0JJcoYWX/FIHMzJiPOyiGS3xeaKHeJNaJlSSr3e2CGx
-         lGmZ9cVGW4ODVFa0JbX1OtaZrtNYayrZCx51U6CBNSTZn+syf9GRaz9pkym99YDNcu4a
-         tB3CAFwXTjym6am1RkTw8Z3TmbpU/LoDBMcECHegGkeA0IisxmSVZSYzyrsRLSHzjtXs
-         TnWBKZkesSWF9VbTS3RCe4Qb4zMpsPEJ69iCnp4ZXvHbnL9I3z/TkMyhMuQ5NVg6/IJi
-         4q3WxXU1vHmDlDoPqUWphAj2lgCuEEu4FjIxi9VbzUctEgZVoCj+e/z3xbwFs+GCuLn3
-         QcZg==
-X-Gm-Message-State: AGRZ1gJTfxViIDzjHsvveZ4hjiZin5eQvxnAS2jQ9bcsWvBmxcac5Fzv
-        xOjx/2JlzwbDImaUizHEGng=
-X-Google-Smtp-Source: AJdET5fwUQRKfoSaQ3JHCKlrr+Y/fJUhljyg+itVp3J3K2iw/l+QS43s1w5/Wgsi/DImjb4FUa0dHQ==
-X-Received: by 2002:adf:db8e:: with SMTP id u14-v6mr6251764wri.217.1540567139748;
-        Fri, 26 Oct 2018 08:18:59 -0700 (PDT)
-Received: from localhost.localdomain ([156.213.138.111])
-        by smtp.gmail.com with ESMTPSA id p7-v6sm10127257wrt.10.2018.10.26.08.18.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 08:18:59 -0700 (PDT)
-From:   Ahmed Abd El Mawgood <ahmedsoliman0x666@gmail.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ahmedsoliman0x666@gmail.com, ovich00@gmail.com,
-        kernel-hardening@lists.openwall.com, nigel.edwards@hpe.com,
-        Boris Lukashev <blukashev@sempervictus.com>,
-        Hossam Hassan <7ossam9063@gmail.com>,
-        Ahmed Lotfy <A7med.lotfey@gmail.com>
-Subject: [PATCH V5 5/5] KVM: Small Refactoring to kvm_free_memslot
-Date:   Fri, 26 Oct 2018 17:12:23 +0200
-Message-Id: <20181026151223.16810-6-ahmedsoliman0x666@gmail.com>
-X-Mailer: git-send-email 2.18.1
-In-Reply-To: <20181026151223.16810-1-ahmedsoliman0x666@gmail.com>
-References: <20181026151223.16810-1-ahmedsoliman0x666@gmail.com>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=qJ1QkkvYuevMWoHJWSkHbZ2EZBzIsp25VhHZ2Ne7YA0=;
+        b=IfECETKIuE19C/mRfTAOPLL5xXh5TpKlYxBHNxY7vCDRchWGvgpN1plhkgU614A/9i
+         L59agRdLvBK+UR4j0TNwaRssHZhSRSZQl7qzw3LPE+NEWUVQDyjImiDUPjB89JtvFN7l
+         73k41JWWsolkDc+wEHZJmKzm4GcNnwr6rnKRnbuILdgwYpOHVB5LyZUKjdZo2+G3SRsU
+         Vor3DadGesDlUmNFnPM6ElCmZBzHpAZ0RFAhWXg3ujfHnUyTfSTs4nHjjGzzmVuJ5Ewa
+         7vxlVmYY9iF9sBsomk706mXhqxhjo8BMPfmRDoA94GvVc7wMMIcTs0jY9jJ07eUJ+oQ1
+         5eOg==
+X-Gm-Message-State: AGRZ1gKoAGE31YRMNNs/9NQ2VR684N3/HB9rVj52sL4SCA3c8u79vcEt
+        Ag3wGW1M3MMfcT0dJPzjnuw=
+X-Google-Smtp-Source: AJdET5c3jyZ87tNuoYuwzxj/34/zD1tdSupqhqXGD4v5SZKyz3XaiX29GCc/tD3qVA1jhTeQOGwK5g==
+X-Received: by 2002:a63:a84a:: with SMTP id i10mr3931893pgp.263.1540567283520;
+        Fri, 26 Oct 2018 08:21:23 -0700 (PDT)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id d65-v6sm15668362pfe.42.2018.10.26.08.21.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 26 Oct 2018 08:21:21 -0700 (PDT)
+Message-ID: <1540567279.66186.99.camel@acm.org>
+Subject: Re: [PATCH] floppy: Avoid memory access beyond the array bounds in
+ setup_rw_floppy()
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Kyungtae Kim <kt0755@gmail.com>, Jens Axboe <axboe@kernel.dk>
+Cc:     jikos@kernel.org, Byoungyoung Lee <lifeasageek@gmail.com>,
+        DaeRyong Jeong <threeearcat@gmail.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 26 Oct 2018 08:21:19 -0700
+In-Reply-To: <CAEAjamtxZRiFUYb4re3jRf9naoSyJO7sskChfEgcBh-m-uEKWQ@mail.gmail.com>
+References: <CAEAjamtxZRiFUYb4re3jRf9naoSyJO7sskChfEgcBh-m-uEKWQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This should be a little bit more readable and prone to memory leaks
+On Fri, 2018-10-26 at 10:39 -0400, Kyungtae Kim wrote:
++AD4 setup+AF8-rw+AF8-floppy() writes some bytes of array cmd to the floppy disk
++AD4 controller, depending on cmd+AF8-count.
++AD4 Although the size of array cmd is fixed like 16, cmd+AF8-count can be much
++AD4 larger through raw+AF8-cmd+AF8-ioctl().
++AD4 Noticed there is no bound check for this, thereby leading to invalid
++AD4 memory access.
 
-Signed-off-by: Ahmed Abd El Mawgood <ahmedsoliman0x666@gmail.com>
----
- virt/kvm/kvm_main.c | 15 +++++++--------
- 1 file changed, 7 insertions(+), 8 deletions(-)
+Against which kernel tree did you prepare this patch? Just above the code
+you want to insert I found the following:
 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 2d3011e8490e..79c98db03c84 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -550,11 +550,11 @@ static void kvm_destroy_dirty_bitmap(struct kvm_memory_slot *memslot)
-  * Free any memory in @free but not in @dont.
-  */
- static void kvm_free_memslot(struct kvm *kvm, struct kvm_memory_slot *free,
--			      struct kvm_memory_slot *dont)
-+			      struct kvm_memory_slot *dont,
-+			      enum kvm_mr_change change)
- {
-+	if (change == KVM_MR_DELETE) {
- #ifdef CONFIG_KVM_ROE
--	if (!dont) {
--		//TODO still this might leak
- 		struct protected_chunk *pos, *n;
- 		struct list_head *head = free->prot_list;
- 		kvfree(free->roe_bitmap);
-@@ -564,10 +564,9 @@ static void kvm_free_memslot(struct kvm *kvm, struct kvm_memory_slot *free,
- 			kvfree(pos);
- 		}
- 		kvfree(free->prot_list);
--	}
- #endif
--	if (!dont || free->dirty_bitmap != dont->dirty_bitmap)
- 		kvm_destroy_dirty_bitmap(free);
-+	}
- 
- 	kvm_arch_free_memslot(kvm, free, dont);
- 
-@@ -582,7 +581,7 @@ static void kvm_free_memslots(struct kvm *kvm, struct kvm_memslots *slots)
- 		return;
- 
- 	kvm_for_each_memslot(memslot, slots)
--		kvm_free_memslot(kvm, memslot, NULL);
-+		kvm_free_memslot(kvm, memslot, NULL, KVM_MR_DELETE);
- 
- 	kvfree(slots);
- }
-@@ -1100,14 +1099,14 @@ int __kvm_set_memory_region(struct kvm *kvm,
- 
- 	kvm_arch_commit_memory_region(kvm, mem, &old, &new, change);
- 
--	kvm_free_memslot(kvm, &old, &new);
-+	kvm_free_memslot(kvm, &old, &new, change);
- 	kvfree(old_memslots);
- 	return 0;
- 
- out_slots:
- 	kvfree(slots);
- out_free:
--	kvm_free_memslot(kvm, &new, &old);
-+	kvm_free_memslot(kvm, &new, &old, change);
- out:
- 	return r;
- }
--- 
-2.18.1
+	if (ptr-+AD4-cmd+AF8-count +AD4 33) ...
 
+Why does that statement compare cmd+AF8-count with 33? Is that comparison correct
+or not? Anyway, I don't think it makes sense first to compare cmd+AF8-count against
+33 and next to compare it against 16 ...
+
++AD4 +-       if (ptr-+AD4-cmd+AF8-count +AD4 ARRAY+AF8-SIZE(ptr-+AD4-cmd))
++AD4 +-               return -EINVAL+ADs
+
+This comparison looks suspicious to me. Almost every comparison of the type
++ACI... +AD4 ARRAY+AF8-SIZE()+ACI I have seen so far was wrong and should be changed into
++ACI... +AD4APQ ARRAY+AF8-SIZE()+ACI instead.
+
+Bart.
