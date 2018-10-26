@@ -2,120 +2,76 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06593ECDE46
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7245ECDE46
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 21:00:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8F8C2082B
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:58:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8F8C2082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 35D5E2082B
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 21:00:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35D5E2082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ispras.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727758AbeJ0FhP (ORCPT
+        id S1727833AbeJ0Fij (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 01:37:15 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:45284 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725947AbeJ0FhP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 01:37:15 -0400
-Received: by mail-oi1-f195.google.com with SMTP id e14-v6so2177669oie.12;
-        Fri, 26 Oct 2018 13:58:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3TdNNn7vkdTVr8zMRWL/VmBsZ84jriFw88GqtMts3wU=;
-        b=KtlsUlJ7H4UfkI3jjueNRTSLwJGLCGOhVEMnw1Fzk+m7kO/frEZjfkl85fGxxXiZMJ
-         PrBZMbxUwUvhne96iLvsKcGe+mo3x9bWbyZaPxANIdNIjTz/vZksOvH6nfr2Zqgjrsct
-         KByTi6kE8TR/BsQ5n1PCylG/EfGAGffsmZx9eMyM50GZfTklB2EI8QO1yEOUtKSr+tXm
-         XbTveLvuLpvAQ28FYrLUoCJC725NtWpGmOqpVltTuBq2yawk3tu70ycv5235Oo+qpbIu
-         rO2OA4soarVx01YOsvJ7dJW9tGHP7GETbuEZGlmBKcVaQZU8s0aI5XBvgZrwM6rwH5fO
-         3moQ==
-X-Gm-Message-State: AGRZ1gIUiiak9G4KQjka0Q84ymm1Bhr4m07yTVFl7W2UL7NqD5Jk7U0z
-        Q/53uJoAcSK+UFI/TU6bTYS9ESrYCMI=
-X-Google-Smtp-Source: AJdET5dP5AtuyWMp4NnGki5NOLDOduTbVReLZwBiIMrDXVISK1cNEsKE5MP0pOI0L+6w/dlsdl3CVQ==
-X-Received: by 2002:aca:f0e:: with SMTP id 14-v6mr3202978oip.202.1540587522129;
-        Fri, 26 Oct 2018 13:58:42 -0700 (PDT)
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com. [209.85.210.49])
-        by smtp.gmail.com with ESMTPSA id w76-v6sm4081872oie.29.2018.10.26.13.58.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 13:58:41 -0700 (PDT)
-Received: by mail-ot1-f49.google.com with SMTP id x4so2338862otg.3;
-        Fri, 26 Oct 2018 13:58:41 -0700 (PDT)
-X-Received: by 2002:a9d:2817:: with SMTP id m23mr3285915otb.168.1540587520920;
- Fri, 26 Oct 2018 13:58:40 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181025094929.29481-1-Zhiqiang.Hou@nxp.com> <20181025094929.29481-4-Zhiqiang.Hou@nxp.com>
-In-Reply-To: <20181025094929.29481-4-Zhiqiang.Hou@nxp.com>
-From:   Li Yang <leoyang.li@nxp.com>
-Date:   Fri, 26 Oct 2018 15:58:29 -0500
-X-Gmail-Original-Message-ID: <CADRPPNQRofR6Upe6_pTNm-bqt0HMVWBOXyYSH8xGvD2g7_nwCA@mail.gmail.com>
-Message-ID: <CADRPPNQRofR6Upe6_pTNm-bqt0HMVWBOXyYSH8xGvD2g7_nwCA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] dts/arm/ls1021a: Clean PCIe controller compatible strings
-To:     Zhiqiang Hou <zhiqiang.hou@nxp.com>
-Cc:     "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>, linux-pci@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>,
-        Minghuan Lian <minghuan.lian@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 27 Oct 2018 01:38:39 -0400
+Received: from mail.ispras.ru ([83.149.199.45]:58958 "EHLO mail.ispras.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726461AbeJ0Fij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Oct 2018 01:38:39 -0400
+Received: from localhost.localdomain (unknown [85.140.184.142])
+        by mail.ispras.ru (Postfix) with ESMTPSA id 3F8D154008B;
+        Sat, 27 Oct 2018 00:00:04 +0300 (MSK)
+From:   Alexey Khoroshilov <khoroshilov@ispras.ru>
+To:     Lee Jones <lee.jones@linaro.org>, Vignesh R <vigneshr@ti.com>
+Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
+Subject: [PATCH] mfd: ti_am335x_tscadc: release device nodes in ti_tscadc_probe()
+Date:   Fri, 26 Oct 2018 23:59:56 +0300
+Message-Id: <1540587596-28493-1-git-send-email-khoroshilov@ispras.ru>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 4:52 AM Z.q. Hou <zhiqiang.hou@nxp.com> wrote:
+ti_tscadc_probe() increments refcnt of tsc and adc device nodes
+and leaves it undecremented.
 
-The correct prefix for arm dts patches should be: "ARM: dts: ls1021a:
-...", and it should be better to mention the string removed in the
-title too.
+Found by Linux Driver Verification project (linuxtesting.org).
 
->
-> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
->
-> Removed the wrong compatible string "snps,dw-pcie", in case
-> match incorrect driver.
->
-> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-> ---
-> V2:
->  - no change
->
->  arch/arm/boot/dts/ls1021a.dtsi | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/ls1021a.dtsi b/arch/arm/boot/dts/ls1021a.dtsi
-> index bdd6e66a79ad..1aaa3288a450 100644
-> --- a/arch/arm/boot/dts/ls1021a.dtsi
-> +++ b/arch/arm/boot/dts/ls1021a.dtsi
-> @@ -716,7 +716,7 @@
->                 };
->
->                 pcie@3400000 {
-> -                       compatible = "fsl,ls1021a-pcie", "snps,dw-pcie";
-> +                       compatible = "fsl,ls1021a-pcie";
->                         reg = <0x00 0x03400000 0x0 0x00010000   /* controller registers */
->                                0x40 0x00000000 0x0 0x00002000>; /* configuration space */
->                         reg-names = "regs", "config";
-> @@ -739,7 +739,7 @@
->                 };
->
->                 pcie@3500000 {
-> -                       compatible = "fsl,ls1021a-pcie", "snps,dw-pcie";
-> +                       compatible = "fsl,ls1021a-pcie";
->                         reg = <0x00 0x03500000 0x0 0x00010000   /* controller registers */
->                                0x48 0x00000000 0x0 0x00002000>; /* configuration space */
->                         reg-names = "regs", "config";
-> --
-> 2.17.1
->
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+---
+ drivers/mfd/ti_am335x_tscadc.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/mfd/ti_am335x_tscadc.c b/drivers/mfd/ti_am335x_tscadc.c
+index c2d47d78705b..6572232a5cef 100644
+--- a/drivers/mfd/ti_am335x_tscadc.c
++++ b/drivers/mfd/ti_am335x_tscadc.c
+@@ -142,16 +142,19 @@ static	int ti_tscadc_probe(struct platform_device *pdev)
+ 	node = of_get_child_by_name(pdev->dev.of_node, "tsc");
+ 	of_property_read_u32(node, "ti,wires", &tsc_wires);
+ 	of_property_read_u32(node, "ti,coordiante-readouts", &readouts);
++	of_node_put(node);
+ 
+ 	node = of_get_child_by_name(pdev->dev.of_node, "adc");
+ 	of_property_for_each_u32(node, "ti,adc-channels", prop, cur, val) {
+ 		adc_channels++;
+ 		if (val > 7) {
++			of_node_put(node);
+ 			dev_err(&pdev->dev, " PIN numbers are 0..7 (not %d)\n",
+ 					val);
+ 			return -EINVAL;
+ 		}
+ 	}
++	of_node_put(node);
+ 	total_channels = tsc_wires + adc_channels;
+ 	if (total_channels > 8) {
+ 		dev_err(&pdev->dev, "Number of i/p channels more than 8\n");
+-- 
+2.7.4
+
