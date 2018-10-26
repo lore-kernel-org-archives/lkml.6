@@ -2,175 +2,144 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FBADECDE47
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E834ECDE44
 	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 17:11:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5D032086B
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 17:00:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD45C20848
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 17:00:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pPCu/eVt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5D032086B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NGsETFzd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD45C20848
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728503AbeJ0BiG (ORCPT
+        id S1728513AbeJ0Bin (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 21:38:06 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:44928 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727842AbeJ0BiG (ORCPT
+        Fri, 26 Oct 2018 21:38:43 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:36708 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727877AbeJ0Bim (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 21:38:06 -0400
-Received: by mail-io1-f67.google.com with SMTP id c6-v6so1122770iob.11
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 10:00:19 -0700 (PDT)
+        Fri, 26 Oct 2018 21:38:42 -0400
+Received: by mail-qt1-f195.google.com with SMTP id u34-v6so2014059qth.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 10:00:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=wSXtAawvihxmBBWG9V+ixp5iLPsNQxELbPvdWyFd9H0=;
-        b=pPCu/eVtBvaLh0BalSnPnEPEX26FIuIFe/5ZJ5VTwBUP1CSjLwbIpDJd2WXZsz6TGJ
-         QXjk8TPBvCrhwmcSrAGCgSfkidUu45mAFogVDkATZDdKnH2ObmQjk5GlHCQL6QDiHWRK
-         o03C6cLqgjd92KVAzYZQnyg7HUNK1v9uO/9eiQ1TJ4GQ8gp1uB4/8grJnP9XFz1Nv1DW
-         YferAw57k+r44ynadT+lSJywBSyt+xrhOVUdRsMh0qONzOiHKl06I/MGHHgyFqB7wTVE
-         EfAHiMIP1Z6BqSRLu3GlMVQ3Wjm0ZYQP0pAch3B1fbGO8i/NeKtAzpHIyz9I7cAFtV8x
-         BkOA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=T5Z4gkXIbPfnWJmltvX718zmpIaavY1fjtWfX1bzD28=;
+        b=NGsETFzd6xVQ/+PqmkGvelVQvmwX8RebSHkOoerLMTsjo0W9cvHFBrUDfo79rfmJ3j
+         xpqropXwcVeUqxKqYrDoat8CqfG7/UK2kpvV+yOWHn1TEBKdYPqYgT/G5YqaT6MK9grN
+         ED0swNuVvv29WS5vSKDMI8H36TJ4xiw3IYshjAWoDos4Afgqcv5qJTqraD0aWYIUy3ZE
+         ydRBim+1FHUSM+wwqsHY8qG5OXhmsFmHZGDnGl80Xhb5TSX0jwlsGCCyFpgcOb8uBBpm
+         g9PlX1eTm0oW9SFuTMmNavJPMBW81OnJPHcEe3ysGrsY+20sZvq8bkSZ1GHDPhuplJs3
+         7lJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=wSXtAawvihxmBBWG9V+ixp5iLPsNQxELbPvdWyFd9H0=;
-        b=i4ZSNxgbIhCjbZxkagLCPTNQFmWJK8agxI2Hr8/MWCRD2ZgbIneIB9Up1GxpcOZa0G
-         t/phn0CKsUtPWIlb6ObXubqOU2YA+nAJmIuwl9y0gLIU/90GkFwBkyzjtvDxjLjnw7g4
-         aCyvCyIL1ywpHfrgfRVAcKyNNCgbznAB/bf+YB9ZuzEtY2GfefpGLuJ7/5CxERKVEcf6
-         cUu4dinewBhQ6dv6Qpnn7fDUwzAljefC4qy0ucjNIQccJbrTTTh7Nv+7KVLUG1spTWeH
-         FAbcmvGyJWtRKaIuZ3wnQBafniHHqhFdTnmQWIR/13PAtu7lRBvTmebtGv2fYs5RHxB2
-         q8Fw==
-X-Gm-Message-State: AGRZ1gJBxWGWZfZolu5+zx2Kk5g/UKj7AhJZ0/+TAkPrR/amLzf7zZl+
-        jR6bB62Y2DlMCCRMoBC/DgwrGmxNSHWBSSjrL5o4FDxh1A==
-X-Google-Smtp-Source: AJdET5c8AWcMlbFQ83MK+Ng2FZxrpR2vKSKBZ1JFOpkWLY7YuxO8WauVhmg9FMMfTq1fyOiVewr6N7BS7BJQK50XizY=
-X-Received: by 2002:a6b:db08:: with SMTP id t8-v6mr2727428ioc.132.1540573218850;
- Fri, 26 Oct 2018 10:00:18 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=T5Z4gkXIbPfnWJmltvX718zmpIaavY1fjtWfX1bzD28=;
+        b=iE/9sZQvKp/WxyGHFyQnNv+NVIEbtNWybKJ0Dq1hpxRdzKJDrWuXPZ+Ik5ldyeFohr
+         rapgx4q00Ob2pQvyocc9O6CaBQfalMf8nZ6YHCes7v+mhLKX5xsPJJ9bQvspoSLsT2mN
+         WGHJhOqv1Zdt0Ks6ACIWZ98lC5VY7B70Gqb3aVSZYtXRu7fPfdvOoOEFqq6K67m4cKpd
+         p2SdM89ihCjf1z740n2G6y36GunOo/dwrV7wFRlDQztLtblQF7q60RKjXb6Uzeh1D/xO
+         BhdFW5QGYZKsMWVAyekDjeRNXzCUrR1rZRj1+wqsk/zf4vDnK73eYNggiqtGm0jd+8Dl
+         8VsQ==
+X-Gm-Message-State: AGRZ1gL93ZKUmNN1U0ItfdVV9dLDPvt05CpEb3Ye/lezHCpYY4kVPvhX
+        sgn90aJ+m7WtZTOP6KphRLs=
+X-Google-Smtp-Source: AJdET5f7elRrn5utp5CzoMj7ur2X5I1kwrG4Webc0qWs7ekXy25PqL7OsIAvvnFPWBo7EcSuVDM5dg==
+X-Received: by 2002:a0c:d107:: with SMTP id a7mr4046933qvh.104.1540573255075;
+        Fri, 26 Oct 2018 10:00:55 -0700 (PDT)
+Received: from llong.remote.csb (nat-pool-bos-t.redhat.com. [66.187.233.206])
+        by smtp.gmail.com with ESMTPSA id k185-v6sm6266398qkd.27.2018.10.26.10.00.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 26 Oct 2018 10:00:54 -0700 (PDT)
+Subject: Re: [Patch v3 04/13] x86/speculation: Disable STIBP when enhanced
+ IBRS is in use
+To:     Tim Chen <tim.c.chen@linux.intel.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Casey Schaufler <casey.schaufler@intel.com>,
+        Asit Mallick <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org
+References: <cover.1539798901.git.tim.c.chen@linux.intel.com>
+ <a96456805e51e234d1bae30837366243e24a4b83.1539798901.git.tim.c.chen@linux.intel.com>
+From:   Waiman Long <longman9394@gmail.com>
+Message-ID: <43c23fc3-ebaa-fe7c-f7b7-54a5166b6b49@gmail.com>
+Date:   Fri, 26 Oct 2018 13:00:52 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-References: <20181023164302.20436-1-guro@fb.com> <20181026085735.GZ18839@dhcp22.suse.cz>
- <20181026155652.GA7647@tower.DHCP.thefacebook.com>
-In-Reply-To: <20181026155652.GA7647@tower.DHCP.thefacebook.com>
-From:   Spock <dairinin@gmail.com>
-Date:   Fri, 26 Oct 2018 20:00:07 +0300
-Message-ID: <CADa=ObqajeQkJA6cR_LXDLT8hrZcFY7kHFxSTFuX=Fg8GkQv1w@mail.gmail.com>
-Subject: Re: [RFC PATCH] mm: don't reclaim inodes with many attached pages
-To:     guro@fb.com
-Cc:     mhocko@kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Kernel-team@fb.com, riel@surriel.com,
-        rdunlap@infradead.org, akpm@linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <a96456805e51e234d1bae30837366243e24a4b83.1539798901.git.tim.c.chen@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=D0=BF=D1=82, 26 =D0=BE=D0=BA=D1=82. 2018 =D0=B3. =D0=B2 18:57, Roman Gushc=
-hin <guro@fb.com>:
+On 10/17/2018 01:59 PM, Tim Chen wrote:
+> With enhanced IBRS in use, the application running on sibling CPU will not
+> be able to launch Spectre v2 attack to the application on current CPU.
+> There is no need to use STIBP for this case.  Disable the STIBP code
+> when enhanced IBRS is used.
 >
-> On Fri, Oct 26, 2018 at 10:57:35AM +0200, Michal Hocko wrote:
-> > Spock doesn't seem to be cced here - fixed now
-> >
-> > On Tue 23-10-18 16:43:29, Roman Gushchin wrote:
-> > > Spock reported that the commit 172b06c32b94 ("mm: slowly shrink slabs
-> > > with a relatively small number of objects") leads to a regression on
-> > > his setup: periodically the majority of the pagecache is evicted
-> > > without an obvious reason, while before the change the amount of free
-> > > memory was balancing around the watermark.
-> > >
-> > > The reason behind is that the mentioned above change created some
-> > > minimal background pressure on the inode cache. The problem is that
-> > > if an inode is considered to be reclaimed, all belonging pagecache
-> > > page are stripped, no matter how many of them are there. So, if a hug=
-e
-> > > multi-gigabyte file is cached in the memory, and the goal is to
-> > > reclaim only few slab objects (unused inodes), we still can eventuall=
-y
-> > > evict all gigabytes of the pagecache at once.
-> > >
-> > > The workload described by Spock has few large non-mapped files in the
-> > > pagecache, so it's especially noticeable.
-> > >
-> > > To solve the problem let's postpone the reclaim of inodes, which have
-> > > more than 1 attached page. Let's wait until the pagecache pages will
-> > > be evicted naturally by scanning the corresponding LRU lists, and onl=
-y
-> > > then reclaim the inode structure.
-> >
-> > Has this actually fixed/worked around the issue?
+> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+> ---
+>  arch/x86/kernel/cpu/bugs.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
 >
-> Spock wrote this earlier to me directly. I believe I can quote it here:
->
-> "Patch applied, looks good so far. System behaves like it was with
-> pre-4.18.15 kernels.
-> Also tried to add some user-level tests to the geneic background activity=
-, like
-> - stat'ing a bunch of files
-> - streamed read several large files at once on ext4 and XFS
-> - random reads on the whole collection with a read size of 16K
->
-> I will be monitoring while fragmentation stacks up and report back if
-> something bad happens."
->
-> Spock, please let me know if you have any new results.
->
-> Thanks!
+> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+> index 2fc7b4e..6ed82ea 100644
+> --- a/arch/x86/kernel/cpu/bugs.c
+> +++ b/arch/x86/kernel/cpu/bugs.c
+> @@ -327,6 +327,14 @@ static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
+>  
+>  static bool stibp_needed(void)
+>  {
+> +	/*
+> +	 * Determine if we want to leave STIBP always on.
+> +	 * Using enhanced IBRS makes using STIBP unnecessary.
+> +	 */
+> +
+> +	if (static_branch_unlikely(&spectre_v2_enhanced_ibrs))
+> +		return false;
+> +
+>  	if (spectre_v2_enabled == SPECTRE_V2_NONE)
+>  		return false;
+>  
+> @@ -881,7 +889,9 @@ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr
+>  				   ", IBPB" : "",
+>  			boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ?
+>  				   ", IBRS_FW" : "",
+> -			(x86_spec_ctrl_base & SPEC_CTRL_STIBP) ?
+> +			spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED ?
+> +				   ", Enhanced IBRS" :
+> +			    (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ?
+>  				   ", STIBP" : "",
+>  			boot_cpu_has(X86_FEATURE_RSB_CTXSW) ?
+>  				   ", RSB filling" : "",
 
-Hello,
+The "Enhanced IBRS" is one of the states of spectre_v2_enabled. So you
+don't need to print that out one more time.
 
-I'd say the patch fixed the problem, at least with my workload
+Cheers,
+Longman
 
-MemTotal:        8164968 kB
-MemFree:          135852 kB
-MemAvailable:    6406088 kB
-Buffers:           11988 kB
-Cached:          6414124 kB
-SwapCached:            0 kB
-Active:          1491952 kB
-Inactive:        5989576 kB
-Active(anon):     542512 kB
-Inactive(anon):   523780 kB
-Active(file):     949440 kB
-Inactive(file):  5465796 kB
-Unevictable:        8872 kB
-Mlocked:            8872 kB
-SwapTotal:       4194300 kB
-SwapFree:        4194300 kB
-Dirty:               128 kB
-Writeback:             0 kB
-AnonPages:       1064232 kB
-Mapped:            32348 kB
-Shmem:              3952 kB
-Slab:             205108 kB
-SReclaimable:     148792 kB
-SUnreclaim:        56316 kB
-KernelStack:        3984 kB
-PageTables:        11100 kB
-NFS_Unstable:          0 kB
-Bounce:                0 kB
-WritebackTmp:          0 kB
-CommitLimit:     8276784 kB
-Committed_AS:    1944792 kB
-VmallocTotal:   34359738367 kB
-VmallocUsed:           0 kB
-VmallocChunk:          0 kB
-AnonHugePages:      6144 kB
-ShmemHugePages:        0 kB
-ShmemPmdMapped:        0 kB
-HugePages_Total:       0
-HugePages_Free:        0
-HugePages_Rsvd:        0
-HugePages_Surp:        0
-Hugepagesize:       2048 kB
-Hugetlb:               0 kB
-DirectMap4k:      271872 kB
-DirectMap2M:     8116224 kB
