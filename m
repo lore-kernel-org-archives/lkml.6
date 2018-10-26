@@ -2,249 +2,325 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C50D1C6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:57:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62DC9C6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:58:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 656E420856
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:57:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 656E420856
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 11E3C2082D
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:58:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11E3C2082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726179AbeJZQdN convert rfc822-to-8bit (ORCPT
+        id S1726296AbeJZQeb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 12:33:13 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:36019 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725907AbeJZQdN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 12:33:13 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9F1AE208DC; Fri, 26 Oct 2018 09:57:10 +0200 (CEST)
-Received: from bbrezillon (aaubervilliers-681-1-12-210.w90-88.abo.wanadoo.fr [90.88.133.210])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D64FD20794;
-        Fri, 26 Oct 2018 09:57:09 +0200 (CEST)
-Date:   Fri, 26 Oct 2018 09:57:07 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Wolfram Sang <wsa@the-dreams.de>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>,
-        Peter Rosin <peda@axentia.se>,
-        Mike Shettel <mshettel@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Joe Perches <joe@perches.com>
-Subject: Re: [PATCH v9 6/9] i3c: master: Add driver for Cadence IP
-Message-ID: <20181026095707.3cd9b511@bbrezillon>
-In-Reply-To: <CAK8P3a0WDRpukjDBm1rGPnZiH2FJRpquWhEknOBg=CphNOYOwg@mail.gmail.com>
-References: <20181022133404.2061-1-boris.brezillon@bootlin.com>
-        <20181022133404.2061-7-boris.brezillon@bootlin.com>
-        <20181024202048.7e3534f7@bbrezillon>
-        <CAK8P3a2DBgfvXs-9KzoDvbQpV+VN96xb7xHG-5=NDDgnt7ViVQ@mail.gmail.com>
-        <20181025180720.1790f6a1@bbrezillon>
-        <CAK8P3a02ELWiMB_pe0bzbsMfdqYOG1G0bFnSHzGu3ZbQHatH2w@mail.gmail.com>
-        <20181025183005.3c0fa452@bbrezillon>
-        <CAK8P3a0WDRpukjDBm1rGPnZiH2FJRpquWhEknOBg=CphNOYOwg@mail.gmail.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Fri, 26 Oct 2018 12:34:31 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:33598 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725914AbeJZQeb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 12:34:31 -0400
+Received: by mail-oi1-f193.google.com with SMTP id c25-v6so245130oiy.0;
+        Fri, 26 Oct 2018 00:58:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LEMctGivfUaWRV3meFewoip+NHGMBgzyB8RLzprBxzo=;
+        b=az3iHMn/V8hOxn0gjsgP5R21HL76kQXAptQAhgVkDTEb0SYT5HwA+ndqwO6M3P1viM
+         TF4PIbzhH+OD6w29zJimmOBa2zRVhFAN15/R4mTAXHLQW8YgrIa2S0o78jPlfwGFV3pb
+         s4Hlu3Dnx99E9W/bPrbbe+y06HAszUXs75wIWVm+Qlmte7/zFAAlwbxeqdkP0/58AJXG
+         gv8/m0bh9PdB+JWg1RvHbmtMT7xoZHWQH7gtRcRig/Ca1kcC/ICr1LZx2IU2AFJXZaBw
+         Fu++fO9WDn9MI2Jhki6lguGF4Z5lL2UQp0XkfC8+btUWGXeZduWXTGmcOyPsjUCLmZ/G
+         Y10w==
+X-Gm-Message-State: AGRZ1gLvXWaGuc2VXwbLQfmLGNm/69jFN/8g+uMG02kZKC9l7CmuSDtP
+        /ht4lRwsVvWDfZxRdoEYC+re63jR8RviCrNhXp8=
+X-Google-Smtp-Source: AJdET5fe88Mh709Zs6SdczzVwITRsADjAS7m/lMXJpGbkbM3sC6Pp+2bsvtWwmTp+n3+7MUaYD3GPcNEHED8LtZr4dg=
+X-Received: by 2002:aca:b655:: with SMTP id g82-v6mr1390705oif.195.1540540708456;
+ Fri, 26 Oct 2018 00:58:28 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+References: <6595711.BNhtJ5yyLe@aspire.rjw.lan> <1540198496.3333.4.camel@suse.cz>
+In-Reply-To: <1540198496.3333.4.camel@suse.cz>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 26 Oct 2018 09:58:17 +0200
+Message-ID: <CAJZ5v0g3p1TJkkyn4eqN1iq+eJRF0=gDGALmj9tuDvdSYg7Byg@mail.gmail.com>
+Subject: Re: [RFC/RFT/[PATCH] cpuidle: New timer events oriented governor for
+ tickless systems
+To:     ggherdovich@suse.cz
+Cc:     rjw@rjwysocki.net, linux-pm@vger.kernel.org,
+        srinivas.pandruvada@linux.intel.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, frederic@kernel.org, mgorman@suse.de,
+        dsmythies@telus.net, daniel.lezcano@linaro.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Arnd,
+Hi Giovanni,
 
-On Fri, 26 Oct 2018 09:43:25 +0200
-Arnd Bergmann <arnd@arndb.de> wrote:
+On Mon, Oct 22, 2018 at 10:51 AM Giovanni Gherdovich
+<ggherdovich@suse.cz> wrote:
+>
+> Hello Rafael,
+>
+> I ran some benchmarks and will send you a detailed report later;
 
-> On Thu, Oct 25, 2018 at 6:30 PM Boris Brezillon
-> <boris.brezillon@bootlin.com> wrote:
-> > On Thu, 25 Oct 2018 18:13:51 +0200 Arnd Bergmann <arnd@arndb.de> wrote:
-> > On Thu, Oct 25, 2018 at 6:07 PM Boris Brezillon <boris.brezillon@bootlin.com> wrote:  
-> > > > On Thu, 25 Oct 2018 17:30:26 +0200
-> > > > Arnd Bergmann <arnd@arndb.de> wrote:  
-> > > > > On 10/24/18, Boris Brezillon <boris.brezillon@bootlin.com> wrote:  
-> > > > > > On Mon, 22 Oct 2018 15:34:01 +0200  
-> > > > I guess I could dynamically allocate the payload, but that requires
-> > > > going over all users of i3c_send_ccc_cmd() to patch them.  
-> > >
-> > > This reminds me that Wolfram mentioned in his ELC talk that the
-> > > buffers on i3c should all be DMA capable to make life easier for
-> > > i3c master drivers that want to implement DMA transfers.  
+Thanks a lot, much appreciated!
+
+Even though I'm about to send a v2 of the $subject patch which is a
+complete rewrite of some parts of the code, results from the previous
+one will be good to see anyway.
+
+> for now I have some questions to make sure I understand the code.
+>
+> First off, I like your algorithm and you make an excellent job at
+> documenting it with comments. Since it's a heuristic, it's not "obvious"
+> code and comments help a lot.
+>
+> On Thu, 2018-10-11 at 23:01 +0200, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 > >
-> > And this is the case for all buffers passed to
-> > i3c_device_do_priv_xfers() (and soon i3c_device_send_hdr_cmd()),
-> > but I did not enforce that for the internal
-> > i3c_master_send_ccc_cmd_locked() helper, maybe I should...
-> > It was just convenient to place the object to be transmitted/received on
-> > the stack.  
-> 
-> Ok. Is i3c_master_send_ccc_cmd_locked() what implements the public
-> interfaces then, or is this something else?
 
-i3c_master_send_ccc_cmd_locked() calls master->ops->send_ccc_cmd(), so
-it's part of the master controller interface.
+[cut]
 
-> 
-> If you place a buffer on the stack, it is not DMA capable, but
-> it is guaranteed to be at least 32-bit word aligned, and should
-> not cause an exception in readsl(), unless it starts with a couple of
-> (not multiple of four)  extra bytes that are not sent to the devices.
-> Is that what happens here?
+> > +static void teo_update(struct cpuidle_driver *drv,
+> > +                        struct cpuidle_device *dev)
+> > +{
+> > +     struct teo_cpu *cpu_data = per_cpu_ptr(&teo_cpus, dev->cpu);
+> > +     unsigned int measured_us = dev->last_residency;
+>
+> question: how reliable is the value "dev->last_residency"? does it come
+> "from the hardware" somehow? I'm asking because I'm more familiar with
+> CPUfreq than CPUidle, and there you have a bit of a disconnect between what
+> the OS think and what the hardware actually does. So I wonder if there is a
+> similar situation with the last_residency value, and ask if it comes from
+> some sort of feedback from the processor itself (if that makes any
+> sense). I see it's written to in the cpuidle_enter_state() function in
+> cpuidle.c, but I couldn't clearly understand that function either.
 
-Here is the report I received from Vitor:
+It is measured by the kernel, so it is not very precise, but it should
+be precise enough for idle duration estimation on average.
 
-"
-	Hi Boris,
+> > +     int i = cpu_data->last_state;
+> > +
+> > +     if (measured_us >= 2 * drv->states[i].exit_latency)
+> > +             measured_us -= drv->states[i].exit_latency;
+> > +     else
+> > +             measured_us /= 2;
+> > +
+> > +     /* Find the state matching the measured idle duration. */
+> > +     for (i = drv->state_count - 1; i > 0; i--) {
+> > +             if (drv->states[i].target_residency <= measured_us)
+> > +                     break;
+> > +     }
+>
+> Wait, I'm lost here. You just initialized "int i = cpu_data->last_state;"
+> ten lines above, and here you're computing "given how much we idled, what
+> would have been the best state to enter?". Was the initialization of i a
+> mistake? what's the intention?
 
+It's intentional, but just because of the measured_us computation
+earlier that would need to refer to
+drv->states[cpu_data->last_state].exit_latency twice.  "i" serves as
+auxiliary index storage for that.
 
-	I'm trying this new patch-set version but I get some issues when use 
-	readsl() function.
+> > +
+> > +     cpu_data->recent_wakeups++;
+> > +
+> > +     /*
+> > +      * If the state matches the time till the closest timer event used
+> > +      * during the most recent state selection too, it would be sufficient
+> > +      * to use that time alone for the idle state selection, so increment
+> > +      * the "hits" number for the matching state and clear the "early series"
+> > +      * data.
+> > +      *
+> > +      * Note that sleep_length_us cannot be less than measured_us (or it
+> > +      * would mean a late timer event), so it is sufficient to check the
+> > +      * lower boundary here.
+> > +      */
+> > +     if (i == drv->state_count - 1 ||
+> > +         drv->states[i+1].target_residency > cpu_data->sleep_length_us)
+> > {
+>
+> Correct me if I'm wrong: we know that states[i+1].target_residency > measured_us,
+> because that's just how we've chosen i. We know that sleep_length_us >= measured_us,
+> because that's how timers work.
+>
+> Now, the naive way if we're in a "hit" situation would be to check is
+> measured_us is equal (or, well, "close") to sleep_length_us. If, on the
+> other side, measured_us is a lot smaller than sleep_length_us, it's an
+> "early". But you don't check it that way, what you do is to see if
+> target_residency[i+1] is in between measured_us and sleep_length_us or
+> not. Like this (sorry for the sloppy notation:
+>
+> target_residency[i] < measured_us <= sleep_length_us < target_residency[i+1]
+>
+> and that would be a hit. Otherwise:
+>
+> target_residency[i] < measured_us < target_residency[i+1] <= sleep_length_us
+>
+> and that's an "early". Right?
 
-	Basically the system complain about memory alignment.
+The idea here is for "early" to mean "so much earlier than it makes a
+real difference", where "a real difference" is when different idle
+states need to be used in both cases.
 
-	As exemple when I try to read the PID from the device
+For example, say you have two idle states, X with the target residency
+of 20 and Y with the target residency of 150.  Say that your
+sleep_length is 300 and your measured_us (idle duration) is 100.
+Then, you should have used idle state X and knowing sleep_length
+upfront wouldn't have helped, so it is a "miss".  Now, if your
+sleep_length is (again) 300 and your measured_us is 200 (say), you
+could still use idle state Y (as indicated by the sleep_length value),
+so relying on sleep_length alone would give you a correct outcome, so
+it is a "hit".
 
-	> +static int i3c_master_getpid_locked(struct i3c_master_controller *master,
-	> +				    struct i3c_device_info *info)
-	> +{
-	> +	struct i3c_ccc_getpid getpid;  
+Generally, a "hit" is when you could rely on sleep_length alone for
+the current outcome.
 
-	at this point the getpid struct it is already unaligned with
+I'm afraid I cannot explain this much better, sorry. :-)
 
-	i3c_master_getpid_locked:1129 getpid_add=0x9a249c7a
+> Again, no guarantee that i is actually the state we idle-ed in, it's just
+> one we make up for this bookkeeping.
 
-	> +	struct i3c_ccc_cmd_dest dest = {
-	> +		.addr = info->dyn_addr,
-	> +		.payload.len = sizeof(struct i3c_ccc_getpid),
-	> +		.payload.data = &getpid,
-	> +	};
-	> +	struct i3c_ccc_cmd cmd = {
-	> +		.rnw = true,
-	> +		.id = I3C_CCC_GETPID,
-	> +		.dests = &dest,
-	> +		.ndests = 1,
-	> +	};
-	> +	int ret, i;
-	> +
-	> +	ret = i3c_master_send_ccc_cmd_locked(master, &cmd);
-	> +	if (ret)
-	> +		return ret;
-	> +
-	> +	info->pid = 0;
-	> +	for (i = 0; i < sizeof(getpid.pid); i++) {
-	> +		int sft = (sizeof(getpid.pid) - i - 1) * 8;
-	> +
-	> +		info->pid |= (u64)getpid.pid[i] << sft;
-	> +	}
-	> +
-	> +	return 0;
-	> +}
-	> +  
+[cut]
 
-	and them when
+> > +     early_count = 0;
+> > +     max_count = 0;
+> > +     max_count_idx = -1;
+> > +     prev_count = 0;
+> > +     prev_idx = -1;
+> > +     idx = -1;
+> > +
+> > +     for (i = 0; i < drv->state_count; i++) {
+> > +             struct cpuidle_state *s = &drv->states[i];
+> > +             struct cpuidle_state_usage *su = &dev->states_usage[i];
+> > +             u64 count = cpu_data->states[i].early_wakeups +
+> > +                             cpu_data->states[i].early_wakeups_old;
+> > +
+> > +             if (s->disabled || su->disable) {
+> > +                     /*
+> > +                      * This state is disabled, so add its count of matched
+> > +                      * "early" wakeups to the last enabled state's count.
+> > +                      */
+> > +                     if (prev_idx >= 0) {
+> > +                             prev_count += count;
+> > +                             if (prev_count > max_count) {
+> > +                                     max_count = prev_count;
+> > +                                     max_count_idx = prev_idx;
+> > +                             }
+> > +                     }
+> > +                     continue;
+>
+> I'm not sure I get this part: I have the impression you introduced the
+> prev_idx variable exactly for its use in this check (skip disabled states),
+> but it looks to me you had to use idx instead. At every iteration, idx is
+> the last enabled state. Why prev_idx?
 
-	static void dw_i3c_master_read_rx_fifo(struct dw_i3c_master *master,
-	                        u8 *bytes, int nbytes)
-	{
-	     readsl(master->regs + RX_TX_DATA_PORT, bytes, nbytes / 4);
-	...
-	}
+Well, this is a bit messy, sorry about that.
 
-	the system crash.
+The idea is that if one of the states was disabled, it can't be
+selected as the one with the maximum count of "early" hits, so its
+count of "early" hits is kind of "stolen" by the first enabled
+shallower state to make it look more "important".
 
-	Misaligned Access
-	Path: (null)
-	CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc1 #88
-	
-	[ECR   ]: 0x00230400 => Misaligned r/w from 0x9a249c7a
-	[EFA   ]: 0x9a249c7a
-	[BLINK ]: dw_i3c_master_irq_handler+0x200/0x2fc [dw_i3c_master]
-	[ERET  ]: dw_i3c_master_irq_handler+0x224/0x2fc [dw_i3c_master]
-	[STAT32]: 0x00000a4c : K DE     A1 E2
-	BTA: 0x70038e44  SP: 0x8071fe58  FP: 0x00000000
-	LPS: 0x8060e63e LPE: 0x8060e642 LPC: 0x00000000
-	r00: 0x00000033 r01: 0x00000004 r02: 0x00000000
-	r03: 0xd0002014 r04: 0x00000006 r05: 0x00000000
-	r06: 0x9a249c7a r07: 0x39307260 r08: 0xe10b6900
-	r09: 0x00000013 r10: 0x00000000 r11: 0x000000c9
-	r12: 0x0a613763
+I've dropped this in the new version of the patch as it covers a
+corner case that may not be worth the effort.
 
-	Do you have any idea about this?
+> > +             }
+> > +
+> > +             if (idx < 0)
+> > +                     idx = i; /* first enabled state */
+> > +
+> > +             if (s->target_residency > duration_us) {
+> > +                     /*
+> > +                      * If the next wakeup is expected to be "early", the
+> > +                      * time frame of it is known already.
+> > +                      */
+> > +                     if (duration_us < cpu_data->sleep_length_us) {
+> > +                             /*
+> > +                              * Use a physical idle state, not busy polling,
+> > +                              * unless a timer will trigger really soon.
+> > +                              */
+> > +                             if ((drv->states[idx].flags & CPUIDLE_FLAG_POLLING) &&
+> > +                                 s->exit_latency <= latency_req &&
+> > +                                 s->target_residency <= cpu_data->sleep_length_us) {
+>
+> Just to be clear: 0 is a polling idle state; can there be any other? You
+> seem to keep it generic here, but seems to me you're actually checking if
+> idx so far is zero and try to see if there is another option.
 
+The polling state has to be state 0.
 
-	Best regards,
+> Also: you put this check "may I convince you not to poll?" inside the
+> branch that handle the 3-or-more case (where duration_us has been changed
+> to avg_us). My question is: don't you need the check also outside of the
+> branch? (where, if I understand correctly, duration_us is equal to
+> sleep_length_us).
 
-	Vitor Soares
-"
+No, because if s->target_residency == cpu_data->sleep_length_us, we'll
+still use polling and duration_us cannot be greater than the sleep
+length.
 
-> 
-> > > If we have buffers here that are not aligned to cache lines
-> > > (or even just 32 bit words), doesn't that also mean that the
-> > > same buffers are not DMA capable either?  
-> >
-> > Yep, if it's not cache-line-aligned (and on the stack), it's not
-> > DMA-able.  
-> 
-> This sounds like a more fundamental problem to solve first
-> then. Obviously it is incredibly /useful/ to be able to put short
-> i2c or i3c messages on the stack, but allowing that in general
-> also prevents the use of DMA without bounce buffers.
+> > +                                     duration_us = s->target_residency;
+> > +                                     idx = i;
+> > +                             }
+> > +                             break;
+> > +                     }
+> > +
+> > +                     /*
+> > +                      * If the number of "hits" for the state matching the
+> > +                      * sleep length is greater than the total number of
+> > +                      * "early" wakeups for all of the shallower states, the
+> > +                      * state selected so far is the one to use.
+> > +                      */
+> > +                     if (early_count <= cpu_data->states[idx].hits +
+> > +                                        cpu_data->states[idx].hits_old)
+> > +                             break;
+> > +
+> > +                     /*
+> > +                      * It is more likely that one of the shallower states
+> > +                      * will match the idle duration measured after wakeup,
+> > +                      * so take the one with the maximum count of matched
+> > +                      * "early" wakeups.
+> > +                      */
+> > +                     idx = max_count_idx;
+> > +                     duration_us = drv->states[idx].target_residency;
+> > +                     break;
+> > +             }
+> > +             if (s->exit_latency > latency_req) {
+> > +                     /*
+> > +                      * If we break out of the loop for latency reasons, use
+> > +                      * the target residency of the selected state as the
+> > +                      * expected idle duration to avoid stopping the tick
+> > +                      * as long as that target residency is low enough.
+> > +                      */
+> > +                     duration_us = drv->states[idx].target_residency;
+> > +                     break;
+> > +             }
+> > +
+> > +             early_count += prev_count;
+>
+> I have the slight feeling that here you wanted "early_count += count;"
+> instead. As I understand early_count is meant to be "one iteration behind"
+> in the loop (meaning it accumulates up to i-1). If you update it with
+> prev_count instead of count, that would make it two iterations
+> behind. Wrong?
 
-Actually, we have the same problem in MTD (UBI passes vmalloced
-buffers to the MTD stack), so I understand this concern very well,
-and I agree that enforcing all buffers passed to the controller to
-be DMA capable is the right thing to do.
+So that's because of the "stealing" idea described above, but I might
+have made a mistake here now looking at it again.
 
-I guess I just didn't think about internal APIs when I made this
-modification which explains why CCC cmds were left behind.
+[cut]
 
-> 
-> One way to address this might be to always bounce any
-> messages that are less than a cache line through a
-> (pre-)kmallocated buffer, and require any longer messages
-> to be cache capable. This could also solve the issue with
-> readsl(), but it would be a rather confusing user interface.
-> 
-> Another option might be to have separate interfaces for
-> "short" and "long" messages at the API level and have
-> distinct rules for those: short would always be bounced
-> by the i3c code, and long puts restrictions on the buffer
-> location.
+>
+> Just a curiosity: why isn't the disable() function from the
+> cpuidle_governor interface implemented? I see it isn't in "menu" as well,
+> so I wonder what disable() is supposed to do.
 
-Hm, let's keep the API simple. I'll just mandate that all payload bufs
-passed to i3c_master_send_ccc_cmd_locked() be dynamically allocated.
+Clean up if any allocations have been made in ->enable(), for example.
 
-Thanks for your feedback.
-
-Boris
+Thanks,
+Rafael
