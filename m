@@ -2,120 +2,91 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6152BC6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 10:15:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C357CECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 10:17:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6FBD2085B
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 10:15:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6FBD2085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 8942E2064C
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 10:17:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FU6w9F2O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8942E2064C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727203AbeJZSwV (ORCPT
+        id S1727408AbeJZSxm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 14:52:21 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:39239 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726402AbeJZSwV (ORCPT
+        Fri, 26 Oct 2018 14:53:42 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58886 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726275AbeJZSxm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 14:52:21 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id C8146808BD; Fri, 26 Oct 2018 12:15:48 +0200 (CEST)
-Date:   Fri, 26 Oct 2018 12:15:49 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Greg KH <greg@kroah.com>
-Cc:     Sasha Levin <sashal@kernel.org>, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>
-Subject: Re: [PATCH AUTOSEL 4.14 02/15] s390/hibernate: fix error handling
- when suspend cpu != resume cpu
-Message-ID: <20181026101549.GA30955@amd>
-References: <20181022102026.40869-1-sashal@kernel.org>
- <20181022102026.40869-2-sashal@kernel.org>
- <20181026090543.GC20200@amd>
- <20181026092214.GA4307@kroah.com>
+        Fri, 26 Oct 2018 14:53:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=S/Ja/7U1Cp8VVRdj3AzqkcY5MzhLozKpOCXbigym99E=; b=FU6w9F2OJttLt4ke24tDhFVWt
+        5yd//uPWcoIBa2e2erPHAr1s1SSCe4lcJidBNCirnBeqlkcGMSDX2ENoBkjcvFlPXwjCQdJ6cU5ZP
+        pdyDIfQastjdGzlI6ohqCBmsLxtTyZEbNArtGc+/YpAF/AFOyAp41Y51ot6OBzkQJsPh2+sknDG+o
+        9N6mnxrV335ae7MJmT3qmGoeN/t4j3B9ydiAbHhmZFYf/luHkYApp77gJy+CO4N0GZm9YF19gmq3+
+        ZirYKAhIQiroz5DMdak9sH3JuhTnK6SVXN7XgnDkq23d0hO9Ua29pZ01CeEXkBdnINQKsVFGNGxcd
+        T7aVdZv7w==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gFzAx-0003NL-RA; Fri, 26 Oct 2018 10:17:07 +0000
+Date:   Fri, 26 Oct 2018 03:17:07 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Igor Stoppa <igor.stoppa@gmail.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        kernel-hardening@lists.openwall.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, igor.stoppa@huawei.com,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Lihao Liang <lianglihao@huawei.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 13/17] prmem: linked list: disable layout randomization
+Message-ID: <20181026101707.GO25444@bombadil.infradead.org>
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-14-igor.stoppa@huawei.com>
+ <20181026093205.GD3159@worktop.c.hoisthospitality.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181026092214.GA4307@kroah.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181026093205.GD3159@worktop.c.hoisthospitality.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Oct 26, 2018 at 11:32:05AM +0200, Peter Zijlstra wrote:
+> On Wed, Oct 24, 2018 at 12:35:00AM +0300, Igor Stoppa wrote:
+> > Some of the data structures used in list management are composed by two
+> > pointers. Since the kernel is now configured by default to randomize the
+> > layout of data structures soleley composed by pointers, this might
+> > prevent correct type punning between these structures and their write
+> > rare counterpart.
+> 
+> 'might' doesn't really work for me. Either it does or it does not.
 
---SUOF0GtieIMvvwua
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri 2018-10-26 10:22:14, Greg KH wrote:
-> On Fri, Oct 26, 2018 at 11:05:43AM +0200, Pavel Machek wrote:
-> > On Mon 2018-10-22 06:20:13, Sasha Levin wrote:
-> > > From: Gerald Schaefer <gerald.schaefer@de.ibm.com>
-> > >=20
-> > > [ Upstream commit 55a5542a546238354d1f209f794414168cf8c71d ]
-> > >=20
-> > > The resume code checks if the resume cpu is the same as the suspend c=
-pu.
-> > > If not, and if it is also not possible to switch to the suspend cpu, =
-an
-> > > error message should be printed and the resume process should be stop=
-ped
-> > > by loading a disabled wait psw.
-> > >=20
-> > > The current logic is broken in multiple ways, the message is never pr=
-inted,
-> > > and the disabled wait psw never loaded because the kernel panics befo=
-re that:
-> > > - sam31 and SIGP_SET_ARCHITECTURE to ESA mode is wrong, this will bre=
-ak
-> > >   on the first 64bit instruction in sclp_early_printk().
-> > > - The init stack should be used, but the stack pointer is not set up =
-correctly
-> > >   (missing aghi %r15,-STACK_FRAME_OVERHEAD).
-> > > - __sclp_early_printk() checks the sclp_init_state. If it is not
-> > >   sclp_init_state_uninitialized, it simply returns w/o printing anyth=
-ing.
-> > >   In the resumed kernel however, sclp_init_state will never be uninit=
-ialized.
-> >=20
-> > Stable patches should fix one bug, and one bug only.
->=20
-> So should upstream patches, but the rule of "stable patches match
-> upstream identically" overrules this :)
-
-a) There is no such rule for upstream.
-
-b) You should split the patch if it is important enough.
-
-c) The "stable patches match upstream identically" rule does not
-exist. Check the documentation.
-
-:-(
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---SUOF0GtieIMvvwua
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlvS6VUACgkQMOfwapXb+vIGaACfRMWb1/mzL0L/XxOwmw/AphVV
-c8EAn3IOm0LpJdXe25NtRVXR1o09joha
-=z+53
------END PGP SIGNATURE-----
-
---SUOF0GtieIMvvwua--
+He means "Depending on the random number generator, the two pointers
+might be AB or BA.  If they're of opposite polarity (50% of the time),
+it _will_ break, and 50% of the time it _won't_ break."
