@@ -2,181 +2,143 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0766C6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:44:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A40ECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:44:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 980B720651
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:44:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8750120868
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:44:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="PoBw/ZJC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 980B720651
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=poorly.run
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="S8p20kBy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8750120868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727993AbeJZXWI (ORCPT
+        id S1728007AbeJZXWN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 19:22:08 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:34411 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727507AbeJZXWG (ORCPT
+        Fri, 26 Oct 2018 19:22:13 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44920 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727537AbeJZXWM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 19:22:06 -0400
-Received: by mail-yb1-f194.google.com with SMTP id n140-v6so571051yba.1
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 07:44:45 -0700 (PDT)
+        Fri, 26 Oct 2018 19:22:12 -0400
+Received: by mail-pl1-f195.google.com with SMTP id d23-v6so608231pls.11
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 07:44:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bbd3LnR6odrKTptuAkKzcDvLSt27S6Jods9Tybg/Zm8=;
-        b=PoBw/ZJChVmLIzcKupLOjfndWroDwIavppohDLVlyVY3j/e0u5BI/y4LB0mcRYFi2y
-         3uoDL4dftEFeqjlrEMDxJO2TD7f2plRYPXHlaO/legOVv2RabY5Xa13Kzs5m9zO7UgSK
-         5lJ4vJsmw/WPPpogpOfJ/WdprVUZbVbGlbPNaBcXTCqLqL8rs0as41XErNTft7oio/MS
-         EaDkjNfUvoWCKYn486u1r6k+8NjnpO7T0yQalUmwMw2Gllezpd+uswTGjIm3g9UuY1bR
-         QbO+rjBbis03XeC1fJDtT7kD1p/7+QhUfm/tKYmw8sgoan7+UHSrz6T0chCqUprGfGyb
-         nsWw==
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=QcyEYMwNoNsH7/pEFnqDrYSAkVmaqVikL9S5nmhdtCc=;
+        b=S8p20kByd5U672qL/qHhAOQAL21yOyWqvIAnM8dyfWgKF/juzSBhy8QtKdIDM/l5Lj
+         eA85hKtx0/4H1xTPu+bjj2CR8raXV0waKdX7bLn+RuzE7W4hGHadtw39qbmWwnpWdaIp
+         jAev7rxS5CfuWX7H8Go/8CYXXMnJCcbafE4bM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bbd3LnR6odrKTptuAkKzcDvLSt27S6Jods9Tybg/Zm8=;
-        b=W2Xqqr8HlT2DmI8es2nbJo2rwYA0IN09oVfMPYkfT/DGdOdKfbvXiZ8Y4+U4sRcfDF
-         CHUIZRLdESdEO+HB9Y/5+pB7L6DAGK2kRcXHCMPzxfqjDSratEzE2HflagBP7XVbzdRo
-         VnsjScp7vW63KuvVD7RaEhyT2NSG3H/wspPAE1qZ4Y+6IWLsDzya/jX8I/EAyF9R/N5b
-         yXDtpu1bdvb6i9H+mwIcJw9tawJPGVrBZGV1jKZ528+KZJAf5FtNKRqtg/Z3SQzLKfGz
-         d7B8yn+MrhDO4U3X223aPqO9t3DvbkoQQzw0Kj8ARUO5A3Z27yhFwsXuwCbg7NFEIFeA
-         7pmw==
-X-Gm-Message-State: AGRZ1gLNBYcpbx1hP2BETtEawjfNB2utkDb1x/scVLuCliz+7X0j3HfB
-        JcB4SeqM6rAKLTRvBrP3HR9FiQ==
-X-Google-Smtp-Source: AJdET5exfF3c5RlP3Ee81hW78KoGnVxkR8a7cMz0ba9pGZ1UGS82NhE/MW/bBVlZtlOuM8qCGeUbGw==
-X-Received: by 2002:a25:abf0:: with SMTP id v103-v6mr3733691ybi.262.1540565085273;
-        Fri, 26 Oct 2018 07:44:45 -0700 (PDT)
-Received: from localhost ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
-        by smtp.gmail.com with ESMTPSA id d63-v6sm1771426ywf.100.2018.10.26.07.44.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 26 Oct 2018 07:44:44 -0700 (PDT)
-Date:   Fri, 26 Oct 2018 10:44:44 -0400
-From:   Sean Paul <sean@poorly.run>
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     Sean Paul <seanpaul@chromium.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Sandeep Panda <spanda@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        jsanka@codeaurora.org, ryandcase@chromium.org,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=QcyEYMwNoNsH7/pEFnqDrYSAkVmaqVikL9S5nmhdtCc=;
+        b=g/rT50mCi0gqaOexQvu1OoDW+DD6fMGkPwp87Lmm5XEIFNPgFRzhGhoJ/XxhfQ7GA0
+         jfj/Cc+VT3DaLxBXHWigdqeU/DyQpEe4/Uy2wqDGMiMYLoIg87yCILpsSa+HPRAfF3M9
+         YaXpiIPDFHEgi8mLtlHfidBPhyIW5AOg71Au/nINJLTx2T0NrA23ugiTrJm0RyRgd8tj
+         OtScI7MrUITkyG/o9peGZyU38U6s+i5AM+jO0GkV4Z+k9jF7T9/ltCZmcOnJxMZoTaDd
+         tHg7qz6G/O/9HqH9MXBlpEdK6VUrUm18uWPdBf4Zl67WG279Nswm6aOPsS6kdyxSl99M
+         4JDg==
+X-Gm-Message-State: AGRZ1gIWBNQPM4vrZV8puzFJOkqSE6lPdj2FSv88xZ52lP8hpOSvME8o
+        CAI0H8mooa2rNxRcgyHItk/RSQ==
+X-Google-Smtp-Source: AJdET5fRX18D6J+W1oD9KGuQYtj3LLqpIcL390bKaD3qSxmQSYUA00Q2DovPP1eq0FzC/3b/8I13Cw==
+X-Received: by 2002:a17:902:8c84:: with SMTP id t4-v6mr3862074plo.188.1540565091986;
+        Fri, 26 Oct 2018 07:44:51 -0700 (PDT)
+Received: from localhost.localdomain ([27.7.51.1])
+        by smtp.gmail.com with ESMTPSA id z22-v6sm12044467pgv.24.2018.10.26.07.44.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 26 Oct 2018 07:44:51 -0700 (PDT)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 6/6] drm/panel: simple: Innolux TV123WAM is actually
- P120ZDG-BF1
-Message-ID: <20181026144444.GT154160@art_vandelay>
-References: <20181025222134.174583-1-dianders@chromium.org>
- <20181025222134.174583-6-dianders@chromium.org>
+        dri-devel@lists.freedesktop.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Cc:     Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v3 07/25] drm/sun4i: sun6i_mipi_dsi: Fix VBP size calculation
+Date:   Fri, 26 Oct 2018 20:13:26 +0530
+Message-Id: <20181026144344.27778-8-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
+In-Reply-To: <20181026144344.27778-1-jagan@amarulasolutions.com>
+References: <20181026144344.27778-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181025222134.174583-6-dianders@chromium.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 03:21:34PM -0700, Douglas Anderson wrote:
-> As far as I can tell the panel that was added in commit da50bd4258db
-> ("drm/panel: simple: Add Innolux TV123WAM panel driver support")
-> wasn't actually an Innolux TV123WAM but was actually an Innolux
-> P120ZDG-BF1.
-> 
-> As far as I can tell the Innolux TV123WAM isn't a real panel and but
-> it's a mosh between the TI TV123WAM and the Innolux P120ZDG-BF1.
-> Let's unmosh.
-> 
-> Here's my evidence:
-> 
-> * Searching for TV123WAM on the Internet turns up a TI panel.  While
->   it's possible that an Innolux panel has the same model number as the
->   TI Panel, it seems a little doubtful.  Looking up the datasheet from
->   the TI Panel shows that it's 1920 x 1280 and 259.2 mm x 172.8 mm.
-> 
-> * As far as I know, the patch adding the Innolux Panel was supposed to
->   be for the board that's sitting in front of me as I type this
->   (support for that board is not yet upstream).  On the back of that
->   panel I see Innolux P120ZDZ-EZ1 rev B1.
-> 
-> * Someone pointed me at a datasheet that's supposed to be for the
->   panel in front of me (sorry, I can't share the datasheet).  That
->   datasheet has the string "p120zdg-bf1"
-> 
-> * If I search for "P120ZDG-BF1" on the Internet I get hits for panels
->   that are 2160x1440.  They don't have datasheets, but the fact that
->   the resolution matches is a good sign.
-> 
-> In any case, let's update the name and also the physical size to match
-> the correct panel.
-> 
-> Fixes: da50bd4258db ("drm/panel: simple: Add Innolux TV123WAM panel driver support")
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> Reviewed-by: Abhinav Kumar <abhinavk@codeaurora.org>
-> Cc: Sandeep Panda <spanda@codeaurora.org>
+The horizontal and vertical back porch calculation in BSP
+code is simply following the Linux drm comment diagram, in
+include/drm/drm_modes.h which is
 
-Reviewed-by: Sean Paul <sean@poorly.run>
+[hv]back porch = [hv]total - [hv]sync_end
 
-> ---
-> 
-> Changes in v2: None
-> 
->  drivers/gpu/drm/panel/panel-simple.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-simple.c b/drivers/gpu/drm/panel/panel-simple.c
-> index 88592f9a0018..a04ffb3b2174 100644
-> --- a/drivers/gpu/drm/panel/panel-simple.c
-> +++ b/drivers/gpu/drm/panel/panel-simple.c
-> @@ -1373,7 +1373,7 @@ static const struct panel_desc innolux_n156bge_l21 = {
->  	},
->  };
->  
-> -static const struct drm_display_mode innolux_tv123wam_mode = {
-> +static const struct drm_display_mode innolux_p120zdg_bf1_mode = {
->  	.clock = 206016,
->  	.hdisplay = 2160,
->  	.hsync_start = 2160 + 48,
-> @@ -1387,13 +1387,13 @@ static const struct drm_display_mode innolux_tv123wam_mode = {
->  	.flags = DRM_MODE_FLAG_PHSYNC | DRM_MODE_FLAG_PVSYNC,
->  };
->  
-> -static const struct panel_desc innolux_tv123wam = {
-> -	.modes = &innolux_tv123wam_mode,
-> +static const struct panel_desc innolux_p120zdg_bf1 = {
-> +	.modes = &innolux_p120zdg_bf1_mode,
->  	.num_modes = 1,
->  	.bpc = 8,
->  	.size = {
-> -		.width = 259,
-> -		.height = 173,
-> +		.width = 254,
-> +		.height = 169,
->  	},
->  	.delay = {
->  		.hpd_absent_delay = 200,
-> @@ -2456,8 +2456,8 @@ static const struct of_device_id platform_of_match[] = {
->  		.compatible = "innolux,n156bge-l21",
->  		.data = &innolux_n156bge_l21,
->  	}, {
-> -		.compatible = "innolux,tv123wam",
-> -		.data = &innolux_tv123wam,
-> +		.compatible = "innolux,p120zdg-bf1",
-> +		.data = &innolux_p120zdg_bf1,
->  	}, {
->  		.compatible = "innolux,zj070na-01p",
->  		.data = &innolux_zj070na_01p,
-> -- 
-> 2.19.1.568.g152ad8e336-goog
-> 
+BSP code form BPI-M64-bsp is calculating vertical back porch as
+(from linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c)
 
+timmings->ver_sync_time= panel_info->lcd_vspw;
+timmings->ver_back_porch= panel_info->lcd_vbp-panel_info->lcd_vspw;
+
+vbp = panel->lcd_vbp;
+vspw = panel->lcd_vspw;
+dsi_dev[sel]->dsi_basic_size0.bits.vbp = vbp-vspw;
+dsi_dev[sel]->dsi_basic_size0.bits.vbp = panel->lcd_vbp - panel->lcd_vspw;
+=>  timmings->ver_back_porch + panel_info->lcd_vspw - panel_info->lcd_vspw
+=>  timmings->ver_back_porch
+=>  mode->vtotal - mode->end
+
+Which evatually same as mode->vtotal - mode->vsync_end so update the
+same in SUN6I_DSI_BASIC_SIZE0_VBP
+
+On the information note, existing SUN6I_DSI_BASIC_SIZE0_VSA is proper
+value.
+
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Tested-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+Changes for v3:
+- Fixed proper commit message
+- add tested credit
+Changes for v2:
+- none
+
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+index fc8560607147..3a1d48bc1996 100644
+--- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
++++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+@@ -526,8 +526,8 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
+ 	regmap_write(dsi->regs, SUN6I_DSI_BASIC_SIZE0_REG,
+ 		     SUN6I_DSI_BASIC_SIZE0_VSA(mode->vsync_end -
+ 					       mode->vsync_start) |
+-		     SUN6I_DSI_BASIC_SIZE0_VBP(mode->vsync_start -
+-					       mode->vdisplay));
++		     SUN6I_DSI_BASIC_SIZE0_VBP(mode->vtotal -
++					       mode->vsync_end));
+ 
+ 	regmap_write(dsi->regs, SUN6I_DSI_BASIC_SIZE1_REG,
+ 		     SUN6I_DSI_BASIC_SIZE1_VACT(mode->vdisplay) |
 -- 
-Sean Paul, Software Engineer, Google / Chromium OS
+2.18.0.321.gffc6fa0e3
+
