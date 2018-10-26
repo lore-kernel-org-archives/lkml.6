@@ -2,104 +2,199 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D4D8ECDE46
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 21:46:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D17B5ECDE46
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 21:49:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4677D2075D
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 21:46:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 803072075D
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 21:49:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="W+CivsH4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4677D2075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="Zy4vnHZl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 803072075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=Dell.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728422AbeJ0GYm (ORCPT
+        id S1728453AbeJ0G1p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 02:24:42 -0400
-Received: from mail-lf1-f50.google.com ([209.85.167.50]:39122 "EHLO
-        mail-lf1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728385AbeJ0GYm (ORCPT
+        Sat, 27 Oct 2018 02:27:45 -0400
+Received: from esa6.dell-outbound.iphmx.com ([68.232.149.229]:28695 "EHLO
+        esa6.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728399AbeJ0G1o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 02:24:42 -0400
-Received: by mail-lf1-f50.google.com with SMTP id p11-v6so1994419lfc.6
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 14:46:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aGFKdQPgiE1MPxeixj4qbzUqAmUsO63g2fKWKdkHi1w=;
-        b=W+CivsH44GwxQVN0+5G4EmaRbIhCBK30+b9Zlf7IOLQkK6IFzj9ENP+unVPhfPenrC
-         VeWFxmfWwuEGenfsh4x6Ae6supEjQk01JQyHljNIiFaFJPGog/8hA0vgcfvofodccr3z
-         WGKyGikKoZFVF5yye/16SVVkRXO2kgXzvPj98=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aGFKdQPgiE1MPxeixj4qbzUqAmUsO63g2fKWKdkHi1w=;
-        b=lWUHofHqwNb3NkjxIQp2L0CpywHa/shJZDkKXdbKERa9xfYx7BzCxSpz4WF03QbQoF
-         wFX3B9hGK2fEPkfl1kmUVhOc+gghKD8s+thH8G8m+0XEmUWfw4Xxzq+9f9Z+PHF4tAsz
-         2wJ5KKaU+321wwoz7FBoi+8zvIuhsTOj8EFgX+j7u1tsHeKOtMzg67yRj66SqO2YU++V
-         Pl7h1wE2LRYCxazkMvdDSNYmRR3AWsjwI+IEa4PFqY8BafxCUycW+VJJ8k8v8eqGmPZj
-         W9eo/rWO9OXU2wOt+7gQ2SbAqP6H3FlLXHMmRBRZkdsVfqGYEhLnzKnSadJUv5gMFAJa
-         WKJQ==
-X-Gm-Message-State: AGRZ1gLsUiSIfM1w5Jf1N81hPzYkYV6pj5oSnVb7Vn+Vg+7OaDRZkfqb
-        tePazeNyS1mZb61EXOFtC/OaZ9R5hwGMqQ==
-X-Google-Smtp-Source: AJdET5cFekCxuwxN6Mdy9lq/IJbIgc+BYOBPBI+qfsVaxJSYDyPMPpBhvLFP0b1iYS3Pkb2exWpKOg==
-X-Received: by 2002:a19:cc46:: with SMTP id c67mr3157665lfg.145.1540590359056;
-        Fri, 26 Oct 2018 14:45:59 -0700 (PDT)
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
-        by smtp.gmail.com with ESMTPSA id 205-v6sm977971ljf.38.2018.10.26.14.45.58
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 14:45:58 -0700 (PDT)
-Received: by mail-lj1-f173.google.com with SMTP id k11-v6so2477049lja.5
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 14:45:58 -0700 (PDT)
-X-Received: by 2002:a2e:95c6:: with SMTP id y6-v6mr3374876ljh.59.1540589932213;
- Fri, 26 Oct 2018 14:38:52 -0700 (PDT)
+        Sat, 27 Oct 2018 02:27:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
+  t=1540590543; x=1572126543;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=tWmp4oGp7E3WUoGSPInLpkCq5Qd46Axw4XY16yBpV7g=;
+  b=Zy4vnHZly1CaTkkV3UYzb1H8miYVWUWcLEfbv8ASOom8+yzaJ8QX0EXW
+   ZjkfF4KU+fK3W24BmoQ+Z3O+2d36eQFQkTxIVXJUj670WO07jOJWx5eDW
+   sBc9Qdi4PaMu/CqiMuniHNXA8hIu0xDtueEh/mgPdO/2Acp0rmZsu6awE
+   E=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FVAAA3i9NbhyWd50NjHAEBAQQBAQc?=
+ =?us-ascii?q?EAQGBUgYBAQsBgVWBFX8yhzWFLYs5O4N9lHKBegsBARuBFYM8AoMZITUMDQE?=
+ =?us-ascii?q?DAQECAQECAQECEAEBAQoLCQgpIwyCNiKBR18+AgEDEhUTLRIQAgEINhBXAgQ?=
+ =?us-ascii?q?BDQ0agn8BggGbPQKBEIlXAQEBgWgzg3GGL4tngheBEYMSilkCgSoBjTGQIwY?=
+ =?us-ascii?q?BAoZpgyAFhmkggVKEd4l8iTKKJAGDFAIEAgQFAhSBRAGCDHCBboFPCIIdDgk?=
+ =?us-ascii?q?SgxCKeI0OgR8BAQ?=
+X-IPAS-Result: =?us-ascii?q?A2FVAAA3i9NbhyWd50NjHAEBAQQBAQcEAQGBUgYBAQsBg?=
+ =?us-ascii?q?VWBFX8yhzWFLYs5O4N9lHKBegsBARuBFYM8AoMZITUMDQEDAQECAQECAQECE?=
+ =?us-ascii?q?AEBAQoLCQgpIwyCNiKBR18+AgEDEhUTLRIQAgEINhBXAgQBDQ0agn8BggGbP?=
+ =?us-ascii?q?QKBEIlXAQEBgWgzg3GGL4tngheBEYMSilkCgSoBjTGQIwYBAoZpgyAFhmkgg?=
+ =?us-ascii?q?VKEd4l8iTKKJAGDFAIEAgQFAhSBRAGCDHCBboFPCIIdDgkSgxCKeI0OgR8BA?=
+ =?us-ascii?q?Q?=
+Received: from mx0b-00154901.pphosted.com ([67.231.157.37])
+  by esa6.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 26 Oct 2018 16:49:02 -0500
+Received: from pps.filterd (m0144104.ppops.net [127.0.0.1])
+        by mx0b-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9QLmU9L128248;
+        Fri, 26 Oct 2018 17:49:02 -0400
+Received: from esa1.dell-outbound2.iphmx.com (esa1.dell-outbound2.iphmx.com [68.232.153.201])
+        by mx0b-00154901.pphosted.com with ESMTP id 2nc7cns377-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 26 Oct 2018 17:49:02 -0400
+From:   <Justin.Lee1@Dell.com>
+Received: from ausc60ps301.us.dell.com ([143.166.148.206])
+  by esa1.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 27 Oct 2018 03:48:36 +0600
+X-LoopCount0: from 10.166.135.97
+X-IronPort-AV: E=Sophos;i="5.54,429,1534827600"; 
+   d="scan'208";a="1216992310"
+To:     <sam@mendozajonas.com>, <netdev@vger.kernel.org>
+CC:     <davem@davemloft.net>, <linux-kernel@vger.kernel.org>,
+        <openbmc@lists.ozlabs.org>
+Subject: RE: [PATCH net-next v2 6/6] net/ncsi: Configure multi-package,
+ multi-channel modes with failover
+Thread-Topic: [PATCH net-next v2 6/6] net/ncsi: Configure multi-package,
+ multi-channel modes with failover
+Thread-Index: AQHUaxq7PwNtXYFfrkq+WonZnNQ9MKUyEawg
+Date:   Fri, 26 Oct 2018 21:48:58 +0000
+Message-ID: <93324b3c0a9b4929aa64801b4ed9c25c@AUSX13MPS306.AMER.DELL.COM>
+References: <20181023215201.27315-1-sam@mendozajonas.com>
+ <20181023215201.27315-7-sam@mendozajonas.com>
+In-Reply-To: <20181023215201.27315-7-sam@mendozajonas.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.242.75]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <87ftwssg7m.fsf@concordia.ellerman.id.au>
-In-Reply-To: <87ftwssg7m.fsf@concordia.ellerman.id.au>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 26 Oct 2018 14:38:33 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj8hOhDQR61+R2w0YbOnXAmfvWWSvyN9pMsNU8MFF6wvw@mail.gmail.com>
-Message-ID: <CAHk-=wj8hOhDQR61+R2w0YbOnXAmfvWWSvyN9pMsNU8MFF6wvw@mail.gmail.com>
-Subject: Re: [GIT PULL] Please pull powerpc/linux.git powerpc-4.20-1 tag
-To:     mpe@ellerman.id.au
-Cc:     amodra@gmail.com, andrew.donnellan@au1.ibm.com,
-        aneesh.kumar@linux.ibm.com, anton@ozlabs.org, anton@samba.org,
-        aravinda@linux.vnet.ibm.com, Arnd Bergmann <arnd@arndb.de>,
-        b.zolnierkie@samsung.com, benh@kernel.crashing.org,
-        breno.leitao@gmail.com, christophe.leroy@c-s.fr,
-        clombard@linux.vnet.ibm.com, dan.carpenter@oracle.com,
-        dan.j.williams@intel.com, daniel.vetter@ffwll.ch, dja@axtens.net,
-        ego@linux.vnet.ibm.com, fbarrat@linux.vnet.ibm.com,
-        fthain@telegraphics.com.au, geert@linux-m68k.org,
-        geoff@infradead.org, hbathini@linux.ibm.com, joel@jms.id.au,
-        ldufour@linux.vnet.ibm.com, leitao@debian.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org, mahesh@linux.vnet.ibm.com,
-        mhairgrove@nvidia.com, mikey@neuling.org, msuchanek@suse.de,
-        mwb@linux.vnet.ibm.com, naveen.n.rao@linux.vnet.ibm.com,
-        nfont@linux.vnet.ibm.com, Nick Piggin <npiggin@gmail.com>,
-        oohall@gmail.com, paulus@ozlabs.org, pvorel@suse.cz,
-        rashmica.g@gmail.com, robh@kernel.org, sbobroff@linux.ibm.com,
-        sjitindarsingh@gmail.com, vaibhav@linux.ibm.com,
-        yamada.masahiro@socionext.com, yuehaibing@huawei.com,
-        zhongjiang@huawei.com
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-26_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810260185
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 11:42 AM Michael Ellerman <mpe@ellerman.id.au> wrote:
->
-> Please pull powerpc updates for 4.20:
+Hi Samuel,
 
-Pulled,
+There is one place that we assume the next available TX channel is under th=
+e same package.
+Please see the comment below.
 
-                       Linus
+Thanks,
+Justin
+
+
++/* Change the active Tx channel in a multi-channel setup */
++int ncsi_update_tx_channel(struct ncsi_dev_priv *ndp,
+> +			   struct ncsi_package *np,
+> +			   struct ncsi_channel *disable,
+> +			   struct ncsi_channel *enable)
+> +{
+> +	struct ncsi_cmd_arg nca;
+> +	struct ncsi_channel *nc;
+> +	int ret =3D 0;
+> +
+> +	if (!np->multi_channel)
+> +		netdev_warn(ndp->ndev.dev,
+> +			    "NCSI: Trying to update Tx channel in single-channel mode\n");
+> +	nca.ndp =3D ndp;
+> +	nca.package =3D np->id;
+
+If the channel may be on different package, the package ID here may not be =
+correct
+in some cases.
+
+> +	nca.req_flags =3D 0;
+> +
+> +	/* Find current channel with Tx enabled */
+> +	if (!disable) {
+> +		NCSI_FOR_EACH_CHANNEL(np, nc)
+> +			if (nc->modes[NCSI_MODE_TX_ENABLE].enable)
+> +				disable =3D nc;
+> +	}
+> +
+> +	/* Find a suitable channel for Tx */
+> +	if (!enable) {
+> +		if (np->preferred_channel &&
+> +		    ncsi_channel_has_link(np->preferred_channel)) {
+> +			enable =3D np->preferred_channel;
+> +		} else {
+> +			NCSI_FOR_EACH_CHANNEL(np, nc) {
+> +				if (!(np->channel_whitelist & 0x1 << nc->id))
+> +					continue;
+> +				if (nc->state !=3D NCSI_CHANNEL_ACTIVE)
+> +					continue;
+> +				if (ncsi_channel_has_link(nc)) {
+> +					enable =3D nc;
+> +					break;
+> +				}
+> +			}
+
+When we search, we need to consider the other available channel might be on=
+ the
+package.
+
+> +		}
+> +	}
+> +
+> +	if (disable =3D=3D enable)
+> +		return -1;
+> +
+> +	if (!enable)
+> +		return -1;
+> +
+> +	if (disable) {
+> +		nca.channel =3D disable->id;
+> +		nca.type =3D NCSI_PKT_CMD_DCNT;
+> +		ret =3D ncsi_xmit_cmd(&nca);
+> +		if (ret)
+> +			netdev_err(ndp->ndev.dev,
+> +				   "Error %d sending DCNT\n",
+> +				   ret);
+> +	}
+
+I remove the cable from ncsi0 and it doesn't failover to ncsi3 as ncsi0 and=
+ ncsi3 are not under
+the same package.
+
+cat /sys/kernel/debug/ncsi_protocol/ncsi_device_
+IFIDX IFNAME NAME   PID CID RX TX MP MC WP WC PC CS PS LS RU CR NQ HA
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+  2   eth2   ncsi0  000 000 1  1  1  1  1  1  1  3  0  0  1  1  0  1
+  2   eth2   ncsi1  000 001 0  0  1  1  1  0  0  1  0  1  1  1  0  1
+  2   eth2   ncsi2  001 000 0  0  1  1  1  0  0  1  0  1  1  1  0  1
+  2   eth2   ncsi3  001 001 1  0  1  1  1  1  0  2  1  1  1  1  0  1
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+MP: Multi-mode Package     WP: Whitelist Package
+MC: Multi-mode Channel     WC: Whitelist Channel
+PC: Primary Channel        CS: Channel State
+PS: Poll Status            LS: Link Status
+RU: Running                CR: Carrier OK
+NQ: Queue Stopped          HA: Hardware Arbitration
