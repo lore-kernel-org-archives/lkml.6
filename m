@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9435EC6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:45:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E52ECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:45:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B00320651
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:45:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA90F20651
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:45:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="HRHXdaLJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B00320651
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="X6HHISz1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA90F20651
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728135AbeJZXXE (ORCPT
+        id S1728147AbeJZXXJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 19:23:04 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:38942 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727687AbeJZXXD (ORCPT
+        Fri, 26 Oct 2018 19:23:09 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:41839 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727745AbeJZXXI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 19:23:03 -0400
-Received: by mail-pg1-f195.google.com with SMTP id r9-v6so643973pgv.6
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 07:45:42 -0700 (PDT)
+        Fri, 26 Oct 2018 19:23:08 -0400
+Received: by mail-pl1-f194.google.com with SMTP id p5-v6so615666plq.8
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 07:45:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=hFXSuNqrssYbWTTz3HCAz9AYQlGBmTmtTIlmYuYmHlg=;
-        b=HRHXdaLJr2Aa2ePTF//BjBnnaaBcSB3te5TQbG7wiyI5IATlUrGSxvl60Wx3DdV34y
-         woQuW34ue5NMJVWLSXFEOcQDjtO4ubgwevclD3cql3YCrDgF3c7BO3jvUmT9SLoXAye9
-         qrYY3ZZ4e6b68avKeliw6yWlzKElFu94zYy/c=
+        bh=oeSMNKpNfhPY+Ywe9odsVBbi7HxlUs5js+iUwbEI7fY=;
+        b=X6HHISz1Ob4/o1zChSdV8ygNvjFt/GbpwkT12/qLNrlRU2odUyoJjbDIza9uISvsop
+         zLNrn3eQOt2NZsewltYEGV/FWBiIk2blpLaAqQsCWy0A+l9JAOCimrLvXRc7bzzoQDNj
+         f1rhjI7deAaYEPIbrLjrljNStdOtyX3KuJyFQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=hFXSuNqrssYbWTTz3HCAz9AYQlGBmTmtTIlmYuYmHlg=;
-        b=My+8ueR17KHIZ8MMJqI/ShSc0SoxnYqy02reJo0tLhdUTcKksOYuGBEChTqHubk8c9
-         gbnyVADO5czGpfme5GK0RrDCGGxWDvfT++385+HPmN6znTwHRRKrjrQoSAYhr7xWA5su
-         7e5wUW95VRtktX00qqI6bdn0qZE8Zq7HkQT5FFjB7pIDp/PoC+Ov9iJrkT+oAXw250KW
-         YzU9iEF6g/kyTL0zOXY3qc9/lrnXUb/xzAbUmUeAJ7N6jaiWCRa1vxi+pcZcjXrkd/L8
-         oFq5k+GBf9NHZuN/5yGrTEzxW56y/YDyUZJ+wjGeYLQyfHFAltnZ7980v8DL0g9q9Qs1
-         j96g==
-X-Gm-Message-State: AGRZ1gIj/hIwuQTsXkHcHrwOIIFCzJzkDNUWR5frroc2CLl/pF8M+949
-        iAmyV9qm9LnvGyix/JMzVQdwTQ==
-X-Google-Smtp-Source: AJdET5fpKXQ9TMHJ93fYydde3aZ5tiYcPMcXp1K5AadZV/Op5N1E1lv427KgTgLNdNnB7ESJQ0yxnw==
-X-Received: by 2002:a63:df03:: with SMTP id u3-v6mr3640604pgg.362.1540565142552;
-        Fri, 26 Oct 2018 07:45:42 -0700 (PDT)
+        bh=oeSMNKpNfhPY+Ywe9odsVBbi7HxlUs5js+iUwbEI7fY=;
+        b=niUTIc8k/ZV2OuSteNUETMON71rkWD6PiptLkMspxKg0VD1QL9BFo/gZnKtSfyQV6c
+         tRnNhs8vAQ/3fUjpYvS/b7Rwoz2+WRD4cjXnny1pTLJukwaTnUpGTXN/TgUKtdAdfl30
+         tN8hL3N7TdMiMmtIfp15HiCRXdAYlDqYOtpCZWRq0F81YPoHAYUL6iWWKFLHyIhuM56s
+         dl6XN4LXGKbFKkjoOG7A7qZD6R8u9g7YmsUZoIJV7LpUrPXMmoGHuOZBcTMCMmlAq9vQ
+         HrZ2z7uyuZVOBVJJFe37akJXOk7n9Fnx1ltme3OCbIOr2nxoMGLEzaAT41aWEX70walq
+         +U7Q==
+X-Gm-Message-State: AGRZ1gIV4+B0qlbLXn8qIQ5S5a0IXclS91anTLhIuoa+X3s0y5q1sOdQ
+        vwZVPjg+IRoXjpCpCotARA78Yg==
+X-Google-Smtp-Source: AJdET5eCSw09pC+nyEzugpgTLUFFRA3oIYc1CZlO/7K3hhLsvt95Uo2gbj80mVh0MyOmVoCooM4DKw==
+X-Received: by 2002:a17:902:e00a:: with SMTP id ca10-v6mr3745128plb.166.1540565148172;
+        Fri, 26 Oct 2018 07:45:48 -0700 (PDT)
 Received: from localhost.localdomain ([27.7.51.1])
-        by smtp.gmail.com with ESMTPSA id z22-v6sm12044467pgv.24.2018.10.26.07.45.37
+        by smtp.gmail.com with ESMTPSA id z22-v6sm12044467pgv.24.2018.10.26.07.45.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 07:45:42 -0700 (PDT)
+        Fri, 26 Oct 2018 07:45:47 -0700 (PDT)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -73,9 +73,9 @@ To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v3 16/25] drm/sun4i: sun6i_mipi_dsi: Add support for VCC-DSI voltage regulator
-Date:   Fri, 26 Oct 2018 20:13:35 +0530
-Message-Id: <20181026144344.27778-17-jagan@amarulasolutions.com>
+Subject: [PATCH v3 17/25] dt-bindings: panel: Add Bananapi S070WV20-CT16 ICN6211 MIPI-DSI to RGB bridge
+Date:   Fri, 26 Oct 2018 20:13:36 +0530
+Message-Id: <20181026144344.27778-18-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20181026144344.27778-1-jagan@amarulasolutions.com>
 References: <20181026144344.27778-1-jagan@amarulasolutions.com>
@@ -86,91 +86,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some boards have VCC-DSI pin connected to voltage regulator which may
-not be turned on by default.
+Bananapi S070WV20-CT16 ICN6211 is 800x480, 4-lane MIPI-DSI to RGB
+bridge panel, which is available on same PCB with 24-bit RGB interface.
 
-Add support for such boards by adding voltage regulator handling code to
-MIPI DSI driver.
+So, this patch adds DSI specific binding details on existing
+dt-bindings file.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-Tested-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
 Changes for v3:
-- new patch
+- Use existing binding doc and update dsi details
 Changes for v2:
 - none
 
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 14 ++++++++++++++
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h |  3 +++
- 2 files changed, 17 insertions(+)
+ .../display/panel/bananapi,s070wv20-ct16.txt  | 31 +++++++++++++++++--
+ 1 file changed, 29 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index 42bd7506abaf..bc57343592e0 100644
---- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-+++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -949,6 +949,12 @@ static int sun6i_dsi_bind(struct device *dev, struct device *master,
+diff --git a/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
+index 35bc0c839f49..b7855dc7c66f 100644
+--- a/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
++++ b/Documentation/devicetree/bindings/display/panel/bananapi,s070wv20-ct16.txt
+@@ -1,12 +1,39 @@
+ Banana Pi 7" (S070WV20-CT16) TFT LCD Panel
  
- 	dsi->drv = drv;
- 
-+	ret = regulator_enable(dsi->regulator);
-+	if (ret) {
-+		dev_err(dev, "Failed to enable regulator\n");
-+		return ret;
-+	}
++S070WV20-CT16 is 7" 800x480 panel connected through a 24-bit RGB interface.
 +
- 	drm_encoder_helper_add(&dsi->encoder,
- 			       &sun6i_dsi_enc_helper_funcs);
- 	ret = drm_encoder_init(drm,
-@@ -980,6 +986,7 @@ static int sun6i_dsi_bind(struct device *dev, struct device *master,
- 
- err_cleanup_connector:
- 	drm_encoder_cleanup(&dsi->encoder);
-+	regulator_disable(dsi->regulator);
- 	return ret;
- }
- 
-@@ -989,6 +996,7 @@ static void sun6i_dsi_unbind(struct device *dev, struct device *master,
- 	struct sun6i_dsi *dsi = dev_get_drvdata(dev);
- 
- 	drm_panel_detach(dsi->panel);
-+	regulator_disable(dsi->regulator);
- }
- 
- static const struct component_ops sun6i_dsi_ops = {
-@@ -1022,6 +1030,12 @@ static int sun6i_dsi_probe(struct platform_device *pdev)
- 		return PTR_ERR(base);
- 	}
- 
-+	dsi->regulator = devm_regulator_get(dev, "vcc-dsi");
-+	if (IS_ERR(dsi->regulator)) {
-+		dev_err(dev, "Couldn't get regulator\n");
-+		return PTR_ERR(dsi->regulator);
-+	}
++Depending on the variant, the PCB attached to the panel module either
++supports DSI, or DSI + 24-bit RGB. DSI is converted to 24-bit RGB via
++an onboard ICN6211 MIPI DSI - RGB bridge chip, then fed to the panel
++itself
 +
- 	dsi->regs = devm_regmap_init_mmio_clk(dev, "bus", base,
- 					      &sun6i_dsi_regmap_config);
- 	if (IS_ERR(dsi->regs)) {
-diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
-index 597b62227019..0df60f84bab3 100644
---- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
-+++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
-@@ -13,6 +13,8 @@
- #include <drm/drm_encoder.h>
- #include <drm/drm_mipi_dsi.h>
- 
-+#include <linux/regulator/consumer.h>
+ Required properties:
+-- compatible: should be "bananapi,s070wv20-ct16"
++- compatible:
++  for 24-bit RGB interface, use "bananapi,s070wv20-ct16"
++  for ICN6211 MIPI-DSI to RGB bridge, use "bananapi,s070wv20-ct16-icn6211"
 +
- struct sun6i_dphy {
- 	struct clk		*bus_clk;
- 	struct clk		*mod_clk;
-@@ -32,6 +34,7 @@ struct sun6i_dsi {
- 	struct clk		*bus_clk;
- 	struct clk		*mod_clk;
- 	struct regmap		*regs;
-+	struct regulator	*regulator;
- 	struct reset_control	*reset;
- 	struct sun6i_dphy	*dphy;
++Required properties for RGB:
+ - power-supply: see ./panel-common.txt
  
++Required properties for MIPI-DSI to RGB:
++- reg: for DSI virtual channel used by that screen
++- avdd-supply: analog regulator dc1 switch
++- dvdd-supply: 3v3 digital regulator
++- reset-gpios: a GPIO phandle for the reset pin
++
+ Optional properties:
+-- enable-gpios: see ./simple-panel.txt
++- enable-gpios: see ./simple-panel.txt(not available in MIPI-DSI to RGB bridge)
+ - backlight: see ./simple-panel.txt
+ 
+ This binding is compatible with the simple-panel binding, which is specified
+ in ./simple-panel.txt.
++
++Example:
++panel@0 {
++	compatible = "bananapi,s070wv20-ct16-icn6211";
++	reg = <0>;
++	avdd-supply = <&reg_dc1sw>;
++	dvdd-supply = <&reg_dldo1>;
++	reset-gpios = <&pio 3 6 GPIO_ACTIVE_HIGH>; /* PD6 */
++	backlight = <&backlight_dsi>;
++};
 -- 
 2.18.0.321.gffc6fa0e3
 
