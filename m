@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F1BC6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D13C6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:41:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD75220665
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:40:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD75220665
+	by mail.kernel.org (Postfix) with ESMTP id A1DF620665
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 07:41:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1DF620665
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726787AbeJZQQe (ORCPT
+        id S1726852AbeJZQRI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 12:16:34 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:49557 "EHLO
+        Fri, 26 Oct 2018 12:17:08 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:52643 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725941AbeJZQQe (ORCPT
+        with ESMTP id S1725941AbeJZQRI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 12:16:34 -0400
+        Fri, 26 Oct 2018 12:17:08 -0400
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9Q7eVwO138530
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9Q7f5Tg138591
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 26 Oct 2018 00:40:31 -0700
+        Fri, 26 Oct 2018 00:41:05 -0700
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9Q7eV6W138527;
-        Fri, 26 Oct 2018 00:40:31 -0700
-Date:   Fri, 26 Oct 2018 00:40:31 -0700
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9Q7f4kF138588;
+        Fri, 26 Oct 2018 00:41:04 -0700
+Date:   Fri, 26 Oct 2018 00:41:04 -0700
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Adrian Hunter <tipbot@zytor.com>
-Message-ID: <tip-70d831e85c1bdd87d193e85666bf3aa39aab7f21@git.kernel.org>
-Cc:     acme@redhat.com, mingo@kernel.org, ak@linux.intel.com,
-        adrian.hunter@intel.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, jolsa@redhat.com
-Reply-To: acme@redhat.com, adrian.hunter@intel.com, ak@linux.intel.com,
-          mingo@kernel.org, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, hpa@zytor.com, jolsa@redhat.com
-In-Reply-To: <20181001062853.28285-10-adrian.hunter@intel.com>
-References: <20181001062853.28285-10-adrian.hunter@intel.com>
+Message-ID: <tip-4be9ace7e1cdcb44c1fba1fb41ec2b92dda06732@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, hpa@zytor.com, acme@redhat.com,
+        tglx@linutronix.de, adrian.hunter@intel.com, ak@linux.intel.com,
+        mingo@kernel.org, jolsa@redhat.com
+Reply-To: tglx@linutronix.de, adrian.hunter@intel.com, mingo@kernel.org,
+          ak@linux.intel.com, jolsa@redhat.com,
+          linux-kernel@vger.kernel.org, hpa@zytor.com, acme@redhat.com
+In-Reply-To: <20181001062853.28285-11-adrian.hunter@intel.com>
+References: <20181001062853.28285-11-adrian.hunter@intel.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf scripts python: call-graph-from-sql.py:
- Factor out CallGraphModel from TreeModel
-Git-Commit-ID: 70d831e85c1bdd87d193e85666bf3aa39aab7f21
+Subject: [tip:perf/urgent] perf scripts python: call-graph-from-sql.py: Add
+ data helper functions
+Git-Commit-ID: 4be9ace7e1cdcb44c1fba1fb41ec2b92dda06732
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,162 +59,130 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  70d831e85c1bdd87d193e85666bf3aa39aab7f21
-Gitweb:     https://git.kernel.org/tip/70d831e85c1bdd87d193e85666bf3aa39aab7f21
+Commit-ID:  4be9ace7e1cdcb44c1fba1fb41ec2b92dda06732
+Gitweb:     https://git.kernel.org/tip/4be9ace7e1cdcb44c1fba1fb41ec2b92dda06732
 Author:     Adrian Hunter <adrian.hunter@intel.com>
-AuthorDate: Mon, 1 Oct 2018 09:28:43 +0300
+AuthorDate: Mon, 1 Oct 2018 09:28:44 +0300
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Tue, 23 Oct 2018 14:23:52 -0300
+CommitDate: Tue, 23 Oct 2018 14:25:42 -0300
 
-perf scripts python: call-graph-from-sql.py: Factor out CallGraphModel from TreeModel
+perf scripts python: call-graph-from-sql.py: Add data helper functions
 
-Factor out CallGraphModel from TreeModel, which paves the way to reuse
-TreeModel in future reports.
+Add helper functions for a few common cases.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Andi Kleen <ak@linux.intel.com>
 Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/20181001062853.28285-10-adrian.hunter@intel.com
+Link: http://lkml.kernel.org/r/20181001062853.28285-11-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/scripts/python/call-graph-from-sql.py | 90 ++++++++++++++++--------
- 1 file changed, 61 insertions(+), 29 deletions(-)
+ tools/perf/scripts/python/call-graph-from-sql.py | 54 +++++++++++++-----------
+ 1 file changed, 29 insertions(+), 25 deletions(-)
 
 diff --git a/tools/perf/scripts/python/call-graph-from-sql.py b/tools/perf/scripts/python/call-graph-from-sql.py
-index 65c18e351bc4..ada486048ad8 100644
+index ada486048ad8..7f2eabe7dacd 100644
 --- a/tools/perf/scripts/python/call-graph-from-sql.py
 +++ b/tools/perf/scripts/python/call-graph-from-sql.py
-@@ -201,42 +201,47 @@ class TreeItem():
- 			self.selectCalls()
- 		return self.child_count
+@@ -52,6 +52,28 @@ from PySide.QtGui import *
+ from PySide.QtSql import *
+ from decimal import *
  
--	def columnCount(self):
--		return 7
++# Data formatting helpers
++
++def dsoname(name):
++	if name == "[kernel.kallsyms]":
++		return "[kernel]"
++	return name
++
++# Percent to one decimal place
++
++def PercentToOneDP(n, d):
++	if not d:
++		return "0.0"
++	x = (n * Decimal(100)) / d
++	return str(x.quantize(Decimal(".1"), rounding=ROUND_HALF_UP))
++
++# Helper for queries that must not fail
++
++def QueryExec(query, stmt):
++	ret = query.exec_(stmt)
++	if not ret:
++		raise Exception("Query failed: " + query.lastError().text())
++
+ class TreeItem():
+ 
+ 	def __init__(self, db, row, parent_item):
+@@ -73,9 +95,7 @@ class TreeItem():
+ 	def setUpRoot(self):
+ 		self.query_done = True
+ 		query = QSqlQuery(self.db)
+-		ret = query.exec_('SELECT id, comm FROM comms')
+-		if not ret:
+-			raise Exception("Query failed: " + query.lastError().text())
++		QueryExec(query, 'SELECT id, comm FROM comms')
+ 		while query.next():
+ 			if not query.value(0):
+ 				continue
+@@ -91,9 +111,7 @@ class TreeItem():
+ 		self.child_items = []
+ 		self.child_count = 0
+ 		query = QSqlQuery(self.db)
+-		ret = query.exec_('SELECT thread_id, ( SELECT pid FROM threads WHERE id = thread_id ), ( SELECT tid FROM threads WHERE id = thread_id ) FROM comm_threads WHERE comm_id = ' + str(comm_id))
+-		if not ret:
+-			raise Exception("Query failed: " + query.lastError().text())
++		QueryExec(query, 'SELECT thread_id, ( SELECT pid FROM threads WHERE id = thread_id ), ( SELECT tid FROM threads WHERE id = thread_id ) FROM comm_threads WHERE comm_id = ' + str(comm_id))
+ 		while query.next():
+ 			child_item = TreeItem(self.db, self.child_count, self)
+ 			self.child_items.append(child_item)
+@@ -114,18 +132,6 @@ class TreeItem():
+ 	def getRow(self):
+ 		return self.row
+ 
+-	def timePercent(self, b):
+-		if not self.time:
+-			return "0.0"
+-		x = (b * Decimal(100)) / self.time
+-		return str(x.quantize(Decimal('.1'), rounding=ROUND_HALF_UP))
 -
--	def columnHeader(self, column):
--		headers = ["Call Path", "Object", "Count ", "Time (ns) ", "Time (%) ", "Branch Count ", "Branch Count (%) "]
--		return headers[column]
-+	def hasChildren(self):
-+		if not self.query_done:
-+			return True
-+		return self.child_count > 0
- 
- 	def getData(self, column):
- 		return self.data[column]
- 
-+# Tree data model
-+
- class TreeModel(QAbstractItemModel):
- 
--	def __init__(self, db, parent=None):
-+	def __init__(self, root, parent=None):
- 		super(TreeModel, self).__init__(parent)
--		self.db = db
--		self.root = TreeItem(db, 0, None)
-+		self.root = root
-+		self.last_row_read = 0
- 
--	def columnCount(self, parent):
--		return self.root.columnCount()
+-	def branchPercent(self, b):
+-		if not self.branch_count:
+-			return "0.0"
+-		x = (b * Decimal(100)) / self.branch_count
+-		return str(x.quantize(Decimal('.1'), rounding=ROUND_HALF_UP))
 -
--	def rowCount(self, parent):
-+	def Item(self, parent):
- 		if parent.isValid():
--			parent_item = parent.internalPointer()
-+			return parent.internalPointer()
- 		else:
--			parent_item = self.root
--		return parent_item.childCount()
-+			return self.root
-+
-+	def rowCount(self, parent):
-+		result = self.Item(parent).childCount()
-+		if result < 0:
-+			result = 0
-+			self.dataChanged.emit(parent, parent)
-+		return result
-+
-+	def hasChildren(self, parent):
-+		return self.Item(parent).hasChildren()
+ 	def addChild(self, call_path_id, name, dso, count, time, branch_count):
+ 		child_item = TreeItem(self.db, self.child_count, self)
+ 		child_item.comm_id = self.comm_id
+@@ -134,14 +140,12 @@ class TreeItem():
+ 		child_item.branch_count = branch_count
+ 		child_item.time = time
+ 		child_item.data[0] = name
+-		if dso == "[kernel.kallsyms]":
+-			dso = "[kernel]"
+-		child_item.data[1] = dso
++		child_item.data[1] = dsoname(dso)
+ 		child_item.data[2] = str(count)
+ 		child_item.data[3] = str(time)
+-		child_item.data[4] = self.timePercent(time)
++		child_item.data[4] = PercentToOneDP(time, self.time)
+ 		child_item.data[5] = str(branch_count)
+-		child_item.data[6] = self.branchPercent(branch_count)
++		child_item.data[6] = PercentToOneDP(branch_count, self.branch_count)
+ 		self.child_items.append(child_item)
+ 		self.child_count += 1
  
- 	def headerData(self, section, orientation, role):
- 		if role == Qt.TextAlignmentRole:
--			if section > 1:
--				return Qt.AlignRight
-+			return self.columnAlignment(section)
- 		if role != Qt.DisplayRole:
- 			return None
- 		if orientation != Qt.Horizontal:
- 			return None
--		return self.root.columnHeader(section)
-+		return self.columnHeader(section)
+@@ -189,12 +193,12 @@ class TreeItem():
+ 			self.branch_count = total_branch_count
+ 			if self.branch_count:
+ 				for child_item in self.child_items:
+-					child_item.data[6] = self.branchPercent(child_item.branch_count)
++					child_item.data[6] = PercentToOneDP(child_item.branch_count, self.branch_count)
+ 		if total_time > self.time:
+ 			self.time = total_time
+ 			if self.time:
+ 				for child_item in self.child_items:
+-					child_item.data[4] = self.timePercent(child_item.time)
++					child_item.data[4] = PercentToOneDP(child_item.time, self.time)
  
- 	def parent(self, child):
- 		child_item = child.internalPointer()
-@@ -246,21 +251,48 @@ class TreeModel(QAbstractItemModel):
- 		return self.createIndex(parent_item.getRow(), 0, parent_item)
- 
- 	def index(self, row, column, parent):
--		if parent.isValid():
--			parent_item = parent.internalPointer()
--		else:
--			parent_item = self.root
--		child_item = parent_item.getChildItem(row)
-+		child_item = self.Item(parent).getChildItem(row)
- 		return self.createIndex(row, column, child_item)
- 
-+	def DisplayData(self, item, index):
-+		return item.getData(index.column())
-+
-+	def columnAlignment(self, column):
-+		return Qt.AlignLeft
-+
-+	def columnFont(self, column):
-+		return None
-+
- 	def data(self, index, role):
- 		if role == Qt.TextAlignmentRole:
--			if index.column() > 1:
--				return Qt.AlignRight
-+			return self.columnAlignment(index.column())
-+		if role == Qt.FontRole:
-+			return self.columnFont(index.column())
- 		if role != Qt.DisplayRole:
- 			return None
--		index_item = index.internalPointer()
--		return index_item.getData(index.column())
-+		item = index.internalPointer()
-+		return self.DisplayData(item, index)
-+
-+# Context-sensitive call graph data model
-+
-+class CallGraphModel(TreeModel):
-+
-+	def __init__(self, glb, parent=None):
-+		super(CallGraphModel, self).__init__(TreeItem(glb.db, 0, None), parent)
-+		self.glb = glb
-+
-+	def columnCount(self, parent=None):
-+		return 7
-+
-+	def columnHeader(self, column):
-+		headers = ["Call Path", "Object", "Count ", "Time (ns) ", "Time (%) ", "Branch Count ", "Branch Count (%) "]
-+		return headers[column]
-+
-+	def columnAlignment(self, column):
-+		alignment = [ Qt.AlignLeft, Qt.AlignLeft, Qt.AlignRight, Qt.AlignRight, Qt.AlignRight, Qt.AlignRight, Qt.AlignRight ]
-+		return alignment[column]
-+
-+# Main window
- 
- class MainWindow(QMainWindow):
- 
-@@ -275,7 +307,7 @@ class MainWindow(QMainWindow):
- 		self.setWindowIcon(self.style().standardIcon(QStyle.SP_ComputerIcon))
- 		self.setMinimumSize(200, 100)
- 
--		self.model = TreeModel(glb.db)
-+		self.model = CallGraphModel(glb)
- 
- 		self.view = QTreeView()
- 		self.view.setModel(self.model)
+ 	def childCount(self):
+ 		if not self.query_done:
