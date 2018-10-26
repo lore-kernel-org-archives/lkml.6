@@ -2,101 +2,122 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 104D1C6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 08:50:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27DB3C6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 08:50:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D093B2084D
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 08:50:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D093B2084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id DEB0420834
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 08:50:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEB0420834
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727224AbeJZR0S (ORCPT
+        id S1727330AbeJZR06 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 13:26:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53338 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726348AbeJZR0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 13:26:17 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 29A5FAD00;
-        Fri, 26 Oct 2018 08:50:06 +0000 (UTC)
-Date:   Fri, 26 Oct 2018 10:46:36 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "xishi.qiuxishi@alibaba-inc.com" <xishi.qiuxishi@alibaba-inc.com>,
-        "zy.zhengyi@alibaba-inc.com" <zy.zhengyi@alibaba-inc.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: Re: [PATCH v2 0/2] mm: soft-offline: fix race against page allocation
-Message-ID: <20181026084636.GY18839@dhcp22.suse.cz>
-References: <1531805552-19547-1-git-send-email-n-horiguchi@ah.jp.nec.com>
- <20180815154334.f3eecd1029a153421631413a@linux-foundation.org>
- <20180822013748.GA10343@hori1.linux.bs1.fc.nec.co.jp>
- <20180822080025.GD29735@dhcp22.suse.cz>
+        Fri, 26 Oct 2018 13:26:58 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:29302 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726348AbeJZR06 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 13:26:58 -0400
+X-UUID: 75866f457ae5466484c6153097eda7aa-20181026
+X-UUID: 75866f457ae5466484c6153097eda7aa-20181026
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 210528792; Fri, 26 Oct 2018 16:50:35 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 26 Oct 2018 16:50:34 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 26 Oct 2018 16:50:34 +0800
+Message-ID: <1540543834.21297.14.camel@mtkswgap22>
+Subject: Re: [PATCH] mm/page_owner: use vmalloc instead of kmalloc
+From:   Miles Chen <miles.chen@mediatek.com>
+To:     Matthew Wilcox <willy@infradead.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <wsd_upstream@mediatek.com>, <linux-mediatek@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>
+Date:   Fri, 26 Oct 2018 16:50:34 +0800
+In-Reply-To: <20181025192701.GK25444@bombadil.infradead.org>
+References: <1540492481-4144-1-git-send-email-miles.chen@mediatek.com>
+         <20181025192701.GK25444@bombadil.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180822080025.GD29735@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 22-08-18 10:00:25, Michal Hocko wrote:
-> On Wed 22-08-18 01:37:48, Naoya Horiguchi wrote:
-> > On Wed, Aug 15, 2018 at 03:43:34PM -0700, Andrew Morton wrote:
-> > > On Tue, 17 Jul 2018 14:32:30 +0900 Naoya Horiguchi <n-horiguchi@ah.jp.nec.com> wrote:
-> > > 
-> > > > I've updated the patchset based on feedbacks:
-> > > > 
-> > > > - updated comments (from Andrew),
-> > > > - moved calling set_hwpoison_free_buddy_page() from mm/migrate.c to mm/memory-failure.c,
-> > > >   which is necessary to check the return code of set_hwpoison_free_buddy_page(),
-> > > > - lkp bot reported a build error when only 1/2 is applied.
-> > > > 
-> > > >   >    mm/memory-failure.c: In function 'soft_offline_huge_page':
-> > > >   > >> mm/memory-failure.c:1610:8: error: implicit declaration of function
-> > > >   > 'set_hwpoison_free_buddy_page'; did you mean 'is_free_buddy_page'?
-> > > >   > [-Werror=implicit-function-declaration]
-> > > >   >        if (set_hwpoison_free_buddy_page(page))
-> > > >   >            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > >   >            is_free_buddy_page
-> > > >   >    cc1: some warnings being treated as errors
-> > > > 
-> > > >   set_hwpoison_free_buddy_page() is defined in 2/2, so we can't use it
-> > > >   in 1/2. Simply doing s/set_hwpoison_free_buddy_page/!TestSetPageHWPoison/
-> > > >   will fix this.
-> > > > 
-> > > > v1: https://lkml.org/lkml/2018/7/12/968
-> > > > 
-> > > 
-> > > Quite a bit of discussion on these two, but no actual acks or
-> > > review-by's?
+On Thu, 2018-10-25 at 12:27 -0700, Matthew Wilcox wrote:
+> On Fri, Oct 26, 2018 at 02:34:41AM +0800, miles.chen@mediatek.com wrote:
+> > The kbuf used by page owner is allocated by kmalloc(),
+> > which means it can use only normal memory and there might
+> > be a "out of memory" issue when we're out of normal memory.
 > > 
-> > Really sorry for late response.
-> > Xishi provided feedback on previous version, but no final ack/reviewed-by.
-> > This fix should work on the reported issue, but rewriting soft-offlining
-> > without PageHWPoison flag would be the better fix (no actual patch yet.)
+> > Use vmalloc() so we can also allocate kbuf from highmem
+> > on 32bit kernel.
 > 
-> If we can go with the later the I would obviously prefer that. I cannot
-> promise to work on the patch though. I can help with reviewing of
-> course.
+> ... hang on, there's a bigger problem here.
 > 
-> If this is important enough that people are hitting the issue in normal
-> workloads then sure, let's go with the simple fix and continue on top of
-> that.
+> static const struct file_operations proc_page_owner_operations = {
+>         .read           = read_page_owner,
+> };
+> 
+> read_page_owner(struct file *file, char __user *buf, size_t count, loff_t *ppos)
+> {
+> ...
+>                 return print_page_owner(buf, count, pfn, page,
+>                                 page_owner, handle);
+> }
+> 
+> static ssize_t
+> print_page_owner(char __user *buf, size_t count, unsigned long pfn,
+>                 struct page *page, struct page_owner *page_owner,
+>                 depot_stack_handle_t handle)
+> {mount -t debugfs none /sys/kernel/debug/
+> ...
+>       kbuf = kmalloc(count, GFP_KERNEL);
+> 
+> So I can force the kernel to make an arbitrary size allocation, triggering
+> OOMs and forcing swapping if I can get a file handle to this file.
+> The only saving grace is that (a) this is a debugfs file and (b) it's
+> root-only (mode 0400).  Nevertheless, I feel some clamping is called
+> for here.  Do we really need to output more than 4kB worth of text here?
+> 
+I did a test on my device, the allocation count is 4096 and around 6xx
+bytes are used each print_page_owner() is called. It looks like that
+clamping the reading count to PAGE_SIZE is ok.
 
-Naoya, did you have any chance to look at this or have any plans to look?
-I am willing to review and help with the overal design but I cannot
-really promise to work on the code.
--- 
-Michal Hocko
-SUSE Labs
+The following output from print_page_owner() is 660 bytes long, I think
+PAGE_SIZE should be enough to print the information we need.
+
+Page allocated via order 0, mask 0x6200ca(GFP_HIGHUSER_MOVABLE)
+PFN 262199 type Movable Block 512 type Movable Flags 0x4003c(referenced|
+uptodate|dirty|lru|swapbacked)
+ get_page_from_freelist+0x1580/0x1650
+ __alloc_pages_nodemask+0xcc/0xfa4
+ shmem_alloc_page+0xa4/0xc8
+ shmem_alloc_and_acct_page+0x138/0x2b8
+ shmem_getpage_gfp.isra.54+0x164/0xfc8
+ shmem_write_begin+0x84/0xcc
+ generic_perform_write+0xe8/0x210
+ __generic_file_write_iter+0x1d4/0x230
+ generic_file_write_iter+0x184/0x2e8
+ new_sync_write+0x144/0x1c4
+ vfs_write+0x194/0x278
+ ksys_write+0x64/0xd4
+ xwrite+0x34/0x84
+ do_copy+0xf4/0x168
+ flush_buffer+0x68/0xec
+ __gunzip+0x370/0x448
+
+
