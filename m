@@ -2,126 +2,95 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B9E9C6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 08:49:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 349F5ECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 08:49:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9B642082D
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 08:49:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDC282082D
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 08:49:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S7T3hZCZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9B642082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gpRYscHa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDC282082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726330AbeJZRZg (ORCPT
+        id S1726796AbeJZR0A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 13:25:36 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:44745 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726096AbeJZRZg (ORCPT
+        Fri, 26 Oct 2018 13:26:00 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:60426 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726341AbeJZRZ7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 13:25:36 -0400
-Received: by mail-lj1-f194.google.com with SMTP id v6-v6so372133ljc.11;
-        Fri, 26 Oct 2018 01:49:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=Oos/QDDzB3DHvuIok2DumIAW+2LqZJtC5YQ5ETc1f7s=;
-        b=S7T3hZCZ38uBSbRmeHo2tcuIkwfJoBBHxjsY0jsFYg04ZbzI2A6ZxAxryjcZuxG5Ny
-         6XpO6zpG8p8Ao8VHBkTg2nB8rUSah2Kc0e2qYc5NyD1hrxMZum4f4szw6p8gEMNg/zS2
-         6RfZflZU3cV7fY5BJAhaM48yK4/Rw3cTRc7+ycW7/ec1507j4c4o8KrMifJOcd3/APbM
-         5DYlBDHC05nPjiomDuAM3dAK/Q9E/u1IsJNCLtRZYYGLpyLjQUQHM9BcVO/4TIxaHynt
-         DIZLKUCsiNUwIy8ba6DKDJ2GMSyd6vRQCi1c1mWCs8RmreiNtJyx2SCIQs+KVhlYNIvo
-         WOKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=Oos/QDDzB3DHvuIok2DumIAW+2LqZJtC5YQ5ETc1f7s=;
-        b=ml2rloILCYTP00uCiIpoDIt4VzxvLL7Et2eTy8v9xTfT5SuWJMgZkRn7PrzCv/BCa5
-         FvIyVkkMmYdlEPXJ/34Kk2P5pVIKW9HoI8Diliyu/pjriPvH8hoGPnlhdgbrCL7rs51f
-         oUAentskXUgnk2BmtH9LCmr7YYn+QpGo61fldW09dZIpVAR7j8w+fp7rqHeXDsGYY/O3
-         josIgKA7FllGL8jM4Cn9nSMCBoRH5LeVgGGEt/4zr8CP+NNHsH1nih36CMeWuzBNEA4L
-         VHLf7+GEBTaR0ItpB5yRWAicDGk0UPp4SaN/sitDGNT/v/l1qgjd2R0VYdpbW/8rtDEw
-         ORPQ==
-X-Gm-Message-State: AGRZ1gKt0oYJb05YasbvYV9MdxBuakygkFS0Oqepm1jiKEwshgK0NbSK
-        dv8LmlPNKn+d4W4/KgCbczI=
-X-Google-Smtp-Source: AJdET5cwcWtzQoIs80RvHLH62LbX+X+PcvsEkKxpAjyOR8veZLIndlDaqMCz8uzqqI2Xr5rj259sKA==
-X-Received: by 2002:a2e:21d2:: with SMTP id h79-v6mr1772122lji.46.1540543763585;
-        Fri, 26 Oct 2018 01:49:23 -0700 (PDT)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id i185-v6sm1662843lfg.89.2018.10.26.01.49.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 01:49:22 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gFxo0-0003Vk-3G; Fri, 26 Oct 2018 10:49:20 +0200
-Date:   Fri, 26 Oct 2018 10:49:20 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?iso-8859-1?Q?Bj=F8rn?= Mork <bjorn@mork.no>,
-        Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH AUTOSEL 3.18 04/98] USB: qcserial: Fix support for HP
- lt4112 LTE/HSPA+ Gobi 4G Modem
-Message-ID: <20181026084920.GB27852@localhost>
-References: <20181025141853.214051-1-sashal@kernel.org>
- <20181025141853.214051-4-sashal@kernel.org>
+        Fri, 26 Oct 2018 13:25:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=AG4c6emYVFszQujiFn5ZxbPGoBBI/9qTM8hR48sNFxo=; b=gpRYscHa7eQ+0eNAPZvJg+GPu
+        b1mhB0sgS8wklgjgQq6dg0auJpWFt5rF9Reth3cQ5HOuZmpm5BDXTcT6GXr4tIufPO8QVfMWPNZ2W
+        740KtwgjHSVbDY0+sEjMsYCGtQHjAs6hDCxxRVprwjFlUM0ztma1fbMiNGm3LQq6FAUVtKQohGJy7
+        JIedf5MrcbIAmKpH8/oPMIChIrvxO42u7Z869GZ+DuRiZaBM/IGX5tvoP0Qb+u1mOBun4VoRbQD1g
+        1gwnatTla/z8XHQVuCasnhPAqzb+mpD3/MckE5P7skhHLOfXkvMYrQzTXvuiBRa/cvz2iokAjXnYh
+        DxGmfVc+A==;
+Received: from [167.98.65.38] (helo=worktop)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gFxoN-0000yq-UB; Fri, 26 Oct 2018 08:49:44 +0000
+Received: by worktop (Postfix, from userid 1000)
+        id 07DD96E07CA; Fri, 26 Oct 2018 10:33:04 +0200 (CEST)
+Date:   Fri, 26 Oct 2018 10:33:03 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Srikar Dronamraju <srikar@linux.vnet.ibm.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Rik van Riel <riel@surriel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Wang <wang.yi59@zte.com.cn>, zhong.weidong@zte.com.cn,
+        Yi Liu <liu.yi24@zte.com.cn>,
+        Frederic Weisbecker <frederic@kernel.org>
+Subject: Re: [PATCH v3 2/3] sched/core: Don't mix isolcpus and housekeeping
+ CPUs
+Message-ID: <20181026083303.GX3109@worktop.c.hoisthospitality.com>
+References: <1540492943-17147-1-git-send-email-srikar@linux.vnet.ibm.com>
+ <1540492943-17147-3-git-send-email-srikar@linux.vnet.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181025141853.214051-4-sashal@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1540492943-17147-3-git-send-email-srikar@linux.vnet.ibm.com>
+User-Agent: Mutt/1.5.22.1 (2013-10-16)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 10:17:19AM -0400, Sasha Levin wrote:
-> From: Bjørn Mork <bjorn@mork.no>
-> 
-> [ Upstream commit 59536da34513c594af2a6fd35ba65ea45b6960a1 ]
-> 
-> The DEVICE_HWI type was added under the faulty assumption that Huawei
-> devices based on Qualcomm chipsets and firmware use the static USB
-> interface numbering known from Gobi devices.  But this model does
-> not apply to Huawei devices like the HP branded lt4112 (Huawei me906e).
-> Huawei firmwares will dynamically assign interface numbers. Functions
-> are renumbered when the firmware is reconfigured.
-> 
-> Fix by changing the DEVICE_HWI type to use a simplified version
-> of Huawei's subclass + protocol scheme: Blacklisting known network
-> interface combinations and assuming the rest are serial.
-> 
-> Reported-and-tested-by: Muri Nicanor <muri+libqmi@immerda.ch>
-> Tested-by: Martin Hauke <mardnh@gmx.de>
-> Cc: <stable@vger.kernel.org>
-> Fixes: e7181d005e84 ("USB: qcserial: Add support for HP lt4112 LTE/HSPA+ Gobi 4G Modem")
-> Signed-off-by: Bjørn Mork <bjorn@mork.no>
-> Signed-off-by: Johan Hovold <johan@kernel.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+On Fri, Oct 26, 2018 at 12:12:22AM +0530, Srikar Dronamraju wrote:
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 3064e0f..37e62b8 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -1003,7 +1003,19 @@ static int migration_cpu_stop(void *data)
+>   */
+>  void set_cpus_allowed_common(struct task_struct *p, const struct cpumask *new_mask)
+>  {
+> -	cpumask_copy(&p->cpus_allowed, new_mask);
+> +	const struct cpumask *hk_mask = housekeeping_cpumask(HK_FLAG_DOMAIN);
+> +
+> +	/*
+> +	 * If the cpumask provided has CPUs that are part of isolated and
+> +	 * housekeeping_cpumask, then restrict it to just the CPUs that
+> +	 * are part of the housekeeping_cpumask.
+> +	 */
+> +	if (!cpumask_subset(new_mask, hk_mask) &&
+> +			cpumask_intersects(new_mask, hk_mask))
+> +		cpumask_and(&p->cpus_allowed, new_mask, hk_mask);
+> +	else
+> +		cpumask_copy(&p->cpus_allowed, new_mask);
+> +
+>  	p->nr_cpus_allowed = cpumask_weight(new_mask);
 
-This one is interesting though; it was marked for stable and has a
-proper fixes tag for a commit that went into 4.19. That patch in turn
-had a stable tag (new device id type patch) and was backported also to
-other active stable trees at the time.
-
-Guess the stable maintainers need to check if the offending patch has
-already been backported when determining how far back to apply a follow
-up fix.
-
-Note that the stable tag above lacks a version comment (e.g. "# 4.19"),
-but I can see how that may be too subtle to convey this (and not all
-maintainers use those). Perhaps an explicit comment should just be added
-in such cases.
-
-Thanks,
-Johan
+NAK, I already explained that.
