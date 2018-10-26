@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D14C6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:46:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07BF0C6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:46:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC72420651
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:46:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF72C204FD
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 14:46:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="kzHDavJk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC72420651
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="V5YdT1/l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF72C204FD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728246AbeJZXXz (ORCPT
+        id S1727979AbeJZXWH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 19:23:55 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39744 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726610AbeJZXXz (ORCPT
+        Fri, 26 Oct 2018 19:22:07 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42142 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727941AbeJZXWG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 19:23:55 -0400
-Received: by mail-pf1-f196.google.com with SMTP id c25-v6so669153pfe.6
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 07:46:34 -0700 (PDT)
+        Fri, 26 Oct 2018 19:22:06 -0400
+Received: by mail-pg1-f195.google.com with SMTP id i4-v6so635738pgq.9
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 07:44:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=04KdMrY9mtNc8S8nXjCwQwnQ1yX1anhNtmkrnoFdsyE=;
-        b=kzHDavJkBKEuNxBJGJXmVcZvHVE8c3PhDjf0C0QetI58w3llHUDa9sEX1LnBU+r9vR
-         jB8wNhA9Avo5S1BxJmAoOenbADcDdaDbP8Fdw+SQlYvnDjIEoca+FohyzIPtKgjxQ2bO
-         SP+F9mWdgv5/y6KhLISY3cmqQOOpF7bne1HkY=
+        bh=cVRNMokL+W5QoyKoWUV5pE0kc2iWWL0MLvzndReDF1w=;
+        b=V5YdT1/l3Yz1J970D4epM3oWJ2wjiQLWGohq3RBi3Ppq+eJLE1CRCHQOrYsh4U/VDq
+         Z52ug+9VwZr+NmHpz3f6QIPib5DfU+z/j/GmZaOgZ3H07tP7SYt5HLfvxyJYdQNctPV1
+         cMYu5Lak1vTDgYSQuyjDpJfjCTMfuprH2yyOA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=04KdMrY9mtNc8S8nXjCwQwnQ1yX1anhNtmkrnoFdsyE=;
-        b=QT8ljw/keMm3UDmKFmQ2w0lo/4Tswe2lwZVSXQEf23fJcLbJMcEClM9a+XYq1p3Q8V
-         huwxFJFVMMBB6Rpua0jVlm2PGXXhYShyB8H0hb8gnrMt9qSxjQ7kGXZUWd98hthR60FN
-         vfhwO41/WWouH+Bpi56vx4qXq2ICTifB7bMSqJzgTMaykK53dpPGdBiVxF68DNXNZV+V
-         Oa8Q/K5R/TIsgJdg3RYQfuzP3a1lGlyYcsYM7rALVrwcrEmEP2ChSW3YzGSbnI/QgDpN
-         Bxxq+CIYGYsjdoSuhBMpuNSsx7Yf9uzWCglYYaBFTpsH7QA6yg8wb81UebMz+srIkDjb
-         jYTw==
-X-Gm-Message-State: AGRZ1gIlrRhtdpffJ0rWbjFuIuLAv4srksivox3jT2bwwRXzrQeJaapH
-        M7fmV9zAtOY1/Pv2oTlh3Rc+c97x6HA=
-X-Google-Smtp-Source: AJdET5f6MTIVMmNIvwzCOSzm7jx1xZ8DzZqc3aLbwSQ0SdAKgElQtiGUWyB6uScd3SKceYBey2wSjw==
-X-Received: by 2002:a63:ce56:: with SMTP id r22-v6mr3703870pgi.217.1540565193758;
-        Fri, 26 Oct 2018 07:46:33 -0700 (PDT)
+        bh=cVRNMokL+W5QoyKoWUV5pE0kc2iWWL0MLvzndReDF1w=;
+        b=hlXMSR909y+QPuTmT4QIjgrKfOiQNz+KlqrrzPk3stjGK7/TCtEBRsrPrBOsS5bhzN
+         2OBUMoVVlk8yNlKtVb8TrC997qx2sqA8hGeP0pzJ8L0xjLu97eiZzohiQVDvr+aJqIlI
+         iQOi0XOnq0umhd1xb3PXpN4lu8RJDUKYUsAZEOQUBI0g4rQiHdIfMLoI+UshemHLGANR
+         po/+w0VqM4/cnHOkwMmc00oL2oxTBDDtqOm3AFFLmZ4GFNwJEvTA3zNK711jMjKY1Kgs
+         abvCVc6tQCxgfvLT/CifWxxtDGTJfxZNl9xb11ZyR01EgG+Klila6DeQDBG8MAVhNAPx
+         BjQw==
+X-Gm-Message-State: AGRZ1gL5b2D4KhqP8tm5Lg4nypMuOMR2sghUMGwUT6qxAxaccM7hLxaY
+        +EHWvTksJp1XCQjcXNEOcqntTQ==
+X-Google-Smtp-Source: AJdET5etpZ6TDNZrXZ5prFQGg/uyFIFNwVuKmkoddw6Y1yZkMR8kNgOj7/B1IDhcatC9qSq6ohWbYg==
+X-Received: by 2002:a63:4f61:: with SMTP id p33-v6mr3749528pgl.71.1540565086365;
+        Fri, 26 Oct 2018 07:44:46 -0700 (PDT)
 Received: from localhost.localdomain ([27.7.51.1])
-        by smtp.gmail.com with ESMTPSA id z22-v6sm12044467pgv.24.2018.10.26.07.46.28
+        by smtp.gmail.com with ESMTPSA id z22-v6sm12044467pgv.24.2018.10.26.07.44.41
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 07:46:33 -0700 (PDT)
+        Fri, 26 Oct 2018 07:44:45 -0700 (PDT)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -73,9 +73,9 @@ To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v3 25/25] arm64: dts: allwinner: a64-amarula-relic: Enable Techstar TS8550B MIPI-DSI panel
-Date:   Fri, 26 Oct 2018 20:13:44 +0530
-Message-Id: <20181026144344.27778-26-jagan@amarulasolutions.com>
+Subject: [PATCH v3 06/25] drm/sun4i: sun6i_mipi_dsi: Add DSI Generic short write 2 param transfer
+Date:   Fri, 26 Oct 2018 20:13:25 +0530
+Message-Id: <20181026144344.27778-7-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20181026144344.27778-1-jagan@amarulasolutions.com>
 References: <20181026144344.27778-1-jagan@amarulasolutions.com>
@@ -86,110 +86,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Amarula A64-Relic board by default bound with Techstar TS8550B
-MIPI-DSI panel, add support for it.
-
-DSI panel connected via board DSI port with,
-- DC1SW as AVDD supply
-- DCDC2 as DVDD supply
-- DCDC1 as VCC-DSI supply
-- PD24 gpio for reset pin
-- PD23 gpio for backlight enable pin
+Short transfer write support for DCS and Generic transfer types
+share similar way to process command sequence in DSI block so
+add generic write 2 param transfer type macro so-that the panels
+which are requesting similar transfer type may process properly.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 Tested-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
 Changes for v3:
-- new patch
+- add tested credit
+Changes for v2:
+- none
 
- .../allwinner/sun50i-a64-amarula-relic.dts    | 46 +++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-index 6cb2b7f0c817..ecc0d8094815 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-@@ -9,6 +9,7 @@
- #include "sun50i-a64.dtsi"
+diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+index 8e9c76febca2..fc8560607147 100644
+--- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
++++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+@@ -871,6 +871,7 @@ static ssize_t sun6i_dsi_transfer(struct mipi_dsi_host *host,
+ 	switch (msg->type) {
+ 	case MIPI_DSI_DCS_SHORT_WRITE:
+ 	case MIPI_DSI_DCS_SHORT_WRITE_PARAM:
++	case MIPI_DSI_GENERIC_SHORT_WRITE_2_PARAM:
+ 		ret = sun6i_dsi_dcs_write_short(dsi, msg);
+ 		break;
  
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/pwm/pwm.h>
- 
- / {
- 	model = "Amarula A64-Relic";
-@@ -18,6 +19,14 @@
- 		serial0 = &uart0;
- 	};
- 
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm 0 50000 PWM_POLARITY_INVERTED>;
-+		brightness-levels = <1 2 4 8 16 32 64 128 512>;
-+		default-brightness-level = <2>;
-+		enable-gpios = <&pio 3 23 GPIO_ACTIVE_HIGH>; /* LCD-BL-EN: PD23 */
-+	};
-+
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-@@ -30,6 +39,28 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
-+&dphy {
-+	status = "okay";
-+};
-+
-+&dsi {
-+	vcc-dsi-supply = <&reg_dldo1>;
-+	status = "okay";
-+
-+	panel@0 {
-+		compatible = "techstar,ts8550b";
-+		reg = <0>;
-+		avdd-supply = <&reg_dc1sw>;
-+		dvdd-supply = <&reg_dldo2>;
-+		reset-gpios = <&pio 3 24 GPIO_ACTIVE_HIGH>; /* LCD-RST: PD24 */
-+		backlight = <&backlight>;
-+	};
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -72,6 +103,12 @@
- 	status = "okay";
- };
- 
-+&pwm {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pwm_pin>;
-+	status = "okay";
-+};
-+
- &r_rsb {
- 	status = "okay";
- 
-@@ -107,6 +144,15 @@
- 	regulator-name = "vcc-pll-avcc";
- };
- 
-+&reg_dc1sw {
-+	/*
-+	 * This regulator also indirectly drives the PD pingroup GPIOs,
-+	 * which also controls the power LED.
-+	 */
-+	regulator-always-on;
-+	regulator-name = "vcc-phy";
-+};
-+
- &reg_dcdc1 {
- 	regulator-always-on;
- 	regulator-min-microvolt = <3300000>;
 -- 
 2.18.0.321.gffc6fa0e3
 
