@@ -2,202 +2,175 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D856ECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:05:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA846ECDE46
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:05:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A0F22085B
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:05:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B23622085B
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:05:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qf+6EyNn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A0F22085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RK4BCBIN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B23622085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbeJ0Dnw (ORCPT
+        id S1727825AbeJ0Dn5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 23:43:52 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:35313 "EHLO
+        Fri, 26 Oct 2018 23:43:57 -0400
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:46398 "EHLO
         mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726501AbeJ0Dnv (ORCPT
+        with ESMTP id S1726501AbeJ0Dn5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 23:43:51 -0400
-Received: by mail-yb1-f194.google.com with SMTP id k132-v6so910989ybc.2;
-        Fri, 26 Oct 2018 12:05:37 -0700 (PDT)
+        Fri, 26 Oct 2018 23:43:57 -0400
+Received: by mail-yb1-f194.google.com with SMTP id f15-v6so407893ybq.13
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 12:05:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=FAfIpbbf5i32tB0r0OpipHm6jpAr1/uuQfuj8ItsGRA=;
-        b=qf+6EyNnERQ9ISNKEs/mkjInmLhEi3e5XFQKCPEk9Rvbx9WMTSytjprKr1IKEWMkyE
-         A0TiP8GXcfT4mMjuooA8trWdBcYRNEQ/SQtCXRR7NON8uqPDwo8QOptKmAfFgOCxe1CI
-         dgBYCHD675VdwrtYHgijFyUl7N2oE8TFTqSxb5b3bWIGVo1begYx0OeNs40ZDNGviBm9
-         5Fsex7kf8CYy/FXCKbGDTA/QRFfTEZBSYEc2XefNvN7iq03zwPD0x80b0r/6iYQiMk5r
-         Aj3UYw43WcYJuAbXOui+EXjE1UDiUD5pN1Z1eXW5ZNPzki6NlRY3P6F/sfP5uidsdlY1
-         SbFA==
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=cQ5zmK7UPObCKq4wrScdRKEZSIqXacdwba9c0yEd0ag=;
+        b=RK4BCBINZO76aRc2tUYd2adUGdOrOy3CcXKRDLfpWGhaFoZhSMpF7f5bC1kGwgyvQr
+         qaFW0ExJkPFyPeVOZq5DyWweF9cxpxIlXpfQcyZovl3YFydo6EmTEia74B0f6COYioPo
+         clqMZ0x6pq81TGn4PHRO3zDBoE+RbBcIsO1Ag=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=FAfIpbbf5i32tB0r0OpipHm6jpAr1/uuQfuj8ItsGRA=;
-        b=qFV3cgu33U77ftefObAxSGYc3oHm+IbAQt8XQeJ+oAWG9Q5KVHRU2H5XOhY6+PLdOD
-         uoQKLAyONo0iJrHSr84DEg//i0KoKM6dm/uf7RoOWtk0fQmG0CpYRQrvFjgTbn/KIFu+
-         aTBQJav3ENVJWnty8R6J2WgDkZua1TnfRLSmPJUdZX4cAvsV1Vxwz0w2qhAEzUUYpgdc
-         jS47bClyXAREwm7yhMcckIZg8R+brJatmtS92NCq9bvhaRNENgqEAoY4Vp63i/O/alWB
-         uSEWnJCA10DuWRa8G6Iyz4EUmsQQjaf5xM9qHCy9G/fexBxZT4A774rQilFR2nYW5OlB
-         shDA==
-X-Gm-Message-State: AGRZ1gIWPQJZ5DR383DRv8oY1kkj5Nmf8opUFr08XWbZxo985yY96XUl
-        ZSAPrm6d1V64PGbdFMX7mHOEIGtK
-X-Google-Smtp-Source: AJdET5dV1IOus9aqQsph3pmNqMsV4bLMRQ4D26c0WAXpjJOwhptLhWUaKk6TE97vVn+BFlm+D9FO6A==
-X-Received: by 2002:a25:73c2:: with SMTP id o185-v6mr4910563ybc.254.1540580736335;
-        Fri, 26 Oct 2018 12:05:36 -0700 (PDT)
-Received: from [10.67.49.121] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id r5-v6sm6493141ywr.80.2018.10.26.12.05.32
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=cQ5zmK7UPObCKq4wrScdRKEZSIqXacdwba9c0yEd0ag=;
+        b=FHFqKxBXuM9UqPmDu5bCJP9L3aSvMkSyyFXw+3JlXHfMvZXzbIWCOYjfWrouUUON+Q
+         fYceaFI2NS7IN9NvYeXeI/guwrUkSEKFqtTx4mQVwFda8iwZrEPqD8nglk/i//Mfl7pz
+         GYQYkF1bK/KNTFzA4rzHS1uj508u7CQNvlvTLcWShhgbodhj14TBRCChdwbIcecP9M7H
+         34Y9dQtjRCuL9ojAAf+aKrSMd4oAzhyVTN2VEMhU9+/seHQPpEDc2nrAwkdBMS3SFIg0
+         qv4oecR2cTS5jbRdc/51I9lqvSceILMPhmBPrh27t/YN3jgPL+hhS1uY9kiT+2WpHFCa
+         uGsA==
+X-Gm-Message-State: AGRZ1gIgWK6zfU2rF3VjJmGZ8w5coG43lFNnhEtQHnHO9SJkiCmnO0ye
+        Ob5dBw7wqVq1TW2yy5bIFciRBhQflzJcFQ==
+X-Google-Smtp-Source: AJdET5evPKS1xtrWqZ/VWQmhZrYQ6u9/QvyTOg7RzXZz7adlKk9f0IJeJzGCihIbCNrPdZph1kOqYQ==
+X-Received: by 2002:a25:200b:: with SMTP id g11-v6mr4984397ybg.390.1540580743124;
+        Fri, 26 Oct 2018 12:05:43 -0700 (PDT)
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
+        by smtp.gmail.com with ESMTPSA id g66-v6sm3972104ywg.22.2018.10.26.12.05.41
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 12:05:35 -0700 (PDT)
-Subject: Re: [PATCH v2 0/2] arm64: Cut rebuild time when changing
- CONFIG_BLK_DEV_INITRD
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Rob Herring <robh@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Olof Johansson <olof@lixom.net>, linux-alpha@vger.kernel.org,
-        arcml <linux-snps-arc@lists.infradead.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-c6x-dev@linux-c6x.org,
-        "moderated list:H8/300 ARCHITECTURE" 
-        <uclinux-h8-devel@lists.sourceforge.jp>,
-        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org,
-        Linux-MIPS <linux-mips@linux-mips.org>,
-        nios2-dev@lists.rocketboards.org,
-        Openrisc <openrisc@lists.librecores.org>,
-        linux-parisc@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        SH-Linux <linux-sh@vger.kernel.org>, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
-        devicetree@vger.kernel.org,
-        "open list:GENERIC INCLUDE/ASM HEADER FILES" 
-        <linux-arch@vger.kernel.org>
-References: <20181024193256.23734-1-f.fainelli@gmail.com>
- <CAL_Jsq+KCOv6pXXHhHDZ+7-QUrmtMDvSjEVhK15yZ3qbnn61Ag@mail.gmail.com>
- <20181025093833.GA23607@rapoport-lnx>
- <CAL_JsqL62ttsGSbE1BS5v-mX3pKE-p_HyvuZD6nB+GUbQyetzg@mail.gmail.com>
- <20181025172935.GA27364@rapoport-lnx>
- <CAL_JsqJrMq+QHvuOsqEdCFchmXsd4s2XKUD_TboKzeEQprJvjg@mail.gmail.com>
- <1bb3bd63-a88e-b668-ea36-f0f985c0e2b1@gmail.com>
- <20181026110708.GA3814@rapoport-lnx>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <53ec9df5-ef2a-edc5-be1c-bca32959c0bc@gmail.com>
-Date:   Fri, 26 Oct 2018 12:05:25 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 26 Oct 2018 12:05:41 -0700 (PDT)
+Received: by mail-yb1-f179.google.com with SMTP id j9-v6so905986ybj.6
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 12:05:41 -0700 (PDT)
+X-Received: by 2002:a25:2386:: with SMTP id j128-v6mr4832820ybj.137.1540580740794;
+ Fri, 26 Oct 2018 12:05:40 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181026110708.GA3814@rapoport-lnx>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Fri, 26 Oct 2018 12:05:40
+ -0700 (PDT)
+In-Reply-To: <20181026180042.52199-2-joel@joelfernandes.org>
+References: <20181026180042.52199-1-joel@joelfernandes.org> <20181026180042.52199-2-joel@joelfernandes.org>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Fri, 26 Oct 2018 20:05:40 +0100
+X-Gmail-Original-Message-ID: <CAGXu5jLLzuwmO6C8nQp3YY0KC0yBiDSJ_U6-Xk1g8T8hzhcZpQ@mail.gmail.com>
+Message-ID: <CAGXu5jLLzuwmO6C8nQp3YY0KC0yBiDSJ_U6-Xk1g8T8hzhcZpQ@mail.gmail.com>
+Subject: Re: [RFC 2/6] pstore: remove type argument from ramoops_get_next_prz
+To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/26/18 4:07 AM, Mike Rapoport wrote:
-> On Thu, Oct 25, 2018 at 04:07:13PM -0700, Florian Fainelli wrote:
->> On 10/25/18 2:13 PM, Rob Herring wrote:
->>> On Thu, Oct 25, 2018 at 12:30 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
->>>>
->>>> On Thu, Oct 25, 2018 at 08:15:15AM -0500, Rob Herring wrote:
->>>>> +Ard
->>>>>
->>>>> On Thu, Oct 25, 2018 at 4:38 AM Mike Rapoport <rppt@linux.ibm.com> wrote:
->>>>>>
->>>>>> On Wed, Oct 24, 2018 at 02:55:17PM -0500, Rob Herring wrote:
->>>>>>> On Wed, Oct 24, 2018 at 2:33 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
->>>>>>>>
->>>>>>>> Hi all,
->>>>>>>>
->>>>>>>> While investigating why ARM64 required a ton of objects to be rebuilt
->>>>>>>> when toggling CONFIG_DEV_BLK_INITRD, it became clear that this was
->>>>>>>> because we define __early_init_dt_declare_initrd() differently and we do
->>>>>>>> that in arch/arm64/include/asm/memory.h which gets included by a fair
->>>>>>>> amount of other header files, and translation units as well.
->>>>>>>
->>>>>> I think arm64 does not have to redefine __early_init_dt_declare_initrd().
->>>>>> Something like this might be just all we need (completely untested,
->>>>>> probably it won't even compile):
-> 
-> [ ... ]
->  
->> FWIW, I am extracting the ARM implementation that parses the initrd
->> early command line parameter and the "setup" code doing the page
->> boundary alignment and memblock checking into a helper into lib/ that
->> other architectures can re-use. So far, this removes the need for
->> unicore32, arc and arm to duplicate essentially the same logic.
-> 
-> Presuming you are going to need asm-generic/initrd.h for that as well,
-> using override for __early_init_dt_declare_initrd in arm64 version of
-> initrd.h might be the simplest option.
+On Fri, Oct 26, 2018 at 7:00 PM, Joel Fernandes (Google)
+<joel@joelfernandes.org> wrote:
+> Since we store the type of the prz when we initialize it, we no longer
+> need to pass it again in ramoops_get_next_prz since we can just use that
+> to setup the pstore record. So lets remove it from the argument list.
+>
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-What I am contemplating doing is promote
-phys_initrd_start/phys_initrd_size to be global variables (similar to
-initrd_start, initrd_end) and have a generic helper function for parsing
-the initrd= command line parameter and finally removing
-__early_init_dt_declare_initrd() because we could have
-early_init_dt_check_for_initrd() just populate
-phys_initrd_start/phys_initrd_size directly as well as
-initrd_start/initrd_end using __va() to preserve compatibility with
-architectures that rely on this. Then I would convert ARM64 to check for
-phys_initrd_start which is really what it is is trying to do in
-arch/arm64/mm/init.c::arm64_memblock_init().
+Yes yes. I like where this is going. :)
 
-Does that sound like a reasonable approach?
+-Kees
+
+> ---
+>  fs/pstore/ram.c | 20 +++++++-------------
+>  1 file changed, 7 insertions(+), 13 deletions(-)
+>
+> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+> index c7cd858adce7..cbfdf4b8e89d 100644
+> --- a/fs/pstore/ram.c
+> +++ b/fs/pstore/ram.c
+> @@ -125,9 +125,7 @@ static int ramoops_pstore_open(struct pstore_info *psi)
+>
+>  static struct persistent_ram_zone *
+>  ramoops_get_next_prz(struct persistent_ram_zone *przs[], uint *c, uint max,
+> -                    u64 *id,
+> -                    enum pstore_type_id *typep, enum pstore_type_id type,
+> -                    bool update)
+> +                    u64 *id, enum pstore_type_id *typep, bool update)
+>  {
+>         struct persistent_ram_zone *prz;
+>         int i = (*c)++;
+> @@ -147,7 +145,7 @@ ramoops_get_next_prz(struct persistent_ram_zone *przs[], uint *c, uint max,
+>         if (!persistent_ram_old_size(prz))
+>                 return NULL;
+>
+> -       *typep = type;
+> +       *typep = prz->type;
+>         *id = i;
+>
+>         return prz;
+> @@ -257,8 +255,7 @@ static ssize_t ramoops_pstore_read(struct pstore_record *record)
+>         while (cxt->dump_read_cnt < cxt->max_dump_cnt && !prz) {
+>                 prz = ramoops_get_next_prz(cxt->dprzs, &cxt->dump_read_cnt,
+>                                            cxt->max_dump_cnt, &record->id,
+> -                                          &record->type,
+> -                                          PSTORE_TYPE_DMESG, 1);
+> +                                          &record->type, 1);
+>                 if (!prz_ok(prz))
+>                         continue;
+>                 header_length = ramoops_read_kmsg_hdr(persistent_ram_old(prz),
+> @@ -274,20 +271,18 @@ static ssize_t ramoops_pstore_read(struct pstore_record *record)
+>
+>         if (!prz_ok(prz))
+>                 prz = ramoops_get_next_prz(&cxt->cprz, &cxt->console_read_cnt,
+> -                                          1, &record->id, &record->type,
+> -                                          PSTORE_TYPE_CONSOLE, 0);
+> +                                          1, &record->id, &record->type, 0);
+>
+>         if (!prz_ok(prz))
+>                 prz = ramoops_get_next_prz(&cxt->mprz, &cxt->pmsg_read_cnt,
+> -                                          1, &record->id, &record->type,
+> -                                          PSTORE_TYPE_PMSG, 0);
+> +                                          1, &record->id, &record->type, 0);
+>
+>         /* ftrace is last since it may want to dynamically allocate memory. */
+>         if (!prz_ok(prz)) {
+>                 if (!(cxt->flags & RAMOOPS_FLAG_FTRACE_PER_CPU)) {
+>                         prz = ramoops_get_next_prz(cxt->fprzs,
+>                                         &cxt->ftrace_read_cnt, 1, &record->id,
+> -                                       &record->type, PSTORE_TYPE_FTRACE, 0);
+> +                                       &record->type, 0);
+>                 } else {
+>                         /*
+>                          * Build a new dummy record which combines all the
+> @@ -306,8 +301,7 @@ static ssize_t ramoops_pstore_read(struct pstore_record *record)
+>                                                 &cxt->ftrace_read_cnt,
+>                                                 cxt->max_ftrace_cnt,
+>                                                 &record->id,
+> -                                               &record->type,
+> -                                               PSTORE_TYPE_FTRACE, 0);
+> +                                               &record->type, 0);
+>
+>                                 if (!prz_ok(prz_next))
+>                                         continue;
+> --
+> 2.19.1.568.g152ad8e336-goog
+>
+
+
+
 -- 
-Florian
+Kees Cook
