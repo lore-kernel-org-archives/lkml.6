@@ -2,279 +2,117 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F0D4C6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 16:18:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A36F4C6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 16:19:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB0B72085B
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 16:18:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB0B72085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 597B82085B
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 16:19:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="RLqKlds7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 597B82085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727565AbeJ0A4b (ORCPT
+        id S1727638AbeJ0A53 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 20:56:31 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50097 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726531AbeJ0A4b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 20:56:31 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 5EDD6208CE; Fri, 26 Oct 2018 18:18:48 +0200 (CEST)
-Received: from bbrezillon (unknown [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 8926020790;
-        Fri, 26 Oct 2018 18:18:47 +0200 (CEST)
-Date:   Fri, 26 Oct 2018 18:18:46 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Wolfram Sang <wsa@the-dreams.de>, linux-i2c@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Cc:     Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        linux-gpio@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>,
-        Peter Rosin <peda@axentia.se>,
-        Mike Shettel <mshettel@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [PATCH v10 0/9] Add the I3C subsystem
-Message-ID: <20181026181846.54c9a418@bbrezillon>
-In-Reply-To: <20181026144333.12276-1-boris.brezillon@bootlin.com>
-References: <20181026144333.12276-1-boris.brezillon@bootlin.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Fri, 26 Oct 2018 20:57:29 -0400
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:62748 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727545AbeJ0A53 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 20:57:29 -0400
+X-IronPort-AV: E=Sophos;i="5.54,428,1534834800"; 
+   d="scan'208";a="23129320"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 26 Oct 2018 09:19:48 -0700
+Received: from NAM03-BY2-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.38) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Fri, 26 Oct 2018 09:19:48 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KrvWMgcUoyP9+qxD9Vu6R0AOz3pn6vSTGUVCFI4kAbE=;
+ b=RLqKlds7eZEnKcEHEtPAiq/RA/rffmouCZV0Smbn5fzGKYWaWjdUeBeNBeiE39VmXbIlEBidDv/q4cgEbbLFUuQsGNtTILdr9BnjyoJRyezuj8kKWzuH2ffWCGP6E2EgGS6zladpu6b9qZmXjdNTgrp6hAGo3cwQdWBkdYFSiv0=
+Received: from BY2PR11MB0744.namprd11.prod.outlook.com (10.163.112.142) by
+ BY2PR11MB0792.namprd11.prod.outlook.com (10.163.112.153) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1273.18; Fri, 26 Oct 2018 16:19:45 +0000
+Received: from BY2PR11MB0744.namprd11.prod.outlook.com
+ ([fe80::d0a5:29e0:506a:76a8]) by BY2PR11MB0744.namprd11.prod.outlook.com
+ ([fe80::d0a5:29e0:506a:76a8%7]) with mapi id 15.20.1273.021; Fri, 26 Oct 2018
+ 16:19:45 +0000
+From:   <Claudiu.Beznea@microchip.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>,
+        <Nicolas.Ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC:     <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <Claudiu.Beznea@microchip.com>
+Subject: [PATCH 0/2] add PM functionality for act8945
+Thread-Topic: [PATCH 0/2] add PM functionality for act8945
+Thread-Index: AQHUbUe155Fv81yN7USxq+vOi6BvvA==
+Date:   Fri, 26 Oct 2018 16:19:45 +0000
+Message-ID: <1540570753-16370-1-git-send-email-claudiu.beznea@microchip.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1P195CA0095.EURP195.PROD.OUTLOOK.COM
+ (2603:10a6:802:59::48) To BY2PR11MB0744.namprd11.prod.outlook.com
+ (2a01:111:e400:52de::14)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Claudiu.Beznea@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BY2PR11MB0792;6:PuX1UN6X0AtzLvMWc38qkTYRTio8PBVhuvXA7U1Lh8ohKE2hpKEmBrIzFuvmywH9uoCtnh0sLlSm1T9oql2oPaZwB4l+X3A75DadYPDIDvx6qmpStySk4s415+vH6utYm1/aGf6/+T77NUlo0ayvN9GbwKtC7+URCoujuFz+mQJD4p4w+dw/NiCNTGnz41wt2UFCJDbXmP6Kxhj/x9/MmmCLieRoCn58CjZT+Y1g+ih7sHYydVildT6wFvMe8khmOLij9Qqh6icS9fwSHexUvaSFkPgKOIg+rPIEoifWKCxGOTJENLcHzgMkqyPnWwLf4TVSOL0k1l6DBe41mckX3XiNUvipyj79PS76r8qifHLDjvnSZm4wlZTQILpi+1Qyt5uqz2YDnP8+V5TFy5OpuZjTbfkDu1/T7gfAya/YDq3Bw73adBYNvAgYs7aHxAJ3kHCgQ7+fYFCg0o0zBnOShg==;5:hi1ZLcVK1A2jp9ItI2Zu5/4Ur416SUJabUXPtjx1lYWEXQiSr8uR/4bvqjZxSczxu+Ql356DG7m3ETkaKR9wSTgwL0CzrJ7Zj3zlbcLWKfv2kZ6IQ9Y+HVtEOT83+/ghyyw9ZxTCYL/r9Mph5k+bo3Jcu+GKnDmvMv2UsJTfqVg=;7:cDBCSUtxeN6wpRkZr1PyBQpMjgrU1i8PEiY6EBiNrFmnaItAjGFwFmruqGWGO9VtClUS5zElOF+NdWo2a3udX89TdbhqNqRreG4qrMuvPC/DtU3bZxnOUDbNNRP93TVBG40eypovzsEHDqGhbCwFNA==
+x-ms-office365-filtering-correlation-id: 7da08b1a-833d-488f-fecd-08d63b5ed77a
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BY2PR11MB0792;
+x-ms-traffictypediagnostic: BY2PR11MB0792:
+x-microsoft-antispam-prvs: <BY2PR11MB0792F933698C34085C25799387F00@BY2PR11MB0792.namprd11.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231355)(944501410)(52105095)(10201501046)(3002001)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:BY2PR11MB0792;BCL:0;PCL:0;RULEID:;SRVR:BY2PR11MB0792;
+x-forefront-prvs: 083751FCA6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(346002)(396003)(136003)(39840400004)(199004)(189003)(52116002)(256004)(2501003)(6486002)(99286004)(66066001)(3846002)(105586002)(81156014)(6116002)(71190400001)(25786009)(107886003)(8676002)(39060400002)(7736002)(305945005)(2616005)(476003)(68736007)(4326008)(5660300001)(36756003)(478600001)(2906002)(5250100002)(110136005)(54906003)(2900100001)(53936002)(14454004)(72206003)(316002)(26005)(81166006)(6512007)(386003)(6506007)(86362001)(106356001)(186003)(71200400001)(14444005)(486006)(8936002)(6436002)(102836004)(97736004);DIR:OUT;SFP:1101;SCL:1;SRVR:BY2PR11MB0792;H:BY2PR11MB0744.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 4/txIqMrE77P1HhQmq4yvuaZnwZTmS7DyBLus0+oKh1ByK++47VHcm2lry4OuY/FATYBFsMhD/VaTjymRWqWLtYRD2t2a2ZG6eCALQUE7n2I6r45ypjFegBoI+rRkYiDSmmS+yc4m2Rg+fERrxzR+BqfVtdqdXfXxbs0AL6doshZ3lVDTxozZIv8+Es2XmanxenT6N/rZvnH1J67LcDPPuBunNO/tYtrd12g3ZhhBaz29IMwdchw9XPG2iX0m+CjnrJhkrBJEPQJ6SKThwtMVFoBvNQwWfBuZPaodI/Ix5YAYLP8pV/uHymukwHv7Rskmp/cqWLl8jIBGN6EwngwFAhID9/2U6uC/QttZ+bERB4=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7da08b1a-833d-488f-fecd-08d63b5ed77a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Oct 2018 16:19:45.1904
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR11MB0792
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 26 Oct 2018 16:43:24 +0200
-Boris Brezillon <boris.brezillon@bootlin.com> wrote:
+This series implements PM functionality for act8945 and use that support
+on sama5d2_xplained board.
 
-> Hi Greg,
-> 
-> I think we've reached a point where we can eventually consider the I3C
-> framework for inclusion in 4.20 (5.0?). A few more issues were reported
-> on v9 and fixed in v10. I can't guarantee that the implementation is
-> free of bugs but I still think it's worth merging it in v4.20: it's a
-> new subsystem, so we don't risk regressions, and the only way we can
-> detect other issues is by having other people experiment with this
-> implementation.
-> 
-> The only remaining concern raised by Arnd is the fact that both hosts
-> and slaves share the same bus type and are differentiated thanks to
-> their device_type, which IMHO is fine since this is what other
-> subsystems do (plus I don't see other solutions to have both I3C
-> devices and I3C buses represented under /sys/bus/i3c/).
-> 
-> I'd really like to get this series merged in 4.20 so that other
-> contributors can work on top of it to add
-> 
-> 1/ new host drivers
-> 2/ support for advanced features
-> 3/ new device drivers
-> 
-> So, unless you have strong reasons to reject this request, and,
-> assuming I get Rob's ack soon enough, I plan to send a PR for this
-> framework next week.
-> 
-> Here is the usual description copy&pasted from the previous versions:
-> 
-> This patch series is adding a new subsystem to support I3C devices.
-> 
-> This is just adding support for basic features. Extra features will
-> be added afterwards.
-> 
-> There are a few design choices that are worth mentioning because they
-> impact the way I3C device drivers can interact with their devices:
-> 
-> - all functions used to send I3C/I2C frames must be called in
->   non-atomic context. Mainly done this way to ease implementation, but
->   this is still open to discussion. Please let me know if you think it's
->   worth considering an asynchronous model here
-> - the I3C bus and I3C master controller are now tightly coupled even
->   though they're still allocated separately. There's now a 1:1
->   relationship between these objects, and the I3C master is no longer
->   represented under the I3C bus object.
->   Arnd, let me know if you had something different in mind, and I'll
->   rework the implementation accordingly.
-> 
-> - I2C backward compatibility has been designed to be transparent to I2C
->   drivers and the I2C subsystem. The I3C master just registers an I2C
->   adapter which creates a new I2C bus. I'd say that, from a
->   representation PoV it's not ideal because what should appear as a
->   single I3C bus exposing I3C and I2C devices here appears as 2
->   different busses connected to each other through the parenting (the
->   I3C master is the parent of the I2C and I3C busses).
->   On the other hand, I don't see a better solution if we want something
->   that is not invasive.
-> 
-> Missing features (will be added in separate patch series after initial
-> support has been accepted/merged):
-> - support for HDR modes (has been removed because of lack of real users)
-> - no support for multi-master and the associated concepts (mastership
->   handover, support for secondary masters, ...)
-> - I2C devices can only be described using DT because this is the only
->   use case I have. However, the framework can easily be extended with
->   ACPI and board info support
-> - I3C slave framework. This has been completely omitted, but shouldn't
->   have a huge impact on the I3C framework because I3C slaves don't see
->   the whole bus, it's only about handling master requests and generating
->   IBIs. Some of the struct, constant and enum definitions could be
->   shared, but most of the I3C slave framework logic will be different
-> 
-> Note that this patchset is available on the linux-i3c repo[1].
-> 
+Boris Brezillon (2):
+  regulator: act8945: Implement PM functionalities
+  ARM: dts: at91: sama5d2_xplained: Add proper regulator states for
+    suspend-to-mem
 
-Forgot to add:
+ arch/arm/boot/dts/at91-sama5d2_xplained.dts |  33 +++++
+ drivers/regulator/act8945a-regulator.c      | 195 ++++++++++++++++++++++++=
++++-
+ 2 files changed, 226 insertions(+), 2 deletions(-)
 
-Main changes between v9 and v10:
-- Fix the example in the DT bindings file
-- Dynamically allocate CCC payloads to make them DMA-safe
-- Fix a deadlock
-- Mention that i2c bufs are not guaranteed to be DMA-safe
-
-> Main change between v8 and v9:
-> - The DT bindings have been simplified to get rid of the I3C/I3C_DEV()
->   macros
-> 
-> Main change between v7 and v8:
-> - The bus object is now embedded in the master_controller object (as
->   suggested by Arnd)
-> 
-> Main changes between v6 and v7:
-> - I3C bus/master representations have been reworked to match what other
->   subsystems are doing (master implicitly represented by the bus
->   object)
-> - I3C dev registration has been fixed
-> - I3C bus mode selection has been fixed
-> - Calls to readsl/writesl() in the Cadence I3C master driver have been
->   fixed
-> 
-> Main changes between v5 and v6:
-> - Introduce {i3c,i2c}_dev_desc structures to better match how I3C
->   master controllers (reservation of one HW slot for each device
->   attached to the bus). With this solution, the resource migration
->   that happens when a device lose its dynamic address and is
->   re-assigned a different address is simplified on the driver side,
->   because most of it is now handled in the core (reserve a new dev
->   slot, reserve IBI resources and free all resources attached to the
->   old slot)
-> - Add I3C error codes (M0 to M2) so that the core and device drivers
->   can have fine grained information on what caused an EIO error.
-> 
-> Only minor things happened between v3 and v5 (you can go check the
-> changelog in each patch for more details).
-> 
-> Main changes between v2 and v3 are:
-> - Reworked the DT bindings as suggested by Rob
-> - Reworked the bus initialization step as suggested by Vitor
-> - Added a driver for an I3C GPIO expander
-> 
-> Main changes between the initial RFC and this v2 are:
-> - Add a generic infrastructure to support IBIs. It's worth mentioning
->   that I tried exposing IBIs as a regular IRQs, but after several
->   attempts and a discussion with Mark Zyngier, it appeared that it was
->   not really fitting in the Linux IRQ model (the fact that you have
->   payload attached to IBIs, the fact that most of the time an IBI will
->   generate a transfer on the bus which has to be done in an atomic
->   context, ...)
->   The counterpart of this decision is the latency induced by the
->   workqueue approach, but since I don't have real use cases, I don't
->   know if this can be a problem or not. 
-> - Add helpers to support Hot Join
-> - Add support for IBIs and Hot Join in Cadence I3C master driver
-> - Address several issues in how I was using the device model
-> 
-> Thanks,
-> 
-> Boris
-> 
-> [1]https://git.kernel.org/pub/scm/linux/kernel/git/i3c/linux.git/log/?h=i3c/next
-> 
-> *** BLURB HERE ***
-> 
-> Boris Brezillon (9):
->   i3c: Add core I3C infrastructure
->   docs: driver-api: Add I3C documentation
->   i3c: Add sysfs ABI spec
->   dt-bindings: i3c: Document core bindings
->   MAINTAINERS: Add myself as the I3C subsystem maintainer
->   i3c: master: Add driver for Cadence IP
->   dt-bindings: i3c: Document Cadence I3C master bindings
->   gpio: Add a driver for Cadence I3C GPIO expander
->   dt-bindings: gpio: Add bindings for Cadence I3C gpio expander
-> 
->  Documentation/ABI/testing/sysfs-bus-i3c       |  146 +
->  .../bindings/gpio/gpio-cdns-i3c.txt           |   39 +
->  .../bindings/i3c/cdns,i3c-master.txt          |   44 +
->  Documentation/devicetree/bindings/i3c/i3c.txt |  139 +
->  .../driver-api/i3c/device-driver-api.rst      |    9 +
->  Documentation/driver-api/i3c/index.rst        |   11 +
->  .../driver-api/i3c/master-driver-api.rst      |   10 +
->  Documentation/driver-api/i3c/protocol.rst     |  203 ++
->  Documentation/driver-api/index.rst            |    1 +
->  MAINTAINERS                                   |   12 +
->  drivers/Kconfig                               |    2 +
->  drivers/Makefile                              |    2 +-
->  drivers/gpio/Kconfig                          |   11 +
->  drivers/gpio/Makefile                         |    1 +
->  drivers/gpio/gpio-cdns-i3c.c                  |  411 +++
->  drivers/i3c/Kconfig                           |   24 +
->  drivers/i3c/Makefile                          |    4 +
->  drivers/i3c/device.c                          |  233 ++
->  drivers/i3c/internals.h                       |   26 +
->  drivers/i3c/master.c                          | 2661 +++++++++++++++++
->  drivers/i3c/master/Kconfig                    |    6 +
->  drivers/i3c/master/Makefile                   |    1 +
->  drivers/i3c/master/i3c-master-cdns.c          | 1671 +++++++++++
->  include/linux/i3c/ccc.h                       |  385 +++
->  include/linux/i3c/device.h                    |  331 ++
->  include/linux/i3c/master.h                    |  648 ++++
->  include/linux/mod_devicetable.h               |   17 +
->  27 files changed, 7047 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/ABI/testing/sysfs-bus-i3c
->  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-cdns-i3c.txt
->  create mode 100644 Documentation/devicetree/bindings/i3c/cdns,i3c-master.txt
->  create mode 100644 Documentation/devicetree/bindings/i3c/i3c.txt
->  create mode 100644 Documentation/driver-api/i3c/device-driver-api.rst
->  create mode 100644 Documentation/driver-api/i3c/index.rst
->  create mode 100644 Documentation/driver-api/i3c/master-driver-api.rst
->  create mode 100644 Documentation/driver-api/i3c/protocol.rst
->  create mode 100644 drivers/gpio/gpio-cdns-i3c.c
->  create mode 100644 drivers/i3c/Kconfig
->  create mode 100644 drivers/i3c/Makefile
->  create mode 100644 drivers/i3c/device.c
->  create mode 100644 drivers/i3c/internals.h
->  create mode 100644 drivers/i3c/master.c
->  create mode 100644 drivers/i3c/master/Kconfig
->  create mode 100644 drivers/i3c/master/Makefile
->  create mode 100644 drivers/i3c/master/i3c-master-cdns.c
->  create mode 100644 include/linux/i3c/ccc.h
->  create mode 100644 include/linux/i3c/device.h
->  create mode 100644 include/linux/i3c/master.h
-> 
+--=20
+2.7.4
 
