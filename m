@@ -2,123 +2,141 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFC1CECDE46
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 21:02:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3903ECDE46
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 21:13:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 604152082B
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 21:02:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61B3B20856
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 21:13:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="id4xYm99"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 604152082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="GLPkiG6V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61B3B20856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728093AbeJ0Fkw (ORCPT
+        id S1727819AbeJ0Fw0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 01:40:52 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34870 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727221AbeJ0Fkv (ORCPT
+        Sat, 27 Oct 2018 01:52:26 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:36689 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726569AbeJ0Fw0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 01:40:51 -0400
-Received: by mail-pg1-f194.google.com with SMTP id 32-v6so1088011pgu.2
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 14:02:18 -0700 (PDT)
+        Sat, 27 Oct 2018 01:52:26 -0400
+Received: by mail-ed1-f67.google.com with SMTP id x2-v6so2465567eds.3
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 14:13:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=K2v49H4PXzvnQzFzstL378Q9bQJ1v/h7kxuP4KYuMic=;
-        b=id4xYm99Sb01QD3CzYGCwExnrnA1/LmGoYe8lUVVLzG2IPegk1BjGxy8CrYP9hEvGe
-         +Vf3faCkRCr5v0y3zdeAcLbAe7YTVpV0bT1CicORIHXz3K93xTTaO845EdQFP+yUIoyI
-         urSbB1QtZGHcbDAqPx3xb0mvPt4hq/Y8iIh+5k0h4rhtEHqAh/pAvX2K/ZaqvhZYMRv5
-         hs0BzHTDKxbq3hLPptLgKIpExv5Nfwt+HZmf/mLA8Fm7okmPoeDg0/wdhTm4g0GleRSK
-         osF9C+F+Btvmdy9ZeBZA21XtKox+Q6MpO1J4fYNj7uiB5PJsKRBM9LC3hisLSG6u1mgf
-         Zjcw==
+        d=rasmusvillemoes.dk; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mVerihqy0rYDSBM1Z/1k4wBvOrj/W6jfdFGnrmbOhxU=;
+        b=GLPkiG6VOw9oMkJzRjytQebFwGBXp9ew5GF9BJ4U2vRz7FRujOpVkD/LbNQiY+PHgH
+         EDALzxkrHC5q/rtxc8yDhMsJffYWefS9qe7NfWLv5j0GsV2mRvoQfI8BU03k8NedD6ng
+         Xfql87xZeTPhTy7kbRa/vqDhd0a78Y5ajcEVY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=K2v49H4PXzvnQzFzstL378Q9bQJ1v/h7kxuP4KYuMic=;
-        b=Z1JLV7ynogwJWpOfr3STF7lb50GNj1N8D0w+2upFOU3iabh64ZB8YvOa0fD62TMtlU
-         o+ElJz+jU52ucg9+7cjrN/WzZ+YUzoimdqY3/1UBswSeTB9jxbuDUw/MtZn+fEH2isfO
-         yofNPWl9CX7BGO2k+WjeAzLJ7PFrFitBd7hqoly4tzxeg/b2IjMmLKUrDL3AKWCSlmGX
-         Yw5xY8dwI86ZkMXgjMU0I4GDDainM3g2p0IG0dHFMwE3okPt5nxa8o6M5RMMBeNwjDfm
-         42D98xsZH3Ug/r/bnaX7pQl7ei0B2W+tQn3YRS+vfY2iPNdZBTJoXRFYsBrzvgWeHpC8
-         i2mA==
-X-Gm-Message-State: AGRZ1gJxkHiNcXgwtSghes7TfwXar8Po6WB7+N3fNxWqtW20CBdc3Hr3
-        bN9zB/E1L4N1AvhBtLAkasPDoQ/24q1mJsIw/2JrbA==
-X-Google-Smtp-Source: AJdET5d2Ezhdsn3anwvDkmoHY+6fxwDgHcbV88Sx1jBcqwQNIOVQn0BVC0yHyh0/xYd535Tj0k0On5nmAcRcWeExVB0=
-X-Received: by 2002:a63:a064:: with SMTP id u36mr4979648pgn.145.1540587737926;
- Fri, 26 Oct 2018 14:02:17 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mVerihqy0rYDSBM1Z/1k4wBvOrj/W6jfdFGnrmbOhxU=;
+        b=JMjS5YfT/5ovkEBlfDsV7tQRlL6Fe65tjkXboDBwoHnYCmBwpfsbRseMC6dI7GwtgL
+         8LygitVB9/ITN8AFgSx+SglDFheN0MixcGgD+Tvw94yK/nOYkf67aYDe1uw+TCFtkjZm
+         XRcwZWdZGR5a2aPpCfi5p/9bEc+6LTdSM2k38qDvzGimJN7plD8LY97Xqmntnn+WZ3Lu
+         W2CuccksAlUvmXSHI8cktFzvHrgeP1CcuAmcqM27t2YyTF0FDSvRTZCd/N/Ez0Zss+3b
+         rSBHHKL3IQVMEG02AbcM11gwL7jtMjjGsUgrhn/dMmenrVt+2ixS2PCE1ZZqkXcPY2FO
+         1DIg==
+X-Gm-Message-State: AGRZ1gK1lCeIDXudfj0EkHfqsjmAVGNbX2KpJXDc0f479q5V4Po3n7f9
+        YSluCURhOdtd08SnEr8408uEK+dKih7coA==
+X-Google-Smtp-Source: AJdET5csC/zbXDA0uThICfhCsDnZo6EuA9hHG29/T4kti4iIg4HIOUThDasb5OvL6UECVLKAKCtBWw==
+X-Received: by 2002:a50:b883:: with SMTP id l3-v6mr2925736ede.188.1540588429723;
+        Fri, 26 Oct 2018 14:13:49 -0700 (PDT)
+Received: from prevas-ravi.waoo.dk (dhcp-5-186-114-252.cgn.ip.fibianet.dk. [5.186.114.252])
+        by smtp.gmail.com with ESMTPSA id a40-v6sm4786220edd.61.2018.10.26.14.13.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 26 Oct 2018 14:13:49 -0700 (PDT)
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] tracing: merge seq_print_sym_short() and seq_print_sym_offset()
+Date:   Fri, 26 Oct 2018 23:13:44 +0200
+Message-Id: <20181026211347.2442-1-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.19.1.6.gbde171bbf5
 MIME-Version: 1.0
-References: <10b12992-3570-4646-374b-82cbd7276839@acm.org> <CAKwvOd=wgxB69dMxzMeH2edCn=TdQGPGkNVW1e=QHPTJtO9ZNw@mail.gmail.com>
- <1538503063.193396.6.camel@acm.org> <CAKwvOdmsNEexQL9R8rgcRcXTZButYM6YWwG8bhVWCoJ8bOqCrA@mail.gmail.com>
- <1538521591.193396.8.camel@acm.org> <20181025213144.GB24709@flashbox>
- <CAKwvOdn=TvoGdFvgxX6TyXBXnhVLttriRrZEnzS6DjcjL64DPA@mail.gmail.com>
- <20181025225548.GA10326@flashbox> <CAKwvOdnwmf47_m_0K5OCLmXbrkLNnekpNOPCCMeJqkuqKUbQ-A@mail.gmail.com>
- <1540576908.66186.103.camel@acm.org> <20181026180515.GA12129@flashbox>
- <CAKwvOdnEHCmNjm-P068KQrbU0K+Dzyw_+_j7XLKJET0LWSz86A@mail.gmail.com>
- <CAHk-=wh0LsuM+kAZGbDaogDdSbdCk3GvXmjYVAMkpmLj2=VF=g@mail.gmail.com>
- <CAKwvOd=c9RG2s3f-PgM1T84sHc5N9zcjrVpG5is+mGbTOxvtrQ@mail.gmail.com> <CAHk-=whazvE2VnJiSFeQ_BzU2iUUt=v8BxhgJyq92ecDayJ14g@mail.gmail.com>
-In-Reply-To: <CAHk-=whazvE2VnJiSFeQ_BzU2iUUt=v8BxhgJyq92ecDayJ14g@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Fri, 26 Oct 2018 14:02:06 -0700
-Message-ID: <CAKwvOdknFO8h0q2zekThPiwije6_LYMjAktrX___Oc76o=Qhdg@mail.gmail.com>
-Subject: Re: [PATCH] libosd: Remove ignored __weak attribute
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     bvanassche@acm.org, ooo@electrozaur.com,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        hch@infradead.org, Kees Cook <keescook@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 1:42 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Fri, Oct 26, 2018 at 1:06 PM Nick Desaulniers
-> <ndesaulniers@google.com> wrote:
-> >
-> > Is removing a filesystem considered a userspace breakage?
->
-> Yes - if a user notices.
->
-> The key word is *USER*.
->
-> Note that it's not "user space". It's not about _programs_ noticing,
-> it's literally about users and their workflows.
->
-> If some change breaks a real user workflow, it needs to be reverted.
->
-> So this is not about ABI or anything like that. We've had cases where
-> the ABI stayed the same, but the order of device probing changed, and
-> that broke peoples setups (because now /dev/sdb and /dev/sda switched
-> places), and we had to revert.
->
-> It's literally about "if a user upgrades a kernel, and something no
-> longer works, it's a regression".
->
-> In general, a good idea is "if you have to wonder about it, just don't
-> do it".  Because it turns out that users are odd, and often do odd
-> things much after you'd have thought they'd have long since switched
-> to more modern hardware or filesystems.
->
->                       Linus
+These two functions are nearly identical, so we can avoid some code
+duplication by moving the conditional into a common implementation.
 
-Makes sense and is a consistent stance.  Thanks for clarifying.  Will
-pursue the smaller fix in the other subthread.
-https://lkml.org/lkml/2018/10/27/55
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+---
+ kernel/trace/trace_output.c | 34 +++++++---------------------------
+ 1 file changed, 7 insertions(+), 27 deletions(-)
 
+diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+index 6e6cc64faa38..501311dcfca6 100644
+--- a/kernel/trace/trace_output.c
++++ b/kernel/trace/trace_output.c
+@@ -339,34 +339,17 @@ static inline const char *kretprobed(const char *name)
+ #endif /* CONFIG_KRETPROBES */
+ 
+ static void
+-seq_print_sym_short(struct trace_seq *s, const char *fmt, unsigned long address)
++seq_print_sym(struct trace_seq *s, const char *fmt, unsigned long address,
++	      bool with_offset)
+ {
+ 	char str[KSYM_SYMBOL_LEN];
+ #ifdef CONFIG_KALLSYMS
+ 	const char *name;
+ 
+-	kallsyms_lookup(address, NULL, NULL, NULL, str);
+-
+-	name = kretprobed(str);
+-
+-	if (name && strlen(name)) {
+-		trace_seq_printf(s, fmt, name);
+-		return;
+-	}
+-#endif
+-	snprintf(str, KSYM_SYMBOL_LEN, "0x%08lx", address);
+-	trace_seq_printf(s, fmt, str);
+-}
+-
+-static void
+-seq_print_sym_offset(struct trace_seq *s, const char *fmt,
+-		     unsigned long address)
+-{
+-	char str[KSYM_SYMBOL_LEN];
+-#ifdef CONFIG_KALLSYMS
+-	const char *name;
+-
+-	sprint_symbol(str, address);
++	if (with_offset)
++		sprint_symbol(str, address);
++	else
++		kallsyms_lookup(address, NULL, NULL, NULL, str);
+ 	name = kretprobed(str);
+ 
+ 	if (name && strlen(name)) {
+@@ -424,10 +407,7 @@ seq_print_ip_sym(struct trace_seq *s, unsigned long ip, unsigned long sym_flags)
+ 		goto out;
+ 	}
+ 
+-	if (sym_flags & TRACE_ITER_SYM_OFFSET)
+-		seq_print_sym_offset(s, "%s", ip);
+-	else
+-		seq_print_sym_short(s, "%s", ip);
++	seq_print_sym(s, "%s", ip, sym_flags & TRACE_ITER_SYM_OFFSET);
+ 
+ 	if (sym_flags & TRACE_ITER_SYM_ADDR)
+ 		trace_seq_printf(s, " <" IP_FMT ">", ip);
 -- 
-Thanks,
-~Nick Desaulniers
+2.19.1.6.gbde171bbf5
+
