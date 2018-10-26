@@ -2,140 +2,127 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A85AC6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 12:03:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E99EC6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 12:11:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE82120873
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 12:03:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38AB720856
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 12:11:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="InF0fbNg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE82120873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y/z0Gza6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38AB720856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727642AbeJZUkm (ORCPT
+        id S1727630AbeJZUsM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 16:40:42 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36013 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727507AbeJZUkm (ORCPT
+        Fri, 26 Oct 2018 16:48:12 -0400
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:42817 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727491AbeJZUsM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 16:40:42 -0400
-Received: by mail-pl1-f195.google.com with SMTP id y11-v6so417935plt.3;
-        Fri, 26 Oct 2018 05:03:52 -0700 (PDT)
+        Fri, 26 Oct 2018 16:48:12 -0400
+Received: by mail-vs1-f66.google.com with SMTP id e126so539397vsc.9
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 05:11:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ANRKLCsHHwR7eib38zAD/OCx5I7PXx4q/aI1rdMoOFs=;
-        b=InF0fbNgYwT4zUtsDMuhDrRArT0lH9qwrfOEIoUWYlEP+bQwI4ArnAeQQFi3yZwzCd
-         PHoHBpU+7Xz3prrSQzUcCuSDFJ3Myp9UULCByylI3pPMvw8FAXboSiikzl9/ihSTDl2j
-         TIbT1/TLRaaE68R3xuC9XZyd53UtJVNcdbZRve5jrV222zgewlI9dITdG0Ub9sY7mRcM
-         t6rCBywaAeg2V1BYZvRK8pA9jnSkxQqeZ1sEIlLyhZxaRWzPBOUpDCrc9Ks6tSRVr/9W
-         fIToXObJWg/IBE/+f+/6bY0V0BSxTNbMy06cKCYUyEQtwP7EU8jYevH0DtkSDxY2oSk0
-         t3bQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=C69vTy5yCnmW8KDKcklUcRVhtwRjBrqphYmxYMdm68A=;
+        b=Y/z0Gza6b2ZIHP7gk7KhT4Qh/EFEc+2rkN0L9zPjxm2B4GQzbAuipRRqeIKy93GNOA
+         CIzRRsVqYBpkqwhXZFR9uopyPAdPiO4DUZP5WfU/9H9inRc0LhPFbBRZRwZ7QuC1xBEB
+         fFVJLPtsH/81BjKzKnzHQkz2sKDT96VF+qaWc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ANRKLCsHHwR7eib38zAD/OCx5I7PXx4q/aI1rdMoOFs=;
-        b=FcKsS+jD63CbP41v6Ke90mmZqjmtwfxJze0CA7AUT6TFs7LbMlYYKVChwwjt7YsGVp
-         8z3oRqmrwiIfGgPe4INEAqPyWcBWfti8ADHBQoLcZLUrsgK3KBxPHK2uLjQEJh+tv/e3
-         I5TNM8Wnpo+n2gyHtn9Biyk1gbqUS/ptVNPnnoJsqrOmVZe2yEIq2QPmAPbYOSJW07HP
-         dMxQnmYolzCqzMEek1DeLbvPGBDlkRdJiFog9i/bBuQ7xQ7KeSxIBxw+RjwXO7ucO8ZF
-         IsUTpK321f2OA+ikwImoLHFIJKb2LuuEtxE8cxZEtZIg7LmTDWIdOtHHesHU/GzwqoQ2
-         sv/w==
-X-Gm-Message-State: AGRZ1gLi+19wWUL+6BOpittbVJ1aZbkCHx4inCNt0NmmsV7cCa+mJt7k
-        HgPNJh8clOsjLMQTIjaRoxizhgaJ
-X-Google-Smtp-Source: AJdET5eazylpIzNzoWwSrb6SNEQzzQg7zJ9hL5CBtzwTPe2aNKuXLj/LnBG4KYraUQLSU99Nhwm0rw==
-X-Received: by 2002:a17:902:b690:: with SMTP id c16-v6mr3218926pls.284.1540555431155;
-        Fri, 26 Oct 2018 05:03:51 -0700 (PDT)
-Received: from [192.168.2.145] ([109.252.91.118])
-        by smtp.googlemail.com with ESMTPSA id h123-v6sm29231469pfg.138.2018.10.26.05.03.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 05:03:50 -0700 (PDT)
-Subject: Re: [RFC PATCH v2 01/17] OPP: Allow to request stub voltage
- regulators
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rob Herring <robh+dt@kernel.org>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=C69vTy5yCnmW8KDKcklUcRVhtwRjBrqphYmxYMdm68A=;
+        b=WCJj79ZGuoj91Y7nRWXx3bQJLIyHhpAvBlf6intnQmctMNUBt1AZMBVfFvp/0poppw
+         7Ev9o7A9ZxIRBzOl79OodgHHavzWGpH2aiwhcpwpGlc8p7HC2FLjUV5+Pb8NUPGzCu3E
+         ZmsqE21zaOH58v/EpDv/pezNInykEo7vIIY8vdwOfbT/jGFgnAMaq2ttW4yCpMrYymqU
+         z/EL4ihGSXvdFBMwnfKzKpFeqkSaAN5mp/oRvtwQcs8/8vMVInFCoDQ7pUqYxDc2W1fp
+         KW/9bhPOkoxjeZjcB+7JQ2TPhM4tir52nsqWnGfZ/Z6q2+Od/bP8gfN0/xgj8nJMqKxz
+         gE0A==
+X-Gm-Message-State: AGRZ1gLDgPfRaH7f4NbAmO5B6Kg1c+pESiJ7Nhuvv2JNm7nO1ktsNN8n
+        sMsHcQDdaZK+X8Bub5VMMNJd3C4HebSUfjByBcB1HQ==
+X-Google-Smtp-Source: AJdET5cU0MQSzkdTwXTow83a/nONVImmIW2WsdXg2jtqVzOC+JhoxVy53yGtUlNTWjwmb6wX4WnDxAgGCowRFNasHPQ=
+X-Received: by 2002:a67:4719:: with SMTP id u25mr1382818vsa.27.1540555879206;
+ Fri, 26 Oct 2018 05:11:19 -0700 (PDT)
+MIME-Version: 1.0
+References: <CGME20181017155403epcas2p1ed9777e96c6b2c77c2c5b67466be9843@epcas2p1.samsung.com>
+ <1539791563-5959-1-git-send-email-b.zolnierkie@samsung.com> <1539791563-5959-9-git-send-email-b.zolnierkie@samsung.com>
+In-Reply-To: <1539791563-5959-9-git-send-email-b.zolnierkie@samsung.com>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Fri, 26 Oct 2018 17:41:08 +0530
+Message-ID: <CAHLCerNsdhG1OjiRiy5s4uSRGB6dUCVe7mvknCqWqMeQzxCb7Q@mail.gmail.com>
+Subject: Re: [PATCH v2 08/17] thermal: qcom: tsens: enable+check sensor after
+ its setup is finished
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Markus Mayer <mmayer@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Heiko Stuebner <heiko@sntech.de>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181021205501.23943-1-digetx@gmail.com>
- <20181021205501.23943-2-digetx@gmail.com>
- <20181022053636.ag62j3rj3vovbz53@vireshk-i7>
- <e4027793-9436-413d-2a7b-34cf519218c3@gmail.com>
- <20181022113224.b5fiebgy2aap66nd@vireshk-i7>
- <29f893be-feed-c4c5-8468-51f7228dd468@gmail.com>
- <20181024064123.lbpbeervghp35fe7@vireshk-i7>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <ba782346-6ac0-7bf3-e187-00d2634b145b@gmail.com>
-Date:   Fri, 26 Oct 2018 15:03:39 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <20181024064123.lbpbeervghp35fe7@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Keerthy <j-keerthy@ti.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jun Nie <jun.nie@linaro.org>,
+        Baoyou Xie <baoyou.xie@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/24/18 9:41 AM, Viresh Kumar wrote:
-> On 22-10-18, 15:12, Dmitry Osipenko wrote:
->> Because there is one Tegra20 board (tegra20-trimslice) that doesn't declare
->> necessary regulators, but we want to have CPU frequency scaling. I couldn't
->> find board schematics and so don't know if CPU / CORE voltages are fixed on
->> Trim-Slice or it is just preferable not to have DVFS for that board, it is an
->> outlet-powered device [0]. Hence tegra20-cpufreq driver will request a dummy
->> regulators when appropriate. 
-> 
-> We have been using the regulator_get_optional() variant until now in the OPP
-> core to make sure that we don't do DVFS for the CPU without the mandatory
-> regulators being present, as that may make things unstable and cause harm to the
-> SoC if we try to take CPU to frequency range over the currently programmed
-> regulator can support.
-> 
-> Now coming back to tegra-20 SoC, which actually requires a regulator normally by
-> design. On one of the boards (which is outlet powered), you aren't sure if there
-> is a programmable regulator or not, or if DVFS should really be done or not.
-> Isn't it worth checking the same from Tegra maintainers, or whomsoever has
-> information on that board ?
+On Wed, Oct 17, 2018 at 9:24 PM Bartlomiej Zolnierkiewicz
+<b.zolnierkie@samsung.com> wrote:
+>
+> Enable+check sensor after setting tmdev->sensor[i].tzd and calling
+> chipset specific enable operation.
+>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> ---
+>  drivers/thermal/qcom/tsens.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/thermal/qcom/tsens.c b/drivers/thermal/qcom/tsens.c
+> index dbd2556..01bff96 100644
+> --- a/drivers/thermal/qcom/tsens.c
+> +++ b/drivers/thermal/qcom/tsens.c
+> @@ -105,13 +105,13 @@ static int tsens_register(struct tsens_device *tmdev)
+>                 if (IS_ERR(tzd))
+>                         continue;
+>
+> -               thermal_zone_set_mode(tzd, THERMAL_DEVICE_ENABLED);
+> -               thermal_zone_device_check(tzd);
+> -
 
-I'll try to find out more detailed information for the next revision of the patchset.
+I don't quite understand why you're making this move explicitly in a
+separate patch for each of the drivers? You added it here in patch 4
+in the first place, why not add it in the correct place there itself?
 
- What would happen if there actually was a regulator
-> and its default settings aren't good enough for high end frequencies ?
 
-Usually this causes kernel/applications crashes and/or machine hang.
-
-> On the other hand, the tegra20 cpufreq driver is common across a lot of boards.
-> What will happen if the DT for some of the boards isn't correct and missed the
-> necessary regulator node ?
-
-AFAIK, there is assumption that bootloader should setup regulators in a way that kernel could work properly at max clock rates. Otherwise things won't work.
-
- And because you are moving to regulator_get() API for
-> the entire SoC (i.e. its cpufreq driver), people will never find the missing
-> regulator.
-
-Regulators core prints info message when dummy regulator is being used.
-
-> If we can do it safely for all tegra20 boards, why not migrate to using
-> regulator_get() instead of regulator_get_optional() in the OPP core API itself
-> for everyone ?
-> 
-
-This should be a platform-specific decision. For Tegra we know that regulators should be in a good state at kernel boot time, I don't think that this applies to other platforms.
+>                 tmdev->sensor[i].tzd = tzd;
+>
+>                 if (tmdev->ops->enable)
+>                         tmdev->ops->enable(tmdev, i);
+> +
+> +               thermal_zone_set_mode(tzd, THERMAL_DEVICE_ENABLED);
+> +               thermal_zone_device_check(tzd);
+>
+>         }
+>         return 0;
+>  }
+> --
+> 1.9.1
+>
