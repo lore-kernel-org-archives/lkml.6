@@ -2,144 +2,124 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 446E9C6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 03:46:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F976ECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 04:11:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCFF32082D
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 03:46:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28A4520834
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 04:11:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="l821JlTU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCFF32082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gp7DcROv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28A4520834
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726180AbeJZMVq (ORCPT
+        id S1726037AbeJZMqb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 08:21:46 -0400
-Received: from mail-he1eur01on0082.outbound.protection.outlook.com ([104.47.0.82]:61952
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725807AbeJZMVq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 08:21:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t+SOo1Wup2E0Gsd1GiTwAbDKVJdp1pyuF0auxAYya5Q=;
- b=l821JlTUgNEWM2KE9N1lMsn4fP1k7/SOMsBZC/KtmG/K+3yYReI2wENrV8sSqc7tu8HuMjhrxjUdc7f03i6WwB7BBK+0yBuLv73hM3GYthjukTxO6VBLRAmNSST3udSHVkxFOQnk5V2afW/Ku4XgQ2Ai4kTK0OlvkddSBYtWEzc=
-Received: from HE1PR04MB1497.eurprd04.prod.outlook.com (10.163.176.23) by
- HE1PR04MB1145.eurprd04.prod.outlook.com (10.162.248.27) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1273.25; Fri, 26 Oct 2018 03:45:43 +0000
-Received: from HE1PR04MB1497.eurprd04.prod.outlook.com
- ([fe80::70d8:2ebf:92cf:5aae]) by HE1PR04MB1497.eurprd04.prod.outlook.com
- ([fe80::70d8:2ebf:92cf:5aae%2]) with mapi id 15.20.1250.032; Fri, 26 Oct 2018
- 03:45:43 +0000
-From:   Xiaowei Bao <xiaowei.bao@nxp.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     "bhelgaas@google.com" <bhelgaas@google.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Leo Li <leoyang.li@nxp.com>, "kishon@ti.com" <kishon@ti.com>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "M.h. Lian" <minghuan.lian@nxp.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>, Roy Zang <roy.zang@nxp.com>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "cyrille.pitchen@free-electrons.com" 
-        <cyrille.pitchen@free-electrons.com>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "shawn.lin@rock-chips.com" <shawn.lin@rock-chips.com>,
-        "niklas.cassel@axis.com" <niklas.cassel@axis.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Subject: RE: [PATCH 3/6] PCI: layerscape: Add the EP mode support
-Thread-Topic: [PATCH 3/6] PCI: layerscape: Add the EP mode support
-Thread-Index: AQHUbFO/sDtxRLGmJUqv9XRnx7sCWaUwgXkAgABfTVA=
-Date:   Fri, 26 Oct 2018 03:45:43 +0000
-Message-ID: <HE1PR04MB149735C7EF2A23AEE982BB9FF5F00@HE1PR04MB1497.eurprd04.prod.outlook.com>
-References: <20181025110901.5680-1-xiaowei.bao@nxp.com>
- <20181025110901.5680-3-xiaowei.bao@nxp.com> <20181025215246.GA14861@bogus>
-In-Reply-To: <20181025215246.GA14861@bogus>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=xiaowei.bao@nxp.com; 
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;HE1PR04MB1145;6:SrM/fQwED3BEYxfUFqkf9ufOVuzQoQn0GKs42QAXmoUEYyb3E+NiIajdvlApW/uzD3ZcJ1iH/+R52H6Va/2qBJFfL/cd+S5xza3MrodVVbEpesuK7HV9+avfqLQCkPrtP1OAZrkzdTab6Mej0Uc5l4+tscybgUdgNBFlU6RuQ8X+RCtsxIUFRRanqH6zxRgapha24dRWdikh6AXztU/LO0hFBaPiV8zhndN8k8NDKEO8bvy56z1oZPpds+mkZeXjgxuAwmkyGa7fpx3oitBnVg1Eey9oldEceQTvgB2HBuhiAkasoDVNmrBBU6DGFlTdWxgSL8I3Oix6tOyoz/2wHiH1dJdAT+HTlE3R1HahZ96ujVrTq/qz+5egS7Q1cuK9YwJUZFTj7C/nma/IjmqJSnD4rZVVlR79kU8xvlC0DM3jg0R7aoK8ZdiayohOuWo7Kv6feuEbdZBFeZjrxHOGKw==;5:lU82wJy5BufL+dhL1W0+KvbXqWkteO1DfXR6DX9O9XWekaN+0ea3SivekWFD46wSyvF+KBLaaDJ8PtcPgm976qibMiIOG87ARwlTqEw2vbY6MEwh/vPAcLTzdiZ200VbJUfNjnnHgypCHp9bFhJTBobl1WnBuKF5561ObasPi1s=;7:RmLb4ygUrjttDO9g5ySE3EoG3gNXHQiq4Q62LsBGFY9u9lzJ3GV8o35G6NyzmCPAmpmlQSOQrVxJMjAIAIcGW/2jZlsP515UavooqvkQmumY5Z9wI61qWI3+E4EboLcQ3AxvITu3sd5w+19aXpcIrw==
-x-ms-office365-filtering-correlation-id: b8b06685-e3ed-4729-1bae-08d63af581a1
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:HE1PR04MB1145;
-x-ms-traffictypediagnostic: HE1PR04MB1145:
-x-microsoft-antispam-prvs: <HE1PR04MB1145A4B3BE12129A480E80B6F5F00@HE1PR04MB1145.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(211936372134217)(180628864354917)(31051911155226)(58145275503218)(9452136761055)(258649278758335)(65623756079841)(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231355)(944501410)(52105095)(3002001)(93006095)(93001095)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:HE1PR04MB1145;BCL:0;PCL:0;RULEID:;SRVR:HE1PR04MB1145;
-x-forefront-prvs: 083751FCA6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(396003)(39860400002)(376002)(136003)(366004)(13464003)(189003)(199004)(9686003)(6916009)(53936002)(4326008)(6116002)(3846002)(6436002)(25786009)(256004)(55016002)(2906002)(26005)(68736007)(54906003)(476003)(71200400001)(71190400001)(44832011)(5660300001)(486006)(446003)(11346002)(8936002)(478600001)(6246003)(8676002)(186003)(81166006)(81156014)(106356001)(33656002)(6506007)(53546011)(7736002)(305945005)(66066001)(105586002)(14454004)(99286004)(7696005)(76176011)(2900100001)(7416002)(102836004)(229853002)(86362001)(5250100002)(316002)(97736004)(74316002);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR04MB1145;H:HE1PR04MB1497.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: UZZ7t1TksF6bY+YixBMtwbVJvNqkeGaQ/RIXOyIEUpPW8tYlDXoGYB4LHzdS/3k+hDmWB6VbNeO5BcFTZXegZlQiMqYhUTKpQymHkLp0Yv1jp8GmHSB12HMXoqCBYurNMeTFx60poGnI0kCx46JSb/8U/93Z2zzlLq1eV6ybupGEut5i6eOtSm9O0uJfud5Okd6G9WkZnXX9bC3cRoKrravwa2EoctKTAvMsJbu/eRntwk7BKdNAIWV2Po81S4sVxpEXQHyfYH8TS2+4Nv0onXMImKD0C2cCF8T3UVk7L0/EZovgAcLfIEGY9a0sAbYx9nkIpMFAtuUTJbDESZULI4QyIL3ZP9i8dCHybVVDPtk=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+        Fri, 26 Oct 2018 08:46:31 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:37761 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725914AbeJZMqb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 08:46:31 -0400
+Received: by mail-pl1-f193.google.com with SMTP id bh10-v6so4864308plb.4
+        for <linux-kernel@vger.kernel.org>; Thu, 25 Oct 2018 21:11:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=cVqDWZHaQMK6td6YKcxbezDFIcxCuYuotLzpYFI+QS4=;
+        b=Gp7DcROvFOl2Zh4H39GutIKwlHkXGEygXPZVsz2oIjQubz/g1dzOpOew6QHUifPtwk
+         4TMLHQuqjANudimlyNDNyjTT8NVxc767jrElVsBiscw1wudmxYkud7xap476l/PohB3E
+         H7VAm0rBYwTzySkRKrDuF6AdiyMRdmllnXxTE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cVqDWZHaQMK6td6YKcxbezDFIcxCuYuotLzpYFI+QS4=;
+        b=SNiitXSpn/ZiTsClZ6WX9vUdGXNd8uBwePTlXu9zZ6F1KYYopapPmRF9mCdWXgLs6J
+         CkLPf9yuIjNXxi8FViQddfprdetQSCf6G0p3jIyVgPMEuAjcgIvdnTlELMyQ1UYKO5it
+         rQs+6xPq0YfBrFCbRX1YNGHf3dylgb2wLzGJm8JtmWk/LTr2cL28WJ66nAZC5AKFaUhU
+         6PoFi0SxODbitaVDcXu1TAUjOGUa3oKLhW30IlFCWBFosZnjW4Xu7LmAZ3O002nP7OSa
+         RezuoK2Wq1CF01Zwng2KzAd8lqxuH+7bqKubSEJiNxkdSoKZi0Vuad6rIxZ5PX3wmjdS
+         eKSw==
+X-Gm-Message-State: AGRZ1gJD3kX6N1f9yhA4pFFAK3shgyToCl0qoP/aVTGd0V8WQvQEUpfx
+        VWmUazLNgdAWDGNRDE2fF8A3Zg==
+X-Google-Smtp-Source: AJdET5eB4PHW0NVhJD51VW83zkccXPfm4mAySR5FkO4fPjgNpzx5fTPPfSeKIeJ02s6UsMv1Dq9Qbg==
+X-Received: by 2002:a17:902:744a:: with SMTP id e10-v6mr1965752plt.61.1540527071685;
+        Thu, 25 Oct 2018 21:11:11 -0700 (PDT)
+Received: from localhost ([122.172.217.9])
+        by smtp.gmail.com with ESMTPSA id s13-v6sm22281717pgs.76.2018.10.25.21.11.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 25 Oct 2018 21:11:09 -0700 (PDT)
+Date:   Fri, 26 Oct 2018 09:41:07 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     catalin.marinas@arm.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: arm: Fix cpu capacity mismatch in example
+Message-ID: <20181026041107.4hofhlcubbo5claq@vireshk-i7>
+References: <138600f5d504b41202a29a1e130a7aa4e51f1925.1540451976.git.viresh.kumar@linaro.org>
+ <80206cb7-b550-1cf6-abf4-e4b17de4cdb5@linaro.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b8b06685-e3ed-4729-1bae-08d63af581a1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Oct 2018 03:45:43.3219
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR04MB1145
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <80206cb7-b550-1cf6-abf4-e4b17de4cdb5@linaro.org>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCi0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQpGcm9tOiBSb2IgSGVycmluZyA8cm9iaEBr
-ZXJuZWwub3JnPiANClNlbnQ6IDIwMTjE6jEw1MIyNsjVIDU6NTMNClRvOiBYaWFvd2VpIEJhbyA8
-eGlhb3dlaS5iYW9AbnhwLmNvbT4NCkNjOiBiaGVsZ2Fhc0Bnb29nbGUuY29tOyBtYXJrLnJ1dGxh
-bmRAYXJtLmNvbTsgc2hhd25ndW9Aa2VybmVsLm9yZzsgTGVvIExpIDxsZW95YW5nLmxpQG54cC5j
-b20+OyBraXNob25AdGkuY29tOyBsb3JlbnpvLnBpZXJhbGlzaUBhcm0uY29tOyBhcm5kQGFybmRi
-LmRlOyBncmVna2hAbGludXhmb3VuZGF0aW9uLm9yZzsgTS5oLiBMaWFuIDxtaW5naHVhbi5saWFu
-QG54cC5jb20+OyBNaW5na2FpIEh1IDxtaW5na2FpLmh1QG54cC5jb20+OyBSb3kgWmFuZyA8cm95
-LnphbmdAbnhwLmNvbT47IGtzdGV3YXJ0QGxpbnV4Zm91bmRhdGlvbi5vcmc7IGN5cmlsbGUucGl0
-Y2hlbkBmcmVlLWVsZWN0cm9ucy5jb207IHBvbWJyZWRhbm5lQG5leGIuY29tOyBzaGF3bi5saW5A
-cm9jay1jaGlwcy5jb207IG5pa2xhcy5jYXNzZWxAYXhpcy5jb207IGxpbnV4LXBjaUB2Z2VyLmtl
-cm5lbC5vcmc7IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5r
-ZXJuZWwub3JnOyBsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7IGxpbnV4cHBj
-LWRldkBsaXN0cy5vemxhYnMub3JnDQpTdWJqZWN0OiBSZTogW1BBVENIIDMvNl0gUENJOiBsYXll
-cnNjYXBlOiBBZGQgdGhlIEVQIG1vZGUgc3VwcG9ydA0KDQpPbiBUaHUsIE9jdCAyNSwgMjAxOCBh
-dCAwNzowODo1OFBNICswODAwLCBYaWFvd2VpIEJhbyB3cm90ZToNCj4gQWRkIHRoZSBFUCBtb2Rl
-IHN1cHBvcnQuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBYaWFvd2VpIEJhbyA8eGlhb3dlaS5iYW9A
-bnhwLmNvbT4NCj4gLS0tDQo+ICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9wY2kvbGF5ZXJzY2Fw
-ZS1wY2kudHh0ICAgICB8ICAgIDMgKysrDQo+ICAxIGZpbGVzIGNoYW5nZWQsIDMgaW5zZXJ0aW9u
-cygrKSwgMCBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2Rl
-dmljZXRyZWUvYmluZGluZ3MvcGNpL2xheWVyc2NhcGUtcGNpLnR4dCBiL0RvY3VtZW50YXRpb24v
-ZGV2aWNldHJlZS9iaW5kaW5ncy9wY2kvbGF5ZXJzY2FwZS1wY2kudHh0DQo+IGluZGV4IDY2ZGYx
-ZTguLmQzZDdiZTEgMTAwNjQ0DQo+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
-aW5ncy9wY2kvbGF5ZXJzY2FwZS1wY2kudHh0DQo+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNl
-dHJlZS9iaW5kaW5ncy9wY2kvbGF5ZXJzY2FwZS1wY2kudHh0DQo+IEBAIC0xMywxMiArMTMsMTUg
-QEAgaW5mb3JtYXRpb24uDQo+ICANCj4gIFJlcXVpcmVkIHByb3BlcnRpZXM6DQo+ICAtIGNvbXBh
-dGlibGU6IHNob3VsZCBjb250YWluIHRoZSBwbGF0Zm9ybSBpZGVudGlmaWVyIHN1Y2ggYXM6DQo+
-ICsgIFJDIG1vZGU6DQo+ICAgICAgICAgICJmc2wsbHMxMDIxYS1wY2llIiwgInNucHMsZHctcGNp
-ZSINCj4gICAgICAgICAgImZzbCxsczIwODBhLXBjaWUiLCAiZnNsLGxzMjA4NWEtcGNpZSIsICJz
-bnBzLGR3LXBjaWUiDQo+ICAgICAgICAgICJmc2wsbHMyMDg4YS1wY2llIg0KPiAgICAgICAgICAi
-ZnNsLGxzMTA4OGEtcGNpZSINCj4gICAgICAgICAgImZzbCxsczEwNDZhLXBjaWUiDQo+ICAgICAg
-ICAgICJmc2wsbHMxMDEyYS1wY2llIg0KPiArICBFUCBtb2RlOg0KPiArICAgICAgICAiZnNsLGxz
-LXBjaWUtZXAiDQoNCllvdSBuZWVkIFNvQyBzcGVjaWZpYyBjb21wYXRpYmxlcyBmb3IgdGhlIHNh
-bWUgcmVhc29ucyBhcyB0aGUgUkMuDQpbWGlhb3dlaSBCYW9dIEkgd2FudCB0byBjb250YWlucyBh
-bGwgbGF5ZXJzY2FwZSBwbGF0Zm9ybSB1c2Ugb25lIGNvbXBhdGlibGUgaWYgdGhlIFBDSWUgY29u
-dHJvbGxlciB3b3JrIGluIEVQIG1vZGUuDQoNClJvYg0K
+On 25-10-18, 14:04, Daniel Lezcano wrote:
+> I think it is actually correct. The example is confusing on what the
+> numbers are. IIUC, it is:
+> 
+> (after normalizing)
+> 
+> dhrystone result on big CPU is 1024 at 1100MHz
+> dhrystone result on little CPU is 446 at 850MHz
+> 
+> We have to scale the result of the little for 1100MHz in order to compare.
+> 
+> 1100/850 = 1.294
+> 
+> dhrystone result on little CPU is 446 * 1.294 = 577 at 1100MHz
+> 
+> So we put the normalized values 1024 and 577. The arch_topology will
+> scale 577 back to 446 as it will compute the max capacity based on the
+> max freq which is 850MHz.
+> 
+> The *final* capacities are 1024 for cluster0 and 446 for cluster1 (read
+> the cpu max capacity, the ones showed in the sysfs).
+> 
+> Did I miss something ?
+
+No. What about making it more clear in the example to save the next idiot (like
+me) from wasting time :)
+
+diff --git a/Documentation/devicetree/bindings/arm/cpu-capacity.txt b/Documentation/devicetree/bindings/arm/cpu-capacity.txt
+index 9b5685a1d15d..d061e6575bde 100644
+--- a/Documentation/devicetree/bindings/arm/cpu-capacity.txt
++++ b/Documentation/devicetree/bindings/arm/cpu-capacity.txt
+@@ -61,7 +61,10 @@ mhz values (normalized w.r.t. the highest value found while parsing the DT).
+ Example 1 (ARM 64-bit, 6-cpu system, two clusters):
+ capacities-dmips-mhz are scaled w.r.t. 1024 (cpu@0 and cpu@1)
+ supposing cluster0@max-freq=1100 and custer1@max-freq=850,
+-final capacities are 1024 for cluster0 and 446 for cluster1
++final capacities are 1024 for cluster0 and 446 for cluster1.
++Note that the values mentioned below in the example (1024 and 578)
++aren't normalized based on max frequency of each cluster and that is
++left for the operating system to do.
+ 
+ cpus {
+        #address-cells = <2>;
+
+-- 
+viresh
