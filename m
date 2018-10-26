@@ -2,125 +2,258 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFD4EC6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 09:44:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B6C8ECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 09:45:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EA7720848
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 09:44:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XX9eoE0y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EA7720848
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id BA72C20848
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 09:44:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA72C20848
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727323AbeJZSVR (ORCPT
+        id S1727420AbeJZSVU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 14:21:17 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:46655 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726367AbeJZSVQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 14:21:16 -0400
-Received: by mail-yw1-f66.google.com with SMTP id j202-v6so189498ywa.13
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 02:44:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=7jrDlWrR87OXQWP4EW7ozj7IY2FG5rNJPWASi2+6LvM=;
-        b=XX9eoE0yYvT46SdS0Pp049Q/2PjNt6Hii6SCcHjPoQ4Lv4xzNQGjtZc4wbZUlBXzu5
-         2eJkgHY+8oIV1uuPS4vF1b+P41QM7kYNCcbGdDCNb7z0Iq0i3n8Sxo9+pJvI0ORfg2E3
-         rx/9GBrc5JQkRCbJMtCxf0u6HMY6WhgK9sNno=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=7jrDlWrR87OXQWP4EW7ozj7IY2FG5rNJPWASi2+6LvM=;
-        b=k3Q3Da57VW24DqC/sTGKDa0Z+pDgYzIRCswWN1RgGh8XV+4hTBMTDK4oDgIV2Ii4CA
-         ebbKMu4D+LocqtzoNgwCpMARG+vn6tYrVxnnbxjPA5QN4qiVl99kWfIe50fxf7Fppawp
-         l1KvfTTGty7v3ZuVhX6WhTA3o5YNGC6Yz57qfX/c39NlNmHOz9UtLgg2kTdQp2y90Yzk
-         2JgtQoIEgiOY92LDyM3LWzeV9MSmMOIN/kZX2JznN9Dsj/2La4Ixp70L4BYR3jKlZnhi
-         NfAFUOpDRg5pnbUEr6JEys+AFO8SH0IsFfGF5kbD5uq3aVs7BRxC65cyC6+Oc9+4CRA7
-         1wDQ==
-X-Gm-Message-State: AGRZ1gIw+sBsSHGXHsJJF9w1JqqrN5Kus2blm6868G3p7NFHUdhZxXPH
-        79eyR7I7qGwtWD0QAHLIURd8XSf4NKQ//w==
-X-Google-Smtp-Source: AJdET5dwdjcW267kqhnVRkncwM1DMt0NTyTf3/LvHVykemX9Qasc5E/g2mAAZSP2PEvqj06kVd4NMw==
-X-Received: by 2002:a0d:c704:: with SMTP id j4-v6mr2715316ywd.466.1540547092626;
-        Fri, 26 Oct 2018 02:44:52 -0700 (PDT)
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
-        by smtp.gmail.com with ESMTPSA id q6-v6sm3135762ywh.41.2018.10.26.02.44.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 02:44:51 -0700 (PDT)
-Received: by mail-yb1-f169.google.com with SMTP id i78-v6so216567ybg.0
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 02:44:50 -0700 (PDT)
-X-Received: by 2002:a25:7643:: with SMTP id r64-v6mr2686841ybc.403.1540547090108;
- Fri, 26 Oct 2018 02:44:50 -0700 (PDT)
+        Fri, 26 Oct 2018 14:21:20 -0400
+Received: from a.mx.secunet.com ([62.96.220.36]:44612 "EHLO a.mx.secunet.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726367AbeJZSVS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 14:21:18 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by a.mx.secunet.com (Postfix) with ESMTP id B8B31201C2;
+        Fri, 26 Oct 2018 11:44:54 +0200 (CEST)
+X-Virus-Scanned: by secunet
+Received: from a.mx.secunet.com ([127.0.0.1])
+        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id IBuyzytjUS3W; Fri, 26 Oct 2018 11:44:51 +0200 (CEST)
+Received: from mail-essen-01.secunet.de (mail-essen-01.secunet.de [10.53.40.204])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by a.mx.secunet.com (Postfix) with ESMTPS id 1E1D9200A3;
+        Fri, 26 Oct 2018 11:44:51 +0200 (CEST)
+Received: from [172.18.17.49] (172.18.17.49) by mail-essen-01.secunet.de
+ (10.53.40.204) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 26 Oct
+ 2018 11:44:50 +0200
+Subject: Re: USB-C device hotplug issue
+To:     Alan Stern <stern@rowland.harvard.edu>,
+        Mathias Nyman <mathias.nyman@intel.com>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ravi Chandra Sadineni <ravisadineni@chromium.org>,
+        Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        Bin Liu <b-liu@ti.com>,
+        "Maxim Moseychuk" <franchesko.salias.hudro.pedros@gmail.com>,
+        Mike Looijmans <mike.looijmans@topic.nl>,
+        Dominik Bozek <dominikx.bozek@intel.com>,
+        USB list <linux-usb@vger.kernel.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+References: <Pine.LNX.4.44L0.1810251040540.1447-100000@iolanthe.rowland.org>
+From:   Dennis Wassenberg <dennis.wassenberg@secunet.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dennis.wassenberg@secunet.com; keydata=
+ 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
+ YPsSSSBN/R6Xmw==
+Organization: secunet Security Networks AG
+Message-ID: <8e750341-8fe5-9c66-0653-3c92d4a60505@secunet.com>
+Date:   Fri, 26 Oct 2018 11:44:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Fri, 26 Oct 2018 02:44:48
- -0700 (PDT)
-In-Reply-To: <1540525277916.97809@xiaomi.com>
-References: <1540525277916.97809@xiaomi.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Fri, 26 Oct 2018 10:44:48 +0100
-X-Gmail-Original-Message-ID: <CAGXu5jJtwLgrMVvXR+C8oSKPus+iVdYsYn4Q2+8FjRbgpL+jNA@mail.gmail.com>
-Message-ID: <CAGXu5jJtwLgrMVvXR+C8oSKPus+iVdYsYn4Q2+8FjRbgpL+jNA@mail.gmail.com>
-Subject: Re: [PATCH] pstore: Remove duplicate invoking of persistent_ram_zap()
-To:     =?UTF-8?B?UGVuZzE1IFdhbmcg546L6bmP?= <wangpeng15@xiaomi.com>
-Cc:     "anton@enomsg.org" <anton@enomsg.org>,
-        "ccross@android.com" <ccross@android.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <Pine.LNX.4.44L0.1810251040540.1447-100000@iolanthe.rowland.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-G-Data-MailSecurity-for-Exchange-State: 0
+X-G-Data-MailSecurity-for-Exchange-Error: 0
+X-G-Data-MailSecurity-for-Exchange-Sender: 23
+X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
+X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+X-G-Data-MailSecurity-for-Exchange-Guid: FF47EB2E-2E12-41AB-A2B4-AA7E64F545C4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 4:41 AM, Peng15 Wang =E7=8E=8B=E9=B9=8F <wangpeng15=
-@xiaomi.com> wrote:
-> From: Peng Wang <wangpeng15@xiaomi.com>
->
-> When initialing przs with invalid data in buffer(no PERSISTENT_RAM_SIG),
-> function call path is like this:
->
-> ramoops_init_prz ->
-> |
-> |-> persistent_ram_new -> persistent_ram_post_init -> persistent_ram_zap
-> |
-> |--> persistent_ram_zap
+Hi all,
 
-There does appear to be a duplicate call to persistent_ram_zap() in this ca=
-se.
 
-> As we can see, persistent_ram_zap() is called twice.
-> We can avoid this by removing it in ramoops_init_prz(),
-> and only call it in persistent_ram_post_init().
+On 10/25/18 4:46 PM, Alan Stern wrote:
+> On Thu, 25 Oct 2018, Dennis Wassenberg wrote:
+> 
+>> Hi all,
+>>
+>> I have a question regarding the usb hub driver (drivers/usb/core/hub.c).
+>>
+>> There is the following scenario. I am using the Lenovo T580 device with the Lenovo UltraDock CS18 docking station. If I plug an usb-c device to the docking station there is one device which will not be recognized (SanDisk Ultra USB-C Flash Drive, https://www.sandisk.com/home/mobile-device-storage/ultra-usb-type-c). An other usb-c devices (SanDisk Extreme 900 SSD, https://www.sandisk.com/home/ssd/extreme-900-ssd) works fine. I don’t have that much USB-C devices available, so there is one device working and the other one not.
+>>
+>> I made some analysis of the situation where I attached the SanDisk Ultra USB-C Flash Drive.
+>> I added some debug logs in drivers/usb/core/hub.c in port_event and hub_port_reset and activated all dynamic debug prints in hub.c. The output is the following:
+>>
+>> [  724.110784] usb 4-1-port1: XXX: port_event: portstatus: 0x2c0, portchange: 0x40!
+>> [  724.110789] usb 4-1-port1: link state change
+>> [  724.114953] usb 4-1-port1: do warm reset
+>> [  724.168109] usb 4-1-port1: not warm reset yet, waiting 50ms
+>> [  724.220768] usb 4-1-port1: not warm reset yet, waiting 200ms
+>> [  724.425188] usb 4-1-port1: XXX: hub_port_reset (before clear USB_PORT_FEAT_C_CONNECTION): 0x203, portchange: 0x1!
+>> [  724.425906] usb 4-1-port1: XXX: hub_port_reset (after clear USB_PORT_FEAT_C_CONNECTION): 0x203, portchange: 0x0!
+>> [  724.477429] hub 4-1:1.0: state 7 ports 4 chg 0000 evt 0002
+>> [  724.477980] usb 4-1-port1: XXX: port_event: portstatus: 0x203, portchange: 0x0!
+>>
+>> The same situation with SanDisk Extreme 900 SSD:
+>>
+>> [  863.647484] hub 4-1:1.0: state 7 ports 4 chg 0000 evt 0002
+>> [  863.647965] usb 4-1-port1: XXX: port_event: portstatus: 0x203, portchange: 0x1!
+>> [  863.648305] usb 4-1-port1: status 0203, change 0001, 10.0 Gb/s
+>> [  863.758573] usb 4-1-port1: debounce total 100ms stable 100ms status 0x203
+>> [  863.773495] usb 4-1-port1: XXX: hub_port_reset (before clear USB_PORT_FEAT_C_CONNECTION): 0x203, portchange: 0x0!
+>> [  863.773699] usb 4-1-port1: XXX: hub_port_reset (after clear USB_PORT_FEAT_C_CONNECTION): 0x203, portchange: 0x0!
+>> [  863.826311] usb 4-1.1: new SuperSpeedPlus USB device number 6 using xhci_hcd
+>> [  863.840002] usb 4-1.1: udev 6, busnum 4, minor = 389
+>> [  863.840010] usb 4-1.1: New USB device found, idVendor=0781, idProduct=5593
+>> [  863.840014] usb 4-1.1: New USB device strings: Mfr=2, Product=3, SerialNumber=1
+>> [  863.840018] usb 4-1.1: Product: EXTREME900
+>> [  863.840022] usb 4-1.1: Manufacturer: SanDisk
+>> [  863.840026] usb 4-1.1: SerialNumber: 10000019DF56
+>>
+>> So, at first I am wondering if the usb hub port was in USB_SS_PORT_LS_U3 if I attach the SanDisk Ultra USB-C Flash Drive. In case of the SanDisk Extreme 900 the usb hub port is in USB_SS_PORT_LS_U0. What’ the reason for that?
+>>
+>> I read https://www.kernel.org/doc/html/v4.14/driver-api/usb/power-management.html. In this test usb core was bootet wird autosuspend=-1.Additionally the <hubdev-portX>/power/pm_qos_no_power_off sysfs variable is always set to 1. Nevertheless the hub port is in LS U3, but only using SanDisk Ultra USB-C Flash Drive.
+>>
+>> I looked through the code and wondered why the USB_PORT_FEAT_C_CONNECTION bit is cleared at successful warm usb 3 reset in hub_port_reset.
+>> In case of the Ultra USB-C Flash Drive at first the link state change is detected. Directly after executing the actual hub_port_reset the USB_PORT_FEAT_C_CONNECTION bit will change to 1. But the hub_port_reset code will set this bit to 0. At the next run the bit remains 0 and the connect_change flag in port_event will not be set. That  means the USB_PORT_FEAT_C_CONNECTION flag will be cleared without taking it into account. That’s why this device will not be detected correctly.
+>>
+>> If I modify the code in this way that I did’t clear the USB_PORT_FEAT_C_CONNECTION bit in hub_port_reset on warm usb3 reset this flag is still set during the next run. This makes sure that the connect_change flag in port_event is set and the usb device is detected correctly.
+>> Is this code change correct or will it break other use cases? Are there any other ways to make the kernel detect that usb device at the docking station?
+>>
+>> Please refer to the output of the modified usb_hub_reset code:
+>>
+>> [  121.566344] hub 4-1:1.0: state 7 ports 4 chg 0000 evt 0002
+>> [  121.566805] usb 4-1-port1: XXX: port_event: portstatus: 0x2c0, portchange: 0x40!
+>> [  121.566810] usb 4-1-port1: link state change
+>> [  121.573481] usb 4-1-port1: do warm reset
+>> [  121.625297] usb 4-1-port1: not warm reset yet, waiting 50ms
+>> [  121.677854] usb 4-1-port1: not warm reset yet, waiting 200ms
+>> [  121.881091] usb 4-1-port1: XXX: hub_port_reset (before clear USB_PORT_FEAT_C_CONNECTION): 0x203, portchange: 0x1!
+>> [  121.881454] usb 4-1-port1: XXX: hub_port_reset (after clear USB_PORT_FEAT_C_CONNECTION): 0x203, portchange: 0x1!
+>> [  121.933109] hub 4-1:1.0: state 7 ports 4 chg 0000 evt 0002
+>> [  121.933407] usb 4-1-port1: XXX: port_event: portstatus: 0x203, portchange: 0x1!
+>> [  121.933861] usb 4-1-port1: status 0203, change 0001, 10.0 Gb/s
+>> [  122.042540] usb 4-1-port1: debounce total 100ms stable 100ms status 0x203
+>> [  122.056865] usb 4-1-port1: XXX: hub_port_reset (before clear USB_PORT_FEAT_C_CONNECTION): 0x203, portchange: 0x0!
+>> [  122.057230] usb 4-1-port1: XXX: hub_port_reset (after clear USB_PORT_FEAT_C_CONNECTION): 0x203, portchange: 0x0!
+>> [  122.109166] usb 4-1.1: new SuperSpeed USB device number 5 using xhci_hcd
+>> [  122.122392] usb 4-1.1: udev 5, busnum 4, minor = 388
+>> [  122.122399] usb 4-1.1: New USB device found, idVendor=0781, idProduct=5596
+>> [  122.122404] usb 4-1.1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+>> [  122.122408] usb 4-1.1: Product: Ultra T C
+>> [  122.122412] usb 4-1.1: Manufacturer: SanDisk
+>> [  122.122415] usb 4-1.1: SerialNumber: 4C531001400624115002
+>> [  122.124151] hub 4-1:1.0: state 7 ports 4 chg 0000 evt 0002
+>> [  122.125042] usb 4-1-port1: XXX: port_event: portstatus: 0x203, portchange: 0x0!
+>>
+>>
+>> The code change for Kernel 4.14 look as follows:
+>>
+>> Subject: [PATCH] usb: core: do not clear USB_PORT_FEAT_C_CONNECTION on warm
+>>  hub port reset
+>>
+>> Signed-off-by: Dennis Wassenberg <dennis.wassenberg@secunet.com>
+>> ---
+>>  drivers/usb/core/hub.c | 4 +++-
+>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+>> index a9db0887edca..9b4dfe6c8829 100644
+>> --- a/drivers/usb/core/hub.c
+>> +++ b/drivers/usb/core/hub.c
+>> @@ -2815,7 +2815,9 @@ static int hub_port_reset(struct usb_hub *hub, int port1,
+>>  					USB_PORT_FEAT_C_BH_PORT_RESET);
+>>  			usb_clear_port_feature(hub->hdev, port1,
+>>  					USB_PORT_FEAT_C_PORT_LINK_STATE);
+>> -			usb_clear_port_feature(hub->hdev, port1,
+>> +
+>> +			if (!warm)
+>> +				usb_clear_port_feature(hub->hdev, port1,
+>>  					USB_PORT_FEAT_C_CONNECTION);
+>>  
+>>  			/*
+> 
+> The key fact is that connection events can get lost if they happen to 
+> occur during a port reset.
+Yes.
+> 
+> I'm not entirely certain of the logic here, but it looks like the
+> correct test to add should be "if (udev != NULL)", not "if (!warm)".  
+> Perhaps Mathias can confirm thisI don't know if clearing the USB_PORT_FEAT_C_CONNECTION bit is correct in case of a non warm reset. In my case I always observed a warm reset because of the link state change.
+Thats why I checked the warm variable to not change the behavoir for cases a didn't checked for the first shot.
 
-However, I think the proposed fix doesn't work the way it should.
+During the first run of usb_hub_reset the udev is NULL because in this situation the device is not attached logically.
 
-There are two prz init paths: ramoops_init_prz() (a single prz) and
-ramoops_init_przs (multiple przs). The "dump" and "ftrace" cases use
-the latter. In those, there is no call to persistent_ram_zap() if the
-buffer is valid.
+[  112.889810] usb 4-1-port1: XXX: port_event: portstatus: 0x2c0, portchange: 0x40!
+[  113.201192] usb 4-1-port1: XXX: hub_port_reset: udev:            (nil)!
+[  113.201198] usb 4-1-port1: XXX: hub_port_reset (not clearing USB_PORT_FEAT_C_CONNECTION): 0x203, portchange: 0x1!
+[  113.253612] usb 4-1-port1: XXX: port_event: portstatus: 0x203, portchange: 0x1!
+[  113.377208] usb 4-1-port1: XXX: hub_port_reset: udev: ffff88046b302800!
+[  113.377214] usb 4-1-port1: XXX: hub_port_reset (not clearing USB_PORT_FEAT_C_CONNECTION): 0x203, portchange: 0x0!
+[  113.429478] usb 4-1.1: new SuperSpeed USB device number 7 using xhci_hcd
+[  113.442370] usb 4-1.1: New USB device found, idVendor=0781, idProduct=5596
+[  113.442376] usb 4-1.1: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[  113.442381] usb 4-1.1: Product: Ultra T C 
+[  113.442385] usb 4-1.1: Manufacturer: SanDisk
+[  113.442388] usb 4-1.1: SerialNumber: 4C530001131013121031
 
-In other words:
+Or maybe we can skip clearing the USB_PORT_FEAT_C_CONNECTION bit in case of hub_port_reset completely without any other check?
 
-ramoops_init_prz() unconditionally calls persistent_ram_zap(). (And
-may call it twice if there is a mismatch of the magic header.)
+Dennis
 
-ramoops_init_przs() only calls persistent_ram_zap() when the magic
-header is wrong.
+> 
+> Are there any reasons for resetting a port when there's no attached 
+> device, besides a link-state change?  If there are, we might need to 
+> check for a connect-change when they occur too.
 
-The proposed patch unconditionally zaps all regions, which means we'd
-lose "dump" and "ftrace" across the next reboot.
-
-Perhaps we could make it an option to persistent_ram_new()?
-
---=20
-Kees Cook
+> 
+> Alan Stern
+> 
