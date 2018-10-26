@@ -2,98 +2,92 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB60AC6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 16:30:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9545BC6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 16:30:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 972CC20868
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 16:30:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 972CC20868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 51E8F20665
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 16:30:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RRG/Sp75"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51E8F20665
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727714AbeJ0BIB (ORCPT
+        id S1727749AbeJ0BIG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 21:08:01 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50583 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727562AbeJ0BIA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 21:08:06 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:40812 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726531AbeJ0BIA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 26 Oct 2018 21:08:00 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9887F2097B; Fri, 26 Oct 2018 18:30:15 +0200 (CEST)
-Received: from bbrezillon (unknown [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id CCDA320954;
-        Fri, 26 Oct 2018 18:30:04 +0200 (CEST)
-Date:   Fri, 26 Oct 2018 18:30:04 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     vitor <vitor.soares@synopsys.com>
-Cc:     Wolfram Sang <wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>,
-        "Jonathan Corbet" <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        "Cyprian Wronka" <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        "Rafal Ciepiela" <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        "Kumar Gala" <galak@codeaurora.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        <linux-gpio@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>,
-        Peter Rosin <peda@axentia.se>,
-        Mike Shettel <mshettel@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>
-Subject: Re: [PATCH v10 0/9] Add the I3C subsystem
-Message-ID: <20181026183004.4857ce73@bbrezillon>
-In-Reply-To: <87738b8d-8033-9ef1-b0fb-059b64b0dc96@synopsys.com>
-References: <20181026144333.12276-1-boris.brezillon@bootlin.com>
-        <ad79f586-860e-bf57-9970-f58dc16d33b8@synopsys.com>
-        <20181026181548.53228a4b@bbrezillon>
-        <87738b8d-8033-9ef1-b0fb-059b64b0dc96@synopsys.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Received: by mail-ot1-f66.google.com with SMTP id m15so1617882otl.7
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 09:30:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=WCQSbmDiSp2TikX+81KkfW5KaWUZgpU/q4zGiCgAHT8=;
+        b=RRG/Sp751Ll7tAfqk3x0Fkc3eipuA4hbh81CcXiAjA/3ZP6DiIGOZMmbpsYne4POYA
+         R/xbi+M+NBIXr4LVhg+UgbeYLAb3XTTwViu5RFkkOY0HkHDRc98ftKVimq8Btf5T3j23
+         KCoHWzmBxJeLGLb5S/SaNwLfKhRPNnJ3EqiDOSonDVj/JPcfW8sOt8S6XU2Etz7kqqLE
+         6q4Uju9mu2vz6u617VN5Ji5gPtd5i0eO9wqhIKDVRCc7xjWB/ZEW9lgkuiud8BLVfqNA
+         STckfhqw4mEHVEOdmgNBbbOQ7gQSH/XkiFIE0X+xe3s2wkfYQf6Iq6gu+Ve6W/tScGKW
+         CjzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=WCQSbmDiSp2TikX+81KkfW5KaWUZgpU/q4zGiCgAHT8=;
+        b=BaF+iFcRWPcnASHjgRlCtUJAxQtgQnD2MjMTCHTEokYOLSy+Xs1fUh9DOX6BMXaXtD
+         TCTyIzG+QZ8Q7iIxwaAkZiDyO957HxuBp1bI/wxg9Ty19FS0DX/ZZUMxXhZ4/MvsrrMi
+         d8G52HlHZYph/bqILBAKbjq5d9VVEYA5VIzUP8u2IXgfRwjm/IO1qvU2byRPflNaJGVH
+         OynPQbNRLa16Inlf8V2dFQFBN4G9x7ZFGd5Y97FYw3mUyIZioqylL6o/nhIF+B1pwkkA
+         1QVmlRw2cD321ueRzN45eHziCqb+eoppCS7h2xYvwZLn/8q7xo0Y04RS6lw+hOcHn+mr
+         lbHw==
+X-Gm-Message-State: AGRZ1gJMU0JQ9+8YwEQbQttcr3w9Yl3+IhlnY5+mdvwrqun9e9+0tSVP
+        ooFX/Z5GY4D4PKlGh31YVj86JOaBX3dLNqL9XoCwcA==
+X-Google-Smtp-Source: AJdET5e+eWEA4Z0bEnv8KWhV+jX2Y7Cn+1Sr3vKSEjxzNoQkT7Hp0FkJWKmf/gof7t6PGSEvmMUWjeLBuwJ/XpaowiA=
+X-Received: by 2002:a9d:4a5c:: with SMTP id d28mr1813095otj.38.1540571417587;
+ Fri, 26 Oct 2018 09:30:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Received: by 2002:ac9:2ac9:0:0:0:0:0 with HTTP; Fri, 26 Oct 2018 09:30:17
+ -0700 (PDT)
+In-Reply-To: <20181026154617.GA23663@linux.intel.com>
+References: <09986c98c9655f1542768ecfda644ac821e67a57.1540369608.git.jsteckli@amazon.de>
+ <558fea0b4df498eefcaea5ae07a089ad9706c1a2.1540369608.git.jsteckli@amazon.de> <20181026154617.GA23663@linux.intel.com>
+From:   Jim Mattson <jmattson@google.com>
+Date:   Fri, 26 Oct 2018 09:30:17 -0700
+Message-ID: <CALMp9eTtB1te3kyHxZjm244BwdVKrVrjOTgiLufQFwD8Y2g_LQ@mail.gmail.com>
+Subject: Re: [PATCH 2/4] kvm, vmx: move register clearing out of assembly path
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Julian Stecklina <jsteckli@amazon.de>,
+        kvm list <kvm@vger.kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>, js@alien8.de,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 26 Oct 2018 17:20:42 +0100
-vitor <vitor.soares@synopsys.com> wrote:
+On Fri, Oct 26, 2018 at 8:46 AM, Sean Christopherson
+<sean.j.christopherson@intel.com> wrote:
 
-> On 26/10/18 17:15, Boris Brezillon wrote:
-> > On Fri, 26 Oct 2018 16:22:06 +0100
-> > vitor <vitor.soares@synopsys.com> wrote:
-> >  
-> >> Can you update the i3c/next tree?  
-> > Done.  
-> 
-> Thanks.
-> 
-> I will apply the driver and them I give you feedback.
+> Since clearing the GPRs exists to mitigate speculation junk, I think
+> we should keep the explicit XOR zeroing instead of deferring to the
+> compiler.  Explicit XORs will ensure the resulting assembly is the
+> same regardless of compiler, version, target arch, etc..., whereas the
+> compiler could theoretically use different zeroing methods[1], e.g. on
+> my system it generates "mov r32,r32" for EBX, ESI and EDI (loading
+> from EAX after EAX is zeroed).
+>
+> And FWIW, I find the original code to be more readable since all GRPs
+> are zeroed with the same method.
 
-Great! Note that the bug in the ->send_ccc_cmd() path should be fixed,
-but you might have issues with i2c transfers as msg->buf is not
-guaranteed to be aligned on 32-bit.
-
-Don't know if you've followed the discussion with Arnd, but it seems
-some (most?) archs are making sure writesl()/readsl() work for
-unaligned bufs. Maybe we should fix that for ARC. The other solution is
-to use i2c_get_dma_safe_msg_buf() to get something aligned on a
-cache-line and by extension aligned on 32bits.
+I concur. I really do prefer the explicit xors to the input arguments.
