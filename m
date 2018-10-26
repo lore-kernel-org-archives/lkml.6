@@ -2,138 +2,73 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76DD8ECDE46
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2C60ECDE46
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:05:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3932520848
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:04:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3932520848
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id B69B220848
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:05:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B69B220848
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbeJ0CmK (ORCPT
+        id S1727770AbeJ0CnR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 22:42:10 -0400
-Received: from foss.arm.com ([217.140.101.70]:48100 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727450AbeJ0CmK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 22:42:10 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8F0F4A78;
-        Fri, 26 Oct 2018 11:04:10 -0700 (PDT)
-Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5572E3F719;
-        Fri, 26 Oct 2018 11:04:08 -0700 (PDT)
-Subject: Re: [PATCH 07/10] sched/fair: Provide can_migrate_task_llc
-To:     Steve Sistare <steven.sistare@oracle.com>, mingo@redhat.com,
-        peterz@infradead.org
-Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
-        rohit.k.jain@oracle.com, daniel.m.jordan@oracle.com,
-        pavel.tatashin@microsoft.com, matt@codeblueprint.co.uk,
-        umgwanakikbuti@gmail.com, riel@redhat.com, jbacik@fb.com,
-        juri.lelli@redhat.com, linux-kernel@vger.kernel.org
-References: <1540220381-424433-1-git-send-email-steven.sistare@oracle.com>
- <1540220381-424433-8-git-send-email-steven.sistare@oracle.com>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <f75ddcd5-f9a0-30c5-94e4-c4077e17ffb0@arm.com>
-Date:   Fri, 26 Oct 2018 19:04:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 26 Oct 2018 22:43:17 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:38365 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726949AbeJ0CnR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 22:43:17 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gG6Tx-0001A2-9E; Fri, 26 Oct 2018 18:05:13 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] gpu: drm/lease: fix spelling mistake, EACCESS -> EACCES
+Date:   Fri, 26 Oct 2018 19:05:12 +0100
+Message-Id: <20181026180512.4908-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <1540220381-424433-8-git-send-email-steven.sistare@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Steve,
+From: Colin Ian King <colin.king@canonical.com>
 
-On 22/10/2018 15:59, Steve Sistare wrote:
-> Define a simpler version of can_migrate_task called can_migrate_task_llc
-> which does not require a struct lb_env argument, and judges whether a
-> migration from one CPU to another within the same LLC should be allowed.
-> 
-> Signed-off-by: Steve Sistare <steven.sistare@oracle.com>
-> ---
->  kernel/sched/fair.c | 28 ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 4acdd8d..6548bed 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -7168,6 +7168,34 @@ int can_migrate_task(struct task_struct *p, struct lb_env *env)
->  }
->  
->  /*
-> + * Return true if task @p can migrate from @rq to @dst_rq in the same LLC.
-> + * No need to test for co-locality, and no need to test task_hot(), as sharing
-> + * LLC provides cache warmth at that level.
+Trivial fix to a spelling mistake of the error access name EACCESS,
+rename to EACCES
 
-I was thinking that perhaps we could have scenarios where some rq's
-keep stealing tasks off of each other and we end up circulating tasks 
-between CPUs. Now, that would only happen if we had a handful of tasks
-with a very tiny period, and I'm not familiar with (real) such hyperactive
-workloads similar to those generated by hackbench where that could happen.
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/gpu/drm/drm_lease.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-In short, I wonder if we should have task_hot() in there. Drawing a
-parallel with load_balance(), even if load-balancing is happening between
-rqs of the same LLC, we do go check task_hot(). Have you already experimented
-with adding a task_hot() check in here?
+diff --git a/drivers/gpu/drm/drm_lease.c b/drivers/gpu/drm/drm_lease.c
+index 24a177ea5417..9ab88db8fad0 100644
+--- a/drivers/gpu/drm/drm_lease.c
++++ b/drivers/gpu/drm/drm_lease.c
+@@ -195,7 +195,7 @@ EXPORT_SYMBOL(drm_lease_filter_crtcs);
+  * make sure all of the desired objects can be leased, atomically
+  * leasing them to the new drmmaster.
+  *
+- * 	ERR_PTR(-EACCESS)	some other master holds the title to any object
++ * 	ERR_PTR(-EACCES)	some other master holds the title to any object
+  * 	ERR_PTR(-ENOENT)	some object is not a valid DRM object for this device
+  * 	ERR_PTR(-EBUSY)		some other lessee holds title to this object
+  *	ERR_PTR(-EEXIST)	same object specified more than once in the provided list
+-- 
+2.19.1
 
-
-
-I've run some iterations of hackbench (hackbench 2 process 100000) to
-investigate this task bouncing, but I didn't really see any of it. That was
-just a 4+4 big.LITTLE system though, I'll try to get numbers on a system
-with more CPUs.
-
------>8-----
-
-activations: # of task activations (task starts running)
-cpu_migrations: # of activations where cpu != prev_cpu
-% stats are percentiles
-
-- STEAL:
-
-  | stat  | cpu_migrations | activations |
-  |-------+----------------+-------------|
-  | count |    2005.000000 | 2005.000000 |
-  | mean  |      16.244888 |  290.608479 |
-  | std   |      38.963138 |  253.003528 |
-  | min   |       0.000000 |    3.000000 |
-  | 50%   |       3.000000 |  239.000000 |
-  | 75%   |       8.000000 |  436.000000 |
-  | 90%   |      45.000000 |  626.000000 |
-  | 99%   |     188.960000 | 1073.000000 |
-  | max   |     369.000000 | 1417.000000 |
-
-- NO_STEAL:
-
-  | stat  | cpu_migrations | activations |
-  |-------+----------------+-------------|
-  | count |    2005.000000 | 2005.000000 |
-  | mean  |      15.260848 |  297.860848 |
-  | std   |      46.331890 |  253.210813 |
-  | min   |       0.000000 |    3.000000 |
-  | 50%   |       3.000000 |  252.000000 |
-  | 75%   |       7.000000 |  444.000000 |
-  | 90%   |      32.600000 |  643.600000 |
-  | 99%   |     214.880000 | 1127.520000 |
-  | max   |     467.000000 | 1547.000000 |
-
------>8-----
-
-Otherwise, my only other concern at the moment is that since stealing
-doesn't care about load, we could steal a task that would cause a big
-imbalance, which wouldn't have happened with a call to load_balance().
-
-I don't think this can be triggered with a symmetrical workload like
-hackbench, so I'll go explore something else.
