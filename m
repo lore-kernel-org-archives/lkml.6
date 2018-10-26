@@ -2,135 +2,98 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BD6FC6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:39:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89C6FC6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:40:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 474ED20868
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:39:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 474ED20868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=datenfreihafen.org
+	by mail.kernel.org (Postfix) with ESMTP id 4E2DB20868
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:40:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TUIm12IZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E2DB20868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726531AbeJZWQ7 (ORCPT
+        id S1726815AbeJZWRk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 18:16:59 -0400
-Received: from proxima.lasnet.de ([78.47.171.185]:39919 "EHLO
-        proxima.lasnet.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726113AbeJZWQ7 (ORCPT
+        Fri, 26 Oct 2018 18:17:40 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:43300 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726113AbeJZWRk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 18:16:59 -0400
-Received: from localhost.localdomain (p200300E9D70FDC4FA9666416553D800C.dip0.t-ipconnect.de [IPv6:2003:e9:d70f:dc4f:a966:6416:553d:800c])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: stefan@datenfreihafen.org)
-        by proxima.lasnet.de (Postfix) with ESMTPSA id E8498C8992;
-        Fri, 26 Oct 2018 15:39:47 +0200 (CEST)
-Subject: Re: [PATCH 4.9 50/71] inet: frags: use rhashtables for reassembly
- units
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Cc:     stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Florian Westphal <fw@strlen.de>,
-        Jesper Dangaard Brouer <brouer@redhat.com>,
-        Alexander Aring <alex.aring@gmail.com>,
-        Stefan Schmidt <stefan@osg.samsung.com>,
-        "David S. Miller" <davem@davemloft.net>
-References: <20181016170539.315587743@linuxfoundation.org>
- <20181016170541.874459615@linuxfoundation.org>
-From:   Stefan Schmidt <stefan@datenfreihafen.org>
-Message-ID: <62bd748b-20a8-d021-7b3b-32146df8beb8@datenfreihafen.org>
-Date:   Fri, 26 Oct 2018 15:39:47 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Fri, 26 Oct 2018 18:17:40 -0400
+Received: by mail-ot1-f68.google.com with SMTP id k9so1064504otl.10;
+        Fri, 26 Oct 2018 06:40:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=d7F7o3iY5Xq+a1FKbiif3XaIk7dmJ9kYCMFcwmuTabM=;
+        b=TUIm12IZ6XVUCN7b5c74N48taIF4GsIsFTXVLzlQWdHETGxY0JRcfMAC4I5M7iBR8G
+         5+h7HYhPisUr5csMd7FQfjVV8w+8YGd0Z6aXgOjGtl7WOv3wKxvZDEeA9l+xgk3ciVPe
+         Cq7iHHbGQdkgUo3Rz6Z6Q6q3jDpGMRf43gxMT4DM8X8lCGhM7sf5o2k/NRFb/JhCl2SI
+         5h3CIyHc5FYOi3b1j1NBJVreMKs/L+icLxaTt8AP4HdBViJfRbiHRGSIW1txHyvM8cnw
+         W4D792eZItcr0+aoKmfWX8i1rhcKvltLwYET7/NDLaBgJ5YN6nE5w62APdzr/mWhivG8
+         t3Iw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=d7F7o3iY5Xq+a1FKbiif3XaIk7dmJ9kYCMFcwmuTabM=;
+        b=DQnkoJfBzGP5eq4hvrND+dwhrGA/U2HeUBO8JdYO5FK2GanV+lHP9FJOZurn0t8ioZ
+         GxsIemDpb5T7q10wVtsjHvpy0IcA5GcFLo8no2lUdIjq2brQ+xnCSQdgvILKwUhvGuN0
+         6Ay+P26uK7n0JnRfaFJpx+XAxtbE+IZAh6cVsOCL9Jq+m3xF6xtjmqk0rzBagbezD96f
+         aYgSy1kQ629mihnMWTTREfXQBr1X9a/mxLamMCW3sYImaPVAZ/ahmxmhW9eluw4jxEUB
+         I+2+eHROpVJB6PxmtefVPXhiylbo01JUjsAIMoKOWd/y4CUe0tEQUl5i1Moyxn7yV9FP
+         bDQQ==
+X-Gm-Message-State: AGRZ1gLxPJ8BPidIwic+DFseVI2arsbEVhWH791l6fDCzHlsJtGJDNGJ
+        IoXOJW8iMwBnoIopdYgGKyaMC0uA5sm1Snu7kdc=
+X-Google-Smtp-Source: AJdET5dONEDDaf95EOplS69XzvUnPdNLhayvxglhujgqQ4Va/YTwZT5uJFmFvqmCJM2YVKfzs+8vOHSa7QXvKSw8y+o=
+X-Received: by 2002:a9d:d61:: with SMTP id 88mr2222754oti.245.1540561232916;
+ Fri, 26 Oct 2018 06:40:32 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181016170541.874459615@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181024142456.10084-1-svendev@arcx.com> <20181024142456.10084-2-svendev@arcx.com>
+ <20181026083410.GO4870@dell>
+In-Reply-To: <20181026083410.GO4870@dell>
+From:   Sven Van Asbroeck <thesven73@gmail.com>
+Date:   Fri, 26 Oct 2018 09:40:21 -0400
+Message-ID: <CAGngYiVZ3y2Y4Wg=CEqoO+C0Mr1CYspON1C=Kmb-vq=kxs5bUg@mail.gmail.com>
+Subject: Re: [PATCH anybus v1 1/4] mfd: support the Arcx anybus bridge.
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Sven Van Asbroeck <svendev@arcx.com>, robh+dt@kernel.org,
+        mark.rutland@arm.com,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        treding@nvidia.com, David Lechner <david@lechnology.com>,
+        noralf@tronnes.org, johan@kernel.org,
+        Michal Simek <monstr@monstr.eu>, michal.vokac@ysoft.com,
+        Arnd Bergmann <arnd@arndb.de>, gregkh@linuxfoundation.org,
+        john.garry@huawei.com,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        geert+renesas@glider.be, robin.murphy@arm.com,
+        paul.gortmaker@windriver.com,
+        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
+        yuanzhichang@hisilicon.com, Stuart Yoder <stuyoder@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        maxime.ripard@bootlin.com, bogdan.purcareata@nxp.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Greg.
+> Wow, this driver is going to need a lot of work.
 
-[Hope I am not to late for this]
+I'm open to reworking this 5 times if need be :)
 
-On 16/10/2018 19:09, Greg Kroah-Hartman wrote:
-> 4.9-stable review patch.  If anyone has any objections, please let me know.
-> 
-> ------------------
-> 
-> From: Eric Dumazet <edumazet@google.com>
-> 
-> Some applications still rely on IP fragmentation, and to be fair linux
-> reassembly unit is not working under any serious load.
-> 
-> It uses static hash tables of 1024 buckets, and up to 128 items per bucket (!!!)
-> 
-> A work queue is supposed to garbage collect items when host is under memory
-> pressure, and doing a hash rebuild, changing seed used in hash computations.
-> 
-> This work queue blocks softirqs for up to 25 ms when doing a hash rebuild,
-> occurring every 5 seconds if host is under fire.
-> 
-> Then there is the problem of sharing this hash table for all netns.
-> 
-> It is time to switch to rhashtables, and allocate one of them per netns
-> to speedup netns dismantle, since this is a critical metric these days.
-> 
-> Lookup is now using RCU. A followup patch will even remove
-> the refcount hold/release left from prior implementation and save
-> a couple of atomic operations.
-> 
-> Before this patch, 16 cpus (16 RX queue NIC) could not handle more
-> than 1 Mpps frags DDOS.
-> 
-> After the patch, I reach 9 Mpps without any tuning, and can use up to 2GB
-> of storage for the fragments (exact number depends on frags being evicted
-> after timeout)
-> 
-> $ grep FRAG /proc/net/sockstat
-> FRAG: inuse 1966916 memory 2140004608
-> 
-> A followup patch will change the limits for 64bit arches.
-> 
-> Signed-off-by: Eric Dumazet <edumazet@google.com>
-> Cc: Kirill Tkhai <ktkhai@virtuozzo.com>
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: Florian Westphal <fw@strlen.de>
-> Cc: Jesper Dangaard Brouer <brouer@redhat.com>
-> Cc: Alexander Aring <alex.aring@gmail.com>
-> Cc: Stefan Schmidt <stefan@osg.samsung.com>
-> Signed-off-by: David S. Miller <davem@davemloft.net>
-> (cherry picked from commit 648700f76b03b7e8149d13cc2bdb3355035258a9)
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  Documentation/networking/ip-sysctl.txt  |    7 
->  include/net/inet_frag.h                 |   81 +++----
->  include/net/ipv6.h                      |   16 -
->  net/ieee802154/6lowpan/6lowpan_i.h      |   26 --
->  net/ieee802154/6lowpan/reassembly.c     |   91 +++-----
->  net/ipv4/inet_fragment.c                |  349 ++++++--------------------------
->  net/ipv4/ip_fragment.c                  |  112 ++++------
->  net/ipv6/netfilter/nf_conntrack_reasm.c |   51 +---
->  net/ipv6/reassembly.c                   |  110 ++++------
->  9 files changed, 267 insertions(+), 576 deletions(-)
-> 
+>
+> But before we get going, how many sub-devices does this have?
 
-When this patch hit master a while back we had to address a regression
-in the ieee802514 6lowpan layer. It seems this fix is missing in the
-backport series (only looking at your patchset here, no the full tree).
-
-https://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git/commit/?id=f18fa5de5ba7f1d6650951502bb96a6e4715a948
-
-I would appreciate if you could pull this into this series as well.
-
-regards
-Stefan Schmidt
+This is a custom piece of h/w which exposes two anybus-S slots, plus a
+power readout in sysfs, I wasn't quite sure if mfd is the right
+abstraction for this.
