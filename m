@@ -2,177 +2,140 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42EC6ECDE46
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 17:36:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE1CECDE46
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 17:38:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01EF52084D
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 17:36:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VjzklzAw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01EF52084D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D1BF42084D
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 17:38:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1BF42084D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727939AbeJ0COV (ORCPT
+        id S1727636AbeJ0CQo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 22:14:21 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40104 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727520AbeJ0COV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 22:14:21 -0400
-Received: by mail-wr1-f66.google.com with SMTP id i17-v6so2113655wre.7
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 10:36:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1agawPrMyMCesyFs7uh2XuBYRSxZV14itOlPhVsFdhE=;
-        b=VjzklzAwtaCNh4A7EyghjRQ9dPDIMdJ8tGsGR9DGdT/3Lo38RkB2fQAhyA1tG3fuy4
-         MlGZoIQyjny4cwryKhWRwCo2hwJ4tGIDK74yC4uRTawnFW5mX1ZedngI/fdZHcNOVnn3
-         +aRJuLHNjBBzOEQzU/tu2ql+lTZ3HLk1GSfYU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1agawPrMyMCesyFs7uh2XuBYRSxZV14itOlPhVsFdhE=;
-        b=Rm8360mXKZrBUdVbNwW53KOdgIs0jKD4bCykW2HI9wJnljKNRB1F+wJJS9xlv2cdlq
-         ew6CjIW0L8DTUm9kglFKHOJHe1oXkFRjjgQhQzdVQNZH15oqptcVS977G47+w7C6LP1m
-         MK9zOPEIhhzWEE1zGj2TMbTNHlQBUPfHIYWKM8onoVFLzzR9UtZ0dM0WeOEXvBGmrZu2
-         Q6Xlc6lVxUPanAcWutmDYk9I97MDqrAVJPEWuDFFK3fdQzt2IsDmICcGaNgzS4y4xMWu
-         EPUh3sYe6ShziKsDTXH2vsTeMI/ccT5YTwcbRa2bGGyqo/K4H841SO5dBaANSgebE4qb
-         8C9A==
-X-Gm-Message-State: AGRZ1gLlMKm08OCaNmDjue5bR4VSC4JenEfOGNnqjjwrPfu524r62Gk/
-        KruJ495KitlX7CdxQ5lTdzDYCTH6qWlNs5jGZJem/Q==
-X-Google-Smtp-Source: AJdET5cM2DXhznn9j2iReJ+GqX07iAxThQsJR2jPKy0lLLaSYPu/+iATPQpmzwXmx9t6E8hkyrrlhi/rsw3TxXAF5UI=
-X-Received: by 2002:a5d:410d:: with SMTP id l13-v6mr6483865wrp.61.1540575386051;
- Fri, 26 Oct 2018 10:36:26 -0700 (PDT)
+        Fri, 26 Oct 2018 22:16:44 -0400
+Received: from mga04.intel.com ([192.55.52.120]:58801 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726949AbeJ0CQo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 22:16:44 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Oct 2018 10:38:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,428,1534834800"; 
+   d="scan'208";a="85858303"
+Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
+  by orsmga006.jf.intel.com with SMTP; 26 Oct 2018 10:38:47 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Fri, 26 Oct 2018 20:38:46 +0300
+Date:   Fri, 26 Oct 2018 20:38:46 +0300
+From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To:     Lyude Paul <lyude@redhat.com>
+Cc:     intel-gfx@lists.freedesktop.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] drm/i915: Fix NULL deref when re-enabling HPD IRQs
+ on systems with MST
+Message-ID: <20181026173846.GF9144@intel.com>
+References: <20181025222657.9241-1-lyude@redhat.com>
+ <20181025222657.9241-2-lyude@redhat.com>
 MIME-Version: 1.0
-References: <CAHk-=wjS6cjjP+fkZWzzrdZ_fZ1F=PrAGcBc57vKCpNyoD73Vw@mail.gmail.com>
- <CACRpkdbi2gqqc271eMgHjD68bqf2mzw8zw+iAhYv2LFajfo-eQ@mail.gmail.com>
- <CAHk-=wiiC65aZFrDp69vdcSALLDZNPkTL1diadxNL54tBPeAzQ@mail.gmail.com>
- <20181023093521.dm3l5oen2j7etsot@kshutemo-mobl1> <CAHk-=wh6i5t5jYHrC-ZCdj8qoZWP3BptV87U=G9G4UyunzPf7Q@mail.gmail.com>
- <20181023200408.GA13179@chatter.qube.local> <CAHk-=wjVJ1w=MYXhu42+1rPybtztz+7q=KWo53nQmasR7R4SNA@mail.gmail.com>
-In-Reply-To: <CAHk-=wjVJ1w=MYXhu42+1rPybtztz+7q=KWo53nQmasR7R4SNA@mail.gmail.com>
-From:   Rob Herring <rob.herring@linaro.org>
-Date:   Fri, 26 Oct 2018 12:36:14 -0500
-Message-ID: <CABGGiszsw=QXPwTe3mf26BG=Pxig6zGcXXJfRA+w0Pawrm5qpQ@mail.gmail.com>
-Subject: Re: Git pull ack emails..
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     kirill@shutemov.name, Linus Walleij <linus.walleij@linaro.org>,
-        boris.brezillon@bootlin.com,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Guenter Roeck <linux@roeck-us.net>, jacek.anaszewski@gmail.com,
-        axboe@kernel.dk, Mark Brown <broonie@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181025222657.9241-2-lyude@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 9:14 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> I'm back home, slightly jetl-agged, but _oh_ so relieved to not be
-> doing the merge window on a laptop any more.
->
-> I've been continuing to just manually ack the pull requests, but I've
-> almost forgotten a few times (and maybe I _did_ forget one or two and
-> didn't catch it? Who knows?).
->
-> So while maybe just continuing to do this means that it becomes second
-> nature, I'm starting to think that mailing list automation really
-> would be a good idea:
->
-> On Tue, Oct 23, 2018 at 1:04 PM Konstantin Ryabitsev
-> <konstantin@linuxfoundation.org> wrote:
-> >
-> > On Tue, Oct 23, 2018 at 10:46:06AM +0100, Linus Torvalds wrote:
-> > >If it's a "proper" pull request (ie done by git request-pull), then
-> > >the magic marker would be that it as that
-> > >
-> > >    for you to fetch changes up to %H:
-> > >
-> > >line where %H is the hash of the tip of the tree that is requested to be pulled.
-> > >
-> > >Then automation could literally just check "is that commit in Linus'
-> > >public tree", and when that happens, generate an automatic
-> > >notification that the pull request in question has been merged.
-> >
-> > I can probably do something like that at kernel.org. How about something
-> > more generic -- e.g. a simple tool that asks a remote web service to
-> > notify you when a commit-id is seen in one of the kernel.org repos?
->
-> So I think it might be good to have some generic model for "give me a
-> trigger when XYZ hits git tree ABC" that people could just do in
-> general, *but* I think the "scan mailing lists for regular pull
-> requests" would actually be nicer.
->
-> Maybe it would be just a special-case wrapper around a more generic
-> thing, but this:
->
-> > - send a REST request to https://foo.kerkel.org/lmk:
-> >
-> >   {
-> >     "tree": "mainline",
-> >     "commit": "123abc...abc555",
-> >     "notify": "(output of $(git config user.email)"
-> >   }
->
-> doesn't really sound all that nice for the "I sent a git pull request,
-> and want to be notified".
->
-> It would be much nicer if the "notification" really did the right
-> thing, and created an actual email follow-up, with the correct To/Cc
-> and subject lines, but also the proper "References" line so that it
-> actually gets threaded properly too.
->
-> That implies that it really should be integrated into the mailing list itself.
->
-> But I don't know how flexible the whole lkml archive bot is for things
-> like this. But I assume you have _some_ hook into new messages coming
-> in for lore.kernel.org?
->
-> > Would that be a useful alternative? If yes, what would be your preferred
-> > workflow for such tool instead of "git lmk [commit] [tree-moniker]"?
->
-> I really do suspect that "I sent out a pull request, I'd like to be
-> automatically notified when it gets upstream" would be the primary
-> thing.
->
-> And by "upstreamed" it isn't necessarily just my tree, of course.
->
-> Are there other situations where you might want to track something
-> _outside_ of a pull request? Maybe. I can't really think of a lot of
-> them, though. Patches etc don't have commit ID's to track, but it
-> *might* be interesting to see similar automation just based on the git
-> patch-ID. But that sounds more like a patchwork issue than something
-> like "track pull requests".
+On Thu, Oct 25, 2018 at 06:26:56PM -0400, Lyude Paul wrote:
+> Turns out that if you trigger an HPD storm on a system that has an MST
+> topology connected to it, you'll end up causing the kernel to eventually
+> hit a NULL deref:
+> 
+> [  332.339041] BUG: unable to handle kernel NULL pointer dereference at 00000000000000ec
+> [  332.340906] PGD 0 P4D 0
+> [  332.342750] Oops: 0000 [#1] SMP PTI
+> [  332.344579] CPU: 2 PID: 25 Comm: kworker/2:0 Kdump: loaded Tainted: G           O      4.18.0-rc3short-hpd-storm+ #2
+> [  332.346453] Hardware name: LENOVO 20BWS1KY00/20BWS1KY00, BIOS JBET71WW (1.35 ) 09/14/2018
+> [  332.348361] Workqueue: events intel_hpd_irq_storm_reenable_work [i915]
+> [  332.350301] RIP: 0010:intel_hpd_irq_storm_reenable_work.cold.3+0x2f/0x86 [i915]
+> [  332.352213] Code: 00 00 ba e8 00 00 00 48 c7 c6 c0 aa 5f a0 48 c7 c7 d0 73 62 a0 4c 89 c1 4c 89 04 24 e8 7f f5 af e0 4c 8b 04 24 44 89 f8 29 e8 <41> 39 80 ec 00 00 00 0f 85 43 13 fc ff 41 0f b6 86 b8 04 00 00 41
+> [  332.354286] RSP: 0018:ffffc90000147e48 EFLAGS: 00010006
+> [  332.356344] RAX: 0000000000000005 RBX: ffff8802c226c9d4 RCX: 0000000000000006
+> [  332.358404] RDX: 0000000000000000 RSI: 0000000000000082 RDI: ffff88032dc95570
+> [  332.360466] RBP: 0000000000000005 R08: 0000000000000000 R09: ffff88031b3dc840
+> [  332.362528] R10: 0000000000000000 R11: 000000031a069602 R12: ffff8802c226ca20
+> [  332.364575] R13: ffff8802c2268000 R14: ffff880310661000 R15: 000000000000000a
+> [  332.366615] FS:  0000000000000000(0000) GS:ffff88032dc80000(0000) knlGS:0000000000000000
+> [  332.368658] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [  332.370690] CR2: 00000000000000ec CR3: 000000000200a003 CR4: 00000000003606e0
+> [  332.372724] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> [  332.374773] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> [  332.376798] Call Trace:
+> [  332.378809]  process_one_work+0x1a1/0x350
+> [  332.380806]  worker_thread+0x30/0x380
+> [  332.382777]  ? wq_update_unbound_numa+0x10/0x10
+> [  332.384772]  kthread+0x112/0x130
+> [  332.386740]  ? kthread_create_worker_on_cpu+0x70/0x70
+> [  332.388706]  ret_from_fork+0x35/0x40
+> [  332.390651] Modules linked in: i915(O) vfat fat joydev btusb btrtl btbcm btintel bluetooth ecdh_generic iTCO_wdt wmi_bmof i2c_algo_bit drm_kms_helper intel_rapl syscopyarea sysfillrect x86_pkg_temp_thermal sysimgblt coretemp fb_sys_fops crc32_pclmul drm psmouse pcspkr mei_me mei i2c_i801 lpc_ich mfd_core i2c_core tpm_tis tpm_tis_core thinkpad_acpi wmi tpm rfkill video crc32c_intel serio_raw ehci_pci xhci_pci ehci_hcd xhci_hcd [last unloaded: i915]
+> [  332.394963] CR2: 00000000000000ec
+> 
+> This appears to be due to the fact that with an MST topology, not all
+> intel_connector structs will have ->encoder set. So, fix this by
+> skipping connectors without encoders in
+> intel_hpd_irq_storm_reenable_work().
+> 
+> For those wondering, this bug was found on accident while simulating HPD
+> storms using a Chamelium connected to a ThinkPad T450s (Broadwell).
+> 
+> Signed-off-by: Lyude Paul <lyude@redhat.com>
+> Cc: Ville Syrjälä <ville.syrjala@linux.intel.com>
+> ---
+>  drivers/gpu/drm/i915/intel_hotplug.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/intel_hotplug.c b/drivers/gpu/drm/i915/intel_hotplug.c
+> index 648a13c6043c..7d21aac10d16 100644
+> --- a/drivers/gpu/drm/i915/intel_hotplug.c
+> +++ b/drivers/gpu/drm/i915/intel_hotplug.c
+> @@ -228,7 +228,8 @@ static void intel_hpd_irq_storm_reenable_work(struct work_struct *work)
+>  		drm_for_each_connector_iter(connector, &conn_iter) {
+>  			struct intel_connector *intel_connector = to_intel_connector(connector);
+>  
+> -			if (intel_connector->encoder->hpd_pin == pin) {
+> +			if (intel_connector->encoder &&
+> +			    intel_connector->encoder->hpd_pin == pin) {
 
-I would very much like to see something that works for patches too.
-There's a lot of tribal knowledge needed for submitters to learn as to
-what is each maintainer's process. Reducing that would be beneficial
-IMO, and more solvable than discussions around non-email based
-submissions. For example, with Greg and Mark B you can expect an
-automated replies. Mark's reply gets threaded with the original, but
-Greg's do not. For networking, you may or may not get a manual reply,
-but patchwork always has the status if you know to go check it. In
-reviewing patches I want to know the status too, but that's somewhat
-my unique position of reviewing bindings which mostly other
-maintainers apply. I've somewhat solved it for myself by automating
-checking linux-next, but maybe automated email replies to patches
-being in linux-next would be nice. While that's not immediate, it
-should be quick enough. And I'd like to have automated replies sent on
-patches I apply, but I'm lazy and haven't managed to set that up yet.
+Hmm. Yeah, with MST that assignment happens at enable time. I guess we
+currently don't clear that pointer ever, so this seems safe. If we start
+to clear it this becomes racy.
 
-BTW, patchwork tracks pull requests too, so maybe there's a common solution.
+Maybe it would be better to just skip MST connectors entirely? Ah,
+i915_hpd_poll_init_work() already used ->mst_port for just that. So
+probabloy better follow the same example here.
 
-Rob
+Hmm. That seems a bit racy as well though. We'd need to
+reorder intel_dp_add_mst_connector() to assign ->mst_port
+before connector_init() to prevent that race.
+
+>  				if (connector->polled != intel_connector->polled)
+>  					DRM_DEBUG_DRIVER("Reenabling HPD on connector %s\n",
+>  							 connector->name);
+> -- 
+> 2.17.2
+
+-- 
+Ville Syrjälä
+Intel
