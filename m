@@ -2,241 +2,349 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EB6BECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:55:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44BB1ECDE46
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:57:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF37A2082B
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:55:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF37A2082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id D2DC62082B
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 20:57:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2DC62082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tronnes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727939AbeJ0Fdj (ORCPT
+        id S1727514AbeJ0FgJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 01:33:39 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54692 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725947AbeJ0Fdj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 01:33:39 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 14123208F5; Fri, 26 Oct 2018 22:55:06 +0200 (CEST)
-Received: from localhost (unknown [88.191.26.124])
-        by mail.bootlin.com (Postfix) with ESMTPSA id DA91A207AB;
-        Fri, 26 Oct 2018 22:55:05 +0200 (CEST)
-Date:   Fri, 26 Oct 2018 22:55:06 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] RTC for 4.20
-Message-ID: <20181026205506.GA14231@piout.net>
+        Sat, 27 Oct 2018 01:36:09 -0400
+Received: from smtp.domeneshop.no ([194.63.252.55]:40943 "EHLO
+        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725947AbeJ0FgJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Oct 2018 01:36:09 -0400
+Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:56286 helo=[192.168.10.175])
+        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <noralf@tronnes.org>)
+        id 1gG9Ag-0001tc-Ka; Fri, 26 Oct 2018 22:57:30 +0200
+Subject: Re: [PATCH 0/3] drm: tinydrm driver for adafruit PiTFT 3.5"
+ touchscreen
+From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+To:     Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Heiner Kallweit <hkallweit1@gmail.com>
+References: <20181024184313.2967-1-eric@anholt.net>
+ <87h8harnv4.fsf@anholt.net>
+ <2e548bd7-81f3-5952-b5de-96c26c9f6b19@tronnes.org>
+ <87o9bhphhv.fsf@anholt.net>
+ <2b5b8650-1e44-ea86-7b38-3b6a7ae793cb@tronnes.org>
+Message-ID: <1defaf31-d014-03ea-a61d-8f7970b95dc4@tronnes.org>
+Date:   Fri, 26 Oct 2018 22:57:26 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ew6BAiZeqk4r7MaW"
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <2b5b8650-1e44-ea86-7b38-3b6a7ae793cb@tronnes.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---ew6BAiZeqk4r7MaW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Den 26.10.2018 21.16, skrev Noralf Trønnes:
+>
+> Den 26.10.2018 04.30, skrev Eric Anholt:
+>> Noralf Trønnes <noralf@tronnes.org> writes:
+>>
+>>> Den 25.10.2018 18.29, skrev Eric Anholt:
+>>>> Eric Anholt <eric@anholt.net> writes:
+>>>>
+>>>>> I was going to start working on making the vc4 driver work with
+>>>>> tinydrm panels, but it turned out tinydrm didn't have the panel I had
+>>>>> previously bought.  So, last night I ported the fbtft staging
+>>>>> driver over to DRM.
+>>>>>
+>>>>> It seems to work (with DT at
+>>>>> https://github.com/anholt/linux/commits/drm-misc-next-hx8357d) --
+>>>>> fbdev works great including rotated, and so does modetest.  However,
+>>>>> when X11 comes up at 16bpp, I get:
+>>>>>
+>>>>> https://photos.app.goo.gl/8tuhzPFFoDGamEfk8
+>>>>>
+>>>>> If I have tinydrm set a preferred bpp of 24, X looks great.  Noralf,
+>>>>> any ideas?
+>>>> Also, with these patches and the format modifier patch I just sent, 
+>>>> mesa
+>>>> with vc4 is now working with this driver on this branch:
+>>>>
+>>>> https://gitlab.freedesktop.org/anholt/mesa/commits/kmsro
+>>> Ah, nice to see this happening!
+>>> Getting hw rendering was one of the advantages I saw DRM could provide
+>>> over fbdev on these displays. Little did I know how complicated 
+>>> graphics
+>>> was outside fbdev, so I was unable to realise this myself.
+>>>
+>>> The current solution to get hw rendering is to have a userspace process
+>>> that continously copies the framebuffer:
+>>> https://github.com/tasanakorn/rpi-fbcp
+>>>
+>>> It's used by some of the small DIY handheld game consoles that run
+>>> emulators which requires hw rendering.
+>>>
+>>>> Now I wonder how we can improve performance of the SPI updates.
+>>> At what SPI speed are you running? The datasheet for most of these
+>>> display controllers list the max speed as 10MHz, but almost all of them
+>>> can go faster. Some are reported going as high as 70-80MHz. That's for
+>>> the pixel data transfer, not the commands. tinydrm/mipi-dbi.c sends
+>>> commands at 10MHz and pixels at full speed 
+>>> (mipi_dbi_spi_cmd_max_speed()).
+>>> Most panels I have run at 32MHz or 48MHz.
+>> I copied the DT from the adafruit tree, which has it at 32mhz. System
+>> performance seems to be limited by the copy and format conversion I
+>> think -- in particular, I wonder if we shouldn't be doing our dirty
+>> copies in our own workqueue.  I haven't managed to get any really good
+>> profiling data yet, though.
+>>
+>> glxgears at 128x128 is nice and smooth, and at 480x320 it's 6fps.
+>> That's not filling 32mhz of SPI.  On the other hand, I would have
+>> expected the uncached reads for the 4-to-2 swapped conversion to be able
+>> to go faster than 3.5mb/sec.  If it's the uncached reads, we could at
+>> least use NEON for the copy to cached, and probably even do the whole
+>> conversion in NEON with a bit more thought.
+>>
+>> Another option: use a vc4 RCL to do RGBA8888 to RGB565, since that will
+>> be less pressure on the bus.  But then, I suppose I should just figure
+>> out what's going on that makes X11 at RGBA8888 break, and fix that so we
+>> don't even have to do that conversion.
+>>
+>> I keep hoping there's some way we could feed output from the DISPSLAVE
+>> HVS register directly to the SPI master -- FIFO32 gets us close (two
+>> 16-bit pixels packed next to each other, leftmost in the lower 2 bytes),
+>> but the need for byte swapping (as opposed to R/B swapping) I think
+>> makes it impossible.
+>
+> I just did some speed tests on a 320x240 display at 3 different speeds.
+> I also tried with byteswapping disabled. Only full updates will benefit
+> from passing the buffer straight through to SPI. This is because partial
+> updates are copied to a transfer buffer anyways to minimize SPI transfer
+> time. No need to transfer things that haven't changed and a memory copy
+> is far cheaper than a SPI transfer.
+>
+> SPI at 48MHz:
+>
+> pi@pi2835:~$ od -An -vtu4 --endian=big 
+> /sys/bus/spi/devices/spi0.0/of_node/spi-max-frequency
+>    48000000
+>
+> pi@pi2835:~$ ./libdrm/tests/modetest/modetest -M mi0283qt -s 
+> 28:320x240@XR24 -v
+> setting mode 320x240-0Hz@XR24 on connectors 28, crtc 30
+> freq: 24.87Hz
+> freq: 24.79Hz
+>
+> pi@pi2835:~$ ./libdrm/tests/modetest/modetest -M mi0283qt -s 
+> 28:320x240@RG16 -v
+> setting mode 320x240-0Hz@RG16 on connectors 28, crtc 30
+> freq: 26.33Hz
+> freq: 26.30Hz
+>
+> disable byteswapping:
+> pi@pi2835:~$ ./libdrm/tests/modetest/modetest -M mi0283qt -s 
+> 28:320x240@RG16 -v
+> setting mode 320x240-0Hz@RG16 on connectors 28, crtc 30
+> freq: 28.40Hz
+> freq: 28.43Hz
+>
+>
+> SPI at 64MHz (seems to work):
+>
+> pi@pi2835:~$ od -An -vtu4 --endian=big 
+> /sys/bus/spi/devices/spi0.0/of_node/spi-max-frequency
+>    64000000
+>
+> pi@pi2835:~$ ./libdrm/tests/modetest/modetest -M mi0283qt -s 
+> 28:320x240@XR24 -v
+> setting mode 320x240-0Hz@XR24 on connectors 28, crtc 30
+> freq: 32.74Hz
+> freq: 32.69Hz
+>
+> pi@pi2835:~$ ./libdrm/tests/modetest/modetest -M mi0283qt -s 
+> 28:320x240@RG16 -v
+> setting mode 320x240-0Hz@RG16 on connectors 28, crtc 30
+> freq: 35.44Hz
+> freq: 35.19Hz
+>
+> disabled byteswapping:
+> pi@pi2835:~$ ./libdrm/tests/modetest/modetest -M mi0283qt -s 
+> 28:320x240@RG16 -v
+> setting mode 320x240-0Hz@RG16 on connectors 28, crtc 30
+> freq: 39.29Hz
+> freq: 39.11Hz
+>
+>
+> SPI at 128MHz (not at all as garbled as I expected):
+>
+> pi@pi2835:~$ od -An -vtu4 --endian=big 
+> /sys/bus/spi/devices/spi0.0/of_node/spi-max-frequency
+>   128000000
+>
+> pi@pi2835:~$ ./libdrm/tests/modetest/modetest -M mi0283qt -s 
+> 28:320x240@XR24 -v
+> setting mode 320x240-0Hz@XR24 on connectors 28, crtc 30
+> freq: 48.69Hz
+> freq: 48.40Hz
+>
+> pi@pi2835:~$ ./libdrm/tests/modetest/modetest -M mi0283qt -s 
+> 28:320x240@RG16 -v
+> setting mode 320x240-0Hz@RG16 on connectors 28, crtc 30
+> freq: 53.61Hz
+> freq: 54.45Hz
+>
+> disabled byteswapping:
+> pi@pi2835:~$ ./libdrm/tests/modetest/modetest -M mi0283qt -s 
+> 28:320x240@RG16 -v
+> setting mode 320x240-0Hz@RG16 on connectors 28, crtc 30
+> freq: 63.16Hz
+> freq: 64.19Hz
+>
+>
+> This is how I disabled byteswapping for this test:
+>
+> diff --git a/drivers/gpu/drm/tinydrm/mipi-dbi.c 
+> b/drivers/gpu/drm/tinydrm/mipi-dbi.c
+> index cb3441e51d5f..fa5d81521485 100644
+> --- a/drivers/gpu/drm/tinydrm/mipi-dbi.c
+> +++ b/drivers/gpu/drm/tinydrm/mipi-dbi.c
+> @@ -228,6 +228,8 @@ static int mipi_dbi_fb_dirty(struct 
+> drm_framebuffer *fb,
+>         DRM_DEBUG("Flushing [FB:%d] x1=%u, x2=%u, y1=%u, y2=%u\n", 
+> fb->base.id,
+>                   clip.x1, clip.x2, clip.y1, clip.y2);
+>
+> +       full = true;
+> +       swap = false;
+>         if (!mipi->dc || !full || swap ||
+>             fb->format->format == DRM_FORMAT_XRGB8888) {
+>                 tr = mipi->tx_buf;
+>
+>
+>>> Almost all the time is spent in the SPI transfer, so every hz 
+>>> counts. On
+>>> the Pi there's byte swapping because the DMA capable SPI controller 
+>>> can't
+>>> do 16-bit (tinydrm_swab16()). If I remember correctly this has 
+>>> negligible
+>>> impact on performance.
+>>>
+>>> The SPI controller/driver on the Pi has some restrictions on the speeds
+>>> to choose from because the divisor has to be a multiple of two
+>>> (bcm2835_spi_transfer_one()).
+>> That's weird.  My specs say CDIV must be a *power* of two, with lower
+>> values rounded down.  I guess that means we might be running things
+>> fast, not slow, though (and at 32mhz out of 250, we should be getting
+>> the same CDIV).
+>
+> Yes, that's what the datasheet says.
+> When fbtft was out-of-tree I distributed a custom kernel with fbtft and
+> Martin Sperl's DMA capable spi-bcm2708. In that version I also allowed
+> odd cdiv's with no ill effects reported:
+> https://github.com/notro/spi-bcm2708/wiki#spi-clock-divider
+> (see the link to the forum post for details)
+> Maybe the hw just ignores odd cdiv's, I don't know.
+>
 
-Hi Linus,
+I lifted the cdiv being odd limitation but it didn't give more speeds.
+The test does demonstrate that it doesn't have to be a power of two though.
 
-Here is the pull-request for the RTC subsystem for 4.20.
+pi@pi2835:~$ od -An -vtu4 --endian=big 
+/sys/bus/spi/devices/spi0.0/of_node/spi-max-frequency
+    40000000
+pi@pi2835:~$ ./libdrm/tests/modetest/modetest -M mi0283qt -s 
+28:320x240@RG16 -v
+setting mode 320x240-0Hz@RG16 on connectors 28, crtc 30
+freq: 26.32Hz
+freq: 26.22Hz
 
-This cycle, there were mostly non urgent fixes in drivers. I also
-finally unexported the non managed registration.
+pi@pi2835:~$ dmesg | grep cdiv
+[   59.820514] bcm2835_spi_transfer_one: cdiv=7
 
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
 
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+pi@pi2835:~$ od -An -vtu4 --endian=big 
+/sys/bus/spi/devices/spi0.0/of_node/spi-max-frequency
+    48000000
+pi@pi2835:~$ ./libdrm/tests/modetest/modetest -M mi0283qt -s 
+28:320x240@RG16 -v
+setting mode 320x240-0Hz@RG16 on connectors 28, crtc 30
+freq: 26.32Hz
+freq: 26.28Hz
 
-are available in the Git repository at:
+pi@pi2835:~$ dmesg | grep cdiv
+[   59.250549] bcm2835_spi_transfer_one: cdiv=6
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git tags/rtc=
--4.20
 
-for you to fetch changes up to 3822d1bb0df18aa28930f19bc46e0704aea1be0f:
+pi@pi2835:~$ od -An -vtu4 --endian=big 
+/sys/bus/spi/devices/spi0.0/of_node/spi-max-frequency
+    56000000
+pi@pi2835:~$ ./libdrm/tests/modetest/modetest -M mi0283qt -s 
+28:320x240@RG16 -v
+setting mode 320x240-0Hz@RG16 on connectors 28, crtc 30
+freq: 35.33Hz
+freq: 35.42Hz
 
-  rtc: sc27xx: Always read normal alarm when registering RTC device (2018-1=
-0-25 02:35:42 +0200)
+pi@pi2835:~$ dmesg | grep cdiv
+[   67.760747] bcm2835_spi_transfer_one: cdiv=5
 
-----------------------------------------------------------------
-RTC for 4.20
 
-Subsystem:
- - non devm managed registration is now removed from the driver API.
- - all the unnecessary rtc_valid_tm() calls have been removed
+pi@pi2835:~$ od -An -vtu4 --endian=big 
+/sys/bus/spi/devices/spi0.0/of_node/spi-max-frequency
+    64000000
 
-Drivers:
- - abx80X: watchdog support
- - cmos: fix non ACPI support
- - sc27xx: fix alarm support
- - Remove a possible sysfs race condition for ab8500, ds1307, ds1685, isl12=
-08
- - Fix a possible race condition where an irq handler may be called before =
-the
-   rtc_device struct is allocated for mt6397, pl030, menelaus, armada38x
+pi@pi2835:~$ ./libdrm/tests/modetest/modetest -M mi0283qt -s 
+28:320x240@RG16 -v
+setting mode 320x240-0Hz@RG16 on connectors 28, crtc 30
+freq: 35.40Hz
+freq: 35.35Hz
 
-----------------------------------------------------------------
-Alexandre Belloni (32):
-      rtc: rv8803: fix the rv8803 id in the OF table
-      rtc: rv8803: add Epson RX8803 support
-      rtc: mt6397: fix possible race condition
-      rtc: pl030: fix possible race condition
-      rtc: pl031: switch to devm_rtc_allocate_device/rtc_register_device
-      mfd: menelaus: Fix possible race condition and leak
-      Merge tag 'ib-mfd-rtc-v4.20' of git://git.kernel.org/.../lee/mfd into=
- rtc-next
-      rtc: unexport non devm managed registration
-      rtc: remove irq_task from kerneldoc
-      rtc: isl1208: avoid possible sysfs race
-      rtc: reorder Makefile entries
-      rtc: move rtc_add_group/s definitions
-      rtc: isl1208: don't include core header file
-      rtc: tx4939: fixup nvmem name and register size
-      rtc: test: make license text and module license match.
-      rtc: test: Switch to SPDX identifier
-      rtc: ds1685: drop RTC_DS1685_PROC_REGS
-      rtc: ds1685: use generic nvmem
-      rtc: ds1685: use rtc_add_group
-      rtc: ds1307: use rtc_add_group
-      rtc: lib: correct documentation typo
-      rtc: armada38x: fix possible race condition
-      rtc: armada38x: add range
-      rtc: armada38x: switch to rtc_time64_to_tm/rtc_tm_to_time64
-      rtc: rs5c348: remove useless label
-      rtc: rs5c348: remove forward declaration
-      rtc: rs5c348: report error when time is invalid
-      rtc: ab8500: use rtc_add_group
-      rtc: ab8500: let the core handle range
-      rtc: ab8500: remove useless check
-      rtc: vr41xx: switch to rtc_time64_to_tm/rtc_tm_to_time64
-      rtc: mv: let the core handle invalid alarms
+pi@pi2835:~$ dmesg | grep cdiv
+[   76.061747] bcm2835_spi_transfer_one: cdiv=4
 
-Arnd Bergmann (1):
-      rtc: mips: default to rtc-cmos on mips
 
-Baolin Wang (5):
-      rtc: sc27xx: Set wakeup capability before registering rtc device
-      rtc: sc27xx: Clear SPG value update interrupt status
-      rtc: sc27xx: Remove interrupts disable and clear in probe()
-      rtc: sc27xx: Add check to see if need to enable the alarm interrupt
-      rtc: sc27xx: Always read normal alarm when registering RTC device
+pi@pi2835:~$ od -An -vtu4 --endian=big 
+/sys/bus/spi/devices/spi0.0/of_node/spi-max-frequency
+    96000000
 
-Dan Carpenter (1):
-      rtc: sysfs: fix NULL check in rtc_add_groups()
+pi@pi2835:~$ ./libdrm/tests/modetest/modetest -M mi0283qt -s 
+28:320x240@RG16 -v
+setting mode 320x240-0Hz@RG16 on connectors 28, crtc 30
+freq: 54.46Hz
+freq: 54.65Hz
 
-Giulio Benetti (2):
-      rtc: ds1307: add offset sysfs for mt41txx chips.
-      rtc: ds1307: add frequency_test_enable  attribute on m41txx
+pi@pi2835:~$ dmesg | grep cdiv
+[  623.200407] bcm2835_spi_transfer_one: cdiv=3
 
-Gustavo A. R. Silva (2):
-      rtc: sun6i: Use struct_size() in kzalloc()
-      rtc: m41t80: mark expected switch fall-through
 
-Jeremy Gebben (2):
-      rtc: abx80x: use a 'priv' struct for client data
-      rtc: abx80x: add basic watchdog support
+pi@pi2835:~$ od -An -vtu4 --endian=big 
+/sys/bus/spi/devices/spi0.0/of_node/spi-max-frequency
+   128000000
+pi@pi2835:~$ ./libdrm/tests/modetest/modetest -M mi0283qt -s 
+28:320x240@RG16 -v
+setting mode 320x240-0Hz@RG16 on connectors 28, crtc 30
+freq: 54.43Hz
+freq: 54.31Hz
 
-Jia-Ju Bai (1):
-      rtc: rtc-mrst: Replace mdelay() with msleep() in mrst_read_time()
+pi@pi2835:~$ dmesg | grep cdiv
+[   65.350713] bcm2835_spi_transfer_one: cdiv=2
 
-Keerthy (2):
-      rtc: omap: use of_device_is_system_power_controller function
-      rtc: omap: Cut down the shutdown time from 2 seconds to 1 sec
 
-Maciej W. Rozycki (2):
-      rtc: cmos: Fix non-ACPI undefined reference to `hpet_rtc_interrupt'
-      rtc: cmos: Remove the `use_acpi_alarm' module parameter for !ACPI
+I can add here that XRGB8888 was added to support things like plymouth
+that only supports that one format. RGB565 is the native format supported
+by the driver. These MIPI compatible controllers do support RGB888, but
+there's no point in implementing it since it will increase the transfer
+time by 50% due to the extra byte, so it's of little use.
 
-Nathan Chancellor (1):
-      rtc: s35390a: Change buf's type to u8 in s35390a_init
+Noralf.
 
-Paul Cercueil (1):
-      rtc: jz4740: Drop dependency on MACH_INGENIC
-
-Soeren Moch (1):
-      rtc: ds1307: fix ds1339 wakealarm support
-
-Thierry Reding (1):
-      rtc: tegra: Propagate errors from platform_get_irq()
-
-Wolfram Sang (1):
-      rtc: ds1685: simplify getting .driver_data
-
-YueHaibing (1):
-      rtc: mrst: remove set but not used variable 'valid'
-
- arch/mips/Kconfig           |   2 +-
- drivers/char/Kconfig        |   2 +-
- drivers/mfd/menelaus.c      |  13 ++-
- drivers/rtc/Kconfig         |  14 +---
- drivers/rtc/Makefile        |  12 +--
- drivers/rtc/class.c         |  12 ++-
- drivers/rtc/interface.c     |   3 -
- drivers/rtc/rtc-ab8500.c    |  96 +++++-----------------
- drivers/rtc/rtc-abx80x.c    | 143 +++++++++++++++++++++++++++++---
- drivers/rtc/rtc-armada38x.c |  46 +++++------
- drivers/rtc/rtc-cmos.c      |  29 +++++--
- drivers/rtc/rtc-core.h      |  14 ----
- drivers/rtc/rtc-ds1307.c    | 145 ++++++++++++++++++++++++++++++++-
- drivers/rtc/rtc-ds1685.c    | 194 ++++++----------------------------------=
-----
- drivers/rtc/rtc-isl1208.c   |  34 +++-----
- drivers/rtc/rtc-lib.c       |   2 +-
- drivers/rtc/rtc-m41t80.c    |   2 +-
- drivers/rtc/rtc-mrst.c      |   5 +-
- drivers/rtc/rtc-mt6397.c    |  13 +--
- drivers/rtc/rtc-mv.c        |   8 +-
- drivers/rtc/rtc-omap.c      |  28 ++++---
- drivers/rtc/rtc-pl030.c     |  15 ++--
- drivers/rtc/rtc-pl031.c     |  18 ++--
- drivers/rtc/rtc-rs5c348.c   |  65 +++++++--------
- drivers/rtc/rtc-rv8803.c    |   7 +-
- drivers/rtc/rtc-s35390a.c   |   2 +-
- drivers/rtc/rtc-sc27xx.c    |  60 +++++++++-----
- drivers/rtc/rtc-sun6i.c     |   3 +-
- drivers/rtc/rtc-sysfs.c     |   4 +-
- drivers/rtc/rtc-tegra.c     |  10 ++-
- drivers/rtc/rtc-test.c      |   7 +-
- drivers/rtc/rtc-tx4939.c    |   4 +-
- drivers/rtc/rtc-vr41xx.c    |   9 +-
- include/linux/rtc.h         |  21 +++--
- 34 files changed, 556 insertions(+), 486 deletions(-)
-
---=20
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---ew6BAiZeqk4r7MaW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEXx9Viay1+e7J/aM4AyWl4gNJNJIFAlvTfx0ACgkQAyWl4gNJ
-NJIVXg/+N2aaHLF8KPjiRaHm7a+uLnopGRHJFYsG+3kr9po1bSG1M01vf/UdiTXk
-Q8f3TOYoR1uDcvOafzRNgNTP3A8473mvR9/5l2/GMW8inCkd4W8VWa/O08BMinTx
-THcDN7jwxCA/uYe/YlEzJMPVCZ8n1LIFy34nsLho7yJs87+dShGmww1/KuM6F2tE
-ARnAHRlJBAxbO1lrGHQp5piVTEuBR+QEPY3u+ORvLEiYCDC5tfLhwX1ZH88V8Hwz
-UgmvgXEhNqHZvLOku2P2T4pKngFX+GL72VDnWdDN5c8iLFMZwjA70Mpe5mfysWCc
-MISTfJq6PVxgVNQSsLBRT1KbODnHKbZjJRE2JDp/sqwNchN1umr0O8YpcMh2u9y3
-BEcitwymrpqpmg/Bx6WwGS8a5L48FWwdyJePYp9FxygdVB1dZ4if0OUnNQ3kUsXj
-/rwax+foE7DJ8vs5QgNu7JLQnHA0aF4C65ZnxN0CvvpH2m9t4Az0wSZEvOJvaIco
-iznxYCGgPMSkqu2fxdCS3UFVAq5Y3g329Slm8eGC/e/KOo9Wvulp6kI4GdlRCsGk
-2eG5x3zLd68Fv1DP0W+GGIYChiY+twwjajJDRSOa4oZhATEzo0SSk++z9z+Y0ds0
-5/uMgZh9l5zlE+TRNGy97E6oYYrdj5qsSwiHgJ1xtxosZte6gKU=
-=yLAq
------END PGP SIGNATURE-----
-
---ew6BAiZeqk4r7MaW--
