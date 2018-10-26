@@ -2,90 +2,107 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 469B0ECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 15:21:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 601C8ECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 15:22:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0EC72084D
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 15:21:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0EC72084D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id 2D9AD2054F
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 15:22:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D9AD2054F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727020AbeJZX6w (ORCPT
+        id S1727491AbeJZX7k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 19:58:52 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36176 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726159AbeJZX6v (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 19:58:51 -0400
-Received: by mail-pg1-f195.google.com with SMTP id z17-v6so698573pgv.3;
-        Fri, 26 Oct 2018 08:21:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=qJ1QkkvYuevMWoHJWSkHbZ2EZBzIsp25VhHZ2Ne7YA0=;
-        b=IfECETKIuE19C/mRfTAOPLL5xXh5TpKlYxBHNxY7vCDRchWGvgpN1plhkgU614A/9i
-         L59agRdLvBK+UR4j0TNwaRssHZhSRSZQl7qzw3LPE+NEWUVQDyjImiDUPjB89JtvFN7l
-         73k41JWWsolkDc+wEHZJmKzm4GcNnwr6rnKRnbuILdgwYpOHVB5LyZUKjdZo2+G3SRsU
-         Vor3DadGesDlUmNFnPM6ElCmZBzHpAZ0RFAhWXg3ujfHnUyTfSTs4nHjjGzzmVuJ5Ewa
-         7vxlVmYY9iF9sBsomk706mXhqxhjo8BMPfmRDoA94GvVc7wMMIcTs0jY9jJ07eUJ+oQ1
-         5eOg==
-X-Gm-Message-State: AGRZ1gKoAGE31YRMNNs/9NQ2VR684N3/HB9rVj52sL4SCA3c8u79vcEt
-        Ag3wGW1M3MMfcT0dJPzjnuw=
-X-Google-Smtp-Source: AJdET5c3jyZ87tNuoYuwzxj/34/zD1tdSupqhqXGD4v5SZKyz3XaiX29GCc/tD3qVA1jhTeQOGwK5g==
-X-Received: by 2002:a63:a84a:: with SMTP id i10mr3931893pgp.263.1540567283520;
-        Fri, 26 Oct 2018 08:21:23 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id d65-v6sm15668362pfe.42.2018.10.26.08.21.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 26 Oct 2018 08:21:21 -0700 (PDT)
-Message-ID: <1540567279.66186.99.camel@acm.org>
-Subject: Re: [PATCH] floppy: Avoid memory access beyond the array bounds in
- setup_rw_floppy()
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Kyungtae Kim <kt0755@gmail.com>, Jens Axboe <axboe@kernel.dk>
-Cc:     jikos@kernel.org, Byoungyoung Lee <lifeasageek@gmail.com>,
-        DaeRyong Jeong <threeearcat@gmail.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 26 Oct 2018 08:21:19 -0700
-In-Reply-To: <CAEAjamtxZRiFUYb4re3jRf9naoSyJO7sskChfEgcBh-m-uEKWQ@mail.gmail.com>
-References: <CAEAjamtxZRiFUYb4re3jRf9naoSyJO7sskChfEgcBh-m-uEKWQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 26 Oct 2018 19:59:40 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54328 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726159AbeJZX7k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 19:59:40 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6CE593082DD1;
+        Fri, 26 Oct 2018 15:22:12 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.106])
+        by smtp.corp.redhat.com (Postfix) with SMTP id CCBCB100190B;
+        Fri, 26 Oct 2018 15:22:09 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Fri, 26 Oct 2018 17:22:12 +0200 (CEST)
+Date:   Fri, 26 Oct 2018 17:22:09 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     serge@hallyn.com,
+        syzbot <syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com>,
+        jmorris@namei.org, keescook@chromium.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: KASAN: use-after-free Read in task_is_descendant
+Message-ID: <20181026152208.GB18848@redhat.com>
+References: <20181025111355.GA3725@redhat.com>
+ <b0ac67e6-4279-91b3-0178-3176876abe70@i-love.sakura.ne.jp>
+ <20181025121709.GD3725@redhat.com>
+ <d11bc954-5a30-e6bd-1668-866a187e0aac@i-love.sakura.ne.jp>
+ <20181025155503.GF3725@redhat.com>
+ <3423a470-c152-0dbf-c7a7-2775a9679194@i-love.sakura.ne.jp>
+ <20181026130442.GB10581@redhat.com>
+ <522c4993-4d98-be98-def2-452ed28098f9@i-love.sakura.ne.jp>
+ <20181026143937.GA18848@redhat.com>
+ <4264173d-4947-9fad-97e6-5269defb6eb4@i-love.sakura.ne.jp>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4264173d-4947-9fad-97e6-5269defb6eb4@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Fri, 26 Oct 2018 15:22:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-10-26 at 10:39 -0400, Kyungtae Kim wrote:
-+AD4 setup+AF8-rw+AF8-floppy() writes some bytes of array cmd to the floppy disk
-+AD4 controller, depending on cmd+AF8-count.
-+AD4 Although the size of array cmd is fixed like 16, cmd+AF8-count can be much
-+AD4 larger through raw+AF8-cmd+AF8-ioctl().
-+AD4 Noticed there is no bound check for this, thereby leading to invalid
-+AD4 memory access.
+On 10/27, Tetsuo Handa wrote:
+>
+> On 2018/10/26 23:39, Oleg Nesterov wrote:
+> > On 10/26, Tetsuo Handa wrote:
+> >> Suppose p1 == p2->real_parent and p2 == p3->real_parent, and p1 exited
+> >> when someone tried to attach on p2, p2->real_parent was pointing to already
+> >> (or about to be) freed p1.
+> >
+> > I don't see a difference.
+> >
+> > If p1 exits it will re-parent p2, p2->real_parent will be updated.
+> >
+> >> So, the puzzle part is why p2->real_parent was still pointing p1 even after
+> >> p1 was freed...
+> >
+> > I don't understand the question.
+> >
+> > Once again. TASK->real_parent can point to the freed mem only if a) TASK exits,
+> > and b) _after_ that its parent TASK->real_parent exits too.
+>
+> Oh, p2 exited and then p1 also exited when someone tried to attach on p2.
+> Then, p2->real_parent can point to already (or about to be) freed p1.
 
-Against which kernel tree did you prepare this patch? Just above the code
-you want to insert I found the following:
+Then we must see pid_alive(p2) == F as I already explained you in my
+yesterday's email.
 
-	if (ptr-+AD4-cmd+AF8-count +AD4 33) ...
+Because if p1 exits _after_ p2, then pid_alive(p2) == F must be already
+completed, p1 can't exit (I mean, release_task(p1) can't be called) until
+release_task(p2) does detach_pid() and drops tasklist_lock.
 
-Why does that statement compare cmd+AF8-count with 33? Is that comparison correct
-or not? Anyway, I don't think it makes sense first to compare cmd+AF8-count against
-33 and next to compare it against 16 ...
+> (By the way, if p->real_parent were updated to point to init_task when p exits,
+> we could omit pid_alive() check?)
 
-+AD4 +-       if (ptr-+AD4-cmd+AF8-count +AD4 ARRAY+AF8-SIZE(ptr-+AD4-cmd))
-+AD4 +-               return -EINVAL+ADs
+Sorry, I don't understand the question...
 
-This comparison looks suspicious to me. Almost every comparison of the type
-+ACI... +AD4 ARRAY+AF8-SIZE()+ACI I have seen so far was wrong and should be changed into
-+ACI... +AD4APQ ARRAY+AF8-SIZE()+ACI instead.
+Ignoring the PR_SET_CHILD_SUBREAPER parents, ignoring the exiting sub-threads
+which reparent to group leader, ->real_parent is alwasy updated to point to
+init_task. But I don't see why we could omit pid_alive() check.
 
-Bart.
+Oleg.
+
