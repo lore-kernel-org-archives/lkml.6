@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55C94ECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:48:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A2AAC6786E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:48:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22ED120868
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:48:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22ED120868
+	by mail.kernel.org (Postfix) with ESMTP id C7E3120868
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:48:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7E3120868
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727613AbeJZWZr (ORCPT
+        id S1727689AbeJZWZu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 18:25:47 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44790 "EHLO mx1.suse.de"
+        Fri, 26 Oct 2018 18:25:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44886 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727431AbeJZWZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 18:25:46 -0400
+        id S1727624AbeJZWZt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 18:25:49 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 11A1DB04D;
-        Fri, 26 Oct 2018 13:48:37 +0000 (UTC)
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 178B1B059;
+        Fri, 26 Oct 2018 13:48:40 +0000 (UTC)
 From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 To:     stefan.wahren@i2se.com, eric@anholt.net,
         dave.stevenson@raspberrypi.org
 Cc:     nsaenzjulienne@suse.de, linux-rpi-kernel@lists.infradead.org,
         gregkh@linuxfoundation.org, linux-arm-kernel@lists.infradead.org,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH RFC 12/18] staging: vchiq_util: use completions instead of semaphores
-Date:   Fri, 26 Oct 2018 15:48:07 +0200
-Message-Id: <20181026134813.7775-13-nsaenzjulienne@suse.de>
+Subject: [PATCH RFC 17/18] staging: vchiq_arm: fix open/release cdev functions
+Date:   Fri, 26 Oct 2018 15:48:12 +0200
+Message-Id: <20181026134813.7775-18-nsaenzjulienne@suse.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181026134813.7775-1-nsaenzjulienne@suse.de>
 References: <20181026134813.7775-1-nsaenzjulienne@suse.de>
@@ -45,106 +45,334 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is preferred in the kernel to avoid using semaphores to wait for
-events, as they are optimised for the opposite situation; where the
-common case is that they are available and may block only occasionally.
-FYI see this thread: https://lkml.org/lkml/2008/4/11/323.
+Both functions checked the minor number of the cdev prior running the
+code. This was useless since the number of devices is already limited by
+alloc_chrdev_region.
 
-Also completions are semantically more explicit in this case.
+This removes the check and reindents the code where relevant.
 
 Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 ---
- .../interface/vchiq_arm/vchiq_util.c             | 16 ++++++++--------
- .../interface/vchiq_arm/vchiq_util.h             |  6 +++---
- 2 files changed, 11 insertions(+), 11 deletions(-)
+ .../interface/vchiq_arm/vchiq_arm.c           | 247 +++++++-----------
+ 1 file changed, 100 insertions(+), 147 deletions(-)
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_util.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_util.c
-index 2e52f07bbaa9..44b954daa74a 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_util.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_util.c
-@@ -48,8 +48,8 @@ int vchiu_queue_init(VCHIU_QUEUE_T *queue, int size)
- 	queue->write = 0;
- 	queue->initialized = 1;
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+index a7dcced79980..153a396d21bd 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+@@ -63,8 +63,6 @@
+ #undef MODULE_PARAM_PREFIX
+ #define MODULE_PARAM_PREFIX DEVICE_NAME "."
  
--	sema_init(&queue->pop, 0);
--	sema_init(&queue->push, 0);
-+	init_completion(&queue->pop);
-+	init_completion(&queue->push);
+-#define VCHIQ_MINOR 0
+-
+ /* Some per-instance constants */
+ #define MAX_COMPLETIONS 128
+ #define MAX_SERVICES 64
+@@ -1950,195 +1948,150 @@ vchiq_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
  
- 	queue->storage = kcalloc(size, sizeof(VCHIQ_HEADER_T *), GFP_KERNEL);
- 	if (!queue->storage) {
-@@ -80,7 +80,7 @@ void vchiu_queue_push(VCHIU_QUEUE_T *queue, VCHIQ_HEADER_T *header)
- 		return;
+ #endif
  
- 	while (queue->write == queue->read + queue->size) {
--		if (down_interruptible(&queue->pop) != 0)
-+		if (wait_for_completion_interruptible(&queue->pop))
- 			flush_signals(current);
- 	}
- 
-@@ -100,17 +100,17 @@ void vchiu_queue_push(VCHIU_QUEUE_T *queue, VCHIQ_HEADER_T *header)
- 
- 	queue->write++;
- 
--	up(&queue->push);
-+	complete(&queue->push);
- }
- 
- VCHIQ_HEADER_T *vchiu_queue_peek(VCHIU_QUEUE_T *queue)
+-/****************************************************************************
+-*
+-*   vchiq_open
+-*
+-***************************************************************************/
+-
+-static int
+-vchiq_open(struct inode *inode, struct file *file)
++static int vchiq_open(struct inode *inode, struct file *file)
  {
- 	while (queue->write == queue->read) {
--		if (down_interruptible(&queue->push) != 0)
-+		if (wait_for_completion_interruptible(&queue->push))
- 			flush_signals(current);
- 	}
+-	int dev = iminor(inode) & 0x0f;
++	VCHIQ_STATE_T *state = vchiq_get_state();
++	VCHIQ_INSTANCE_T instance;
  
--	up(&queue->push); // We haven't removed anything from the queue.
-+	complete(&queue->push); // We haven't removed anything from the queue.
+ 	vchiq_log_info(vchiq_arm_log_level, "vchiq_open");
+-	switch (dev) {
+-	case VCHIQ_MINOR: {
+-		VCHIQ_STATE_T *state = vchiq_get_state();
+-		VCHIQ_INSTANCE_T instance;
  
- 	/*
- 	 * Read from queue->storage must be visible after read from
-@@ -126,7 +126,7 @@ VCHIQ_HEADER_T *vchiu_queue_pop(VCHIU_QUEUE_T *queue)
- 	VCHIQ_HEADER_T *header;
+-		if (!state) {
+-			vchiq_log_error(vchiq_arm_log_level,
++	if (!state) {
++		vchiq_log_error(vchiq_arm_log_level,
+ 				"vchiq has no connection to VideoCore");
+-			return -ENOTCONN;
+-		}
+-
+-		instance = kzalloc(sizeof(*instance), GFP_KERNEL);
+-		if (!instance)
+-			return -ENOMEM;
++		return -ENOTCONN;
++	}
  
- 	while (queue->write == queue->read) {
--		if (down_interruptible(&queue->push) != 0)
-+		if (wait_for_completion_interruptible(&queue->push))
- 			flush_signals(current);
- 	}
+-		instance->state = state;
+-		instance->pid = current->tgid;
++	instance = kzalloc(sizeof(*instance), GFP_KERNEL);
++	if (!instance)
++		return -ENOMEM;
  
-@@ -146,7 +146,7 @@ VCHIQ_HEADER_T *vchiu_queue_pop(VCHIU_QUEUE_T *queue)
+-		vchiq_debugfs_add_instance(instance);
++	instance->state = state;
++	instance->pid = current->tgid;
  
- 	queue->read++;
+-		init_completion(&instance->insert_event);
+-		init_completion(&instance->remove_event);
+-		mutex_init(&instance->completion_mutex);
+-		mutex_init(&instance->bulk_waiter_list_mutex);
+-		INIT_LIST_HEAD(&instance->bulk_waiter_list);
++	vchiq_debugfs_add_instance(instance);
  
--	up(&queue->pop);
-+	complete(&queue->pop);
+-		file->private_data = instance;
+-	} break;
++	init_completion(&instance->insert_event);
++	init_completion(&instance->remove_event);
++	mutex_init(&instance->completion_mutex);
++	mutex_init(&instance->bulk_waiter_list_mutex);
++	INIT_LIST_HEAD(&instance->bulk_waiter_list);
  
- 	return header;
+-	default:
+-		vchiq_log_error(vchiq_arm_log_level,
+-			"Unknown minor device: %d", dev);
+-		return -ENXIO;
+-	}
++	file->private_data = instance;
+ 
+ 	return 0;
  }
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_util.h b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_util.h
-index 5a1540d349d3..b226227fe5bc 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_util.h
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_util.h
-@@ -35,7 +35,7 @@
- #define VCHIQ_UTIL_H
  
- #include <linux/types.h>
--#include <linux/semaphore.h>
-+#include <linux/completion.h>
- #include <linux/mutex.h>
- #include <linux/bitops.h>
- #include <linux/kthread.h>
-@@ -60,8 +60,8 @@ typedef struct {
- 	int write;
- 	int initialized;
+-/****************************************************************************
+-*
+-*   vchiq_release
+-*
+-***************************************************************************/
+-
+-static int
+-vchiq_release(struct inode *inode, struct file *file)
++static int vchiq_release(struct inode *inode, struct file *file)
+ {
+-	int dev = iminor(inode) & 0x0f;
++	VCHIQ_INSTANCE_T instance = file->private_data;
++	VCHIQ_STATE_T *state = vchiq_get_state();
++	VCHIQ_SERVICE_T *service;
+ 	int ret = 0;
++	int i;
  
--	struct semaphore pop;
--	struct semaphore push;
-+	struct completion pop;
-+	struct completion push;
+-	switch (dev) {
+-	case VCHIQ_MINOR: {
+-		VCHIQ_INSTANCE_T instance = file->private_data;
+-		VCHIQ_STATE_T *state = vchiq_get_state();
+-		VCHIQ_SERVICE_T *service;
+-		int i;
++	vchiq_log_info(vchiq_arm_log_level, "%s: instance=%lx", __func__,
++		       (unsigned long)instance);
  
- 	VCHIQ_HEADER_T **storage;
- } VCHIU_QUEUE_T;
+-		vchiq_log_info(vchiq_arm_log_level,
+-			"%s: instance=%lx",
+-			__func__, (unsigned long)instance);
++	if (!state) {
++		ret = -EPERM;
++		goto out;
++	}
+ 
+-		if (!state) {
+-			ret = -EPERM;
+-			goto out;
+-		}
++	/* Ensure videocore is awake to allow termination. */
++	vchiq_use_internal(instance->state, NULL, USE_TYPE_VCHIQ);
+ 
+-		/* Ensure videocore is awake to allow termination. */
+-		vchiq_use_internal(instance->state, NULL,
+-				USE_TYPE_VCHIQ);
++	mutex_lock(&instance->completion_mutex);
+ 
+-		mutex_lock(&instance->completion_mutex);
++	/* Wake the completion thread and ask it to exit */
++	instance->closing = 1;
++	complete(&instance->insert_event);
+ 
+-		/* Wake the completion thread and ask it to exit */
+-		instance->closing = 1;
+-		complete(&instance->insert_event);
++	mutex_unlock(&instance->completion_mutex);
+ 
+-		mutex_unlock(&instance->completion_mutex);
++	/* Wake the slot handler if the completion queue is full. */
++	complete(&instance->remove_event);
+ 
+-		/* Wake the slot handler if the completion queue is full. */
+-		complete(&instance->remove_event);
++	/* Mark all services for termination... */
++	i = 0;
++	while ((service = next_service_by_instance(state, instance, &i))) {
++		USER_SERVICE_T *user_service = service->base.userdata;
+ 
+-		/* Mark all services for termination... */
+-		i = 0;
+-		while ((service = next_service_by_instance(state, instance,
+-			&i)) !=	NULL) {
+-			USER_SERVICE_T *user_service = service->base.userdata;
++		/* Wake the slot handler if the msg queue is full. */
++		complete(&user_service->remove_event);
+ 
+-			/* Wake the slot handler if the msg queue is full. */
+-			complete(&user_service->remove_event);
++		vchiq_terminate_service_internal(service);
++		unlock_service(service);
++	}
+ 
+-			vchiq_terminate_service_internal(service);
+-			unlock_service(service);
+-		}
++	/* ...and wait for them to die */
++	i = 0;
++	while ((service = next_service_by_instance(state, instance, &i))) {
++		USER_SERVICE_T *user_service = service->base.userdata;
+ 
+-		/* ...and wait for them to die */
+-		i = 0;
+-		while ((service = next_service_by_instance(state, instance, &i))
+-			!= NULL) {
+-			USER_SERVICE_T *user_service = service->base.userdata;
++		wait_for_completion(&service->remove_event);
++
++		BUG_ON(service->srvstate != VCHIQ_SRVSTATE_FREE);
+ 
+-			wait_for_completion(&service->remove_event);
++		spin_lock(&msg_queue_spinlock);
++
++		while (user_service->msg_remove != user_service->msg_insert) {
++			VCHIQ_HEADER_T *header;
++			int m = user_service->msg_remove & (MSG_QUEUE_SIZE - 1);
+ 
+-			BUG_ON(service->srvstate != VCHIQ_SRVSTATE_FREE);
++			header = user_service->msg_queue[m];
++			user_service->msg_remove++;
++			spin_unlock(&msg_queue_spinlock);
+ 
++			if (header)
++				vchiq_release_message(service->handle, header);
+ 			spin_lock(&msg_queue_spinlock);
++		}
+ 
+-			while (user_service->msg_remove !=
+-				user_service->msg_insert) {
+-				VCHIQ_HEADER_T *header;
+-				int m = user_service->msg_remove &
+-					(MSG_QUEUE_SIZE - 1);
++		spin_unlock(&msg_queue_spinlock);
+ 
+-				header = user_service->msg_queue[m];
+-				user_service->msg_remove++;
+-				spin_unlock(&msg_queue_spinlock);
++		unlock_service(service);
++	}
+ 
+-				if (header)
+-					vchiq_release_message(
+-						service->handle,
+-						header);
+-				spin_lock(&msg_queue_spinlock);
+-			}
++	/* Release any closed services */
++	while (instance->completion_remove !=
++		instance->completion_insert) {
++		VCHIQ_COMPLETION_DATA_T *completion;
++		VCHIQ_SERVICE_T *service;
+ 
+-			spin_unlock(&msg_queue_spinlock);
++		completion = &instance->completions[
++			instance->completion_remove & (MAX_COMPLETIONS - 1)];
++		service = completion->service_userdata;
++		if (completion->reason == VCHIQ_SERVICE_CLOSED) {
++			USER_SERVICE_T *user_service = service->base.userdata;
+ 
++			/* Wake any blocked user-thread */
++			if (instance->use_close_delivered)
++				complete(&user_service->close_event);
+ 			unlock_service(service);
+ 		}
++		instance->completion_remove++;
++	}
+ 
+-		/* Release any closed services */
+-		while (instance->completion_remove !=
+-			instance->completion_insert) {
+-			VCHIQ_COMPLETION_DATA_T *completion;
+-			VCHIQ_SERVICE_T *service;
+-
+-			completion = &instance->completions[
+-				instance->completion_remove &
+-				(MAX_COMPLETIONS - 1)];
+-			service = completion->service_userdata;
+-			if (completion->reason == VCHIQ_SERVICE_CLOSED) {
+-				USER_SERVICE_T *user_service =
+-					service->base.userdata;
+-
+-				/* Wake any blocked user-thread */
+-				if (instance->use_close_delivered)
+-					complete(&user_service->close_event);
+-				unlock_service(service);
+-			}
+-			instance->completion_remove++;
+-		}
+-
+-		/* Release the PEER service count. */
+-		vchiq_release_internal(instance->state, NULL);
++	/* Release the PEER service count. */
++	vchiq_release_internal(instance->state, NULL);
+ 
+-		{
+-			struct bulk_waiter_node *waiter, *next;
++	{
++		struct bulk_waiter_node *waiter, *next;
+ 
+-			list_for_each_entry_safe(waiter, next,
+-					&instance->bulk_waiter_list, list) {
+-				list_del(&waiter->list);
+-				vchiq_log_info(vchiq_arm_log_level,
+-					"bulk_waiter - cleaned up %pK for pid %d",
+-					waiter, waiter->pid);
+-				kfree(waiter);
+-			}
++		list_for_each_entry_safe(waiter, next,
++					 &instance->bulk_waiter_list, list) {
++			list_del(&waiter->list);
++			vchiq_log_info(vchiq_arm_log_level,
++				"bulk_waiter - cleaned up %pK for pid %d",
++				waiter, waiter->pid);
++			kfree(waiter);
+ 		}
++	}
+ 
+-		vchiq_debugfs_remove_instance(instance);
++	vchiq_debugfs_remove_instance(instance);
+ 
+-		kfree(instance);
+-		file->private_data = NULL;
+-	} break;
+-
+-	default:
+-		vchiq_log_error(vchiq_arm_log_level,
+-			"Unknown minor device: %d", dev);
+-		ret = -ENXIO;
+-	}
++	kfree(instance);
++	file->private_data = NULL;
+ 
+ out:
+ 	return ret;
+@@ -3613,7 +3566,7 @@ static int __init vchiq_driver_init(void)
+ 		return PTR_ERR(vchiq_class);
+ 	}
+ 
+-	ret = alloc_chrdev_region(&vchiq_devid, VCHIQ_MINOR, 1, DEVICE_NAME);
++	ret = alloc_chrdev_region(&vchiq_devid, 0, 1, DEVICE_NAME);
+ 	if (ret) {
+ 		pr_err("Failed to allocate vchiq's chrdev region\n");
+ 		goto class_destroy;
 -- 
 2.19.1
 
