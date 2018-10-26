@@ -2,122 +2,86 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B91A1ECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 22:56:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15253ECDE46
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 22:58:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4310A2085B
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 22:56:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uFLqGmqQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4310A2085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C56562085B
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 22:58:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C56562085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728323AbeJ0Hfn (ORCPT
+        id S1728559AbeJ0HhQ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 03:35:43 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39523 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728133AbeJ0Hfn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 03:35:43 -0400
-Received: by mail-wr1-f66.google.com with SMTP id r10-v6so2803305wrv.6
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 15:56:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=ydYQIbR1asUPae4hW+soJCu8ie5aNmZQJu3Xr7vUY2U=;
-        b=uFLqGmqQNHllT+h9VdQYY+ynVhGigh5gVDP3RmQOAo2tkSEX9l6TYCmoRqDDofOzlr
-         xASVbyIx3fk2C8DDWIoORHJ3QjnWRkV9Fd4JXd5xZ9MORHCvv3/fTaKFmZynakPTDvHg
-         Rrl5lEidHiBb4NVG7Czlc1P8fMvjt44W8j/gzxt/6u0iBfqbIh/p4gfCPG67KtHySp/5
-         zJGDcyCAt+tGeVnqsbkqh4LTmwsb9wITcw43+4YAqB7MVXXb0LLYRBb1S/JzJfjavU6R
-         KoOIXgDYvkw3zoWZlXDycgLoJulfptRB3NpDK9gPwd43U0UsCRdGARSQcpYK9PvKPm+C
-         HDxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ydYQIbR1asUPae4hW+soJCu8ie5aNmZQJu3Xr7vUY2U=;
-        b=Zak/sEgU6xi2TtFl1Uy0p2+ZnEOea6LMweHbCFR86ugPadNVFdxSOPXKRFaWKEkLZb
-         rNiL6vbA8m8kVbfEdfM8Ws4GrfMioLZbT1xbkN+kq1x4q5vAXJPhCl5CUblx31gp4jV/
-         xPL2hkeSCHF2MapTeou1v9FQHkyxxkceviEaW3XHsqh4tVlWsuO5WTodgyQjuRHRWu7M
-         Iqk+O7NJMMGcGczrD2Nph7zrQgntpceg3xgByJJtRM5anqPftwXxx0nSzhKosiTH2tQS
-         xg9DGwl24ECWQzsYD7LXWt33kncel9F0BbkJDoOE5jqNRzsV1MktTblDbEymvxOQ8gnz
-         4CCQ==
-X-Gm-Message-State: AGRZ1gJgVed0rt3c+PqKNqVO3axWKh0hI/KBLnlKL9SkWbE0vMzVz3ak
-        dC23FIWjcxLcmV2YgI2s3ZNo5TAY25taI832ClQ=
-X-Google-Smtp-Source: AJdET5caOeiba2wlOkKVpOhCqMSBWa2m22NmlB38y/olmGcEFSwrt4jU4rGM5g1Ea7TdVh/St5pVpFhMddR71Oniozo=
-X-Received: by 2002:adf:d181:: with SMTP id h1-v6mr7215146wri.138.1540594607746;
- Fri, 26 Oct 2018 15:56:47 -0700 (PDT)
+        Sat, 27 Oct 2018 03:37:16 -0400
+Received: from mga06.intel.com ([134.134.136.31]:30275 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728133AbeJ0HhQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Oct 2018 03:37:16 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Oct 2018 15:58:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,429,1534834800"; 
+   d="scan'208";a="275976854"
+Received: from orsmsx107.amr.corp.intel.com ([10.22.240.5])
+  by fmsmga006.fm.intel.com with ESMTP; 26 Oct 2018 15:58:21 -0700
+Received: from orsmsx110.amr.corp.intel.com ([169.254.10.20]) by
+ ORSMSX107.amr.corp.intel.com ([169.254.1.14]) with mapi id 14.03.0319.002;
+ Fri, 26 Oct 2018 15:58:20 -0700
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     Firoz Khan <firoz.khan@linaro.org>,
+        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
+        "Yu, Fenghua" <fenghua.yu@intel.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+CC:     "y2038@lists.linaro.org" <y2038@lists.linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "deepa.kernel@gmail.com" <deepa.kernel@gmail.com>,
+        "marcin.juszkiewicz@linaro.org" <marcin.juszkiewicz@linaro.org>
+Subject: RE: [PATCH v4 0/5] ia64: system call table generation support
+Thread-Topic: [PATCH v4 0/5] ia64: system call table generation support
+Thread-Index: AQHUbOpkghKucEByO0a+Z5GnhAF2tKUyJC4w
+Date:   Fri, 26 Oct 2018 22:58:20 +0000
+Message-ID: <3908561D78D1C84285E8C5FCA982C28F7D42C7D2@ORSMSX110.amr.corp.intel.com>
+References: <1540530674-3824-1-git-send-email-firoz.khan@linaro.org>
+In-Reply-To: <1540530674-3824-1-git-send-email-firoz.khan@linaro.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNDlmMmQxZjYtYmJmOC00ZjlmLWI0YzEtYzFiZGYzYmJkODM0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoic0JqQUFETWJDdEtiWDJrbWQrbFwvdE8wNXNSYmNlOWN3VjBRWTRjZU54eHJFNnc0bjNiVU9BT0hHQkpZNUdWTXIifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.138]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <20181026195146.9C7C1136@viggo.jf.intel.com> <0e5fd8bc-0b18-ea88-ed95-ec81a44d0783@intel.com>
- <CA+DvKQLpizz2LJppOts1fB6ujQNqj0fii8mo-UfosoYpQWRb5g@mail.gmail.com> <FA6429E0-C480-47AA-AAF0-95E615D8265B@amacapital.net>
-In-Reply-To: <FA6429E0-C480-47AA-AAF0-95E615D8265B@amacapital.net>
-From:   Daniel Micay <danielmicay@gmail.com>
-Date:   Fri, 26 Oct 2018 18:56:21 -0400
-Message-ID: <CA+DvKQJYmWm6uP6k4HYdkuTdMX7=rSu34W2j-Vk8YcnWZVA-3w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] x86/pkeys: copy pkey state at fork()
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Dave Hansen <dave.hansen@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Will Deacon <will.deacon@arm.com>,
-        Andy Lutomirski <luto@kernel.org>, jroedel@suse.de
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 26 Oct 2018 at 18:12, Andy Lutomirski <luto@amacapital.net> wrote:
->
->
->
-> > On Oct 26, 2018, at 2:39 PM, Daniel Micay <danielmicay@gmail.com> wrote=
-:
-> >
-> > I ended up working around this with a pthread_atfork handler disabling
-> > my usage of the feature in the child process for the time being. I
-> > don't have an easy way to detect if the bug is present within a
-> > library so
->
-> Can you not just make sure that the fix is backported to all relevant ker=
-nels?
+> Finally, this is the ground work to solve the Y2038 issue. We need 
+> to add two dozen of system calls to solve Y2038 issue. So this patch
+> series will help to add new system calls easily by adding new entry 
+> in the syscall.tbl.
 
-There are too many different distribution kernels and I won't be in
-control of where the software is used.
+You have great optimism that anyone will care about ia64 in 2038 :-)
 
-> I suppose we could add a new flag for pkey_get() or something.
+Patches look good now.  If I don't see any comments in the next few
+days I'll queue them for next merge window.
 
-That would work, since I can apply the workaround (disabling the
-feature in child processes) if I get EINVAL. The flag wouldn't need to
-do anything, just existing and being tied to this patch so I have a
-way to detect that I can safely use MPK after fork.
+Thanks
 
-> > I'm going to need a kernel version check with a table of
-> > kernel releases fixing the problem for each stable branch.
->
-> That won=E2=80=99t work right on district kernels. Please don=E2=80=99t g=
-o there.
-
-If it's backported to an earlier version, it will just mean missing a
-chance to use it. I'm not going to assume that it behaves a certain
-way based on having an old kernel, but rather I just won't use it in a
-forked child on an older kernel version if I don't have a way to
-detect the problem. It's for a few different uses in library code so
-I can't have a runtime test trying to detect it with clone(...). I'd
-definitely prefer a proper way to detect that I can use it after fork. I re=
-ally
-don't want to have a hack like that which is why I'm bringing it up.
+-Tony
