@@ -7,67 +7,68 @@ X-Spam-Status: No, score=-9.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E41BECDE46
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 17:36:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDDC8ECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 17:36:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01A232084D
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 17:36:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 956BE20868
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 17:36:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="iFwHjdzC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01A232084D
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QrwWNaG1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 956BE20868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727758AbeJ0COC (ORCPT
+        id S1727784AbeJ0COF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 22:14:02 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39989 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727724AbeJ0COB (ORCPT
+        Fri, 26 Oct 2018 22:14:05 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:42254 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727759AbeJ0COF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 22:14:01 -0400
-Received: by mail-pg1-f194.google.com with SMTP id o14-v6so855006pgv.7
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 10:36:07 -0700 (PDT)
+        Fri, 26 Oct 2018 22:14:05 -0400
+Received: by mail-pf1-f195.google.com with SMTP id f26-v6so881695pfn.9
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 10:36:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=rMPYYtJcfOKkkPHMGb8Y8gDAK7xJI/9Pi23QASvDL1E=;
-        b=iFwHjdzC8umg6IlyVFmFkpjQiVZWuqG1U+1T3PuD3ziLxVxvtXPPuQ6oZxGx8fBaid
-         50Kbz9sulA/y4I7PbEhD9lJCcQXAs6x76gJ8e34Q8evj2yQLD+GwjrNJaXMBJqDL251G
-         k4L6s0B+9Cbj+SN1AmwT5FZzICYYX3ycp6bHg=
+        bh=PteDfKg2sjPU8GQpzvIO14bIYL+O+BA756dZUBXv6tU=;
+        b=QrwWNaG1lXd02WO21bjNs3fmRSj7JiJ7RfUNvb99Rzh3bD5klyrxRxvr1/171MxImF
+         9kVfK0Eecr7Y9C6663eDEwu68UQxeDbIIs9/Jz2mmwHod3Qs+dTr/wuFaLx2HW2L6Mh4
+         Ml1WdBmJPLesYaTs6O2OzafknRUxrF+WorSmw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=rMPYYtJcfOKkkPHMGb8Y8gDAK7xJI/9Pi23QASvDL1E=;
-        b=N7x6Dksj9hCRIzVez9WJPoTTaaZ5NyR7k7yGAxHqGpLeenlxpSgL+7MDGcMFUfFcEo
-         QjFDj1JrMPT4zB9Ongu15Jx7BqqmDyjvMRDjLQtdmsbnDWXbBC43CAdWA+RRGkJ0Fu6p
-         WuvM1OyvTPMsVY901goakLYaJp+NXUtJsE4uL0mwXS5JNJjXZRQ7YqZLukuK8ckxBxYy
-         3H7sOm6ET2fI6pqSyc09KbnMOggTw/CKT+xaEmEeIqG0lgecYbMBnrpOcsNxjthjCRki
-         yqtvRY7LcYasLS96BkawoyQoNifg4hnoL3lnX15Li9xamG7fyNzoZIqscU0gJ4Qa2eBx
-         CtrA==
-X-Gm-Message-State: AGRZ1gIbpuB/Vb7jAsodjjUGMmTvkwCJvm9Wmqq/WZnjGPI3N37fGH1o
-        fhBqFJ9FR08GA8BlX4kHWujgRg==
-X-Google-Smtp-Source: AJdET5c1qJJCHCwt+KVf9bb+Beg1nuXAeWpGIGCRchaOj898q0GKpfLfBOSebanEwX0Js5gO8NJqSA==
-X-Received: by 2002:a63:9e58:: with SMTP id r24mr4466127pgo.264.1540575367630;
-        Fri, 26 Oct 2018 10:36:07 -0700 (PDT)
+        bh=PteDfKg2sjPU8GQpzvIO14bIYL+O+BA756dZUBXv6tU=;
+        b=ZBpsCZN7lidl2P0gcaMxSVT1zm/H9dMgAEuJvWXuErJJANgZgAk/DUrvzuVPv0PFVP
+         8n7skYVWSdmsSmATmAPdtfHh1tNKYZJ3gLXRk0s5999/kX0e0Ze7EYsMBvdwP3noepZ+
+         hYBFWL1LIE7zNrlk3+Au2SrYmnR+dizrMwngSOzHh+pTIsrBKWqJxBMBIvTAZ6LYFxpp
+         /0WWS24ZIjreQIXcjKMem4RP4rncChqwHMcL0hsohle8u5UQXtZgcmjjs9vsrBLKspyr
+         xpD35ADxNUk6Yr98KAy7KKAt2/EohLXJ/RjzZIPOqo/c9SZEpX//rMPNSz6HFeJd3chB
+         jD2w==
+X-Gm-Message-State: AGRZ1gJE7lGT7glsi91BfMlY1pA1Lfb/AgywoC8ALcxOtcFvM2b8no36
+        JA32yHoh680p19OALNEokbf7xw==
+X-Google-Smtp-Source: AJdET5d0cgF5A2cjMuQza8KRpAWakLVECFTDBi85IVSJwrkQn7g4ukHilmgjt6EbG7wJxTg0qxqHZw==
+X-Received: by 2002:a62:8012:: with SMTP id j18-v6mr4635258pfd.202.1540575371842;
+        Fri, 26 Oct 2018 10:36:11 -0700 (PDT)
 Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:e418:c825:76cf:5f64])
-        by smtp.gmail.com with ESMTPSA id b29-v6sm20164448pfj.183.2018.10.26.10.36.06
+        by smtp.gmail.com with ESMTPSA id b29-v6sm20164448pfj.183.2018.10.26.10.36.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 26 Oct 2018 10:36:06 -0700 (PDT)
+        Fri, 26 Oct 2018 10:36:10 -0700 (PDT)
 From:   Evan Green <evgreen@chromium.org>
 To:     Rob Herring <robh@kernel.org>, Andy Gross <andy.gross@linaro.org>,
         Kishon Vijay Abraham I <kishon@ti.com>
 Cc:     Douglas Anderson <dianders@chromium.org>,
         Stephen Boyd <swboyd@chromium.org>,
+        Can Guo <cang@codeaurora.org>,
         Evan Green <evgreen@chromium.org>, devicetree@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         Rob Herring <robh+dt@kernel.org>,
         David Brown <david.brown@linaro.org>,
         Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org
-Subject: [PATCH v5 3/5] arm64: dts: qcom: sdm845: add UFS controller
-Date:   Fri, 26 Oct 2018 10:35:42 -0700
-Message-Id: <20181026173544.136037-4-evgreen@chromium.org>
+Subject: [PATCH v5 4/5] arm64: dts: qcom: sdm845: Add UFS nodes for sdm845-mtp
+Date:   Fri, 26 Oct 2018 10:35:43 -0700
+Message-Id: <20181026173544.136037-5-evgreen@chromium.org>
 X-Mailer: git-send-email 2.16.4
 In-Reply-To: <20181026173544.136037-1-evgreen@chromium.org>
 References: <20181026173544.136037-1-evgreen@chromium.org>
@@ -76,103 +77,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the UFS controller and PHY to SDM845.
+From: Can Guo <cang@codeaurora.org>
 
+Enable the UFS host controller and PHY on sdm845-mtp.
+
+Signed-off-by: Can Guo <cang@codeaurora.org>
 Signed-off-by: Evan Green <evgreen@chromium.org>
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
 ---
-As Doug mentioned in v2, this should land after (or with) the driver fix
-in this series.
 
 Changes in v5: None
 Changes in v4: None
 Changes in v3: None
-Changes in v2:
-- Renamed ufsphy to phy (Vivek)
-- Removed #clock-cells (Vivek)
+Changes in v2: None
 
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 67 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
+ arch/arm64/boot/dts/qcom/sdm845-mtp.dts | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index b72bdb0a31a5..9c72edb678ec 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -808,6 +808,73 @@
- 			};
- 		};
+diff --git a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+index eedfaf8922e2..d5fddea71a85 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
++++ b/arch/arm64/boot/dts/qcom/sdm845-mtp.dts
+@@ -356,6 +356,20 @@
+ 	status = "okay";
+ };
  
-+		ufshc1: ufshc@1d84000 {
-+			compatible = "qcom,sdm845-ufshc", "qcom,ufshc",
-+				     "jedec,ufs-2.0";
-+			reg = <0x1d84000 0x2500>;
-+			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>;
-+			phys = <&ufsphy1_lanes>;
-+			phy-names = "ufsphy";
-+			lanes-per-direction = <2>;
-+			power-domains = <&gcc UFS_PHY_GDSC>;
++&ufshc1 {
++	status = "okay";
 +
-+			clock-names =
-+				"core_clk",
-+				"bus_aggr_clk",
-+				"iface_clk",
-+				"core_clk_unipro",
-+				"ref_clk",
-+				"tx_lane0_sync_clk",
-+				"rx_lane0_sync_clk",
-+				"rx_lane1_sync_clk";
-+			clocks =
-+				<&gcc GCC_UFS_PHY_AXI_CLK>,
-+				<&gcc GCC_AGGRE_UFS_PHY_AXI_CLK>,
-+				<&gcc GCC_UFS_PHY_AHB_CLK>,
-+				<&gcc GCC_UFS_PHY_UNIPRO_CORE_CLK>,
-+				<&rpmhcc RPMH_CXO_CLK>,
-+				<&gcc GCC_UFS_PHY_TX_SYMBOL_0_CLK>,
-+				<&gcc GCC_UFS_PHY_RX_SYMBOL_0_CLK>,
-+				<&gcc GCC_UFS_PHY_RX_SYMBOL_1_CLK>;
-+			freq-table-hz =
-+				<50000000 200000000>,
-+				<0 0>,
-+				<0 0>,
-+				<37500000 150000000>,
-+				<0 0>,
-+				<0 0>,
-+				<0 0>,
-+				<0 0>;
++	vcc-supply = <&vreg_l20a_2p95>;
++	vcc-max-microamp = <600000>;
++};
 +
-+			resets = <&gcc GCC_UFS_PHY_BCR>;
-+			reset-names = "rst";
++&ufsphy1 {
++	status = "okay";
 +
-+			status = "disabled";
-+		};
++	vdda-phy-supply = <&vdda_ufs1_core>;
++	vdda-pll-supply = <&vdda_ufs1_1p2>;
++};
 +
-+		ufsphy1: phy@1d87000 {
-+			compatible = "qcom,sdm845-qmp-ufs-phy";
-+			reg = <0x1d87000 0x18c>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+			clock-names = "ref",
-+				      "ref_aux";
-+			clocks = <&gcc GCC_UFS_MEM_CLKREF_CLK>,
-+				 <&gcc GCC_UFS_PHY_PHY_AUX_CLK>;
-+
-+			status = "disabled";
-+
-+			ufsphy1_lanes: lanes@1d87400 {
-+				reg = <0x1d87400 0x108>,
-+				      <0x1d87600 0x1e0>,
-+				      <0x1d87c00 0x1dc>,
-+				      <0x1d87800 0x108>,
-+				      <0x1d87a00 0x1e0>;
-+				#phy-cells = <0>;
-+			};
-+		};
-+
- 		tcsr_mutex_regs: syscon@1f40000 {
- 			compatible = "syscon";
- 			reg = <0x1f40000 0x40000>;
+ &usb_1 {
+ 	status = "okay";
+ };
 -- 
 2.16.4
 
