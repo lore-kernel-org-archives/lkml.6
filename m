@@ -2,223 +2,122 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82210ECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:25:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA24BECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:27:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44E7C2085B
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:25:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44E7C2085B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5D5F220824
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 18:27:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RdUrJ43R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D5F220824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728038AbeJ0DDP (ORCPT
+        id S1728002AbeJ0DFT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 23:03:15 -0400
-Received: from mga09.intel.com ([134.134.136.24]:3611 "EHLO mga09.intel.com"
+        Fri, 26 Oct 2018 23:05:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54038 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727685AbeJ0DDO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 23:03:14 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Oct 2018 11:25:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,428,1534834800"; 
-   d="scan'208";a="85867440"
-Received: from schen9-desk.jf.intel.com (HELO [10.54.74.144]) ([10.54.74.144])
-  by orsmga006.jf.intel.com with ESMTP; 26 Oct 2018 11:25:10 -0700
-Subject: Re: [Patch v3 09/13] x86/speculation: Reorganize SPEC_CTRL MSR update
-To:     Waiman Long <longman9394@gmail.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Tom Lendacky <thomas.lendacky@amd.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org
-References: <cover.1539798901.git.tim.c.chen@linux.intel.com>
- <23d8ffaac99be49aa163eb16dd131399141fc432.1539798901.git.tim.c.chen@linux.intel.com>
- <63856b8d-0b53-7103-db7e-315330e2ee48@gmail.com>
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <2349aa0d-f751-2e79-b0bc-f1d6acae13ef@linux.intel.com>
-Date:   Fri, 26 Oct 2018 11:25:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.0
+        id S1727685AbeJ0DFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 23:05:19 -0400
+Received: from kernel.org (c-71-202-33-127.hsd1.ca.comcast.net [71.202.33.127])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92AE220824;
+        Fri, 26 Oct 2018 18:27:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540578434;
+        bh=xXKEG+V8+mKxTTt5972/Uv0jmNn6D4WcqzHHZXE5Em4=;
+        h=Date:From:To:Cc:Subject:From;
+        b=RdUrJ43RZskUz6H56IPIO+BHmOJoKtRUwaTqOLSbSRKkRtUBq5+DvhCt8Hi42sxZi
+         PKBX+cGtx2UGmnxLTAPLilm7cQBwQuwGgTdGUyhQ7m7HP3dj7E5/MXipfF0F/lHRB2
+         NE8EF1ppstBtreAMjJLSWZI0VqOBzjQC/rJVq/LI=
+Date:   Fri, 26 Oct 2018 11:27:13 -0700
+From:   Shaohua Li <shli@kernel.org>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org
+Subject: [GIT PULL] MD update for 4.20
+Message-ID: <20181026182713.GA93048@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <63856b8d-0b53-7103-db7e-315330e2ee48@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/26/2018 10:21 AM, Waiman Long wrote:
-> On 10/17/2018 01:59 PM, Tim Chen wrote:
->> Reorganize the spculation control MSR update code. Currently it is limited
->> to only dynamic update of the Speculative Store Bypass Disable bit.
->> This patch consolidates the logic to check for AMD CPUs that may or may
->> not use this MSR to control SSBD. This prepares us to add logic to update
->> other bits in the SPEC_CTRL MSR cleanly.
->>
->> Originally-by: Thomas Lendacky <Thomas.Lendacky@amd.com>
->> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
->> ---
->>  arch/x86/kernel/process.c | 39 +++++++++++++++++++++++++++++----------
->>  1 file changed, 29 insertions(+), 10 deletions(-)
->>
->> diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
->> index 8aa4960..789f1bada 100644
->> --- a/arch/x86/kernel/process.c
->> +++ b/arch/x86/kernel/process.c
->> @@ -397,25 +397,45 @@ static __always_inline void amd_set_ssb_virt_state(unsigned long tifn)
->>  
->>  static __always_inline void spec_ctrl_update_msr(unsigned long tifn)
->>  {
->> -	u64 msr = x86_spec_ctrl_base | ssbd_tif_to_spec_ctrl(tifn);
->> +	u64 msr = x86_spec_ctrl_base;
->> +
->> +	/*
->> +	 * If X86_FEATURE_SSBD is not set, the SSBD
->> +	 * bit is not to be touched.
->> +	 */
->> +	if (static_cpu_has(X86_FEATURE_SSBD))
->> +		msr |= ssbd_tif_to_spec_ctrl(tifn);
->>  
->>  	wrmsrl(MSR_IA32_SPEC_CTRL, msr);
->>  }
->>  
->> -static __always_inline void __speculation_ctrl_update(unsigned long tifn)
->> +static __always_inline void __speculation_ctrl_update(unsigned long tifp,
->> +						      unsigned long tifn)
-> 
-> I think it will be more intuitive to pass in (tifp ^ tifn) as bitmask of
-> changed TIF bits than tifp alone as you are only interested in the
-> changed bits anyway. 
+Hi,
+Please pull MD update for 4.20. This pull mainly improves raid10 cluster and
+fixes some bugs.
+- raid10 cluster improvements from Guoqing
+- Memory leak fixes from Jack and Xiao
+- raid10 hang fix from Alex
+- raid5 block faulty device fix from Mariusz
+- metadata update fix from Neil
+- Invalid disk role fix from Me
+- Other clearnups
 
-I will need to then pass the bitmask plus tifn.  I still need to
-pass two parameters and it is a bit more work for the caller
-to generate the bit mask.  It is not obvious to me that it is better.
+Thanks,
+Shaohua
 
-Please also document the input parameters as it is
-> hard to know what they are by reading the function alone.
+The following changes since commit f151f57bfd97fb8c76bbef9e181ecba5dd750f2a:
 
-Sure.
+  Merge tag 'drm-fixes-2018-09-28' of git://anongit.freedesktop.org/drm/drm (2018-09-28 18:55:17 +0200)
 
-> 
-> Cheers,
-> Longman
->>  {
->> -	if (static_cpu_has(X86_FEATURE_VIRT_SSBD))
->> -		amd_set_ssb_virt_state(tifn);
->> -	else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
->> -		amd_set_core_ssb_state(tifn);
->> -	else
->> +	bool updmsr = false;
->> +
->> +	/* Check for AMD cpu to see if it uses SPEC_CTRL MSR for SSBD */
->> +	if ((tifp ^ tifn) & _TIF_SSBD) {
->> +		if (static_cpu_has(X86_FEATURE_VIRT_SSBD))
->> +			amd_set_ssb_virt_state(tifn);
->> +		else if (static_cpu_has(X86_FEATURE_LS_CFG_SSBD))
->> +			amd_set_core_ssb_state(tifn);
->> +		else if (static_cpu_has(X86_FEATURE_SSBD))
->> +			updmsr  = true;
->> +	}
->> +
->> +	if (updmsr)
->>  		spec_ctrl_update_msr(tifn);
->>  }
->>  
->>  void speculation_ctrl_update(unsigned long tif)
->>  {
->> +	/*
->> +	 * On this path we're forcing the update, so use ~tif as the
->> +	 * previous flags.
->> +	 */
->>  	preempt_disable();
->> -	__speculation_ctrl_update(tif);
->> +	__speculation_ctrl_update(~tif, tif);
->>  	preempt_enable();
->>  }
->>  
->> @@ -451,8 +471,7 @@ void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p,
->>  	if ((tifp ^ tifn) & _TIF_NOCPUID)
->>  		set_cpuid_faulting(!!(tifn & _TIF_NOCPUID));
->>  
->> -	if ((tifp ^ tifn) & _TIF_SSBD)
->> -		__speculation_ctrl_update(tifn);
->> +	__speculation_ctrl_update(tifp, tifn);
->>  }
->>  
->>  /*
-> 
-> 
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/shli/md.git for-next
+
+for you to fetch changes up to af9b926de9c5986ab009e64917de87c9758bab10:
+
+  MD: Memory leak when flush bio size is zero (2018-10-22 09:15:26 -0700)
+
+----------------------------------------------------------------
+Alex Wu (1):
+      md/raid10: Fix raid10 replace hang when new added disk faulty
+
+Colin Ian King (1):
+      md: remove redundant code that is no longer reachable
+
+Guoqing Jiang (8):
+      md-cluster/raid10: resize all the bitmaps before start reshape
+      md-cluster/raid10: support add disk under grow mode
+      md-cluster: introduce resync_info_get interface for sanity check
+      md-cluster/raid10: call update_size in md_reap_sync_thread
+      md-cluster/raid10: don't call remove_and_add_spares during reshaping stage
+      md-cluster/bitmap: don't call md_bitmap_sync_with_cluster during reshaping stage
+      md-cluster: send BITMAP_NEEDS_SYNC message if reshaping is interrupted
+      md-cluster: remove suspend_info
+
+Jack Wang (2):
+      md/bitmap: use mddev_suspend/resume instead of ->quiesce()
+      md: fix memleak for mempool
+
+Mariusz Tkaczyk (1):
+      raid5: block failing device if raid will be failed
+
+NeilBrown (1):
+      md: allow metadata updates while suspending an array - fix
+
+Shaohua Li (2):
+      MD: fix invalid stored role for a disk
+      MD: fix invalid stored role for a disk - try2
+
+Xiao Ni (1):
+      MD: Memory leak when flush bio size is zero
+
+ drivers/md/md-bitmap.c   |   9 +-
+ drivers/md/md-cluster.c  | 234 ++++++++++++++++++++++++++++++++---------------
+ drivers/md/md-cluster.h  |   2 +
+ drivers/md/md.c          | 113 +++++++++++++++++------
+ drivers/md/md.h          |   1 +
+ drivers/md/raid1.c       |   1 +
+ drivers/md/raid10.c      | 109 ++++++++++++++++++----
+ drivers/md/raid5-cache.c |   2 -
+ drivers/md/raid5.c       |  12 +++
+ 9 files changed, 356 insertions(+), 127 deletions(-)
