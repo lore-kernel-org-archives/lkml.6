@@ -2,141 +2,86 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2442C46475
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 03:15:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B0B5C46475
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 03:17:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 467962082E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 03:15:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 467962082E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 757EC2082E
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 03:17:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="cSThd1DH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 757EC2082E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726065AbeJZLux (ORCPT
+        id S1726198AbeJZLw3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 07:50:53 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:13695 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725754AbeJZLux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 07:50:53 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id EB6A8C389567E;
-        Fri, 26 Oct 2018 11:15:36 +0800 (CST)
-Received: from [127.0.0.1] (10.177.96.96) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.408.0; Fri, 26 Oct 2018
- 11:15:36 +0800
-To:     <rasesh.mody@qlogic.com>, <netdev@vger.kernel.org>,
-        <f.fainelli@gmail.com>, <andrew@lunn.ch>,
-        <linux-kernel@vger.kernel.org>
-From:   maowenan <maowenan@huawei.com>
-Subject: bnx2: rx_fw_discards: BCM5716 sporadically drops packets when update
- to driver version 2.2.6
-Message-ID: <1a94796f-1760-f332-46f0-6ab0b5a0aab7@huawei.com>
-Date:   Fri, 26 Oct 2018 11:15:33 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        Fri, 26 Oct 2018 07:52:29 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:38281 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725754AbeJZLw3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 07:52:29 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 27168cfd;
+        Fri, 26 Oct 2018 03:14:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=from:to:cc
+        :subject:date:message-id:in-reply-to:references:mime-version
+        :content-transfer-encoding; s=mail; bh=zH7lmNzbcb4poiRyxY8QYeJLI
+        p8=; b=cSThd1DH5EwXpjo+odukpoJ2qxeBjJgi2FmK/lSFU92gKEfVHBjUkPKIZ
+        Uac0dCylJx0wVswcxAFbQ4OZObZ8Fy0BidVT4ZRbyKD0ARPxgVg7D8qYisdtAWuz
+        ChG7iYPTdnm4KOd2tumo3e5NWErkvrb6iMxm7D5htHDsZm2q2HHHjYirAQ7rbojL
+        WlldcTw4OFnjch44UuGeVrpSzdRaBvtiXIGzjxHO6EF9nmB4TBWLS101CEWjNcwA
+        G1Fuke5YdVJzbQMZLFzEEi5npUtToFH9Nf2+2ErzWfzGVWEDXxkpEMiM9dWFgpCt
+        xRbyAi7sUe+W0UYH/l2/TOM01AwKw==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 776bb1e7 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
+        Fri, 26 Oct 2018 03:14:18 +0000 (UTC)
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+To:     linux-sparse@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Subject: [PATCH sparse] parse: shifting by full number of bits is undefined
+Date:   Fri, 26 Oct 2018 05:17:00 +0200
+Message-Id: <20181026031700.12310-1-Jason@zx2c4.com>
+In-Reply-To: <CAHmME9oZk7Afns=W=xM=6waqvVfV+iAdAcB6731xzUUcm4P0zA@mail.gmail.com>
+References: <CAHmME9oZk7Afns=W=xM=6waqvVfV+iAdAcB6731xzUUcm4P0zA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.177.96.96]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi，
+The type checker wasn't identifying upper bounds for huge unsigned
+64-bit numbers, because the right shift turned into a no-op:
 
-After I update version of bnx2 driver from 2.2.1 to 2.2.6, I find BCM5716 sporadically drops packets, which
-shows in rx_fw_discards.
-C36-141-5:~ #  ethtool -S NIC0
+zx2c4@thinkpad /tmp $ cat sparse.c
+enum { sparse_does_not_like_this = 0x8000000000000003ULL };
+zx2c4@thinkpad /tmp $ sparse sparse.c
+sparse.c:1:36: warning: cast truncates bits from constant value (8000000000000003 becomes 3)
 
-NIC statistics:
-     rx_ucast_packets: 11902
+This works around the issue by detecting when we're going to shift by
+the size of the variable and treat that as always zero.
 
-     rx_mcast_packets: 217
+Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+---
+ parse.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-     rx_bcast_packets: 4954320
-
-     rx_filtered_packets: 328793
-
-     rx_fw_discards: 2742
-
-C36-141-5:~ #
-
-5s later:
-
-C36-141-5:~ #  ethtool -S NIC0
-
-NIC statistics:
-     rx_ucast_packets: 11910
-
-     rx_mcast_packets: 217
-
-     rx_bcast_packets: 4958117
-
-     rx_filtered_packets: 328897
-
-     rx_fw_discards: 2750
-
-C36-141-5:~ #
-
-so rx_fw_discards: 2742-----> rx_fw_discards: 2750, lost 8 packets.
-
-the information of bnx2
-C36-141-5:~ # modinfo bnx2
-kernel/drivers/net/ethernet/broadcom/bnx2.ko
-
-firmware:       bnx2/bnx2-rv2p-09ax-6.0.17.fw
-
-firmware:       bnx2/bnx2-rv2p-09-6.0.17.fw
-
-firmware:       bnx2/bnx2-mips-09-6.2.1b.fw
-
-firmware:       bnx2/bnx2-rv2p-06-6.0.15.fw
-
-firmware:       bnx2/bnx2-mips-06-6.2.3.fw
-version:        2.2.6
-
-
-1) Firstly, I check the patches from 2.2.1 to 2.2.6, below patch is interesting.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=0021850d0417a4dc38ed871d929b651b87e2ead9
-Do not enable filter SORT MODE in chip init routine. This patch addresses an
-issue where BCM5716 sporadically drops packets when changing multicast list.
-
-diff --git a/drivers/net/ethernet/broadcom/bnx2.c b/drivers/net/ethernet/broadcom/bnx2.c
-index 8957eb5f4478..8c9a8b7787d2 100644
---- a/drivers/net/ethernet/broadcom/bnx2.c
-+++ b/drivers/net/ethernet/broadcom/bnx2.c
-@@ -4984,8 +4984,6 @@ bnx2_init_chip(struct bnx2 *bp)
-
- 	bp->idle_chk_status_idx = 0xffff;
-
--	bp->rx_mode = BNX2_EMAC_RX_MODE_SORT_MODE;
--
- 	/* Set up how to generate a link change interrupt. */
- 	BNX2_WR(bp, BNX2_EMAC_ATTENTION_ENA, BNX2_EMAC_ATTENTION_ENA_LINK);
-
-
-2) Secondly, I revert this patch, after verify it, I find rx_fw_discards does not increasing.
-so I think this patch can fix current issue. But I'm not sure the issue of this patch to fix
-will be reproduced?
-I'm not convinced that what factor will trigger rx_fw_discards increasing?
-And how to fix this?
-
-Thanks a lot.
-
-
-
-
-
-
-
-
-
-
-
+diff --git a/parse.c b/parse.c
+index 02a55a7..02d0615 100644
+--- a/parse.c
++++ b/parse.c
+@@ -788,7 +788,7 @@ static int type_is_ok(struct symbol *type, Num *upper, Num *lower)
+ 
+ 	if (!is_unsigned)
+ 		shift--;
+-	if (upper->x == 0 && upper->y >> shift)
++	if (upper->x == 0 && (shift < (sizeof(upper->y) << 3)) && upper->y >> shift)
+ 		return 0;
+ 	if (lower->x == 0 || (!is_unsigned && (~lower->y >> shift) == 0))
+ 		return 1;
+-- 
+2.19.1
 
