@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 772BAC6786E
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:49:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF832ECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:49:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4132C20831
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:49:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4132C20831
+	by mail.kernel.org (Postfix) with ESMTP id 9F9D420869
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 13:49:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F9D420869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727531AbeJZWZp (ORCPT
+        id S1727770AbeJZW0m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 18:25:45 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44886 "EHLO mx1.suse.de"
+        Fri, 26 Oct 2018 18:26:42 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44822 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726998AbeJZWZo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727501AbeJZWZo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 26 Oct 2018 18:25:44 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1E497B04C;
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CAA91B04E;
         Fri, 26 Oct 2018 13:48:35 +0000 (UTC)
 From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 To:     stefan.wahren@i2se.com, eric@anholt.net,
@@ -32,9 +32,9 @@ To:     stefan.wahren@i2se.com, eric@anholt.net,
 Cc:     nsaenzjulienne@suse.de, linux-rpi-kernel@lists.infradead.org,
         gregkh@linuxfoundation.org, linux-arm-kernel@lists.infradead.org,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH RFC 09/18] staging: vchiq_core: do not initialize semaphores twice
-Date:   Fri, 26 Oct 2018 15:48:04 +0200
-Message-Id: <20181026134813.7775-10-nsaenzjulienne@suse.de>
+Subject: [PATCH RFC 10/18] staging: vchiq_core: don't add a wmb() before remote_event_signal()
+Date:   Fri, 26 Oct 2018 15:48:05 +0200
+Message-Id: <20181026134813.7775-11-nsaenzjulienne@suse.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181026134813.7775-1-nsaenzjulienne@suse.de>
 References: <20181026134813.7775-1-nsaenzjulienne@suse.de>
@@ -45,31 +45,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-vchiq_init_state() initialises a series of semaphores to then call
-remote_event_create() on the same semaphores, which initializes them
-again.
+It's the first thing remote_event_signal() does.
 
 Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 ---
- .../staging/vc04_services/interface/vchiq_arm/vchiq_core.c   | 5 -----
- 1 file changed, 5 deletions(-)
+ .../staging/vc04_services/interface/vchiq_arm/vchiq_core.c    | 4 ----
+ 1 file changed, 4 deletions(-)
 
 diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-index dee5ea7bfe4f..6242357735b9 100644
+index 6242357735b9..e8b7ccabd9cb 100644
 --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
 +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-@@ -2200,11 +2200,6 @@ vchiq_init_state(VCHIQ_STATE_T *state, VCHIQ_SLOT_ZERO_T *slot_zero)
+@@ -1138,9 +1138,6 @@ queue_message_sync(VCHIQ_STATE_T *state, VCHIQ_SERVICE_T *service,
+ 			size);
+ 	}
  
- 	sema_init(&state->connect, 0);
- 	mutex_init(&state->mutex);
--	sema_init(&state->trigger_event, 0);
--	sema_init(&state->recycle_event, 0);
--	sema_init(&state->sync_trigger_event, 0);
--	sema_init(&state->sync_release_event, 0);
+-	/* Make sure the new header is visible to the peer. */
+-	wmb();
 -
- 	mutex_init(&state->slot_mutex);
- 	mutex_init(&state->recycle_mutex);
- 	mutex_init(&state->sync_mutex);
+ 	remote_event_signal(&state->remote->sync_trigger);
+ 
+ 	if (VCHIQ_MSG_TYPE(msgid) != VCHIQ_MSG_PAUSE)
+@@ -3265,7 +3262,6 @@ static void
+ release_message_sync(VCHIQ_STATE_T *state, VCHIQ_HEADER_T *header)
+ {
+ 	header->msgid = VCHIQ_MSGID_PADDING;
+-	wmb();
+ 	remote_event_signal(&state->remote->sync_release);
+ }
+ 
 -- 
 2.19.1
 
