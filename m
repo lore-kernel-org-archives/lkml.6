@@ -2,186 +2,117 @@ Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E7AECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:16:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E097ECDE44
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:20:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A4372082D
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:16:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A4372082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BBAE72082D
+	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 19:20:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aA2Bj1zv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBAE72082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727791AbeJ0Dyr (ORCPT
+        id S1727745AbeJ0D6v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 26 Oct 2018 23:54:47 -0400
-Received: from mga14.intel.com ([192.55.52.115]:59924 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726113AbeJ0Dyq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 26 Oct 2018 23:54:46 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 26 Oct 2018 12:16:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,429,1534834800"; 
-   d="scan'208";a="102811740"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga001.fm.intel.com with ESMTP; 26 Oct 2018 12:16:31 -0700
-Received: from [10.252.142.77] (kliang2-mobl1.ccr.corp.intel.com [10.252.142.77])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id 725ED580496;
-        Fri, 26 Oct 2018 12:16:30 -0700 (PDT)
-Subject: Re: A concern about overflow ring buffer mode
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     David Miller <davem@davemloft.net>, linux-kernel@vger.kernel.org,
-        Wang Nan <wangnan0@huawei.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Kan Liang <kan.liang@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-References: <20181026.104513.2239058788450235574.davem@davemloft.net>
- <20181026183805.GD3353@kernel.org> <20181026184255.GE3353@kernel.org>
- <20181026190211.GF3353@kernel.org>
- <3b81c999-9039-94e9-7a74-cdbd48fca08b@linux.intel.com>
- <20181026191231.GG3353@kernel.org>
-From:   "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <65cbd052-15d9-f3fb-4a8f-781c3ce7a297@linux.intel.com>
-Date:   Fri, 26 Oct 2018 15:16:29 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 26 Oct 2018 23:58:51 -0400
+Received: from mail-qk1-f173.google.com ([209.85.222.173]:43264 "EHLO
+        mail-qk1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726501AbeJ0D6v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 26 Oct 2018 23:58:51 -0400
+Received: by mail-qk1-f173.google.com with SMTP id r71so1351653qkr.10
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 12:20:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=O4meVGNYs8kZqYVa8CCngOivEK22E/2Sn1LUryZ1aM4=;
+        b=aA2Bj1zvovtqU6sC3yaZmgXx71DbwdaG+hqdNUsyCGm/pLR1HOKq0qH3fvpXbmGPCq
+         wdTCteQsDB8Z94NxxOsQNTy6NVL2TIs+PYxK3DCsJ5IWYlTuM/0hL3JG1OH5+eCZQtfd
+         LVcd4wp/g1yXXfDLOEixukjkx2X2uHBYtTe/8d9L0jEBGSd3BY54txDyG4oiX3+Ga1sU
+         F7PyXP59zuz5XaOQ8kFLYE5fIL2ATxWkYIH8W438prw2xFKYy6DvW0O21WY7nEdzo0vm
+         YQq84MSA43FV8vTc5LzCTa26vt0ECZQ2t4fliS2z78r7IvL3wYxKQEp7hAXTs7KPsNPf
+         44dQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=O4meVGNYs8kZqYVa8CCngOivEK22E/2Sn1LUryZ1aM4=;
+        b=XfSprZoRLHmu5nV1JxNnguAcyA2sg5flB82fJ/jp1LpWYNqSc4Ino69BP4mXmVKJRg
+         6ew7qEBVleekP2p8V9p5i3wT3lXysmeWYkAOfor4mSgOHDX4/GTcmywO3mAXiWBOBoU9
+         N1xHGaGkva0ozylVzRd8OkoYTGJ8pnDAcwKj/LOilbjUNmqFwKDatTPUsmgu4nDFYgcg
+         DZMFafF7+d89WkB/bOhCDE0t3ErfAZVtgbqjl6qCRG1vgdWh5Wtu2jGit2jYxPALZIAn
+         bL2/cIWmx4qxfLVizfFNp74ShzZDUOaZkw5VjIWmLL9uVoy3f7MPw71Zgn/zWhXwP5os
+         u8wQ==
+X-Gm-Message-State: AGRZ1gI0ilUxRsb55Cp91CzyRCQAFEFUC111VSCsOmE3QtGGgi/XEnDr
+        xU5/N9HbKgHPvRaZVnmNaE8=
+X-Google-Smtp-Source: AJdET5ejGHoC5aMAgWBgw6ZE3rGnOq75a/KUPmacbcpuvFao33RkFWIwQnQqts4KOwY81wRjIEfE/w==
+X-Received: by 2002:ae9:e012:: with SMTP id m18-v6mr4325860qkk.25.1540581634839;
+        Fri, 26 Oct 2018 12:20:34 -0700 (PDT)
+Received: from smtp.gmail.com ([143.107.45.1])
+        by smtp.gmail.com with ESMTPSA id u74-v6sm5928214qka.37.2018.10.26.12.20.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 26 Oct 2018 12:20:34 -0700 (PDT)
+Date:   Fri, 26 Oct 2018 16:20:30 -0300
+From:   Shayenne da Luz Moura <shayenneluzmoura@gmail.com>
+To:     Dave Airlie <airlied@redhat.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        David Airlie <airlied@linux.ie>
+Cc:     virtualization@lists.linux-foundation.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        outreachy-kernel@googlegroups.com
+Subject: [PATCH 0/6] drm/qxl: Remove checkpatch issues 
+Message-ID: <cover.1540579956.git.shayenneluzmoura@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181026191231.GG3353@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This series cleans the following checkpatch.pl issues:
 
+ERROR: trailing whitespace
+WARNING: Missing a blank line after declarations
+CHECK: Please don't use multiple blank lines
+WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
+ERROR: space required before the open parenthesis '('
+CHECK: Avoid using bool structure members because of possible alignment issues
 
-On 10/26/2018 3:12 PM, Arnaldo Carvalho de Melo wrote:
-> Em Fri, Oct 26, 2018 at 03:07:40PM -0400, Liang, Kan escreveu:
->> On 10/26/2018 3:02 PM, Arnaldo Carvalho de Melo wrote:
->>> So, I'm adding the following to my tree to help in diagnosing problems
->>> with this overwrite mode:
->   
->> Actually, you can use per-event overwrite term to disable overwrite mode for
->> perf top.
->   
->> /*
->>   * Check per-event overwrite term.
->>   * perf top should support consistent term for all events.
->>   * - All events don't have per-event term
->>   *   E.g. "cpu/cpu-cycles/,cpu/instructions/"
->>   *   Nothing change, return 0.
->>   * - All events have same per-event term
->>   *   E.g. "cpu/cpu-cycles,no-overwrite/,cpu/instructions,no-overwrite/
->>   *   Using the per-event setting to replace the opts->overwrite if
->>   *   they are different, then return 0.
->>   * - Events have different per-event term
->>   *   E.g. "cpu/cpu-cycles,overwrite/,cpu/instructions,no-overwrite/"
->>   *   Return -1
->>   * - Some of the event set per-event term, but some not.
->>   *   E.g. "cpu/cpu-cycles/,cpu/instructions,no-overwrite/"
->>   *   Return -1
->>   */
->> static int perf_top__overwrite_check(struct perf_top *top)
->> {
-> 
-> I see, it will disable that opts->overwrite if it finds the no-overwrite
-> in the per-event definition, so the equivalent of the option I added
-> below:
-> 
->       perf top --no-overwrite
-> 
-> is:
-> 
->       perf top -e cycles/no-overwrite/
-> 
-> I checked and both have the same result. But I still think there is
-> value in having the shorter form, ok?
->
+Shayenne da Luz Moura (6):
+  drm/qxl: Remove trailing whitespace
+  drm/qxl: Add line after variable declarations
+  drm/qxl: Remove exceding whiteline
+  drm/qxl: Use 'unsigned int' instead of 'usigned'
+  drm/qxl: Add space before open parentheses
+  drm/qxl: Use 'unsigned int' instead of bool
 
-Sure.
+ drivers/gpu/drm/qxl/qxl_cmd.c     |  7 +++++--
+ drivers/gpu/drm/qxl/qxl_debugfs.c |  5 ++---
+ drivers/gpu/drm/qxl/qxl_dev.h     |  1 -
+ drivers/gpu/drm/qxl/qxl_display.c | 19 ++++++++++---------
+ drivers/gpu/drm/qxl/qxl_draw.c    | 11 ++++++-----
+ drivers/gpu/drm/qxl/qxl_drv.h     | 31 ++++++++++++++-----------------
+ drivers/gpu/drm/qxl/qxl_dumb.c    |  3 ++-
+ drivers/gpu/drm/qxl/qxl_fb.c      |  4 ++--
+ drivers/gpu/drm/qxl/qxl_image.c   |  4 +++-
+ drivers/gpu/drm/qxl/qxl_ioctl.c   |  2 ++
+ drivers/gpu/drm/qxl/qxl_kms.c     |  2 +-
+ drivers/gpu/drm/qxl/qxl_object.c  |  5 ++---
+ drivers/gpu/drm/qxl/qxl_object.h  |  2 ++
+ drivers/gpu/drm/qxl/qxl_prime.c   |  1 -
+ drivers/gpu/drm/qxl/qxl_release.c |  1 -
+ drivers/gpu/drm/qxl/qxl_ttm.c     | 12 +++++-------
+ 16 files changed, 56 insertions(+), 54 deletions(-)
 
-Thanks,
-Kan
+-- 
+2.19.1
 
-> - Arnaldo
-> 
->> Thanks,
->> Kan
->>
->>>
->>>   From 40feb09001c7cc2ba8aeaa0a8f03b6d28fa4ca95 Mon Sep 17 00:00:00 2001
->>> From: Arnaldo Carvalho de Melo <acme@redhat.com>
->>> Date: Fri, 26 Oct 2018 15:55:23 -0300
->>> Subject: [PATCH 1/1] perf top: Allow disabling the overwrite mode
->>>
->>> In ebebbf082357 ("perf top: Switch default mode to overwrite mode") we
->>> forgot to leave a way to disable that new default, add a --overwrite
->>> option that can be disabled using --no-overwrite, since the code already
->>> in such a way that we can readily disable this mode.
->>>
->>> This is useful when investigating bugs with this mode like the recent
->>> report from David Miller where lots of unknown symbols appear due to
->>> disabling the events while processing them which disables all record
->>> types, not just PERF_RECORD_SAMPLE, which makes it impossible to resolve
->>> maps when we lose PERF_RECORD_MMAP records.
->>>
->>> This can be easily seen while building a kernel, when there are lots of
->>> short lived processes.
->>>
->>> Cc: Adrian Hunter <adrian.hunter@intel.com>
->>> Cc: Andi Kleen <ak@linux.intel.com>
->>> Cc: David Ahern <dsahern@gmail.com>
->>> Cc: David Miller <davem@davemloft.net>
->>> Cc: Jin Yao <yao.jin@linux.intel.com>
->>> Cc: Jiri Olsa <jolsa@kernel.org>
->>> Cc: Kan Liang <kan.liang@intel.com>
->>> Cc: Namhyung Kim <namhyung@kernel.org>
->>> Cc: Peter Zijlstra <peterz@infradead.org>
->>> Cc: Wang Nan <wangnan0@huawei.com>
->>> Link: https://lkml.kernel.org/n/tip-oqgsz2bq4kgrnnajrafcdhie@git.kernel.org
->>> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
->>> ---
->>>    tools/perf/Documentation/perf-top.txt | 5 +++++
->>>    tools/perf/builtin-top.c              | 2 ++
->>>    2 files changed, 7 insertions(+)
->>>
->>> diff --git a/tools/perf/Documentation/perf-top.txt b/tools/perf/Documentation/perf-top.txt
->>> index 114fda12aa49..d4be6061fe1c 100644
->>> --- a/tools/perf/Documentation/perf-top.txt
->>> +++ b/tools/perf/Documentation/perf-top.txt
->>> @@ -242,6 +242,11 @@ Default is to monitor all CPUS.
->>>    --hierarchy::
->>>    	Enable hierarchy output.
->>> +--overwrite::
->>> +	This is the default, but for investigating problems with it or any other strange
->>> +	behaviour like lots of unknown samples, we may want to disable this mode by using
->>> +	--no-overwrite.
->>> +
->>>    --force::
->>>    	Don't do ownership validation.
->>> diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
->>> index d21d8751e749..214fad747b04 100644
->>> --- a/tools/perf/builtin-top.c
->>> +++ b/tools/perf/builtin-top.c
->>> @@ -1372,6 +1372,8 @@ int cmd_top(int argc, const char **argv)
->>>    		    "Show raw trace event output (do not use print fmt or plugins)"),
->>>    	OPT_BOOLEAN(0, "hierarchy", &symbol_conf.report_hierarchy,
->>>    		    "Show entries in a hierarchy"),
->>> +	OPT_BOOLEAN(0, "overwrite", &top.record_opts.overwrite,
->>> +		    "Use a backward ring buffer, default: yes"),
->>>    	OPT_BOOLEAN(0, "force", &symbol_conf.force, "don't complain, do it"),
->>>    	OPT_UINTEGER(0, "num-thread-synthesize", &top.nr_threads_synthesize,
->>>    			"number of thread to run event synthesize"),
->>>
