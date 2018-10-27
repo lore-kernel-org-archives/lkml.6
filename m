@@ -1,148 +1,121 @@
-Return-Path: <SRS0=FPao=NG=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=4IUq=NH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49BB3ECDE44
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 23:49:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01966ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 00:07:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC6BC20831
-	for <linux-kernel@archiver.kernel.org>; Fri, 26 Oct 2018 23:49:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94EAA2064A
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 00:07:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EXW6SQ3l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC6BC20831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="M10XEl6z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94EAA2064A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728331AbeJ0I2Z (ORCPT
+        id S1728386AbeJ0IqY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 04:28:25 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44036 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727993AbeJ0I2Y (ORCPT
+        Sat, 27 Oct 2018 04:46:24 -0400
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:24265 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728129AbeJ0IqX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 04:28:24 -0400
-Received: by mail-pl1-f196.google.com with SMTP id d23-v6so1164797pls.11;
-        Fri, 26 Oct 2018 16:49:21 -0700 (PDT)
+        Sat, 27 Oct 2018 04:46:23 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=kM09Tv1c2zOf2gNK3DgXTR3BNL8w5tzluQThDACq4hQ=;
-        b=EXW6SQ3lKya6YWyVK7fDdWi+ssqi6RSwNThdxxivNphus4w2JLt5ebr+0JqQww1QWp
-         KVis9oIuyu1FDuaRmKwFhwgJsH39RbjpCvsr/U5izI5GD8U49t2WGT3tBLHNiR5Y053h
-         g7aU8O4DTNDn1xL2ubzbgGOxIN5aYT6f3vhLgj52SNTNB9jdJ8YP4goD/B4F9opXBIPs
-         uBqx94CesKocVwwzMiZjkm3O2xXOSgWL27Zd6T7vCptIWAu03WU2x5auNQ7WYK/dlzLx
-         oBRLf0UO5rAEgEv7DY5fhL5rCayovi+XeBKuxlMxzFGWhyoFonSJe4fcOe6MauJZZXyX
-         XVYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=kM09Tv1c2zOf2gNK3DgXTR3BNL8w5tzluQThDACq4hQ=;
-        b=fBUKchZCvKATAjcfPPJv+dg9mFzn5g4aV8jv5jAZmTbKyQkL9DP9206U6vuYei8c/o
-         w5QGIGEm3Kg0rKMObF1aPcOfNLT2lkTvsOjwqXfN3RvJfjo7TIuXh793fmti2uqV4eYO
-         giq6cwjvf/l35CgXpi/NWOF6hUYS0BRT6pKCYNbjaBv+NxO5GAOrGBN80w2mGyvKoXEk
-         6x0MmLKij1/vDkOPcqZ1oVlXaJ8/h7zhvwaUijQmrkzPneAGcl9jfMCFbLlkuzTLLJvF
-         nQMr+6kG3q4YfjycIIywGNmtxmfoLKUL4/wpKUpxx4RuE+NmHOKRqxeJvZHLZbsujHSU
-         dCNQ==
-X-Gm-Message-State: AGRZ1gKesfMFlF+gnYtwS6UGr/xL2RZpDnYwQNyKHibdaM/GpQh5WfIO
-        vFf8i9OARXN5oc7tsFZny/U=
-X-Google-Smtp-Source: AJdET5dzlV0QYEtXCYowqb+YUotDPUvJwYuA9L3PKpNnL8Kq6JdocGY4nXlL1QJtG+KM83kDVtvwNQ==
-X-Received: by 2002:a17:902:3381:: with SMTP id b1-v6mr5374471plc.323.1540597761205;
-        Fri, 26 Oct 2018 16:49:21 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id j14-v6sm15522423pgh.52.2018.10.26.16.49.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 26 Oct 2018 16:49:19 -0700 (PDT)
-Date:   Fri, 26 Oct 2018 16:49:17 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: [git pull] Input updates for v4.20-rc0
-Message-ID: <20181026234917.GA196749@dtor-ws>
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1540598837; x=1572134837;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=PHPso/Udnf8JDqgcmL2PDCJe/S9nUX89w6woEDGe9TU=;
+  b=M10XEl6zsm+cF6xmC3d2aN/MQlEo7hIPxK/pOutl8iwUSsAC9jL/5Oin
+   rnLva3F+ppX+Nft4+lRtqScVam17db3uxW09lDYy1vnraCHfRoYxXiaZf
+   DjtJcQntz6pkbbloLrmJyowhJGcA2cBys/1nkiySbvLtvokyWVFsKwnCZ
+   Q=;
+X-IronPort-AV: E=Sophos;i="5.54,429,1534809600"; 
+   d="scan'208";a="638710279"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2a-22cc717f.us-west-2.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 27 Oct 2018 00:07:15 +0000
+Received: from u7588a65da6b65f.ant.amazon.com (pdx2-ws-svc-lb17-vlan2.amazon.com [10.247.140.66])
+        by email-inbound-relay-2a-22cc717f.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w9R07Btc111328
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=FAIL);
+        Sat, 27 Oct 2018 00:07:13 GMT
+Received: from u7588a65da6b65f.ant.amazon.com (localhost [127.0.0.1])
+        by u7588a65da6b65f.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id w9R07CU6004631;
+        Sat, 27 Oct 2018 02:07:12 +0200
+Subject: Re: [RFC 00/60] Coscheduling for Linux
+To:     Subhra Mazumdar <subhra.mazumdar@oracle.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org
+References: <20180907214047.26914-1-jschoenh@amazon.de>
+ <65abfba5-7c51-fd99-898e-f6e74969fea3@oracle.com>
+From:   =?UTF-8?Q?Jan_H=2e_Sch=c3=b6nherr?= <jschoenh@amazon.de>
+Openpgp: preference=signencrypt
+Message-ID: <3fbb5a02-1fc6-eaaf-b8b5-be8d24133747@amazon.de>
+Date:   Sat, 27 Oct 2018 02:07:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <65abfba5-7c51-fd99-898e-f6e74969fea3@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 27/10/2018 01.05, Subhra Mazumdar wrote:
+> 
+> 
+>> D) What can I *not* do with this?
+>> ---------------------------------
+>>
+>> Besides the missing load-balancing within coscheduled task-groups, this
+>> implementation has the following properties, which might be considered
+>> short-comings.
+>>
+>> This particular implementation focuses on SCHED_OTHER tasks managed by CFS
+>> and allows coscheduling them. Interrupts as well as tasks in higher
+>> scheduling classes are currently out-of-scope: they are assumed to be
+>> negligible interruptions as far as coscheduling is concerned and they do
+>> *not* cause a preemption of a whole group. This implementation could be
+>> extended to cover higher scheduling classes. Interrupts, however, are an
+>> orthogonal issue.
+>>
+>> The collective context switch from one coscheduled set of tasks to another
+>> -- while fast -- is not atomic. If a use-case needs the absolute guarantee
+>> that all tasks of the previous set have stopped executing before any task
+>> of the next set starts executing, an additional hand-shake/barrier needs to
+>> be added.
+>>
+> The leader doesn't kick the other cpus _immediately_ to switch to a
+> different cosched group. 
 
-Please pull from:
+It does. (Or at least, it should, in case you found evidence that it does not.)
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
+Specifically, the logic to not preempt the currently running task before
+some minimum time has passed, is without effect for a collective context
+switch.
 
-to receive updates for the input subsystem. Just random driver fixups,
-nothing exiting.
+> So threads from previous cosched group will keep
+> running in other HTs till their sched_slice is over (in worst case). This
+> can still keep the window of L1TF vulnerability open?
 
-Changelog:
----------
+No. Per the above, the window due to the collective context switch should
+not be as long as "the remaining time slice" but more towards the IPI
+delay. During this window, tasks of different coscheduling groups may
+execute simultaneously.
 
-Brian Masney (1):
-      Input: pwm-vibrator - correct pwms in DT binding example
+In addition (as mentioned in the quoted text above), there more cases where
+a task of a coscheduled group on one SMT sibling may execute simultaneously
+with some other code not from the same coscheduled group: tasks in
+scheduling classes higher than CFS, and interrupts -- as both of them
+operate outside the scope of the coscheduler.
 
-Dmitry Torokhov (1):
-      Input: synaptics - avoid using uninitialized variable when probing
-
-George G. Davis (1):
-      Input: atmel_mxt_ts - fix multiple <linux/property.h> includes
-
-Gustavo A. R. Silva (3):
-      Input: cyapa - mark expected switch fall-throughs
-      Input: atmel_mxt_ts - mark expected switch fall-through
-      Input: xen-kbdfront - mark expected switch fall-through
-
-Hans de Goede (1):
-      Input: of_touchscreen - add support for touchscreen-min-x|y
-
-Julian Sax (1):
-      Input: silead - try firmware reload after unsuccessful resume
-
-Linus Walleij (1):
-      Input: Fix DIR-685 touchkeys MAINTAINERS entry
-
-Martin Kepplinger (1):
-      Input: st1232 - set INPUT_PROP_DIRECT property
-
-Randy Dunlap (1):
-      Input: wm97xx-ts - fix exit path
-
-Rob Herring (2):
-      Input: sun4i-lradc - convert to using %pOFn instead of device_node.name
-      Input: xilinx_ps2 - convert to using %pOFn instead of device_node.name
-
-Stephen Boyd (1):
-      Input: elants_i2c - use DMA safe i2c when possible
-
-Diffstat:
---------
-
- .../devicetree/bindings/input/pwm-vibrator.txt     |  4 +--
- .../bindings/input/touchscreen/touchscreen.txt     |  6 ++--
- MAINTAINERS                                        |  2 +-
- drivers/input/keyboard/sun4i-lradc-keys.c          |  6 ++--
- drivers/input/misc/xen-kbdfront.c                  |  2 +-
- drivers/input/mouse/cyapa_gen3.c                   |  4 +--
- drivers/input/mouse/synaptics.c                    |  4 +--
- drivers/input/serio/xilinx_ps2.c                   |  2 +-
- drivers/input/touchscreen/atmel_mxt_ts.c           |  3 +-
- drivers/input/touchscreen/elants_i2c.c             |  7 +++--
- drivers/input/touchscreen/of_touchscreen.c         | 36 +++++++++++++++++-----
- drivers/input/touchscreen/silead.c                 | 13 ++++++++
- drivers/input/touchscreen/st1232.c                 |  1 +
- drivers/input/touchscreen/wm97xx-core.c            |  3 +-
- 14 files changed, 64 insertions(+), 29 deletions(-)
-
-Thanks.
-
-
--- 
-Dmitry
+Regards
+Jan
