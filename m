@@ -2,303 +2,195 @@ Return-Path: <SRS0=4IUq=NH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0051C46475
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 08:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DBDBC46475
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 08:13:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5914F20856
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 08:09:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5914F20856
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id ABAB020869
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 08:13:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABAB020869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728324AbeJ0QtN (ORCPT
+        id S1728318AbeJ0Qxv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 12:49:13 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:37031 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728299AbeJ0QtM (ORCPT
+        Sat, 27 Oct 2018 12:53:51 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33954 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728020AbeJ0Qxv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 12:49:12 -0400
-Received: by mail-io1-f69.google.com with SMTP id t4-v6so3197253iof.4
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Oct 2018 01:09:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=kAgvg+XhpyCLt9cgMxgEYTTHZgIS1+Txv3i8d9OLlqg=;
-        b=lV2cUDMIadeEY2vHOSMBbGuz6xmprcnHVZTirsH6Tyxk5PhogMHpkkilgv5hm188xY
-         BBGLknMQW58Xdea1uIHMl6irjdaXHCyrv8VE3TdpeTGFwLyLXV0z1b9zT1enfLB5jXPc
-         ZYcftAL7N2jWAE/tRXjEVca/rFdB3pi0LYQ+DMqW6B31ktyW+VhE+AE93ZOI54uSmfdE
-         Z4Mdauwn1vy22lvBUzeeYPQb3Eybq/Y7DWrmH+YsYCdUvss78j0DBgVxKw0U2UhUoDnJ
-         wlpIo1bJMjSy09UL9J7q2UAC2JiBYuJLZdEkc/xSpz8hMBDR4F4BySJz0Me9ag2xhPHL
-         2Lsg==
-X-Gm-Message-State: AGRZ1gK6UnJIb1AxYYzfzIMenTGXLCxdbXODrEiak+nswpKGTNjeJFJI
-        7AbRlbGuQnEBwF5eDrnI9mSMpU0QDQT2R9YAaw1dREE74HbA
-X-Google-Smtp-Source: AJdET5dNPH1hhKAE+ldllJ9zByWJPcbN83qDKhaf1Qwl8839JI8ibyJbJByO0FjbS16XD01z8cYwC6bJIc5FG52CC5g9ZK9uFaMM
+        Sat, 27 Oct 2018 12:53:51 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9R8DfF6017609
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Oct 2018 04:13:41 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ncjbnu6sk-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Oct 2018 04:13:41 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
+        Sat, 27 Oct 2018 09:13:39 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sat, 27 Oct 2018 09:13:36 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9R8DZFr7864824
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sat, 27 Oct 2018 08:13:35 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D1788A4053;
+        Sat, 27 Oct 2018 08:13:35 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B260DA404D;
+        Sat, 27 Oct 2018 08:13:35 +0000 (GMT)
+Received: from oc7455500831.ibm.com (unknown [9.145.50.251])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sat, 27 Oct 2018 08:13:35 +0000 (GMT)
+Subject: Re: Linux kernel crash
+To:     Stephen Smith <ischis2@cox.net>, linux-kernel@vger.kernel.org
+References: <1654617.UvxYW9xS0L@thunderbird> <8609715.XleivgsqJ9@thunderbird>
+From:   Christian Borntraeger <borntraeger@de.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
+ 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
+ syiRa+UVlsKmx1hsEg==
+Date:   Sat, 27 Oct 2018 10:13:35 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Received: by 2002:a24:21d6:: with SMTP id e205-v6mr2831655ita.19.1540627744301;
- Sat, 27 Oct 2018 01:09:04 -0700 (PDT)
-Date:   Sat, 27 Oct 2018 01:09:04 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006e31980579315914@google.com>
-Subject: INFO: task hung in __do_page_fault (2)
-From:   syzbot <syzbot+6b074f741adbd93d2df5@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, arnd@arndb.de, ebiederm@xmission.com,
-        linux-kernel@vger.kernel.org, linux@dominikbrodowski.net,
-        mcgrof@kernel.org, sudipm.mukherjee@gmail.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <8609715.XleivgsqJ9@thunderbird>
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18102708-0028-0000-0000-0000030E3123
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18102708-0029-0000-0000-000023CA5044
+Message-Id: <e684dd79-7bf9-1685-a06a-438eb8385b28@de.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-27_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810270077
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-syzbot found the following crash on:
-
-HEAD commit:    18d0eae30e6a Merge tag 'char-misc-4.20-rc1' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17d952eb400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=342f43de913c81b9
-dashboard link: https://syzkaller.appspot.com/bug?extid=6b074f741adbd93d2df5
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12482713400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=158fd4a3400000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+6b074f741adbd93d2df5@syzkaller.appspotmail.com
-
-INFO: task syz-executor198:7946 blocked for more than 140 seconds.
-       Not tainted 4.19.0+ #82
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor198 D23160  7946   5577 0x00000004
-Call Trace:
-  context_switch kernel/sched/core.c:2826 [inline]
-  __schedule+0x8cf/0x21d0 kernel/sched/core.c:3474
-  schedule+0xfe/0x460 kernel/sched/core.c:3518
-  __rwsem_down_read_failed_common kernel/locking/rwsem-xadd.c:280 [inline]
-  rwsem_down_read_failed+0x371/0x710 kernel/locking/rwsem-xadd.c:297
-  call_rwsem_down_read_failed+0x18/0x30 arch/x86/lib/rwsem.S:94
-  __down_read arch/x86/include/asm/rwsem.h:83 [inline]
-  down_read+0x9b/0x120 kernel/locking/rwsem.c:26
-  do_user_addr_fault arch/x86/mm/fault.c:1362 [inline]
-  __do_page_fault+0xbc9/0xe60 arch/x86/mm/fault.c:1489
-  do_page_fault+0xf2/0x7e0 arch/x86/mm/fault.c:1520
-  page_fault+0x1e/0x30 arch/x86/entry/entry_64.S:1136
-RIP: 0033:0x4ab5dd
-Code: Bad RIP value.
-RSP: 002b:00007ffe4b4dd2c0 EFLAGS: 00010202
-RAX: 00000000004ab700 RBX: 0000000000000001 RCX: 00000000006e0350
-RDX: 00000000004073b0 RSI: 0000000000000000 RDI: 00000000004cc9d0
-RBP: 00007ffe4b4dd2e0 R08: 000000037ffffa00 R09: 000000037ffffa00
-R10: 00007ffe4b4dd350 R11: 0000000000000000 R12: 0000000000000001
-R13: 00000000006e0340 R14: 0000000000000008 R15: 00000000006dbd4c
-INFO: task syz-executor198:7947 blocked for more than 140 seconds.
-       Not tainted 4.19.0+ #82
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor198 D23400  7947   5577 0x80000004
-Call Trace:
-  context_switch kernel/sched/core.c:2826 [inline]
-  __schedule+0x8cf/0x21d0 kernel/sched/core.c:3474
-  schedule+0xfe/0x460 kernel/sched/core.c:3518
-  __rwsem_down_read_failed_common kernel/locking/rwsem-xadd.c:280 [inline]
-  rwsem_down_read_failed+0x371/0x710 kernel/locking/rwsem-xadd.c:297
-  call_rwsem_down_read_failed+0x18/0x30 arch/x86/lib/rwsem.S:94
-  __down_read arch/x86/include/asm/rwsem.h:83 [inline]
-  down_read+0x9b/0x120 kernel/locking/rwsem.c:26
-  exit_mm kernel/exit.c:511 [inline]
-  do_exit+0x59c/0x26d0 kernel/exit.c:854
-  do_group_exit+0x177/0x440 kernel/exit.c:970
-  get_signal+0x8b0/0x1980 kernel/signal.c:2517
-  do_signal+0x9c/0x21c0 arch/x86/kernel/signal.c:816
-  exit_to_usermode_loop+0x2e5/0x380 arch/x86/entry/common.c:162
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x446569
-Code: 63 65 20 69 73 20 65 6d 70 74 79 2c 20 79 6f 75 20 6d 61 79 20 77 61  
-6e 74 20 74 6f 20 2e 2f 63 6f 6e 66 69 67 75 72 65 20 2d <2d> 65 6e 61 62  
-6c 65 2d 72 74 69 6e 73 74 0a 00 00 00 00 00 00 00
-RSP: 002b:00007f8ad1b55db8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 00000000006dbc48 RCX: 0000000000446569
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00000000006dbc48
-RBP: 00000000006dbc40 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dbc4c
-R13: 00007ffe4b4dd2bf R14: 00007f8ad1b569c0 R15: 00000000006dbd4c
-INFO: task syz-executor198:7948 blocked for more than 140 seconds.
-       Not tainted 4.19.0+ #82
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-syz-executor198 D23336  7948   5577 0x80000004
-Call Trace:
-  context_switch kernel/sched/core.c:2826 [inline]
-  __schedule+0x8cf/0x21d0 kernel/sched/core.c:3474
-  schedule+0xfe/0x460 kernel/sched/core.c:3518
-  __rwsem_down_read_failed_common kernel/locking/rwsem-xadd.c:280 [inline]
-  rwsem_down_read_failed+0x371/0x710 kernel/locking/rwsem-xadd.c:297
-  call_rwsem_down_read_failed+0x18/0x30 arch/x86/lib/rwsem.S:94
-  __down_read arch/x86/include/asm/rwsem.h:83 [inline]
-  down_read+0x9b/0x120 kernel/locking/rwsem.c:26
-  exit_mm kernel/exit.c:511 [inline]
-  do_exit+0x59c/0x26d0 kernel/exit.c:854
-  do_group_exit+0x177/0x440 kernel/exit.c:970
-  get_signal+0x8b0/0x1980 kernel/signal.c:2517
-  do_signal+0x9c/0x21c0 arch/x86/kernel/signal.c:816
-  exit_to_usermode_loop+0x2e5/0x380 arch/x86/entry/common.c:162
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x446569
-Code: 63 65 20 69 73 20 65 6d 70 74 79 2c 20 79 6f 75 20 6d 61 79 20 77 61  
-6e 74 20 74 6f 20 2e 2f 63 6f 6e 66 69 67 75 72 65 20 2d <2d> 65 6e 61 62  
-6c 65 2d 72 74 69 6e 73 74 0a 00 00 00 00 00 00 00
-RSP: 002b:00007f8ad1b34db8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 00000000006dbc58 RCX: 0000000000446569
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00000000006dbc58
-RBP: 00000000006dbc50 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006dbc5c
-R13: 00007ffe4b4dd2bf R14: 00007f8ad1b359c0 R15: 00000000006dbd4c
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/982:
-  #0: 000000006bf8e029 (rcu_read_lock){....}, at:  
-debug_show_all_locks+0xd0/0x424 kernel/locking/lockdep.c:4379
-1 lock held by rsyslogd/5460:
-  #0: 000000001a428f24 (&f->f_pos_lock){+.+.}, at: __fdget_pos+0x1bb/0x200  
-fs/file.c:766
-2 locks held by getty/5550:
-  #0: 00000000a6ec9e30 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 000000000ba6ebb5 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/5551:
-  #0: 000000001c296eea (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 000000008d7c7477 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/5552:
-  #0: 00000000e6d3c5fa (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 000000008f05095b (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/5553:
-  #0: 00000000a51f4685 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 000000007d588b0b (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/5554:
-  #0: 0000000011c5a9cb (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 0000000034232836 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/5555:
-  #0: 00000000a3089d9b (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 000000002c7368ab (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/5556:
-  #0: 00000000e9383a5f (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 00000000a5ba37f2 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-1 lock held by syz-executor198/7946:
-  #0: 000000000d212cc7 (&mm->mmap_sem){++++}, at: do_user_addr_fault  
-arch/x86/mm/fault.c:1362 [inline]
-  #0: 000000000d212cc7 (&mm->mmap_sem){++++}, at:  
-__do_page_fault+0xbc9/0xe60 arch/x86/mm/fault.c:1489
-1 lock held by syz-executor198/7947:
-  #0: 000000000d212cc7 (&mm->mmap_sem){++++}, at: exit_mm kernel/exit.c:511  
-[inline]
-  #0: 000000000d212cc7 (&mm->mmap_sem){++++}, at: do_exit+0x59c/0x26d0  
-kernel/exit.c:854
-1 lock held by syz-executor198/7948:
-  #0: 000000000d212cc7 (&mm->mmap_sem){++++}, at: exit_mm kernel/exit.c:511  
-[inline]
-  #0: 000000000d212cc7 (&mm->mmap_sem){++++}, at: do_exit+0x59c/0x26d0  
-kernel/exit.c:854
-1 lock held by syz-executor198/7949:
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 PID: 982 Comm: khungtaskd Not tainted 4.19.0+ #82
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  nmi_cpu_backtrace.cold.1+0x5c/0xa1 lib/nmi_backtrace.c:101
-  nmi_trigger_cpumask_backtrace+0x1b3/0x1ed lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_all_cpu_backtrace include/linux/nmi.h:144 [inline]
-  check_hung_uninterruptible_tasks kernel/hung_task.c:204 [inline]
-  watchdog+0xb3e/0x1050 kernel/hung_task.c:265
-  kthread+0x35a/0x420 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:350
-Sending NMI from CPU 0 to CPUs 1:
-INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.430  
-msecs
-NMI backtrace for cpu 1
-CPU: 1 PID: 7949 Comm: syz-executor198 Not tainted 4.19.0+ #82
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__lock_acquire+0x44b/0x4c20 kernel/locking/lockdep.c:3291
-Code: 83 e2 03 83 e0 01 41 09 f6 c1 e0 02 45 88 77 21 83 e1 f8 09 d1 09 c1  
-83 e1 f7 44 09 c9 41 88 4f 22 0f b7 55 20 41 0f b7 47 22 <c1> e2 04 83 e0  
-0f 09 d0 48 89 fa 66 41 89 47 22 48 c1 ea 03 48 b8
-RSP: 0018:ffff8801b88aec90 EFLAGS: 00000002
-RAX: 0000000000000004 RBX: 00000000000004e1 RCX: 0000000000000004
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff8801cd5dae8c
-RBP: ffff8801b88af018 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000028 R11: ffff8801cd5da5c0 R12: 0000000000000001
-R13: ffff8801cd5dae2c R14: 0000000000000004 R15: ffff8801cd5dae68
-FS:  00007f8ad1b14700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffff600400 CR3: 00000001b8962000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
-  __mutex_lock_common kernel/locking/mutex.c:925 [inline]
-  __mutex_lock+0x166/0x16f0 kernel/locking/mutex.c:1072
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
-  perf_mmap+0x86b/0x1cb0 kernel/events/core.c:5646
-  call_mmap include/linux/fs.h:1813 [inline]
-  mmap_region+0xe82/0x1cd0 mm/mmap.c:1762
-  do_mmap+0xa22/0x1230 mm/mmap.c:1535
-  do_mmap_pgoff include/linux/mm.h:2316 [inline]
-  vm_mmap_pgoff+0x213/0x2c0 mm/util.c:350
-  ksys_mmap_pgoff+0x4da/0x660 mm/mmap.c:1585
-  __do_sys_mmap arch/x86/kernel/sys_x86_64.c:100 [inline]
-  __se_sys_mmap arch/x86/kernel/sys_x86_64.c:91 [inline]
-  __x64_sys_mmap+0xe9/0x1b0 arch/x86/kernel/sys_x86_64.c:91
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x446569
-Code: e8 2c b3 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 2b 09 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f8ad1b13da8 EFLAGS: 00000216 ORIG_RAX: 0000000000000009
-RAX: ffffffffffffffda RBX: 00000000006dbc68 RCX: 0000000000446569
-RDX: 0000000000000000 RSI: 0000000000003000 RDI: 0000000020ffd000
-RBP: 00000000006dbc60 R08: 0000000000000003 R09: 0000000000000000
-R10: 0000000000000011 R11: 0000000000000216 R12: 00000000006dbc6c
-R13: 00007ffe4b4dd2bf R14: 00007f8ad1b149c0 R15: 00000000006dbd4c
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+On 10/27/2018 06:07 AM, Stephen Smith wrote:
+> On Wednesday, October 24, 2018 10:20:05 PM MST Stephen Smith wrote:
+>>
+>> Whenever I run "shutdown -h now" or "reboot" I receive an immediate kernel
+>> crash with a dump that has:
+>>
+>> "Code: Bad RIP value"
+> 
+> I Canonical response noted  the following from the dump:
+> 
+> [ 42.640541] resource sanity check: requesting [mem 0x000c0000-0x000fffff], 
+> which spans more than PCI Bus 0000:00 [mem 0x000c0000-0x000dffff window]
+> 
+> I've since updated to the latest BIOS at there suggestion.   
+> 
+> I see the following on the screen when the kernel crashes:
+> [   43.115817] WARNING: CPU: 2 PID: 1847 at mm/usercopy.c:81 
+> usercopy_warn+0x81/0xa0
+> [   43.115818] Modules linked in: binfmt_misc snd_hda_codec_hdmi 
+> snd_hda_codec_realtek snd_hda_codec_generic edac_mce_amd snd_hda_intel kvm_amd 
+> kvm snd_hda_codec snd_hda_core irqbypass crct10dif_pclmul crc32_pclmul 
+> snd_hwdep snd_pcm snd_seq_midi snd_seq_midi_event ghash_clmulni_intel 
+> snd_rawmidi snd_seq pcbc aesni_intel snd_seq_device snd_timer eeepc_wmi 
+> asus_wmi sparse_keymap aes_x86_64 joydev snd video crypto_simd cryptd 
+> soundcore wmi_bmof glue_helper input_leds wmi k10temp ccp serio_raw 
+> nvidia_uvm(POE) mac_hid sch_fq_codel parport_pc ppdev lp parport ip_tables 
+> x_tables autofs4 raid10 raid456 async_raid6_recov async_memcpy async_pq 
+> async_xor async_tx xor raid6_pq libcrc32c raid0 multipath linear raid1 
+> hid_generic usbhid hid nvidia_drm(POE) nvidia_modeset(POE) nvidia(POE) 
+> drm_kms_helper syscopyarea
+> [   43.115849]  sysfillrect sysimgblt fb_sys_fops drm r8169 ipmi_devintf 
+> i2c_piix4 ipmi_msghandler mii ahci libahci gpio_amdpt gpio_generic
+> [   43.115856] CPU: 2 PID: 1847 Comm: Xorg Tainted: P           OE     
+> 4.18.0-10-generic #11-Ubuntu
+> [   43.115857] Hardware name: System manufacturer System Product Name/PRIME 
+> B350-PLUS, BIOS 0406 02/07/2017
+> [   43.115859] RIP: 0010:usercopy_warn+0x81/0xa0
+> [   43.115859] Code: 10 99 41 51 4d 89 d8 48 c7 c0 89 8d 0f 99 49 89 f1 48 89 
+> f9 48 0f 45 c2 48 c7 c7 f0 a1 10 99 4c 89 d2 48 89 c6 e8 f1 cf df ff <0f> 0b 
+> 48 83 c4 18 c9 c3 48 c7 c6 b2 8a 12 99 49 89 f1 49 89 f3 eb 
+> [   43.115875] RSP: 0018:ffffb0c741f07b08 EFLAGS: 00010286
+> [   43.115876] RAX: 0000000000000000 RBX: ffff9beec5c42cb0 RCX: 
+> 0000000000000006
+> [   43.115876] RDX: 0000000000000007 RSI: 0000000000000096 RDI: 
+> ffff9beece6964b0
+> [   43.115877] RBP: ffffb0c741f07b20 R08: 0000000000000001 R09: 
+> 0000000000000392
+> [   43.115878] R10: 0000000000000004 R11: 0000000000000000 R12: 
+> 0000000000000003
+> [   43.115878] R13: 0000000000000001 R14: ffff9beec5c42cb3 R15: 
+> ffff9beec5c42cf8
+> [   43.115879] FS:  00007f6267654a80(0000) GS:ffff9beece680000(0000) knlGS:
+> 0000000000000000
+> [   43.115880] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   43.115881] CR2: 00007f6263cc5d20 CR3: 0000000402fb0000 CR4: 
+> 00000000003406e0
+> [   43.115881] Call Trace:
+> [   43.115886]  __check_heap_object+0xc2/0x110
+> [   43.115887]  __check_object_size+0x14c/0x178
+> [   43.116024]  os_memcpy_to_user+0x26/0x50 [nvidia]
+> [   43.116158]  _nv009384rm+0xbf/0xe0 [nvidia]
+> [   43.116159] WARNING: kernel stack frame pointer at 00000000e73eb0f3 in 
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+The newer kernels (like 4.18) have checks regarding copies to userspace for
+unwanted kernel memory exposure.
+The check fails here. This particular copy was initiated by the binary nvidia 
+driver, so unfortunately we cannot help here. So either ask Nvidia for a fix 
+or (if that driver was installed with the Ubuntu software updater)  Canonical.
+
