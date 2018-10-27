@@ -2,182 +2,111 @@ Return-Path: <SRS0=4IUq=NH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCB12C46475
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 11:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08A71C46475
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 12:06:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66A6120869
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 11:50:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A409D20856
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 12:06:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b="EJg1wwJ4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66A6120869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=linux-watchdog.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="epQQ4/7+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A409D20856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728627AbeJ0Ubi (ORCPT
+        id S1728533AbeJ0UrI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 16:31:38 -0400
-Received: from www.linux-watchdog.org ([185.87.125.42]:55840 "EHLO
-        www.linux-watchdog.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728563AbeJ0Ubh (ORCPT
+        Sat, 27 Oct 2018 16:47:08 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:39488 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726254AbeJ0UrI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 16:31:37 -0400
-Received: by www.linux-watchdog.org (Postfix, from userid 500)
-        id CC9B4403A5; Sat, 27 Oct 2018 13:27:24 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org CC9B4403A5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
-        s=odk20180602; t=1540639644;
-        bh=NW+gyem+BY0LJ6DTn3zOQ8ODlkOYc7UpS4LnQibXic4=;
-        h=Date:From:To:Cc:Subject:From;
-        b=EJg1wwJ4fKYLIskyWHpcAG1OQtKWBsBQJw3DcwnB/uRBFxsZtFY1tcwCwZ5evxpGc
-         eiWXt+MUdEG2w3zL+7XXneUcCycJmQ5TtehxGyR8bfJQLCvrpE4t8SBjK6L8fFzxS3
-         coQTMwkZoZi/XTJw6Qe6E3uHpDOPjtheWQ06xitE=
-Date:   Sat, 27 Oct 2018 13:27:24 +0200
-From:   Wim Van Sebroeck <wim@linux-watchdog.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Chris Brandt <chris.brandt@renesas.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Hauke Mehrtens <hauke@hauke-m.de>,
-        Jean Delvare <jdelvare@suse.de>,
-        Jerry Hoemann <jerry.hoemann@hpe.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Marek =?iso-8859-1?Q?Beh=FAn?= <marek.behun@nic.cz>,
-        "Robert P. J. Day" <rpjday@crashcourse.ca>,
-        Romain Izard <romain.izard.pro@gmail.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: [GIT PULL REQUEST] watchdog - v4.20 Merge window
-Message-ID: <20181027112724.GA26504@www.linux-watchdog.org>
+        Sat, 27 Oct 2018 16:47:08 -0400
+Received: by mail-lj1-f193.google.com with SMTP id a28-v6so543375ljd.6
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Oct 2018 05:06:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oUlhzbHtvpiLt0g9FBXvPQo4KTNlW9kYFGAu6kOyU3k=;
+        b=epQQ4/7+6GimaKbY56IBgbZpjMwZowJoxq6Z+vgiOktccDVervEGnbuFN1bQgRV8Wt
+         sOilyXGTCO1LmNychbqvDtv08BJWESTHYeQJ8m1/t8Q6XOIpDVxZx7rU0jzevnDsbNyh
+         ot+YXX9+GlIiqx0aaF3F+9u2QehhXuLS384csxohT29OJGeshz0YjN7eYo2YAjwMsXqZ
+         z1NX+eSQPkwwDucswLdA9V6mXRNn6DxrSLqOkeWPPV5bc4FBxjC7JEBs5mEymO4aD+7D
+         9+TUuHc7wjJnyfkrm9lJ6YW4MQCVgyV4Zdm4mw+kLmz4wPvJbeGN2VHQf2YQMU6Ypja/
+         dPBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oUlhzbHtvpiLt0g9FBXvPQo4KTNlW9kYFGAu6kOyU3k=;
+        b=B1HAzSTEXn8kVycck2hI2NWj69EAi0CEz9dY87twSvAbl6BW0ELCQu3J9SvfWAwL6X
+         CDYXkBLo/BDl8HvbZ+GBVpDkuPZXTGc6c0m4DuHwY9SaOoESdoAB983aXdEac3fJs4D/
+         DLwZ7GRuGHZd++9OLCmzneELA2Bu9uYewTauvxlopodqHcC8qej7BDzRrEXq0IZiyaO0
+         sRKOXHOXPXhZA2zRgJncfzpizOe/x6nUrJjB9pmMozlXCEP9CobIwCsmlyv2HFT0RaaM
+         pe9FUIvnRFla23dtc1G8YQNZdhlr4QH3FNEkN8phbQ2j6LENvK5Nb1EWKfatgvHbfJqZ
+         819Q==
+X-Gm-Message-State: AGRZ1gJnBlfDzlhP8DvRcvWBVv+qgh1uOA5C2ORE5AH/v31IUI78LxAo
+        hXW9UtbWtk0Iyw8zV0GLCI9C2tkjk5vzgAsHHuA=
+X-Google-Smtp-Source: AJdET5dZWhS3JQTK+Kl61CMyik7F2Q5uGGb57OY1gKIUrtla3tP5c2ycw9J4HZibGdDgkMFjzsTiP4mJASH9MIl8a00=
+X-Received: by 2002:a2e:6e08:: with SMTP id j8-v6mr5287431ljc.61.1540641981105;
+ Sat, 27 Oct 2018 05:06:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.5.20 (2009-12-10)
+References: <20171108223020.24487-1-linux@rasmusvillemoes.dk>
+ <20181026232409.16100-1-linux@rasmusvillemoes.dk> <20181026232409.16100-2-linux@rasmusvillemoes.dk>
+In-Reply-To: <20181026232409.16100-2-linux@rasmusvillemoes.dk>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Sat, 27 Oct 2018 14:06:09 +0200
+Message-ID: <CANiq72kEdD3hoHaxukkdzEJt+e_nptyO1GdgfUqWnSAog3k=JQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/7] compiler_attributes.h: add __attribute__((format_arg))
+ shorthand
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi Rasmus,
 
-Please pull the watchdog changes for the v4.20 (or 5.00) release cycle.
+On Sat, Oct 27, 2018 at 1:24 AM Rasmus Villemoes
+<linux@rasmusvillemoes.dk> wrote:
+>
+> diff --git a/include/linux/compiler_attributes.h b/include/linux/compiler_attributes.h
+> index 6b28c1b7310c..08264df52322 100644
+> --- a/include/linux/compiler_attributes.h
+> +++ b/include/linux/compiler_attributes.h
+> @@ -32,6 +32,7 @@
+>  # define __GCC4_has_attribute___assume_aligned__      (__GNUC_MINOR__ >= 9)
+>  # define __GCC4_has_attribute___designated_init__     0
+>  # define __GCC4_has_attribute___externally_visible__  1
+> +# define __GCC4_has_attribute___format_arg__          1
 
-This series contains:
-* Add Armada 37xx CPU watchdog
-* w83627hf_wdt: Add Support for NCT6796D, NCT6797D, NCT6798D
-* hpwdt: several improvements
-* renesas_wdt: SPDX identifiers, stop when unregistering, support for R7S9210
-* rza_wdt: SPDX identifiers, support longer timeouts
-* core: fix null pointer dereference when releasing cdev
-* iTCO_wdt: Drop option vendorsupport=2
-* sama5d4: fix timeout-sec usage
-* lantiq_wdt: convert to watchdog framework
-* several small fixes
+Thank you Rasmus for doing this already on top of this tree!
 
-The output from git request-pull:
-----------------------------------------------------------------
+>  # define __GCC4_has_attribute___noclone__             1
+>  # define __GCC4_has_attribute___optimize__            1
+>  # define __GCC4_has_attribute___nonstring__           0
+> @@ -140,6 +141,18 @@
+>  #define __printf(a, b)                  __attribute__((__format__(printf, a, b)))
+>  #define __scanf(a, b)                   __attribute__((__format__(scanf, a, b)))
+>
+> +/*
+> + * Optional
 
-The following changes since commit 17b57b1883c1285f3d0dc2266e8f79286a7bef38:
+I did quick check and gcc >= 4.1, clang >= 3.0, icc >= 13 compilers
+seem to support it (or at least recognize it, even if they just ignore
+it), so we do not need to make it optional, no? Did I miss some case?
 
-  Linux 4.19-rc6 (2018-09-30 07:15:35 -0700)
+Thanks!
 
-are available in the git repository at:
-
-  git://www.linux-watchdog.org/linux-watchdog.git tags/linux-watchdog-4.20-rc1
-
-for you to fetch changes up to cd6ba41c192deca20d9add5554bc8c51d0f07de2:
-
-  watchdog: ts4800: release syscon device node in ts4800_wdt_probe() (2018-10-22 10:16:28 +0200)
-
-----------------------------------------------------------------
-linux-watchdog 4.20-rc1 tag
-
-----------------------------------------------------------------
-Alexey Khoroshilov (1):
-      watchdog: ts4800: release syscon device node in ts4800_wdt_probe()
-
-Chris Brandt (2):
-      watchdog: rza_wdt: Support longer timeouts
-      dt-bindings: watchdog: renesas-wdt: Add support for R7S9210
-
-Christophe Leroy (3):
-      watchdog: mpc8xxx: use dev_xxxx() instead of pr_xxxx()
-      watchdog: mpc8xxx: provide boot status
-      dt-bindings: watchdog: add mpc8xxx-wdt support
-
-Guenter Roeck (2):
-      watchdog: w83627hf_wdt: Support NCT6796D, NCT6797D, NCT6798D
-      MAINTAINERS: Fix file pattern for MEN Z069 watchdog driver
-
-Hauke Mehrtens (3):
-      watchdog: lantiq: update register names to better match spec
-      watchdog: lantiq: Convert to watchdog_device
-      watchdog: lantiq: add get_timeleft callback
-
-Jean Delvare (2):
-      watchdog: iTCO_wdt: Drop option vendorsupport=2
-      watchdog: iTCO_wdt: Remove unused hooks
-
-Jerry Hoemann (7):
-      watchdog: hpwdt: Initialize pretimeout from module parameter.
-      watchdog: hpwdt: Claim NMI from iLO
-      watchdog: hpwdt: Display module parameters.
-      watchdog: hpwdt: Module paramerter alias.
-      watchdog: hpwdt: Update version number.
-      watchdog: hpwdt: Update Driver Documentation.
-      watchdog: hpwdt: Disable PreTimeout when Timeout is smaller
-
-Kuninori Morimoto (1):
-      watchdog: rza_wdt: convert to SPDX identifiers
-
-Marek Behún (4):
-      watchdog: Add support for Armada 37xx CPU watchdog
-      dt-bindings: watchdog: Document armada-37xx-wdt binding
-      documentation: watchdog: add documentation for armada-37xx-wdt
-      watchdog: armada_37xx_wdt: use do_div for u64 division
-
-Robert P. J. Day (1):
-      watchdog: fix a small number of "watchog" typos in comments
-
-Romain Izard (1):
-      watchdog: sama5d4: fix timeout-sec usage
-
-Wolfram Sang (3):
-      watchdog: renesas_wdt: use SPDX identifier for Renesas drivers
-      watchdog: core: fix null pointer dereference when releasing cdev
-      watchdog: renesas_wdt: stop when unregistering
-
- .../bindings/watchdog/armada-37xx-wdt.txt          |  23 ++
- .../devicetree/bindings/watchdog/mpc8xxx-wdt.txt   |  25 ++
- .../devicetree/bindings/watchdog/renesas-wdt.txt   |   1 +
- Documentation/watchdog/hpwdt.txt                   |  93 ++---
- Documentation/watchdog/watchdog-parameters.txt     |   5 +
- MAINTAINERS                                        |   2 +-
- drivers/watchdog/Kconfig                           |  12 +
- drivers/watchdog/Makefile                          |   1 +
- drivers/watchdog/armada_37xx_wdt.c                 | 388 +++++++++++++++++++++
- drivers/watchdog/booke_wdt.c                       |   2 +-
- drivers/watchdog/hpwdt.c                           |  24 +-
- drivers/watchdog/iTCO_vendor.h                     |   4 -
- drivers/watchdog/iTCO_vendor_support.c             | 168 +--------
- drivers/watchdog/iTCO_wdt.c                        |   4 -
- drivers/watchdog/lantiq_wdt.c                      | 311 ++++++++---------
- drivers/watchdog/mpc8xxx_wdt.c                     |  46 ++-
- drivers/watchdog/renesas_wdt.c                     |   6 +-
- drivers/watchdog/rza_wdt.c                         |  93 +++--
- drivers/watchdog/sama5d4_wdt.c                     |   6 +-
- drivers/watchdog/ts4800_wdt.c                      |   1 +
- drivers/watchdog/via_wdt.c                         |   4 +-
- drivers/watchdog/w83627hf_wdt.c                    |   8 +-
- drivers/watchdog/watchdog_dev.c                    |  10 +-
- 23 files changed, 783 insertions(+), 454 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/watchdog/armada-37xx-wdt.txt
- create mode 100644 Documentation/devicetree/bindings/watchdog/mpc8xxx-wdt.txt
- create mode 100644 drivers/watchdog/armada_37xx_wdt.c
+Cheers,
+Miguel
