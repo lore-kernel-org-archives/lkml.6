@@ -2,128 +2,119 @@ Return-Path: <SRS0=4IUq=NH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1C69C46475
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 07:12:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DBB8C46475
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 07:17:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09D2E2085B
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 07:12:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="OBB/93yR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09D2E2085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=redchan.it
+	by mail.kernel.org (Postfix) with ESMTP id 421502085B
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 07:17:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 421502085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728264AbeJ0Pwo (ORCPT
+        id S1728244AbeJ0P5h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 11:52:44 -0400
-Received: from cock.li ([185.100.85.212]:36898 "EHLO cock.li"
+        Sat, 27 Oct 2018 11:57:37 -0400
+Received: from mx1.mailbox.org ([80.241.60.212]:55626 "EHLO mx1.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727844AbeJ0Pwo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 11:52:44 -0400
+        id S1728206AbeJ0P5h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Oct 2018 11:57:37 -0400
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [80.241.60.240])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx1.mailbox.org (Postfix) with ESMTPS id 5E7F74B3C8;
+        Sat, 27 Oct 2018 09:17:35 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
+        with ESMTP id I41kJURv4Vlu; Sat, 27 Oct 2018 09:17:33 +0200 (CEST)
+Date:   Sat, 27 Oct 2018 18:17:29 +1100
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Ed Maste <emaste@freebsd.org>
+Cc:     David Drysdale <drysdale@google.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] namei: implement O_BENEATH-style AT_* flags
+Message-ID: <20181027071729.xbnvfii6iwdwymrn@ryuk>
+References: <20181009065300.11053-3-cyphar@cyphar.com>
+ <20181027014114.GA52393@freebsd.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1540624359; bh=HH/59LlMrC3J4c+stT8qLvBfiQOQOiDw511Rw2KCnxU=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=OBB/93yRH7L8dJcb5foyKVAEZ22fUKgKINHjzCXUt4HC5m963Yi5FrVIMIJTjgOGq
-         0D0NWi+yLU4eZRuplPnYWK+6eJjI0ZppuPrLonsyljOiwnD5+0ymG+xlaHpwHgvoAm
-         N/ihNrc8+uC0XH7xXLLefHRcUf17biO7Gew39MHoyxnay9WC46LdKSMOTAVX2gzvbT
-         NFi6p4HdVJdsEfiLme5SiIT5f7DvtkFGAg0g0Cztw7PEWmVJ5N5bb14092kRYq1sM6
-         WEOnzsItNlI0Q4n/gvUdUkc/BQuzW2PlwRupspyVRWutR/ArNtBpX8ibVSrfTwb545
-         Ktj9NKLA44IKA==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Sat, 27 Oct 2018 07:12:39 +0000
-From:   visionsofalice@redchan.it
-To:     linux-kernel@vger.kernel.org
-Cc:     Eben Moglen <moglen@columbia.edu>, esr@thyrsus.com,
-        gregkh@linuxfoundation.org, rms@gnu.org, bruce@perens.com
-Subject: Re: The linux devs can rescind their license grant.
-In-Reply-To: <3068-Fri26Oct2018143130-0400-eben@harlan.sflc-vpn>
-References: <20181020134908.GA32218@kroah.com>
- <87y3ar80ac.fsf@notabene.neil.brown.name>
- <c6bf1877-6e29-50ec-ffa8-314ab35ec9ce@redhat.com>
- <185b786a2bd6e8d527dca161dc42e4f1@redchan.it>
- <20181025081911.GB11343@kroah.com> <20181025193901.GD26403@thyrsus.com>
- <849-Fri26Oct2018091533-0400-eben@harlan.sflc-vpn>
- <4c023302875de71cc58007301b180940@redchan.it>
- <3068-Fri26Oct2018143130-0400-eben@harlan.sflc-vpn>
-Message-ID: <f10ae195193dcf695b6623508ffd4cc7@redchan.it>
-X-Sender: visionsofalice@redchan.it
-User-Agent: Roundcube Webmail/1.3.6
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rqlehc5c4ca2xn3a"
+Content-Disposition: inline
+In-Reply-To: <20181027014114.GA52393@freebsd.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Lawrence Rosen is also in agreement on this point (regarding the GPL v2 
-specifically).
-It is revocable at the will of the grantor, at any time.
-(He writes that if a licensee-contributor was to sue a grantor, then 
-would be a good time to unilaterally rescind: disposing of the matter 
-entirely)
 
-The contention that a copyright license is only terminable is 
-traditionally usually true in practice; but not because such is declared 
-by the Copyright Statute (such is not). It is because, in practice, 
-those terms are supported by consideration. Thus the licensee has payed 
-the grantor for those very terms to be in effect.
+--rqlehc5c4ca2xn3a
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-In the case of most users and most developers of the linux-kernel this 
-is not the case.
+On 2018-10-27, Ed Maste <emaste@freebsd.org> wrote:
+> On Tue, 9 Oct 2018 at 02:53, Aleksa Sarai <cyphar@cyphar.com> wrote:
+> >
+> > +#ifndef O_BENEATH
+> > +#define O_BENEATH      00040000000 /* *Not* the same as capsicum's O_B=
+ENEATH! */
+> > +#endif
+> [...]
+> O_BENEATH originally came from the Capsicum Linux port, and inherited the
+> restriction against ".." path components from years ago when the port was
+> done.  In addition, FreeBSD did not originally implement O_BENEATH as the
+> "beneath" behaviour is inherently provided once a process enters a
+> capability mode sandbox.  However, Capsicum now allows ".." paths, and
+> FreeBSD supports O_BENEATH separately from capability mode.  Absolute pat=
+hs
+> are not yet allowed with O_BENEATH but a change is in review to permit th=
+em.
 
-In-fact The very principal that, in the real world, precipitated the 
-widespread adoption of linux:
-that no consideration is paid for receipt of the program.
+What is the proposed semantic of O_BENEATH with absolute paths -- I
+believe you don't have an openat(2) on FreeBSD (but please feel free to
+correct me)?
 
-The GPL v2 is not supported by consideration.
-This is its strength.
-And it is not something that can be disclaimed after the fact.
+> Ideally I would like to see us have the same API; none of this work has y=
+et
+> shipped in a FreeBSD release and there is an opportunity for us to make
+> changes to match the interface and errors Linux may adopt.
 
-The drafter of version 2 of the GPL did, indeed, make an error in 
-drafting. He was, perhaps, familiar mostly with commercial copyright 
-licenses.
-The foundation of the GPL does not rest on any contemplation of 
-quid-pro-quo or contract theories however;
-it is on the simple declaration in the Copyright Statute that copyright 
-is alienable in all ways property is.
-The GPL v2 is similar to a property license, and not a traditional 
-commercial copyright license.
+I'm going to send out a v4 "soon" but I would like to know what folks
+think about having resolveat(2) (or similar) to separate the scoping O_*
+flags and produce an O_PATH -- since unsupported O_* flags are ignored
+by older kernels userspace will have to do some plenty of checking after
+each path operation.
 
-On 2018-10-26 18:31, Eben Moglen wrote:
-> On Friday, 26 October 2018, visionsofalice@redchan.it wrote:
-> 
->   You are conflating case law dealing with commercial software and
->   non-gratuitous licenses with the present situation, which would 
-> likely
->   be a case of first-impression in nearly any jurisdiction.
-> 
-> I think the best procedure would be for me to publish my analysis and
-> for you then to tell me what is wrong with it.  What you say here
-> sounds like what a lawyer might say, but isn't.  I have been teaching
-> this stuff for about thirty years, so if I am conflating or confusing
-> anything I will be grateful for help in seeing my mistake.
-> 
->   The rule for gratuitous licenses is that they are revocable at the 
-> will
->   of the grantor.
-> 
-> That's not actually "the rule."  It sounds like it might be the rule,
-> but it so happens that it's not.  When I have given the explanation as
-> I have learned, taught and depended on it, you will be able to show me
-> what I am wrong about.
-> 
->   Raymond Nimmer (God rest his soul) was in agreement on this point,
->   vis-a-vis the GPL and similar licenses.
-> 
-> You have your Nimmers confused.  The primary author of the treatise
-> Nimmer on Copyright (a book about the law, not in itself an authority)
-> was Melville Nimmer.  The treatise is continued by his son, David, a
-> fine lawyer with whom I do from time to time politely disagree about
-> something.  Ray Nimmer is quite another person.
-> 
-> Eben
+Personally, I believe this (along with AT_EMPTY_PATH for openat(2))
+would help with some other O_PATH issues.
+
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--rqlehc5c4ca2xn3a
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAlvUEQkACgkQnhiqJn3b
+jbQeHA/+Jg2+M95VA/odwUZX6NTOQ/uf9PbRMQlz5IX3Z0Z1HbVjZa6yg9mZtc7W
+47nVNzpNPo/r0kwP2hCZB0VKhgqwj0vlcFSlWVnNjfg3RZa8D47C8sanDzXX/R+K
+Nf9wZ0ISRGrZobMZOgdjC7Zh3Fj0ymA44MmILbDHvGopED0EpQu9hqxje8W1UjMg
+wYbxh4wntPvr99yKRpu86wcO/JNruktBCtRcqKyaYV821kb1651aiHf4DVsKIiQA
+SyZtAfwrg41uA8j/bqFGwLUn1Fy7LuTftiOUQRpPHVprUUEuvYu0yct0auHPQrLM
+q88VJtLpOlSgit1nL0jmksYhLf4qTuU7xzj7XYvvKfjTCXpvIFZC4RdmpXXrUXSH
+eJiAgHGOKFq48m4hxZF7jcpSyg4cIh/IGL4OEBoBieRL1r3V4sKX5pSQwWA7focO
+H/8YDwPVkzReMQKvY8WcNgL5lCK/v8vu72qZaUR3zc+prS3+SavQc+CjM5fGWooF
+gsRMfkzfKuReIl4rMsln0M/vXJ+cErPQZvwvLJr0FlqpvemlQpS37AaDrQb0dxEv
+wzCu7+W5fQ9vyeB3CiTa/3/hzD5TK7/lNxUZOUnsI78y4DF/qWm1Skv+iLZQB0Wj
+MljUox4YH6g9SD9SxtbLbmzi+9o7Mh05/oO7+DHbnd/6TIALJ88=
+=ucUf
+-----END PGP SIGNATURE-----
+
+--rqlehc5c4ca2xn3a--
