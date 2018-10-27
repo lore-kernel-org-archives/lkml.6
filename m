@@ -2,341 +2,156 @@ Return-Path: <SRS0=4IUq=NH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2219AC46475
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 09:14:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53844C46475
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 09:25:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEB0920665
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 09:14:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEB0920665
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 04E81204FD
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 09:25:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04E81204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728357AbeJ0RyT (ORCPT
+        id S1728353AbeJ0SFV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 13:54:19 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45204 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726193AbeJ0RyT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 13:54:19 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9R94SqT105631
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Oct 2018 05:14:00 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ncm689np0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Oct 2018 05:14:00 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Sat, 27 Oct 2018 10:13:57 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Sat, 27 Oct 2018 10:13:51 +0100
-Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9R9Dorm61735080
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 27 Oct 2018 09:13:50 GMT
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F0E2642042;
-        Sat, 27 Oct 2018 09:13:49 +0000 (GMT)
-Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1F27A42041;
-        Sat, 27 Oct 2018 09:13:45 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.207.63])
-        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Sat, 27 Oct 2018 09:13:44 +0000 (GMT)
-Date:   Sat, 27 Oct 2018 10:13:42 +0100
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Greg Hackmann <ghackmann@android.com>,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        CHANDAN VN <chandan.vn@samsung.com>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE" 
-        <devicetree@vger.kernel.org>, linux@armlinux.org.uk
-Subject: Re: [PATCH v4 1/2] arm64: Get rid of __early_init_dt_declare_initrd()
-References: <20181026223951.30936-1-f.fainelli@gmail.com>
- <20181026223951.30936-2-f.fainelli@gmail.com>
+        Sat, 27 Oct 2018 14:05:21 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56486 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726610AbeJ0SFV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Oct 2018 14:05:21 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 508163082AF3;
+        Sat, 27 Oct 2018 09:25:01 +0000 (UTC)
+Received: from [10.36.116.60] (ovpn-116-60.ams2.redhat.com [10.36.116.60])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 40B754C47B;
+        Sat, 27 Oct 2018 09:24:54 +0000 (UTC)
+Subject: Re: [RFC v2 12/20] dma-iommu: Implement NESTED_MSI cookie
+To:     Robin Murphy <robin.murphy@arm.com>, eric.auger.pro@gmail.com,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
+        yi.l.liu@linux.intel.com, jean-philippe.brucker@arm.com,
+        will.deacon@arm.com
+Cc:     tianyu.lan@intel.com, ashok.raj@intel.com, marc.zyngier@arm.com,
+        christoffer.dall@arm.com, peter.maydell@linaro.org
+References: <20180918142457.3325-1-eric.auger@redhat.com>
+ <20180918142457.3325-13-eric.auger@redhat.com>
+ <bd90bf0e-1bf6-244b-0ed6-0018ddc25eb4@arm.com>
+ <167b1683-9dfe-d471-da2e-37bf53278007@redhat.com>
+ <70ff6bee-5775-cccb-b74a-db915c907bcd@arm.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <1d5181dd-86c6-ffe7-df27-0c8362342039@redhat.com>
+Date:   Sat, 27 Oct 2018 11:24:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181026223951.30936-2-f.fainelli@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18102709-0028-0000-0000-0000030E3500
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18102709-0029-0000-0000-000023CA5454
-Message-Id: <20181027091341.GB6770@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-27_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810270086
+In-Reply-To: <70ff6bee-5775-cccb-b74a-db915c907bcd@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Sat, 27 Oct 2018 09:25:01 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Florian,
+Hi Robin,
 
-On Fri, Oct 26, 2018 at 03:39:50PM -0700, Florian Fainelli wrote:
-> ARM64 is the only architecture that re-defines
-> __early_init_dt_declare_initrd() in order for that function to populate
-> initrd_start/initrd_end with physical addresses instead of virtual
-> addresses. Instead of having an override, just get rid of that
-> implementation and perform the virtual to physical conversion of these
-> addresses in arm64_memblock_init() where relevant.
+On 10/25/18 12:05 AM, Robin Murphy wrote:
+> On 2018-10-24 7:44 pm, Auger Eric wrote:
+>> Hi Robin,
+>>
+>> On 10/24/18 8:02 PM, Robin Murphy wrote:
+>>> Hi Eric,
+>>>
+>>> On 2018-09-18 3:24 pm, Eric Auger wrote:
+>>>> Up to now, when the type was UNMANAGED, we used to
+>>>> allocate IOVA pages within a range provided by the user.
+>>>> This does not work in nested mode.
+>>>>
+>>>> If both the host and the guest are exposed with SMMUs, each
+>>>> would allocate an IOVA. The guest allocates an IOVA (gIOVA)
+>>>> to map onto the guest MSI doorbell (gDB). The Host allocates
+>>>> another IOVA (hIOVA) to map onto the physical doorbell (hDB).
+>>>>
+>>>> So we end up with 2 unrelated mappings, at S1 and S2:
+>>>>            S1             S2
+>>>> gIOVA    ->     gDB
+>>>>                  hIOVA    ->    hDB
+>>>>
+>>>> The PCI device would be programmed with hIOVA.
+>>>>
+>>>> iommu_dma_bind_doorbell allows to pass gIOVA/gDB to the host
+>>>> so that gIOVA can be used by the host instead of re-allocating
+>>>> a new IOVA. That way the host can create the following nested
+>>>> mapping:
+>>>>
+>>>>            S1           S2
+>>>> gIOVA    ->    gDB    ->    hDB
+>>>>
+>>>> this time, the PCI device will be programmed with the gIOVA MSI
+>>>> doorbell which is correctly map through the 2 stages.
+>>>
+>>> If I'm understanding things correctly, this plus a couple of the
+>>> preceding patches all add up to a rather involved way of coercing an
+>>> automatic allocator to only "allocate" predetermined addresses in an
+>>> entirely known-ahead-of-time manner.
+>> agreed
+>>   Given that the guy calling
+>>> iommu_dma_bind_doorbell() could seemingly just as easily call
+>>> iommu_map() at that point and not bother with an allocator cookie and
+>>> all this machinery at all, what am I missing?
+>> Well iommu_dma_map_msi_msg() gets called and is part of this existing
+>> MSI mapping machinery. If we do not do anything this function allocates
+>> an hIOVA that is not involved in any nested setup. So either we coerce
+>> the allocator in place (which is what this series does) or we unplug the
+>> allocator to replace this latter with a simple S2 mapping, as you
+>> suggest, ie. iommu_map(gDB, hDB). Assuming we unplug the allocator, the
+>> guy who actually calls  iommu_dma_bind_doorbell() knows gDB but does not
+>> know hDB. So I don't really get how we can simplify things.
 > 
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
->  arch/arm64/include/asm/memory.h |  8 --------
->  arch/arm64/mm/init.c            | 26 ++++++++++++++++----------
->  2 files changed, 16 insertions(+), 18 deletions(-)
+> OK, there's what I was missing :D
 > 
-> diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
-> index b96442960aea..dc3ca21ba240 100644
-> --- a/arch/arm64/include/asm/memory.h
-> +++ b/arch/arm64/include/asm/memory.h
-> @@ -168,14 +168,6 @@
->  #define IOREMAP_MAX_ORDER	(PMD_SHIFT)
->  #endif
->  
-> -#ifdef CONFIG_BLK_DEV_INITRD
-> -#define __early_init_dt_declare_initrd(__start, __end)			\
-> -	do {								\
-> -		initrd_start = (__start);				\
-> -		initrd_end = (__end);					\
-> -	} while (0)
-> -#endif
-> -
->  #ifndef __ASSEMBLY__
->  
->  #include <linux/bitops.h>
-> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-> index 3cf87341859f..98ff0f7a0f7a 100644
-> --- a/arch/arm64/mm/init.c
-> +++ b/arch/arm64/mm/init.c
-> @@ -364,6 +364,9 @@ static void __init fdt_enforce_memory_region(void)
->  void __init arm64_memblock_init(void)
->  {
->  	const s64 linear_region_size = -(s64)PAGE_OFFSET;
-> +	unsigned long __maybe_unused phys_initrd_size;
-> +	u64 __maybe_unused phys_initrd_start;
-> +	u64 __maybe_unused base, size;
->  
->  	/* Handle linux,usable-memory-range property */
->  	fdt_enforce_memory_region();
-> @@ -414,8 +417,11 @@ void __init arm64_memblock_init(void)
->  		 * initrd to become inaccessible via the linear mapping.
->  		 * Otherwise, this is a no-op
->  		 */
-> -		u64 base = initrd_start & PAGE_MASK;
-> -		u64 size = PAGE_ALIGN(initrd_end) - base;
-> +		phys_initrd_start = __pa(initrd_start);
-> +		phys_initrd_size = __pa(initrd_end) - phys_initrd_start;
+> But that then seems to reveal a somewhat bigger problem - if the callers
+> are simply registering IPAs, and relying on the ITS driver to grab an
+> entry and fill in a PA later, then how does either one know *which* PA
+> is supposed to belong to a given IPA in the case where you have multiple
+> devices with different ITS targets assigned to the same guest?
 
-If initrd_{start,end} are defined by the command line they already would be
-physical addresses.
+You're definitively right here. I think this can be resolved by passing
+the struct device handle along with the stage1 mapping and storing the
+info together. Then when the host MSI controller looks for a free
+unmapped iova, it must also check whether the device belongs to its MSI
+domain.
 
-> +
-> +		base = phys_initrd_start & PAGE_MASK;
-> +		size = PAGE_ALIGN(phys_initrd_size);
->  
->  		/*
->  		 * We can only add back the initrd memory if we don't end up
-> @@ -459,15 +465,15 @@ void __init arm64_memblock_init(void)
->  	 * pagetables with memblock.
->  	 */
->  	memblock_reserve(__pa_symbol(_text), _end - _text);
-> -#ifdef CONFIG_BLK_DEV_INITRD
-> -	if (initrd_start) {
-> -		memblock_reserve(initrd_start, initrd_end - initrd_start);
-> -
-> -		/* the generic initrd code expects virtual addresses */
-> -		initrd_start = __phys_to_virt(initrd_start);
-> -		initrd_end = __phys_to_virt(initrd_end);
-> +	if (IS_ENABLED(CONFIG_BLK_DEV_INITRD) && initrd_start) {
-> +		memblock_reserve(phys_initrd_start, phys_initrd_size);
+ (and if
+> it's possible to assume a guest will use per-device stage 1 mappings and
+> present it with a single vITS backed by multiple pITSes, I think things
+> start breaking even harder.)
 
-this is not needed, as we do memblock_reserve() for the same area earlier.
+I don't really get your point here. Assigned devices on guest side
+should be in separate iommu domain because we want them to get isolated
+from each other. There is a single vITS as of now and I don't think we
+will change that anytime soon. The vITS driver is allocating a gIOVA for
+each separate domain and I currently "trap" the gIOVA/gPA mapping on
+irqfd routing setup. This mapping gets associated to a VFIO IOMMU, one
+per assigned device, so we have different vfio containers for each of
+them. If I then enumerate all the devices attached to the containers and
+pass this stage1 binding along with the device struct, I think we should
+be OK?
 
-What do you think of my version (below)?
+Thanks
 
-> +		/*
-> +		 * initrd_below_start_ok can be changed by
-> +		 * __early_init_dt_declare_initrd(), set it back to what
-> +		 * we want here.
-> +		 */
-> +		initrd_below_start_ok = 0;
->  	}
-> -#endif
->  
->  	early_init_fdt_scan_reserved_mem();
->  
-> -- 
-> 2.17.1
+Eric
+
 > 
-
-From 0e5661c6f1ac2d4b08a55d38c6bc224c187af14f Mon Sep 17 00:00:00 2001
-From: Florian Fainelli <f.fainelli@gmail.com>
-Date: Sat, 27 Oct 2018 12:04:58 +0300
-Subject: [PATCH] arm64: Get rid of __early_init_dt_declare_initrd()
-
-ARM64 is the only architecture that re-defines
-__early_init_dt_declare_initrd() in order for that function to populate
-initrd_start/initrd_end with physical addresses instead of virtual
-addresses. Instead of having an override, just get rid of that
-implementation and perform the virtual to physical conversion of these
-addresses in arm64_memblock_init() where relevant.
-
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
----
- arch/arm64/include/asm/memory.h |  8 --------
- arch/arm64/mm/init.c            | 40 +++++++++++++++++++++++++---------------
- 2 files changed, 25 insertions(+), 23 deletions(-)
-
-diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
-index b9644296..dc3ca21 100644
---- a/arch/arm64/include/asm/memory.h
-+++ b/arch/arm64/include/asm/memory.h
-@@ -168,14 +168,6 @@
- #define IOREMAP_MAX_ORDER	(PMD_SHIFT)
- #endif
- 
--#ifdef CONFIG_BLK_DEV_INITRD
--#define __early_init_dt_declare_initrd(__start, __end)			\
--	do {								\
--		initrd_start = (__start);				\
--		initrd_end = (__end);					\
--	} while (0)
--#endif
--
- #ifndef __ASSEMBLY__
- 
- #include <linux/bitops.h>
-diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-index 9d9582c..dd665be3 100644
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -61,6 +61,8 @@
- s64 memstart_addr __ro_after_init = -1;
- phys_addr_t arm64_dma_phys_limit __ro_after_init;
- 
-+static phys_addr_t phys_initrd_start, phys_initrd_end;
-+
- #ifdef CONFIG_BLK_DEV_INITRD
- static int __init early_initrd(char *p)
- {
-@@ -71,8 +73,8 @@ static int __init early_initrd(char *p)
- 	if (*endp == ',') {
- 		size = memparse(endp + 1, NULL);
- 
--		initrd_start = start;
--		initrd_end = start + size;
-+		phys_initrd_start = start;
-+		phys_initrd_end = start + size;
- 	}
- 	return 0;
- }
-@@ -363,6 +365,7 @@ static void __init fdt_enforce_memory_region(void)
- void __init arm64_memblock_init(void)
- {
- 	const s64 linear_region_size = -(s64)PAGE_OFFSET;
-+	u64 __maybe_unused base, size;
- 
- 	/* Handle linux,usable-memory-range property */
- 	fdt_enforce_memory_region();
-@@ -407,14 +410,23 @@ void __init arm64_memblock_init(void)
- 		memblock_add(__pa_symbol(_text), (u64)(_end - _text));
- 	}
- 
--	if (IS_ENABLED(CONFIG_BLK_DEV_INITRD) && initrd_start) {
-+	if (IS_ENABLED(CONFIG_BLK_DEV_INITRD) &&
-+	    (initrd_start || phys_initrd_start)) {
- 		/*
- 		 * Add back the memory we just removed if it results in the
- 		 * initrd to become inaccessible via the linear mapping.
- 		 * Otherwise, this is a no-op
- 		 */
--		u64 base = initrd_start & PAGE_MASK;
--		u64 size = PAGE_ALIGN(initrd_end) - base;
-+		if (phys_initrd_start) {
-+			initrd_start = __phys_to_virt(phys_initrd_start);
-+			initrd_end = __phys_to_virt(phys_initrd_end);
-+		} else if (initrd_start) {
-+			phys_initrd_start = __pa(initrd_start);
-+			phys_initrd_end = __pa(initrd_end);
-+		}
-+
-+		base = phys_initrd_start & PAGE_MASK;
-+		size = PAGE_ALIGN(phys_initrd_end - phys_initrd_start);
- 
- 		/*
- 		 * We can only add back the initrd memory if we don't end up
-@@ -433,6 +445,13 @@ void __init arm64_memblock_init(void)
- 			memblock_remove(base, size); /* clear MEMBLOCK_ flags */
- 			memblock_add(base, size);
- 			memblock_reserve(base, size);
-+
-+			/*
-+			 * initrd_below_start_ok can be changed by
-+			 * __early_init_dt_declare_initrd(), set it back to what
-+			 * we want here.
-+			 */
-+			initrd_below_start_ok = 0;
- 		}
- 	}
- 
-@@ -454,19 +473,10 @@ void __init arm64_memblock_init(void)
- 	}
- 
- 	/*
--	 * Register the kernel text, kernel data, initrd, and initial
-+	 * Register the kernel text, kernel data and initial
- 	 * pagetables with memblock.
- 	 */
- 	memblock_reserve(__pa_symbol(_text), _end - _text);
--#ifdef CONFIG_BLK_DEV_INITRD
--	if (initrd_start) {
--		memblock_reserve(initrd_start, initrd_end - initrd_start);
--
--		/* the generic initrd code expects virtual addresses */
--		initrd_start = __phys_to_virt(initrd_start);
--		initrd_end = __phys_to_virt(initrd_end);
--	}
--#endif
- 
- 	early_init_fdt_scan_reserved_mem();
- 
--- 
-2.7.4
-
--- 
-Sincerely yours,
-Mike.
-
+> Other than allowing arbitrary disjoint IOVA pages, I'm not sure this
+> really works any differently from the existing MSI cookie now that I
+> look more closely :/
+> 
+> Robin.
