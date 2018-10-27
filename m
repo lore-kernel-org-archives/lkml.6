@@ -2,106 +2,80 @@ Return-Path: <SRS0=4IUq=NH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE544ECDE46
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 02:00:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5662FECDE44
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 02:10:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9150A20843
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 02:00:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=usp-br.20150623.gappssmtp.com header.i=@usp-br.20150623.gappssmtp.com header.b="sOjLj73h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9150A20843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=usp.br
+	by mail.kernel.org (Postfix) with ESMTP id F240420831
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 02:10:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F240420831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727963AbeJ0KkO (ORCPT
+        id S1727562AbeJ0KtF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 06:40:14 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:41294 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727840AbeJ0KkO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 06:40:14 -0400
-Received: by mail-qk1-f194.google.com with SMTP id 189so431595qkj.8
-        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 19:00:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=usp-br.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=NU6uEhiDTDfMKDT6vIKylD1JcOmwJKYVJFXwnpeU4xs=;
-        b=sOjLj73hbkjSNHCbjYdY/10ua9GvS5qgofryFwX7Al2Wq0Ah/5T0+uLHRFthjyBSJR
-         fTxs1EBvwwPAxu2/CpX6Rp9IcNWvQ4Dczucmuj7hIBEjAjTCvnvcuzwYtr7a7BmczEqD
-         EC9Hw3/QdPVRZ54nCM9GZYJzFYhzuMSUc9tSmxuHNoTrd9bXikADe/Jk/AAIe2pLYDxP
-         CtEwaCma9AcArR9h9GULLKwSFz0RjwZ0m1s6diAdZp2M1n9k5D3V/8AAAZBJL2Jc4L4R
-         +rRwBd4hm+ldGz7/+5i9pky/AHbNqQMzDVnqoYm/juj42YnPhnKwVJn6rjc8PQwroUSd
-         GRvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=NU6uEhiDTDfMKDT6vIKylD1JcOmwJKYVJFXwnpeU4xs=;
-        b=Q9JmcUt8CpfUuwHG0sA1nEqPE0hQucqY/2iJqLd9PVBncWagxUw7hPztSvhuJwSKjh
-         P7zlhzV2NAucMtUMo/vtU6wf1rbHtRq5U5DD2UFDIdZyvUkyDdXj75/RkAKq/Jccec2p
-         UISYzz4wiqiQEImVYEd+yt3emu2nG2A5Btvje6/Jn7BajJtQoofqBxEBXVgHGd/4z9aE
-         igbCY43vevG+jTGr+uTOwgIMnBBXswvJoMAvIQ5tD+ZIdeCsGNR2DGcN9PU0ay5uhxS8
-         iXy2L4cf9ODw0SQklUlFvdUC8o3x/5UwYsmVwalafHT9dshHSH9L6gtyo9io9t74JSHV
-         2l5w==
-X-Gm-Message-State: AGRZ1gK+tCcpp9po4KNnni8XpFQsHe8bbXyDV1INEPliphgHYefYca8H
-        QYXYjRjSgHWEm5FCseB+rSRE2Q==
-X-Google-Smtp-Source: AJdET5cpuLESHD23vMBbkSd1mZMwXcwmH5QzRTLkRUJMo3g/oXciZKeWaC6sNGnbDMdF/eH7p6RlAA==
-X-Received: by 2002:a37:1ad9:: with SMTP id l86mr5001061qkh.54.1540605653316;
-        Fri, 26 Oct 2018 19:00:53 -0700 (PDT)
-Received: from mango.spo.virtua.com.br ([2804:14c:81:942d::1])
-        by smtp.gmail.com with ESMTPSA id h67-v6sm8499777qkf.32.2018.10.26.19.00.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Oct 2018 19:00:52 -0700 (PDT)
-From:   Matheus Tavares <matheus.bernardino@usp.br>
-To:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
-Subject: [PATCH v2 6/6] staging:iio:ad2s90: Check channel type at read_raw
-Date:   Fri, 26 Oct 2018 23:00:05 -0300
-Message-Id: <20181027020005.3140-7-matheus.bernardino@usp.br>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20181027020005.3140-1-matheus.bernardino@usp.br>
-References: <20181027020005.3140-1-matheus.bernardino@usp.br>
+        Sat, 27 Oct 2018 06:49:05 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:14119 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726439AbeJ0KtF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Oct 2018 06:49:05 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id EA08CC35E6F49;
+        Sat, 27 Oct 2018 10:09:40 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.408.0; Sat, 27 Oct 2018 10:09:36 +0800
+From:   Wei Yongjun <weiyongjun1@huawei.com>
+To:     Olivier Moysan <olivier.moysan@st.com>,
+        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        "Alexandre Torgue" <alexandre.torgue@st.com>
+CC:     Wei Yongjun <weiyongjun1@huawei.com>,
+        <alsa-devel@alsa-project.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+Subject: [PATCH] ASoC: stm32: sai: fix invalid use of sizeof in stm32_sai_add_mclk_provider()
+Date:   Sat, 27 Oct 2018 02:19:59 +0000
+Message-ID: <1540606799-164510-1-git-send-email-weiyongjun1@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a channel type check at the beginning of the
-ad2s90_read_raw function. Since ad2s90 has only one channel, it just
-checks if the given channel is the expected one and if not, return
--EINVAL.
+sizeof() when applied to a pointer typed expression gives the
+size of the pointer, not that of the pointed data.
 
-Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
+Fixes: 8307b2afd386 ("ASoC: stm32: sai: set sai as mclk clock provider")
+Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
 ---
- drivers/staging/iio/resolver/ad2s90.c | 3 +++
- 1 file changed, 3 insertions(+)
+ sound/soc/stm/stm32_sai_sub.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/staging/iio/resolver/ad2s90.c
-index 52b656875ed1..24002042a5c5 100644
---- a/drivers/staging/iio/resolver/ad2s90.c
-+++ b/drivers/staging/iio/resolver/ad2s90.c
-@@ -34,6 +34,9 @@ static int ad2s90_read_raw(struct iio_dev *indio_dev,
- 	int ret;
- 	struct ad2s90_state *st = iio_priv(indio_dev);
+diff --git a/sound/soc/stm/stm32_sai_sub.c b/sound/soc/stm/stm32_sai_sub.c
+index ea05cc9..211589b 100644
+--- a/sound/soc/stm/stm32_sai_sub.c
++++ b/sound/soc/stm/stm32_sai_sub.c
+@@ -390,7 +390,7 @@ static int stm32_sai_add_mclk_provider(struct stm32_sai_sub_data *sai)
+ 	char *mclk_name, *p, *s = (char *)pname;
+ 	int ret, i = 0;
  
-+	if (chan->type != IIO_ANGL)
-+		return -EINVAL;
-+
- 	switch (m) {
- 	case IIO_CHAN_INFO_SCALE:
- 		/* 2 * Pi / (2^12 - 1) ~= 0.001534355 */
--- 
-2.18.0
+-	mclk = devm_kzalloc(dev, sizeof(mclk), GFP_KERNEL);
++	mclk = devm_kzalloc(dev, sizeof(*mclk), GFP_KERNEL);
+ 	if (!mclk)
+ 		return -ENOMEM;
+
+
 
