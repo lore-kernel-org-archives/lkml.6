@@ -2,82 +2,73 @@ Return-Path: <SRS0=4IUq=NH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CD67ECDE46
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 02:20:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89942ECDE46
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 02:29:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00AD020831
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 02:20:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00AD020831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 20C362082C
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 02:29:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20C362082C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727417AbeJ0K7b (ORCPT
+        id S1727651AbeJ0LIv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 06:59:31 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52440 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725927AbeJ0K7b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 06:59:31 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6E52C308424E;
-        Sat, 27 Oct 2018 02:20:09 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-142.pek2.redhat.com [10.72.12.142])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id F103519753;
-        Sat, 27 Oct 2018 02:19:57 +0000 (UTC)
-Subject: Re: [PATCH] kdump, vmcoreinfo: Export sme_me_mask value to vmcoreinfo
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        tglx@linutronix.de, mingo@redhat.com, x86@kernel.org,
-        bhe@redhat.com, dyoung@redhat.com
-References: <20181026093630.8520-1-lijiang@redhat.com>
- <053CC83A-9A95-4C12-9627-AABD1427DA9C@alien8.de>
- <1263471c-a27d-a698-15f0-b5947f13ea93@redhat.com>
- <20181026163554.GA26331@nazgul.tnic>
-From:   lijiang <lijiang@redhat.com>
-Message-ID: <e8357c26-1969-f870-d2e5-62b77a1b4fd5@redhat.com>
-Date:   Sat, 27 Oct 2018 10:19:52 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 27 Oct 2018 07:08:51 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:13699 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725927AbeJ0LIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Oct 2018 07:08:51 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id E01067FCCCAE0;
+        Sat, 27 Oct 2018 10:29:22 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.408.0; Sat, 27 Oct 2018 10:29:14 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Cliff Whickman <cpw@sgi.com>, Robin Holt <robinmholt@gmail.com>,
+        "Arnd Bergmann" <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     YueHaibing <yuehaibing@huawei.com>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] sgi-xp: drop pointless static qualifier in xpc_setup_msg_structures_uv
+Date:   Sat, 27 Oct 2018 02:39:37 +0000
+Message-ID: <1540607977-166833-1-git-send-email-yuehaibing@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-In-Reply-To: <20181026163554.GA26331@nazgul.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Sat, 27 Oct 2018 02:20:09 +0000 (UTC)
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018年10月27日 00:35, Borislav Petkov 写道:
-> On Fri, Oct 26, 2018 at 08:32:11PM +0800, lijiang wrote:
->> If SME is enabled in the first kernel, the crash kernel's page table(pgd/pud/pmd/pte)
->> contains the memory encryption mask, so i have to remove the sme mask to obtain the
->> true physical address when dump vmcore.
-> 
-> Sorry, I have no clue what makedumpfile does exactly so you'd have to
-> be more detailed (or wait until I look at it :)). Which kernel accesses
-> which kernel's pagetable?
-> 
-> /me goes and looks at the makedumpfile's manpage...
-> 
+There is no need to have the 'enum xp_retval ret' variable static since
+new value always be assigned before use it.
 
-So sorry that i should provide more detail about this.
-Thanks a lot for spending time reading the manpage.
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/misc/sgi-xp/xpc_uv.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> Ok, it uses vmcoreinfo to exclude pages which would mean, it accesses
-> the first kernel's pagetable and traverses it.
-> 
-> Am I close?
-> 
+diff --git a/drivers/misc/sgi-xp/xpc_uv.c b/drivers/misc/sgi-xp/xpc_uv.c
+index 0441abe..0323bfe 100644
+--- a/drivers/misc/sgi-xp/xpc_uv.c
++++ b/drivers/misc/sgi-xp/xpc_uv.c
+@@ -1151,7 +1151,7 @@ struct uv_IO_APIC_route_entry {
+ static enum xp_retval
+ xpc_setup_msg_structures_uv(struct xpc_channel *ch)
+ {
+-	static enum xp_retval ret;
++	enum xp_retval ret;
+ 	struct xpc_channel_uv *ch_uv = &ch->sn.uv;
+ 
+ 	DBUG_ON(ch->flags & XPC_C_SETUP);
 
-Yes, your explanation is perfect.
 
-Thanks.
-Lianbo
+
