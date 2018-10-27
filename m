@@ -2,61 +2,69 @@ Return-Path: <SRS0=4IUq=NH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7EEEC46475
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D66D9ECDE44
 	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 06:23:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7323620824
+	by mail.kernel.org (Postfix) with ESMTP id A2EC22085B
 	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 06:23:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7323620824
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2EC22085B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728013AbeJ0PDA (ORCPT
+        id S1728147AbeJ0PDC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 11:03:00 -0400
+        Sat, 27 Oct 2018 11:03:02 -0400
 Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:53787
         "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726610AbeJ0PDA (ORCPT
+        by vger.kernel.org with ESMTP id S1727845AbeJ0PDB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 11:03:00 -0400
+        Sat, 27 Oct 2018 11:03:01 -0400
 X-IronPort-AV: E=Sophos;i="5.54,430,1534802400"; 
-   d="scan'208";a="283492149"
+   d="scan'208";a="283492152"
 Received: from palace.rsr.lip6.fr (HELO palace.lip6.fr) ([132.227.105.202])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/AES128-SHA256; 27 Oct 2018 08:22:57 +0200
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/AES128-SHA256; 27 Oct 2018 08:22:58 +0200
 From:   Julia Lawall <Julia.Lawall@lip6.fr>
-To:     dri-devel@lists.freedesktop.org
-Cc:     kernel-janitors@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org
-Subject: [PATCH 0/8] constify clk_ops structure
-Date:   Sat, 27 Oct 2018 07:47:34 +0200
-Message-Id: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
+To:     Michael Turquette <mturquette@baylibre.com>
+Cc:     kernel-janitors@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 3/8] clk: palmas: constify clk_ops structure
+Date:   Sat, 27 Oct 2018 07:47:37 +0200
+Message-Id: <1540619262-22681-4-git-send-email-Julia.Lawall@lip6.fr>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
+References: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Declare as const clk_ops structures that are only stored in const fields or
-passed to functions with const parameters.
+The clk_ops structure is only stored in the ops field of clk_init_data
+structures.  This field is const, so the clk_ops structure can be
+const as well.
 
 Identified and transformed using Coccinelle.
 
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
+ drivers/clk/clk-palmas.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- arch/arm/mach-vexpress/spc.c             |    2 +-
- drivers/clk/clk-max77686.c               |    2 +-
- drivers/clk/clk-palmas.c                 |    2 +-
- drivers/clk/clk-s2mps11.c                |    2 +-
- drivers/clk/pistachio/clk-pll.c          |    8 ++++----
- drivers/clk/pxa/clk-pxa.c                |    4 ++--
- drivers/gpu/drm/imx/imx-tve.c            |    2 +-
- drivers/gpu/drm/msm/hdmi/hdmi_phy_8996.c |    2 +-
- 8 files changed, 12 insertions(+), 12 deletions(-)
+diff --git a/drivers/clk/clk-palmas.c b/drivers/clk/clk-palmas.c
+index e9612e7068e9..e41a3a9f7528 100644
+--- a/drivers/clk/clk-palmas.c
++++ b/drivers/clk/clk-palmas.c
+@@ -115,7 +115,7 @@ static int palmas_clks_is_prepared(struct clk_hw *hw)
+ 	return !!(val & cinfo->clk_desc->enable_mask);
+ }
+ 
+-static struct clk_ops palmas_clks_ops = {
++static const struct clk_ops palmas_clks_ops = {
+ 	.prepare	= palmas_clks_prepare,
+ 	.unprepare	= palmas_clks_unprepare,
+ 	.is_prepared	= palmas_clks_is_prepared,
+
