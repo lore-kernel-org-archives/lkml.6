@@ -2,129 +2,170 @@ Return-Path: <SRS0=4IUq=NH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.5 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8059C46475
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 11:04:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97FECC46475
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 11:05:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC6C22082C
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 11:04:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="BKmovRns"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC6C22082C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=natalenko.name
+	by mail.kernel.org (Postfix) with ESMTP id 409A32082C
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 11:05:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 409A32082C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728539AbeJ0TpQ (ORCPT
+        id S1728559AbeJ0TqV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 15:45:16 -0400
-Received: from vulcan.natalenko.name ([104.207.131.136]:58266 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728477AbeJ0TpQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 15:45:16 -0400
-Received: from mail.natalenko.name (vulcan.natalenko.name [IPv6:fe80::5400:ff:fe0c:dfa0])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        Sat, 27 Oct 2018 15:46:21 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42292 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728477AbeJ0TqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Oct 2018 15:46:21 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by vulcan.natalenko.name (Postfix) with ESMTPSA id 2101744A89B;
-        Sat, 27 Oct 2018 13:04:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=dkim-20170712; t=1540638279;
-        h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=OyG1IkvwLGrBm8pZPboQW6HvbidL0w/dzMJfzk6SFHo=;
-        b=BKmovRnssjpO+oUOl2lG+QTmiAhYaz9OsoD2pppa8fk8X1dt0CfisfZ4DPRhb8L+AWhS+v
-        HAw/PaapHv6HmxAFrGdf8DAsmawTOzN+Yr+7pVHyWuSMgfJSQ24VpjAQ3CvnBcIwRmA0UW
-        6NFgn+LwJYpcTSdSpoqQjBTFuu041ik=
-DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name 2101744A89B
-Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
+        by mx1.redhat.com (Postfix) with ESMTPS id 42ED2D6EE1;
+        Sat, 27 Oct 2018 11:05:46 +0000 (UTC)
+Received: from krava (ovpn-204-48.brq.redhat.com [10.40.204.48])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 7B94D1001918;
+        Sat, 27 Oct 2018 11:05:42 +0000 (UTC)
+Date:   Sat, 27 Oct 2018 13:05:41 +0200
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        David Ahern <dsahern@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Wang Nan <wangnan0@huawei.com>
+Subject: Re: [PATCH 11/11] perf tools: Stop fallbacking to kallsyms for vdso
+ symbols lookup
+Message-ID: <20181027110541.GA25072@krava>
+References: <20181017225501.32150-1-acme@kernel.org>
+ <20181017225501.32150-12-acme@kernel.org>
+ <4c682937-3cee-6974-0970-68610e13ad37@intel.com>
+ <87a7n070tj.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Sat, 27 Oct 2018 13:04:38 +0200
-From:   Oleksandr Natalenko <oleksandr@natalenko.name>
-To:     Dave Taht <dave.taht@gmail.com>
-Cc:     hkallweit1@gmail.com,
-        =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jamal Hadi Salim <jhs@mojatatu.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        =?UTF-8?Q?Ji?= =?UTF-8?Q?=C5=99=C3=AD_P=C3=ADrko?= 
-        <jiri@resnulli.us>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: CAKE and r8169 cause panic on upload in v4.19
-In-Reply-To: <CAA93jw4pvEYiXZ-C=yH1H_twZigSYAuEMrE_CCDjzLnVHwAdVA@mail.gmail.com>
-References: <61d09f0db41f269cc9ee13dd68a5c285@natalenko.name>
- <fbd7f0b8-10c8-be17-fce6-327a95d8ea2e@gmail.com>
- <CAA93jw7xoaokrN4oGAyqh6JHAn8nJpUpp_wj-iy+GWNoV-ipNA@mail.gmail.com>
- <b80e6819da8ea74f18b6ec0aaf9128fa@natalenko.name>
- <CAA93jw4pvEYiXZ-C=yH1H_twZigSYAuEMrE_CCDjzLnVHwAdVA@mail.gmail.com>
-Message-ID: <5a9ff4ac2596869f23e871b40d862802@natalenko.name>
-X-Sender: oleksandr@natalenko.name
-User-Agent: Roundcube Webmail/1.3.7
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=arc-20170712; t=1540638279;
-        h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=OyG1IkvwLGrBm8pZPboQW6HvbidL0w/dzMJfzk6SFHo=;
-        b=yG3PPxLTy3CzMK0OOmJD6zigef/vJrGtaiv9tArikQq4/4/g7BBDYPpCE0ZjU4HqIxFqQv
-        k98rbCIh7G9808Pu3BZNJ4IpiTBP4aIUfNtg5pUTNMXcHMSHWXh5Jqls5y6fq8X29N/YtZ
-        Rj+HdSX4KEVjKLUaLAUSItxKlxou+eQ=
-ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1540638279; a=rsa-sha256;
-        cv=none;
-        b=nbaHXxXB33ZF6RGgOWC/9yUIGcP40+IKb7zCowHvY2zuoFwymZca3IkZLvE5Yq0wEQI7uHAY+oF6oDArq2TuMyy8u709GE9CCGEof5lkeuPgZlijls5DPyjk0zCRkUIsqE5zh/ub0eO/9qymiqb9/1zpZfngQABAOdwGfWcqfV8=
-ARC-Authentication-Results: i=1;
-        vulcan.natalenko.name;
-        auth=pass smtp.auth=oleksandr@natalenko.name smtp.mailfrom=oleksandr@natalenko.name
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87a7n070tj.fsf@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Sat, 27 Oct 2018 11:05:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
-
-On 27.10.2018 01:08, Dave Taht wrote:
-> Groovy. :whew:
+On Fri, Oct 26, 2018 at 04:19:52PM -0700, Vinicius Costa Gomes wrote:
+> Hi,
 > 
-> I do look forward to more cake test results, particularly on different
-> network cards such as these, and at speeds higher than 10Gbit on high
-> end hardware, and in the 100-1Gbit range on low to mid-range. After
-> the last round of features added to cake before it went into linux, we
-> run now out of cpu on inbound shaping at those speeds on low end apu2
-> (x86) hardware, (atom and a15 chips are not so hot now either) and I
-> wish I knew what we could do to speed it up. The new "list skb" and
-> mirred code looked promising but we haven't got around to exploring it
-> yet.
+> Adrian Hunter <adrian.hunter@intel.com> writes:
 > 
-> Thank you for trying and I hope this gets sorted out on your chipset.
-
-Yeah, but this is still strange. Both LAN computer and router run 4.19, 
-but only router panics. The LAN computer employs alx driver, router 
-employs r8169. Both had GRO enabled at the moment of panic. But [1] 
-reports that this happens with Intel NIC too, so must not be limited to 
-Realtek.
-
-> We tend to use flent's rrul test to *really* abuse things. :)
+> > On 18/10/18 1:55 AM, Arnaldo Carvalho de Melo wrote:
+> >> From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> >> 
+> >> David reports that:
+> >> 
+> >> <quote>
+> >> Perf has this hack where it uses the kernel symbol map as a backup when
+> >> a symbol can't be found in the user's symbol table(s).
+> >
+> > I don't think this is a complete fix because it exposes new problems.
 > 
-> So cake's ok with gro disabled in hw?
+> This commit broke function name resolution for 'perf record -g' for me.
+> 
+> What I mean is, with this commit applied:
+> 
+> $ ./tools/perf/perf record -g -- sleep 1
+> 
+> $ ./tools/perf/perf report
+> 
+> 'perf report' doesn't seem to be able to show the function names of the
+> trace.
+> 
+> If I revert this commit, function names are resolved fine.
 
-Yes, I've gone back to CAKE but with GRO disabled for NIC, and it is 
-stable now. I've also asked a bug reporter [1] to do the same, so we 
-will see.
+that commit just showed up some places where we have the
+ip resolve wrong.. would attached patch fix it for you?
 
-Thanks.
+jirka
 
--- 
-   Oleksandr Natalenko (post-factum)
 
-[1] https://bugzilla.kernel.org/show_bug.cgi?id=201063
+---
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index 111ae858cbcb..72a5b803c797 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -1824,7 +1824,7 @@ static void ip__resolve_ams(struct thread *thread,
+ 	 * Thus, we have to try consecutively until we find a match
+ 	 * or else, the symbol is unknown
+ 	 */
+-	thread__find_cpumode_addr_location(thread, ip, &al);
++	thread__find_cpumode_addr_location(thread, ip, &al, NULL);
+ 
+ 	ams->addr = ip;
+ 	ams->al_addr = al.addr;
+@@ -1909,8 +1909,8 @@ static int add_callchain_ip(struct thread *thread,
+ 
+ 	al.filtered = 0;
+ 	al.sym = NULL;
+-	if (!cpumode) {
+-		thread__find_cpumode_addr_location(thread, ip, &al);
++	if (!cpumode || *cpumode == PERF_RECORD_MISC_CPUMODE_UNKNOWN) {
++		thread__find_cpumode_addr_location(thread, ip, &al, cpumode);
+ 	} else {
+ 		if (ip >= PERF_CONTEXT_MAX) {
+ 			switch (ip) {
+@@ -2151,7 +2151,7 @@ static int thread__resolve_callchain_sample(struct thread *thread,
+ 	struct branch_stack *branch = sample->branch_stack;
+ 	struct ip_callchain *chain = sample->callchain;
+ 	int chain_nr = 0;
+-	u8 cpumode = PERF_RECORD_MISC_USER;
++	u8 cpumode = PERF_RECORD_MISC_CPUMODE_UNKNOWN;
+ 	int i, j, err, nr_entries;
+ 	int skip_idx = -1;
+ 	int first_call = 0;
+diff --git a/tools/perf/util/thread.c b/tools/perf/util/thread.c
+index 2048d393ece6..1cd83ecde501 100644
+--- a/tools/perf/util/thread.c
++++ b/tools/perf/util/thread.c
+@@ -366,7 +366,7 @@ int thread__fork(struct thread *thread, struct thread *parent, u64 timestamp)
+ }
+ 
+ void thread__find_cpumode_addr_location(struct thread *thread, u64 addr,
+-					struct addr_location *al)
++					struct addr_location *al, u8 *cpumode)
+ {
+ 	size_t i;
+ 	const u8 cpumodes[] = {
+@@ -378,8 +378,11 @@ void thread__find_cpumode_addr_location(struct thread *thread, u64 addr,
+ 
+ 	for (i = 0; i < ARRAY_SIZE(cpumodes); i++) {
+ 		thread__find_symbol(thread, cpumodes[i], addr, al);
+-		if (al->map)
++		if (al->map) {
++			if (cpumode)
++				*cpumode = cpumodes[i];
+ 			break;
++		}
+ 	}
+ }
+ 
+diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
+index 07606aa6998d..9aad9a71c943 100644
+--- a/tools/perf/util/thread.h
++++ b/tools/perf/util/thread.h
+@@ -99,7 +99,7 @@ struct symbol *thread__find_symbol(struct thread *thread, u8 cpumode,
+ 				   u64 addr, struct addr_location *al);
+ 
+ void thread__find_cpumode_addr_location(struct thread *thread, u64 addr,
+-					struct addr_location *al);
++					struct addr_location *al, u8 *cpumode);
+ 
+ static inline void *thread__priv(struct thread *thread)
+ {
