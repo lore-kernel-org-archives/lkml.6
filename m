@@ -2,86 +2,91 @@ Return-Path: <SRS0=4IUq=NH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75BDFC46475
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 17:22:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C8D7C46475
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 17:27:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F1B42085B
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 17:22:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2C832085B
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 17:27:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="P/QgTGrK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F1B42085B
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cD81g3Un"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2C832085B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728886AbeJ1CDk (ORCPT
+        id S1728894AbeJ1CIl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 22:03:40 -0400
-Received: from mail-lj1-f178.google.com ([209.85.208.178]:35471 "EHLO
-        mail-lj1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728819AbeJ1CDk (ORCPT
+        Sat, 27 Oct 2018 22:08:41 -0400
+Received: from mail-lj1-f177.google.com ([209.85.208.177]:32838 "EHLO
+        mail-lj1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728814AbeJ1CIl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 22:03:40 -0400
-Received: by mail-lj1-f178.google.com with SMTP id o14-v6so4021751ljj.2
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Oct 2018 10:22:00 -0700 (PDT)
+        Sat, 27 Oct 2018 22:08:41 -0400
+Received: by mail-lj1-f177.google.com with SMTP id z21-v6so4031766ljz.0
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Oct 2018 10:27:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=NkyAJYwQEZBj22f1cBkKh8WwnR6FeJUq1r6gjd/R6IM=;
-        b=P/QgTGrK1KCRfe1LDxvexIHd/vN99HRoP3IPASvikEsEE2FlMStPUEpGh0cgcBZ1rw
-         Kv9mKNwVqaCfsCwVQm9NQgpJwYl4YNuSko0iiHPzY9XvigEFSuNvojSYRasf02TbcjVR
-         kPwbGXkvO8PjTG8VLRKLhCHIU5B3g4RhhJL5Q=
+        bh=K4roiOGdDLY/A/AjgFlHUPUKHMnmJEJbRKu9haAw68c=;
+        b=cD81g3Unf6oXRlTm24sGvP6zFnyueikUbE0rToWkb10yTGZsZ9a85oMT1AZIh7DNRY
+         5RfRYnS3psJ/ZJZyjn+BSA9PJKSA3jJ4SL2a3Iryn4GV//VlGm4nAog1ukMb+iCcPfr+
+         4Gia/6HJvcbFbEdlyveN8ipTOeND9sVooyYYg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=NkyAJYwQEZBj22f1cBkKh8WwnR6FeJUq1r6gjd/R6IM=;
-        b=ctTE4DFFTpfeDHjckbcazJ1bRD9VE5H//HQzZzX+wIXLPJJEfZSziCbf+gNLmo4quP
-         6wksNQTmjMkAmMVWRtcP2u/F3xyqBTKa9G7jb5qpRAvW84Tq9uwXreBp6ZdQewvGShO6
-         C0mc4KFu1blSBkELawXs66AzVT3fojw6PN9i13tjlefhEUNlBDr5gXuhS8T5MvsSEFP7
-         xCRpiRwRCA46gz06VEDbVsbNKt1dduH1H3h7EFmYPHVwJvK3SNXQQZdKp+WKcEV6SjRy
-         7CchSQD2m4Lj6AxtfGvrG45VJMx5NmSiERQpt9Z1ipACrT4J8QR1/JrNZ4K5MIftb+1C
-         TSKA==
-X-Gm-Message-State: AGRZ1gJOXTjqnfLWLW7inGMtCbW/zAPe+9tjJTFSrZqeeNNbG+X473+U
-        /aKuMMsmB72sAEhai56Pr+yPz0tYRCb4rg==
-X-Google-Smtp-Source: AJdET5cMo3HQzbvmEh7zk9VkykMBOQVFdiajKoiBZ7FpwEa9Dx5fWwu8cn4LGJXzmMFZB06e4B8N0Q==
-X-Received: by 2002:a2e:d11:: with SMTP id 17-v6mr5794183ljn.18.1540660919109;
-        Sat, 27 Oct 2018 10:21:59 -0700 (PDT)
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com. [209.85.167.42])
-        by smtp.gmail.com with ESMTPSA id c6-v6sm356615lfj.73.2018.10.27.10.21.58
+        bh=K4roiOGdDLY/A/AjgFlHUPUKHMnmJEJbRKu9haAw68c=;
+        b=kPJSmzKairaqsdlbvSQfHKLBHlyjrptIfcnZ3thDXmiIFDrltYTiapvPrjns/rxTUb
+         uonbwCZJwEkTJ1UutTR8Ht5niqIxbXZx3FRtFIb1vmkgiB7iU0+dCVR0H6HpSIORWmJj
+         p6AIwjM22L3xxqvvrswvmFD7GKOmgYbyprm48fpLkfOCAk5JL06FYJr8cJNpGt6i3gup
+         RBaczm6C5bDLizYJuUeeleuf5czmRITrEYF8D5KSI/J3OILJQbyMz4AnXnRR8yKgU9XH
+         GM9jEj9oYCs/wUFA0ArIZyomhweRb0orWnNx9sfibuCKvtWNIJaIq0D3vhP1RmV3xGAV
+         rO6w==
+X-Gm-Message-State: AGRZ1gLttHmue1sBC74bkYzKHHqwlx6KXmxPi95hs6rl+IgfszJk5j1F
+        r9+9br2vFxJI2oKATcNcf7xpVCc+wEaa8w==
+X-Google-Smtp-Source: AJdET5eA46TJt1k63ROsC8uUWxni+8FIfXGVkj3TsOakM2yHjrTbIViDcDTasGvYKjoryz3yg4FEMw==
+X-Received: by 2002:a2e:8146:: with SMTP id t6-v6mr5329329ljg.32.1540661219299;
+        Sat, 27 Oct 2018 10:26:59 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id u27-v6sm1058330lfc.36.2018.10.27.10.26.57
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 27 Oct 2018 10:21:58 -0700 (PDT)
-Received: by mail-lf1-f42.google.com with SMTP id o2-v6so3135346lfl.13
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Oct 2018 10:21:58 -0700 (PDT)
-X-Received: by 2002:ac2:41d8:: with SMTP id d24-v6mr4589430lfi.138.1540660917483;
- Sat, 27 Oct 2018 10:21:57 -0700 (PDT)
+        Sat, 27 Oct 2018 10:26:58 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id m18-v6so3148366lfl.11
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Oct 2018 10:26:57 -0700 (PDT)
+X-Received: by 2002:ac2:41d8:: with SMTP id d24-v6mr4595017lfi.138.1540661217220;
+ Sat, 27 Oct 2018 10:26:57 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181026234917.GA196749@dtor-ws>
-In-Reply-To: <20181026234917.GA196749@dtor-ws>
+References: <20181027112724.GA26504@www.linux-watchdog.org>
+In-Reply-To: <20181027112724.GA26504@www.linux-watchdog.org>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 27 Oct 2018 10:21:41 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh_KrcgwU=Beeu4fqbY5PoRa_=EUmvVxFFceMFvnvcZYw@mail.gmail.com>
-Message-ID: <CAHk-=wh_KrcgwU=Beeu4fqbY5PoRa_=EUmvVxFFceMFvnvcZYw@mail.gmail.com>
-Subject: Re: [git pull] Input updates for v4.20-rc0
-To:     dmitry.torokhov@gmail.com
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-input@vger.kernel.org
+Date:   Sat, 27 Oct 2018 10:26:41 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wicMwPp77jc-nDt3+FZOUKnRqeresdYhUPbJUMbiJsg9g@mail.gmail.com>
+Message-ID: <CAHk-=wicMwPp77jc-nDt3+FZOUKnRqeresdYhUPbJUMbiJsg9g@mail.gmail.com>
+Subject: Re: [GIT PULL REQUEST] watchdog - v4.20 Merge window
+To:     wim@linux-watchdog.org
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-watchdog@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        khoroshilov@ispras.ru, chris.brandt@renesas.com,
+        christophe.leroy@c-s.fr, hauke@hauke-m.de, jdelvare@suse.de,
+        jerry.hoemann@hpe.com, kuninori.morimoto.gx@renesas.com,
+        marek.behun@nic.cz, rpjday@crashcourse.ca,
+        romain.izard.pro@gmail.com, wsa+renesas@sang-engineering.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 4:49 PM Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
+On Sat, Oct 27, 2018 at 4:50 AM Wim Van Sebroeck <wim@linux-watchdog.org> wrote:
 >
->     updates for the input subsystem. Just random driver fixups,
-> nothing exiting.
+> Please pull the watchdog changes for the v4.20 (or 5.00) release cycle.
 
 Pulled,
-             Linus
+
+                     Linus
