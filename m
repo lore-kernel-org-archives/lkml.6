@@ -2,68 +2,108 @@ Return-Path: <SRS0=4IUq=NH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12526ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 19:06:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9289C46475
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 19:36:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBE842085B
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 19:06:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBE842085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
+	by mail.kernel.org (Postfix) with ESMTP id 925692085B
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 19:36:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 925692085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728897AbeJ1Dsb (ORCPT
+        id S1726226AbeJ1ESJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 23:48:31 -0400
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:6204 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728472AbeJ1Dsb (ORCPT
+        Sun, 28 Oct 2018 00:18:09 -0400
+Received: from smtprelay0185.hostedemail.com ([216.40.44.185]:56589 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725833AbeJ1ESJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 23:48:31 -0400
-X-IronPort-AV: E=Sophos;i="5.54,433,1534802400"; 
-   d="scan'208";a="353101584"
-Received: from palace.lip6.fr ([132.227.105.202])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/AES128-SHA256; 27 Oct 2018 21:06:34 +0200
-From:   Julia Lawall <Julia.Lawall@lip6.fr>
-To:     Jianguo Sun <sunjianguo1@huawei.com>
-Cc:     kernel-janitors@vger.kernel.org, Shawn Guo <shawn.guo@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] PCI: histb: constify dw_pcie_host_ops structure
-Date:   Sat, 27 Oct 2018 20:31:19 +0200
-Message-Id: <1540665079-27788-1-git-send-email-Julia.Lawall@lip6.fr>
-X-Mailer: git-send-email 1.9.1
+        Sun, 28 Oct 2018 00:18:09 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay02.hostedemail.com (Postfix) with ESMTP id CB14952C2;
+        Sat, 27 Oct 2018 19:36:07 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: legs94_8cad8675f7535
+X-Filterd-Recvd-Size: 2997
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf08.hostedemail.com (Postfix) with ESMTPA;
+        Sat, 27 Oct 2018 19:36:06 +0000 (UTC)
+Message-ID: <c6b7e5b26883c53db35454e9b0ffb44898517228.camel@perches.com>
+Subject: Re: Another HID problem this merge window..
+From:   Joe Perches <joe@perches.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc:     linux-input@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Sat, 27 Oct 2018 12:36:05 -0700
+In-Reply-To: <CAHk-=wiZ24JuVehJ5sEC0UG1Gk2nvB363wO02RRsR1oEht6R9Q@mail.gmail.com>
+References: <CAHk-=wiZ24JuVehJ5sEC0UG1Gk2nvB363wO02RRsR1oEht6R9Q@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The dw_pcie_host_ops structure is only stored in the ops field
-of a pcie_port structure, and this field is const, so make the
-dw_pcie_host_ops structure const as well.
+On Sat, 2018-10-27 at 11:13 -0700, Linus Torvalds wrote:
+> Ok, so this is a much smaller issue than the i2c one that cause boot
+> problems, but it's annoying.
+> 
+> We do *not* enable new random drivers by default. And we most
+> *definitely* don't do it when they are odd-ball ones that most people
+> have never heard of.
+> 
+> Yet the new "BigBen Interactive" driver that was added this merge
+> window did exactly that.
 
-Done with the help of Coccinelle.
+In fairness, it seems many of the HID drivers do exactly that
+and this could have been a "copy from example" addition.
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/pci/controller/dwc/pcie-histb.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff -u -p a/drivers/pci/controller/dwc/pcie-histb.c b/drivers/pci/controller/dwc/pcie-histb.c
---- a/drivers/pci/controller/dwc/pcie-histb.c
-+++ b/drivers/pci/controller/dwc/pcie-histb.c
-@@ -202,7 +202,7 @@ static int histb_pcie_host_init(struct p
- 	return 0;
- }
- 
--static struct dw_pcie_host_ops histb_pcie_host_ops = {
-+static const struct dw_pcie_host_ops histb_pcie_host_ops = {
- 	.rd_own_conf = histb_pcie_rd_own_conf,
- 	.wr_own_conf = histb_pcie_wr_own_conf,
- 	.host_init = histb_pcie_host_init,
+$ git grep -P -i -B2 'default\s+\!EXPERT' -- drivers/hid/Kconfig
+drivers/hid/Kconfig-    tristate "A4 tech mice"
+drivers/hid/Kconfig-    depends on HID
+drivers/hid/Kconfig:    default !EXPERT
+--
+drivers/hid/Kconfig-    tristate "Apple {i,Power,Mac}Books"
+drivers/hid/Kconfig-    depends on HID
+drivers/hid/Kconfig:    default !EXPERT
+--
+drivers/hid/Kconfig-    tristate "Belkin Flip KVM and Wireless keyboard"
+drivers/hid/Kconfig-    depends on HID
+drivers/hid/Kconfig:    default !EXPERT
+--
+drivers/hid/Kconfig-    tristate "Cherry Cymotion keyboard"
+drivers/hid/Kconfig-    depends on HID
+drivers/hid/Kconfig:    default !EXPERT
+--
+drivers/hid/Kconfig-    tristate "Chicony devices"
+drivers/hid/Kconfig-    depends on HID
+drivers/hid/Kconfig:    default !EXPERT
+--
+drivers/hid/Kconfig-    tristate "Cypress mouse and barcode readers"
+drivers/hid/Kconfig-    depends on HID
+drivers/hid/Kconfig:    default !EXPERT
+--
+drivers/hid/Kconfig-    tristate "Ezkey BTC 8193 keyboard"
+drivers/hid/Kconfig-    depends on HID
+drivers/hid/Kconfig:    default !EXPERT
+--
+drivers/hid/Kconfig-    tristate "ITE devices"
+drivers/hid/Kconfig-    depends on HID
+drivers/hid/Kconfig:    default !EXPERT
+--
+drivers/hid/Kconfig-    tristate "Kensington Slimblade Trackball"
+drivers/hid/Kconfig-    depends on HID
+drivers/hid/Kconfig:    default !EXPERT
+--
+drivers/hid/Kconfig-    tristate "Logitech devices"
+drivers/hid/Kconfig-    depends on HID
+drivers/hid/Kconfig:    default !EXPERT
 
