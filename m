@@ -2,182 +2,124 @@ Return-Path: <SRS0=4IUq=NH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0419BC46475
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 15:48:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCAFCC46475
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 16:08:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5E1420843
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 15:48:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81DF220843
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 16:08:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=interia.pl header.i=@interia.pl header.b="T3slYCgF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5E1420843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=poczta.fm
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hvQLKFIm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81DF220843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728720AbeJ1AaJ (ORCPT
+        id S1728799AbeJ1AuD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 20:30:09 -0400
-Received: from smtpo.poczta.interia.pl ([217.74.65.208]:53953 "EHLO
-        smtpo.poczta.interia.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728501AbeJ1AaJ (ORCPT
+        Sat, 27 Oct 2018 20:50:03 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:34241 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728784AbeJ1AuD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 20:30:09 -0400
-X-Interia-R: Interia
-X-Interia-R-IP: 188.121.17.172
-X-Interia-R-Helo: <x220.localdomain>
-Received: from x220.localdomain (ipv4-188-121-17-172.net.internetunion.pl [188.121.17.172])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by www.poczta.fm (INTERIA.PL) with ESMTPSA;
-        Sat, 27 Oct 2018 17:48:41 +0200 (CEST)
-Date:   Sat, 27 Oct 2018 17:49:03 +0200
-From:   Slawomir Stepien <sst@poczta.fm>
-To:     Nishad Kamdar <nishadkamdar@gmail.com>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/2] staging: iio: ad2s1210: Add device tree support.
-Message-ID: <20181027154903.GA1582@x220.localdomain>
-References: <cover.1540489369.git.nishadkamdar@gmail.com>
- <1dc6fdf4626e7cf1ca4933fe3008cb3cd267149b.1540489369.git.nishadkamdar@gmail.com>
+        Sat, 27 Oct 2018 20:50:03 -0400
+Received: by mail-lf1-f65.google.com with SMTP id n26-v6so3095802lfl.1
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Oct 2018 09:08:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=9iUGkkPMzymHyFy8XDEDG24c/EyKWgD9wzcOAiPjkI0=;
+        b=hvQLKFImd8VEgGiXL2XbyeMcqXmUqr3qFouEqQxN7dfYU/OOnuBqO0Yo4AiPEVAeAa
+         f/IrkpCG48CI1AGQcR7ZqYts8A05M3bRDQ04TaeCdam4sbfoY7UduInoRVed6uOo+jmS
+         7qI5VJ22gdg/omsjL4rEyQWppgAhbczpbqHSU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=9iUGkkPMzymHyFy8XDEDG24c/EyKWgD9wzcOAiPjkI0=;
+        b=U+2fC8D1hFthz8YSPt6YHnCj+/DW5E8iXVeJ8QBdh0jLmZbAycrsqpSSZsQ+ZXUGNP
+         k/HCTjoN4sdxeez47fhpOelane5ZeKnwiBUnYUaAST0fiPWCig09DP42KC7vdXE6eps7
+         /vLI992M6RPKcjtiaVskslIlG1kJogwvT8yaw+T2QMKHHExnOynsSDcyk9A8FR+tdeeu
+         7C2/Br6y4UjOH+jT46jDezrOEdDfiwwP3ATu4ya/trXq4Rh4WczGx2BiOWRKUtkadS9b
+         161PyuwJXPHmgzFS/NndcdfmURJs6TLX7D6ZSfH0AfvHoNCT7RWfjV9najL+VcBjY1Kd
+         ZA/g==
+X-Gm-Message-State: AGRZ1gKg88AKjeDgXrc9LRifstPOFqOoa8VMlY3LfIZsqKrzR8sNTsEo
+        dR7z+Q9dl7GGQI8eRWVQ2tcaxoit3I+qrg==
+X-Google-Smtp-Source: AJdET5cfngm7jOpWXbFzy9IjxmIHH2faJ6kfKYoXjUZca7fSwo6LSmWHHaS77EAoRKV492/ZHQ/YNg==
+X-Received: by 2002:a19:6e0b:: with SMTP id j11-v6mr4455685lfc.118.1540656514361;
+        Sat, 27 Oct 2018 09:08:34 -0700 (PDT)
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
+        by smtp.gmail.com with ESMTPSA id q5-v6sm2222771lfj.85.2018.10.27.09.08.33
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 27 Oct 2018 09:08:33 -0700 (PDT)
+Received: by mail-lf1-f51.google.com with SMTP id h192so3102379lfg.3
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Oct 2018 09:08:33 -0700 (PDT)
+X-Received: by 2002:ac2:41d8:: with SMTP id d24-v6mr4500865lfi.138.1540656512719;
+ Sat, 27 Oct 2018 09:08:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1dc6fdf4626e7cf1ca4933fe3008cb3cd267149b.1540489369.git.nishadkamdar@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Interia-Antivirus: OK
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=interia.pl;
-        s=biztos; t=1540655323;
-        bh=2Ng5HXZoZ5a4zxJqQh7L+eusyQ03ladSGI+4aJVJWJg=;
-        h=X-Interia-R:X-Interia-R-IP:X-Interia-R-Helo:Date:From:To:Cc:
-         Subject:Message-ID:References:MIME-Version:Content-Type:
-         Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
-         User-Agent:X-Interia-Antivirus;
-        b=T3slYCgFLHHvt3uV9ektXnQa8WZZbTo8jNHK3NoK7Q0X6Yjp5DHE5LF9yAuI7pOpb
-         Xhx3YB+pOO5+XL+Oa4L3qNYMg1M3Ab5q8Cbu2dqTCDSq64c0lySurXaUvPrWsBv5Gq
-         WZ8KSwJvZ/JBvkerhWhRRVXnwRh/SPIu8ZYFiRP8=
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 27 Oct 2018 09:08:16 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiVH6SdC2YutcDJ8kiAYUkO-ei3Wdjp2TXcbWas7LJrSg@mail.gmail.com>
+Message-ID: <CAHk-=wiVH6SdC2YutcDJ8kiAYUkO-ei3Wdjp2TXcbWas7LJrSg@mail.gmail.com>
+Subject: Oops in current tree in i2c
+To:     Jiri Kosina <jkosina@suse.cz>, Julian Sax <jsbc@gmx.de>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Hans de Goede <hdegoede@redhat.com>
+Cc:     linux-input@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi
+Julian, Jiri,
+ On my laptop I'm getting a kernel page fault with the current git
+tree, and I'm tentatively blaming commit
 
-On paź 26, 2018 18:55, Nishad Kamdar wrote:
-> Add device tree table for matching vendor ID
-> and support for retrieving platform data
-> from device tree.
+  9ee3e06610fd ("HID: i2c-hid: override HID descriptors for certain devices")
 
-So maybe you should make 2 commits?
+but that's simply because it's the only thing that seems to touch this
+particular area in this merge window.
 
-> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
-> ---
->  drivers/staging/iio/resolver/ad2s1210.c | 43 ++++++++++++++++++++++++-
->  1 file changed, 42 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/iio/resolver/ad2s1210.c b/drivers/staging/iio/resolver/ad2s1210.c
-> index 93c3c70ce62e..9fd5461c4ed0 100644
-> --- a/drivers/staging/iio/resolver/ad2s1210.c
-> +++ b/drivers/staging/iio/resolver/ad2s1210.c
-> @@ -17,6 +17,7 @@
->  #include <linux/delay.h>
->  #include <linux/gpio/consumer.h>
->  #include <linux/module.h>
-> +#include <linux/of.h>
->  
->  #include <linux/iio/iio.h>
->  #include <linux/iio/sysfs.h>
-> @@ -669,6 +670,27 @@ static int ad2s1210_setup_gpios(struct ad2s1210_state *st)
->  	return 0;
->  }
->  
-> +#ifdef CONFIG_OF
-> +static struct ad2s1210_platform_data *ad2s1210_parse_dt(struct device *dev)
-> +{
-> +	struct device_node *np = dev->of_node;
-> +	struct ad2s1210_platform_data *pdata;
-> +
-> +	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
-> +	if (!pdata)
-> +		return NULL;
-> +
-> +	pdata->gpioin = of_property_read_bool(np, "adi,gpioin");
+The oops looks like this:
 
-Why here you are adding "adi", but you are not adding it to the gpios in prev
-commit?
+  BUG: unable to handle kernel paging request at 000000007a25d598
+  PGD 0 P4D 0
+  Oops: 0000 [#1] SMP PTI
+  CPU: 1 PID: 888 Comm: systemd-udevd Not tainted 4.19.0-07715-g345671ea0f92 #4
+  Hardware name: Dell Inc. XPS 13 9350/09JHRY, BIOS 1.7.0 01/16/2018
+  RIP: 0010:strstr+0x19/0x70
 
-I've also seen this: https://patchwork.kernel.org/patch/10355839/. However I do
-not understand why adding vendor id to props is needed...
+where the code disassembly (and the register contents) shows that the
+wild pointer is the first argument to "strstr()", which just has a
+bogus value that is not a valid kernel pointer (RDI: 000000007a25d598
+- which is obviously also the address of the page fault)
 
-> +
-> +	return pdata;
-> +}
-> +#else
-> +static struct ad2s1210_platform_data *ad2s1210_parse_dt(struct device *dev)
-> +{
-> +	return NULL;
-> +}
-> +#endif
-> +
->  static int ad2s1210_probe(struct spi_device *spi)
->  {
->  	struct iio_dev *indio_dev;
-> @@ -682,7 +704,19 @@ static int ad2s1210_probe(struct spi_device *spi)
->  	if (!indio_dev)
->  		return -ENOMEM;
->  	st = iio_priv(indio_dev);
-> -	st->pdata = spi->dev.platform_data;
-> +	if (spi->dev.of_node) {
-> +		st->pdata = ad2s1210_parse_dt(&spi->dev);
-> +		if (!st->pdata)
-> +			return -EINVAL;
-> +	} else {
-> +		st->pdata = spi->dev.platform_data;
-> +	}
-> +
-> +	if (!st->pdata) {
-> +		dev_err(&spi->dev, "ad2s1210: no platform data supplied\n");
-> +		return -EINVAL;
-> +	}
-> +
+The call trace is:
 
-Why not just use only device-tree here? The ad2s1210_platform_data has now only
-one entry... In that case remember to add "depends on OF" in Kconfig.
+   dmi_matches+0x55/0xc0
+   dmi_first_match+0x26/0x40
+   i2c_hid_get_dmi_i2c_hid_desc_override+0x16/0x40 [i2c_hid]
+   i2c_hid_probe+0x28c/0x760 [i2c_hid]
+   i2c_device_probe+0x1e7/0x260
+   really_probe+0xf8/0x3e0
+   driver_probe_device+0x10f/0x120
+   bus_for_each_drv+0x66/0xb0
+   __device_attach+0xd9/0x150
+   bus_probe_device+0x8a/0xa0
+   device_add+0x48e/0x660
+   i2c_new_device+0x162/0x350
 
->  	ret = ad2s1210_setup_gpios(st);
->  	if (ret < 0)
->  		return ret;
-> @@ -724,6 +758,12 @@ static int ad2s1210_remove(struct spi_device *spi)
->  	return 0;
->  }
->  
-> +static const struct of_device_id ad2s1210_of_match[] = {
-> +	{ .compatible = "adi,ad2s1210", },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, ad2s1210_of_match);
-> +
->  static const struct spi_device_id ad2s1210_id[] = {
->  	{ "ad2s1210" },
->  	{}
-> @@ -733,6 +773,7 @@ MODULE_DEVICE_TABLE(spi, ad2s1210_id);
->  static struct spi_driver ad2s1210_driver = {
->  	.driver = {
->  		.name = DRV_NAME,
-> +		.of_match_table = of_match_ptr(ad2s1210_of_match),
->  	},
->  	.probe = ad2s1210_probe,
->  	.remove = ad2s1210_remove,
+which is why I suspect that new i2c_hid_get_dmi_hid_report_desc_override() code.
 
--- 
-Slawomir Stepien
+I *think* the problem is that the i2c_hid_dmi_desc_override_table[]
+isn't terminated by a NULL entry, and I will test that next.
+
+What makes me *very* unhappy about this is that if I'm right, I think
+it means that code was literally not tested at all by anybody who
+didn't have one of the entries in that list.
+
+                  Linus
