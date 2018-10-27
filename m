@@ -2,107 +2,116 @@ Return-Path: <SRS0=4IUq=NH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 675F2C46475
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 20:17:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDE37C46475
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 20:20:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 197062085B
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 20:17:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D6A42085B
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 20:20:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UtSy9Sbg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 197062085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p2KJ2hIo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D6A42085B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726966AbeJ1E7c (ORCPT
+        id S1728764AbeJ1FDF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 00:59:32 -0400
-Received: from mail-lj1-f172.google.com ([209.85.208.172]:46339 "EHLO
-        mail-lj1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726479AbeJ1E7c (ORCPT
+        Sun, 28 Oct 2018 01:03:05 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:41387 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726596AbeJ1FDF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 00:59:32 -0400
-Received: by mail-lj1-f172.google.com with SMTP id x3-v6so4196571lji.13
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Oct 2018 13:17:24 -0700 (PDT)
+        Sun, 28 Oct 2018 01:03:05 -0400
+Received: by mail-lf1-f66.google.com with SMTP id c16so3310754lfj.8;
+        Sat, 27 Oct 2018 13:20:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CYyDE4F0EuFW4AVaLYBQS/tk4P6nO6mzBrDy3UOfK6c=;
-        b=UtSy9SbgQFsdrX4fbZ/M6knP5BllErq5MZbEY0vP48UlOpjnm7K/yivOkRiVzXwF+k
-         ThbeSK4GMZ/imyCtZjb7gOTxVkSIwL9cRQ2nh725vnd+wzpzPrab6rgcmH75a5CycKCo
-         EezFZSlONCsmEBTPgcd1NPoZHxHk3YSaWT++g=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=EWMUqs6CaHzLIxKw/s30cfrMD8CaJcuQBftfn1gEFGk=;
+        b=p2KJ2hIoEpPZL/XynATC31xOqWgwqYGiVrAig40gdWiKnqkrKKG7ylqYY8Au/GwG3v
+         WuKwh2l5iJx0zQ+wUdCyQd4auLeH5OknI/VICF2kOdQ/ATX8XcS22PPf/z0KFa4BMt0b
+         nq/1XmWp1fBahJelOLero2mIWzvVqYtfhJVkLNoReBaMs3qSTtm4loSR7ClMGfspXfBf
+         q1Nc3xsQNyd7Yi759ZuAS6z3tIVZWdqpBzO0tPngKLXxv919SZoNOpGgZ2wliY/6zqPJ
+         y69CxYqfEY9gu+ZLWU6OAD//RXKAA68ihlkn1REhkDTE/4Ga+cYl6a4y+ATrrPr3c/lZ
+         uKfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CYyDE4F0EuFW4AVaLYBQS/tk4P6nO6mzBrDy3UOfK6c=;
-        b=rtuQl7gnwKY+e6zklf4gOhlQp24+Cv89rMJos1y3zdwbN2mhIQio6ivSL2/fC6XGvp
-         7tkpg/jRM4tQCY3mwknB6PKmhhiGY4uqu+X5kIcaku/2t929dOwIYUVc9MEKCvMGgglc
-         w6u5vkZWQyQVA/DhcTqVxbJeiQZY2GGmimBjp3sIwpx+7Asaz4andobq8LABDxrOY8Lv
-         MdhCxHw+HKGCvXc6Qpx1dzrp2Bh81mLy9GyrzbX5CE0zYJcL74mKC7g2yBSyu46+dqq1
-         g97XjTDutlRuBn872tKuQ/HB7sXV/CU71ZYSbvNB3qecFfbSn6ZDoapujPgwCVDzwEbk
-         0dZw==
-X-Gm-Message-State: AGRZ1gJ8JwxIVcZ8JTbpilXBR2tJ5qqqNzGCsrYH7iCdKVfM4T0Aa7e1
-        rT5SG5u6B/RF/l045aMxgldoonGspXgm1A==
-X-Google-Smtp-Source: AJdET5cgDfqChsXurEShkGrnwXx9/NvTzvRfTHTAQLS5FzJVafcsgnMYdaS5HmKGFQpOQ9J5KH6sXQ==
-X-Received: by 2002:a2e:8347:: with SMTP id l7-v6mr5489676ljh.140.1540671443214;
-        Sat, 27 Oct 2018 13:17:23 -0700 (PDT)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id n195-v6sm2398907lfb.26.2018.10.27.13.17.21
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=EWMUqs6CaHzLIxKw/s30cfrMD8CaJcuQBftfn1gEFGk=;
+        b=M/YmiBDtH1BAvjtvLzIQp9GckR5PPPP+PtlezXTPUuseVv2BJDBg6bm7FejjWvckO/
+         ZC0DFqi8ZHqS9hO1VfpPF2fw60eb6UdV/FGj/lON1qJO+uRsp6N+E5FmCHoai8k+HCq+
+         cTAZGI5BmhUsCzGCK6qrx1+wG2XV87pHMvhE7KjZ+ySElbNV+9zc7rC3s7wNr8k1T6Vw
+         4KVqCANjQh/F1fepBYHiIgNkKdtOh5FXOARtZ/EOiiOKMMYMhPITuThI41BJovcbZQ4P
+         gXGy4P1ClzkmJTBOb6Gm1tLOs5BY1FaocH5lFLAtZHaEZYZMlt06KaX4Cx8nKwqbSZJK
+         SeNw==
+X-Gm-Message-State: AGRZ1gIA4sdDU3e8lWkJ4QlxgBD4l/fexMMXxEzmNPhFHmnzouhSLBtY
+        h/wZQ6ZmFBspwHvL2NPj8Oo=
+X-Google-Smtp-Source: AJdET5ePccC2+hit3PP7SpUjiYPtVOLt/BJK/a+yb64PNe1U2MbhScHJoRtQKEqp3nLNhN4OS69i4A==
+X-Received: by 2002:a19:cb94:: with SMTP id b142mr5141435lfg.117.1540671655451;
+        Sat, 27 Oct 2018 13:20:55 -0700 (PDT)
+Received: from localhost.localdomain ([95.174.65.6])
+        by smtp.gmail.com with ESMTPSA id d13-v6sm2216147ljc.25.2018.10.27.13.20.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 27 Oct 2018 13:17:22 -0700 (PDT)
-Received: by mail-lj1-f179.google.com with SMTP id z21-v6so4233045ljz.0
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Oct 2018 13:17:21 -0700 (PDT)
-X-Received: by 2002:a2e:9584:: with SMTP id w4-v6mr5619448ljh.118.1540671441350;
- Sat, 27 Oct 2018 13:17:21 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAHk-=wiZ24JuVehJ5sEC0UG1Gk2nvB363wO02RRsR1oEht6R9Q@mail.gmail.com>
- <c6b7e5b26883c53db35454e9b0ffb44898517228.camel@perches.com>
-In-Reply-To: <c6b7e5b26883c53db35454e9b0ffb44898517228.camel@perches.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 27 Oct 2018 13:17:05 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgTMd_orbgEmjtKdpPJdnFcho_-66_R3PBr7joxFOxqsw@mail.gmail.com>
-Message-ID: <CAHk-=wgTMd_orbgEmjtKdpPJdnFcho_-66_R3PBr7joxFOxqsw@mail.gmail.com>
-Subject: Re: Another HID problem this merge window..
-To:     joe@perches.com
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sat, 27 Oct 2018 13:20:54 -0700 (PDT)
+From:   Tomas Bortoli <tomasbortoli@gmail.com>
+To:     vyasevich@gmail.com, nhorman@tuxdriver.com,
+        marcelo.leitner@gmail.com
+Cc:     davem@davemloft.net, linux-sctp@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Tomas Bortoli <tomasbortoli@gmail.com>
+Subject: [PATCH] sctp: socket.c validate sprstat_policy
+Date:   Sat, 27 Oct 2018 22:20:26 +0200
+Message-Id: <20181027202026.32157-1-tomasbortoli@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 27, 2018 at 12:36 PM Joe Perches <joe@perches.com> wrote:
->
-> In fairness, it seems many of the HID drivers do exactly that
-> and this could have been a "copy from example" addition.
+It is possible to perform out-of-bound reads on
+sctp_getsockopt_pr_streamstatus() and on
+sctp_getsockopt_pr_assocstatus() by passing from userspace a
+sprstat_policy that overflows the abandoned_sent/abandoned_unsent
+fixed length arrays. The over-read data are directly copied/leaked
+to userspace.
 
-Interesting, and I think you're right.
+Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
+Reported-by: syzbot+5da0d0a72a9e7d791748@syzkaller.appspotmail.com
+---
+v2 - added forgot ||
 
-I wonder why I haven't noticed this before. Some of those might be
-hidden by other dependencies - what I do is to just check how "make
-oldconfig" changes my normal fairly minimal configuration, and then
-complain when I notice that somebody enables some odd new hardware.
+ net/sctp/socket.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Anyway, those other "!EXPERT" defaults look pretty questionable too.
-HID itself beind default y and the HID_GENERIC driver defaulting on
-seems eminently sane. And HID_LOGITECH might fall under both "very
-common" and "enables other config options".
+diff --git a/net/sctp/socket.c b/net/sctp/socket.c
+index fc0386e8ff23..5290b8bd40c8 100644
+--- a/net/sctp/socket.c
++++ b/net/sctp/socket.c
+@@ -7083,7 +7083,8 @@ static int sctp_getsockopt_pr_assocstatus(struct sock *sk, int len,
+ 	}
+ 
+ 	policy = params.sprstat_policy;
+-	if (!policy || (policy & ~(SCTP_PR_SCTP_MASK | SCTP_PR_SCTP_ALL)))
++	if (!policy || (policy & ~(SCTP_PR_SCTP_MASK | SCTP_PR_SCTP_ALL)) ||
++	    __SCTP_PR_INDEX(policy) > SCTP_PR_INDEX(MAX))
+ 		goto out;
+ 
+ 	asoc = sctp_id2assoc(sk, params.sprstat_assoc_id);
+@@ -7142,7 +7143,8 @@ static int sctp_getsockopt_pr_streamstatus(struct sock *sk, int len,
+ 	}
+ 
+ 	policy = params.sprstat_policy;
+-	if (!policy || (policy & ~(SCTP_PR_SCTP_MASK | SCTP_PR_SCTP_ALL)))
++	if (!policy || (policy & ~(SCTP_PR_SCTP_MASK | SCTP_PR_SCTP_ALL)) ||
++	    __SCTP_PR_INDEX(policy) > SCTP_PR_INDEX(MAX))
+ 		goto out;
+ 
+ 	asoc = sctp_id2assoc(sk, params.sprstat_assoc_id);
+-- 
+2.11.0
 
-But even then, the !EXPERT seems an odd choice. Why not just 'y' for
-the truly common cases?
-
-I wonder if there is some truly old historical legacy there, ie the
-old PC keyboard support would have been configurable out only for
-expert users to avoid errors, and maybe the HID Kconfig file started
-getting ideas from that...
-
-                Linus
