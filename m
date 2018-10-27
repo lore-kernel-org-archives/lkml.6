@@ -2,86 +2,79 @@ Return-Path: <SRS0=4IUq=NH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79E98C46475
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 08:13:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96580C46475
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 08:20:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B4992086C
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 08:13:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B4992086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 25D2520856
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 08:20:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="muKQwXu9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25D2520856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728353AbeJ0Qx6 (ORCPT
+        id S1728299AbeJ0RAn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 12:53:58 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:58628 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728020AbeJ0Qx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 12:53:57 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6804D753E8;
-        Sat, 27 Oct 2018 08:13:49 +0000 (UTC)
-Received: from localhost (ovpn-8-21.pek2.redhat.com [10.72.8.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BD35166D46;
-        Sat, 27 Oct 2018 08:13:45 +0000 (UTC)
-Date:   Sat, 27 Oct 2018 16:13:43 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Petr Tesarik <ptesarik@suse.cz>, lijiang <lijiang@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        kexec@lists.infradead.org, mingo@redhat.com, tglx@linutronix.de,
-        dyoung@redhat.com
-Subject: Re: [PATCH] kdump, vmcoreinfo: Export sme_me_mask value to vmcoreinfo
-Message-ID: <20181027081343.GA1884@MiWiFi-R3L-srv>
-References: <20181026093630.8520-1-lijiang@redhat.com>
- <053CC83A-9A95-4C12-9627-AABD1427DA9C@alien8.de>
- <1263471c-a27d-a698-15f0-b5947f13ea93@redhat.com>
- <20181026182440.20a4b107@ezekiel.suse.cz>
- <20181026222517.GB26927@nazgul.tnic>
+        Sat, 27 Oct 2018 13:00:43 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52964 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727643AbeJ0RAn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Oct 2018 13:00:43 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=r7pcUE8ZYRjkrOxqSGW41abNyHoWl4gSq+v5SHUSiGw=; b=muKQwXu95MlJ5Nlzqu2sPSvjl
+        MmVeVCOcwVjka0ItvRcBsyMpDHdjxZVRs9HXDbFOpQfjiVU5pBx8j+ESIBmrf3L9QxLltWUGm8eti
+        2wDFuZq0uBneG1aqi0EbJsJHnzIJOcGVvHoQ4srhWcCX8KJ9jHifsDX62ugOUfwSmnSBSKzpcg9Fi
+        6pzl0z5Tn+jkNH+tMvVnplcr+3R3ni7APP8YDehDX2XsTOrI1jsqBgjw1N+ik+wq2v07/WH+Kqd5L
+        b4UnEQpnUG3PqCnHpjrc/CG2d9X/bch3unVs+sVYQF4YyFzxncueuz4i/tTbrNpvyh/QIMb1+QQ1n
+        Krs9+uI5w==;
+Received: from 089144192143.atnat0001.highway.a1.net ([89.144.192.143] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gGJpa-0006Fx-9y; Sat, 27 Oct 2018 08:20:26 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     ooo@electrozaur.com, martin.petersen@oracle.com
+Cc:     Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        osd-dev@open-osd.org, linux-scsi@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: remove exofs and the T10 OSD code V2
+Date:   Sat, 27 Oct 2018 10:20:17 +0200
+Message-Id: <20181027082019.20838-1-hch@lst.de>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181026222517.GB26927@nazgul.tnic>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Sat, 27 Oct 2018 08:13:49 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/27/18 at 12:25am, Borislav Petkov wrote:
-> On Fri, Oct 26, 2018 at 06:24:40PM +0200, Petr Tesarik wrote:
-> > But we need the MSR value from the panic kernel environment, not while
-> > the production kernel is still running, right?
-> 
-> Actually, we need only the encryption bit number (and it should be 0
-> otherwise to denote SME wasn't enabled).
-> 
-> I guess something like
-> 
-> 	VMCOREINFO_NUMBER(sme_mask);
+The only real user of the T10 OSD protocol, the pNFS object layout
+driver never went to the point of having shipping products, and we
+removed it 1.5 years ago.  Exofs is just a simple example without
+real life users.
 
-Yes, agree. So sme_me_mask itself or the encryption bit number, both is
-fine.
+The code has been mostly unmaintained for years and is getting in the
+way of block / SCSI changes, so I think it's finally time to drop it.
 
-We need read and parse the memory content of crashed kernel which
-is mapped to /prov/vmcore by user space makedumpfile. Not only is it
-because user space makedumpfile can't access and get if it's sme
-enabled from system, we may use cp to copy /proc/vmcore to a file
-directly, then analyze it in another compupter. This often happen when
-there's something wrong with makedumpfile, we need debug makedumpfile
-with the complete copied file.
+Quote from Boaz:
 
-And only telling whether sme is enabled might be not enough. Since AMD
-CPU might extend to support 5-level, then the current fixed bit positon
-47 would need be changed.
+"As I said then. It is used in Universities for studies and experiments.
+Every once in a while. I get an email with questions and reports.
 
-Thanks
-Baoquan
+But yes feel free to remove the all thing!!
+
+I guess I can put it up on github. In a public tree.
+
+Just that I will need to forward port it myself, til now you guys
+been doing this for me ;-)"
