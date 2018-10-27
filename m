@@ -2,223 +2,126 @@ Return-Path: <SRS0=4IUq=NH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C68D6C46475
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 03:35:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A16EC46475
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 03:36:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C0262085B
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 03:35:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 384D92082C
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 03:36:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Pj1/VKoT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C0262085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="PykhxD1N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 384D92082C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727340AbeJ0MP1 (ORCPT
+        id S1727741AbeJ0MPk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 08:15:27 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41376 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725965AbeJ0MP1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 08:15:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=IIJhb7FLZWKtzjBGXnWyUV9DSybJaH5E/AYv+Dkcm2g=; b=Pj1/VKoT6Ml3pLiPuP8CGZKWQ
-        1kqv59d/tswWSd0Caq1pxQjIWV7FaSHm2KMqsMcHmwQoRYGSiqfZmCdN4Lf1vAR4C/PmtHjD/i3Vp
-        l6xSYJEH44HzB9bEEEmsGbFuTV63D3ppakeX2cgr2PCAFEqJ+swbZLaVQ4PJVYil8HqMPe0WapVgZ
-        yoyPXFoih3KHS9X2VX5lfDQlll4JOWZu0RHCgRonmU1VJA24JZ2pbwhL70RuxCe08XtmudAp3l8Tg
-        J2Jj371+vrHaF+SMEj7UVeEVcdyf7DVnc80eoDII4zPfTSggujinQCcomjVp3eBRcsoR0gKhv2fjx
-        gSx9RHaPw==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gGFOE-0006xG-6r; Sat, 27 Oct 2018 03:35:54 +0000
-Subject: Re: 4.18: early boot crash in thermal_cooling_device_destroy_sysfs
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     ACPI Devel Mailing List <linux-acpi@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>
-References: <c1e0c7c7-2ed9-39fd-b3e0-aebf4d5839a3@infradead.org>
- <4a200a32-7d7f-1248-2ecd-74600083b1c1@infradead.org>
- <3743579.MQBqPkux9Q@aspire.rjw.lan>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <6eaa3393-f7aa-8f1a-a5c4-72aaafa2d1f9@infradead.org>
-Date:   Fri, 26 Oct 2018 20:35:51 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sat, 27 Oct 2018 08:15:40 -0400
+Received: from imap.thunk.org ([74.207.234.97]:34388 "EHLO imap.thunk.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727417AbeJ0MPk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Oct 2018 08:15:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=b/TxJuMdn3viuwjrsHaYqV136V/qHzY/u/OMsL9bjmg=; b=PykhxD1NLPkQ+9bUYbAmXQT70j
+        TedClLhVy5JAkpsl9i2EeuvRojFlfWo+yRYtdMa0hWZ0eYUf5Z2GMjgq4X8VDsx658v8f3Aou8zks
+        0WMZABCr4fGGbs1wkMTcm1co1ggmKFUptbUg3Na30sIJyQJHQN5UXpAZXe1zvv0aM3uQ=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1gGFOD-0006BC-GJ; Sat, 27 Oct 2018 03:35:53 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 52E917A0147; Fri, 26 Oct 2018 23:35:52 -0400 (EDT)
+Date:   Fri, 26 Oct 2018 23:35:52 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     bvanassche@acm.org, Linus Torvalds <torvalds@linux-foundation.org>,
+        ooo@electrozaur.com, Nathan Chancellor <natechancellor@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        hch@infradead.org
+Subject: Re: [PATCH] libosd: Remove ignored __weak attribute
+Message-ID: <20181027033552.GA29237@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Nick Desaulniers <ndesaulniers@google.com>, bvanassche@acm.org,
+        Linus Torvalds <torvalds@linux-foundation.org>, ooo@electrozaur.com,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        hch@infradead.org
+References: <20181025213144.GB24709@flashbox>
+ <CAKwvOdn=TvoGdFvgxX6TyXBXnhVLttriRrZEnzS6DjcjL64DPA@mail.gmail.com>
+ <20181025225548.GA10326@flashbox>
+ <CAKwvOdnwmf47_m_0K5OCLmXbrkLNnekpNOPCCMeJqkuqKUbQ-A@mail.gmail.com>
+ <1540576908.66186.103.camel@acm.org>
+ <CAKwvOdnYx60JkJHJkD7CYA9yx5Oa7Tn9q4aZ3-tcZGx++yoduQ@mail.gmail.com>
+ <1540589437.66186.124.camel@acm.org>
+ <CAKwvOdm-xYRqCBXhLC1ceC44_rEmggW4qiSgGpRkpL+p-NadVg@mail.gmail.com>
+ <1540591147.66186.127.camel@acm.org>
+ <CAKwvOdmUhtK10cbYFoEJJp4O8LA_F-+f68A_NcL_fm_FH6QodA@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <3743579.MQBqPkux9Q@aspire.rjw.lan>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKwvOdmUhtK10cbYFoEJJp4O8LA_F-+f68A_NcL_fm_FH6QodA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/26/18 2:14 AM, Rafael J. Wysocki wrote:
-> On Monday, October 22, 2018 8:37:25 PM CEST Randy Dunlap wrote:
->>
->> On 8/16/18 2:33 PM, Randy Dunlap wrote:
->>> Hi,
->>>
->>> Sorry for the photo.  That's all I have available so far.
->>>
->>> https://www.infradead.org/~rdunlap/doc/IMG_20180816_133254743_HDR.jpg
->>>
->>>
->>> Does anyone recognize this?
->>>
->>> This is an (older) Toshiba laptop.  The kernel .config is mostly an
->>> allmodconfig with some DEBUG options disabled and other options enabled
->>> so that it can boot without using an initramfs.  (and with COMPILE_TEST
->>> disabled :)
->>>
->>>
->>> The full kernel .config file is attached.
->>>
->>> Thanks,
->>>
->>
->> This is a result of CONFIG_DEBUG_TEST_DRIVER_REMOVE=y.
->> [switch from 64-bit to 32-bit machine]
->>
->>
->> When using CONFIG_DEBUG_VM=y, it BUGs at:
->> [    5.553603] ------------[ cut here ]------------
->> [    5.553733] kernel BUG at arch/x86/mm/physaddr.c:75!
->> [    5.557788] invalid opcode: 0000 [#1] PREEMPT SMP DEBUG_PAGEALLOC
->> [    5.558738] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc7 #4
->> [    5.558738] Hardware name: Dell Inc. Inspiron 1318                   /0C236D, BIOS A04 01/15/2009
->> [    5.558738] EIP: __phys_addr+0x40/0x90
->> [    5.558738] Code: 00 40 75 2e 8b 15 00 57 23 d5 85 d2 74 12 89 d9 c1 e9 0c 39 ca 72 5b e8 2e ca ff ff 39 d8 75 4a 89 d8 5b 5d c3 8d 74 26 00 90 <0f> 0b 8d b6 00 00 00 00 8b 0d 80 56 23 d5 8d 91 00 00 80 00 39 d0
->> [    5.558738] EAX: 6b6b6b6b EBX: 6b6b6b6b ECX: 00140011 EDX: 00000000
->> [    5.558738] ESI: f4890000 EDI: d4a58d60 EBP: f40c1e0c ESP: f40c1e08
->> [    5.558738] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00210a97
->> [    5.558738] CR0: 80050033 CR2: 00000000 CR3: 14cad000 CR4: 000406d0
->> [    5.558738] Call Trace:
->> [    5.558738]  kfree+0x1f/0x160
->> [    5.558738]  thermal_cooling_device_destroy_sysfs+0x11/0x20
->> [    5.558738]  thermal_cooling_device_unregister+0x168/0x180
->> [    5.558738]  acpi_pss_perf_exit.isra.4+0x32/0x50
->> [    5.558738]  acpi_processor_stop+0x4d/0x60
->> [    5.558738]  really_probe+0xa3/0x3e0
->> [    5.558738]  driver_probe_device+0x5b/0x120
->> [    5.558738]  __driver_attach+0xd9/0x100
->> [    5.558738]  ? driver_probe_device+0x120/0x120
->> [    5.558738]  bus_for_each_dev+0x56/0x90
->> [    5.558738]  driver_attach+0x14/0x20
->> [    5.558738]  ? driver_probe_device+0x120/0x120
->> [    5.558738]  bus_add_driver+0x117/0x210
->> [    5.558738]  driver_register+0x61/0xb0
->> [    5.558738]  acpi_processor_driver_init+0x19/0x88
->> [    5.558738]  ? acpi_pci_slot_init+0xf/0xf
->> [    5.558738]  do_one_initcall+0x3e/0x15a
->> [    5.558738]  ? do_early_param+0x75/0x75
->> [    5.558738]  kernel_init_freeable+0x170/0x1f3
->> [    5.558738]  ? rest_init+0xcd/0xcd
->> [    5.558738]  kernel_init+0x8/0xdb
->> [    5.558738]  ret_from_fork+0x2e/0x38
->> [    5.558738] Modules linked in:
->> [    5.625269] _warn_unseeded_randomness: 1 callbacks suppressed
->> [    5.625272] random: get_random_bytes called from init_oops_id+0x3a/0x40 with crng_init=0
->> [    5.629758] ---[ end trace 65b17bf4d18e7692 ]---
->> [    5.631573] EIP: __phys_addr+0x40/0x90
->> [    5.633242] Code: 00 40 75 2e 8b 15 00 57 23 d5 85 d2 74 12 89 d9 c1 e9 0c 39 ca 72 5b e8 2e ca ff ff 39 d8 75 4a 89 d8 5b 5d c3 8d 74 26 00 90 <0f> 0b 8d b6 00 00 00 00 8b 0d 80 56 23 d5 8d 91 00 00 80 00 39 d0
->> [    5.638618] EAX: 6b6b6b6b EBX: 6b6b6b6b ECX: 00140011 EDX: 00000000
->> [    5.640703] ESI: f4890000 EDI: d4a58d60 EBP: f40c1e0c ESP: d4cb13dc
->> [    5.642801] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00210a97
->> [    5.645053] CR0: 80050033 CR2: 00000000 CR3: 14cad000 CR4: 000406d0
->> [    5.647179] Kernel panic - not syncing: Fatal exception
->> [    5.648172] Kernel Offset: 0x13000000 from 0xc1000000 (relocation range: 0xc0000000-0xf77fdfff)
->> [    5.648172] ---[ end Kernel panic - not syncing: Fatal exception ]---
->>
->>
->> When not using CONFIG_DEBUG_VM, it BUGs in kfree:
->> [    5.497864] ------------[ cut here ]------------
->> [    5.498215] kernel BUG at mm/slub.c:3901!
->> [    5.501739] invalid opcode: 0000 [#1] PREEMPT SMP
->> [    5.502720] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc7 #3
->> [    5.502720] Hardware name: Dell Inc. Inspiron 1318                   /0C236D, BIOS A04 01/15/2009
->> [    5.502720] EIP: kfree+0x117/0x150
->> [    5.502720] Code: 74 21 8b 06 31 d2 f6 c4 80 74 04 0f b6 56 31 89 f0 e8 7d e0 fa ff e9 7b ff ff ff 8d b4 26 00 00 00 00 90 8b 46 04 a8 01 75 d8 <0f> 0b 8d b4 26 00 00 00 00 8b 75 f0 ff 75 ec 89 d9 89 f8 6a 01 53
->> [    5.502720] EAX: 00000100 EBX: 6b6b6b6b ECX: 00140011 EDX: 00000000
->> [    5.502720] ESI: f67dac70 EDI: ccc4aca0 EBP: f4083e28 ESP: f4083e10
->> [    5.502720] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00210246
->> [    5.502720] CR0: 80050033 CR2: ffd14000 CR3: 0ce94000 CR4: 000406d0
->> [    5.502720] Call Trace:
->> [    5.502720]  thermal_cooling_device_destroy_sysfs+0x11/0x20
->> [    5.502720]  thermal_cooling_device_unregister+0x168/0x180
->> [    5.502720]  acpi_pss_perf_exit.isra.4+0x32/0x50
->> [    5.502720]  acpi_processor_stop+0x4d/0x60
->> [    5.502720]  really_probe+0xa3/0x3e0
->> [    5.502720]  driver_probe_device+0x5b/0x120
->> [    5.502720]  __driver_attach+0xd9/0x100
->> [    5.502720]  ? driver_probe_device+0x120/0x120
->> [    5.502720]  bus_for_each_dev+0x56/0x90
->> [    5.502720]  driver_attach+0x14/0x20
->> [    5.502720]  ? driver_probe_device+0x120/0x120
->> [    5.502720]  bus_add_driver+0x117/0x210
->> [    5.502720]  driver_register+0x61/0xb0
->> [    5.502720]  acpi_processor_driver_init+0x19/0x88
->> [    5.502720]  ? acpi_pci_slot_init+0xf/0xf
->> [    5.502720]  do_one_initcall+0x3e/0x15a
->> [    5.502720]  ? do_early_param+0x75/0x75
->> [    5.502720]  kernel_init_freeable+0x170/0x1f3
->> [    5.502720]  ? rest_init+0xcd/0xcd
->> [    5.502720]  kernel_init+0x8/0xdb
->> [    5.502720]  ret_from_fork+0x2e/0x38
->> [    5.502720] Modules linked in:
->> [    5.567678] _warn_unseeded_randomness: 1 callbacks suppressed
->> [    5.567682] random: get_random_bytes called from init_oops_id+0x3a/0x40 with crng_init=0
->> [    5.572237] ---[ end trace 1b6e88c03e412db2 ]---
->> [    5.574099] EIP: kfree+0x117/0x150
->> [    5.575673] Code: 74 21 8b 06 31 d2 f6 c4 80 74 04 0f b6 56 31 89 f0 e8 7d e0 fa ff e9 7b ff ff ff 8d b4 26 00 00 00 00 90 8b 46 04 a8 01 75 d8 <0f> 0b 8d b4 26 00 00 00 00 8b 75 f0 ff 75 ec 89 d9 89 f8 6a 01 53
->> [    5.581124] EAX: 00000100 EBX: 6b6b6b6b ECX: 00140011 EDX: 00000000
->> [    5.583243] ESI: f67dac70 EDI: ccc4aca0 EBP: f4083e28 ESP: cce983dc
->> [    5.585347] DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068 EFLAGS: 00210246
->> [    5.587600] CR0: 80050033 CR2: ffd14000 CR3: 0ce94000 CR4: 000406d0
->> [    5.589747] Kernel panic - not syncing: Fatal exception
->> [    5.590740] Kernel Offset: 0xb200000 from 0xc1000000 (relocation range: 0xc0000000-0xf77fdfff)
->> [    5.590740] ---[ end Kernel panic - not syncing: Fatal exception ]---
->>
->>
->>
->>
+On Fri, Oct 26, 2018 at 03:07:39PM -0700, Nick Desaulniers wrote:
+> > That's not completely correct. The standard approach to check whether or not
+> > a driver is still being used is to check its git history. If the number of
+> > contributors is low and it was several years ago that a new feature was added
+> > or a bug has been fixed it is likely that nobody is using that driver anymore.
 > 
-> This admittedly is a long shot, but does the appended patch help?
+> I don't disagree with you, I just don't see how what you state can be
+> reconciled with Linus' response in
+> https://lkml.org/lkml/2018/10/27/44.  Those two viewpoints seem
+> incompatible to me, but maybe there's a nuance I'm missing?
 
-Thanks for the patch, but:
-Nope, same crash.
+So a couple of observations.  Obviously, drivers, file systems and
+architectures *have* been removed.  It can be done; sometimes if it
+can be demonstrate that it can't possibly work (for example, due to
+bitrot, the kernel would immediately crashed if anyone tried to use
+the code in question :-).
 
-> ---
->  drivers/thermal/thermal_core.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> Index: linux-pm/drivers/thermal/thermal_core.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_core.c
-> +++ linux-pm/drivers/thermal/thermal_core.c
-> @@ -1066,7 +1066,7 @@ void thermal_cooling_device_unregister(s
->  	struct thermal_zone_device *tz;
->  	struct thermal_cooling_device *pos = NULL;
->  
-> -	if (!cdev)
-> +	if (IS_ERR_OR_NULL(cdev))
->  		return;
->  
->  	mutex_lock(&thermal_list_lock);
-> 
-> 
+In other cases, drivers has been removed through the staging
+subsystem, sometimes by adding a "depends on BROKEN" in the Kconfig
+file, and seeing if anyone complains --- since removing a "depends on
+BROKEN" line in Kconfig is even easier than doing reverting a git
+commit (especially if the user downloaded a tarball instead of doing a
+git clone).
 
+If you've done your due diligence then the chances that you have to
+revert a change which disables and later removes the dead code can be
+pushed close to zero.  The question is whether it's worth the effort.
 
--- 
-~Randy
+> Nathan and I are just pointing out a small fix to eliminate a small
+> warning, deleting all this code does kind of feels like "throwing out
+> the baby with the bath water." A nuclear option for what would be a
+> small change otherwise.  Maybe it's good to discuss the EOL for
+> exofs/osd, but can we please decouple that conversation from the small
+> change Nathan and I are proposing?
+
+The second observation I'll make is that if someone is proposing a
+cleanup patch, it's unfair to dump on the person proposing the cleanup
+patch the (non-trivial) effort to drop a driver/file system/subsystem.
+
+If the maintainer wants to drop a driver/file system, that should be
+the maintainer's responsibiltiy; not someone proposing a
+cleanup/maintenance patch.
+
+						- Ted
