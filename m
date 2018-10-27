@@ -2,124 +2,110 @@ Return-Path: <SRS0=4IUq=NH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	URI_TRY_3LD autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCAFCC46475
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 16:08:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28966C46475
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 16:11:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81DF220843
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 16:08:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hvQLKFIm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81DF220843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id DB80B20843
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 16:11:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB80B20843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tronnes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728799AbeJ1AuD (ORCPT
+        id S1728808AbeJ1Awb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 20:50:03 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:34241 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728784AbeJ1AuD (ORCPT
+        Sat, 27 Oct 2018 20:52:31 -0400
+Received: from smtp.domeneshop.no ([194.63.252.55]:44128 "EHLO
+        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728643AbeJ1Awb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 20:50:03 -0400
-Received: by mail-lf1-f65.google.com with SMTP id n26-v6so3095802lfl.1
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Oct 2018 09:08:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=9iUGkkPMzymHyFy8XDEDG24c/EyKWgD9wzcOAiPjkI0=;
-        b=hvQLKFImd8VEgGiXL2XbyeMcqXmUqr3qFouEqQxN7dfYU/OOnuBqO0Yo4AiPEVAeAa
-         f/IrkpCG48CI1AGQcR7ZqYts8A05M3bRDQ04TaeCdam4sbfoY7UduInoRVed6uOo+jmS
-         7qI5VJ22gdg/omsjL4rEyQWppgAhbczpbqHSU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=9iUGkkPMzymHyFy8XDEDG24c/EyKWgD9wzcOAiPjkI0=;
-        b=U+2fC8D1hFthz8YSPt6YHnCj+/DW5E8iXVeJ8QBdh0jLmZbAycrsqpSSZsQ+ZXUGNP
-         k/HCTjoN4sdxeez47fhpOelane5ZeKnwiBUnYUaAST0fiPWCig09DP42KC7vdXE6eps7
-         /vLI992M6RPKcjtiaVskslIlG1kJogwvT8yaw+T2QMKHHExnOynsSDcyk9A8FR+tdeeu
-         7C2/Br6y4UjOH+jT46jDezrOEdDfiwwP3ATu4ya/trXq4Rh4WczGx2BiOWRKUtkadS9b
-         161PyuwJXPHmgzFS/NndcdfmURJs6TLX7D6ZSfH0AfvHoNCT7RWfjV9najL+VcBjY1Kd
-         ZA/g==
-X-Gm-Message-State: AGRZ1gKg88AKjeDgXrc9LRifstPOFqOoa8VMlY3LfIZsqKrzR8sNTsEo
-        dR7z+Q9dl7GGQI8eRWVQ2tcaxoit3I+qrg==
-X-Google-Smtp-Source: AJdET5cfngm7jOpWXbFzy9IjxmIHH2faJ6kfKYoXjUZca7fSwo6LSmWHHaS77EAoRKV492/ZHQ/YNg==
-X-Received: by 2002:a19:6e0b:: with SMTP id j11-v6mr4455685lfc.118.1540656514361;
-        Sat, 27 Oct 2018 09:08:34 -0700 (PDT)
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
-        by smtp.gmail.com with ESMTPSA id q5-v6sm2222771lfj.85.2018.10.27.09.08.33
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 27 Oct 2018 09:08:33 -0700 (PDT)
-Received: by mail-lf1-f51.google.com with SMTP id h192so3102379lfg.3
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Oct 2018 09:08:33 -0700 (PDT)
-X-Received: by 2002:ac2:41d8:: with SMTP id d24-v6mr4500865lfi.138.1540656512719;
- Sat, 27 Oct 2018 09:08:32 -0700 (PDT)
+        Sat, 27 Oct 2018 20:52:31 -0400
+Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:58864 helo=[192.168.10.175])
+        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <noralf@tronnes.org>)
+        id 1gGRB0-0007mL-ED; Sat, 27 Oct 2018 18:11:02 +0200
+Subject: Re: [PATCH 1/3] dt-bindings: new binding for Himax HX8357D display
+ panels
+To:     Eric Anholt <eric@anholt.net>, dri-devel@lists.freedesktop.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Heiner Kallweit <hkallweit1@gmail.com>
+References: <20181024184313.2967-1-eric@anholt.net>
+ <20181024184313.2967-2-eric@anholt.net>
+From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+Message-ID: <0d208d10-c24b-74a6-c7ce-1c826ded1bde@tronnes.org>
+Date:   Sat, 27 Oct 2018 18:10:59 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 27 Oct 2018 09:08:16 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiVH6SdC2YutcDJ8kiAYUkO-ei3Wdjp2TXcbWas7LJrSg@mail.gmail.com>
-Message-ID: <CAHk-=wiVH6SdC2YutcDJ8kiAYUkO-ei3Wdjp2TXcbWas7LJrSg@mail.gmail.com>
-Subject: Oops in current tree in i2c
-To:     Jiri Kosina <jkosina@suse.cz>, Julian Sax <jsbc@gmx.de>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Hans de Goede <hdegoede@redhat.com>
-Cc:     linux-input@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181024184313.2967-2-eric@anholt.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Julian, Jiri,
- On my laptop I'm getting a kernel page fault with the current git
-tree, and I'm tentatively blaming commit
 
-  9ee3e06610fd ("HID: i2c-hid: override HID descriptors for certain devices")
+Den 24.10.2018 20.43, skrev Eric Anholt:
+> This adds a new binding for Himax HX8357D display panels. It includes
+> a compatible string for one display (more can be added in the future).
+>
+> The YX350HV15 panel[1] is found in the Adafruit PiTFT 3.5" Touch
+> Screen for Raspberry Pi.
+>
+> [1] https://learn.adafruit.com/adafruit-pitft-3-dot-5-touch-screen-for-raspberry-pi/downloads
+>
+> This binding is closely modeled after the ili9341 binding, for a
+> similar product from adafruit.  The primary difference is that the
+> hx8367d doesn't have a reset line that I can find in the schematics.
 
-but that's simply because it's the only thing that seems to touch this
-particular area in this merge window.
+Typo s/hx8367d/hx8357d/
 
-The oops looks like this:
+The adafruit display has an AXP803 that resets the controller.
 
-  BUG: unable to handle kernel paging request at 000000007a25d598
-  PGD 0 P4D 0
-  Oops: 0000 [#1] SMP PTI
-  CPU: 1 PID: 888 Comm: systemd-udevd Not tainted 4.19.0-07715-g345671ea0f92 #4
-  Hardware name: Dell Inc. XPS 13 9350/09JHRY, BIOS 1.7.0 01/16/2018
-  RIP: 0010:strstr+0x19/0x70
+Acked-by: Noralf Trønnes <noralf@tronnes.org>
 
-where the code disassembly (and the register contents) shows that the
-wild pointer is the first argument to "strstr()", which just has a
-bogus value that is not a valid kernel pointer (RDI: 000000007a25d598
-- which is obviously also the address of the page fault)
+> Signed-off-by: Eric Anholt <eric@anholt.net>
+> ---
+>   .../bindings/display/himax,hx8357d.txt        | 25 +++++++++++++++++++
+>   1 file changed, 25 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/display/himax,hx8357d.txt
+>
+> diff --git a/Documentation/devicetree/bindings/display/himax,hx8357d.txt b/Documentation/devicetree/bindings/display/himax,hx8357d.txt
+> new file mode 100644
+> index 000000000000..48586e570be0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/himax,hx8357d.txt
+> @@ -0,0 +1,25 @@
+> +Himax HX8357D display panels
+> +
+> +This binding is for display panels using a Himax HX8357D controller in SPI
+> +mode, such as the Adafruit 3.5" TFT for Raspberry Pi.
+> +
+> +Required properties:
+> +- compatible:	"adafruit,yx350hv15", "himax,hx8357d"
+> +- dc-gpios:	D/C pin
+> +
+> +The node for this driver must be a child node of a SPI controller, hence
+> +all mandatory properties described in ../spi/spi-bus.txt must be specified.
+> +
+> +Optional properties:
+> +- rotation:	panel rotation in degrees counter clockwise (0,90,180,270)
+> +- backlight:	phandle of the backlight device attached to the panel
+> +
+> +Example:
+> +	display@0{
+> +		compatible = "adafruit,yx350hv15", "himax,hx8357d";
+> +		reg = <0>;
+> +		spi-max-frequency = <32000000>;
+> +		dc-gpios = <&gpio0 25 GPIO_ACTIVE_HIGH>;
+> +		rotation = <90>;
+> +		backlight = <&backlight>;
+> +	};
 
-The call trace is:
-
-   dmi_matches+0x55/0xc0
-   dmi_first_match+0x26/0x40
-   i2c_hid_get_dmi_i2c_hid_desc_override+0x16/0x40 [i2c_hid]
-   i2c_hid_probe+0x28c/0x760 [i2c_hid]
-   i2c_device_probe+0x1e7/0x260
-   really_probe+0xf8/0x3e0
-   driver_probe_device+0x10f/0x120
-   bus_for_each_drv+0x66/0xb0
-   __device_attach+0xd9/0x150
-   bus_probe_device+0x8a/0xa0
-   device_add+0x48e/0x660
-   i2c_new_device+0x162/0x350
-
-which is why I suspect that new i2c_hid_get_dmi_hid_report_desc_override() code.
-
-I *think* the problem is that the i2c_hid_dmi_desc_override_table[]
-isn't terminated by a NULL entry, and I will test that next.
-
-What makes me *very* unhappy about this is that if I'm right, I think
-it means that code was literally not tested at all by anybody who
-didn't have one of the entries in that list.
-
-                  Linus
