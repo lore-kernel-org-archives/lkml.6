@@ -2,207 +2,231 @@ Return-Path: <SRS0=4IUq=NH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA1C7ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 16:27:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D929DC46475
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 17:14:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 782CD20828
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 16:27:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 682972082D
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 17:14:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="Q4+R8/Ba"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 782CD20828
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=plaes.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j3hRr5qP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 682972082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728897AbeJ1BJN (ORCPT
+        id S1728848AbeJ1B4W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 21:09:13 -0400
-Received: from plaes.org ([188.166.43.21]:33278 "EHLO plaes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728747AbeJ1BJN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 21:09:13 -0400
-Received: from plaes.org (localhost [127.0.0.1])
-        by plaes.org (Postfix) with ESMTPSA id 88CF1400F5;
-        Sat, 27 Oct 2018 16:27:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
-        t=1540657659; bh=M6qbsYMO+bCjTgRqFjIpKzi42Mdt1n4wzZwICGpnois=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Q4+R8/BaTO7fU9PdP8H3XH5y1qLSMaqbl8rS9Rcpuy2s2mckOFBDFYK6DpqkZSqmx
-         JnK1sCRyYMrXEqShls3NP9te08HrgPowlSozLTQm282Wk106kk5H+fHI7xzV3qSuQH
-         27nB6OANmzfXhP+XBCEdXhNYCJtWsHnpHaTdEMmWQubYqMuBk5v8jKJQl2eqmt/sSM
-         41+rGepztfnCRGaGiS9q4anUOk42gUfxQE5NIjysmZ7BEeX40bv4h2QyuCMyjq3ARO
-         aZTNu3x/s6+/FThASVWV6C1a4f0Zj7OIiaLEAZp2TF5RwIqq0c5VbdsL7WJQtt2VuV
-         SlDt+z7S6Tk5Q==
-Date:   Sat, 27 Oct 2018 16:27:38 +0000
-From:   Priit Laes <plaes@plaes.org>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        Sat, 27 Oct 2018 21:56:22 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:43899 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728610AbeJ1B4W (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Oct 2018 21:56:22 -0400
+Received: by mail-pl1-f195.google.com with SMTP id 30-v6so1882860plb.10;
+        Sat, 27 Oct 2018 10:14:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=OCRv4A0VJ9/qMPljWG2QE5nwjzDgigATOeOWkARuYp4=;
+        b=j3hRr5qPNvYbzXYul9kMQcJzveqnDeNJBFX50oFC/JbY1lMlNGK1xH/njoGkOEf0Pm
+         cJ3q9pYkpzxJvBgyze7oVWe7ZKU5VCCqnPwYQj0GR/+Nc0ApNuam9zr63+0npriOUXye
+         IJsnE2FJWX1Mz/ZxpaJR8k53YsnET4xsnC/JVRkio5XvavzVNoEdt0ZrOqdmWWpB46/i
+         neuRJ3VJAyX8kQPfHeRdR9wik+QhSkYrLwWOlbOTmaspSVXTGQRVlO5NNMfGdOeuigRF
+         9/S3YBdlZmD287uHhEkJ7JQy0ge7H/kRJItL5kfXz9xMB1pM3XEHg6h/2Oul9Q38MxxZ
+         /WBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=OCRv4A0VJ9/qMPljWG2QE5nwjzDgigATOeOWkARuYp4=;
+        b=RMN4kbBQr8sqn1jQ3l8ulm9OHYnPVjgRoEWr7ffv9TxrcUGvxre4QBqAzs4KwG6q27
+         QxTvRsiEBvGBKoAx3VM9gNytzTWt7U5nk3LnYjm2VnZyvlX02gjwSPBUsuBwlGJjY+cZ
+         lJH4VHO5B4b/YIUT7R//DOsZ2trIIwSdG6i4fSX48e+L5WnHiCu8/Lv+rXfbleYVTVa6
+         qgxAUFO9p4i3KMfN1kUl5eybqHVeeWxx2AqTA/a7shl9YX9ZNcOT6Gc4QECcwpPgRN+0
+         CBTa6dbqKd8gVYVxEXdN/jMayT4b2F3o2LMx2v6JL70SUIaV2uP1mhEyMlwExT7KAYQH
+         6sNw==
+X-Gm-Message-State: AGRZ1gKQcJCVnry/KOudHIoiTiEsjvDL/c6Z+qR66Xrt/TAiRTDjs34I
+        myVr+SxdKG6u6z1LlvLXOHw=
+X-Google-Smtp-Source: AJdET5dtzkxWJDV8BSBDlVZtSmwvV18FlwU1EnUlkrNw45OdyhZMdHCWmnysFiyIZ/ly+Xo9uUCKrw==
+X-Received: by 2002:a17:902:7802:: with SMTP id p2-v6mr7802914pll.170.1540660483738;
+        Sat, 27 Oct 2018 10:14:43 -0700 (PDT)
+Received: from himanshu-Vostro-3559 ([103.233.116.134])
+        by smtp.gmail.com with ESMTPSA id b88-v6sm35081053pfc.150.2018.10.27.10.14.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 27 Oct 2018 10:14:42 -0700 (PDT)
+Date:   Sat, 27 Oct 2018 22:44:28 +0530
+From:   Himanshu Jha <himanshujha199640@gmail.com>
+To:     Dan O'Donovan <dan@emutex.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-iio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com
-Subject: Re: [linux-sunxi] [PATCH v3 20/25] drm/panel: Add Techstar TS8550B
- MIPI-DSI LCD panel
-Message-ID: <20181027162738.7jlvinhyzx766t4a@plaes.org>
-References: <20181026144344.27778-1-jagan@amarulasolutions.com>
- <20181026144344.27778-21-jagan@amarulasolutions.com>
- <20181026161324.qbpcpkpwyixi7juk@plaes.org>
- <CAMty3ZDc84ErYB9LR_Y7OJtUOx+AAhTV1RwC7-Jr1Br8yN6hUw@mail.gmail.com>
+        devicetree@vger.kernel.org,
+        Carlos Iglesias <carlos.iglesias@emutex.com>,
+        Nicola Lunghi <nicola.lunghi@emutex.com>,
+        Javier Arteaga <javier@emutex.com>,
+        srinivas.pandruvada@linux.intel.com
+Subject: Re: [PATCH v3 2/3] iio: adc128s052: add ACPI _HID AANT1280
+Message-ID: <20181027171428.GA2503@himanshu-Vostro-3559>
+References: <20180423213805.12591-1-javier@emutex.com>
+ <1540481742-23596-1-git-send-email-dan@emutex.com>
+ <1540481742-23596-3-git-send-email-dan@emutex.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMty3ZDc84ErYB9LR_Y7OJtUOx+AAhTV1RwC7-Jr1Br8yN6hUw@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1540481742-23596-3-git-send-email-dan@emutex.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 27, 2018 at 03:25:29PM +0530, Jagan Teki wrote:
-> On Fri, Oct 26, 2018 at 9:43 PM Priit Laes <plaes@plaes.org> wrote:
-> >
-> > On Fri, Oct 26, 2018 at 08:13:39PM +0530, Jagan Teki wrote:
-> > > Techstar TS8550B MIPI DSI panel is 480x854, 2-lane MIPI DSI
-> > > LCD panel. Add panel driver for it.
-> > >
-> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > Tested-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > ---
-> > > Changes for v3:
-> > > - new patch
-> > > Changes for v2:
-> > > - none
-> > >
-> > >  drivers/gpu/drm/panel/Kconfig                 |   9 +
-> > >  drivers/gpu/drm/panel/Makefile                |   1 +
-> > >  .../gpu/drm/panel/panel-techstar-ts8550b.c    | 346 ++++++++++++++++++
-> > >  3 files changed, 356 insertions(+)
-> > >  create mode 100644 drivers/gpu/drm/panel/panel-techstar-ts8550b.c
-> > >
-> > > diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-> > > index 20b88c275421..d0d4e60f5153 100644
-> > > --- a/drivers/gpu/drm/panel/Kconfig
-> > > +++ b/drivers/gpu/drm/panel/Kconfig
-> > > @@ -195,4 +195,13 @@ config DRM_PANEL_SITRONIX_ST7789V
-> > >         Say Y here if you want to enable support for the Sitronix
-> > >         ST7789V controller for 240x320 LCD panels
-> > >
-> > > +config DRM_PANEL_TECHSTAR_TS8550B
-> > > +     tristate "Techstar TS8550B MIPI-DSI panel driver"
-> > > +     depends on OF
-> > > +     depends on DRM_MIPI_DSI
-> > > +     depends on BACKLIGHT_CLASS_DEVICE
-> > > +     help
-> > > +       Say Y if you want to enable support for panels based on the
-> > > +       Techstar TS8550B MIPI-DSI interface.
-> > > +
-> > >  endmenu
-> > > diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
-> > > index 04696bb85218..88011f06edb8 100644
-> > > --- a/drivers/gpu/drm/panel/Makefile
-> > > +++ b/drivers/gpu/drm/panel/Makefile
-> > > @@ -20,3 +20,4 @@ obj-$(CONFIG_DRM_PANEL_SEIKO_43WVF1G) += panel-seiko-43wvf1g.o
-> > >  obj-$(CONFIG_DRM_PANEL_SHARP_LQ101R1SX01) += panel-sharp-lq101r1sx01.o
-> > >  obj-$(CONFIG_DRM_PANEL_SHARP_LS043T1LE01) += panel-sharp-ls043t1le01.o
-> > >  obj-$(CONFIG_DRM_PANEL_SITRONIX_ST7789V) += panel-sitronix-st7789v.o
-> > > +obj-$(CONFIG_DRM_PANEL_TECHSTAR_TS8550B) += panel-techstar-ts8550b.o
-> > > diff --git a/drivers/gpu/drm/panel/panel-techstar-ts8550b.c b/drivers/gpu/drm/panel/panel-techstar-ts8550b.c
-> > > new file mode 100644
-> > > index 000000000000..8baca71595a7
-> > > --- /dev/null
-> > > +++ b/drivers/gpu/drm/panel/panel-techstar-ts8550b.c
-> > > @@ -0,0 +1,346 @@
-> > > +// SPDX-License-Identifier: GPL-2.0+
-> > > +/*
-> > > + * Copyright (C) 2019, Amarula Solutions.
-> > > + * Author: Jagan Teki <jagan@amarulasolutions.com>
-> > > + */
-> > > +
-> > > +#include <linux/backlight.h>
-> > > +#include <linux/delay.h>
-> > > +#include <linux/device.h>
-> > > +#include <linux/err.h>
-> > > +#include <linux/errno.h>
-> > > +#include <linux/fb.h>
-> > > +#include <linux/kernel.h>
-> > > +#include <linux/module.h>
-> > > +
-> > > +#include <linux/gpio/consumer.h>
-> > > +#include <linux/regulator/consumer.h>
-> > > +
-> > > +#include <drm/drm_mipi_dsi.h>
-> > > +#include <drm/drm_modes.h>
-> > > +#include <drm/drm_panel.h>
-> > > +
-> > > +#include <video/mipi_display.h>
-> > > +
-> > > +struct ts8550b {
-> > > +     struct drm_panel        panel;
-> > > +     struct mipi_dsi_device  *dsi;
-> > > +
-> > > +     struct backlight_device *backlight;
-> > > +     struct regulator        *dvdd;
-> > > +     struct regulator        *avdd;
-> > > +     struct gpio_desc        *reset;
-> > > +
-> > > +     bool                    is_enabled;
-> > > +     bool                    is_prepared;
-> > > +};
-> > > +
-> > > +static inline struct ts8550b *panel_to_ts8550b(struct drm_panel *panel)
-> > > +{
-> > > +     return container_of(panel, struct ts8550b, panel);
-> > > +}
-> > > +
-> > > +static inline int ts8550b_dcs_write_seq(struct ts8550b *ctx, const void *seq,
-> > > +                                     size_t len)
-> > > +{
-> > > +     return mipi_dsi_dcs_write_buffer(ctx->dsi, seq, len);
-> > > +};
-> > > +
-> > > +#define ts8550b_dcs_write_seq_static(ctx, seq...)            \
-> > > +     ({                                                      \
-> > > +             static const u8 d[] = { seq };                  \
-> > > +             ts8550b_dcs_write_seq(ctx, d, ARRAY_SIZE(d));   \
-> > > +     })
-> > > +
-> > > +static void ts8550b_init_sequence(struct ts8550b *ctx)
-> >
-> > This seems to be pretty "standard" MIPI-based display, utilizing
-> > bunch of manufacturer-specific commands during init sequence.
-> >
-> > Standard MIPI commands fall between 0x00..0xAF and are defined in <video/mipi.h>
+Hi Dan,
+
+On Thu, Oct 25, 2018 at 04:35:41PM +0100, Dan O'Donovan wrote:
+> From: Nicola Lunghi <nicola.lunghi@emutex.com>
 > 
-> Where is this file? we have include/video/mipi_display.h with
-> 0x00..0xA8. Not all commands in sequence is listed in this, may be I
-> will update DCS commands macros and rest as-it-is. what do you think?
+> ACPI _HID AANT1280 matches an ADC124S101 present on E3940 SKUs of the UP
+> Squared board.
+> 
+> Add it to the driver.
+> 
+> Signed-off-by: Nicola Lunghi <nicola.lunghi@emutex.com>
+> [javier@emutex.com: fix up commit message and one checkpatch warning]
+> Signed-off-by: Javier Arteaga <javier@emutex.com>
+> Signed-off-by: Dan O'Donovan <dan@emutex.com>
+> ---
+>  drivers/iio/adc/ti-adc128s052.c | 18 +++++++++++++++++-
+>  1 file changed, 17 insertions(+), 1 deletion(-)
 
-Yeah, include/video/mipi_display.h is the header file I was referring to.
+[]
 
-Although those three commands I pointed out look like standard DCS command
-defines and the order makes sense too:
-SOFT_RESET -> magic1 -> EXIT_SLEEP_MODE -> magic2 -> SET_DISPLAY_ON
+> +#ifdef CONFIG_ACPI
+> +static const struct acpi_device_id adc128_acpi_match[] = {
+> +	{ "AANT1280", 2 }, /* ADC124S021 compatible ACPI ID */
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(acpi, adc128_acpi_match);
+> +#endif
 
-Until someone finds proper datasheet for this device, those magic1
-and magic2 sequenses remain mystery...
+I'm curious about the naming conventions used for selecting 
+an ACPI ID.
 
-Päikest,
-Priit :)
+AFAIK, ACPI or PNP ID consists of *Vendor* ID + Product ID.
+
+PNP ID: PNP Vendor IDs consist of 3 characters, each character being
+an uppercase letter (A-Z).
+
+ACPI ID: ACPI Vendor IDs consist of 4 characters, each character being
+either an uppercase letter (A-Z) or a numeral (0-9).
+
+In your case,
+
+Vendor ID -> AANT (AAEON TECHNOLOGY INC. registered ACPI ID prefix)
+http://www.uefi.org/ACPI_ID_List?search=AANT
+
+Product ID -> 1280
+
+How did you come up with 1280 ? And why AANT ? why not TXNW which is
+registered ACPI prefix for TEXAS INSTRUMENTS ?
+http://www.uefi.org/ACPI_ID_List?search=Texas+
+
+Latest ACPI manuals says:
+
+6.1.5 _HID (Hardware ID)
+------------------------
+
+This object is used to supply OSPM with the deviceâ€™s Plug and Play
+hardware ID.[1]
+
+[1] "A Plug and Play ID or ACPI ID can be obtained by sending e-mail to
+pnpid@microsoft.com."
+
+A _HID object evaluates to either a numeric 32-bit compressed EISA type ID or a string. If a
+string, the format must be an alphanumeric PNP or ACPI ID with no asterisk or other leading
+characters.
+
+A valid PNP ID must be of the form "AAA####" where A is an uppercase letter and # is a hex
+digit. A valid ACPI ID must be of the form "NNNN####" where N is an uppercase letter or a
+digit ('0'-'9') and # is a hex digit. This specification reserves the string "ACPI" for use only
+with devices defined herein. It further reserves all strings representing 4 HEX digits for
+exclusive use with PCI-assigned Vendor IDs.
+
+
+Next question:
+
+There are a lot drivers in iio/ using ACPI for device enumeration using
+these IDs. For now, let's take an example of Bosch Sensors:
+
+drivers/iio/accel/bmc150-accel-i2c.c:static const struct acpi_device_id bmc150_accel_acpi_match[] = {
+drivers/iio/accel/bmc150-accel-i2c.c-   {"BSBA0150",    bmc150},
+drivers/iio/accel/bmc150-accel-i2c.c-   {"BMC150A",     bmc150},
+drivers/iio/accel/bmc150-accel-i2c.c-   {"BMI055A",     bmi055},
+drivers/iio/accel/bmc150-accel-i2c.c-   {"BMA0255",     bma255},
+
+drivers/iio/gyro/bmg160_i2c.c:static const struct acpi_device_id bmg160_acpi_match[] = {
+drivers/iio/gyro/bmg160_i2c.c-  {"BMG0160", 0},
+drivers/iio/gyro/bmg160_i2c.c-  {"BMI055B", 0},
+drivers/iio/gyro/bmg160_i2c.c-  {},
+drivers/iio/gyro/bmg160_i2c.c-};
+
+drivers/iio/imu/bmi160/bmi160_i2c.c:static const struct acpi_device_id bmi160_acpi_match[] = {
+drivers/iio/imu/bmi160/bmi160_i2c.c-    {"BMI0160", 0},
+drivers/iio/imu/bmi160/bmi160_i2c.c-    { },
+drivers/iio/imu/bmi160/bmi160_i2c.c-};
+drivers/iio/imu/bmi160/bmi160_i2c.c-MODULE_DEVICE_TABLE(acpi, bmi160_acpi_match);
+
+Bosch registered ACPI ID: BOSC
+http://www.uefi.org/ACPI_ID_List?search=Bosch
+
+Bosch registered PNP ID: BSG
+http://www.uefi.org/PNP_ID_List?search=Bosch
+
+So, how could we use PNP ID "BMI" which is registered prefix for
+BENSON MEDICAL INSTRUMENTS COMPANY ?
+http://www.uefi.org/PNP_ID_List?search=BMI
+
+Product ID -> "160" is fine for bmi160 which uniquely identifies the
+sensor device.
+
+But shouldn't the prefix be "BSG0160" instead of "BMI0160" ?
+
+When I wrote the driver for Bosch BME680, I followed the same guideline
+as done everywhere else in the Bosch family:
+
+drivers/iio/pressure/bmp280-i2c.c-      {"BMP0280", BMP280_CHIP_ID },
+drivers/iio/pressure/bmp280-i2c.c-      {"BMP0180", BMP180_CHIP_ID },
+drivers/iio/pressure/bmp280-i2c.c-      {"BMP0085", BMP180_CHIP_ID },
+drivers/iio/pressure/bmp280-i2c.c-      {"BME0280", BME280_CHIP_ID },
+
+Therefore, I used BME0680 for bosch bme680 sensor!
+
+In OF matching, we use vendor prefixes and that looks more legimate:
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/devicetree/bindings/vendor-prefixes.txt
+
+Dan,
+
+These questions are not just for you but to rest of the community
+members as well.
+
+If there is something I misunderstood, then please let me know :)
+
+
+Thanks
+-- 
+Himanshu Jha
+Undergraduate Student
+Department of Electronics & Communication
+Guru Tegh Bahadur Institute of Technology
