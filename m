@@ -6,37 +6,38 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A552C46475
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37A2DECDE47
 	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 06:23:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF5BF20824
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 06:23:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF5BF20824
+	by mail.kernel.org (Postfix) with ESMTP id 0A58C2085B
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 06:23:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A58C2085B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728223AbeJ0PDD (ORCPT
+        id S1728283AbeJ0PDF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 11:03:03 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:53787
+        Sat, 27 Oct 2018 11:03:05 -0400
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:21590
         "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728014AbeJ0PDD (ORCPT
+        by vger.kernel.org with ESMTP id S1727845AbeJ0PDD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 27 Oct 2018 11:03:03 -0400
 X-IronPort-AV: E=Sophos;i="5.54,430,1534802400"; 
-   d="scan'208";a="283492151"
+   d="scan'208";a="283492150"
 Received: from palace.rsr.lip6.fr (HELO palace.lip6.fr) ([132.227.105.202])
   by mail3-relais-sop.national.inria.fr with ESMTP/TLS/AES128-SHA256; 27 Oct 2018 08:22:58 +0200
 From:   Julia Lawall <Julia.Lawall@lip6.fr>
-To:     Liviu Dudau <liviu.dudau@arm.com>
+To:     Chanwoo Choi <cw00.choi@samsung.com>
 Cc:     kernel-janitors@vger.kernel.org,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/8] ARM: vexpress/spc: constify clk_ops structure
-Date:   Sat, 27 Oct 2018 07:47:36 +0200
-Message-Id: <1540619262-22681-3-git-send-email-Julia.Lawall@lip6.fr>
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH 1/8] clk: max77686: constify clk_ops structure
+Date:   Sat, 27 Oct 2018 07:47:35 +0200
+Message-Id: <1540619262-22681-2-git-send-email-Julia.Lawall@lip6.fr>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
 References: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
@@ -54,20 +55,20 @@ Identified and transformed using Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
 ---
- arch/arm/mach-vexpress/spc.c |    2 +-
+ drivers/clk/clk-max77686.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-vexpress/spc.c b/arch/arm/mach-vexpress/spc.c
-index 0f5381d13494..611f22de48cb 100644
---- a/arch/arm/mach-vexpress/spc.c
-+++ b/arch/arm/mach-vexpress/spc.c
-@@ -521,7 +521,7 @@ static int spc_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return ve_spc_set_performance(spc->cluster, rate / 1000);
+diff --git a/drivers/clk/clk-max77686.c b/drivers/clk/clk-max77686.c
+index 02551fe4b87c..22c937644c93 100644
+--- a/drivers/clk/clk-max77686.c
++++ b/drivers/clk/clk-max77686.c
+@@ -137,7 +137,7 @@ static unsigned long max77686_recalc_rate(struct clk_hw *hw,
+ 	return 32768;
  }
  
--static struct clk_ops clk_spc_ops = {
-+static const struct clk_ops clk_spc_ops = {
- 	.recalc_rate = spc_recalc_rate,
- 	.round_rate = spc_round_rate,
- 	.set_rate = spc_set_rate,
+-static struct clk_ops max77686_clk_ops = {
++static const struct clk_ops max77686_clk_ops = {
+ 	.prepare	= max77686_clk_prepare,
+ 	.unprepare	= max77686_clk_unprepare,
+ 	.is_prepared	= max77686_clk_is_prepared,
 
