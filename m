@@ -2,93 +2,98 @@ Return-Path: <SRS0=4IUq=NH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECA28ECDE46
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 02:57:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 972D4ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 03:05:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A9C02082B
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 02:57:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A9C02082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3E53A2082B
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 03:05:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KJTj2uzQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E53A2082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727682AbeJ0Lgs (ORCPT
+        id S1728184AbeJ0LpC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 07:36:48 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59482 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726501AbeJ0Lgs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 07:36:48 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8923C307D992;
-        Sat, 27 Oct 2018 02:57:21 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-142.pek2.redhat.com [10.72.12.142])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 647A56714C;
-        Sat, 27 Oct 2018 02:57:12 +0000 (UTC)
-Subject: Re: [PATCH] kdump, vmcoreinfo: Export sme_me_mask value to vmcoreinfo
-To:     Borislav Petkov <bp@alien8.de>, Petr Tesarik <ptesarik@suse.cz>
-Cc:     linux-kernel@vger.kernel.org, bhe@redhat.com, x86@kernel.org,
-        kexec@lists.infradead.org, mingo@redhat.com, tglx@linutronix.de,
-        dyoung@redhat.com
-References: <20181026093630.8520-1-lijiang@redhat.com>
- <053CC83A-9A95-4C12-9627-AABD1427DA9C@alien8.de>
- <1263471c-a27d-a698-15f0-b5947f13ea93@redhat.com>
- <20181026182440.20a4b107@ezekiel.suse.cz>
- <20181026222517.GB26927@nazgul.tnic>
-From:   lijiang <lijiang@redhat.com>
-Message-ID: <a4bae45c-e52a-7fbb-6b74-5de12ea47368@redhat.com>
-Date:   Sat, 27 Oct 2018 10:57:08 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181026222517.GB26927@nazgul.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Sat, 27 Oct 2018 02:57:21 +0000 (UTC)
+        Sat, 27 Oct 2018 07:45:02 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:42603 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726501AbeJ0LpC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Oct 2018 07:45:02 -0400
+Received: by mail-pl1-f194.google.com with SMTP id t6-v6so1305093plo.9
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 20:05:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=7tP0R3+lL6Cs3V3JwrNwgGApMEt4w+/POjXDuxjCN1k=;
+        b=KJTj2uzQP0+soyBm++INZw6pYYfLD+TYpG88L7br0vNma8MqAdYAHD5Wb7qzMLlPbZ
+         ipMu4TgbG642rjeqQ9tsUQXLqWZPPzrSbKucJjP2I9JDgOHVMXto5lKacBXIt0mUUP47
+         3Hl9QkN7jhVSWSxNe+N5Sl0TlOcEtYRaZZbrxY18OOAbpgwUtz6swvOVv2dc2QpuSrAl
+         fRRR+smBCG+Rc9HiBTAGSrdr28jKWmOq/iTUSXyM5CsTBSSDX1QK5eoueA/ErEXIbQtb
+         xpJkM5CjjIlfgwG1ZcZNkKXaagcAWwrcVDjHqH13UN/zHePbaZMWKi9O6PgdRJaC6G/R
+         5prA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=7tP0R3+lL6Cs3V3JwrNwgGApMEt4w+/POjXDuxjCN1k=;
+        b=uBoo1tFwiJ1EeTyD31HsLqAG+hXUMg2PW2QbK1chh+0qEd1YvPDM64aVb+rIOvWZPV
+         3cNDQleMHJT8LIwtp1CO9cDuDC9NP+jtRv04DNXb4op6ISugpNDH5WlcsIR7U2pcXDpu
+         zo7JRxHRr17OIIA7sVZ78UVcekOcn3OyzMxz1bZznja+Ew7hbHNGFUyQrLCwk4kvoxRy
+         J5PBVM29QkR7D2xaBjOPE0Nci4EmLu0Msr4+lk+hHXwAUACiXVAHIr0DqNNX7OsolvX6
+         WWgZ7hD1fluSxiIFU3hFks0V1Qhujudq7ld8MTyFNRvSTnBH3ZQSJfgTFNoBnpZPer7m
+         ivdQ==
+X-Gm-Message-State: AGRZ1gJNm5oAaom0p4x1i0R9HtfJINbvZ5PWocsyJJD1A3xwjLP7hryq
+        fvhkvUkBNGixC00eWeGkbck=
+X-Google-Smtp-Source: AJdET5f8yyFsNkifCpz5dxbz5h9yaspo2wziZacRZxaUooH66A+eFru3VY3C/tkX/HC88jK4kJVJtA==
+X-Received: by 2002:a17:902:f097:: with SMTP id go23mr5813248plb.328.1540609534009;
+        Fri, 26 Oct 2018 20:05:34 -0700 (PDT)
+Received: from localhost.localdomain ([104.238.150.158])
+        by smtp.gmail.com with ESMTPSA id n79-v6sm20988784pfk.19.2018.10.26.20.05.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 26 Oct 2018 20:05:33 -0700 (PDT)
+From:   Muchun Song <smuchun@gmail.com>
+To:     mingo@kernel.org, peterz@infradead.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] sched/rt: Fix a comment in pick_next_task_rt()
+Date:   Sat, 27 Oct 2018 11:05:17 +0800
+Message-Id: <20181027030517.23292-1-smuchun@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018年10月27日 06:25, Borislav Petkov 写道:
-> On Fri, Oct 26, 2018 at 06:24:40PM +0200, Petr Tesarik wrote:
->> But we need the MSR value from the panic kernel environment, not while
->> the production kernel is still running, right?
-> 
-> Actually, we need only the encryption bit number (and it should be 0
-> otherwise to denote SME wasn't enabled).
-> 
+Commit f4ebcbc0d7e0 ("sched/rt: Substract number of tasks of throttled
+queues from rq->nr_running") added a new member rt_rq->rt_queued, which
+is used to indicate the status of rq->rt enqueue or dequeue. So, the
+check rt_nr_running was removed and we now check rt_queued.
 
-Thanks for your comment.
-For this patch, it really needs only the encryption bit number. 
+Fix the comment in pick_next_task_rt() to avoid confusing.
 
-For the AMD machine with SME feature, the OS or HV sets bit 47 of a
-physical address to 1 in the page table entry to indicate the page
-should be encrypted.
+Signed-off-by: Muchun Song <smuchun@gmail.com>
+---
+ kernel/sched/rt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks.
-Lianbo
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index 2e2955a8cf8f..a21ea6021929 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -1561,7 +1561,7 @@ pick_next_task_rt(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ 
+ 	/*
+ 	 * We may dequeue prev's rt_rq in put_prev_task().
+-	 * So, we update time before rt_nr_running check.
++	 * So, we update time before rt_queued check.
+ 	 */
+ 	if (prev->sched_class == &rt_sched_class)
+ 		update_curr_rt(rq);
+-- 
+2.17.1
 
-> I guess something like
-> 
-> 	VMCOREINFO_NUMBER(sme_mask);
-> 
-> which gets written by the kexec-ed kernel.
-> 
->> If so, then this reminds me that I have wanted for a long time to store
->> more of the hardware state in a vmcore NOTE after a kernel crash ...
->> control registers, MSRs and whatnot. Of course, this would be a
->> long-term project, but I wonder what other people think about it in
->> general.
-> 
-> I guess that sounds like a good idea - the more relevant hw info for
-> debugging, the better. Determining the important MSRs to save would need
-> a bit of a pondering over though. For example, some MSRs are per-core,
-> some per-socket, etc...
-> 
