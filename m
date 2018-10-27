@@ -6,39 +6,48 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5A4C46475
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 10:00:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E0BECDE47
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 10:00:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFE582086E
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 10:00:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFE582086E
+	by mail.kernel.org (Postfix) with ESMTP id A209220869
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 10:00:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A209220869
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728583AbeJ0Ska (ORCPT
+        id S1728602AbeJ0Skd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 14:40:30 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:46204 "EHLO huawei.com"
+        Sat, 27 Oct 2018 14:40:33 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:46205 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728434AbeJ0Sk3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 14:40:29 -0400
+        id S1728430AbeJ0Skc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Oct 2018 14:40:32 -0400
 Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 586D043BDF76D;
+        by Forcepoint Email with ESMTP id 4E9AA7001F6FA;
         Sat, 27 Oct 2018 17:59:57 +0800 (CST)
 Received: from vm100-107-113-134.huawei.com (100.107.113.134) by
  DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.408.0; Sat, 27 Oct 2018 17:59:52 +0800
+ 14.3.408.0; Sat, 27 Oct 2018 17:59:51 +0800
 From:   Yu Chen <chenyu56@huawei.com>
 To:     <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
 CC:     <suzhuangluan@hisilicon.com>, <kongfei@hisilicon.com>,
-        Yu Chen <chenyu56@huawei.com>, Arnd Bergmann <arnd@arndb.de>,
+        Yu Chen <chenyu56@huawei.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Arnd Bergmann" <arnd@arndb.de>, Shawn Guo <shawnguo@kernel.org>,
+        Pengcheng Li <lpc.li@hisilicon.com>,
+        Jianguo Sun <sunjianguo1@huawei.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jiancheng Xue <xuejiancheng@hisilicon.com>,
         John Stultz <john.stultz@linaro.org>,
-        "Binghui Wang" <wangbinghui@hisilicon.com>
-Subject: [PATCH 07/10] hikey960: Support usb functionality of Hikey960
-Date:   Sat, 27 Oct 2018 17:58:17 +0800
-Message-ID: <20181027095820.40056-8-chenyu56@huawei.com>
+        Binghui Wang <wangbinghui@hisilicon.com>
+Subject: [PATCH 06/10] phy: Add usb phy support for hi3660 Soc of Hisilicon
+Date:   Sat, 27 Oct 2018 17:58:16 +0800
+Message-ID: <20181027095820.40056-7-chenyu56@huawei.com>
 X-Mailer: git-send-email 2.15.0-rc2
 In-Reply-To: <20181027095820.40056-1-chenyu56@huawei.com>
 References: <20181027095820.40056-1-chenyu56@huawei.com>
@@ -51,377 +60,336 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver handles usb hub power on and typeC port event of HiKey960 board:
-1)DP&DM switching between usb hub and typeC port base on typeC port
-state
-2)Control power of usb hub on Hikey960
-3)Control vbus of typeC port
-4)Handle typeC port event to switch data role
+This driver handles usb phy power on and shutdown for hi3660 Soc of
+Hisilicon.
 
-Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: "David S. Miller" <davem@davemloft.net>
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Pengcheng Li <lpc.li@hisilicon.com>
+Cc: Jianguo Sun <sunjianguo1@huawei.com>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Jiancheng Xue <xuejiancheng@hisilicon.com>
 Cc: John Stultz <john.stultz@linaro.org>
 Cc: Binghui Wang <wangbinghui@hisilicon.com>
 Signed-off-by: Yu Chen <chenyu56@huawei.com>
 ---
- drivers/misc/Kconfig          |   7 +
- drivers/misc/Makefile         |   1 +
- drivers/misc/hisi_hikey_usb.c | 319 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 327 insertions(+)
- create mode 100644 drivers/misc/hisi_hikey_usb.c
+ MAINTAINERS                             |   2 +
+ drivers/phy/hisilicon/Kconfig           |  10 ++
+ drivers/phy/hisilicon/Makefile          |   1 +
+ drivers/phy/hisilicon/phy-hi3660-usb3.c | 254 ++++++++++++++++++++++++++++++++
+ 4 files changed, 267 insertions(+)
+ create mode 100644 drivers/phy/hisilicon/phy-hi3660-usb3.c
 
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index 3726eacdf65d..8e04fc87b685 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -513,6 +513,13 @@ config MISC_RTSX
- 	tristate
- 	default MISC_RTSX_PCI || MISC_RTSX_USB
+diff --git a/MAINTAINERS b/MAINTAINERS
+index e485449f7811..7adf167588ee 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15294,7 +15294,9 @@ M:	Binghui Wang <wangbinghui@hisilicon.com>
+ L:	linux-usb@vger.kernel.org
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/usb/dwc3-hisi.txt
++F:	Documentation/devicetree/bindings/phy/phy-hi3660-usb3.txt
+ F:	drivers/usb/dwc3/dwc3-hisi.c
++F:	drivers/phy/hisilicon/phy-hi3660-usb3.c
  
-+config HISI_HIKEY_USB
-+	tristate "USB functionality of HiSilicon Hikey Platform"
-+	depends on GPIOLIB
-+	default n
+ USB ISP116X DRIVER
+ M:	Olav Kongas <ok@artecdesign.ee>
+diff --git a/drivers/phy/hisilicon/Kconfig b/drivers/phy/hisilicon/Kconfig
+index b40ee54a1a50..3c142f08987c 100644
+--- a/drivers/phy/hisilicon/Kconfig
++++ b/drivers/phy/hisilicon/Kconfig
+@@ -12,6 +12,16 @@ config PHY_HI6220_USB
+ 
+ 	  To compile this driver as a module, choose M here.
+ 
++config PHY_HI3660_USB
++	tristate "hi3660 USB PHY support"
++	depends on (ARCH_HISI && ARM64) || COMPILE_TEST
++	select GENERIC_PHY
++	select MFD_SYSCON
 +	help
-+	  If you say yes here you get support for usb functionality of HiSilicon Hikey Platform.
++	  Enable this to support the HISILICON HI3660 USB PHY.
 +
- source "drivers/misc/c2port/Kconfig"
- source "drivers/misc/eeprom/Kconfig"
- source "drivers/misc/cb710/Kconfig"
-diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-index af22bbc3d00c..387dd302815c 100644
---- a/drivers/misc/Makefile
-+++ b/drivers/misc/Makefile
-@@ -58,3 +58,4 @@ obj-$(CONFIG_ASPEED_LPC_SNOOP)	+= aspeed-lpc-snoop.o
- obj-$(CONFIG_PCI_ENDPOINT_TEST)	+= pci_endpoint_test.o
- obj-$(CONFIG_OCXL)		+= ocxl/
- obj-$(CONFIG_MISC_RTSX)		+= cardreader/
-+obj-$(CONFIG_HISI_HIKEY_USB)	+= hisi_hikey_usb.o
-diff --git a/drivers/misc/hisi_hikey_usb.c b/drivers/misc/hisi_hikey_usb.c
++	  To compile this driver as a module, choose M here.
++
+ config PHY_HISTB_COMBPHY
+ 	tristate "HiSilicon STB SoCs COMBPHY support"
+ 	depends on (ARCH_HISI && ARM64) || COMPILE_TEST
+diff --git a/drivers/phy/hisilicon/Makefile b/drivers/phy/hisilicon/Makefile
+index f662a4fe18d8..75ba64e2faf8 100644
+--- a/drivers/phy/hisilicon/Makefile
++++ b/drivers/phy/hisilicon/Makefile
+@@ -1,4 +1,5 @@
+ obj-$(CONFIG_PHY_HI6220_USB)		+= phy-hi6220-usb.o
++obj-$(CONFIG_PHY_HI3660_USB)		+= phy-hi3660-usb3.o
+ obj-$(CONFIG_PHY_HISTB_COMBPHY)		+= phy-histb-combphy.o
+ obj-$(CONFIG_PHY_HISI_INNO_USB2)	+= phy-hisi-inno-usb2.o
+ obj-$(CONFIG_PHY_HIX5HD2_SATA)		+= phy-hix5hd2-sata.o
+diff --git a/drivers/phy/hisilicon/phy-hi3660-usb3.c b/drivers/phy/hisilicon/phy-hi3660-usb3.c
 new file mode 100644
-index 000000000000..4965719c99ae
+index 000000000000..041c542750e2
 --- /dev/null
-+++ b/drivers/misc/hisi_hikey_usb.c
-@@ -0,0 +1,319 @@
++++ b/drivers/phy/hisilicon/phy-hi3660-usb3.c
+@@ -0,0 +1,254 @@
 +// SPDX-License-Identifier: GPL-2.0+
 +/*
-+ * hisi_hikey_usb.c
++ * Phy provider for USB 3.0 controller on HiSilicon 3660 platform
 + *
-+ * Copyright (c) Hisilicon Tech. Co., Ltd. All rights reserved.
++ * Copyright (C) 2017-2018 Hilisicon Electronics Co., Ltd.
++ *		http://www.huawei.com
 + *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
++ * Authors: Yu Chen <chenyu56@huawei.com>
++ *
++ * This program is free software: you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2  of
++ * the License as published by the Free Software Foundation.
 + *
 + * This program is distributed in the hope that it will be useful,
 + * but WITHOUT ANY WARRANTY; without even the implied warranty of
 + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 + * GNU General Public License for more details.
-+ *
 + */
 +
-+#include <linux/module.h>
 +#include <linux/kernel.h>
-+#include <linux/slab.h>
++#include <linux/mfd/syscon.h>
++#include <linux/module.h>
 +#include <linux/platform_device.h>
-+#include <linux/gpio.h>
-+#include <linux/of_gpio.h>
-+#include <linux/extcon-provider.h>
-+#include <linux/usb/role.h>
++#include <linux/phy/phy.h>
++#include <linux/regmap.h>
 +
-+#define DEVICE_DRIVER_NAME "hisi_hikey_usb"
++#define PERI_CRG_CLK_EN4			(0x40)
++#define PERI_CRG_CLK_DIS4			(0x44)
++#define GT_CLK_USB3OTG_REF			BIT(0)
++#define GT_ACLK_USB3OTG				BIT(1)
 +
-+#define HUB_VBUS_POWER_ON 1
-+#define HUB_VBUS_POWER_OFF 0
-+#define USB_SWITCH_TO_HUB 1
-+#define USB_SWITCH_TO_TYPEC 0
++#define PERI_CRG_RSTEN4				(0x90)
++#define PERI_CRG_RSTDIS4			(0x94)
++#define IP_RST_USB3OTGPHY_POR			BIT(3)
++#define IP_RST_USB3OTG				BIT(5)
 +
-+#define INVALID_GPIO_VALUE (-1)
++#define PERI_CRG_ISODIS				(0x148)
++#define USB_REFCLK_ISO_EN			BIT(25)
 +
-+struct hisi_hikey_usb {
-+	int otg_switch_gpio;
-+	int typec_vbus_gpio;
-+	int typec_vbus_enable_val;
-+	int hub_vbus_gpio;
++#define PCTRL_PERI_CTRL3			(0x10)
++#define PCTRL_PERI_CTRL3_MSK_START		(16)
++#define USB_TCXO_EN				BIT(1)
 +
-+	struct extcon_dev *edev;
-+	struct usb_role_switch *role_sw;
++#define PCTRL_PERI_CTRL24			(0x64)
++#define SC_CLK_USB3PHY_3MUX1_SEL		BIT(25)
++
++#define USBOTG3_CTRL0				(0x00)
++#define SC_USB3PHY_ABB_GT_EN			BIT(15)
++
++#define USBOTG3_CTRL2				(0x08)
++#define USBOTG3CTRL2_POWERDOWN_HSP		BIT(0)
++#define USBOTG3CTRL2_POWERDOWN_SSP		BIT(1)
++
++#define USBOTG3_CTRL3				(0x0C)
++#define USBOTG3_CTRL3_VBUSVLDEXT		BIT(6)
++#define USBOTG3_CTRL3_VBUSVLDEXTSEL		BIT(5)
++
++#define USBOTG3_CTRL4				(0x10)
++
++#define USBOTG3_CTRL7				(0x1c)
++#define REF_SSP_EN				BIT(16)
++
++#define HI3660_USB_DEFAULT_PHY_PARAM		(0x1c466e3)
++
++struct hi3660_priv {
++	struct device *dev;
++	struct regmap *peri_crg;
++	struct regmap *pctrl;
++	struct regmap *otg_bc;
++	u32 eye_diagram_param;
++
++	u32 peri_crg_offset;
++	u32 pctrl_offset;
++	u32 otg_bc_offset;
 +};
 +
-+static const unsigned int usb_extcon_cable[] = {
-+	EXTCON_USB,
-+	EXTCON_USB_HOST,
-+	EXTCON_NONE,
-+};
-+
-+static void hub_power_ctrl(struct hisi_hikey_usb *hisi_hikey_usb, int value)
++static int hi3660_phy_init(struct phy *phy)
 +{
-+	int gpio = hisi_hikey_usb->hub_vbus_gpio;
-+
-+	if (gpio_is_valid(gpio))
-+		gpio_set_value(gpio, value);
-+}
-+
-+static void usb_switch_ctrl(struct hisi_hikey_usb *hisi_hikey_usb,
-+		int switch_to)
-+{
-+	int gpio = hisi_hikey_usb->otg_switch_gpio;
-+	const char *switch_to_str = (switch_to == USB_SWITCH_TO_HUB) ?
-+		"hub" : "typec";
-+
-+	if (!gpio_is_valid(gpio)) {
-+		pr_err("%s: otg_switch_gpio is err\n", __func__);
-+		return;
-+	}
-+
-+	if (gpio_get_value(gpio) == switch_to) {
-+		pr_info("%s: already switch to %s\n", __func__, switch_to_str);
-+		return;
-+	}
-+
-+	gpio_direction_output(gpio, switch_to);
-+	pr_info("%s: switch to %s\n", __func__, switch_to_str);
-+}
-+
-+static void usb_typec_power_ctrl(struct hisi_hikey_usb *hisi_hikey_usb,
-+		int value)
-+{
-+	int gpio = hisi_hikey_usb->typec_vbus_gpio;
-+
-+	if (!gpio_is_valid(gpio)) {
-+		pr_err("%s: typec power gpio is err\n", __func__);
-+		return;
-+	}
-+
-+	if (gpio_get_value(gpio) == value) {
-+		pr_info("%s: typec power no change\n", __func__);
-+		return;
-+	}
-+
-+	gpio_direction_output(gpio, value);
-+	pr_info("%s: set typec vbus gpio to %d\n", __func__, value);
-+}
-+
-+static int extcon_hisi_pd_set_role(struct device *dev, enum usb_role role)
-+{
-+	struct hisi_hikey_usb *hisi_hikey_usb = dev_get_drvdata(dev);
-+
-+	dev_info(dev, "%s:set usb role to %d\n", __func__, role);
-+	switch (role) {
-+	case USB_ROLE_NONE:
-+		usb_switch_ctrl(hisi_hikey_usb, USB_SWITCH_TO_HUB);
-+		usb_typec_power_ctrl(hisi_hikey_usb,
-+				!hisi_hikey_usb->typec_vbus_enable_val);
-+		hub_power_ctrl(hisi_hikey_usb, HUB_VBUS_POWER_ON);
-+		extcon_set_state_sync(hisi_hikey_usb->edev, EXTCON_USB, false);
-+		extcon_set_state_sync(hisi_hikey_usb->edev, EXTCON_USB_HOST,
-+				true);
-+		break;
-+	case USB_ROLE_HOST:
-+		usb_switch_ctrl(hisi_hikey_usb, USB_SWITCH_TO_TYPEC);
-+		usb_typec_power_ctrl(hisi_hikey_usb,
-+				hisi_hikey_usb->typec_vbus_enable_val);
-+		extcon_set_state_sync(hisi_hikey_usb->edev, EXTCON_USB, false);
-+		extcon_set_state_sync(hisi_hikey_usb->edev, EXTCON_USB_HOST,
-+				true);
-+		break;
-+	case USB_ROLE_DEVICE:
-+		hub_power_ctrl(hisi_hikey_usb, HUB_VBUS_POWER_OFF);
-+		usb_typec_power_ctrl(hisi_hikey_usb,
-+				hisi_hikey_usb->typec_vbus_enable_val);
-+		usb_switch_ctrl(hisi_hikey_usb, USB_SWITCH_TO_TYPEC);
-+		extcon_set_state_sync(hisi_hikey_usb->edev, EXTCON_USB_HOST,
-+				false);
-+		extcon_set_state_sync(hisi_hikey_usb->edev, EXTCON_USB, true);
-+		break;
-+	}
-+
-+	return 0;
-+}
-+
-+static enum usb_role extcon_hisi_pd_get_role(struct device *dev)
-+{
-+	struct hisi_hikey_usb *hisi_hikey_usb = dev_get_drvdata(dev);
-+
-+	return usb_role_switch_get_role(hisi_hikey_usb->role_sw);
-+}
-+
-+static const struct usb_role_switch_desc sw_desc = {
-+	.set = extcon_hisi_pd_set_role,
-+	.get = extcon_hisi_pd_get_role,
-+	.allow_userspace_control = true,
-+};
-+
-+static int hisi_hikey_usb_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *root = dev->of_node;
-+	struct hisi_hikey_usb *hisi_hikey_usb;
++	struct hi3660_priv *priv = phy_get_drvdata(phy);
++	u32 val, mask;
 +	int ret;
 +
-+	hisi_hikey_usb = devm_kzalloc(dev, sizeof(*hisi_hikey_usb), GFP_KERNEL);
-+	if (!hisi_hikey_usb)
-+		return -ENOMEM;
++	/* usb refclk iso disable */
++	ret = regmap_write(priv->peri_crg, PERI_CRG_ISODIS, USB_REFCLK_ISO_EN);
++	if (ret)
++		goto out;
 +
-+	dev_set_name(dev, "hisi_hikey_usb");
++	/* enable usb_tcxo_en */
++	val = USB_TCXO_EN | (USB_TCXO_EN << PCTRL_PERI_CTRL3_MSK_START);
++	ret = regmap_write(priv->pctrl, PCTRL_PERI_CTRL3, val);
++	if (ret)
++		goto out;
 +
-+	hisi_hikey_usb->hub_vbus_gpio = INVALID_GPIO_VALUE;
-+	hisi_hikey_usb->otg_switch_gpio = INVALID_GPIO_VALUE;
-+	hisi_hikey_usb->typec_vbus_gpio = INVALID_GPIO_VALUE;
++	/* select usbphy clk from abb */
++	mask = SC_CLK_USB3PHY_3MUX1_SEL;
++	ret = regmap_update_bits(priv->pctrl, PCTRL_PERI_CTRL24, mask, 0);
++	if (ret)
++		goto out;
 +
-+	hisi_hikey_usb->hub_vbus_gpio = of_get_named_gpio(root,
-+			"hub_vdd33_en_gpio", 0);
-+	if (!gpio_is_valid(hisi_hikey_usb->hub_vbus_gpio)) {
-+		pr_err("%s: hub_vbus_gpio is err\n", __func__);
-+		return hisi_hikey_usb->hub_vbus_gpio;
-+	}
++	/* assert phy */
++	val = IP_RST_USB3OTGPHY_POR | IP_RST_USB3OTG;
++	ret = regmap_write(priv->peri_crg, PERI_CRG_RSTEN4, val);
++	if (ret)
++		goto out;
 +
-+	ret = gpio_request(hisi_hikey_usb->hub_vbus_gpio, "hub_vbus_int_gpio");
-+	if (ret) {
-+		pr_err("%s: request hub_vbus_gpio err\n", __func__);
-+		hisi_hikey_usb->hub_vbus_gpio = INVALID_GPIO_VALUE;
-+		return ret;
-+	}
++	/* enable phy ref clk */
++	val = SC_USB3PHY_ABB_GT_EN;
++	mask = val;
++	ret = regmap_update_bits(priv->otg_bc, USBOTG3_CTRL0, mask, val);
++	if (ret)
++		goto out;
 +
-+	ret = gpio_direction_output(hisi_hikey_usb->hub_vbus_gpio,
-+			HUB_VBUS_POWER_ON);
-+	if (ret) {
-+		pr_err("%s: power on hub vbus err\n", __func__);
-+		goto free_gpio1;
-+	}
++	val = REF_SSP_EN;
++	mask = val;
++	ret = regmap_update_bits(priv->otg_bc, USBOTG3_CTRL7, mask, val);
++	if (ret)
++		goto out;
 +
-+	hisi_hikey_usb->typec_vbus_gpio = of_get_named_gpio(root,
-+		"typc_vbus_int_gpio,typec-gpios", 0);
-+	if (!gpio_is_valid(hisi_hikey_usb->typec_vbus_gpio)) {
-+		pr_err("%s: typec_vbus_gpio is err\n", __func__);
-+		ret = hisi_hikey_usb->typec_vbus_gpio;
-+		goto free_gpio1;
-+	}
++	/* exit from IDDQ mode */
++	mask = USBOTG3CTRL2_POWERDOWN_HSP | USBOTG3CTRL2_POWERDOWN_SSP;
++	ret = regmap_update_bits(priv->otg_bc, USBOTG3_CTRL2, mask, 0);
++	if (ret)
++		goto out;
 +
-+	ret = gpio_request(hisi_hikey_usb->typec_vbus_gpio,
-+			"typc_vbus_int_gpio");
-+	if (ret) {
-+		pr_err("%s: request typec_vbus_gpio err\n", __func__);
-+		hisi_hikey_usb->typec_vbus_gpio = INVALID_GPIO_VALUE;
-+		goto free_gpio1;
-+	}
++	udelay(100);
 +
-+	ret = of_property_read_u32(root, "typc_vbus_enable_val",
-+				   &hisi_hikey_usb->typec_vbus_enable_val);
-+	if (ret) {
-+		pr_err("%s: typc_vbus_enable_val can't get\n", __func__);
-+		goto free_gpio2;
-+	}
++	/* deassert phy */
++	val = IP_RST_USB3OTGPHY_POR | IP_RST_USB3OTG;
++	ret = regmap_write(priv->peri_crg, PERI_CRG_RSTDIS4, val);
++	if (ret)
++		goto out;
 +
-+	hisi_hikey_usb->typec_vbus_enable_val =
-+		!!hisi_hikey_usb->typec_vbus_enable_val;
++	usleep_range(10000, 15000);
 +
-+	ret = gpio_direction_output(hisi_hikey_usb->typec_vbus_gpio,
-+				    hisi_hikey_usb->typec_vbus_enable_val);
-+	if (ret) {
-+		pr_err("%s: power on typec vbus err", __func__);
-+		goto free_gpio2;
-+	}
++	/* fake vbus valid signal */
++	val = USBOTG3_CTRL3_VBUSVLDEXT | USBOTG3_CTRL3_VBUSVLDEXTSEL;
++	mask = val;
++	ret = regmap_update_bits(priv->otg_bc, USBOTG3_CTRL3, mask, val);
++	if (ret)
++		goto out;
 +
-+	if (of_device_is_compatible(root, "hisilicon,hikey960_usb")) {
-+		hisi_hikey_usb->otg_switch_gpio = of_get_named_gpio(root,
-+				"otg_gpio", 0);
-+		if (!gpio_is_valid(hisi_hikey_usb->otg_switch_gpio)) {
-+			pr_info("%s: otg_switch_gpio is err\n", __func__);
-+			goto free_gpio2;
-+		}
++	udelay(100);
 +
-+		ret = gpio_request(hisi_hikey_usb->otg_switch_gpio,
-+				"otg_switch_gpio");
-+		if (ret) {
-+			hisi_hikey_usb->otg_switch_gpio = INVALID_GPIO_VALUE;
-+			pr_err("%s: request typec_vbus_gpio err\n", __func__);
-+			goto free_gpio2;
-+		}
-+	}
-+
-+	hisi_hikey_usb->edev = devm_extcon_dev_allocate(dev, usb_extcon_cable);
-+	if (IS_ERR(hisi_hikey_usb->edev)) {
-+		dev_err(dev, "failed to allocate extcon device\n");
-+		goto free_gpio2;
-+	}
-+
-+	ret = devm_extcon_dev_register(dev, hisi_hikey_usb->edev);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to register extcon device\n");
-+		goto free_gpio2;
-+	}
-+	extcon_set_state(hisi_hikey_usb->edev, EXTCON_USB_HOST, true);
-+
-+	hisi_hikey_usb->role_sw = usb_role_switch_register(dev, &sw_desc);
-+	if (IS_ERR(hisi_hikey_usb->role_sw))
-+		goto free_gpio2;
-+
-+	platform_set_drvdata(pdev, hisi_hikey_usb);
++	ret = regmap_write(priv->otg_bc, USBOTG3_CTRL4,
++			priv->eye_diagram_param);
++	if (ret)
++		goto out;
 +
 +	return 0;
-+
-+free_gpio2:
-+	if (gpio_is_valid(hisi_hikey_usb->typec_vbus_gpio)) {
-+		gpio_free(hisi_hikey_usb->typec_vbus_gpio);
-+		hisi_hikey_usb->typec_vbus_gpio = INVALID_GPIO_VALUE;
-+	}
-+
-+free_gpio1:
-+	if (gpio_is_valid(hisi_hikey_usb->hub_vbus_gpio)) {
-+		gpio_free(hisi_hikey_usb->hub_vbus_gpio);
-+		hisi_hikey_usb->hub_vbus_gpio = INVALID_GPIO_VALUE;
-+	}
-+
++out:
++	dev_err(priv->dev, "failed to init phy ret: %d\n", ret);
 +	return ret;
 +}
 +
-+static int  hisi_hikey_usb_remove(struct platform_device *pdev)
++static int hi3660_phy_exit(struct phy *phy)
 +{
-+	struct hisi_hikey_usb *hisi_hikey_usb = platform_get_drvdata(pdev);
++	struct hi3660_priv *priv = phy_get_drvdata(phy);
++	u32 val, mask;
++	int ret;
 +
-+	if (gpio_is_valid(hisi_hikey_usb->otg_switch_gpio)) {
-+		gpio_free(hisi_hikey_usb->otg_switch_gpio);
-+		hisi_hikey_usb->otg_switch_gpio = INVALID_GPIO_VALUE;
-+	}
++	/* assert phy */
++	val = IP_RST_USB3OTGPHY_POR;
++	ret = regmap_write(priv->peri_crg, PERI_CRG_RSTEN4, val);
++	if (ret)
++		goto out;
 +
-+	if (gpio_is_valid(hisi_hikey_usb->typec_vbus_gpio)) {
-+		gpio_free(hisi_hikey_usb->typec_vbus_gpio);
-+		hisi_hikey_usb->typec_vbus_gpio = INVALID_GPIO_VALUE;
-+	}
++	val = SC_CLK_USB3PHY_3MUX1_SEL;
++	mask = SC_CLK_USB3PHY_3MUX1_SEL;
++	ret = regmap_update_bits(priv->pctrl, PCTRL_PERI_CTRL24, mask, val);
++	if (ret)
++		goto out;
 +
-+	if (gpio_is_valid(hisi_hikey_usb->hub_vbus_gpio)) {
-+		gpio_free(hisi_hikey_usb->hub_vbus_gpio);
-+		hisi_hikey_usb->hub_vbus_gpio = INVALID_GPIO_VALUE;
-+	}
-+
-+	usb_role_switch_unregister(hisi_hikey_usb->role_sw);
++	/* disable usb_tcxo_en */
++	val = USB_TCXO_EN << PCTRL_PERI_CTRL3_MSK_START;
++	ret = regmap_write(priv->pctrl, PCTRL_PERI_CTRL3, val);
++	if (ret)
++		goto out;
 +
 +	return 0;
++out:
++	dev_err(priv->dev, "failed to exit phy ret: %d\n", ret);
++	return ret;
 +}
 +
-+static const struct of_device_id id_table_hisi_hikey_usb[] = {
-+	{.compatible = "hisilicon,gpio_hubv1"},
-+	{.compatible = "hisilicon,hikey960_usb"},
-+	{}
++static struct phy_ops hi3660_phy_ops = {
++	.init		= hi3660_phy_init,
++	.exit		= hi3660_phy_exit,
++	.owner		= THIS_MODULE,
 +};
 +
-+static struct platform_driver  hisi_hikey_usb_driver = {
-+	.probe = hisi_hikey_usb_probe,
-+	.remove = hisi_hikey_usb_remove,
++static int hi3660_phy_probe(struct platform_device *pdev)
++{
++	struct phy_provider *phy_provider;
++	struct device *dev = &pdev->dev;
++	struct phy *phy;
++	struct hi3660_priv *priv;
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->dev = dev;
++	priv->peri_crg = syscon_regmap_lookup_by_phandle(dev->of_node,
++					"hisilicon,pericrg-syscon");
++	if (IS_ERR(priv->peri_crg)) {
++		dev_err(dev, "no hisilicon,pericrg-syscon\n");
++		return PTR_ERR(priv->peri_crg);
++	}
++
++	priv->pctrl = syscon_regmap_lookup_by_phandle(dev->of_node,
++					"hisilicon,pctrl-syscon");
++	if (IS_ERR(priv->pctrl)) {
++		dev_err(dev, "no hisilicon,pctrl-syscon\n");
++		return PTR_ERR(priv->pctrl);
++	}
++
++	priv->otg_bc = syscon_regmap_lookup_by_phandle(dev->of_node,
++					"hisilicon,usb3-otg-bc-syscon");
++	if (IS_ERR(priv->otg_bc)) {
++		dev_err(dev, "no hisilicon,usb3-otg-bc-syscon\n");
++		return PTR_ERR(priv->otg_bc);
++	}
++
++	if (of_property_read_u32(dev->of_node, "eye-diagram-param",
++		&(priv->eye_diagram_param)))
++		priv->eye_diagram_param = HI3660_USB_DEFAULT_PHY_PARAM;
++
++	phy = devm_phy_create(dev, NULL, &hi3660_phy_ops);
++	if (IS_ERR(phy))
++		return PTR_ERR(phy);
++
++	phy_set_drvdata(phy, priv);
++	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
++	return PTR_ERR_OR_ZERO(phy_provider);
++}
++
++static const struct of_device_id hi3660_phy_of_match[] = {
++	{.compatible = "hisilicon,hi3660-usb-phy",},
++	{ },
++};
++MODULE_DEVICE_TABLE(of, hi3660_phy_of_match);
++
++static struct platform_driver hi3660_phy_driver = {
++	.probe	= hi3660_phy_probe,
 +	.driver = {
-+		.name = DEVICE_DRIVER_NAME,
-+		.of_match_table = of_match_ptr(id_table_hisi_hikey_usb),
-+
-+	},
++		.name	= "hi3660-usb-phy",
++		.of_match_table	= hi3660_phy_of_match,
++	}
 +};
-+
-+module_platform_driver(hisi_hikey_usb_driver);
++module_platform_driver(hi3660_phy_driver);
 +
 +MODULE_AUTHOR("Yu Chen <chenyu56@huawei.com>");
-+MODULE_DESCRIPTION("Driver Support for USB functionality of Hikey");
 +MODULE_LICENSE("GPL v2");
++MODULE_DESCRIPTION("Hilisicon Hi3660 USB3 PHY Driver");
 -- 
 2.15.0-rc2
 
