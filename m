@@ -2,217 +2,141 @@ Return-Path: <SRS0=4IUq=NH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DDD9C46475
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 05:58:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57DF4ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 06:07:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0CE520824
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 05:58:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 151B52085B
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 06:07:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J8/sLvXu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0CE520824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="BOuWSG/b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 151B52085B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728136AbeJ0Oih (ORCPT
+        id S1728012AbeJ0OrO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 10:38:37 -0400
-Received: from mail-it1-f196.google.com ([209.85.166.196]:35737 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727216AbeJ0Oih (ORCPT
+        Sat, 27 Oct 2018 10:47:14 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:41750 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726828AbeJ0OrN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 10:38:37 -0400
-Received: by mail-it1-f196.google.com with SMTP id p64-v6so4195791itp.0;
-        Fri, 26 Oct 2018 22:58:46 -0700 (PDT)
+        Sat, 27 Oct 2018 10:47:13 -0400
+Received: by mail-pl1-f193.google.com with SMTP id p5-v6so1432768plq.8
+        for <linux-kernel@vger.kernel.org>; Fri, 26 Oct 2018 23:07:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TBYk/LPmr1/RR394T6uEMpJ1jpP5l5d9hMJO3PTLyQk=;
-        b=J8/sLvXuH+jVih6A0o9xo2rqrBcB/xJFlOQIASpojxP8zoyh+lam6WmC3+TYvEML6b
-         i3OoCNaMdFODGpknzHiEIjKtVSDWn1RYHlPn+ye3alHQzX2ST6WZscDC44pTJTShwk3Z
-         eQ8yEFubHkKrFs+hEP2H180VQS+RHLoyq1cwyS8ilFrAFlcjbFMXEdprfgW1dyba50Y1
-         RNdJ3CkAZf1XmGMUZ1Y6f2+qYQZhe3zcLRB+Tjtw73IsbOoRhTSxFJQDAefZsiM4iTcc
-         kqVz8hkdd/MQqeawqRQwx/YmtTfZ7QP6KnYQkfKjZEIVQBEwYno1Ui+JRvuT8ZHaB5bA
-         jYTw==
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=4MgGyHpaFljNUU/NS+lIwkQShtcjMjXMnCBswOpfcyA=;
+        b=BOuWSG/bJyfqcClS6UEIDrOy0bZ7Go4PKrerBjvaIyECq0wv7GW3AnTOvTp4dk+081
+         GvIm0h09dRsBsnjJhx/ejMwSJPVTS1D4dcUxmM4cIYHfyEKzO9+ZoWDqkbLC/i/n6cxG
+         0f+sUBXkErdo8K9tDyTyozaS6gt+Sc60fY/klpyrB0StMFxiasfPXSKYv2zim1bmKZCE
+         A0fNxaFdoV3v+UJacQzgufaJ3b23+mMI48H9WO6iHfZWzg+jARN/e/WGDG7f4D4IbzJD
+         UT7aOc5i136a/67pHqlEvKNrFHpY9VDYs4ubMzzY3g06fxFvyzKgh14k5dUAdKDEQvQn
+         /Tzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TBYk/LPmr1/RR394T6uEMpJ1jpP5l5d9hMJO3PTLyQk=;
-        b=I5PQLHx9sjXvR3uooAjL8XP3yk+DfsGKZvemgfm1/crC/MWUAx6+JYN99lSSjyUjyv
-         4CGGxtU0EOYoKEInm/KeFfgYq/CFrOYvZ1grW/yj4XXyWk9QML4IBiRjv/yELy1kgDrb
-         NuQgdEovOEWKIQm91L+k2dIt1ID6NSRIZ9sgojk1wf6bfOpc3wB0xshTyNMc/Fg5Lv4m
-         /9fhqdEwns4T5ihAOtIfKpo3rYp8xkmizwo3sN0fgRCC4kznFjN0FN6CLkP5r1C2QT19
-         NWIBXV5YMeFWujc3tBbzhc4doVy8OWuCP5lPzEarOAh//NbG3QAQsLyd9BQ1vh52POl/
-         RRVA==
-X-Gm-Message-State: AGRZ1gJxGo/2n7fryq/b0K+atd6FlsKD+Fpa6R0nRf2RWu0FDkVsmgUK
-        GtmsccjuiEPUOogmZ4OaH/Ty0rTrQqq2wpI5aWM=
-X-Google-Smtp-Source: AJdET5dfYeBdgKS/LBLFeNHvJbtBJd2Oc+JxaDOr1XHtUrQlmSrbiWV32g73bFiByaei6WumD9IVOUuDKwTUGFnDLxQ=
-X-Received: by 2002:a24:5cb:: with SMTP id 194-v6mr5502335itl.139.1540619926150;
- Fri, 26 Oct 2018 22:58:46 -0700 (PDT)
-MIME-Version: 1.0
-References: <000000000000e80c930579245751@google.com>
-In-Reply-To: <000000000000e80c930579245751@google.com>
-From:   Xin Long <lucien.xin@gmail.com>
-Date:   Sat, 27 Oct 2018 14:58:33 +0900
-Message-ID: <CADvbK_fK4jyPXA+ZJUtAFOjRcunqX0XdiEC2nZbnLMVxiJCAmw@mail.gmail.com>
-Subject: Re: KASAN: slab-out-of-bounds Read in sctp_getsockopt
-To:     syzbot+5da0d0a72a9e7d791748@syzkaller.appspotmail.com
-Cc:     davem <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>,
-        linux-sctp@vger.kernel.org,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        network dev <netdev@vger.kernel.org>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        syzkaller-bugs@googlegroups.com,
-        Vlad Yasevich <vyasevich@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=4MgGyHpaFljNUU/NS+lIwkQShtcjMjXMnCBswOpfcyA=;
+        b=tuYzQ8/IR7g33qWxzlW9BUL20c8wmFDmfftwKAzZNnW2YYL3WvSNqi8LEfvMRnc+cn
+         00OUzMLbUxGDE+U0tvmaiv38W6uPUw+GMRVkU/m+LyiMckZ2u8ccdtkNvM1F4FQlc6DZ
+         jlWmVB0C/Ff/39fl+MXPLDv43dh5P2svyLFg/nxlf+ri8ctU/cSiP9jfr+Gm7OEcssCO
+         datPH1zWmEfwEifomiNEz9E13rAsY20pkvjKLsewF7BXDaPSd+FK01ly3r6sHfCELlYY
+         PjeVzpZsR3L99eOgfDrR+OSC3cDANtpSic/BhBeRIeVzMtF/piBvKDV4MJdbUT9FrTDL
+         VIFA==
+X-Gm-Message-State: AGRZ1gJnqJjql+NHE0sSqIxAt8OX7BD5zwtezFYQ863cpRf+M3OZ36kw
+        0zew/ApPIidWUl0h/y2YfbyhLA==
+X-Google-Smtp-Source: AJdET5fQ+cjgrmKRWKK5AJZeON3QZshDMwNsZ57mE66nZhv8tR27WOvlvam+15+pDGF1MMCQDCE8ag==
+X-Received: by 2002:a17:902:a584:: with SMTP id az4-v6mr4124547plb.46.1540620442018;
+        Fri, 26 Oct 2018 23:07:22 -0700 (PDT)
+Received: from localhost (c-67-161-15-180.hsd1.ca.comcast.net. [67.161.15.180])
+        by smtp.gmail.com with ESMTPSA id m12-v6sm7313307pgd.81.2018.10.26.23.07.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 26 Oct 2018 23:07:20 -0700 (PDT)
+Date:   Fri, 26 Oct 2018 23:07:20 -0700 (PDT)
+X-Google-Original-Date: Fri, 26 Oct 2018 23:00:34 PDT (-0700)
+Subject:     Re: [PATCH 2/2] RISC-V: Add support for SECCOMP
+In-Reply-To: <CALCETrUSvugnh1JiLgn49c4_dw6F8bXiO52jdqiAKEn-CgzoXA@mail.gmail.com>
+CC:     keescook@chromium.org, linux-riscv@lists.infradead.org,
+        aou@eecs.berkeley.edu, paul@paul-moore.com, eparis@redhat.com,
+        wad@chromium.org, Wesley Terpstra <wesley@sifive.com>,
+        dhowells@redhat.com, tglx@linutronix.de, pombredanne@nexb.com,
+        Greg KH <gregkh@linuxfoundation.org>,
+        kstewart@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-audit@redhat.com, david.abdurachmanov@gmail.com
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     luto@amacapital.net
+Message-ID: <mhng-d334eb95-7c80-4070-a053-d04e9b564b74@palmer-mbp2014>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 27, 2018 at 1:38 AM syzbot
-<syzbot+5da0d0a72a9e7d791748@syzkaller.appspotmail.com> wrote:
+On Thu, 25 Oct 2018 14:02:20 PDT (-0700), luto@amacapital.net wrote:
+> On Wed, Oct 24, 2018 at 2:42 PM Kees Cook <keescook@chromium.org> wrote:
+>>
+>> On Wed, Oct 24, 2018 at 1:40 PM, Palmer Dabbelt <palmer@sifive.com> wrote:
+>> > From: "Wesley W. Terpstra" <wesley@sifive.com>
+>> >
+>> > This is a fairly straight-forward implementation of seccomp for RISC-V
+>> > systems.
+>> >
+>> > Signed-off-by: Wesley W. Terpstra <wesley@sifive.com>
+>> > Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+>> > ---
+>> >  arch/riscv/Kconfig                   | 18 ++++++++++++++++++
+>> >  arch/riscv/include/asm/seccomp.h     | 10 ++++++++++
+>> >  arch/riscv/include/asm/syscall.h     |  6 ++++++
+>> >  arch/riscv/include/asm/thread_info.h |  1 +
+>> >  include/uapi/linux/audit.h           |  1 +
+>> >  5 files changed, 36 insertions(+)
+>> >  create mode 100644 arch/riscv/include/asm/seccomp.h
+>> >
+>> > diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+>> > index a344980287a5..28abe47602a1 100644
+>> > --- a/arch/riscv/Kconfig
+>> > +++ b/arch/riscv/Kconfig
+>> > @@ -28,6 +28,7 @@ config RISCV
+>> >         select GENERIC_STRNLEN_USER
+>> >         select GENERIC_SMP_IDLE_THREAD
+>> >         select GENERIC_ATOMIC64 if !64BIT || !RISCV_ISA_A
+>> > +       select HAVE_ARCH_SECCOMP_FILTER
+>>
+>> I think this patch is missing most of the actual seccomp glue?
+>>
+>> config HAVE_ARCH_SECCOMP_FILTER
+>>         bool
+>>         help
+>>           An arch should select this symbol if it provides all of these things:
+>>           - syscall_get_arch()
+>>           - syscall_get_arguments()
+>>           - syscall_rollback()
+>>           - syscall_set_return_value()
+>>           - SIGSYS siginfo_t support
+>>           - secure_computing is called from a ptrace_event()-safe context
+>>           - secure_computing return value is checked and a return value of -1
+>>             results in the system call being skipped immediately.
+>>           - seccomp syscall wired up
+>>
+>> I only see syscall_get_arch(). Nothing is using TIF_SECCOMP (I'd
+>> expect a masked check in entry.S -- it seems like tracepoints are
+>> getting missed too? I see it handled in ptrace.c but not checked in
+>> entry.S?) There's no checking for seccomp in ptrace.c, etc.
 >
-> Hello,
+> Hi RISC-V people:
 >
-> syzbot found the following crash on:
->
-> HEAD commit:    bd6bf7c10484 Merge tag 'pci-v4.20-changes' of git://git.ke..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16fd6bcb400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=2dd8629d56664133
-> dashboard link: https://syzkaller.appspot.com/bug?extid=5da0d0a72a9e7d791748
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16b3ea33400000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17f9f1bd400000
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+5da0d0a72a9e7d791748@syzkaller.appspotmail.com
->
-> ==================================================================
-> BUG: KASAN: slab-out-of-bounds in sctp_getsockopt_pr_streamstatus
-> net/sctp/socket.c:7174 [inline]
-Forgot to change to use "&" in sctp_getsockopt_pr_streamstatus() in
-"sctp: get pr_assoc and pr_stream all status with SCTP_PR_SCTP_ALL instead"
+> I strongly, strongly suggest that you rewrite your asm to work the way
+> that x86's does: have a function called prepare_exit_to_usermode() and
+> make it work more or less like x86's.  Doing all the exit work in asm
+> like you are is just setting you up for a world of pain.
 
-@@ -7158,7 +7158,7 @@ static int
-sctp_getsockopt_pr_streamstatus(struct sock *sk, int len,
-                goto out;
-        }
-
--       if (policy == SCTP_PR_SCTP_ALL) {
-+       if (policy & SCTP_PR_SCTP_ALL) {
-
-> BUG: KASAN: slab-out-of-bounds in sctp_getsockopt+0x7516/0x7cc2
-> net/sctp/socket.c:7582
-> Read of size 8 at addr ffff8801d89f0968 by task syz-executor278/5330
->
-> CPU: 1 PID: 5330 Comm: syz-executor278 Not tainted 4.19.0+ #303
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0x244/0x39d lib/dump_stack.c:113
->   print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
->   kasan_report_error mm/kasan/report.c:354 [inline]
->   kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
->   __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
->   sctp_getsockopt_pr_streamstatus net/sctp/socket.c:7174 [inline]
->   sctp_getsockopt+0x7516/0x7cc2 net/sctp/socket.c:7582
->   sock_common_getsockopt+0x9a/0xe0 net/core/sock.c:2937
->   __sys_getsockopt+0x1ad/0x390 net/socket.c:1939
->   __do_sys_getsockopt net/socket.c:1950 [inline]
->   __se_sys_getsockopt net/socket.c:1947 [inline]
->   __x64_sys_getsockopt+0xbe/0x150 net/socket.c:1947
->   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x445789
-> Code: e8 6c b6 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
-> ff 0f 83 2b 12 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007effdb293db8 EFLAGS: 00000246 ORIG_RAX: 0000000000000037
-> RAX: ffffffffffffffda RBX: 00000000006dac48 RCX: 0000000000445789
-> RDX: 0000000000000074 RSI: 0000000000000084 RDI: 0000000000000003
-> RBP: 00000000006dac40 R08: 0000000020000040 R09: 0000000000000000
-> R10: 0000000020000080 R11: 0000000000000246 R12: 00000000006dac4c
-> R13: 00007ffcfc408c6f R14: 00007effdb2949c0 R15: 00000000006dad2c
->
-> Allocated by task 5329:
->   save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->   set_track mm/kasan/kasan.c:460 [inline]
->   kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
->   kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
->   kmalloc include/linux/slab.h:513 [inline]
->   kzalloc include/linux/slab.h:707 [inline]
->   sctp_stream_init_ext+0x4f/0xf0 net/sctp/stream.c:237
->   sctp_sendmsg_to_asoc+0x1308/0x1a20 net/sctp/socket.c:1896
->   sctp_sendmsg+0x13c2/0x1da0 net/sctp/socket.c:2113
->   inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
->   sock_sendmsg_nosec net/socket.c:621 [inline]
->   sock_sendmsg+0xd5/0x120 net/socket.c:631
->   __sys_sendto+0x3d7/0x670 net/socket.c:1788
->   __do_sys_sendto net/socket.c:1800 [inline]
->   __se_sys_sendto net/socket.c:1796 [inline]
->   __x64_sys_sendto+0xe1/0x1a0 net/socket.c:1796
->   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> Freed by task 3223:
->   save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->   set_track mm/kasan/kasan.c:460 [inline]
->   __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
->   kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
->   __cache_free mm/slab.c:3498 [inline]
->   kfree+0xcf/0x230 mm/slab.c:3813
->   kzfree+0x28/0x30 mm/slab_common.c:1543
->   aa_free_file_ctx security/apparmor/include/file.h:76 [inline]
->   apparmor_file_free_security+0x133/0x1a0 security/apparmor/lsm.c:448
->   security_file_free+0x4a/0x80 security/security.c:900
->   file_free fs/file_table.c:54 [inline]
->   __fput+0x4e8/0xa30 fs/file_table.c:294
->   ____fput+0x15/0x20 fs/file_table.c:309
->   task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
->   tracehook_notify_resume include/linux/tracehook.h:188 [inline]
->   exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
->   prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
->   syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
->   do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
->
-> The buggy address belongs to the object at ffff8801d89f0900
->   which belongs to the cache kmalloc-96 of size 96
-> The buggy address is located 8 bytes to the right of
->   96-byte region [ffff8801d89f0900, ffff8801d89f0960)
-> The buggy address belongs to the page:
-> page:ffffea0007627c00 count:1 mapcount:0 mapping:ffff8801da8004c0 index:0x0
-> flags: 0x2fffc0000000100(slab)
-> raw: 02fffc0000000100 ffffea0007646748 ffffea0007613488 ffff8801da8004c0
-> raw: 0000000000000000 ffff8801d89f0000 0000000100000020 0000000000000000
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->   ffff8801d89f0800: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
->   ffff8801d89f0880: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-> > ffff8801d89f0900: 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc
->                                                            ^
->   ffff8801d89f0980: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
->   ffff8801d89f0a00: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-> ==================================================================
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
+OK, thanks for the suggestion.  Next time we have to change it I'll try to take 
+a look and figure out something sane.
