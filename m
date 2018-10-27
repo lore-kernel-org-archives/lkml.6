@@ -2,95 +2,113 @@ Return-Path: <SRS0=4IUq=NH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75EC3C46475
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 19:47:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92845C46475
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 19:59:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8C032082C
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 19:47:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B38E2082C
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 19:59:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hO9xKHns"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8C032082C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tu/5VmWJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B38E2082C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726476AbeJ1E3c (ORCPT
+        id S1726564AbeJ1ElI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 00:29:32 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:36959 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725766AbeJ1E3c (ORCPT
+        Sun, 28 Oct 2018 00:41:08 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:47091 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725789AbeJ1ElI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 00:29:32 -0400
-Received: by mail-wm1-f65.google.com with SMTP id p2-v6so4304955wmc.2
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Oct 2018 12:47:30 -0700 (PDT)
+        Sun, 28 Oct 2018 00:41:08 -0400
+Received: by mail-lj1-f196.google.com with SMTP id x3-v6so4174018lji.13;
+        Sat, 27 Oct 2018 12:59:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hIUgqk80qYi7BCDY9mXYCIvlqNz5V9y+3GPF6/XyZbs=;
-        b=hO9xKHnsTBmdzYOHRXnSt2la6KIdhsIa4axc/3AiSRQbCS0WM4gYUe6lVth/QPFY23
-         HbgXwHGs5TBNxnqPm/QKiqFTNCyQGwOkOUO202zHcddbwXAf1CmlHzOya/7gwTmwY4o+
-         tUwgfbfcYGhi0ylcqDfCQ585UTWf+GMGASCpF+9+QUdaz8gkbX9jzeSszTDlNLN/+J6N
-         a/Qb49pwab2HvZ1gmTVLEytIflEM426U75FZINBMxTWJ13X4feiNIhoh+7twhhDQPTgm
-         RrhwAeMZOviU7KGiKoDN9bJcqYeyEBjIHsLoS8r0XrIi4XEUfGMuVxv6W748ytndG+9B
-         xztA==
+        h=from:to:cc:subject:date:message-id;
+        bh=Xj2s6ge2CpWnsk1bP+uWJhJ/coQfpXyxy1jcA8VZdWY=;
+        b=Tu/5VmWJp9+pz5qwbDG9fV/4uftjUQmw0nhClyq1Scr0NFGut0509R22qBAXVZCeCR
+         S1M33rMBefe2gQx3jyscDNN9StxmF1qS9Y0ehSNz208RX8u1M8rpUTdExGNHj2O3VXSB
+         6+nGpewSBbrzhgLLt5UOuZlddU1UVyBLs26yfhtnkdnTjThijTiLe+vECHZIX8XiAZDL
+         CFcr3nfMVn8SwuIfWP1LSfHo9C3seZSqcmKRuofUARxqfXcb90Qs7Sy1ANyQ2AOgSyLo
+         s+d7DNKiq5eEMvnazMFCBwK5GwQ+0b95eRrQgmpz2xxEq47Gvuww/9WHNIIshZjfmgbd
+         oStw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hIUgqk80qYi7BCDY9mXYCIvlqNz5V9y+3GPF6/XyZbs=;
-        b=A9twMfIVM29GPZ8tdSu91NrlJuMhSJdza1jl3SEKwrkjw4vmo5gXhwfvo7V7S1/a0Q
-         TKmr2mlGuEnON2imSWOK8PyZPsd0wvB/oi624/hDWGh3rrl57fsMKMnjaI/2OSEBeC2C
-         Q3mrorwvoQXCVMjnZ/fPuUPCQHktIfWU5aOsl/2z88U4oFrdgZdFUAyJqr4K60nE0h0/
-         tR408DUumv1a43fAoFTTUIdNzmBdPiCfiPoHtcuxzVxkCCjSaeyqF3iDgH8sHC1ve8My
-         OoMsYlYQj7vjMHysRnFYGZVmt7Ycx79cC/i47okYrn3T98onaBP2z/dyRe29VHAh0rLB
-         0guw==
-X-Gm-Message-State: AGRZ1gK/lo1Buz6YgRHdwqpqxn55mqTX/tWOi2LWUQMQzIC70Yb9AlE5
-        NVP9PAcvauNtRS31ZEAS2w==
-X-Google-Smtp-Source: AJdET5dzT+2NLKWhfVbbVkQkgQ8wx+d2u6rDT/lO+7SscYecmjlrCsAS/+0ChwJlo4E8h+VKAMh2Sg==
-X-Received: by 2002:a1c:a88b:: with SMTP id r133-v6mr9153380wme.97.1540669649347;
-        Sat, 27 Oct 2018 12:47:29 -0700 (PDT)
-Received: from avx2 (nat5-minsk-pool-46-53-217-92.telecom.by. [46.53.217.92])
-        by smtp.gmail.com with ESMTPSA id y19-v6sm20463012wra.60.2018.10.27.12.47.27
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Xj2s6ge2CpWnsk1bP+uWJhJ/coQfpXyxy1jcA8VZdWY=;
+        b=UdiByUsYMeGvucAwKnX5lkE6MD/idpapN0BxswwspR9E2yfD4BegOEyacXafGXgmcK
+         gk5oR7HpIPhEMxhnQT7QtfeH0z59zRcCXcfwNExeel6CwsysVVwIb3LqlLmwh1dn4dYY
+         f2N9Px/m+wzsSyIS4phpsxT53F5oOY/Jsb2ervTpO12KLhtdHMGdUNr45TRDNjEpdbSV
+         D+r0dgJr1rY/ER5/hsHuR9qc0bRZvVhQ0T7DNPLr30mSts+BqNEHyvH3GA3zhWqFXlwl
+         QP1yPGMNr5wsWlYdfRI0WPV2JbN/7ADlcO8PZMuD63CFL5ZlUUCS+KkhRN2HvCo3Yve4
+         n/4A==
+X-Gm-Message-State: AGRZ1gJ1K+2XEtfc5SvvtaRQSxAqYXoXmx8G1kPHao63gD5+OL316NGU
+        OIRX/e4s+b22VN22tG3UBgY=
+X-Google-Smtp-Source: AJdET5dJTUjRGzLAZUuIikjPsWdFgQjxCUpWVuhUIgTjsxkqvjgFoWj2sZRbVOn1LB67fBvc/D8neg==
+X-Received: by 2002:a2e:5dd9:: with SMTP id v86-v6mr415669lje.86.1540670342235;
+        Sat, 27 Oct 2018 12:59:02 -0700 (PDT)
+Received: from localhost.localdomain ([95.174.65.6])
+        by smtp.gmail.com with ESMTPSA id o14-v6sm1975333lfe.16.2018.10.27.12.59.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 27 Oct 2018 12:47:28 -0700 (PDT)
-Date:   Sat, 27 Oct 2018 22:47:25 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: proc: move linux_proc_banner to where it is used
-Message-ID: <20181027194725.GA30155@avx2>
-References: <20181026212034.5491-1-linux@rasmusvillemoes.dk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181026212034.5491-1-linux@rasmusvillemoes.dk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Sat, 27 Oct 2018 12:59:01 -0700 (PDT)
+From:   Tomas Bortoli <tomasbortoli@gmail.com>
+To:     vyasevich@gmail.com, nhorman@tuxdriver.com,
+        marcelo.leitner@gmail.com
+Cc:     davem@davemloft.net, linux-sctp@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller@googlegroups.com, Tomas Bortoli <tomasbortoli@gmail.com>
+Subject: [PATCH] sctp: socket.c validate sprstat_policy
+Date:   Sat, 27 Oct 2018 21:58:53 +0200
+Message-Id: <20181027195853.30243-1-tomasbortoli@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 11:20:34PM +0200, Rasmus Villemoes wrote:
-> +#include <generated/compile.h>
+It is possible to perform out-of-bound reads on
+sctp_getsockopt_pr_streamstatus() and on
+sctp_getsockopt_pr_assocstatus() by passing from userspace a
+sprstat_policy that overflows the abandoned_sent/abandoned_unsent
+fixed length arrays. The over-read data are directly copied/leaked
+to userspace.
 
-> +#define linux_proc_banner \
-> +	"%s version %s" \
-> +	" (" LINUX_COMPILE_BY "@" LINUX_COMPILE_HOST ")" \
-> +	" (" LINUX_COMPILER ") %s\n"
+Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
+Reported-by: syzbot+5da0d0a72a9e7d791748@syzkaller.appspotmail.com
+---
+ net/sctp/socket.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Include doesn't work if compiling from scratch:
+diff --git a/net/sctp/socket.c b/net/sctp/socket.c
+index fc0386e8ff23..5290b8bd40c8 100644
+--- a/net/sctp/socket.c
++++ b/net/sctp/socket.c
+@@ -7083,7 +7083,8 @@ static int sctp_getsockopt_pr_assocstatus(struct sock *sk, int len,
+ 	}
+ 
+ 	policy = params.sprstat_policy;
+-	if (!policy || (policy & ~(SCTP_PR_SCTP_MASK | SCTP_PR_SCTP_ALL)))
++	if (!policy || (policy & ~(SCTP_PR_SCTP_MASK | SCTP_PR_SCTP_ALL))
++	    __SCTP_PR_INDEX(policy) > SCTP_PR_INDEX(MAX))
+ 		goto out;
+ 
+ 	asoc = sctp_id2assoc(sk, params.sprstat_assoc_id);
+@@ -7142,7 +7143,8 @@ static int sctp_getsockopt_pr_streamstatus(struct sock *sk, int len,
+ 	}
+ 
+ 	policy = params.sprstat_policy;
+-	if (!policy || (policy & ~(SCTP_PR_SCTP_MASK | SCTP_PR_SCTP_ALL)))
++	if (!policy || (policy & ~(SCTP_PR_SCTP_MASK | SCTP_PR_SCTP_ALL)) ||
++	    __SCTP_PR_INDEX(policy) > SCTP_PR_INDEX(MAX))
+ 		goto out;
+ 
+ 	asoc = sctp_id2assoc(sk, params.sprstat_assoc_id);
+-- 
+2.11.0
 
-	rm -rf ../obj
-	mkdir ../obj
-	make O=../obj defconfig
-	make O=../obj fs/proc/version.o
-
-  CC      fs/proc/version.o
-fs/proc/version.c:2:10: fatal error: generated/compile.h: No such file or directory
