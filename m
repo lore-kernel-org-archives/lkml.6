@@ -6,43 +6,39 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7CA1ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 10:00:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5A4C46475
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 10:00:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96BBD20869
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 10:00:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96BBD20869
+	by mail.kernel.org (Postfix) with ESMTP id EFE582086E
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 10:00:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFE582086E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728563AbeJ0Sk3 (ORCPT
+        id S1728583AbeJ0Ska (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 14:40:29 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:46153 "EHLO huawei.com"
+        Sat, 27 Oct 2018 14:40:30 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:46204 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728437AbeJ0Sk3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728434AbeJ0Sk3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 27 Oct 2018 14:40:29 -0400
 Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 463EF8D2C21A9;
+        by Forcepoint Email with ESMTP id 586D043BDF76D;
         Sat, 27 Oct 2018 17:59:57 +0800 (CST)
 Received: from vm100-107-113-134.huawei.com (100.107.113.134) by
  DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.408.0; Sat, 27 Oct 2018 17:59:49 +0800
+ 14.3.408.0; Sat, 27 Oct 2018 17:59:52 +0800
 From:   Yu Chen <chenyu56@huawei.com>
 To:     <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
 CC:     <suzhuangluan@hisilicon.com>, <kongfei@hisilicon.com>,
-        Yu Chen <chenyu56@huawei.com>, Felipe Balbi <balbi@kernel.org>,
+        Yu Chen <chenyu56@huawei.com>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        "Mauro Carvalho Chehab" <mchehab+samsung@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
         John Stultz <john.stultz@linaro.org>,
-        Binghui Wang <wangbinghui@hisilicon.com>
-Subject: [PATCH 04/10] usb: dwc3: dwc3-hisi: Add code for dwc3 of Hisilicon Soc Platform
-Date:   Sat, 27 Oct 2018 17:58:14 +0800
-Message-ID: <20181027095820.40056-5-chenyu56@huawei.com>
+        "Binghui Wang" <wangbinghui@hisilicon.com>
+Subject: [PATCH 07/10] hikey960: Support usb functionality of Hikey960
+Date:   Sat, 27 Oct 2018 17:58:17 +0800
+Message-ID: <20181027095820.40056-8-chenyu56@huawei.com>
 X-Mailer: git-send-email 2.15.0-rc2
 In-Reply-To: <20181027095820.40056-1-chenyu56@huawei.com>
 References: <20181027095820.40056-1-chenyu56@huawei.com>
@@ -55,412 +51,377 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This driver handles the poweron and shutdown of dwc3 core
-on Hisilicon Soc Platform.
+This driver handles usb hub power on and typeC port event of HiKey960 board:
+1)DP&DM switching between usb hub and typeC port base on typeC port
+state
+2)Control power of usb hub on Hikey960
+3)Control vbus of typeC port
+4)Handle typeC port event to switch data role
 
-Cc: Felipe Balbi <balbi@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: John Stultz <john.stultz@linaro.org>
 Cc: Binghui Wang <wangbinghui@hisilicon.com>
 Signed-off-by: Yu Chen <chenyu56@huawei.com>
 ---
- MAINTAINERS                  |   8 ++
- drivers/usb/dwc3/Kconfig     |   8 ++
- drivers/usb/dwc3/Makefile    |   1 +
- drivers/usb/dwc3/dwc3-hisi.c | 335 +++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 352 insertions(+)
- create mode 100644 drivers/usb/dwc3/dwc3-hisi.c
+ drivers/misc/Kconfig          |   7 +
+ drivers/misc/Makefile         |   1 +
+ drivers/misc/hisi_hikey_usb.c | 319 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 327 insertions(+)
+ create mode 100644 drivers/misc/hisi_hikey_usb.c
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fdb6a298c7e7..e485449f7811 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15288,6 +15288,14 @@ L:	linux-usb@vger.kernel.org
- S:	Maintained
- F:	drivers/usb/roles/intel-xhci-usb-role-switch.c
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index 3726eacdf65d..8e04fc87b685 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -513,6 +513,13 @@ config MISC_RTSX
+ 	tristate
+ 	default MISC_RTSX_PCI || MISC_RTSX_USB
  
-+USB IP DRIVER FOR HISILICON KIRIN
-+M:	Yu Chen <chenyu56@huawei.com>
-+M:	Binghui Wang <wangbinghui@hisilicon.com>
-+L:	linux-usb@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/usb/dwc3-hisi.txt
-+F:	drivers/usb/dwc3/dwc3-hisi.c
-+
- USB ISP116X DRIVER
- M:	Olav Kongas <ok@artecdesign.ee>
- L:	linux-usb@vger.kernel.org
-diff --git a/drivers/usb/dwc3/Kconfig b/drivers/usb/dwc3/Kconfig
-index 1a0404fda596..09d105a2b53a 100644
---- a/drivers/usb/dwc3/Kconfig
-+++ b/drivers/usb/dwc3/Kconfig
-@@ -123,4 +123,12 @@ config USB_DWC3_QCOM
- 	  for peripheral mode support.
- 	  Say 'Y' or 'M' if you have one such device.
- 
-+config USB_DWC3_HISI
-+	tristate "HiSilicon Kirin Platforms"
-+	depends on ((ARCH_HISI && ARM64) || COMPILE_TEST) && OF
-+	default USB_DWC3
++config HISI_HIKEY_USB
++	tristate "USB functionality of HiSilicon Hikey Platform"
++	depends on GPIOLIB
++	default n
 +	help
-+	  Support USB2/3 functionality in HiSilicon Kirin platforms.
-+	  Say 'Y' or 'M' if you have one such device.
++	  If you say yes here you get support for usb functionality of HiSilicon Hikey Platform.
 +
- endif
-diff --git a/drivers/usb/dwc3/Makefile b/drivers/usb/dwc3/Makefile
-index 6e3ef6144e5d..15781455e3f0 100644
---- a/drivers/usb/dwc3/Makefile
-+++ b/drivers/usb/dwc3/Makefile
-@@ -50,3 +50,4 @@ obj-$(CONFIG_USB_DWC3_KEYSTONE)		+= dwc3-keystone.o
- obj-$(CONFIG_USB_DWC3_OF_SIMPLE)	+= dwc3-of-simple.o
- obj-$(CONFIG_USB_DWC3_ST)		+= dwc3-st.o
- obj-$(CONFIG_USB_DWC3_QCOM)		+= dwc3-qcom.o
-+obj-$(CONFIG_USB_DWC3_HISI)		+= dwc3-hisi.o
-diff --git a/drivers/usb/dwc3/dwc3-hisi.c b/drivers/usb/dwc3/dwc3-hisi.c
+ source "drivers/misc/c2port/Kconfig"
+ source "drivers/misc/eeprom/Kconfig"
+ source "drivers/misc/cb710/Kconfig"
+diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+index af22bbc3d00c..387dd302815c 100644
+--- a/drivers/misc/Makefile
++++ b/drivers/misc/Makefile
+@@ -58,3 +58,4 @@ obj-$(CONFIG_ASPEED_LPC_SNOOP)	+= aspeed-lpc-snoop.o
+ obj-$(CONFIG_PCI_ENDPOINT_TEST)	+= pci_endpoint_test.o
+ obj-$(CONFIG_OCXL)		+= ocxl/
+ obj-$(CONFIG_MISC_RTSX)		+= cardreader/
++obj-$(CONFIG_HISI_HIKEY_USB)	+= hisi_hikey_usb.o
+diff --git a/drivers/misc/hisi_hikey_usb.c b/drivers/misc/hisi_hikey_usb.c
 new file mode 100644
-index 000000000000..6e9787d420a7
+index 000000000000..4965719c99ae
 --- /dev/null
-+++ b/drivers/usb/dwc3/dwc3-hisi.c
-@@ -0,0 +1,335 @@
++++ b/drivers/misc/hisi_hikey_usb.c
+@@ -0,0 +1,319 @@
 +// SPDX-License-Identifier: GPL-2.0+
-+/**
-+ * dwc3-hisi.c - Support for dwc3 platform devices on HiSilicon platforms
++/*
++ * hisi_hikey_usb.c
 + *
-+ * Copyright (C) 2017-2018 Hilisicon Electronics Co., Ltd.
-+ *		http://www.huawei.com
++ * Copyright (c) Hisilicon Tech. Co., Ltd. All rights reserved.
 + *
-+ * Authors: Yu Chen <chenyu56@huawei.com>
-+ *
-+ * This program is free software: you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2  of
-+ * the License as published by the Free Software Foundation.
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
 + *
 + * This program is distributed in the hope that it will be useful,
 + * but WITHOUT ANY WARRANTY; without even the implied warranty of
 + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 + * GNU General Public License for more details.
++ *
 + */
 +
 +#include <linux/module.h>
 +#include <linux/kernel.h>
 +#include <linux/slab.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/regmap.h>
-+#include <linux/reset.h>
-+#include <linux/extcon.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/pinctrl/consumer.h>
++#include <linux/platform_device.h>
++#include <linux/gpio.h>
++#include <linux/of_gpio.h>
++#include <linux/extcon-provider.h>
++#include <linux/usb/role.h>
 +
-+struct dwc3_hisi {
-+	struct device		*dev;
-+	struct clk		**clks;
-+	int			num_clocks;
-+	struct reset_control	**rstcs;
-+	int			num_rstcs;
++#define DEVICE_DRIVER_NAME "hisi_hikey_usb"
++
++#define HUB_VBUS_POWER_ON 1
++#define HUB_VBUS_POWER_OFF 0
++#define USB_SWITCH_TO_HUB 1
++#define USB_SWITCH_TO_TYPEC 0
++
++#define INVALID_GPIO_VALUE (-1)
++
++struct hisi_hikey_usb {
++	int otg_switch_gpio;
++	int typec_vbus_gpio;
++	int typec_vbus_enable_val;
++	int hub_vbus_gpio;
++
++	struct extcon_dev *edev;
++	struct usb_role_switch *role_sw;
 +};
 +
-+struct dwc3_hisi *g_dwc3_hisi;
++static const unsigned int usb_extcon_cable[] = {
++	EXTCON_USB,
++	EXTCON_USB_HOST,
++	EXTCON_NONE,
++};
 +
-+static int dwc3_hisi_init_clks(struct dwc3_hisi *dwc3_hisi,
-+		struct device_node *np)
++static void hub_power_ctrl(struct hisi_hikey_usb *hisi_hikey_usb, int value)
 +{
-+	struct device *dev = dwc3_hisi->dev;
-+	int i;
++	int gpio = hisi_hikey_usb->hub_vbus_gpio;
 +
-+	dwc3_hisi->num_clocks = of_clk_get_parent_count(np);
-+	if (!dwc3_hisi->num_clocks)
-+		return -ENOENT;
++	if (gpio_is_valid(gpio))
++		gpio_set_value(gpio, value);
++}
 +
-+	dwc3_hisi->clks = devm_kcalloc(dev, dwc3_hisi->num_clocks,
-+			sizeof(struct clk *), GFP_KERNEL);
-+	if (!dwc3_hisi->clks)
-+		return -ENOMEM;
++static void usb_switch_ctrl(struct hisi_hikey_usb *hisi_hikey_usb,
++		int switch_to)
++{
++	int gpio = hisi_hikey_usb->otg_switch_gpio;
++	const char *switch_to_str = (switch_to == USB_SWITCH_TO_HUB) ?
++		"hub" : "typec";
 +
-+	for (i = 0; i < dwc3_hisi->num_clocks; i++) {
-+		struct clk	*clk;
++	if (!gpio_is_valid(gpio)) {
++		pr_err("%s: otg_switch_gpio is err\n", __func__);
++		return;
++	}
 +
-+		clk = of_clk_get(np, i);
-+		if (IS_ERR(clk)) {
-+			while (--i >= 0)
-+				clk_put(dwc3_hisi->clks[i]);
++	if (gpio_get_value(gpio) == switch_to) {
++		pr_info("%s: already switch to %s\n", __func__, switch_to_str);
++		return;
++	}
 +
-+			return PTR_ERR(clk);
-+		}
++	gpio_direction_output(gpio, switch_to);
++	pr_info("%s: switch to %s\n", __func__, switch_to_str);
++}
 +
-+		dwc3_hisi->clks[i] = clk;
++static void usb_typec_power_ctrl(struct hisi_hikey_usb *hisi_hikey_usb,
++		int value)
++{
++	int gpio = hisi_hikey_usb->typec_vbus_gpio;
++
++	if (!gpio_is_valid(gpio)) {
++		pr_err("%s: typec power gpio is err\n", __func__);
++		return;
++	}
++
++	if (gpio_get_value(gpio) == value) {
++		pr_info("%s: typec power no change\n", __func__);
++		return;
++	}
++
++	gpio_direction_output(gpio, value);
++	pr_info("%s: set typec vbus gpio to %d\n", __func__, value);
++}
++
++static int extcon_hisi_pd_set_role(struct device *dev, enum usb_role role)
++{
++	struct hisi_hikey_usb *hisi_hikey_usb = dev_get_drvdata(dev);
++
++	dev_info(dev, "%s:set usb role to %d\n", __func__, role);
++	switch (role) {
++	case USB_ROLE_NONE:
++		usb_switch_ctrl(hisi_hikey_usb, USB_SWITCH_TO_HUB);
++		usb_typec_power_ctrl(hisi_hikey_usb,
++				!hisi_hikey_usb->typec_vbus_enable_val);
++		hub_power_ctrl(hisi_hikey_usb, HUB_VBUS_POWER_ON);
++		extcon_set_state_sync(hisi_hikey_usb->edev, EXTCON_USB, false);
++		extcon_set_state_sync(hisi_hikey_usb->edev, EXTCON_USB_HOST,
++				true);
++		break;
++	case USB_ROLE_HOST:
++		usb_switch_ctrl(hisi_hikey_usb, USB_SWITCH_TO_TYPEC);
++		usb_typec_power_ctrl(hisi_hikey_usb,
++				hisi_hikey_usb->typec_vbus_enable_val);
++		extcon_set_state_sync(hisi_hikey_usb->edev, EXTCON_USB, false);
++		extcon_set_state_sync(hisi_hikey_usb->edev, EXTCON_USB_HOST,
++				true);
++		break;
++	case USB_ROLE_DEVICE:
++		hub_power_ctrl(hisi_hikey_usb, HUB_VBUS_POWER_OFF);
++		usb_typec_power_ctrl(hisi_hikey_usb,
++				hisi_hikey_usb->typec_vbus_enable_val);
++		usb_switch_ctrl(hisi_hikey_usb, USB_SWITCH_TO_TYPEC);
++		extcon_set_state_sync(hisi_hikey_usb->edev, EXTCON_USB_HOST,
++				false);
++		extcon_set_state_sync(hisi_hikey_usb->edev, EXTCON_USB, true);
++		break;
 +	}
 +
 +	return 0;
 +}
 +
-+static int dwc3_hisi_enable_clks(struct dwc3_hisi *dwc3_hisi)
++static enum usb_role extcon_hisi_pd_get_role(struct device *dev)
 +{
-+	int i;
++	struct hisi_hikey_usb *hisi_hikey_usb = dev_get_drvdata(dev);
++
++	return usb_role_switch_get_role(hisi_hikey_usb->role_sw);
++}
++
++static const struct usb_role_switch_desc sw_desc = {
++	.set = extcon_hisi_pd_set_role,
++	.get = extcon_hisi_pd_get_role,
++	.allow_userspace_control = true,
++};
++
++static int hisi_hikey_usb_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *root = dev->of_node;
++	struct hisi_hikey_usb *hisi_hikey_usb;
 +	int ret;
 +
-+	for (i = 0; i < dwc3_hisi->num_clocks; i++) {
-+		ret = clk_prepare_enable(dwc3_hisi->clks[i]);
-+		if (ret < 0) {
-+			while (--i >= 0)
-+				clk_disable_unprepare(dwc3_hisi->clks[i]);
-+
-+			return ret;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static void dwc3_hisi_disable_clks(struct dwc3_hisi *dwc3_hisi)
-+{
-+	int i;
-+
-+	for (i = 0; i < dwc3_hisi->num_clocks; i++)
-+		clk_disable_unprepare(dwc3_hisi->clks[i]);
-+}
-+
-+static int dwc3_hisi_get_rstcs(struct dwc3_hisi *dwc3_hisi,
-+		struct device_node *np)
-+{
-+	struct device *dev = dwc3_hisi->dev;
-+	int i;
-+
-+	dwc3_hisi->num_rstcs = of_count_phandle_with_args(np,
-+			"resets", "#reset-cells");
-+	if (!dwc3_hisi->num_rstcs)
-+		return -ENOENT;
-+
-+	dwc3_hisi->rstcs = devm_kcalloc(dev, dwc3_hisi->num_rstcs,
-+			sizeof(struct reset_control *), GFP_KERNEL);
-+	if (!dwc3_hisi->rstcs)
++	hisi_hikey_usb = devm_kzalloc(dev, sizeof(*hisi_hikey_usb), GFP_KERNEL);
++	if (!hisi_hikey_usb)
 +		return -ENOMEM;
 +
-+	for (i = 0; i < dwc3_hisi->num_rstcs; i++) {
-+		struct reset_control *rstc;
++	dev_set_name(dev, "hisi_hikey_usb");
 +
-+		rstc = of_reset_control_get_shared_by_index(np, i);
-+		if (IS_ERR(rstc)) {
-+			while (--i >= 0)
-+				reset_control_put(dwc3_hisi->rstcs[i]);
-+			return PTR_ERR(rstc);
-+		}
++	hisi_hikey_usb->hub_vbus_gpio = INVALID_GPIO_VALUE;
++	hisi_hikey_usb->otg_switch_gpio = INVALID_GPIO_VALUE;
++	hisi_hikey_usb->typec_vbus_gpio = INVALID_GPIO_VALUE;
 +
-+		dwc3_hisi->rstcs[i] = rstc;
++	hisi_hikey_usb->hub_vbus_gpio = of_get_named_gpio(root,
++			"hub_vdd33_en_gpio", 0);
++	if (!gpio_is_valid(hisi_hikey_usb->hub_vbus_gpio)) {
++		pr_err("%s: hub_vbus_gpio is err\n", __func__);
++		return hisi_hikey_usb->hub_vbus_gpio;
 +	}
 +
-+	return 0;
-+}
-+
-+static int dwc3_hisi_reset_control_assert(struct dwc3_hisi *dwc3_hisi)
-+{
-+	int i, ret;
-+
-+	for (i = dwc3_hisi->num_rstcs - 1; i >= 0 ; i--) {
-+		ret = reset_control_assert(dwc3_hisi->rstcs[i]);
-+		if (ret) {
-+			while (--i >= 0)
-+				reset_control_deassert(dwc3_hisi->rstcs[i]);
-+			return ret;
-+		}
-+		udelay(10);
-+	}
-+
-+	return 0;
-+}
-+
-+static int dwc3_hisi_reset_control_deassert(struct dwc3_hisi *dwc3_hisi)
-+{
-+	int i, ret;
-+
-+	for (i = 0; i < dwc3_hisi->num_rstcs; i++) {
-+		ret = reset_control_deassert(dwc3_hisi->rstcs[i]);
-+		if (ret) {
-+			while (--i >= 0)
-+				reset_control_assert(dwc3_hisi->rstcs[i]);
-+			return ret;
-+		}
-+		udelay(10);
-+	}
-+
-+	return 0;
-+}
-+
-+static int dwc3_hisi_probe(struct platform_device *pdev)
-+{
-+	struct dwc3_hisi	*dwc3_hisi;
-+	struct device		*dev = &pdev->dev;
-+	struct device_node	*np = dev->of_node;
-+
-+	int			ret;
-+	int			i;
-+
-+	dwc3_hisi = devm_kzalloc(dev, sizeof(*dwc3_hisi), GFP_KERNEL);
-+	if (!dwc3_hisi)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, dwc3_hisi);
-+	dwc3_hisi->dev = dev;
-+
-+	ret = dwc3_hisi_init_clks(dwc3_hisi, np);
++	ret = gpio_request(hisi_hikey_usb->hub_vbus_gpio, "hub_vbus_int_gpio");
 +	if (ret) {
-+		dev_err(dev, "could not get clocks\n");
++		pr_err("%s: request hub_vbus_gpio err\n", __func__);
++		hisi_hikey_usb->hub_vbus_gpio = INVALID_GPIO_VALUE;
 +		return ret;
 +	}
 +
-+	ret = dwc3_hisi_enable_clks(dwc3_hisi);
++	ret = gpio_direction_output(hisi_hikey_usb->hub_vbus_gpio,
++			HUB_VBUS_POWER_ON);
 +	if (ret) {
-+		dev_err(dev, "could not enable clocks\n");
-+		goto err_put_clks;
++		pr_err("%s: power on hub vbus err\n", __func__);
++		goto free_gpio1;
 +	}
 +
-+	ret = dwc3_hisi_get_rstcs(dwc3_hisi, np);
-+	if (ret) {
-+		dev_err(dev, "could not get reset controllers\n");
-+		goto err_disable_clks;
-+	}
-+	ret = dwc3_hisi_reset_control_deassert(dwc3_hisi);
-+	if (ret) {
-+		dev_err(dev, "reset control deassert failed\n");
-+		goto err_put_rstcs;
++	hisi_hikey_usb->typec_vbus_gpio = of_get_named_gpio(root,
++		"typc_vbus_int_gpio,typec-gpios", 0);
++	if (!gpio_is_valid(hisi_hikey_usb->typec_vbus_gpio)) {
++		pr_err("%s: typec_vbus_gpio is err\n", __func__);
++		ret = hisi_hikey_usb->typec_vbus_gpio;
++		goto free_gpio1;
 +	}
 +
-+	pm_runtime_set_active(dev);
-+	pm_runtime_enable(dev);
-+	pm_runtime_get_sync(dev);
-+
-+	ret = of_platform_populate(np, NULL, NULL, dev);
++	ret = gpio_request(hisi_hikey_usb->typec_vbus_gpio,
++			"typc_vbus_int_gpio");
 +	if (ret) {
-+		dev_err(dev, "failed to add dwc3 core\n");
-+		goto err_reset_assert;
++		pr_err("%s: request typec_vbus_gpio err\n", __func__);
++		hisi_hikey_usb->typec_vbus_gpio = INVALID_GPIO_VALUE;
++		goto free_gpio1;
 +	}
 +
-+	dev_err(dev, "finish dwc3 hisi probe\n");
++	ret = of_property_read_u32(root, "typc_vbus_enable_val",
++				   &hisi_hikey_usb->typec_vbus_enable_val);
++	if (ret) {
++		pr_err("%s: typc_vbus_enable_val can't get\n", __func__);
++		goto free_gpio2;
++	}
 +
-+	g_dwc3_hisi = dwc3_hisi;
++	hisi_hikey_usb->typec_vbus_enable_val =
++		!!hisi_hikey_usb->typec_vbus_enable_val;
++
++	ret = gpio_direction_output(hisi_hikey_usb->typec_vbus_gpio,
++				    hisi_hikey_usb->typec_vbus_enable_val);
++	if (ret) {
++		pr_err("%s: power on typec vbus err", __func__);
++		goto free_gpio2;
++	}
++
++	if (of_device_is_compatible(root, "hisilicon,hikey960_usb")) {
++		hisi_hikey_usb->otg_switch_gpio = of_get_named_gpio(root,
++				"otg_gpio", 0);
++		if (!gpio_is_valid(hisi_hikey_usb->otg_switch_gpio)) {
++			pr_info("%s: otg_switch_gpio is err\n", __func__);
++			goto free_gpio2;
++		}
++
++		ret = gpio_request(hisi_hikey_usb->otg_switch_gpio,
++				"otg_switch_gpio");
++		if (ret) {
++			hisi_hikey_usb->otg_switch_gpio = INVALID_GPIO_VALUE;
++			pr_err("%s: request typec_vbus_gpio err\n", __func__);
++			goto free_gpio2;
++		}
++	}
++
++	hisi_hikey_usb->edev = devm_extcon_dev_allocate(dev, usb_extcon_cable);
++	if (IS_ERR(hisi_hikey_usb->edev)) {
++		dev_err(dev, "failed to allocate extcon device\n");
++		goto free_gpio2;
++	}
++
++	ret = devm_extcon_dev_register(dev, hisi_hikey_usb->edev);
++	if (ret < 0) {
++		dev_err(dev, "failed to register extcon device\n");
++		goto free_gpio2;
++	}
++	extcon_set_state(hisi_hikey_usb->edev, EXTCON_USB_HOST, true);
++
++	hisi_hikey_usb->role_sw = usb_role_switch_register(dev, &sw_desc);
++	if (IS_ERR(hisi_hikey_usb->role_sw))
++		goto free_gpio2;
++
++	platform_set_drvdata(pdev, hisi_hikey_usb);
++
 +	return 0;
 +
-+err_reset_assert:
-+	ret = dwc3_hisi_reset_control_assert(dwc3_hisi);
-+	if (ret)
-+		dev_err(dev, "reset control assert failed\n");
-+err_put_rstcs:
-+	for (i = 0; i < dwc3_hisi->num_rstcs; i++)
-+		reset_control_put(dwc3_hisi->rstcs[i]);
-+err_disable_clks:
-+	dwc3_hisi_disable_clks(dwc3_hisi);
-+err_put_clks:
-+	for (i = 0; i < dwc3_hisi->num_clocks; i++)
-+		clk_put(dwc3_hisi->clks[i]);
++free_gpio2:
++	if (gpio_is_valid(hisi_hikey_usb->typec_vbus_gpio)) {
++		gpio_free(hisi_hikey_usb->typec_vbus_gpio);
++		hisi_hikey_usb->typec_vbus_gpio = INVALID_GPIO_VALUE;
++	}
++
++free_gpio1:
++	if (gpio_is_valid(hisi_hikey_usb->hub_vbus_gpio)) {
++		gpio_free(hisi_hikey_usb->hub_vbus_gpio);
++		hisi_hikey_usb->hub_vbus_gpio = INVALID_GPIO_VALUE;
++	}
 +
 +	return ret;
 +}
 +
-+static int dwc3_hisi_remove(struct platform_device *pdev)
++static int  hisi_hikey_usb_remove(struct platform_device *pdev)
 +{
-+	struct dwc3_hisi	*dwc3_hisi = platform_get_drvdata(pdev);
-+	struct device		*dev = &pdev->dev;
-+	int			i, ret;
++	struct hisi_hikey_usb *hisi_hikey_usb = platform_get_drvdata(pdev);
 +
-+	of_platform_depopulate(dev);
-+
-+	ret = dwc3_hisi_reset_control_assert(dwc3_hisi);
-+	if (ret) {
-+		dev_err(dev, "reset control assert failed\n");
-+		return ret;
++	if (gpio_is_valid(hisi_hikey_usb->otg_switch_gpio)) {
++		gpio_free(hisi_hikey_usb->otg_switch_gpio);
++		hisi_hikey_usb->otg_switch_gpio = INVALID_GPIO_VALUE;
 +	}
 +
-+	for (i = 0; i < dwc3_hisi->num_clocks; i++) {
-+		clk_disable_unprepare(dwc3_hisi->clks[i]);
-+		clk_put(dwc3_hisi->clks[i]);
++	if (gpio_is_valid(hisi_hikey_usb->typec_vbus_gpio)) {
++		gpio_free(hisi_hikey_usb->typec_vbus_gpio);
++		hisi_hikey_usb->typec_vbus_gpio = INVALID_GPIO_VALUE;
 +	}
 +
-+	pm_runtime_put_sync(dev);
-+	pm_runtime_disable(dev);
++	if (gpio_is_valid(hisi_hikey_usb->hub_vbus_gpio)) {
++		gpio_free(hisi_hikey_usb->hub_vbus_gpio);
++		hisi_hikey_usb->hub_vbus_gpio = INVALID_GPIO_VALUE;
++	}
++
++	usb_role_switch_unregister(hisi_hikey_usb->role_sw);
 +
 +	return 0;
 +}
 +
-+#ifdef CONFIG_PM_SLEEP
-+static int dwc3_hisi_suspend(struct device *dev)
-+{
-+	struct dwc3_hisi *dwc3_hisi = dev_get_drvdata(dev);
-+	int ret;
-+
-+	dev_info(dev, "%s\n", __func__);
-+
-+	ret = dwc3_hisi_reset_control_assert(dwc3_hisi);
-+	if (ret) {
-+		dev_err(dev, "reset control assert failed\n");
-+		return ret;
-+	}
-+
-+	dwc3_hisi_disable_clks(dwc3_hisi);
-+
-+	pinctrl_pm_select_default_state(dev);
-+
-+	return 0;
-+}
-+
-+static int dwc3_hisi_resume(struct device *dev)
-+{
-+	struct dwc3_hisi *dwc3_hisi = dev_get_drvdata(dev);
-+	int ret;
-+
-+	dev_info(dev, "%s\n", __func__);
-+	pinctrl_pm_select_default_state(dev);
-+
-+	ret = dwc3_hisi_enable_clks(dwc3_hisi);
-+	if (ret) {
-+		dev_err(dev, "could not enable clocks\n");
-+		return ret;
-+	}
-+
-+	ret = dwc3_hisi_reset_control_deassert(dwc3_hisi);
-+	if (ret) {
-+		dev_err(dev, "reset control deassert failed\n");
-+		return ret;
-+	}
-+
-+	/* Wait for clock stable */
-+	msleep(100);
-+
-+	return 0;
-+}
-+#endif /* CONFIG_PM_SLEEP */
-+
-+static SIMPLE_DEV_PM_OPS(dwc3_hisi_dev_pm_ops,
-+		dwc3_hisi_suspend, dwc3_hisi_resume);
-+
-+static const struct of_device_id dwc3_hisi_match[] = {
-+	{ .compatible = "hisilicon,hi3660-dwc3" },
-+	{ /* sentinel */ },
++static const struct of_device_id id_table_hisi_hikey_usb[] = {
++	{.compatible = "hisilicon,gpio_hubv1"},
++	{.compatible = "hisilicon,hikey960_usb"},
++	{}
 +};
 +
-+MODULE_DEVICE_TABLE(of, dwc3_hisi_match);
-+
-+static struct platform_driver dwc3_hisi_driver = {
-+	.probe = dwc3_hisi_probe,
-+	.remove = dwc3_hisi_remove,
++static struct platform_driver  hisi_hikey_usb_driver = {
++	.probe = hisi_hikey_usb_probe,
++	.remove = hisi_hikey_usb_remove,
 +	.driver = {
-+		.name = "usb-hisi-dwc3",
-+		.of_match_table = dwc3_hisi_match,
-+		.pm = &dwc3_hisi_dev_pm_ops,
++		.name = DEVICE_DRIVER_NAME,
++		.of_match_table = of_match_ptr(id_table_hisi_hikey_usb),
++
 +	},
 +};
 +
-+module_platform_driver(dwc3_hisi_driver);
++module_platform_driver(hisi_hikey_usb_driver);
 +
 +MODULE_AUTHOR("Yu Chen <chenyu56@huawei.com>");
++MODULE_DESCRIPTION("Driver Support for USB functionality of Hikey");
 +MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("DesignWare USB3 HiSilicon Glue Layer");
 -- 
 2.15.0-rc2
 
