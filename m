@@ -1,307 +1,78 @@
 Return-Path: <SRS0=4IUq=NH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3C90ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 07:33:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DD02C46475
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 07:46:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F1162082C
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 07:33:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAAC020856
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 07:46:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L3Ll9ucs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F1162082C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HBc6qDvg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAAC020856
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728334AbeJ0QOA (ORCPT
+        id S1728271AbeJ0Q0Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 12:14:00 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:36125 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728020AbeJ0QN6 (ORCPT
+        Sat, 27 Oct 2018 12:26:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:51190 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726610AbeJ0Q0Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 12:13:58 -0400
-Received: by mail-it1-f194.google.com with SMTP id h14-v6so4321524itf.1;
-        Sat, 27 Oct 2018 00:33:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=e526CFyajBgx96B06SVfMTHspOpYwVCNLay6h1juHoY=;
-        b=L3Ll9ucsCWbGgcB25Wx+Uk7k/QXErh1f2oW8/QXjC/ei2UZ6N8fgtkhiXnnhPZ36n6
-         Jxe/b/Gw3p3mM6kQPtdV3GFKyfsN4vMFe2npt9Ys+FscdgsjUNEuf2iweiMgFq/71hXl
-         dlcU6gOy85v/ptICy8LqKa9Zh9c/90wBwWTm4X5KDqlpQGn5MSh4ihX2Zw0BT5vQWOjB
-         +VbehDl/TKihj66kSL8632BBGqkyn15lkcZoxU9KKE2UsLInI34H1kz1p8EfS5DlgRHM
-         63HdAdKJFVV3L7mDjeK3nG+RVLFx2BHpGC8DVMCrwFuT8fxrAwwYg14UAKp21mGIU48g
-         YvbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=e526CFyajBgx96B06SVfMTHspOpYwVCNLay6h1juHoY=;
-        b=IZbQZAN8XwoDeGikGivKXlLB7poLxileKB1KOY5AMJYpUP0KLbwyov1im9hDZh7x/j
-         Dmex8E2xfKOS3p99bcd6KPVWzPGWXkpPK6hynu9qJwXVZclfYQBgTSpQZvt59/JmCtyY
-         hHh+QY3578mrvYV4rK0XaNztIJYi/v13xy1fz/AjlKiOLfMtipnKHsd1HR1TmHb85Tei
-         l32KxfyqwTT5lq2y83EyWxiv5ChaouCtGRVBhYmA2GTIeVkaxpjCgDovGxNCcIhTxTb0
-         T24TAMDgkuxUl31YPbRJ7ek/0e2UR7TV8vLUrUZ8KijsX9vZypds8mxwZyjELC1jEdgh
-         cuVw==
-X-Gm-Message-State: AGRZ1gJuMRi1MaYNgO6ZDAazXqDnZYBT99EGSK8ZjQBuf88Qh1GnjFuD
-        TTAvNtZxyjSaqwQQnfJAYB1VqpgTKxfFZu8LlkY=
-X-Google-Smtp-Source: AJdET5e+Hs17rIGuyF6Vc3E8NvPZ1Qbos50tYdl98NEpwZtWSK14iezZQpeuO+Z8PVnZoYCe8PFoXbYrCMZcY4wZzxI=
-X-Received: by 2002:a24:6c14:: with SMTP id w20-v6mr5385680itb.103.1540625634696;
- Sat, 27 Oct 2018 00:33:54 -0700 (PDT)
+        Sat, 27 Oct 2018 12:26:25 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=mqaUCOFBFYJYsnLY7OQxGoPDOvQJyr8Y2RrHnFs3nHM=; b=HBc6qDvgNerNICCAI+jpfcQoj
+        DR8fmcCa79QQR6UASNtNdfEiFkI9LPI+4CjPya1ecLaNorIiVLiaEjJzocTzzvxFyqz1PLSZLd/RY
+        EAzZh3b3GeZW5DtKEcfqtwv4E0u+uxiJCKcduyTFGcowGxmM+Q5rKhe3tAjqPggcPLuZKslmixxC/
+        KoO7lupH7THemSZBV9LuVH9xpnQ60tIdCtkqUwmFCx4e80WdutySfhmm+2Q0BFGxM2GKGNITFw9OZ
+        w/8/eCUDKdckQkPhvjbJ9/ZOt8ywM3vfjNsg6aIFxieJ5JrGf7scVv+lAvyTSKuO0zOZcC9Pbf+Jk
+        utqt7kXFw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gGJIT-0003YZ-Iv; Sat, 27 Oct 2018 07:46:13 +0000
+Date:   Sat, 27 Oct 2018 00:46:13 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Palmer Dabbelt <palmer@sifive.com>
+Cc:     linux-riscv@lists.infradead.org, aou@eecs.berkeley.edu,
+        paul@paul-moore.com, eparis@redhat.com, keescook@chromium.org,
+        luto@amacapital.net, wad@chromium.org,
+        Wesley Terpstra <wesley@sifive.com>, dhowells@redhat.com,
+        tglx@linutronix.de, pombredanne@nexb.com,
+        Greg KH <gregkh@linuxfoundation.org>,
+        kstewart@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        linux-audit@redhat.com, david.abdurachmanov@gmail.com
+Subject: Re: [PATCH 1/2] Move EM_RISCV into elf-em.h
+Message-ID: <20181027074613.GA7868@infradead.org>
+References: <CAEn-LTqbEmWovu4t7Rs4C211+GRRU4V3B=+WmW0SOhX_b8db5Q@mail.gmail.com>
+ <20181024204036.8799-1-palmer@sifive.com>
+ <20181024204036.8799-2-palmer@sifive.com>
 MIME-Version: 1.0
-References: <00000000000073bd310578e29d8d@google.com>
-In-Reply-To: <00000000000073bd310578e29d8d@google.com>
-From:   Xin Long <lucien.xin@gmail.com>
-Date:   Sat, 27 Oct 2018 16:33:42 +0900
-Message-ID: <CADvbK_eCqg4TYchu7c6o+ooySx6LK=RUZQ0wveLKM63hg3JMVA@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in sctp_outq_select_transport
-To:     syzbot+56a40ceee5fb35932f4d@syzkaller.appspotmail.com
-Cc:     davem <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>,
-        linux-sctp@vger.kernel.org,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        network dev <netdev@vger.kernel.org>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        syzkaller-bugs@googlegroups.com,
-        Vlad Yasevich <vyasevich@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181024204036.8799-2-palmer@sifive.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 7:14 PM syzbot
-<syzbot+56a40ceee5fb35932f4d@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    23469de647c4 Merge git://git.kernel.org/pub/scm/linux/kern..
-> git tree:       net
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13580ce5400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=b3f55cb3dfcc6c33
-> dashboard link: https://syzkaller.appspot.com/bug?extid=56a40ceee5fb35932f4d
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
->
-> Unfortunately, I don't have any reproducer for this crash yet.
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+56a40ceee5fb35932f4d@syzkaller.appspotmail.com
->
-> ==================================================================
-> BUG: KASAN: use-after-free in sctp_outq_select_transport+0x77e/0x9a0
-> net/sctp/outqueue.c:840
-> Read of size 4 at addr ffff8801c5ff2614 by task syz-executor5/8275
->
-> CPU: 0 PID: 8275 Comm: syz-executor5 Not tainted 4.19.0-rc8+ #152
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->   <IRQ>
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0x1c4/0x2b6 lib/dump_stack.c:113
->   print_address_description.cold.8+0x9/0x1ff mm/kasan/report.c:256
->   kasan_report_error mm/kasan/report.c:354 [inline]
->   kasan_report.cold.9+0x242/0x309 mm/kasan/report.c:412
->   __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
->   sctp_outq_select_transport+0x77e/0x9a0 net/sctp/outqueue.c:840
-I think we need a fix like:
-@@ -586,6 +586,10 @@ void sctp_assoc_rm_peer(struct sctp_association *asoc,
-                                sctp_transport_hold(active);
-        }
+On Wed, Oct 24, 2018 at 01:40:35PM -0700, Palmer Dabbelt wrote:
+> This should never have been inside our arch port to begin with, it's
+> just a relic from when we were maintaining out of tree patches.
+> 
+> Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 
-+        list_for_each_entry(ch, &asoc->outqueue.out_chunk_list, list)
-+               if (ch->transport == transport)
-+                       ch->transport = NULL;
-+
-        asoc->peer.transport_count--;
+Looks good, and probably harmless enought that we should pick it up
+for this merge window:
 
-        sctp_transport_free(peer);
-
->   sctp_outq_flush_data net/sctp/outqueue.c:1100 [inline]
->   sctp_outq_flush+0x14f7/0x34f0 net/sctp/outqueue.c:1209
->   sctp_outq_uncork+0x6a/0x80 net/sctp/outqueue.c:776
->   sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1820 [inline]
->   sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
->   sctp_do_sm+0x608/0x7190 net/sctp/sm_sideeffect.c:1191
->   sctp_assoc_bh_rcv+0x346/0x670 net/sctp/associola.c:1067
->   sctp_inq_push+0x280/0x370 net/sctp/inqueue.c:95
->   sctp_rcv+0x2d93/0x3c00 net/sctp/input.c:268
->   sctp6_rcv+0x15/0x30 net/sctp/ipv6.c:1061
->   ip6_input_finish+0x3fc/0x1aa0 net/ipv6/ip6_input.c:383
->   NF_HOOK include/linux/netfilter.h:289 [inline]
->   ip6_input+0xe9/0x600 net/ipv6/ip6_input.c:426
->   dst_input include/net/dst.h:450 [inline]
->   ip6_rcv_finish+0x17a/0x330 net/ipv6/ip6_input.c:76
->   NF_HOOK include/linux/netfilter.h:289 [inline]
->   ipv6_rcv+0x120/0x640 net/ipv6/ip6_input.c:271
->   __netif_receive_skb_one_core+0x14d/0x200 net/core/dev.c:4913
->   __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:5023
->   process_backlog+0x218/0x6f0 net/core/dev.c:5829
->   napi_poll net/core/dev.c:6249 [inline]
->   net_rx_action+0x7c5/0x1950 net/core/dev.c:6315
-> IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
-> IPv6: ADDRCONF(NETDEV_CHANGE): vcan0: link becomes ready
->   __do_softirq+0x30c/0xb03 kernel/softirq.c:292
->   do_softirq_own_stack+0x2a/0x40 arch/x86/entry/entry_64.S:1047
->   </IRQ>
->   do_softirq.part.13+0x126/0x160 kernel/softirq.c:336
->   do_softirq kernel/softirq.c:328 [inline]
->   __local_bh_enable_ip+0x21d/0x260 kernel/softirq.c:189
->   local_bh_enable include/linux/bottom_half.h:32 [inline]
->   rcu_read_unlock_bh include/linux/rcupdate.h:723 [inline]
->   ip6_finish_output2+0xce4/0x27a0 net/ipv6/ip6_output.c:121
->   ip6_finish_output+0x58c/0xc60 net/ipv6/ip6_output.c:154
->   NF_HOOK_COND include/linux/netfilter.h:278 [inline]
->   ip6_output+0x232/0x9d0 net/ipv6/ip6_output.c:171
->   dst_output include/net/dst.h:444 [inline]
->   NF_HOOK include/linux/netfilter.h:289 [inline]
->   ip6_xmit+0xf69/0x2420 net/ipv6/ip6_output.c:275
->   sctp_v6_xmit+0x3b2/0x790 net/sctp/ipv6.c:230
->   sctp_packet_transmit+0x298e/0x3db0 net/sctp/output.c:656
->   sctp_packet_singleton net/sctp/outqueue.c:791 [inline]
->   sctp_outq_flush_ctrl.constprop.11+0x7a9/0xe50 net/sctp/outqueue.c:922
->   sctp_outq_flush+0x310/0x34f0 net/sctp/outqueue.c:1204
->   sctp_outq_uncork+0x6a/0x80 net/sctp/outqueue.c:776
-> kobject: 'rfkill9' (0000000067be229d): fill_kobj_path: path
-> = '/devices/virtual/mac80211_hwsim/hwsim7/ieee80211/phy7/rfkill9'
->   sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1349 [inline]
->   sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
->   sctp_do_sm+0x4f25/0x7190 net/sctp/sm_sideeffect.c:1191
-> ieee80211 phy7: Selected rate control algorithm 'minstrel_ht'
-> kobject: 'net' (00000000cdd117dc): kobject_add_internal: parent: 'hwsim7',
-> set: '(null)'
->   sctp_endpoint_bh_rcv+0x465/0x960 net/sctp/endpointola.c:456
-> kobject: 'wlan0' (00000000c9d333fc): kobject_add_internal: parent: 'net',
-> set: 'devices'
->   sctp_inq_push+0x280/0x370 net/sctp/inqueue.c:95
->   sctp_backlog_rcv+0x1a8/0xd50 net/sctp/input.c:351
-> kobject: 'wlan0' (00000000c9d333fc): kobject_uevent_env
-> kobject: 'wlan0' (00000000c9d333fc): fill_kobj_path: path
-> = '/devices/virtual/mac80211_hwsim/hwsim7/net/wlan0'
->   sk_backlog_rcv include/net/sock.h:931 [inline]
->   __release_sock+0x12f/0x3a0 net/core/sock.c:2336
-> kobject: 'queues' (00000000c5d009e9): kobject_add_internal:
-> parent: 'wlan0', set: '<NULL>'
->   release_sock+0xad/0x2c0 net/core/sock.c:2849
->   sock_setsockopt+0x60d/0x2280 net/core/sock.c:1054
-> kobject: 'queues' (00000000c5d009e9): kobject_uevent_env
-> kobject: 'queues' (00000000c5d009e9): kobject_uevent_env: filter function
-> caused the event to drop!
->   __sys_setsockopt+0x304/0x3c0 net/socket.c:1898
-> kobject: 'rx-0' (000000007736ba36): kobject_add_internal: parent: 'queues',
-> set: 'queues'
->   __do_sys_setsockopt net/socket.c:1913 [inline]
->   __se_sys_setsockopt net/socket.c:1910 [inline]
->   __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1910
->   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-> kobject: 'rx-0' (000000007736ba36): kobject_uevent_env
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> kobject: 'rx-0' (000000007736ba36): fill_kobj_path: path
-> = '/devices/virtual/mac80211_hwsim/hwsim7/net/wlan0/queues/rx-0'
-> RIP: 0033:0x457569
-> Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
-> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
-> ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-> RSP: 002b:00007f0613beec78 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-> RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000457569
-> RDX: 000000000000001a RSI: 0000000000000001 RDI: 0000000000000003
-> RBP: 000000000072c040 R08: 0000000000000010 R09: 0000000000000000
-> R10: 00000000200000c0 R11: 0000000000000246 R12: 00007f0613bef6d4
-> R13: 00000000004c3b61 R14: 00000000004d5c88 R15: 00000000ffffffff
->
-> Allocated by task 8261:
->   save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-> kobject: 'tx-0' (000000008f0eae4c): kobject_add_internal: parent: 'queues',
-> set: 'queues'
->   set_track mm/kasan/kasan.c:460 [inline]
->   kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
->   kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
->   kmalloc include/linux/slab.h:513 [inline]
->   kzalloc include/linux/slab.h:707 [inline]
->   sctp_transport_new+0x10a/0x880 net/sctp/transport.c:111
->   sctp_assoc_add_peer+0x2de/0x10d0 net/sctp/associola.c:630
->   sctp_process_param net/sctp/sm_make_chunk.c:2540 [inline]
->   sctp_process_init+0xfc0/0x29e0 net/sctp/sm_make_chunk.c:2356
->   sctp_cmd_process_init net/sctp/sm_sideeffect.c:682 [inline]
->   sctp_cmd_interpreter net/sctp/sm_sideeffect.c:1410 [inline]
->   sctp_side_effects net/sctp/sm_sideeffect.c:1220 [inline]
->   sctp_do_sm+0x13b9/0x7190 net/sctp/sm_sideeffect.c:1191
->   sctp_assoc_bh_rcv+0x346/0x670 net/sctp/associola.c:1067
->   sctp_inq_push+0x280/0x370 net/sctp/inqueue.c:95
->   sctp_backlog_rcv+0x1a8/0xd50 net/sctp/input.c:351
->   sk_backlog_rcv include/net/sock.h:931 [inline]
->   __release_sock+0x12f/0x3a0 net/core/sock.c:2336
-> kobject: 'tx-0' (000000008f0eae4c): kobject_uevent_env
->   release_sock+0xad/0x2c0 net/core/sock.c:2849
->   sctp_wait_for_connect+0x391/0x640 net/sctp/socket.c:8667
->   sctp_sendmsg_to_asoc+0x1d0f/0x2230 net/sctp/socket.c:1985
->   sctp_sendmsg+0x13c2/0x1da0 net/sctp/socket.c:2131
->   inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
->   sock_sendmsg_nosec net/socket.c:621 [inline]
->   sock_sendmsg+0xd5/0x120 net/socket.c:631
->   __sys_sendto+0x3d7/0x670 net/socket.c:1788
->   __do_sys_sendto net/socket.c:1800 [inline]
->   __se_sys_sendto net/socket.c:1796 [inline]
->   __x64_sys_sendto+0xe1/0x1a0 net/socket.c:1796
->   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> kobject: 'tx-0' (000000008f0eae4c): fill_kobj_path: path
-> = '/devices/virtual/mac80211_hwsim/hwsim7/net/wlan0/queues/tx-0'
->
-> Freed by task 9:
->   save_stack+0x43/0xd0 mm/kasan/kasan.c:448
->   set_track mm/kasan/kasan.c:460 [inline]
->   __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
->   kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
->   __cache_free mm/slab.c:3498 [inline]
->   kfree+0xcf/0x230 mm/slab.c:3813
->   sctp_transport_destroy_rcu+0x4a/0x60 net/sctp/transport.c:163
->   __rcu_reclaim kernel/rcu/rcu.h:236 [inline]
->   rcu_do_batch kernel/rcu/tree.c:2576 [inline]
->   invoke_rcu_callbacks kernel/rcu/tree.c:2880 [inline]
->   __rcu_process_callbacks kernel/rcu/tree.c:2847 [inline]
->   rcu_process_callbacks+0xf23/0x2670 kernel/rcu/tree.c:2864
->   __do_softirq+0x30c/0xb03 kernel/softirq.c:292
-> kobject: 'tx-1' (000000009aaee194): kobject_add_internal: parent: 'queues',
-> set: 'queues'
->
-> The buggy address belongs to the object at ffff8801c5ff24c0
->   which belongs to the cache kmalloc-1024 of size 1024
-> The buggy address is located 340 bytes inside of
->   1024-byte region [ffff8801c5ff24c0, ffff8801c5ff28c0)
-> The buggy address belongs to the page:
-> page:ffffea000717fc80 count:1 mapcount:0 mapping:ffff8801da800ac0 index:0x0
-> compound_mapcount: 0
-> flags: 0x2fffc0000008100(slab|head)
-> raw: 02fffc0000008100 ffffea00070ed808 ffffea00071b2488 ffff8801da800ac0
-> raw: 0000000000000000 ffff8801c5ff2040 0000000100000007 0000000000000000
-> kobject: 'tx-1' (000000009aaee194): kobject_uevent_env
-> page dumped because: kasan: bad access detected
->
-> Memory state around the buggy address:
->   ffff8801c5ff2500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->   ffff8801c5ff2580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> > ffff8801c5ff2600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->                           ^
->   ffff8801c5ff2680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->   ffff8801c5ff2700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ==================================================================
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
+Reviewed-by: Christoph Hellwig <hch@lst.de>
