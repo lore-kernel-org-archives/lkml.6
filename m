@@ -2,137 +2,98 @@ Return-Path: <SRS0=4IUq=NH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D8DC46475
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 06:25:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87F47C46475
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 06:37:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CC2420824
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 06:25:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CF8B2064C
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 06:37:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="elt7TEOQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CC2420824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b="cFSIzPI0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CF8B2064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=telus.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728565AbeJ0PF0 (ORCPT
+        id S1728093AbeJ0PR1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 11:05:26 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35359 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728550AbeJ0PFX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 11:05:23 -0400
-Received: by mail-wm1-f66.google.com with SMTP id q12-v6so497789wmq.0;
-        Fri, 26 Oct 2018 23:25:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=HWfMrph8e/QdCRT9hyqcC5RTeNy6Cd43nR34MMh8yUc=;
-        b=elt7TEOQTLoh9Nii+HJAVN1GEQlYVZUKCnkCTO11IpfHNvqMOhY6yuHGvSLo326sO3
-         9qcNBucx9Vsq0xh/NQ9z8KQJJw185yDdp6UnesDYIprdkqj1kSUZRtyoZAHe6tJORidP
-         Q0VqyE9B9GowFyypAcvUogZkjRbBb2wiYxU9imOcG1d6Dky11lschZ6tSSYEJlBZC/ES
-         qGLgwFO8czxMKXKqDg1mZ9FgBuq/RG4zwmcZ50wQcXohyPpynXayICi6DUbplY9H1Gnw
-         j7aJDysH4gYEO4eL2ENNOxj7PU2p4bFZEh4frlerwHgdlLGKdlOE/fdIEBB3nLSBI1qY
-         StEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=HWfMrph8e/QdCRT9hyqcC5RTeNy6Cd43nR34MMh8yUc=;
-        b=F2+FYR6CtEaMz+m/66Sa3h0GwLhkdg090+qjsQA4tMEvMEZzXXXXzpsankwIZcsvV1
-         LZRourRchi9TEXZrUFuMs8BRZ/dj/4J7I+E6gQwvwbz1uYJRLxUc8J1L7VmcezcE9YWo
-         jHPPtUIryznk6zEjIzpAv7R0tHpTvQHsDmXlvUPfOPxTQFrPTZaAV2jE7aR6QspiZj3R
-         hBB7+zulI8W+TmH7AKqK2mgbj1UE/WgztMY/GDV1MfBQSauGQ9SYF5krrvBENLIfLbTG
-         9lCl+S+sk/eCYKPQ5L+FLaSG/Z3371UEe8rVehih3wU474xi/p/o86VB3LGHRIAez1/H
-         JLFg==
-X-Gm-Message-State: AGRZ1gJ3oPS/LoCyZuywBsPmBUqUJTpc/BGY8/IymbHDWB+18rYgi2d4
-        WBKs/x1nlWaTFPpzZ1ahE/M=
-X-Google-Smtp-Source: AJdET5eFC05hS/iBEakxEQI1wqC2E1sr5kY3lTdIhQpBZFPrWrNbkHu2M8YOObERFBjGfq23VdFOiQ==
-X-Received: by 2002:a1c:dcc:: with SMTP id 195-v6mr7445960wmn.117.1540621527859;
-        Fri, 26 Oct 2018 23:25:27 -0700 (PDT)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id l67-v6sm17320180wma.20.2018.10.26.23.25.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 26 Oct 2018 23:25:27 -0700 (PDT)
-Date:   Fri, 26 Oct 2018 23:25:25 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Bart Van Assche <bvanassche@acm.org>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        ooo@electrozaur.com,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        hch@infradead.org
-Subject: Re: [PATCH] libosd: Remove ignored __weak attribute
-Message-ID: <20181027062525.GA22995@flashbox>
-References: <20181025225548.GA10326@flashbox>
- <CAKwvOdnwmf47_m_0K5OCLmXbrkLNnekpNOPCCMeJqkuqKUbQ-A@mail.gmail.com>
- <1540576908.66186.103.camel@acm.org>
- <CAKwvOdnYx60JkJHJkD7CYA9yx5Oa7Tn9q4aZ3-tcZGx++yoduQ@mail.gmail.com>
- <1540589437.66186.124.camel@acm.org>
- <CAKwvOdm-xYRqCBXhLC1ceC44_rEmggW4qiSgGpRkpL+p-NadVg@mail.gmail.com>
- <1540591147.66186.127.camel@acm.org>
- <CAKwvOdmUhtK10cbYFoEJJp4O8LA_F-+f68A_NcL_fm_FH6QodA@mail.gmail.com>
- <20181027033552.GA29237@thunk.org>
- <ac63f6d2-d9f3-c512-892d-2e4450fd4c1e@acm.org>
+        Sat, 27 Oct 2018 11:17:27 -0400
+Received: from cmta18.telus.net ([209.171.16.91]:57162 "EHLO cmta18.telus.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727772AbeJ0PR0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Oct 2018 11:17:26 -0400
+Received: from dougxps ([173.180.45.4])
+        by cmsmtp with SMTP
+        id GIDtgZdMYiBO5GIDvgMvJl; Sat, 27 Oct 2018 00:37:30 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=telus.net; s=neo;
+        t=1540622250; bh=KYNAyi15HY+wSJz15EFdb9FS9k28v2JxwZM3dkfcFTA=;
+        h=From:To:Cc:References:In-Reply-To:Subject:Date;
+        b=cFSIzPI0kDsvjc3XnsEz+FG+by00ZC5Tle5yP92dy2ajjO28+bh6OyfgMZtDJRwgw
+         yODNewYsoLw52peJ/vC3khEvMcyjuizm6ohVkZ2rvADO6fjuxXrGfD1DLi6pDe8x6N
+         pb0n7IqjU/Zdw4ZXOAlP5gFreTbE61oBoWMBTOYaiehB21/hcHEymHgRTFOPeY5Z83
+         gLKm71uCc4OLR+SWdRXRyx+Q4PPzYFVcrg0f0eEjjFsXznvJMbbk0W11Plhtx6Iml0
+         A9Obt0sGcHicL6a3jLUkjB7cDyb5UFlXcvSqX8rBO4T/T+F8JmYx9JmAyQVRxPI9EJ
+         UN4flCygi7iBQ==
+X-Authority-Analysis: v=2.3 cv=d5AkNirE c=1 sm=1 tr=0
+ a=zJWegnE7BH9C0Gl4FFgQyA==:117 a=zJWegnE7BH9C0Gl4FFgQyA==:17
+ a=Pyq9K9CWowscuQLKlpiwfMBGOR0=:19 a=kj9zAlcOel0A:10 a=D19gQVrFAAAA:8
+ a=0igoudQp0_ATWZdRAXoA:9 a=CjuIK1q_8ugA:10 a=JZBxSqCIBzwA:10
+ a=W4TVW4IDbPiebHqcZpNg:22
+From:   "Doug Smythies" <dsmythies@telus.net>
+To:     "'Rafael J. Wysocki'" <rjw@rjwysocki.net>
+Cc:     "'Srinivas Pandruvada'" <srinivas.pandruvada@linux.intel.com>,
+        "'Peter Zijlstra'" <peterz@infradead.org>,
+        "'LKML'" <linux-kernel@vger.kernel.org>,
+        "'Frederic Weisbecker'" <frederic@kernel.org>,
+        "'Mel Gorman'" <mgorman@suse.de>,
+        "'Giovanni Gherdovich'" <ggherdovich@suse.cz>,
+        "'Daniel Lezcano'" <daniel.lezcano@linaro.org>,
+        "'Linux PM'" <linux-pm@vger.kernel.org>,
+        "Doug Smythies" <dsmythies@telus.net>
+References: FyDdgD8Nty5tHFyDfgBIL9
+In-Reply-To: FyDdgD8Nty5tHFyDfgBIL9
+Subject: RE: [RFC/RFT][PATCH v2] cpuidle: New timer events oriented governor for tickless systems
+Date:   Fri, 26 Oct 2018 23:37:24 -0700
+Message-ID: <001201d46dbf$88339510$989abf30$@net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ac63f6d2-d9f3-c512-892d-2e4450fd4c1e@acm.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Office Outlook 12.0
+Content-Language: en-ca
+Thread-Index: AdRtDH3oudDuSet0QzO8Qu9q0tpqpwAsSDAw
+X-CMAE-Envelope: MS4wfIqZcX7ef17TlyzbBLgRoUqidBvOdB/Y/4Z82Unkx2N40mfIS+ChQ66NjZgJRf+IhmqORMabWlWuy7vHtNu7ttqoUpKxxjIR77Emz3ECa5PfoCI+u5Y1
+ dFqv5o/YVuTSv0LP/o5TBuGbPyB47bWd6eNBNfa9BFWBIINxWNTw/J1qzx0SXlunqI3dpNJpQR6OmoINiYigOGHb+r6whQABJgP/j+8Kh5AGhTrvnrJNVoRI
+ Gl3lr1YRrdJ35QTXcuY8l6+FFvhc4wSXgctZXQ8pnEf0mJjpPaTvMrGePhg4HufR/EWqmROYzz00FDi1+MTUYPIc63d93fcfxAOauNBiUCdvxRCI7Ja9xECI
+ LQYOEnvTgb5R9bBzTWGjvoN2KeoCIRmgxbN1Ce6DibHEN3VUbvA7DHLMzUqxxB5vFIf2USEB5cTDKkYZbcfF8VTvDv284ib35gBOzeA+m3h35bz7nBkME6bP
+ 3yV+7k/DVy2kutP4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 11:15:11PM -0700, Bart Van Assche wrote:
-> On 10/26/18 8:35 PM, Theodore Y. Ts'o wrote:
-> > The second observation I'll make is that if someone is proposing a
-> > cleanup patch, it's unfair to dump on the person proposing the cleanup
-> > patch the (non-trivial) effort to drop a driver/file system/subsystem.
-> 
-> Hi Ted,
-> 
-> Maybe I was not clear enough. It never was my intention to suggest that Nick
-> or Nathan should remove the OSD code. This is something I'm willing to do
-> myself. BTW, I'm still waiting for someone to explain me why the patch at
-> the start of this thread was submitted by people who never have used the
-> libosd driver and who do not have any plans to use it ever.
-> 
+This is just for anybody else trying to compile:
 
-Hi Bart,
+On 2018.10.26 02:12 Rafael J. Wysocki wrote:
 
-We've been cleaning up Clang warnings seen in various configurations. In
-this case, I believe this warning shows up in an arm64 allyesconfig
-build (would probably show up in an x86_64 one too but I'm not going to
-test right now).
+> The venerable menu governor does some thigns that are quite
 
-More info: https://github.com/ClangBuiltLinux/linux/issues/58
+Typo: thigns -> things
 
-Cheers,
-Nathan
+...[snip]...
 
-> > If the maintainer wants to drop a driver/file system, that should be
-> > the maintainer's responsibiltiy; not someone proposing a
-> > cleanup/maintenance patch.
-> 
-> I think anyone who makes tree-wide changes has the freedom to suggest to
-> remove a driver. Having to modify drivers that are no longer maintained when
-> doing tree-wide changes can be a real pain.
-> 
-> Additionally, you may have missed earlier discussions on the linux-scsi
-> mailing list about this driver. The first time it was suggested to remove
-> this driver was several years ago. The outcome of a discussion of a few
-> weeks ago is that there is agreement about the removal of this driver. See
-> also the following messages:
-> * https://www.spinics.net/lists/linux-scsi/msg123738.html
-> * https://www.spinics.net/lists/linux-scsi/msg123742.html
-> 
-> Bart.
+> The patch should apply on top of 4.19, although I'm running it on
+> top of my linux-next branch.
+
+No, it uses "poll_time_limit" which was introduced in patch 1 of 6
+[1] in that group of menu changes from October 2nd.
+
+"[PATCH 1/6] cpuidle: menu: Fix wakeup statistics updates for polling state"
+
+... Doug
+
+[1] https://lkml.org/lkml/2018/10/3/42
+
+
