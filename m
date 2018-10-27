@@ -2,110 +2,79 @@ Return-Path: <SRS0=4IUq=NH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=FAKE_REPLY_C,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8690CECDE46
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 01:10:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E564ECDE46
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 01:46:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53C16207DD
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 01:10:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53C16207DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id F085F20843
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 01:46:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F085F20843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=freebsd.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727256AbeJ0Jtm (ORCPT
+        id S1726672AbeJ0KZ7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 05:49:42 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:21294 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726048AbeJ0Jtm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 05:49:42 -0400
-Received: from fsav102.sakura.ne.jp (fsav102.sakura.ne.jp [27.133.134.229])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9R1ADKa061478;
-        Sat, 27 Oct 2018 10:10:13 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav102.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp);
- Sat, 27 Oct 2018 10:10:13 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank060157065137.bbtec.net [60.157.65.137])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w9R1A8fQ061445
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Sat, 27 Oct 2018 10:10:13 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [RFC PATCH 2/2] memcg: do not report racy no-eligible OOM tasks
-To:     Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>
-Cc:     linux-mm@kvack.org, David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20181022071323.9550-1-mhocko@kernel.org>
- <20181022071323.9550-3-mhocko@kernel.org>
- <20181026142531.GA27370@cmpxchg.org> <20181026192551.GC18839@dhcp22.suse.cz>
- <20181026193304.GD18839@dhcp22.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <dfafc626-2233-db9b-49fa-9d4bae16d4aa@i-love.sakura.ne.jp>
-Date:   Sat, 27 Oct 2018 10:10:06 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 27 Oct 2018 06:25:59 -0400
+Received: from mx2.freebsd.org ([8.8.178.116]:27121 "EHLO mx2.freebsd.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725828AbeJ0KZ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Oct 2018 06:25:59 -0400
+X-Greylist: delayed 325 seconds by postgrey-1.27 at vger.kernel.org; Sat, 27 Oct 2018 06:25:58 EDT
+Received: from mx1.freebsd.org (mx1.freebsd.org [IPv6:2610:1c1:1:606c::19:1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client CN "mx1.freebsd.org", Issuer "Let's Encrypt Authority X3" (verified OK))
+        by mx2.freebsd.org (Postfix) with ESMTPS id E48126712A;
+        Sat, 27 Oct 2018 01:41:15 +0000 (UTC)
+        (envelope-from emaste@freebsd.org)
+Received: from freefall.freebsd.org (freefall.freebsd.org [IPv6:2610:1c1:1:6074::16:84])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (Client CN "freefall.freebsd.org", Issuer "Let's Encrypt Authority X3" (verified OK))
+        by mx1.freebsd.org (Postfix) with ESMTPS id 4896275558;
+        Sat, 27 Oct 2018 01:41:15 +0000 (UTC)
+        (envelope-from emaste@freebsd.org)
+Received: by freefall.freebsd.org (Postfix, from userid 1079)
+        id 250881C44; Sat, 27 Oct 2018 01:41:14 +0000 (UTC)
+Date:   Sat, 27 Oct 2018 01:41:14 +0000
+From:   Ed Maste <emaste@freebsd.org>
+To:     cyphar@cyphar.com, David Drysdale <drysdale@google.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] namei: implement O_BENEATH-style AT_* flags
+Message-ID: <20181027014114.GA52393@freebsd.org>
 MIME-Version: 1.0
-In-Reply-To: <20181026193304.GD18839@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181009065300.11053-3-cyphar@cyphar.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/10/27 4:25, Michal Hocko wrote:
->> out_of_memory() bails on task_will_free_mem(current), which
->> specifically *excludes* already reaped tasks. Why are we then adding a
->> separate check before that to bail on already reaped victims?
-> 
-> 696453e66630a has introduced the bail out.
-> 
->> Do we want to bail if current is a reaped victim or not?
->>
->> I don't see how we could skip it safely in general: the current task
->> might have been killed and reaped and gotten access to the memory
->> reserve and still fail to allocate on its way out. It needs to kill
->> the next task if there is one, or warn if there isn't another
->> one. Because we're genuinely oom without reclaimable tasks.
-> 
-> Yes, this would be the case for the global case which is a real OOM
-> situation. Memcg oom is somehow more relaxed because the oom is local.
+On Tue, 9 Oct 2018 at 02:53, Aleksa Sarai <cyphar@cyphar.com> wrote:
+>
+> +#ifndef O_BENEATH
+> +#define O_BENEATH      00040000000 /* *Not* the same as capsicum's O_BENEATH! */
+> +#endif
 
-We can handle possibility of genuinely OOM without reclaimable tasks.
-Only __GFP_NOFAIL OOM has to select next OOM victim. There is no need to
-select next OOM victim unless __GFP_NOFAIL. Commit 696453e66630ad45
-("mm, oom: task_will_free_mem should skip oom_reaped tasks") was too simple.
+I had originally followed up privately to Aleksa about this comment (to
+suggest that it's outdated and should be removed), but the reference
+Capsicum implementation now supports O_BENEATH and I think it's sensible to
+follow up here with the additional context.
 
-On 2018/10/27 4:33, Michal Hocko wrote:
-> On Fri 26-10-18 21:25:51, Michal Hocko wrote:
->> On Fri 26-10-18 10:25:31, Johannes Weiner wrote:
-> [...]
->>> There is of course the scenario brought forward in this thread, where
->>> multiple threads of a process race and the second one enters oom even
->>> though it doesn't need to anymore. What the global case does to catch
->>> this is to grab the oom lock and do one last alloc attempt. Should
->>> memcg lock the oom_lock and try one more time to charge the memcg?
->>
->> That would be another option. I agree that making it more towards the
->> global case makes it more attractive. My tsk_is_oom_victim is more
->> towards "plug this particular case".
-> 
-> Nevertheless let me emphasise that tsk_is_oom_victim will close the race
-> completely, while mem_cgroup_margin will always be racy. So the question
-> is whether we want to close the race because it is just too easy for
-> userspace to hit it or keep the global and memcg oom handling as close
-> as possible.
-> 
+O_BENEATH originally came from the Capsicum Linux port, and inherited the
+restriction against ".." path components from years ago when the port was
+done.  In addition, FreeBSD did not originally implement O_BENEATH as the
+"beneath" behaviour is inherently provided once a process enters a
+capability mode sandbox.  However, Capsicum now allows ".." paths, and
+FreeBSD supports O_BENEATH separately from capability mode.  Absolute paths
+are not yet allowed with O_BENEATH but a change is in review to permit them.
+ 
+On FreeBSD a lookup prevented by O_BENEATH semantics returns ENOTCAPABLE,
+the errno coming from the Capsicum implementation.
 
-Yes, adding tsk_is_oom_victim(current) before calling out_of_memory() from
-both global OOM and memcg OOM paths can close the race completely. (But
-note that tsk_is_oom_victim(current) for global OOM path needs to check for
-__GFP_NOFAIL in order to handle genuinely OOM case.)
+Ideally I would like to see us have the same API; none of this work has yet
+shipped in a FreeBSD release and there is an opportunity for us to make
+changes to match the interface and errors Linux may adopt.
