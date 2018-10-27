@@ -2,249 +2,232 @@ Return-Path: <SRS0=4IUq=NH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_DIGITS,
-	FROM_LOCAL_HEX,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29DEFC46475
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 11:12:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F41E5C46475
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 11:17:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D76C320824
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 11:12:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D76C320824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7A9FF20856
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 11:17:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VSS8V4x2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A9FF20856
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728560AbeJ0Twl (ORCPT
+        id S1728575AbeJ0T5w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 15:52:41 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:34637 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728477AbeJ0Twl (ORCPT
+        Sat, 27 Oct 2018 15:57:52 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:33695 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728524AbeJ0T5w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 15:52:41 -0400
-Received: by mail-io1-f69.google.com with SMTP id c7-v6so3460322iod.1
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Oct 2018 04:12:04 -0700 (PDT)
+        Sat, 27 Oct 2018 15:57:52 -0400
+Received: by mail-it1-f195.google.com with SMTP id h6-v6so6489197ith.0
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Oct 2018 04:17:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=0781gJOjO76kYtQR1KxNXFJAf5l4cns/NMzPhquz0tw=;
+        b=VSS8V4x2ljZrTKE8q5Yi57Vl6AsykPy3HLTQoDTED6h+NNib8NJrjcmDgUxFR1EANj
+         0Tin3pqSvwcTCks7a1ncgR+C3lT7F5L2NvU1Xuqir5+l8+UIxAO1kqXJ5aUJLQ0DAixJ
+         QhDBF7lFcvfKX8QTyYivAMMfHPu6eVyjxUCtTMEIxtWFeZ6YG96IUaOWrBxykmtSrzlZ
+         D5VLOQkS+hUvoYlK/Xi3HL24k+m2PUMg9+KgalotVJDOJ6ufbI8BrlXzlPkCfIgKZB5m
+         eLKTxVPzXN9+fKaX9IxXbGHrvylmiNd4ft8ZO9O2sgESwcs55M25ydH9KX3tZBZGlwGj
+         WuOQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=K7RKJkk0Geg6JMWGNNznh/dmH/Tqga5dhGnEk8rGbuQ=;
-        b=Sk/wWm79Oi/VfrmdhTKq/ozm8uHgWp3gVF1dMz4vWlkH5XFhPbaQDUPR6nfAYE5p+Y
-         z31nWyv1CvIsrF6Wi3jbEtTAJOGuGPwYk7U4naUkAg0h8luRRZZcpn+Dza08g8ol9PNj
-         4TwyCwXHtioqLxvvNvQhOOI+46ZF/YwxTU5BP5bPDdGV2+3oy2LX3iTbGjOZrg3jIuEa
-         NvR/EAq5wX1s/S0f57ppaUyAwb4y21gzDoAeafb8emITgczX4Gqoc0QMx3FZc3Q4d1SA
-         lkhhhzn7TvLQGOiRGScjQ9r3/B09Nncu5ujdt1YyfLniQqHVYpIe9Xs3X8AnAKVk2Rtm
-         nMng==
-X-Gm-Message-State: AGRZ1gLO4QtX+CiMFvbdZNdMNdSB1fw6UzYukGo+xeTzCgJvZGAK/O4h
-        zYAY/QNP/oemWUIf58NFBKzhXRrRGdWeNB69GRzTK8q2/H6B
-X-Google-Smtp-Source: AJdET5fhmfI0uI208LnYIyp8UUNO0dv0S794xThEyuxWCq7XDlJpBiLs65Dv79AEiUy0Mq9BCaA5Q5pb5MoOpykYH5JFh7Vx2FTr
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=0781gJOjO76kYtQR1KxNXFJAf5l4cns/NMzPhquz0tw=;
+        b=r9/oZwpSWFEN/ehRmGBYbHipzyGB3NrUNIEhW8vPWtA7t3fZwxTawr7XDi+O1mLm1b
+         2DY8OwALUUMYK24gtuLTgK3erHmwYPgEYpOA8Ed/O03FE62GhU2ryHqol6QZyODyQ+YD
+         SHBSwNsCZQrLQGvhcOfjQiE1JLz0gVqeO2rOBxhDFY4u2AQVm0Ykrn3etO3A+c9b8mbL
+         6zI//i6mbRlPgVGJNUWdQlexVVI/X3+QnlWvxoJ+e+02+mdPHcGans0pJElFgT+SPp5N
+         v/zjW6k3mtutPFmau1QzylP567EtJOj9fw34gTNjDFjGISMnER4S2vg34rx4//Hs+t75
+         YJ6g==
+X-Gm-Message-State: AGRZ1gLhaL+IlocnF+LVrPP/UBqz57WzyhGp1Tc39kelCPS57Y0R5KnL
+        u94sYxGnHldG3724be97o1PdORTGwcjoyeDAfWkpPA==
+X-Google-Smtp-Source: AJdET5d0GqCqnyAFWueCN13bNpyKAWIZRqc+d+wuAX10CkLJfCnpxx1gEy45zBb70gJpb/7PKZxGzNz0ZP0j/CcsdK4=
+X-Received: by 2002:a24:940f:: with SMTP id j15-v6mr6083625ite.12.1540639033640;
+ Sat, 27 Oct 2018 04:17:13 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a24:1f81:: with SMTP id d123-v6mr5343875itd.2.1540638723864;
- Sat, 27 Oct 2018 04:12:03 -0700 (PDT)
-Date:   Sat, 27 Oct 2018 04:12:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000dd0a16057933e7d6@google.com>
-Subject: INFO: task hung in ext4_map_blocks
-From:   syzbot <syzbot+b620151161795bd74a60@syzkaller.appspotmail.com>
-To:     adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        tytso@mit.edu
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Received: by 2002:a02:1003:0:0:0:0:0 with HTTP; Sat, 27 Oct 2018 04:16:52
+ -0700 (PDT)
+In-Reply-To: <20181024120335.GE29272@localhost.localdomain>
+References: <20181016140322.GB3121@hirez.programming.kicks-ass.net>
+ <20181016144045.GF9130@localhost.localdomain> <alpine.DEB.2.21.1810161643540.7787@nanos.tec.linutronix.de>
+ <20181016153608.GH9130@localhost.localdomain> <20181018082838.GA21611@localhost.localdomain>
+ <20181018122331.50ed3212@luca64> <20181018104713.GC21611@localhost.localdomain>
+ <20181018130811.61337932@luca64> <20181019113942.GH3121@hirez.programming.kicks-ass.net>
+ <20181019225005.61707c64@nowhere> <20181024120335.GE29272@localhost.localdomain>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Sat, 27 Oct 2018 12:16:52 +0100
+Message-ID: <CACT4Y+Y3uvX+Zb9nG_sYfbRXoxD1XR-1PLyitwm-UQyjGv5r1A@mail.gmail.com>
+Subject: Re: INFO: rcu detected stall in do_idle
+To:     Juri Lelli <juri.lelli@redhat.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        luca abeni <luca.abeni@santannapisa.it>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Juri Lelli <juri.lelli@gmail.com>,
+        syzbot <syzbot+385468161961cee80c31@syzkaller.appspotmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>, nstange@suse.de,
+        syzkaller-bugs@googlegroups.com, henrik@austad.us,
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
+        Claudio Scordino <claudio@evidence.eu.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Wed, Oct 24, 2018 at 1:03 PM, Juri Lelli <juri.lelli@redhat.com> wrote:
+>
+> On 19/10/18 22:50, luca abeni wrote:
+> > On Fri, 19 Oct 2018 13:39:42 +0200
+> > Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > > On Thu, Oct 18, 2018 at 01:08:11PM +0200, luca abeni wrote:
+> > > > Ok, I see the issue now: the problem is that the "while
+> > > > (dl_se->runtime <= 0)" loop is executed at replenishment time, but
+> > > > the deadline should be postponed at enforcement time.
+> > > >
+> > > > I mean: in update_curr_dl() we do:
+> > > >   dl_se->runtime -= scaled_delta_exec;
+> > > >   if (dl_runtime_exceeded(dl_se) || dl_se->dl_yielded) {
+> > > >           ...
+> > > >           enqueue replenishment timer at dl_next_period(dl_se)
+> > > > But dl_next_period() is based on a "wrong" deadline!
+> > > >
+> > > >
+> > > > I think that inserting a
+> > > >         while (dl_se->runtime <= -pi_se->dl_runtime) {
+> > > >                 dl_se->deadline += pi_se->dl_period;
+> > > >                 dl_se->runtime += pi_se->dl_runtime;
+> > > >         }
+> > > > immediately after "dl_se->runtime -= scaled_delta_exec;" would fix
+> > > > the problem, no?
+> > >
+> > > That certainly makes sense to me.
+> >
+> > Good; I'll try to work on this idea in the weekend.
+>
+> So, we (me and Luca) managed to spend some more time on this and found a
+> few more things worth sharing. I'll try to summarize what we have got so
+> far (including what already discussed) because impression is that each
+> point might deserve a fix or at least consideration (just amazing how a
+> simple random fuzzer thing can highlight all that :).
 
-syzbot found the following crash on:
+1. Fuzzing finds bugs in any code. Always.
+If a code wasn't fuzzed, there are bugs.
 
-HEAD commit:    638820d8da8e Merge branch 'next-general' of git://git.kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=10c8d0eb400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f9a456324fcc850a
-dashboard link: https://syzkaller.appspot.com/bug?extid=b620151161795bd74a60
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15ede44d400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1452e9cb400000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+b620151161795bd74a60@syzkaller.appspotmail.com
-
-audit: type=1800 audit(1540407533.329:30): pid=5235 uid=0 auid=4294967295  
-ses=4294967295 subj==unconfined op=collect_data cause=failed(directio)  
-comm="startpar" name="rmnologin" dev="sda1" ino=2423 res=0
-INFO: task kworker/u4:0:7 blocked for more than 140 seconds.
-       Not tainted 4.19.0+ #301
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-kworker/u4:0    D13168     7      2 0x80000000
-Workqueue: writeback wb_workfn (flush-8:0)
-Call Trace:
-  context_switch kernel/sched/core.c:2826 [inline]
-  __schedule+0x8cf/0x21d0 kernel/sched/core.c:3474
-  schedule+0xfe/0x460 kernel/sched/core.c:3518
-  __rwsem_down_write_failed_common+0xc9a/0x15e0  
-kernel/locking/rwsem-xadd.c:577
-  rwsem_down_write_failed+0xe/0x10 kernel/locking/rwsem-xadd.c:606
-  call_rwsem_down_write_failed+0x17/0x30 arch/x86/lib/rwsem.S:117
-  __down_write arch/x86/include/asm/rwsem.h:142 [inline]
-  down_write+0xa5/0x130 kernel/locking/rwsem.c:72
-  ext4_map_blocks+0x88f/0x1b40 fs/ext4/inode.c:629
-  mpage_map_one_extent fs/ext4/inode.c:2450 [inline]
-  mpage_map_and_submit_extent fs/ext4/inode.c:2503 [inline]
-  ext4_writepages+0x2595/0x4130 fs/ext4/inode.c:2854
-  do_writepages+0x9a/0x1a0 mm/page-writeback.c:2340
-  __writeback_single_inode+0x20a/0x1620 fs/fs-writeback.c:1323
-  writeback_sb_inodes+0x71f/0x11d0 fs/fs-writeback.c:1587
-  __writeback_inodes_wb+0x1b9/0x340 fs/fs-writeback.c:1656
-  wb_writeback+0xa73/0xfc0 fs/fs-writeback.c:1765
-  wb_check_old_data_flush fs/fs-writeback.c:1867 [inline]
-  wb_do_writeback fs/fs-writeback.c:1920 [inline]
-  wb_workfn+0x1008/0x1790 fs/fs-writeback.c:1949
-  process_one_work+0xc90/0x1c40 kernel/workqueue.c:2153
-  worker_thread+0x17f/0x1390 kernel/workqueue.c:2296
-  kthread+0x35a/0x420 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:350
-
-Showing all locks held in the system:
-5 locks held by kworker/u4:0/7:
-  #0: 00000000ce3fc1c2 ((wq_completion)"writeback"){+.+.}, at:  
-__write_once_size include/linux/compiler.h:206 [inline]
-  #0: 00000000ce3fc1c2 ((wq_completion)"writeback"){+.+.}, at:  
-arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
-  #0: 00000000ce3fc1c2 ((wq_completion)"writeback"){+.+.}, at: atomic64_set  
-include/asm-generic/atomic-instrumented.h:40 [inline]
-  #0: 00000000ce3fc1c2 ((wq_completion)"writeback"){+.+.}, at:  
-atomic_long_set include/asm-generic/atomic-long.h:59 [inline]
-  #0: 00000000ce3fc1c2 ((wq_completion)"writeback"){+.+.}, at: set_work_data  
-kernel/workqueue.c:617 [inline]
-  #0: 00000000ce3fc1c2 ((wq_completion)"writeback"){+.+.}, at:  
-set_work_pool_and_clear_pending kernel/workqueue.c:644 [inline]
-  #0: 00000000ce3fc1c2 ((wq_completion)"writeback"){+.+.}, at:  
-process_one_work+0xb43/0x1c40 kernel/workqueue.c:2124
-  #1: 00000000d6c9c988 ((work_completion)(&(&wb->dwork)->work)){+.+.}, at:  
-process_one_work+0xb9a/0x1c40 kernel/workqueue.c:2128
-  #2: 00000000a32f172a (&type->s_umount_key#30){++++}, at:  
-trylock_super+0x22/0x110 fs/super.c:412
-  #3: 000000004f496d2d (&sbi->s_journal_flag_rwsem){.+.+}, at:  
-do_writepages+0x9a/0x1a0 mm/page-writeback.c:2340
-  #4: 00000000abe2b30d (&ei->i_data_sem){++++}, at:  
-ext4_map_blocks+0x88f/0x1b40 fs/ext4/inode.c:629
-1 lock held by khungtaskd/980:
-  #0: 000000004d289beb (rcu_read_lock){....}, at:  
-debug_show_all_locks+0xd0/0x424 kernel/locking/lockdep.c:4379
-1 lock held by rsyslogd/5273:
-  #0: 00000000bce88f8b (&f->f_pos_lock){+.+.}, at: __fdget_pos+0x1bb/0x200  
-fs/file.c:766
-2 locks held by getty/5363:
-  #0: 00000000bc7d06fd (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 000000005dc6654d (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/5364:
-  #0: 00000000b74b0737 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 000000000d7c9596 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/5365:
-  #0: 000000002db01519 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 00000000feac9e10 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/5366:
-  #0: 00000000fa7b9c5d (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 0000000029958494 (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/5367:
-  #0: 00000000c8499234 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 000000008773936c (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/5368:
-  #0: 000000004165be65 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 0000000089cba62d (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-2 locks held by getty/5369:
-  #0: 00000000f3f983f2 (&tty->ldisc_sem){++++}, at:  
-ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
-  #1: 00000000c8e059da (&ldata->atomic_read_lock){+.+.}, at:  
-n_tty_read+0x335/0x1ce0 drivers/tty/n_tty.c:2140
-5 locks held by syz-executor827/5390:
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 PID: 980 Comm: khungtaskd Not tainted 4.19.0+ #301
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  nmi_cpu_backtrace.cold.1+0x5c/0xa1 lib/nmi_backtrace.c:101
-  nmi_trigger_cpumask_backtrace+0x1b3/0x1ed lib/nmi_backtrace.c:62
-  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
-  trigger_all_cpu_backtrace include/linux/nmi.h:144 [inline]
-  check_hung_uninterruptible_tasks kernel/hung_task.c:204 [inline]
-  watchdog+0xb3e/0x1050 kernel/hung_task.c:265
-  kthread+0x35a/0x420 kernel/kthread.c:246
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:350
-Sending NMI from CPU 0 to CPUs 1:
-INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.137  
-msecs
-NMI backtrace for cpu 1
-CPU: 1 PID: 5390 Comm: syz-executor827 Not tainted 4.19.0+ #301
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:get_ext_path fs/ext4/move_extent.c:40 [inline]
-RIP: 0010:mext_check_coverage.constprop.13+0x174/0x510  
-fs/ext4/move_extent.c:98
-Code: 49 83 7c 24 10 00 0f 84 e4 01 00 00 e8 f5 2f 60 ff 48 8b 95 70 ff ff  
-ff 48 b8 00 00 00 00 00 fc ff df 48 c1 ea 03 80 3c 02 00 <0f> 85 e3 02 00  
-00 4c 89 fa 48 89 5d 98 48 b8 00 00 00 00 00 fc ff
-RSP: 0018:ffff8801d7fcf1c0 EFLAGS: 00000246
-RAX: dffffc0000000000 RBX: ffff8801d963a880 RCX: ffffffff821f5a82
-RDX: 1ffff1003aff9e41 RSI: ffffffff821f591b RDI: ffff8801d963a890
-RBP: ffff8801d7fcf270 R08: ffff8801d7d66400 R09: ffffed003b5e5b57
-R10: ffffed003b5e5b57 R11: ffff8801daf2dabb R12: ffff8801d963a880
-R13: 00000000f6986ac0 R14: ffff8801b73411f0 R15: ffff8801d7fcf3e0
-FS:  0000000001fef880(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffff600400 CR3: 00000001d93df000 CR4: 00000000001406e0
-Call Trace:
-  move_extent_per_page fs/ext4/move_extent.c:323 [inline]
-  ext4_move_extents+0x2784/0x3c20 fs/ext4/move_extent.c:669
-  ext4_ioctl+0x3154/0x4210 fs/ext4/ioctl.c:799
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:501 [inline]
-  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:685
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:702
-  __do_sys_ioctl fs/ioctl.c:709 [inline]
-  __se_sys_ioctl fs/ioctl.c:707 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:707
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4401d9
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffe954e8808 EFLAGS: 00000217 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004401d9
-RDX: 0000000020000040 RSI: 00000000c028660f RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000004002c8 R11: 0000000000000217 R12: 0000000000401a60
-R13: 0000000000401af0 R14: 0000000000000000 R15: 0000000000000000
+2. This fuzzer is not so simple ;)
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+> Apologies for the
+> long email.
+>
+> Reproducer runs on a CONFIG_HZ=100, CONFIG_IRQ_TIME_ACCOUNTING kernel
+> and does something like this (only the bits that seems to matter here)
+>
+> int main(void)
+> {
+>   [...]
+>   [setup stuff at 0x2001d000]
+>   syscall(__NR_perf_event_open, 0x2001d000, 0, -1, -1, 0);
+>   *(uint32_t*)0x20000000 = 0;
+>   *(uint32_t*)0x20000004 = 6;
+>   *(uint64_t*)0x20000008 = 0;
+>   *(uint32_t*)0x20000010 = 0;
+>   *(uint32_t*)0x20000014 = 0;
+>   *(uint64_t*)0x20000018 = 0x9917; <-- ~40us
+>   *(uint64_t*)0x20000020 = 0xffff; <-- ~65us (~60% bandwidth)
+>   *(uint64_t*)0x20000028 = 0;
+>   syscall(__NR_sched_setattr, 0, 0x20000000, 0);
+>   [busy loop]
+>   return 0;
+> }
+>
+> And this causes problems because the task is actually never throttled.
+>
+> Pain points:
+>
+>  1. Granularity of enforcement (at each tick) is huge compared with
+>     the task runtime. This makes starting the replenishment timer,
+>     when runtime is depleted, always to fail (because old deadline
+>     is way in the past). So, the task is fully replenished and put
+>     back to run.
+>
+>     - Luca's proposal should help here, since the deadline is postponed
+>       at throttling time, and replenishment timer set to that (and it
+>       should be in the future)
+>
+>  1.1 Even if we fix 1. in a configuration like this, the task would
+>      still be able to run for ~10ms (worst case) and potentially starve
+>      other tasks. It doesn't seem a too big interval maybe, but there
+>      might be other very short activities that might miss an occasion
+>      to run "quickly".
+>
+>      - Might be fixed by imposing (via sysctl) reasonable defaults for
+>        minimum runtime (w.r.t. HZ, like HZ/2) and maximum for period
+>        (as also a very small bandwidth task can have a big runtime if
+>        period is big as well)
+>
+>  (1.2) When runtime becomes very negative (because delta_exec was big)
+>        we seem to spend lot of time inside the replenishment loop.
+>
+>        - Not sure it's such a big problem, might need more profiling.
+>          Feeling is that once the other points will be addressed this
+>          won't matter anymore
+>
+>  2. This is related to perf_event_open syscall reproducer does before
+>     becoming DEADLINE and entering the busy loop. Enabling of perf
+>     swevents generates lot of hrtimers load that happens in the
+>     reproducer task context. Now, DEADLINE uses rq_clock() for setting
+>     deadlines, but rq_clock_task() for doing runtime enforcement.
+>     In a situation like this it seems that the amount of irq pressure
+>     becomes pretty big (I'm seeing this on kvm, real hw should maybe do
+>     better, pain point remains I guess), so rq_clock() and
+>     rq_clock_task() might become more a more skewed w.r.t. each other.
+>     Since rq_clock() is only used when setting absolute deadlines for
+>     the first time (or when resetting them in certain cases), after a
+>     bit the replenishment code will start to see postponed deadlines
+>     always in the past w.r.t. rq_clock(). And this brings us back to the
+>     fact that the task is never stopped, since it can't keep up with
+>     rq_clock().
+>
+>     - Not sure yet how we want to address this [1]. We could use
+>       rq_clock() everywhere, but tasks might be penalized by irq
+>       pressure (theoretically this would mandate that irqs are
+>       explicitly accounted for I guess). I tried to use the skew between
+>       the two clocks to "fix" deadlines, but that puts us at risks of
+>       de-synchronizing userspace and kernel views of deadlines.
+>
+>  3. HRTICK is not started for new entities.
+>
+>     - Already got a patch for it.
+>
+> This should be it, I hope. Luca (thanks a lot for your help) and please
+> add or correct me if I was wrong.
+>
+> Thoughts?
+>
+> Best,
+>
+> - Juri
+>
+> 1 - https://elixir.bootlin.com/linux/latest/source/kernel/sched/deadline.c#L1162
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/20181024120335.GE29272%40localhost.localdomain.
+> For more options, visit https://groups.google.com/d/optout.
