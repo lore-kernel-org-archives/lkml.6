@@ -2,72 +2,182 @@ Return-Path: <SRS0=4IUq=NH=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5871CC46475
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 15:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0419BC46475
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 15:48:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A0D920843
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 15:39:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A0D920843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id A5E1420843
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 15:48:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=interia.pl header.i=@interia.pl header.b="T3slYCgF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5E1420843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=poczta.fm
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728765AbeJ1AVM (ORCPT
+        id S1728720AbeJ1AaJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 20:21:12 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:35216 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728324AbeJ1AVM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 20:21:12 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 244F020789; Sat, 27 Oct 2018 17:39:48 +0200 (CEST)
-Received: from bbrezillon (unknown [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D9E1320729;
-        Sat, 27 Oct 2018 17:39:47 +0200 (CEST)
-Date:   Sat, 27 Oct 2018 17:39:45 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     "Grandbois, Brett" <brett.grandbois@opengear.com>
-Cc:     Marek Vasut <marek.vasut@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] mtd: spi-nor: Add support for SPI boot flash access
- for AMD Family 16h
-Message-ID: <20181027173945.241e87b2@bbrezillon>
-In-Reply-To: <20181016005726.26813-1-brett.grandbois@opengear.com>
-References: <20181016005726.26813-1-brett.grandbois@opengear.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sat, 27 Oct 2018 20:30:09 -0400
+Received: from smtpo.poczta.interia.pl ([217.74.65.208]:53953 "EHLO
+        smtpo.poczta.interia.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728501AbeJ1AaJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Oct 2018 20:30:09 -0400
+X-Interia-R: Interia
+X-Interia-R-IP: 188.121.17.172
+X-Interia-R-Helo: <x220.localdomain>
+Received: from x220.localdomain (ipv4-188-121-17-172.net.internetunion.pl [188.121.17.172])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by www.poczta.fm (INTERIA.PL) with ESMTPSA;
+        Sat, 27 Oct 2018 17:48:41 +0200 (CEST)
+Date:   Sat, 27 Oct 2018 17:49:03 +0200
+From:   Slawomir Stepien <sst@poczta.fm>
+To:     Nishad Kamdar <nishadkamdar@gmail.com>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 2/2] staging: iio: ad2s1210: Add device tree support.
+Message-ID: <20181027154903.GA1582@x220.localdomain>
+References: <cover.1540489369.git.nishadkamdar@gmail.com>
+ <1dc6fdf4626e7cf1ca4933fe3008cb3cd267149b.1540489369.git.nishadkamdar@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1dc6fdf4626e7cf1ca4933fe3008cb3cd267149b.1540489369.git.nishadkamdar@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Interia-Antivirus: OK
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=interia.pl;
+        s=biztos; t=1540655323;
+        bh=2Ng5HXZoZ5a4zxJqQh7L+eusyQ03ladSGI+4aJVJWJg=;
+        h=X-Interia-R:X-Interia-R-IP:X-Interia-R-Helo:Date:From:To:Cc:
+         Subject:Message-ID:References:MIME-Version:Content-Type:
+         Content-Disposition:Content-Transfer-Encoding:In-Reply-To:
+         User-Agent:X-Interia-Antivirus;
+        b=T3slYCgFLHHvt3uV9ektXnQa8WZZbTo8jNHK3NoK7Q0X6Yjp5DHE5LF9yAuI7pOpb
+         Xhx3YB+pOO5+XL+Oa4L3qNYMg1M3Ab5q8Cbu2dqTCDSq64c0lySurXaUvPrWsBv5Gq
+         WZ8KSwJvZ/JBvkerhWhRRVXnwRh/SPIu8ZYFiRP8=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Brett,
+Hi
 
-On Tue, 16 Oct 2018 00:57:41 +0000
-"Grandbois, Brett" <brett.grandbois@opengear.com> wrote:
+On paź 26, 2018 18:55, Nishad Kamdar wrote:
+> Add device tree table for matching vendor ID
+> and support for retrieving platform data
+> from device tree.
 
-> Add support to expose the SPI boot flash on AMD Family 16h CPUs as a
-> standard mtd device to give userspace BIOS updaters greater feature
-> support.  The BIOS and Kernel Developer's Guide refers to this as the
-> 'SPI ROM' controller and so the driver follows that naming convention
-> for consistency.
+So maybe you should make 2 commits?
+
+> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+> ---
+>  drivers/staging/iio/resolver/ad2s1210.c | 43 ++++++++++++++++++++++++-
+>  1 file changed, 42 insertions(+), 1 deletion(-)
 > 
+> diff --git a/drivers/staging/iio/resolver/ad2s1210.c b/drivers/staging/iio/resolver/ad2s1210.c
+> index 93c3c70ce62e..9fd5461c4ed0 100644
+> --- a/drivers/staging/iio/resolver/ad2s1210.c
+> +++ b/drivers/staging/iio/resolver/ad2s1210.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/delay.h>
+>  #include <linux/gpio/consumer.h>
+>  #include <linux/module.h>
+> +#include <linux/of.h>
+>  
+>  #include <linux/iio/iio.h>
+>  #include <linux/iio/sysfs.h>
+> @@ -669,6 +670,27 @@ static int ad2s1210_setup_gpios(struct ad2s1210_state *st)
+>  	return 0;
+>  }
+>  
+> +#ifdef CONFIG_OF
+> +static struct ad2s1210_platform_data *ad2s1210_parse_dt(struct device *dev)
+> +{
+> +	struct device_node *np = dev->of_node;
+> +	struct ad2s1210_platform_data *pdata;
+> +
+> +	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
+> +	if (!pdata)
+> +		return NULL;
+> +
+> +	pdata->gpioin = of_property_read_bool(np, "adi,gpioin");
 
-We're currently trying to convert spi-nor controller drivers to the
-spi-mem interface [1]. Can you look at this new interface and tell me if
-you'd be able to implement it? If that's not possible, then I'd prefer
-to have this driver implement the mtd_info interface directly.
+Why here you are adding "adi", but you are not adding it to the gpios in prev
+commit?
 
-Thanks,
+I've also seen this: https://patchwork.kernel.org/patch/10355839/. However I do
+not understand why adding vendor id to props is needed...
 
-Boris
+> +
+> +	return pdata;
+> +}
+> +#else
+> +static struct ad2s1210_platform_data *ad2s1210_parse_dt(struct device *dev)
+> +{
+> +	return NULL;
+> +}
+> +#endif
+> +
+>  static int ad2s1210_probe(struct spi_device *spi)
+>  {
+>  	struct iio_dev *indio_dev;
+> @@ -682,7 +704,19 @@ static int ad2s1210_probe(struct spi_device *spi)
+>  	if (!indio_dev)
+>  		return -ENOMEM;
+>  	st = iio_priv(indio_dev);
+> -	st->pdata = spi->dev.platform_data;
+> +	if (spi->dev.of_node) {
+> +		st->pdata = ad2s1210_parse_dt(&spi->dev);
+> +		if (!st->pdata)
+> +			return -EINVAL;
+> +	} else {
+> +		st->pdata = spi->dev.platform_data;
+> +	}
+> +
+> +	if (!st->pdata) {
+> +		dev_err(&spi->dev, "ad2s1210: no platform data supplied\n");
+> +		return -EINVAL;
+> +	}
+> +
 
-[1]https://elixir.bootlin.com/linux/latest/source/include/linux/spi/spi-mem.h#L185
+Why not just use only device-tree here? The ad2s1210_platform_data has now only
+one entry... In that case remember to add "depends on OF" in Kconfig.
+
+>  	ret = ad2s1210_setup_gpios(st);
+>  	if (ret < 0)
+>  		return ret;
+> @@ -724,6 +758,12 @@ static int ad2s1210_remove(struct spi_device *spi)
+>  	return 0;
+>  }
+>  
+> +static const struct of_device_id ad2s1210_of_match[] = {
+> +	{ .compatible = "adi,ad2s1210", },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, ad2s1210_of_match);
+> +
+>  static const struct spi_device_id ad2s1210_id[] = {
+>  	{ "ad2s1210" },
+>  	{}
+> @@ -733,6 +773,7 @@ MODULE_DEVICE_TABLE(spi, ad2s1210_id);
+>  static struct spi_driver ad2s1210_driver = {
+>  	.driver = {
+>  		.name = DRV_NAME,
+> +		.of_match_table = of_match_ptr(ad2s1210_of_match),
+>  	},
+>  	.probe = ad2s1210_probe,
+>  	.remove = ad2s1210_remove,
+
+-- 
+Slawomir Stepien
