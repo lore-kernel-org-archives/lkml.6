@@ -6,41 +6,39 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A1E1ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 10:00:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37C4FECDE4A
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 10:00:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E9DC20665
-	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 10:00:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E9DC20665
+	by mail.kernel.org (Postfix) with ESMTP id 09ECF20665
+	for <linux-kernel@archiver.kernel.org>; Sat, 27 Oct 2018 10:00:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09ECF20665
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728618AbeJ0Ske (ORCPT
+        id S1728634AbeJ0Skf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 27 Oct 2018 14:40:34 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:14124 "EHLO huawei.com"
+        Sat, 27 Oct 2018 14:40:35 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:14126 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728585AbeJ0Skd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 27 Oct 2018 14:40:33 -0400
+        id S1728584AbeJ0Ske (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 27 Oct 2018 14:40:34 -0400
 Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id A296DFCE990F4;
+        by Forcepoint Email with ESMTP id B339B5A68B91F;
         Sat, 27 Oct 2018 18:00:04 +0800 (CST)
 Received: from vm100-107-113-134.huawei.com (100.107.113.134) by
  DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
- 14.3.408.0; Sat, 27 Oct 2018 17:59:54 +0800
+ 14.3.408.0; Sat, 27 Oct 2018 17:59:53 +0800
 From:   Yu Chen <chenyu56@huawei.com>
 To:     <linux-usb@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
 CC:     <suzhuangluan@hisilicon.com>, <kongfei@hisilicon.com>,
-        Yu Chen <chenyu56@huawei.com>, Wei Xu <xuwei5@hisilicon.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>,
+        Yu Chen <chenyu56@huawei.com>, Felipe Balbi <balbi@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         John Stultz <john.stultz@linaro.org>,
-        Binghui Wang <wangbinghui@hisilicon.com>
-Subject: [PATCH 10/10] dts: hi3660: Add support for usb on Hikey960
-Date:   Sat, 27 Oct 2018 17:58:20 +0800
-Message-ID: <20181027095820.40056-11-chenyu56@huawei.com>
+        "Binghui Wang" <wangbinghui@hisilicon.com>
+Subject: [PATCH 09/10] usb: gadget: Add configfs attribuite for controling match_existing_only
+Date:   Sat, 27 Oct 2018 17:58:19 +0800
+Message-ID: <20181027095820.40056-10-chenyu56@huawei.com>
 X-Mailer: git-send-email 2.15.0-rc2
 In-Reply-To: <20181027095820.40056-1-chenyu56@huawei.com>
 References: <20181027095820.40056-1-chenyu56@huawei.com>
@@ -53,142 +51,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support for usb on Hikey960.
+Currently the "match_existing_only" of usb_gadget_driver in configfs is
+set to one which is not flexible.
+Dwc3 udc will be removed when usb core switch to host mode. This causes
+failure of writing name of dwc3 udc to configfs's UDC attribuite.
+To fix this we need to add a way to change the config of
+"match_existing_only".
+This patch adds a configfs attribuite for controling match_existing_only
+which allow user to config "match_existing_only".
 
-Cc: Wei Xu <xuwei5@hisilicon.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
+Cc: Felipe Balbi <balbi@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: John Stultz <john.stultz@linaro.org>
 Cc: Binghui Wang <wangbinghui@hisilicon.com>
 Signed-off-by: Yu Chen <chenyu56@huawei.com>
 ---
- arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts | 35 +++++++++++++++
- arch/arm64/boot/dts/hisilicon/hi3660.dtsi         | 52 +++++++++++++++++++++++
- 2 files changed, 87 insertions(+)
+ drivers/usb/gadget/configfs.c | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts b/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
-index c98bcbc8dfba..49b6965a96c8 100644
---- a/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
-+++ b/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
-@@ -13,6 +13,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/input/input.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/usb/pd.h>
+diff --git a/drivers/usb/gadget/configfs.c b/drivers/usb/gadget/configfs.c
+index 025129942894..c82b7bc98dea 100644
+--- a/drivers/usb/gadget/configfs.c
++++ b/drivers/usb/gadget/configfs.c
+@@ -291,6 +291,36 @@ static ssize_t gadget_dev_desc_UDC_store(struct config_item *item,
+ 	return ret;
+ }
  
- / {
- 	model = "HiKey960";
-@@ -196,6 +197,17 @@
- 			method = "smc";
- 		};
- 	};
++static ssize_t gadget_driver_match_existing_only_store(struct config_item *item,
++		const char *page, size_t len)
++{
++	struct usb_gadget_driver *gadget_driver =
++		&(to_gadget_info(item)->composite.gadget_driver);
++	bool match_existing_only;
++	int ret;
 +
-+	hisi_hikey_usb: hisi_hikey_usb {
-+		compatible = "hisilicon,hikey960_usb";
-+		typc_vbus_int_gpio,typec-gpios = <&gpio25 2 0>;
-+		typc_vbus_enable_val = <1>;
-+		otg_gpio = <&gpio25 6 0>;
-+		hub_vdd33_en_gpio = <&gpio5 6 0>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&usbhub5734_pmx_func>;
-+	};
++	ret = kstrtobool(page, &match_existing_only);
++	if (ret)
++		return ret;
 +
++	if (match_existing_only)
++		gadget_driver->match_existing_only = 1;
++	else
++		gadget_driver->match_existing_only = 0;
++
++	return len;
++}
++
++static ssize_t gadget_driver_match_existing_only_show(struct config_item *item,
++		char *page)
++{
++	struct usb_gadget_driver *gadget_driver =
++		&(to_gadget_info(item)->composite.gadget_driver);
++	bool match_existing_only = !!gadget_driver->match_existing_only;
++
++	return sprintf(page, "%s\n", match_existing_only ? "true" : "false");
++}
++
+ CONFIGFS_ATTR(gadget_dev_desc_, bDeviceClass);
+ CONFIGFS_ATTR(gadget_dev_desc_, bDeviceSubClass);
+ CONFIGFS_ATTR(gadget_dev_desc_, bDeviceProtocol);
+@@ -300,6 +330,7 @@ CONFIGFS_ATTR(gadget_dev_desc_, idProduct);
+ CONFIGFS_ATTR(gadget_dev_desc_, bcdDevice);
+ CONFIGFS_ATTR(gadget_dev_desc_, bcdUSB);
+ CONFIGFS_ATTR(gadget_dev_desc_, UDC);
++CONFIGFS_ATTR(gadget_, driver_match_existing_only);
+ 
+ static struct configfs_attribute *gadget_root_attrs[] = {
+ 	&gadget_dev_desc_attr_bDeviceClass,
+@@ -311,6 +342,7 @@ static struct configfs_attribute *gadget_root_attrs[] = {
+ 	&gadget_dev_desc_attr_bcdDevice,
+ 	&gadget_dev_desc_attr_bcdUSB,
+ 	&gadget_dev_desc_attr_UDC,
++	&gadget_attr_driver_match_existing_only,
+ 	NULL,
  };
  
- /*
-@@ -526,6 +538,29 @@
- &i2c1 {
- 	status = "okay";
- 
-+	rt1711h: rt1711h@4e {
-+		compatible = "richtek,rt1711h";
-+		reg = <0x4e>;
-+		status = "ok";
-+		interrupt-parent = <&gpio27>;
-+		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&usb_cfg_func>;
-+		dev-conn-end = "hisi_hikey_usb-role-switch";
-+
-+		usb_con: connector {
-+			compatible = "usb-c-connector";
-+			label = "USB-C";
-+			data-role = "dual";
-+			power-role = "dual";
-+			try-power-role = "sink";
-+			source-pdos = <PDO_FIXED(5000, 500, PDO_FIXED_USB_COMM)>;
-+			sink-pdos = <PDO_FIXED(5000, 500, PDO_FIXED_USB_COMM)
-+				PDO_VAR(5000, 5000, 1000)>;
-+			op-sink-microwatt = <10000000>;
-+		};
-+	};
-+
- 	adv7533: adv7533@39 {
- 		status = "ok";
- 		compatible = "adi,adv7533";
-diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-index f432b0a88c65..d0af1cd4db80 100644
---- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-+++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
-@@ -1122,5 +1122,57 @@
- 				};
- 			};
- 		};
-+
-+		usb3_otg_bc: usb3_otg_bc@ff200000 {
-+			compatible = "syscon";
-+			reg = <0x0 0xff200000 0x0 0x1000>;
-+		};
-+
-+		usb_phy: usbphy {
-+			compatible = "hisilicon,hi3660-usb-phy";
-+			#phy-cells = <0>;
-+			hisilicon,pericrg-syscon = <&crg_ctrl>;
-+			hisilicon,pctrl-syscon = <&pctrl>;
-+			hisilicon,usb3-otg-bc-syscon = <&usb3_otg_bc>;
-+			eye-diagram-param = <0x22466e4>;
-+		};
-+
-+		usb3: hisi_dwc3 {
-+			compatible = "hisilicon,hi3660-dwc3";
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			ranges;
-+
-+			clocks = <&crg_ctrl HI3660_CLK_ABB_USB>,
-+				 <&crg_ctrl HI3660_ACLK_GATE_USB3OTG>;
-+			clock-names = "clk_usb3phy_ref", "aclk_usb3otg";
-+
-+			assigned-clocks = <&crg_ctrl HI3660_ACLK_GATE_USB3OTG>;
-+			assigned-clock-rates = <229000000>;
-+			resets = <&crg_rst 0x90 8>,
-+				 <&crg_rst 0x90 7>,
-+				 <&crg_rst 0x90 6>,
-+				 <&crg_rst 0x90 5>;
-+
-+			dwc3@ff100000 {
-+				compatible = "snps,dwc3";
-+				reg = <0x0 0xff100000 0x0 0x100000>;
-+				interrupts = <0 159 4>, <0 161 4>;
-+				phys = <&usb_phy>;
-+				phy-names = "usb3-phy";
-+				dr_mode = "otg";
-+				maximum-speed = "super-speed";
-+				phy_type = "utmi";
-+				snps,dis-del-phy-power-chg-quirk;
-+				snps,lfps_filter_quirk;
-+				snps,dis_u2_susphy_quirk;
-+				snps,dis_u3_susphy_quirk;
-+				snps,tx_de_emphasis_quirk;
-+				snps,tx_de_emphasis = <1>;
-+				snps,dis_enblslpm_quirk;
-+				snps,gctl-reset-quirk;
-+				extcon = <&hisi_hikey_usb>;
-+			};
-+		};
- 	};
- };
 -- 
 2.15.0-rc2
 
