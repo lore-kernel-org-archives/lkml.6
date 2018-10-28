@@ -3,125 +3,101 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D124C6786F
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 12:58:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D891C6786F
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 13:10:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEB6F20843
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 12:58:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35A5F20665
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 13:10:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nltJ8sQe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEB6F20843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="C82IdWyG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35A5F20665
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727623AbeJ1Vnb (ORCPT
+        id S1727656AbeJ1Vyx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 17:43:31 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36376 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727150AbeJ1Vnb (ORCPT
+        Sun, 28 Oct 2018 17:54:53 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:64017 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726548AbeJ1Vyw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 17:43:31 -0400
-Received: by mail-lj1-f193.google.com with SMTP id s15-v6so5224872lji.3;
-        Sun, 28 Oct 2018 05:58:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=xYy1WKAbtC+bLTvu93oFushNxSY5ujZsJKK45wvq15s=;
-        b=nltJ8sQe7yey0wtncJiJiNW5puOcK9q7NVUX5evo5AMUL8W+GKdEibpllA5a4pXXtz
-         SgYZ10+vYAwQQla5dpkd8nH1xVQrO6KvV21SWGWativixq+3vxWHoK0vyfaY8AkpS/p7
-         nnbTp2B6hafke53YhdVWuRR5Jx9FzuSIlXDmVK/nRWi9llEKAfx2kfuoHY7LgVogbmfw
-         8RuUsf8jvAqHjgvq2mdzQRVePkJuR0tU55aYkCHVdf4cdYVOPfA8lfVofRn6y3JeALkw
-         gbktmu91qAflEYUb+bxN79dZQEAdMI4buKmUx/KXlMaeimvsPqE/Idq3nTSX+bthVilA
-         fa4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=xYy1WKAbtC+bLTvu93oFushNxSY5ujZsJKK45wvq15s=;
-        b=lncpAu0MsmotO2u+cewAkRSkVdhH5yP+7882eRzH4cmA1+DxcmOtjX672FX3vq7mrQ
-         V6t4NMeedoMJVDUM32PLdzcbuS3bILZPkE7wJE5keUyVUP5PcT9fTeJjpJWJn8OwdqZm
-         C22FZExzFdB7/wJndl9XEqhVHnKC05DSNQnLsEqWgC85VZQXufcOhcaWo7AXJDzoPzNK
-         Q8jICdXchzI/S5wP4yeQVYLXjqmw82uQorrq5Tna0Az8ZCUygACK4law3D39cuN8xTKz
-         OhyaO39mGpDwgfDA09Czi/y+gSdVrrawcXaC95bWheyRA6/ALkfZiMcxXfJJ1Y7i8R8u
-         T/hw==
-X-Gm-Message-State: AGRZ1gItwvrXzXIwt/PDwK5aUsmFDEjYFuIPsrir1VXpWpw4m6cqWK1J
-        819yK6SNvJTN9KTDsPmj8UKpjxmo
-X-Google-Smtp-Source: AJdET5dIg/B5YEbwi7EPHVU3s8AwgB/8ki7yRWdC8g3Uz8bOaVtojfjHgnzuQ0HP83N3+L9oUcxW9w==
-X-Received: by 2002:a2e:8596:: with SMTP id b22-v6mr4616463lji.122.1540731533898;
-        Sun, 28 Oct 2018 05:58:53 -0700 (PDT)
-Received: from [192.168.2.145] ([109.252.91.118])
-        by smtp.googlemail.com with ESMTPSA id p63-v6sm2686093lfg.46.2018.10.28.05.58.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 28 Oct 2018 05:58:53 -0700 (PDT)
-Subject: Re: [RFC PATCH v2 01/17] OPP: Allow to request stub voltage
- regulators
-To:     Lucas Stach <l.stach@pengutronix.de>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181021205501.23943-1-digetx@gmail.com>
- <20181021205501.23943-2-digetx@gmail.com>
- <20181022053636.ag62j3rj3vovbz53@vireshk-i7>
- <e4027793-9436-413d-2a7b-34cf519218c3@gmail.com>
- <20181022113224.b5fiebgy2aap66nd@vireshk-i7>
- <29f893be-feed-c4c5-8468-51f7228dd468@gmail.com>
- <20181024064123.lbpbeervghp35fe7@vireshk-i7>
- <ba782346-6ac0-7bf3-e187-00d2634b145b@gmail.com>
- <1540568255.2245.11.camel@pengutronix.de>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <bd3a57ee-6131-22bb-1954-3d97bba5276a@gmail.com>
-Date:   Sun, 28 Oct 2018 15:58:25 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+        Sun, 28 Oct 2018 17:54:52 -0400
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id w9SD9wrw001904;
+        Sun, 28 Oct 2018 22:09:58 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w9SD9wrw001904
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1540732198;
+        bh=E6jmfOtoF/c8eLmVqGd5wikx07MJVkzlZFYjWLrlJkU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=C82IdWyGknhsYpuYfx+D34qjlSQpCbMId5uLZlQtfxy8JjY/oGBsshnM9cVhG3HgD
+         AKBRSbVSyubFOTd3EKHUeMhL6oL7CoL5hG3L2ipkBHGT98wTAy7VBVr7cNxfivKsN3
+         F4bbqFDgNFxLM00QpHM3RAHhLCr0i5inUtApzgb21Lu0iRi/oFp/X+gHZghsjGStIf
+         R3Bq9tAZ5tvOvHyxjAMWVHWFz8qSqJSTcOu0MpG2JQcPWdYU09WlyUu/J2hjVs3dVz
+         A+al1zZ+c2p9Z+mQnCJgsPVFzYdyrLSGN3g3CmdJrtrGwz043q7DIB/jT+PVQjJRe3
+         GTJvJIFpBOXRQ==
+X-Nifty-SrcIP: [209.85.222.52]
+Received: by mail-ua1-f52.google.com with SMTP id w19so2015814uaj.3;
+        Sun, 28 Oct 2018 06:09:58 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gJeJvd+mloRKGcw2ZxqKdZViVyKhcurxo7KFA2VVANGUOJAskyX
+        pDYg70h4FEjkDRsmMUBdbC2/yJ8z7pKyeoEMgjg=
+X-Google-Smtp-Source: AJdET5cvLpL5vL3bNXmSOJGTKH04EhCfIfDFvA5+Z1LMMXzyvVdbUVUJwrH/BPMRgq/r/eF2uX/iMgXknHmg0w3HLqA=
+X-Received: by 2002:ab0:7646:: with SMTP id s6mr485827uaq.89.1540732197170;
+ Sun, 28 Oct 2018 06:09:57 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1540568255.2245.11.camel@pengutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181019124921.13780-1-changbin.du@gmail.com> <20181019124921.13780-5-changbin.du@gmail.com>
+ <CAK7LNARW0=0d7m5DAgZOir=h0Y4tssqZoQRGasnGPNnvNf_+pg@mail.gmail.com> <20181028125106.azcn2dxia3snplin@mail.google.com>
+In-Reply-To: <20181028125106.azcn2dxia3snplin@mail.google.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Sun, 28 Oct 2018 22:09:21 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARr7bE=DVuzim5771heuN5os0=5-D+jXfUyBb2e1xYoRA@mail.gmail.com>
+Message-ID: <CAK7LNARr7bE=DVuzim5771heuN5os0=5-D+jXfUyBb2e1xYoRA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] kernel hacking: new config CC_OPTIMIZE_FOR_DEBUGGING
+ to apply GCC -Og optimization
+To:     Changbin Du <changbin.du@gmail.com>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>, X86 ML <x86@kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-sparse@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/26/18 6:37 PM, Lucas Stach wrote:
-> Am Freitag, den 26.10.2018, 15:03 +0300 schrieb Dmitry Osipenko:
-> [...]
->>> On the other hand, the tegra20 cpufreq driver is common across a lot of boards.
->>> What will happen if the DT for some of the boards isn't correct and missed the
->>> necessary regulator node ?
->>
->> AFAIK, there is assumption that bootloader should setup regulators in
->> a way that kernel could work properly at max clock rates. Otherwise
->> things won't work.
-> 
-> This isn't true. The assumption is that the bootloader sets up the
-> regulators such that stable operation at the CPU speed used by the
-> bootloader is guaranteed.
-> 
-> Often the bootloader doesn't know about specific SKUs, so drives things
-> at a rate/voltage that is safe across all SKUs [1], in which case the
-> bootloader is totally unaware of the voltage needed to run the CPU at
-> highest possible clock frequency.
-> 
-> Regards,
-> Lucas
-> 
-> [1] http://git.denx.de/?p=u-boot.git;a=commit;h=2364e151e432b4ccf32dc9e6147121253d4ff86d
-> 
+Hi Changbin,
 
-Oh, okay. Thank you for pointing at [1], though the assumption is true for T20. 
+On Sun, Oct 28, 2018 at 9:52 PM Changbin Du <changbin.du@gmail.com> wrote:
 
-I agree that it's better not to rely on configuration left from bootloader in general.
+> >
+> Thanks for pointing this out and kind suggestions. I have tested with your
+> modification. Will update patch serias soon.
+
+
+I have one more request.
+
+The patch subject
+"kernel hacking: new config CC_OPTIMIZE_FOR_DEBUGGING to apply GCC -Og
+optimization"
+is too long (83 characters)
+
+
+I'd like the subject to be within 70 columns or so.
+
+Thanks.
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
