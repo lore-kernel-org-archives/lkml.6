@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 239F4ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 22:20:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A769CC6786F
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 22:20:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB66E2064C
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 22:20:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D2D42064C
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 22:20:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=steffenvogel.de header.i=@steffenvogel.de header.b="crTxnUns"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB66E2064C
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=steffenvogel.de header.i=@steffenvogel.de header.b="RDpEOfRZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D2D42064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=steffenvogel.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728005AbeJ2HGD (ORCPT
+        id S1727749AbeJ2HGB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 03:06:03 -0400
-Received: from nag.0l.de ([207.154.252.120]:33480 "EHLO nag.0l.de"
+        Mon, 29 Oct 2018 03:06:01 -0400
+Received: from nag.0l.de ([207.154.252.120]:33482 "EHLO nag.0l.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725841AbeJ2HGC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 03:06:02 -0400
+        id S1726476AbeJ2HGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 03:06:01 -0400
 From:   Steffen Vogel <post@steffenvogel.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=steffenvogel.de;
         s=2017; t=1540764601; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:mime-version:
          content-type:content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=aUlh6ptyzuVQTpQPSQ0uAv0fx0Pk/HrpjD7cdK3uirA=;
-        b=crTxnUnsSsrm8P4IJ7MLlQNv5VcxTiBeJaX6f8IsZjpKYC1745rfJ+ElEFIIptDhQKw5fC
-        feZajjWcbVI8I/S2oLE4kz9aZdaFrDXAtmxF/lQXDn95if1hgnE/QLjYny3kQv3UM0j3kt
-        Hew5aLETJTB3Aq7/qkuP8LXCE46/n22Py2NgSH4Q4TOD96mDqZOjw65oGtDdeEXLfo0XKR
-        xm5bCWEF7DXFXOMAYfU9LcLoZoACaHOtmlAOB4v7Fyfy1EUn/dsxNHSqK4M5ng5NIJQZDz
-        4+bLf224lgGgPxl4iy0+1WZC9tig81iI8jNxCy0B6bNGdNvEExeEWIiewoJx4w==
+        bh=UZ+uT7kVjqwLZYOg1c2d5AcoIHDejx6MDyhY4qb+E7U=;
+        b=RDpEOfRZUqtkizES1+HbH5lNE+DPa4bj7B2c8r4YnREcU6aULNzONyInIIw+5Uv+QgfDiq
+        8d70tAoo4tGTR0EHDhQgWZl2HX8ld88L2q424GEO9S20r3iPHXk+EYgttngGQgeyVaDPXb
+        eDTh5hEIlMNSccSBZlvb6DmVpTAjTEe6SXr4rrL1vdRVUsHUJ0A/QusRC+k01A9neNkO+Q
+        gBdnIUe4HS+FRVuz12FAUISXgCwGZiylcVdQPvPX9xFcA8XIsJVnxdHyXgjnsG6u1YxDm3
+        l5RgnLQ8euNWfH5Ee3nowgDPb64p0LMExsAAg7XwfO701lnonLsBZULoZ17dIw==
 To:     linux-kernel@vger.kernel.org
 Cc:     Evgeniy Polyakov <zbr@ioremap.net>,
         Steffen Vogel <post@steffenvogel.de>
-Subject: [PATCH 3/9] w1: add newlines after declarations
-Date:   Sun, 28 Oct 2018 23:09:22 +0100
-Message-Id: <20181028220927.56227-4-post@steffenvogel.de>
+Subject: [PATCH 2/9] w1: improve coding style by following strict 80 column line limit
+Date:   Sun, 28 Oct 2018 23:09:21 +0100
+Message-Id: <20181028220927.56227-3-post@steffenvogel.de>
 In-Reply-To: <20181028220927.56227-1-post@steffenvogel.de>
 References: <20181028220927.56227-1-post@steffenvogel.de>
 MIME-Version: 1.0
@@ -51,15 +51,15 @@ ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=steffenvogel.de;
          message-id:message-id:to:to:cc:cc:mime-version:mime-version:
          content-type:content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=aUlh6ptyzuVQTpQPSQ0uAv0fx0Pk/HrpjD7cdK3uirA=;
-        b=qZ1DzV2eK4DLpIbQgqQW09Qlx4xyghELo0gIH00VSNQ1+I6dDh0zufCEjko8l6YCd/8Io/
-        /skLhy05zKejJoG4VoRzMsEKeuc/zlBr3qPqIrVBzE851CYguddfW2WjpvueoEXPv35vg7
-        4QrQSaFR3X//16F4YtiQaskqamvjwV0nzFBgeb34FOUJFy3bg18voeG3M9hIdFvGTlVevx
-        3/eh2QCe7ufPW4OsNUmWok1UwzzmmVyVoIVmaAiVD6z4zNNTbEAU96X1ctT9Ruijia+LD7
-        WIsZcheEtIpcrXvlrpf27hLKfJXXarMAzqXPIq+jKAG/JICZg+kC3zSpLIeRSQ==
+        bh=UZ+uT7kVjqwLZYOg1c2d5AcoIHDejx6MDyhY4qb+E7U=;
+        b=JxkCUxWJ2xy8vjXfnWmEOaJ1IiVKcM8Rj4ORrM5+WibRZO/oLZ/u15g5dfjovOg+rZ8igx
+        IROigmljAxl6t7/vNAlBb1VCLWDmM/p5ELnPcm+CXiTgFgUdjITnj1XN/RJEqd08QQTMds
+        PXwtBaZwHenuLZHe0CBEZU/xjoqEMI6Y9LpsS9+HQWU43NUjIaNkFG64AOxTXSfPTqiHTq
+        QF7pT4ruWsNfGaLBFwRK0IhoUc9KmHM8n3v0yo5ckZwBBYFZFU2aATXm4giPL/mp1WjCcY
+        5sx4xFrcyKw7Oa0ksb3HVgDGxrjc54+4TdKvxV9W7ZtHO4TeeXaAnlr0FC05mA==
 ARC-Seal: i=1; s=2017; d=steffenvogel.de; t=1540764601; a=rsa-sha256;
         cv=none;
-        b=IpbXSAlHf5WtTfQEg6xjpdco2GkpgLW7wSlaItX/2PR5wlQPoY5d8/kl6h+fgtESxJGz0IK9puOugQ2C9YfG0pSR2ececcaDssZ++iQpf2eRPDDGPTCDa0XU6l8aVBlddGLZFO2n3X0yEFsfalShVMh/oRp5vxZYxOM65p1PyyTe7K5lH6ljZRZeAxk8jiefz5KtNXmHn8CQC+0HVlptwJOgOzlFtd8OKvlaJd5lpcOJJEnERvdq94oBTwWchvC6CCRVh+1FQ6tTQRWf+PrOSJHVpduvcXr9SUi1393d1txM3vaKAmUyiMqcTm4YkI2VT3hFGmPO4GmFz7dsYD5Upg==
+        b=NWbVlSsfCZdCi/L3nfU5pjmxly5Wks0kgwMpavV1W2OYbc5ByH1oW89H4FYM+pWM0V2IPReuW6IMhMN+TWvO/RYhaS+PwsawrsuYRzvrX7UpS1EoSm8uez7x3bHoFaMts2AKb9+o4h6vxF6J45Ww+EeUaZOZAXCvyYSrFCw63l+q59Xt0+/BkOQwx9kHObMZcTOJKhBtC+PlavnQb4LiVMmHLG/EKVtBizYw5iim2A1aCZ000jvOwbG6IuEiBRhuA7H0MD5keKgfa409gi5WhxHYM1GxTrCW10O09d0JtEOtv7MdswFqcaPDZbaL16bNGe3+q9vZiaUISIWGkQPAMw==
 ARC-Authentication-Results: i=1;
         ORIGINATING;
         auth=pass smtp.auth=stv0g@0l.de smtp.mailfrom=post@steffenvogel.de
@@ -74,236 +74,331 @@ This satisfies a checkpatch warning
 
 Signed-off-by: Steffen Vogel <post@steffenvogel.de>
 ---
- drivers/w1/w1.c         | 23 +++++++++++++++++++++++
- drivers/w1/w1_netlink.c |  7 +++++++
- 2 files changed, 30 insertions(+)
+ drivers/w1/w1.c         | 56 +++++++++++++++++++++++++++++--------------------
+ drivers/w1/w1_int.c     |  3 ++-
+ drivers/w1/w1_io.c      | 29 +++++++++++++++----------
+ drivers/w1/w1_netlink.c | 16 +++++++++-----
+ 4 files changed, 64 insertions(+), 40 deletions(-)
 
 diff --git a/drivers/w1/w1.c b/drivers/w1/w1.c
-index bd95dfe4041d..812186ce35d6 100644
+index 2c64655b603c..bd95dfe4041d 100644
 --- a/drivers/w1/w1.c
 +++ b/drivers/w1/w1.c
-@@ -130,6 +130,7 @@ static ssize_t rw_write(struct file *filp, struct kobject *kobj,
+@@ -85,7 +85,8 @@ static void w1_slave_release(struct device *dev)
+ 	sl->master->slave_count--;
+ }
  
- out_up:
- 	mutex_unlock(&sl->master->mutex);
-+
+-static ssize_t name_show(struct device *dev, struct device_attribute *attr, char *buf)
++static ssize_t name_show(struct device *dev,
++	struct device_attribute *attr, char *buf)
+ {
+ 	struct w1_slave *sl = dev_to_w1_slave(dev);
+ 
+@@ -203,9 +204,10 @@ struct device w1_slave_device = {
+ 	.driver = &w1_slave_driver,
+ 	.release = &w1_slave_release
+ };
+-#endif  /*  0  */
++#endif
+ 
+-static ssize_t w1_master_attribute_show_name(struct device *dev, struct device_attribute *attr, char *buf)
++static ssize_t w1_master_attribute_show_name(struct device *dev,
++	struct device_attribute *attr, char *buf)
+ {
+ 	struct w1_master *md = dev_to_w1_master(dev);
+ 	ssize_t count;
+@@ -217,9 +219,9 @@ static ssize_t w1_master_attribute_show_name(struct device *dev, struct device_a
  	return count;
  }
  
-@@ -142,6 +143,7 @@ static ssize_t rw_read(struct file *filp, struct kobject *kobj,
- 	mutex_lock(&sl->master->mutex);
- 	w1_read_block(sl->master, buf, count);
- 	mutex_unlock(&sl->master->mutex);
-+
+-static ssize_t w1_master_attribute_store_search(struct device * dev,
++static ssize_t w1_master_attribute_store_search(struct device *dev,
+ 						struct device_attribute *attr,
+-						const char * buf, size_t count)
++						const char *buf, size_t count)
+ {
+ 	long tmp;
+ 	struct w1_master *md = dev_to_w1_master(dev);
+@@ -286,7 +288,8 @@ static ssize_t w1_master_attribute_show_pullup(struct device *dev,
  	return count;
  }
  
-@@ -297,6 +299,7 @@ static ssize_t w1_master_attribute_show_pointer(struct device *dev,
- 	mutex_lock(&md->mutex);
- 	count = sprintf(buf, "0x%p\n", md->bus_master);
- 	mutex_unlock(&md->mutex);
-+
+-static ssize_t w1_master_attribute_show_pointer(struct device *dev, struct device_attribute *attr, char *buf)
++static ssize_t w1_master_attribute_show_pointer(struct device *dev,
++	struct device_attribute *attr, char *buf)
+ {
+ 	struct w1_master *md = dev_to_w1_master(dev);
+ 	ssize_t count;
+@@ -297,7 +300,8 @@ static ssize_t w1_master_attribute_show_pointer(struct device *dev, struct devic
  	return count;
  }
  
-@@ -304,7 +307,9 @@ static ssize_t w1_master_attribute_show_timeout(struct device *dev,
- 	struct device_attribute *attr, char *buf)
+-static ssize_t w1_master_attribute_show_timeout(struct device *dev, struct device_attribute *attr, char *buf)
++static ssize_t w1_master_attribute_show_timeout(struct device *dev,
++	struct device_attribute *attr, char *buf)
  {
  	ssize_t count;
-+
  	count = sprintf(buf, "%d\n", w1_timeout);
-+
+@@ -330,7 +334,8 @@ static ssize_t w1_master_attribute_store_max_slave_count(struct device *dev,
  	return count;
  }
  
-@@ -312,7 +317,9 @@ static ssize_t w1_master_attribute_show_timeout_us(struct device *dev,
- 	struct device_attribute *attr, char *buf)
+-static ssize_t w1_master_attribute_show_max_slave_count(struct device *dev, struct device_attribute *attr, char *buf)
++static ssize_t w1_master_attribute_show_max_slave_count(struct device *dev,
++	struct device_attribute *attr, char *buf)
  {
+ 	struct w1_master *md = dev_to_w1_master(dev);
  	ssize_t count;
-+
- 	count = sprintf(buf, "%d\n", w1_timeout_us);
-+
- 	return count;
- }
- 
-@@ -369,6 +376,7 @@ static ssize_t w1_master_attribute_show_slave_count(struct device *dev,
+@@ -338,10 +343,12 @@ static ssize_t w1_master_attribute_show_max_slave_count(struct device *dev, stru
  	mutex_lock(&md->mutex);
- 	count = sprintf(buf, "%d\n", md->slave_count);
+ 	count = sprintf(buf, "%d\n", md->max_slave_count);
  	mutex_unlock(&md->mutex);
 +
  	return count;
  }
  
-@@ -399,8 +407,10 @@ static ssize_t w1_master_attribute_show_add(struct device *dev,
- 	struct device_attribute *attr, char *buf)
+-static ssize_t w1_master_attribute_show_attempts(struct device *dev, struct device_attribute *attr, char *buf)
++static ssize_t w1_master_attribute_show_attempts(struct device *dev,
++	struct device_attribute *attr, char *buf)
  {
- 	int c = PAGE_SIZE;
+ 	struct w1_master *md = dev_to_w1_master(dev);
+ 	ssize_t count;
+@@ -349,10 +356,12 @@ static ssize_t w1_master_attribute_show_attempts(struct device *dev, struct devi
+ 	mutex_lock(&md->mutex);
+ 	count = sprintf(buf, "%lu\n", md->attempts);
+ 	mutex_unlock(&md->mutex);
 +
- 	c -= snprintf(buf+PAGE_SIZE - c, c,
- 		"write device id xx-xxxxxxxxxxxx to add slave\n");
-+
- 	return PAGE_SIZE - c;
+ 	return count;
  }
  
-@@ -449,6 +459,7 @@ struct w1_slave *w1_slave_search_device(struct w1_master *dev,
- 	struct w1_reg_num *rn)
+-static ssize_t w1_master_attribute_show_slave_count(struct device *dev, struct device_attribute *attr, char *buf)
++static ssize_t w1_master_attribute_show_slave_count(struct device *dev,
++	struct device_attribute *attr, char *buf)
  {
- 	struct w1_slave *sl;
-+
- 	mutex_lock(&dev->list_mutex);
- 	list_for_each_entry(sl, &dev->slist, w1_slave_entry) {
- 		if (sl->reg_num.family == rn->family &&
-@@ -459,6 +470,7 @@ struct w1_slave *w1_slave_search_device(struct w1_master *dev,
+ 	struct w1_master *md = dev_to_w1_master(dev);
+ 	ssize_t count;
+@@ -408,8 +417,7 @@ static int w1_atoreg_num(struct device *dev, const char *buf, size_t count,
+ 	 * print it either.  It would be unreasonable for the user to then
+ 	 * provide it.
+ 	 */
+-	const char *error_msg = "bad slave string format, expecting "
+-		"ff-dddddddddddd\n";
++	const char *error_msg = "bad slave string format, expecting ff-dddddddddddd\n";
+ 
+ 	if (buf[2] != '-') {
+ 		dev_err(dev, "%s", error_msg);
+@@ -880,8 +888,8 @@ void w1_reconnect_slaves(struct w1_family *f, int attach)
+ 
+ 	mutex_lock(&w1_mlock);
+ 	list_for_each_entry(dev, &w1_masters, w1_master_entry) {
+-		dev_dbg(&dev->dev, "Reconnecting slaves in device %s "
+-			"for family %02x.\n", dev->name, f->fid);
++		dev_dbg(&dev->dev, "Reconnecting slaves in device %s for family %02x.\n",
++			dev->name, f->fid);
+ 		mutex_lock(&dev->mutex);
+ 		mutex_lock(&dev->list_mutex);
+ 		list_for_each_entry_safe(sl, sln, &dev->slist, w1_slave_entry) {
+@@ -905,8 +913,8 @@ void w1_reconnect_slaves(struct w1_family *f, int attach)
+ 				mutex_lock(&dev->list_mutex);
+ 			}
+ 		}
+-		dev_dbg(&dev->dev, "Reconnecting slaves in device %s "
+-			"has been finished.\n", dev->name);
++		dev_dbg(&dev->dev, "Reconnecting slaves in device %s has been finished.\n",
++			dev->name);
+ 		mutex_unlock(&dev->list_mutex);
+ 		mutex_unlock(&dev->mutex);
+ 	}
+@@ -951,7 +959,8 @@ void w1_slave_found(struct w1_master *dev, u64 rn)
+  * See "Application note 187 1-wire search algorithm" at www.maxim-ic.com
+  *
+  */
+-void w1_search(struct w1_master *dev, u8 search_type, w1_slave_found_callback cb)
++void w1_search(struct w1_master *dev, u8 search_type,
++	w1_slave_found_callback cb)
+ {
+ 	u64 last_rn, rn, tmp64;
+ 	int i, slave_count = 0;
+@@ -1002,9 +1011,11 @@ void w1_search(struct w1_master *dev, u8 search_type, w1_slave_found_callback cb
+ 		for (i = 0; i < 64; ++i) {
+ 			/* Determine the direction/search bit */
+ 			if (i == desc_bit)
+-				search_bit = 1;	  /* took the 0 path last time, so take the 1 path */
++				/* took the 0 path last time, so take the 1 path */
++				search_bit = 1;
+ 			else if (i > desc_bit)
+-				search_bit = 0;	  /* take the 0 path on the next branch */
++				/* take the 0 path on the next branch */
++				search_bit = 0;
+ 			else
+ 				search_bit = ((last_rn >> i) & 0x1);
+ 
+@@ -1015,7 +1026,7 @@ void w1_search(struct w1_master *dev, u8 search_type, w1_slave_found_callback cb
+ 			if ( (triplet_ret & 0x03) == 0x03 )
+ 				break;
+ 
+-			/* If both directions were valid, and we took the 0 path... */
++			/* If both directions were valid, and we took the 0 path */
+ 			if (triplet_ret == 0)
+ 				last_zero = i;
+ 
+@@ -1051,9 +1062,8 @@ void w1_search(struct w1_master *dev, u8 search_type, w1_slave_found_callback cb
+ 			 * last id as the first id (provided it is still on the
+ 			 * bus).
+ 			 */
+-			dev_info(&dev->dev, "%s: max_slave_count %d reached, "
+-				"will continue next search.\n", __func__,
+-				dev->max_slave_count);
++			dev_info(&dev->dev, "%s: max_slave_count %d reached, will continue next search.\n",
++				__func__, dev->max_slave_count);
+ 			set_bit(W1_WARN_MAX_COUNT, &dev->flags);
  		}
  	}
- 	mutex_unlock(&dev->list_mutex);
-+
- 	return NULL;
- }
- 
-@@ -495,8 +507,10 @@ static ssize_t w1_master_attribute_show_remove(struct device *dev,
- 	struct device_attribute *attr, char *buf)
+diff --git a/drivers/w1/w1_int.c b/drivers/w1/w1_int.c
+index 507eea535d43..72b9392d9551 100644
+--- a/drivers/w1/w1_int.c
++++ b/drivers/w1/w1_int.c
+@@ -31,7 +31,8 @@ static struct w1_master *w1_alloc_dev(u32 id, int slave_count, int slave_ttl,
+ 	/*
+ 	 * We are in process context(kernel thread), so can sleep.
+ 	 */
+-	dev = kzalloc(sizeof(struct w1_master) + sizeof(struct w1_bus_master), GFP_KERNEL);
++	dev = kzalloc(sizeof(struct w1_master) +
++		sizeof(struct w1_bus_master), GFP_KERNEL);
+ 	if (!dev) {
+ 		pr_err("Failed to allocate %zd bytes for new w1 device.\n",
+ 			sizeof(struct w1_master));
+diff --git a/drivers/w1/w1_io.c b/drivers/w1/w1_io.c
+index bc7d1f7a1222..2626a61852e9 100644
+--- a/drivers/w1/w1_io.c
++++ b/drivers/w1/w1_io.c
+@@ -73,7 +73,8 @@ static void w1_write_bit(struct w1_master *dev, int bit)
  {
- 	int c = PAGE_SIZE;
-+
- 	c -= snprintf(buf+PAGE_SIZE - c, c,
- 		"write device id xx-xxxxxxxxxxxx to remove slave\n");
-+
- 	return PAGE_SIZE - c;
+ 	unsigned long flags = 0;
+ 
+-	if(w1_disable_irqs) local_irq_save(flags);
++	if (w1_disable_irqs)
++		local_irq_save(flags);
+ 
+ 	if (bit) {
+ 		dev->bus_master->write_bit(dev->bus_master->data, 0);
+@@ -87,7 +88,8 @@ static void w1_write_bit(struct w1_master *dev, int bit)
+ 		w1_delay(10);
+ 	}
+ 
+-	if(w1_disable_irqs) local_irq_restore(flags);
++	if (w1_disable_irqs)
++		local_irq_restore(flags);
  }
  
-@@ -674,6 +688,7 @@ static int w1_family_notify(unsigned long action, struct w1_slave *sl)
- 			sysfs_remove_groups(&sl->dev.kobj, fops->groups);
- 		break;
- 	}
-+
- 	return 0;
- }
- 
-@@ -709,6 +724,7 @@ static int __w1_attach_slave_device(struct w1_slave *sl)
- 			"Device registration [%s] failed. err=%d\n",
- 			dev_name(&sl->dev), err);
- 		put_device(&sl->dev);
-+
- 		return err;
- 	}
- 	w1_family_notify(BUS_NOTIFY_ADD_DEVICE, sl);
-@@ -777,6 +793,7 @@ int w1_attach_slave_device(struct w1_master *dev, struct w1_reg_num *rn)
- 		w1_family_put(sl->family);
- 		atomic_dec(&sl->master->refcnt);
- 		kfree(sl);
-+
- 		return err;
- 	}
- 
-@@ -793,6 +810,7 @@ int w1_unref_slave(struct w1_slave *sl)
+ /**
+@@ -192,9 +194,10 @@ static u8 w1_read_bit(struct w1_master *dev)
+  */
+ u8 w1_triplet(struct w1_master *dev, int bdir)
  {
- 	struct w1_master *dev = sl->master;
- 	int refcnt;
-+
- 	mutex_lock(&dev->list_mutex);
- 	refcnt = atomic_sub_return(1, &sl->refcnt);
- 	if (refcnt == 0) {
-@@ -817,6 +835,7 @@ int w1_unref_slave(struct w1_slave *sl)
- 	}
- 	atomic_dec(&dev->refcnt);
- 	mutex_unlock(&dev->list_mutex);
-+
- 	return refcnt;
- }
+-	if (dev->bus_master->triplet)
+-		return dev->bus_master->triplet(dev->bus_master->data, bdir);
+-	else {
++	if (dev->bus_master->triplet) {
++		return dev->bus_master->triplet(dev->bus_master->data,
++			bdir);
++	} else {
+ 		u8 id_bit   = w1_touch_bit(dev, 1);
+ 		u8 comp_bit = w1_touch_bit(dev, 1);
+ 		u8 retval;
+@@ -298,9 +301,10 @@ u8 w1_read_block(struct w1_master *dev, u8 *buf, int len)
+ 	int i;
+ 	u8 ret;
  
-@@ -824,6 +843,7 @@ int w1_slave_detach(struct w1_slave *sl)
+-	if (dev->bus_master->read_block)
+-		ret = dev->bus_master->read_block(dev->bus_master->data, buf, len);
+-	else {
++	if (dev->bus_master->read_block) {
++		ret = dev->bus_master->read_block(dev->bus_master->data,
++			buf, len);
++	} else {
+ 		for (i = 0; i < len; ++i)
+ 			buf[i] = w1_read_8(dev);
+ 		ret = len;
+@@ -320,7 +324,8 @@ int w1_reset_bus(struct w1_master *dev)
+ 	int result;
+ 	unsigned long flags = 0;
+ 
+-	if(w1_disable_irqs) local_irq_save(flags);
++	if (w1_disable_irqs)
++		local_irq_save(flags);
+ 
+ 	if (dev->bus_master->reset_bus)
+ 		result = dev->bus_master->reset_bus(dev->bus_master->data) & 0x1;
+@@ -346,7 +351,8 @@ int w1_reset_bus(struct w1_master *dev)
+ 		msleep(1);
+ 	}
+ 
+-	if(w1_disable_irqs) local_irq_restore(flags);
++	if (w1_disable_irqs)
++		local_irq_restore(flags);
+ 
+ 	return result;
+ }
+@@ -363,7 +369,8 @@ u8 w1_calc_crc8(u8 * data, int len)
+ }
+ EXPORT_SYMBOL_GPL(w1_calc_crc8);
+ 
+-void w1_search_devices(struct w1_master *dev, u8 search_type, w1_slave_found_callback cb)
++void w1_search_devices(struct w1_master *dev, u8 search_type,
++	w1_slave_found_callback cb)
  {
- 	/* Only detach a slave once as it decreases the refcnt each time. */
- 	int destroy_now;
-+
- 	mutex_lock(&sl->master->list_mutex);
- 	destroy_now = !test_bit(W1_SLAVE_DETACH, &sl->flags);
- 	set_bit(W1_SLAVE_DETACH, &sl->flags);
-@@ -831,6 +851,7 @@ int w1_slave_detach(struct w1_slave *sl)
- 
- 	if (destroy_now)
- 		destroy_now = !w1_unref_slave(sl);
-+
- 	return destroy_now ? 0 : -EBUSY;
- }
- 
-@@ -996,6 +1017,7 @@ void w1_search(struct w1_master *dev, u8 search_type,
- 		/* Do fast search on single slave bus */
- 		if (dev->max_slave_count == 1) {
- 			int rv;
-+
- 			w1_write_8(dev, W1_READ_ROM);
- 			rv = w1_read_block(dev, (u8 *)&rn, 8);
- 			mutex_unlock(&dev->bus_mutex);
-@@ -1127,6 +1149,7 @@ int w1_process_callbacks(struct w1_master *dev)
- 			mutex_lock(&dev->list_mutex);
- 		}
- 	}
-+
- 	return ret;
- }
- 
+ 	dev->attempts++;
+ 	if (dev->bus_master->search)
 diff --git a/drivers/w1/w1_netlink.c b/drivers/w1/w1_netlink.c
-index 54a82bf69566..ff858bf4a94d 100644
+index 0f2c6ed94b0f..54a82bf69566 100644
 --- a/drivers/w1/w1_netlink.c
 +++ b/drivers/w1/w1_netlink.c
-@@ -63,6 +63,7 @@ static void w1_unref_block(struct w1_cb_block *block)
+@@ -82,8 +82,10 @@ static void w1_unref_block(struct w1_cb_block *block)
+ static void w1_reply_make_space(struct w1_cb_block *block, u16 space)
  {
- 	if (atomic_sub_return(1, &block->refcnt) == 0) {
- 		u16 len = w1_reply_len(block);
+ 	u16 len = w1_reply_len(block);
 +
- 		if (len) {
- 			cn_netlink_send_mult(block->first_cn, len,
- 				block->portid, 0, GFP_KERNEL);
-@@ -137,6 +138,7 @@ static void w1_netlink_queue_cmd(struct w1_cb_block *block,
- 	struct w1_netlink_cmd *cmd)
+ 	if (len + space >= block->maxlen) {
+-		cn_netlink_send_mult(block->first_cn, len, block->portid, 0, GFP_KERNEL);
++		cn_netlink_send_mult(block->first_cn, len,
++			block->portid, 0, GFP_KERNEL);
+ 		block->first_cn->len = 0;
+ 		block->cn = NULL;
+ 		block->msg = NULL;
+@@ -110,7 +112,8 @@ static void w1_netlink_check_send(struct w1_cb_block *block)
+ static void w1_netlink_setup_msg(struct w1_cb_block *block, u32 ack)
  {
- 	u32 space;
+ 	if (block->cn && block->cn->ack == ack) {
+-		block->msg = (struct w1_netlink_msg *)(block->cn->data + block->cn->len);
++		block->msg = (struct w1_netlink_msg *)
++			(block->cn->data + block->cn->len);
+ 	} else {
+ 		/* advance or set to data */
+ 		if (block->cn)
+@@ -170,7 +173,9 @@ static void w1_netlink_queue_status(struct w1_cb_block *block,
+ 	block->msg->len = 0;
+ 	block->msg->status = (u8)-error;
+ 	if (req_cmd) {
+-		struct w1_netlink_cmd *cmd = (struct w1_netlink_cmd *)block->msg->data;
++		struct w1_netlink_cmd *cmd =
++			(struct w1_netlink_cmd *) block->msg->data;
 +
- 	w1_reply_make_space(block, sizeof(struct cn_msg) +
- 		sizeof(struct w1_netlink_msg) + sizeof(*cmd) + cmd->len);
- 
-@@ -165,6 +167,7 @@ static void w1_netlink_queue_status(struct w1_cb_block *block,
- 	int error)
+ 		memcpy(cmd, req_cmd, sizeof(*cmd));
+ 		block->cn->len += sizeof(*cmd);
+ 		block->msg->len += sizeof(*cmd);
+@@ -388,8 +393,9 @@ static int w1_process_command_slave(struct w1_slave *sl,
+ 		struct w1_netlink_cmd *cmd)
  {
- 	u16 space = sizeof(struct cn_msg) + sizeof(*req_msg) + sizeof(*req_cmd);
-+
- 	w1_reply_make_space(block, space);
- 	w1_netlink_setup_msg(block, block->request_cn.ack);
+ 	dev_dbg(&sl->master->dev, "%s: %02x.%012llx.%02x: cmd=%02x, len=%u.\n",
+-		__func__, sl->reg_num.family, (unsigned long long)sl->reg_num.id,
+-		sl->reg_num.crc, cmd->cmd, cmd->len);
++		__func__, sl->reg_num.family,
++		(unsigned long long) sl->reg_num.id, sl->reg_num.crc, cmd->cmd,
++		cmd->len);
  
-@@ -276,6 +279,7 @@ static int w1_get_slaves(struct w1_master *dev, struct w1_netlink_cmd *req_cmd)
- 
- 	if (req_cmd->cmd == W1_CMD_LIST_SLAVES) {
- 		u64 rn;
-+
- 		mutex_lock(&dev->list_mutex);
- 		list_for_each_entry(sl, &dev->slist, w1_slave_entry) {
- 			memcpy(&rn, &sl->reg_num, sizeof(rn));
-@@ -508,6 +512,7 @@ static void w1_list_count_cmds(struct w1_netlink_msg *msg, int *cmd_count,
- 	u16 mlen = msg->len;
- 	u16 len;
- 	int slave_list = 0;
-+
- 	while (mlen) {
- 		if (cmd->len + sizeof(struct w1_netlink_cmd) > mlen)
- 			break;
-@@ -526,6 +531,7 @@ static void w1_list_count_cmds(struct w1_netlink_msg *msg, int *cmd_count,
- 
- 	if (slave_list) {
- 		struct w1_master *dev = w1_search_master_id(msg->id.mst.id);
-+
- 		if (dev) {
- 			/* Bytes, and likely an overstimate, and if it isn't
- 			 * the results can still be split between packets.
-@@ -586,6 +592,7 @@ static void w1_cn_callback(struct cn_msg *cn, struct netlink_skb_parms *nsp)
- 	if (node_count) {
- 		int size;
- 		int reply_size = sizeof(*cn) + cn->len + slave_len;
-+
- 		if (cn->flags & W1_CN_BUNDLE) {
- 			/* bundling duplicats some of the messages */
- 			reply_size += 2 * cmd_count * (sizeof(struct cn_msg) +
+ 	return w1_process_command_io(sl->master, cmd);
+ }
 -- 
 2.11.0
 
