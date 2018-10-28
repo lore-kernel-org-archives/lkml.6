@@ -2,310 +2,132 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C8EEC46475
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 03:18:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A43B3ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 03:49:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3101320665
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 03:18:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3101320665
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2C81D20827
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 03:49:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EbxyGra6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C81D20827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727876AbeJ1MBR (ORCPT
+        id S1729110AbeJ1Ma6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 08:01:17 -0400
-Received: from mail-it1-f200.google.com ([209.85.166.200]:36638 "EHLO
-        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727778AbeJ1MBR (ORCPT
+        Sun, 28 Oct 2018 08:30:58 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:36306 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727833AbeJ1Ma5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 08:01:17 -0400
-Received: by mail-it1-f200.google.com with SMTP id q184-v6so2071778itc.1
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Oct 2018 20:18:04 -0700 (PDT)
+        Sun, 28 Oct 2018 08:30:57 -0400
+Received: by mail-pl1-f194.google.com with SMTP id y11-v6so2234450plt.3
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Oct 2018 20:47:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=BSUUSCiAf+SZUNfvSypKxLuFXw4+UcxoOy8un93LPJI=;
+        b=EbxyGra6soWQj0mr3PD1FW9OM5p2A0SqOpIlaHmPFPIIopYasflIkZxvD2c/tfzYB8
+         CYQMt+T7NzrHqFefrJx7CC/9DhBSawFRO0VlCRATb0/jFn+dN22LQav8Aoyc7hwW3nol
+         zNR+y+pnekp9zlRojpdypcnr/4XWtYliCjvRHPg3+LnRtcOOcDxGf0ZnvV8D6Q/SJO9f
+         zs4l82qQTUxoHTjnRg6jJ1wZjw8fLfUSDQN5mN5daK164htpq9Jl3So/g/k370Ymm2uk
+         Ce+hcZddoW/yCL7TRbcZn27mM5681bJOdh4GCaEoGhpRdTeCjUzkM789AxG78GoBwjEX
+         JByA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=CQeHFaOojb+48tBqvogK6yiFZaxhj8v6kY+kh6JEpZQ=;
-        b=gvRvUdgx1+v5+xyMALuCnJTE+zSS8PXOPvUDuDAlHtDi68NzH2ovgXMH30rST2KEhE
-         x+8BpA0DJwZbFyRxiaW8tjOn1QhL7cDvOtUfzUFtOO5ZU20ldnK9as/rP2lXGR1v+yfI
-         1UJJ+xjTpq8xbAUS5JY5VLZ6cSYVyF2ynx/QOHaDopHcj2UJrKq3ADgJphKlBDX3+Hep
-         36Yx3YGPxxKVb1VXYIqz6d9WO7D9gmbSUmmTEFyRrgr5GG1nezlslW6JRHmHsFvoszI+
-         msycQmyJYyU85bO2lxonEads85bVKHOc8QjH9Pybf5L/xpUcDCxrGhHNskAxEAB57Yhp
-         hDQA==
-X-Gm-Message-State: AGRZ1gKtrVCHYtud53qRLZzCkF799mOLjZk0Kp57RFUjcbuxyH7GfzCw
-        BIpWEMtQlUWqQNmvH1/xHcp1p8gjbYHqQfTQPZfDRaW6MV7B
-X-Google-Smtp-Source: AJdET5fVM2kVoNnVQfysFwKx1PffHbxGG5Ea1wbZQ7buQIPykj5uRGLUfIbUE4ZQmip3ZvZ/So5aQk3fMTEe4KOeDYf2Al6GU8gR
-MIME-Version: 1.0
-X-Received: by 2002:a6b:f90a:: with SMTP id j10-v6mr228226iog.5.1540696683948;
- Sat, 27 Oct 2018 20:18:03 -0700 (PDT)
-Date:   Sat, 27 Oct 2018 20:18:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008db3210579416691@google.com>
-Subject: WARNING in __debug_object_init (3)
-From:   syzbot <syzbot+6e682caa546b7c96c859@syzkaller.appspotmail.com>
-To:     ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=BSUUSCiAf+SZUNfvSypKxLuFXw4+UcxoOy8un93LPJI=;
+        b=ajt9NaiWchKi1HC2LVIZeB61F0NipfBcaHgJ2rmqUOucAuJE+QMvn8bK4u3NN9ai01
+         M6xdy49R9atCLYnqCjJRkI9zo8rLNZC9bKblY94Mxcyro4hg+evbHxuEqzHN7tstZDZQ
+         0RjfUDGBVzoUbLA4jYJeAJ+qTZQZJfFnYE8T0Sxyj3lLZdvfejR5fwnEswdj0irLlYTg
+         Uk2FxeTlt1EhkX9Su+1sjG7SSkOmVIMi4m624VvuYQjOjxWTB9RV25tKhL3+vIie5bAx
+         vFEE+mYWgCHHQxu0qF12hoCpHKVSjGLezSURgHzLC2FXYTTXZTovKG5ted1jQ/gJ3P8c
+         fbrg==
+X-Gm-Message-State: AGRZ1gLzjnCJ0gWyr45IvmsE+Vt9TRPBzdZovqbR0twf/bVEmuq7vZwU
+        WzLEi20pvLXzMtmfaE/NCQzvl6GueKQ=
+X-Google-Smtp-Source: AJdET5enSUtGNDgfo/YJxlYE5Rzh9t6kWGUAYWuuz185Q1gzqEmZdkfi6Jvne+wazve9CrtFlIcuJQ==
+X-Received: by 2002:a17:902:2909:: with SMTP id g9-v6mr9158258plb.223.1540698460459;
+        Sat, 27 Oct 2018 20:47:40 -0700 (PDT)
+Received: from emca-Inspiron-3558 (96-89-123-89-static.hfc.comcastbusiness.net. [96.89.123.89])
+        by smtp.gmail.com with ESMTPSA id u13-v6sm15454625pgp.18.2018.10.27.20.47.39
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sat, 27 Oct 2018 20:47:39 -0700 (PDT)
+From:   Robert Eshleman <bobbyeshleman@gmail.com>
+Cc:     Robert Eshleman <bobbyeshleman@gmail.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Colin Ian King <colin.king@canonical.com>,
+        =?UTF-8?q?Andr=C3=A9=20Lehmann?= <lenneman@web.de>,
+        Michael Straube <straube.linux@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: rtl8712: fix CamelCase in fw_priv struct
+Date:   Sat, 27 Oct 2018 20:47:00 -0700
+Message-Id: <1540698425-17503-1-git-send-email-bobbyeshleman@gmail.com>
+X-Mailer: git-send-email 2.7.4
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Rename fields in fw_priv struct from CamelCase to snake_case.
+Reported by checkpatch.
 
-syzbot found the following crash on:
-
-HEAD commit:    8c60c36d0b8c Add linux-next specific files for 20181019
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=100feec5400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8b6d7c4c81535e89
-dashboard link: https://syzkaller.appspot.com/bug?extid=6e682caa546b7c96c859
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13579abd400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13654f6b400000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+6e682caa546b7c96c859@syzkaller.appspotmail.com
-
-ODEBUG: object 0000000015e9012c is on stack 00000000115bcb67, but NOT  
-annotated.
-WARNING: CPU: 0 PID: 5594 at lib/debugobjects.c:369  
-debug_object_is_on_stack lib/debugobjects.c:363 [inline]
-WARNING: CPU: 0 PID: 5594 at lib/debugobjects.c:369  
-__debug_object_init.cold.14+0x51/0xdf lib/debugobjects.c:395
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 0 PID: 5594 Comm: syz-executor740 Not tainted  
-4.19.0-rc8-next-20181019+ #98
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  panic+0x2ad/0x55c kernel/panic.c:188
-  __warn.cold.8+0x20/0x45 kernel/panic.c:540
-  report_bug+0x254/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
-  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:969
-RIP: 0010:debug_object_is_on_stack lib/debugobjects.c:363 [inline]
-RIP: 0010:__debug_object_init.cold.14+0x51/0xdf lib/debugobjects.c:395
-Code: ea 03 80 3c 02 00 75 7c 49 8b 54 24 18 48 89 de 48 c7 c7 c0 f1 40 88  
-4c 89 85 d0 fd ff ff e8 09 8c d1 fd 4c 8b 85 d0 fd ff ff <0f> 0b e9 09 d6  
-ff ff 41 83 c4 01 b8 ff ff 37 00 44 89 25 b7 4e 66
-RSP: 0018:ffff8801bb387308 EFLAGS: 00010086
-RAX: 0000000000000050 RBX: ffff8801bb387af8 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff816585a5 RDI: 0000000000000005
-RBP: ffff8801bb387560 R08: ffff8801cb208a20 R09: ffffed003b5c5008
-R10: ffffed003b5c5008 R11: ffff8801dae28047 R12: ffff8801d82ea300
-R13: 0000000000069700 R14: ffff8801d82ea300 R15: ffff8801cb208a10
-  debug_object_init+0x16/0x20 lib/debugobjects.c:432
-  debug_timer_init kernel/time/timer.c:704 [inline]
-  debug_init kernel/time/timer.c:757 [inline]
-  init_timer_key+0xa9/0x480 kernel/time/timer.c:806
-  sock_init_data+0xe1/0xdc0 net/core/sock.c:2696
-  bpf_prog_test_run_skb+0x255/0xc40 net/bpf/test_run.c:144
-  bpf_prog_test_run+0x130/0x1a0 kernel/bpf/syscall.c:1790
-  __do_sys_bpf kernel/bpf/syscall.c:2427 [inline]
-  __se_sys_bpf kernel/bpf/syscall.c:2371 [inline]
-  __x64_sys_bpf+0x3d8/0x510 kernel/bpf/syscall.c:2371
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440259
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffc212cf818 EFLAGS: 00000213 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440259
-RDX: 0000000000000028 RSI: 0000000020000080 RDI: 000000000000000a
-RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000213 R12: 0000000000401ae0
-R13: 0000000000401b70 R14: 0000000000000000 R15: 0000000000000000
-
-======================================================
-WARNING: possible circular locking dependency detected
-4.19.0-rc8-next-20181019+ #98 Not tainted
-------------------------------------------------------
-syz-executor740/5594 is trying to acquire lock:
-00000000688fcc6b ((console_sem).lock){-.-.}, at: down_trylock+0x13/0x70  
-kernel/locking/semaphore.c:136
-
-but task is already holding lock:
-00000000505ead1b (&obj_hash[i].lock){-.-.}, at:  
-__debug_object_init+0x127/0x1290 lib/debugobjects.c:384
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #3 (&obj_hash[i].lock){-.-.}:
-        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-        _raw_spin_lock_irqsave+0x99/0xd0 kernel/locking/spinlock.c:152
-        __debug_object_init+0x127/0x1290 lib/debugobjects.c:384
-        debug_object_init+0x16/0x20 lib/debugobjects.c:432
-        debug_hrtimer_init kernel/time/hrtimer.c:410 [inline]
-        debug_init kernel/time/hrtimer.c:458 [inline]
-        hrtimer_init+0x97/0x490 kernel/time/hrtimer.c:1308
-        init_dl_task_timer+0x1b/0x50 kernel/sched/deadline.c:1057
-        __sched_fork+0x2ae/0x590 kernel/sched/core.c:2166
-        init_idle+0x75/0x740 kernel/sched/core.c:5382
-        sched_init+0xb33/0xc02 kernel/sched/core.c:6065
-        start_kernel+0x4be/0xa2b init/main.c:608
-        x86_64_start_reservations+0x2e/0x30 arch/x86/kernel/head64.c:472
-        x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:451
-        secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
-
--> #2 (&rq->lock){-.-.}:
-        __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-        _raw_spin_lock+0x2d/0x40 kernel/locking/spinlock.c:144
-        rq_lock kernel/sched/sched.h:1127 [inline]
-        task_fork_fair+0xb0/0x6d0 kernel/sched/fair.c:9768
-        sched_fork+0x443/0xba0 kernel/sched/core.c:2359
-        copy_process+0x2585/0x8770 kernel/fork.c:1887
-        _do_fork+0x1cb/0x11c0 kernel/fork.c:2216
-        kernel_thread+0x34/0x40 kernel/fork.c:2275
-        rest_init+0x28/0x372 init/main.c:409
-        arch_call_rest_init+0xe/0x1b
-        start_kernel+0x9f0/0xa2b init/main.c:745
-        x86_64_start_reservations+0x2e/0x30 arch/x86/kernel/head64.c:472
-        x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:451
-        secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
-
--> #1 (&p->pi_lock){-.-.}:
-        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-        _raw_spin_lock_irqsave+0x99/0xd0 kernel/locking/spinlock.c:152
-        try_to_wake_up+0xd2/0x12e0 kernel/sched/core.c:1965
-        wake_up_process+0x10/0x20 kernel/sched/core.c:2129
-        __up.isra.1+0x1c0/0x2a0 kernel/locking/semaphore.c:262
-        up+0x13c/0x1c0 kernel/locking/semaphore.c:187
-        __up_console_sem+0xbe/0x1b0 kernel/printk/printk.c:236
-        console_unlock+0x80c/0x1190 kernel/printk/printk.c:2432
-        vprintk_emit+0x391/0x990 kernel/printk/printk.c:1922
-        vprintk_default+0x28/0x30 kernel/printk/printk.c:1964
-        vprintk_func+0x7e/0x181 kernel/printk/printk_safe.c:398
-        printk+0xa7/0xcf kernel/printk/printk.c:1997
-        check_stack_usage kernel/exit.c:755 [inline]
-        do_exit.cold.18+0x57/0x16f kernel/exit.c:916
-        do_group_exit+0x177/0x440 kernel/exit.c:970
-        __do_sys_exit_group kernel/exit.c:981 [inline]
-        __se_sys_exit_group kernel/exit.c:979 [inline]
-        __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:979
-        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
--> #0 ((console_sem).lock){-.-.}:
-        lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
-        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-        _raw_spin_lock_irqsave+0x99/0xd0 kernel/locking/spinlock.c:152
-        down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
-        __down_trylock_console_sem+0xae/0x1f0 kernel/printk/printk.c:219
-        console_trylock+0x15/0xa0 kernel/printk/printk.c:2247
-        console_trylock_spinning kernel/printk/printk.c:1653 [inline]
-        vprintk_emit+0x372/0x990 kernel/printk/printk.c:1921
-        vprintk_default+0x28/0x30 kernel/printk/printk.c:1964
-        vprintk_func+0x7e/0x181 kernel/printk/printk_safe.c:398
-        printk+0xa7/0xcf kernel/printk/printk.c:1997
-        debug_object_is_on_stack lib/debugobjects.c:363 [inline]
-        __debug_object_init.cold.14+0x4a/0xdf lib/debugobjects.c:395
-        debug_object_init+0x16/0x20 lib/debugobjects.c:432
-        debug_timer_init kernel/time/timer.c:704 [inline]
-        debug_init kernel/time/timer.c:757 [inline]
-        init_timer_key+0xa9/0x480 kernel/time/timer.c:806
-        sock_init_data+0xe1/0xdc0 net/core/sock.c:2696
-        bpf_prog_test_run_skb+0x255/0xc40 net/bpf/test_run.c:144
-        bpf_prog_test_run+0x130/0x1a0 kernel/bpf/syscall.c:1790
-        __do_sys_bpf kernel/bpf/syscall.c:2427 [inline]
-        __se_sys_bpf kernel/bpf/syscall.c:2371 [inline]
-        __x64_sys_bpf+0x3d8/0x510 kernel/bpf/syscall.c:2371
-        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-other info that might help us debug this:
-
-Chain exists of:
-   (console_sem).lock --> &rq->lock --> &obj_hash[i].lock
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock(&obj_hash[i].lock);
-                                lock(&rq->lock);
-                                lock(&obj_hash[i].lock);
-   lock((console_sem).lock);
-
-  *** DEADLOCK ***
-
-1 lock held by syz-executor740/5594:
-  #0: 00000000505ead1b (&obj_hash[i].lock){-.-.}, at:  
-__debug_object_init+0x127/0x1290 lib/debugobjects.c:384
-
-stack backtrace:
-CPU: 0 PID: 5594 Comm: syz-executor740 Not tainted  
-4.19.0-rc8-next-20181019+ #98
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  print_circular_bug.isra.35.cold.54+0x1bd/0x27d  
-kernel/locking/lockdep.c:1221
-  check_prev_add kernel/locking/lockdep.c:1863 [inline]
-  check_prevs_add kernel/locking/lockdep.c:1976 [inline]
-  validate_chain kernel/locking/lockdep.c:2347 [inline]
-  __lock_acquire+0x3399/0x4c20 kernel/locking/lockdep.c:3341
-  lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
-  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
-  _raw_spin_lock_irqsave+0x99/0xd0 kernel/locking/spinlock.c:152
-  down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
-  __down_trylock_console_sem+0xae/0x1f0 kernel/printk/printk.c:219
-  console_trylock+0x15/0xa0 kernel/printk/printk.c:2247
-  console_trylock_spinning kernel/printk/printk.c:1653 [inline]
-  vprintk_emit+0x372/0x990 kernel/printk/printk.c:1921
-  vprintk_default+0x28/0x30 kernel/printk/printk.c:1964
-  vprintk_func+0x7e/0x181 kernel/printk/printk_safe.c:398
-  printk+0xa7/0xcf kernel/printk/printk.c:1997
-  debug_object_is_on_stack lib/debugobjects.c:363 [inline]
-  __debug_object_init.cold.14+0x4a/0xdf lib/debugobjects.c:395
-  debug_object_init+0x16/0x20 lib/debugobjects.c:432
-  debug_timer_init kernel/time/timer.c:704 [inline]
-  debug_init kernel/time/timer.c:757 [inline]
-  init_timer_key+0xa9/0x480 kernel/time/timer.c:806
-  sock_init_data+0xe1/0xdc0 net/core/sock.c:2696
-  bpf_prog_test_run_skb+0x255/0xc40 net/bpf/test_run.c:144
-  bpf_prog_test_run+0x130/0x1a0 kernel/bpf/syscall.c:1790
-  __do_sys_bpf kernel/bpf/syscall.c:2427 [inline]
-  __se_sys_bpf kernel/bpf/syscall.c:2371 [inline]
-  __x64_sys_bpf+0x3d8/0x510 kernel/bpf/syscall.c:2371
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440259
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffc212cf818 EFLAGS: 00000213 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440259
-RDX: 0000000000000028 RSI: 0000000020000080 RDI: 000000000000000a
-RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000213 R12: 0000000000401ae0
-R13: 0000000000401b70 R14: 0000000000000000 R15: 0000000000000000
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
-
-
+Signed-off-by: Robert Eshleman <bobbyeshleman@gmail.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/staging/rtl8712/hal_init.c    | 10 +++++-----
+ drivers/staging/rtl8712/rtl8712_hal.h |  8 ++++----
+ 2 files changed, 9 insertions(+), 9 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/drivers/staging/rtl8712/hal_init.c b/drivers/staging/rtl8712/hal_init.c
+index 7cdd609..4c6519c 100644
+--- a/drivers/staging/rtl8712/hal_init.c
++++ b/drivers/staging/rtl8712/hal_init.c
+@@ -100,11 +100,11 @@ static void fill_fwpriv(struct _adapter *padapter, struct fw_priv *pfwpriv)
+ 		pfwpriv->rf_config = RTL8712_RFC_1T2R;
+ 	}
+ 	pfwpriv->mp_mode = (pregpriv->mp_mode == 1) ? 1 : 0;
+-	pfwpriv->vcsType = pregpriv->vrtl_carrier_sense; /* 0:off 1:on 2:auto */
+-	pfwpriv->vcsMode = pregpriv->vcs_type; /* 1:RTS/CTS 2:CTS to self */
+-	/* default enable turboMode */
+-	pfwpriv->turboMode = ((pregpriv->wifi_test == 1) ? 0 : 1);
+-	pfwpriv->lowPowerMode = pregpriv->low_power;
++	pfwpriv->vcs_type = pregpriv->vrtl_carrier_sense; /* 0:off 1:on 2:auto */
++	pfwpriv->vcs_mode = pregpriv->vcs_type; /* 1:RTS/CTS 2:CTS to self */
++	/* default enable turbo_mode */
++	pfwpriv->turbo_mode = ((pregpriv->wifi_test == 1) ? 0 : 1);
++	pfwpriv->low_power_mode = pregpriv->low_power;
+ }
+ 
+ static void update_fwhdr(struct fw_hdr	*pfwhdr, const u8 *pmappedfw)
+diff --git a/drivers/staging/rtl8712/rtl8712_hal.h b/drivers/staging/rtl8712/rtl8712_hal.h
+index 42f5197..66cc464 100644
+--- a/drivers/staging/rtl8712/rtl8712_hal.h
++++ b/drivers/staging/rtl8712/rtl8712_hal.h
+@@ -72,13 +72,13 @@ struct fw_priv {   /*8-bytes alignment required*/
+ 	unsigned char regulatory_class_3; /*regulatory class bit map 3*/
+ 	unsigned char rfintfs;    /* 0:SWSI, 1:HWSI, 2:HWPI*/
+ 	unsigned char def_nettype;
+-	unsigned char turboMode;
+-	unsigned char lowPowerMode;/* 0: normal mode, 1: low power mode*/
++	unsigned char turbo_mode;
++	unsigned char low_power_mode;/* 0: normal mode, 1: low power mode*/
+ 	/*--- long word 2 ----*/
+ 	unsigned char lbk_mode; /*0x00: normal, 0x03: MACLBK, 0x01: PHYLBK*/
+ 	unsigned char mp_mode; /* 1: for MP use, 0: for normal driver */
+-	unsigned char vcsType; /* 0:off 1:on 2:auto */
+-	unsigned char vcsMode; /* 1:RTS/CTS 2:CTS to self */
++	unsigned char vcs_type; /* 0:off 1:on 2:auto */
++	unsigned char vcs_mode; /* 1:RTS/CTS 2:CTS to self */
+ 	unsigned char rsvd022;
+ 	unsigned char rsvd023;
+ 	unsigned char rsvd024;
+-- 
+2.7.4
+
