@@ -2,129 +2,84 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C19D4C6786F
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 13:22:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1FBAC6786F
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 13:29:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57E68205F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 13:22:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YydaRDj0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57E68205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 524BA205F4
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 13:29:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 524BA205F4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727596AbeJ1WHW (ORCPT
+        id S1727308AbeJ1WNs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 18:07:22 -0400
-Received: from mail-wm1-f53.google.com ([209.85.128.53]:53224 "EHLO
-        mail-wm1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbeJ1WHV (ORCPT
+        Sun, 28 Oct 2018 18:13:48 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:44200 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726450AbeJ1WNs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 18:07:21 -0400
-Received: by mail-wm1-f53.google.com with SMTP id 189-v6so5601155wmw.2
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 06:22:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=VGMBkqQepJaIK5hp9KrXbnrCZGgU0IlaIV5TBSqeg4c=;
-        b=YydaRDj0WS7gri+D5Wmx+GgGSo9iSseoxLI9yYwGrAWMbV3/4zpS4qQoe0+ZYaJ1+R
-         54HDJdhViJ4e7BUmGja/F5MA4OKr/qwLcra7+w1yQutzAs/g1OBJgPKfMg35fGtRg3rs
-         A6462birjKOug9gTypnKzcmM0dp+BuaUOvGTnKyOQSkg6X4XrYew+ozqAOQi34ErBc8M
-         eFWQfaxxq++x4vwfRXr5NTEMjjZaqcg033IrIB+3yA1ZkePbsKepOveCrLLxjXUNJNfa
-         4o1HsG/d/pY9s17TGqD5htCa233luEBuCELLnmxJ34hxBaV8erO0idsBGZtnyiw4k9X7
-         Z+vA==
+        Sun, 28 Oct 2018 18:13:48 -0400
+Received: by mail-vs1-f68.google.com with SMTP id w194so3593288vsc.11;
+        Sun, 28 Oct 2018 06:29:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=VGMBkqQepJaIK5hp9KrXbnrCZGgU0IlaIV5TBSqeg4c=;
-        b=lTN40iMjsaKLP5LpE/gLOQmIDKWrzTEO/uoDLPHcEUraSUDl7nWWzfQgx1oKWIC2S2
-         GAVmjYNuogTZmItfzf60gNDkOVEiT9TFATNBs87dXrnSgXW3YUK6Afvh729SYp+Xb40S
-         kg8WSwSHzdGYFLOdANQldBL8b4mZaShDi+mZXNYaJYigSkGaOCSmAH1UBxgGfAQ/La9r
-         8h9yrM4kE/ki8g2NFq2Y2EMx9VwmzyhV/yy7AT+6y9nCQkh8hID58S6vTBtXOKY8oyzg
-         L1v027qVmNbp0sT4D9Yt9DWKSe2BW6YyhDB8IavLxXQ4ZWA93bnU3q1CTDuW2qR4X336
-         /LpQ==
-X-Gm-Message-State: AGRZ1gL4hQqKcX+Snbf3HBk2nBLy89AAdWhKi0Pwl63e43cAteJzSRJ4
-        bCqqCIexn1QVEJkuhYQjIXm2n7sI
-X-Google-Smtp-Source: AJdET5eG17d2C6RXnkAj9R6onUTZjD1YGy3aL4q+yfKQTArdMwuOVUhZQqInbyvlMB0eLpZOZgIw3g==
-X-Received: by 2002:a1c:85d0:: with SMTP id h199-v6mr10748865wmd.127.1540732961945;
-        Sun, 28 Oct 2018 06:22:41 -0700 (PDT)
-Received: from ?IPv6:2a02:8108:85c0:57c8:bc68:3d44:305d:951f? ([2a02:8108:85c0:57c8:bc68:3d44:305d:951f])
-        by smtp.gmail.com with ESMTPSA id x12-v6sm30777376wmd.32.2018.10.28.06.22.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 28 Oct 2018 06:22:41 -0700 (PDT)
-Subject: Re: Which SPDX Identifier for files without explicit GPL version
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <406c69c1-43fd-f821-b74b-a1399ed636e9@gmail.com>
- <20181028112728.GD8826@kroah.com>
-From:   Michael Straube <straube.linux@gmail.com>
-Message-ID: <f1aa3ce0-7e68-ce7e-e2a3-a978bcc36e03@gmail.com>
-Date:   Sun, 28 Oct 2018 14:22:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TkUb+kS3yT4e0xmixeNsb64kHqKAAMe3NEYnWIWUDoQ=;
+        b=hRFtzjAioj3EtflUI/mvPj2+swxWY14hEQvZzkLuiLvyy12RGca8cqioaSkw7kDFhH
+         QiS/D5AEBUmtE7iENIFjz4uFE27Icy2kPCP/ea+Oz4AfMPlaOBWgeQJAjj2T24G3H/BT
+         UtKzUsuST+bxk4lhx2QC/H7fafc/Gi1vT+mOdQAcSN6tb7wYn5olDr4Vhaw3i6J8ous1
+         pnzVoiJQZKMKNxWUMCD5dV0JpZYa6Xqhi+avTmDxGYkFtxfZA6D9+JcJ6jjDK0dpQ9wj
+         3OwxvQ1UuH1yUMk8wl/al6FIce3QYh/O0oUs6j8m0mcbIYOZQpT6T9p2zv/nlExwNMoy
+         iu8g==
+X-Gm-Message-State: AGRZ1gL4eOfZ5zxw8KkMAZ87Ct6g7Cy0he3ExcZMIf8/XZinKD0jP8Gg
+        3Oc9GUgN9n07e955SvfHkO8so2ewNSBczqaIS/k=
+X-Google-Smtp-Source: AJdET5eWHIQP+fkrRNO4+QOVC5VuvOCm1AZIQjwd8so5YJmrFPE6Gh6KqrjgbjLwXdqGf4+yteGqCf7dDHDGxSR+sRw=
+X-Received: by 2002:a67:c202:: with SMTP id i2mr2688049vsj.11.1540733348725;
+ Sun, 28 Oct 2018 06:29:08 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181028112728.GD8826@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181021200048.2114-1-wsa+renesas@sang-engineering.com> <20181021200048.2114-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181021200048.2114-2-wsa+renesas@sang-engineering.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Sun, 28 Oct 2018 14:28:56 +0100
+Message-ID: <CAMuHMdUBf7AZSeEX4SffGapBRainhRCoKKVrEXA1dmyM=7kh6A@mail.gmail.com>
+Subject: Re: [PATCH 1/3] spi: spi-rspi: simplify getting .driver_data
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/28/18 12:27 PM, Greg Kroah-Hartman wrote:
-> On Sun, Oct 28, 2018 at 11:04:06AM +0100, Michael Straube wrote:
->> Hi,
->>
->> which GPL version should be used in SPDX Identifiers for files that
->> are GPL licensed but do not mention any version? It is not clear to
->> me after reading license-rules.rst.
->>
->> For example:
->>
->> /******************************************************************************
->>   * Copyright(c) 2008 - 2010 Realtek Corporation. All rights reserved.
->>   *
->>   * This program is distributed in the hope that it will be useful, but WITHOUT
->>   * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
->>   * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
->>   * more details.
->>   *
->>   * The full GNU General Public License is included in this distribution in the
->>   * file called LICENSE.
-> 
-> Perhaps look up what version of the GPL that was originally contained in
-> the tarball that this driver was bundled with?  I think that should be
-> on their website somewhere...
-> 
-> If not, it's v1, not a good thing, but all we have to go on.  Also, try
-> emailing:
-> 
->>   * Contact Information:
->>   * wlanfae <wlanfae@realtek.com>
-> 
-> That address :)
-> 
-> thanks,
-> 
-> greg k-h
-> 
+Hi Wolfram,
 
-Ah, there is a file 'license' in the root directory of this driver (rtl8192e)
-that I overlooked. It contains GPLv2. So v2 applies to all files with the above
-shortened boiler plate?
+On Sun, Oct 21, 2018 at 10:03 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+> We should get 'driver_data' from 'struct device' directly. Going via
+> platform_device is an unneeded step back and forth.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+> ---
+>
+> Build tested only. buildbot is happy.
 
-Thanks,
-Michael
+How disappointing, you do have a Lager ;-)
 
+Gr{oetje,eeting}s,
 
-  
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
