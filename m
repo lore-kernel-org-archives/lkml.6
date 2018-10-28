@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A1A9ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 07:32:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 636C7ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 07:32:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1D1220843
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 07:32:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1D1220843
+	by mail.kernel.org (Postfix) with ESMTP id 184A620870
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 07:32:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 184A620870
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728117AbeJ1QP0 (ORCPT
+        id S1728060AbeJ1QP0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Sun, 28 Oct 2018 12:15:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57022 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:56920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727876AbeJ1QPY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 12:15:24 -0400
+        id S1726734AbeJ1QPX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 28 Oct 2018 12:15:23 -0400
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB5AF20882;
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D95021479;
         Sun, 28 Oct 2018 07:31:35 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1gGfXq-00085f-SQ; Sun, 28 Oct 2018 03:31:34 -0400
-Message-Id: <20181028073134.782040559@goodmis.org>
+        id 1gGfXq-00083X-2Q; Sun, 28 Oct 2018 03:31:34 -0400
+Message-Id: <20181028073133.974161499@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Sun, 28 Oct 2018 03:29:57 -0400
+Date:   Sun, 28 Oct 2018 03:29:53 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [for-next][PATCH 09/18] tracing: probeevent: Add symbol type
+Subject: [for-next][PATCH 05/18] tracing: probeevent: Unify fetch type tables
 References: <20181028072948.693267247@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,115 +49,253 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Masami Hiramatsu <mhiramat@kernel.org>
 
-Add "symbol" type to probeevent, which is an alias of u32 or u64
-(depends on BITS_PER_LONG). This shows the result value in
-symbol+offset style. This type is only available with kprobe
-events.
+Unify {k,u}probe_fetch_type_table to probe_fetch_type_table
+because the main difference of those type tables (fetcharg
+methods) are gone. Now we can consolidate it.
 
-Link: http://lkml.kernel.org/r/152465882860.26224.14779072294412467338.stgit@devbox
+Link: http://lkml.kernel.org/r/152465871274.26224.13999436317830479698.stgit@devbox
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- Documentation/trace/kprobetrace.rst |  2 ++
- kernel/trace/trace.c                |  2 +-
- kernel/trace/trace_probe.c          |  8 ++++++++
- kernel/trace/trace_probe.h          | 12 +++++++++---
- 4 files changed, 20 insertions(+), 4 deletions(-)
+ kernel/trace/trace_kprobe.c | 27 +------------------
+ kernel/trace/trace_probe.c  | 54 ++++++++++++++++++++++++-------------
+ kernel/trace/trace_probe.h  |  6 +----
+ kernel/trace/trace_uprobe.c | 27 +------------------
+ 4 files changed, 39 insertions(+), 75 deletions(-)
 
-diff --git a/Documentation/trace/kprobetrace.rst b/Documentation/trace/kprobetrace.rst
-index 8bfc75c90806..6224ddf34508 100644
---- a/Documentation/trace/kprobetrace.rst
-+++ b/Documentation/trace/kprobetrace.rst
-@@ -72,6 +72,8 @@ offset, and container-size (usually 32). The syntax is::
+diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
+index c024cc40d509..dc1c638daf44 100644
+--- a/kernel/trace/trace_kprobe.c
++++ b/kernel/trace/trace_kprobe.c
+@@ -121,30 +121,6 @@ static int kprobe_dispatcher(struct kprobe *kp, struct pt_regs *regs);
+ static int kretprobe_dispatcher(struct kretprobe_instance *ri,
+ 				struct pt_regs *regs);
  
-  b<bit-width>@<bit-offset>/<container-size>
+-/* Fetch type information table */
+-static const struct fetch_type kprobes_fetch_type_table[] = {
+-	/* Special types */
+-	[FETCH_TYPE_STRING] = __ASSIGN_FETCH_TYPE("string", string, string,
+-					sizeof(u32), 1, "__data_loc char[]"),
+-	[FETCH_TYPE_STRSIZE] = __ASSIGN_FETCH_TYPE("string_size", u32,
+-					string_size, sizeof(u32), 0, "u32"),
+-	/* Basic types */
+-	ASSIGN_FETCH_TYPE(u8,  u8,  0),
+-	ASSIGN_FETCH_TYPE(u16, u16, 0),
+-	ASSIGN_FETCH_TYPE(u32, u32, 0),
+-	ASSIGN_FETCH_TYPE(u64, u64, 0),
+-	ASSIGN_FETCH_TYPE(s8,  u8,  1),
+-	ASSIGN_FETCH_TYPE(s16, u16, 1),
+-	ASSIGN_FETCH_TYPE(s32, u32, 1),
+-	ASSIGN_FETCH_TYPE(s64, u64, 1),
+-	ASSIGN_FETCH_TYPE_ALIAS(x8,  u8,  u8,  0),
+-	ASSIGN_FETCH_TYPE_ALIAS(x16, u16, u16, 0),
+-	ASSIGN_FETCH_TYPE_ALIAS(x32, u32, u32, 0),
+-	ASSIGN_FETCH_TYPE_ALIAS(x64, u64, u64, 0),
+-
+-	ASSIGN_FETCH_TYPE_END
+-};
+-
+ /*
+  * Allocate new trace_probe and initialize it (including kprobes).
+  */
+@@ -720,8 +696,7 @@ static int create_trace_kprobe(int argc, char **argv)
  
-+Symbol type('symbol') is an alias of u32 or u64 type (depends on BITS_PER_LONG)
-+which shows given pointer in "symbol+offset" style.
- For $comm, the default type is "string"; any other type is invalid.
- 
- 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 147be8523560..1e3f28b1fa07 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -4626,7 +4626,7 @@ static const char readme_msg[] =
- 	"\t     args: <name>=fetcharg[:type]\n"
- 	"\t fetcharg: %<register>, @<address>, @<symbol>[+|-<offset>],\n"
- 	"\t           $stack<index>, $stack, $retval, $comm\n"
--	"\t     type: s8/16/32/64, u8/16/32/64, x8/16/32/64, string,\n"
-+	"\t     type: s8/16/32/64, u8/16/32/64, x8/16/32/64, string, symbol,\n"
- 	"\t           b<bit-width>@<bit-offset>/<container-size>\n"
- #endif
- 	"  events/\t\t- Directory containing all trace event subsystems:\n"
+ 		/* Parse fetch argument */
+ 		ret = traceprobe_parse_probe_arg(arg, &tk->tp.size, parg,
+-						 is_return, true,
+-						 kprobes_fetch_type_table);
++						 is_return, true);
+ 		if (ret) {
+ 			pr_info("Parse error at argument[%d]. (%d)\n", i, ret);
+ 			goto error;
 diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
-index d119bf8c3b4f..1e7e0618577d 100644
+index c59c69cb2f2e..d06e67cca3e1 100644
 --- a/kernel/trace/trace_probe.c
 +++ b/kernel/trace/trace_probe.c
-@@ -46,6 +46,13 @@ DEFINE_BASIC_PRINT_TYPE_FUNC(x16, u16, "0x%x")
- DEFINE_BASIC_PRINT_TYPE_FUNC(x32, u32, "0x%x")
- DEFINE_BASIC_PRINT_TYPE_FUNC(x64, u64, "0x%Lx")
+@@ -61,8 +61,29 @@ int PRINT_TYPE_FUNC_NAME(string)(struct trace_seq *s, void *data, void *ent)
  
-+int PRINT_TYPE_FUNC_NAME(symbol)(struct trace_seq *s, void *data, void *ent)
-+{
-+	trace_seq_printf(s, "%pS", (void *)*(unsigned long *)data);
-+	return !trace_seq_has_overflowed(s);
-+}
-+const char PRINT_TYPE_FMT_NAME(symbol)[] = "%pS";
+ const char PRINT_TYPE_FMT_NAME(string)[] = "\\\"%s\\\"";
+ 
+-static const struct fetch_type *find_fetch_type(const char *type,
+-						const struct fetch_type *ftbl)
++/* Fetch type information table */
++static const struct fetch_type probe_fetch_types[] = {
++	/* Special types */
++	__ASSIGN_FETCH_TYPE("string", string, string, sizeof(u32), 1,
++			    "__data_loc char[]"),
++	/* Basic types */
++	ASSIGN_FETCH_TYPE(u8,  u8,  0),
++	ASSIGN_FETCH_TYPE(u16, u16, 0),
++	ASSIGN_FETCH_TYPE(u32, u32, 0),
++	ASSIGN_FETCH_TYPE(u64, u64, 0),
++	ASSIGN_FETCH_TYPE(s8,  u8,  1),
++	ASSIGN_FETCH_TYPE(s16, u16, 1),
++	ASSIGN_FETCH_TYPE(s32, u32, 1),
++	ASSIGN_FETCH_TYPE(s64, u64, 1),
++	ASSIGN_FETCH_TYPE_ALIAS(x8,  u8,  u8,  0),
++	ASSIGN_FETCH_TYPE_ALIAS(x16, u16, u16, 0),
++	ASSIGN_FETCH_TYPE_ALIAS(x32, u32, u32, 0),
++	ASSIGN_FETCH_TYPE_ALIAS(x64, u64, u64, 0),
 +
- /* Print type function for string type */
- int PRINT_TYPE_FUNC_NAME(string)(struct trace_seq *s, void *data, void *ent)
++	ASSIGN_FETCH_TYPE_END
++};
++
++static const struct fetch_type *find_fetch_type(const char *type)
  {
-@@ -79,6 +86,7 @@ static const struct fetch_type probe_fetch_types[] = {
- 	ASSIGN_FETCH_TYPE_ALIAS(x16, u16, u16, 0),
- 	ASSIGN_FETCH_TYPE_ALIAS(x32, u32, u32, 0),
- 	ASSIGN_FETCH_TYPE_ALIAS(x64, u64, u64, 0),
-+	ASSIGN_FETCH_TYPE_ALIAS(symbol, ADDR_FETCH_TYPE, ADDR_FETCH_TYPE, 0),
+ 	int i;
  
- 	ASSIGN_FETCH_TYPE_END
- };
+@@ -83,21 +104,21 @@ static const struct fetch_type *find_fetch_type(const char *type,
+ 
+ 		switch (bs) {
+ 		case 8:
+-			return find_fetch_type("u8", ftbl);
++			return find_fetch_type("u8");
+ 		case 16:
+-			return find_fetch_type("u16", ftbl);
++			return find_fetch_type("u16");
+ 		case 32:
+-			return find_fetch_type("u32", ftbl);
++			return find_fetch_type("u32");
+ 		case 64:
+-			return find_fetch_type("u64", ftbl);
++			return find_fetch_type("u64");
+ 		default:
+ 			goto fail;
+ 		}
+ 	}
+ 
+-	for (i = 0; ftbl[i].name; i++) {
+-		if (strcmp(type, ftbl[i].name) == 0)
+-			return &ftbl[i];
++	for (i = 0; probe_fetch_types[i].name; i++) {
++		if (strcmp(type, probe_fetch_types[i].name) == 0)
++			return &probe_fetch_types[i];
+ 	}
+ 
+ fail:
+@@ -164,8 +185,7 @@ static int parse_probe_vars(char *arg, const struct fetch_type *t,
+ static int
+ parse_probe_arg(char *arg, const struct fetch_type *type,
+ 		struct fetch_insn **pcode, struct fetch_insn *end,
+-		bool is_return, bool is_kprobe,
+-		const struct fetch_type *ftbl)
++		bool is_return, bool is_kprobe)
+ {
+ 	struct fetch_insn *code = *pcode;
+ 	unsigned long param;
+@@ -247,12 +267,11 @@ parse_probe_arg(char *arg, const struct fetch_type *type,
+ 		tmp = strrchr(arg, ')');
+ 
+ 		if (tmp) {
+-			const struct fetch_type *t2;
++			const struct fetch_type *t2 = find_fetch_type(NULL);
+ 
+-			t2 = find_fetch_type(NULL, ftbl);
+ 			*tmp = '\0';
+ 			ret = parse_probe_arg(arg, t2, &code, end, is_return,
+-					      is_kprobe, ftbl);
++					      is_kprobe);
+ 			if (ret)
+ 				break;
+ 			if (code->op == FETCH_OP_COMM)
+@@ -312,8 +331,7 @@ static int __parse_bitfield_probe_arg(const char *bf,
+ 
+ /* String length checking wrapper */
+ int traceprobe_parse_probe_arg(char *arg, ssize_t *size,
+-		struct probe_arg *parg, bool is_return, bool is_kprobe,
+-		const struct fetch_type *ftbl)
++		struct probe_arg *parg, bool is_return, bool is_kprobe)
+ {
+ 	struct fetch_insn *code, *tmp = NULL;
+ 	const char *t;
+@@ -339,7 +357,7 @@ int traceprobe_parse_probe_arg(char *arg, ssize_t *size,
+ 	 */
+ 	if (!t && strcmp(arg, "$comm") == 0)
+ 		t = "string";
+-	parg->type = find_fetch_type(t, ftbl);
++	parg->type = find_fetch_type(t);
+ 	if (!parg->type) {
+ 		pr_info("Unsupported type: %s\n", t);
+ 		return -EINVAL;
+@@ -353,7 +371,7 @@ int traceprobe_parse_probe_arg(char *arg, ssize_t *size,
+ 	code[FETCH_INSN_MAX - 1].op = FETCH_OP_END;
+ 
+ 	ret = parse_probe_arg(arg, parg->type, &code, &code[FETCH_INSN_MAX - 1],
+-			      is_return, is_kprobe, ftbl);
++			      is_return, is_kprobe);
+ 	if (ret)
+ 		goto fail;
+ 
 diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
-index c4e9d3d3216d..469110e0790b 100644
+index 42c724a7ad11..5c262ed6347c 100644
 --- a/kernel/trace/trace_probe.h
 +++ b/kernel/trace/trace_probe.h
-@@ -145,6 +145,7 @@ DECLARE_BASIC_PRINT_TYPE_FUNC(x32);
- DECLARE_BASIC_PRINT_TYPE_FUNC(x64);
- 
- DECLARE_BASIC_PRINT_TYPE_FUNC(string);
-+DECLARE_BASIC_PRINT_TYPE_FUNC(symbol);
- 
- /* Default (unsigned long) fetch type */
- #define __DEFAULT_FETCH_TYPE(t) x##t
-@@ -152,6 +153,10 @@ DECLARE_BASIC_PRINT_TYPE_FUNC(string);
- #define DEFAULT_FETCH_TYPE _DEFAULT_FETCH_TYPE(BITS_PER_LONG)
- #define DEFAULT_FETCH_TYPE_STR __stringify(DEFAULT_FETCH_TYPE)
- 
-+#define __ADDR_FETCH_TYPE(t) u##t
-+#define _ADDR_FETCH_TYPE(t) __ADDR_FETCH_TYPE(t)
-+#define ADDR_FETCH_TYPE _ADDR_FETCH_TYPE(BITS_PER_LONG)
-+
- #define __ASSIGN_FETCH_TYPE(_name, ptype, ftype, _size, sign, _fmttype)	\
- 	{.name = _name,				\
- 	 .size = _size,					\
-@@ -160,13 +165,14 @@ DECLARE_BASIC_PRINT_TYPE_FUNC(string);
- 	 .fmt = PRINT_TYPE_FMT_NAME(ptype),		\
- 	 .fmttype = _fmttype,				\
- 	}
--
-+#define _ASSIGN_FETCH_TYPE(_name, ptype, ftype, _size, sign, _fmttype)	\
-+	__ASSIGN_FETCH_TYPE(_name, ptype, ftype, _size, sign, #_fmttype)
- #define ASSIGN_FETCH_TYPE(ptype, ftype, sign)			\
--	__ASSIGN_FETCH_TYPE(#ptype, ptype, ftype, sizeof(ftype), sign, #ptype)
-+	_ASSIGN_FETCH_TYPE(#ptype, ptype, ftype, sizeof(ftype), sign, ptype)
- 
- /* If ptype is an alias of atype, use this macro (show atype in format) */
- #define ASSIGN_FETCH_TYPE_ALIAS(ptype, atype, ftype, sign)		\
--	__ASSIGN_FETCH_TYPE(#ptype, ptype, ftype, sizeof(ftype), sign, #atype)
-+	_ASSIGN_FETCH_TYPE(#ptype, ptype, ftype, sizeof(ftype), sign, atype)
+@@ -184,9 +184,6 @@ DECLARE_BASIC_PRINT_TYPE_FUNC(string);
  
  #define ASSIGN_FETCH_TYPE_END {}
  
+-#define FETCH_TYPE_STRING      0
+-#define FETCH_TYPE_STRSIZE     1
+-
+ #ifdef CONFIG_KPROBE_EVENTS
+ bool trace_kprobe_on_func_entry(struct trace_event_call *call);
+ bool trace_kprobe_error_injectable(struct trace_event_call *call);
+@@ -261,8 +258,7 @@ find_event_file_link(struct trace_probe *tp, struct trace_event_file *file)
+ }
+ 
+ extern int traceprobe_parse_probe_arg(char *arg, ssize_t *size,
+-		   struct probe_arg *parg, bool is_return, bool is_kprobe,
+-		   const struct fetch_type *ftbl);
++		   struct probe_arg *parg, bool is_return, bool is_kprobe);
+ 
+ extern int traceprobe_conflict_field_name(const char *name,
+ 			       struct probe_arg *args, int narg);
+diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+index e076f89ab33a..7772fec84c12 100644
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@ -161,30 +161,6 @@ static unsigned long translate_user_vaddr(unsigned long file_offset)
+ 	return base_addr + file_offset;
+ }
+ 
+-/* Fetch type information table */
+-static const struct fetch_type uprobes_fetch_type_table[] = {
+-	/* Special types */
+-	[FETCH_TYPE_STRING] = __ASSIGN_FETCH_TYPE("string", string, string,
+-					sizeof(u32), 1, "__data_loc char[]"),
+-	[FETCH_TYPE_STRSIZE] = __ASSIGN_FETCH_TYPE("string_size", u32,
+-					string_size, sizeof(u32), 0, "u32"),
+-	/* Basic types */
+-	ASSIGN_FETCH_TYPE(u8,  u8,  0),
+-	ASSIGN_FETCH_TYPE(u16, u16, 0),
+-	ASSIGN_FETCH_TYPE(u32, u32, 0),
+-	ASSIGN_FETCH_TYPE(u64, u64, 0),
+-	ASSIGN_FETCH_TYPE(s8,  u8,  1),
+-	ASSIGN_FETCH_TYPE(s16, u16, 1),
+-	ASSIGN_FETCH_TYPE(s32, u32, 1),
+-	ASSIGN_FETCH_TYPE(s64, u64, 1),
+-	ASSIGN_FETCH_TYPE_ALIAS(x8,  u8,  u8,  0),
+-	ASSIGN_FETCH_TYPE_ALIAS(x16, u16, u16, 0),
+-	ASSIGN_FETCH_TYPE_ALIAS(x32, u32, u32, 0),
+-	ASSIGN_FETCH_TYPE_ALIAS(x64, u64, u64, 0),
+-
+-	ASSIGN_FETCH_TYPE_END
+-};
+-
+ /* Note that we don't verify it, since the code does not come from user space */
+ static int
+ process_fetch_insn(struct fetch_insn *code, struct pt_regs *regs, void *dest,
+@@ -621,8 +597,7 @@ static int create_trace_uprobe(int argc, char **argv)
+ 
+ 		/* Parse fetch argument */
+ 		ret = traceprobe_parse_probe_arg(arg, &tu->tp.size, parg,
+-						 is_return, false,
+-						 uprobes_fetch_type_table);
++						 is_return, false);
+ 		if (ret) {
+ 			pr_info("Parse error at argument[%d]. (%d)\n", i, ret);
+ 			goto error;
 -- 
 2.19.0
 
