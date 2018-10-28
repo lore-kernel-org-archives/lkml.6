@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7E6EC2BC61
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 22:20:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 826C5ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 22:20:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B51C2064C
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 22:20:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A9932064C
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 22:20:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=steffenvogel.de header.i=@steffenvogel.de header.b="cLeaZ9GW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B51C2064C
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=steffenvogel.de header.i=@steffenvogel.de header.b="qvLErrpo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A9932064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=steffenvogel.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727250AbeJ2HF6 (ORCPT
+        id S1727637AbeJ2HF7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 03:05:58 -0400
-Received: from nag.0l.de ([207.154.252.120]:33452 "EHLO nag.0l.de"
+        Mon, 29 Oct 2018 03:05:59 -0400
+Received: from nag.0l.de ([207.154.252.120]:33460 "EHLO nag.0l.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726570AbeJ2HF6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726491AbeJ2HF6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 29 Oct 2018 03:05:58 -0400
 From:   Steffen Vogel <post@steffenvogel.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=steffenvogel.de;
@@ -30,18 +30,18 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=steffenvogel.de;
          message-id:message-id:to:to:cc:cc:mime-version:mime-version:
          content-type:content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=nPlkdBE0X//3GHvuvtwUDg69Qnv6/aj8m9gf6/O+P44=;
-        b=cLeaZ9GWRzIiC8BsI8UKd+BEQJJeeWyt+2PADTJKlKMwJsooYBfEc7yNIOineXFaFZs3Pc
-        1G+zW5oWYJHJ4bBTDXvm4i9yihjyOQ/j1CjnJeW5hEu96THxLJnHLZVyga8QkGUgqEo57w
-        5/0cs/1DlL4S+GkjfP+UywaxvyBVy+5BqKq+tqNQ5YqBi4u+ZvupEvtRytILT3dVPec4eM
-        0M8I47GPpTynZFayL8FUjeDnzyTdQHjppfvU8Eq3mHdDolXMZth6GLqrQQy+tkduoVpie7
-        O0IL9/pCd2mWD92HgXbrymsJve2jhCKg4U74/x8zhqtGnFSODFT+h8qpLaLxPg==
+        bh=KNpEQvOZqIKB+uF8P0m8ZbJqX+PtvoPif/KGnamFfUk=;
+        b=qvLErrpoR46oevlinV4BnIoNz65BXTDNvp/GzKym+K12NLS+8ZdggMiDwBzR7GVWS1pxoO
+        Lm/aXBMuKCjaPed8hEmlyoj/jrbw/yPP7C/vK8XFGlLzN1DY5NauCD20NYmT0GH22+2hyB
+        1/08dwgxxR20SaIoJ7T14zdwqeFIuh93FJBIH6RitiE480TghkXLOWPQy4TBoBktape86F
+        w31ZP2KEMAbne3o0bDLH+UEm2lzmhz9aadxWUHI0WMSlzgUuYONO0r7BATNzJ2fMgmNkwn
+        eaFEGyMwgjoEjLO+X81yoslUMTuX+FhGiYPe7PX4mDSyMBnSvhfGUY5PimBi3w==
 To:     linux-kernel@vger.kernel.org
 Cc:     Evgeniy Polyakov <zbr@ioremap.net>,
         Steffen Vogel <post@steffenvogel.de>
-Subject: [PATCH 7/9] w1: use __func__ for logging the function name
-Date:   Sun, 28 Oct 2018 23:09:26 +0100
-Message-Id: <20181028220927.56227-8-post@steffenvogel.de>
+Subject: [PATCH 6/9] w1: do not log errors about failed memory allocations
+Date:   Sun, 28 Oct 2018 23:09:25 +0100
+Message-Id: <20181028220927.56227-7-post@steffenvogel.de>
 In-Reply-To: <20181028220927.56227-1-post@steffenvogel.de>
 References: <20181028220927.56227-1-post@steffenvogel.de>
 MIME-Version: 1.0
@@ -51,15 +51,15 @@ ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=steffenvogel.de;
          message-id:message-id:to:to:cc:cc:mime-version:mime-version:
          content-type:content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=nPlkdBE0X//3GHvuvtwUDg69Qnv6/aj8m9gf6/O+P44=;
-        b=kj7eJU2zc3ivbVbC+yy/sTQfASOLmPoybHhmVJkUJt2hDrzyWzDDv50NaMc+oB/4drYhvi
-        wQeAKiGWOAIigVE3g06N0UiDijUJONipCxLRahJWWF1C+stEH07C3oCdlRtJ4ZR8Q9cCIl
-        klZ4NRfrjgzuk1c9L4NpIROiwZc3fzkIFwhKOSJlPYIemJJ5vas8UpfpYm50j+tyT6KpD0
-        hNdfD0LuuBz11JV1aUarL9xTnNHMtEz0MuVMpVaJyX4Py8TrdnmuUvC5KB3/LpVHHPjTDA
-        KzHfDWXLgH6bcI8TX8b+Q8to5hVj3/n/2Uwy2NtxObu4xDG8XmBvHvcW4D1r/g==
+        bh=KNpEQvOZqIKB+uF8P0m8ZbJqX+PtvoPif/KGnamFfUk=;
+        b=ErcAWlsXyjm+aGWbnNK5lJnasOchEibpAJlXK6VDLvcEOuC29Vwe/3/0oAR/eHyVXJCOgR
+        3lbODm2hlOBZhiJVj/b2l/6EU4AKSYXI9rk2jK8HX/8qA6m+HA60xvZvYOocDC8x4YUNry
+        dyqUGcgDeu6UQuIbbQQ/7SDjlzm0AHI1lEr40YINoqyvNZPfIr6kSjBOV+mJrnKTSepayE
+        IFY+mhBDD5c2qQbDbCeAsBE+R9ovn6NxMVcDrzuMHchvfRcyumO1WldxoMRRwH1NsTef9z
+        K0nSjJkBmimwxhgVpxWBp3YthrQ6hlgiCD8eOFDTNQvYFe/Y0L6I4u+EMHjBlg==
 ARC-Seal: i=1; s=2017; d=steffenvogel.de; t=1540764601; a=rsa-sha256;
         cv=none;
-        b=C5g8k34gL3xCGlj23o2Nj5YLiAMc2ef2/0m2z/Xow3MccWsufs7P3NVuPa7p4PYttDqaO3NvcKVSN1lon+galARV79hfCbjWk5nYlf/fQ3ILo77jfl0wh5Yb3c0hJNz65d93YukfjkgYCl4n6ie5uxPPg4l8E9Ip4e9FpYt1neGNdJGAfiklzHKP/lIjypbF4En2bTlJwiY52BIQedSy7JrWQbm9sa+lPAuhgbmYEYcwxjjQssRvewMtEIPb6AWj8cprgRghuq/IwZn6orIcLbnEuYcD6dzotsA8Aaz2Gg64XShjlSq19NIFhVIit17cZ+mHBUzl6RlSxwCKxO0oQg==
+        b=f1kzF196ISyoWIsEpJHb/wxYhhZytxxlIs/0EpkTErcErZP/jY59niet3NBLd4TREZ5oxipknWMH7yu3vQUxvkmjS+9bnoCc18U/v9kes4uPcLClP6KTQG6C/WBZHwvmiYrv6qycSU6yoDQ6HsZjq/DGk5wnDDocr9a9zCtbAoM9Yd+70m27hGCa72sszRUqsVF25wouOk7PFZiA2KAMYfGWNvQ8imbkfH1uVZViv1WhnV8aOx+3jRyLydUnZBAIQUNVsqaQ9uUM+igYdvEG82xnpyySQLXPGXXi3NuMuTC23jrJ2tEgA5OzmjyLqWvjdfx1SJy03k17CLcdSo4aSg==
 ARC-Authentication-Results: i=1;
         ORIGINATING;
         auth=pass smtp.auth=stv0g@0l.de smtp.mailfrom=post@steffenvogel.de
@@ -74,36 +74,46 @@ This fixes a warning raised by the checkpatch tool.
 
 Signed-off-by: Steffen Vogel <post@steffenvogel.de>
 ---
- drivers/w1/w1.c     | 3 ++-
- drivers/w1/w1_int.c | 2 +-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ drivers/w1/w1.c     | 7 +------
+ drivers/w1/w1_int.c | 6 +-----
+ 2 files changed, 2 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/w1/w1.c b/drivers/w1/w1.c
-index e8ce97e066ec..c790c79352a0 100644
+index bad2ee26cd4e..e8ce97e066ec 100644
 --- a/drivers/w1/w1.c
 +++ b/drivers/w1/w1.c
-@@ -1053,7 +1053,8 @@ void w1_search(struct w1_master *dev, u8 search_type,
+@@ -747,13 +747,8 @@ int w1_attach_slave_device(struct w1_master *dev, struct w1_reg_num *rn)
+ 	struct w1_netlink_msg msg;
  
- 			if (test_bit(W1_ABORT_SEARCH, &dev->flags)) {
- 				mutex_unlock(&dev->bus_mutex);
--				dev_dbg(&dev->dev, "Abort w1_search\n");
-+				dev_dbg(&dev->dev, "Abort %s\n", __func__);
-+
- 				return;
- 			}
- 		}
+ 	sl = kzalloc(sizeof(struct w1_slave), GFP_KERNEL);
+-	if (!sl) {
+-		dev_err(&dev->dev,
+-			 "%s: failed to allocate new slave device.\n",
+-			 __func__);
++	if (!sl)
+ 		return -ENOMEM;
+-	}
+-
+ 
+ 	sl->owner = THIS_MODULE;
+ 	sl->master = dev;
 diff --git a/drivers/w1/w1_int.c b/drivers/w1/w1_int.c
-index dd34d6a33f50..694b61ca1f85 100644
+index 72b9392d9551..dd34d6a33f50 100644
 --- a/drivers/w1/w1_int.c
 +++ b/drivers/w1/w1_int.c
-@@ -98,7 +98,7 @@ int w1_add_master_device(struct w1_bus_master *master)
- 	if (!(master->touch_bit && master->reset_bus) &&
- 	    !(master->write_bit && master->read_bit) &&
- 	    !(master->write_byte && master->read_byte && master->reset_bus)) {
--		pr_err("w1_add_master_device: invalid function set\n");
-+		pr_err("%s: invalid function set\n", __func__);
- 		return(-EINVAL);
- 	}
+@@ -33,12 +33,8 @@ static struct w1_master *w1_alloc_dev(u32 id, int slave_count, int slave_ttl,
+ 	 */
+ 	dev = kzalloc(sizeof(struct w1_master) +
+ 		sizeof(struct w1_bus_master), GFP_KERNEL);
+-	if (!dev) {
+-		pr_err("Failed to allocate %zd bytes for new w1 device.\n",
+-			sizeof(struct w1_master));
++	if (!dev)
+ 		return NULL;
+-	}
+-
+ 
+ 	dev->bus_master = (struct w1_bus_master *)(dev + 1);
  
 -- 
 2.11.0
