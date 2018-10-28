@@ -6,87 +6,102 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA699C6786F
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 22:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17066C2BC61
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 22:53:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9264220665
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 22:45:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C09E32082D
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 22:53:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZZjoqpOu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9264220665
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="VTtRwMz4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C09E32082D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727716AbeJ2Hbj (ORCPT
+        id S1727619AbeJ2HjW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 03:31:39 -0400
-Received: from mail-lf1-f51.google.com ([209.85.167.51]:39485 "EHLO
-        mail-lf1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727652AbeJ2Hbj (ORCPT
+        Mon, 29 Oct 2018 03:39:22 -0400
+Received: from mail-it1-f178.google.com ([209.85.166.178]:53058 "EHLO
+        mail-it1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725841AbeJ2HjW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 03:31:39 -0400
-Received: by mail-lf1-f51.google.com with SMTP id p11-v6so4622321lfc.6
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 15:45:35 -0700 (PDT)
+        Mon, 29 Oct 2018 03:39:22 -0400
+Received: by mail-it1-f178.google.com with SMTP id r5-v6so5402158ith.2
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 15:53:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=HeMRQi738ZCHUx/1tyCBXynyhyxwGolNQtAJkoNB4Iw=;
-        b=ZZjoqpOuqJW3xe1cQbVtDnDQ2n7l5n/9SpXcFy3Ytpn6r2xv8S9275lGxjWJe0F7eo
-         oUpQv1kA+U/PgLBcg7Xb0XfEkGFb4KRN4JlgtNYCNRQbMBeix30znoa8Uz5Xy3ePaZZi
-         u9Ai0Js1EWPjmEY5KUkANudpXFFk5fCcyw+4Y=
+        bh=r37inC5qCJjuX3ZK1ggDKstZdXL9Ux5p8XYNwMEUViw=;
+        b=VTtRwMz4Gqtlh2XhPlMm+SItEavcOWjihCFY4fytwoJBmy6VElJ5h+pqMxVuMQqzRX
+         GVyzhOTYtjeKboyj/nx5RV1PFJs/w53MPHOGaORZIuKyQ+lQzeKZZEmlPN2QCuh59sjK
+         /1G0g+UP+YHFE1MGYFwJUD8Ky8uDk+l2bMnUQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=HeMRQi738ZCHUx/1tyCBXynyhyxwGolNQtAJkoNB4Iw=;
-        b=QDQqtIyK7U9tCuzQGXtd72xeIA2GXV1R+wpP18qH64WXSNQQ6oLucU6eAAQLH9LWhE
-         FV58SU5efz/JXFrqI9+bype1+1D8Bcq4YctYUeeG2Q/ly8qxoqXdjS7jePtsShDuXjjW
-         0Lt0D0S8L0IqZE+yM9aIe5rCkGgMPAbrZihtifL3knMkVctXpPOkxNFXnP7PG1MEgJpQ
-         a5QN3+yySgZuMiEpPDoJofpyW4v44NiUJKRON1SbsFUCdMc+Li98J/2JFcQylROVZjnu
-         m/QdDCOUkvEcRtzHucXMRBcqEWaHAffAILhF4p1yuTYLL9yU1Fwr548kz5HggYrS5Glb
-         HLKQ==
-X-Gm-Message-State: AGRZ1gKQGk+UABsouY0EDYRQSlkwUu/02eVq93DROHBQrgwpY/65GlSz
-        ubuAyqGG6SDp1dyDrcT87ZMKH3Aptv4jjw==
-X-Google-Smtp-Source: AJdET5c8+2d7rbilBEK1lWnsh6zh4ohMlpgS1LByN76eclGvkfQma8oRbJMe10KleyQKYIAPZb75UA==
-X-Received: by 2002:a19:5154:: with SMTP id f81mr7075091lfb.96.1540766734505;
-        Sun, 28 Oct 2018 15:45:34 -0700 (PDT)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
-        by smtp.gmail.com with ESMTPSA id d21-v6sm967385lja.86.2018.10.28.15.45.33
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 28 Oct 2018 15:45:33 -0700 (PDT)
-Received: by mail-lj1-f172.google.com with SMTP id v6-v6so5942617ljc.11
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 15:45:33 -0700 (PDT)
-X-Received: by 2002:a2e:9819:: with SMTP id a25-v6mr1958316ljj.6.1540766732844;
- Sun, 28 Oct 2018 15:45:32 -0700 (PDT)
+        bh=r37inC5qCJjuX3ZK1ggDKstZdXL9Ux5p8XYNwMEUViw=;
+        b=q2YKnoVlWe+JgejAuRVmqGmPLXuQsmbSY8MYDmaRINqEpCApvYsXMSPQCLf4dssgSm
+         FnFrCEe+Xv1oxZOuqku8kicdTBrJLYTaqWyEyou4OlZa5POuqqCLWCQF8Udp5aYbM8q4
+         maYWW+UjjYIx1KHaGxiudhAPIKCk1vfpTJeyiDjiPsjmMACBN0wSlCzxJS2WPBDOSDKE
+         o66N3ip5UtMlQDhQHheCSXkfHu0GSOtbnUsPyDtvxLnSynsMT2FZZvQnnXoWACO4HT6x
+         39GEO90lI17PTeac5dpdEaByGzU+rd4mdYEBReMnIa47CZ8HXx+l+hCKuu9Q0NLyfZfA
+         pNUA==
+X-Gm-Message-State: AGRZ1gKpYZcK0F6zD28UJ+KkSFo0dOPe/aThWnFKpiHlYDvIsssSDzdR
+        jkxj0UQe2gUxntpGRBnUqtpHAX3XJT7+DSakj68QQA==
+X-Google-Smtp-Source: AJdET5dYGMyxc/XnBQ0a/XHARCR4D4UwzAbgsc7Uif4o1UDbdbi+/Dhgoo0LmZUGGrpr5tkgWdE0TGGGcagzVwRGyuU=
+X-Received: by 2002:a24:ac02:: with SMTP id s2-v6mr8307357ite.105.1540767198038;
+ Sun, 28 Oct 2018 15:53:18 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181029093532.38a3888e@canb.auug.org.au>
-In-Reply-To: <20181029093532.38a3888e@canb.auug.org.au>
+References: <20181028220927.56227-1-post@steffenvogel.de>
+In-Reply-To: <20181028220927.56227-1-post@steffenvogel.de>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 28 Oct 2018 15:45:16 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi475eRvUDctiWdBWsEB7UYgr8OrpPzrd=xkevUpTSCuA@mail.gmail.com>
-Message-ID: <CAHk-=wi475eRvUDctiWdBWsEB7UYgr8OrpPzrd=xkevUpTSCuA@mail.gmail.com>
-Subject: Re: linux-next: build failure in Linus' tree
-To:     sfr@canb.auug.org.au
-Cc:     linux-next@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        liuhangbin@gmail.com, David Miller <davem@davemloft.net>
+Date:   Sun, 28 Oct 2018 15:53:07 -0700
+Message-ID: <CAADWXX89jMiTp-Nz887tv+6YwWkrWF8qYfpuTkmk2OE3_SqeGA@mail.gmail.com>
+Subject: Re: w1: coding style and checkpatch fixes
+To:     post@steffenvogel.de
+Cc:     lkml <linux-kernel@vger.kernel.org>, zbr@ioremap.net
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 28, 2018 at 3:35 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+[ This is not about your patch series per se, only about your email settings ]
+
+On Sun, Oct 28, 2018 at 3:20 PM Steffen Vogel <post@steffenvogel.de> wrote:
 >
-> After merging the origin tree, today's linux-next build (powerpc
-> ppc64_defconfig) failed like this:
+> This is my first series of patches for the Linux kernel.
+> I started by familiarizing myself with coding style and
+> satisfying my inner OCD by cleaning the 1-wire subsystem.
 
-linux-next is back! Wheee..
+Sadly, your DKIM setup is wrong, causing all the emails to be marked
+as spam when they go through a mailing list.
 
->   5a2de63fd1a5 ("bridge: do not add port to router list when receives query with source 0.0.0.0")
+Your DKIM header looks like this:
 
-David?
+  DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=steffenvogel.de;
+          s=2017; t=1540764601;
+h=from:from:sender:reply-to:subject:subject:date:date:
+          message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+          content-type:content-transfer-encoding:content-transfer-encoding:
+          in-reply-to:in-reply-to:references:references;
+
+and the problem with that is the "sender" field in there.
+
+A good mailing list will not change the contents of your email, or
+most of the other headers, but it *will* set the sender field to the
+mailing list.
+
+End result: the DKIM signature is guaranteed to fail after the email
+has gone through a mailing list.
+
+In other words, putting the sender field as part of the DKIM-checked
+headers is just wrong. It's a somewhat common mistake, but it's still
+wrong. I wonder where people get their setups from, because I think
+there is some DKIM guide on the internet that is actively spreading
+this bad behavior.
+
+You do have a few other oddities in there (the duplication of the
+common fields), but they shouldn't matter.
 
                  Linus
