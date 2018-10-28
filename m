@@ -2,138 +2,111 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93CECECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 05:44:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE9EAECDE46
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 06:07:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E7D020824
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 05:44:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E7D020824
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
+	by mail.kernel.org (Postfix) with ESMTP id 5A83E20824
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 06:07:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="irejrCuc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A83E20824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727684AbeJ1OY6 (ORCPT
+        id S1727651AbeJ1Oup (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 10:24:58 -0400
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:52052 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725827AbeJ1OY5 (ORCPT
+        Sun, 28 Oct 2018 10:50:45 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42337 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725775AbeJ1Oup (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 10:24:57 -0400
-X-IronPort-AV: E=Sophos;i="5.54,434,1534802400"; 
-   d="scan'208";a="353118905"
-Received: from 89-157-201-244.rev.numericable.fr (HELO hadrien) ([89.157.201.244])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Oct 2018 06:41:22 +0100
-Date:   Sun, 28 Oct 2018 06:41:22 +0100 (CET)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Joe Perches <joe@perches.com>
-cc:     Julia Lawall <julia.lawall@lip6.fr>,
-        Sasha Levin <sashal@kernel.org>,
-        Shayenne da Luz Moura <shayenneluzmoura@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Michael Thayer <michael.thayer@oracle.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        outreachy-kernel@googlegroups.com
-Subject: Re: [Outreachy kernel] [RESEND PATCH 2/2] staging: vboxvideo: Use
- unsigned int instead bool
-In-Reply-To: <5ac9cc7060a4a942a7c362cfe35515bd3c7820fb.camel@perches.com>
-Message-ID: <alpine.DEB.2.21.1810280639150.2450@hadrien>
-References: <cover.1540580493.git.shayenneluzmoura@gmail.com>  <211701e4ae42acd95afb24713314bce5a4c58ecf.1540580493.git.shayenneluzmoura@gmail.com>  <20181026204225.GH2015@sasha-vm>  <alpine.DEB.2.21.1810262252550.2791@hadrien>
- <5ac9cc7060a4a942a7c362cfe35515bd3c7820fb.camel@perches.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Sun, 28 Oct 2018 10:50:45 -0400
+Received: by mail-pf1-f196.google.com with SMTP id f26-v6so2440205pfn.9;
+        Sat, 27 Oct 2018 23:07:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=GsAq7xNf+bkdex0pSug1EkyY6fyBIT+YzZtQzWaglxI=;
+        b=irejrCucbotLNOhehMN7qEI8tE8f6HKqHMYpCaQBN2WB+8BO5gMbv+/7N8gU5WaBpl
+         vlGF8+6yB+9XQoTI47bwp4M+552I7/LaL/+ZH0viDogVSCb72eeLMpxuoAx/IYz1KwEc
+         sRFgAlgpiMUUJ8FezkjxsPamNLmKXGXMMnrWkkNBkhZYdTQ5aa+lB01RChW9TCty0wX9
+         445mIAVNqsD6AlnoSTVa1xZ9M0wqF1tu1mXR0l4VNIOJh/1Z7nrl6ZGqFpsEd+gbppMi
+         JwJ/QAfOxEOrV+nf6Yy+mgcCA2ZEj2+9xTjaahqw88GUR2gFL2QqSSOBo4YeBJtHpCVz
+         6/3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=GsAq7xNf+bkdex0pSug1EkyY6fyBIT+YzZtQzWaglxI=;
+        b=Opi1J0xVKpbYflBFKmwDFF97baeum4g/VISGpSoFxI12ZWSCS1M035eW/d+f1qK8TQ
+         8okgDpUnzJ+1LEUVEAqFTc9UYd3KB1X+qhGTncqxPEHM6nsDokKMWp1GuhvgjZFOUZQK
+         T86/Sv0jQ486qWr7d8QwxwSMxYoJGG6OZjb6wWwrk/3LOhbloHX9v3TxzVkspK8hAVJb
+         MpnPT1TWHTTvGW5gfEZgZPzEtlkNevaROZHvzN5mtu6BRq3BTZk1tac3vtn9mZG7JTfO
+         r5+FzQHbwUa64DtVlgLJHK3gvMU/7yGgtU+EEvoDbR9p4TZ7Iw3+Sh5PT5X7oCYFOtrA
+         +frA==
+X-Gm-Message-State: AGRZ1gJgJOM6fTWwEU4M7xzEpxV3FLy9Y82YynIaDyyHtKtmLqCVDjHG
+        TOM0MoDWIizOu5eT2mzJZ2U=
+X-Google-Smtp-Source: AJdET5fbB3M28oLHNxFO2sPAro4Y4Brf+UAbaSWfX841rKRQKpcTtElcfCgl/ahoMjBJN238486qPA==
+X-Received: by 2002:a62:1c1:: with SMTP id 184-v6mr10139358pfb.242.1540706828200;
+        Sat, 27 Oct 2018 23:07:08 -0700 (PDT)
+Received: from localhost.localdomain ([2409:4071:210a:547b:a60f:5e67:90:ea3f])
+        by smtp.gmail.com with ESMTPSA id m25-v6sm8482793pgb.67.2018.10.27.23.07.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 27 Oct 2018 23:07:07 -0700 (PDT)
+From:   Bhumika Goyal <bhumirks@gmail.com>
+To:     dvhart@infradead.org, andy@infradead.org,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     julia.lawall@lip6.fr, Bhumika Goyal <bhumirks@gmail.com>
+Subject: [PATCH] platform/x86: wmi: declare device_type structure as constant
+Date:   Sun, 28 Oct 2018 11:37:00 +0530
+Message-Id: <20181028060700.22110-1-bhumirks@gmail.com>
+X-Mailer: git-send-email 2.14.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The only usage of device_type structure is getting stored as
+a reference in the type field of device structure. This type
+field is declared const. Therefore, the device_type structure
+can never be modified and can be declared as const.
 
+Signed-off-by: Bhumika Goyal <bhumirks@gmail.com>
+---
+ drivers/platform/x86/wmi.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-On Sat, 27 Oct 2018, Joe Perches wrote:
+diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
+index 04791ea5d97b..bea35be68706 100644
+--- a/drivers/platform/x86/wmi.c
++++ b/drivers/platform/x86/wmi.c
+@@ -987,19 +987,19 @@ static struct bus_type wmi_bus_type = {
+ 	.remove = wmi_dev_remove,
+ };
+ 
+-static struct device_type wmi_type_event = {
++static const struct device_type wmi_type_event = {
+ 	.name = "event",
+ 	.groups = wmi_event_groups,
+ 	.release = wmi_dev_release,
+ };
+ 
+-static struct device_type wmi_type_method = {
++static const struct device_type wmi_type_method = {
+ 	.name = "method",
+ 	.groups = wmi_method_groups,
+ 	.release = wmi_dev_release,
+ };
+ 
+-static struct device_type wmi_type_data = {
++static const struct device_type wmi_type_data = {
+ 	.name = "data",
+ 	.groups = wmi_data_groups,
+ 	.release = wmi_dev_release,
+-- 
+2.14.5
 
-> On Fri, 2018-10-26 at 22:54 +0200, Julia Lawall wrote:
-> > [Adding Joe Perches]
-> >
-> > On Fri, 26 Oct 2018, Sasha Levin wrote:
-> >
-> > > On Fri, Oct 26, 2018 at 04:04:45PM -0300, Shayenne da Luz Moura wrote:
-> > > > This change was suggested by checkpath.pl. Use unsigned int with bitfield
-> > > > allocate only one bit to the boolean variable.
-> > > >
-> > > > CHECK: Avoid using bool structure members because of possible alignment
-> > > > issues
-> > > >
-> > > > Signed-off-by: Shayenne da Luz Moura <shayenneluzmoura@gmail.com>
-> > > > ---
-> > > > drivers/staging/vboxvideo/vbox_drv.h        | 14 +++++++-------
-> > > > drivers/staging/vboxvideo/vboxvideo_guest.h |  2 +-
-> > > > 2 files changed, 8 insertions(+), 8 deletions(-)
-> > > >
-> > > > diff --git a/drivers/staging/vboxvideo/vbox_drv.h
-> > > > b/drivers/staging/vboxvideo/vbox_drv.h
-> > > > index 594f84272957..7d3e329a6b1c 100644
-> > > > --- a/drivers/staging/vboxvideo/vbox_drv.h
-> > > > +++ b/drivers/staging/vboxvideo/vbox_drv.h
-> > > > @@ -81,7 +81,7 @@ struct vbox_private {
-> > > > 	u8 __iomem *vbva_buffers;
-> > > > 	struct gen_pool *guest_pool;
-> > > > 	struct vbva_buf_ctx *vbva_info;
-> > > > -	bool any_pitch;
-> > > > +	unsigned int any_pitch:1;
-> > > > 	u32 num_crtcs;
-> > > > 	/** Amount of available VRAM, including space used for buffers. */
-> > > > 	u32 full_vram_size;
-> > >
-> > > Using bitfields for booleans in these cases is less efficient than just
-> > > using "regular" booleans for two reasons:
-> > >
-> > > 1. It will use the same amount of space. Due to alignment requirements,
-> > > the compiler can't squeeze in anything into the 7 bits that are now
-> > > "free". Each member, unless it's another bitfield, must start at a whole
-> > > byte.
-
-Since this is between a pointer and a u32, won't the compiler put a lot
-more padding, in both cases?
-
-> > >
-> > > 2. This is actually less efficient (slower) for the compiler to work
-> > > with. The smallest granularity we have to access memory is 1 byte; we
-> > > can't set individual bits directly in memory. For the original code, the
-> > > assembly for 'vbox_private.any_pitch = true' would look something like
-> > > this:
-> > >
-> > > 	movl   $0x1,-0x10(%rsp)
-> > >
-> > > As you can see, the compiler can directly write into the variable.
-> > > However, when we switch to using bitfields, the compiler must preserve
-> > > the original value of the other 7 bits, so it must first read them from
-> > > memory, manipulate the value and write it back. The assembly would
-> > > look something like this:
-> > >
-> > > 	movzbl -0x10(%rsp),%eax
-> > > 	or     $0x1,%eax
-> > > 	mov    %al,-0x10(%rsp)
-> > >
-> > > Which is less efficient than what was previously happening.
-> >
-> > Maybe checkpatch could be more precise about what kind of bools should be
-> > changed?
->
-> Probably so, what verbiage would you suggest?
-
-I don't know what are the conditions.  Sasha?
-
-julia
-
-> Also, any conversion from bool to int would
-> have to take care than any assigment uses !!
-> where appropriate.
->
->
->
