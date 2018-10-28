@@ -2,84 +2,98 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE8E2C6786F
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 13:46:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 015E3C6786F
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 13:54:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85E0320843
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 13:46:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85E0320843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=holtmann.org
+	by mail.kernel.org (Postfix) with ESMTP id AB38920665
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 13:54:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB38920665
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727498AbeJ1WbI convert rfc822-to-8bit (ORCPT
+        id S1727620AbeJ1Wji (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 18:31:08 -0400
-Received: from coyote.holtmann.net ([212.227.132.17]:37707 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726492AbeJ1WbI (ORCPT
+        Sun, 28 Oct 2018 18:39:38 -0400
+Received: from andre.telenet-ops.be ([195.130.132.53]:54386 "EHLO
+        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727507AbeJ1Wji (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 18:31:08 -0400
-Received: from marcel-macbook.fritz.box (p4FF9F655.dip0.t-ipconnect.de [79.249.246.85])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 57E55CEEAF;
-        Sun, 28 Oct 2018 14:53:51 +0100 (CET)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
-Subject: Re: [PATCH v3 3/5] nfc: pn533: add UART phy driver
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20181028102725.GL27852@localhost>
-Date:   Sun, 28 Oct 2018 14:46:24 +0100
-Cc:     Lars Poeschel <poeschel@lemonage.de>,
-        devicetree <devicetree@vger.kernel.org>,
-        Samuel Ortiz <sameo@linux.intel.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:NFC SUBSYSTEM" <linux-wireless@vger.kernel.org>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <9494A12C-C53A-4F6E-B6F3-BABB09867677@holtmann.org>
-References: <20181025132937.24405-1-poeschel@lemonage.de>
- <20181025132937.24405-3-poeschel@lemonage.de>
- <20181028102725.GL27852@localhost>
-To:     Johan Hovold <johan@kernel.org>
-X-Mailer: Apple Mail (2.3445.100.39)
+        Sun, 28 Oct 2018 18:39:38 -0400
+Received: from ramsan.of.borg ([84.194.111.163])
+        by andre.telenet-ops.be with bizsmtp
+        id t1uu1y0083XaVaC011uuHz; Sun, 28 Oct 2018 14:54:54 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gGlWo-0008CC-Ae; Sun, 28 Oct 2018 14:54:54 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gGhsx-0000ZA-UL; Sun, 28 Oct 2018 11:01:31 +0100
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [git pull] m68k updates for 4.20
+Date:   Sun, 28 Oct 2018 11:01:24 +0100
+Message-Id: <20181028100124.2116-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Johan,
+	Hi Linus,
 
->> This adds the UART phy interface for the pn533 driver.
->> The pn533 driver can be used through UART interface this way.
->> It is implemented as a serdev device.
-> 
-> Just a few drive-by comments below.
-> 
->> +// SPDX-License-Identifier: GPL-2.0
-> 
-> This should match MODULE_LICENSE below which currently says v2 *or
-> later*.
-> 
->> +/*
->> + * Driver for NXP PN532 NFC Chip - UART transport layer
->> + *
->> + * Copyright (C) 2018 Lemonage Software GmbH
->> + * Author: Lars Pöschel <poeschel@lemonage.de>
->> + * All rights reserved.
->> + */
-> 
->> +#define VERSION "0.1"
-> 
-> We don't version kernel drivers individually, so please drop this here
-> and below.
+The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
 
-if we don’t then maybe send patches to remove MODULE_VERSION first. Otherwise this is totally fine to do.
+  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
 
-There are currently 670 usages of MODULE_VERSION and I have not heard anybody looking at removing this.
+are available in the Git repository at:
 
-Regards
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git tags/m68k-for-v4.20-tag1
 
-Marcel
+for you to fetch changes up to 58c116fb7dc6703a557fe79c6e6ebab1450082b3:
 
+  m68k/sun3: Remove is_medusa and m68k_pgtable_cachemode (2018-08-31 09:30:42 +0200)
+
+----------------------------------------------------------------
+m68k updates for v4.20
+
+  - Just two small cleanups.
+
+Thanks for pulling!
+
+P.S. Sorry for the late pull request.
+     I didn't bring my NitroKey to Edinburgh, and had moved all other
+     secret keys offline, as recommended.
+
+----------------------------------------------------------------
+Robert P. J. Day (1):
+      m68k/atari: ARAnyM - Remove reference to long-deprecated MODULE_PARM
+
+Руслан Исаев (1):
+      m68k/sun3: Remove is_medusa and m68k_pgtable_cachemode
+
+ arch/m68k/emu/nfeth.c        | 4 ----
+ arch/m68k/kernel/sun3-head.S | 6 ------
+ 2 files changed, 10 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
