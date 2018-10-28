@@ -2,117 +2,137 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 675F2ECDE46
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 04:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2393FECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 04:31:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1453A20831
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 04:18:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B70D420827
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 04:31:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N+RDlCF3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1453A20831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="FWPURrhS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B70D420827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729175AbeJ1NBc (ORCPT
+        id S1726503AbeJ1NOV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 09:01:32 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:54032 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727791AbeJ1NBc (ORCPT
+        Sun, 28 Oct 2018 09:14:21 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43389 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725757AbeJ1NOV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 09:01:32 -0400
-Received: by mail-it1-f193.google.com with SMTP id q70-v6so5878574itb.3;
-        Sat, 27 Oct 2018 21:18:11 -0700 (PDT)
+        Sun, 28 Oct 2018 09:14:21 -0400
+Received: by mail-pg1-f194.google.com with SMTP id n10-v6so2300985pgv.10
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Oct 2018 21:30:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=neFthfOwkGDUES53+dJ4WrhK3oID3b4zXpwURU6x+aA=;
-        b=N+RDlCF3v580DGGI6LeEeY/0iOloLE5qKdBMCu727mnevRPZJGbIsY7XIr38nqtw6A
-         tj9WPR8/dk9JKIYhEcdzNaQRiqepQ+v8ZTPzAozIseNlUehsG3WE462RRgjms57nrIFG
-         BkhDWZ4LB4fLSQxwq9UknYIKs950vHmBiok+8MdJ1P3sHt4niubA1sunCQ9ilIIYXSqR
-         QRIQjcGEt7BJsjfF5GVEtAJ3dJHid+F+4nEIPY/FVF0etxPzmOfvpiHLTVa32CPBVqwR
-         xtmnTIKoPnnDpjgZ0NpuT7K5/8n7LPWLxOh9DhY95clfm0NJKAF8dGuwzx9uwLfE/svX
-         /N/A==
+        d=joelfernandes.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UPwV39yVWYSq+/56VBRD2t57nMmrSpoLnd3/XxZuTIs=;
+        b=FWPURrhSOWLSVbyhGjwNqXQf16eap69uOf//XVQN4QPJqdK/Lu+w0JC0ci3G9t1mE1
+         VsKIaEoekOkKoK0lhZFhJ1J+YZMmf4jSoWMYyYD4jvdefeignKUO4ScyqSfZaIJiJ8/S
+         ogCUNkuPlM6DPDcub22e6W/+6IHjqs4d8ftNo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=neFthfOwkGDUES53+dJ4WrhK3oID3b4zXpwURU6x+aA=;
-        b=bDaXqS7f9atKAb6lPWQMbFruFSoghoEIZisr+smvIDMVC334VmmNw2JWziuJMc3ulz
-         7yuh2KmAIg3rkAgyWhOhDJ3SNT58jHDM4dt7Z3pS/GNcwWZtetV7GyqjoTPalHXdVE61
-         wB0goyqWfUawDYoKkkDNQ3HIbQN/b3bo6zm2BV6X8QCRh9JbYrJbz7mC+8gRhtJpl+ao
-         UYt1E/vfZE7CcW8JloJDBYwwPVZ8Z/ZZxqwAn7GGvrG1Ws13pzbY+CbzdiQ9P1xDgUgG
-         t5g05yO9QG8qrfY8spY/pYjPmaKn9M6rcDClrSQe2BoFiJ3Zzuqz7Pr6+1ThrDHev0VY
-         ZJlA==
-X-Gm-Message-State: AGRZ1gLU2n6DYv2Z/1QTINrTJO9sLrZzTGB9HKc0o0DBQ0qxVFvhX/kS
-        2depLAjerVaWNIXc2J2MLS85PGWt89sY7ToFM1o=
-X-Google-Smtp-Source: AJdET5fAs6GBM+HKNKYRI0Eg+lPMcDb9C8pG17Kmw+tGEysVKXjq+CWmpdT/8srwx5llhCAZd8kF/k/m/A15lKPxkyQ=
-X-Received: by 2002:a02:506:: with SMTP id e6-v6mr6879970jad.69.1540700290636;
- Sat, 27 Oct 2018 21:18:10 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=UPwV39yVWYSq+/56VBRD2t57nMmrSpoLnd3/XxZuTIs=;
+        b=DSssILIu8dEY45con42dYOGxRf1pa54Hcz+927VfylRY1bTlyjM8CWlGhPVVB/Y80a
+         caNuXTbtyP0QlH0Xx1UNujW8W7ahHvd6H5SHNQRNRaJc+/ccMLVXvcutVa6cFWRiPdrx
+         PQz+i/8tnniOaUeJbvbmM5FPTkLOClXNht7a3Ty7ey4ID1+98W3V/HoZj9gPMg7z2+YN
+         3+C5FwO371iBiAAR/DUN9M01ohzvOPxsmoxBQyujSnH6Kn/JdKBei5600s962E4zb4Dw
+         ixeE9NJM8uCet9Zh1rpEVco5eqX7ToF7x8HwNU65WZErsFoi5xYPywHpANC/zwY4PsUl
+         oYag==
+X-Gm-Message-State: AGRZ1gL8ov1Dz1QIQ66TII5eCr6jRPQYfEIOYhqgu50L+nbb5XjJUIJr
+        I9dWORyjed0cSdLM8yca8PZFGCKIDuA=
+X-Google-Smtp-Source: AJdET5erxsFM/Yv33Fs95qDNZ5UgfcCoU8FbyE7UrgEJ7K2kj4/dKCHatO7s2xMADHQsuBI+19/6QQ==
+X-Received: by 2002:a63:7f0e:: with SMTP id a14-v6mr9095170pgd.296.1540701057824;
+        Sat, 27 Oct 2018 21:30:57 -0700 (PDT)
+Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id q26-v6sm20791609pfi.165.2018.10.27.21.30.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 27 Oct 2018 21:30:56 -0700 (PDT)
+From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>
+Subject: [RFC] doc: rcu: remove note on smp_mb during synchronize_rcu
+Date:   Sat, 27 Oct 2018 21:30:46 -0700
+Message-Id: <20181028043046.198403-1-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
 MIME-Version: 1.0
-References: <20181027205320.14975-1-tomasbortoli@gmail.com>
-In-Reply-To: <20181027205320.14975-1-tomasbortoli@gmail.com>
-From:   Xin Long <lucien.xin@gmail.com>
-Date:   Sun, 28 Oct 2018 13:17:56 +0900
-Message-ID: <CADvbK_dHDq69jtLHh4p9xeonhcLAjSytTZMZ0vN3QzcukP2ajg@mail.gmail.com>
-Subject: Re: [PATCH v2] sctp: socket.c validate sprstat_policy
-To:     tomasbortoli@gmail.com
-Cc:     Vlad Yasevich <vyasevich@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        davem <davem@davemloft.net>, linux-sctp@vger.kernel.org,
-        network dev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 28, 2018 at 5:54 AM Tomas Bortoli <tomasbortoli@gmail.com> wrote:
->
-> It is possible to perform out-of-bound reads on
-> sctp_getsockopt_pr_streamstatus() and on
-> sctp_getsockopt_pr_assocstatus() by passing from userspace a
-> sprstat_policy that overflows the abandoned_sent/abandoned_unsent
-> fixed length arrays. The over-read data are directly copied/leaked
-> to userspace.
->
-> Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
-> Reported-by: syzbot+5da0d0a72a9e7d791748@syzkaller.appspotmail.com
-> ---
->  net/sctp/socket.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/net/sctp/socket.c b/net/sctp/socket.c
-> index fc0386e8ff23..14dce5d95817 100644
-> --- a/net/sctp/socket.c
-> +++ b/net/sctp/socket.c
-> @@ -7083,7 +7083,9 @@ static int sctp_getsockopt_pr_assocstatus(struct sock *sk, int len,
->         }
->
->         policy = params.sprstat_policy;
-> -       if (!policy || (policy & ~(SCTP_PR_SCTP_MASK | SCTP_PR_SCTP_ALL)))
-> +       if (!policy || (policy & ~(SCTP_PR_SCTP_MASK | SCTP_PR_SCTP_ALL)) ||
-> +           __SCTP_PR_INDEX(policy) > SCTP_PR_INDEX(MAX) ||
-> +           __SCTP_PR_INDEX(policy) < 0)
->                 goto out;
->
->         asoc = sctp_id2assoc(sk, params.sprstat_assoc_id);
-> @@ -7142,7 +7144,9 @@ static int sctp_getsockopt_pr_streamstatus(struct sock *sk, int len,
->         }
->
->         policy = params.sprstat_policy;
-> -       if (!policy || (policy & ~(SCTP_PR_SCTP_MASK | SCTP_PR_SCTP_ALL)))
-> +       if (!policy || (policy & ~(SCTP_PR_SCTP_MASK | SCTP_PR_SCTP_ALL)) ||
-> +           __SCTP_PR_INDEX(policy) > SCTP_PR_INDEX(MAX) ||
-> +           __SCTP_PR_INDEX(policy) < 0)
->                 goto out;
-This is not the correct fix.
-See https://lkml.org/lkml/2018/10/27/136
+As per this thread [1], it seems this smp_mb isn't needed anymore:
+"So the smp_mb() that I was trying to add doesn't need to be there."
+
+So let us remove this part from the memory ordering documentation.
+
+[1] https://lkml.org/lkml/2017/10/6/707
+
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+---
+ .../Tree-RCU-Memory-Ordering.html             | 32 +------------------
+ 1 file changed, 1 insertion(+), 31 deletions(-)
+
+diff --git a/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.html b/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.html
+index a346ce0116eb..0fb1511763d4 100644
+--- a/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.html
++++ b/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.html
+@@ -77,7 +77,7 @@ The key point is that the lock-acquisition functions, including
+ <tt>smp_mb__after_unlock_lock()</tt> immediately after successful
+ acquisition of the lock.
+ 
+-<p>Therefore, for any given <tt>rcu_node</tt> struction, any access
++<p>Therefore, for any given <tt>rcu_node</tt> structure, any access
+ happening before one of the above lock-release functions will be seen
+ by all CPUs as happening before any access happening after a later
+ one of the above lock-acquisition functions.
+@@ -162,36 +162,6 @@ an <tt>atomic_add_return()</tt> of zero) to detect idle CPUs.
+ <tr><td>&nbsp;</td></tr>
+ </table>
+ 
+-<p>The approach must be extended to handle one final case, that
+-of waking a task blocked in <tt>synchronize_rcu()</tt>.
+-This task might be affinitied to a CPU that is not yet aware that
+-the grace period has ended, and thus might not yet be subject to
+-the grace period's memory ordering.
+-Therefore, there is an <tt>smp_mb()</tt> after the return from
+-<tt>wait_for_completion()</tt> in the <tt>synchronize_rcu()</tt>
+-code path.
+-
+-<table>
+-<tr><th>&nbsp;</th></tr>
+-<tr><th align="left">Quick Quiz:</th></tr>
+-<tr><td>
+-	What?  Where???
+-	I don't see any <tt>smp_mb()</tt> after the return from
+-	<tt>wait_for_completion()</tt>!!!
+-</td></tr>
+-<tr><th align="left">Answer:</th></tr>
+-<tr><td bgcolor="#ffffff"><font color="ffffff">
+-	That would be because I spotted the need for that
+-	<tt>smp_mb()</tt> during the creation of this documentation,
+-	and it is therefore unlikely to hit mainline before v4.14.
+-	Kudos to Lance Roy, Will Deacon, Peter Zijlstra, and
+-	Jonathan Cameron for asking questions that sensitized me
+-	to the rather elaborate sequence of events that demonstrate
+-	the need for this memory barrier.
+-</font></td></tr>
+-<tr><td>&nbsp;</td></tr>
+-</table>
+-
+ <p>Tree RCU's grace--period memory-ordering guarantees rely most
+ heavily on the <tt>rcu_node</tt> structure's <tt>-&gt;lock</tt>
+ field, so much so that it is necessary to abbreviate this pattern
+-- 
+2.19.1.568.g152ad8e336-goog
+
