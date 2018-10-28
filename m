@@ -2,77 +2,64 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C66AECDE46
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 10:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 041BEECDE46
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 10:45:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6259D20870
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 10:35:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CAp2o2t9";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Y41H5sD0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6259D20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id AE03120843
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 10:45:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE03120843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbeJ1TTU (ORCPT
+        id S1727008AbeJ1T3U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 15:19:20 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:36292 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726468AbeJ1TTU (ORCPT
+        Sun, 28 Oct 2018 15:29:20 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:45460 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726379AbeJ1T3U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 15:19:20 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 51F6C60741; Sun, 28 Oct 2018 10:35:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540722904;
-        bh=S9VVu0DHBGqNwIm0vYOn66ZhRwrrkJh9WXlIpeY3mOs=;
-        h=From:Subject:To:Cc:References:Date:In-Reply-To:From;
-        b=CAp2o2t9j0IhMuKDz4D7o0ZREN+6TONRwwC9Z09FTr/MfFxuM74OmtiWG0yXHHqaG
-         qZCybjlnQ14NXf6TyIQePx4Tdid4qL7+QISdk91vOlJa5SCV4r+IC1RC/hYWmhB5b8
-         6oEQ1yOKzysSLmxkhfKEgsTv6d/8POhOgtMIUUwA=
-Received: from [10.79.165.249] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7EACF60741;
-        Sun, 28 Oct 2018 10:34:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540722903;
-        bh=S9VVu0DHBGqNwIm0vYOn66ZhRwrrkJh9WXlIpeY3mOs=;
-        h=From:Subject:To:Cc:References:Date:In-Reply-To:From;
-        b=Y41H5sD0kXFw0rAVwRSaqW1DHWWlYZZc2UM8LZeZvUClorputW8TG1iwbsDxBtcpG
-         6OcaI0YpV65YK0vsNAWtpNj+7bwblwQoYMpdvSNLeSpYnUSKdeFmTagCodU7p3hpIc
-         hC7k7Er+0poqVaRN6Tqbs0pydCtHHhcLVtHzbTRQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7EACF60741
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH v1 2/2] clk: qcom : dispcc: Add support for display port
- clocks
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        chandanu@codeaurora.org, linux-arm-msm-owner@vger.kernel.org
-References: <1539093467-12123-1-git-send-email-tdas@codeaurora.org>
- <1539093467-12123-3-git-send-email-tdas@codeaurora.org>
- <153911726378.119890.5522594539667887860@swboyd.mtv.corp.google.com>
- <3c4cccca-2c5c-927f-f471-2bbbd71b4155@codeaurora.org>
-Message-ID: <9c359e26-3708-14b6-f22a-fb529446d325@codeaurora.org>
-Date:   Sun, 28 Oct 2018 16:04:55 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sun, 28 Oct 2018 15:29:20 -0400
+Received: by mail-ed1-f66.google.com with SMTP id t10-v6so4814507eds.12
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 03:45:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=rFKFQFEVLb4vxL9PJRhux+aUcuP2vv9bAAOzOM1curo=;
+        b=EOIj4toITmEHkIisuHU3tVKuz13p1mnDoQnqVADru8YnomO6uI4EYifaKH/1OAuns3
+         IxvqPYvWJkyx1uwBASm7bBIK9kuH/298GJ2Y5FUlFUXk5gzgi2MBbWYhhSykrD5icJod
+         F+wQqr0Ho5GUEzLy9iFGMNumRiVKjbkcUCSUGEpZNwpqsZfMMORoIMHHS909zK7o4BGu
+         XAFC9p1MKrMhUqpBNMnwVG2V7JSc9yTAJemFedy6cMtD6eoTVTaHVhnkblnUpEVypSoT
+         7epUTtny3EE+69c9+EWyT2ev9tAuTBNKWCWsBRjSCSpjkXNqlMLyBF8+vyvRg0M515WK
+         3IaA==
+X-Gm-Message-State: AGRZ1gLQZk5WwMFq2TkKGRQh3dysdASTxuFm6oVym7lDtFn9oRyOCWSt
+        btWKVJJ2TCXSVMYQpUFDM5kzkbbDhZk=
+X-Google-Smtp-Source: AJdET5clAWYbDXxLfrbWgZmLnaPys2ro2RN3Gy5C0hm3IqvhyYCROFuqMbcXJMGwjSzbl8T13Hp/iw==
+X-Received: by 2002:a50:d710:: with SMTP id t16-v6mr9857897edi.75.1540723502074;
+        Sun, 28 Oct 2018 03:45:02 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id l22-v6sm3122820ejd.53.2018.10.28.03.45.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 28 Oct 2018 03:45:01 -0700 (PDT)
+Subject: Re: Oops in current tree in i2c
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Jiri Kosina <jkosina@suse.cz>, Julian Sax <jsbc@gmx.de>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Cc:     linux-input@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <CAHk-=wiVH6SdC2YutcDJ8kiAYUkO-ei3Wdjp2TXcbWas7LJrSg@mail.gmail.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <8d8e3771-0b33-2489-4e27-d3d63162df11@redhat.com>
+Date:   Sun, 28 Oct 2018 11:44:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <3c4cccca-2c5c-927f-f471-2bbbd71b4155@codeaurora.org>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+In-Reply-To: <CAHk-=wiVH6SdC2YutcDJ8kiAYUkO-ei3Wdjp2TXcbWas7LJrSg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -80,228 +67,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Stephen,
+Hi Linus,
 
-On 2018-10-19 16:04, Taniya Das wrote:
-> Hello Stephen,
+On 27-10-18 18:08, Linus Torvalds wrote:
+> Julian, Jiri,
+>   On my laptop I'm getting a kernel page fault with the current git
+> tree, and I'm tentatively blaming commit
 > 
-> On 10/10/2018 2:04 AM, Stephen Boyd wrote:
->> Quoting Taniya Das (2018-10-09 06:57:47)
->>> diff --git a/drivers/clk/qcom/dispcc-sdm845.c 
->>> b/drivers/clk/qcom/dispcc-sdm845.c
->>> index 0cc4909..6d3136a 100644
->>> --- a/drivers/clk/qcom/dispcc-sdm845.c
->>> +++ b/drivers/clk/qcom/dispcc-sdm845.c
->>> @@ -128,6 +144,100 @@ enum {
->>>          },
->>>   };
->>> 
->>> +static const struct freq_tbl ftbl_disp_cc_mdss_dp_aux_clk_src[] = {
->>> +       F(19200000, P_BI_TCXO, 1, 0, 0),
->>> +       { }
->>> +};
->>> +
->>> +static struct clk_rcg2 disp_cc_mdss_dp_aux_clk_src = {
->>> +       .cmd_rcgr = 0x219c,
->>> +       .mnd_width = 0,
->>> +       .hid_width = 5,
->>> +       .parent_map = disp_cc_parent_map_2,
->>> +       .freq_tbl = ftbl_disp_cc_mdss_dp_aux_clk_src,
->>> +       .clkr.hw.init = &(struct clk_init_data){
->>> +               .name = "disp_cc_mdss_dp_aux_clk_src",
->>> +               .parent_names = disp_cc_parent_names_2,
->>> +               .num_parents = 2,
->>> +               .flags = CLK_SET_RATE_PARENT,
->>> +               .ops = &clk_rcg2_ops,
->>> +       },
->>> +};
->>> +
->>> +static const struct freq_tbl ftbl_disp_cc_mdss_dp_crypto_clk_src[] = 
->>> {
->>> +       F(108000, P_DP_PHY_PLL_LINK_CLK,   3,   0,   0),
->>> +       F(180000, P_DP_PHY_PLL_LINK_CLK,   3,   0,   0),
->>> +       F(360000, P_DP_PHY_PLL_LINK_CLK,   3,   0,   0),
->>> +       F(540000, P_DP_PHY_PLL_LINK_CLK,   3,   0,   0),
->>> +       { }
->>> +};
->>> +
->>> +static struct clk_rcg2 disp_cc_mdss_dp_crypto_clk_src = {
->>> +       .cmd_rcgr = 0x2154,
->>> +       .mnd_width = 0,
->>> +       .hid_width = 5,
->>> +       .parent_map = disp_cc_parent_map_1,
->>> +       .freq_tbl = ftbl_disp_cc_mdss_dp_crypto_clk_src,
->>> +       .clkr.hw.init = &(struct clk_init_data){
->>> +               .name = "disp_cc_mdss_dp_crypto_clk_src",
->>> +               .parent_names = disp_cc_parent_names_1,
->>> +               .num_parents = 4,
->>> +               .flags = CLK_GET_RATE_NOCACHE,
->> 
->> Why?
->> 
->>> +               .ops = &clk_rcg2_ops,
->>> +       },
->>> +};
->>> +
->>> +static const struct freq_tbl ftbl_disp_cc_mdss_dp_link_clk_src[] = {
->>> +       F(162000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
->>> +       F(270000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
->>> +       F(540000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
->>> +       F(810000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
->> 
->> Are these in kHz? They really look like it and that's bad. Why do we
->> need them at all? Just to make sure the display driver picks these 
->> exact
->> frequencies? It seems like we could just pass whatever number comes in
->> up to the parent and see what it can do.
->> 
+>    9ee3e06610fd ("HID: i2c-hid: override HID descriptors for certain devices")
 > 
-> Let me check back the reason we had to make this change.
+> but that's simply because it's the only thing that seems to touch this
+> particular area in this merge window.
+> 
+> The oops looks like this:
+> 
+>    BUG: unable to handle kernel paging request at 000000007a25d598
+>    PGD 0 P4D 0
+>    Oops: 0000 [#1] SMP PTI
+>    CPU: 1 PID: 888 Comm: systemd-udevd Not tainted 4.19.0-07715-g345671ea0f92 #4
+>    Hardware name: Dell Inc. XPS 13 9350/09JHRY, BIOS 1.7.0 01/16/2018
+>    RIP: 0010:strstr+0x19/0x70
+> 
+> where the code disassembly (and the register contents) shows that the
+> wild pointer is the first argument to "strstr()", which just has a
+> bogus value that is not a valid kernel pointer (RDI: 000000007a25d598
+> - which is obviously also the address of the page fault)
+> 
+> The call trace is:
+> 
+>     dmi_matches+0x55/0xc0
+>     dmi_first_match+0x26/0x40
+>     i2c_hid_get_dmi_i2c_hid_desc_override+0x16/0x40 [i2c_hid]
+>     i2c_hid_probe+0x28c/0x760 [i2c_hid]
+>     i2c_device_probe+0x1e7/0x260
+>     really_probe+0xf8/0x3e0
+>     driver_probe_device+0x10f/0x120
+>     bus_for_each_drv+0x66/0xb0
+>     __device_attach+0xd9/0x150
+>     bus_probe_device+0x8a/0xa0
+>     device_add+0x48e/0x660
+>     i2c_new_device+0x162/0x350
+> 
+> which is why I suspect that new i2c_hid_get_dmi_hid_report_desc_override() code.
+> 
+> I *think* the problem is that the i2c_hid_dmi_desc_override_table[]
+> isn't terminated by a NULL entry, and I will test that next.
 
-We will need this flag since we reset/power-down the PLL every time we 
-disconnect/connect the DP cable or during suspend/resume. Only with this 
-flag, the calls to the PLL driver are properly called.
+Yes that likely is the problem. I already had a bug report from one of the
+Manjaro maintainers who was cherry picking this into the Manjaro kernel.
 
-> 
->>> +       { }
->>> +};
->>> +
->>> +static struct clk_rcg2 disp_cc_mdss_dp_link_clk_src = {
->>> +       .cmd_rcgr = 0x2138,
->>> +       .mnd_width = 0,
->>> +       .hid_width = 5,
->>> +       .parent_map = disp_cc_parent_map_1,
->>> +       .freq_tbl = ftbl_disp_cc_mdss_dp_link_clk_src,
->>> +       .clkr.hw.init = &(struct clk_init_data){
->>> +               .name = "disp_cc_mdss_dp_link_clk_src",
->>> +               .parent_names = disp_cc_parent_names_1,
->>> +               .num_parents = 4,
->>> +               .flags = CLK_SET_RATE_PARENT,
->>> +               .ops = &clk_rcg2_ops,
->>> +       },
->>> +};
->>> +
->>> +static struct clk_rcg2 disp_cc_mdss_dp_pixel1_clk_src = {
->>> +       .cmd_rcgr = 0x2184,
->>> +       .mnd_width = 16,
->>> +       .hid_width = 5,
->>> +       .parent_map = disp_cc_parent_map_1,
->>> +       .clkr.hw.init = &(struct clk_init_data){
->>> +               .name = "disp_cc_mdss_dp_pixel1_clk_src",
->>> +               .parent_names = disp_cc_parent_names_1,
->>> +               .num_parents = 4,
->>> +               .flags = CLK_SET_RATE_PARENT,
->>> +               .ops = &clk_dp_ops,
->>> +       },
->>> +};
->>> +
->>> +static struct clk_rcg2 disp_cc_mdss_dp_pixel_clk_src = {
->>> +       .cmd_rcgr = 0x216c,
->>> +       .mnd_width = 16,
->>> +       .hid_width = 5,
->>> +       .parent_map = disp_cc_parent_map_1,
->>> +       .clkr.hw.init = &(struct clk_init_data){
->>> +               .name = "disp_cc_mdss_dp_pixel_clk_src",
->>> +               .parent_names = disp_cc_parent_names_1,
->>> +               .num_parents = 4,
->>> +               .flags = CLK_SET_RATE_PARENT,
->>> +               .ops = &clk_dp_ops,
->>> +       },
->>> +};
->>> +
->>>   static const struct freq_tbl ftbl_disp_cc_mdss_esc0_clk_src[] = {
->>>          F(19200000, P_BI_TCXO, 1, 0, 0),
->>>          { }
->>> @@ -391,6 +501,115 @@ enum {
->>>          },
->>>   };
->>> 
->>> +static struct clk_branch disp_cc_mdss_dp_aux_clk = {
->>> +       .halt_reg = 0x2054,
->>> +       .halt_check = BRANCH_HALT,
->>> +       .clkr = {
->>> +               .enable_reg = 0x2054,
->>> +               .enable_mask = BIT(0),
->>> +               .hw.init = &(struct clk_init_data){
->>> +                       .name = "disp_cc_mdss_dp_aux_clk",
->>> +                       .parent_names = (const char *[]){
->>> +                               "disp_cc_mdss_dp_aux_clk_src",
->>> +                       },
->>> +                       .num_parents = 1,
->>> +                       .flags = CLK_SET_RATE_PARENT,
->>> +                       .ops = &clk_branch2_ops,
->>> +               },
->>> +       },
->>> +};
->>> +
->>> +static struct clk_branch disp_cc_mdss_dp_crypto_clk = {
->>> +       .halt_reg = 0x2048,
->>> +       .halt_check = BRANCH_HALT,
->>> +       .clkr = {
->>> +               .enable_reg = 0x2048,
->>> +               .enable_mask = BIT(0),
->>> +               .hw.init = &(struct clk_init_data){
->>> +                       .name = "disp_cc_mdss_dp_crypto_clk",
->>> +                       .parent_names = (const char *[]){
->>> +                               "disp_cc_mdss_dp_crypto_clk_src",
->>> +                       },
->>> +                       .num_parents = 1,
->>> +                       .flags = CLK_SET_RATE_PARENT,
->>> +                       .ops = &clk_branch2_ops,
->>> +               },
->>> +       },
->>> +};
->>> +
->>> +static struct clk_branch disp_cc_mdss_dp_link_clk = {
->>> +       .halt_reg = 0x2040,
->>> +       .halt_check = BRANCH_HALT,
->>> +       .clkr = {
->>> +               .enable_reg = 0x2040,
->>> +               .enable_mask = BIT(0),
->>> +               .hw.init = &(struct clk_init_data){
->>> +                       .name = "disp_cc_mdss_dp_link_clk",
->>> +                       .parent_names = (const char *[]){
->>> +                               "disp_cc_mdss_dp_link_clk_src",
->>> +                       },
->>> +                       .num_parents = 1,
->>> +                       .flags = CLK_SET_RATE_PARENT,
->>> +                       .ops = &clk_branch2_ops,
->>> +               },
->>> +       },
->>> +};
->>> +
->>> +/* reset state of disp_cc_mdss_dp_link_div_clk_src divider is 0x3 
->>> (div 4) */
->> 
->> Not sure what this comment is for. But it's interesting nonetheless.
->> 
->>> +static struct clk_branch disp_cc_mdss_dp_link_intf_clk = {
->>> +       .halt_reg = 0x2044,
->>> +       .halt_check = BRANCH_HALT,
->>> +       .clkr = {
->>> +               .enable_reg = 0x2044,
->>> +               .enable_mask = BIT(0),
->>> +               .hw.init = &(struct clk_init_data){
->>> +                       .name = "disp_cc_mdss_dp_link_intf_clk",
->>> +                       .parent_names = (const char *[]){
->>> +                               "disp_cc_mdss_dp_link_clk_src",
->>> +                       },
->>> +                       .num_parents = 1,
->>> +                       .flags = CLK_GET_RATE_NOCACHE,
->> 
->> Why?
->> 
-> 
-> It was a requirement, but let me get back on this too.
-> 
-I had a discussion with the Display Port teams and below is the requirement,
+So I ran some tests on a laptop of mine which does use i2c-hid but I
+failed to reproduce the issue, so we both (me and the Manjaro maintainer)
+both assumed something went wrong with the backport.
 
-This flag is required since we reset/power-down the PLL every time they
-disconnect/connect the DP cable or during suspend/resume.
-Only with this flag, the calls to the PLL driver properly.
+Both of us seem to have overlooked the missing terminating entry,
+as well as other people involved in the patch.
 
->>> +                       .ops = &clk_branch2_ops,
->>> +               },
->>> +       },
->>> +};
->>> +
+> What makes me *very* unhappy about this is that if I'm right, I think
+> it means that code was literally not tested at all by anybody who
+> didn't have one of the entries in that list.
+
+That is not true, I've hit one of these unterminated dmi lists
+issues before and it depends on what get put in mem directly
+after the list by the linker, bugs caused by this do not always
+reproduce unfortunately.
+
+And as mentioned I have tested the patch on a machine with an i2c-hid
+touchpad, which is not on the list and I did not hit this problem.
+
+Anyways this is fixed now, thank you for catching this.
+
+Regards,
+
+Hans
