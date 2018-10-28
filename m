@@ -2,65 +2,65 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF875ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 10:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E16EEECDE46
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 11:02:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B73D20843
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 10:48:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B73D20843
+	by mail.kernel.org (Postfix) with ESMTP id 9741920665
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 11:02:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9741920665
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727386AbeJ1TdC (ORCPT
+        id S1727420AbeJ1TrL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 15:33:02 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:37272 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726379AbeJ1TdC (ORCPT
+        Sun, 28 Oct 2018 15:47:11 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:45667 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727065AbeJ1TrL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 15:33:02 -0400
-Received: by mail-ed1-f68.google.com with SMTP id u12-v6so1964533eds.4
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 03:48:44 -0700 (PDT)
+        Sun, 28 Oct 2018 15:47:11 -0400
+Received: by mail-ed1-f65.google.com with SMTP id t10-v6so4835746eds.12
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 04:02:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=6alRfDBiFL26fmhy4Ia7xj1Yf4rCbZ6HYk49z/5pmY8=;
-        b=anudnTjCYg4eWmsJLZWdpdsRZK/RqmZ7YEDseyyp/uLS1xLTXyi/ZDiYH3TQ09rab3
-         VnxsNYEwCGrauF1CgrHHsAK3NY3jicHUjaDK+N3wdA4I5+bapNep2jSZD+jms/HsbJp+
-         GmkDgc51EZ/BRJzmlNhRch6pcoan21J9iuudbGdM+GKhkKIfNT/e/mVKJf7GlasAAHtf
-         DzN43AwyhSBGbGI8MYL6wopLdWv1Jg3tfDd+dEfaUdQzGWVg9lue7QUU1JQIO7f5KAsp
-         lqCMBTQ+qsl08aqfJdWo18vuh7etMKvboyUensaRg6XWWuagLShMR4x/cjJxUrBohiH2
-         ymJg==
-X-Gm-Message-State: AGRZ1gL1h1HXFALVARjZE2bjn4LuNutN62lfl5FQrRNpc9CiOSTe4cPt
-        EuR8SFEickv3cVwRq0SFIry4/g==
-X-Google-Smtp-Source: AJdET5fhZzMsUTEIi8eZ0KEmXuXXiEuiCLR0tMPPBTS4gexwiaEE6w5m00DoFHlt8b6vbhgEUvm01g==
-X-Received: by 2002:a50:a5d8:: with SMTP id b24-v6mr3745821edc.137.1540723724207;
-        Sun, 28 Oct 2018 03:48:44 -0700 (PDT)
+        bh=1bZhArkoqMIuKaNEK+cqsIteiW5Npk6lXBmRec8doAQ=;
+        b=tbmIYRrC3zVqMTEz6NekD7n/w/5/XnEaPRrWKWmtfTxppyZ1ulfsNQRHv5HrzVV3x5
+         QJAsQtVP08uzS4B8HQfueyo00RbUpryCExBZGk9K9+TJLs6IxVcYLTjC0SdZMIifSuRp
+         Qv9a+97nBCqNchYxfyxKi6GvAgf+A/DfaXYdijWgZOzrvZ5WCOk8kFTwQsO77GBMUDSa
+         +tv2+tg6gaeJ4oXJPAQy4tsy+RwJOjic0LnT/S+0+kdzlbbvcZkzA4QwG9UUiniHy5DD
+         DjBcCVLQd3oG7b09PBry/AzXLoMgjZ4wm5cVKTCzwHBEK64aCDdQ7cPNr+9/8JPotGpU
+         omow==
+X-Gm-Message-State: AGRZ1gIbYBhiKGWT4oQmuncOX/aw5TAXEptZJST9O7iHi2IuQWMm0Uqw
+        egzuZl3b7lUoaytRGaE+iUH+Tw==
+X-Google-Smtp-Source: AJdET5dCanfRUhFtZ0VR3jheOYzoofDkcrR73gEa6LFbYlD+DibOqTXS20Rs6daWjLrJ9sXHmlWJ0g==
+X-Received: by 2002:a17:906:7442:: with SMTP id x2-v6mr7692676ejl.169.1540724570858;
+        Sun, 28 Oct 2018 04:02:50 -0700 (PDT)
 Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id j22-v6sm5448357edh.47.2018.10.28.03.48.43
+        by smtp.gmail.com with ESMTPSA id f11-v6sm990513eds.23.2018.10.28.04.02.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 28 Oct 2018 03:48:43 -0700 (PDT)
-Subject: Re: [PATCH v3] libata: Apply NOLPM quirk for SAMSUNG
- MZ7TD256HAFV-000L9
-To:     Diego Viola <diego.viola@gmail.com>, axboe@kernel.dk
-Cc:     tj@kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20181026134516.1234-1-diego.viola@gmail.com>
- <3d9dd60b-7bfe-bc1c-b971-0935a84dcf45@kernel.dk>
- <CA+ToGPHR7s4kTKdSh3rpjvxPQN+Y+Qfv=vT2icJ1Gh55X3-mTg@mail.gmail.com>
- <CA+ToGPFMgT2co9c+QWN=7etS9w0OaRfUz69hduOn5rRvMwdsbg@mail.gmail.com>
+        Sun, 28 Oct 2018 04:02:50 -0700 (PDT)
+Subject: Re: [RESEND PATCH 1/2] staging: vboxvideo: Change uint32_t to u32
+To:     Shayenne da Luz Moura <shayenneluzmoura@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Thayer <michael.thayer@oracle.com>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        outreachy-kernel@googlegroups.com
+References: <cover.1540580493.git.shayenneluzmoura@gmail.com>
+ <a81ed59de19694f34b5c5d183e06007d6cc50d1f.1540580493.git.shayenneluzmoura@gmail.com>
 From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <539a21b1-7d09-4f30-0421-d083d1c48ee4@redhat.com>
-Date:   Sun, 28 Oct 2018 11:48:42 +0100
+Message-ID: <a74af0ae-70a3-1e10-fff2-32c6ac3b74c7@redhat.com>
+Date:   Sun, 28 Oct 2018 12:02:49 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <CA+ToGPFMgT2co9c+QWN=7etS9w0OaRfUz69hduOn5rRvMwdsbg@mail.gmail.com>
+In-Reply-To: <a81ed59de19694f34b5c5d183e06007d6cc50d1f.1540580493.git.shayenneluzmoura@gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -71,52 +71,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Hi,
 
-On 28-10-18 05:13, Diego Viola wrote:
-> On Fri, Oct 26, 2018 at 5:36 PM Diego Viola <diego.viola@gmail.com> wrote:
->>
->> On Fri, Oct 26, 2018 at 11:21 AM Jens Axboe <axboe@kernel.dk> wrote:
->>>
->>> On 10/26/18 7:45 AM, Diego Viola wrote:
->>>> med_power_with_dipm causes my T450 to freeze with a SAMSUNG
->>>> MZ7TD256HAFV-000L9 SSD (firmware DXT02L5Q).
->>>>
->>>> Switching the LPM to max_performance fixes this issue.
->>>
->>> Applied, thanks.
->>>
->>> --
->>> Jens Axboe
->>>
->>
->> Jens, Hans,
->>
->> Thank you.
->>
->> Diego
+On 26-10-18 21:04, Shayenne da Luz Moura wrote:
+> This change was suggested by checkpath.pl.
 > 
-> Hi Hans and Jens,
+> CHECK: Prefer kernel type 'u32' over 'uint32_t'
 > 
-> I just wanted to give you guys an update about this problem.
-> 
-> I've managed to update my SSD firmware to the latest version[1].
-> 
-> For running the update, I've had to install Windows 10, ran the
-> firmware update, remove Windows and reinstall Arch Linux.
-> 
-> The latest version of the firmware is DXT04L5Q, and it looks like
-> there hasn't been a new update since 2015.
-> 
-> I'll be running with med_power_with_dipm and hope this firmware update
-> fixes the problem, if it doesn't and I get another freeze, I'll send
-> another patch blacklisting the drive completely. Is that OK?
+> Signed-off-by: Shayenne da Luz Moura <shayenneluzmoura@gmail.com>
 
-Yes, if it still happens with the latest firmware then blacklisting
-it completely is the right thing to do.
+So as already mentioned in response to the coverletter of
+the first posting of this series.
 
-Unfortunately for reasons which I do not understand OEM SSDs often use
-different (customized?) firmware compared to the model on which they
-are based and often see less updates and seem to have more bugs :|
+The drm headers use uint32_t in the prototype definition of the callback
+functions we are defining, so the vboxvideo code should use the same even
+if the compiler does not warn about the callback implementation having
+different parameter types in this case.
+
+To be precise, the page_flip member of struct drm_crtc_funcs is defined as:
+
+         int (*page_flip)(struct drm_crtc *crtc,
+                          struct drm_framebuffer *fb,
+                          struct drm_pending_vblank_event *event,
+                          uint32_t flags,
+                          struct drm_modeset_acquire_ctx *ctx);
+
+So our implementation before your patch exactly matches the prototype
+which IMHO is the right thing to do.
 
 Regards,
 
 Hans
+
+
+
+
+> ---
+>   drivers/staging/vboxvideo/vbox_mode.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/vboxvideo/vbox_mode.c b/drivers/staging/vboxvideo/vbox_mode.c
+> index 79836c8fb909..8a1b117990b8 100644
+> --- a/drivers/staging/vboxvideo/vbox_mode.c
+> +++ b/drivers/staging/vboxvideo/vbox_mode.c
+> @@ -311,7 +311,7 @@ static int vbox_crtc_mode_set(struct drm_crtc *crtc,
+>   static int vbox_crtc_page_flip(struct drm_crtc *crtc,
+>   			       struct drm_framebuffer *fb,
+>   			       struct drm_pending_vblank_event *event,
+> -			       uint32_t page_flip_flags,
+> +			       u32 page_flip_flags,
+>   			       struct drm_modeset_acquire_ctx *ctx)
+>   {
+>   	struct vbox_private *vbox = crtc->dev->dev_private;
+> 
