@@ -2,81 +2,162 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A963C6786F
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 18:10:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2962ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 18:31:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4507C2082D
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 18:10:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D52020843
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 18:31:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="E+LV/sMa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4507C2082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JbRnzA9S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D52020843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727250AbeJ2Czm (ORCPT
+        id S1726905AbeJ2DRS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 22:55:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34286 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725895AbeJ2Czl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 22:55:41 -0400
-Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C578B2082D;
-        Sun, 28 Oct 2018 18:10:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540750218;
-        bh=foO19T/fSbZjxoHGAyNkXGp9S6Vma90ER/NMDoGP71U=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=E+LV/sMaSbNALXu/YpRv69zxf/h6lEA8/kF5k1hWpVUlmAalJ38Jyw/AulaVesQ4d
-         2OXou6xs4r5gDe5LGlVADvIpJ8gbm7GbDaRKTGL1KToEAdjscgHcALUuQgONzk4cfQ
-         Hwi1ABk6VHv85mzNXvVE6bKdCkFftkEXYBd5ebfY=
-Subject: Re: [PATCH 0/2] tracing: Fix synthetic event parser
-To:     Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Rajvi Jingar <rajvi.jingar@intel.com>,
-        Tom Zanussi <zanussi@kernel.org>, linux-kernel@vger.kernel.org,
-        Shuah Khan <shuah@kernel.org>
-References: <154013446976.25576.14780785912268176178.stgit@devbox>
- <20181028040135.717a7b5d@vmware.local.home>
- <20181028040924.1eca8002@vmware.local.home>
-From:   Shuah Khan <shuah@kernel.org>
-Message-ID: <c160ec5e-debd-74dd-43e8-a7792a63f06e@kernel.org>
-Date:   Sun, 28 Oct 2018 12:10:17 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sun, 28 Oct 2018 23:17:18 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50310 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726170AbeJ2DRS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 28 Oct 2018 23:17:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=QljHHvaILxJgNXGsDqYAJ9V/RePwVryCzz28vYczcdU=; b=JbRnzA9SLmT/gzL9FA+Ob2716
+        k/WoDvQMhKNd2W1g14HzHmVo4QSjP3zc2pzYaXfZZpx6G4+BglzSqqqp6feML00YnjvodB87dAX8s
+        FzI1MOMSQUtFyjmcgnKGEo30/yExfdqMklwP8az/hnDLj/lGDreJ9Q3fPVFZmdMgvDCNN1v77ddFA
+        qxwiksVgJ/H9o3T3MSRMIkxnoQ1VMhezWoIdYo8ERvqFLlXlNPLG2AMtI81SxWqY10p5QZL+Rgf7q
+        Eo+nSN5iIK8d1Ov4gXyna6MgzvCy+JEZS9zsnaHoB1dPLBfy5k9EeaSjOswLCFqdavpBcFFvM1j2Z
+        gkXppHa3g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gGpqS-0006B0-5Y; Sun, 28 Oct 2018 18:31:28 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 40D46202A40A3; Sun, 28 Oct 2018 19:31:26 +0100 (CET)
+Date:   Sun, 28 Oct 2018 19:31:26 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Igor Stoppa <igor.stoppa@gmail.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 10/17] prmem: documentation
+Message-ID: <20181028183126.GB744@hirez.programming.kicks-ass.net>
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-11-igor.stoppa@huawei.com>
+ <20181026092609.GB3159@worktop.c.hoisthospitality.com>
+ <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181028040924.1eca8002@vmware.local.home>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/28/2018 02:09 AM, Steven Rostedt wrote:
-> On Sun, 28 Oct 2018 04:01:35 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
-> 
->> I'll add them on top of my linux-next code, and include them in the
->> pull request I'm hoping to do on Tuesday.
-> 
-> Bah, I think this is on a different branch, and that will make it go as
-> a separate pull. Anyway, it probably will still be on Tuesday where I
-> push it to Linus.
-> 
-> -- Steve
-> 
+On Fri, Oct 26, 2018 at 11:46:28AM +0100, Kees Cook wrote:
+> On Fri, Oct 26, 2018 at 10:26 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+> > I still don't really understand the whole write-rare thing; how does it
+> > really help? If we can write in kernel memory, we can write to
+> > page-tables too.
 
-Here it is
+> One aspect of hardening the kernel against attack is reducing the
+> internal attack surface. Not all flaws are created equal, so there is
+> variation in what limitations an attacker may have when exploiting
+> flaws (not many flaws end up being a fully controlled "write anything,
+> anywhere, at any time"). By making the more sensitive data structures
+> of the kernel read-only, we reduce the risk of an attacker finding a
+> path to manipulating the kernel's behavior in a significant way.
+> 
+> Examples of typical sensitive targets are function pointers, security
+> policy, and page tables. Having these "read only at rest" makes them
+> much harder to control by an attacker using memory integrity flaws.
 
-Acked-by: Shuah Khan <shuah@kernel.org>
+Because 'write-anywhere' exploits are easier than (and the typical first
+step to) arbitrary code execution thingies?
 
-thanks,
--- Shuah
+> The "write rarely" name itself may not sufficiently describe what is
+> wanted either (I'll take the blame for the inaccurate name), so I'm
+> open to new ideas there. The implementation requirements for the
+> "sensitive data read-only at rest" feature are rather tricky:
+> 
+> - allow writes only from specific places in the kernel
+> - keep those locations inline to avoid making them trivial ROP targets
+> - keep the writeability window open only to a single uninterruptable CPU
+
+The current patch set does not achieve that because it uses a global
+address space for the alias mapping (vmap) which is equally accessible
+from all CPUs.
+
+> - fast enough to deal with page table updates
+
+The proposed implementation needs page-tables for the alias; I don't see
+how you could ever do R/O page-tables when you need page-tables to
+modify your page-tables.
+
+And this is entirely irrespective of performance.
+
+> The proposal I made a while back only covered .data things (and used
+> x86-specific features).
+
+Oh, right, that CR0.WP stuff.
+
+> Igor's proposal builds on this by including a
+> way to do this with dynamic allocation too, which greatly expands the
+> scope of structures that can be protected. Given that the x86-only
+> method of write-window creation was firmly rejected, this is a new
+> proposal for how to do it (vmap window). Using switch_mm() has also
+> been suggested, etc.
+
+Right... /me goes find the patches we did for text_poke. Hmm, those
+never seem to have made it:
+
+  https://lkml.kernel.org/r/20180902173224.30606-1-namit@vmware.com
+
+like that. That approach will in fact work and not be a completely
+broken mess like this thing.
+
+> We need to find a good way to do the write-windowing that works well
+> for static and dynamic structures _and_ for the page tables... this
+> continues to be tricky.
+> 
+> Making it resilient against ROP-style targets makes it difficult to
+> deal with certain data structures (like list manipulation). In my
+> earlier RFC, I tried to provide enough examples of where this could
+> get used to let people see some of the complexity[1]. Igor's series
+> expands this to even more examples using dynamic allocation.
+
+Doing 2 CR3 writes for 'every' WR write doesn't seem like it would be
+fast enough for much of anything.
+
+And I don't suppose we can take the WP fault and then fix up from there,
+because if we're doing R/O page-tables, that'll incrase the fault depth
+and we'll double fault all the time, and tripple fault where we
+currently double fault. And we all know how _awesome_ tripple faults
+are.
+
+But duplicating (and wrapping in gunk) whole APIs is just not going to
+work.
