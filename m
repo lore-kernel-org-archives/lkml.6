@@ -2,84 +2,81 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D33C6786F
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 18:09:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A963C6786F
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 18:10:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8DB020843
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 18:09:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8DB020843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 4507C2082D
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 18:10:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="E+LV/sMa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4507C2082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727150AbeJ2Cyv (ORCPT
+        id S1727250AbeJ2Czm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 22:54:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32928 "EHLO mail.kernel.org"
+        Sun, 28 Oct 2018 22:55:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34286 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725895AbeJ2Cyu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 22:54:50 -0400
-Received: from vmware.local.home (unknown [95.87.249.99])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725895AbeJ2Czl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 28 Oct 2018 22:55:41 -0400
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0A072082D;
-        Sun, 28 Oct 2018 18:09:23 +0000 (UTC)
-Date:   Sun, 28 Oct 2018 14:09:11 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Changbin Du <changbin.du@gmail.com>
-Cc:     yamada.masahiro@socionext.com, michal.lkml@markovi.net,
-        tglx@linutronix.de, mingo@redhat.com, linux@armlinux.org.uk,
-        akpm@linux-foundation.org, gregkh@linuxfoundation.org,
-        x86@kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-sparse@vger.kernel.org, robin.murphy@arm.com
-Subject: Re: [PATCH v3 1/4] x86/mm: declare check_la57_support() as inline
-Message-ID: <20181028140911.21d49629@vmware.local.home>
-In-Reply-To: <20181028130945.23581-2-changbin.du@gmail.com>
-References: <20181028130945.23581-1-changbin.du@gmail.com>
-        <20181028130945.23581-2-changbin.du@gmail.com>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mail.kernel.org (Postfix) with ESMTPSA id C578B2082D;
+        Sun, 28 Oct 2018 18:10:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540750218;
+        bh=foO19T/fSbZjxoHGAyNkXGp9S6Vma90ER/NMDoGP71U=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=E+LV/sMaSbNALXu/YpRv69zxf/h6lEA8/kF5k1hWpVUlmAalJ38Jyw/AulaVesQ4d
+         2OXou6xs4r5gDe5LGlVADvIpJ8gbm7GbDaRKTGL1KToEAdjscgHcALUuQgONzk4cfQ
+         Hwi1ABk6VHv85mzNXvVE6bKdCkFftkEXYBd5ebfY=
+Subject: Re: [PATCH 0/2] tracing: Fix synthetic event parser
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Cc:     Rajvi Jingar <rajvi.jingar@intel.com>,
+        Tom Zanussi <zanussi@kernel.org>, linux-kernel@vger.kernel.org,
+        Shuah Khan <shuah@kernel.org>
+References: <154013446976.25576.14780785912268176178.stgit@devbox>
+ <20181028040135.717a7b5d@vmware.local.home>
+ <20181028040924.1eca8002@vmware.local.home>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <c160ec5e-debd-74dd-43e8-a7792a63f06e@kernel.org>
+Date:   Sun, 28 Oct 2018 12:10:17 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20181028040924.1eca8002@vmware.local.home>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 28 Oct 2018 13:09:42 +0000
-Changbin Du <changbin.du@gmail.com> wrote:
-
-> The level4_kernel_pgt is only defined when X86_5LEVEL is enabled.
-> So declare check_la57_support() as inline to make sure the code
-> referring to level4_kernel_pgt is optimized out. This is a preparation
-> for CONFIG_CC_OPTIMIZE_FOR_DEBUGGING.
+On 10/28/2018 02:09 AM, Steven Rostedt wrote:
+> On Sun, 28 Oct 2018 04:01:35 -0400
+> Steven Rostedt <rostedt@goodmis.org> wrote:
 > 
-> Signed-off-by: Changbin Du <changbin.du@gmail.com>
-
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
--- Steve
-
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
->  arch/x86/kernel/head64.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>> I'll add them on top of my linux-next code, and include them in the
+>> pull request I'm hoping to do on Tuesday.
 > 
-> diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-> index 5dc377dc9d7b..5ae682f2aa83 100644
-> --- a/arch/x86/kernel/head64.c
-> +++ b/arch/x86/kernel/head64.c
-> @@ -98,7 +98,7 @@ static bool __head check_la57_support(unsigned long physaddr)
->  	return true;
->  }
->  #else
-> -static bool __head check_la57_support(unsigned long physaddr)
-> +static inline bool __head check_la57_support(unsigned long physaddr)
->  {
->  	return false;
->  }
+> Bah, I think this is on a different branch, and that will make it go as
+> a separate pull. Anyway, it probably will still be on Tuesday where I
+> push it to Linus.
+> 
+> -- Steve
+> 
 
+Here it is
+
+Acked-by: Shuah Khan <shuah@kernel.org>
+
+thanks,
+-- Shuah
