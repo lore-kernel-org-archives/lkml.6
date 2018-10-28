@@ -2,262 +2,306 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEF8FECDE46
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 10:27:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C66AECDE46
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 10:35:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8149520870
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 10:27:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6259D20870
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 10:35:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TjaBIRiD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8149520870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CAp2o2t9";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Y41H5sD0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6259D20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727372AbeJ1TLl (ORCPT
+        id S1727205AbeJ1TTU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 15:11:41 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:34446 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726452AbeJ1TLk (ORCPT
+        Sun, 28 Oct 2018 15:19:20 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:36292 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726468AbeJ1TTU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 15:11:40 -0400
-Received: by mail-lj1-f193.google.com with SMTP id g8-v6so2125232ljk.1;
-        Sun, 28 Oct 2018 03:27:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=mYLn8WvJnm+tIsXralmBJ8c1walAN84G9IosFwUVl5g=;
-        b=TjaBIRiDE7D55ZtbPhny9lWdXo4jEnjtzPze41OS3ZCU3OLPYZLdi2dEYlezn0QyL5
-         naCDiimmZni7omA/K+X9+ywGzYnAUbAHvzuG69+4t+D7WosQYuR7nrkbwCPodmx8ZFPz
-         3ATO2ofwgA7SJnq2JXS2hvMxHobgvHCeYBz2QHD8nXrO2CBjwWvgQE66DCWtbcBhMDHN
-         u+SMdhWiiLdeee6g1k2gnnQqX0zW7dvShLx/jmtCz/4nn54kZ7qLosoCOoPo8EuBarCV
-         AbcAIvgqjdXubqqT6CApn3IAccgESWzAazwv0IMowRASk3KEz1nnMHeKvAu9GfV/DtXe
-         yxhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition
-         :content-transfer-encoding:in-reply-to:user-agent;
-        bh=mYLn8WvJnm+tIsXralmBJ8c1walAN84G9IosFwUVl5g=;
-        b=o6l3oyWfHrDPbQxoyL7s8v/zjKxEY1qwEL/Rp2dtx2AOra6UpmkaBh9wcZGLinmQ/o
-         ZH7HmDt+2Bk9/JCdjNqTbzNy3eG5VWEqsO8ChB014y/6+bcgSf8gWjFh5y7D+QvZroig
-         hiD4ifhZaU2gZF0OhhhGP4vRkong996zrYfY9u0C0+LxJto4ceiU/h0JhTzwWD/zbcXY
-         DkZaTRhOx9VNS3R1ClL45dGcNccnjB13ESN8RqcGDyCUGYn5qJjlijQlc0IORJkv3M3R
-         cHNo4LxsKpn5G00HcVQfZ+nFPGZs4i+sKR1QA1yOcQL+dE2mVe4eEsrP6EkjKJexs5YO
-         Zmyg==
-X-Gm-Message-State: AGRZ1gIBplYP/HRN0YbyZtJs3cAm+jhsm072JrkgqYBJ6F2eycli2g9U
-        0ETmM4fnl6ney1P10NgwU+wMnqq1
-X-Google-Smtp-Source: AJdET5dlR4Nu4IVNSQjCo9bcTRI2SBY+YNo9WmiyjjYzcgG7X677QGLNw8hwtA8jZAztcyotzTtgOw==
-X-Received: by 2002:a2e:84c5:: with SMTP id q5-v6mr6299056ljh.65.1540722443302;
-        Sun, 28 Oct 2018 03:27:23 -0700 (PDT)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id y127-v6sm2594515lfc.13.2018.10.28.03.27.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 28 Oct 2018 03:27:22 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gGiI1-0002r4-Hz; Sun, 28 Oct 2018 11:27:26 +0100
-Date:   Sun, 28 Oct 2018 11:27:25 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Lars Poeschel <poeschel@lemonage.de>
-Cc:     devicetree@vger.kernel.org, Samuel Ortiz <sameo@linux.intel.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:NFC SUBSYSTEM" <linux-wireless@vger.kernel.org>
-Subject: Re: [PATCH v3 3/5] nfc: pn533: add UART phy driver
-Message-ID: <20181028102725.GL27852@localhost>
-References: <20181025132937.24405-1-poeschel@lemonage.de>
- <20181025132937.24405-3-poeschel@lemonage.de>
+        Sun, 28 Oct 2018 15:19:20 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 51F6C60741; Sun, 28 Oct 2018 10:35:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540722904;
+        bh=S9VVu0DHBGqNwIm0vYOn66ZhRwrrkJh9WXlIpeY3mOs=;
+        h=From:Subject:To:Cc:References:Date:In-Reply-To:From;
+        b=CAp2o2t9j0IhMuKDz4D7o0ZREN+6TONRwwC9Z09FTr/MfFxuM74OmtiWG0yXHHqaG
+         qZCybjlnQ14NXf6TyIQePx4Tdid4qL7+QISdk91vOlJa5SCV4r+IC1RC/hYWmhB5b8
+         6oEQ1yOKzysSLmxkhfKEgsTv6d/8POhOgtMIUUwA=
+Received: from [10.79.165.249] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7EACF60741;
+        Sun, 28 Oct 2018 10:34:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540722903;
+        bh=S9VVu0DHBGqNwIm0vYOn66ZhRwrrkJh9WXlIpeY3mOs=;
+        h=From:Subject:To:Cc:References:Date:In-Reply-To:From;
+        b=Y41H5sD0kXFw0rAVwRSaqW1DHWWlYZZc2UM8LZeZvUClorputW8TG1iwbsDxBtcpG
+         6OcaI0YpV65YK0vsNAWtpNj+7bwblwQoYMpdvSNLeSpYnUSKdeFmTagCodU7p3hpIc
+         hC7k7Er+0poqVaRN6Tqbs0pydCtHHhcLVtHzbTRQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7EACF60741
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+Subject: Re: [PATCH v1 2/2] clk: qcom : dispcc: Add support for display port
+ clocks
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        chandanu@codeaurora.org, linux-arm-msm-owner@vger.kernel.org
+References: <1539093467-12123-1-git-send-email-tdas@codeaurora.org>
+ <1539093467-12123-3-git-send-email-tdas@codeaurora.org>
+ <153911726378.119890.5522594539667887860@swboyd.mtv.corp.google.com>
+ <3c4cccca-2c5c-927f-f471-2bbbd71b4155@codeaurora.org>
+Message-ID: <9c359e26-3708-14b6-f22a-fb529446d325@codeaurora.org>
+Date:   Sun, 28 Oct 2018 16:04:55 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181025132937.24405-3-poeschel@lemonage.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <3c4cccca-2c5c-927f-f471-2bbbd71b4155@codeaurora.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 03:29:34PM +0200, Lars Poeschel wrote:
-> This adds the UART phy interface for the pn533 driver.
-> The pn533 driver can be used through UART interface this way.
-> It is implemented as a serdev device.
+Hello Stephen,
 
-Just a few drive-by comments below.
+On 2018-10-19 16:04, Taniya Das wrote:
+> Hello Stephen,
+> 
+> On 10/10/2018 2:04 AM, Stephen Boyd wrote:
+>> Quoting Taniya Das (2018-10-09 06:57:47)
+>>> diff --git a/drivers/clk/qcom/dispcc-sdm845.c 
+>>> b/drivers/clk/qcom/dispcc-sdm845.c
+>>> index 0cc4909..6d3136a 100644
+>>> --- a/drivers/clk/qcom/dispcc-sdm845.c
+>>> +++ b/drivers/clk/qcom/dispcc-sdm845.c
+>>> @@ -128,6 +144,100 @@ enum {
+>>>          },
+>>>   };
+>>> 
+>>> +static const struct freq_tbl ftbl_disp_cc_mdss_dp_aux_clk_src[] = {
+>>> +       F(19200000, P_BI_TCXO, 1, 0, 0),
+>>> +       { }
+>>> +};
+>>> +
+>>> +static struct clk_rcg2 disp_cc_mdss_dp_aux_clk_src = {
+>>> +       .cmd_rcgr = 0x219c,
+>>> +       .mnd_width = 0,
+>>> +       .hid_width = 5,
+>>> +       .parent_map = disp_cc_parent_map_2,
+>>> +       .freq_tbl = ftbl_disp_cc_mdss_dp_aux_clk_src,
+>>> +       .clkr.hw.init = &(struct clk_init_data){
+>>> +               .name = "disp_cc_mdss_dp_aux_clk_src",
+>>> +               .parent_names = disp_cc_parent_names_2,
+>>> +               .num_parents = 2,
+>>> +               .flags = CLK_SET_RATE_PARENT,
+>>> +               .ops = &clk_rcg2_ops,
+>>> +       },
+>>> +};
+>>> +
+>>> +static const struct freq_tbl ftbl_disp_cc_mdss_dp_crypto_clk_src[] = 
+>>> {
+>>> +       F(108000, P_DP_PHY_PLL_LINK_CLK,   3,   0,   0),
+>>> +       F(180000, P_DP_PHY_PLL_LINK_CLK,   3,   0,   0),
+>>> +       F(360000, P_DP_PHY_PLL_LINK_CLK,   3,   0,   0),
+>>> +       F(540000, P_DP_PHY_PLL_LINK_CLK,   3,   0,   0),
+>>> +       { }
+>>> +};
+>>> +
+>>> +static struct clk_rcg2 disp_cc_mdss_dp_crypto_clk_src = {
+>>> +       .cmd_rcgr = 0x2154,
+>>> +       .mnd_width = 0,
+>>> +       .hid_width = 5,
+>>> +       .parent_map = disp_cc_parent_map_1,
+>>> +       .freq_tbl = ftbl_disp_cc_mdss_dp_crypto_clk_src,
+>>> +       .clkr.hw.init = &(struct clk_init_data){
+>>> +               .name = "disp_cc_mdss_dp_crypto_clk_src",
+>>> +               .parent_names = disp_cc_parent_names_1,
+>>> +               .num_parents = 4,
+>>> +               .flags = CLK_GET_RATE_NOCACHE,
+>> 
+>> Why?
+>> 
+>>> +               .ops = &clk_rcg2_ops,
+>>> +       },
+>>> +};
+>>> +
+>>> +static const struct freq_tbl ftbl_disp_cc_mdss_dp_link_clk_src[] = {
+>>> +       F(162000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
+>>> +       F(270000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
+>>> +       F(540000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
+>>> +       F(810000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
+>> 
+>> Are these in kHz? They really look like it and that's bad. Why do we
+>> need them at all? Just to make sure the display driver picks these 
+>> exact
+>> frequencies? It seems like we could just pass whatever number comes in
+>> up to the parent and see what it can do.
+>> 
+> 
+> Let me check back the reason we had to make this change.
 
-> +// SPDX-License-Identifier: GPL-2.0
+We will need this flag since we reset/power-down the PLL every time we 
+disconnect/connect the DP cable or during suspend/resume. Only with this 
+flag, the calls to the PLL driver are properly called.
 
-This should match MODULE_LICENSE below which currently says v2 *or
-later*.
+> 
+>>> +       { }
+>>> +};
+>>> +
+>>> +static struct clk_rcg2 disp_cc_mdss_dp_link_clk_src = {
+>>> +       .cmd_rcgr = 0x2138,
+>>> +       .mnd_width = 0,
+>>> +       .hid_width = 5,
+>>> +       .parent_map = disp_cc_parent_map_1,
+>>> +       .freq_tbl = ftbl_disp_cc_mdss_dp_link_clk_src,
+>>> +       .clkr.hw.init = &(struct clk_init_data){
+>>> +               .name = "disp_cc_mdss_dp_link_clk_src",
+>>> +               .parent_names = disp_cc_parent_names_1,
+>>> +               .num_parents = 4,
+>>> +               .flags = CLK_SET_RATE_PARENT,
+>>> +               .ops = &clk_rcg2_ops,
+>>> +       },
+>>> +};
+>>> +
+>>> +static struct clk_rcg2 disp_cc_mdss_dp_pixel1_clk_src = {
+>>> +       .cmd_rcgr = 0x2184,
+>>> +       .mnd_width = 16,
+>>> +       .hid_width = 5,
+>>> +       .parent_map = disp_cc_parent_map_1,
+>>> +       .clkr.hw.init = &(struct clk_init_data){
+>>> +               .name = "disp_cc_mdss_dp_pixel1_clk_src",
+>>> +               .parent_names = disp_cc_parent_names_1,
+>>> +               .num_parents = 4,
+>>> +               .flags = CLK_SET_RATE_PARENT,
+>>> +               .ops = &clk_dp_ops,
+>>> +       },
+>>> +};
+>>> +
+>>> +static struct clk_rcg2 disp_cc_mdss_dp_pixel_clk_src = {
+>>> +       .cmd_rcgr = 0x216c,
+>>> +       .mnd_width = 16,
+>>> +       .hid_width = 5,
+>>> +       .parent_map = disp_cc_parent_map_1,
+>>> +       .clkr.hw.init = &(struct clk_init_data){
+>>> +               .name = "disp_cc_mdss_dp_pixel_clk_src",
+>>> +               .parent_names = disp_cc_parent_names_1,
+>>> +               .num_parents = 4,
+>>> +               .flags = CLK_SET_RATE_PARENT,
+>>> +               .ops = &clk_dp_ops,
+>>> +       },
+>>> +};
+>>> +
+>>>   static const struct freq_tbl ftbl_disp_cc_mdss_esc0_clk_src[] = {
+>>>          F(19200000, P_BI_TCXO, 1, 0, 0),
+>>>          { }
+>>> @@ -391,6 +501,115 @@ enum {
+>>>          },
+>>>   };
+>>> 
+>>> +static struct clk_branch disp_cc_mdss_dp_aux_clk = {
+>>> +       .halt_reg = 0x2054,
+>>> +       .halt_check = BRANCH_HALT,
+>>> +       .clkr = {
+>>> +               .enable_reg = 0x2054,
+>>> +               .enable_mask = BIT(0),
+>>> +               .hw.init = &(struct clk_init_data){
+>>> +                       .name = "disp_cc_mdss_dp_aux_clk",
+>>> +                       .parent_names = (const char *[]){
+>>> +                               "disp_cc_mdss_dp_aux_clk_src",
+>>> +                       },
+>>> +                       .num_parents = 1,
+>>> +                       .flags = CLK_SET_RATE_PARENT,
+>>> +                       .ops = &clk_branch2_ops,
+>>> +               },
+>>> +       },
+>>> +};
+>>> +
+>>> +static struct clk_branch disp_cc_mdss_dp_crypto_clk = {
+>>> +       .halt_reg = 0x2048,
+>>> +       .halt_check = BRANCH_HALT,
+>>> +       .clkr = {
+>>> +               .enable_reg = 0x2048,
+>>> +               .enable_mask = BIT(0),
+>>> +               .hw.init = &(struct clk_init_data){
+>>> +                       .name = "disp_cc_mdss_dp_crypto_clk",
+>>> +                       .parent_names = (const char *[]){
+>>> +                               "disp_cc_mdss_dp_crypto_clk_src",
+>>> +                       },
+>>> +                       .num_parents = 1,
+>>> +                       .flags = CLK_SET_RATE_PARENT,
+>>> +                       .ops = &clk_branch2_ops,
+>>> +               },
+>>> +       },
+>>> +};
+>>> +
+>>> +static struct clk_branch disp_cc_mdss_dp_link_clk = {
+>>> +       .halt_reg = 0x2040,
+>>> +       .halt_check = BRANCH_HALT,
+>>> +       .clkr = {
+>>> +               .enable_reg = 0x2040,
+>>> +               .enable_mask = BIT(0),
+>>> +               .hw.init = &(struct clk_init_data){
+>>> +                       .name = "disp_cc_mdss_dp_link_clk",
+>>> +                       .parent_names = (const char *[]){
+>>> +                               "disp_cc_mdss_dp_link_clk_src",
+>>> +                       },
+>>> +                       .num_parents = 1,
+>>> +                       .flags = CLK_SET_RATE_PARENT,
+>>> +                       .ops = &clk_branch2_ops,
+>>> +               },
+>>> +       },
+>>> +};
+>>> +
+>>> +/* reset state of disp_cc_mdss_dp_link_div_clk_src divider is 0x3 
+>>> (div 4) */
+>> 
+>> Not sure what this comment is for. But it's interesting nonetheless.
+>> 
+>>> +static struct clk_branch disp_cc_mdss_dp_link_intf_clk = {
+>>> +       .halt_reg = 0x2044,
+>>> +       .halt_check = BRANCH_HALT,
+>>> +       .clkr = {
+>>> +               .enable_reg = 0x2044,
+>>> +               .enable_mask = BIT(0),
+>>> +               .hw.init = &(struct clk_init_data){
+>>> +                       .name = "disp_cc_mdss_dp_link_intf_clk",
+>>> +                       .parent_names = (const char *[]){
+>>> +                               "disp_cc_mdss_dp_link_clk_src",
+>>> +                       },
+>>> +                       .num_parents = 1,
+>>> +                       .flags = CLK_GET_RATE_NOCACHE,
+>> 
+>> Why?
+>> 
+> 
+> It was a requirement, but let me get back on this too.
+> 
+I had a discussion with the Display Port teams and below is the requirement,
 
-> +/*
-> + * Driver for NXP PN532 NFC Chip - UART transport layer
-> + *
-> + * Copyright (C) 2018 Lemonage Software GmbH
-> + * Author: Lars Pöschel <poeschel@lemonage.de>
-> + * All rights reserved.
-> + */
+This flag is required since we reset/power-down the PLL every time they
+disconnect/connect the DP cable or during suspend/resume.
+Only with this flag, the calls to the PLL driver properly.
 
-> +#define VERSION "0.1"
-
-We don't version kernel drivers individually, so please drop this here
-and below.
-
-> +static int pn532_uart_send_frame(struct pn533 *dev,
-> +				struct sk_buff *out)
-> +{
-> +	static const u8 wakeup[] = {
-> +		0x55, 0x55, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-> +		0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-> +	/* wakeup sequence and dummy bytes for waiting time */
-
-Comments should go above the code they apply to.
-
-> +	struct pn532_uart_phy *pn532 = dev->phy;
-> +	int count;
-> +
-> +	print_hex_dump_debug("PN532_uart TX: ", DUMP_PREFIX_NONE, 16, 1,
-> +			     out->data, out->len, false);
-> +
-> +	pn532->cur_out_buf = out;
-> +	if (pn532->send_wakeup)
-> +		count = serdev_device_write(pn532->serdev,
-> +				wakeup, sizeof(wakeup),
-> +				MAX_SCHEDULE_TIMEOUT);
-
-No error handling?
-
-> +
-> +	count = serdev_device_write(pn532->serdev, out->data, out->len,
-> +			MAX_SCHEDULE_TIMEOUT);
-
-Same here.
-
-> +	if (PN533_FRAME_CMD(((struct pn533_std_frame *)out->data)) ==
-> +			PN533_CMD_SAM_CONFIGURATION)
-> +		pn532->send_wakeup = 0;
-> +
-> +	mod_timer(&pn532->cmd_timeout, HZ / 40 + jiffies);
-> +	return 0;
-> +}
-> +
-> +static int pn532_uart_send_ack(struct pn533 *dev, gfp_t flags)
-> +{
-> +	struct pn532_uart_phy *pn532 = dev->phy;
-> +	static const u8 ack[PN533_STD_FRAME_ACK_SIZE] = {
-> +			0x00, 0x00, 0xff, 0x00, 0xff, 0x00};
-> +	/* spec 7.1.1.3:  Preamble, SoPC (2), ACK Code (2), Postamble */
-
-Same as above.
-
-> +	int rc;
-> +
-> +	rc = serdev_device_write(pn532->serdev, ack, sizeof(ack),
-> +			MAX_SCHEDULE_TIMEOUT);
-
-Error handling.
-
-> +
-> +	return 0;
-> +}
-
-> +static int pn532_uart_probe(struct serdev_device *serdev)
-> +{
-> +	struct pn532_uart_phy *pn532;
-> +	struct pn533 *priv;
-> +	int err;
-> +
-> +	err = -ENOMEM;
-> +	pn532 = kzalloc(sizeof(*pn532), GFP_KERNEL);
-> +	if (pn532 == NULL)
-
-I'd use !pn532 here (and elsewhere).
-
-> +		goto err_exit;
-> +
-> +	pn532->recv_skb = alloc_skb(PN532_UART_SKB_BUFF_LEN, GFP_KERNEL);
-> +	if (pn532->recv_skb == NULL)
-> +		goto err_free;
-> +
-> +	pn532->serdev = serdev;
-> +	priv = pn533_register_device(PN533_DEVICE_PN532,
-> +				     PN533_NO_TYPE_B_PROTOCOLS,
-> +				     PN533_PROTO_REQ_ACK_RESP,
-> +				     pn532, &uart_phy_ops, NULL,
-> +				     &pn532->serdev->dev,
-> +				     &serdev->dev);
-> +
-
-Stray new line.
-
-> +	if (IS_ERR(priv)) {
-> +		err = PTR_ERR(priv);
-> +		goto err_skb;
-> +	}
-
-Should you not set up your device fully before registering it? I'd
-assume you could get callbacks from NFC core here.
-
-> +
-> +	pn532->priv = priv;
-> +	serdev_device_set_drvdata(serdev, pn532);
-> +	serdev_device_set_client_ops(serdev, &pn532_serdev_ops);
-> +	err = serdev_device_open(serdev);
-> +	if (err) {
-> +		dev_err(&serdev->dev, "Unable to open device %s\n",
-> +				serdev->dev.init_name);
-
-dev_err will include the device name so you can drop the init_name bit.
-
-> +		goto err_unregister;
-> +	}
-
-Keeping the serial device open at all times will prevent low power
-states on some platforms. Wouldn't it be possible to open the device
-when the nfc interface is brought up (and during setup)?
-
-> +
-> +	err = serdev_device_set_baudrate(serdev, 115200);
-> +	if (err != 115200) {
-> +		err = -EINVAL;
-> +		goto err_serdev;
-> +	}
-> +
-> +	serdev_device_set_flow_control(serdev, false);
-> +	pn532->send_wakeup = 1;
-> +	timer_setup(&pn532->cmd_timeout, pn532_cmd_timeout, 0);
-> +	err = pn533_finalize_setup(pn532->priv);
-> +	if (err)
-> +		goto err_serdev;
-> +
-> +	return 0;
-> +
-> +err_serdev:
-> +	serdev_device_close(serdev);
-> +err_unregister:
-> +	pn533_unregister_device(pn532->priv);
-> +err_skb:
-> +	kfree_skb(pn532->recv_skb);
-> +err_free:
-> +	kfree(pn532);
-> +err_exit:
-> +	return err;
-> +}
-
-> +MODULE_AUTHOR("Lars Pöschel <poeschel@lemonage.de>");
-> +MODULE_DESCRIPTION("PN532 UART driver ver " VERSION);
-> +MODULE_VERSION(VERSION);
-
-Drop version.
-
-> +MODULE_LICENSE("GPL");
-
-Doesn't match SPDX identifier above.
-
-Johan
+>>> +                       .ops = &clk_branch2_ops,
+>>> +               },
+>>> +       },
+>>> +};
+>>> +
