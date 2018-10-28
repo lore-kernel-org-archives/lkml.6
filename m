@@ -2,100 +2,78 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81280ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 04:41:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB608ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 04:44:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3403120824
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 04:41:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3403120824
+	by mail.kernel.org (Postfix) with ESMTP id 6280020824
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 04:44:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6280020824
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727312AbeJ1NYa (ORCPT
+        id S1727461AbeJ1N1w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 09:24:30 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:39738 "EHLO
+        Sun, 28 Oct 2018 09:27:52 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:39754 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725757AbeJ1NYa (ORCPT
+        with ESMTP id S1725757AbeJ1N1w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 09:24:30 -0400
-Received: from localhost (c-67-183-62-245.hsd1.wa.comcast.net [67.183.62.245])
+        Sun, 28 Oct 2018 09:27:52 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id E6C65148800FD;
-        Sat, 27 Oct 2018 21:41:05 -0700 (PDT)
-Date:   Sat, 27 Oct 2018 21:41:02 -0700 (PDT)
-Message-Id: <20181027.214102.1558835285408950686.davem@davemloft.net>
-To:     acme@kernel.org
-CC:     linux-kernel@vger.kernel.org, kan.liang@intel.com
-Subject: perf synthesized mmap timeouts
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 58B38146F4249;
+        Sat, 27 Oct 2018 21:44:27 -0700 (PDT)
+Date:   Sat, 27 Oct 2018 21:44:26 -0700 (PDT)
+Message-Id: <20181027.214426.537959459795607171.davem@davemloft.net>
+To:     oleksandr@natalenko.name
+Cc:     dave.taht@gmail.com, hkallweit1@gmail.com, toke@toke.dk,
+        jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: CAKE and r8169 cause panic on upload in v4.19
 From:   David Miller <davem@davemloft.net>
+In-Reply-To: <b80e6819da8ea74f18b6ec0aaf9128fa@natalenko.name>
+References: <fbd7f0b8-10c8-be17-fce6-327a95d8ea2e@gmail.com>
+        <CAA93jw7xoaokrN4oGAyqh6JHAn8nJpUpp_wj-iy+GWNoV-ipNA@mail.gmail.com>
+        <b80e6819da8ea74f18b6ec0aaf9128fa@natalenko.name>
 X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 27 Oct 2018 21:41:06 -0700 (PDT)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 27 Oct 2018 21:44:27 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Oleksandr Natalenko <oleksandr@natalenko.name>
+Date: Fri, 26 Oct 2018 22:54:12 +0200
 
-If I understand the commit message for:
+> Next, I've seen GRO bits in the call trace and decided to disable GRO
+> on this NIC. So far, I cannot trigger a panic with GRO disabled even
+> after 20 rounds of speedtest.
+> 
+> So, must be some generic thing indeed.
 
-commit 8cc42de736b617827a4e7664fb8d7a325bc125bc
-Author: Kan Liang <kan.liang@intel.com>
-Date:   Thu Jan 18 13:26:32 2018 -0800
+Yeah something is out-of-whack with GRO.
 
-    perf top: Check the latency of perf_top__mmap_read()
+Does this fix it?
 
-properly, the problem is that a malicious or out of control
-app can be doing endless mmaps causing perf to loop forever
-processing the /proc/$PID/maps file.
-
-But that is not what this commit is handling at all.
-
-It is instead applying a large hammer which quits if it is taking a
-long time to process the maps, not if the process's mmap list is
-growing endlessly while we process it.
-
-This triggers any time I run perf top on a fully loaded system making
-perf less useful than it should be.
-
-And it triggers simply because the perf synthesize threads have to
-share the cpu with the workload already running.
-
-So it takes more than half a second to process emacs's 527 maps when
-the number of running processes is ~NCPUS?  Big deal.  We should let
-it finish....
-
-The tradeoff choosen here is really bad.
-
-Guess what happens if you don't have maps for a given process?
-
-What happens is that for every single sample we get within that range,
-we get a completely unique histogram entry.
-
-This means potentially millions and millions of histogram entries
-where there should only be a few hundred.
-
-This makes the histogram rbtree huge, and slow to process.
-
-So not only is top unable to provide correct histogram output, it is
-also running sluggishly.
-
-A way to mitigate the actual problem would be to snapshot the maps
-file into a large buffer, if possible.  We can get the full contents
-faster than the process in question can make more maps.  At most we
-will do one additional read at the end if they were able to sneak in
-one new mmap during the initial read.
-
-No timeout necessary.  We have the complete maps file, our processing
-time is therefore bounded.
-
-Thanks.
+diff --git a/net/core/dev.c b/net/core/dev.c
+index 022ad73d6253..77d43ae2a7bb 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -5457,7 +5457,7 @@ static void gro_flush_oldest(struct list_head *head)
+ 	/* Do not adjust napi->gro_hash[].count, caller is adding a new
+ 	 * SKB to the chain.
+ 	 */
+-	list_del(&oldest->list);
++	skb_list_del_init(oldest);
+ 	napi_gro_complete(oldest);
+ }
+ 
