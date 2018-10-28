@@ -2,108 +2,90 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8BBEECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 06:59:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78908ECDE46
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 07:05:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AB5A20672
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 06:59:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2850520672
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 07:05:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vGVNEWUD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AB5A20672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="Ys20LAlR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2850520672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=aol.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727743AbeJ1Pmp (ORCPT
+        id S1727762AbeJ1PtR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 11:42:45 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36519 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725827AbeJ1Pmp (ORCPT
+        Sun, 28 Oct 2018 11:49:17 -0400
+Received: from sonic301-20.consmr.mail.ir2.yahoo.com ([77.238.176.97]:40919
+        "EHLO sonic301-20.consmr.mail.ir2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725827AbeJ1PtQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 11:42:45 -0400
-Received: by mail-pg1-f193.google.com with SMTP id z17-v6so2395655pgv.3;
-        Sat, 27 Oct 2018 23:59:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=message-id:date:from:to:cc:subject:mime-version:content-disposition
-         :user-agent;
-        bh=3UmAG1INPLsZvGsCkv7tZzyCXG8GP3ES//qe0OzkhQI=;
-        b=vGVNEWUDeojAVaAyi5opIBuEwQNIoHcY0SqqZbuvavyzJRfOtCk9vYibwHV+53/LrE
-         s3QNzzlXHKQ5gm1ATkVRyvew+W0ZcNtxTTRnjXXKU4ttJuKrMxtfxt09zDOZ+hra/RrW
-         Vnpqemb6hB4jP6WAjbrV1e+TGY/i8FMSAqS33Q4d3jGz5MKnIPL7XxMnk5b8xX2Bgh1J
-         QkfIRzHVXH/5EaP8nd6NBqkeVR9Kvzhy56iAxd/6zDqyEvMkTdw419iXryokX/m9yVFB
-         7GTjevv1SsiECfynDu8+IlWZK0XoJe/XR0y9YgX4AQvOxXdtR2U1AOSbe+HpTSTywFqn
-         NtHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:from:to:cc:subject:mime-version
-         :content-disposition:user-agent;
-        bh=3UmAG1INPLsZvGsCkv7tZzyCXG8GP3ES//qe0OzkhQI=;
-        b=ga097WDnlZMU4Gt/AXS8XYteGblIQQK8DaqAZ3Jo7SoDRo6uH6D4JbERbEF86osY3Q
-         EXi0ZXnSY6ZDPtLJ8A7sTKV8jTFPJDcESOp9sbK8kf8AMrDcgHg6+VcnjtW7IJ98g3Z9
-         hLDFQHbU+JYdwpMqD24XeqG1v7WFfKCsjILsJHHqq007PmEmHGanMmNJkQsXHKdOaDb2
-         VKRnF85aFxcmPAqQ6x21nfG6TkA7BzkgMY+9VBOsoV/fxIr//hTPGL3kj+5EtU0cGMAJ
-         FN39KSrk/P8MLszF0bIbyN5pOUDPbC/WC+5g8GNddfeGAnaazyOkBxkD7rxVyr6+pmAH
-         luVQ==
-X-Gm-Message-State: AGRZ1gK0POUny3923ENNCIn6D28XLZBYyOiiw/PCDn+GWV90z853IxNQ
-        VH4H6YQ9qySnXwblvi/jO7Q=
-X-Google-Smtp-Source: AJdET5e3IvcBmFR2GjqbIF2T8s6rgMr3bwetb07caJQtTXKqPYTpTbiZqsmzAI61vWegHAAYUfZZDw==
-X-Received: by 2002:a62:3641:: with SMTP id d62-v6mr10203457pfa.97.1540709941765;
-        Sat, 27 Oct 2018 23:59:01 -0700 (PDT)
-Received: from sabyasachi ([45.116.191.194])
-        by smtp.gmail.com with ESMTPSA id l16-v6sm25196412pfj.179.2018.10.27.23.59.00
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 27 Oct 2018 23:59:00 -0700 (PDT)
-Message-ID: <5bd55e34.1c69fb81.b2503.b6f5@mx.google.com>
-X-Google-Original-Message-ID: <20181028065856.GA4783@sabyasachi.linux@gmail.com>
-Date:   Sun, 28 Oct 2018 12:28:56 +0530
-From:   Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-To:     ysato@users.sourceforge.jp, dalias@libc.org,
-        thomas.petazzoni@free-electrons.com, robin.murphy@arm.com,
-        jacopo+renesas@jmondi.org
-Cc:     jrdr.linux@gmail.com, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org, brajeswar.linux@gmail.com
-Subject: [PATCH] arch/sh/mm/consistent.c: Use dma_zalloc_coherent
+        Sun, 28 Oct 2018 11:49:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1540710330; bh=RmTdo1IFPqVCOrCtVRNEDiUiCmBMQ1i0jASg4+wV3eo=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=Ys20LAlR0r+NXABOrrKh3bB1hd4xXP6WViqBljweK17ifbBH8jgg7E05d+YUV6NuCggnukgLDnn8E4bV+2QGmczpdnQpxGKTaLVgLusbK64AvLXPcje3CleIe23V2X27y23udX2t88V8ma/G9NYb9tKpPfdFSseos8REU0JM3NThoKTxfEs01dYUJ6vIM1idW8GO7nwp58HhSedR+7PwomQPK8ua1u6/ILT4wPgK4oQRRdYTUDsC8rSj1KSMTcXws2I8Z3BrwcZ4SgsWKzFac6porCn459lakcPTEC12hZrN+74ptojgKV003BWbcoeM+Rpp7S003z81LYzhWQP04A==
+X-YMail-OSG: fcdNk28VM1nyhkX1F2315fjS7._VRpM3ZFHA0EzZmQkU1sqtaFBqU6X_uAxr5AP
+ nwwKcbOKevXm.OQvURceKRJ4U6DZY2gPoi4dKeGo.PkIgejcljjLwQ4DYeMK_G7WqlRT1jt8ia_H
+ Ol5Gz4a3yc3ZvtV9.MOvzXJkpVF27sX.wMZ.ihioI0d0qyVfHqIJWJW259CL7BDWauiLTapusrFX
+ euG7K4BL8VcHMGylgEdPTR6TTEaBxS4r1.W080WaLgi9St5KAcX035rOSNZ4qlu7LRZOOFf2HxyD
+ e19j6vDD71I2aZ6cxigjrMGrR.oDgP_kfSYOJa4AIT0hj2W9wcDxliydfnnvZP45G2PlEtfuYy4y
+ RvQJ5eo7wSBXO4tDeneUt57zv2Zi9efCSctWUKgi2B4Y_y.P0JFMpTp7.yaESCBvcdNDPuq9coaY
+ cg2EszI0f6EIREu3L0wXP6NGEkNSROZzc0s3IPDA4P3Zi7kXb9Hr6KQqvTLcLAv8KdEyfhtFlbPD
+ bHWBckluzd7C8fggH2wg8E42Ucq5kHM3pTNOeCw9SOCp7mXXoVy_fGbQvRrCWjMqtGXs7hl_vjry
+ al5PIAEwJtlxDY00yaXRmlQaP4xrFBeC4X_KX.qkIAvehCi5rWzCsBIXrNK2qe12NvLQY1y9XoeR
+ h2UQMHzVAEvOUpfoh1wg1uYeeV_wxeg3wYipdbeX5VksnV2WPX_ppW2M0dzwd47JdC5bhHmjz4zL
+ WLWECbIkGxH_.i1ya3gC2EHSCHCa7ETlChp7g4aS0HBdAJPQoLTn76D_6MmCr3ChHsjl49t6Mbjt
+ VxM2wK2HJleESRdifZAcziJoVtY_3tyPJklyp48JZc.fTBFHXygxVbvMmo3uaGawiuIbBMnXlQZ6
+ KYshdPLkDNyPvBrqWn2ffCx9LyZQeW2u.IxPfCRv.h1B4ojKnEy6FCI58DuhbZroKWLzWEN84nPh
+ yTQc63ZD.ajn4uOJ9jzkvYEHP2FbCXcEgYL_4j14fHeULwOs6ItSjQD5EcogoS76HJfzPb8S7DDj
+ R6_wJR3w7nJ2JtomCYFbmTKqF.PILHDFB2lNZ29IiYRNt5giO7g--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ir2.yahoo.com with HTTP; Sun, 28 Oct 2018 07:05:30 +0000
+Received: from 115.192.33.5 (EHLO [192.168.199.211]) ([115.192.33.5])
+          by smtp416.mail.ir2.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 7bd7991af1881c6c1fb88d3c9d71edb6;
+          Sun, 28 Oct 2018 07:05:25 +0000 (UTC)
+Subject: Re: [PATCH] mm: simplify get_next_ra_size
+To:     Fengguang Wu <fengguang.wu@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <1540707206-19649-1-git-send-email-hsiangkao@aol.com>
+ <20181028062722.hfomc3davarmzojw@wfg-t540p.sh.intel.com>
+From:   Gao Xiang <hsiangkao@aol.com>
+Message-ID: <17e85309-e324-6c0f-6da2-2c4f0703a464@aol.com>
+Date:   Sun, 28 Oct 2018 15:05:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181028062722.hfomc3davarmzojw@wfg-t540p.sh.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replaced dma_alloc_coherent + memset with dma_zalloc_coherant
+Hi Fengguang,
 
-Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
----
- arch/sh/mm/consistent.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+On 2018/10/28 14:27, Fengguang Wu wrote:
+> Looks good to me, thanks!
+> 
+> Reviewed-by: Fengguang Wu <fengguang.wu@intel.com>
 
-diff --git a/arch/sh/mm/consistent.c b/arch/sh/mm/consistent.c
-index 792f361..fc8d235 100644
---- a/arch/sh/mm/consistent.c
-+++ b/arch/sh/mm/consistent.c
-@@ -52,13 +52,12 @@ int __init platform_resource_setup_memory(struct platform_device *pdev,
- 	if (!memsize)
- 		return 0;
- 
--	buf = dma_alloc_coherent(&pdev->dev, memsize, &dma_handle, GFP_KERNEL);
-+	buf = dma_zalloc_coherent(&pdev->dev, memsize, &dma_handle, GFP_KERNEL);
- 	if (!buf) {
- 		pr_warning("%s: unable to allocate memory\n", name);
- 		return -ENOMEM;
- 	}
- 
--	memset(buf, 0, memsize);
- 
- 	r->flags = IORESOURCE_MEM;
- 	r->start = dma_handle;
--- 
-2.7.4
+Thanks for taking time and the quickly review. :)
 
+Best regards,
+Gao Xiang
+
+> 
+> On Sun, Oct 28, 2018 at 02:13:26PM +0800, Gao Xiang wrote:
+>> It's a trivial simplification for get_next_ra_size and
+>> clear enough for humans to understand.
+>>
+>> It also fixes potential overflow if ra->size(< ra_pages) is too large.
+>>
+>> Cc: Fengguang Wu <fengguang.wu@intel.com>
+>> Signed-off-by: Gao Xiang <hsiangkao@aol.com>
+>> --- 
