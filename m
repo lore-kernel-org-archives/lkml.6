@@ -2,123 +2,72 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 379B9ECDE46
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 10:04:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58C3EECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 10:23:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8A4520672
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 10:04:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0000720665
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 10:23:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rYk5Gzsq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8A4520672
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AP/Al/wo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0000720665
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727203AbeJ1SsW (ORCPT
+        id S1727317AbeJ1TID (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 14:48:22 -0400
-Received: from mail-wr1-f46.google.com ([209.85.221.46]:36614 "EHLO
-        mail-wr1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726195AbeJ1SsV (ORCPT
+        Sun, 28 Oct 2018 15:08:03 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47002 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726195AbeJ1TID (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 14:48:21 -0400
-Received: by mail-wr1-f46.google.com with SMTP id y16so5486157wrw.3
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 03:04:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=to:from:subject:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=/sIdGuk+1Ob2ZRTjOK5EPf0kuWxQal4NcCy5bh4Vpo8=;
-        b=rYk5GzsqXjewMld+L/NcUJ2eQbLyCcc5XtqfdgosqDbw8Nz8I7NL6RE2WG/rDwndBb
-         mMbW2DL5uE303RFOKv3KpdY0vjyMfKRlhkGl3aGuRLfkNPekmS1R7pIAyx0+zNAIFW07
-         p2skJeeZbRxlqtEYFv08+nKHeYTIdx8xRdHGZeJ5tTP/1jN1MvMaIEWAr5eZyXed+s1w
-         OJRghYqVbTk/TPkefHljcTRnN8okSaWr/btaFZFT8p+mZtORRrA1yBRy7wx8YLfVKXVS
-         FE0TsxvU81ADnYYw0/4lzJaLkC22Vcrso4RVtjKqC4FVab2jHPp5P81PXYg3jEfVOBYB
-         Bb9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:to:from:subject:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=/sIdGuk+1Ob2ZRTjOK5EPf0kuWxQal4NcCy5bh4Vpo8=;
-        b=PfCyK8LhfmooqkQ5zAxxvhwCn99XUhG20gwlYXVUNTeL9IwHgHQpuiNKnOdJB4sBr5
-         xgom2idFqeiAk8u+dgT7V0H84Aibx+jgf9GMH72Gk/Tvw1m3tXZUhCupJWNkEjCB4Li5
-         iHBXNQ+ant1HsQQWSrmjZilv8IdRfj7AAohmZVLE9plAY9coODEWoeNKs+yVcDq1x4EN
-         yYYW7kDi5SJk1b6hHfjie1e/ODDMgN3qvetwAXtywmH9Fu6zrBekLIpf77jO51tfX4YF
-         2Z11AQZUnH/5T//qA/nSshBOqT+HiI1dsH6ty3gvg1UJfzkP6YJETF82FOJzj0SQuB8L
-         4iIg==
-X-Gm-Message-State: AGRZ1gJIKXpk+efoVEPhr+ngGErYopcTcMzPt/wUoSmXjfxMR5fYUx2/
-        uNW/VuT8nbNUvNHCfYssx0TOdnoK
-X-Google-Smtp-Source: AJdET5fKAU6rEBlKFw2ZcQekPBeEGz7x5FCIulMr+xbt8f17ayMcjhkJbBOEq0DxhiR9mXMbmKxipw==
-X-Received: by 2002:adf:eec1:: with SMTP id a1-v6mr11544642wrp.242.1540721048532;
-        Sun, 28 Oct 2018 03:04:08 -0700 (PDT)
-Received: from ?IPv6:2a02:8108:85c0:57c8:bc68:3d44:305d:951f? ([2a02:8108:85c0:57c8:bc68:3d44:305d:951f])
-        by smtp.gmail.com with ESMTPSA id x139-v6sm16416906wme.3.2018.10.28.03.04.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 28 Oct 2018 03:04:07 -0700 (PDT)
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From:   Michael Straube <straube.linux@gmail.com>
-Subject: Which SPDX Identifier for files without explicit GPL version
-Message-ID: <406c69c1-43fd-f821-b74b-a1399ed636e9@gmail.com>
-Date:   Sun, 28 Oct 2018 11:04:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sun, 28 Oct 2018 15:08:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=3jDaZ1xYLEny0Ob3RYybM83HZoEZZBuR/omY7KjG2iI=; b=AP/Al/wooMawAhsNY6k2kzDxu
+        3PgK6Ffl3ocdFCnozUpBGiBqmwBiPwm94jGWp8zFXJ52VtSh6YbXGtIlsQpRqbs/Ot99H+37tBKK6
+        N//APtggPdmePKWb36qfzHc/J6Po9zgb04Mmrjl1dak+215lyr8dheFxzbXwzO9NxJh9gWFatGbFt
+        P+YIUO7P1KHYiXowgN2s946SsEx/ihPC921OvQaqa/qR6VCkrkNXfKycksW1yIB4z65s3jJhks1UB
+        rVq1gB1IYqbzxREHXfuvpfnv8o3Cwlwgsh3OnGBumMiW4E0iloBlavxCl6H7P/yVe6bVvWZA8BsJN
+        BzHoAES9g==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gGiEU-0006ka-Jh; Sun, 28 Oct 2018 10:23:46 +0000
+Date:   Sun, 28 Oct 2018 03:23:46 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Gao Xiang <hsiangkao@aol.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Fengguang Wu <fengguang.wu@intel.com>
+Subject: Re: [PATCH] mm: simplify get_next_ra_size
+Message-ID: <20181028102346.GC25444@bombadil.infradead.org>
+References: <1540707206-19649-1-git-send-email-hsiangkao@aol.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1540707206-19649-1-git-send-email-hsiangkao@aol.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Sun, Oct 28, 2018 at 02:13:26PM +0800, Gao Xiang wrote:
+> It's a trivial simplification for get_next_ra_size and
+> clear enough for humans to understand.
+> 
+> It also fixes potential overflow if ra->size(< ra_pages) is too large.
+> 
+> Cc: Fengguang Wu <fengguang.wu@intel.com>
+> Signed-off-by: Gao Xiang <hsiangkao@aol.com>
 
-which GPL version should be used in SPDX Identifiers for files that
-are GPL licensed but do not mention any version? It is not clear to
-me after reading license-rules.rst.
+Reviewed-by: Matthew Wilcox <willy@infradead.org>
 
-For example:
-
-/******************************************************************************
-  * Copyright(c) 2008 - 2010 Realtek Corporation. All rights reserved.
-  *
-  * This program is distributed in the hope that it will be useful, but WITHOUT
-  * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-  * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-  * more details.
-  *
-  * The full GNU General Public License is included in this distribution in the
-  * file called LICENSE.
-  *
-  * Contact Information:
-  * wlanfae <wlanfae@realtek.com>
-  *****************************************************************************/
-
-or:
-
-/* IEEE 802.11 SoftMAC layer
-  * Copyright (c) 2005 Andrea Merello <andrea.merello@gmail.com>
-  *
-  * Mostly extracted from the rtl8180-sa2400 driver for the
-  * in-kernel generic ieee802.11 stack.
-  *
-  * Some pieces of code might be stolen from ipw2100 driver
-  * copyright of who own it's copyright ;-)
-  *
-  * PS wx handler mostly stolen from hostap, copyright who
-  * own it's copyright ;-)
-  *
-  * released under the GPL
-  */
-
-
-Should it be GPL-2.0 ?
-
-Regards,
-Michael
+I also considered what would happen with underflow (passing a 'max'
+less than 16, or less than 2) and it would seem to do the right thing
+in that case.
