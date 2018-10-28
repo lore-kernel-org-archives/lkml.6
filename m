@@ -2,169 +2,123 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB3BC6786F
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 16:38:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76B27C6786F
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 16:40:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44AD020831
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 16:38:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 213E920870
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 16:40:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="RqzDupv4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44AD020831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IyI5gnsP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 213E920870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727798AbeJ2BXp (ORCPT
+        id S1727820AbeJ2BZu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 21:23:45 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:60784 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726692AbeJ2BXp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 21:23:45 -0400
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id w9SGcKii003293;
-        Mon, 29 Oct 2018 01:38:21 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w9SGcKii003293
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1540744701;
-        bh=6wTfhA8jd4V+D+sd2TOi97MoDVj3C650L3WDPK86rR8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=RqzDupv4xhqMicdpSwEmD42C0UJmnOSphNHpJQifdHmKXEofq8HSVU19jhFpAS607
-         YNXHm9C8NTVutslWMKo2AD7iQ1gYmbnuftJH44PXr4crGejcOpF4uyuX/vdSposWfL
-         IAXc4jwADM3jl9OjBZr9QcTCbkwIxK4YAO+1KSOn3cNsBgb4+20DgWT1YgMSIJ6Khl
-         +nrDhYmPuw/Uk9naGUlt4F547Xw5tgD0hagqbQKZF37ydRdqaw8wS8XGwL5wSQWZyx
-         5tA2fXH3IDtzZS1IKNqtHe8AwTwaTsC3I5pFF1fbR3nl2ZIFImE7jm0kSO3+K52kzq
-         9XDoMHNvgj/Pw==
-X-Nifty-SrcIP: [209.85.217.44]
-Received: by mail-vs1-f44.google.com with SMTP id s9so3387259vsk.7;
-        Sun, 28 Oct 2018 09:38:21 -0700 (PDT)
-X-Gm-Message-State: AGRZ1gKAUU7mGTsnIz1iVX3gd1RyhO5s6YnEIUrPNDa5i2pXGCvS5vHl
-        2MXgzeAsrgqHWlq97hdm9ZSPWy7gpxH1fTjVsVk=
-X-Google-Smtp-Source: AJdET5dpCyylxysSi5hNJDdUoxQYZDnNkx0peLEtINb8K0mNZiHni5VhLCwVb46mOdy6QZt8uA2EQz49Ibz0HqGE/5c=
-X-Received: by 2002:a67:385a:: with SMTP id f87mr4732325vsa.179.1540744700386;
- Sun, 28 Oct 2018 09:38:20 -0700 (PDT)
+        Sun, 28 Oct 2018 21:25:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53002 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726492AbeJ2BZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 28 Oct 2018 21:25:50 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CBA4420831;
+        Sun, 28 Oct 2018 16:40:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540744842;
+        bh=vU9+Jx0JkAc/sb4nvuerh78nzxvVBp/YrmoMigp7JGE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=IyI5gnsPWT4bH8zeY9/uhU96O59bLMGH8Zme4XH6Me+Y7QagldpyQASum100e0rGz
+         d4WvnhNX3srqBDqEzaXR2/ByLOPFJinGfFWXM6fgeoZjsHAVVzXBgtC9GW5Savd4Gx
+         psVJdO5kZrpDQDMEVsQq0fOrIJwavdXr5fpPYdZw=
+Date:   Sun, 28 Oct 2018 16:40:38 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Matheus Tavares <matheus.bernardino@usp.br>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
+Subject: Re: [PATCH v2 1/6] staging:iio:ad2s90: Make read_raw return
+ spi_read's error code
+Message-ID: <20181028164038.0c920358@archlinux>
+In-Reply-To: <20181027020005.3140-2-matheus.bernardino@usp.br>
+References: <20181027020005.3140-1-matheus.bernardino@usp.br>
+        <20181027020005.3140-2-matheus.bernardino@usp.br>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20181023011042.GA6582@WindFlash>
-In-Reply-To: <20181023011042.GA6582@WindFlash>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon, 29 Oct 2018 01:37:44 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT4uJiR8Nm1agBQwjGFDY81_7O0o6fxuqh=55WizwvhYQ@mail.gmail.com>
-Message-ID: <CAK7LNAT4uJiR8Nm1agBQwjGFDY81_7O0o6fxuqh=55WizwvhYQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] Creates macro to avoid variable shadowing
-To:     =?UTF-8?Q?Leonardo_Br=C3=A1s?= <leobras.c@gmail.com>
-Cc:     lkcamp@lists.libreplanetbr.org, Borislav Petkov <bp@alien8.de>,
-        David.Laight@aculab.com, Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, helen@koikeco.de,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 10:11 AM Leonardo Br=C3=A1s <leobras.c@gmail.com> w=
-rote:
->
-> Creates DEF_FIELD_ADDR_VAR as a more generic version of the DEF_FIELD_ADD
-> macro, allowing usage of a variable name other than the struct element na=
-me.
-> Also, sets DEF_FIELD_ADDR as a specific usage of DEF_FILD_ADDR_VAR in whi=
-ch
-> the var name is the same as the struct element name.
->
-> Signed-off-by: Leonardo Br=C3=A1s <leobras.c@gmail.com>
+On Fri, 26 Oct 2018 23:00:00 -0300
+Matheus Tavares <matheus.bernardino@usp.br> wrote:
+
+> Previously, when spi_read returned an error code inside ad2s90_read_raw,
+> the code was ignored and IIO_VAL_INT was returned. This patch makes the
+> function return the error code returned by spi_read when it fails.
+> 
+> Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
+Hi Matheus,
+
+One quick process note is that it takes people a while to get around to reviewing
+a series, so whilst it's tempting to very quickly send out a fix the moment
+someone points out something that needs fixing, it is perhaps better to wait
+at least a few days to see if you can pick up a few more reviews before you
+do a V2.
+
+A few comments on this one inline.  I think it can be done 'slightly'
+(and I mean only slightly) nicer than the version you have.  Result is the
+same though.
+
+Thanks,
+
+Jonathan
+
 > ---
-
-
-Applied to linux-kbuild.
-
-
-
->  scripts/mod/file2alias.c | 24 +++++++++++++++++-------
->  1 file changed, 17 insertions(+), 7 deletions(-)
->
-> diff --git a/scripts/mod/file2alias.c b/scripts/mod/file2alias.c
-> index 7be43697ff84..3015c0bdecb2 100644
-> --- a/scripts/mod/file2alias.c
-> +++ b/scripts/mod/file2alias.c
-> @@ -95,12 +95,20 @@ extern struct devtable *__start___devtable[], *__stop=
-___devtable[];
->   */
->  #define DEF_FIELD(m, devid, f) \
->         typeof(((struct devid *)0)->f) f =3D TO_NATIVE(*(typeof(f) *)((m)=
- + OFF_##devid##_##f))
+>  drivers/staging/iio/resolver/ad2s90.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/staging/iio/resolver/ad2s90.c
+> index 59586947a936..11fac9f90148 100644
+> --- a/drivers/staging/iio/resolver/ad2s90.c
+> +++ b/drivers/staging/iio/resolver/ad2s90.c
+> @@ -35,12 +35,15 @@ static int ad2s90_read_raw(struct iio_dev *indio_dev,
+>  	struct ad2s90_state *st = iio_priv(indio_dev);
+>  
+>  	mutex_lock(&st->lock);
 > +
-> +/* Define a variable v that holds the address of field f of struct devid
-> + * based at address m.  Due to the way typeof works, for a field of type
-> + * T[N] the variable has type T(*)[N], _not_ T*.
-> + */
-> +#define DEF_FIELD_ADDR_VAR(m, devid, f, v) \
-> +       typeof(((struct devid *)0)->f) *v =3D ((m) + OFF_##devid##_##f)
+Unconnected change.  I'm not against the change in principle but please
+group white space tidying up in it's own patch.
+
+>  	ret = spi_read(st->sdev, st->rx, 2);
+> -	if (ret)
+> -		goto error_ret;
+> +	if (ret < 0) {
+> +		mutex_unlock(&st->lock);
+> +		return ret;
+I'd actually prefer to keep the return path the same as before as then
+it is easy (if the function gets more complex in future) to be sure
+that all paths unlock the mutex.  
+> +	}
 > +
->  /* Define a variable f that holds the address of field f of struct devid
->   * based at address m.  Due to the way typeof works, for a field of type
->   * T[N] the variable has type T(*)[N], _not_ T*.
->   */
->  #define DEF_FIELD_ADDR(m, devid, f) \
-> -       typeof(((struct devid *)0)->f) *f =3D ((m) + OFF_##devid##_##f)
-> +       DEF_FIELD_ADDR_VAR(m, devid, f, f)
->
->  /* Add a table entry.  We test function type matches while we're here. *=
-/
->  #define ADD_TO_DEVTABLE(device_id, type, function) \
-> @@ -641,25 +649,27 @@ static void do_pnp_card_entries(void *symval, unsig=
-ned long size,
->         unsigned int i;
->
->         device_id_check(mod->name, "pnp", size, id_size, symval);
-> +       DEF_FIELD_ADDR(symval, pnp_card_device_id, devs);
-> +       typeof(devs) devs_last;
->
->         for (i =3D 0; i < count; i++) {
->                 unsigned int j;
-> -               DEF_FIELD_ADDR(symval + i*id_size, pnp_card_device_id, de=
-vs);
-> +               devs_last =3D devs + i * id_size;
->
->                 for (j =3D 0; j < PNP_MAX_DEVICES; j++) {
-> -                       const char *id =3D (char *)(*devs)[j].id;
-> -                       int i2, j2;
-> +                       const char *id =3D (char *)(*devs_last)[j].id;
-> +                       int j2;
->                         int dup =3D 0;
->
->                         if (!id[0])
->                                 break;
->
->                         /* find duplicate, already added value */
-> -                       for (i2 =3D 0; i2 < i && !dup; i2++) {
-> -                               DEF_FIELD_ADDR(symval + i2*id_size, pnp_c=
-ard_device_id, devs);
-> +                       while ((devs_last -=3D id_size) >=3D devs && !dup=
-) {
->
->                                 for (j2 =3D 0; j2 < PNP_MAX_DEVICES; j2++=
-) {
-> -                                       const char *id2 =3D (char *)(*dev=
-s)[j2].id;
-> +                                       const char *id2 =3D
-> +                                               (char *)(*devs_last)[j2].=
-id;
->
->                                         if (!id2[0])
->                                                 break;
-> --
-> 2.19.1
->
+>  	*val = (((u16)(st->rx[0])) << 4) | ((st->rx[1] & 0xF0) >> 4);
+>  
+> -error_ret:
+>  	mutex_unlock(&st->lock);
+>  
+>  	return IIO_VAL_INT;
+The 'standard' if slightly nasty way of doing this is:
 
+	return ret ? ret : IIO_VAL_INT;
 
---=20
-Best Regards
-Masahiro Yamada
