@@ -2,107 +2,113 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB3B1C6786F
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 14:13:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DCA6C6786F
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 14:24:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7BF992082B
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 14:13:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mK4P6wLE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BF992082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id B5A4020843
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 14:24:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5A4020843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=eircom.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727534AbeJ1W6J (ORCPT
+        id S1727586AbeJ1XJl convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 18:58:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53978 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726450AbeJ1W6J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 18:58:09 -0400
-Received: from localhost (unknown [178.225.204.225])
+        Sun, 28 Oct 2018 19:09:41 -0400
+Received: from vie01a-dmta-pe08-1.mx.upcmail.net ([84.116.36.20]:61411 "EHLO
+        vie01a-dmta-pe08-1.mx.upcmail.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726828AbeJ1XJl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 28 Oct 2018 19:09:41 -0400
+Received: from [172.31.216.235] (helo=vie01a-pemc-psmtp-pe12.mail.upcmail.net)
+        by vie01a-dmta-pe08.mx.upcmail.net with esmtp (Exim 4.88)
+        (envelope-from <mikebrady@eircom.net>)
+        id 1gGlzq-0001re-0z
+        for linux-kernel@vger.kernel.org; Sun, 28 Oct 2018 15:24:54 +0100
+Received: from helix.aillwee.com ([37.228.204.209])
+        by vie01a-pemc-psmtp-pe12.mail.upcmail.net with ESMTP
+        id GlzngtHcYkosQGlzng9BpX; Sun, 28 Oct 2018 15:24:52 +0100
+X-Env-Mailfrom: mikebrady@eircom.net
+X-Env-Rcptto: linux-kernel@vger.kernel.org
+X-SourceIP: 37.228.204.209
+X-CNFS-Analysis: v=2.3 cv=NNQEBHyg c=1 sm=1 tr=0
+ a=/+iDkf0alGTUGXENEoGzTg==:117 a=/+iDkf0alGTUGXENEoGzTg==:17
+ a=kj9zAlcOel0A:10 a=smKx5t2vBNcA:10 a=pGLkceISAAAA:8 a=foHCeV_ZAAAA:8
+ a=qjr1OBkKLYMV1eQWp_MA:9 a=CjuIK1q_8ugA:10 a=h8a9FgHX5U4dIE3jaWyr:22
+Received: from [172.20.10.4] (unknown [77.75.241.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEC362082B;
-        Sun, 28 Oct 2018 14:13:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540736004;
-        bh=vOjnZb2eCl0WdgHZjtLrLM7jxxWbRq17pH89ah59/tQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mK4P6wLEtAlYqfVbbQcSEGw0OXQ/jhCzUToVsTyEvUx1EeZMZOTAeOhId9p/87iz8
-         iWiRxODhFhQHAngfHEQxHo2OBR649AfktV8Jm5hznLGbm0qfblUnLZ+ROI6QeICVKy
-         7vR08fJXSSMZ8gX7L+UVXeEIi0BWr8UJSrXrcYIE=
-Date:   Sun, 28 Oct 2018 15:13:19 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Michael Straube <straube.linux@gmail.com>
-Cc:     devel@driverdev.osuosl.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Which SPDX Identifier for files without explicit GPL version
-Message-ID: <20181028141319.GA13215@kroah.com>
-References: <406c69c1-43fd-f821-b74b-a1399ed636e9@gmail.com>
- <20181028112728.GD8826@kroah.com>
- <f1aa3ce0-7e68-ce7e-e2a3-a978bcc36e03@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f1aa3ce0-7e68-ce7e-e2a3-a978bcc36e03@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        by helix.aillwee.com (Postfix) with ESMTPSA id 95E7B4E607;
+        Sun, 28 Oct 2018 14:24:50 +0000 (GMT)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
+Subject: Re: [alsa-devel] [PATCH v2] staging: bcm2835-audio: interpolate audio
+ delay
+From:   Mike Brady <mikebrady@eircom.net>
+In-Reply-To: <5bc8295a-1e38-99b5-d54c-72e920600f83@gmail.com>
+Date:   Sun, 28 Oct 2018 14:24:56 +0000
+Cc:     Takashi Iwai <tiwai@suse.de>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        devel@driverdev.osuosl.org, alsa-devel@alsa-project.org,
+        f.fainelli@gmail.com, julia.lawall@lip6.fr,
+        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        eric@anholt.net, linux-rpi-kernel@lists.infradead.org,
+        nishka.dasgupta_ug18@ashoka.edu.in,
+        linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <4E95A62E-951C-4432-BCE4-A2BA64029551@eircom.net>
+References: <20181022191708.GA4659@ubuntu>
+ <a703f8a2-e85a-bc5b-750a-cc43ef252ba5@gmail.com>
+ <EA85FEC9-B1C7-4548-88F5-F0E7BC12158E@eircom.net>
+ <046aea96-e0d3-60f4-c61a-c26bb1b5c193@gmail.com>
+ <B9A84822-3780-4E01-96AD-FD3B42C44B45@eircom.net>
+ <9884c4f5-2343-e3a4-8d8b-dd2db404ef27@gmail.com>
+ <s5hftwuo4t0.wl-tiwai@suse.de>
+ <5bc8295a-1e38-99b5-d54c-72e920600f83@gmail.com>
+To:     Kirill Marinushkin <k.marinushkin@gmail.com>
+X-Mailer: Apple Mail (2.3445.100.39)
+X-CMAE-Envelope: MS4wfN+obAUj1HnM3caf4Xchuzx6v7UXSo3WpTOBcR1zjaor1lNMRI/gFQNnlXbDP0Zso2J0XxXbt8q80/UIiXa5ZHKF6fy51ngcngpygCDnKuWw9dxSXDHT
+ uw+Bi2ilcZQMSG9OteeiUY8RP59WLBeuepEdVyXtZgTfYJhwPmHOI+JERnJsLnQCoTWRT5Ck+CBjqegkUDk7HSiFu2oTIsCT7Ncg9+il0dzQ2FeinbBZyLg4
+ Pxikgu9W82ah/K57cVsFuEVyMvqfaDNh8UZMi5VxivvW1ow6c4IgTJ1OnrrD2GmwhPUVrcQMordraCdTIT35CEKnt5QBUfzMzwJdGdbIf6QhMLRUKJD0d8ms
+ +2BNO1qlwYvdxHnIvAC8mXJNT9yy+ZimjiXl+AylpiVrFu/LnsaWS6yXP0av01fDAmVCGxUEKewZKlFKzfovLyJZGESxINW/hUyygKzw7O+mt/poA0zdugoy
+ lARVoGtG0JvjXuPtOH89Lx/G30aqvoaQHX18S/ogrY1Y2mKvYG6GEke3KMXff9oMzr2hNcHjU/VshtnYl7cv4WtbdYlzzHL+2a82xtO+eEcOmR+Q1kMKf1LY
+ X9GqPJD5cS8NVhx4GysCTPngdkMZt2dyGtMBr2z1IzhtxzsCxwyHveWBfNqKYUs9CE4=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 28, 2018 at 02:22:40PM +0100, Michael Straube wrote:
-> On 10/28/18 12:27 PM, Greg Kroah-Hartman wrote:
-> > On Sun, Oct 28, 2018 at 11:04:06AM +0100, Michael Straube wrote:
-> > > Hi,
-> > > 
-> > > which GPL version should be used in SPDX Identifiers for files that
-> > > are GPL licensed but do not mention any version? It is not clear to
-> > > me after reading license-rules.rst.
-> > > 
-> > > For example:
-> > > 
-> > > /******************************************************************************
-> > >   * Copyright(c) 2008 - 2010 Realtek Corporation. All rights reserved.
-> > >   *
-> > >   * This program is distributed in the hope that it will be useful, but WITHOUT
-> > >   * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> > >   * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> > >   * more details.
-> > >   *
-> > >   * The full GNU General Public License is included in this distribution in the
-> > >   * file called LICENSE.
-> > 
-> > Perhaps look up what version of the GPL that was originally contained in
-> > the tarball that this driver was bundled with?  I think that should be
-> > on their website somewhere...
-> > 
-> > If not, it's v1, not a good thing, but all we have to go on.  Also, try
-> > emailing:
-> > 
-> > >   * Contact Information:
-> > >   * wlanfae <wlanfae@realtek.com>
-> > 
-> > That address :)
-> > 
-> > thanks,
-> > 
-> > greg k-h
-> > 
+Hi Kirill. Thanks for the post.
+Mike
+
+> On 25 Oct 2018, at 18:20, Kirill Marinushkin <k.marinushkin@gmail.com> wrote:
 > 
-> Ah, there is a file 'license' in the root directory of this driver (rtl8192e)
-> that I overlooked. It contains GPLv2. So v2 applies to all files with the above
-> shortened boiler plate?
+> Hello Takashi, Mike,
+> 
+> @Takashi
+> 
+> On 10/25/18 09:37, Takashi Iwai wrote:
+>> Well, in the API POV, it's nothing wrong to keep hwptr sticking while
+>> updating only delay value.  It implies that the hardware chip doesn't
+>> provide the hwptr update.
+> 
+> Thank you for the clarification. Modifying `runtime->delay` from the `pointer`
+> function looked wrong for me. Now I understand the motivation and the use-case.
+> I will be more careful when analyzing the code which doesn't fit my expectations.
+> 
+> @Mike
+> 
+> I was wrong. You can ignore my comments. Please don't take them personal: it's
+> all about having high-quality code in kernel.
+> 
+> Best Regards,
+> Kirill
+> _______________________________________________
+> Alsa-devel mailing list
+> Alsa-devel@alsa-project.org
+> http://mailman.alsa-project.org/mailman/listinfo/alsa-devel
 
-Yes.  So add a SPDX line to the file and delete the boiler plate text so
-we don't have this question again in the future.  Then delete that opy
-of the GPL so we don't have files we don't need :)
-
-thanks,
-
-greg k-h
