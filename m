@@ -8,59 +8,59 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FF9FC6786F
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 12:46:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C77D7C6786F
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 12:52:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 166B620665
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 12:46:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55E7F2064C
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 12:52:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e7sdtj+S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 166B620665
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mArZQ+0n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55E7F2064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727521AbeJ1Vay (ORCPT
+        id S1727573AbeJ1Vgg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 17:30:54 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35872 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726379AbeJ1Vay (ORCPT
+        Sun, 28 Oct 2018 17:36:36 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:47075 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726448AbeJ1Vgg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 17:30:54 -0400
-Received: by mail-pg1-f195.google.com with SMTP id z17-v6so2584215pgv.3;
-        Sun, 28 Oct 2018 05:46:20 -0700 (PDT)
+        Sun, 28 Oct 2018 17:36:36 -0400
+Received: by mail-pl1-f196.google.com with SMTP id bb7-v6so2502541plb.13;
+        Sun, 28 Oct 2018 05:52:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=mgLnnM9dgsbh5RM0dMMhXSQBDfIYDiAf2cu8Hc3JC+w=;
-        b=e7sdtj+S11jR/QOz3MfyeGjIan9LusQ5i5DNh718jWTn0nmu8r2GDw8wLCi7WYDnRZ
-         w9Jgyu3S0u5pfcPcT37kPqvk81F1AhR12vfNcP14teZJr007lJcG+ijiJaBPhQwmUTX8
-         hI/3XSjCoVsn9TlcQ4gmqrLMkcevale42od9I0MzwtGDdy5DUzCMJjiojDz7gohw3zYa
-         AK1cML6mSop1+4rLHyzxA5VE1jq+fZhlF9+G4J+kUuEJbugZXIN5knj6JFwVn/WdgQuY
-         iptvHlFCfBY8pRN15jRb1pEeacVs/rl5994b5wUQn3au9WFDv3L2tN3q9jdOfKhNUcA9
-         1amQ==
+        bh=Zh1XZcfn81XXtuE3Q2zC/H087swHCUfSUNmPutXptaE=;
+        b=mArZQ+0n4a1HhHG7GKAZC83m0YUM2ya5B0B1vSodGCipE0iK0r6YOsXHKlUzBHzOwO
+         DQRnAs9d+mSRD5ZVstJHf33F5lEYmFUMdaFI14ByqwJ9m0S2u7MEXUIhDJI1nAp3ukjR
+         DNrRQ7ZIGO0hsPz1tbMt43uUj+M4DoyS11TeMVAo/wf6VQJKW0IC3FWWtrxLDdvF/Xqp
+         io/5OlDsmJGejL2Pv4NSkY2QbfNXW4Goc87Od7rmnzGD93XNdKV3GLq8fi63f62Zk05y
+         S+nkwVlIx00ylZ7SmrGGkPjSdFcAB1s5f/GilBibusaOlXaMLb935vFh3cMewx5Us1cP
+         9ELg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mgLnnM9dgsbh5RM0dMMhXSQBDfIYDiAf2cu8Hc3JC+w=;
-        b=r0mLFrkRx5acSc8I1CMpMrZSMpgaJ0b3zL2dG1n97I/D0jUi2evuC53L7R5GNqGduN
-         v84vyeKXRbL//oU5RMVP1xUmrpkuY+DNaUTMmikOOfS+rE/K8xDMG1yCkhoGmuwNd62F
-         MVdV1QcXtIcG27IvkYbnKtI3a5ig3ASW7xgi39cuO/1lczlJkPruwA7cDE5yw6rJcRWw
-         cgLW+DLJb7I2dtosz+tGQ0SSQHtWcrayH4S/1lWiUTIEQH3AMO7o4AJqqtbUG337miKS
-         HrkgdRBfF+NpaMzdvQPgnngyBfA/gbq8X1KlIf/kGFYsE4srQ0tBbRvdHdJbpYuRkKgX
-         EdsQ==
-X-Gm-Message-State: AGRZ1gJZ0g6L36Dxyqhwm8pLaMPawlH1fcXj+0DFjlmnE/WN3YK0TR3W
-        HdQPx9OxtkffqfGT2pRPt7A=
-X-Google-Smtp-Source: AJdET5fcoJfYiCf4BbiU2IhDyjRmxQF92k9ZxIDaQz2MT5f8QeLYb6TyLKjUycqXEMQGNyBZ/qD1Sg==
-X-Received: by 2002:a65:5a89:: with SMTP id c9-v6mr9832862pgt.216.1540730780552;
-        Sun, 28 Oct 2018 05:46:20 -0700 (PDT)
+        bh=Zh1XZcfn81XXtuE3Q2zC/H087swHCUfSUNmPutXptaE=;
+        b=m1ij4Tx90OtsyxfhlDPWqfvqiZlZjMPUpyr8pU35/lxQA9bUDuT7czY/1G6Bzaqlys
+         iiqAoOAeRqRGSz25oX+yRqTSRCf0ZHpOKRSCznpOsWPz9cyO4MFm3m3qH82FMS3JQVKx
+         QNQvT8TtXHJ+vl1lKf4qfzaoWAl0IxGHutN2LINX8l7Dxx2And4YCT6bdpM60fHor+lw
+         XsSVF2zVWeSCfqXa5mqUC0Fl1WyNzVIpYcChNEb68yVE3vGoa2oZpEWR3MlBWuCSo7qz
+         mrmBAXgranA4H5CZte38EYPr1t/KeOs+ixYgq5enrPrFjYi56TOyBOJv3rC9i7D15Wda
+         cGhA==
+X-Gm-Message-State: AGRZ1gKtS5k+cxG5hze+4Xb53bKwM1Oz0eJouJeK5tVpozQS0p7qd9Vh
+        sYFSKjK1yeGvwd0ALP2srdg=
+X-Google-Smtp-Source: AJdET5evkPNMRYnlKKG6ENfnlaPjPrfWobW125pSZtT1HIx0Cy7gxgnNI9Ls5XsTDraf1Mlp0DB+2w==
+X-Received: by 2002:a17:902:8b8a:: with SMTP id ay10-v6mr10383706plb.130.1540731121510;
+        Sun, 28 Oct 2018 05:52:01 -0700 (PDT)
 Received: from mail.google.com ([2001:19f0:6001:4ff6:5400:1ff:feb7:a195])
-        by smtp.gmail.com with ESMTPSA id p13-v6sm6261422pgg.94.2018.10.28.05.46.19
+        by smtp.gmail.com with ESMTPSA id o2-v6sm17266686pgp.82.2018.10.28.05.52.00
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 28 Oct 2018 05:46:20 -0700 (PDT)
-Date:   Sun, 28 Oct 2018 12:46:18 +0000
+        Sun, 28 Oct 2018 05:52:00 -0700 (PDT)
+Date:   Sun, 28 Oct 2018 12:51:59 +0000
 From:   Changbin Du <changbin.du@gmail.com>
 To:     Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc:     changbin.du@gmail.com, Michal Marek <michal.lkml@markovi.net>,
@@ -73,121 +73,273 @@ Cc:     changbin.du@gmail.com, Michal Marek <michal.lkml@markovi.net>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         linux-sparse@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH v2 1/4] x86/mm: surround level4_kernel_pgt with #ifdef
- CONFIG_X86_5LEVEL...#endif
-Message-ID: <20181028124507.4n2sfkm7iteyoud5@mail.google.com>
+Subject: Re: [PATCH v2 4/4] kernel hacking: new config
+ CC_OPTIMIZE_FOR_DEBUGGING to apply GCC -Og optimization
+Message-ID: <20181028125106.azcn2dxia3snplin@mail.google.com>
 References: <20181019124921.13780-1-changbin.du@gmail.com>
- <20181019124921.13780-2-changbin.du@gmail.com>
- <CAK7LNAQJxVDWU5GPY4O6x+z_Pkmh4KuHiTpkY_LDJwNYO-eCBw@mail.gmail.com>
+ <20181019124921.13780-5-changbin.du@gmail.com>
+ <CAK7LNARW0=0d7m5DAgZOir=h0Y4tssqZoQRGasnGPNnvNf_+pg@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK7LNAQJxVDWU5GPY4O6x+z_Pkmh4KuHiTpkY_LDJwNYO-eCBw@mail.gmail.com>
+In-Reply-To: <CAK7LNARW0=0d7m5DAgZOir=h0Y4tssqZoQRGasnGPNnvNf_+pg@mail.gmail.com>
 User-Agent: NeoMutt/20180716-508-7c9a6d
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 28, 2018 at 10:44:46AM +0900, Masahiro Yamada wrote:
+On Sun, Oct 28, 2018 at 11:28:24AM +0900, Masahiro Yamada wrote:
 > On Fri, Oct 19, 2018 at 9:50 PM Du Changbin <changbin.du@gmail.com> wrote:
 > >
-> > The level4_kernel_pgt is only defined when X86_5LEVEL is enabled. So
-> > surround level4_kernel_pgt with #ifdef CONFIG_X86_5LEVEL...#endif to
-> > make code correct.
-> 
-> For clarification, is it better to mention
-> that this is a preparation for CONFIG_CC_OPTIMIZE_FOR_DEBUGGING ?
->
-yes, I will update the commit msg.
-
-> 
+> > This will apply GCC '-Og' optimization level which is supported
+> > since GCC 4.8. This optimization level offers a reasonable level
+> > of optimization while maintaining fast compilation and a good
+> > debugging experience. It is similar to '-O1' while perferring
+> > to keep debug ability over runtime speed.
+> >
+> > If enabling this option breaks your kernel, you should either
+> > disable this or find a fix (mostly in the arch code). Currently
+> > this option has only been tested on x86_64 and arm platform.
+> >
+> > This option can satisfy people who was searching for a method
+> > to disable compiler optimizations so to achieve better kernel
+> > debugging experience with kgdb or qemu.
+> >
+> > The main problem of '-Og' is we must not use __attribute__((error(msg))).
+> > The compiler will report error though the call to error function
+> > still can be optimize out. So we must fallback to array tricky.
+> >
+> > Comparison of vmlinux size: a bit smaller.
+> >
+> >     w/o CONFIG_CC_OPTIMIZE_FOR_DEBUGGING
+> >     $ size vmlinux
+> >        text    data     bss     dec     hex filename
+> >     22665554   9709674  2920908 35296136        21a9388 vmlinux
+> >
+> >     w/ CONFIG_CC_OPTIMIZE_FOR_DEBUGGING
+> >     $ size vmlinux
+> >        text    data     bss     dec     hex filename
+> >     21499032   10102758 2920908 34522698        20ec64a vmlinux
+> >
+> > Comparison of system performance: a bit drop (~6%).
+> >     This benchmark of kernel compilation is suggested by Ingo Molnar.
+> >     https://lkml.org/lkml/2018/5/2/74
+> >
+> >     Preparation: Set cpufreq to 'performance'.
+> >     for ((cpu=0; cpu<120; cpu++)); do
+> >       G=/sys/devices/system/cpu/cpu$cpu/cpufreq/scaling_governor
+> >       [ -f $G ] && echo performance > $G
+> >     done
+> >
+> >     w/o CONFIG_CC_OPTIMIZE_FOR_DEBUGGING
+> >     $ perf stat --repeat 5 --null --pre                 '\
+> >         cp -a kernel ../kernel.copy.$(date +%s);         \
+> >         rm -rf *;                                        \
+> >         git checkout .;                                  \
+> >         echo 1 > /proc/sys/vm/drop_caches;               \
+> >         find ../kernel* -type f | xargs cat >/dev/null;  \
+> >         make -j kernel >/dev/null;                       \
+> >         make clean >/dev/null 2>&1;                      \
+> >         sync                                            '\
+> >                                                          \
+> >         make -j8 >/dev/null
+> >
+> >     Performance counter stats for 'make -j8' (5 runs):
+> >
+> >         219.764246652 seconds time elapsed                   ( +-  0.78% )
+> >
+> >     w/ CONFIG_CC_OPTIMIZE_FOR_DEBUGGING
+> >     $ perf stat --repeat 5 --null --pre                 '\
+> >         cp -a kernel ../kernel.copy.$(date +%s);         \
+> >         rm -rf *;                                        \
+> >         git checkout .;                                  \
+> >         echo 1 > /proc/sys/vm/drop_caches;               \
+> >         find ../kernel* -type f | xargs cat >/dev/null;  \
+> >         make -j kernel >/dev/null;                       \
+> >         make clean >/dev/null 2>&1;                      \
+> >         sync                                            '\
+> >                                                          \
+> >         make -j8 >/dev/null
+> >
+> >     Performance counter stats for 'make -j8' (5 runs):
+> >
+> >          233.574187771 seconds time elapsed                  ( +-  0.19% )
+> >
 > > Signed-off-by: Du Changbin <changbin.du@gmail.com>
 > > Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 > > ---
-> >  arch/x86/include/asm/pgtable_64.h |  2 ++
-> >  arch/x86/kernel/head64.c          | 13 ++++++-------
-> >  2 files changed, 8 insertions(+), 7 deletions(-)
+> >  Makefile                     |  5 +++++
+> >  include/linux/compiler-gcc.h |  2 +-
+> >  include/linux/compiler.h     |  2 +-
+> >  init/Kconfig                 | 19 +++++++++++++++++++
+> >  4 files changed, 26 insertions(+), 2 deletions(-)
 > >
-> > diff --git a/arch/x86/include/asm/pgtable_64.h b/arch/x86/include/asm/pgtable_64.h
-> > index 9c85b54bf03c..9333f7fa5bdb 100644
-> > --- a/arch/x86/include/asm/pgtable_64.h
-> > +++ b/arch/x86/include/asm/pgtable_64.h
-> > @@ -16,7 +16,9 @@
-> >  #include <linux/threads.h>
-> >  #include <asm/fixmap.h>
+> > diff --git a/Makefile b/Makefile
+> > index 757d6507cb5c..ea908cfe8594 100644
+> > --- a/Makefile
+> > +++ b/Makefile
+> > @@ -657,6 +657,10 @@ KBUILD_CFLAGS      += $(call cc-disable-warning, format-truncation)
+> >  KBUILD_CFLAGS  += $(call cc-disable-warning, format-overflow)
+> >  KBUILD_CFLAGS  += $(call cc-disable-warning, int-in-bool-context)
 > >
-> > +#ifdef CONFIG_X86_5LEVEL
-> >  extern p4d_t level4_kernel_pgt[512];
-> > +#endif
+> > +ifdef CONFIG_CC_OPTIMIZE_FOR_DEBUGGING
+> > +KBUILD_CFLAGS  += $(call cc-option, -Og)
 > 
 > 
-> Is this #ifdef  necessary?
+> This line is a problem.
 > 
-> It is harmless to declaring unused stuff.
+> As you stated in your patch description, -Og is supported on GCC 4.8+
+> but the minimum GCC version supported for Linux kernel is GCC 4.6
+> 
+> 
+> If you use either GCC 4.6 or 4.7,
+> $(call cc-option, -Og) is evaluated to empty.
+> 
+> It means no optimization flag is given to the compiler, then
+> the build fails.
+> 
+> I'd like to suggest to change as follows:
+> 
+>
+Thanks for pointing this out and kind suggestions. I have tested with your
+modification. Will update patch serias soon.
+
+> 
+> 
+> diff --git a/Makefile b/Makefile
+> index 122ab74..9af3dc4 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -663,7 +663,7 @@ KBUILD_CFLAGS       += $(call cc-disable-warning,
+> format-overflow)
+>  KBUILD_CFLAGS  += $(call cc-disable-warning, int-in-bool-context)
+> 
+>  ifdef CONFIG_CC_OPTIMIZE_FOR_DEBUGGING
+> -KBUILD_CFLAGS  += $(call cc-option, -Og)
+> +KBUILD_CFLAGS  += -Og
+>  KBUILD_CFLAGS  += $(call cc-disable-warning,maybe-uninitialized,)
+>  else
+>  ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
+> diff --git a/init/Kconfig b/init/Kconfig
+> index b01c7c6..a0424dc 100644
+> --- a/init/Kconfig
+> +++ b/init/Kconfig
+> @@ -1083,6 +1083,7 @@ config CC_OPTIMIZE_FOR_SIZE
+> 
+>  config CC_OPTIMIZE_FOR_DEBUGGING
+>         bool "Optimize for better debugging experience (-Og)"
+> +       depends on $(cc-option,-Og)
+>         select NO_AUTO_INLINE
+>         help
+>           This will apply GCC '-Og' optimization level which is supported
 > 
 > 
 > 
-> >  extern p4d_t level4_ident_pgt[512];
-> >  extern pud_t level3_kernel_pgt[512];
-> >  extern pud_t level3_ident_pgt[512];
-> > diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-> > index ddee1f0870c4..4a59ef93c258 100644
-> > --- a/arch/x86/kernel/head64.c
-> > +++ b/arch/x86/kernel/head64.c
-> > @@ -151,16 +151,15 @@ unsigned long __head __startup_64(unsigned long physaddr,
+> 
+> 
+> If -Og is unsupported by the compiler, this is hidden from the Kconfig menu.
+> 
+> 
+> 
+> Also, in order to fix a warning from 'make tiny.config'
+> could you add the following change?
+> 
+> 
+> 
+> diff --git a/kernel/configs/tiny.config b/kernel/configs/tiny.config
+> index 7fa0c4a..599ea86 100644
+> --- a/kernel/configs/tiny.config
+> +++ b/kernel/configs/tiny.config
+> @@ -1,5 +1,6 @@
+>  # CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE is not set
+>  CONFIG_CC_OPTIMIZE_FOR_SIZE=y
+> +# CONFIG_CC_OPTIMIZE_FOR_DEBUGGING is not set
+>  # CONFIG_KERNEL_GZIP is not set
+>  # CONFIG_KERNEL_BZIP2 is not set
+>  # CONFIG_KERNEL_LZMA is not set
+> 
+> 
+> 
+> 
+> 
+> 
+> 
+> > +KBUILD_CFLAGS  += $(call cc-disable-warning,maybe-uninitialized,)
+> > +else
+> >  ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
+> >  KBUILD_CFLAGS  += $(call cc-option,-Oz,-Os)
+> >  KBUILD_CFLAGS  += $(call cc-disable-warning,maybe-uninitialized,)
+> > @@ -667,6 +671,7 @@ else
+> >  KBUILD_CFLAGS   += -O2
+> >  endif
+> >  endif
+> > +endif
 > >
-> >         pgd = fixup_pointer(&early_top_pgt, physaddr);
-> >         p = pgd + pgd_index(__START_KERNEL_map);
-> > -       if (la57)
-> > -               *p = (unsigned long)level4_kernel_pgt;
-> > -       else
-> > -               *p = (unsigned long)level3_kernel_pgt;
-> > -       *p += _PAGE_TABLE_NOENC - __START_KERNEL_map + load_delta;
-> > -
-> > +#ifdef CONFIG_X86_5LEVEL
-> >         if (la57) {
-> > +               *p = (unsigned long)level4_kernel_pgt;
-> >                 p4d = fixup_pointer(&level4_kernel_pgt, physaddr);
-> >                 p4d[511] += load_delta;
-> > -       }
-> > +       } else
-> > +#endif
-> > +               *p = (unsigned long)level3_kernel_pgt;
-> > +       *p += _PAGE_TABLE_NOENC - __START_KERNEL_map + load_delta;
+> >  KBUILD_CFLAGS += $(call cc-ifversion, -lt, 0409, \
+> >                         $(call cc-disable-warning,maybe-uninitialized,))
+> > diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
+> > index 4d36b27214fd..2a76f7c64b54 100644
+> > --- a/include/linux/compiler-gcc.h
+> > +++ b/include/linux/compiler-gcc.h
+> > @@ -85,7 +85,7 @@
 > >
-> >         pud = fixup_pointer(&level3_kernel_pgt, physaddr);
-> >         pud[510] += load_delta;
+> >  #define __compiletime_object_size(obj) __builtin_object_size(obj, 0)
+> >
+> > -#ifndef __CHECKER__
+> > +#if !defined(__CHECKER__) && !defined(CONFIG_CC_OPTIMIZE_FOR_DEBUGGING)
+> >  #define __compiletime_warning(message) __attribute__((warning(message)))
+> >  #define __compiletime_error(message) __attribute__((error(message)))
+> >
+> > diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+> > index 681d866efb1e..9385c62e9f00 100644
+> > --- a/include/linux/compiler.h
+> > +++ b/include/linux/compiler.h
+> > @@ -320,7 +320,7 @@ static inline void *offset_to_ptr(const int *off)
+> >   * sparse see a constant array size without breaking compiletime_assert on old
+> >   * versions of GCC (e.g. 4.2.4), so hide the array from sparse altogether.
+> >   */
+> > -# ifndef __CHECKER__
+> > +# if !defined(__CHECKER__) && !defined(CONFIG_CC_OPTIMIZE_FOR_DEBUGGING)
+> >  #  define __compiletime_error_fallback(condition) \
+> >         do { ((void)sizeof(char[1 - 2 * condition])); } while (0)
+> >  # endif
+> > diff --git a/init/Kconfig b/init/Kconfig
+> > index 1e234e2f1cba..b01c7c654570 100644
+> > --- a/init/Kconfig
+> > +++ b/init/Kconfig
+> > @@ -1081,6 +1081,25 @@ config CC_OPTIMIZE_FOR_SIZE
+> >
+> >           If unsure, say N.
+> >
+> > +config CC_OPTIMIZE_FOR_DEBUGGING
+> > +       bool "Optimize for better debugging experience (-Og)"
+> > +       select NO_AUTO_INLINE
+> > +       help
+> > +         This will apply GCC '-Og' optimization level which is supported
+> > +         since GCC 4.8. This optimization level offers a reasonable level
+> > +         of optimization while maintaining fast compilation and a good
+> > +         debugging experience. It is similar to '-O1' while preferring to
+> > +         keep debug ability over runtime speed. The overall performance
+> > +         will drop a bit (~6%).
+> > +
+> > +         Use only if you want to debug the kernel, especially if you want
+> > +         to have better kernel debugging experience with gdb facilities
+> > +         like kgdb or qemu. If enabling this option breaks your kernel,
+> > +         you should either disable this or find a fix (mostly in the arch
+> > +         code).
+> > +
+> > +         If unsure, select N.
+> > +
+> >  endchoice
+> >
+> >  config HAVE_LD_DEAD_CODE_DATA_ELIMINATION
 > > --
 > > 2.17.1
 > >
 > 
 > 
-> Hmm, this code looks a bit ugly...
-> 
-> Does the following one liner work with CONFIG_CC_OPTIMIZE_FOR_DEBUGGING ?
-> 
-> 
-> diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-> index 8047379..579847f 100644
-> --- a/arch/x86/kernel/head64.c
-> +++ b/arch/x86/kernel/head64.c
-> @@ -97,7 +97,7 @@ static bool __head check_la57_support(unsigned long physaddr)
->         return true;
->  }
->  #else
-> -static bool __head check_la57_support(unsigned long physaddr)
-> +static __always_inline bool __head check_la57_support(unsigned long physaddr)
->  {
->         return false;
->  }
-> 
-This is much better. I just declared it as 'inline'. Thanks for your suggestion.
-
-> 
-> 
-> 
-> --
+> -- 
 > Best Regards
 > Masahiro Yamada
 
