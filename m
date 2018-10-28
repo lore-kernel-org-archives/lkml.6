@@ -2,324 +2,310 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 048CCC46475
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 02:29:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C8EEC46475
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 03:18:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F6DC2085B
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 02:29:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="l9SeYoEU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F6DC2085B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 3101320665
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 03:18:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3101320665
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729123AbeJ1LMY (ORCPT
+        id S1727876AbeJ1MBR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 07:12:24 -0400
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:56309 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728916AbeJ1LMY (ORCPT
+        Sun, 28 Oct 2018 08:01:17 -0400
+Received: from mail-it1-f200.google.com ([209.85.166.200]:36638 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727778AbeJ1MBR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 07:12:24 -0400
-X-Greylist: delayed 2637 seconds by postgrey-1.27 at vger.kernel.org; Sun, 28 Oct 2018 07:12:21 EDT
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id w9S2T10j031227;
-        Sun, 28 Oct 2018 11:29:01 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w9S2T10j031227
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1540693742;
-        bh=VgTCvkDQ8nBUHZDnIMTOjucL8QLv5XrH7RzJG4rIIn0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=l9SeYoEUO0A52tBMETvBFqY6rTe3RCuUklvRgSRi4jgFEiIpSg/HonR269eS5LmSP
-         yVE9lUK7WDIBkTOZ+QW2/nCYsI4OOOWWA4SyJsPTJGleJIIMtfICTKpJWN5cmBTgQo
-         3Q6ktx9bFrxj8pEJi05PI6TOiBNVDcsVlCZI9T/1/OwFIkQw19QvBqbgYEDGYEmlem
-         8Exte9wXb3oFqMCdABvoTvR6KJ2nLbY2OIHKX+WnqZCX1Qie2uVEt5X7+V493CXmUz
-         wfuxrkAqTGpkdKrxP0PX7D6SuvE2C7UiyAd76ntU4tyjpR+b5bx3QhTCd72oF4a/Tq
-         kG15Q4UDW7oqQ==
-X-Nifty-SrcIP: [209.85.217.42]
-Received: by mail-vs1-f42.google.com with SMTP id q15so3193043vso.1;
-        Sat, 27 Oct 2018 19:29:01 -0700 (PDT)
-X-Gm-Message-State: AGRZ1gKg5pfthTw/xDXXCPpEotCEpJ6UzLvz6I3CyWOyDXZqwC5hvfd6
-        fH1ZSUq+lI0xpDKfuaNoh+t+e+PO35Z8wHniT0w=
-X-Google-Smtp-Source: AJdET5fK3JInB+IR6lFmiKJYgBFE0dyTngEnHnNq4Ug9bZRwP3S1LKE9e1J6rnJrtMft4a88RCJ7W/ALoUvvcs+BZkg=
-X-Received: by 2002:a67:a858:: with SMTP id r85mr3925025vse.215.1540693740248;
- Sat, 27 Oct 2018 19:29:00 -0700 (PDT)
+        Sun, 28 Oct 2018 08:01:17 -0400
+Received: by mail-it1-f200.google.com with SMTP id q184-v6so2071778itc.1
+        for <linux-kernel@vger.kernel.org>; Sat, 27 Oct 2018 20:18:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=CQeHFaOojb+48tBqvogK6yiFZaxhj8v6kY+kh6JEpZQ=;
+        b=gvRvUdgx1+v5+xyMALuCnJTE+zSS8PXOPvUDuDAlHtDi68NzH2ovgXMH30rST2KEhE
+         x+8BpA0DJwZbFyRxiaW8tjOn1QhL7cDvOtUfzUFtOO5ZU20ldnK9as/rP2lXGR1v+yfI
+         1UJJ+xjTpq8xbAUS5JY5VLZ6cSYVyF2ynx/QOHaDopHcj2UJrKq3ADgJphKlBDX3+Hep
+         36Yx3YGPxxKVb1VXYIqz6d9WO7D9gmbSUmmTEFyRrgr5GG1nezlslW6JRHmHsFvoszI+
+         msycQmyJYyU85bO2lxonEads85bVKHOc8QjH9Pybf5L/xpUcDCxrGhHNskAxEAB57Yhp
+         hDQA==
+X-Gm-Message-State: AGRZ1gKtrVCHYtud53qRLZzCkF799mOLjZk0Kp57RFUjcbuxyH7GfzCw
+        BIpWEMtQlUWqQNmvH1/xHcp1p8gjbYHqQfTQPZfDRaW6MV7B
+X-Google-Smtp-Source: AJdET5fVM2kVoNnVQfysFwKx1PffHbxGG5Ea1wbZQ7buQIPykj5uRGLUfIbUE4ZQmip3ZvZ/So5aQk3fMTEe4KOeDYf2Al6GU8gR
 MIME-Version: 1.0
-References: <20181019124921.13780-1-changbin.du@gmail.com> <20181019124921.13780-5-changbin.du@gmail.com>
-In-Reply-To: <20181019124921.13780-5-changbin.du@gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sun, 28 Oct 2018 11:28:24 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARW0=0d7m5DAgZOir=h0Y4tssqZoQRGasnGPNnvNf_+pg@mail.gmail.com>
-Message-ID: <CAK7LNARW0=0d7m5DAgZOir=h0Y4tssqZoQRGasnGPNnvNf_+pg@mail.gmail.com>
-Subject: Re: [PATCH v2 4/4] kernel hacking: new config CC_OPTIMIZE_FOR_DEBUGGING
- to apply GCC -Og optimization
-To:     changbin.du@gmail.com
-Cc:     Michal Marek <michal.lkml@markovi.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>, X86 ML <x86@kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a6b:f90a:: with SMTP id j10-v6mr228226iog.5.1540696683948;
+ Sat, 27 Oct 2018 20:18:03 -0700 (PDT)
+Date:   Sat, 27 Oct 2018 20:18:03 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008db3210579416691@google.com>
+Subject: WARNING in __debug_object_init (3)
+From:   syzbot <syzbot+6e682caa546b7c96c859@syzkaller.appspotmail.com>
+To:     ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 9:50 PM Du Changbin <changbin.du@gmail.com> wrote:
->
-> This will apply GCC '-Og' optimization level which is supported
-> since GCC 4.8. This optimization level offers a reasonable level
-> of optimization while maintaining fast compilation and a good
-> debugging experience. It is similar to '-O1' while perferring
-> to keep debug ability over runtime speed.
->
-> If enabling this option breaks your kernel, you should either
-> disable this or find a fix (mostly in the arch code). Currently
-> this option has only been tested on x86_64 and arm platform.
->
-> This option can satisfy people who was searching for a method
-> to disable compiler optimizations so to achieve better kernel
-> debugging experience with kgdb or qemu.
->
-> The main problem of '-Og' is we must not use __attribute__((error(msg))).
-> The compiler will report error though the call to error function
-> still can be optimize out. So we must fallback to array tricky.
->
-> Comparison of vmlinux size: a bit smaller.
->
->     w/o CONFIG_CC_OPTIMIZE_FOR_DEBUGGING
->     $ size vmlinux
->        text    data     bss     dec     hex filename
->     22665554   9709674  2920908 35296136        21a9388 vmlinux
->
->     w/ CONFIG_CC_OPTIMIZE_FOR_DEBUGGING
->     $ size vmlinux
->        text    data     bss     dec     hex filename
->     21499032   10102758 2920908 34522698        20ec64a vmlinux
->
-> Comparison of system performance: a bit drop (~6%).
->     This benchmark of kernel compilation is suggested by Ingo Molnar.
->     https://lkml.org/lkml/2018/5/2/74
->
->     Preparation: Set cpufreq to 'performance'.
->     for ((cpu=0; cpu<120; cpu++)); do
->       G=/sys/devices/system/cpu/cpu$cpu/cpufreq/scaling_governor
->       [ -f $G ] && echo performance > $G
->     done
->
->     w/o CONFIG_CC_OPTIMIZE_FOR_DEBUGGING
->     $ perf stat --repeat 5 --null --pre                 '\
->         cp -a kernel ../kernel.copy.$(date +%s);         \
->         rm -rf *;                                        \
->         git checkout .;                                  \
->         echo 1 > /proc/sys/vm/drop_caches;               \
->         find ../kernel* -type f | xargs cat >/dev/null;  \
->         make -j kernel >/dev/null;                       \
->         make clean >/dev/null 2>&1;                      \
->         sync                                            '\
->                                                          \
->         make -j8 >/dev/null
->
->     Performance counter stats for 'make -j8' (5 runs):
->
->         219.764246652 seconds time elapsed                   ( +-  0.78% )
->
->     w/ CONFIG_CC_OPTIMIZE_FOR_DEBUGGING
->     $ perf stat --repeat 5 --null --pre                 '\
->         cp -a kernel ../kernel.copy.$(date +%s);         \
->         rm -rf *;                                        \
->         git checkout .;                                  \
->         echo 1 > /proc/sys/vm/drop_caches;               \
->         find ../kernel* -type f | xargs cat >/dev/null;  \
->         make -j kernel >/dev/null;                       \
->         make clean >/dev/null 2>&1;                      \
->         sync                                            '\
->                                                          \
->         make -j8 >/dev/null
->
->     Performance counter stats for 'make -j8' (5 runs):
->
->          233.574187771 seconds time elapsed                  ( +-  0.19% )
->
-> Signed-off-by: Du Changbin <changbin.du@gmail.com>
-> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-> ---
->  Makefile                     |  5 +++++
->  include/linux/compiler-gcc.h |  2 +-
->  include/linux/compiler.h     |  2 +-
->  init/Kconfig                 | 19 +++++++++++++++++++
->  4 files changed, 26 insertions(+), 2 deletions(-)
->
-> diff --git a/Makefile b/Makefile
-> index 757d6507cb5c..ea908cfe8594 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -657,6 +657,10 @@ KBUILD_CFLAGS      += $(call cc-disable-warning, format-truncation)
->  KBUILD_CFLAGS  += $(call cc-disable-warning, format-overflow)
->  KBUILD_CFLAGS  += $(call cc-disable-warning, int-in-bool-context)
->
-> +ifdef CONFIG_CC_OPTIMIZE_FOR_DEBUGGING
-> +KBUILD_CFLAGS  += $(call cc-option, -Og)
+Hello,
+
+syzbot found the following crash on:
+
+HEAD commit:    8c60c36d0b8c Add linux-next specific files for 20181019
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=100feec5400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8b6d7c4c81535e89
+dashboard link: https://syzkaller.appspot.com/bug?extid=6e682caa546b7c96c859
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13579abd400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13654f6b400000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+6e682caa546b7c96c859@syzkaller.appspotmail.com
+
+ODEBUG: object 0000000015e9012c is on stack 00000000115bcb67, but NOT  
+annotated.
+WARNING: CPU: 0 PID: 5594 at lib/debugobjects.c:369  
+debug_object_is_on_stack lib/debugobjects.c:363 [inline]
+WARNING: CPU: 0 PID: 5594 at lib/debugobjects.c:369  
+__debug_object_init.cold.14+0x51/0xdf lib/debugobjects.c:395
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 5594 Comm: syz-executor740 Not tainted  
+4.19.0-rc8-next-20181019+ #98
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  panic+0x2ad/0x55c kernel/panic.c:188
+  __warn.cold.8+0x20/0x45 kernel/panic.c:540
+  report_bug+0x254/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:969
+RIP: 0010:debug_object_is_on_stack lib/debugobjects.c:363 [inline]
+RIP: 0010:__debug_object_init.cold.14+0x51/0xdf lib/debugobjects.c:395
+Code: ea 03 80 3c 02 00 75 7c 49 8b 54 24 18 48 89 de 48 c7 c7 c0 f1 40 88  
+4c 89 85 d0 fd ff ff e8 09 8c d1 fd 4c 8b 85 d0 fd ff ff <0f> 0b e9 09 d6  
+ff ff 41 83 c4 01 b8 ff ff 37 00 44 89 25 b7 4e 66
+RSP: 0018:ffff8801bb387308 EFLAGS: 00010086
+RAX: 0000000000000050 RBX: ffff8801bb387af8 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: ffffffff816585a5 RDI: 0000000000000005
+RBP: ffff8801bb387560 R08: ffff8801cb208a20 R09: ffffed003b5c5008
+R10: ffffed003b5c5008 R11: ffff8801dae28047 R12: ffff8801d82ea300
+R13: 0000000000069700 R14: ffff8801d82ea300 R15: ffff8801cb208a10
+  debug_object_init+0x16/0x20 lib/debugobjects.c:432
+  debug_timer_init kernel/time/timer.c:704 [inline]
+  debug_init kernel/time/timer.c:757 [inline]
+  init_timer_key+0xa9/0x480 kernel/time/timer.c:806
+  sock_init_data+0xe1/0xdc0 net/core/sock.c:2696
+  bpf_prog_test_run_skb+0x255/0xc40 net/bpf/test_run.c:144
+  bpf_prog_test_run+0x130/0x1a0 kernel/bpf/syscall.c:1790
+  __do_sys_bpf kernel/bpf/syscall.c:2427 [inline]
+  __se_sys_bpf kernel/bpf/syscall.c:2371 [inline]
+  __x64_sys_bpf+0x3d8/0x510 kernel/bpf/syscall.c:2371
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x440259
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffc212cf818 EFLAGS: 00000213 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440259
+RDX: 0000000000000028 RSI: 0000000020000080 RDI: 000000000000000a
+RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
+R10: 0000000000000000 R11: 0000000000000213 R12: 0000000000401ae0
+R13: 0000000000401b70 R14: 0000000000000000 R15: 0000000000000000
+
+======================================================
+WARNING: possible circular locking dependency detected
+4.19.0-rc8-next-20181019+ #98 Not tainted
+------------------------------------------------------
+syz-executor740/5594 is trying to acquire lock:
+00000000688fcc6b ((console_sem).lock){-.-.}, at: down_trylock+0x13/0x70  
+kernel/locking/semaphore.c:136
+
+but task is already holding lock:
+00000000505ead1b (&obj_hash[i].lock){-.-.}, at:  
+__debug_object_init+0x127/0x1290 lib/debugobjects.c:384
+
+which lock already depends on the new lock.
 
 
-This line is a problem.
+the existing dependency chain (in reverse order) is:
 
-As you stated in your patch description, -Og is supported on GCC 4.8+
-but the minimum GCC version supported for Linux kernel is GCC 4.6
+-> #3 (&obj_hash[i].lock){-.-.}:
+        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+        _raw_spin_lock_irqsave+0x99/0xd0 kernel/locking/spinlock.c:152
+        __debug_object_init+0x127/0x1290 lib/debugobjects.c:384
+        debug_object_init+0x16/0x20 lib/debugobjects.c:432
+        debug_hrtimer_init kernel/time/hrtimer.c:410 [inline]
+        debug_init kernel/time/hrtimer.c:458 [inline]
+        hrtimer_init+0x97/0x490 kernel/time/hrtimer.c:1308
+        init_dl_task_timer+0x1b/0x50 kernel/sched/deadline.c:1057
+        __sched_fork+0x2ae/0x590 kernel/sched/core.c:2166
+        init_idle+0x75/0x740 kernel/sched/core.c:5382
+        sched_init+0xb33/0xc02 kernel/sched/core.c:6065
+        start_kernel+0x4be/0xa2b init/main.c:608
+        x86_64_start_reservations+0x2e/0x30 arch/x86/kernel/head64.c:472
+        x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:451
+        secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
+
+-> #2 (&rq->lock){-.-.}:
+        __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
+        _raw_spin_lock+0x2d/0x40 kernel/locking/spinlock.c:144
+        rq_lock kernel/sched/sched.h:1127 [inline]
+        task_fork_fair+0xb0/0x6d0 kernel/sched/fair.c:9768
+        sched_fork+0x443/0xba0 kernel/sched/core.c:2359
+        copy_process+0x2585/0x8770 kernel/fork.c:1887
+        _do_fork+0x1cb/0x11c0 kernel/fork.c:2216
+        kernel_thread+0x34/0x40 kernel/fork.c:2275
+        rest_init+0x28/0x372 init/main.c:409
+        arch_call_rest_init+0xe/0x1b
+        start_kernel+0x9f0/0xa2b init/main.c:745
+        x86_64_start_reservations+0x2e/0x30 arch/x86/kernel/head64.c:472
+        x86_64_start_kernel+0x76/0x79 arch/x86/kernel/head64.c:451
+        secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
+
+-> #1 (&p->pi_lock){-.-.}:
+        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+        _raw_spin_lock_irqsave+0x99/0xd0 kernel/locking/spinlock.c:152
+        try_to_wake_up+0xd2/0x12e0 kernel/sched/core.c:1965
+        wake_up_process+0x10/0x20 kernel/sched/core.c:2129
+        __up.isra.1+0x1c0/0x2a0 kernel/locking/semaphore.c:262
+        up+0x13c/0x1c0 kernel/locking/semaphore.c:187
+        __up_console_sem+0xbe/0x1b0 kernel/printk/printk.c:236
+        console_unlock+0x80c/0x1190 kernel/printk/printk.c:2432
+        vprintk_emit+0x391/0x990 kernel/printk/printk.c:1922
+        vprintk_default+0x28/0x30 kernel/printk/printk.c:1964
+        vprintk_func+0x7e/0x181 kernel/printk/printk_safe.c:398
+        printk+0xa7/0xcf kernel/printk/printk.c:1997
+        check_stack_usage kernel/exit.c:755 [inline]
+        do_exit.cold.18+0x57/0x16f kernel/exit.c:916
+        do_group_exit+0x177/0x440 kernel/exit.c:970
+        __do_sys_exit_group kernel/exit.c:981 [inline]
+        __se_sys_exit_group kernel/exit.c:979 [inline]
+        __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:979
+        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #0 ((console_sem).lock){-.-.}:
+        lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
+        __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+        _raw_spin_lock_irqsave+0x99/0xd0 kernel/locking/spinlock.c:152
+        down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
+        __down_trylock_console_sem+0xae/0x1f0 kernel/printk/printk.c:219
+        console_trylock+0x15/0xa0 kernel/printk/printk.c:2247
+        console_trylock_spinning kernel/printk/printk.c:1653 [inline]
+        vprintk_emit+0x372/0x990 kernel/printk/printk.c:1921
+        vprintk_default+0x28/0x30 kernel/printk/printk.c:1964
+        vprintk_func+0x7e/0x181 kernel/printk/printk_safe.c:398
+        printk+0xa7/0xcf kernel/printk/printk.c:1997
+        debug_object_is_on_stack lib/debugobjects.c:363 [inline]
+        __debug_object_init.cold.14+0x4a/0xdf lib/debugobjects.c:395
+        debug_object_init+0x16/0x20 lib/debugobjects.c:432
+        debug_timer_init kernel/time/timer.c:704 [inline]
+        debug_init kernel/time/timer.c:757 [inline]
+        init_timer_key+0xa9/0x480 kernel/time/timer.c:806
+        sock_init_data+0xe1/0xdc0 net/core/sock.c:2696
+        bpf_prog_test_run_skb+0x255/0xc40 net/bpf/test_run.c:144
+        bpf_prog_test_run+0x130/0x1a0 kernel/bpf/syscall.c:1790
+        __do_sys_bpf kernel/bpf/syscall.c:2427 [inline]
+        __se_sys_bpf kernel/bpf/syscall.c:2371 [inline]
+        __x64_sys_bpf+0x3d8/0x510 kernel/bpf/syscall.c:2371
+        do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+other info that might help us debug this:
+
+Chain exists of:
+   (console_sem).lock --> &rq->lock --> &obj_hash[i].lock
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(&obj_hash[i].lock);
+                                lock(&rq->lock);
+                                lock(&obj_hash[i].lock);
+   lock((console_sem).lock);
+
+  *** DEADLOCK ***
+
+1 lock held by syz-executor740/5594:
+  #0: 00000000505ead1b (&obj_hash[i].lock){-.-.}, at:  
+__debug_object_init+0x127/0x1290 lib/debugobjects.c:384
+
+stack backtrace:
+CPU: 0 PID: 5594 Comm: syz-executor740 Not tainted  
+4.19.0-rc8-next-20181019+ #98
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  print_circular_bug.isra.35.cold.54+0x1bd/0x27d  
+kernel/locking/lockdep.c:1221
+  check_prev_add kernel/locking/lockdep.c:1863 [inline]
+  check_prevs_add kernel/locking/lockdep.c:1976 [inline]
+  validate_chain kernel/locking/lockdep.c:2347 [inline]
+  __lock_acquire+0x3399/0x4c20 kernel/locking/lockdep.c:3341
+  lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
+  __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
+  _raw_spin_lock_irqsave+0x99/0xd0 kernel/locking/spinlock.c:152
+  down_trylock+0x13/0x70 kernel/locking/semaphore.c:136
+  __down_trylock_console_sem+0xae/0x1f0 kernel/printk/printk.c:219
+  console_trylock+0x15/0xa0 kernel/printk/printk.c:2247
+  console_trylock_spinning kernel/printk/printk.c:1653 [inline]
+  vprintk_emit+0x372/0x990 kernel/printk/printk.c:1921
+  vprintk_default+0x28/0x30 kernel/printk/printk.c:1964
+  vprintk_func+0x7e/0x181 kernel/printk/printk_safe.c:398
+  printk+0xa7/0xcf kernel/printk/printk.c:1997
+  debug_object_is_on_stack lib/debugobjects.c:363 [inline]
+  __debug_object_init.cold.14+0x4a/0xdf lib/debugobjects.c:395
+  debug_object_init+0x16/0x20 lib/debugobjects.c:432
+  debug_timer_init kernel/time/timer.c:704 [inline]
+  debug_init kernel/time/timer.c:757 [inline]
+  init_timer_key+0xa9/0x480 kernel/time/timer.c:806
+  sock_init_data+0xe1/0xdc0 net/core/sock.c:2696
+  bpf_prog_test_run_skb+0x255/0xc40 net/bpf/test_run.c:144
+  bpf_prog_test_run+0x130/0x1a0 kernel/bpf/syscall.c:1790
+  __do_sys_bpf kernel/bpf/syscall.c:2427 [inline]
+  __se_sys_bpf kernel/bpf/syscall.c:2371 [inline]
+  __x64_sys_bpf+0x3d8/0x510 kernel/bpf/syscall.c:2371
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x440259
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007ffc212cf818 EFLAGS: 00000213 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440259
+RDX: 0000000000000028 RSI: 0000000020000080 RDI: 000000000000000a
+RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
+R10: 0000000000000000 R11: 0000000000000213 R12: 0000000000401ae0
+R13: 0000000000401b70 R14: 0000000000000000 R15: 0000000000000000
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
 
-If you use either GCC 4.6 or 4.7,
-$(call cc-option, -Og) is evaluated to empty.
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-It means no optimization flag is given to the compiler, then
-the build fails.
-
-I'd like to suggest to change as follows:
-
-
-
-
-diff --git a/Makefile b/Makefile
-index 122ab74..9af3dc4 100644
---- a/Makefile
-+++ b/Makefile
-@@ -663,7 +663,7 @@ KBUILD_CFLAGS       += $(call cc-disable-warning,
-format-overflow)
- KBUILD_CFLAGS  += $(call cc-disable-warning, int-in-bool-context)
-
- ifdef CONFIG_CC_OPTIMIZE_FOR_DEBUGGING
--KBUILD_CFLAGS  += $(call cc-option, -Og)
-+KBUILD_CFLAGS  += -Og
- KBUILD_CFLAGS  += $(call cc-disable-warning,maybe-uninitialized,)
- else
- ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
-diff --git a/init/Kconfig b/init/Kconfig
-index b01c7c6..a0424dc 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1083,6 +1083,7 @@ config CC_OPTIMIZE_FOR_SIZE
-
- config CC_OPTIMIZE_FOR_DEBUGGING
-        bool "Optimize for better debugging experience (-Og)"
-+       depends on $(cc-option,-Og)
-        select NO_AUTO_INLINE
-        help
-          This will apply GCC '-Og' optimization level which is supported
-
-
-
-
-
-If -Og is unsupported by the compiler, this is hidden from the Kconfig menu.
-
-
-
-Also, in order to fix a warning from 'make tiny.config'
-could you add the following change?
-
-
-
-diff --git a/kernel/configs/tiny.config b/kernel/configs/tiny.config
-index 7fa0c4a..599ea86 100644
---- a/kernel/configs/tiny.config
-+++ b/kernel/configs/tiny.config
-@@ -1,5 +1,6 @@
- # CONFIG_CC_OPTIMIZE_FOR_PERFORMANCE is not set
- CONFIG_CC_OPTIMIZE_FOR_SIZE=y
-+# CONFIG_CC_OPTIMIZE_FOR_DEBUGGING is not set
- # CONFIG_KERNEL_GZIP is not set
- # CONFIG_KERNEL_BZIP2 is not set
- # CONFIG_KERNEL_LZMA is not set
-
-
-
-
-
-
-
-> +KBUILD_CFLAGS  += $(call cc-disable-warning,maybe-uninitialized,)
-> +else
->  ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
->  KBUILD_CFLAGS  += $(call cc-option,-Oz,-Os)
->  KBUILD_CFLAGS  += $(call cc-disable-warning,maybe-uninitialized,)
-> @@ -667,6 +671,7 @@ else
->  KBUILD_CFLAGS   += -O2
->  endif
->  endif
-> +endif
->
->  KBUILD_CFLAGS += $(call cc-ifversion, -lt, 0409, \
->                         $(call cc-disable-warning,maybe-uninitialized,))
-> diff --git a/include/linux/compiler-gcc.h b/include/linux/compiler-gcc.h
-> index 4d36b27214fd..2a76f7c64b54 100644
-> --- a/include/linux/compiler-gcc.h
-> +++ b/include/linux/compiler-gcc.h
-> @@ -85,7 +85,7 @@
->
->  #define __compiletime_object_size(obj) __builtin_object_size(obj, 0)
->
-> -#ifndef __CHECKER__
-> +#if !defined(__CHECKER__) && !defined(CONFIG_CC_OPTIMIZE_FOR_DEBUGGING)
->  #define __compiletime_warning(message) __attribute__((warning(message)))
->  #define __compiletime_error(message) __attribute__((error(message)))
->
-> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
-> index 681d866efb1e..9385c62e9f00 100644
-> --- a/include/linux/compiler.h
-> +++ b/include/linux/compiler.h
-> @@ -320,7 +320,7 @@ static inline void *offset_to_ptr(const int *off)
->   * sparse see a constant array size without breaking compiletime_assert on old
->   * versions of GCC (e.g. 4.2.4), so hide the array from sparse altogether.
->   */
-> -# ifndef __CHECKER__
-> +# if !defined(__CHECKER__) && !defined(CONFIG_CC_OPTIMIZE_FOR_DEBUGGING)
->  #  define __compiletime_error_fallback(condition) \
->         do { ((void)sizeof(char[1 - 2 * condition])); } while (0)
->  # endif
-> diff --git a/init/Kconfig b/init/Kconfig
-> index 1e234e2f1cba..b01c7c654570 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -1081,6 +1081,25 @@ config CC_OPTIMIZE_FOR_SIZE
->
->           If unsure, say N.
->
-> +config CC_OPTIMIZE_FOR_DEBUGGING
-> +       bool "Optimize for better debugging experience (-Og)"
-> +       select NO_AUTO_INLINE
-> +       help
-> +         This will apply GCC '-Og' optimization level which is supported
-> +         since GCC 4.8. This optimization level offers a reasonable level
-> +         of optimization while maintaining fast compilation and a good
-> +         debugging experience. It is similar to '-O1' while preferring to
-> +         keep debug ability over runtime speed. The overall performance
-> +         will drop a bit (~6%).
-> +
-> +         Use only if you want to debug the kernel, especially if you want
-> +         to have better kernel debugging experience with gdb facilities
-> +         like kgdb or qemu. If enabling this option breaks your kernel,
-> +         you should either disable this or find a fix (mostly in the arch
-> +         code).
-> +
-> +         If unsure, select N.
-> +
->  endchoice
->
->  config HAVE_LD_DEAD_CODE_DATA_ELIMINATION
-> --
-> 2.17.1
->
-
-
--- 
-Best Regards
-Masahiro Yamada
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
