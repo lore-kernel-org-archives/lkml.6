@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE84CC6786F
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 22:20:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 239F4ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 22:20:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A80E20843
+	by mail.kernel.org (Postfix) with ESMTP id DB66E2064C
 	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 22:20:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=steffenvogel.de header.i=@steffenvogel.de header.b="aW0bFvaN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A80E20843
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=steffenvogel.de header.i=@steffenvogel.de header.b="crTxnUns"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB66E2064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=steffenvogel.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727799AbeJ2HGC (ORCPT
+        id S1728005AbeJ2HGD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 03:06:02 -0400
-Received: from nag.0l.de ([207.154.252.120]:33464 "EHLO nag.0l.de"
+        Mon, 29 Oct 2018 03:06:03 -0400
+Received: from nag.0l.de ([207.154.252.120]:33480 "EHLO nag.0l.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727251AbeJ2HGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 03:06:01 -0400
+        id S1725841AbeJ2HGC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 03:06:02 -0400
 From:   Steffen Vogel <post@steffenvogel.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=steffenvogel.de;
         s=2017; t=1540764601; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:mime-version:
          content-type:content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=PAgujbtqO4TqrpyUG1Gx0jiGTE50eJZ4PAdukjYCckQ=;
-        b=aW0bFvaNFhZFIhyQtdS1RfBzPozyuYC1bz5OAfTtVBvhklQTe2Cj7P7RKK+IP4o0AYrELP
-        1s1VwA49yMsTiNKBYF2hoTzthZtcHt2GQ3k01peJQdg3Gjha0GVIMUitBeNHmAuXEf8427
-        lhOp3TfIXicMMrVDA48rGXOaWOarhqzcKyyW8VhvCWZMwsh1cPk2d3P53XquQlxYSAT7FU
-        BfKQUNcKjN8QsAwGSYLvlRemOJ84DcBw5hY78SvRI85uYr+K4dYMr5rYEHXCpZITTBohqu
-        3q5k9JSqh6B1j+1/QNJXMDM0fKVpJgUqLe3DNXsm0/yarUNL9LTeHLc41UvFJg==
+        bh=aUlh6ptyzuVQTpQPSQ0uAv0fx0Pk/HrpjD7cdK3uirA=;
+        b=crTxnUnsSsrm8P4IJ7MLlQNv5VcxTiBeJaX6f8IsZjpKYC1745rfJ+ElEFIIptDhQKw5fC
+        feZajjWcbVI8I/S2oLE4kz9aZdaFrDXAtmxF/lQXDn95if1hgnE/QLjYny3kQv3UM0j3kt
+        Hew5aLETJTB3Aq7/qkuP8LXCE46/n22Py2NgSH4Q4TOD96mDqZOjw65oGtDdeEXLfo0XKR
+        xm5bCWEF7DXFXOMAYfU9LcLoZoACaHOtmlAOB4v7Fyfy1EUn/dsxNHSqK4M5ng5NIJQZDz
+        4+bLf224lgGgPxl4iy0+1WZC9tig81iI8jNxCy0B6bNGdNvEExeEWIiewoJx4w==
 To:     linux-kernel@vger.kernel.org
 Cc:     Evgeniy Polyakov <zbr@ioremap.net>,
         Steffen Vogel <post@steffenvogel.de>
-Subject: [PATCH 4/9] w1: cleanup whitespaces according to coding style document
-Date:   Sun, 28 Oct 2018 23:09:23 +0100
-Message-Id: <20181028220927.56227-5-post@steffenvogel.de>
+Subject: [PATCH 3/9] w1: add newlines after declarations
+Date:   Sun, 28 Oct 2018 23:09:22 +0100
+Message-Id: <20181028220927.56227-4-post@steffenvogel.de>
 In-Reply-To: <20181028220927.56227-1-post@steffenvogel.de>
 References: <20181028220927.56227-1-post@steffenvogel.de>
 MIME-Version: 1.0
@@ -51,15 +51,15 @@ ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=steffenvogel.de;
          message-id:message-id:to:to:cc:cc:mime-version:mime-version:
          content-type:content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=PAgujbtqO4TqrpyUG1Gx0jiGTE50eJZ4PAdukjYCckQ=;
-        b=Nin/dZPOSbtZNYxw3uVXlvkrrrb5jaAaQVhAVVaJ7D0wn44NaOFFGoS2UICBYjY0oquREv
-        5weNlhkplWKDbrogrqAIhFhYn2Y5nloW8Tw3GM0+OQ69NeFNAW24phvk98nZ6hJeR+DnP2
-        K6+mHIkrngD/A3WxiizEqoNxrKX+UKxK9eMvBnJSjl4gGyG9Vjs2sSZ82C/VQvejh9Mv6v
-        d7wOBFjZSVbg1K+Zw5lihi7xjq5KMot1ay5mbxC5aljnftLpT5Ki5nOzw6FZ7aSfUYor5y
-        BUInbOE02w4F8Uy3/PvmgKRnfM2uh75cVmV5IEmOmcRYPtsueXszg+MS8o8U/A==
+        bh=aUlh6ptyzuVQTpQPSQ0uAv0fx0Pk/HrpjD7cdK3uirA=;
+        b=qZ1DzV2eK4DLpIbQgqQW09Qlx4xyghELo0gIH00VSNQ1+I6dDh0zufCEjko8l6YCd/8Io/
+        /skLhy05zKejJoG4VoRzMsEKeuc/zlBr3qPqIrVBzE851CYguddfW2WjpvueoEXPv35vg7
+        4QrQSaFR3X//16F4YtiQaskqamvjwV0nzFBgeb34FOUJFy3bg18voeG3M9hIdFvGTlVevx
+        3/eh2QCe7ufPW4OsNUmWok1UwzzmmVyVoIVmaAiVD6z4zNNTbEAU96X1ctT9Ruijia+LD7
+        WIsZcheEtIpcrXvlrpf27hLKfJXXarMAzqXPIq+jKAG/JICZg+kC3zSpLIeRSQ==
 ARC-Seal: i=1; s=2017; d=steffenvogel.de; t=1540764601; a=rsa-sha256;
         cv=none;
-        b=v6tSyRCyRBxCmpufmurh+EbDy1NKSHdorASWOghKfNhseAuX5lHpgS6RfDw0SWkxiOd1HQ5Q8L6tSRfqrJDISGXqqQQCppxss8/PIkTmKaVnlD2s1iwIEF/RgMftCQ5ULu6s/3yyyb+jRau4NbaCqirCHjTGd0ezXdV/ZcnVgsZ688nLTXlcNlqo9+2xEHsXAMaZEv19Fr12/gM3nzuvxMRWsLpogTIvQ2bmof0rSPMf1b2nDSmtPEB4J6CDi5/kH6k9yWHbjj29HDR5e2x4sFuPXFLLBFPlVStiVy1PTunXLixzYfm0lSmAjioyxpiyRDmqEknWMxUh3MlMuv2M+g==
+        b=IpbXSAlHf5WtTfQEg6xjpdco2GkpgLW7wSlaItX/2PR5wlQPoY5d8/kl6h+fgtESxJGz0IK9puOugQ2C9YfG0pSR2ececcaDssZ++iQpf2eRPDDGPTCDa0XU6l8aVBlddGLZFO2n3X0yEFsfalShVMh/oRp5vxZYxOM65p1PyyTe7K5lH6ljZRZeAxk8jiefz5KtNXmHn8CQC+0HVlptwJOgOzlFtd8OKvlaJd5lpcOJJEnERvdq94oBTwWchvC6CCRVh+1FQ6tTQRWf+PrOSJHVpduvcXr9SUi1393d1txM3vaKAmUyiMqcTm4YkI2VT3hFGmPO4GmFz7dsYD5Upg==
 ARC-Authentication-Results: i=1;
         ORIGINATING;
         auth=pass smtp.auth=stv0g@0l.de smtp.mailfrom=post@steffenvogel.de
@@ -70,183 +70,240 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These changes fix several warnings emitted by the checkpatch tool.
+This satisfies a checkpatch warning
 
 Signed-off-by: Steffen Vogel <post@steffenvogel.de>
 ---
- drivers/w1/w1.c         | 20 +++++++++-----------
- drivers/w1/w1_family.c  |  2 +-
- drivers/w1/w1_io.c      | 17 +++++++++--------
- drivers/w1/w1_netlink.c |  2 +-
- 4 files changed, 20 insertions(+), 21 deletions(-)
+ drivers/w1/w1.c         | 23 +++++++++++++++++++++++
+ drivers/w1/w1_netlink.c |  7 +++++++
+ 2 files changed, 30 insertions(+)
 
 diff --git a/drivers/w1/w1.c b/drivers/w1/w1.c
-index 812186ce35d6..f64da16dbec9 100644
+index bd95dfe4041d..812186ce35d6 100644
 --- a/drivers/w1/w1.c
 +++ b/drivers/w1/w1.c
-@@ -775,7 +775,7 @@ int w1_attach_slave_device(struct w1_master *dev, struct w1_reg_num *rn)
- 	spin_lock(&w1_flock);
- 	f = w1_family_registered(rn->family);
- 	if (!f) {
--		f= &w1_default_family;
-+		f = &w1_default_family;
- 		dev_info(&dev->dev, "Family %x for %02x.%012llx.%02x is not registered.\n",
- 			  rn->family, rn->family,
- 			  (unsigned long long)rn->id, rn->crc);
-@@ -997,7 +997,7 @@ void w1_search(struct w1_master *dev, u8 search_type,
+@@ -130,6 +130,7 @@ static ssize_t rw_write(struct file *filp, struct kobject *kobj,
  
- 	desc_bit = 64;
+ out_up:
+ 	mutex_unlock(&sl->master->mutex);
++
+ 	return count;
+ }
  
--	while ( !last_device && (slave_count++ < dev->max_slave_count) ) {
-+	while (!last_device && (slave_count++ < dev->max_slave_count)) {
- 		last_rn = rn;
- 		rn = 0;
+@@ -142,6 +143,7 @@ static ssize_t rw_read(struct file *filp, struct kobject *kobj,
+ 	mutex_lock(&sl->master->mutex);
+ 	w1_read_block(sl->master, buf, count);
+ 	mutex_unlock(&sl->master->mutex);
++
+ 	return count;
+ }
  
-@@ -1045,7 +1045,7 @@ void w1_search(struct w1_master *dev, u8 search_type,
- 			triplet_ret = w1_triplet(dev, search_bit);
+@@ -297,6 +299,7 @@ static ssize_t w1_master_attribute_show_pointer(struct device *dev,
+ 	mutex_lock(&md->mutex);
+ 	count = sprintf(buf, "0x%p\n", md->bus_master);
+ 	mutex_unlock(&md->mutex);
++
+ 	return count;
+ }
  
- 			/* quit if no device responded */
--			if ( (triplet_ret & 0x03) == 0x03 )
-+			if ((triplet_ret & 0x03) == 0x03)
- 				break;
+@@ -304,7 +307,9 @@ static ssize_t w1_master_attribute_show_timeout(struct device *dev,
+ 	struct device_attribute *attr, char *buf)
+ {
+ 	ssize_t count;
++
+ 	count = sprintf(buf, "%d\n", w1_timeout);
++
+ 	return count;
+ }
  
- 			/* If both directions were valid, and we took the 0 path */
-@@ -1064,13 +1064,12 @@ void w1_search(struct w1_master *dev, u8 search_type,
+@@ -312,7 +317,9 @@ static ssize_t w1_master_attribute_show_timeout_us(struct device *dev,
+ 	struct device_attribute *attr, char *buf)
+ {
+ 	ssize_t count;
++
+ 	count = sprintf(buf, "%d\n", w1_timeout_us);
++
+ 	return count;
+ }
+ 
+@@ -369,6 +376,7 @@ static ssize_t w1_master_attribute_show_slave_count(struct device *dev,
+ 	mutex_lock(&md->mutex);
+ 	count = sprintf(buf, "%d\n", md->slave_count);
+ 	mutex_unlock(&md->mutex);
++
+ 	return count;
+ }
+ 
+@@ -399,8 +407,10 @@ static ssize_t w1_master_attribute_show_add(struct device *dev,
+ 	struct device_attribute *attr, char *buf)
+ {
+ 	int c = PAGE_SIZE;
++
+ 	c -= snprintf(buf+PAGE_SIZE - c, c,
+ 		"write device id xx-xxxxxxxxxxxx to add slave\n");
++
+ 	return PAGE_SIZE - c;
+ }
+ 
+@@ -449,6 +459,7 @@ struct w1_slave *w1_slave_search_device(struct w1_master *dev,
+ 	struct w1_reg_num *rn)
+ {
+ 	struct w1_slave *sl;
++
+ 	mutex_lock(&dev->list_mutex);
+ 	list_for_each_entry(sl, &dev->slist, w1_slave_entry) {
+ 		if (sl->reg_num.family == rn->family &&
+@@ -459,6 +470,7 @@ struct w1_slave *w1_slave_search_device(struct w1_master *dev,
  		}
- 		mutex_unlock(&dev->bus_mutex);
- 
--		if ( (triplet_ret & 0x03) != 0x03 ) {
-+		if ((triplet_ret & 0x03) != 0x03) {
- 			if ((desc_bit == last_zero) || (last_zero < 0)) {
- 				last_device = 1;
- 				dev->search_id = 0;
--			} else {
-+			} else
- 				dev->search_id = rn;
--			}
- 			desc_bit = last_zero;
- 			cb(dev, rn);
- 		}
-@@ -1109,8 +1108,7 @@ void w1_search_process_cb(struct w1_master *dev, u8 search_type,
- 			mutex_unlock(&dev->list_mutex);
- 			w1_slave_detach(sl);
- 			mutex_lock(&dev->list_mutex);
--		}
--		else if (test_bit(W1_SLAVE_ACTIVE, &sl->flags))
-+		} else if (test_bit(W1_SLAVE_ACTIVE, &sl->flags))
- 			sl->ttl = dev->slave_ttl;
  	}
  	mutex_unlock(&dev->list_mutex);
-@@ -1142,7 +1140,8 @@ int w1_process_callbacks(struct w1_master *dev)
- 		list_for_each_entry_safe(async_cmd, async_n, &dev->async_list,
- 			async_entry) {
- 			/* drop the lock, if it is a search it can take a long
--			 * time */
-+			 * time
-+			 */
- 			mutex_unlock(&dev->list_mutex);
- 			async_cmd->cb(dev, async_cmd);
- 			ret = 1;
-@@ -1199,8 +1198,7 @@ int w1_process(void *data)
- 			if (!jremain)
- 				jremain = jtime;
- 			jremain = schedule_timeout(jremain);
--		}
--		else
-+		} else
- 			schedule();
++
+ 	return NULL;
+ }
+ 
+@@ -495,8 +507,10 @@ static ssize_t w1_master_attribute_show_remove(struct device *dev,
+ 	struct device_attribute *attr, char *buf)
+ {
+ 	int c = PAGE_SIZE;
++
+ 	c -= snprintf(buf+PAGE_SIZE - c, c,
+ 		"write device id xx-xxxxxxxxxxxx to remove slave\n");
++
+ 	return PAGE_SIZE - c;
+ }
+ 
+@@ -674,6 +688,7 @@ static int w1_family_notify(unsigned long action, struct w1_slave *sl)
+ 			sysfs_remove_groups(&sl->dev.kobj, fops->groups);
+ 		break;
+ 	}
++
+ 	return 0;
+ }
+ 
+@@ -709,6 +724,7 @@ static int __w1_attach_slave_device(struct w1_slave *sl)
+ 			"Device registration [%s] failed. err=%d\n",
+ 			dev_name(&sl->dev), err);
+ 		put_device(&sl->dev);
++
+ 		return err;
+ 	}
+ 	w1_family_notify(BUS_NOTIFY_ADD_DEVICE, sl);
+@@ -777,6 +793,7 @@ int w1_attach_slave_device(struct w1_master *dev, struct w1_reg_num *rn)
+ 		w1_family_put(sl->family);
+ 		atomic_dec(&sl->master->refcnt);
+ 		kfree(sl);
++
+ 		return err;
  	}
  
-diff --git a/drivers/w1/w1_family.c b/drivers/w1/w1_family.c
-index ee90a6733472..5abbeb86de6e 100644
---- a/drivers/w1/w1_family.c
-+++ b/drivers/w1/w1_family.c
-@@ -83,7 +83,7 @@ EXPORT_SYMBOL(w1_unregister_family);
- /*
-  * Should be called under w1_flock held.
-  */
--struct w1_family * w1_family_registered(u8 fid)
-+struct w1_family *w1_family_registered(u8 fid)
+@@ -793,6 +810,7 @@ int w1_unref_slave(struct w1_slave *sl)
  {
- 	struct list_head *ent, *n;
- 	struct w1_family *f = NULL;
-diff --git a/drivers/w1/w1_io.c b/drivers/w1/w1_io.c
-index 2626a61852e9..283c89708c7c 100644
---- a/drivers/w1/w1_io.c
-+++ b/drivers/w1/w1_io.c
-@@ -140,13 +140,13 @@ void w1_write_8(struct w1_master *dev, u8 byte)
- 	if (dev->bus_master->write_byte) {
- 		w1_pre_write(dev);
- 		dev->bus_master->write_byte(dev->bus_master->data, byte);
--	}
--	else
-+	} else {
- 		for (i = 0; i < 8; ++i) {
- 			if (i == 7)
- 				w1_pre_write(dev);
- 			w1_touch_bit(dev, (byte >> i) & 0x1);
+ 	struct w1_master *dev = sl->master;
+ 	int refcnt;
++
+ 	mutex_lock(&dev->list_mutex);
+ 	refcnt = atomic_sub_return(1, &sl->refcnt);
+ 	if (refcnt == 0) {
+@@ -817,6 +835,7 @@ int w1_unref_slave(struct w1_slave *sl)
+ 	}
+ 	atomic_dec(&dev->refcnt);
+ 	mutex_unlock(&dev->list_mutex);
++
+ 	return refcnt;
+ }
+ 
+@@ -824,6 +843,7 @@ int w1_slave_detach(struct w1_slave *sl)
+ {
+ 	/* Only detach a slave once as it decreases the refcnt each time. */
+ 	int destroy_now;
++
+ 	mutex_lock(&sl->master->list_mutex);
+ 	destroy_now = !test_bit(W1_SLAVE_DETACH, &sl->flags);
+ 	set_bit(W1_SLAVE_DETACH, &sl->flags);
+@@ -831,6 +851,7 @@ int w1_slave_detach(struct w1_slave *sl)
+ 
+ 	if (destroy_now)
+ 		destroy_now = !w1_unref_slave(sl);
++
+ 	return destroy_now ? 0 : -EBUSY;
+ }
+ 
+@@ -996,6 +1017,7 @@ void w1_search(struct w1_master *dev, u8 search_type,
+ 		/* Do fast search on single slave bus */
+ 		if (dev->max_slave_count == 1) {
+ 			int rv;
++
+ 			w1_write_8(dev, W1_READ_ROM);
+ 			rv = w1_read_block(dev, (u8 *)&rn, 8);
+ 			mutex_unlock(&dev->bus_mutex);
+@@ -1127,6 +1149,7 @@ int w1_process_callbacks(struct w1_master *dev)
+ 			mutex_lock(&dev->list_mutex);
  		}
-+	}
- 	w1_post_write(dev);
+ 	}
++
+ 	return ret;
  }
- EXPORT_SYMBOL_GPL(w1_write_8);
-@@ -236,9 +236,10 @@ u8 w1_read_8(struct w1_master *dev)
  
- 	if (dev->bus_master->read_byte)
- 		res = dev->bus_master->read_byte(dev->bus_master->data);
--	else
-+	else {
- 		for (i = 0; i < 8; ++i)
--			res |= (w1_touch_bit(dev,1) << i);
-+			res |= (w1_touch_bit(dev, 1) << i);
-+	}
- 
- 	return res;
- }
-@@ -257,10 +258,10 @@ void w1_write_block(struct w1_master *dev, const u8 *buf, int len)
- 	if (dev->bus_master->write_block) {
- 		w1_pre_write(dev);
- 		dev->bus_master->write_block(dev->bus_master->data, buf, len);
--	}
--	else
-+	} else {
- 		for (i = 0; i < len; ++i)
- 			w1_write_8(dev, buf[i]); /* calls w1_pre_write */
-+	}
- 	w1_post_write(dev);
- }
- EXPORT_SYMBOL_GPL(w1_write_block);
-@@ -358,7 +359,7 @@ int w1_reset_bus(struct w1_master *dev)
- }
- EXPORT_SYMBOL_GPL(w1_reset_bus);
- 
--u8 w1_calc_crc8(u8 * data, int len)
-+u8 w1_calc_crc8(u8 *data, int len)
- {
- 	u8 crc = 0;
- 
-@@ -400,7 +401,7 @@ int w1_reset_select_slave(struct w1_slave *sl)
- 		w1_write_8(sl->master, W1_SKIP_ROM);
- 	else {
- 		u8 match[9] = {W1_MATCH_ROM, };
--		u64 rn = le64_to_cpu(*((u64*)&sl->reg_num));
-+		u64 rn = le64_to_cpu(*((u64 *)&sl->reg_num));
- 
- 		memcpy(&match[1], &rn, 8);
- 		w1_write_block(sl->master, match, 9);
 diff --git a/drivers/w1/w1_netlink.c b/drivers/w1/w1_netlink.c
-index ff858bf4a94d..b0c7abddd091 100644
+index 54a82bf69566..ff858bf4a94d 100644
 --- a/drivers/w1/w1_netlink.c
 +++ b/drivers/w1/w1_netlink.c
-@@ -606,7 +606,7 @@ static void w1_cn_callback(struct cn_msg *cn, struct netlink_skb_parms *nsp)
- 		 * space for replies which is the original message size plus
- 		 * space for any list slave data and status messages
- 		 * cn->len doesn't include itself which is part of the block
--		 * */
-+		 */
- 		size =  /* block + original message */
- 			sizeof(struct w1_cb_block) + sizeof(*cn) + cn->len +
- 			/* space for nodes */
+@@ -63,6 +63,7 @@ static void w1_unref_block(struct w1_cb_block *block)
+ {
+ 	if (atomic_sub_return(1, &block->refcnt) == 0) {
+ 		u16 len = w1_reply_len(block);
++
+ 		if (len) {
+ 			cn_netlink_send_mult(block->first_cn, len,
+ 				block->portid, 0, GFP_KERNEL);
+@@ -137,6 +138,7 @@ static void w1_netlink_queue_cmd(struct w1_cb_block *block,
+ 	struct w1_netlink_cmd *cmd)
+ {
+ 	u32 space;
++
+ 	w1_reply_make_space(block, sizeof(struct cn_msg) +
+ 		sizeof(struct w1_netlink_msg) + sizeof(*cmd) + cmd->len);
+ 
+@@ -165,6 +167,7 @@ static void w1_netlink_queue_status(struct w1_cb_block *block,
+ 	int error)
+ {
+ 	u16 space = sizeof(struct cn_msg) + sizeof(*req_msg) + sizeof(*req_cmd);
++
+ 	w1_reply_make_space(block, space);
+ 	w1_netlink_setup_msg(block, block->request_cn.ack);
+ 
+@@ -276,6 +279,7 @@ static int w1_get_slaves(struct w1_master *dev, struct w1_netlink_cmd *req_cmd)
+ 
+ 	if (req_cmd->cmd == W1_CMD_LIST_SLAVES) {
+ 		u64 rn;
++
+ 		mutex_lock(&dev->list_mutex);
+ 		list_for_each_entry(sl, &dev->slist, w1_slave_entry) {
+ 			memcpy(&rn, &sl->reg_num, sizeof(rn));
+@@ -508,6 +512,7 @@ static void w1_list_count_cmds(struct w1_netlink_msg *msg, int *cmd_count,
+ 	u16 mlen = msg->len;
+ 	u16 len;
+ 	int slave_list = 0;
++
+ 	while (mlen) {
+ 		if (cmd->len + sizeof(struct w1_netlink_cmd) > mlen)
+ 			break;
+@@ -526,6 +531,7 @@ static void w1_list_count_cmds(struct w1_netlink_msg *msg, int *cmd_count,
+ 
+ 	if (slave_list) {
+ 		struct w1_master *dev = w1_search_master_id(msg->id.mst.id);
++
+ 		if (dev) {
+ 			/* Bytes, and likely an overstimate, and if it isn't
+ 			 * the results can still be split between packets.
+@@ -586,6 +592,7 @@ static void w1_cn_callback(struct cn_msg *cn, struct netlink_skb_parms *nsp)
+ 	if (node_count) {
+ 		int size;
+ 		int reply_size = sizeof(*cn) + cn->len + slave_len;
++
+ 		if (cn->flags & W1_CN_BUNDLE) {
+ 			/* bundling duplicats some of the messages */
+ 			reply_size += 2 * cmd_count * (sizeof(struct cn_msg) +
 -- 
 2.11.0
 
