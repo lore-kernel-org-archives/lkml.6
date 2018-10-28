@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B17BECDE44
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A669AECDE47
 	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 07:31:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FAEA20843
+	by mail.kernel.org (Postfix) with ESMTP id 77BB820873
 	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 07:31:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FAEA20843
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77BB820873
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728386AbeJ1QP3 (ORCPT
+        id S1728410AbeJ1QPa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 12:15:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57022 "EHLO mail.kernel.org"
+        Sun, 28 Oct 2018 12:15:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727945AbeJ1QPZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 12:15:25 -0400
+        id S1726503AbeJ1QPX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 28 Oct 2018 12:15:23 -0400
 Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F3CC720843;
-        Sun, 28 Oct 2018 07:31:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 67D5E20870;
+        Sun, 28 Oct 2018 07:31:34 +0000 (UTC)
 Received: from rostedt by gandalf.local.home with local (Exim 4.91)
         (envelope-from <rostedt@goodmis.org>)
-        id 1gGfXr-00088s-Ru; Sun, 28 Oct 2018 03:31:35 -0400
-Message-Id: <20181028073135.762987515@goodmis.org>
+        id 1gGfXp-00081O-GQ; Sun, 28 Oct 2018 03:31:33 -0400
+Message-Id: <20181028073133.412367383@goodmis.org>
 User-Agent: quilt/0.65
-Date:   Sun, 28 Oct 2018 03:30:03 -0400
+Date:   Sun, 28 Oct 2018 03:29:49 -0400
 From:   Steven Rostedt <rostedt@goodmis.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Ingo Molnar <mingo@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Masami Hiramatsu <mhiramat@kernel.org>
-Subject: [for-next][PATCH 15/18] tracing/kprobes: Allow kprobe-events to record module symbol
+Subject: [for-next][PATCH 01/18] tracing: probeevent: Cleanup print argument functions
 References: <20181028072948.693267247@goodmis.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -49,194 +49,180 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Masami Hiramatsu <mhiramat@kernel.org>
 
-Allow kprobe-events to record module symbols.
+Cleanup the print-argument function to decouple it into
+print-name and print-value, so that it can support more
+flexible expression, like array type.
 
-Since data symbols in a non-loaded module doesn't exist, it fails to
-define such symbol as an argument of kprobe-event. But if the kprobe
-event is defined on that module, we can defer to resolve the symbol
-address.
-
-Note that if given symbol is not found, the event is kept unavailable.
-User can enable it but the event is not recorded.
-
-Link: http://lkml.kernel.org/r/153547312336.26502.11432902826345374463.stgit@devbox
+Link: http://lkml.kernel.org/r/152465859635.26224.13452846788717102315.stgit@devbox
 
 Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 ---
- kernel/trace/trace_kprobe.c | 12 ++++++-
- kernel/trace/trace_probe.c  | 62 ++++++++++++++++++++++++++++++++-----
- kernel/trace/trace_probe.h  |  4 ++-
- 3 files changed, 68 insertions(+), 10 deletions(-)
+ kernel/trace/trace_kprobe.c | 20 ++++++--------------
+ kernel/trace/trace_probe.c  | 12 +++++-------
+ kernel/trace/trace_probe.h  | 19 ++++++++++++++++---
+ kernel/trace/trace_uprobe.c |  9 ++-------
+ 4 files changed, 29 insertions(+), 31 deletions(-)
 
 diff --git a/kernel/trace/trace_kprobe.c b/kernel/trace/trace_kprobe.c
-index 4727a13824f0..fec67188c4d2 100644
+index 508396edc56a..6326c71181aa 100644
 --- a/kernel/trace/trace_kprobe.c
 +++ b/kernel/trace/trace_kprobe.c
-@@ -366,7 +366,7 @@ static bool within_notrace_func(struct trace_kprobe *tk)
- /* Internal register function - just handle k*probes and flags */
- static int __register_trace_kprobe(struct trace_kprobe *tk)
- {
--	int ret;
-+	int i, ret;
+@@ -1136,8 +1136,6 @@ print_kprobe_event(struct trace_iterator *iter, int flags,
+ 	struct kprobe_trace_entry_head *field;
+ 	struct trace_seq *s = &iter->seq;
+ 	struct trace_probe *tp;
+-	u8 *data;
+-	int i;
  
- 	if (trace_probe_is_registered(&tk->tp))
- 		return -EINVAL;
-@@ -377,6 +377,12 @@ static int __register_trace_kprobe(struct trace_kprobe *tk)
- 		return -EINVAL;
- 	}
+ 	field = (struct kprobe_trace_entry_head *)iter->ent;
+ 	tp = container_of(event, struct trace_probe, call.event);
+@@ -1149,11 +1147,9 @@ print_kprobe_event(struct trace_iterator *iter, int flags,
  
-+	for (i = 0; i < tk->tp.nr_args; i++) {
-+		ret = traceprobe_update_arg(&tk->tp.args[i]);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	/* Set/clear disabled flag according to tp->flag */
- 	if (trace_probe_is_enabled(&tk->tp))
- 		tk->rp.kp.flags &= ~KPROBE_FLAG_DISABLED;
-@@ -928,6 +934,7 @@ process_fetch_insn(struct fetch_insn *code, struct pt_regs *regs, void *dest,
- {
- 	unsigned long val;
+ 	trace_seq_putc(s, ')');
  
-+retry:
- 	/* 1st stage: get value from context */
- 	switch (code->op) {
- 	case FETCH_OP_REG:
-@@ -953,6 +960,9 @@ process_fetch_insn(struct fetch_insn *code, struct pt_regs *regs, void *dest,
- 		val = regs_get_kernel_argument(regs, code->param);
- 		break;
- #endif
-+	case FETCH_NOP_SYMBOL:	/* Ignore a place holder */
-+		code++;
-+		goto retry;
- 	default:
- 		return -EILSEQ;
- 	}
+-	data = (u8 *)&field[1];
+-	for (i = 0; i < tp->nr_args; i++)
+-		if (!tp->args[i].type->print(s, tp->args[i].name,
+-					     data + tp->args[i].offset, field))
+-			goto out;
++	if (print_probe_args(s, tp->args, tp->nr_args,
++			     (u8 *)&field[1], field) < 0)
++		goto out;
+ 
+ 	trace_seq_putc(s, '\n');
+  out:
+@@ -1167,8 +1163,6 @@ print_kretprobe_event(struct trace_iterator *iter, int flags,
+ 	struct kretprobe_trace_entry_head *field;
+ 	struct trace_seq *s = &iter->seq;
+ 	struct trace_probe *tp;
+-	u8 *data;
+-	int i;
+ 
+ 	field = (struct kretprobe_trace_entry_head *)iter->ent;
+ 	tp = container_of(event, struct trace_probe, call.event);
+@@ -1185,11 +1179,9 @@ print_kretprobe_event(struct trace_iterator *iter, int flags,
+ 
+ 	trace_seq_putc(s, ')');
+ 
+-	data = (u8 *)&field[1];
+-	for (i = 0; i < tp->nr_args; i++)
+-		if (!tp->args[i].type->print(s, tp->args[i].name,
+-					     data + tp->args[i].offset, field))
+-			goto out;
++	if (print_probe_args(s, tp->args, tp->nr_args,
++			     (u8 *)&field[1], field) < 0)
++		goto out;
+ 
+ 	trace_seq_putc(s, '\n');
+ 
 diff --git a/kernel/trace/trace_probe.c b/kernel/trace/trace_probe.c
-index 333cda6d2633..5b3d573b3dcf 100644
+index e99c3ce7aa65..e2c184eaa7db 100644
 --- a/kernel/trace/trace_probe.c
 +++ b/kernel/trace/trace_probe.c
-@@ -251,16 +251,16 @@ parse_probe_arg(char *arg, const struct fetch_type *type,
- 			if (!(flags & TPARG_FL_KERNEL))
- 				return -EINVAL;
+@@ -26,10 +26,9 @@ const char *reserved_field_names[] = {
  
--			ret = traceprobe_split_symbol_offset(arg + 1, &offset);
--			if (ret)
--				break;
-+			/* Preserve symbol for updating */
-+			code->op = FETCH_NOP_SYMBOL;
-+			code->data = kstrdup(arg + 1, GFP_KERNEL);
-+			if (!code->data)
-+				return -ENOMEM;
-+			if (++code == end)
-+				return -E2BIG;
+ /* Printing  in basic type function template */
+ #define DEFINE_BASIC_PRINT_TYPE_FUNC(tname, type, fmt)			\
+-int PRINT_TYPE_FUNC_NAME(tname)(struct trace_seq *s, const char *name,	\
+-				void *data, void *ent)			\
++int PRINT_TYPE_FUNC_NAME(tname)(struct trace_seq *s, void *data, void *ent)\
+ {									\
+-	trace_seq_printf(s, " %s=" fmt, name, *(type *)data);		\
++	trace_seq_printf(s, fmt, *(type *)data);			\
+ 	return !trace_seq_has_overflowed(s);				\
+ }									\
+ const char PRINT_TYPE_FMT_NAME(tname)[] = fmt;				\
+@@ -49,15 +48,14 @@ DEFINE_BASIC_PRINT_TYPE_FUNC(x32, u32, "0x%x")
+ DEFINE_BASIC_PRINT_TYPE_FUNC(x64, u64, "0x%Lx")
  
- 			code->op = FETCH_OP_IMM;
--			code->immediate =
--				(unsigned long)kallsyms_lookup_name(arg + 1);
--			if (!code->immediate)
--				return -ENOENT;
--			code->immediate += offset;
-+			code->immediate = 0;
- 		}
- 		/* These are fetching from memory */
- 		if (++code == end)
-@@ -480,6 +480,11 @@ int traceprobe_parse_probe_arg(char *arg, ssize_t *size,
- 		memcpy(parg->code, tmp, sizeof(*code) * (code - tmp + 1));
- 
- fail:
-+	if (ret) {
-+		for (code = tmp; code < tmp + FETCH_INSN_MAX; code++)
-+			if (code->op == FETCH_NOP_SYMBOL)
-+				kfree(code->data);
-+	}
- 	kfree(tmp);
- 
- 	return ret;
-@@ -504,12 +509,53 @@ int traceprobe_conflict_field_name(const char *name,
- 
- void traceprobe_free_probe_arg(struct probe_arg *arg)
+ /* Print type function for string type */
+-int PRINT_TYPE_FUNC_NAME(string)(struct trace_seq *s, const char *name,
+-				 void *data, void *ent)
++int PRINT_TYPE_FUNC_NAME(string)(struct trace_seq *s, void *data, void *ent)
  {
-+	struct fetch_insn *code = arg->code;
-+
-+	while (code && code->op != FETCH_OP_END) {
-+		if (code->op == FETCH_NOP_SYMBOL)
-+			kfree(code->data);
-+		code++;
-+	}
- 	kfree(arg->code);
- 	kfree(arg->name);
- 	kfree(arg->comm);
- 	kfree(arg->fmt);
+ 	int len = *(u32 *)data >> 16;
+ 
+ 	if (!len)
+-		trace_seq_printf(s, " %s=(fault)", name);
++		trace_seq_puts(s, "(fault)");
+ 	else
+-		trace_seq_printf(s, " %s=\"%s\"", name,
++		trace_seq_printf(s, "\"%s\"",
+ 				 (const char *)get_loc_data(data, ent));
+ 	return !trace_seq_has_overflowed(s);
+ }
+diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
+index 03b10f3201a5..8254a061ac35 100644
+--- a/kernel/trace/trace_probe.h
++++ b/kernel/trace/trace_probe.h
+@@ -82,7 +82,7 @@ static nokprobe_inline void *get_loc_data(u32 *dl, void *ent)
+ /* Data fetch function type */
+ typedef	void (*fetch_func_t)(struct pt_regs *, void *, void *);
+ /* Printing function type */
+-typedef int (*print_type_func_t)(struct trace_seq *, const char *, void *, void *);
++typedef int (*print_type_func_t)(struct trace_seq *, void *, void *);
+ 
+ /* Fetch types */
+ enum {
+@@ -124,8 +124,7 @@ typedef u32 string_size;
+ 
+ /* Printing  in basic type function template */
+ #define DECLARE_BASIC_PRINT_TYPE_FUNC(type)				\
+-int PRINT_TYPE_FUNC_NAME(type)(struct trace_seq *s, const char *name,	\
+-				void *data, void *ent);			\
++int PRINT_TYPE_FUNC_NAME(type)(struct trace_seq *s, void *data, void *ent);\
+ extern const char PRINT_TYPE_FMT_NAME(type)[]
+ 
+ DECLARE_BASIC_PRINT_TYPE_FUNC(u8);
+@@ -403,6 +402,20 @@ store_trace_args(int ent_size, struct trace_probe *tp, struct pt_regs *regs,
+ 	}
  }
  
-+int traceprobe_update_arg(struct probe_arg *arg)
++static inline int
++print_probe_args(struct trace_seq *s, struct probe_arg *args, int nr_args,
++		 u8 *data, void *field)
 +{
-+	struct fetch_insn *code = arg->code;
-+	long offset;
-+	char *tmp;
-+	char c;
-+	int ret = 0;
++	int i;
 +
-+	while (code && code->op != FETCH_OP_END) {
-+		if (code->op == FETCH_NOP_SYMBOL) {
-+			if (code[1].op != FETCH_OP_IMM)
-+				return -EINVAL;
-+
-+			tmp = strpbrk("+-", code->data);
-+			if (tmp)
-+				c = *tmp;
-+			ret = traceprobe_split_symbol_offset(code->data,
-+							     &offset);
-+			if (ret)
-+				return ret;
-+
-+			code[1].immediate =
-+				(unsigned long)kallsyms_lookup_name(code->data);
-+			if (tmp)
-+				*tmp = c;
-+			if (!code[1].immediate)
-+				return -ENOENT;
-+			code[1].immediate += offset;
-+		}
-+		code++;
++	for (i = 0; i < nr_args; i++) {
++		trace_seq_printf(s, " %s=", args[i].name);
++		if (!args[i].type->print(s, data + args[i].offset, field))
++			return -ENOMEM;
 +	}
 +	return 0;
 +}
 +
- /* When len=0, we just calculate the needed length */
- #define LEN_OR_ZERO (len ? len - pos : 0)
- static int __set_print_fmt(struct trace_probe *tp, char *buf, int len,
-diff --git a/kernel/trace/trace_probe.h b/kernel/trace/trace_probe.h
-index 09f62171cc23..974afc1a3e73 100644
---- a/kernel/trace/trace_probe.h
-+++ b/kernel/trace/trace_probe.h
-@@ -100,6 +100,7 @@ enum fetch_op {
- 	// Stage 5 (loop) op
- 	FETCH_OP_LP_ARRAY,	/* Array: .param = loop count */
- 	FETCH_OP_END,
-+	FETCH_NOP_SYMBOL,	/* Unresolved Symbol holder */
- };
+ extern int set_print_fmt(struct trace_probe *tp, bool is_return);
  
- struct fetch_insn {
-@@ -116,6 +117,7 @@ struct fetch_insn {
- 			unsigned char rshift;
- 		};
- 		unsigned long immediate;
-+		void *data;
- 	};
- };
+ #ifdef CONFIG_PERF_EVENTS
+diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+index d09638706fe0..c55753e1079e 100644
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@ -892,7 +892,6 @@ print_uprobe_event(struct trace_iterator *iter, int flags, struct trace_event *e
+ 	struct trace_seq *s = &iter->seq;
+ 	struct trace_uprobe *tu;
+ 	u8 *data;
+-	int i;
  
-@@ -276,7 +278,7 @@ extern int traceprobe_parse_probe_arg(char *arg, ssize_t *size,
- extern int traceprobe_conflict_field_name(const char *name,
- 			       struct probe_arg *args, int narg);
+ 	entry = (struct uprobe_trace_entry_head *)iter->ent;
+ 	tu = container_of(event, struct trace_uprobe, tp.call.event);
+@@ -909,12 +908,8 @@ print_uprobe_event(struct trace_iterator *iter, int flags, struct trace_event *e
+ 		data = DATAOF_TRACE_ENTRY(entry, false);
+ 	}
  
--extern void traceprobe_update_arg(struct probe_arg *arg);
-+extern int traceprobe_update_arg(struct probe_arg *arg);
- extern void traceprobe_free_probe_arg(struct probe_arg *arg);
+-	for (i = 0; i < tu->tp.nr_args; i++) {
+-		struct probe_arg *parg = &tu->tp.args[i];
+-
+-		if (!parg->type->print(s, parg->name, data + parg->offset, entry))
+-			goto out;
+-	}
++	if (print_probe_args(s, tu->tp.args, tu->tp.nr_args, data, entry) < 0)
++		goto out;
  
- extern int traceprobe_split_symbol_offset(char *symbol, long *offset);
+ 	trace_seq_putc(s, '\n');
+ 
 -- 
 2.19.0
 
