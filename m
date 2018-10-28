@@ -2,147 +2,126 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDA9CC6786F
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 12:55:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D124C6786F
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 12:58:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B71E120843
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 12:55:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEB6F20843
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 12:58:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Z7IWfZcP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B71E120843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nltJ8sQe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEB6F20843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727652AbeJ1Vjx (ORCPT
+        id S1727623AbeJ1Vnb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 17:39:53 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:54715 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726548AbeJ1Vjw (ORCPT
+        Sun, 28 Oct 2018 17:43:31 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36376 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727150AbeJ1Vnb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 17:39:52 -0400
-Received: by mail-wm1-f66.google.com with SMTP id r63-v6so5555490wma.4
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 05:55:17 -0700 (PDT)
+        Sun, 28 Oct 2018 17:43:31 -0400
+Received: by mail-lj1-f193.google.com with SMTP id s15-v6so5224872lji.3;
+        Sun, 28 Oct 2018 05:58:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ZkqiSK0foukgf/wyUrP43W1JLOOI7NiMe4dW1YSf01k=;
-        b=Z7IWfZcPcB/PNywoYxW/PWEV03Ypu5mWL0eY1bCC+X3r+BP99BfoGGhcKQA7pl7Q7y
-         /5lVMTeT4PokHF3gUNtwNJsRtm89a5ctfXv9b+U7YyAB+9UWDmYzg9RtgOQbbPpLReRD
-         K/5Y5mEtemcD5PeIvgFTBiCNGzm3R8BBgJhlF8vaBqP7BnXPDpzNDkR7FgCbeCm+Mkt/
-         u7W3Xt3vsfyGtDjUCpDXMADD186INcbV85TSXjIlN9iWsK90Xb2/RCthxxkScwrnFVea
-         b1wqhdPm7AsucPhx4JwhdyvS+CtNlks54LE/eYtEaVc0e0vpUGzfmtBsZI0oUVJbyWmW
-         mmbw==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=xYy1WKAbtC+bLTvu93oFushNxSY5ujZsJKK45wvq15s=;
+        b=nltJ8sQe7yey0wtncJiJiNW5puOcK9q7NVUX5evo5AMUL8W+GKdEibpllA5a4pXXtz
+         SgYZ10+vYAwQQla5dpkd8nH1xVQrO6KvV21SWGWativixq+3vxWHoK0vyfaY8AkpS/p7
+         nnbTp2B6hafke53YhdVWuRR5Jx9FzuSIlXDmVK/nRWi9llEKAfx2kfuoHY7LgVogbmfw
+         8RuUsf8jvAqHjgvq2mdzQRVePkJuR0tU55aYkCHVdf4cdYVOPfA8lfVofRn6y3JeALkw
+         gbktmu91qAflEYUb+bxN79dZQEAdMI4buKmUx/KXlMaeimvsPqE/Idq3nTSX+bthVilA
+         fa4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ZkqiSK0foukgf/wyUrP43W1JLOOI7NiMe4dW1YSf01k=;
-        b=mmZSZVL8pc7OjxQNNSdzfJSPzSXlMIysdo3nFcI6czDGgFCW1vHJKlHDENJgDrhfth
-         ldQlyq3Smhx6foAe46WreyQAKCDff37DRYltR191aQy8A430lh6iDdYSKDoLMsZoXM3y
-         NhGF1TzWGSisF9ZTO/7+LlUSRn4D0g9XJYj2EBwQCVhW3G2IVWJ6bW4Qgmgl21nHT93t
-         NNgUBbWNvJU+n+nkcIDC7utkIoINvyx7TNu5Tugl34fBLmJ/C4t12a0qv5ZUPprVKqAI
-         hcrS+0da24BIA4p6CWDAs421rydPcwbHb3dBt1mMZftXxuU2KBXHVh0m+26y0PWFgwrT
-         wc3w==
-X-Gm-Message-State: AGRZ1gLkiXplJSSQoQLw7IBzUqG2ZZYhr2NKoz0p81ZQKUV3OhSrnaef
-        pmQoEokfhzaPtTRjyhK5dag=
-X-Google-Smtp-Source: AJdET5fNaBy49wFoVlhlhHSMueD4TpIheu+8OV97VsJV+9DxdBtIU+NJ0UVQP41SqmDOxXSw0prkjg==
-X-Received: by 2002:a1c:a794:: with SMTP id q142-v6mr11517090wme.77.1540731316600;
-        Sun, 28 Oct 2018 05:55:16 -0700 (PDT)
-Received: from blackbox.darklights.net (p200300DCD7072200691979D1FB980407.dip0.t-ipconnect.de. [2003:dc:d707:2200:6919:79d1:fb98:407])
-        by smtp.googlemail.com with ESMTPSA id u10-v6sm13759388wrt.59.2018.10.28.05.55.15
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=xYy1WKAbtC+bLTvu93oFushNxSY5ujZsJKK45wvq15s=;
+        b=lncpAu0MsmotO2u+cewAkRSkVdhH5yP+7882eRzH4cmA1+DxcmOtjX672FX3vq7mrQ
+         V6t4NMeedoMJVDUM32PLdzcbuS3bILZPkE7wJE5keUyVUP5PcT9fTeJjpJWJn8OwdqZm
+         C22FZExzFdB7/wJndl9XEqhVHnKC05DSNQnLsEqWgC85VZQXufcOhcaWo7AXJDzoPzNK
+         Q8jICdXchzI/S5wP4yeQVYLXjqmw82uQorrq5Tna0Az8ZCUygACK4law3D39cuN8xTKz
+         OhyaO39mGpDwgfDA09Czi/y+gSdVrrawcXaC95bWheyRA6/ALkfZiMcxXfJJ1Y7i8R8u
+         T/hw==
+X-Gm-Message-State: AGRZ1gItwvrXzXIwt/PDwK5aUsmFDEjYFuIPsrir1VXpWpw4m6cqWK1J
+        819yK6SNvJTN9KTDsPmj8UKpjxmo
+X-Google-Smtp-Source: AJdET5dIg/B5YEbwi7EPHVU3s8AwgB/8ki7yRWdC8g3Uz8bOaVtojfjHgnzuQ0HP83N3+L9oUcxW9w==
+X-Received: by 2002:a2e:8596:: with SMTP id b22-v6mr4616463lji.122.1540731533898;
+        Sun, 28 Oct 2018 05:58:53 -0700 (PDT)
+Received: from [192.168.2.145] ([109.252.91.118])
+        by smtp.googlemail.com with ESMTPSA id p63-v6sm2686093lfg.46.2018.10.28.05.58.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 28 Oct 2018 05:55:15 -0700 (PDT)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, daniel.lezcano@linaro.org
-Cc:     linux-arm-kernel@lists.infradead.org, khilman@baylibre.com,
-        carlo@caione.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 2/2] clocksource: meson6_timer: implement ARM delay timer
-Date:   Sun, 28 Oct 2018 13:55:01 +0100
-Message-Id: <20181028125501.17336-3-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181028125501.17336-1-martin.blumenstingl@googlemail.com>
-References: <20181028125501.17336-1-martin.blumenstingl@googlemail.com>
+        Sun, 28 Oct 2018 05:58:53 -0700 (PDT)
+Subject: Re: [RFC PATCH v2 01/17] OPP: Allow to request stub voltage
+ regulators
+To:     Lucas Stach <l.stach@pengutronix.de>,
+        Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181021205501.23943-1-digetx@gmail.com>
+ <20181021205501.23943-2-digetx@gmail.com>
+ <20181022053636.ag62j3rj3vovbz53@vireshk-i7>
+ <e4027793-9436-413d-2a7b-34cf519218c3@gmail.com>
+ <20181022113224.b5fiebgy2aap66nd@vireshk-i7>
+ <29f893be-feed-c4c5-8468-51f7228dd468@gmail.com>
+ <20181024064123.lbpbeervghp35fe7@vireshk-i7>
+ <ba782346-6ac0-7bf3-e187-00d2634b145b@gmail.com>
+ <1540568255.2245.11.camel@pengutronix.de>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <bd3a57ee-6131-22bb-1954-3d97bba5276a@gmail.com>
+Date:   Sun, 28 Oct 2018 15:58:25 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1540568255.2245.11.camel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Implement an ARM delay timer to be used for udelay(). This allows us to
-skip the delay loop calibration at boot.
+On 10/26/18 6:37 PM, Lucas Stach wrote:
+> Am Freitag, den 26.10.2018, 15:03 +0300 schrieb Dmitry Osipenko:
+> [...]
+>>> On the other hand, the tegra20 cpufreq driver is common across a lot of boards.
+>>> What will happen if the DT for some of the boards isn't correct and missed the
+>>> necessary regulator node ?
+>>
+>> AFAIK, there is assumption that bootloader should setup regulators in
+>> a way that kernel could work properly at max clock rates. Otherwise
+>> things won't work.
+> 
+> This isn't true. The assumption is that the bootloader sets up the
+> regulators such that stable operation at the CPU speed used by the
+> bootloader is guaranteed.
+> 
+> Often the bootloader doesn't know about specific SKUs, so drives things
+> at a rate/voltage that is safe across all SKUs [1], in which case the
+> bootloader is totally unaware of the voltage needed to run the CPU at
+> highest possible clock frequency.
+> 
+> Regards,
+> Lucas
+> 
+> [1] http://git.denx.de/?p=u-boot.git;a=commit;h=2364e151e432b4ccf32dc9e6147121253d4ff86d
+> 
 
-With this patch udelay() is now independent of CPU frequency changes.
-This is a good thing on Meson8, Meson8b and Meson8m2 because changing
-the CPU frequency requires running the CPU clock off the XTAL while
-changing the PLL or it's dividers. After changing the CPU clocks we need
-to wait a few usecs for the clock to become stable. So having an
-udelay() implementation that doesn't depend on the CPU frequency is
-beneficial.
+Oh, okay. Thank you for pointing at [1], though the assumption is true for T20. 
 
-Suggested-by: Jianxin Pan <jianxin.pan@amlogic.com>
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- drivers/clocksource/meson6_timer.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
-
-diff --git a/drivers/clocksource/meson6_timer.c b/drivers/clocksource/meson6_timer.c
-index c622135bee9d..5ee2a575069b 100644
---- a/drivers/clocksource/meson6_timer.c
-+++ b/drivers/clocksource/meson6_timer.c
-@@ -22,6 +22,10 @@
- #include <linux/of_address.h>
- #include <linux/of_irq.h>
- 
-+#ifdef CONFIG_ARM
-+#include <linux/delay.h>
-+#endif
-+
- enum meson6_timera_input_clock {
- 	MESON_TIMERA_CLOCK_1US = 0x0,
- 	MESON_TIMERA_CLOCK_10US = 0x1,
-@@ -60,6 +64,18 @@ enum meson6_timere_input_clock {
- 
- static void __iomem *timer_base;
- 
-+#ifdef CONFIG_ARM
-+static unsigned long meson6_read_current_timer(void)
-+{
-+	return readl_relaxed(timer_base + MESON_ISA_TIMERE);
-+}
-+
-+static struct delay_timer meson6_delay_timer = {
-+	.read_current_timer = meson6_read_current_timer,
-+	.freq = 1000 * 1000,
-+};
-+#endif
-+
- static u64 notrace meson6_timer_sched_read(void)
- {
- 	return (u64)readl(timer_base + MESON_ISA_TIMERE);
-@@ -198,6 +214,12 @@ static int __init meson6_timer_init(struct device_node *node)
- 
- 	clockevents_config_and_register(&meson6_clockevent, USEC_PER_SEC,
- 					1, 0xfffe);
-+
-+#ifdef CONFIG_ARM
-+	/* Also use MESON_ISA_TIMERE for delays */
-+	register_current_timer_delay(&meson6_delay_timer);
-+#endif
-+
- 	return 0;
- }
- TIMER_OF_DECLARE(meson6, "amlogic,meson6-timer",
--- 
-2.19.1
-
+I agree that it's better not to rely on configuration left from bootloader in general.
