@@ -6,150 +6,110 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D015BC6786F
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 16:35:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 836F9C6786F
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 16:37:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7833420843
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 16:35:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2004120831
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 16:37:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="ZjpBdoKR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7833420843
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="shAoRxGe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2004120831
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727679AbeJ2BUz (ORCPT
+        id S1727709AbeJ2BWI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 21:20:55 -0400
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:47511 "EHLO
+        Sun, 28 Oct 2018 21:22:08 -0400
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:48540 "EHLO
         conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727150AbeJ2BUz (ORCPT
+        with ESMTP id S1726692AbeJ2BWI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 21:20:55 -0400
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id w9SGZUMd010426;
-        Mon, 29 Oct 2018 01:35:31 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w9SGZUMd010426
+        Sun, 28 Oct 2018 21:22:08 -0400
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id w9SGaubM010814;
+        Mon, 29 Oct 2018 01:36:57 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com w9SGaubM010814
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1540744531;
-        bh=IO26zXAOHtciBK5nNiZyqy1jcUD+neI1T8fhI+956dQ=;
+        s=dec2015msa; t=1540744617;
+        bh=7IeUpMjdW9uf63UW+8cpT8GngkY24s0QcDAQeUGUJIU=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ZjpBdoKRuTsKm3eVwXHtZ2jPyhEi6yT+b/CbKBFcg5EoRJ9R1sBaZ2vJjl7aQKMgR
-         aIA5G+ny7gG4I6zCZmK8juM3kU8eAuMnG6nN6dLG/2x5MdP6kPYD0+UXNTAb7ibPlp
-         TpjnHNoPuje2JCImW1X++rHB1KSjxCV8/6YHXLxCu1ox5F7K/Zhc+x9nGdZ3AF/BxV
-         1gKL94fbQxEdE8+lXLdwpEwcfhmFR/GgOSJOYH1iVF/8F0m9XsEdxn4J97E4zDMZM7
-         v93gNSg7e9fv2CqA5nxglg+dGB+pjB0HdaUOxZOccQ1XLrYhQhiLw3L9Jn08vHTZM9
-         RUEjBiDfZJgxQ==
-X-Nifty-SrcIP: [209.85.222.46]
-Received: by mail-ua1-f46.google.com with SMTP id o17so2114838uad.8;
-        Sun, 28 Oct 2018 09:35:30 -0700 (PDT)
-X-Gm-Message-State: AGRZ1gKR3NFqPOeK88WAOm92kawCrKw4IBORUu83NF4Umgznx763nekm
-        CLv98hWvxc0hpo39XiplJLMfeYCYqz6p1gPwjEM=
-X-Google-Smtp-Source: AJdET5cdlJJ44Fw8xQAumEWOxlAFq8yOgK38Xpfid5e04aZMVxVLSt6ecrWfr+V1s89QRXwvAIOkEYsuJFIHVQ+QQu4=
-X-Received: by 2002:a9f:28c4:: with SMTP id d62mr4591498uad.42.1540744529754;
- Sun, 28 Oct 2018 09:35:29 -0700 (PDT)
+        b=shAoRxGeph+Ku2og3vB9JC+jiKYrSxrGozkqtKKDsi14bJA2z4/05HiHr8aK/4d/b
+         2mGg0wn7jIrAO0DsWtIf1qhqhpBakpcdjEc8jRPhHizSPX2duc5ubvVhRUCjjHNa+G
+         WPee7GEJf+bmjWUYaNzXN+8hoh1w4or8NAOKCZmLOQZIQtRDglF4+/hd218M7f9BxW
+         wlIKVGTBfHJ+oT8+/qsHaFaxtdUnHz8M2uD5wYfWS5TTkidayFfswDprfm7ceXn4B9
+         CZiDNv2FX7BeIZi2BNtysmpYlACqi+ntI1YF3fgYpqj17nnPGCgdauLgIuAuMEuBsM
+         lmKaUKmfvl3rg==
+X-Nifty-SrcIP: [209.85.217.46]
+Received: by mail-vs1-f46.google.com with SMTP id v205so1144584vsc.3;
+        Sun, 28 Oct 2018 09:36:57 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gLDJ3UllhFo+MURoi5aEB8e8A6a3Rgbugudn1z4DAsev2Np3XkT
+        iwB3HIsQYxZxHlffK0ml/rP53HOb/V7KR5TaCpo=
+X-Google-Smtp-Source: AJdET5cJtvbPGGqhD8Oj8rDhgFP7PVLxmAClDUyDxjZ6AMGCxs1wngJ9nJxYnE5qPr47ZWO3L2McnOMr6n2w1GWee80=
+X-Received: by 2002:a67:f1d6:: with SMTP id v22mr4647180vsm.181.1540744616135;
+ Sun, 28 Oct 2018 09:36:56 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181024040354.24879-1-leobras.c@gmail.com> <20181024040354.24879-2-leobras.c@gmail.com>
-In-Reply-To: <20181024040354.24879-2-leobras.c@gmail.com>
+References: <20181024040354.24879-1-leobras.c@gmail.com> <20181024040354.24879-3-leobras.c@gmail.com>
+In-Reply-To: <20181024040354.24879-3-leobras.c@gmail.com>
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon, 29 Oct 2018 01:34:52 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAR1OQsou-i85JLuWG2GdGx17fqhh9GN36QgahMm9N+DTw@mail.gmail.com>
-Message-ID: <CAK7LNAR1OQsou-i85JLuWG2GdGx17fqhh9GN36QgahMm9N+DTw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/5] x86/vdso: Renames variable to fix shadow warning.
-To:     =?UTF-8?Q?Leonardo_Br=C3=A1s?= <leobras.c@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>
+Date:   Mon, 29 Oct 2018 01:36:20 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASfo=hw6r6GtdcLdkKCGVFpXUASvSst6WO5tcFbaZ-X0Q@mail.gmail.com>
+Message-ID: <CAK7LNASfo=hw6r6GtdcLdkKCGVFpXUASvSst6WO5tcFbaZ-X0Q@mail.gmail.com>
+Subject: Re: [PATCH v3 2/5] kbuild: Removes unnecessary shadowed local variable.
+To:     =?UTF-8?Q?Leonardo_Br=C3=A1s?= <leobras.c@gmail.com>
 Cc:     lkcamp@lists.libreplanetbr.org, Borislav Petkov <bp@alien8.de>,
         David.Laight@aculab.com, Andy Lutomirski <luto@kernel.org>,
-        helen@koikeco.de, Michal Marek <michal.lkml@markovi.net>,
+        Ingo Molnar <mingo@kernel.org>, helen@koikeco.de,
+        Michal Marek <michal.lkml@markovi.net>,
         Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ingo,
-
-
 On Wed, Oct 24, 2018 at 1:04 PM Leonardo Bras <leobras.c@gmail.com> wrote:
 >
-> The go32() and go64() functions have an argument and a local variable
-> called =E2=80=98name=E2=80=99.  Rename both to clarify the code and to fi=
-x a warning
-> with -Wshadow.
+> Removes an unnecessary shadowed local variable (start).
+> It was used only once, with the same value it was started before
+> the if block.
 >
 > Signed-off-by: Leonardo Bras <leobras.c@gmail.com>
 
 
-Please take care of this in x86 tree instead of kbuild.
+
+Applied to linux-kbuild
+with some fixups in the subject.
+
+Please do not add a period to the end of the subject.
 
 
-Thanks.
+
+
 
 
 > ---
->  arch/x86/entry/vdso/vdso2c.h | 13 +++++++------
->  1 file changed, 7 insertions(+), 6 deletions(-)
+>  scripts/asn1_compiler.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >
-> diff --git a/arch/x86/entry/vdso/vdso2c.h b/arch/x86/entry/vdso/vdso2c.h
-> index fa847a620f40..a20b134de2a8 100644
-> --- a/arch/x86/entry/vdso/vdso2c.h
-> +++ b/arch/x86/entry/vdso/vdso2c.h
-> @@ -7,7 +7,7 @@
+> diff --git a/scripts/asn1_compiler.c b/scripts/asn1_compiler.c
+> index c146020fc783..1b28787028d3 100644
+> --- a/scripts/asn1_compiler.c
+> +++ b/scripts/asn1_compiler.c
+> @@ -413,7 +413,7 @@ static void tokenise(char *buffer, char *end)
 >
->  static void BITSFUNC(go)(void *raw_addr, size_t raw_len,
->                          void *stripped_addr, size_t stripped_len,
-> -                        FILE *outfile, const char *name)
-> +                        FILE *outfile, const char *image_name)
->  {
->         int found_load =3D 0;
->         unsigned long load_size =3D -1;  /* Work around bogus warning */
-> @@ -93,11 +93,12 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_l=
-en,
->                 int k;
->                 ELF(Sym) *sym =3D raw_addr + GET_LE(&symtab_hdr->sh_offse=
-t) +
->                         GET_LE(&symtab_hdr->sh_entsize) * i;
-> -               const char *name =3D raw_addr + GET_LE(&strtab_hdr->sh_of=
-fset) +
-> -                       GET_LE(&sym->st_name);
-> +               const char *sym_name =3D raw_addr +
-> +                                      GET_LE(&strtab_hdr->sh_offset) +
-> +                                      GET_LE(&sym->st_name);
+>                         /* Handle string tokens */
+>                         if (isalpha(*p)) {
+> -                               const char **dir, *start = p;
+> +                               const char **dir;
 >
->                 for (k =3D 0; k < NSYMS; k++) {
-> -                       if (!strcmp(name, required_syms[k].name)) {
-> +                       if (!strcmp(sym_name, required_syms[k].name)) {
->                                 if (syms[k]) {
->                                         fail("duplicate symbol %s\n",
->                                              required_syms[k].name);
-> @@ -134,7 +135,7 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_l=
-en,
->         if (syms[sym_vvar_start] % 4096)
->                 fail("vvar_begin must be a multiple of 4096\n");
->
-> -       if (!name) {
-> +       if (!image_name) {
->                 fwrite(stripped_addr, stripped_len, 1, outfile);
->                 return;
->         }
-> @@ -157,7 +158,7 @@ static void BITSFUNC(go)(void *raw_addr, size_t raw_l=
-en,
->         }
->         fprintf(outfile, "\n};\n\n");
->
-> -       fprintf(outfile, "const struct vdso_image %s =3D {\n", name);
-> +       fprintf(outfile, "const struct vdso_image %s =3D {\n", image_name=
-);
->         fprintf(outfile, "\t.data =3D raw_data,\n");
->         fprintf(outfile, "\t.size =3D %lu,\n", mapping_size);
->         if (alt_sec) {
+>                                 /* Can be a directive, type name or element
+>                                  * name.  Find the end of the name.
 > --
 > 2.19.1
 >
 
 
---=20
+-- 
 Best Regards
 Masahiro Yamada
