@@ -2,109 +2,94 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEB0AC2BC61
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 23:08:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB559C2BC61
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 23:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E1DA20672
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 23:08:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AB3720672
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 23:10:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HA9jmS17"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E1DA20672
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="TFY/DFTn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AB3720672
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727690AbeJ2Hyk (ORCPT
+        id S1727630AbeJ2H4T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 03:54:40 -0400
-Received: from ozlabs.org ([203.11.71.1]:55393 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726858AbeJ2Hyk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 03:54:40 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42jth02K3Bz9s9m;
-        Mon, 29 Oct 2018 10:08:32 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1540768112;
-        bh=vsUlzxveGGb5eo0emhEZjLROtpgUrXJNYMUqaP7IzV0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=HA9jmS17+GN0KWKrCG/2g1C5QxMqXcPzEwb8P+/o2rkURegCUJkHjoGPwTMLzSdbP
-         Ry2lRAQbmhysGzRmnLMk8szpPmV7uNA9ZVzk+YKMCUn9QXLy4nBtDj6ob6Lk1K+38P
-         gHpCxG5gHGsYQtLlbcesuSelCoRzmXonTebw5JBHtuDy4La+BCFZ44K9T0ue8fWYiF
-         BVmw2ex3qgQyVvjyiI23q6IrArayfEQZr7t76L55CioDCNa2Sd2p6Q1i7bklgWUN+B
-         /LCBmz5WoexuLy3XlbiDK+AqAqgKhjygYtBrSehyoiErm78RApuDKLPHhCWZZFLBI7
-         9T3n9uWu93IGg==
-Date:   Mon, 29 Oct 2018 10:08:31 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
-        ARM <linux-arm-kernel@lists.infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>
-Subject: linux-next: manual merge of the arm-soc tree with Linus' tree
-Message-ID: <20181029100831.73b12672@canb.auug.org.au>
+        Mon, 29 Oct 2018 03:56:19 -0400
+Received: from mail-ed1-f43.google.com ([209.85.208.43]:39652 "EHLO
+        mail-ed1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726741AbeJ2H4T (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 03:56:19 -0400
+Received: by mail-ed1-f43.google.com with SMTP id e5-v6so5711758eds.6
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 16:10:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=vpKPgllwmuG5+Ujlt0RUdvR8CEviOcBwE+h4ookEKlc=;
+        b=TFY/DFTnBO7d0XoPPpVdvlQr4SMY+VMVWgYIYJ28a3+02QuRnSf6SI5Axu7x1orWiz
+         uX1B1t7zn3lpPqVyHUcVoOttFW82b8enItF1zST50M86I0fmaqn2mbk9NvM/wLQYv3kR
+         gIVxgKZJTIGTKPYV99wd1bsy6PsCRBO+mT+zY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vpKPgllwmuG5+Ujlt0RUdvR8CEviOcBwE+h4ookEKlc=;
+        b=Rzwobuieat7z4Kl7zfysPNAS2yLnSUPlx6DxxfI00RYj6FmTYTkAnIu0Vun+jMmqgz
+         OrUO41i4qvhW571Z1qbrLT4K1csJjZYbz/LGYdqhsl2aD3GRFQ7VUSnfJM1zdNHk3i9a
+         ZxlxUxNLufsqLDs5+e19+IkcSQNo/eZ0m8GvvKb4uGHs77pWbOvqvblXLyN+qQ46ryD4
+         bcVQiJCDpGt1QhHJOy1IZFEbM0ZEDxG19wteY54ULF/OquVv4Gtk+TjamYcBNJpkCPAN
+         Z2hfogXa8gT8m96uGU2YRsHeHGU0qci2mSUfGOKtgXRveUcoObwI0NJnS7zSSVa5sgYw
+         53sA==
+X-Gm-Message-State: AGRZ1gLNm0ZMUWt7SxP3H1yzTLsoKLOYwyo7TEewcsl0PN+OQMbCDCPP
+        Cn3Ukn7G8rrLugT10Zlu3Q2Awg==
+X-Google-Smtp-Source: AJdET5eBynFG88vN2bX1+F5bFidNuCj8LuxfiXgb9JlhC8fPNe5eaPKPIcCGznzLMuzzNUbvZlGvgg==
+X-Received: by 2002:a50:b3cf:: with SMTP id t15-v6mr11927264edd.181.1540768212429;
+        Sun, 28 Oct 2018 16:10:12 -0700 (PDT)
+Received: from andrea (15.152.230.94.awnet.cz. [94.230.152.15])
+        by smtp.gmail.com with ESMTPSA id w14-v6sm5370480eds.16.2018.10.28.16.10.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 28 Oct 2018 16:10:11 -0700 (PDT)
+Date:   Mon, 29 Oct 2018 00:10:03 +0100
+From:   Andrea Parri <andrea.parri@amarulasolutions.com>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Triplett <josh@joshtriplett.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [RFR] Store tearing
+Message-ID: <20181028231003.GA4021@andrea>
+References: <20181028230627.GA3420@andrea>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/=_L/wC4xwxrC/ekk9rJ.mvS"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181028230627.GA3420@andrea>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/=_L/wC4xwxrC/ekk9rJ.mvS
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hopefully, with Paul's proper email address this time,
 
-Hi all,
+  Andrea
 
-Today's linux-next merge of the arm-soc tree got a conflict in:
-
-  drivers/soc/qcom/Kconfig
-
-between commit:
-
-  a978a5b8d83f ("net/kconfig: Make QCOM_QMI_HELPERS available when COMPILE_=
-TEST")
-
-from Linus' tree and commit:
-
-  ccfb464cd106 ("soc: qcom: Allow COMPILE_TEST of qcom SoC Kconfigs")
-
-from the arm-soc tree.
-
-I fixed it up (I just used the version in Linus' tree) and can carry the
-fix as necessary. This is now fixed as far as linux-next is concerned,
-but any non trivial conflicts should be mentioned to your upstream
-maintainer when your tree is submitted for merging.  You may also want
-to consider cooperating with the maintainer of the conflicting tree to
-minimise any particularly complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/=_L/wC4xwxrC/ekk9rJ.mvS
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvWQW8ACgkQAVBC80lX
-0GycAQf/bAeaq8482QIDfTMaSVUId/AcgetXEXQqiqek1NffGeh3s13ZLo9vlH4/
-Fg8iZ6JBLNfqam4H4T8n2tE9aaY/GSFsge2+NfaQaJR6T3k4SIh4CHuTWUR/p16B
-oOveCZMlTk80IGuCBLSJwmiVj/fyIqXNV7/rXysTOj2xO4JqFt5wXIUD/KyeI6gL
-8RL4atS+OcRSktfDnj6jyOw0ast4ubJ6OxzH22tFTpHSadSLakjoEj4++KnxpAGg
-rlLGEXvLGw6WCFgDf/WrSAhSCjiWRImWkLzjFQxLR+CPkLFX0Xtgy6XB+ICK6S12
-6lTPuvOcPPOyAvA2aWMwDD40ibfK7w==
-=LPtz
------END PGP SIGNATURE-----
-
---Sig_/=_L/wC4xwxrC/ekk9rJ.mvS--
+On Mon, Oct 29, 2018 at 12:06:27AM +0100, Andrea Parri wrote:
+> Hi,
+> 
+> memory-barriers.txt says:
+> 
+>   [on "store tearing"]
+> 
+>   "In fact, a recent bug (since fixed) caused GCC to incorrectly use
+>    this optimization in a volatile store.".
+> 
+> I was wondering if you could help me retrieve some reference/discussions
+> about this?
+> 
+> Thanks,
+>   Andrea
