@@ -2,314 +2,252 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBB69C6786F
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 17:51:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F93C6786F
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 17:53:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82EA020831
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 17:51:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE0312082D
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 17:53:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dUC4ghk4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82EA020831
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Nyi8XQtj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE0312082D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726582AbeJ2CgV (ORCPT
+        id S1726741AbeJ2Civ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 22:36:21 -0400
-Received: from mail-lj1-f181.google.com ([209.85.208.181]:44086 "EHLO
-        mail-lj1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725814AbeJ2CgU (ORCPT
+        Sun, 28 Oct 2018 22:38:51 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:34571 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725860AbeJ2Civ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 22:36:20 -0400
-Received: by mail-lj1-f181.google.com with SMTP id v6-v6so5566368ljc.11;
-        Sun, 28 Oct 2018 10:50:58 -0700 (PDT)
+        Sun, 28 Oct 2018 22:38:51 -0400
+Received: by mail-qk1-f194.google.com with SMTP id a132so3623703qkg.1;
+        Sun, 28 Oct 2018 10:53:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=uMzf56goReuwaCa+NTW/SLCKAZWdOpvcigpX7l71SyQ=;
-        b=dUC4ghk4kuJ4aFGLLjVzHm8kWKX24Aerjw7mpENSTA5bdMQ4b/ELlaU5mbIjwmgKEJ
-         OHgHXlbyOz5u4DR32RURmKXh5R89GmHet3M9BTOvRv6iMHHvDXOx9/1Edd5eC/jmXhVK
-         81lPu/ZngQKZIL6ftY7ZbN12AHW7s8DRRd9TaaQj/Z0rIOwIYY5BOOXtSoyil6nzBsZ2
-         Z4pFzmh3eaI/zAyVK5cN9VFt/uIA8wNTV72wLZEH7H2BFm1Clrt0/4kP3Z1W9tAE68yY
-         wtEW89P2277MWceD0Um96nr9AJOsCj0qONFRlo0nXpdd65jfrXX4zUiq8lvOVdmG63yY
-         vSPw==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=4w8Il7hvMIBZ4QnYnQUfmonHHza2krN5vv1/C3g+XsQ=;
+        b=Nyi8XQtjgIjHJHJ/hU2sd3DEkf2MZFM80aopWfaT/KjhPXlkyuOZXv3Zt0a4nigQMy
+         4OrOYDvygPUSks0D1Ut+L8v4a78yprDFOBfjrlIJg9w0V81s/MjzGNSPEAxldNqsHfSR
+         rNyeN8Aj1hrp0eICagEwNvV+JmQpUqlFpI/vDbLr8Xq6gNAqTMi+mkwIS3mII9rAFd58
+         w01+YobjGrBAHOpTScPlPy617HKJejm1ckLkuAeIRtNjDhQ/1RGrZoRljbhOxHwr1r81
+         YKh6xXP5xKPE8/9UuVpe7zFF0b/AzOJhoPREqgUBJvfwHTxk/asvExzMFPwzrqCQVL6P
+         VECQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=uMzf56goReuwaCa+NTW/SLCKAZWdOpvcigpX7l71SyQ=;
-        b=U6SYWnO2zf3X9CeBcVVXK/8+mJC3FIExmcC+Eyr246+rxg6bvsJpqmsBgUzTZGjQV8
-         Clj6S2i9f+iEeJv0XFxkE5xUTxfGofU2pD00la3hxVnP0Bv6ERPR6VX/WfLGa8eBeXMO
-         qEkFWsrRztZG5LFbbHeOGjwJb9Y/3BiOb94PK+kx6pq10U0FNnKRMkn5rkDgEwOi7imd
-         RKwkZnwbr5rjJP3az7YidcrSmvcp4zk2qbij16JTUOU4gKALjYnB0zj9lUIz7UEtnCRX
-         bXVV7YvQjUKepphJYRsrF9o8w2YWrw3Kc4YIX5uZkDZ3n4gCG50nkHRIYKUnjmD49ace
-         WLXg==
-X-Gm-Message-State: AGRZ1gLmnz0C2j+DndQboFGNQ+iWqyQD9Cd3Q/g5419VU6Qb1WX73kvS
-        Cjb9SFkPMd8Qgl5SKKs9yosu0NN4VU7W48xOZCRJqapZ79w=
-X-Google-Smtp-Source: AJdET5eWW7bg2/JHE2WCclt/Z+wroc1MRqPx6u7FRwYIkbma4ZlvVRBPDn9HCKFHBrp08fWMxN8s+CAMHlr+hXk1l9A=
-X-Received: by 2002:a2e:8989:: with SMTP id c9-v6mr7429196lji.124.1540749057533;
- Sun, 28 Oct 2018 10:50:57 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4w8Il7hvMIBZ4QnYnQUfmonHHza2krN5vv1/C3g+XsQ=;
+        b=M2FszkZUykdcCR7bIEUSvQm7OdVYCbqCdVabpLtwgjsTMZN973aRDHABdQCZScep3n
+         eChN1lLo6Y8TqBzm4JYf1Tee4m0Dx1xZu7m6L1cTNWUar9FI4z/P9ZzYkjQ3B6tjrQMi
+         PDAMuSlISojDCycimlvp9JK+KOjCunem5ULOHOiNllbGUyM8pmRtf5khqGOiW0TNomfn
+         tWRxEUsAP1mQ3UOLyFEsN/a9KqpgjArNEqwBnVVOBbx8ZsdkOV7vMJAredxlnngyhslI
+         +uL9vZDUYxDj5V0YBen7wKRVOTyB7Pe4JeQIOSXY29UL/dqTKxbfnHWzUyYsJBE5QV5h
+         3lZw==
+X-Gm-Message-State: AGRZ1gKB3FDnN+/DCeuFDHV+YxOLL7OZgHurkJ2YV+RvPUqatBwhHOsc
+        d01B15iqmLKjbY/uEBej1lKCQ9f4
+X-Google-Smtp-Source: AJdET5f5R25iN+HecL9zsfgrg/t+rRLWbiAkZkCGO9TGVqwwBOTTyCyQd2rNkw15F0ZX0YabhjojFw==
+X-Received: by 2002:a37:9ce:: with SMTP id 197mr7258330qkj.164.1540749209329;
+        Sun, 28 Oct 2018 10:53:29 -0700 (PDT)
+Received: from localhost.localdomain ([177.220.172.92])
+        by smtp.gmail.com with ESMTPSA id g46-v6sm2194908qta.79.2018.10.28.10.53.27
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 28 Oct 2018 10:53:28 -0700 (PDT)
+Received: by localhost.localdomain (Postfix, from userid 1000)
+        id 9C17D180F5A; Sun, 28 Oct 2018 14:53:25 -0300 (-03)
+Date:   Sun, 28 Oct 2018 14:53:25 -0300
+From:   Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To:     Xin Long <lucien.xin@gmail.com>
+Cc:     syzbot+5da0d0a72a9e7d791748@syzkaller.appspotmail.com,
+        davem <davem@davemloft.net>, LKML <linux-kernel@vger.kernel.org>,
+        linux-sctp@vger.kernel.org, network dev <netdev@vger.kernel.org>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        syzkaller-bugs@googlegroups.com,
+        Vlad Yasevich <vyasevich@gmail.com>
+Subject: Re: KASAN: slab-out-of-bounds Read in sctp_getsockopt
+Message-ID: <20181028175325.GQ6634@localhost.localdomain>
+References: <000000000000e80c930579245751@google.com>
+ <CADvbK_fK4jyPXA+ZJUtAFOjRcunqX0XdiEC2nZbnLMVxiJCAmw@mail.gmail.com>
 MIME-Version: 1.0
-From:   Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-Date:   Sun, 28 Oct 2018 20:50:46 +0300
-Message-ID: <CAE5jQCc3hrq6E-Ff1oiYUOSDA08PMrqnu80XQtaD5adcUQvV8w@mail.gmail.com>
-Subject: XFS: Hang and dmesg flood on mounting invalid FS image
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: multipart/mixed; boundary="00000000000043aab105794d98d7"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CADvbK_fK4jyPXA+ZJUtAFOjRcunqX0XdiEC2nZbnLMVxiJCAmw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---00000000000043aab105794d98d7
-Content-Type: text/plain; charset="UTF-8"
+On Sat, Oct 27, 2018 at 02:58:33PM +0900, Xin Long wrote:
+> On Sat, Oct 27, 2018 at 1:38 AM syzbot
+> <syzbot+5da0d0a72a9e7d791748@syzkaller.appspotmail.com> wrote:
+> >
+> > Hello,
+> >
+> > syzbot found the following crash on:
+> >
+> > HEAD commit:    bd6bf7c10484 Merge tag 'pci-v4.20-changes' of git://git.ke..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=16fd6bcb400000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=2dd8629d56664133
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=5da0d0a72a9e7d791748
+> > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16b3ea33400000
+> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17f9f1bd400000
+> >
+> > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > Reported-by: syzbot+5da0d0a72a9e7d791748@syzkaller.appspotmail.com
+> >
+> > ==================================================================
+> > BUG: KASAN: slab-out-of-bounds in sctp_getsockopt_pr_streamstatus
+> > net/sctp/socket.c:7174 [inline]
+> Forgot to change to use "&" in sctp_getsockopt_pr_streamstatus() in
+> "sctp: get pr_assoc and pr_stream all status with SCTP_PR_SCTP_ALL instead"
+> 
+> @@ -7158,7 +7158,7 @@ static int
+> sctp_getsockopt_pr_streamstatus(struct sock *sk, int len,
+>                 goto out;
+>         }
+> 
+> -       if (policy == SCTP_PR_SCTP_ALL) {
+> +       if (policy & SCTP_PR_SCTP_ALL) {
 
-Hello,
+Hmmm. This is trying to avoid the
+   streamoute->abandoned_unsent[__SCTP_PR_INDEX(policy)]
+with possibly large 'policy' as policy may be SCTP_PR_SCTP_ALL | SCTP_PR_SCTP_MASK
 
-When mounting a broken XFS image, the kernel hangs and floods dmesg
-with stack traces.
+That said, I don't think this is a good fix because the input
+parameter was bogus and we would be trying to make some sense out of
+it. So I suggest something along these lines:
 
-How to reproduce with kvm-xfstests:
-1) Checkout v4.19, copy x86_64-config-4.14 to .config, `make
-olddefconfig` and compile
-2) Unpack the attached image (128 Mb uncompressed) to /tmp/kvm-xfstests-$USER
-3) Inside the `kvm-xfstests shell`:
+diff --git a/net/sctp/socket.c b/net/sctp/socket.c
+index fc0386e8ff23..b816956c69f5 100644
+--- a/net/sctp/socket.c
++++ b/net/sctp/socket.c
+@@ -7144,6 +7144,8 @@ static int sctp_getsockopt_pr_streamstatus(struct sock *sk, int len,
+ 	policy = params.sprstat_policy;
+ 	if (!policy || (policy & ~(SCTP_PR_SCTP_MASK | SCTP_PR_SCTP_ALL)))
+ 		goto out;
++	if (policy & SCTP_PR_SCTP_ALL && policy & ~SCTP_PR_SCTP_ALL)
++		goto out;
+ 
+ 	asoc = sctp_id2assoc(sk, params.sprstat_assoc_id);
+ 	if (!asoc || params.sprstat_sid >= asoc->stream.outcnt)
 
-root@kvm-xfstests:~# mount /vtmp
-root@kvm-xfstests:~# mount /vtmp/xfs.img /mnt
-[   39.280840] XFS (loop0): Mounting V5 Filesystem
-[   39.303657] XFS (loop0): Internal error xlog_valid_rec_header(2) at
-line 5283 of file fs/xfs/xfs_log_recover.c.  Caller
-xlog_do_recovery_pass+0x2bd/0x5d0
-[   39.304886] CPU: 0 PID: 373 Comm: mount Not tainted 4.19.0-xfstests #1
-[   39.305491] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS 1.11.1-1ubuntu1 04/01/2014
-[   39.306247] Call Trace:
-[   39.306464]  dump_stack+0x85/0xc0
-[   39.306751]  xlog_valid_rec_header.isra.6+0xd5/0xe0
-[   39.307250]  xlog_do_recovery_pass+0x2bd/0x5d0
-[   39.307624]  ? xlog_bread_noalign+0x98/0x110
-[   39.307983]  ? xlog_bread_noalign+0x98/0x110
-[   39.308344]  xlog_verify_head+0xab/0x190
-[   39.308675]  xlog_find_tail+0x208/0x350
-[   39.308999]  xlog_recover+0x2b/0x160
-[   39.309307]  xfs_log_mount+0x280/0x2a0
-[   39.309625]  xfs_mountfs+0x42f/0x890
-[   39.309928]  ? xfs_mru_cache_create+0x18b/0x1f0
-[   39.310309]  xfs_fs_fill_super+0x4f8/0x6d0
-[   39.310655]  ? xfs_test_remount_options+0x60/0x60
-[   39.311050]  mount_bdev+0x17f/0x1b0
-[   39.311347]  mount_fs+0x3b/0x170
-[   39.311624]  ? __init_waitqueue_head+0x36/0x50
-[   39.311999]  vfs_kern_mount.part.16+0x54/0x160
-[   39.312374]  do_mount+0x20e/0xdf0
-[   39.312657]  ? memdup_user+0x3e/0x70
-[   39.312961]  __ia32_compat_sys_mount+0xa3/0x140
-[   39.313346]  do_fast_syscall_32+0x9d/0x2f0
-[   39.313694]  entry_SYSENTER_compat+0x84/0x96
-[   39.314126] XFS (loop0): Torn write (CRC failure) detected at log
-block 0xaaf. Truncating head block from 0xab7.
-[   39.316912] XFS (loop0): Internal error xlog_valid_rec_header(2) at
-line 5283 of file fs/xfs/xfs_log_recover.c.  Caller
-xlog_do_recovery_pass+0x2bd/0x5d0
-[   39.318057] CPU: 0 PID: 373 Comm: mount Not tainted 4.19.0-xfstests #1
-[   39.318601] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS 1.11.1-1ubuntu1 04/01/2014
-[   39.319339] Call Trace:
-[   39.319552]  dump_stack+0x85/0xc0
-[   39.319834]  xlog_valid_rec_header.isra.6+0xd5/0xe0
-[   39.320244]  xlog_do_recovery_pass+0x2bd/0x5d0
-[   39.320618]  ? xlog_bread_noalign+0x98/0x110
-[   39.320979]  ? xlog_bread_noalign+0x98/0x110
-[   39.321344]  xlog_verify_tail+0x144/0x1e0
-[   39.321686]  xlog_verify_head+0xd4/0x190
-[   39.322021]  xlog_find_tail+0x208/0x350
-[   39.322348]  xlog_recover+0x2b/0x160
-[   39.322654]  xfs_log_mount+0x280/0x2a0
-[   39.322974]  xfs_mountfs+0x42f/0x890
-[   39.323280]  ? xfs_mru_cache_create+0x18b/0x1f0
-[   39.323664]  xfs_fs_fill_super+0x4f8/0x6d0
-[   39.324013]  ? xfs_test_remount_options+0x60/0x60
-[   39.324411]  mount_bdev+0x17f/0x1b0
-[   39.324710]  mount_fs+0x3b/0x170
-[   39.324988]  ? __init_waitqueue_head+0x36/0x50
-[   39.325369]  vfs_kern_mount.part.16+0x54/0x160
-[   39.325747]  do_mount+0x20e/0xdf0
-[   39.326063]  ? memdup_user+0x3e/0x70
-[   39.326369]  __ia32_compat_sys_mount+0xa3/0x140
-[   39.326753]  do_fast_syscall_32+0x9d/0x2f0
-[   39.327101]  entry_SYSENTER_compat+0x84/0x96
-[   39.328873] XFS (loop0): Internal error xlog_valid_rec_header(2) at
-line 5283 of file fs/xfs/xfs_log_recover.c.  Caller
-xlog_do_recovery_pass+0x2bd/0x5d0
-[   39.330024] CPU: 0 PID: 373 Comm: mount Not tainted 4.19.0-xfstests #1
-[   39.330574] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS 1.11.1-1ubuntu1 04/01/2014
-[   39.331349] Call Trace:
-[   39.331565]  dump_stack+0x85/0xc0
-[   39.331850]  xlog_valid_rec_header.isra.6+0xd5/0xe0
-[   39.332264]  xlog_do_recovery_pass+0x2bd/0x5d0
-[   39.332642]  ? xlog_bread_noalign+0x98/0x110
-[   39.333005]  ? xlog_bread_noalign+0x98/0x110
-[   39.333371]  xlog_verify_tail+0x144/0x1e0
-[   39.333713]  xlog_verify_head+0xd4/0x190
-[   39.334048]  xlog_find_tail+0x208/0x350
-[   39.334376]  xlog_recover+0x2b/0x160
-[   39.334682]  xfs_log_mount+0x280/0x2a0
-[   39.335003]  xfs_mountfs+0x42f/0x890
-[   39.335309]  ? xfs_mru_cache_create+0x18b/0x1f0
-[   39.335693]  xfs_fs_fill_super+0x4f8/0x6d0
-[   39.336041]  ? xfs_test_remount_options+0x60/0x60
-[   39.336439]  mount_bdev+0x17f/0x1b0
-[   39.336739]  mount_fs+0x3b/0x170
-[   39.337016]  ? __init_waitqueue_head+0x36/0x50
-[   39.337396]  vfs_kern_mount.part.16+0x54/0x160
-[   39.337774]  do_mount+0x20e/0xdf0
-[   39.338059]  ? memdup_user+0x3e/0x70
-[   39.338365]  __ia32_compat_sys_mount+0xa3/0x140
-[   39.338749]  do_fast_syscall_32+0x9d/0x2f0
-[   39.339098]  entry_SYSENTER_compat+0x84/0x96
-[   39.340891] XFS (loop0): Internal error xlog_valid_rec_header(2) at
-line 5283 of file fs/xfs/xfs_log_recover.c.  Caller
-xlog_do_recovery_pass+0x2bd/0x5d0
-[   39.342084] CPU: 0 PID: 373 Comm: mount Not tainted 4.19.0-xfstests #1
-[   39.342636] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS 1.11.1-1ubuntu1 04/01/2014
-[   39.343385] Call Trace:
-[   39.343601]  dump_stack+0x85/0xc0
-[   39.343890]  xlog_valid_rec_header.isra.6+0xd5/0xe0
-[   39.344309]  xlog_do_recovery_pass+0x2bd/0x5d0
-[   39.344692]  ? xlog_bread_noalign+0x98/0x110
-[   39.345092]  ? xlog_bread_noalign+0x98/0x110
-[   39.345709]  xlog_verify_tail+0x144/0x1e0
-[   39.346059]  xlog_verify_head+0xd4/0x190
-[   39.346392]  xlog_find_tail+0x208/0x350
-[   39.346718]  xlog_recover+0x2b/0x160
-[   39.347025]  xfs_log_mount+0x280/0x2a0
-[   39.347345]  xfs_mountfs+0x42f/0x890
-[   39.347650]  ? xfs_mru_cache_create+0x18b/0x1f0
-[   39.348032]  xfs_fs_fill_super+0x4f8/0x6d0
-[   39.348380]  ? xfs_test_remount_options+0x60/0x60
-[   39.348778]  mount_bdev+0x17f/0x1b0
-[   39.349077]  mount_fs+0x3b/0x170
-[   39.349366]  ? __init_waitqueue_head+0x36/0x50
-[   39.349753]  vfs_kern_mount.part.16+0x54/0x160
-[   39.350138]  do_mount+0x20e/0xdf0
-[   39.350425]  ? memdup_user+0x3e/0x70
-[   39.350731]  __ia32_compat_sys_mount+0xa3/0x140
-[   39.351115]  do_fast_syscall_32+0x9d/0x2f0
-[   39.351464]  entry_SYSENTER_compat+0x84/0x96
-[   39.353323] XFS (loop0): Internal error xlog_valid_rec_header(2) at
-line 5283 of file fs/xfs/xfs_log_recover.c.  Caller
-xlog_do_recovery_pass+0x2bd/0x5d0
-// ... and so on ...
+To bail out if ALL is specificied together with anything else.
+(the if condition probably could be optimized somehow)
 
-Best regards
-Anatoly
-
---00000000000043aab105794d98d7
-Content-Type: application/octet-stream; name="xfs_128mb.img.bz2"
-Content-Disposition: attachment; filename="xfs_128mb.img.bz2"
-Content-Transfer-Encoding: base64
-Content-ID: <f_jnt61atq0>
-X-Attachment-Id: f_jnt61atq0
-
-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
-PXr3/n2vXr8iIiowBDR0hCP/MkpSWmJoBOT1BRUlNU84FVVldYWVr0ekEC9Xr9i2uLq8DAg19gBs
-LExsjKzM7Q0hGprbG1ub3BxcvaE9zm6Ors7vAV5egoVwe3x9fn+AgYKDhIWGh4iJivfFxkaGjo+Q
-DSMlJ/CP+MpKy0v8pGYDhxEyImpucnZ4TPiaChoqOkFUtNT1Aqpqqusra6vsLGys7S1tre4ubq7v
-L2+v8DBwsPEFi8XGx8jJyssZmZozO+efoDdEbpfTT1NXW1vb9z2fd973/g+H4vj+T5fm+f6Pp+r6
-/s+37fu+/8Px/L8/y/T9f2/efx/P8/1QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAtttttttttttttttttttttttttttttttttttttttttttttttttttttt
-tttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttttoAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk
-kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk
-kkjVZgaRgu57d0H14bgsDCsIweDxHA9HCMFgYXgYD874bkTJcEgAAbrIQAklzCSSIwAAAOCVh6pE
-Zq/7dJAAAPwoAAQhIBybJr0eQNJlC+IEgABzO93u9y+28XdJIAAGgYG2Mkkkkk/wzwm9N3Psjmku
-T9ZwEuyIZUkgBCAQL2QLhAhAABYRSSSSSRYRYEgABlYEkkCBAOae6s4HytxJJJJJdL9F2rdv4Lc3
-Nzc3K7m5wlYGxYvMk3m0XAh9tIFyEJokJJJJOjGS7IEJcwEUSQEZJAYssEkkkkz445MdjRjjjjTH
-HHGp6Vk5rkiwbUyjCSIiigLJIsAUWCyARSErktbJbNa1rWta1r6BqQkkkkiKKBpGSQuYoE2hhcqq
-LEWEiPxUIBchJN0Lj/OGTZtfltbTsW2barWtbDULJJFkEEhCrAgFw77DDDDDPhhhhhhhhhpqyEDB
-gSbSQkmDhhlwwzYYYYYYYYYX4akAAFAABQAAUAAFAABQAAUAAFAABQAAUAAFAABQAAUAAFAABQAA
-VhCjISEaUpTNopSlKUpS+mqLFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
-VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
-VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVEZSlKUz6KUpSlKUv0hKCQkDeAQAAELhJCFa1rX
-NfWta1rWt+mXjE7RvJmYmZADe0bgcZArciIiIiPcqrthVaUpfpqIsJJJv1a1rXPfWta1rWt+mBpG
-SEk2gDe4wAAVvo3YiZiLjeRExMwvCrvcKqrW5EREREABvdgAArciIiIiGVV2wqqte43bmJmZmZmb
-u7varu7u7ugANgAArgXmZmZeZmZmZYFAF7Oq5mZmXmZmZmWBQBYFAF8JJJJpJJJJchhVcKqrT4n9
-2c5znO5nOc5znNZVVwqqtKquFVVpiFVcKqrQAGwAAUABsAAFMwqrhVVa8PCquJJJJLySSTSSSSSw
-KALAoAsCgC+58FJJOM6SSSSWBQAArvKquFVVr5SquFVVoADYAWBQBYFAFgUAAoADYAAK6JERMRER
-EQqrhVVb/bwMzMzLzMzMzLAoAsCgCuYQqrhVVaYVVwqqtAAbAAFgUAWBQBYFAFAAbAABXOoiJiIi
-IiFVcKqrQAGwAAVwImZmZmZlVXCqq0xEa3kF3u5mXmZmZmWBQBYFAF5rk4RXCqq1w0foiImIiIiI
-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
---00000000000043aab105794d98d7--
+> 
+> > BUG: KASAN: slab-out-of-bounds in sctp_getsockopt+0x7516/0x7cc2
+> > net/sctp/socket.c:7582
+> > Read of size 8 at addr ffff8801d89f0968 by task syz-executor278/5330
+> >
+> > CPU: 1 PID: 5330 Comm: syz-executor278 Not tainted 4.19.0+ #303
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> > Google 01/01/2011
+> > Call Trace:
+> >   __dump_stack lib/dump_stack.c:77 [inline]
+> >   dump_stack+0x244/0x39d lib/dump_stack.c:113
+> >   print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
+> >   kasan_report_error mm/kasan/report.c:354 [inline]
+> >   kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
+> >   __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+> >   sctp_getsockopt_pr_streamstatus net/sctp/socket.c:7174 [inline]
+> >   sctp_getsockopt+0x7516/0x7cc2 net/sctp/socket.c:7582
+> >   sock_common_getsockopt+0x9a/0xe0 net/core/sock.c:2937
+> >   __sys_getsockopt+0x1ad/0x390 net/socket.c:1939
+> >   __do_sys_getsockopt net/socket.c:1950 [inline]
+> >   __se_sys_getsockopt net/socket.c:1947 [inline]
+> >   __x64_sys_getsockopt+0xbe/0x150 net/socket.c:1947
+> >   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > RIP: 0033:0x445789
+> > Code: e8 6c b6 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7
+> > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff
+> > ff 0f 83 2b 12 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+> > RSP: 002b:00007effdb293db8 EFLAGS: 00000246 ORIG_RAX: 0000000000000037
+> > RAX: ffffffffffffffda RBX: 00000000006dac48 RCX: 0000000000445789
+> > RDX: 0000000000000074 RSI: 0000000000000084 RDI: 0000000000000003
+> > RBP: 00000000006dac40 R08: 0000000020000040 R09: 0000000000000000
+> > R10: 0000000020000080 R11: 0000000000000246 R12: 00000000006dac4c
+> > R13: 00007ffcfc408c6f R14: 00007effdb2949c0 R15: 00000000006dad2c
+> >
+> > Allocated by task 5329:
+> >   save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+> >   set_track mm/kasan/kasan.c:460 [inline]
+> >   kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+> >   kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
+> >   kmalloc include/linux/slab.h:513 [inline]
+> >   kzalloc include/linux/slab.h:707 [inline]
+> >   sctp_stream_init_ext+0x4f/0xf0 net/sctp/stream.c:237
+> >   sctp_sendmsg_to_asoc+0x1308/0x1a20 net/sctp/socket.c:1896
+> >   sctp_sendmsg+0x13c2/0x1da0 net/sctp/socket.c:2113
+> >   inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
+> >   sock_sendmsg_nosec net/socket.c:621 [inline]
+> >   sock_sendmsg+0xd5/0x120 net/socket.c:631
+> >   __sys_sendto+0x3d7/0x670 net/socket.c:1788
+> >   __do_sys_sendto net/socket.c:1800 [inline]
+> >   __se_sys_sendto net/socket.c:1796 [inline]
+> >   __x64_sys_sendto+0xe1/0x1a0 net/socket.c:1796
+> >   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> >
+> > Freed by task 3223:
+> >   save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+> >   set_track mm/kasan/kasan.c:460 [inline]
+> >   __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+> >   kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+> >   __cache_free mm/slab.c:3498 [inline]
+> >   kfree+0xcf/0x230 mm/slab.c:3813
+> >   kzfree+0x28/0x30 mm/slab_common.c:1543
+> >   aa_free_file_ctx security/apparmor/include/file.h:76 [inline]
+> >   apparmor_file_free_security+0x133/0x1a0 security/apparmor/lsm.c:448
+> >   security_file_free+0x4a/0x80 security/security.c:900
+> >   file_free fs/file_table.c:54 [inline]
+> >   __fput+0x4e8/0xa30 fs/file_table.c:294
+> >   ____fput+0x15/0x20 fs/file_table.c:309
+> >   task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+> >   tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+> >   exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
+> >   prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+> >   syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+> >   do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+> >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> >
+> > The buggy address belongs to the object at ffff8801d89f0900
+> >   which belongs to the cache kmalloc-96 of size 96
+> > The buggy address is located 8 bytes to the right of
+> >   96-byte region [ffff8801d89f0900, ffff8801d89f0960)
+> > The buggy address belongs to the page:
+> > page:ffffea0007627c00 count:1 mapcount:0 mapping:ffff8801da8004c0 index:0x0
+> > flags: 0x2fffc0000000100(slab)
+> > raw: 02fffc0000000100 ffffea0007646748 ffffea0007613488 ffff8801da8004c0
+> > raw: 0000000000000000 ffff8801d89f0000 0000000100000020 0000000000000000
+> > page dumped because: kasan: bad access detected
+> >
+> > Memory state around the buggy address:
+> >   ffff8801d89f0800: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+> >   ffff8801d89f0880: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+> > > ffff8801d89f0900: 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc fc
+> >                                                            ^
+> >   ffff8801d89f0980: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+> >   ffff8801d89f0a00: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+> > ==================================================================
+> >
+> >
+> > ---
+> > This bug is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >
+> > syzbot will keep track of this bug report. See:
+> > https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
+> > syzbot.
+> > syzbot can test patches for this bug, for details see:
+> > https://goo.gl/tpsmEJ#testing-patches
