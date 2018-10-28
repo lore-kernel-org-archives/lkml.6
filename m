@@ -4,67 +4,97 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8D96ECDE44
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1EFEECDE46
 	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 06:31:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3BB820873
+	by mail.kernel.org (Postfix) with ESMTP id 7605A20672
 	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 06:31:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3BB820873
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7605A20672
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727759AbeJ1PPG (ORCPT
+        id S1727709AbeJ1PLD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 11:15:06 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:49143
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726445AbeJ1PPG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 11:15:06 -0400
-X-IronPort-AV: E=Sophos;i="5.54,435,1534802400"; 
-   d="scan'208";a="283535952"
-Received: from palace.lip6.fr ([132.227.105.202])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/AES128-SHA256; 28 Oct 2018 07:31:24 +0100
-From:   Julia Lawall <Julia.Lawall@lip6.fr>
-To:     Liam Girdwood <lgirdwood@gmail.com>
-Cc:     kernel-janitors@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        Sun, 28 Oct 2018 11:11:03 -0400
+Received: from mga07.intel.com ([134.134.136.100]:57466 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726734AbeJ1PLD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 28 Oct 2018 11:11:03 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Oct 2018 23:27:23 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,435,1534834800"; 
+   d="scan'208";a="91801189"
+Received: from rwang-mobl4.amr.corp.intel.com (HELO wfg-t570.sh.intel.com) ([10.254.211.80])
+  by FMSMGA003.fm.intel.com with ESMTP; 27 Oct 2018 23:27:22 -0700
+Received: from wfg by wfg-t570.sh.intel.com with local (Exim 4.89)
+        (envelope-from <fengguang.wu@intel.com>)
+        id 1gGeXi-0003Y2-4o; Sun, 28 Oct 2018 14:27:22 +0800
+Date:   Sun, 28 Oct 2018 14:27:22 +0800
+From:   Fengguang Wu <fengguang.wu@intel.com>
+To:     Gao Xiang <hsiangkao@aol.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: AMD: constify regulator_desc structure
-Date:   Sun, 28 Oct 2018 06:56:08 +0100
-Message-Id: <1540706168-30601-1-git-send-email-Julia.Lawall@lip6.fr>
-X-Mailer: git-send-email 1.9.1
+Subject: Re: [PATCH] mm: simplify get_next_ra_size
+Message-ID: <20181028062722.hfomc3davarmzojw@wfg-t540p.sh.intel.com>
+References: <1540707206-19649-1-git-send-email-hsiangkao@aol.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <1540707206-19649-1-git-send-email-hsiangkao@aol.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The regulator_desc structure can be const as it is only passed as the
-second argument of devm_regulator_register and the corresponding
-parameter is declared as const.
+Looks good to me, thanks!
 
-Done with the help of Coccinelle.
+Reviewed-by: Fengguang Wu <fengguang.wu@intel.com>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- sound/soc/amd/acp-da7219-max98357a.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/sound/soc/amd/acp-da7219-max98357a.c b/sound/soc/amd/acp-da7219-max98357a.c
-index 3f813ea5210a..a5daad973ce5 100644
---- a/sound/soc/amd/acp-da7219-max98357a.c
-+++ b/sound/soc/amd/acp-da7219-max98357a.c
-@@ -403,7 +403,7 @@ static struct regulator_config acp_da7219_cfg = {
- static struct regulator_ops acp_da7219_ops = {
- };
- 
--static struct regulator_desc acp_da7219_desc = {
-+static const struct regulator_desc acp_da7219_desc = {
- 	.name = "reg-fixed-1.8V",
- 	.type = REGULATOR_VOLTAGE,
- 	.owner = THIS_MODULE,
-
+On Sun, Oct 28, 2018 at 02:13:26PM +0800, Gao Xiang wrote:
+>It's a trivial simplification for get_next_ra_size and
+>clear enough for humans to understand.
+>
+>It also fixes potential overflow if ra->size(< ra_pages) is too large.
+>
+>Cc: Fengguang Wu <fengguang.wu@intel.com>
+>Signed-off-by: Gao Xiang <hsiangkao@aol.com>
+>---
+> mm/readahead.c | 12 +++++-------
+> 1 file changed, 5 insertions(+), 7 deletions(-)
+>
+>diff --git a/mm/readahead.c b/mm/readahead.c
+>index 4e63014..205ac34 100644
+>--- a/mm/readahead.c
+>+++ b/mm/readahead.c
+>@@ -272,17 +272,15 @@ static unsigned long get_init_ra_size(unsigned long size, unsigned long max)
+>  *  return it as the new window size.
+>  */
+> static unsigned long get_next_ra_size(struct file_ra_state *ra,
+>-						unsigned long max)
+>+				      unsigned long max)
+> {
+> 	unsigned long cur = ra->size;
+>-	unsigned long newsize;
+>
+> 	if (cur < max / 16)
+>-		newsize = 4 * cur;
+>-	else
+>-		newsize = 2 * cur;
+>-
+>-	return min(newsize, max);
+>+		return 4 * cur;
+>+	if (cur <= max / 2)
+>+		return 2 * cur;
+>+	return max;
+> }
+>
+> /*
+>-- 
+>2.7.4
+>
