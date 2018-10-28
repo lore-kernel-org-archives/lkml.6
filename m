@@ -2,140 +2,102 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 276F8C6786F
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 14:26:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C078C6786F
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 14:34:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D97FE20843
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 14:26:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D97FE20843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=eircom.net
+	by mail.kernel.org (Postfix) with ESMTP id 0824320664
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 14:34:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tca/aHQs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0824320664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727624AbeJ1XK4 convert rfc822-to-8bit (ORCPT
+        id S1727477AbeJ1XTQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 19:10:56 -0400
-Received: from vie01a-dmta-pe06-1.mx.upcmail.net ([84.116.36.14]:62219 "EHLO
-        vie01a-dmta-pe06-1.mx.upcmail.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726450AbeJ1XK4 (ORCPT
+        Sun, 28 Oct 2018 19:19:16 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:46302 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726548AbeJ1XTQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 19:10:56 -0400
-Received: from [172.31.216.235] (helo=vie01a-pemc-psmtp-pe12.mail.upcmail.net)
-        by vie01a-dmta-pe06.mx.upcmail.net with esmtp (Exim 4.88)
-        (envelope-from <mikebrady@eircom.net>)
-        id 1gGm13-0001bu-0V
-        for linux-kernel@vger.kernel.org; Sun, 28 Oct 2018 15:26:09 +0100
-Received: from helix.aillwee.com ([37.228.204.209])
-        by vie01a-pemc-psmtp-pe12.mail.upcmail.net with ESMTP
-        id Gm11gtJgIkosQGm11g9Cde; Sun, 28 Oct 2018 15:26:08 +0100
-X-Env-Mailfrom: mikebrady@eircom.net
-X-Env-Rcptto: linux-kernel@vger.kernel.org
-X-SourceIP: 37.228.204.209
-X-CNFS-Analysis: v=2.3 cv=NNQEBHyg c=1 sm=1 tr=0
- a=/+iDkf0alGTUGXENEoGzTg==:117 a=/+iDkf0alGTUGXENEoGzTg==:17
- a=IkcTkHD0fZMA:10 a=smKx5t2vBNcA:10 a=3uxiNX8bdHwq9VOc5UcA:9 a=QEXdDO2ut3YA:10
-Received: from [172.20.10.4] (unknown [77.75.241.11])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by helix.aillwee.com (Postfix) with ESMTPSA id 7B9B54E6CD;
-        Sun, 28 Oct 2018 14:26:06 +0000 (GMT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
-Subject: Re: [alsa-devel] [PATCH v2] staging: bcm2835-audio: interpolate audio
- delay
-From:   Mike Brady <mikebrady@eircom.net>
-In-Reply-To: <s5hftwuo4t0.wl-tiwai@suse.de>
-Date:   Sun, 28 Oct 2018 14:26:12 +0000
-Cc:     Kirill Marinushkin <k.marinushkin@gmail.com>,
-        stefan.wahren@i2se.com, devel@driverdev.osuosl.org,
-        alsa-devel@alsa-project.org, f.fainelli@gmail.com, eric@anholt.net,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        julia.lawall@lip6.fr, linux-rpi-kernel@lists.infradead.org,
-        nishka.dasgupta_ug18@ashoka.edu.in,
-        linux-arm-kernel@lists.infradead.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <126FA055-050B-4AAC-9392-CA8CCA821768@eircom.net>
-References: <20181022191708.GA4659@ubuntu>
- <a703f8a2-e85a-bc5b-750a-cc43ef252ba5@gmail.com>
- <EA85FEC9-B1C7-4548-88F5-F0E7BC12158E@eircom.net>
- <046aea96-e0d3-60f4-c61a-c26bb1b5c193@gmail.com>
- <B9A84822-3780-4E01-96AD-FD3B42C44B45@eircom.net>
- <9884c4f5-2343-e3a4-8d8b-dd2db404ef27@gmail.com>
- <s5hftwuo4t0.wl-tiwai@suse.de>
-To:     Takashi Iwai <tiwai@suse.de>
-X-Mailer: Apple Mail (2.3445.100.39)
-X-CMAE-Envelope: MS4wfNJXJWIA8zFo7T3zMz66ebeaL/jBU7Ay6GNnjEDnD4NwjhNVbbay36/n+jPjzVrHK3qJfyrr3KkMw1KFpWKYWK/F11KKPNmFbskmWbpyBNvU/DBGCc3j
- nKEusel5Ihv1CDV+FoaLZRm4jN13efbvxE1Sc5uzpzxsgoHxL2Z6U+G0wHXMfmED8UYkWpuIWLi+Xr2+OyZfg0uHAxpfvPVLs6VKrgNTXlnSsGC1uuP3AOnT
- BrXzOMawo+4mySks3mgkfBkHfsFXv/10jtXqjAWO21aBRMx1HKi7MYLZ6684ZjQA0k6ULbxPE52KbcnqqyxWA3E8wtGnxlsJrFkCqY3qYw58GtBbsVsiCAC/
- Y5bUaoDm062j5RL8rKVQAuIZdwlV4nCIWfEMWA6Lyj1vTqyNsOIwOqjMrIFknVi6+CWaFW0WStRZ8i7NMAgu3HxSfLxdGikHeiZMbHDAjOhXwAPmirvbr+CV
- kExkHG0I1bgxdfFwc6erMcRI6X66mSbRUEPGkdlRLfMsNtLEEBeeEKiKv9PvsrXaQa+aHKl2ndYNf4qF1V7wLGDV7jYJv8jKaXQ5shxXiTw6GojlPtAGBUjH
- 5G5LsHDI+mjfs9CYFHxwilCrUiMXscVU/hm0qpEivqAx/8fmkvHZhdQHux0j4SADlLg=
+        Sun, 28 Oct 2018 19:19:16 -0400
+Received: by mail-qt1-f195.google.com with SMTP id c16-v6so6400557qtj.13;
+        Sun, 28 Oct 2018 07:34:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7WRl6Xtt9WakAQ61tKvCn/mS9tfOT27fwr/WQOxrJGs=;
+        b=Tca/aHQsl2cAIi/SEANYULnr8QsodCIEdYaPbHZFro7ZpBJevegc3VuYGfx9Fi8+gA
+         5K30x93UQfDon2Fi5eoEDg6fnO6Go5D2WlOTEZMNLGVuTAwEiSYB0SqrzTf0yhjSxnPD
+         wYxjBxriaiE5Bu+tr0xo2nXtEYdnGmfYOgkGfJEej7XfTgPvZHjkU/2xAyXN88B6oDoS
+         7PJy+nMPzZxkBZoJeVFKIriAY8GXLqnd2r2ppew1dVUs8oR2Kj7FTBFlwHejWFJcOy6A
+         FYt4k5ZTdMf7hqO0jiQ4W+1CCskb5689p8OFmb2+mVF5A2brLgi9O029paN3qiz/mXFA
+         qIRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7WRl6Xtt9WakAQ61tKvCn/mS9tfOT27fwr/WQOxrJGs=;
+        b=DyYUktFoxAcklsXQSNWhojFVWXV3lf+o2DnHmDC1YfxgfW+NUmLQy9T3cqOaBtS5mT
+         2nIwN+USyznaekyc4fvuGcKdRxxc/gxU2nJkO5MZdqwYBvHvW+ujxJ5yNAfyJ97gPc5F
+         gssz9mU5Yy/qtETB+/PAlEbN4hGXYOSiQHEQk5xX2rxdiGAbDQhWCH/Kga9m0yNTHbrM
+         kA+4diBmY2E7xUJmqI/AwepoQ6WvgapxXVy8BJwkgLR35yLyZP+aXNrGXI+nzcRQ5fae
+         EGwv02IuAzmGDyuknKu4GH8C+8w1RzOJcQTaEliSonOoRKyQ7+QijJ8PQ5LUeahzSVdc
+         k14Q==
+X-Gm-Message-State: AGRZ1gJwNui1DpZv/N4PPawOowasotVcO4ooF30/VInVY8X0zVheEjhb
+        IDR7Ed5wA6eV5gAsaPpD9ZE0sXlP
+X-Google-Smtp-Source: AJdET5enYJWO9XrC2b3xHGVTxF5r66I3HIsTahREzPlHVfdyfn3lmKev98p4ijizH+ICqXSW32ZCng==
+X-Received: by 2002:aed:22f0:: with SMTP id q45-v6mr7924738qtc.145.1540737268391;
+        Sun, 28 Oct 2018 07:34:28 -0700 (PDT)
+Received: from localhost.localdomain ([186.222.90.17])
+        by smtp.gmail.com with ESMTPSA id p48-v6sm11266026qtp.48.2018.10.28.07.34.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 28 Oct 2018 07:34:28 -0700 (PDT)
+From:   Diego Viola <diego.viola@gmail.com>
+To:     hdegoede@redhat.com
+Cc:     axboe@kernel.dk, tj@kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Diego Viola <diego.viola@gmail.com>
+Subject: [PATCH] Blacklist SAMSUNG MZ7TD256HAFV-000L9 SSD
+Date:   Sun, 28 Oct 2018 11:34:03 -0300
+Message-Id: <20181028143403.2285-1-diego.viola@gmail.com>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+med_power_with_dipm still causes freezes after updating the firmware to
+the latest version (DXT04L5Q).
 
+Set model_rev to NULL and blacklist the device.
 
-> On 25 Oct 2018, at 08:37, Takashi Iwai <tiwai@suse.de> wrote:
-> 
-> On Thu, 25 Oct 2018 00:02:34 +0200,
-> Kirill Marinushkin wrote:
->> 
->>>> When you play sound - the pointer increments.
->>> 
->>> Unfortunately, when you play sound, the pointer does not actually increment, for up to about 10 milliseconds. I know of no way to actually access the true “live” position of the frame that is being played at any instant; hence the desire to estimate it.
->>> 
->> 
->> Your vision of situation in the opposite from my vision. What you see as a
->> symptom - I see as a root cause. As I see, you should fix the
->> pointer-not-incrementing. Why do you think that it's okay that the pointer is
->> not updating during sound play? Why do you insist that there is a delay? I don't
->> understand why we are so stuck here.
-> 
-> Well, in the API POV, it's nothing wrong to keep hwptr sticking while
-> updating only delay value.  It implies that the hardware chip doesn't
-> provide the hwptr update.
-> 
-> Though, usually the delay value is provided also from the hardware,
-> e.g. reading the link position or such.  It's a typical case like
-> USB-audio, where the hwptr gets updated and the delay indicates the
-> actual position *behind* hwptr.  That works because hwptr shows the
-> position in the ring buffer at which you can access the data.  And it
-> doesn't mean that hwptr is the actually playing position, but it can
-> be ahead of the current position, when many samples are queued on
-> FIFO.  The delay is provided to correct the position back to the
-> actual point.
-> 
-> But, this also doesn't mean that the delay shouldn't be used for the
-> purpose like this patchset, either.  OTOH, providing a finer hwptr
-> value would be likely more apps-friendly; there must be many programs
-> that don't evaluate the delay value properly.
-> 
-> So, I suppose that hwptr update might be a better option if the code
-> won't become too complex.  Let's see.
+Signed-off-by: Diego Viola <diego.viola@gmail.com>
+---
+ drivers/ata/libata-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Indeed. It will take me a few days to look into this…
-
-Regards
-Mike
-
-> One another thing I'd like to point out is that the value given in the
-> patch is nothing but an estimated position, optimistically calculated
-> via the system timer.  Mike and I had already discussion in another
-> thread, and another possible option would be to provide the proper
-> timestamp-vs-hwptr pair, instead of updating the timestamp always at
-> the status read.
-> 
-> Maybe it's worth to have a module option to suppress this optimistic
-> hwptr update behavior, in case something went wrong with clocks?
-> 
-> 
-> thanks,
-> 
-> Takashi
+diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
+index 6e594644cb1d..a7f5202a4815 100644
+--- a/drivers/ata/libata-core.c
++++ b/drivers/ata/libata-core.c
+@@ -4553,7 +4553,7 @@ static const struct ata_blacklist_entry ata_device_blacklist [] = {
+ 	/* These specific Samsung models/firmware-revs do not handle LPM well */
+ 	{ "SAMSUNG MZMPC128HBFU-000MV", "CXM14M1Q", ATA_HORKAGE_NOLPM, },
+ 	{ "SAMSUNG SSD PM830 mSATA *",  "CXM13D1Q", ATA_HORKAGE_NOLPM, },
+-	{ "SAMSUNG MZ7TD256HAFV-000L9", "DXT02L5Q", ATA_HORKAGE_NOLPM, },
++	{ "SAMSUNG MZ7TD256HAFV-000L9", NULL,       ATA_HORKAGE_NOLPM, },
+ 
+ 	/* devices that don't properly handle queued TRIM commands */
+ 	{ "Micron_M500IT_*",		"MU01",	ATA_HORKAGE_NO_NCQ_TRIM |
+-- 
+2.19.1
 
