@@ -2,116 +2,110 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E68A6ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 16:44:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F160C6786F
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 16:46:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACD3420831
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 16:44:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00C4420831
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 16:46:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="K//TAq3I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACD3420831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IYS7HTmL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00C4420831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727876AbeJ2B3H (ORCPT
+        id S1727941AbeJ2BbL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 21:29:07 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:17018 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727604AbeJ2B3G (ORCPT
+        Sun, 28 Oct 2018 21:31:11 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37045 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726492AbeJ2BbK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 21:29:06 -0400
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id w9SGhYso025623;
-        Mon, 29 Oct 2018 01:43:34 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w9SGhYso025623
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1540745015;
-        bh=8U/Ig1UmLFtcit4Sv57d9Gtk8h30Vtmj6fFOQY3850s=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=K//TAq3Ie3hmjA8uTX0RSO/HrZpFC/YdB3TeoLUkWMvp7ExhK6nOxr9WALuPnFi5l
-         Kn8xvggKHA4huPqJkOHDD1Np1fCVGgoG04P4DHpKXkqVa+mUpJjdLtgCnQy+Ia7tcm
-         ickK0Xcxow/T5fdzWRyO0lo6OGu2BKR/sv2i1Odl2319sas9N5x+BTYfbDutSwOIsh
-         N9YYonivh45IjzHMP6WL8D2+G/C10y+eGwkefvScV/Ee/aVkYXVYt1U4bhPw3SpTE0
-         V+xCQg6TH0viBryo3Dnu4wCUvPXcgIprvnT4pAun24lZX0k43AIGBmDDq1jnwt/68D
-         UMq2QsS9LYEgw==
-X-Nifty-SrcIP: [209.85.217.46]
-Received: by mail-vs1-f46.google.com with SMTP id t17so625046vsc.8;
-        Sun, 28 Oct 2018 09:43:34 -0700 (PDT)
-X-Gm-Message-State: AGRZ1gL0QukwvJo2FuONxijUL0HgO406xOywl16LruZjRqu8G883/Ayy
-        C/2qYPImohhtWijVqXkdHwvdt8vysZEGkxV7+2c=
-X-Google-Smtp-Source: AJdET5c2gNd+QthG6uNMuIhCpW8tlrSsAy0Qkb2Q01nibXps+WxpCKUeCa+TFE2Iq8lUdEYv16RhDgWNBPsVYdBgfHc=
-X-Received: by 2002:a67:a858:: with SMTP id r85mr4615091vse.215.1540745013525;
- Sun, 28 Oct 2018 09:43:33 -0700 (PDT)
+        Sun, 28 Oct 2018 21:31:10 -0400
+Received: by mail-wm1-f68.google.com with SMTP id p2-v6so5694867wmc.2;
+        Sun, 28 Oct 2018 09:46:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Bt4DL7L5StPNcHNCCX9ykvQ5j+a3BkQzChn3WaLtYMc=;
+        b=IYS7HTmLJgc8l5O+CBKjlLwW/Hml97aprHyZiDqoUgzG6TwKy2KEbydMo759tUXKJX
+         k+ieAifIt39A7U9aRVgMjH6AC94IS1HgmuwOAQs3d+8idFljjFB3NjtlZlIxJGEqzrvL
+         JJAULIIae/4t+1Nh4j6efpMYTxmC1yZ+iPdNJbwQlXA0wtNBSykbEmO2ER5MMcf5grqh
+         Vc/uPuVj8qigJ4xcc7RC5u+YrmH10QMHYDj1GKCB58Rr7k+Lg4QajjpcicKN34BTQiRU
+         xjjCXtDR7RpyERzJ0S8qtBSWSkwKiI1gBWEydVweyywkA+sHdXOKPDsMa9o3piBm1UY8
+         kgPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Bt4DL7L5StPNcHNCCX9ykvQ5j+a3BkQzChn3WaLtYMc=;
+        b=sW2stA+zSQ4cYEFOv96UpqLTnbbwAzpRjAzuUr5tiq+JpJlaOwRF18hUHa84Kxrwhk
+         njpa5Km0x3krra7EnBa1u5wZ8JAVW5fsazKqMnhNCA/+g6QbVRAA3AxeC13PDfWOVuJI
+         2gIw7P5PS0I8gEADIy2LOryR4vY16DyNNwQvOVTUwrhhISIk0Htpb9FSzotOA0Q9LVrv
+         409AGbsEJaWb25mYEM28HN9tcUq3bu+VY09r3HjNiOKEzoEmSMY/t6Owk2VQ0PAu4BN1
+         OsRJiWyrzrLEXPwIZNRV3AlQpTqS5pNvFYnNZ/eza4wzDjtARtG++1m7af9+VZ5Cc1s4
+         3qrw==
+X-Gm-Message-State: AGRZ1gJhoy6+ifQ5iFZu+bzHe/eLOs8jhzxAwRf7v952XekU5RaLkaYM
+        oHlZq2lqicFgmipAHl4J2bI=
+X-Google-Smtp-Source: AJdET5cREJ8WAstB8buR/JaXVM4/ELHlBqbihrTrr3rR6PJblyaSP6v5DpCYKOjl/l+bQDiQ6MmTBw==
+X-Received: by 2002:a1c:4007:: with SMTP id n7-v6mr4434228wma.46.1540745161307;
+        Sun, 28 Oct 2018 09:46:01 -0700 (PDT)
+Received: from joris.fritz.box (p200300CF83C0B500C714D115E7850A75.dip0.t-ipconnect.de. [2003:cf:83c0:b500:c714:d115:e785:a75])
+        by smtp.gmail.com with ESMTPSA id m2-v6sm16549230wrj.80.2018.10.28.09.46.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 28 Oct 2018 09:46:00 -0700 (PDT)
+From:   Joris Gutjahr <joris.gutjahr@gmail.com>
+To:     davem@davemloft.net, linux-ide@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Joris Gutjahr <joris.gutjahr@gmail.com>
+Subject: [PATCH] Malformatted switch statment
+Date:   Sun, 28 Oct 2018 17:45:46 +0100
+Message-Id: <20181028164546.17178-1-joris.gutjahr@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <20181024040354.24879-1-leobras.c@gmail.com> <20181024040354.24879-5-leobras.c@gmail.com>
-In-Reply-To: <20181024040354.24879-5-leobras.c@gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon, 29 Oct 2018 01:42:57 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQzgdFPpwHEtfDazLd2jAhNy8=f_4mvOQMWfOWCb07E1Q@mail.gmail.com>
-Message-ID: <CAK7LNAQzgdFPpwHEtfDazLd2jAhNy8=f_4mvOQMWfOWCb07E1Q@mail.gmail.com>
-Subject: Re: [PATCH v3 4/5] modpost: Changes parameter name to avoid shadowing.
-To:     =?UTF-8?Q?Leonardo_Br=C3=A1s?= <leobras.c@gmail.com>
-Cc:     lkcamp@lists.libreplanetbr.org, Borislav Petkov <bp@alien8.de>,
-        David.Laight@aculab.com, Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>, helen@koikeco.de,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 1:05 PM Leonardo Bras <leobras.c@gmail.com> wrote:
->
-> Changes the parameter name to avoid shadowing a variable.
->
-> Signed-off-by: Leonardo Bras <leobras.c@gmail.com>
+I fixed this coding style error I got after running
+checkpatch --file on this file.
+The problem was that the whole case block was on one line.
 
+Signed-off-by: Joris Gutjahr <joris.gutjahr@gmail.com>
+---
+ drivers/ide/amd74xx.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-For this one, I'd rather like to see code refactoring
-than renaming the variable.
-
-I will take a closer look.
-
-
-
-
-> ---
->  scripts/mod/modpost.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-> index 0d998c54564d..368fe42340df 100644
-> --- a/scripts/mod/modpost.c
-> +++ b/scripts/mod/modpost.c
-> @@ -2228,13 +2228,13 @@ static int add_versions(struct buffer *b, struct module *mod)
->  }
->
->  static void add_depends(struct buffer *b, struct module *mod,
-> -                       struct module *modules)
-> +                       struct module *module_list)
->  {
->         struct symbol *s;
->         struct module *m;
->         int first = 1;
->
-> -       for (m = modules; m; m = m->next)
-> +       for (m = module_list; m; m = m->next)
->                 m->seen = is_vmlinux(m->name);
->
->         buf_printf(b, "\n");
-> --
-> 2.19.1
->
-
-
+diff --git a/drivers/ide/amd74xx.c b/drivers/ide/amd74xx.c
+index cbfe846911d1..fa39f279bf53 100644
+--- a/drivers/ide/amd74xx.c
++++ b/drivers/ide/amd74xx.c
+@@ -273,9 +273,15 @@ static int amd74xx_probe(struct pci_dev *dev, const struct pci_device_id *id)
+ 	amd_clock = (ide_pci_clk ? ide_pci_clk : 33) * 1000;
+ 
+ 	switch (amd_clock) {
+-	case 33000: amd_clock = 33333; break;
+-	case 37000: amd_clock = 37500; break;
+-	case 41000: amd_clock = 41666; break;
++	case 33000:
++		amd_clock = 33333;
++		break;
++	case 37000:
++		amd_clock = 37500;
++		break;
++	case 41000:
++		amd_clock = 41666;
++		break;
+ 	}
+ 
+ 	if (amd_clock < 20000 || amd_clock > 50000) {
 -- 
-Best Regards
-Masahiro Yamada
+2.19.1
+
