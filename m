@@ -2,84 +2,207 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1FBAC6786F
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 13:29:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B055C6786F
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 13:31:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 524BA205F4
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 13:29:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 524BA205F4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id CDACD20881
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 13:31:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDACD20881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727308AbeJ1WNs (ORCPT
+        id S1727583AbeJ1WQb convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 18:13:48 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:44200 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726450AbeJ1WNs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 18:13:48 -0400
-Received: by mail-vs1-f68.google.com with SMTP id w194so3593288vsc.11;
-        Sun, 28 Oct 2018 06:29:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TkUb+kS3yT4e0xmixeNsb64kHqKAAMe3NEYnWIWUDoQ=;
-        b=hRFtzjAioj3EtflUI/mvPj2+swxWY14hEQvZzkLuiLvyy12RGca8cqioaSkw7kDFhH
-         QiS/D5AEBUmtE7iENIFjz4uFE27Icy2kPCP/ea+Oz4AfMPlaOBWgeQJAjj2T24G3H/BT
-         UtKzUsuST+bxk4lhx2QC/H7fafc/Gi1vT+mOdQAcSN6tb7wYn5olDr4Vhaw3i6J8ous1
-         pnzVoiJQZKMKNxWUMCD5dV0JpZYa6Xqhi+avTmDxGYkFtxfZA6D9+JcJ6jjDK0dpQ9wj
-         3OwxvQ1UuH1yUMk8wl/al6FIce3QYh/O0oUs6j8m0mcbIYOZQpT6T9p2zv/nlExwNMoy
-         iu8g==
-X-Gm-Message-State: AGRZ1gL4eOfZ5zxw8KkMAZ87Ct6g7Cy0he3ExcZMIf8/XZinKD0jP8Gg
-        3Oc9GUgN9n07e955SvfHkO8so2ewNSBczqaIS/k=
-X-Google-Smtp-Source: AJdET5eWHIQP+fkrRNO4+QOVC5VuvOCm1AZIQjwd8so5YJmrFPE6Gh6KqrjgbjLwXdqGf4+yteGqCf7dDHDGxSR+sRw=
-X-Received: by 2002:a67:c202:: with SMTP id i2mr2688049vsj.11.1540733348725;
- Sun, 28 Oct 2018 06:29:08 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181021200048.2114-1-wsa+renesas@sang-engineering.com> <20181021200048.2114-2-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181021200048.2114-2-wsa+renesas@sang-engineering.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Sun, 28 Oct 2018 14:28:56 +0100
-Message-ID: <CAMuHMdUBf7AZSeEX4SffGapBRainhRCoKKVrEXA1dmyM=7kh6A@mail.gmail.com>
-Subject: Re: [PATCH 1/3] spi: spi-rspi: simplify getting .driver_data
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Sun, 28 Oct 2018 18:16:31 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58510 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726379AbeJ1WQa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 28 Oct 2018 18:16:30 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B21D8341;
+        Sun, 28 Oct 2018 06:31:51 -0700 (PDT)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EA97E3F71D;
+        Sun, 28 Oct 2018 06:31:44 -0700 (PDT)
+Date:   Sun, 28 Oct 2018 13:31:34 +0000
+Message-ID: <86va5myz7t.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Lokesh Vutla <lokeshvutla@ti.com>
+Cc:     Nishanth Menon <nm@ti.com>,
+        Device Tree Mailing List <devicetree@vger.kernel.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        <jason@lakedaemon.net>, Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>, <linux-kernel@vger.kernel.org>,
+        Tero Kristo <t-kristo@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>, <tglx@linutronix.de>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 09/10] irqchip: ti-sci-inta: Add support for Interrupt Aggregator driver
+In-Reply-To: <63ba5353-8470-b4c1-64a8-a1df5bf48614@ti.com>
+References: <20181018154017.7112-1-lokeshvutla@ti.com>
+        <20181018154017.7112-10-lokeshvutla@ti.com>
+        <b20127dc-be43-3b00-9960-663738df0069@arm.com>
+        <9969f24c-cdb0-1f5c-d0f4-b1c1f587325c@ti.com>
+        <86va5ssrfm.wl-marc.zyngier@arm.com>
+        <b3a71622-7734-04be-0b0c-38e9dc6542d4@ti.com>
+        <63ba5353-8470-b4c1-64a8-a1df5bf48614@ti.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Wolfram,
+Hi Lokesh,
 
-On Sun, Oct 21, 2018 at 10:03 PM Wolfram Sang
-<wsa+renesas@sang-engineering.com> wrote:
-> We should get 'driver_data' from 'struct device' directly. Going via
-> platform_device is an unneeded step back and forth.
->
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-> ---
->
-> Build tested only. buildbot is happy.
+On Fri, 26 Oct 2018 21:19:41 +0100,
+Lokesh Vutla <lokeshvutla@ti.com> wrote:
+> 
+> Hi Marc,
+> 
+> [..snip..]
+> >> [...]
+> >> 
+> >>>>> +/**
+> >>>>> + * ti_sci_inta_register_event() - Register a event to an interrupt aggregator
+> >>>>> + * @dev:	Device pointer to source generating the event
+> >>>>> + * @src_id:	TISCI device ID of the event source
+> >>>>> + * @src_index:	Event source index within the device.
+> >>>>> + * @virq:	Linux Virtual IRQ number
+> >>>>> + * @flags:	Corresponding IRQ flags
+> >>>>> + * @ack_needed:	If explicit clearing of event is required.
+> >>>>> + *
+> >>>>> + * Creates a new irq and attaches to IA domain if virq is not specified
+> >>>>> + * else attaches the event to vint corresponding to virq.
+> >>>>> + * When using TISCI within the client drivers, source indexes are always
+> >>>>> + * generated dynamically and cannot be represented in DT. So client
+> >>>>> + * drivers should call this API instead of platform_get_irq().
+> >>>> 
+> >>>> NAK. Either this fits in the standard model, or we adapt the standard
+> >>>> model to catter for your particular use case. But we don't define a new,
+> >>>> TI specific API.
+> >>>> 
+> >>>> I have a hunch that if the IDs are generated dynamically, then the model
+> >>>> we use for MSIs would fit this thing. I also want to understand what
+> >>> 
+> >>> hmm..I haven't thought about using MSI. Will try to explore it. But
+> >>> the "struct msi_msg" is not applicable in this case as device does not
+> >>> write to a specific location.
+> >> 
+> >> It doesn't need to. You can perfectly ignore the address field and
+> >> only be concerned with the data. We already have MSI users that do not
+> >> need programming of the doorbell address, just the data.
+> > 
+> 
+> Just one more clarification.
+> 
+> First let me explain the IRQ routes a bit deeply. As I said earlier
+> there are three ways in which IRQ can flow in AM65x SoC
+> 1) Device directly connected to GIC
+> 	- Device IRQ --> GIC
+> 2) Device connected to INTR.
+> 	- Device IRQ --> INTR --> GIC
+> 3) Devices connected to INTA.
+> 	- Device IRQ --> INTA --> INTR --> GIC
+> 
+> 1 and 2 are straight forward and we use DT for IRQ
+> representation. Coming to 3 the trickier part is that Input to INTA
+> and output from INTA and dynamically managed. To be more specific:
+> - By hardware design there are certain set of physical global
+> events(interrupts) attached to an INTA. Out of which a certain range
+> are assigned to the current linux host that can be queried from
+> system-controller.
+> - Similarly out of all the INTA outputs(referenced as vints) a certain
+> range can be used by the current linux host.
+> 
+> 
+> So for configuring an IRQ route in case 3, the following steps are needed:
+> - Device id and device resource index for which the interrupt is needed
 
-How disappointing, you do have a Lager ;-)
+THat is no different from a PCI device for example, where we need the
+requester ID and the number of the interrupt in the MSI-X table.
 
-Gr{oetje,eeting}s,
+> - A free event id from the range assigned to the INTA in this host context
+> - A free vint from the range assigned to the INTA in this host context
+> - A free gic IRQ from the range assigned to the INTR in this host context.
 
-                        Geert
+From what I understand of the driver, at least some of that is under
+the responsibility of the firmware, right? Or is the driver under
+control of all three parameters? To be honest, it doesn't really
+matter, as the as far as the kernel is concerned, the irqchip drivers
+are free to deal with the routing anyway they want.
+
+> With the above information, linux should send a message to
+> system-controller using TISCI protocol. After policing the given
+> information, system-controller does the following:
+> - Attaches the interrupt(INTA input) to the device resource index
+> - Muxes the interrupt(INTA input) to corresponding vint(INTA output)
+> - Muxes the vint(INTR input) to GIC irq(INTR output).
+
+Isn't there a 1:1 mapping between *used* INTR inputs and outputs?
+Since INTR is a router, there is no real muxing. I assume that the
+third point above is just a copy-paste error.
+
+> 
+> For grouping of interrupts, the same vint number is to be passed to
+> system-controller for all the requests.
+> 
+> Keeping all the above in mind, I see the following as software IRQ
+> Domain Hierarchy:
+> 
+> 1) INTA multi MSI --> 2)INTA  -->3) MSI --> 4) INTR  -->5) GIC
+> 
+> INTA driver has to set a chained IRQ using virq allocated from its
+> parent MSI. This is to differentiate the grouped interrupts within
+> INTA.
+> 
+> Inorder to cover the above two MSI domains, a new bus driver has to be
+> created as I couldn't find a fit with the existing bus drivers.
+> 
+> Does the above approach make sense? Please correct me if i am wrong.
+
+I think this can be further simplified, as you seem to assume that
+dynamic allocation implies MSI. This is not the case. You can
+perfectly use dynamically allocated interrupts and still not use MSIs.
+
+INTA is indeed a chained interrupt controller, as it may mux several
+inputs onto a single output. But the output of INTA is not an MSI. It
+is just a regular interrupt that can allocated when the first mapping
+gets established.
+
+Also, INTA shouldn't offer any "multi-MSI". This is a PCI-specific
+concept that doesn't translate on any other type of bus. What you want
+is something that should behave like MSI-X for its allocation part,
+where each MSI gets allocated independently.
+
+Hierarchy-wise, you should end-up with something like this:
+
+       TISCI-MSI       Chained-intr       SPI
+Device ---------> INTA ------------> INTR ---> GIC
+
+As for the bus, you have two choices:
+
+- You create a new one altogether. See drivers/bus/fsl-mc for
+  an example of something totally over the top. This implies that all
+  your devices are following the exact same programming model for more
+  than just interrupts.
+
+- You use the platform-MSI framework to build your interrupt
+  infrastructure, and you don't have to implement much more than
+  that.
+
+Hope this helps,
+
+	M.
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Jazz is not dead, it just smell funny.
