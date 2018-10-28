@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D3A3C2BC61
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 21:00:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1B3AC2BC61
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 21:02:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C9E620672
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 21:00:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C9E620672
+	by mail.kernel.org (Postfix) with ESMTP id 8023E20672
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 21:02:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8023E20672
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbeJ2FqW (ORCPT
+        id S1727775AbeJ2Fsp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 01:46:22 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:59669 "EHLO
+        Mon, 29 Oct 2018 01:48:45 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:54159 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727078AbeJ2FqW (ORCPT
+        with ESMTP id S1727637AbeJ2Fsp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 01:46:22 -0400
-Received: from null ([212.227.220.15]) by mrelayeu.kundenserver.de (mreue001
- [213.165.67.97]) with ESMTPSA (Nemesis) id 0M9j7n-1gQTLw3hyJ-00Cwl1; Sun, 28
- Oct 2018 22:00:11 +0100
-Received: from null ([212.227.220.15]) by mrelayeu.kundenserver.de (mreue001
- [213.165.67.97]) with ESMTPSA (Nemesis) id 0M9j7n-1gQTLw3hyJ-00Cwl1; Sun, 28
- Oct 2018 22:00:11 +0100
-Date:   Sun, 28 Oct 2018 22:00:10 +0100 (CET)
+        Mon, 29 Oct 2018 01:48:45 -0400
+Received: from null ([212.227.220.15]) by mrelayeu.kundenserver.de (mreue010
+ [213.165.67.97]) with ESMTPSA (Nemesis) id 1MDyc8-1gOXhW1t5Q-00A2Do; Sun, 28
+ Oct 2018 22:02:34 +0100
+Received: from null ([212.227.220.15]) by mrelayeu.kundenserver.de (mreue010
+ [213.165.67.97]) with ESMTPSA (Nemesis) id 1MDyc8-1gOXhW1t5Q-00A2Do; Sun, 28
+ Oct 2018 22:02:34 +0100
+Date:   Sun, 28 Oct 2018 22:02:32 +0100 (CET)
 From:   Stefan Wahren <stefan.wahren@i2se.com>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>, eric@anholt.net,
-        dave.stevenson@raspberrypi.org
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 Cc:     linux-rpi-kernel@lists.infradead.org, gregkh@linuxfoundation.org,
         linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Message-ID: <646164838.4217.1540760410870@email.ionos.de>
-In-Reply-To: <20181026134813.7775-12-nsaenzjulienne@suse.de>
+        eric@anholt.net, linux-kernel@vger.kernel.org,
+        dave.stevenson@raspberrypi.org
+Message-ID: <437901663.4228.1540760552985@email.ionos.de>
+In-Reply-To: <20181026134813.7775-17-nsaenzjulienne@suse.de>
 References: <20181026134813.7775-1-nsaenzjulienne@suse.de>
- <20181026134813.7775-12-nsaenzjulienne@suse.de>
-Subject: Re: [PATCH RFC 11/18] staging: vchiq_arm: use completions instead
- of semaphores
+ <20181026134813.7775-17-nsaenzjulienne@suse.de>
+Subject: Re: [PATCH RFC 16/18] staging: vchiq_arm: rework probe and init
+ functions
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
@@ -49,22 +49,22 @@ X-Priority: 3
 Importance: Medium
 X-Mailer: Open-Xchange Mailer v7.8.4-Rev39
 X-Originating-Client: open-xchange-appsuite
-X-Provags-ID: V03:K1:/5N3B9OX1SeVKvEc8cP+3WfKHk73DBpJzvWUR/J3nCTAhOrQJ3G
- 2TbjbySLazTZJgP7wTzCTXNznGi3g5m8cyeSsNQvzjmfakaXl5H/f+yh6FtGRQ8jhSU5OSU
- A1eUlv5N/Fw7sAEXXH23gYAXAL1tOdLIIpzQyl6E/WYkcYXmO10bwCPq/8wN0+CIrxDK1hx
- BN7FFy3JDzcBm2lTOH7Xg==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:+8gVdqKyQ2s=:ipfnBK/QnBtE2pzjgVUHRb
- xJ+qK5CEdeLeTqZ8HiDPCgJ15970ZFTPmtZialzDc1CS004n6llqyIRFEqVP7Fmkpo5wh31IW
- K8Tx6DlpXaY5WeNS+1AnLjgXGHYlWjJEPTz068oi18BDCE53hDZt7TT2Y9lvpaIYgQbWAsNii
- hIl75qxa/W0ln/GhEj1N0U3InVfPTfpoKhEHV72QfGqdC+1CfHbPi2oqvTHkZNag0bKPJPFUy
- Cu0obKK4a0I4U14ZtjkjazfFoIhyNcx4hO49rsQFvy+yenfd7xcG8nnheECFDIP+xGTODJrg0
- Bw78IJ74eIDUOvSGpsHAk7F+lAeA6kO7yNSTCAtR+lJr6e6GmC/ax97t2x8EBmpom2OehRdOp
- KX/hJQY3urDIOkL+G9qZa0ezlzAywaY1CNYSI9O48jcP7HSIk80NAqiWApMBzWlvBP2N5Hl2x
- +ABuwHWl47Xavfw+CDYod/W84Esqsn0LtUwUf+y51vvF1fkbRoigNQyfWmcjAVpDGx+O/lXWf
- UCL1hIn/4dttheNEozqxoIE0ufNo492ZmWSNtKIUbGA62+VwtCo9beu5PeyHwTXARKrEp40QF
- sXjdP3sGetUeOcWaGbPw8OpGqj1k1OWR7AMK7vAwtGPKtFF9D0GLdnYcy8aEhuFmvzI3wLCZ6
- XkAy0jvX/Z2d3/9HFnFfVN+m+qXZ4IofS9Br/SBDF6hPZfT++kg3Oa2QRsgxSG90xoMHUIkpW
- efGJDw/eb0ADT363
+X-Provags-ID: V03:K1:eEKKRKXLuY1pOUZ/1ZoLZpavHl0hHK6yAC0FS9gHnVswAGS1qw8
+ 3OVTesRVnOkcx1dV6TbJU1Espi7Zh4VmsiUDmfhmO/zn3migtDBA+6LR4TuLlaQ/+OIGC9R
+ mns2sqwNhL9NJmy9M67FElNwZAaWfgQhksYHuEXCPLduhvpAgZ15VthEg7rXQVLXKkFFhl6
+ xcm5lc1AqQ7zYxj+tT4nw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:nyDqYVtyGSI=:aCKZwPEE/U814vVKOXricD
+ w62wZv+OGF/M90MeOZWCEmXf1vMGjrZR/Ga7gPjOSK9Yaqjj7QHmIahJPhpO4XEcjskIFnRZM
+ ydRlB73ykMXPlJ4VR3pMpdQ5E0fjz4Oh8NCrrEVbtV7KNriNaaa+bjXHsdq+cdtgL2LadDAoC
+ gxSxQjkEBkcePqfaPluVf+yYiLid4WfUtgM6DK3IZCBVSxwiKOFtXEMcYGH9NnyOTkIGQ93YC
+ aUxvSS29MTT/cBpLUAYL9WZz7+8s33ghFsHp7V6OSNN5SVTeCc1yde4qvWTG6+3XEpKXftAah
+ DGi6oqcT+w6rYvum5TxONFEEC3QkN6X/ICEYx5nIggkXZNy6MeDtqjkcr7shvXv1jBGscu+KH
+ gTg5KNKTZlnpUp4Za5QAbjcLEPmsyWI3OJC3+nrhUiqiO+NjK0VeUvhhQReJjiVTTMdeyjEaL
+ sHxbEufVwhABISoZ/JP4YyONaqkS5rcJsFhvPouyry2KKI/Q0bxOFNJ7J1XeJBDiaPSGIjGpa
+ zaUF8Yppwccf5xcgZevWdXx2qz4QFKir0n9i4tCeY1I5bG8oiy/nLypIazMdSEhHEz8subaQg
+ 2yiqwCSu1YdMkFcnY9Kk2kyY3F3FVo80Py5uvWvypnnhorFtAfUAZY601aaGQgMXawPqD+ULr
+ hSCMBpLczFFt9avmzqM8fG60ngVx3PuSdDDHsFmOVUbL5Teu1KlW924oZup80Oqj5E1HuWIK0
+ Gh0oaHdWDCBngI7i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -73,12 +73,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 > Nicolas Saenz Julienne <nsaenzjulienne@suse.de> hat am 26. Oktober 2018 um 15:48 geschrieben:
 > 
 > 
-> It is preferred in the kernel to avoid using semaphores to wait for
-> events, as they are optimised for the opposite situation; where the
-> common case is that they are available and may block only occasionally.
-> FYI see this thread: https://lkml.org/lkml/2008/4/11/323.
-> 
-> Also completions are semantically more explicit in this case.
+> Some operations performed in the probe function should have been
+> implemented in the init function. Namely class and dev region creations.
 > 
 
-Since patch #11 #12 and #13 doing the same, they could be fold.
+Please explain the why in the commit log
