@@ -2,102 +2,119 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C078C6786F
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 14:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EF3AC6786F
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 14:35:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0824320664
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 14:34:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8A1D20664
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 14:35:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tca/aHQs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0824320664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LXVwfsbp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8A1D20664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727477AbeJ1XTQ (ORCPT
+        id S1727647AbeJ1XTv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 19:19:16 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:46302 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726548AbeJ1XTQ (ORCPT
+        Sun, 28 Oct 2018 19:19:51 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:34561 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726548AbeJ1XTv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 19:19:16 -0400
-Received: by mail-qt1-f195.google.com with SMTP id c16-v6so6400557qtj.13;
-        Sun, 28 Oct 2018 07:34:29 -0700 (PDT)
+        Sun, 28 Oct 2018 19:19:51 -0400
+Received: by mail-lf1-f66.google.com with SMTP id n26-v6so4149500lfl.1;
+        Sun, 28 Oct 2018 07:35:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7WRl6Xtt9WakAQ61tKvCn/mS9tfOT27fwr/WQOxrJGs=;
-        b=Tca/aHQsl2cAIi/SEANYULnr8QsodCIEdYaPbHZFro7ZpBJevegc3VuYGfx9Fi8+gA
-         5K30x93UQfDon2Fi5eoEDg6fnO6Go5D2WlOTEZMNLGVuTAwEiSYB0SqrzTf0yhjSxnPD
-         wYxjBxriaiE5Bu+tr0xo2nXtEYdnGmfYOgkGfJEej7XfTgPvZHjkU/2xAyXN88B6oDoS
-         7PJy+nMPzZxkBZoJeVFKIriAY8GXLqnd2r2ppew1dVUs8oR2Kj7FTBFlwHejWFJcOy6A
-         FYt4k5ZTdMf7hqO0jiQ4W+1CCskb5689p8OFmb2+mVF5A2brLgi9O029paN3qiz/mXFA
-         qIRQ==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=ogbCnzOS1qu3JW+CgfkkNaNgtD3s6w3fPHUt0d9V0ag=;
+        b=LXVwfsbp2g9MLTM5ZHiuDYyMw2lIS/iru962c+V4xtEGAf9eYHeVQuYDv7AP7uKKzz
+         e23TojkA0J4Vh7ZwqrxHC8uw3eIPDtaE5FGv+4GSkk9LSIa9DgtMHGd8z9qAgVg/kqBB
+         FjNm4thp3ijGdTzPTWUm3WKclCZEHERqBV0fslfj6tjs0W1s1xo2z4X7slYoBmlUqvdw
+         2czjuisC3zZlXFOWVYpbcrEouSvG6OnggJRgvr+HXGrP8GsHPlJQRumcx00UXUK28wKg
+         L86+ZTUe4+GrcupOJhJOBQYajJFZobLapdmUBxDQLd6ExElh0pUBvRCdPyOsU4INrhsx
+         ISnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7WRl6Xtt9WakAQ61tKvCn/mS9tfOT27fwr/WQOxrJGs=;
-        b=DyYUktFoxAcklsXQSNWhojFVWXV3lf+o2DnHmDC1YfxgfW+NUmLQy9T3cqOaBtS5mT
-         2nIwN+USyznaekyc4fvuGcKdRxxc/gxU2nJkO5MZdqwYBvHvW+ujxJ5yNAfyJ97gPc5F
-         gssz9mU5Yy/qtETB+/PAlEbN4hGXYOSiQHEQk5xX2rxdiGAbDQhWCH/Kga9m0yNTHbrM
-         kA+4diBmY2E7xUJmqI/AwepoQ6WvgapxXVy8BJwkgLR35yLyZP+aXNrGXI+nzcRQ5fae
-         EGwv02IuAzmGDyuknKu4GH8C+8w1RzOJcQTaEliSonOoRKyQ7+QijJ8PQ5LUeahzSVdc
-         k14Q==
-X-Gm-Message-State: AGRZ1gJwNui1DpZv/N4PPawOowasotVcO4ooF30/VInVY8X0zVheEjhb
-        IDR7Ed5wA6eV5gAsaPpD9ZE0sXlP
-X-Google-Smtp-Source: AJdET5enYJWO9XrC2b3xHGVTxF5r66I3HIsTahREzPlHVfdyfn3lmKev98p4ijizH+ICqXSW32ZCng==
-X-Received: by 2002:aed:22f0:: with SMTP id q45-v6mr7924738qtc.145.1540737268391;
-        Sun, 28 Oct 2018 07:34:28 -0700 (PDT)
-Received: from localhost.localdomain ([186.222.90.17])
-        by smtp.gmail.com with ESMTPSA id p48-v6sm11266026qtp.48.2018.10.28.07.34.25
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=ogbCnzOS1qu3JW+CgfkkNaNgtD3s6w3fPHUt0d9V0ag=;
+        b=oiv9e3nbRxoJS4Dy+FxvRNuOFwu1ZlMQdf+kmXsunPwZ/CJ0ZZ5MAD3YB+AMz3zYHz
+         tC3p4OZnKjh+eUWYYJH9cBpCADo5pRKQaCb5v6sC1EAaciDoeAFCU0+B74FFbbhvwOYK
+         KmIPMHarKBnQVLXNO18wKYbQaQzIqJNqMjtiqv1tvmH7BOfcZoGY7OTyAHxsOlO+FIoq
+         Zx10l+kbIC8ZtGjAWFENTB5/goAAqJthNUAgPzkJXATxSsd8/s1YYhhuh1YNkZchr7qy
+         mx1vcSL22Bo2+TtNOHC58x0tOWsZF9tPqGpDxnCTRfKTUaNLObBLGDDaHGDGo0yylsHA
+         SOOQ==
+X-Gm-Message-State: AGRZ1gIhrXXpCBkXvJqFTMt+fLGeVUckoJ0zBt9QXwjDejqnRDPXkN+u
+        Rc7ZJCPmv5kMgEl+NfNZoU4=
+X-Google-Smtp-Source: AJdET5eB9O2m0E8jmvjV2VYdcdZAszA6JsArIXdXWnTQX2rgE+zgjo//9nrd52O3j5pcq6bigJ8tBA==
+X-Received: by 2002:a19:24c6:: with SMTP id k189mr6386816lfk.77.1540737302128;
+        Sun, 28 Oct 2018 07:35:02 -0700 (PDT)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id t77-v6sm2795272lfi.63.2018.10.28.07.35.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 28 Oct 2018 07:34:28 -0700 (PDT)
-From:   Diego Viola <diego.viola@gmail.com>
-To:     hdegoede@redhat.com
-Cc:     axboe@kernel.dk, tj@kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Diego Viola <diego.viola@gmail.com>
-Subject: [PATCH] Blacklist SAMSUNG MZ7TD256HAFV-000L9 SSD
-Date:   Sun, 28 Oct 2018 11:34:03 -0300
-Message-Id: <20181028143403.2285-1-diego.viola@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        Sun, 28 Oct 2018 07:35:01 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1gGm9h-0005Ok-DL; Sun, 28 Oct 2018 15:35:05 +0100
+Date:   Sun, 28 Oct 2018 15:35:05 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Marcel Holtmann <marcel@holtmann.org>
+Cc:     Johan Hovold <johan@kernel.org>,
+        Lars Poeschel <poeschel@lemonage.de>,
+        devicetree <devicetree@vger.kernel.org>,
+        Samuel Ortiz <sameo@linux.intel.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:NFC SUBSYSTEM" <linux-wireless@vger.kernel.org>
+Subject: Re: [PATCH v3 3/5] nfc: pn533: add UART phy driver
+Message-ID: <20181028143505.GM27852@localhost>
+References: <20181025132937.24405-1-poeschel@lemonage.de>
+ <20181025132937.24405-3-poeschel@lemonage.de>
+ <20181028102725.GL27852@localhost>
+ <9494A12C-C53A-4F6E-B6F3-BABB09867677@holtmann.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <9494A12C-C53A-4F6E-B6F3-BABB09867677@holtmann.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-med_power_with_dipm still causes freezes after updating the firmware to
-the latest version (DXT04L5Q).
+On Sun, Oct 28, 2018 at 02:46:24PM +0100, Marcel Holtmann wrote:
 
-Set model_rev to NULL and blacklist the device.
+> >> +#define VERSION "0.1"
+> > 
+> > We don't version kernel drivers individually, so please drop this here
+> > and below.
+> 
+> if we don’t then maybe send patches to remove MODULE_VERSION first.
+> Otherwise this is totally fine to do.
+> 
+> There are currently 670 usages of MODULE_VERSION and I have not heard
+> anybody looking at removing this.
 
-Signed-off-by: Diego Viola <diego.viola@gmail.com>
----
- drivers/ata/libata-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Should have phrased that differently; versioning modules individually
+does not make much sense when we already have a kernel version which is
+tied to the driver code in question and which *does* get updated as new
+kernels are released (unlike these module version defines, which tend to
+stay unchanged).
 
-diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-index 6e594644cb1d..a7f5202a4815 100644
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -4553,7 +4553,7 @@ static const struct ata_blacklist_entry ata_device_blacklist [] = {
- 	/* These specific Samsung models/firmware-revs do not handle LPM well */
- 	{ "SAMSUNG MZMPC128HBFU-000MV", "CXM14M1Q", ATA_HORKAGE_NOLPM, },
- 	{ "SAMSUNG SSD PM830 mSATA *",  "CXM13D1Q", ATA_HORKAGE_NOLPM, },
--	{ "SAMSUNG MZ7TD256HAFV-000L9", "DXT02L5Q", ATA_HORKAGE_NOLPM, },
-+	{ "SAMSUNG MZ7TD256HAFV-000L9", NULL,       ATA_HORKAGE_NOLPM, },
- 
- 	/* devices that don't properly handle queued TRIM commands */
- 	{ "Micron_M500IT_*",		"MU01",	ATA_HORKAGE_NO_NCQ_TRIM |
--- 
-2.19.1
+For USB, we've dropped module versioning entirely and push back whenever
+someone proposes to add it back. Other subsystems and particularly old
+drivers may still have these macros of course.
 
+In this case, the pn533 driver (and its interface drivers) is one of only
+three NFC drivers which have MODULE_VERSION, but maybe it makes sense to
+keep it in, if only for consistency with the other pn533 components.
+
+Thanks,
+Johan
