@@ -2,132 +2,78 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A43B3ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 03:49:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 114E3ECDE46
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 04:10:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C81D20827
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 03:49:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EbxyGra6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C81D20827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A29F92064C
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 04:10:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A29F92064C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729110AbeJ1Ma6 (ORCPT
+        id S1729130AbeJ1Mlv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 08:30:58 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36306 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727833AbeJ1Ma5 (ORCPT
+        Sun, 28 Oct 2018 08:41:51 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:39448 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727762AbeJ1Mlv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 08:30:57 -0400
-Received: by mail-pl1-f194.google.com with SMTP id y11-v6so2234450plt.3
-        for <linux-kernel@vger.kernel.org>; Sat, 27 Oct 2018 20:47:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=BSUUSCiAf+SZUNfvSypKxLuFXw4+UcxoOy8un93LPJI=;
-        b=EbxyGra6soWQj0mr3PD1FW9OM5p2A0SqOpIlaHmPFPIIopYasflIkZxvD2c/tfzYB8
-         CYQMt+T7NzrHqFefrJx7CC/9DhBSawFRO0VlCRATb0/jFn+dN22LQav8Aoyc7hwW3nol
-         zNR+y+pnekp9zlRojpdypcnr/4XWtYliCjvRHPg3+LnRtcOOcDxGf0ZnvV8D6Q/SJO9f
-         zs4l82qQTUxoHTjnRg6jJ1wZjw8fLfUSDQN5mN5daK164htpq9Jl3So/g/k370Ymm2uk
-         Ce+hcZddoW/yCL7TRbcZn27mM5681bJOdh4GCaEoGhpRdTeCjUzkM789AxG78GoBwjEX
-         JByA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=BSUUSCiAf+SZUNfvSypKxLuFXw4+UcxoOy8un93LPJI=;
-        b=ajt9NaiWchKi1HC2LVIZeB61F0NipfBcaHgJ2rmqUOucAuJE+QMvn8bK4u3NN9ai01
-         M6xdy49R9atCLYnqCjJRkI9zo8rLNZC9bKblY94Mxcyro4hg+evbHxuEqzHN7tstZDZQ
-         0RjfUDGBVzoUbLA4jYJeAJ+qTZQZJfFnYE8T0Sxyj3lLZdvfejR5fwnEswdj0irLlYTg
-         Uk2FxeTlt1EhkX9Su+1sjG7SSkOmVIMi4m624VvuYQjOjxWTB9RV25tKhL3+vIie5bAx
-         vFEE+mYWgCHHQxu0qF12hoCpHKVSjGLezSURgHzLC2FXYTTXZTovKG5ted1jQ/gJ3P8c
-         fbrg==
-X-Gm-Message-State: AGRZ1gLzjnCJ0gWyr45IvmsE+Vt9TRPBzdZovqbR0twf/bVEmuq7vZwU
-        WzLEi20pvLXzMtmfaE/NCQzvl6GueKQ=
-X-Google-Smtp-Source: AJdET5enSUtGNDgfo/YJxlYE5Rzh9t6kWGUAYWuuz185Q1gzqEmZdkfi6Jvne+wazve9CrtFlIcuJQ==
-X-Received: by 2002:a17:902:2909:: with SMTP id g9-v6mr9158258plb.223.1540698460459;
-        Sat, 27 Oct 2018 20:47:40 -0700 (PDT)
-Received: from emca-Inspiron-3558 (96-89-123-89-static.hfc.comcastbusiness.net. [96.89.123.89])
-        by smtp.gmail.com with ESMTPSA id u13-v6sm15454625pgp.18.2018.10.27.20.47.39
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 27 Oct 2018 20:47:39 -0700 (PDT)
-From:   Robert Eshleman <bobbyeshleman@gmail.com>
-Cc:     Robert Eshleman <bobbyeshleman@gmail.com>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Florian Schilhabel <florian.c.schilhabel@googlemail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Colin Ian King <colin.king@canonical.com>,
-        =?UTF-8?q?Andr=C3=A9=20Lehmann?= <lenneman@web.de>,
-        Michael Straube <straube.linux@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8712: fix CamelCase in fw_priv struct
-Date:   Sat, 27 Oct 2018 20:47:00 -0700
-Message-Id: <1540698425-17503-1-git-send-email-bobbyeshleman@gmail.com>
-X-Mailer: git-send-email 2.7.4
-To:     unlisted-recipients:; (no To-header on input)
+        Sun, 28 Oct 2018 08:41:51 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 432A3148800EB;
+        Sat, 27 Oct 2018 20:58:33 -0700 (PDT)
+Date:   Sat, 27 Oct 2018 20:58:30 -0700 (PDT)
+Message-Id: <20181027.205830.1547905692901578490.davem@davemloft.net>
+To:     acme@kernel.org
+CC:     linux-kernel@vger.kernel.org, kan.liang@intel.com
+Subject: UI messages in event thread hangs perf top
+From:   David Miller <davem@davemloft.net>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sat, 27 Oct 2018 20:58:33 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename fields in fw_priv struct from CamelCase to snake_case.
-Reported by checkpatch.
 
-Signed-off-by: Robert Eshleman <bobbyeshleman@gmail.com>
----
- drivers/staging/rtl8712/hal_init.c    | 10 +++++-----
- drivers/staging/rtl8712/rtl8712_hal.h |  8 ++++----
- 2 files changed, 9 insertions(+), 9 deletions(-)
+If I run perf top with a "make -j128" kernel build, I get ring buffer event
+processing timeouts which results in:
 
-diff --git a/drivers/staging/rtl8712/hal_init.c b/drivers/staging/rtl8712/hal_init.c
-index 7cdd609..4c6519c 100644
---- a/drivers/staging/rtl8712/hal_init.c
-+++ b/drivers/staging/rtl8712/hal_init.c
-@@ -100,11 +100,11 @@ static void fill_fwpriv(struct _adapter *padapter, struct fw_priv *pfwpriv)
- 		pfwpriv->rf_config = RTL8712_RFC_1T2R;
- 	}
- 	pfwpriv->mp_mode = (pregpriv->mp_mode == 1) ? 1 : 0;
--	pfwpriv->vcsType = pregpriv->vrtl_carrier_sense; /* 0:off 1:on 2:auto */
--	pfwpriv->vcsMode = pregpriv->vcs_type; /* 1:RTS/CTS 2:CTS to self */
--	/* default enable turboMode */
--	pfwpriv->turboMode = ((pregpriv->wifi_test == 1) ? 0 : 1);
--	pfwpriv->lowPowerMode = pregpriv->low_power;
-+	pfwpriv->vcs_type = pregpriv->vrtl_carrier_sense; /* 0:off 1:on 2:auto */
-+	pfwpriv->vcs_mode = pregpriv->vcs_type; /* 1:RTS/CTS 2:CTS to self */
-+	/* default enable turbo_mode */
-+	pfwpriv->turbo_mode = ((pregpriv->wifi_test == 1) ? 0 : 1);
-+	pfwpriv->low_power_mode = pregpriv->low_power;
- }
- 
- static void update_fwhdr(struct fw_hdr	*pfwhdr, const u8 *pmappedfw)
-diff --git a/drivers/staging/rtl8712/rtl8712_hal.h b/drivers/staging/rtl8712/rtl8712_hal.h
-index 42f5197..66cc464 100644
---- a/drivers/staging/rtl8712/rtl8712_hal.h
-+++ b/drivers/staging/rtl8712/rtl8712_hal.h
-@@ -72,13 +72,13 @@ struct fw_priv {   /*8-bytes alignment required*/
- 	unsigned char regulatory_class_3; /*regulatory class bit map 3*/
- 	unsigned char rfintfs;    /* 0:SWSI, 1:HWSI, 2:HWPI*/
- 	unsigned char def_nettype;
--	unsigned char turboMode;
--	unsigned char lowPowerMode;/* 0: normal mode, 1: low power mode*/
-+	unsigned char turbo_mode;
-+	unsigned char low_power_mode;/* 0: normal mode, 1: low power mode*/
- 	/*--- long word 2 ----*/
- 	unsigned char lbk_mode; /*0x00: normal, 0x03: MACLBK, 0x01: PHYLBK*/
- 	unsigned char mp_mode; /* 1: for MP use, 0: for normal driver */
--	unsigned char vcsType; /* 0:off 1:on 2:auto */
--	unsigned char vcsMode; /* 1:RTS/CTS 2:CTS to self */
-+	unsigned char vcs_type; /* 0:off 1:on 2:auto */
-+	unsigned char vcs_mode; /* 1:RTS/CTS 2:CTS to self */
- 	unsigned char rsvd022;
- 	unsigned char rsvd023;
- 	unsigned char rsvd024;
--- 
-2.7.4
+		ui__warning("Too slow to read ring buffer.\n"
+			    "Please try increasing the period (-c) or\n"
+			    "decreasing the freq (-F) or\n"
+			    "limiting the number of CPUs (-C)\n");
 
+from perf_top__mmap_read().
+
+This hangs the main event thread.  Only the display thread runs after
+this point.
+
+We can't issue UI messages from the event thread, because those will
+hang waiting for a keypress.  The display thread will eat any keys
+we press and the event thread thus hangs forever.
+
+I can tell this is what has happened because the histogram entries
+continue to decay, yet the event count stops increasing.
+
+If I put a gdb on the perf process, indeed the backtrace in the event
+processing thread is in the select() call done by ui__getch().
+
+Adding insult to injury, the display thread immediately overwrites the
+warning message printed by the event thread, and thus the user has no
+chance to even see it.
+
+I really wonder how this was tested.
+
+Perhaps we should mark the event thread in a special way and trigger
+assertions if UI messages are printed from it.  Again, any such
+operation will hang the thread and stop all event processing.
