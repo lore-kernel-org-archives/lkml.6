@@ -2,112 +2,122 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36957C6786F
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 12:22:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E4C5C6786F
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 12:35:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8ECBF2075D
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 12:22:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C139C20843
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 12:35:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="LI9zLaem"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ECBF2075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=natalenko.name
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JeOZbKs4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C139C20843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727547AbeJ1VGm (ORCPT
+        id S1727561AbeJ1VTs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 17:06:42 -0400
-Received: from vulcan.natalenko.name ([104.207.131.136]:23338 "EHLO
-        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726406AbeJ1VGm (ORCPT
+        Sun, 28 Oct 2018 17:19:48 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:54428 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726379AbeJ1VTs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 17:06:42 -0400
-Received: from mail.natalenko.name (vulcan.natalenko.name [IPv6:fe80::5400:ff:fe0c:dfa0])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (No client certificate requested)
-        by vulcan.natalenko.name (Postfix) with ESMTPSA id E5FEB44BCA4;
-        Sun, 28 Oct 2018 13:22:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=dkim-20170712; t=1540729330;
-        h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=TU4HOJ/X4YyTaVXpX1f+JUeterXkauFAf6iTjuxvO6o=;
-        b=LI9zLaem15BBxTM2zJiH0BRMyRqzFyoYunChbaI3fHVQOc13+1SR2iP3GxWQOfc1TdCzSv
-        91V7/83Bruel0xUJGE4RjYC4HfP0mRdyvIUoOMUbu/Ts05xMVojK5r33G6qFYGIY9d844K
-        BL9kT1HfKwnPqoH2zl58FmCl0ZBpoGY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 vulcan.natalenko.name E5FEB44BCA4
-Authentication-Results: vulcan.natalenko.name; dmarc=fail (p=none dis=none) header.from=natalenko.name
+        Sun, 28 Oct 2018 17:19:48 -0400
+Received: by mail-wm1-f65.google.com with SMTP id r63-v6so5525902wma.4
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 05:35:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=J19T3Goe9Qyq7xQM4/QFwTkUNe2LU8Fn8VCV3sVm5CA=;
+        b=JeOZbKs43ekLZ3Wv76HuUkfoxCnQnupDJDsFn4cPbJ5Z1OJWCelE7rX+d9BY62hP9o
+         XebfKVftjG3dXgr3LHjFfssJvxlc7VVs4q5uhXtfgIkCk4tkOkJCBBQojcQt8yISSoxV
+         TLppkAv5B34Z/2lqXAqGzBn1Rcc5zqS3tB8ms=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=J19T3Goe9Qyq7xQM4/QFwTkUNe2LU8Fn8VCV3sVm5CA=;
+        b=ONsRoFysrLC78ZXAQa9mD1VVpuEiVH2gUxkx1FItuXKcpECrmQzwmxkAIAXopjjFfk
+         hfsaowiS66DPruMoP26S2At2K69ZLOi8bW8WErg493pJQN2N/RHsyGq5qiAtyqO37dRY
+         QPH7e/ha5JE0ijCGg8uZVznQnN0W9PY45feyAOjRsHWVuopjWG4Not1PcjrnBsWBI+8y
+         I2GntM0B4HmP+MRbdkh2JxXwmBjC9DHv5ktIhuC5ff4OSVmdiazjFguWPNLCrlCWY1UL
+         b0x8KF9iaBrArF4UfIZ4jFNijVu9npiJJyZwhmZ/2IhgHAkZD989hfYn2jEOs7Z4ESvU
+         h4Mg==
+X-Gm-Message-State: AGRZ1gINjY1uMKoTsVwwotQ6Mca931bhzOXoMV4AZUBGmwSPUE8SXx2N
+        r4qIkye3qKgOdcxGgmMnAMdNjg==
+X-Google-Smtp-Source: AJdET5fIpc4OJ0ZEBXV32qQGjF7UQA53iRJUX8xEAmfXr4W4P805Fz3FZVrKS8gAUhye96VV14SqsA==
+X-Received: by 2002:a1c:9cc9:: with SMTP id f192-v6mr11313690wme.135.1540730114843;
+        Sun, 28 Oct 2018 05:35:14 -0700 (PDT)
+Received: from localhost.localdomain ([209.250.228.18])
+        by smtp.gmail.com with ESMTPSA id v30-v6sm18926830wra.67.2018.10.28.05.35.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 28 Oct 2018 05:35:13 -0700 (PDT)
+From:   Leo Yan <leo.yan@linaro.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Coresight ML <coresight@lists.linaro.org>,
+        Mike Leach <mike.leach@linaro.org>,
+        Robert Walker <robert.walker@arm.com>,
+        Al Grant <Al.Grant@arm.com>
+Cc:     Leo Yan <leo.yan@linaro.org>
+Subject: [PATCH v1 0/4] perf cs-etm: Add support for sample flags
+Date:   Sun, 28 Oct 2018 20:34:51 +0800
+Message-Id: <1540730095-6732-1-git-send-email-leo.yan@linaro.org>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Sun, 28 Oct 2018 13:22:09 +0100
-From:   Oleksandr Natalenko <oleksandr@natalenko.name>
-To:     David Miller <davem@davemloft.net>
-Cc:     dave.taht@gmail.com, hkallweit1@gmail.com, toke@toke.dk,
-        jhs@mojatatu.com, xiyou.wangcong@gmail.com, jiri@resnulli.us,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: CAKE and r8169 cause panic on upload in v4.19
-In-Reply-To: <20181027.214426.537959459795607171.davem@davemloft.net>
-References: <fbd7f0b8-10c8-be17-fce6-327a95d8ea2e@gmail.com>
- <CAA93jw7xoaokrN4oGAyqh6JHAn8nJpUpp_wj-iy+GWNoV-ipNA@mail.gmail.com>
- <b80e6819da8ea74f18b6ec0aaf9128fa@natalenko.name>
- <20181027.214426.537959459795607171.davem@davemloft.net>
-Message-ID: <3d749bf1ec48ee9f4172b23bde84ec4b@natalenko.name>
-X-Sender: oleksandr@natalenko.name
-User-Agent: Roundcube Webmail/1.3.7
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
-        s=arc-20170712; t=1540729330;
-        h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=TU4HOJ/X4YyTaVXpX1f+JUeterXkauFAf6iTjuxvO6o=;
-        b=Q37+ycCon28QUGM4KGOfHruBZTE2AfMoK6EmArs3vo+66+gVquaFi2jH8ZeUfMqA5tLeqB
-        eYYoisKug0u0atKlq8e5qmK+T5U7iwag7HuCODDEqnwhg5vgoTOEdDkSen7AKZgX4Jod6q
-        mR5KqczRUG3WH2j/hhVVKCNmMYdgnyU=
-ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1540729330; a=rsa-sha256;
-        cv=none;
-        b=iMxVdWOGuipjV+IrPpWDZEd3XwerUibdcZUPdLp6lpSPxzWTgkt0D1V1a2af46v4flN7IefIYk8RXU8TRWhO0lYhqnB3nph9aB6lZIskRIIkxJBJEJKNRsQ/I0CqLtTUlQ9AHiaOwstD+z0ldqs/caguinpj+1e/MLs00/HPu+A=
-ARC-Authentication-Results: i=1;
-        vulcan.natalenko.name;
-        auth=pass smtp.auth=oleksandr@natalenko.name smtp.mailfrom=oleksandr@natalenko.name
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
+This patch seris adds support for sample flags so can facilitate perf
+to print sample flags for branch instruction.
 
-On 28.10.2018 05:44, David Miller wrote:
-> Does this fix it?
-> 
-> diff --git a/net/core/dev.c b/net/core/dev.c
-> index 022ad73d6253..77d43ae2a7bb 100644
-> --- a/net/core/dev.c
-> +++ b/net/core/dev.c
-> @@ -5457,7 +5457,7 @@ static void gro_flush_oldest(struct list_head 
-> *head)
->  	/* Do not adjust napi->gro_hash[].count, caller is adding a new
->  	 * SKB to the chain.
->  	 */
-> -	list_del(&oldest->list);
-> +	skb_list_del_init(oldest);
->  	napi_gro_complete(oldest);
->  }
+The branch instructions also include exception taken and return
+related instructions, so the first patch is used to generate branch
+sample for exception packets; and the second patch is to track the
+exception number.
 
-Yes, but I had to apply both a8305bff6852 and 992cba7e276d too to get it 
-compiled. With these 3 patches the panic is not triggered any more while 
-having GRO enabled.
+The patch 0003 is to set branch instruction flags in packet, this
+patch has the core code in this series to set flags according to the
+decoding element type, and also based on the elements including
+instruction type, subtype and condition flag to help making decision
+to set flags value.
 
-Thanks!
+The patch 0004 is to support sample flags by copying the flags value
+from packet structure to sample structure, and it includes two fixing
+up for TRACE_ON and exception packets.
+
+The patch series is based on OpenCSD v0.10.0 and Rob's patch 'perf:
+Support for Arm A32/T32 instruction sets in CoreSight trace' also is
+prerequisite to support A32/T32 ISAs.
+
+The patches can be applied on the acme core branch [1] and tested on
+Juno board with below commands for A64 and A32/T32 building:
+
+  # perf script -F,-time,+flags,+ip,+sym,+addr -k vmlinux
+
+
+Leo Yan (4):
+  perf cs-etm: Generate branch sample for exception packet
+  perf cs-etm: Track exception number
+  perf cs-etm: Set branch instruction flags in packet
+  perf cs-etm: Add support sample flags
+
+ tools/perf/util/cs-etm-decoder/cs-etm-decoder.c | 237 +++++++++++++++++++++++-
+ tools/perf/util/cs-etm-decoder/cs-etm-decoder.h |  11 +-
+ tools/perf/util/cs-etm.c                        |  44 ++++-
+ 3 files changed, 277 insertions(+), 15 deletions(-)
 
 -- 
-   Oleksandr Natalenko (post-factum)
+2.7.4
+
