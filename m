@@ -2,87 +2,101 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E66F4C2BC61
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 20:23:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C53C8C2BC61
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 20:24:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FA752054F
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 20:23:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B1642054F
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 20:24:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bkr93xnL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FA752054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=cougarmail-collin-edu.20150623.gappssmtp.com header.i=@cougarmail-collin-edu.20150623.gappssmtp.com header.b="PHoHAA7L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B1642054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cougarmail.collin.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727552AbeJ2FJh (ORCPT
+        id S1727604AbeJ2FKa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 01:09:37 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:35404 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726364AbeJ2FJg (ORCPT
+        Mon, 29 Oct 2018 01:10:30 -0400
+Received: from mail-wr1-f47.google.com ([209.85.221.47]:44401 "EHLO
+        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726364AbeJ2FK3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 01:09:36 -0400
-Received: by mail-lf1-f66.google.com with SMTP id d7-v6so4499183lfi.2
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 13:23:52 -0700 (PDT)
+        Mon, 29 Oct 2018 01:10:29 -0400
+Received: by mail-wr1-f47.google.com with SMTP id d17-v6so6176649wre.11
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 13:24:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oxiK7HUx0xOIU4ksodukkO7n2uIsxMXkxMd6lpzLm6A=;
-        b=bkr93xnLDfzPKzfOC5llUaS9QC2WmMv83M/DK5ugF5dQBNNBT0+OlVkQVsj5ql7gC2
-         iMCVksKYwXft8biZwcgV+mHKNcc6K+teGaDkVetZLYUCwe5UixqLjddtqTAobgRreqjE
-         7ZVvcs3weP/E53hQc2iWt1kwy9ypyazXO+Fp0=
+        d=cougarmail-collin-edu.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=78UkiBUsSmHmkFK5eZnFluH25hsjHZZ8P4543FEkDOA=;
+        b=PHoHAA7LvzTW9tmocuQeJ1Lh5qkI995t22zAt6Ny/RUr01U9rnQVkj3TFygjDGWHJq
+         D7iAa8tLTJq4MJUGW1o0KXHdWfx0GISRO4FHk8HYFOQMe0DiaM0okIjvALCjGe8VSHdQ
+         6KfMakErnPpVyNP9j4Hw9p/PMzR8J95zDwwZcUq63OgFFLn1XRhBRc9RYFP7UBB8802e
+         6OSjcMXaMCVy3chvuZdqxJFGwIGTyV36Tdxj7rUlk1ko73Aalz6Bd1H3za6ysS2FsEHu
+         Z9p1P57Y1ANUKf8FW/lQvXMg6rx+MWPtf0eYhTHnisdJhpU/VUyoaU9E9kBOI1/NIaDI
+         VAMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oxiK7HUx0xOIU4ksodukkO7n2uIsxMXkxMd6lpzLm6A=;
-        b=ViXn+nztukcZuX9QdMAEtFjSiDBGkBq5INFaoHjZb+MtNiXOtoDHJdpNnrNvHUTbji
-         49mTJnvovIttM6LaP5puQVP61UQs4CrbKenDqX71abuuI0WmsC56lUCl+KEF4Bm5sXgY
-         Q69BtFGcmGdhUo/+jdVPxkBnxDb2jv/614P+I261X5dK8xteTy9y2QVUeWrJMg8dveJy
-         JvzViqUTGzlQY6ooRUWX9st33pxmwI1PXMNMB7nYROaHpuCF537H1YgYt9qPoyD6GNPB
-         8IEmmiltpOHXAtpynRe1X9PQgubrXPPD9Zt/gvb1gvb3SeVfvox2htgYNRdDD43J9CZo
-         10MA==
-X-Gm-Message-State: AGRZ1gJHTwy23/Ypjw3kyXWbsnJwc8YN95O//cCYzYgDgZhlaboSaSwW
-        Q4MFS+Q3cCdJpc2daVS+Hnu+wlkJIpU=
-X-Google-Smtp-Source: AJdET5cfpyGB18fcJlky2vvOwa0LrbkBbHLCZ6WCjtwH7xRmNntTHw2KJ7ytfqSqZlKAmU6ACOlbZQ==
-X-Received: by 2002:a19:9b50:: with SMTP id d77mr6745325lfe.137.1540758230874;
-        Sun, 28 Oct 2018 13:23:50 -0700 (PDT)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id s69-v6sm2832580lfs.92.2018.10.28.13.23.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 28 Oct 2018 13:23:50 -0700 (PDT)
-Received: by mail-lf1-f41.google.com with SMTP id p86so2282197lfg.5
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 13:23:50 -0700 (PDT)
-X-Received: by 2002:a19:cb94:: with SMTP id b142mr6864547lfg.117.1540758229587;
- Sun, 28 Oct 2018 13:23:49 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=78UkiBUsSmHmkFK5eZnFluH25hsjHZZ8P4543FEkDOA=;
+        b=nBKhBOq752Nh7v+2kmdyAiVZGhC/ZfnXVnhrHLjR4BZjwHlHgd1mwxQKNzZBIdxUup
+         6yeXDoBWNnBlQd2//HP6G0mJrQYb+tSEJI+iWaTvsXMvGX3smmz/YmpZaTv141QFUvoy
+         pFb/Kfl1QIIurb594lyVYcbA2lwcjFwsvflSXbWmtwk3G7JtPd+B5zQoBmsPHJp1WK44
+         jG4jWydH5v1AzkpgNGKNfiwxNYLUXp/FVNDyogdb1OylVG5Wd2Fje+M2/Z/CDcivFD/6
+         CO8yExxBMIzpPyCHCVOCXnShLTl+UO1mi0wSnBCMOpGGxYm2slG6k7jqhKmeJTAkLjH4
+         NeTw==
+X-Gm-Message-State: AGRZ1gKcnQdWHEjyW0pTdoofqkF6DDHwinqgO2o8AeEWWXQC2Qvw9Y8s
+        2J2Npdwf5afQeIhNeX8srrn65rKhJwEvlzwAd3nhe7KlYXI=
+X-Google-Smtp-Source: AJdET5cGtlNrPbRzSavD8npNhG+VeoR8/y3Hbi6/2gDjveFU+brNOX5JZ05pVIIdYRg1I72vyWWbMHiD0dguwgnfAb4=
+X-Received: by 2002:adf:f68e:: with SMTP id v14-v6mr3045580wrp.261.1540758284423;
+ Sun, 28 Oct 2018 13:24:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <CAK7LNASZO0gOaLG2kmiAMaCQe3NYNsvW4FVm4sn5ESdRK5CDNA@mail.gmail.com>
-In-Reply-To: <CAK7LNASZO0gOaLG2kmiAMaCQe3NYNsvW4FVm4sn5ESdRK5CDNA@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 28 Oct 2018 13:23:33 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgg0NQUxPut0vw8JjM=ZAGc6cHjRcU0xwn+B6Wb47b1ag@mail.gmail.com>
-Message-ID: <CAHk-=wgg0NQUxPut0vw8JjM=ZAGc6cHjRcU0xwn+B6Wb47b1ag@mail.gmail.com>
-Subject: Re: [GIT PULL] Kbuild updates for v4.20
-To:     yamada.masahiro@socionext.com
-Cc:     linux-kbuild@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        masahiroy@kernel.org
+Received: by 2002:adf:b60e:0:0:0:0:0 with HTTP; Sun, 28 Oct 2018 13:24:43
+ -0700 (PDT)
+From:   Nathaniel Russell <nrussell6@cougarmail.collin.edu>
+Date:   Sun, 28 Oct 2018 15:24:43 -0500
+Message-ID: <CA+uPecOtCAQSW2WUCciCzvZFimKoyWOScAeRnHoA=zN6D_ax6w@mail.gmail.com>
+Subject: RTL8812au driver source code A little help please?
+To:     linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 28, 2018 at 10:12 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> Please pull Kbuild updates for v4.20
+make[1]: Entering directory '/usr/src/linux-4.19'
+  CC [M]  /tmp/rtl8812AU_8821AU_linux/os_dep/linux/os_intfs.o
+/tmp/rtl8812AU_8821AU_linux/os_dep/linux/os_intfs.c:816:22: error:
+initialization of =E2=80=98u16 (*)(struct net_device *, struct sk_buff *,
+struct net_device *, u16 (*)(struct net_device *, struct sk_buff *,
+struct net_device *))=E2=80=99 {aka =E2=80=98short unsigned int (*)(struct =
+net_device
+*, struct sk_buff *, struct net_device *, short unsigned int
+(*)(struct net_device *, struct sk_buff *, struct net_device *))=E2=80=99}
+from incompatible pointer type =E2=80=98u16 (*)(struct net_device *, struct
+sk_buff *, void *, u16 (*)(struct net_device *, struct sk_buff *,
+struct net_device *))=E2=80=99 {aka =E2=80=98short unsigned int (*)(struct =
+net_device
+*, struct sk_buff *, void *, short unsigned int (*)(struct net_device
+*, struct sk_buff *, struct net_device *))=E2=80=99}
+[-Werror=3Dincompatible-pointer-types]
+  .ndo_select_queue =3D rtw_select_queue,
+                      ^~~~~~~~~~~~~~~~
+/tmp/rtl8812AU_8821AU_linux/os_dep/linux/os_intfs.c:816:22: note:
+(near initialization for =E2=80=98rtw_netdev_ops.ndo_select_queue=E2=80=99)
+cc1: some warnings being treated as errors
+make[2]: *** [scripts/Makefile.build:306:
+/tmp/rtl8812AU_8821AU_linux/os_dep/linux/os_intfs.o] Error 1
+make[1]: *** [Makefile:1517: _module_/tmp/rtl8812AU_8821AU_linux] Error 2
+make[1]: Leaving directory '/usr/src/linux-4.19'
+make: *** [Makefile:1584: modules] Error 2
 
-Pulled,
 
-                      Linus
+I Kinda need some help figuring out how to make this compile on kernel
+source 4.19.0?
+Any help would be apprectiated,
