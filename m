@@ -2,162 +2,145 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2962ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 18:31:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A5D8C6786F
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 18:38:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D52020843
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 18:31:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 432E22054F
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 18:38:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JbRnzA9S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D52020843
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="S/czunjC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 432E22054F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726905AbeJ2DRS (ORCPT
+        id S1726763AbeJ2DX4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 23:17:18 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:50310 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726170AbeJ2DRS (ORCPT
+        Sun, 28 Oct 2018 23:23:56 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:37551 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726426AbeJ2DXz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 23:17:18 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=QljHHvaILxJgNXGsDqYAJ9V/RePwVryCzz28vYczcdU=; b=JbRnzA9SLmT/gzL9FA+Ob2716
-        k/WoDvQMhKNd2W1g14HzHmVo4QSjP3zc2pzYaXfZZpx6G4+BglzSqqqp6feML00YnjvodB87dAX8s
-        FzI1MOMSQUtFyjmcgnKGEo30/yExfdqMklwP8az/hnDLj/lGDreJ9Q3fPVFZmdMgvDCNN1v77ddFA
-        qxwiksVgJ/H9o3T3MSRMIkxnoQ1VMhezWoIdYo8ERvqFLlXlNPLG2AMtI81SxWqY10p5QZL+Rgf7q
-        Eo+nSN5iIK8d1Ov4gXyna6MgzvCy+JEZS9zsnaHoB1dPLBfy5k9EeaSjOswLCFqdavpBcFFvM1j2Z
-        gkXppHa3g==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gGpqS-0006B0-5Y; Sun, 28 Oct 2018 18:31:28 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 40D46202A40A3; Sun, 28 Oct 2018 19:31:26 +0100 (CET)
-Date:   Sun, 28 Oct 2018 19:31:26 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Igor Stoppa <igor.stoppa@gmail.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 10/17] prmem: documentation
-Message-ID: <20181028183126.GB744@hirez.programming.kicks-ass.net>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-11-igor.stoppa@huawei.com>
- <20181026092609.GB3159@worktop.c.hoisthospitality.com>
- <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
+        Sun, 28 Oct 2018 23:23:55 -0400
+Received: by mail-lf1-f66.google.com with SMTP id a82-v6so4377645lfa.4
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 11:38:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=JawUiS6yl5PWFfA1n7wCgqH2PS+44iYpdZ2SRlWC0B8=;
+        b=S/czunjCL4Mw44i59SyQNzVjZlUeftMEDzkt+TdvSP7QrYK0ikBfnk3Xxy6FGTJIAa
+         J53DveY9sXTPSdkkFFo9LWrr3KZXZD3y4qWoYbN69Uz7/kjiJ1XutDS0IsG8DEEGf+81
+         cQiWHPMmhyDEMGLYREgsPQVpddWtbZEjV6oVBO1+ZsLBYnB99OxQy6LL5yNM8ky2ltVc
+         rLqgFIA3k4bEnFmrLB4ktBdaVlxjwNjlS2HfCUrV4FzZvP6L1h3nK6UM+OcKyW2AIV8a
+         htx9fxtzt8ZeyYSEQvLojOpFZhJGyhT1zvwNbJ2WmCUyrzazwcgPnBJoK63Sz4B13NF7
+         BgOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=JawUiS6yl5PWFfA1n7wCgqH2PS+44iYpdZ2SRlWC0B8=;
+        b=VaS4ftUyfBOFDIA0MpXXh422oYY96hKSU+fyo9t7uBxSXXBH6+SyayzSEp+fvI1CgG
+         YvfTphBNsd8waVIQxkGwa+8hxfyCTDLecOy2HlZOPtmsl9WbqjX2NOeyB020nXgh1JKP
+         hZB0Ovhr0v3J3wDMRG0Dt6Sr0yyX7/hv72NcSFJLNnGD06GOehpU9c9hInvEd+aZh8AH
+         Et7bmZi4j1kjVCxQ76nb45VikeDNajhqrrim4sAECSk7AjUs/dEpVym+tyXI25X4YkWx
+         ehIEWy6PLBJW5OOeTd6kompVYux7TiSWV5Zlkk0mTZDSlUUj8fejt/K4ltQuyDHAuZKV
+         RWZA==
+X-Gm-Message-State: AGRZ1gI+R5T69PSilwypkNHVlhPIv74qBtTkLYh20pkwZAaqGLRdc2ag
+        SB5PBsBJ79KZhiR/LqgS2+7aa+1ybKw=
+X-Google-Smtp-Source: AJdET5fQYjC4aIIaZJwD8zAdtOuV8PRSqLVgXvkkIue/m4scmdabuigHYv1kNveK17jv/9a+85YShg==
+X-Received: by 2002:a19:4e59:: with SMTP id c86mr6761660lfb.132.1540751906039;
+        Sun, 28 Oct 2018 11:38:26 -0700 (PDT)
+Received: from [192.168.0.36] (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
+        by smtp.googlemail.com with ESMTPSA id u65sm380454lff.54.2018.10.28.11.38.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 28 Oct 2018 11:38:24 -0700 (PDT)
+Subject: Re: [PATCH] lightnvm: Fix uninitialized return value in
+ nvm_get_chunk_meta()
+To:     geert@linux-m68k.org, keith.busch@intel.com, axboe@fb.com,
+        hch@lst.de, sagi@grimberg.me
+Cc:     arnd@arndb.de, linux-block@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20181028160726.24450-1-geert@linux-m68k.org>
+From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <a0fa4599-f6c1-1f45-43f4-4cf30b8de509@lightnvm.io>
+Date:   Sun, 28 Oct 2018 19:38:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181028160726.24450-1-geert@linux-m68k.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 11:46:28AM +0100, Kees Cook wrote:
-> On Fri, Oct 26, 2018 at 10:26 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-> > I still don't really understand the whole write-rare thing; how does it
-> > really help? If we can write in kernel memory, we can write to
-> > page-tables too.
-
-> One aspect of hardening the kernel against attack is reducing the
-> internal attack surface. Not all flaws are created equal, so there is
-> variation in what limitations an attacker may have when exploiting
-> flaws (not many flaws end up being a fully controlled "write anything,
-> anywhere, at any time"). By making the more sensitive data structures
-> of the kernel read-only, we reduce the risk of an attacker finding a
-> path to manipulating the kernel's behavior in a significant way.
+On 10/28/2018 05:07 PM, Geert Uytterhoeven wrote:
+> With gcc 4.1:
 > 
-> Examples of typical sensitive targets are function pointers, security
-> policy, and page tables. Having these "read only at rest" makes them
-> much harder to control by an attacker using memory integrity flaws.
-
-Because 'write-anywhere' exploits are easier than (and the typical first
-step to) arbitrary code execution thingies?
-
-> The "write rarely" name itself may not sufficiently describe what is
-> wanted either (I'll take the blame for the inaccurate name), so I'm
-> open to new ideas there. The implementation requirements for the
-> "sensitive data read-only at rest" feature are rather tricky:
+>      drivers/lightnvm/core.c: In function ‘nvm_get_bb_meta’:
+>      drivers/lightnvm/core.c:977: warning: ‘ret’ may be used uninitialized in this function
 > 
-> - allow writes only from specific places in the kernel
-> - keep those locations inline to avoid making them trivial ROP targets
-> - keep the writeability window open only to a single uninterruptable CPU
-
-The current patch set does not achieve that because it uses a global
-address space for the alias mapping (vmap) which is equally accessible
-from all CPUs.
-
-> - fast enough to deal with page table updates
-
-The proposed implementation needs page-tables for the alias; I don't see
-how you could ever do R/O page-tables when you need page-tables to
-modify your page-tables.
-
-And this is entirely irrespective of performance.
-
-> The proposal I made a while back only covered .data things (and used
-> x86-specific features).
-
-Oh, right, that CR0.WP stuff.
-
-> Igor's proposal builds on this by including a
-> way to do this with dynamic allocation too, which greatly expands the
-> scope of structures that can be protected. Given that the x86-only
-> method of write-window creation was firmly rejected, this is a new
-> proposal for how to do it (vmap window). Using switch_mm() has also
-> been suggested, etc.
-
-Right... /me goes find the patches we did for text_poke. Hmm, those
-never seem to have made it:
-
-  https://lkml.kernel.org/r/20180902173224.30606-1-namit@vmware.com
-
-like that. That approach will in fact work and not be a completely
-broken mess like this thing.
-
-> We need to find a good way to do the write-windowing that works well
-> for static and dynamic structures _and_ for the page tables... this
-> continues to be tricky.
+> and
 > 
-> Making it resilient against ROP-style targets makes it difficult to
-> deal with certain data structures (like list manipulation). In my
-> earlier RFC, I tried to provide enough examples of where this could
-> get used to let people see some of the complexity[1]. Igor's series
-> expands this to even more examples using dynamic allocation.
+>      drivers/nvme/host/lightnvm.c: In function ‘nvme_nvm_get_chk_meta’:
+>      drivers/nvme/host/lightnvm.c:580: warning: ‘ret’ may be used uninitialized in this function
+> 
+> Indeed, if (for the former) the number of channels or LUNs is zero, or
+> (for both) the passed number of chunks is zero, ret will be returned
+> uninitialized.
+> 
+> Fix this by preinitializing ret to zero.
+> 
+> Fixes: aff3fb18f957de93 ("lightnvm: move bad block and chunk state logic to core")
+> Fixes: a294c199455187d1 ("lightnvm: implement get log report chunk helpers")
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
+> I don't know if this can happen in practice, but given this is core
+> functionality that can be called from other files, or even from other
+> modules, I think it's better to be safe than sorry.
+> 
+> The latter seems to be a pre-existing issue since v4.17.
+> I didn't notice it before, due to the dependency of NVM on PCI (my gcc
+> 4.1 targets m68k, i.e. no PCI).
+> ---
+>   drivers/lightnvm/core.c      | 2 +-
+>   drivers/nvme/host/lightnvm.c | 3 ++-
+>   2 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
+> index efb976a863d2295a..73ab3cf2686804ba 100644
+> --- a/drivers/lightnvm/core.c
+> +++ b/drivers/lightnvm/core.c
+> @@ -974,7 +974,7 @@ static int nvm_get_bb_meta(struct nvm_dev *dev, sector_t slba,
+>   	struct ppa_addr ppa;
+>   	u8 *blks;
+>   	int ch, lun, nr_blks;
+> -	int ret;
+> +	int ret = 0;
+>   
+>   	ppa.ppa = slba;
+>   	ppa = dev_to_generic_addr(dev, ppa);
+> diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
+> index a4f3b263cd6c60ee..d64805dc8efbaa02 100644
+> --- a/drivers/nvme/host/lightnvm.c
+> +++ b/drivers/nvme/host/lightnvm.c
+> @@ -577,7 +577,8 @@ static int nvme_nvm_get_chk_meta(struct nvm_dev *ndev,
+>   	struct ppa_addr ppa;
+>   	size_t left = nchks * sizeof(struct nvme_nvm_chk_meta);
+>   	size_t log_pos, offset, len;
+> -	int ret, i, max_len;
+> +	int i, max_len;
+> +	int ret = 0;
+>   
+>   	/*
+>   	 * limit requests to maximum 256K to avoid issuing arbitrary large
+> 
 
-Doing 2 CR3 writes for 'every' WR write doesn't seem like it would be
-fast enough for much of anything.
-
-And I don't suppose we can take the WP fault and then fix up from there,
-because if we're doing R/O page-tables, that'll incrase the fault depth
-and we'll double fault all the time, and tripple fault where we
-currently double fault. And we all know how _awesome_ tripple faults
-are.
-
-But duplicating (and wrapping in gunk) whole APIs is just not going to
-work.
+Thanks Geert. Applied for 4.21/5.1.
