@@ -2,64 +2,64 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7040ECDE44
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 07:50:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5895ECDE44
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 07:51:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6FA6320824
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 07:50:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9384120824
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 07:51:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DRPlWHmX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FA6320824
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ce+N/GjC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9384120824
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727793AbeJ1Qd7 (ORCPT
+        id S1727948AbeJ1QfZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 12:33:59 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42849 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726488AbeJ1Qd7 (ORCPT
+        Sun, 28 Oct 2018 12:35:25 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44468 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726488AbeJ1QfZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 12:33:59 -0400
-Received: by mail-pg1-f194.google.com with SMTP id i4-v6so2409219pgq.9;
-        Sun, 28 Oct 2018 00:50:07 -0700 (PDT)
+        Sun, 28 Oct 2018 12:35:25 -0400
+Received: by mail-pl1-f195.google.com with SMTP id s5-v6so716155plq.11;
+        Sun, 28 Oct 2018 00:51:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=fp/9xhOD4HmbDF1HFdOd79Yf2CXGwv8kOhhb6d8fvHQ=;
-        b=DRPlWHmXfEgKDLuQEObzbRdPkOOjwSCmj5kq+n2EoPDdn82EGIbPvygnk9YknrWawt
-         /UYZ44J5dukNMGgdPFgOg7e42UlF4KOC/bK1ZKdtX03rZ6Fu7XUTAN7ukRpNsph1XzO9
-         qWyzZ+Z9Ohs4++QVlOHY/XxRwJM3RI8NLMxmHgczSXP8rCB0pEAmzy6SqNPmwwbXQ8PM
-         zBilOx9IBaC/S2a40/pFvFtsvu9yNnZaX04sTNglTxvu4mn8Jd9ksf4iyxtK8MzX02i2
-         sEfQRjubVtFd6JB3PmC1FgnqelumTNaYIC7boht3Qg886Wqep7DKD/0zhAgKQ6qz0vJ/
-         3Xew==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=E92Wh5JZ8eoDlZ0Z0ALHufJDY7LyfXxGPBRFU8RRm3s=;
+        b=Ce+N/GjCeDP0xPXT7JvzIXU1TtXOZ+RUY6LeIeIIS1s36YNbeVtUNtluHoLhVkMBNv
+         /2uo5nxbBuPWbRI0OJrUIzW9ODKzjowQTFi27k+fYXWZz8jorPKQkzG/PMWIGOAijYLI
+         hiNMy0yfjFlqLkHzBt5eLRrC+YLSaOMm0Y6dM6YkqPW+b6DLXBzfsnWgiPP7MQFhcBCD
+         6+ha6Y5qTtbcx7oiQtIyNMUgc81R3waOkpyhJWgOHa7BbULhMfr1b6DSBuE9QMuFLGx0
+         WIyWv3rPtKkeJC02wlphjChRBCNOSaNPosGSwktE5dJLwKNMUQ6MJqEaDYtRz5vXyoJs
+         7r8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=fp/9xhOD4HmbDF1HFdOd79Yf2CXGwv8kOhhb6d8fvHQ=;
-        b=li7Zv29nh+su1nBbvLBady1/uo5ivIAE3SY5SVQ6aJ4+uZXCPfeYbSD9qiBoDqnXY8
-         Wqagz2tpXdTH8NhgB11QD6Fbf2Y+ngYShz8towNoX11ugWjwh4uj2u6JzwPDwS4b78rq
-         mKzxD5sLJk/9Djz7AC585jYIGLPU5/zlGASL8vLhvXq8K0IcHXForFDWDZfYBMVL4DLV
-         acH6azAxTxbx2rxLwn1jbrxGwBW0phFKr0E+evTknFIGVx4Msd9L0ln1hCYIaFpMzht3
-         vIwTpo2blcCyAoLROSWeCZcYPZI/5vQ7aLVWplnHZGcbVUtJLT0ZFNyCwUoNkMMRUzpN
-         gHaw==
-X-Gm-Message-State: AGRZ1gImcHUKkb36vSvjZsvvMicPOnLnaYL9ECOoC0kXNIPVUMvl6mY1
-        0UmkHJg5SqVVlGSFDgwMFjI=
-X-Google-Smtp-Source: AJdET5crpDOU2ahx1Mt4JQxoeonw7L8bLfKrh/o1ockY1IMkn7fy0V+j+SZC2hJb+bncoCYtyFOhmQ==
-X-Received: by 2002:a63:ce14:: with SMTP id y20-v6mr9688461pgf.248.1540713006718;
-        Sun, 28 Oct 2018 00:50:06 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=E92Wh5JZ8eoDlZ0Z0ALHufJDY7LyfXxGPBRFU8RRm3s=;
+        b=DSP4f2wahwQQ6eJmBGofP+FLEzCmF4zKdHhBxfrB1FAzlaYqWHT/3+xtl3V44XrTnJ
+         Q22FoHKu/XILzlgSmirbHt23QcY8e5tkyrkIv9vXqooO3AJneihEPhlOkD4mcZtxm0PG
+         52BpWEEZIkohEkJX8Ya0V5Hp9SiZZP/vndqrKDq7qjn2So2UeORwEdtSk/OrkufSu4/y
+         2CxxBQ9Wnp6/z1EFx5RbwzaPDYud1rVgAmfqINzoo3hyCYiHTujMIIelZHrbzig2pMYK
+         f7aC4GKUzgMYgNsnh/RyjPMYUomEz2hrcszqzwpS5HdDQWuZeLAbFkaSOXtWPaQAdEV0
+         4spg==
+X-Gm-Message-State: AGRZ1gID1JsCxjLSgTINdo+mV+2IaqiVWfg0asflRnkOxo78zImJ2d08
+        Ggtk5juRWdyhIOsuIYEr5Nk=
+X-Google-Smtp-Source: AJdET5eWCj4FfrcLzVtbw7FRmWmOaBZ0qpf7Vqr7EmaoagEUmB0n76rNgLUrYFufrbVCVrMvzHKKKw==
+X-Received: by 2002:a17:902:76c3:: with SMTP id j3-v6mr9779882plt.339.1540713093041;
+        Sun, 28 Oct 2018 00:51:33 -0700 (PDT)
 Received: from nishad ([106.51.27.228])
-        by smtp.gmail.com with ESMTPSA id t9-v6sm8514357pgl.37.2018.10.28.00.50.02
+        by smtp.gmail.com with ESMTPSA id x189-v6sm9580737pfb.162.2018.10.28.00.51.28
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 28 Oct 2018 00:50:06 -0700 (PDT)
-Date:   Sun, 28 Oct 2018 13:19:59 +0530
+        Sun, 28 Oct 2018 00:51:32 -0700 (PDT)
+Date:   Sun, 28 Oct 2018 13:21:25 +0530
 From:   Nishad Kamdar <nishadkamdar@gmail.com>
 To:     Slawomir Stepien <sst@poczta.fm>
 Cc:     Lars-Peter Clausen <lars@metafoo.de>,
@@ -70,12 +70,14 @@ Cc:     Lars-Peter Clausen <lars@metafoo.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v6 0/3] staging: iio: ad2s1210: Switch to the gpio descriptor
- interface.
-Message-ID: <cover.1540712249.git.nishadkamdar@gmail.com>
+Subject: [PATCH v6 1/3] staging: iio: ad2s1210: Switch to the gpio descriptor
+ interface
+Message-ID: <3b51eb662d107472e8bab38a87714354a1381779.1540712249.git.nishadkamdar@gmail.com>
+References: <cover.1540712249.git.nishadkamdar@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <cover.1540712249.git.nishadkamdar@gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -83,45 +85,220 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Use the gpiod interface instead of the deprecated old non-descriptor
+interface.
 
-Changes in v6:
- - Split device tree table addition and device tree support 
-   addition in two patches.
- - Replace platform data with device tree support.
- - Rename boolean property.
-Changes in v5:
- - Add device tree support.
- - Add device tree table for matching vendor ID.
- - Add Support for retrieving platform data from device tree.
-Changes in v4:
- - Add spaces after { and before } in gpios[]
-   initialization.
- - Check the correct pointer for error.
- - Align the dev_err msg to existing format in the code.
-Changes in v3:
- - Use a pointer to pointer for gpio_desc in
-   struct ad2s1210_gpio as it will be used to
-   modify a pointer.
- - Use dot notation to initialize the structure.
- - Use a pointer variable to avoid writing gpios[i].
-Changes in v2:
- - Use the spi_device struct embedded in st instead
-   of passing it as an argument to ad2s1210_setup_gpios().
- - Use an array of structs to reduce redundant code in
-   in ad2s1210_setup_gpios().
- - Remove ad2s1210_free_gpios() as devm API is being used.
+Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+---
+ drivers/staging/iio/resolver/ad2s1210.c | 92 ++++++++++++++-----------
+ drivers/staging/iio/resolver/ad2s1210.h |  3 -
+ 2 files changed, 50 insertions(+), 45 deletions(-)
+
+diff --git a/drivers/staging/iio/resolver/ad2s1210.c b/drivers/staging/iio/resolver/ad2s1210.c
+index ac13b99bd9cb..93c3c70ce62e 100644
+--- a/drivers/staging/iio/resolver/ad2s1210.c
++++ b/drivers/staging/iio/resolver/ad2s1210.c
+@@ -15,7 +15,7 @@
+ #include <linux/slab.h>
+ #include <linux/sysfs.h>
+ #include <linux/delay.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/module.h>
+ 
+ #include <linux/iio/iio.h>
+@@ -69,10 +69,21 @@ enum ad2s1210_mode {
+ 
+ static const unsigned int ad2s1210_resolution_value[] = { 10, 12, 14, 16 };
+ 
++struct ad2s1210_gpio {
++	struct gpio_desc **ptr;
++	const char *name;
++	unsigned long flags;
++};
++
+ struct ad2s1210_state {
+ 	const struct ad2s1210_platform_data *pdata;
+ 	struct mutex lock;
+ 	struct spi_device *sdev;
++	struct gpio_desc *sample;
++	struct gpio_desc *a0;
++	struct gpio_desc *a1;
++	struct gpio_desc *res0;
++	struct gpio_desc *res1;
+ 	unsigned int fclkin;
+ 	unsigned int fexcit;
+ 	bool hysteresis;
+@@ -91,8 +102,8 @@ static const int ad2s1210_mode_vals[4][2] = {
+ static inline void ad2s1210_set_mode(enum ad2s1210_mode mode,
+ 				     struct ad2s1210_state *st)
+ {
+-	gpio_set_value(st->pdata->a[0], ad2s1210_mode_vals[mode][0]);
+-	gpio_set_value(st->pdata->a[1], ad2s1210_mode_vals[mode][1]);
++	gpiod_set_value(st->a0, ad2s1210_mode_vals[mode][0]);
++	gpiod_set_value(st->a1, ad2s1210_mode_vals[mode][1]);
+ 	st->mode = mode;
+ }
+ 
+@@ -152,8 +163,8 @@ int ad2s1210_update_frequency_control_word(struct ad2s1210_state *st)
+ 
+ static unsigned char ad2s1210_read_resolution_pin(struct ad2s1210_state *st)
+ {
+-	int resolution = (gpio_get_value(st->pdata->res[0]) << 1) |
+-			  gpio_get_value(st->pdata->res[1]);
++	int resolution = (gpiod_get_value(st->res0) << 1) |
++			  gpiod_get_value(st->res1);
+ 
+ 	return ad2s1210_resolution_value[resolution];
+ }
+@@ -164,10 +175,10 @@ static const int ad2s1210_res_pins[4][2] = {
+ 
+ static inline void ad2s1210_set_resolution_pin(struct ad2s1210_state *st)
+ {
+-	gpio_set_value(st->pdata->res[0],
+-		       ad2s1210_res_pins[(st->resolution - 10) / 2][0]);
+-	gpio_set_value(st->pdata->res[1],
+-		       ad2s1210_res_pins[(st->resolution - 10) / 2][1]);
++	gpiod_set_value(st->res0,
++			ad2s1210_res_pins[(st->resolution - 10) / 2][0]);
++	gpiod_set_value(st->res1,
++			ad2s1210_res_pins[(st->resolution - 10) / 2][1]);
+ }
+ 
+ static inline int ad2s1210_soft_reset(struct ad2s1210_state *st)
+@@ -401,15 +412,15 @@ static ssize_t ad2s1210_clear_fault(struct device *dev,
+ 	int ret;
+ 
+ 	mutex_lock(&st->lock);
+-	gpio_set_value(st->pdata->sample, 0);
++	gpiod_set_value(st->sample, 0);
+ 	/* delay (2 * tck + 20) nano seconds */
+ 	udelay(1);
+-	gpio_set_value(st->pdata->sample, 1);
++	gpiod_set_value(st->sample, 1);
+ 	ret = ad2s1210_config_read(st, AD2S1210_REG_FAULT);
+ 	if (ret < 0)
+ 		goto error_ret;
+-	gpio_set_value(st->pdata->sample, 0);
+-	gpio_set_value(st->pdata->sample, 1);
++	gpiod_set_value(st->sample, 0);
++	gpiod_set_value(st->sample, 1);
+ error_ret:
+ 	mutex_unlock(&st->lock);
+ 
+@@ -466,7 +477,7 @@ static int ad2s1210_read_raw(struct iio_dev *indio_dev,
+ 	s16 vel;
+ 
+ 	mutex_lock(&st->lock);
+-	gpio_set_value(st->pdata->sample, 0);
++	gpiod_set_value(st->sample, 0);
+ 	/* delay (6 * tck + 20) nano seconds */
+ 	udelay(1);
+ 
+@@ -512,7 +523,7 @@ static int ad2s1210_read_raw(struct iio_dev *indio_dev,
+ 	}
+ 
+ error_ret:
+-	gpio_set_value(st->pdata->sample, 1);
++	gpiod_set_value(st->sample, 1);
+ 	/* delay (2 * tck + 20) nano seconds */
+ 	udelay(1);
+ 	mutex_unlock(&st->lock);
+@@ -630,30 +641,32 @@ static const struct iio_info ad2s1210_info = {
+ 
+ static int ad2s1210_setup_gpios(struct ad2s1210_state *st)
+ {
+-	unsigned long flags = st->pdata->gpioin ? GPIOF_DIR_IN : GPIOF_DIR_OUT;
+-	struct gpio ad2s1210_gpios[] = {
+-		{ st->pdata->sample, GPIOF_DIR_IN, "sample" },
+-		{ st->pdata->a[0], flags, "a0" },
+-		{ st->pdata->a[1], flags, "a1" },
+-		{ st->pdata->res[0], flags, "res0" },
+-		{ st->pdata->res[0], flags, "res1" },
++	int ret, i;
++	struct spi_device *spi = st->sdev;
++	struct ad2s1210_gpio *pin;
++	unsigned long flags = st->pdata->gpioin ? GPIOD_IN : GPIOD_OUT_LOW;
++
++	struct ad2s1210_gpio gpios[] = {
++		{ .ptr = &st->sample, .name = "sample", .flags = GPIOD_IN },
++		{ .ptr = &st->a0, .name = "a0", .flags = flags },
++		{ .ptr = &st->a1, .name = "a1", .flags = flags },
++		{ .ptr = &st->res0, .name = "res0", .flags = flags },
++		{ .ptr = &st->res1, .name = "res1", .flags = flags },
+ 	};
+ 
+-	return gpio_request_array(ad2s1210_gpios, ARRAY_SIZE(ad2s1210_gpios));
+-}
 -
-
-Nishad Kamdar (3):
-  staging: iio: ad2s1210: Switch to the gpio descriptor interface
-  staging: iio: ad2s1210: Add device tree table.
-  staging: iio: ad2s1210: Add device tree support.
-
- drivers/staging/iio/resolver/Kconfig    |   1 +
- drivers/staging/iio/resolver/ad2s1210.c | 114 +++++++++++++-----------
- drivers/staging/iio/resolver/ad2s1210.h |  20 -----
- 3 files changed, 65 insertions(+), 70 deletions(-)
-
+-static void ad2s1210_free_gpios(struct ad2s1210_state *st)
+-{
+-	unsigned long flags = st->pdata->gpioin ? GPIOF_DIR_IN : GPIOF_DIR_OUT;
+-	struct gpio ad2s1210_gpios[] = {
+-		{ st->pdata->sample, GPIOF_DIR_IN, "sample" },
+-		{ st->pdata->a[0], flags, "a0" },
+-		{ st->pdata->a[1], flags, "a1" },
+-		{ st->pdata->res[0], flags, "res0" },
+-		{ st->pdata->res[0], flags, "res1" },
+-	};
++	for (i = 0; i < ARRAY_SIZE(gpios); i++) {
++		pin = &gpios[i];
++		*pin->ptr = devm_gpiod_get(&spi->dev, pin->name, pin->flags);
++		if (IS_ERR(*pin->ptr)) {
++			ret = PTR_ERR(*pin->ptr);
++			dev_err(&spi->dev,
++				"ad2s1210: failed to request %s GPIO: %d\n",
++				pin->name, ret);
++			return ret;
++		}
++	}
+ 
+-	gpio_free_array(ad2s1210_gpios, ARRAY_SIZE(ad2s1210_gpios));
++	return 0;
+ }
+ 
+ static int ad2s1210_probe(struct spi_device *spi)
+@@ -692,7 +705,7 @@ static int ad2s1210_probe(struct spi_device *spi)
+ 
+ 	ret = iio_device_register(indio_dev);
+ 	if (ret)
+-		goto error_free_gpios;
++		return ret;
+ 
+ 	st->fclkin = spi->max_speed_hz;
+ 	spi->mode = SPI_MODE_3;
+@@ -700,10 +713,6 @@ static int ad2s1210_probe(struct spi_device *spi)
+ 	ad2s1210_initial(st);
+ 
+ 	return 0;
+-
+-error_free_gpios:
+-	ad2s1210_free_gpios(st);
+-	return ret;
+ }
+ 
+ static int ad2s1210_remove(struct spi_device *spi)
+@@ -711,7 +720,6 @@ static int ad2s1210_remove(struct spi_device *spi)
+ 	struct iio_dev *indio_dev = spi_get_drvdata(spi);
+ 
+ 	iio_device_unregister(indio_dev);
+-	ad2s1210_free_gpios(iio_priv(indio_dev));
+ 
+ 	return 0;
+ }
+diff --git a/drivers/staging/iio/resolver/ad2s1210.h b/drivers/staging/iio/resolver/ad2s1210.h
+index e9b2147701fc..63d479b20a6c 100644
+--- a/drivers/staging/iio/resolver/ad2s1210.h
++++ b/drivers/staging/iio/resolver/ad2s1210.h
+@@ -12,9 +12,6 @@
+ #define _AD2S1210_H
+ 
+ struct ad2s1210_platform_data {
+-	unsigned int		sample;
+-	unsigned int		a[2];
+-	unsigned int		res[2];
+ 	bool			gpioin;
+ };
+ #endif /* _AD2S1210_H */
 -- 
 2.17.1
 
