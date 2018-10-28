@@ -2,96 +2,103 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02232C2BC61
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 21:11:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83732C6786F
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 21:12:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A37BD20664
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 21:11:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="d3aZX9jM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A37BD20664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 5455520827
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 21:12:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5455520827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728005AbeJ2F5k (ORCPT
+        id S1728024AbeJ2F54 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 01:57:40 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:38256 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727741AbeJ2F5k (ORCPT
+        Mon, 29 Oct 2018 01:57:56 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:59323 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727701AbeJ2F54 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 01:57:40 -0400
-Received: by mail-lf1-f66.google.com with SMTP id p86so2329771lfg.5
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 14:11:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CbuGby1AYMPd0qinsAnm72Zu8BFDE7HFMGpcBy3MonE=;
-        b=d3aZX9jMK/D09OPLzQDziXfJrVottVg3+kpxxhQRiCkJZDpisI4PaVOoHIBD78c7Yr
-         JcNrJLf2ppxmxCPxlQILM0jB/oy8N/Yfam/6rpasLHS1zn3WDC8VHM6F3U4raqiWEzjI
-         73JBjqNlr3LbpEKoq1oW5ixWzjOkIKwMsgfU0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CbuGby1AYMPd0qinsAnm72Zu8BFDE7HFMGpcBy3MonE=;
-        b=dJKAkfUF2ed1YURKkapS21BVEnXOf7Q5RNjo9DpzYGbfRTpsZrE2etN+MCUi81l570
-         F8kn4HwEZaRYEv1nB2F2S3WIpyyp9JZ3Wc7nkoHlE+P74vfFb8JYsbDnP7rUGqYCAz2P
-         OEgAtRoLKWkP477FfbL4nw3vcmEGUzBmp+BOyImzRBbVxcjUiU0g9vdMDn0ZqGTVOq2x
-         FkSDOJIIFMlfiQUEClMjarzL6trPWuuKhcW6BT4gLVyGApaWPdfYFrkAP7mntY+ziD0f
-         Slp3kkK1PTjAZJQ8P6wYCb94OOM6EqzlHen3zS4E1twHh8H1v+XlN8/h8JhFuTuYZYJn
-         MSsw==
-X-Gm-Message-State: AGRZ1gJkrgvS5uMH1A3EDHvrNX4I1Prm+DtkRg4Z32uau6L03eKt7LIE
-        G9osku5Ka3z16AvsBTpRHh4+G+Zl1W+rPA==
-X-Google-Smtp-Source: AJdET5dIavJECqz1QhGjjqqw82GfmQsM2P8TLWJ7gkbqqarnmWCQXBTfTC88LhTUQlk2wBiwIAF11A==
-X-Received: by 2002:a19:cd8e:: with SMTP id d136mr6646812lfg.3.1540761108276;
-        Sun, 28 Oct 2018 14:11:48 -0700 (PDT)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id s126-v6sm817769lja.4.2018.10.28.14.11.46
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 28 Oct 2018 14:11:47 -0700 (PDT)
-Received: by mail-lf1-f48.google.com with SMTP id d7-v6so4546219lfi.2
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 14:11:46 -0700 (PDT)
-X-Received: by 2002:a19:4948:: with SMTP id l8-v6mr6255789lfj.16.1540761106466;
- Sun, 28 Oct 2018 14:11:46 -0700 (PDT)
+        Mon, 29 Oct 2018 01:57:56 -0400
+Received: from null ([212.227.220.15]) by mrelayeu.kundenserver.de (mreue009
+ [213.165.67.97]) with ESMTPSA (Nemesis) id 1MFbeI-1gLoIo3JCY-00H3DJ; Sun, 28
+ Oct 2018 22:11:44 +0100
+Received: from null ([212.227.220.15]) by mrelayeu.kundenserver.de (mreue009
+ [213.165.67.97]) with ESMTPSA (Nemesis) id 1MFbeI-1gLoIo3JCY-00H3DJ; Sun, 28
+ Oct 2018 22:11:44 +0100
+Date:   Sun, 28 Oct 2018 22:11:43 +0100 (CET)
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     linux-rpi-kernel@lists.infradead.org, eric@anholt.net,
+        gregkh@linuxfoundation.org, linux-arm-kernel@lists.infradead.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        dave.stevenson@raspberrypi.org
+Message-ID: <847891613.4295.1540761103425@email.ionos.de>
+In-Reply-To: <20181026134813.7775-19-nsaenzjulienne@suse.de>
+References: <20181026134813.7775-1-nsaenzjulienne@suse.de>
+ <20181026134813.7775-19-nsaenzjulienne@suse.de>
+Subject: Re: [PATCH RFC 18/18] staging: vchiq: add more tasks to the TODO
+ list
 MIME-Version: 1.0
-References: <1540613318-23877-1-git-send-email-ren_guo@c-sky.com>
-In-Reply-To: <1540613318-23877-1-git-send-email-ren_guo@c-sky.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sun, 28 Oct 2018 14:11:30 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whHhzsdgbVwRFB8oGVwnfN551HPQjtvuodf+W5dNHtjuA@mail.gmail.com>
-Message-ID: <CAHk-=whHhzsdgbVwRFB8oGVwnfN551HPQjtvuodf+W5dNHtjuA@mail.gmail.com>
-Subject: Re: [GIT PULL] C-SKY(csky) Port for Linux 4.20
-To:     ren_guo@c-sky.com
-Cc:     Arnd Bergmann <arnd@arndb.de>, marc.zyngier@arm.com,
-        Peter Zijlstra <peterz@infradead.org>, robh@kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch@vger.kernel.org, c-sky_gcc_upstream@c-sky.com,
-        guoren1983@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev39
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K1:6u8sDlr00Xti4xgt9XmtPwhhj5UMR6w8+UyiWlgBJ7/OCc3mm9f
+ zkFwNOTXB7G/U0reyduRdJHR3XvZKDW6yPuSujczytzbqzy6rPydAziVbaP+jWh7VWkZ3Po
+ bNQA0IDxR8JjXAOc7DH2GHieDVJ/wtP4h+pjpJFU6ow6K0m2HX7nFQzBB1nys/SjS9wMbKG
+ DdE/HelR7/dWyqUWdXMkQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:ysKt6YBQcG0=:fypeZRFMPtqbWOnzpiJzFZ
+ uBv2Pp6v2MN4g3WgQoceStbKYoF2YfEvi3ZHbDLun+/VIdg3x5nx41qBANjKbDJJcR3YL0HkZ
+ oBIyu4Y9NU1nGny/Kzy7rVaw4dUjDWgkRdzM6c3CGqHeg1EWHJKou8Dikrq0HtfoWUVkg1kFF
+ gLgZufuv+AGj77XWdHdtmMI3dlcmnrmiRvHDJwYDkiQW1ycvGJNgG7OV5YB301ro0nwhXtFF6
+ dq3EdFR6qakRSjXFsixd5I/yOh2L5ikqjBLbeadvFjURDexIjkX91GbnsNPIzcAeC4rDHGglv
+ uAoaQsRkFDV9QeIQy2dM2YnlD46KgwwVfqGJR+FFV0jxeFfuGPcjc9fcBTYRzi6ix5irN4WBG
+ QkL/9AFHxv9LVJStk6vrFpoQeIKDhkA2cwfReQeplJIZu9KA4hMRjEX/BdziYcQW+6wAmfjtb
+ LDTXXvwvefvBiQAHrN9Aq2R+/vOJFhPkcAxLU2lmMevNvlSa9FW6cWDgUJjGTgWnKsNN7UnDv
+ PQZCzL2PE0SymgqQ6HPOUv1JKoJV69mMm1UKm88Aqf9XFt9EQX6BjVqYPxkDaKY3dUkHd2vxv
+ JroKGiqUgp0hTYLRqi8xdgQ6UZLxdymYIZXhUDNI+CZ/O8KYrKpjBddjCKXKdrT5/eMyQIMOz
+ rTJbCWwhT4lwOCoFXE+fFaLHFRmrrPsHVrh4k+Xb+1HW3u8jaqSRXbkgJzuBQRg32j1ltis/c
+ iXXpzzFaIMAsX4Ni
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnd,
- I was kind of hoping/expecting to get an explicit ack for this from
-you, since it's a new architecture.
 
-Good to merge?
+> Nicolas Saenz Julienne <nsaenzjulienne@suse.de> hat am 26. Oktober 2018 um 15:48 geschrieben:
+> 
+> 
+> The more the better.
 
-              Linus
+Please try to find a better commit log ;-)
 
-On Fri, Oct 26, 2018 at 9:08 PM Guo Ren <ren_guo@c-sky.com> wrote:
->
-> This tag contains the Linux port for C-SKY(csky) based on linux-4.19
-> Release, which has been through 10 rounds of review on mailing list.
->
-> We almost got the Acked-by/Reviewed-by of all patches except "Process
-> management and Signal", but all've been tested.
+> 
+> Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+> ---
+>  .../staging/vc04_services/interface/vchi/TODO | 46 ++++++++++++++++++-
+>  1 file changed, 44 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/vc04_services/interface/vchi/TODO b/drivers/staging/vc04_services/interface/vchi/TODO
+> index 0b3ec75ff627..bf2135826431 100644
+> --- a/drivers/staging/vc04_services/interface/vchi/TODO
+> +++ b/drivers/staging/vc04_services/interface/vchi/TODO
+> @@ -27,8 +27,8 @@ unused.
+>  3) Make driver more portable
+>  
+>  Building this driver with arm/multi_v7_defconfig or arm64/defconfig
+> -leads to data corruption during the following command: 
+> -  
+> +leads to data corruption during the following command:
+> +
+
+I assume this wasn't intended.
+
+Btw after applying Phil's patch series. This point can be dropped.
+
+Beside that i'm fine with the additions.
