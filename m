@@ -2,108 +2,156 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D2BEC6786F
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 16:52:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 994A8C6786F
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 16:55:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5A5F2064C
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 16:52:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40DF22064C
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 16:55:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AJxIJVGp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5A5F2064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="V2uNg7CS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40DF22064C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727992AbeJ2Bhs (ORCPT
+        id S1728001AbeJ2BkK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 21:37:48 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:44041 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726492AbeJ2Bhs (ORCPT
+        Sun, 28 Oct 2018 21:40:10 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:46007 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726492AbeJ2BkK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 21:37:48 -0400
-Received: by mail-qk1-f196.google.com with SMTP id n12so3536046qkh.11;
-        Sun, 28 Oct 2018 09:52:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0Ob1SxHjZHBVGMX0NNAPJL0siXAyvQsxoYjE1n3y6AU=;
-        b=AJxIJVGpA3iA0CKfJUuVsYmRlXJ8pJaxO8tMmoriDig6TWitEdDw5iCqxumscmL4i6
-         SAovwbPzlVghggVVs9gD6PhAYC4S2YCfQHZqUu54UqpWZdAXjFcLbNDuMdjkdx+wrZ1W
-         Lp+LA7CXW7DWJnrEnm29vTpnOE4V94UmjMOgSKTdbmxJUfl4LT28zmxZlotey2C5lR+N
-         QElIgn2pBCQ+pzqs18EOeYUdKJ742CdzRjyCwIfOtwo+QmPBgOwPDZVBVlHqhMdb3c3m
-         LKIEPmUTa06d2Nr5ZUnXGGsJ98Fsb7mbj4S9Ov8vTueoL5PmAKF/Dz9b6CCZqjZWsugy
-         dU0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0Ob1SxHjZHBVGMX0NNAPJL0siXAyvQsxoYjE1n3y6AU=;
-        b=N1aOyqWZWranVcARw9LTGxR38AD729D/xyo0POn8L0kViyg6B82T/frqg/OvBCo5Ye
-         az000w692TgtHbgM8EnJycirZJP9WX7uuZm7wFc/J3I2zcNxNgrcNFdhlcXD4CvZOnfw
-         gh/CNIRcsdFNRwiuWg4PztdOh1GTt/xlN3E5DDhEwgwS3m1yo4efJpboMfhJ6gD+9X6s
-         Sdx7nR0oZQeYFav1LNPzSQy48zK7v+X7zaE1lbSEJtdfvRQeWt/Q9Ve8wWSfk7mBFo0y
-         UAMRseFiEL7qYOHtriXn9N6V5CPuaMuM7kfOpcBrgNa5wT5DpRUM05JjJYkrwNMQv/NV
-         8pHw==
-X-Gm-Message-State: AGRZ1gLCOo9JHrm/+llQ2z2bYU4ucEXaSuxDemV8p6LuxKE4wudTiZ55
-        E3b212vzK4GZro/S7EQdQlQ=
-X-Google-Smtp-Source: AJdET5ckra0naG+JoJJaZUAn3xydQ6IXMqSAXuMhajAlaTZrbRCwGNz8zMwGtSKHnGNOVg4pEWX3oQ==
-X-Received: by 2002:a37:62d3:: with SMTP id w202mr4641645qkb.357.1540745558129;
-        Sun, 28 Oct 2018 09:52:38 -0700 (PDT)
-Received: from renatolg ([186.220.2.26])
-        by smtp.gmail.com with ESMTPSA id m188-v6sm4934000qkb.24.2018.10.28.09.52.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 28 Oct 2018 09:52:37 -0700 (PDT)
-From:   Renato Lui Geh <renatogeh@gmail.com>
-X-Google-Original-From: Renato Lui Geh <renatogeh@renatolg>
-Date:   Sun, 28 Oct 2018 13:52:32 -0300
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Renato Lui Geh <renatogeh@gmail.com>, lars@metafoo.de,
-        Michael.Hennerich@analog.com, knaack.h@gmx.de, pmeerw@pmeerw.net,
-        gregkh@linuxfoundation.org, alexandru.Ardelean@analog.com,
-        stefan.popa@analog.com, giuliano.belinassi@usp.br,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
-Subject: Re: [PATCH v2 1/2] staging: iio: ad7780: update voltage on read
-Message-ID: <20181028165231.2det3cq3u7r6qoxj@renatolg>
-References: <cover.1540506298.git.renatogeh@gmail.com>
- <1f7b2c6ee0e18b1c43a8b27f482b08313c52d4e9.1540506298.git.renatogeh@gmail.com>
- <20181028155611.67abeafb@archlinux>
+        Sun, 28 Oct 2018 21:40:10 -0400
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id w9SGsn34009985;
+        Mon, 29 Oct 2018 01:54:50 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w9SGsn34009985
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1540745690;
+        bh=cRrPPvaf1GZ+1Lxh56L1YkMQ2Em6HvpMNZC0LYrzlvU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=V2uNg7CS61CIuFEk5OXtlN8VrIM2RDgFGzRIDSuuj1IwSn7hTC3uRyZbTVKHVj+O6
+         yCAJHRNytnQXrf/qOzkwM5T2KEVNSlyuYMeXwvPmBB8t29HCYLuz0zYZqRq/CakYSv
+         hOxW45ZlLVi5L1323mcgNN6CpF2CF9nmaezFU1sy+Hicc+bCuhJk52xMwIj+fA0ex2
+         fgzzqG28y+fI7SlHzMHDhQcs4PD4iyi1fzf3mp86yOq5HJn/5VRprF2IPrM1mPmz4J
+         7HiH+bRVRyb4efc4jGC32dqSJMXioX66nF6T0n+Ih8OGcczH9mqRG1J3nz7nrv+H0r
+         cI+AvbY3lD2HA==
+X-Nifty-SrcIP: [209.85.217.54]
+Received: by mail-vs1-f54.google.com with SMTP id 124so3766454vsp.12;
+        Sun, 28 Oct 2018 09:54:49 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gI7HnZfdmr3cMjhCRezEXGt3khz/GlD6pWv81SSkFKRbVAHbCN1
+        0kuKE50Wt/xpcPalvpUrtuNOTjnj4sI0vUYhjLo=
+X-Google-Smtp-Source: AJdET5dN9GZ2bAlLFlg1ZCw8lfFQF0o0jrxuuWxiq+wM1Et34ZBIaUc4Irw2jN39/GJgTVpyQg55IxTRTbQMVozgbjU=
+X-Received: by 2002:a67:5fc7:: with SMTP id t190mr4804635vsb.155.1540745688741;
+ Sun, 28 Oct 2018 09:54:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20181028155611.67abeafb@archlinux>
-User-Agent: NeoMutt/20180716
+References: <20181017000809.GA21292@WindFlash> <20181017081115.GA22535@zn.tnic>
+ <CAK7LNASVn7CB5uL9tCtNC2u4Ary5eb-vyiB_sS2ey5AZNweKAA@mail.gmail.com>
+ <20181017083126.GB22535@zn.tnic> <CADvQ+rFa=XEuxLb=yPmtJE2QepBNjCVzjEY5urVzCaSF1tJBYw@mail.gmail.com>
+ <20181018091606.GA20831@zn.tnic> <CAK7LNAQq7aE_2QYwqei7M9fg8Yen7-ucjz-t2E_hq2xkznKsQw@mail.gmail.com>
+ <7b87404e2a0347968013e024e52e4cb2@AcuMS.aculab.com>
+In-Reply-To: <7b87404e2a0347968013e024e52e4cb2@AcuMS.aculab.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 29 Oct 2018 01:54:12 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS=wj9CW+qN4=yCgLuvsJUbyo-5Wq08BnuCkDH4Y82FwA@mail.gmail.com>
+Message-ID: <CAK7LNAS=wj9CW+qN4=yCgLuvsJUbyo-5Wq08BnuCkDH4Y82FwA@mail.gmail.com>
+Subject: Re: [PATCH 1/4] Adds -Wshadow=local on KBUILD_HOSTCFLAGS
+To:     David.Laight@aculab.com
+Cc:     Borislav Petkov <bp@alien8.de>,
+        =?UTF-8?Q?Leonardo_Br=C3=A1s?= <leobras.c@gmail.com>,
+        lkcamp@lists.libreplanetbr.org,
+        Matthew Wilcox <willy6545@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jonathan,
+On Fri, Oct 19, 2018 at 8:28 PM David Laight <David.Laight@aculab.com> wrot=
+e:
+>
+> From: Masahiro Yamada
+> > Sent: 18 October 2018 17:39
+> >
+> > On Thu, Oct 18, 2018 at 6:18 PM Borislav Petkov <bp@alien8.de> wrote:
+> > >
+> > > On Wed, Oct 17, 2018 at 09:40:53PM -0300, Leonardo Bras wrote:
+> > > > The idea was to put it as default and fix all the shadowing warning=
+s.
+> > > > What do you think?  I am open to suggestions.
+> > >
+> > > That's Masahiro's call. In the rest of the kernel, those warnings are=
+ behind
+> > > the W=3D2 switch - i.e., not enabled by default.
+> >
+> >
+> > It is not realistic to enable this warning option by default.
+> > Even -Wshadow=3Dlocal emits tons of warnings.
+> > (More with -Wshadow)
+>
+> The question is, how many of them are actual bugs.
+> IMHO -Wshadow is a good idea.
+>
+> > The problem of this flag is,
+> > it is false positive in macro expansions.
+>
+> Right, but macro expansions inside macro definitions could accidentally
+> use the same local variable - leading to choas.
 
-Thank you for the review.
 
->> +		voltage_uv = regulator_get_voltage(st->reg);
->> +		if (voltage_uv)
->> +			st->int_vref_mv = voltage_uv/1000;
->>  		*val = st->int_vref_mv * st->gain;
->Is there actually a reason (now) to have the stashed value
->of int_vref_mv in the state structure?
+I do not think so.
 
-From probe:
+The macro definitions are surrounded by { ... }
+so that local variables are properly separated from
+the outside world.
 
-if (voltage_uv)
-	st->int_vref_mv = voltage_uv / 1000;
-else
-	dev_warn(&spi->dev, "Reference voltage unspecified\n");
 
-So the idea was to, when voltage_uv = 0, return the previous voltage.
-Should I instead handle this as an error the same way as in probe?
 
-Thanks,
-Renato
+
+> > For example, I think the following is a legitimate case.
+> ...
+> > arch/arm64/kernel/fpsimd.c:713:2: note: in expansion of macro =E2=80=98=
+write_sysreg=E2=80=99
+> >   write_sysreg(read_sysreg(CPACR_EL1) | CPACR_EL1_ZEN_EL1EN, CPACR_EL1)=
+;
+> >   ^~~~~~~~~~~~
+>
+> Easily fixed by using different named temporaries in the two macros.
+> There probably aren't that many macro pairs where that happens.
+> Especially since many are now inlined functions.
+
+But, theoretically, any arbitrary macros could be used in pairs.
+
+This means a new constraint where a local variable name must be unique,
+it means 'local variable' is not literally 'local'.
+
+
+I'd like to use short names such as 'x', 'tmp', etc. for local variables.
+
+
+
+> It might be that a small number of changes get rid of most of the warning=
+s.
+>
+>         David
+>
+> -
+> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1=
+ 1PT, UK
+> Registration No: 1397386 (Wales)
+
+
+--
+Best Regards
+Masahiro Yamada
