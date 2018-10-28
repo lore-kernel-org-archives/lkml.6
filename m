@@ -6,44 +6,42 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC437C6786F
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 16:07:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F53C6786F
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 16:09:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A01CC20870
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 16:07:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A01CC20870
+	by mail.kernel.org (Postfix) with ESMTP id 7D95420831
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 16:09:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D95420831
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727808AbeJ2Awh (ORCPT
+        id S1727836AbeJ2Ay1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 20:52:37 -0400
-Received: from laurent.telenet-ops.be ([195.130.137.89]:33722 "EHLO
+        Sun, 28 Oct 2018 20:54:27 -0400
+Received: from laurent.telenet-ops.be ([195.130.137.89]:35934 "EHLO
         laurent.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727671AbeJ2Awh (ORCPT
+        with ESMTP id S1726492AbeJ2Ay1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 20:52:37 -0400
+        Sun, 28 Oct 2018 20:54:27 -0400
 Received: from ramsan.of.borg ([84.194.111.163])
         by laurent.telenet-ops.be with bizsmtp
-        id t47X1y00L3XaVaC0147Xee; Sun, 28 Oct 2018 17:07:35 +0100
+        id t49Q1y0053XaVaC0149Q5Z; Sun, 28 Oct 2018 17:09:24 +0100
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan.of.borg with esmtp (Exim 4.86_2)
         (envelope-from <geert@linux-m68k.org>)
-        id 1gGnb9-0001io-Et; Sun, 28 Oct 2018 17:07:31 +0100
+        id 1gGncy-0001jr-1c; Sun, 28 Oct 2018 17:09:24 +0100
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1gGnb9-0006NB-CM; Sun, 28 Oct 2018 17:07:31 +0100
+        id 1gGncy-0006Pp-0D; Sun, 28 Oct 2018 17:09:24 +0100
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-To:     Matias Bjorling <mb@lightnvm.io>,
-        Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-block@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
         Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH] lightnvm: Fix uninitialized return value in nvm_get_chunk_meta()
-Date:   Sun, 28 Oct 2018 17:07:26 +0100
-Message-Id: <20181028160726.24450-1-geert@linux-m68k.org>
+Subject: [PATCH] regulator: bd718x7: Remove double indirection for bd718xx_pmic_inits.rdatas
+Date:   Sun, 28 Oct 2018 17:09:22 +0100
+Message-Id: <20181028160922.24618-1-geert@linux-m68k.org>
 X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -55,63 +53,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 With gcc 4.1:
 
-    drivers/lightnvm/core.c: In function ‘nvm_get_bb_meta’:
-    drivers/lightnvm/core.c:977: warning: ‘ret’ may be used uninitialized in this function
+    drivers/regulator/bd718x7-regulator.c: In function ‘bd718xx_probe’:
+    drivers/regulator/bd718x7-regulator.c:1020: warning: initialization from incompatible pointer type
+    drivers/regulator/bd718x7-regulator.c:1024: warning: initialization from incompatible pointer type
 
-and
+Apparently this old compiler can't handle the obscure double
+indirection.
 
-    drivers/nvme/host/lightnvm.c: In function ‘nvme_nvm_get_chk_meta’:
-    drivers/nvme/host/lightnvm.c:580: warning: ‘ret’ may be used uninitialized in this function
+However, there is no need for a double indirection.  Just store a
+pointer to the array instead, like other drivers tend to do.
 
-Indeed, if (for the former) the number of channels or LUNs is zero, or
-(for both) the passed number of chunks is zero, ret will be returned
-uninitialized.
-
-Fix this by preinitializing ret to zero.
-
-Fixes: aff3fb18f957de93 ("lightnvm: move bad block and chunk state logic to core")
-Fixes: a294c199455187d1 ("lightnvm: implement get log report chunk helpers")
+Fixes: 494edd266b945f36 ("regulator/mfd: Support ROHM BD71847 power management IC")
 Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
 ---
-I don't know if this can happen in practice, but given this is core
-functionality that can be called from other files, or even from other
-modules, I think it's better to be safe than sorry.
-
-The latter seems to be a pre-existing issue since v4.17.
-I didn't notice it before, due to the dependency of NVM on PCI (my gcc
-4.1 targets m68k, i.e. no PCI).
+Compile-tested only.
 ---
- drivers/lightnvm/core.c      | 2 +-
- drivers/nvme/host/lightnvm.c | 3 ++-
- 2 files changed, 3 insertions(+), 2 deletions(-)
+ drivers/regulator/bd718x7-regulator.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/lightnvm/core.c b/drivers/lightnvm/core.c
-index efb976a863d2295a..73ab3cf2686804ba 100644
---- a/drivers/lightnvm/core.c
-+++ b/drivers/lightnvm/core.c
-@@ -974,7 +974,7 @@ static int nvm_get_bb_meta(struct nvm_dev *dev, sector_t slba,
- 	struct ppa_addr ppa;
- 	u8 *blks;
- 	int ch, lun, nr_blks;
--	int ret;
-+	int ret = 0;
+diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd718x7-regulator.c
+index 3a47e0372e77c812..fff5bc4faa2c99aa 100644
+--- a/drivers/regulator/bd718x7-regulator.c
++++ b/drivers/regulator/bd718x7-regulator.c
+@@ -1007,7 +1007,7 @@ static const struct bd718xx_regulator_data bd71837_regulators[] = {
+ };
  
- 	ppa.ppa = slba;
- 	ppa = dev_to_generic_addr(dev, ppa);
-diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-index a4f3b263cd6c60ee..d64805dc8efbaa02 100644
---- a/drivers/nvme/host/lightnvm.c
-+++ b/drivers/nvme/host/lightnvm.c
-@@ -577,7 +577,8 @@ static int nvme_nvm_get_chk_meta(struct nvm_dev *ndev,
- 	struct ppa_addr ppa;
- 	size_t left = nchks * sizeof(struct nvme_nvm_chk_meta);
- 	size_t log_pos, offset, len;
--	int ret, i, max_len;
-+	int i, max_len;
-+	int ret = 0;
+ struct bd718xx_pmic_inits {
+-	const struct bd718xx_regulator_data (*r_datas)[];
++	const struct bd718xx_regulator_data *r_datas;
+ 	unsigned int r_amount;
+ };
  
- 	/*
- 	 * limit requests to maximum 256K to avoid issuing arbitrary large
+@@ -1017,11 +1017,11 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 	struct regulator_config config = { 0 };
+ 	struct bd718xx_pmic_inits pmic_regulators[] = {
+ 		[BD718XX_TYPE_BD71837] = {
+-			.r_datas = &bd71837_regulators,
++			.r_datas = bd71837_regulators,
+ 			.r_amount = ARRAY_SIZE(bd71837_regulators),
+ 		},
+ 		[BD718XX_TYPE_BD71847] = {
+-			.r_datas = &bd71847_regulators,
++			.r_datas = bd71847_regulators,
+ 			.r_amount = ARRAY_SIZE(bd71847_regulators),
+ 		},
+ 	};
+@@ -1059,7 +1059,7 @@ static int bd718xx_probe(struct platform_device *pdev)
+ 		struct regulator_dev *rdev;
+ 		const struct bd718xx_regulator_data *r;
+ 
+-		r = &(*pmic_regulators[mfd->chip_type].r_datas)[i];
++		r = &pmic_regulators[mfd->chip_type].r_datas[i];
+ 		desc = &r->desc;
+ 
+ 		config.dev = pdev->dev.parent;
 -- 
 2.17.1
 
