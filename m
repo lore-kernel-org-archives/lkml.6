@@ -2,93 +2,173 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FA83C6786F
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 17:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98CA1C6786F
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 17:38:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3610620672
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 17:35:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3610620672
+	by mail.kernel.org (Postfix) with ESMTP id 48D2120831
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 17:38:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gG1x5ukj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48D2120831
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726476AbeJ2CUY (ORCPT
+        id S1726501AbeJ2CYG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 22:20:24 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41338 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725814AbeJ2CUY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 22:20:24 -0400
-Received: by mail-pf1-f193.google.com with SMTP id a19-v6so2839621pfo.8
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 10:35:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ko6DMPZzGP/t0RFZm/l/OMhRIWBXiTrmvjX1V2BRzY4=;
-        b=S115Wh3FHoSQ+eGcs0i7dpKlvmDP2Y5Q9ywyR4x7N3g5tk1BdZG0kAN5GACqPlSc0y
-         5zR2W68mH6DajMqFQKAa9PmB4flPQDb6pczy/JrEALzJrY7TWN8SyAYM6RUklscgwW4W
-         2wtynW/MU3MYsUKUB2zThx0vsGDdRNm4+YKfBlq7BApPj/TnvCr9qVAbR/5vz5N3Dg/c
-         uvtVNAcgY43/2Kq4ZR1q2LLnlK313Q9q7Yij37+VCyX2kR0cCGi0jzxQa0S7S8uEq4P6
-         nkss2xotNzx9DhARwbLMx4Qrk/vtK96/xDnFlvG/kS5ykMG6Dvk7yKNw3poTBDCzh0Vo
-         PzIg==
-X-Gm-Message-State: AGRZ1gIkn4s7YtIrOxSuMJWmMM2lkh4dMcBc0ovolQRFSDHhpElhEd0k
-        6PQm51Q0KUk1ZBQ0RvrZshs0Cw==
-X-Google-Smtp-Source: AJdET5eokQ7geGgMWCkjNfhHgxE0Zllc971l/V8hSLTczzqArMhQvJ5TUEStlsdeIHobJQpN4liLJw==
-X-Received: by 2002:a62:34c5:: with SMTP id b188-v6mr12275911pfa.65.1540748106485;
-        Sun, 28 Oct 2018 10:35:06 -0700 (PDT)
-Received: from localhost ([2601:647:4700:ab4a:e7d0:9f45:8bc9:57ab])
-        by smtp.gmail.com with ESMTPSA id i13-v6sm2797441pgs.51.2018.10.28.10.35.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 28 Oct 2018 10:35:05 -0700 (PDT)
-Date:   Sun, 28 Oct 2018 10:35:03 -0700
-From:   Moritz Fischer <mdf@kernel.org>
-To:     Andreas Puhm <puhm@oregano.at>
-Cc:     "matthew.gerlach@linux.intel.com" <matthew.gerlach@linux.intel.com>,
-        Moritz Fischer <mdf@kernel.org>,
-        Anatolij Gustschin <agust@denx.de>,
-        Alan Tull <atull@kernel.org>,
-        "linux-fpga@vger.kernel.org" <linux-fpga@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] fpga: altera_cvp: restrict registration to CvP enabled
- devices
-Message-ID: <20181028173503.GA4358@archbook>
-References: <78c44ad0b2344a4490ffd300cf0df746@SRV177.busymouse24.de>
- <20181023182649.047f1f93@crub>
- <3773264cdfcb4c258cc7eebd213302dd@SRV177.busymouse24.de>
- <20181024095135.GA1382@archbook>
- <alpine.DEB.2.20.1810241545580.2819@mgerlach-VirtualBox>
- <1540457043890.27497@oregano.at>
+        Sun, 28 Oct 2018 22:24:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52768 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725860AbeJ2CYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 28 Oct 2018 22:24:06 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9B72120665;
+        Sun, 28 Oct 2018 17:38:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540748327;
+        bh=30i2IJE7f0XUwNC1WbLOFoUjdm6FjnX0C5XJ1GGq61E=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=gG1x5ukjFZvHgoVSftkPWiOcjNk/dFiIDYlEVtwxwT8r6d3qZuvrDjBplJXKfhMKx
+         RupVgbrMDG7IO5XYjyzMoUsEs4b/7OQqKbGcqM+e1qcXDe11PL6/5tg32/VLhVeJjx
+         V14PPaSo7bUVc6VsMcN9q196Q2o4ZwxefdHjK5Ug=
+Date:   Sun, 28 Oct 2018 17:38:42 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Carlos Iglesias <carlos.iglesias@emutex.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "knaack.h@gmx.de" <knaack.h@gmx.de>,
+        "lars@metafoo.de" <lars@metafoo.de>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Dan O'Donovan <dan.odonovan@emutex.com>
+Subject: Re: [PATCH 1/2] dt-bindings: iio: pressure: Add support for
+ Honeywell HSC SPI sensors
+Message-ID: <20181028173842.580ba1d4@archlinux>
+In-Reply-To: <20181026181406.14545-2-carlos.iglesias@emutex.com>
+References: <20181026181406.14545-1-carlos.iglesias@emutex.com>
+        <20181026181406.14545-2-carlos.iglesias@emutex.com>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1540457043890.27497@oregano.at>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andreas,
+On Fri, 26 Oct 2018 18:14:36 +0000
+Carlos Iglesias <carlos.iglesias@emutex.com> wrote:
 
-On Thu, Oct 25, 2018 at 08:44:06AM +0000, Andreas Puhm wrote:
-
-> >My experience with cvp is with Arria10 and Stratix 10.  The PCIe Hard IP
-> >gets configured when the IOring gets configured at power on.  The idea is
-> >that the load of the IOring is very fast, much before the infamous 100ms
-> >PCIe timeout for link training.  When the Hard IP is configured, the
-> >CVP_EN is set or cleared according to how it was configured.  Yes, you
+> Add device tree bindings for the HSC pressure sensors.
 > 
-> So is it correct that the value of CVP_EN can be evaluated by the altera_cvp right in the first call of its probe function
-> (as would be the case with my proposed patch).
+> Signed-off-by: Carlos Iglesias <carlos.iglesias@emutex.com>
+> ---
+>  .../bindings/iio/pressure/hsc_spi.txt         | 85 +++++++++++++++++++
+>  1 file changed, 85 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/pressure/hsc_spi.txt
 > 
-> If it is, I will fix the remaining issues with the patch and submit it.
+> diff --git a/Documentation/devicetree/bindings/iio/pressure/hsc_spi.txt b/Documentation/devicetree/bindings/iio/pressure/hsc_spi.txt
+> new file mode 100644
+> index 000000000000..2302d6eef7c7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/pressure/hsc_spi.txt
+> @@ -0,0 +1,85 @@
+> +Honeywell HSC Series of Pressure Sensors
+> +
+> +Pressure sensors from Honeywell with analog, I2C and SPI interfaces
+> +
+> +Required properties:
+> +- compatible: selects the sensor model; must be one of the following
+> +	"honeywell,hsc001baa"
+> +	"honeywell,hsc001bab"
+> +	"honeywell,hsc001bac"
+> +	"honeywell,hsc001baf"
+> +	"honeywell,hsc1_6baa"
+> +	"honeywell,hsc1_6bab"
+> +	"honeywell,hsc1_6bac"
+> +	"honeywell,hsc1_6baf"
+> +	"honeywell,hsc2_5baa"
+> +	"honeywell,hsc2_5bab"
+> +	"honeywell,hsc2_5bac"
+> +	"honeywell,hsc2_5baf"
+> +	"honeywell,hsc004baa"
+> +	"honeywell,hsc004bab"
+> +	"honeywell,hsc004bac"
+> +	"honeywell,hsc004baf"
+> +	"honeywell,hsc006baa"
+> +	"honeywell,hsc006bab"
+> +	"honeywell,hsc006bac"
+> +	"honeywell,hsc006baf"
+> +	"honeywell,hsc010baa"
+> +	"honeywell,hsc010bab"
+> +	"honeywell,hsc010bac"
+> +	"honeywell,hsc010baf"
+> +	"honeywell,hsc100kaa"
+> +	"honeywell,hsc100kab"
+> +	"honeywell,hsc100kac"
+> +	"honeywell,hsc100kaf"
+> +	"honeywell,hsc160kaa"
+> +	"honeywell,hsc160kab"
+> +	"honeywell,hsc160kac"
+> +	"honeywell,hsc160kaf"
+> +	"honeywell,hsc250kaa"
+> +	"honeywell,hsc250kab"
+> +	"honeywell,hsc250kac"
+> +	"honeywell,hsc250kaf"
+> +	"honeywell,hsc400kaa"
+> +	"honeywell,hsc400kab"
+> +	"honeywell,hsc400kac"
+> +	"honeywell,hsc400kaf"
+> +	"honeywell,hsc600kaa"
+> +	"honeywell,hsc600kab"
+> +	"honeywell,hsc600kac"
+> +	"honeywell,hsc600kaf"
+> +	"honeywell,hsc001gaa"
+> +	"honeywell,hsc001gab"
+> +	"honeywell,hsc001gac"
+> +	"honeywell,hsc001gaf"
+> +	"honeywell,hsc015paa"
+> +	"honeywell,hsc015pab"
+> +	"honeywell,hsc015pac"
+> +	"honeywell,hsc015paf"
+> +	"honeywell,hsc030paa"
+> +	"honeywell,hsc030pab"
+> +	"honeywell,hsc030pac"
+> +	"honeywell,hsc030paf"
+> +	"honeywell,hsc060paa"
+> +	"honeywell,hsc060pab"
+> +	"honeywell,hsc060pac"
+> +	"honeywell,hsc060paf"
+> +	"honeywell,hsc100paa"
+> +	"honeywell,hsc100pab"
+> +	"honeywell,hsc100pac"
+> +	"honeywell,hsc100paf"
+> +	"honeywell,hsc150paa"
+> +	"honeywell,hsc150pab"
+> +	"honeywell,hsc150pac"
+> +	"honeywell,hsc150paf"
+> +- reg: the SPI chip select number used by the sensor.
+> +- spi-max-frequency: maximum clock frequency (Hz) used for the SPI bus.
+> +  The maximum value supported by the sensors is 400000.
+As Rob pointed out in a few reviews this week, the devicetree binding
+for this should only be applying a tighter bound than either the
+device or the bus master. So something introduced by the board
+layout for example, or a level convertor..
 
-Yes please, go ahead and fix up the remaining issues (+ send it using
-git send-email)
+Jonathan
+> +
+> +Example:
+> +
+> +	hsc_spi0: hsc@0 {
+> +		compatible = "honeywell,hsc010baa";
+> +		reg = <0>;
+> +		spi-max-frequency = <400000>;
+> +	};
 
-Thanks,
-Moritz
