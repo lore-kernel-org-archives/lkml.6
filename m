@@ -2,101 +2,88 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C53C8C2BC61
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 20:24:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3516C2BC61
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 20:28:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B1642054F
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 20:24:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51FCB20664
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 20:28:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cougarmail-collin-edu.20150623.gappssmtp.com header.i=@cougarmail-collin-edu.20150623.gappssmtp.com header.b="PHoHAA7L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B1642054F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cougarmail.collin.edu
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="az8rvHHr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51FCB20664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727604AbeJ2FKa (ORCPT
+        id S1727600AbeJ2FOD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 01:10:30 -0400
-Received: from mail-wr1-f47.google.com ([209.85.221.47]:44401 "EHLO
-        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726364AbeJ2FK3 (ORCPT
+        Mon, 29 Oct 2018 01:14:03 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:37223 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725923AbeJ2FOD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 01:10:29 -0400
-Received: by mail-wr1-f47.google.com with SMTP id d17-v6so6176649wre.11
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 13:24:45 -0700 (PDT)
+        Mon, 29 Oct 2018 01:14:03 -0400
+Received: by mail-lj1-f193.google.com with SMTP id c4-v6so5804819lja.4
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 13:28:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cougarmail-collin-edu.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=78UkiBUsSmHmkFK5eZnFluH25hsjHZZ8P4543FEkDOA=;
-        b=PHoHAA7LvzTW9tmocuQeJ1Lh5qkI995t22zAt6Ny/RUr01U9rnQVkj3TFygjDGWHJq
-         D7iAa8tLTJq4MJUGW1o0KXHdWfx0GISRO4FHk8HYFOQMe0DiaM0okIjvALCjGe8VSHdQ
-         6KfMakErnPpVyNP9j4Hw9p/PMzR8J95zDwwZcUq63OgFFLn1XRhBRc9RYFP7UBB8802e
-         6OSjcMXaMCVy3chvuZdqxJFGwIGTyV36Tdxj7rUlk1ko73Aalz6Bd1H3za6ysS2FsEHu
-         Z9p1P57Y1ANUKf8FW/lQvXMg6rx+MWPtf0eYhTHnisdJhpU/VUyoaU9E9kBOI1/NIaDI
-         VAMw==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9/K2dBnZR+jc0HKVdZu+KFO9504l9fzV/S/hksoQLws=;
+        b=az8rvHHrfWsveUEwqzJ42XL/LydgOJDY8K0t6eqGUj2UqNRdms7dEkSKvs6MRisbN1
+         3d2HI2Aa1grlsU5vPMzSRs1rhcGueCu5+Hy8O6054tGt55bTr6JkVJMS8bPPCHRhlSas
+         clUxp4RUjGO415wE7cAHGRDCYmAHC8qn9zlcI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=78UkiBUsSmHmkFK5eZnFluH25hsjHZZ8P4543FEkDOA=;
-        b=nBKhBOq752Nh7v+2kmdyAiVZGhC/ZfnXVnhrHLjR4BZjwHlHgd1mwxQKNzZBIdxUup
-         6yeXDoBWNnBlQd2//HP6G0mJrQYb+tSEJI+iWaTvsXMvGX3smmz/YmpZaTv141QFUvoy
-         pFb/Kfl1QIIurb594lyVYcbA2lwcjFwsvflSXbWmtwk3G7JtPd+B5zQoBmsPHJp1WK44
-         jG4jWydH5v1AzkpgNGKNfiwxNYLUXp/FVNDyogdb1OylVG5Wd2Fje+M2/Z/CDcivFD/6
-         CO8yExxBMIzpPyCHCVOCXnShLTl+UO1mi0wSnBCMOpGGxYm2slG6k7jqhKmeJTAkLjH4
-         NeTw==
-X-Gm-Message-State: AGRZ1gKcnQdWHEjyW0pTdoofqkF6DDHwinqgO2o8AeEWWXQC2Qvw9Y8s
-        2J2Npdwf5afQeIhNeX8srrn65rKhJwEvlzwAd3nhe7KlYXI=
-X-Google-Smtp-Source: AJdET5cGtlNrPbRzSavD8npNhG+VeoR8/y3Hbi6/2gDjveFU+brNOX5JZ05pVIIdYRg1I72vyWWbMHiD0dguwgnfAb4=
-X-Received: by 2002:adf:f68e:: with SMTP id v14-v6mr3045580wrp.261.1540758284423;
- Sun, 28 Oct 2018 13:24:44 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9/K2dBnZR+jc0HKVdZu+KFO9504l9fzV/S/hksoQLws=;
+        b=K0FoqZuxUjhUj6tQxAKBr59sbtFKON8uucn9UZlZ+atu9Gx83FZe3yxzHbXI1ixkw0
+         2w5HobRsu9bmrxKQUVRolzHJcGYRMMb6px0XmN2zpt0Fza8uM8D735yhWcBIBFTlPihi
+         dnUCkLfQczPwcn6SPQFt5fgKjSN6AzrVMZYfBLgsE/OTBh3cR2HkpbwXyrgUQGyVf3mI
+         6csluy/+xOn02YQt1X7PYnTa6Gr5TRqejZqf3OZk1+w5ZxcqZE1mP2jnKc88pNDfv2dP
+         i+J1HMHTmENRD5oPw5r0xg98/0GL8vbJuCqZeMbhUZrVc0+Eo2Ny/ayrjC8/uuYPaP7A
+         cLKQ==
+X-Gm-Message-State: AGRZ1gKBwdV3X5d9vNLcQIHB4imWLkbVIsgKUDBvxPkoSsdu0qIlZhq+
+        f66hurLLeNZwDhiHLkFCYAEhuP//IL/Vjg==
+X-Google-Smtp-Source: AJdET5cs5d6szvex9Xy+7tQMfXWhl1+RulqisK4BOKnEQG55gJht0EY8E8PyqMmUTSbvNW4OKWrK0g==
+X-Received: by 2002:a2e:7f14:: with SMTP id a20-v6mr7301497ljd.148.1540758496843;
+        Sun, 28 Oct 2018 13:28:16 -0700 (PDT)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id w9-v6sm2702471ljh.97.2018.10.28.13.28.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 28 Oct 2018 13:28:15 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id f3-v6so5803421ljk.9
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 13:28:15 -0700 (PDT)
+X-Received: by 2002:a2e:95c6:: with SMTP id y6-v6mr7220830ljh.59.1540758495125;
+ Sun, 28 Oct 2018 13:28:15 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:adf:b60e:0:0:0:0:0 with HTTP; Sun, 28 Oct 2018 13:24:43
- -0700 (PDT)
-From:   Nathaniel Russell <nrussell6@cougarmail.collin.edu>
-Date:   Sun, 28 Oct 2018 15:24:43 -0500
-Message-ID: <CA+uPecOtCAQSW2WUCciCzvZFimKoyWOScAeRnHoA=zN6D_ax6w@mail.gmail.com>
-Subject: RTL8812au driver source code A little help please?
-To:     linux-kernel@vger.kernel.org
+References: <20181028172401.GA41102@beast>
+In-Reply-To: <20181028172401.GA41102@beast>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 28 Oct 2018 13:27:59 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjrKjE_RsPmGv70Z1kN8tk2Rqv0EZczBB0BmcdPpqud1w@mail.gmail.com>
+Message-ID: <CAHk-=wjrKjE_RsPmGv70Z1kN8tk2Rqv0EZczBB0BmcdPpqud1w@mail.gmail.com>
+Subject: Re: [GIT PULL] VLA removal for v4.20-rc1
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>, airlied@linux.ie,
+        dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+        linux-kbuild@vger.kernel.org, yamada.masahiro@socionext.com,
+        Nick Desaulniers <ndesaulniers@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-make[1]: Entering directory '/usr/src/linux-4.19'
-  CC [M]  /tmp/rtl8812AU_8821AU_linux/os_dep/linux/os_intfs.o
-/tmp/rtl8812AU_8821AU_linux/os_dep/linux/os_intfs.c:816:22: error:
-initialization of =E2=80=98u16 (*)(struct net_device *, struct sk_buff *,
-struct net_device *, u16 (*)(struct net_device *, struct sk_buff *,
-struct net_device *))=E2=80=99 {aka =E2=80=98short unsigned int (*)(struct =
-net_device
-*, struct sk_buff *, struct net_device *, short unsigned int
-(*)(struct net_device *, struct sk_buff *, struct net_device *))=E2=80=99}
-from incompatible pointer type =E2=80=98u16 (*)(struct net_device *, struct
-sk_buff *, void *, u16 (*)(struct net_device *, struct sk_buff *,
-struct net_device *))=E2=80=99 {aka =E2=80=98short unsigned int (*)(struct =
-net_device
-*, struct sk_buff *, void *, short unsigned int (*)(struct net_device
-*, struct sk_buff *, struct net_device *))=E2=80=99}
-[-Werror=3Dincompatible-pointer-types]
-  .ndo_select_queue =3D rtw_select_queue,
-                      ^~~~~~~~~~~~~~~~
-/tmp/rtl8812AU_8821AU_linux/os_dep/linux/os_intfs.c:816:22: note:
-(near initialization for =E2=80=98rtw_netdev_ops.ndo_select_queue=E2=80=99)
-cc1: some warnings being treated as errors
-make[2]: *** [scripts/Makefile.build:306:
-/tmp/rtl8812AU_8821AU_linux/os_dep/linux/os_intfs.o] Error 1
-make[1]: *** [Makefile:1517: _module_/tmp/rtl8812AU_8821AU_linux] Error 2
-make[1]: Leaving directory '/usr/src/linux-4.19'
-make: *** [Makefile:1584: modules] Error 2
+On Sun, Oct 28, 2018 at 10:24 AM Kees Cook <keescook@chromium.org> wrote:
+>
+> Please pull these VLA removal changes for v4.20-rc1.
 
+Pulled,
 
-I Kinda need some help figuring out how to make this compile on kernel
-source 4.19.0?
-Any help would be apprectiated,
+                   Linus
