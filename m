@@ -2,98 +2,107 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 015E3C6786F
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 13:54:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB3B1C6786F
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 14:13:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB38920665
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 13:54:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB38920665
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 7BF992082B
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 14:13:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mK4P6wLE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BF992082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727620AbeJ1Wji (ORCPT
+        id S1727534AbeJ1W6J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 18:39:38 -0400
-Received: from andre.telenet-ops.be ([195.130.132.53]:54386 "EHLO
-        andre.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727507AbeJ1Wji (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 18:39:38 -0400
-Received: from ramsan.of.borg ([84.194.111.163])
-        by andre.telenet-ops.be with bizsmtp
-        id t1uu1y0083XaVaC011uuHz; Sun, 28 Oct 2018 14:54:54 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan.of.borg with esmtp (Exim 4.86_2)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gGlWo-0008CC-Ae; Sun, 28 Oct 2018 14:54:54 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1gGhsx-0000ZA-UL; Sun, 28 Oct 2018 11:01:31 +0100
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [git pull] m68k updates for 4.20
-Date:   Sun, 28 Oct 2018 11:01:24 +0100
-Message-Id: <20181028100124.2116-1-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.17.1
+        Sun, 28 Oct 2018 18:58:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53978 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726450AbeJ1W6J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 28 Oct 2018 18:58:09 -0400
+Received: from localhost (unknown [178.225.204.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DEC362082B;
+        Sun, 28 Oct 2018 14:13:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540736004;
+        bh=vOjnZb2eCl0WdgHZjtLrLM7jxxWbRq17pH89ah59/tQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mK4P6wLEtAlYqfVbbQcSEGw0OXQ/jhCzUToVsTyEvUx1EeZMZOTAeOhId9p/87iz8
+         iWiRxODhFhQHAngfHEQxHo2OBR649AfktV8Jm5hznLGbm0qfblUnLZ+ROI6QeICVKy
+         7vR08fJXSSMZ8gX7L+UVXeEIi0BWr8UJSrXrcYIE=
+Date:   Sun, 28 Oct 2018 15:13:19 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Michael Straube <straube.linux@gmail.com>
+Cc:     devel@driverdev.osuosl.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Which SPDX Identifier for files without explicit GPL version
+Message-ID: <20181028141319.GA13215@kroah.com>
+References: <406c69c1-43fd-f821-b74b-a1399ed636e9@gmail.com>
+ <20181028112728.GD8826@kroah.com>
+ <f1aa3ce0-7e68-ce7e-e2a3-a978bcc36e03@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f1aa3ce0-7e68-ce7e-e2a3-a978bcc36e03@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-	Hi Linus,
+On Sun, Oct 28, 2018 at 02:22:40PM +0100, Michael Straube wrote:
+> On 10/28/18 12:27 PM, Greg Kroah-Hartman wrote:
+> > On Sun, Oct 28, 2018 at 11:04:06AM +0100, Michael Straube wrote:
+> > > Hi,
+> > > 
+> > > which GPL version should be used in SPDX Identifiers for files that
+> > > are GPL licensed but do not mention any version? It is not clear to
+> > > me after reading license-rules.rst.
+> > > 
+> > > For example:
+> > > 
+> > > /******************************************************************************
+> > >   * Copyright(c) 2008 - 2010 Realtek Corporation. All rights reserved.
+> > >   *
+> > >   * This program is distributed in the hope that it will be useful, but WITHOUT
+> > >   * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> > >   * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> > >   * more details.
+> > >   *
+> > >   * The full GNU General Public License is included in this distribution in the
+> > >   * file called LICENSE.
+> > 
+> > Perhaps look up what version of the GPL that was originally contained in
+> > the tarball that this driver was bundled with?  I think that should be
+> > on their website somewhere...
+> > 
+> > If not, it's v1, not a good thing, but all we have to go on.  Also, try
+> > emailing:
+> > 
+> > >   * Contact Information:
+> > >   * wlanfae <wlanfae@realtek.com>
+> > 
+> > That address :)
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> > 
+> 
+> Ah, there is a file 'license' in the root directory of this driver (rtl8192e)
+> that I overlooked. It contains GPLv2. So v2 applies to all files with the above
+> shortened boiler plate?
 
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+Yes.  So add a SPDX line to the file and delete the boiler plate text so
+we don't have this question again in the future.  Then delete that opy
+of the GPL so we don't have files we don't need :)
 
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+thanks,
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git tags/m68k-for-v4.20-tag1
-
-for you to fetch changes up to 58c116fb7dc6703a557fe79c6e6ebab1450082b3:
-
-  m68k/sun3: Remove is_medusa and m68k_pgtable_cachemode (2018-08-31 09:30:42 +0200)
-
-----------------------------------------------------------------
-m68k updates for v4.20
-
-  - Just two small cleanups.
-
-Thanks for pulling!
-
-P.S. Sorry for the late pull request.
-     I didn't bring my NitroKey to Edinburgh, and had moved all other
-     secret keys offline, as recommended.
-
-----------------------------------------------------------------
-Robert P. J. Day (1):
-      m68k/atari: ARAnyM - Remove reference to long-deprecated MODULE_PARM
-
-Руслан Исаев (1):
-      m68k/sun3: Remove is_medusa and m68k_pgtable_cachemode
-
- arch/m68k/emu/nfeth.c        | 4 ----
- arch/m68k/kernel/sun3-head.S | 6 ------
- 2 files changed, 10 deletions(-)
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+greg k-h
