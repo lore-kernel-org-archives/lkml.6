@@ -2,100 +2,104 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B330C2BC61
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 22:34:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D83D5C2BC61
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 22:35:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E30920848
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 22:34:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E30920848
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 9ED7D2082D
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 22:35:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="m0ywWQcg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ED7D2082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727502AbeJ2HUx (ORCPT
+        id S1727583AbeJ2HVm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 03:20:53 -0400
-Received: from sauhun.de ([88.99.104.3]:58212 "EHLO pokefinder.org"
+        Mon, 29 Oct 2018 03:21:42 -0400
+Received: from ozlabs.org ([203.11.71.1]:59991 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725841AbeJ2HUx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 03:20:53 -0400
-Received: from localhost (unknown [87.113.172.131])
-        by pokefinder.org (Postfix) with ESMTPSA id A5E1D4A1CA7;
-        Sun, 28 Oct 2018 23:34:50 +0100 (CET)
-Date:   Sun, 28 Oct 2018 22:34:50 +0000
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Vignesh R <vigneshr@ti.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Sekhar Nori <nsekhar@ti.com>, Nishanth Menon <nm@ti.com>,
-        Peter Rosin <peda@axentia.se>, linux-i2c@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 0/2] i2c-omap: Enable i2c-omap driver for AM654 SoCs
-Message-ID: <20181028223450.GK1882@kunai>
-References: <20180928052557.21663-1-vigneshr@ti.com>
- <09a6b1d4-f8f4-ea90-f361-bd3a92088430@ti.com>
+        id S1725841AbeJ2HVl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 03:21:41 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42jsy17254z9sC2;
+        Mon, 29 Oct 2018 09:35:37 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1540766138;
+        bh=gLPXTWGzT5eG77Hldsi2LXfEE7CCVWuyMjUbEy8Ioyk=;
+        h=Date:From:To:Cc:Subject:From;
+        b=m0ywWQcgbzWc5G7X0p+pQg6cJlrJFUJuCyz3qezh/v3QTQvcVNOxyr0ZCPkH7JHEL
+         ooZeBzve12JO2I/dg8fSyTBrC2TKHfyUdpSPsIDjIxmywyuWg/fdNU2GWqxq+JwrBI
+         jMWwlmVEds4cp7/xWKD54+dTxgQCyND7CcdrczZQs7XIjHmxROtgvNhwhiOL37ym0B
+         bEtR64oVXYksHdqexqzDH6BgL8pTuOgMFcTef+9gn580oyulvXPlLXZf5mK5OSlzXG
+         Q/Cx6YCVbQPbXIf+DwD7DVxvvoQp80TJM/jnBRCInnZcomCJ6IftxDJGCnnKlcaFvh
+         FX+68dlZXjMCg==
+Date:   Mon, 29 Oct 2018 09:35:32 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hangbin Liu <liuhangbin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: linux-next: build failure in Linus' tree
+Message-ID: <20181029093532.38a3888e@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Xsn3knLL3qrmRbVI"
-Content-Disposition: inline
-In-Reply-To: <09a6b1d4-f8f4-ea90-f361-bd3a92088430@ti.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/iHyy82eJ6+rygpE93muF4IO"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---Xsn3knLL3qrmRbVI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--Sig_/iHyy82eJ6+rygpE93muF4IO
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 20, 2018 at 01:23:40PM +0530, Vignesh R wrote:
->=20
->=20
-> On 28-Sep-18 10:55 AM, Vignesh R wrote:
-> > Couple of patches to enable i2c-omap driver to be used with TI's new
-> > AM654 platforms.
-> >=20
-> >=20
-> > Vignesh R (2):
-> >   dt-bindings: i2c-omap: Add new compatible for AM654 SoCs
-> >   i2c: busses: Kconfig: Enable I2C_OMAP for ARCH_K3
-> >=20
-> >  Documentation/devicetree/bindings/i2c/i2c-omap.txt | 8 ++++++--
-> >  drivers/i2c/busses/Kconfig                         | 2 +-
-> >  2 files changed, 7 insertions(+), 3 deletions(-)
-> >=20
->=20
-> Gentle ping...
+Hi Linus,
 
-Maintainer tags are missing. Tony is listed for this driver on OMAP2+.
-Is this his realm? Do we need a specific maintainer for this driver?
+After merging the origin tree, today's linux-next build (powerpc
+ppc64_defconfig) failed like this:
 
+net/bridge/br_multicast.c: In function 'br_multicast_query_received':
+net/bridge/br_multicast.c:1432:32: error: 'union <anonymous>' has no member=
+ named 'ip6'; did you mean 'ip4'?
+       !ipv6_addr_any(&saddr->u.ip6)))
+                                ^~~
+                                ip4
 
---Xsn3knLL3qrmRbVI
-Content-Type: application/pgp-signature; name="signature.asc"
+Caused by commit
+
+  5a2de63fd1a5 ("bridge: do not add port to router list when receives query=
+ with source 0.0.0.0")
+
+# CONFIG_IPV6 is not set
+
+I have just reverted that commit for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/iHyy82eJ6+rygpE93muF4IO
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvWOYkACgkQFA3kzBSg
-KbYIFBAAqCLZ65V0I5GPyJjznioZ2Fw/6JUr+Wn1LrqT3chwhG67zkJcTlxP3mxE
-2PommoAQUO0/thFaRkHEfZoC/JfqxhtgLlqdWU+SlVUXw3gt2FJ07eJ9KdAL60/w
-wqrHz0UmXhz8PqqRY5R24lgcJYqMSSi6tiq+SiRvb4iFwJPTj0giismR0iS6wDT+
-no+1XlB43WfZBYJ3Aj0gAdGID5+DtxkLjuy+/+NEhP9KLWpZYjVOJ9GgfNGZkeDJ
-rp4Rd+ONT9xf3/00Y7EpruPsXyhLN4/TcYIjJrk9jpme7RtHjnZVrVWcsT0bKMYl
-st8dLJBAD0MeBDAsPOUV0tw36aSV/ttyZDP+kl5BswFbFZ9OKhtvQggyHezDU2eh
-C7S1f8goOOK71qkHMmT0ZZ4nTXm84vIqS/8PqTQt9SAfkHBzBUwCr+Qo8EMHkrDp
-6Dya/Gwe4E5oEqNdc26KrrBqWiZVYzttIcfjVEV5GzKhQyzfBXDBWAoKZS7kyxeV
-yVZb/QFCH+0LB5aNiuc2HRI5XXze8WwpCJmU1zcg/yi2UT2LAE1XbIfeV0vat6q6
-osQFXAUScydV0/cy93bxarnpxYIRPezTJRWvWj/qaHF+Ev3lQ2lW3CBfy0MboiOE
-ZY1ZwYrroAIpgWxDNLhV4hshBJNkDmMqX+p3ThocSB328PT5AOc=
-=0lwQ
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvWObQACgkQAVBC80lX
+0Gx6hAf/awY7VZlqjz3PKj61F8pi04/HNge7EKzsHPliXrVEqHErqKWNnaZ5V9OM
+UGKpYpGn7+/QjJrtRIERTfL9hDowu6P2ZXBN7QGfbPnxfYzjvOpzXw/s4ZxnLZGO
+n4texDl55gCvn6QMQS5MEKOHie3Z4rmU4HIEyP0MNQk8LvwiL0DTvRE/WI5i+lz/
+OP2024cSO67RPI1xWk2GzGmwcwgdYCbrmP1DMm2kJbd905ll3AKZNc0FBHpyktEE
+rPGbmQxCDtQ7yfZUhfkMHR7mBymQEg1hJ/ij9pkdtXWVI2wjuJ1q5AeUBwvkZILw
+ykdR/rVXpyN3IC6SZQZIjMHjwv4hdg==
+=K7Tx
 -----END PGP SIGNATURE-----
 
---Xsn3knLL3qrmRbVI--
+--Sig_/iHyy82eJ6+rygpE93muF4IO--
