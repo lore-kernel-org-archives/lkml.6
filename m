@@ -2,62 +2,68 @@ Return-Path: <SRS0=OQ6t=NI=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97244C6786F
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 13:12:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C90C6786F
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 13:14:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F04820665
-	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 13:12:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0320620665
+	for <linux-kernel@archiver.kernel.org>; Sun, 28 Oct 2018 13:14:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="fCGVPT4J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F04820665
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="swV2dR80"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0320620665
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727803AbeJ1V4w (ORCPT
+        id S1727621AbeJ1V7R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 28 Oct 2018 17:56:52 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:65113 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727507AbeJ1V4w (ORCPT
+        Sun, 28 Oct 2018 17:59:17 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:44918 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726379AbeJ1V7Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 28 Oct 2018 17:56:52 -0400
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id w9SDC4cE029992;
-        Sun, 28 Oct 2018 22:12:04 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w9SDC4cE029992
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1540732325;
-        bh=smKeRRoagZFsLUnBzoYBhOeaRq+9D5NXq69fWsMcRAA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=fCGVPT4J754FkkXvWTDS0IYP6cFYNs11rCPnSBOgdTzy8yYn9Y6b6WiZxsiEIPWVe
-         viCzOf6z7xkHhjChZDF1hOnBn0ZvNeCquatyP8XnrYO/KRvHz1xRq+R0EGzoPUF8Jy
-         JimeifWmKwJrWn3tpGdpZj4l8TCN5x7j7taaAcZ5vq48iQ7tE1CNCpBWXOg0VcJ/9l
-         4XP9WjziGDEt/A43iCKZh3Lo0vKWkktOTyVKgObqkn5nzX3TGexjaeaX17Plrq1efH
-         rFWOjhuxpwpcDVsCypQjR369CVc4kHG7o7SqtwOGz6vyrbYlXOMjPlfQde1keXiAzD
-         wGQFDemVEDv9w==
-X-Nifty-SrcIP: [209.85.222.41]
-Received: by mail-ua1-f41.google.com with SMTP id g10so2009591uak.5;
-        Sun, 28 Oct 2018 06:12:04 -0700 (PDT)
-X-Gm-Message-State: AGRZ1gKg2xZ8OSd/iSwvKrjg23iWcmbdzj/2y9pP/QeM1xRF2ZVOUnbt
-        xLj4ehLuRmuiWl7CXdFy1RmlR78fL5P8r/0/Y9o=
-X-Google-Smtp-Source: AJdET5ejnSvwFTKk92wUXkD3Ajzdss93X8bsgCJkC1qEi8w/O0+kumxw03hZ05wfKETGwj9Njo5NS6cHOyqF0+iCOdE=
-X-Received: by 2002:a9f:28c4:: with SMTP id d62mr4366243uad.42.1540732323632;
- Sun, 28 Oct 2018 06:12:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181019124921.13780-1-changbin.du@gmail.com> <20181019124921.13780-3-changbin.du@gmail.com>
-In-Reply-To: <20181019124921.13780-3-changbin.du@gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sun, 28 Oct 2018 22:11:27 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASAv3OcujS9RssGue-0Nd+zVh+O4jMOOmKQOqdtWWt9Jw@mail.gmail.com>
-Message-ID: <CAK7LNASAv3OcujS9RssGue-0Nd+zVh+O4jMOOmKQOqdtWWt9Jw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] kernel hacking: new config NO_AUTO_INLINE to
- disable compiler auto-inline optimizations
-To:     Changbin Du <changbin.du@gmail.com>
-Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Sun, 28 Oct 2018 17:59:16 -0400
+Received: by mail-pg1-f195.google.com with SMTP id w3-v6so2579612pgs.11;
+        Sun, 28 Oct 2018 06:14:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=VUFcxAXNVjWjZk6FKAKGjp0X7ZDdt9e3a7qM6aXtSqk=;
+        b=swV2dR80fLp7lIgBePWtGtd48LOFSbaSJ4oqAyNN+mSEj4wtspJ/w1OUMgETYBwNM2
+         QWtjqG4NgnWSLfC7/s7dH+MtHuenUjVMCx24dIv8yDUBra57Gsl3RixzQhoAjd8mVKTN
+         Foq6pymMLui6Hc2ANWZTr/UZeQzF14owaYqu3U3MlLmpHedyOroOD02vBCpIYyXiSvfV
+         dcQRCdZLsPZqUt745FCv9YQzu2P4I5N4Sn07tbBVOCKcJyFVXkOnwGnhx+Tj3mp6uo28
+         DRJbf7qQGVAlmpqfg5ChfjQ9SkoX12cuj1weNFgpOr90CKNxT8kplfLcSQaw+7KdVcWY
+         jzWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VUFcxAXNVjWjZk6FKAKGjp0X7ZDdt9e3a7qM6aXtSqk=;
+        b=Wzbk5ZUT+uSwX+DUYaaxd2Sl8bGvmwCecrbmxDdOkIqtQHdIvdc+Qua3td4d7TMXDr
+         RkcSTB94Oah0/XJzvTLLgMPmaHiXcRCOsxGKlAva2cjA2eGoX/Vyzgjfdco/Lc8q/xSa
+         Yvx4xRYo+ggk+80fEYhAArhsMGUq4fnRaQI6sz7/5cTX0SOT0yD2Hk+fJKM/uK+XyV2H
+         QBlFl/0CNAmFVg8WALS11NenVaBcYy6lliEDuOzLEn05wIHNMhYQomJmMHidXyhOV015
+         0xj/Y9LkoKHpcuHaxstK1nyyymPTDHQRoQdi5EefrYgnC8aQnetXgfwhe/7+id7Vbiae
+         N1kQ==
+X-Gm-Message-State: AGRZ1gJOmbUEzAw/+SfQGeO1WMktb1+F+xNe8rvtA4j3QRB3Wc631HYB
+        K/YaB0ivOhBiEu+2VNk0s+A=
+X-Google-Smtp-Source: AJdET5fl5zfLIXy3BhN2eer5kU+gSGxjD8q/Aiu3QdreQG9hLw1lto09htaVfmXnoyBnzU+wS5c6aA==
+X-Received: by 2002:a62:6f43:: with SMTP id k64-v6mr10841627pfc.87.1540732479611;
+        Sun, 28 Oct 2018 06:14:39 -0700 (PDT)
+Received: from mail.google.com ([2001:19f0:6001:4ff6:5400:1ff:feb7:a195])
+        by smtp.gmail.com with ESMTPSA id w66-v6sm22993683pfb.51.2018.10.28.06.14.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 28 Oct 2018 06:14:39 -0700 (PDT)
+Date:   Sun, 28 Oct 2018 13:14:36 +0000
+From:   Changbin Du <changbin.du@gmail.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Changbin Du <changbin.du@gmail.com>,
+        Michal Marek <michal.lkml@markovi.net>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
         Russell King <linux@armlinux.org.uk>,
@@ -67,34 +73,56 @@ Cc:     Michal Marek <michal.lkml@markovi.net>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         linux-sparse@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v2 4/4] kernel hacking: new config
+ CC_OPTIMIZE_FOR_DEBUGGING to apply GCC -Og optimization
+Message-ID: <20181028131357.parhzj32feapxncb@mail.google.com>
+References: <20181019124921.13780-1-changbin.du@gmail.com>
+ <20181019124921.13780-5-changbin.du@gmail.com>
+ <CAK7LNARW0=0d7m5DAgZOir=h0Y4tssqZoQRGasnGPNnvNf_+pg@mail.gmail.com>
+ <20181028125106.azcn2dxia3snplin@mail.google.com>
+ <CAK7LNARr7bE=DVuzim5771heuN5os0=5-D+jXfUyBb2e1xYoRA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK7LNARr7bE=DVuzim5771heuN5os0=5-D+jXfUyBb2e1xYoRA@mail.gmail.com>
+User-Agent: NeoMutt/20180716-508-7c9a6d
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 19, 2018 at 9:50 PM Du Changbin <changbin.du@gmail.com> wrote:
->
-> This patch add a new kernel hacking option NO_AUTO_INLINE. Selecting
-> this option will prevent the compiler from optimizing the kernel by
-> auto-inlining functions not marked with the inline keyword.
->
-> With this option, only functions explicitly marked with "inline" will
-> be inlined. This will allow the function tracer to trace more functions
-> because it only traces functions that the compiler has not inlined.
->
-> Signed-off-by: Du Changbin <changbin.du@gmail.com>
-> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+On Sun, Oct 28, 2018 at 10:09:21PM +0900, Masahiro Yamada wrote:
+> Hi Changbin,
+> 
+> On Sun, Oct 28, 2018 at 9:52 PM Changbin Du <changbin.du@gmail.com> wrote:
+> 
+> > >
+> > Thanks for pointing this out and kind suggestions. I have tested with your
+> > modification. Will update patch serias soon.
+> 
+> 
+> I have one more request.
+> 
+> The patch subject
+> "kernel hacking: new config CC_OPTIMIZE_FOR_DEBUGGING to apply GCC -Og
+> optimization"
+> is too long (83 characters)
+> 
+> 
+> I'd like the subject to be within 70 columns or so.
+> 
+oh, I just sent new version. Could me update the title if there are more
+suggestions then?
 
-
-This subject
-"kernel hacking: new config NO_AUTO_INLINE to disable compiler
-auto-inline optimizations"
-is also too long.
-
-Could you please make it a bit shorter?
-
+> Thanks.
+> 
+> 
+> 
+> 
+> -- 
+> Best Regards
+> Masahiro Yamada
 
 -- 
-Best Regards
-Masahiro Yamada
+Thanks,
+Changbin Du
