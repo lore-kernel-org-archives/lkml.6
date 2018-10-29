@@ -2,131 +2,209 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C062C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 11:58:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CCC6C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 11:58:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57E4B2082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 11:58:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57E4B2082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0756A2081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 11:58:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nGKzpSnC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0756A2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729201AbeJ2Uqk (ORCPT
+        id S1729221AbeJ2UrF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 16:46:40 -0400
-Received: from mga01.intel.com ([192.55.52.88]:42563 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728416AbeJ2Uqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 16:46:39 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2018 04:58:18 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,440,1534834800"; 
-   d="scan'208";a="103423121"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 29 Oct 2018 04:58:14 -0700
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 29 Oct 2018 13:58:13 +0200
-Date:   Mon, 29 Oct 2018 13:58:13 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Yu Chen <chenyu56@huawei.com>
-Cc:     linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, suzhuangluan@hisilicon.com,
-        kongfei@hisilicon.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lucas Tsai <lucas_tsai@richtek.com>,
-        shufan_lee <shufan_lee@richtek.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Binghui Wang <wangbinghui@hisilicon.com>
-Subject: Re: [PATCH 08/10] usb: typec: Add support for usb role switch in
- rt1711h driver
-Message-ID: <20181029115813.GA14534@kuha.fi.intel.com>
-References: <20181027095820.40056-1-chenyu56@huawei.com>
- <20181027095820.40056-9-chenyu56@huawei.com>
+        Mon, 29 Oct 2018 16:47:05 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:46839 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728416AbeJ2UrE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 16:47:04 -0400
+Received: by mail-qt1-f195.google.com with SMTP id c16-v6so8737319qtj.13;
+        Mon, 29 Oct 2018 04:58:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yCEehFaUebTW4fNviATPLpbyvaSH1ltp0+F+mlQKsHg=;
+        b=nGKzpSnCiqhg68BNZOT9dxaD/1CIux1TbnGQ75s2rZuTco5nmOkMNbMted2jd7xeRM
+         yBYw6hGchoJTs49upL8h52tCtVW95Mi+sDDGpHe0ogl/CusdTYg8Qb/leSXkR2jWWuiS
+         Use/AJgy/RYskhQYdMS6U+4jjKVbpjtJP9WYrcqB3HSZYqvCUXkbbOeWggJJgALCujAg
+         92+ZV4z59Vs0V2FifuJQgWbdOgvq26jC4pIG4d/KsIdF1+5B9LQfGVQAUB6uq0lf3bjP
+         I9Cu22nuY7fS/1Rti9YSmSKeMAlgMR703H2ZGTSxkxX2V3vDvILurwj6stc6r4hBgZDt
+         cBZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yCEehFaUebTW4fNviATPLpbyvaSH1ltp0+F+mlQKsHg=;
+        b=FSBEgIx6KdlVw517k6VgTw4GEvMZR4JhfTePND8Qcxzw0xg2iqYxWV2h53Uvd9Ix2t
+         ciY29ahKG0Z+PIm0VX2sDI6WU3ee2R/NnM5hRkFC05rQAmGhfHBggaas+z1F6NRcQfOy
+         myvSkRphUOKs7VDtNKZks7v7Rh/nmtJswy6vAIxskGqJ/7nT2EQ51a6BOwzWDD8jJcdQ
+         xLa5Nye3MqPgDhv9oPxV6qYPzmHBFwC6vRe77yE8LcPCtNdLdCWUKwgpV9QvRhN8Dr7Z
+         30w+CvqjbcS871mSB+Xe+SBGIXoGZA+wO4a6A0jac7YQfHByjfBljQVyc+Gy14AbWbGK
+         JItQ==
+X-Gm-Message-State: AGRZ1gKgndQs9dq5A/9VzBwIK9O3ifGSr72a+dT2UanWcFfXMAOI+Kmx
+        VD5NXaP4SuTdlZYqhmDCZpZsJhSZ2N1cRyc3bHo=
+X-Google-Smtp-Source: AJdET5dnE129p3+qYj7Wuxs2AazwFKbU1sO8vMPUb4j3m6j/USynTzOjSBxlNH+2/RzvwlezX2wokitCDmPEfq1ZtqU=
+X-Received: by 2002:aed:3e56:: with SMTP id m22-v6mr3104185qtf.99.1540814322512;
+ Mon, 29 Oct 2018 04:58:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181027095820.40056-9-chenyu56@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181020102100.14111-1-hdegoede@redhat.com>
+In-Reply-To: <20181020102100.14111-1-hdegoede@redhat.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 29 Oct 2018 13:58:31 +0200
+Message-ID: <CAHp75VeHpCbJTT-U8QPS8J5O7OZ53HjMCz+tHQL6J-iC4qOzrw@mail.gmail.com>
+Subject: Re: [PATCH] platform/x86: touchscreen_dmi: Add min-x and min-y
+ settings for various models
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 27, 2018 at 05:58:18PM +0800, Yu Chen wrote:
-> This patch add struct device_connection to rt1711h driver to support
-> find "usb-role-switch" in tcpm_register_port.
-> 
-> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Lucas Tsai <lucas_tsai@richtek.com>
-> Cc: shufan_lee <shufan_lee@richtek.com>
-> Cc: John Stultz <john.stultz@linaro.org>
-> Cc: Binghui Wang <wangbinghui@hisilicon.com>
-> Signed-off-by: Yu Chen <chenyu56@huawei.com>
+On Sat, Oct 20, 2018 at 1:21 PM Hans de Goede <hdegoede@redhat.com> wrote:
+>
+> Add min-x and min-y settings now that we've support for this and for some
+> models also update the width/height settings with slighly more accurate
+> values.
+>
+> This fixes touches along the edges registering at the wrong coordinates.
+>
+> While at it also set max-fingers to 10 in a couple of cases where the
+> touchpad can handle 10 fingers (rather then the default 5) and that was
+> missing.
+
+Applied, thanks!
+
+>
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
 > ---
->  drivers/usb/typec/tcpm/tcpci_rt1711h.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
-> diff --git a/drivers/usb/typec/tcpm/tcpci_rt1711h.c b/drivers/usb/typec/tcpm/tcpci_rt1711h.c
-> index 017389021b96..5f8b952612fe 100644
-> --- a/drivers/usb/typec/tcpm/tcpci_rt1711h.c
-> +++ b/drivers/usb/typec/tcpm/tcpci_rt1711h.c
-> @@ -39,6 +39,7 @@ struct rt1711h_chip {
->  	struct tcpci_data data;
->  	struct tcpci *tcpci;
->  	struct device *dev;
-> +	struct device_connection dev_conn;
+>  drivers/platform/x86/touchscreen_dmi.c | 33 +++++++++++++++++++-------
+>  1 file changed, 25 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/platform/x86/touchscreen_dmi.c b/drivers/platform/x86/touchscreen_dmi.c
+> index f852009e0e30..3a65a37f8ac8 100644
+> --- a/drivers/platform/x86/touchscreen_dmi.c
+> +++ b/drivers/platform/x86/touchscreen_dmi.c
+> @@ -51,10 +51,13 @@ static const struct ts_dmi_data chuwi_hi8_data = {
 >  };
->  
->  static int rt1711h_read16(struct rt1711h_chip *chip, unsigned int reg, u16 *val)
-> @@ -237,6 +238,7 @@ static int rt1711h_probe(struct i2c_client *client,
->  {
->  	int ret;
->  	struct rt1711h_chip *chip;
-> +	const char *dev_conn_end;
->  
->  	ret = rt1711h_check_revision(client);
->  	if (ret < 0) {
-> @@ -254,6 +256,7 @@ static int rt1711h_probe(struct i2c_client *client,
->  		return PTR_ERR(chip->data.regmap);
->  
->  	chip->dev = &client->dev;
-> +	dev_set_name(chip->dev, "rt1711h");
->  	i2c_set_clientdata(client, chip);
->  
->  	ret = rt1711h_sw_reset(chip);
-> @@ -264,6 +267,15 @@ static int rt1711h_probe(struct i2c_client *client,
->  	if (ret < 0)
->  		return ret;
->  
-> +	ret = device_property_read_string(chip->dev, "dev-conn-end",
-> +			&dev_conn_end);
-> +	if (!ret) {
-> +		chip->dev_conn.endpoint[0] = "rt1711h";
-> +		chip->dev_conn.endpoint[1] = dev_conn_end;
-> +		chip->dev_conn.id = "usb-role-switch";
-> +		device_connection_add(&chip->dev_conn);
-> +	}
+>
+>  static const struct property_entry chuwi_hi8_pro_props[] = {
+> +       PROPERTY_ENTRY_U32("touchscreen-min-x", 6),
+> +       PROPERTY_ENTRY_U32("touchscreen-min-y", 3),
+>         PROPERTY_ENTRY_U32("touchscreen-size-x", 1728),
+>         PROPERTY_ENTRY_U32("touchscreen-size-y", 1148),
+>         PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
+>         PROPERTY_ENTRY_STRING("firmware-name", "gsl3680-chuwi-hi8-pro.fw"),
+> +       PROPERTY_ENTRY_U32("silead,max-fingers", 10),
+>         PROPERTY_ENTRY_BOOL("silead,home-button"),
+>         PROPERTY_ENTRY_BOOL("efi-embedded-firmware"),
+>         { }
+> @@ -75,6 +78,8 @@ static const struct ts_dmi_data chuwi_hi8_pro_data = {
+>  };
+>
+>  static const struct property_entry chuwi_vi8_props[] = {
+> +       PROPERTY_ENTRY_U32("touchscreen-min-x", 4),
+> +       PROPERTY_ENTRY_U32("touchscreen-min-y", 6),
+>         PROPERTY_ENTRY_U32("touchscreen-size-x", 1724),
+>         PROPERTY_ENTRY_U32("touchscreen-size-y", 1140),
+>         PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
+> @@ -121,9 +126,9 @@ static const struct ts_dmi_data chuwi_vi10_data = {
+>
+>  static const struct property_entry connect_tablet9_props[] = {
+>         PROPERTY_ENTRY_U32("touchscreen-min-x", 9),
+> -       PROPERTY_ENTRY_U32("touchscreen-min-y", 8),
+> +       PROPERTY_ENTRY_U32("touchscreen-min-y", 10),
+>         PROPERTY_ENTRY_U32("touchscreen-size-x", 1664),
+> -       PROPERTY_ENTRY_U32("touchscreen-size-y", 878),
+> +       PROPERTY_ENTRY_U32("touchscreen-size-y", 880),
+>         PROPERTY_ENTRY_BOOL("touchscreen-inverted-y"),
+>         PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
+>         PROPERTY_ENTRY_STRING("firmware-name", "gsl1680-connect-tablet9.fw"),
+> @@ -137,8 +142,10 @@ static const struct ts_dmi_data connect_tablet9_data = {
+>  };
+>
+>  static const struct property_entry cube_iwork8_air_props[] = {
+> -       PROPERTY_ENTRY_U32("touchscreen-size-x", 1660),
+> -       PROPERTY_ENTRY_U32("touchscreen-size-y", 900),
+> +       PROPERTY_ENTRY_U32("touchscreen-min-x", 1),
+> +       PROPERTY_ENTRY_U32("touchscreen-min-y", 3),
+> +       PROPERTY_ENTRY_U32("touchscreen-size-x", 1664),
+> +       PROPERTY_ENTRY_U32("touchscreen-size-y", 896),
+>         PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
+>         PROPERTY_ENTRY_STRING("firmware-name", "gsl3670-cube-iwork8-air.fw"),
+>         PROPERTY_ENTRY_U32("silead,max-fingers", 10),
+> @@ -222,11 +229,14 @@ static const struct ts_dmi_data gp_electronic_t701_data = {
+>  };
+>
+>  static const struct property_entry itworks_tw891_props[] = {
+> +       PROPERTY_ENTRY_U32("touchscreen-min-x", 1),
+> +       PROPERTY_ENTRY_U32("touchscreen-min-y", 5),
+>         PROPERTY_ENTRY_U32("touchscreen-size-x", 1600),
+> -       PROPERTY_ENTRY_U32("touchscreen-size-y", 890),
+> +       PROPERTY_ENTRY_U32("touchscreen-size-y", 896),
+>         PROPERTY_ENTRY_BOOL("touchscreen-inverted-y"),
+>         PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
+>         PROPERTY_ENTRY_STRING("firmware-name", "gsl3670-itworks-tw891.fw"),
+> +       PROPERTY_ENTRY_U32("silead,max-fingers", 10),
+>         { }
+>  };
+>
+> @@ -250,8 +260,10 @@ static const struct ts_dmi_data jumper_ezpad_6_pro_data = {
+>  };
+>
+>  static const struct property_entry jumper_ezpad_mini3_props[] = {
+> +       PROPERTY_ENTRY_U32("touchscreen-min-x", 23),
+> +       PROPERTY_ENTRY_U32("touchscreen-min-y", 16),
+>         PROPERTY_ENTRY_U32("touchscreen-size-x", 1700),
+> -       PROPERTY_ENTRY_U32("touchscreen-size-y", 1150),
+> +       PROPERTY_ENTRY_U32("touchscreen-size-y", 1138),
+>         PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
+>         PROPERTY_ENTRY_STRING("firmware-name", "gsl3676-jumper-ezpad-mini3.fw"),
+>         PROPERTY_ENTRY_U32("silead,max-fingers", 10),
+> @@ -403,11 +415,14 @@ static const struct ts_dmi_data pov_mobii_wintab_p800w_v20_data = {
+>  };
+>
+>  static const struct property_entry pov_mobii_wintab_p800w_v21_props[] = {
+> -       PROPERTY_ENTRY_U32("touchscreen-size-x", 1800),
+> -       PROPERTY_ENTRY_U32("touchscreen-size-y", 1150),
+> +       PROPERTY_ENTRY_U32("touchscreen-min-x", 1),
+> +       PROPERTY_ENTRY_U32("touchscreen-min-y", 8),
+> +       PROPERTY_ENTRY_U32("touchscreen-size-x", 1794),
+> +       PROPERTY_ENTRY_U32("touchscreen-size-y", 1148),
+>         PROPERTY_ENTRY_BOOL("touchscreen-swapped-x-y"),
+>         PROPERTY_ENTRY_STRING("firmware-name",
+>                               "gsl3692-pov-mobii-wintab-p800w.fw"),
+> +       PROPERTY_ENTRY_U32("silead,max-fingers", 10),
+>         PROPERTY_ENTRY_BOOL("silead,home-button"),
+>         { }
+>  };
+> @@ -494,6 +509,8 @@ static const struct ts_dmi_data trekstor_surftab_twin_10_1_data = {
+>  };
+>
+>  static const struct property_entry trekstor_surftab_wintron70_props[] = {
+> +       PROPERTY_ENTRY_U32("touchscreen-min-x", 12),
+> +       PROPERTY_ENTRY_U32("touchscreen-min-y", 8),
+>         PROPERTY_ENTRY_U32("touchscreen-size-x", 884),
+>         PROPERTY_ENTRY_U32("touchscreen-size-y", 632),
+>         PROPERTY_ENTRY_STRING("firmware-name",
+> --
+> 2.19.0
+>
 
-That is wrong. You should not read name of a device from a property.
-
-Regardless of that, I don't think this patch is needed at all. You
-need to describe this kind connection with OF device graph
-(Documentation/devicetree/bindings/graph.txt).
-
-I've prepared a proposal how we should be able handle graphs in the
-device connection API:
-https://lkml.org/lkml/2018/10/24/613
-
-
-thanks,
 
 -- 
-heikki
+With Best Regards,
+Andy Shevchenko
