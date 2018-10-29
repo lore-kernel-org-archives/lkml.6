@@ -2,209 +2,178 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16199C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 23:25:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3513EC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 23:29:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B29F92082B
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 23:25:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC5C82082B
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 23:29:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oijYefpG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B29F92082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ab5nKApg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC5C82082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725981AbeJ3IQB (ORCPT
+        id S1725988AbeJ3IUU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 04:16:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58146 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725763AbeJ3IQA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 04:16:00 -0400
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F71721104;
-        Mon, 29 Oct 2018 23:25:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540855502;
-        bh=sAasVK4V1LbEtnONT+TBXvpf441PteCxNR4+6vQO6S4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=oijYefpGqeV600sVhKURNeWjIFA38kxoobu9YZ2N6OQr+QMEU4Xy7rKsQfQwHY08/
-         ptqgIjl2mBE5WEQhplFVVP1xhwf0ZaREa0GXL3g1USadi5uTKXRLWpwQ1rczYmNGnO
-         uKqpRB+xsrPej15s5/xJhzjsGIg7bN0afLKUZt1w=
-Received: by mail-qt1-f177.google.com with SMTP id q41-v6so11406437qtq.10;
-        Mon, 29 Oct 2018 16:25:02 -0700 (PDT)
-X-Gm-Message-State: AGRZ1gJVid6GW2lQC4SiHkXLtSBSY+jPy9fICNwZT/ZAm0WigQA1KB0q
-        H68r++CXB5XgP2bPKqTcq42xykFLlms+d/DwEA==
-X-Google-Smtp-Source: AJdET5exTMsXPo+Jb16mAirTe6X5fgsnOumICFDYxc/ILj8tq0rYZuzwNjB1K2uNL3cYn8Mycyvoy4gndhZ1l/uotwQ=
-X-Received: by 2002:aed:3ece:: with SMTP id o14-v6mr408104qtf.26.1540855501326;
- Mon, 29 Oct 2018 16:25:01 -0700 (PDT)
+        Tue, 30 Oct 2018 04:20:20 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45850 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725824AbeJ3IUT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 04:20:19 -0400
+Received: by mail-pf1-f196.google.com with SMTP id u4-v6so2433239pfh.12
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 16:29:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=QQln21pT/FJiXd3CvWGnCgvbBviEehqc5USvtIkiPZw=;
+        b=Ab5nKApgTi5mmM1Lro2GizrsxKnYUgyW0JaekE/3zmw/u2xu1ep3NxIu1p7uVOnkt7
+         eLyPr/kxAZqsJu22wWRmOjey2mQFphx6R9TgKTY0tDkxkOafhDiGD1LlKQ+hIQrevbq8
+         YkJsgQ+hasS31gnbj+WgnyN24GoIUkk/MCZ9o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=QQln21pT/FJiXd3CvWGnCgvbBviEehqc5USvtIkiPZw=;
+        b=hmhqYoDgDGIOG7u/9RuAHnYnxyzBLrWpPgBlP7BxOKFwt22jpOgoY2Qu0YGsJfn3fb
+         yJRw1eFI/Ff9YhGSS0W4q+XoHoB/sAcGW4LQ6OWedVAEEYER+qmX5w6OPvw3L6uo3tj9
+         Ei0Ag5BIFd5mo+0Py9dAZYD4DkyX91B5fY+6D3F2pXwelH6dYq6aYaerep06dAi2tDrN
+         zsGkoAu7uxUZlg1Tru8KpEmAs9k4y7E2cpAX8pcqr2MCWAoppCXc1CC9KWQ5ksIoDIA7
+         g5ZVxUHSjY3T8Uf0uyHqyINxFgkgWF1cwxXH5UAvyCaE7KOF0JEIiwv9JKz5zSFxU6Ec
+         L6bw==
+X-Gm-Message-State: AGRZ1gIqW0cDa7/PsxKb2N1p2AB4VGyOh5DMVvp1OGhW2agCfmCOM8yW
+        W0mVCRftyrknEhQFLxWCRUg/xw==
+X-Google-Smtp-Source: AJdET5fM59UmE4C46oJyzJT+ZHTZK8mq14Y+3SzJVFEd53a50wj2HhA2SAfuzax0ebrEkgp2gjGCVw==
+X-Received: by 2002:a63:ef53:: with SMTP id c19-v6mr15732207pgk.386.1540855759917;
+        Mon, 29 Oct 2018 16:29:19 -0700 (PDT)
+Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id s30-v6sm15192812pga.57.2018.10.29.16.29.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Oct 2018 16:29:19 -0700 (PDT)
+Date:   Mon, 29 Oct 2018 16:32:47 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>, linux-remoteproc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Loic Pallardy <loic.pallardy@st.com>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Rohit kumar <rohitkr@codeaurora.org>,
+        Suman Anna <s-anna@ti.com>,
+        Wei Yongjun <weiyongjun1@huawei.com>
+Subject: [GIT PULL] remoteproc updates for v4.20
+Message-ID: <20181029233247.GV12063@builder>
 MIME-Version: 1.0
-References: <20181029190014.6455-1-f.fainelli@gmail.com> <20181029190014.6455-2-f.fainelli@gmail.com>
- <CAL_JsqL2g69Duhkqd=f09BStoAKeakJz8Wgz3is37YU0+fc80A@mail.gmail.com> <CAKv+Gu-5vpSJDs3RdTtspO3WmbqTE4YQDWj2us4YOP2zi1PDTg@mail.gmail.com>
-In-Reply-To: <CAKv+Gu-5vpSJDs3RdTtspO3WmbqTE4YQDWj2us4YOP2zi1PDTg@mail.gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 29 Oct 2018 18:24:48 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJmGdExHbYA7_ABz0K4b=JPdX+O=2GRzip=_KBakqh9Ug@mail.gmail.com>
-Message-ID: <CAL_JsqJmGdExHbYA7_ABz0K4b=JPdX+O=2GRzip=_KBakqh9Ug@mail.gmail.com>
-Subject: Re: [PATCH 1/2 v5] arm64: Get rid of __early_init_dt_declare_initrd()
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        rppt@linux.ibm.com, Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        aryabinin@virtuozzo.com, Andrey Konovalov <andreyknvl@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Johannes Weiner <hannes@cmpxchg.org>, ghackmann@android.com,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        chandan.vn@samsung.com,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 4:58 PM Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
->
-> On 29 October 2018 at 16:59, Rob Herring <robh+dt@kernel.org> wrote:
-> > +Ard who last touched this.
-> >
-> > On Mon, Oct 29, 2018 at 2:23 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
-> >>
-> >> ARM64 is the only architecture that re-defines
-> >> __early_init_dt_declare_initrd() in order for that function to populate
-> >> initrd_start/initrd_end with physical addresses instead of virtual
-> >> addresses. Instead of having an override, just get rid of that
-> >> implementation and perform the virtual to physical conversion of these
-> >> addresses in arm64_memblock_init() where relevant.
-> >>
-> >> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> >> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
-> >> ---
-> >>  arch/arm64/include/asm/memory.h |  8 -------
-> >>  arch/arm64/mm/init.c            | 42 +++++++++++++++++++++------------
-> >>  2 files changed, 27 insertions(+), 23 deletions(-)
-> >>
-> >> diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
-> >> index b96442960aea..dc3ca21ba240 100644
-> >> --- a/arch/arm64/include/asm/memory.h
-> >> +++ b/arch/arm64/include/asm/memory.h
-> >> @@ -168,14 +168,6 @@
-> >>  #define IOREMAP_MAX_ORDER      (PMD_SHIFT)
-> >>  #endif
-> >>
-> >> -#ifdef CONFIG_BLK_DEV_INITRD
-> >> -#define __early_init_dt_declare_initrd(__start, __end)                 \
-> >> -       do {                                                            \
-> >> -               initrd_start = (__start);                               \
-> >> -               initrd_end = (__end);                                   \
-> >> -       } while (0)
-> >> -#endif
-> >> -
-> >>  #ifndef __ASSEMBLY__
-> >>
-> >>  #include <linux/bitops.h>
-> >> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-> >> index 3cf87341859f..292570b08f85 100644
-> >> --- a/arch/arm64/mm/init.c
-> >> +++ b/arch/arm64/mm/init.c
-> >> @@ -62,6 +62,8 @@
-> >>  s64 memstart_addr __ro_after_init = -1;
-> >>  phys_addr_t arm64_dma_phys_limit __ro_after_init;
-> >>
-> >> +static phys_addr_t phys_initrd_start, phys_initrd_end;
-> >> +
-> >>  #ifdef CONFIG_BLK_DEV_INITRD
-> >>  static int __init early_initrd(char *p)
-> >>  {
-> >> @@ -72,8 +74,8 @@ static int __init early_initrd(char *p)
-> >>         if (*endp == ',') {
-> >>                 size = memparse(endp + 1, NULL);
-> >>
-> >> -               initrd_start = start;
-> >> -               initrd_end = start + size;
-> >> +               phys_initrd_start = start;
-> >> +               phys_initrd_end = start + size;
-> >>         }
-> >>         return 0;
-> >>  }
-> >> @@ -364,6 +366,7 @@ static void __init fdt_enforce_memory_region(void)
-> >>  void __init arm64_memblock_init(void)
-> >>  {
-> >>         const s64 linear_region_size = -(s64)PAGE_OFFSET;
-> >> +       u64 __maybe_unused base, size;
-> >>
-> >>         /* Handle linux,usable-memory-range property */
-> >>         fdt_enforce_memory_region();
-> >> @@ -408,14 +411,25 @@ void __init arm64_memblock_init(void)
-> >>                 memblock_add(__pa_symbol(_text), (u64)(_end - _text));
-> >>         }
-> >>
-> >> -       if (IS_ENABLED(CONFIG_BLK_DEV_INITRD) && initrd_start) {
-> >> +       if (IS_ENABLED(CONFIG_BLK_DEV_INITRD) &&
-> >> +           (initrd_start || phys_initrd_start)) {
-> >
-> > I've tried to explain already that this is broken. The problem is
-> > __early_init_dt_declare_initrd using __va() which happens before this
-> > function is called. __va() uses PHYS_OFFSET which in turn is defined
-> > as memstart_addr. However, memstart_addr may be changed just above
-> > this hunk, so the earlier conversion to a VA may not be valid at this
-> > point. This is explained if you read Ard's commit that added all this
-> > mess.
-> >
-> > You could fix this by converting back to a PA before adjusting
-> > memstart_addr, but that's 2 wrongs making a right and fragile. The
-> > better solution is the other proposal making the DT code set
-> > phys_initrd_* (whatever the ARM code calls them).
-> >
->
-> On arm64, we have
->
-> #define PHYS_OFFSET \
->   ({ VM_BUG_ON(memstart_addr & 1); memstart_addr; })
->
-> and
->
-> s64 memstart_addr __ro_after_init = -1;
->
-> IOW, any attempt to perform PA to VA translations before memstart_addr
-> is assigned will BUG() if CONFIG_DEBUG_VM=y, so please enable that
-> when playing with this code.
+The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
 
-Which will result in a crashed kernel with no console output unless
-you have earlycon enabled (or maybe EFI console will be up?). A WARN
-would be better.
+  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
 
-> The reason we have this code is because the start of the linear region
-> might not coincide with memblock_start_of_DRAM(), which could happen,
-> e.g., when running a 39-bit VA kernel on a system with a very sparse
-> memory map (which is unfortunately what some silicon vendors think is
-> what ARM recommends) and the kernel loaded near the top of that
-> memory. The ability to load the kernel anywhere in physical memory was
-> introduced to accommodate physical KASLR.
->
-> Ideally, we'd fix this by only recording physical addresses for the
-> initrd in generic code, and deferring the translation until the point
-> where we actually do the access.
+are available in the Git repository at:
 
-The plan had been for the core code to set both the phys and virt
-addresses and let arm64 calculate the VA again. I guess we'll have to
-condition getting the VA on !ARM64 at least until we convert other
-platforms to use physaddr.
+  git://github.com/andersson/remoteproc tags/rproc-v4.20
 
-Rob
+for you to fetch changes up to f18b7e914fd2ed5e8b5733644cefcf62f7582679:
+
+  remoteproc: qcom: q6v5-mss: Register segments/dumpfn for coredump (2018-10-19 12:54:03 -0700)
+
+----------------------------------------------------------------
+remoteproc updates for v4.20
+
+This contains a series of patches that reworks the memory carveout
+handling in remoteproc, in order to allow this to be reused for
+statically allocated memory regions to be used for e.g. firmware.
+
+It adds support for audio DSP (both TZ-assisted and non-TZ assisted) and
+compute DSP on Qualcomm SDM845, TZ-assisted audio DSP, compute DSP and
+WiFi processor on Qualcomm QCS404 and through some renaming of the
+drivers cleans up the naming situation.
+
+Finally support for custom coreudmp segment handlers is added and
+is used in the Qualcomm modem remoteproc driver to gather memory dumps
+of the firmware.
+
+----------------------------------------------------------------
+Bjorn Andersson (6):
+      remoteproc/davinci: Use %zx for formating size_t
+      remoteproc: qcom: adsp: Add SDM845 ADSP and CDSP support
+      remoteproc: qcom: q6v5: Propagate EPROBE_DEFER
+      remoteproc: qcom: Rename Hexagon v5 PAS driver
+      remoteproc: qcom: Rename Hexagon v5 modem driver
+      remoteproc: qcom: pas: Add QCS404 remoteprocs
+
+Brian Norris (2):
+      remoteproc: qcom: q6v5-mss: add SCM probe dependency
+      remoteproc: qcom: q6v5: shore up resource probe handling
+
+Loic Pallardy (12):
+      remoteproc: configure IOMMU only if device address requested
+      remoteproc: add rproc_va_to_pa function
+      remoteproc: add release ops in rproc_mem_entry struct
+      remoteproc: add name in rproc_mem_entry struct
+      remoteproc: add helper function to allocate and init rproc_mem_entry struct
+      remoteproc: introduce rproc_add_carveout function
+      remoteproc: introduce rproc_find_carveout_by_name function
+      remoteproc: add alloc ops in rproc_mem_entry struct
+      remoteproc: add helper function to allocate rproc_mem_entry from reserved memory
+      remoteproc: add helper function to check carveout device address
+      remoteproc: modify rproc_handle_carveout to support pre-registered region
+      remoteproc: modify vring allocation to rely on centralized carveout allocator
+
+Rohit kumar (2):
+      dt-binding: remoteproc: Add QTI ADSP PIL bindings
+      remoteproc: qcom: Introduce Non-PAS ADSP PIL driver
+
+Sibi Sankar (11):
+      dt-bindings: remoteproc: qcom: Remove additional definition tag
+      dt-bindings: remoteproc: Add PDC reset binding for Q6V5 PIL
+      remoteproc: qcom: q6v5-pil: Explicitly get mss_restart line
+      remoteproc: qcom: q6v5-pil: Add PDC reset for modem on SDM845 SoCs
+      remoteproc: qcom: q6v5: Fix a race condition on fatal crash
+      remoteproc: qcom: q6v5-pil: Assign the relocated address
+      remoteproc: Introduce custom dump function for each remoteproc segment
+      remoteproc: Add mechanism for custom dump function assignment
+      remoteproc: qcom: q6v5-mss: Refactor mba load/unload sequence
+      remoteproc: qcom: q6v5-mss: Add custom dump function for modem
+      remoteproc: qcom: q6v5-mss: Register segments/dumpfn for coredump
+
+Suman Anna (2):
+      remoteproc: Check for NULL firmwares in sysfs interface
+      remoteproc: Add missing kernel-doc comment for auto-boot
+
+Wei Yongjun (1):
+      remoteproc: qcom: qcom_q6v5_adsp: Fix some return value check
+
+ .../bindings/remoteproc/qcom,adsp-pil.txt          | 126 +++++
+ .../devicetree/bindings/remoteproc/qcom,adsp.txt   |   5 +
+ .../devicetree/bindings/remoteproc/qcom,q6v5.txt   |   8 +-
+ drivers/remoteproc/Kconfig                         |  46 +-
+ drivers/remoteproc/Makefile                        |   5 +-
+ drivers/remoteproc/da8xx_remoteproc.c              |   2 +-
+ drivers/remoteproc/qcom_q6v5.c                     |  43 +-
+ drivers/remoteproc/qcom_q6v5_adsp.c                | 497 +++++++++++++++++
+ .../{qcom_q6v5_pil.c => qcom_q6v5_mss.c}           | 420 ++++++++++-----
+ .../{qcom_adsp_pil.c => qcom_q6v5_pas.c}           |  28 +-
+ drivers/remoteproc/remoteproc_core.c               | 595 +++++++++++++++++----
+ drivers/remoteproc/remoteproc_debugfs.c            |   1 +
+ drivers/remoteproc/remoteproc_internal.h           |   2 +
+ drivers/remoteproc/remoteproc_sysfs.c              |   5 +
+ drivers/remoteproc/remoteproc_virtio.c             |  14 +-
+ include/linux/remoteproc.h                         |  47 +-
+ 16 files changed, 1557 insertions(+), 287 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/remoteproc/qcom,adsp-pil.txt
+ create mode 100644 drivers/remoteproc/qcom_q6v5_adsp.c
+ rename drivers/remoteproc/{qcom_q6v5_pil.c => qcom_q6v5_mss.c} (90%)
+ rename drivers/remoteproc/{qcom_adsp_pil.c => qcom_q6v5_pas.c} (90%)
