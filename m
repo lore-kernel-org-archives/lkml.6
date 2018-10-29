@@ -2,105 +2,113 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C58DC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:20:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9235AC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:21:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F20D2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:20:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F20D2084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 42DC62080A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:21:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="i+/YFwdD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42DC62080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbeJ2WJT (ORCPT
+        id S1726897AbeJ2WKT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 18:09:19 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34706 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725862AbeJ2WJT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 18:09:19 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 88785AE03;
-        Mon, 29 Oct 2018 13:20:38 +0000 (UTC)
-Date:   Mon, 29 Oct 2018 14:20:35 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Mike Galbraith <efault@gmx.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Subject: Re: memcg oops:
- memcg_kmem_charge_memcg()->try_charge()->page_counter_try_charge()->BOOM
-Message-ID: <20181029132035.GI32673@dhcp22.suse.cz>
-References: <1540792855.22373.34.camel@gmx.de>
+        Mon, 29 Oct 2018 18:10:19 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:33400 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725862AbeJ2WKT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 18:10:19 -0400
+Received: by mail-vs1-f65.google.com with SMTP id 125so5201825vsi.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 06:21:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rWirhtKcMKmvjZeoLSoMY+H/UBnDbrqsTL5eaRAtbbg=;
+        b=i+/YFwdDAWLMWttljofE0hQ7eTR9nlDUVDOc1W47u2qDyMcRDUKnNenZ5of5S2P4Uy
+         1pBSJPsV3rztN86yJyNF9zXyeK0FHnhN0hrFKSJaSld7Yn24lCguoA+cX6fNTSLBgjsq
+         54sYMiqel3GS2nCw8RVfaiLhlWBLn+usg9iQKgz22XTUVE8GaaQUyR7JItNNx50mE1d8
+         M0VP9vOPpPLJcqjgcrNHa1lRQALs+YTRsBDxc2U7CaalpsQYZOQud3v5KHrpUkrs0h5h
+         FEjEvmx6ON0DHNTEX7a+Ns4ayS/ba/FZUXUeJYue7J/En2VvNAWNEXouq3xsg0IpZf5f
+         JvOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rWirhtKcMKmvjZeoLSoMY+H/UBnDbrqsTL5eaRAtbbg=;
+        b=DwVh5vwBgRfwqqzLV8G3R0YDx5LN9LP/M+wsLVo52u2d9cXH6uLtf56GwxROuJWseb
+         XkEj1UZ88rbSmdYW2ZzQ7VwuAfmk/k1cXKU/fKdP8Tea6PRpSkY5OKhsq+atTuQCQLPT
+         FsD8nwXypKINMvf2IJ+OjyD/1BJu1j1/F4aipEZEKkvungn59rXSYk3AG65S78/8YYbu
+         FfhcP1wkFfdd4RHLEd8u7rNRtHV2H+Uw9RL8GevsByJFdbNfaivTSR3qm9l40NW47jCm
+         TTrEspGCBdtjvY8brbOuFS+z4gceUta3vMYF7YECDKBHpjgYAvXvEBF0Nm1ZbFq8CRZi
+         m6Lw==
+X-Gm-Message-State: AGRZ1gJ3nFo4l5FinjzmkgB+JSBbegKySEkiX+YDNOF+o9J6YaQmj5Q1
+        uZjmZXtf2iSH+FF1dBHRdZ9mAPGbM9aIR4hC285bpw==
+X-Google-Smtp-Source: AJdET5d1kbsDsn+iFSDaUQsy8W7WmkXoLAfF0BHqb99mkjZrvFTVI3aG759UfU3j2aTR5zrUF+V4SBj55Kdd2QADjqo=
+X-Received: by 2002:a67:7082:: with SMTP id l124mr373572vsc.62.1540819298635;
+ Mon, 29 Oct 2018 06:21:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1540792855.22373.34.camel@gmx.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181022202901.1654-1-zwisler@google.com> <20181024072227.achkbix2ndef2ule@vireshk-i7>
+In-Reply-To: <20181024072227.achkbix2ndef2ule@vireshk-i7>
+From:   Ross Zwisler <zwisler@google.com>
+Date:   Mon, 29 Oct 2018 07:21:26 -0600
+Message-ID: <CAGRrVHw=Hkch+U9Unrw0DCOWxddCx239hSEbvQTM=xrto1ekoA@mail.gmail.com>
+Subject: Re: [PATCH] thermal: add ratelimited thermal and power logging
+To:     viresh.kumar@linaro.org
+Cc:     linux-kernel@vger.kernel.org, Ricky Liang <jcliang@chromium.org>,
+        amit.kachhap@gmail.com, daniel.lezcano@linaro.org,
+        edubezval@gmail.com, javi.merino@kernel.org, rui.zhang@intel.com,
+        linux-pm@vger.kernel.org, Stephen Barber <smbarber@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cc Vladimir and Johannes - the full report is http://lkml.kernel.org/r/1540792855.22373.34.camel@gmx.de
+On Wed, Oct 24, 2018 at 1:22 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> On 22-10-18, 14:29, Ross Zwisler wrote:
+> > From: Ricky Liang <jcliang@chromium.org>
+> >
+> > Add thermal logs in devfreq_cooling and cpu_cooling.
+>
+> Why should we add them ?
+>
+> > Also add logging to
+> > power_allocator when it starts to control power.
+> >
+> > These changes can lead to excessive log spam when running up against
+> > thermal limits, so have this logging ratelimited to allow only 1 log each
+> > 30 seconds from each of those subsystems.
+>
+> What's the use of these logs when we are going to print them only once every 30
+> seconds ?
+>
+> I recently extended thermal sysfs support to share more stats.
+>
+> commit 8ea229511e06 ("thermal: Add cooling device's statistics in sysfs")
+>
+> Will that be helpful in your case ?
+>
+> Otherwise we should probably add trace points instead.
 
-On Mon 29-10-18 07:00:55, Mike Galbraith wrote:
-> Greetings,
-> 
-> The attached config makes boom on both real HW, and KVM.  First
-> encountered after RT merge, then reproduced in virgin source with
-> config based on the enterprise-ish RT config.
-> 
-> [    4.412732] BUG: unable to handle kernel NULL pointer dereference at 00000000000000f8
-> [    4.414047] PGD 0 P4D 0
-> [    4.414769] Oops: 0002 [#1] PREEMPT SMP PTI
-> [    4.415651] CPU: 7 PID: 1 Comm: systemd Not tainted 4.19.0.g69d5b97-preempt #110
-> [    4.416849] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
-> [    4.419475] RIP: 0010:page_counter_try_charge+0x25/0xc0
+Thank you for the review.  Basically we use these prints to get a
+notification when a system is having thermal issues.  It's easy to
+look in dmesg and see the prints and know that something temperature
+related is going on.
 
-I strongly suspect memcg is NULL here.
+However, I agree that the current solution is a bit hacky, and in
+looking at it a bit further we don't even cover all the paths that we
+need to.  The processor_set_cur_state()  function in
+drivers/acpi/processor_thermal.c, for example, is used on the x86_64
+systems I'm testing with and wasn't augmented with prints.
 
-> [    4.420976] Code: f3 c3 0f 1f 00 0f 1f 44 00 00 48 85 ff 0f 84 a8 00 00 00 41 56 48 89 f8 41 55 49 89 fe 41 54 49 89 d5 55 49 89 f4 53 48 89 f3 <f0> 48 0f c1 1f 48 01 f3 48 39 5f 18 48 89 fd 73 17 eb 41 48 89 e8
-> [    4.424162] RSP: 0018:ffffb27840c57cb0 EFLAGS: 00010202
-> [    4.425236] RAX: 00000000000000f8 RBX: 0000000000000020 RCX: 0000000000000200
-> [    4.426467] RDX: ffffb27840c57d08 RSI: 0000000000000020 RDI: 00000000000000f8
-> [    4.427652] RBP: 0000000000000001 R08: 0000000000000000 R09: ffffb278410bc000
-> [    4.428883] R10: ffffb27840c57ed0 R11: 0000000000000040 R12: 0000000000000020
-> [    4.430168] R13: ffffb27840c57d08 R14: 00000000000000f8 R15: 00000000006000c0
-> [    4.431411] FS:  00007f79081a3940(0000) GS:ffff92a4b7bc0000(0000) knlGS:0000000000000000
-> [    4.432748] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [    4.433836] CR2: 00000000000000f8 CR3: 00000002310ac002 CR4: 00000000001606e0
-> [    4.435500] Call Trace:
-> [    4.436319]  try_charge+0x92/0x7b0
-> [    4.437284]  ? unlazy_walk+0x4c/0xb0
-> [    4.438676]  ? terminate_walk+0x91/0x100
-> [    4.439984]  memcg_kmem_charge_memcg+0x28/0x80
-> [    4.441059]  memcg_kmem_charge+0x88/0x1d0
-> [    4.442105]  copy_process.part.37+0x23a/0x2070
-
-Could you faddr2line this please?
-
-> [    4.443128]  ? shmem_tmpfile+0x90/0x90
-> [    4.444061]  ? shmem_mknod+0xbf/0xd0
-> [    4.444968]  _do_fork+0xbd/0x3e0
-> [    4.445907]  ? trace_hardirqs_off_thunk+0x1a/0x1c
-> [    4.447729]  do_syscall_64+0x5a/0x170
-> [    4.449792]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> [    4.451386] RIP: 0033:0x7f790672e193
-> [    4.452285] Code: db 45 85 ed 0f 85 ad 01 00 00 64 4c 8b 04 25 10 00 00 00 31 d2 4d 8d 90 d0 02 00 00 31 f6 bf 11 00 20 01 b8 38 00 00 00 0f 05 <48> 3d 00 f0 ff ff 0f 87 f1 00 00 00 85 c0 41 89 c4 0f 85 fe 00 00
-> [    4.455686] RSP: 002b:00007ffe60886b70 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
-> [    4.457112] RAX: ffffffffffffffda RBX: 00007ffe60886b70 RCX: 00007f790672e193
-> [    4.458488] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
-> [    4.461035] RBP: 00007ffe60886bc0 R08: 00007f79081a3940 R09: 0000000000000000
-> [    4.462378] R10: 00007f79081a3c10 R11: 0000000000000246 R12: 0000000000000000
-> [    4.463626] R13: 0000000000000000 R14: 0000000000000000 R15: 000055838becab00
-> [    4.464862] Modules linked in:
-> [    4.465649] Dumping ftrace buffer:
-> [    4.466502]    (ftrace buffer empty)
-> [    4.467336] CR2: 00000000000000f8
--- 
-Michal Hocko
-SUSE Labs
+I'm going to take a step back and try and find another solution.  The
+info you added to sysfs looks very promising, thank you for pointing
+it out.
