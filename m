@@ -2,115 +2,201 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB11C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 16:35:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC0D7C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 16:35:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2432A20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 16:35:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F733L5cq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2432A20870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7F9C420824
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 16:35:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F9C420824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728028AbeJ3BYm (ORCPT
+        id S1728071AbeJ3BYw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 21:24:42 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:32803 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727880AbeJ3BYl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 21:24:41 -0400
-Received: by mail-pf1-f196.google.com with SMTP id a15-v6so4310828pfn.0;
-        Mon, 29 Oct 2018 09:35:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=NNILUclF2YksZLNcLmr/Qd5pjkkJZsvpg7fMEBWQxMM=;
-        b=F733L5cqxa8KGMzjDWDU4WYgPjsYodctTd5dqg4pVMVFCNDxZHAkjoPXy+4g+YIm62
-         NFbUnu57mOAK/4KdHe++seNLsk0g0Ne7yJQWslt1/YZjqa8DqEKIf4zJ4fjO7TAMt6Zy
-         sSA5Vdv9BXQDCOybkZOnf03NfmyfHUGaQmKnMg0NwB1GB5rsvsI01ck3nEmn4MJp0VR6
-         7H73aDdnq6v5F10zZ0kNsuT5AXMT6zaETWTytFpIHdnFDpdrL96wRXVpDVKu8vNETIuA
-         xpQjHi0v4aSq4etthb4VhXSbUk2aHm7EHrJToT0jLX5b0iJO+agr1OckTrcqS4DY7MLy
-         50wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=NNILUclF2YksZLNcLmr/Qd5pjkkJZsvpg7fMEBWQxMM=;
-        b=kd1f5tXqTHhKjrUXX8BWiCi0b6rJynYo+mes39vR09x6UudV92rmH4TuN8+/8nkPVn
-         2bBc+QY9VJWQkXdGPn5CfzWC7uIlsnZWECRXkUOc07P/qnXNngmWINGmJbyFRpk9TObz
-         0AL3Df1jX80JNfTHP5FlCRARZ4c4gKEhTvRpcjxxppxe6oMmwfSyYBjunyMjcRrxCXA8
-         k7rwhOnqNjraBhdwOQCmhl6q+d16/R8Cen52OEn8C+gu8BJY03zPmRn+JwbWpbKvCX2I
-         qyz0+/xrvxaFy/8JYSw/Ni/7B3rGEq45joylLoQvtiCHMsthYbqzlZ9FHZdSfRZM5yfs
-         v3sw==
-X-Gm-Message-State: AGRZ1gKTuy487UYiHD/nkCKPL3g4k23ngqcnskcYKk9Wv9c3MXTfHau0
-        nUuHvu4ImwJG2rZBEo0HaDXK8jpqze0=
-X-Google-Smtp-Source: AJdET5ceu5KykyL3ENMB6WnLnTyl7Ohx/+tIbnYWtAo5gsakUR5MDtSjLcYJ0R4dWx61kYCcT7wZXQ==
-X-Received: by 2002:a62:1c0f:: with SMTP id c15-v6mr15880886pfc.14.1540830920342;
-        Mon, 29 Oct 2018 09:35:20 -0700 (PDT)
-Received: from [10.211.55.5] ([49.170.189.99])
-        by smtp.gmail.com with ESMTPSA id w2-v6sm37608365pfk.140.2018.10.29.09.35.17
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 09:35:18 -0700 (PDT)
-Subject: Re: [PATCH] spi: dw: fix buffer end address
-From:   Jaewon Kim <jaewon02.kim@gmail.com>
-To:     Mark Brown <broonie@kernel.org>,
-        Jaewon Kim <jaewon02.kim@samsung.com>
-Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1540395437-6623-1-git-send-email-jaewon02.kim@samsung.com>
-Message-ID: <762bc63e-7b01-0d77-3939-7b236dbda37f@gmail.com>
-Date:   Tue, 30 Oct 2018 01:35:15 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 29 Oct 2018 21:24:52 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40100 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727872AbeJ3BYw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 21:24:52 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A3941ACDE;
+        Mon, 29 Oct 2018 16:35:29 +0000 (UTC)
+Date:   Mon, 29 Oct 2018 17:35:28 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Pasha Tatashin <pavel.tatashin@microsoft.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        rppt@linux.vnet.ibm.com, Ingo Molnar <mingo@kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        yi.z.zhang@linux.intel.com
+Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
+ point where we init pgmap
+Message-ID: <20181029163528.GL32673@dhcp22.suse.cz>
+References: <f97de51c-67dd-99b2-754e-0685cac06699@linux.intel.com>
+ <20181010172451.GK5873@dhcp22.suse.cz>
+ <98c35e19-13b9-0913-87d9-b3f1ab738b61@linux.intel.com>
+ <20181010185242.GP5873@dhcp22.suse.cz>
+ <20181011085509.GS5873@dhcp22.suse.cz>
+ <6f32f23c-c21c-9d42-7dda-a1d18613cd3c@linux.intel.com>
+ <20181017075257.GF18839@dhcp22.suse.cz>
+ <971729e6-bcfe-a386-361b-d662951e69a7@linux.intel.com>
+ <20181029141210.GJ32673@dhcp22.suse.cz>
+ <84f09883c16608ddd2ba88103f43ec6a1c649e97.camel@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <1540395437-6623-1-git-send-email-jaewon02.kim@samsung.com>
-Content-Type: text/plain; charset=euc-kr; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <84f09883c16608ddd2ba88103f43ec6a1c649e97.camel@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is some side effect on this patch.
-
-So, I revoke this patch.
-
-
-18. 10. 25. 오전 12:37에 Jaewon Kim 이(가) 쓴 글:
-> Buffer address can be NULL, if user does not want to receive TX/RX data.
-> In this case, driver should not set the rx/tx_end value with len.
+On Mon 29-10-18 08:59:34, Alexander Duyck wrote:
+> On Mon, 2018-10-29 at 15:12 +0100, Michal Hocko wrote:
+> > On Wed 17-10-18 08:02:20, Alexander Duyck wrote:
+> > > On 10/17/2018 12:52 AM, Michal Hocko wrote:
+> > > > On Thu 11-10-18 10:38:39, Alexander Duyck wrote:
+> > > > > On 10/11/2018 1:55 AM, Michal Hocko wrote:
+> > > > > > On Wed 10-10-18 20:52:42, Michal Hocko wrote:
+> > > > > > [...]
+> > > > > > > My recollection was that we do clear the reserved bit in
+> > > > > > > move_pfn_range_to_zone and we indeed do in __init_single_page. But then
+> > > > > > > we set the bit back right afterwards. This seems to be the case since
+> > > > > > > d0dc12e86b319 which reorganized the code. I have to study this some more
+> > > > > > > obviously.
+> > > > > > 
+> > > > > > so my recollection was wrong and d0dc12e86b319 hasn't really changed
+> > > > > > much because __init_single_page wouldn't zero out the struct page for
+> > > > > > the hotplug contex. A comment in move_pfn_range_to_zone explains that we
+> > > > > > want the reserved bit because pfn walkers already do see the pfn range
+> > > > > > and the page is not fully associated with the zone until it is onlined.
+> > > > > > 
+> > > > > > I am thinking that we might be overzealous here. With the full state
+> > > > > > initialized we shouldn't actually care. pfn_to_online_page should return
+> > > > > > NULL regardless of the reserved bit and normal pfn walkers shouldn't
+> > > > > > touch pages they do not recognize and a plain page with ref. count 1
+> > > > > > doesn't tell much to anybody. So I _suspect_ that we can simply drop the
+> > > > > > reserved bit setting here.
+> > > > > 
+> > > > > So this has me a bit hesitant to want to just drop the bit entirely. If
+> > > > > nothing else I think I may wan to make that a patch onto itself so that if
+> > > > > we aren't going to set it we just drop it there. That way if it does cause
+> > > > > issues we can bisect it to that patch and pinpoint the cause.
+> > > > 
+> > > > Yes a patch on its own make sense for bisectability.
+> > > 
+> > > For now I think I am going to back off of this. There is a bunch of other
+> > > changes that need to happen in order for us to make this work. As far as I
+> > > can tell there are several places that are relying on this reserved bit.
+> > 
+> > Please be more specific. Unless I misremember, I have added this
+> > PageReserved just to be sure (f1dd2cd13c4bb) because pages where just
+> > half initialized back then. I am not aware anybody is depending on this.
+> > If there is somebody then be explicit about that. The last thing I want
+> > to see is to preserve a cargo cult and build a design around it.
+> 
+> It is mostly just a matter of going through and auditing all the
+> places that are using PageReserved to identify pages that they aren't
+> supposed to touch for whatever reason.
 >
-> Signed-off-by: Jaewon Kim <jaewon02.kim@samsung.com>
-> ---
->   drivers/spi/spi-dw.c | 8 ++++++--
->   1 file changed, 6 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/spi/spi-dw.c b/drivers/spi/spi-dw.c
-> index b705f2b..34e6fca 100644
-> --- a/drivers/spi/spi-dw.c
-> +++ b/drivers/spi/spi-dw.c
-> @@ -293,9 +293,13 @@ static int dw_spi_transfer_one(struct spi_controller *master,
->   	dws->dma_mapped = 0;
->   
->   	dws->tx = (void *)transfer->tx_buf;
-> -	dws->tx_end = dws->tx + transfer->len;
-> +	dws->tx_end = dws->tx;
-> +	if (dws->tx)
-> +		dws->tx_end += transfer->len;
->   	dws->rx = transfer->rx_buf;
-> -	dws->rx_end = dws->rx + transfer->len;
-> +	dws->rx_end = dws->rx;
-> +	if (dws->rx)
-> +		dws->rx_end += transfer->len;
->   	dws->len = transfer->len;
->   
->   	spi_enable_chip(dws, 0);
+> From what I can tell the issue appears to be the fact that the reserved
+> bit is used to identify if a region of memory is "online" or "offline".
+
+No, this is wrong. pfn_to_online_page does that. PageReserved has
+nothing to do with online vs. offline status. It merely says that you
+shouldn't touch the page unless you own it. Sure we might have few
+places relying on it but nothing should really depend the reserved bit
+check from the MM hotplug POV.
+
+> So for example the call "online_pages_range" doesn't invoke the
+> online_page_callback unless the first pfn in the range is marked as
+> reserved.
+
+Yes and there is no fundamental reason to do that. We can easily check
+the online status without that.
+
+> Another example Dan had pointed out was the saveable_page function in
+> kernel/power/snapshot.c.
+
+Use pfn_to_online_page there.
+
+> > > > > > Regarding the post initialization required by devm_memremap_pages and
+> > > > > > potentially others. Can we update the altmap which is already a way how
+> > > > > > to get alternative struct pages by a constructor which we could call
+> > > > > > from memmap_init_zone and do the post initialization? This would reduce
+> > > > > > the additional loop in the caller while it would still fit the overall
+> > > > > > design of the altmap and the core hotplug doesn't have to know anything
+> > > > > > about DAX or whatever needs a special treatment.
+> > > > > > 
+> > > > > > Does that make any sense?
+> > > > > 
+> > > > > I think the only thing that is currently using the altmap is the ZONE_DEVICE
+> > > > > memory init. Specifically I think it is only really used by the
+> > > > > devm_memremap_pages version of things, and then only under certain
+> > > > > circumstances. Also the HMM driver doesn't pass an altmap. What we would
+> > > > > really need is a non-ZONE_DEVICE users of the altmap to really justify
+> > > > > sticking with that as the preferred argument to pass.
+> > > > 
+> > > > I am not aware of any upstream HMM user so I am not sure what are the
+> > > > expectations there. But I thought that ZONE_DEVICE users use altmap. If
+> > > > that is not generally true then we certainly have to think about a
+> > > > better interface.
+> > > 
+> > > I'm just basing my statement on the use of the move_pfn_range_to_zone call.
+> > > The only caller that is actually passing the altmap is devm_memremap_pages
+> > > and if I understand things correctly that is only used when we want to stare
+> > > the vmmemmap on the same memory that we just hotplugged.
+> > 
+> > Yes, and that is what I've called as allocator callback earlier.
+> 
+> I am really not a fan of the callback approach. It just means we will
+> have to do everything multiple times in terms of initialization.
+
+I do not follow. Could you elaborate?
+
+> > > That is why it made more sense to me to just create a ZONE_DEVICE specific
+> > > function for handling the page initialization because the one value I do
+> > > have to pass is the dev_pagemap in both HMM and memremap case, and that has
+> > > the altmap already embedded inside of it.
+> > 
+> > And I have argued that this is a wrong approach to the problem. If you
+> > need a very specific struct page initialization then create a init
+> > (constructor) callback.
+> 
+> The callback solution just ends up being more expensive because we lose
+> multiple layers of possible optimization. By putting everything into on
+> initization function we are able to let the compiler go through and
+> optimize things to the point where we are essentially just doing
+> something akin to one bit memcpy/memset where we are able to construct
+> one set of page values and write that to every single page we have to
+> initialize within a given page block.
+
+You are already doing per-page initialization so I fail to see a larger
+unit to operate on.
+
+> My concern is that we are going to see a 2-4x regression if I were to
+> update the current patches I have to improve init performance in order
+> to achieve the purity of the page initilization functions that you are
+> looking for. I feel we are much better off having one function that can
+> handle all cases and do so with high performance, than trying to
+> construct a set of functions that end up having to reinitialize the
+> same memory from the previous step and end up with us wasting cycles
+> and duplicating overhead in multiple spots.
+
+The memory hotplug is just one pile of unmaintainable mess mostly because
+of this kind of attitude. You just care about _your_ particular usecase
+and not a wee bit beyond that.
+-- 
+Michal Hocko
+SUSE Labs
