@@ -2,119 +2,92 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6339C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 16:03:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D76E9C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 16:03:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9314A2082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 16:03:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96C2C2082D
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 16:03:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="BOcaQ2Dh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9314A2082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="SFDUI+61"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96C2C2082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727719AbeJ3AwY (ORCPT
+        id S1727760AbeJ3AxD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 20:52:24 -0400
-Received: from mail-qt1-f171.google.com ([209.85.160.171]:45114 "EHLO
-        mail-qt1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727085AbeJ3AwY (ORCPT
+        Mon, 29 Oct 2018 20:53:03 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33072 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727586AbeJ3AxC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 20:52:24 -0400
-Received: by mail-qt1-f171.google.com with SMTP id l9-v6so9791550qtj.12
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 09:03:11 -0700 (PDT)
+        Mon, 29 Oct 2018 20:53:02 -0400
+Received: by mail-lf1-f67.google.com with SMTP id i26so2143690lfc.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 09:03:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=22zDYaBQAQTYUANz4bSW6gERVTj33l72WDZyoYh36PU=;
-        b=BOcaQ2DhF6mDhIhAzD7HLM5Nnm2FFEHtei2KuWTX1s0CmpTXVadi3WLa730GTbovzS
-         mwtM6uDqHrVi5ar8lL3im6AQxk94HR2f1ZtiQ+zGImrPPEWVmJ1ekX6XNrofA8FjdAvV
-         aQItXO7XoUaojOzrMSlaw5WRzHgS6aUU7gLPA=
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dzn1/tlMeICKGrvbErMdzCLCGp8vxT7YrRmHfg+595Y=;
+        b=SFDUI+61XXp74hcKM9pDDvRqp/tKQtv2dD9W4DsPIQRp1VKeb9XsP2YOOBre1heMJL
+         H9Jk1Wo8CBUP+KtNf95Ua2T7+iFDefqwFRp+7AwPTgfRGhJrGmnybSeoSTIgsDrGVIXq
+         MRJEjYIPJLBQwC61TY1zQ1avrNVLmQwvKuM+A=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=22zDYaBQAQTYUANz4bSW6gERVTj33l72WDZyoYh36PU=;
-        b=ib8GOQ5/u7DGCjY4UOqAhYUtichtAh6b59rGSZwIYDaSUnO1Zfwb8Y7Kde+o3F88+O
-         ovzcGw6dWQK9H2no/ZvXOJdz+ZsLp7ReRvJwlhj/p2w7BMWbNgYx8vf9/hSg6cXhKBtV
-         CCPS8z6XKnW34BGNkVPqBQ1ZQyUuDWSsb2kOzjEiGxS1u0NThZWpWF9dAGDgF7pOZJA2
-         P0+gBsyo9K0S7h3ovLx6OYX8W/bQcMXq0jeSTwPAbC3OXH5FfXd6NzGX8Rry2Nyzow5D
-         nqCgnnuidVn1DTVMdH5u3Cq4P8kSLJ0fOsOF//D3ruMc5Pc838Y9DfF/Gi8ig0YPNrOd
-         xA5Q==
-X-Gm-Message-State: AGRZ1gKu5FfWv5Qc7WHkAw35QD5RRejzEcADRnAnf5pIORowAgClrBA+
-        aFNInWfENrIvErQDz9P1h1A0Tu36CsE=
-X-Google-Smtp-Source: AJdET5cGpuvhN7uI4H00h1tjoiUDUv+klIIPdAWtAMVdEW+4c0SUlL2yraZcZx+JbQXmob/mVDGHag==
-X-Received: by 2002:a05:6214:18e:: with SMTP id q14mr1247482qvr.173.1540828990622;
-        Mon, 29 Oct 2018 09:03:10 -0700 (PDT)
-Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
-        by smtp.gmail.com with ESMTPSA id h187sm12601374qke.46.2018.10.29.09.03.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Oct 2018 09:03:09 -0700 (PDT)
-Date:   Mon, 29 Oct 2018 12:03:08 -0400 (EDT)
-From:   Nicolas Pitre <nicolas.pitre@linaro.org>
-To:     Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-cc:     linux-kernel@vger.kernel.org
-Subject: Re: Cramfs: "unable to handle kernel paging request" when reading
- a file from a fuzzed FS image
-In-Reply-To: <CAE5jQCeN6xsyUsi0RhyDobGqMXO5JA-LtFEV=E=gVZLXSo4Akw@mail.gmail.com>
-Message-ID: <nycvar.YSQ.7.76.1810291150231.1498@knanqh.ubzr>
-References: <CAE5jQCdhWVVqf8en9S-3mbDBwuxk481S+hi-uvQSw6Gf6jKujQ@mail.gmail.com> <nycvar.YSQ.7.76.1810282336440.1498@knanqh.ubzr> <CAE5jQCeN6xsyUsi0RhyDobGqMXO5JA-LtFEV=E=gVZLXSo4Akw@mail.gmail.com>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dzn1/tlMeICKGrvbErMdzCLCGp8vxT7YrRmHfg+595Y=;
+        b=OgD5nk5Au+KCmp287At13lkbeyzAUQYbMZOy/ga6CXO3V5s/byOs2urOEgjexuSeYD
+         zGakZ6bzXzmd6fomZz0PFBB4hKl2Rrmvmt9jVEnlOSQVbrk0bgQug8fIfzxbvAKtmePI
+         EuQGYb8/OU6d8rPB85fYNinwaQbg6sZ5Wwqp/VSpx3e0mbP06K/himA7efjkX+/UFDDi
+         NFleZWtqo4zcV3iWUdRDa4R79xaGbY3/OjMu4ZcArBh4K2GsRCGLGbXF/mP24stT+g6Y
+         8d1P0zL1BZ2QQd5dZ8S/xgBwd6pWICYgP16+kk1rMPU8pgUfbLzg5lhH37mu6YnYQHaF
+         jdbQ==
+X-Gm-Message-State: AGRZ1gLH4gv6ZYO1h/G3XUoP9ToXdWbbCvH7MngFLbUW72PGz0iWE907
+        tdNO8fO39FZ4jsc2SCvsEl0sPbb6WweNmQ==
+X-Google-Smtp-Source: AJdET5et86eMln6EURRgLLPHmGdDQldTk0YIXtos2sxJMs+yphwW2vdg2HFFgbK9I4/sibWGyomy5A==
+X-Received: by 2002:a19:d98f:: with SMTP id s15mr5375145lfi.58.1540829025877;
+        Mon, 29 Oct 2018 09:03:45 -0700 (PDT)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
+        by smtp.gmail.com with ESMTPSA id i2-v6sm1816527ljc.94.2018.10.29.09.03.44
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Oct 2018 09:03:44 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id t22-v6so8332933lji.7
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 09:03:44 -0700 (PDT)
+X-Received: by 2002:a2e:7801:: with SMTP id t1-v6mr4451072ljc.120.1540829023746;
+ Mon, 29 Oct 2018 09:03:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <1540613318-23877-1-git-send-email-ren_guo@c-sky.com>
+In-Reply-To: <1540613318-23877-1-git-send-email-ren_guo@c-sky.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 29 Oct 2018 09:03:27 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whq5ebFd2CKE0bybLOY7ttMPxGiXF3WkzFXtkYhAbJqSg@mail.gmail.com>
+Message-ID: <CAHk-=whq5ebFd2CKE0bybLOY7ttMPxGiXF3WkzFXtkYhAbJqSg@mail.gmail.com>
+Subject: Re: [GIT PULL] C-SKY(csky) Port for Linux 4.20
+To:     ren_guo@c-sky.com
+Cc:     Arnd Bergmann <arnd@arndb.de>, marc.zyngier@arm.com,
+        Peter Zijlstra <peterz@infradead.org>, robh@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch@vger.kernel.org, c-sky_gcc_upstream@c-sky.com,
+        guoren1983@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 29 Oct 2018, Anatoly Trosinenko wrote:
+On Fri, Oct 26, 2018 at 9:08 PM Guo Ren <ren_guo@c-sky.com> wrote:
+>
+> This tag contains the Linux port for C-SKY(csky) based on linux-4.19
+> Release, which has been through 10 rounds of review on mailing list.
+>
+> We almost got the Acked-by/Reviewed-by of all patches except "Process
+> management and Signal", but all've been tested.
 
-> > How do I populate /vtmp? Mine is empty at this point. I imagine I 
-> > should put the cramfs image somewhere on the host, but I'm not that 
-> > familiar withkvm.
-> 
-> Oops, forgot to say, it is the /tmp/kvm-xfstests-$USER directory on 
-> the host (it will be created when you first launch kvm-xfstests and it 
-> is "live", i.e. like NFS, not like "pack to ext4 image then boot and 
-> mount").
+Pulled,
 
-OK, I reproduced it. The fix is as follows:
-
-diff --git a/fs/cramfs/inode.c b/fs/cramfs/inode.c
-index f408994fc6..6e000392e4 100644
---- a/fs/cramfs/inode.c
-+++ b/fs/cramfs/inode.c
-@@ -202,7 +202,8 @@ static void *cramfs_blkdev_read(struct super_block *sb, unsigned int offset,
- 			continue;
- 		blk_offset = (blocknr - buffer_blocknr[i]) << PAGE_SHIFT;
- 		blk_offset += offset;
--		if (blk_offset + len > BUFFER_SIZE)
-+		if (blk_offset > BUFFER_SIZE ||
-+		    blk_offset + len > BUFFER_SIZE)
- 			continue;
- 		return read_buffers[i] + blk_offset;
- 	}
-
-User space will get a bunch of zeroes rather than an explicit error in 
-this case. There is just so many ways to corrupt a cramfs image without 
-detecting it afterwards that I don't think it is worth doing more than 
-making sure the system won't be compromized.
-
-> > Hmmm... It doesn't show up on my test system.
-> 
-> Mounted it on my host Ubuntu 18.10 amd64, executed `cat /mnt/xyz` and
-> it was "Killed". Maybe it is something freshly added or
-> arch-dependent...
-
-It actually depends on whether there is something mapped immediately 
-next to the cramfs cache buffer.
-
-In any case, this is a nice catch. Thank you for reporting it.
-
-
-Nicolas
+                    Linus
