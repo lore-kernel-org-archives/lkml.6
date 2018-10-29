@@ -2,111 +2,151 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F430C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:28:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C498C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:28:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E34B20657
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:28:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="vSXuM0Nb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E34B20657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 469B120657
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:28:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 469B120657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727676AbeJ3CRf (ORCPT
+        id S1727726AbeJ3CRi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 22:17:35 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:53522 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727624AbeJ3CRf (ORCPT
+        Mon, 29 Oct 2018 22:17:38 -0400
+Received: from mail-io1-f71.google.com ([209.85.166.71]:41743 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727624AbeJ3CRg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 22:17:35 -0400
-Received: by mail-it1-f194.google.com with SMTP id f16-v6so2975669ita.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 10:28:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=JJa4QjoSR7L22FTHEbArzuX5XAjy0u6zdPaUR1soXoY=;
-        b=vSXuM0NbPe7SJFVDhz2NwqfenB+PxlHmphZC1N3Me+JI8StTQZyoTnf5PEa9d1P51j
-         xjJ3//MjEb2SS+cqxXIWyZ0XJTyxkp9fKVu0LTfQ8XvN6MnvfkQUm87qonja/vblFpw8
-         adozznn34DJ1FRIL/wDqdgPrzvMcHpH7SBHbddCXDipLRgq7DTlUbbWAI6TOC0U0CEUS
-         /d5PFOcbbRKfOzKIYCTdW/8ZmiRwZa/Ptviw6yoesyH9kMz8pcrgKXZQvkVKIFNh74FO
-         /EYopAtGXplDWpcxI4oQSqd8Jv2V+VypH6/aJnkOBQgrPQ6hCPw0wLb7NdyHtRpZfrUN
-         nx9w==
+        Mon, 29 Oct 2018 22:17:36 -0400
+Received: by mail-io1-f71.google.com with SMTP id m17-v6so8509225ioh.8
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 10:28:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JJa4QjoSR7L22FTHEbArzuX5XAjy0u6zdPaUR1soXoY=;
-        b=LOu9cziV53sDLvIAo//2Ag5vzTQCaG29rhJe+OkkAxAeYCQFo5ifNkh+K9S9rRA4ku
-         8HPiXahVYXHvjMp2C7Q+AJbwDMNw71kgnq8z+FQdh6Ym0GFFtTh8LqS2lzpuo1Styv3S
-         M2dDBKy4qctxloEKMMopBRyzcchqlDTGdlB8WTifXj48YRXN1VusBXtAxZo1SHkOOTVn
-         NCeEd8Z9AUU4ECLJlie7cCUNsZFKqL9zezZ9l76ypFBrQkmIa6z/YxHiSFy1eEzQUCQR
-         7NJWsiE7YJSDgz03tZs8KtSi0ONJtmRTsfAf9j0WPOAlr/RVVoe6sO6oYixr0EdOHaHb
-         UTTg==
-X-Gm-Message-State: AGRZ1gKQUzDo53r9sCQz5hdyx/ZnmGwy1x/UU2JkF+VyY8GBJGrJd/B5
-        4gInp2RTkMxpkG/wAYDWfcrvPNO5yr4=
-X-Google-Smtp-Source: AJdET5c6+scwurXJEeZRxqXSCjDPyFRd/cQsx8k5NGCLy271EYt5QJETuS5swm+cu4jrBj018J564Q==
-X-Received: by 2002:a24:bc5:: with SMTP id 188-v6mr10691393itd.172.1540834080375;
-        Mon, 29 Oct 2018 10:28:00 -0700 (PDT)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id q185-v6sm5425995itc.30.2018.10.29.10.27.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 10:27:59 -0700 (PDT)
-Subject: Re: [PATCH 03/14] blk-mq: provide dummy blk_mq_map_queue_type()
- helper
-To:     Bart Van Assche <bvanassche@acm.org>, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181029163738.10172-1-axboe@kernel.dk>
- <20181029163738.10172-4-axboe@kernel.dk> <1540833779.196084.56.camel@acm.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <ac06591d-f3de-514d-7d29-cbfc34ffeb1c@kernel.dk>
-Date:   Mon, 29 Oct 2018 11:27:58 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=otKv0+XOG9axzftbV3DgkApEIPQFRabqJgvg9ExHR6c=;
+        b=uLM2K9E/b0a5rR1WmABc9tS7cuqjiFErMNPQBHYHTK7wTW384xVRHdtctWZ4Bh43rl
+         mg4liL9BVtPcuA9X51dfOkaDJ2nKCS8Umm9xNxIocxIDc3JL5u/FuAHncVSHRovJF1oO
+         ujjeCzflhqM9mM0GyYgnKRwASzmFVjPzOFuzMK4zr7L6UmdpK7apqSVwlzlZdzYAXcao
+         KLIYomUl7UAuC53uDFzntFekGmEaMJVx9pyVOthvz3SNDdCBCQ6x5RABghi9YM2CIfgZ
+         kjKUGXQjNSlCbvzP3cMfuM2Nlrz6BXQnVhpGxKC7g2jarXjc21o+joSIOdnWc1REs4FA
+         LE3A==
+X-Gm-Message-State: AGRZ1gLec8vh48GWTApIpZK5cY4JjQ9ZxzX+SJ5KuCkz0MLAuCdP9oTu
+        veV2TgJ6DTjNKg/XY1kiLwQ47XcfC8K6q39Vc5fjfX8uGKVs
+X-Google-Smtp-Source: AJdET5ev9amglDaceii99jRO3at8JdzVoERpqOZX0eJTw5edQjc3rZmRFmaPQas8lco5LlEm31J3G22wwZo2s6roGrzDT33Wyckn
 MIME-Version: 1.0
-In-Reply-To: <1540833779.196084.56.camel@acm.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a24:4746:: with SMTP id t67-v6mr4007557itb.39.1540834083006;
+ Mon, 29 Oct 2018 10:28:03 -0700 (PDT)
+Date:   Mon, 29 Oct 2018 10:28:03 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000002cf4a10579616456@google.com>
+Subject: WARNING in __vb2_queue_cancel
+From:   syzbot <syzbot+736c3aae4af7b50d9683@syzkaller.appspotmail.com>
+To:     hverkuil@xs4all.nl, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com, satendra.t@samsung.com,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/29/18 11:22 AM, Bart Van Assche wrote:
-> On Mon, 2018-10-29 at 10:37 -0600, Jens Axboe wrote:
->> diff --git a/block/blk-mq.h b/block/blk-mq.h
->> index 889f0069dd80..79c300faa7ce 100644
->> --- a/block/blk-mq.h
->> +++ b/block/blk-mq.h
->> @@ -80,6 +80,12 @@ static inline struct blk_mq_hw_ctx *blk_mq_map_queue(struct request_queue *q,
->>  	return q->queue_hw_ctx[set->map[0].mq_map[cpu]];
->>  }
->>  
->> +static inline struct blk_mq_hw_ctx *blk_mq_map_queue_type(struct request_queue *q,
->> +							  int type, int cpu)
->> +{
->> +	return blk_mq_map_queue(q, cpu);
->> +}
->> +
->>  /*
->>   * sysfs helpers
->>   */
-> 
-> How about renaming 'type' into something like hw_ctx_type to make it more
-> clear what its meaning is? How about declaring both the 'type' and 'cpu'
-> arguments as unsigned ints?
+Hello,
 
-I can do that. For the CPU type, the existing prototype is already
-int for CPU. But may as well just update them both in the same patch.
+syzbot found the following crash on:
 
--- 
-Jens Axboe
+HEAD commit:    9f51ae62c84a Merge git://git.kernel.org/pub/scm/linux/kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11f0dbe5400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=62118286bb772a24
+dashboard link: https://syzkaller.appspot.com/bug?extid=736c3aae4af7b50d9683
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ffc90b400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=147dd1c5400000
 
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+736c3aae4af7b50d9683@syzkaller.appspotmail.com
+
+WARNING: CPU: 1 PID: 5722 at  
+drivers/media/common/videobuf2/videobuf2-core.c:1667  
+__vb2_queue_cancel+0x89d/0xca0  
+drivers/media/common/videobuf2/videobuf2-core.c:1667
+Kernel panic - not syncing: panic_on_warn set ...
+
+CPU: 1 PID: 5722 Comm: syz-executor576 Not tainted 4.19.0+ #309
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  panic+0x238/0x4e7 kernel/panic.c:184
+  __warn.cold.8+0x20/0x4a kernel/panic.c:536
+  report_bug+0x254/0x2d0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:178 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
+  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:966
+RIP: 0010:__vb2_queue_cancel+0x89d/0xca0  
+drivers/media/common/videobuf2/videobuf2-core.c:1667
+Code: 48 8b 45 d0 65 48 33 04 25 28 00 00 00 0f 85 88 03 00 00 48 81 c4 b0  
+01 00 00 5b 41 5c 41 5d 41 5e 41 5f 5d c3 e8 83 9f 34 fc <0f> 0b 48 8b 85  
+70 fe ff ff 48 05 28 02 00 00 48 89 85 40 fe ff ff
+RSP: 0018:ffff8801d5a9f878 EFLAGS: 00010293
+RAX: ffff8801d482c680 RBX: ffff8801d5a9fa28 RCX: ffffffff854abdf8
+RDX: 0000000000000000 RSI: ffffffff854ac47d RDI: 0000000000000005
+RBP: ffff8801d5a9fa50 R08: ffff8801d482c680 R09: ffffed003977abbf
+R10: ffffed003977abbf R11: ffff8801cbbd5dff R12: ffff8801cbbd5dfc
+R13: dffffc0000000000 R14: 0000000000000002 R15: ffff8801cbbd0d08
+  vb2_core_streamoff+0x60/0x140  
+drivers/media/common/videobuf2/videobuf2-core.c:1795
+  __vb2_cleanup_fileio+0x73/0x160  
+drivers/media/common/videobuf2/videobuf2-core.c:2316
+  vb2_core_queue_release+0x1e/0x80  
+drivers/media/common/videobuf2/videobuf2-core.c:2043
+  vb2_queue_release drivers/media/common/videobuf2/videobuf2-v4l2.c:672  
+[inline]
+  _vb2_fop_release+0x1d2/0x2b0  
+drivers/media/common/videobuf2/videobuf2-v4l2.c:843
+  vb2_fop_release+0x77/0xc0  
+drivers/media/common/videobuf2/videobuf2-v4l2.c:857
+  vivid_fop_release+0x18e/0x440 drivers/media/platform/vivid/vivid-core.c:474
+  v4l2_release+0xfb/0x1a0 drivers/media/v4l2-core/v4l2-dev.c:448
+  __fput+0x385/0xa30 fs/file_table.c:278
+  ____fput+0x15/0x20 fs/file_table.c:309
+  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x405591
+Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 94 17 00 00 c3 48  
+83 ec 08 e8 6a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48  
+89 c2 e8 b3 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
+RSP: 002b:00007ffd801e3640 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+RAX: 0000000000000000 RBX: 0000000000000003 RCX: 0000000000405591
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 0000000000000003
+RBP: 00000000000003e8 R08: 00000000000003e8 R09: 0000000000000000
+R10: 00007ffd801e3650 R11: 0000000000000293 R12: 00000000006dbc2c
+R13: 000000000000002d R14: 0000000000000003 R15: 00000000006dbc20
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
