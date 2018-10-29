@@ -2,120 +2,131 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66C39C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:54:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 864BDECDE44
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:55:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33C5420870
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:54:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DQ6AoN4m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33C5420870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 59792204FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:55:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59792204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728249AbeJ3CoV (ORCPT
+        id S1728278AbeJ3Cos (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 22:44:21 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:39572 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727834AbeJ3CoV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 22:44:21 -0400
-Received: by mail-pg1-f194.google.com with SMTP id r9-v6so4273168pgv.6
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 10:54:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dSRBAJc5LjP0q5OJVj+GJWLu8GLrm3rpsIZDICYf+sg=;
-        b=DQ6AoN4mF54G/icj5lBMWGhZ4iWMO8x8DBlN3zsG31Pc1xz7P5mYixswVbf6xhV4/H
-         WjElr0+2zmHrpMdPL7oBZJ742nNedfPz2hHISNtsg2Vm6X+L6EBM095DE9wkDJ1sL6Jq
-         2IE5mU1XtzUurNJtaSy1QlwRprNYfM5XEoU52t56dKByc1+SvPddXo23s/IkIB5/sfGa
-         sRZ8BWZFzV8URRKQ7XNzImTjgJd4Hfco5bnO5g93pNWs22zn/PqiYQVDmZ/sOTYVq0BA
-         v/jOzivQlkAdo0XGSMbTyypNqCwVaotpGJI+ox8jxS5DtSCB8H24UxnbnOkipH/g/uJ0
-         JEyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dSRBAJc5LjP0q5OJVj+GJWLu8GLrm3rpsIZDICYf+sg=;
-        b=bRRyR7idPBRwOdRGi54npXHDTUlW9oYOMbiMuFI/wp2eePXouZ94kcV8KkgGW1YoUy
-         HNPrY13G4gxZ77oI4C1jjg8WHu7PoN/13Dxf9LpYdzUudwS83+uRrRvU+T3qmxn79YTx
-         8+hXio63fQtZSARciLJWqoluhZQ8WR4dMFIb5zuYLD3fwW3xJw6M59CCxKxaObX8BLOP
-         gSeIXziAIZrum5Rs6e/AC3wWmZMVLImTgpEGnffA3GleybfD9K4LkZBq8XYZNT3bQirG
-         eekkdDJUGOfIUVZTIU//7BBENQn3JFMfFnyZEnwzOFVQFb7RdfVeH74vTYzHft5pAjAV
-         gl1A==
-X-Gm-Message-State: AGRZ1gJtPY4A1E+NAsB/xJOYuUwjV8FDcV0Mtn9i4/AgG6h/NQZjIU1G
-        pwvrrA06CQxHK5oi6yNY6TBe1kjlczULpQGixbz0pQ==
-X-Google-Smtp-Source: AJdET5ciTSlNdT5VcV0g+PyFSxZrRZ/Q6sx+8JJsqXE5PJQTH8uMDebizR9yNr3teLO58R+ZFmMVOuLyRoWNuyVdBXA=
-X-Received: by 2002:a62:5bc4:: with SMTP id p187-v6mr13503819pfb.94.1540835680718;
- Mon, 29 Oct 2018 10:54:40 -0700 (PDT)
-MIME-Version: 1.0
-References: <0147a993d4a94426afa469a8dcc4e5d7@AcuMS.aculab.com>
- <20181022234357.82217-1-ndesaulniers@google.com> <alpine.DEB.2.21.1810241136130.3525@jsakkine-mobl1>
-In-Reply-To: <alpine.DEB.2.21.1810241136130.3525@jsakkine-mobl1>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 29 Oct 2018 10:54:29 -0700
-Message-ID: <CAKwvOdn+V8iFJ_V1vr3GBm-NwxzaDbcmK+nW1q3uVky7bRsB3w@mail.gmail.com>
-Subject: Re: [PATCH v2] [PATCH] KEYS: trusted: fix -Wvarags warning
-To:     jarkko.sakkinen@linux.intel.com
-Cc:     dhowells@redhat.com,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        David.Laight@aculab.com, denkenz@gmail.com,
-        zohar@linux.vnet.ibm.com, jmorris@namei.org, serge@hallyn.com,
-        keyrings@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 29 Oct 2018 22:44:48 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43992 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726998AbeJ3Cos (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 22:44:48 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3889A80D;
+        Mon, 29 Oct 2018 10:55:08 -0700 (PDT)
+Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 901743F6A8;
+        Mon, 29 Oct 2018 10:55:06 -0700 (PDT)
+From:   Julien Thierry <julien.thierry@arm.com>
+To:     linux-nfs@vger.kernel.org
+Cc:     Julien Thierry <julien.thierry@arm.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] SUNRPC: Fix iter_iov_*vec warnings
+Date:   Mon, 29 Oct 2018 17:55:01 +0000
+Message-Id: <1540835701-23176-1-git-send-email-julien.thierry@arm.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 1:37 AM Jarkko Sakkinen
-<jarkko.sakkinen@linux.intel.com> wrote:
->
-> On Mon, 22 Oct 2018, ndesaulniers@google.com wrote:
-> > Fixes the warning reported by Clang:
-> > security/keys/trusted.c:146:17: warning: passing an object that
-> > undergoes default
-> >      argument promotion to 'va_start' has undefined behavior [-Wvarargs]
-> >        va_start(argp, h3);
-> >                       ^
-> > security/keys/trusted.c:126:37: note: parameter of type 'unsigned
-> > char' is declared here
-> > unsigned char *h2, unsigned char h3, ...)
-> >                               ^
-> > Specifically, it seems that both the C90 (4.8.1.1) and C11 (7.16.1.4)
-> > standards explicitly call this out as undefined behavior:
-> >
-> > The parameter parmN is the identifier of the rightmost parameter in
-> > the variable parameter list in the function definition (the one just
-> > before the ...). If the parameter parmN is declared with ... or with a
-> > type that is not compatible with the type that results after
-> > application of the default argument promotions, the behavior is
-> > undefined.
-> >
-> > Link: https://github.com/ClangBuiltLinux/linux/issues/41
-> > Link: https://www.eskimo.com/~scs/cclass/int/sx11c.html
-> > Suggested-by: David Laight <David.Laight@aculab.com>
-> > Suggested-by: Denis Kenzior <denkenz@gmail.com>
-> > Suggested-by: James Bottomley <jejb@linux.vnet.ibm.com>
-> > Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
-> > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
->
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
->
-> /Jarkko
+While booting linux-next on Juno with rootfs over NFS, the following
+warning is spammed on kernel log:
 
-Bumping the maintainers if this isn't already picked up?
+[   16.988190] WARNING: CPU: 1 PID: 680 at lib/iov_iter.c:1082 iov_iter_kvec+0x20/0x40
+[   16.995776] Modules linked in:
+[   16.998801] CPU: 1 PID: 680 Comm: kworker/u13:0 Not tainted 4.19.0-next-20181029 #2238
+[   17.006640] Hardware name: ARM Juno development board (r0) (DT)
+[   17.012505] Workqueue: xprtiod xs_stream_data_receive_workfn
+[   17.018108] pstate: 00000005 (nzcv daif -PAN -UAO)
+[   17.022851] pc : iov_iter_kvec+0x20/0x40
+[   17.026733] lr : xs_stream_data_receive+0x194/0x378
+[   17.031559] sp : ffff00000b033ce0
+[   17.034836] x29: ffff00000b033ce0 x28: 0000000000000000
+[   17.040095] x27: ffff8009760b9870 x26: ffff00000917e1c8
+[   17.045352] x25: 0000000000000000 x24: ffff800976a91598
+[   17.050610] x23: ffff000009169000 x22: ffff8009775f0000
+[   17.055867] x21: 000000000000000c x20: ffff800976a91578
+[   17.061124] x19: ffff800976a91000 x18: 0000000000000000
+[   17.066381] x17: 0000000000000000 x16: 0000000000000000
+[   17.071639] x15: 0000000000000400 x14: 0000000000000400
+[   17.076896] x13: 0000000000000400 x12: 0000000000002f28
+[   17.082153] x11: 0000000000000000 x10: 0000000000000960
+[   17.087410] x9 : ffff00000b033d50 x8 : fefefefefefefeff
+[   17.092667] x7 : ffff80097ff9d380 x6 : 0000000000000000
+[   17.097924] x5 : 00646f6974727078 x4 : 000000000000000c
+[   17.103181] x3 : 0000000000000001 x2 : ffff00000b033d30
+[   17.108438] x1 : 0000000000000002 x0 : ffff00000b033d50
+[   17.113695] Call trace:
+[   17.116115]  iov_iter_kvec+0x20/0x40
+[   17.119652]  xs_stream_data_receive_workfn+0x10/0x18
+[   17.124568]  process_one_work+0x1c8/0x318
+[   17.128535]  worker_thread+0x48/0x428
+[   17.132158]  kthread+0xf8/0x128
+[   17.135266]  ret_from_fork+0x10/0x18
+[   17.138801] ---[ end trace 65cbcd2ddaeef59e ]---
 
+This is likely a clash between the recent addition of vector iterators to
+SUNRPC and the recent
+commit aa563d7bca6e882ec2bdae24603c8f016401a144 ("iov_iter: Separate
+type from direction and use accessor functions") which slightly changes
+the usage of those iterators by splitting type and direction.
+
+Fix this by not including type in the direction of the operation.
+
+Fixes: 277e4ab7d530bf287e02b65cfcd3ea8f489784f6 ("SUNRPC: Simplify TCP
+receive code by switching to using iterators")
+
+Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+Cc: Trond Myklebust <trond.myklebust@hammerspace.com>
+Cc: Anna Schumaker <anna.schumaker@netapp.com>
+Cc: "J. Bruce Fields" <bfields@fieldses.org>
+Cc: Jeff Layton <jlayton@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: netdev@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+ net/sunrpc/xprtsock.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/net/sunrpc/xprtsock.c b/net/sunrpc/xprtsock.c
+index 1b51e04..ae77c71 100644
+--- a/net/sunrpc/xprtsock.c
++++ b/net/sunrpc/xprtsock.c
+@@ -361,7 +361,7 @@ static void xs_free_peer_addresses(struct rpc_xprt *xprt)
+ xs_read_kvec(struct socket *sock, struct msghdr *msg, int flags,
+ 		struct kvec *kvec, size_t count, size_t seek)
+ {
+-	iov_iter_kvec(&msg->msg_iter, READ | ITER_KVEC, kvec, 1, count);
++	iov_iter_kvec(&msg->msg_iter, READ, kvec, 1, count);
+ 	return xs_sock_recvmsg(sock, msg, flags, seek);
+ }
+ 
+@@ -370,7 +370,7 @@ static void xs_free_peer_addresses(struct rpc_xprt *xprt)
+ 		struct bio_vec *bvec, unsigned long nr, size_t count,
+ 		size_t seek)
+ {
+-	iov_iter_bvec(&msg->msg_iter, READ | ITER_BVEC, bvec, nr, count);
++	iov_iter_bvec(&msg->msg_iter, READ, bvec, nr, count);
+ 	return xs_sock_recvmsg(sock, msg, flags, seek);
+ }
+ 
 -- 
-Thanks,
-~Nick Desaulniers
+1.9.1
+
