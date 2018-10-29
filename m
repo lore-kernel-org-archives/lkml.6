@@ -2,105 +2,121 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2BB1C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:46:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCEEFC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:46:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACB8F2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:46:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9475420657
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:46:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NCvw+VwL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACB8F2084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="uKRCrLkb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9475420657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=umn.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729368AbeJ3DgT (ORCPT
+        id S1729430AbeJ3Dgi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 23:36:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36610 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726036AbeJ3DgT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 23:36:19 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 29 Oct 2018 23:36:38 -0400
+Received: from mta-p4.oit.umn.edu ([134.84.196.204]:57382 "EHLO
+        mta-p4.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726036AbeJ3Dgi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 23:36:38 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mta-p4.oit.umn.edu (Postfix) with ESMTP id 6B15E6F2;
+        Mon, 29 Oct 2018 18:46:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=umn.edu; h=
+        content-type:content-type:subject:subject:message-id:date:date
+        :from:from:in-reply-to:references:mime-version:received:received
+        :received; s=20160920; t=1540838802; x=1542653203; bh=DnRnVqmnS/
+        3YdV0iCc5SQhIbdjGxM82O3DdnjbdOpqI=; b=uKRCrLkb3YFu3xJwuL0K79HuSx
+        2oz6DhovsrEN9zUsMKv3WfLQOYmiPcjOX/4zEE/omI/0Sj/p1Q4KcjiW9Ua8I7xd
+        KfzyB/97NcSH54UWWp97ejwJbQcFEH+TnDLXi9DDRJpy2AOa6b8HryX7uu8HUSWj
+        rHnpMie8C3uBHzEhkOOYsKRtWkYvHKxHH0krfIOrxUwOz0JAQFTxTAWM0Tyl5/bp
+        EBcFAocB1iA/g3TvX4zkg3HlB1dXb1axVeXxYOmuET2vs3pr5mdyP4tCzo2X4fAJ
+        MmGhD3xHseLnLwrCPJ4DLIDdfNXwbsgWEygeHhxF+1ygxCPYkQc+obgtG04Q==
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p4.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p4.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id NeJYn5-5cKO2; Mon, 29 Oct 2018 13:46:42 -0500 (CDT)
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+        (using TLSv1 with cipher AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F22B20657;
-        Mon, 29 Oct 2018 18:46:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540838784;
-        bh=mrHMnLwX0DVtjbXQ+jvcykd02wNA85+ktJMKPlCOsX0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NCvw+VwL0mm9FXuFYDD7DW93R9dxUBVzzppX7Au0vMu/Hyrmk+Y95HqBVgnnhzYwL
-         6ygZOYjb13k0PPR9IpolVmT2OC3cUM8qY+MhCkHUoEF2fViJKKApb4FWbZOrl5MT4E
-         PzyAB60pXGPZjYBNGBTwsCFqmqzUsvIqISVAJDuM=
-Date:   Mon, 29 Oct 2018 14:46:22 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Dan Rue <dan.rue@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lars Persson <lars.persson@axis.com>,
-        "chris.ruehl@gtsys.com.hk" <chris.ruehl@gtsys.com.hk>,
-        Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH AUTOSEL 4.9 33/98] ARM: dts: imx6ul-14x14-evk: Add
- ksz8081 phy properties
-Message-ID: <20181029184622.GO2015@sasha-vm>
-References: <20181025141423.213774-1-sashal@kernel.org>
- <20181025141423.213774-33-sashal@kernel.org>
- <AM0PR04MB42906FF43CCBE63339E25462EEF30@AM0PR04MB4290.eurprd04.prod.outlook.com>
+        (Authenticated sender: wang6495)
+        by mta-p4.oit.umn.edu (Postfix) with ESMTPSA id 4BD6E6E8;
+        Mon, 29 Oct 2018 13:46:42 -0500 (CDT)
+Received: by mail-io1-f41.google.com with SMTP id y22-v6so5634720ioj.13;
+        Mon, 29 Oct 2018 11:46:42 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gKNZ6qAMkMSOoNgkb+EFtuI9b13BSML51QnlVG5TI89AzIGYFIs
+        CRkUb3iXlJEz4/aGjvn34nFv2p0s5KCO/mx2YVk=
+X-Google-Smtp-Source: AJdET5fSCuhILgoTkDIfmyD8XTjD/xfLwselQjgyxFicPBACh66FYwYVR0Dw6Rc7ZjU7dvyjT3H3E3NgaE5z5w2Iizc=
+X-Received: by 2002:a5e:dd4d:: with SMTP id u13-v6mr9408706iop.62.1540838802038;
+ Mon, 29 Oct 2018 11:46:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <AM0PR04MB42906FF43CCBE63339E25462EEF30@AM0PR04MB4290.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <1539958334-11531-1-git-send-email-wang6495@umn.edu>
+In-Reply-To: <1539958334-11531-1-git-send-email-wang6495@umn.edu>
+From:   Wenwen Wang <wang6495@umn.edu>
+Date:   Mon, 29 Oct 2018 13:46:04 -0500
+X-Gmail-Original-Message-ID: <CAAa=b7ceXdaB9KcZy9ML5pcEwMjYF0ibaB_f6LuuHFe_jSuMYQ@mail.gmail.com>
+Message-ID: <CAAa=b7ceXdaB9KcZy9ML5pcEwMjYF0ibaB_f6LuuHFe_jSuMYQ@mail.gmail.com>
+Subject: Re: [PATCH] media: dvb: fix a missing-check bug
+To:     Wenwen Wang <wang6495@umn.edu>
+Cc:     Kangjie Lu <kjlu@umn.edu>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        viro@zeniv.linux.org.uk,
+        "open list:STAGING - ATOMISP DRIVER" <linux-media@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 02:07:52PM +0000, Leonard Crestez wrote:
->On 10/25/2018 5:15 PM, Sasha Levin wrote:
->> From: Leonard Crestez <leonard.crestez@nxp.com>
->>
->> [ Upstream commit e6f4292ae0a1e73fae26ced57de13a48f71ad1fa ]
->>
->> Right now mach-imx6ul registers a fixup for the ksz8081 phy. The same
->> register values can be set through the micrel phy driver by using dts
->> properties.
->>
->> This seems preferable and allows cleanly fixing suspend/resume.
->>
->> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
->> Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
->> Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
->> Signed-off-by: David S. Miller <davem@davemloft.net>
->> Signed-off-by: Sasha Levin <sashal@kernel.org>
->
->This patch only fixes suspend on 6ul evk in combination with
->79e498a9c7da ("net: phy: micrel: Restore led_mode and clk_sel on
->resume"). It is otherwise not very useful to backport just the DT patch.
->
->That patch was earlier backported but then reverted from 4.9 because it
->unexpectedly caused issues when combined with other phy patches applied
->out-of-order. It seems a correct fix was eventually made (by backporting
->bfe72442578b) and 79e498a9c7da could now be restored:
->
->     https://lkml.org/lkml/2018/7/11/972
->
->I'm not sure fixing nfsroot suspend/resume on dev boards meets the
->criteria for linux-stable, especially since it already caused trouble
->once. In general I'd class "fixing things that never worked before" as
->not particularly suitable for backporting.
+Hello,
 
-Thank you for looking into this, I'll drop the patch.
+Can anyone confirm this bug? Thanks!
 
---
-Thanks,
-Sasha
+Wenwen
+
+On Fri, Oct 19, 2018 at 9:12 AM Wenwen Wang <wang6495@umn.edu> wrote:
+>
+> In dvb_audio_write(), the first byte of the user-space buffer 'buf' is
+> firstly copied and checked to see whether this is a TS packet, which always
+> starts with 0x47 for synchronization purposes. If yes, ts_play() will be
+> called. Otherwise, dvb_aplay() will be called. In ts_play(), the content of
+> 'buf', including the first byte, is copied again from the user space.
+> However, after the copy, no check is re-enforced on the first byte of the
+> copied data.  Given that 'buf' is in the user space, a malicious user can
+> race to change the first byte after the check in dvb_audio_write() but
+> before the copy in ts_play(). Through this way, the user can supply
+> inconsistent code, which can cause undefined behavior of the kernel and
+> introduce potential security risk.
+>
+> This patch adds a necessary check in ts_play() to make sure the first byte
+> acquired in the second copy contains the expected value. Otherwise, an
+> error code EINVAL will be returned.
+>
+> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+> ---
+>  drivers/media/pci/ttpci/av7110_av.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/media/pci/ttpci/av7110_av.c b/drivers/media/pci/ttpci/av7110_av.c
+> index ef1bc17..1ff6062 100644
+> --- a/drivers/media/pci/ttpci/av7110_av.c
+> +++ b/drivers/media/pci/ttpci/av7110_av.c
+> @@ -468,6 +468,8 @@ static ssize_t ts_play(struct av7110 *av7110, const char __user *buf,
+>                 }
+>                 if (copy_from_user(kb, buf, TS_SIZE))
+>                         return -EFAULT;
+> +               if (kb[0] != 0x47)
+> +                       return -EINVAL;
+>                 write_ts_to_decoder(av7110, type, kb, TS_SIZE);
+>                 todo -= TS_SIZE;
+>                 buf += TS_SIZE;
+> --
+> 2.7.4
+>
