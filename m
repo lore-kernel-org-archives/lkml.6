@@ -2,146 +2,108 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D92D3C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:30:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08241C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:30:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 852342082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:30:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 852342082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
+	by mail.kernel.org (Postfix) with ESMTP id 70E4D20851
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:30:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70E4D20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729407AbeJ2RSN (ORCPT
+        id S1729438AbeJ2RSb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 13:18:13 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34460 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725969AbeJ2RSN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 13:18:13 -0400
-Received: by mail-lj1-f194.google.com with SMTP id g8-v6so4001625ljk.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 01:30:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=Vv6ytH6ycJEU89LDmU3nW1CmSFUJAaunoB7ZV3maOGM=;
-        b=grKJPotvGrhy5FpM2lr/5nef4sLgxwblDOzSUfSzO8iMXl9kYqXOPTgChEK6Wv1vES
-         8M3ZqytEuQQKEtygh8uvCMUoq9hd4nWCsQc0eA3FffqQ2X/ibk3g4cDGLzMZzT1HO8q/
-         85VDqQwaJzMb7sqnS+lgVcXwZJ/nixQ5cNLo12LaUT6Y3XxcALnK5xMqYI4Ik+klcaqp
-         tJBmr1qtdRn+CZHt3BwqqzrEMQQv/8yrwoc9lTO4wVV48VNjAytgOfEDuq3ooznJrW+i
-         MHPSrAfIx/B9sBDcUHTVZwbSQu+Og+m93nPYS47BGNG5Ila54RVrDRYObmPLuDWWJ7Jj
-         bBBA==
-X-Gm-Message-State: AGRZ1gIDL5dryVHZ9YFgrYHWh0Q4mhYbh8GzxXENoU3vdgh9S7JwkWTF
-        V+3Yz9FmaKd3Upw4btrTU1c=
-X-Google-Smtp-Source: AJdET5dDthD3NQv/vLyXU2sSoe/kXvBS6WMNSZF7PJMN3p2TjplciqVBB2vO9UrsTroZBR8okTTk3Q==
-X-Received: by 2002:a2e:215a:: with SMTP id h87-v6mr9469150ljh.102.1540801834573;
-        Mon, 29 Oct 2018 01:30:34 -0700 (PDT)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id g92-v6sm2978518lji.24.2018.10.29.01.30.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Oct 2018 01:30:33 -0700 (PDT)
-Date:   Mon, 29 Oct 2018 10:30:25 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] regulator: bd718x7: Remove double indirection for
- bd718xx_pmic_inits.rdatas
-Message-ID: <20181029083025.GA20774@localhost.localdomain>
-References: <20181028160922.24618-1-geert@linux-m68k.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181028160922.24618-1-geert@linux-m68k.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Mon, 29 Oct 2018 13:18:31 -0400
+Received: from mxhk.zte.com.cn ([63.217.80.70]:62640 "EHLO mxhk.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729409AbeJ2RSb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 13:18:31 -0400
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id E33D8BDDB8C53D2B23E1;
+        Mon, 29 Oct 2018 16:30:52 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id w9T8Uiji044158;
+        Mon, 29 Oct 2018 16:30:44 +0800 (GMT-8)
+        (envelope-from wang.yi59@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018102916305119-7358926 ;
+          Mon, 29 Oct 2018 16:30:51 +0800 
+From:   Yi Wang <wang.yi59@zte.com.cn>
+To:     paul.burton@mips.com
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
+        Yi Wang <wang.yi59@zte.com.cn>
+Subject: [PATCH v2] clk: boston: fix possible memory leak in clk_boston_setup()
+Date:   Mon, 29 Oct 2018 16:31:47 +0800
+Message-Id: <1540801907-31544-1-git-send-email-wang.yi59@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-10-29 16:30:51,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-10-29 16:30:44,
+        Serialize complete at 2018-10-29 16:30:44
+X-MAIL: mse01.zte.com.cn w9T8Uiji044158
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+'onecell' is malloced in clk_boston_setup(), but is not freed
+before leaving from the error handling cases.
 
-On Sun, Oct 28, 2018 at 05:09:22PM +0100, Geert Uytterhoeven wrote:
-> With gcc 4.1:
-> 
->     drivers/regulator/bd718x7-regulator.c: In function ‘bd718xx_probe’:
->     drivers/regulator/bd718x7-regulator.c:1020: warning: initialization from incompatible pointer type
->     drivers/regulator/bd718x7-regulator.c:1024: warning: initialization from incompatible pointer type
-> 
-> Apparently this old compiler can't handle the obscure double
-> indirection.
+Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+---
+v2: fix syntax issue in comment, thanks to  Sergei.
 
-That was surprizing for me. Besides I don't see why this is obscure ;)
+ drivers/clk/imgtec/clk-boston.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-> However, there is no need for a double indirection.  Just store a
-> pointer to the array instead, like other drivers tend to do.
-
-But that's _exactly_ what we have here. A pointer to an array of
-structs, not pointer to a struct - or pointer to the first member of an
-array =)
-
-But this is one of the cases where practicality should be preferred. And
-you are correct. It is easier to understand when we have simple pointer
-to a struct - and moreover it should work on all compilers, right?
-So this looks good to me.
-
-> Fixes: 494edd266b945f36 ("regulator/mfd: Support ROHM BD71847 power management IC")
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> ---
-> Compile-tested only.
-> ---
->  drivers/regulator/bd718x7-regulator.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd718x7-regulator.c
-> index 3a47e0372e77c812..fff5bc4faa2c99aa 100644
-> --- a/drivers/regulator/bd718x7-regulator.c
-> +++ b/drivers/regulator/bd718x7-regulator.c
-> @@ -1007,7 +1007,7 @@ static const struct bd718xx_regulator_data bd71837_regulators[] = {
->  };
->  
->  struct bd718xx_pmic_inits {
-> -	const struct bd718xx_regulator_data (*r_datas)[];
-> +	const struct bd718xx_regulator_data *r_datas;
->  	unsigned int r_amount;
->  };
->  
-> @@ -1017,11 +1017,11 @@ static int bd718xx_probe(struct platform_device *pdev)
->  	struct regulator_config config = { 0 };
->  	struct bd718xx_pmic_inits pmic_regulators[] = {
->  		[BD718XX_TYPE_BD71837] = {
-> -			.r_datas = &bd71837_regulators,
-> +			.r_datas = bd71837_regulators,
->  			.r_amount = ARRAY_SIZE(bd71837_regulators),
->  		},
->  		[BD718XX_TYPE_BD71847] = {
-> -			.r_datas = &bd71847_regulators,
-> +			.r_datas = bd71847_regulators,
->  			.r_amount = ARRAY_SIZE(bd71847_regulators),
->  		},
->  	};
-> @@ -1059,7 +1059,7 @@ static int bd718xx_probe(struct platform_device *pdev)
->  		struct regulator_dev *rdev;
->  		const struct bd718xx_regulator_data *r;
->  
-> -		r = &(*pmic_regulators[mfd->chip_type].r_datas)[i];
-> +		r = &pmic_regulators[mfd->chip_type].r_datas[i];
->  		desc = &r->desc;
->  
->  		config.dev = pdev->dev.parent;
-> -- 
-> 2.17.1
-> 
-
+diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
+index 15af423..f5d54a6 100644
+--- a/drivers/clk/imgtec/clk-boston.c
++++ b/drivers/clk/imgtec/clk-boston.c
+@@ -73,27 +73,32 @@ static void __init clk_boston_setup(struct device_node *np)
+ 	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
+ 	if (IS_ERR(hw)) {
+ 		pr_err("failed to register input clock: %ld\n", PTR_ERR(hw));
+-		return;
++		goto error;
+ 	}
+ 	onecell->hws[BOSTON_CLK_INPUT] = hw;
+ 
+ 	hw = clk_hw_register_fixed_rate(NULL, "sys", "input", 0, sys_freq);
+ 	if (IS_ERR(hw)) {
+ 		pr_err("failed to register sys clock: %ld\n", PTR_ERR(hw));
+-		return;
++		goto error;
+ 	}
+ 	onecell->hws[BOSTON_CLK_SYS] = hw;
+ 
+ 	hw = clk_hw_register_fixed_rate(NULL, "cpu", "input", 0, cpu_freq);
+ 	if (IS_ERR(hw)) {
+ 		pr_err("failed to register cpu clock: %ld\n", PTR_ERR(hw));
+-		return;
++		goto error;
+ 	}
+ 	onecell->hws[BOSTON_CLK_CPU] = hw;
+ 
+ 	err = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, onecell);
+ 	if (err)
+ 		pr_err("failed to add DT provider: %d\n", err);
++
++	return;
++
++error:
++	kfree(onecell);
+ }
+ 
+ /*
 -- 
-Matti Vaittinen
-ROHM Semiconductors
+1.8.3.1
 
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
