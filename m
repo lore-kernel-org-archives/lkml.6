@@ -2,94 +2,112 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 234D5C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 23:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A398C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 23:46:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3CC92081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 23:40:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5FDC62081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 23:46:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="liMuj0x5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3CC92081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lwjfBf/9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FDC62081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726040AbeJ3Ibu (ORCPT
+        id S1726090AbeJ3Ihs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 04:31:50 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:41528 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725824AbeJ3Ibu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 04:31:50 -0400
-Received: by mail-vs1-f65.google.com with SMTP id t17so3360719vsc.8
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 16:40:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=DBo3R1uGRylZH2MKNzXF5f5jJIa6z0Mq6/HFIYMps5Q=;
-        b=liMuj0x5hW3K6SpyzThckIPblcdVZPW0qfIfxzaAt4FxPdNfGQgbvGYdERDl5GMtgk
-         pZdjGclaRC6tBj7gxPHfw91yAofx1EnWSRUtesDIcAURita0J9j6oRiG5+XwruJXw1Ku
-         gCjZoqFrmNDu3hkxA2fB6mUMZyT8iXjBgEroNmCqNTKbRDnDkoA2Hi8MXt6yj+LJmYu/
-         Kbx0eGpyvs+DmvGkBC65B5Y8Cic0Vd5h6Sag98ZbEQSNcAId+OHO4hp9Mj+V4Z6RRa+c
-         1IR96QelUUPSQQNP3sHB8uAb53/WPXzcCTvh/zZDhZlFbrk+MY+eMXyw1KMIjw+NpSXI
-         FUeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=DBo3R1uGRylZH2MKNzXF5f5jJIa6z0Mq6/HFIYMps5Q=;
-        b=oeak+Di3Xg4nL9hFy4Az6Y3h90QvGN7qLbvSopyWGaq5NydjLOf49ow6euJ8jEMrCH
-         TKnBDBAibOHRy5KiDzp5r724oWNjBAgCr6SlM8fmYCUh0frO5aAwR/A08cnkgWVzTMQq
-         dr+ldaI70BxRzmwLfsMQdXb201IPAwDOU2yXUgLGT0hCps6Snk9Zkw+LwPKKZoCz9FXq
-         5YDdgKOICTBnaZCOe1bWgowbaBUaDe20Hw6fVLnvp1+DvCnHl0kLqCSkVjXWO5ULJSAq
-         5E9BpRcg6mM0N67coIcuu8l9N7dj8xk5nkHUWV7GUjdJnsSH/LLDb92mtnQs6aYFVash
-         a0lw==
-X-Gm-Message-State: AGRZ1gLSsny0UjL71rLJFfA3Y8JXGbZoToUAtL12OlK39vzhUJvLrAUX
-        r9Si2l7pwRB960dJFhHgUY9ARVd6mqLg3r+ZsAC2NQ==
-X-Google-Smtp-Source: AJdET5fo8h9B3PmxHYXkqHUkoiO59wdfMxZjF8ZZDZHPyuiJjxmFk+ruusgNTMwrG7qig+ZfgsuB0MXzLdetyNOPlK4=
-X-Received: by 2002:a67:6cc1:: with SMTP id h184mr2201108vsc.149.1540856448113;
- Mon, 29 Oct 2018 16:40:48 -0700 (PDT)
+        Tue, 30 Oct 2018 04:37:48 -0400
+Received: from ozlabs.org ([203.11.71.1]:37421 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725819AbeJ3Ihr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 04:37:47 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42kWTb3fjhz9s3l;
+        Tue, 30 Oct 2018 10:46:43 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1540856803;
+        bh=f9+TUny0lAepavf3rKDMO0+mxw/2VwAEqrJA6Tj7VKk=;
+        h=Date:From:To:Cc:Subject:From;
+        b=lwjfBf/9QkW7Xxb3y3R/1k/Yaf8UBTk31FXCxD21shWdjedKW/iocO7vUEzLKJRUn
+         8M6Y1aVUMAAf1ZF/bj8+ih+QaasC+UOY9na5rrbFZIatqaf5yL+GbFzV50GptKXhku
+         cg8hSvjVRh/V9QMvwb2JuOgGuOkpOjyl8naLPk0LytwISEsiN210jOi+/CkqUYkC1f
+         ktiDWTjQ5BKBO6V/Zqu+w48s3F4x4Yk1S9lX0XrJ2Z9RualS+9CBsDnX3BBvFLpU08
+         7zV2yEBkgiV85+PD4NqLDxktSwQZXAjYbh6REBG+1vfpLrVJv0qoaFxOVRh7ywO4Bh
+         TWUFeCu4pIPsA==
+Date:   Tue, 30 Oct 2018 10:46:37 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Changbin Du <changbin.du@gmail.com>
+Subject: linux-next: manual merge of the compiler-attributes tree with the
+ kbuild tree
+Message-ID: <20181030104637.382c26d0@canb.auug.org.au>
 MIME-Version: 1.0
-Received: by 2002:a67:f492:0:0:0:0:0 with HTTP; Mon, 29 Oct 2018 16:40:47
- -0700 (PDT)
-In-Reply-To: <20181029233414.GA29750@avx2>
-References: <20181029233414.GA29750@avx2>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Mon, 29 Oct 2018 23:40:47 +0000
-Message-ID: <CAKOZuetMT0uC7MaYF6_meq+jX=4A1Lz5gpUsBZZUQd8WyHYosQ@mail.gmail.com>
-Subject: Re: Re: [PATCH] fs/proc: introduce /proc/stat2 file
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/Txj/sLcRG0RPm7X.OikBPYu"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 11:34 PM, Alexey Dobriyan <adobriyan@gmail.com> wrote:
->> I'd much rather move to a model in which userspace *explicitly* tells
->> the kernel which fields it wants, with the kernel replying with just
->> those particular fields, maybe in their raw binary representations.
->> The ASCII-text bag-of-everything files would remain available for
->> ad-hoc and non-performance critical use, but programs that cared about
->> performance would have an efficient bypass. One concrete approach is
->> to let users open up today's proc files and, instead of read(2)ing a
->> text blob, use an ioctl to retrieve specified and targeted information
->> of the sort that would normally be encoded in the text blob. Because
->> callers would open the same file when using either the text or binary
->> interfaces, little would have to change, and it'd be easy to implement
->> fallbacks when a particular system doesn't support a particular
->> fast-path ioctl.
->
-> You've just reinvented systems calls.
+--Sig_/Txj/sLcRG0RPm7X.OikBPYu
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I don't know why you say so. There are important benefits that come
-from using an ioctl on a proc file FD instead of a plain system call.
-Procfs files have file permissions, auditing, SCM_RIGHTS-ability, PID
-race immunity, and other things that you wouldn't get from a plain
-"get this information about this PID" system call.
+Hi Miguel,
+
+Today's linux-next merge of the compiler-attributes tree got a conflict
+in:
+
+  include/linux/compiler-gcc.h
+
+between commit:
+
+  94c7dfd01652 ("kernel hacking: support building kernel with -Og optimizat=
+ion level")
+
+from the kbuild tree and commits:
+
+  5c67a52f3da0 ("Compiler Attributes: always use the extra-underscores synt=
+ax")
+  989bd5000f36 ("Compiler Attributes: remove unneeded sparse (__CHECKER__) =
+tests")
+
+from the compiler-attributes tree.
+
+I fixed it up (the latter just removed the __CHECKER__ check, so I did
+that) and can carry the fix as necessary. This is now fixed as far as
+linux-next is concerned, but any non trivial conflicts should be mentioned
+to your upstream maintainer when your tree is submitted for merging.
+You may also want to consider cooperating with the maintainer of the
+conflicting tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Txj/sLcRG0RPm7X.OikBPYu
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvXm90ACgkQAVBC80lX
+0Gxg+QgAkApuu6p1esEjyjkjj9LGWA0Oo087fTpH+Qw++H9X7RvQrDKprReHh8w9
+Ni/lPsH1+eAh2bP+PYnIBb7yV5Q5VN3nKWZ6OxLzK+T7PJ0ygnQZCguEz7ROhwu1
+IO111AFqzyewfhn3FQAcJTAvOS4iV8QMc2dr3/SoJ0Aolg9LwNe9gQW8B6FhwCn6
+Qg7jSgaLdh3rhbqpc/cVfyV29oPDWhKd7JlTTxDasgaQ3MwBDbCGUSTdLofH6BDJ
+/wnZazZzjWx45osg+mx/eM7YN8ohAGKsfMYcsFnuFM8mriVfdTHuhOglA5d5N36x
+8D1QhmKOlQa2R9STztLu88Wrm1nqmQ==
+=u3gb
+-----END PGP SIGNATURE-----
+
+--Sig_/Txj/sLcRG0RPm7X.OikBPYu--
