@@ -2,112 +2,139 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34ACAC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:54:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7533DC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:54:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD3DF20657
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:54:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C70F20657
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:54:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aVVVWU9R";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aVVVWU9R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD3DF20657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P8q5n5Pg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C70F20657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727162AbeJ2Xnp (ORCPT
+        id S1727412AbeJ2Xnx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 19:43:45 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46348 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726035AbeJ2Xnp (ORCPT
+        Mon, 29 Oct 2018 19:43:53 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43685 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726035AbeJ2Xnw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 19:43:45 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A74AC60744; Mon, 29 Oct 2018 14:54:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540824886;
-        bh=54+gFFfnokpRiB0H4nbjotsXLcsVsFrujc56tUtFGRE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=aVVVWU9RpN6zp5HkFKIoRaM6+KLbPYMYMfljW8iSs+iWSNBYki8Ub0fYSKTRwiVFy
-         B2ZFlnVu33/PefSVLtJRMh+z4nzVapLrkji5AzrzyOVODeg3rwNpt0CQKLPdBW6bYu
-         xrMBtWEV6zylVvu+RsJoDS67zv1gQ4bJm446caZQ=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 37C7D6029D;
-        Mon, 29 Oct 2018 14:54:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1540824886;
-        bh=54+gFFfnokpRiB0H4nbjotsXLcsVsFrujc56tUtFGRE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=aVVVWU9RpN6zp5HkFKIoRaM6+KLbPYMYMfljW8iSs+iWSNBYki8Ub0fYSKTRwiVFy
-         B2ZFlnVu33/PefSVLtJRMh+z4nzVapLrkji5AzrzyOVODeg3rwNpt0CQKLPdBW6bYu
-         xrMBtWEV6zylVvu+RsJoDS67zv1gQ4bJm446caZQ=
+        Mon, 29 Oct 2018 19:43:52 -0400
+Received: by mail-pg1-f194.google.com with SMTP id n10-v6so4002819pgv.10;
+        Mon, 29 Oct 2018 07:54:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=B66S474fG0CJqvU5CDrs3Ys6Dr6PEfrkm0ahw/mINZI=;
+        b=P8q5n5PgYDXz0/7i4QO+GdmJXB4yWvYnKRl+to9H32EZSj0pVTIGSdYReUHQPsDMou
+         lvRKHc8I9BtS2Yo7YT40MkxOPfHh9m3ziGz2t8hDIoqqCj7cp2G9hhqKhimUBgn7kSn+
+         CG1Mt0HWnPXMr2uoZlgvNv2K6yB+KhbaVTu9eWpMx6Rwv5s1wnWrAOTitDzSOA9og+Xa
+         X90HEjCXZP87aGDbNisqkuuCv1Q4lVupyYBolhf3C350hooHW/kx4ymmy1LBLi7UF5iH
+         HFFfMsAsmF5YmVIbYcEOp8CasBlSLcxPOeUuLKHHRak/AlWMtGp0Rn1lRx1Pbxi1BA3C
+         zoig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=B66S474fG0CJqvU5CDrs3Ys6Dr6PEfrkm0ahw/mINZI=;
+        b=TJltbBXUde4Oh/0a8ZJ3W4SxvRoOcMRLK+hNJ8F6wQGviMLP7OewedNorr1+MnHsAR
+         Fq5P3zrptH1asuaT69FXJ/at5XghZtOBaeU6iBh2x4UuTIMdenI5a07u4HZ+gJEQ6lcV
+         VIII8UPSjR2gx04lX48ZAFNNdMGAG/JFUzwAsfkpvGyUffNXNnGaJIMHI+vO1drbCkOG
+         yVMfNxyHPbhPDsNdbupfxINEg818/tXGMmU6fSazcEX1buIV9oSCXzI5I8rOqJRJ2nPY
+         tr8C736N+JlDlqGwcrLsLZrL8XMi1kuyPQj56isp1jvr6/tCPPpe2nQkKLPWajqsspvP
+         hV7w==
+X-Gm-Message-State: AGRZ1gLEuXu0dbtRbJHKHLy0HHboavoGu4qptHjwWNRG4z+GoKMZWxpz
+        n2JPzMCci8vNlV3ny6i+ju8=
+X-Google-Smtp-Source: AJdET5f8Tfl9KWH7JDW0KudJ9CNieYp8qPKn4EFWUvQYgm+Bw9WZ0at0DPbKMKKmeuqIyrk9h1nhnA==
+X-Received: by 2002:a63:4952:: with SMTP id y18-v6mr14111502pgk.32.1540824893640;
+        Mon, 29 Oct 2018 07:54:53 -0700 (PDT)
+Received: from mail.google.com ([2001:19f0:6001:4ff6:5400:1ff:feb7:a195])
+        by smtp.gmail.com with ESMTPSA id b69-v6sm6489394pfc.150.2018.10.29.07.54.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Oct 2018 07:54:52 -0700 (PDT)
+Date:   Mon, 29 Oct 2018 14:54:51 +0000
+From:   Changbin Du <changbin.du@gmail.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Changbin Du <changbin.du@gmail.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>, X86 ML <x86@kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-sparse@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>
+Subject: Re: [PATCH v3 4/4] kernel hacking: new config
+ CC_OPTIMIZE_FOR_DEBUGGING to apply GCC -Og optimization
+Message-ID: <20181029145320.xjt4ydr5gierv57n@mail.google.com>
+References: <20181028130945.23581-1-changbin.du@gmail.com>
+ <20181028130945.23581-5-changbin.du@gmail.com>
+ <CAK7LNAS8UPXBbOpG9Zy_aP7an2jbq5H7uQGymUAn+hv46WQ4Bw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 29 Oct 2018 20:24:46 +0530
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc:     andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
-        bjorn.andersson@linaro.org, dianders@chromium.org,
-        evgreen@chromium.org, benchan@chromium.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tsoni@codeaurora.org
-Subject: Re: [PATCH] arm64: dts: qcom: sdm845: Add SCM DT node
-In-Reply-To: <9fb3d2d2-37b5-27d2-ad27-45c77ebe1df2@linaro.org>
-References: <20181026122542.4714-1-sibis@codeaurora.org>
- <9fb3d2d2-37b5-27d2-ad27-45c77ebe1df2@linaro.org>
-Message-ID: <24ab0b3496de7809cc49479ea33c2eab@codeaurora.org>
-X-Sender: sibis@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK7LNAS8UPXBbOpG9Zy_aP7an2jbq5H7uQGymUAn+hv46WQ4Bw@mail.gmail.com>
+User-Agent: NeoMutt/20180716-508-7c9a6d
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stan,
-Thanks for the review!
-
-On 2018-10-29 15:02, Stanimir Varbanov wrote:
-> Hi Sibi,
+On Mon, Oct 29, 2018 at 10:16:02PM +0900, Masahiro Yamada wrote:
+> On Sun, Oct 28, 2018 at 10:11 PM Changbin Du <changbin.du@gmail.com> wrote:
+> >
+> > This will apply GCC '-Og' optimization level which is supported
+> > since GCC 4.8. This optimization level offers a reasonable level
+> > of optimization while maintaining fast compilation and a good
+> > debugging experience. It is similar to '-O1' while perferring
+> > to keep debug ability over runtime speed.
+> >
+> > If enabling this option breaks your kernel, you should either
+> > disable this or find a fix (mostly in the arch code). Currently
+> > this option has only been tested on x86_64 and arm platform.
+> >
+> > This option can satisfy people who was searching for a method
+> > to disable compiler optimizations so to achieve better kernel
+> > debugging experience with kgdb or qemu.
+> >
+> > The main problem of '-Og' is we must not use __attribute__((error(msg))).
+> > The compiler will report error though the call to error function
+> > still can be optimize out. So we must fallback to array tricky.
 > 
-> On 10/26/2018 03:25 PM, Sibi Sankar wrote:
->> Add SCM DT node to enable SCM functionality on SDM845.
->> 
->> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
->> ---
->>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 6 ++++++
->>  1 file changed, 6 insertions(+)
->> 
->> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi 
->> b/arch/arm64/boot/dts/qcom/sdm845.dtsi
->> index b72bdb0a31a5..fad22acfda4d 100644
->> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
->> @@ -221,6 +221,12 @@
->>  		};
->>  	};
->> 
->> +	firmware {
->> +		scm {
->> +			compatible = "qcom,scm-sdm845", "qcom,scm";
->> +		};
->> +	};
 > 
-> What will happen if the platform is without tz firmware? I'd move this
-> DT node in sdm845-mtp.dts or at least make it status = disabled.
+> I removed the sentence "So we must fallback to array tricky."
+> 
+> Commit 81b45683487a51b0f4d3b29d37f20d6d078544e4
+> killed the fallback to the negative array trick.
+> 
+> 
+> I also resolved a conflict.
+> 
+> Your series is now available in the following branch.
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild kbuild
+> 
+> 
+> Please double check if I did it correctly.
+>
+I have tested your kbuild branch and no issues found. Thanks for checking this
+series!
 
-Even in the absence of tz firmware, ATF is expected to implement the 
-necessary
-handlers for the SMC calls so I don't think it is necessary to keep it 
-disabled.
+> 
+> --
+> Best Regards
+> Masahiro Yamada
 
 -- 
--- Sibi Sankar --
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+Thanks,
+Changbin Du
