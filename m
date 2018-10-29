@@ -2,154 +2,131 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 784DBC2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:01:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59770ECDE44
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:01:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FF0B2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:01:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WXYEBIOS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FF0B2084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 268B72084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:01:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 268B72084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729676AbeJ2Rss (ORCPT
+        id S1729690AbeJ2Rs4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 13:48:48 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:46236 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729483AbeJ2Rss (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 13:48:48 -0400
-Received: by mail-pg1-f196.google.com with SMTP id m9-v6so850017pgl.13
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 02:01:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=j2cyl7pk/6O0Vid/aGybHYEdGtKHVLDUxG+HI9FVaoA=;
-        b=WXYEBIOSHhZvGe/6kt/SgeSbslSJXkqbZ0fRzs5jy48Ai3Gc5kXSPFxH5AG+BZjr6C
-         B8f0LxSrx+RoBc/wlrR8K3+o3ubakn5wC9RYOi0OH6DXdqpa4AqjNR/8PSzd70NoaSxV
-         ckPCguDAiO4rZ6yBzcYnXf2ULxRM/JwZTjQYo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=j2cyl7pk/6O0Vid/aGybHYEdGtKHVLDUxG+HI9FVaoA=;
-        b=N2LQghxa8ZHzR6yoya4HxHBJkLv5hti5IrKMMkv0q4TXgBFW6+qmXFkicxuablrb9Z
-         1NuBavgvGRwLMjz8vCCI5kTEArWcHn+5pwePV7ES08V+CgWiufpu7DQ/yRu/WmplbGJC
-         uts7CSffozfrHpDg1W1vjZwzBfInhxalOnqfwX8nV/pLyICX4BvuTOiAu0sxzhrO0Kdq
-         rvhLcw5MkWdS3ElYipPU1WSJ26VmsL1oD3zV4iMXsa3tP4n/vagv/c/YlUQzJVleKCeA
-         XXbAIJMpU2b14JNu7uDt2GIoGbZSoz/AGDH/cNTUG3MoF15n2CpGjj2zMq+90++SLrs3
-         CUZw==
-X-Gm-Message-State: AGRZ1gKiS0R0g02m406cJOvkV6OQhit3uw4IpI4qDI+2RzFmEXL4usnK
-        37LbMa9BSSmQDaxMO/utuErO
-X-Google-Smtp-Source: AJdET5cG27bKpgsyGYQbxkexpabn/WBOGJscC8thahsoxQZ/qTda67toB8MZqGc9CCMcVJDDRtux1w==
-X-Received: by 2002:a62:764e:: with SMTP id r75-v6mr14316497pfc.230.1540803664889;
-        Mon, 29 Oct 2018 02:01:04 -0700 (PDT)
-Received: from localhost.localdomain ([2409:4072:6091:9d4b:9d82:66b9:3ee6:ffac])
-        by smtp.gmail.com with ESMTPSA id m11-v6sm28265245pfi.102.2018.10.29.02.00.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 02:01:04 -0700 (PDT)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     robh@kernel.org, heiko@sntech.de, ezequiel@collabora.com,
-        xuwei5@hisilicon.com, michal.simek@xilinx.com, pavel@ucw.cz,
-        andy.gross@linaro.org
-Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-rockchip@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, daniel.thompson@linaro.org,
-        amit.kucheria@linaro.org, linus.walleij@linaro.org,
-        koen.kooi@linaro.org, nicolas.dechesne@linaro.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 3/7] arm64: dts: hisilicon: hikey: Standardize LED labels and triggers
-Date:   Mon, 29 Oct 2018 14:30:02 +0530
-Message-Id: <20181029090006.4353-4-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181029090006.4353-1-manivannan.sadhasivam@linaro.org>
-References: <20181029090006.4353-1-manivannan.sadhasivam@linaro.org>
+        Mon, 29 Oct 2018 13:48:56 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54313 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729487AbeJ2Rs4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 13:48:56 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 2644D207D4; Mon, 29 Oct 2018 10:01:10 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-12-210.w90-88.abo.wanadoo.fr [90.88.133.210])
+        by mail.bootlin.com (Postfix) with ESMTPSA id E633C20791;
+        Mon, 29 Oct 2018 10:00:59 +0100 (CET)
+Date:   Mon, 29 Oct 2018 10:01:00 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 13/15] dt-bindings: sun6i-dsi: Add compatible for A64
+ DPHY
+Message-ID: <20181029090100.h2zzdchyb3ls2hxe@flea>
+References: <20181023155035.9101-1-jagan@amarulasolutions.com>
+ <20181023155035.9101-14-jagan@amarulasolutions.com>
+ <20181024180927.ejt7odo23ebzjgfg@flea>
+ <CAMty3ZC3jXKBVrrCSd0Un+ZNvNKPj4C0WpcpNOYJBK1=vehBQg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="547tgbqlmpx6son6"
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZC3jXKBVrrCSd0Un+ZNvNKPj4C0WpcpNOYJBK1=vehBQg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For all 96Boards, the following standard is used for onboard LEDs.
 
-green:user1  default-trigger: heartbeat
-green:user2  default-trigger: mmc0/disk-activity(onboard-storage)
-green:user3  default-trigger: mmc1 (SD-card)
-green:user4  default-trigger: none, panic-indicator
-yellow:wlan  default-trigger: phy0tx
-blue:bt      default-trigger: hci0-power
+--547tgbqlmpx6son6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-So lets adopt the same for HiKey, which is one of the 96Boards
-CE platform.
+On Thu, Oct 25, 2018 at 06:22:51PM +0530, Jagan Teki wrote:
+> On Wed, Oct 24, 2018 at 11:39 PM Maxime Ripard
+> <maxime.ripard@bootlin.com> wrote:
+> >
+> > On Tue, Oct 23, 2018 at 09:20:33PM +0530, Jagan Teki wrote:
+> > > The MIPI DSI PHY HDMI controller on Allwinner A64 is similar
+> > > on the one on A31.
+> > >
+> > > Add A64 compatible and append A31 compatible as fallback.
+> > >
+> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > ---
+> > > Changes for v2:
+> > > - new patch
+> > >
+> > >  Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/display/sunxi/sun6i-ds=
+i.txt b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+> > > index 9fa6e7a758ad..704fb31962f2 100644
+> > > --- a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+> > > +++ b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+> > > @@ -36,7 +36,7 @@ D-PHY
+> > >
+> > >  Required properties:
+> > >    - compatible: value must be one of:
+> > > -    * allwinner,sun6i-a31-mipi-dphy
+> > > +    * "allwinner,sun50i-a64-mipi-dphy", "allwinner,sun6i-a31-mipi-dp=
+hy"
+> >
+> > No. you need both. The A64 MIPI DPHY one needs to be always set with
+> > the A31 fallback, but the A31 is also usable on its own.
+>=20
+> Why wouldn't be, because we don't have any difference dphy right?
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
+That's not my point. You removed from the binding documentation that
+allwinner,sun6i-a31-mipi-dphy was a valid option on its own. It's not
+ok to do so.
 
-diff --git a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
-index f4964bee6a1a..d2bb5912dee7 100644
---- a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
-+++ b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
-@@ -340,42 +340,43 @@
- 
- 	leds {
- 		compatible = "gpio-leds";
-+
- 		user_led4 {
--			label = "user_led4";
-+			label = "green:user1";
- 			gpios = <&gpio4 0 0>; /* <&gpio_user_led_1>; */
- 			linux,default-trigger = "heartbeat";
- 		};
- 
- 		user_led3 {
--			label = "user_led3";
-+			label = "green:user2";
- 			gpios = <&gpio4 1 0>; /* <&gpio_user_led_2>; */
- 			linux,default-trigger = "mmc0";
- 		};
- 
- 		user_led2 {
--			label = "user_led2";
-+			label = "green:user3";
- 			gpios = <&gpio4 2 0>; /* <&gpio_user_led_3>; */
- 			linux,default-trigger = "mmc1";
- 		};
- 
- 		user_led1 {
--			label = "user_led1";
-+			label = "green:user4";
- 			gpios = <&gpio4 3 0>; /* <&gpio_user_led_4>; */
- 			panic-indicator;
--			linux,default-trigger = "cpu0";
-+			linux,default-trigger = "none";
- 		};
- 
- 		wlan_active_led {
--			label = "wifi_active";
-+			label = "yellow:wlan";
- 			gpios = <&gpio3 5 0>; /* <&gpio_wlan_active_led>; */
- 			linux,default-trigger = "phy0tx";
- 			default-state = "off";
- 		};
- 
- 		bt_active_led {
--			label = "bt_active";
-+			label = "blue:bt";
- 			gpios = <&gpio4 7 0>; /* <&gpio_bt_active_led>; */
--			linux,default-trigger = "hci0rx";
-+			linux,default-trigger = "hci0-power";
- 			default-state = "off";
- 		};
- 	};
--- 
-2.17.1
+Maxime
 
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--547tgbqlmpx6son6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW9bMTAAKCRDj7w1vZxhR
+xRb2AQDYLqR5lKFMeJ4nQvP+h+MgqMF32jXgYvXBdc1B/9SEGgEA21tjd+t0QYtC
+pyY+IEgmBefftVavZR66nPGWUisBTgA=
+=JXh0
+-----END PGP SIGNATURE-----
+
+--547tgbqlmpx6son6--
