@@ -4,230 +4,131 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73A08C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:03:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07F85ECDE44
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:04:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3682C20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:03:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C39C6208E3
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:04:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K5oTUjMh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3682C20870
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c52Ze7da"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C39C6208E3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728350AbeJ3Cwz (ORCPT
+        id S1728298AbeJ3Cyd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 22:52:55 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:33622 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728161AbeJ3Cwz (ORCPT
+        Mon, 29 Oct 2018 22:54:33 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:33889 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726532AbeJ3Cyc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 22:52:55 -0400
-Received: by mail-lj1-f193.google.com with SMTP id z21-v6so8748103ljz.0;
-        Mon, 29 Oct 2018 11:03:11 -0700 (PDT)
+        Mon, 29 Oct 2018 22:54:32 -0400
+Received: by mail-qt1-f194.google.com with SMTP id z2-v6so10372855qts.1;
+        Mon, 29 Oct 2018 11:04:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=t6xiqK4v9iNRHHQrMF7tqrJ+DDjMcL+GLezehYMFE4c=;
-        b=K5oTUjMhkg0q73FRNd8lyRNADWFZDkJt9LISlnPQIxTtc+Q6h08RFofvPO4Y3rwj1u
-         b4FQOGE3/Rijvbh8EE8BGNW34pZAtO5YASQjhOKKGR44BMZr9DLC3kr7fXi3l5v1zPHy
-         p0gJpAlSs2wGJuASWXTN9GZrT57bwtoS8swLMRd+6oMY3gjexBXNqpBv2pkgIGSDFyo8
-         OfcefNTbn6p3msJF87ecWlyGsDzP2ojgogr7EidCyJg+rUEOmry8Wn9ZmAdaql8rX1wI
-         S9xZDajHlX45D08PycYyVIJHdcPLfxghji27kbmZ3+l3EoQFvHb6VgZJSllWzP1Ra8Wb
-         Dicg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3iDI9uNcgbd4WeSkgPK2jFWjSLsx2JhiA7S0p38mNzw=;
+        b=c52Ze7daZNSqDKJB3rUMiggb7JxImdR+XlDvq5IAA1DKf80aTS9crO9F9GKpt6oLqP
+         jiZP19FMVUwcfl+dJxuAwMqNH7tuYP2EAKjP+gIOEr9px8g7ohWnSAPaCW1aVw28C3+G
+         075tjn8+X8XEdz7Vb5ZvNToSz2+W38z0CPNkmm06Y9r+yGGOnltf3MhlIbMl2Hm4U6mF
+         Ou+QDKPm4JZeV7efn13KeIn0v5a3/D/D7RRKFr/0X6b6mQHsjcVn3aU6XW06iWLGQXB9
+         ERVMtS+NTBfa5mOpq7ltvdKy768NUQTZZxOMGSXIn6nK4bLfpJa6o3jZtbqumpexnmvu
+         9AIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=t6xiqK4v9iNRHHQrMF7tqrJ+DDjMcL+GLezehYMFE4c=;
-        b=IHvDVwJs52sMghi+qd39uPia3DRF5cgAJyzV9GuZYVjmqdSpLEFupZhKPU+FCNsWFZ
-         POf0qodel7OUGOQXdxYwB7C9ax/x5AfxfN6Bw4CSqJE5QwJX3cVDBK6u5eFWQXJkKSYt
-         Qa4etH2DUlwv5EwRMcbcdo/B41+zUvciH8JhWDDu3+yHFeQyUIIL6d4t+zD9QK0J2sUb
-         KLafNjhu1YhlNNkcLjzamdo/NRBwf0abdowc17efFR5U/WwPZy76QmJEdtO1/YKFTGvP
-         79Kk2cugGCQSnfUcOacE1WsEgXidUgHC8fsL7SaBSuFMBozIS9xM6EjpTOG2OR03ZHPG
-         MMPA==
-X-Gm-Message-State: AGRZ1gLyHyegjFxrxgp83mCxJMSRVPdvf0Y6EmbnjgkaJHxG4m2lPdHb
-        C49s3RomxdPZEbe5QvY/I5pDTl5NsyotJg==
-X-Google-Smtp-Source: AJdET5fCEGLpaah0Tq8vpMZOtvEPJ0sEGUnR3jKVv9n8dFJVLyRt777baMJHNcoCLOLNj4iobj9p2A==
-X-Received: by 2002:a2e:92:: with SMTP id e18-v6mr10962931lji.130.1540836190393;
-        Mon, 29 Oct 2018 11:03:10 -0700 (PDT)
-Received: from ?IPv6:2001:14bb:52:7be:f0bf:dd2d:f008:5213? (dmkd798g-7z2-yccwcp-4.rev.dnainternet.fi. [2001:14bb:52:7be:f0bf:dd2d:f008:5213])
-        by smtp.gmail.com with ESMTPSA id x29-v6sm1897421ljb.69.2018.10.29.11.03.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 11:03:09 -0700 (PDT)
-Subject: Re: [PATCH 02/17] prmem: write rare for static allocation
-To:     Dave Hansen <dave.hansen@intel.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        kernel-hardening@lists.openwall.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     igor.stoppa@huawei.com, Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-3-igor.stoppa@huawei.com>
- <23022d8a-dcef-20d5-cb07-a218b08b7b9a@intel.com>
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <311d06ab-df6d-134a-82fc-1e2098f8a924@gmail.com>
-Date:   Mon, 29 Oct 2018 20:03:07 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3iDI9uNcgbd4WeSkgPK2jFWjSLsx2JhiA7S0p38mNzw=;
+        b=SVbNqOe3Wrd55WixSQFDCLWlUEsa5hPLOUyW4kmmKgAbgkcKQ5UnU2c+GPjefNxqtW
+         jtTJwAdjuT3xKw+stMsapU8C1AmT3q4vr04tERJvptIjnia46GHKtakBVRAGZu1qkDBE
+         euatNoKJ4Vm37oIfSfOFhVWxj0z8ESY/+Mp5kPwuwiSZtVSd9IcrEod9VcIwmIEAjWy+
+         cZvf4756ShnsD6qbmAa5+bmJ7Qs65zSZXQbz/HIV7JFAKm1f+dao9tZqiMhg62RQi8wE
+         uVjugtgnY9RC1CXlm2vX5X7XLEKeftfidTe/4teEtDNnHgkJ5/mHHs7LmfXYN8Ol06oJ
+         fGYw==
+X-Gm-Message-State: AGRZ1gJe3/C59dTrSLCFKd5cGYHdEbBgLTS1sSR/RsH17vZ2ScAR/FG7
+        dLtMYZ72oilsm3b7lj1vc6Xfc3Xd1YxuJKWefLU=
+X-Google-Smtp-Source: AJdET5ek3GpN8qjoV09qYCcDvP4Zle5MprTtp99IDbXtUm5Wl1KbhJTFQcJUz8UC7FmkcQlgrxJ0m2SZrIiWx4Re47A=
+X-Received: by 2002:aed:3e56:: with SMTP id m22-v6mr4345349qtf.99.1540836289189;
+ Mon, 29 Oct 2018 11:04:49 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <23022d8a-dcef-20d5-cb07-a218b08b7b9a@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181025232517.ywnw54qibemosjws@picard> <154083512089.98144.9141070901932719147@swboyd.mtv.corp.google.com>
+ <CAHp75VfnN5tF1Z9+CDDhKFNG5QfCRcGOZeAkpf-5BfCEx16gvg@mail.gmail.com>
+In-Reply-To: <CAHp75VfnN5tF1Z9+CDDhKFNG5QfCRcGOZeAkpf-5BfCEx16gvg@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 29 Oct 2018 20:04:38 +0200
+Message-ID: <CAHp75VctdBE-GM60udJawBCXdmoOqZn4N=kFWz5GLHzjPG2iQQ@mail.gmail.com>
+Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     duffydack73@gmail.com, Hans de Goede <hdegoede@redhat.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Johannes Stezenbach <js@sig21.net>,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/10/2018 01:24, Dave Hansen wrote:
->> +static __always_inline bool __is_wr_after_init(const void *ptr, size_t size)
->> +{
->> +	size_t start = (size_t)&__start_wr_after_init;
->> +	size_t end = (size_t)&__end_wr_after_init;
->> +	size_t low = (size_t)ptr;
->> +	size_t high = (size_t)ptr + size;
->> +
->> +	return likely(start <= low && low < high && high <= end);
->> +}
-> 
-> size_t is an odd type choice for doing address arithmetic.
+On Mon, Oct 29, 2018 at 7:52 PM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> Cc: Pierre as well.
+>
+> On Mon, Oct 29, 2018 at 7:48 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > Quoting Dean Wallace (2018-10-25 16:25:17)
+> > > I have found a regression in 4.18.15 that means I lose sound on my old
+> > > Toshiba Chromebook 2 (Swanky).  My system details are:-
+> > >
+> > > Toshiba Chromebook (Swanky)
+> > > MrChromebox UEFI coreboot
+> > > Arch Linux running latest alsa/pulseaudio
+> > >
+> > > Upgraded kernel from 4.18.14 to 4.18.15 and lost all sound output.  By
+> > > output I mean, the card is still detected, the module loaded, all apps
+> > > showing sound is being playing, but no actual audible sound comes
+> > > through.  Upgraded to 4.18.16 same issue.
+> > >
+> > > Dug around and found Upstream commit 648e921888ad96ea3dc922739e96716ad3225d7f
+> > > clk: x86: Stop marking clocks as CLK_IS_CRITICAL
+> > > "This commit removes the CLK_IS_CRITICAL marking, fixing Cherry Trail
+> > > devices not being able to reach S0i3 greatly decreasing their battery
+> > > drain when suspended."
+> > >
+> > > I reverted it and compiled 4.18.16 and have sound back again.  Could
+> > > this be looked into, with possibility of fix.
+> > >
+> >
+> > Thanks for the bug report. I'm adding some people involved in the commit
+> > you mention is causing audio regressions. The best plan is to probably
+> > revert the commit from the 4.18 linux stable tree. Or there may be
+> > another patch missing that would be useful to make this backported patch
+> > work. Hopefully Hans or Andy knows.
+>
+> Hans has been investigating S0ix issues on Baytrail and Cherrytrail machines.
+> I have a feeling that the problem can be fixed by properly handling
+> clock in ASoC driver(s). Perhaps Hans and Pierre can figure this out
+> better than me.
 
-it seemed more portable than unsigned long
+Looking to sound/soc/intel/boards/cht_bsw_rt5672.c I see no
+suspend-resume hooks. Perhaps, adding them like in the commit
+ac8bd9e13be2 ("r8169: Disable clk during suspend / resume") would
+help.
 
->> +/**
->> + * wr_memset() - sets n bytes of the destination to the c value
->> + * @dst: beginning of the memory to write to
->> + * @c: byte to replicate
->> + * @size: amount of bytes to copy
->> + *
->> + * Returns true on success, false otherwise.
->> + */
->> +static __always_inline
->> +bool wr_memset(const void *dst, const int c, size_t n_bytes)
->> +{
->> +	size_t size;
->> +	unsigned long flags;
->> +	uintptr_t d = (uintptr_t)dst;
->> +
->> +	if (WARN(!__is_wr_after_init(dst, n_bytes), WR_ERR_RANGE_MSG))
->> +		return false;
->> +	while (n_bytes) {
->> +		struct page *page;
->> +		uintptr_t base;
->> +		uintptr_t offset;
->> +		uintptr_t offset_complement;
-> 
-> Again, these are really odd choices for types.  vmap() returns a void*
-> pointer, on which you can do arithmetic.  
+Btw, what the drivers are in use for the machine you have? It's better
+you run alsa-info.sh or alike to collect necessary information along
+with output of `lsmod`, `dmesg`, etc.
 
-I wasn't sure of how much I could rely on the compiler not doing some 
-unwanted optimizations.
-
-> Why bother keeping another
-> type to which you have to cast to and from?
-
-For the above reason. If I'm worrying unnecessarily, I can switch back 
-to void *
-It certainly is easier to use.
-
-> BTW, our usual "pointer stored in an integer type" is 'unsigned long',
-> if a pointer needs to be manipulated.
-
-yes, I noticed that, but it seemed strange ...
-size_t corresponds to unsigned long, afaik
-
-but it seems that I have not fully understood where to use it
-
-anyway, I can stick to the convention with unsigned long
-
-> 
->> +		local_irq_save(flags);
-> 
-> Why are you doing the local_irq_save()?
-
-The idea was to avoid the case where an attack would somehow freeze the 
-core doing the write-rare operation, while the temporary mapping is 
-accessible.
-
-I have seen comments about using mappings that are private to the 
-current core (and I will reply to those comments as well), but this 
-approach seems architecture-dependent, while I was looking for a 
-solution that, albeit not 100% reliable, would work on any system with 
-an MMU. This would not prevent each arch to come up with own custom 
-implementation that provides better coverage, performance, etc.
-
->> +		page = virt_to_page(d);
->> +		offset = d & ~PAGE_MASK;
->> +		offset_complement = PAGE_SIZE - offset;
->> +		size = min(n_bytes, offset_complement);
->> +		base = (uintptr_t)vmap(&page, 1, VM_MAP, PAGE_KERNEL);
-> 
-> Can you even call vmap() (which sleeps) with interrupts off?
-
-I accidentally disabled sleeping while atomic debugging and I totally 
-missed this problem :-(
-
-However, to answer your question, nothing exploded while I was testing 
-(without that type of debugging).
-
-I suspect I was just "lucky". Or maybe I was simply not triggering the 
-sleeping sub-case.
-
-As I understood the code, sleeping _might_ happen, but it's not going to 
-happen systematically.
-
-I wonder if I could split vmap() into two parts: first the sleeping one, 
-with interrupts enabled, then the non sleeping one, with interrupts 
-disabled.
-
-I need to read the code more carefully, but it seems that sleeping might 
-happen when memory for the mapping meta data is not immediately available.
-
-BTW, wouldn't the might_sleep() call belong more to the part which 
-really sleeps, instead than to the whole vmap() ?
-
->> +		if (WARN(!base, WR_ERR_PAGE_MSG)) {
->> +			local_irq_restore(flags);
->> +			return false;
->> +		}
-> 
-> You really need some kmap_atomic()-style accessors to wrap this stuff
-> for you.  This little pattern is repeated over and over.
-
-I really need to learn more about the way the kernel works and is 
-structured. It's a work in progress. Thanks for the advice.
-
-> ...
->> +const char WR_ERR_RANGE_MSG[] = "Write rare on invalid memory range.";
->> +const char WR_ERR_PAGE_MSG[] = "Failed to remap write rare page.";
-> 
-> Doesn't the compiler de-duplicate duplicated strings for you?  Is there
-> any reason to declare these like this?
-
-I noticed I have made some accidental modifications in a couple of 
-cases, when replicating the command.
-
-So I thought that if I really want to use the same string, why not doing 
-it explicitly? It seemed also easier, in case I want to tweak the 
-message. I need to do it only in one place.
-
---
-igor
+-- 
+With Best Regards,
+Andy Shevchenko
