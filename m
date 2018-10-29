@@ -2,104 +2,104 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA78C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:29:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47821C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:29:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ECE82084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:29:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qYFpsqr2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6ECE82084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1B8BC2080A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:29:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B8BC2080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729192AbeJ3DTB (ORCPT
+        id S1729372AbeJ3DTb convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 23:19:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57314 "EHLO mail.kernel.org"
+        Mon, 29 Oct 2018 23:19:31 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:40138 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726852AbeJ3DTB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 23:19:01 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726852AbeJ3DTa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 23:19:30 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55E272080A;
-        Mon, 29 Oct 2018 18:29:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540837751;
-        bh=DmmkJElWMtcW2iNLRLdHlRZL6/ceYGta53SwvJwN/YA=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=qYFpsqr2NpbhGTufc0SAYl8xsZQik7rA4f8sGJQG92w4V9kyPciDvLI/lGNIWLLLG
-         IEqpr1ZAM4Dr4Zcq5wCQf4DgUHu+GH5dlrKGWTPpCx/n4oz96RHMTbtPpPYUrDb9Tm
-         5CjeQFrZQnnHbFAx4CGvMqVL3kSc02nVpOGTLEv0=
-Content-Type: text/plain; charset="utf-8"
+        by mx1.redhat.com (Postfix) with ESMTPS id 1E2F8325DB6;
+        Mon, 29 Oct 2018 18:29:41 +0000 (UTC)
+Received: from t450s.home (ovpn-116-100.phx2.redhat.com [10.3.116.100])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9479D5FC0E;
+        Mon, 29 Oct 2018 18:29:23 +0000 (UTC)
+Date:   Mon, 29 Oct 2018 12:29:22 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     Simon Guo <wei.guo.simon@linux.alibaba.com>,
+        Eric Auger <eric.auger@redhat.com>,
+        qixuan.wu@linux.alibaba.com, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, Peter Xu <peterx@redhat.com>
+Subject: Re: Can VFIO pin only a specific region of guest mem when use pass
+ through devices?
+Message-ID: <20181029122922.7b2a9b0c@t450s.home>
+In-Reply-To: <e4be89df-2bf9-76a2-497f-c6ba3256c95a@redhat.com>
+References: <20181029024228.GA4279@simonLocalRHEL7.x64>
+        <e4be89df-2bf9-76a2-497f-c6ba3256c95a@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     geert+renesas@glider.be, horms@verge.net.au, jiada_wang@mentor.com,
-        magnus.damm@gmail.com, mark.rutland@arm.com,
-        mturquette@baylibre.com, robh+dt@kernel.org
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181025072349.15173-3-jiada_wang@mentor.com>
-Cc:     linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        jiada_wang@mentor.com
-References: <20181025072349.15173-1-jiada_wang@mentor.com>
- <20181025072349.15173-3-jiada_wang@mentor.com>
-Message-ID: <154083775062.98144.11157403961171783929@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH linux-next v1 2/4] clk: renesas: Add binding document for AVB
- Counter Clock
-Date:   Mon, 29 Oct 2018 11:29:10 -0700
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 29 Oct 2018 18:29:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting jiada_wang@mentor.com (2018-10-25 00:23:47)
-> From: Jiada Wang <jiada_wang@mentor.com>
-> =
+On Mon, 29 Oct 2018 17:14:46 +0800
+Jason Wang <jasowang@redhat.com> wrote:
 
-> Add device tree bindings for avb counter clock for Renesas
-> R-Car Socs.
-> =
+> On 2018/10/29 上午10:42, Simon Guo wrote:
+> > Hi,
+> >
+> > I am using network device pass through mode with qemu x86(-device vfio-pci,host=0000:xx:yy.z)
+> > and “intel_iommu=on” in host kernel command line, and it shows the whole guest memory
+> > were pinned(vfio_pin_pages()), viewed by the “top” RES memory output. I understand it is due
+> > to device can DMA to any guest memory address and it cannot be swapped.
+> >
+> > However can we just pin a rang of address space allowed by iommu group of that device,
+> > instead of pin whole address space? I do notice some code like vtd_host_dma_iommu().
+> > Maybe there is already some way to enable that?
+> >
+> > Sorry if I missed some basics. I googled some but no luck to find the answer yet. Please
+> > let me know if any discussion already raised on that.
+> >
+> > Any other suggestion will also be appreciated. For example, can we modify the guest network
+> > card driver to allocate only from a specific memory region(zone), and qemu advises guest
+> > kernel to only pin that memory region(zone) accordingly?
+> >
+> > Thanks,
+> > - Simon  
+> 
+> 
+> One possible method is to enable IOMMU of VM.
 
-> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
-> ---
->  .../bindings/clock/renesas,avb-clk.txt        | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/renesas,avb-c=
-lk.txt
-> =
+Right, making use of a virtual IOMMU in the VM is really the only way
+to bound the DMA to some subset of guest memory, but vIOMMU usage by
+the guest is optional on x86 and even if the guest does use it, it might
+enable passthrough mode, which puts you back at the problem that all
+guest memory is pinned with the additional problem that it might also
+be accounted for once per assigned device and may hit locked memory
+limits.  Also, the DMA mapping and unmapping path with a vIOMMU is very
+slow, so performance of the device in the guest will be abysmal unless
+the use case is limited to very static mappings, such as userspace use
+within the guest for nested assignment or perhaps DPDK use cases.
 
-> diff --git a/Documentation/devicetree/bindings/clock/renesas,avb-clk.txt =
-b/Documentation/devicetree/bindings/clock/renesas,avb-clk.txt
-> new file mode 100644
-> index 000000000000..03bf50b5830c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/renesas,avb-clk.txt
-> @@ -0,0 +1,19 @@
-> +* Renesas AVB Counter Clock
-> +
-> +The AVB Counter Clocks are provided by avb_counter8 Clock Generator,
-> +avb_counter8 has dividers which operates with S0D1=CF=95 clock and has
-> +8 output clocks.
-> +
-> +Required Properties:
-> +  - compatible: Must be "renesas,clk-avb"
-> +  - reg: Base address and length of the memory resource used by the AVB
-> +  - #clock-cells: Must be 1
-> +
-> +Example
-> +-------
-> +
-> +       clk_avb: avb-clock@ec5a011c {
-> +               compatible =3D "renesas,clk-avb";
-> +               reg =3D <0 0xec5a011c 0 0x24>;
+Modifying the guest to only use a portion of memory for DMA sounds like
+a quite intrusive option.  There are certainly IOMMU models where the
+IOMMU provides a fixed IOVA range, but creating dynamic mappings within
+that range doesn't really solve anything given that it simply returns
+us to a vIOMMU with slow mapping.  A window with a fixed identity
+mapping used as a DMA zone seems plausible, but again, also pretty
+intrusive to the guest, possibly also to the drivers.  Host IOMMU page
+faulting can also help the pinned memory footprint, but of course
+requires hardware support and lots of new code paths, many of which are
+already being discussed for things like Scalable IOV and SVA.  Thanks,
 
-This is an odd register offset. Is this just one clk inside of a larger
-clk controller?
-
+Alex
