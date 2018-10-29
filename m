@@ -2,200 +2,187 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7B1CC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:59:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55900C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 20:00:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31A2B2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:59:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31A2B2084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 11B3E2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 20:00:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q3twotvL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11B3E2084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727284AbeJ3EtX (ORCPT
+        id S1729286AbeJ3EuP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 00:49:23 -0400
-Received: from mga17.intel.com ([192.55.52.151]:24154 "EHLO mga17.intel.com"
+        Tue, 30 Oct 2018 00:50:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725781AbeJ3EtW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 00:49:22 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2018 12:59:12 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,441,1534834800"; 
-   d="scan'208";a="103709374"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga001.jf.intel.com with ESMTP; 29 Oct 2018 12:59:11 -0700
-Message-ID: <3281f3044fa231bbc1b02d5c5efca3502a0d05a8.camel@linux.intel.com>
-Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
- point where we init pgmap
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Linux MM <linux-mm@kvack.org>,
+        id S1725781AbeJ3EuP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 00:50:15 -0400
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A7FF21019;
+        Mon, 29 Oct 2018 20:00:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540843204;
+        bh=ZMNJfLeHJO9coG8PKL/4oh4nH6KMZh+zkUMB/iFKFB0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Q3twotvLE4Q0PcViX4aGRQxI+OSahToZu9uS1Yd7rKvkxbKJxTQXLERwsaUbpiOoJ
+         FI4sj1+juItgJQS+FQsdiSGOrFcaP9CVzA0zFSxprhvBrH/7OSb2Xo6/ZRz2LBSRkY
+         zArZKB0wesh1A/762IcvuxOA3QZ/YFZXWQ6F65w8=
+Received: by mail-qt1-f172.google.com with SMTP id u34-v6so10810687qth.3;
+        Mon, 29 Oct 2018 13:00:04 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gL0W5W1xBQ8/aZUUs7tXsLgW9/1tNy7rM9+QvvixHctxH432pBu
+        2H5XH/lKTSOVuu64XSYVxCOrNTIRPLUUsfhSgg==
+X-Google-Smtp-Source: AJdET5dS7w4c7S8BPm/lVESa1pL8sV2XVqdt/Qf9bW35vQ2WXL5SPM2osioxDj3W7g8ZGONK/AxaWnHZHGdUFV/GCNo=
+X-Received: by 2002:a0c:c3c8:: with SMTP id p8mr14455498qvi.90.1540843203112;
+ Mon, 29 Oct 2018 13:00:03 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181029190014.6455-1-f.fainelli@gmail.com> <20181029190014.6455-2-f.fainelli@gmail.com>
+In-Reply-To: <20181029190014.6455-2-f.fainelli@gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 29 Oct 2018 14:59:51 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqL2g69Duhkqd=f09BStoAKeakJz8Wgz3is37YU0+fc80A@mail.gmail.com>
+Message-ID: <CAL_JsqL2g69Duhkqd=f09BStoAKeakJz8Wgz3is37YU0+fc80A@mail.gmail.com>
+Subject: Re: [PATCH 1/2 v5] arm64: Get rid of __early_init_dt_declare_initrd()
+To:     Florian Fainelli <f.fainelli@gmail.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        rppt@linux.ibm.com, Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Pasha Tatashin <pavel.tatashin@microsoft.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
-        rppt@linux.vnet.ibm.com, Ingo Molnar <mingo@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        yi.z.zhang@linux.intel.com, osalvador@techadventures.net
-Date:   Mon, 29 Oct 2018 12:59:11 -0700
-In-Reply-To: <20181029181827.GO32673@dhcp22.suse.cz>
-References: <20181011085509.GS5873@dhcp22.suse.cz>
-         <6f32f23c-c21c-9d42-7dda-a1d18613cd3c@linux.intel.com>
-         <20181017075257.GF18839@dhcp22.suse.cz>
-         <971729e6-bcfe-a386-361b-d662951e69a7@linux.intel.com>
-         <20181029141210.GJ32673@dhcp22.suse.cz>
-         <84f09883c16608ddd2ba88103f43ec6a1c649e97.camel@linux.intel.com>
-         <20181029163528.GL32673@dhcp22.suse.cz>
-         <18dfc5a0db11650ff31433311da32c95e19944d9.camel@linux.intel.com>
-         <20181029172415.GM32673@dhcp22.suse.cz>
-         <8e7a4311a240b241822945c0bb4095c9ffe5a14d.camel@linux.intel.com>
-         <20181029181827.GO32673@dhcp22.suse.cz>
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        aryabinin@virtuozzo.com, Andrey Konovalov <andreyknvl@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Johannes Weiner <hannes@cmpxchg.org>, ghackmann@android.com,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        chandan.vn@samsung.com,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-10-29 at 19:18 +0100, Michal Hocko wrote:
-> On Mon 29-10-18 10:42:33, Alexander Duyck wrote:
-> > On Mon, 2018-10-29 at 18:24 +0100, Michal Hocko wrote:
-> > > On Mon 29-10-18 10:01:28, Alexander Duyck wrote:
-> 
-> [...]
-> > > > So there end up being a few different issues with constructors. First
-> > > > in my mind is that it means we have to initialize the region of memory
-> > > > and cannot assume what the constructors are going to do for us. As a
-> > > > result we will have to initialize the LRU pointers, and then overwrite
-> > > > them with the pgmap and hmm_data.
-> > > 
-> > > Why we would do that? What does really prevent you from making a fully
-> > > customized constructor?
-> > 
-> > It is more an argument of complexity. Do I just pass a single pointer
-> > and write that value, or the LRU values in init, or do I have to pass a
-> > function pointer, some abstracted data, and then call said function
-> > pointer while passing the page and the abstracted data?
-> 
-> I though you have said that pgmap is the current common denominator for
-> zone device users. I really do not see what is the problem to do
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 89d2a2ab3fe6..9105a4ed2c96 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -5516,7 +5516,10 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
->  
->  not_early:
->  		page = pfn_to_page(pfn);
-> -		__init_single_page(page, pfn, zone, nid);
-> +		if (pgmap && pgmap->init_page)
-> +			pgmap->init_page(page, pfn, zone, nid, pgmap);
-> +		else
-> +			__init_single_page(page, pfn, zone, nid);
->  		if (context == MEMMAP_HOTPLUG)
->  			SetPageReserved(page);
->  
-> that would require to replace altmap throughout the call chain and
-> replace it by pgmap. Altmap could be then renamed to something more
-> clear
++Ard who last touched this.
 
-So as I had pointed out earlier doing per-page init is much slower than
-initializing pages in bulk. Ideally I would like to see us seperate the
-memmap_init_zone function into two pieces, one section for handling
-hotplug and another for the everything else case. As is the fact that
-you have to jump over a bunch of tests for the "not_early" case is
-quite ugly in my opinion.
+On Mon, Oct 29, 2018 at 2:23 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
+>
+> ARM64 is the only architecture that re-defines
+> __early_init_dt_declare_initrd() in order for that function to populate
+> initrd_start/initrd_end with physical addresses instead of virtual
+> addresses. Instead of having an override, just get rid of that
+> implementation and perform the virtual to physical conversion of these
+> addresses in arm64_memblock_init() where relevant.
+>
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+> ---
+>  arch/arm64/include/asm/memory.h |  8 -------
+>  arch/arm64/mm/init.c            | 42 +++++++++++++++++++++------------
+>  2 files changed, 27 insertions(+), 23 deletions(-)
+>
+> diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
+> index b96442960aea..dc3ca21ba240 100644
+> --- a/arch/arm64/include/asm/memory.h
+> +++ b/arch/arm64/include/asm/memory.h
+> @@ -168,14 +168,6 @@
+>  #define IOREMAP_MAX_ORDER      (PMD_SHIFT)
+>  #endif
+>
+> -#ifdef CONFIG_BLK_DEV_INITRD
+> -#define __early_init_dt_declare_initrd(__start, __end)                 \
+> -       do {                                                            \
+> -               initrd_start = (__start);                               \
+> -               initrd_end = (__end);                                   \
+> -       } while (0)
+> -#endif
+> -
+>  #ifndef __ASSEMBLY__
+>
+>  #include <linux/bitops.h>
+> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+> index 3cf87341859f..292570b08f85 100644
+> --- a/arch/arm64/mm/init.c
+> +++ b/arch/arm64/mm/init.c
+> @@ -62,6 +62,8 @@
+>  s64 memstart_addr __ro_after_init = -1;
+>  phys_addr_t arm64_dma_phys_limit __ro_after_init;
+>
+> +static phys_addr_t phys_initrd_start, phys_initrd_end;
+> +
+>  #ifdef CONFIG_BLK_DEV_INITRD
+>  static int __init early_initrd(char *p)
+>  {
+> @@ -72,8 +74,8 @@ static int __init early_initrd(char *p)
+>         if (*endp == ',') {
+>                 size = memparse(endp + 1, NULL);
+>
+> -               initrd_start = start;
+> -               initrd_end = start + size;
+> +               phys_initrd_start = start;
+> +               phys_initrd_end = start + size;
+>         }
+>         return 0;
+>  }
+> @@ -364,6 +366,7 @@ static void __init fdt_enforce_memory_region(void)
+>  void __init arm64_memblock_init(void)
+>  {
+>         const s64 linear_region_size = -(s64)PAGE_OFFSET;
+> +       u64 __maybe_unused base, size;
+>
+>         /* Handle linux,usable-memory-range property */
+>         fdt_enforce_memory_region();
+> @@ -408,14 +411,25 @@ void __init arm64_memblock_init(void)
+>                 memblock_add(__pa_symbol(_text), (u64)(_end - _text));
+>         }
+>
+> -       if (IS_ENABLED(CONFIG_BLK_DEV_INITRD) && initrd_start) {
+> +       if (IS_ENABLED(CONFIG_BLK_DEV_INITRD) &&
+> +           (initrd_start || phys_initrd_start)) {
 
-I could probably take your patch and test it. I'm suspecting this is
-going to be a signficant slow-down in general as the indirect function
-pointer stuff is probably going to come into play.
+I've tried to explain already that this is broken. The problem is
+__early_init_dt_declare_initrd using __va() which happens before this
+function is called. __va() uses PHYS_OFFSET which in turn is defined
+as memstart_addr. However, memstart_addr may be changed just above
+this hunk, so the earlier conversion to a VA may not be valid at this
+point. This is explained if you read Ard's commit that added all this
+mess.
 
-The "init_page" function in this case is going to end up being much
-more complex then it really needs to be in this design as well since I
-have to get the altmap and figure out if the page was used for vmmemmap
-storage or is an actual DAX page. I might just see if I could add an
-additional test for the pfn being before the end of the vmmemmap in the
-case of pgmap being present.
+You could fix this by converting back to a PA before adjusting
+memstart_addr, but that's 2 wrongs making a right and fragile. The
+better solution is the other proposal making the DT code set
+phys_initrd_* (whatever the ARM code calls them).
 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 89d2a2ab3fe6..048e4cc72fdf 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -5474,8 +5474,8 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
->  	 * Honor reservation requested by the driver for this ZONE_DEVICE
->  	 * memory
->  	 */
-> -	if (altmap && start_pfn == altmap->base_pfn)
-> -		start_pfn += altmap->reserve;
-> +	if (pgmap && pgmap->get_memmap)
-> +		start_pfn = pgmap->get_memmap(pgmap, start_pfn);
->  
->  	for (pfn = start_pfn; pfn < end_pfn; pfn++) {
->  		/*
-> 
-> [...]
+>                 /*
+>                  * Add back the memory we just removed if it results in the
+>                  * initrd to become inaccessible via the linear mapping.
+>                  * Otherwise, this is a no-op
+>                  */
+> -               u64 base = initrd_start & PAGE_MASK;
+> -               u64 size = PAGE_ALIGN(initrd_end) - base;
+> +               if (phys_initrd_start) {
+> +                       /* Command line specified the initrd location */
+> +                       initrd_start = __phys_to_virt(phys_initrd_start);
+> +                       initrd_end = __phys_to_virt(phys_initrd_end);
+> +               } else if (initrd_start) {
+> +                       /* FDT specified the initrd location */
+> +                       phys_initrd_start = __pa(initrd_start);
+> +                       phys_initrd_end = __pa(initrd_end);
 
-The only reason why I hadn't bothered with these bits is that I was
-actually trying to leave this generic since I thought I had seen other
-discussions about hotplug scenerios where memory may want to change
-where the vmmemmap is initialized other than just the case of
-ZONE_DEVICE pages. So I was thinking at some point we may see altmap
-without the pgmap.
+Kind of inconsistent to mix __phys_to_virt and __pa flavors.
 
-> > If I have to implement the code to verify the slowdown I will, but I
-> > really feel like it is just going to be time wasted since we have seen
-> > this in other spots within the kernel.
-> 
-> Please try to understand that I am not trying to force you write some
-> artificial benchmarks. All I really do care about is that we have sane
-> interfaces with reasonable performance. Especially for one-off things
-> in relattively slow paths. I fully recognize that ZONE_DEVICE begs for a
-> better integration but really, try to go incremental and try to unify
-> the code first and microptimize on top. Is that way too much to ask for?
-
-No, but the patches I had already proposed I thought were heading in
-that direction. I had unified memmap_init_zone,
-memmap_init_zone_device, and the deferred page initialization onto a
-small set of functions and all had improved performance as a result.
-
-> Anyway we have gone into details while the primary problem here was that
-> the hotplug lock doesn't scale AFAIR. And my question was why cannot we
-> pull move_pfn_range_to_zone and what has to be done to achieve that.
-> That is a fundamental thing to address first. Then you can microptimize
-> on top.
-
-Yes, the hotplug lock was part of the original issue. However that
-starts to drift into the area I believe Oscar was working on as a part
-of his patch set in encapsulating the move_pfn_range_to_zone and other
-calls that were contained in the hotplug lock into their own functions.
-
-Most of the changes I have in my follow-on patch set can work
-regardless of how we deal with the lock issue. I just feel like what
-you are pushing for is going to be a massive patch set by the time we
-are done and I really need to be able to work this a piece at a time. 
-
-The patches Andrew pushed addressed the immediate issue so that now
-systems with nvdimm/DAX memory can at least initialize quick enough
-that systemd doesn't refuse to mount the root file system due to a
-timeout. The next patch set I have refactors things to reduce code and
-allow us to reuse some of the hotplug code for the deferred page init, 
-https://lore.kernel.org/lkml/20181017235043.17213.92459.stgit@localhost.localdomain/
-. After that I was planning to work on dealing with the PageReserved
-flag and trying to get that sorted out.
-
-I was hoping to wait until after Dan's HMM patches and Oscar's changes
-had been sorted before I get into any further refactor of this specific
-code.
-
+Rob
