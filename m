@@ -2,127 +2,105 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B7DEC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:20:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C58DC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:20:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E361B2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:20:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZnV4TR6x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E361B2084A
+	by mail.kernel.org (Postfix) with ESMTP id 5F20D2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:20:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F20D2084A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726529AbeJ2WJA (ORCPT
+        id S1726858AbeJ2WJT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 18:09:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60210 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725862AbeJ2WJA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 18:09:00 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9B5A2080A;
-        Mon, 29 Oct 2018 13:20:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540819220;
-        bh=b5/tuago8D5WvfnWBCpaKZxBL4k4rNqpm7I1T8K9G00=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZnV4TR6x5uxdRRXyW3OV6Uf/kf23iwxq9HaMuLrF/qRXFvfDdQIgyBXL38OHCDDm0
-         Ytigqy8NgZ7pSnWQZahbHMe0DX5+yB2awC8HHKrhaIu3Z/li5GaBDyeBK0cjrQvt/p
-         AMr7/K9Rge6oulUgwwBS95mIvM3Aq6Pjw7nOtEBo=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id BCDFC142C5F; Mon, 29 Oct 2018 10:20:01 -0300 (-03)
-Date:   Mon, 29 Oct 2018 10:20:01 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Colin King <colin.king@canonical.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drivers/perf: fix spelling mistake, EACCESS -> EACCES
-Message-ID: <20181029132001.GD21857@kernel.org>
-References: <20181026175839.4565-1-colin.king@canonical.com>
- <20181029122854.GB20813@kernel.org>
- <20181029123357.GA21857@kernel.org>
- <20181029123656.GB57235@gmail.com>
+        Mon, 29 Oct 2018 18:09:19 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34706 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725862AbeJ2WJT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 18:09:19 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 88785AE03;
+        Mon, 29 Oct 2018 13:20:38 +0000 (UTC)
+Date:   Mon, 29 Oct 2018 14:20:35 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mike Galbraith <efault@gmx.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+Subject: Re: memcg oops:
+ memcg_kmem_charge_memcg()->try_charge()->page_counter_try_charge()->BOOM
+Message-ID: <20181029132035.GI32673@dhcp22.suse.cz>
+References: <1540792855.22373.34.camel@gmx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181029123656.GB57235@gmail.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1540792855.22373.34.camel@gmx.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Oct 29, 2018 at 01:36:56PM +0100, Ingo Molnar escreveu:
-> 
-> * Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> 
-> > Em Mon, Oct 29, 2018 at 09:28:54AM -0300, Arnaldo Carvalho de Melo escreveu:
-> > > Em Fri, Oct 26, 2018 at 06:58:39PM +0100, Colin King escreveu:
-> > > > From: Colin Ian King <colin.king@canonical.com>
-> > > > 
-> > > > Trivial fix to a spelling mistake of the error access name EACCESS,
-> > > > rename to EACCES
-> > > 
-> > > Thanks, applied.
-> > > 
-> > > And I also took the chance to fix another spelling mistake, on this same
-> > > line:
-> > > 
-> > > -        *  -EACCESS    -- @event is for this PMU, @event is valid, but no privilidges
-> > > +        *  -EACCES     -- @event is for this PMU, @event is valid, but no privilidges
-> > >                                                                                  ^
-> > >                                                                                  ^
-> > >                                                                                  ^
-> > >                                                                                  ^
-> > 
-> > But I see Ingo has already merged your patch, lets fix that one later
-> > then :-)
-> 
-> I zapped my commit, please let's merge your upgraded version.
-> 
-> BTW., while at it, could we also try a header refresh now that a lot of 
-> the merge window changes to headers are behind us, this is from the 
-> perf/urgent build (f0718d792b8a)"
-> 
-> Warning: Kernel ABI header at 'tools/include/uapi/linux/kvm.h' differs from latest version at 'include/uapi/linux/kvm.h'
-> diff -u tools/include/uapi/linux/kvm.h include/uapi/linux/kvm.h
-> Warning: Kernel ABI header at 'tools/include/uapi/sound/asound.h' differs from latest version at 'include/uapi/sound/asound.h'
-> diff -u tools/include/uapi/sound/asound.h include/uapi/sound/asound.h
-> Warning: Kernel ABI header at 'tools/arch/x86/include/asm/cpufeatures.h' differs from latest version at 'arch/x86/include/asm/cpufeatures.h'
-> diff -u tools/arch/x86/include/asm/cpufeatures.h arch/x86/include/asm/cpufeatures.h
-> Warning: Kernel ABI header at 'tools/arch/x86/include/uapi/asm/kvm.h' differs from latest version at 'arch/x86/include/uapi/asm/kvm.h'
-> diff -u tools/arch/x86/include/uapi/asm/kvm.h arch/x86/include/uapi/asm/kvm.h
-> Warning: Kernel ABI header at 'tools/arch/powerpc/include/uapi/asm/kvm.h' differs from latest version at 'arch/powerpc/include/uapi/asm/kvm.h'
-> diff -u tools/arch/powerpc/include/uapi/asm/kvm.h arch/powerpc/include/uapi/asm/kvm.h
-> Warning: Kernel ABI header at 'tools/arch/s390/include/uapi/asm/kvm.h' differs from latest version at 'arch/s390/include/uapi/asm/kvm.h'
-> diff -u tools/arch/s390/include/uapi/asm/kvm.h arch/s390/include/uapi/asm/kvm.h
-> Warning: Kernel ABI header at 'tools/arch/arm64/include/uapi/asm/unistd.h' differs from latest version at 'arch/arm64/include/uapi/asm/unistd.h'
-> diff -u tools/arch/arm64/include/uapi/asm/unistd.h arch/arm64/include/uapi/asm/unistd.h
-> Warning: Kernel ABI header at 'tools/include/uapi/asm-generic/unistd.h' differs from latest version at 'include/uapi/asm-generic/unistd.h'
-> diff -u tools/include/uapi/asm-generic/unistd.h include/uapi/asm-generic/unistd.h
-> Warning: Kernel ABI header at 'tools/include/uapi/linux/mman.h' differs from latest version at 'include/uapi/linux/mman.h'
-> diff -u tools/include/uapi/linux/mman.h include/uapi/linux/mman.h
-> 
-> ?
-> 
-> Thanks!
+Cc Vladimir and Johannes - the full report is http://lkml.kernel.org/r/1540792855.22373.34.camel@gmx.de
 
-Ok, I'll put together a perf/urgent with those things resolved, may take
-a day or two as I'm working on addressing DaveM's reported issues and in
-fixing the regressions that that "remove fallback to kallsyms for
-userspace addresses" patch caused.
+On Mon 29-10-18 07:00:55, Mike Galbraith wrote:
+> Greetings,
+> 
+> The attached config makes boom on both real HW, and KVM.  First
+> encountered after RT merge, then reproduced in virgin source with
+> config based on the enterprise-ish RT config.
+> 
+> [    4.412732] BUG: unable to handle kernel NULL pointer dereference at 00000000000000f8
+> [    4.414047] PGD 0 P4D 0
+> [    4.414769] Oops: 0002 [#1] PREEMPT SMP PTI
+> [    4.415651] CPU: 7 PID: 1 Comm: systemd Not tainted 4.19.0.g69d5b97-preempt #110
+> [    4.416849] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.0.0-prebuilt.qemu-project.org 04/01/2014
+> [    4.419475] RIP: 0010:page_counter_try_charge+0x25/0xc0
 
-- Arnaldo
+I strongly suspect memcg is NULL here.
+
+> [    4.420976] Code: f3 c3 0f 1f 00 0f 1f 44 00 00 48 85 ff 0f 84 a8 00 00 00 41 56 48 89 f8 41 55 49 89 fe 41 54 49 89 d5 55 49 89 f4 53 48 89 f3 <f0> 48 0f c1 1f 48 01 f3 48 39 5f 18 48 89 fd 73 17 eb 41 48 89 e8
+> [    4.424162] RSP: 0018:ffffb27840c57cb0 EFLAGS: 00010202
+> [    4.425236] RAX: 00000000000000f8 RBX: 0000000000000020 RCX: 0000000000000200
+> [    4.426467] RDX: ffffb27840c57d08 RSI: 0000000000000020 RDI: 00000000000000f8
+> [    4.427652] RBP: 0000000000000001 R08: 0000000000000000 R09: ffffb278410bc000
+> [    4.428883] R10: ffffb27840c57ed0 R11: 0000000000000040 R12: 0000000000000020
+> [    4.430168] R13: ffffb27840c57d08 R14: 00000000000000f8 R15: 00000000006000c0
+> [    4.431411] FS:  00007f79081a3940(0000) GS:ffff92a4b7bc0000(0000) knlGS:0000000000000000
+> [    4.432748] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [    4.433836] CR2: 00000000000000f8 CR3: 00000002310ac002 CR4: 00000000001606e0
+> [    4.435500] Call Trace:
+> [    4.436319]  try_charge+0x92/0x7b0
+> [    4.437284]  ? unlazy_walk+0x4c/0xb0
+> [    4.438676]  ? terminate_walk+0x91/0x100
+> [    4.439984]  memcg_kmem_charge_memcg+0x28/0x80
+> [    4.441059]  memcg_kmem_charge+0x88/0x1d0
+> [    4.442105]  copy_process.part.37+0x23a/0x2070
+
+Could you faddr2line this please?
+
+> [    4.443128]  ? shmem_tmpfile+0x90/0x90
+> [    4.444061]  ? shmem_mknod+0xbf/0xd0
+> [    4.444968]  _do_fork+0xbd/0x3e0
+> [    4.445907]  ? trace_hardirqs_off_thunk+0x1a/0x1c
+> [    4.447729]  do_syscall_64+0x5a/0x170
+> [    4.449792]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> [    4.451386] RIP: 0033:0x7f790672e193
+> [    4.452285] Code: db 45 85 ed 0f 85 ad 01 00 00 64 4c 8b 04 25 10 00 00 00 31 d2 4d 8d 90 d0 02 00 00 31 f6 bf 11 00 20 01 b8 38 00 00 00 0f 05 <48> 3d 00 f0 ff ff 0f 87 f1 00 00 00 85 c0 41 89 c4 0f 85 fe 00 00
+> [    4.455686] RSP: 002b:00007ffe60886b70 EFLAGS: 00000246 ORIG_RAX: 0000000000000038
+> [    4.457112] RAX: ffffffffffffffda RBX: 00007ffe60886b70 RCX: 00007f790672e193
+> [    4.458488] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000001200011
+> [    4.461035] RBP: 00007ffe60886bc0 R08: 00007f79081a3940 R09: 0000000000000000
+> [    4.462378] R10: 00007f79081a3c10 R11: 0000000000000246 R12: 0000000000000000
+> [    4.463626] R13: 0000000000000000 R14: 0000000000000000 R15: 000055838becab00
+> [    4.464862] Modules linked in:
+> [    4.465649] Dumping ftrace buffer:
+> [    4.466502]    (ftrace buffer empty)
+> [    4.467336] CR2: 00000000000000f8
+-- 
+Michal Hocko
+SUSE Labs
