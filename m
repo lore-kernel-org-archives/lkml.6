@@ -2,129 +2,125 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 615D3C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 01:30:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BF29C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 01:31:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E565920827
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 01:30:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E565920827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
+	by mail.kernel.org (Postfix) with ESMTP id 8F95720827
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 01:31:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="QeEbJ+ah"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F95720827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726222AbeJ2KQE (ORCPT
+        id S1726437AbeJ2KR7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 06:16:04 -0400
-Received: from nautica.notk.org ([91.121.71.147]:56429 "EHLO nautica.notk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725943AbeJ2KQE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 06:16:04 -0400
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id 9982EC009; Mon, 29 Oct 2018 02:29:39 +0100 (CET)
-Date:   Mon, 29 Oct 2018 02:29:24 +0100
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [GIT PULL] 9p updates for 4.20
-Message-ID: <20181029012924.GA31433@nautica>
+        Mon, 29 Oct 2018 06:17:59 -0400
+Received: from mail-lj1-f173.google.com ([209.85.208.173]:43058 "EHLO
+        mail-lj1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725886AbeJ2KR7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 06:17:59 -0400
+Received: by mail-lj1-f173.google.com with SMTP id g26-v6so4908892lja.10
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 18:31:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GP/v4e14BPItWcRABGxKw20BeVuq6xYG7hmyleerOrQ=;
+        b=QeEbJ+ahb0MG63MXbE5rFrEn2VHosaPiPK0hUsP3fK4Quiu3nF4GXfe7kDQlcyRpOV
+         hhOra5Qgwgsa95uAauFeMzCYtlDQxfbGjgPZnd8MUc1YDhHfKt3HD1TPfy270Rn4ONn9
+         S4jpeqLcHrUg04WLOgGiroysChMBaCnaT6yGQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GP/v4e14BPItWcRABGxKw20BeVuq6xYG7hmyleerOrQ=;
+        b=cp6EvA5f4x2ciAgyYr8EBWwvU8H7pxiLG69MZv5t0tZc+PB/gM2ZD4Wnn1eMMFIdGG
+         oM1MHo1ZnXaFW9OO9X6tk8emsH0AkiWCiNV//6KJQN3nA6ZfncWoppXa+arVHsjYA5PL
+         De/m8TzA0GecyuwvX0g5djjjn5Cz9O7GdbYPfp3gQFYf1tN3y2uh3AAFkGcSSgs2/QTN
+         xNBzKtc6BifYqsXsw3ITkv8pn8wgQTocNUsCsw+Es/EpAJjdTmk7sMnG4BVtCkCWeur1
+         nNza/ZsN3LIvitO0Rcqt42zywIz/iAA+IMM7opniuLkTT1cS2wHvdIB0gPsf9NKNYnGr
+         8p8g==
+X-Gm-Message-State: AGRZ1gJzuxyU5U445TfxgXMIQS016kAJPspR9RYFQFKZS7urNzHxfCFC
+        4hOfyz49/AbpydZ0wGKkphSBtpQ9EvEedg==
+X-Google-Smtp-Source: AJdET5ez6A/8a+CrThW3qEdgk2Z1NXP2jhL78mAKt3TP22eEiZhmgJieagV9o24kuz1ZPdyton8XZA==
+X-Received: by 2002:a2e:812:: with SMTP id 18-v6mr6731292lji.10.1540776693512;
+        Sun, 28 Oct 2018 18:31:33 -0700 (PDT)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id u77-v6sm2783903lja.37.2018.10.28.18.31.32
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 28 Oct 2018 18:31:32 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id t22-v6so6169810lji.7
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 18:31:32 -0700 (PDT)
+X-Received: by 2002:a2e:7801:: with SMTP id t1-v6mr2701377ljc.120.1540776691653;
+ Sun, 28 Oct 2018 18:31:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <20181028220927.56227-1-post@steffenvogel.de> <CAADWXX89jMiTp-Nz887tv+6YwWkrWF8qYfpuTkmk2OE3_SqeGA@mail.gmail.com>
+ <20181029002919.3cek4f27mdrnrgkj@cam.home.0l.dn42>
+In-Reply-To: <20181029002919.3cek4f27mdrnrgkj@cam.home.0l.dn42>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 28 Oct 2018 18:31:15 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjMMAOSFdr-+ABZoffQ6NsJVB=iiQ97FUrCC6rt7njccA@mail.gmail.com>
+Message-ID: <CAHk-=wjMMAOSFdr-+ABZoffQ6NsJVB=iiQ97FUrCC6rt7njccA@mail.gmail.com>
+Subject: Re: w1: coding style and checkpatch fixes
+To:     post@steffenvogel.de
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Sun, Oct 28, 2018 at 5:30 PM Steffen Vogel <post@steffenvogel.de> wrote:
+>
+> For those who are interested. Rspamd, by default, includes the sender
+> address into the list of signed headers:
 
-Here is a 9p update for 4.20.
+Ugh. That's just broken.
 
-Highlights this time around are the end of Matthew's work to remove the
-custom 9p request cache and use a slab directly for requests, with some
-extra patches on my end to not degrade performance, but it's a very good
-cleanup.
-Tomas and I fixed a few more syzkaller bugs (refcount is the big one),
-and I had a go at the coverity bugs and at some of the bugzilla reports
-we had open for a while.
+> There is RFC6377 which discusses this problem. On possible solution is
+> a mailing list service which understands DKIM and can check/sign the
+> messages.
 
-I'm a bit disappointed that I couldn't get much reviews for a few of my
-own patches, but the big ones got some and it's all been soaking in
-linux-next for quite a while so I think it should be OK.
+I think that is almost purely historical.
 
-Lastly, as said last time, I'm going to be confusing again as I changed
-my PGP key - it's signed by the old one - but should keep this one for
-the forseeable future now.
+People figured it out. The actual solution was that mailing lists just
+don't rewrite headers or bodies, but they do set that "sender" line
+(and add various new ones, like "List-ID" etc unsubscribe
+information).
 
-Thanks!
+And that was exactly so that dkim would just work, without the list
+having to then add its own signing that just causes even more
+problems.
 
-The following changes since commit 5b394b2ddf0347bef56e50c69a58773c94343ff3:
+[ And no, lkml isn't actually great at this - it will mess up
+whitespace on headers, so it only works with a relaxed/relaxed dkim
+signature.
 
-  Linux 4.19-rc1 (2018-08-26 14:11:59 -0700)
+  But honestly, if you use strict/strict, you're doing something
+wrong. It's a bad idea. Smtp was never whitespace-strict ]
 
-are available in the Git repository at:
+> This is actually according to RFC. Listing signed header-fields
+> multiple times prohibits them from beeing modified and resigned my other
+> MTAs.
 
-  git://github.com/martinetd/linux tags/9p-for-4.20
+Again, that is mostly historical baggage. I don't think anybody
+actually does that.
 
-for you to fetch changes up to fb488fc1f2b4c5128540b032892ddec91edaf8d9:
+So yes, you'll find a lot of "what ifs" from ten years ago when people
+weren't actually using dkim and mailing lists didn't try to work with
+it. Mostly theoretical "this is how it could work".
 
-  9p/trans_fd: put worker reqs on destroy (2018-10-10 09:14:34 +0900)
+I've seen some truly horrendous suggestions for mailing lists, like
+always rewriting "From" headers etc exactly so that you can then make
+a new dkim signature. That would make for a really bad mailing list.
 
-----------------------------------------------------------------
-Dan Carpenter (1):
-      9p: potential NULL dereference
+.. and yes, I'm sure such bad mailing lists exist.
 
-Dinu-Razvan Chis-Serban (1):
-      9p locks: add mount option for lock retry interval
-
-Dominique Martinet (12):
-      9p/xen: fix check for xenbus_read error in front_probe
-      v9fs_dir_readdir: fix double-free on p9stat_read error
-      9p: clear dangling pointers in p9stat_free
-      9p: embed fcall in req to round down buffer allocs
-      9p: add a per-client fcall kmem_cache
-      9p/rdma: do not disconnect on down_interruptible EAGAIN
-      9p: acl: fix uninitialized iattr access
-      9p/rdma: remove useless check in cm_event_handler
-      9p: p9dirent_read: check network-provided name length
-      9p locks: fix glock.client_id leak in do_lock
-      9p/trans_fd: abort p9_read_work if req status changed
-      9p/trans_fd: put worker reqs on destroy
-
-Gertjan Halkes (1):
-      9p: do not trust pdu content for stat item size
-
-Gustavo A. R. Silva (1):
-      9p: fix spelling mistake in fall-through annotation
-
-Matthew Wilcox (2):
-      9p: Use a slab for allocating requests
-      9p: Remove p9_idpool
-
-Tomas Bortoli (3):
-      9p: rename p9_free_req() function
-      9p: Add refcount to p9_req_t
-      9p: Rename req to rreq in trans_fd
-
- fs/9p/acl.c             |   2 +-
- fs/9p/v9fs.c            |  21 +++++
- fs/9p/v9fs.h            |   1 +
- fs/9p/vfs_dir.c         |  19 +---
- fs/9p/vfs_file.c        |  24 +++++-
- include/net/9p/9p.h     |  12 +--
- include/net/9p/client.h |  71 ++++++---------
- net/9p/Makefile         |   1 -
- net/9p/client.c         | 551 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++---------------------------------------------------------
- net/9p/mod.c            |   9 +-
- net/9p/protocol.c       |  20 ++++-
- net/9p/trans_fd.c       |  64 +++++++++-----
- net/9p/trans_rdma.c     |  37 ++++----
- net/9p/trans_virtio.c   |  44 +++++++---
- net/9p/trans_xen.c      |  17 ++--
- net/9p/util.c           | 140 ------------------------------
- 16 files changed, 482 insertions(+), 551 deletions(-)
- delete mode 100644 net/9p/util.c
+                Linus
