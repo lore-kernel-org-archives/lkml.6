@@ -2,138 +2,100 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=0.2 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	URIBL_SBL,URIBL_SBL_A autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B51E6C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 22:47:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F35AC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 22:48:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D28E2087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 22:47:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D28E2087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 1DCD120870
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 22:48:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sfconservancy.org header.i=@sfconservancy.org header.b="GrwOsiMc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DCD120870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sfconservancy.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730433AbeJ3HiB (ORCPT
+        id S1730618AbeJ3Hjh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 03:38:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:46566 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730417AbeJ3HiB (ORCPT
+        Tue, 30 Oct 2018 03:39:37 -0400
+Received: from pine.sfconservancy.org ([162.242.171.33]:45796 "EHLO
+        pine.sfconservancy.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730604AbeJ3Hjh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 03:38:01 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 84EAB33F3;
-        Mon, 29 Oct 2018 22:47:12 +0000 (UTC)
-Date:   Mon, 29 Oct 2018 15:47:11 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     kernel test robot <rong.a.chen@intel.com>
-Cc:     Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Michal Hocko <mhocko@suse.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Chris Zankel <chris@zankel.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greentime Hu <green.hu@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guan Xuetao <gxt@pku.edu.cn>, Ingo Molnar <mingo@redhat.com>,
-        "James E.J. Bottomley" <jejb@parisc-linux.org>,
-        Jonas Bonn <jonas@southpole.se>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ley Foon Tan <lftan@altera.com>,
-        Mark Salter <msalter@redhat.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Matt Turner <mattst88@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Michal Simek <monstr@monstr.eu>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Richard Kuo <rkuo@codeaurora.org>,
-        Richard Weinberger <richard@nod.at>,
-        Rich Felker <dalias@libc.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Serge Semin <fancer.lancer@gmail.com>,
+        Tue, 30 Oct 2018 03:39:37 -0400
+X-Greylist: delayed 598 seconds by postgrey-1.27 at vger.kernel.org; Tue, 30 Oct 2018 03:39:36 EDT
+Received: from localhost (a79-168-5-133.cpe.netcabo.pt [79.168.5.133])
+        (Authenticated sender: bkuhn)
+        by pine.sfconservancy.org (Postfix) with ESMTPSA id 5A00EE477;
+        Mon, 29 Oct 2018 22:38:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=sfconservancy.org;
+        s=pine; t=1540852734;
+        bh=J2j4IcRAYAWx87Sf5KYAlA4mDpXi9ouQCudY3s8XhAM=;
+        h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+        b=GrwOsiMcIKJOM10amNjyMF0A526IOqxcqqdoVDu3ive1tSdOHCuU5mrccJ3LvCXyU
+         eKPVQLUR+5iomNbTOmLrh0sxkRioM1jW4xK+gbZTs6qMsQrWnz7f4rYT8WiNOz9kQ/
+         JGBk7mKuHZuYDIdY5l38ufCQzPXWBaCmXUR/3ZhhGKkkslmYnh+swK4JoQBdPNpUBE
+         CU8soFXIK7JDhCYavMQzkiGG0VurwpiqtTaoH9Pobwcsw6rKdpX55Cd/NkSeBXveiq
+         jxUXpFo7SSWHB8yb9YgxWRDgKJnC7tI1Ao+5CPEILJ6iNjnUV4SGnZ2zCuZCSEs9uf
+         ZDxFdoM69lPuw==
+From:   "Bradley M. Kuhn" <bkuhn@sfconservancy.org>
+To:     ksummit-discuss@lists.linuxfoundation.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        LKML <linux-kernel@vger.kernel.org>, lkp@01.org
-Subject: Re: [LKP] [mm] 68c37ccedc:
- BUG:kernel_hang_in_early-boot_stage,last_printk:early_console_in_setup_code
-Message-Id: <20181029154711.df59cb8d6150a55f5cfef67d@linux-foundation.org>
-In-Reply-To: <20181029131501.GP24195@shao2-debian>
-References: <20181029131501.GP24195@shao2-debian>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Laura Abbott <labbott@redhat.com>, editor@lwn.net,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Chris Mason <clm@fb.com>,
+        bruce@perens.com
+Subject: Re: The linux devs can rescind their license grant.
+In-Reply-To: <20181025081911.GB11343@kroah.com>
+Organization: Software Freedom Conservancy
+References: <185b786a2bd6e8d527dca161dc42e4f1@redchan.it> <20181025081911.GB11343@kroah.com>
+Face:   iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAFVBMVEVAKiCGSDptUUeJe3eu
+ eGm7dGzcopjFce4jAAACdklEQVQ4y2WUwZKbMAyGjZPesWt6xg7dcxbonmNW+Fx2MPdujN//EfrL
+ 2XabVElmGEufflkSEQ4mu5Eo5GIvgQSfCdf3bUcpf1q6yL7v2StGCuHv+ZZ7yYdwyjsg56u4Ee3x
+ X4BVWlmIlijdIywiuKZAYfsX6Qtxlo9AfhdMtBJ3uBPJg5A34hG5tg6EOI7hgaBCtO4/jXQjJD0S
+ fJEbcQ/kKy4iTuLYIZ4/n8RZngT3Nj8aE6iKMA1Y2LYtkDEdhZ6Jc0feWqX8inJ8rdwr0TuIAzS0
+ 1LpSTcikdUc0vkyHojFZN71O1m45lZxpOn/vhWxBONONWpuxB9yZMDkF4uJo8q4dntsxX/zkiPL1
+ 6t+Eq4V4MsY9Kf0lT2PpQqL5VTzXlvCEfk0dNG5NSPubsMqEpzBD0zc5Unjhm6cfIBQK5Kjdx7yv
+ /JBymifRKXPbwlXNuDrNcd5yCKhq6SjSvu/LuhYwsgahuyAQFePczLyGG/ZlCwbEs6Y173lfGhAg
+ i8o0iJM7dDMHNo1B8hiZoK+DGHpFEWH7EhdKc/6F2m5EX5kmbtvcKFE1zUYoLpIuhPdxT2v8WVfe
+ r+my7msqjkqpZo7Ga6UqqZQ+og2HQliH/NZbZWtr8VuTZ2KQRhtSlVEcruoKnSjE0FrfLXWtFL5q
+ ER6NXhw7RGWYEBWL+QYTmT3fYzhbQpT3yifuVEqJ/GtJhfTfAs1NhGGzQuj0qRC1BYEZ5L1MD7Qd
+ 2IFNUcYEInQLk0FNRn84lMX+IrNVxAT5U3HgjcMC4j/EYPwgxr4+3BytsHYCkooUyHb445AaIjnM
+ WN9sRi0/HGcBhFX4XUx+atnxG85wHO8ZbYsqAAAAAElFTkSuQmCC
+Date:   Mon, 29 Oct 2018 22:31:46 +0000
+Message-ID: <87a7mwz8od.fsf@ebb.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 29 Oct 2018 21:15:01 +0800 kernel test robot <rong.a.chen@intel.com> wrote:
+On Thu, Oct 25, 2018 at 07:56:26AM +0000, visionsofalice@redchan.it wrote:
+> The linux devs can rescind their license grant.
+Greg KH responded on Thu, 25 Oct 2018 09:19:11 +0100:
+>> No they can not, please do not keep spreading false information.
 
-> FYI, we noticed the following commit (built with gcc-7):
-> 
-> commit: 68c37ccedcde10514898f4ba3b28c0de85c590d1 ("mm: nobootmem: remove bootmem allocation APIs")
-> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
-> 
-> in testcase: boot
-> 
-> on test machine: qemu-system-x86_64 -enable-kvm -cpu host -smp 2 -m 2G
-> 
-> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
-> 
->
-> +-----------------------------------------------------------------------------+------------+------------+
-> |                                                                             | 6881a1e729 | 68c37ccedc |
-> +-----------------------------------------------------------------------------+------------+------------+
-> | boot_successes                                                              | 4          | 0          |
-> | boot_failures                                                               | 0          | 4          |
-> | BUG:kernel_hang_in_early-boot_stage,last_printk:early_console_in_setup_code | 0          | 4          |
-> +-----------------------------------------------------------------------------+------------+------------+
+I was explicitly cc'ed on this thread by visionsofalice.  I've read the
+whole thread, and the only useful thing I can contribute here is to agree
+with Greg and additionally provide some backup research on the point:
+https://sfconservancy.org/news/2018/sep/26/GPLv2-irrevocability/
 
-Well that's irritating.
+Software Freedom Conservancy engaged our legal counsel to write a new
+section for the Copyleft Guide that further explains the irrevocability of
+GPLv2.  We published this when others raised these specious claims back in
+September.  Direct link to new section:
+https://copyleft.org/guide/comprehensive-gpl-guidech8.html#x11-540007.4
 
-Does the problem remain when the entire patch series is applied?
 
-mm-remove-config_no_bootmem.patch
-mm-remove-config_no_bootmem-fix.patch
-mm-remove-config_have_memblock.patch
-mm-remove-config_have_memblock-fix.patch
-mm-remove-config_have_memblock-fix-2.patch
-mm-remove-config_have_memblock-fix-3.patch
-mm-remove-bootmem-allocator-implementation.patch
-mm-nobootmem-remove-dead-code.patch
-memblock-rename-memblock_alloc_nid_try_nid-to-memblock_phys_alloc.patch
-memblock-remove-_virt-from-apis-returning-virtual-address.patch
-memblock-replace-alloc_bootmem_align-with-memblock_alloc.patch
-memblock-replace-alloc_bootmem_low-with-memblock_alloc_low.patch
-memblock-replace-__alloc_bootmem_node_nopanic-with-memblock_alloc_try_nid_nopanic.patch
-memblock-replace-alloc_bootmem_pages_nopanic-with-memblock_alloc_nopanic.patch
-memblock-replace-alloc_bootmem_low-with-memblock_alloc_low-2.patch
-memblock-replace-__alloc_bootmem_nopanic-with-memblock_alloc_from_nopanic.patch
-memblock-add-align-parameter-to-memblock_alloc_node.patch
-memblock-replace-alloc_bootmem_pages_node-with-memblock_alloc_node.patch
-memblock-replace-__alloc_bootmem_node-with-appropriate-memblock_-api.patch
-memblock-replace-alloc_bootmem_node-with-memblock_alloc_node.patch
-memblock-replace-alloc_bootmem_low_pages-with-memblock_alloc_low.patch
-memblock-replace-alloc_bootmem_pages-with-memblock_alloc.patch
-memblock-replace-__alloc_bootmem-with-memblock_alloc_from.patch
-memblock-replace-alloc_bootmem-with-memblock_alloc.patch
-mm-nobootmem-remove-bootmem-allocation-apis.patch
-memblock-replace-free_bootmem_node-with-memblock_free.patch
-memblock-replace-free_bootmem_late-with-memblock_free_late.patch
-memblock-rename-free_all_bootmem-to-memblock_free_all.patch
-memblock-rename-__free_pages_bootmem-to-memblock_free_pages.patch
-mm-remove-nobootmem.patch
-memblock-replace-bootmem_alloc_-with-memblock-variants.patch
-mm-remove-include-linux-bootmemh.patch
-mm-remove-include-linux-bootmemh-fix.patch
-mm-remove-include-linux-bootmemh-fix-2.patch
-mm-remove-include-linux-bootmemh-fix-3.patch
-docs-boot-time-mm-remove-bootmem-documentation.patch
-
+HTH,
+-- 
+Bradley M. Kuhn
+Distinguished Technologist of Software Freedom Conservancy
+========================================================================
+Become a Conservancy Supporter today: https://sfconservancy.org/supporter
