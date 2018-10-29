@@ -2,114 +2,153 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D14B9C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:49:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92680C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:49:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F09E2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:49:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F09E2084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 593632084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:49:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="OBBfqoEs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 593632084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729539AbeJ2RhS (ORCPT
+        id S1729457AbeJ2RhI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 13:37:18 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:43078 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729525AbeJ2RhR (ORCPT
+        Mon, 29 Oct 2018 13:37:08 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:36682 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729418AbeJ2RhI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 13:37:17 -0400
-Received: by mail-qt1-f195.google.com with SMTP id q41-v6so8254875qtq.10
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 01:49:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HttdNTd1jhKbq8SfoIPuvYZigOvj5l86pPRsLMOgT0g=;
-        b=GWHQzaOmEbts2j30l+LmLBQdrXvk0VA6bPvF4ouTgVyDto79CIemcA0x6SgLPp0e06
-         iyU6BDqd60gMgaBV21c9eFDWQFDEh6m4Zes32YSUoD0xWvzU5AfpxAsBA0VljB5aDIXT
-         9HaBvNK54svopG7AL7adQf7yeHEDh3HfF/ck98jlopoPqW3Abnldvb5sM3aQ9xkG39F7
-         v1f+GUjzoq0cFkFy8vzzL+gkSwAtm2HfCJ/4Rxs3rAWQ33ffpx37doEnV1qJZNrN5iWz
-         0lELam9rRxc3M6bKbCTYqF5alpYm4/8wwVKLGlqZlF4F3maTtXxt2qfB89VGfuuZ8/5i
-         kwMg==
-X-Gm-Message-State: AGRZ1gK2BSYTjv/8SfEmBSLyZv+DKjOldWqe31aMhDAkVeh9826sD1FC
-        /oXFyzLf4wh5KLj6W4GUKMCwvEppXiUhTL/dZ2AzFw==
-X-Google-Smtp-Source: AJdET5dRmlx+ucsVkMi/VCuYfY9EhpOfWe0TShA4BdA528F7oGgmyzd59gtKqmjsw/srrod4Ve8fdBYbDd4KnOGe9pE=
-X-Received: by 2002:ac8:1a3b:: with SMTP id v56-v6mr11643924qtj.362.1540802977007;
- Mon, 29 Oct 2018 01:49:37 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAHk-=wiZ24JuVehJ5sEC0UG1Gk2nvB363wO02RRsR1oEht6R9Q@mail.gmail.com>
- <c6b7e5b26883c53db35454e9b0ffb44898517228.camel@perches.com>
- <CAHk-=wgTMd_orbgEmjtKdpPJdnFcho_-66_R3PBr7joxFOxqsw@mail.gmail.com> <nycvar.YFH.7.76.1810272338590.23511@cbobk.fhfr.pm>
-In-Reply-To: <nycvar.YFH.7.76.1810272338590.23511@cbobk.fhfr.pm>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Mon, 29 Oct 2018 09:49:25 +0100
-Message-ID: <CAO-hwJJjP1SJjcfGkr84yyPqYpCx-_6LSk5uDP2Twg2ouy_3+w@mail.gmail.com>
-Subject: Re: Another HID problem this merge window..
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>, joe@perches.com,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Hans de Goede <hdegoede@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 29 Oct 2018 13:37:08 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9T8nPFL030827;
+        Mon, 29 Oct 2018 08:49:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
+ bh=ljr1AVEDeyqNV2z//1XrWvkspXgCo1lAbTrhPYSDkVY=;
+ b=OBBfqoEseTQUF4I7mA3VeuDw1tqArlQDZ5yYYrg2X/Ecz2/chkRFq8LpZgywdpdjshB9
+ lJ3dddYX/nVuxG1yZWXaZC9KzQwpkiD6jWnZvC62DoUfIq/lZc2cUoJqXS3TdLCoAng0
+ SjN7wT8HM637QoSMaK05fvXWL5pbthwyUU+r30eTK7m1tlEFZ8CpZzA1529KnRJVLghl
+ YVms6h/7gaXkz2w4rLSynU6yI7fkwdVPhLrMpj+QAOP6EOXlMZ26T1fuTJh97BZBbnzo
+ vgafHZztRm7dbkD6FZVrSAUdOzHQYo0XZ51DgNp54hQOV3JaVJE1ZnrOngSdJI2tt0nE 2w== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2nduckrxpv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 29 Oct 2018 08:49:24 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9T8nOdT003603
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 29 Oct 2018 08:49:24 GMT
+Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9T8nO1V027654;
+        Mon, 29 Oct 2018 08:49:24 GMT
+Received: from will-ThinkCentre-M93p.cn.oracle.com (/10.182.70.234)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 29 Oct 2018 01:49:23 -0700
+From:   Jianchao Wang <jianchao.w.wang@oracle.com>
+To:     axboe@kernel.dk
+Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH V3 2/4] blk-mq: insert request without involving any io scheduler
+Date:   Mon, 29 Oct 2018 16:49:09 +0800
+Message-Id: <1540802951-5408-3-git-send-email-jianchao.w.wang@oracle.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1540802951-5408-1-git-send-email-jianchao.w.wang@oracle.com>
+References: <1540802951-5408-1-git-send-email-jianchao.w.wang@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9060 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810290085
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+When try to issue request directly, if the queue is stopped or
+quiesced, 'bypass_insert' will be ignored and return BLK_STS_OK to
+caller to avoid it dispatch request again. Then the request will
+be inserted with blk_mq_sched_insert_request. This is not correct
+for dm-rq case where we should avoid to pass through the underlying
+paths' io scheduler.
 
-On Sat, Oct 27, 2018 at 11:45 PM Jiri Kosina <jikos@kernel.org> wrote:
->
-> On Sat, 27 Oct 2018, Linus Torvalds wrote:
->
-> > I wonder if there is some truly old historical legacy there, ie the old
-> > PC keyboard support would have been configurable out only for expert
-> > users to avoid errors, and maybe the HID Kconfig file started getting
-> > ideas from that...
->
-> This really goes waaay back to times when we extracted all the quirks from
-> the generic driver (which became unmaintainable exactly because quirks
-> being sprinkled left and right) into specialized drivers, but didn't want
-> to cause too many user surprises that all of a sudden their configuration
-> regressed when it comes to hardware support.
->
-> We've had exactly this discussion multiple times before, see for example
->
->         https://lkml.org/lkml/2010/5/20/227
->
-> So I guess there is no need for replaying it, I think we're in complete
-> agreement.
+To fix it, use blk_mq_request_bypass_insert to insert the request
+into hctx->dispatch directly.
 
-On the things I have on my plate, I'll try to remove all of the tiny
-HID drivers that does nothing but some small remapping. This will
-probably need help from userspace ("firmware" or bpf loading), and I
-have not settled my plans yet.
-I also think we should probably clean up the Kconfig now that
-hid-generic can unbind itself if there is a special driver coming in.
-And that means that we should probably start removing the blacklist of
-devices that have special modules, to let them be taken by hid-generic
-on boot until their driver is loaded.
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+---
+ block/blk-mq.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
->
-> That being said, benff Kconfig setting definitely escaped attention. That
-> should never ever have been set to default y, I take blame for not
-> noticing that while applying the patch.
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 0f6328b..e0aa068 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -1729,13 +1729,14 @@ static blk_status_t __blk_mq_issue_directly(struct blk_mq_hw_ctx *hctx,
+ }
+ 
+ enum mq_decision {
++	MQ_INSERT_DISPATCH,
+ 	MQ_INSERT_QUEUE,
+ 	MQ_END_REQUEST,
+ 	MQ_DO_NOTHING,
+ };
+ 
+ static inline enum mq_decision
+-	blk_mq_make_dicision(blk_status_t ret, bool bypass_insert)
++	blk_mq_make_dicision(blk_status_t ret, bool bypass_insert, bool force)
+ {
+ 	enum mq_decision dec;
+ 
+@@ -1745,7 +1746,10 @@ static inline enum mq_decision
+ 		break;
+ 	case BLK_STS_DEV_RESOURCE:
+ 	case BLK_STS_RESOURCE:
+-		dec = bypass_insert ? MQ_DO_NOTHING : MQ_INSERT_QUEUE;
++		if (force)
++			dec = bypass_insert ? MQ_INSERT_DISPATCH : MQ_INSERT_QUEUE;
++		else
++			dec = bypass_insert ? MQ_DO_NOTHING : MQ_INSERT_QUEUE;
+ 		break;
+ 	default:
+ 		dec = bypass_insert ? MQ_DO_NOTHING : MQ_END_REQUEST;
+@@ -1761,7 +1765,7 @@ static blk_status_t blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
+ 						bool bypass_insert)
+ {
+ 	struct request_queue *q = rq->q;
+-	bool run_queue = true;
++	bool run_queue = true, force = false;
+ 	enum mq_decision dec;
+ 	blk_status_t ret = BLK_STS_RESOURCE;
+ 	int srcu_idx;
+@@ -1776,7 +1780,7 @@ static blk_status_t blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
+ 	 */
+ 	if (blk_mq_hctx_stopped(hctx) || blk_queue_quiesced(q)) {
+ 		run_queue = false;
+-		bypass_insert = false;
++		force = true;
+ 		goto out_unlock;
+ 	}
+ 
+@@ -1795,8 +1799,11 @@ static blk_status_t blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
+ out_unlock:
+ 	hctx_unlock(hctx, srcu_idx);
+ 
+-	dec = blk_mq_make_dicision(ret, bypass_insert);
++	dec = blk_mq_make_dicision(ret, bypass_insert, force);
+ 	switch(dec) {
++	case MQ_INSERT_DISPATCH:
++		blk_mq_request_bypass_insert(rq, run_queue);
++		break;
+ 	case MQ_INSERT_QUEUE:
+ 		blk_mq_sched_insert_request(rq, false, run_queue, false);
+ 		break;
+-- 
+2.7.4
 
-Not sure I have actually reviewed this one (I don't think so), but
-I'll keep this in my head for next drivers.
-
-Cheers,
-Benjamin
-
->
-> Thanks,
->
-> --
-> Jiri Kosina
-> SUSE Labs
->
