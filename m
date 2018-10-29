@@ -2,85 +2,104 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1371BC2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A154CC46475
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:15:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBDA820664
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:15:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBDA820664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 66A7F20851
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:15:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66A7F20851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729484AbeJ2SCp (ORCPT
+        id S1729562AbeJ2SDH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 14:02:45 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:52328 "EHLO mx1.redhat.com"
+        Mon, 29 Oct 2018 14:03:07 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:55242 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729300AbeJ2SCo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 14:02:44 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CB97086647;
-        Mon, 29 Oct 2018 09:14:58 +0000 (UTC)
-Received: from [10.72.12.201] (ovpn-12-201.pek2.redhat.com [10.72.12.201])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5792660C65;
-        Mon, 29 Oct 2018 09:14:49 +0000 (UTC)
-Subject: Re: Can VFIO pin only a specific region of guest mem when use pass
- through devices?
-To:     Simon Guo <wei.guo.simon@linux.alibaba.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Eric Auger <eric.auger@redhat.com>
-Cc:     qixuan.wu@linux.alibaba.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, Peter Xu <peterx@redhat.com>
-References: <20181029024228.GA4279@simonLocalRHEL7.x64>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <e4be89df-2bf9-76a2-497f-c6ba3256c95a@redhat.com>
-Date:   Mon, 29 Oct 2018 17:14:46 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1729467AbeJ2SDH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 14:03:07 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id D7EB320791; Mon, 29 Oct 2018 10:15:17 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-12-210.w90-88.abo.wanadoo.fr [90.88.133.210])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A26992099B;
+        Mon, 29 Oct 2018 10:15:07 +0100 (CET)
+Date:   Mon, 29 Oct 2018 10:15:08 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v3 00/25] drm/sun4i: Allwinner A64 MIPI-DSI support
+Message-ID: <20181029091508.gyhn2m5fnbucvb34@flea>
+References: <20181026144344.27778-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-In-Reply-To: <20181029024228.GA4279@simonLocalRHEL7.x64>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 29 Oct 2018 09:14:58 +0000 (UTC)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="36y45ohgmtyd7cei"
+Content-Disposition: inline
+In-Reply-To: <20181026144344.27778-1-jagan@amarulasolutions.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-On 2018/10/29 ÉÏÎç10:42, Simon Guo wrote:
-> Hi,
->
-> I am using network device pass through mode with qemu x86(-device vfio-pci,host=0000:xx:yy.z)
-> and ¡°intel_iommu=on¡± in host kernel command line, and it shows the whole guest memory
-> were pinned(vfio_pin_pages()), viewed by the ¡°top¡± RES memory output. I understand it is due
-> to device can DMA to any guest memory address and it cannot be swapped.
->
-> However can we just pin a rang of address space allowed by iommu group of that device,
-> instead of pin whole address space? I do notice some code like vtd_host_dma_iommu().
-> Maybe there is already some way to enable that?
->
-> Sorry if I missed some basics. I googled some but no luck to find the answer yet. Please
-> let me know if any discussion already raised on that.
->
-> Any other suggestion will also be appreciated. For example, can we modify the guest network
-> card driver to allocate only from a specific memory region(zone), and qemu advises guest
-> kernel to only pin that memory region(zone) accordingly?
->
-> Thanks,
-> - Simon
+--36y45ohgmtyd7cei
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Oct 26, 2018 at 08:13:19PM +0530, Jagan Teki wrote:
+> This series fixed the issues related to work DSI on 2-lane panel
+> which is reported on previous version[1].
+>=20
+> Few comments from previous version still in discussion, but I just
+> send this version just to group all working changes together.
+> anyway I will fix in this in next version if any.
+>=20
+> PLL_MIPI min rate is still weird, I tried many possible dclock rate
+> from panel driver to satisfy manual suggested min rate 500MHz but
+> none working so eventually moved 300MHz. any inputs on this area
+> are welcome.
+>=20
+> All these changes are tested in 2-lane, 4-lane MIPI-DSI panels.
+>=20
+> If anyone wants to test, use this repo [2] with WIP-A64-DSI branch.
 
-One possible method is to enable IOMMU of VM.
+A changelog would be nice here, and usually you shouldn't send a new
+version while there is ongoing discussion on the previous version.
 
-Peter (cced) may know more.
+Maxime
 
-Thanks
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
+--36y45ohgmtyd7cei
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW9bPnAAKCRDj7w1vZxhR
+xc3TAPsGM9mbbgPEbeemnJdAp3i8+8IXWkv2qSQ+xPuWMuQo1AD/erFiP6S+Y096
+5le9/Ejs/zgE90IGY1rjAwpBliviFgs=
+=aut5
+-----END PGP SIGNATURE-----
+
+--36y45ohgmtyd7cei--
