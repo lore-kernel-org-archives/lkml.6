@@ -2,100 +2,122 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00AC3C46475
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 07:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C15DC46475
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 07:26:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C49BC2080A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 07:26:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C49BC2080A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTP id 241692080A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 07:26:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="fUhqPpuk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 241692080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729544AbeJ2QOA (ORCPT
+        id S1729504AbeJ2QNz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 12:14:00 -0400
-Received: from mail-out.m-online.net ([212.18.0.10]:53854 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729493AbeJ2QN7 (ORCPT
+        Mon, 29 Oct 2018 12:13:55 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:51824 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729370AbeJ2QNZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 12:13:59 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 42k5kb3qwnz1rLLl;
-        Mon, 29 Oct 2018 08:26:31 +0100 (CET)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 42k5kb376lz1qrHp;
-        Mon, 29 Oct 2018 08:26:31 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id H6tJpSwA3Tuj; Mon, 29 Oct 2018 08:26:30 +0100 (CET)
-X-Auth-Info: HkHnSDBmUMRbLkghsJTiMCm7TyFlLpkFUYcxVtSl2/Q=
-Received: from crub.agik.hopto.org (p5088702D.dip0.t-ipconnect.de [80.136.112.45])
+        Mon, 29 Oct 2018 12:13:25 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Mon, 29 Oct 2018 08:26:30 +0100 (CET)
-From:   Anatolij Gustschin <agust@denx.de>
-To:     atull@kernel.org, mdf@kernel.org
-Cc:     linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andreas Puhm <puhm@oregano.at>
-Subject: [PATCH v2] fpga: altera-cvp: Fix registration for CvP incapable devices
-Date:   Mon, 29 Oct 2018 08:26:30 +0100
-Message-Id: <20181029072630.13339-1-agust@denx.de>
-X-Mailer: git-send-email 2.17.1
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id D1E048781F;
+        Mon, 29 Oct 2018 20:25:53 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1540797953;
+        bh=aa81lk+tnvlI+U6sRrADkZjfMbd7061EJ7B4jRO4Mkw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=fUhqPpuk6HVATv7DZN19baA3cvUvop8ygtGR1P9zfdqBYEbLc+qH+Bol3n72xlAuT
+         tu9V8J63kE6hE9RpGiYYhx5xNr5+16xzBUU8O535oGfSNmNaMzbTQfDNQE8KVQxSNv
+         m1SnF/MA9gCiAFotKYiHM75/E8RxCeuuD5xaIGuP23ScyRzV7OpGjr+HvwekHG/BGV
+         nwHpZPqS9phLWATmjvBVBV1ECFO8+Cvervfa3TOIsmfrG98nNzy68QXybwmTrMdHBG
+         Zz1DxrdARWfSfOsefMeGev8TXOkogn0oGaOx9eZrMFLuePcuc+V1BnEVpyXwnv/3wR
+         QtJ43HrMLNTpA==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5bd6b6010000>; Mon, 29 Oct 2018 20:25:53 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+        by smtp (Postfix) with ESMTP id BBC8713EFD8;
+        Mon, 29 Oct 2018 20:25:53 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id E11BC1E21FF; Mon, 29 Oct 2018 20:25:48 +1300 (NZDT)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     linux@armlinux.org.uk
+Cc:     u.kleine-koenig@pengutronix.de, jlu@pengutronix.de, bp@alien8.de,
+        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Subject: [PATCH v5 5/8] ARM: l2x0: add marvell,ecc-enable property for aurora
+Date:   Mon, 29 Oct 2018 20:25:32 +1300
+Message-Id: <20181029072535.31667-6-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181029072535.31667-1-chris.packham@alliedtelesis.co.nz>
+References: <20181029072535.31667-1-chris.packham@alliedtelesis.co.nz>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andreas Puhm <puhm@oregano.at>
+The aurora cache on the Marvell Armada-XP SoC supports ECC protection
+for the L2 data arrays. Add a "marvell,ecc-enable" device tree property
+which can be used to enable this.
 
-The probe function needs to verify the CvP enable bit in order to
-properly determine if FPGA Manager functionality can be safely
-enabled.
-
-Fixes: 34d1dc17ce97 ("fpga manager: Add Altera CvP driver")
-Signed-off-by: Andreas Puhm <puhm@oregano.at>
-Signed-off-by: Anatolij Gustschin <agust@denx.de>
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+[jlu@pengutronix.de: use aurora specific define AURORA_ACR_ECC_EN]
+Signed-off-by: Jan Luebbe <jlu@pengutronix.de>
 ---
-Changes in v2:
- - improve Fixes tag
- - wrap lines in commit description
+=20Documentation/devicetree/bindings/arm/l2c2x0.txt | 2 ++
+=20arch/arm/mm/cache-l2x0.c                         | 7 +++++++
+=202 files changed, 9 insertions(+)
 
- drivers/fpga/altera-cvp.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
-index 3998d4f0e5e7..196d52558990 100644
---- a/drivers/fpga/altera-cvp.c
-+++ b/drivers/fpga/altera-cvp.c
-@@ -403,6 +403,7 @@ static int altera_cvp_probe(struct pci_dev *pdev,
- 	struct altera_cvp_conf *conf;
- 	struct fpga_manager *mgr;
- 	u16 cmd, val;
-+	u32 regval;
- 	int ret;
- 
- 	/*
-@@ -419,6 +420,14 @@ static int altera_cvp_probe(struct pci_dev *pdev,
- 		return -ENODEV;
- 	}
- 
-+	pci_read_config_dword(pdev, VSE_CVP_STATUS, &regval);
-+	if (!(regval & VSE_CVP_STATUS_CVP_EN)) {
-+		dev_err(&pdev->dev,
-+			"CVP is disabled for this device: CVP_STATUS Reg 0x%x\n",
-+			regval);
-+		return -ENODEV;
+diff --git a/Documentation/devicetree/bindings/arm/l2c2x0.txt b/Documenta=
+tion/devicetree/bindings/arm/l2c2x0.txt
+index fbe6cb21f4cf..15a84f0ba9f1 100644
+--- a/Documentation/devicetree/bindings/arm/l2c2x0.txt
++++ b/Documentation/devicetree/bindings/arm/l2c2x0.txt
+@@ -76,6 +76,8 @@ Optional properties:
+=20  specified to indicate that such transforms are precluded.
+=20- arm,parity-enable : enable parity checking on the L2 cache (L220 or =
+PL310).
+=20- arm,parity-disable : disable parity checking on the L2 cache (L220 o=
+r PL310).
++- marvell,ecc-enable : enable ECC protection on the L2 cache
++- marvell,ecc-disable : disable ECC protection on the L2 cache
+=20- arm,outer-sync-disable : disable the outer sync operation on the L2 =
+cache.
+=20  Some core tiles, especially ARM PB11MPCore have a faulty L220 cache =
+that
+=20  will randomly hang unless outer sync operations are disabled.
+diff --git a/arch/arm/mm/cache-l2x0.c b/arch/arm/mm/cache-l2x0.c
+index b70bee74750d..644f786e4fa9 100644
+--- a/arch/arm/mm/cache-l2x0.c
++++ b/arch/arm/mm/cache-l2x0.c
+@@ -1505,6 +1505,13 @@ static void __init aurora_of_parse(const struct de=
+vice_node *np,
+=20		mask |=3D AURORA_ACR_FORCE_WRITE_POLICY_MASK;
+=20	}
+=20
++	if (of_property_read_bool(np, "marvell,ecc-enable")) {
++		mask |=3D AURORA_ACR_ECC_EN;
++		val |=3D AURORA_ACR_ECC_EN;
++	} else if (of_property_read_bool(np, "marvell,ecc-disable")) {
++		mask |=3D AURORA_ACR_ECC_EN;
 +	}
 +
- 	conf = devm_kzalloc(&pdev->dev, sizeof(*conf), GFP_KERNEL);
- 	if (!conf)
- 		return -ENOMEM;
--- 
-2.17.1
-
+=20	if (of_property_read_bool(np, "arm,parity-enable")) {
+=20		mask |=3D AURORA_ACR_PARITY_EN;
+=20		val |=3D AURORA_ACR_PARITY_EN;
+--=20
+2.19.1
