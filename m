@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05C57C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:34:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB5DDC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:34:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B80622080A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:34:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B80622080A
+	by mail.kernel.org (Postfix) with ESMTP id 9D4A52084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:34:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D4A52084A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729674AbeJ3DYJ (ORCPT
+        id S1729690AbeJ3DYN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 23:24:09 -0400
-Received: from foss.arm.com ([217.140.101.70]:44746 "EHLO foss.arm.com"
+        Mon, 29 Oct 2018 23:24:13 -0400
+Received: from foss.arm.com ([217.140.101.70]:44760 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728517AbeJ3DYI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 23:24:08 -0400
+        id S1728517AbeJ3DYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 23:24:12 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5552C1596;
-        Mon, 29 Oct 2018 11:34:17 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 887211682;
+        Mon, 29 Oct 2018 11:34:20 -0700 (PDT)
 Received: from e110439-lin.cambridge.arm.com (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6438B3F6A8;
-        Mon, 29 Oct 2018 11:34:14 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 978793F6A8;
+        Mon, 29 Oct 2018 11:34:17 -0700 (PDT)
 From:   Patrick Bellasi <patrick.bellasi@arm.com>
 To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 Cc:     Ingo Molnar <mingo@redhat.com>,
@@ -45,9 +45,9 @@ Cc:     Ingo Molnar <mingo@redhat.com>,
         Joel Fernandes <joelaf@google.com>,
         Steve Muckle <smuckle@google.com>,
         Suren Baghdasaryan <surenb@google.com>
-Subject: [PATCH v5 14/15] sched/core: uclamp: use TG's clamps to restrict Task's clamps
-Date:   Mon, 29 Oct 2018 18:33:09 +0000
-Message-Id: <20181029183311.29175-16-patrick.bellasi@arm.com>
+Subject: [PATCH v5 14/15] sched/core: uclamp: use TG's clamps to restrict TASK's clamps
+Date:   Mon, 29 Oct 2018 18:33:10 +0000
+Message-Id: <20181029183311.29175-17-patrick.bellasi@arm.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20181029183311.29175-1-patrick.bellasi@arm.com>
 References: <20181029183311.29175-1-patrick.bellasi@arm.com>
@@ -58,9 +58,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 When a task's util_clamp value is configured via sched_setattr(2), this
 value has to be properly accounted in the corresponding clamp group
-every time the task is enqueued and dequeued. When cgroups are also in
-use, per-task clamp values have to be aggregated to those of the CPU's
-controller's Task Group (TG) in which the task is currently living.
+every time the task is enqueued and dequeued. However, when cgroups are
+also in use, the per-task clamp values could be restricted by the TG in
+which the task is currently living.
 
 Let's update uclamp_cpu_get() to provide aggregation between the task
 and the TG clamp values. Every time a task is enqueued, it will be
@@ -69,33 +69,29 @@ task specific value and its TG effective value.
 
 This also mimics what already happen for a task's CPU affinity mask when
 the task is also living in a cpuset. The overall idea is that cgroup
-attributes are always used to restrict the per-task attributes.
+attributes are always used to restrict per-task attributes.
 
 Thus, this implementation allows to:
 
 1. ensure cgroup clamps are always used to restrict task specific
    requests, i.e. boosted only up to the effective granted value or
    clamped at least to a certain value
+
 2. implements a "nice-like" policy, where tasks are still allowed to
    request less then what enforced by their current TG
 
 For this mechanisms to work properly, we exploit the concept of
 "effective" clamp, which is already used by a TG to track parent
-enforced restrictions.
-In this patch we re-use the same variable:
+enforced restrictions. Here we re-use the same variable:
+
    task_struct::uclamp::effective::group_id
+
 to track the currently most restrictive clamp group each task is
-subject to and thus it's also currently refcounted into.
+subject to and thus currently refcounted into.
 
 This solution allows also to better decouple the slow-path, where task
 and task group clamp values are updated, from the fast-path, where the
 most appropriate clamp value is tracked by refcounting clamp groups.
-
-For consistency purposes, as well as to properly inform userspace, the
-sched_getattr(2) call is updated to always return the properly
-aggregated constrains as described above. This will also make
-sched_getattr(2) a convenient userspace API to know the utilization
-constraints enforced on a task by the cgroup's CPU controller.
 
 Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
 Cc: Ingo Molnar <mingo@redhat.com>
@@ -114,6 +110,10 @@ Cc: linux-kernel@vger.kernel.org
 Cc: linux-pm@vger.kernel.org
 
 ---
+Changes in v5:
+ Others:
+ - rebased on v4.19
+
 Changes in v4:
  Message-ID: <20180816140731.GD2960@e110439-lin>
  - reuse already existing:
@@ -125,7 +125,6 @@ Changes in v4:
  Others:
  - small documentation fixes
  - rebased on v4.19-rc1
-
 Changes in v3:
  Message-ID: <CAJuCfpFnj2g3+ZpR4fP4yqfxs0zd=c-Zehr2XM7m_C+WdL9jNA@mail.gmail.com>
  - rename UCLAMP_NONE into UCLAMP_NOT_VALID
@@ -176,7 +175,7 @@ index 7698e7554892..4b61fbcb0797 100644
  	 * Clamp group and value actually used by a scheduling entity,
  	 * i.e. a (RUNNABLE) task or a task group.
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index e2292c698e3b..2ce84d22ab17 100644
+index 3dcd1c17a244..f2e35b0a1f0c 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
 @@ -875,6 +875,28 @@ static inline void uclamp_cpu_update(struct rq *rq, unsigned int clamp_id,
@@ -267,7 +266,7 @@ index e2292c698e3b..2ce84d22ab17 100644
   */
  static inline void uclamp_cpu_get_id(struct task_struct *p, struct rq *rq,
  				     unsigned int clamp_id)
-@@ -1312,10 +1356,12 @@ static int __setscheduler_uclamp(struct task_struct *p,
+@@ -1310,10 +1354,12 @@ static int __setscheduler_uclamp(struct task_struct *p,
  
  	/* Update each required clamp group */
  	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN) {
@@ -280,7 +279,7 @@ index e2292c698e3b..2ce84d22ab17 100644
  		uclamp_group_get(p, &p->uclamp[UCLAMP_MAX],
  				 UCLAMP_MAX, upper_bound);
  	}
-@@ -1359,8 +1405,10 @@ static void uclamp_fork(struct task_struct *p, bool reset)
+@@ -1357,8 +1403,10 @@ static void uclamp_fork(struct task_struct *p, bool reset)
  	for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id) {
  		unsigned int clamp_value = p->uclamp[clamp_id].value;
  
