@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E64DC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 16:38:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47C0EECDE44
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 16:38:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9F8320657
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 16:38:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFF6F20657
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 16:38:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="COF20vKr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9F8320657
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="0JHuNA87"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFF6F20657
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728388AbeJ3B1f (ORCPT
+        id S1728414AbeJ3B1h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 21:27:35 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:35483 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728375AbeJ3B1d (ORCPT
+        Mon, 29 Oct 2018 21:27:37 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:42857 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728393AbeJ3B1g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 21:27:33 -0400
-Received: by mail-io1-f66.google.com with SMTP id 79-v6so5379146iou.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 09:38:11 -0700 (PDT)
+        Mon, 29 Oct 2018 21:27:36 -0400
+Received: by mail-io1-f67.google.com with SMTP id n18-v6so5361174ioa.9
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 09:38:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Q05dSOPfwm/UowrXt9AMeUMp3mZmjRCMcDVjG5ZA724=;
-        b=COF20vKrj63JShQizBSeV2pci2HC1D41bwvx4tlSvmxUL68aRt2QDcWMN19XF7+rjs
-         HF621Qbl3ilDuNe9zDt/4g8b2bSUZuw30VNTOaHxZZIkXCZ1G6sC0CSJk+cTUiHZVeXM
-         72rj/ZKwgcvhSlKkYz6s96R0KGRJ1MKNgdTxb0T/cO3Q0XML/YmwI8ct4Htok4Df2Ded
-         0ST/kzTllASH4rCbj5cOzABgYqLOhvpgGR2My/tVRYxMoEJUgFjceEIKIlYQqIbF96Jw
-         175VKDPkz9zW8oK8+oxKnodMmUqFi1dq/2o2B/c4Hqd85mjI45A4W9e1SH5EmBdZbwap
-         926g==
+        bh=AUS9BOQg07ils7vChzxqsumgK0NWQMbJPJfbvlLn1gk=;
+        b=0JHuNA87KYzh6lRQ2LOHX3wG3VqdlV9EzpTDtSBUhoste0/Mxr9KvlF292x2gnkIZx
+         hv7xvMzJRtrnYnquPb3ov1fC4hbzJ3DqUjnx53d/AnYJM8XDtqtzIJt+4xWHV4JP3zN9
+         w3rTAZONd5uFYdRyLLZqCoB7dSVHgTqimL9NN1UFoPzf0d+n61Qz7Y+vEBIkZfqGHWWB
+         vFFMPQXX++UndcgeKgafwSoEV1uMdd3KHJxECo/gG1G1G/YC5y55uQlJK8qhbz0OMzON
+         XWkexd85WNPczSbsi3+76Aq5Y/dWq7jxbWnnjY6kfPAQjdSyVdTKVlDwNPhe0YrnvXlP
+         lrLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Q05dSOPfwm/UowrXt9AMeUMp3mZmjRCMcDVjG5ZA724=;
-        b=LSaioPY9ub86YCcejLI0x71IM9+9tcG9LQSFd/KqyQeYfxf7WzmOqh8/e/nio7VXJ/
-         sj/zLeWWDOzg6FpSLj/+7E/UsfIq2oWh1bP8sS/nIuZnyT9OedwPE+6i+YBxOE1g1Tty
-         c3lLi2g10wGY2HnXQ7751O9Y7AsElecxqYl4bDwyrjHggRpPrbSN0X0d/Gw3ybPSqhiW
-         ZUBvAoBswI3IWB3/g7ZzbCSPaCLL5LJcmtcPFj2CaX8/O1IxuPWy1tFy5/OgzAQMWcYp
-         kP6+iAd0UGuZ4FS7sbnk0W+7aH+3lBfkT8p0sZKUH18qri8llO4T70v9tzz9kRJDA3Aw
-         /vgg==
-X-Gm-Message-State: AGRZ1gK9U24Y4yLtt5s+AUxs2V9iGeec95XleNgDJmgb7SVTAkvuf0FI
-        rKGR13pISKse8gSulvxw31u9sQ==
-X-Google-Smtp-Source: AJdET5dD0eA5AJlugFKS6rUc7yreRdJuV2LCZCeHZocHlVpxudSJPTCWefQyvXPJSc8a/aKoDik/Qg==
-X-Received: by 2002:a6b:8ec9:: with SMTP id q192-v6mr8719024iod.248.1540831091352;
-        Mon, 29 Oct 2018 09:38:11 -0700 (PDT)
+        bh=AUS9BOQg07ils7vChzxqsumgK0NWQMbJPJfbvlLn1gk=;
+        b=ZvlssIGQRpgXCHtjkcWkKT1Z2amcgdZ+sPipJKaotOi3/ahQRlOxN/auW0vuz29pfh
+         Y18sHB/ShXqd/2R1G3+4wBXLGGpmLgxeUY/uTgaoYkyXoeL8q+Dwx0z3RJKEAVoNssGq
+         TOwc8C8rKy4BUrpWvzaSiRTwV0B8bLRh9CnNdU6u2cpH/fzN8+3+DH5QJuQ/g636fwoW
+         /s/gDGaI+qR7T+JT1oX3DVkawrC3Bt4qaKugF7HnTJs/qWqpYp3JaB+oz6MJ37S5jVgV
+         9xtHGqV0JjkSmCo/F3kMViCteE2NU9s8X5ZTz2lHznbnRtcCJzxTyrjUHm8Iy8Gs9UvY
+         zvcQ==
+X-Gm-Message-State: AGRZ1gL+gOHp6V1peIhkI8K+6AsjczM21XD+S2gvHJ/rJzeJW4apfpNw
+        rIQAgE2iXuBYwUHIfr0/J7x78ZwR5lk=
+X-Google-Smtp-Source: AJdET5eea/KHqFKX5AfZFCdCqgzjkmuE+ffPIM+OCd5TjrvCaSG4eJL4pjrM1Ud/EoB8XhJC7eb6RQ==
+X-Received: by 2002:a6b:3c08:: with SMTP id k8-v6mr8304024iob.219.1540831094017;
+        Mon, 29 Oct 2018 09:38:14 -0700 (PDT)
 Received: from localhost.localdomain ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id q15-v6sm3367019itc.38.2018.10.29.09.38.09
+        by smtp.gmail.com with ESMTPSA id q15-v6sm3367019itc.38.2018.10.29.09.38.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 09:38:09 -0700 (PDT)
+        Mon, 29 Oct 2018 09:38:12 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 13/14] block: add REQ_HIPRI and inherit it from IOCB_HIPRI
-Date:   Mon, 29 Oct 2018 10:37:37 -0600
-Message-Id: <20181029163738.10172-14-axboe@kernel.dk>
+Subject: [PATCH 14/14] nvme: add separate poll queue map
+Date:   Mon, 29 Oct 2018 10:37:38 -0600
+Message-Id: <20181029163738.10172-15-axboe@kernel.dk>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181029163738.10172-1-axboe@kernel.dk>
 References: <20181029163738.10172-1-axboe@kernel.dk>
@@ -73,106 +73,300 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We use IOCB_HIPRI to poll for IO in the caller instead of scheduling.
-This information is not available for (or after) IO submission. The
-driver may make different queue choices based on the type of IO, so
-make the fact that we will poll for this IO known to the lower layers
-as well.
+Adds support for defining a variable number of poll queues, currently
+configurable with the 'poll_queues' module parameter. Defaults to
+a single poll queue.
+
+And now we finally have poll support without triggering interrupts!
 
 Reviewed-by: Hannes Reinecke <hare@suse.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- fs/block_dev.c            | 2 ++
- fs/direct-io.c            | 2 ++
- fs/iomap.c                | 9 ++++++++-
- include/linux/blk_types.h | 4 +++-
- 4 files changed, 15 insertions(+), 2 deletions(-)
+ drivers/nvme/host/pci.c | 103 +++++++++++++++++++++++++++++++++-------
+ include/linux/blk-mq.h  |   2 +-
+ 2 files changed, 88 insertions(+), 17 deletions(-)
 
-diff --git a/fs/block_dev.c b/fs/block_dev.c
-index 38b8ce05cbc7..8bb8090c57a7 100644
---- a/fs/block_dev.c
-+++ b/fs/block_dev.c
-@@ -232,6 +232,8 @@ __blkdev_direct_IO_simple(struct kiocb *iocb, struct iov_iter *iter,
- 		bio.bi_opf = dio_bio_write_op(iocb);
- 		task_io_account_write(ret);
- 	}
-+	if (iocb->ki_flags & IOCB_HIPRI)
-+		bio.bi_opf |= REQ_HIPRI;
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 658c9a2f4114..cce5d06f11c5 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -86,6 +86,10 @@ MODULE_PARM_DESC(write_queues,
+ 	"Number of queues to use for writes. If not set, reads and writes "
+ 	"will share a queue set.");
  
- 	qc = submit_bio(&bio);
- 	for (;;) {
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index 093fb54cd316..ffb46b7aa5f7 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -1265,6 +1265,8 @@ do_blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
- 	} else {
- 		dio->op = REQ_OP_READ;
- 	}
-+	if (iocb->ki_flags & IOCB_HIPRI)
-+		dio->op_flags |= REQ_HIPRI;
- 
- 	/*
- 	 * For AIO O_(D)SYNC writes we need to defer completions to a workqueue
-diff --git a/fs/iomap.c b/fs/iomap.c
-index ec15cf2ec696..50ad8c8d1dcb 100644
---- a/fs/iomap.c
-+++ b/fs/iomap.c
-@@ -1554,6 +1554,7 @@ iomap_dio_zero(struct iomap_dio *dio, struct iomap *iomap, loff_t pos,
- 		unsigned len)
- {
- 	struct page *page = ZERO_PAGE(0);
-+	int flags = REQ_SYNC | REQ_IDLE;
- 	struct bio *bio;
- 
- 	bio = bio_alloc(GFP_KERNEL, 1);
-@@ -1562,9 +1563,12 @@ iomap_dio_zero(struct iomap_dio *dio, struct iomap *iomap, loff_t pos,
- 	bio->bi_private = dio;
- 	bio->bi_end_io = iomap_dio_bio_end_io;
- 
-+	if (dio->iocb->ki_flags & IOCB_HIPRI)
-+		flags |= REQ_HIPRI;
++static int poll_queues = 1;
++module_param_cb(poll_queues, &queue_count_ops, &poll_queues, 0644);
++MODULE_PARM_DESC(poll_queues, "Number of queues to use for polled IO.");
 +
- 	get_page(page);
- 	__bio_add_page(bio, page, len, 0);
--	bio_set_op_attrs(bio, REQ_OP_WRITE, REQ_SYNC | REQ_IDLE);
-+	bio_set_op_attrs(bio, REQ_OP_WRITE, flags);
+ struct nvme_dev;
+ struct nvme_queue;
  
- 	atomic_inc(&dio->ref);
- 	return submit_bio(bio);
-@@ -1663,6 +1667,9 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
- 				bio_set_pages_dirty(bio);
+@@ -94,6 +98,7 @@ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown);
+ enum {
+ 	NVMEQ_TYPE_READ,
+ 	NVMEQ_TYPE_WRITE,
++	NVMEQ_TYPE_POLL,
+ 	NVMEQ_TYPE_NR,
+ };
+ 
+@@ -202,6 +207,7 @@ struct nvme_queue {
+ 	u16 last_cq_head;
+ 	u16 qid;
+ 	u8 cq_phase;
++	u8 polled;
+ 	u32 *dbbuf_sq_db;
+ 	u32 *dbbuf_cq_db;
+ 	u32 *dbbuf_sq_ei;
+@@ -250,7 +256,7 @@ static inline void _nvme_check_size(void)
+ 
+ static unsigned int max_io_queues(void)
+ {
+-	return num_possible_cpus() + write_queues;
++	return num_possible_cpus() + write_queues + poll_queues;
+ }
+ 
+ static unsigned int max_queue_count(void)
+@@ -500,8 +506,15 @@ static int nvme_pci_map_queues(struct blk_mq_tag_set *set)
+ 			offset = queue_irq_offset(dev);
  		}
  
-+		if (dio->iocb->ki_flags & IOCB_HIPRI)
-+			bio->bi_opf |= REQ_HIPRI;
++		/*
++		 * The poll queue(s) doesn't have an IRQ (and hence IRQ
++		 * affinity), so use the regular blk-mq cpu mapping
++		 */
+ 		map->queue_offset = qoff;
+-		blk_mq_pci_map_queues(map, to_pci_dev(dev->dev), offset);
++		if (i != NVMEQ_TYPE_POLL)
++			blk_mq_pci_map_queues(map, to_pci_dev(dev->dev), offset);
++		else
++			blk_mq_map_queues(map);
+ 		qoff += map->nr_queues;
+ 		offset += map->nr_queues;
+ 	}
+@@ -892,7 +905,7 @@ static blk_status_t nvme_queue_rq(struct blk_mq_hw_ctx *hctx,
+ 	 * We should not need to do this, but we're still using this to
+ 	 * ensure we can drain requests on a dying queue.
+ 	 */
+-	if (unlikely(nvmeq->cq_vector < 0))
++	if (unlikely(nvmeq->cq_vector < 0 && !nvmeq->polled))
+ 		return BLK_STS_IOERR;
+ 
+ 	ret = nvme_setup_cmd(ns, req, &cmnd);
+@@ -921,6 +934,8 @@ static blk_status_t nvme_queue_rq(struct blk_mq_hw_ctx *hctx,
+ 
+ static int nvme_flags_to_type(struct request_queue *q, unsigned int flags)
+ {
++	if (flags & REQ_HIPRI)
++		return NVMEQ_TYPE_POLL;
+ 	if ((flags & REQ_OP_MASK) == REQ_OP_READ)
+ 		return NVMEQ_TYPE_READ;
+ 
+@@ -1094,7 +1109,10 @@ static int adapter_alloc_cq(struct nvme_dev *dev, u16 qid,
+ 		struct nvme_queue *nvmeq, s16 vector)
+ {
+ 	struct nvme_command c;
+-	int flags = NVME_QUEUE_PHYS_CONTIG | NVME_CQ_IRQ_ENABLED;
++	int flags = NVME_QUEUE_PHYS_CONTIG;
 +
- 		iov_iter_advance(dio->submit.iter, n);
++	if (vector != -1)
++		flags |= NVME_CQ_IRQ_ENABLED;
  
- 		dio->size += n;
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index 093a818c5b68..d6c2558d6b73 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -322,6 +322,8 @@ enum req_flag_bits {
- 	/* command specific flags for REQ_OP_WRITE_ZEROES: */
- 	__REQ_NOUNMAP,		/* do not free blocks when zeroing */
+ 	/*
+ 	 * Note: we (ab)use the fact that the prp fields survive if no data
+@@ -1106,7 +1124,10 @@ static int adapter_alloc_cq(struct nvme_dev *dev, u16 qid,
+ 	c.create_cq.cqid = cpu_to_le16(qid);
+ 	c.create_cq.qsize = cpu_to_le16(nvmeq->q_depth - 1);
+ 	c.create_cq.cq_flags = cpu_to_le16(flags);
+-	c.create_cq.irq_vector = cpu_to_le16(vector);
++	if (vector != -1)
++		c.create_cq.irq_vector = cpu_to_le16(vector);
++	else
++		c.create_cq.irq_vector = 0;
  
-+	__REQ_HIPRI,
+ 	return nvme_submit_sync_cmd(dev->ctrl.admin_q, &c, NULL, 0);
+ }
+@@ -1348,13 +1369,14 @@ static int nvme_suspend_queue(struct nvme_queue *nvmeq)
+ 	int vector;
+ 
+ 	spin_lock_irq(&nvmeq->cq_lock);
+-	if (nvmeq->cq_vector == -1) {
++	if (nvmeq->cq_vector == -1 && !nvmeq->polled) {
+ 		spin_unlock_irq(&nvmeq->cq_lock);
+ 		return 1;
+ 	}
+ 	vector = nvmeq->cq_vector;
+ 	nvmeq->dev->online_queues--;
+ 	nvmeq->cq_vector = -1;
++	nvmeq->polled = false;
+ 	spin_unlock_irq(&nvmeq->cq_lock);
+ 
+ 	/*
+@@ -1366,7 +1388,8 @@ static int nvme_suspend_queue(struct nvme_queue *nvmeq)
+ 	if (!nvmeq->qid && nvmeq->dev->ctrl.admin_q)
+ 		blk_mq_quiesce_queue(nvmeq->dev->ctrl.admin_q);
+ 
+-	pci_free_irq(to_pci_dev(nvmeq->dev->dev), vector, nvmeq);
++	if (vector != -1)
++		pci_free_irq(to_pci_dev(nvmeq->dev->dev), vector, nvmeq);
+ 
+ 	return 0;
+ }
+@@ -1500,7 +1523,7 @@ static void nvme_init_queue(struct nvme_queue *nvmeq, u16 qid)
+ 	spin_unlock_irq(&nvmeq->cq_lock);
+ }
+ 
+-static int nvme_create_queue(struct nvme_queue *nvmeq, int qid)
++static int nvme_create_queue(struct nvme_queue *nvmeq, int qid, bool polled)
+ {
+ 	struct nvme_dev *dev = nvmeq->dev;
+ 	int result;
+@@ -1510,7 +1533,11 @@ static int nvme_create_queue(struct nvme_queue *nvmeq, int qid)
+ 	 * A queue's vector matches the queue identifier unless the controller
+ 	 * has only one vector available.
+ 	 */
+-	vector = dev->num_vecs == 1 ? 0 : qid;
++	if (!polled)
++		vector = dev->num_vecs == 1 ? 0 : qid;
++	else
++		vector = -1;
 +
- 	/* for driver use */
- 	__REQ_DRV,
- 	__REQ_SWAP,		/* swapping request. */
-@@ -342,8 +344,8 @@ enum req_flag_bits {
- #define REQ_RAHEAD		(1ULL << __REQ_RAHEAD)
- #define REQ_BACKGROUND		(1ULL << __REQ_BACKGROUND)
- #define REQ_NOWAIT		(1ULL << __REQ_NOWAIT)
--
- #define REQ_NOUNMAP		(1ULL << __REQ_NOUNMAP)
-+#define REQ_HIPRI		(1ULL << __REQ_HIPRI)
+ 	result = adapter_alloc_cq(dev, qid, nvmeq, vector);
+ 	if (result)
+ 		return result;
+@@ -1527,15 +1554,20 @@ static int nvme_create_queue(struct nvme_queue *nvmeq, int qid)
+ 	 * xxx' warning if the create CQ/SQ command times out.
+ 	 */
+ 	nvmeq->cq_vector = vector;
++	nvmeq->polled = polled;
+ 	nvme_init_queue(nvmeq, qid);
+-	result = queue_request_irq(nvmeq);
+-	if (result < 0)
+-		goto release_sq;
++
++	if (vector != -1) {
++		result = queue_request_irq(nvmeq);
++		if (result < 0)
++			goto release_sq;
++	}
  
- #define REQ_DRV			(1ULL << __REQ_DRV)
- #define REQ_SWAP		(1ULL << __REQ_SWAP)
+ 	return result;
+ 
+ release_sq:
+ 	nvmeq->cq_vector = -1;
++	nvmeq->polled = false;
+ 	dev->online_queues--;
+ 	adapter_delete_sq(dev, qid);
+ release_cq:
+@@ -1686,7 +1718,7 @@ static int nvme_pci_configure_admin_queue(struct nvme_dev *dev)
+ 
+ static int nvme_create_io_queues(struct nvme_dev *dev)
+ {
+-	unsigned i, max;
++	unsigned i, max, rw_queues;
+ 	int ret = 0;
+ 
+ 	for (i = dev->ctrl.queue_count; i <= dev->max_qid; i++) {
+@@ -1697,8 +1729,17 @@ static int nvme_create_io_queues(struct nvme_dev *dev)
+ 	}
+ 
+ 	max = min(dev->max_qid, dev->ctrl.queue_count - 1);
++	if (max != 1 && dev->io_queues[NVMEQ_TYPE_POLL]) {
++		rw_queues = dev->io_queues[NVMEQ_TYPE_READ] +
++				dev->io_queues[NVMEQ_TYPE_WRITE];
++	} else {
++		rw_queues = max;
++	}
++
+ 	for (i = dev->online_queues; i <= max; i++) {
+-		ret = nvme_create_queue(&dev->queues[i], i);
++		bool polled = i > rw_queues;
++
++		ret = nvme_create_queue(&dev->queues[i], i, polled);
+ 		if (ret)
+ 			break;
+ 	}
+@@ -1970,6 +2011,7 @@ static int nvme_setup_host_mem(struct nvme_dev *dev)
+ static void nvme_calc_io_queues(struct nvme_dev *dev, unsigned int nr_io_queues)
+ {
+ 	unsigned int this_w_queues = write_queues;
++	unsigned int this_p_queues = poll_queues;
+ 
+ 	/*
+ 	 * Setup read/write queue split
+@@ -1977,9 +2019,28 @@ static void nvme_calc_io_queues(struct nvme_dev *dev, unsigned int nr_io_queues)
+ 	if (nr_io_queues == 1) {
+ 		dev->io_queues[NVMEQ_TYPE_READ] = 1;
+ 		dev->io_queues[NVMEQ_TYPE_WRITE] = 0;
++		dev->io_queues[NVMEQ_TYPE_POLL] = 0;
+ 		return;
+ 	}
+ 
++	/*
++	 * Configure number of poll queues, if set
++	 */
++	if (this_p_queues) {
++		/*
++		 * We need at least one queue left. With just one queue, we'll
++		 * have a single shared read/write set.
++		 */
++		if (this_p_queues >= nr_io_queues) {
++			this_w_queues = 0;
++			this_p_queues = nr_io_queues - 1;
++		}
++
++		dev->io_queues[NVMEQ_TYPE_POLL] = this_p_queues;
++		nr_io_queues -= this_p_queues;
++	} else
++		dev->io_queues[NVMEQ_TYPE_POLL] = 0;
++
+ 	/*
+ 	 * If 'write_queues' is set, ensure it leaves room for at least
+ 	 * one read queue
+@@ -2049,19 +2110,29 @@ static int nvme_setup_io_queues(struct nvme_dev *dev)
+ 	if (!irq_sets[1])
+ 		affd.nr_sets = 1;
+ 
++	/*
++	 * Need IRQs for read+write queues, and one for the admin queue
++	 */
++	nr_io_queues = irq_sets[0] + irq_sets[1] + 1;
++
+ 	/*
+ 	 * If we enable msix early due to not intx, disable it again before
+ 	 * setting up the full range we need.
+ 	 */
+ 	pci_free_irq_vectors(pdev);
+-	result = pci_alloc_irq_vectors_affinity(pdev, 1, nr_io_queues + 1,
++	result = pci_alloc_irq_vectors_affinity(pdev, 1, nr_io_queues,
+ 			PCI_IRQ_ALL_TYPES | PCI_IRQ_AFFINITY, &affd);
+ 	if (result <= 0)
+ 		return -EIO;
+ 	dev->num_vecs = result;
+-	dev->max_qid = max(result - 1, 1);
++	result = max(result - 1, 1);
++	dev->max_qid = result + dev->io_queues[NVMEQ_TYPE_POLL];
+ 
+ 	nvme_calc_io_queues(dev, dev->max_qid);
++	dev_info(dev->ctrl.device, "%d/%d/%d r/w/p queues\n",
++					dev->io_queues[NVMEQ_TYPE_READ],
++					dev->io_queues[NVMEQ_TYPE_WRITE],
++					dev->io_queues[NVMEQ_TYPE_POLL]);
+ 
+ 	/*
+ 	 * Should investigate if there's a performance win from allocating
+diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
+index b5ae2b5677c1..6ee1d19c6dec 100644
+--- a/include/linux/blk-mq.h
++++ b/include/linux/blk-mq.h
+@@ -82,7 +82,7 @@ struct blk_mq_queue_map {
+ };
+ 
+ enum {
+-	HCTX_MAX_TYPES = 2,
++	HCTX_MAX_TYPES = 3,
+ };
+ 
+ struct blk_mq_tag_set {
 -- 
 2.17.1
 
