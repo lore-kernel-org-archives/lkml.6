@@ -2,107 +2,102 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E53EC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:16:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 610F4C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:16:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 002B020827
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:16:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 002B020827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2983820827
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:16:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I4vj2Xub"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2983820827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729875AbeJ2TEA (ORCPT
+        id S1729890AbeJ2TEN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 15:04:00 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:32888 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729613AbeJ2TEA (ORCPT
+        Mon, 29 Oct 2018 15:04:13 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:45138 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729613AbeJ2TEM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 15:04:00 -0400
-Received: by mail-qt1-f194.google.com with SMTP id i15-v6so8510354qtr.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 03:15:59 -0700 (PDT)
+        Mon, 29 Oct 2018 15:04:12 -0400
+Received: by mail-qt1-f193.google.com with SMTP id l9-v6so8453494qtj.12;
+        Mon, 29 Oct 2018 03:16:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0XpXxIG6RvfrJcmeHDk6dC/VEkNzaQidrxdFaPMKMV0=;
+        b=I4vj2Xub5Q5Un4bI2t8yTgRZrGCRh9xO4IqL30AkyyFRQ6au2bMZ0mwh2ijRUiuO05
+         HQoARWuj6nQFNvQDuumW1w6YNuUCi6uFBWC27CJdliYFBBGMY+7Fm+A9QYXtSDb5sOz0
+         HZwAJhZG1Kgi/uUmzD9GJ97xA4bvI9hvZhFq7EKjsfyPnT6ev/pf9tzY0Ez+T3lNL0zt
+         MCqtvSfjom+m2y+0LhpacV0QucvbAG/poMQjqDLrMAKoYxwioDXhegHn4+R8xw/4rp1z
+         2kt9vtIkusHHUnOLXntZXwSdjkGScX2IDRM+tD3x2jFXTHpfgM0ByAjlBTPTdcFjYMza
+         o3xQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=wrptKfDyU25gGei8hDekoqMLYF7ix+QkUL+h8ja2Erg=;
-        b=lXfKkiOox9xsiOOhnEVk+PRRxhfiBGjScz2hFCQdD3Wq+4k+hf3efb8GsFIy01v6BT
-         mk1eEeUxibMdPAK36KmyAn803BaDNs/iosOa1+N9D55iX+Zqrly7VuhtOzEtNuZ11okO
-         pZRIKWqgmAo1SnDs+dPsszMX6R6sJr40QgXIr0cyRWHiJGiCeuRVrxJuPXPbqE8huiLJ
-         yyJFOsqfiHvJHsoB8H+dNpfE8Z8ojDvv3ewvbmrkaKjhjuFa9kALQ6Jlaw6vbe/KUh3g
-         hGm9JMP/mylR1U/2jZWZEpz6A0eEwj3Epmn7qFmcufEekGxN2Yck5QUTQRO5Z60GOm69
-         1XzQ==
-X-Gm-Message-State: AGRZ1gJ6+MMTw62ii11wAB5WlgGYQCj05VdYlUhmtMYdCzL6JKup3VsY
-        0TEegZTwBI3YQJpabshaIgLREszoxiXaSpbjz+5n8Rwj
-X-Google-Smtp-Source: AJdET5cnI9y1M4/3knzn54aAlU+ylaggfx7Vh+mf6e0xAr3HQpTk7qwfaUAi1quYYC6RPbJcMyM80UemuTiTG+wxCww=
-X-Received: by 2002:a0c:9927:: with SMTP id h36mr1056341qvd.171.1540808158833;
- Mon, 29 Oct 2018 03:15:58 -0700 (PDT)
+        bh=0XpXxIG6RvfrJcmeHDk6dC/VEkNzaQidrxdFaPMKMV0=;
+        b=BvKWCC5wMpstc2+DKN82V3B4Lwoclcd5Dswr3S9dOSdyB/FLzgAuU18dIIWgxCo3MH
+         VfCHpKOcIpBNK0EmUZX1uBRIzqW3rMJHQ3+ZXKkI2jIwr95Ph5HTr0glYMzxn3hvoYj9
+         B0P0Ij8Dq67feZp4iN/otmmKQFV3Ko6KVqtZSTK3KKS4e/CfSseIOJmm0WE7aHKP52Pd
+         0uy6fW2egidOo49ac1mYu9NJUU+zeAqZjbKgxHRjcyb8VeuZVywmjo6zUoyBRVxaU1KJ
+         7LbYXw1q52xJCTAw3+PNzorbI01tlbv7Q+IMmyi3HAbpR4iCqxAqtZUXDwwLJ5X9Rwrf
+         Q0YQ==
+X-Gm-Message-State: AGRZ1gKrcmFhgsytVQWW46mzXyDZ7ztAp+MRvZf3hdkwG6ygvyUVnRCZ
+        Iy8wcrw59uDLsWMIhJOUUX2IU9wCdnImAR0w8Ks=
+X-Google-Smtp-Source: AJdET5egLiFmmHoRTIWCABhRELgj61D9ZxCYemS7kxJfkREnqTBQFxljnVBv5ZJIO04AtB5LSDq5EFoKOqMOX/1ZKnU=
+X-Received: by 2002:aed:3e56:: with SMTP id m22-v6mr2858113qtf.99.1540808171280;
+ Mon, 29 Oct 2018 03:16:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181019085958.32694-1-ckeepax@opensource.cirrus.com>
- <20181019085958.32694-2-ckeepax@opensource.cirrus.com> <20181028223116.GJ1882@kunai>
-In-Reply-To: <20181028223116.GJ1882@kunai>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Mon, 29 Oct 2018 11:15:47 +0100
-Message-ID: <CAO-hwJLw74k+jBnDuQ7OrVzJOy8i82OXKNWuNhxNqUj+8nzwhg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] i2c: Clear client->irq in i2c_device_remove
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     ckeepax@opensource.cirrus.com,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        patches@opensource.cirrus.com
+References: <1540812743-1825-1-git-send-email-peng.hao2@zte.com.cn>
+In-Reply-To: <1540812743-1825-1-git-send-email-peng.hao2@zte.com.cn>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 29 Oct 2018 12:15:59 +0200
+Message-ID: <CAHp75Ve19dcQ3FtRa4BS_Y381g9TDvb2G-M8BNegFuUWA6wzAQ@mail.gmail.com>
+Subject: Re: [PATCH V3 1/5] pvpanic: move pvpanic to misc as common driver
+To:     peng.hao2@zte.com.cn
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        hutao@cn.fujitsu.com,
+        Linux Documentation List <linux-doc@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 28, 2018 at 11:31 PM Wolfram Sang <wsa@the-dreams.de> wrote:
+On Mon, Oct 29, 2018 at 5:22 AM Peng Hao <peng.hao2@zte.com.cn> wrote:
 >
-> On Fri, Oct 19, 2018 at 09:59:58AM +0100, Charles Keepax wrote:
-> > The IRQ will be mapped in i2c_device_probe only if client->irq is zero and
-> > i2c_device_remove does not clear this. When rebinding an I2C device,
-> > whos IRQ provider has also been rebound this means that an IRQ mapping
-> > will never be created, causing the I2C device to fail to acquire its
-> > IRQ. Fix this issue by clearing client->irq in i2c_device_remove,
-> > forcing i2c_device_probe to lookup the mapping again.
-> >
-> > Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> move pvpanic.c from drivers/platform/x86 to drivers/misc.
+> following patches will use pvpanic device in arm64.
 >
-> Adding Benjamin here again. Also, should there be a Fixes: tag?
+> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+> ---
+>  drivers/misc/Kconfig           |   7 +++
+>  drivers/misc/Makefile          |   1 +
+>  drivers/misc/pvpanic.c         | 124 +++++++++++++++++++++++++++++++++++++++++
+>  drivers/platform/Kconfig       |   3 +
+>  drivers/platform/Makefile      |   1 +
+>  drivers/platform/x86/Kconfig   |   8 ---
+>  drivers/platform/x86/Makefile  |   1 -
+>  drivers/platform/x86/pvpanic.c | 124 -----------------------------------------
 
-Not sure if the circumstances are preventing me to think straight, but
-how can you reprobe the i2c_device?
-And in all cases, for the Host notify part, having the IRQ already set
-shouldn't be an issue.
+As I mentioned you better to use -C -M.
+This is currently a bit hard to review.
 
-So for the host notify case, this patch is fine, not entirely sure
-about the acpi or OF part of it.
-
-Cheers,
-Benjamin
-
->
-> > ---
-> >  drivers/i2c/i2c-core-base.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
-> > index 656f0a6fe3adf..28460f6a60cc1 100644
-> > --- a/drivers/i2c/i2c-core-base.c
-> > +++ b/drivers/i2c/i2c-core-base.c
-> > @@ -430,6 +430,8 @@ static int i2c_device_remove(struct device *dev)
-> >       dev_pm_clear_wake_irq(&client->dev);
-> >       device_init_wakeup(&client->dev, false);
-> >
-> > +     client->irq = 0;
-> > +
-> >       return status;
-> >  }
-> >
-> > --
-> > 2.11.0
-> >
+-- 
+With Best Regards,
+Andy Shevchenko
