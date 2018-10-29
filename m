@@ -2,127 +2,105 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDB93C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:11:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A30C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:12:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5938F2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:11:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nbLIXviF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5938F2084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E3C9520827
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:12:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3C9520827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729714AbeJ2S7H (ORCPT
+        id S1729751AbeJ2TAk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 14:59:07 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37742 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729487AbeJ2S7H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 14:59:07 -0400
-Received: by mail-wr1-f65.google.com with SMTP id g9-v6so7984765wrq.4;
-        Mon, 29 Oct 2018 03:11:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kgHZG9vtNBMOKMXgYo0AYmbAIOGaF85PoWqnNo+hD3Q=;
-        b=nbLIXviFtMPbxowUItqU6RCb28Pz9iXHjdOXdSFCGd9STyTFpdGFlu3sC5yS1PoWUO
-         +X4Gevr7X3AvujfHSJ67L9UTek/UTgVCQP7O9SdN6js+1MKkuCEn9iQ3fUHXQivGjoWV
-         tQnsoIqmWvkm/FhjJct4aKNGmQgluhBu024gv8J4yAwfKDyNp8LRy/0DxapOuwV5tcOL
-         IFriDEnc/0X5P4nehPZLhfAJTGL5y7QLk53hR32rpaEmH3h7rU51v5cv8qOr+vtN/RNY
-         MdwzdrA08teMq0wET1FnIxE0WNxGFgPr51VPvbgF9RArY6Z9uE+JxrS5PRPiZfnwqntq
-         UaWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kgHZG9vtNBMOKMXgYo0AYmbAIOGaF85PoWqnNo+hD3Q=;
-        b=d47MSEpRB1wvc59L09tYs/Y6PCzEkZ6qn2iUytXvOo5Hn5oaE89IIgxR6oIzpRaaPr
-         TK6k34XRrzNplc4gk7ELrrqCKPt+AA4QNOXOT00fiUXEr02YivFlGfmDdCGHHvBoREZ4
-         DecrEMfwwMujHA57uEcAhgsdVUaYYv1Bo3Xuq8V6Bm2KQ2hv3LMO84yGGhQszrrWAm9f
-         Y9emakbMpBcmjT3dcAHjRQZzZzHSGi5tFQsV0IUxmPSQJivYqqH5q4xa1EqoC1DemFRZ
-         lwjwg1XPVRVsN6OQi45TC/Vnh3KfGoMZqYy77jCyfGlHOWEe322e+NHcWCaz/u+Q2+wQ
-         GKtQ==
-X-Gm-Message-State: AGRZ1gK6DC8Fn4+vqByuhok4aCummoQsT+46RhUHqmZB7EMdedunlzv3
-        gFVsfsAAvj1P3hG6vUb2br4=
-X-Google-Smtp-Source: AJdET5faObUvrcSL0FeShbVBtHIF3MVkgW/7Af6tGIZt4tCDERrNNK7WmSP8Cyiyy1ra7pJAm9KR2Q==
-X-Received: by 2002:adf:c00e:: with SMTP id z14-v6mr13989328wre.268.1540807865684;
-        Mon, 29 Oct 2018 03:11:05 -0700 (PDT)
-Received: from localhost (pD9E511F8.dip0.t-ipconnect.de. [217.229.17.248])
-        by smtp.gmail.com with ESMTPSA id 21-v6sm93509wmv.5.2018.10.29.03.11.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Oct 2018 03:11:04 -0700 (PDT)
-Date:   Mon, 29 Oct 2018 11:11:03 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Pekka Pessi <ppessi@nvidia.com>
-Cc:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Timo Alho <talho@nvidia.com>,
-        Mika Liljeberg <mliljeberg@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-serial@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/9] serial: Add Tegra Combined UART driver
-Message-ID: <20181029101103.GA26393@ulmo>
-References: <20181026111638.10759-1-thierry.reding@gmail.com>
- <85092b49-2b62-bd76-05a3-521415835b6e@nvidia.com>
+        Mon, 29 Oct 2018 15:00:40 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45572 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729487AbeJ2TAk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 15:00:40 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 56EF53003064;
+        Mon, 29 Oct 2018 10:12:40 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-109.pek2.redhat.com [10.72.12.109])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3FD3F620C0;
+        Mon, 29 Oct 2018 10:12:23 +0000 (UTC)
+Subject: Re: [PATCH] kdump, vmcoreinfo: Export sme_me_mask value to vmcoreinfo
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Baoquan He <bhe@redhat.com>, Petr Tesarik <ptesarik@suse.cz>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        kexec@lists.infradead.org, mingo@redhat.com, tglx@linutronix.de,
+        dyoung@redhat.com
+References: <20181027091007.GB1046@nazgul.tnic>
+ <20181027093917.GA14493@MiWiFi-R3L-srv> <20181027101221.GC1046@nazgul.tnic>
+ <20181027110858.GB14493@MiWiFi-R3L-srv>
+ <C5F8ED8E-F361-4C6C-B9E2-E3C8BCD8E050@alien8.de>
+ <c55bef2a-b972-7e6e-b698-6ac1bc736046@redhat.com>
+ <20181027145151.GA7338@nazgul.tnic>
+ <390b16ba-05d7-3590-c3b2-4b69aa3ae051@redhat.com>
+ <20181029083118.GC1884@MiWiFi-R3L-srv>
+ <d6f93848-c750-f29c-4ca7-9661596cad62@redhat.com>
+ <20181029095738.GB20101@zn.tnic>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <15897206-c1a6-ced6-3a1b-f71da8fc9c83@redhat.com>
+Date:   Mon, 29 Oct 2018 18:12:19 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="OXfL5xGRrasGEqWY"
-Content-Disposition: inline
-In-Reply-To: <85092b49-2b62-bd76-05a3-521415835b6e@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181029095738.GB20101@zn.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Mon, 29 Oct 2018 10:12:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+在 2018年10月29日 17:57, Borislav Petkov 写道:
+> On Mon, Oct 29, 2018 at 05:29:16PM +0800, lijiang wrote:
+>> Ok, i will change it to a local variable and export it.
+> 
+> Why do you have to export it at all?!
+> 
 
---OXfL5xGRrasGEqWY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I mean that i will write the value of local variable to the vmcoreinfo. For example:
 
-On Mon, Oct 29, 2018 at 11:04:06AM +0200, Pekka Pessi wrote:
-> Hi Thierry,
->=20
-> What is the use case for the mailbox driver? What kind of entity will be
-> there consuming sent messages and sending messages to kernel?
+diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+index 4c8acdfdc5a7..3cc975e7ff8f 100644
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@ -352,11 +352,16 @@ void machine_kexec(struct kimage *image)
 
-This is currently only used for the TCU. I'm sure there could be other
-cases, but we support none of the upstream at the moment. Are you aware
-of any others that we need to take into account?
+ void arch_crash_save_vmcoreinfo(void)
+ {
++       u64 sme_mask = 0;
++
+        VMCOREINFO_NUMBER(phys_base);
+        VMCOREINFO_SYMBOL(init_top_pgt);
+        vmcoreinfo_append_str("NUMBER(pgtable_l5_enabled)=%d\n",
+                        pgtable_l5_enabled());
 
-Thierry
++       sme_mask = sme_me_mask;
++       VMCOREINFO_NUMBER(sme_mask);
++
+ #ifdef CONFIG_NUMA
+        VMCOREINFO_SYMBOL(node_data);
+        VMCOREINFO_LENGTH(node_data, MAX_NUMNODES);
+-- 
 
---OXfL5xGRrasGEqWY
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+Because the crash kernel's page table(pgd/pud/pmd/pte) contains
+the memory encryption mask(bit 47), makedumpfile needs to remove
+the sme mask to obtain the true physical address.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvW3LcACgkQ3SOs138+
-s6FRIw/+Pw2StMAnCWis5xYWoEvtLTttWYsHVBudkqmZVjFV9kcIODJnsRQU49gr
-7wF4DlLbvPiA0Z+PzYw9wPYLRYNCmURdzY/o8AovrV5Fh6gJ3duWMSTGOt1XvEt4
-17UEFyQKHO27J+IIhLFcLwc+Q+U9CVWX1AFb94o/tFJTdBLp28lkgH+uWR7rkBm5
-L7g0Km2x74VTywGUwiuVof6mRwny7V3OqpluT85Ot6i0PXGfGSAZk1RwU12Pi1dJ
-CcNnRMx0/f2/bY/f4CJF5kg3vgoLpr45hi8mZS4RqTCOXACnehELzTW2tX63t/nt
-o2pp09x//EwgsoXNNKa4FCdbfQw2VgOcl+MbWrmPNXy4XgRp9+N8UX63rNxp3/Nd
-ebyeADdTocSv/1hP0khItpIHvWdvyLCCUgqa3jEVV7+qPv9svgFhJ2rXNEv6j6iC
-jQR1R4BFwrHyHilDJ2v+yjV1iNGn5qqFaDkaqT+4C+KtgQV8VNrCZ3AFgWAeHznp
-biBoVP/1W4vuk46Ssk3JpzQqqrPN29mYPsiU5yKqzrmkPQMLN4UU19q2nY0RPO/i
-7vMMdinA2R9UdtWKfkdumNULkwUGN3hdZqMRMqKO+03wxgKPC2oQPMzxFj31T2Wy
-mjpYgAPX4JOjlWDO15An5iRykhcz4+XcWmHMUHUqnfT3SURKbS8=
-=yi2X
------END PGP SIGNATURE-----
 
---OXfL5xGRrasGEqWY--
+Thanks.
+Lianbo
+
