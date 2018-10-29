@@ -2,140 +2,114 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7940DC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:18:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91B24C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:18:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 408E520870
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:18:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 408E520870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 675E620870
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:18:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 675E620870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729198AbeJ3DIR (ORCPT
+        id S1729284AbeJ3DIp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 23:08:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57634 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729178AbeJ3DIR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 23:08:17 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5511CAF64;
-        Mon, 29 Oct 2018 18:18:28 +0000 (UTC)
-Date:   Mon, 29 Oct 2018 19:18:27 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Pasha Tatashin <pavel.tatashin@microsoft.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        rppt@linux.vnet.ibm.com, Ingo Molnar <mingo@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        yi.z.zhang@linux.intel.com
-Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
- point where we init pgmap
-Message-ID: <20181029181827.GO32673@dhcp22.suse.cz>
-References: <20181011085509.GS5873@dhcp22.suse.cz>
- <6f32f23c-c21c-9d42-7dda-a1d18613cd3c@linux.intel.com>
- <20181017075257.GF18839@dhcp22.suse.cz>
- <971729e6-bcfe-a386-361b-d662951e69a7@linux.intel.com>
- <20181029141210.GJ32673@dhcp22.suse.cz>
- <84f09883c16608ddd2ba88103f43ec6a1c649e97.camel@linux.intel.com>
- <20181029163528.GL32673@dhcp22.suse.cz>
- <18dfc5a0db11650ff31433311da32c95e19944d9.camel@linux.intel.com>
- <20181029172415.GM32673@dhcp22.suse.cz>
- <8e7a4311a240b241822945c0bb4095c9ffe5a14d.camel@linux.intel.com>
+        Mon, 29 Oct 2018 23:08:45 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:52541 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729261AbeJ3DIo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 23:08:44 -0400
+Received: from tmo-115-37.customers.d1-online.com ([80.187.115.37] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gHC7n-0000S3-Qk; Mon, 29 Oct 2018 19:18:52 +0100
+Date:   Mon, 29 Oct 2018 19:18:50 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
+cc:     "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: RE: [PATCH V2 1/2] x86/efi: Unmap EFI boot services code/data regions
+ from efi_pgd
+In-Reply-To: <alpine.DEB.2.21.1810291907320.5984@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1810291911570.5984@nanos.tec.linutronix.de>
+References: <20181026213845.28166-1-sai.praneeth.prakhya@intel.com> <20181026213845.28166-2-sai.praneeth.prakhya@intel.com> <alpine.DEB.2.21.1810291809490.5984@nanos.tec.linutronix.de> <alpine.DEB.2.21.1810291820250.5984@nanos.tec.linutronix.de>
+ <FFF73D592F13FD46B8700F0A279B802F485E5549@ORSMSX114.amr.corp.intel.com> <alpine.DEB.2.21.1810291907320.5984@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8e7a4311a240b241822945c0bb4095c9ffe5a14d.camel@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 29-10-18 10:42:33, Alexander Duyck wrote:
-> On Mon, 2018-10-29 at 18:24 +0100, Michal Hocko wrote:
-> > On Mon 29-10-18 10:01:28, Alexander Duyck wrote:
-[...]
-> > > So there end up being a few different issues with constructors. First
-> > > in my mind is that it means we have to initialize the region of memory
-> > > and cannot assume what the constructors are going to do for us. As a
-> > > result we will have to initialize the LRU pointers, and then overwrite
-> > > them with the pgmap and hmm_data.
-> > 
-> > Why we would do that? What does really prevent you from making a fully
-> > customized constructor?
+Sai,
+
+On Mon, 29 Oct 2018, Thomas Gleixner wrote:
+> On Mon, 29 Oct 2018, Prakhya, Sai Praneeth wrote:
 > 
-> It is more an argument of complexity. Do I just pass a single pointer
-> and write that value, or the LRU values in init, or do I have to pass a
-> function pointer, some abstracted data, and then call said function
-> pointer while passing the page and the abstracted data?
+> > Hi Thomas and Peter,
+> > 
+> > [off the mailing list because I wasn't sure if it's a good idea to spam others with my questions]
+> 
+> In general it's good to do on list because others can learn from the
+> answers as well.
 
-I though you have said that pgmap is the current common denominator for
-zone device users. I really do not see what is the problem to do
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 89d2a2ab3fe6..9105a4ed2c96 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -5516,7 +5516,10 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
- 
- not_early:
- 		page = pfn_to_page(pfn);
--		__init_single_page(page, pfn, zone, nid);
-+		if (pgmap && pgmap->init_page)
-+			pgmap->init_page(page, pfn, zone, nid, pgmap);
-+		else
-+			__init_single_page(page, pfn, zone, nid);
- 		if (context == MEMMAP_HOTPLUG)
- 			SetPageReserved(page);
- 
-that would require to replace altmap throughout the call chain and
-replace it by pgmap. Altmap could be then renamed to something more
-clear
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 89d2a2ab3fe6..048e4cc72fdf 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -5474,8 +5474,8 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
- 	 * Honor reservation requested by the driver for this ZONE_DEVICE
- 	 * memory
- 	 */
--	if (altmap && start_pfn == altmap->base_pfn)
--		start_pfn += altmap->reserve;
-+	if (pgmap && pgmap->get_memmap)
-+		start_pfn = pgmap->get_memmap(pgmap, start_pfn);
- 
- 	for (pfn = start_pfn; pfn < end_pfn; pfn++) {
- 		/*
+So you somehow managed to keep everyone and the lists in CC
+nevertheless. Did not pay attention to the CC list until I got my reply on
+the list :)
 
-[...]
+> > > > > +	retval = __change_page_attr_set_clr(&cpa, 0);
+> > > > > +	__flush_tlb_all();
+> > > >
+> > > > So this looks like you copied it from kernel_map_pages_in_pgd() which
+> > > > has been discussed before to be not sufficient, but it can't be
+> > > > changed right now due to locking issues.
+> > >
+> > > Managed to confuse myself. The place which cannot be changed is a different
+> > > one, but still for your call site __flush_tlb_all() might not be sufficient.
+> > 
+> > Since the mappings are changed, I thought a flush_tlb() might be needed.
+> > But, (to be honest), I don't completely understand the x86/mm code. So, could you 
+> > please elaborate the issue more for my better understanding?
+> > 
+> > So some questions I have are,
+> > 1. What did Peter Z mean here? "How is that not a TLB invalidation bug ?"
+> 
+> __flush_tlb_all() flushes only the mapping on the current CPU. So in a SMP
+> environment it's not sufficient.
+> 
+> > 2. I assumed kernel_map_pages_in_pgd() to be a good code but you said that 
+> > it has some locking issues. So, could you please elaborate more on that.
+> 
+> I corrected myself. It's the other function which cannot use the proper
+> cpa_flush.*() functions.
+> 
+> > Or, could you please provide me some pointers in the source code that I
+> > can take a look at so that I could understand the issue much better.
+> 
+> I'll have a second look at the whole thing and reply on list.
 
-> If I have to implement the code to verify the slowdown I will, but I
-> really feel like it is just going to be time wasted since we have seen
-> this in other spots within the kernel.
+So actually for the problem at hand __flush_tlb_all() works, because that
+is called way before the secondary CPUs are up.
 
-Please try to understand that I am not trying to force you write some
-artificial benchmarks. All I really do care about is that we have sane
-interfaces with reasonable performance. Especially for one-off things
-in relattively slow paths. I fully recognize that ZONE_DEVICE begs for a
-better integration but really, try to go incremental and try to unify
-the code first and microptimize on top. Is that way too much to ask for?
+Ditto for kernel_map_pages_in_pgd(). But both functions want to be marked
+__init and aside of that they both should contain a warning when they are
+called after the secondary CPUs have been brought up.
 
-Anyway we have gone into details while the primary problem here was that
-the hotplug lock doesn't scale AFAIR. And my question was why cannot we
-pull move_pfn_range_to_zone and what has to be done to achieve that.
-That is a fundamental thing to address first. Then you can microptimize
-on top.
--- 
-Michal Hocko
-SUSE Labs
+Thanks,
+
+	tglx
