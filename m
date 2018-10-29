@@ -2,67 +2,139 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F80BC2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 02:44:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B5A9C6786F
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 02:46:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20FA62075D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 02:44:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20FA62075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id 4683020843
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 02:46:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4683020843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729166AbeJ2Lay (ORCPT
+        id S1729174AbeJ2LdU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 07:30:54 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:50312 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729055AbeJ2Lay (ORCPT
+        Mon, 29 Oct 2018 07:33:20 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:53578 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728047AbeJ2LdU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 07:30:54 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R491e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04428;MF=wei.guo.simon@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0TBnbo-o_1540780949;
-Received: from localhost(mailfrom:wei.guo.simon@linux.alibaba.com fp:SMTPD_---0TBnbo-o_1540780949)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 29 Oct 2018 10:42:29 +0800
-Date:   Mon, 29 Oct 2018 10:42:28 +0800
-From:   Simon Guo <wei.guo.simon@linux.alibaba.com>
-To:     Alex Williamson <alex.williamson@redhat.com>,
-        Eric Auger <eric.auger@redhat.com>
-Cc:     qixuan.wu@linux.alibaba.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Subject: Can VFIO pin only a specific region of guest mem when use pass
- through devices?
-Message-ID: <20181029024228.GA4279@simonLocalRHEL7.x64>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=gb2312
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Mon, 29 Oct 2018 07:33:20 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 09D6E133FABE5;
+        Sun, 28 Oct 2018 19:46:40 -0700 (PDT)
+Date:   Sun, 28 Oct 2018 19:46:39 -0700 (PDT)
+Message-Id: <20181028.194639.720600183842499774.davem@davemloft.net>
+To:     torvalds@linux-foundation.org
+CC:     akpm@linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT] Networking
+From:   David Miller <davem@davemloft.net>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 28 Oct 2018 19:46:40 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-I am using network device pass through mode with qemu x86(-device vfio-pci,host=0000:xx:yy.z)
-and ¡°intel_iommu=on¡± in host kernel command line, and it shows the whole guest memory
-were pinned(vfio_pin_pages()), viewed by the ¡°top¡± RES memory output. I understand it is due
-to device can DMA to any guest memory address and it cannot be swapped.
+1) GRO overflow entries are not unlinked properly, resulting in list poison
+   pointers being dereferenced.
 
-However can we just pin a rang of address space allowed by iommu group of that device,
-instead of pin whole address space? I do notice some code like vtd_host_dma_iommu().
-Maybe there is already some way to enable that?
+2) Fix bridge build with ipv6 disabled, from Nikolay Aleksandrov.
 
-Sorry if I missed some basics. I googled some but no luck to find the answer yet. Please
-let me know if any discussion already raised on that.
+3) Direct packet access and other fixes in BPF from Daniel Borkmann.
 
-Any other suggestion will also be appreciated. For example, can we modify the guest network
-card driver to allocate only from a specific memory region(zone), and qemu advises guest
-kernel to only pin that memory region(zone) accordingly?
+4) gred_change_table_def() gets passed the wrong pointer, a pointer to
+   a set of unparsed attributes instead of the attribute itself.  From
+     Jakub Kicinski.
 
-Thanks,
-- Simon
+5) Allow macsec device to be brought up even if it's lowerdev is down,
+   from Sabrina Dubroca.
+
+Please pull, thanks a lot!
+
+The following changes since commit 345671ea0f9258f410eb057b9ced9cefbbe5dc78:
+
+  Merge branch 'akpm' (patches from Andrew) (2018-10-26 19:33:41 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/davem/net.git 
+
+for you to fetch changes up to 747569b0a7c537d680bc94a988be6caad9960488:
+
+  net: diag: document swapped src/dst in udp_dump_one. (2018-10-28 19:27:21 -0700)
+
+----------------------------------------------------------------
+Alexei Starovoitov (1):
+      Merge branch 'pkt-access-fixes'
+
+Daniel Borkmann (9):
+      bpf: fix test suite to enable all unpriv program types
+      bpf: disallow direct packet access for unpriv in cg_skb
+      bpf: fix direct packet access for flow dissector progs
+      bpf: fix cg_skb types to hint access type in may_access_direct_pkt_data
+      bpf: fix direct packet write into pop/peek helpers
+      bpf: fix leaking uninitialized memory on pop/peek helpers
+      bpf: make direct packet write unclone more robust
+      bpf: add bpf_jit_limit knob to restrict unpriv allocations
+      bpf: fix wrong helper enablement in cgroup local storage
+
+David S. Miller (3):
+      Merge git://git.kernel.org/.../bpf/bpf
+      net: Properly unlink GRO packets on overflow.
+      Merge branch 'macsec-fixes'
+
+Jakub Kicinski (1):
+      net: sched: gred: pass the right attribute to gred_change_table_def()
+
+Lorenzo Colitti (1):
+      net: diag: document swapped src/dst in udp_dump_one.
+
+Martin Lau (1):
+      bpf, btf: fix a missing check bug in btf_parse
+
+Naresh Kamboju (1):
+      selftests/bpf: add config fragments BPF_STREAM_PARSER and XDP_SOCKETS
+
+Nikolay Aleksandrov (1):
+      net: bridge: remove ipv6 zero address check in mcast queries
+
+Rasmus Villemoes (1):
+      ptp: drop redundant kasprintf() to create worker name
+
+Sabrina Dubroca (2):
+      macsec: update operstate when lower device changes
+      macsec: let the administrator set UP state even if lowerdev is down
+
+Taehee Yoo (1):
+      bpf: devmap: fix wrong interface selection in notifier_call
+
+ Documentation/sysctl/net.txt                |  8 ++++++++
+ drivers/net/macsec.c                        | 20 +++++++++++++++++---
+ drivers/ptp/ptp_clock.c                     |  6 +-----
+ include/linux/filter.h                      |  1 +
+ kernel/bpf/btf.c                            | 58 +++++++++++++++++++++++++---------------------------------
+ kernel/bpf/core.c                           | 49 ++++++++++++++++++++++++++++++++++++++++++++++---
+ kernel/bpf/devmap.c                         |  3 +--
+ kernel/bpf/helpers.c                        |  2 --
+ kernel/bpf/queue_stack_maps.c               |  2 ++
+ kernel/bpf/verifier.c                       | 13 ++++++++++---
+ net/bridge/br_multicast.c                   |  3 +--
+ net/core/dev.c                              |  2 +-
+ net/core/filter.c                           | 21 +++++++++++++++++----
+ net/core/sysctl_net_core.c                  | 10 ++++++++--
+ net/ipv4/udp_diag.c                         |  1 +
+ net/sched/sch_gred.c                        |  2 +-
+ tools/testing/selftests/bpf/config          |  2 ++
+ tools/testing/selftests/bpf/test_verifier.c | 15 +++++++++++++--
+ 18 files changed, 155 insertions(+), 63 deletions(-)
