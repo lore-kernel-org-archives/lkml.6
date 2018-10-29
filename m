@@ -2,188 +2,248 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA025C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:34:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9EF9C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:35:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CFF320824
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:34:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CFF320824
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8FD8C20824
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:35:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FD8C20824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728821AbeJ3EY7 (ORCPT
+        id S1729522AbeJ3EZK convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 00:24:59 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45424 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725781AbeJ3EY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 00:24:59 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0F502341;
-        Mon, 29 Oct 2018 12:34:54 -0700 (PDT)
-Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C9B553F6A8;
-        Mon, 29 Oct 2018 12:34:51 -0700 (PDT)
-Subject: Re: [PATCH 07/10] sched/fair: Provide can_migrate_task_llc
-To:     Steven Sistare <steven.sistare@oracle.com>, mingo@redhat.com,
-        peterz@infradead.org
-Cc:     subhra.mazumdar@oracle.com, dhaval.giani@oracle.com,
-        rohit.k.jain@oracle.com, daniel.m.jordan@oracle.com,
-        pavel.tatashin@microsoft.com, matt@codeblueprint.co.uk,
-        umgwanakikbuti@gmail.com, riel@redhat.com, jbacik@fb.com,
-        juri.lelli@redhat.com, linux-kernel@vger.kernel.org
-References: <1540220381-424433-1-git-send-email-steven.sistare@oracle.com>
- <1540220381-424433-8-git-send-email-steven.sistare@oracle.com>
- <f75ddcd5-f9a0-30c5-94e4-c4077e17ffb0@arm.com>
- <b9915490-661b-0d0e-ae60-d5803357e1ec@oracle.com>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <b7d91b1d-5da1-5d70-f266-93b108379b64@arm.com>
-Date:   Mon, 29 Oct 2018 19:34:50 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 30 Oct 2018 00:25:10 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:7566 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725781AbeJ3EZK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 00:25:10 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DCFB483F40;
+        Mon, 29 Oct 2018 19:35:04 +0000 (UTC)
+Received: from llong.remote.csb (dhcp-17-8.bos.redhat.com [10.18.17.8])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1AF0560C72;
+        Mon, 29 Oct 2018 19:35:04 +0000 (UTC)
+Subject: Re: [PATCH] fs/proc: introduce /proc/stat2 file
+To:     Davidlohr Bueso <dave@stgolabs.net>, akpm@linux-foundation.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Davidlohr Bueso <dbueso@suse.de>
+References: <20181029192521.23059-1-dave@stgolabs.net>
+From:   Waiman Long <longman@redhat.com>
+Organization: Red Hat
+Message-ID: <0afed890-7c5a-93ee-cdb9-e30775bd9cf1@redhat.com>
+Date:   Mon, 29 Oct 2018 15:35:03 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.0
 MIME-Version: 1.0
-In-Reply-To: <b9915490-661b-0d0e-ae60-d5803357e1ec@oracle.com>
+In-Reply-To: <20181029192521.23059-1-dave@stgolabs.net>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 29 Oct 2018 19:35:04 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/10/2018 19:28, Steven Sistare wrote:
-> On 10/26/2018 2:04 PM, Valentin Schneider wrote:
-[...]
->>
->> I was thinking that perhaps we could have scenarios where some rq's
->> keep stealing tasks off of each other and we end up circulating tasks 
->> between CPUs. Now, that would only happen if we had a handful of tasks
->> with a very tiny period, and I'm not familiar with (real) such hyperactive
->> workloads similar to those generated by hackbench where that could happen.
-> 
-> That will not happen with the current code, as it only steals if nr_running > 1.
-> The src loses a task, the dst gains it and has nr_running == 1, so it will not
-> be re-stolen.
-> 
+On 10/29/2018 03:25 PM, Davidlohr Bueso wrote:
+> A recent report from a large database vendor which I shall not name
+> shows concerns about poor performance when consuming /proc/stat info.
+> Particularly  kstat_irq() pops up in the profiles and most time is
+> being spent there. The overall system is under a lot of irqs and
+> almost 1k cores, thus this comes to little surprise.
+>
+> Granted that procfs in general is not known for its performance,
+> nor designed for it, for that matter. Some users, however may be able
+> to overcome this performance limitation, some not. Therefore it isn't
+> bad having a kernel option for users that don't want any hard irq info
+> -- and care enough about this.
+>
+> This patch introduces a new /proc/stat2 file that is identical to the
+> regular 'stat' except that it zeroes all hard irq statistics. The new
+> file is a drop in replacement to stat for users that need performance.
+>
+> The stat file is not touched, of course -- this was also previously
+> suggested by Waiman:
+> https://lore.kernel.org/lkml/1524166562-5644-1-git-send-email-longman@redhat.com/
+>
+> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 
-That's indeed fine, I was thinking of something like this:
+I am wondering if /proc/stat_noirqs will be a more descriptive name of
+the intent of this new procfs file or we should just go with the more
+generic stat2 name.
+
+Cheers,
+Longman
+
+> ---
+>  Documentation/filesystems/proc.txt | 12 +++++++---
+>  fs/proc/stat.c                     | 45 ++++++++++++++++++++++++++++++++------
+>  2 files changed, 47 insertions(+), 10 deletions(-)
+>
+> diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+> index 12a5e6e693b6..563b01decb1e 100644
+> --- a/Documentation/filesystems/proc.txt
+> +++ b/Documentation/filesystems/proc.txt
+> @@ -27,7 +27,7 @@ Table of Contents
+>    1.5	SCSI info
+>    1.6	Parallel port info in /proc/parport
+>    1.7	TTY info in /proc/tty
+> -  1.8	Miscellaneous kernel statistics in /proc/stat
+> +  1.8	Miscellaneous kernel statistics in /proc/stat and /proc/stat2
+>    1.9	Ext4 file system parameters
+>  
+>    2	Modifying System Parameters
+> @@ -140,6 +140,7 @@ Table 1-1: Process specific entries in /proc
+>   mem		Memory held by this process
+>   root		Link to the root directory of this process
+>   stat		Process status
+> + stat2		Process status without irq information
+>   statm		Process memory status information
+>   status		Process status in human readable form
+>   wchan		Present with CONFIG_KALLSYMS=y: it shows the kernel function
+> @@ -1301,8 +1302,8 @@ To see  which  tty's  are  currently in use, you can simply look into the file
+>    unknown              /dev/tty        4    1-63 console 
+>  
+>  
+> -1.8 Miscellaneous kernel statistics in /proc/stat
+> --------------------------------------------------
+> +1.8 Miscellaneous kernel statistics in /proc/stat and /proc/stat2
+> +-----------------------------------------------------------------
+>  
+>  Various pieces   of  information about  kernel activity  are  available in the
+>  /proc/stat file.  All  of  the numbers reported  in  this file are  aggregates
+> @@ -1371,6 +1372,11 @@ of the possible system softirqs. The first column is the total of all
+>  softirqs serviced; each subsequent column is the total for that particular
+>  softirq.
+>  
+> +The stat2 file acts as a performance alternative to /proc/stat for workloads
+> +and systems that care and are under heavy irq load. In order to to be completely
+> +compatible, /proc/stat and /proc/stat2 are identical with the exception that the
+> +later will show 0 for any (hard)irq-related fields. This refers particularly
+> +to the "intr" line and 'irq' column for that aggregate in the cpu line.
+>  
+>  1.9 Ext4 file system parameters
+>  -------------------------------
+> diff --git a/fs/proc/stat.c b/fs/proc/stat.c
+> index 535eda7857cf..349040270003 100644
+> --- a/fs/proc/stat.c
+> +++ b/fs/proc/stat.c
+> @@ -79,7 +79,7 @@ static u64 get_iowait_time(int cpu)
+>  
+>  #endif
+>  
+> -static int show_stat(struct seq_file *p, void *v)
+> +static int __show_stat(struct seq_file *p, void *v, bool irq_stats)
+>  {
+>  	int i, j;
+>  	u64 user, nice, system, idle, iowait, irq, softirq, steal;
+> @@ -100,13 +100,17 @@ static int show_stat(struct seq_file *p, void *v)
+>  		system += kcpustat_cpu(i).cpustat[CPUTIME_SYSTEM];
+>  		idle += get_idle_time(i);
+>  		iowait += get_iowait_time(i);
+> -		irq += kcpustat_cpu(i).cpustat[CPUTIME_IRQ];
+>  		softirq += kcpustat_cpu(i).cpustat[CPUTIME_SOFTIRQ];
+>  		steal += kcpustat_cpu(i).cpustat[CPUTIME_STEAL];
+>  		guest += kcpustat_cpu(i).cpustat[CPUTIME_GUEST];
+>  		guest_nice += kcpustat_cpu(i).cpustat[CPUTIME_GUEST_NICE];
+> -		sum += kstat_cpu_irqs_sum(i);
+> -		sum += arch_irq_stat_cpu(i);
+> +
+> +		if (irq_stats) {
+> +			irq += kcpustat_cpu(i).cpustat[CPUTIME_IRQ];
+> +
+> +			sum += kstat_cpu_irqs_sum(i);
+> +			sum += arch_irq_stat_cpu(i);
+> +		}
+>  
+>  		for (j = 0; j < NR_SOFTIRQS; j++) {
+>  			unsigned int softirq_stat = kstat_softirqs_cpu(j, i);
+> @@ -115,7 +119,9 @@ static int show_stat(struct seq_file *p, void *v)
+>  			sum_softirq += softirq_stat;
+>  		}
+>  	}
+> -	sum += arch_irq_stat();
+> +
+> +	if (irq_stats)
+> +		sum += arch_irq_stat();
+>  
+>  	seq_put_decimal_ull(p, "cpu  ", nsec_to_clock_t(user));
+>  	seq_put_decimal_ull(p, " ", nsec_to_clock_t(nice));
+> @@ -136,7 +142,8 @@ static int show_stat(struct seq_file *p, void *v)
+>  		system = kcpustat_cpu(i).cpustat[CPUTIME_SYSTEM];
+>  		idle = get_idle_time(i);
+>  		iowait = get_iowait_time(i);
+> -		irq = kcpustat_cpu(i).cpustat[CPUTIME_IRQ];
+> +		if (irq_stats)
+> +			irq = kcpustat_cpu(i).cpustat[CPUTIME_IRQ];
+>  		softirq = kcpustat_cpu(i).cpustat[CPUTIME_SOFTIRQ];
+>  		steal = kcpustat_cpu(i).cpustat[CPUTIME_STEAL];
+>  		guest = kcpustat_cpu(i).cpustat[CPUTIME_GUEST];
+> @@ -158,7 +165,7 @@ static int show_stat(struct seq_file *p, void *v)
+>  
+>  	/* sum again ? it could be updated? */
+>  	for_each_irq_nr(j)
+> -		seq_put_decimal_ull(p, " ", kstat_irqs_usr(j));
+> +		seq_put_decimal_ull(p, " ", irq_stats ? kstat_irqs_usr(j) : 0);
+>  
+>  	seq_printf(p,
+>  		"\nctxt %llu\n"
+> @@ -181,6 +188,16 @@ static int show_stat(struct seq_file *p, void *v)
+>  	return 0;
+>  }
+>  
+> +static int show_stat(struct seq_file *p, void *v)
+> +{
+> +	return __show_stat(p, v, true);
+> +}
+> +
+> +static int show_stat2(struct seq_file *p, void *v)
+> +{
+> +	return __show_stat(p, v, false);
+> +}
+> +
+>  static int stat_open(struct inode *inode, struct file *file)
+>  {
+>  	unsigned int size = 1024 + 128 * num_online_cpus();
+> @@ -190,6 +207,12 @@ static int stat_open(struct inode *inode, struct file *file)
+>  	return single_open_size(file, show_stat, NULL, size);
+>  }
+>  
+> +static int stat2_open(struct inode *inode, struct file *file)
+> +{
+> +	unsigned int size = 1024 + 128 * num_online_cpus();
+> +	return single_open_size(file, show_stat2, NULL, size);
+> +}
+> +
+>  static const struct file_operations proc_stat_operations = {
+>  	.open		= stat_open,
+>  	.read		= seq_read,
+> @@ -197,9 +220,17 @@ static const struct file_operations proc_stat_operations = {
+>  	.release	= single_release,
+>  };
+>  
+> +static const struct file_operations proc_stat2_operations = {
+> +	.open		= stat2_open,
+> +	.read		= seq_read,
+> +	.llseek		= seq_lseek,
+> +	.release	= single_release,
+> +};
+> +
+>  static int __init proc_stat_init(void)
+>  {
+>  	proc_create("stat", 0, NULL, &proc_stat_operations);
+> +	proc_create("stat2", 0, NULL, &proc_stat2_operations);
+>  	return 0;
+>  }
+>  fs_initcall(proc_stat_init);
 
 
-Suppose you have 2 rq's sharing a workload of 3 tasks. You get one rq with
-nr_running == 1 (r_1) and one rq with nr_running == 2 (r_2).
 
-As soon as the task on r_1 ends/blocks, we'll go through idle balancing and
-can potentially steal the non-running task from r_2. Sometime later the task
-that was running on r_1 wakes up, and we end up with r_1->nr_running == 2
-and r_2->nr_running == 1.
-
-IOW we've swapped their role in that example, and the whole thing can
-repeat.
-
-The shorter the period of those tasks, the more we'll migrate them
-between rq's, hence why I wonder if we shouldn't have some sort of
-throttling.
-
-> If we modify the code to handle misfits, we may steal when src nr_running == 1,
-> but a fast CPU will only steal the lone task from a slow one, never fast from fast, 
-> and never slow from fast, so no tug of war.
-> 
->> In short, I wonder if we should have task_hot() in there. Drawing a
->> parallel with load_balance(), even if load-balancing is happening between
->> rqs of the same LLC, we do go check task_hot(). Have you already experimented
->> with adding a task_hot() check in here?
-> 
-> I tried task_hot, to see if L1/L2 cache warmth matters much on L1/L2/L3 systems, 
-> and it reduced steals and overall performance.
-> 
-
-Mmm so task_hot() mainly implements two mechanisms - the CACHE_HOT_BUDDY
-sched feature and the exec_start threshold.
-
-The first one should be sidestepped in the stealing case since we won't
-pass (if env->dst_rq->nr_running), that leaves us with the threshold.
-
-We might want to sidestep it when we are doing balancing within an LLC
-domain (env->sd->flags & SD_SHARE_PKG_RESOURCES) - or use a lower threshold
-in such cases.
-
-In any case, I think it would make sense to add some LLC conditions to
-task_hot() so that
-- regular load_balance() can also benefit from them
-- task stealing has at least some sort of throttling
-
-
-On a sidenote, I find it a bit odd that the exec_start threshold depends on
-sysctl_sched_migration_cost, which to me is more about idle_balance() cost
-than "how long does it take for a previously run task to go cache cold".
-
->> I've run some iterations of hackbench (hackbench 2 process 100000) to
->> investigate this task bouncing, but I didn't really see any of it. That was
->> just a 4+4 big.LITTLE system though, I'll try to get numbers on a system
->> with more CPUs.
->>
->> ----->8-----
->>
->> activations: # of task activations (task starts running)
->> cpu_migrations: # of activations where cpu != prev_cpu
->> % stats are percentiles
->>
->> - STEAL:
->>
->>   | stat  | cpu_migrations | activations |
->>   |-------+----------------+-------------|
->>   | count |    2005.000000 | 2005.000000 |
->>   | mean  |      16.244888 |  290.608479 |
->>   | std   |      38.963138 |  253.003528 |
->>   | min   |       0.000000 |    3.000000 |
->>   | 50%   |       3.000000 |  239.000000 |
->>   | 75%   |       8.000000 |  436.000000 |
->>   | 90%   |      45.000000 |  626.000000 |
->>   | 99%   |     188.960000 | 1073.000000 |
->>   | max   |     369.000000 | 1417.000000 |
->>
->> - NO_STEAL:
->>
->>   | stat  | cpu_migrations | activations |
->>   |-------+----------------+-------------|
->>   | count |    2005.000000 | 2005.000000 |
->>   | mean  |      15.260848 |  297.860848 |
->>   | std   |      46.331890 |  253.210813 |
->>   | min   |       0.000000 |    3.000000 |
->>   | 50%   |       3.000000 |  252.000000 |
->>   | 75%   |       7.000000 |  444.000000 |
->>   | 90%   |      32.600000 |  643.600000 |
->>   | 99%   |     214.880000 | 1127.520000 |
->>   | max   |     467.000000 | 1547.000000 |
->>
->> ----->8-----
->>
->> Otherwise, my only other concern at the moment is that since stealing
->> doesn't care about load, we could steal a task that would cause a big
->> imbalance, which wouldn't have happened with a call to load_balance().
->>
->> I don't think this can be triggered with a symmetrical workload like
->> hackbench, so I'll go explore something else.
-> 
-> The dst is about to go idle with zero load, so stealing can only improve the
-> instantaneous balance between src and dst.  For longer term average load, we
-> still rely on periodic load_balance to make adjustments.
-> 
-
-Right, so my line of thinking was that by not doing a load_balance() and
-taking a shortcut (stealing a task), we may end up just postponing a
-load_balance() to after we've stolen a task. I guess in those cases
-there's no magic trick to be found and we just have to deal with it.
-
-And then there's some of the logic like we have in update_sd_pick_busiest()
-where we e.g. try to prevent misfit tasks from running on LITTLEs, but
-then if such tasks are waiting to be run and a LITTLE frees itself up,
-I *think* it's okay to steal it.
-
-> All good questions, keep them coming.
-> 
-> - Steve
-> 
