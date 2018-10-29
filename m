@@ -2,124 +2,97 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE5FC2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:33:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68EA3C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:33:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8962E2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:33:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3481020870
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:33:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DGW7oHIh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8962E2084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="gVvjCSqX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3481020870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729396AbeJ3DWv (ORCPT
+        id S1729407AbeJ3DXH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 23:22:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59108 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728221AbeJ3DWv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 23:22:51 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D43592080A;
-        Mon, 29 Oct 2018 18:32:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540837980;
-        bh=Lk15W6sR8shuOHtrfohOoWYvE/72muOe/v6MpngrcR8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DGW7oHIhLEvUgwYmSA44BDciXxsXi8V/XNhqaJqES5TBWr4zMkRQ4C9561MsoE2jc
-         n2Jn7luZlB0gvEDASxQpuIKEfRFLKwHUTc4hPOJye3AxilsmDrk4q2kEDwk726302a
-         QFQhx84ie7dk2R9ssIpv6RrZB8gxnuFNJHEzFfxY=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 0B2BC142C5F; Mon, 29 Oct 2018 15:32:58 -0300 (-03)
-Date:   Mon, 29 Oct 2018 15:32:58 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     "Liang, Kan" <kan.liang@linux.intel.com>
-Cc:     David Miller <davem@davemloft.net>, linux-kernel@vger.kernel.org,
-        wangnan0@huawei.com, jolsa@kernel.org, namhyung@kernel.org,
-        kan.liang@intel.com, ak@linux.intel.com, yao.jin@linux.intel.com,
-        peterz@infradead.org
-Subject: Re: [PATCHES/RFC] Re: A concern about overflow ring buffer mode
-Message-ID: <20181029183258.GL21857@kernel.org>
-References: <0247fca0-5a94-9a83-cefa-282804316729@linux.intel.com>
- <20181029.104008.791032322062574758.davem@davemloft.net>
- <b488a063-276c-ab8f-954e-f68e951146b4@linux.intel.com>
- <20181029.104827.680192866924184016.davem@davemloft.net>
- <d3626e3f-5993-7ee7-f817-48e9dcee17f4@linux.intel.com>
+        Mon, 29 Oct 2018 23:23:07 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41570 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729193AbeJ3DXH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 23:23:07 -0400
+Received: by mail-lj1-f196.google.com with SMTP id z80-v6so2754546ljb.8
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 11:33:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LEnflDjnHG1+HuE9+T+AV5GVwUWj49fcaDumUkxer3E=;
+        b=gVvjCSqX43+ykDmkUbl4jX/ayBvNcN4eXXtOEVuM3LmW6h9fRR5TS/eE8wLwH3oHPz
+         jmhd8fnobipYX8T28hcv0vqtvRbtYlFRHirlZapp5Ct45jzxDgi8lPFKzecu9/AQW0gE
+         SxV/zSRCDCnDtgcS9/+Q0kmvOlsldNPmXvoLA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LEnflDjnHG1+HuE9+T+AV5GVwUWj49fcaDumUkxer3E=;
+        b=KPkC0rfr70zY98aJSmS5K7cAl/eq9EoZypbRllVacyvqz/hzcQ4ym2SBdz57wkZ6Ff
+         A8IZB5Q3t13CUBNo80A6p8dnvV/rMandJQr/X80YEOadbyntNek4gWldOdg1KFvyX/nC
+         MbyS2wQYQSHkhsqrgmSGrqps/5ZJHVLsvjm72UOPGM+v5yNowiM4zTngS3B/UVVTvOfO
+         9eZrad1c2RaQ5TIXBjne/YyL7827JDTOp9DbCiUqaEkV6WfClIe+ZJ8a4cMQtRrOuRBs
+         9Y4LEzgMq6W4QXKiiuIk5lfBkDxix2D/hubbqFR8aI07+LpIr0kKOchdVa9bLPmTLNOI
+         v4yQ==
+X-Gm-Message-State: AGRZ1gLaNgMkRpa6jUNgXhgli2a6a6DF7Jw2uq4BWXPggMh/pi0hVPn1
+        o69HLkpa4BCF29ErBD+2mhhz7oGJBKsmbQ==
+X-Google-Smtp-Source: AJdET5e6FT8a1se9U9uSDX1YIo2MYP+A9OouFwW7KY9rtCNv+nNGMPKoWIlBk5wdhve4iVj51CCQgA==
+X-Received: by 2002:a2e:320c:: with SMTP id y12-v6mr6509622ljy.163.1540837995073;
+        Mon, 29 Oct 2018 11:33:15 -0700 (PDT)
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
+        by smtp.gmail.com with ESMTPSA id k18-v6sm3169711ljk.58.2018.10.29.11.33.13
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Oct 2018 11:33:13 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id n3-v6so6851366lfe.7
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 11:33:13 -0700 (PDT)
+X-Received: by 2002:a19:3fcf:: with SMTP id m198mr8718858lfa.106.1540837992908;
+ Mon, 29 Oct 2018 11:33:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d3626e3f-5993-7ee7-f817-48e9dcee17f4@linux.intel.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <CAHk-=wjGKhoVaa60i5XZODEtzTUYVV3fouyYL4k=JsPY4K_xjQ@mail.gmail.com>
+ <nycvar.YFH.7.76.1810291415570.23511@cbobk.fhfr.pm> <CAHk-=wgwgmcqxChVXQb66itd__qJOBc7LBsJ+nRAM86qJH-S2Q@mail.gmail.com>
+In-Reply-To: <CAHk-=wgwgmcqxChVXQb66itd__qJOBc7LBsJ+nRAM86qJH-S2Q@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 29 Oct 2018 11:32:56 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiRjotiAcy-=Jv5bMM2-r7KzWRGd84CwGmq1FLb1dWKcA@mail.gmail.com>
+Message-ID: <CAHk-=wiRjotiAcy-=Jv5bMM2-r7KzWRGd84CwGmq1FLb1dWKcA@mail.gmail.com>
+Subject: Re: Logitech high-resolution scrolling..
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Harry Cutts <hcutts@chromium.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        peter.hutterer@who-t.net
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Oct 29, 2018 at 02:20:15PM -0400, Liang, Kan escreveu:
-> 
-> 
-> On 10/29/2018 1:48 PM, David Miller wrote:
-> > From: "Liang, Kan" <kan.liang@linux.intel.com>
-> > Date: Mon, 29 Oct 2018 13:42:56 -0400
-> > 
-> > > 
-> > > 
-> > > On 10/29/2018 1:40 PM, David Miller wrote:
-> > > > From: "Liang, Kan" <kan.liang@linux.intel.com>
-> > > > Date: Mon, 29 Oct 2018 10:33:06 -0400
-> > > > 
-> > > > > I just realized that the problem in KNL will be back if we switch
-> > > > > back to non-overwrite mode.
-> > > > What is KNL?
-> > > > 
-> > > Intel Xeon Phi Processor, Knights Landing.
-> > 
-> > I don't understand how a specific piece of hardware directly leads to
-> > ring buffer processing timeouts, or multi-minute thread map processing
-> > times...
-> 
-> Perf top processes all samples in a serial way. With the number of CPU
-> increasing under the heavy load, the number of samples increase
-> dramatically. The processing time also increase significantly.
-> When the processing time is longer than display refresh time, only the stale
-> data is shown.
-> 
-> I use KNL as an example. Because the problem is even worse on KNL. There is
-> nothing output with perf top.
-> 
-> In theory, it's a problem for all large scale platforms.
-> 
-> > 
-> > You'll have to explain all of the details of your test scenerio, and
-> > the exact problems triggers, which
-> 
-> My test was the same as yours, just running a parallel kernel build on KNL.
-> 
-> > caused you to write these patches
-> > which causes serious regressions for what I consider a core simple use
-> > case of perf top.
-> 
-> I agree that the warning message is annoying. I will try to find another way
-> to deliver the message. But I think we do need the warning message.
+On Mon, Oct 29, 2018 at 8:16 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Patch I'm using attached. I'm inclined to just commit it, but if
+> somebody has a better idea, I can test alternatives too.
 
-There is no problem with the message, the problem is the thread where
-the message is being displayed, just signal the display thread to
-display the warning, not doing that in the event processing thread.
- 
-> You didn't see any warning before the patch. I think it is just because perf
-> top hides the problem.
-> 
-> Thanks,
-> Kan
-> > 
-> > And that's running perf top during a parallel kernel build.
-> > 
-> > 
+I committed my patch, as it at least makes the scroll wheel usable.
+
+I'm more than open to further improvements, but I wasn't willing to
+live with the status quo, and carrying this around in my tree as a
+patch kept confusing me while doing merges whenever a conflict
+happened (because the "git diff" that I use to see the conflicts
+obviously also showed my own local modifications).
+
+                 Linus
