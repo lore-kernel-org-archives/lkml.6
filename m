@@ -2,119 +2,105 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A94EC2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED59C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:57:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F18E120825
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:56:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 374C020825
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:57:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=owltronix-com.20150623.gappssmtp.com header.i=@owltronix-com.20150623.gappssmtp.com header.b="TiWRXad6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F18E120825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=owltronix.com
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="JI/PlU9z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 374C020825
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729704AbeJ2Sob (ORCPT
+        id S1729738AbeJ2SpH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 14:44:31 -0400
-Received: from mail-vk1-f196.google.com ([209.85.221.196]:32969 "EHLO
-        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729554AbeJ2Sob (ORCPT
+        Mon, 29 Oct 2018 14:45:07 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:19899 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729594AbeJ2SpG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 14:44:31 -0400
-Received: by mail-vk1-f196.google.com with SMTP id l186so1887280vke.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 02:56:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=owltronix-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=50449q8iGcINCtJ7cimQ1yuKOqLpxMohEE6QzK4fbBE=;
-        b=TiWRXad6qHt9PX0pHIni01Npesnu6yOPz0ZxCOeKBHDpfP/pLu9TRfK1Z+Kz03LQsQ
-         Q5LefLbUqsmO+4WCjjhkSIW+7AK0ZvjNx1za2u6ISsHpxC4ZCQgLA6lXhITVMMERPiIp
-         5SJeqh8nn9QW2fSYrIZdvbo3ze27q8lgWFG4Vt7ZcK/Kx+i9w3vgoM1DGWxf5lwDax5K
-         ZG5bKtPLuKvQ5d27f4GrhIzfKV1lpfGZE0md4tUzUI9QiOIUvGSXVkr3Pkr98TLgbdrN
-         g5jHWVQ8qg0YxfdTnp0kHD8vT8K5BF9+iiiUrdDbkA9yEhXwiMmHomRCkq+gyV26Ey1o
-         k8Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=50449q8iGcINCtJ7cimQ1yuKOqLpxMohEE6QzK4fbBE=;
-        b=Bu7YyiLuteY3MtCVeeAmYZMGWuJHMRfrDFY1iojJKrHyRyuylIxJEZK3AJJsBAxMQr
-         a0H1IJmT7R4kOQwDXz+eo0n5EXr/MxljIG9EA7U5jbmjND0R8gwyAQQ4j1gKT42DV4cz
-         aKNihRefIRMlCirpgfguZgX+8HAWKbnedCWCIy77wC7KLu3CsrW86JqDACeTOU6tRa2U
-         MrDnY/zm+oJztodQ2XUa0OnLciNIvH3TWNIq2UqrRbZqxcRaKB6FnWFYGZ6qEEoIZ1XZ
-         NF87IbKnlT81bHS/g9Yecg8teyFnBRFAyiiC1vlL9KL8CuZoBlCSwmSDRay89CqKj+/i
-         czoA==
-X-Gm-Message-State: AGRZ1gLcb+iHy3aWzXM7smHIMoDba5GAouLl7BtriLg3qo3e9kZHGhjH
-        8+oG4As2jeqj73mKl3dki2ufTN61uxQxf7juFcMBX1AyvOC72w==
-X-Google-Smtp-Source: AJdET5cfdn422FeDx+Eo+2l5j7+b4OfTbchnsoNa33TnEgTAY2fWvBwsJZ6NkEwTBT2qVpZQKbXRTGsQsPYtx5pYMaw=
-X-Received: by 2002:a1f:1d4b:: with SMTP id d72-v6mr5685900vkd.34.1540806993713;
- Mon, 29 Oct 2018 02:56:33 -0700 (PDT)
+        Mon, 29 Oct 2018 14:45:06 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bd6d9680000>; Mon, 29 Oct 2018 02:56:56 -0700
+Received: from HQMAIL101.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 29 Oct 2018 02:57:09 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 29 Oct 2018 02:57:09 -0700
+Received: from [10.26.11.215] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 29 Oct
+ 2018 09:57:07 +0000
+Subject: Re: [PATCH V3] arm64: Don't flush tlb while clearing the accessed bit
+To:     Ashish Mhetre <amhetre@nvidia.com>, <mark.rutland@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-tegra@vger.kernel.org>, <avanbrunt@nvidia.com>
+CC:     <linux-kernel@vger.kernel.org>, <vdumpa@nvidia.com>,
+        <Snikam@nvidia.com>
+References: <1540805158-618-1-git-send-email-amhetre@nvidia.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <b014451f-d81e-1d02-4b04-f719bca6621d@nvidia.com>
+Date:   Mon, 29 Oct 2018 09:57:04 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <1540541544-7761-1-git-send-email-hans.holmberg@cnexlabs.com> <e884c6c9-d875-e282-59dd-f1733ffc38fb@lightnvm.io>
-In-Reply-To: <e884c6c9-d875-e282-59dd-f1733ffc38fb@lightnvm.io>
-From:   Hans Holmberg <hans@owltronix.com>
-Date:   Mon, 29 Oct 2018 10:56:22 +0100
-Message-ID: <CANr-nt0kcMYrGA5fmG1HBG+Hp6DUwi7B+SWTVfjYtHYE5EGELw@mail.gmail.com>
-Subject: Re: [PATCH] lightnvm: pblk: fix chunk close trace event check
-To:     Matias Bjorling <mb@lightnvm.io>
-Cc:     linux-block@vger.kernel.org, Javier Gonzalez <javier@cnexlabs.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1540805158-618-1-git-send-email-amhetre@nvidia.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1540807016; bh=B1EmMxeTBY1PPTiFEUalJrnyKJhas2yAxsj4P8Dj6JM=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=JI/PlU9zToSOj+AJzpwikxfzVKAzSw8NspwDlqWxhlpBY7SOnYGtVWAXHmqmzge4x
+         Kh55yLizRGKLQYnh6C2GBjgx6IT6b816bH8/t92PUGEDwShdHcVDBciBaruWormo3A
+         nLZLqeWiyhE/pCbuEmmw84/uf9phwnBZyj3fOHL7ELDkdT4z8McocFetsoZYks1QXm
+         KrMmoqhzlcMnFOdpo/tism60rvV6p4ucEgYszKk5hhBzzTxwegB6UgTRv5xD+8BRam
+         BmcLM1btyIbb8yotGfvUIn9xEClflLFem+Ds7O+ysjjAltMHIOnKiY3DkM+pSZUCoi
+         txbF9KN0FV/1A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 8:49 PM Matias Bj=C3=B8rling <mb@lightnvm.io> wrote=
-:
->
-> On 10/26/2018 10:12 AM, Hans Holmberg wrote:
-> > The check for chunk closes suffers from an off-by-one issue, leading
-> > to chunk close events not being traced. Fix this.
-> >
-> > Fixes: 4c44abf43d00 ("lightnvm: pblk: add trace events for chunk states=
-")
-> >
-> > Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
-> > ---
-> >
-> >   drivers/lightnvm/pblk-core.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.=
-c
-> > index 6944aac43b01..6581c35f51ee 100644
-> > --- a/drivers/lightnvm/pblk-core.c
-> > +++ b/drivers/lightnvm/pblk-core.c
-> > @@ -531,7 +531,7 @@ void pblk_check_chunk_state_update(struct pblk *pbl=
-k, struct nvm_rq *rqd)
-> >               if (caddr =3D=3D 0)
-> >                       trace_pblk_chunk_state(pblk_disk_name(pblk),
-> >                                                       ppa, NVM_CHK_ST_O=
-PEN);
-> > -             else if (caddr =3D=3D chunk->cnlb)
-> > +             else if (caddr =3D=3D (chunk->cnlb - 1))
-> >                       trace_pblk_chunk_state(pblk_disk_name(pblk),
-> >                                                       ppa, NVM_CHK_ST_C=
-LOSED);
-> >       }
-> >
->
-> Thanks Hans, Applied for 4.21/5.1. Note that you're sending from your
-> owntronix email account. Checkpatch complains that sender and author
-> doesn't match.
 
-Ah, I must have messed up my git configuration.
-Would you mind updating the patch author to "Hans Holmberg
-<hans.holmberg@cnexlabs.com>" in for-4.21/core?
+On 29/10/2018 09:25, Ashish Mhetre wrote:
+> From: Alex Van Brunt <avanbrunt@nvidia.com>
+> 
+> Accessed bit is used to age a page and in generic implementation there is
+> flush_tlb while clearing the accessed bit.
+> Flushing a TLB is overhead on ARM64 as access flag faults don't get
+> translation table entries cached into TLB's. Flushing TLB is not necessary
+> for this. Clearing the accessed bit without flushing TLB doesn't cause data
+> corruption on ARM64.
+> In our case with this patch, speed of reading from fast NVMe/SSD through
+> PCIe got improved by 10% ~ 15% and writing got improved by 20% ~ 40%.
+> So for performance optimisation don't flush TLB when clearing the accessed
+> bit on ARM64.
+> x86 made the same optimization even though their TLB invalidate is much
+> faster as it doesn't broadcast to other CPUs.
+> Please refer to:
+> 'commit b13b1d2d8692 ("x86/mm: In the PTE swapout page reclaim case clear
+> the accessed bit instead of flushing the TLB")'
+> 
+> Signed-off-by: Alex Van Brunt <avanbrunt@nvidia.com>
+> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
+> ---
 
-Thanks,
-Hans
+Please make sure you state here below the above line what has been
+changed between each version of the patch.
+
+Thanks
+Jon
+
+-- 
+nvpublic
