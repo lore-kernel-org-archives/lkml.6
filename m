@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4C24C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:34:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC7A0C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:34:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A389F2080A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:34:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A389F2080A
+	by mail.kernel.org (Postfix) with ESMTP id B5A8B2080A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:34:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5A8B2080A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729565AbeJ3DXt (ORCPT
+        id S1729584AbeJ3DXx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 23:23:49 -0400
-Received: from foss.arm.com ([217.140.101.70]:44652 "EHLO foss.arm.com"
+        Mon, 29 Oct 2018 23:23:53 -0400
+Received: from foss.arm.com ([217.140.101.70]:44666 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729275AbeJ3DXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 23:23:49 -0400
+        id S1729275AbeJ3DXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 23:23:52 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1929E341;
-        Mon, 29 Oct 2018 11:33:58 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4CC2A341;
+        Mon, 29 Oct 2018 11:34:01 -0700 (PDT)
 Received: from e110439-lin.cambridge.arm.com (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 27DE13F6A8;
-        Mon, 29 Oct 2018 11:33:55 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 5BA843F6A8;
+        Mon, 29 Oct 2018 11:33:58 -0700 (PDT)
 From:   Patrick Bellasi <patrick.bellasi@arm.com>
 To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 Cc:     Ingo Molnar <mingo@redhat.com>,
@@ -45,9 +45,9 @@ Cc:     Ingo Molnar <mingo@redhat.com>,
         Joel Fernandes <joelaf@google.com>,
         Steve Muckle <smuckle@google.com>,
         Suren Baghdasaryan <surenb@google.com>
-Subject: [PATCH v5 08/15] sched/core: uclamp: add system default clamps
-Date:   Mon, 29 Oct 2018 18:33:03 +0000
-Message-Id: <20181029183311.29175-10-patrick.bellasi@arm.com>
+Subject: [PATCH v5 09/15] sched/cpufreq: uclamp: add utilization clamping for FAIR tasks
+Date:   Mon, 29 Oct 2018 18:33:04 +0000
+Message-Id: <20181029183311.29175-11-patrick.bellasi@arm.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20181029183311.29175-1-patrick.bellasi@arm.com>
 References: <20181029183311.29175-1-patrick.bellasi@arm.com>
@@ -56,34 +56,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tasks without a user-defined clamp value are considered not clamped
-and by default their utilization can be any value in the
-[0..SCHED_CAPACITY_SCALE] range. Tasks with a user-defined clamp value
-are allowed to request any value in that range, and we currently
-unconditionally enforce the required clamps.
-However, a "System Management Software" could be interested in
-unconditionally limiting the range of clamp values allowed for all
-tasks.
+Each time a frequency update is required via schedutil, a frequency is
+selected to (possibly) satisfy the utilization reported by the CFS
+class. However, when utilization clamping is in use, the frequency
+selection should consider userspace utilization clamping hints.
+This will allow, for example, to:
 
-Let's fix this by explicitly adding a privileged interface to define a
-system default configuration via:
+ - boost tasks which are directly affecting the user experience
+   by running them at least at a minimum "requested" frequency
 
-  /proc/sys/kernel/sched_uclamp_util_{min,max}
+ - cap low priority tasks not directly affecting the user experience
+   by running them only up to a maximum "allowed" frequency
 
-which works as an unconditional clamp range restriction for all tasks.
+These constraints are meant to support a per-task based tuning of the
+frequency selection thus supporting a fine grained definition of
+performance boosting vs energy saving strategies in kernel space.
 
-If a task specific value is not compliant with the system default range,
-it will be forced to the corresponding system default value.
+This adds the required support to clamp the utilization generated by
+RUNNABLE FAIR tasks within the boundaries defined by their aggregated
+utilization clamp constraints.
+
+On each CPU the aggregated clamp values are obtained by considering the
+maximum of the {min,max}_util values for each task. This max aggregation
+responds to the goal of not penalizing, for example, high boosted (i.e.
+more important for the user-experience) CFS tasks which happens to be
+co-scheduled with high capped (i.e. less important for the
+user-experience) CFS tasks.
+
+For FAIR tasks both the utilization and the IOWait boost values
+are clamped according to the CPU aggregated utilization clamp
+constraints.
+
+The default values for boosting and capping are defined to be:
+ - util_min: 0
+ - util_max: SCHED_CAPACITY_SCALE
+which means that by default no boosting/capping is enforced on FAIR
+tasks, and thus the frequency will be selected considering the actual
+utilization value of each CPU.
 
 Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
 Cc: Ingo Molnar <mingo@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Paul Turner <pjt@google.com>
+Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
 Cc: Suren Baghdasaryan <surenb@google.com>
 Cc: Todd Kjos <tkjos@google.com>
 Cc: Joel Fernandes <joelaf@google.com>
-Cc: Steve Muckle <smuckle@google.com>
 Cc: Juri Lelli <juri.lelli@redhat.com>
 Cc: Quentin Perret <quentin.perret@arm.com>
 Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
@@ -92,304 +110,129 @@ Cc: linux-kernel@vger.kernel.org
 Cc: linux-pm@vger.kernel.org
 
 ---
-The current restriction could be too aggressive since, for example if a
-task has a util_min which is higher then the system default max, it
-will be forced to the system default min unconditionally.
-
-We should probably better restrict util_min to the maximum system
-default value, but that whould make the code more complex and we keep it
-for a future update.
-
 Changes in v5:
- Other:
+  Message-ID: <20180914133654.GL24124@hirez.programming.kicks-ass.net>
+  - add a comment to justify the assumptions on util clamping for FAIR tasks
+  Message-ID: <20180914093240.GB24082@hirez.programming.kicks-ass.net>
+  - removed uclamp_value and use inline access to data structures
+  Message-ID: <20180914135712.GQ1413@e110439-lin>
+  - the (unlikely(val == UCLAMP_NOT_VALID)) check is not more required
+    since we now ensure we always have a valid value configured
+ Others:
  - rebased on v4.19
 
 Changes in v4:
- Message-ID: <20180820122728.GM2960@e110439-lin>
- - fix unwanted reset of clamp values on refcount success
+ Message-ID: <CAKfTPtC2adLupg7wy1JU9zxKx1466Sza6fSCcr92wcawm1OYkg@mail.gmail.com>
+ - use *rq instead of cpu for both uclamp_util() and uclamp_value()
+ Message-ID: <20180816135300.GC2960@e110439-lin>
+ - remove uclamp_value() which is never used outside CONFIG_UCLAMP_TASK
  Others:
- - by default all tasks have a UCLAMP_NOT_VALID task specific clamp
- - always use:
-      p->uclamp[clamp_id].effective.value
-   to track the actual clamp value the task has been refcounted into.
-   This matches with the usage of
-      p->uclamp[clamp_id].effective.group_id
  - rebased on v4.19-rc1
+Changes in v3:
+ Message-ID: <CAJuCfpF6=L=0LrmNnJrTNPazT4dWKqNv+thhN0dwpKCgUzs9sg@mail.gmail.com>
+ - rename UCLAMP_NONE into UCLAMP_NOT_VALID
+ Others:
+ - rebased on tip/sched/core
+Changes in v2:
+ - rebased on v4.18-rc4
 ---
- include/linux/sched.h        |   5 ++
- include/linux/sched/sysctl.h |  11 +++
- kernel/sched/core.c          | 131 ++++++++++++++++++++++++++++++++---
- kernel/sysctl.c              |  16 +++++
- 4 files changed, 154 insertions(+), 9 deletions(-)
+ kernel/sched/cpufreq_schedutil.c | 25 ++++++++++++++++++++++---
+ kernel/sched/sched.h             | 28 ++++++++++++++++++++++++++++
+ 2 files changed, 50 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 3ab1cbd4e3b1..ec6783ea4e7d 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -614,6 +614,11 @@ struct uclamp_se {
- 	unsigned int group_id		: order_base_2(UCLAMP_GROUPS);
- 	unsigned int mapped		: 1;
- 	unsigned int active		: 1;
-+	/* Clamp group and value actually used by a RUNNABLE task */
-+	struct {
-+		unsigned int value	: SCHED_CAPACITY_SHIFT + 1;
-+		unsigned int group_id	: order_base_2(UCLAMP_GROUPS);
-+	} effective;
- };
- #endif /* CONFIG_UCLAMP_TASK */
+diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
+index 3fffad3bc8a8..fd3fe55d605b 100644
+--- a/kernel/sched/cpufreq_schedutil.c
++++ b/kernel/sched/cpufreq_schedutil.c
+@@ -222,8 +222,13 @@ static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
+ 	 * CFS tasks and we use the same metric to track the effective
+ 	 * utilization (PELT windows are synchronized) we can directly add them
+ 	 * to obtain the CPU's actual utilization.
++	 *
++	 * CFS utilization can be boosted or capped, depending on utilization
++	 * clamp constraints requested by currently RUNNABLE tasks.
++	 * When there are no CFS RUNNABLE tasks, clamps are released and OPPs
++	 * will be gracefully reduced with the utilization decay.
+ 	 */
+-	util = cpu_util_cfs(rq);
++	util  = uclamp_util(rq, cpu_util_cfs(rq));
+ 	util += cpu_util_rt(rq);
  
-diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
-index a9c32daeb9d8..445fb54eaeff 100644
---- a/include/linux/sched/sysctl.h
-+++ b/include/linux/sched/sysctl.h
-@@ -56,6 +56,11 @@ int sched_proc_update_handler(struct ctl_table *table, int write,
- extern unsigned int sysctl_sched_rt_period;
- extern int sysctl_sched_rt_runtime;
+ 	/*
+@@ -307,6 +312,7 @@ static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
+ 			       unsigned int flags)
+ {
+ 	bool set_iowait_boost = flags & SCHED_CPUFREQ_IOWAIT;
++	unsigned int max_boost;
  
-+#ifdef CONFIG_UCLAMP_TASK
-+extern unsigned int sysctl_sched_uclamp_util_min;
-+extern unsigned int sysctl_sched_uclamp_util_max;
-+#endif
-+
- #ifdef CONFIG_CFS_BANDWIDTH
- extern unsigned int sysctl_sched_cfs_bandwidth_slice;
- #endif
-@@ -75,6 +80,12 @@ extern int sched_rt_handler(struct ctl_table *table, int write,
- 		void __user *buffer, size_t *lenp,
- 		loff_t *ppos);
+ 	/* Reset boost if the CPU appears to have been idle enough */
+ 	if (sg_cpu->iowait_boost &&
+@@ -322,11 +328,24 @@ static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
+ 		return;
+ 	sg_cpu->iowait_boost_pending = true;
  
-+#ifdef CONFIG_UCLAMP_TASK
-+extern int sched_uclamp_handler(struct ctl_table *table, int write,
-+				void __user *buffer, size_t *lenp,
-+				loff_t *ppos);
-+#endif
++	/*
++	 * Boost FAIR tasks only up to the CPU clamped utilization.
++	 *
++	 * Since DL tasks have a much more advanced bandwidth control, it's
++	 * safe to assume that IO boost does not apply to those tasks.
++	 * Instead, since RT tasks are not utiliation clamped, we don't want
++	 * to apply clamping on IO boost while there is blocked RT
++	 * utilization.
++	 */
++	max_boost = sg_cpu->iowait_boost_max;
++	if (!cpu_util_rt(cpu_rq(sg_cpu->cpu)))
++		max_boost = uclamp_util(cpu_rq(sg_cpu->cpu), max_boost);
 +
- extern int sysctl_numa_balancing(struct ctl_table *table, int write,
- 				 void __user *buffer, size_t *lenp,
- 				 loff_t *ppos);
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 9b49062439f3..8421ef96ec97 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -729,6 +729,23 @@ static void set_load_weight(struct task_struct *p, bool update_load)
-  */
- static DEFINE_MUTEX(uclamp_mutex);
+ 	/* Double the boost at each request */
+ 	if (sg_cpu->iowait_boost) {
+ 		sg_cpu->iowait_boost <<= 1;
+-		if (sg_cpu->iowait_boost > sg_cpu->iowait_boost_max)
+-			sg_cpu->iowait_boost = sg_cpu->iowait_boost_max;
++		if (sg_cpu->iowait_boost > max_boost)
++			sg_cpu->iowait_boost = max_boost;
+ 		return;
+ 	}
  
-+/*
-+ * Minimum utilization for all tasks
-+ * default: 0
-+ */
-+unsigned int sysctl_sched_uclamp_util_min;
-+
-+/*
-+ * Maximum utilization for all tasks
-+ * default: 1024
-+ */
-+unsigned int sysctl_sched_uclamp_util_max = SCHED_CAPACITY_SCALE;
-+
-+/*
-+ * Tasks's clamp values are required to be within this range
-+ */
-+static struct uclamp_se uclamp_default[UCLAMP_CNT];
-+
- /**
-  * uclamp_map: reference count utilization clamp groups
-  * @value:    the utilization "clamp value" tracked by this clamp group
-@@ -857,6 +874,55 @@ static inline void uclamp_cpu_update(struct rq *rq, unsigned int clamp_id,
- 	rq->uclamp.value[clamp_id] = max_value;
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 859192ec492c..a7e9b7041ea5 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -2262,6 +2262,34 @@ static inline unsigned int uclamp_none(int clamp_id)
+ 	return SCHED_CAPACITY_SCALE;
  }
  
++#ifdef CONFIG_UCLAMP_TASK
 +/**
-+ * uclamp_effective_group_id: get the effective clamp group index of a task
-+ * @p: the task to get the effective clamp value for
-+ * @clamp_id: the clamp index to consider
++ * clamp_util: clamp a utilization value for a specified CPU
++ * @rq: the CPU's RQ to get the clamp values from
++ * @util: the utilization signal to clamp
 + *
-+ * The effective clamp group index of a task depends on:
-+ * - the task specific clamp value, explicitly requested from userspace
-+ * - the system default clamp value, defined by the sysadmin
-+ * and tasks specific's clamp values are always restricted by system
-+ * defaults clamp values.
++ * Each CPU tracks util_{min,max} clamp values depending on the set of its
++ * currently RUNNABLE tasks. Given a utilization signal, i.e a signal in
++ * the [0..SCHED_CAPACITY_SCALE] range, this function returns a clamped
++ * utilization signal considering the current clamp values for the
++ * specified CPU.
 + *
-+ * This method returns the effective group index for a task, depending on its
-+ * status and a proper aggregation of the clamp values listed above.
-+ * Moreover, it ensures that the task's effective value:
-+ *    task_struct::uclamp::effective::value
-+ * is updated to represent the clamp value corresponding to the taks effective
-+ * group index.
++ * Return: a clamped utilization signal for a given CPU.
 + */
-+static inline unsigned int uclamp_effective_group_id(struct task_struct *p,
-+						     unsigned int clamp_id)
++static inline unsigned int uclamp_util(struct rq *rq, unsigned int util)
 +{
-+	unsigned int clamp_value;
-+	unsigned int group_id;
++	unsigned int min_util = rq->uclamp.value[UCLAMP_MIN];
++	unsigned int max_util = rq->uclamp.value[UCLAMP_MAX];
 +
-+	/* Task currently refcounted into a CPU clamp group */
-+	if (p->uclamp[clamp_id].active)
-+		return p->uclamp[clamp_id].effective.group_id;
-+
-+	/* Task specific clamp value */
-+	clamp_value = p->uclamp[clamp_id].value;
-+	group_id = p->uclamp[clamp_id].group_id;
-+
-+	/* System default restriction */
-+	if (unlikely(clamp_value < uclamp_default[UCLAMP_MIN].value ||
-+		     clamp_value > uclamp_default[UCLAMP_MAX].value)) {
-+		/*
-+		 * Unconditionally enforce system defaults, which is a simpler
-+		 * solution compared to a proper clamping.
-+		 */
-+		clamp_value = uclamp_default[clamp_id].value;
-+		group_id = uclamp_default[clamp_id].group_id;
-+	}
-+
-+	p->uclamp[clamp_id].effective.value = clamp_value;
-+	p->uclamp[clamp_id].effective.group_id = group_id;
-+
-+	return group_id;
++	return clamp(util, min_util, max_util);
 +}
-+
- /**
-  * uclamp_cpu_get_id(): increase reference count for a clamp group on a CPU
-  * @p: the task being enqueued on a CPU
-@@ -869,16 +935,17 @@ static inline void uclamp_cpu_update(struct rq *rq, unsigned int clamp_id,
- static inline void uclamp_cpu_get_id(struct task_struct *p, struct rq *rq,
- 				     unsigned int clamp_id)
- {
--	unsigned int clamp_value;
-+	unsigned int effective;
- 	unsigned int group_id;
- 
- 	if (unlikely(!p->uclamp[clamp_id].mapped))
- 		return;
- 
--	group_id = p->uclamp[clamp_id].group_id;
-+	group_id = uclamp_effective_group_id(p, clamp_id);
- 	p->uclamp[clamp_id].active = true;
- 
- 	rq->uclamp.group[clamp_id][group_id].tasks += 1;
-+	effective = p->uclamp[clamp_id].effective.value;
- 
- 	if (unlikely(rq->uclamp.flags & UCLAMP_FLAG_IDLE)) {
- 		/*
-@@ -889,16 +956,15 @@ static inline void uclamp_cpu_get_id(struct task_struct *p, struct rq *rq,
- 		 */
- 		if (clamp_id == UCLAMP_MAX)
- 			rq->uclamp.flags &= ~UCLAMP_FLAG_IDLE;
--		rq->uclamp.value[clamp_id] = p->uclamp[clamp_id].value;
-+		rq->uclamp.value[clamp_id] = effective;
- 	}
- 
- 	/* CPU's clamp groups track the max effective clamp value */
--	clamp_value = p->uclamp[clamp_id].value;
--	if (clamp_value > rq->uclamp.group[clamp_id][group_id].value)
--		rq->uclamp.group[clamp_id][group_id].value = clamp_value;
-+	if (effective > rq->uclamp.group[clamp_id][group_id].value)
-+		rq->uclamp.group[clamp_id][group_id].value = effective;
- 
--	if (rq->uclamp.value[clamp_id] < p->uclamp[clamp_id].value)
--		rq->uclamp.value[clamp_id] = p->uclamp[clamp_id].value;
-+	if (rq->uclamp.value[clamp_id] < effective)
-+		rq->uclamp.value[clamp_id] = effective;
- }
- 
- /**
-@@ -922,7 +988,7 @@ static inline void uclamp_cpu_put_id(struct task_struct *p, struct rq *rq,
- 	if (unlikely(!p->uclamp[clamp_id].mapped))
- 		return;
- 
--	group_id = p->uclamp[clamp_id].group_id;
-+	group_id = uclamp_effective_group_id(p, clamp_id);
- 	p->uclamp[clamp_id].active = false;
- 
- 	if (likely(rq->uclamp.group[clamp_id][group_id].tasks))
-@@ -1172,6 +1238,50 @@ static void uclamp_group_get(struct task_struct *p, struct uclamp_se *uc_se,
- 	uc_se->mapped = true;
- }
- 
-+int sched_uclamp_handler(struct ctl_table *table, int write,
-+			 void __user *buffer, size_t *lenp,
-+			 loff_t *ppos)
++#else /* CONFIG_UCLAMP_TASK */
++static inline unsigned int uclamp_util(struct rq *rq, unsigned int util)
 +{
-+	int old_min, old_max;
-+	int result = 0;
-+
-+	mutex_lock(&uclamp_mutex);
-+
-+	old_min = sysctl_sched_uclamp_util_min;
-+	old_max = sysctl_sched_uclamp_util_max;
-+
-+	result = proc_dointvec(table, write, buffer, lenp, ppos);
-+	if (result)
-+		goto undo;
-+	if (!write)
-+		goto done;
-+
-+	if (sysctl_sched_uclamp_util_min > sysctl_sched_uclamp_util_max ||
-+	    sysctl_sched_uclamp_util_max > SCHED_CAPACITY_SCALE) {
-+		result = -EINVAL;
-+		goto undo;
-+	}
-+
-+	if (old_min != sysctl_sched_uclamp_util_min) {
-+		uclamp_group_get(NULL, &uclamp_default[UCLAMP_MIN],
-+				 UCLAMP_MIN, sysctl_sched_uclamp_util_min);
-+	}
-+	if (old_max != sysctl_sched_uclamp_util_max) {
-+		uclamp_group_get(NULL, &uclamp_default[UCLAMP_MAX],
-+				 UCLAMP_MAX, sysctl_sched_uclamp_util_max);
-+	}
-+	goto done;
-+
-+undo:
-+	sysctl_sched_uclamp_util_min = old_min;
-+	sysctl_sched_uclamp_util_max = old_max;
-+
-+done:
-+	mutex_unlock(&uclamp_mutex);
-+
-+	return result;
++	return util;
 +}
++#endif /* CONFIG_UCLAMP_TASK */
 +
- static int __setscheduler_uclamp(struct task_struct *p,
- 				 const struct sched_attr *attr)
- {
-@@ -1268,6 +1378,9 @@ static void __init init_uclamp(void)
- 	for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id) {
- 		uc_se = &init_task.uclamp[clamp_id];
- 		uclamp_group_get(NULL, uc_se, clamp_id, uclamp_none(clamp_id));
-+
-+		uc_se = &uclamp_default[clamp_id];
-+		uclamp_group_get(NULL, uc_se, clamp_id, uclamp_none(clamp_id));
- 	}
- }
- 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index cc02050fd0c4..378ea57e5fc5 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -445,6 +445,22 @@ static struct ctl_table kern_table[] = {
- 		.mode		= 0644,
- 		.proc_handler	= sched_rr_handler,
- 	},
-+#ifdef CONFIG_UCLAMP_TASK
-+	{
-+		.procname	= "sched_uclamp_util_min",
-+		.data		= &sysctl_sched_uclamp_util_min,
-+		.maxlen		= sizeof(unsigned int),
-+		.mode		= 0644,
-+		.proc_handler	= sched_uclamp_handler,
-+	},
-+	{
-+		.procname	= "sched_uclamp_util_max",
-+		.data		= &sysctl_sched_uclamp_util_max,
-+		.maxlen		= sizeof(unsigned int),
-+		.mode		= 0644,
-+		.proc_handler	= sched_uclamp_handler,
-+	},
-+#endif
- #ifdef CONFIG_SCHED_AUTOGROUP
- 	{
- 		.procname	= "sched_autogroup_enabled",
+ #ifdef arch_scale_freq_capacity
+ # ifndef arch_scale_freq_invariant
+ #  define arch_scale_freq_invariant()	true
 -- 
 2.18.0
 
