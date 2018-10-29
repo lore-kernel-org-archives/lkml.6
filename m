@@ -2,295 +2,172 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D3AC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:00:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 474A4C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:04:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 985ED2081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:00:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mAa0OUJ1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 985ED2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id F18972081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:04:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F18972081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729191AbeJ2Usi (ORCPT
+        id S1729186AbeJ2Uww (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 16:48:38 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:40090 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729095AbeJ2Ush (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 16:48:37 -0400
-Received: by mail-qt1-f196.google.com with SMTP id k12so2906135qtf.7;
-        Mon, 29 Oct 2018 05:00:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=O2AWIyc7DTaDMorh/hy5SO8y5UGlpcdfK6ps5HwhpSo=;
-        b=mAa0OUJ1y5Dg3locSgocNN/6XAYRE1A726oR3uhWkoeHvm55B2xvtRmIXqAKO14oIf
-         GoxGQTn+ePBBXM4MVwTWBD5O4FbEot1xKeOZrYojJbyEIlGFmeKBe4yTCSTLYw5j18rV
-         dK9ceMI0/3YswHYfQNK4lNYfdHAuW8LmiFIqP5r8XPWFcnGzOhAjPx2p4yyxMgxEB/YS
-         BuzhcHAC4uXHub4q7WENrIjnoSjjwrkwOOhM2PV3em3NAJBSa3GKo49C6hCRdLE9h/VP
-         OtgO0KFKL6aKOH9TQqE50Lr7Tub/b9UdgeYxf/8u1jcynzeEIsXHSq8c2MKs+vbv4ouw
-         a/xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=O2AWIyc7DTaDMorh/hy5SO8y5UGlpcdfK6ps5HwhpSo=;
-        b=nbDRPt5SkWhOkg90mangQLXYUmU+ofm3HuBP6OTUs6rEvs8RgFYmYTbwKXZuGkTF34
-         yzmRdDemnzRYOhlQRFSmABHUMzQhsxBgy0A5ceAZVqomx9xTsDLyEY6EPFxUvc3cr8Vm
-         frIl6qMn4KnfQ2H78rrh0xxevpr5oJKb3erCivMH2ficB3uVqFlqbsj/cit09tNRJQ2m
-         29gMIzNPaT5q54Tk1YfUvxUg7ZHmDzRbzhGuparcVL4E6O0/pr5NmK7elz3+kr0L43nS
-         vIZlXyzuQLzEaDTtsBAA7wHdJOOBvo8MR3Um7ytoF5lcSj0hSnmhLBYVE1RStzIzSooU
-         twxA==
-X-Gm-Message-State: AGRZ1gICZfirh2+gRmkXz+vx+qi4qghVwYSjFW0bYddjMaLXon/5AsLw
-        /QFr9YP+e3j9xRhRPQLfw6+MzGxkRolja+jHVsE=
-X-Google-Smtp-Source: AJdET5fCP6P1LjHiZGjhNXy0KDGGE8GgUy1QDWQ/cYZ+O6TlglQgIxOmDuDhf50T87gd5Bdgq2w5Ex+Qf1KVAtm5/ak=
-X-Received: by 2002:ac8:191a:: with SMTP id t26-v6mr11977000qtj.327.1540814414866;
- Mon, 29 Oct 2018 05:00:14 -0700 (PDT)
+        Mon, 29 Oct 2018 16:52:52 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39358 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729095AbeJ2Uww (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 16:52:52 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3952480D;
+        Mon, 29 Oct 2018 05:04:29 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 077A53F6A8;
+        Mon, 29 Oct 2018 05:04:29 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id F135F1AE091C; Mon, 29 Oct 2018 12:04:35 +0000 (GMT)
+Date:   Mon, 29 Oct 2018 12:04:35 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Anders Roxell <anders.roxell@linaro.org>
+Cc:     catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Laura Abbott <labbott@redhat.com>
+Subject: Re: [PATCH] arm64: kprobe: make page to RO mode when allocate it
+Message-ID: <20181029120434.GA15446@arm.com>
+References: <20181015111600.5479-1-anders.roxell@linaro.org>
 MIME-Version: 1.0
-References: <20181014175427.22139-1-hdegoede@redhat.com>
-In-Reply-To: <20181014175427.22139-1-hdegoede@redhat.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 29 Oct 2018 14:00:03 +0200
-Message-ID: <CAHp75Vf2ioDkNgA42J14p+_t7Hjdszmbpwh9nMSwQtxANuzLtg@mail.gmail.com>
-Subject: Re: [PATCH v2] platform/x86: Add Intel AtomISP2 dummy /
- power-management driver
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181015111600.5479-1-anders.roxell@linaro.org>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 14, 2018 at 8:54 PM Hans de Goede <hdegoede@redhat.com> wrote:
->
-> The Image Signal Processor found on Cherry Trail devices is brought up in
-> D0 state on devices which have camera sensors attached to it. The ISP will
-> not enter D3 state again without some massaging of its registers beforehand
-> and the ISP not being in D3 state blocks the SoC from entering S0ix modes.
->
-> There was a driver for the ISP in drivers/staging but that got removed
-> again because it never worked. It does not seem likely that a real
-> driver for the ISP will be added to the mainline kernel anytime soon.
->
-> This commit adds a dummy driver which contains the necessary magic from
-> the staging driver to powerdown the ISP, so that Cherry Trail devices where
-> the ISP is used will properly use S0ix modes when suspended.
->
-> Together with other recent S0ix related fixes this allows S0ix modes to
-> be entered on e.g. a Chuwi Hi8 Pro and a HP x2 210.
->
+Hi Anders,
 
-There are might be slight improvements, but in general it's okay.
-Applied, thanks!
-
-P.S. It's possible we need to add Merrifield ID there, I will do it
-myself along with cosmetic changes as a separate patches later on.
-
-> BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=196915
-> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+On Mon, Oct 15, 2018 at 01:16:00PM +0200, Anders Roxell wrote:
+> Commit 1404d6f13e47 ("arm64: dump: Add checking for writable and exectuable pages")
+> has successfully identified code that leaves a page with W+X
+> permissions.
+> 
+> [    3.245140] arm64/mm: Found insecure W+X mapping at address (____ptrval____)/0xffff000000d90000
+> [    3.245771] WARNING: CPU: 0 PID: 1 at ../arch/arm64/mm/dump.c:232 note_page+0x410/0x420
+> [    3.246141] Modules linked in:
+> [    3.246653] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc5-next-20180928-00001-ge70ae259b853-dirty #62
+> [    3.247008] Hardware name: linux,dummy-virt (DT)
+> [    3.247347] pstate: 80000005 (Nzcv daif -PAN -UAO)
+> [    3.247623] pc : note_page+0x410/0x420
+> [    3.247898] lr : note_page+0x410/0x420
+> [    3.248071] sp : ffff00000804bcd0
+> [    3.248254] x29: ffff00000804bcd0 x28: ffff000009274000
+> [    3.248578] x27: ffff00000921a000 x26: ffff80007dfff000
+> [    3.248845] x25: ffff0000093f5000 x24: ffff000009526f6a
+> [    3.249109] x23: 0000000000000004 x22: ffff000000d91000
+> [    3.249396] x21: ffff000000d90000 x20: 0000000000000000
+> [    3.249661] x19: ffff00000804bde8 x18: 0000000000000400
+> [    3.249924] x17: 0000000000000000 x16: 0000000000000000
+> [    3.250271] x15: ffffffffffffffff x14: 295f5f5f5f6c6176
+> [    3.250594] x13: 7274705f5f5f5f28 x12: 2073736572646461
+> [    3.250941] x11: 20746120676e6970 x10: 70616d20582b5720
+> [    3.251252] x9 : 6572756365736e69 x8 : 3039643030303030
+> [    3.251519] x7 : 306666666678302f x6 : ffff0000095467b2
+> [    3.251802] x5 : 0000000000000000 x4 : 0000000000000000
+> [    3.252060] x3 : 0000000000000000 x2 : ffffffffffffffff
+> [    3.252323] x1 : 4d151327adc50b00 x0 : 0000000000000000
+> [    3.252664] Call trace:
+> [    3.252953]  note_page+0x410/0x420
+> [    3.253186]  walk_pgd+0x12c/0x238
+> [    3.253417]  ptdump_check_wx+0x68/0xf8
+> [    3.253637]  mark_rodata_ro+0x68/0x98
+> [    3.253847]  kernel_init+0x38/0x160
+> [    3.254103]  ret_from_fork+0x10/0x18
+> 
+> Reworked to that when allocate a page it sets mode RO. Inspired by
+> commit 63fef14fc98a ("kprobes/x86: Make insn buffer always ROX and use text_poke()").
+> 
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Cc: Laura Abbott <labbott@redhat.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Co-developed-by: Arnd Bergmann <arnd@arndb.de>
+> Co-developed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 > ---
-> Changes in v2:
-> -Rename the driver and Kconfig option from intel-isp-dummy to intel-atomisp2-pm
-> ---
->  MAINTAINERS                              |   6 ++
->  drivers/platform/x86/Kconfig             |  12 +++
->  drivers/platform/x86/Makefile            |   1 +
->  drivers/platform/x86/intel_atomisp2_pm.c | 119 +++++++++++++++++++++++
->  4 files changed, 138 insertions(+)
->  create mode 100644 drivers/platform/x86/intel_atomisp2_pm.c
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 2c5d5c6859b8..ba9e5da792ea 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -7306,6 +7306,12 @@ L:       alsa-devel@alsa-project.org (moderated for non-subscribers)
->  S:     Supported
->  F:     sound/soc/intel/
->
-> +INTEL ATOMISP2 DUMMY / POWER-MANAGEMENT DRIVER
-> +M:     Hans de Goede <hdegoede@redhat.com>
-> +L:     platform-driver-x86@vger.kernel.org
-> +S:     Maintained
-> +F:     drivers/platform/x86/intel_atomisp2_pm.c
-> +
->  INTEL C600 SERIES SAS CONTROLLER DRIVER
->  M:     Intel SCU Linux support <intel-linux-scu@intel.com>
->  M:     Artur Paszkiewicz <artur.paszkiewicz@intel.com>
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index 48bec711e5e3..5eedcec0fefe 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -1232,6 +1232,18 @@ config I2C_MULTI_INSTANTIATE
->           To compile this driver as a module, choose M here: the module
->           will be called i2c-multi-instantiate.
->
-> +config INTEL_ATOMISP2_PM
-> +       tristate "Intel AtomISP2 dummy / power-management driver"
-> +       depends on PCI && IOSF_MBI && PM
-> +       help
-> +         Power-management driver for Intel's Image Signal Processor found on
-> +         Bay and Cherry Trail devices. This dummy driver's sole purpose is to
-> +         turn the ISP off (put it in D3) to save power and to allow entering
-> +         of S0ix modes.
-> +
-> +         To compile this driver as a module, choose M here: the module
-> +         will be called intel_atomisp2_pm.
-> +
->  endif # X86_PLATFORM_DEVICES
->
->  config PMC_ATOM
-> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-> index e6d1becf81ce..dc29af4d8e2f 100644
-> --- a/drivers/platform/x86/Makefile
-> +++ b/drivers/platform/x86/Makefile
-> @@ -92,3 +92,4 @@ obj-$(CONFIG_MLX_PLATFORM)    += mlx-platform.o
->  obj-$(CONFIG_INTEL_TURBO_MAX_3) += intel_turbo_max_3.o
->  obj-$(CONFIG_INTEL_CHTDC_TI_PWRBTN)    += intel_chtdc_ti_pwrbtn.o
->  obj-$(CONFIG_I2C_MULTI_INSTANTIATE)    += i2c-multi-instantiate.o
-> +obj-$(CONFIG_INTEL_ATOMISP2_PM)        += intel_atomisp2_pm.o
-> diff --git a/drivers/platform/x86/intel_atomisp2_pm.c b/drivers/platform/x86/intel_atomisp2_pm.c
-> new file mode 100644
-> index 000000000000..9371603a0ac9
-> --- /dev/null
-> +++ b/drivers/platform/x86/intel_atomisp2_pm.c
-> @@ -0,0 +1,119 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Dummy driver for Intel's Image Signal Processor found on Bay and Cherry
-> + * Trail devices. The sole purpose of this driver is to allow the ISP to
-> + * be put in D3.
-> + *
-> + * Copyright (C) 2018 Hans de Goede <hdegoede@redhat.com>
-> + *
-> + * Based on various non upstream patches for ISP support:
-> + * Copyright (C) 2010-2017 Intel Corporation. All rights reserved.
-> + * Copyright (c) 2010 Silicon Hive www.siliconhive.com.
-> + */
-> +
-> +#include <linux/delay.h>
-> +#include <linux/module.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/pci.h>
-> +#include <linux/pm_runtime.h>
-> +#include <asm/iosf_mbi.h>
-> +
-> +/* PCI configuration regs */
-> +#define PCI_INTERRUPT_CTRL             0x9c
-> +
-> +#define PCI_CSI_CONTROL                        0xe8
-> +#define PCI_CSI_CONTROL_PORTS_OFF_MASK 0x7
-> +
-> +/* IOSF BT_MBI_UNIT_PMC regs */
-> +#define ISPSSPM0                       0x39
-> +#define ISPSSPM0_ISPSSC_OFFSET         0
-> +#define ISPSSPM0_ISPSSC_MASK           0x00000003
-> +#define ISPSSPM0_ISPSSS_OFFSET         24
-> +#define ISPSSPM0_ISPSSS_MASK           0x03000000
-> +#define ISPSSPM0_IUNIT_POWER_ON                0x0
-> +#define ISPSSPM0_IUNIT_POWER_OFF       0x3
-> +
-> +static int isp_probe(struct pci_dev *dev, const struct pci_device_id *id)
+>  arch/arm64/kernel/probes/kprobes.c | 27 ++++++++++++++++++++-------
+>  1 file changed, 20 insertions(+), 7 deletions(-)
+> 
+> diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
+> index 9b65132e789a..b842e908b423 100644
+> --- a/arch/arm64/kernel/probes/kprobes.c
+> +++ b/arch/arm64/kernel/probes/kprobes.c
+> @@ -23,7 +23,9 @@
+>  #include <linux/slab.h>
+>  #include <linux/stop_machine.h>
+>  #include <linux/sched/debug.h>
+> +#include <linux/set_memory.h>
+>  #include <linux/stringify.h>
+> +#include <linux/vmalloc.h>
+>  #include <asm/traps.h>
+>  #include <asm/ptrace.h>
+>  #include <asm/cacheflush.h>
+> @@ -42,10 +44,21 @@ DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
+>  static void __kprobes
+>  post_kprobe_handler(struct kprobe_ctlblk *, struct pt_regs *);
+>  
+> +static int __kprobes patch_text(kprobe_opcode_t *addr, u32 opcode)
 > +{
-> +       unsigned long timeout;
-> +       u32 val;
+> +	void *addrs[1];
+> +	u32 insns[1];
 > +
-> +       pci_write_config_dword(dev, PCI_INTERRUPT_CTRL, 0);
+> +	addrs[0] = (void *)addr;
+> +	insns[0] = (u32)opcode;
 > +
-> +       /*
-> +        * MRFLD IUNIT DPHY is located in an always-power-on island
-> +        * MRFLD HW design need all CSI ports are disabled before
-> +        * powering down the IUNIT.
-> +        */
-> +       pci_read_config_dword(dev, PCI_CSI_CONTROL, &val);
-> +       val |= PCI_CSI_CONTROL_PORTS_OFF_MASK;
-> +       pci_write_config_dword(dev, PCI_CSI_CONTROL, val);
-> +
-> +       /* Write 0x3 to ISPSSPM0 bit[1:0] to power off the IUNIT */
-> +       iosf_mbi_modify(BT_MBI_UNIT_PMC, MBI_REG_READ, ISPSSPM0,
-> +                       ISPSSPM0_IUNIT_POWER_OFF, ISPSSPM0_ISPSSC_MASK);
-> +
-> +       /*
-> +        * There should be no IUNIT access while power-down is
-> +        * in progress HW sighting: 4567865
-> +        * Wait up to 50 ms for the IUNIT to shut down.
-> +        */
-> +       timeout = jiffies + msecs_to_jiffies(50);
-> +       while (1) {
-> +               /* Wait until ISPSSPM0 bit[25:24] shows 0x3 */
-> +               iosf_mbi_read(BT_MBI_UNIT_PMC, MBI_REG_READ, ISPSSPM0, &val);
-> +               val = (val & ISPSSPM0_ISPSSS_MASK) >> ISPSSPM0_ISPSSS_OFFSET;
-> +               if (val == ISPSSPM0_IUNIT_POWER_OFF)
-> +                       break;
-> +
-> +               if (time_after(jiffies, timeout)) {
-> +                       dev_err(&dev->dev, "IUNIT power-off timeout.\n");
-> +                       return -EBUSY;
-> +               }
-> +               usleep_range(1000, 2000);
-> +       }
-> +
-> +       pm_runtime_allow(&dev->dev);
-> +       pm_runtime_put_sync_suspend(&dev->dev);
-> +
-> +       return 0;
+> +	return aarch64_insn_patch_text(addrs, insns, 1);
 > +}
 > +
-> +static void isp_remove(struct pci_dev *dev)
-> +{
-> +       pm_runtime_get_sync(&dev->dev);
-> +       pm_runtime_forbid(&dev->dev);
-> +}
-> +
-> +static int isp_pci_suspend(struct device *dev)
-> +{
-> +       return 0;
-> +}
-> +
-> +static int isp_pci_resume(struct device *dev)
-> +{
-> +       return 0;
-> +}
-> +
-> +static UNIVERSAL_DEV_PM_OPS(isp_pm_ops, isp_pci_suspend,
-> +                           isp_pci_resume, NULL);
-> +
-> +static const struct pci_device_id isp_id_table[] = {
-> +       { PCI_VDEVICE(INTEL, 0x22b8), },
-> +       { 0, }
-> +};
-> +MODULE_DEVICE_TABLE(pci, isp_id_table);
-> +
-> +static struct pci_driver isp_pci_driver = {
-> +       .name = "intel_atomisp2_pm",
-> +       .id_table = isp_id_table,
-> +       .probe = isp_probe,
-> +       .remove = isp_remove,
-> +       .driver.pm = &isp_pm_ops,
-> +};
-> +
-> +module_pci_driver(isp_pci_driver);
-> +
-> +MODULE_DESCRIPTION("Intel AtomISP2 dummy / power-management drv (for suspend)");
-> +MODULE_AUTHOR("Hans de Goede <hdegoede@redhat.com>");
-> +MODULE_LICENSE("GPL v2");
-> --
-> 2.19.0
->
+>  static void __kprobes arch_prepare_ss_slot(struct kprobe *p)
+>  {
+>  	/* prepare insn slot */
+> -	p->ainsn.api.insn[0] = cpu_to_le32(p->opcode);
+> +	patch_text(p->ainsn.api.insn, p->opcode);
+>  
+>  	flush_icache_range((uintptr_t) (p->ainsn.api.insn),
+>  			   (uintptr_t) (p->ainsn.api.insn) +
+> @@ -118,15 +131,15 @@ int __kprobes arch_prepare_kprobe(struct kprobe *p)
+>  	return 0;
+>  }
+>  
+> -static int __kprobes patch_text(kprobe_opcode_t *addr, u32 opcode)
+> +void *alloc_insn_page(void)
+>  {
+> -	void *addrs[1];
+> -	u32 insns[1];
+> +	void *page;
+>  
+> -	addrs[0] = (void *)addr;
+> -	insns[0] = (u32)opcode;
+> +	page = vmalloc_exec(PAGE_SIZE);
+> +	if (page)
+> +		set_memory_ro((unsigned long)page & PAGE_MASK, 1);
 
+This looks a bit strange to me -- you're allocating PAGE_SIZE bytes so
+that we can adjust the permissions, yet we can't guarantee that page is
+actually page-aligned and therefore end up explicitly masking down.
 
--- 
-With Best Regards,
-Andy Shevchenko
+In which case allocating an entire page isn't actually helping us, and
+we could end up racing with somebody else changing permission on the
+same page afaict.
+
+I think we need to ensure we really have an entire page, perhaps using
+vmap() instead? Or have I missed some subtle detail here?
+
+Cheers,
+
+Will
