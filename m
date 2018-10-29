@@ -2,277 +2,263 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D6FFC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:27:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15FDBC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:27:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B38C20880
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:27:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="t8O3k3pk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B38C20880
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	by mail.kernel.org (Postfix) with ESMTP id B1DC820657
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:27:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1DC820657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726886AbeJ2XQa (ORCPT
+        id S1727065AbeJ2XQg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 19:16:30 -0400
-Received: from mail-dm3nam03on0089.outbound.protection.outlook.com ([104.47.41.89]:32160
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725989AbeJ2XQ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 19:16:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YNzhC/Zc3PUl34f6m6rLNbjqBf3V4fE5KiqihX8kyiI=;
- b=t8O3k3pk1ZmrweO6YOWVSKQ+JNesH205YbOLw1GCWSjWbmH7iXufG5jSyHFumXs/hMvZgCsCWV4Lhkgnw71JR2a4j6oZrOvklNiiXSZP2WMprYgXJxxXY0DJJJ3lQqzjol+Y20Q9cdfwzMs3TgZ+s8wRhpwPHrrPif4Y/l4Z/qs=
-Received: from BYAPR02MB4055.namprd02.prod.outlook.com (20.176.248.159) by
- BYAPR02MB5574.namprd02.prod.outlook.com (20.177.230.84) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1273.25; Mon, 29 Oct 2018 14:27:19 +0000
-Received: from BYAPR02MB4055.namprd02.prod.outlook.com
- ([fe80::8551:a7c9:de28:bbb5]) by BYAPR02MB4055.namprd02.prod.outlook.com
- ([fe80::8551:a7c9:de28:bbb5%3]) with mapi id 15.20.1273.027; Mon, 29 Oct 2018
- 14:27:18 +0000
-From:   Rajan Vaja <RAJANV@xilinx.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
-        "andy.gross@linaro.org" <andy.gross@linaro.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "geert+renesas@glider.be" <geert+renesas@glider.be>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "sean.wang@mediatek.com" <sean.wang@mediatek.com>,
-        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
-        Michal Simek <michals@xilinx.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Jolly Shah <JOLLYS@xilinx.com>
-Subject: RE: [PATCH v3 0/4] drivers: soc: xilinx: Add support for ZynqMP power
- domain driver
-Thread-Topic: [PATCH v3 0/4] drivers: soc: xilinx: Add support for ZynqMP
- power domain driver
-Thread-Index: AQHUXCiXuP+O1wmqNkuDthhr7zBZnKUY2XcAgALktoCAGq0KsA==
-Date:   Mon, 29 Oct 2018 14:27:18 +0000
-Message-ID: <BYAPR02MB40556D3EDE9892943073662DB7F30@BYAPR02MB4055.namprd02.prod.outlook.com>
-References: <1538688221-9823-1-git-send-email-jollys@xilinx.com>
- <BL2PR02MB2130719D4A82F429745DDBEEB8E00@BL2PR02MB2130.namprd02.prod.outlook.com>
- <20181012145251.GA6489@bogus>
-In-Reply-To: <20181012145251.GA6489@bogus>
-Accept-Language: en-IN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 10.0.260.4
-dlp-reaction: no-action
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=RAJANV@xilinx.com; 
-x-originating-ip: [149.199.62.133]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR02MB5574;6:M95XWhiDRDJeFFeWWINiPJHXo49q713WIccBpOpxyF1BmSCKtFHStM151tI1rKBxuUrH8qNtgBg3zaPNvySWow/UFvubJXiS8f1JpeOkWlpF9StVtbYdzDa42AhLz0wwYYtQJR/0jbI9+G2FTZu9K73aQzi3JotcXjakstSNBzR68D4/QfHWCygBYcixLL3Bq15IYY+nn/4eB1HaKI5RapZmwrEQeLRxuJnMhgvEF2mUEsHIiPHBGIuP7BnUukG1Nfw1EC+su8yPd6TlKRWPy7spsRQhIhGIJnNrvGeLyjSWBBfEdbpfev4uDbgBaT+0eeEiJ97NQ7jjFhfERAFqIyrljdVRrRJsaFZcNMVUCIg12tPAzxeH/Fj5QerFdKURKYGcd5I5F91POjrUdpqwT7C/cRCMhsYe6hZw6oRXZDzD9yBB1+KOFMB1I0iKG9lJ8MAhh5sOXtn5LZ9IlGGqzA==;5:T8FX11qRDEJrxk0EIo6vawYRvs5VD8MaOhV4CzxpIJ2GzIt6F07VfV3mh8iCkGo2CWntorazwB9RQo6SFoqC6HVvLtJFnvCJ1G7Nx2W7ATJNqoM6shvHdzKglr9PG6QbDmYKtbrRS550su0wXVQcF1OsytQcRHL6ixkYv8QrurM=;7:H3Sc0ZVOEWV4eFAi3+SsGr4SziBWUcIGatbCcLS2Mdx7g8NPKEGGjM7HApiAliKX9/VU6fFNHePO+rdjE6oxyh141MZ5bXp1rTszKwG38uCvhOnZAHnGaGpnMHdZ0aTHxgn3n5BMoxgoP6PxnrAi2Q==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(396003)(366004)(346002)(376002)(39860400002)(136003)(43544003)(189003)(199004)(13464003)(186003)(68736007)(39060400002)(53546011)(72206003)(7696005)(76176011)(5250100002)(229853002)(486006)(316002)(6506007)(8936002)(14454004)(4326008)(6116002)(26005)(6436002)(3846002)(14444005)(1720100001)(256004)(86362001)(55016002)(102836004)(966005)(54906003)(478600001)(7416002)(25786009)(2900100001)(106356001)(6306002)(5660300001)(9686003)(2906002)(6916009)(105586002)(33656002)(97736004)(66066001)(8676002)(71200400001)(107886003)(81166006)(7736002)(476003)(71190400001)(11346002)(446003)(53936002)(305945005)(99286004)(81156014)(74316002)(6246003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR02MB5574;H:BYAPR02MB4055.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-office365-filtering-correlation-id: 0d331c2d-6fb5-4e83-0e2b-08d63daaa175
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BYAPR02MB5574;
-x-ms-traffictypediagnostic: BYAPR02MB5574:
-x-microsoft-antispam-prvs: <BYAPR02MB557478E8FD21A5CB49F2F5ABB7F30@BYAPR02MB5574.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(269456686620040)(85827821059158)(7411616537696)(180628864354917)(9452136761055)(258649278758335)(192813158149592);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231382)(944501410)(4982022)(52105095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BYAPR02MB5574;BCL:0;PCL:0;RULEID:;SRVR:BYAPR02MB5574;
-x-forefront-prvs: 084080FC15
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: EpHBb+aK+zM0i68vetBXJp2+NtavAHxzkH8Xhd8Crtl1B2DxbzseOMiaYS1IPWOsQsHnp0ucjZ6re2/q1yz5h1BUfXXrUW4RdvsgaHj3CL8ESqnWahCDsWZet/ih7FUUqkuKxwMiYdwAb8I8xXC/MmdHtDWov7JlqcyeIyuV0quQhrZNHhObtKna/nzwIZ5180F0zNR3fwsq5w9zmMs2HGazBwBts06li/EqPGRMQmy1av0u6bAruIUsrWX73DIilL0HfNdIWLAKz4AL0B4TWdgnZlrrb28CdyEuRDcvOPAfS/0ZPR78+Ir5+2QJ+X0w5VAemsy/QeSNngUY2ky2nsvViA2Pat+OH0powccsvPw=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Mon, 29 Oct 2018 19:16:36 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40742 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726903AbeJ2XQf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 19:16:35 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9TENbaH035015
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 10:27:42 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ne3km9b9n-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 10:27:41 -0400
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 29 Oct 2018 10:27:39 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 29 Oct 2018 10:27:34 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9TERXrF22806720
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 29 Oct 2018 14:27:33 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 46A47B2064;
+        Mon, 29 Oct 2018 14:27:33 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1DB96B2065;
+        Mon, 29 Oct 2018 14:27:33 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.141])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 29 Oct 2018 14:27:33 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 4F4A816C0C00; Mon, 29 Oct 2018 07:27:35 -0700 (PDT)
+Date:   Mon, 29 Oct 2018 07:27:35 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Ran Rozenstein <ranro@mellanox.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
+        "dipankar@in.ibm.com" <dipankar@in.ibm.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
+        "josh@joshtriplett.org" <josh@joshtriplett.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "dhowells@redhat.com" <dhowells@redhat.com>,
+        "edumazet@google.com" <edumazet@google.com>,
+        "fweisbec@gmail.com" <fweisbec@gmail.com>,
+        "oleg@redhat.com" <oleg@redhat.com>,
+        "joel@joelfernandes.org" <joel@joelfernandes.org>,
+        Maor Gottlieb <maorg@mellanox.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        Eran Ben Elisha <eranbe@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>
+Subject: Re: [PATCH tip/core/rcu 02/19] rcu: Defer reporting RCU-preempt
+ quiescent states when disabled
+Reply-To: paulmck@linux.ibm.com
+References: <20180829222021.GA29944@linux.vnet.ibm.com>
+ <20180829222047.319-2-paulmck@linux.vnet.ibm.com>
+ <AM4PR0501MB27691ECD1B0ECB0531B16F20C5F30@AM4PR0501MB2769.eurprd05.prod.outlook.com>
 MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0d331c2d-6fb5-4e83-0e2b-08d63daaa175
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Oct 2018 14:27:18.0791
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR02MB5574
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM4PR0501MB27691ECD1B0ECB0531B16F20C5F30@AM4PR0501MB2769.eurprd05.prod.outlook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18102914-2213-0000-0000-0000030C5026
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009948; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01109688; UDB=6.00574928; IPR=6.00889780;
+ MB=3.00023953; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-29 14:27:39
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18102914-2214-0000-0000-00005C0FC27C
+Message-Id: <20181029142735.GZ4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-29_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810290134
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+On Mon, Oct 29, 2018 at 11:24:42AM +0000, Ran Rozenstein wrote:
+> Hi Paul and all,
+> 
+> > -----Original Message-----
+> > From: linux-kernel-owner@vger.kernel.org [mailto:linux-kernel-
+> > owner@vger.kernel.org] On Behalf Of Paul E. McKenney
+> > Sent: Thursday, August 30, 2018 01:21
+> > To: linux-kernel@vger.kernel.org
+> > Cc: mingo@kernel.org; jiangshanlai@gmail.com; dipankar@in.ibm.com;
+> > akpm@linux-foundation.org; mathieu.desnoyers@efficios.com;
+> > josh@joshtriplett.org; tglx@linutronix.de; peterz@infradead.org;
+> > rostedt@goodmis.org; dhowells@redhat.com; edumazet@google.com;
+> > fweisbec@gmail.com; oleg@redhat.com; joel@joelfernandes.org; Paul E.
+> > McKenney <paulmck@linux.vnet.ibm.com>
+> > Subject: [PATCH tip/core/rcu 02/19] rcu: Defer reporting RCU-preempt
+> > quiescent states when disabled
+> > 
+> > This commit defers reporting of RCU-preempt quiescent states at
+> > rcu_read_unlock_special() time when any of interrupts, softirq, or
+> > preemption are disabled.  These deferred quiescent states are reported at a
+> > later RCU_SOFTIRQ, context switch, idle entry, or CPU-hotplug offline
+> > operation.  Of course, if another RCU read-side critical section has started in
+> > the meantime, the reporting of the quiescent state will be further deferred.
+> > 
+> > This also means that disabling preemption, interrupts, and/or softirqs will act
+> > as an RCU-preempt read-side critical section.
+> > This is enforced by checking preempt_count() as needed.
+> > 
+> > Some special cases must be handled on an ad-hoc basis, for example,
+> > context switch is a quiescent state even though both the scheduler and
+> > do_exit() disable preemption.  In these cases, additional calls to
+> > rcu_preempt_deferred_qs() override the preemption disabling.  Similar logic
+> > overrides disabled interrupts in rcu_preempt_check_callbacks() because in
+> > this case the quiescent state happened just before the corresponding
+> > scheduling-clock interrupt.
+> > 
+> > In theory, this change lifts a long-standing restriction that required that if
+> > interrupts were disabled across a call to rcu_read_unlock() that the matching
+> > rcu_read_lock() also be contained within that interrupts-disabled region of
+> > code.  Because the reporting of the corresponding RCU-preempt quiescent
+> > state is now deferred until after interrupts have been enabled, it is no longer
+> > possible for this situation to result in deadlocks involving the scheduler's
+> > runqueue and priority-inheritance locks.  This may allow some code
+> > simplification that might reduce interrupt latency a bit.  Unfortunately, in
+> > practice this would also defer deboosting a low-priority task that had been
+> > subjected to RCU priority boosting, so real-time-response considerations
+> > might well force this restriction to remain in place.
+> > 
+> > Because RCU-preempt grace periods are now blocked not only by RCU read-
+> > side critical sections, but also by disabling of interrupts, preemption, and
+> > softirqs, it will be possible to eliminate RCU-bh and RCU-sched in favor of
+> > RCU-preempt in CONFIG_PREEMPT=y kernels.  This may require some
+> > additional plumbing to provide the network denial-of-service guarantees
+> > that have been traditionally provided by RCU-bh.  Once these are in place,
+> > CONFIG_PREEMPT=n kernels will be able to fold RCU-bh into RCU-sched.
+> > This would mean that all kernels would have but one flavor of RCU, which
+> > would open the door to significant code cleanup.
+> > 
+> > Moving to a single flavor of RCU would also have the beneficial effect of
+> > reducing the NOCB kthreads by at least a factor of two.
+> > 
+> > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com> [ paulmck:
+> > Apply rcu_read_unlock_special() preempt_count() feedback
+> >   from Joel Fernandes. ]
+> > [ paulmck: Adjust rcu_eqs_enter() call to rcu_preempt_deferred_qs() in
+> >   response to bug reports from kbuild test robot. ] [ paulmck: Fix bug located
+> > by kbuild test robot involving recursion
+> >   via rcu_preempt_deferred_qs(). ]
+> > ---
+> >  .../RCU/Design/Requirements/Requirements.html |  50 +++---
+> >  include/linux/rcutiny.h                       |   5 +
+> >  kernel/rcu/tree.c                             |   9 ++
+> >  kernel/rcu/tree.h                             |   3 +
+> >  kernel/rcu/tree_exp.h                         |  71 +++++++--
+> >  kernel/rcu/tree_plugin.h                      | 144 +++++++++++++-----
+> >  6 files changed, 205 insertions(+), 77 deletions(-)
+> > 
+> 
+> We started seeing the trace below in our regression system, after I bisected I found this is the offending commit.
+> This appears immediately on boot. 
+> Please let me know if you need any additional details.
 
-> -----Original Message-----
-> From: Rob Herring [mailto:robh@kernel.org]
-> Sent: 12 October 2018 08:23 PM
-> To: Jolly Shah <JOLLYS@xilinx.com>
-> Cc: matthias.bgg@gmail.com; andy.gross@linaro.org; shawnguo@kernel.org;
-> geert+renesas@glider.be; bjorn.andersson@linaro.org; sean.wang@mediatek.c=
-om;
-> m.szyprowski@samsung.com; Michal Simek <michals@xilinx.com>;
-> mark.rutland@arm.com; devicetree@vger.kernel.org; Rajan Vaja
-> <RAJANV@xilinx.com>; linux-kernel@vger.kernel.org; linux-arm-
-> kernel@lists.infradead.org
-> Subject: Re: [PATCH v3 0/4] drivers: soc: xilinx: Add support for ZynqMP =
-power
-> domain driver
->=20
-> On Wed, Oct 10, 2018 at 06:41:44PM +0000, Jolly Shah wrote:
-> > Ping for comments
->=20
-> Please see my comments on other ZynqMP firmware patches. In summary, I
-> need to see a complete binding, not piecemeal additions.
-[Rajan] Based on your suggestion to have complete zynqmp firmware binding, =
-we can
-have two options:
+Interesting.  Here is the offending function:
 
-1. Use firmware node instead of having separate subnodes for dependent
-drivers(genpd, reset, nvmem, etc). In this case, firmware driver
-needs to take care of probing of depedent drivers. We have thought of
-MFD approach to probe depedent drivers. Firmware driver would register
-depedent drivers as MFD child devices from firmware probe.=20
+	static void rcu_preempt_deferred_qs(struct task_struct *t)
+	{
+		unsigned long flags;
+		bool couldrecurse = t->rcu_read_lock_nesting >= 0;
 
-	firmware {
-		zynqmp_firmware: zynqmp-firmware {
-			compatible =3D "xlnx,zynqmp-firmware";
-			method =3D "smc";
-			#power-domain-cells =3D <1>;
-		};
-	};
+		if (!rcu_preempt_need_deferred_qs(t))
+			return;
+		if (couldrecurse)
+			t->rcu_read_lock_nesting -= INT_MIN;
+		local_irq_save(flags);
+		rcu_preempt_deferred_qs_irqrestore(t, flags);
+		if (couldrecurse)
+			t->rcu_read_lock_nesting += INT_MIN;
+	}
 
-	sata {
-		...
-		power-domains =3D <&zynqmp_firmware 2>;
-		...
-	};
+Using twos-complement arithmetic (which the kernel build gcc arguments
+enforce, last I checked) this does work.  But as UBSAN says, subtracting
+INT_MIN is unconditionally undefined behavior according to the C standard.
 
-drivers/firmware/xilinx/zynqmp.c: zynqmp_firmware_probe(struct platform_dev=
-ice *pdev)
-	static const struct mfd_cell firmware_devs[] =3D {
-		{
-			.name =3D "zynqmp_power_controller",
-		},
-	};
+Good catch!!!
 
-	ret =3D mfd_add_devices(&pdev->dev, PLATFORM_DEVID_NONE, firmware_devs,
-				ARRAY_SIZE(firmware_devs), NULL, 0, NULL);
+So how do I make the above code not simply function, but rather meet
+the C standard?
 
-2. Keep separate node for each device outside (in parralel to) zynqmp-firmw=
-are node.
-In this case, each firmware driver consumer is independet driver/binding.
-Order of probe can be taken care by -EPROBE defer mechanism.
+One approach to add INT_MIN going in, then add INT_MAX and then add 1
+coming out.
 
-Example:
-	firmware {
-		zynqmp_firmware: zynqmp-firmware {
-			compatible =3D "xlnx,zynqmp-firmware";
-			method =3D "smc";
-		};
-	};
-	=09
-	zynqmp_power_domains: zynqmp-power-domains {
-		...
-		compatible =3D "xlnx,zynqmp-genpd";
-		#power-domain-cells =3D <1>;
-		...
-	};
+Another approach is to sacrifice the INT_MAX value (should be plenty
+safe), thus subtract INT_MAX going in and add INT_MAX coming out.
+For consistency, I suppose that I should change the INT_MIN in
+__rcu_read_unlock() to -INT_MAX.
 
-	sata {
-		...
-		power-domains =3D <&zynqmp_power_domains 2>;
-		...
-	};
+I could also leave __rcu_read_unlock() alone and XOR the top
+bit of t->rcu_read_lock_nesting on entry and exit to/from
+rcu_preempt_deferred_qs().
 
-Please let us know your inputs and suggest better approach so we can submit
-changes accordingly.
+Sacrificing the INT_MIN value seems most maintainable, as in the following
+patch.  Thoughts?
 
-Thanks,
-Rajan
->=20
-> Rob
->=20
-> >
-> > Thanks,
-> > Jolly Shah
-> >
-> > > -----Original Message-----
-> > > From: Jolly Shah [mailto:jolly.shah@xilinx.com]
-> > > Sent: Thursday, October 04, 2018 2:24 PM
-> > > To: matthias.bgg@gmail.com; andy.gross@linaro.org; shawnguo@kernel.or=
-g;
-> > > geert+renesas@glider.be; bjorn.andersson@linaro.org;
-> > > sean.wang@mediatek.com; m.szyprowski@samsung.com; Michal Simek
-> > > <michals@xilinx.com>; robh+dt@kernel.org; mark.rutland@arm.com
-> > > Cc: Rajan Vaja <RAJANV@xilinx.com>; devicetree@vger.kernel.org; linux=
--arm-
-> > > kernel@lists.infradead.org; linux-kernel@vger.kernel.org; Jolly Shah
-> > > <JOLLYS@xilinx.com>
-> > > Subject: [PATCH v3 0/4] drivers: soc: xilinx: Add support for ZynqMP =
-power
-> > > domain driver
-> > >
-> > > The zynqmp power domain driver communicates the usage requirements fo=
-r
-> > > logical power domains / devices to the platform FW.
-> > > FW is responsible for choosing appropriate power states, taking Linux=
-' usage
-> > > information into account.
-> > >
-> > > This patch series is based on top of Xilinx firmware patch set:
-> > > https://patchwork.kernel.org/cover/10555405/
-> > >
-> > > v3:
-> > >  - Changed binding to have FW node as a power controller as suggested=
- by Rob
-> > >  - Updated FW driver to register it as mfd child devices from firmwar=
-e probe
-> > >  - Move bindings location as suggested
-> > >
-> > > v2:
-> > >  - Rebased on top of latest firmware driver patch series
-> > >  - Updated driver name from zynqmp-genpd to zynqmp-power-controller
-> > >  - Updated device tree bindings to move power controller node under f=
-irmware
-> > > node
-> > >
-> > > Jolly Shah (1):
-> > >   drivers: soc: xilinx: Add ZynqMP power domain driver
-> > >
-> > > Rajan Vaja (3):
-> > >   dt-bindings: power: Add ZynqMP power domain bindings
-> > >   firmware: xilinx: Add APIs to control node status/power
-> > >   firmware: xilinx: Add node IDs for zynqmp firmware
-> > >
-> > >  .../bindings/power/xlnx,zynqmp-genpd.txt           |  34 ++
-> > >  drivers/firmware/xilinx/Kconfig                    |   1 +
-> > >  drivers/firmware/xilinx/zynqmp.c                   |  73 ++++
-> > >  drivers/soc/xilinx/Kconfig                         |   9 +
-> > >  drivers/soc/xilinx/Makefile                        |   2 +
-> > >  drivers/soc/xilinx/zynqmp_pm_domains.c             | 403
-> > > +++++++++++++++++++++
-> > >  include/dt-bindings/power/xlnx-zynqmp-power.h      |  39 ++
-> > >  include/linux/firmware/xlnx-zynqmp.h               |  98 +++++
-> > >  8 files changed, 659 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/power/xlnx,zynq=
-mp-
-> > > genpd.txt
-> > >  create mode 100644 drivers/soc/xilinx/zynqmp_pm_domains.c
-> > >  create mode 100644 include/dt-bindings/power/xlnx-zynqmp-power.h
-> > >
-> > > --
-> > > 2.7.4
-> >
-> >
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+							Thanx, Paul
+
+------------------------------------------------------------------------
+
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index bd8186d0f4a7..f1b40c6d36e4 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -424,7 +424,7 @@ void __rcu_read_unlock(void)
+ 		--t->rcu_read_lock_nesting;
+ 	} else {
+ 		barrier();  /* critical section before exit code. */
+-		t->rcu_read_lock_nesting = INT_MIN;
++		t->rcu_read_lock_nesting = -INT_MAX;
+ 		barrier();  /* assign before ->rcu_read_unlock_special load */
+ 		if (unlikely(READ_ONCE(t->rcu_read_unlock_special.s)))
+ 			rcu_read_unlock_special(t);
+@@ -617,11 +617,11 @@ static void rcu_preempt_deferred_qs(struct task_struct *t)
+ 	if (!rcu_preempt_need_deferred_qs(t))
+ 		return;
+ 	if (couldrecurse)
+-		t->rcu_read_lock_nesting -= INT_MIN;
++		t->rcu_read_lock_nesting -= INT_MAX;
+ 	local_irq_save(flags);
+ 	rcu_preempt_deferred_qs_irqrestore(t, flags);
+ 	if (couldrecurse)
+-		t->rcu_read_lock_nesting += INT_MIN;
++		t->rcu_read_lock_nesting += INT_MAX;
+ }
+ 
+ /*
+
