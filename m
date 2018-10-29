@@ -2,126 +2,120 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1E49C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:29:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C06C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:32:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D8222082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:29:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D8222082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id B6CE42082D
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:32:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6CE42082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727497AbeJ3GTi (ORCPT
+        id S1727604AbeJ3GXF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 02:19:38 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:52764 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726568AbeJ3GTi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 02:19:38 -0400
-Received: from tmo-115-37.customers.d1-online.com ([80.187.115.37] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gHF5u-0003Uz-Dy; Mon, 29 Oct 2018 22:29:06 +0100
-Date:   Mon, 29 Oct 2018 22:29:05 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Long Li <longli@microsoft.com>
-cc:     LKML <linux-kernel@vger.kernel.org>,
-        Michael Kelley <mikelley@microsoft.com>
-Subject: Re: [PATCH] Choose CPU based on allocated IRQs
-In-Reply-To: <20181023014044.15888-1-longli@linuxonhyperv.com>
-Message-ID: <alpine.DEB.2.21.1810292138480.5984@nanos.tec.linutronix.de>
-References: <20181023014044.15888-1-longli@linuxonhyperv.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 30 Oct 2018 02:23:05 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:47108 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727265AbeJ3GXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 02:23:05 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A71C2601B;
+        Mon, 29 Oct 2018 21:32:35 +0000 (UTC)
+Received: from t450s.home (ovpn-116-133.phx2.redhat.com [10.3.116.133])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7B2DF194AF;
+        Mon, 29 Oct 2018 21:32:34 +0000 (UTC)
+Date:   Mon, 29 Oct 2018 15:32:34 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Wenwen Wang <wang6495@umn.edu>
+Cc:     Kangjie Lu <kjlu@umn.edu>, kvm@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>, <aik@ozlabs.ru>,
+        David Gibson <david@gibson.dropbear.id.au>
+Subject: Re: [PATCH v4] drivers/vfio: Fix a redundant copy bug
+Message-ID: <20181029153234.36e67a6f@t450s.home>
+In-Reply-To: <CAAa=b7dE=6obq4nABsyo84iA1CTOcLVCAuUxHDYfSCimzc12eA@mail.gmail.com>
+References: <1539803924-3190-1-git-send-email-wang6495@umn.edu>
+        <CAAa=b7dE=6obq4nABsyo84iA1CTOcLVCAuUxHDYfSCimzc12eA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 29 Oct 2018 21:32:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Long,
+On Mon, 29 Oct 2018 13:56:54 -0500
+Wenwen Wang <wang6495@umn.edu> wrote:
 
-On Tue, 23 Oct 2018, Long Li wrote:
-
-thanks for this patch.
-
-A trivial formal thing ahead. The subject line
-
-   [PATCH] Choose CPU based on allocated IRQs
-
-is lacking a proper subsystem prefix. In most cases you can figure the
-prefix out by running 'git log path/to/file' which in this case will show
-you that most commits touching this file use the prefix 'genirq/matrix:'.
-
-So the proper subject would be:
-
-   [PATCH] genirq/matrix: Choose CPU based on allocated IRQs
-
-Subsystem prefixes are important to see where a patch belongs to right from
-the subject. Without that it could belong to any random part of the kernel
-and needs further inspection of the patch itself. This applies to both
-email and to git shortlog listings.
-
-> From: Long Li <longli@microsoft.com>
+> Hello,
 > 
-> In irq_matrix, "available" is set when IRQs are allocated earlier in the IRQ
-> assigning process.
-> 
-> Later, when IRQs are activated those values are not good indicators of what
-> CPU to choose to assign to this IRQ.
+> Could you please apply this patch? Thanks!
 
-Can you please explain why you think that available is the wrong indicator
-and which problem you are trying to solve?
+I'd like to see testing and/or review from David or Alexey since I also
+don't have an environment for spapr/eeh.  We're already late into the
+v4.20 merge window so this is probably v4.21 material.  Thanks,
 
-The WHY is really the most important part of a changelog.
+Alex
 
-> Change to choose CPU for an IRQ based on how many IRQs are already allocated
-> on this CPU.
+> On Wed, Oct 17, 2018 at 2:18 PM Wenwen Wang <wang6495@umn.edu> wrote:
+> >
+> > In vfio_spapr_iommu_eeh_ioctl(), if the ioctl command is VFIO_EEH_PE_OP,
+> > the user-space buffer 'arg' is copied to the kernel object 'op' and the
+> > 'argsz' and 'flags' fields of 'op' are checked. If the check fails, an
+> > error code EINVAL is returned. Otherwise, 'op.op' is further checked
+> > through a switch statement to invoke related handlers. If 'op.op' is
+> > VFIO_EEH_PE_INJECT_ERR, the whole user-space buffer 'arg' is copied again
+> > to 'op' to obtain the err information. However, in the following execution
+> > of this case, the fields of 'op', except the field 'err', are actually not
+> > used. That is, the second copy has a redundant part. Therefore, for
+> > performance consideration, the redundant part of the second copy should be
+> > removed.
+> >
+> > This patch removes such a part in the second copy. It only copies from
+> > 'err.type' to 'err.mask', which is exactly required by the
+> > VFIO_EEH_PE_INJECT_ERR op.
+> >
+> > Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+> > ---
+> >  drivers/vfio/vfio_spapr_eeh.c | 9 ++++++---
+> >  1 file changed, 6 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/vfio/vfio_spapr_eeh.c b/drivers/vfio/vfio_spapr_eeh.c
+> > index 38edeb4..66634c6 100644
+> > --- a/drivers/vfio/vfio_spapr_eeh.c
+> > +++ b/drivers/vfio/vfio_spapr_eeh.c
+> > @@ -37,6 +37,7 @@ long vfio_spapr_iommu_eeh_ioctl(struct iommu_group *group,
+> >         struct eeh_pe *pe;
+> >         struct vfio_eeh_pe_op op;
+> >         unsigned long minsz;
+> > +       unsigned long start, end;
+> >         long ret = -EINVAL;
+> >
+> >         switch (cmd) {
+> > @@ -86,10 +87,12 @@ long vfio_spapr_iommu_eeh_ioctl(struct iommu_group *group,
+> >                         ret = eeh_pe_configure(pe);
+> >                         break;
+> >                 case VFIO_EEH_PE_INJECT_ERR:
+> > -                       minsz = offsetofend(struct vfio_eeh_pe_op, err.mask);
+> > -                       if (op.argsz < minsz)
+> > +                       start = offsetof(struct vfio_eeh_pe_op, err.type);
+> > +                       end = offsetofend(struct vfio_eeh_pe_op, err.mask);
+> > +                       if (op.argsz < end)
+> >                                 return -EINVAL;
+> > -                       if (copy_from_user(&op, (void __user *)arg, minsz))
+> > +                       if (copy_from_user(&op.err, (char __user *)arg +
+> > +                                               start, end - start))
+> >                                 return -EFAULT;
+> >
+> >                         ret = eeh_pe_inject_err(pe, op.err.type, op.err.func,
+> > --
+> > 2.7.4
+> >  
 
-Looking deeper. The initial values are:
-
-    available = alloc_size - (managed + systembits)
-    allocated = 0
-
-There are two distinct functionalities which modify 'available' and
-'allocated' (omitting the reverse operations for simplicity):
-
-1) managed interrupts
-
-   reserve_managed()
-	managed++;
-	available--;
-
-   alloc_managed()
-        allocated++;
-
-2) regular interrupts
-
-   alloc()
-	allocated++;
-	available--;
-
-So 'available' can be lower than 'allocated' depending on the number of
-reserved managed interrupts, which have not yet been activated.
-
-So for all regular interrupts we really want to look at the number of
-'available' vectors because the reserved managed ones are already accounted
-there and they need to be taken into account.
-
-For the spreading of managed interrupts in alloc_managed() that's indeed a
-different story and 'allocated' is more correct. But even that is not
-completely accurate and can lead to the wrong result. The accurate solution
-would be to account the managed _and_ allocated vectors separately and do
-the spreading for managed interrupts based on that.
-
-Thanks,
-
-	tglx
