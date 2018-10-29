@@ -2,119 +2,133 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E622EC6786F
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 01:39:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB5F4C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 01:52:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB79120843
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 01:39:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZQID3cGw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB79120843
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 711F920843
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 01:52:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 711F920843
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727760AbeJ2KZi (ORCPT
+        id S1727836AbeJ2Kiz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 06:25:38 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38158 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727739AbeJ2KZi (ORCPT
+        Mon, 29 Oct 2018 06:38:55 -0400
+Received: from smtprelay0054.hostedemail.com ([216.40.44.54]:43999 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727820AbeJ2Kiy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 06:25:38 -0400
-Received: by mail-pg1-f194.google.com with SMTP id f8-v6so3073645pgq.5
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 18:39:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kR6i6dEM5L8jvQziX4axM0i1MuEPrKecct7qpmb4utc=;
-        b=ZQID3cGwsRbpIhtGn+RQhMexXvCe27aEAuJt0lRFWIWedrbYtRs/mcbme3D/olCqDp
-         bVbMbn7XBSrI4350m+jqQVtN/YWBMjQyxwW9ztEfjPS4PPoi1hCykAfZXy6uophYWs2T
-         X1Ku/dlvmaTztuCoQv5iDbfWSNYcLUhdXILDM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kR6i6dEM5L8jvQziX4axM0i1MuEPrKecct7qpmb4utc=;
-        b=a2JeL1sIoKQS8ssNxDYSSXlK/n30CcD2kyoxzi4jR/g26s5n7dnNPx3lbag4HxZFkd
-         cDlLT4aGpBdh9SF6qYZbkZWLCxjWhGBXJno87m+aUMNYirqh8RcReuXuQOyJwKpfqv6D
-         oxGhbqyTHC/dhOnRNTCdooOjbPb51MqMyS34sgBtwdG0WcZDcPM9I5Z0ehvonVkMJaSm
-         X8tbVnNxsIl10oacz3aeakohwZo0iPVvQugZPyW16l3Fv4u9q5VvXY6iKm+OMJUqh1sG
-         uR/YumoCByVm60iHZIDPeP8d4u3T/nUYXAQbgEHFchVItYbteLg0/TwS5azlGmZXVURW
-         Rejw==
-X-Gm-Message-State: AGRZ1gIKEr/X7KvrjHe7QJerNfKKBfCasDiy2ZFsli5O2KczpSvfNm19
-        ibvqybHfwxOWnpJ7qGraoTM8ig==
-X-Google-Smtp-Source: AJdET5eeRHspcOQg2rpKsqUYXdIklm5NeZULgS0kdl77TU0fcgm6ZBGmxl0lYIlAxJD0iA9+5jQ87A==
-X-Received: by 2002:a62:32c4:: with SMTP id y187-v6mr13160728pfy.4.1540777152223;
-        Sun, 28 Oct 2018 18:39:12 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 3-v6sm20861664pga.12.2018.10.28.18.39.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 28 Oct 2018 18:39:11 -0700 (PDT)
-Date:   Sun, 28 Oct 2018 18:39:08 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
-        dianders@chromium.org, evgreen@chromium.org, benchan@chromium.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tsoni@codeaurora.org
-Subject: Re: [PATCH] arm64: dts: qcom: sdm845: Add reserve-memory nodes
-Message-ID: <20181029013908.GD1855@tuxbook-pro>
-References: <20181026122745.5094-1-sibis@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181026122745.5094-1-sibis@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 29 Oct 2018 06:38:54 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id AA52F18028236;
+        Mon, 29 Oct 2018 01:52:25 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: gun79_8981504183648
+X-Filterd-Recvd-Size: 2937
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf02.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 29 Oct 2018 01:52:24 +0000 (UTC)
+Message-ID: <795912c5ade5a813cf5c70d7085c14c24b553f1d.camel@perches.com>
+Subject: Re: [PATCH 8/9] w1: fix whitespaces of struct declarations
+From:   Joe Perches <joe@perches.com>
+To:     Steffen Vogel <post@steffenvogel.de>, linux-kernel@vger.kernel.org
+Cc:     Evgeniy Polyakov <zbr@ioremap.net>
+Date:   Sun, 28 Oct 2018 18:52:23 -0700
+In-Reply-To: <20181028220927.56227-9-post@steffenvogel.de>
+References: <20181028220927.56227-1-post@steffenvogel.de>
+         <20181028220927.56227-9-post@steffenvogel.de>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 26 Oct 05:27 PDT 2018, Sibi Sankar wrote:
+On Sun, 2018-10-28 at 23:09 +0100, Steffen Vogel wrote:
+> This fixes a warning raised by the checkpatch tool.
 
-> Add reserve-memory nodes for mpss and mba required for
-> remoteproc mss pil.
-> 
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+checkpatch does not raise any whitespace errors on
+this file.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+It does suggest that braces could be moved.
 
-Regards,
-Bjorn
+$ ./scripts/checkpatch.pl -f --strict drivers/w1/w1_netlink.h
+WARNING: Missing or malformed SPDX-License-Identifier tag in line 1
+#1: FILE: drivers/w1/w1_netlink.h:1:
++/*
 
+ERROR: open brace '{' following struct go on the same line
+#74: FILE: drivers/w1/w1_netlink.h:74:
++struct w1_netlink_msg
++{
+
+ERROR: open brace '{' following struct go on the same line
+#130: FILE: drivers/w1/w1_netlink.h:130:
++struct w1_netlink_cmd
++{
+
+total: 2 errors, 1 warnings, 0 checks, 144 lines checked
+
+> Signed-off-by: Steffen Vogel <post@steffenvogel.de>
 > ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+>  drivers/w1/w1_netlink.h | 28 +++++++++++++---------------
+>  1 file changed, 13 insertions(+), 15 deletions(-)
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index d3fe012ad84e..f74892e447f9 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -88,6 +88,16 @@
->  			reg = <0 0x86200000 0 0x2d00000>;
->  			no-map;
->  		};
-> +
-> +		mpss_region: reserved-memory@8e000000 {
-> +			no-map;
-> +			reg = <0 0x8e000000 0 0x7800000>;
-> +		};
-> +
-> +		mba_region: reserved-memory@96500000 {
-> +			no-map;
-> +			reg = <0 0x96500000 0 0x200000>;
-> +		};
->  	};
+> diff --git a/drivers/w1/w1_netlink.h b/drivers/w1/w1_netlink.h
+> index 08cbf08f3649..7873eb54352e 100644
+> --- a/drivers/w1/w1_netlink.h
+> +++ b/drivers/w1/w1_netlink.h
+> @@ -61,19 +61,18 @@ enum w1_netlink_message_types {
+>   * The netlink connector data sequence is, struct nlmsghdr, struct cn_msg,
+>   * then one or more struct w1_netlink_msg (each with optional data).
+>   */
+> -struct w1_netlink_msg does n
+> -{
+> -	__u8				type;
+> -	__u8				status;
+> -	__u16				len;
+> +struct w1_netlink_msg {
+> +	__u8 type;
+> +	__u8 status;
+> +	__u16 len;
+>  	union {
+> -		__u8			id[8];
+> +		__u8 id[8];
+>  		struct w1_mst {
+> -			__u32		id;
+> -			__u32		res;
+> +			__u32 id;
+> +			__u32 res;
+>  		} mst;
+>  	} id;
+> -	__u8				data[0];
+> +	__u8 data[0];
+>  };
 >  
->  	cpus {
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
-> 
+>  /**
+> @@ -117,12 +116,11 @@ enum w1_commands {
+>   * One or more struct w1_netlink_cmd is placed starting at w1_netlink_msg.data
+>   * each with optional data.
+>   */
+> -struct w1_netlink_cmd
+> -{
+> -	__u8				cmd;
+> -	__u8				res;
+> -	__u16				len;
+> -	__u8				data[0];
+> +struct w1_netlink_cmd {
+> +	__u8 cmd;
+> +	__u8 res;
+> +	__u16 len;
+> +	__u8 data[0];
+>  };
+>  
+>  #ifdef __KERNEL__
+
