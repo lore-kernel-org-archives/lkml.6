@@ -2,247 +2,121 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9622C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1529CC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:04:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 950E02084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:03:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB9C32087A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:04:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MHnE5+ri"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 950E02084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jmNOesas"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB9C32087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726330AbeJ2VwL (ORCPT
+        id S1726488AbeJ2Vwx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 17:52:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54376 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725886AbeJ2VwJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 17:52:09 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B8802082D;
-        Mon, 29 Oct 2018 13:03:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540818214;
-        bh=rWkvN35ArfA/P0K4whT8szAcNK249q70oOANmzkVvYc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MHnE5+riKEa76nR0hJUXUNCYsPvfS7LEKmCI8eL4MxMiYYPii7k4lbWTwNKSmXCJd
-         zLvePCTVMMlUVBc3/N8dX1vyvsBgslHs5e9qCIquS+/1CPJxuOZ574C4adzGrlsWOo
-         8PsLbQNHgkVh0HF4sOo9C21FPRknnlnFTQUc4bGE=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 3EA6F142C5F; Mon, 29 Oct 2018 10:03:31 -0300 (-03)
-Date:   Mon, 29 Oct 2018 10:03:31 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     "Liang, Kan" <kan.liang@linux.intel.com>
-Cc:     David Miller <davem@davemloft.net>, linux-kernel@vger.kernel.org,
-        Wang Nan <wangnan0@huawei.com>, Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Kan Liang <kan.liang@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Jin Yao <yao.jin@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCHES/RFC] Re: A concern about overflow ring buffer mode
-Message-ID: <20181029130331.GC21857@kernel.org>
-References: <20181026.104513.2239058788450235574.davem@davemloft.net>
- <20181026183805.GD3353@kernel.org>
- <20181026184255.GE3353@kernel.org>
- <20181026190211.GF3353@kernel.org>
- <3b81c999-9039-94e9-7a74-cdbd48fca08b@linux.intel.com>
- <20181026191231.GG3353@kernel.org>
- <65cbd052-15d9-f3fb-4a8f-781c3ce7a297@linux.intel.com>
- <20181026192424.GH3353@kernel.org>
- <4f84468f-37d9-cf1b-12c1-514ef74b6a48@linux.intel.com>
+        Mon, 29 Oct 2018 17:52:53 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:46255 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725886AbeJ2Vwx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 17:52:53 -0400
+Received: by mail-ed1-f67.google.com with SMTP id v18-v6so7184165edq.13;
+        Mon, 29 Oct 2018 06:04:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:references:date:in-reply-to:message-id
+         :user-agent:mime-version;
+        bh=HhOss3t/D5OWI5zhM8Hag1e35zlkzx3kXjNsw5TjDaM=;
+        b=jmNOesasNQd3E6j+Ym89Ms9Sg0qpFN/L/QQ2Pp1qX2ClJ66cZvfdHqVqjypU93kUtI
+         IrZESOQoKUD6DqWWe+EMCdSEFA49rlmRK6NAkIxePFk9OpIGkAOCWUZ+1Q1Rp7k7ueEY
+         ctw4OrMAIPCQblkWgTGQvGKq0uRWfGbP4iEYVJ7xWH7RRNUn6SVxCYy5dDIbvMT6vpFS
+         qPewHdn5Pk/7hQ3X/Htb/BrIxphSK3t134MjGjU9umqQLlm6N4hIHBevGDSLYGKjOlov
+         uCjnE/Wg+fRTAFu+m8shkCg7uNQ60JU7+Sr7Z0/mhZyDmKaZx37Tyfoe5vEwYbgGp6dY
+         uSGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:references:date
+         :in-reply-to:message-id:user-agent:mime-version;
+        bh=HhOss3t/D5OWI5zhM8Hag1e35zlkzx3kXjNsw5TjDaM=;
+        b=QbJVQMDgGjOPIqCAtWe9EjLckVKcoP8fdBDP2etJ7xvsxRgyjG7Y4+N/K4bCphUp5z
+         mnsmNNvW9KasMSAzoFQCc7lmA8GADtFmSLfH/R1Q9NNK4la1YxuhZDQQhTxM3VfnTGtu
+         ZyGAryyrfSnWdoFPifq/r28S+oGuiHHQfXoFNnyaJma/BX+dGdmX43YTb0hsBT/iqEVT
+         7NbtR86lIvEwOwJI53KC6iGG69SjBM110fD6MUbS1saHz74di1LGJSahhJqcTKVt7/SA
+         PDFx4nakVsMdvF2EGOaivGO4iVWZVCKbR4BF2ksGu5Su7J+m+0BacbgzkL8HE0XHFUjj
+         4ZQQ==
+X-Gm-Message-State: AGRZ1gJfbawmhWiclh1IQwRY8AsGt6g+1EZNK76LV4MyH5pIINFxRqUA
+        7tgYa+d1jw8kc2z/nDSMeyrAGRs2
+X-Google-Smtp-Source: AJdET5cNU1GlquAV5tuhc5Aabr86M7LqfT2mIgirTpni9U7btTGx1ub9+X+GQADVb/xnrGrsZFv3Tg==
+X-Received: by 2002:a17:906:6308:: with SMTP id p8-v6mr4346358ejk.100.1540818255864;
+        Mon, 29 Oct 2018 06:04:15 -0700 (PDT)
+Received: from dell.be.48ers.dk (d528f5fe4.static.telenet.be. [82.143.95.228])
+        by smtp.gmail.com with ESMTPSA id a4-v6sm5829154edt.82.2018.10.29.06.04.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Oct 2018 06:04:14 -0700 (PDT)
+Received: from peko by dell.be.48ers.dk with local (Exim 4.89)
+        (envelope-from <peter@korsgaard.com>)
+        id 1gH7DJ-0004Uf-Og; Mon, 29 Oct 2018 14:04:13 +0100
+From:   Peter Korsgaard <peter@korsgaard.com>
+To:     Federico Vaga <federico.vaga@cern.ch>
+Cc:     Peter Korsgaard <jacmet@sunsite.dk>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/3] i2c:ocores: add polling interface
+References: <20180625161303.7991-1-federico.vaga@cern.ch>
+        <4222986.LvGMQbjSbS@pcbe13614> <87woq438li.fsf@dell.be.48ers.dk>
+        <5352289.A0jT2G1FDH@pcbe13614>
+Date:   Mon, 29 Oct 2018 14:04:13 +0100
+In-Reply-To: <5352289.A0jT2G1FDH@pcbe13614> (Federico Vaga's message of "Mon,
+        29 Oct 2018 09:50:15 +0100")
+Message-ID: <87muqwzyya.fsf@dell.be.48ers.dk>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4f84468f-37d9-cf1b-12c1-514ef74b6a48@linux.intel.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Fri, Oct 26, 2018 at 04:11:51PM -0400, Liang, Kan escreveu:
-> On 10/26/2018 3:24 PM, Arnaldo Carvalho de Melo wrote:
-> > Em Fri, Oct 26, 2018 at 03:16:29PM -0400, Liang, Kan escreveu:
-> > > On 10/26/2018 3:12 PM, Arnaldo Carvalho de Melo wrote:
-> > > > Em Fri, Oct 26, 2018 at 03:07:40PM -0400, Liang, Kan escreveu:
-> > > > > On 10/26/2018 3:02 PM, Arnaldo Carvalho de Melo wrote:
-> > > > I checked and both have the same result. But I still think there is
-> > > > value in having the shorter form, ok?
+>>>>> "Federico" == Federico Vaga <federico.vaga@cern.ch> writes:
 
-> > > Sure.
+Hi,
 
-> > Ok.
+ >> >> Where does this 10 come from?
+ >> > 
+ >> > It's true, it's just a random number. It can be zero as well, and we ask
+ >> > the system to just sleep for that amount of time.
+ >> > 
+ >> > (1) usleep_range(sleep_min, sleep_min);
+ >> 
+ >> Or just usleep(sleep_min);
 
-> > I think that we should default back to --no-overwrite till we get this
-> > sorted out, as the effect is easily noticeable, as David reported and I
-> > reproduced, when doing kernel builds.
- 
-> It is mainly for performance reason to switch to overwrite mode. The impact
-> was very small when I did my test. But now the effect is easily noticeable
-> in other tests. Yes, I agree. We may change it back to non-overwrite mode
-> until the issue is addressed.
+ > This does not exist as far as I know; the alternative is an active wait with 
+ > udelay. But then, it is not that different from just start polling TIP or BUSY 
+ > flags.
 
-So, I have these two patches in my perf/core branch, with Fixes tags
-that will make them get to the stable kernels, ok?
+Ahh yes.
 
+ > I think that something like this could be better
 
-From f54ef0e7342efb77205b2faaacbcb81cdd31f064 Mon Sep 17 00:00:00 2001
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
-Date: Fri, 26 Oct 2018 15:55:23 -0300
-Subject: [PATCH 1/2] perf top: Allow disabling the overwrite mode
+ > (2) usleep_range(sleep_min, sleep_min * XXX);
 
-In ebebbf082357 ("perf top: Switch default mode to overwrite mode") we
-forgot to leave a way to disable that new default, add a --overwrite
-option that can be disabled using --no-overwrite, since the code already
-in such a way that we can readily disable this mode.
+ > But.
+ > Since it is better to make this patch ready for xfer_irqless, then I will 
+ > definitively go for udelay(). The reason is that, xfer_irqless may run in 
+ > atomic context where we can't sleep at all.
 
-This is useful when investigating bugs with this mode like the recent
-report from David Miller where lots of unknown symbols appear due to
-disabling the events while processing them which disables all record
-types, not just PERF_RECORD_SAMPLE, which makes it impossible to resolve
-maps when we lose PERF_RECORD_MMAP records.
+Great! BTW I noticed that your sleep_min calculation looked odd:
 
-This can be easily seen while building a kernel, when there are lots of
-short lived processes.
+int sleep_min = (8/i2c->bus_clock_khz) * 1000; /* us for 8bits
 
-Reported-by: David Miller <davem@davemloft.net>
-Acked-by: Kan Liang <kan.liang@intel.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Fixes: ebebbf082357 ("perf top: Switch default mode to overwrite mode")
-Link: https://lkml.kernel.org/n/tip-oqgsz2bq4kgrnnajrafcdhie@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/Documentation/perf-top.txt | 5 +++++
- tools/perf/builtin-top.c              | 2 ++
- 2 files changed, 7 insertions(+)
+bus_clock_khz almost certainly will be bigger than 8 (E.G. likely
+100KHz), so the above set sleep_min to 0. Please move the * 1000 before
+the division.
 
-diff --git a/tools/perf/Documentation/perf-top.txt b/tools/perf/Documentation/perf-top.txt
-index 114fda12aa49..d4be6061fe1c 100644
---- a/tools/perf/Documentation/perf-top.txt
-+++ b/tools/perf/Documentation/perf-top.txt
-@@ -242,6 +242,11 @@ Default is to monitor all CPUS.
- --hierarchy::
- 	Enable hierarchy output.
- 
-+--overwrite::
-+	This is the default, but for investigating problems with it or any other strange
-+	behaviour like lots of unknown samples, we may want to disable this mode by using
-+	--no-overwrite.
-+
- --force::
- 	Don't do ownership validation.
- 
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index d21d8751e749..214fad747b04 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -1372,6 +1372,8 @@ int cmd_top(int argc, const char **argv)
- 		    "Show raw trace event output (do not use print fmt or plugins)"),
- 	OPT_BOOLEAN(0, "hierarchy", &symbol_conf.report_hierarchy,
- 		    "Show entries in a hierarchy"),
-+	OPT_BOOLEAN(0, "overwrite", &top.record_opts.overwrite,
-+		    "Use a backward ring buffer, default: yes"),
- 	OPT_BOOLEAN(0, "force", &symbol_conf.force, "don't complain, do it"),
- 	OPT_UINTEGER(0, "num-thread-synthesize", &top.nr_threads_synthesize,
- 			"number of thread to run event synthesize"),
 -- 
-2.14.4
-
-From 5af190cac4ec10c53f1a934e7bbd30da7e616b22 Mon Sep 17 00:00:00 2001
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
-Date: Mon, 29 Oct 2018 09:47:00 -0300
-Subject: [PATCH 2/2] perf top: Do not use overwrite mode by default
-
-Enabling --overwrite mode allows us to to use just the most recent
-records, which helps in high core count machines such as Knights
-Landing/Mill, but right now is being disabled by default as the pausing
-used in this technique is leading to loss of metadata events such as
-PERF_RECORD_MMAP which makes 'perf top' unable to resolve samples,
-leading to lots of unknown samples appearing on the UI.
-
-Enabling this may be useful if you are in such machines and profiling a
-workload that doesn't creates short lived threads and/or doesn't uses
-many executable mmap operations.
-
-Work is being planed to solve this situation, till then, this will
-remain disabled by default.
-
-Reported-by: David Miller <davem@davemloft.net>
-Acked-by: Kan Liang <kan.liang@intel.com>
-Link: https://lkml.kernel.org/r/4f84468f-37d9-cf1b-12c1-514ef74b6a48@linux.intel.com
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Fixes: ebebbf082357 ("perf top: Switch default mode to overwrite mode")
-Link: https://lkml.kernel.org/n/tip-f19zd2uyfimkeon4vt6kzucq@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/Documentation/perf-top.txt | 11 ++++++++---
- tools/perf/builtin-top.c              |  9 ++++++++-
- 2 files changed, 16 insertions(+), 4 deletions(-)
-
-diff --git a/tools/perf/Documentation/perf-top.txt b/tools/perf/Documentation/perf-top.txt
-index d4be6061fe1c..808b664343c9 100644
---- a/tools/perf/Documentation/perf-top.txt
-+++ b/tools/perf/Documentation/perf-top.txt
-@@ -243,9 +243,14 @@ Default is to monitor all CPUS.
- 	Enable hierarchy output.
- 
- --overwrite::
--	This is the default, but for investigating problems with it or any other strange
--	behaviour like lots of unknown samples, we may want to disable this mode by using
--	--no-overwrite.
-+	Enable this to use just the most recent records, which helps in high core count
-+	machines such as Knights Landing/Mill, but right now is disabled by default as
-+	the pausing used in this technique is leading to loss of metadata events such
-+	as PERF_RECORD_MMAP which makes 'perf top' unable to resolve samples, leading
-+	to lots of unknown samples appearing on the UI. Enable this if you are in such
-+	machines and profiling a workload that doesn't creates short lived threads and/or
-+	doesn't uses many executable mmap operations. Work is being planed to solve
-+	this situation, till then, this will remain disabled by default.
- 
- --force::
- 	Don't do ownership validation.
-diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
-index 214fad747b04..0891656da6ef 100644
---- a/tools/perf/builtin-top.c
-+++ b/tools/perf/builtin-top.c
-@@ -1257,7 +1257,14 @@ int cmd_top(int argc, const char **argv)
- 				.uses_mmap   = true,
- 			},
- 			.proc_map_timeout    = 500,
--			.overwrite	= 1,
-+			/*
-+			 * FIXME: This will lose PERF_RECORD_MMAP and other metadata
-+			 * when we pause, fix that and reenable. Probably using a
-+			 * separate evlist with a dummy event, i.e. a non-overwrite
-+			 * ring buffer just for metadata events, while PERF_RECORD_SAMPLE
-+			 * stays in overwrite mode. -acme
-+			 * */
-+			.overwrite	= 0,
- 		},
- 		.max_stack	     = sysctl__max_stack(),
- 		.annotation_opts     = annotation__default_options,
--- 
-2.14.4
-
+Bye, Peter Korsgaard
