@@ -2,207 +2,92 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 207A0C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:45:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 461C3C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:46:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDBD520870
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:45:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00CB420851
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:46:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CU227xEL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDBD520870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="d7TPB9Ah"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00CB420851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729751AbeJ2Sdp (ORCPT
+        id S1729734AbeJ2SeV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 14:33:45 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50864 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726720AbeJ2Sdo (ORCPT
+        Mon, 29 Oct 2018 14:34:21 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45226 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729343AbeJ2SeV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 14:33:44 -0400
-Received: by mail-wm1-f68.google.com with SMTP id h2-v6so3686195wmb.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 02:45:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=KX+Cs1Efnv2nK8whWWxnejHGmA7flfz8dAL5I+d4jzw=;
-        b=CU227xELlvgd0opa2QXgdDqYJS4AAQl3vmGlNpiYUkrmPNcW2r4TcRn4XcBqDrExjj
-         eWlUp5Gsmzv25e8jxNDw9dKQGdzZe42BvlTbmFfyhFBudnUWFw4F/rJ1xyhf6VLKEB+x
-         WrZY056qPWjRt/FUzUjQhnjkG3xq2pBLt7Xg0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KX+Cs1Efnv2nK8whWWxnejHGmA7flfz8dAL5I+d4jzw=;
-        b=fJjd7X77cbQMUpOETN4iPCilGwPA8lutDFo78oIcW3rCS9sD0LN0jUj3xZMAjykXQn
-         qI3iRSz4aq4aRExnO6B+myAVxU5htpuDAtbmw8xWb34Rh7Dmb5Qw+NG/5UzZTxWWsuqE
-         KWykpRxtOEuAH2dSx1fN9qmVRpK+h0iZxUmfz/1bwtYGqBSuVFbsiYpMh3qMyjSwnyuE
-         artCMYa0Ajx/4iW3CJB2/ICoUF/nk4Dx8+pvpNnNTmhQwD9YE6du/mznBTUVTnsLj4bV
-         lVeb36Jr0oPx/b7ON6ItcvZ8uNRwee8nZoBrRRDhu4hhkwtmPWB7qkonRGWBeUmAwD1x
-         f3+w==
-X-Gm-Message-State: AGRZ1gJsxAdqiDffoCXT6MhSZKDZNjFytn+6sqhk5tjj1ViYRZ1RIvvi
-        iPrY8rEK+PCXUfPk2hWMsBW/uA==
-X-Google-Smtp-Source: AJdET5cJuqVNXSnJLRtXLa6xBMOc02+c1RBLtFzGGJrlW3Eq+5x8AlytubM4QwQ+HTmr6astB0ZWlw==
-X-Received: by 2002:a1c:3a8d:: with SMTP id h135-v6mr1824866wma.92.1540806349414;
-        Mon, 29 Oct 2018 02:45:49 -0700 (PDT)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id j16-v6sm14119716wrq.89.2018.10.29.02.45.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 02:45:48 -0700 (PDT)
-Subject: Re: [PATCH v2 1/2] media: docs-rst: Document memory-to-memory video
- decoder interface
-To:     Tomasz Figa <tfiga@chromium.org>, linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        =?UTF-8?B?UGF3ZcWCIE/Fm2NpYWs=?= <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Kamil Debski <kamil@wypas.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jeongtae Park <jtp.park@samsung.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Nicolas Dufresne <nicolas@ndufresne.ca>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Maxime Jourdan <maxi.jourdan@wanadoo.fr>
-References: <20181022144901.113852-1-tfiga@chromium.org>
- <20181022144901.113852-2-tfiga@chromium.org>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <31c175d6-b1e9-f8d7-0b8b-821271a59a70@linaro.org>
-Date:   Mon, 29 Oct 2018 11:45:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 29 Oct 2018 14:34:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=PuM/YVr2So/dmG84HTc1LgCHTadvBadxAXV9Fq06hs4=; b=d7TPB9AhsXigINRCK813cnCOF
+        tOEnFIzllQjyq48n+aLrOpWg0A6Zfa5bMa5VqPIenUZcIA2l2pKyDrDXyUuC4zhvIviuEdYdYi9JL
+        +v8CP4Kz1OBb9sbWwdgBq7wiV9q54QjWZO78R2qtqPsMbkCRVWFd/p3PtV8HK7lGg85Cg=;
+Received: from [87.246.78.46] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gH47t-0000uM-JC; Mon, 29 Oct 2018 09:46:25 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id B1FBC440078; Mon, 29 Oct 2018 10:46:24 +0100 (CET)
+Date:   Mon, 29 Oct 2018 09:46:24 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com, lgirdwood@gmail.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] regulator: bd718x7: add missing linux/of.h inclusion
+Message-ID: <20181029094624.GV2103@sirena.org.uk>
+References: <20180919071400.GA12191@localhost.localdomain>
+ <20181029094041.GB20774@localhost.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <20181022144901.113852-2-tfiga@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="N4FnyIpcgIJc+tmW"
+Content-Disposition: inline
+In-Reply-To: <20181029094041.GB20774@localhost.localdomain>
+X-Cookie: Piece of cake!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomasz,
 
-On 10/22/2018 05:48 PM, Tomasz Figa wrote:
-> Due to complexity of the video decoding process, the V4L2 drivers of
-> stateful decoder hardware require specific sequences of V4L2 API calls
-> to be followed. These include capability enumeration, initialization,
-> decoding, seek, pause, dynamic resolution change, drain and end of
-> stream.
-> 
-> Specifics of the above have been discussed during Media Workshops at
-> LinuxCon Europe 2012 in Barcelona and then later Embedded Linux
-> Conference Europe 2014 in Düsseldorf. The de facto Codec API that
-> originated at those events was later implemented by the drivers we already
-> have merged in mainline, such as s5p-mfc or coda.
-> 
-> The only thing missing was the real specification included as a part of
-> Linux Media documentation. Fix it now and document the decoder part of
-> the Codec API.
-> 
-> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
-> ---
->  Documentation/media/uapi/v4l/dev-decoder.rst  | 1082 +++++++++++++++++
->  Documentation/media/uapi/v4l/devices.rst      |    1 +
->  Documentation/media/uapi/v4l/pixfmt-v4l2.rst  |    5 +
->  Documentation/media/uapi/v4l/v4l2.rst         |   10 +-
->  .../media/uapi/v4l/vidioc-decoder-cmd.rst     |   40 +-
->  Documentation/media/uapi/v4l/vidioc-g-fmt.rst |   14 +
->  6 files changed, 1137 insertions(+), 15 deletions(-)
->  create mode 100644 Documentation/media/uapi/v4l/dev-decoder.rst
-> 
-> diff --git a/Documentation/media/uapi/v4l/dev-decoder.rst b/Documentation/media/uapi/v4l/dev-decoder.rst
-> new file mode 100644
-> index 000000000000..09c7a6621b8e
-> --- /dev/null
-> +++ b/Documentation/media/uapi/v4l/dev-decoder.rst
+--N4FnyIpcgIJc+tmW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-<cut>
+On Mon, Oct 29, 2018 at 11:40:41AM +0200, Matti Vaittinen wrote:
 
-> +Capture setup
-> +=============
-> +
+> Should I just create another patch to you where this inclusion is done again
+> or is there some better way to handle this? Can you cherry pick or
+> re-apply the commit
 
-<cut>
+Just send another patch, it's easiest.
 
-> +
-> +2.  **Optional.** Acquire the visible resolution via
-> +    :c:func:`VIDIOC_G_SELECTION`.
-> +
-> +    * **Required fields:**
-> +
-> +      ``type``
-> +          a ``V4L2_BUF_TYPE_*`` enum appropriate for ``CAPTURE``
-> +
-> +      ``target``
-> +          set to ``V4L2_SEL_TGT_COMPOSE``
-> +
-> +    * **Return fields:**
-> +
-> +      ``r.left``, ``r.top``, ``r.width``, ``r.height``
-> +          the visible rectangle; it must fit within the frame buffer resolution
-> +          returned by :c:func:`VIDIOC_G_FMT` on ``CAPTURE``.
-> +
-> +    * The following selection targets are supported on ``CAPTURE``:
-> +
-> +      ``V4L2_SEL_TGT_CROP_BOUNDS``
-> +          corresponds to the coded resolution of the stream
-> +
-> +      ``V4L2_SEL_TGT_CROP_DEFAULT``
-> +          the rectangle covering the part of the ``CAPTURE`` buffer that
-> +          contains meaningful picture data (visible area); width and height
-> +          will be equal to the visible resolution of the stream
-> +
-> +      ``V4L2_SEL_TGT_CROP``
-> +          the rectangle within the coded resolution to be output to
-> +          ``CAPTURE``; defaults to ``V4L2_SEL_TGT_CROP_DEFAULT``; read-only on
-> +          hardware without additional compose/scaling capabilities
+--N4FnyIpcgIJc+tmW
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Hans should correct me if I'm wrong but V4L2_SEL_TGT_CROP_xxx are
-applicable over OUTPUT queue type?
+-----BEGIN PGP SIGNATURE-----
 
-> +
-> +      ``V4L2_SEL_TGT_COMPOSE_BOUNDS``
-> +          the maximum rectangle within a ``CAPTURE`` buffer, which the cropped
-> +          frame can be output into; equal to ``V4L2_SEL_TGT_CROP`` if the
-> +          hardware does not support compose/scaling
-> +
-> +      ``V4L2_SEL_TGT_COMPOSE_DEFAULT``
-> +          equal to ``V4L2_SEL_TGT_CROP``
-> +
-> +      ``V4L2_SEL_TGT_COMPOSE``
-> +          the rectangle inside a ``CAPTURE`` buffer into which the cropped
-> +          frame is written; defaults to ``V4L2_SEL_TGT_COMPOSE_DEFAULT``;
-> +          read-only on hardware without additional compose/scaling capabilities
-> +
-> +      ``V4L2_SEL_TGT_COMPOSE_PADDED``
-> +          the rectangle inside a ``CAPTURE`` buffer which is overwritten by the
-> +          hardware; equal to ``V4L2_SEL_TGT_COMPOSE`` if the hardware does not
-> +          write padding pixels
-> +
-> +    .. warning::
-> +
-> +       The values are guaranteed to be meaningful only after the decoder
-> +       successfully parses the stream metadata. The client must not rely on the
-> +       query before that happens.
-> +
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvW1u8ACgkQJNaLcl1U
+h9Chrgf/aICEqWh2fgKwBmywnecmpIKyHveUOprDsYcZ79AkbmfvJze27oUfKJCp
+WZHKNWEP/Zivw10OMpDm91/A0L9sqhx6FzI25Ny4IdAH8kZoubpjx7isrLWqVVQg
+Kbe0BI2m37SxjuJ187fy7k3vbVJRlsr6ndm48McCiJIcx+ty+LflxuySbsSFmp8y
+KptHTAslha/8BbQ2/nlJlHdbWNpQnDg0iCwRnSNOG3xMF0S3oG1zypOYCCYbK/MX
+WLxIYEVwcVMzNvvmGVAm7FVEedKTi5AmZpfrNLJS4tTSEM5+8ldPPTfPsZUtWp51
+tynVLehN9mYTMN93Qixd3kwT1IQWSA==
+=aDLI
+-----END PGP SIGNATURE-----
 
--- 
-regards,
-Stan
+--N4FnyIpcgIJc+tmW--
