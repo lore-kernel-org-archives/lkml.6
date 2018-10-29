@@ -2,121 +2,314 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCEEFC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:46:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BA51C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:47:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9475420657
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:46:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="uKRCrLkb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9475420657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=umn.edu
+	by mail.kernel.org (Postfix) with ESMTP id C03B620657
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:47:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C03B620657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729430AbeJ3Dgi (ORCPT
+        id S1729446AbeJ3DhA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 23:36:38 -0400
-Received: from mta-p4.oit.umn.edu ([134.84.196.204]:57382 "EHLO
-        mta-p4.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726036AbeJ3Dgi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 23:36:38 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mta-p4.oit.umn.edu (Postfix) with ESMTP id 6B15E6F2;
-        Mon, 29 Oct 2018 18:46:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=umn.edu; h=
-        content-type:content-type:subject:subject:message-id:date:date
-        :from:from:in-reply-to:references:mime-version:received:received
-        :received; s=20160920; t=1540838802; x=1542653203; bh=DnRnVqmnS/
-        3YdV0iCc5SQhIbdjGxM82O3DdnjbdOpqI=; b=uKRCrLkb3YFu3xJwuL0K79HuSx
-        2oz6DhovsrEN9zUsMKv3WfLQOYmiPcjOX/4zEE/omI/0Sj/p1Q4KcjiW9Ua8I7xd
-        KfzyB/97NcSH54UWWp97ejwJbQcFEH+TnDLXi9DDRJpy2AOa6b8HryX7uu8HUSWj
-        rHnpMie8C3uBHzEhkOOYsKRtWkYvHKxHH0krfIOrxUwOz0JAQFTxTAWM0Tyl5/bp
-        EBcFAocB1iA/g3TvX4zkg3HlB1dXb1axVeXxYOmuET2vs3pr5mdyP4tCzo2X4fAJ
-        MmGhD3xHseLnLwrCPJ4DLIDdfNXwbsgWEygeHhxF+1ygxCPYkQc+obgtG04Q==
-X-Virus-Scanned: amavisd-new at umn.edu
-Received: from mta-p4.oit.umn.edu ([127.0.0.1])
-        by localhost (mta-p4.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id NeJYn5-5cKO2; Mon, 29 Oct 2018 13:46:42 -0500 (CDT)
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
-        (using TLSv1 with cipher AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: wang6495)
-        by mta-p4.oit.umn.edu (Postfix) with ESMTPSA id 4BD6E6E8;
-        Mon, 29 Oct 2018 13:46:42 -0500 (CDT)
-Received: by mail-io1-f41.google.com with SMTP id y22-v6so5634720ioj.13;
-        Mon, 29 Oct 2018 11:46:42 -0700 (PDT)
-X-Gm-Message-State: AGRZ1gKNZ6qAMkMSOoNgkb+EFtuI9b13BSML51QnlVG5TI89AzIGYFIs
-        CRkUb3iXlJEz4/aGjvn34nFv2p0s5KCO/mx2YVk=
-X-Google-Smtp-Source: AJdET5fSCuhILgoTkDIfmyD8XTjD/xfLwselQjgyxFicPBACh66FYwYVR0Dw6Rc7ZjU7dvyjT3H3E3NgaE5z5w2Iizc=
-X-Received: by 2002:a5e:dd4d:: with SMTP id u13-v6mr9408706iop.62.1540838802038;
- Mon, 29 Oct 2018 11:46:42 -0700 (PDT)
+        Mon, 29 Oct 2018 23:37:00 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44990 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728150AbeJ3DhA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 23:37:00 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 72E2F341;
+        Mon, 29 Oct 2018 11:47:05 -0700 (PDT)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A44083F6A8;
+        Mon, 29 Oct 2018 11:47:02 -0700 (PDT)
+Date:   Mon, 29 Oct 2018 18:47:00 +0000
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v5 14/15] sched/core: uclamp: use TG's clamps to restrict
+ Task's clamps
+Message-ID: <20181029184700.GB14309@e110439-lin>
+References: <20181029183311.29175-1-patrick.bellasi@arm.com>
+ <20181029183311.29175-16-patrick.bellasi@arm.com>
 MIME-Version: 1.0
-References: <1539958334-11531-1-git-send-email-wang6495@umn.edu>
-In-Reply-To: <1539958334-11531-1-git-send-email-wang6495@umn.edu>
-From:   Wenwen Wang <wang6495@umn.edu>
-Date:   Mon, 29 Oct 2018 13:46:04 -0500
-X-Gmail-Original-Message-ID: <CAAa=b7ceXdaB9KcZy9ML5pcEwMjYF0ibaB_f6LuuHFe_jSuMYQ@mail.gmail.com>
-Message-ID: <CAAa=b7ceXdaB9KcZy9ML5pcEwMjYF0ibaB_f6LuuHFe_jSuMYQ@mail.gmail.com>
-Subject: Re: [PATCH] media: dvb: fix a missing-check bug
-To:     Wenwen Wang <wang6495@umn.edu>
-Cc:     Kangjie Lu <kjlu@umn.edu>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        viro@zeniv.linux.org.uk,
-        "open list:STAGING - ATOMISP DRIVER" <linux-media@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181029183311.29175-16-patrick.bellasi@arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Slightly older version posted by error along with the correct one.
+Please comment on:
 
-Can anyone confirm this bug? Thanks!
+   Message-ID: <20181029183311.29175-17-patrick.bellasi@arm.com>
 
-Wenwen
+Sorry for the noise.
 
-On Fri, Oct 19, 2018 at 9:12 AM Wenwen Wang <wang6495@umn.edu> wrote:
->
-> In dvb_audio_write(), the first byte of the user-space buffer 'buf' is
-> firstly copied and checked to see whether this is a TS packet, which always
-> starts with 0x47 for synchronization purposes. If yes, ts_play() will be
-> called. Otherwise, dvb_aplay() will be called. In ts_play(), the content of
-> 'buf', including the first byte, is copied again from the user space.
-> However, after the copy, no check is re-enforced on the first byte of the
-> copied data.  Given that 'buf' is in the user space, a malicious user can
-> race to change the first byte after the check in dvb_audio_write() but
-> before the copy in ts_play(). Through this way, the user can supply
-> inconsistent code, which can cause undefined behavior of the kernel and
-> introduce potential security risk.
->
-> This patch adds a necessary check in ts_play() to make sure the first byte
-> acquired in the second copy contains the expected value. Otherwise, an
-> error code EINVAL will be returned.
->
-> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+On 29-Oct 18:33, Patrick Bellasi wrote:
+> When a task's util_clamp value is configured via sched_setattr(2), this
+> value has to be properly accounted in the corresponding clamp group
+> every time the task is enqueued and dequeued. When cgroups are also in
+> use, per-task clamp values have to be aggregated to those of the CPU's
+> controller's Task Group (TG) in which the task is currently living.
+> 
+> Let's update uclamp_cpu_get() to provide aggregation between the task
+> and the TG clamp values. Every time a task is enqueued, it will be
+> accounted in the clamp_group which defines the smaller clamp between the
+> task specific value and its TG effective value.
+> 
+> This also mimics what already happen for a task's CPU affinity mask when
+> the task is also living in a cpuset. The overall idea is that cgroup
+> attributes are always used to restrict the per-task attributes.
+> 
+> Thus, this implementation allows to:
+> 
+> 1. ensure cgroup clamps are always used to restrict task specific
+>    requests, i.e. boosted only up to the effective granted value or
+>    clamped at least to a certain value
+> 2. implements a "nice-like" policy, where tasks are still allowed to
+>    request less then what enforced by their current TG
+> 
+> For this mechanisms to work properly, we exploit the concept of
+> "effective" clamp, which is already used by a TG to track parent
+> enforced restrictions.
+> In this patch we re-use the same variable:
+>    task_struct::uclamp::effective::group_id
+> to track the currently most restrictive clamp group each task is
+> subject to and thus it's also currently refcounted into.
+> 
+> This solution allows also to better decouple the slow-path, where task
+> and task group clamp values are updated, from the fast-path, where the
+> most appropriate clamp value is tracked by refcounting clamp groups.
+> 
+> For consistency purposes, as well as to properly inform userspace, the
+> sched_getattr(2) call is updated to always return the properly
+> aggregated constrains as described above. This will also make
+> sched_getattr(2) a convenient userspace API to know the utilization
+> constraints enforced on a task by the cgroup's CPU controller.
+> 
+> Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Tejun Heo <tj@kernel.org>
+> Cc: Paul Turner <pjt@google.com>
+> Cc: Suren Baghdasaryan <surenb@google.com>
+> Cc: Todd Kjos <tkjos@google.com>
+> Cc: Joel Fernandes <joelaf@google.com>
+> Cc: Steve Muckle <smuckle@google.com>
+> Cc: Juri Lelli <juri.lelli@redhat.com>
+> Cc: Quentin Perret <quentin.perret@arm.com>
+> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> Cc: Morten Rasmussen <morten.rasmussen@arm.com>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-pm@vger.kernel.org
+> 
 > ---
->  drivers/media/pci/ttpci/av7110_av.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/media/pci/ttpci/av7110_av.c b/drivers/media/pci/ttpci/av7110_av.c
-> index ef1bc17..1ff6062 100644
-> --- a/drivers/media/pci/ttpci/av7110_av.c
-> +++ b/drivers/media/pci/ttpci/av7110_av.c
-> @@ -468,6 +468,8 @@ static ssize_t ts_play(struct av7110 *av7110, const char __user *buf,
->                 }
->                 if (copy_from_user(kb, buf, TS_SIZE))
->                         return -EFAULT;
-> +               if (kb[0] != 0x47)
-> +                       return -EINVAL;
->                 write_ts_to_decoder(av7110, type, kb, TS_SIZE);
->                 todo -= TS_SIZE;
->                 buf += TS_SIZE;
-> --
-> 2.7.4
->
+> Changes in v4:
+>  Message-ID: <20180816140731.GD2960@e110439-lin>
+>  - reuse already existing:
+>      task_struct::uclamp::effective::group_id
+>    instead of adding:
+>      task_struct::uclamp_group_id
+>    to back annotate the effective clamp group in which a task has been
+>    refcounted
+>  Others:
+>  - small documentation fixes
+>  - rebased on v4.19-rc1
+> 
+> Changes in v3:
+>  Message-ID: <CAJuCfpFnj2g3+ZpR4fP4yqfxs0zd=c-Zehr2XM7m_C+WdL9jNA@mail.gmail.com>
+>  - rename UCLAMP_NONE into UCLAMP_NOT_VALID
+>  - fix not required override
+>  - fix typos in changelog
+>  Others:
+>  - clean up uclamp_cpu_get_id()/sched_getattr() code by moving task's
+>    clamp group_id/value code into dedicated getter functions:
+>    uclamp_task_group_id(), uclamp_group_value() and uclamp_task_value()
+>  - rebased on tip/sched/core
+> Changes in v2:
+>  OSPM discussion:
+>  - implement a "nice" semantics where cgroup clamp values are always
+>    used to restrict task specific clamp values, i.e. tasks running on a
+>    TG are only allowed to demote themself.
+>  Other:
+>  - rabased on v4.18-rc4
+>  - this code has been split from a previous patch to simplify the review
+> ---
+>  include/linux/sched.h |  9 +++++++
+>  kernel/sched/core.c   | 58 +++++++++++++++++++++++++++++++++++++++----
+>  2 files changed, 62 insertions(+), 5 deletions(-)
+> 
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 7698e7554892..4b61fbcb0797 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -609,12 +609,21 @@ struct sched_dl_entity {
+>   * The active bit is set whenever a task has got an effective clamp group
+>   * and value assigned, which can be different from the user requested ones.
+>   * This allows to know a task is actually refcounting a CPU's clamp group.
+> + *
+> + * The user_defined bit is set whenever a task has got a task-specific clamp
+> + * value requested from userspace, i.e. the system defaults applies to this
+> + * task just as a restriction. This allows to relax TG's clamps when a less
+> + * restrictive task specific value has been defined, thus allowing to
+> + * implement a "nice" semantic when both task group and task specific values
+> + * are used. For example, a task running on a 20% boosted TG can still drop
+> + * its own boosting to 0%.
+>   */
+>  struct uclamp_se {
+>  	unsigned int value		: SCHED_CAPACITY_SHIFT + 1;
+>  	unsigned int group_id		: order_base_2(UCLAMP_GROUPS);
+>  	unsigned int mapped		: 1;
+>  	unsigned int active		: 1;
+> +	unsigned int user_defined	: 1;
+>  	/*
+>  	 * Clamp group and value actually used by a scheduling entity,
+>  	 * i.e. a (RUNNABLE) task or a task group.
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index e2292c698e3b..2ce84d22ab17 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -875,6 +875,28 @@ static inline void uclamp_cpu_update(struct rq *rq, unsigned int clamp_id,
+>  	rq->uclamp.value[clamp_id] = max_value;
+>  }
+>  
+> +/**
+> + * uclamp_apply_defaults: check if p is subject to system default clamps
+> + * @p: the task to check
+> + *
+> + * Tasks in the root group or autogroups are always and only limited by system
+> + * defaults. All others instead are limited by their TG's specific value.
+> + * This method checks the conditions under witch a task is subject to system
+> + * default clamps.
+> + */
+> +#ifdef CONFIG_UCLAMP_TASK_GROUP
+> +static inline bool uclamp_apply_defaults(struct task_struct *p)
+> +{
+> +	if (task_group_is_autogroup(task_group(p)))
+> +		return true;
+> +	if (task_group(p) == &root_task_group)
+> +		return true;
+> +	return false;
+> +}
+> +#else
+> +#define uclamp_apply_defaults(p) true
+> +#endif
+> +
+>  /**
+>   * uclamp_effective_group_id: get the effective clamp group index of a task
+>   * @p: the task to get the effective clamp value for
+> @@ -882,9 +904,11 @@ static inline void uclamp_cpu_update(struct rq *rq, unsigned int clamp_id,
+>   *
+>   * The effective clamp group index of a task depends on:
+>   * - the task specific clamp value, explicitly requested from userspace
+> + * - the task group effective clamp value, for tasks not in the root group or
+> + *   in an autogroup
+>   * - the system default clamp value, defined by the sysadmin
+> - * and tasks specific's clamp values are always restricted by system
+> - * defaults clamp values.
+> + * and tasks specific's clamp values are always restricted, with increasing
+> + * priority, by their task group first and the system defaults after.
+>   *
+>   * This method returns the effective group index for a task, depending on its
+>   * status and a proper aggregation of the clamp values listed above.
+> @@ -908,6 +932,22 @@ static inline unsigned int uclamp_effective_group_id(struct task_struct *p,
+>  	clamp_value = p->uclamp[clamp_id].value;
+>  	group_id = p->uclamp[clamp_id].group_id;
+>  
+> +	if (!uclamp_apply_defaults(p)) {
+> +#ifdef CONFIG_UCLAMP_TASK_GROUP
+> +		unsigned int clamp_max =
+> +			task_group(p)->uclamp[clamp_id].effective.value;
+> +		unsigned int group_max =
+> +			task_group(p)->uclamp[clamp_id].effective.group_id;
+> +
+> +		if (!p->uclamp[clamp_id].user_defined ||
+> +		    clamp_value > clamp_max) {
+> +			clamp_value = clamp_max;
+> +			group_id = group_max;
+> +		}
+> +#endif
+> +		goto done;
+> +	}
+> +
+>  	/* RT tasks have different default values */
+>  	default_clamp = task_has_rt_policy(p)
+>  		? uclamp_default_perf
+> @@ -924,6 +964,8 @@ static inline unsigned int uclamp_effective_group_id(struct task_struct *p,
+>  		group_id = default_clamp[clamp_id].group_id;
+>  	}
+>  
+> +done:
+> +
+>  	p->uclamp[clamp_id].effective.value = clamp_value;
+>  	p->uclamp[clamp_id].effective.group_id = group_id;
+>  
+> @@ -936,8 +978,10 @@ static inline unsigned int uclamp_effective_group_id(struct task_struct *p,
+>   * @rq: the CPU's rq where the clamp group has to be reference counted
+>   * @clamp_id: the clamp index to update
+>   *
+> - * Once a task is enqueued on a CPU's rq, the clamp group currently defined by
+> - * the task's uclamp::group_id is reference counted on that CPU.
+> + * Once a task is enqueued on a CPU's rq, with increasing priority, we
+> + * reference count the most restrictive clamp group between the task specific
+> + * clamp value, the clamp value of its task group and the system default clamp
+> + * value.
+>   */
+>  static inline void uclamp_cpu_get_id(struct task_struct *p, struct rq *rq,
+>  				     unsigned int clamp_id)
+> @@ -1312,10 +1356,12 @@ static int __setscheduler_uclamp(struct task_struct *p,
+>  
+>  	/* Update each required clamp group */
+>  	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MIN) {
+> +		p->uclamp[UCLAMP_MIN].user_defined = true;
+>  		uclamp_group_get(p, &p->uclamp[UCLAMP_MIN],
+>  				 UCLAMP_MIN, lower_bound);
+>  	}
+>  	if (attr->sched_flags & SCHED_FLAG_UTIL_CLAMP_MAX) {
+> +		p->uclamp[UCLAMP_MAX].user_defined = true;
+>  		uclamp_group_get(p, &p->uclamp[UCLAMP_MAX],
+>  				 UCLAMP_MAX, upper_bound);
+>  	}
+> @@ -1359,8 +1405,10 @@ static void uclamp_fork(struct task_struct *p, bool reset)
+>  	for (clamp_id = 0; clamp_id < UCLAMP_CNT; ++clamp_id) {
+>  		unsigned int clamp_value = p->uclamp[clamp_id].value;
+>  
+> -		if (unlikely(reset))
+> +		if (unlikely(reset)) {
+>  			clamp_value = uclamp_none(clamp_id);
+> +			p->uclamp[clamp_id].user_defined = false;
+> +		}
+>  
+>  		p->uclamp[clamp_id].mapped = false;
+>  		p->uclamp[clamp_id].active = false;
+> -- 
+> 2.18.0
+> 
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
