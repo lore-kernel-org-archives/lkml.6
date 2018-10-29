@@ -2,108 +2,90 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08241C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:30:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 161CCC46475
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:31:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70E4D20851
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:30:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70E4D20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id D67B52082D
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:31:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D67B52082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729438AbeJ2RSb (ORCPT
+        id S1729454AbeJ2RS6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 13:18:31 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:62640 "EHLO mxhk.zte.com.cn"
+        Mon, 29 Oct 2018 13:18:58 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56044 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729409AbeJ2RSb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 13:18:31 -0400
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id E33D8BDDB8C53D2B23E1;
-        Mon, 29 Oct 2018 16:30:52 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id w9T8Uiji044158;
-        Mon, 29 Oct 2018 16:30:44 +0800 (GMT-8)
-        (envelope-from wang.yi59@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018102916305119-7358926 ;
-          Mon, 29 Oct 2018 16:30:51 +0800 
-From:   Yi Wang <wang.yi59@zte.com.cn>
-To:     paul.burton@mips.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-mips@linux-mips.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, zhong.weidong@zte.com.cn,
-        Yi Wang <wang.yi59@zte.com.cn>
-Subject: [PATCH v2] clk: boston: fix possible memory leak in clk_boston_setup()
-Date:   Mon, 29 Oct 2018 16:31:47 +0800
-Message-Id: <1540801907-31544-1-git-send-email-wang.yi59@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-10-29 16:30:51,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-10-29 16:30:44,
-        Serialize complete at 2018-10-29 16:30:44
-X-MAIL: mse01.zte.com.cn w9T8Uiji044158
+        id S1725969AbeJ2RS6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 13:18:58 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E04A19D1FD;
+        Mon, 29 Oct 2018 08:31:21 +0000 (UTC)
+Received: from localhost (ovpn-8-17.pek2.redhat.com [10.72.8.17])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3C2CE608E6;
+        Mon, 29 Oct 2018 08:31:20 +0000 (UTC)
+Date:   Mon, 29 Oct 2018 16:31:18 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     lijiang <lijiang@redhat.com>
+Cc:     Borislav Petkov <bp@alien8.de>, Petr Tesarik <ptesarik@suse.cz>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        kexec@lists.infradead.org, mingo@redhat.com, tglx@linutronix.de,
+        dyoung@redhat.com
+Subject: Re: [PATCH] kdump, vmcoreinfo: Export sme_me_mask value to vmcoreinfo
+Message-ID: <20181029083118.GC1884@MiWiFi-R3L-srv>
+References: <20181026222517.GB26927@nazgul.tnic>
+ <20181027081343.GA1884@MiWiFi-R3L-srv>
+ <20181027091007.GB1046@nazgul.tnic>
+ <20181027093917.GA14493@MiWiFi-R3L-srv>
+ <20181027101221.GC1046@nazgul.tnic>
+ <20181027110858.GB14493@MiWiFi-R3L-srv>
+ <C5F8ED8E-F361-4C6C-B9E2-E3C8BCD8E050@alien8.de>
+ <c55bef2a-b972-7e6e-b698-6ac1bc736046@redhat.com>
+ <20181027145151.GA7338@nazgul.tnic>
+ <390b16ba-05d7-3590-c3b2-4b69aa3ae051@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <390b16ba-05d7-3590-c3b2-4b69aa3ae051@redhat.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 29 Oct 2018 08:31:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'onecell' is malloced in clk_boston_setup(), but is not freed
-before leaving from the error handling cases.
+On 10/29/18 at 03:59pm, lijiang wrote:
+> diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+> index 4c8acdfdc5a7..de363796ed20 100644
+> --- a/arch/x86/kernel/machine_kexec_64.c
+> +++ b/arch/x86/kernel/machine_kexec_64.c
+> @@ -29,6 +29,9 @@
+>  #include <asm/setup.h>
+>  #include <asm/set_memory.h>
+> 
+> +u64 sme_mask;
+> +EXPORT_SYMBOL(sme_mask);
 
-Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
----
-v2: fix syntax issue in comment, thanks to  Sergei.
+Wondering why it is global. Who else will use it?
 
- drivers/clk/imgtec/clk-boston.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
-index 15af423..f5d54a6 100644
---- a/drivers/clk/imgtec/clk-boston.c
-+++ b/drivers/clk/imgtec/clk-boston.c
-@@ -73,27 +73,32 @@ static void __init clk_boston_setup(struct device_node *np)
- 	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
- 	if (IS_ERR(hw)) {
- 		pr_err("failed to register input clock: %ld\n", PTR_ERR(hw));
--		return;
-+		goto error;
- 	}
- 	onecell->hws[BOSTON_CLK_INPUT] = hw;
- 
- 	hw = clk_hw_register_fixed_rate(NULL, "sys", "input", 0, sys_freq);
- 	if (IS_ERR(hw)) {
- 		pr_err("failed to register sys clock: %ld\n", PTR_ERR(hw));
--		return;
-+		goto error;
- 	}
- 	onecell->hws[BOSTON_CLK_SYS] = hw;
- 
- 	hw = clk_hw_register_fixed_rate(NULL, "cpu", "input", 0, cpu_freq);
- 	if (IS_ERR(hw)) {
- 		pr_err("failed to register cpu clock: %ld\n", PTR_ERR(hw));
--		return;
-+		goto error;
- 	}
- 	onecell->hws[BOSTON_CLK_CPU] = hw;
- 
- 	err = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, onecell);
- 	if (err)
- 		pr_err("failed to add DT provider: %d\n", err);
-+
-+	return;
-+
-+error:
-+	kfree(onecell);
- }
- 
- /*
--- 
-1.8.3.1
-
+> +
+>  #ifdef CONFIG_KEXEC_FILE
+>  const struct kexec_file_ops * const kexec_file_loaders[] = {
+>                 &kexec_bzImage64_ops,
+> @@ -357,6 +360,9 @@ void arch_crash_save_vmcoreinfo(void)
+>         vmcoreinfo_append_str("NUMBER(pgtable_l5_enabled)=%d\n",
+>                         pgtable_l5_enabled());
+> 
+> +       sme_mask = sme_me_mask;
+> +       VMCOREINFO_NUMBER(sme_mask);
+> +
+>  #ifdef CONFIG_NUMA
+>         VMCOREINFO_SYMBOL(node_data);
+>         VMCOREINFO_LENGTH(node_data, MAX_NUMNODES);
