@@ -3,115 +3,142 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AC78C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:58:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B728DECDE44
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:58:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 381C520870
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:58:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 381C520870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 888AA20880
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:58:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 888AA20880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729659AbeJ2Rp6 (ORCPT
+        id S1729514AbeJ2Rqi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 13:45:58 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:36422 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729300AbeJ2Rpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 13:45:44 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4BD1D341;
-        Mon, 29 Oct 2018 01:58:02 -0700 (PDT)
-Received: from salmiak (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D8BCC3F557;
-        Mon, 29 Oct 2018 01:58:00 -0700 (PDT)
-Date:   Mon, 29 Oct 2018 08:57:50 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Ashish Mhetre <amhetre@nvidia.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        avanbrunt@nvidia.com, linux-kernel@vger.kernel.org,
-        vdumpa@nvidia.com
-Subject: Re: [PATCH V2] arm64: Don't flush tlb while clearing the accessed bit
-Message-ID: <20181029085738.kcjiwf5p6rdqeb6j@salmiak>
-References: <1540794599-30922-1-git-send-email-amhetre@nvidia.com>
+        Mon, 29 Oct 2018 13:46:38 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:54061 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729300AbeJ2Rqi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 13:46:38 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 8D5A3207D4; Mon, 29 Oct 2018 09:58:53 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-12-210.w90-88.abo.wanadoo.fr [90.88.133.210])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 4DA6720970;
+        Mon, 29 Oct 2018 09:58:43 +0100 (CET)
+Date:   Mon, 29 Oct 2018 09:58:43 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 02/15] clk: sunxi-ng: Add check for minimal rate to
+ NKM PLLs
+Message-ID: <20181029085843.3bslqwktxbp2ywk2@flea>
+References: <20181023155035.9101-1-jagan@amarulasolutions.com>
+ <20181023155035.9101-3-jagan@amarulasolutions.com>
+ <20181024180436.5n3i3z6h2yezc4cv@flea>
+ <CAMty3ZC2wn-DjR+93yc-n-bAmVCHaEqR_=4XPddoo+7LjebTEg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5lt5pgqwghypjetl"
 Content-Disposition: inline
-In-Reply-To: <1540794599-30922-1-git-send-email-amhetre@nvidia.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <CAMty3ZC2wn-DjR+93yc-n-bAmVCHaEqR_=4XPddoo+7LjebTEg@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 11:59:59AM +0530, Ashish Mhetre wrote:
-> From: Alex Van Brunt <avanbrunt@nvidia.com>
-> 
-> Accessed bit is used to age a page and in generic implementation there is
-> flush_tlb while clearing the accessed bit.
-> Flushing a TLB is overhead on ARM64 as access flag faults don't get
-> translation table entries cached into TLB's. Flushing TLB is not necessary
-> for this. Clearing the accessed bit without flushing TLB doesn't cause data
-> corruption on ARM64. [It may cause incorrect page aging but chances of that
-> should be relatively low.]
-> In our case with this patch, speed of reading from fast NVMe/SSD through
-> PCIe got improved by 10% ~ 15% and writing got improved by 20% ~ 40%.
-> So for performance optimisation don't flush TLB when clearing the accessed
-> bit on ARM64.
-> x86 made the same optimization even though their TLB invalidate is much
-> faster as it doesn't broadcast to other CPUs.
 
-Please specifically refer to commit:
+--5lt5pgqwghypjetl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  b13b1d2d8692b437 ("x86/mm: In the PTE swapout page reclaim case clear the accessed bit instead of flushing the TLB")
+On Thu, Oct 25, 2018 at 04:25:59PM +0530, Jagan Teki wrote:
+> On Wed, Oct 24, 2018 at 11:34 PM Maxime Ripard
+> <maxime.ripard@bootlin.com> wrote:
+> >
+> > On Tue, Oct 23, 2018 at 09:20:22PM +0530, Jagan Teki wrote:
+> > > Some NKM PLLs doesn't work well when their output clock rate is set b=
+elow
+> > > certain rate.
+> > >
+> > > So, add support for minimal rate for relevant PLLs.
+> > >
+> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > ---
+> > > Changes for v2:
+> > > - new patch
+> > >
+> > >  drivers/clk/sunxi-ng/ccu_nkm.c | 7 +++++++
+> > >  drivers/clk/sunxi-ng/ccu_nkm.h | 1 +
+> > >  2 files changed, 8 insertions(+)
+> > >
+> > > diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/cc=
+u_nkm.c
+> > > index 841840e35e61..d17539dc88dd 100644
+> > > --- a/drivers/clk/sunxi-ng/ccu_nkm.c
+> > > +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+> > > @@ -125,6 +125,13 @@ static unsigned long ccu_nkm_round_rate(struct c=
+cu_mux_internal *mux,
+> > >       if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+> > >               rate *=3D nkm->fixed_post_div;
+> > >
+> > > +     if (rate < nkm->min_rate) {
+> > > +             rate =3D nkm->min_rate;
+> > > +             if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+> > > +                     rate /=3D nkm->fixed_post_div;
+> >
+> > I'm not sure this is right. Is the post divider taken into account to
+> > calculate the minimum, or is the minimum on the rate before the fixed
+> > post divider.
+>=20
+> Since we are returning from here, we need to take care post div which
+> is actually doing at the end of round_rate.
 
-... so that it's easy for people to track down the relevant x86 change.
+That's not my point though. Does the rate needs to be superior to min
+/ post_div, or min?
 
-> 
-> Signed-off-by: Alex Van Brunt <avanbrunt@nvidia.com>
-> Signed-off-by: Ashish Mhetre <amhetre@nvidia.com>
-> ---
-> v2: Added comments about why flushing is not needed while clearing accessed bit
-> 
->  arch/arm64/include/asm/pgtable.h | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-> index 2ab2031..33e1940 100644
-> --- a/arch/arm64/include/asm/pgtable.h
-> +++ b/arch/arm64/include/asm/pgtable.h
-> @@ -652,6 +652,22 @@ static inline int ptep_test_and_clear_young(struct vm_area_struct *vma,
->  	return __ptep_test_and_clear_young(ptep);
->  }
->  
-> +#define __HAVE_ARCH_PTEP_CLEAR_YOUNG_FLUSH
-> +static inline int ptep_clear_flush_young(struct vm_area_struct *vma,
-> +					 unsigned long address, pte_t *ptep)
-> +{
-> +	/*
-> +	 * Flushing a TLB is overhead on ARM64 as access flag faults don't get
-> +	 * translation table entries cached into TLB's. Flushing TLB is not
-> +	 * necessary for this. Clearing the accessed bit without flushing TLB
-> +	 * doesn't cause data corruption on ARM64.[ It may cause imcorrect page
-> +	 * aging but chances of this should be comparatively low. ]
-> +	 * So as a performance optimization don't flush the TLB when clearing
-> +	 * the accessed bit.
-> +	 */
+> >
+> > How did you test this?
+>=20
+> I've not used this on PLL_MIPI atleast, so I didn't test this.
 
-Can we just copy the x86 comment from commit b13b1d2d8692b437?
+If you've never tested this, why are you adding that code?
 
-Thanks,
-Mark.
+Maxime
 
-> +	return ptep_test_and_clear_young(vma, address, ptep);
-> +}
-> +
->  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->  #define __HAVE_ARCH_PMDP_TEST_AND_CLEAR_YOUNG
->  static inline int pmdp_test_and_clear_young(struct vm_area_struct *vma,
-> -- 
-> 2.7.4
-> 
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--5lt5pgqwghypjetl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW9bLwwAKCRDj7w1vZxhR
+xbT0AP0fPto4coEig8ZR39G7ONTVrOWBcxXknPHHF4gUjPDIbAEA0V0BEp+iz73p
+SAD23hiIL4S+7qCvlNFZYYpGN5WsxAw=
+=XwoR
+-----END PGP SIGNATURE-----
+
+--5lt5pgqwghypjetl--
