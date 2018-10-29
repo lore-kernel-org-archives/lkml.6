@@ -2,94 +2,179 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0340CC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:41:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3082C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:45:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C847D2080A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:41:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C847D2080A
+	by mail.kernel.org (Postfix) with ESMTP id 57B0720657
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:45:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57B0720657
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726679AbeJ2WaX (ORCPT
+        id S1726222AbeJ2WeI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 18:30:23 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48164 "EHLO mx1.redhat.com"
+        Mon, 29 Oct 2018 18:34:08 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:15838 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725862AbeJ2WaX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 18:30:23 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        id S1725977AbeJ2WeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 18:34:08 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 958DC3002875;
-        Mon, 29 Oct 2018 13:41:39 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-109.pek2.redhat.com [10.72.12.109])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 399FB60C65;
-        Mon, 29 Oct 2018 13:41:30 +0000 (UTC)
-Subject: Re: [PATCH] kdump, vmcoreinfo: Export sme_me_mask value to vmcoreinfo
-To:     Baoquan He <bhe@redhat.com>
-Cc:     Borislav Petkov <bp@alien8.de>, Petr Tesarik <ptesarik@suse.cz>,
-        linux-kernel@vger.kernel.org, x86@kernel.org,
-        kexec@lists.infradead.org, mingo@redhat.com, tglx@linutronix.de,
-        dyoung@redhat.com
-References: <20181027101221.GC1046@nazgul.tnic>
- <20181027110858.GB14493@MiWiFi-R3L-srv>
- <C5F8ED8E-F361-4C6C-B9E2-E3C8BCD8E050@alien8.de>
- <c55bef2a-b972-7e6e-b698-6ac1bc736046@redhat.com>
- <20181027145151.GA7338@nazgul.tnic>
- <390b16ba-05d7-3590-c3b2-4b69aa3ae051@redhat.com>
- <20181029083118.GC1884@MiWiFi-R3L-srv>
- <d6f93848-c750-f29c-4ca7-9661596cad62@redhat.com>
- <20181029095738.GB20101@zn.tnic>
- <15897206-c1a6-ced6-3a1b-f71da8fc9c83@redhat.com>
- <20181029114414.GA11408@MiWiFi-R3L-srv>
-From:   lijiang <lijiang@redhat.com>
-Message-ID: <90385882-7fd1-a674-ec5a-19bd42471a5e@redhat.com>
-Date:   Mon, 29 Oct 2018 21:41:26 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181029114414.GA11408@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 29 Oct 2018 13:41:39 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0E714307EAB8;
+        Mon, 29 Oct 2018 13:45:24 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-158.ams2.redhat.com [10.36.116.158])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 746805EDEA;
+        Mon, 29 Oct 2018 13:45:16 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id A22BDB3DC7; Mon, 29 Oct 2018 14:45:15 +0100 (CET)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     David Airlie <airlied@redhat.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
+        BOCHS VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v3] drm/bochs: add edid support.
+Date:   Mon, 29 Oct 2018 14:45:07 +0100
+Message-Id: <20181029134507.7775-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 29 Oct 2018 13:45:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018年10月29日 19:44, Baoquan He 写道:
-> On 10/29/18 at 06:12pm, lijiang wrote:
->> diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
->> index 4c8acdfdc5a7..3cc975e7ff8f 100644
->> --- a/arch/x86/kernel/machine_kexec_64.c
->> +++ b/arch/x86/kernel/machine_kexec_64.c
->> @@ -352,11 +352,16 @@ void machine_kexec(struct kimage *image)
->>
->  void arch_crash_save_vmcoreinfo(void)
->  {
-> +       u64 sme_mask = sme_me_mask;
-> +
-> 
-> This may looks better.
-> 
+Recent qemu (latest master branch, upcoming 3.1 release) got support
+for EDID data.  This patch adds guest driver support.
 
-Ok, thanks for your comment.
+EDID support in qemu is not (yet) enabled by default, so please use
+'qemu -device VGA,edid=on' for testing.
 
->         VMCOREINFO_NUMBER(phys_base);
->         VMCOREINFO_SYMBOL(init_top_pgt);
->         vmcoreinfo_append_str("NUMBER(pgtable_l5_enabled)=%d\n",
->                         pgtable_l5_enabled());
-> 
-> +       VMCOREINFO_NUMBER(sme_mask);
-> +
->  #ifdef CONFIG_NUMA
->         VMCOREINFO_SYMBOL(node_data);
->         VMCOREINFO_LENGTH(node_data, MAX_NUMNODES);
-> 
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ drivers/gpu/drm/bochs/bochs.h     |  1 +
+ drivers/gpu/drm/bochs/bochs_hw.c  | 39 +++++++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/bochs/bochs_kms.c | 18 +++++++++++++++---
+ 3 files changed, 55 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/bochs/bochs.h b/drivers/gpu/drm/bochs/bochs.h
+index e7a69077e4..06b8166efa 100644
+--- a/drivers/gpu/drm/bochs/bochs.h
++++ b/drivers/gpu/drm/bochs/bochs.h
+@@ -66,6 +66,7 @@ struct bochs_device {
+ 	u16 yres_virtual;
+ 	u32 stride;
+ 	u32 bpp;
++	struct edid *edid;
+ 
+ 	/* drm */
+ 	struct drm_device  *dev;
+diff --git a/drivers/gpu/drm/bochs/bochs_hw.c b/drivers/gpu/drm/bochs/bochs_hw.c
+index cacff73a64..db4afe94c5 100644
+--- a/drivers/gpu/drm/bochs/bochs_hw.c
++++ b/drivers/gpu/drm/bochs/bochs_hw.c
+@@ -69,6 +69,41 @@ static void bochs_hw_set_little_endian(struct bochs_device *bochs)
+ #define bochs_hw_set_native_endian(_b) bochs_hw_set_little_endian(_b)
+ #endif
+ 
++static int bochs_load_edid(struct bochs_device *bochs)
++{
++	uint8_t *blob;
++	size_t i, len;
++	uint8_t num_exts;
++
++	if (!bochs->mmio)
++		return -1;
++
++	if ((readb(bochs->mmio+0) != 0x00 ||
++	     readb(bochs->mmio+1) != 0xff))
++		return -1;
++
++	num_exts = readb(bochs->mmio + 126);
++	len = EDID_LENGTH * (1 + num_exts);
++	if (len > 0x400 /* vga register offset */)
++		return -1;
++
++	kfree(bochs->edid);
++	bochs->edid = kmalloc(len, GFP_KERNEL);
++	blob = (void *)bochs->edid;
++	for (i = 0; i < len; i++) {
++		blob[i] = readb(bochs->mmio+i);
++	}
++
++	if (!drm_edid_is_valid(bochs->edid)) {
++		DRM_ERROR("EDID is not valid, ignoring.\n");
++		kfree(bochs->edid);
++		bochs->edid = NULL;
++		return -1;
++	}
++
++	return 0;
++}
++
+ int bochs_hw_init(struct drm_device *dev)
+ {
+ 	struct bochs_device *bochs = dev->dev_private;
+@@ -150,6 +185,9 @@ int bochs_hw_init(struct drm_device *dev)
+ 	}
+ 
+ noext:
++	if (bochs_load_edid(bochs) == 0)
++		DRM_INFO("Found EDID data blob.\n");
++
+ 	return 0;
+ }
+ 
+@@ -164,6 +202,7 @@ void bochs_hw_fini(struct drm_device *dev)
+ 	if (bochs->fb_map)
+ 		iounmap(bochs->fb_map);
+ 	pci_release_regions(dev->pdev);
++	kfree(bochs->edid);
+ }
+ 
+ void bochs_hw_setmode(struct bochs_device *bochs,
+diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
+index 9bc5b438ae..b9931443a7 100644
+--- a/drivers/gpu/drm/bochs/bochs_kms.c
++++ b/drivers/gpu/drm/bochs/bochs_kms.c
+@@ -213,10 +213,17 @@ static void bochs_encoder_init(struct drm_device *dev)
+ 
+ static int bochs_connector_get_modes(struct drm_connector *connector)
+ {
+-	int count;
++	struct bochs_device *bochs =
++		container_of(connector, struct bochs_device, connector);
++	int count = 0;
+ 
+-	count = drm_add_modes_noedid(connector, 8192, 8192);
+-	drm_set_preferred_mode(connector, defx, defy);
++	if (bochs->edid)
++		count = drm_add_edid_modes(connector, bochs->edid);
++
++	if (!count) {
++		count = drm_add_modes_noedid(connector, 8192, 8192);
++		drm_set_preferred_mode(connector, defx, defy);
++	}
+ 	return count;
+ }
+ 
+@@ -271,6 +278,11 @@ static void bochs_connector_init(struct drm_device *dev)
+ 	drm_connector_helper_add(connector,
+ 				 &bochs_connector_connector_helper_funcs);
+ 	drm_connector_register(connector);
++
++	if (bochs->edid) {
++		drm_connector_attach_edid_property(connector);
++		drm_connector_update_edid_property(connector, bochs->edid);
++	}
+ }
+ 
+ 
+-- 
+2.9.3
+
