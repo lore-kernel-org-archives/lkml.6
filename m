@@ -7,72 +7,71 @@ X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C7DDC2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:08:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C95EC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:08:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED7CF20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:08:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C05E20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:08:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mxvoiQps"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED7CF20870
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ViKF3X5Q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C05E20870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728437AbeJ3C6Q (ORCPT
+        id S1728456AbeJ3C6T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 22:58:16 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:41272 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728366AbeJ3C6Q (ORCPT
+        Mon, 29 Oct 2018 22:58:19 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39633 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728367AbeJ3C6S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 22:58:16 -0400
-Received: by mail-pf1-f194.google.com with SMTP id e22-v6so1394614pfn.8
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 11:08:32 -0700 (PDT)
+        Mon, 29 Oct 2018 22:58:18 -0400
+Received: by mail-pg1-f196.google.com with SMTP id r9-v6so4291188pgv.6
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 11:08:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=CSaQp289WlwooI6biqRK70zJEg/8W1x/ZX+9kCIc7Ts=;
-        b=mxvoiQpswweCkHANP3Cexu88qUDHEHcm1IUx/gx6U9O+2agCOQbySNl981YrQPO/NE
-         ZINFMOGENJEp2Aht7gk4zKayGjMO6w8n2HAseulpfg1OphhcjUqBwzvJ/cbdumj+QMlg
-         uZMhsBdcbNKonkRq7C2sIofM1Jw1d0iaZAIQs=
+        bh=5KlK5EoYecHiEwx2KYOj1AK3WWuK24K/BTuRZp/Hgn0=;
+        b=ViKF3X5QZz1G04Kuc+UrpCLOIvvtASddvUpgEhbE2NwCsDxuq6JsW/AfF3MtdzfNcH
+         x4aFvJIFkNdrS8l2CQjvpOEnAdP+LsFKZAoe9CdyAH5M9odaITFSuzPbsiwDohBeU3UQ
+         YDDibS0wr7JOOkRxMW/g3gib7jVbkYmN9FZJo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=CSaQp289WlwooI6biqRK70zJEg/8W1x/ZX+9kCIc7Ts=;
-        b=XFiwZsy99CxI3K3n+D1K9n/qc2Q5gWr2v+ojn/iB9xL+Dx1LL6/2GLHdhZmRUJniXR
-         jElBzZIdv+BLmjgLaLkvucKh/1LohgkcINaMTN5iGEypVNv6bcRhCRSECnOerZS5CzTQ
-         +H6XMNq7yCiGBVgUczHFziJwQwCloILI/xPraVkxJobauVqia5frEnubPziAwV3rRHR1
-         OezEr79EMoXvKp+IPwQ5HMmSHwWI7K5dl+MCNPMtgOxi0JFVaWwT8VJJUnkvp3RdiQgF
-         6PR8GL0bFI2PXcYYtS0QXCvNYvBzylALHWWg4SWSBfUFpiU0k6cCKwaYovhIYdS/npPD
-         xrhQ==
-X-Gm-Message-State: AGRZ1gK9A1CCFgvq083qi8NUp+185zvGU2JAqOOepKNqVdHeeBCHh2GC
-        UVAiOamtN5g6MY3hzm6pivrpEA==
-X-Google-Smtp-Source: AJdET5d/8hGlxDxAlpCXY3ZegXVIPGXLSUdUXAvdHRmyPp8wrYLT7hr04+3LnVhCwvDG/Kn1hLlsVw==
-X-Received: by 2002:a62:425b:: with SMTP id p88-v6mr16258227pfa.96.1540836512254;
-        Mon, 29 Oct 2018 11:08:32 -0700 (PDT)
+        bh=5KlK5EoYecHiEwx2KYOj1AK3WWuK24K/BTuRZp/Hgn0=;
+        b=YPLSTYL5pIODF1gUW+Np2OO6f12651bN34rEhPFvGkyuMIVW0v+AJiGr82vQSphoCd
+         3PdNflqetAH9LUvJndNn/mqk8nXWtGgNDyLJlFzhR6LYO8Dpb+XA8qWP7IV2tt/TWqgh
+         fvQ8Y7LV9RZIhc+ODEy+TAHEjK0zP63I0pyfAna5mnnw80TD0xWp8LBx13kirPUS0q2W
+         MR+xlksdKlwFXxpapawTcHaLjmn4S7zrSz4Oo+xZslYKceAODjQfOTGyc27bDC5cuBG4
+         DbT9RzxbQ/++pYGnV6Zc7H6bI763gN3DUNhTi3lG1iPwm+Una/tF/4TV6H00agSr+AnZ
+         rqnQ==
+X-Gm-Message-State: AGRZ1gJgU2jhwAk+0I/JCZ7AGyfDBL+RclWVgKMCQC4B/2ijm4eXNgzh
+        B4gWuS6r8jSuHSvXhyDSXdIYag==
+X-Google-Smtp-Source: AJdET5dnes+lqSdsKf+M8kej513uIWGXuNg0nbxyLNaYWMhztTpOmHr2lEByvMdxDcC5rsUHz1VWbw==
+X-Received: by 2002:a62:7a92:: with SMTP id v140-v6mr9434788pfc.46.1540836514355;
+        Mon, 29 Oct 2018 11:08:34 -0700 (PDT)
 Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
-        by smtp.gmail.com with ESMTPSA id u13-v6sm20537765pgp.18.2018.10.29.11.08.29
+        by smtp.gmail.com with ESMTPSA id u13-v6sm20537765pgp.18.2018.10.29.11.08.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 11:08:31 -0700 (PDT)
+        Mon, 29 Oct 2018 11:08:33 -0700 (PDT)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     Jason Wessel <jason.wessel@windriver.com>,
         Daniel Thompson <daniel.thompson@linaro.org>,
         tglx@linutronix.de, mingo@kernel.org, gregkh@linuxfoundation.org
 Cc:     linux-arm-msm@vger.kernel.org,
         kgdb-bugreport@lists.sourceforge.net,
-        Douglas Anderson <dianders@chromium.org>, nm@ti.com,
-        marex@denx.de, vigneshr@ti.com, linux-aspeed@lists.ozlabs.org,
-        jk@ozlabs.org, andrew@aj.id.au, rolf.evers.fischer@aptiv.com,
-        linux-kernel@vger.kernel.org, tony@atomide.com,
-        Jisheng.Zhang@synaptics.com, joel@jms.id.au,
-        linux-serial@vger.kernel.org, jslaby@suse.com, asierra@xes-inc.com,
-        andriy.shevchenko@linux.intel.com, dan.carpenter@oracle.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 5/7] serial: 8250: Process sysrq at port unlock time
-Date:   Mon, 29 Oct 2018 11:07:05 -0700
-Message-Id: <20181029180707.207546-6-dianders@chromium.org>
+        Douglas Anderson <dianders@chromium.org>,
+        linux-mips@linux-mips.org, linux-sh@vger.kernel.org,
+        peterz@infradead.org, linux-hexagon@vger.kernel.org,
+        frederic@kernel.org, riel@surriel.com,
+        linux-kernel@vger.kernel.org, luto@kernel.org,
+        sparclinux@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 6/7] smp: Don't yell about IRQs disabled in kgdb_roundup_cpus()
+Date:   Mon, 29 Oct 2018 11:07:06 -0700
+Message-Id: <20181029180707.207546-7-dianders@chromium.org>
 X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
 In-Reply-To: <20181029180707.207546-1-dianders@chromium.org>
 References: <20181029180707.207546-1-dianders@chromium.org>
@@ -83,125 +82,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's take advantage of the new ("serial: core: Allow processing sysrq
-at port unlock time") to handle sysrqs more cleanly.
+In kgdb_roundup_cpus() we've got code that looks like:
+  local_irq_enable();
+  smp_call_function(kgdb_call_nmi_hook, NULL, 0);
+  local_irq_disable();
+
+In certain cases when we drop into kgdb (like with sysrq-g on a serial
+console) we'll get a big yell that looks like:
+
+  sysrq: SysRq : DEBUG
+  ------------[ cut here ]------------
+  DEBUG_LOCKS_WARN_ON(current->hardirq_context)
+  WARNING: CPU: 0 PID: 0 at .../kernel/locking/lockdep.c:2875 lockdep_hardirqs_on+0xf0/0x160
+  CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.19.0 #27
+  pstate: 604003c9 (nZCv DAIF +PAN -UAO)
+  pc : lockdep_hardirqs_on+0xf0/0x160
+  ...
+  Call trace:
+   lockdep_hardirqs_on+0xf0/0x160
+   trace_hardirqs_on+0x188/0x1ac
+   kgdb_roundup_cpus+0x14/0x3c
+   kgdb_cpu_enter+0x53c/0x5cc
+   kgdb_handle_exception+0x180/0x1d4
+   kgdb_compiled_brk_fn+0x30/0x3c
+   brk_handler+0x134/0x178
+   do_debug_exception+0xfc/0x178
+   el1_dbg+0x18/0x78
+   kgdb_breakpoint+0x34/0x58
+   sysrq_handle_dbg+0x54/0x5c
+   __handle_sysrq+0x114/0x21c
+   handle_sysrq+0x30/0x3c
+   qcom_geni_serial_isr+0x2dc/0x30c
+  ...
+  ...
+  irq event stamp: ...45
+  hardirqs last  enabled at (...44): [...] __do_softirq+0xd8/0x4e4
+  hardirqs last disabled at (...45): [...] el1_irq+0x74/0x130
+  softirqs last  enabled at (...42): [...] _local_bh_enable+0x2c/0x34
+  softirqs last disabled at (...43): [...] irq_exit+0xa8/0x100
+  ---[ end trace adf21f830c46e638 ]---
+
+Let's add kgdb to the list of reasons not to warn in
+smp_call_function_many().  That will allow us (in a future patch) to
+stop calling local_irq_enable() which will get rid of the original
+splat.
+
+NOTE: with this change comes the obvious question: will we start
+deadlocking more often now when we drop into the debugger.  I can't
+say that for sure one way or the other, but the fact that we do the
+same logic for "oops_in_progress" makes me feel like it shouldn't
+happen too often.  Also note that the old logic of turning on
+interrupts temporarily wasn't exactly safe since (I presume) that
+could have violated spin_lock_irqsave() semantics and ended up with a
+deadlock of its own.
 
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
-I don't have a great way to test all 8250 variants, but I've at least
-tested rk3288 / rk3399 and they seem to work.  Hopefully I got the
-aspeed_vuart / fsl / omap variants right (I only compile tested
-those).
 
- drivers/tty/serial/8250/8250_aspeed_vuart.c | 6 +++++-
- drivers/tty/serial/8250/8250_fsl.c          | 6 +++++-
- drivers/tty/serial/8250/8250_omap.c         | 6 +++++-
- drivers/tty/serial/8250/8250_port.c         | 8 +++-----
- 4 files changed, 18 insertions(+), 8 deletions(-)
+ kernel/smp.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/tty/serial/8250/8250_aspeed_vuart.c b/drivers/tty/serial/8250/8250_aspeed_vuart.c
-index 435bec40dee6..0438d9a905ce 100644
---- a/drivers/tty/serial/8250/8250_aspeed_vuart.c
-+++ b/drivers/tty/serial/8250/8250_aspeed_vuart.c
-@@ -5,6 +5,10 @@
-  *    Copyright (C) 2016 Jeremy Kerr <jk@ozlabs.org>, IBM Corp.
-  *    Copyright (C) 2006 Arnd Bergmann <arnd@arndb.de>, IBM Corp.
-  */
-+#if defined(CONFIG_SERIAL_8250_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
-+#define SUPPORT_SYSRQ
-+#endif
-+
- #include <linux/device.h>
- #include <linux/module.h>
- #include <linux/of_address.h>
-@@ -293,7 +297,7 @@ static int aspeed_vuart_handle_irq(struct uart_port *port)
- 	if (lsr & UART_LSR_THRE)
- 		serial8250_tx_chars(up);
+diff --git a/kernel/smp.c b/kernel/smp.c
+index 163c451af42e..bb581e58c8dc 100644
+--- a/kernel/smp.c
++++ b/kernel/smp.c
+@@ -19,6 +19,7 @@
+ #include <linux/sched.h>
+ #include <linux/sched/idle.h>
+ #include <linux/hypervisor.h>
++#include <linux/kgdb.h>
  
--	spin_unlock_irqrestore(&port->lock, flags);
-+	uart_unlock_and_check_sysrq(port, flags);
+ #include "smpboot.h"
  
- 	return 1;
- }
-diff --git a/drivers/tty/serial/8250/8250_fsl.c b/drivers/tty/serial/8250/8250_fsl.c
-index 6640a4c7ddd1..ff3dcaea5d93 100644
---- a/drivers/tty/serial/8250/8250_fsl.c
-+++ b/drivers/tty/serial/8250/8250_fsl.c
-@@ -1,4 +1,8 @@
- // SPDX-License-Identifier: GPL-2.0
-+#if defined(CONFIG_SERIAL_8250_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
-+#define SUPPORT_SYSRQ
-+#endif
-+
- #include <linux/serial_reg.h>
- #include <linux/serial_8250.h>
+@@ -413,7 +414,8 @@ void smp_call_function_many(const struct cpumask *mask,
+ 	 * can't happen.
+ 	 */
+ 	WARN_ON_ONCE(cpu_online(this_cpu) && irqs_disabled()
+-		     && !oops_in_progress && !early_boot_irqs_disabled);
++		     && !oops_in_progress && !early_boot_irqs_disabled
++		     && !in_dbg_master());
  
-@@ -54,7 +58,7 @@ int fsl8250_handle_irq(struct uart_port *port)
- 		serial8250_tx_chars(up);
- 
- 	up->lsr_saved_flags = orig_lsr;
--	spin_unlock_irqrestore(&up->port.lock, flags);
-+	uart_unlock_and_check_sysrq(&up->port, flags);
- 	return 1;
- }
- EXPORT_SYMBOL_GPL(fsl8250_handle_irq);
-diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
-index a019286f8bb6..ad7ba7d0f28d 100644
---- a/drivers/tty/serial/8250/8250_omap.c
-+++ b/drivers/tty/serial/8250/8250_omap.c
-@@ -8,6 +8,10 @@
-  *
-  */
- 
-+#if defined(CONFIG_SERIAL_8250_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
-+#define SUPPORT_SYSRQ
-+#endif
-+
- #include <linux/device.h>
- #include <linux/io.h>
- #include <linux/module.h>
-@@ -1085,7 +1089,7 @@ static int omap_8250_dma_handle_irq(struct uart_port *port)
- 		}
- 	}
- 
--	spin_unlock_irqrestore(&port->lock, flags);
-+	uart_unlock_and_check_sysrq(port, flags);
- 	serial8250_rpm_put(up);
- 	return 1;
- }
-diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
-index f776b3eafb96..c39482b96111 100644
---- a/drivers/tty/serial/8250/8250_port.c
-+++ b/drivers/tty/serial/8250/8250_port.c
-@@ -1755,7 +1755,7 @@ void serial8250_read_char(struct uart_8250_port *up, unsigned char lsr)
- 		else if (lsr & UART_LSR_FE)
- 			flag = TTY_FRAME;
- 	}
--	if (uart_handle_sysrq_char(port, ch))
-+	if (uart_prepare_sysrq_char(port, ch))
- 		return;
- 
- 	uart_insert_char(port, lsr, UART_LSR_OE, ch, flag);
-@@ -1897,7 +1897,7 @@ int serial8250_handle_irq(struct uart_port *port, unsigned int iir)
- 	if ((!up->dma || up->dma->tx_err) && (status & UART_LSR_THRE))
- 		serial8250_tx_chars(up);
- 
--	spin_unlock_irqrestore(&port->lock, flags);
-+	uart_unlock_and_check_sysrq(port, flags);
- 	return 1;
- }
- EXPORT_SYMBOL_GPL(serial8250_handle_irq);
-@@ -3258,9 +3258,7 @@ void serial8250_console_write(struct uart_8250_port *up, const char *s,
- 
- 	serial8250_rpm_get(up);
- 
--	if (port->sysrq)
--		locked = 0;
--	else if (oops_in_progress)
-+	if (oops_in_progress)
- 		locked = spin_trylock_irqsave(&port->lock, flags);
- 	else
- 		spin_lock_irqsave(&port->lock, flags);
+ 	/* Try to fastpath.  So, what's a CPU they want? Ignoring this one. */
+ 	cpu = cpumask_first_and(mask, cpu_online_mask);
 -- 
 2.19.1.568.g152ad8e336-goog
 
