@@ -2,70 +2,96 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52B16C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:40:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48CF2C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:40:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 268732082B
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:40:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 268732082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id 15E192082B
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:40:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KplcaCOE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15E192082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727875AbeJ3C3u (ORCPT
+        id S1727976AbeJ3C3y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 22:29:50 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44757 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727814AbeJ3C3s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 22:29:48 -0400
-Received: by mail-pg1-f193.google.com with SMTP id w3-v6so4240015pgs.11;
-        Mon, 29 Oct 2018 10:40:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=1elt8IPWkTBZEpJODKoSmS5VMdMb8KY8f1IYC9AiGmM=;
-        b=W60hqUnhR8qP4v6vYjymsMMPCPjIWUIriXdAf1FXL2aGexmMkP29rxoS7qZOF2jUuZ
-         tTVgCh6WkEsTTJS+tjAYtqOTAKDIxyf7IhS4rOIiNBDVKYYL84a1oBYiib8FZERLOJKL
-         qXDRooAgrFOrJ7rclJs5hLW8ZKWka/4102aFls3TY7T9RIr9LgbRKrxDWRMIehNlKlbj
-         86RkIYAR+iR/beZh4GJ9sRVVnzkljWG0FF3XvE8PT6siZEr/+0VCIWFBMPCKXkxkGqJz
-         cLcWtOnu5a7OlGQuW5BmXEaSjG7LOrdJAkiXYTnsYnhhgnPy1Xp69FNJedxjT5b6Xj6t
-         owrw==
-X-Gm-Message-State: AGRZ1gKhmyJUZrW6YDFXtVc16ikS1AR0+5FnM87FGNMJorKwizYpCbso
-        IM7CpzalezKmwEm6GUmcNqSWcrEk
-X-Google-Smtp-Source: AJdET5fnu3Ld51XVprBwV9HRR3fFAV0+wBEZa6n3mnGyDBeaQSRztQVt3O/ExWEhAgZ7+v8/y6guow==
-X-Received: by 2002:a63:801:: with SMTP id 1mr14448058pgi.275.1540834812243;
-        Mon, 29 Oct 2018 10:40:12 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id c128-v6sm15534996pfb.147.2018.10.29.10.40.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Oct 2018 10:40:11 -0700 (PDT)
-Message-ID: <1540834809.196084.65.camel@acm.org>
-Subject: Re: [PATCH 06/14] blk-mq: add 'type' attribute to the sysfs hctx
- directory
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 29 Oct 2018 10:40:09 -0700
-In-Reply-To: <20181029163738.10172-7-axboe@kernel.dk>
-References: <20181029163738.10172-1-axboe@kernel.dk>
-         <20181029163738.10172-7-axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Mon, 29 Oct 2018 22:29:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37846 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727808AbeJ3C3y (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 22:29:54 -0400
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A947A2082D;
+        Mon, 29 Oct 2018 17:40:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540834817;
+        bh=5Gk4TWeIstkbQbvCjVdBzGY3LMGB3js6Pqpg3WIVaSg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KplcaCOE6HNbiCgklwWRoIulQSiM8sEJ0CAj7k/p2cP++hwTtvY6YMBQPVcePCipV
+         7sl5mSEvVT0IjYh39iuh0IDBCePOZSkmL/ybf7ifht3uV9l3HaKiHy1cT6X4RsYkOg
+         MxmrgTLxiJOjnoqRMfknVSd4KASSx4z5WHcO+4kE=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 366D5142C5F; Mon, 29 Oct 2018 14:40:14 -0300 (-03)
+Date:   Mon, 29 Oct 2018 14:40:14 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Milian Wolff <milian.wolff@kdab.com>
+Cc:     jolsa@kernel.org, Linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH] perf util: take pgoff into account when reporting elf to
+ libdwfl
+Message-ID: <20181029174014.GG21857@kernel.org>
+References: <20181029141644.3907-1-milian.wolff@kdab.com>
+ <3361238.noN1Jb7VD2@milian-kdab2>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3361238.noN1Jb7VD2@milian-kdab2>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-10-29 at 10:37 -0600, Jens Axboe wrote:
-+AD4 It can be useful for a user to verify what type a given hardware
-+AD4 queue is, expose this information in sysfs.
+Em Mon, Oct 29, 2018 at 04:26:27PM +0100, Milian Wolff escreveu:
+> On Monday, October 29, 2018 3:16:44 PM CET Milian Wolff wrote:
+> > Libdwfl parses an ELF file itself and creates mappings for the
+> > individual sections. Perf on the other hand sees raw mmap events which
+> > represent individual sections. When we encounter an address pointing
+> > into a mapping with pgoff != 0, we must take that into account and
+> > report the file at the non-offset base address.
+> > 
+> > This fixes unwinding with libdwfl in some cases. E.g. for a file like:
+> 
+> <snip>
+> 
+> > Note that the backtrace is still stopping too early, when
+> > compared to the nice results obtained via libunwind. It's
+> > unclear so far what the reason for that is.
+> 
+> The remaining issue is due to a bug in elfutils:
+> 
+> https://sourceware.org/ml/elfutils-devel/2018-q4/msg00089.html
+> 
+> With both patches applied, libunwind and elfutils produce the same output for 
+> the above scenario.
 
-Reviewed-by: Bart Van Assche +ADw-bvanassche+AEA-acm.org+AD4
+I'm updating the patch to remove:
 
+"It's unclear so far what the reason for that is."
+
+Adding:
+
+"See https://sourceware.org/ml/elfutils-devel/2018-q4/msg00089.html for
+a patch fixing that."
+
+Ok? Or are you saying that that "unclear" part applies to both libunwind
+and elfutils?
+
+- Arnaldo
