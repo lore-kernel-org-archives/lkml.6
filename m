@@ -2,84 +2,98 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD98C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:42:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19209C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:44:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A6922084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:42:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="vnDGY9RS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A6922084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id CA60F2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:44:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA60F2084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729439AbeJ2Ra0 (ORCPT
+        id S1729440AbeJ2RcH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 13:30:26 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:49004 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725969AbeJ2RaZ (ORCPT
+        Mon, 29 Oct 2018 13:32:07 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:40894 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725969AbeJ2RcG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 13:30:25 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9T8cb9b022333;
-        Mon, 29 Oct 2018 08:42:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=D7NLud37n9ffGvg4g7MNVxLGBKFByEwVLNH/OyBT4B8=;
- b=vnDGY9RSEAjd4yY1NHYNeA0xaf1mGQULuYhShBbrJYrBANmDruEVitAW5ozKns0ZFHcm
- N16tipD3IVq9afyxaczwGEcMJhBwLBv9CT7TexpvefhynSuWzLt4LogshR36234+HcEP
- gl0HF/SNBVl0TQgyej2wYC67U6e3PCxWwu9AsC7D5QDcsJwonvIZU6CLrul3KGj4qVOx
- VD76G7VgxSdb/E4NEaPBcCiGcwjhyyxBQ+8gyMR7Z75ZWMJcRfeeY2+SwIm39xyAjtM4
- MEgevXzUYE/daOJOOopW3G/LRO5voTVJsdfxlWzl+jyBfdLwxcOktbTiipiCarr+9lw8 Ow== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2120.oracle.com with ESMTP id 2ncfypm8pu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 29 Oct 2018 08:42:42 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9T8gfft006483
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 29 Oct 2018 08:42:41 GMT
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9T8gePj024343;
-        Mon, 29 Oct 2018 08:42:40 GMT
-Received: from [10.182.70.180] (/10.182.70.180)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 29 Oct 2018 01:42:40 -0700
-Subject: Re: [PATCH V3 1/4] blk-mq: refactor the code of issue request
- directly
-To:     axboe@kernel.dk
-Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1540802013-2921-1-git-send-email-jianchao.w.wang@oracle.com>
- <1540802013-2921-2-git-send-email-jianchao.w.wang@oracle.com>
-From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <82b8ea32-2227-ca1b-5dbb-23e072148715@oracle.com>
-Date:   Mon, 29 Oct 2018 16:42:48 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 29 Oct 2018 13:32:06 -0400
+Received: by mail-ed1-f65.google.com with SMTP id z12-v6so743238edp.7
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 01:44:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5ajumEsASgZT9eBRHK4nLQlcsQovJ+/WEFGfGS0sTCw=;
+        b=q8lodT4A63JILnWLgt2QiAd8LJc2LSFApSwEdxoADS6t4xxEPh6/NxQ6934ui2AoCc
+         gnKhLJnVffbspyTcpcclvdieL6nqjoh9FVe8Hpp2xqjMEtL9drVzhkayRdlQWNmQI2Ti
+         3EyPO9Dk2dTlRQQip0Sj6Qu9zzmUut/WxkSM4awTLPQFXLZNRCMmecEI0f7+ZsKtRo90
+         nme/ld87St3h3GByOdgoLia3WgMvp+vF37CO0MtyovOjS3xpEMMWS0fS5S2M7HhKuHtl
+         EFUKcWNCBBTVjkczExSnIjuRWq//mTw0FK8/5cqFyRVDL48roUxV1+c6YGD0QZwBjGVw
+         ARJg==
+X-Gm-Message-State: AGRZ1gLtvQmOribWb0P1zgYRs2Cf+v0hCJNRO0hGwgEfSQwzhhdzWDEM
+        OS0SzB7DRj4DastXWocz4gBYZS4U
+X-Google-Smtp-Source: AJdET5fVYvTkzltlVfntqbZR3F8Tl5g4TcrVpSmLq5Wl+a1TacHULfGROrH1jzkZuA5t+R6Sun/PMA==
+X-Received: by 2002:a50:ca47:: with SMTP id e7-v6mr12711139edi.56.1540802665677;
+        Mon, 29 Oct 2018 01:44:25 -0700 (PDT)
+Received: from linux-x5ow.site (nat.nue.novell.com. [2620:113:80c0:5::2222])
+        by smtp.gmail.com with ESMTPSA id l52-v6sm6574375edc.10.2018.10.29.01.44.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Oct 2018 01:44:24 -0700 (PDT)
+Subject: Re: [PATCH] mcb: fix a missing-check bug
+To:     Wenwen Wang <wang6495@umn.edu>
+Cc:     Kangjie Lu <kjlu@umn.edu>, open list <linux-kernel@vger.kernel.org>
+References: <1539961894-11928-1-git-send-email-wang6495@umn.edu>
+From:   Johannes Thumshirn <jth@kernel.org>
+Message-ID: <5d09862f-e903-169e-9b11-310d4a1fd01c@kernel.org>
+Date:   Mon, 29 Oct 2018 09:44:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1540802013-2921-2-git-send-email-jianchao.w.wang@oracle.com>
+In-Reply-To: <1539961894-11928-1-git-send-email-wang6495@umn.edu>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9060 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=645
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810290083
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry, please ignore this patchset.
-I will re-send a new one.
+Hi Wenwen,
 
-Thanks
-Jianchao
+Sorry for the late reply:
+
+On 19/10/18 17:11, Wenwen Wang wrote:
+> In chameleon_parse_cells(), to parse each cell, the descriptor type 'dtype'
+> is acquired from the IO memory region pointed by 'p' through readl() in
+> get_next_dtype(). Then 'dtype' is checked to see whether it is
+> CHAMELEON_DTYPE_GENERAL. If yes, chameleon_parse_gdd() is invoked to parse
+> Chameleon general device descriptor. In chameleon_parse_gdd(), the data in
+> the IO memory region is read again through readl() field by field.
+> Specifically, the 'reg1' field contains the type information. That means
+> the type is read twice. More importantly, no check is re-enforced after the
+> second read. Given that the IO memory region can also be accessed by the
+> device, it is possible that a malicious device controlled by an attacker
+> can modify the type information between the two reads. This can cause
+> undefined behavior of the kernel and introduce potential security risk.
+
+Yes but this doesn't really mitigate the problem, does it? If a
+malicious attacker controlling the MMIO space can change the register
+contents after the first read, what stops him/her from doing it after
+the second, third, 4096th read?
+
+>  
+>  	reg1 = readl(&gdd->reg1);
+> +	if ((reg1 >> 28) != CHAMELEON_DTYPE_GENERAL) {
+> +		ret = -EINVAL;
+> +		goto err;
+> +	}
+
+
+Just an advice for your next submission, give that 'magic' 28 a define
+(like CHAMELEON_DTYPE_SHIFT or whatever), this makes the code nicer to read.
