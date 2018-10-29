@@ -2,188 +2,146 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C80AC2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:27:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D92D3C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:30:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C61DB2082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:27:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C61DB2082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axis.com
+	by mail.kernel.org (Postfix) with ESMTP id 852342082D
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:30:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 852342082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729364AbeJ2RNp (ORCPT
+        id S1729407AbeJ2RSN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 13:13:45 -0400
-Received: from bastet.se.axis.com ([195.60.68.11]:45319 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725969AbeJ2RNp (ORCPT
+        Mon, 29 Oct 2018 13:18:13 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34460 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725969AbeJ2RSN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 13:13:45 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bastet.se.axis.com (Postfix) with ESMTP id 1BDC918070;
-        Mon, 29 Oct 2018 09:26:07 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
-Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
-        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id krdGr-3Jl8-3; Mon, 29 Oct 2018 09:26:06 +0100 (CET)
-Received: from boulder03.se.axis.com (boulder03.se.axis.com [10.0.8.17])
-        by bastet.se.axis.com (Postfix) with ESMTPS id 1E867182A6;
-        Mon, 29 Oct 2018 09:26:06 +0100 (CET)
-Received: from boulder03.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ED1B01E08E;
-        Mon, 29 Oct 2018 09:26:05 +0100 (CET)
-Received: from boulder03.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EB3471E08B;
-        Mon, 29 Oct 2018 09:26:05 +0100 (CET)
-Received: from seth.se.axis.com (unknown [10.0.2.172])
-        by boulder03.se.axis.com (Postfix) with ESMTP;
-        Mon, 29 Oct 2018 09:26:05 +0100 (CET)
-Received: from lnxartpec.se.axis.com (lnxartpec.se.axis.com [10.88.4.9])
-        by seth.se.axis.com (Postfix) with ESMTP id DF8342204;
-        Mon, 29 Oct 2018 09:26:05 +0100 (CET)
-Received: by lnxartpec.se.axis.com (Postfix, from userid 10564)
-        id DC163801EE; Mon, 29 Oct 2018 09:26:05 +0100 (CET)
-From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
-To:     linux@armlinux.org.uk, jeyu@kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Vincent Whitchurch <rabinv@axis.com>
-Subject: [PATCH] ARM: module: Fix function kallsyms on Thumb-2
-Date:   Mon, 29 Oct 2018 09:25:55 +0100
-Message-Id: <20181029082555.32626-1-vincent.whitchurch@axis.com>
-X-Mailer: git-send-email 2.11.0
-X-TM-AS-GCONF: 00
+        Mon, 29 Oct 2018 13:18:13 -0400
+Received: by mail-lj1-f194.google.com with SMTP id g8-v6so4001625ljk.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 01:30:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=Vv6ytH6ycJEU89LDmU3nW1CmSFUJAaunoB7ZV3maOGM=;
+        b=grKJPotvGrhy5FpM2lr/5nef4sLgxwblDOzSUfSzO8iMXl9kYqXOPTgChEK6Wv1vES
+         8M3ZqytEuQQKEtygh8uvCMUoq9hd4nWCsQc0eA3FffqQ2X/ibk3g4cDGLzMZzT1HO8q/
+         85VDqQwaJzMb7sqnS+lgVcXwZJ/nixQ5cNLo12LaUT6Y3XxcALnK5xMqYI4Ik+klcaqp
+         tJBmr1qtdRn+CZHt3BwqqzrEMQQv/8yrwoc9lTO4wVV48VNjAytgOfEDuq3ooznJrW+i
+         MHPSrAfIx/B9sBDcUHTVZwbSQu+Og+m93nPYS47BGNG5Ila54RVrDRYObmPLuDWWJ7Jj
+         bBBA==
+X-Gm-Message-State: AGRZ1gIDL5dryVHZ9YFgrYHWh0Q4mhYbh8GzxXENoU3vdgh9S7JwkWTF
+        V+3Yz9FmaKd3Upw4btrTU1c=
+X-Google-Smtp-Source: AJdET5dDthD3NQv/vLyXU2sSoe/kXvBS6WMNSZF7PJMN3p2TjplciqVBB2vO9UrsTroZBR8okTTk3Q==
+X-Received: by 2002:a2e:215a:: with SMTP id h87-v6mr9469150ljh.102.1540801834573;
+        Mon, 29 Oct 2018 01:30:34 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id g92-v6sm2978518lji.24.2018.10.29.01.30.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Oct 2018 01:30:33 -0700 (PDT)
+Date:   Mon, 29 Oct 2018 10:30:25 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] regulator: bd718x7: Remove double indirection for
+ bd718xx_pmic_inits.rdatas
+Message-ID: <20181029083025.GA20774@localhost.localdomain>
+References: <20181028160922.24618-1-geert@linux-m68k.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181028160922.24618-1-geert@linux-m68k.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thumb-2 functions have the lowest bit set in the symbol value in the
-symtab.  When kallsyms are generated for the vmlinux, the kallsyms are
-generated from the output of nm, and nm clears the lowest bit.
 
- $ arm-linux-gnueabihf-readelf -a vmlinux | grep show_interrupts
-  95947: 8015dc89   686 FUNC    GLOBAL DEFAULT    2 show_interrupts
- $ arm-linux-gnueabihf-nm vmlinux | grep show_interrupts
- 8015dc88 T show_interrupts
- $ cat /proc/kallsyms | grep show_interrupts
- 8015dc88 T show_interrupts
+On Sun, Oct 28, 2018 at 05:09:22PM +0100, Geert Uytterhoeven wrote:
+> With gcc 4.1:
+> 
+>     drivers/regulator/bd718x7-regulator.c: In function ‘bd718xx_probe’:
+>     drivers/regulator/bd718x7-regulator.c:1020: warning: initialization from incompatible pointer type
+>     drivers/regulator/bd718x7-regulator.c:1024: warning: initialization from incompatible pointer type
+> 
+> Apparently this old compiler can't handle the obscure double
+> indirection.
 
-However, for modules, the kallsyms uses the values in the symbol table
-without modification, so for functions in modules, the lowest bit is set
-in kallsyms.
+That was surprizing for me. Besides I don't see why this is obscure ;)
 
- $ arm-linux-gnueabihf-readelf -a drivers/net/tun.ko | grep tun_get_socket
-    268: 000000e1    44 FUNC    GLOBAL DEFAULT    2 tun_get_socket
- $ arm-linux-gnueabihf-nm drivers/net/tun.ko | grep tun_get_socket
- 000000e0 T tun_get_socket
- $ cat /proc/kallsyms | grep tun_get_socket
- 7fcd30e1 t tun_get_socket  [tun]
+> However, there is no need for a double indirection.  Just store a
+> pointer to the array instead, like other drivers tend to do.
 
-Because of this, the offset of the crashing instruction shown in oopses
-is incorrect when the crash is in a module.  For example, given a
-tun_get_socket which starts like this,
+But that's _exactly_ what we have here. A pointer to an array of
+structs, not pointer to a struct - or pointer to the first member of an
+array =)
 
- 000000e0 <tun_get_socket>:
-       e0:       b500            push    {lr}
-       e2:       f7ff fffe       bl      0 <__gnu_mcount_nc>
-       e6:       4b08            ldr     r3, [pc, #32]
-       e8:       6942            ldr     r2, [r0, #20]
-       ea:       429a            cmp     r2, r3
-       ec:       d002            beq.n   f4 <tun_get_socket+0x14>
+But this is one of the cases where practicality should be preferred. And
+you are correct. It is easier to understand when we have simple pointer
+to a struct - and moreover it should work on all compilers, right?
+So this looks good to me.
 
-a crash when tun_get_socket is called with NULL results in:
+> Fixes: 494edd266b945f36 ("regulator/mfd: Support ROHM BD71847 power management IC")
+> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> ---
+> Compile-tested only.
+> ---
+>  drivers/regulator/bd718x7-regulator.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd718x7-regulator.c
+> index 3a47e0372e77c812..fff5bc4faa2c99aa 100644
+> --- a/drivers/regulator/bd718x7-regulator.c
+> +++ b/drivers/regulator/bd718x7-regulator.c
+> @@ -1007,7 +1007,7 @@ static const struct bd718xx_regulator_data bd71837_regulators[] = {
+>  };
+>  
+>  struct bd718xx_pmic_inits {
+> -	const struct bd718xx_regulator_data (*r_datas)[];
+> +	const struct bd718xx_regulator_data *r_datas;
+>  	unsigned int r_amount;
+>  };
+>  
+> @@ -1017,11 +1017,11 @@ static int bd718xx_probe(struct platform_device *pdev)
+>  	struct regulator_config config = { 0 };
+>  	struct bd718xx_pmic_inits pmic_regulators[] = {
+>  		[BD718XX_TYPE_BD71837] = {
+> -			.r_datas = &bd71837_regulators,
+> +			.r_datas = bd71837_regulators,
+>  			.r_amount = ARRAY_SIZE(bd71837_regulators),
+>  		},
+>  		[BD718XX_TYPE_BD71847] = {
+> -			.r_datas = &bd71847_regulators,
+> +			.r_datas = bd71847_regulators,
+>  			.r_amount = ARRAY_SIZE(bd71847_regulators),
+>  		},
+>  	};
+> @@ -1059,7 +1059,7 @@ static int bd718xx_probe(struct platform_device *pdev)
+>  		struct regulator_dev *rdev;
+>  		const struct bd718xx_regulator_data *r;
+>  
+> -		r = &(*pmic_regulators[mfd->chip_type].r_datas)[i];
+> +		r = &pmic_regulators[mfd->chip_type].r_datas[i];
+>  		desc = &r->desc;
+>  
+>  		config.dev = pdev->dev.parent;
+> -- 
+> 2.17.1
+> 
 
- PC is at tun_get_socket+0x7/0x2c [tun]
- pc : [<7fcdb0e8>]
-
-which can result in the incorrect line being reported by gdb if this
-symbol+offset is used there.  If the crash is on the first instruction
-of a function, the "PC is at" line would also report the symbol name of
-the preceding function.
-
-To solve this, fix up these symbols like nm does.  For this, we need a
-new hook in the generic module loading code, before the symbols' st_info
-is overwritten by add_kallsyms().  After the fix:
-
- $ cat /proc/kallsyms | grep tun_get_socket
- 7fcd30e0 t tun_get_socket  [tun]
-
- PC is at tun_get_socket+0x8/0x2c [tun]
- pc : [<7fcdb0e8>]
-
-Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
----
- arch/arm/kernel/module.c     | 14 ++++++++++++++
- include/linux/moduleloader.h |  2 ++
- kernel/module.c              |  6 ++++++
- 3 files changed, 22 insertions(+)
-
-diff --git a/arch/arm/kernel/module.c b/arch/arm/kernel/module.c
-index 3ff571c2c71c..771f86318d84 100644
---- a/arch/arm/kernel/module.c
-+++ b/arch/arm/kernel/module.c
-@@ -399,6 +399,20 @@ int module_finalize(const Elf32_Ehdr *hdr, const Elf_Shdr *sechdrs,
- 	return 0;
- }
- 
-+#if defined(CONFIG_THUMB2_KERNEL) && defined(CONFIG_KALLSYMS)
-+void module_fixup_kallsyms(struct mod_kallsyms *kallsyms)
-+{
-+	int i;
-+
-+	for (i = 0; i < kallsyms->num_symtab; i++) {
-+		Elf_Sym *sym = &kallsyms->symtab[i];
-+
-+		if (ELF_ST_TYPE(sym->st_info) == STT_FUNC)
-+			sym->st_value &= ~1;
-+	}
-+}
-+#endif
-+
- void
- module_arch_cleanup(struct module *mod)
- {
-diff --git a/include/linux/moduleloader.h b/include/linux/moduleloader.h
-index 31013c2effd3..92387dd49b82 100644
---- a/include/linux/moduleloader.h
-+++ b/include/linux/moduleloader.h
-@@ -86,6 +86,8 @@ void module_arch_cleanup(struct module *mod);
- /* Any cleanup before freeing mod->module_init */
- void module_arch_freeing_init(struct module *mod);
- 
-+void module_fixup_kallsyms(struct mod_kallsyms *kallsyms);
-+
- #ifdef CONFIG_KASAN
- #include <linux/kasan.h>
- #define MODULE_ALIGN (PAGE_SIZE << KASAN_SHADOW_SCALE_SHIFT)
-diff --git a/kernel/module.c b/kernel/module.c
-index 49a405891587..ded4f4b49824 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -2659,6 +2659,10 @@ static void layout_symtab(struct module *mod, struct load_info *info)
- 	mod->init_layout.size = debug_align(mod->init_layout.size);
- }
- 
-+void __weak module_fixup_kallsyms(struct mod_kallsyms *kallsyms)
-+{
-+}
-+
- /*
-  * We use the full symtab and strtab which layout_symtab arranged to
-  * be appended to the init section.  Later we switch to the cut-down
-@@ -2680,6 +2684,8 @@ static void add_kallsyms(struct module *mod, const struct load_info *info)
- 	/* Make sure we get permanent strtab: don't use info->strtab. */
- 	mod->kallsyms->strtab = (void *)info->sechdrs[info->index.str].sh_addr;
- 
-+	module_fixup_kallsyms(mod->kallsyms);
-+
- 	/* Set types up while we still have access to sections. */
- 	for (i = 0; i < mod->kallsyms->num_symtab; i++)
- 		mod->kallsyms->symtab[i].st_info
 -- 
-2.11.0
+Matti Vaittinen
+ROHM Semiconductors
 
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
