@@ -2,134 +2,127 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09A87C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:09:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDB93C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:11:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C26C120827
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:09:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5938F2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:11:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=birdec.tech header.i=@birdec.tech header.b="dhlYM5uo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C26C120827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=birdec.tech
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nbLIXviF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5938F2084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729730AbeJ2S5a (ORCPT
+        id S1729714AbeJ2S7H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 14:57:30 -0400
-Received: from host.euro-space.net ([87.117.239.2]:59499 "EHLO
-        host.euro-space.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729625AbeJ2S5a (ORCPT
+        Mon, 29 Oct 2018 14:59:07 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37742 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729487AbeJ2S7H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 14:57:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=birdec.tech
-        ; s=default; h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=oKfNGpMSV/UW4WwQevm9uvvKiImZyOV4bH+dfSC5qbY=; b=dhlYM5uoIlC2MD46hCQG3pNyB/
-        O7Fsag3UBv1pi8A8ey+2zlpJf6ucV3xYlStzoFWizCuJqw5Zlxnpspql4vLO/CaPa9uC4VNBc4koV
-        BAp4CzKjkxrGXo76bLdq697I53wQjIJrd4GrgWvkH1ATzbMEw5KuuSW0lugWl/P0se1BbhcSwHyYk
-        srsIdom9fgQRqiQ1D9lnWRYRC4QZOvtPm01MemHKftO9o9JzK5t+01rUuIonA7aAm/95GHQicXqud
-        EF0EFV2NFZDd2c4qwWmvBW5HSFFTU/a9CahNaCS+Kqr9+5gCPbMG/6Dx7NwKrqhPhF6fmGVaNLIDK
-        relBqCqA==;
-Received: from x4dbc7335.dyn.telefonica.de ([77.188.115.53]:52812 helo=gentoo0.localdomain)
-        by host.euro-space.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <kmarinushkin@birdec.tech>)
-        id 1gH3Mv-0007KB-0B; Mon, 29 Oct 2018 08:57:53 +0000
-From:   Kirill Marinushkin <kmarinushkin@birdec.tech>
-To:     Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org,
-        Kirill Marinushkin <kmarinushkin@birdec.tech>
-Subject: [PATCH 2/2] ASoC: pcm3060: Rename output widgets
-Date:   Mon, 29 Oct 2018 09:59:13 +0100
-Message-Id: <20181029085913.17298-2-kmarinushkin@birdec.tech>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20181029085913.17298-1-kmarinushkin@birdec.tech>
-References: <20181029085913.17298-1-kmarinushkin@birdec.tech>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - host.euro-space.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - birdec.tech
-X-Get-Message-Sender-Via: host.euro-space.net: authenticated_id: kmarinushkin@birdec.tech
-X-Authenticated-Sender: host.euro-space.net: kmarinushkin@birdec.tech
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        Mon, 29 Oct 2018 14:59:07 -0400
+Received: by mail-wr1-f65.google.com with SMTP id g9-v6so7984765wrq.4;
+        Mon, 29 Oct 2018 03:11:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kgHZG9vtNBMOKMXgYo0AYmbAIOGaF85PoWqnNo+hD3Q=;
+        b=nbLIXviFtMPbxowUItqU6RCb28Pz9iXHjdOXdSFCGd9STyTFpdGFlu3sC5yS1PoWUO
+         +X4Gevr7X3AvujfHSJ67L9UTek/UTgVCQP7O9SdN6js+1MKkuCEn9iQ3fUHXQivGjoWV
+         tQnsoIqmWvkm/FhjJct4aKNGmQgluhBu024gv8J4yAwfKDyNp8LRy/0DxapOuwV5tcOL
+         IFriDEnc/0X5P4nehPZLhfAJTGL5y7QLk53hR32rpaEmH3h7rU51v5cv8qOr+vtN/RNY
+         MdwzdrA08teMq0wET1FnIxE0WNxGFgPr51VPvbgF9RArY6Z9uE+JxrS5PRPiZfnwqntq
+         UaWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kgHZG9vtNBMOKMXgYo0AYmbAIOGaF85PoWqnNo+hD3Q=;
+        b=d47MSEpRB1wvc59L09tYs/Y6PCzEkZ6qn2iUytXvOo5Hn5oaE89IIgxR6oIzpRaaPr
+         TK6k34XRrzNplc4gk7ELrrqCKPt+AA4QNOXOT00fiUXEr02YivFlGfmDdCGHHvBoREZ4
+         DecrEMfwwMujHA57uEcAhgsdVUaYYv1Bo3Xuq8V6Bm2KQ2hv3LMO84yGGhQszrrWAm9f
+         Y9emakbMpBcmjT3dcAHjRQZzZzHSGi5tFQsV0IUxmPSQJivYqqH5q4xa1EqoC1DemFRZ
+         lwjwg1XPVRVsN6OQi45TC/Vnh3KfGoMZqYy77jCyfGlHOWEe322e+NHcWCaz/u+Q2+wQ
+         GKtQ==
+X-Gm-Message-State: AGRZ1gK6DC8Fn4+vqByuhok4aCummoQsT+46RhUHqmZB7EMdedunlzv3
+        gFVsfsAAvj1P3hG6vUb2br4=
+X-Google-Smtp-Source: AJdET5faObUvrcSL0FeShbVBtHIF3MVkgW/7Af6tGIZt4tCDERrNNK7WmSP8Cyiyy1ra7pJAm9KR2Q==
+X-Received: by 2002:adf:c00e:: with SMTP id z14-v6mr13989328wre.268.1540807865684;
+        Mon, 29 Oct 2018 03:11:05 -0700 (PDT)
+Received: from localhost (pD9E511F8.dip0.t-ipconnect.de. [217.229.17.248])
+        by smtp.gmail.com with ESMTPSA id 21-v6sm93509wmv.5.2018.10.29.03.11.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Oct 2018 03:11:04 -0700 (PDT)
+Date:   Mon, 29 Oct 2018 11:11:03 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Pekka Pessi <ppessi@nvidia.com>
+Cc:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Mikko Perttunen <mperttunen@nvidia.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Timo Alho <talho@nvidia.com>,
+        Mika Liljeberg <mliljeberg@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-serial@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/9] serial: Add Tegra Combined UART driver
+Message-ID: <20181029101103.GA26393@ulmo>
+References: <20181026111638.10759-1-thierry.reding@gmail.com>
+ <85092b49-2b62-bd76-05a3-521415835b6e@nvidia.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="OXfL5xGRrasGEqWY"
+Content-Disposition: inline
+In-Reply-To: <85092b49-2b62-bd76-05a3-521415835b6e@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the initial commit [1], I added differential outputs of the codec as
-separate `+` and `-` widgets:
 
-OUTL+
-OUTR+
-OUTL-
-OUTR-
+--OXfL5xGRrasGEqWY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Later, in the commit [2], I added a control to switch the outputs between
-differential and single-ended modes. Having this control, the `+` and `-`
-separation in widgets seems for me confusing. There are no functional
-benefits in such separation, so I find reasonable to get rid of it:
+On Mon, Oct 29, 2018 at 11:04:06AM +0200, Pekka Pessi wrote:
+> Hi Thierry,
+>=20
+> What is the use case for the mailbox driver? What kind of entity will be
+> there consuming sent messages and sending messages to kernel?
 
-OUTL
-OUTR
+This is currently only used for the TCU. I'm sure there could be other
+cases, but we support none of the upstream at the moment. Are you aware
+of any others that we need to take into account?
 
-The new naming is more friendly for sound cards, and is better aligned with
-other codec drivers in kernel.
+Thierry
 
-Renaming outputs now should not be a problem from the backwards-
-compatibility perspective, as the driver for PCM3060 is added into the
-mainline very recently, and did not yet appear in any releases.
+--OXfL5xGRrasGEqWY
+Content-Type: application/pgp-signature; name="signature.asc"
 
-[1] commit 6ee47d4a8dac ("ASoC: pcm3060: Add codec driver")
-[2] commit c33260d09337 ("ASoC: pcm3060: Add control for differential
-    output")
+-----BEGIN PGP SIGNATURE-----
 
-Signed-off-by: Kirill Marinushkin <kmarinushkin@birdec.tech>
----
- sound/soc/codecs/pcm3060.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvW3LcACgkQ3SOs138+
+s6FRIw/+Pw2StMAnCWis5xYWoEvtLTttWYsHVBudkqmZVjFV9kcIODJnsRQU49gr
+7wF4DlLbvPiA0Z+PzYw9wPYLRYNCmURdzY/o8AovrV5Fh6gJ3duWMSTGOt1XvEt4
+17UEFyQKHO27J+IIhLFcLwc+Q+U9CVWX1AFb94o/tFJTdBLp28lkgH+uWR7rkBm5
+L7g0Km2x74VTywGUwiuVof6mRwny7V3OqpluT85Ot6i0PXGfGSAZk1RwU12Pi1dJ
+CcNnRMx0/f2/bY/f4CJF5kg3vgoLpr45hi8mZS4RqTCOXACnehELzTW2tX63t/nt
+o2pp09x//EwgsoXNNKa4FCdbfQw2VgOcl+MbWrmPNXy4XgRp9+N8UX63rNxp3/Nd
+ebyeADdTocSv/1hP0khItpIHvWdvyLCCUgqa3jEVV7+qPv9svgFhJ2rXNEv6j6iC
+jQR1R4BFwrHyHilDJ2v+yjV1iNGn5qqFaDkaqT+4C+KtgQV8VNrCZ3AFgWAeHznp
+biBoVP/1W4vuk46Ssk3JpzQqqrPN29mYPsiU5yKqzrmkPQMLN4UU19q2nY0RPO/i
+7vMMdinA2R9UdtWKfkdumNULkwUGN3hdZqMRMqKO+03wxgKPC2oQPMzxFj31T2Wy
+mjpYgAPX4JOjlWDO15An5iRykhcz4+XcWmHMUHUqnfT3SURKbS8=
+=yi2X
+-----END PGP SIGNATURE-----
 
-diff --git a/sound/soc/codecs/pcm3060.c b/sound/soc/codecs/pcm3060.c
-index f792ad637ae4..078a3b1fc064 100644
---- a/sound/soc/codecs/pcm3060.c
-+++ b/sound/soc/codecs/pcm3060.c
-@@ -207,20 +207,16 @@ static const struct snd_kcontrol_new pcm3060_dapm_controls[] = {
- };
- 
- static const struct snd_soc_dapm_widget pcm3060_dapm_widgets[] = {
--	SND_SOC_DAPM_OUTPUT("OUTL+"),
--	SND_SOC_DAPM_OUTPUT("OUTR+"),
--	SND_SOC_DAPM_OUTPUT("OUTL-"),
--	SND_SOC_DAPM_OUTPUT("OUTR-"),
-+	SND_SOC_DAPM_OUTPUT("OUTL"),
-+	SND_SOC_DAPM_OUTPUT("OUTR"),
- 
- 	SND_SOC_DAPM_INPUT("INL"),
- 	SND_SOC_DAPM_INPUT("INR"),
- };
- 
- static const struct snd_soc_dapm_route pcm3060_dapm_map[] = {
--	{ "OUTL+", NULL, "Playback" },
--	{ "OUTR+", NULL, "Playback" },
--	{ "OUTL-", NULL, "Playback" },
--	{ "OUTR-", NULL, "Playback" },
-+	{ "OUTL", NULL, "Playback" },
-+	{ "OUTR", NULL, "Playback" },
- 
- 	{ "Capture", NULL, "INL" },
- 	{ "Capture", NULL, "INR" },
--- 
-2.13.6
-
+--OXfL5xGRrasGEqWY--
