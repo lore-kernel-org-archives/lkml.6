@@ -6,153 +6,93 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E04BFC2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 03:38:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20A30C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 03:43:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89FB32084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 03:38:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBEA92084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 03:43:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dgUSjv2P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89FB32084A
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jJwLfHws"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBEA92084A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729330AbeJ2MZD (ORCPT
+        id S1729333AbeJ2MaB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 08:25:03 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:45074 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729257AbeJ2MZD (ORCPT
+        Mon, 29 Oct 2018 08:30:01 -0400
+Received: from mail-qt1-f169.google.com ([209.85.160.169]:45234 "EHLO
+        mail-qt1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729257AbeJ2MaB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 08:25:03 -0400
-Received: by mail-io1-f65.google.com with SMTP id p83-v6so4056830iod.12
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 20:38:11 -0700 (PDT)
+        Mon, 29 Oct 2018 08:30:01 -0400
+Received: by mail-qt1-f169.google.com with SMTP id l9-v6so7679747qtj.12
+        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 20:43:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PrhvkBo5ZKnk4/O4sfkDr3vs9gwKOxwlrsNh7k7vl4w=;
-        b=dgUSjv2PCW6B83yNOop+fG7DUZcWgIB+ftKt1ny78iD7JFuS1vx+4Pa6Hv2g/GTvAf
-         J0qJFeAZsICbCFIlr0ajqLn6ryOs0ZCpf4mPVTWdvNu/72xK/VF6FXWbcv+A8t6tMRZh
-         RF9N2EE9nLR1Fz/Z7y8Txue5/MArzdPzHVfh0=
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=mgQKg5cpqf/fe95yBECr7IuD+GRxZjLjv0KQk4WR33c=;
+        b=jJwLfHwsxX12LlCz7xNgooeXXqEX4f8QQMK/abnKniLrTN+bpcAcAkcvhVYSyAaxpb
+         mTcr36CMwwXiECn268ewbuTU0NVv+KWzsHXVvdKqmbULe8u7lNM/fWQ7tmVujcPsqTk7
+         HSsWZFvYK88AitYo0vKYTiEM3Zgjd/zTXsrT8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PrhvkBo5ZKnk4/O4sfkDr3vs9gwKOxwlrsNh7k7vl4w=;
-        b=Xr1UOfI4HD1lk9EoHBLZ+DqBKjtCICOhqEvHXl+FpVaqbf/saB5L8BRz66TWo67Igq
-         q0vbZL2aTYhrHnCRPzYNDMA1sjScGPHBFszVF43o6Ixdy0XIlGXzw/N1HROmRtNwIJFU
-         alBQ5r73ien2o3wzZ8wDJrPIJz0B74FbisSwFHc4zPW1samS+uaFWNX+GkQzTTqhZQjl
-         okhTl/l5UhEHxPtYhGTi4XT85OIPUL85KBmLFIY0t/puh60U1PQlf76l+chxiDwgJsTa
-         TspSEQl17xHbWydLdvvvJ4xDFVs9hFatDl2X8GRSdVWQuEaMA3FNbx+5MedWlrED6Otm
-         EkXA==
-X-Gm-Message-State: AGRZ1gIQ+4mw4UNACUqz6eVAua3eqFVlY9X7FF0OKIN9gah2nqer+UjN
-        6lQ3S+KwR2p4Jlw7wPeQwybxAuRaij/yumYuGP5SdA==
-X-Google-Smtp-Source: AJdET5f3V+kICpxod72n5WC/bA3wJ01XLoDTkCU+s9S2I9ii2M2hH4LfqGW+pgXHywCerT9qHJOnB811lx3tY/C4UNs=
-X-Received: by 2002:a6b:6904:: with SMTP id e4-v6mr7057835ioc.119.1540784291528;
- Sun, 28 Oct 2018 20:38:11 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=mgQKg5cpqf/fe95yBECr7IuD+GRxZjLjv0KQk4WR33c=;
+        b=MGG6ASiKrXjysV2Wgm/TcO7YSNZJDBAgMP640kUMCpO4eOUOW92iTFn2NfccelUoHe
+         sDfa/ZuxiwrcRl4j0ED2l+R9aqwPt9Hrnrjtqe560XywqEQFY+37mOhT4PosjsPri1Yi
+         GUEwjs0j2OQgjdA9mVwaHvsgdMilv3xX2DF9/Epg5rJtophNclfaCItH2klAdwZ5GP5y
+         myJYBWbpz+mLWqDByPPaIZWAeGtEHWjIzoMogzHnJvu9StCtdEMPjE4PxEEeDb9YyFKG
+         HrxbD7JH0WlUGx9BRTWxeFs9sgFAogDt3SaZV2UEYKN320M5jXWjooagqTg2xX6Yrngp
+         XhXQ==
+X-Gm-Message-State: AGRZ1gILZQuCEGpq+Rxe8FYykrvq1Feibcs0MDRqUfZ6258+5s9O7eDD
+        7ZebNMb+hFdZYB8OhG7d45j916NzC/c=
+X-Google-Smtp-Source: AJdET5ceh1cVT1ezbvHTpUi5frUkzQpphM19EX7hdvg1Ig8m+ETjYe3GY6QcaPW3Lht1Dh2NG3NgKg==
+X-Received: by 2002:a0c:884d:: with SMTP id 13mr11691203qvm.170.1540784589553;
+        Sun, 28 Oct 2018 20:43:09 -0700 (PDT)
+Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
+        by smtp.gmail.com with ESMTPSA id p31sm2879309qkh.86.2018.10.28.20.43.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 28 Oct 2018 20:43:08 -0700 (PDT)
+Date:   Sun, 28 Oct 2018 23:43:07 -0400 (EDT)
+From:   Nicolas Pitre <nicolas.pitre@linaro.org>
+To:     Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+cc:     linux-kernel@vger.kernel.org
+Subject: Re: Cramfs: "unable to handle kernel paging request" when reading
+ a file from a fuzzed FS image
+In-Reply-To: <CAE5jQCdhWVVqf8en9S-3mbDBwuxk481S+hi-uvQSw6Gf6jKujQ@mail.gmail.com>
+Message-ID: <nycvar.YSQ.7.76.1810282336440.1498@knanqh.ubzr>
+References: <CAE5jQCdhWVVqf8en9S-3mbDBwuxk481S+hi-uvQSw6Gf6jKujQ@mail.gmail.com>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-References: <1540530377-3509-1-git-send-email-firoz.khan@linaro.org> <CAMuHMdXPR7WgPe5nPh3Lcc6FDxTNDYyOmV1oKU=BLcS2H7MPgA@mail.gmail.com>
-In-Reply-To: <CAMuHMdXPR7WgPe5nPh3Lcc6FDxTNDYyOmV1oKU=BLcS2H7MPgA@mail.gmail.com>
-From:   Firoz Khan <firoz.khan@linaro.org>
-Date:   Mon, 29 Oct 2018 09:08:00 +0530
-Message-ID: <CALxhOng9DaF9ZkUGQW9=tzaPmoiG9NzhhaWXqPDr7RwUTf0c0A@mail.gmail.com>
-Subject: Re: [PATCH v4 0/4] m68k: system call table generation support
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Geert,
+On Sun, 28 Oct 2018, Anatoly Trosinenko wrote:
 
-On Sat, 27 Oct 2018 at 20:17, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->
-> Hi Firoz,
->
-> On Fri, Oct 26, 2018 at 7:06 AM Firoz Khan <firoz.khan@linaro.org> wrote:
-> > The purpose of this patch series is, we can easily add/modify/delete
-> > system call table support by changing entry in syscall.tbl file
-> > instead of manually changing many files. The other goal is to unify
-> > the system call table generation support implementation across all
-> > the architectures.
-> >
-> > The system call tables are in different format in all architecture.
-> > It will be difficult to manually add, modify or delete the system
-> > calls in the respective files manually. To make it easy by keeping
-> > a script and which'll generate uapi header file and syscall table
-> > file.
-> >
-> > syscall.tbl contains the list of available system calls along with
-> > system call number and corresponding entry point. Add a new system
-> > call in this architecture will be possible by adding new entry in
-> > the syscall.tbl file.
-> >
-> > Adding a new table entry consisting of:
-> >         - System call number.
-> >         - ABI.
-> >         - System call name.
-> >         - Entry point name.
-> >
-> > ARM, s390 and x86 architecuture does exist the similar support. I
-> > leverage their implementation to come up with a generic solution.
-> >
-> > I have done the same support for work for alpha, ia64, microblaze,
-> > mips, parisc, powerpc, sh, sparc, and xtensa. Below mentioned git
-> > repository contains more details.
-> > Git repo:- https://github.com/frzkhn/system_call_table_generator/
-> >
-> > Finally, this is the ground work to solve the Y2038 issue. We need
-> > to add two dozen of system calls to solve Y2038 issue. So this patch
-> > series will help to add new system calls easily by adding new entry
-> > in the syscall.tbl.
->
-> Thanks for the update!
->
-> Can you please tell the audience what has been changed in v4?
+> Hello,
+> 
+> When reading a file from a fuzzed cramfs image, unhandled kernel
+> paging request occurs.
 
-Sure.
-- I added the comments in syscall.tbl and solved mixed (space and tab)
-  indentation.
-- Modified the scripts (syscalltbl.sh and syscallhdr.sh) as per the feedback
-  provided by Arnd, Finn Thain, Eugene Syromiatnikov and Rolf Eike Beer.
+Hmmm... It doesn't show up on my test system.
 
-Eg:-
- - echo options are not portable; changed to printf
- - "let" is a bash extension; changed posix-conformant expression.
- - Finally I optimized the script and solved mixed indentation.
+> How to reproduce with kvm-xfstests:
+> 1) Checkout the v4.19 tag, copy x86_64-config-4.14 to .config, perform
+> `make olddefconfig`
+> 2) Enable Cramfs in the config, then compile
+> 3) In the `kvm-xfstests shell` perform:
+> 
+> root@kvm-xfstests:~# mount /vtmp
+> root@kvm-xfstests:~# mount /vtmp/cramfs.img /mnt
 
->
-> When posting a new version of a patch or patch series, it is a good
-> idea to include a changelog in the cover letter and/or patches.
+How do I populate /vtmp? Mine is empty at this point. I imagine I should 
+put the cramfs image somewhere on the host, but I'm not that familiar 
+withkvm.
 
-Sure, will do!
 
-Thanks
-Firoz
-
->
-> Thanks!
->
-> Gr{oetje,eeting}s,
->
->                         Geert
->
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
->
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+Nicolas
