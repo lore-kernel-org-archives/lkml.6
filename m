@@ -6,156 +6,137 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68374C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:04:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 193EBC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:07:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D378820873
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:04:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5E5020851
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:07:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="MmS5gqQ6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D378820873
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="pCWkfj+r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5E5020851
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729592AbeJ2Rv7 (ORCPT
+        id S1729544AbeJ2Ryz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 13:51:59 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:15278 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729300AbeJ2Rv6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 13:51:58 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bd6cd010001>; Mon, 29 Oct 2018 02:04:02 -0700
-Received: from HQMAIL101.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 29 Oct 2018 02:04:14 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 29 Oct 2018 02:04:14 -0700
-Received: from [10.21.24.173] (10.21.24.173) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 29 Oct
- 2018 09:04:10 +0000
-Subject: Re: [PATCH 0/9] serial: Add Tegra Combined UART driver
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Jiri Slaby <jslaby@suse.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Timo Alho <talho@nvidia.com>,
-        Mika Liljeberg <mliljeberg@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20181026111638.10759-1-thierry.reding@gmail.com>
-From:   Pekka Pessi <ppessi@nvidia.com>
-Message-ID: <85092b49-2b62-bd76-05a3-521415835b6e@nvidia.com>
-Date:   Mon, 29 Oct 2018 11:04:06 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 29 Oct 2018 13:54:55 -0400
+Received: from ozlabs.org ([203.11.71.1]:38917 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729455AbeJ2Ryz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 13:54:55 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42k7yg215zz9s2P;
+        Mon, 29 Oct 2018 20:07:05 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1540804027;
+        bh=8dyF3MgoI7PwKVYxVaqdjLARlRNjWzO7VImUYT6yRV8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=pCWkfj+r7hic3+11c8FjFFO9SPlLiCIreajZT0/H6/EMsjeRGTyhEj1AOgVukwS1e
+         unixZiqm8V171V7UkzdEOwD8XgepZ/YBxP0oy79WxomNYlLdt7qDrIUAoSGXzB+ZNa
+         8wl8SipWzL4sU+lhmK6TwunArcp/H3uqsT/RpEmzSsXqMdJVmaoXuRNcSCM9dvyUC6
+         De1S6mOWFlvwQoHeIYcDFozqorMe3BDt3lS7VY2oj2Rr+PnmPaUApfLUXxhi9hk7XI
+         hmkD5aH62nBPbVgupiGdWOqYpI3C3flSvY6DNvjBqr0Hoygf7hAU9BOfWaYVuIkZyw
+         gRdAhF5doCK3A==
+Date:   Mon, 29 Oct 2018 20:07:05 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the vfs tree
+Message-ID: <20181029200620.75f71e94@canb.auug.org.au>
+In-Reply-To: <20181029153334.7c8d16cc@canb.auug.org.au>
+References: <20180910133525.28c5dd20@canb.auug.org.au>
+        <20181029153334.7c8d16cc@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <20181026111638.10759-1-thierry.reding@gmail.com>
-X-Originating-IP: [10.21.24.173]
-X-ClientProxiedBy: UKMAIL102.nvidia.com (10.26.138.15) To HQMAIL101.nvidia.com
- (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1540803842; bh=g9fWBiSc02a1fPF49MCKvWeS8mTtA11H9ffVxwOST7o=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=MmS5gqQ6j7rYafiRLUCzi/DmZzR3epOSMLnLuJBAOEoWHIqh0DmMLVU/xXjE6cxgU
-         ZW5gkUGyM/3Ht23rHfKpCsynVYum+7AGw9xfC1DLYkQ6Bd0kM3j1o/cfnO6/7TUlqu
-         NlPHHn9zvlzQcJwtfs/MhJDjQ0vJFmY1G3GO7Y7pClmTCpZCzg53IBaq16e1jmFFWB
-         urvSv+IZ9kysZfp90Mj2c5W3hqDxkG8xmgrh8VfM7HN4DAty704CEfvxn1DV49ehBa
-         E8y3ZLgEyqSG+jqdIgJlywT5lNPm1J3X60+hbgaKAAtNFs/Jc3M58KA5ET9IeOp3tm
-         BvPnmxQ21jziQ==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/3rSs4Wq3svp7df6CTRF.jzr"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thierry,
+--Sig_/3rSs4Wq3svp7df6CTRF.jzr
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-What is the use case for the mailbox driver? What kind of entity will be 
-there consuming sent messages and sending messages to kernel?
+Hi David,
 
---Pekka
+On Mon, 29 Oct 2018 15:33:34 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> Hi Al, David,
+>=20
+> These have returned, so I have disabled CONFIG_SAMPLE_VFS again.
 
-On 10/26/2018 02:16 PM, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
->
-> Hi everyone,
->
-> this is a reworked version of Mikko's earlier proposal[0]. I've reworked
-> the TCU driver itself so that it relies less on global variables as well
-> as added a Kconfig option to allow the console support to be selected. I
-> also fixed a couple of issues that manifested themselves as I was moving
-> towards the IRQ driven mode (TCU was passing a pointer to a local
-> variable which was getting stored in the mailbox's ring buffer and the
-> data pointed at was becoming stale by the time the mailbox got around to
-> dequeue it).
->
-> The biggest bulk of the changes is in the mailbox driver. This series
-> addresses all of Jassi's comments from back at the time. One notable
-> additional change is that shared mailboxes are now interrupt driven,
-> which removes the need for polling mode.
->
-> Unfortunately there is still an issue because the TCU uses the mailbox
-> in atomic context for both TTY and console modes, so we get a sleeping-
-> while-atomic BUG when using mbox_client->tx_block = true in order to
-> rate-limit mbox_send_message(). In order to work around this, I added a
-> mechanism to mbox_send_message() that will allow blocking from atomic
-> context if the mailbox controller implements the new ->flush() callback.
-> For Tegra HSP shared mailboxes this is done by spinning on the shared
-> mailbox register until the receiver has marked the mailbox as empty. I
-> have been running this locally for a couple of days now and it works
-> perfectly.
->
-> Furthermore this series incorporates Mikko's work in progress on
-> splitting up the mailbox controllers and allowing multiple controllers
-> to match on the same device tree node during mbox_request_channel().
->
-> Last but not least there are no build-time dependencies between the
-> mailbox and serial drivers, so I think the easiest way to merge this is
-> if Jassi picks up patches 1-5, Greg takes patches 6 & 7 and I pick up
-> patches 8-9 into the Tegra tree.
->
-> Thanks,
-> Thierry
->
-> [0]: https://lore.kernel.org/patchwork/project/lkml/list/?series=357641
->
-> Mikko Perttunen (5):
->    mailbox: Allow multiple controllers per device
->    dt-bindings: tegra186-hsp: Add shared interrupts
->    dt-bindings: serial: Add bindings for nvidia,tegra194-tcu
->    arm64: tegra: Add nodes for TCU on Tegra194
->    arm64: tegra: Mark TCU as primary serial port on Tegra194 P2888
->
-> Thierry Reding (4):
->    mailbox: Support blocking transfers in atomic context
->    mailbox: tegra-hsp: Add support for shared mailboxes
->    mailbox: tegra-hsp: Add suspend/resume support
->    serial: Add Tegra Combined UART driver
->
->   .../bindings/mailbox/nvidia,tegra186-hsp.txt  |   3 +
->   .../bindings/serial/nvidia,tegra194-tcu.txt   |  35 ++
->   .../arm64/boot/dts/nvidia/tegra194-p2888.dtsi |   2 +-
->   arch/arm64/boot/dts/nvidia/tegra194.dtsi      |  38 +-
->   drivers/mailbox/mailbox.c                     |  11 +-
->   drivers/mailbox/tegra-hsp.c                   | 495 +++++++++++++++---
->   drivers/tty/serial/Kconfig                    |  22 +
->   drivers/tty/serial/Makefile                   |   1 +
->   drivers/tty/serial/tegra-tcu.c                | 299 +++++++++++
->   include/linux/mailbox_controller.h            |   4 +
->   include/uapi/linux/serial_core.h              |   3 +
->   11 files changed, 847 insertions(+), 66 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/serial/nvidia,tegra194-tcu.txt
->   create mode 100644 drivers/tty/serial/tegra-tcu.c
->
+Here is the current set of errors I git today (this is from a PowerPC
+allyesconfig build native compiler on a PowerPC64 LE machine):
 
+samples/vfs/test-fsinfo.c: In function 'fsinfo':
+samples/vfs/test-fsinfo.c:37:17: error: '__NR_fsinfo' undeclared (first use=
+ in this function); did you mean 'fsinfo'?
+  return syscall(__NR_fsinfo, dfd, filename, params, buffer, buf_size);
+                 ^~~~~~~~~~~
+                 fsinfo
+samples/vfs/test-fsinfo.c:37:17: note: each undeclared identifier is report=
+ed only once for each function it appears in
+samples/vfs/test-fsinfo.c:38:1: warning: control reaches end of non-void fu=
+nction [-Wreturn-type]
+ }
+ ^
+samples/vfs/test-fs-query.c: In function 'fsopen':
+samples/vfs/test-fs-query.c:32:17: error: '__NR_fsopen' undeclared (first u=
+se in this function); did you mean 'fsopen'?
+  return syscall(__NR_fsopen, fs_name, flags);
+                 ^~~~~~~~~~~
+                 fsopen
+samples/vfs/test-fs-query.c:32:17: note: each undeclared identifier is repo=
+rted only once for each function it appears in
+samples/vfs/test-fs-query.c: In function 'fsinfo':
+samples/vfs/test-fs-query.c:38:17: error: '__NR_fsinfo' undeclared (first u=
+se in this function); did you mean 'fsinfo'?
+  return syscall(__NR_fsinfo, dfd, filename, params, buffer, buf_size);
+                 ^~~~~~~~~~~
+                 fsinfo
+samples/vfs/test-fs-query.c: In function 'fsopen':
+samples/vfs/test-fs-query.c:33:1: warning: control reaches end of non-void =
+function [-Wreturn-type]
+ }
+ ^
+samples/vfs/test-fs-query.c: In function 'fsinfo':
+samples/vfs/test-fs-query.c:39:1: warning: control reaches end of non-void =
+function [-Wreturn-type]
+ }
+ ^
+samples/vfs/test-statx.c: In function 'dump_statx':
+samples/vfs/test-statx.c:164:29: warning: format '%llx' expects argument of=
+ type 'long long unsigned int', but argument 2 has type '__u64' {aka 'long =
+unsigned int'} [-Wformat=3D]
+   printf("Attributes: %016llx (", stx->stx_attributes);
+                       ~~~~~~^     ~~~~~~~~~~~~~~~~~~~
+                       %016lx
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/3rSs4Wq3svp7df6CTRF.jzr
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvWzbkACgkQAVBC80lX
+0Gx8XQf+NPQJYd61cT0HfSNAiw8R52N7vLfN50UP0qkPfjbKhiyeK29bw6Uv6s3W
+fYLHs3Ce+d1UVkFCTs2r7Qxs/IUqUbQDxYAQHjw979WU3MqvingubTvwpaqAl/W1
+N/63oJ1ACfi2afqxra5wD76+hXsgtaPSMMb4dClVH2PuDP0AYK+REpuwRGdrsb37
+GKw9fZ/rE5J35duTVMzm271SWnobq2Dq8NEP96BQrwnNtpDPJBZ1kT3Ai37cmmfp
+yrjzVc6khvKmtoRjz7p4LmiVu0TMmR3f+8BaTFlrtQELyRjOrNuj5mTE96pW2JSr
+a4XQ+8zF39pR5DnS7TiSDkheBHtshA==
+=fAJ3
+-----END PGP SIGNATURE-----
+
+--Sig_/3rSs4Wq3svp7df6CTRF.jzr--
