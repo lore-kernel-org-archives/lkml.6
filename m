@@ -2,197 +2,140 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C106C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 11:09:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74F06C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 11:14:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32E312064C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 11:09:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="dYQnYqWT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32E312064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id E8A3D2081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 11:14:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8A3D2081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728412AbeJ2T5p (ORCPT
+        id S1727740AbeJ2UCc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 15:57:45 -0400
-Received: from mail-eopbgr30076.outbound.protection.outlook.com ([40.107.3.76]:22944
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        Mon, 29 Oct 2018 16:02:32 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:14579 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726692AbeJ2T5n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 15:57:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pBNR15C2Z2rCaxKiZgYG1XL6dAzUvvn6KEJ5fIsFg6Q=;
- b=dYQnYqWTJuLVY/ZZn3ms7Ao4jfnaDS7OWZP5XUjfGW2U4hqMLCiXtv6km/JWOjngOLFz9GS38zNn/Wbr7HEyB8BBuj+SPq/VxamQXkUR8QBqqDVqb3TfYEr46LK+EKoUFyhXxQJUMRSzHf4CzwI77CcLeqjXBQ5O5og3jfTw6AQ=
-Received: from VI1PR04MB4976.eurprd04.prod.outlook.com (20.177.49.217) by
- VI1PR04MB1359.eurprd04.prod.outlook.com (10.163.166.14) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1273.25; Mon, 29 Oct 2018 11:09:24 +0000
-Received: from VI1PR04MB4976.eurprd04.prod.outlook.com
- ([fe80::a425:3202:622e:7995]) by VI1PR04MB4976.eurprd04.prod.outlook.com
- ([fe80::a425:3202:622e:7995%2]) with mapi id 15.20.1273.027; Mon, 29 Oct 2018
- 11:09:24 +0000
-From:   Poonam Aggrwal <poonam.aggrwal@nxp.com>
-To:     Vabhav Sharma <vabhav.sharma@nxp.com>,
-        "sudeep.holla@arm.com" <sudeep.holla@arm.com>,
-        "oss@buserror.net" <oss@buserror.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-kernel-owner@vger.kernel.org" 
-        <linux-kernel-owner@vger.kernel.org>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "yamada.masahiro@socionext.com" <yamada.masahiro@socionext.com>,
-        Leo Li <leoyang.li@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>
-CC:     "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        Udit Kumar <udit.kumar@nxp.com>,
-        Pankaj Bansal <pankaj.bansal@nxp.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
-        Varun Sethi <V.Sethi@nxp.com>,
-        Vabhav Sharma <vabhav.sharma@nxp.com>,
-        Yinbo Zhu <yinbo.zhu@nxp.com>
-Subject: RE: [PATCH v7 2/6] soc/fsl/guts: Add definition for LX2160A
-Thread-Topic: [PATCH v7 2/6] soc/fsl/guts: Add definition for LX2160A
-Thread-Index: AQHUb2jMtnB5YzdFEU2F1umur4t5tqU2EK4g
-Date:   Mon, 29 Oct 2018 11:09:24 +0000
-Message-ID: <VI1PR04MB4976D4A33E0561D125BE837486F30@VI1PR04MB4976.eurprd04.prod.outlook.com>
-References: <1540759926-3641-1-git-send-email-vabhav.sharma@nxp.com>
- <1540759926-3641-3-git-send-email-vabhav.sharma@nxp.com>
-In-Reply-To: <1540759926-3641-3-git-send-email-vabhav.sharma@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=poonam.aggrwal@nxp.com; 
-x-originating-ip: [14.143.30.134]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB1359;6:6wBhiTL3AGxbH/Rp7C9hO96MzXb6n8Wv3BmlJAAl3nyPKTeZH3zKDQYCLYHjUFR58FEHmo46Xn7wTD2zpQ1YCEueEMs41NG7sgqodAGGVNE+IqXvoeiKsCwraD7IQBWL04Se7vihKwPyjwpyw4/bxNO/z+jK40XfKPZ2lFwrCStfBbEST6U7Dw2pnfqEiBXmY/9x5hhZUKIX9ClZFW0cQGEzspDJohYxJhL3x9cNKF7NyIgohyvvdy34HfBFejP9sT+88kiAWgVNpe5HGS4OEVEHA+WM8r6ecYAlnyWM6uKqi2uADVn6lou/Tunm7dIODK/ypJVhOstMBEsthQ7b1Xkq731gioQHl3EAgIRCmABoLiU4SjupxSOVi7LNNnApMsNDh1TgYqgWmrku979BduqouX/xMsB9PMBrOjTsYxbfQ7UiGgjWUuQRTNDkFCBDHwvCfvcKbq9jPkGisM4abr1r/Ae+2vUbjBMwQ7wxcC4=;5:UAcrmjWun/1LpoKuDZKDszkTHxRLM6S6xYl4pZgbYNq6ZaSEtJmOhNsEC3bO7nrID48xggrSu2gmqKFs9IAJKfHWGiAVhkb7Yo9B6SNt+ubagAKTCHCv/I+rVtFC+RrtMjkmx3aZpjQdwda/XiOsw+khckuNCzBbM1is7UEU8qo=;7:YYkUpN37s5XE61Q+7EbzfIbQhZeqZcLOOgRx+6E+hhLhw5s/dBcsy658MFYP9nybcSK5lyEqtnmCjPxBcZkzDFUPisobt3os6mHzPHoYa4WDNEAQsq4IsqRfslJgEIhqQI3zHms0kAQyGNvu724T+A==
-x-ms-office365-filtering-correlation-id: 35ccc36f-af72-4b10-59d4-08d63d8efc44
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB1359;
-x-ms-traffictypediagnostic: VI1PR04MB1359:
-x-microsoft-antispam-prvs: <VI1PR04MB13590DAE631FD13B25328E7D86F30@VI1PR04MB1359.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(258649278758335)(180628864354917)(9452136761055)(65623756079841)(228905959029699)(45079756050767)(189930954265078)(185117386973197);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231382)(944501410)(4982022)(52105095)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB1359;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB1359;
-x-forefront-prvs: 084080FC15
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(39860400002)(366004)(346002)(376002)(199004)(189003)(13464003)(44832011)(6246003)(4326008)(11346002)(6116002)(476003)(7736002)(53936002)(25786009)(256004)(446003)(99286004)(105586002)(2906002)(68736007)(3846002)(486006)(45080400002)(478600001)(106356001)(305945005)(74316002)(66066001)(33656002)(966005)(14454004)(2900100001)(71190400001)(8676002)(6436002)(6506007)(9686003)(55016002)(6306002)(97736004)(71200400001)(26005)(2501003)(5250100002)(55236004)(316002)(54906003)(575784001)(110136005)(53546011)(186003)(86362001)(7416002)(8936002)(2201001)(81156014)(229853002)(102836004)(7696005)(81166006)(5660300001)(76176011)(921003)(1121003)(473944003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB1359;H:VI1PR04MB4976.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: oipseuV673D8gQYA824Z4QblrKciSu7eaKxthdS7wUprY4mzmu7M+pBFoPcyv5Kb4BZl0/6/Y8pphCUTpXBXz7QQNezDY+cMZYcJZLaOEnItp390ML5PrXx0j9df4zKcFN9TOFMdeFL7OtCMqMV/XGl6Y9n5jNskIJzLq5eA/FVBaB6DodnDhuszLfOVFLN8pqFigmiIa6suLw1AotykHx8yViEuit0LLSHbNwcpc55bEcGDIHBb1zoqVlkpx2C1KgUkRsE7RUSk90SQxXhdDCYy9rMYSpxhqNX7IxAmI17WkDgHXi/MdMUd6EahhEFA2eX3NYnGCEJj/8GbXo6MBOTeQdeK7ZOQZwTl+6u+TDk=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1727646AbeJ2UCc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 16:02:32 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 215755BEE34BB;
+        Mon, 29 Oct 2018 19:14:16 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.408.0; Mon, 29 Oct 2018
+ 19:14:15 +0800
+Subject: Re: [BUG] Kernel BUG when mounting and then unmounting a fuzzed F2FS
+ image
+To:     Anatoly Trosinenko <anatoly.trosinenko@gmail.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+References: <CAE5jQCfXKTdxPW2OKVyV9-49WqNmQT+mHsui3XXxDBJbkJ6=jA@mail.gmail.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <d7fd18ae-ac93-2c1a-1f6a-21b3c5da8de7@huawei.com>
+Date:   Mon, 29 Oct 2018 19:14:14 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 35ccc36f-af72-4b10-59d4-08d63d8efc44
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Oct 2018 11:09:24.4460
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB1359
+In-Reply-To: <CAE5jQCfXKTdxPW2OKVyV9-49WqNmQT+mHsui3XXxDBJbkJ6=jA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Anatoly,
 
+Could you please try pending v5.00rc1 or v4.20rc1, since in this round we
+have fixed this issue with below commit:
 
-> -----Original Message-----
-> From: linux-arm-kernel [mailto:linux-arm-kernel-bounces@lists.infradead.o=
-rg]
-> On Behalf Of Vabhav Sharma
-> Sent: Monday, October 29, 2018 2:28 PM
-> To: sudeep.holla@arm.com; oss@buserror.net; linux-kernel@vger.kernel.org;
-> devicetree@vger.kernel.org; robh+dt@kernel.org; mark.rutland@arm.com;
-> linuxppc-dev@lists.ozlabs.org; linux-arm-kernel@lists.infradead.org;
-> mturquette@baylibre.com; sboyd@kernel.org; rjw@rjwysocki.net;
-> viresh.kumar@linaro.org; linux-clk@vger.kernel.org; linux-pm@vger.kernel.=
-org;
-> linux-kernel-owner@vger.kernel.org; catalin.marinas@arm.com;
-> will.deacon@arm.com; gregkh@linuxfoundation.org; arnd@arndb.de;
-> kstewart@linuxfoundation.org; yamada.masahiro@socionext.com; Leo Li
-> <leoyang.li@nxp.com>; shawnguo@kernel.org
-> Cc: ulf.hansson@linaro.org; Udit Kumar <udit.kumar@nxp.com>; Pankaj Bansa=
-l
-> <pankaj.bansal@nxp.com>; linux@armlinux.org.uk; adrian.hunter@intel.com;
-> Varun Sethi <V.Sethi@nxp.com>; Vabhav Sharma <vabhav.sharma@nxp.com>;
-> Yinbo Zhu <yinbo.zhu@nxp.com>
-> Subject: [PATCH v7 2/6] soc/fsl/guts: Add definition for LX2160A
->=20
-> Adding compatible string "lx2160a-dcfg" to initialize guts driver for lx2=
-160 and
-> SoC die attribute definition for LX2160A
->=20
-> Signed-off-by: Vabhav Sharma <vabhav.sharma@nxp.com>
-> Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
-> Acked-by: Li Yang <leoyang.li@nxp.com>
-> ---
->  drivers/soc/fsl/guts.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->=20
-> diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c index
-> 302e0c8..bcab1ee 100644
-> --- a/drivers/soc/fsl/guts.c
-> +++ b/drivers/soc/fsl/guts.c
-> @@ -100,6 +100,11 @@ static const struct fsl_soc_die_attr fsl_soc_die[] =
-=3D {
->  	  .svr		=3D 0x87000000,
->  	  .mask		=3D 0xfff70000,
->  	},
-> +	/* Die: LX2160A, SoC: LX2160A/LX2120A/LX2080A */
-> +	{ .die          =3D "LX2160A",
-> +	  .svr          =3D 0x87360000,
-Do all  the threevariants " LX2160A/LX2120A/LX2080A"  have same SVR?
-> +	  .mask         =3D 0xff3f0000,
-> +	},
->  	{ },
->  };
->=20
-> @@ -222,6 +227,7 @@ static const struct of_device_id fsl_guts_of_match[] =
-=3D {
->  	{ .compatible =3D "fsl,ls1088a-dcfg", },
->  	{ .compatible =3D "fsl,ls1012a-dcfg", },
->  	{ .compatible =3D "fsl,ls1046a-dcfg", },
-> +	{ .compatible =3D "fsl,lx2160a-dcfg", },
->  	{}
->  };
->  MODULE_DEVICE_TABLE(of, fsl_guts_of_match);
-> --
-> 2.7.4
->=20
->=20
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> https://emea01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2Flists=
-.infr
-> adead.org%2Fmailman%2Flistinfo%2Flinux-arm-
-> kernel&amp;data=3D02%7C01%7Cpoonam.aggrwal%40nxp.com%7Cd9b7c36c786
-> 54cd6dc4008d63d7fee63%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0
-> %7C636764017001504288&amp;sdata=3DpqFMlw6yVrHrvn4YRhqj%2FmoOnSscrZu
-> tcoYn3In8OJc%3D&amp;reserved=3D0
+edc55aaf0d17 ("f2fs: avoid f2fs_bug_on if f2fs_get_meta_page_nofail got EIO")
+
+Thanks,
+
+On 2018/10/28 19:50, Anatoly Trosinenko wrote:
+> Hello,
+> 
+> When mounting and then unmounting a fuzzed F2FS image, a BUG is
+> triggered at fs/f2fs/checkpoint.c:127.
+> 
+> How to reproduce with kvm-xfstests:
+> 1) Checkout v4.19, copy x86_64-config-4.14 to .config, perform `make
+> olddefconfig`, then compile
+> 2) Place the attached image (128M unpacked) to /tmp/kvm-xfstests-$USER
+> 3) Inside the `kvm-xfstests shell` execute:
+> 
+> root@kvm-xfstests:~# mount /vtmp
+> root@kvm-xfstests:~# mount /vtmp/f2fs.img /mnt
+> [   11.456857] F2FS-fs (loop0): Found nat_bits in checkpoint
+> [   11.460360] F2FS-fs (loop0): Mounted with checkpoint version = 1c8a6001
+> root@kvm-xfstests:~# umount /mnt
+> [   14.592761] ------------[ cut here ]------------
+> [   14.593218] kernel BUG at fs/f2fs/checkpoint.c:127!
+> [   14.593739] invalid opcode: 0000 [#1] SMP PTI
+> [   14.594129] CPU: 0 PID: 368 Comm: umount Not tainted 4.19.0-xfstests #1
+> [   14.594710] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+> BIOS 1.11.1-1ubuntu1 04/01/2014
+> [   14.595497] RIP: 0010:f2fs_get_meta_page_nofail+0x41/0x50
+> [   14.596030] Code: 00 00 4c 89 e6 48 89 ef e8 1c f3 ff ff 48 3d 00
+> f0 ff ff 76 17 48 83 f8 fb 75 05 83 eb 01 75 dd 31 f6 48 89 ef e8 bf
+> fe ff ff <0f> 0b 5b 5d 41 5c c3 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00
+> 31 d2
+> [   14.597784] RSP: 0018:ffffb95ec095fad8 EFLAGS: 00010296
+> [   14.598257] RAX: ffff9982b9d2d280 RBX: 0000000000000009 RCX: 0000000000000000
+> [   14.598935] RDX: ffffffff00000001 RSI: 0000000000000007 RDI: 0000000000000246
+> [   14.599608] RBP: ffff9982babe0000 R08: 00000004d0a24803 R09: 0000000000000001
+> [   14.600286] R10: 0000000000000001 R11: 0000000000000000 R12: 0000000001201aef
+> [   14.600953] R13: ffff9982b9d14c00 R14: 00000000009008ef R15: 0000000000000001
+> [   14.601625] FS:  0000000000000000(0000) GS:ffff9982bda00000(0063)
+> knlGS:00000000f7bdab00
+> [   14.602384] CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+> [   14.602899] CR2: 0000000056c95460 CR3: 00000000785ea006 CR4: 0000000000360ef0
+> [   14.603550] Call Trace:
+> [   14.603779]  __flush_nat_entry_set+0x118/0x620
+> [   14.604182]  f2fs_flush_nat_entries+0x239/0x290
+> [   14.604585]  ? __submit_merged_write_cond+0xa7/0x200
+> [   14.605026]  ? up_write+0x1c/0x80
+> [   14.605324]  ? __submit_merged_write_cond+0xa7/0x200
+> [   14.605764]  f2fs_write_checkpoint+0x45c/0x720
+> [   14.606161]  f2fs_sync_fs+0xb9/0x1a0
+> [   14.606482]  sync_filesystem+0x71/0x90
+> [   14.606818]  generic_shutdown_super+0x22/0x100
+> [   14.607214]  kill_block_super+0x21/0x50
+> [   14.607558]  kill_f2fs_super+0x67/0xc0
+> [   14.607893]  deactivate_locked_super+0x2f/0x70
+> [   14.608292]  cleanup_mnt+0x3b/0x70
+> [   14.608598]  task_work_run+0x9e/0xd0
+> [   14.608919]  exit_to_usermode_loop+0xb7/0xc0
+> [   14.609299]  do_fast_syscall_32+0x267/0x2f0
+> [   14.609672]  entry_SYSENTER_compat+0x84/0x96
+> [   14.610082] ---[ end trace d15a41554e67c0ec ]---
+> [   14.610500] RIP: 0010:f2fs_get_meta_page_nofail+0x41/0x50
+> [   14.610979] Code: 00 00 4c 89 e6 48 89 ef e8 1c f3 ff ff 48 3d 00
+> f0 ff ff 76 17 48 83 f8 fb 75 05 83 eb 01 75 dd 31 f6 48 89 ef e8 bf
+> fe ff ff <0f> 0b 5b 5d 41 5c c3 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00
+> 31 d2
+> [   14.612632] RSP: 0018:ffffb95ec095fad8 EFLAGS: 00010296
+> [   14.613096] RAX: ffff9982b9d2d280 RBX: 0000000000000009 RCX: 0000000000000000
+> [   14.613720] RDX: ffffffff00000001 RSI: 0000000000000007 RDI: 0000000000000246
+> [   14.614347] RBP: ffff9982babe0000 R08: 00000004d0a24803 R09: 0000000000000001
+> [   14.614974] R10: 0000000000000001 R11: 0000000000000000 R12: 0000000001201aef
+> [   14.615610] R13: ffff9982b9d14c00 R14: 00000000009008ef R15: 0000000000000001
+> [   14.616240] FS:  0000000000000000(0000) GS:ffff9982bda00000(0063)
+> knlGS:00000000f7bdab00
+> [   14.616949] CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+> [   14.617457] CR2: 0000000056c95460 CR3: 00000000785ea006 CR4: 0000000000360ef0
+> Segmentation fault
+> root@kvm-xfstests:~#
+> 
+> Best regards
+> Anatoly
+> 
+
