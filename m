@@ -6,116 +6,108 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82AB6C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:33:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8517C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:34:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39F802084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:33:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A325D2082D
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:34:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="K3uh3lHZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39F802084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="ERmFGWaT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A325D2082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727597AbeJ3CXL (ORCPT
+        id S1727690AbeJ3CYK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 22:23:11 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:39741 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726532AbeJ3CXK (ORCPT
+        Mon, 29 Oct 2018 22:24:10 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:35428 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726532AbeJ3CYJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 22:23:10 -0400
-Received: by mail-io1-f66.google.com with SMTP id n11-v6so5497505iob.6
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 10:33:36 -0700 (PDT)
+        Mon, 29 Oct 2018 22:24:09 -0400
+Received: by mail-oi1-f193.google.com with SMTP id v198-v6so5072177oif.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 10:34:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:references:from:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=ZbubRYa/8fy+0yJxd9+y45LroD/J4+JL9RC6O2OzP8w=;
-        b=K3uh3lHZN0OE4CM1dCqWmJIB9hkipycO+/JsiXdLVrp5RwvFVrOVuE1nvQA2bDf2Hq
-         Ci3HBPIcKwfbaBDZ5sBUaiSA2ZIP+MNQIKXj/aQMziSDPDvkeTa4TKYn/hb9uLJ6Fd15
-         1RhHw3yHVJurQ+Mt2NrDWz5F5XRkGTpgk0vFO6prcIbmbeaPnY3RkPS1OunYN4x7jhuS
-         1CYaaV77/YqRKlXbTTK6zkyks+VjlZUaQU1cOTGJoe9uuE4GdYH/hA+BGjhUxXjykXrs
-         +YHUmPm46eg1mRCxWYNTAjtE6P/3mqWBAr5CcT6Rh4S44VFTqD5o8Zv0jRmc5HywyaZ5
-         npUA==
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=E8MprY7VTm9p0yfpD9lSRFyDxBGNr193lmRNNx0JyUg=;
+        b=ERmFGWaTpLpbrDnTCFAtYXkC/eW6TfOmgw+UVU0niqOQl1nqY7oY4xy8BA2Nm1G1Dr
+         GJI01ajNUXjuX5XI3rgsdn+9f9okIePdkFynNm5u4lXTbPX24q1T15a6p8ipmQVOBUoW
+         3FO50j4MeIzri8HTFM1SFqtXsPqb+TKBytjoCuooCkyjVZsfJDyjGy/b6STmrVcMUIgr
+         UP49h8F4xq31VPHOMcfKbaGZr3mtaT0Tih4hRKuIq1ke4F5E0nJOLwgRjVIeMMejpNwX
+         l8rIEQHZ2QRX8Mq/oz3qe+r+VKhbbbFTSElOv98B5bzhfk3LEdiB+5IXbjovIIk4tQU1
+         D2Qg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ZbubRYa/8fy+0yJxd9+y45LroD/J4+JL9RC6O2OzP8w=;
-        b=CZGpM1GZ5CLuDRbwtXjLPF88I2snwexTda9Lqdba+rT6p3zQ2rDQ2kwHd7TkgGC1pO
-         pZk+HMfJWRIrPwCxVcqPDvq3mUKsj5C2h/ye1xnOlTo3SUZ4SZ6Y/TQTRWk+K/UKcS2S
-         sX31okkqItLWqPffQTp2GTLvzlKHmQ0YC/+yPrsHOpTHcsAYkIa0UJBy20raTq8+GfIM
-         DtNcYwWXM3xDqAqRBryOVd80xeQSpY8eErJjyrWJzbnurgyztfGtWnrffM1l8KQY9V2v
-         CnguxLTr91RaINy9hG6QRtC2wRwQO9EbFJxe0rS26B61DfXjhXgewIqbrlhZhfF24/Hr
-         Akdw==
-X-Gm-Message-State: AGRZ1gJvvzpLKZqNLAclkni2n8DPRQO+Ixv/xNcTYTJ/aWjumVAYJsDS
-        U6sTYyjVMVQNBG0/mynPteuzE/Tp5Jk=
-X-Google-Smtp-Source: AJdET5eNuL5y5btNXG41pSHDpoMFYpZgzgjXpypPFXCuxpYUHNhEgb1TYfqGAPBgBSa1F/r0vnuwXw==
-X-Received: by 2002:a6b:c6d1:: with SMTP id w200-v6mr8858646iof.79.1540834414936;
-        Mon, 29 Oct 2018 10:33:34 -0700 (PDT)
-Received: from [192.168.1.56] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id n2-v6sm6738920iog.75.2018.10.29.10.33.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 10:33:33 -0700 (PDT)
-Subject: Re: [PATCH 04/14] blk-mq: pass in request/bio flags to queue mapping
-To:     Bart Van Assche <bvanassche@acm.org>, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181029163738.10172-1-axboe@kernel.dk>
- <20181029163738.10172-5-axboe@kernel.dk> <1540834236.196084.61.camel@acm.org>
-From:   Jens Axboe <axboe@kernel.dk>
-Message-ID: <9b61eab8-0289-2127-5529-4f599fb1da24@kernel.dk>
-Date:   Mon, 29 Oct 2018 11:33:32 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=E8MprY7VTm9p0yfpD9lSRFyDxBGNr193lmRNNx0JyUg=;
+        b=n6Z7A2XCeRncCTu1v+VZq9HTe/BnmrLG9mLrYI52QPvbgZgxBzIba/Y9HvnZvpEpup
+         DR1vqFWVmtJhM5tpKG4Lixb9ztsLab2TiesnC3a9GWeHoLP024MrB9DY17EHzYVxx8Md
+         cFpnr9p0Eet1/HXDtcFruAO6xalz+49ur/uJ+KUbF+eKZj/+HP/aZRNEVjwjOwxdqxI0
+         DnJDRjURHTBNO6KE8Xb9q/fcO+7g/M1J1SrkF/36ioWa9Zf7cjYx3x0xbJIxq+4ZWz+d
+         N4lpWkwpGk9R16SrMKsJxI5hWDTNu+kTJBo0MMghIHsDWKREoL1NXeHhEVDWBpNXq6nC
+         8wgw==
+X-Gm-Message-State: AGRZ1gLfY0GPPgXkeT+417Bu5FT4nj/pZaPods0N7Jp5v7Glt/Gx4Rhv
+        E+pRDqIvZKoOW/FAtfxnq2+3nC/LiorFDl8uxyf2kw==
+X-Google-Smtp-Source: AJdET5dYRgdsJxLd35A8W4PXnvrIiU9m4oaIFPeiC1x+cr62TnKUOCtu6wj3ipimPv2lXmmp94F0K5JuFvhaLmHLINc=
+X-Received: by 2002:aca:590b:: with SMTP id n11-v6mr8492487oib.232.1540834474488;
+ Mon, 29 Oct 2018 10:34:34 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1540834236.196084.61.camel@acm.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <98c35e19-13b9-0913-87d9-b3f1ab738b61@linux.intel.com>
+ <20181010185242.GP5873@dhcp22.suse.cz> <20181011085509.GS5873@dhcp22.suse.cz>
+ <6f32f23c-c21c-9d42-7dda-a1d18613cd3c@linux.intel.com> <20181017075257.GF18839@dhcp22.suse.cz>
+ <971729e6-bcfe-a386-361b-d662951e69a7@linux.intel.com> <20181029141210.GJ32673@dhcp22.suse.cz>
+ <84f09883c16608ddd2ba88103f43ec6a1c649e97.camel@linux.intel.com>
+ <20181029163528.GL32673@dhcp22.suse.cz> <18dfc5a0db11650ff31433311da32c95e19944d9.camel@linux.intel.com>
+ <20181029172415.GM32673@dhcp22.suse.cz>
+In-Reply-To: <20181029172415.GM32673@dhcp22.suse.cz>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 29 Oct 2018 10:34:22 -0700
+Message-ID: <CAPcyv4goFsZR=O-P_KGrjV8hz0H=nqgYPGSGGLEnmtcagoTYrA@mail.gmail.com>
+Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
+ point where we init pgmap
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     alexander.h.duyck@linux.intel.com, Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Pasha Tatashin <pavel.tatashin@microsoft.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        rppt@linux.vnet.ibm.com, Ingo Molnar <mingo@kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Zhang Yi <yi.z.zhang@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/29/18 11:30 AM, Bart Van Assche wrote:
-> On Mon, 2018-10-29 at 10:37 -0600, Jens Axboe wrote:
->> @@ -400,9 +402,15 @@ void blk_mq_sched_insert_requests(struct request_queue *q,
->>  				  struct blk_mq_ctx *ctx,
->>  				  struct list_head *list, bool run_queue_async)
->>  {
->> -	struct blk_mq_hw_ctx *hctx = blk_mq_map_queue(q, ctx->cpu);
->> -	struct elevator_queue *e = hctx->queue->elevator;
->> +	struct blk_mq_hw_ctx *hctx;
->> +	struct elevator_queue *e;
->> +	struct request *rq;
->> +
->> +	/* For list inserts, requests better be on the same hw queue */
->> +	rq = list_first_entry(list, struct request, queuelist);
->> +	hctx = blk_mq_map_queue(q, rq->cmd_flags, ctx->cpu);
-> 
-> Passing all request cmd_flags bits to blk_mq_map_queue() makes it possible
-> for that function to depend on every single cmd_flags bit even if different
-> requests have different cmd_flags. Have you considered to pass the hw_ctx
-> type only to blk_mq_map_queue() to avoid that that function would start
-> depending on other cmd_flags?
+On Mon, Oct 29, 2018 at 10:24 AM Michal Hocko <mhocko@kernel.org> wrote:
+>
+> On Mon 29-10-18 10:01:28, Alexander Duyck wrote:
+> > On Mon, 2018-10-29 at 17:35 +0100, Michal Hocko wrote:
+[..]
+> > > You are already doing per-page initialization so I fail to see a larger
+> > > unit to operate on.
+> >
+> > I have a patch that makes it so that we can work at a pageblock level
+> > since all of the variables with the exception of only the LRU and page
+> > address fields can be precomputed. Doing that is one of the ways I was
+> > able to reduce page init to 1/3 to 1/4 of the time it was taking
+> > otherwise in the case of deferred page init.
+>
+> You still have to call set_page_links for each page. But let's assume we
+> can do initialization per larger units. Nothing really prevent to hide
+> that into constructor as well.
 
-The core only knows about the number of types, not what each type means
-nor how to map it outside of using the mapping functions. So I don't
-want to expose this is an explicit type, as that would then mean that
-blk-mq had to know about them.
-
-> Additionally, what guarantees that all requests in queuelist have the same
-> hw_ctx type? If a later patch will guarantee that, please mention that in
-> the comment about list_first_entry().
-
-When the code is introduced, it's always the same hctx. Later on when we
-do support multiple sets, the user of the list insert (plugging) explicitly
-makes sure that a list only contains requests for the same hardware queue.
-
-I'll improve the comment.
-
--- 
-Jens Axboe
-
+A constructor / indirect function call makes sense when there are
+multiple sub-classes of object initialization, on the table I only see
+3 cases: typical hotplug, base ZONE_DEVICE, ZONE_DEVICE + HMM. I think
+we can look to move the HMM special casing out of line, then we're
+down to 2. Even at 3 cases we're better off open-coding than a
+constructor for such a low number of sub-cases to handle. I do not
+foresee more cases arriving, so I struggle to see what the constructor
+buys us in terms of code readability / maintainability?
