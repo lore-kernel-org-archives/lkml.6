@@ -2,99 +2,194 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88006C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 15:57:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD596C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 15:59:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DAF32084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 15:57:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DAF32084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 820AC2082D
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 15:59:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 820AC2082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727803AbeJ3Aqd (ORCPT
+        id S1727671AbeJ3Ass (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 20:46:33 -0400
-Received: from mga06.intel.com ([134.134.136.31]:10654 "EHLO mga06.intel.com"
+        Mon, 29 Oct 2018 20:48:48 -0400
+Received: from mga03.intel.com ([134.134.136.65]:9565 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727565AbeJ3Aqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 20:46:33 -0400
-X-Amp-Result: UNSCANNABLE
+        id S1727085AbeJ3Asr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 20:48:47 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2018 08:57:20 -0700
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2018 08:59:34 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,440,1534834800"; 
-   d="asc'?scan'208";a="81823516"
-Received: from jtkirshe-desk1.jf.intel.com ([134.134.177.96])
-  by fmsmga007.fm.intel.com with ESMTP; 29 Oct 2018 08:57:19 -0700
-Message-ID: <c7970686b40e5348b2351580b19f45ee6edc12a9.camel@intel.com>
-Subject: Re: [PATCH 2/2] kconfig: remove silentoldconfig target
-From:   Jeff Kirsher <jeffrey.t.kirsher@intel.com>
-Reply-To: jeffrey.t.kirsher@intel.com
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild@vger.kernel.org
-Cc:     "David S. Miller" <davem@davemloft.net>, linux-doc@vger.kernel.org,
-        netdev@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        intel-wired-lan@lists.osuosl.org, linux-kernel@vger.kernel.org
-Date:   Mon, 29 Oct 2018 09:00:48 -0700
-In-Reply-To: <1540827688-15999-2-git-send-email-yamada.masahiro@socionext.com>
-References: <1540827688-15999-1-git-send-email-yamada.masahiro@socionext.com>
-         <1540827688-15999-2-git-send-email-yamada.masahiro@socionext.com>
-Organization: Intel
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-Zp+VR215FWXUzxuFZmnr"
+   d="scan'208";a="245297002"
+Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
+  by orsmga004.jf.intel.com with ESMTP; 29 Oct 2018 08:59:34 -0700
+Message-ID: <84f09883c16608ddd2ba88103f43ec6a1c649e97.camel@linux.intel.com>
+Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
+ point where we init pgmap
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Pasha Tatashin <pavel.tatashin@microsoft.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
+        rppt@linux.vnet.ibm.com, Ingo Molnar <mingo@kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        yi.z.zhang@linux.intel.com
+Date:   Mon, 29 Oct 2018 08:59:34 -0700
+In-Reply-To: <20181029141210.GJ32673@dhcp22.suse.cz>
+References: <25092df0-b7b4-d456-8409-9c004cb6e422@linux.intel.com>
+         <20181010095838.GG5873@dhcp22.suse.cz>
+         <f97de51c-67dd-99b2-754e-0685cac06699@linux.intel.com>
+         <20181010172451.GK5873@dhcp22.suse.cz>
+         <98c35e19-13b9-0913-87d9-b3f1ab738b61@linux.intel.com>
+         <20181010185242.GP5873@dhcp22.suse.cz>
+         <20181011085509.GS5873@dhcp22.suse.cz>
+         <6f32f23c-c21c-9d42-7dda-a1d18613cd3c@linux.intel.com>
+         <20181017075257.GF18839@dhcp22.suse.cz>
+         <971729e6-bcfe-a386-361b-d662951e69a7@linux.intel.com>
+         <20181029141210.GJ32673@dhcp22.suse.cz>
+Content-Type: text/plain; charset="UTF-8"
 X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
 Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, 2018-10-29 at 15:12 +0100, Michal Hocko wrote:
+> On Wed 17-10-18 08:02:20, Alexander Duyck wrote:
+> > On 10/17/2018 12:52 AM, Michal Hocko wrote:
+> > > On Thu 11-10-18 10:38:39, Alexander Duyck wrote:
+> > > > On 10/11/2018 1:55 AM, Michal Hocko wrote:
+> > > > > On Wed 10-10-18 20:52:42, Michal Hocko wrote:
+> > > > > [...]
+> > > > > > My recollection was that we do clear the reserved bit in
+> > > > > > move_pfn_range_to_zone and we indeed do in __init_single_page. But then
+> > > > > > we set the bit back right afterwards. This seems to be the case since
+> > > > > > d0dc12e86b319 which reorganized the code. I have to study this some more
+> > > > > > obviously.
+> > > > > 
+> > > > > so my recollection was wrong and d0dc12e86b319 hasn't really changed
+> > > > > much because __init_single_page wouldn't zero out the struct page for
+> > > > > the hotplug contex. A comment in move_pfn_range_to_zone explains that we
+> > > > > want the reserved bit because pfn walkers already do see the pfn range
+> > > > > and the page is not fully associated with the zone until it is onlined.
+> > > > > 
+> > > > > I am thinking that we might be overzealous here. With the full state
+> > > > > initialized we shouldn't actually care. pfn_to_online_page should return
+> > > > > NULL regardless of the reserved bit and normal pfn walkers shouldn't
+> > > > > touch pages they do not recognize and a plain page with ref. count 1
+> > > > > doesn't tell much to anybody. So I _suspect_ that we can simply drop the
+> > > > > reserved bit setting here.
+> > > > 
+> > > > So this has me a bit hesitant to want to just drop the bit entirely. If
+> > > > nothing else I think I may wan to make that a patch onto itself so that if
+> > > > we aren't going to set it we just drop it there. That way if it does cause
+> > > > issues we can bisect it to that patch and pinpoint the cause.
+> > > 
+> > > Yes a patch on its own make sense for bisectability.
+> > 
+> > For now I think I am going to back off of this. There is a bunch of other
+> > changes that need to happen in order for us to make this work. As far as I
+> > can tell there are several places that are relying on this reserved bit.
+> 
+> Please be more specific. Unless I misremember, I have added this
+> PageReserved just to be sure (f1dd2cd13c4bb) because pages where just
+> half initialized back then. I am not aware anybody is depending on this.
+> If there is somebody then be explicit about that. The last thing I want
+> to see is to preserve a cargo cult and build a design around it.
 
---=-Zp+VR215FWXUzxuFZmnr
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+It is mostly just a matter of going through and auditing all the
+places that are using PageReserved to identify pages that they aren't
+supposed to touch for whatever reason.
 
-On Tue, 2018-10-30 at 00:41 +0900, Masahiro Yamada wrote:
-> As commit 911a91c39cab ("kconfig: rename silentoldconfig to
-> syncconfig") announced, it is time for the removal.
->=20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
->=20
->  Documentation/networking/ice.rst | 2 +-
->  scripts/kconfig/Makefile         | 9 +--------
->  2 files changed, 2 insertions(+), 9 deletions(-)
+From what I can tell the issue appears to be the fact that the reserved
+bit is used to identify if a region of memory is "online" or "offline".
+So for example the call "online_pages_range" doesn't invoke the
+online_page_callback unless the first pfn in the range is marked as
+reserved.
 
-Acked-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Another example Dan had pointed out was the saveable_page function in
+kernel/power/snapshot.c.
 
-For the ice driver documentation change.
+> > > > > Regarding the post initialization required by devm_memremap_pages and
+> > > > > potentially others. Can we update the altmap which is already a way how
+> > > > > to get alternative struct pages by a constructor which we could call
+> > > > > from memmap_init_zone and do the post initialization? This would reduce
+> > > > > the additional loop in the caller while it would still fit the overall
+> > > > > design of the altmap and the core hotplug doesn't have to know anything
+> > > > > about DAX or whatever needs a special treatment.
+> > > > > 
+> > > > > Does that make any sense?
+> > > > 
+> > > > I think the only thing that is currently using the altmap is the ZONE_DEVICE
+> > > > memory init. Specifically I think it is only really used by the
+> > > > devm_memremap_pages version of things, and then only under certain
+> > > > circumstances. Also the HMM driver doesn't pass an altmap. What we would
+> > > > really need is a non-ZONE_DEVICE users of the altmap to really justify
+> > > > sticking with that as the preferred argument to pass.
+> > > 
+> > > I am not aware of any upstream HMM user so I am not sure what are the
+> > > expectations there. But I thought that ZONE_DEVICE users use altmap. If
+> > > that is not generally true then we certainly have to think about a
+> > > better interface.
+> > 
+> > I'm just basing my statement on the use of the move_pfn_range_to_zone call.
+> > The only caller that is actually passing the altmap is devm_memremap_pages
+> > and if I understand things correctly that is only used when we want to stare
+> > the vmmemmap on the same memory that we just hotplugged.
+> 
+> Yes, and that is what I've called as allocator callback earlier.
 
---=-Zp+VR215FWXUzxuFZmnr
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+I am really not a fan of the callback approach. It just means we will
+have to do everything multiple times in terms of initialization.
 
------BEGIN PGP SIGNATURE-----
+> > That is why it made more sense to me to just create a ZONE_DEVICE specific
+> > function for handling the page initialization because the one value I do
+> > have to pass is the dev_pagemap in both HMM and memremap case, and that has
+> > the altmap already embedded inside of it.
+> 
+> And I have argued that this is a wrong approach to the problem. If you
+> need a very specific struct page initialization then create a init
+> (constructor) callback.
 
-iQIzBAABCAAdFiEEiTyZWz+nnTrOJ1LZ5W/vlVpL7c4FAlvXLrAACgkQ5W/vlVpL
-7c7czA/7BJyuUZ7KlnPwyyvsq4CeO2EBjuqMQJTPHs44GgDBGLAQZxmnnsQNS8qY
-VoBpJeytrK3eiCOLEZj2jiQskY1kWY8SPwJumdotICdonIhnBkb9+9YcOKqb+BXx
-1szIy/8acRFWc+3WAoTcrICDKVCwf0cV7phXuj6NMjOPmH33Gt5X6gMfQWobAWZK
-XIppy5J2aBTH6XgDtAi0/SZA4FIZx/wl8mi36QQU83Utd/Cm86WMDi6CjD6InAdw
-eJSEPSATlxhxR4o2J+gv/KrieVKyctShS0nJCJ6IMgD4jHdMYLWOkAE2qMRySGqY
-klt7ts3eUG8V+7uEHROG9UbQUWnynsdgf2EStUJyGgVWRYubbrWs7mJjVX9tIrGa
-74FYauDDoAgd2sCjBIOaP5ys7pMw7Vqqrq5NoytBQJJkTQHpOKIX8ueLA09Kt9Qb
-kFsUhWkuF2G2l0PEb7ltq2O29dfQ6YTOdhGa+xIrgcp0d1f/ietVrAyhHucd8q8O
-iMBSO8cVMW1C+nwtbolmupAMrdDhhTsQ0xhGzruXkqjEj+z1J6zDhJKq/sfpvLNo
-0B73BXGfNL+sZ1L1kFrO5EFkvK7x/4SQtgjQwt11qhBlkBhXgOM1h4/JWa9725v7
-suMbspxRrPXscXBIXnLmHcr7tVY3l5E8NoKNpp88BFFceH7RT/k=
-=SE6r
------END PGP SIGNATURE-----
+The callback solution just ends up being more expensive because we lose
+multiple layers of possible optimization. By putting everything into on
+initization function we are able to let the compiler go through and
+optimize things to the point where we are essentially just doing
+something akin to one bit memcpy/memset where we are able to construct
+one set of page values and write that to every single page we have to
+initialize within a given page block.
 
---=-Zp+VR215FWXUzxuFZmnr--
+My concern is that we are going to see a 2-4x regression if I were to
+update the current patches I have to improve init performance in order
+to achieve the purity of the page initilization functions that you are
+looking for. I feel we are much better off having one function that can
+handle all cases and do so with high performance, than trying to
+construct a set of functions that end up having to reinitialize the
+same memory from the previous step and end up with us wasting cycles
+and duplicating overhead in multiple spots.
+
+In my mind the memmap_init_zone_device function is essentially just
+bringing the pages "online" after they have been mapped. That is why I
+am thinking it is probably okay to clear the reseved bit for the DAX
+pages at least. Once we have a hard go/no-go on Dan's patches that were
+consolidating the HMM functionality we could look at seeing if we need
+to move some functions around and what we can do to make it so that all
+the ZONE_DEVICE code can be moved as far out of the generic page init
+as possible while still maintaining reasonable initialization
+performance.
+
 
