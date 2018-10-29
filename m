@@ -2,306 +2,217 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9712EC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 11:04:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FCB8C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 11:07:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BACA2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 11:04:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D04402064C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 11:07:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LXgiaHOp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BACA2084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fkti537c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D04402064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727704AbeJ2Tw4 (ORCPT
+        id S1727740AbeJ2TzQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 15:52:56 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50331 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726897AbeJ2Tw4 (ORCPT
+        Mon, 29 Oct 2018 15:55:16 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:35390 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726692AbeJ2TzP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 15:52:56 -0400
-Received: by mail-wm1-f66.google.com with SMTP id h2-v6so3953306wmb.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 04:04:44 -0700 (PDT)
+        Mon, 29 Oct 2018 15:55:15 -0400
+Received: by mail-lf1-f65.google.com with SMTP id d7-v6so5666151lfi.2;
+        Mon, 29 Oct 2018 04:07:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=1BW7vSls9eYk1HLtfvsb6QBedgoztlM5rfgEnr846js=;
-        b=LXgiaHOpY6up2nJhGUHW16uhE3JMiRCxoATAY+5u0TS4R+1i9W4bZryTGGRrV3SW44
-         IDWNuiL+sKgyhZaiigeQlmEdDA6z4oXcjOs8wDj8yMuNUqkUBg95W7APYtY5habmnmPJ
-         MoLUYZmM6qOkMg9ZnUImKAnoWVDMETityGloc=
+        bh=FOCrY6C6LY1qMKaDyhet23xMCETdYNcQeghglHoE/EM=;
+        b=Fkti537crTS2rpU12vjxlt7+K8fYBpcH5tRsFEgzGQ0GovzO3rSRSqc14d2q1G3DF5
+         OW0UnSrkkT1gxUibJQXRrrueQur47klE906L4NFjkZNE8IuMtxHasHe6aM9nW8MZ0B90
+         3XH1hu9x4nn3Q0DXLWD4WRg2IdygjvmlXXSuuO3pe/zGpmviXfPwlizLl73tLUdSlXdd
+         X/1cjzzQiVhZ+WQjWfqWOyZwGSxMOYJS0e6xQCoJPEJMvhReoh3uAgcZxq9w3tUb3NMx
+         lJs4zxUkqW1Z9aXN3VM5H/TsifdUNNWbA9jCpUZ0hkj0DDWk2ATLwqNs+G27QCB9cRfc
+         lF6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=1BW7vSls9eYk1HLtfvsb6QBedgoztlM5rfgEnr846js=;
-        b=hGreGGBCP6B1Kt+FnMPgErQeg7KDFxSsl9op7AsqX5DJIje4ZcMZK6t+ctCaQkApRY
-         IuK3MX7aUI4DV/Ab02qBaTRyeWGmeq17fgBfpnR3jKw6pIFTGSnE9cYmfC4bFRFlUQlg
-         1j7lYs0LD6YTv+g9jpHXf+zlWfjx39UvcB+r8QXza3fRARZTzX0VaRIeeDh7OxOdKCu8
-         io/4INDXyn7XJZCQaCQshUDd+GnzsRFi4OgVxVWbxknlanPzOgJamq8bsHuU2UYIntyB
-         xxK676A0jvXawD0aig7XUKVaIkjkxP7BHJA14fXcNHYTp8xLq3nS+LOYx9KCgT23eQV+
-         N0Yw==
-X-Gm-Message-State: AGRZ1gIqwqv1ensR4N3EN6CxD9NsHhCTJ9BOt01rVVxQSRbqJICUezqQ
-        lsomRnXYUzQjvhbcWzPcrHHfwA==
-X-Google-Smtp-Source: AJdET5fhT7G3pI4uhpWJ6a3x1Oyd9x8JSZ9kyuqVVimyyUl+m3FOc44aFffZDLY1jOZsdIqxG1Okyw==
-X-Received: by 2002:a1c:845:: with SMTP id 66-v6mr14296667wmi.61.1540811083025;
-        Mon, 29 Oct 2018 04:04:43 -0700 (PDT)
-Received: from dell ([2.31.167.205])
-        by smtp.gmail.com with ESMTPSA id n2-v6sm982150wrm.36.2018.10.29.04.04.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Oct 2018 04:04:41 -0700 (PDT)
-Date:   Mon, 29 Oct 2018 11:04:39 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Richard Fitzgerald <rf@opensource.cirrus.com>,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        lgirdwood@gmail.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, patches@opensource.cirrus.com,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] mfd: lochnagar: Add support for the Cirrus Logic
- Lochnagar
-Message-ID: <20181029110439.GS4870@dell>
-References: <20181008132542.19775-1-ckeepax@opensource.cirrus.com>
- <20181008132542.19775-2-ckeepax@opensource.cirrus.com>
- <20181025074459.GF4939@dell>
- <20181025082621.GD16508@imbe.wolfsonmicro.main>
- <b2f85f45-cbe9-5a27-e9e8-ad28f2bd9bd6@opensource.cirrus.com>
- <20181025114205.GC4870@dell>
- <33ea391c-aa6e-2709-6faf-4905e84229e4@opensource.cirrus.com>
- <20181026080051.GK4870@dell>
- <20181026203223.GC27137@sirena.org.uk>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=FOCrY6C6LY1qMKaDyhet23xMCETdYNcQeghglHoE/EM=;
+        b=oMnD3lsA8cotMzE7V59iytJ+DKEKx8TDXvHRnhER4hKFg7lXwxTUpsjD/2JcIocv7u
+         wS7tdjYhT2tO7qZ7Ht2/m9m02LpHzlSBCsIkDDUlroDO7KVqWdv3zWYCapZOUXr1OsUo
+         D3/edQAnflyIi75O+EHAEMP9+B74VJpHQqA59L4BzDoXZGHhFX6zz59vYaQA9d3p8TLl
+         e+cjyv7OpY3e2R7UgOWxiPdJEPVnRhHYtKIEkX63IbU5psvS7dD2h8I7y81SYNxFZqBd
+         pC9tD83sQQEhNNQAN3P/kpPrKlQk4Z1ik825I0wP9mbJqIqtsZ4/FLOjJBggwsA7UDb0
+         1hMw==
+X-Gm-Message-State: AGRZ1gLMTmeYxswN9YTVoFithMT8sbtYHPDbLwQHcQK4OwNa44dmWmmU
+        xoBfSVo4bbY6sQ2o4CWJVSE=
+X-Google-Smtp-Source: AJdET5fkxhJdeOsFQtxycfu03KpLOuaAnwo8hZS++H1SxDuMzu+l9DExzIBojznkE9793ByJ6BGkFw==
+X-Received: by 2002:a19:5059:: with SMTP id z25mr7941732lfj.120.1540811221412;
+        Mon, 29 Oct 2018 04:07:01 -0700 (PDT)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id b22sm2061959lfg.32.2018.10.29.04.06.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Oct 2018 04:06:59 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1gH5Nw-0002ja-TS; Mon, 29 Oct 2018 12:07:04 +0100
+Date:   Mon, 29 Oct 2018 12:07:04 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Lars Poeschel <poeschel@lemonage.de>
+Cc:     Johan Hovold <johan@kernel.org>, devicetree@vger.kernel.org,
+        Samuel Ortiz <sameo@linux.intel.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:NFC SUBSYSTEM" <linux-wireless@vger.kernel.org>
+Subject: Re: [PATCH v3 3/5] nfc: pn533: add UART phy driver
+Message-ID: <20181029110704.GQ27852@localhost>
+References: <20181025132937.24405-1-poeschel@lemonage.de>
+ <20181025132937.24405-3-poeschel@lemonage.de>
+ <20181028102725.GL27852@localhost>
+ <20181029100246.GA5905@lem-wkst-02.lemonage>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181026203223.GC27137@sirena.org.uk>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181029100246.GA5905@lem-wkst-02.lemonage>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 26 Oct 2018, Mark Brown wrote:
-> On Fri, Oct 26, 2018 at 09:00:51AM +0100, Lee Jones wrote:
-> > On Thu, 25 Oct 2018, Richard Fitzgerald wrote:
+On Mon, Oct 29, 2018 at 11:02:46AM +0100, Lars Poeschel wrote:
+> Hi Johan,
 > 
-> > > Largely the point. How long do you think it would take to populate the
-> > > cache if you had to read thousands of registers over I2C? Boot time matters.
-> > > Deferring it until it's touched can create various unpredictable and
-> > > annoying behaviour later, for example if a lot of cache entries are
-> > > written while the chip is asleep and the initial values weren't known
-> > > then a suspend/resume cannot filter out writes that are setting the
-> > > register to its default (which regmap does to avoid unnecessary bus traffic).
-> > > So the resume could have a large amount of unnecessary overhead writing
-> > > registers to a value they already have or reading the initial values of
-> > > those registers.
+> thank you very much for the review!
 > 
-> > One more register read when initially writing to a register and one
-> > more when resuming doesn't sound like a vast amount of over-head.
-> 
-> Especially on resume extra register I/O really adds up - people really
-> care how long their system takes to come back from suspend, and how
-> quickly individual devices come back.  For devices that are on slow
-> buses like I2C this means that every register operation counts.  Boot
-> can be similarly pressured of course, though it's a less frequent issue
-> for these devices.
-> 
-> > Not sure what you think I was suggesting above.  If the default values
-> > are actually non-zero that's fine - we'll either leave them as they
-> > are (if they are never changed, in which case Regmap doesn't even need
-> > to know about them), document only those (non-zero) ones or wait until
-> > they are read for the first time, then populate the cache.
-> 
-> You can't assume that the device is in power on reset state unless the
-> driver reset it itself which may or may not be a good idea or even
-> possible, sometimes it's what you want but at other times even if it's
-> possible it can cause user visible disruption during the boot process
-> which is undesirable.
-> 
-> > Setting up the cache manually also sounds like a vector for potential
-> > failure.  At least if you were to cache dynamically on first write
-> > (either on start-up or after sleep) then the actual value will be
-> > cached, rather than what a piece of C code says it should be.
-> 
-> Even where there's no problem getting the hardware into a clean state it
-> can rapidly get very, very expensive to do this with larger register
-> sets on slow buses, and at the framework level we can't assume that
-> readback support is even present on the device (the earliest versions of
-> cache support were written to support such devices).  Some of the
-> userspaces that regmap devices get used with end up wanting to apply a
-> bunch of configuration at startup, if we can cut down on the amount of
-> I/O that's involved in doing that it can help them quite a bit.  You
-> also get userspaces that want to enumerate device state at startup,
-> that's a bit easier to change in userspace but it's not an unreasonable
-> thing to want to do and can also get very I/O heavy.
-> 
-> There is some potential for errors to be introduced but equally these
-> tables can be both generated and verified mechanically, tasks that are
-> particularly straightforward for the device vendors to do.  There are
-> also potential risks in doing this at runtime if we didn't get the
-> device reset, if we don't accurately mark the volatile registers as
-> volatile or if there's otherwise bugs in the code.
-> 
-> > Precisely my point.  Lochnagar is a small device yet it's required to
-> > submit hundreds of lines of Regmap tables.  Imagine what that would
-> > look like for a large device.
-> 
-> There's no *requirement* to provide the data even if you're using the
-> cache (and the cache support is entirely optional), there's just costs
-> to not providing it in terms of what features you can get from the
-> regmap API and the performance of the system.  Not every device is going
-> to be bothered by those costs, many devices don't provide all of the
-> data they could.
+> On Sun, Oct 28, 2018 at 11:27:25AM +0100, Johan Hovold wrote:
+> > On Thu, Oct 25, 2018 at 03:29:34PM +0200, Lars Poeschel wrote:
+> > > This adds the UART phy interface for the pn533 driver.
+> > > The pn533 driver can be used through UART interface this way.
+> > > It is implemented as a serdev device.
+> > 
+> > Just a few drive-by comments below.
 
-So what do we do in the case where, due to the size of the device, the
-amount of lines required by these tables go from crazy to grotesque?
-
-> I'm not clear to me that Lochnagar will particularly benefit from
-> providing the cache defaults but it sounds like you've raised concerns
-> about other devices which would, and it seems clear that the readability
-> information is very useful for this device if there's registers that
-> it's unsafe to try to read from.
-
-Any reduction in lines would be a good thing.  Charles, could you
-please define what specific benefits you gain from providing providing
-the pre-cache data please?  With a particular emphasis on whether the
-trade-off is justified.
-
-> > > > Even if it is absolutely critical that you have to supply these to
-> > > > Regmap up-front, instead of on first use/read, why can't you just
-> > > > supply the oddball non-zero ones?
+> > > +/*
+> > > + * Driver for NXP PN532 NFC Chip - UART transport layer
+> > > + *
+> > > + * Copyright (C) 2018 Lemonage Software GmbH
+> > > + * Author: Lars P�schel <poeschel@lemonage.de>
+> > > + * All rights reserved.
+> > > + */
+> > 
+> > > +#define VERSION "0.1"
+> > 
+> > We don't version kernel drivers individually, so please drop this here
+> > and below.
 > 
-> That doesn't work, we need to know both if the register has a default
-> value and what that value is - there's no great value in only supplying
-> the defaults for registers with non-zero values.
+> There was a comment from Marcel about this as well and I read it as: You
+> can do it, but it is not required and nobody really cares.
+> I included this, because the other pn532 phy driver (i2c) is doing it
+> this way, but I don't like it either, so I will drop this, as well as
+> the PN532_UART_DRIVER_NAME define in the next version.
 
-All registers have a default value.  Why can't we assume that if a
-register is writable and a default value was omitted then the default
-is zero?
+Sounds good.
 
-Ah wait!  As I was typing the above, I just had a thought.  We don't
-actually provide a list of writable registers do we?  Only a the
-ability to verify if one is writable (presumably) before a write.
-
-That's frustrating!
-
-> > > If you aren't happy with the regmap subsystem you could send some
-> > > patches to change it to what you would be happy with (and patch the ~1300
-> > > drivers that use it)
+> > > +static int pn532_uart_probe(struct serdev_device *serdev)
+> > > +{
+> > > +	struct pn532_uart_phy *pn532;
+> > > +	struct pn533 *priv;
+> > > +	int err;
+> > > +
+> > > +	err = -ENOMEM;
+> > > +	pn532 = kzalloc(sizeof(*pn532), GFP_KERNEL);
+> > > +	if (pn532 == NULL)
+> > 
+> > I'd use !pn532 here (and elsewhere).
 > 
-> > That may well happen.  This is the pre-patch discussion.
+> I will change it.
 > 
-> > Apologies that it had to happen on your submission, but this is that
-> > alerted me to the issue(s).
+> > > +		goto err_exit;
+> > > +
+> > > +	pn532->recv_skb = alloc_skb(PN532_UART_SKB_BUFF_LEN, GFP_KERNEL);
+> > > +	if (pn532->recv_skb == NULL)
+> > > +		goto err_free;
+> > > +
+> > > +	pn532->serdev = serdev;
+> > > +	priv = pn533_register_device(PN533_DEVICE_PN532,
+> > > +				     PN533_NO_TYPE_B_PROTOCOLS,
+> > > +				     PN533_PROTO_REQ_ACK_RESP,
+> > > +				     pn532, &uart_phy_ops, NULL,
+> > > +				     &pn532->serdev->dev,
+> > > +				     &serdev->dev);
+> > > +
+> > 
+> > Stray new line.
 > 
-> The regmap cache API has been this way since it was introduced in 2011
-> FWIW, we did add range based support later which is purely data driven.
+> Ok.
+> 
+> > > +	if (IS_ERR(priv)) {
+> > > +		err = PTR_ERR(priv);
+> > > +		goto err_skb;
+> > > +	}
+> > 
+> > Should you not set up your device fully before registering it? I'd
+> > assume you could get callbacks from NFC core here.
+> 
+> I did not see any during my tests, but you are right: It feels a bit
+> odd.
+> The i2c driver is also requesting irqs after registering.
+> The pn533_finalize_setup() has to be last.
+> I could do the serdev_* stuff before, but ...
+> 
+> > > +
+> > > +	pn532->priv = priv;
+> > > +	serdev_device_set_drvdata(serdev, pn532);
+> > > +	serdev_device_set_client_ops(serdev, &pn532_serdev_ops);
+> > > +	err = serdev_device_open(serdev);
+> > > +	if (err) {
+> > > +		dev_err(&serdev->dev, "Unable to open device %s\n",
+> > > +				serdev->dev.init_name);
+> > 
+> > dev_err will include the device name so you can drop the init_name bit.
+> 
+> Ok, i drop it.
+> 
+> > > +		goto err_unregister;
+> > > +	}
+> > 
+> > Keeping the serial device open at all times will prevent low power
+> > states on some platforms. Wouldn't it be possible to open the device
+> > when the nfc interface is brought up (and during setup)?
+> 
+> ... that would then be contrary to this idea.
 
-Utilising range support here would certainly help IMHO.
+Not necessarily, that depends on what callbacks you can expect and at
+what time.
 
-> > > Like any kernel subsystem it has an API that we have to obey to be able to
-> > > use it.
-> 
-> > Again, this isn't about Lochnagar.
-> 
-> I think from the perspective of Richard and Charles who are just trying
-> to get their driver merged this is something of an abstract distinction.
-> If the driver were merged and this discussion were happening separately
-> their perspective would most likely be different.
+> Also I don't see how to implement it with what is there today. i2c also
+> does not do something similar.
 
-Charles has already mentioned that he'd take a look at the current
-*use* (not changing the API, but the way in which Lochnagar
-*uses/consumes* it).  Actions which would be most welcomed.
+But i2c doesn't have the concept of an "open" port consuming power.
 
-> > > > The API is obscene and needs a re-work IMHO.
-> 
-> > > > I really hope we do not really have to list every register, but *if we
-> > > > absolutely must*, let's do it once:
-> 
-> > > >    REG_ADDRESS, WRV, INITIAL_VALUE
-> 
-> There is the option to specify range based access tables instead of a
-> function, for a lot of devices this is a nice, easy way to specify
-> things that makes more sense so we support it.  We don't combine the
-> tables because they're range based and if there is 100% overlap you can
-> always just point at the same table.
-> 
-> We allow the functions partly because it lets people handle weird cases
-> but also because it turned out when I looked at this that a lot of the
-> time the compiler output for switch statements was pretty efficient with
-> sparse register maps and it makes the code incredibly simple, much
-> simpler than trying to parse access tables into a more efficient data
-> structure and IIRC more compact too.  It's possible that those tradeoffs
-> have changed since but at the time there was a class of devices where it
-> wasn't clear that putting more effort in would result in substantially
-> better outcomes.
-> 
-> > > To re-iterate, regmap is a standard kernel subsystem. It's not owned by Cirrus,
-> > > so it's not our responsibility if you don't like it. Mark Brown is the maintainer.
-> 
-> > Sounds very much like you are saying, "it's not Cirrus' fault,
-> > therefore it is not my problem"?  Which is a terrible attitude.
-> 
-> I think from the perspective of Charles and Richard this is sounding an
-> awful lot like you want them (or someone else) to rewrite a very widely
-> used kernel API before they can get their driver merged.  To me that
-> would be a completely disproportionate amount of effort for their goal
-> but unfortunately people do get asked to do things like that so it's not
-> an unreasonable fear for them to have.
+> It can be done with adding some callbacks from the core (pn533.c) driver
+> to it's phy drivers.
 
-I would see that as an unreasonable request.
+Haven't looked at it in any detail, but in general serdev driver should
+only keep the port open while the device is in use.
 
-To be clear, that is *not* what I am asking.
+I only noticed that nfc core has dev_up/down callbacks which looks like
+they could be used for something like this.
 
-> > Remember that the Linux kernel is an open community.  Anyone should be
-> > free to discuss any relevant issue.  If we decide to take this
-> > off-line, which is likely, then so be it.  In the mean time, as a
-> > contributor to this community project, it's absolutely your
-> > responsibly to help discuss and potentially solve wider issues than
-> > just your lines of code.
-> 
-> It's also a community of people with differing amounts of ability to
-> contribute, due to things like time, energy and so on.  Not everyone can
-> work on everything they want to, let alone other things people ask them
-> to look at.
+> Wouldn't that be the scope of another later patch then ?
 
-I'm not asking for code submission.  Merely contributing to this
-discussion, or simply allowing it to happen on the back of one of
-their submission is enough.
+Possibly. We have accepted some serdev drivers already taking the lazy
+approach of opening the port in probe. Depending on the driver, it may
+not be too bad (e.g. for some specific hardware which you know you'll
+always use), but it not really nice to have everyone pay a price in
+terms of power-consumption for a feature that is rarely used.
 
-Denouncing all responsibility and a lack of care is not okay.
-
-> > > As above, if one subsystem owner doesn't like another subsystem then those
-> > > subsystem owners should talk to each other and sort something out. It shouldn't
-> > > block patches that are just trying to use the subsystem as it currently exists
-> > > in the kernel.
-> 
-> > Again, no one is blocking this patch.
-> 
-> > This driver was submitted for review/discussion.  We are discussing.
-> 
-> I kind of said this above but just to be clear this driver seems to me
-> like an idiomatic user of the regmap API as it is today.  My guess is
-> that we could probably loose the defaults tables and not suffer too much
-> but equally well they don't hurt from a regmap point of view.
-
-Perhaps Charles could elaborate on whether this is possible or not?
-
-> Reviwed-by: Mark Brown <broonie@kernel.org>
-
-Thanks.
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Johan
