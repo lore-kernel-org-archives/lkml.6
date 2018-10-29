@@ -2,115 +2,113 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96BB7C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 15:41:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F6C9C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 15:41:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DAF62054F
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 15:41:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FB532084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 15:41:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="eQ4bUXst"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DAF62054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="x/16oJ45"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FB532084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727687AbeJ3Aah (ORCPT
+        id S1727709AbeJ3Aax (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 20:30:37 -0400
-Received: from smtp-fw-2101.amazon.com ([72.21.196.25]:47197 "EHLO
-        smtp-fw-2101.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727456AbeJ3Aag (ORCPT
+        Mon, 29 Oct 2018 20:30:53 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:25348 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727666AbeJ3Aax (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 20:30:36 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1540827687; x=1572363687;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=SdGxs4CHf5TRhTYKYm5KecJ6+mGYsQYqjbP+I6JaFLw=;
-  b=eQ4bUXstjUcH7c0mlWutL6Of17Ft6S68I4ntSW56t6GRpfJXSWUh43Xv
-   7X9R2ebdZj7ns+L72vWP9R1+zWY7VkOZ3gfh2VUuAj2promgWN5Q7YdOq
-   COmBbHYH+CHW2ZlhNXJTFKM6nDcmSM8N3tTIniMRZo0C4pVCyof4yC7YV
-   U=;
-X-IronPort-AV: E=Sophos;i="5.54,440,1534809600"; 
-   d="scan'208";a="701924541"
-Received: from iad6-co-svc-p1-lb1-vlan2.amazon.com (HELO email-inbound-relay-2c-579b7f5b.us-west-2.amazon.com) ([10.124.125.2])
-  by smtp-border-fw-out-2101.iad2.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 29 Oct 2018 15:41:25 +0000
-Received: from u54ee758033e858cfa736.ant.amazon.com (pdx2-ws-svc-lb17-vlan2.amazon.com [10.247.140.66])
-        by email-inbound-relay-2c-579b7f5b.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w9TFfK5E016030
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Mon, 29 Oct 2018 15:41:22 GMT
-Received: from u54ee758033e858cfa736.ant.amazon.com (localhost [127.0.0.1])
-        by u54ee758033e858cfa736.ant.amazon.com (8.15.2/8.15.2/Debian-3) with ESMTP id w9TFfKMr000676;
-        Mon, 29 Oct 2018 16:41:20 +0100
-Received: (from jsteckli@localhost)
-        by u54ee758033e858cfa736.ant.amazon.com (8.15.2/8.15.2/Submit) id w9TFfJ0Q000675;
-        Mon, 29 Oct 2018 16:41:19 +0100
-From:   Julian Stecklina <jsteckli@amazon.de>
-To:     kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Julian Stecklina <jsteckli@amazon.de>,
-        Julian Stecklina <js@alien8.de>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] kvm, vmx: fix __invvpid style
-Date:   Mon, 29 Oct 2018 16:40:44 +0100
-Message-Id: <d47f6d087f9f125ee34671f62dc30180c83e2d09.1540822350.git.jsteckli@amazon.de>
+        Mon, 29 Oct 2018 20:30:53 -0400
+Received: from grover.tkatk1.zaq.ne.jp (zaqdadce369.zaq.ne.jp [218.220.227.105]) (authenticated)
+        by conuserg-10.nifty.com with ESMTP id w9TFfWK2013655;
+        Tue, 30 Oct 2018 00:41:32 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w9TFfWK2013655
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1540827692;
+        bh=HMAzEtLUBQ8jV61vaUgZPyx7GDQriWLLUT3ZTQfut0g=;
+        h=From:To:Cc:Subject:Date:From;
+        b=x/16oJ45sYdXqK1urzvNx62AfT54nJeWSvGIXDxeuBU0EelgcjsPSwq9816mm4Nr7
+         Bj2bbnVsYuk2bMXExQfvvpWUbPSJ3S+TTQQ197VpXh26/XZmP6qnn0Jt7YmlSDFjqe
+         WyDS0up9Cq2vW+3EjFuPyMYQqPWQ+zayVJ47n+38JiKDH1OlMU+Xab5XrBzADmXoy4
+         ILOaGzGwHxer3JV8U9WquBUOHM6WJt/U2LzuD9LqsNGGzg6I1OdOKdzHT8dGmO+8Bp
+         yAAnt2/W2YzbFM8zb1ILYyX5BWWN01Hl1bVKadr/2i1QcHo4nfFI3NlRRe2xVhMVOp
+         iq3G6xvmlF2zw==
+X-Nifty-SrcIP: [218.220.227.105]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] kconfig: remove oldnoconfig target
+Date:   Tue, 30 Oct 2018 00:41:27 +0900
+Message-Id: <1540827688-15999-1-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <74fa3809ea293cc05d37b1449b16e08480c4ddbd.1540822350.git.jsteckli@amazon.de>
-References: <74fa3809ea293cc05d37b1449b16e08480c4ddbd.1540822350.git.jsteckli@amazon.de>
-In-Reply-To: <74fa3809ea293cc05d37b1449b16e08480c4ddbd.1540822350.git.jsteckli@amazon.de>
-References: <74fa3809ea293cc05d37b1449b16e08480c4ddbd.1540822350.git.jsteckli@amazon.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The code violated the coding style. Fixed by using tabs instead of
-spaces. There are only whitespace changes here.
+As commit 312ee68752fa ("kconfig: announce removal of oldnoconfig if
+used") announced, it is time for the removal.
 
-Signed-off-by: Julian Stecklina <jsteckli@amazon.de>
-Reviewed-by: Jan H. Schönherr <jschoenh@amazon.de>
-Reviewed-by: Konrad Jan Miller <kjm@amazon.de>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- arch/x86/kvm/vmx.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-index 29a2ee7..9bd7c6c 100644
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -2100,16 +2100,16 @@ static int __find_msr_index(struct vcpu_vmx *vmx, u32 msr)
+ scripts/kconfig/Makefile | 9 +--------
+ scripts/kconfig/conf.c   | 7 -------
+ 2 files changed, 1 insertion(+), 15 deletions(-)
+
+diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
+index 67ed9f6..5d37a60 100644
+--- a/scripts/kconfig/Makefile
++++ b/scripts/kconfig/Makefile
+@@ -68,14 +68,7 @@ PHONY += $(simple-targets)
+ $(simple-targets): $(obj)/conf
+ 	$< $(silent) --$@ $(Kconfig)
  
- static inline void __invvpid(unsigned long ext, u16 vpid, gva_t gva)
- {
--    struct {
--	u64 vpid : 16;
--	u64 rsvd : 48;
--	u64 gva;
--    } operand = { vpid, 0, gva };
--    bool error;
+-PHONY += oldnoconfig silentoldconfig savedefconfig defconfig
 -
--    asm volatile (__ex("invvpid %2, %1") CC_SET(na)
--		  : CC_OUT(na) (error) : "r"(ext), "m"(operand));
--    BUG_ON(error);
-+	struct {
-+		u64 vpid : 16;
-+		u64 rsvd : 48;
-+		u64 gva;
-+	} operand = { vpid, 0, gva };
-+	bool error;
-+
-+	asm volatile (__ex("invvpid %2, %1") CC_SET(na)
-+		      : CC_OUT(na) (error) : "r"(ext), "m"(operand));
-+	BUG_ON(error);
- }
+-# oldnoconfig is an alias of olddefconfig, because people already are dependent
+-# on its behavior (sets new symbols to their default value but not 'n') with the
+-# counter-intuitive name.
+-oldnoconfig: olddefconfig
+-	@echo "  WARNING: \"oldnoconfig\" target will be removed after Linux 4.19"
+-	@echo "            Please use \"olddefconfig\" instead, which is an alias."
++PHONY += silentoldconfig savedefconfig defconfig
  
- static inline void __invept(unsigned long ext, u64 eptp, gpa_t gpa)
+ # We do not expect manual invokcation of "silentoldcofig" (or "syncconfig").
+ silentoldconfig: syncconfig
+diff --git a/scripts/kconfig/conf.c b/scripts/kconfig/conf.c
+index 7b2b372..98e0c7a 100644
+--- a/scripts/kconfig/conf.c
++++ b/scripts/kconfig/conf.c
+@@ -460,12 +460,6 @@ static struct option long_opts[] = {
+ 	{"randconfig",      no_argument,       NULL, randconfig},
+ 	{"listnewconfig",   no_argument,       NULL, listnewconfig},
+ 	{"olddefconfig",    no_argument,       NULL, olddefconfig},
+-	/*
+-	 * oldnoconfig is an alias of olddefconfig, because people already
+-	 * are dependent on its behavior(sets new symbols to their default
+-	 * value but not 'n') with the counter-intuitive name.
+-	 */
+-	{"oldnoconfig",     no_argument,       NULL, olddefconfig},
+ 	{NULL, 0, NULL, 0}
+ };
+ 
+@@ -480,7 +474,6 @@ static void conf_usage(const char *progname)
+ 	printf("  --syncconfig            Similar to oldconfig but generates configuration in\n"
+ 	       "                          include/{generated/,config/}\n");
+ 	printf("  --olddefconfig          Same as oldconfig but sets new symbols to their default value\n");
+-	printf("  --oldnoconfig           An alias of olddefconfig\n");
+ 	printf("  --defconfig <file>      New config with default defined in <file>\n");
+ 	printf("  --savedefconfig <file>  Save the minimal current configuration to <file>\n");
+ 	printf("  --allnoconfig           New config where all options are answered with no\n");
 -- 
 2.7.4
 
