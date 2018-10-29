@@ -3,187 +3,165 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF385C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 15:23:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A23E7C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 15:26:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76E6020657
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 15:23:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 441182084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 15:26:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D0wKYL1c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76E6020657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kdab.com header.i=@kdab.com header.b="r0T0tUvu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 441182084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kdab.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727558AbeJ3AMm (ORCPT
+        id S1727590AbeJ3APp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 20:12:42 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:36673 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726445AbeJ3AMm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 20:12:42 -0400
-Received: by mail-qt1-f194.google.com with SMTP id u34-v6so9655187qth.3;
-        Mon, 29 Oct 2018 08:23:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lA1pWmOjLyLw3eXRdhS2W58k9UmAUeZfL6ecWjOd6s0=;
-        b=D0wKYL1cNPlivZ5ebmWIXJDSwhMvtDhd+wdBWQEde7A77Dmo2qDTIbkE9XDJo7cSZG
-         QzRdfyEqIctOIPIFFaKy/n3Xp2qRZme6TfKAY8DwKHfZXPTihsm8jo5f8W/qXV7unEHN
-         M+/Wff82BvfcOQAfJRS087lWKVYPab65c0YTBue/XmlVORQunSvrodXZhtRqlC5fNxJX
-         jjQrRJ2cgYdS5KqyU6YXB9oibEbW+dU7E4/ssB3j0M7KFgwhRZjmhhmoV5C5DfYuTSF3
-         pr9ZJuImUiuRnclaXX/RdIC3Yua5K1nhbH/q5jmvQtr5/4WJmhN3QbaliAmRFzIu9UDS
-         Zwmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lA1pWmOjLyLw3eXRdhS2W58k9UmAUeZfL6ecWjOd6s0=;
-        b=GC5HHVzEe8lCsgxvRiygV/gddQJrDh8yur4atidGd3QN4XJKtrR/gtgJtDPQ7iZSU/
-         J3ya1fIjEc4fBEktpF1QvmJcBQygY03w+bbsvb+Qr+Wiyb/UN3ENE3OKLm0VyJbCmjHI
-         68nbxijc5cGEb5UZ9pFiETFT2ZGJ8blIBePm32gJbYZc9gDVUOC+uhxCF9CZ8Jt2yDKp
-         SUdMt5979r5RNXmAETN24YvOt/xV7HT71X+9VGBMHuuLjJcOl9hGHDNUvXDmL45rNGzC
-         y5kRLSQEivIhYW3dHOOzm544pHiTtxc3zbCBm8UWFmi4RoW8w7ANe71D7ZTuL89GboSE
-         Ae0g==
-X-Gm-Message-State: AGRZ1gJjiy09mrRaDg6giN+jryg7OSe1yt6+0EQQXEnOnGTqmQNtV7Bd
-        13tVyALuDwdzzV1uIMJgjubG+0OtIGH+h2hxmPY=
-X-Google-Smtp-Source: AJdET5dLcQ/W5XNnnIDMfB3ll8l7rQ4HAtdTtGhHkjDd0KoZL+2lskUz1/PJg0L5YWFIQnEDTtPILScQzoe+k1ZzKlo=
-X-Received: by 2002:ac8:764e:: with SMTP id i14-v6mr13445272qtr.373.1540826616051;
- Mon, 29 Oct 2018 08:23:36 -0700 (PDT)
+        Mon, 29 Oct 2018 20:15:45 -0400
+Received: from mail.kdab.com ([176.9.126.58]:49082 "EHLO mail.kdab.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726808AbeJ3APp (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 20:15:45 -0400
+Authentication-Results: mail.kdab.com (amavisd-new); dkim=pass (1024-bit key)
+ reason="pass (just generated,
+ assumed good)" header.d=kdab.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kdab.com; h=
+ content-type:content-type:mime-version:references:in-reply-to
+ :organization:message-id:date:date:subject:subject:from:from; s=
+ dkim; t=1540826795; x=1541690796; bh=Z1kiBcVf+sc7Sr9l6p0sAzcTN9o
+ trCX7jpxuxECAMNA=; b=r0T0tUvuFRdJHhtylhvrM7zvuvPQdtDTVQ1WcaexTab
+ Pcy5NccT9XGAclst00mVcYJSY4VFV6Q669A11pRRLDQccUCdtv6qqDofQI71FTWR
+ uLcxs/LVf8wkJ4kcIjykVBdlcn/mj8pa9OvyPzm+bPNnB6PuFKTtFpIQFsyxswIc
+ =
+X-Virus-Scanned: amavisd-new at kdab.com
+From:   Milian Wolff <milian.wolff@kdab.com>
+To:     Milian Wolff <milian.wolff@kdab.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, Linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH] perf util: take pgoff into account when reporting elf to
+ libdwfl
+Date:   Mon, 29 Oct 2018 16:26:27 +0100
+Message-ID: <3361238.noN1Jb7VD2@milian-kdab2>
+Organization: KDAB
+In-Reply-To: <20181029141644.3907-1-milian.wolff@kdab.com>
+References: <20181029141644.3907-1-milian.wolff@kdab.com>
 MIME-Version: 1.0
-References: <CACRpkdY7eaYk81CU8gmHKfWB82_qNJur=c=7SCRuW+BNeL=Oiw@mail.gmail.com>
- <20181018215101.169847-1-rajatja@google.com> <CAHp75Vd_r4QGR5xw2cJigM2J3WStg_0PdynBXMZOyZh+t1znKg@mail.gmail.com>
- <CACK8Z6HOsUcPFyf-GguxPxh_Zdj6gCXP=FpGw-vQXJfnM=cquw@mail.gmail.com>
- <20181024100230.GQ10650@smile.fi.intel.com> <CAE_wzQ-80NCNbzbFx1eEDwEEOEAbv-5u+W171iUagY2pOahbmw@mail.gmail.com>
-In-Reply-To: <CAE_wzQ-80NCNbzbFx1eEDwEEOEAbv-5u+W171iUagY2pOahbmw@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 29 Oct 2018 17:23:24 +0200
-Message-ID: <CAHp75VfMHqT+aAGVaXzXGbzF2=VEABOOaGhkjfV-D0NPbBM+Rw@mail.gmail.com>
-Subject: Re: [PATCH] mmc: sdhci-pci: Try "cd" for card-detect lookup before
- using NULL
-To:     Dmitry Torokhov <dtor@google.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     Rajat Jain <rajatja@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rajat Jain <rajatxjain@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; boundary="nextPart3459085.tViC8COEIA";
+ micalg="sha256"; protocol="application/pkcs7-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 9:03 PM Dmitry Torokhov <dtor@google.com> wrote:
-> On Wed, Oct 24, 2018 at 3:02 AM Andy Shevchenko
-> <andy.shevchenko@gmail.com> wrote:
-> > On Mon, Oct 22, 2018 at 04:34:55PM -0700, Rajat Jain wrote:
-> > > On Fri, Oct 19, 2018 at 2:13 AM Andy Shevchenko
-> > > <andy.shevchenko@gmail.com> wrote:
-> > > > On Fri, Oct 19, 2018 at 12:53 AM Rajat Jain <rajatja@google.com> wrote:
-> >
-> > > > > across other users of this API (other MMC host controller drivers).
-> > > >
-> > > > >         if (slot->cd_idx >= 0) {
-> > > > > -               ret = mmc_gpiod_request_cd(host->mmc, NULL, slot->cd_idx,
-> > > > > +               ret = mmc_gpiod_request_cd(host->mmc, "cd", slot->cd_idx,
-> > > > >                                            slot->cd_override_level, 0, NULL);
-> > > >
-> > > > Yes.
-> > > >
-> > > > > +               if (ret && ret != -EPROBE_DEFER)
-> > > > > +                       ret = mmc_gpiod_request_cd(host->mmc, NULL,
-> > > > > +                                                  slot->cd_idx,
-> > > > > +                                                  slot->cd_override_level,
-> > > > > +                                                  0, NULL);
-> > > >
-> > > > And no. Instead of this part you need to provide an ACPI GPIO mapping table.
-> > >
-> > > Sure, I am willing to do so, and I tried earlier too. However, certain
-> > > doubts arose in my mind when I tried that and I posted my questions
-> > > earlier (https://lkml.org/lkml/2018/9/28/507) but couldn't elicit any
-> > > response. Unfortunately I still do not have answers. My primary
-> > > questions are:
-> > >
-> > > 1) - It seems that 1 SDHCI device may support multiple slots (looking
-> > > at the code). It is not clear to me if they could share card detect
-> > > interrupts, or should have separate ones?
-> >
-> > This is more likely question to HW engineers of your platform with a caveat
-> > that there should be a way to distinguish exact slot in which card is being
-> > inserted.
-> >
-> > > Also, the driver may not
-> > > really know?
-> >
-> > I think in such case the bug in HW design and / or driver.
->
-> Why? You can have a shared or dedicated interrupt and the driver does
-> not really need to know if it can poll the status.
+--nextPart3459085.tViC8COEIA
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Yes, that's my point either we get 1:1 mapping between slot and GPIOs
-or have a possibility to read back from some register(s) the actual
-status of all of them, otherwise it's a bad design. Sorry if I wasn't
-clear about it.
+On Monday, October 29, 2018 3:16:44 PM CET Milian Wolff wrote:
+> Libdwfl parses an ELF file itself and creates mappings for the
+> individual sections. Perf on the other hand sees raw mmap events which
+> represent individual sections. When we encounter an address pointing
+> into a mapping with pgoff != 0, we must take that into account and
+> report the file at the non-offset base address.
+> 
+> This fixes unwinding with libdwfl in some cases. E.g. for a file like:
 
-> > > So should I add 1 or two pins using the
-> > > devm_acpi_dev_add_driver_gpios().
-> >
-> > This depends on the above, e.g. HW design, ACPI tables.
->
-> Yes, it depends on the HW design and that is exactly why the approach
-> with devm_acpi_dev_add_driver_gpios() does not work well here: this is
-> a generic driver used on many platforms and you are trying to put the
-> platform knowledge into the driver. Here we are lucky I guess as I do
-> not believe anyone is using more than one slot, so we can have a tavle
-> with a single entry, but actually doing the fallback the way Rajat was
-> proposing is more correct. Or you have a table with N entries, where N
-> is hopefully sufficiently large.
+<snip>
 
-Yes, unfortunately this is the case. We need to keep somewhere the
-list to support old firmwares (see hci_bcm.c as an example how BIOS
-can screw things up).
-Soonish we start _DSD in BIOSes in a correct way (ha-ha), better for everyone.
+> Note that the backtrace is still stopping too early, when
+> compared to the nice results obtained via libunwind. It's
+> unclear so far what the reason for that is.
 
-> > > Is some one familiar with SDHC
-> > > driver can answer these questions, it shall be great.
-> >
-> > Actually above questions better to ask in linux-mmc mailing list, which by the
-> > fact is in Cc list already. So, wait for someone to clarify.
-> >
-> >
-> > > 2) I'm not really sure what should I set "active_low" to? Isn't this
-> > > something that should be specified by platform / ACPI too, and driver
-> > > should just be able to say say choose whatever the ACPI says?
-> > >
-> > > struct acpi_gpio_params {
-> > >         unsigned int crs_entry_index;
-> > >         unsigned int line_index;
-> > >         bool active_low;
-> > > };
-> >
-> >
-> > ACPI specification misses this property, that's why we have it in the
-> > structure. In your case it should be provided by _DSD and thus be consistent
-> > with the hardcoded values.
->
-> Again, you think as if the driver was platform specific; it is not. I
-> have 1000s of systems with different ACPI tables. Let's say half of
-> them use one polarity, and half another. Which polarity do you propose
-> to use?
+The remaining issue is due to a bug in elfutils:
 
-Use one table for one half and another for the rest.
+https://sourceware.org/ml/elfutils-devel/2018-q4/msg00089.html
 
+With both patches applied, libunwind and elfutils produce the same output for 
+the above scenario.
+
+Cheers
 -- 
-With Best Regards,
-Andy Shevchenko
+Milian Wolff | milian.wolff@kdab.com | Senior Software Engineer
+KDAB (Deutschland) GmbH, a KDAB Group company
+Tel: +49-30-521325470
+KDAB - The Qt, C++ and OpenGL Experts
+--nextPart3459085.tViC8COEIA
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCDEIw
+ggXmMIIDzqADAgECAhBqm+E4O/8ra58B1dm4p1JWMA0GCSqGSIb3DQEBDAUAMIGFMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
+VQQKExFDT01PRE8gQ0EgTGltaXRlZDErMCkGA1UEAxMiQ09NT0RPIFJTQSBDZXJ0aWZpY2F0aW9u
+IEF1dGhvcml0eTAeFw0xMzAxMTAwMDAwMDBaFw0yODAxMDkyMzU5NTlaMIGXMQswCQYDVQQGEwJH
+QjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQK
+ExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGlj
+YXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
+AL6znlesKHZ1QBbHOAOY08YYdiFQ8yV5C0y1oNF9Olg+nKcxLqf2NHbZhGra0D00SOTq9bus3/mx
+gUsg/Wh/eXQ0pnp8tZ8XZWAnlyKMpjL+qUByRjXCA6RQyDMqVaVUkbIr5SU0RDX/kSsKwer3H1pT
+/HUrBN0X8sKtPTdGX8XAWt/VdMLBrZBlgvnkCos+KQWWCo63OTTqRvaq8aWccm+KOMjTcE6s2mj6
+RkalweyDI7X+7U5lNo6jzC8RTXtVV4/Vwdax720YpMPJQaDaElmOupyTf1Qib+cpukNJnQmwygjD
+8m046DQkLnpXNCAGjuJy1F5NATksUsbfJAr7FLUCAwEAAaOCATwwggE4MB8GA1UdIwQYMBaAFLuv
+fgI9+qbxPISOre44mOzZMjLUMB0GA1UdDgQWBBSCr2yM+MX+lmF86B89K3FIXsSLwDAOBgNVHQ8B
+Af8EBAMCAYYwEgYDVR0TAQH/BAgwBgEB/wIBADARBgNVHSAECjAIMAYGBFUdIAAwTAYDVR0fBEUw
+QzBBoD+gPYY7aHR0cDovL2NybC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQ2VydGlmaWNhdGlvbkF1
+dGhvcml0eS5jcmwwcQYIKwYBBQUHAQEEZTBjMDsGCCsGAQUFBzAChi9odHRwOi8vY3J0LmNvbW9k
+b2NhLmNvbS9DT01PRE9SU0FBZGRUcnVzdENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3Au
+Y29tb2RvY2EuY29tMA0GCSqGSIb3DQEBDAUAA4ICAQB4XLKBKDRPPO5fVs6fl1bsj6JrF/bz9kkI
+BtTYLzXN30D+03Hj6OxCDBEaIeNmsBhrJmuubvyE7HtoSmR809AgcYboW+rcTNZ/8u/Hv+GTrNI/
+AhqX2/kiQNxmgUPt/eJPs92Qclj0HnVyy9TnSvGkSDU7I5Px+TbO+88G4zipA2psZaWeEykgzClZ
+lPz1FjTCkk77ZXp5cQYYexE6zeeN4/0OqqoAloFrjAF4o50YJafX8mnahjp3I2Y2mkjhk0xQfhNq
+bzlLWPoT3m7j7U26u7zg6swjOq8hITYc3/np5tM5aVyu6t99p17bTbY7+1RTWBviN9YJzK8HxzOb
+XYWBf/L+VGOYNsQDTxAk0Hbvb1j6KjUhg7fO294F29QIhhmiNOr84JHoy+fNLpfvYc/Q9EtFOI5I
+SYgOxLk3nD/whbUe9rmEQXLp8MB933Ij474gwwCPUpwv9mj2PMnXoc7mbrS22XUSeTwxCTP9bcmU
+dp4jmIoWfhQm7X9w/Zgddg+JZ/YnIHOwsGsaTUgj7fIvxqith7DoJC91WJ8Lce3CVJqb1XWeKIJ8
+4F7YLXZN0oa7TktYgDdmQVxYkZo1c5noaDKH9Oq9cbm/vOYRUM1cWcef20Wkyk5S/GFyyPJwG0fR
+1nRas3DqAf4cXxMiEKcff7PNa4M3RGTqH0pWR8p6EjCCBlQwggU8oAMCAQICEAf6KCF9+1doL2oE
+OTPysLwwDQYJKoZIhvcNAQELBQAwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJHcmVhdGVyIE1h
+bmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBMaW1pdGVkMT0w
+OwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWls
+IENBMB4XDTE3MDUyMzAwMDAwMFoXDTIwMDUyMjIzNTk1OVowggFZMQswCQYDVQQGEwJTRTEPMA0G
+A1UEERMGNjgzIDMxMRIwEAYDVQQIEwlWYWVybWxhbmQxEDAOBgNVBAcTB0hhZ2ZvcnMxGDAWBgNV
+BAkTD05vcnJpbmdzIHZhZWcgMjEPMA0GA1UEEhMGQm94IDMwMSYwJAYDVQQKDB1LbGFyw6RsdmRh
+bGVucyBEYXRha29uc3VsdCBBQjEdMBsGA1UECxMUQSBLREFCIEdyb3VwIENvbXBhbnkxQzBBBgNV
+BAsMOklzc3VlZCB0aHJvdWdoIEtsYXLDpGx2ZGFsZW5zIERhdGFrb25zdWx0IEFCIEUtUEtJIE1h
+bmFnZXIxHzAdBgNVBAsTFkNvcnBvcmF0ZSBTZWN1cmUgRW1haWwxFTATBgNVBAMTDE1pbGlhbiBX
+b2xmZjEkMCIGCSqGSIb3DQEJARYVbWlsaWFuLndvbGZmQGtkYWIuY29tMIIBIjANBgkqhkiG9w0B
+AQEFAAOCAQ8AMIIBCgKCAQEAxrzfNBVvRbiAknuTBXuQnNm9sLIFLo0vbPB6kswk78A3tA++Zn5c
+lQUHhGlQq1cdYxagnUpqwvG3Sod15mPSOLkAPf/mabLN7p+lFbRaUP+97ZkTZtvb4BCC3osIEFI4
+G393OSFWqc2qmIPE/SwSASbAA20Fcaa2M6P1lhOk/ttUh2jIurTPF0wUycIA7lBddrOgaOA8e2m6
+iLTNHtlrfRbBaUX91D5ebY+UWmIjXSQ9+CtutMzBkwnF0rZKririvOkklg9VzEGNQVHrQfDF2s/U
+pOtmtuVSwElauGT/KALyCFuIrYC1pmaKH8S1xODJqiRaf6jH8E+KQzKjyM/ErwIDAQABo4IB1TCC
+AdEwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8AwHQYDVR0OBBYEFN+m99RtIuA1bSdw
+6b1brOX7X3AJMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8EAjAAMB0GA1UdJQQWMBQGCCsGAQUF
+BwMEBggrBgEFBQcDAjBGBgNVHSAEPzA9MDsGDCsGAQQBsjEBAgEDBTArMCkGCCsGAQUFBwIBFh1o
+dHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8EUzBRME+gTaBLhklodHRwOi8vY3Js
+LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWls
+Q0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKGSWh0dHA6Ly9jcnQuY29tb2RvY2Eu
+Y29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcnQwJAYI
+KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAgBgNVHREEGTAXgRVtaWxpYW4ud29s
+ZmZAa2RhYi5jb20wDQYJKoZIhvcNAQELBQADggEBABf47LSJADqH+ow9INv3QM1NC/qq2bjxGvsZ
+68iD11VEUAFlsYfsVTgQqUirwPVTYenXtwVBELHZyywsui1JxL7HKQetLQegDDP/RyfjReVaWxhy
+3OpuItsgLVbru9QVgPifnoBFPtfZcwjeJDmeSbLT8oj4Rd0KYBOIve7WKvsfNPsNwfbLwY2zILkE
+LjxZcVi2AwZHDyab+dzL/3YcLuJj1lSawBGn7ilpcdZydlv4aye51pD/MemLIYLcylt+ImrmjnTV
+y+QlAHRF3s5FE8yAr+W1MBD/1bKZCSgFt8VQoAlz3hiQh8QqZp4Zl8WuVL4+mP/mT6VDEWgq/0Bo
+cukxggJuMIICagIBATCBrDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hl
+c3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNV
+BAMTNENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EC
+EAf6KCF9+1doL2oEOTPysLwwDQYJYIZIAWUDBAIBBQCggZMwGAYJKoZIhvcNAQkDMQsGCSqGSIb3
+DQEHATAcBgkqhkiG9w0BCQUxDxcNMTgxMDI5MTUyNjI3WjAoBgkqhkiG9w0BCQ8xGzAZMAsGCWCG
+SAFlAwQBAjAKBggqhkiG9w0DBzAvBgkqhkiG9w0BCQQxIgQg24dX81ri03iNTgx+tKlI/+9oQB3c
+72G64lDcPqxuCv8wDQYJKoZIhvcNAQEBBQAEggEAGr8Ez4b+HObaynUpIqtsqoyHzCfr0mFTAKdf
+31MAGqpNdeY6WnwJ2mr6/gRd2fJrD8m25HeGxDLUeK+aa1sUX+CS+26HOAIk+XjQHkxMC5tB+Zkw
+UCfMXWHZxjyQj5nxtICscSMNppvYUWU9gMUaE1PHtLAlrSNYkbssqNgoOAPobYRy3iD+k+xhT6S3
+vgy4z+ia6ngCzw7qyIjEXNXrvr7/FBOf6ZV55hA+N/xWioGefrv//4K/3wwIzFzPVh25xcBOw2tM
+fxP2Hxm6v7Uc53+5nKQMgKEIPn6lmnKtV2JPk6jfh9+Af/4QGH77zXrvuQsn9kTpqxZF1Z/otP1f
+igAAAAAAAA==
+
+
+--nextPart3459085.tViC8COEIA--
+
+
