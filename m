@@ -2,102 +2,80 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 093B4C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 11:34:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A33EC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 11:35:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCEF92082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 11:34:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCEF92082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id F13642082D
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 11:35:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F13642082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728950AbeJ2UXM (ORCPT
+        id S1729105AbeJ2UXQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 16:23:12 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:36001 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726582AbeJ2UXM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 16:23:12 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9TBYZEj1519777
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Mon, 29 Oct 2018 04:34:35 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9TBYZFQ1519774;
-        Mon, 29 Oct 2018 04:34:35 -0700
-Date:   Mon, 29 Oct 2018 04:34:35 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Muchun Song <tipbot@zytor.com>
-Message-ID: <tip-a68d75081aeccfb169575bea6f452a5a12b9f49b@git.kernel.org>
-Cc:     tglx@linutronix.de, torvalds@linux-foundation.org,
-        linux-kernel@vger.kernel.org, smuchun@gmail.com, mingo@kernel.org,
-        peterz@infradead.org, hpa@zytor.com
-Reply-To: hpa@zytor.com, peterz@infradead.org, mingo@kernel.org,
-          smuchun@gmail.com, linux-kernel@vger.kernel.org,
-          torvalds@linux-foundation.org, tglx@linutronix.de
-In-Reply-To: <20181027030517.23292-1-smuchun@gmail.com>
-References: <20181027030517.23292-1-smuchun@gmail.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/urgent] sched/rt: Update comment in pick_next_task_rt()
-Git-Commit-ID: a68d75081aeccfb169575bea6f452a5a12b9f49b
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Mon, 29 Oct 2018 16:23:16 -0400
+Received: from foss.arm.com ([217.140.101.70]:39148 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726582AbeJ2UXP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 16:23:15 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DF9D4165C;
+        Mon, 29 Oct 2018 04:24:57 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id B0A953F6A8;
+        Mon, 29 Oct 2018 04:24:57 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id A9D081AE091C; Mon, 29 Oct 2018 11:25:04 +0000 (GMT)
+Date:   Mon, 29 Oct 2018 11:25:04 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     John Garry <john.garry@huawei.com>
+Cc:     catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linuxarm@huawei.com
+Subject: Re: [PATCH] arm64/numa: Add more vetting in numa_set_distance()
+Message-ID: <20181029112504.GF14127@arm.com>
+References: <1540562267-101152-1-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <1540562267-101152-1-git-send-email-john.garry@huawei.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  a68d75081aeccfb169575bea6f452a5a12b9f49b
-Gitweb:     https://git.kernel.org/tip/a68d75081aeccfb169575bea6f452a5a12b9f49b
-Author:     Muchun Song <smuchun@gmail.com>
-AuthorDate: Sat, 27 Oct 2018 11:05:17 +0800
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 29 Oct 2018 07:18:04 +0100
+Hi John,
 
-sched/rt: Update comment in pick_next_task_rt()
+On Fri, Oct 26, 2018 at 09:57:47PM +0800, John Garry wrote:
+> Currently it is acceptable to set the distance between 2 separate nodes to
+> LOCAL_DISTANCE.
+> 
+> Reject this as it is invalid.
+> 
+> This change avoids a crash reported in [1].
+> 
+> [1] https://www.spinics.net/lists/arm-kernel/msg683304.html
+> 
+> Signed-off-by: John Garry <john.garry@huawei.com>
+> 
+> diff --git a/arch/arm64/mm/numa.c b/arch/arm64/mm/numa.c
+> index 146c04c..6092e3d 100644
+> --- a/arch/arm64/mm/numa.c
+> +++ b/arch/arm64/mm/numa.c
+> @@ -335,7 +335,8 @@ void __init numa_set_distance(int from, int to, int distance)
+>  	}
+>  
+>  	if ((u8)distance != distance ||
+> -	    (from == to && distance != LOCAL_DISTANCE)) {
+> +	    (from == to && distance != LOCAL_DISTANCE) ||
+> +	    (from != to && distance == LOCAL_DISTANCE)) {
 
-Commit:
+The current code here is more-or-less lifted from the x86 implementation
+of numa_set_distance(). I think we should either factor out the sanity check
+into a core helper or make the core code robust to these funny configurations.
 
-  f4ebcbc0d7e0 ("sched/rt: Substract number of tasks of throttled queues from rq->nr_running")
-
-added a new rt_rq->rt_queued field, which is used to indicate the status of
-rq->rt enqueue or dequeue. So, the ->rt_nr_running check was removed and we
-now check ->rt_queued instead.
-
-Fix the comment in pick_next_task_rt() as well, which was still referencing
-the old logic.
-
-Signed-off-by: Muchun Song <smuchun@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20181027030517.23292-1-smuchun@gmail.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- kernel/sched/rt.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 2e2955a8cf8f..a21ea6021929 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -1561,7 +1561,7 @@ pick_next_task_rt(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
- 
- 	/*
- 	 * We may dequeue prev's rt_rq in put_prev_task().
--	 * So, we update time before rt_nr_running check.
-+	 * So, we update time before rt_queued check.
- 	 */
- 	if (prev->sched_class == &rt_sched_class)
- 		update_curr_rt(rq);
+Will
