@@ -2,179 +2,138 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3082C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:45:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2432EC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:46:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57B0720657
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:45:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57B0720657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E8EA120657
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:46:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8EA120657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726222AbeJ2WeI (ORCPT
+        id S1726493AbeJ2WfF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 18:34:08 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:15838 "EHLO mx1.redhat.com"
+        Mon, 29 Oct 2018 18:35:05 -0400
+Received: from mga05.intel.com ([192.55.52.43]:6142 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725977AbeJ2WeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 18:34:08 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726047AbeJ2WfF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 18:35:05 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2018 06:46:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,440,1534834800"; 
+   d="scan'208";a="82425017"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga008.fm.intel.com with ESMTP; 29 Oct 2018 06:46:21 -0700
+Received: from [10.251.20.185] (kliang2-mobl1.ccr.corp.intel.com [10.251.20.185])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0E714307EAB8;
-        Mon, 29 Oct 2018 13:45:24 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-158.ams2.redhat.com [10.36.116.158])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 746805EDEA;
-        Mon, 29 Oct 2018 13:45:16 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id A22BDB3DC7; Mon, 29 Oct 2018 14:45:15 +0100 (CET)
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     David Airlie <airlied@redhat.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
-        BOCHS VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3] drm/bochs: add edid support.
-Date:   Mon, 29 Oct 2018 14:45:07 +0100
-Message-Id: <20181029134507.7775-1-kraxel@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Mon, 29 Oct 2018 13:45:24 +0000 (UTC)
+        by linux.intel.com (Postfix) with ESMTPS id 8E27F580332;
+        Mon, 29 Oct 2018 06:46:20 -0700 (PDT)
+Subject: Re: perf synthesized mmap timeouts
+To:     David Miller <davem@davemloft.net>, acme@kernel.org
+Cc:     linux-kernel@vger.kernel.org, kan.liang@intel.com
+References: <20181027.214102.1558835285408950686.davem@davemloft.net>
+From:   "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <61d0538b-fdd4-933d-397b-4bbe339bb517@linux.intel.com>
+Date:   Mon, 29 Oct 2018 09:46:17 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181027.214102.1558835285408950686.davem@davemloft.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Recent qemu (latest master branch, upcoming 3.1 release) got support
-for EDID data.  This patch adds guest driver support.
 
-EDID support in qemu is not (yet) enabled by default, so please use
-'qemu -device VGA,edid=on' for testing.
 
-Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
----
- drivers/gpu/drm/bochs/bochs.h     |  1 +
- drivers/gpu/drm/bochs/bochs_hw.c  | 39 +++++++++++++++++++++++++++++++++++++++
- drivers/gpu/drm/bochs/bochs_kms.c | 18 +++++++++++++++---
- 3 files changed, 55 insertions(+), 3 deletions(-)
+On 10/28/2018 12:41 AM, David Miller wrote:
+> 
+> If I understand the commit message for:
+> 
+> commit 8cc42de736b617827a4e7664fb8d7a325bc125bc
+> Author: Kan Liang <kan.liang@intel.com>
+> Date:   Thu Jan 18 13:26:32 2018 -0800
+> 
+>      perf top: Check the latency of perf_top__mmap_read()
+> 
+> properly, the problem is that a malicious or out of control
+> app can be doing endless mmaps causing perf to loop forever
+> processing the /proc/$PID/maps file.
+>
 
-diff --git a/drivers/gpu/drm/bochs/bochs.h b/drivers/gpu/drm/bochs/bochs.h
-index e7a69077e4..06b8166efa 100644
---- a/drivers/gpu/drm/bochs/bochs.h
-+++ b/drivers/gpu/drm/bochs/bochs.h
-@@ -66,6 +66,7 @@ struct bochs_device {
- 	u16 yres_virtual;
- 	u32 stride;
- 	u32 bpp;
-+	struct edid *edid;
- 
- 	/* drm */
- 	struct drm_device  *dev;
-diff --git a/drivers/gpu/drm/bochs/bochs_hw.c b/drivers/gpu/drm/bochs/bochs_hw.c
-index cacff73a64..db4afe94c5 100644
---- a/drivers/gpu/drm/bochs/bochs_hw.c
-+++ b/drivers/gpu/drm/bochs/bochs_hw.c
-@@ -69,6 +69,41 @@ static void bochs_hw_set_little_endian(struct bochs_device *bochs)
- #define bochs_hw_set_native_endian(_b) bochs_hw_set_little_endian(_b)
- #endif
- 
-+static int bochs_load_edid(struct bochs_device *bochs)
-+{
-+	uint8_t *blob;
-+	size_t i, len;
-+	uint8_t num_exts;
-+
-+	if (!bochs->mmio)
-+		return -1;
-+
-+	if ((readb(bochs->mmio+0) != 0x00 ||
-+	     readb(bochs->mmio+1) != 0xff))
-+		return -1;
-+
-+	num_exts = readb(bochs->mmio + 126);
-+	len = EDID_LENGTH * (1 + num_exts);
-+	if (len > 0x400 /* vga register offset */)
-+		return -1;
-+
-+	kfree(bochs->edid);
-+	bochs->edid = kmalloc(len, GFP_KERNEL);
-+	blob = (void *)bochs->edid;
-+	for (i = 0; i < len; i++) {
-+		blob[i] = readb(bochs->mmio+i);
-+	}
-+
-+	if (!drm_edid_is_valid(bochs->edid)) {
-+		DRM_ERROR("EDID is not valid, ignoring.\n");
-+		kfree(bochs->edid);
-+		bochs->edid = NULL;
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
- int bochs_hw_init(struct drm_device *dev)
- {
- 	struct bochs_device *bochs = dev->dev_private;
-@@ -150,6 +185,9 @@ int bochs_hw_init(struct drm_device *dev)
- 	}
- 
- noext:
-+	if (bochs_load_edid(bochs) == 0)
-+		DRM_INFO("Found EDID data blob.\n");
-+
- 	return 0;
- }
- 
-@@ -164,6 +202,7 @@ void bochs_hw_fini(struct drm_device *dev)
- 	if (bochs->fb_map)
- 		iounmap(bochs->fb_map);
- 	pci_release_regions(dev->pdev);
-+	kfree(bochs->edid);
- }
- 
- void bochs_hw_setmode(struct bochs_device *bochs,
-diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
-index 9bc5b438ae..b9931443a7 100644
---- a/drivers/gpu/drm/bochs/bochs_kms.c
-+++ b/drivers/gpu/drm/bochs/bochs_kms.c
-@@ -213,10 +213,17 @@ static void bochs_encoder_init(struct drm_device *dev)
- 
- static int bochs_connector_get_modes(struct drm_connector *connector)
- {
--	int count;
-+	struct bochs_device *bochs =
-+		container_of(connector, struct bochs_device, connector);
-+	int count = 0;
- 
--	count = drm_add_modes_noedid(connector, 8192, 8192);
--	drm_set_preferred_mode(connector, defx, defy);
-+	if (bochs->edid)
-+		count = drm_add_edid_modes(connector, bochs->edid);
-+
-+	if (!count) {
-+		count = drm_add_modes_noedid(connector, 8192, 8192);
-+		drm_set_preferred_mode(connector, defx, defy);
-+	}
- 	return count;
- }
- 
-@@ -271,6 +278,11 @@ static void bochs_connector_init(struct drm_device *dev)
- 	drm_connector_helper_add(connector,
- 				 &bochs_connector_connector_helper_funcs);
- 	drm_connector_register(connector);
-+
-+	if (bochs->edid) {
-+		drm_connector_attach_edid_property(connector);
-+		drm_connector_update_edid_property(connector, bochs->edid);
-+	}
- }
- 
- 
--- 
-2.9.3
+NO, the perf_top__mmap_read() is used to read and process all available 
+samples on each ringbuffer. It will be called repeatedly until perf top 
+exit.
 
+If it is a fully loaded system, the processing time of the function will 
+be very long. Even much longer than refresh time for display thread. If 
+so, it means that only stale data can be shown, or even worse, nothing 
+can be shown.
+For example, in the Knights Landing/Mill platform, the processing time 
+could be tens of minutes if there is a heavy load (kernel building).
+Because for the Knights Landing/Mill platform, the CPU# is big (> 200), 
+but the computational capabilities for each core is weak (Atom core).
+There is nothing shown on the screen during this period.
+That's why we add a warning here to give user a hint.
+
+If it's annoying for your case, I think you encountered the similar 
+problem. You may want to follow the hint, and have the latest data 
+refreshed. On the other hand, I agree that we need a more decent way to 
+deliver the hint.
+
+Thanks,
+Kan
+
+> But that is not what this commit is handling at all.
+> 
+> It is instead applying a large hammer which quits if it is taking a
+> long time to process the maps, not if the process's mmap list is
+> growing endlessly while we process it.
+> 
+> This triggers any time I run perf top on a fully loaded system making
+> perf less useful than it should be.
+> 
+> And it triggers simply because the perf synthesize threads have to
+> share the cpu with the workload already running.
+> 
+> So it takes more than half a second to process emacs's 527 maps when
+> the number of running processes is ~NCPUS?  Big deal.  We should let
+> it finish....
+> 
+> The tradeoff choosen here is really bad.
+> 
+> Guess what happens if you don't have maps for a given process?
+> 
+> What happens is that for every single sample we get within that range,
+> we get a completely unique histogram entry.
+> 
+> This means potentially millions and millions of histogram entries
+> where there should only be a few hundred.
+> 
+> This makes the histogram rbtree huge, and slow to process.
+> 
+> So not only is top unable to provide correct histogram output, it is
+> also running sluggishly.
+> 
+> A way to mitigate the actual problem would be to snapshot the maps
+> file into a large buffer, if possible.  We can get the full contents
+> faster than the process in question can make more maps.  At most we
+> will do one additional read at the end if they were able to sneak in
+> one new mmap during the initial read.
+> 
+> No timeout necessary.  We have the complete maps file, our processing
+> time is therefore bounded.
+> 
+> Thanks.
+> 
