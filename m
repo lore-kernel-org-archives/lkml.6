@@ -2,99 +2,94 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58A1BC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:41:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0340CC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:41:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AF7420870
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:41:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HnokiOq4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AF7420870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id C847D2080A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:41:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C847D2080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726600AbeJ2W3s (ORCPT
+        id S1726679AbeJ2WaX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 18:29:48 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:45006 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725862AbeJ2W3s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 18:29:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=7tOo3mOK1RhCIFMhClp70+XyUYGv1gfIsS6PyLmMgJM=; b=HnokiOq4Tly7OCMPlmMDSRKxVp
-        mWbkYnOTCGE3vShL6H50qNxIhL66pqHkzKmPKxKYmcopgoIoevXegcSvdGuvwdswGeBptDP/1DI+G
-        Gt8T2tAAVkrMjRuXeEyo/ckM0VOP7kAQFJgfQPxnD+KM5Y3KcsdKXC2E5yhOdsUDmnqKUN/Fyf+G0
-        jhggGCjM0mZPMOe2Q1qP+1ljTl+FwlYMjDQtWMnkt9MfGQI/6IR70mj3cwnZxdXt2X396AzN1ThZ1
-        G4/CBl7keWa+aL1nW+psS9j55MBfHwfHdQ7QY2mC0NH/d0tu8nzNXUfUcl8ptzv02bTO6vmIrlHsW
-        PwTZ+rJA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gH7mu-0003HR-R5; Mon, 29 Oct 2018 13:41:00 +0000
-Date:   Mon, 29 Oct 2018 06:41:00 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Vitor soares <vitor.soares@synopsys.com>
-Cc:     boris.brezillon@bootlin.com, wsa@the-dreams.de,
-        linux-i2c@vger.kernel.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org, gregkh@linuxfoundation.org,
-        arnd@arndb.de, psroka@cadence.com, agolec@cadence.com,
-        adouglas@cadence.com, bfolta@cadence.com, dkos@cadence.com,
-        alicja@cadence.com, cwronka@cadence.com, sureshp@cadence.com,
-        rafalc@cadence.com, thomas.petazzoni@bootlin.com, nm@ti.com,
-        robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com,
-        ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        geert@linux-m68k.org, linus.walleij@linaro.org,
-        Xiang.Lin@synaptics.com, linux-gpio@vger.kernel.org,
-        nsekhar@ti.com, pgaj@cadence.com, peda@axentia.se,
-        mshettel@codeaurora.org, swboyd@chromium.org,
-        joao.pinto@synopsys.com, luis.oliveira@synopsys.com,
-        manuel.abreu@synopsys.com, gustavo.pimentel@synopsys.com
-Subject: Re: [PATCH 1/3] i3c: master: Add driver for Synopsys DesignWare IP
-Message-ID: <20181029134100.GD28520@bombadil.infradead.org>
-References: <1540807618-13246-1-git-send-email-soares@synopsys.com>
- <1540807618-13246-2-git-send-email-soares@synopsys.com>
+        Mon, 29 Oct 2018 18:30:23 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48164 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725862AbeJ2WaX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 18:30:23 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 958DC3002875;
+        Mon, 29 Oct 2018 13:41:39 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-109.pek2.redhat.com [10.72.12.109])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 399FB60C65;
+        Mon, 29 Oct 2018 13:41:30 +0000 (UTC)
+Subject: Re: [PATCH] kdump, vmcoreinfo: Export sme_me_mask value to vmcoreinfo
+To:     Baoquan He <bhe@redhat.com>
+Cc:     Borislav Petkov <bp@alien8.de>, Petr Tesarik <ptesarik@suse.cz>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        kexec@lists.infradead.org, mingo@redhat.com, tglx@linutronix.de,
+        dyoung@redhat.com
+References: <20181027101221.GC1046@nazgul.tnic>
+ <20181027110858.GB14493@MiWiFi-R3L-srv>
+ <C5F8ED8E-F361-4C6C-B9E2-E3C8BCD8E050@alien8.de>
+ <c55bef2a-b972-7e6e-b698-6ac1bc736046@redhat.com>
+ <20181027145151.GA7338@nazgul.tnic>
+ <390b16ba-05d7-3590-c3b2-4b69aa3ae051@redhat.com>
+ <20181029083118.GC1884@MiWiFi-R3L-srv>
+ <d6f93848-c750-f29c-4ca7-9661596cad62@redhat.com>
+ <20181029095738.GB20101@zn.tnic>
+ <15897206-c1a6-ced6-3a1b-f71da8fc9c83@redhat.com>
+ <20181029114414.GA11408@MiWiFi-R3L-srv>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <90385882-7fd1-a674-ec5a-19bd42471a5e@redhat.com>
+Date:   Mon, 29 Oct 2018 21:41:26 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <20181029114414.GA11408@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1540807618-13246-2-git-send-email-soares@synopsys.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 29 Oct 2018 13:41:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 10:06:56AM +0000, Vitor soares wrote:
-> +config DW_I3C_MASTER
-> +	tristate "Synospsys DesignWare I3C master driver"
-> +	depends on I3C
-
-> +	depends on !(ALPHA || PARISC)
-
-why?
-
-> +	help
-> +	  Support·for·Synopsys·DesignWare·MIPI·I3C·Controller.
-
-These strange characters (displayed as a centred dot on my terminal)
-should probably be spaces.
-
-> +static struct dw_i3c_xfer *
-> +dw_i3c_master_alloc_xfer(struct dw_i3c_master *master, unsigned int ncmds)
-> +{
-> +	struct dw_i3c_xfer *xfer;
+åœ¨ 2018å¹´10æœˆ29æ—¥ 19:44, Baoquan He å†™é“:
+> On 10/29/18 at 06:12pm, lijiang wrote:
+>> diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+>> index 4c8acdfdc5a7..3cc975e7ff8f 100644
+>> --- a/arch/x86/kernel/machine_kexec_64.c
+>> +++ b/arch/x86/kernel/machine_kexec_64.c
+>> @@ -352,11 +352,16 @@ void machine_kexec(struct kimage *image)
+>>
+>  void arch_crash_save_vmcoreinfo(void)
+>  {
+> +       u64 sme_mask = sme_me_mask;
 > +
-> +	xfer = kzalloc(sizeof(*xfer) + (ncmds * sizeof(*xfer->cmds)),
-> +		       GFP_KERNEL);
+> 
+> This may looks better.
+> 
 
-You should be using struct_size() here.
+Ok, thanks for your comment.
 
+>         VMCOREINFO_NUMBER(phys_base);
+>         VMCOREINFO_SYMBOL(init_top_pgt);
+>         vmcoreinfo_append_str("NUMBER(pgtable_l5_enabled)=%d\n",
+>                         pgtable_l5_enabled());
+> 
+> +       VMCOREINFO_NUMBER(sme_mask);
+> +
+>  #ifdef CONFIG_NUMA
+>         VMCOREINFO_SYMBOL(node_data);
+>         VMCOREINFO_LENGTH(node_data, MAX_NUMNODES);
+> 
