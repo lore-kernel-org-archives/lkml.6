@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5815FC46475
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:50:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61A38C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:50:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2808C2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:50:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2808C2084A
+	by mail.kernel.org (Postfix) with ESMTP id 2F29220851
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:50:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F29220851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=benyossef.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729770AbeJ2Si0 (ORCPT
+        id S1729788AbeJ2Sia (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 14:38:26 -0400
-Received: from foss.arm.com ([217.140.101.70]:37784 "EHLO foss.arm.com"
+        Mon, 29 Oct 2018 14:38:30 -0400
+Received: from foss.arm.com ([217.140.101.70]:37796 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729343AbeJ2SiZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 14:38:25 -0400
+        id S1729509AbeJ2Sia (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 14:38:30 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8DA98341;
-        Mon, 29 Oct 2018 02:50:30 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C870E1596;
+        Mon, 29 Oct 2018 02:50:34 -0700 (PDT)
 Received: from sugar.kfn.arm.com (E110176.Arm.com [10.50.4.178])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 216FD3F557;
-        Mon, 29 Oct 2018 02:50:27 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8EF1F3F557;
+        Mon, 29 Oct 2018 02:50:32 -0700 (PDT)
 From:   Gilad Ben-Yossef <gilad@benyossef.com>
 To:     Herbert Xu <herbert@gondor.apana.org.au>,
         "David S. Miller" <davem@davemloft.net>,
@@ -36,9 +36,9 @@ To:     Herbert Xu <herbert@gondor.apana.org.au>,
 Cc:     Ofir Drang <Ofir.Drang@arm.com>, Yael Chemla <Yael.Chemla@arm.com>,
         linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/3] dt-bindings: crypto: ccree: add ccree 713
-Date:   Mon, 29 Oct 2018 09:50:13 +0000
-Message-Id: <1540806616-5483-3-git-send-email-gilad@benyossef.com>
+Subject: [PATCH v2 3/3] crypto: ccree: add SM4 support
+Date:   Mon, 29 Oct 2018 09:50:14 +0000
+Message-Id: <1540806616-5483-4-git-send-email-gilad@benyossef.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1540806616-5483-1-git-send-email-gilad@benyossef.com>
 References: <1540806616-5483-1-git-send-email-gilad@benyossef.com>
@@ -47,32 +47,156 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add device tree bindings associating Arm TrustZone CryptoCell 713 with the
-ccree driver.
+Add support for SM4 cipher in CryptoCell 713.
 
 Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
 ---
- Documentation/devicetree/bindings/crypto/arm-cryptocell.txt | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/crypto/Kconfig                  |  1 +
+ drivers/crypto/ccree/cc_cipher.c        | 66 +++++++++++++++++++++++++++++++++
+ drivers/crypto/ccree/cc_hw_queue_defs.h |  3 ++
+ 3 files changed, 70 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/crypto/arm-cryptocell.txt b/Documentation/devicetree/bindings/crypto/arm-cryptocell.txt
-index 999fb2a..0ac06ec 100644
---- a/Documentation/devicetree/bindings/crypto/arm-cryptocell.txt
-+++ b/Documentation/devicetree/bindings/crypto/arm-cryptocell.txt
-@@ -1,8 +1,11 @@
- Arm TrustZone CryptoCell cryptographic engine
+diff --git a/drivers/crypto/Kconfig b/drivers/crypto/Kconfig
+index bea4de6..c7e6f5d 100644
+--- a/drivers/crypto/Kconfig
++++ b/drivers/crypto/Kconfig
+@@ -751,6 +751,7 @@ config CRYPTO_DEV_CCREE
+ 	select CRYPTO_ECB
+ 	select CRYPTO_CTR
+ 	select CRYPTO_XTS
++	select CRYPTO_SM4
+ 	help
+ 	  Say 'Y' to enable a driver for the REE interface of the Arm
+ 	  TrustZone CryptoCell family of processors. Currently the
+diff --git a/drivers/crypto/ccree/cc_cipher.c b/drivers/crypto/ccree/cc_cipher.c
+index 7623b299..989e70f 100644
+--- a/drivers/crypto/ccree/cc_cipher.c
++++ b/drivers/crypto/ccree/cc_cipher.c
+@@ -7,6 +7,7 @@
+ #include <crypto/internal/skcipher.h>
+ #include <crypto/des.h>
+ #include <crypto/xts.h>
++#include <crypto/sm4.h>
+ #include <crypto/scatterwalk.h>
  
- Required properties:
--- compatible: Should be one of: "arm,cryptocell-712-ree",
--  "arm,cryptocell-710-ree" or "arm,cryptocell-630p-ree".
-+- compatible: Should be one of -
-+   "arm,cryptocell-713-ree"
-+   "arm,cryptocell-712-ree"
-+   "arm,cryptocell-710-ree"
-+   "arm,cryptocell-630p-ree"
- - reg: Base physical address of the engine and length of memory mapped region.
- - interrupts: Interrupt number for the device.
+ #include "cc_driver.h"
+@@ -83,6 +84,9 @@ static int validate_keys_sizes(struct cc_cipher_ctx *ctx_p, u32 size)
+ 		if (size == DES3_EDE_KEY_SIZE || size == DES_KEY_SIZE)
+ 			return 0;
+ 		break;
++	case S_DIN_to_SM4:
++		if (size == SM4_KEY_SIZE)
++			return 0;
+ 	default:
+ 		break;
+ 	}
+@@ -122,6 +126,17 @@ static int validate_data_size(struct cc_cipher_ctx *ctx_p,
+ 		if (IS_ALIGNED(size, DES_BLOCK_SIZE))
+ 			return 0;
+ 		break;
++	case S_DIN_to_SM4:
++		switch (ctx_p->cipher_mode) {
++		case DRV_CIPHER_CTR:
++			return 0;
++		case DRV_CIPHER_ECB:
++		case DRV_CIPHER_CBC:
++			if (IS_ALIGNED(size, SM4_BLOCK_SIZE))
++				return 0;
++		default:
++			break;
++		}
+ 	default:
+ 		break;
+ 	}
+@@ -522,6 +537,9 @@ static void cc_setup_cipher_data(struct crypto_tfm *tfm,
+ 	case S_DIN_to_DES:
+ 		flow_mode = DIN_DES_DOUT;
+ 		break;
++	case S_DIN_to_SM4:
++		flow_mode = DIN_SM4_DOUT;
++		break;
+ 	default:
+ 		dev_err(dev, "invalid flow mode, flow_mode = %d\n", flow_mode);
+ 		return;
+@@ -1324,6 +1342,54 @@ static const struct cc_alg_template skcipher_algs[] = {
+ 		.flow_mode = S_DIN_to_DES,
+ 		.min_hw_rev = CC_HW_REV_630,
+ 	},
++	{
++		.name = "cbc(sm4)",
++		.driver_name = "cbc-sm4-ccree",
++		.blocksize = SM4_BLOCK_SIZE,
++		.template_skcipher = {
++			.setkey = cc_cipher_setkey,
++			.encrypt = cc_cipher_encrypt,
++			.decrypt = cc_cipher_decrypt,
++			.min_keysize = SM4_KEY_SIZE,
++			.max_keysize = SM4_KEY_SIZE,
++			.ivsize = SM4_BLOCK_SIZE,
++			},
++		.cipher_mode = DRV_CIPHER_CBC,
++		.flow_mode = S_DIN_to_SM4,
++		.min_hw_rev = CC_HW_REV_713,
++	},
++	{
++		.name = "ecb(sm4)",
++		.driver_name = "ecb-sm4-ccree",
++		.blocksize = SM4_BLOCK_SIZE,
++		.template_skcipher = {
++			.setkey = cc_cipher_setkey,
++			.encrypt = cc_cipher_encrypt,
++			.decrypt = cc_cipher_decrypt,
++			.min_keysize = SM4_KEY_SIZE,
++			.max_keysize = SM4_KEY_SIZE,
++			.ivsize = 0,
++			},
++		.cipher_mode = DRV_CIPHER_ECB,
++		.flow_mode = S_DIN_to_SM4,
++		.min_hw_rev = CC_HW_REV_713,
++	},
++	{
++		.name = "ctr(sm4)",
++		.driver_name = "ctr-sm4-ccree",
++		.blocksize = SM4_BLOCK_SIZE,
++		.template_skcipher = {
++			.setkey = cc_cipher_setkey,
++			.encrypt = cc_cipher_encrypt,
++			.decrypt = cc_cipher_decrypt,
++			.min_keysize = SM4_KEY_SIZE,
++			.max_keysize = SM4_KEY_SIZE,
++			.ivsize = SM4_BLOCK_SIZE,
++			},
++		.cipher_mode = DRV_CIPHER_CTR,
++		.flow_mode = S_DIN_to_SM4,
++		.min_hw_rev = CC_HW_REV_713,
++	},
+ };
  
+ static struct cc_crypto_alg *cc_create_alg(const struct cc_alg_template *tmpl,
+diff --git a/drivers/crypto/ccree/cc_hw_queue_defs.h b/drivers/crypto/ccree/cc_hw_queue_defs.h
+index 45985b9..f719ff9c 100644
+--- a/drivers/crypto/ccree/cc_hw_queue_defs.h
++++ b/drivers/crypto/ccree/cc_hw_queue_defs.h
+@@ -107,6 +107,7 @@ enum cc_flow_mode {
+ 	AES_to_AES_to_HASH_and_DOUT	= 13,
+ 	AES_to_AES_to_HASH	= 14,
+ 	AES_to_HASH_and_AES	= 15,
++	DIN_SM4_DOUT		= 16,
+ 	DIN_AES_AESMAC		= 17,
+ 	HASH_to_DOUT		= 18,
+ 	/* setup flows */
+@@ -114,9 +115,11 @@ enum cc_flow_mode {
+ 	S_DIN_to_AES2		= 33,
+ 	S_DIN_to_DES		= 34,
+ 	S_DIN_to_RC4		= 35,
++	S_DIN_to_SM4		= 36,
+ 	S_DIN_to_HASH		= 37,
+ 	S_AES_to_DOUT		= 38,
+ 	S_AES2_to_DOUT		= 39,
++	S_SM4_to_DOUT		= 40,
+ 	S_RC4_to_DOUT		= 41,
+ 	S_DES_to_DOUT		= 42,
+ 	S_HASH_to_DOUT		= 43,
 -- 
 2.7.4
 
