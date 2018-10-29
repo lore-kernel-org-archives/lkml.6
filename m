@@ -2,121 +2,153 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1529CC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9586FC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:04:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB9C32087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:04:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AD422082D
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:04:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jmNOesas"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB9C32087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=korsgaard.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="xD//XRnN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AD422082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726488AbeJ2Vwx (ORCPT
+        id S1726580AbeJ2Vw4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 17:52:53 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:46255 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725886AbeJ2Vwx (ORCPT
+        Mon, 29 Oct 2018 17:52:56 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:51980 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725971AbeJ2Vwy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 17:52:53 -0400
-Received: by mail-ed1-f67.google.com with SMTP id v18-v6so7184165edq.13;
+        Mon, 29 Oct 2018 17:52:54 -0400
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id w9TD4Fvx011893;
+        Mon, 29 Oct 2018 22:04:16 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w9TD4Fvx011893
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1540818256;
+        bh=t/8A7yVZQ2O0p60HD19rRpcS1YNmjufORWnIox32jrI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=xD//XRnNhmPvMcoA7EzyRH/UxSw1KgV+Sp83myrXiThaOpyTDVtVAS+XN/E0FbbIZ
+         53YVOsjgQzqX6Z8wDNaDiMkmvrMUvT1Y3ApC+uEO0rIyMx4nuDbxN20UB+xWBCmL59
+         KwFLdmLcUm52PDEDH3Qh8dhq77LsLwRI/HxLYu3YFId4zp9NKpEsGS068h79WBh5Ur
+         Ha21kOmkfMVjhsp7akIGJ1hiCySB9ZBc07i3bVbOGzXMYazPE/JuUxHMGHFquL5517
+         QyhOnakomnBqghb17cweedE/DLJuH6fBs2ynXjN5idyJWGOjzOmDeyA0JFRprxUz9V
+         hCO6/29Nj2iDA==
+X-Nifty-SrcIP: [209.85.217.43]
+Received: by mail-vs1-f43.google.com with SMTP id v205so2524105vsc.3;
         Mon, 29 Oct 2018 06:04:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:references:date:in-reply-to:message-id
-         :user-agent:mime-version;
-        bh=HhOss3t/D5OWI5zhM8Hag1e35zlkzx3kXjNsw5TjDaM=;
-        b=jmNOesasNQd3E6j+Ym89Ms9Sg0qpFN/L/QQ2Pp1qX2ClJ66cZvfdHqVqjypU93kUtI
-         IrZESOQoKUD6DqWWe+EMCdSEFA49rlmRK6NAkIxePFk9OpIGkAOCWUZ+1Q1Rp7k7ueEY
-         ctw4OrMAIPCQblkWgTGQvGKq0uRWfGbP4iEYVJ7xWH7RRNUn6SVxCYy5dDIbvMT6vpFS
-         qPewHdn5Pk/7hQ3X/Htb/BrIxphSK3t134MjGjU9umqQLlm6N4hIHBevGDSLYGKjOlov
-         uCjnE/Wg+fRTAFu+m8shkCg7uNQ60JU7+Sr7Z0/mhZyDmKaZx37Tyfoe5vEwYbgGp6dY
-         uSGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:references:date
-         :in-reply-to:message-id:user-agent:mime-version;
-        bh=HhOss3t/D5OWI5zhM8Hag1e35zlkzx3kXjNsw5TjDaM=;
-        b=QbJVQMDgGjOPIqCAtWe9EjLckVKcoP8fdBDP2etJ7xvsxRgyjG7Y4+N/K4bCphUp5z
-         mnsmNNvW9KasMSAzoFQCc7lmA8GADtFmSLfH/R1Q9NNK4la1YxuhZDQQhTxM3VfnTGtu
-         ZyGAryyrfSnWdoFPifq/r28S+oGuiHHQfXoFNnyaJma/BX+dGdmX43YTb0hsBT/iqEVT
-         7NbtR86lIvEwOwJI53KC6iGG69SjBM110fD6MUbS1saHz74di1LGJSahhJqcTKVt7/SA
-         PDFx4nakVsMdvF2EGOaivGO4iVWZVCKbR4BF2ksGu5Su7J+m+0BacbgzkL8HE0XHFUjj
-         4ZQQ==
-X-Gm-Message-State: AGRZ1gJfbawmhWiclh1IQwRY8AsGt6g+1EZNK76LV4MyH5pIINFxRqUA
-        7tgYa+d1jw8kc2z/nDSMeyrAGRs2
-X-Google-Smtp-Source: AJdET5cNU1GlquAV5tuhc5Aabr86M7LqfT2mIgirTpni9U7btTGx1ub9+X+GQADVb/xnrGrsZFv3Tg==
-X-Received: by 2002:a17:906:6308:: with SMTP id p8-v6mr4346358ejk.100.1540818255864;
-        Mon, 29 Oct 2018 06:04:15 -0700 (PDT)
-Received: from dell.be.48ers.dk (d528f5fe4.static.telenet.be. [82.143.95.228])
-        by smtp.gmail.com with ESMTPSA id a4-v6sm5829154edt.82.2018.10.29.06.04.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Oct 2018 06:04:14 -0700 (PDT)
-Received: from peko by dell.be.48ers.dk with local (Exim 4.89)
-        (envelope-from <peter@korsgaard.com>)
-        id 1gH7DJ-0004Uf-Og; Mon, 29 Oct 2018 14:04:13 +0100
-From:   Peter Korsgaard <peter@korsgaard.com>
-To:     Federico Vaga <federico.vaga@cern.ch>
-Cc:     Peter Korsgaard <jacmet@sunsite.dk>,
-        linux-i2c <linux-i2c@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] i2c:ocores: add polling interface
-References: <20180625161303.7991-1-federico.vaga@cern.ch>
-        <4222986.LvGMQbjSbS@pcbe13614> <87woq438li.fsf@dell.be.48ers.dk>
-        <5352289.A0jT2G1FDH@pcbe13614>
-Date:   Mon, 29 Oct 2018 14:04:13 +0100
-In-Reply-To: <5352289.A0jT2G1FDH@pcbe13614> (Federico Vaga's message of "Mon,
-        29 Oct 2018 09:50:15 +0100")
-Message-ID: <87muqwzyya.fsf@dell.be.48ers.dk>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+X-Gm-Message-State: AGRZ1gImZLQ5G28YoSr7LEueFdjG2t9i3yC/o4psMWTdBaESEjpkCcQA
+        /TrjCf6F29UUMrmWMYjdTamHgXu4SoCFxyvoftg=
+X-Google-Smtp-Source: AJdET5db04YEM52vF6jvjKhAx5P4AnIzgRjmeFcGdL8OUewoJvEnevdVmFJPiycyfHUXFJG4eVL5E0XU6SN2oWJI7EY=
+X-Received: by 2002:a67:385a:: with SMTP id f87mr5992449vsa.179.1540818255048;
+ Mon, 29 Oct 2018 06:04:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20181028130945.23581-1-changbin.du@gmail.com> <20181028130945.23581-3-changbin.du@gmail.com>
+In-Reply-To: <20181028130945.23581-3-changbin.du@gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 29 Oct 2018 22:03:38 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASiGPar_Aj1KDu8E+S=NKRf7mEJ8gwe2=OMUGggZmtfNQ@mail.gmail.com>
+Message-ID: <CAK7LNASiGPar_Aj1KDu8E+S=NKRf7mEJ8gwe2=OMUGggZmtfNQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] kernel hacking: new config NO_AUTO_INLINE to
+ disable compiler auto-inline optimizations
+To:     Changbin Du <changbin.du@gmail.com>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>, X86 ML <x86@kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-sparse@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>>>> "Federico" == Federico Vaga <federico.vaga@cern.ch> writes:
+On Sun, Oct 28, 2018 at 10:13 PM Changbin Du <changbin.du@gmail.com> wrote:
+>
+> This patch add a new kernel hacking option NO_AUTO_INLINE. Selecting
 
-Hi,
 
- >> >> Where does this 10 come from?
- >> > 
- >> > It's true, it's just a random number. It can be zero as well, and we ask
- >> > the system to just sleep for that amount of time.
- >> > 
- >> > (1) usleep_range(sleep_min, sleep_min);
- >> 
- >> Or just usleep(sleep_min);
+I fixed "This patch add ..." to "This patch adds ..."
+then applied to linux-kbuild.
 
- > This does not exist as far as I know; the alternative is an active wait with 
- > udelay. But then, it is not that different from just start polling TIP or BUSY 
- > flags.
 
-Ahh yes.
 
- > I think that something like this could be better
 
- > (2) usleep_range(sleep_min, sleep_min * XXX);
+> this option will prevent the compiler from optimizing the kernel by
+> auto-inlining functions not marked with the inline keyword.
+>
+> With this option, only functions explicitly marked with "inline" will
+> be inlined. This will allow the function tracer to trace more functions
+> because it only traces functions that the compiler has not inlined.
+>
+> Signed-off-by: Changbin Du <changbin.du@gmail.com>
+> Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> ---
+>  Makefile          |  6 ++++++
+>  lib/Kconfig.debug | 17 +++++++++++++++++
+>  2 files changed, 23 insertions(+)
+>
+> diff --git a/Makefile b/Makefile
+> index 7d4ba5196010..04beb822ddfc 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -749,6 +749,12 @@ KBUILD_CFLAGS      += $(call cc-option, -femit-struct-debug-baseonly) \
+>                    $(call cc-option,-fno-var-tracking)
+>  endif
+>
+> +ifdef CONFIG_NO_AUTO_INLINE
+> +KBUILD_CFLAGS   += $(call cc-option, -fno-inline-functions) \
+> +                  $(call cc-option, -fno-inline-small-functions) \
+> +                  $(call cc-option, -fno-inline-functions-called-once)
+> +endif
+> +
+>  ifdef CONFIG_FUNCTION_TRACER
+>  ifdef CONFIG_FTRACE_MCOUNT_RECORD
+>    # gcc 5 supports generating the mcount tables directly
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index 04adfc3b185e..d50711b41dad 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -211,6 +211,23 @@ config GDB_SCRIPTS
+>           instance. See Documentation/dev-tools/gdb-kernel-debugging.rst
+>           for further details.
+>
+> +config NO_AUTO_INLINE
+> +       bool "Disable compiler auto-inline optimizations"
+> +       help
+> +         This will prevent the compiler from optimizing the kernel by
+> +         auto-inlining functions not marked with the inline keyword.
+> +         With this option, only functions explicitly marked with
+> +         "inline" will be inlined. This will allow the function tracer
+> +         to trace more functions because it only traces functions that
+> +         the compiler has not inlined.
+> +
+> +         Enabling this function can help debugging a kernel if using
+> +         the function tracer. But it can also change how the kernel
+> +         works, because inlining functions may change the timing,
+> +         which could make it difficult while debugging race conditions.
+> +
+> +         If unsure, select N.
+> +
+>  config ENABLE_MUST_CHECK
+>         bool "Enable __must_check logic"
+>         default y
+> --
+> 2.17.1
+>
 
- > But.
- > Since it is better to make this patch ready for xfer_irqless, then I will 
- > definitively go for udelay(). The reason is that, xfer_irqless may run in 
- > atomic context where we can't sleep at all.
-
-Great! BTW I noticed that your sleep_min calculation looked odd:
-
-int sleep_min = (8/i2c->bus_clock_khz) * 1000; /* us for 8bits
-
-bus_clock_khz almost certainly will be bigger than 8 (E.G. likely
-100KHz), so the above set sleep_min to 0. Please move the * 1000 before
-the division.
 
 -- 
-Bye, Peter Korsgaard
+Best Regards
+Masahiro Yamada
