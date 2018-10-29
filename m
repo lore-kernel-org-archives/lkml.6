@@ -2,110 +2,99 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9BBBC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 15:57:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88006C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 15:57:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A45B62082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 15:57:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A45B62082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4DAF32084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 15:57:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DAF32084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727698AbeJ3AqM (ORCPT
+        id S1727803AbeJ3Aqd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 20:46:12 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33370 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727085AbeJ3AqL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 20:46:11 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D8063AD33;
-        Mon, 29 Oct 2018 15:56:57 +0000 (UTC)
-Date:   Mon, 29 Oct 2018 16:56:56 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     alexander.h.duyck@linux.intel.com, Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Pasha Tatashin <pavel.tatashin@microsoft.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        rppt@linux.vnet.ibm.com, Ingo Molnar <mingo@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Zhang Yi <yi.z.zhang@linux.intel.com>
-Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
- point where we init pgmap
-Message-ID: <20181029155656.GK32673@dhcp22.suse.cz>
-References: <20181010095838.GG5873@dhcp22.suse.cz>
- <f97de51c-67dd-99b2-754e-0685cac06699@linux.intel.com>
- <20181010172451.GK5873@dhcp22.suse.cz>
- <98c35e19-13b9-0913-87d9-b3f1ab738b61@linux.intel.com>
- <20181010185242.GP5873@dhcp22.suse.cz>
- <20181011085509.GS5873@dhcp22.suse.cz>
- <6f32f23c-c21c-9d42-7dda-a1d18613cd3c@linux.intel.com>
- <20181017075257.GF18839@dhcp22.suse.cz>
- <971729e6-bcfe-a386-361b-d662951e69a7@linux.intel.com>
- <CAPcyv4gZZcuWFLzRpyJcAxtGEPTDkpwkG3J0Z4Q1u790+7W2Ag@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4gZZcuWFLzRpyJcAxtGEPTDkpwkG3J0Z4Q1u790+7W2Ag@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 29 Oct 2018 20:46:33 -0400
+Received: from mga06.intel.com ([134.134.136.31]:10654 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727565AbeJ3Aqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 20:46:33 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2018 08:57:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,440,1534834800"; 
+   d="asc'?scan'208";a="81823516"
+Received: from jtkirshe-desk1.jf.intel.com ([134.134.177.96])
+  by fmsmga007.fm.intel.com with ESMTP; 29 Oct 2018 08:57:19 -0700
+Message-ID: <c7970686b40e5348b2351580b19f45ee6edc12a9.camel@intel.com>
+Subject: Re: [PATCH 2/2] kconfig: remove silentoldconfig target
+From:   Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Reply-To: jeffrey.t.kirsher@intel.com
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild@vger.kernel.org
+Cc:     "David S. Miller" <davem@davemloft.net>, linux-doc@vger.kernel.org,
+        netdev@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        intel-wired-lan@lists.osuosl.org, linux-kernel@vger.kernel.org
+Date:   Mon, 29 Oct 2018 09:00:48 -0700
+In-Reply-To: <1540827688-15999-2-git-send-email-yamada.masahiro@socionext.com>
+References: <1540827688-15999-1-git-send-email-yamada.masahiro@socionext.com>
+         <1540827688-15999-2-git-send-email-yamada.masahiro@socionext.com>
+Organization: Intel
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-Zp+VR215FWXUzxuFZmnr"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 29-10-18 08:49:46, Dan Williams wrote:
-> On Wed, Oct 17, 2018 at 8:02 AM Alexander Duyck
-> <alexander.h.duyck@linux.intel.com> wrote:
-> >
-> > On 10/17/2018 12:52 AM, Michal Hocko wrote:
-> > > On Thu 11-10-18 10:38:39, Alexander Duyck wrote:
-> > >> On 10/11/2018 1:55 AM, Michal Hocko wrote:
-> > >>> On Wed 10-10-18 20:52:42, Michal Hocko wrote:
-> > >>> [...]
-> > >>>> My recollection was that we do clear the reserved bit in
-> > >>>> move_pfn_range_to_zone and we indeed do in __init_single_page. But then
-> > >>>> we set the bit back right afterwards. This seems to be the case since
-> > >>>> d0dc12e86b319 which reorganized the code. I have to study this some more
-> > >>>> obviously.
-> > >>>
-> > >>> so my recollection was wrong and d0dc12e86b319 hasn't really changed
-> > >>> much because __init_single_page wouldn't zero out the struct page for
-> > >>> the hotplug contex. A comment in move_pfn_range_to_zone explains that we
-> > >>> want the reserved bit because pfn walkers already do see the pfn range
-> > >>> and the page is not fully associated with the zone until it is onlined.
-> > >>>
-> > >>> I am thinking that we might be overzealous here. With the full state
-> > >>> initialized we shouldn't actually care. pfn_to_online_page should return
-> > >>> NULL regardless of the reserved bit and normal pfn walkers shouldn't
-> > >>> touch pages they do not recognize and a plain page with ref. count 1
-> > >>> doesn't tell much to anybody. So I _suspect_ that we can simply drop the
-> > >>> reserved bit setting here.
-> > >>
-> > >> So this has me a bit hesitant to want to just drop the bit entirely. If
-> > >> nothing else I think I may wan to make that a patch onto itself so that if
-> > >> we aren't going to set it we just drop it there. That way if it does cause
-> > >> issues we can bisect it to that patch and pinpoint the cause.
-> > >
-> > > Yes a patch on its own make sense for bisectability.
-> >
-> > For now I think I am going to back off of this. There is a bunch of
-> > other changes that need to happen in order for us to make this work. As
-> > far as I can tell there are several places that are relying on this
-> > reserved bit.
-> 
-> When David Hildebrand and I looked it was only the hibernation code
-> that we thought needed changing.
 
-More details please?
+--=-Zp+VR215FWXUzxuFZmnr
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
--- 
-Michal Hocko
-SUSE Labs
+On Tue, 2018-10-30 at 00:41 +0900, Masahiro Yamada wrote:
+> As commit 911a91c39cab ("kconfig: rename silentoldconfig to
+> syncconfig") announced, it is time for the removal.
+>=20
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+>=20
+>  Documentation/networking/ice.rst | 2 +-
+>  scripts/kconfig/Makefile         | 9 +--------
+>  2 files changed, 2 insertions(+), 9 deletions(-)
+
+Acked-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+
+For the ice driver documentation change.
+
+--=-Zp+VR215FWXUzxuFZmnr
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiTyZWz+nnTrOJ1LZ5W/vlVpL7c4FAlvXLrAACgkQ5W/vlVpL
+7c7czA/7BJyuUZ7KlnPwyyvsq4CeO2EBjuqMQJTPHs44GgDBGLAQZxmnnsQNS8qY
+VoBpJeytrK3eiCOLEZj2jiQskY1kWY8SPwJumdotICdonIhnBkb9+9YcOKqb+BXx
+1szIy/8acRFWc+3WAoTcrICDKVCwf0cV7phXuj6NMjOPmH33Gt5X6gMfQWobAWZK
+XIppy5J2aBTH6XgDtAi0/SZA4FIZx/wl8mi36QQU83Utd/Cm86WMDi6CjD6InAdw
+eJSEPSATlxhxR4o2J+gv/KrieVKyctShS0nJCJ6IMgD4jHdMYLWOkAE2qMRySGqY
+klt7ts3eUG8V+7uEHROG9UbQUWnynsdgf2EStUJyGgVWRYubbrWs7mJjVX9tIrGa
+74FYauDDoAgd2sCjBIOaP5ys7pMw7Vqqrq5NoytBQJJkTQHpOKIX8ueLA09Kt9Qb
+kFsUhWkuF2G2l0PEb7ltq2O29dfQ6YTOdhGa+xIrgcp0d1f/ietVrAyhHucd8q8O
+iMBSO8cVMW1C+nwtbolmupAMrdDhhTsQ0xhGzruXkqjEj+z1J6zDhJKq/sfpvLNo
+0B73BXGfNL+sZ1L1kFrO5EFkvK7x/4SQtgjQwt11qhBlkBhXgOM1h4/JWa9725v7
+suMbspxRrPXscXBIXnLmHcr7tVY3l5E8NoKNpp88BFFceH7RT/k=
+=SE6r
+-----END PGP SIGNATURE-----
+
+--=-Zp+VR215FWXUzxuFZmnr--
+
