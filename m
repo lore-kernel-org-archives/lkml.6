@@ -2,221 +2,136 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 206E4C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 04:33:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9265C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 04:44:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7F192084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 04:33:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6196D2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 04:44:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="GPLp2h42"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7F192084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="O6KuvZAX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6196D2084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=live.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729105AbeJ2NUm (ORCPT
+        id S1729347AbeJ2NbF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 09:20:42 -0400
-Received: from ozlabs.org ([203.11.71.1]:42009 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729072AbeJ2NUm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 09:20:42 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42k1v9117Cz9s9J;
-        Mon, 29 Oct 2018 15:33:39 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1540787621;
-        bh=VAfOhW1ckDBRHFhsCEuWVCLUFa5gaMVQlj/0818P8oQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=GPLp2h42jZaZteI5jR7/hR62iw/Y6RfXvzE9gu7TvfNXiFN60laRoTWJwKs1ctgeT
-         iZtwj0OBCc2Twrl2nmxPtTOO/8FX5rRdi3amRURG8fHxfroFXBfR/9KDxkUPUwl/S5
-         BhJC4/kb0OFYaMVpwWuzUIw3yNMFL1f9X3UMJk/9xBFLp/LeCUF7zLbOa77ZSx9dEB
-         nPHu5UNGruy9OHK9cFz5XoOZnpnAt4onqo+hvuPjs98MRsyXeMz75b8gr/W7AT3187
-         Zrox1M6QUiO638o9FFJoDWRpcdxGlpXU5xA/MaPsCjcArZnQCD16AZUxjugK+Dj/0d
-         0BLHqiePDtWkg==
-Date:   Mon, 29 Oct 2018 15:33:34 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: linux-next: build failure after merge of the vfs tree
-Message-ID: <20181029153334.7c8d16cc@canb.auug.org.au>
-In-Reply-To: <20180910133525.28c5dd20@canb.auug.org.au>
-References: <20180910133525.28c5dd20@canb.auug.org.au>
+        Mon, 29 Oct 2018 09:31:05 -0400
+Received: from mail-oln040092014011.outbound.protection.outlook.com ([40.92.14.11]:19110
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729094AbeJ2NbE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 09:31:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=j7JsNHxV7rgEypCGxNFDrAgyioM9jitp/t4iAsM0otE=;
+ b=O6KuvZAXiR5aHw02DD2vuEqu2++r/JcS0J6lMeLbv9NnBEhN/clHltySl931Imsq+LKfMNWxG8LfbtZ3kN9wfoN7Crw7sJYFWfkmkd7hOfQQFEhg7S2PXHrQyXuSDXTkwQvmU3F2hYX2hH5IIej6b830mWAvUgWPTHErQ5V9XgPAQYsWj1lb7LK7jtNV6nj6ox7eelCKbfRMRspVixnmLiqoroSrVOBiF43xv0BRo1Ii3b6BizQyQ1Kbi7hM5//uFAzhNnUL/+tonnJ1SR/PZ/Om4VeXN5D10VmcY/pXtlfiTsnhKWwTkiwZDrFLcf40Fu0ExPjyeH18mFoWzt7K/w==
+Received: from DM3NAM05FT003.eop-nam05.prod.protection.outlook.com
+ (10.152.98.59) by DM3NAM05HT181.eop-nam05.prod.protection.outlook.com
+ (10.152.99.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1294.4; Mon, 29 Oct
+ 2018 04:44:03 +0000
+Received: from BL0PR02MB4851.namprd02.prod.outlook.com (10.152.98.51) by
+ DM3NAM05FT003.mail.protection.outlook.com (10.152.98.108) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1294.4 via Frontend Transport; Mon, 29 Oct 2018 04:44:03 +0000
+Received: from BL0PR02MB4851.namprd02.prod.outlook.com
+ ([fe80::a98d:3fd2:ebf8:5e25]) by BL0PR02MB4851.namprd02.prod.outlook.com
+ ([fe80::a98d:3fd2:ebf8:5e25%3]) with mapi id 15.20.1273.025; Mon, 29 Oct 2018
+ 04:44:03 +0000
+From:   abhja kaanlani <unidef_rogue@live.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [REQUEST FOR CODE INTEGRATION - L4.25-L5.05] Parallelization and
+ binary trees with huge dimensions
+Thread-Topic: [REQUEST FOR CODE INTEGRATION - L4.25-L5.05] Parallelization and
+ binary trees with huge dimensions
+Thread-Index: AQHUb0Hwfn99kMI7/UuWP+/4yBT/yQ==
+Date:   Mon, 29 Oct 2018 04:44:03 +0000
+Message-ID: <BL0PR02MB4851C51D639FB6AC1F62013983F30@BL0PR02MB4851.namprd02.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-incomingtopheadermarker: OriginalChecksum:479148BC9CAA9DCAFF853F209BED22439B73AC97F706D347162A5D392E9B3330;UpperCasedChecksum:504D691DCEDF0C87E190FA4AFB3DC27009905A1A3F035229B6FDA5E74C0D9604;SizeAsReceived:7021;Count:44
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [SK67lPQpATlfzeXVtw1KA1YpgF1C+mOX]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM3NAM05HT181;6:wuTWgCbyglsDLjIUlkoqbQN7NFne2/g4dRgUSiFuLQrVeqfEL+lb0fF3Wj6GhjTYldFfelBuLMBtGq46sgj81E1jOMI5HCyFeJ5Nc9f6oxIujHIwj9LIO4m0arw/6ACuqaaoGST6A7WQe/rOU+pDl2kZYytA+x4JfOdxg7yCNsxjxiRp0gUr4xWzRWUhxt5GOie4cqTruOM6S9cE3I2vU320MV5Xk1FgwlXEmpARchX8cpC4Acwv5KXIUIOrgd3Ki+ZN1T6D5UIk+uT58kBP5RO5csSt9xsXtqAUeyIb2rWfqMQyo3STLqZwQxdBFP7iMGrfvpVt2k4QuSjFiEZeVJC7Txj2sYfy+3cxG1kv9SlFV7nJ5Wst4Vb6HSWKQVZhmbUFGa5SI2tNud3a5K/odlcGzewi1wy8PpJrGXoEjhGTBlVWy0qvdCGMoSee88OXdLbE9YcxB96Ia8ctO58l5w==;5:3z08PVBCWQ2brm3DvBEyLSCuo98JtuwEGs9AO2dwB0MZgfTUEFJZ/r9c0EAcTOH8bChpIk5VzBFQVt2khWwXEtB7086s7saS9qdk7dn528X7G6ATlDQBXJA4pb78cvfCVuSvhwSnaSOdJcEyT+LSqFDfUq5MXNhLxBlgNZ0nYdU=;7:edl1iNHFECeooW5DFKBy0OPiugM4y7WGgjGEcu8P6EbRWVH9fEkZvRTn0szjF7Ldv6XKaPNyqFP0eUe71Xmmpi5+I5oYw1elpaJoRe2puQV+sgE8erL3u48ZvHAovnZ+kvE+Uo1QjxP5+QOlA8pBbQ==
+x-incomingheadercount: 44
+x-eopattributedmessage: 0
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031324274)(2017031323274)(2017031322404)(1601125500)(1603101475)(1701031045);SRVR:DM3NAM05HT181;
+x-ms-traffictypediagnostic: DM3NAM05HT181:
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:DM3NAM05HT181;BCL:0;PCL:0;RULEID:;SRVR:DM3NAM05HT181;
+x-microsoft-antispam-message-info: sMW/eP7hhjdjTGMxm3HBlCuUn3Mxc3Si2SKYbB6Qg9WC3oswYmWVZw8BM0KX2sIO
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/_GMFGOTd49DjwOosIhh=GpW"; protocol="application/pgp-signature"
+X-OriginatorOrg: live.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 7181d4b0-87d6-4f4e-ba33-0d3746212cec
+X-MS-Exchange-CrossTenant-Network-Message-Id: 836f6a39-7ab2-40af-7366-08d63d592709
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 7181d4b0-87d6-4f4e-ba33-0d3746212cec
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Oct 2018 04:44:03.5349
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3NAM05HT181
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/_GMFGOTd49DjwOosIhh=GpW
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+When I have time I=92ll have to read a few books and dig into the latest ke=
+rnel to really understand what the Linux kernel is, but during that procras=
+tination=A0
 
-Hi Al, David,
 
-These have returned, so I have disabled CONFIG_SAMPLE_VFS again.
 
-On Mon, 10 Sep 2018 13:35:25 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the vfs tree, today's linux-next build (powerpc
-> allyesconfig) failed like this:
->=20
-> samples/vfs/test-fsinfo.c: In function 'fsinfo':
-> samples/vfs/test-fsinfo.c:37:17: error: '__NR_fsinfo' undeclared (first u=
-se in this function); did you mean 'fsinfo'?
->   return syscall(__NR_fsinfo, dfd, filename, params, buffer, buf_size);
->                  ^~~~~~~~~~~
->                  fsinfo
-> samples/vfs/test-fsinfo.c:37:17: note: each undeclared identifier is repo=
-rted only once for each function it appears in
-> samples/vfs/test-fsinfo.c: In function 'dump_attr_LIMITS':
-> samples/vfs/test-fsinfo.c:180:30: warning: format '%llx' expects argument=
- of type 'long long unsigned int', but argument 2 has type '__u64' {aka 'lo=
-ng unsigned int'} [-Wformat=3D]
->   printf("\tmax file size: %llx\n", f->max_file_size);
->                            ~~~^     ~~~~~~~~~~~~~~~~
->                            %lx
-> samples/vfs/test-fsinfo.c:181:32: warning: format '%llx' expects argument=
- of type 'long long unsigned int', but argument 2 has type '__u64' {aka 'lo=
-ng unsigned int'} [-Wformat=3D]
->   printf("\tmax ids      : u=3D%llx g=3D%llx p=3D%llx\n",
->                              ~~~^
->                              %lx
->          f->max_uid, f->max_gid, f->max_projid);
->          ~~~~~~~~~~
-> samples/vfs/test-fsinfo.c:181:39: warning: format '%llx' expects argument=
- of type 'long long unsigned int', but argument 3 has type '__u64' {aka 'lo=
-ng unsigned int'} [-Wformat=3D]
->   printf("\tmax ids      : u=3D%llx g=3D%llx p=3D%llx\n",
->                                     ~~~^
->                                     %lx
->          f->max_uid, f->max_gid, f->max_projid);
->                      ~~~~~~~~~~
-> samples/vfs/test-fsinfo.c:181:46: warning: format '%llx' expects argument=
- of type 'long long unsigned int', but argument 4 has type '__u64' {aka 'lo=
-ng unsigned int'} [-Wformat=3D]
->   printf("\tmax ids      : u=3D%llx g=3D%llx p=3D%llx\n",
->                                            ~~~^
->                                            %lx
->          f->max_uid, f->max_gid, f->max_projid);
->                                  ~~~~~~~~~~~~~
-> samples/vfs/test-fsinfo.c: In function 'dump_attr_SUPPORTS':
-> samples/vfs/test-fsinfo.c:197:24: warning: format '%llx' expects argument=
- of type 'long long unsigned int', but argument 2 has type '__u64' {aka 'lo=
-ng unsigned int'} [-Wformat=3D]
->   printf("\tstx_attr=3D%llx\n", f->stx_attributes);
->                      ~~~^     ~~~~~~~~~~~~~~~~~
->                      %lx
-> samples/vfs/test-fsmount.c: In function 'fsopen':
-> samples/vfs/test-fsmount.c:63:17: error: '__NR_fsopen' undeclared (first =
-use in this function); did you mean 'fsopen'?
->   return syscall(__NR_fsopen, fs_name, flags);
->                  ^~~~~~~~~~~
->                  fsopen
-> samples/vfs/test-fsmount.c:63:17: note: each undeclared identifier is rep=
-orted only once for each function it appears in
-> samples/vfs/test-fsmount.c: In function 'fsmount':
-> samples/vfs/test-fsmount.c:68:17: error: '__NR_fsmount' undeclared (first=
- use in this function); did you mean 'fsmount'?
->   return syscall(__NR_fsmount, fsfd, flags, ms_flags);
->                  ^~~~~~~~~~~~
->                  fsmount
-> samples/vfs/test-fsmount.c: In function 'fsconfig':
-> samples/vfs/test-fsmount.c:74:17: error: '__NR_fsconfig' undeclared (firs=
-t use in this function); did you mean 'fsconfig'?
->   return syscall(__NR_fsconfig, fsfd, cmd, key, val, aux);
->                  ^~~~~~~~~~~~~
->                  fsconfig
-> samples/vfs/test-fsmount.c: In function 'move_mount':
-> samples/vfs/test-fsmount.c:81:17: error: '__NR_move_mount' undeclared (fi=
-rst use in this function); did you mean 'move_mount'?
->   return syscall(__NR_move_mount,
->                  ^~~~~~~~~~~~~~~
->                  move_mount
-> samples/vfs/test-fs-query.c: In function 'fsopen':
-> samples/vfs/test-fs-query.c:32:17: error: '__NR_fsopen' undeclared (first=
- use in this function); did you mean 'fsopen'?
->   return syscall(__NR_fsopen, fs_name, flags);
->                  ^~~~~~~~~~~
->                  fsopen
-> samples/vfs/test-fs-query.c:32:17: note: each undeclared identifier is re=
-ported only once for each function it appears in
-> samples/vfs/test-fs-query.c: In function 'fsinfo':
-> samples/vfs/test-fs-query.c:38:17: error: '__NR_fsinfo' undeclared (first=
- use in this function); did you mean 'fsinfo'?
->   return syscall(__NR_fsinfo, dfd, filename, params, buffer, buf_size);
->                  ^~~~~~~~~~~
->                  fsinfo
-> samples/vfs/test-statx.c: In function 'dump_statx':
-> samples/vfs/test-statx.c:160:29: warning: format '%llx' expects argument =
-of type 'long long unsigned int', but argument 2 has type '__u64' {aka 'lon=
-g unsigned int'} [-Wformat=3D]
->    printf("Attributes: %016llx (", stx->stx_attributes);
->                        ~~~~~~^     ~~~~~~~~~~~~~~~~~~~
->                        %016lx
->=20
-> Caused by commits
->=20
->   2615362dc9ce ("vfs: Add a sample program for the new mount API")
->   e9078278ec11 ("vfs: syscall: Add fsinfo() to query filesystem informati=
-on")
->=20
-> The directory name has changed, but the errors persist!
->=20
-> I have applied this patch for today:
->=20
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Mon, 10 Sep 2018 13:19:20 +1000
-> Subject: [PATCH] disable building the VFS sample programs
->=20
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  samples/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/samples/Kconfig b/samples/Kconfig
-> index 0431af2589ac..c8823d9d97db 100644
-> --- a/samples/Kconfig
-> +++ b/samples/Kconfig
-> @@ -148,6 +148,7 @@ config SAMPLE_VFIO_MDEV_MBOCHS
-> =20
->  config SAMPLE_VFS
->  	bool "Build example programs that use new VFS system calls"
-> +	depends on BROKEN
->  	help
->  	  Build example userspace programs that use new VFS system calls such
->  	  as mount API and statx()
 
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/_GMFGOTd49DjwOosIhh=GpW
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+I want to rewrite the Linux scheduler using my code, it=92s basically a bin=
+ary tree with a bunch of fixed variables with a rotating DMA that cleans up=
+ excess pointers. It can be used as an integrated SQL database (because of =
+char*=92s and binary trees) and depending on what multidimension you init t=
+he arrays, it will take huge amounts of ram
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvWjZ4ACgkQAVBC80lX
-0Gye5wgAlhctCJu+jCbLY//6DewuzRCiGl+6g9Lo/gPILyns9B/FR06kjv7gC4tm
-xPHJe/XjFIh5ygT3kKa8tP3QWUPH1hv90rM+In5TcDUkBViVzkboKOqpafNtWR8R
-ZRS6cRl+o8S8oBJ7fQuafoIZu+LFBVne7vBgOmlkGtFYK5rfZqxF2rGpzeS+YrC2
-9jff6R1Ik7KoTcCVF3mHKFNzPcxfCXbnI1b2eWxYV43kxKkMg01jGpGEU/oKrA+h
-M2ISeyDfWkgWkhZZNe1PaqCtPvSK4mRZKiLAT7vMcmgAMmAolnWszdq/k/CH5zbX
-k8Yp/ZLcoCm5MRDhMHHLxGtNAPlZMA==
-=xavl
------END PGP SIGNATURE-----
+You can easily go up one indice by adding a number to the indice that makes=
+ the array go up, im sorry its med time for me
 
---Sig_/_GMFGOTd49DjwOosIhh=GpW--
+
+But my intentions is to make my code its own operating system. The Quantum =
+moniker is a marketing buzzword, its really made for binary trees with HUGE=
+ dimensions (im talking about bt[200][200][200][200][200][200][200][200][20=
+0][200][200][200][200][200][200][200][200][200][200][200][200][200][200][20=
+0][200][200][200][200][200][200][200][200][200][200][200][200][200][200][20=
+0][200][200][200][200][200][200][200][200]; (sorry if thats spammy)
+
+
+If this isnt relevant to the Linux kernel, please disregard
+
+
+My code is at GitHub, at unidef/quantum
+
+
+for convenience: git clone https://github.com/unidef/quantum qwork/
+
+
+I appreciate any feedback, and I would love to be actively involved in Linu=
+x kernel development
+
+
+
+Also just like in EQ2, Linux could use a really memory hungry mode, I have =
+32gb of ram on all my computers and multitasking (especially in Linux) is r=
+eally, really fun!
+
+
+Abja
+
+
+
+
