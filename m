@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2042C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:55:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AEB5C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:56:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5604820870
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:55:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F356F2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:56:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vw65rX1b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5604820870
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PJ+jKuUz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F356F2084A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728294AbeJ3Co4 (ORCPT
+        id S1728236AbeJ3CqW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 22:44:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43550 "EHLO mail.kernel.org"
+        Mon, 29 Oct 2018 22:46:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728279AbeJ3Co4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 22:44:56 -0400
+        id S1727712AbeJ3CqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 22:46:22 -0400
 Received: from jouet.infradead.org (unknown [179.97.41.186])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1144E204FD;
-        Mon, 29 Oct 2018 17:55:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 77594204FD;
+        Mon, 29 Oct 2018 17:56:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540835716;
-        bh=QcuORfmAL79u8PDA5uSbC3+wJDnCwX962HhcfXHQcqk=;
+        s=default; t=1540835801;
+        bh=BPqcXJghhk4BLehj5161FDGSWqveazlDnxHC1bTjwAc=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vw65rX1bP+YSmSfPvG+obBGqRkUmb2+1tSzWkHC/Q+hLtr1TpJ04fPKQEiLdJKGgI
-         6Yg4cuj+1qoOFFHOFVV8Ua0ply+v7LO5U3nEIiYUgIwaSuZgzIWo3x0ZjBfoTMmq0R
-         sMSKduu5vRh0T6rA3X+ARMotVhvSEXxBrxZzKMxA=
+        b=PJ+jKuUzJGtM4di+3CwJX4lAOj/1Jr7GJHCin94eL82sT2Ntlw/vSumo4BFxt/QhA
+         xVy+VQkn0tYC1eByQUuTbx92Z8c9POzvpQ3gwa/f27XDTdLMTD6gwwwfwbo8tpvAMZ
+         iamzXhOG55Ql1bI1+4YApm6EZjVfDbl0CutRZDq4=
 Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 382A1142C5F; Mon, 29 Oct 2018 14:55:14 -0300 (-03)
-Date:   Mon, 29 Oct 2018 14:55:14 -0300
+        id A2DC8142C5F; Mon, 29 Oct 2018 14:56:39 -0300 (-03)
+Date:   Mon, 29 Oct 2018 14:56:39 -0300
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     David Miller <davem@davemloft.net>
 Cc:     kan.liang@linux.intel.com, linux-kernel@vger.kernel.org,
@@ -46,15 +46,15 @@ Cc:     kan.liang@linux.intel.com, linux-kernel@vger.kernel.org,
         kan.liang@intel.com, ak@linux.intel.com, yao.jin@linux.intel.com,
         peterz@infradead.org
 Subject: Re: [PATCHES/RFC] Re: A concern about overflow ring buffer mode
-Message-ID: <20181029175514.GI21857@kernel.org>
-References: <4f84468f-37d9-cf1b-12c1-514ef74b6a48@linux.intel.com>
- <20181029130331.GC21857@kernel.org>
- <0247fca0-5a94-9a83-cefa-282804316729@linux.intel.com>
- <20181029.104008.791032322062574758.davem@davemloft.net>
+Message-ID: <20181029175639.GJ21857@kernel.org>
+References: <0247fca0-5a94-9a83-cefa-282804316729@linux.intel.com>
+ <20181029143506.GF21857@kernel.org>
+ <9ad642b0-1a15-b3d9-781f-893f782f8867@linux.intel.com>
+ <20181029.104321.1657526975436362699.davem@davemloft.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181029.104008.791032322062574758.davem@davemloft.net>
+In-Reply-To: <20181029.104321.1657526975436362699.davem@davemloft.net>
 X-Url:  http://acmel.wordpress.com
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,17 +62,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Oct 29, 2018 at 10:40:08AM -0700, David Miller escreveu:
+Em Mon, Oct 29, 2018 at 10:43:21AM -0700, David Miller escreveu:
 > From: "Liang, Kan" <kan.liang@linux.intel.com>
-> Date: Mon, 29 Oct 2018 10:33:06 -0400
+> Date: Mon, 29 Oct 2018 11:11:25 -0400
 > 
-> > I just realized that the problem in KNL will be back if we switch
-> > back to non-overwrite mode.
+> > The processing time for each perf_top__mmap_read_idx() should not that
+> > long. We may check it after each perf_top__mmap_read_idx(). Also
+> > change the ui_warning to one-time warning. The patch as below can do
+> > that (not test).
 > 
->> What is KNL?
+> You cannot make ui__*() calls from the event processing thread.
+> 
+> I tried to make this point strongly over the weekend.
+> 
+> It hangs the event thread, because the ui call waits for a keypress
+> but the display thread will eat them up and the event thread thus
+> hangs in select().
+> 
+> So, once more, all ui calls must be avoided in event processing code.
+> 
+> Said another way, it is not legal to call UI interfaces from any
+> code that could be called by the event thread.
 
-I guess its Knights Landing.
-
-https://en.wikipedia.org/wiki/Xeon_Phi
+Right, that global in fact needs to be set in the event processing and
+checked in the display thread, start it with 0, switch to 1 and then to
+2 to say it was processed just once, etc.
 
 - Arnaldo
