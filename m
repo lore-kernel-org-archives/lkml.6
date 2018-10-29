@@ -2,107 +2,145 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCF9EC2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:23:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91756C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:26:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F2872064C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:23:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F2872064C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 396292064C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:26:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 396292064C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=personaltelco.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729631AbeJ2SLM (ORCPT
+        id S1729565AbeJ2SON convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 14:11:12 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:33235 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729466AbeJ2SLM (ORCPT
+        Mon, 29 Oct 2018 14:14:13 -0400
+Received: from mail.klickitat.com ([54.70.207.208]:46684 "EHLO
+        mail.klickitat.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729466AbeJ2SON (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 14:11:12 -0400
-Received: by mail-qt1-f194.google.com with SMTP id i15-v6so8379243qtr.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 02:23:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gIbHfazCbL427uhX0bEmyj805xEbvdrUodbO/C3xOVI=;
-        b=RqPIdTglozNMGVasdCwYbGdxwSCWIfsdO+svXSZFJ2jeyn6IRoiOxJQMi16Ce9GV6i
-         k2P5Vonc81TI532KJjOiQ8BxsTdcpDVo6OYwKbsCiLXZJPgTkVRzMfdpKxHXg6l7jSED
-         sWUwWlWTzX4PQKHny3L6UbNbuOe3h1QIsgO9Qi5dg39mw/iegtYOAzt42mcAMls4iObR
-         kVZ/H2XmKqEp4BeugYFc99TFuj/kT+sgE+NKSsFSKzQiFc9pkDeZl4uepXi5T3BrdCp/
-         7m5Xl1FiWNX9pd3UQVwjNXsD9oijJ4sarto/kDwV4RauXt5d+wyj4scmvsfFaTrNNMlH
-         8cpA==
-X-Gm-Message-State: AGRZ1gLbpto8KpOijn0bEdQdK9YYCxvn+6DhoCQk5YbfmDDUw0yvBuC+
-        FygL74Yk5vO2argRf0X5DbLE4wt50wlwUldq4F0=
-X-Google-Smtp-Source: AJdET5fNq1wGrJzfDmjGWxCDrJDYtxpXWAIBtnLXOhKjsxbNp2lF/hEYT4jiQqlYDLdsSizpwdwfQuJ1vUcXcNwNqI0=
-X-Received: by 2002:a0c:e202:: with SMTP id q2mr392880qvl.180.1540805003420;
- Mon, 29 Oct 2018 02:23:23 -0700 (PDT)
+        Mon, 29 Oct 2018 14:14:13 -0400
+X-Greylist: delayed 485 seconds by postgrey-1.27 at vger.kernel.org; Mon, 29 Oct 2018 14:14:12 EDT
+Received: by mail.klickitat.com (Postfix, from userid 182)
+        id AB690A613E3; Mon, 29 Oct 2018 02:07:14 -0700 (PDT)
+Received: from husum.klickitat.com (husum.ptp [192.168.80.4])
+        by mail.klickitat.com (Postfix) with ESMTP id 1D33DA613A7;
+        Mon, 29 Oct 2018 02:07:12 -0700 (PDT)
+From:   Russell Senior <russell@personaltelco.net>
+To:     Richard Weinberger <richard@nod.at>
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        zajec5@gmail.com, stable@vger.kernel.org
+Subject: Re: [PATCH] ubifs: Handle re-linking of inodes correctly while recovery
+References: <20181028214407.20965-1-richard@nod.at>
+Date:   Mon, 29 Oct 2018 02:18:17 -0700
+In-Reply-To: <20181028214407.20965-1-richard@nod.at> (Richard Weinberger's
+        message of "Sun, 28 Oct 2018 22:44:07 +0100")
+Message-ID: <87ftwpqffq.fsf@husum.klickitat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-References: <20181028230627.GA3420@andrea> <20181028231003.GA4021@andrea> <20181029012042.GR4170@linux.ibm.com>
-In-Reply-To: <20181029012042.GR4170@linux.ibm.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 29 Oct 2018 10:23:07 +0100
-Message-ID: <CAK8P3a3t54qYyj1r0vjXJzgb3wvJLt4ypb7=xesavcJwC30_kg@mail.gmail.com>
-Subject: Re: [RFR] Store tearing
-To:     Paul McKenney <paulmck@linux.ibm.com>
-Cc:     andrea.parri@amarulasolutions.com,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 2:21 AM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
->
-> On Mon, Oct 29, 2018 at 12:10:03AM +0100, Andrea Parri wrote:
-> > Hopefully, with Paul's proper email address this time,
-> >
-> >   Andrea
-> >
-> > On Mon, Oct 29, 2018 at 12:06:27AM +0100, Andrea Parri wrote:
-> > > Hi,
-> > >
-> > > memory-barriers.txt says:
-> > >
-> > >   [on "store tearing"]
-> > >
-> > >   "In fact, a recent bug (since fixed) caused GCC to incorrectly use
-> > >    this optimization in a volatile store.".
-> > >
-> > > I was wondering if you could help me retrieve some reference/discussions
-> > > about this?
->
-> This was quite some time ago, but it involved a 32-bit volatile store
-> of a constant such as 0x10001.  The machine in question had a narrow
-> store-immediate instruction, so the compiler emitted  a pair of 16-bit
-> store-immediate instructions.  This bug was fixed, though only after
-> significant screaming and shouting.
 
-A related issue I remember was on ARMv5 (an architecture without
-unaligned access) where a function like )not sure if this specific
-one triggers it, but something like it did)
+UBIFS's recovery code strictly assumes that a deleted inode will never
+come back, therefore it removes all data which belongs to that inode
+as soon it faces an inode with link count 0 in the replay list.
+Before O_TMPFILE this assumption was perfectly fine. With O_TMPFILE
+it can lead to data loss upon a power-cut.
 
-struct my_registers {
-     u32 a;
-     u32 b;
-     u32 c;
-} __attribute__((packed));
-#define __raw_writel(p, v) do { (volatile u32 __iomem *)(p) = (v); } while (0)
-void my_write_a(struct my_registers __iomem *r, u32 val)
-{
-       __raw_writel(&r->a, val);
-}
+Consider a journal with entries like:
+0: inode X (nlink = 0) /* O_TMPFILE was created */
+1: data for inode X /* Someone writes to the temp file */
+2: inode X (nlink = 0) /* inode was changed, xattr, chmod, … */
+3: inode X (nlink = 1) /* inode was re-linked via linkat() */
 
-The above is undefined behavior because we cast from an unaligned
-data type to a 32-bit aligned type, and gcc resolved this by turning the
-intended 32-bit store into a set of 8 bit stores. We worked around this
-by changing __raw_writel() into a inline assembly that always uses a
-32-bit store.
+Upon replay of entry #2 UBIFS will drop all data that belongs to inode X,
+this will lead to an empty file after mounting.
 
-      Arnd
+As solution for this problem, scan the replay list for a re-link entry
+before dropping data.
+
+Fixes: 474b93704f32 ("ubifs: Implement O_TMPFILE")
+Cc: stable@vger.kernel.org
+Reported-by: Russell Senior <russell@personaltelco.net>
+Reported-by: Rafał Miłecki <zajec5@gmail.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
+Tested-by: Russell Senior <russell@personaltelco.net>
+---
+Russel, Rafał,
+
+please give this patch another testing.
+I'll also run it on different test systems before merging.
+
+Thanks,
+//richard
+---
+ fs/ubifs/replay.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
+
+diff --git a/fs/ubifs/replay.c b/fs/ubifs/replay.c
+index 4844538eb926..65a780685b82 100644
+--- a/fs/ubifs/replay.c
++++ b/fs/ubifs/replay.c
+@@ -209,6 +209,34 @@ static int trun_remove_range(struct ubifs_info *c, struct replay_entry *r)
+ 	return ubifs_tnc_remove_range(c, &min_key, &max_key);
+ }
+ 
++/**
++ * inode_relinked - check whether inode in question will be re-linked.
++ * @c: UBIFS file-system description object
++ * @rino: replay entry to test
++ *
++ * O_TMPFILE files can be re-linked, this means link count goes from 0 to 1.
++ * This case needs special care, otherwise all references to the inode will
++ * be removed upon the first replay entry of an inode with link count 0
++ * is found.
++ */
++static bool inode_relinked(struct ubifs_info *c, struct replay_entry *rino)
++{
++	struct replay_entry *r = rino;
++
++	ubifs_assert(c, rino->deletion);
++	ubifs_assert(c, key_type(c, &rino->key) == UBIFS_INO_KEY);
++
++	list_for_each_entry_from(r, &c->replay_list, list) {
++		if (key_inum(c, &r->key) == key_inum(c, &rino->key) &&
++		    r->deletion == 0) {
++			ubifs_assert(c, r->sqnum > rino->sqnum);
++			return true;
++		}
++	}
++
++	return false;
++}
++
+ /**
+  * apply_replay_entry - apply a replay entry to the TNC.
+  * @c: UBIFS file-system description object
+@@ -236,6 +264,11 @@ static int apply_replay_entry(struct ubifs_info *c, struct replay_entry *r)
+ 			{
+ 				ino_t inum = key_inum(c, &r->key);
+ 
++				if (inode_relinked(c, r)) {
++					err = 0;
++					break;
++				}
++
+ 				err = ubifs_tnc_remove_ino(c, inum);
+ 				break;
+ 			}
+-- 
+2.19.1
+
+
+
+-- 
+Russell Senior, President
+russell@personaltelco.net
