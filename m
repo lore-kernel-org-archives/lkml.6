@@ -2,124 +2,100 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CBABC2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 01:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D30DC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 01:39:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C52D20657
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 01:38:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3463620843
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 01:39:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hTbzTMb6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C52D20657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qp1Q/YNx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3463620843
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727702AbeJ2KYm (ORCPT
+        id S1727735AbeJ2KZ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 06:24:42 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34312 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727683AbeJ2KYm (ORCPT
+        Mon, 29 Oct 2018 06:25:26 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:37158 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726985AbeJ2KZ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 06:24:42 -0400
-Received: by mail-pf1-f196.google.com with SMTP id f78-v6so3184718pfe.1
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 18:38:17 -0700 (PDT)
+        Mon, 29 Oct 2018 06:25:26 -0400
+Received: by mail-pl1-f195.google.com with SMTP id bh10-v6so3002385plb.4;
+        Sun, 28 Oct 2018 18:39:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=l6/npn9/1VPeCkjWJwAE8tYQRfDC0Me6DiMKj4x+LBY=;
-        b=hTbzTMb6uGXWkNh5SB2/4wwuGA0VczXnFSxBqeKUa7pFbm5caR1nQLLHTb0+AwzSsb
-         LGVP9bt6Ei5BNf/eE5ifX7Z4AtFp2qA4750GIxpnZmMLsrO2hd7CxrTmnaZNIf0JMtZ9
-         FUDnuT4ci9rMZZjTGN1/f56hH5hohTYAEpu4M=
+        bh=W8zbc508Lri55XPTGoSvM+RnFVoZz30xuenMctXg9Zc=;
+        b=qp1Q/YNx3kuXIK4Yu4cAjSpL0mU4G0rYJlzwLbhKMLG4S8+ciniffFY3iqNCB5Hgxn
+         IdpyYF6Ft84LOThmx0B0yfu4ris4YUpY9aQ5lkJRhboK+q0ZncZGmgEjNxMvZnhTFSZ4
+         Vm60hkBswsn7YuV++W94qiyYR5Gdjz6ljuUzVL1Rqe/atoht6nIR1c/rQeozFyDOgJ9c
+         yk/RYS/efZsSMUsyDwtTZ5G342NeI621acTOWFkJ9p7j9MQrSRNU/ok8r6E1Cp5sp/+u
+         LqxOAV1AJIOnKpVvcRTExRKNpqW7UpX91CHsOADXY+0hYrpnXeH761A9G7VoyxwF7XZP
+         eeQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=l6/npn9/1VPeCkjWJwAE8tYQRfDC0Me6DiMKj4x+LBY=;
-        b=C0o4m6gBo3TBCy+woDBp/H4kfPFa//bBHwWCGr2N0ioEUvstxVRtP4uTHIbIzuZ96w
-         z0aqEhSl9esHxqkx8GLAZJPrMxYqu3eNy0DDDUS0HRj2/5ixwJDbLesSeIphZbmorO2R
-         y1AeTkMLwn9crO8WZSYt6cwfYDb11zoKiJ54kGZ2R+W+/17PiWhHgaZ1kD+/mXfUUTno
-         LuWu51uOoncKyZGxVf/RCFzXcb9syVQFPY2lm1w/xhBTYLteCMOxfTozD1R31DxVXmO8
-         0dcVyXrzTmym8wxP3EC1Td3zDJScaWqQdUnDeBA/swv5DJv26BeqQ52sbt8PdkoU8pDj
-         vs8w==
-X-Gm-Message-State: AGRZ1gJLkB/gVCuj6UnsPIK2LC8Z7XbPoaCnR1briqihnWEx5eg1IN/f
-        nddVaEjymVCn5wUbozLXQOiRlw==
-X-Google-Smtp-Source: AJdET5fh4vidjamdTookYQdTsBXcandzVUD5FYeyGNO6mbEi20Gh/C2hb6UOHGt033p61dr2bsMeBQ==
-X-Received: by 2002:a63:4a4a:: with SMTP id j10-v6mr4664045pgl.0.1540777096862;
-        Sun, 28 Oct 2018 18:38:16 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id m19-v6sm18301800pgv.93.2018.10.28.18.38.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 28 Oct 2018 18:38:16 -0700 (PDT)
-Date:   Sun, 28 Oct 2018 18:38:13 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
-        dianders@chromium.org, evgreen@chromium.org, benchan@chromium.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tsoni@codeaurora.org
-Subject: Re: [PATCH] arm64: dts: qcom: sdm845: Add PDC Global reset driver
- node
-Message-ID: <20181029013813.GC1855@tuxbook-pro>
-References: <20181026122653.4935-1-sibis@codeaurora.org>
+        bh=W8zbc508Lri55XPTGoSvM+RnFVoZz30xuenMctXg9Zc=;
+        b=bGjWT8G4i1WO3Vn9VQp9gM6GSzo5KKEfllgAPN1LHGjoJKBWA3bzAEySj9n5pQGkt0
+         2M6L1B8T8yywpULB1GDhbbYODhnts3J0jFoutQEEiCEptWpJ7L40YA3tkxpjuEqhztH1
+         BgnLupMk3foKeFl3VocD+OMgCRnPNTYnezRj05x7J4DJjtHzpgeOKMrQ+wd+4PSPUa+g
+         hJM04HBqcOKDplnvRnAolgzttY28iLnhuijcgmh8cF18njINwCYJk5SB+pPtxE6Sd6Ty
+         Dmtm0GdZsQijydAqXEIAoEAJrKl0d7ItMv50963h2KobPDHid+rpTR5QjJ5ndAZReTVg
+         pa1w==
+X-Gm-Message-State: AGRZ1gJPFs7K5sRbem/KRQD5qaEh1hXAAw1iz7iaUewySs8vILH+vXfd
+        1qRBQlCR8i0QbDxvzM/S94o=
+X-Google-Smtp-Source: AJdET5f0Nmck6RlJjeVQTiKO6hmxVbuoX473xW9ymRe83AJTKdOdi5yl443w2uw6C1Q+wTpq6jbSrw==
+X-Received: by 2002:a17:902:163:: with SMTP id 90-v6mr9170745plb.87.1540777141061;
+        Sun, 28 Oct 2018 18:39:01 -0700 (PDT)
+Received: from leo.usersys.redhat.com ([209.132.188.80])
+        by smtp.gmail.com with ESMTPSA id o4-v6sm2343625pfi.172.2018.10.28.18.38.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 28 Oct 2018 18:39:00 -0700 (PDT)
+Date:   Mon, 29 Oct 2018 09:38:50 +0800
+From:   Hangbin Liu <liuhangbin@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     sfr@canb.auug.org.au, linux-next@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Subject: Re: linux-next: build failure in Linus' tree
+Message-ID: <20181029013850.GL24677@leo.usersys.redhat.com>
+References: <20181029093532.38a3888e@canb.auug.org.au>
+ <CAHk-=wi475eRvUDctiWdBWsEB7UYgr8OrpPzrd=xkevUpTSCuA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181026122653.4935-1-sibis@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAHk-=wi475eRvUDctiWdBWsEB7UYgr8OrpPzrd=xkevUpTSCuA@mail.gmail.com>
+User-Agent: Mutt/1.7.0 (2016-08-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 26 Oct 05:26 PDT 2018, Sibi Sankar wrote:
-
-> This patch adds the node to support PDC Global reset driver on
-> SDM845 SoCs
+On Sun, Oct 28, 2018 at 03:45:16PM -0700, Linus Torvalds wrote:
+> On Sun, Oct 28, 2018 at 3:35 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> >
+> > After merging the origin tree, today's linux-next build (powerpc
+> > ppc64_defconfig) failed like this:
 > 
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
-> ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 7 +++++++
->  1 file changed, 7 insertions(+)
+> linux-next is back! Wheee..
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index fad22acfda4d..d3fe012ad84e 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -11,6 +11,7 @@
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
->  #include <dt-bindings/phy/phy-qcom-qusb2.h>
->  #include <dt-bindings/reset/qcom,sdm845-aoss.h>
-> +#include <dt-bindings/reset/qcom,sdm845-pdc.h>
->  #include <dt-bindings/soc/qcom,rpmh-rsc.h>
->  
->  / {
-> @@ -1262,6 +1263,12 @@
->  			#power-domain-cells = <1>;
->  		};
->  
-> +		pdc_reset: reset-controller@b2e0000 {
-> +			compatible = "qcom,sdm845-pdc-global";
-> +			reg = <0xb2e0000 0x20000>;
-> +			#reset-cells = <1>;
-> +		};
-> +
->  		tsens0: thermal-sensor@c263000 {
->  			compatible = "qcom,sdm845-tsens", "qcom,tsens-v2";
->  			reg = <0xc263000 0x1ff>, /* TM */
-> -- 
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
+> >   5a2de63fd1a5 ("bridge: do not add port to router list when receives query with source 0.0.0.0")
 > 
+> David?
+> 
+>                  Linus
+
+Sorry, I forgot to check if IPv6 is configured. Nikolay has helped post
+a fix for this issue.
+
+Regards
+Hangbin
