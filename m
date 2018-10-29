@@ -2,210 +2,166 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67C07C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 15:08:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEB03C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 15:11:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2459C2082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 15:08:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Qeqv7CRd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2459C2082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id A7FB62082D
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 15:11:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7FB62082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727427AbeJ2X53 (ORCPT
+        id S1727507AbeJ3AAh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 19:57:29 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:39840 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726580AbeJ2X53 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 19:57:29 -0400
-Received: by mail-io1-f68.google.com with SMTP id n11-v6so5159897iob.6
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 08:08:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eOvBh6L9X5NzQeyvJl3WtqiMIqmWgzqgwXntttAkqE4=;
-        b=Qeqv7CRdqmUbWlLqk5muHyZsmqBEnn+zozYop2CyHru8+m52VJjyebrp0NwXaxVuJB
-         FL26w5NM4oopUJgXWOXhhd6Wm5eoyrmJBm/77JSxUz6l3DDcl+Aj/VNoe/lPfdLzn7SQ
-         +d+WGy2oGxAAMig1AJpAv2RNkYfQ7wglsg9So=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eOvBh6L9X5NzQeyvJl3WtqiMIqmWgzqgwXntttAkqE4=;
-        b=JVf6XgvGbPtiU7n0tMafBr0rKI6nJNCwib/Siw8Mr1QtH7rurSIOJVhlnt4ssnPpXC
-         wBktDckm0pNPCf9nBomEBfQ/QeZ2S1WWh+515KXp/DURi0DkxTtzD7oJzSALnMjNKpl4
-         Bzm3TpxxVCZvUA28/QCYWrY34tXgJIL18Zpi9ONX3dRosv+BNc0jjpWenlLD6H18+Lxl
-         oAFa9ApiPtOQhCeR2gh/AFHg1Oc8sjYOeZLlY5H5T+4hT8OXkKORpDNbpPg40MKJjlJE
-         oKmzvo8xA0FLCmOBN3CzXJMfNNL8UvvXt6ojiqBfzDIjVK8J0XY/N6mnemnlJaWbJAwq
-         Qx5A==
-X-Gm-Message-State: AGRZ1gJzo/EC2N4LGMJPjyCtQdNey971dbIgsEWy+bS2xLs8SHySyjuU
-        x3xfwbPuIWLskJdBusijkRkXk7IzFv/t3aAUJFkBNw==
-X-Google-Smtp-Source: AJdET5f6vg+fmy5W1W7d+BLWX8WLHe9JQOIR0mSofPNURVct41G56N2eX/aO3jfwN9cc3+PlOKZL7J1DWj4XVubmy8I=
-X-Received: by 2002:a6b:918b:: with SMTP id t133-v6mr8814581iod.267.1540825706570;
- Mon, 29 Oct 2018 08:08:26 -0700 (PDT)
+        Mon, 29 Oct 2018 20:00:37 -0400
+Received: from mga14.intel.com ([192.55.52.115]:31442 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726066AbeJ3AAg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 20:00:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2018 08:11:28 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,440,1534834800"; 
+   d="scan'208";a="85069852"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga007.jf.intel.com with ESMTP; 29 Oct 2018 08:11:28 -0700
+Received: from [10.251.20.185] (kliang2-mobl1.ccr.corp.intel.com [10.251.20.185])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by linux.intel.com (Postfix) with ESMTPS id E0D11580332;
+        Mon, 29 Oct 2018 08:11:26 -0700 (PDT)
+Subject: Re: [PATCHES/RFC] Re: A concern about overflow ring buffer mode
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     David Miller <davem@davemloft.net>, linux-kernel@vger.kernel.org,
+        Wang Nan <wangnan0@huawei.com>, Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Kan Liang <kan.liang@intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>
+References: <20181026183805.GD3353@kernel.org>
+ <20181026184255.GE3353@kernel.org> <20181026190211.GF3353@kernel.org>
+ <3b81c999-9039-94e9-7a74-cdbd48fca08b@linux.intel.com>
+ <20181026191231.GG3353@kernel.org>
+ <65cbd052-15d9-f3fb-4a8f-781c3ce7a297@linux.intel.com>
+ <20181026192424.GH3353@kernel.org>
+ <4f84468f-37d9-cf1b-12c1-514ef74b6a48@linux.intel.com>
+ <20181029130331.GC21857@kernel.org>
+ <0247fca0-5a94-9a83-cefa-282804316729@linux.intel.com>
+ <20181029143506.GF21857@kernel.org>
+From:   "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <9ad642b0-1a15-b3d9-781f-893f782f8867@linux.intel.com>
+Date:   Mon, 29 Oct 2018 11:11:25 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20181023155035.9101-1-jagan@amarulasolutions.com>
- <20181023155035.9101-13-jagan@amarulasolutions.com> <20181024181334.lul7ta7ijluwfb7v@flea>
- <CAMty3ZBJcH1fz5FyhT1rk9qiJ-aWoQYiH7P1ZyQPLKmVWOCkdA@mail.gmail.com> <20181029090856.yyjnvaruyasgnzyz@flea>
-In-Reply-To: <20181029090856.yyjnvaruyasgnzyz@flea>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Mon, 29 Oct 2018 20:38:14 +0530
-Message-ID: <CAMty3ZBcTsoJsCZa=sM9vjWgHjCjEjY2cDordTQcNySQpzyR=Q@mail.gmail.com>
-Subject: Re: [PATCH v2 12/15] clk: sunxi-ng: a64: Add min and max rate for PLL_MIPI
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181029143506.GF21857@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 2:39 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Thu, Oct 25, 2018 at 09:21:31PM +0530, Jagan Teki wrote:
-> > On Wed, Oct 24, 2018 at 11:43 PM Maxime Ripard
-> > <maxime.ripard@bootlin.com> wrote:
-> > >
-> > > On Tue, Oct 23, 2018 at 09:20:32PM +0530, Jagan Teki wrote:
-> > > > A64 manual say PLL_MIPI rates are 500MHz to 1.4GHz, but
-> > > > using minimum 500MHz can't release the clock and which
-> > > > is not working.
-> > > >
-> > > > So use working minimum rate as 300MHz which is tested on
-> > > > Bananapi DSI panel.
-> > >
-> > > I'm not quite sure what you mean by that. What do you mean by "500MHz
-> > > can't release the clock"? Why would 300MHz work better then? Should be
-> > > avoid reaching 500MHz if it's a frequency in the valid range?
-> >
-> > PLL_MIPI can't be work with existing nkm where rate set to 270MHz
-> > (from PLL_VIDEO)
-> > /*** round rate call in ccu_nkm.c */
-> > [    2.408356] round: rate = 118800000
-> > [    2.408359] round: parent_rate = 158740688
-> > [    2.408417] round: rate = 148500000
-> > [    2.408420] round: parent_rate = 158740688
-> > [    2.408439] round: rate = 178200000
-> > [    2.408441] round: parent_rate = 158740688
-> > [    2.408460] round: rate = 205615384
-> > [    2.408462] round: parent_rate = 158740688
-> > [    2.408481] round: rate = 237600000
-> > [    2.408483] round: parent_rate = 158740688
-> > [    2.408502] round: rate = 270000000
-> > [    2.408504] round: parent_rate = 158740688
-> > [    2.408523] round: rate = 118800000
-> > [    2.408525] round: parent_rate = 158740560
-> > [    2.408544] round: rate = 148500000
-> > [    2.408546] round: parent_rate = 158740560
-> > [    2.408565] round: rate = 178200000
-> > [    2.408567] round: parent_rate = 158740560
-> > [    2.408586] round: rate = 205615384
-> > [    2.408588] round: parent_rate = 158740560
-> > [    2.408607] round: rate = 237600000
-> > [    2.408609] round: parent_rate = 158740560
-> > [    2.408627] round: rate = 270000000
-> > [    2.408630] round: parent_rate = 158740560
-> > [    2.408648] round: rate = 270000000
-> > [    2.408651] round: parent_rate = 158740640
-> > [    2.408670] round: rate = 270000000
-> > [    2.408672] round: parent_rate = 158740704
-> >
-> > /** set rate call in ccu_nkm **/
-> > [    2.408685] set: rate = 270000000
-> > [    2.408688] set: parent_rate = 297000000
-> >
-> > By using min and max rate as per A64 manual page 94 range of PLL can
-> > be 500MHz~1.4GHz getting 1,2,1 nkm dividers which can't be work.
-> > [    2.423589] sun4i_dclk_round_rate: min_div = 4 max_div = 127, rate = 55000000
-> > [    2.423643] ideal = 220000000, rounded = 0
-> > [    2.423647] ideal = 275000000, rounded = 0
-> > [    2.423651] ideal = 330000000, rounded = 0
-> > [    2.423692] ideal = 385000000, rounded = 384000000
-> > [    2.423732] ideal = 440000000, rounded = 440000000
-> > [    2.423736] sun4i_dclk_round_rate: div = 8 rate = 55000000
-> > [    2.423740] sun4i_dclk_round_rate: min_div = 4 max_div = 127, rate = 55000000
-> > [    2.423744] ideal = 220000000, rounded = 0
-> > [    2.423748] ideal = 275000000, rounded = 0
-> > [    2.423751] ideal = 330000000, rounded = 0
-> > [    2.423791] ideal = 385000000, rounded = 384000000
-> > [    2.423831] ideal = 440000000, rounded = 440000000
-> > [    2.423834] sun4i_dclk_round_rate: div = 8 rate = 55000000
-> > [    2.423957] sun4i_dclk_recalc_rate: val = 1, rate = 440000000
-> > [    2.423961] sun4i_dclk_recalc_rate: val = 1, rate = 440000000
-> > [    2.424378] ccu_nkm_set_rate: rate = 440000000, parent_rate = 220000000
-> > [    2.424381] ccu_nkm_set_rate: _nkm.n = 1
-> > [    2.424383] ccu_nkm_set_rate: _nkm.k = 2
-> > [    2.424385] ccu_nkm_set_rate: _nkm.m = 1
-> > [    2.424725] sun4i_dclk_set_rate div 8
-> > [    2.424732] sun4i_dclk_recalc_rate: val = 8, rate = 55000000
-> > [    2.561271] usb 3-1: new high-speed USB device number 2 using ehci-platform
-> > [    2.718486] hub 3-1:1.0: USB hub found
-> > [    2.718606] hub 3-1:1.0: 4 ports detected
-> > [    3.437263] ------------[ cut here ]------------
-> > [    3.437270] [CRTC:36:crtc-0] vblank wait timed out
-> >
-> > So, lowering the min rate by 300MHz seems working with bounded nkm
-> > dividers 5, 2, 9. Tested on two different panels.
-> >
-> > [    2.415773] [drm] No driver support for vblank timestamp query.
-> > [    2.424116] sun4i_dclk_round_rate: min_div = 4 max_div = 127, rate = 55000000
-> > [    2.424172] ideal = 220000000, rounded = 0
-> > [    2.424176] ideal = 275000000, rounded = 0
-> > [    2.424194] ccu_nkm_round_rate: rate = 330000000
-> > [    2.424197] ideal = 330000000, rounded = 330000000
-> > [    2.424201] sun4i_dclk_round_rate: div = 6 rate = 55000000
-> > [    2.424205] sun4i_dclk_round_rate: min_div = 4 max_div = 127, rate = 55000000
-> > [    2.424209] ideal = 220000000, rounded = 0
-> > [    2.424213] ideal = 275000000, rounded = 0
-> > [    2.424230] ccu_nkm_round_rate: rate = 330000000
-> > [    2.424233] ideal = 330000000, rounded = 330000000
-> > [    2.424236] sun4i_dclk_round_rate: div = 6 rate = 55000000
-> > [    2.424253] ccu_nkm_round_rate: rate = 330000000
-> > [    2.424270] ccu_nkm_round_rate: rate = 330000000
-> > [    2.424278] sun4i_dclk_recalc_rate: val = 1, rate = 330000000
-> > [    2.424281] sun4i_dclk_recalc_rate: val = 1, rate = 330000000
-> > [    2.424306] ccu_nkm_set_rate: rate = 330000000, parent_rate = 297000000
-> > [    2.424309] ccu_nkm_set_rate: _nkm.n = 5
-> > [    2.424311] ccu_nkm_set_rate: _nkm.k = 2
-> > [    2.424313] ccu_nkm_set_rate: _nkm.m = 9
-> > [    2.424661] sun4i_dclk_set_rate div 6
-> > [    2.424668] sun4i_dclk_recalc_rate: val = 6, rate = 55000000
-> >
-> > Note: BPI-M64-bsp is setting the rate directly to 180MHz with 297MHz
-> > parent with resulting dividers as 1, 2, 5. ans we can't produce this
-> > 180MHz rate with dclk_round_rate and ccu_nkm.
->
-> I'm still not quite sure what you mean by "500MHz can't release the
-> clock".
->
-> From what you're saying, this seems to be related to the boundaries of
-> the dividers rather than the rate itself.
 
-Yes, with 500MHz rate the boundaries of the dividers never release
-hence it hangs during set_rate and finally after sometime it trigger
-vblank timeout. can't release here means the same, may be I would
-confused, sorry for that.
+
+On 10/29/2018 10:35 AM, Arnaldo Carvalho de Melo wrote:
+> Em Mon, Oct 29, 2018 at 10:33:06AM -0400, Liang, Kan escreveu:
+>> On 10/29/2018 9:03 AM, Arnaldo Carvalho de Melo wrote:
+>>> Em Fri, Oct 26, 2018 at 04:11:51PM -0400, Liang, Kan escreveu:
+>>>> On 10/26/2018 3:24 PM, Arnaldo Carvalho de Melo wrote:
+>>>>> Em Fri, Oct 26, 2018 at 03:16:29PM -0400, Liang, Kan escreveu:
+>>>> It is mainly for performance reason to switch to overwrite mode. The impact
+>>>> was very small when I did my test. But now the effect is easily noticeable
+>>>> in other tests. Yes, I agree. We may change it back to non-overwrite mode
+>>>> until the issue is addressed.
+> 
+>>> So, I have these two patches in my perf/core branch, with Fixes tags
+>>> that will make them get to the stable kernels, ok?
+>   
+>> I just realized that the problem in KNL will be back if we switch back to
+>> non-overwrite mode.
+>> The problem is that users have to wait tens of minutes to see perf top
+>> results on the screen in KNL. Before that, there is nothing but a black
+>> screen.
+>   
+>> Sorry I didn't notice it last Friday. Because I thought the ui_warning in
+>> perf_top__mmap_read() can give user a hint. So the user can switch to
+>> overwrite mode manually.
+>> But unfortunately, the ui_warning doesn't work. Because it is called after
+>> perf_top__mmap_read(). The processing time of perf_top__mmap_read() could be
+>> tens of minutes.
+> 
+> So we need a way to notice that we're in a machine like that and warn
+> the user before the wait takes place, ideas on how to do that?
+> 
+The processing time for each perf_top__mmap_read_idx() should not that 
+long. We may check it after each perf_top__mmap_read_idx(). Also change 
+the ui_warning to one-time warning. The patch as below can do that (not 
+test).
+
+
+diff --git a/tools/perf/builtin-top.c b/tools/perf/builtin-top.c
+index d21d875..5e532e0 100644
+--- a/tools/perf/builtin-top.c
++++ b/tools/perf/builtin-top.c
+@@ -877,31 +877,40 @@ static void perf_top__mmap_read_idx(struct 
+perf_top *top, int idx)
+  	perf_mmap__read_done(md);
+  }
+
++static bool check_processing_time = true;
++
+  static void perf_top__mmap_read(struct perf_top *top)
+  {
+  	bool overwrite = top->record_opts.overwrite;
+  	struct perf_evlist *evlist = top->evlist;
+-	unsigned long long start, end;
++	unsigned long long start, end, tolerance;
+  	int i;
+
+-	start = rdclock();
+  	if (overwrite)
+  		perf_evlist__toggle_bkw_mmap(evlist, BKW_MMAP_DATA_PENDING);
+
+-	for (i = 0; i < top->evlist->nr_mmaps; i++)
++	tolerance = (unsigned long long)top->delay_secs * NSEC_PER_SEC / 
+top->evlist->nr_mmaps;
++	start = rdclock();
++	for (i = 0; i < top->evlist->nr_mmaps; i++) {
+  		perf_top__mmap_read_idx(top, i);
++		if (check_processing_time) {
++			end = rdclock();
++
++			if ((end - start) > tolerance) {
++				ui__warning("Too slow to read ring buffer.\n"
++					    "Please try increasing the period (-c) or\n"
++					    "decreasing the freq (-F) or\n"
++					    "limiting the number of CPUs (-C)\n");
++				check_processing_time = false;
++			}
++			start = end;
++		}
++	}
+
+  	if (overwrite) {
+  		perf_evlist__toggle_bkw_mmap(evlist, BKW_MMAP_EMPTY);
+  		perf_evlist__toggle_bkw_mmap(evlist, BKW_MMAP_RUNNING);
+  	}
+-	end = rdclock();
+-
+-	if ((end - start) > (unsigned long long)top->delay_secs * NSEC_PER_SEC)
+-		ui__warning("Too slow to read ring buffer.\n"
+-			    "Please try increasing the period (-c) or\n"
+-			    "decreasing the freq (-F) or\n"
+-			    "limiting the number of CPUs (-C)\n");
+  }
+
+  /*
