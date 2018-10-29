@@ -2,187 +2,133 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15AB0C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:47:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9333EECDE44
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:48:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2F072082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:47:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2F072082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5A2E32082D
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:48:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="BwzsR2sV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A2E32082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbeJ2XgB (ORCPT
+        id S1726995AbeJ2XhP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 19:36:01 -0400
-Received: from mail-it1-f198.google.com ([209.85.166.198]:40903 "EHLO
-        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726087AbeJ2XgB (ORCPT
+        Mon, 29 Oct 2018 19:37:15 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:37455 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726503AbeJ2XhP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 19:36:01 -0400
-Received: by mail-it1-f198.google.com with SMTP id y144-v6so1157664itc.5
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 07:47:03 -0700 (PDT)
+        Mon, 29 Oct 2018 19:37:15 -0400
+Received: by mail-io1-f65.google.com with SMTP id k17-v6so5112582ioc.4
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 07:48:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MnfB3NBe0zr1IXXWgqSFxtO5BvGhLc8TBKxaaj9cCek=;
+        b=BwzsR2sVkdQHP5JgKSnEzD2CevxoIsomasmUYuhh1KOILyuYbFqPa6lEwLM9u9ZnN6
+         GnXQocNPvty0xv9gtYBb58l9zIXbR8/9hYS0s2rergrsb+QM8pxv9mboMdVABCHILRfI
+         7FFyiPw3aIIfCXH4nim+IJVs6cOMao3hqbKVQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to
-         :content-transfer-encoding;
-        bh=ty9mqiG4SzatmBRqXCDGfZzcvhLu/BB3FO1B0BoobFw=;
-        b=eu4FPxwrA3VwhLmfClcDN84ShyNE6Brhyow3ZP8EyjR4NJN6pB7qUkOCqU467AHEpe
-         pCvvCaatjl3GODiwvkwtJ6liDgKU7E0BAXZHkw+2uXhOIDGKuaoxQi68Iv9HQuqjnMzK
-         BQnG2OyQJ1nNu+rgZaHFQbyLCbStpL9CV01O/RTJAnrS4gOUGjzJuCdErbH15FJIdtxy
-         XQt0RWO9WONuaVOG+PQWLQK64lvyy8OCpC70/wwixilxKlID4HVkCDlPii51DSPW4unl
-         Ivy0qFoXD8ZUrRH3vSVvMQ1DsV+1jiXYzlZdT7xRcbK+uHZ8iujh//Z4wrCb5kRMFbu6
-         m/WQ==
-X-Gm-Message-State: AGRZ1gI2z/nZYFYtYexwYMakzHRZ2lQjEtWNLVSll4TzMDytYxmHWTGk
-        qquKn5DRoylA8L6IsfTjZ/NwCdF8CygkavIri3BOOkE0nuHT
-X-Google-Smtp-Source: AJdET5dJf0Ot45t8Pp0KE/3GkJv4RITQxVlxL615DaipCwq8yttvmGwNEFdqU3RuNWoUU45JAxgmuoS4HrqHxoX3+MokP5JAiNM9
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MnfB3NBe0zr1IXXWgqSFxtO5BvGhLc8TBKxaaj9cCek=;
+        b=eWQfDYLsH69iCUAgPkDX67YnsGiVk3k+ubXFMxSm+tiwK/tSbfa7GGkcUz6TRGIL2P
+         IS4EpHAlvO62/XlhYTHghBdcB+GVsjER+nqajplU66vUjJPCFX8CQKAWmLS2gnYmPz6t
+         ZSrc123RzvELWy21u49qyEtYk/ElXo0dacjIkx6HfyK6m48KoRmgYhsuW7PtDreFDO/3
+         HJLrNnGZm2MgJFginp0+0WBsGhZe46Do93E85rE60N3nrQgXjP0u+Mbrcv2RKbgF4kpH
+         y+0QYdns0wKO8xsFOP628d+5pHVRIPm+GzLdzvT57vybUOwOG1m/QM8UrNzhWFqA51+C
+         hlxg==
+X-Gm-Message-State: AGRZ1gJ2KSxKTwq8U17vZ7UxZuKJu63dBVGwo9Jy/E5nZZe1MaxBPfXH
+        jxz+nj6O1Lq0a3hSL9CecJHRe7H9VYWZKEhQ2IFhww==
+X-Google-Smtp-Source: AJdET5dBNFcx+T0XtSKsE12EO9npZjqqlsU9APzl/9F0+4onp8dO5yJlAcwiLNmA+uouQ3g3B3ZU1PD7iVmm5xlrOgY=
+X-Received: by 2002:a6b:3e57:: with SMTP id l84-v6mr8662688ioa.252.1540824497221;
+ Mon, 29 Oct 2018 07:48:17 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a6b:e316:: with SMTP id u22-v6mr4155697ioc.38.1540824423105;
- Mon, 29 Oct 2018 07:47:03 -0700 (PDT)
-Date:   Mon, 29 Oct 2018 07:47:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000066ab7105795f245e@google.com>
-Subject: KASAN: use-after-free Read in wake_up_if_idle
-From:   syzbot <syzbot+2c1253bc508adef78a7f@syzkaller.appspotmail.com>
-To:     frederic@kernel.org, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
-Content-Transfer-Encoding: base64
+References: <20181026144344.27778-1-jagan@amarulasolutions.com>
+ <20181026144344.27778-17-jagan@amarulasolutions.com> <20181029093142.hgn4q6o7q32voutf@flea>
+In-Reply-To: <20181029093142.hgn4q6o7q32voutf@flea>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Mon, 29 Oct 2018 20:18:05 +0530
+Message-ID: <CAMty3ZBky1kP-1Q+ja2BpcbTxdHgQOFn=T4bcnZwMz6zP+AcOQ@mail.gmail.com>
+Subject: Re: [PATCH v3 16/25] drm/sun4i: sun6i_mipi_dsi: Add support for
+ VCC-DSI voltage regulator
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8sDQoNCnN5emJvdCBmb3VuZCB0aGUgZm9sbG93aW5nIGNyYXNoIG9uOg0KDQpIRUFEIGNv
-bW1pdDogICAgMjM0NjlkZTY0N2M0IE1lcmdlIGdpdDovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20v
-bGludXgva2Vybi4uDQpnaXQgdHJlZTogICAgICAgdXBzdHJlYW0NCmNvbnNvbGUgb3V0cHV0OiBo
-dHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS94L2xvZy50eHQ/eD0xNjQxZmExZDQwMDAwMA0K
-a2VybmVsIGNvbmZpZzogIGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvLmNvbmZpZz94
-PWIzZjU1Y2IzZGZjYzZjMzMNCmRhc2hib2FyZCBsaW5rOiBodHRwczovL3N5emthbGxlci5hcHBz
-cG90LmNvbS9idWc/ZXh0aWQ9MmMxMjUzYmM1MDhhZGVmNzhhN2YNCmNvbXBpbGVyOiAgICAgICBn
-Y2MgKEdDQykgOC4wLjEgMjAxODA0MTMgKGV4cGVyaW1lbnRhbCkNCg0KVW5mb3J0dW5hdGVseSwg
-SSBkb24ndCBoYXZlIGFueSByZXByb2R1Y2VyIGZvciB0aGlzIGNyYXNoIHlldC4NCg0KSU1QT1JU
-QU5UOiBpZiB5b3UgZml4IHRoZSBidWcsIHBsZWFzZSBhZGQgdGhlIGZvbGxvd2luZyB0YWcgdG8g
-dGhlIGNvbW1pdDoNClJlcG9ydGVkLWJ5OiBzeXpib3QrMmMxMjUzYmM1MDhhZGVmNzhhN2ZAc3l6
-a2FsbGVyLmFwcHNwb3RtYWlsLmNvbQ0KDQpjb3VsZCBub3QgYWxsb2NhdGUgZGlnZXN0IFRGTSBo
-YW5kbGUgcG9seTEzMDUtc2ltZA0KY291bGQgbm90IGFsbG9jYXRlIGRpZ2VzdCBURk0gaGFuZGxl
-IHBvbHkxMzA1LXNpbWQNCmNvdWxkIG5vdCBhbGxvY2F0ZSBkaWdlc3QgVEZNIGhhbmRsZSBwb2x5
-MTMwNS1zaW1k77+977+977+9DQo9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0NCkJVRzogS0FTQU46IHVzZS1hZnRlci1mcmVl
-IGluIGlzX2lkbGVfdGFzayBpbmNsdWRlL2xpbnV4L3NjaGVkLmg6MTUzNCAgDQpbaW5saW5lXQ0K
-QlVHOiBLQVNBTjogdXNlLWFmdGVyLWZyZWUgaW4gd2FrZV91cF9pZl9pZGxlKzB4NDgyLzB4NTgw
-ICANCmtlcm5lbC9zY2hlZC9jb3JlLmM6MTgwNA0KUmVhZCBvZiBzaXplIDQgYXQgYWRkciBmZmZm
-ODgwMWNjODBhNWU0IGJ5IHRhc2sgc3l6LWV4ZWN1dG9yNS8xMjExMw0KDQpDUFU6IDAgUElEOiAx
-MjExMyBDb21tOiBzeXotZXhlY3V0b3I1IE5vdCB0YWludGVkIDQuMTkuMC1yYzgrICM3Mg0KSGFy
-ZHdhcmUgbmFtZTogR29vZ2xlIEdvb2dsZSBDb21wdXRlIEVuZ2luZS9Hb29nbGUgQ29tcHV0ZSBF
-bmdpbmUsIEJJT1MgIA0KR29vZ2xlIDAxLzAxLzIwMTENCkNhbGwgVHJhY2U6DQogIF9fZHVtcF9z
-dGFjayBsaWIvZHVtcF9zdGFjay5jOjc3IFtpbmxpbmVdDQogIGR1bXBfc3RhY2srMHgxYzQvMHgy
-YjYgbGliL2R1bXBfc3RhY2suYzoxMTMNCiAgcHJpbnRfYWRkcmVzc19kZXNjcmlwdGlvbi5jb2xk
-LjgrMHg5LzB4MWZmIG1tL2thc2FuL3JlcG9ydC5jOjI1Ng0KICBrYXNhbl9yZXBvcnRfZXJyb3Ig
-bW0va2FzYW4vcmVwb3J0LmM6MzU0IFtpbmxpbmVdDQogIGthc2FuX3JlcG9ydC5jb2xkLjkrMHgy
-NDIvMHgzMDkgbW0va2FzYW4vcmVwb3J0LmM6NDEyDQogIF9fYXNhbl9yZXBvcnRfbG9hZDRfbm9h
-Ym9ydCsweDE0LzB4MjAgbW0va2FzYW4vcmVwb3J0LmM6NDMyDQogIGlzX2lkbGVfdGFzayBpbmNs
-dWRlL2xpbnV4L3NjaGVkLmg6MTUzNCBbaW5saW5lXQ0KICB3YWtlX3VwX2lmX2lkbGUrMHg0ODIv
-MHg1ODAga2VybmVsL3NjaGVkL2NvcmUuYzoxODA0DQogIHdha2VfdXBfYWxsX2lkbGVfY3B1cysw
-eDcyLzB4YzAga2VybmVsL3NtcC5jOjc0NA0KICBjcHVpZGxlX2xhdGVuY3lfbm90aWZ5KzB4ZS8w
-eDIwIGRyaXZlcnMvY3B1aWRsZS9jcHVpZGxlLmM6NjY2DQogIG5vdGlmaWVyX2NhbGxfY2hhaW4r
-MHgxN2UvMHgzODAga2VybmVsL25vdGlmaWVyLmM6OTMNCiAgX19ibG9ja2luZ19ub3RpZmllcl9j
-YWxsX2NoYWluIGtlcm5lbC9ub3RpZmllci5jOjMxNyBbaW5saW5lXQ0KICBibG9ja2luZ19ub3Rp
-Zmllcl9jYWxsX2NoYWluKzB4MTQ3LzB4MTkwIGtlcm5lbC9ub3RpZmllci5jOjMyOA0KICBwbV9x
-b3NfdXBkYXRlX3RhcmdldCsweDQ5YS8weGQ1MCBrZXJuZWwvcG93ZXIvcW9zLmM6MzE2DQogIHBt
-X3Fvc19yZW1vdmVfcmVxdWVzdCsweDFjMC8weDY0MCBrZXJuZWwvcG93ZXIvcW9zLmM6NTQyDQog
-IHNuZF9wY21fcmVsZWFzZV9zdWJzdHJlYW0ucGFydC40NisweDI2MS8weDMzMCBzb3VuZC9jb3Jl
-L3BjbV9uYXRpdmUuYzoyMzkwDQogIHNuZF9wY21fcmVsZWFzZV9zdWJzdHJlYW0rMHg2MS8weDgw
-IHNvdW5kL2NvcmUvcGNtX25hdGl2ZS5jOjIzNzgNCiAgc25kX3BjbV9vc3NfcmVsZWFzZV9maWxl
-LnBhcnQuMjMrMHg3MS8weGEwIHNvdW5kL2NvcmUvb3NzL3BjbV9vc3MuYzoyMzgyDQogIHNuZF9w
-Y21fb3NzX3JlbGVhc2VfZmlsZSBzb3VuZC9jb3JlL29zcy9wY21fb3NzLmM6MjM3NyBbaW5saW5l
-XQ0KICBzbmRfcGNtX29zc19yZWxlYXNlKzB4MTE0LzB4MjkwIHNvdW5kL2NvcmUvb3NzL3BjbV9v
-c3MuYzoyNTYyDQogIF9fZnB1dCsweDM4NS8weGEzMCBmcy9maWxlX3RhYmxlLmM6Mjc4DQogIF9f
-X19mcHV0KzB4MTUvMHgyMCBmcy9maWxlX3RhYmxlLmM6MzA5DQogIHRhc2tfd29ya19ydW4rMHgx
-ZTgvMHgyYTAga2VybmVsL3Rhc2tfd29yay5jOjExMw0KICB0cmFjZWhvb2tfbm90aWZ5X3Jlc3Vt
-ZSBpbmNsdWRlL2xpbnV4L3RyYWNlaG9vay5oOjE5MyBbaW5saW5lXQ0KICBleGl0X3RvX3VzZXJt
-b2RlX2xvb3ArMHgzMTgvMHgzODAgYXJjaC94ODYvZW50cnkvY29tbW9uLmM6MTY2DQogIHByZXBh
-cmVfZXhpdF90b191c2VybW9kZSBhcmNoL3g4Ni9lbnRyeS9jb21tb24uYzoxOTcgW2lubGluZV0N
-CiAgc3lzY2FsbF9yZXR1cm5fc2xvd3BhdGggYXJjaC94ODYvZW50cnkvY29tbW9uLmM6MjY4IFtp
-bmxpbmVdDQogIGRvX3N5c2NhbGxfNjQrMHg2YmUvMHg4MjAgYXJjaC94ODYvZW50cnkvY29tbW9u
-LmM6MjkzDQogIGVudHJ5X1NZU0NBTExfNjRfYWZ0ZXJfaHdmcmFtZSsweDQ5LzB4YmUNClJJUDog
-MDAzMzoweDQ1NzU2OQ0KQ29kZTogZmQgYjMgZmIgZmYgYzMgNjYgMmUgMGYgMWYgODQgMDAgMDAg
-MDAgMDAgMDAgNjYgOTAgNDggODkgZjggNDggODkgZjcgIA0KNDggODkgZDYgNDggODkgY2EgNGQg
-ODkgYzIgNGQgODkgYzggNGMgOGIgNGMgMjQgMDggMGYgMDUgPDQ4PiAzZCAwMSBmMCBmZiAgDQpm
-ZiAwZiA4MyBjYiBiMyBmYiBmZiBjMyA2NiAyZSAwZiAxZiA4NCAwMCAwMCAwMCAwMA0KUlNQOiAw
-MDJiOjAwMDA3ZmJjNWU2ZjNjNzggRUZMQUdTOiAwMDAwMDI0NiBPUklHX1JBWDogMDAwMDAwMDAw
-MDAwMDEwMQ0KUkFYOiBmZmZmZmZmZmZmZmZmZmVhIFJCWDogMDAwMDAwMDAwMDAwMDAwNCBSQ1g6
-IDAwMDAwMDAwMDA0NTc1NjkNClJEWDogMDAwMDAwMDAwMDEwNTAwMCBSU0k6IDAwMDAwMDAwMjAw
-MDAxNDAgUkRJOiBmZmZmZmZmZmZmZmZmZjljDQpSQlA6IDAwMDAwMDAwMDA3MmJmMDAgUjA4OiAw
-MDAwMDAwMDAwMDAwMDAwIFIwOTogMDAwMDAwMDAwMDAwMDAwMA0KUjEwOiAwMDAwMDAwMDAwMDAw
-MDAwIFIxMTogMDAwMDAwMDAwMDAwMDI0NiBSMTI6IDAwMDA3ZmJjNWU2ZjQ2ZDQNClIxMzogMDAw
-MDAwMDAwMDRjMmI3NiBSMTQ6IDAwMDAwMDAwMDA0ZDQxZDAgUjE1OiAwMDAwMDAwMGZmZmZmZmZm
-DQoNCkFsbG9jYXRlZCBieSB0YXNrIDIyMzY6DQogIHNhdmVfc3RhY2srMHg0My8weGQwIG1tL2th
-c2FuL2thc2FuLmM6NDQ4DQogIHNldF90cmFjayBtbS9rYXNhbi9rYXNhbi5jOjQ2MCBbaW5saW5l
-XQ0KICBrYXNhbl9rbWFsbG9jKzB4YzcvMHhlMCBtbS9rYXNhbi9rYXNhbi5jOjU1Mw0KICBrYXNh
-bl9zbGFiX2FsbG9jKzB4MTIvMHgyMCBtbS9rYXNhbi9rYXNhbi5jOjQ5MA0KICBrbWVtX2NhY2hl
-X2FsbG9jX25vZGUrMHgxNDQvMHg3MzAgbW0vc2xhYi5jOjM2NDQNCiAgYWxsb2NfdGFza19zdHJ1
-Y3Rfbm9kZSBrZXJuZWwvZm9yay5jOjE1NyBbaW5saW5lXQ0KICBkdXBfdGFza19zdHJ1Y3Qga2Vy
-bmVsL2ZvcmsuYzo4MDIgW2lubGluZV0NCiAgY29weV9wcm9jZXNzKzB4MWZmNC8weDg3ODAga2Vy
-bmVsL2ZvcmsuYzoxNzA3DQogIF9kb19mb3JrKzB4MWNiLzB4MTFkMCBrZXJuZWwvZm9yay5jOjIx
-NjYNCmNvdWxkIG5vdCBhbGxvY2F0ZSBkaWdlc3QgVEZNIGhhbmRsZSBwb2x5MTMwNS1zaW1k77+9
-77+977+9DQogIGtlcm5lbF90aHJlYWQrMHgzNC8weDQwIGtlcm5lbC9mb3JrLmM6MjIyNQ0KICBj
-YWxsX3VzZXJtb2RlaGVscGVyX2V4ZWNfc3luYyBrZXJuZWwvdW1oLmM6MTMwIFtpbmxpbmVdDQog
-IGNhbGxfdXNlcm1vZGVoZWxwZXJfZXhlY193b3JrKzB4YzkvMHgyZjAga2VybmVsL3VtaC5jOjE4
-Mg0KICBwcm9jZXNzX29uZV93b3JrKzB4YzkwLzB4MWM0MCBrZXJuZWwvd29ya3F1ZXVlLmM6MjE1
-Mw0KICB3b3JrZXJfdGhyZWFkKzB4MTdmLzB4MTM5MCBrZXJuZWwvd29ya3F1ZXVlLmM6MjI5Ng0K
-ICBrdGhyZWFkKzB4MzVhLzB4NDIwIGtlcm5lbC9rdGhyZWFkLmM6MjQ2DQogIHJldF9mcm9tX2Zv
-cmsrMHgzYS8weDUwIGFyY2gveDg2L2VudHJ5L2VudHJ5XzY0LlM6NDEzDQoNCkZyZWVkIGJ5IHRh
-c2sgODY2MToNCiAgc2F2ZV9zdGFjaysweDQzLzB4ZDAgbW0va2FzYW4va2FzYW4uYzo0NDgNCiAg
-c2V0X3RyYWNrIG1tL2thc2FuL2thc2FuLmM6NDYwIFtpbmxpbmVdDQogIF9fa2FzYW5fc2xhYl9m
-cmVlKzB4MTAyLzB4MTUwIG1tL2thc2FuL2thc2FuLmM6NTIxDQogIGthc2FuX3NsYWJfZnJlZSsw
-eGUvMHgxMCBtbS9rYXNhbi9rYXNhbi5jOjUyOA0KY291bGQgbm90IGFsbG9jYXRlIGRpZ2VzdCBU
-Rk0gaGFuZGxlIHBvbHkxMzA1LXNpbWQCDQogIF9fY2FjaGVfZnJlZSBtbS9zbGFiLmM6MzQ5OCBb
-aW5saW5lXQ0KICBrbWVtX2NhY2hlX2ZyZWUrMHg4My8weDI5MCBtbS9zbGFiLmM6Mzc1Ng0KICBm
-cmVlX3Rhc2tfc3RydWN0IGtlcm5lbC9mb3JrLmM6MTYyIFtpbmxpbmVdDQogIGZyZWVfdGFzaysw
-eDE2ZS8weDFmMCBrZXJuZWwvZm9yay5jOjQxNg0KICBfX3B1dF90YXNrX3N0cnVjdCsweDJlNi8w
-eDYyMCBrZXJuZWwvZm9yay5jOjY4OQ0KICBwdXRfdGFza19zdHJ1Y3QgaW5jbHVkZS9saW51eC9z
-Y2hlZC90YXNrLmg6OTYgW2lubGluZV0NCiAgZmluaXNoX3Rhc2tfc3dpdGNoKzB4NjI4LzB4OTEw
-IGtlcm5lbC9zY2hlZC9jb3JlLmM6MjcwOQ0KICBjb250ZXh0X3N3aXRjaCBrZXJuZWwvc2NoZWQv
-Y29yZS5jOjI4MjggW2lubGluZV0NCiAgX19zY2hlZHVsZSsweDg3NC8weDFlZDAga2VybmVsL3Nj
-aGVkL2NvcmUuYzozNDczDQogIHNjaGVkdWxlKzB4ZmUvMHg0NjAga2VybmVsL3NjaGVkL2NvcmUu
-YzozNTE3DQogIGZyZWV6YWJsZV9zY2hlZHVsZSBpbmNsdWRlL2xpbnV4L2ZyZWV6ZXIuaDoxNzIg
-W2lubGluZV0NCiAgZG9fbmFub3NsZWVwKzB4MjFlLzB4NzUwIGtlcm5lbC90aW1lL2hydGltZXIu
-YzoxNjg4DQogIGhydGltZXJfbmFub3NsZWVwKzB4MmQ0LzB4NjIwIGtlcm5lbC90aW1lL2hydGlt
-ZXIuYzoxNzQyDQogIF9fZG9fc3lzX25hbm9zbGVlcCBrZXJuZWwvdGltZS9ocnRpbWVyLmM6MTc3
-NiBbaW5saW5lXQ0KICBfX3NlX3N5c19uYW5vc2xlZXAga2VybmVsL3RpbWUvaHJ0aW1lci5jOjE3
-NjMgW2lubGluZV0NCiAgX194NjRfc3lzX25hbm9zbGVlcCsweDFlNy8weDI4MCBrZXJuZWwvdGlt
-ZS9ocnRpbWVyLmM6MTc2Mw0KICBkb19zeXNjYWxsXzY0KzB4MWI5LzB4ODIwIGFyY2gveDg2L2Vu
-dHJ5L2NvbW1vbi5jOjI5MA0KICBlbnRyeV9TWVNDQUxMXzY0X2FmdGVyX2h3ZnJhbWUrMHg0OS8w
-eGJlDQoNClRoZSBidWdneSBhZGRyZXNzIGJlbG9uZ3MgdG8gdGhlIG9iamVjdCBhdCBmZmZmODgw
-MWNjODBhNWMwDQogIHdoaWNoIGJlbG9uZ3MgdG8gdGhlIGNhY2hlIHRhc2tfc3RydWN0IG9mIHNp
-emUgNjA4MA0KVGhlIGJ1Z2d5IGFkZHJlc3MgaXMgbG9jYXRlZCAzNiBieXRlcyBpbnNpZGUgb2YN
-CiAgNjA4MC1ieXRlIHJlZ2lvbiBbZmZmZjg4MDFjYzgwYTVjMCwgZmZmZjg4MDFjYzgwYmQ4MCkN
-ClRoZSBidWdneSBhZGRyZXNzIGJlbG9uZ3MgdG8gdGhlIHBhZ2U6DQpwYWdlOmZmZmZlYTAwMDcz
-MjAyODAgY291bnQ6MSBtYXBjb3VudDowIG1hcHBpbmc6ZmZmZjg4MDFkYTk0YzIwMCBpbmRleDow
-eDAgIA0KY29tcG91bmRfbWFwY291bnQ6IDANCmZsYWdzOiAweDJmZmZjMDAwMDAwODEwMChzbGFi
-fGhlYWQpDQpyYXc6IDAyZmZmYzAwMDAwMDgxMDAgZmZmZmVhMDAwNmU4OTAwOCBmZmZmZWEwMDA2
-ZjBmNTg4IGZmZmY4ODAxZGE5NGMyMDANCnJhdzogMDAwMDAwMDAwMDAwMDAwMCBmZmZmODgwMWNj
-ODBhNWMwIDAwMDAwMDAxMDAwMDAwMDEgMDAwMDAwMDAwMDAwMDAwMA0KcGFnZSBkdW1wZWQgYmVj
-YXVzZToga2FzYW46IGJhZCBhY2Nlc3MgZGV0ZWN0ZWQNCg0KTWVtb3J5IHN0YXRlIGFyb3VuZCB0
-aGUgYnVnZ3kgYWRkcmVzczoNCiAgZmZmZjg4MDFjYzgwYTQ4MDogZmMgZmMgZmMgZmMgZmMgZmMg
-ZmMgZmMgZmMgZmMgZmMgZmMgZmMgZmMgZmMgZmMNCiAgZmZmZjg4MDFjYzgwYTUwMDogZmMgZmMg
-ZmMgZmMgZmMgZmMgZmMgZmMgZmMgZmMgZmMgZmMgZmMgZmMgZmMgZmMNCj4gZmZmZjg4MDFjYzgw
-YTU4MDogZmMgZmMgZmMgZmMgZmMgZmMgZmMgZmMgZmIgZmIgZmIgZmIgZmIgZmIgZmIgZmINCiAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXg0K
-ICBmZmZmODgwMWNjODBhNjAwOiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBmYiBm
-YiBmYiBmYiBmYg0Ka29iamVjdDogJ2xvb3AzJyAoMDAwMDAwMDAwMWI4MzlhMyk6IGZpbGxfa29i
-al9wYXRoOiBwYXRoICANCj0gJy9kZXZpY2VzL3ZpcnR1YWwvYmxvY2svbG9vcDMnDQogIGZmZmY4
-ODAxY2M4MGE2ODA6IGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZiIGZi
-IGZiDQo9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT0NCg0KDQotLS0NClRoaXMgYnVnIGlzIGdlbmVyYXRlZCBieSBhIGJvdC4g
-SXQgbWF5IGNvbnRhaW4gZXJyb3JzLg0KU2VlIGh0dHBzOi8vZ29vLmdsL3Rwc21FSiBmb3IgbW9y
-ZSBpbmZvcm1hdGlvbiBhYm91dCBzeXpib3QuDQpzeXpib3QgZW5naW5lZXJzIGNhbiBiZSByZWFj
-aGVkIGF0IHN5emthbGxlckBnb29nbGVncm91cHMuY29tLg0KDQpzeXpib3Qgd2lsbCBrZWVwIHRy
-YWNrIG9mIHRoaXMgYnVnIHJlcG9ydC4gU2VlOg0KaHR0cHM6Ly9nb28uZ2wvdHBzbUVKI2J1Zy1z
-dGF0dXMtdHJhY2tpbmcgZm9yIGhvdyB0byBjb21tdW5pY2F0ZSB3aXRoICANCnN5emJvdC4NCg==
+On Mon, Oct 29, 2018 at 3:01 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>
+> On Fri, Oct 26, 2018 at 08:13:35PM +0530, Jagan Teki wrote:
+> > Some boards have VCC-DSI pin connected to voltage regulator which may
+> > not be turned on by default.
+> >
+> > Add support for such boards by adding voltage regulator handling code to
+> > MIPI DSI driver.
+> >
+> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > Tested-by: Jagan Teki <jagan@amarulasolutions.com>
+> > ---
+> > Changes for v3:
+> > - new patch
+> > Changes for v2:
+> > - none
+> >
+> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 14 ++++++++++++++
+> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h |  3 +++
+> >  2 files changed, 17 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > index 42bd7506abaf..bc57343592e0 100644
+> > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
+> > @@ -949,6 +949,12 @@ static int sun6i_dsi_bind(struct device *dev, struct device *master,
+> >
+> >       dsi->drv = drv;
+> >
+> > +     ret = regulator_enable(dsi->regulator);
+> > +     if (ret) {
+> > +             dev_err(dev, "Failed to enable regulator\n");
+> > +             return ret;
+> > +     }
+> > +
+>
+> The regulator should be enabled only when the device is in use.
+
+True, but there is no device specific quirk needed because who ever
+not needed simply use dummy regulator
+[    0.245821] sun6i-mipi-dsi 1ca0000.dsi: 1ca0000.dsi supply vcc-dsi
+not found, using dummy regulato
+r
+
+even like HVCC in hdmi driver [1]
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c?id=633ba1e086e1abbeef1ffd899911de8cf3987d9f
