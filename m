@@ -7,67 +7,72 @@ X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFC9FC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:08:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C7DDC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:08:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8E712084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:08:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED7CF20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:08:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cdj/bG62"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8E712084A
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mxvoiQps"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED7CF20870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728415AbeJ3C6N (ORCPT
+        id S1728437AbeJ3C6Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 22:58:13 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40443 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728367AbeJ3C6L (ORCPT
+        Mon, 29 Oct 2018 22:58:16 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41272 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728366AbeJ3C6Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 22:58:11 -0400
-Received: by mail-pl1-f194.google.com with SMTP id b9-v6so4189266pls.7
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 11:08:28 -0700 (PDT)
+        Mon, 29 Oct 2018 22:58:16 -0400
+Received: by mail-pf1-f194.google.com with SMTP id e22-v6so1394614pfn.8
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 11:08:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=uuVBjLPPAr7vrrxtncgOpWRyj/co0fFGtiULUHSo5OQ=;
-        b=cdj/bG62aAL2KnWaVIAJOSrpnC9nsbsXjlggJ6B4TOaBaVxAQ6niOV4YmXCNLDD+aS
-         o8RSp1GrDIo6cW0XokWZoyRkvyuge1ANtIF5d2SmghbRacfD9khbep4aBt284a/DhMGX
-         wwpy3XRtX76rgm6BpD/CSNA4U/BAad+cmtoRA=
+        bh=CSaQp289WlwooI6biqRK70zJEg/8W1x/ZX+9kCIc7Ts=;
+        b=mxvoiQpswweCkHANP3Cexu88qUDHEHcm1IUx/gx6U9O+2agCOQbySNl981YrQPO/NE
+         ZINFMOGENJEp2Aht7gk4zKayGjMO6w8n2HAseulpfg1OphhcjUqBwzvJ/cbdumj+QMlg
+         uZMhsBdcbNKonkRq7C2sIofM1Jw1d0iaZAIQs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=uuVBjLPPAr7vrrxtncgOpWRyj/co0fFGtiULUHSo5OQ=;
-        b=cgBNOor+c434fAVnnftvrXUwe8amJWxkhe7fFoAsl7msu/xcvn8bNuveCMbjEsZ985
-         cPZDY7NjiWwo3w7L+sPLUgRPZs8hRJro9pmlco5xGhQCVPM1tqHbAPslbxW7GuabJhEB
-         kD0FQ71AYV9Xi+iwYyfUm0zFyAi8KKir571WmzmMs6jvk32eHDb/9LegE4/hX+7U0bn4
-         oA55Cmcv3j2ni3MvJfE1hrmtFgAh35rep698na7HqppcRF7HXD0tuQrG3Vynh8fFnl9s
-         Oxyn408ipitjsWMHn39aD2zkxEBajF8M8ghEZoVVeHCsjCb3f6PQ1AmgouMu1u51dKBx
-         3NOw==
-X-Gm-Message-State: AGRZ1gLdNTMepPvhxil/uAXLtc9CVgJ+zH/gaCdDqHrdqnbpVY3dPIe7
-        MWRSO4chAInPwNVxcuPVV9ddDA==
-X-Google-Smtp-Source: AJdET5c2PDQALEVV+aHTh8q3e5YsAPaHEDo1keDmh9zyoI809z4dgnYzJmUQlESJWYq9B7Wa4BZIgQ==
-X-Received: by 2002:a17:902:1124:: with SMTP id d33-v6mr6564607pla.125.1540836508342;
-        Mon, 29 Oct 2018 11:08:28 -0700 (PDT)
+        bh=CSaQp289WlwooI6biqRK70zJEg/8W1x/ZX+9kCIc7Ts=;
+        b=XFiwZsy99CxI3K3n+D1K9n/qc2Q5gWr2v+ojn/iB9xL+Dx1LL6/2GLHdhZmRUJniXR
+         jElBzZIdv+BLmjgLaLkvucKh/1LohgkcINaMTN5iGEypVNv6bcRhCRSECnOerZS5CzTQ
+         +H6XMNq7yCiGBVgUczHFziJwQwCloILI/xPraVkxJobauVqia5frEnubPziAwV3rRHR1
+         OezEr79EMoXvKp+IPwQ5HMmSHwWI7K5dl+MCNPMtgOxi0JFVaWwT8VJJUnkvp3RdiQgF
+         6PR8GL0bFI2PXcYYtS0QXCvNYvBzylALHWWg4SWSBfUFpiU0k6cCKwaYovhIYdS/npPD
+         xrhQ==
+X-Gm-Message-State: AGRZ1gK9A1CCFgvq083qi8NUp+185zvGU2JAqOOepKNqVdHeeBCHh2GC
+        UVAiOamtN5g6MY3hzm6pivrpEA==
+X-Google-Smtp-Source: AJdET5d/8hGlxDxAlpCXY3ZegXVIPGXLSUdUXAvdHRmyPp8wrYLT7hr04+3LnVhCwvDG/Kn1hLlsVw==
+X-Received: by 2002:a62:425b:: with SMTP id p88-v6mr16258227pfa.96.1540836512254;
+        Mon, 29 Oct 2018 11:08:32 -0700 (PDT)
 Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
-        by smtp.gmail.com with ESMTPSA id u13-v6sm20537765pgp.18.2018.10.29.11.08.25
+        by smtp.gmail.com with ESMTPSA id u13-v6sm20537765pgp.18.2018.10.29.11.08.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 11:08:26 -0700 (PDT)
+        Mon, 29 Oct 2018 11:08:31 -0700 (PDT)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     Jason Wessel <jason.wessel@windriver.com>,
         Daniel Thompson <daniel.thompson@linaro.org>,
         tglx@linutronix.de, mingo@kernel.org, gregkh@linuxfoundation.org
 Cc:     linux-arm-msm@vger.kernel.org,
         kgdb-bugreport@lists.sourceforge.net,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        jslaby@suse.com
-Subject: [PATCH 3/7] serial: qcom_geni_serial: Process sysrq at port unlock time
-Date:   Mon, 29 Oct 2018 11:07:03 -0700
-Message-Id: <20181029180707.207546-4-dianders@chromium.org>
+        Douglas Anderson <dianders@chromium.org>, nm@ti.com,
+        marex@denx.de, vigneshr@ti.com, linux-aspeed@lists.ozlabs.org,
+        jk@ozlabs.org, andrew@aj.id.au, rolf.evers.fischer@aptiv.com,
+        linux-kernel@vger.kernel.org, tony@atomide.com,
+        Jisheng.Zhang@synaptics.com, joel@jms.id.au,
+        linux-serial@vger.kernel.org, jslaby@suse.com, asierra@xes-inc.com,
+        andriy.shevchenko@linux.intel.com, dan.carpenter@oracle.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 5/7] serial: 8250: Process sysrq at port unlock time
+Date:   Mon, 29 Oct 2018 11:07:05 -0700
+Message-Id: <20181029180707.207546-6-dianders@chromium.org>
 X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
 In-Reply-To: <20181029180707.207546-1-dianders@chromium.org>
 References: <20181029180707.207546-1-dianders@chromium.org>
@@ -83,35 +88,120 @@ at port unlock time") to handle sysrqs more cleanly.
 
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
+I don't have a great way to test all 8250 variants, but I've at least
+tested rk3288 / rk3399 and they seem to work.  Hopefully I got the
+aspeed_vuart / fsl / omap variants right (I only compile tested
+those).
 
- drivers/tty/serial/qcom_geni_serial.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+ drivers/tty/serial/8250/8250_aspeed_vuart.c | 6 +++++-
+ drivers/tty/serial/8250/8250_fsl.c          | 6 +++++-
+ drivers/tty/serial/8250/8250_omap.c         | 6 +++++-
+ drivers/tty/serial/8250/8250_port.c         | 8 +++-----
+ 4 files changed, 18 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-index 3c8e0202da8b..20edce1e222e 100644
---- a/drivers/tty/serial/qcom_geni_serial.c
-+++ b/drivers/tty/serial/qcom_geni_serial.c
-@@ -499,9 +499,7 @@ static int handle_rx_console(struct uart_port *uport, u32 bytes, bool drop)
- 					continue;
- 			}
- 
--			spin_unlock(&uport->lock);
--			sysrq = uart_handle_sysrq_char(uport, buf[c]);
--			spin_lock(&uport->lock);
-+			sysrq = uart_prepare_sysrq_char(uport, buf[c]);
- 
- 			if (!sysrq)
- 				tty_insert_flip_char(tport, buf[c], TTY_NORMAL);
-@@ -811,7 +809,8 @@ static irqreturn_t qcom_geni_serial_isr(int isr, void *dev)
- 		qcom_geni_serial_handle_rx(uport, drop_rx);
- 
- out_unlock:
--	spin_unlock_irqrestore(&uport->lock, flags);
-+	uart_unlock_and_check_sysrq(uport, flags);
+diff --git a/drivers/tty/serial/8250/8250_aspeed_vuart.c b/drivers/tty/serial/8250/8250_aspeed_vuart.c
+index 435bec40dee6..0438d9a905ce 100644
+--- a/drivers/tty/serial/8250/8250_aspeed_vuart.c
++++ b/drivers/tty/serial/8250/8250_aspeed_vuart.c
+@@ -5,6 +5,10 @@
+  *    Copyright (C) 2016 Jeremy Kerr <jk@ozlabs.org>, IBM Corp.
+  *    Copyright (C) 2006 Arnd Bergmann <arnd@arndb.de>, IBM Corp.
+  */
++#if defined(CONFIG_SERIAL_8250_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
++#define SUPPORT_SYSRQ
++#endif
 +
- 	return IRQ_HANDLED;
- }
+ #include <linux/device.h>
+ #include <linux/module.h>
+ #include <linux/of_address.h>
+@@ -293,7 +297,7 @@ static int aspeed_vuart_handle_irq(struct uart_port *port)
+ 	if (lsr & UART_LSR_THRE)
+ 		serial8250_tx_chars(up);
  
+-	spin_unlock_irqrestore(&port->lock, flags);
++	uart_unlock_and_check_sysrq(port, flags);
+ 
+ 	return 1;
+ }
+diff --git a/drivers/tty/serial/8250/8250_fsl.c b/drivers/tty/serial/8250/8250_fsl.c
+index 6640a4c7ddd1..ff3dcaea5d93 100644
+--- a/drivers/tty/serial/8250/8250_fsl.c
++++ b/drivers/tty/serial/8250/8250_fsl.c
+@@ -1,4 +1,8 @@
+ // SPDX-License-Identifier: GPL-2.0
++#if defined(CONFIG_SERIAL_8250_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
++#define SUPPORT_SYSRQ
++#endif
++
+ #include <linux/serial_reg.h>
+ #include <linux/serial_8250.h>
+ 
+@@ -54,7 +58,7 @@ int fsl8250_handle_irq(struct uart_port *port)
+ 		serial8250_tx_chars(up);
+ 
+ 	up->lsr_saved_flags = orig_lsr;
+-	spin_unlock_irqrestore(&up->port.lock, flags);
++	uart_unlock_and_check_sysrq(&up->port, flags);
+ 	return 1;
+ }
+ EXPORT_SYMBOL_GPL(fsl8250_handle_irq);
+diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
+index a019286f8bb6..ad7ba7d0f28d 100644
+--- a/drivers/tty/serial/8250/8250_omap.c
++++ b/drivers/tty/serial/8250/8250_omap.c
+@@ -8,6 +8,10 @@
+  *
+  */
+ 
++#if defined(CONFIG_SERIAL_8250_CONSOLE) && defined(CONFIG_MAGIC_SYSRQ)
++#define SUPPORT_SYSRQ
++#endif
++
+ #include <linux/device.h>
+ #include <linux/io.h>
+ #include <linux/module.h>
+@@ -1085,7 +1089,7 @@ static int omap_8250_dma_handle_irq(struct uart_port *port)
+ 		}
+ 	}
+ 
+-	spin_unlock_irqrestore(&port->lock, flags);
++	uart_unlock_and_check_sysrq(port, flags);
+ 	serial8250_rpm_put(up);
+ 	return 1;
+ }
+diff --git a/drivers/tty/serial/8250/8250_port.c b/drivers/tty/serial/8250/8250_port.c
+index f776b3eafb96..c39482b96111 100644
+--- a/drivers/tty/serial/8250/8250_port.c
++++ b/drivers/tty/serial/8250/8250_port.c
+@@ -1755,7 +1755,7 @@ void serial8250_read_char(struct uart_8250_port *up, unsigned char lsr)
+ 		else if (lsr & UART_LSR_FE)
+ 			flag = TTY_FRAME;
+ 	}
+-	if (uart_handle_sysrq_char(port, ch))
++	if (uart_prepare_sysrq_char(port, ch))
+ 		return;
+ 
+ 	uart_insert_char(port, lsr, UART_LSR_OE, ch, flag);
+@@ -1897,7 +1897,7 @@ int serial8250_handle_irq(struct uart_port *port, unsigned int iir)
+ 	if ((!up->dma || up->dma->tx_err) && (status & UART_LSR_THRE))
+ 		serial8250_tx_chars(up);
+ 
+-	spin_unlock_irqrestore(&port->lock, flags);
++	uart_unlock_and_check_sysrq(port, flags);
+ 	return 1;
+ }
+ EXPORT_SYMBOL_GPL(serial8250_handle_irq);
+@@ -3258,9 +3258,7 @@ void serial8250_console_write(struct uart_8250_port *up, const char *s,
+ 
+ 	serial8250_rpm_get(up);
+ 
+-	if (port->sysrq)
+-		locked = 0;
+-	else if (oops_in_progress)
++	if (oops_in_progress)
+ 		locked = spin_trylock_irqsave(&port->lock, flags);
+ 	else
+ 		spin_lock_irqsave(&port->lock, flags);
 -- 
 2.19.1.568.g152ad8e336-goog
 
