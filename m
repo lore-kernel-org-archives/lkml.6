@@ -2,90 +2,113 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AEB5C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:56:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73886C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:59:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F356F2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:56:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PJ+jKuUz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F356F2084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 24F89204FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:59:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24F89204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728236AbeJ3CqW (ORCPT
+        id S1728240AbeJ3Csk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 22:46:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43784 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727712AbeJ3CqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 22:46:22 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77594204FD;
-        Mon, 29 Oct 2018 17:56:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540835801;
-        bh=BPqcXJghhk4BLehj5161FDGSWqveazlDnxHC1bTjwAc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PJ+jKuUzJGtM4di+3CwJX4lAOj/1Jr7GJHCin94eL82sT2Ntlw/vSumo4BFxt/QhA
-         xVy+VQkn0tYC1eByQUuTbx92Z8c9POzvpQ3gwa/f27XDTdLMTD6gwwwfwbo8tpvAMZ
-         iamzXhOG55Ql1bI1+4YApm6EZjVfDbl0CutRZDq4=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id A2DC8142C5F; Mon, 29 Oct 2018 14:56:39 -0300 (-03)
-Date:   Mon, 29 Oct 2018 14:56:39 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     David Miller <davem@davemloft.net>
-Cc:     kan.liang@linux.intel.com, linux-kernel@vger.kernel.org,
-        wangnan0@huawei.com, jolsa@kernel.org, namhyung@kernel.org,
-        kan.liang@intel.com, ak@linux.intel.com, yao.jin@linux.intel.com,
-        peterz@infradead.org
-Subject: Re: [PATCHES/RFC] Re: A concern about overflow ring buffer mode
-Message-ID: <20181029175639.GJ21857@kernel.org>
-References: <0247fca0-5a94-9a83-cefa-282804316729@linux.intel.com>
- <20181029143506.GF21857@kernel.org>
- <9ad642b0-1a15-b3d9-781f-893f782f8867@linux.intel.com>
- <20181029.104321.1657526975436362699.davem@davemloft.net>
+        Mon, 29 Oct 2018 22:48:40 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44024 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728104AbeJ3Csk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 22:48:40 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0742A1596;
+        Mon, 29 Oct 2018 10:58:59 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CC2BC3F6A8;
+        Mon, 29 Oct 2018 10:58:58 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id DE44D1AE091C; Mon, 29 Oct 2018 17:59:05 +0000 (GMT)
+Date:   Mon, 29 Oct 2018 17:59:05 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Zhen Lei <thunder.leizhen@huawei.com>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        iommu <iommu@lists.linux-foundation.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        LinuxArm <linuxarm@huawei.com>
+Subject: Re: [PATCH v2 1/1] iommu/arm-smmu-v3: eliminate a potential memory
+ corruption on Hi16xx soc
+Message-ID: <20181029175905.GC16739@arm.com>
+References: <1540021014-8176-1-git-send-email-thunder.leizhen@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181029.104321.1657526975436362699.davem@davemloft.net>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1540021014-8176-1-git-send-email-thunder.leizhen@huawei.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Oct 29, 2018 at 10:43:21AM -0700, David Miller escreveu:
-> From: "Liang, Kan" <kan.liang@linux.intel.com>
-> Date: Mon, 29 Oct 2018 11:11:25 -0400
+On Sat, Oct 20, 2018 at 03:36:54PM +0800, Zhen Lei wrote:
+> The standard GITS_TRANSLATER register in ITS is only 4 bytes, but
+> Hisilicon expands the next 4 bytes to carry some IMPDEF information. That
+> means, total 8 bytes data will be written to MSIAddress each time.
 > 
-> > The processing time for each perf_top__mmap_read_idx() should not that
-> > long. We may check it after each perf_top__mmap_read_idx(). Also
-> > change the ui_warning to one-time warning. The patch as below can do
-> > that (not test).
+> MSIAddr: |----4bytes----|----4bytes----|
+> 	 |    MSIData   |    IMPDEF    |
 > 
-> You cannot make ui__*() calls from the event processing thread.
+> There is no problem for ITS, because the next 4 bytes space is reserved
+> in ITS. But it will overwrite the 4 bytes memory following "sync_count".
+> It's very fortunately that the previous and the next neighbour of the
+> "sync_count" are both aligned by 8 bytes, so no problem is met now.
 > 
-> I tried to make this point strongly over the weekend.
+> It's good to explicitly add a workaround:
+> 1. Add gcc __attribute__((aligned(8))) to make sure that "sync_count" is
+>    always aligned by 8 bytes.
+> 2. Add a "int" struct member to make sure the 4 bytes padding is always
+>    exist.
 > 
-> It hangs the event thread, because the ui call waits for a keypress
-> but the display thread will eat them up and the event thread thus
-> hangs in select().
+> There is no functional change.
 > 
-> So, once more, all ui calls must be avoided in event processing code.
+> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+> ---
+>  drivers/iommu/arm-smmu-v3.c | 15 ++++++++++++++-
+>  1 file changed, 14 insertions(+), 1 deletion(-)
 > 
-> Said another way, it is not legal to call UI interfaces from any
-> code that could be called by the event thread.
+> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+> index 5059d09..624fdd0 100644
+> --- a/drivers/iommu/arm-smmu-v3.c
+> +++ b/drivers/iommu/arm-smmu-v3.c
+> @@ -586,7 +586,20 @@ struct arm_smmu_device {
+>  
+>  	struct arm_smmu_strtab_cfg	strtab_cfg;
+>  
+> -	u32				sync_count;
+> +	/*
+> +	 * The alignment and padding is required by Hi16xx of Hisilicon.
+> +	 * Because the ITS hardware on Hi16xx will truncate the MSIAddress(Here
+> +	 * it's the address of "sync_count") to 8 bytes boundary first, then
+> +	 * write 32 bits MSIdata at offset 0, and 32 bits IMPDEF data at offset
+> +	 * 4. Without this workaround, the adjacent member maybe overwritten.
+> +	 *
+> +	 *                    |---4bytes---|---4bytes---|
+> +	 * MSIAddress & (~0x7):   MSIdata  | IMPDEF data|
+> +	 */
+> +	struct {
+> +		u32			sync_count;
+> +		int			padding;
+> +	} __attribute__((aligned(8)));
 
-Right, that global in fact needs to be set in the event processing and
-checked in the display thread, start it with 0, switch to 1 and then to
-2 to say it was processed just once, etc.
+I thought the conclusion after reviewing your original patch was to maintain
+the union and drop the alignment directive? e.g.
 
-- Arnaldo
+	union {
+		u32	sync_count;
+		u64	padding; /* Hi16xx writes an extra 32 bits of goodness */
+	};
+
+Will
