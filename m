@@ -2,127 +2,150 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD1CC2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:34:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A0BFC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:36:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B219D2082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:34:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="g833a1kp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B219D2082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 452AA2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:36:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 452AA2084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729506AbeJ2RV6 (ORCPT
+        id S1729456AbeJ2RY0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 13:21:58 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:37968 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729149AbeJ2RV5 (ORCPT
+        Mon, 29 Oct 2018 13:24:26 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:43533 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729149AbeJ2RY0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 13:21:57 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9T8Spjm013186;
-        Mon, 29 Oct 2018 08:34:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=FeJiBIM4gj+Uv4+k6aC45dq/teyiiFKjX9alY/b/HNs=;
- b=g833a1kppqZdB0Qna3OBPACCftFIIYLwAJY5hXtVkGzzXwCCoZu7+jrJ8lmv0J/6SKJV
- zjzDq98hUVt0ia6UXcgGgUe+HlMSExoR9nDV30ddDlz/2yXnffR0hlXCKw0Coj/33tcd
- OPU4bVT8XG2sg7F84IZ/jwEINt5OuTXLT352T12ugbZ27TaeQ6VULAOCkRH92GwEMGgE
- tPzkBdkdJ0YvdtNFrzuIEG9MX5I2gi65UGWLjqz+yRhHBakmP+AGfOfx8lDpWeebGkCE
- ZhZlS70Sd0BQIZTUX6eTXeSLiNkWOF88b8kgV5cwjL+w53UXk5yAz7WZgnvKr/AklHFX yQ== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2120.oracle.com with ESMTP id 2ncfypm5ws-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 29 Oct 2018 08:34:16 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9T8YAXE027565
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 29 Oct 2018 08:34:10 GMT
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9T8YAJH008228;
-        Mon, 29 Oct 2018 08:34:10 GMT
-Received: from will-ThinkCentre-M93p.cn.oracle.com (/10.182.70.234)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 29 Oct 2018 01:34:09 -0700
-From:   Jianchao Wang <jianchao.w.wang@oracle.com>
-To:     axboe@kernel.dk
-Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V3 3/4] blk-mq: issue directly with bypass_insert 'false' in blk_mq_sched_insert_requests
-Date:   Mon, 29 Oct 2018 16:33:32 +0800
-Message-Id: <1540802013-2921-4-git-send-email-jianchao.w.wang@oracle.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1540802013-2921-1-git-send-email-jianchao.w.wang@oracle.com>
-References: <1540802013-2921-1-git-send-email-jianchao.w.wang@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9060 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810290082
+        Mon, 29 Oct 2018 13:24:26 -0400
+Received: by mail-qt1-f195.google.com with SMTP id q41-v6so8226477qtq.10
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 01:36:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gvD+qhjcC5r6uNHaCROudDcSbU0PDuEp1xBMMjlhqc4=;
+        b=Tg+7GA1fwVe5A7HnTR5630e7J6YE7LI0mnw5aTnPeyh2LlKRaGPdV8mw/rD3E4p+e4
+         eKJxoMk8mMQUKjR6Tz5KoHsjQMANhMtjkFyyXzfYFVbaYJaAsNipa3QDiLN7QsxuxDM6
+         k8ntlHJ6KDdV0492v4bbLUc1LdcDxZ8kt90tjDWtG+qaS0j2tHX4N2tOENIUI8ZXcLKz
+         QQcneGZIRjYeqC83328ijaBnc4r486JQWOVAaKIRof8464QTajN2ZCD7oA7pwhuoGt4J
+         JxYCrfYPzDmeDnyMKTm12XyNY1ckH+u5WfyvBQQCnafron20EezNTROXxKSMVI4HnURt
+         DiFA==
+X-Gm-Message-State: AGRZ1gI0Jyf4vB6/iW2H7NYpDxp1ajEAi8N/rLXt9RAs1FCK7f53g2Wq
+        r0ZLxnLB4Sxf7JFP9ESPHZEyoI3INoNEFHouGPrtVA==
+X-Google-Smtp-Source: AJdET5dgHilzJMxQ42+jZrPlqXsDfgIrBTLRkafOZH+kr72c893azt0oTh/a1Aq5TIuBFySd6/MuyIvcf88/XIuV9zo=
+X-Received: by 2002:ac8:1d11:: with SMTP id d17-v6mr11814460qtl.343.1540802207715;
+ Mon, 29 Oct 2018 01:36:47 -0700 (PDT)
+MIME-Version: 1.0
+References: <CAHk-=wiVH6SdC2YutcDJ8kiAYUkO-ei3Wdjp2TXcbWas7LJrSg@mail.gmail.com>
+ <8d8e3771-0b33-2489-4e27-d3d63162df11@redhat.com>
+In-Reply-To: <8d8e3771-0b33-2489-4e27-d3d63162df11@redhat.com>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Mon, 29 Oct 2018 09:36:36 +0100
+Message-ID: <CAO-hwJLwihgNOBhzjXkJnoZM9iDSKW2XQPUT2xEzKSEBS_2wEw@mail.gmail.com>
+Subject: Re: Oops in current tree in i2c
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>, jkosina@suse.cz,
+        Julian Sax <jsbc@gmx.de>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is not necessary to issue request directly with bypass_insert
-'true' in blk_mq_sched_insert_requests and insert the non-issued
-requests itself. Just set bypass_insert to 'false' and let
-blk_mq_try_issue_directly handle them.
+Hi,
 
-Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
----
- block/blk-mq-sched.c |  8 +++-----
- block/blk-mq.c       | 10 +---------
- 2 files changed, 4 insertions(+), 14 deletions(-)
+On Sun, Oct 28, 2018 at 11:45 AM Hans de Goede <hdegoede@redhat.com> wrote:
+>
+> Hi Linus,
+>
+> On 27-10-18 18:08, Linus Torvalds wrote:
+> > Julian, Jiri,
+> >   On my laptop I'm getting a kernel page fault with the current git
+> > tree, and I'm tentatively blaming commit
+> >
+> >    9ee3e06610fd ("HID: i2c-hid: override HID descriptors for certain devices")
+> >
+> > but that's simply because it's the only thing that seems to touch this
+> > particular area in this merge window.
+> >
+> > The oops looks like this:
+> >
+> >    BUG: unable to handle kernel paging request at 000000007a25d598
+> >    PGD 0 P4D 0
+> >    Oops: 0000 [#1] SMP PTI
+> >    CPU: 1 PID: 888 Comm: systemd-udevd Not tainted 4.19.0-07715-g345671ea0f92 #4
+> >    Hardware name: Dell Inc. XPS 13 9350/09JHRY, BIOS 1.7.0 01/16/2018
+> >    RIP: 0010:strstr+0x19/0x70
+> >
+> > where the code disassembly (and the register contents) shows that the
+> > wild pointer is the first argument to "strstr()", which just has a
+> > bogus value that is not a valid kernel pointer (RDI: 000000007a25d598
+> > - which is obviously also the address of the page fault)
+> >
+> > The call trace is:
+> >
+> >     dmi_matches+0x55/0xc0
+> >     dmi_first_match+0x26/0x40
+> >     i2c_hid_get_dmi_i2c_hid_desc_override+0x16/0x40 [i2c_hid]
+> >     i2c_hid_probe+0x28c/0x760 [i2c_hid]
+> >     i2c_device_probe+0x1e7/0x260
+> >     really_probe+0xf8/0x3e0
+> >     driver_probe_device+0x10f/0x120
+> >     bus_for_each_drv+0x66/0xb0
+> >     __device_attach+0xd9/0x150
+> >     bus_probe_device+0x8a/0xa0
+> >     device_add+0x48e/0x660
+> >     i2c_new_device+0x162/0x350
+> >
+> > which is why I suspect that new i2c_hid_get_dmi_hid_report_desc_override() code.
+> >
+> > I *think* the problem is that the i2c_hid_dmi_desc_override_table[]
+> > isn't terminated by a NULL entry, and I will test that next.
 
-diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
-index 29bfe80..23cd97e 100644
---- a/block/blk-mq-sched.c
-+++ b/block/blk-mq-sched.c
-@@ -411,12 +411,10 @@ void blk_mq_sched_insert_requests(struct request_queue *q,
- 		 * busy in case of 'none' scheduler, and this way may save
- 		 * us one extra enqueue & dequeue to sw queue.
- 		 */
--		if (!hctx->dispatch_busy && !e && !run_queue_async) {
-+		if (!hctx->dispatch_busy && !e && !run_queue_async)
- 			blk_mq_try_issue_list_directly(hctx, list);
--			if (list_empty(list))
--				return;
--		}
--		blk_mq_insert_requests(hctx, ctx, list);
-+		else
-+			blk_mq_insert_requests(hctx, ctx, list);
- 	}
- 
- 	blk_mq_run_hw_queue(hctx, run_queue_async);
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index e0aa068..9c6c858 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -1834,15 +1834,7 @@ void blk_mq_try_issue_list_directly(struct blk_mq_hw_ctx *hctx,
- 				queuelist);
- 
- 		list_del_init(&rq->queuelist);
--		ret = blk_mq_request_issue_directly(rq);
--		if (ret != BLK_STS_OK) {
--			if (ret == BLK_STS_RESOURCE ||
--					ret == BLK_STS_DEV_RESOURCE) {
--				list_add(&rq->queuelist, list);
--				break;
--			}
--			blk_mq_end_request(rq, ret);
--		}
-+		ret = blk_mq_try_issue_directly(hctx, rq, NULL, false);
- 	}
- }
- 
--- 
-2.7.4
+Thanks for fixing that in master. I should have spotted it while
+reviewing the series. My bad.
 
+>
+> Yes that likely is the problem. I already had a bug report from one of the
+> Manjaro maintainers who was cherry picking this into the Manjaro kernel.
+>
+> So I ran some tests on a laptop of mine which does use i2c-hid but I
+> failed to reproduce the issue, so we both (me and the Manjaro maintainer)
+> both assumed something went wrong with the backport.
+>
+> Both of us seem to have overlooked the missing terminating entry,
+> as well as other people involved in the patch.
+>
+> > What makes me *very* unhappy about this is that if I'm right, I think
+> > it means that code was literally not tested at all by anybody who
+> > didn't have one of the entries in that list.
+>
+> That is not true, I've hit one of these unterminated dmi lists
+> issues before and it depends on what get put in mem directly
+> after the list by the linker, bugs caused by this do not always
+> reproduce unfortunately.
+>
+> And as mentioned I have tested the patch on a machine with an i2c-hid
+> touchpad, which is not on the list and I did not hit this problem.
+
+Oh. This explains why I was also sure I tested this on a i2c-hid
+laptop without having the oops.
+
+I'll try to setup some automate testing for those also.
+
+Cheers,
+Benjamin
+
+>
+> Anyways this is fixed now, thank you for catching this.
+>
+> Regards,
+>
+> Hans
