@@ -2,170 +2,221 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A015C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 22:17:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D9E4C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 22:25:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7AA120657
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 22:17:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C42052080A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 22:25:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LUCJ4X6o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7AA120657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="cY2+bZ6D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C42052080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729275AbeJ3HHp (ORCPT
+        id S1727986AbeJ3HQg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 03:07:45 -0400
-Received: from mail-ot1-f74.google.com ([209.85.210.74]:35885 "EHLO
-        mail-ot1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727501AbeJ3HHp (ORCPT
+        Tue, 30 Oct 2018 03:16:36 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:37755 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727639AbeJ3HQg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 03:07:45 -0400
-Received: by mail-ot1-f74.google.com with SMTP id v95so1143532ota.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 15:17:06 -0700 (PDT)
+        Tue, 30 Oct 2018 03:16:36 -0400
+Received: by mail-oi1-f193.google.com with SMTP id w66-v6so4331865oiw.4
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 15:25:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=v2rMXvzKWECS79zyMLwtUWxdg5/xyv6bQsMHck8PeHs=;
-        b=LUCJ4X6onUxUt+WiTRlTWYzC2I5Qs7dVa42ShD2nZxYWJSLPs9VeRT0iXu6rbPPmre
-         qYEDlYXyyIk4zJTU/u7sMPSmX+Iau0sMeoXPV1EwFkfHExPObyFVY+ySelIRTInAASL4
-         Urg8zM/rexr8FgHKuI1D3e2sSXn0ValX4gAjS/awKJ2Vfd7a3CI/Q5H60Z75cTPTSUx/
-         1Q90nK6Tu+zwTlH/8jzH6hWQV5j/KhQq3jPVQLidwTUN2KM3Y/se4EjtdrCf7W6BFbNq
-         wvKGretz1Gu4nBJi7sdj8JxxgtoZIGpR0LlSk3yJ5VUqCnAxzjiz4QISLhFybbTUNrlG
-         tO2A==
+        bh=Z+FNmrGMnhAt1VV5t/xKk65qEiK+YvqDLz2tQRn6SF8=;
+        b=cY2+bZ6DdqBMpUFeEZYyVzyfUjOLGuhdJzeB4Wz4NUlgWYTQJ5DdfOFUdU5fG11xF0
+         uRI/QmjDT30HXRgfowluVDIoS3ch3EZzxNKi9SyK/tXcsma6ZQWNOryvHoWj4veGymIJ
+         2RBRhVfjNTqHNMkL6lCHZPLmZFB8Qe8JxVB4Vj2p+hhz1yczmIJTtSsMReDl4P1hydUm
+         4oY3WLwkZz3PFJMB2kLnAu8lx3nG13mxT/qJvH/ZPkyDi2HDogQ2Xg8Mn4IZmYGnYmap
+         EzbBApgKJ9AmheVPasvPfDt1XYiIqy8x+Qeq6zVBMN7uZrmxvr7JOXCYyUpIIgGP06Ec
+         RRfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=v2rMXvzKWECS79zyMLwtUWxdg5/xyv6bQsMHck8PeHs=;
-        b=MVc/5fyWOVZd0psjGH5WDETPHwV6AHEqMnB3pHxNX5VscrgKtkGcgjSq4sVCL2EcHf
-         WSXPZeFGuXUDIxSdvBw0GrsUCpzdcSBXbBmzQ0nPWBfOniZDEEctDAGfRTeJO2kpJmCP
-         7FThUkKQG2AhnSApAPLdp+Mbos45dL6Igz7kXh10D2ZBzmDIoXFDLeOMSskUdnLCLc0b
-         lpPZ/20BX5tWxosrdqM/aiX7hHHvIHLUJM4VUVU+l1IGr/TQx2QK+cg14GffNi8DgqeB
-         5xKXjGmMGx9mlBFa7lIDFdLDCmycMwH/NWz8SqlZsyAGKyXnCaGcs4ibFa5agNXBTAqJ
-         yWiQ==
-X-Gm-Message-State: AGRZ1gIQyJNZcCG1SqpSn+1AhaACGRqYp9dCNcoGbQz/RSL3fZuKY8wR
-        MUGxU2hAfFcxrfXBXXBAdv3cM+ZF7LTZ
-X-Google-Smtp-Source: AJdET5dBlSMM8lfjYMLAqPBijGOAbWSEAXhg9dhXCJwZUCFL5/Zq0I4DXXXV89TAzIbUCX4ehV1czbF9DzTO
-X-Received: by 2002:a9d:6552:: with SMTP id q18mr11827520otl.37.1540851425913;
- Mon, 29 Oct 2018 15:17:05 -0700 (PDT)
-Date:   Mon, 29 Oct 2018 15:17:01 -0700
-In-Reply-To: <CAA93t1oaZ5zkv+BsGnYZg6pqKv0DzXi3j8oZHUyTyffUWHtHug@mail.gmail.com>
-Message-Id: <20181029221701.51376-1-rajatja@google.com>
-Mime-Version: 1.0
-References: <CAA93t1oaZ5zkv+BsGnYZg6pqKv0DzXi3j8oZHUyTyffUWHtHug@mail.gmail.com>
-X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
-Subject: [PATCH v2] mmc: sdhci-pci: Try "cd" for card-detect lookup before
- using NULL
-From:   Rajat Jain <rajatja@google.com>
-To:     adrian.hunter@intel.com, Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rajat Jain <rajatxjain@gmail.com>,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Z+FNmrGMnhAt1VV5t/xKk65qEiK+YvqDLz2tQRn6SF8=;
+        b=NUw7Jxzp4ujINAYXb0f5Nf2b5YDmOApy/q94MH2vwwgF52WUeEZtA8ahDlrm73FQEY
+         t2SNBIXG9LSxlNsLjU+nT6SXQ2t7tGiK14pTga/hxH8ppviaOyZ6N0X5qCv4tLlq6qLf
+         PBaQ4iwjv1GGiX+jH6ZUcrYlnEjOqzns4zYLG0VNtWw9tcYuln8ogOooOt8w2p3U7R4M
+         03GHeU++exDfiQVuCa0r7L6RYkRWigaH1HwqOoM59rl46Ss11SLA1hECLZmL6z9Mp/GJ
+         cHu1HSsKooaM3BaOKScGwGWN8V+qm6Ju53Zd4TxVtnSb3dpVnmtTrWPhcOjA3vJgxF3x
+         CBsg==
+X-Gm-Message-State: AGRZ1gK8KyqOkIloN6G7S/6DiWHW2Xf928aehAtxUdUfQzWkjewdedVp
+        kTDanETRncNqnjctTeqfSq9IDCxT/Hy7q96xUW7pDQ==
+X-Google-Smtp-Source: AJdET5e/sjQ/ELXAjtRHUPic1NWLIBYqETclNys6T6w31Zaj2x5O3v4qD4Lgnd9G9HJr9357qULdtn6OUdPNFlHR+WM=
+X-Received: by 2002:aca:ead4:: with SMTP id i203-v6mr10088894oih.149.1540851954211;
+ Mon, 29 Oct 2018 15:25:54 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181029210716.212159-1-brho@google.com>
+In-Reply-To: <20181029210716.212159-1-brho@google.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 29 Oct 2018 15:25:42 -0700
+Message-ID: <CAPcyv4gJUjuSKwy7i2wuKR=Vz-AkDrxnGya5qkg7XTFxuXbtzw@mail.gmail.com>
+Subject: Re: [RFC PATCH] kvm: Use huge pages for DAX-backed files
+To:     Barret Rhoden <brho@google.com>
+Cc:     Dave Jiang <dave.jiang@intel.com>, zwisler@kernel.org,
+        Vishal L Verma <vishal.l.verma@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dmitry Torokhov <dtor@google.com>, linux-gpio@vger.kernel.org,
-        linux-acpi@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Rajat Jain <rajatja@google.com>
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        KVM list <kvm@vger.kernel.org>,
+        "Zhang, Yu C" <yu.c.zhang@intel.com>,
+        "Zhang, Yi Z" <yi.z.zhang@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Problem:
+On Mon, Oct 29, 2018 at 2:07 PM Barret Rhoden <brho@google.com> wrote:
+>
+> This change allows KVM to map DAX-backed files made of huge pages with
+> huge mappings in the EPT/TDP.
+>
+> DAX pages are not PageTransCompound.  The existing check is trying to
+> determine if the mapping for the pfn is a huge mapping or not.  For
+> non-DAX maps, e.g. hugetlbfs, that means checking PageTransCompound.
+>
+> For DAX, we can check the page table itself.  Actually, we might always
+> be able to walk the page table, even for PageTransCompound pages, but
+> it's probably a little slower.
+>
+> Note that KVM already faulted in the page (or huge page) in the host's
+> page table, and we hold the KVM mmu spinlock (grabbed before checking
+> the mmu seq).  Based on the other comments about not worrying about a
+> pmd split, we might be able to safely walk the page table without
+> holding the mm sem.
+>
+> This patch relies on kvm_is_reserved_pfn() being false for DAX pages,
+> which I've hacked up for testing this code.  That change should
+> eventually happen:
+>
+> https://lore.kernel.org/lkml/20181022084659.GA84523@tiger-server/
+>
+> Another issue is that kvm_mmu_zap_collapsible_spte() also uses
+> PageTransCompoundMap() to detect huge pages, but we don't have a way to
+> get the HVA easily.  Can we just aggressively zap DAX pages there?
+>
+> Alternatively, is there a better way to track at the struct page level
+> whether or not a page is huge-mapped?  Maybe the DAX huge pages mark
+> themselves as TransCompound or something similar, and we don't need to
+> special case DAX/ZONE_DEVICE pages.
+>
+> Signed-off-by: Barret Rhoden <brho@google.com>
+> ---
+>  arch/x86/kvm/mmu.c | 71 +++++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 70 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+> index cf5f572f2305..9f3e0f83a2dd 100644
+> --- a/arch/x86/kvm/mmu.c
+> +++ b/arch/x86/kvm/mmu.c
+> @@ -3152,6 +3152,75 @@ static int kvm_handle_bad_page(struct kvm_vcpu *vcpu, gfn_t gfn, kvm_pfn_t pfn)
+>         return -EFAULT;
+>  }
+>
+> +static unsigned long pgd_mapping_size(struct mm_struct *mm, unsigned long addr)
+> +{
+> +       pgd_t *pgd;
+> +       p4d_t *p4d;
+> +       pud_t *pud;
+> +       pmd_t *pmd;
+> +       pte_t *pte;
+> +
+> +       pgd = pgd_offset(mm, addr);
+> +       if (!pgd_present(*pgd))
+> +               return 0;
+> +
+> +       p4d = p4d_offset(pgd, addr);
+> +       if (!p4d_present(*p4d))
+> +               return 0;
+> +       if (p4d_huge(*p4d))
+> +               return P4D_SIZE;
+> +
+> +       pud = pud_offset(p4d, addr);
+> +       if (!pud_present(*pud))
+> +               return 0;
+> +       if (pud_huge(*pud))
+> +               return PUD_SIZE;
+> +
+> +       pmd = pmd_offset(pud, addr);
+> +       if (!pmd_present(*pmd))
+> +               return 0;
+> +       if (pmd_huge(*pmd))
+> +               return PMD_SIZE;
+> +
+> +       pte = pte_offset_map(pmd, addr);
+> +       if (!pte_present(*pte))
+> +               return 0;
+> +       return PAGE_SIZE;
+> +}
+> +
+> +static bool pfn_is_pmd_mapped(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn)
+> +{
+> +       struct page *page = pfn_to_page(pfn);
+> +       unsigned long hva, map_sz;
+> +
+> +       if (!is_zone_device_page(page))
+> +               return PageTransCompoundMap(page);
+> +
+> +       /*
+> +        * DAX pages do not use compound pages.  The page should have already
+> +        * been mapped into the host-side page table during try_async_pf(), so
+> +        * we can check the page tables directly.
+> +        */
+> +       hva = gfn_to_hva(kvm, gfn);
+> +       if (kvm_is_error_hva(hva))
+> +               return false;
+> +
+> +       /*
+> +        * Our caller grabbed the KVM mmu_lock with a successful
+> +        * mmu_notifier_retry, so we're safe to walk the page table.
+> +        */
+> +       map_sz = pgd_mapping_size(current->mm, hva);
+> +       switch (map_sz) {
+> +       case PMD_SIZE:
+> +               return true;
+> +       case P4D_SIZE:
+> +       case PUD_SIZE:
+> +               printk_once(KERN_INFO "KVM THP promo found a very large page");
 
-The card detect IRQ does not work with modern BIOS (that want
-to use _DSD to provide the card detect GPIO to the driver).
+Why not allow PUD_SIZE? The device-dax interface supports PUD mappings.
 
-Details:
+> +               return false;
+> +       }
+> +       return false;
+> +}
 
-The mmc core provides the mmc_gpiod_request_cd() API to let host drivers
-request the gpio descriptor for the "card detect" pin.
-This pin is specified in the ACPI for the SDHC device:
+The above 2 functions are  similar to what we need to do for
+determining the blast radius of a memory error, see
+dev_pagemap_mapping_shift() and its usage in add_to_kill().
 
- * Either as a resource using _CRS. This is a method used by legacy BIOS.
-   (The driver needs to tell which resource index).
+> +
+>  static void transparent_hugepage_adjust(struct kvm_vcpu *vcpu,
+>                                         gfn_t *gfnp, kvm_pfn_t *pfnp,
+>                                         int *levelp)
+> @@ -3168,7 +3237,7 @@ static void transparent_hugepage_adjust(struct kvm_vcpu *vcpu,
+>          */
+>         if (!is_error_noslot_pfn(pfn) && !kvm_is_reserved_pfn(pfn) &&
+>             level == PT_PAGE_TABLE_LEVEL &&
+> -           PageTransCompoundMap(pfn_to_page(pfn)) &&
+> +           pfn_is_pmd_mapped(vcpu->kvm, gfn, pfn) &&
 
- * Or as a named property ("cd-gpios"/"cd-gpio") in _DSD (which internally
-   points to an entry in _CRS). This way, the driver can lookup using a
-   string. This is what modern BIOS prefer to use.
-
-This API finally results in a call to the following code:
-
-struct gpio_desc *acpi_find_gpio(..., const char *con_id,...)
-{
-...
-   /* Lookup gpio (using "<con_id>-gpio") in the _DSD */
-...
-   if (!acpi_can_fallback_to_crs(adev, con_id))
-          return ERR_PTR(-ENOENT);
-...
-   /* Falling back to _CRS is allowed, Lookup gpio in the _CRS */
-...
-}
-
-Note that this means that if the ACPI has _DSD properties, the kernel
-will never use _CRS for the lookup (Because acpi_can_fallback_to_crs()
-will always be false for any device hat has _DSD entries).
-
-The SDHCI driver is thus currently broken on a modern BIOS, even if
-BIOS provides both _CRS (for index based lookup) and _DSD entries (for
-string based lookup). Ironically, none of these will be used for the
-lookup currently because:
-
-* Since the con_id is NULL, acpi_find_gpio() does not find a matching
-  entry in DSDT. (The _DSDT entry has the property name = "cd-gpios")
-
-* Because ACPI contains DSDT entries, thus acpi_can_fallback_to_crs()
-  returns false (because device properties have been populated from
-  _DSD), thus the _CRS is never used for the lookup.
-
-Fix:
-
-Try "cd" for lookup in the _DSD before falling back to using NULL so
-as to try looking up in the _CRS.
-
-I've tested this patch successfully with both Legacy BIOS (that
-provide only _CRS method) as well as modern BIOS (that provide both
-_CRS and _DSD). Also the use of "cd" appears to be fairly consistent
-across other users of this API (other MMC host controller drivers).
-
-Link: https://lkml.org/lkml/2018/9/25/1113
-Signed-off-by: Rajat Jain <rajatja@google.com>
----
-v2: Fix the commit log to take care of Andy's comments.
-
- drivers/mmc/host/sdhci-pci-core.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
-index 7bfd366d970d..e53333c695b3 100644
---- a/drivers/mmc/host/sdhci-pci-core.c
-+++ b/drivers/mmc/host/sdhci-pci-core.c
-@@ -1762,8 +1762,13 @@ static struct sdhci_pci_slot *sdhci_pci_probe_slot(
- 		device_init_wakeup(&pdev->dev, true);
- 
- 	if (slot->cd_idx >= 0) {
--		ret = mmc_gpiod_request_cd(host->mmc, NULL, slot->cd_idx,
-+		ret = mmc_gpiod_request_cd(host->mmc, "cd", slot->cd_idx,
- 					   slot->cd_override_level, 0, NULL);
-+		if (ret && ret != -EPROBE_DEFER)
-+			ret = mmc_gpiod_request_cd(host->mmc, NULL,
-+						   slot->cd_idx,
-+						   slot->cd_override_level,
-+						   0, NULL);
- 		if (ret == -EPROBE_DEFER)
- 			goto remove;
- 
--- 
-2.19.1.568.g152ad8e336-goog
-
+I'm wondering if we're adding an explicit is_zone_device_page() check
+in this path to determine the page mapping size if that can be a
+replacement for the kvm_is_reserved_pfn() check. In other words, the
+goal of fixing up PageReserved() was to preclude the need for DAX-page
+special casing in KVM, but if we already need add some special casing
+for page size determination, might as well bypass the
+kvm_is_reserved_pfn() dependency as well.
