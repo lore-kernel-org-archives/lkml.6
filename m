@@ -2,116 +2,207 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35414C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 20:16:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD625C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 20:18:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E301220824
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 20:16:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="FzGYLRBO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E301220824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	by mail.kernel.org (Postfix) with ESMTP id 6317320824
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 20:18:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6317320824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729714AbeJ3FGr (ORCPT
+        id S1728468AbeJ3FIS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 01:06:47 -0400
-Received: from mail-dm3nam03on0114.outbound.protection.outlook.com ([104.47.41.114]:36187
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726983AbeJ3FGr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 01:06:47 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NaUACPcL/dyplk0PMoBupA/KN4dnBkYF6jUh9z5JHxo=;
- b=FzGYLRBOIWDnuclAbv1Tqv5V71pPzkQG/tTJ4vRiKtjqhgSAeoa5yrGwOuMX0BAOfll5BgUfPAo13+dG6OyVGVXL2rdyd+2FG1lrzldSEXSP4rJVzhxIwKaWMpRmWHdQRYSmXXWmDdthSiqm9zwhyFpU4TVCVulh87ZZL4FlbyA=
-Received: from CY4PR21MB0773.namprd21.prod.outlook.com (10.173.192.19) by
- CY4PR21MB0774.namprd21.prod.outlook.com (10.173.192.20) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.4; Mon, 29 Oct 2018 20:16:30 +0000
-Received: from CY4PR21MB0773.namprd21.prod.outlook.com
- ([fe80::6d0b:b90f:7a73:99fb]) by CY4PR21MB0773.namprd21.prod.outlook.com
- ([fe80::6d0b:b90f:7a73:99fb%8]) with mapi id 15.20.1294.014; Mon, 29 Oct 2018
- 20:16:30 +0000
-From:   Michael Kelley <mikelley@microsoft.com>
-To:     Long Li <longli@microsoft.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] Choose CPU based on allocated IRQs
-Thread-Topic: [PATCH] Choose CPU based on allocated IRQs
-Thread-Index: AQHUanM/SeOs7Q7r6USMZx47e/faSKU2s0IA
-Date:   Mon, 29 Oct 2018 20:16:30 +0000
-Message-ID: <CY4PR21MB0773D8F02354E91BC4711E03D7F30@CY4PR21MB0773.namprd21.prod.outlook.com>
-References: <20181023014044.15888-1-longli@linuxonhyperv.com>
-In-Reply-To: <20181023014044.15888-1-longli@linuxonhyperv.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-10-29T20:16:29.1299072Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
- Sensitivity=General
-x-originating-ip: [2001:4898:80e8:f:50cc:f2af:fc37:b75]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR21MB0774;6:siugKeWNWyIii9z+y2cXpWw6Bq4UcYTXU5YyRC/uL26ZIYXmyrQ1CBnu1YpZ2/NUYygrUoCmJS8jncG6YNCeZ0ydepRaUD9hRxlDOXANaWcjKpUNdOblYM1SrunnguKWPBz3wum6O9yL9EGCHm4aCUDDCiOqsjMUTVA2Z5aSl16O5jQ9LaSZ/4pG896NQbtA3mwdu/eal0P4Giwz/nw4C00meAdv0Z65ucMUyEebmqSW7GtGC1by794hA1VCYjc2bUh1AfNGWm8PTYk5W1wiw4sM1kusJtFVHcUTBijbV0KnsG/jMa+RDUQ/kgp5QAWP1wTPQTMjP/zroEji3x3Wa0ZtDLuFgl/3ooT5fEQv7AcLFVGWF4+bmsxPjRcX/LDpQJewHULovvv7Uqfr6EcwTDsKNmHZ39QF/cnIivLKxs7BXAFffYTmnVo/3Udpm7WCsOyshsgJT14KB4eU47Whpw==;5:TvBb1eUZNWL81DhKrZdgaNvn3ImEa/IwAb34ZyHntd8Scfr87NOn+2x5cdYxkFrvJLmI3brQkLJ1qjgDpSsyqwJ9mYJj0RAbAW4w1VLrRV/9yOp06y5CZ6Bm9tadiP3lSZ8ZHuO/WZNgS762FZ2RNy1o+XpWn5+xgXUSbMsybEg=;7:GIo9KCYHbx1d75lcMRy93h1/XNDSRUw73/RpDie9wH5n0WyYOTwOvDj7oaMfHa3qW4VVegCs2LTcwy5qq26DshSuHoA0xllh0pMJ/XM9A6Et7kKnQvc2TbRIWPx4FtAFDwOfXRDkmCtFTGem/G9/fg==
-x-ms-office365-filtering-correlation-id: 5e11ca22-3f86-43bc-871c-08d63ddb6a41
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0774;
-x-ms-traffictypediagnostic: CY4PR21MB0774:
-x-microsoft-antispam-prvs: <CY4PR21MB0774036F0D442A30E121595BD7F30@CY4PR21MB0774.namprd21.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(89211679590171);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(8220027)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(10201501046)(3231382)(944501410)(52105095)(2018427008)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:CY4PR21MB0774;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0774;
-x-forefront-prvs: 084080FC15
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(376002)(396003)(39860400002)(136003)(346002)(189003)(199004)(105586002)(106356001)(7736002)(9686003)(478600001)(7696005)(102836004)(76176011)(33656002)(55016002)(97736004)(14454004)(6346003)(99286004)(46003)(53936002)(186003)(68736007)(10290500003)(6506007)(6116002)(486006)(74316002)(305945005)(2501003)(11346002)(10090500001)(71200400001)(5250100002)(110136005)(6436002)(2900100001)(22452003)(316002)(446003)(25786009)(476003)(71190400001)(2906002)(86612001)(229853002)(8936002)(8990500004)(81156014)(256004)(81166006)(6246003)(5660300001)(86362001)(8676002)(1511001);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0774;H:CY4PR21MB0773.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=mikelley@microsoft.com; 
-x-microsoft-antispam-message-info: rcfmSmTAtHH/AENVAb3ICgzwMv+2Axsxo2skLLPeG9q6INYIhzuDiZ4JRLZ5eWuuUHaVvJRLwRsk60jbaFk6Vs2DZdHq2uGdlmabLRKDKonSeIV+GL/1P/hmoWzJHxW4fbxKwbdRz7XDEpfu9jfMIPfIonmBppQni8/FkQD3re7ryEYCRpbE4wNwEVUgvnDlRbNx6MpwjJYcgHu0yvw+RbNWHWc+gp0DfbBSaM8TFKmlIXOGNbwaKyT6McvVSLNOC4GAR5fz8MWU1QmRtgSykpVYwqIrqTY1peViqdC0UG2iLSaodKj2eXWW2f8gQJ6YOFt7zojBUQu6Ju7uGjijDm524nZhKEgxmW7YSw8J2LU=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 30 Oct 2018 01:08:18 -0400
+Received: from mail-it1-f200.google.com ([209.85.166.200]:57682 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726983AbeJ3FIS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 01:08:18 -0400
+Received: by mail-it1-f200.google.com with SMTP id d7-v6so10577827itf.7
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 13:18:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=docXobxXieq5lCTxnfw+AUd39ENTkGk7Ufu1S6Sn6dQ=;
+        b=WIoHU8IOUzAATJ7eNeCgBRXHQC5AZfzW12axMQYcMDxx1iMxM2AeWVA70cU5ceCMIw
+         i+mn/HnUPUF9bJkHVQFYKThrGsv7PxQKG2cYV0Kdl/ENJ2PKi7UWcTZqKZhmIAEle+sg
+         PJSitVdWY3OiYLMlyB0W/5MSdVxj6xfv7VmWihqHeHHk7op3uxrFw/f7FCQc4ztzlfeI
+         Ncs8a1ndNRh/8wubrR2PSCC3RsfPzTfM++ohU69piK7gcbEcwECKpFXsAcLyigV4K9sN
+         VOwktxYSIrsNay2YrIyRF3VxbBABMcXnTSAcDWEJ0lwQHyrT/7nYgMo+dKg4Qtu9NBkM
+         4vmQ==
+X-Gm-Message-State: AGRZ1gKtrHOs4RJx3Vi4SURyNuha+htG9V22881WzPmkfEu7KFc5kVjq
+        mSsSoyK+k7m4Ec5oPClxzJTuOVJHaCmTRl8fTyNClqHd/Box
+X-Google-Smtp-Source: AJdET5eq4lVnTZRLOgtXvoP5npDRHN68nvbu8qWgqjjtH3Ov0EidWs0XIdfAqZ5XScTyzAsNKw+2bPf0T+toYL2w2DYTBienp6Vz
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5e11ca22-3f86-43bc-871c-08d63ddb6a41
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Oct 2018 20:16:30.7423
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0774
+X-Received: by 2002:a6b:b5cb:: with SMTP id e194-v6mr5060370iof.31.1540844282720;
+ Mon, 29 Oct 2018 13:18:02 -0700 (PDT)
+Date:   Mon, 29 Oct 2018 13:18:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000204051057963c4dc@google.com>
+Subject: KASAN: use-after-free Write in __vb2_cleanup_fileio
+From:   syzbot <syzbot+4e12d2d56f8ccc65c180@syzkaller.appspotmail.com>
+To:     hverkuil@xs4all.nl, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, mchehab@kernel.org,
+        sakari.ailus@linux.intel.com, satendra.t@samsung.com,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Long Li <longli@microsoft.com>  Sent: Monday, October 22, 2018 6:41 P=
-M
->=20
-> In irq_matrix, "available" is set when IRQs are allocated earlier in the =
-IRQ
-> assigning process.
->=20
-> Later, when IRQs are activated those values are not good indicators of wh=
-at
-> CPU to choose to assign to this IRQ.
->=20
-> Change to choose CPU for an IRQ based on how many IRQs are already alloca=
-ted
-> on this CPU.
->=20
-> Signed-off-by: Long Li <longli@microsoft.com>
+Hello,
 
-Reviewed-by:  Michael Kelley <mikelley@microsoft.com>
+syzbot found the following crash on:
+
+HEAD commit:    9f51ae62c84a Merge git://git.kernel.org/pub/scm/linux/kern..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=130e0599400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=62118286bb772a24
+dashboard link: https://syzkaller.appspot.com/bug?extid=4e12d2d56f8ccc65c180
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1346e183400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=117c2713400000
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+4e12d2d56f8ccc65c180@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: use-after-free in __vb2_cleanup_fileio+0x13d/0x160  
+drivers/media/common/videobuf2/videobuf2-core.c:2318
+Write of size 4 at addr ffff8801d7730040 by task syz-executor965/5707
+
+CPU: 1 PID: 5707 Comm: syz-executor965 Not tainted 4.19.0+ #309
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
+  __asan_report_store4_noabort+0x17/0x20 mm/kasan/report.c:437
+  __vb2_cleanup_fileio+0x13d/0x160  
+drivers/media/common/videobuf2/videobuf2-core.c:2318
+  vb2_core_queue_release+0x1e/0x80  
+drivers/media/common/videobuf2/videobuf2-core.c:2043
+  vb2_queue_release drivers/media/common/videobuf2/videobuf2-v4l2.c:672  
+[inline]
+  _vb2_fop_release+0x1d2/0x2b0  
+drivers/media/common/videobuf2/videobuf2-v4l2.c:843
+  vb2_fop_release+0x77/0xc0  
+drivers/media/common/videobuf2/videobuf2-v4l2.c:857
+  vivid_fop_release+0x18e/0x440 drivers/media/platform/vivid/vivid-core.c:474
+  v4l2_release+0xfb/0x1a0 drivers/media/v4l2-core/v4l2-dev.c:448
+  __fput+0x385/0xa30 fs/file_table.c:278
+  ____fput+0x15/0x20 fs/file_table.c:309
+  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x400f30
+Code: 01 f0 ff ff 0f 83 b0 0a 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f  
+44 00 00 83 3d 9d 57 2d 00 00 75 14 b8 03 00 00 00 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 84 0a 00 00 c3 48 83 ec 08 e8 3a 01 00 00
+RSP: 002b:00007ffd05f62478 EFLAGS: 00000246 ORIG_RAX: 0000000000000003
+RAX: 0000000000000000 RBX: 0000000000000003 RCX: 0000000000400f30
+RDX: 0000000000000001 RSI: 0000000020000280 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 00000000004002e0 R09: 00000000004002e0
+R10: 0000000000a73880 R11: 0000000000000246 R12: 0000000000401e40
+R13: 0000000000401ed0 R14: 0000000000000000 R15: 0000000000000000
+
+Allocated by task 5702:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+  kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
+  kmalloc include/linux/slab.h:546 [inline]
+  kzalloc include/linux/slab.h:741 [inline]
+  __vb2_init_fileio+0x1ce/0xc90  
+drivers/media/common/videobuf2/videobuf2-core.c:2227
+  __vb2_perform_fileio+0xcfb/0x1210  
+drivers/media/common/videobuf2/videobuf2-core.c:2361
+  vb2_read+0x3b/0x50 drivers/media/common/videobuf2/videobuf2-core.c:2493
+  vb2_fop_read+0x20a/0x400  
+drivers/media/common/videobuf2/videobuf2-v4l2.c:898
+  v4l2_read+0x168/0x220 drivers/media/v4l2-core/v4l2-dev.c:317
+  do_loop_readv_writev fs/read_write.c:700 [inline]
+  do_iter_read+0x4a3/0x650 fs/read_write.c:924
+  vfs_readv+0x175/0x1c0 fs/read_write.c:986
+  do_readv+0x11a/0x310 fs/read_write.c:1019
+  __do_sys_readv fs/read_write.c:1106 [inline]
+  __se_sys_readv fs/read_write.c:1103 [inline]
+  __x64_sys_readv+0x75/0xb0 fs/read_write.c:1103
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 5702:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3817
+  __vb2_cleanup_fileio+0xf8/0x160  
+drivers/media/common/videobuf2/videobuf2-core.c:2320
+  vb2_core_queue_release+0x1e/0x80  
+drivers/media/common/videobuf2/videobuf2-core.c:2043
+  vb2_queue_release drivers/media/common/videobuf2/videobuf2-v4l2.c:672  
+[inline]
+  _vb2_fop_release+0x1d2/0x2b0  
+drivers/media/common/videobuf2/videobuf2-v4l2.c:843
+  vb2_fop_release+0x77/0xc0  
+drivers/media/common/videobuf2/videobuf2-v4l2.c:857
+  vivid_fop_release+0x18e/0x440 drivers/media/platform/vivid/vivid-core.c:474
+  v4l2_release+0xfb/0x1a0 drivers/media/v4l2-core/v4l2-dev.c:448
+  __fput+0x385/0xa30 fs/file_table.c:278
+  ____fput+0x15/0x20 fs/file_table.c:309
+  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8801d7730040
+  which belongs to the cache kmalloc-1k of size 1024
+The buggy address is located 0 bytes inside of
+  1024-byte region [ffff8801d7730040, ffff8801d7730440)
+The buggy address belongs to the page:
+page:ffffea00075dcc00 count:1 mapcount:0 mapping:ffff8801da800ac0 index:0x0  
+compound_mapcount: 0
+flags: 0x2fffc0000010200(slab|head)
+raw: 02fffc0000010200 ffffea00075dcb88 ffffea00075dde08 ffff8801da800ac0
+raw: 0000000000000000 ffff8801d7730040 0000000100000007 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801d772ff00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8801d772ff80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> ffff8801d7730000: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+                                            ^
+  ffff8801d7730080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801d7730100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
