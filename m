@@ -2,134 +2,91 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64AFCC2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:28:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A692FC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E93020657
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:28:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D0542zzh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E93020657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 55C9620657
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:30:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55C9620657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727762AbeJ3CSO (ORCPT
+        id S1727683AbeJ3CUM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 22:18:14 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35217 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726330AbeJ3CSO (ORCPT
+        Mon, 29 Oct 2018 22:20:12 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37282 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726743AbeJ3CUM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 22:18:14 -0400
-Received: by mail-pg1-f196.google.com with SMTP id 32-v6so4247652pgu.2
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 10:28:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9Nv2xOlbXaWyJXbR+LgN8wx+L6gFwy3aaGFZH/g8OlQ=;
-        b=D0542zzhcH9Nh0K1keLRaJQS+/B7WEMMDw5Q30c2LNcKEAn4YgNBgnI3W+XLj8HXio
-         GzkbUlpAqy6k047ePP8yn9ESouPYKSPc8svLRxlRLkvSO1Hhc0ZuPQrjnjRUkNWvEI+v
-         OfI0djCFyIcN10sz2/5RvPu6IicMHVNfhBWMOcWW1K2TGvrys0lsN7U0QzQEo6IPHMcB
-         fFMBSfpaPUMX1GnHK2MP2+DxzxPPmy4si0TeZ1okpHB0V/FPSzRlqXqhM3f4SxbGF3gh
-         zCBZP1aXPR6oju6Fh+TT5f+eOvDZoHO5Qwrp9L03AlOFGmnKJc6sGOGauZ1KIRYHUBRu
-         gv8w==
+        Mon, 29 Oct 2018 22:20:12 -0400
+Received: by mail-pg1-f194.google.com with SMTP id c10-v6so4246229pgq.4;
+        Mon, 29 Oct 2018 10:30:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9Nv2xOlbXaWyJXbR+LgN8wx+L6gFwy3aaGFZH/g8OlQ=;
-        b=fOZ8aRcdDdsbFdXWPw2noVoujHHrhnu5cpZp3bLaWvUGZbSBk/lk++bpf5hVPTKl+I
-         aB0K/Va5tD37FSJwnvFiOheEbY8zZo20/ZZDcexQmV2Mj8ZLlh6Qa2PFIQ96OY3XMf3m
-         W4X+CL8lGchXHUOrCPGXvllij2a3+bbtgQbnGyILmpon8OMs8S3zXGBKDZ3LfnI/oaED
-         B03iib+vnSYexK3im64NmJjvCJQluk2yNtXtgMYIVX6oUL8LlWw+3t4apwdoYr4yzniY
-         YYgNbEAJjBeeWhkfEfgANzYOUiRatDZrNd6fIiteHxEJ8qvNGJLL+vbiYSP4yClyqCTh
-         /CjA==
-X-Gm-Message-State: AGRZ1gLT4xTR2G/dXzu70ZRTSKNGfqR/oyvjaJr9sn+BsN66ZxfbqgPB
-        EEHZ3Y4JJxejpIhWKLQQf0WSE30kaa+jOS0M+yU9+Q==
-X-Google-Smtp-Source: AJdET5f6NlO5/EQlLVMGHjy1DiTGwHLyQnp7TgL+be2WEdxCV+u+MvE0IGov+UL5BKAj7XjlSuoh/hNUPzWfo/8PrcQ=
-X-Received: by 2002:aa7:88c2:: with SMTP id p2-v6mr16167065pfo.32.1540834119850;
- Mon, 29 Oct 2018 10:28:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181029105158.6340-1-natechancellor@gmail.com>
-In-Reply-To: <20181029105158.6340-1-natechancellor@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 29 Oct 2018 10:28:28 -0700
-Message-ID: <CAKwvOdmkPFC5SPNVTXeRdrE-vnbjYiDdXr_ZCArmvYYVtsYKVQ@mail.gmail.com>
-Subject: Re: [PATCH] hinic: Fix l4_type parameter in hinic_task_set_tunnel_l4
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     aviad.krawczyk@huawei.com, "David S. Miller" <davem@davemloft.net>,
-        netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:message-id:subject:from:to:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=z+j3ah8Gx9oCSywNqFyoHtJo+bLcW4JJtLtEa9pBpcE=;
+        b=TW2gftMd4ztMGcyw9wRVh/Xp9eF08/yuiOjjld0EbLX1J7KjsYgGWhgUwiv4/286iu
+         otZEN4Ezf5QYStLIzC/aLFcT3W5SWlfb/VGibBrKOQ+XAtcarTOwpIPe1LICDZ3f7mji
+         Ws9i03akYWbFGQtALg6BFoBq7dhFBKcL2RT9tB/9fxrWJDeNcWoHUredhWW5fowheDO0
+         bq507UFssNOphM9ZENgmB3OuU8zFP7z7ELFsCkpEvyQKb0ZeDo7G8FfS50HAsFbE+oGl
+         XadReMkEUWJVVGbtPemKGgF7jGz6EUB/0tN7zjPeGoaVtpsPyC4CQVpwu/RuxVdhi5CN
+         cL+A==
+X-Gm-Message-State: AGRZ1gJGSNE0OvJykJ91jGwWnGUkw0NZ1Vogof/xtSra1EipzycVTqEL
+        NG8mKrcAjCs3Ffa1ZWzw+IWZ2LzR
+X-Google-Smtp-Source: AJdET5cjx3F4LGCa4YA5vbmeW3QN3dqIdfTRAJ6IfFJ21aGYvmcvsUhIb7FT1m0TcDzJLqtW0rR7FQ==
+X-Received: by 2002:a63:5816:: with SMTP id m22-v6mr14429837pgb.332.1540834238245;
+        Mon, 29 Oct 2018 10:30:38 -0700 (PDT)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id a11-v6sm2190637pff.8.2018.10.29.10.30.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Oct 2018 10:30:37 -0700 (PDT)
+Message-ID: <1540834236.196084.61.camel@acm.org>
+Subject: Re: [PATCH 04/14] blk-mq: pass in request/bio flags to queue mapping
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 29 Oct 2018 10:30:36 -0700
+In-Reply-To: <20181029163738.10172-5-axboe@kernel.dk>
+References: <20181029163738.10172-1-axboe@kernel.dk>
+         <20181029163738.10172-5-axboe@kernel.dk>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 3:54 AM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> Clang warns:
->
-> drivers/net/ethernet/huawei/hinic/hinic_tx.c:392:34: error: implicit
-> conversion from enumeration type 'enum hinic_l4_tunnel_type' to
-> different enumeration type 'enum hinic_l4_offload_type'
-> [-Werror,-Wenum-conversion]
->                 hinic_task_set_tunnel_l4(task, TUNNEL_UDP_NO_CSUM,
->                 ~~~~~~~~~~~~~~~~~~~~~~~~       ^~~~~~~~~~~~~~~~~~
-> 1 error generated.
->
-> It seems that hinic_task_set_tunnel_l4 was meant to take an enum of type
-> hinic_l4_tunnel_type, not hinic_l4_offload_type, given both the name of
-> the functions and the values used.
+On Mon, 2018-10-29 at 10:37 -0600, Jens Axboe wrote:
++AD4 +AEAAQA -400,9 +-402,15 +AEAAQA void blk+AF8-mq+AF8-sched+AF8-insert+AF8-requests(struct request+AF8-queue +ACo-q,
++AD4  				  struct blk+AF8-mq+AF8-ctx +ACo-ctx,
++AD4  				  struct list+AF8-head +ACo-list, bool run+AF8-queue+AF8-async)
++AD4  +AHs
++AD4 -	struct blk+AF8-mq+AF8-hw+AF8-ctx +ACo-hctx +AD0 blk+AF8-mq+AF8-map+AF8-queue(q, ctx-+AD4-cpu)+ADs
++AD4 -	struct elevator+AF8-queue +ACo-e +AD0 hctx-+AD4-queue-+AD4-elevator+ADs
++AD4 +-	struct blk+AF8-mq+AF8-hw+AF8-ctx +ACo-hctx+ADs
++AD4 +-	struct elevator+AF8-queue +ACo-e+ADs
++AD4 +-	struct request +ACo-rq+ADs
++AD4 +-
++AD4 +-	/+ACo For list inserts, requests better be on the same hw queue +ACo-/
++AD4 +-	rq +AD0 list+AF8-first+AF8-entry(list, struct request, queuelist)+ADs
++AD4 +-	hctx +AD0 blk+AF8-mq+AF8-map+AF8-queue(q, rq-+AD4-cmd+AF8-flags, ctx-+AD4-cpu)+ADs
 
-I agree. Thanks for fixing this up, Nathan!
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Passing all request cmd+AF8-flags bits to blk+AF8-mq+AF8-map+AF8-queue() makes it possible
+for that function to depend on every single cmd+AF8-flags bit even if different
+requests have different cmd+AF8-flags. Have you considered to pass the hw+AF8-ctx
+type only to blk+AF8-mq+AF8-map+AF8-queue() to avoid that that function would start
+depending on other cmd+AF8-flags?
 
->
-> Fixes: cc18a7543d2f ("net-next/hinic: add checksum offload and TSO support")
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
->  drivers/net/ethernet/huawei/hinic/hinic_hw_qp.c | 2 +-
->  drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.c b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.c
-> index 967c993d5303..bbf9bdd0ee3e 100644
-> --- a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.c
-> +++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.c
-> @@ -532,7 +532,7 @@ void hinic_task_set_inner_l3(struct hinic_sq_task *task,
->  }
->
->  void hinic_task_set_tunnel_l4(struct hinic_sq_task *task,
-> -                             enum hinic_l4_offload_type l4_type,
-> +                             enum hinic_l4_tunnel_type l4_type,
->                               u32 tunnel_len)
->  {
->         task->pkt_info2 |= HINIC_SQ_TASK_INFO2_SET(l4_type, TUNNEL_L4TYPE) |
-> diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
-> index a0dc63a4bfc7..038522e202b6 100644
-> --- a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
-> +++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
-> @@ -160,7 +160,7 @@ void hinic_task_set_inner_l3(struct hinic_sq_task *task,
->                              u32 network_len);
->
->  void hinic_task_set_tunnel_l4(struct hinic_sq_task *task,
-> -                             enum hinic_l4_offload_type l4_type,
-> +                             enum hinic_l4_tunnel_type l4_type,
->                               u32 tunnel_len);
->
->  void hinic_set_cs_inner_l4(struct hinic_sq_task *task,
-> --
-> 2.19.1
->
+Additionally, what guarantees that all requests in queuelist have the same
+hw+AF8-ctx type? If a later patch will guarantee that, please mention that in
+the comment about list+AF8-first+AF8-entry().
 
-
--- 
 Thanks,
-~Nick Desaulniers
+
+Bart.
