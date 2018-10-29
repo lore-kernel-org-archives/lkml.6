@@ -4,113 +4,160 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F53EC2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:43:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33221C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:43:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 260CC2082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:43:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E48172082D
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:43:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZAkEaFzz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 260CC2082D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jk7VZYlc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E48172082D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726969AbeJ3Edj (ORCPT
+        id S1728447AbeJ3Edp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 00:33:39 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:38697 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbeJ3Edj (ORCPT
+        Tue, 30 Oct 2018 00:33:45 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:39808 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725911AbeJ3Edo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 00:33:39 -0400
-Received: by mail-lf1-f66.google.com with SMTP id p86so4805284lfg.5;
-        Mon, 29 Oct 2018 12:43:31 -0700 (PDT)
+        Tue, 30 Oct 2018 00:33:44 -0400
+Received: by mail-qt1-f196.google.com with SMTP id g10-v6so10734349qtq.6;
+        Mon, 29 Oct 2018 12:43:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=a03GFk+k3fn8cFfh7Vk0sg8SsQ4UOnTnklmK8S4nQ64=;
-        b=ZAkEaFzzfsRpdOu8ev1rj/y5h9mnfzjI6uV4biZNWhPVnmQPasbRWemzC5z1olekBB
-         /goFRShx/h0wVH+eq0f0rjewD/7KZgf5m9hJ3nx9QWLnQIhHLwAe/xX1xCRS00IwVEpm
-         wzXnG9UEZ7Hic/aDSO9Xxj07UFEK7peqdMDJsKDslXKDPT8ddkDhWUgIdNqkqiq/MON9
-         8i6NPakSWbRifbEaEU0iqNM2gWiwDUQmQuEZMvZXHOLe25T9U5FF4G046427QHIa/XAw
-         Dj5D/qA0zJmja3GBerlFJ6/mqzmoc7QGm/UFJhvfQb1or4iokz5smoLtRM6pLImyOoYR
-         5qTA==
+        h=mime-version:references:in-reply-to:reply-to:from:date:message-id
+         :subject:to:cc;
+        bh=rBTGGxdiJskMjWrUGdixSbQQERoc8ij0psm8trdkVx4=;
+        b=Jk7VZYlcNYSftIydFmQj4MQ7gyaVTmbX6ZpFrqZNRp4JBoyMqjcbFwWKK2EqaYciaU
+         3/1MrMpgXPK4Z9lLBiYLwy3PUJA7hK3Gzsnx4dcNl7UsV1ABuFKPCzNz9NVaRJz52LhT
+         MuhkDrETlKAi4z3y1p+BV+wrUab85uS3hzQ8p5is42qrTON1eIqu6ycsEZyyO2NBSaOm
+         nb/E8H1ZE6x1qzYXwwEgbbfJaYMkia8rVSN00xN1begAqC5+cVmNAxsug0V2PARgYeYC
+         Uce6EEyXgY2eItQ3V3kDoj5LIulN3v2SiYajVuSJ0prtSml3bfLgQGZlwrbJ9FTS7g6D
+         wMXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=a03GFk+k3fn8cFfh7Vk0sg8SsQ4UOnTnklmK8S4nQ64=;
-        b=U4A232q7q71QNSEvzteXF328iqrH4XATYEDufUCRa+bx2td5IMNo1EGzbVfsUiiSXG
-         /fHfZvgTDC+h1TdvrYbw9kcY2LYusgz8DC0d7XmECVXM2Bf2LD4JUypfJHmS6bV7MxtH
-         4uSOas/hhBa7yA9lzyTUmsQJDcFJLDyCzTHj1bI3siJdWigNMzp0TSPIR7EHUi4V33O6
-         GDSFiNCLJRujBbHCl7uZH0/7FRxORW4yNO8/HZ6IMLAW3vZHDjD40y6eWbpTr2bn6cqj
-         KV33N1Sp1CcbirqUDMbU8w9r0uFX3J8dYpYfBlEN2U8M4RL3oNCdDEt/rxOmrpkUkw1A
-         7SjQ==
-X-Gm-Message-State: AGRZ1gIT2bqbHGpMq/uXHeN21lGqsDadrGKe7H/xAz3eD9giUW0QzjMn
-        YmxTXDOxtqn043YGB2NwcBTf++cg0Iw=
-X-Google-Smtp-Source: AJdET5f//X/mb0AnSNJ8dRTU1KRuTK0C4/oWsAeVzrfLg/sLUtdUjjZZ7Hnw6NNhap9hyTyGDmjb+w==
-X-Received: by 2002:a19:a302:: with SMTP id m2mr56510lfe.108.1540842209843;
-        Mon, 29 Oct 2018 12:43:29 -0700 (PDT)
-Received: from ?IPv6:2001:14bb:52:7be:f0bf:dd2d:f008:5213? (dmkd798g-7z2-yccwcp-4.rev.dnainternet.fi. [2001:14bb:52:7be:f0bf:dd2d:f008:5213])
-        by smtp.gmail.com with ESMTPSA id f14-v6sm3426144ljk.40.2018.10.29.12.43.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 12:43:29 -0700 (PDT)
-Subject: Re: [PATCH 14/17] prmem: llist, hlist, both plain and rcu
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        kernel-hardening@lists.openwall.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        igor stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-15-igor.stoppa@huawei.com>
- <1634210774.446.1540381072927.JavaMail.zimbra@efficios.com>
- <243a8ff2-889c-089f-a1ff-c882933ca5c3@gmail.com>
- <20181028055233.08fd81b0@vmware.local.home>
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <4b4f1e05-0cf2-4b5b-55b1-9737cf0922ef@gmail.com>
-Date:   Mon, 29 Oct 2018 21:43:26 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:reply-to
+         :from:date:message-id:subject:to:cc;
+        bh=rBTGGxdiJskMjWrUGdixSbQQERoc8ij0psm8trdkVx4=;
+        b=BWMcMftDEAQEtFHVARBVibQBbTkbXrMCM7OWMot+ufGjNaoiP6yEFmg428Ul9uR3/1
+         V/ISIFcQPrr9kZdJakgXa7L+HqR95LA54QYbwL0BK6iHwxIV3sivpiL0EYcZxpeaufBS
+         hTQveUkn2UWG8knMQcjjP/VQQpea2MYilBBS4tf5KTOR1dnIKlA8/XhU0Y2sqKfZtOm4
+         Alir2qHjE7r/cshZ4flRGyEmZoiW2P8R7R9f9plOgZ7vfpuPKw5w0JQHDTYdPn+0C1CV
+         2KrOvqxZIkhUdDEZ/1Fwq9UboUEEfvpN5c02pDVhVtNBVLcCCWsmos5XDLhVbd0R28du
+         IVqw==
+X-Gm-Message-State: AGRZ1gIVsAM47hBsJnOwttyyp0a1iZnujqpJnWuJ542y2wK9OXkF0xNt
+        atqZZRT7unOYwP6udDovVOpXFtbWfMMsUdxtckI=
+X-Google-Smtp-Source: AJdET5cxy6ETRGZyrkNvdLTHcZzQT5GSTmcVZ2vBVKtQkyn1DduzkzuvSWWETFSVnUZgML4xZegN66zM6qFZNRvTyyc=
+X-Received: by 2002:ad4:4106:: with SMTP id i6mr14040087qvp.219.1540842216067;
+ Mon, 29 Oct 2018 12:43:36 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181028055233.08fd81b0@vmware.local.home>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CACRpkdY7eaYk81CU8gmHKfWB82_qNJur=c=7SCRuW+BNeL=Oiw@mail.gmail.com>
+ <20181018215101.169847-1-rajatja@google.com> <CAHp75Vd_r4QGR5xw2cJigM2J3WStg_0PdynBXMZOyZh+t1znKg@mail.gmail.com>
+ <CACK8Z6HOsUcPFyf-GguxPxh_Zdj6gCXP=FpGw-vQXJfnM=cquw@mail.gmail.com>
+ <20181024100230.GQ10650@smile.fi.intel.com> <CAE_wzQ-80NCNbzbFx1eEDwEEOEAbv-5u+W171iUagY2pOahbmw@mail.gmail.com>
+ <CAHp75VfMHqT+aAGVaXzXGbzF2=VEABOOaGhkjfV-D0NPbBM+Rw@mail.gmail.com>
+ <CACK8Z6GMsfVEpefzwvVgS44Eg=PQzcNOaC3GA9F2OzrBxvpchw@mail.gmail.com> <20181029174356.GR10650@smile.fi.intel.com>
+In-Reply-To: <20181029174356.GR10650@smile.fi.intel.com>
+Reply-To: rajatxjain@gmail.com
+From:   Rajat Jain <rajatxjain@gmail.com>
+Date:   Mon, 29 Oct 2018 12:43:24 -0700
+Message-ID: <CAA93t1oaZ5zkv+BsGnYZg6pqKv0DzXi3j8oZHUyTyffUWHtHug@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhci-pci: Try "cd" for card-detect lookup before
+ using NULL
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Rajat Jain <rajatja@google.com>, Dmitry Torokhov <dtor@google.com>,
+        "Hunter, Adrian" <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-mmc@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-gpio@vger.kernel.org, linux-acpi@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/10/2018 09:52, Steven Rostedt wrote:
+On Mon, Oct 29, 2018 at 10:44 AM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+>
+> On Mon, Oct 29, 2018 at 10:22:02AM -0700, Rajat Jain wrote:
+> > On Mon, Oct 29, 2018 at 8:23 AM Andy Shevchenko
+> > <andy.shevchenko@gmail.com> wrote:
+> > > On Wed, Oct 24, 2018 at 9:03 PM Dmitry Torokhov <dtor@google.com> wrote:
+> > > > On Wed, Oct 24, 2018 at 3:02 AM Andy Shevchenko
+> > > > <andy.shevchenko@gmail.com> wrote:
+> > > > > On Mon, Oct 22, 2018 at 04:34:55PM -0700, Rajat Jain wrote:
+> > > > > > On Fri, Oct 19, 2018 at 2:13 AM Andy Shevchenko
+> > > > > > <andy.shevchenko@gmail.com> wrote:
+>
+> > > > > > Also, the driver may not
+> > > > > > really know?
+> > > > >
+> > > > > I think in such case the bug in HW design and / or driver.
+> > > >
+> > > > Why? You can have a shared or dedicated interrupt and the driver does
+> > > > not really need to know if it can poll the status.
+> > >
+> > > Yes, that's my point either we get 1:1 mapping between slot and GPIOs
+> > > or have a possibility to read back from some register(s) the actual
+> > > status of all of them, otherwise it's a bad design.
+> >
+> > No, AFAIU, the driver only should only be able to read the status of
+> > *the* interrupt that was fired? (as opposite to the ability to read
+> > *all of them* when an interrupt fires).
+>
+> I can't be sure in the details of this (sdhci) driver, I'm not a maintainer of
+> that one. So, my above conclusions are purely generic.
+>
+> > > > > > 2) I'm not really sure what should I set "active_low" to? Isn't this
+> > > > > > something that should be specified by platform / ACPI too, and driver
+> > > > > > should just be able to say say choose whatever the ACPI says?
+> > > > > >
+> > > > > > struct acpi_gpio_params {
+> > > > > >         unsigned int crs_entry_index;
+> > > > > >         unsigned int line_index;
+> > > > > >         bool active_low;
+> > > > > > };
+>
+>
+> > > > > ACPI specification misses this property, that's why we have it in the
+> > > > > structure. In your case it should be provided by _DSD and thus be consistent
+> > > > > with the hardcoded values.
+> > > >
+> > > > Again, you think as if the driver was platform specific; it is not. I
+> > > > have 1000s of systems with different ACPI tables. Let's say half of
+> > > > them use one polarity, and half another. Which polarity do you propose
+> > > > to use?
+> > >
+> > > Use one table for one half and another for the rest.
+> >
+> > But how does driver determine which table to use for which platform?
+> > (Currently the driver is platform independent).
+>
+> Based on vendor and device IDs in any form of it.
 
-> If a change log depends on other commits for context, it is
-> insufficient.
+The vendor ID and device ID here would mean building a table of
+platforms ids in this (currently platform independent) driver. I'm not
+sure if my original patch introduces any problems that are worth
+solving using such a table.
 
-ok, I will adjust the change logs accordingly
+I would thus prefer to solve it using my original patch, I would
+respin it taking care of your other review comments.
 
---
-thanks, igor
+Thanks and best regards,
+
+Rajat
+
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
