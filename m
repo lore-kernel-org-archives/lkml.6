@@ -6,59 +6,59 @@ X-Spam-Status: No, score=1.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADBBCC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:35:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A52E9C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:37:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65DD12082B
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:35:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B20620664
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:37:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RG3GkqUo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65DD12082B
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K4Xcclj5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B20620664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729346AbeJ2VXh (ORCPT
+        id S1729300AbeJ2VZc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 17:23:37 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39924 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729242AbeJ2VXh (ORCPT
+        Mon, 29 Oct 2018 17:25:32 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36281 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729210AbeJ2VZb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 17:23:37 -0400
-Received: by mail-wm1-f65.google.com with SMTP id y144-v6so7755572wmd.4;
-        Mon, 29 Oct 2018 05:35:06 -0700 (PDT)
+        Mon, 29 Oct 2018 17:25:31 -0400
+Received: by mail-wr1-f68.google.com with SMTP id y16so8499773wrw.3;
+        Mon, 29 Oct 2018 05:37:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=h4jQvS3smwEHiSjQLJ3kY9xovFkxw3+QZ/jJOJIUjm0=;
-        b=RG3GkqUowS0h/5a+EHZKVF9iQoOQu/hZc/Gtp5NLyBb5HtJhSEqQfW1kEae/NVVk/6
-         B5Ns5eS5BatVnlAVxjlLX723X0WMi8OX8GPsmbz6qNX8Ic6lm5Q9VgSbVopJqx0ybt1V
-         YTsC+NK0fpe//rIhemYvAi/cFVTbX0QzhsIZ1YaJnwZkkUjGdAHlWbKdSypcqlcDKm98
-         9ZoUU5KUttpOI1C6U+JlzpcxUuteVbcP3MEpoOhlCu7QobZU5qKxbWYUWRfRqyOjU2ve
-         HewPpS5WRR8IewIQBHYyVzDzRQMMDrFcHVkou7swyXLETrj9swTthUkZYAFBigqDvRdh
-         H/mQ==
+        bh=NmX/AYJu1E1rPxyWRdoDW8b6kN4gWKLjWo3ELhWYNn0=;
+        b=K4Xcclj5SGQt3BFEaU44Jgx1gNuVA6APFY+kBMOz2JVFIF6Sw2B0lko/RGQB/xaGwC
+         YFjFQShV0uO/TpcEiIx6Orxue22+oscOWDszTYUkrf0JIB1pWSicvlBfeV8Jlgy6DhbR
+         rDVQCUqijy3wcGvc6NC+7Uwumsb6nvAMSNfyAOxQCVTHmxAOtn2NHp/6TclRJe53hmXO
+         PMlhbtsYtz6bya+VCYrOXIhBiF5FKfMIix4FVSRThPrpCaFX4tvpb0IHZYY4RoxZ+wo8
+         199e8p305VVa3C/8SegN9KQVpIv0xeDZiPcq5AO+09u1Vdy/Aw/96A+1m9mF9voD8UHm
+         tQWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=h4jQvS3smwEHiSjQLJ3kY9xovFkxw3+QZ/jJOJIUjm0=;
-        b=hlqdXWpe1/Z1kafUhjNfd8s32Ny0oa3FNYN31CzlWqxxipaNPnEecWtK6WDeA27uMV
-         WWI5sxD9xr4HeoXPkZJbTlBtxZ8jDoeVbfU+Tz7xybu+YODJvjhR8SWd36RDUA99dFHP
-         9o1DqEwHC3iL8B2p/vsAcU/ljkvSXSVQ/Ym8W+gx59oHu4loVeSgOfl7pIcm8IK1PjqU
-         uqKOs5qLuX8jgkd8q5WNY8uMSiFEk4opsRWYI7bVAnUxWxZOkpfa4icc33gejpWZVseb
-         me9YIyzMsuDOVSYXmqVQ8tQq7ldu6zwFffmU4yvJyIByjoEe12OEOQr3x5HSv42eMv7t
-         Yhig==
-X-Gm-Message-State: AGRZ1gJ1YTH2AA4rZxbAnFtEDoTkWZroNKxMaAg/bu1zyFU27hDTO8rT
-        vy05WjvmFnqEC4baEwC6yQ0=
-X-Google-Smtp-Source: AJdET5dLyR1E3h/zEaBjohTht9EMap9NRkmVuKj3M6/2FP16rNwljoApWrJ3Snf4HnjZ/TkB7NiNxw==
-X-Received: by 2002:a1c:2ecc:: with SMTP id u195-v6mr14167988wmu.137.1540816505448;
-        Mon, 29 Oct 2018 05:35:05 -0700 (PDT)
+        bh=NmX/AYJu1E1rPxyWRdoDW8b6kN4gWKLjWo3ELhWYNn0=;
+        b=YAMHrCVzJrVzoDWTQdKYwMJnQigX0Pi/+hqZhIryGPSrBubGTKL7byrenZ/m47JddY
+         Vl0wW7mknXSY6IgVOpBmydkCGYkFswdLYx0r+McgpfB6L9fQ3qnzmin9mSIU1b7uwDiK
+         gc4Anfb5ck9Tgwv4p9TKB17s8DfEjzlYci4neYNuOQqjpQ1jTi/2oOuPrS5KbsJjuL5h
+         1H0fkKqRX1ntPqsREPJzLb5dvjgjPNXx0WoNkvtpz/VGQ0pK8q6eEYiRb6suvxWj/53S
+         6QcBJMaEycz5U7LaFBkzodPMId4um5sZr3SKz0eYP+3Audr+KZHfTKtub6RdoO4MRn+6
+         cE6Q==
+X-Gm-Message-State: AGRZ1gJOaSIErubSFyxTD3s2uUE8++9yfn8vcPRuNWM+kRJQquxp1vAK
+        8crCAzLShXiC+earoOD4xZo=
+X-Google-Smtp-Source: AJdET5cgJAPpeZ3KN37nYAemXacqZFuVwblmRF5Hxi1lwRY19f/L8A76BDLYd41RNieaKfAQRqaQ6A==
+X-Received: by 2002:a05:6000:11c1:: with SMTP id i1mr14728725wrx.310.1540816619632;
+        Mon, 29 Oct 2018 05:36:59 -0700 (PDT)
 Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id g8-v6sm24728758wri.58.2018.10.29.05.35.04
+        by smtp.gmail.com with ESMTPSA id 125-v6sm2847016wmy.32.2018.10.29.05.36.58
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Oct 2018 05:35:04 -0700 (PDT)
-Date:   Mon, 29 Oct 2018 13:35:02 +0100
+        Mon, 29 Oct 2018 05:36:59 -0700 (PDT)
+Date:   Mon, 29 Oct 2018 13:36:56 +0100
 From:   Ingo Molnar <mingo@kernel.org>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     Colin King <colin.king@canonical.com>,
@@ -69,13 +69,14 @@ Cc:     Colin King <colin.king@canonical.com>,
         Namhyung Kim <namhyung@kernel.org>,
         kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] drivers/perf: fix spelling mistake, EACCESS -> EACCES
-Message-ID: <20181029123502.GA57235@gmail.com>
+Message-ID: <20181029123656.GB57235@gmail.com>
 References: <20181026175839.4565-1-colin.king@canonical.com>
  <20181029122854.GB20813@kernel.org>
+ <20181029123357.GA21857@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181029122854.GB20813@kernel.org>
+In-Reply-To: <20181029123357.GA21857@kernel.org>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -85,31 +86,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 * Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
 
-> Em Fri, Oct 26, 2018 at 06:58:39PM +0100, Colin King escreveu:
-> > From: Colin Ian King <colin.king@canonical.com>
+> Em Mon, Oct 29, 2018 at 09:28:54AM -0300, Arnaldo Carvalho de Melo escreveu:
+> > Em Fri, Oct 26, 2018 at 06:58:39PM +0100, Colin King escreveu:
+> > > From: Colin Ian King <colin.king@canonical.com>
+> > > 
+> > > Trivial fix to a spelling mistake of the error access name EACCESS,
+> > > rename to EACCES
 > > 
-> > Trivial fix to a spelling mistake of the error access name EACCESS,
-> > rename to EACCES
+> > Thanks, applied.
+> > 
+> > And I also took the chance to fix another spelling mistake, on this same
+> > line:
+> > 
+> > -        *  -EACCESS    -- @event is for this PMU, @event is valid, but no privilidges
+> > +        *  -EACCES     -- @event is for this PMU, @event is valid, but no privilidges
+> >                                                                                  ^
+> >                                                                                  ^
+> >                                                                                  ^
+> >                                                                                  ^
 > 
-> Thanks, applied.
-> 
-> And I also took the chance to fix another spelling mistake, on this same
-> line:
-> 
-> -        *  -EACCESS    -- @event is for this PMU, @event is valid, but no privilidges
-> +        *  -EACCES     -- @event is for this PMU, @event is valid, but no privilidges
->                                                                                  ^
->                                                                                  ^
->                                                                                  ^
->                                                                                  ^
-> 
-> :-)
+> But I see Ingo has already merged your patch, lets fix that one later
+> then :-)
 
-LOL.
+I zapped my commit, please let's merge your upgraded version.
 
-I zapped my commit from perf/urgent, because I failed to notice the 
-second typo :-)
+BTW., while at it, could we also try a header refresh now that a lot of 
+the merge window changes to headers are behind us, this is from the 
+perf/urgent build (f0718d792b8a)"
 
-Thanks,
+Warning: Kernel ABI header at 'tools/include/uapi/linux/kvm.h' differs from latest version at 'include/uapi/linux/kvm.h'
+diff -u tools/include/uapi/linux/kvm.h include/uapi/linux/kvm.h
+Warning: Kernel ABI header at 'tools/include/uapi/sound/asound.h' differs from latest version at 'include/uapi/sound/asound.h'
+diff -u tools/include/uapi/sound/asound.h include/uapi/sound/asound.h
+Warning: Kernel ABI header at 'tools/arch/x86/include/asm/cpufeatures.h' differs from latest version at 'arch/x86/include/asm/cpufeatures.h'
+diff -u tools/arch/x86/include/asm/cpufeatures.h arch/x86/include/asm/cpufeatures.h
+Warning: Kernel ABI header at 'tools/arch/x86/include/uapi/asm/kvm.h' differs from latest version at 'arch/x86/include/uapi/asm/kvm.h'
+diff -u tools/arch/x86/include/uapi/asm/kvm.h arch/x86/include/uapi/asm/kvm.h
+Warning: Kernel ABI header at 'tools/arch/powerpc/include/uapi/asm/kvm.h' differs from latest version at 'arch/powerpc/include/uapi/asm/kvm.h'
+diff -u tools/arch/powerpc/include/uapi/asm/kvm.h arch/powerpc/include/uapi/asm/kvm.h
+Warning: Kernel ABI header at 'tools/arch/s390/include/uapi/asm/kvm.h' differs from latest version at 'arch/s390/include/uapi/asm/kvm.h'
+diff -u tools/arch/s390/include/uapi/asm/kvm.h arch/s390/include/uapi/asm/kvm.h
+Warning: Kernel ABI header at 'tools/arch/arm64/include/uapi/asm/unistd.h' differs from latest version at 'arch/arm64/include/uapi/asm/unistd.h'
+diff -u tools/arch/arm64/include/uapi/asm/unistd.h arch/arm64/include/uapi/asm/unistd.h
+Warning: Kernel ABI header at 'tools/include/uapi/asm-generic/unistd.h' differs from latest version at 'include/uapi/asm-generic/unistd.h'
+diff -u tools/include/uapi/asm-generic/unistd.h include/uapi/asm-generic/unistd.h
+Warning: Kernel ABI header at 'tools/include/uapi/linux/mman.h' differs from latest version at 'include/uapi/linux/mman.h'
+diff -u tools/include/uapi/linux/mman.h include/uapi/linux/mman.h
+
+?
+
+Thanks!
 
 	Ingo
