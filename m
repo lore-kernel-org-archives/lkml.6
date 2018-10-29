@@ -2,79 +2,71 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7A09C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:48:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C6EEC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:51:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFB962080A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:48:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFB962080A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id E7376204FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:51:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7376204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728157AbeJ3CiH (ORCPT
+        id S1728173AbeJ3ClM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 22:38:07 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:37038 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726532AbeJ3CiH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 22:38:07 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7309C136DD16E;
-        Mon, 29 Oct 2018 10:48:28 -0700 (PDT)
-Date:   Mon, 29 Oct 2018 10:48:27 -0700 (PDT)
-Message-Id: <20181029.104827.680192866924184016.davem@davemloft.net>
-To:     kan.liang@linux.intel.com
-Cc:     acme@kernel.org, linux-kernel@vger.kernel.org, wangnan0@huawei.com,
-        jolsa@kernel.org, namhyung@kernel.org, kan.liang@intel.com,
-        ak@linux.intel.com, yao.jin@linux.intel.com, peterz@infradead.org
-Subject: Re: [PATCHES/RFC] Re: A concern about overflow ring buffer mode
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <b488a063-276c-ab8f-954e-f68e951146b4@linux.intel.com>
-References: <0247fca0-5a94-9a83-cefa-282804316729@linux.intel.com>
-        <20181029.104008.791032322062574758.davem@davemloft.net>
-        <b488a063-276c-ab8f-954e-f68e951146b4@linux.intel.com>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 29 Oct 2018 10:48:28 -0700 (PDT)
+        Mon, 29 Oct 2018 22:41:12 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:38726 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726532AbeJ3ClL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 22:41:11 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id Khj9w4h30Il4; Mon, 29 Oct 2018 18:51:31 +0100 (CET)
+Received: from zn.tnic (p200300EC2BC61800329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bc6:1800:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6060E1EC00E8;
+        Mon, 29 Oct 2018 18:51:31 +0100 (CET)
+Date:   Mon, 29 Oct 2018 18:51:29 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Luck, Tony" <tony.luck@intel.com>
+Cc:     Daniel Aberger - Profihost AG <d.aberger@profihost.ag>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "s.priebe@profihost.ag" <s.priebe@profihost.ag>,
+        "n.fahldieck@profihost.ag" <n.fahldieck@profihost.ag>,
+        "p.kramme@profihost.ag" <p.kramme@profihost.ag>
+Subject: Re: MCE reports errors that can't be verified
+Message-ID: <20181029175129.GL32150@zn.tnic>
+References: <6ccf5413-ce2a-bbb9-0203-b0cc9fe2e641@profihost.ag>
+ <20181029161525.GI32150@zn.tnic>
+ <3908561D78D1C84285E8C5FCA982C28F7D43AA76@ORSMSX110.amr.corp.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F7D43AA76@ORSMSX110.amr.corp.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-Date: Mon, 29 Oct 2018 13:42:56 -0400
+On Mon, Oct 29, 2018 at 04:59:44PM +0000, Luck, Tony wrote:
+> The EDAC driver printed out those messages,
 
-> 
-> 
-> On 10/29/2018 1:40 PM, David Miller wrote:
->> From: "Liang, Kan" <kan.liang@linux.intel.com>
->> Date: Mon, 29 Oct 2018 10:33:06 -0400
->> 
->>> I just realized that the problem in KNL will be back if we switch
->>> back to non-overwrite mode.
->> What is KNL?
->>
-> Intel Xeon Phi Processor, Knights Landing.
+I don't think so - that's __print_mce() in mce.c which dumps the three
+lines under "... events logged". Which means, that's the lowest prio,
+fallback notifier which runs when nothing else before it has done any
+logging.
 
-I don't understand how a specific piece of hardware directly leads to
-ring buffer processing timeouts, or multi-minute thread map processing
-times...
+-- 
+Regards/Gruss,
+    Boris.
 
-You'll have to explain all of the details of your test scenerio, and
-the exact problems triggers, which caused you to write these patches
-which causes serious regressions for what I consider a core simple use
-case of perf top.
-
-And that's running perf top during a parallel kernel build.
-
-
+Good mailing practices for 400: avoid top-posting and trim the reply.
