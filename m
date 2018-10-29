@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C969AECDE44
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:30:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCAE7C46475
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:31:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 982A320851
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:30:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 982A320851
+	by mail.kernel.org (Postfix) with ESMTP id 8E54F20851
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:31:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E54F20851
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729671AbeJ2SSI (ORCPT
+        id S1729653AbeJ2STp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 14:18:08 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:56303 "EHLO mail.bootlin.com"
+        Mon, 29 Oct 2018 14:19:45 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:56512 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729507AbeJ2SSH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 14:18:07 -0400
+        id S1729486AbeJ2STp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 14:19:45 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 213EE2097B; Mon, 29 Oct 2018 10:30:15 +0100 (CET)
+        id BD225208B0; Mon, 29 Oct 2018 10:31:52 +0100 (CET)
 Received: from localhost (aaubervilliers-681-1-12-210.w90-88.abo.wanadoo.fr [90.88.133.210])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D8D1D20901;
-        Mon, 29 Oct 2018 10:30:04 +0100 (CET)
-Date:   Mon, 29 Oct 2018 10:30:05 +0100
+        by mail.bootlin.com (Postfix) with ESMTPSA id 874F020711;
+        Mon, 29 Oct 2018 10:31:42 +0100 (CET)
+Date:   Mon, 29 Oct 2018 10:31:42 +0100
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Jagan Teki <jagan@amarulasolutions.com>
 Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -44,16 +44,16 @@ Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
         Michael Trimarchi <michael@amarulasolutions.com>,
         linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 15/25] drm/sun4i: sun6i_mipi_dsi: Set proper vblk
- timing calculation
-Message-ID: <20181029093005.6kg7pc5z63gi6lzb@flea>
+Subject: Re: [PATCH v3 16/25] drm/sun4i: sun6i_mipi_dsi: Add support for
+ VCC-DSI voltage regulator
+Message-ID: <20181029093142.hgn4q6o7q32voutf@flea>
 References: <20181026144344.27778-1-jagan@amarulasolutions.com>
- <20181026144344.27778-16-jagan@amarulasolutions.com>
+ <20181026144344.27778-17-jagan@amarulasolutions.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="b5odkxjnn5rkvxze"
+        protocol="application/pgp-signature"; boundary="c44lc6ofhu4n4dbs"
 Content-Disposition: inline
-In-Reply-To: <20181026144344.27778-16-jagan@amarulasolutions.com>
+In-Reply-To: <20181026144344.27778-17-jagan@amarulasolutions.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -61,23 +61,17 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---b5odkxjnn5rkvxze
+--c44lc6ofhu4n4dbs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 26, 2018 at 08:13:34PM +0530, Jagan Teki wrote:
-> Unlike hblk, the vblk timings should follow an equation to compute
-> the desired value for lane 4 devices and rest of devices it would be 0.
+On Fri, Oct 26, 2018 at 08:13:35PM +0530, Jagan Teki wrote:
+> Some boards have VCC-DSI pin connected to voltage regulator which may
+> not be turned on by default.
 >=20
-> BSP code from BPI-M64-bsp is computing vblk as for 4-lane devices
-> (in drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
-> tmp =3D (ht*dsi_pixel_bits[format]/8)*vt-(4+dsi_hblk+2);
-> dsi_vblk =3D (lane-tmp%lane);
->=20
-> So, update the vblk timing calculation accordingly.
->=20
-> Tested on 2-lane, 4-lane MIPI-DSI LCD panels.
+> Add support for such boards by adding voltage regulator handling code to
+> MIPI DSI driver.
 >=20
 > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 > Tested-by: Jagan Teki <jagan@amarulasolutions.com>
@@ -87,38 +81,63 @@ On Fri, Oct 26, 2018 at 08:13:34PM +0530, Jagan Teki wrote:
 > Changes for v2:
 > - none
 >=20
->  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
+>  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 14 ++++++++++++++
+>  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h |  3 +++
+>  2 files changed, 17 insertions(+)
 >=20
 > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun=
 4i/sun6i_mipi_dsi.c
-> index 20e330186b7f..42bd7506abaf 100644
+> index 42bd7506abaf..bc57343592e0 100644
 > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
 > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> @@ -511,8 +511,19 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi=
- *dsi,
->  	 * Allwinner BSP is using a rather convoluted calculation
->  	 * there only for 4 lanes. However, using 0 (the !4 lanes
->  	 * case) even with a 4 lanes screen seems to work...
-
-Since you're adding the support for 2 lanes DSI displays, that should
-be removed.
-
-> +	 *
-> +	 * The vertical blank is set using a blanking packet (4 bytes +
-> +	 * payload + 2 bytes). Its minimal size is therefore 6 bytes
->  	 */
-> -	vblk =3D 0;
-> +#define VBLK_PACKET_OVERHEAD	6
-> +	if (device->lanes =3D=3D 4) {
-> +		int tmp;
+> @@ -949,6 +949,12 @@ static int sun6i_dsi_bind(struct device *dev, struct=
+ device *master,
+> =20
+>  	dsi->drv =3D drv;
+> =20
+> +	ret =3D regulator_enable(dsi->regulator);
+> +	if (ret) {
+> +		dev_err(dev, "Failed to enable regulator\n");
+> +		return ret;
+> +	}
 > +
-> +		tmp =3D (mode->htotal * Bpp) * mode->vtotal - (hblk + VBLK_PACKET_OVER=
-HEAD);
-> +		vblk =3D(device->lanes - tmp % device->lanes);
 
-This generates a checkpatch warning. You should run all your patches
-through checkpatch before sending them.
+The regulator should be enabled only when the device is in use.
+
+>  	drm_encoder_helper_add(&dsi->encoder,
+>  			       &sun6i_dsi_enc_helper_funcs);
+>  	ret =3D drm_encoder_init(drm,
+> @@ -980,6 +986,7 @@ static int sun6i_dsi_bind(struct device *dev, struct =
+device *master,
+> =20
+>  err_cleanup_connector:
+>  	drm_encoder_cleanup(&dsi->encoder);
+> +	regulator_disable(dsi->regulator);
+>  	return ret;
+>  }
+> =20
+> @@ -989,6 +996,7 @@ static void sun6i_dsi_unbind(struct device *dev, stru=
+ct device *master,
+>  	struct sun6i_dsi *dsi =3D dev_get_drvdata(dev);
+> =20
+>  	drm_panel_detach(dsi->panel);
+> +	regulator_disable(dsi->regulator);
+>  }
+> =20
+>  static const struct component_ops sun6i_dsi_ops =3D {
+> @@ -1022,6 +1030,12 @@ static int sun6i_dsi_probe(struct platform_device =
+*pdev)
+>  		return PTR_ERR(base);
+>  	}
+> =20
+> +	dsi->regulator =3D devm_regulator_get(dev, "vcc-dsi");
+> +	if (IS_ERR(dsi->regulator)) {
+> +		dev_err(dev, "Couldn't get regulator\n");
+> +		return PTR_ERR(dsi->regulator);
+> +	}
+> +
+
+You haven't updated the DT bindings accordingly.
 
 Maxime
 
@@ -127,15 +146,15 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---b5odkxjnn5rkvxze
+--c44lc6ofhu4n4dbs
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW9bTHQAKCRDj7w1vZxhR
-xRWAAP9JWRTAm8RZAs7kJwQAWkqMXb0F/THZam8BAwbfcJLEcwD9Gfhyz4Y3DnUg
-iyihVtXXwRnGsWxQDXFHDNia+lAgkAI=
-=xbRn
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW9bTfgAKCRDj7w1vZxhR
+xafeAQC/hk+cR3NR/oeGrMutYm3CO/ddSYmfepkr5BAd0Qg4YAEAn8uF6TFtcbAX
+akK7hkY59vjG9MdW7yEzdyHdpeNZjgU=
+=z4E+
 -----END PGP SIGNATURE-----
 
---b5odkxjnn5rkvxze--
+--c44lc6ofhu4n4dbs--
