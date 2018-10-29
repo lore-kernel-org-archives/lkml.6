@@ -7,160 +7,668 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D2EDC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:09:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48A01C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:09:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AB2D204FD
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:09:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAA3A204FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:09:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="Q5TgxY+m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AB2D204FD
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="l03rKDbf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAA3A204FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726700AbeJ3B7R (ORCPT
+        id S1727111AbeJ3B7U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 21:59:17 -0400
-Received: from smtprelay.synopsys.com ([198.182.60.111]:52794 "EHLO
+        Mon, 29 Oct 2018 21:59:20 -0400
+Received: from smtprelay4.synopsys.com ([198.182.47.9]:40204 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726066AbeJ3B7Q (ORCPT
+        with ESMTP id S1726066AbeJ3B7T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 21:59:16 -0400
+        Mon, 29 Oct 2018 21:59:19 -0400
 Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 0F3AE10C031B;
-        Mon, 29 Oct 2018 10:09:48 -0700 (PDT)
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 58A5624E08FE;
+        Mon, 29 Oct 2018 10:09:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1540832988; bh=5pkZrd6kJ3caL9OXjHwvJuw9JnzWH4BYk+kQM13Wlb0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Q5TgxY+mEKKWi9k2QyyqECOTAhl/ZJj5UZTeZA/3Lo9YKaK3MQH5ny3is9XPJ5Gfq
-         gTnZ92SOn9vcfkrN9Z2W2R6up9XisgcbmGUIeBHoG1V39c7NHsnF2EewRB1kZLTm3D
-         nUN7R7FcT71ayG3ALS9dJNpcUyAachbcG8tUSP0xpmyFkZLgLDLY7TbFKNRJYbbyNM
-         Uxswx55TNSzqZt0aFdqfV1leRJA8KA2ihO3KJV0qWEBAnHgB4HKtHU4wWcDwPhtbYU
-         SIi7nFVKSBOw3Tzsc3lM50Rilt8aV0/G6/9K6MfdxNvvx90kdhsUDHFq4uBDuAeDEs
-         hKzQFHCqCHlzg==
+        t=1540832990; bh=qD4gQdfsOSr5mcsasm9lVoV62aZ3lfj9EeXyiyJIp1k=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=l03rKDbf/CVEkNXxpvuf3bj/Bm2I3DXcvMiCKL/tyZLKu9GFzIx1p+T1Uiusjt6nX
+         bZKJu29D8OuIB/vrSKe/x9qcDky3WXIJR0AbGOvtemT6OJCq2ARtKivXn2GV8xDsbc
+         VPGbcw8Klr4SyUA72KajBtiKaJ3/W7AVK9vKnhUBdLSEjOTJOMl50E0AcTjVxbvJLx
+         /YEOAbEBT4KFX6HCrHXhou7S9NUBf9nH0oPm/U1FvzFDv+IEFySj+VF/O74EII5Lok
+         wCqQFqPLqiLW4fCUXl9GeZuLg0jM6zj75WmJYfcJQZnTP4vK1v2DABLyf8ZrljNtFP
+         3gsd1ZnwUkLUw==
 Received: from paltsev-e7480.internal.synopsys.com (paltsev-e7480.internal.synopsys.com [10.121.3.38])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 59DF8363F;
-        Mon, 29 Oct 2018 10:09:46 -0700 (PDT)
+        by mailhost.synopsys.com (Postfix) with ESMTP id 7D6FA3658;
+        Mon, 29 Oct 2018 10:09:48 -0700 (PDT)
 From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 To:     linux-snps-arc@lists.infradead.org,
         Vineet Gupta <vineet.gupta1@synopsys.com>
 Cc:     linux-kernel@vger.kernel.org,
         Alexey Brodkin <alexey.brodkin@synopsys.com>,
         Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [RFC v2 1/2] ARC: split show_faulting_vma for logic and representation parts
-Date:   Mon, 29 Oct 2018 20:09:40 +0300
-Message-Id: <20181029170941.13811-1-Eugeniy.Paltsev@synopsys.com>
+Subject: [RFC v2 2/2] ARC: ARCv2: Introduce SmaRT support
+Date:   Mon, 29 Oct 2018 20:09:41 +0300
+Message-Id: <20181029170941.13811-2-Eugeniy.Paltsev@synopsys.com>
 X-Mailer: git-send-email 2.14.5
+In-Reply-To: <20181029170941.13811-1-Eugeniy.Paltsev@synopsys.com>
+References: <20181029170941.13811-1-Eugeniy.Paltsev@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for introduncing SmaRT support for ARC split
-show_faulting_vma() for logic and representation parts to be
-able to use logic part in SmaRT code.
+Add compile-time 'ARC_SMART_TRACE' option for enabling SmaRT support.
+
+Small real time trace (SmaRT) is an optional on-chip debug hardware
+component that captures instruction-trace history. It stores the
+address of the most recent non-sequential instructions executed into
+internal buffer.
+
+Usually we use MetaWare debugger to enable SmaRT and display trace
+information.
+
+This patch allows to display the decoded content of SmaRT buffer
+without MetaWare debugger. It is done by extending ordinary exception
+message with decoded SmaRT instruction-trace history.
+
+In some cases it's really useful as it allows to show pre-exception
+instruction-trace which was not tainted by exception handler code,
+printk code, etc...
+
+Nevertheless this option has negative performance impact due to
+implementation as we dump SmaRT buffer content into external memory
+buffer in the beginning of every slowpath exception handler code.
+We choose this implementation as a compromise between performance
+impact and SmaRT buffer tainting.
+Although the performance impact is not really significant (according
+to lmbench) we leave this option disabled by default.
+
+Here is th examples of user-space and kernel-space fault messages with
+'ARC_SMART_TRACE' option enabled:
+
+User-space exception:
+----------------------->8-------------------------
+Exception: u_hell[101]: at 0x103a2 [off 0x103a2 in /root/u_hell, VMA: 00010000:00012000]
+  ECR: 0x00050200 => Invalid Write @ 0x00000000 by insn @ 0x000103a2
+SmaRT [64 entries] (U=userspace, E=exception/interrupt, R=repeated, V=valid):
+ dst[   0]: ___V 0x90231dd8: smart_populate+0x0/0xcc
+ src[   0]:      0x9023230c: do_page_fault+0x2c/0x2ec
+ dst[   1]: ___V 0x902322e0: do_page_fault+0x0/0x2ec
+ src[   1]:      0x9022e064: EV_TLBProtV+0xec/0xf0
+ dst[   2]: ___V 0x9022df78: EV_TLBProtV+0x0/0xf0
+ src[   2]:      0x9023315c: do_slow_path_pf+0x10/0x14
+ dst[   3]: ___V 0x9023314c: do_slow_path_pf+0x0/0x14
+ src[   3]:      0x902330e8: EV_TLBMissD+0x80/0xe0
+ dst[   4]: _E_V 0x90233068: EV_TLBMissD+0x0/0xe0
+ src[   4]:      0x000103a2: off 0x103a2 in /root/u_hell (VMA: 00010000:00012000)
+ dst[   5]: U__V 0x00010398: off 0x10398 in /root/u_hell
+ src[   5]:      0x2004f238: off 0x43238 in /lib/libuClibc-1.0.18.so (VMA: 2000c000:20072000)
+ dst[   6]: U__V 0x2004f214: off 0x43214 in /lib/libuClibc-1.0.18.so
+ src[   6]:      0x20049a82: off 0x3da82 in /lib/libuClibc-1.0.18.so
+...[snip]...
+----------------------->8-------------------------
+
+Kernel-space exception:
+----------------------->8-------------------------
+Exception: at dw_mci_probe+0x12/0x954:
+  ECR: 0x00050100 => Invalid Read @ 0x00000004 by insn @ 0x905e7ca2
+SmaRT [64 entries] (U=userspace, E=exception/interrupt, R=repeated, V=valid):
+ dst[   0]: ___V 0x90231dd8: smart_populate+0x0/0xcc
+ src[   0]:      0x9023230c: do_page_fault+0x2c/0x2ec
+ dst[   1]: ___V 0x902322e0: do_page_fault+0x0/0x2ec
+ src[   1]:      0x9022e064: EV_TLBProtV+0xec/0xf0
+ dst[   2]: ___V 0x9022e00c: EV_TLBProtV+0x94/0xf0
+ src[   2]:      0x9022e004: EV_TLBProtV+0x8c/0xf0
+ dst[   3]: ___V 0x9022df78: EV_TLBProtV+0x0/0xf0
+ src[   3]:      0x9023315c: do_slow_path_pf+0x10/0x14
+ dst[   4]: ___V 0x9023314c: do_slow_path_pf+0x0/0x14
+ src[   4]:      0x902330a4: EV_TLBMissD+0x3c/0xe0
+ dst[   5]: _E_V 0x90233068: EV_TLBMissD+0x0/0xe0
+ src[   5]:      0x905e7ca2: dw_mci_probe+0x12/0x954
+ dst[   6]: ___V 0x905e7c90: dw_mci_probe+0x0/0x954
+ src[   6]:      0x905ea61c: dw_mci_pltfm_probe+0xa8/0xc4
+ dst[   7]: ___V 0x905ea5f4: dw_mci_pltfm_probe+0x80/0xc4
+ src[   7]:      0x904a9b2e: devm_ioremap_resource+0x4e/0x12c
+ dst[   8]: ___V 0x904a9b1e: devm_ioremap_resource+0x3e/0x12c
+ src[   8]:      0x904a9bc0: devm_ioremap_resource+0xe0/0x12c
+ dst[   9]: ___V 0x904a9bbc: devm_ioremap_resource+0xdc/0x12c
+ src[   9]:      0x9075a3b0: _raw_spin_unlock_irqrestore+0x28/0x2c
+...[snip]...
+----------------------->8-------------------------
+
+The number of SmaRT buffer lines to record/display can be configured
+in runtime via '/proc/sys/smart_trace/entries' procfs option.
+SmaRT can be suspended in runtime by setting
+'/proc/sys/smart_trace/entries' to 0.
+
+The code was written in such a way to achieve minimal interference
+with MetaWare SmaRT support:
+ * SmaRT is disabled only for small amount of time in smart_populate
+   function.
+ * SmaRT enable/disable via MetaWare doesn't lead to any serious
+   issues (SmaRT disable via MetaWare may lead to last SmaRT
+   record to be invalid, though)
+
+NOTE:
+this RFC has prerequisite:
+  http://patchwork.ozlabs.org/patch/986820/
+
+Changes RFCv1->RFCv2:
+ * Changes in output display:
+   * Only print VMAs if they are changed.
+   * Split entry for two lines and print source and destination
+     addresses on different lines.
+ * Add procfs options to configure/suspend SmaRT in runtime.
+ * Add SmaRT version check. Limit supported SmaRT versions to >= 0x03.
+ * Move all SmaRT related stuff to smart.h and smart.c
+ * Other minor changes.
 
 Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 ---
- arch/arc/include/asm/bug.h     |  9 +++++++++
- arch/arc/kernel/troubleshoot.c | 43 ++++++++++++++++++++++++++++++------------
- 2 files changed, 40 insertions(+), 12 deletions(-)
+ arch/arc/Kconfig               |   8 ++
+ arch/arc/include/asm/arcregs.h |  23 ++++
+ arch/arc/include/asm/smart.h   |  22 ++++
+ arch/arc/kernel/Makefile       |   1 +
+ arch/arc/kernel/setup.c        |   4 +
+ arch/arc/kernel/smart.c        | 274 +++++++++++++++++++++++++++++++++++++++++
+ arch/arc/kernel/traps.c        |   8 ++
+ arch/arc/kernel/troubleshoot.c |   3 +
+ arch/arc/mm/fault.c            |   2 +
+ 9 files changed, 345 insertions(+)
+ create mode 100644 arch/arc/include/asm/smart.h
+ create mode 100644 arch/arc/kernel/smart.c
 
-diff --git a/arch/arc/include/asm/bug.h b/arch/arc/include/asm/bug.h
-index b68f7f82f2d8..064391646d38 100644
---- a/arch/arc/include/asm/bug.h
-+++ b/arch/arc/include/asm/bug.h
-@@ -15,6 +15,15 @@
+diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
+index a045f3086047..c482fd5d865f 100644
+--- a/arch/arc/Kconfig
++++ b/arch/arc/Kconfig
+@@ -528,6 +528,14 @@ config ARC_DBG_TLB_PARANOIA
+ 	bool "Paranoia Checks in Low Level TLB Handlers"
+ 	default n
  
- struct task_struct;
++config ARC_SMART_TRACE
++	bool "Enable SmaRT real time trace on-chip debug HW"
++	depends on ISA_ARCV2
++	help
++	  Enable SmaRT (small real time trace) on-chip debug hardware component
++	  that captures instruction-trace history if exists. This trace will be
++	  printed if any unexpected exception is occurred.
++
+ endif
  
-+struct faulting_vma_info {
-+	char *file_path;
-+	unsigned long offset;
-+	unsigned long vm_start;
-+	unsigned long vm_end;
+ config ARC_UBOOT_SUPPORT
+diff --git a/arch/arc/include/asm/arcregs.h b/arch/arc/include/asm/arcregs.h
+index 49bfbd879caa..cd8228d82872 100644
+--- a/arch/arc/include/asm/arcregs.h
++++ b/arch/arc/include/asm/arcregs.h
+@@ -118,6 +118,20 @@
+ #define ARC_AUX_DPFP_2H         0x304
+ #define ARC_AUX_DPFP_STAT       0x305
+ 
++/* SmaRT registers */
++#define ARC_AUX_SMART_CONTROL	0x700
++#define SMART_CTL_EN		BIT(0)
++#define SMART_CTL_DATA_POS	8
++#define SMART_CTL_DATA_SRC	(0 << SMART_CTL_DATA_POS)
++#define SMART_CTL_DATA_DST	(1 << SMART_CTL_DATA_POS)
++#define SMART_CTL_DATA_FLAG	(2 << SMART_CTL_DATA_POS)
++#define SMART_CTL_IDX_POS	10
++#define ARC_AUX_SMART_DATA	0x701
++#define SMART_FLAG_U		BIT(8)
++#define SMART_FLAG_E		BIT(9)
++#define SMART_FLAG_R		BIT(10)
++#define SMART_FLAG_V		BIT(31)
++
+ #ifndef __ASSEMBLY__
+ 
+ #include <soc/arc/aux.h>
+@@ -199,6 +213,15 @@ struct bcr_dccm_arcv2 {
+ #endif
+ };
+ 
++/* SmaRT BCR encoding starting from version 0x03 */
++struct bcr_smart_v3p {
++#ifdef CONFIG_CPU_BIG_ENDIAN
++	unsigned int stack_size:22, pad:2, ver:8;
++#else
++	unsigned int ver:8, pad:2, stack_size:22;
++#endif
 +};
 +
-+int get_faulting_vma_info(unsigned long address, char *buf, int buflen,
-+			  struct faulting_vma_info *fvma);
- void show_regs(struct pt_regs *regs);
- void show_exception_mesg(struct pt_regs *regs);
- void show_stacktrace(struct task_struct *tsk, struct pt_regs *regs);
-diff --git a/arch/arc/kernel/troubleshoot.c b/arch/arc/kernel/troubleshoot.c
-index fdfba1942a06..00efcdfde0ee 100644
---- a/arch/arc/kernel/troubleshoot.c
-+++ b/arch/arc/kernel/troubleshoot.c
-@@ -80,11 +80,14 @@ static void print_task_path_n_nm(struct task_struct *tsk, char *buf)
- 	pr_info("Path: %s\n", !IS_ERR(path_nm) ? path_nm : "?");
+ /* ARCompact: Both SP and DP FPU BCRs have same format */
+ struct bcr_fp_arcompact {
+ #ifdef CONFIG_CPU_BIG_ENDIAN
+diff --git a/arch/arc/include/asm/smart.h b/arch/arc/include/asm/smart.h
+new file mode 100644
+index 000000000000..3c2302bc8443
+--- /dev/null
++++ b/arch/arc/include/asm/smart.h
+@@ -0,0 +1,22 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Copyright (C) 2018 Synopsys
++// Author: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
++
++#ifndef __ASM_SMART_H
++#define __ASM_SMART_H
++
++void smart_populate(void);
++void smart_show(void);
++void smart_init(void);
++
++#ifdef CONFIG_ARC_SMART_TRACE
++#define POPULATE_SMART()	smart_populate()
++
++#else
++#define POPULATE_SMART()
++void smart_show(void) {}
++void smart_init(void) {}
++
++#endif /* CONFIG_ARC_SMART_TRACE */
++#endif /* __ASM_SMART_H */
+diff --git a/arch/arc/kernel/Makefile b/arch/arc/kernel/Makefile
+index 2dc5f4296d44..4e58a5f90c78 100644
+--- a/arch/arc/kernel/Makefile
++++ b/arch/arc/kernel/Makefile
+@@ -22,6 +22,7 @@ obj-$(CONFIG_ARC_EMUL_UNALIGNED) 	+= unaligned.o
+ obj-$(CONFIG_KGDB)			+= kgdb.o
+ obj-$(CONFIG_ARC_METAWARE_HLINK)	+= arc_hostlink.o
+ obj-$(CONFIG_PERF_EVENTS)		+= perf_event.o
++obj-$(CONFIG_ARC_SMART_TRACE)		+= smart.o
+ 
+ obj-$(CONFIG_ARC_FPU_SAVE_RESTORE)	+= fpu.o
+ CFLAGS_fpu.o   += -mdpfp
+diff --git a/arch/arc/kernel/setup.c b/arch/arc/kernel/setup.c
+index b2cae79a25d7..c5641e6ffc2a 100644
+--- a/arch/arc/kernel/setup.c
++++ b/arch/arc/kernel/setup.c
+@@ -28,6 +28,7 @@
+ #include <asm/unwind.h>
+ #include <asm/mach_desc.h>
+ #include <asm/smp.h>
++#include <asm/smart.h>
+ 
+ #define FIX_PTR(x)  __asm__ __volatile__(";" : "+r"(x))
+ 
+@@ -447,6 +448,9 @@ void setup_processor(void)
+ 	pr_info("%s", arc_platform_smp_cpuinfo());
+ 
+ 	arc_chk_core_config();
++
++	if (IS_ENABLED(CONFIG_ARC_SMART_TRACE))
++		smart_init();
  }
  
--static void show_faulting_vma(unsigned long address, char *buf)
-+int get_faulting_vma_info(unsigned long address, char *buf, int buflen,
-+			  struct faulting_vma_info *fvma)
- {
- 	struct vm_area_struct *vma;
--	char *nm = buf;
- 	struct mm_struct *active_mm = current->active_mm;
-+	int ret = -ENOENT;
+ static inline int is_kernel(unsigned long addr)
+diff --git a/arch/arc/kernel/smart.c b/arch/arc/kernel/smart.c
+new file mode 100644
+index 000000000000..fb1e88c7b99b
+--- /dev/null
++++ b/arch/arc/kernel/smart.c
+@@ -0,0 +1,274 @@
++// SPDX-License-Identifier: GPL-2.0+
++//
++// Synopsys SmaRT (Small Real time Trace) handling code
++//
++// Copyright (C) 2018 Synopsys
++// Author: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
 +
-+	fvma->file_path = "?";
- 
- 	/* can't use print_vma_addr() yet as it doesn't check for
- 	 * non-inclusive vma
-@@ -97,19 +100,35 @@ static void show_faulting_vma(unsigned long address, char *buf)
- 	 */
- 	if (vma && (vma->vm_start <= address)) {
- 		if (vma->vm_file) {
--			nm = file_path(vma->vm_file, buf, PAGE_SIZE - 1);
--			if (IS_ERR(nm))
--				nm = "?";
-+			fvma->file_path = file_path(vma->vm_file, buf, buflen);
-+			if (IS_ERR(fvma->file_path))
-+				fvma->file_path = "?";
- 		}
- 
--		pr_cont("[off 0x%lx in %s, VMA: %08lx:%08lx] ",
--			vma->vm_start < TASK_UNMAPPED_BASE ?
--				address : address - vma->vm_start,
--			nm, vma->vm_start, vma->vm_end);
--	} else
--		pr_cont("[No matching VMA found] ");
-+		fvma->vm_start = vma->vm_start;
-+		fvma->vm_end = vma->vm_end;
-+		fvma->offset = vma->vm_start < TASK_UNMAPPED_BASE ?
-+				address : address - vma->vm_start;
++#include <linux/init.h>
++#include <linux/gfp.h>
++#include <linux/sysctl.h>
++#include <linux/percpu.h>
++#include <linux/percpu-defs.h>
 +
-+		ret = 0;
-+	}
- 
- 	up_read(&active_mm->mmap_sem);
++#include <asm/arcregs.h>
++#include <asm/smart.h>
++#include <asm/bug.h>
 +
-+	return ret;
++#define SMART_BUFF_MAX	4096	/* HW limit */
++
++struct smart_buff {
++	u32 entries_collected;
++	u32 src[SMART_BUFF_MAX];
++	u32 dst[SMART_BUFF_MAX];
++	u32 flags[SMART_BUFF_MAX];
++};
++
++DEFINE_PER_CPU(struct smart_buff, smart_buff_log);
++
++struct smart_fvma_info {
++	bool vma_found;
++	struct faulting_vma_info fvma;
++};
++
++/* 0 value of 'smart_entries_use' will be treated as 'disable' */
++static unsigned int smart_entries_use = SMART_BUFF_MAX;
++
++/* limits for smart_trace/entries */
++static unsigned int smart_entries_min;
++static unsigned int smart_entries_max = SMART_BUFF_MAX;
++
++static struct ctl_table ctl_smart_vars[] = {
++	{
++		.procname	= "entries",
++		.data		= &smart_entries_use,
++		.maxlen		= sizeof(smart_entries_use),
++		.mode		= 0644,
++		.proc_handler	= proc_douintvec_minmax,
++		.extra1		= &smart_entries_min,
++		.extra2		= &smart_entries_max,
++	}, {}
++};
++
++static struct ctl_table ctl_smart[] = {
++	{
++		.procname	= "arc_smart_trace",
++		.mode		= 0555,
++		.child		= ctl_smart_vars,
++	}, {}
++};
++
++static inline bool smart_exist(void)
++{
++	struct bcr_smart_v3p bcr;
++
++	READ_BCR(ARC_REG_SMART_BCR, bcr);
++
++	/*
++	 * SmaRT versions < 0x03 have different registers encoding and small
++	 * buffer size. We don't support them.
++	 */
++	return bcr.ver >= 0x03;
 +}
 +
-+static void show_faulting_vma(unsigned long address, char *buf, int buflen)
++static inline u32 smart_stack_size(void)
 +{
-+	struct faulting_vma_info fvma;
++	struct bcr_smart_v3p bcr;
++
++	READ_BCR(ARC_REG_SMART_BCR, bcr);
++	return bcr.stack_size;
++}
++
++static inline void smart_enable(void)
++{
++	write_aux_reg(ARC_AUX_SMART_CONTROL, SMART_CTL_EN);
++}
++
++static inline void smart_disable(void)
++{
++	write_aux_reg(ARC_AUX_SMART_CONTROL, 0);
++}
++
++static bool smart_fvma_changed(struct smart_fvma_info *curr,
++			       struct smart_fvma_info *prev)
++{
++	if (!prev->vma_found)
++		return true;
++
++	return prev->fvma.vm_start != curr->fvma.vm_start ||
++	       prev->fvma.vm_end   != curr->fvma.vm_end;
++}
++
++static void smart_show_fault_vma(unsigned long address, char *buf, int buflen,
++				 struct smart_fvma_info *curr,
++				 struct smart_fvma_info *prev)
++{
 +	int ret;
 +
-+	ret = get_faulting_vma_info(address, buf, buflen, &fvma);
-+	if (ret)
-+		pr_cont("[No matching VMA found] ");
++	ret = get_faulting_vma_info(address, buf, buflen, &curr->fvma);
++	curr->vma_found = !ret;
++	if (ret) {
++		pr_cont(": No matching VMA found\n");
++		return;
++	}
++
++	if (smart_fvma_changed(curr, prev))
++		pr_cont(": off 0x%lx in %s (VMA: %08lx:%08lx)\n",
++			curr->fvma.offset, curr->fvma.file_path,
++			curr->fvma.vm_start, curr->fvma.vm_end);
 +	else
-+		pr_cont("[off 0x%lx in %s, VMA: %08lx:%08lx] ", fvma.offset,
-+			fvma.file_path, fvma.vm_start, fvma.vm_end);
++		pr_cont(": off 0x%lx in %s\n",
++			curr->fvma.offset, curr->fvma.file_path);
++}
++
++/* Show decoded userspace/kernelspace address */
++static void smart_show_address(u32 address, char *buf, int buflen,
++			       struct smart_fvma_info *curr,
++			       struct smart_fvma_info *prev)
++{
++	curr->vma_found = false;
++
++	if (address < 0x80000000)
++		smart_show_fault_vma(address, buf, buflen, curr, prev);
++	else
++		pr_cont(": %pS\n", (void *)address);
++}
++
++static void smart_show_dst(int i, u32 flags, u32 dst, char *buf, int buflen,
++			   struct smart_fvma_info *curr,
++			   struct smart_fvma_info *prev)
++{
++	pr_info(" dst[%4d]: %s%s%s%s %#010x", i,
++		flags & SMART_FLAG_U ? "U" : "_",
++		flags & SMART_FLAG_E ? "E" : "_",
++		flags & SMART_FLAG_R ? "R" : "_",
++		flags & SMART_FLAG_V ? "V" : "_",
++		dst);
++
++	smart_show_address(dst, buf, buflen, curr, prev);
++}
++
++static void smart_show_src(int i, u32 src, char *buf, int buflen,
++			   struct smart_fvma_info *curr,
++			   struct smart_fvma_info *prev)
++{
++	pr_info(" src[%4d]:      %#010x", i, src);
++
++	smart_show_address(src, buf, buflen, curr, prev);
++}
++
++static void smart_show_entries(struct smart_buff *smart_buff, u32 stack_use,
++			       char *buf, int buflen)
++{
++	struct smart_fvma_info fvma_0, fvma_1;
++	int i;
++
++	/*
++	 * fvma_1 will be treat as 'previous' vma while we process first entry.
++	 * We had to errase is to show first VMAs unconditionally.
++	 */
++	fvma_1.vma_found = false;
++
++	for (i = 0; i < stack_use; i++) {
++		smart_show_dst(i, smart_buff->flags[i], smart_buff->dst[i],
++			       buf, buflen, &fvma_0, &fvma_1);
++
++		smart_show_src(i, smart_buff->src[i], buf, buflen,
++			       &fvma_1, &fvma_0);
++	}
++}
++
++/* Should be called per cpu */
++void __init smart_init(void)
++{
++	struct smart_buff *smart_buff_cpu;
++
++	/*
++	 * We don't check 'smart_entries_use' value here as sysctl is not
++	 * available yet, so smart_entries_use' value is unchanged.
++	 */
++	if (!smart_exist())
++		return;
++
++	smart_buff_cpu = this_cpu_ptr(&smart_buff_log);
++	smart_buff_cpu->entries_collected = 0;
++
++	smart_enable();
++}
++
++void smart_show(void)
++{
++	struct smart_buff *smart_buff_cpu;
++	u32 stack_size, stack_use;
++	char *buf;
++
++	if (!smart_exist() || !smart_entries_use)
++		return;
++
++	smart_buff_cpu = this_cpu_ptr(&smart_buff_log);
++
++	stack_size = smart_stack_size();
++	stack_use = min_t(u32, stack_size, smart_buff_cpu->entries_collected);
++	pr_info("SmaRT [%d entries] (U=userspace, E=exception/interrupt, R=repeated, V=valid):\n",
++		stack_use);
++
++	buf = (char *)__get_free_page(GFP_NOWAIT);
++	if (!buf)
++		return;
++
++	smart_show_entries(smart_buff_cpu, stack_use, buf, PAGE_SIZE - 1);
++
++	free_page((unsigned long)buf);
++}
++
++#define SMART_CTL_IDX(i)	((i) << SMART_CTL_IDX_POS)
++#define SMART_CTL_GET_SRC(i)	(SMART_CTL_IDX(i) | SMART_CTL_DATA_SRC)
++#define SMART_CTL_GET_DST(i)	(SMART_CTL_IDX(i) | SMART_CTL_DATA_DST)
++#define SMART_CTL_GET_FLG(i)	(SMART_CTL_IDX(i) | SMART_CTL_DATA_FLAG)
++
++void smart_populate(void)
++{
++	struct smart_buff *smart_buff_cpu;
++	u32 stack_size, stack_use;
++	int i;
++
++	if (!smart_exist() || !smart_entries_use) {
++		smart_buff_cpu = this_cpu_ptr(&smart_buff_log);
++		smart_buff_cpu->entries_collected = 0;
++
++		return;
++	}
++
++	/*
++	 * The ARC_AUX_SMART_DATA register may be read safely only when the
++	 * processor is in the state in which SmaRT is not collecting data.
++	 */
++	smart_disable();
++
++	smart_buff_cpu = this_cpu_ptr(&smart_buff_log);
++
++	stack_size = smart_stack_size();
++	stack_use = min_t(u32, stack_size, smart_entries_use);
++	smart_buff_cpu->entries_collected = stack_use;
++
++	for (i = 0; i < stack_use; i++) {
++		write_aux_reg(ARC_AUX_SMART_CONTROL, SMART_CTL_GET_SRC(i));
++		smart_buff_cpu->src[i] = read_aux_reg(ARC_AUX_SMART_DATA);
++		write_aux_reg(ARC_AUX_SMART_CONTROL, SMART_CTL_GET_DST(i));
++		smart_buff_cpu->dst[i] = read_aux_reg(ARC_AUX_SMART_DATA);
++		write_aux_reg(ARC_AUX_SMART_CONTROL, SMART_CTL_GET_FLG(i));
++		smart_buff_cpu->flags[i] = read_aux_reg(ARC_AUX_SMART_DATA);
++	}
++
++	smart_enable();
++}
++
++static int __init smart_register_sysctl(void)
++{
++	if (!register_sysctl_table(ctl_smart))
++		pr_err("Unable to register SmaRT sysctl\n");
++
++	return 0;
++}
++
++arch_initcall(smart_register_sysctl);
+diff --git a/arch/arc/kernel/traps.c b/arch/arc/kernel/traps.c
+index e66fd40296b3..7bd94f8183d1 100644
+--- a/arch/arc/kernel/traps.c
++++ b/arch/arc/kernel/traps.c
+@@ -22,6 +22,7 @@
+ #include <asm/setup.h>
+ #include <asm/unaligned.h>
+ #include <asm/kprobes.h>
++#include <asm/smart.h>
+ 
+ void __init trap_init(void)
+ {
+@@ -70,6 +71,7 @@ int name(unsigned long address, struct pt_regs *regs) \
+ {						\
+ 	siginfo_t info;				\
+ 						\
++	POPULATE_SMART();			\
+ 	clear_siginfo(&info);			\
+ 	info.si_signo = signr;			\
+ 	info.si_errno = 0;			\
+@@ -96,6 +98,8 @@ DO_ERROR_INFO(SIGSEGV, "gcc generated __builtin_trap", do_trap5_error, 0)
+ int do_misaligned_access(unsigned long address, struct pt_regs *regs,
+ 			 struct callee_regs *cregs)
+ {
++	POPULATE_SMART();
++
+ 	/* If emulation not enabled, or failed, kill the task */
+ 	if (misaligned_fixup(address, regs, cregs) != 0)
+ 		return do_misaligned_error(address, regs);
+@@ -128,6 +132,8 @@ void do_non_swi_trap(unsigned long address, struct pt_regs *regs)
+ {
+ 	unsigned int param = regs->ecr_param;
+ 
++	POPULATE_SMART();
++
+ 	switch (param) {
+ 	case 1:
+ 		trap_is_brkpt(address, regs);
+@@ -159,6 +165,8 @@ void do_insterror_or_kprobe(unsigned long address, struct pt_regs *regs)
+ {
+ 	int rc;
+ 
++	POPULATE_SMART();
++
+ 	/* Check if this exception is caused by kprobes */
+ 	rc = notify_die(DIE_IERR, "kprobe_ierr", regs, address, 0, SIGILL);
+ 	if (rc == NOTIFY_STOP)
+diff --git a/arch/arc/kernel/troubleshoot.c b/arch/arc/kernel/troubleshoot.c
+index 00efcdfde0ee..1410fdfcdfef 100644
+--- a/arch/arc/kernel/troubleshoot.c
++++ b/arch/arc/kernel/troubleshoot.c
+@@ -17,6 +17,7 @@
+ 
+ #include <asm/arcregs.h>
+ #include <asm/irqflags.h>
++#include <asm/smart.h>
+ 
+ /*
+  * Common routine to print scratch regs (r0-r12) or callee regs (r13-r25)
+@@ -218,6 +219,8 @@ void show_exception_mesg(struct pt_regs *regs)
+ 		show_exception_mesg_u(regs);
+ 	else
+ 		show_exception_mesg_k(regs);
++
++	smart_show();
  }
  
- static void show_ecr_verbose(struct pt_regs *regs)
-@@ -175,7 +194,7 @@ static inline void show_exception_mesg_u(struct pt_regs *regs)
+ void show_regs(struct pt_regs *regs)
+diff --git a/arch/arc/mm/fault.c b/arch/arc/mm/fault.c
+index 026d662a7668..296a19bcf9a0 100644
+--- a/arch/arc/mm/fault.c
++++ b/arch/arc/mm/fault.c
+@@ -18,6 +18,7 @@
+ #include <linux/mm_types.h>
+ #include <asm/pgalloc.h>
+ #include <asm/mmu.h>
++#include <asm/smart.h>
  
- 	buf = (char *)__get_free_page(GFP_NOWAIT);
- 	if (buf) {
--		show_faulting_vma(regs->ret, buf);
-+		show_faulting_vma(regs->ret, buf, PAGE_SIZE - 1);
- 		free_page((unsigned long)buf);
- 	}
+ /*
+  * kernel virtual address is required to implement vmalloc/pkmap/fixmap
+@@ -72,6 +73,7 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
+ 	int write = regs->ecr_cause & ECR_C_PROTV_STORE;  /* ST/EX */
+ 	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
  
++	POPULATE_SMART();
+ 	clear_siginfo(&info);
+ 
+ 	/*
 -- 
 2.14.5
 
