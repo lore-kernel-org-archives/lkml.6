@@ -2,263 +2,130 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15FDBC2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:27:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9599EC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:28:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1DC820657
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:27:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1DC820657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 434C220657
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:28:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=cern.onmicrosoft.com header.i=@cern.onmicrosoft.com header.b="MTzhTkOc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 434C220657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cern.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727065AbeJ2XQg (ORCPT
+        id S1727216AbeJ2XQw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 19:16:36 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40742 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726903AbeJ2XQf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 19:16:35 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9TENbaH035015
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 10:27:42 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ne3km9b9n-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 10:27:41 -0400
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 29 Oct 2018 10:27:39 -0400
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 29 Oct 2018 10:27:34 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9TERXrF22806720
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 29 Oct 2018 14:27:33 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 46A47B2064;
-        Mon, 29 Oct 2018 14:27:33 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1DB96B2065;
-        Mon, 29 Oct 2018 14:27:33 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.141])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 29 Oct 2018 14:27:33 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 4F4A816C0C00; Mon, 29 Oct 2018 07:27:35 -0700 (PDT)
-Date:   Mon, 29 Oct 2018 07:27:35 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Ran Rozenstein <ranro@mellanox.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "jiangshanlai@gmail.com" <jiangshanlai@gmail.com>,
-        "dipankar@in.ibm.com" <dipankar@in.ibm.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "mathieu.desnoyers@efficios.com" <mathieu.desnoyers@efficios.com>,
-        "josh@joshtriplett.org" <josh@joshtriplett.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "dhowells@redhat.com" <dhowells@redhat.com>,
-        "edumazet@google.com" <edumazet@google.com>,
-        "fweisbec@gmail.com" <fweisbec@gmail.com>,
-        "oleg@redhat.com" <oleg@redhat.com>,
-        "joel@joelfernandes.org" <joel@joelfernandes.org>,
-        Maor Gottlieb <maorg@mellanox.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Eran Ben Elisha <eranbe@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>
-Subject: Re: [PATCH tip/core/rcu 02/19] rcu: Defer reporting RCU-preempt
- quiescent states when disabled
-Reply-To: paulmck@linux.ibm.com
-References: <20180829222021.GA29944@linux.vnet.ibm.com>
- <20180829222047.319-2-paulmck@linux.vnet.ibm.com>
- <AM4PR0501MB27691ECD1B0ECB0531B16F20C5F30@AM4PR0501MB2769.eurprd05.prod.outlook.com>
+        Mon, 29 Oct 2018 19:16:52 -0400
+Received: from mail-eopbgr80080.outbound.protection.outlook.com ([40.107.8.80]:6667
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725989AbeJ2XQw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 19:16:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.onmicrosoft.com;
+ s=selector1-cern-ch;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=om22OWHljtCipSrTK6imvEYZlkjWqbA+NvRH/il5wnE=;
+ b=MTzhTkOcKkOg38yRtrL17gffs+IfVQrwzGFAqcAGdMPSDljs7/+EKT78K/Se93qU081H/MUf4WjA+i6kcefoBuZGWPhBnfP8aTY6RVCv1hFm/ilFbycSB2wVLwFErvIrqaoM3bpTVHotLe01RGFsGv5AtFfroaKxRkB3SnaOGyk=
+Received: from VI1PR0601CA0025.eurprd06.prod.outlook.com
+ (2603:10a6:800:1e::35) by AMSPR06MB519.eurprd06.prod.outlook.com
+ (2a01:111:e400:8033::17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1273.22; Mon, 29 Oct
+ 2018 14:27:55 +0000
+Received: from AM5EUR02FT050.eop-EUR02.prod.protection.outlook.com
+ (2a01:111:f400:7e1e::205) by VI1PR0601CA0025.outlook.office365.com
+ (2603:10a6:800:1e::35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1273.18 via Frontend
+ Transport; Mon, 29 Oct 2018 14:27:54 +0000
+Authentication-Results: spf=pass (sender IP is 188.184.36.46)
+ smtp.mailfrom=cern.ch; the-dreams.de; dkim=none (message not signed)
+ header.d=none;the-dreams.de; dmarc=bestguesspass action=none
+ header.from=cern.ch;
+Received-SPF: Pass (protection.outlook.com: domain of cern.ch designates
+ 188.184.36.46 as permitted sender) receiver=protection.outlook.com;
+ client-ip=188.184.36.46; helo=cernmxgwlb4.cern.ch;
+Received: from cernmxgwlb4.cern.ch (188.184.36.46) by
+ AM5EUR02FT050.mail.protection.outlook.com (10.152.9.252) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1294.14 via Frontend Transport; Mon, 29 Oct 2018 14:27:54 +0000
+Received: from cernfe04.cern.ch (188.184.36.41) by cernmxgwlb4.cern.ch
+ (188.184.36.46) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 29 Oct
+ 2018 15:27:44 +0100
+Received: from pcbe13614.localnet (2001:1458:202:121::100:40) by smtp.cern.ch
+ (2001:1458:201:66::100:14) with Microsoft SMTP Server (TLS) id 14.3.408.0;
+ Mon, 29 Oct 2018 15:27:43 +0100
+From:   Federico Vaga <federico.vaga@cern.ch>
+To:     Wolfram Sang <wsa@the-dreams.de>
+Reply-To: <federico.vaga@cern.ch>
+CC:     Peter Korsgaard <jacmet@sunsite.dk>,
+        linux-i2c <linux-i2c@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/3] i2c:ocores: do not handle IRQ if IF is not set
+Date:   Mon, 29 Oct 2018 15:27:43 +0100
+Message-ID: <1607303.K3FPNFt9tg@pcbe13614>
+In-Reply-To: <20181029085259.GA4101@kunai>
+References: <20180625161303.7991-1-federico.vaga@cern.ch> <CACXmViZZ3SBPbV4AXK6EsJPfD5TJqEU_-Q36+vz5LxTk_pzq4A@mail.gmail.com> <20181029085259.GA4101@kunai>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM4PR0501MB27691ECD1B0ECB0531B16F20C5F30@AM4PR0501MB2769.eurprd05.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18102914-2213-0000-0000-0000030C5026
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009948; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01109688; UDB=6.00574928; IPR=6.00889780;
- MB=3.00023953; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-29 14:27:39
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18102914-2214-0000-0000-00005C0FC27C
-Message-Id: <20181029142735.GZ4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-29_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810290134
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Originating-IP: [2001:1458:202:121::100:40]
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:188.184.36.46;IPV:NLI;CTRY:CH;EFV:NLI;SFV:NSPM;SFS:(10001)(10009020)(459900002);DIR:OUT;SFP:1101;SCL:1;SRVR:AMSPR06MB519;H:cernmxgwlb4.cern.ch;FPR:;SPF:None;LANG:en;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: d96f4f16-e5c4-4ee5-8a32-08d63daab74d
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4608076)(5565046)(2017052603328)(7153060)(7193020);SRVR:AMSPR06MB519;
+X-MS-TrafficTypeDiagnostic: AMSPR06MB519:
+X-Microsoft-Exchange-Diagnostics: 1;AMSPR06MB519;20:4cXiRlIPENanEoge7GZoFBcVO02JXA9C+GyT4Acfzbc4S6NhtEyEf+qgb9yLI7IU57p+IR98PQouk/Bg3thmFcW/Mb55tA9EhWWpO/R8bJF03KA0wV7JbEXu/nI8M4zXRjo1MRJJS4vlJzF9cMI5PO+0iBYz1bvUvAyAzVeg4dQ86Gp/i3DO7Lh8saAXqOI9WadF96zZB/qXebvobP3u7CyOCVyGUbJ6y6kxQv3IL84EMYnIRERdJYsN78lX2IJEvbW7c3wEldwjbicQXc0zwd/6Et2yCcYpThhOKxvz+XJISKtnYkGkQhblJlznHF0YmsmqlJ8Knl+GCAebsG8anfEUSY/nIl3nD/KfBqfPoBZnD4UW71gtiIL1Uaoaze2PGT1xhF7E+arjDeRAVuYTnMCGnwbj9NficQ1dRKnezH1G424nI8DVzOwFgiuYqCt5B1XAX8CxIz02ThUSHJqvNEMvhcRxr3RRV61kdFHBKu3eV9QVh34Zo3dyvhsL3bLt;4:Wa2oMfAghdhJlG+y5MOA8L1nlI69hX2XeHeblHEjwqGDkM1mV7NgGjb2hQ24YWSIxkDHqGZZ3FrxaOXLpZM8U7eDeCq6RaptPTLXwXn+E/Kh3Da4/g7YscvKhIb4u8nhaONJ+H7BhIp3QVEt4QpM3nKWycLoFKVsMU13o4myo93ZG8RNmE/D8M4FkJclrh2y0wNfCUnfcD2cg9UxkEAKJWhgo6tgZzqlJ2aAnvKFf1OAWb/5A+kWAsOjarx6QdHBDLzMYJR6H8mpzCoImVVc7w==
+X-Microsoft-Antispam-PRVS: <AMSPR06MB51906933193148882F17FF6EFF30@AMSPR06MB519.eurprd06.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231382)(7700054)(944501410)(52105095)(10201501046)(93006095)(93004095)(3002001)(148016)(149066)(150057)(6041310)(201703131423095)(201702281529075)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095)(7701012);SRVR:AMSPR06MB519;BCL:0;PCL:0;RULEID:;SRVR:AMSPR06MB519;
+X-Forefront-PRVS: 084080FC15
+X-Microsoft-Exchange-Diagnostics: 1;AMSPR06MB519;23:b6VcrXCjIeNFARtIKugwSLAfVCxV1JdmM00dIIQHnpjEq+ktNcOJcNjALpnwCupd5WRREtATEyJdN1PjB2XlQwdOp1khm06/E3E3DGUK+vV9QcOR6ltfaPqsUNGyYL2uXESK9XP5fbA2/ngJPtMdYnyjrLnXwNx7ZGj47QtFBd7vDcqukxzVWgJbamPD+KM6;6:PEH+oifbBpc/hFWWaaG+IpljTxtjjg+1txzn3zDrbzf5R5qjmNFUeypZ1ps0yRW+T/mMZL24rBVHBQAXJN1AzZG0ThuTgyaau97AiT2T1KJNq3Lcqsx3HjWey/VAnjEsiSiwRnd87MX74TGI+IRAbYAVDKR846J1vZp8D3sHG9XzTw7B004XoEz58+lGLGh9Jo1WWHpN73e2FshCA3a7icRPxgmaplD86FWCKFsL76slQUOdw41dnZRW6ZFHFcE5VlZ+X1j9Vd9TciLAyLYicnVojVwPE25jz7Omag3nCblMgCd0NyAXzji5VC6mxWgq6K54z5ZSHDwVBz+unGoWqI9YwEgan9cQAwQRgG2MaNRmahjwFDl++Ma2FfcAs0+pc8zkOloyQ8+rGBfNoCjymD8hzQiYN2xRaXrJHh4Hvr8zRdCvrYM+NBwLzIT8EJWzLshF0VtdvzdSzvKlToMflikQ5ZGzL7PKk8TCkyOEihXrqezkLSPa+zfjOYX7MOce;5:WPlIhl5ofa7OaGbRwQMP/ijXIHHHAmnPNwlsuqcb6EYxsPbrbRaoXVGC39PiVmx+0Mc0MxHhoOWHQTDsgFKTrOW7iSOliytcFOEqVqCK6xK4L9DejqxIVdBOwM8VXUpCJJNQuyTy9wt7vNpNZVQ36Hi87hbXcfLWiWDeYvzyTb4=
+X-Microsoft-Antispam-Message-Info: D3H0uVyFPI4u3aZvdf8T44ZBXlZeVnf16o6vbljm9NdJ/mqY0r2KNmld6NFVdsN8M9uBp5ZrIY25ianIFyO5uIObm1x2KhUm96zdNReyRX+NzqsrepSmwotgT8gXyhCqoLYqZPHpeZjCyUi1PatIv7yh0YPP7fSK6t353aidZerAwiWHhSFH7BrV5pXd84CWLZH9ZHR/gvNZLjs7r4gg+C9Xj0f0bm+qlKyYWiyQzE6JzH1U3Wm6dlRlLjJAGtQxnxZkGE/DAIbepD4ojpgzGEJUDU7m13U2LmNQPU/pPZcyyZQOSh971M04GMs7lPg/e9n5CHFYiBpXJCjRYwjo9DVUOFMO5KdQGhvV2HUQmYBHgupRGXCZRNa1zWMR3rT4yDAihLdQUU9071nQfTcgFWYHIJoLYlF5/au55Hy8lZp4fIoushG+fj0b0V8mUqVeeFv6mOvH6Ge2qbg1v7gUy/i4dLj0dZqZ7U/NqcWFIRk=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;AMSPR06MB519;7:Kf2C/m52NUBRUrxuV0mrCY25SOnvjU1ixG90+hornjT3CAh6nnZ5qiztvtQKN3SvJ+6mIBORUKEcF3cyqpy4yDORo1spyVV8B6zp1a3XVa6ruCXrPvLK4+lSMStOYlL30V5fkXMzywYw3/7J2okS7Q==
+X-OriginatorOrg: cern.ch
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2018 14:27:54.6050
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d96f4f16-e5c4-4ee5-8a32-08d63daab74d
+X-MS-Exchange-CrossTenant-Id: c80d3499-4a40-4a8c-986e-abce017d6b19
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[188.184.36.46];Helo=[cernmxgwlb4.cern.ch]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AMSPR06MB519
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 11:24:42AM +0000, Ran Rozenstein wrote:
-> Hi Paul and all,
+On Monday, October 29, 2018 9:53:01 AM CET Wolfram Sang wrote:
+> On Sun, Oct 21, 2018 at 04:12:10PM +0200, Peter Korsgaard wrote:
+> > On Mon, Jun 25, 2018 at 6:14 PM Federico Vaga <federico.vaga@cern.ch> 
+wrote:
+> > > If the Interrupt Flag (IF) is not set, we should not handle the IRQ:
+> > > - the line can be shared with other devices
+> > > - it can be a spurious interrupt
+> > > 
+> > > To avoid reading twice the status register, the ocores_process()
+> > > function
+> > > expects it to be read by the caller.
+> > > 
+> > > Signed-off-by: Federico Vaga <federico.vaga@cern.ch>
+> > 
+> > Looks good.
+> > 
+> > Acked-by: Peter Korsgaard <peter@korsgaard.com>
 > 
-> > -----Original Message-----
-> > From: linux-kernel-owner@vger.kernel.org [mailto:linux-kernel-
-> > owner@vger.kernel.org] On Behalf Of Paul E. McKenney
-> > Sent: Thursday, August 30, 2018 01:21
-> > To: linux-kernel@vger.kernel.org
-> > Cc: mingo@kernel.org; jiangshanlai@gmail.com; dipankar@in.ibm.com;
-> > akpm@linux-foundation.org; mathieu.desnoyers@efficios.com;
-> > josh@joshtriplett.org; tglx@linutronix.de; peterz@infradead.org;
-> > rostedt@goodmis.org; dhowells@redhat.com; edumazet@google.com;
-> > fweisbec@gmail.com; oleg@redhat.com; joel@joelfernandes.org; Paul E.
-> > McKenney <paulmck@linux.vnet.ibm.com>
-> > Subject: [PATCH tip/core/rcu 02/19] rcu: Defer reporting RCU-preempt
-> > quiescent states when disabled
-> > 
-> > This commit defers reporting of RCU-preempt quiescent states at
-> > rcu_read_unlock_special() time when any of interrupts, softirq, or
-> > preemption are disabled.  These deferred quiescent states are reported at a
-> > later RCU_SOFTIRQ, context switch, idle entry, or CPU-hotplug offline
-> > operation.  Of course, if another RCU read-side critical section has started in
-> > the meantime, the reporting of the quiescent state will be further deferred.
-> > 
-> > This also means that disabling preemption, interrupts, and/or softirqs will act
-> > as an RCU-preempt read-side critical section.
-> > This is enforced by checking preempt_count() as needed.
-> > 
-> > Some special cases must be handled on an ad-hoc basis, for example,
-> > context switch is a quiescent state even though both the scheduler and
-> > do_exit() disable preemption.  In these cases, additional calls to
-> > rcu_preempt_deferred_qs() override the preemption disabling.  Similar logic
-> > overrides disabled interrupts in rcu_preempt_check_callbacks() because in
-> > this case the quiescent state happened just before the corresponding
-> > scheduling-clock interrupt.
-> > 
-> > In theory, this change lifts a long-standing restriction that required that if
-> > interrupts were disabled across a call to rcu_read_unlock() that the matching
-> > rcu_read_lock() also be contained within that interrupts-disabled region of
-> > code.  Because the reporting of the corresponding RCU-preempt quiescent
-> > state is now deferred until after interrupts have been enabled, it is no longer
-> > possible for this situation to result in deadlocks involving the scheduler's
-> > runqueue and priority-inheritance locks.  This may allow some code
-> > simplification that might reduce interrupt latency a bit.  Unfortunately, in
-> > practice this would also defer deboosting a low-priority task that had been
-> > subjected to RCU priority boosting, so real-time-response considerations
-> > might well force this restriction to remain in place.
-> > 
-> > Because RCU-preempt grace periods are now blocked not only by RCU read-
-> > side critical sections, but also by disabling of interrupts, preemption, and
-> > softirqs, it will be possible to eliminate RCU-bh and RCU-sched in favor of
-> > RCU-preempt in CONFIG_PREEMPT=y kernels.  This may require some
-> > additional plumbing to provide the network denial-of-service guarantees
-> > that have been traditionally provided by RCU-bh.  Once these are in place,
-> > CONFIG_PREEMPT=n kernels will be able to fold RCU-bh into RCU-sched.
-> > This would mean that all kernels would have but one flavor of RCU, which
-> > would open the door to significant code cleanup.
-> > 
-> > Moving to a single flavor of RCU would also have the beneficial effect of
-> > reducing the NOCB kthreads by at least a factor of two.
-> > 
-> > Signed-off-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com> [ paulmck:
-> > Apply rcu_read_unlock_special() preempt_count() feedback
-> >   from Joel Fernandes. ]
-> > [ paulmck: Adjust rcu_eqs_enter() call to rcu_preempt_deferred_qs() in
-> >   response to bug reports from kbuild test robot. ] [ paulmck: Fix bug located
-> > by kbuild test robot involving recursion
-> >   via rcu_preempt_deferred_qs(). ]
-> > ---
-> >  .../RCU/Design/Requirements/Requirements.html |  50 +++---
-> >  include/linux/rcutiny.h                       |   5 +
-> >  kernel/rcu/tree.c                             |   9 ++
-> >  kernel/rcu/tree.h                             |   3 +
-> >  kernel/rcu/tree_exp.h                         |  71 +++++++--
-> >  kernel/rcu/tree_plugin.h                      | 144 +++++++++++++-----
-> >  6 files changed, 205 insertions(+), 77 deletions(-)
-> > 
-> 
-> We started seeing the trace below in our regression system, after I bisected I found this is the offending commit.
-> This appears immediately on boot. 
-> Please let me know if you need any additional details.
+> I assume this patch will be resent when the other patches get updated?
+> Or shall I pick this one independently of the others?
 
-Interesting.  Here is the offending function:
+Since Peter did not answer yet, I would say to wait because I'm going to re-
+send the full patch-set soon.
 
-	static void rcu_preempt_deferred_qs(struct task_struct *t)
-	{
-		unsigned long flags;
-		bool couldrecurse = t->rcu_read_lock_nesting >= 0;
 
-		if (!rcu_preempt_need_deferred_qs(t))
-			return;
-		if (couldrecurse)
-			t->rcu_read_lock_nesting -= INT_MIN;
-		local_irq_save(flags);
-		rcu_preempt_deferred_qs_irqrestore(t, flags);
-		if (couldrecurse)
-			t->rcu_read_lock_nesting += INT_MIN;
-	}
 
-Using twos-complement arithmetic (which the kernel build gcc arguments
-enforce, last I checked) this does work.  But as UBSAN says, subtracting
-INT_MIN is unconditionally undefined behavior according to the C standard.
-
-Good catch!!!
-
-So how do I make the above code not simply function, but rather meet
-the C standard?
-
-One approach to add INT_MIN going in, then add INT_MAX and then add 1
-coming out.
-
-Another approach is to sacrifice the INT_MAX value (should be plenty
-safe), thus subtract INT_MAX going in and add INT_MAX coming out.
-For consistency, I suppose that I should change the INT_MIN in
-__rcu_read_unlock() to -INT_MAX.
-
-I could also leave __rcu_read_unlock() alone and XOR the top
-bit of t->rcu_read_lock_nesting on entry and exit to/from
-rcu_preempt_deferred_qs().
-
-Sacrificing the INT_MIN value seems most maintainable, as in the following
-patch.  Thoughts?
-
-							Thanx, Paul
-
-------------------------------------------------------------------------
-
-diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
-index bd8186d0f4a7..f1b40c6d36e4 100644
---- a/kernel/rcu/tree_plugin.h
-+++ b/kernel/rcu/tree_plugin.h
-@@ -424,7 +424,7 @@ void __rcu_read_unlock(void)
- 		--t->rcu_read_lock_nesting;
- 	} else {
- 		barrier();  /* critical section before exit code. */
--		t->rcu_read_lock_nesting = INT_MIN;
-+		t->rcu_read_lock_nesting = -INT_MAX;
- 		barrier();  /* assign before ->rcu_read_unlock_special load */
- 		if (unlikely(READ_ONCE(t->rcu_read_unlock_special.s)))
- 			rcu_read_unlock_special(t);
-@@ -617,11 +617,11 @@ static void rcu_preempt_deferred_qs(struct task_struct *t)
- 	if (!rcu_preempt_need_deferred_qs(t))
- 		return;
- 	if (couldrecurse)
--		t->rcu_read_lock_nesting -= INT_MIN;
-+		t->rcu_read_lock_nesting -= INT_MAX;
- 	local_irq_save(flags);
- 	rcu_preempt_deferred_qs_irqrestore(t, flags);
- 	if (couldrecurse)
--		t->rcu_read_lock_nesting += INT_MIN;
-+		t->rcu_read_lock_nesting += INT_MAX;
- }
- 
- /*
 
