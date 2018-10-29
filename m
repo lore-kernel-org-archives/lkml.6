@@ -2,200 +2,321 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EADBC2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:18:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B01FC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:18:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40A3C2087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:18:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40A3C2087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 26DDD20664
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:18:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26DDD20664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729287AbeJ2VGb (ORCPT
+        id S1729304AbeJ2VGn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 17:06:31 -0400
-Received: from mail-io1-f69.google.com ([209.85.166.69]:32836 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728947AbeJ2VGa (ORCPT
+        Mon, 29 Oct 2018 17:06:43 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48044 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729203AbeJ2VGn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 17:06:30 -0400
-Received: by mail-io1-f69.google.com with SMTP id b4-v6so4216862ioq.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 05:18:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=txKW0Ozi7yfljAQIOTmhvFeA6iwOoPXH5cTxdWPD43I=;
-        b=GQvzYKZZZC5rsJG1NeQpgi/fbbScQBiS/0YirQ9pzUvG73YmoReE9omSw9freP7Oep
-         ImpdPCQI+ts7ijoXAN5AXxJFtW7X5FRmEqAvQ3mMX3gza0HStWhNrOJEV+NYbUfinqzw
-         +kF0M4gj2wN8o1VMZXGmaPX3hZvrpssBlHr8iFc61tpnvmM+WjPzbr6KxSt8AgyXNVVT
-         LZl8deIpBW7VlcKMrJc+T3Gsr9QX/BSfITnpRkZ0wnkbP2Pygi4wB7wEcYc+liwHxV3N
-         9bjNc6ULudu0DZd4aLuZJKE/Ovx5+VGUK6GezFQtKs0UlUtwqxgrcfa/T78jbBJH6c+j
-         7qkw==
-X-Gm-Message-State: AGRZ1gK2VOsCh7VBaUlHCX6gmnGfltJ6+uTJtGEf56UBdmVUwV4FeCJJ
-        iaTpOaJNWY2e2gUfq1ZO0jo5AxCa6FFVD5JpKB75MRvBWheS
-X-Google-Smtp-Source: AJdET5eWfx2NGg0XDjsKF5EmNh8WoTVmECzCzufmb6dSEdcEM40Cdtl5P3RcIkfqGW4xNUsxnlK200ktB8C1i/c6Yzpm6zRO9sNL
+        Mon, 29 Oct 2018 17:06:43 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9TCEAVB057867
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 08:18:16 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ne1ewswqk-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 08:18:15 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
+        Mon, 29 Oct 2018 12:18:13 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 29 Oct 2018 12:18:10 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9TCI9Cj66650160
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 29 Oct 2018 12:18:09 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A229B11C054;
+        Mon, 29 Oct 2018 12:18:09 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2A79F11C052;
+        Mon, 29 Oct 2018 12:18:09 +0000 (GMT)
+Received: from oc3784624756.ibm.com (unknown [9.152.212.21])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 29 Oct 2018 12:18:09 +0000 (GMT)
+Subject: Re: [PATCH] perf/stat: Handle different PMU names with common prefix
+To:     =?UTF-8?Q?S=c3=a9bastien_Boisvert?= <sboisvert@gydle.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org
+Cc:     brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, kan.liang@linux.intel.com,
+        stable@vger.kernel.org
+References: <20181023151616.78193-1-tmricht@linux.ibm.com>
+ <7b3b23b7-1c73-66bf-611b-8dd9fb274694@gydle.com>
+From:   Thomas-Mich Richter <tmricht@linux.ibm.com>
+Organization: IBM
+Date:   Mon, 29 Oct 2018 13:18:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Received: by 2002:a05:660c:743:: with SMTP id a3mr3454165itl.36.1540815483654;
- Mon, 29 Oct 2018 05:18:03 -0700 (PDT)
-Date:   Mon, 29 Oct 2018 05:18:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000091818d05795d0f2f@google.com>
-Subject: KASAN: use-after-free Read in __vb2_perform_fileio
-From:   syzbot <syzbot+4180ff9ca6810b06c1e9@syzkaller.appspotmail.com>
-To:     kyungmin.park@samsung.com, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, m.szyprowski@samsung.com,
-        mchehab@kernel.org, pawel@osciak.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <7b3b23b7-1c73-66bf-611b-8dd9fb274694@gydle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18102912-0012-0000-0000-000002BFA8B1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18102912-0013-0000-0000-000020F3C9FD
+Message-Id: <80512536-d668-489d-5f73-d7e4a4d54e2d@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-29_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810290117
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 10/26/2018 05:04 PM, Sébastien Boisvert wrote:
+> On 2018-10-23 11:16 a.m., Thomas Richter wrote:
+>> On s390 the CPU Measurement Facility for counters now supports
+>> 2 PMUs named cpum_cf (CPU Measurement Facility for counters) and
+>> cpum_cf_diag (CPU Measurement Facility for diagnostic counters)
+>> for one and the same CPU.
+>>
+>> Running command
+>>
+>>  [root@s35lp76 perf]# ./perf stat -e tx_c_tend \
+>> 	 -- ~/mytests/cf-tx-events 1
+>>
+> 
+> Is tx_c_tend related to these ?
+> 
+>   tx-abort OR cpu/tx-abort/                          [Kernel PMU event]
+>   tx-capacity OR cpu/tx-capacity/                    [Kernel PMU event]
+>   tx-commit OR cpu/tx-commit/                        [Kernel PMU event]
+>   tx-conflict OR cpu/tx-conflict/                    [Kernel PMU event]
+>   tx-start OR cpu/tx-start/                          [Kernel PMU event]
+> 
+> 
 
-syzbot found the following crash on:
+Yes, these are the transaction counters on intel platforms, 
+tx_c_tend is a transaction counter for s390.
 
-HEAD commit:    8c60c36d0b8c Add linux-next specific files for 20181019
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=13c73a33400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ddc97ab84fb1ff2a
-dashboard link: https://syzkaller.appspot.com/bug?extid=4180ff9ca6810b06c1e9
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13d0dbe5400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1688efc5400000
+>>  Measuring transactions
+>>  TX_C_TABORT_NO_SPECIAL: 0 expected:0
+>>  TX_C_TABORT_SPECIAL: 0 expected:0
+>>  TX_C_TEND: 1 expected:1
+>>  TX_NC_TABORT: 11 expected:11
+>>  TX_NC_TEND: 1 expected:1
+>>
+>>  Performance counter stats for '/root/mytests/cf-tx-events 1':
+>>
+>>   2      tx_c_tend
+>>
+>>       0.002120091 seconds time elapsed
+>>
+>>       0.000121000 seconds user
+>>       0.002127000 seconds sys
+>>
+>>  [root@s35lp76 perf]#
+>>
+>> displays output which is unexpected (and wrong):
+>>
+>>   2      tx_c_tend
+>>
+>> The test program definitely triggers only one transaction, as shown
+>> in line 'TX_C_TEND: 1 expected:1'.
+> 
+> OK, something is done twice in perf stat, but should be done once.
+> 
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+4180ff9ca6810b06c1e9@syzkaller.appspotmail.com
+Correct
 
-==================================================================
-BUG: KASAN: use-after-free in __vb2_perform_fileio+0x10da/0x1210  
-drivers/media/common/videobuf2/videobuf2-core.c:2391
-Read of size 4 at addr ffff8801b6c52c5c by task syz-executor081/7270
+>>
+>> This is caused by the following call sequence:
+>>
+>> pmu_lookup() scans and installs a PMU.
+>> +--> pmu_aliases() parses all aliases in directory
+>> 		.../<pmu-name>/events/* which are file names.
+>>      +--> pmu_aliases_parse() Read each file in directory and create
+>>                       an new alias entry. This is done with
+>>           +--> perf_pmu__new_alias() and
+>> 	       +--> __perf_pmu__new_alias() which also check for
+>> 	                   identical alias names.
+>>
+>> After pmu_aliases() returns, a complete list of event names
+>> for this pmu has been created. Now function
+>>
+>> pmu_add_cpu_aliases()   is called to add the events listed in the json
+>> |                       files to the alias list of the cpu.
+>> +--> perf_pmu__find_map()  Returns a pointer to the json events.
+>>
+>> Now function pmu_add_cpu_aliases() scans through all events listed
+>> in the JSON files for this CPU.
+> 
+> Are these JSON files temporary in nature ?
 
-CPU: 0 PID: 7270 Comm: syz-executor081 Not tainted  
-4.19.0-rc8-next-20181019+ #99
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
-  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
-  __vb2_perform_fileio+0x10da/0x1210  
-drivers/media/common/videobuf2/videobuf2-core.c:2391
-  vb2_read+0x3b/0x50 drivers/media/common/videobuf2/videobuf2-core.c:2502
-  vb2_fop_read+0x20a/0x400  
-drivers/media/common/videobuf2/videobuf2-v4l2.c:898
-  v4l2_read+0x168/0x220 drivers/media/v4l2-core/v4l2-dev.c:317
-  __vfs_read+0x117/0x9b0 fs/read_write.c:416
-  vfs_read+0x17f/0x3c0 fs/read_write.c:452
-  ksys_pread64+0x181/0x1b0 fs/read_write.c:626
-  __do_sys_pread64 fs/read_write.c:636 [inline]
-  __se_sys_pread64 fs/read_write.c:633 [inline]
-  __x64_sys_pread64+0x97/0xf0 fs/read_write.c:633
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x447a59
-Code: e8 fc e6 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 4b c5 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fffcdab1c58 EFLAGS: 00000286 ORIG_RAX: 0000000000000011
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000447a59
-RDX: 00000000000000d6 RSI: 0000000020000140 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 000000000000000f R09: 000000000000000f
-R10: 0000000000000000 R11: 0000000000000286 R12: 000000000000000f
-R13: 000000000000b864 R14: 0000000000000000 R15: 0000000000000000
+No they are not, they are part of the perf tool, directory
 
-Allocated by task 7270:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
-  kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
-  kmalloc include/linux/slab.h:546 [inline]
-  kzalloc include/linux/slab.h:741 [inline]
-  __vb2_init_fileio+0x1ce/0xc90  
-drivers/media/common/videobuf2/videobuf2-core.c:2236
-  __vb2_perform_fileio+0xcfb/0x1210  
-drivers/media/common/videobuf2/videobuf2-core.c:2370
-  vb2_read+0x3b/0x50 drivers/media/common/videobuf2/videobuf2-core.c:2502
-  vb2_fop_read+0x20a/0x400  
-drivers/media/common/videobuf2/videobuf2-v4l2.c:898
-  v4l2_read+0x168/0x220 drivers/media/v4l2-core/v4l2-dev.c:317
-  __vfs_read+0x117/0x9b0 fs/read_write.c:416
-  vfs_read+0x17f/0x3c0 fs/read_write.c:452
-  ksys_pread64+0x181/0x1b0 fs/read_write.c:626
-  __do_sys_pread64 fs/read_write.c:636 [inline]
-  __se_sys_pread64 fs/read_write.c:633 [inline]
-  __x64_sys_pread64+0x97/0xf0 fs/read_write.c:633
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 7274:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xcf/0x230 mm/slab.c:3817
-  __vb2_cleanup_fileio+0xf8/0x160  
-drivers/media/common/videobuf2/videobuf2-core.c:2329
-  vb2_core_queue_release+0x1e/0x80  
-drivers/media/common/videobuf2/videobuf2-core.c:2052
-  vb2_queue_release drivers/media/common/videobuf2/videobuf2-v4l2.c:672  
-[inline]
-  _vb2_fop_release+0x1d2/0x2b0  
-drivers/media/common/videobuf2/videobuf2-v4l2.c:843
-  vb2_fop_release+0x77/0xc0  
-drivers/media/common/videobuf2/videobuf2-v4l2.c:857
-  vivid_fop_release+0x18e/0x440 drivers/media/platform/vivid/vivid-core.c:474
-  v4l2_release+0xfb/0x1a0 drivers/media/v4l2-core/v4l2-dev.c:448
-  __fput+0x3bc/0xa70 fs/file_table.c:279
-  ____fput+0x15/0x20 fs/file_table.c:312
-  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
-  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8801b6c52940
-  which belongs to the cache kmalloc-1k of size 1024
-The buggy address is located 796 bytes inside of
-  1024-byte region [ffff8801b6c52940, ffff8801b6c52d40)
-The buggy address belongs to the page:
-page:ffffea0006db1480 count:1 mapcount:0 mapping:ffff8801da800ac0 index:0x0  
-compound_mapcount: 0
-flags: 0x2fffc0000010200(slab|head)
-raw: 02fffc0000010200 ffffea00071f9e88 ffffea0006db1608 ffff8801da800ac0
-raw: 0000000000000000 ffff8801b6c52040 0000000100000007 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801b6c52b00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801b6c52b80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff8801b6c52c00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                     ^
-  ffff8801b6c52c80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801b6c52d00: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-==================================================================
+[root@s35lp76 linux]# ls tools/perf/pmu-events/arch/s390/cf_z14/*
+tools/perf/pmu-events/arch/s390/cf_z14/basic.json
+tools/perf/pmu-events/arch/s390/cf_z14/crypto.json
+tools/perf/pmu-events/arch/s390/cf_z14/extended.json
+tools/perf/pmu-events/arch/s390/cf_z14/transaction.json
+[root@s35lp76 linux]# 
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+>> Each json event pmu name is compared with the current PMU being
+>> built up and if they mismatch, the json event is added to the
+>> current PMUs alias list.
+>> To avoid duplicate entries the following comparison is done:
+>>
+>> 	if (!is_arm_pmu_core(name)) {
+>> 	     pname = pe->pmu ? pe->pmu : "cpu";
+>> 	     if (strncmp(pname, name, strlen(pname)))
+>> 		     continue;
+>>      }
+> 
+> Is this the test to know whether a PMU event must be added or not ?
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Correct.
+
+> 
+>>
+>> The culprit is the strncmp() function.
+>>
+>> Using current s390 PMU naming, the first PMU is 'cpum_cf'
+>> and a long list of events is added, among them 'tx_c_tend'
+>>
+>> When the second PMU named 'cpum_cf_diag' is added, only one event
+>> named 'CF_DIAG' is added by the pmu_aliases()  function.
+>>
+>> Now function pmu_add_cpu_aliases() is invoked for PMU 'cpum_cf_diag'.
+>> Since the CPUID string is the same for both PMUs, json file events
+>> for PMU named 'cpum_cf' are added to the PMU 'cpm_cf_diag'
+>>
+>> This happens because the strncmp() actually compares:
+>>>      strncmp("cpum_cf", "cpum_cf_diag", 6);
+> 
+> I fail to see how these argument values can be generated by this code:
+> 
+>  	     pname = pe->pmu ? pe->pmu : "cpu";
+>  	     if (strncmp(pname, name, strlen(pname)))
+> 
+> The 3rd argument is the length of the first argument, pname.
+> 
+> With "cpum_cf", it should be 7, not 6.
+
+Yes, mistake on my side...
+but it is the same type of error , regardless if 6 or 7 characters are 
+compared:
+
+      strncmp("cpmu_cf", "cpum_cf_diag", 7) 
+
+returns 0 when it should not. The device names of both PMUs are different.
+
+> 
+> 
+> 
+>>
+>> The first parameter is the pmu name taken from the event in
+>> the json file. The second parameter is the pmu name of the PMU
+>> currently being built.
+>> They are different, but the length of the compare only tests the
+>> common prefix and this returns 0(true) when it should return false.
+>>
+> 
+> The 6 comes from strlen(pname). In that case, it is neither the length of
+> "cpum_cf" (7) or "cpum_cf_diag" (12).
+
+Correct as said above, can not count to 7...
+
+> 
+>> Now all events for PMU cpum_cf are added to the alias list for pmu
+>> cpum_cf_diag.
+>>
+>> Later on in function parse_events_add_pmu() the event 'tx_c_end' is
+>> searched in all available PMUs and found twice, adding it two
+>> times to the evsel_list global variable which is the root
+>> of all events. This results in a counter value of 2 instead
+>> of 1.
+> 
+> The counter value of 2 is 1 + 1 since both PMU events 'tx_c_end' that
+> were added got a +1.
+
+Correct, the transaction counter is 2 becauses it was connected to PMUs,
+but only one has the counter.
+
+> 
+>>
+>> Output with this patch:
+>>
+>>  [root@s35lp76 perf]# ./perf stat -e tx_c_tend \
+>> 			-- ~/mytests/cf-tx-events 1
+>>  Measuring transactions
+>>  TX_C_TABORT_NO_SPECIAL: 0 expected:0
+>>  TX_C_TABORT_SPECIAL: 0 expected:0
+>>  TX_C_TEND: 1 expected:1
+>>  TX_NC_TABORT: 11 expected:11
+>>  TX_NC_TEND: 1 expected:1
+>>
+>>  Performance counter stats for '/root/mytests/cf-tx-events 1':
+>>
+>>                   1      tx_c_tend
+>>
+> 
+> OK, now that's 1, like in your expected test value:
+> 
+>   TX_C_TEND: 1 expected:1
+> 
+>>       0.001815365 seconds time elapsed
+>>
+>>       0.000123000 seconds user
+>>       0.001756000 seconds sys
+>>
+>>  [root@s35lp76 perf]#
+>>
+>> Fixes: 292c34c10249 ("perf pmu: Fix core PMU alias list for X86 platform")
+>> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+>> Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+>> Cc: Kan Liang <kan.liang@linux.intel.com>
+>> Cc: <stable@vger.kernel.org> # 4.18+
+>> ---
+>>  tools/perf/util/pmu.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+>> index 7799788f662f..7e49baad304d 100644
+>> --- a/tools/perf/util/pmu.c
+>> +++ b/tools/perf/util/pmu.c
+>> @@ -773,7 +773,7 @@ static void pmu_add_cpu_aliases(struct list_head *head, struct perf_pmu *pmu)
+>>  
+>>  		if (!is_arm_pmu_core(name)) {
+>>  			pname = pe->pmu ? pe->pmu : "cpu";
+>> -			if (strncmp(pname, name, strlen(pname)))
+>> +			if (strcmp(pname, name))
+>>  				continue;
+>>  		}
+>>  
+>>
+> 
+
+
+-- 
+Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
+--
+Vorsitzende des Aufsichtsrats: Martina Koederitz 
+Geschäftsführung: Dirk Wittkopp
+Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
+
