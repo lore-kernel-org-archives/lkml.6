@@ -2,206 +2,257 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76D9FC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:52:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D4CAC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:52:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B9792082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:52:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFD2A2082D
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:52:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="IdvNa6XV";
-	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="DxrU/L+8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B9792082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="upF7BxUy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFD2A2082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727809AbeJ3Gmu (ORCPT
+        id S1727846AbeJ3GnV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 02:42:50 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:53958 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727427AbeJ3Gmu (ORCPT
+        Tue, 30 Oct 2018 02:43:21 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45849 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727427AbeJ3GnV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 02:42:50 -0400
-Received: from pps.filterd (m0044008.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9TLoBk2024861;
-        Mon, 29 Oct 2018 14:52:09 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : content-type : content-transfer-encoding :
- mime-version; s=facebook; bh=Zb9A+AO1o7G8ZkhPlsVGcpKyW6H1vTQf4I2n9gEIXQw=;
- b=IdvNa6XVW6zwjIgpPPudeCelWTUL4XMILKgbr+/Ddxis3zrGDnamk2YwvlANI24H5uvk
- cwbDtlt7m365w4or4ovVimr1JIOqIbpZNwrdBoYaTRTWVzUOsP7YH+DYWS9ifuWkd4nE
- kGhVnaLeSQ8zj+ULwMJAdfNti1RcxK5qBls= 
-Received: from maileast.thefacebook.com ([199.201.65.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2ne72y8pgc-14
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Mon, 29 Oct 2018 14:52:09 -0700
-Received: from frc-hub03.TheFacebook.com (2620:10d:c021:18::173) by
- frc-hub03.TheFacebook.com (2620:10d:c021:18::173) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.1.1531.3; Mon, 29 Oct 2018 14:52:00 -0700
-Received: from FRC-CHUB08.TheFacebook.com (2620:10d:c021:18::27) by
- frc-hub03.TheFacebook.com (2620:10d:c021:18::173) with Microsoft SMTP Server
- (version=TLS1_0, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1531.3
- via Frontend Transport; Mon, 29 Oct 2018 14:52:00 -0700
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (192.168.183.28)
- by o365-in.thefacebook.com (192.168.177.28) with Microsoft SMTP Server (TLS)
- id 14.3.361.1; Mon, 29 Oct 2018 17:52:00 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector1-fb-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Zb9A+AO1o7G8ZkhPlsVGcpKyW6H1vTQf4I2n9gEIXQw=;
- b=DxrU/L+8xC6QpvelRLA3lWFM+x5IOwpdg+bmcknxBDP6wYd9ayySNxp38bWVrwdtuTuMRKWv4YDWQz0l8nIN1bxsklBu4IAO75zo0xnaru0wvFqiUGwXN/FldcGrKWZ9cy9sDmEA7BSpxNqP1BeMI5LBZke8IPEsaeUPi2coqdQ=
-Received: from BY2PR15MB0167.namprd15.prod.outlook.com (10.163.64.141) by
- BY2PR15MB0503.namprd15.prod.outlook.com (10.163.110.152) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1273.21; Mon, 29 Oct 2018 21:51:55 +0000
-Received: from BY2PR15MB0167.namprd15.prod.outlook.com
- ([fe80::8e8:753:f746:ed14]) by BY2PR15MB0167.namprd15.prod.outlook.com
- ([fe80::8e8:753:f746:ed14%2]) with mapi id 15.20.1273.027; Mon, 29 Oct 2018
- 21:51:55 +0000
-From:   Roman Gushchin <guro@fb.com>
-To:     "linux-mm@kvack.org" <linux-mm@kvack.org>
-CC:     Mike Galbraith <efault@gmx.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        "Roman Gushchin" <guro@fb.com>, Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        "Andrew Morton" <akpm@linux-foundation.org>
-Subject: [PATCH] mm: handle no memcg case in memcg_kmem_charge() properly
-Thread-Topic: [PATCH] mm: handle no memcg case in memcg_kmem_charge() properly
-Thread-Index: AQHUb9GbG27ZhPtkmkCI4HpK7bnl7w==
-Date:   Mon, 29 Oct 2018 21:51:55 +0000
-Message-ID: <20181029215123.17830-1-guro@fb.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR01CA0026.prod.exchangelabs.com (2603:10b6:300:101::12)
- To BY2PR15MB0167.namprd15.prod.outlook.com (2a01:111:e400:58e0::13)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:200::7:ad5c]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BY2PR15MB0503;20:bmlRoVRMsAVb/Hz3Y58b3Lb76y828+jUFrnvIXeXM+ADH2UAVL89FsOG5g21kQaeRMbdp4hP7XO45SL4vWAESHLv/c2g8oJ2JEYkOi6M5Txe6/Zl26lGD9Lqt4Cq3BqBzmezMaF5TnTDGXhujiBSfPtuiKrcfJX1YNsifG6PIII=
-x-ms-office365-filtering-correlation-id: 5d8dd020-436d-4119-e924-08d63de8be33
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BY2PR15MB0503;
-x-ms-traffictypediagnostic: BY2PR15MB0503:
-x-microsoft-antispam-prvs: <BY2PR15MB0503F99CF638DED94769AE63BEF30@BY2PR15MB0503.namprd15.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(26323138287068)(67672495146484)(85827821059158);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823302103)(10201501046)(3002001)(93006095)(93001095)(3231382)(11241501184)(944501410)(52105095)(148016)(149066)(150057)(6041310)(20161123564045)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:BY2PR15MB0503;BCL:0;PCL:0;RULEID:;SRVR:BY2PR15MB0503;
-x-forefront-prvs: 084080FC15
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(39860400002)(136003)(346002)(376002)(396003)(189003)(199004)(8676002)(14444005)(97736004)(1076002)(5640700003)(6486002)(6436002)(386003)(6506007)(8936002)(53936002)(81156014)(6916009)(102836004)(2501003)(5250100002)(6512007)(39060400002)(4326008)(256004)(2906002)(54906003)(71200400001)(71190400001)(478600001)(81166006)(6116002)(316002)(25786009)(52116002)(14454004)(7736002)(5660300001)(186003)(36756003)(2616005)(46003)(486006)(2900100001)(1857600001)(305945005)(86362001)(476003)(575784001)(106356001)(2351001)(105586002)(68736007)(99286004)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BY2PR15MB0503;H:BY2PR15MB0167.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 3NiTYMkL3b/2fdZbZOnqPqeq+OlWebL9HfS114qgrypoxDh1R5rEb14qGVnNxeQGD8w6GKLrTu8qhZvKyCAyLS6//uQkJX1CP7wz2YVg22SU6ft9QQ0xwLg1v6aNwCctwKAVkk6s8ZGlQ/Y7HNV72OB9oMBSpCZxM0Xwvh9gXIDLMpRXJf0/LOc43dpmB9qa9/6C8ejGiw8OiGSZTyOTIac7mAl0IoarLYOAxE2aLl3hVy3pk7Ft9e70If5IELWXdxzcVpLWKxAa2DeSI6ySk2/ScinRa9/6rx8G6ZkmuF9JnRgYLPiEBMYRnfruWbWrJIjNxa0zKx1PdMvHdzaKl7BRaTbLbSIUbmvm1UQTvC8=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 30 Oct 2018 02:43:21 -0400
+Received: by mail-pf1-f194.google.com with SMTP id u4-v6so2327460pfh.12;
+        Mon, 29 Oct 2018 14:52:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=vqXkZVjCR76MjGe9H9yb1nOPGRtH4NPJel+OWXHMPko=;
+        b=upF7BxUy64zzkGDPFzjcWaiU3kEyaYXy13FCPiAH5PIYdAbl2UJzdRsFiPH+PsoEh2
+         ql970BBDQa/IjvG7+rpR+clt4X1O2scoRvOI3kB38JIY3GdSIY81tkEKldYkYDUddbJ/
+         1YzQmE8PAs2Cc3yFznHJxHqztYU39BhEHHq5024tHLOVzj9N9fYJk7lalFTLV4WPkjtq
+         VJy52jIL6AzqI/C9akywSYbwt2ise26MpKv79rtP7NK6G8dbD8Ai1uMaFIrthctSZjHk
+         ZFhF3Gyalo8Ftvry/4SGTJmhD7gIkLgwIflnvpqZw27zgGg6ZMO/+/iv4js+7LLyoGu3
+         Js6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=vqXkZVjCR76MjGe9H9yb1nOPGRtH4NPJel+OWXHMPko=;
+        b=o5xXm0kbPcVyY5eJHS86fD7Viw5dROXnydIiV5EYflC0pqODS1Rsffm7CyUDE3mJmX
+         EGT/bW5zQcVcgyTtFPE+gNCGU7/BS2tih6DdB2CyvXb0NdWRFoHFHHwaBisUMqlm23yo
+         RU43Hdy2zO4PEWSmI/UfIypMicXbraKo+IhmmevgrxcirS959kDFkX04Lu2TF0rSqmON
+         5ZB7VUsRwPkmuk0lP/xHmPzPwxvu4g1YHOqof60D+16F8kAN9IDxUVMG9i2fVfPMBq/f
+         o1mVj8XquLnNm87fOaiSgKYHajh9WjTPLw5KL/iJ2vedTLhUkYgcQGSWjRS8tihG+6/f
+         9paQ==
+X-Gm-Message-State: AGRZ1gI5uCnXgVLwlWgGw8KaR2qLUFE3s1JamvfRofY6/e4jr2dCaYE7
+        0af3nqXymHl1dsTisVhHwRo=
+X-Google-Smtp-Source: AJdET5duuBdgojQAydHrdwyHthDT/GW1VUpF9jcD6jv2fW+vN51XEVk7pNo5D6+5tSd9XLYDPNIk5A==
+X-Received: by 2002:a63:3dcb:: with SMTP id k194-v6mr15354991pga.191.1540849966298;
+        Mon, 29 Oct 2018 14:52:46 -0700 (PDT)
+Received: from [10.67.49.121] ([192.19.223.250])
+        by smtp.googlemail.com with ESMTPSA id r6-v6sm17026636pgn.70.2018.10.29.14.52.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Oct 2018 14:52:45 -0700 (PDT)
+Subject: Re: [PATCH 1/2 v5] arm64: Get rid of __early_init_dt_declare_initrd()
+To:     Rob Herring <robh+dt@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        rppt@linux.ibm.com, Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        aryabinin@virtuozzo.com, Andrey Konovalov <andreyknvl@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Johannes Weiner <hannes@cmpxchg.org>, ghackmann@android.com,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        chandan.vn@samsung.com,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
+        Russell King <linux@armlinux.org.uk>
+References: <20181029190014.6455-1-f.fainelli@gmail.com>
+ <20181029190014.6455-2-f.fainelli@gmail.com>
+ <CAL_JsqL2g69Duhkqd=f09BStoAKeakJz8Wgz3is37YU0+fc80A@mail.gmail.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <e3033413-555e-72ca-be75-e4b566b62480@gmail.com>
+Date:   Mon, 29 Oct 2018 14:52:37 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5d8dd020-436d-4119-e924-08d63de8be33
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Oct 2018 21:51:55.7688
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR15MB0503
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-29_13:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+In-Reply-To: <CAL_JsqL2g69Duhkqd=f09BStoAKeakJz8Wgz3is37YU0+fc80A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mike Galbraith reported a regression caused by the commit 9b6f7e163cd0
-("mm: rework memcg kernel stack accounting") on a system with
-"cgroup_disable=3Dmemory" boot option: the system panics with the
-following stack trace:
+On 10/29/18 12:59 PM, Rob Herring wrote:
+> +Ard who last touched this.
+> 
+> On Mon, Oct 29, 2018 at 2:23 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
+>>
+>> ARM64 is the only architecture that re-defines
+>> __early_init_dt_declare_initrd() in order for that function to populate
+>> initrd_start/initrd_end with physical addresses instead of virtual
+>> addresses. Instead of having an override, just get rid of that
+>> implementation and perform the virtual to physical conversion of these
+>> addresses in arm64_memblock_init() where relevant.
+>>
+>> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+>> Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+>> ---
+>>  arch/arm64/include/asm/memory.h |  8 -------
+>>  arch/arm64/mm/init.c            | 42 +++++++++++++++++++++------------
+>>  2 files changed, 27 insertions(+), 23 deletions(-)
+>>
+>> diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
+>> index b96442960aea..dc3ca21ba240 100644
+>> --- a/arch/arm64/include/asm/memory.h
+>> +++ b/arch/arm64/include/asm/memory.h
+>> @@ -168,14 +168,6 @@
+>>  #define IOREMAP_MAX_ORDER      (PMD_SHIFT)
+>>  #endif
+>>
+>> -#ifdef CONFIG_BLK_DEV_INITRD
+>> -#define __early_init_dt_declare_initrd(__start, __end)                 \
+>> -       do {                                                            \
+>> -               initrd_start = (__start);                               \
+>> -               initrd_end = (__end);                                   \
+>> -       } while (0)
+>> -#endif
+>> -
+>>  #ifndef __ASSEMBLY__
+>>
+>>  #include <linux/bitops.h>
+>> diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+>> index 3cf87341859f..292570b08f85 100644
+>> --- a/arch/arm64/mm/init.c
+>> +++ b/arch/arm64/mm/init.c
+>> @@ -62,6 +62,8 @@
+>>  s64 memstart_addr __ro_after_init = -1;
+>>  phys_addr_t arm64_dma_phys_limit __ro_after_init;
+>>
+>> +static phys_addr_t phys_initrd_start, phys_initrd_end;
+>> +
+>>  #ifdef CONFIG_BLK_DEV_INITRD
+>>  static int __init early_initrd(char *p)
+>>  {
+>> @@ -72,8 +74,8 @@ static int __init early_initrd(char *p)
+>>         if (*endp == ',') {
+>>                 size = memparse(endp + 1, NULL);
+>>
+>> -               initrd_start = start;
+>> -               initrd_end = start + size;
+>> +               phys_initrd_start = start;
+>> +               phys_initrd_end = start + size;
+>>         }
+>>         return 0;
+>>  }
+>> @@ -364,6 +366,7 @@ static void __init fdt_enforce_memory_region(void)
+>>  void __init arm64_memblock_init(void)
+>>  {
+>>         const s64 linear_region_size = -(s64)PAGE_OFFSET;
+>> +       u64 __maybe_unused base, size;
+>>
+>>         /* Handle linux,usable-memory-range property */
+>>         fdt_enforce_memory_region();
+>> @@ -408,14 +411,25 @@ void __init arm64_memblock_init(void)
+>>                 memblock_add(__pa_symbol(_text), (u64)(_end - _text));
+>>         }
+>>
+>> -       if (IS_ENABLED(CONFIG_BLK_DEV_INITRD) && initrd_start) {
+>> +       if (IS_ENABLED(CONFIG_BLK_DEV_INITRD) &&
+>> +           (initrd_start || phys_initrd_start)) {
+> 
+> I've tried to explain already that this is broken. The problem is
+> __early_init_dt_declare_initrd using __va() which happens before this
+> function is called. __va() uses PHYS_OFFSET which in turn is defined
+> as memstart_addr. However, memstart_addr may be changed just above
+> this hunk, so the earlier conversion to a VA may not be valid at this
+> point. This is explained if you read Ard's commit that added all this
+> mess.
 
-  [0.928542] BUG: unable to handle kernel NULL pointer dereference at 00000=
-000000000f8
-  [0.929317] PGD 0 P4D 0
-  [0.929573] Oops: 0002 [#1] PREEMPT SMP PTI
-  [0.929984] CPU: 0 PID: 1 Comm: systemd Not tainted 4.19.0-preempt+ #410
-  [0.930637] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-=
-20180531_142017-buildhw-08.phx2.fed4
-  [0.931862] RIP: 0010:page_counter_try_charge+0x22/0xc0
-  [0.932376] Code: 41 5d c3 c3 0f 1f 40 00 0f 1f 44 00 00 48 85 ff 0f 84 a7=
- 00 00 00 41 56 48 89 f8 49 89 fe 49
-  [0.934283] RSP: 0018:ffffacf68031fcb8 EFLAGS: 00010202
-  [0.934826] RAX: 00000000000000f8 RBX: 0000000000000000 RCX: 0000000000000=
-000
-  [0.935558] RDX: ffffacf68031fd08 RSI: 0000000000000020 RDI: 0000000000000=
-0f8
-  [0.936288] RBP: 0000000000000001 R08: 8000000000000063 R09: ffff99ff7cd37=
-a40
-  [0.937021] R10: ffffacf68031fed0 R11: 0000000000200000 R12: 0000000000000=
-020
-  [0.937749] R13: ffffacf68031fd08 R14: 00000000000000f8 R15: ffff99ff7da1e=
-c60
-  [0.938486] FS:  00007fc2140bb280(0000) GS:ffff99ff7da00000(0000) knlGS:00=
-00000000000000
-  [0.939311] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  [0.939905] CR2: 00000000000000f8 CR3: 0000000012dc8002 CR4: 0000000000760=
-ef0
-  [0.940638] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000=
-000
-  [0.941366] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000=
-400
-  [0.942110] PKRU: 55555554
-  [0.942412] Call Trace:
-  [0.942673]  try_charge+0xcb/0x780
-  [0.943031]  memcg_kmem_charge_memcg+0x28/0x80
-  [0.943486]  ? __vmalloc_node_range+0x1e4/0x280
-  [0.943971]  memcg_kmem_charge+0x8b/0x1d0
-  [0.944396]  copy_process.part.41+0x1ca/0x2070
-  [0.944853]  ? get_acl+0x1a/0x120
-  [0.945200]  ? shmem_tmpfile+0x90/0x90
-  [0.945596]  _do_fork+0xd7/0x3d0
-  [0.945934]  ? trace_hardirqs_off_thunk+0x1a/0x1c
-  [0.946421]  do_syscall_64+0x5a/0x180
-  [0.946798]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Thanks for explaining this again, looks like I had overlooked that
+explanation in the "other branch" of the thread last time I read it.
 
-The problem occurs because get_mem_cgroup_from_current() returns
-the NULL pointer if memory controller is disabled. Let's check
-if this is a case at the beginning of memcg_kmem_charge() and
-just return 0 if mem_cgroup_disabled() returns true. This is how
-we handle this case in many other places in the memory controller
-code.
+> 
+> You could fix this by converting back to a PA before adjusting
+> memstart_addr, but that's 2 wrongs making a right and fragile. The
+> better solution is the other proposal making the DT code set
+> phys_initrd_* (whatever the ARM code calls them).
 
-Fixes: 9b6f7e163cd0 ("mm: rework memcg kernel stack accounting")
-Reported-by: Mike Galbraith <efault@gmx.de>
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
----
- mm/memcontrol.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+OK, that sounds reasonable, will cook something doing that. Thanks!
 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 54920cbc46bf..6e1469b80cb7 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -2593,7 +2593,7 @@ int memcg_kmem_charge(struct page *page, gfp_t gfp, i=
-nt order)
- 	struct mem_cgroup *memcg;
- 	int ret =3D 0;
-=20
--	if (memcg_kmem_bypass())
-+	if (mem_cgroup_disabled() || memcg_kmem_bypass())
- 		return 0;
-=20
- 	memcg =3D get_mem_cgroup_from_current();
---=20
-2.17.2
+> 
+>>                 /*
+>>                  * Add back the memory we just removed if it results in the
+>>                  * initrd to become inaccessible via the linear mapping.
+>>                  * Otherwise, this is a no-op
+>>                  */
+>> -               u64 base = initrd_start & PAGE_MASK;
+>> -               u64 size = PAGE_ALIGN(initrd_end) - base;
+>> +               if (phys_initrd_start) {
+>> +                       /* Command line specified the initrd location */
+>> +                       initrd_start = __phys_to_virt(phys_initrd_start);
+>> +                       initrd_end = __phys_to_virt(phys_initrd_end);
+>> +               } else if (initrd_start) {
+>> +                       /* FDT specified the initrd location */
+>> +                       phys_initrd_start = __pa(initrd_start);
+>> +                       phys_initrd_end = __pa(initrd_end);
+> 
+> Kind of inconsistent to mix __phys_to_virt and __pa flavors.
+> 
+> Rob
+> 
 
+
+-- 
+Florian
