@@ -2,89 +2,131 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6AB6C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:36:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C05DFC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:43:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D30D2087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:36:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D30D2087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 648D320824
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:43:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BGz0yKKr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 648D320824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727742AbeJ3G1G (ORCPT
+        id S1727634AbeJ3Gda (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 02:27:06 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:52780 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726568AbeJ3G1G (ORCPT
+        Tue, 30 Oct 2018 02:33:30 -0400
+Received: from mail-ed1-f50.google.com ([209.85.208.50]:46853 "EHLO
+        mail-ed1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727314AbeJ3Gda (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 02:27:06 -0400
-Received: from tmo-115-37.customers.d1-online.com ([80.187.115.37] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gHFCy-0003fD-Pa; Mon, 29 Oct 2018 22:36:24 +0100
-Date:   Mon, 29 Oct 2018 22:36:23 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-cc:     Andrei Vagin <avagin@gmail.com>,
-        "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-        Dmitry Safonov <dima@arista.com>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        Jeff Dike <jdike@addtoit.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "criu@openvz.org" <criu@openvz.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Pavel Emelianov <xemul@virtuozzo.com>,
-        Shuah Khan <shuah@kernel.org>,
-        "containers@lists.linux-foundation.org" 
-        <containers@lists.linux-foundation.org>,
-        Adrian Reber <adrian@lisas.de>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [RFC 00/20] ns: Introduce Time Namespace
-In-Reply-To: <87y3ag5tze.fsf@xmission.com>
-Message-ID: <alpine.DEB.2.21.1810292234300.5984@nanos.tec.linutronix.de>
-References: <20180919205037.9574-1-dima@arista.com>        <874lej6nny.fsf@xmission.com>        <20180924205119.GA14833@outlook.office365.com>        <874leezh8n.fsf@xmission.com>        <20180925014150.GA6302@outlook.office365.com>        <87zhw4rwiq.fsf@xmission.com>
-        <alpine.DEB.2.21.1809272247270.8118@nanos.tec.linutronix.de>        <87mus1ftb9.fsf@xmission.com> <20181021014121.GA23474@gmail.com>        <alpine.DEB.2.21.1810292026040.5984@nanos.tec.linutronix.de> <87y3ag5tze.fsf@xmission.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 30 Oct 2018 02:33:30 -0400
+Received: by mail-ed1-f50.google.com with SMTP id v18-v6so8668850edq.13
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 14:42:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zbRB6Qt/mFqkheWmWKwC5+fpTqzRBevU9KCWKLXWBJU=;
+        b=BGz0yKKrDIUL856n5CBCNpbdomDgKQLNCwOAXKRLpBq6R85QyMQUJnL5K1ch0NPYT8
+         fqLaFxQnB/LPFWWzl21O6IkQYzATkIwDoFHsQ9fkTI2TaK8MivYie63IDcLtSF2JT2qz
+         R0sHPmsPWah9U2VmUaZd0LmVDn42nI8asLHgM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zbRB6Qt/mFqkheWmWKwC5+fpTqzRBevU9KCWKLXWBJU=;
+        b=QMdkClVoBqvLPUhQ9Eyup2oNmORzVFlbnL/15dPRnd0OpPfCgounZuaKzyXi/UWctV
+         2IoY/Y+hkZqHdQ6H5nlcKavtjN0+uHh/TPChOroyxIzBMk0p1EG9bfTHAzLDTp7ngKkn
+         eOjaD4InnjekG9eV1+uHU0wobdHEpcx2bXCvaQi91VSXkjF5ACLmoKgeDJ/TD0oQY1gP
+         ZKHHJ8SFk2TprVFmKBnnyQeg8cLeqVK/vfYOsVqmc7qMDcfGf42DJgr3bVW3glEM2dIS
+         nkYPpnpVhcTnns01gc9wrdahBVIm5iR5THvvm4HvumPep9ewbxIvqGC66JCPeAxm1rtP
+         QJWA==
+X-Gm-Message-State: AGRZ1gKix/7awOdpzA8uirED1oAh+P0QM0nzvjQOjvMsfuwdMZpSFocd
+        TJRi4h5JmL+SRGV65hd6YnWP5nvx6Ro=
+X-Google-Smtp-Source: AJdET5dC/4wZsTCYG6Kh8mVp+U/G7H4vn+JTHiCWH19jmi841H24pVLEjBUtn0ztBoU2PxNX2CKgUw==
+X-Received: by 2002:a17:906:45d8:: with SMTP id z24-v6mr5561345ejq.19.1540849376517;
+        Mon, 29 Oct 2018 14:42:56 -0700 (PDT)
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com. [209.85.128.48])
+        by smtp.gmail.com with ESMTPSA id t15-v6sm3901360ejf.27.2018.10.29.14.42.54
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Oct 2018 14:42:55 -0700 (PDT)
+Received: by mail-wm1-f48.google.com with SMTP id y144-v6so9398753wmd.4
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 14:42:54 -0700 (PDT)
+X-Received: by 2002:a1c:7818:: with SMTP id t24-v6mr5911577wmc.99.1540849374463;
+ Mon, 29 Oct 2018 14:42:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+References: <CAHk-=wjGKhoVaa60i5XZODEtzTUYVV3fouyYL4k=JsPY4K_xjQ@mail.gmail.com>
+ <nycvar.YFH.7.76.1810291415570.23511@cbobk.fhfr.pm> <CAHk-=wgwgmcqxChVXQb66itd__qJOBc7LBsJ+nRAM86qJH-S2Q@mail.gmail.com>
+ <CAHk-=wiRjotiAcy-=Jv5bMM2-r7KzWRGd84CwGmq1FLb1dWKcA@mail.gmail.com>
+ <CA+jURcttJs05DFCuKCyOfe3oA9Q_KoiP3+g8-OVu4OPm9ufp6Q@mail.gmail.com> <CAHk-=wh3VO9hD9hUBS-H2d4jjGuYuVTudshHsPe9p-5sYhFfGg@mail.gmail.com>
+In-Reply-To: <CAHk-=wh3VO9hD9hUBS-H2d4jjGuYuVTudshHsPe9p-5sYhFfGg@mail.gmail.com>
+From:   Harry Cutts <hcutts@chromium.org>
+Date:   Mon, 29 Oct 2018 14:42:42 -0700
+X-Gmail-Original-Message-ID: <CA+jURcvVAJbwazWBByh=GTEV-wC75mZA0oaiX0x4_89F_byM6A@mail.gmail.com>
+Message-ID: <CA+jURcvVAJbwazWBByh=GTEV-wC75mZA0oaiX0x4_89F_byM6A@mail.gmail.com>
+Subject: Re: Logitech high-resolution scrolling..
+To:     torvalds@linux-foundation.org
+Cc:     jikos@kernel.org, benjamin.tissoires@redhat.com,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Hutterer <peter.hutterer@who-t.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Eric,
+On Mon, 29 Oct 2018 at 14:12, Linus Torvalds <torvalds@linux-foundation.org>
+> So what the half-multiplier did, assuming a multiplier of 8 (which is
+> what my MX Anywhere 2S reports) would be:
+>
+>  - remainder starts at 3
+>  - high-res is +1
+>  - now remainder is 3+1, and it triggers the >= half logic
+>  - 4/8 is 0, but then the code added 1 because high-res was positive,
+> so the code decides to add 1
+>  - the code does a wheel update of 1, and updates remainder with -8,
+> so now it's -4
+>
+> Next time around, if the high-res update is 0 or -1, it will go the
+> other direction. And then it will oscillate.
+>
+> Notice how tiny movements of +1/-1 in the *high-res* count can
+> translate into +1/-1 in the regular wheel movement.
 
-On Mon, 29 Oct 2018, Eric W. Biederman wrote:
-> Thomas Gleixner <tglx@linutronix.de> writes:
-> >
-> > I'll try to find some time in the next weeks to look deeper into that, but
-> > I can't promise anything before returning from LPC. Btw, LPC would be a
-> > great opportunity to discuss that. Are you and the other name space wizards
-> > there by any chance?
-> 
-> I will be and there are going to be both container and CRIU
-> mini-conferences.  So there should at least some of us around.
+Ah, I see what you mean. So, if we move the threshold to (multiplier -
+1)/multiplier (7/8) in this case, I think the equivalent scenario
+would be:
 
-So let's try to find a slot for a BOF or similar (there might be still
-slots for the kernel summit available, i'll ask).
+- remainder starts at 7
+- high-res is +1
+- remainder is now 7+1, triggering a low-res update
+- 7/8 is 0, but we add one to the remainder in the check making it (7+1)/8 == 1
+- we update remainder to -1
 
-Thanks,
+This way we're still at least 7/8ths of a notch from the threshold in
+either direction, so we shouldn't get the oscillation problem. Does
+that sound reasonable, or do you think I've missed something?
 
-	tglx
+> I do not believe that you actually ever *used* that code, or if you
+> did, you only did so with applications that were high-res aware and
+> ignored the regular wheel entirely because you were testing in an
+> environment with other changes than just the kernel.
+
+I tested these changes with 5 different Logitech mice (see the
+Logitech high-res support patch [0] for details), and did so mainly
+with applications that were *not* high-res aware, using a mix of
+clicky and smooth modes. Admittedly the MX Anywhere 2S was not one of
+my test devices; I had assumed that its behaviour would be
+sufficiently similar to that of the MX Anywhere 2 and the MX Master
+2S.
+
+Harry Cutts
+Chrome OS Touch/Input team
+
+[0]: https://patchwork.kernel.org/patch/10582935/
