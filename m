@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E312C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 20:16:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1037CC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 20:16:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F85220824
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 20:16:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F85220824
+	by mail.kernel.org (Postfix) with ESMTP id D43E42084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 20:16:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D43E42084A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=monom.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729671AbeJ3FGi (ORCPT
+        id S1729696AbeJ3FGn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 01:06:38 -0400
-Received: from mail.monom.org ([188.138.9.77]:50778 "EHLO mail.monom.org"
+        Tue, 30 Oct 2018 01:06:43 -0400
+Received: from mail.monom.org ([188.138.9.77]:50802 "EHLO mail.monom.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728735AbeJ3FGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 01:06:36 -0400
+        id S1726983AbeJ3FGh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 01:06:37 -0400
 Received: from mail.monom.org (localhost [127.0.0.1])
-        by filter.mynetwork.local (Postfix) with ESMTP id 184E1500A77;
-        Mon, 29 Oct 2018 21:16:20 +0100 (CET)
+        by filter.mynetwork.local (Postfix) with ESMTP id 2107B500B3B;
+        Mon, 29 Oct 2018 21:16:21 +0100 (CET)
 Received: from localhost (ppp-93-104-187-85.dynamic.mnet-online.de [93.104.187.85])
-        by mail.monom.org (Postfix) with ESMTPSA id D1F34500294;
-        Mon, 29 Oct 2018 21:16:19 +0100 (CET)
+        by mail.monom.org (Postfix) with ESMTPSA id D4854500294;
+        Mon, 29 Oct 2018 21:16:20 +0100 (CET)
 From:   Daniel Wagner <wagi@monom.org>
 To:     LKML <linux-kernel@vger.kernel.org>,
         linux-rt-users <linux-rt-users@vger.kernel.org>,
@@ -39,10 +39,10 @@ To:     LKML <linux-kernel@vger.kernel.org>,
         Daniel Wagner <daniel.wagner@siemens.com>,
         Tom Zanussi <tom.zanussi@linux.intel.com>,
         Julia Cartwright <julia@ni.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>
-Subject: [PATCH RT 1/2] x86/kconfig: Fall back to ticket spinlocks
-Date:   Mon, 29 Oct 2018 21:16:16 +0100
-Message-Id: <20181029201617.24733-2-wagi@monom.org>
+Cc:     Daniel Wagner <wagi@monom.org>
+Subject: [PATCH RT 2/2] Linux 4.4.162-rt176-rc1
+Date:   Mon, 29 Oct 2018 21:16:17 +0100
+Message-Id: <20181029201617.24733-3-wagi@monom.org>
 X-Mailer: git-send-email 2.14.4
 In-Reply-To: <20181029201617.24733-1-wagi@monom.org>
 References: <20181029201617.24733-1-wagi@monom.org>
@@ -51,109 +51,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Wagner <daniel.wagner@siemens.com>
-
 v4.4.162-rt176-rc1 stable review patch.
 If anyone has any objections, please let me know.
 
 -----------
 
 
-Sebastian writes:
-
-"""
-We reproducibly observe cache line starvation on a Core2Duo E6850 (2
-cores), a i5-6400 SKL (4 cores) and on a NXP LS2044A ARM Cortex-A72 (4
-cores).
-
-The problem can be triggered with a v4.9-RT kernel by starting
-
-    cyclictest -S -p98 -m  -i2000 -b 200
-
-and as "load"
-
-    stress-ng --ptrace 4
-
-The reported maximal latency is usually less than 60us. If the problem
-triggers then values around 400us, 800us or even more are reported. The
-upperlimit is the -i parameter.
-
-Reproduction with 4.9-RT is almost immediate on Core2Duo, ARM64 and SKL,
-but it took 7.5 hours to trigger on v4.14-RT on the Core2Duo.
-
-Instrumentation show always the picture:
-
-CPU0                                         CPU1
-=> do_syscall_64                              => do_syscall_64
-=> SyS_ptrace                                   => syscall_slow_exit_work
-=> ptrace_check_attach                          => ptrace_do_notify / rt_read_unlock
-=> wait_task_inactive                              rt_spin_lock_slowunlock()
-   -> while task_running()                         __rt_mutex_unlock_common()
-  /   check_task_state()                           mark_wakeup_next_waiter()
- |     raw_spin_lock_irq(&p->pi_lock);             raw_spin_lock(&current->pi_lock);
- |     .                                               .
- |     raw_spin_unlock_irq(&p->pi_lock);               .
-  \  cpu_relax()                                       .
-   -                                                   .
-    *IRQ*                                          <lock acquired>
-
-In the error case we observe that the while() loop is repeated more than
-5000 times which indicates that the pi_lock can be acquired. CPU1 on the
-other side does not make progress waiting for the same lock with interrupts
-disabled.
-
-This continues until an IRQ hits CPU0. Once CPU0 starts processing the IRQ
-the other CPU is able to acquire pi_lock and the situation relaxes.
-"""
-
-This matches with the observeration for v4.4-rt on a Core2Duo E6850:
-
-CPU 0:
-
-- no progress for a very long time in rt_mutex_dequeue_pi):
-
-stress-n-1931    0d..11  5060.891219: function:             __try_to_take_rt_mutex
-stress-n-1931    0d..11  5060.891219: function:                rt_mutex_dequeue
-stress-n-1931    0d..21  5060.891220: function:                rt_mutex_enqueue_pi
-stress-n-1931    0....2  5060.891220: signal_generate:      sig=17 errno=0 code=262148 comm=stress-ng-ptrac pid=1928 grp=1 res=1
-stress-n-1931    0d..21  5060.894114: function:             rt_mutex_dequeue_pi
-stress-n-1931    0d.h11  5060.894115: local_timer_entry:    vector=239
-
-CPU 1:
-
-- IRQ at 5060.894114 on CPU 1 followed by the IRQ on CPU 0
-
-stress-n-1928    1....0  5060.891215: sys_enter:            NR 101 (18, 78b, 0, 0, 17, 788)
-stress-n-1928    1d..11  5060.891216: function:             __try_to_take_rt_mutex
-stress-n-1928    1d..21  5060.891216: function:                rt_mutex_enqueue_pi
-stress-n-1928    1d..21  5060.891217: function:             rt_mutex_dequeue_pi
-stress-n-1928    1....1  5060.891217: function:             rt_mutex_adjust_prio
-stress-n-1928    1d..11  5060.891218: function:                __rt_mutex_adjust_prio
-stress-n-1928    1d.h10  5060.894114: local_timer_entry:    vector=239
-
-Backporting all qspinlock related patches is very likely to introduce
-regressions. Therefore, the recommended solution by PeterZ and Thomas
-is to drop back to ticket spinlocks for v4.4.
-
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Daniel Wagner <daniel.wagner@siemens.com>
+Signed-off-by: Daniel Wagner <wagi@monom.org>
 ---
- arch/x86/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+ localversion-rt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 6df130a37d41..f00cab581e2d 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -42,7 +42,6 @@ config X86
- 	select ARCH_USE_BUILTIN_BSWAP
- 	select ARCH_USE_CMPXCHG_LOCKREF		if X86_64
- 	select ARCH_USE_QUEUED_RWLOCKS
--	select ARCH_USE_QUEUED_SPINLOCKS
- 	select ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH
- 	select ARCH_WANTS_DYNAMIC_TASK_STRUCT
- 	select ARCH_WANT_FRAME_POINTERS
+diff --git a/localversion-rt b/localversion-rt
+index 8ead11a7cbc7..c3267d6bdd98 100644
+--- a/localversion-rt
++++ b/localversion-rt
+@@ -1 +1 @@
+--rt175
++-rt176-rc1
 -- 
 2.14.4
