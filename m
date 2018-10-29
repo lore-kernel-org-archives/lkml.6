@@ -2,132 +2,152 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76644C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:22:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9886EECDE44
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:24:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46C112082B
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:22:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46C112082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 695512082B
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:24:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 695512082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729209AbeJ2VLI (ORCPT
+        id S1729254AbeJ2VM1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 17:11:08 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:39175 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729146AbeJ2VLI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 17:11:08 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 7D5E2464CC16B;
-        Mon, 29 Oct 2018 20:22:36 +0800 (CST)
-Received: from [127.0.0.1] (10.142.63.192) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.408.0; Mon, 29 Oct 2018
- 20:22:29 +0800
-CC:     <wangbinghui@hisilicon.com>, <linux-usb@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <suzhuangluan@hisilicon.com>, <kongfei@hisilicon.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lucas Tsai <lucas_tsai@richtek.com>,
-        shufan_lee <shufan_lee@richtek.com>,
-        John Stultz <john.stultz@linaro.org>
-Subject: Re: [PATCH 08/10] usb: typec: Add support for usb role switch in
- rt1711h driver
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
-References: <20181027095820.40056-1-chenyu56@huawei.com>
- <20181027095820.40056-9-chenyu56@huawei.com>
- <20181029115813.GA14534@kuha.fi.intel.com>
-From:   Chen Yu <chenyu56@huawei.com>
-Message-ID: <d3268b28-db8c-fb1d-5cc4-5226c4181a2d@huawei.com>
-Date:   Mon, 29 Oct 2018 20:22:27 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
+        Mon, 29 Oct 2018 17:12:27 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:53416 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728950AbeJ2VM1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 17:12:27 -0400
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0962430B8A3E;
+        Mon, 29 Oct 2018 12:24:00 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.34.27.30])
+        by smtp.corp.redhat.com (Postfix) with SMTP id BD23760C65;
+        Mon, 29 Oct 2018 12:23:57 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Mon, 29 Oct 2018 13:23:59 +0100 (CET)
+Date:   Mon, 29 Oct 2018 13:23:56 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        syzbot <syzbot+a9ac39bf55329e206219@syzkaller.appspotmail.com>,
+        James Morris <jmorris@namei.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com
+Subject: Re: KASAN: use-after-free Read in task_is_descendant
+Message-ID: <20181029122356.GA29883@redhat.com>
+References: <76013c9e-0664-ef5e-b6c0-d48f6ce5db3c@i-love.sakura.ne.jp>
+ <20181022134634.GA7358@redhat.com>
+ <201810250215.w9P2Fm2M078167@www262.sakura.ne.jp>
+ <20181025111355.GA3725@redhat.com>
+ <b0ac67e6-4279-91b3-0178-3176876abe70@i-love.sakura.ne.jp>
+ <20181025121709.GD3725@redhat.com>
+ <20181025130129.GE3725@redhat.com>
+ <CAGXu5jJDkt0vR28Rzhi2gmb=9S7BwWkiMuVrN98AOABgngYY4A@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181029115813.GA14534@kuha.fi.intel.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.142.63.192]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jJDkt0vR28Rzhi2gmb=9S7BwWkiMuVrN98AOABgngYY4A@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Mon, 29 Oct 2018 12:24:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 10/26, Kees Cook wrote:
+>
+> On Thu, Oct 25, 2018 at 2:01 PM, Oleg Nesterov <oleg@redhat.com> wrote:
+> > On 10/25, Oleg Nesterov wrote:
+> >> perhaps it needs some changes too. I even have a vague feeling that I have already
+> >> blamed this function some time ago...
+> >
+> > Heh, yes, 3 years ago ;)
+> >
+> > https://lore.kernel.org/lkml/20150106184427.GA18153@redhat.com/
+> >
+> > I can't understand my email today, but note that I tried to point out that
+> > task_is_descendant() can dereference the freed mem.
+>
+> Instead of:
+>
+>         while (walker->pid > 0) {
+>
+> should it simply be "while (pid_liave(walker)) {"?
+
+No, this would be wrong. Probably walker->pid > 0 is not the best check,
+but we do not need to change it for correctness.
+
+> And add a
+> pid_alive(parent) after rcu_read_lock()?
+
+So you too do not read my emails ;)
+
+I still think we need a single pid_alive() check and I even sent the patch.
+Attached again at the end.
+
+To clarify, let me repeat that ptracer_exception_found() may need some fixes
+too, right now I am only talking about task_is_descendant().
+
+> > And yes, task_is_descendant() is overcompicated for no reason, afaics.
+>
+> Yeah, agreed. I'll fix this up.
+
+I have already posted this code, this is what I think it should do.
 
 
-On 2018/10/29 19:58, Heikki Krogerus wrote:
-> On Sat, Oct 27, 2018 at 05:58:18PM +0800, Yu Chen wrote:
->> This patch add struct device_connection to rt1711h driver to support
->> find "usb-role-switch" in tcpm_register_port.
->>
->> Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
->> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Cc: Lucas Tsai <lucas_tsai@richtek.com>
->> Cc: shufan_lee <shufan_lee@richtek.com>
->> Cc: John Stultz <john.stultz@linaro.org>
->> Cc: Binghui Wang <wangbinghui@hisilicon.com>
->> Signed-off-by: Yu Chen <chenyu56@huawei.com>
->> ---
->>  drivers/usb/typec/tcpm/tcpci_rt1711h.c | 15 +++++++++++++++
->>  1 file changed, 15 insertions(+)
->>
->> diff --git a/drivers/usb/typec/tcpm/tcpci_rt1711h.c b/drivers/usb/typec/tcpm/tcpci_rt1711h.c
->> index 017389021b96..5f8b952612fe 100644
->> --- a/drivers/usb/typec/tcpm/tcpci_rt1711h.c
->> +++ b/drivers/usb/typec/tcpm/tcpci_rt1711h.c
->> @@ -39,6 +39,7 @@ struct rt1711h_chip {
->>  	struct tcpci_data data;
->>  	struct tcpci *tcpci;
->>  	struct device *dev;
->> +	struct device_connection dev_conn;
->>  };
->>  
->>  static int rt1711h_read16(struct rt1711h_chip *chip, unsigned int reg, u16 *val)
->> @@ -237,6 +238,7 @@ static int rt1711h_probe(struct i2c_client *client,
->>  {
->>  	int ret;
->>  	struct rt1711h_chip *chip;
->> +	const char *dev_conn_end;
->>  
->>  	ret = rt1711h_check_revision(client);
->>  	if (ret < 0) {
->> @@ -254,6 +256,7 @@ static int rt1711h_probe(struct i2c_client *client,
->>  		return PTR_ERR(chip->data.regmap);
->>  
->>  	chip->dev = &client->dev;
->> +	dev_set_name(chip->dev, "rt1711h");
->>  	i2c_set_clientdata(client, chip);
->>  
->>  	ret = rt1711h_sw_reset(chip);
->> @@ -264,6 +267,15 @@ static int rt1711h_probe(struct i2c_client *client,
->>  	if (ret < 0)
->>  		return ret;
->>  
->> +	ret = device_property_read_string(chip->dev, "dev-conn-end",
->> +			&dev_conn_end);
->> +	if (!ret) {
->> +		chip->dev_conn.endpoint[0] = "rt1711h";
->> +		chip->dev_conn.endpoint[1] = dev_conn_end;
->> +		chip->dev_conn.id = "usb-role-switch";
->> +		device_connection_add(&chip->dev_conn);
->> +	}
-> That is wrong. You should not read name of a device from a property.
->
-> Regardless of that, I don't think this patch is needed at all. You
-> need to describe this kind connection with OF device graph
-> (Documentation/devicetree/bindings/graph.txt).
->
-> I've prepared a proposal how we should be able handle graphs in the
-> device connection API:
-> https://lkml.org/lkml/2018/10/24/613
-I will fix this patch. Thanks!
->
-> thanks,
->
+	static int task_is_descendant(struct task_struct *parent,
+				      struct task_struct *child)
+	{
+		struct task_struct *walker;
 
+		for (walker = child; walker->pid; walker = rcu_dereference(walker->real_parent)) {
+			if (same_thread_group(parent, walker))
+				return 1;
+		}
+
+		return 0;
+	}
+
+This version differs in that I removed the parent/child != NULL at the start
+and rcu_read_lock(), it should be held by the caller anyway.
+
+> Just to make sure I'm not crazy: the
+> real_parent of all tasks in a thread group are the same, yes?
+
+Well, yes and no. So if
+
+	same_thread_group(t1, t2) == T
+
+then
+	same_thread_group(t1->real_parent, t2->real_parent) == T
+
+which means that real_parent of all tasks in a thread group is the same
+_process_.
+
+But t1->real_parent and t2->real_parent are not necessarily the same task.
+
+Oleg.
+
+--- x/security/yama/yama_lsm.c
++++ x/security/yama/yama_lsm.c
+@@ -368,7 +368,8 @@ static int yama_ptrace_access_check(stru
+ 			break;
+ 		case YAMA_SCOPE_RELATIONAL:
+ 			rcu_read_lock();
+-			if (!task_is_descendant(current, child) &&
++			if (!pid_alive(child) ||
++			    !task_is_descendant(current, child) &&
+ 			    !ptracer_exception_found(current, child) &&
+ 			    !ns_capable(__task_cred(child)->user_ns, CAP_SYS_PTRACE))
+ 				rc = -EPERM;
 
