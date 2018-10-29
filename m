@@ -2,80 +2,102 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FAKE_REPLY_C,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E0F9C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 20:01:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4139AC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 20:03:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3039B2080A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 20:01:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAE802080A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 20:03:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SnmonRnt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3039B2080A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dYBf/sIT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAE802080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729683AbeJ3Evs (ORCPT
+        id S1729400AbeJ3Ex0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 00:51:48 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:51137 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbeJ3Evr (ORCPT
+        Tue, 30 Oct 2018 00:53:26 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35828 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726725AbeJ3Ex0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 00:51:47 -0400
-Received: by mail-wm1-f65.google.com with SMTP id h2-v6so5731022wmb.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 13:01:35 -0700 (PDT)
+        Tue, 30 Oct 2018 00:53:26 -0400
+Received: by mail-lj1-f194.google.com with SMTP id x85-v6so4887185ljb.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 13:03:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=t4o6vkl8GtIZ/bH/Qbi+my4lpjQHH2H03Qtk7uBOr3Y=;
-        b=SnmonRnt/4rKQwbqxKg2GSh1igoVIDb00gEYIPbnIvD94ijkjKV4iNAWTypLSB/S4A
-         M64pTS0bCI8Mqs0ppx5Rei4WVSmJGWDM7aD+82DNpiGJqK3JUsFrkQmWOkgsGPz4DTLR
-         Kx7t4Iyp0AktedptdVrMgeP4nce3hW7p3PRuW9SnhiJ9uDTyeElfSmYdc6bINuuNDJAl
-         X7hu7uusxpI0JIEA94AuEeHDB7xTabJ6AarEYhNws4XtxgpL3X2r9Wd/l7ALOuwzUF2K
-         zFHK/fBcv7LX8h7S7mIXNKsyhDAX6Os+2fpezG7niPg+dbmLcizd2Sb+SMQAoKwtqKn3
-         eNpQ==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PE9axsRjosjJ3T7nxoPev2GfqHe3Uv/m+p22kVrDbkc=;
+        b=dYBf/sITMcZfMFpbBEUQf9AN9ogyJfhuDfI9mTJ/1oWQs45JloVTBj9OwLpv6npLft
+         H9dfosfxforkSkAJJsTjzvp+iX5QgYVattsSo6txofdwRP0m7hcgpJqcFvsnNOv+3JG9
+         kUmIh5aB4uHkPUMjFviMViIsggI91Bxu79rUg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=t4o6vkl8GtIZ/bH/Qbi+my4lpjQHH2H03Qtk7uBOr3Y=;
-        b=EQmE/dDVKd4cXw7kJ8gf+LyjuO093YO5295SPvUB3y0u7ilEUpc/Q2JNQYVEacZ7Gw
-         fg3TmbHJgvQxdXNXvGmL5LA/kYb+hMUrPO+z51tSGwOxqzZg1ENfgHh8L0A0V9wv2rEi
-         +li3RSPpcDTu98kPDIyug3AOEGP90/3UcttqBj4B1cBSA+x8g7GSNgFdH2y2kBa1IILk
-         wY1rI9YNJbIvc1bYQ7pxeMLiKZpUvJlkWgaRVF4/O7NrwMswEYqzqkl8B8Dc6KPSoGSq
-         +gId1uolhv2e2pAtvC93+/3he/g/v6H913JiOvsHg3aPfTC0lMQCk5OVJpPivFe8Fiuh
-         /mOg==
-X-Gm-Message-State: AGRZ1gKS/Y4TFV+4/8BTTuxSI+WBi0Nm8yonnEmq6Tdqtz/8zbHUqxAV
-        IjafU+uSFT5ihr7DvCb4gw==
-X-Google-Smtp-Source: AJdET5fvsWSmGvHPstzUzCDusUsyxKBdgVDzpA/08lUY1rueVz7uRrO0S03Ryjcj857T58gCA8Wn7g==
-X-Received: by 2002:a1c:85d0:: with SMTP id h199-v6mr14655554wmd.127.1540843294944;
-        Mon, 29 Oct 2018 13:01:34 -0700 (PDT)
-Received: from avx2 (nat5-minsk-pool-46-53-217-92.telecom.by. [46.53.217.92])
-        by smtp.gmail.com with ESMTPSA id h78-v6sm12981070wmd.4.2018.10.29.13.01.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 13:01:34 -0700 (PDT)
-Date:   Mon, 29 Oct 2018 23:01:31 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     dave@stgolabs.net, llong@redhat.com
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/proc: introduce /proc/stat2 file
-Message-ID: <20181029200131.GA23290@avx2>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PE9axsRjosjJ3T7nxoPev2GfqHe3Uv/m+p22kVrDbkc=;
+        b=aIcyyVFIX5Ihqym7+1ZuQO4HFtN+6gEaV33oWA7xplx65i11lK0THIRw9zC8JkUsEc
+         L3550wfQ2x0/HehhJItPKNaWp2WJxliogEP+BduA0b8P5FT+ZjubY/FVRbnbvAom/q3h
+         cAdOeAZsqqYPMgeOHpEiTG9D+5kv4i+yIrYAFUvnXePNaYjw03vyUhK4Sr2OYiPVcc9B
+         WhN4PUmA4LOsL0QuvQ+LA80jfLTrffpVmU54QjGn4McCXNL4Tt4pjD2cWXLf5hZjpYGu
+         xrPZ6ZNCK1ovXM6yMGJyb93aQQgmZAmZjMkN7VH7FcMfztMwEWWEYGtDbEwQGUTybXdp
+         XmFg==
+X-Gm-Message-State: AGRZ1gJ0T4GN07NXgr8QrR2kpWc+cQUx1+7DMkU/5y0TEzaqevt7Y4yK
+        oFGuny4HSM93DamsWrzhk+qhcA==
+X-Google-Smtp-Source: AJdET5fStIYU91QUSccY8fOQLQfhwLV6Pux18sSgw5yvhGwjR9c9t6H6wZ2zsw6bKSMQ8Hw3j7QN+Q==
+X-Received: by 2002:a2e:760a:: with SMTP id r10-v6mr10286819ljc.97.1540843393276;
+        Mon, 29 Oct 2018 13:03:13 -0700 (PDT)
+Received: from localhost ([195.238.92.132])
+        by smtp.gmail.com with ESMTPSA id g2-v6sm500969ljg.9.2018.10.29.13.03.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Oct 2018 13:03:12 -0700 (PDT)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        codalist@coda.cs.cmu.edu, coda@cs.cmu.edu,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Praneeth Bajjuri <praneeth@ti.com>
+Subject: [PATCH v2] codafs: Fix build using bare-metal toolchain
+Date:   Mon, 29 Oct 2018 22:03:11 +0200
+Message-Id: <20181029200311.16947-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> I am wondering if /proc/stat_noirqs will be a more descriptive name of
-> the intent of this new procfs file or we should just go with the more
-> generic stat2 name.
+The kernel is self-contained project and can be built with bare-metal
+toolchain. But bare-metal toolchain doesn't define __linux__. Because of
+this u_quad_t type is not defined when using bare-metal toolchain and
+codafs build fails. This patch fixes it by defining u_quad_t type
+unconditionally.
 
-What would you do if someone asks for /proc/stat without CPU numbers?
+Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+---
+ include/linux/coda.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/include/linux/coda.h b/include/linux/coda.h
+index d30209b9cef8..0ca0c83fdb1c 100644
+--- a/include/linux/coda.h
++++ b/include/linux/coda.h
+@@ -58,8 +58,7 @@ Mellon the rights to redistribute these changes without encumbrance.
+ #ifndef _CODA_HEADER_
+ #define _CODA_HEADER_
+ 
+-#if defined(__linux__)
+ typedef unsigned long long u_quad_t;
+-#endif
++
+ #include <uapi/linux/coda.h>
+ #endif 
+-- 
+2.19.1
+
