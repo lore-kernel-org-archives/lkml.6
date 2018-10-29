@@ -3,96 +3,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD2D7C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:29:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F090C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:30:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66F5E20827
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:29:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35EB720827
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:30:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TGknT0UD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66F5E20827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bfHxO2Ot"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35EB720827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729845AbeJ2TSA (ORCPT
+        id S1729853AbeJ2TSj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 15:18:00 -0400
-Received: from ozlabs.org ([203.11.71.1]:57377 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729487AbeJ2TSA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 15:18:00 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42k9p947MHz9s2P;
-        Mon, 29 Oct 2018 21:29:53 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1540808993;
-        bh=MVY+9Rcb7Oi9lKxWukKEkT0h7P9XA1pYNcA+6ocNHTY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=TGknT0UD8ZGZqEmaWEHCwW25H30zJPMifJe2Tt1HhTP/sAq36w1n3QqC6Ye81S/JO
-         MattB0ghdx+ixxfE5ihT2JxFSr5P3DmeW6Qu2VGgK7fo99XGd99Ffl6qaZnyvl8ecw
-         QgAmBa7UiVHkZnCLLxt52cH4As9kft2+wzrVJTwX87Pue+40a4WtrK3LlqzIbgasRZ
-         lma1jUU/JTqH1dkUEZbbx7+cLg+Fi3L2W0YIBIY/x/+1kJkqoBTgHMaQFW4IhRua0H
-         8SS7oUp5XakPmHTd1GpF/h1bT4xZyHe7P5jublHvOWNVEjIcGadQtsqrDZ3eNriCXe
-         dNrdVyLs2GSTA==
-Date:   Mon, 29 Oct 2018 21:29:52 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the vfs tree
-Message-ID: <20181029212952.2d0641fb@canb.auug.org.au>
-In-Reply-To: <5183.1540804880@warthog.procyon.org.uk>
-References: <20181029200620.75f71e94@canb.auug.org.au>
-        <20180910133525.28c5dd20@canb.auug.org.au>
-        <20181029153334.7c8d16cc@canb.auug.org.au>
-        <5183.1540804880@warthog.procyon.org.uk>
+        Mon, 29 Oct 2018 15:18:39 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:46042 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729343AbeJ2TSj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 15:18:39 -0400
+Received: by mail-qk1-f196.google.com with SMTP id d135so3489127qkc.12;
+        Mon, 29 Oct 2018 03:30:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CSGizkzi5iU9+GuXPFOlvyYv0nHhp0jBIHqz4f/REdc=;
+        b=bfHxO2Ot6WNaxE8sOnLj8lIZILKI850gPn2az72FkcKYMp7KaV356+Cwz/UddUVZMM
+         nRaPCDZa6Kvlx8xtY++hswsgfG9vCQ6olE3vv+3zzavW0Z4i/4yCBRZ/yPa3m4oNN1gQ
+         jaOasR8wjYQ0IG1hMVap7XnyUD28Kido1rPUSS/6wdKXZ7OGKfmMAobHCGSHjG0HumhW
+         7et5bHINbsh2NgwmKSoVZs0zRfFLNmbRzf/c1gCogeyCvul/UdVwuvFItQG5Hj1ReTNx
+         I1HHJF2SjAMBf7senNv2j4+eG2KLmy/ZI4aiYGRCJdoOAHhgNk9M5vTfL7Mb6uEVThvG
+         bT7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CSGizkzi5iU9+GuXPFOlvyYv0nHhp0jBIHqz4f/REdc=;
+        b=bRbLI8aJuLk06JpQmQ4EYpiaKi6H5I90WnVUR9Jhdni8/KeGBWEtKVdDSnAyYLSRvg
+         1n2gWyUvy/dPIT9AyE634cqysuKQEedG45/6vnRTFwLO+2XdhmIAeKksp/atE2n7ezJw
+         J1Bn95IM5FOunB1XVCgBC0fmm9jKvdpdIxe2rVuYO5hfdA8Wcka4dfnwMSSjJqCAErDK
+         ZdDQw6OYdYKrqmwPil+cWo7ffj51wcxisPP6aLrGqnTuKUD5OI5k6zSPqlpIXfvfXMc8
+         hTaXzwk1LygbEdMRolrYOgg10sRQEduNJ8Hz1wZcI6ra5w8hIra9toL4I9ort61M4dqa
+         EYRg==
+X-Gm-Message-State: AGRZ1gIZ57vgJSPm50lskTD0okKniAmghimKu2gVMzbAcbBLRQLZSs3l
+        6/ZBi+ze440KYlnwYwGO+RaqNUg/8PPKqSbFg9E=
+X-Google-Smtp-Source: AJdET5cLMHFbtrS4OUgIYlLMpNkgey06AxIE8wD7hsd+9j4OnlEiouPoflkC6mtfK3aJK0FQXu2dfyVhnyLnvd6coQU=
+X-Received: by 2002:a37:1f44:: with SMTP id f65mr11295093qkf.33.1540809034553;
+ Mon, 29 Oct 2018 03:30:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/KhcNM3A2bKsRes/np1wT8XW"; protocol="application/pgp-signature"
+References: <1540812743-1825-1-git-send-email-peng.hao2@zte.com.cn> <1540812743-1825-3-git-send-email-peng.hao2@zte.com.cn>
+In-Reply-To: <1540812743-1825-3-git-send-email-peng.hao2@zte.com.cn>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 29 Oct 2018 12:30:23 +0200
+Message-ID: <CAHp75VfxyNSCcDL=ZnDOipnKBQYAms7_BGRmMdEbCAb184ujuA@mail.gmail.com>
+Subject: Re: [PATCH V3 3/5] misc/pvpanic: add MMIO support
+To:     peng.hao2@zte.com.cn
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        hutao@cn.fujitsu.com,
+        Linux Documentation List <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/KhcNM3A2bKsRes/np1wT8XW
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi David,
-
-On Mon, 29 Oct 2018 09:21:20 +0000 David Howells <dhowells@redhat.com> wrot=
-e:
+On Mon, Oct 29, 2018 at 5:22 AM Peng Hao <peng.hao2@zte.com.cn> wrote:
 >
-> I think these changes should cover them all.
+> On some architectures (e.g. arm64), it's preferable to use MMIO, since
+> this can be used standalone. Add MMIO support to the pvpanic driver.
 
-Yep, that fixes the build for me, thanks.
+>  pvpanic_walk_resources(struct acpi_resource *res, void *context)
+>  {
+> +       struct acpi_resource_fixed_memory32 *fixmem32;
+> +
+>         switch (res->type) {
+>         case ACPI_RESOURCE_TYPE_END_TAG:
+>                 return AE_OK;
+>
+>         case ACPI_RESOURCE_TYPE_IO:
+> -               port = res->data.io.minimum;
+> +               base = (void __iomem *) ioport_map(res->data.io.minimum, 1);
+> +               return AE_OK;
+> +
+> +       case ACPI_RESOURCE_TYPE_FIXED_MEMORY32:
+> +               fixmem32 = &res->data.fixed_memory32;
+> +               base = ioremap(fixmem32->address, fixmem32->address_length);
+>                 return AE_OK;
 
-Tested-by: Stephen Rothwell <sfr@canb.auug.org.au>
---=20
-Cheers,
-Stephen Rothwell
+Ouch. Sorry, I forgot to look at this previously.
 
---Sig_/KhcNM3A2bKsRes/np1wT8XW
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+This should be converted to use
+acpi_dev_resource_io()
+acpi_dev_resource_memory()
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvW4SAACgkQAVBC80lX
-0GySjAf+KkLkvzFyqH9eEg6RjjqHE5mW/UNqRpBjM7H8tJGaxT7xlvFF0r6XpKbP
-fUOdQ/4/8CV4lfH48k++MyMtKh5risumjjTjzz4xZBFflXih/R1EzptuDP59agrw
-+5PtvBp+mgS4fxRgI1esNeOSa+Zu24PrvePaNgM65BnzrkFDSv7UBdrK/IpUTs58
-UAvc2uw8eOwmrdmpi54UYyTpQJdQOrYvTJyk0fH61MytuAITH3zp+fnEMutvmW1X
-WuKFiMrThEQvwM9uWQ2G0C22T/WDk3HIgNbkYjyg4fftccdRmoZ0QIXhe7kcU7dG
-MYKkvoiQuhXw/zKrkquE5NkCkJ341w==
-=Vt2o
------END PGP SIGNATURE-----
-
---Sig_/KhcNM3A2bKsRes/np1wT8XW--
+-- 
+With Best Regards,
+Andy Shevchenko
