@@ -2,117 +2,87 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEF11C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:24:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67911C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:26:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 615CE20827
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:24:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="T+Pg1N6p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 615CE20827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 2C66720827
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:26:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C66720827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729708AbeJ2TMM (ORCPT
+        id S1729738AbeJ2TO2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 15:12:12 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:53301 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729487AbeJ2TMM (ORCPT
+        Mon, 29 Oct 2018 15:14:28 -0400
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:40143 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729343AbeJ2TO2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 15:12:12 -0400
-Received: by mail-wm1-f66.google.com with SMTP id l26-v6so7604051wmh.3
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 03:24:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=78/LbgHWSj19fwf6QFJ3yiqXolHVngkl8Abx0aGyBHE=;
-        b=T+Pg1N6pitNSeyZKberM+TcNAnmorqu6Y288rmS2GilUqaVu6d7rOYsfU/VUZDCInn
-         FoJnKpbTzSXaU1rq05rzQEhmvMSoynnrdYt7lYDd+kb5OumlvkCakX7PCIozDdPYI0or
-         FW78cu0FX4bZOe+gauvJslO09fkfUdJX+GIgM=
+        Mon, 29 Oct 2018 15:14:28 -0400
+Received: by mail-vk1-f194.google.com with SMTP id h20-v6so1892892vke.7;
+        Mon, 29 Oct 2018 03:26:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=78/LbgHWSj19fwf6QFJ3yiqXolHVngkl8Abx0aGyBHE=;
-        b=K9+FmuL6/Fw53jv2AGWQ+RFtHn/0HKiNCccLmno7wguEjWoD3RueRY8y/o8Rah+1nw
-         QsvmpTZnewDCvAa3c1plOUGdnGKymYJ7JXfIZdTtWPFpIYHiCFKuY15maE3nNFKFCrnS
-         35roo+nzt0JPFLZi5Ya2NZ4+fG6HvhNaHDvuc5I8aCLBZqklAGFbj/bRbGipn3NK7Mn/
-         qN5wQXcY6H3kkrP1BNREraHKeVzG19gQrLiudQeLl+ugUnsbIqJb1bQtyvd4vPQ+Qbtg
-         etPpJVSNcv5BB9TvgMYM6AGhHDY8P6zwG8jJDsozm7hsJSEwa74Gc7TxVIYX7aYbEVRs
-         iXqw==
-X-Gm-Message-State: AGRZ1gLiWxfRGJAz96tTVCKs/l/YPZqSJPdhLxu7+r8h40K9jYXaK2uB
-        J/UxstCBTlavWllHYUt0paxDo8Qg1Ns=
-X-Google-Smtp-Source: AJdET5cn5IgG3HO0blT+5oU7jW4901bJMfYy3iUIMpOK0MMe0eAkrUpWIqfZ5QjYYC/yFb0lvrneEA==
-X-Received: by 2002:a1c:3c4:: with SMTP id 187-v6mr12932280wmd.90.1540808647718;
-        Mon, 29 Oct 2018 03:24:07 -0700 (PDT)
-Received: from [192.168.0.40] (sju31-1-78-210-255-2.fbx.proxad.net. [78.210.255.2])
-        by smtp.googlemail.com with ESMTPSA id 64-v6sm26753027wrr.64.2018.10.29.03.24.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 03:24:06 -0700 (PDT)
-Subject: Re: [PATCH v2] thermal: qoriq: add multiple sensors support
-To:     andy.tang@nxp.com, rui.zhang@intel.com
-Cc:     edubezval@gmail.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181029093119.33971-1-andy.tang@nxp.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <27f5210f-d305-3d04-8fff-722623cb065c@linaro.org>
-Date:   Mon, 29 Oct 2018 11:24:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QKSrj5R7qlAwQbENRVeHgM/B94DGqbgniUVAbXEOv7A=;
+        b=oNBaiYM2dInrP6Sk8S8Yblv8SLK0x4xrr4kWiHY3jtjZT/s9B/U9pn0CcyXM3jTQeF
+         mkBRcRHl7IafBRGfAFU+p6YiXk7a05CbHpggDEpnufbMfJvGX6d3t988KoTSq1eq16fp
+         VUZJXGCrGhc1I9PYP51WlX4VUEZaZvB9zcICvjVBtuglzmVI7w4FJBEsvP5BBSesP6Pe
+         PpkJMbdTTUwmmrfN0EpMdjuMKwX3GG9T1XMwP2Apt9gd6axnbMtZrRJmVplDvVl7feva
+         KOFUZ/tRh5eqR4iSEKjKEp/5mAxUmCZ/2jEgXHdsm+QJeruhOMM/amppzWEqBgdIm3Nx
+         dVkA==
+X-Gm-Message-State: AGRZ1gIIqSPZhPlCuV/e4eKq0uVgapj/gLheTlGX5ourLOaJgKHR5L7X
+        xBmobMsMBWhIf+ofe36LoGPadSR6VtHsjK4AmdE=
+X-Google-Smtp-Source: AJdET5drlR3PbNeD0SfUZ2kvcnYX1She5iVtD09kTfEkl+VHFikB0ukoFxzQWaxTezOCwp9DBgG+WbWbTy22fl7xSLI=
+X-Received: by 2002:a1f:2145:: with SMTP id h66mr313596vkh.65.1540808784685;
+ Mon, 29 Oct 2018 03:26:24 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181029093119.33971-1-andy.tang@nxp.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <1540613318-23877-1-git-send-email-ren_guo@c-sky.com>
+ <CAHk-=whHhzsdgbVwRFB8oGVwnfN551HPQjtvuodf+W5dNHtjuA@mail.gmail.com> <CAK8P3a2-wyXxctVtJxniUoeShASMhF-6Z1vyvfBnr6wKJuioAQ@mail.gmail.com>
+In-Reply-To: <CAK8P3a2-wyXxctVtJxniUoeShASMhF-6Z1vyvfBnr6wKJuioAQ@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 29 Oct 2018 11:26:12 +0100
+Message-ID: <CAMuHMdU6e8vu_Kak2Avzn2WeTkmc-mjagR5tzX8BxgdH_UcYUA@mail.gmail.com>
+Subject: Re: [GIT PULL] C-SKY(csky) Port for Linux 4.20
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        Guo Ren <ren_guo@c-sky.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        c-sky_gcc_upstream@c-sky.com, guoren1983@gmail.com,
+        Marta Rybczynska <mrybczyn@kalray.eu>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/10/2018 10:31, andy.tang@nxp.com wrote:
-> From: Yuantian Tang <andy.tang@nxp.com>
-> 
-> The QorIQ Layerscape SoC has several thermal sensors but the current
-> driver only supports one.
-> 
-> Massage the code to be sensor oriented and allow the support for
-> multiple sensors.
-> 
-> Signed-off-by: Yuantian Tang <andy.tang@nxp.com>
-> ---
+On Mon, Oct 29, 2018 at 10:45 AM Arnd Bergmann <arnd@arndb.de> wrote:
+> One more general comment: I think this may well be the last new CPU
+> architecture we ever add to the kernel. Both nds32 and c-sky are made
+> by companies that also work on risc-v, and generally speaking risc-v
+> seems to be killing off any of the minor licensable instruction set projects,
+> just like ARM has mostly killed off the custom vendor-specific instruction
+> sets already. If we add another architecture in the future, it may instead
+> be something like the LLVM bitcode or WebAssembly, who knows?
 
-With the fix below:
+Kalray MPPA?
 
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Gr{oetje,eeting}s,
 
-Thanks!
+                        Geert
 
-[ ... ]
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-> +	ret = qoriq_tmu_register_tmu_zone(pdev);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "Failed to register sensors\n");
-> +		ret = -ENODEV;
-> +		goto err_iomap;
->  	
-
-	if (ret) {
-		dev_err(&pdev->dev, "Failed to register sensors\n");
-		goto err_iomap;
-	}
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
