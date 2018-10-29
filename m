@@ -2,151 +2,134 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C498C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:28:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64AFCC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:28:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 469B120657
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:28:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 469B120657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2E93020657
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:28:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D0542zzh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E93020657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727726AbeJ3CRi (ORCPT
+        id S1727762AbeJ3CSO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 22:17:38 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:41743 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727624AbeJ3CRg (ORCPT
+        Mon, 29 Oct 2018 22:18:14 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35217 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726330AbeJ3CSO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 22:17:36 -0400
-Received: by mail-io1-f71.google.com with SMTP id m17-v6so8509225ioh.8
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 10:28:03 -0700 (PDT)
+        Mon, 29 Oct 2018 22:18:14 -0400
+Received: by mail-pg1-f196.google.com with SMTP id 32-v6so4247652pgu.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 10:28:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9Nv2xOlbXaWyJXbR+LgN8wx+L6gFwy3aaGFZH/g8OlQ=;
+        b=D0542zzhcH9Nh0K1keLRaJQS+/B7WEMMDw5Q30c2LNcKEAn4YgNBgnI3W+XLj8HXio
+         GzkbUlpAqy6k047ePP8yn9ESouPYKSPc8svLRxlRLkvSO1Hhc0ZuPQrjnjRUkNWvEI+v
+         OfI0djCFyIcN10sz2/5RvPu6IicMHVNfhBWMOcWW1K2TGvrys0lsN7U0QzQEo6IPHMcB
+         fFMBSfpaPUMX1GnHK2MP2+DxzxPPmy4si0TeZ1okpHB0V/FPSzRlqXqhM3f4SxbGF3gh
+         zCBZP1aXPR6oju6Fh+TT5f+eOvDZoHO5Qwrp9L03AlOFGmnKJc6sGOGauZ1KIRYHUBRu
+         gv8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=otKv0+XOG9axzftbV3DgkApEIPQFRabqJgvg9ExHR6c=;
-        b=uLM2K9E/b0a5rR1WmABc9tS7cuqjiFErMNPQBHYHTK7wTW384xVRHdtctWZ4Bh43rl
-         mg4liL9BVtPcuA9X51dfOkaDJ2nKCS8Umm9xNxIocxIDc3JL5u/FuAHncVSHRovJF1oO
-         ujjeCzflhqM9mM0GyYgnKRwASzmFVjPzOFuzMK4zr7L6UmdpK7apqSVwlzlZdzYAXcao
-         KLIYomUl7UAuC53uDFzntFekGmEaMJVx9pyVOthvz3SNDdCBCQ6x5RABghi9YM2CIfgZ
-         kjKUGXQjNSlCbvzP3cMfuM2Nlrz6BXQnVhpGxKC7g2jarXjc21o+joSIOdnWc1REs4FA
-         LE3A==
-X-Gm-Message-State: AGRZ1gLec8vh48GWTApIpZK5cY4JjQ9ZxzX+SJ5KuCkz0MLAuCdP9oTu
-        veV2TgJ6DTjNKg/XY1kiLwQ47XcfC8K6q39Vc5fjfX8uGKVs
-X-Google-Smtp-Source: AJdET5ev9amglDaceii99jRO3at8JdzVoERpqOZX0eJTw5edQjc3rZmRFmaPQas8lco5LlEm31J3G22wwZo2s6roGrzDT33Wyckn
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9Nv2xOlbXaWyJXbR+LgN8wx+L6gFwy3aaGFZH/g8OlQ=;
+        b=fOZ8aRcdDdsbFdXWPw2noVoujHHrhnu5cpZp3bLaWvUGZbSBk/lk++bpf5hVPTKl+I
+         aB0K/Va5tD37FSJwnvFiOheEbY8zZo20/ZZDcexQmV2Mj8ZLlh6Qa2PFIQ96OY3XMf3m
+         W4X+CL8lGchXHUOrCPGXvllij2a3+bbtgQbnGyILmpon8OMs8S3zXGBKDZ3LfnI/oaED
+         B03iib+vnSYexK3im64NmJjvCJQluk2yNtXtgMYIVX6oUL8LlWw+3t4apwdoYr4yzniY
+         YYgNbEAJjBeeWhkfEfgANzYOUiRatDZrNd6fIiteHxEJ8qvNGJLL+vbiYSP4yClyqCTh
+         /CjA==
+X-Gm-Message-State: AGRZ1gLT4xTR2G/dXzu70ZRTSKNGfqR/oyvjaJr9sn+BsN66ZxfbqgPB
+        EEHZ3Y4JJxejpIhWKLQQf0WSE30kaa+jOS0M+yU9+Q==
+X-Google-Smtp-Source: AJdET5f6NlO5/EQlLVMGHjy1DiTGwHLyQnp7TgL+be2WEdxCV+u+MvE0IGov+UL5BKAj7XjlSuoh/hNUPzWfo/8PrcQ=
+X-Received: by 2002:aa7:88c2:: with SMTP id p2-v6mr16167065pfo.32.1540834119850;
+ Mon, 29 Oct 2018 10:28:39 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a24:4746:: with SMTP id t67-v6mr4007557itb.39.1540834083006;
- Mon, 29 Oct 2018 10:28:03 -0700 (PDT)
-Date:   Mon, 29 Oct 2018 10:28:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002cf4a10579616456@google.com>
-Subject: WARNING in __vb2_queue_cancel
-From:   syzbot <syzbot+736c3aae4af7b50d9683@syzkaller.appspotmail.com>
-To:     hverkuil@xs4all.nl, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, mchehab@kernel.org,
-        sakari.ailus@linux.intel.com, satendra.t@samsung.com,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <20181029105158.6340-1-natechancellor@gmail.com>
+In-Reply-To: <20181029105158.6340-1-natechancellor@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Mon, 29 Oct 2018 10:28:28 -0700
+Message-ID: <CAKwvOdmkPFC5SPNVTXeRdrE-vnbjYiDdXr_ZCArmvYYVtsYKVQ@mail.gmail.com>
+Subject: Re: [PATCH] hinic: Fix l4_type parameter in hinic_task_set_tunnel_l4
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     aviad.krawczyk@huawei.com, "David S. Miller" <davem@davemloft.net>,
+        netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Mon, Oct 29, 2018 at 3:54 AM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> Clang warns:
+>
+> drivers/net/ethernet/huawei/hinic/hinic_tx.c:392:34: error: implicit
+> conversion from enumeration type 'enum hinic_l4_tunnel_type' to
+> different enumeration type 'enum hinic_l4_offload_type'
+> [-Werror,-Wenum-conversion]
+>                 hinic_task_set_tunnel_l4(task, TUNNEL_UDP_NO_CSUM,
+>                 ~~~~~~~~~~~~~~~~~~~~~~~~       ^~~~~~~~~~~~~~~~~~
+> 1 error generated.
+>
+> It seems that hinic_task_set_tunnel_l4 was meant to take an enum of type
+> hinic_l4_tunnel_type, not hinic_l4_offload_type, given both the name of
+> the functions and the values used.
 
-syzbot found the following crash on:
+I agree. Thanks for fixing this up, Nathan!
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
-HEAD commit:    9f51ae62c84a Merge git://git.kernel.org/pub/scm/linux/kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11f0dbe5400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=62118286bb772a24
-dashboard link: https://syzkaller.appspot.com/bug?extid=736c3aae4af7b50d9683
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ffc90b400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=147dd1c5400000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+736c3aae4af7b50d9683@syzkaller.appspotmail.com
-
-WARNING: CPU: 1 PID: 5722 at  
-drivers/media/common/videobuf2/videobuf2-core.c:1667  
-__vb2_queue_cancel+0x89d/0xca0  
-drivers/media/common/videobuf2/videobuf2-core.c:1667
-Kernel panic - not syncing: panic_on_warn set ...
-
-CPU: 1 PID: 5722 Comm: syz-executor576 Not tainted 4.19.0+ #309
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  panic+0x238/0x4e7 kernel/panic.c:184
-  __warn.cold.8+0x20/0x4a kernel/panic.c:536
-  report_bug+0x254/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
-  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:966
-RIP: 0010:__vb2_queue_cancel+0x89d/0xca0  
-drivers/media/common/videobuf2/videobuf2-core.c:1667
-Code: 48 8b 45 d0 65 48 33 04 25 28 00 00 00 0f 85 88 03 00 00 48 81 c4 b0  
-01 00 00 5b 41 5c 41 5d 41 5e 41 5f 5d c3 e8 83 9f 34 fc <0f> 0b 48 8b 85  
-70 fe ff ff 48 05 28 02 00 00 48 89 85 40 fe ff ff
-RSP: 0018:ffff8801d5a9f878 EFLAGS: 00010293
-RAX: ffff8801d482c680 RBX: ffff8801d5a9fa28 RCX: ffffffff854abdf8
-RDX: 0000000000000000 RSI: ffffffff854ac47d RDI: 0000000000000005
-RBP: ffff8801d5a9fa50 R08: ffff8801d482c680 R09: ffffed003977abbf
-R10: ffffed003977abbf R11: ffff8801cbbd5dff R12: ffff8801cbbd5dfc
-R13: dffffc0000000000 R14: 0000000000000002 R15: ffff8801cbbd0d08
-  vb2_core_streamoff+0x60/0x140  
-drivers/media/common/videobuf2/videobuf2-core.c:1795
-  __vb2_cleanup_fileio+0x73/0x160  
-drivers/media/common/videobuf2/videobuf2-core.c:2316
-  vb2_core_queue_release+0x1e/0x80  
-drivers/media/common/videobuf2/videobuf2-core.c:2043
-  vb2_queue_release drivers/media/common/videobuf2/videobuf2-v4l2.c:672  
-[inline]
-  _vb2_fop_release+0x1d2/0x2b0  
-drivers/media/common/videobuf2/videobuf2-v4l2.c:843
-  vb2_fop_release+0x77/0xc0  
-drivers/media/common/videobuf2/videobuf2-v4l2.c:857
-  vivid_fop_release+0x18e/0x440 drivers/media/platform/vivid/vivid-core.c:474
-  v4l2_release+0xfb/0x1a0 drivers/media/v4l2-core/v4l2-dev.c:448
-  __fput+0x385/0xa30 fs/file_table.c:278
-  ____fput+0x15/0x20 fs/file_table.c:309
-  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
-  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x405591
-Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 94 17 00 00 c3 48  
-83 ec 08 e8 6a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48  
-89 c2 e8 b3 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
-RSP: 002b:00007ffd801e3640 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
-RAX: 0000000000000000 RBX: 0000000000000003 RCX: 0000000000405591
-RDX: 0000000000000000 RSI: 0000000000000080 RDI: 0000000000000003
-RBP: 00000000000003e8 R08: 00000000000003e8 R09: 0000000000000000
-R10: 00007ffd801e3650 R11: 0000000000000293 R12: 00000000006dbc2c
-R13: 000000000000002d R14: 0000000000000003 R15: 00000000006dbc20
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+>
+> Fixes: cc18a7543d2f ("net-next/hinic: add checksum offload and TSO support")
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> ---
+>  drivers/net/ethernet/huawei/hinic/hinic_hw_qp.c | 2 +-
+>  drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.c b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.c
+> index 967c993d5303..bbf9bdd0ee3e 100644
+> --- a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.c
+> +++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.c
+> @@ -532,7 +532,7 @@ void hinic_task_set_inner_l3(struct hinic_sq_task *task,
+>  }
+>
+>  void hinic_task_set_tunnel_l4(struct hinic_sq_task *task,
+> -                             enum hinic_l4_offload_type l4_type,
+> +                             enum hinic_l4_tunnel_type l4_type,
+>                               u32 tunnel_len)
+>  {
+>         task->pkt_info2 |= HINIC_SQ_TASK_INFO2_SET(l4_type, TUNNEL_L4TYPE) |
+> diff --git a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
+> index a0dc63a4bfc7..038522e202b6 100644
+> --- a/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
+> +++ b/drivers/net/ethernet/huawei/hinic/hinic_hw_qp.h
+> @@ -160,7 +160,7 @@ void hinic_task_set_inner_l3(struct hinic_sq_task *task,
+>                              u32 network_len);
+>
+>  void hinic_task_set_tunnel_l4(struct hinic_sq_task *task,
+> -                             enum hinic_l4_offload_type l4_type,
+> +                             enum hinic_l4_tunnel_type l4_type,
+>                               u32 tunnel_len);
+>
+>  void hinic_set_cs_inner_l4(struct hinic_sq_task *task,
+> --
+> 2.19.1
+>
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+-- 
+Thanks,
+~Nick Desaulniers
