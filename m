@@ -2,154 +2,129 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F289C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:57:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3819C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:58:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AD5A20657
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:57:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6700620870
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:58:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uvabOtmE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AD5A20657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="NVKqkmWQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6700620870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brauner.io
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727524AbeJ2Xp7 (ORCPT
+        id S1727355AbeJ2Xr3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 19:45:59 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38699 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726035AbeJ2Xp6 (ORCPT
+        Mon, 29 Oct 2018 19:47:29 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:40069 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726580AbeJ2Xr3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 19:45:58 -0400
-Received: by mail-pf1-f196.google.com with SMTP id b11-v6so4154743pfi.5;
-        Mon, 29 Oct 2018 07:56:59 -0700 (PDT)
+        Mon, 29 Oct 2018 19:47:29 -0400
+Received: by mail-wm1-f66.google.com with SMTP id b203-v6so8289596wme.5
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 07:58:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=brauner.io; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=IusJJhakUU7MEBNIT7tc+H0KmzYjjL0B/+9I2KbAtxI=;
-        b=uvabOtmE6T0kbxa/+gfZEsVGF0gujpx6ykjkjpF8GL6OgevsLWRKWwFTfuMuecAsy9
-         FIdJo6WgN1WHut5scspyLXk6TGCImVG039Q0djUkTRlDTln8T+M/Lz8UTZgWSkGksSAr
-         /oEQngHxTA8ENodCM/GjQ0uf2eAsm7bvWn8+KBNx+Oze4/89zkW5ZysRjaKYTRN1TotX
-         mhlkTqX5kfX1JX0N+fmbE+YHUWtfwHjZ5LMMpQA8oACC0WtK0Vvj3zq5WMKMbFilTVYF
-         q4ZJBlUhUj/F+17g7heJrDNVY4pd8rJWhadhxisLSNVlAyGibjgn+TqqHeXaK+Ib2Uks
-         C2xw==
+        bh=vPKZVKpVBlWevOi1yl6o147IiQoFsMY88pDy5N0Ej6M=;
+        b=NVKqkmWQfjL9yY4fB1CEoAd0kEpA+X7ClaVpQeIBuvraNP9KiTNBZwWOtGvVrEP0+J
+         boMODjaBCSGZW7GeVHEk2jWqcYoNitmI2JF/dxNy9Uhwf6x02Mm3bHPiQMrCEmOJ4HGX
+         sU1VgLQ7loADW4axSqDvNXwK72Ctetj/vXeeR8GBVhJyJpy/0dx+HOGKoABWUnZ1OUCe
+         wTtSZuJIM3Jr/ki1jHckkEhzCJKnGtf8w5YNvnzjr3q69gaPFt84165AJzw8kPdBn5f4
+         c0s/uz2mtdesj86zTso3FtOsKiKnJuv2q96ACRg1BWZAuUV2C0xAkMPC3dVLZedM0b38
+         6kFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IusJJhakUU7MEBNIT7tc+H0KmzYjjL0B/+9I2KbAtxI=;
-        b=aSTpBGee3rbhn6jacbM7/zCMJpkroYVXrtzIgbABqliBB4yze41YAgMr6pLTgxFFGe
-         /dhxntnx5u4EtByIJaOZMLk4wqCgEAWsdHJcbifJNq7Yk1zgUzqm5dJZf42upukWRWNg
-         9ujhQxme7Yc/6eA66LmsIcxsKS+K3KhlJZnqXeODb73uWEJh6JD3JkQWkaxzPLJRmDu6
-         yAiZWm+Hmgf+qBR8LnzvM579I+ihUzMmHI7LDEeF7+4SmoLmlSnzJf3ACcYRnUs6KqO1
-         dqhQwLTW7hVe2dc+WZ28oveft9d/LMk0nyJPyx7hwqrxHlpAKzp4479Rdl+NBfH9umK8
-         k5Nw==
-X-Gm-Message-State: AGRZ1gKHljZ/ZupEP6PP2zk2uA9xN07GBEmVd9LdysIJ36ptfyQbhcS3
-        ps3m6asnVEMTQyLDV1JEeak=
-X-Google-Smtp-Source: AJdET5eWsXYzCCa0JG4ArfA7fYB4rnV+4huLKls3Sh6EHsmFV5N+ra3agWyA9AtC0se0g/GsQbfNcw==
-X-Received: by 2002:a63:504d:: with SMTP id q13mr6831159pgl.319.1540825018797;
-        Mon, 29 Oct 2018 07:56:58 -0700 (PDT)
-Received: from mail.google.com ([2001:19f0:6001:4ff6:5400:1ff:feb7:a195])
-        by smtp.gmail.com with ESMTPSA id i13-v6sm5537111pgs.51.2018.10.29.07.56.57
+        bh=vPKZVKpVBlWevOi1yl6o147IiQoFsMY88pDy5N0Ej6M=;
+        b=CPZRh7WV+I9acJhCYwQx3YGtLmT/HPuWrc+GpP0JLXG7ccFhBeTiJ6DNYmIVRzu1av
+         3HCnDbleoMaUF2ZylVZBAdmDPtTBzNU6g0SyBe8a0n0lTcFb3DiRsNMonrhL8zcZOZLW
+         AN73UFG3aaEyfKlJR3UckXgrpeSM62Lk4kezxkaG4ZacgVsAJjRfn2XHgAGivvK+/HQR
+         FuH3r0vDRpsaiDxDiz4Eo2PDkP3nVMpUG5wGvjtjcUq26uP9zVHN1wphoFjQ6dOQxpIu
+         skn4qKJElFAxsE6oloVMzgbTvr+gi1rLShzA8e+z2FaDiz+h5d1THSq7j5A163Hezem2
+         8dsA==
+X-Gm-Message-State: AGRZ1gIcU4lDhOSRMeb+wymVZJC+L9r2nNu99y47nULyV1ChkI5JzIk7
+        /p6jA1IDMk+XKrfHR1lT0V2iFQ==
+X-Google-Smtp-Source: AJdET5foYkB/VFK8otgR0NpJJDe4K3/l+YZj/g1vST2bUU1MwvjhzQgBYzDtVlnEo7e0p5AAI/7N/A==
+X-Received: by 2002:a1c:6483:: with SMTP id y125-v6mr13347866wmb.66.1540825107406;
+        Mon, 29 Oct 2018 07:58:27 -0700 (PDT)
+Received: from brauner.io ([2a02:8070:8895:9700:6d7a:7ba6:535c:106b])
+        by smtp.gmail.com with ESMTPSA id k4-v6sm5209910wro.68.2018.10.29.07.58.25
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Oct 2018 07:56:58 -0700 (PDT)
-Date:   Mon, 29 Oct 2018 14:56:56 +0000
-From:   Changbin Du <changbin.du@gmail.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Changbin Du <changbin.du@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>, X86 ML <x86@kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org, Robin Murphy <robin.murphy@arm.com>
-Subject: Re: [PATCH v2 4/4] kernel hacking: new config
- CC_OPTIMIZE_FOR_DEBUGGING to apply GCC -Og optimization
-Message-ID: <20181029145655.vzlhz7dipzmpw52m@mail.google.com>
-References: <20181019124921.13780-1-changbin.du@gmail.com>
- <20181019124921.13780-5-changbin.du@gmail.com>
- <CAK7LNARW0=0d7m5DAgZOir=h0Y4tssqZoQRGasnGPNnvNf_+pg@mail.gmail.com>
- <20181028125106.azcn2dxia3snplin@mail.google.com>
- <CAK7LNARr7bE=DVuzim5771heuN5os0=5-D+jXfUyBb2e1xYoRA@mail.gmail.com>
- <20181028131357.parhzj32feapxncb@mail.google.com>
- <CAK7LNAQ0iZDHP8zQZ_Ws4Wy4H6rwiV5p-A0bM1yVJLP51sqQeg@mail.gmail.com>
+        Mon, 29 Oct 2018 07:58:26 -0700 (PDT)
+Date:   Mon, 29 Oct 2018 15:58:19 +0100
+From:   Christian Brauner <christian@brauner.io>
+To:     keescook@chromium.org, linux-kernel@vger.kernel.org
+Cc:     ebiederm@xmission.com, mcgrof@kernel.org,
+        akpm@linux-foundation.org, joe.lawrence@redhat.com,
+        longman@redhat.com, linux@dominikbrodowski.net,
+        viro@zeniv.linux.org.uk, adobriyan@gmail.com,
+        linux-api@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] sysctl: handle overflow for file-max
+Message-ID: <20181029145818.4bqmy25itjnqhodg@brauner.io>
+References: <20181016223322.16844-1-christian@brauner.io>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAK7LNAQ0iZDHP8zQZ_Ws4Wy4H6rwiV5p-A0bM1yVJLP51sqQeg@mail.gmail.com>
-User-Agent: NeoMutt/20180716-508-7c9a6d
+In-Reply-To: <20181016223322.16844-1-christian@brauner.io>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 10:01:44PM +0900, Masahiro Yamada wrote:
-> Hi.
+On Wed, Oct 17, 2018 at 12:33:20AM +0200, Christian Brauner wrote:
+> Hey,
 > 
+> Here is v3 of this patchset. Changelogs are in the individual commits.
 > 
-> On Sun, Oct 28, 2018 at 10:14 PM Changbin Du <changbin.du@gmail.com> wrote:
-> >
-> > On Sun, Oct 28, 2018 at 10:09:21PM +0900, Masahiro Yamada wrote:
-> > > Hi Changbin,
-> > >
-> > > On Sun, Oct 28, 2018 at 9:52 PM Changbin Du <changbin.du@gmail.com> wrote:
-> > >
-> > > > >
-> > > > Thanks for pointing this out and kind suggestions. I have tested with your
-> > > > modification. Will update patch serias soon.
-> > >
-> > >
-> > > I have one more request.
-> > >
-> > > The patch subject
-> > > "kernel hacking: new config CC_OPTIMIZE_FOR_DEBUGGING to apply GCC -Og
-> > > optimization"
-> > > is too long (83 characters)
-> > >
-> > >
-> > > I'd like the subject to be within 70 columns or so.
-> > >
-> > oh, I just sent new version. Could me update the title if there are more
-> > suggestions then?
+> Currently, when writing
 > 
+> echo 18446744073709551616 > /proc/sys/fs/file-max
 > 
+> /proc/sys/fs/file-max will overflow and be set to 0. That quickly
+> crashes the system.
 > 
-> How about this?
+> The first version of this patch intended to detect the overflow and cap
+> at ULONG_MAX. However, we should not do this and rather return EINVAL on
+> overflow. The reasons are:
+> - this aligns with other sysctl handlers that simply reject overflows
+>   (cf. [1], [2], and a bunch of others)
+> - we already do a partial fail on overflow right now
+>   Namely, when the TMPBUFLEN is exceeded. So we already reject values
+>   such as 184467440737095516160 (21 chars) but accept values such as
+>   18446744073709551616 (20 chars) but both are overflows. So we should
+>   just always reject 64bit overflows and not special-case this based on
+>   the number of chars.
 > 
-> 2/4: kernel hacking: add a config option to disable compiler auto-inlining
-> 3/4: ARM: mm: fix build error in fix_to_virt with -Og optimization level
-> 4/4: kernel hacking: support building kernel with -Og optimization level
-> 
-> (The CONFIG name is so long that the subject
-> would easily exceeds 80-columns with it.)
-> 
-> 
-> I applied this series to linux-kbuild,
-> and will send another pull request in this MW.
-> 
-> 
-> If you come up with better patch titles,
-> please let me know.
-> I will fix them up locally.
->
-I am just fine with these new titles. Thanks.
+> (This patchset is in reference to https://lkml.org/lkml/2018/10/11/585.)
+
+Just so that we don't forget, can we make sure that this gets picked
+into linux-next? :)
+
+Christian
 
 > 
+> Thanks!
+> Christian
+> 
+> [1]: fb910c42cceb ("sysctl: check for UINT_MAX before unsigned int min/max")
+> [2]: 196851bed522 ("s390/topology: correct topology mode proc handler")
+> 
+> Christian Brauner (2):
+>   sysctl: handle overflow in proc_get_long
+>   sysctl: handle overflow for file-max
+> 
+>  kernel/sysctl.c | 47 ++++++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 46 insertions(+), 1 deletion(-)
 > 
 > -- 
-> Best Regards
-> Masahiro Yamada
-
--- 
-Thanks,
-Changbin Du
+> 2.17.1
+> 
