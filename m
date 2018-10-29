@@ -2,123 +2,112 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 556D7C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34ACAC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:54:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24D6D20657
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:52:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24D6D20657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id DD3DF20657
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:54:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aVVVWU9R";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="aVVVWU9R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD3DF20657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727610AbeJ2XlC (ORCPT
+        id S1727162AbeJ2Xnp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 19:41:02 -0400
-Received: from foss.arm.com ([217.140.101.70]:41706 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726035AbeJ2XlC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 19:41:02 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 71103341;
-        Mon, 29 Oct 2018 07:52:04 -0700 (PDT)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1896D3F71D;
-        Mon, 29 Oct 2018 07:52:02 -0700 (PDT)
-Subject: Re: [PATCH] arm: mm: fault: check ADFSR in case of abort
-To:     "Wiebe, Wladislav (Nokia - DE/Ulm)" <wladislav.wiebe@nokia.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "tony@atomide.com" <tony@atomide.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "ebiederm@xmission.com" <ebiederm@xmission.com>,
-        "jrdr.linux@gmail.com" <jrdr.linux@gmail.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <HE1PR0702MB37567D530C1C1D45949C164BFAF30@HE1PR0702MB3756.eurprd07.prod.outlook.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <d9195ffb-f766-363e-21f3-e3737526c7de@arm.com>
-Date:   Mon, 29 Oct 2018 14:52:01 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 29 Oct 2018 19:43:45 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46348 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726035AbeJ2Xnp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 19:43:45 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id A74AC60744; Mon, 29 Oct 2018 14:54:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540824886;
+        bh=54+gFFfnokpRiB0H4nbjotsXLcsVsFrujc56tUtFGRE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=aVVVWU9RpN6zp5HkFKIoRaM6+KLbPYMYMfljW8iSs+iWSNBYki8Ub0fYSKTRwiVFy
+         B2ZFlnVu33/PefSVLtJRMh+z4nzVapLrkji5AzrzyOVODeg3rwNpt0CQKLPdBW6bYu
+         xrMBtWEV6zylVvu+RsJoDS67zv1gQ4bJm446caZQ=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 37C7D6029D;
+        Mon, 29 Oct 2018 14:54:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1540824886;
+        bh=54+gFFfnokpRiB0H4nbjotsXLcsVsFrujc56tUtFGRE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=aVVVWU9RpN6zp5HkFKIoRaM6+KLbPYMYMfljW8iSs+iWSNBYki8Ub0fYSKTRwiVFy
+         B2ZFlnVu33/PefSVLtJRMh+z4nzVapLrkji5AzrzyOVODeg3rwNpt0CQKLPdBW6bYu
+         xrMBtWEV6zylVvu+RsJoDS67zv1gQ4bJm446caZQ=
 MIME-Version: 1.0
-In-Reply-To: <HE1PR0702MB37567D530C1C1D45949C164BFAF30@HE1PR0702MB3756.eurprd07.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
+Date:   Mon, 29 Oct 2018 20:24:46 +0530
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc:     andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
+        bjorn.andersson@linaro.org, dianders@chromium.org,
+        evgreen@chromium.org, benchan@chromium.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        tsoni@codeaurora.org
+Subject: Re: [PATCH] arm64: dts: qcom: sdm845: Add SCM DT node
+In-Reply-To: <9fb3d2d2-37b5-27d2-ad27-45c77ebe1df2@linaro.org>
+References: <20181026122542.4714-1-sibis@codeaurora.org>
+ <9fb3d2d2-37b5-27d2-ad27-45c77ebe1df2@linaro.org>
+Message-ID: <24ab0b3496de7809cc49479ea33c2eab@codeaurora.org>
+X-Sender: sibis@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/10/2018 14:20, Wiebe, Wladislav (Nokia - DE/Ulm) wrote:
-> When running into situations like:
-> "Unhandled fault: synchronous external abort (0x210) at 0xXXX"
-> or
-> "Unhandled prefetch abort: synchronous external abort (0x210) at 0xXXX"
-> it is useful to know the content of ADFSR (Auxiliary Data Fault Status
-> Register) to indicate an ECC double-bit error in L1 or L2 cache.
-> 
-> Refer to:
-> Cortex-A15 Technical Reference Manual, Revision: r2p1
-> [6.4.8. Error Correction Code]
+Hi Stan,
+Thanks for the review!
 
-The contents of ADFSR are implementation-defined, though, so this 
-interpretation is *only* valid on Cortex-A15. Other processors may use 
-those bit positions to report something else, at which point printing a 
-message about ECC errors would be totally misleading.
-
-Robin.
-
-> Signed-off-by: Wladislav Wiebe <wladislav.wiebe@nokia.com>
-> ---
->   arch/arm/mm/fault.c | 18 ++++++++++++++++++
->   1 file changed, 18 insertions(+)
+On 2018-10-29 15:02, Stanimir Varbanov wrote:
+> Hi Sibi,
 > 
-> diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
-> index 3232afb6fdc0..5e240deb6ed6 100644
-> --- a/arch/arm/mm/fault.c
-> +++ b/arch/arm/mm/fault.c
-> @@ -547,6 +547,22 @@ hook_fault_code(int nr, int (*fn)(unsigned long, unsigned int, struct pt_regs *)
->   	fsr_info[nr].name = name;
->   }
->   
-> +/*
-> + * Check for ECC double-bit errors in Auxiliary Data Fault Status Register
-> + */
-> +static void check_adfsr_for_ecc(void)
-> +{
-> +	u32 adfsr = 0;
-> +
-> +	asm("mrc p15, 0, %0, c5, c1, 0" : "=r" (adfsr));
-> +
-> +	if (adfsr & (BIT(31) | BIT(23))) {
-> +		pr_alert("ADFSR status 0x%x indicates that an L1 or L2 cache\n"
-> +			 "ECC double-bit error occurred at some time.\n",
-> +			  adfsr);
-> +	}
-> +}
-> +
->   /*
->    * Dispatch a data abort to the relevant handler.
->    */
-> @@ -559,6 +575,7 @@ do_DataAbort(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
->   	if (!inf->fn(addr, fsr & ~FSR_LNX_PF, regs))
->   		return;
->   
-> +	check_adfsr_for_ecc();
->   	pr_alert("Unhandled fault: %s (0x%03x) at 0x%08lx\n",
->   		inf->name, fsr, addr);
->   	show_pte(current->mm, addr);
-> @@ -593,6 +610,7 @@ do_PrefetchAbort(unsigned long addr, unsigned int ifsr, struct pt_regs *regs)
->   	if (!inf->fn(addr, ifsr | FSR_LNX_PF, regs))
->   		return;
->   
-> +	check_adfsr_for_ecc();
->   	pr_alert("Unhandled prefetch abort: %s (0x%03x) at 0x%08lx\n",
->   		inf->name, ifsr, addr);
->   
+> On 10/26/2018 03:25 PM, Sibi Sankar wrote:
+>> Add SCM DT node to enable SCM functionality on SDM845.
+>> 
+>> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+>> ---
+>>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 6 ++++++
+>>  1 file changed, 6 insertions(+)
+>> 
+>> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi 
+>> b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>> index b72bdb0a31a5..fad22acfda4d 100644
+>> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+>> @@ -221,6 +221,12 @@
+>>  		};
+>>  	};
+>> 
+>> +	firmware {
+>> +		scm {
+>> +			compatible = "qcom,scm-sdm845", "qcom,scm";
+>> +		};
+>> +	};
 > 
+> What will happen if the platform is without tz firmware? I'd move this
+> DT node in sdm845-mtp.dts or at least make it status = disabled.
+
+Even in the absence of tz firmware, ATF is expected to implement the 
+necessary
+handlers for the SMC calls so I don't think it is necessary to keep it 
+disabled.
+
+-- 
+-- Sibi Sankar --
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project.
