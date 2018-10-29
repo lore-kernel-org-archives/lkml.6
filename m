@@ -2,91 +2,101 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18BBAC2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 02:29:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D78AFC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 02:30:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5B9F2082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 02:29:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5B9F2082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tencent.com
+	by mail.kernel.org (Postfix) with ESMTP id 9F65E2082D
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 02:30:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qoUpw6Jl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F65E2082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729155AbeJ2LQG (ORCPT
+        id S1729163AbeJ2LRG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 07:16:06 -0400
-Received: from mail4.tencent.com ([183.57.53.109]:60997 "EHLO
-        mail4.tencent.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729128AbeJ2LQG (ORCPT
+        Mon, 29 Oct 2018 07:17:06 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:37082 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729050AbeJ2LRG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 07:16:06 -0400
-Received: from EXHUB-SZMAIL04.tencent.com (unknown [10.14.6.35])
-        by mail4.tencent.com (Postfix) with ESMTP id 312DC5015D;
-        Mon, 29 Oct 2018 10:29:27 +0800 (CST)
-Received: from EXMBX-SZMAIL022.tencent.com ([fe80::dcc:e364:cd45:89d9]) by
- EXHUB-SZMAIL04.tencent.com ([::1]) with mapi id 14.03.0415.000; Mon, 29 Oct
- 2018 10:29:17 +0800
-From:   =?utf-8?B?Y2hvdXJ5emhvdSjlkajlqIEp?= <chouryzhou@tencent.com>
-To:     Todd Kjos <tkjos@google.com>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?utf-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "dave@stgolabs.net" <dave@stgolabs.net>,
-        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        =?utf-8?B?Y2hvdXJ5emhvdSjlkajlqIEp?= <chouryzhou@tencent.com>
-Subject: RE: [PATCH] binder: ipc namespace support for android binder
-Thread-Topic: [PATCH] binder: ipc namespace support for android binder
-Thread-Index: AdRvLq/0N5Jg5ds8SyKSO/9pZfjvhg==
-Date:   Mon, 29 Oct 2018 02:29:08 +0000
-Message-ID: <5FBCBE569E134E4CA167B91C0A77FD610198F6B4F6@EXMBX-SZMAIL022.tencent.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.96.209.37]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 29 Oct 2018 07:17:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=HgVFgci+gjDF7DF5bd6K2ongmaAjKrHaNK3ZkD4uZPQ=; b=qoUpw6JlTu2E46hzop7Msu8Sh
+        UtVNFkbZ8aA92MtV4P6RKqq9F/JlYOPmHPzmkRflNhXX3MwkdBtJO6f25LpaMSqWVBvyVWYv2TZbC
+        I6vbWI91pdjJalWv/Fe+N7pkquXDl3JZpZMeSrtVa2oAxSmm613tUtHny6UOQa/hsnkNYX9kyPVgA
+        Hs6wo/cHOsfZwJi1wynKE0tYVXPwHxDJjWfbOx8LC7Vs/IHS2oVfb16DvmBc1H2RVsFl6nU2ITlez
+        mAi9zO4RWwGZqntB9qMFAShH56uVVgfXyNkr0ZC0nk+052In7q7n9ayuhoxKDwceGpBIHVz8M38o0
+        hVTcecWiA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gGxJz-0002ef-1T; Mon, 29 Oct 2018 02:30:27 +0000
+Date:   Sun, 28 Oct 2018 19:30:26 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     miles.chen@mediatek.com
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        wsd_upstream@mediatek.com, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        Joe Perches <joe@perches.com>, Michal Hocko <mhocko@kernel.org>
+Subject: Re: [PATCHv2] mm/page_owner: use kvmalloc instead of kmalloc
+Message-ID: <20181029023026.GC28520@bombadil.infradead.org>
+References: <1540779403-27622-1-git-send-email-miles.chen@mediatek.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1540779403-27622-1-git-send-email-miles.chen@mediatek.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Pj4gSGkNCj4+ICAgV2UgYXJlIHdvcmtpbmcgZm9yIHJ1bm5pbmcgYW5kcm9pZCBpbiBjb250YWlu
-ZXIsIGJ1dCB3ZSBmb3VuZCB0aGF0IGJpbmRlciBpcw0KPj4gbm90IGlzb2xhdGVkIGJ5IGlwYyBu
-YW1lc3BhY2UuIFNpbmNlIGJpbmRlciBpcyBhIGZvcm0gb2YgSVBDIGFuZCB0aGVyZWZvcmUgc2hv
-dWxkDQo+PiBiZSB0aWVkIHRvIGlwYyBuYW1lc3BhY2UuIFdpdGggdGhpcyBwYXRjaCwgd2UgY2Fu
-IHJ1biBtb3JlIHRoYW4gb25lIGFuZHJvaWQNCj4+IGNvbnRhaW5lciBvbiBvbmUgaG9zdC4NCj4+
-ICAgVGhpcyBwYXRjaCBtb3ZlICJiaW5kZXJfcHJvY3MiIGFuZCAiYmluZGVyX2NvbnRleHQiIGlu
-dG8gaXBjX25hbWVzcGFjZSwNCj4+IGRyaXZlciB3aWxsIGZpbmQgdGhlIGNvbnRleHQgZnJvbSBp
-dCB3aGVuIG9wZW5pbmcuIEFsdGhvdWdodCBzdGF0aXN0aWNzIGluIGRlYnVnZnMNCj4+IHJlbWFp
-biBnbG9iYWwuDQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogY2hvdXJ5IHpob3UgPGNob3VyeXpob3VA
-dGVuY2VudC5jb20+DQo+PiAtLS0NCj4+ICBkcml2ZXJzL2FuZHJvaWQvS2NvbmZpZyAgICAgICB8
-ICAgMiArLQ0KPj4gIGRyaXZlcnMvYW5kcm9pZC9iaW5kZXIuYyAgICAgIHwgMTI2ICsrKysrKysr
-KysrKysrKysrKysrKysrKystLS0tLS0tLS0NCj4+ICBpbmNsdWRlL2xpbnV4L2lwY19uYW1lc3Bh
-Y2UuaCB8ICAxNCArKysrDQo+PiAgaXBjL25hbWVzcGFjZS5jICAgICAgICAgICAgICAgfCAgIDQg
-KysNCj4+ICA0IGZpbGVzIGNoYW5nZWQsIDExMSBpbnNlcnRpb25zKCspLCAzNSBkZWxldGlvbnMo
-LSkNCj4+DQo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9hbmRyb2lkL0tjb25maWcgYi9kcml2ZXJz
-L2FuZHJvaWQvS2NvbmZpZw0KPj4gaW5kZXggNDMyZTlhZDc3MDcwLi4wOTg4MzQ0M2IyZGEgMTAw
-NjQ0DQo+PiAtLS0gYS9kcml2ZXJzL2FuZHJvaWQvS2NvbmZpZw0KPj4gKysrIGIvZHJpdmVycy9h
-bmRyb2lkL0tjb25maWcNCj4+IEBAIC0xMCw3ICsxMCw3IEBAIGlmIEFORFJPSUQNCj4+DQo+PiAg
-Y29uZmlnIEFORFJPSURfQklOREVSX0lQQw0KPj4gICAgICAgICBib29sICJBbmRyb2lkIEJpbmRl
-ciBJUEMgRHJpdmVyIg0KPj4gLSAgICAgICBkZXBlbmRzIG9uIE1NVQ0KPj4gKyAgICAgICBkZXBl
-bmRzIG9uIE1NVSAmJiBTWVNWSVBDDQo+IA0KPiBOQUsuIFdlIGNhbid0IGZvcmNlIFNZU1ZJUEMg
-b24gZm9yIEFuZHJvaWQuIFRoZSBub3Rpb24gb2YgcnVubmluZw0KPiBiaW5kZXIgaW4gYSBjb250
-YWluZXIgaXMgcmVhc29uYWJsZSwgYnV0IG5lZWRzIHRvIGJlIGRvbmUgd2l0aG91dA0KPiBleHBs
-aWNpdCByZXF1aXJlbWVudCBmb3IgU1lTVklQQy4gYmluZGVyLWluLWNvbnRhaW5lciBpcyBhIHRv
-cGljIGluDQo+IHRoZSBhbmRyb2lkIG1pY3JvY29uZiBhdCBMaW51eCBwbHVtYmVycyAtLSBhcmUg
-eW91IGdvaW5nIHRvIGJlIGF0IExQQz8NCj4gDQpXZSBoYXZlIG5vIHBsYW4gdG8gZ29pbmcgdG8g
-YXR0ZW5kIExQQyB0ZW1wb3JhcmlseS4NCg0KPiBJdCdzIG5vdCBvYnZpb3VzIGZyb20gdGhpcyBw
-YXRjaCB3aGVyZSB0aGlzIGRlcGVuZGVuY3kgY29tZXMNCj4gZnJvbS4uLndoeSBpcyBTWVNWSVBD
-IHJlcXVpcmVkPyBJJ2QgbGlrZSB0byBub3QgaGF2ZSB0byByZXF1aXJlIElQQ19OUw0KPiBlaXRo
-ZXIgZm9yIGRldmljZXMuDQoNClllcywgdGhlIHBhdGNoIGlzIG5vdCBoaWdobHkgZGVwZW5kZW50
-IG9uIFNZU1ZJUEMsIGJ1dCBpdCB3aWxsIGJlIGNvbnZlbmllbnQNCmlmIHJlcXVpcmUgaXQuIEkg
-d2lsbCB1cGRhdGUgaXQgdG8gZHJvcCBkZXBlbmRlbmN5IG9mIGl0IGluIFYyIHBhdGNoLiBUaGlz
-IHBhdGNoDQpkb2Vzbid0IG5lZWQgSVBDX05TIHNldCBhdCBwcmVzZW50Lg0K
+On Mon, Oct 29, 2018 at 10:16:43AM +0800, miles.chen@mediatek.com wrote:
+> The kbuf used by page owner is allocated by kmalloc(), which means it
+> can use only normal memory and there might be a "out of memory"
+> issue when we're out of normal memory.
+> 
+> Use kvmalloc() so we can also allocate kbuf from
+> normal/hihghmem on 32bit kernel.
+
+That's a misconception:
+
+        ret = kmalloc_node(size, kmalloc_flags, node);
+
+        /*
+         * It doesn't really make sense to fallback to vmalloc for sub page
+         * requests
+         */
+        if (ret || size <= PAGE_SIZE)
+                return ret;
+
+Now, maybe this is an opportunity for us to improve kvmalloc.  Maybe like
+this ...
+
+diff --git a/mm/util.c b/mm/util.c
+index 8bf08b5b5760..fdf5b34d2c28 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -416,10 +416,10 @@ void *kvmalloc_node(size_t size, gfp_t flags, int node)
+ 	ret = kmalloc_node(size, kmalloc_flags, node);
+ 
+ 	/*
+-	 * It doesn't really make sense to fallback to vmalloc for sub page
+-	 * requests
++	 * It only makes sense to fallback to vmalloc for sub page
++	 * requests if we might be able to allocate highmem pages.
+ 	 */
+-	if (ret || size <= PAGE_SIZE)
++	if (ret || (!IS_ENABLED(CONFIG_HIGHMEM) && size <= PAGE_SIZE))
+ 		return ret;
+ 
+ 	return __vmalloc_node_flags_caller(size, node, flags,
