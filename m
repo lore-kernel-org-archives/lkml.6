@@ -2,69 +2,84 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD861C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 07:43:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03B4EC46475
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 07:49:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E6CA2082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 07:43:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E6CA2082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id C04CA20851
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 07:49:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oFM98eQT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C04CA20851
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729108AbeJ2Qaw (ORCPT
+        id S1729252AbeJ2Qh1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 12:30:52 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39712 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725984AbeJ2Qaw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 12:30:52 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A7BC6AF80;
-        Mon, 29 Oct 2018 07:43:22 +0000 (UTC)
-Subject: Re: [PATCH 11/14] irq: add support for allocating (and affinitizing)
- sets of IRQs
-To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-nvme@lists.infradead.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-References: <20181025211626.12692-1-axboe@kernel.dk>
- <20181025211626.12692-12-axboe@kernel.dk>
-From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <61ddcb9e-267d-ff36-dcec-70485ee3aa47@suse.de>
-Date:   Mon, 29 Oct 2018 08:43:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 29 Oct 2018 12:37:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45068 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729090AbeJ2Qh0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 12:37:26 -0400
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A23B220851;
+        Mon, 29 Oct 2018 07:49:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540799397;
+        bh=VBIB3j/I8Wz+6iVanr0oduPk5nh0olzBHsMdqasuKoY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=oFM98eQTTdSP6xfcrqiN0T2e4a6x9Z4iaZ4OSdQmtBL4RHmwt0RNmrzFPBUZb81X1
+         DjHmwN1WlSohmgXE/2AOpwFpvJgYAjdS8Ka1DFc4eekSYx5sbebEWXB0eT6baiu8HK
+         l5gXplZQlv27jEnuoaN51ppMeaQIkM+SJ6MAILIs=
+Received: by mail-lj1-f172.google.com with SMTP id x85-v6so2593438ljb.2;
+        Mon, 29 Oct 2018 00:49:56 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gKWJZQovLwug5Pyt7jK1Oz4k21KBM7hUcm93iuLNYKLTHaCjR/b
+        RoV8s/hyPmvGq0qWXTsI2KB+th9cCf5962z1okk=
+X-Google-Smtp-Source: AJdET5dw1UJTz9IZH8g1rMLNw4ofWbW0ztaASjaOy1/pLg2B941Py6+IBd4BHBP94gdEjtSUDfETWCcbghQNIFlA8q4=
+X-Received: by 2002:a2e:6503:: with SMTP id z3-v6mr7348162ljb.153.1540799394752;
+ Mon, 29 Oct 2018 00:49:54 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181025211626.12692-12-axboe@kernel.dk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr> <1540619262-22681-2-git-send-email-Julia.Lawall@lip6.fr>
+In-Reply-To: <1540619262-22681-2-git-send-email-Julia.Lawall@lip6.fr>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Mon, 29 Oct 2018 08:49:43 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPceTN=idoipU_X+jZQQorRVh3cBaepw72q5O-vn49OGzw@mail.gmail.com>
+Message-ID: <CAJKOXPceTN=idoipU_X+jZQQorRVh3cBaepw72q5O-vn49OGzw@mail.gmail.com>
+Subject: Re: [PATCH 1/8] clk: max77686: constify clk_ops structure
+To:     Julia.Lawall@lip6.fr
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        kernel-janitors@vger.kernel.org,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
+        <b.zolnierkie@samsung.com>, mturquette@baylibre.com,
+        sboyd@kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/25/18 11:16 PM, Jens Axboe wrote:
-> A driver may have a need to allocate multiple sets of MSI/MSI-X
-> interrupts, and have them appropriately affinitized. Add support for
-> defining a number of sets in the irq_affinity structure, of varying
-> sizes, and get each set affinitized correctly across the machine.
-> 
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+On Sat, 27 Oct 2018 at 08:23, Julia Lawall <Julia.Lawall@lip6.fr> wrote:
+>
+> The clk_ops structure is only stored in the ops field of a
+> clk_init_data structure.  This field is const, so the clk_ops
+> structure can be const as well.
+>
+> Identified and transformed using Coccinelle.
+>
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>
 > ---
->   include/linux/interrupt.h |  4 ++++
->   kernel/irq/affinity.c     | 31 +++++++++++++++++++++++++------
->   2 files changed, 29 insertions(+), 6 deletions(-)
-> 
+>  drivers/clk/clk-max77686.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
 
-Reviewed-by: Hannes Reinecke <hare@suse.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-Cheers,
-
-Hannes
+Best regards,
+Krzysztof
