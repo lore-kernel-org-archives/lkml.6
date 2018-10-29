@@ -2,231 +2,205 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AFB0C46475
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:35:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34B70C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:40:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D97C820827
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:35:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D97C820827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id AF65B2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:40:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF65B2084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729714AbeJ2SXR (ORCPT
+        id S1729648AbeJ2S14 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 14:23:17 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:57566 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729467AbeJ2SXR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 14:23:17 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 946D0200124;
-        Mon, 29 Oct 2018 10:35:23 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1F3EF20011F;
-        Mon, 29 Oct 2018 10:35:20 +0100 (CET)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id BC262402F0;
-        Mon, 29 Oct 2018 17:35:15 +0800 (SGT)
-From:   andy.tang@nxp.com
-To:     rui.zhang@intel.com, daniel.lezcano@linaro.org
-Cc:     edubezval@gmail.com, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Yuantian Tang <andy.tang@nxp.com>
-Subject: [PATCH v2] thermal: qoriq: add multiple sensors support
-Date:   Mon, 29 Oct 2018 17:31:19 +0800
-Message-Id: <20181029093119.33971-1-andy.tang@nxp.com>
-X-Mailer: git-send-email 2.14.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Mon, 29 Oct 2018 14:27:56 -0400
+Received: from mail-it1-f200.google.com ([209.85.166.200]:53505 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729594AbeJ2S14 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 14:27:56 -0400
+Received: by mail-it1-f200.google.com with SMTP id f79-v6so8937804ita.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 02:40:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=8FT4cEW7VV4LHx2UPHr5/Cr6dAbs0BeFYMDeAiAND6w=;
+        b=iwQpkEI3Rplm9m9HJH//ZcGEIUvyfNa2ffbrfhIT8jrHMdwJ4TE9aa4h3y+WcqlqAz
+         EEn5qmn9fBDj4XfTbczQfb/ExY7+Vz40yNHJJgYWz8oSjQ1qn8iXqIzPSt7aH4e3FMNf
+         Rk0RheSk/gNQX/G2oQ65eX9peC4dN5Swrpfn9QJbAx0FQ9Gr/o/i/hQB4yJDErkTamIK
+         tf7Zpls5gh3nDe/bAy6OstM/QrNJy92goYq2Lk+0o5gpElM3NASdbpegcgbrGubACYZZ
+         JyxV8vWifjangjBaDEUtNOMUrZcqIib5JIUC4CcjZR2zIKHE2N+hVTFV16pLE8gyu3QP
+         O0+Q==
+X-Gm-Message-State: AGRZ1gKNPMl19BVbTg7iUY4ZUh8N+ehm4RToX/qytB3G2JmElOApr2Il
+        kV/Hm/a9jyByc3FxSlxQNruAFIxQhDAHsd/BC06qfg534u7a
+X-Google-Smtp-Source: AJdET5cIRhGYmWRj27QRooa8Yg1iQyBQOnkfGpJxzFWBXmxDAO1j22/o9POdqE1IDUx1N5OI7/rZBJf9D2bgsKwvtblDWTPjIZop
+MIME-Version: 1.0
+X-Received: by 2002:a24:c3:: with SMTP id 186-v6mr8277600ita.39.1540806003408;
+ Mon, 29 Oct 2018 02:40:03 -0700 (PDT)
+Date:   Mon, 29 Oct 2018 02:40:03 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000080601805795ada2e@google.com>
+Subject: INFO: task hung in vivid_stop_generating_vid_cap
+From:   syzbot <syzbot+06283a66a648cd073885@syzkaller.appspotmail.com>
+To:     hverkuil@xs4all.nl, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, mchehab@kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yuantian Tang <andy.tang@nxp.com>
+Hello,
 
-The QorIQ Layerscape SoC has several thermal sensors but the current
-driver only supports one.
+syzbot found the following crash on:
 
-Massage the code to be sensor oriented and allow the support for
-multiple sensors.
+HEAD commit:    8c60c36d0b8c Add linux-next specific files for 20181019
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1608ccf5400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ddc97ab84fb1ff2a
+dashboard link: https://syzkaller.appspot.com/bug?extid=06283a66a648cd073885
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-Signed-off-by: Yuantian Tang <andy.tang@nxp.com>
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+06283a66a648cd073885@syzkaller.appspotmail.com
+
+VMExit: intr_info=00000000 errcode=00000000 ilen=00000003
+         reason=80000021 qualification=0000000000000003
+IDTVectoring: info=00000000 errcode=00000000
+TSC Offset = 0xfffffe6382838c64
+EPT pointer = 0x00000001c4f5101e
+INFO: task syz-executor4:791 blocked for more than 140 seconds.
+       Not tainted 4.19.0-rc8-next-20181019+ #99
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+syz-executor4   D23272   791   5784 0x00000004
+Call Trace:
+  context_switch kernel/sched/core.c:2831 [inline]
+  __schedule+0x8cf/0x21d0 kernel/sched/core.c:3480
+  schedule+0xfe/0x460 kernel/sched/core.c:3524
+  schedule_timeout+0x1cc/0x260 kernel/time/timer.c:1780
+  do_wait_for_common kernel/sched/completion.c:83 [inline]
+  __wait_for_common kernel/sched/completion.c:104 [inline]
+  wait_for_common kernel/sched/completion.c:115 [inline]
+  wait_for_completion+0x427/0x8a0 kernel/sched/completion.c:136
+  kthread_stop+0x1a4/0x8f0 kernel/kthread.c:550
+  vivid_stop_generating_vid_cap+0x2bc/0x93b  
+drivers/media/platform/vivid/vivid-kthread-cap.c:919
+  vid_cap_stop_streaming+0x8d/0xe0  
+drivers/media/platform/vivid/vivid-vid-cap.c:259
+  __vb2_queue_cancel+0x171/0xca0  
+drivers/media/common/videobuf2/videobuf2-core.c:1668
+  vb2_core_streamoff+0x60/0x140  
+drivers/media/common/videobuf2/videobuf2-core.c:1804
+  __vb2_cleanup_fileio+0x73/0x160  
+drivers/media/common/videobuf2/videobuf2-core.c:2325
+  vb2_core_queue_release+0x1e/0x80  
+drivers/media/common/videobuf2/videobuf2-core.c:2052
+  vb2_queue_release drivers/media/common/videobuf2/videobuf2-v4l2.c:672  
+[inline]
+  _vb2_fop_release+0x1d2/0x2b0  
+drivers/media/common/videobuf2/videobuf2-v4l2.c:843
+  vb2_fop_release+0x77/0xc0  
+drivers/media/common/videobuf2/videobuf2-v4l2.c:857
+  vivid_fop_release+0x18e/0x440 drivers/media/platform/vivid/vivid-core.c:474
+  v4l2_release+0xfb/0x1a0 drivers/media/v4l2-core/v4l2-dev.c:448
+  __fput+0x3bc/0xa70 fs/file_table.c:279
+  ____fput+0x15/0x20 fs/file_table.c:312
+  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x411021
+Code: 4c 89 f6 48 89 c7 48 89 ca 48 89 4c 24 10 4c 89 54 24 08 e8 b1 a3 ff  
+ff 48 8b 4c 24 10 41 c6 04 0f 00 4c 8b 7c 24 28 4c 8b 54 <24> 08 45 0f b6  
+37 e9 db fc ff ff 0f 1f 40 00 41 80 f8 29 74 7f ba
+RSP: 002b:00007ffebf8f0810 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
+RAX: 0000000000000000 RBX: 0000000000000004 RCX: 0000000000411021
+RDX: 0000001b2ca20000 RSI: 0000000000730430 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 0000000030c04255 R09: 0000000030c04259
+R10: 00007ffebf8f0740 R11: 0000000000000293 R12: 0000000000000000
+R13: 0000000000000001 R14: 0000000000000447 R15: 0000000000000004
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/1008:
+  #0: 00000000b994d395 (rcu_read_lock){....}, at:  
+debug_show_all_locks+0xd0/0x424 kernel/locking/lockdep.c:4379
+1 lock held by rsyslogd/5554:
+  #0: 0000000064483821 (&f->f_pos_lock){+.+.}, at: __fdget_pos+0x1bb/0x200  
+fs/file.c:766
+2 locks held by getty/5644:
+  #0: 0000000088b7a22a (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
+  #1: 000000003463365c (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
+2 locks held by getty/5645:
+  #0: 00000000b07a05bf (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
+  #1: 00000000accbc122 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
+2 locks held by getty/5646:
+  #0: 000000003b71eb89 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
+  #1: 00000000e3b18d3f (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
+2 locks held by getty/5647:
+  #0: 00000000c8f2c425 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
+  #1: 00000000646fd3b6 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
+2 locks held by getty/5648:
+  #0: 000000004a4ae0cc (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
+  #1: 00000000d9aa1576 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
+2 locks held by getty/5649:
+  #0: 000000001d616490 (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
+  #1: 00000000865e3bcf (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
+2 locks held by getty/5650:
+  #0: 00000000c8214d1d (&tty->ldisc_sem){++++}, at:  
+ldsem_down_read+0x32/0x40 drivers/tty/tty_ldsem.c:353
+  #1: 00000000782baf35 (&ldata->atomic_read_lock){+.+.}, at:  
+n_tty_read+0x335/0x1e80 drivers/tty/n_tty.c:2154
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 PID: 1008 Comm: khungtaskd Not tainted 4.19.0-rc8-next-20181019+ #99
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  nmi_cpu_backtrace.cold.2+0x5c/0xa1 lib/nmi_backtrace.c:101
+  nmi_trigger_cpumask_backtrace+0x1e8/0x22a lib/nmi_backtrace.c:62
+  arch_trigger_cpumask_backtrace+0x14/0x20 arch/x86/kernel/apic/hw_nmi.c:38
+  trigger_all_cpu_backtrace include/linux/nmi.h:144 [inline]
+  check_hung_uninterruptible_tasks kernel/hung_task.c:204 [inline]
+  watchdog+0xb39/0x1050 kernel/hung_task.c:265
+  kthread+0x35a/0x440 kernel/kthread.c:246
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1 skipped: idling at native_safe_halt+0x6/0x10  
+arch/x86/include/asm/irqflags.h:57
+
+
 ---
-v2:
-  - update the commit message
-  - refine the qoriq_tmu_register_tmu_zone()
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
- drivers/thermal/qoriq_thermal.c |  100 ++++++++++++++++++---------------------
- 1 files changed, 46 insertions(+), 54 deletions(-)
-
-diff --git a/drivers/thermal/qoriq_thermal.c b/drivers/thermal/qoriq_thermal.c
-index 450ed66..8beb344 100644
---- a/drivers/thermal/qoriq_thermal.c
-+++ b/drivers/thermal/qoriq_thermal.c
-@@ -59,14 +59,21 @@ struct qoriq_tmu_regs {
- 	u32 ttr3cr;		/* Temperature Range 3 Control Register */
- };
- 
-+struct qoriq_tmu_data;
-+
- /*
-  * Thermal zone data
-  */
-+struct qoriq_sensor {
-+	struct thermal_zone_device	*tzd;
-+	struct qoriq_tmu_data		*qdata;
-+	int				id;
-+};
-+
- struct qoriq_tmu_data {
--	struct thermal_zone_device *tz;
- 	struct qoriq_tmu_regs __iomem *regs;
--	int sensor_id;
- 	bool little_endian;
-+	struct qoriq_sensor	*sensor[SITES_MAX];
- };
- 
- static void tmu_write(struct qoriq_tmu_data *p, u32 val, void __iomem *addr)
-@@ -87,48 +94,51 @@ static u32 tmu_read(struct qoriq_tmu_data *p, void __iomem *addr)
- 
- static int tmu_get_temp(void *p, int *temp)
- {
-+	struct qoriq_sensor *qsensor = p;
-+	struct qoriq_tmu_data *qdata = qsensor->qdata;
- 	u32 val;
--	struct qoriq_tmu_data *data = p;
- 
--	val = tmu_read(data, &data->regs->site[data->sensor_id].tritsr);
-+	val = tmu_read(qdata, &qdata->regs->site[qsensor->id].tritsr);
- 	*temp = (val & 0xff) * 1000;
- 
- 	return 0;
- }
- 
--static int qoriq_tmu_get_sensor_id(void)
-+static const struct thermal_zone_of_device_ops tmu_tz_ops = {
-+	.get_temp = tmu_get_temp,
-+};
-+
-+static int qoriq_tmu_register_tmu_zone(struct platform_device *pdev)
- {
--	int ret, id;
--	struct of_phandle_args sensor_specs;
--	struct device_node *np, *sensor_np;
-+	struct qoriq_tmu_data *qdata = platform_get_drvdata(pdev);
-+	int id, sites = 0;
- 
--	np = of_find_node_by_name(NULL, "thermal-zones");
--	if (!np)
--		return -ENODEV;
-+	for (id = 0; id < SITES_MAX; id++) {
-+		qdata->sensor[id] = devm_kzalloc(&pdev->dev,
-+				sizeof(struct qoriq_sensor), GFP_KERNEL);
-+		if (!qdata->sensor[id])
-+			return -ENOMEM;
- 
--	sensor_np = of_get_next_child(np, NULL);
--	ret = of_parse_phandle_with_args(sensor_np, "thermal-sensors",
--			"#thermal-sensor-cells",
--			0, &sensor_specs);
--	if (ret) {
--		of_node_put(np);
--		of_node_put(sensor_np);
--		return ret;
--	}
-+		qdata->sensor[id]->id = id;
-+		qdata->sensor[id]->qdata = qdata;
- 
--	if (sensor_specs.args_count >= 1) {
--		id = sensor_specs.args[0];
--		WARN(sensor_specs.args_count > 1,
--				"%s: too many cells in sensor specifier %d\n",
--				sensor_specs.np->name, sensor_specs.args_count);
--	} else {
--		id = 0;
--	}
-+		qdata->sensor[id]->tzd = devm_thermal_zone_of_sensor_register(
-+				&pdev->dev, id, qdata->sensor[id], &tmu_tz_ops);
-+		if (IS_ERR(qdata->sensor[id]->tzd)) {
-+			if (PTR_ERR(qdata->sensor[id]->tzd) == -ENODEV)
-+				continue;
-+			else
-+				return PTR_ERR(qdata->sensor[id]->tzd);
- 
--	of_node_put(np);
--	of_node_put(sensor_np);
-+		}
-+
-+		sites |= 0x1 << (15 - id);
-+	}
-+	/* Enable monitoring */
-+	if (sites != 0)
-+		tmu_write(qdata, sites | TMR_ME | TMR_ALPF, &qdata->regs->tmr);
- 
--	return id;
-+	return 0;
- }
- 
- static int qoriq_tmu_calibration(struct platform_device *pdev)
-@@ -178,16 +188,11 @@ static void qoriq_tmu_init_device(struct qoriq_tmu_data *data)
- 	tmu_write(data, TMR_DISABLE, &data->regs->tmr);
- }
- 
--static const struct thermal_zone_of_device_ops tmu_tz_ops = {
--	.get_temp = tmu_get_temp,
--};
--
- static int qoriq_tmu_probe(struct platform_device *pdev)
- {
- 	int ret;
- 	struct qoriq_tmu_data *data;
- 	struct device_node *np = pdev->dev.of_node;
--	u32 site;
- 
- 	if (!np) {
- 		dev_err(&pdev->dev, "Device OF-Node is NULL");
-@@ -203,13 +208,6 @@ static int qoriq_tmu_probe(struct platform_device *pdev)
- 
- 	data->little_endian = of_property_read_bool(np, "little-endian");
- 
--	data->sensor_id = qoriq_tmu_get_sensor_id();
--	if (data->sensor_id < 0) {
--		dev_err(&pdev->dev, "Failed to get sensor id\n");
--		ret = -ENODEV;
--		goto err_iomap;
--	}
--
- 	data->regs = of_iomap(np, 0);
- 	if (!data->regs) {
- 		dev_err(&pdev->dev, "Failed to get memory region\n");
-@@ -223,19 +221,13 @@ static int qoriq_tmu_probe(struct platform_device *pdev)
- 	if (ret < 0)
- 		goto err_tmu;
- 
--	data->tz = devm_thermal_zone_of_sensor_register(&pdev->dev,
--							data->sensor_id,
--							data, &tmu_tz_ops);
--	if (IS_ERR(data->tz)) {
--		ret = PTR_ERR(data->tz);
--		dev_err(&pdev->dev,
--			"Failed to register thermal zone device %d\n", ret);
--		goto err_tmu;
-+	ret = qoriq_tmu_register_tmu_zone(pdev);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Failed to register sensors\n");
-+		ret = -ENODEV;
-+		goto err_iomap;
- 	}
- 
--	/* Enable monitoring */
--	site = 0x1 << (15 - data->sensor_id);
--	tmu_write(data, site | TMR_ME | TMR_ALPF, &data->regs->tmr);
- 
- 	return 0;
- 
--- 
-1.7.1
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
