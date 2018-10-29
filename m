@@ -2,533 +2,163 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D5DDC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:49:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64F94C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:52:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA2C92082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:49:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="ofmWi84i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA2C92082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	by mail.kernel.org (Postfix) with ESMTP id 269C42080A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:52:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 269C42080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726568AbeJ3Ejd (ORCPT
+        id S1726656AbeJ3Em0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 00:39:33 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:43183 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725851AbeJ3Eja (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 00:39:30 -0400
-Received: by mail-pl1-f195.google.com with SMTP id g59-v6so298022plb.10
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 12:49:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=XnGJlogTrVhMu+n4/HTh/rTcb41yuRztLKKSE+F7ibw=;
-        b=ofmWi84i1r1LVpYFyTriSUOSAk9+1zesDD9J86HlIR1Vu4nrY2x9+ekkngUyn0omXW
-         2dUP2XxQM52+vSWv43o0Kx8Vo+3qutejnSCwSja7kYwnTULhFK+rWyfHk1cpzgqZPU4L
-         0zSAsyQ/hQYG4YhIU/5a6k5dNU9wiV5RjpabWAb/n0uYH5DJ/W47D5z2slLPukorcwAW
-         s1QbVAKXShg9E5gYIoWChAi01nMehbzsyBsix3MJHpYVdf2/DZZzbZjyFruMDHmyv5ca
-         Gss5vMCsBJz4dQraB2eXN3frbmXxvLe83IveOCIUPA9lAubibH1jbsQT53teBu/Tsx01
-         JbCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=XnGJlogTrVhMu+n4/HTh/rTcb41yuRztLKKSE+F7ibw=;
-        b=paSWWGYkI8544ZQTIBiWHuMCNdzd3o4XD8AWDEo+/WDHRrTDi21wlyUOEFFINw4fXG
-         X3N+UmnCpDTIsx2+bJBa4zYoz2s1imztwN28IHurRRFoBBV2BsQ6kSM4OU+xHg+9TY44
-         1tkH/bGqclPsYFnEJ9Jporoj7usHy14ASd9YVbJE87SiAwDf9r+pIBZH65suw0BSVNRF
-         Ejsf842sBgCBq+8dIp1VpWMCL/N5gfD1IOu1oOnnX6j+X8h2KWpoE2xmDqkUp4jyhtYw
-         DP8//stua3kad9iPU6i641Mhsmpt3S0RsDNnNJEOZrkRoc8mXsRbA/MIZ8dMW9E0jzRs
-         mB2A==
-X-Gm-Message-State: AGRZ1gJ3Am0JGpUbu4KYMvyehO0qIGQDSn6zv3/QTisl4ipxDaaxVk5a
-        6SgcAsKnGEUQ3lgvFrAfMpllAkWcaSU=
-X-Google-Smtp-Source: AJdET5eBY36WApFpQNYdY6Fs1r3zD4k1fp0Xjz5YyOOc9z2YPdbuqHbjKFn0kjoNF+a3DA+KrfJwQg==
-X-Received: by 2002:a17:902:8e8a:: with SMTP id bg10-v6mr15828862plb.214.1540842561538;
-        Mon, 29 Oct 2018 12:49:21 -0700 (PDT)
-Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
-        by smtp.gmail.com with ESMTPSA id c69-v6sm38876613pfg.2.2018.10.29.12.49.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 12:49:19 -0700 (PDT)
-Subject: Re: [PATCH 09/14] blk-mq: ensure that plug lists don't straddle
- hardware queues
-From:   Jens Axboe <axboe@kernel.dk>
-To:     Bart Van Assche <bvanassche@acm.org>, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181029163738.10172-1-axboe@kernel.dk>
- <20181029163738.10172-10-axboe@kernel.dk>
- <1540841278.196084.84.camel@acm.org>
- <2e8ae405-6cc2-ce7b-a6a3-ca2e19549e40@kernel.dk>
-Message-ID: <32904af4-90b1-1762-5c46-4d52808cb601@kernel.dk>
-Date:   Mon, 29 Oct 2018 13:49:18 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 30 Oct 2018 00:42:26 -0400
+Received: from mga12.intel.com ([192.55.52.136]:30194 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725850AbeJ3Em0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 00:42:26 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2018 12:52:17 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,441,1534834800"; 
+   d="scan'208";a="85438765"
+Received: from tstruk-mobl1.jf.intel.com ([10.7.197.156])
+  by orsmga008.jf.intel.com with ESMTP; 29 Oct 2018 12:52:17 -0700
+Subject: [PATCH  v2] tpm: add support for partial reads
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+To:     jarkko.sakkinen@linux.intel.com
+Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, tadeusz.struk@intel.com
+Date:   Mon, 29 Oct 2018 12:52:17 -0700
+Message-ID: <154084273717.29396.1021945733871865594.stgit@tstruk-mobl1.jf.intel.com>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-In-Reply-To: <2e8ae405-6cc2-ce7b-a6a3-ca2e19549e40@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/29/18 1:30 PM, Jens Axboe wrote:
-> On 10/29/18 1:27 PM, Bart Van Assche wrote:
->> On Mon, 2018-10-29 at 10:37 -0600, Jens Axboe wrote:
->>>  void blk_mq_flush_plug_list(struct blk_plug *plug, bool from_schedule)
->>>  {
->>>  	struct blk_mq_ctx *this_ctx;
->>> @@ -1628,7 +1649,7 @@ void blk_mq_flush_plug_list(struct blk_plug *plug, bool from_schedule)
->>>  	struct request *rq;
->>>  	LIST_HEAD(list);
->>>  	LIST_HEAD(ctx_list);
->>> -	unsigned int depth;
->>> +	unsigned int depth, this_flags;
->>>  
->>>  	list_splice_init(&plug->mq_list, &list);
->>>  
->>> @@ -1636,13 +1657,14 @@ void blk_mq_flush_plug_list(struct blk_plug *plug, bool from_schedule)
->>>  
->>>  	this_q = NULL;
->>>  	this_ctx = NULL;
->>> +	this_flags = 0;
->>>  	depth = 0;
->>>  
->>>  	while (!list_empty(&list)) {
->>>  		rq = list_entry_rq(list.next);
->>>  		list_del_init(&rq->queuelist);
->>>  		BUG_ON(!rq->q);
->>> -		if (rq->mq_ctx != this_ctx) {
->>> +		if (!ctx_match(rq, this_ctx, this_flags)) {
->>>  			if (this_ctx) {
->>>  				trace_block_unplug(this_q, depth, !from_schedule);
->>>  				blk_mq_sched_insert_requests(this_q, this_ctx,
->>> @@ -1650,6 +1672,7 @@ void blk_mq_flush_plug_list(struct blk_plug *plug, bool from_schedule)
->>>  								from_schedule);
->>>  			}
->>>  
->>> +			this_flags = rq->cmd_flags;
->>>  			this_ctx = rq->mq_ctx;
->>>  			this_q = rq->q;
->>>  			depth = 0;
->>
->> This patch will cause the function stored in the flags_to_type pointer to be
->> called 2 * (n - 1) times where n is the number of elements in 'list' when
->> blk_mq_sched_insert_requests() is called. Have you considered to rearrange
->> the code such that that number of calls is reduced to n?
-> 
-> One alternative is to improve the sorting, but then we'd need to call
-> it in there instead. My longer term plan is something like the below,
-> which will reduce the number of calls in general, not just for
-> this path. But that is a separate change, should not be mixed
-> with this one.
+Currently to read a response from the TPM device an application needs
+provide big enough buffer for the whole response and read it in one go.
+The application doesn't know how big the response it beforehand so it
+always needs to maintain a 4K buffer and read the max (4K).
+In case if the user of the TSS library doesn't provide big enough
+buffer the TCTI spec says that the library should set the required
+size and return TSS2_TCTI_RC_INSUFFICIENT_BUFFER error code so that the
+application could allocate a bigger buffer and call receive again.
+To make it possible in the TSS library, this requires being able to do
+partial reads from the driver.
+The library would read the 10 bytes header first to get the actual size
+of the response from the header, and then read the rest of the response.
+This patch adds support for partial reads, i.e. the user can read the
+response in one or multiple reads, until the whole response is consumed.
+The user can also read only part of the response and ignore
+the rest by issuing a new write to send a new command.
 
-Here's an updated one that applies on top of the current tree,
-and also uses this information to sort efficiently. This eliminates
-all this, and also makes the whole thing more clear.
+The usecase is implemented in this TSS commit:
+https://github.com/tpm2-software/tpm2-tss/commit/ce982f67a67dc08e24683d30b05800648d8a264c
 
-I'll split this into two patches, just didn't want to include in
-the series just yet.
+Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
+---
+Changes in v2:
+ - Allow writes after only partial response is consumed to maintain
+   backwords compatibility.
+---
+ drivers/char/tpm/tpm-dev-common.c |   38 ++++++++++++++++++++++++++++---------
+ drivers/char/tpm/tpm-dev.h        |    2 ++
+ 2 files changed, 31 insertions(+), 9 deletions(-)
 
-
-diff --git a/block/blk-flush.c b/block/blk-flush.c
-index 7922dba81497..397985808b75 100644
---- a/block/blk-flush.c
-+++ b/block/blk-flush.c
-@@ -219,7 +219,7 @@ static void flush_end_io(struct request *flush_rq, blk_status_t error)
+diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+index 99b5133a9d05..77e686d35384 100644
+--- a/drivers/char/tpm/tpm-dev-common.c
++++ b/drivers/char/tpm/tpm-dev-common.c
+@@ -64,6 +64,7 @@ static void tpm_timeout_work(struct work_struct *work)
  
- 	/* release the tag's ownership to the req cloned from */
- 	spin_lock_irqsave(&fq->mq_flush_lock, flags);
--	hctx = blk_mq_map_queue(q, flush_rq->cmd_flags, flush_rq->mq_ctx->cpu);
-+	hctx = flush_rq->mq_hctx;
- 	if (!q->elevator) {
- 		blk_mq_tag_set_rq(hctx, flush_rq->tag, fq->orig_rq);
- 		flush_rq->tag = -1;
-@@ -307,13 +307,13 @@ static bool blk_kick_flush(struct request_queue *q, struct blk_flush_queue *fq,
- 	if (!q->elevator) {
- 		fq->orig_rq = first_rq;
- 		flush_rq->tag = first_rq->tag;
--		hctx = blk_mq_map_queue(q, first_rq->cmd_flags,
--					first_rq->mq_ctx->cpu);
-+		hctx = flush_rq->mq_hctx;
- 		blk_mq_tag_set_rq(hctx, first_rq->tag, flush_rq);
- 	} else {
- 		flush_rq->internal_tag = first_rq->internal_tag;
- 	}
+ 	mutex_lock(&priv->buffer_mutex);
+ 	priv->data_pending = 0;
++	priv->partial_data = 0;
+ 	memset(priv->data_buffer, 0, sizeof(priv->data_buffer));
+ 	mutex_unlock(&priv->buffer_mutex);
+ 	wake_up_interruptible(&priv->async_wait);
+@@ -90,22 +91,39 @@ ssize_t tpm_common_read(struct file *file, char __user *buf,
+ 	ssize_t ret_size = 0;
+ 	int rc;
  
-+	flush_rq->mq_hctx = first_rq->mq_hctx;
- 	flush_rq->cmd_flags = REQ_OP_FLUSH | REQ_PREFLUSH;
- 	flush_rq->cmd_flags |= (flags & REQ_DRV) | (flags & REQ_FAILFAST_MASK);
- 	flush_rq->rq_flags |= RQF_FLUSH_SEQ;
-@@ -326,13 +326,11 @@ static bool blk_kick_flush(struct request_queue *q, struct blk_flush_queue *fq,
- static void mq_flush_data_end_io(struct request *rq, blk_status_t error)
- {
- 	struct request_queue *q = rq->q;
--	struct blk_mq_hw_ctx *hctx;
-+	struct blk_mq_hw_ctx *hctx = rq->mq_hctx;
- 	struct blk_mq_ctx *ctx = rq->mq_ctx;
- 	unsigned long flags;
- 	struct blk_flush_queue *fq = blk_get_flush_queue(q, ctx);
+-	del_singleshot_timer_sync(&priv->user_read_timer);
+-	flush_work(&priv->timeout_work);
+ 	mutex_lock(&priv->buffer_mutex);
++	if (priv->data_pending || priv->partial_data) {
++		if (*off == 0)
++			priv->partial_data = priv->data_pending;
++
++		ret_size = min_t(ssize_t, size + *off, priv->partial_data);
++		if (ret_size <= 0) {
++			ret_size = 0;
++			priv->data_pending = 0;
++			priv->partial_data = 0;
++			goto out;
++		}
  
--	hctx = blk_mq_map_queue(q, rq->cmd_flags, ctx->cpu);
--
- 	if (q->elevator) {
- 		WARN_ON(rq->tag < 0);
- 		blk_mq_put_driver_tag_hctx(hctx, rq);
-diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
-index fac70c81b7de..cde19be36135 100644
---- a/block/blk-mq-debugfs.c
-+++ b/block/blk-mq-debugfs.c
-@@ -427,10 +427,8 @@ struct show_busy_params {
- static void hctx_show_busy_rq(struct request *rq, void *data, bool reserved)
- {
- 	const struct show_busy_params *params = data;
--	struct blk_mq_hw_ctx *hctx;
- 
--	hctx = blk_mq_map_queue(rq->q, rq->cmd_flags, rq->mq_ctx->cpu);
--	if (hctx == params->hctx)
-+	if (rq->mq_hctx == params->hctx)
- 		__blk_mq_debugfs_rq_show(params->m,
- 					 list_entry_rq(&rq->queuelist));
- }
-diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
-index d232ecf3290c..25c558358255 100644
---- a/block/blk-mq-sched.c
-+++ b/block/blk-mq-sched.c
-@@ -367,9 +367,7 @@ void blk_mq_sched_insert_request(struct request *rq, bool at_head,
- 	struct request_queue *q = rq->q;
- 	struct elevator_queue *e = q->elevator;
- 	struct blk_mq_ctx *ctx = rq->mq_ctx;
--	struct blk_mq_hw_ctx *hctx;
--
--	hctx = blk_mq_map_queue(q, rq->cmd_flags, ctx->cpu);
-+	struct blk_mq_hw_ctx *hctx = rq->mq_hctx;
- 
- 	/* flush rq in flush machinery need to be dispatched directly */
- 	if (!(rq->rq_flags & RQF_FLUSH_SEQ) && op_is_flush(rq->cmd_flags)) {
-@@ -399,16 +397,10 @@ void blk_mq_sched_insert_request(struct request *rq, bool at_head,
- }
- 
- void blk_mq_sched_insert_requests(struct request_queue *q,
--				  struct blk_mq_ctx *ctx,
-+				  struct blk_mq_hw_ctx *hctx,
- 				  struct list_head *list, bool run_queue_async)
- {
--	struct blk_mq_hw_ctx *hctx;
- 	struct elevator_queue *e;
--	struct request *rq;
--
--	/* For list inserts, requests better be on the same hw queue */
--	rq = list_first_entry(list, struct request, queuelist);
--	hctx = blk_mq_map_queue(q, rq->cmd_flags, ctx->cpu);
- 
- 	e = hctx->queue->elevator;
- 	if (e && e->type->ops.mq.insert_requests)
-@@ -424,7 +416,7 @@ void blk_mq_sched_insert_requests(struct request_queue *q,
- 			if (list_empty(list))
- 				return;
+-	if (priv->data_pending) {
+-		ret_size = min_t(ssize_t, size, priv->data_pending);
+-		if (ret_size > 0) {
+-			rc = copy_to_user(buf, priv->data_buffer, ret_size);
+-			memset(priv->data_buffer, 0, priv->data_pending);
+-			if (rc)
+-				ret_size = -EFAULT;
++		rc = copy_to_user(buf, priv->data_buffer + *off, ret_size);
++		if (rc) {
++			memset(priv->data_buffer, 0, TPM_BUFSIZE);
++			priv->partial_data = 0;
++			ret_size = -EFAULT;
++		} else {
++			memset(priv->data_buffer + *off, 0, ret_size);
++			priv->partial_data -= ret_size;
++			*off += ret_size;
  		}
--		blk_mq_insert_requests(hctx, ctx, list);
-+		blk_mq_insert_requests(hctx, list);
+ 
+ 		priv->data_pending = 0;
  	}
  
- 	blk_mq_run_hw_queue(hctx, run_queue_async);
-diff --git a/block/blk-mq-sched.h b/block/blk-mq-sched.h
-index 8a9544203173..a42547213f58 100644
---- a/block/blk-mq-sched.h
-+++ b/block/blk-mq-sched.h
-@@ -20,7 +20,7 @@ void blk_mq_sched_restart(struct blk_mq_hw_ctx *hctx);
- void blk_mq_sched_insert_request(struct request *rq, bool at_head,
- 				 bool run_queue, bool async);
- void blk_mq_sched_insert_requests(struct request_queue *q,
--				  struct blk_mq_ctx *ctx,
-+				  struct blk_mq_hw_ctx *hctx,
- 				  struct list_head *list, bool run_queue_async);
- 
- void blk_mq_sched_dispatch_requests(struct blk_mq_hw_ctx *hctx);
-diff --git a/block/blk-mq-tag.c b/block/blk-mq-tag.c
-index 478a959357f5..fb836d818b80 100644
---- a/block/blk-mq-tag.c
-+++ b/block/blk-mq-tag.c
-@@ -527,14 +527,7 @@ int blk_mq_tag_update_depth(struct blk_mq_hw_ctx *hctx,
-  */
- u32 blk_mq_unique_tag(struct request *rq)
- {
--	struct request_queue *q = rq->q;
--	struct blk_mq_hw_ctx *hctx;
--	int hwq = 0;
--
--	hctx = blk_mq_map_queue(q, rq->cmd_flags, rq->mq_ctx->cpu);
--	hwq = hctx->queue_num;
--
--	return (hwq << BLK_MQ_UNIQUE_TAG_BITS) |
-+	return (rq->mq_hctx->queue_num << BLK_MQ_UNIQUE_TAG_BITS) |
- 		(rq->tag & BLK_MQ_UNIQUE_TAG_MASK);
++out:
++	if (!priv->partial_data) {
++		*off = 0;
++		del_singleshot_timer_sync(&priv->user_read_timer);
++		flush_work(&priv->timeout_work);
++	}
+ 	mutex_unlock(&priv->buffer_mutex);
+ 	return ret_size;
  }
- EXPORT_SYMBOL(blk_mq_unique_tag);
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 37310cc55733..17ea522bd7c1 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -300,6 +300,7 @@ static struct request *blk_mq_rq_ctx_init(struct blk_mq_alloc_data *data,
- 	/* csd/requeue_work/fifo_time is initialized before use */
- 	rq->q = data->q;
- 	rq->mq_ctx = data->ctx;
-+	rq->mq_hctx = data->hctx;
- 	rq->rq_flags = rq_flags;
- 	rq->cpu = -1;
- 	rq->cmd_flags = op;
-@@ -473,10 +474,11 @@ static void __blk_mq_free_request(struct request *rq)
- {
- 	struct request_queue *q = rq->q;
- 	struct blk_mq_ctx *ctx = rq->mq_ctx;
--	struct blk_mq_hw_ctx *hctx = blk_mq_map_queue(q, rq->cmd_flags, ctx->cpu);
-+	struct blk_mq_hw_ctx *hctx = rq->mq_hctx;
- 	const int sched_tag = rq->internal_tag;
+@@ -150,6 +168,8 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+ 		goto out;
+ 	}
  
- 	blk_pm_mark_last_busy(rq);
-+	rq->mq_hctx = NULL;
- 	if (rq->tag != -1)
- 		blk_mq_put_tag(hctx, hctx->tags, ctx, rq->tag);
- 	if (sched_tag != -1)
-@@ -490,7 +492,7 @@ void blk_mq_free_request(struct request *rq)
- 	struct request_queue *q = rq->q;
- 	struct elevator_queue *e = q->elevator;
- 	struct blk_mq_ctx *ctx = rq->mq_ctx;
--	struct blk_mq_hw_ctx *hctx = blk_mq_map_queue(q, rq->cmd_flags, ctx->cpu);
-+	struct blk_mq_hw_ctx *hctx = rq->mq_hctx;
- 
- 	if (rq->rq_flags & RQF_ELVPRIV) {
- 		if (e && e->type->ops.mq.finish_request)
-@@ -982,7 +984,7 @@ bool blk_mq_get_driver_tag(struct request *rq)
- {
- 	struct blk_mq_alloc_data data = {
- 		.q = rq->q,
--		.hctx = blk_mq_map_queue(rq->q, rq->cmd_flags, rq->mq_ctx->cpu),
-+		.hctx = rq->mq_hctx,
- 		.flags = BLK_MQ_REQ_NOWAIT,
- 		.cmd_flags = rq->cmd_flags,
- 	};
-@@ -1148,7 +1150,7 @@ bool blk_mq_dispatch_rq_list(struct request_queue *q, struct list_head *list,
- 
- 		rq = list_first_entry(list, struct request, queuelist);
- 
--		hctx = blk_mq_map_queue(rq->q, rq->cmd_flags, rq->mq_ctx->cpu);
-+		hctx = rq->mq_hctx;
- 		if (!got_budget && !blk_mq_get_dispatch_budget(hctx))
- 			break;
- 
-@@ -1578,9 +1580,7 @@ void __blk_mq_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
-  */
- void blk_mq_request_bypass_insert(struct request *rq, bool run_queue)
- {
--	struct blk_mq_ctx *ctx = rq->mq_ctx;
--	struct blk_mq_hw_ctx *hctx = blk_mq_map_queue(rq->q, rq->cmd_flags,
--							ctx->cpu);
-+	struct blk_mq_hw_ctx *hctx = rq->mq_hctx;
- 
- 	spin_lock(&hctx->lock);
- 	list_add_tail(&rq->queuelist, &hctx->dispatch);
-@@ -1590,10 +1590,10 @@ void blk_mq_request_bypass_insert(struct request *rq, bool run_queue)
- 		blk_mq_run_hw_queue(hctx, false);
- }
- 
--void blk_mq_insert_requests(struct blk_mq_hw_ctx *hctx, struct blk_mq_ctx *ctx,
--			    struct list_head *list)
-+void blk_mq_insert_requests(struct blk_mq_hw_ctx *hctx, struct list_head *list)
- 
- {
-+	struct blk_mq_ctx *ctx = NULL;
- 	struct request *rq;
- 
++	priv->partial_data = 0;
++
  	/*
-@@ -1601,7 +1601,8 @@ void blk_mq_insert_requests(struct blk_mq_hw_ctx *hctx, struct blk_mq_ctx *ctx,
- 	 * offline now
- 	 */
- 	list_for_each_entry(rq, list, queuelist) {
--		BUG_ON(rq->mq_ctx != ctx);
-+		BUG_ON(ctx && rq->mq_ctx != ctx);
-+		ctx = rq->mq_ctx;
- 		trace_block_rq_insert(hctx->queue, rq);
- 	}
+ 	 * If in nonblocking mode schedule an async job to send
+ 	 * the command return the size.
+diff --git a/drivers/char/tpm/tpm-dev.h b/drivers/char/tpm/tpm-dev.h
+index a126b575cb8c..a2ca6a7a06f1 100644
+--- a/drivers/char/tpm/tpm-dev.h
++++ b/drivers/char/tpm/tpm-dev.h
+@@ -11,6 +11,8 @@ struct file_priv {
  
-@@ -1611,84 +1612,61 @@ void blk_mq_insert_requests(struct blk_mq_hw_ctx *hctx, struct blk_mq_ctx *ctx,
- 	spin_unlock(&ctx->lock);
- }
+ 	/* Holds the amount of data passed or an error code from async op */
+ 	ssize_t data_pending;
++	/* For partial reads, holds the reminder of a response */
++	ssize_t partial_data;
+ 	struct mutex buffer_mutex;
  
--static int plug_ctx_cmp(void *priv, struct list_head *a, struct list_head *b)
-+static int plug_hctx_cmp(void *priv, struct list_head *a, struct list_head *b)
- {
- 	struct request *rqa = container_of(a, struct request, queuelist);
- 	struct request *rqb = container_of(b, struct request, queuelist);
- 
--	return !(rqa->mq_ctx < rqb->mq_ctx ||
--		 (rqa->mq_ctx == rqb->mq_ctx &&
-+	return !(rqa->mq_hctx < rqb->mq_hctx ||
-+		 (rqa->mq_hctx == rqb->mq_hctx &&
- 		  blk_rq_pos(rqa) < blk_rq_pos(rqb)));
- }
- 
--/*
-- * Need to ensure that the hardware queue matches, so we don't submit
-- * a list of requests that end up on different hardware queues.
-- */
--static bool ctx_match(struct request *req, struct blk_mq_ctx *ctx,
--		      unsigned int flags)
--{
--	if (req->mq_ctx != ctx)
--		return false;
--
--	/*
--	 * If we just have one map, then we know the hctx will match
--	 * if the ctx matches
--	 */
--	if (req->q->tag_set->nr_maps == 1)
--		return true;
--
--	return blk_mq_map_queue(req->q, req->cmd_flags, ctx->cpu) ==
--		blk_mq_map_queue(req->q, flags, ctx->cpu);
--}
--
- void blk_mq_flush_plug_list(struct blk_plug *plug, bool from_schedule)
- {
--	struct blk_mq_ctx *this_ctx;
-+	struct blk_mq_hw_ctx *this_hctx;
- 	struct request_queue *this_q;
- 	struct request *rq;
- 	LIST_HEAD(list);
--	LIST_HEAD(ctx_list);
--	unsigned int depth, this_flags;
-+	LIST_HEAD(hctx_list);
-+	unsigned int depth;
- 
- 	list_splice_init(&plug->mq_list, &list);
- 
--	list_sort(NULL, &list, plug_ctx_cmp);
-+	list_sort(NULL, &list, plug_hctx_cmp);
- 
- 	this_q = NULL;
--	this_ctx = NULL;
--	this_flags = 0;
-+	this_hctx = NULL;
- 	depth = 0;
- 
- 	while (!list_empty(&list)) {
- 		rq = list_entry_rq(list.next);
- 		list_del_init(&rq->queuelist);
- 		BUG_ON(!rq->q);
--		if (!ctx_match(rq, this_ctx, this_flags)) {
--			if (this_ctx) {
-+		if (rq->mq_hctx != this_hctx) {
-+			if (this_hctx) {
- 				trace_block_unplug(this_q, depth, !from_schedule);
--				blk_mq_sched_insert_requests(this_q, this_ctx,
--								&ctx_list,
-+				blk_mq_sched_insert_requests(this_q, this_hctx,
-+								&hctx_list,
- 								from_schedule);
- 			}
- 
--			this_flags = rq->cmd_flags;
--			this_ctx = rq->mq_ctx;
-+			this_hctx = rq->mq_hctx;
- 			this_q = rq->q;
- 			depth = 0;
- 		}
- 
- 		depth++;
--		list_add_tail(&rq->queuelist, &ctx_list);
-+		list_add_tail(&rq->queuelist, &hctx_list);
- 	}
- 
- 	/*
--	 * If 'this_ctx' is set, we know we have entries to complete
--	 * on 'ctx_list'. Do those.
-+	 * If 'this_chtx' is set, we know we have entries to complete
-+	 * on 'hctx_list'. Do those.
- 	 */
--	if (this_ctx) {
-+	if (this_hctx) {
- 		trace_block_unplug(this_q, depth, !from_schedule);
--		blk_mq_sched_insert_requests(this_q, this_ctx, &ctx_list,
-+		blk_mq_sched_insert_requests(this_q, this_hctx, &hctx_list,
- 						from_schedule);
- 	}
- }
-@@ -1812,9 +1790,7 @@ blk_status_t blk_mq_request_issue_directly(struct request *rq)
- 	blk_status_t ret;
- 	int srcu_idx;
- 	blk_qc_t unused_cookie;
--	struct blk_mq_ctx *ctx = rq->mq_ctx;
--	struct blk_mq_hw_ctx *hctx = blk_mq_map_queue(rq->q, rq->cmd_flags,
--							ctx->cpu);
-+	struct blk_mq_hw_ctx *hctx = rq->mq_hctx;
- 
- 	hctx_lock(hctx, &srcu_idx);
- 	ret = __blk_mq_try_issue_directly(hctx, rq, &unused_cookie, true);
-@@ -1939,9 +1915,7 @@ static blk_qc_t blk_mq_make_request(struct request_queue *q, struct bio *bio)
- 		blk_mq_put_ctx(data.ctx);
- 
- 		if (same_queue_rq) {
--			data.hctx = blk_mq_map_queue(q,
--					same_queue_rq->cmd_flags,
--					same_queue_rq->mq_ctx->cpu);
-+			data.hctx = same_queue_rq->mq_hctx;
- 			blk_mq_try_issue_directly(data.hctx, same_queue_rq,
- 					&cookie);
- 		}
-diff --git a/block/blk-mq.h b/block/blk-mq.h
-index 8329017badc8..c74804b99a33 100644
---- a/block/blk-mq.h
-+++ b/block/blk-mq.h
-@@ -59,8 +59,7 @@ int blk_mq_alloc_rqs(struct blk_mq_tag_set *set, struct blk_mq_tags *tags,
- void __blk_mq_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
- 				bool at_head);
- void blk_mq_request_bypass_insert(struct request *rq, bool run_queue);
--void blk_mq_insert_requests(struct blk_mq_hw_ctx *hctx, struct blk_mq_ctx *ctx,
--				struct list_head *list);
-+void blk_mq_insert_requests(struct blk_mq_hw_ctx *hctx, struct list_head *list);
- 
- /* Used by blk_insert_cloned_request() to issue request directly */
- blk_status_t blk_mq_request_issue_directly(struct request *rq);
-@@ -223,13 +222,10 @@ static inline void blk_mq_put_driver_tag_hctx(struct blk_mq_hw_ctx *hctx,
- 
- static inline void blk_mq_put_driver_tag(struct request *rq)
- {
--	struct blk_mq_hw_ctx *hctx;
--
- 	if (rq->tag == -1 || rq->internal_tag == -1)
- 		return;
- 
--	hctx = blk_mq_map_queue(rq->q, rq->cmd_flags, rq->mq_ctx->cpu);
--	__blk_mq_put_driver_tag(hctx, rq);
-+	__blk_mq_put_driver_tag(rq->mq_hctx, rq);
- }
- 
- static inline void blk_mq_clear_mq_map(struct blk_mq_queue_map *qmap)
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 4223ae2d2198..7b351210ebcd 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -129,6 +129,7 @@ enum mq_rq_state {
- struct request {
- 	struct request_queue *q;
- 	struct blk_mq_ctx *mq_ctx;
-+	struct blk_mq_hw_ctx *mq_hctx;
- 
- 	int cpu;
- 	unsigned int cmd_flags;		/* op and common flags */
-
--- 
-Jens Axboe
+ 	struct timer_list user_read_timer;      /* user needs to claim result */
 
