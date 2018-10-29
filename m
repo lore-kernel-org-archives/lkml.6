@@ -2,145 +2,142 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16F8CC2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 11:27:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA46EC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 11:30:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB7912082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 11:27:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB7912082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 86D792082D
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 11:30:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86D792082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729093AbeJ2UPo (ORCPT
+        id S1727743AbeJ2USP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 16:15:44 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59118 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726582AbeJ2UPn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 16:15:43 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9TBNwsi032162
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 07:27:27 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ndwx494yn-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 07:27:27 -0400
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 29 Oct 2018 07:27:26 -0400
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 29 Oct 2018 07:27:24 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9TBRNiv24379448
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 29 Oct 2018 11:27:23 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 54A30B2065;
-        Mon, 29 Oct 2018 11:27:23 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3CE83B205F;
-        Mon, 29 Oct 2018 11:27:23 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.185.180])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 29 Oct 2018 11:27:23 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 6628C16C2E1E; Mon, 29 Oct 2018 04:27:25 -0700 (PDT)
-Date:   Mon, 29 Oct 2018 04:27:25 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     andrea.parri@amarulasolutions.com,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [RFR] Store tearing
-Reply-To: paulmck@linux.ibm.com
-References: <20181028230627.GA3420@andrea>
- <20181028231003.GA4021@andrea>
- <20181029012042.GR4170@linux.ibm.com>
- <CAK8P3a3t54qYyj1r0vjXJzgb3wvJLt4ypb7=xesavcJwC30_kg@mail.gmail.com>
+        Mon, 29 Oct 2018 16:18:15 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39100 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726079AbeJ2USO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 16:18:14 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7DE20341;
+        Mon, 29 Oct 2018 04:20:28 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4AB7B3F6A8;
+        Mon, 29 Oct 2018 04:20:28 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 395D91AE091C; Mon, 29 Oct 2018 11:20:35 +0000 (GMT)
+Date:   Mon, 29 Oct 2018 11:20:35 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        akpm@linux-foundation.org
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Kyeongdon Kim <kyeongdon.kim@lge.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        "kasan-dev@googlegroups.com" <kasan-dev@googlegroups.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2 2/3] arm64: lib: use C string functions with KASAN
+ enabled.
+Message-ID: <20181029112034.GE14127@arm.com>
+References: <20180914152800.GB6236@arm.com>
+ <20180920135631.23833-1-aryabinin@virtuozzo.com>
+ <20180920135631.23833-2-aryabinin@virtuozzo.com>
+ <20181029102922.GC14127@arm.com>
+ <9cf4a5ff-b68d-5703-720a-bce05409428a@virtuozzo.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK8P3a3t54qYyj1r0vjXJzgb3wvJLt4ypb7=xesavcJwC30_kg@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18102911-0040-0000-0000-00000488398C
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009947; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000268; SDB=6.01109627; UDB=6.00574892; IPR=6.00889720;
- MB=3.00023950; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-29 11:27:26
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18102911-0041-0000-0000-000008905745
-Message-Id: <20181029112725.GV4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-29_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=825 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810290109
+In-Reply-To: <9cf4a5ff-b68d-5703-720a-bce05409428a@virtuozzo.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 10:23:07AM +0100, Arnd Bergmann wrote:
-> On Mon, Oct 29, 2018 at 2:21 AM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
-> >
-> > On Mon, Oct 29, 2018 at 12:10:03AM +0100, Andrea Parri wrote:
-> > > Hopefully, with Paul's proper email address this time,
-> > >
-> > >   Andrea
-> > >
-> > > On Mon, Oct 29, 2018 at 12:06:27AM +0100, Andrea Parri wrote:
-> > > > Hi,
-> > > >
-> > > > memory-barriers.txt says:
-> > > >
-> > > >   [on "store tearing"]
-> > > >
-> > > >   "In fact, a recent bug (since fixed) caused GCC to incorrectly use
-> > > >    this optimization in a volatile store.".
-> > > >
-> > > > I was wondering if you could help me retrieve some reference/discussions
-> > > > about this?
-> >
-> > This was quite some time ago, but it involved a 32-bit volatile store
-> > of a constant such as 0x10001.  The machine in question had a narrow
-> > store-immediate instruction, so the compiler emitted  a pair of 16-bit
-> > store-immediate instructions.  This bug was fixed, though only after
-> > significant screaming and shouting.
-> 
-> A related issue I remember was on ARMv5 (an architecture without
-> unaligned access) where a function like )not sure if this specific
-> one triggers it, but something like it did)
-> 
-> struct my_registers {
->      u32 a;
->      u32 b;
->      u32 c;
-> } __attribute__((packed));
-> #define __raw_writel(p, v) do { (volatile u32 __iomem *)(p) = (v); } while (0)
-> void my_write_a(struct my_registers __iomem *r, u32 val)
-> {
->        __raw_writel(&r->a, val);
-> }
-> 
-> The above is undefined behavior because we cast from an unaligned
-> data type to a 32-bit aligned type, and gcc resolved this by turning the
-> intended 32-bit store into a set of 8 bit stores. We worked around this
-> by changing __raw_writel() into a inline assembly that always uses a
-> 32-bit store.
+Hi Andrey, Andrew,
 
-I had either missed or forgotten this one, nice example of store tearing!
+On Mon, Oct 29, 2018 at 11:16:15AM +0000, Andrey Ryabinin wrote:
+> On 10/29/2018 01:29 PM, Will Deacon wrote:
+> > On Thu, Sep 20, 2018 at 04:56:30PM +0300, Andrey Ryabinin wrote:
+> >> ARM64 has asm implementation of memchr(), memcmp(), str[r]chr(),
+> >> str[n]cmp(), str[n]len(). KASAN don't see memory accesses in asm
+> >> code, thus it can potentially miss many bugs.
+> >>
+> >> Ifdef out __HAVE_ARCH_* defines of these functions when KASAN is
+> >> enabled, so the generic implementations from lib/string.c will be used.
+> >>
+> >> We can't just remove the asm functions because efistub uses them.
+> >> And we can't have two non-weak functions either, so declare the asm
+> >> functions as weak.
+> >>
+> >> Reported-by: Kyeongdon Kim <kyeongdon.kim@lge.com>
+> >> Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+> >> ---
+> >> Changes since v1:
+> >>  - Use WEAK() instead of .weak
+> >>
+> >>  arch/arm64/include/asm/string.h | 14 ++++++++------
+> >>  arch/arm64/kernel/arm64ksyms.c  |  7 +++++--
+> >>  arch/arm64/lib/memchr.S         |  2 +-
+> >>  arch/arm64/lib/memcmp.S         |  2 +-
+> >>  arch/arm64/lib/strchr.S         |  2 +-
+> >>  arch/arm64/lib/strcmp.S         |  2 +-
+> >>  arch/arm64/lib/strlen.S         |  2 +-
+> >>  arch/arm64/lib/strncmp.S        |  2 +-
+> >>  arch/arm64/lib/strnlen.S        |  2 +-
+> >>  arch/arm64/lib/strrchr.S        |  2 +-
+> >>  10 files changed, 21 insertions(+), 16 deletions(-)
+> > 
+> > Acked-by: Will Deacon <will.deacon@arm.com>
+> > 
+> > Please post these again after the merge window and we'll figure out how to
+> > get them queued.
+> 
+> Andrew sent these patches to Linus couple days ago, so they are in tree
+> already.
 
-							Thanx, Paul
+Oh, good thing I was happy with them in the end, then!
 
+> Something went wrong with mail notification though. I didn't even realize
+> that they were in -mm tree, because I didn't receive the usual 'the patch
+> has been added to -mm tree' email.  But I did receive email that was sent
+> to Linus.
+
+Yeah, strange. I usually see the notifications from Andrew.
+
+> Also there was no you or Catalin in Cc tags in 2,3 patches, and in the
+> first patch, the Cc tags were corrupted:
+
+:/
+
+Andrew -- have we broken your scripts somehow, or is this just a one-off
+for these patches?
+
+Thanks,
+
+Will
+
+> From: Andrey Ryabinin <aryabinin@virtuozzo.com>
+> Subject: include/linux/linkage.h: align weak symbols
+> 
+> Since WEAK() supposed to be used instead of ENTRY() to define weak
+> symbols, but unlike ENTRY() it doesn't have ALIGN directive.  It seems
+> there is no actual reason to not have, so let's add ALIGN to WEAK() too.
+> 
+> Link: http://lkml.kernel.org/r/20180920135631.23833-1-aryabinin@virtuozzo.com
+> Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+> Will Deacon <will.deacon@arm.com>, Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Kyeongdon Kim <kyeongdon.kim@lge.com>
+> Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> Cc: Alexander Potapenko <glider@google.com>
+> Cc: Dmitry Vyukov <dvyukov@google.com>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
