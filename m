@@ -6,92 +6,90 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37FBCC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:16:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 194C3C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:16:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B60EE20664
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:16:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B60EE20664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id DD64720664
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:16:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD64720664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729240AbeJ2VE6 (ORCPT
+        id S1729273AbeJ2VFK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 17:04:58 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39588 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728950AbeJ2VE6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 17:04:58 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 391EE80D;
-        Mon, 29 Oct 2018 05:16:32 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 095DB3F6A8;
-        Mon, 29 Oct 2018 05:16:32 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id 0333F1AE091C; Mon, 29 Oct 2018 12:16:38 +0000 (GMT)
-Date:   Mon, 29 Oct 2018 12:16:38 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     John Garry <john.garry@huawei.com>
-Cc:     catalin.marinas@arm.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linuxarm@huawei.com
-Subject: Re: [PATCH] arm64/numa: Add more vetting in numa_set_distance()
-Message-ID: <20181029121638.GB15446@arm.com>
-References: <1540562267-101152-1-git-send-email-john.garry@huawei.com>
- <20181029112504.GF14127@arm.com>
- <925009c6-226d-213f-dbcb-68b772d80a18@huawei.com>
+        Mon, 29 Oct 2018 17:05:10 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33249 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728950AbeJ2VFK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 17:05:10 -0400
+Received: by mail-lj1-f196.google.com with SMTP id z21-v6so7553969ljz.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 05:16:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=PtdAGCoo6jxbL4lsVf3hTNw7lOjeF4+cr4UKTLomOsc=;
+        b=UfdH0QKQTh9SOKxLjhx57EJY/g4upaq1WaHHMXVyn9Tpf9DnIONLlzKGWyr0Rf+14q
+         WPnDkZ71rRtXsq7/LElJEUS12YUAg034eB1aYoxNflFZPCbLPuql8NnQj4QSHipHGiDF
+         Pc7xcIxzTJfXsnYMBFm2GaBd4be7N8oczIrlb4ko6w5qquoroZDAYGjVpS2DPTm6fOuf
+         88RYBQ2l0/Pt3hQq3U/Jm6/q89KkIe2R6ohrq91DB2ooD/7s91shLyc6W8eQQFajOjtR
+         D54uWrCxjTNvTf7rs7h2VfNfLLtrp+VNWq0kJsebhpqKEDOOWenKlIWu2caEzymkEP/t
+         wVXQ==
+X-Gm-Message-State: AGRZ1gK28xKQ5wDciyN4SH+78lLeBblncTuH0VyJVJjDz2ho1f9ZgZMu
+        DZVHCdEl2HptMOjjpRUU7t0Rm6gw
+X-Google-Smtp-Source: AJdET5c0qMxA+D2jmG2upTOZF/JONGbi4aN9bkpuj8HOvuuaesHtHZxeV4wUNUC/MhFb7RZxvtmYMg==
+X-Received: by 2002:a2e:8845:: with SMTP id z5-v6mr8816576ljj.98.1540815402909;
+        Mon, 29 Oct 2018 05:16:42 -0700 (PDT)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id c22sm3014058lfd.88.2018.10.29.05.16.41
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Oct 2018 05:16:42 -0700 (PDT)
+Date:   Mon, 29 Oct 2018 14:16:30 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     lgirdwood@gmail.com, broonie@kernel.org, mazziesaccount@gmail.com
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH] regulator: bd718x7: add missing linux/of.h inclusion
+ (deja-vu)
+Message-ID: <20181029121630.GA11183@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <925009c6-226d-213f-dbcb-68b772d80a18@huawei.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 12:14:09PM +0000, John Garry wrote:
-> On 29/10/2018 11:25, Will Deacon wrote:
-> >On Fri, Oct 26, 2018 at 09:57:47PM +0800, John Garry wrote:
-> >>Currently it is acceptable to set the distance between 2 separate nodes to
-> >>LOCAL_DISTANCE.
-> >>
-> >>Reject this as it is invalid.
-> >>
-> >>This change avoids a crash reported in [1].
-> >>
-> >>[1] https://www.spinics.net/lists/arm-kernel/msg683304.html
-> >>
-> >>Signed-off-by: John Garry <john.garry@huawei.com>
-> >>
-> >>diff --git a/arch/arm64/mm/numa.c b/arch/arm64/mm/numa.c
-> >>index 146c04c..6092e3d 100644
-> >>--- a/arch/arm64/mm/numa.c
-> >>+++ b/arch/arm64/mm/numa.c
-> >>@@ -335,7 +335,8 @@ void __init numa_set_distance(int from, int to, int distance)
-> >> 	}
-> >>
-> >> 	if ((u8)distance != distance ||
-> >>-	    (from == to && distance != LOCAL_DISTANCE)) {
-> >>+	    (from == to && distance != LOCAL_DISTANCE) ||
-> >>+	    (from != to && distance == LOCAL_DISTANCE)) {
-> >
-> >The current code here is more-or-less lifted from the x86 implementation
-> >of numa_set_distance().
-> 
-> Right, I did notice this. I didn't think that x86 folks would be so
-> concerned since they generally only use ACPI, and the ACPI code already
-> validates these distances in drivers/acpi/numa.c: slit_valid() [unlike OF
-> code].
-> 
->  I think we should either factor out the sanity check
-> >into a core helper or make the core code robust to these funny configurations.
-> 
-> OK, so to me it would make sense to factor out a sanity check into a core
-> helper.
+0-Day tests found compilation error on x86.
+Driver won't compile on x86_64 as "of_match_ptr" is
+not found. Add missing include <linux/of.h>
 
-That, or have the OF code perform the same validation that slit_valid() is
-doing for ACPI. I'm just trying to avoid other architectures running into
-this problem down the line.
+At some point this fix was lost. So re-apply it.
 
-Will
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ drivers/regulator/bd718x7-regulator.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd718x7-regulator.c
+index 3a47e0372e77..7ba14dae5848 100644
+--- a/drivers/regulator/bd718x7-regulator.c
++++ b/drivers/regulator/bd718x7-regulator.c
+@@ -9,6 +9,7 @@
+ #include <linux/kernel.h>
+ #include <linux/mfd/rohm-bd718x7.h>
+ #include <linux/module.h>
++#include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/regulator/driver.h>
+ #include <linux/regulator/machine.h>
+-- 
+2.14.3
+
+
+-- 
+Matti Vaittinen
+ROHM Semiconductors
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
