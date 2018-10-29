@@ -2,268 +2,156 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C21C9C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:05:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9263BC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:08:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B2BD2080A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:05:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B2BD2080A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 5861D2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:08:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SgxFmj9t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5861D2084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729551AbeJ3Dzh (ORCPT
+        id S1729516AbeJ3D6W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 23:55:37 -0400
-Received: from sauhun.de ([88.99.104.3]:38560 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725969AbeJ3Dzh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 23:55:37 -0400
-Received: from localhost (unknown [87.114.85.207])
-        by pokefinder.org (Postfix) with ESMTPSA id 6CB5F2E35DD;
-        Mon, 29 Oct 2018 20:05:36 +0100 (CET)
-Date:   Mon, 29 Oct 2018 19:05:35 +0000
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Peter Rosin <peda@axentia.se>,
-        Bartosz Golaszewski <brgl@bgdev.pl>
-Subject: [PULL REQUEST] i2c for 4.20
-Message-ID: <20181029190531.GA5319@kunai>
+        Mon, 29 Oct 2018 23:58:22 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43461 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726384AbeJ3D6W (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 23:58:22 -0400
+Received: by mail-wr1-f66.google.com with SMTP id t10-v6so9914936wrn.10;
+        Mon, 29 Oct 2018 12:08:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2FB+brlDErFcKaAXgeHxcJPKsFF2HZZjbUO9HWm2rW8=;
+        b=SgxFmj9tSXovSPYtHmggzlOV2TAkLud2T9hdGrUjOIKsBpgppYwnnLqTEU0sdN4IAE
+         kIa2Vsc9arcLQcWtZ6ayweDA0qV0cDKh2lGoEYXNdJRQk9iGoIHmvfx1bQcK15BkzUeD
+         8I50miv1tTfTe9bN12gA2FbKh63hI6hVgkUfMqd+jXCn9AfO33nsTjx8NGzlBpNL4uke
+         LQY6yiraP1f7x9UEC+n5tVi6QL+eU+0iWS++S2dPxHhxjBNHny34zr+rPjiUDUSWDvR1
+         nwu9zaGwCo+w4pQaNW5Ll85rvUGJS5cepwZFOxVqfIEpZJJy5f1ZFP+KmEt9fJhgm5mP
+         QaCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2FB+brlDErFcKaAXgeHxcJPKsFF2HZZjbUO9HWm2rW8=;
+        b=AhUugMiJMA8CJAcuEtwmcjqH6A7Cwa3n/rdnPGGE0/bAKpzrztNE3uh2+XQBq7U24e
+         l5ybv9L2daW1od6xyg7fQ4+DCMc7EwYAyuf6fw7PvbO+4SK/pO+IxUwR/WsWOrYwD79C
+         E5zpKX7xD16i2bckdpO2wT2rEmt1NQ0L850SWibgX2R02usyqurb27SE0zhq/XcMkTJq
+         ruzHwpJYYYF+EgO8zqcb/w2RYvB9rzZ1X+oBZo7lseqdiNyVtWq5so+U4/UYbxVgY5o7
+         ovn4M6gnITlLwpqNQqTHxXJKh7txGTofonQSoIy5261shKt+spiIknlrGd/boamJmGni
+         s6xQ==
+X-Gm-Message-State: AGRZ1gISRCPeIKx7YXbhkcQ58/N5V2MAXzFXlK/Z/oH2tKEkxB54iohY
+        PtwaVH/EZqrmYajatGEpBYE=
+X-Google-Smtp-Source: AJdET5dkfCC4pzmu6hCTHcxltT55t4+hTeYl7bXqy1Z8bkkqvcX4gwTE0qc5HwHlaaEzTOTI0rny4A==
+X-Received: by 2002:adf:f384:: with SMTP id m4-v6mr15368677wro.111.1540840100875;
+        Mon, 29 Oct 2018 12:08:20 -0700 (PDT)
+Received: from picard ([194.207.103.1])
+        by smtp.gmail.com with ESMTPSA id l140-v6sm28577135wmb.24.2018.10.29.12.08.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Oct 2018 12:08:20 -0700 (PDT)
+Date:   Mon, 29 Oct 2018 19:08:19 +0000
+From:   Dean Wallace <duffydack73@gmail.com>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Johannes Stezenbach <js@sig21.net>,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
+Message-ID: <20181029190819.2ivlx73n6y6sx4vk@picard>
+References: <20181025232517.ywnw54qibemosjws@picard>
+ <154083512089.98144.9141070901932719147@swboyd.mtv.corp.google.com>
+ <CAHp75VfnN5tF1Z9+CDDhKFNG5QfCRcGOZeAkpf-5BfCEx16gvg@mail.gmail.com>
+ <CAHp75VctdBE-GM60udJawBCXdmoOqZn4N=kFWz5GLHzjPG2iQQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <CAHp75VctdBE-GM60udJawBCXdmoOqZn4N=kFWz5GLHzjPG2iQQ@mail.gmail.com>
+X-Info: Keep It Simple, Stupid.
+X-Operating-System: Linux, kernel 4.18.16-arch1-1-ARCH
+X-Message-Flag: WARNING!! Outlook sucks
+User-Agent: Every email client sucks, this one just sucks less.
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 29-10-18, Andy Shevchenko wrote:
+> On Mon, Oct 29, 2018 at 7:52 PM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+> >
+> > Cc: Pierre as well.
+> >
+> > On Mon, Oct 29, 2018 at 7:48 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > >
+> > > Quoting Dean Wallace (2018-10-25 16:25:17)
+> > > > I have found a regression in 4.18.15 that means I lose sound on my old
+> > > > Toshiba Chromebook 2 (Swanky).  My system details are:-
+> > > >
+> > > > Toshiba Chromebook (Swanky)
+> > > > MrChromebox UEFI coreboot
+> > > > Arch Linux running latest alsa/pulseaudio
+> > > >
+> > > > Upgraded kernel from 4.18.14 to 4.18.15 and lost all sound output.  By
+> > > > output I mean, the card is still detected, the module loaded, all apps
+> > > > showing sound is being playing, but no actual audible sound comes
+> > > > through.  Upgraded to 4.18.16 same issue.
+> > > >
+> > > > Dug around and found Upstream commit 648e921888ad96ea3dc922739e96716ad3225d7f
+> > > > clk: x86: Stop marking clocks as CLK_IS_CRITICAL
+> > > > "This commit removes the CLK_IS_CRITICAL marking, fixing Cherry Trail
+> > > > devices not being able to reach S0i3 greatly decreasing their battery
+> > > > drain when suspended."
+> > > >
+> > > > I reverted it and compiled 4.18.16 and have sound back again.  Could
+> > > > this be looked into, with possibility of fix.
+> > > >
+> > >
+> > > Thanks for the bug report. I'm adding some people involved in the commit
+> > > you mention is causing audio regressions. The best plan is to probably
+> > > revert the commit from the 4.18 linux stable tree. Or there may be
+> > > another patch missing that would be useful to make this backported patch
+> > > work. Hopefully Hans or Andy knows.
+> >
+> > Hans has been investigating S0ix issues on Baytrail and Cherrytrail machines.
+> > I have a feeling that the problem can be fixed by properly handling
+> > clock in ASoC driver(s). Perhaps Hans and Pierre can figure this out
+> > better than me.
+> 
+> Looking to sound/soc/intel/boards/cht_bsw_rt5672.c I see no
+> suspend-resume hooks. Perhaps, adding them like in the commit
+> ac8bd9e13be2 ("r8169: Disable clk during suspend / resume") would
+> help.
+> 
+> Btw, what the drivers are in use for the machine you have? It's better
+> you run alsa-info.sh or alike to collect necessary information along
+> with output of `lsmod`, `dmesg`, etc.
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
 
---SUOF0GtieIMvvwua
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+alsa-info.txt [1], cpuinfo [2], dmesg [3], and 'ls /sys/bus/i2c/devices' [4]
+[1] https://gist.github.com/duffydack/480be8ddced44515dbf981dc09f593ec#file-alsa-info
+[2] https://gist.github.com/duffydack/480be8ddced44515dbf981dc09f593ec#file-cpuinfo-log
+[3] https://gist.github.com/duffydack/480be8ddced44515dbf981dc09f593ec#file-dmesg-log
+[4] https://gist.github.com/duffydack/480be8ddced44515dbf981dc09f593ec#file-sys-bus-i2c-devices-log
 
-Linus,
-
-welcome back! I hope the time off was good for you.
-
-I2C has not so much stuff this time. Mostly driver enablement for new
-SoCs, some driver bugfixes, and some cleanups.
-
-Please pull.
-
-Thanks,
-
-   Wolfram
-
-
-The following changes since commit 0238df646e6224016a45505d2c111a24669ebe21:
-
-  Linux 4.19-rc7 (2018-10-07 17:26:02 +0200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-4.20
-
-for you to fetch changes up to 84de6e96e036dcfb18dded04a506b1dd72ba0e5b:
-
-  MAINTAINERS: add maintainer for Renesas RIIC driver (2018-10-29 18:53:38 +0000)
-
-----------------------------------------------------------------
-Alexandre Belloni (5):
-      i2c: designware: use generic table matching
-      i2c: designware: move #ifdef CONFIG_OF to the top
-      i2c: designware: allow IP specific sda_hold_time
-      dt-bindings: i2c: designware: document MSCC Ocelot bindings
-      i2c: designware: add MSCC Ocelot support
-
-Biju Das (2):
-      dt-bindings: i2c: rcar: Document r8a7744 support
-      dt-bindings: i2c: sh_mobile: Document r8a7744 support
-
-Brendan Higgins (1):
-      i2c: aspeed: fix invalid clock parameters for very large divisors
-
-Chris Brandt (1):
-      MAINTAINERS: add maintainer for Renesas RIIC driver
-
-Fabrizio Castro (1):
-      dt-bindings: i2c: rcar: Add r8a77470 support
-
-Florian Fainelli (1):
-      i2c: brcmstb: Allow enabling the driver on DSL SoCs
-
-Guenter Roeck (1):
-      i2c: aspeed: Acknowledge most interrupts early in interrupt handler
-
-Gustavo A. R. Silva (1):
-      i2c: synquacer: fix fall-through annotation
-
-Hans de Goede (2):
-      i2c: designware: Remove Cherry Trail PMIC I2C bus pm_disabled workaround
-      i2c: designware: Set IRQF_NO_SUSPEND flag for all BYT and CHT controllers
-
-Jae Hyun Yoo (1):
-      i2c: aspeed: Handle master/slave combined irq events properly
-
-Jarkko Nikula (1):
-      i2c: sh_mobile: Remove dummy runtime PM callbacks
-
-Jun Gao (1):
-      i2c: mediatek: Use DMA safe buffers for i2c transactions
-
-Luca Ceresoli (3):
-      i2c: mux: pca954x: simplify code to reach the adapter
-      i2c: mux: ltc4306: simplify code to reach the adapter
-      i2c: mux: mlxcpld: simplify code to reach the adapter
-
-Masahiro Yamada (3):
-      i2c: uniphier-f: make driver robust against concurrency
-      i2c: uniphier-f: fix occasional timeout error
-      i2c: uniphier-f: fix race condition when IRQ is cleared
-
-Rob Herring (1):
-      i2c: Convert to using %pOFn instead of device_node.name
-
-Stephen Boyd (2):
-      i2c: i2c-qcom-geni: Simplify tx/rx functions
-      i2c: i2c-qcom-geni: Simplify irq handler
-
-Wang Xin (1):
-      eeprom: at24: fix unexpected timeout under high load
-
-Wolfram Sang (10):
-      i2c: aspeed: use proper annotation for "fall through"
-      Merge tag 'at24-4.20-updates-for-wolfram' of git://git.kernel.org/.../brgl/linux into i2c/for-4.20
-      i2c: omap: use core to detect 'no zero length' quirk
-      i2c: qup: use core to detect 'no zero length' quirk
-      i2c: tegra: use core to detect 'no zero length' quirk
-      i2c: zx2967: use core to detect 'no zero length' quirk
-      i2c: core: remove outdated DEBUG output
-      i2c: core: remove level of indentation in i2c_transfer
-      Merge tag 'v4.19-rc7' into i2c/for-4.20
-      Merge branch 'i2c-mux/for-next' of https://github.com/peda-r/i2c-mux into i2c/for-4.20-fixed
-
-
-with much appreciated quality assurance from
-----------------------------------------------------------------
-Alok Chauhan (2):
-      (Rev.) i2c: i2c-qcom-geni: Simplify irq handler
-      (Rev.) i2c: i2c-qcom-geni: Simplify tx/rx functions
-
-Andy Gross (1):
-      (Rev.) i2c: qup: use core to detect 'no zero length' quirk
-
-Andy Shevchenko (4):
-      (Rev.) i2c: designware: Set IRQF_NO_SUSPEND flag for all BYT and CHT controllers
-      (Rev.) i2c: designware: Remove Cherry Trail PMIC I2C bus pm_disabled workaround
-      (Rev.) i2c: designware: add MSCC Ocelot support
-      (Rev.) i2c: designware: allow IP specific sda_hold_time
-
-Biju Das (1):
-      (Rev.) dt-bindings: i2c: rcar: Add r8a77470 support
-
-Brendan Higgins (2):
-      (Rev.) i2c: aspeed: use proper annotation for "fall through"
-      (Rev.) i2c: aspeed: Handle master/slave combined irq events properly
-
-Douglas Anderson (2):
-      (Rev.) i2c: i2c-qcom-geni: Simplify irq handler
-      (Rev.) i2c: i2c-qcom-geni: Simplify tx/rx functions
-
-Fabrizio Castro (2):
-      (Rev.) dt-bindings: i2c: sh_mobile: Document r8a7744 support
-      (Rev.) dt-bindings: i2c: rcar: Document r8a7744 support
-
-Geert Uytterhoeven (2):
-      (Rev.) dt-bindings: i2c: sh_mobile: Document r8a7744 support
-      (Rev.) dt-bindings: i2c: rcar: Document r8a7744 support
-
-Grygorii Strashko (1):
-      (Rev.) i2c: omap: use core to detect 'no zero length' quirk
-
-Jae Hyun Yoo (2):
-      (Rev.) i2c: aspeed: fix invalid clock parameters for very large divisors
-      (Test) i2c: aspeed: use proper annotation for "fall through"
-
-Jarkko Nikula (5):
-      (Test) i2c: designware: Set IRQF_NO_SUSPEND flag for all BYT and CHT controllers
-      (Test) i2c: designware: add MSCC Ocelot support
-      (Test) i2c: designware: allow IP specific sda_hold_time
-      (Test) i2c: designware: move #ifdef CONFIG_OF to the top
-      (Test) i2c: designware: use generic table matching
-
-Joel Stanley (1):
-      (Test) i2c: aspeed: Acknowledge most interrupts early in interrupt handler
-
-Mika Westerberg (1):
-      (Rev.) i2c: designware: Set IRQF_NO_SUSPEND flag for all BYT and CHT controllers
-
-Peter Rosin (1):
-      (Rev.) i2c: Convert to using %pOFn instead of device_node.name
-
-Rob Herring (1):
-      (Rev.) dt-bindings: i2c: designware: document MSCC Ocelot bindings
-
-Simon Horman (2):
-      (Rev.) dt-bindings: i2c: sh_mobile: Document r8a7744 support
-      (Rev.) dt-bindings: i2c: rcar: Document r8a7744 support
-
-Wolfram Sang (1):
-      (Rev.) i2c: sh_mobile: Remove dummy runtime PM callbacks
-
- .../devicetree/bindings/i2c/i2c-designware.txt     |   7 +-
- Documentation/devicetree/bindings/i2c/i2c-rcar.txt |   2 +
- .../devicetree/bindings/i2c/i2c-sh_mobile.txt      |   1 +
- MAINTAINERS                                        |   6 +
- drivers/i2c/busses/Kconfig                         |   7 +-
- drivers/i2c/busses/i2c-aspeed.c                    | 205 +++++++++++++--------
- drivers/i2c/busses/i2c-designware-baytrail.c       |   2 +-
- drivers/i2c/busses/i2c-designware-common.c         |   2 +
- drivers/i2c/busses/i2c-designware-core.h           |   9 +-
- drivers/i2c/busses/i2c-designware-master.c         |   2 +-
- drivers/i2c/busses/i2c-designware-platdrv.c        |  90 +++++----
- drivers/i2c/busses/i2c-mt65xx.c                    |  62 ++++++-
- drivers/i2c/busses/i2c-omap.c                      |   8 +-
- drivers/i2c/busses/i2c-powermac.c                  |  17 +-
- drivers/i2c/busses/i2c-qcom-geni.c                 | 149 +++++++--------
- drivers/i2c/busses/i2c-qup.c                       |  14 +-
- drivers/i2c/busses/i2c-sh_mobile.c                 |  18 --
- drivers/i2c/busses/i2c-synquacer.c                 |   2 +-
- drivers/i2c/busses/i2c-tegra.c                     |   4 +-
- drivers/i2c/busses/i2c-uniphier-f.c                |  59 ++++--
- drivers/i2c/busses/i2c-zx2967.c                    |   8 +-
- drivers/i2c/i2c-core-base.c                        |  43 ++---
- drivers/i2c/muxes/i2c-mux-gpmux.c                  |   4 +-
- drivers/i2c/muxes/i2c-mux-ltc4306.c                |   2 +-
- drivers/i2c/muxes/i2c-mux-mlxcpld.c                |   2 +-
- drivers/i2c/muxes/i2c-mux-pca954x.c                |   2 +-
- drivers/misc/eeprom/at24.c                         |  43 ++---
- 27 files changed, 450 insertions(+), 320 deletions(-)
-
---SUOF0GtieIMvvwua
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvXWfYACgkQFA3kzBSg
-KbY8Ow//QUUMgbmdo5++zaz9B6HRb2rL0LAleXj0BFDFVplzfkus1usTzeTkRppm
-lX+MOkML6yJCekNzo9JJIeH86xIXdejUVVHbhzMogTdL5im5qvIn2m92EyO0zSc/
-B003xn+4z+cVzkG4iltDXZeof1EZf+72SuVwAUUkiNA9ZYnIjRrKZP9jm93dNLVA
-4kAOLUeOaFCKToXzr4DoL/1wUkmuS2OIqAs0IO2LuAUF+aJhCsU1EBw1YUgQHbBK
-3eGEFWFZAJP2detXCqnUUXXd9Q2TCTuju4uPUouPm2Lz2OEJtkmqmSit+mwSRxLe
-7uvT+seAbgZUG43eu1VeaMY3ywnOknRH8mTgkSzMNATLwPBDr8WRiIuTOD5W+36w
-nK/7lMsuVwuszrYQ9qkz7z5BnR7SgAXyFwCijU3hXCr8M18uicYOAq83Wg5Nw2Ui
-eq+h7Ka8mYYy0Sf3jcKeHvW71JYRsbiaZzB24wikN5HXRe2asoVQVy63y6FLrMXX
-9MMmhxDePRrALxOKQkcsjTXbgRMNVM05+CR0ZqE90LCuqgt/LQ2/TsFMelOU3SD4
-FbMOPT+7bVkCQfhaLJ51+0cscywKOd9Gw/vAdZCwOqXHk3e1OpQI2M4jRxJTrxuV
-l/nwYj1pc7ah0iLoRl0AOR8tWEK9LxK2GgYPl14O15tcReF//vs=
-=46rK
------END PGP SIGNATURE-----
-
---SUOF0GtieIMvvwua--
+Regards
+-- 
+Dean
