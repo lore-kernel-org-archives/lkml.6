@@ -2,101 +2,107 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52EB8C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:15:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E53EC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:16:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2317720827
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:15:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2317720827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 002B020827
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:16:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 002B020827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729859AbeJ2TDx (ORCPT
+        id S1729875AbeJ2TEA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 15:03:53 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38170 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729613AbeJ2TDx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 15:03:53 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 420CA341;
-        Mon, 29 Oct 2018 03:15:52 -0700 (PDT)
-Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2B3B43F6A8;
-        Mon, 29 Oct 2018 03:15:51 -0700 (PDT)
-From:   Julien Thierry <julien.thierry@arm.com>
-To:     linux-efi@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, ard.biesheuvel@linaro.org,
-        joe@perches.com, Julien Thierry <julien.thierry@arm.com>
-Subject: [PATCH v2 2/2] efi/fdt: Simplify get_fdt flow
-Date:   Mon, 29 Oct 2018 10:15:42 +0000
-Message-Id: <1540808142-33208-3-git-send-email-julien.thierry@arm.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1540808142-33208-1-git-send-email-julien.thierry@arm.com>
-References: <1540808142-33208-1-git-send-email-julien.thierry@arm.com>
+        Mon, 29 Oct 2018 15:04:00 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:32888 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729613AbeJ2TEA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 15:04:00 -0400
+Received: by mail-qt1-f194.google.com with SMTP id i15-v6so8510354qtr.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 03:15:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wrptKfDyU25gGei8hDekoqMLYF7ix+QkUL+h8ja2Erg=;
+        b=lXfKkiOox9xsiOOhnEVk+PRRxhfiBGjScz2hFCQdD3Wq+4k+hf3efb8GsFIy01v6BT
+         mk1eEeUxibMdPAK36KmyAn803BaDNs/iosOa1+N9D55iX+Zqrly7VuhtOzEtNuZ11okO
+         pZRIKWqgmAo1SnDs+dPsszMX6R6sJr40QgXIr0cyRWHiJGiCeuRVrxJuPXPbqE8huiLJ
+         yyJFOsqfiHvJHsoB8H+dNpfE8Z8ojDvv3ewvbmrkaKjhjuFa9kALQ6Jlaw6vbe/KUh3g
+         hGm9JMP/mylR1U/2jZWZEpz6A0eEwj3Epmn7qFmcufEekGxN2Yck5QUTQRO5Z60GOm69
+         1XzQ==
+X-Gm-Message-State: AGRZ1gJ6+MMTw62ii11wAB5WlgGYQCj05VdYlUhmtMYdCzL6JKup3VsY
+        0TEegZTwBI3YQJpabshaIgLREszoxiXaSpbjz+5n8Rwj
+X-Google-Smtp-Source: AJdET5cnI9y1M4/3knzn54aAlU+ylaggfx7Vh+mf6e0xAr3HQpTk7qwfaUAi1quYYC6RPbJcMyM80UemuTiTG+wxCww=
+X-Received: by 2002:a0c:9927:: with SMTP id h36mr1056341qvd.171.1540808158833;
+ Mon, 29 Oct 2018 03:15:58 -0700 (PDT)
+MIME-Version: 1.0
+References: <20181019085958.32694-1-ckeepax@opensource.cirrus.com>
+ <20181019085958.32694-2-ckeepax@opensource.cirrus.com> <20181028223116.GJ1882@kunai>
+In-Reply-To: <20181028223116.GJ1882@kunai>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Mon, 29 Oct 2018 11:15:47 +0100
+Message-ID: <CAO-hwJLw74k+jBnDuQ7OrVzJOy8i82OXKNWuNhxNqUj+8nzwhg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] i2c: Clear client->irq in i2c_device_remove
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     ckeepax@opensource.cirrus.com,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        patches@opensource.cirrus.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reorganize get_fdt lookup loop, clearly showing that:
-- Nothing is done for table entries that do not have fdt_guid
-- Once an entry with fdt_guid is found, break out of the loop
+On Sun, Oct 28, 2018 at 11:31 PM Wolfram Sang <wsa@the-dreams.de> wrote:
+>
+> On Fri, Oct 19, 2018 at 09:59:58AM +0100, Charles Keepax wrote:
+> > The IRQ will be mapped in i2c_device_probe only if client->irq is zero and
+> > i2c_device_remove does not clear this. When rebinding an I2C device,
+> > whos IRQ provider has also been rebound this means that an IRQ mapping
+> > will never be created, causing the I2C device to fail to acquire its
+> > IRQ. Fix this issue by clearing client->irq in i2c_device_remove,
+> > forcing i2c_device_probe to lookup the mapping again.
+> >
+> > Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+>
+> Adding Benjamin here again. Also, should there be a Fixes: tag?
 
-No functional changes.
+Not sure if the circumstances are preventing me to think straight, but
+how can you reprobe the i2c_device?
+And in all cases, for the Host notify part, having the IRQ already set
+shouldn't be an issue.
 
-Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-Suggested-by: Joe Perches <joe@perches.com>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
- drivers/firmware/efi/libstub/fdt.c | 25 +++++++++++++------------
- 1 file changed, 13 insertions(+), 12 deletions(-)
+So for the host notify case, this patch is fine, not entirely sure
+about the acpi or OF part of it.
 
-diff --git a/drivers/firmware/efi/libstub/fdt.c b/drivers/firmware/efi/libstub/fdt.c
-index 8b6696e..5b7e2b3 100644
---- a/drivers/firmware/efi/libstub/fdt.c
-+++ b/drivers/firmware/efi/libstub/fdt.c
-@@ -366,23 +366,24 @@ void *get_fdt(efi_system_table_t *sys_table, unsigned long *fdt_size)
- {
- 	efi_guid_t fdt_guid = DEVICE_TREE_GUID;
- 	efi_config_table_t *tables;
--	void *fdt;
- 	int i;
- 
--	tables = (efi_config_table_t *) sys_table->tables;
--	fdt = NULL;
-+	tables = (efi_config_table_t *)sys_table->tables;
- 
- 	for (i = 0; i < sys_table->nr_tables; i++) {
--		if (efi_guidcmp(tables[i].guid, fdt_guid) == 0) {
--			fdt = (void *) tables[i].table;
--			if (fdt_check_header(fdt) != 0) {
--				pr_efi_err(sys_table, "Invalid header detected on UEFI supplied FDT, ignoring ...\n");
--				return NULL;
--			}
--			*fdt_size = fdt_totalsize(fdt);
--			break;
-+		void *fdt;
-+
-+		if (efi_guidcmp(tables[i].guid, fdt_guid) != 0)
-+			continue;
-+
-+		fdt = (void *) tables[i].table;
-+		if (fdt_check_header(fdt) != 0) {
-+			pr_efi_err(sys_table, "Invalid header detected on UEFI supplied FDT, ignoring ...\n");
-+			return NULL;
- 		}
-+		*fdt_size = fdt_totalsize(fdt);
-+		return fdt;
- 	}
- 
--	return fdt;
-+	return NULL;
- }
--- 
-1.9.1
+Cheers,
+Benjamin
 
+>
+> > ---
+> >  drivers/i2c/i2c-core-base.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/drivers/i2c/i2c-core-base.c b/drivers/i2c/i2c-core-base.c
+> > index 656f0a6fe3adf..28460f6a60cc1 100644
+> > --- a/drivers/i2c/i2c-core-base.c
+> > +++ b/drivers/i2c/i2c-core-base.c
+> > @@ -430,6 +430,8 @@ static int i2c_device_remove(struct device *dev)
+> >       dev_pm_clear_wake_irq(&client->dev);
+> >       device_init_wakeup(&client->dev, false);
+> >
+> > +     client->irq = 0;
+> > +
+> >       return status;
+> >  }
+> >
+> > --
+> > 2.11.0
+> >
