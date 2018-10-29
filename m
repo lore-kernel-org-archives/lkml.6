@@ -2,118 +2,113 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F9D0C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:01:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F960C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:01:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44E2F204FD
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:01:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44E2F204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 028F1204FD
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:01:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ewJWvKQW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 028F1204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728289AbeJ3CvK convert rfc822-to-8bit (ORCPT
+        id S1728321AbeJ3Cv3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 22:51:10 -0400
-Received: from mga05.intel.com ([192.55.52.43]:28052 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727772AbeJ3CvK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 22:51:10 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2018 11:01:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,441,1534834800"; 
-   d="scan'208";a="99735193"
-Received: from orsmsx103.amr.corp.intel.com ([10.22.225.130])
-  by fmsmga002.fm.intel.com with ESMTP; 29 Oct 2018 11:01:28 -0700
-Received: from orsmsx114.amr.corp.intel.com ([169.254.8.128]) by
- ORSMSX103.amr.corp.intel.com ([169.254.5.166]) with mapi id 14.03.0415.000;
- Mon, 29 Oct 2018 11:01:28 -0700
-From:   "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-CC:     "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        "Ingo Molnar" <mingo@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: RE: [PATCH V2 1/2] x86/efi: Unmap EFI boot services code/data
- regions from efi_pgd
-Thread-Topic: [PATCH V2 1/2] x86/efi: Unmap EFI boot services code/data
- regions from efi_pgd
-Thread-Index: AQHUbXSDlG5yxQFZuUKIGr9tlrL5CKU27+KAgAACRID//5GH4A==
-Date:   Mon, 29 Oct 2018 18:01:27 +0000
-Message-ID: <FFF73D592F13FD46B8700F0A279B802F485E5549@ORSMSX114.amr.corp.intel.com>
-References: <20181026213845.28166-1-sai.praneeth.prakhya@intel.com>
- <20181026213845.28166-2-sai.praneeth.prakhya@intel.com>
- <alpine.DEB.2.21.1810291809490.5984@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1810291820250.5984@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1810291820250.5984@nanos.tec.linutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNzU5ZWQ3ZWMtODczMC00YWRiLWE0ZjYtM2JmODU0NGY0ZGY3IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiaG1DRW9NRDRNQzQ3UnhyY2gyYk1uTmh6QU9SZUY3dXNIeFJrbTFHOFwvWXdHU2FpbmZ3RjViNXZGQjVXWFRGUTEifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.140]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Mon, 29 Oct 2018 22:51:29 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:37016 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727772AbeJ3Cv3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 22:51:29 -0400
+Received: by mail-lf1-f66.google.com with SMTP id p17so319806lfh.4;
+        Mon, 29 Oct 2018 11:01:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=7kgQoUjTh24AyO/p9oeeYLOwg1VLACPfdZMGUe9bi24=;
+        b=ewJWvKQWE+ZIdEn9+5FvVem8ynSjjOZtQ8ASAQwGo9iqJBUQkujpHsYY5hvGEc3GrL
+         mENgeb3vTrUwZN3irUT3epuvMUHXFRzI8xrVsOVCuKbGq++1wtqaDeO1JOFRs6yMbh13
+         4EmaE7C2iCp1awkJ1/wlMMXhvXIZgAg7CmXqA/gzhVnDmE+DQG20zxvWVbQmfSnQZJTu
+         +DPBATd36Cy3WxLb6zmJbYJueHncElUxafG4+Nlbyy8nSXCHNFmayuiM1g6e6DUnUoiC
+         AJmODwTdcCZRrABqDIFNHDofAe8aOsVQgkBL25Mn3cQFdZg05fZxPHrCrN6t5VBKbr6t
+         BB6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=7kgQoUjTh24AyO/p9oeeYLOwg1VLACPfdZMGUe9bi24=;
+        b=SVSaenpszEnB+OzleBRExGqO6SnZ7cmtg8xXwBxznKxzP+eFIQNFoMBcOiAlCm6FpT
+         nB7Sp+H2zkBat9Vkov9wEeEME35LX2aHO7HUCv/T7WtuixOSL/8bsAxK/a0518FigUPi
+         LKzWAIQxksWmQ/m9Eiv4mGjqf4zLfl5F+Wv47/iTFMoI5uCMUjXAVeYwIFI3iv/8x4eJ
+         LP5gdDygmB7ZtHZ+caMao+AldFOouP1+RTuLrwvP4PCbGWSZ0Qm0Kctrzo9OGPKbg0+k
+         U7IsDFVVdCPrGdlWOyT4mxHFi1LMoxyJBcU512fTzvZLYwR/STNuAtqf+gMb4wSIhr9c
+         fh1A==
+X-Gm-Message-State: AGRZ1gIl66hsQCjJK6/x0rEpaIRZXaFwj4IV5AZM1CWYUwUb4CClKAUv
+        TDiy4KTkWFjLfzdNvDP5w58=
+X-Google-Smtp-Source: AJdET5ev/pCOW16Nali/5oz0BfpyVCCm+SghGErJwQe1Sq/gvslVbV17kdxSCZE2beFxFW1qcLNJEQ==
+X-Received: by 2002:a19:cc46:: with SMTP id c67mr8710395lfg.145.1540836105613;
+        Mon, 29 Oct 2018 11:01:45 -0700 (PDT)
+Received: from ?IPv6:2001:14bb:52:7be:f0bf:dd2d:f008:5213? (dmkd798g-7z2-yccwcp-4.rev.dnainternet.fi. [2001:14bb:52:7be:f0bf:dd2d:f008:5213])
+        by smtp.gmail.com with ESMTPSA id j12-v6sm517117lja.8.2018.10.29.11.01.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Oct 2018 11:01:44 -0700 (PDT)
+Subject: Re: [PATCH V5 0/5] KVM: X86: Introducing ROE Protection Kernel
+ Hardening
+To:     Ahmed Abd El Mawgood <ahmedsoliman0x666@gmail.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ovich00@gmail.com, kernel-hardening@lists.openwall.com,
+        nigel.edwards@hpe.com, Boris Lukashev <blukashev@sempervictus.com>,
+        Hossam Hassan <7ossam9063@gmail.com>,
+        Ahmed Lotfy <A7med.lotfey@gmail.com>
+References: <20181026151223.16810-1-ahmedsoliman0x666@gmail.com>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <1b3eb10e-c492-dc77-cbe6-3a3e692326d7@gmail.com>
+Date:   Mon, 29 Oct 2018 20:01:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <20181026151223.16810-1-ahmedsoliman0x666@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas and Peter,
+Hi,
 
-[off the mailing list because I wasn't sure if it's a good idea to spam others with my questions]
+On 26/10/2018 16:12, Ahmed Abd El Mawgood wrote:
 
-> > > +	/*
-> > > +	 * The typical sequence for unmapping is to find a pte through
-> > > +	 * lookup_address_in_pgd() (ideally, it should never return NULL
-> because
-> > > +	 * the address is already mapped) and change it's protections.
-> > > +	 * As pfn is the *target* of a mapping, it's not useful while unmapping.
-> > > +	 */
-> > > +	struct cpa_data cpa = {
-> > > +		.vaddr		= &address,
-> > > +		.pgd		= pgd,
-> > > +		.numpages	= numpages,
-> > > +		.mask_set	= __pgprot(0),
-> > > +		.mask_clr	= __pgprot(_PAGE_PRESENT | _PAGE_RW),
-> > > +		.flags		= 0,
-> > > +	};
-> > > +
-> > > +	retval = __change_page_attr_set_clr(&cpa, 0);
-> > > +	__flush_tlb_all();
-> >
-> > So this looks like you copied it from kernel_map_pages_in_pgd() which
-> > has been discussed before to be not sufficient, but it can't be
-> > changed right now due to locking issues.
->
-> Managed to confuse myself. The place which cannot be changed is a different
-> one, but still for your call site __flush_tlb_all() might not be sufficient.
+> This is the 5th version which is 4th version with minor fixes. ROE is a
+> hypercall that enables host operating system to restrict guest's access to its
+> own memory. This will provide a hardening mechanism that can be used to stop
+> rootkits from manipulating kernel static data structures and code. Once a memory
+> region is protected the guest kernel can't even request undoing the protection.
 
-Since the mappings are changed, I thought a flush_tlb() might be needed.
-But, (to be honest), I don't completely understand the x86/mm code. So, could you 
-please elaborate the issue more for my better understanding?
+This is very interesting, because it seems a very good match to the work 
+I'm doing, for supporting the creation of more targets for protection:
 
-So some questions I have are,
-1. What did Peter Z mean here? "How is that not a TLB invalidation bug ?"
-2. I assumed kernel_map_pages_in_pgd() to be a good code but you said that 
-it has some locking issues. So, could you please elaborate more on that.
+https://www.openwall.com/lists/kernel-hardening/2018/10/23/3
 
-Or, could you please provide me some pointers in the source code that I can take a look at so that I could understand the issue much better.
+In my case the protection would extend also to write-rate type of data.
+There is an open problem of identifying legitimate write-rare 
+operations, however it should be possible to provide at least a certain 
+degree of confidence.
 
-Regards,
-Sai
+--
+
+igor
