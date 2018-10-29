@@ -2,241 +2,74 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC74C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 23:31:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A3DCC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 23:32:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3C0F2082B
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 23:31:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3C0F2082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hallyn.com
+	by mail.kernel.org (Postfix) with ESMTP id 42B342082B
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 23:32:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42B342082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726170AbeJ3IWC (ORCPT
+        id S1726172AbeJ3IXV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 04:22:02 -0400
-Received: from mail.hallyn.com ([178.63.66.53]:57970 "EHLO mail.hallyn.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725804AbeJ3IWC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 04:22:02 -0400
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id C2B59CDF; Mon, 29 Oct 2018 23:31:00 +0000 (UTC)
-Date:   Mon, 29 Oct 2018 23:31:00 +0000
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian@brauner.io>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Aleksa Sarai <asarai@suse.de>, linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v8 2/2] samples: add an example of seccomp user trap
-Message-ID: <20181029233100.GA24103@mail.hallyn.com>
-References: <20181029224031.29809-1-tycho@tycho.ws>
- <20181029224031.29809-3-tycho@tycho.ws>
+        Tue, 30 Oct 2018 04:23:21 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:37130 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725819AbeJ3IXV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 04:23:21 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gHH13-0003R5-4h; Mon, 29 Oct 2018 23:32:13 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] perf/core: clean up inconsisent indentation
+Date:   Mon, 29 Oct 2018 23:32:11 +0000
+Message-Id: <20181029233211.21475-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181029224031.29809-3-tycho@tycho.ws>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 04:40:31PM -0600, Tycho Andersen wrote:
-> The idea here is just to give a demonstration of how one could safely use
-> the SECCOMP_RET_USER_NOTIF feature to do mount policies. This particular
-> policy is (as noted in the comment) not very interesting, but it serves to
-> illustrate how one might apply a policy dodging the various TOCTOU issues.
-> 
-> Signed-off-by: Tycho Andersen <tycho@tycho.ws>
-> CC: Kees Cook <keescook@chromium.org>
-> CC: Andy Lutomirski <luto@amacapital.net>
-> CC: Oleg Nesterov <oleg@redhat.com>
-> CC: Eric W. Biederman <ebiederm@xmission.com>
-> CC: "Serge E. Hallyn" <serge@hallyn.com>
-> CC: Christian Brauner <christian@brauner.io>
-> CC: Tyler Hicks <tyhicks@canonical.com>
-> CC: Akihiro Suda <suda.akihiro@lab.ntt.co.jp>
-> ---
-> v5: new in v5
-> v7: updates for v7 API changes
-> v8: * add some more comments about what's happening in main() (Kees)
->     * move from ptrace API to SECCOMP_FILTER_FLAG_NEW_LISTENER
-> ---
->  samples/seccomp/.gitignore  |   1 +
->  samples/seccomp/Makefile    |   7 +-
->  samples/seccomp/user-trap.c | 345 ++++++++++++++++++++++++++++++++++++
->  3 files changed, 352 insertions(+), 1 deletion(-)
-> 
-> diff --git a/samples/seccomp/.gitignore b/samples/seccomp/.gitignore
-> index 78fb78184291..d1e2e817d556 100644
-> --- a/samples/seccomp/.gitignore
-> +++ b/samples/seccomp/.gitignore
-> @@ -1,3 +1,4 @@
->  bpf-direct
->  bpf-fancy
->  dropper
-> +user-trap
-> diff --git a/samples/seccomp/Makefile b/samples/seccomp/Makefile
-> index cf34ff6b4065..4920903c8009 100644
-> --- a/samples/seccomp/Makefile
-> +++ b/samples/seccomp/Makefile
-> @@ -1,6 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->  ifndef CROSS_COMPILE
-> -hostprogs-$(CONFIG_SAMPLE_SECCOMP) := bpf-fancy dropper bpf-direct
-> +hostprogs-$(CONFIG_SAMPLE_SECCOMP) := bpf-fancy dropper bpf-direct user-trap
->  
->  HOSTCFLAGS_bpf-fancy.o += -I$(objtree)/usr/include
->  HOSTCFLAGS_bpf-fancy.o += -idirafter $(objtree)/include
-> @@ -16,6 +16,10 @@ HOSTCFLAGS_bpf-direct.o += -I$(objtree)/usr/include
->  HOSTCFLAGS_bpf-direct.o += -idirafter $(objtree)/include
->  bpf-direct-objs := bpf-direct.o
->  
-> +HOSTCFLAGS_user-trap.o += -I$(objtree)/usr/include
-> +HOSTCFLAGS_user-trap.o += -idirafter $(objtree)/include
-> +user-trap-objs := user-trap.o
-> +
->  # Try to match the kernel target.
->  ifndef CONFIG_64BIT
->  
-> @@ -33,6 +37,7 @@ HOSTCFLAGS_bpf-fancy.o += $(MFLAG)
->  HOSTLDLIBS_bpf-direct += $(MFLAG)
->  HOSTLDLIBS_bpf-fancy += $(MFLAG)
->  HOSTLDLIBS_dropper += $(MFLAG)
-> +HOSTLDLIBS_user-trap += $(MFLAG)
->  endif
->  always := $(hostprogs-m)
->  endif
-> diff --git a/samples/seccomp/user-trap.c b/samples/seccomp/user-trap.c
-> new file mode 100644
-> index 000000000000..bba7ac803c6c
-> --- /dev/null
-> +++ b/samples/seccomp/user-trap.c
-> @@ -0,0 +1,345 @@
-> +#include <signal.h>
-> +#include <stdio.h>
-> +#include <stdlib.h>
-> +#include <unistd.h>
-> +#include <errno.h>
-> +#include <fcntl.h>
-> +#include <string.h>
-> +#include <stddef.h>
-> +#include <sys/sysmacros.h>
-> +#include <sys/types.h>
-> +#include <sys/wait.h>
-> +#include <sys/socket.h>
-> +#include <sys/stat.h>
-> +#include <sys/mman.h>
-> +#include <sys/syscall.h>
-> +#include <sys/user.h>
-> +#include <sys/ioctl.h>
-> +#include <sys/ptrace.h>
-> +#include <sys/mount.h>
-> +#include <linux/limits.h>
-> +#include <linux/filter.h>
-> +#include <linux/seccomp.h>
-> +
-> +#define ARRAY_SIZE(x) (sizeof(x) / sizeof(*(x)))
-> +
-> +static int seccomp(unsigned int op, unsigned int flags, void *args)
-> +{
-> +	errno = 0;
-> +	return syscall(__NR_seccomp, op, flags, args);
-> +}
-> +
-> +static int send_fd(int sock, int fd)
-> +{
-> +	struct msghdr msg = {};
-> +	struct cmsghdr *cmsg;
-> +	char buf[CMSG_SPACE(sizeof(int))] = {0}, c = 'c';
-> +	struct iovec io = {
-> +		.iov_base = &c,
-> +		.iov_len = 1,
-> +	};
-> +
-> +	msg.msg_iov = &io;
-> +	msg.msg_iovlen = 1;
-> +	msg.msg_control = buf;
-> +	msg.msg_controllen = sizeof(buf);
-> +	cmsg = CMSG_FIRSTHDR(&msg);
-> +	cmsg->cmsg_level = SOL_SOCKET;
-> +	cmsg->cmsg_type = SCM_RIGHTS;
-> +	cmsg->cmsg_len = CMSG_LEN(sizeof(int));
-> +	*((int *)CMSG_DATA(cmsg)) = fd;
-> +	msg.msg_controllen = cmsg->cmsg_len;
-> +
-> +	if (sendmsg(sock, &msg, 0) < 0) {
-> +		perror("sendmsg");
-> +		return -1;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int recv_fd(int sock)
-> +{
-> +	struct msghdr msg = {};
-> +	struct cmsghdr *cmsg;
-> +	char buf[CMSG_SPACE(sizeof(int))] = {0}, c = 'c';
-> +	struct iovec io = {
-> +		.iov_base = &c,
-> +		.iov_len = 1,
-> +	};
-> +
-> +	msg.msg_iov = &io;
-> +	msg.msg_iovlen = 1;
-> +	msg.msg_control = buf;
-> +	msg.msg_controllen = sizeof(buf);
-> +
-> +	if (recvmsg(sock, &msg, 0) < 0) {
-> +		perror("recvmsg");
-> +		return -1;
-> +	}
-> +
-> +	cmsg = CMSG_FIRSTHDR(&msg);
-> +
-> +	return *((int *)CMSG_DATA(cmsg));
-> +}
-> +
-> +static int user_trap_syscall(int nr, unsigned int flags)
-> +{
-> +	struct sock_filter filter[] = {
-> +		BPF_STMT(BPF_LD+BPF_W+BPF_ABS,
-> +			offsetof(struct seccomp_data, nr)),
-> +		BPF_JUMP(BPF_JMP+BPF_JEQ+BPF_K, nr, 0, 1),
-> +		BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_USER_NOTIF),
-> +		BPF_STMT(BPF_RET+BPF_K, SECCOMP_RET_ALLOW),
-> +	};
-> +
-> +	struct sock_fprog prog = {
-> +		.len = (unsigned short)ARRAY_SIZE(filter),
-> +		.filter = filter,
-> +	};
-> +
-> +	return seccomp(SECCOMP_SET_MODE_FILTER, flags, &prog);
-> +}
-> +
-> +static int handle_req(struct seccomp_notif *req,
-> +		      struct seccomp_notif_resp *resp, int listener)
-> +{
-> +	char path[PATH_MAX], source[PATH_MAX], target[PATH_MAX];
-> +	int ret = -1, mem;
-> +
-> +	resp->id = req->id;
-> +	resp->error = -EPERM;
-> +	resp->val = 0;
-> +
-> +	if (req->data.nr != __NR_mount) {
-> +		fprintf(stderr, "huh? trapped something besides mknod? %d\n", req->data.nr);
+From: Colin Ian King <colin.king@canonical.com>
 
-'besides mount' ?
+Replace a bunch of spaces with tab, cleans up indentation
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ kernel/events/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 8c490130c4fb..84530ab358c3 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -750,7 +750,7 @@ static inline void update_cgrp_time_from_event(struct perf_event *event)
+ 	/*
+ 	 * Do not update time when cgroup is not active
+ 	 */
+-       if (cgroup_is_descendant(cgrp->css.cgroup, event->cgrp->css.cgroup))
++	if (cgroup_is_descendant(cgrp->css.cgroup, event->cgrp->css.cgroup))
+ 		__update_cgrp_time(event->cgrp);
+ }
+ 
+-- 
+2.19.1
+
