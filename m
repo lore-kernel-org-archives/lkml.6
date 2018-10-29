@@ -2,96 +2,86 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48CF2C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:40:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F691C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:40:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15E192082B
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:40:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15CA22082B
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:40:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KplcaCOE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15E192082B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cNhARO8T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15CA22082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727976AbeJ3C3y (ORCPT
+        id S1727980AbeJ3Cac (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 22:29:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37846 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727808AbeJ3C3y (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 22:29:54 -0400
-Received: from jouet.infradead.org (unknown [179.97.41.186])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A947A2082D;
-        Mon, 29 Oct 2018 17:40:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540834817;
-        bh=5Gk4TWeIstkbQbvCjVdBzGY3LMGB3js6Pqpg3WIVaSg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KplcaCOE6HNbiCgklwWRoIulQSiM8sEJ0CAj7k/p2cP++hwTtvY6YMBQPVcePCipV
-         7sl5mSEvVT0IjYh39iuh0IDBCePOZSkmL/ybf7ifht3uV9l3HaKiHy1cT6X4RsYkOg
-         MxmrgTLxiJOjnoqRMfknVSd4KASSx4z5WHcO+4kE=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 366D5142C5F; Mon, 29 Oct 2018 14:40:14 -0300 (-03)
-Date:   Mon, 29 Oct 2018 14:40:14 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Milian Wolff <milian.wolff@kdab.com>
-Cc:     jolsa@kernel.org, Linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH] perf util: take pgoff into account when reporting elf to
- libdwfl
-Message-ID: <20181029174014.GG21857@kernel.org>
-References: <20181029141644.3907-1-milian.wolff@kdab.com>
- <3361238.noN1Jb7VD2@milian-kdab2>
+        Mon, 29 Oct 2018 22:30:32 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:34978 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726330AbeJ3Cac (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 22:30:32 -0400
+Received: by mail-lj1-f195.google.com with SMTP id x85-v6so4460866ljb.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 10:40:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Dbcj5wTsjO4bqYfWeSO4SAW9QD6RMUfaqt7cCbkMYNc=;
+        b=cNhARO8Tbm/ZZpKglVbG/tmJbCWid6FqG5wkIv8IMOoOcuBXT9stprooY78HUJ0mEp
+         q4+iC3uzrX3QTBlVoXAIUj6o9nDTk/InfUWg/bSPV73LMrfdXCGpS6IcLir8lRWBTyQG
+         4twpi6f/3ovtfTUbSBr0YGPZ0wwvHw+P9bxec=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Dbcj5wTsjO4bqYfWeSO4SAW9QD6RMUfaqt7cCbkMYNc=;
+        b=Wh0gWftbVLsPzv12+j7oYIJxfVmsn5x6m7ok+RzyV403n9s02SBCGFoXMKYZ4oYhya
+         G3cx/hvEFN/crJXmDgxP7a5nZLtykVGUekOi2t0Lw+s5axxDQQ6UvaISkj+d6BGNa4+J
+         gIu2fFVnhz9674SWFVyByx6YBboUiOQhHiGoo5i8VC21P9c0q10wSuTvzslZReD++v6b
+         Sg8b2RBoT0qzhEW4s6siLS98H+lLzTQInktF/wnX/o5hGHC29Y2PRMG+PEzxsFUFf9Zo
+         gDeSSmENRjIRxI0Xy3D59JrYx4AppwWg33P+K5HlTcd4ssyfqKxfLhpjJQE8ZaOnxlSi
+         Ka1g==
+X-Gm-Message-State: AGRZ1gKVM3MhmdCDU8Vhv+ifGv0Op6nE6oQflfMtIc3ADjbgV8dN4SeF
+        Hj1h0JDUWr44FsdJIIzET8ybSE4wMiDN6A==
+X-Google-Smtp-Source: AJdET5dH0Rn9ENXXPlg2IJfyNvXCfi8V/+VgQAp2Jcfa9oNNGzSpay3UTsu/hMRYRcZgqk1Q+xxUDg==
+X-Received: by 2002:a2e:6e08:: with SMTP id j8-v6mr11034420ljc.61.1540834854739;
+        Mon, 29 Oct 2018 10:40:54 -0700 (PDT)
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com. [209.85.208.174])
+        by smtp.gmail.com with ESMTPSA id t144sm445693lff.53.2018.10.29.10.40.53
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Oct 2018 10:40:53 -0700 (PDT)
+Received: by mail-lj1-f174.google.com with SMTP id g8-v6so5774678ljk.1
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 10:40:53 -0700 (PDT)
+X-Received: by 2002:a2e:95c6:: with SMTP id y6-v6mr9718669ljh.59.1540834853148;
+ Mon, 29 Oct 2018 10:40:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3361238.noN1Jb7VD2@milian-kdab2>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+References: <20181029144358.GA2018@kroah.com>
+In-Reply-To: <20181029144358.GA2018@kroah.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 29 Oct 2018 10:40:37 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wikVF3TdzQT97HN9-pVtuaEHj2q8htSOEXfwkZOQg-ZHg@mail.gmail.com>
+Message-ID: <CAHk-=wikVF3TdzQT97HN9-pVtuaEHj2q8htSOEXfwkZOQg-ZHg@mail.gmail.com>
+Subject: Re: [GIT PULL] Staging/IIO driver patches for 4.20-rc1
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, sfr@canb.auug.org.au,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devel@linuxdriverproject.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, Oct 29, 2018 at 04:26:27PM +0100, Milian Wolff escreveu:
-> On Monday, October 29, 2018 3:16:44 PM CET Milian Wolff wrote:
-> > Libdwfl parses an ELF file itself and creates mappings for the
-> > individual sections. Perf on the other hand sees raw mmap events which
-> > represent individual sections. When we encounter an address pointing
-> > into a mapping with pgoff != 0, we must take that into account and
-> > report the file at the non-offset base address.
-> > 
-> > This fixes unwinding with libdwfl in some cases. E.g. for a file like:
-> 
-> <snip>
-> 
-> > Note that the backtrace is still stopping too early, when
-> > compared to the nice results obtained via libunwind. It's
-> > unclear so far what the reason for that is.
-> 
-> The remaining issue is due to a bug in elfutils:
-> 
-> https://sourceware.org/ml/elfutils-devel/2018-q4/msg00089.html
-> 
-> With both patches applied, libunwind and elfutils produce the same output for 
-> the above scenario.
+On Mon, Oct 29, 2018 at 7:44 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+>
+> Here is the big staging and IIO driver pull request for 4.20-rc1.
 
-I'm updating the patch to remove:
+Pulled,
 
-"It's unclear so far what the reason for that is."
-
-Adding:
-
-"See https://sourceware.org/ml/elfutils-devel/2018-q4/msg00089.html for
-a patch fixing that."
-
-Ok? Or are you saying that that "unclear" part applies to both libunwind
-and elfutils?
-
-- Arnaldo
+                Linus
