@@ -2,124 +2,295 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BAE2C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 11:59:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D3AC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:00:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFCF12082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 11:59:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFCF12082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 985ED2081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:00:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mAa0OUJ1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 985ED2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729249AbeJ2Ur3 (ORCPT
+        id S1729191AbeJ2Usi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 16:47:29 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:51699 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728416AbeJ2Ur3 (ORCPT
+        Mon, 29 Oct 2018 16:48:38 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:40090 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729095AbeJ2Ush (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 16:47:29 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1gH6CG-0000pi-Dj; Mon, 29 Oct 2018 12:59:04 +0100
-Date:   Mon, 29 Oct 2018 12:59:04 +0100
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: [ANNOUNCE] v4.18.16-rt9
-Message-ID: <20181029115904.yxoreisulsusexky@linutronix.de>
+        Mon, 29 Oct 2018 16:48:37 -0400
+Received: by mail-qt1-f196.google.com with SMTP id k12so2906135qtf.7;
+        Mon, 29 Oct 2018 05:00:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=O2AWIyc7DTaDMorh/hy5SO8y5UGlpcdfK6ps5HwhpSo=;
+        b=mAa0OUJ1y5Dg3locSgocNN/6XAYRE1A726oR3uhWkoeHvm55B2xvtRmIXqAKO14oIf
+         GoxGQTn+ePBBXM4MVwTWBD5O4FbEot1xKeOZrYojJbyEIlGFmeKBe4yTCSTLYw5j18rV
+         dK9ceMI0/3YswHYfQNK4lNYfdHAuW8LmiFIqP5r8XPWFcnGzOhAjPx2p4yyxMgxEB/YS
+         BuzhcHAC4uXHub4q7WENrIjnoSjjwrkwOOhM2PV3em3NAJBSa3GKo49C6hCRdLE9h/VP
+         OtgO0KFKL6aKOH9TQqE50Lr7Tub/b9UdgeYxf/8u1jcynzeEIsXHSq8c2MKs+vbv4ouw
+         a/xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=O2AWIyc7DTaDMorh/hy5SO8y5UGlpcdfK6ps5HwhpSo=;
+        b=nbDRPt5SkWhOkg90mangQLXYUmU+ofm3HuBP6OTUs6rEvs8RgFYmYTbwKXZuGkTF34
+         yzmRdDemnzRYOhlQRFSmABHUMzQhsxBgy0A5ceAZVqomx9xTsDLyEY6EPFxUvc3cr8Vm
+         frIl6qMn4KnfQ2H78rrh0xxevpr5oJKb3erCivMH2ficB3uVqFlqbsj/cit09tNRJQ2m
+         29gMIzNPaT5q54Tk1YfUvxUg7ZHmDzRbzhGuparcVL4E6O0/pr5NmK7elz3+kr0L43nS
+         vIZlXyzuQLzEaDTtsBAA7wHdJOOBvo8MR3Um7ytoF5lcSj0hSnmhLBYVE1RStzIzSooU
+         twxA==
+X-Gm-Message-State: AGRZ1gICZfirh2+gRmkXz+vx+qi4qghVwYSjFW0bYddjMaLXon/5AsLw
+        /QFr9YP+e3j9xRhRPQLfw6+MzGxkRolja+jHVsE=
+X-Google-Smtp-Source: AJdET5fCP6P1LjHiZGjhNXy0KDGGE8GgUy1QDWQ/cYZ+O6TlglQgIxOmDuDhf50T87gd5Bdgq2w5Ex+Qf1KVAtm5/ak=
+X-Received: by 2002:ac8:191a:: with SMTP id t26-v6mr11977000qtj.327.1540814414866;
+ Mon, 29 Oct 2018 05:00:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: NeoMutt/20180716
+References: <20181014175427.22139-1-hdegoede@redhat.com>
+In-Reply-To: <20181014175427.22139-1-hdegoede@redhat.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 29 Oct 2018 14:00:03 +0200
+Message-ID: <CAHp75Vf2ioDkNgA42J14p+_t7Hjdszmbpwh9nMSwQtxANuzLtg@mail.gmail.com>
+Subject: Re: [PATCH v2] platform/x86: Add Intel AtomISP2 dummy /
+ power-management driver
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear RT folks!
+On Sun, Oct 14, 2018 at 8:54 PM Hans de Goede <hdegoede@redhat.com> wrote:
+>
+> The Image Signal Processor found on Cherry Trail devices is brought up in
+> D0 state on devices which have camera sensors attached to it. The ISP will
+> not enter D3 state again without some massaging of its registers beforehand
+> and the ISP not being in D3 state blocks the SoC from entering S0ix modes.
+>
+> There was a driver for the ISP in drivers/staging but that got removed
+> again because it never worked. It does not seem likely that a real
+> driver for the ISP will be added to the mainline kernel anytime soon.
+>
+> This commit adds a dummy driver which contains the necessary magic from
+> the staging driver to powerdown the ISP, so that Cherry Trail devices where
+> the ISP is used will properly use S0ix modes when suspended.
+>
+> Together with other recent S0ix related fixes this allows S0ix modes to
+> be entered on e.g. a Chuwi Hi8 Pro and a HP x2 210.
+>
 
-I'm pleased to announce the v4.18.16-rt9 patch set. 
+There are might be slight improvements, but in general it's okay.
+Applied, thanks!
 
-Changes since v4.18.16-rt8:
+P.S. It's possible we need to add Merrifield ID there, I will do it
+myself along with cosmetic changes as a separate patches later on.
 
-  - The RCU fix, which was introduced in v4.18.7-rt5, leads to a lockdep
-    warning during CPU hotplug. After a discussion with upstream it was
-    suggested to revert the change that lead to the problem in -RT.
+> BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=196915
+> Signed-off-by: Hans de Goede <hdegoede@redhat.com>
+> ---
+> Changes in v2:
+> -Rename the driver and Kconfig option from intel-isp-dummy to intel-atomisp2-pm
+> ---
+>  MAINTAINERS                              |   6 ++
+>  drivers/platform/x86/Kconfig             |  12 +++
+>  drivers/platform/x86/Makefile            |   1 +
+>  drivers/platform/x86/intel_atomisp2_pm.c | 119 +++++++++++++++++++++++
+>  4 files changed, 138 insertions(+)
+>  create mode 100644 drivers/platform/x86/intel_atomisp2_pm.c
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 2c5d5c6859b8..ba9e5da792ea 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7306,6 +7306,12 @@ L:       alsa-devel@alsa-project.org (moderated for non-subscribers)
+>  S:     Supported
+>  F:     sound/soc/intel/
+>
+> +INTEL ATOMISP2 DUMMY / POWER-MANAGEMENT DRIVER
+> +M:     Hans de Goede <hdegoede@redhat.com>
+> +L:     platform-driver-x86@vger.kernel.org
+> +S:     Maintained
+> +F:     drivers/platform/x86/intel_atomisp2_pm.c
+> +
+>  INTEL C600 SERIES SAS CONTROLLER DRIVER
+>  M:     Intel SCU Linux support <intel-linux-scu@intel.com>
+>  M:     Artur Paszkiewicz <artur.paszkiewicz@intel.com>
+> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+> index 48bec711e5e3..5eedcec0fefe 100644
+> --- a/drivers/platform/x86/Kconfig
+> +++ b/drivers/platform/x86/Kconfig
+> @@ -1232,6 +1232,18 @@ config I2C_MULTI_INSTANTIATE
+>           To compile this driver as a module, choose M here: the module
+>           will be called i2c-multi-instantiate.
+>
+> +config INTEL_ATOMISP2_PM
+> +       tristate "Intel AtomISP2 dummy / power-management driver"
+> +       depends on PCI && IOSF_MBI && PM
+> +       help
+> +         Power-management driver for Intel's Image Signal Processor found on
+> +         Bay and Cherry Trail devices. This dummy driver's sole purpose is to
+> +         turn the ISP off (put it in D3) to save power and to allow entering
+> +         of S0ix modes.
+> +
+> +         To compile this driver as a module, choose M here: the module
+> +         will be called intel_atomisp2_pm.
+> +
+>  endif # X86_PLATFORM_DEVICES
+>
+>  config PMC_ATOM
+> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
+> index e6d1becf81ce..dc29af4d8e2f 100644
+> --- a/drivers/platform/x86/Makefile
+> +++ b/drivers/platform/x86/Makefile
+> @@ -92,3 +92,4 @@ obj-$(CONFIG_MLX_PLATFORM)    += mlx-platform.o
+>  obj-$(CONFIG_INTEL_TURBO_MAX_3) += intel_turbo_max_3.o
+>  obj-$(CONFIG_INTEL_CHTDC_TI_PWRBTN)    += intel_chtdc_ti_pwrbtn.o
+>  obj-$(CONFIG_I2C_MULTI_INSTANTIATE)    += i2c-multi-instantiate.o
+> +obj-$(CONFIG_INTEL_ATOMISP2_PM)        += intel_atomisp2_pm.o
+> diff --git a/drivers/platform/x86/intel_atomisp2_pm.c b/drivers/platform/x86/intel_atomisp2_pm.c
+> new file mode 100644
+> index 000000000000..9371603a0ac9
+> --- /dev/null
+> +++ b/drivers/platform/x86/intel_atomisp2_pm.c
+> @@ -0,0 +1,119 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Dummy driver for Intel's Image Signal Processor found on Bay and Cherry
+> + * Trail devices. The sole purpose of this driver is to allow the ISP to
+> + * be put in D3.
+> + *
+> + * Copyright (C) 2018 Hans de Goede <hdegoede@redhat.com>
+> + *
+> + * Based on various non upstream patches for ISP support:
+> + * Copyright (C) 2010-2017 Intel Corporation. All rights reserved.
+> + * Copyright (c) 2010 Silicon Hive www.siliconhive.com.
+> + */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/module.h>
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/pci.h>
+> +#include <linux/pm_runtime.h>
+> +#include <asm/iosf_mbi.h>
+> +
+> +/* PCI configuration regs */
+> +#define PCI_INTERRUPT_CTRL             0x9c
+> +
+> +#define PCI_CSI_CONTROL                        0xe8
+> +#define PCI_CSI_CONTROL_PORTS_OFF_MASK 0x7
+> +
+> +/* IOSF BT_MBI_UNIT_PMC regs */
+> +#define ISPSSPM0                       0x39
+> +#define ISPSSPM0_ISPSSC_OFFSET         0
+> +#define ISPSSPM0_ISPSSC_MASK           0x00000003
+> +#define ISPSSPM0_ISPSSS_OFFSET         24
+> +#define ISPSSPM0_ISPSSS_MASK           0x03000000
+> +#define ISPSSPM0_IUNIT_POWER_ON                0x0
+> +#define ISPSSPM0_IUNIT_POWER_OFF       0x3
+> +
+> +static int isp_probe(struct pci_dev *dev, const struct pci_device_id *id)
+> +{
+> +       unsigned long timeout;
+> +       u32 val;
+> +
+> +       pci_write_config_dword(dev, PCI_INTERRUPT_CTRL, 0);
+> +
+> +       /*
+> +        * MRFLD IUNIT DPHY is located in an always-power-on island
+> +        * MRFLD HW design need all CSI ports are disabled before
+> +        * powering down the IUNIT.
+> +        */
+> +       pci_read_config_dword(dev, PCI_CSI_CONTROL, &val);
+> +       val |= PCI_CSI_CONTROL_PORTS_OFF_MASK;
+> +       pci_write_config_dword(dev, PCI_CSI_CONTROL, val);
+> +
+> +       /* Write 0x3 to ISPSSPM0 bit[1:0] to power off the IUNIT */
+> +       iosf_mbi_modify(BT_MBI_UNIT_PMC, MBI_REG_READ, ISPSSPM0,
+> +                       ISPSSPM0_IUNIT_POWER_OFF, ISPSSPM0_ISPSSC_MASK);
+> +
+> +       /*
+> +        * There should be no IUNIT access while power-down is
+> +        * in progress HW sighting: 4567865
+> +        * Wait up to 50 ms for the IUNIT to shut down.
+> +        */
+> +       timeout = jiffies + msecs_to_jiffies(50);
+> +       while (1) {
+> +               /* Wait until ISPSSPM0 bit[25:24] shows 0x3 */
+> +               iosf_mbi_read(BT_MBI_UNIT_PMC, MBI_REG_READ, ISPSSPM0, &val);
+> +               val = (val & ISPSSPM0_ISPSSS_MASK) >> ISPSSPM0_ISPSSS_OFFSET;
+> +               if (val == ISPSSPM0_IUNIT_POWER_OFF)
+> +                       break;
+> +
+> +               if (time_after(jiffies, timeout)) {
+> +                       dev_err(&dev->dev, "IUNIT power-off timeout.\n");
+> +                       return -EBUSY;
+> +               }
+> +               usleep_range(1000, 2000);
+> +       }
+> +
+> +       pm_runtime_allow(&dev->dev);
+> +       pm_runtime_put_sync_suspend(&dev->dev);
+> +
+> +       return 0;
+> +}
+> +
+> +static void isp_remove(struct pci_dev *dev)
+> +{
+> +       pm_runtime_get_sync(&dev->dev);
+> +       pm_runtime_forbid(&dev->dev);
+> +}
+> +
+> +static int isp_pci_suspend(struct device *dev)
+> +{
+> +       return 0;
+> +}
+> +
+> +static int isp_pci_resume(struct device *dev)
+> +{
+> +       return 0;
+> +}
+> +
+> +static UNIVERSAL_DEV_PM_OPS(isp_pm_ops, isp_pci_suspend,
+> +                           isp_pci_resume, NULL);
+> +
+> +static const struct pci_device_id isp_id_table[] = {
+> +       { PCI_VDEVICE(INTEL, 0x22b8), },
+> +       { 0, }
+> +};
+> +MODULE_DEVICE_TABLE(pci, isp_id_table);
+> +
+> +static struct pci_driver isp_pci_driver = {
+> +       .name = "intel_atomisp2_pm",
+> +       .id_table = isp_id_table,
+> +       .probe = isp_probe,
+> +       .remove = isp_remove,
+> +       .driver.pm = &isp_pm_ops,
+> +};
+> +
+> +module_pci_driver(isp_pci_driver);
+> +
+> +MODULE_DESCRIPTION("Intel AtomISP2 dummy / power-management drv (for suspend)");
+> +MODULE_AUTHOR("Hans de Goede <hdegoede@redhat.com>");
+> +MODULE_LICENSE("GPL v2");
+> --
+> 2.19.0
+>
 
-Known issues
-     - A warning triggered in "rcu_note_context_switch" originated from
-       SyS_timer_gettime(). The issue was always there, it is now
-       visible. Reported by Grygorii Strashko and Daniel Wagner.
 
-The delta patch against v4.18.16-rt8 is appended below and can be found here:
- 
-     https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.18/incr/patch-4.18.16-rt8-rt9.patch.xz
-
-You can get this release via the git tree at:
-
-    git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-rt-devel.git v4.18.16-rt9
-
-The RT patch against v4.18.16 can be found here:
-
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.18/older/patch-4.18.16-rt9.patch.xz
-
-The split quilt queue is available at:
-
-    https://cdn.kernel.org/pub/linux/kernel/projects/rt/4.18/older/patches-4.18.16-rt9.tar.xz
-
-Sebastian
-
-diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
-index a104cf91e6b90..d40708e8c5d6e 100644
---- a/kernel/rcu/tree_exp.h
-+++ b/kernel/rcu/tree_exp.h
-@@ -472,14 +472,12 @@ static void sync_rcu_exp_select_node_cpus(struct work_struct *wp)
- static void sync_rcu_exp_select_cpus(struct rcu_state *rsp,
- 				     smp_call_func_t func)
- {
--	int cpu;
- 	struct rcu_node *rnp;
- 
- 	trace_rcu_exp_grace_period(rsp->name, rcu_exp_gp_seq_endval(rsp), TPS("reset"));
- 	sync_exp_reset_tree(rsp);
- 	trace_rcu_exp_grace_period(rsp->name, rcu_exp_gp_seq_endval(rsp), TPS("select"));
- 
--	cpus_read_lock();
- 	/* Schedule work for each leaf rcu_node structure. */
- 	rcu_for_each_leaf_node(rsp, rnp) {
- 		rnp->exp_need_flush = false;
-@@ -494,11 +492,7 @@ static void sync_rcu_exp_select_cpus(struct rcu_state *rsp,
- 			continue;
- 		}
- 		INIT_WORK(&rnp->rew.rew_work, sync_rcu_exp_select_node_cpus);
--		cpu = cpumask_next(rnp->grplo - 1, cpu_online_mask);
--		/* If all offline, queue the work on an unbound CPU. */
--		if (unlikely(cpu > rnp->grphi))
--			cpu = WORK_CPU_UNBOUND;
--		queue_work_on(cpu, rcu_par_gp_wq, &rnp->rew.rew_work);
-+		queue_work_on(rnp->grplo, rcu_par_gp_wq, &rnp->rew.rew_work);
- 		rnp->exp_need_flush = true;
- 	}
- 
-@@ -506,7 +500,6 @@ static void sync_rcu_exp_select_cpus(struct rcu_state *rsp,
- 	rcu_for_each_leaf_node(rsp, rnp)
- 		if (rnp->exp_need_flush)
- 			flush_work(&rnp->rew.rew_work);
--	cpus_read_unlock();
- }
- 
- static void synchronize_sched_expedited_wait(struct rcu_state *rsp)
-diff --git a/localversion-rt b/localversion-rt
-index 700c857efd9ba..22746d6390a42 100644
---- a/localversion-rt
-+++ b/localversion-rt
-@@ -1 +1 @@
---rt8
-+-rt9
+-- 
+With Best Regards,
+Andy Shevchenko
