@@ -2,87 +2,94 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53C24C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:45:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 867E1C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:45:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D6CE2080A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:45:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4574420870
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:45:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IwtTdHWh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D6CE2080A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RH1cNrr6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4574420870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728168AbeJ3Ceg (ORCPT
+        id S1728188AbeJ3CfA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 22:34:36 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:38300 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727834AbeJ3Ceg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 22:34:36 -0400
-Received: by mail-lf1-f65.google.com with SMTP id p86so4520564lfg.5
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 10:44:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Lzsb/vw9eg9BJv14xvjB2TjRsMYNxq3xtvm6hSrjKS8=;
-        b=IwtTdHWhpKteuQu5s1UxGUH8xKT4Xr+Rvw2CSJ6HGkYGwAwfeU64Eqn+fy6BMEasn6
-         RA+smMhpaJ8yacwjCjnm66rXIF+IJ/NUikfiRF/glnovXZz3dyg4Kufpv1meOaEkb/zJ
-         FRD3UAdX/UnerWZjhfSIvcgRKhGOG1Vtfjv08=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Lzsb/vw9eg9BJv14xvjB2TjRsMYNxq3xtvm6hSrjKS8=;
-        b=stOmJbDII/y17LeTEsKYFtcoUsSlpgJ+vITgBJohX+EowImIrxZ4ScoM6xG3woi8zK
-         sXAiS9tIv3yGcZDaVi71GSJtWjPX7NG3TATQSLoRIaAQuxsMkcD6Pmc3+atJC7ng5NHJ
-         cha2be70hjahbnHh9GUFAH3Gyv4fQ7vw13rsAkKJNu7wyAE+pia4dtvubqxfARYRaqAc
-         /19dJ7QxDV6HJQQrI4QqIPOUVMXFhTvBAupfKvZwfDq2Mh26TF+LA0Nj6XRd1mGCtloH
-         iQ86lhuD7VZJVwcZpYNBT4qcAUE16Br/0m+guW5pcXIV2U29jH+uPbA/0JQiRhi0n8OB
-         Vn7w==
-X-Gm-Message-State: AGRZ1gLPyl8ToqQ4UpCwSNPjMDJKGoopfqLNolTivumxGggKPJP5Y7IR
-        zbWjQVGAlsuOKusize68eIWazHflAyshAw==
-X-Google-Smtp-Source: AJdET5edudMjTfcKzSUrpyKON4btx3Up1ovFrXW13GiJrvhXPLwubL+GEOgheF9rPVhdAfwtp5AGVw==
-X-Received: by 2002:a19:59d3:: with SMTP id n202-v6mr8721980lfb.125.1540835096856;
-        Mon, 29 Oct 2018 10:44:56 -0700 (PDT)
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
-        by smtp.gmail.com with ESMTPSA id v64sm218958lfa.48.2018.10.29.10.44.55
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 10:44:56 -0700 (PDT)
-Received: by mail-lj1-f180.google.com with SMTP id k19-v6so151514lji.11
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 10:44:55 -0700 (PDT)
-X-Received: by 2002:a2e:7801:: with SMTP id t1-v6mr4675854ljc.120.1540835095285;
- Mon, 29 Oct 2018 10:44:55 -0700 (PDT)
+        Mon, 29 Oct 2018 22:35:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39030 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726205AbeJ3CfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 22:35:00 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A63A22080A;
+        Mon, 29 Oct 2018 17:45:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540835121;
+        bh=9jnjpqdkmmVYhR3OAGNlh5vZeGI0JEtXyDuBjW7V8Mo=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=RH1cNrr6/ZIX16Xnu+QqUzhA8CgGl5woC2RaCEXF5RnLf+4E/w+C4TsqpzUHUGx2R
+         IoseNSEycNUxPcrlEAbh10/UY1UgEAIy1vuV1mNDG90whR4r9lag1mXwL94szAOLDC
+         0w6uHMxy6xZCeE78jMiOv0aWQo2SPiwIoLgzyrKw=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20181029144432.GA2127@kroah.com>
-In-Reply-To: <20181029144432.GA2127@kroah.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 29 Oct 2018 10:44:38 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiWzKQKCVZ9Er8JJfURYndpHpdLRVTxrKRvZ2obRvdYQQ@mail.gmail.com>
-Message-ID: <CAHk-=wiWzKQKCVZ9Er8JJfURYndpHpdLRVTxrKRvZ2obRvdYQQ@mail.gmail.com>
-Subject: Re: [GIT PULL] TTY/Serial fixes for 4.20-rc1
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     jslaby@suse.cz, sfr@canb.auug.org.au,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+To:     Dean Wallace <duffydack73@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20181025232517.ywnw54qibemosjws@picard>
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        stable@vger.kernel.org, Johannes Stezenbach <js@sig21.net>,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-kernel@vger.kernel.org
+References: <20181025232517.ywnw54qibemosjws@picard>
+Message-ID: <154083512089.98144.9141070901932719147@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
+Date:   Mon, 29 Oct 2018 10:45:20 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 7:44 AM Greg KH <gregkh@linuxfoundation.org> wrote:
->
-> Here is the big tty and serial pull request for 4.20-rc1
+Quoting Dean Wallace (2018-10-25 16:25:17)
+> I have found a regression in 4.18.15 that means I lose sound on my old
+> Toshiba Chromebook 2 (Swanky).  My system details are:-
+> =
 
-Pulled,
+> Toshiba Chromebook (Swanky)
+> MrChromebox UEFI coreboot
+> Arch Linux running latest alsa/pulseaudio
+> =
 
-                            Linus
+> Upgraded kernel from 4.18.14 to 4.18.15 and lost all sound output.  By
+> output I mean, the card is still detected, the module loaded, all apps
+> showing sound is being playing, but no actual audible sound comes
+> through.  Upgraded to 4.18.16 same issue.
+> =
+
+> Dug around and found Upstream commit 648e921888ad96ea3dc922739e96716ad322=
+5d7f
+> clk: x86: Stop marking clocks as CLK_IS_CRITICAL
+> "This commit removes the CLK_IS_CRITICAL marking, fixing Cherry Trail
+> devices not being able to reach S0i3 greatly decreasing their battery
+> drain when suspended."
+> =
+
+> I reverted it and compiled 4.18.16 and have sound back again.  Could
+> this be looked into, with possibility of fix.
+> =
+
+
+Thanks for the bug report. I'm adding some people involved in the commit
+you mention is causing audio regressions. The best plan is to probably
+revert the commit from the 4.18 linux stable tree. Or there may be
+another patch missing that would be useful to make this backported patch
+work. Hopefully Hans or Andy knows.
+
