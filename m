@@ -2,62 +2,66 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 605ECECDE44
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 03:12:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B11FEC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 03:12:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 211ED2075D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 03:12:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CC632075D
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 03:12:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=steffenvogel.de header.i=@steffenvogel.de header.b="tNvzlGyY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 211ED2075D
+	dkim=pass (2048-bit key) header.d=steffenvogel.de header.i=@steffenvogel.de header.b="VQFg8UOF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CC632075D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=steffenvogel.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729295AbeJ2L7L (ORCPT
+        id S1729307AbeJ2L7m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 07:59:11 -0400
-Received: from nag.0l.de ([207.154.252.120]:44774 "EHLO nag.0l.de"
+        Mon, 29 Oct 2018 07:59:42 -0400
+Received: from nag.0l.de ([207.154.252.120]:44806 "EHLO nag.0l.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729137AbeJ2L7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 07:59:11 -0400
+        id S1729137AbeJ2L7l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 07:59:41 -0400
 From:   Steffen Vogel <post@steffenvogel.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=steffenvogel.de;
         s=2017; t=1540782275;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:
-         content-transfer-encoding:content-transfer-encoding:in-reply-to:
-         references; bh=jSPM0bWrxyvE/WaOjD0tmnxseWEsbiu1cyAKgZ6K6B4=;
-        b=tNvzlGyYhCT1eXO0nkduUlNdvVZ57lzPBoUUOnhg4a000Z4oct3UxvV6JvhklpxneDyvQe
-        AOwFK/pmVQUt5BQL5MFS3/peULfOzPvSLAw3ructwhusDnQoqiVmuXcqyRdOVKDEwZ8cjX
-        SJ7B0EfsVvVlmMDhR4jhGhejFVsiC9ayN3NoXbNQtci7d97qAH9ArRxRV28GC182+YoZD0
-        3uJ+HkV7wHk4AzysRFGRekqS9d/fw3maAarzDsjUV1m9ZFccUE3R+7XdoEDk5Cenuv8BXx
-        sI18Ah+szbiOFEJSrRuVuFWeeoWrO+vMhvTLaT9EjhiADWVBdcknBk/8TVW7Og==
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=G+cnrY+PphmN7096bgQRGIW67/lbza3AsPj54wLHHXY=;
+        b=VQFg8UOFTWycMWwdkIw3gOVxXveGc+fplfkfOsZLmnP3gcCXfcCzE4aL/jSqPU3MCifeID
+        afESUXiFuESY9mDVhuKzxm/ZLzGjtBiKg+lzmS4GG6K4RQ8QjCsVWkSY1nrpGbY/z8A+/o
+        sZ3ZMJIHRPvgVhsLxIoooqUUZY6Y8e8EDgJIpU45JRKoVhgKOrnrJcv6FIIwVFSRX6D8bR
+        FDhtiYVesA+jCCmtcFQDoNmrua+zwXA6Leu3p3XPY9l86fIVgvAL4b3RRk3OX3I8c9ExA8
+        I/2Clf7orSOFLfDqwiUPv4R2ObHLRQ5bIGk+C83fKKUsrNdKiylb98omznpQqQ==
 To:     linux-kernel@vger.kernel.org
 Cc:     Evgeniy Polyakov <zbr@ioremap.net>, Joe Perches <joe@perches.com>,
         Steffen Vogel <post@steffenvogel.de>
-Subject: [PATCH v2 00/11] w1: coding style and checkpatch fixes
-Date:   Mon, 29 Oct 2018 04:03:30 +0100
-Message-Id: <cover.1540782140.git.post@steffenvogel.de>
+Subject: [PATCH v2 08/12] w1: improve code-style of struct declarations
+Date:   Mon, 29 Oct 2018 04:03:38 +0100
+Message-Id: <978fc1676896e84c7ca7ce9942de25c4db00708b.1540782140.git.post@steffenvogel.de>
+In-Reply-To: <cover.1540782140.git.post@steffenvogel.de>
+References: <cover.1540782140.git.post@steffenvogel.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=steffenvogel.de;
-        s=2017; t=1540782276;
+        s=2017; t=1540782275;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:
-         content-transfer-encoding:content-transfer-encoding:in-reply-to:
-         references; bh=jSPM0bWrxyvE/WaOjD0tmnxseWEsbiu1cyAKgZ6K6B4=;
-        b=sOz4G30n/BkT4BSuzh8ZY0ANM8564DPrEUm9mxBIEiKPxMb38shO2z91MBsm9V140QqiwE
-        1AR0Z0kK8n0oqV2TPR/gszhTW628e4kyDLupk5MvmSIDvu1UdUIqxkbzqc4C+CbpZfT3yc
-        6FEb8rtpwZIhMAP0cgFhaBVs6UlVIB2CBIpU8xxQj1cDAGdJfQXq3kwLB/qBLR2b081Vbp
-        ditffjWe0oM0mZXKrAahyhwMXoBhASETnaUT7aWMkIqhQGRo3aaFtUyDlwHV+RiuNY4/4t
-        n7p9VPgJGz6aqE4PQhaEx5CJ7jNmdowlxbQ9J9wGru/7pAngY07uWZs1np1icA==
-ARC-Seal: i=1; s=2017; d=steffenvogel.de; t=1540782276; a=rsa-sha256;
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=G+cnrY+PphmN7096bgQRGIW67/lbza3AsPj54wLHHXY=;
+        b=kN1AwZVtIVEiiWwfpCLukFbDUMJSgPD4wntySWh/fj+Ey+eBAbUDALOakbjW54ptNuw5Pz
+        0dB9G/wtanLe0qljES5i7C1MFNmSuqa2AGV7lRcWw1ZAATAd4BeuMidZWw8tUI4M8APFk1
+        PwjSA0qDlPR1oYNuZuaKR7XHJrYKJNqFKlm7o8H5iuuCgUutLOePnwxxJ0ranGsssU5obh
+        u+M4ZkAFRZsYjj7EsPUbZYDTaHs48Cj1cjtB6IWETKv8nq4ONmfFzCIT8wcXRwOrUVMAde
+        /VH+maJN4x+guZDkm1n7SSOyIXj6deYzouZ5nuoB+oxtJ1Tbcx8YeczI1L8viA==
+ARC-Seal: i=1; s=2017; d=steffenvogel.de; t=1540782275; a=rsa-sha256;
         cv=none;
-        b=c9ayIA5JsyQqRuI9LfNgQ8fv+2+JM7x9H4yl3HsMQN/By3NY5skCzOyVJkLFz1dvBWhdN4CTcVth9dIiLxsKxjNVuoZ2LMeNxsXEKZAD0kqw7DYPlBsEIO/oAFbmowQzKl1wa2yhIXOfC53QPpROxa1DJ749SlNGUo0XVLVFWHAf0whiDTv1SFg0YzEVwPgakr8R1OIxSU8VyAIFmu0yaoyMMkBnI0XPhrrfg0shnJMY8hu7JULOSuEjgV59MKsgALbz/Mzt9fdTtxYVFl6WUHq9F1JnachLN4JZso38McOnf9Hm9KZr3ygavNH/d/1dETiHJO97MXrvJUQPxnq6sA==
+        b=omY/mBDXuZJvZU75WMpL/pxPx1DS6+DNPT15IEm9PD7E8F6xjVc+6jrzZjkegaEZ+Pz6yQFyswY2QoATYiJI37nby4NUnp4vj1nLeP6hM/7QOd0t4arNZY2CXAAnOa8rtiVobYjBQkw6ADQMAIP8rKtG7fxaVQZbsq0AKkAKzAMk3pBZYj6jGjj8ShgH4wMoOcveR1/4yVMJxBWSIcqWLLodOd/7tOHxxNLSw3H/sjlhMAMySyhb+LtROz6WfB5IJIbvwqfDlKyX2yqsgjxeRq8WvM5+gMyOK3rJBviBloaaLHAO/ymJpYIswN9MMrt/efa/F58QhHWhophIeecsuw==
 ARC-Authentication-Results: i=1;
         ORIGINATING;
         auth=pass smtp.auth=stv0g@0l.de smtp.mailfrom=post@steffenvogel.de
@@ -68,68 +72,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Among improving the readability of the struct declarations,
+this fixes a warning about incorrect brace placement
+raised by the checkpatch tool.
 
-This is my first series of patches for the Linux kernel.
-I started by familiarizing myself with coding style and
-satisfying my inner OCD by cleaning the 1-wire subsystem.
-
-Cheers,
-Steffen
-
+Signed-off-by: Steffen Vogel <post@steffenvogel.de>
 ---
+ drivers/w1/w1_netlink.h | 28 +++++++++++++---------------
+ 1 file changed, 13 insertions(+), 15 deletions(-)
 
-Changes since v1:
-  - addressed comments from Joe Perches:
-  - re-ran checkpatch.pl in --strict mode
-  - fixed commit messages to reflect more precisly
-    the checkpatch warnings
-
-Steffen Vogel (12):
-  w1: add SPDX identifiers
-  w1: improve code-style by adhering tp 80 columns per line limit
-  w1: add newlines after declarations
-  w1: cleanup whitespaces according to coding style document
-  w1: use octal numbers instead of macros for file mode
-  w1: do not log errors about failed memory allocations
-  w1: use __func__ for logging the function name
-  w1: improve code-style of struct declarations
-  w1: using linux instead of asm prefix for includes
-  w1: use pointers instead of types to determine size of allocs
-  w1: replace non-standard %LX format-string by %llX
-  w1: fix typo in comment
-
- drivers/w1/masters/ds1wm.c     |   5 +-
- drivers/w1/masters/ds2482.c    |   7 +-
- drivers/w1/masters/ds2490.c    |  16 +--
- drivers/w1/masters/matrox_w1.c |  16 +--
- drivers/w1/masters/mxc_w1.c    |  10 +-
- drivers/w1/masters/omap_hdq.c  |   7 +-
- drivers/w1/masters/w1-gpio.c   |   5 +-
- drivers/w1/slaves/w1_ds2405.c  |  12 +-
- drivers/w1/slaves/w1_ds2406.c  |   4 +-
- drivers/w1/slaves/w1_ds2408.c  |   4 +-
- drivers/w1/slaves/w1_ds2413.c  |   4 +-
- drivers/w1/slaves/w1_ds2423.c  |  15 +--
- drivers/w1/slaves/w1_ds2431.c  |   4 +-
- drivers/w1/slaves/w1_ds2433.c  |   4 +-
- drivers/w1/slaves/w1_ds2438.c  |   4 +-
- drivers/w1/slaves/w1_ds2780.c  |   6 +-
- drivers/w1/slaves/w1_ds2781.c  |   6 +-
- drivers/w1/slaves/w1_ds2805.c  |   4 +-
- drivers/w1/slaves/w1_ds28e04.c |   4 +-
- drivers/w1/slaves/w1_ds28e17.c |   4 +-
- drivers/w1/slaves/w1_smem.c    |  16 +--
- drivers/w1/slaves/w1_therm.c   |  16 +--
- drivers/w1/w1.c                | 272 +++++++++++++++++++++++------------------
- drivers/w1/w1_family.c         |  15 +--
- drivers/w1/w1_int.c            |  34 ++----
- drivers/w1/w1_internal.h       |  11 +-
- drivers/w1/w1_io.c             |  86 ++++++-------
- drivers/w1/w1_netlink.c        |  64 +++++-----
- drivers/w1/w1_netlink.h        |  39 +++---
- 29 files changed, 283 insertions(+), 411 deletions(-)
-
+diff --git a/drivers/w1/w1_netlink.h b/drivers/w1/w1_netlink.h
+index 08cbf08f3649..7873eb54352e 100644
+--- a/drivers/w1/w1_netlink.h
++++ b/drivers/w1/w1_netlink.h
+@@ -61,19 +61,18 @@ enum w1_netlink_message_types {
+  * The netlink connector data sequence is, struct nlmsghdr, struct cn_msg,
+  * then one or more struct w1_netlink_msg (each with optional data).
+  */
+-struct w1_netlink_msg
+-{
+-	__u8				type;
+-	__u8				status;
+-	__u16				len;
++struct w1_netlink_msg {
++	__u8 type;
++	__u8 status;
++	__u16 len;
+ 	union {
+-		__u8			id[8];
++		__u8 id[8];
+ 		struct w1_mst {
+-			__u32		id;
+-			__u32		res;
++			__u32 id;
++			__u32 res;
+ 		} mst;
+ 	} id;
+-	__u8				data[0];
++	__u8 data[0];
+ };
+ 
+ /**
+@@ -117,12 +116,11 @@ enum w1_commands {
+  * One or more struct w1_netlink_cmd is placed starting at w1_netlink_msg.data
+  * each with optional data.
+  */
+-struct w1_netlink_cmd
+-{
+-	__u8				cmd;
+-	__u8				res;
+-	__u16				len;
+-	__u8				data[0];
++struct w1_netlink_cmd {
++	__u8 cmd;
++	__u8 res;
++	__u16 len;
++	__u8 data[0];
+ };
+ 
+ #ifdef __KERNEL__
 -- 
 2.11.0
 
