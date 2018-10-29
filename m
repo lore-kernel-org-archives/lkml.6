@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C2AC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 23:52:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15405C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 23:52:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EACE2082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 23:52:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF26F2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 23:52:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p7AJ6Xix"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EACE2082D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NdfWYyrJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF26F2084A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726336AbeJ3Inj (ORCPT
+        id S1726503AbeJ3Inm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 04:43:39 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34585 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725824AbeJ3Ini (ORCPT
+        Tue, 30 Oct 2018 04:43:42 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:34500 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725824AbeJ3Ink (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 04:43:38 -0400
-Received: by mail-pg1-f195.google.com with SMTP id k1-v6so3260267pgq.1;
-        Mon, 29 Oct 2018 16:52:35 -0700 (PDT)
+        Tue, 30 Oct 2018 04:43:40 -0400
+Received: by mail-pl1-f193.google.com with SMTP id f10-v6so4597234plr.1;
+        Mon, 29 Oct 2018 16:52:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=AtQivvj6hJ1qy9E/5uGhpUB8LlJCIsHqyEiYftwE/sA=;
-        b=p7AJ6XixL296KovyKMAD+UzeA+mwLeJ3m1QA5oj6PcFN5uBSkIug+6L9XN8E27b191
-         B37oztlbjdZXaancADeb/EH0MDVF41xkeXaqLdysJJYJXtglzeGPpl8SFXP/Oa2R9u3e
-         ZrmV4prxSDk0zXDgZegDvpRWMNUREV/ACi1oQQD7c5J+rDRZxNJth/pyFDyEkuT7uLBi
-         UZzP0+DqoU92CYEz4n4wZmDbG57FGeVAs9fgfipfRz6qQamrFSZMwwZHCP+u4KQakJSk
-         1H/YUqj2tphWaaYQNHkEoVJqZL6pczSzt0uaF1oH6VOjQBngKwYF5DeNS/IERJ0K06fw
-         9Nmw==
+        bh=xRniQ/SenF/b2HkRCisGu8vGveS5ZrM6Rdu1vfSJ1hU=;
+        b=NdfWYyrJaKwj0g5pJz1Dt03O59C9R58Rk2vAj1lodD9y2gN1oN9JDzi77jkpb18I35
+         xD8gUuFi8XvlfsnepqG/DnZSP2MlRo9pOG9RI9plDEcle8dggoqCC+Qm9+PLQUydjuMV
+         1QleRUKhNLCm0KFls5X0syhY69a3PYAHrBOmtMan9W5+pBy7VaQeveVibXo6pL6+HaYw
+         yxVKEoZ3zGFXW62nxN5CqPv/v/yos+nucGc9VwP+QrsZyoN5IvtRsDvIs8VjGm8EU/Ww
+         XYrZjkpHG4Hg3WpSahZvJOJWxs6gOh0pyaipEdiuSL6QxxCJaZ+M8HiUPtlR2oOb6UVq
+         NxHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=AtQivvj6hJ1qy9E/5uGhpUB8LlJCIsHqyEiYftwE/sA=;
-        b=FXzlKfetexa5rlDIHxqyUOFAH/ulrcQO72dGFq3POd4Oc4Owd7W5uzkGFTiswbo/j9
-         2yWUrzwye2M5IQRa2HjNw6TyZ+2+CH/c5wbN60V5nL84hPz9OTHzZFF95mVyeQibcp7V
-         iIy/+cBGWPtM1q60PtOKN2YsFr5FO8UfW64xn6PvQGnonjUU250dGQuaCYCcGablmJqR
-         rg8e4FHz25Pc5QAuewv/WaRVq/wX4T36Z3/XOUYiFPBnwrxdAGoN5GSUt53/It5H/SH/
-         EF6RFtjdv7/hNRCHKQYzHj3HeD6XbyFmTroK9dhPHeilXQ8yUn0KPEL6AhMCFSeRRZ+R
-         xmuw==
-X-Gm-Message-State: AGRZ1gIsw5vD8wMTHveYjFL3PsJknvBUBwMm6P1Ny6KChmq4aYydh+PW
-        Q7kkY6yOopQPh2axPrenmKkTFklC
-X-Google-Smtp-Source: AJdET5cJBzb7p6c/l41cmqC5bBs2xtjr6B0hdL70p3RdSxmQYPKkuPyP1v1uKJ4lb4gShWumd4fCJQ==
-X-Received: by 2002:a63:1e5c:: with SMTP id p28mr15872242pgm.376.1540857154346;
-        Mon, 29 Oct 2018 16:52:34 -0700 (PDT)
+        bh=xRniQ/SenF/b2HkRCisGu8vGveS5ZrM6Rdu1vfSJ1hU=;
+        b=F87i4HCsGsG4IFxdDMDNLPGRzGMk/97rREMHp9jmP5683fOXhd+sqa0Ak0deCt6t3l
+         efNvJM3Og/hwc4+8zBTuBqsfzFB3CA7dNh71g8n4lPmygvjyNT/c/kwG2HXKGg7Fxk11
+         yc4f8l4r07xd/g9+M1Icz58ExWesp5FqOBdLkNVc/UaZHGiQvypRdgbnCXXjIXJyRaSf
+         YjFHjzM/p9vnX9kzVO/Q/nRh7g6+os0g8SHLDEZikSBJHArsagUIyMb6rdXHFjPyzbvV
+         oZwxQwEnrAaBt7SQIlevBHwMAMMCUs2ITym3ZtTNof3zl6ECOA3czsaKRG4Iu+enlP5N
+         1krw==
+X-Gm-Message-State: AGRZ1gLzPfEx1GuR+JRDu3TJjfM12+jEf6eqL1S5DHKh0sN2/Z3As7mK
+        0llxgT54zSVB27nh590NujHw/WjX
+X-Google-Smtp-Source: AJdET5e5bw1tFJSx1qa61gkDTjZ9BaPVELRZjfaIRFIPo8U1E7PTr0pTB7nsNKPA3E34HYQe+nw5zA==
+X-Received: by 2002:a17:902:7201:: with SMTP id ba1-v6mr902814plb.79.1540857156701;
+        Mon, 29 Oct 2018 16:52:36 -0700 (PDT)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id k13-v6sm22537981pff.30.2018.10.29.16.52.32
+        by smtp.gmail.com with ESMTPSA id k13-v6sm22537981pff.30.2018.10.29.16.52.34
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 16:52:33 -0700 (PDT)
+        Mon, 29 Oct 2018 16:52:35 -0700 (PDT)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -84,9 +84,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         DEVICE TREE), rppt@linux.ibm.com, linux@armlinux.org.uk,
         green.hu@gmail.com, deanbo422@gmail.com, gxt@pku.edu.cn,
         ard.biesheuvel@linaro.org
-Subject: [PATCH 1/6] nds32: Remove phys_initrd_start and phys_initrd_size
-Date:   Mon, 29 Oct 2018 16:52:01 -0700
-Message-Id: <20181029235206.30060-2-f.fainelli@gmail.com>
+Subject: [PATCH 2/6] arch: Make phys_initrd_start and phys_initrd_size global variables
+Date:   Mon, 29 Oct 2018 16:52:02 -0700
+Message-Id: <20181029235206.30060-3-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181029235206.30060-1-f.fainelli@gmail.com>
 References: <20181029235206.30060-1-f.fainelli@gmail.com>
@@ -95,28 +95,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This will conflict with a subsequent change making phys_initrd_start and
-phys_initrd_size global variables. nds32 does not make use of those nor
-provides a suitable declarations so just get rid of them.
+Make phys_initrd_start and phys_initrd_size global variables that will
+later be referenced by generic code under drivers/of/fdt.c.
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- arch/nds32/mm/init.c | 2 --
- 1 file changed, 2 deletions(-)
+ arch/arm/mm/init.c       | 4 ++--
+ arch/unicore32/mm/init.c | 4 ++--
+ include/linux/initrd.h   | 3 +++
+ 3 files changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/arch/nds32/mm/init.c b/arch/nds32/mm/init.c
-index c713d2ad55dc..32f55a24ccbb 100644
---- a/arch/nds32/mm/init.c
-+++ b/arch/nds32/mm/init.c
-@@ -22,8 +22,6 @@
- DEFINE_PER_CPU(struct mmu_gather, mmu_gathers);
- DEFINE_SPINLOCK(anon_alias_lock);
- extern pgd_t swapper_pg_dir[PTRS_PER_PGD];
--extern unsigned long phys_initrd_start;
--extern unsigned long phys_initrd_size;
+diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+index 0cc8e04295a4..8f364aa24172 100644
+--- a/arch/arm/mm/init.c
++++ b/arch/arm/mm/init.c
+@@ -51,8 +51,8 @@ unsigned long __init __clear_cr(unsigned long mask)
+ }
+ #endif
  
- /*
-  * empty_zero_page is a special page that is used for
+-static phys_addr_t phys_initrd_start __initdata = 0;
+-static unsigned long phys_initrd_size __initdata = 0;
++phys_addr_t phys_initrd_start __initdata = 0;
++unsigned long phys_initrd_size __initdata = 0;
+ 
+ static int __init early_initrd(char *p)
+ {
+diff --git a/arch/unicore32/mm/init.c b/arch/unicore32/mm/init.c
+index 8f8699e62bd5..4dd26d6f02e5 100644
+--- a/arch/unicore32/mm/init.c
++++ b/arch/unicore32/mm/init.c
+@@ -31,8 +31,8 @@
+ 
+ #include "mm.h"
+ 
+-static unsigned long phys_initrd_start __initdata = 0x01000000;
+-static unsigned long phys_initrd_size __initdata = SZ_8M;
++phys_addr_t phys_initrd_start __initdata = 0x01000000;
++unsigned long phys_initrd_size __initdata = SZ_8M;
+ 
+ static int __init early_initrd(char *p)
+ {
+diff --git a/include/linux/initrd.h b/include/linux/initrd.h
+index 84b423044088..14beaff9b445 100644
+--- a/include/linux/initrd.h
++++ b/include/linux/initrd.h
+@@ -21,4 +21,7 @@ extern int initrd_below_start_ok;
+ extern unsigned long initrd_start, initrd_end;
+ extern void free_initrd_mem(unsigned long, unsigned long);
+ 
++extern phys_addr_t phys_initrd_start;
++extern unsigned long phys_initrd_size;
++
+ extern unsigned int real_root_dev;
 -- 
 2.17.1
 
