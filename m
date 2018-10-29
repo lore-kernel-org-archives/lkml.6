@@ -2,169 +2,99 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC2F0C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43705C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:48:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9888B2082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:45:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 059C52082D
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:48:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="ZR0WGkzW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9888B2082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SOhodhg+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 059C52082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729275AbeJ3Ef4 (ORCPT
+        id S1727665AbeJ3EiU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 00:35:56 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:37121 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbeJ3Ef4 (ORCPT
+        Tue, 30 Oct 2018 00:38:20 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:40220 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725781AbeJ3EiU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 00:35:56 -0400
-Received: by mail-oi1-f193.google.com with SMTP id w66-v6so3929914oiw.4;
-        Mon, 29 Oct 2018 12:45:48 -0700 (PDT)
+        Tue, 30 Oct 2018 00:38:20 -0400
+Received: by mail-qk1-f193.google.com with SMTP id f18-v6so5744184qkm.7
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 12:48:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
+        d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=+P+YyHQN4mbzIEI8gj6PxHxuqBpIjDzGExY1dBY+9d4=;
-        b=ZR0WGkzWU75PY8YKcHoqeSHCE2QzOKCRQphzI2WtlaVsXOUKtRKMGlJI/OLbzhfTmV
-         6bulfiIJHwh0zHl3SDZmIiAIQ6V/Ak6Pm6hWWykhdf6NLPY3LH3dLDmcnWwnFDTXrxjb
-         q+n3+O7YTlqLoEKYc+NIZxXl281uTlPMs5eciFPfY+isNqRV1xX60OiqqEZTpirSyv6z
-         cuqEhBqLJr0NQfvekoLk462AbnZI2DuJYo7AYkS66sX06Uo/UuSy5C9SjkxH+bGUqwut
-         pjj4wXp+m5BGrCIGTr7RqTR4cyYPUHBenklsNifS0ho+oKQh2JzShCH929m/YzSJUOce
-         Q6WQ==
+        bh=jAAOcWZXrc9pNA9zgpJnUaBbYEUNJCtGEP2DciOoHTw=;
+        b=SOhodhg+8z2QLVwE9sh5BDJGHrPZqrA7xpbiRKqqJL5+rAuwySOcDmXAkdtG1BN2IG
+         uRTaAW/8+h/HHrpwF+CaVUoLk9sRSfTI4s0WHuE3WVQC/yasuChDpUci9KGGlyFJyiuH
+         i/eIfZkDM5o5LgI/Yoht6sTtCvr2E26wjq3pSZhCKUJ02ICSIrm9Dq29OFVjXIqguZUP
+         lS6WvVS+6tyx8H90lm2fnjM51doePmWHYNRu3I7QoZ8Rmajlud18L6IZP8hw+oXdJwbJ
+         bu8rPbov6HDTRiEmmCMkx1coRh/OJYMFpYKmdno6B8jZ8PZAKn/OGk0C2QCp/OnPRu03
+         wzDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=+P+YyHQN4mbzIEI8gj6PxHxuqBpIjDzGExY1dBY+9d4=;
-        b=at1r8Zn0SH373L8PwllmBTBTlDr6qozrYXGEYj2Q5h3+s5bGpdiJPr/2mB6chSrKNu
-         td3mktyZsWWr2RDjkhrmtuD9TWFLNmAfTRuhILNzPXPz6KFVsGjaJWE/6NLZbfvfb1KN
-         QfpFmH5UuN1DNSXxASnAzricq4guFnxzx6zG6tUqruEdFhDJDKZUdvctjj8/Ue1B8BbT
-         zKNlPabHSAcE/RPKkCO2vxy76GozgpAPztoD3u8Hm/fmFo1Zjz3nqUPDr4SHuwg4a6Gf
-         n0DPsAgbyS9NzYwe+8uGoh8fZOvYK7ZcsXft3l469nbXZO3zjdQHtmkSoepoM5i8JAbC
-         PBww==
-X-Gm-Message-State: AGRZ1gL5OibHEN09T8be7JhV3HWQBWGypFadfkWH861ZW4lEitPs9xUa
-        VRZMk0hx2+yZ884sIdw3tCA0nfIGYJlSfLM3Bj8=
-X-Google-Smtp-Source: AJdET5f148hjpSoY5MEOJi9uus5q8o/KGxeQasLdb4cWdTXBeo7UlegKeKdZOXdGewwGlp8WMRhkx69t/NJmeQev4vM=
-X-Received: by 2002:aca:e804:: with SMTP id f4-v6mr8705120oih.38.1540842348082;
- Mon, 29 Oct 2018 12:45:48 -0700 (PDT)
+        bh=jAAOcWZXrc9pNA9zgpJnUaBbYEUNJCtGEP2DciOoHTw=;
+        b=TIEsnxDfqvG+p8AhV2A9nTQzT54JwMCos1juS1vrQwZTdTa+BzzOPoBzgJaCWYiSAg
+         5pO6GDbuG6HM+5JerVOGmIm55Hb6Qov7/Gt+4i5qUxQybQ63YAKB044MNJ8WDdw2/dmn
+         pKpf9p8cYudnTAmnLD3RJMbmXM83+eTwfA0JjkP84CD5BzBYgktDzWWVjGTny1Ht4Vyj
+         wVnOmZaMtUOo5CPJ88SXITLTfWhuH+KZPFt1P2NUaRAZUlLhzJq+hUOEqmm3Rn+XSkrB
+         tOI+rALVeArT7THQE1g90MyALiGr4I9I9jUf8tJaXx3tlI+xGWX0bY9UNNb4AscVs1hm
+         1Zuw==
+X-Gm-Message-State: AGRZ1gJSEtM18lt60YwzzuD80eTZPKuCMD7kQqXVFzqyAFWArDqkR+Rx
+        m93mSXFvEJs6MmaSxtvurGyaDEfQCOnRccInCstqBQ==
+X-Google-Smtp-Source: AJdET5dFoZ9sxJkTWP5K44m2QpQjNb2ptuHVNk7ZM6bsnB1ibK5s4L0VB+u8UeN1QUvcx2yw6uyJtxCinpr2hwqlqNw=
+X-Received: by 2002:a37:12a1:: with SMTP id 33mr12822845qks.189.1540842491115;
+ Mon, 29 Oct 2018 12:48:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <1539839245-13793-1-git-send-email-jianxin.pan@amlogic.com>
- <1539839245-13793-4-git-send-email-jianxin.pan@amlogic.com>
- <a8d359208edfdc75cb5c6de378796f76e0572a0f.camel@baylibre.com>
- <eda2faf2-cf06-902d-36ff-48ceafcb4a4b@amlogic.com> <f4d239df2f1333b005680f9bfdd2eba93e7f86e5.camel@baylibre.com>
- <CAFBinCCuqUmVNdwUm7WbkHy1eWvOA5oQ5FcOuytbYNbgGcXnRQ@mail.gmail.com> <3723695d951e0d30e8a0117d336d8f268269a030.camel@baylibre.com>
-In-Reply-To: <3723695d951e0d30e8a0117d336d8f268269a030.camel@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Mon, 29 Oct 2018 20:45:36 +0100
-Message-ID: <CAFBinCDyoK0G5FoyqZq6zPZLXH+YHy+-7GBCrjuH4=LN+MpSDQ@mail.gmail.com>
-Subject: Re: [PATCH v5 3/3] clk: meson: add sub MMC clock controller driver
-To:     jbrunet@baylibre.com
-Cc:     jianxin.pan@amlogic.com, Neil Armstrong <narmstrong@baylibre.com>,
-        yixun.lan@amlogic.com, khilman@baylibre.com, carlo@caione.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-        miquel.raynal@bootlin.com, boris.brezillon@bootlin.com,
-        liang.yang@amlogic.com, jian.hu@amlogic.com,
-        qiufang.dai@amlogic.com, hanjie.lin@amlogic.com,
-        victor.wan@amlogic.com, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20181029175322.189042-1-dancol@google.com> <CAJWu+opR5bU7b0ux5GZjO-Wu+=2F8sARke-E_y4PpH0XSubx9g@mail.gmail.com>
+In-Reply-To: <CAJWu+opR5bU7b0ux5GZjO-Wu+=2F8sARke-E_y4PpH0XSubx9g@mail.gmail.com>
+From:   Joel Fernandes <joelaf@google.com>
+Date:   Mon, 29 Oct 2018 12:47:57 -0700
+Message-ID: <CAJWu+oro6rxxCdU7s00ZBhV0UZi6s8Cmupr1U9njo4cvhaqk9g@mail.gmail.com>
+Subject: Re: [RFC PATCH] Minimal non-child process exit notification support
+To:     Daniel Colascione <dancol@google.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jerome,
-
-many thanks for the whole explanation!
-
-On Sun, Oct 28, 2018 at 8:16 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+On Mon, Oct 29, 2018 at 12:45 PM Joel Fernandes <joelaf@google.com> wrote:
 >
-> On Thu, 2018-10-25 at 22:58 +0200, Martin Blumenstingl wrote:
-> > Hi Jerome,
+> On Mon, Oct 29, 2018 at 10:53 AM Daniel Colascione <dancol@google.com> wrote:
 > >
-> > On Thu, Oct 25, 2018 at 2:54 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
-> > [snip]
-> > > > > > +static void clk_regmap_div_init(struct clk_hw *hw)
-> > > > > > +{
-> > > > > > + struct clk_regmap *clk = to_clk_regmap(hw);
-> > > > > > + struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
-> > > > > > + unsigned int val;
-> > > > > > + int ret;
-> > > > > > +
-> > > > > > + ret = regmap_read(clk->map, div->offset, &val);
-> > > > > > + if (ret)
-> > > > > > +         return;
-> > > > > >
-> > > > > > + val &= (clk_div_mask(div->width) << div->shift);
-> > > > > > + if (!val)
-> > > > > > +         regmap_update_bits(clk->map, div->offset,
-> > > > > > +                            clk_div_mask(div->width) << div->shift,
-> > > > > > +                            clk_div_mask(div->width));
-> > > > >
-> > > > > This is wrong for several reasons:
-> > > > > * You should hard code the initial value in the driver.
-> > > > > * If shift is not 0, I doubt this will give the expected result.
-> > > >
-> > > > The value 0x00 of divider means nand clock off then read/write nand register is forbidden.
-> > >
-> > > That is not entirely true, you can access the clock register or you'd be in a
-> > > chicken and egg situation.
-> > >
-> > > > Should we set the initial value in nand driver, or in sub emmc clk driver?
-> > >
-> > > In the nand driver, which is the consumer of the clock. see my previous comments
-> > > about it.
+> > This patch adds a new file under /proc/pid, /proc/pid/exithand.
+> > Attempting to read from an exithand file will block until the
+> > corresponding process exits, at which point the read will successfully
+> > complete with EOF.  The file descriptor supports both blocking
+> > operations and poll(2). It's intended to be a minimal interface for
+> > allowing a program to wait for the exit of a process that is not one
+> > of its children.
 > >
-> > an old version of this series had the code still in the NAND driver
-> > (by writing to the registers directly instead of using the clk API).
-> > this looks pretty much like a "sclk-div" to me (as I commented in v3
-> > of this series: [0]):
-> > - value 0 means disabled
-> > - positive divider values
-> > - (probably no duty control, but that's optional as far as I
-> > understand sclk-div)
-> > - uses max divider value when enabling the clock
-> >
-> > if switching to sclk-div works then we can get rid of some duplicate code
+> > Why might we want this interface? Android's lmkd kills processes in
+> > order to free memory in response to various memory pressure
+> > signals. It's desirable to wait until a killed process actually exits
+> > before moving on (if needed) to killing the next process. Since the
+> > processes that lmkd kills are not lmkd's children, lmkd currently
+> > lacks a way to wait for a proces to actually die after being sent
+> > SIGKILL; today, lmkd resorts to polling the proc filesystem pid
 >
-> It is possible:
-> There is a couple of things to note though:
+> Any idea why it needs to wait and then send SIGKILL? Why not do
+> SIGKILL and look for errno == ESRCH in a loop with a delay.
 >
-> * sclk does not 'uses max divider value when enabling the clock': Since this
-> divider can gate, it needs to save the divider value when disabling, since the
-> divider value is no longer stored in the register,
-> On init, this cached value is  saved as it is. If the divider is initially
-> disabled, we have to set the cached value to something that makes sense, in case
-> the clock is enabled without a prior call to clk_set_rate().
->
-> So in sclk, the clock setting is not changed nor hard coded in init, and this is
-> a very important difference.
->
-> * Even if sclk zero value means gated, it is still a zero based divider, while
-> eMMC/Nand divider is one based. It this controller was to sclk, then something
-> needs to be done for this.
->
-> * Since sclk caches a value in its data, and there can multiple instance of eMMC
-> /NAND clock controller, some care must be taken when registering the data.
->
-> Both the generic divider and sclk could work here ... it's up to you Jianxin.
-to give even more options:
-the generic divider will (probably) get a CLK_DIVIDER_ZERO_GATE flag
-in the next development cycle, see [0] (this may require a small
-change to clk-regmap on top)
 
-
-Regards
-Martin
-
-
-[0] https://patchwork.kernel.org/patch/10650797/
+Sorry I take that back, I see it needs to wait after sending the kill,
+not before (duh). Anyway if the polling is ever rewritten, another way
+could be to do kill(pid, 0) and then check for return of -1 and errno
+== ESRCH; instead of looking at /proc/
