@@ -2,87 +2,116 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DDF3C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:58:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0223ECDE44
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:05:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0BDF2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:58:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0BDF2084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id A89DB2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:05:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lS6/LNDw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A89DB2084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729439AbeJ3Dsv (ORCPT
+        id S1729532AbeJ3Dz1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 23:48:51 -0400
-Received: from smtprelay0251.hostedemail.com ([216.40.44.251]:58733 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727954AbeJ3Dsu (ORCPT
+        Mon, 29 Oct 2018 23:55:27 -0400
+Received: from mail-lf1-f51.google.com ([209.85.167.51]:42870 "EHLO
+        mail-lf1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725969AbeJ3Dz1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 23:48:50 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay02.hostedemail.com (Postfix) with ESMTP id BEF062AB8;
-        Mon, 29 Oct 2018 18:58:52 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: screw92_4ca5bddfed811
-X-Filterd-Recvd-Size: 2197
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf02.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 29 Oct 2018 18:58:46 +0000 (UTC)
-Message-ID: <ecd684121963748417a5d0105880ea8d73a20b9b.camel@perches.com>
-Subject: Re: [PATCH 3/3] MAINTAINERS: Add myself as the dw-i3c-master module
- maintainer
-From:   Joe Perches <joe@perches.com>
-To:     Vitor soares <vitor.soares@synopsys.com>,
-        boris.brezillon@bootlin.com, wsa@the-dreams.de,
-        linux-i2c@vger.kernel.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org, gregkh@linuxfoundation.org,
-        arnd@arndb.de
-Cc:     psroka@cadence.com, agolec@cadence.com, adouglas@cadence.com,
-        bfolta@cadence.com, dkos@cadence.com, alicja@cadence.com,
-        cwronka@cadence.com, sureshp@cadence.com, rafalc@cadence.com,
-        thomas.petazzoni@bootlin.com, nm@ti.com, robh+dt@kernel.org,
-        pawel.moll@arm.com, mark.rutland@arm.com,
-        ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        geert@linux-m68k.org, linus.walleij@linaro.org,
-        Xiang.Lin@synaptics.com, linux-gpio@vger.kernel.org,
-        nsekhar@ti.com, pgaj@cadence.com, peda@axentia.se,
-        mshettel@codeaurora.org, swboyd@chromium.org,
-        joao.pinto@synopsys.com, luis.oliveira@synopsys.com,
-        manuel.abreu@synopsys.com, gustavo.pimentel@synopsys.com
-Date:   Mon, 29 Oct 2018 11:58:45 -0700
-In-Reply-To: <1540807618-13246-4-git-send-email-soares@synopsys.com>
-References: <1540807618-13246-1-git-send-email-soares@synopsys.com>
-         <1540807618-13246-4-git-send-email-soares@synopsys.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 29 Oct 2018 23:55:27 -0400
+Received: by mail-lf1-f51.google.com with SMTP id q6-v6so6918803lfh.9;
+        Mon, 29 Oct 2018 12:05:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8Vdgkgu5dqbHq7kAdM9OJ4GdnKQM3UrEPnn4ycmTJbA=;
+        b=lS6/LNDw7uVCAu9TvA5A2/2wcq+sq29kMM+4KzPv/GF9Fxhb9VOt6aqXD4O15xOL6K
+         5rWT950PxWqUJ88RLkuKGrMniR1P+4k3Ow0Y1LPjx1zGzRP7KpVU7WAqkdMrouXpf2qt
+         unUwse4JPlxDGoVUQxTug95xw0jzZSGsKUPr8D4B12Y0Hxk6OKmMmxg1bZ7Knqa/98PV
+         Lnj/3+ZGKFhmM59xltmXyuPmU8lFogzAEaiOyf0YS0QHWrbSIt6cAUmkh4YfnNBPb01S
+         siyin1aAJOGLs+DtQdKsa8FZT70dvMTUtphFH71XkKwR+qbwNTKcZ4viNfyjTRA9RbtB
+         wXrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8Vdgkgu5dqbHq7kAdM9OJ4GdnKQM3UrEPnn4ycmTJbA=;
+        b=btKpMrdCmhYV6Dj93J7w06/3Wj6TD4nmsxfP5xEgq4p7hPGNx6sS+wkOhWw3fI8HER
+         g9rVZz2072NjlisbyUdhbw2rKY+fSU1WSOrn/fv2qqebYJqfMmBOy3+EzIKR5fa+VBTD
+         h0pLKTn/uRe1eSWE0BHRw3NNqcRgMCX5REDxDtFFXXCNrxlOjRAYnDdBvgMiyJlcyY7Q
+         nE3IXUpYkBo61C8jOItH4K8R08C/lp+0oemnciMlEqfcLcOdWMULomXEbAw6iD4pWX7+
+         +MIUgAC3hirEK0tKP66rm39rmgSC8VxFnxLUhjb+pKzRCCmoYEUfgUb41poHVMaWXW6u
+         VQWg==
+X-Gm-Message-State: AGRZ1gKmhAgIaOzyDmk5S5IOoKfklW0zJaRyJqpsQa2hSOie6VSyi3je
+        /9DPTt/v/yArjG/CgWlLEjqt4nsbfBk=
+X-Google-Smtp-Source: AJdET5eF1FVNwEKahbYih6rHErSOannQtX1jSqMfTJ9tmzfTVUrCt5b81RZbPuvliPGQBgEqs+KgTw==
+X-Received: by 2002:a19:5510:: with SMTP id n16mr8953999lfe.68.1540839925976;
+        Mon, 29 Oct 2018 12:05:25 -0700 (PDT)
+Received: from ?IPv6:2001:14bb:52:7be:f0bf:dd2d:f008:5213? (dmkd798g-7z2-yccwcp-4.rev.dnainternet.fi. [2001:14bb:52:7be:f0bf:dd2d:f008:5213])
+        by smtp.gmail.com with ESMTPSA id q5-v6sm3199673lfj.85.2018.10.29.12.05.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Oct 2018 12:05:25 -0700 (PDT)
+Subject: Re: [PATCH 10/17] prmem: documentation
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        kernel-hardening@lists.openwall.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, igor.stoppa@huawei.com,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-11-igor.stoppa@huawei.com>
+ <20181024230426.GA27484@rapoport-lnx>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <dc9f6353-f484-81ec-31c8-04a4b63aaad3@gmail.com>
+Date:   Mon, 29 Oct 2018 21:05:22 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181024230426.GA27484@rapoport-lnx>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-10-29 at 10:06 +0000, Vitor soares wrote:
-> Signed-off-by: Vitor soares <soares@synopsys.com>
-[]
-> diff --git a/MAINTAINERS b/MAINTAINERS
-[]
-> @@ -6930,6 +6930,12 @@ F:	drivers/i3c/
->  F:	include/linux/i3c/
->  F:	include/dt-bindings/i3c/
->  
-> +I3C·DRIVER·FOR·SYNOPSYS·DESIGNWARE
-> +M:	Vitor·Soares·<soares@synopsys.com>
+Hello,
 
-Please do not use the '·' character
-between your names and the email address
+On 25/10/2018 00:04, Mike Rapoport wrote:
 
-Please use a standard ascii space instead.
+> I feel that foreword should include a sentence or two saying why we need
+> the memory protection and when it can/should be used.
 
+I was somewhat lost about the actual content of this sort of document.
 
+In past reviews of older version of the docs, I go the impression that 
+this should focus more on the use of the API and how to use it.
+
+And it seem that different people expect to find here different type of 
+information.
+
+What is the best place where to put a more extensive description of the 
+feature?
+
+--
+igor
