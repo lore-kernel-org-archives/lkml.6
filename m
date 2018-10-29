@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 958B0C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:33:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD1CECDE44
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:33:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46DDD2080A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:33:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46DDD2080A
+	by mail.kernel.org (Postfix) with ESMTP id AAB8C2080A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:33:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAB8C2080A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729488AbeJ3DXd (ORCPT
+        id S1729503AbeJ3DXg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 23:23:33 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44570 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728488AbeJ3DXd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 23:23:33 -0400
+        Mon, 29 Oct 2018 23:23:36 -0400
+Received: from foss.arm.com ([217.140.101.70]:44588 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729391AbeJ3DXg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 23:23:36 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 10E32341;
-        Mon, 29 Oct 2018 11:33:42 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 42E611596;
+        Mon, 29 Oct 2018 11:33:45 -0700 (PDT)
 Received: from e110439-lin.cambridge.arm.com (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1FC033F6A8;
-        Mon, 29 Oct 2018 11:33:38 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 51B5F3F6A8;
+        Mon, 29 Oct 2018 11:33:42 -0700 (PDT)
 From:   Patrick Bellasi <patrick.bellasi@arm.com>
 To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
 Cc:     Ingo Molnar <mingo@redhat.com>,
@@ -45,9 +45,9 @@ Cc:     Ingo Molnar <mingo@redhat.com>,
         Joel Fernandes <joelaf@google.com>,
         Steve Muckle <smuckle@google.com>,
         Suren Baghdasaryan <surenb@google.com>
-Subject: [PATCH v5 04/15] sched/core: uclamp: add CPU's clamp groups accounting
-Date:   Mon, 29 Oct 2018 18:32:58 +0000
-Message-Id: <20181029183311.29175-5-patrick.bellasi@arm.com>
+Subject: [PATCH v5 04/15] sched/core: uclamp: add CPU's clamp groups refcounting
+Date:   Mon, 29 Oct 2018 18:32:59 +0000
+Message-Id: <20181029183311.29175-6-patrick.bellasi@arm.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20181029183311.29175-1-patrick.bellasi@arm.com>
 References: <20181029183311.29175-1-patrick.bellasi@arm.com>
@@ -63,8 +63,8 @@ Utilization clamping allows to clamp the utilization of a CPU within a
 [util_min, util_max] range which depends on the set of currently
 RUNNABLE tasks on that CPU.
 Each task references two "clamp groups" defining the minimum and maximum
-utilization clamp values to be considered for that task. These clamp
-value are mapped by a clamp group which is enforced on a CPU only when
+utilization "clamp values" to be considered for that task. Each clamp
+value is mapped to a clamp group which is enforced on a CPU only when
 there is at least one RUNNABLE task referencing that clamp group.
 
 When tasks are enqueued/dequeued on/from a CPU, the set of clamp groups
@@ -82,9 +82,9 @@ Here we introduce the required support to properly reference count clamp
 groups at each task enqueue/dequeue time.
 
 Tasks have a:
-   task_struct::uclamp::group_id[clamp_idx]
-indexing, for each clamp index (i.e. util_{min,max}), the clamp group
-they have to refcount at enqueue time.
+   task_struct::uclamp[clamp_idx]::group_id
+indexing, for each "clamp index" (i.e. util_{min,max}), the "group
+index" of the clamp group they have to refcount at enqueue time.
 
 CPUs rq have a:
    rq::uclamp::group[clamp_idx][group_idx].tasks
@@ -92,16 +92,17 @@ which is used to reference count how many tasks are currently RUNNABLE on
 that CPU for each clamp group of each clamp index.
 
 The clamp value of each clamp group is tracked by
-   rq::uclamp::group[][].value
+   rq::uclamp::group[clamp_idx][group_idx].value
 thus making rq::uclamp::group[][] an unordered array of clamp values.
-However, the MAX aggregation of the currently active clamp groups is
-implemented to minimize the number of times we need to scan the complete
-(unordered) clamp group array to figure out the new max value. This
-operation indeed happens only when we dequeue the last task of the clamp
-group corresponding to the current max clamp, and thus the CPU is either
-entering IDLE or going to schedule a less boosted or more clamped task.
-Moreover, the expected number of different clamp values, which can be
-configured at build time, is usually so small that a more advanced
+
+The MAX aggregation of the currently active clamp groups is implemented
+to minimize the number of times we need to scan the complete (unordered)
+clamp group array to figure out the new max value.
+This operation indeed happens only when we dequeue the last task of the
+clamp group corresponding to the current max clamp, and thus the CPU is
+either entering IDLE or going to schedule a less boosted or more clamped
+task. Moreover, the expected number of different clamp values, which can
+be configured at build time, is usually so small that a more advanced
 ordering algorithm is not needed. In real use-cases we expect less then
 10 different clamp values for each clamp index.
 
@@ -130,7 +131,7 @@ Changes in v5:
  - consistently use "unsigned int" for both clamp_id and group_id
  - fixup documentation
  - reduced usage of inline comments
- - rebased on v4.19.0
+ - rebased on v4.19
 
 Changes in v4:
  Message-ID: <20180816133249.GA2964@e110439-lin>
@@ -443,7 +444,7 @@ index 654327d7f212..a98a96a7d9f1 100644
  }
  
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 947ab14d3d5b..1755c9c9f4f0 100644
+index 947ab14d3d5b..94c4f2f410ad 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
 @@ -766,6 +766,50 @@ extern void rto_push_irq_work_func(struct irq_work *work);
@@ -489,7 +490,7 @@ index 947ab14d3d5b..1755c9c9f4f0 100644
 + * values, i.e. no min/max clamping at all.
 + */
 +struct uclamp_cpu {
-+	struct uclamp_group group[UCLAMP_CNT][CONFIG_UCLAMP_GROUPS_COUNT + 1];
++	struct uclamp_group group[UCLAMP_CNT][UCLAMP_GROUPS];
 +	int value[UCLAMP_CNT];
 +};
 +#endif /* CONFIG_UCLAMP_TASK */
