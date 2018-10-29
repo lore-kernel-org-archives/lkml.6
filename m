@@ -2,246 +2,123 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEAA0ECDE44
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 20:35:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47C2CC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 20:36:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 981312082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 20:35:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06D342080A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 20:36:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZgLYO6kt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 981312082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="gU7Jiyzj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06D342080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=umn.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729730AbeJ3F0H (ORCPT
+        id S1729738AbeJ3F0w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 01:26:07 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:39407 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729535AbeJ3F0H (ORCPT
+        Tue, 30 Oct 2018 01:26:52 -0400
+Received: from mta-p2.oit.umn.edu ([134.84.196.202]:59368 "EHLO
+        mta-p2.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729535AbeJ3F0w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 01:26:07 -0400
-Received: by mail-lf1-f66.google.com with SMTP id p11-v6so7130576lfc.6;
-        Mon, 29 Oct 2018 13:35:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=xoROp14gpVcYrnHpanBIcwQXTn+zarzVVmX341Y2MGo=;
-        b=ZgLYO6ktDKWE8nwlBLwYEAvIITbNAwmN2nbaOfoGc2SkAy1mIgkxE+e+KiueKVUyM7
-         tcuhmKpm2OsOUSthP8WKmze4K+U/bU5b82GDSzaWDzoimBhC/icW7BoAWiM86aF0yTFM
-         mSU0RQK5oYbC36tevv801EzhhftwHtTkNHrPUCqRMhan3Kr7GEDyw6hXrmOPjXGgNjFv
-         b6/nSaOf3rFDKwRY/2/+n4cyepQ9chQy+Z/oPXlzWfXclCOEyryxy954anxZkxd/pxWv
-         kaii2x0K7MdcBOcP/y9P9udgGk/74jIhY98mRt3iIxWoK+QjLeukagDL+r3Pw2w3l+mz
-         uzhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=xoROp14gpVcYrnHpanBIcwQXTn+zarzVVmX341Y2MGo=;
-        b=tqYHO9Msmr5SvOwY3+fPOteyO5C5UfHZXvv5fI9UeymWnqsOKRHn9wfGsZHFDRI9av
-         KjQmgw9jgEInqH94yOqmPglRZOF3YueImum+K9nILzfW18Iqio7t/goKfFKqBVQYEdda
-         8mu2lyrCbYv4nb8jZpPvEMVFoSHVCDoY0v+/r8JxPJyleFyQ6Y/olnZZ8um4O/1SP+Fk
-         Oki0JlWTyJH/wFDO3x9uQRMypish5+zMQobjuln2e3lq/lpRHasr9MYg6TmvqCeoPGur
-         6KXghe5i9LXXp9CBi2QHl+/pV6FuVccMUX+Vt00x4gJKL1ADIfp8RDO5m8RtN4Jk04MB
-         PElQ==
-X-Gm-Message-State: AGRZ1gJIMzdtzvmUHjk5G/TgD8jbLHftvcOtJrGdyewl0EBtXpSxM3fj
-        HcmUl2ZM+8kjyP63lJefeHh/Gt/88iA=
-X-Google-Smtp-Source: AJdET5cSRWcuRdnyf6N20sMcTngnAIq6L/3huRMkYVlpn02LRjkV5zy9SzlMT15UTyLO/2uqkGF0yQ==
-X-Received: by 2002:a19:1019:: with SMTP id f25mr150184lfi.54.1540845345157;
-        Mon, 29 Oct 2018 13:35:45 -0700 (PDT)
-Received: from ?IPv6:2001:14bb:52:7be:f0bf:dd2d:f008:5213? (dmkd798g-7z2-yccwcp-4.rev.dnainternet.fi. [2001:14bb:52:7be:f0bf:dd2d:f008:5213])
-        by smtp.gmail.com with ESMTPSA id 71-v6sm3662973lja.90.2018.10.29.13.35.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 13:35:44 -0700 (PDT)
-Subject: Re: [PATCH 10/17] prmem: documentation
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        kernel-hardening@lists.openwall.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, igor.stoppa@huawei.com,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-11-igor.stoppa@huawei.com>
- <20181026092609.GB3159@worktop.c.hoisthospitality.com>
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <cb42d84d-082a-e1e5-7b71-95c2c4a44d0e@gmail.com>
-Date:   Mon, 29 Oct 2018 22:35:42 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 30 Oct 2018 01:26:52 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mta-p2.oit.umn.edu (Postfix) with ESMTP id 1B21B238;
+        Mon, 29 Oct 2018 20:36:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=umn.edu; h=
+        content-type:content-type:subject:subject:message-id:date:date
+        :from:from:in-reply-to:references:mime-version:received:received
+        :received; s=20160920; t=1540845391; x=1542659792; bh=Kt4ncB21bL
+        rvWMclY2gefgrpEzuKWPMDRq9XkJg9+KY=; b=gU7Jiyzj+h/0OUCUSL8TE8YShH
+        t4/IQ88kpkTLxyEJPrukJchpFx57mLrBwBHnEo9f8MKfxGV3FWRT8GLtZPoVh9dL
+        8bjktSRxlwRDCD0QEB1+hsCQArqcCD3ywn9UzTLOgUc2ST1oR0yiKcPnwTXVXXxT
+        gd+LAEAuzHRYDBYxMgcYRPsQ5vh2G5KeBSsStJHZ1+Q0ukq90hUQtvd0Y+ErlzdI
+        jZCA6NMPEBXCmwfetv5TVSaEhr2i0wy6SACQPE0FSYp4HoOVgaH39O0st94h4P1i
+        8NYoaKXR0l70HIpXL3fQ6RwKyzOMEoXyE6Uy7iR6rk3PQjB7ScCf+ggq6Lgw==
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p2.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p2.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id rnxK6bgqXlt9; Mon, 29 Oct 2018 15:36:31 -0500 (CDT)
+Received: from mail-it1-f170.google.com (mail-it1-f170.google.com [209.85.166.170])
+        (using TLSv1 with cipher AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: wang6495)
+        by mta-p2.oit.umn.edu (Postfix) with ESMTPSA id E55A711F;
+        Mon, 29 Oct 2018 15:36:31 -0500 (CDT)
+Received: by mail-it1-f170.google.com with SMTP id t4-v6so2832597itf.1;
+        Mon, 29 Oct 2018 13:36:31 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gIQFw1HEC7tEg3sKmB2WEo3Of1carjLIIKlzVvMQ7G9BeyQvDA9
+        v9P3Ta8EUrTQvt++luR6ayyVeI7Oqsu1LEJzRU4=
+X-Google-Smtp-Source: AJdET5fL+ScnNI1TL/MYY25tk1v8r7NsnhC1awruM9FIdRJa9O01B8KgMfS6zWY7qZkninKaICv1dt+XGoeD4Gtkn1o=
+X-Received: by 2002:a02:142:: with SMTP id c63-v6mr11555418jad.32.1540845391708;
+ Mon, 29 Oct 2018 13:36:31 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181026092609.GB3159@worktop.c.hoisthospitality.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1538668833-18372-1-git-send-email-wang6495@umn.edu>
+In-Reply-To: <1538668833-18372-1-git-send-email-wang6495@umn.edu>
+From:   Wenwen Wang <wang6495@umn.edu>
+Date:   Mon, 29 Oct 2018 15:35:54 -0500
+X-Gmail-Original-Message-ID: <CAAa=b7c6uYQARV80wxWHysHG0otD+8ZQfmq0Q2FMumUKi7BuRg@mail.gmail.com>
+Message-ID: <CAAa=b7c6uYQARV80wxWHysHG0otD+8ZQfmq0Q2FMumUKi7BuRg@mail.gmail.com>
+Subject: Re: [PATCH] media: davinci_vpfe: fix a NULL pointer dereference bug
+To:     Wenwen Wang <wang6495@umn.edu>
+Cc:     Kangjie Lu <kjlu@umn.edu>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "open list:STAGING - ATOMISP DRIVER" <linux-media@vger.kernel.org>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/10/2018 10:26, Peter Zijlstra wrote:
+Hello,
 
->> +- Kernel code is protected at system level and, unlike data, it doesn't
->> +  require special attention.
-> 
-> What does this even mean?
+Can anyone please confirm this bug and apply the patch? Thanks!
 
-I was trying to convey the notion that the pages containing kernel code 
-do not require any special handling by the author of a generic kernel 
-component, for example a kernel driver.
+Wenwen
 
-Pages containing either statically or dynamically allocated data, 
-instead, are not automatically protected.
-
-But yes, the sentence is far from being clear.
-
-> 
->> +Protection mechanism
->> +--------------------
->> +
->> +- When available, the MMU can write protect memory pages that would be
->> +  otherwise writable.
-> 
-> Again; what does this really want to say?
-
-That it is possible to use the MMU also for write-protecting pages 
-containing data which was not declared as constant.
-> 
->> +- The protection has page-level granularity.
-> 
-> I don't think Linux supports non-paging MMUs.
-
-This probably came from a model I had in mind where a separate execution 
-environment, such as an hypervisor, could trap and filter writes to a 
-certain parts of a page, rejecting some and performing others, 
-effectively emulating sub-page granularity.
-
-> 
->> +- An attempt to overwrite a protected page will trigger an exception.
->> +- **Write protected data must go exclusively to write protected pages**
->> +- **Writable data must go exclusively to writable pages**
-> 
-> WTH is with all those ** ?
-
-[...]
-
-> Can we ditch all the ** nonsense and put whitespace in there? More paragraphs
-> and whitespace are more good.
-
-Yes
-
-> Also, I really don't like how you differentiate between static and
-> dynamic wr.
-
-ok, but why? what would you suggest, instead?
-
-[...]
-
-> We already have RO, why do you need more RO?
-
-I can explain, but I'm at loss of what is the best place: I was under 
-the impression that this sort of document should focus mostly on the API 
-and its use. I was even considering removing most of the explanation and 
-instead put it in a separate document.
-
-> 
->> +
->> +   **Remarks:**
->> +    - The "AUTO" modes perform automatic protection of the content, whenever
->> +       the current vmap_area is used up and a new one is allocated.
->> +        - At that point, the vmap_area being phased out is protected.
->> +        - The size of the vmap_area depends on various parameters.
->> +        - It might not be possible to know for sure *when* certain data will
->> +          be protected.
-> 
-> Surely that is a problem?
-> 
->> +        - The functionality is provided as tradeoff between hardening and speed.
-> 
-> Which you fail to explain.
-> 
->> +        - Its usefulness depends on the specific use case at hand
-> 
-> How about you write sensible text inside the option descriptions
-> instead?
-> 
-> This is not a presentation; less bullets, more content.
-
-I tried to say something, without saying too much, but it was clearly a 
-bad choice.
-
-Where should i put a thoroughly detailed explanation?
-Here or in a separate document?
-
-> 
->> +- Not only the pmalloc memory must be protected, but also any reference to
->> +  it that might become the target for an attack. The attack would replace
->> +  a reference to the protected memory with a reference to some other,
->> +  unprotected, memory.
-> 
-> I still don't really understand the whole write-rare thing; how does it
-> really help? If we can write in kernel memory, we can write to
-> page-tables too.
-
-It has already been answered by Kees, but I'll provide also my answer:
-
-the exploits used to write in kernel memory are specific to certain 
-products and SW builds, so it's not possible to generalize too much, 
-however there might be some limitation in the reach of a specific 
-vulnerability. For example, if a memory location is referred to as 
-offset from a base address, the maximum size of the offset limits the 
-scope of the attack. Which might make it impossible to use that specific 
-vulnerability for writing directly to the page table. But something 
-else, say a statically allocated variable, might be within reach.
-
-said this, there is also the almost orthogonal use case of providing 
-increased robustness by trapping accidental modifications, caused by bugs.
-
-> And I don't think this document even begins to explain _why_ you're
-> doing any of this. How does it help?
-
-ok, point taken
-
->> +- The users of rare write must take care of ensuring the atomicity of the
->> +  action, respect to the way they use the data being altered; for example,
->> +  take a lock before making a copy of the value to modify (if it's
->> +  relevant), then alter it, issue the call to rare write and finally
->> +  release the lock. Some special scenario might be exempt from the need
->> +  for locking, but in general rare-write must be treated as an operation
->> +  that can incur into races.
-> 
-> What?!
-
-Probably something along the lines of:
-
-"users of write-rare are responsible of using mechanisms that allow 
-reading/writing data in a consistent way"
-
-and if it seems obvious, I can just drop it.
-
-One of the problems I have faced is to decide what level of knowledge or 
-understanding I should expect from the reader of such document: what I 
-can take for granted and what I should explain.
-
---
-igor
-
-
-
-
+On Thu, Oct 4, 2018 at 11:00 AM Wenwen Wang <wang6495@umn.edu> wrote:
+>
+> In vpfe_isif_init(), there is a while loop to get the ISIF base address and
+> linearization table0 and table1 address. In the loop body, the function
+> platform_get_resource() is called to get the resource. If
+> platform_get_resource() returns NULL, the loop is terminated and the
+> execution goes to 'fail_nobase_res'. Suppose the loop is terminated at the
+> first iteration because platform_get_resource() returns NULL and the
+> execution goes to 'fail_nobase_res'. Given that there is another while loop
+> at 'fail_nobase_res' and i equals to 0, one iteration of the second while
+> loop will be executed. However, the second while loop does not check the
+> return value of platform_get_resource(). This can cause a NULL pointer
+> dereference bug if the return value is a NULL pointer.
+>
+> This patch avoids the above issue by adding a check in the second while
+> loop after the call to platform_get_resource().
+>
+> Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+> ---
+>  drivers/staging/media/davinci_vpfe/dm365_isif.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/staging/media/davinci_vpfe/dm365_isif.c b/drivers/staging/media/davinci_vpfe/dm365_isif.c
+> index 745e33f..b0425a6 100644
+> --- a/drivers/staging/media/davinci_vpfe/dm365_isif.c
+> +++ b/drivers/staging/media/davinci_vpfe/dm365_isif.c
+> @@ -2080,7 +2080,8 @@ int vpfe_isif_init(struct vpfe_isif_device *isif, struct platform_device *pdev)
+>
+>         while (i >= 0) {
+>                 res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+> -               release_mem_region(res->start, res_len);
+> +               if (res)
+> +                       release_mem_region(res->start, res_len);
+>                 i--;
+>         }
+>         return status;
+> --
+> 2.7.4
+>
