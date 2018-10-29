@@ -2,142 +2,107 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F761C46475
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:22:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCF9EC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:23:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3151020851
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:22:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3151020851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 5F2872064C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:23:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F2872064C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729621AbeJ2SKR (ORCPT
+        id S1729631AbeJ2SLM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 14:10:17 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:55897 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729510AbeJ2SKR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 14:10:17 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id D6435208CE; Mon, 29 Oct 2018 10:22:26 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-12-210.w90-88.abo.wanadoo.fr [90.88.133.210])
-        by mail.bootlin.com (Postfix) with ESMTPSA id A7C85208B0;
-        Mon, 29 Oct 2018 10:22:26 +0100 (CET)
-Date:   Mon, 29 Oct 2018 10:22:27 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 12/25] drm/sun4i: sun6i_mipi_dsi: Add DSI hblk packet
- overhead
-Message-ID: <20181029092227.mdxgvg5aqzh22j72@flea>
-References: <20181026144344.27778-1-jagan@amarulasolutions.com>
- <20181026144344.27778-13-jagan@amarulasolutions.com>
+        Mon, 29 Oct 2018 14:11:12 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:33235 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729466AbeJ2SLM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 14:11:12 -0400
+Received: by mail-qt1-f194.google.com with SMTP id i15-v6so8379243qtr.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 02:23:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gIbHfazCbL427uhX0bEmyj805xEbvdrUodbO/C3xOVI=;
+        b=RqPIdTglozNMGVasdCwYbGdxwSCWIfsdO+svXSZFJ2jeyn6IRoiOxJQMi16Ce9GV6i
+         k2P5Vonc81TI532KJjOiQ8BxsTdcpDVo6OYwKbsCiLXZJPgTkVRzMfdpKxHXg6l7jSED
+         sWUwWlWTzX4PQKHny3L6UbNbuOe3h1QIsgO9Qi5dg39mw/iegtYOAzt42mcAMls4iObR
+         kVZ/H2XmKqEp4BeugYFc99TFuj/kT+sgE+NKSsFSKzQiFc9pkDeZl4uepXi5T3BrdCp/
+         7m5Xl1FiWNX9pd3UQVwjNXsD9oijJ4sarto/kDwV4RauXt5d+wyj4scmvsfFaTrNNMlH
+         8cpA==
+X-Gm-Message-State: AGRZ1gLbpto8KpOijn0bEdQdK9YYCxvn+6DhoCQk5YbfmDDUw0yvBuC+
+        FygL74Yk5vO2argRf0X5DbLE4wt50wlwUldq4F0=
+X-Google-Smtp-Source: AJdET5fNq1wGrJzfDmjGWxCDrJDYtxpXWAIBtnLXOhKjsxbNp2lF/hEYT4jiQqlYDLdsSizpwdwfQuJ1vUcXcNwNqI0=
+X-Received: by 2002:a0c:e202:: with SMTP id q2mr392880qvl.180.1540805003420;
+ Mon, 29 Oct 2018 02:23:23 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lllrmm6ipxhi4upc"
-Content-Disposition: inline
-In-Reply-To: <20181026144344.27778-13-jagan@amarulasolutions.com>
-User-Agent: NeoMutt/20180716
+References: <20181028230627.GA3420@andrea> <20181028231003.GA4021@andrea> <20181029012042.GR4170@linux.ibm.com>
+In-Reply-To: <20181029012042.GR4170@linux.ibm.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 29 Oct 2018 10:23:07 +0100
+Message-ID: <CAK8P3a3t54qYyj1r0vjXJzgb3wvJLt4ypb7=xesavcJwC30_kg@mail.gmail.com>
+Subject: Re: [RFR] Store tearing
+To:     Paul McKenney <paulmck@linux.ibm.com>
+Cc:     andrea.parri@amarulasolutions.com,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Oct 29, 2018 at 2:21 AM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
+>
+> On Mon, Oct 29, 2018 at 12:10:03AM +0100, Andrea Parri wrote:
+> > Hopefully, with Paul's proper email address this time,
+> >
+> >   Andrea
+> >
+> > On Mon, Oct 29, 2018 at 12:06:27AM +0100, Andrea Parri wrote:
+> > > Hi,
+> > >
+> > > memory-barriers.txt says:
+> > >
+> > >   [on "store tearing"]
+> > >
+> > >   "In fact, a recent bug (since fixed) caused GCC to incorrectly use
+> > >    this optimization in a volatile store.".
+> > >
+> > > I was wondering if you could help me retrieve some reference/discussions
+> > > about this?
+>
+> This was quite some time ago, but it involved a 32-bit volatile store
+> of a constant such as 0x10001.  The machine in question had a narrow
+> store-immediate instruction, so the compiler emitted  a pair of 16-bit
+> store-immediate instructions.  This bug was fixed, though only after
+> significant screaming and shouting.
 
---lllrmm6ipxhi4upc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+A related issue I remember was on ARMv5 (an architecture without
+unaligned access) where a function like )not sure if this specific
+one triggers it, but something like it did)
 
-On Fri, Oct 26, 2018 at 08:13:31PM +0530, Jagan Teki wrote:
-> Add 10 bytes packet overhead for hblk where blank is set using
-> a blanking packet like (4 bytes + 4 bytes + payload + 2 bytes)
->=20
-> This is according to BSP code from BPI-M64-bsp
-> (in drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
-> dsi_hblk =3D (ht-hspw)*dsi_pixel_bits[format]/8-(4+4+2);
->=20
-> So, add 10 bytes packet overhead for DSI hblk.
->=20
-> Tested on 2-lane, 4-lane MIPI-DSI LCD panels.
->=20
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> Tested-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
-> Changes for v3:
-> - new patch
-> Changes for v2:
-> - none
->=20
->  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun=
-4i/sun6i_mipi_dsi.c
-> index 596e560263bf..cf42be1f1ba1 100644
-> --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> @@ -461,7 +461,7 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi =
-*dsi,
->  {
->  	struct mipi_dsi_device *device =3D dsi->device;
->  	unsigned int Bpp =3D mipi_dsi_pixel_format_to_bpp(device->format) / 8;
-> -	u16 hbp, hfp, hsa, hblk, vblk;
-> +	u16 hbp, hfp, hsa, hblk_max, hblk, vblk;
->  	size_t bytes;
->  	u8 *buffer;
-> =20
-> @@ -494,8 +494,13 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi=
- *dsi,
-> =20
->  	/*
->  	 * hblk seems to be the line + porches length.
-> +	 * The blank is set using a blanking packet (4 bytes + 4 bytes +
-> +	 * payload + 2 bytes). So minimal size is 10 bytes
->  	 */
-> -	hblk =3D (mode->htotal - (mode->hsync_end - mode->hsync_start)) * Bpp;
-> +#define HBLK_PACKET_OVERHEAD	10
-> +	hblk_max =3D (mode->htotal - (mode->hsync_end - mode->hsync_start)) * B=
-pp;
-> +	hblk_max -=3D HBLK_PACKET_OVERHEAD;
-> +	hblk =3D max((unsigned int)HBLK_PACKET_OVERHEAD, hblk_max);
+struct my_registers {
+     u32 a;
+     u32 b;
+     u32 c;
+} __attribute__((packed));
+#define __raw_writel(p, v) do { (volatile u32 __iomem *)(p) = (v); } while (0)
+void my_write_a(struct my_registers __iomem *r, u32 val)
+{
+       __raw_writel(&r->a, val);
+}
 
-I'd rather use the same convention than the other assignments done
-before in that function.
+The above is undefined behavior because we cast from an unaligned
+data type to a 32-bit aligned type, and gcc resolved this by turning the
+intended 32-bit store into a set of 8 bit stores. We worked around this
+by changing __raw_writel() into a inline assembly that always uses a
+32-bit store.
 
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---lllrmm6ipxhi4upc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW9bRUwAKCRDj7w1vZxhR
-xToJAP42zwMlUWetjTpxDylXTsNHV59JrZ091p3KqQ63YbmrugD/WWdKcs1Po0kx
-ijDFy7H+IgWHuPQLm9SshyJ5x+vBsQw=
-=WVlR
------END PGP SIGNATURE-----
-
---lllrmm6ipxhi4upc--
+      Arnd
