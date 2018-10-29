@@ -2,130 +2,126 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60B17C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:49:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77B67C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:54:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1421720824
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:49:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 272482082D
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:54:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a4gFDdQq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1421720824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="XPwjlw8p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 272482082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=umn.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729255AbeJ3Dj1 (ORCPT
+        id S1729388AbeJ3DoO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 23:39:27 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:38052 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725923AbeJ3Dj1 (ORCPT
+        Mon, 29 Oct 2018 23:44:14 -0400
+Received: from mta-p3.oit.umn.edu ([134.84.196.203]:36506 "EHLO
+        mta-p3.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726364AbeJ3DoN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 23:39:27 -0400
-Received: by mail-wm1-f65.google.com with SMTP id l2-v6so3505389wmh.3;
-        Mon, 29 Oct 2018 11:49:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=/8uiv9/vWgybD1QFLYZgnSt3onBdRFwaOzmp8iqGht4=;
-        b=a4gFDdQqdFcN5jbwjTr9oZzjo4km6iq6jW2S1HObI+yU7kVCi9HVGhZi3Sevl5lsrC
-         hjo15G4tot+TxF8LgzBYSXcVqX88VbPwPTOgCbOkB0XnjKQKJGIBCJk1BlLG36+13Ihl
-         q0MAdF5jRfaNx2PfFp5rs/UejvMra4C2zSUSKbdhgByufGAvR4ItxC6LCI9lpD1epUTG
-         SraiaPPyA9PDbmL2Cbl1PIL0aXeABKtEUycHrvjqYMbp4H94kDBGHaaNwBhn3o9WK8wV
-         1wZllqDmS+NtabnDm2kSVdXeyYqJ7MdZkVglkTWJZMHLjglc0OVWkZk3jBiKn7LovY87
-         jDJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=/8uiv9/vWgybD1QFLYZgnSt3onBdRFwaOzmp8iqGht4=;
-        b=gtJFpXIsnHIu9bQGP2ujGFd+i1jqWOcil0ddWTH0/6+eOQg64LZTAvfAjnBqf8ogYY
-         dh0Ot3cQDxLWSAl0bDc4wH1ieaLFSqidCLlaXE4O3li/LZNKFxn5Z+5icWjsi9ZIWGvc
-         mD9R4bQMpPzGfD3g6zfOlkFS1YHlqX6LVEV3CiYJVhfmYoINeE/bhPR/5AtNdg4By4Qo
-         Z1Bak8WVpd3r8onHnJfgL+FMJaS6mJlG9bjzIDCjXAla+4crt66HNWp2L/5N4klJz8ZJ
-         M+1sbteZBjlT8+amvBXkCvYZRBG+HAT6igjiIQwTzgn5bsp8jdqa378xEdOJZIAVUWrc
-         ce/w==
-X-Gm-Message-State: AGRZ1gJbTl3CxaA4oSm1nZ8c3Vk46yAq3SXs3+2Lrln7QX7UqSSwXi/2
-        h/nUXdgywIkzRn6ut9EYV0g=
-X-Google-Smtp-Source: AJdET5dH88dFU8TlkbGslieQe0HYLgfKHGL1gRZv1ZJgsCraYBVHzgavf/PdNui/MgODUfQFw5Axzw==
-X-Received: by 2002:a1c:4d0a:: with SMTP id o10-v6mr12119129wmh.111.1540838970087;
-        Mon, 29 Oct 2018 11:49:30 -0700 (PDT)
-Received: from ?IPv6:2a02:8071:6a3:700:65d5:fcea:31c5:30bf? ([2a02:8071:6a3:700:65d5:fcea:31c5:30bf])
-        by smtp.gmail.com with ESMTPSA id m16sm15851825wrx.75.2018.10.29.11.49.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 11:49:28 -0700 (PDT)
-Subject: Re: [PATCH] arm: dts: socfpga*.dts*: use SPDX-License-Identifier
-To:     Dinh Nguyen <dinguyen@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Marek Vasut <marex@denx.de>,
-        Nobuhiro Iwamatsu <iwamatsu@nigauri.org>,
-        Steffen Trumtrar <s.trumtrar@pengutronix.de>,
-        Graham Moore <grmoore@opensource.altera.com>
-References: <20181023190853.23252-1-simon.k.r.goldschmidt@gmail.com>
- <b7790735-c797-a5e3-ccf5-01080f652945@kernel.org>
-From:   Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
-Message-ID: <941ecf8f-ddf7-01f9-1eb8-4b3e33f71efd@gmail.com>
-Date:   Mon, 29 Oct 2018 19:49:15 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 29 Oct 2018 23:44:13 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mta-p3.oit.umn.edu (Postfix) with ESMTP id 4989A747;
+        Mon, 29 Oct 2018 18:54:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=umn.edu; h=
+        content-type:content-type:subject:subject:message-id:date:date
+        :from:from:in-reply-to:references:mime-version:received:received
+        :received; s=20160920; t=1540839256; x=1542653657; bh=1YK0wjCQpX
+        RLa+eDT43pdA6pzc+NAEWjb48yPZ+oNXs=; b=XPwjlw8pHNrXYPFzXcdoT7+fZW
+        +nQA7FAqilh0S7nic0nsO2jmdubKn9bWtBke/GtMTeWqCAaBrBJz0kCZ9zhoaSLb
+        Ma6iOKXh89JGb/mE8NClRX6tNwcQD9m4tUOb5Kppgs2QeKD1eg2OXbm61Au1gL1E
+        +PzDEG88poXiafNiCZeJUHnj+XAWk+QyjHYfIacfPi9QloX/r5NpBJIDzxFNWEEw
+        LENRQpR+fDSQkRx51+yGP2H/9bCIQdt4T4IIC/7cFSw+pctIoDIxdCHO4hHoaE5D
+        Yfq0Zy8IP4btuuKrrrWzbNmUjTCG1w8vIba6Wj9mec4y0Da3ZubRIXsg1avg==
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p3.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p3.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id VPCh53mB-A3m; Mon, 29 Oct 2018 13:54:16 -0500 (CDT)
+Received: from mail-it1-f175.google.com (mail-it1-f175.google.com [209.85.166.175])
+        (using TLSv1 with cipher AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: wang6495)
+        by mta-p3.oit.umn.edu (Postfix) with ESMTPSA id 22A30125;
+        Mon, 29 Oct 2018 13:54:16 -0500 (CDT)
+Received: by mail-it1-f175.google.com with SMTP id e17so9227752itk.5;
+        Mon, 29 Oct 2018 11:54:16 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gL+6YAB/vvtTJzRhEIUkh54L/gTum7k12R1sFBRuwrTgc2+U6Eh
+        qniPKb7NeiVvca+61IsXsaKY05yMPTTlKpamg50=
+X-Google-Smtp-Source: AJdET5er31X1QLHMX7q5WCQyNKq/e8zJMgkoCQJN+g6YTNMYo+zEtshEE59WtFgk/xXZQGgoeo0J8yQnlakf4mjx/Eg=
+X-Received: by 2002:a24:4f82:: with SMTP id c124-v6mr11373764itb.108.1540839255865;
+ Mon, 29 Oct 2018 11:54:15 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <b7790735-c797-a5e3-ccf5-01080f652945@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+References: <1540051091-16604-1-git-send-email-wang6495@umn.edu> <F93F08E0-9D18-4C1A-8214-8AEAC829B317@gmail.com>
+In-Reply-To: <F93F08E0-9D18-4C1A-8214-8AEAC829B317@gmail.com>
+From:   Wenwen Wang <wang6495@umn.edu>
+Date:   Mon, 29 Oct 2018 13:53:39 -0500
+X-Gmail-Original-Message-ID: <CAAa=b7cbS0ycDF3sgXn6C9QpczLk5Sy5o-JCi66tTTGtkGoWbQ@mail.gmail.com>
+Message-ID: <CAAa=b7cbS0ycDF3sgXn6C9QpczLk5Sy5o-JCi66tTTGtkGoWbQ@mail.gmail.com>
+Subject: Re: [PATCH] net: socket: fix a missing-check bug
+To:     f.fainelli@gmail.com
+Cc:     Kangjie Lu <kjlu@umn.edu>, "David S. Miller" <davem@davemloft.net>,
+        "open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Wenwen Wang <wang6495@umn.edu>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29.10.2018 16:33, Dinh Nguyen wrote:
-> Hi Simon,
->
-> On 10/23/2018 02:08 PM, Simon Goldschmidt wrote:
->> Follow the recent trend for the license description.
->>
->> This is also in an effort to fully sync the devicetrees with U-Boot.
->>
->> Signed-off-by: Simon Goldschmidt <simon.k.r.goldschmidt@gmail.com>
->> ---
->>   arch/arm/boot/dts/socfpga.dtsi                | 16 +------
->>   arch/arm/boot/dts/socfpga_arria10.dtsi        | 13 +-----
->>   arch/arm/boot/dts/socfpga_arria10_socdk.dtsi  | 14 +-----
->>   .../boot/dts/socfpga_arria10_socdk_nand.dts   | 13 +-----
->>   .../boot/dts/socfpga_arria10_socdk_qspi.dts   | 13 +-----
->>   .../boot/dts/socfpga_arria10_socdk_sdmmc.dts  | 14 +-----
->>   arch/arm/boot/dts/socfpga_arria5.dtsi         | 15 +-----
->>   arch/arm/boot/dts/socfpga_arria5_socdk.dts    | 16 +------
->>   arch/arm/boot/dts/socfpga_cyclone5.dtsi       | 16 +------
->>   .../dts/socfpga_cyclone5_de0_nano_soc.dts     | 13 +-----
->>   arch/arm/boot/dts/socfpga_cyclone5_mcv.dtsi   | 14 +-----
->>   arch/arm/boot/dts/socfpga_cyclone5_mcvevk.dts | 14 +-----
->>   arch/arm/boot/dts/socfpga_cyclone5_socdk.dts  | 16 +------
->>   arch/arm/boot/dts/socfpga_cyclone5_sockit.dts | 16 +------
->>   .../boot/dts/socfpga_cyclone5_socrates.dts    | 16 +------
->>   arch/arm/boot/dts/socfpga_cyclone5_sodia.dts  | 16 +------
->>   .../boot/dts/socfpga_cyclone5_vining_fpga.dts | 46 +------------------
->>   arch/arm/boot/dts/socfpga_vt.dts              | 16 +------
->>   18 files changed, 28 insertions(+), 269 deletions(-)
->>
-> error: arch/arm/boot/dts/socfpga_cyclone5_de0_nano_soc.dts: does not
-> exist in index
->
-> Can you please rebase this patch after v4.20-rc1 has landed? The above
-> board filename has been changed.
->
-> Thanks,
-> Dinh
->
+Hi Florian,
 
-Sure, I'll do that.
+Thanks for your response. The bug is found with the assistance of a
+research prototype, which is now not available to the public.
 
-Simon
+Yes, this is a kind of time-of-check-to-time-of-use (TOCTTOU) bug.
+
+BTW, could you please confirm this bug? Thanks!
+
+Wenwen
+
+On Sat, Oct 20, 2018 at 10:21 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
+>
+> Hi Wenwen,
+>
+> On October 20, 2018 8:58:10 AM PDT, Wenwen Wang <wang6495@umn.edu> wrote:
+> >In ethtool_ioctl(), the ioctl command is firstly obtained from the
+> >user-space buffer 'compat_rxnfc' through get_user() and saved to
+> >'ethcmd'.
+> >Then, 'ethcmd' is checked to see whether it is necessary to pre-process
+> >the
+> >ethool structure, because the structure ethtool_rxnfc is defined with
+> >padding, as mentioned in the comment. If yes, a user-space buffer
+> >'rxnfc'
+> >is allocated through compat_alloc_user_space() and then the data in the
+> >original buffer 'compat_rxnfc' is copied to 'rxnfc' through
+> >copy_in_user(),
+> >including the ioctl command. It is worth noting that after this copy,
+> >there
+> >is no check enforced on the copied ioctl command. That means it is
+> >possible
+> >that 'rxnfc->cmd' is different from 'ethcmd', because a malicious user
+> >can
+> >race to modify the ioctl command in 'compat_rxnfc' between these two
+> >copies. Eventually, the ioctl command in 'rxnfc' will be used in
+> >dev_ethtool(). This can cause undefined behavior of the kernel and
+> >introduce potential security risk.
+> >
+> >This patch avoids the above issue by rewriting 'rxnfc->cmd' using
+> >'ethcmd'
+> >after copy_in_user().
+> >
+> >Signed-off-by: Wenwen Wang <wang6495@umn.edu>
+>
+> Assuming these issues are found with some kind of automated analysis, can you also add in your work flow to provide a Fixes: tag such that this could be backported to stable kernels?
+>
+> If this is found by a tool is this something that is open source and somehow available? I would also make it clear that these issues are typically named time TOCTOU which might be clearer for people who review those patches.
+>
+> Thanks!
+> --
+> Florian
