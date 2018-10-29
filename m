@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15405C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 23:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 280A3C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 23:52:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF26F2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 23:52:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E25BB2082D
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 23:52:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NdfWYyrJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF26F2084A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p3ns2q3u"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E25BB2082D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726503AbeJ3Inm (ORCPT
+        id S1726596AbeJ3Inn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 04:43:42 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:34500 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725824AbeJ3Ink (ORCPT
+        Tue, 30 Oct 2018 04:43:43 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40574 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725824AbeJ3Inn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 04:43:40 -0400
-Received: by mail-pl1-f193.google.com with SMTP id f10-v6so4597234plr.1;
-        Mon, 29 Oct 2018 16:52:37 -0700 (PDT)
+        Tue, 30 Oct 2018 04:43:43 -0400
+Received: by mail-pl1-f194.google.com with SMTP id b9-v6so4573374pls.7;
+        Mon, 29 Oct 2018 16:52:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=xRniQ/SenF/b2HkRCisGu8vGveS5ZrM6Rdu1vfSJ1hU=;
-        b=NdfWYyrJaKwj0g5pJz1Dt03O59C9R58Rk2vAj1lodD9y2gN1oN9JDzi77jkpb18I35
-         xD8gUuFi8XvlfsnepqG/DnZSP2MlRo9pOG9RI9plDEcle8dggoqCC+Qm9+PLQUydjuMV
-         1QleRUKhNLCm0KFls5X0syhY69a3PYAHrBOmtMan9W5+pBy7VaQeveVibXo6pL6+HaYw
-         yxVKEoZ3zGFXW62nxN5CqPv/v/yos+nucGc9VwP+QrsZyoN5IvtRsDvIs8VjGm8EU/Ww
-         XYrZjkpHG4Hg3WpSahZvJOJWxs6gOh0pyaipEdiuSL6QxxCJaZ+M8HiUPtlR2oOb6UVq
-         NxHA==
+        bh=IdcEyKMm4vYhsKy4CABorYdVSsAXOdKZ8deL2wX7NRA=;
+        b=p3ns2q3uzt5IPKy6pThwMWZ+2BxmXDhR3fDNiRBZP3zz+NeZkGWhmEOqgy3IhrdGZq
+         vlO3fgpwrVCPFKTqGDaDJ8cLQuK85GgbCTHTKd4VjD0BG2fTiigh+hFiO5GTR33UqAVH
+         gn+5ZYyKvFlJ8F/eeWdo6L20gBgbllK3tLGDiQ5cKJxR/8wB3/Cme35fqIIbG3PP51PX
+         Api8AXpXIdJs9arp2NYdfj1XQQbM64UIxW8nZRdv3dJRN8uSNraqY4rZohKP7GhFxVP1
+         W7ICGYefk0t+wHCjlJFrGi2CNGZsC88l07AQE0t34lKcPPs5vXLtGfDNgjFOPfnutGFP
+         FBEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=xRniQ/SenF/b2HkRCisGu8vGveS5ZrM6Rdu1vfSJ1hU=;
-        b=F87i4HCsGsG4IFxdDMDNLPGRzGMk/97rREMHp9jmP5683fOXhd+sqa0Ak0deCt6t3l
-         efNvJM3Og/hwc4+8zBTuBqsfzFB3CA7dNh71g8n4lPmygvjyNT/c/kwG2HXKGg7Fxk11
-         yc4f8l4r07xd/g9+M1Icz58ExWesp5FqOBdLkNVc/UaZHGiQvypRdgbnCXXjIXJyRaSf
-         YjFHjzM/p9vnX9kzVO/Q/nRh7g6+os0g8SHLDEZikSBJHArsagUIyMb6rdXHFjPyzbvV
-         oZwxQwEnrAaBt7SQIlevBHwMAMMCUs2ITym3ZtTNof3zl6ECOA3czsaKRG4Iu+enlP5N
-         1krw==
-X-Gm-Message-State: AGRZ1gLzPfEx1GuR+JRDu3TJjfM12+jEf6eqL1S5DHKh0sN2/Z3As7mK
-        0llxgT54zSVB27nh590NujHw/WjX
-X-Google-Smtp-Source: AJdET5e5bw1tFJSx1qa61gkDTjZ9BaPVELRZjfaIRFIPo8U1E7PTr0pTB7nsNKPA3E34HYQe+nw5zA==
-X-Received: by 2002:a17:902:7201:: with SMTP id ba1-v6mr902814plb.79.1540857156701;
-        Mon, 29 Oct 2018 16:52:36 -0700 (PDT)
+        bh=IdcEyKMm4vYhsKy4CABorYdVSsAXOdKZ8deL2wX7NRA=;
+        b=MT2GwGRQk7pi/7jbb9sbLhIiHr18v446r1/psWsT9YXDYIc+JUhiYlosecHUgW/m3k
+         RR14JFCPju8+JruFiiWnAO0jzhtIcgfT3tH/Xuk6twCl+MdkwKPOTeMrA3lI5cbG7qtp
+         +YUPwrbF6kuqbuyAWZmxBtVwT7sPQEmbSwN3wNISJvbnRxd3W73QWiIL7KAecNgJ3WVB
+         YYpc06aKKSxrqgkIum8xDrhqY5AtH+6MTH10dneXkWNAT2Yh7WgWzBgTQQ4DEo/JaB7O
+         n9sGxOjo8AkDQq3mv34DR5OIlQcd8wgejEn0c2RKLme9/3aTl4g+14mFa5n4RKqVFaOs
+         D77g==
+X-Gm-Message-State: AGRZ1gJoyS6VlP5Srj2GR3aYQ6zvkDkZmJtZzqFakciXGKQXtLuCqJxG
+        F48yXdQuJBMmmkF23sDTu1t1weH4
+X-Google-Smtp-Source: AJdET5f46Izd+jiHB1knz9Af4+W7TgXITKwkUfBEb0OM3n+3u7kESWfwo+gWbpH5EzG5zr+mUBJzEg==
+X-Received: by 2002:a17:902:5066:: with SMTP id f35-v6mr16157636plh.145.1540857159247;
+        Mon, 29 Oct 2018 16:52:39 -0700 (PDT)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id k13-v6sm22537981pff.30.2018.10.29.16.52.34
+        by smtp.gmail.com with ESMTPSA id k13-v6sm22537981pff.30.2018.10.29.16.52.36
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 16:52:35 -0700 (PDT)
+        Mon, 29 Oct 2018 16:52:38 -0700 (PDT)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
@@ -84,9 +84,9 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         DEVICE TREE), rppt@linux.ibm.com, linux@armlinux.org.uk,
         green.hu@gmail.com, deanbo422@gmail.com, gxt@pku.edu.cn,
         ard.biesheuvel@linaro.org
-Subject: [PATCH 2/6] arch: Make phys_initrd_start and phys_initrd_size global variables
-Date:   Mon, 29 Oct 2018 16:52:02 -0700
-Message-Id: <20181029235206.30060-3-f.fainelli@gmail.com>
+Subject: [PATCH 3/6] arch: Define ARCH_HAS_PHYS_INITRD for ARM and Unicore32
+Date:   Mon, 29 Oct 2018 16:52:03 -0700
+Message-Id: <20181029235206.30060-4-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181029235206.30060-1-f.fainelli@gmail.com>
 References: <20181029235206.30060-1-f.fainelli@gmail.com>
@@ -95,58 +95,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make phys_initrd_start and phys_initrd_size global variables that will
-later be referenced by generic code under drivers/of/fdt.c.
+Make ARM and Unicore32 select ARCH_HAS_PHYS_INITRD meaning that they do
+define phys_initrd_start/phys_initrd_size and make use of it.
 
 Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
- arch/arm/mm/init.c       | 4 ++--
- arch/unicore32/mm/init.c | 4 ++--
- include/linux/initrd.h   | 3 +++
- 3 files changed, 7 insertions(+), 4 deletions(-)
+ arch/Kconfig           | 7 +++++++
+ arch/arm/Kconfig       | 1 +
+ arch/unicore32/Kconfig | 1 +
+ 3 files changed, 9 insertions(+)
 
-diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
-index 0cc8e04295a4..8f364aa24172 100644
---- a/arch/arm/mm/init.c
-+++ b/arch/arm/mm/init.c
-@@ -51,8 +51,8 @@ unsigned long __init __clear_cr(unsigned long mask)
- }
- #endif
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 9d329608913e..0926f8291782 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -865,6 +865,13 @@ config HAVE_ARCH_PREL32_RELOCATIONS
+ 	  architectures, and don't require runtime relocation on relocatable
+ 	  kernels.
  
--static phys_addr_t phys_initrd_start __initdata = 0;
--static unsigned long phys_initrd_size __initdata = 0;
-+phys_addr_t phys_initrd_start __initdata = 0;
-+unsigned long phys_initrd_size __initdata = 0;
- 
- static int __init early_initrd(char *p)
- {
-diff --git a/arch/unicore32/mm/init.c b/arch/unicore32/mm/init.c
-index 8f8699e62bd5..4dd26d6f02e5 100644
---- a/arch/unicore32/mm/init.c
-+++ b/arch/unicore32/mm/init.c
-@@ -31,8 +31,8 @@
- 
- #include "mm.h"
- 
--static unsigned long phys_initrd_start __initdata = 0x01000000;
--static unsigned long phys_initrd_size __initdata = SZ_8M;
-+phys_addr_t phys_initrd_start __initdata = 0x01000000;
-+unsigned long phys_initrd_size __initdata = SZ_8M;
- 
- static int __init early_initrd(char *p)
- {
-diff --git a/include/linux/initrd.h b/include/linux/initrd.h
-index 84b423044088..14beaff9b445 100644
---- a/include/linux/initrd.h
-+++ b/include/linux/initrd.h
-@@ -21,4 +21,7 @@ extern int initrd_below_start_ok;
- extern unsigned long initrd_start, initrd_end;
- extern void free_initrd_mem(unsigned long, unsigned long);
- 
-+extern phys_addr_t phys_initrd_start;
-+extern unsigned long phys_initrd_size;
++config ARCH_HAS_PHYS_INITRD
++	bool
++	help
++	  An architecture selects this when it needs to act on the physical
++	  address of the initial ramdisk and allow generic code such as
++	  FDT to populate that address.
 +
- extern unsigned int real_root_dev;
+ source "kernel/gcov/Kconfig"
+ 
+ source "scripts/gcc-plugins/Kconfig"
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index e8cd55a5b04c..b87c40701b0e 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -11,6 +11,7 @@ config ARM
+ 	select ARCH_HAS_KCOV
+ 	select ARCH_HAS_MEMBARRIER_SYNC_CORE
+ 	select ARCH_HAS_PTE_SPECIAL if ARM_LPAE
++	select ARCH_HAS_PHYS_INITRD
+ 	select ARCH_HAS_PHYS_TO_DMA
+ 	select ARCH_HAS_SET_MEMORY
+ 	select ARCH_HAS_STRICT_KERNEL_RWX if MMU && !XIP_KERNEL
+diff --git a/arch/unicore32/Kconfig b/arch/unicore32/Kconfig
+index 0c5111b206bd..28a66ae61dcf 100644
+--- a/arch/unicore32/Kconfig
++++ b/arch/unicore32/Kconfig
+@@ -2,6 +2,7 @@
+ config UNICORE32
+ 	def_bool y
+ 	select ARCH_HAS_DEVMEM_IS_ALLOWED
++	select ARCH_HAS_PHYS_INITRD
+ 	select ARCH_MIGHT_HAVE_PC_PARPORT
+ 	select ARCH_MIGHT_HAVE_PC_SERIO
+ 	select DMA_DIRECT_OPS
 -- 
 2.17.1
 
