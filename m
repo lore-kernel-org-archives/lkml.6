@@ -2,217 +2,172 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C45CC2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:09:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B10C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:11:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42FD520664
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:09:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42FD520664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id EFF7420664
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:10:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="hHt+qc0o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFF7420664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729594AbeJ2R4y (ORCPT
+        id S1729486AbeJ2R6n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 13:56:54 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:54810 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729455AbeJ2R4x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 13:56:53 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 49D3B207D4; Mon, 29 Oct 2018 10:09:06 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-12-210.w90-88.abo.wanadoo.fr [90.88.133.210])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 1562720711;
-        Mon, 29 Oct 2018 10:08:56 +0100 (CET)
-Date:   Mon, 29 Oct 2018 10:08:56 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 12/15] clk: sunxi-ng: a64: Add min and max rate for
- PLL_MIPI
-Message-ID: <20181029090856.yyjnvaruyasgnzyz@flea>
-References: <20181023155035.9101-1-jagan@amarulasolutions.com>
- <20181023155035.9101-13-jagan@amarulasolutions.com>
- <20181024181334.lul7ta7ijluwfb7v@flea>
- <CAMty3ZBJcH1fz5FyhT1rk9qiJ-aWoQYiH7P1ZyQPLKmVWOCkdA@mail.gmail.com>
+        Mon, 29 Oct 2018 13:58:43 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:58723 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729343AbeJ2R6n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 13:58:43 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181029091056euoutp012db2660ed8e9af7f971f9aaa1ddb6357~iCU64xna-0870908709euoutp01n
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 09:10:56 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181029091056euoutp012db2660ed8e9af7f971f9aaa1ddb6357~iCU64xna-0870908709euoutp01n
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1540804256;
+        bh=e+YoKOIu0cm6Jc8pFEJEVHFX2I0pp5TXA0eK23Wd6i0=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=hHt+qc0oimMUlbWx3lOGk2K3/pg0rXLNaQObGGEBI1vvQ4aI5s7nNsDgS4SG2kp+z
+         Nb93Biw2Trls2LfGBFEVqgq2lwIb/viEJ5QeelDDZ2Q4U3sc3WQ0W0mEaDfO4WPWvt
+         IdbJpjBMZWegDJvDfd5Y4njOOV5x2pWyJEqWE5Es=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181029091055eucas1p11b397866987dcc7de2937bfa81d26d38~iCU6NtiCa0849608496eucas1p1I;
+        Mon, 29 Oct 2018 09:10:55 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id D5.96.04806.F9EC6DB5; Mon, 29
+        Oct 2018 09:10:55 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20181029091054eucas1p1756b51bc1e76d7033dcfeff884a41b15~iCU5cFNR01192711927eucas1p1_;
+        Mon, 29 Oct 2018 09:10:54 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20181029091054eusmtrp14baa9752a132cf78471a68ee219f7dc6~iCU5Lx1ZC2621526215eusmtrp1R;
+        Mon, 29 Oct 2018 09:10:54 +0000 (GMT)
+X-AuditID: cbfec7f5-34dff700000012c6-9b-5bd6ce9f038d
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id D5.0B.04128.E9EC6DB5; Mon, 29
+        Oct 2018 09:10:54 +0000 (GMT)
+Received: from [106.120.43.17] (unknown [106.120.43.17]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20181029091053eusmtip27ed7f017516539f47da835058e250b43~iCU4oDCPm2007220072eusmtip2h;
+        Mon, 29 Oct 2018 09:10:53 +0000 (GMT)
+Subject: Re: [PATCH v2 5/6] dt-bindings: drm/panel: simple: Innolux TV123WAM
+ is actually P120ZDG-BF1
+To:     Douglas Anderson <dianders@chromium.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Sandeep Panda <spanda@codeaurora.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        David Airlie <airlied@linux.ie>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, ryandcase@chromium.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+From:   Andrzej Hajda <a.hajda@samsung.com>
+Message-ID: <5b059dbe-efb2-c379-beb6-216a6bcedcba@samsung.com>
+Date:   Mon, 29 Oct 2018 10:10:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lcwzkqyl6fqt7dzg"
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZBJcH1fz5FyhT1rk9qiJ-aWoQYiH7P1ZyQPLKmVWOCkdA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20181025222134.174583-5-dianders@chromium.org>
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sf0yMcRzH931+3XPV5etOu89omrMYN0L+eEYam83TZubHZqaMB0+FCndS
+        mU3ph36vqOyuXEi0MKSiSFOn03JHpPIjRX6sJqZcrUbc06Ppv9f3/Xl/39/3Z/uypLqTnsnu
+        izoiGqKECB3jRlU3jToWFTvag5eYLiq5LEczwRVbHTRnv/yQ4dqc3xkuLfeSgsuttyu4F7VF
+        DFfa0UpwyXVWBVfT6aS5rpt2xMVnJSm40VoLtVrFX7NcQ3xhfCvFv8jOIvgac5eCL0w10XxF
+        eRrD3xnuofnuDBvBD1XM3qjc7hawV4zYd1Q0+AXucgt/9zWROWSZFjtUmcPEo2SPdKRkAS+H
+        pNvnCInVuAzBh3q9zD8RZNZx6cjNxUMI+psfMpMX2sfzSdl0BYFtfJlsGkCQ86NxYqDBoVB5
+        9REpDWbgUgRN+d2EdCBxLQEjnwYn3mPwAvh9+5UrlmVVOBCeZwsSUtgXOvpFyeGFt4G15wKS
+        WIWnQ7PpIyWxEgdA+1jCBJPYBxKrCkmZtfD6YzEhF01goaT3uBQJeC3UDa+SZQ302yoVMntD
+        y5lMSuYTcNLUNlEZcCqCxyVX/i28EhptrbSUQ7oa36j1k+U1cOrtMCPHe0LnwHS5gSecrj5L
+        yrIKUlPUsnsOdNurSJm1UPrMyeQgnXnKXuYpu5in7GL+/+55RJUjrRhtjAwTjf5RYsxioxBp
+        jI4KW7znYGQFcv23lnGb8y568Gt3A8Is0nmoetzbg9W0cNQYF9mAgCV1M1QjT1ySaq8Qd0w0
+        HNxpiI4QjQ1oFkvptKrLllvBahwmHBEPiOIh0TA5JVjlzHgUFNPlkxjyecCiv95pRRp6f9W6
+        8Lo3W8T39U8He+eXFJUEbdhs+uJXkOelafS+nmFb3uAvOnPiKssMId/U+kVv2rZaN+G3lr5d
+        y16u97g3fEt4qk8JjZ3bVF3gG1Hect93x+Ehos+ed+wGhTT+HSvSae1Y9V2H+5/cefwDvVeF
+        RUcZw4WlC0mDUfgLfCiC2WsDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrAIsWRmVeSWpSXmKPExsVy+t/xe7rzzl2LNrj2Xsii99xJJov5R86x
+        WpxddpDN4srX92wWnROXsFtM3H+W3eLyrjlsFkuvX2SyaN17hN1i542vrBZ3N5xltGjobWG3
+        +LlrHosDr8eaeWsYPWY3XGTxuNzXy+Sxc9Zddo/ZHTNZPTat6mTz2P7tAavH/e7jTB6fN8kF
+        cEbp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp2yXoZdx7
+        08xWMI+/4vOWCWwNjK08XYycHBICJhLX/k1l7mLk4hASWMooMev7KzaIhLjE7vlvmSFsYYk/
+        17rYIIpeM0qce/0QLCEskCaxZfVRsG4RkO6HvSdYQBxmgV1MEj3LmtkhWg4ySlzZuZ8RpIVN
+        QFPi7+abQLM4OHgF7CQu9SWCmCwCqhLXX6WCVIgKREisXv6CFcTmFRCUODnzCQuIzSlgI3Ht
+        VyOYzSygLvFn3iVmCFteonnrbChbXOLWk/lMExiFZiFpn4WkZRaSlllIWhYwsqxiFEktLc5N
+        zy020itOzC0uzUvXS87P3cQIjO1tx35u2cHY9S74EKMAB6MSD+8D7mvRQqyJZcWVuYcYJTiY
+        lUR4v58BCvGmJFZWpRblxxeV5qQWH2I0BfptIrOUaHI+MO3klcQbmhqaW1gamhubG5tZKInz
+        njeojBISSE8sSc1OTS1ILYLpY+LglGpgFI5/GyTTy2PTuO9/4pU7D03vXlB02sUdFvJH9tQc
+        wa0FnHL/2P98Ff5+99JC9nXPtpx/uklE+9BCeeEmEctbO59N3rjnseKVc3aJlqtnuHTedjhs
+        4BFxSX1JsPyHD09Oz1rN1ZVTdE1B8VoSG0fAvNXlf4I0516581ln3vnFP2+emR4osfrKo5NK
+        LMUZiYZazEXFiQA6nkWCAwMAAA==
+X-CMS-MailID: 20181029091054eucas1p1756b51bc1e76d7033dcfeff884a41b15
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20181025222234epcas5p49f58ac6ec1f0fa0ef1b5f35162b215a3
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181025222234epcas5p49f58ac6ec1f0fa0ef1b5f35162b215a3
+References: <20181025222134.174583-1-dianders@chromium.org>
+        <CGME20181025222234epcas5p49f58ac6ec1f0fa0ef1b5f35162b215a3@epcas5p4.samsung.com>
+        <20181025222134.174583-5-dianders@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 26.10.2018 00:21, Douglas Anderson wrote:
+> As far as I can tell the bindings that were added in commit
+> 9c04400f7ea6 ("dt-bindings: drm/panel: Document Innolux TV123WAM panel
+> bindings") weren't actually for Innolux TV123WAM but were actually for
+> Innolux P120ZDG-BF1.
+>
+> As far as I can tell the Innolux TV123WAM isn't a real panel and but
+> it's a mosh between the TI TV123WAM and the Innolux P120ZDG-BF1.
+> Let's unmosh.
+>
+> Here's my evidence:
+>
+> * Searching for TV123WAM on the Internet turns up a TI panel.  While
+>   it's possible that an Innolux panel has the same model number as the
+>   TI Panel, it seems a little doubtful.  Looking up the datasheet from
+>   the TI Panel shows that it's 1920 x 1280 and 259.2 mm x 172.8 mm.
+>
+> * As far as I know, the patch adding the Innolux Panel was supposed to
+>   be for the board that's sitting in front of me as I type this
+>   (support for that board is not yet upstream).  On the back of that
+>   panel I see Innolux P120ZDZ-EZ1 rev B1.
+>
+> * Someone pointed me at a datasheet that's supposed to be for the
+>   panel in front of me (sorry, I can't share the datasheet).  That
+>   datasheet has the string "p120zdg-bf1"
+>
+> * If I search for "P120ZDG-BF1" on the Internet I get hits for panels
+>   that are 2160x1440.  They don't have datasheets, but the fact that
+>   the resolution matches is a good sign.
+>
+> While we doing the rename, also mention that no-hpd can be used with
+> this panel.  See the previous patch in this series ("drm/panel:
+> simple: Add "no-hpd" delay for Innolux TV123WAM").
+>
+> Fixes: 9c04400f7ea6 ("dt-bindings: drm/panel: Document Innolux TV123WAM panel bindings")
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Cc: Sandeep Panda <spanda@codeaurora.org>
 
---lcwzkqyl6fqt7dzg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Grats for good deduction.
 
-On Thu, Oct 25, 2018 at 09:21:31PM +0530, Jagan Teki wrote:
-> On Wed, Oct 24, 2018 at 11:43 PM Maxime Ripard
-> <maxime.ripard@bootlin.com> wrote:
-> >
-> > On Tue, Oct 23, 2018 at 09:20:32PM +0530, Jagan Teki wrote:
-> > > A64 manual say PLL_MIPI rates are 500MHz to 1.4GHz, but
-> > > using minimum 500MHz can't release the clock and which
-> > > is not working.
-> > >
-> > > So use working minimum rate as 300MHz which is tested on
-> > > Bananapi DSI panel.
-> >
-> > I'm not quite sure what you mean by that. What do you mean by "500MHz
-> > can't release the clock"? Why would 300MHz work better then? Should be
-> > avoid reaching 500MHz if it's a frequency in the valid range?
->=20
-> PLL_MIPI can't be work with existing nkm where rate set to 270MHz
-> (from PLL_VIDEO)
-> /*** round rate call in ccu_nkm.c */
-> [    2.408356] round: rate =3D 118800000
-> [    2.408359] round: parent_rate =3D 158740688
-> [    2.408417] round: rate =3D 148500000
-> [    2.408420] round: parent_rate =3D 158740688
-> [    2.408439] round: rate =3D 178200000
-> [    2.408441] round: parent_rate =3D 158740688
-> [    2.408460] round: rate =3D 205615384
-> [    2.408462] round: parent_rate =3D 158740688
-> [    2.408481] round: rate =3D 237600000
-> [    2.408483] round: parent_rate =3D 158740688
-> [    2.408502] round: rate =3D 270000000
-> [    2.408504] round: parent_rate =3D 158740688
-> [    2.408523] round: rate =3D 118800000
-> [    2.408525] round: parent_rate =3D 158740560
-> [    2.408544] round: rate =3D 148500000
-> [    2.408546] round: parent_rate =3D 158740560
-> [    2.408565] round: rate =3D 178200000
-> [    2.408567] round: parent_rate =3D 158740560
-> [    2.408586] round: rate =3D 205615384
-> [    2.408588] round: parent_rate =3D 158740560
-> [    2.408607] round: rate =3D 237600000
-> [    2.408609] round: parent_rate =3D 158740560
-> [    2.408627] round: rate =3D 270000000
-> [    2.408630] round: parent_rate =3D 158740560
-> [    2.408648] round: rate =3D 270000000
-> [    2.408651] round: parent_rate =3D 158740640
-> [    2.408670] round: rate =3D 270000000
-> [    2.408672] round: parent_rate =3D 158740704
->=20
-> /** set rate call in ccu_nkm **/
-> [    2.408685] set: rate =3D 270000000
-> [    2.408688] set: parent_rate =3D 297000000
->=20
-> By using min and max rate as per A64 manual page 94 range of PLL can
-> be 500MHz~1.4GHz getting 1,2,1 nkm dividers which can't be work.
-> [    2.423589] sun4i_dclk_round_rate: min_div =3D 4 max_div =3D 127, rate=
- =3D 55000000
-> [    2.423643] ideal =3D 220000000, rounded =3D 0
-> [    2.423647] ideal =3D 275000000, rounded =3D 0
-> [    2.423651] ideal =3D 330000000, rounded =3D 0
-> [    2.423692] ideal =3D 385000000, rounded =3D 384000000
-> [    2.423732] ideal =3D 440000000, rounded =3D 440000000
-> [    2.423736] sun4i_dclk_round_rate: div =3D 8 rate =3D 55000000
-> [    2.423740] sun4i_dclk_round_rate: min_div =3D 4 max_div =3D 127, rate=
- =3D 55000000
-> [    2.423744] ideal =3D 220000000, rounded =3D 0
-> [    2.423748] ideal =3D 275000000, rounded =3D 0
-> [    2.423751] ideal =3D 330000000, rounded =3D 0
-> [    2.423791] ideal =3D 385000000, rounded =3D 384000000
-> [    2.423831] ideal =3D 440000000, rounded =3D 440000000
-> [    2.423834] sun4i_dclk_round_rate: div =3D 8 rate =3D 55000000
-> [    2.423957] sun4i_dclk_recalc_rate: val =3D 1, rate =3D 440000000
-> [    2.423961] sun4i_dclk_recalc_rate: val =3D 1, rate =3D 440000000
-> [    2.424378] ccu_nkm_set_rate: rate =3D 440000000, parent_rate =3D 2200=
-00000
-> [    2.424381] ccu_nkm_set_rate: _nkm.n =3D 1
-> [    2.424383] ccu_nkm_set_rate: _nkm.k =3D 2
-> [    2.424385] ccu_nkm_set_rate: _nkm.m =3D 1
-> [    2.424725] sun4i_dclk_set_rate div 8
-> [    2.424732] sun4i_dclk_recalc_rate: val =3D 8, rate =3D 55000000
-> [    2.561271] usb 3-1: new high-speed USB device number 2 using ehci-pla=
-tform
-> [    2.718486] hub 3-1:1.0: USB hub found
-> [    2.718606] hub 3-1:1.0: 4 ports detected
-> [    3.437263] ------------[ cut here ]------------
-> [    3.437270] [CRTC:36:crtc-0] vblank wait timed out
->=20
-> So, lowering the min rate by 300MHz seems working with bounded nkm
-> dividers 5, 2, 9. Tested on two different panels.
->=20
-> [    2.415773] [drm] No driver support for vblank timestamp query.
-> [    2.424116] sun4i_dclk_round_rate: min_div =3D 4 max_div =3D 127, rate=
- =3D 55000000
-> [    2.424172] ideal =3D 220000000, rounded =3D 0
-> [    2.424176] ideal =3D 275000000, rounded =3D 0
-> [    2.424194] ccu_nkm_round_rate: rate =3D 330000000
-> [    2.424197] ideal =3D 330000000, rounded =3D 330000000
-> [    2.424201] sun4i_dclk_round_rate: div =3D 6 rate =3D 55000000
-> [    2.424205] sun4i_dclk_round_rate: min_div =3D 4 max_div =3D 127, rate=
- =3D 55000000
-> [    2.424209] ideal =3D 220000000, rounded =3D 0
-> [    2.424213] ideal =3D 275000000, rounded =3D 0
-> [    2.424230] ccu_nkm_round_rate: rate =3D 330000000
-> [    2.424233] ideal =3D 330000000, rounded =3D 330000000
-> [    2.424236] sun4i_dclk_round_rate: div =3D 6 rate =3D 55000000
-> [    2.424253] ccu_nkm_round_rate: rate =3D 330000000
-> [    2.424270] ccu_nkm_round_rate: rate =3D 330000000
-> [    2.424278] sun4i_dclk_recalc_rate: val =3D 1, rate =3D 330000000
-> [    2.424281] sun4i_dclk_recalc_rate: val =3D 1, rate =3D 330000000
-> [    2.424306] ccu_nkm_set_rate: rate =3D 330000000, parent_rate =3D 2970=
-00000
-> [    2.424309] ccu_nkm_set_rate: _nkm.n =3D 5
-> [    2.424311] ccu_nkm_set_rate: _nkm.k =3D 2
-> [    2.424313] ccu_nkm_set_rate: _nkm.m =3D 9
-> [    2.424661] sun4i_dclk_set_rate div 6
-> [    2.424668] sun4i_dclk_recalc_rate: val =3D 6, rate =3D 55000000
->=20
-> Note: BPI-M64-bsp is setting the rate directly to 180MHz with 297MHz
-> parent with resulting dividers as 1, 2, 5. ans we can't produce this
-> 180MHz rate with dclk_round_rate and ccu_nkm.
 
-I'm still not quite sure what you mean by "500MHz can't release the
-clock".
+Reviewed-by: Andrzej Hajda <a.hajda@samsung.com>
 
-=46rom what you're saying, this seems to be related to the boundaries of
-the dividers rather than the rate itself.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---lcwzkqyl6fqt7dzg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW9bOKAAKCRDj7w1vZxhR
-xTvpAP9bDZZoJC5eah5D5XltfM9QjZurgMCE/aLANzNHKFnHsAEApZh7dHjeh6Cr
-1UuUfqW9uwjyGIduMA3zs7v2LpIGUQo=
-=PTeb
------END PGP SIGNATURE-----
-
---lcwzkqyl6fqt7dzg--
+ --
+Regards
+Andrzej
