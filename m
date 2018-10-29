@@ -2,117 +2,108 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60461C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:07:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC32C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:08:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A9A92084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:07:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3860B20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 10:08:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jcg9+EhU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A9A92084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="OjjHnNrA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3860B20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729703AbeJ2Szs (ORCPT
+        id S1729740AbeJ2Sz5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 14:55:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34952 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729457AbeJ2Szs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 14:55:48 -0400
-Received: from localhost (unknown [77.138.135.184])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2112020827;
-        Mon, 29 Oct 2018 10:07:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540807669;
-        bh=7DX5UQuycbwywgywfDcjg/mkhVjlX+ErmeD9+JPzs/g=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Jcg9+EhUP0LhkHBTd8wDCjpD0KdjrH/kK7BCy5DJCNXiYerJulMwRtXhed14XvLD+
-         67i6tI4+CVwTUYUe6FYQpDBNn1v6KWqHxVpE5QzP4xf3C3q11DY4O8Cc/SBMhUv0Ap
-         TiOXtTJ0rHeUe6dOqj5E/4Jsx3+j1Rc5wrFwMYCA=
-Date:   Mon, 29 Oct 2018 12:07:44 +0200
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Doug Ledford <dledford@redhat.com>
-Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Lijun Ou <oulijun@huawei.com>,
-        "Wei Hu(Xavier)" <xavier.huwei@huawei.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] RDMA/hns: Use 64-bit arithmetic instead of 32-bit
-Message-ID: <20181029100744.GP3974@mtr-leonro.mtl.com>
-References: <20181018080258.GA1720@embeddedor.com>
- <20181018110155.GH5007@mtr-leonro.mtl.com>
- <4bf459e9feb559270983530d2e3720e78a167b05.camel@redhat.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="0OAP2g/MAC+5xKAE"
-Content-Disposition: inline
-In-Reply-To: <4bf459e9feb559270983530d2e3720e78a167b05.camel@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 29 Oct 2018 14:55:57 -0400
+Received: from smtprelay4.synopsys.com ([198.182.47.9]:51986 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729457AbeJ2Sz5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 14:55:57 -0400
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id DBCD824E11D9;
+        Mon, 29 Oct 2018 03:07:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1540807678; bh=cv+vAGIaacXfqsm6laxKspmfbhBbpJnIh33JEQ/PZN0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=OjjHnNrA7/5Ji4V+qYIlPitzYwrqss7kviqX7GdPSQYOiS/O/gctzdzg2PxnuQ3sr
+         r+z8J9TlyoRsE1/+F25X9iSFFsmSUh5YkRUK0XYVsJ6Hw2abck0jaPq4DUbawUk5Pg
+         w8vN4PLBElAuwbo/RojjTbhvB4VjscDBe1eoEl1CfS4FikjcRIGeqZ4NgRlIlA2frZ
+         /zOIL5CPqu63iBQ7vpQu0IXhiCZhcbaqIm/NgDXIPMTN3hCu9kAd1qvi0D6n+Puodk
+         sXi++UEs+iI4zXyhRdlcQmpOrY+uuwuFeHpuI8NRYQ6cigoFBHXZ1cG7ZgUxx8QVU1
+         8qA9/rOoV9a+Q==
+Received: from localhost.localdomain (soares-e7470.internal.synopsys.com [10.225.2.39])
+        by mailhost.synopsys.com (Postfix) with ESMTP id CF3245444;
+        Mon, 29 Oct 2018 03:07:46 -0700 (PDT)
+From:   Vitor soares <vitor.soares@synopsys.com>
+To:     boris.brezillon@bootlin.com, wsa@the-dreams.de,
+        linux-i2c@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org, gregkh@linuxfoundation.org,
+        arnd@arndb.de
+Cc:     psroka@cadence.com, agolec@cadence.com, adouglas@cadence.com,
+        bfolta@cadence.com, dkos@cadence.com, alicja@cadence.com,
+        cwronka@cadence.com, sureshp@cadence.com, rafalc@cadence.com,
+        thomas.petazzoni@bootlin.com, nm@ti.com, robh+dt@kernel.org,
+        pawel.moll@arm.com, mark.rutland@arm.com,
+        ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        vitor.soares@synopsys.com, geert@linux-m68k.org,
+        linus.walleij@linaro.org, Xiang.Lin@synaptics.com,
+        linux-gpio@vger.kernel.org, nsekhar@ti.com, pgaj@cadence.com,
+        peda@axentia.se, mshettel@codeaurora.org, swboyd@chromium.org,
+        joao.pinto@synopsys.com, luis.oliveira@synopsys.com,
+        manuel.abreu@synopsys.com, gustavo.pimentel@synopsys.com
+Subject: [PATCH 0/3] Add driver for Synopsys DesignWare I3C master IP
+Date:   Mon, 29 Oct 2018 10:06:55 +0000
+Message-Id: <1540807618-13246-1-git-send-email-soares@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This patch series is a proposal for the I3C master driver for Synopsys IP.
+This patch is to be applied on top of I3C subsystem RFC V10 submitted bu Boris Brezillon.
 
---0OAP2g/MAC+5xKAE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The change made on bufs passed to i3c_master_send_ccc_cmd_locked() be dynamically allocated allow the use of writesl/readsl() function on I3C transfers.
+For I2C transfers still have memory misalignment on bufs and if the client try to read more than 4bytes the system stops. This will fixed next version.
 
-On Thu, Oct 18, 2018 at 08:17:10PM -0400, Doug Ledford wrote:
-> On Thu, 2018-10-18 at 14:01 +0300, Leon Romanovsky wrote:
-> > On Thu, Oct 18, 2018 at 10:02:58AM +0200, Gustavo A. R. Silva wrote:
-> > > Cast *max_num_sg* to u64 in order to give the compiler complete
-> > > information about the proper arithmetic to use.
-> > >
-> > > Notice that such variable is used in a context that expects an
-> > > expression of type u64 (64 bits, unsigned) and the following
-> > > expression is currently being evaluated using 32-bit
-> > > arithmetic:
-> >
-> > And what is wrong with that?
-> > Please fix static analyzer tool instead of fixing proper C code.
->
-> Judging on the static analyzer tool's message, I don't see anything
-> wrong with it.  The code contains a potential unintentional overflow
-> error.  The author might have been well aware of the overflow and not
-> cared and in that case this is valid C, but the analyzer has no way of
-> knowing that, so it flags it for review.  To silence the checker you
-> could either cast the arithmetic to u64, or cast length to u32.  Either
-> would clear up the ambiguity.  I guess I'm not seeing why you would
-> blame the static checker in this case, it did the best it is possible
-> for it to do.
+Supported features:
+  Regular CCC commands.
+  I3C private transfers.
+  I2C transfers.
 
-You are right, static analyzer tools have no way to understand that this
-overflow isn't possible. I was over excited to go to my vacation hence my
-response. Sorry about that.
+Missing functionalities:
+  Support for I3C_BUS_MODE_MIXED_SLOW.
+  Hot-join.
+  IBI.
 
-Thanks
+Main change between v1 and v2:
+  Add controller version on dt-binding
+  The driver now calls writesl/readsl() instead readl/writel
+  Rename some variables in the driver
+   
 
---0OAP2g/MAC+5xKAE
-Content-Type: application/pgp-signature; name="signature.asc"
+Vitor soares (3):
+  i3c: master: Add driver for Synopsys DesignWare IP
+  dt-bindings: i3c: Document Synopsys DesignWare I3C master bindings
+  MAINTAINERS: Add myself as the dw-i3c-master module maintainer
 
------BEGIN PGP SIGNATURE-----
+ .../devicetree/bindings/i3c/snps,dw-i3c-master.txt |   42 +
+ MAINTAINERS                                        |    6 +
+ drivers/i3c/master/Kconfig                         |   13 +
+ drivers/i3c/master/Makefile                        |    1 +
+ drivers/i3c/master/dw-i3c-master.c                 | 1217 ++++++++++++++++++++
+ 5 files changed, 1279 insertions(+)
+ create mode 100755 Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
+ create mode 100755 drivers/i3c/master/dw-i3c-master.c
 
-iQIcBAEBAgAGBQJb1tvwAAoJEORje4g2clinayQP/R70uw4wTtRmMPCkAZCm75H0
-nyENuFu+rQxYOy+08ebBtp1b+jBfstb/fUR3/Qwy/bbORPNnomeD/aZM/fR4pRmc
-ZEeRpMh666+9d4ZJ+VW2x71n0X+rQvE+tG55au75Bxl4fh/vKKWX0GjMlyo0lwBv
-FpJ+5rn372QBiXo71wfVq3HtAU1Hu+wkqNY32pMQkko/YbsI+zyaX7YNo+214qD9
-tNUEgk4uzZH0vTvnQZt0C+8KxSJBy1Qsatj+G1XfPIXfgXfSq/jqsV0klaSo4zpl
-QaXo3l3738IvUrJbEOGEBRDGlnmsG6TmiNHMQlcupgwKGbi1pY2beVW1vTJ12s36
-/88y8r9TjOFHikEM8Gv6in5Cw6v61iVSbqiTsMPRRgTy7C2iIxrIwSx6cqYzcQk8
-aJguQqDlzEJW72JYSxo0/rDzD3aP+OMyXPvp5YiHbBK9UbNSZrx2bK9g1222y2Bd
-UTtCkBuIIrQfJGT8Fk9ZyCdVk8bu8p9Gsvvm/U6mKdbtUR/jIJinyGdTUoyhNSUi
-zeuQD+FzLdkgbL+NZWmN7JmzQuygjAQp3wXfn6l+D/DxQL+T7AcnzSI3Uly0S1sl
-iodzUYEfYVHi22gIyGKo6fZ5wyByXD2VBrwF+aoWD4Fjpn6oLAqb7OQd4Up42ED5
-jDbEgNcsCaVK66PfgwKg
-=4bu2
------END PGP SIGNATURE-----
+-- 
+2.7.4
 
---0OAP2g/MAC+5xKAE--
+
