@@ -2,126 +2,171 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D8EBC2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:07:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A9AC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:08:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26B502082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:07:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FB022084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:08:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HU+ne1BX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26B502082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hsB/gPZ2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FB022084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728302AbeJ3C5Q (ORCPT
+        id S1728329AbeJ3C6G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 22:57:16 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:33094 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726532AbeJ3C5Q (ORCPT
+        Mon, 29 Oct 2018 22:58:06 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:37353 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728273AbeJ3C6G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 22:57:16 -0400
-Received: by mail-lj1-f194.google.com with SMTP id z21-v6so8762020ljz.0;
-        Mon, 29 Oct 2018 11:07:32 -0700 (PDT)
+        Mon, 29 Oct 2018 22:58:06 -0400
+Received: by mail-pf1-f194.google.com with SMTP id j23-v6so4436763pfi.4
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 11:08:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=pR8/LuDExk9lZ2Q4gxSaTG3u4O1iTDqahE/PFUWPLp4=;
-        b=HU+ne1BXKQKDeJ7KlXZjyjFG5HSyJYT3LMPsGopzs7wmO+5HWkI2BeJFJM1mepCFkq
-         0bl6Z1hCPV5kixtK1DSpysHT9QEiUPzSFs52M/Nm0m9TqMSv9SnmZLRr5cvRwahtAEXE
-         UMkWySvQ0t4WrKwHEeNTTF2FB5s6Wj7KyuzC8MB4axxpat18d3plGuROqqjsPHI6MrEm
-         ZYop28DmO75qWecyql80IJDSuCAusWEJ0JQWYWs95t6QnviCKvdM1TuPqH4q+uvckRbq
-         xYkAHE3hBvseGjV10lA2tj56Iir1QxiySL5jnZuNi3JYwDmfUfOliJQTlc7GXTzRKLDz
-         R7Sw==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QSKKc5HMlh7M5vL937dP++TT6tmkeJeSmcqt5MVCOtY=;
+        b=hsB/gPZ2gEczir8iQUAn0e9pABW4rct9ZAh6E2jhg77MsVjPTMBQfPhvBJR1BZm+6m
+         +OqpVPHEG2Hkn5wbNSXGiP7vXlYiyracqL7uFW25m8vWND53ljm5X4RERvGv6xZKL7xn
+         jpFaHwDjmEMbTLwB1YIDBXfdvPbYN5rgtzT3s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=pR8/LuDExk9lZ2Q4gxSaTG3u4O1iTDqahE/PFUWPLp4=;
-        b=VwtAwkWmBlevGE96AMY/5CHqs5tI8MtI6Yps59AXYgcUAWXw38WPO0uDo960Fwrcf4
-         B0ZY8FjgcYCBMx6dXzXDfBhGFzvGTSiJOHOmwaMy58NxCSiQCCtvjKzyMZLk9e2HoImU
-         sRRWmh+p51jDbDoNPA03vo37l3GQGJ0Amu7fU57ThvCg4owBbWzU4FrE9bMF79FMZSvt
-         bOtMurbrv1s8jpK1ef6mSJ2nlB3m/wiCT6LBMvqn1IRWReeUniM3svhFwalruY0dv0Gv
-         AZwztztVfGRH73gXeCN0qs4YC44BS1RzunW4WYBidWeb+sZPIR/2tIZ7sAj//rTvBtHx
-         8qFw==
-X-Gm-Message-State: AGRZ1gJ3fgPVHPAJ0dkZIljXat+PAeE8CyHCQxz3VgCX+q1Qqu3q10kt
-        6CAulNZCYh+In1+ID/37XqsXdFD0irj/Yw==
-X-Google-Smtp-Source: AJdET5cjCMtIIWyH960cKXiJ+KhL5HHd2z4p7RNvWsTSbIIV5oG+Gc2A0wIcDNubx1SVsvi1tblFFQ==
-X-Received: by 2002:a2e:9e10:: with SMTP id e16-v6mr10080880ljk.169.1540836450960;
-        Mon, 29 Oct 2018 11:07:30 -0700 (PDT)
-Received: from ?IPv6:2001:14bb:52:7be:f0bf:dd2d:f008:5213? (dmkd798g-7z2-yccwcp-4.rev.dnainternet.fi. [2001:14bb:52:7be:f0bf:dd2d:f008:5213])
-        by smtp.gmail.com with ESMTPSA id y127-v6sm3221546lfc.13.2018.10.29.11.07.28
+        bh=QSKKc5HMlh7M5vL937dP++TT6tmkeJeSmcqt5MVCOtY=;
+        b=roPYFvTYBL7F7CprFnJcKznm1F9/0BvpVg1PRKyXGljK5l7jl1a65ZetS+FutyFW2H
+         bd6LarNMCpSP2So0Fx8W2tkrfjTPMrzZdKVed2Y/gvzED+/h27ukZZxev64Dv6D5J8Jz
+         mWiwam9PZrh2S/I04RLxqTy9ZWBrSwbaOKzlNl5f4nMGSwtyO7emg14eQJiQiGGLVpy9
+         F6SPfzn0gm57ZuWZIgE/aGfvBzL4nCYWRVFrx9lAzcel4rs7EH4euNoNK5RtpZDkcxDR
+         WegfRttGstY64gti2zA9NsHAs5g+gm70Xs1Ps07dzh/AtFiOM4DHXe2adIhi2SUnPsij
+         GRyA==
+X-Gm-Message-State: AGRZ1gLqi2bKYohij1xfuNR8W6aCQcPGN/ozRwjD3wrT6jGNl0aqRMqr
+        YNJ+To1B4yiay6M+t0kir948QQ==
+X-Google-Smtp-Source: AJdET5dGhnncRm9iSJg05kgJBJDzyYpBIEP2cpS8BQk0o1rd7rDmc4oUGhklGtHfFiVvNn75kQ9R1w==
+X-Received: by 2002:a63:ea07:: with SMTP id c7-v6mr14041434pgi.361.1540836502105;
+        Mon, 29 Oct 2018 11:08:22 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
+        by smtp.gmail.com with ESMTPSA id u13-v6sm20537765pgp.18.2018.10.29.11.08.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 11:07:30 -0700 (PDT)
-Subject: Re: [PATCH 03/17] prmem: vmalloc support for dynamic allocation
-To:     Dave Hansen <dave.hansen@intel.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        kernel-hardening@lists.openwall.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Cc:     igor.stoppa@huawei.com, Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Joe Perches <joe@perches.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-4-igor.stoppa@huawei.com>
- <489bf780-7dd2-2feb-8456-25ad5beeb3e4@intel.com>
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-Message-ID: <624caa9a-e591-a1f4-40d1-49db10a91f03@gmail.com>
-Date:   Mon, 29 Oct 2018 20:07:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 29 Oct 2018 11:08:20 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        tglx@linutronix.de, mingo@kernel.org, gregkh@linuxfoundation.org
+Cc:     linux-arm-msm@vger.kernel.org,
+        kgdb-bugreport@lists.sourceforge.net,
+        Douglas Anderson <dianders@chromium.org>, nm@ti.com,
+        linux-mips@linux-mips.org, dalias@libc.org,
+        catalin.marinas@arm.com, vigneshr@ti.com,
+        linux-aspeed@lists.ozlabs.org, linux-sh@vger.kernel.org,
+        peterz@infradead.org, will.deacon@arm.com, mhocko@suse.com,
+        paulus@samba.org, hpa@zytor.com, sparclinux@vger.kernel.org,
+        marex@denx.de, sfr@canb.auug.org.au, ysato@users.sourceforge.jp,
+        linux-hexagon@vger.kernel.org, x86@kernel.org,
+        linux@armlinux.org.uk, pombredanne@nexb.com, tony@atomide.com,
+        mingo@redhat.com, joel@jms.id.au, linux-serial@vger.kernel.org,
+        rolf.evers.fischer@aptiv.com, jhogan@kernel.org,
+        asierra@xes-inc.com, linux-snps-arc@lists.infradead.org,
+        dan.carpenter@oracle.com, ying.huang@intel.com, riel@surriel.com,
+        frederic@kernel.org, jslaby@suse.com, paul.burton@mips.com,
+        rppt@linux.vnet.ibm.com, bp@alien8.de, luto@kernel.org,
+        andriy.shevchenko@linux.intel.com,
+        linux-arm-kernel@lists.infradead.org, christophe.leroy@c-s.fr,
+        andrew@aj.id.au, linux-kernel@vger.kernel.org, ralf@linux-mips.org,
+        rkuo@codeaurora.org, Jisheng.Zhang@synaptics.com,
+        vgupta@synopsys.com, benh@kernel.crashing.org, jk@ozlabs.org,
+        mpe@ellerman.id.au, akpm@linux-foundation.org,
+        linuxppc-dev@lists.ozlabs.org, davem@davemloft.net,
+        kstewart@linuxfoundation.org
+Subject: [PATCH 0/7] serial: Finish kgdb on qcom_geni; fix many lockdep splats w/ kgdb
+Date:   Mon, 29 Oct 2018 11:07:00 -0700
+Message-Id: <20181029180707.207546-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
 MIME-Version: 1.0
-In-Reply-To: <489bf780-7dd2-2feb-8456-25ad5beeb3e4@intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+I started out this series trying to make sysrq work over the serial
+console on qcom_geni_serial, then fell into a rat's nest.
+
+To solve the deadlock I faced when enabling sysrq I tried to borrow
+code from '8250_port.c' which avoided grabbing the port lock in
+console_write().  ...but since these days I try to run with lockdep on
+all the time, I found it caused an annoying lockdep splat (which I
+also reproduced on my rk3399 board).  ...so I instead changed my
+qcom_geni_serial solution to borrow code from 'msm_serial.c'
+
+I wasn't super happy with the solution in 'msm_serial.c' though.  I
+don't like releasing the spinlock there.  Not only is it ugly but it
+means we are unlocking / re-locking _all the time_ even though sysrq
+characters are rare.  ...so I came up with what I think is a better
+solution and then implemented it for qcom_geni_serial.
+
+Since I had a good way to test 8250-based UARTs, I also fixed that
+driver to use my new method.  When doing so, I ran into a missing
+msm_serial.c at all, so I didn't switch that (or all other serial
+drivers for that matter) to the new method.
+
+After fixing all the above issues, I found the next lockdep splat in
+kgdb and I think I've worked around it in a good-enough way, but I'm
+much less confident about this.  Hopefully folks can take a look at
+it.
+
+In general, patches earlier in this series should be "less
+controversial" and hopefully can land even if people don't like
+patches later in the series.  ;-)
+
+Looking back, this is pretty much two series squashed that could be
+treated indepdently.  The first is a serial series and the second is a
+kgdb series.
+
+For all serial patches I'd expect them to go through the tty tree once
+they've been reviewed.
+
+If folks are OK w/ the 'smp' patch it probably should go in some core
+kernel tree.  The kgdb patch won't work without it, though, so to land
+that we'd need coordination between the folks landing that and the
+folks landing the 'smp' patch.
 
 
-On 25/10/2018 01:26, Dave Hansen wrote:
-> On 10/23/18 2:34 PM, Igor Stoppa wrote:
->> +#define VM_PMALLOC		0x00000100	/* pmalloc area - see docs */
->> +#define VM_PMALLOC_WR		0x00000200	/* pmalloc write rare area */
->> +#define VM_PMALLOC_PROTECTED	0x00000400	/* pmalloc protected area */
-> 
-> Please introduce things as you use them.  It's impossible to review a
-> patch that just says "see docs" that doesn't contain any docs. :)
+Douglas Anderson (7):
+  serial: qcom_geni_serial: Finish supporting sysrq
+  serial: core: Allow processing sysrq at port unlock time
+  serial: qcom_geni_serial: Process sysrq at port unlock time
+  serial: core: Include console.h from serial_core.h
+  serial: 8250: Process sysrq at port unlock time
+  smp: Don't yell about IRQs disabled in kgdb_roundup_cpus()
+  kgdb: Remove irq flags and local_irq_enable/disable from roundup
 
-Yes, otoh it's a big pain in the neck to keep the docs split into 
-smaller patches interleaved with the code, at least while the code is 
-still in a flux.
+ arch/arc/kernel/kgdb.c                      |  4 +--
+ arch/arm/kernel/kgdb.c                      |  4 +--
+ arch/arm64/kernel/kgdb.c                    |  4 +--
+ arch/hexagon/kernel/kgdb.c                  | 11 ++----
+ arch/mips/kernel/kgdb.c                     |  4 +--
+ arch/powerpc/kernel/kgdb.c                  |  2 +-
+ arch/sh/kernel/kgdb.c                       |  4 +--
+ arch/sparc/kernel/smp_64.c                  |  2 +-
+ arch/x86/kernel/kgdb.c                      |  9 ++---
+ drivers/tty/serial/8250/8250_aspeed_vuart.c |  6 +++-
+ drivers/tty/serial/8250/8250_fsl.c          |  6 +++-
+ drivers/tty/serial/8250/8250_omap.c         |  6 +++-
+ drivers/tty/serial/8250/8250_port.c         |  8 ++---
+ drivers/tty/serial/qcom_geni_serial.c       | 10 ++++--
+ include/linux/kgdb.h                        |  9 ++---
+ include/linux/serial_core.h                 | 38 ++++++++++++++++++++-
+ kernel/debug/debug_core.c                   |  2 +-
+ kernel/smp.c                                |  4 ++-
+ 18 files changed, 80 insertions(+), 53 deletions(-)
 
-And since the docs refer to the sources, for the automated documentation 
-of the API, I cannot just put the documentation at the beginning of the 
-patchset.
-
-Can I keep the docs as they are, for now, till the code is more stable?
-
---
-igor
+-- 
+2.19.1.568.g152ad8e336-goog
 
