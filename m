@@ -2,93 +2,172 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9C4FC2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:17:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E62EECDE44
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:17:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A4D520870
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:17:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A4D520870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
+	by mail.kernel.org (Postfix) with ESMTP id D7C2A20880
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:17:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vWNRwsST"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7C2A20880
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727567AbeJ3GH1 (ORCPT
+        id S1727676AbeJ3GHr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 02:07:27 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:40500 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726485AbeJ3GH1 (ORCPT
+        Tue, 30 Oct 2018 02:07:47 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:37234 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726485AbeJ3GHq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 02:07:27 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 902B413ADD5D4;
-        Mon, 29 Oct 2018 14:16:59 -0700 (PDT)
-Date:   Mon, 29 Oct 2018 14:16:56 -0700 (PDT)
-Message-Id: <20181029.141656.565374870463385142.davem@davemloft.net>
-To:     kan.liang@linux.intel.com
-Cc:     acme@kernel.org, linux-kernel@vger.kernel.org, wangnan0@huawei.com,
-        jolsa@kernel.org, namhyung@kernel.org, kan.liang@intel.com,
-        ak@linux.intel.com, yao.jin@linux.intel.com, peterz@infradead.org
-Subject: Re: [PATCHES/RFC] Re: A concern about overflow ring buffer mode
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <d3626e3f-5993-7ee7-f817-48e9dcee17f4@linux.intel.com>
-References: <b488a063-276c-ab8f-954e-f68e951146b4@linux.intel.com>
-        <20181029.104827.680192866924184016.davem@davemloft.net>
-        <d3626e3f-5993-7ee7-f817-48e9dcee17f4@linux.intel.com>
-X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Tue, 30 Oct 2018 02:07:46 -0400
+Received: by mail-lf1-f65.google.com with SMTP id p17so766966lfh.4;
+        Mon, 29 Oct 2018 14:17:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=rHFZG9pWUais7nhw2UduPXRMeh+ITBO90nUo2sRa4wM=;
+        b=vWNRwsSTgCmY8RJxJErKJu4l1ftiT/2EKB31NNmZMKIOSK2X1Ics6T/NJURxFkUDkj
+         wCb36qRwTzEi1T9JZ+Z4F4lweBm7u424ZqU+MbomHjDLuiFWdyy/nCHlc9Tlddmq7wO9
+         r0JYTo7jNwu0VqDSyShOMvCzNabU4I7OVGo8hN9z/nZIqIN5dfDOudv34WM0+dBGrvNe
+         dUbH6pYhQO+29cXA1Gg/pe45Tj++X9AWByxZDEEmxn1asBnfHvaz3nPayhSmlrkbqOgD
+         JgRBK2aNY7cOTLNrjegGR6hS8Z0X1SCB18Lowt3RQmNWEEnBiIGqFA/InMTVsSsTg2QU
+         9hkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=rHFZG9pWUais7nhw2UduPXRMeh+ITBO90nUo2sRa4wM=;
+        b=V43ne3qj1KAgg/SW+DCsZ/i7CvtsqTqXdvAEZ/w1BXP2ygyYk7giS8srkLZN/s844+
+         euQOKBflhpviQvofmuLkaOtFH+8uagJr8KO6tnhdD8BzuCFShlaYqsSB7B8i51U0UYR7
+         Mkevk8DZI3b5/YG4HdbjRKmXvHzqgbMCk9FjeMYJ3aQ/1SBPPJ6wMCorigDebqwBokwT
+         jIYIY+fWZmqYJORmjBJ+wq98DXhghTOopuUIFB0UUd4WZb3LHBBzcoZ+Gg92wdggrjeL
+         gDqf4gnQAdVY0Q2f7RXbzC51bw95dBXV82oIWA7M6iiYxPxDhBFWFnRVWOE/TC1tl2+m
+         7mCA==
+X-Gm-Message-State: AGRZ1gLsSm1r0H3CYcCiQgJeLjSV48jGB8Ew8ZLu2TgveDIDFp5K0QpK
+        ndBh0k4HGSq0tlmUY2N9cpqRg5ZlhD4=
+X-Google-Smtp-Source: AJdET5ePGqmWE3vSrsqL3WHKhOF2Kp5JIZjKU6JQnuFMkZCMY3cPx0UpnE1RPZGQ+Ero2sE6845/5Q==
+X-Received: by 2002:a19:c954:: with SMTP id z81mr210924lff.150.1540847837332;
+        Mon, 29 Oct 2018 14:17:17 -0700 (PDT)
+Received: from ?IPv6:2001:14bb:52:7be:f0bf:dd2d:f008:5213? (dmkd798g-7z2-yccwcp-4.rev.dnainternet.fi. [2001:14bb:52:7be:f0bf:dd2d:f008:5213])
+        by smtp.gmail.com with ESMTPSA id r63-v6sm3374551lfr.66.2018.10.29.14.17.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Oct 2018 14:17:16 -0700 (PDT)
+Subject: Re: [PATCH 16/17] prmem: pratomic-long
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        kernel-hardening@lists.openwall.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, igor.stoppa@huawei.com,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-17-igor.stoppa@huawei.com>
+ <20181025001312.GA3159@worktop.c.hoisthospitality.com>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <806bfff0-8d62-9918-480d-ec791b93841e@gmail.com>
+Date:   Mon, 29 Oct 2018 23:17:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181025001312.GA3159@worktop.c.hoisthospitality.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 29 Oct 2018 14:16:59 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Liang, Kan" <kan.liang@linux.intel.com>
-Date: Mon, 29 Oct 2018 14:20:15 -0400
-
-> You didn't see any warning before the patch. I think it is just
-> because perf top hides the problem.
-
-Quite honestly, the last time I played around with this:
-
-1) The new ring buffer mode didn't exist
-
-2) perf started up much more quickly and was much more responsive
-   than it is these days
-
-It used to handle a 128-cpu system doing a parallel kernel build
-with no problems, no dropped events, nothing.
-
-Something has changed to make perf more bloated and slow, and one by
-one I'm trying to identify and deal with these issues rather than
-just make perf abort when it can't keep up which is the approach
-that has seem to have taken over.  That's to me is just wrong.
-
-One point I want to make clear, dropping things like mmap events will
-make perf run more slowly not more fast.
-
-I keep trying to explain this over and over.
-
-If you drop map events, you have no range into which to fit samples.
-
-Therefore samples create a unique histogram entries, and the histogram
-table grows to be quite huge.  And this slows down perf significantly
-because every new sample and histogram decay walks this table, sorting
-it, killing off old entries, finding a place for new ones, etc.
-
-I really think dropping events causes more harm than good in this
-case, therefore.
-
-This also happens when perf cannot find a symbol, for example in a
-binary or library with no symbols.  I see this as an area for
-significant improvement.
 
 
+On 25/10/2018 01:13, Peter Zijlstra wrote:
+> On Wed, Oct 24, 2018 at 12:35:03AM +0300, Igor Stoppa wrote:
+>> +static __always_inline
+>> +bool __pratomic_long_op(bool inc, struct pratomic_long_t *l)
+>> +{
+>> +	struct page *page;
+>> +	uintptr_t base;
+>> +	uintptr_t offset;
+>> +	unsigned long flags;
+>> +	size_t size = sizeof(*l);
+>> +	bool is_virt = __is_wr_after_init(l, size);
+>> +
+>> +	if (WARN(!(is_virt || likely(__is_wr_pool(l, size))),
+>> +		 WR_ERR_RANGE_MSG))
+>> +		return false;
+>> +	local_irq_save(flags);
+>> +	if (is_virt)
+>> +		page = virt_to_page(l);
+>> +	else
+>> +		vmalloc_to_page(l);
+>> +	offset = (~PAGE_MASK) & (uintptr_t)l;
+>> +	base = (uintptr_t)vmap(&page, 1, VM_MAP, PAGE_KERNEL);
+>> +	if (WARN(!base, WR_ERR_PAGE_MSG)) {
+>> +		local_irq_restore(flags);
+>> +		return false;
+>> +	}
+>> +	if (inc)
+>> +		atomic_long_inc((atomic_long_t *)(base + offset));
+>> +	else
+>> +		atomic_long_dec((atomic_long_t *)(base + offset));
+>> +	vunmap((void *)base);
+>> +	local_irq_restore(flags);
+>> +	return true;
+>> +
+>> +}
+> 
+> That's just hideously nasty.. and horribly broken.
+> 
+> We're not going to duplicate all these kernel interfaces wrapped in gunk
+> like that. 
+
+one possibility would be to have macros which use typeof() on the 
+parameter being passed, to decide what implementation to use: regular or 
+write-rare
+
+This means that type punning would still be needed, to select the 
+implementation.
+
+Would this be enough? Is there some better way?
+
+> Also, you _cannot_ call vunmap() with IRQs disabled. Clearly
+> you've never tested this with debug bits enabled.
+
+I thought I had them. And I _did_ have them enabled, at some point.
+But I must have messed up with the configuration and I failed to notice 
+this.
+
+I can think of a way it might work, albeit it's not going to be very pretty:
+
+* for the vmap(): if I understand correctly, it might sleep while 
+obtaining memory for creating the mapping. This part could be executed 
+before disabling interrupts. The rest of the function, instead, would be 
+executed after interrupts are disabled.
+
+* for vunmap(): after the writing is done, change also the alternate 
+mapping to read only, then enable interrupts and destroy the alternate 
+mapping. Making also the secondary mapping read only makes it equally 
+secure as the primary, which means that it can be visible also with 
+interrupts enabled.
+
+
+--
+igor
