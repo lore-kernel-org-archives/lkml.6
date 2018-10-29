@@ -2,122 +2,130 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2315BC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:15:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFD3AECDE44
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:16:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE4D520870
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:15:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE4D520870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id 9BC812084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:16:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pnWvR3pa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BC812084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728746AbeJ3DEw (ORCPT
+        id S1728909AbeJ3DGG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 23:04:52 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:36205 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728723AbeJ3DEw (ORCPT
+        Mon, 29 Oct 2018 23:06:06 -0400
+Received: from mail-lj1-f173.google.com ([209.85.208.173]:39332 "EHLO
+        mail-lj1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728891AbeJ3DGG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 23:04:52 -0400
-Received: by mail-pf1-f196.google.com with SMTP id j22-v6so623008pfh.3;
-        Mon, 29 Oct 2018 11:15:06 -0700 (PDT)
+        Mon, 29 Oct 2018 23:06:06 -0400
+Received: by mail-lj1-f173.google.com with SMTP id a28-v6so5755572ljd.6;
+        Mon, 29 Oct 2018 11:16:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=2qPBh/q69nky92IpEBTdXdD93mcC/g6otc1+JAUVzKA=;
+        b=pnWvR3pa0Yeus7BQZPQ6Bemj50E7NWlnwuQQe4eA3B8lJ+5YtoAyu3eQoB8fihxe9t
+         iuhebRIXMQpzgtNiU3K91YKIG2R2s9mNbpmbgPGZqg8CQivKcoQo+2Q+3jOBu8KApXCV
+         rVbf9RRov2NpVyWRgYmlqd/dzCcyjw0ptHTAKOhxXIYhGGVbaAyGmtxOCk1R/rI3ODSp
+         v4Pcg4CDDN2jm5hpYwjazBSoEtIija2v8rTqQ4YR8N+3OKNTWE7K8CU7BNJg4FoIp9cP
+         9BAIvrOom3K66kcK5C0VX3XwhIaN1OlubTAh7CCrap9yE7OBtnETRWWnHKWWNa7F8cTw
+         TuxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nJC0NNPKN/Uv1V6q9cs49qJxbI0zyIuZrqxHAYI0mSU=;
-        b=QxiYQIV63br1mR2LUr0c6D/Q+RwpTn0VBOHn0bBMpq9SqQ4AsVJy7iW+ZNmZQ0yD5V
-         UZcgEVMAgPril46EscwqDcO/2gNzseufF70jR6qlkTxHyt7ND2XEZyIrsFhz2+RBImA6
-         ynE0IpJS08M50EWR1YspbjMFbbRmf4p7PL4oiOIbT6Kfm8LwJL7RhFAp9CdAt7lAmlii
-         sqi9+jiF7lOXzwlrvEcNOgQTTcpY6UjERNa7SFmCmktsgmL24GoxBReuOdeKmPOFN5cl
-         pgbXmC5YpNufpZSqzD36IE2pOLB4pFg18kzMsp/TO27mIaoLR3Suv9GS83/MIqRBJEQd
-         3dwg==
-X-Gm-Message-State: AGRZ1gJkI7ljrF5U6BeyyFTOX4yg5C9t/MVDVW8rKMDL4S4mIuVrSkDq
-        +Mdj7Zn8Sy0ODqiv69uSC8VUrrUe
-X-Google-Smtp-Source: AJdET5fsSxnu8hqTdf6qGA7XgvvcBm5uD3Hb6tJHDViyPpxLp9Yj0iBGzq6gwPqMe4qz7MIEVqqzsA==
-X-Received: by 2002:a63:bd51:: with SMTP id d17mr4132675pgp.443.1540836906129;
-        Mon, 29 Oct 2018 11:15:06 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id o9-v6sm28511626pgn.30.2018.10.29.11.15.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Oct 2018 11:15:04 -0700 (PDT)
-Message-ID: <1540836903.196084.70.camel@acm.org>
-Subject: Re: [PATCH 07/14] blk-mq: support multiple hctx maps
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 29 Oct 2018 11:15:03 -0700
-In-Reply-To: <20181029163738.10172-8-axboe@kernel.dk>
-References: <20181029163738.10172-1-axboe@kernel.dk>
-         <20181029163738.10172-8-axboe@kernel.dk>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2qPBh/q69nky92IpEBTdXdD93mcC/g6otc1+JAUVzKA=;
+        b=aALuJ9+Cplfv4ZisVgAsYRGtzc12WrvstB+XODADebg0hIgXXk5IfkEC7sggPrH8nJ
+         TVk4PbX8pVK3oBwOUHOT5aJ8XOXw6hjoan87BgeCXs0doAfTPV4DwqoHoMmineld347j
+         L0WVKpELOfKsFPzXAoFzVQaa537K1jNghYaeKBm6yHtD7gXjzOnfz7fE50hLYLdbrVay
+         vK5dAsTV8CX0xHbzaoPLncOhks2KXzdWZUDEx5ZM/lL6xbXwxlfSEtSbKKI2G04V8Obi
+         IUgJCFGZIE7faKb9islRqT+kk3F3tWF22otRK62qBL4RZC+tF9OF59KYpx6W1wXFkS/h
+         nr0w==
+X-Gm-Message-State: AGRZ1gLs0H+e/0FZz5pnKgrMnT4fO8Sbhd8akUDCstslgVsohugz0Jnb
+        oLL+7A6dsomBtJFTIKuWc4zN7ATedm0xiQ==
+X-Google-Smtp-Source: AJdET5eIzwFHEMs9QrGGRWyam3ClbO0ICpli7rSZR6iwnWaEiQI8koujzbdsJLCSVD678H5FByMLHg==
+X-Received: by 2002:a2e:744:: with SMTP id i4-v6mr10225514ljd.36.1540836977341;
+        Mon, 29 Oct 2018 11:16:17 -0700 (PDT)
+Received: from ?IPv6:2001:14bb:52:7be:f0bf:dd2d:f008:5213? (dmkd798g-7z2-yccwcp-4.rev.dnainternet.fi. [2001:14bb:52:7be:f0bf:dd2d:f008:5213])
+        by smtp.gmail.com with ESMTPSA id c19sm576788lfg.86.2018.10.29.11.16.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Oct 2018 11:16:16 -0700 (PDT)
+Subject: Re: [PATCH 06/17] prmem: test cases for memory protection
+To:     Dave Hansen <dave.hansen@intel.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        kernel-hardening@lists.openwall.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     igor.stoppa@huawei.com, Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-7-igor.stoppa@huawei.com>
+ <0175ca6a-40d1-0fde-350c-891488432ecb@intel.com>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <1ef1168c-0c44-274a-5942-257b84609051@gmail.com>
+Date:   Mon, 29 Oct 2018 20:16:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <0175ca6a-40d1-0fde-350c-891488432ecb@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-10-29 at 10:37 -0600, Jens Axboe wrote:
-+AD4 -static inline struct blk+AF8-mq+AF8-hw+AF8-ctx +ACo-blk+AF8-mq+AF8-map+AF8-queue(struct request+AF8-queue +ACo-q,
-+AD4 -						     unsigned int flags,
-+AD4 -						     int cpu)
-+AD4 +-static inline struct blk+AF8-mq+AF8-hw+AF8-ctx +ACo-blk+AF8-mq+AF8-map+AF8-queue+AF8-type(struct request+AF8-queue +ACo-q,
-+AD4 +-							  int type, int cpu)
-+AD4  +AHs
-+AD4  	struct blk+AF8-mq+AF8-tag+AF8-set +ACo-set +AD0 q-+AD4-tag+AF8-set+ADs
-+AD4  
-+AD4 -	return q-+AD4-queue+AF8-hw+AF8-ctx+AFs-set-+AD4-map+AFs-0+AF0.mq+AF8-map+AFs-cpu+AF0AXQA7
-+AD4 +-	return q-+AD4-queue+AF8-hw+AF8-ctx+AFs-set-+AD4-map+AFs-type+AF0.mq+AF8-map+AFs-cpu+AF0AXQA7
-+AD4  +AH0
-+AD4  
-+AD4 -static inline struct blk+AF8-mq+AF8-hw+AF8-ctx +ACo-blk+AF8-mq+AF8-map+AF8-queue+AF8-type(struct request+AF8-queue +ACo-q,
-+AD4 -							  int type, int cpu)
-+AD4 +-static inline struct blk+AF8-mq+AF8-hw+AF8-ctx +ACo-blk+AF8-mq+AF8-map+AF8-queue(struct request+AF8-queue +ACo-q,
-+AD4 +-						     unsigned int flags,
-+AD4 +-						     int cpu)
-+AD4  +AHs
-+AD4 -	return blk+AF8-mq+AF8-map+AF8-queue(q, type, cpu)+ADs
-+AD4 +-	int type +AD0 0+ADs
-+AD4 +-
-+AD4 +-	if (q-+AD4-mq+AF8-ops-+AD4-flags+AF8-to+AF8-type)
-+AD4 +-		type +AD0 q-+AD4-mq+AF8-ops-+AD4-flags+AF8-to+AF8-type(q, flags)+ADs
-+AD4 +-
-+AD4 +-	return blk+AF8-mq+AF8-map+AF8-queue+AF8-type(q, type, cpu)+ADs
-+AD4  +AH0
 
-How about adding a comment above both these functions that explains their
-purpose? Since blk+AF8-mq+AF8-map+AF8-queue() maps rq-+AD4-cmd+AF8-flags and the cpu index to
-a hardware context, how about renaming blk+AF8-mq+AF8-map+AF8-queue() into
-blk+AF8-mq+AF8-map+AF8-cmd+AF8-flags()?
 
-+AD4  /+ACo
-+AD4 diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
-+AD4 index f9e19962a22f..837087cf07cc 100644
-+AD4 --- a/include/linux/blk-mq.h
-+AD4 +-+-+- b/include/linux/blk-mq.h
-+AD4 +AEAAQA -86,6 +-86,7 +AEAAQA enum +AHs
-+AD4  
-+AD4  struct blk+AF8-mq+AF8-tag+AF8-set +AHs
-+AD4  	struct blk+AF8-mq+AF8-queue+AF8-map	map+AFs-HCTX+AF8-MAX+AF8-TYPES+AF0AOw
-+AD4 +-	unsigned int		nr+AF8-maps+ADs
-+AD4  	const struct blk+AF8-mq+AF8-ops	+ACo-ops+ADs
-+AD4  	unsigned int		nr+AF8-hw+AF8-queues+ADs
-+AD4  	unsigned int		queue+AF8-depth+ADs	/+ACo max hw supported +ACo-/
-+AD4 +AEAAQA -109,6 +-110,7 +AEAAQA struct blk+AF8-mq+AF8-queue+AF8-data +AHs
-+AD4  
-+AD4  typedef blk+AF8-status+AF8-t (queue+AF8-rq+AF8-fn)(struct blk+AF8-mq+AF8-hw+AF8-ctx +ACo,
-+AD4  		const struct blk+AF8-mq+AF8-queue+AF8-data +ACo)+ADs
-+AD4 +-typedef int (flags+AF8-to+AF8-type+AF8-fn)(struct request+AF8-queue +ACo, unsigned int)+ADs
+On 25/10/2018 17:43, Dave Hansen wrote:
+>> +static bool is_address_protected(void *p)
+>> +{
+>> +	struct page *page;
+>> +	struct vmap_area *area;
+>> +
+>> +	if (unlikely(!is_vmalloc_addr(p)))
+>> +		return false;
+>> +	page = vmalloc_to_page(p);
+>> +	if (unlikely(!page))
+>> +		return false;
+>> +	wmb(); /* Flush changes to the page table - is it needed? */
+> 
+> No.
 
-How about adding a comment that the format of the second argument of
-flags+AF8-to+AF8-type+AF8-fn is the same as that of rq-+AD4-cmd+AF8-flags?
+ok
 
-Thanks,
+> The rest of this is just pretty verbose and seems to have been very
+> heavily copied and pasted.  I guess that's OK for test code, though.
 
-Bart.
+I was tempted to play with macros, as templates to generate tests on the 
+fly, according to the type being passed.
+
+But I was afraid it might generate an even stronger rejection than the 
+rest of the patchset already has.
+
+Would it be acceptable/preferable?
+
+--
+igor
