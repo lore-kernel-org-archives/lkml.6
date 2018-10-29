@@ -2,177 +2,93 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BEBA3C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:14:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9C4FC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:17:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EFA720870
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:14:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EFA720870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5A4D520870
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:17:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A4D520870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727816AbeJ3GFQ (ORCPT
+        id S1727567AbeJ3GH1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 02:05:16 -0400
-Received: from mga06.intel.com ([134.134.136.31]:36152 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726616AbeJ3GFN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 02:05:13 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2018 14:14:47 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,441,1534834800"; 
-   d="scan'208";a="275456018"
-Received: from maru.jf.intel.com ([10.54.51.77])
-  by fmsmga005.fm.intel.com with ESMTP; 29 Oct 2018 14:14:47 -0700
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-To:     Wolfram Sang <wsa@the-dreams.de>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
-        openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        James Feist <james.feist@linux.intel.com>,
-        Vernon Mauery <vernon.mauery@linux.intel.com>,
-        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Subject: [PATCH i2c-next v8 5/5] i2c: aspeed: Add bus idle waiting logic for multi-master use cases
-Date:   Mon, 29 Oct 2018 14:14:14 -0700
-Message-Id: <20181029211414.20771-6-jae.hyun.yoo@linux.intel.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181029211414.20771-1-jae.hyun.yoo@linux.intel.com>
-References: <20181029211414.20771-1-jae.hyun.yoo@linux.intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 30 Oct 2018 02:07:27 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:40500 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726485AbeJ3GH1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 02:07:27 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::cf9])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 902B413ADD5D4;
+        Mon, 29 Oct 2018 14:16:59 -0700 (PDT)
+Date:   Mon, 29 Oct 2018 14:16:56 -0700 (PDT)
+Message-Id: <20181029.141656.565374870463385142.davem@davemloft.net>
+To:     kan.liang@linux.intel.com
+Cc:     acme@kernel.org, linux-kernel@vger.kernel.org, wangnan0@huawei.com,
+        jolsa@kernel.org, namhyung@kernel.org, kan.liang@intel.com,
+        ak@linux.intel.com, yao.jin@linux.intel.com, peterz@infradead.org
+Subject: Re: [PATCHES/RFC] Re: A concern about overflow ring buffer mode
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <d3626e3f-5993-7ee7-f817-48e9dcee17f4@linux.intel.com>
+References: <b488a063-276c-ab8f-954e-f68e951146b4@linux.intel.com>
+        <20181029.104827.680192866924184016.davem@davemloft.net>
+        <d3626e3f-5993-7ee7-f817-48e9dcee17f4@linux.intel.com>
+X-Mailer: Mew version 6.7 on Emacs 26 / Mule 6.0 (HANACHIRUSATO)
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 29 Oct 2018 14:16:59 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In multi-master environment, this driver's master cannot know
-exactly when a peer master sends data to this driver's slave so a
-case can be happened that this master tries to send data through
-the master_xfer function but slave data from peer master is still
-being processed by this driver.
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+Date: Mon, 29 Oct 2018 14:20:15 -0400
 
-To prevent any state corruption in the case, this patch adds
-checking code if any slave operation is ongoing and it waits up to
-the bus timeout duration before starting a master_xfer operation.
+> You didn't see any warning before the patch. I think it is just
+> because perf top hides the problem.
 
-Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
----
- drivers/i2c/busses/i2c-aspeed.c | 52 +++++++++++++++++++++++----------
- 1 file changed, 37 insertions(+), 15 deletions(-)
+Quite honestly, the last time I played around with this:
 
-diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
-index 833b6b6a4c7e..4e92a405210b 100644
---- a/drivers/i2c/busses/i2c-aspeed.c
-+++ b/drivers/i2c/busses/i2c-aspeed.c
-@@ -12,6 +12,7 @@
- 
- #include <linux/clk.h>
- #include <linux/completion.h>
-+#include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/errno.h>
- #include <linux/i2c.h>
-@@ -115,6 +116,9 @@
- /* 0x18 : I2CD Slave Device Address Register   */
- #define ASPEED_I2CD_DEV_ADDR_MASK			GENMASK(6, 0)
- 
-+/* Busy checking */
-+#define ASPEED_I2C_BUS_BUSY_CHECK_INTERVAL_US		(10 * 1000)
-+
- enum aspeed_i2c_master_state {
- 	ASPEED_I2C_MASTER_INACTIVE,
- 	ASPEED_I2C_MASTER_START,
-@@ -156,6 +160,8 @@ struct aspeed_i2c_bus {
- 	int				cmd_err;
- 	/* Protected only by i2c_lock_bus */
- 	int				master_xfer_result;
-+	/* Multi-master */
-+	bool				multi_master;
- #if IS_ENABLED(CONFIG_I2C_SLAVE)
- 	struct i2c_client		*slave;
- 	enum aspeed_i2c_slave_state	slave_state;
-@@ -596,27 +602,41 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
- 	return irq_remaining ? IRQ_NONE : IRQ_HANDLED;
- }
- 
-+static int aspeed_i2c_check_bus_busy(struct aspeed_i2c_bus *bus)
-+{
-+	unsigned long check_started;
-+
-+	if (bus->multi_master) {
-+		might_sleep();
-+		check_started = jiffies;
-+	}
-+
-+	for (;;) {
-+		if (!(readl(bus->base + ASPEED_I2C_CMD_REG) &
-+		      ASPEED_I2CD_BUS_BUSY_STS) &&
-+		    bus->slave_state == ASPEED_I2C_SLAVE_STOP)
-+			return 0;
-+		if (!bus->multi_master)
-+			break;
-+		if (time_after(jiffies, check_started + bus->adap.timeout))
-+			break;
-+		usleep_range((ASPEED_I2C_BUS_BUSY_CHECK_INTERVAL_US >> 2) + 1,
-+			     ASPEED_I2C_BUS_BUSY_CHECK_INTERVAL_US);
-+	}
-+
-+	return aspeed_i2c_recover_bus(bus);
-+}
-+
- static int aspeed_i2c_master_xfer(struct i2c_adapter *adap,
- 				  struct i2c_msg *msgs, int num)
- {
- 	struct aspeed_i2c_bus *bus = i2c_get_adapdata(adap);
- 	unsigned long time_left, flags;
--	int ret = 0;
- 
--	spin_lock_irqsave(&bus->lock, flags);
--	bus->cmd_err = 0;
--
--	/* If bus is busy, attempt recovery. We assume a single master
--	 * environment.
--	 */
--	if (readl(bus->base + ASPEED_I2C_CMD_REG) & ASPEED_I2CD_BUS_BUSY_STS) {
--		spin_unlock_irqrestore(&bus->lock, flags);
--		ret = aspeed_i2c_recover_bus(bus);
--		if (ret)
--			return ret;
--		spin_lock_irqsave(&bus->lock, flags);
--	}
-+	if (aspeed_i2c_check_bus_busy(bus))
-+		return -EAGAIN;
- 
-+	spin_lock_irqsave(&bus->lock, flags);
- 	bus->cmd_err = 0;
- 	bus->msgs = msgs;
- 	bus->msgs_index = 0;
-@@ -827,7 +847,9 @@ static int aspeed_i2c_init(struct aspeed_i2c_bus *bus,
- 	if (ret < 0)
- 		return ret;
- 
--	if (!of_property_read_bool(pdev->dev.of_node, "multi-master"))
-+	if (of_property_read_bool(pdev->dev.of_node, "multi-master"))
-+		bus->multi_master = true;
-+	else
- 		fun_ctrl_reg |= ASPEED_I2CD_MULTI_MASTER_DIS;
- 
- 	/* Enable Master Mode */
--- 
-2.19.1
+1) The new ring buffer mode didn't exist
+
+2) perf started up much more quickly and was much more responsive
+   than it is these days
+
+It used to handle a 128-cpu system doing a parallel kernel build
+with no problems, no dropped events, nothing.
+
+Something has changed to make perf more bloated and slow, and one by
+one I'm trying to identify and deal with these issues rather than
+just make perf abort when it can't keep up which is the approach
+that has seem to have taken over.  That's to me is just wrong.
+
+One point I want to make clear, dropping things like mmap events will
+make perf run more slowly not more fast.
+
+I keep trying to explain this over and over.
+
+If you drop map events, you have no range into which to fit samples.
+
+Therefore samples create a unique histogram entries, and the histogram
+table grows to be quite huge.  And this slows down perf significantly
+because every new sample and histogram decay walks this table, sorting
+it, killing off old entries, finding a place for new ones, etc.
+
+I really think dropping events causes more harm than good in this
+case, therefore.
+
+This also happens when perf cannot find a symbol, for example in a
+binary or library with no symbols.  I see this as an area for
+significant improvement.
+
 
