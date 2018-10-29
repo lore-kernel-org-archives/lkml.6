@@ -2,118 +2,124 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2B42C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:32:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE5FC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:33:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 679582080A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:32:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 679582080A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8962E2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:33:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DGW7oHIh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8962E2084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729381AbeJ3DW2 convert rfc822-to-8bit (ORCPT
+        id S1729396AbeJ3DWv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 23:22:28 -0400
-Received: from mga14.intel.com ([192.55.52.115]:49726 "EHLO mga14.intel.com"
+        Mon, 29 Oct 2018 23:22:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726852AbeJ3DW2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 23:22:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2018 11:32:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,441,1534834800"; 
-   d="scan'208";a="81863268"
-Received: from orsmsx105.amr.corp.intel.com ([10.22.225.132])
-  by fmsmga007.fm.intel.com with ESMTP; 29 Oct 2018 11:32:36 -0700
-Received: from orsmsx114.amr.corp.intel.com ([169.254.8.128]) by
- ORSMSX105.amr.corp.intel.com ([169.254.2.237]) with mapi id 14.03.0415.000;
- Mon, 29 Oct 2018 11:32:36 -0700
-From:   "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-CC:     "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        "Ingo Molnar" <mingo@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: RE: [PATCH V2 1/2] x86/efi: Unmap EFI boot services code/data
- regions from efi_pgd
-Thread-Topic: [PATCH V2 1/2] x86/efi: Unmap EFI boot services code/data
- regions from efi_pgd
-Thread-Index: AQHUbXSDlG5yxQFZuUKIGr9tlrL5CKU27+KAgAACRID//5GH4IAAfEuAgAACJgD//4v9QA==
-Date:   Mon, 29 Oct 2018 18:32:36 +0000
-Message-ID: <FFF73D592F13FD46B8700F0A279B802F485E5588@ORSMSX114.amr.corp.intel.com>
-References: <20181026213845.28166-1-sai.praneeth.prakhya@intel.com>
- <20181026213845.28166-2-sai.praneeth.prakhya@intel.com>
- <alpine.DEB.2.21.1810291809490.5984@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1810291820250.5984@nanos.tec.linutronix.de>
- <FFF73D592F13FD46B8700F0A279B802F485E5549@ORSMSX114.amr.corp.intel.com>
- <alpine.DEB.2.21.1810291907320.5984@nanos.tec.linutronix.de>
- <alpine.DEB.2.21.1810291911570.5984@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1810291911570.5984@nanos.tec.linutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDdmYTEyNjUtMjExZi00YmI3LWFmNWYtMzJhMjM1NGVmOGFjIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiV3JZVXozQ3ZvdXY3VzFMZGdEMWVsM0ljZnJDOHRaMHhxVFhIYXZnb0JRdlgyaXExVDlwV1wvUHg1OE9sM010YTMifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.140]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1728221AbeJ3DWv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 23:22:51 -0400
+Received: from jouet.infradead.org (unknown [179.97.41.186])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D43592080A;
+        Mon, 29 Oct 2018 18:32:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540837980;
+        bh=Lk15W6sR8shuOHtrfohOoWYvE/72muOe/v6MpngrcR8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DGW7oHIhLEvUgwYmSA44BDciXxsXi8V/XNhqaJqES5TBWr4zMkRQ4C9561MsoE2jc
+         n2Jn7luZlB0gvEDASxQpuIKEfRFLKwHUTc4hPOJye3AxilsmDrk4q2kEDwk726302a
+         QFQhx84ie7dk2R9ssIpv6RrZB8gxnuFNJHEzFfxY=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 0B2BC142C5F; Mon, 29 Oct 2018 15:32:58 -0300 (-03)
+Date:   Mon, 29 Oct 2018 15:32:58 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     "Liang, Kan" <kan.liang@linux.intel.com>
+Cc:     David Miller <davem@davemloft.net>, linux-kernel@vger.kernel.org,
+        wangnan0@huawei.com, jolsa@kernel.org, namhyung@kernel.org,
+        kan.liang@intel.com, ak@linux.intel.com, yao.jin@linux.intel.com,
+        peterz@infradead.org
+Subject: Re: [PATCHES/RFC] Re: A concern about overflow ring buffer mode
+Message-ID: <20181029183258.GL21857@kernel.org>
+References: <0247fca0-5a94-9a83-cefa-282804316729@linux.intel.com>
+ <20181029.104008.791032322062574758.davem@davemloft.net>
+ <b488a063-276c-ab8f-954e-f68e951146b4@linux.intel.com>
+ <20181029.104827.680192866924184016.davem@davemloft.net>
+ <d3626e3f-5993-7ee7-f817-48e9dcee17f4@linux.intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d3626e3f-5993-7ee7-f817-48e9dcee17f4@linux.intel.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > In general it's good to do on list because others can learn from the
-> > answers as well.
+Em Mon, Oct 29, 2018 at 02:20:15PM -0400, Liang, Kan escreveu:
 > 
-> So you somehow managed to keep everyone and the lists in CC nevertheless.
-> Did not pay attention to the CC list until I got my reply on the list :)
-
-Sorry! my bad.. yes, the conversation did happen on the list and it's by accident.
 > 
-> > > > > > +	retval = __change_page_attr_set_clr(&cpa, 0);
-
-[........]
-
-> > > So some questions I have are,
-> > > 1. What did Peter Z mean here? "How is that not a TLB invalidation bug ?"
-> >
-> > __flush_tlb_all() flushes only the mapping on the current CPU. So in a
-> > SMP environment it's not sufficient.
-
-Thanks for the explanation. The issue makes sense to me now.
-
-[.........]
-
-> > I'll have a second look at the whole thing and reply on list.
+> On 10/29/2018 1:48 PM, David Miller wrote:
+> > From: "Liang, Kan" <kan.liang@linux.intel.com>
+> > Date: Mon, 29 Oct 2018 13:42:56 -0400
+> > 
+> > > 
+> > > 
+> > > On 10/29/2018 1:40 PM, David Miller wrote:
+> > > > From: "Liang, Kan" <kan.liang@linux.intel.com>
+> > > > Date: Mon, 29 Oct 2018 10:33:06 -0400
+> > > > 
+> > > > > I just realized that the problem in KNL will be back if we switch
+> > > > > back to non-overwrite mode.
+> > > > What is KNL?
+> > > > 
+> > > Intel Xeon Phi Processor, Knights Landing.
+> > 
+> > I don't understand how a specific piece of hardware directly leads to
+> > ring buffer processing timeouts, or multi-minute thread map processing
+> > times...
 > 
-> So actually for the problem at hand __flush_tlb_all() works, because that is
-> called way before the secondary CPUs are up.
+> Perf top processes all samples in a serial way. With the number of CPU
+> increasing under the heavy load, the number of samples increase
+> dramatically. The processing time also increase significantly.
+> When the processing time is longer than display refresh time, only the stale
+> data is shown.
 > 
-> Ditto for kernel_map_pages_in_pgd().
+> I use KNL as an example. Because the problem is even worse on KNL. There is
+> nothing output with perf top.
+> 
+> In theory, it's a problem for all large scale platforms.
+> 
+> > 
+> > You'll have to explain all of the details of your test scenerio, and
+> > the exact problems triggers, which
+> 
+> My test was the same as yours, just running a parallel kernel build on KNL.
+> 
+> > caused you to write these patches
+> > which causes serious regressions for what I consider a core simple use
+> > case of perf top.
+> 
+> I agree that the warning message is annoying. I will try to find another way
+> to deliver the message. But I think we do need the warning message.
 
-Yes, you are right. Both the functions are *always* called before SMP initialization
-and as you rightly pointed out they should be marked with __init.
-
-> But both functions want to be marked
-> __init and aside of that they both should contain a warning when they are called
-> after the secondary CPUs have been brought up.
-
-Makes sense too.. I will include these changes in V3.
-
-Regards,
-Sai
+There is no problem with the message, the problem is the thread where
+the message is being displayed, just signal the display thread to
+display the warning, not doing that in the event processing thread.
+ 
+> You didn't see any warning before the patch. I think it is just because perf
+> top hides the problem.
+> 
+> Thanks,
+> Kan
+> > 
+> > And that's running perf top during a parallel kernel build.
+> > 
+> > 
