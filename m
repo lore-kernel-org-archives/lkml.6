@@ -2,153 +2,206 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF6FC2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:06:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69871C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:07:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5FE62084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:06:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21D362082D
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:07:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xb6mz380"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5FE62084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rXJkdVYN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21D362082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727355AbeJ3F5S (ORCPT
+        id S1727558AbeJ3F5s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 01:57:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48794 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726070AbeJ3F5S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 01:57:18 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2DE8220657;
-        Mon, 29 Oct 2018 21:06:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540847213;
-        bh=opvLBWY5/RA0bH+ET5kTMklUGuaRZf7d4eGqIjnY544=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Xb6mz380sQa7Sli0mBdiVIfK7nk0tN9tcPmjQoZY/c98TgQ35WydBIFyMDSp5iH3e
-         3J3i4xo4wYjqQEkdcaZbgyh4xpk8WF0Fs23aVHM38RwdKT+Y/z2P44ZepgD0VmKGGU
-         lKUyIf6IZebTVxfiGlvwBzd4P6cX5IOx+oQ2qupE=
-Date:   Mon, 29 Oct 2018 16:06:51 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Jon Derrick <jonathan.derrick@intel.com>
-Cc:     linux-pci@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Keith Busch <keith.busch@intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, Tony Luck <tony.luck@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Tyler Baicar <tbaicar@codeaurora.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] PCI/AER: Option to leave System Error Interrupts
- as-is
-Message-ID: <20181029210651.GB13681@bhelgaas-glaptop.roam.corp.google.com>
-References: <1540585146-31876-1-git-send-email-jonathan.derrick@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1540585146-31876-1-git-send-email-jonathan.derrick@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 30 Oct 2018 01:57:48 -0400
+Received: from mail-qt1-f202.google.com ([209.85.160.202]:35574 "EHLO
+        mail-qt1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726016AbeJ3F5s (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 01:57:48 -0400
+Received: by mail-qt1-f202.google.com with SMTP id d12-v6so11320164qtj.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 14:07:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=tHymFGFRgVecm8/hoaasAtMklgjSpPGwZy4Dhx4CQcI=;
+        b=rXJkdVYNjvko/d7tCVV2PxcDPmKk+SpDHkVgbqGPSfPe4lCb7GdU1I+PIBxqYhYE/N
+         pI35/TZxJt+sXjtQV2ayaXnoWjftMhBgdEFtgQih2Sle5IgviCAOUkS5mebxdjGa0LB/
+         BCSLh/dkp1WPiFahTr9V3nJn2/qL4ltwqdiXFqlkf89tGrJkTsLkTHJ7gdweOMb/e+W/
+         K085WARc05xFKvaL4KsYRbwULTXorIRDQDdJ1HSJ1Ii2sYA48mq4Y6RZe/BSNyN/Ah6a
+         +gb20+2VtVF8kZH0u6+OsKB2Yn4cgZnLkfdmRnBX4qlygk5i8K7bEcqiFUXgBKqt5UgZ
+         uXcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=tHymFGFRgVecm8/hoaasAtMklgjSpPGwZy4Dhx4CQcI=;
+        b=s/oR1baWfla6V8ti9jUMe1d5ToL6ZtajZVhXaxklztNakP6LTEsiWOagEEh+/F91dD
+         u8TphtEiAjclfrkJlM5PftrmDCFNPqhikosLLsuva9E6aUvqOvK3j/BERvOg0DDQa3AY
+         DcLkFAlodohnUWhTG4zBi+7mp9Rxc+FDDiNTa7/B8iEPjpz1JmDOfTIBcVHJVzilWepn
+         Eu3Ir7mDxGkXZArcsOVeUp5zl/cywvCjreEukEDM3IweukB6o8fxwhYfdgM80ZuTEssH
+         Af3FdxZoYtmqYhlg8aLx1lAsikhFG9NzAyugbe7xKIWNVV0iI9K3+Vf1LE37Qf2QmSgC
+         SGUQ==
+X-Gm-Message-State: AGRZ1gLPcwVf/JtkAss7HJjlIRnVUw+kmmH3nqTIiQ2m8VWWlMLOsJ/Z
+        oXLF3pwNg2+MDldgkEcUmIGSIUEk
+X-Google-Smtp-Source: AJdET5cHjhBYlNA4W6lTtgTUjgW3mOR/w6u3S+SVErmPmREKZEMGprwHc/6C+UrEkkyQuMM7U/65BQPN
+X-Received: by 2002:ac8:4108:: with SMTP id q8-v6mr11520qtl.17.1540847242527;
+ Mon, 29 Oct 2018 14:07:22 -0700 (PDT)
+Date:   Mon, 29 Oct 2018 17:07:16 -0400
+Message-Id: <20181029210716.212159-1-brho@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
+Subject: [RFC PATCH] kvm: Use huge pages for DAX-backed files
+From:   Barret Rhoden <brho@google.com>
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        "=?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?=" <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
+Cc:     linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        kvm@vger.kernel.org, yu.c.zhang@intel.com, yi.z.zhang@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Rafael, Len, Tony, Borislav, Tyler, Christoph, linux-acpi, LKML]
+This change allows KVM to map DAX-backed files made of huge pages with
+huge mappings in the EPT/TDP.
 
-On Fri, Oct 26, 2018 at 02:19:04PM -0600, Jon Derrick wrote:
-> Add a bit in pci_host_bridge to indicate to leave the System Error
-> Interrupts as configured by the pre-boot environment. Propagate this to
-> the AER driver which disables System Error Interrupts.
-> 
-> Signed-off-by: Jon Derrick <jonathan.derrick@intel.com>
-> ---
->  drivers/pci/pcie/aer.c | 7 +++++--
->  include/linux/pci.h    | 3 +++
->  2 files changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index 83180ed..6a4af63 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -1360,6 +1360,7 @@ static void set_downstream_devices_error_reporting(struct pci_dev *dev,
->  static void aer_enable_rootport(struct aer_rpc *rpc)
->  {
->  	struct pci_dev *pdev = rpc->rpd;
-> +	struct pci_host_bridge *host;
->  	int aer_pos;
->  	u16 reg16;
->  	u32 reg32;
-> @@ -1369,8 +1370,10 @@ static void aer_enable_rootport(struct aer_rpc *rpc)
->  	pcie_capability_write_word(pdev, PCI_EXP_DEVSTA, reg16);
->  
->  	/* Disable system error generation in response to error messages */
-> -	pcie_capability_clear_word(pdev, PCI_EXP_RTCTL,
-> -				   SYSTEM_ERROR_INTR_ON_MESG_MASK);
-> +	host = pci_find_host_bridge(pdev->bus);
-> +	if (!host->no_disable_sys_err)
-> +		pcie_capability_clear_word(pdev, PCI_EXP_RTCTL,
-> +					   SYSTEM_ERROR_INTR_ON_MESG_MASK);
+DAX pages are not PageTransCompound.  The existing check is trying to
+determine if the mapping for the pfn is a huge mapping or not.  For
+non-DAX maps, e.g. hugetlbfs, that means checking PageTransCompound.
 
-If I squint hard enough this sort of makes sense, but it also makes me
-confused about the normal APEI firmware-first model works.
+For DAX, we can check the page table itself.  Actually, we might always
+be able to walk the page table, even for PageTransCompound pages, but
+it's probably a little slower.
 
-In the NON-firmare-first case, firmware isn't involved in handling AER
-errors.  The Linux AER driver fields an interrupt from a Root Port,
-reads AER log registers, etc.
+Note that KVM already faulted in the page (or huge page) in the host's
+page table, and we hold the KVM mmu spinlock (grabbed before checking
+the mmu seq).  Based on the other comments about not worrying about a
+pmd split, we might be able to safely walk the page table without
+holding the mm sem.
 
-In the normal APEI firmware-first case, when the hardware reports an
-AER event, I think firmware gets control first, and *it* reads the AER
-log registers, packages them up, and generates an interrupt to the OS,
-which reads the packaged error state from the firmware via the HEST.
+This patch relies on kvm_is_reserved_pfn() being false for DAX pages,
+which I've hacked up for testing this code.  That change should
+eventually happen:
 
-If I understand this special Intel VMD firmware-first case correctly,
-firmware gets control first, reads the AER log registers, and
-synthesizes what looks to the OS like a normal AER interrupt.  The
-Linux AER driver gets what it thinks is an interrupt from a Root Port,
-and it reads AER log registers from the hardware just like it does in
-the NON-firmware-first case.
+https://lore.kernel.org/lkml/20181022084659.GA84523@tiger-server/
 
-My confusion is about how we manage the mechanism by which the
-firmware gets control first.  In the Intel VMD case, it looks like
-firmware fields the System Errors controlled by the Root Control
-register of Root Ports.  This patch adds some framework so we know not
-to touch something set up by firmware.
+Another issue is that kvm_mmu_zap_collapsible_spte() also uses
+PageTransCompoundMap() to detect huge pages, but we don't have a way to
+get the HVA easily.  Can we just aggressively zap DAX pages there?
 
-But in the normal APEI firmware-first case, we disable those System
-Errors in the Root Control registers, so firmware must get control
-some other way.
+Alternatively, is there a better way to track at the struct page level
+whether or not a page is huge-mapped?  Maybe the DAX huge pages mark
+themselves as TransCompound or something similar, and we don't need to
+special case DAX/ZONE_DEVICE pages.
 
-How does the OS know what mechanism the firmware uses, so it can make
-sure to preserve it?  This patch might be part of the solution, but it
-seems pretty ad hoc, and of course it does nothing for the APEI
-firmware-first case.  How does firmware get control in that case?
+Signed-off-by: Barret Rhoden <brho@google.com>
+---
+ arch/x86/kvm/mmu.c | 71 +++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 70 insertions(+), 1 deletion(-)
 
->  	aer_pos = pdev->aer_cap;
->  	/* Clear error status */
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 6925828..6fcfab4 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -484,6 +484,9 @@ struct pci_host_bridge {
->  	unsigned int	native_shpc_hotplug:1;	/* OS may use SHPC hotplug */
->  	unsigned int	native_pme:1;		/* OS may use PCIe PME */
->  	unsigned int	native_ltr:1;		/* OS may use PCIe LTR */
-> +	unsigned int	no_disable_sys_err:1;	/* Don't disable system
-> +						   error interrupts */
-> +
->  	/* Resource alignment requirements */
->  	resource_size_t (*align_resource)(struct pci_dev *dev,
->  			const struct resource *res,
-> -- 
-> 1.8.3.1
-> 
+diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+index cf5f572f2305..9f3e0f83a2dd 100644
+--- a/arch/x86/kvm/mmu.c
++++ b/arch/x86/kvm/mmu.c
+@@ -3152,6 +3152,75 @@ static int kvm_handle_bad_page(struct kvm_vcpu *vcpu, gfn_t gfn, kvm_pfn_t pfn)
+ 	return -EFAULT;
+ }
+ 
++static unsigned long pgd_mapping_size(struct mm_struct *mm, unsigned long addr)
++{
++	pgd_t *pgd;
++	p4d_t *p4d;
++	pud_t *pud;
++	pmd_t *pmd;
++	pte_t *pte;
++
++	pgd = pgd_offset(mm, addr);
++	if (!pgd_present(*pgd))
++		return 0;
++
++	p4d = p4d_offset(pgd, addr);
++	if (!p4d_present(*p4d))
++		return 0;
++	if (p4d_huge(*p4d))
++		return P4D_SIZE;
++
++	pud = pud_offset(p4d, addr);
++	if (!pud_present(*pud))
++		return 0;
++	if (pud_huge(*pud))
++		return PUD_SIZE;
++
++	pmd = pmd_offset(pud, addr);
++	if (!pmd_present(*pmd))
++		return 0;
++	if (pmd_huge(*pmd))
++		return PMD_SIZE;
++
++	pte = pte_offset_map(pmd, addr);
++	if (!pte_present(*pte))
++		return 0;
++	return PAGE_SIZE;
++}
++
++static bool pfn_is_pmd_mapped(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn)
++{
++	struct page *page = pfn_to_page(pfn);
++	unsigned long hva, map_sz;
++
++	if (!is_zone_device_page(page))
++		return PageTransCompoundMap(page);
++
++	/*
++	 * DAX pages do not use compound pages.  The page should have already
++	 * been mapped into the host-side page table during try_async_pf(), so
++	 * we can check the page tables directly.
++	 */
++	hva = gfn_to_hva(kvm, gfn);
++	if (kvm_is_error_hva(hva))
++		return false;
++
++	/*
++	 * Our caller grabbed the KVM mmu_lock with a successful
++	 * mmu_notifier_retry, so we're safe to walk the page table.
++	 */
++	map_sz = pgd_mapping_size(current->mm, hva);
++	switch (map_sz) {
++	case PMD_SIZE:
++		return true;
++	case P4D_SIZE:
++	case PUD_SIZE:
++		printk_once(KERN_INFO "KVM THP promo found a very large page");
++		return false;
++	}
++	return false;
++}
++
+ static void transparent_hugepage_adjust(struct kvm_vcpu *vcpu,
+ 					gfn_t *gfnp, kvm_pfn_t *pfnp,
+ 					int *levelp)
+@@ -3168,7 +3237,7 @@ static void transparent_hugepage_adjust(struct kvm_vcpu *vcpu,
+ 	 */
+ 	if (!is_error_noslot_pfn(pfn) && !kvm_is_reserved_pfn(pfn) &&
+ 	    level == PT_PAGE_TABLE_LEVEL &&
+-	    PageTransCompoundMap(pfn_to_page(pfn)) &&
++	    pfn_is_pmd_mapped(vcpu->kvm, gfn, pfn) &&
+ 	    !mmu_gfn_lpage_is_disallowed(vcpu, gfn, PT_DIRECTORY_LEVEL)) {
+ 		unsigned long mask;
+ 		/*
+-- 
+2.19.1.568.g152ad8e336-goog
+
