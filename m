@@ -2,103 +2,111 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50A84C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:33:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8156BC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:34:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16E0920827
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:33:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16E0920827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 1E76A20827
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:34:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E76A20827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729688AbeJ2SVJ (ORCPT
+        id S1729681AbeJ2SWM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 14:21:09 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:56646 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729592AbeJ2SVJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 14:21:09 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 8A14A208CE; Mon, 29 Oct 2018 10:33:16 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-12-210.w90-88.abo.wanadoo.fr [90.88.133.210])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 59213207D4;
-        Mon, 29 Oct 2018 10:33:06 +0100 (CET)
-Date:   Mon, 29 Oct 2018 10:33:06 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 18/25] drm/panel: Add Bananapi S070WV20-CT16 ICN6211
- MIPI-DSI to RGB bridge
-Message-ID: <20181029093306.ysyfgnrozbo2ywcu@flea>
-References: <20181026144344.27778-1-jagan@amarulasolutions.com>
- <20181026144344.27778-19-jagan@amarulasolutions.com>
+        Mon, 29 Oct 2018 14:22:12 -0400
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:64317
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729467AbeJ2SWM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 14:22:12 -0400
+X-IronPort-AV: E=Sophos;i="5.54,439,1534802400"; 
+   d="scan'208";a="283652620"
+Received: from vaio-julia.rsr.lip6.fr ([132.227.76.33])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2018 10:34:08 +0100
+Date:   Mon, 29 Oct 2018 10:34:00 +0100 (CET)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To:     Liviu Dudau <liviu.dudau@arm.com>
+cc:     kernel-janitors@vger.kernel.org,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/8] ARM: vexpress/spc: constify clk_ops structure
+In-Reply-To: <20181029091756.GA1167@e110455-lin.cambridge.arm.com>
+Message-ID: <alpine.DEB.2.20.1810291033270.3755@hadrien>
+References: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr> <1540619262-22681-3-git-send-email-Julia.Lawall@lip6.fr> <20181029091756.GA1167@e110455-lin.cambridge.arm.com>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hdtvfuanrelpecuc"
-Content-Disposition: inline
-In-Reply-To: <20181026144344.27778-19-jagan@amarulasolutions.com>
-User-Agent: NeoMutt/20180716
+Content-Type: multipart/mixed; BOUNDARY="8323329-1340634172-1540805640=:3755"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--8323329-1340634172-1540805640=:3755
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
---hdtvfuanrelpecuc
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 26, 2018 at 08:13:37PM +0530, Jagan Teki wrote:
-> Bananapi S070WV20-CT16 ICN6211 is 800x480, 4-lane MIPI-DSI to RGB bridge
-> panel which can be used to connect via DSI port on BPI-M64 board,
-> so add a driver for it.
->=20
-> The same panel PCB comes with parallel RBG which is supported via
-> panel-simple driver with "bananapi,s070wv20-ct16" compatible.
->=20
-> BSP dclock of 30MHz is not working with existing sunxi-ng and sun4i
-> sun4i_dclk_recalc, so updated to 55MHz can result proper working
-> nkm dividers.
->=20
-> dclock, 30MHz =3D> PLL_MIPI, 300MHz =3D> set rate 440MHz with 1,2,1 nkm
-> dclock, 55MHz =3D> PLL_MIPI, 300MHz =3D> set rate 330MHz with 5,2,9 nkm
 
-That panel is generic, you don't need those details in your commit log.
+On Mon, 29 Oct 2018, Liviu Dudau wrote:
 
-Maxime
+> On Sat, Oct 27, 2018 at 07:47:36AM +0200, Julia Lawall wrote:
+> > The clk_ops structure is only stored in the ops field of a
+> > clk_init_data structure.  This field is const, so the clk_ops
+> > structure can be const as well.
+> >
+> > Identified and transformed using Coccinelle.
+> >
+> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>
+> Acked-by: Liviu Dudau <liviu.dudau@arm.com>
+>
+> Are you going to send the series to the arm-soc maintainers directly or
+> you want us to cherry-pick this patch into the Versatile tree?
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Please do with it whatever seems best.
 
---hdtvfuanrelpecuc
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
+julia
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW9bT0gAKCRDj7w1vZxhR
-xUQ8AP9YdRaccCX4pK7kzdP4KTovwRcg2mcNR6cZqeZM5zgHBAD8DPHFmJ01ST/h
-UbLtUvbCKLNiymS3lObWE6Qelee2ZAY=
-=qgcV
------END PGP SIGNATURE-----
-
---hdtvfuanrelpecuc--
+>
+> Best regards,
+> Liviu
+>
+> >
+> > ---
+> >  arch/arm/mach-vexpress/spc.c |    2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/arch/arm/mach-vexpress/spc.c b/arch/arm/mach-vexpress/spc.c
+> > index 0f5381d13494..611f22de48cb 100644
+> > --- a/arch/arm/mach-vexpress/spc.c
+> > +++ b/arch/arm/mach-vexpress/spc.c
+> > @@ -521,7 +521,7 @@ static int spc_set_rate(struct clk_hw *hw, unsigned long rate,
+> >  	return ve_spc_set_performance(spc->cluster, rate / 1000);
+> >  }
+> >
+> > -static struct clk_ops clk_spc_ops = {
+> > +static const struct clk_ops clk_spc_ops = {
+> >  	.recalc_rate = spc_recalc_rate,
+> >  	.round_rate = spc_round_rate,
+> >  	.set_rate = spc_set_rate,
+> >
+>
+> --
+> ====================
+> | I would like to |
+> | fix the world,  |
+> | but they're not |
+> | giving me the   |
+>  \ source code!  /
+>   ---------------
+>     ¯\_(ツ)_/¯
+>
+--8323329-1340634172-1540805640=:3755--
