@@ -2,133 +2,136 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9333EECDE44
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C1FCC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:48:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A2E32082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:48:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="BwzsR2sV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A2E32082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	by mail.kernel.org (Postfix) with ESMTP id EBBE92084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 14:48:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBBE92084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbeJ2XhP (ORCPT
+        id S1727265AbeJ2Xhg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 19:37:15 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:37455 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726503AbeJ2XhP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 19:37:15 -0400
-Received: by mail-io1-f65.google.com with SMTP id k17-v6so5112582ioc.4
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 07:48:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MnfB3NBe0zr1IXXWgqSFxtO5BvGhLc8TBKxaaj9cCek=;
-        b=BwzsR2sVkdQHP5JgKSnEzD2CevxoIsomasmUYuhh1KOILyuYbFqPa6lEwLM9u9ZnN6
-         GnXQocNPvty0xv9gtYBb58l9zIXbR8/9hYS0s2rergrsb+QM8pxv9mboMdVABCHILRfI
-         7FFyiPw3aIIfCXH4nim+IJVs6cOMao3hqbKVQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MnfB3NBe0zr1IXXWgqSFxtO5BvGhLc8TBKxaaj9cCek=;
-        b=eWQfDYLsH69iCUAgPkDX67YnsGiVk3k+ubXFMxSm+tiwK/tSbfa7GGkcUz6TRGIL2P
-         IS4EpHAlvO62/XlhYTHghBdcB+GVsjER+nqajplU66vUjJPCFX8CQKAWmLS2gnYmPz6t
-         ZSrc123RzvELWy21u49qyEtYk/ElXo0dacjIkx6HfyK6m48KoRmgYhsuW7PtDreFDO/3
-         HJLrNnGZm2MgJFginp0+0WBsGhZe46Do93E85rE60N3nrQgXjP0u+Mbrcv2RKbgF4kpH
-         y+0QYdns0wKO8xsFOP628d+5pHVRIPm+GzLdzvT57vybUOwOG1m/QM8UrNzhWFqA51+C
-         hlxg==
-X-Gm-Message-State: AGRZ1gJ2KSxKTwq8U17vZ7UxZuKJu63dBVGwo9Jy/E5nZZe1MaxBPfXH
-        jxz+nj6O1Lq0a3hSL9CecJHRe7H9VYWZKEhQ2IFhww==
-X-Google-Smtp-Source: AJdET5dBNFcx+T0XtSKsE12EO9npZjqqlsU9APzl/9F0+4onp8dO5yJlAcwiLNmA+uouQ3g3B3ZU1PD7iVmm5xlrOgY=
-X-Received: by 2002:a6b:3e57:: with SMTP id l84-v6mr8662688ioa.252.1540824497221;
- Mon, 29 Oct 2018 07:48:17 -0700 (PDT)
+        Mon, 29 Oct 2018 19:37:36 -0400
+Received: from foss.arm.com ([217.140.101.70]:41624 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726087AbeJ2Xhg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 19:37:36 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C0D68341;
+        Mon, 29 Oct 2018 07:48:38 -0700 (PDT)
+Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 19C9F3F71D;
+        Mon, 29 Oct 2018 07:48:36 -0700 (PDT)
+Date:   Mon, 29 Oct 2018 14:48:34 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Anshuman Khandual <anshuman.khandual@arm.com>
+Cc:     John Garry <john.garry@huawei.com>, catalin.marinas@arm.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxarm@huawei.com
+Subject: Re: [PATCH] arm64/numa: Add more vetting in numa_set_distance()
+Message-ID: <20181029144833.GB1835@brain-police>
+References: <1540562267-101152-1-git-send-email-john.garry@huawei.com>
+ <20181029112504.GF14127@arm.com>
+ <925009c6-226d-213f-dbcb-68b772d80a18@huawei.com>
+ <20181029121638.GB15446@arm.com>
+ <839acfc7-6b3a-b7ac-2f4a-713960ece457@huawei.com>
+ <17e3006a-7ecd-968e-7e67-ea7d08858ec3@arm.com>
 MIME-Version: 1.0
-References: <20181026144344.27778-1-jagan@amarulasolutions.com>
- <20181026144344.27778-17-jagan@amarulasolutions.com> <20181029093142.hgn4q6o7q32voutf@flea>
-In-Reply-To: <20181029093142.hgn4q6o7q32voutf@flea>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Mon, 29 Oct 2018 20:18:05 +0530
-Message-ID: <CAMty3ZBky1kP-1Q+ja2BpcbTxdHgQOFn=T4bcnZwMz6zP+AcOQ@mail.gmail.com>
-Subject: Re: [PATCH v3 16/25] drm/sun4i: sun6i_mipi_dsi: Add support for
- VCC-DSI voltage regulator
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <17e3006a-7ecd-968e-7e67-ea7d08858ec3@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 3:01 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Fri, Oct 26, 2018 at 08:13:35PM +0530, Jagan Teki wrote:
-> > Some boards have VCC-DSI pin connected to voltage regulator which may
-> > not be turned on by default.
-> >
-> > Add support for such boards by adding voltage regulator handling code to
-> > MIPI DSI driver.
-> >
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > Tested-by: Jagan Teki <jagan@amarulasolutions.com>
-> > ---
-> > Changes for v3:
-> > - new patch
-> > Changes for v2:
-> > - none
-> >
-> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 14 ++++++++++++++
-> >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h |  3 +++
-> >  2 files changed, 17 insertions(+)
-> >
-> > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > index 42bd7506abaf..bc57343592e0 100644
-> > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-> > @@ -949,6 +949,12 @@ static int sun6i_dsi_bind(struct device *dev, struct device *master,
-> >
-> >       dsi->drv = drv;
-> >
-> > +     ret = regulator_enable(dsi->regulator);
-> > +     if (ret) {
-> > +             dev_err(dev, "Failed to enable regulator\n");
-> > +             return ret;
-> > +     }
-> > +
->
-> The regulator should be enabled only when the device is in use.
+On Mon, Oct 29, 2018 at 06:15:42PM +0530, Anshuman Khandual wrote:
+> On 10/29/2018 06:02 PM, John Garry wrote:
+> > On 29/10/2018 12:16, Will Deacon wrote:
+> >> On Mon, Oct 29, 2018 at 12:14:09PM +0000, John Garry wrote:
+> >>> On 29/10/2018 11:25, Will Deacon wrote:
+> >>>> On Fri, Oct 26, 2018 at 09:57:47PM +0800, John Garry wrote:
+> >>>>> Currently it is acceptable to set the distance between 2 separate nodes to
+> >>>>> LOCAL_DISTANCE.
+> >>>>>
+> >>>>> Reject this as it is invalid.
+> >>>>>
+> >>>>> This change avoids a crash reported in [1].
+> >>>>>
+> >>>>> [1] https://www.spinics.net/lists/arm-kernel/msg683304.html
+> >>>>>
+> >>>>> Signed-off-by: John Garry <john.garry@huawei.com>
+> >>>>>
+> >>>>> diff --git a/arch/arm64/mm/numa.c b/arch/arm64/mm/numa.c
+> >>>>> index 146c04c..6092e3d 100644
+> >>>>> --- a/arch/arm64/mm/numa.c
+> >>>>> +++ b/arch/arm64/mm/numa.c
+> >>>>> @@ -335,7 +335,8 @@ void __init numa_set_distance(int from, int to, int distance)
+> >>>>>     }
+> >>>>>
+> >>>>>     if ((u8)distance != distance ||
+> >>>>> -        (from == to && distance != LOCAL_DISTANCE)) {
+> >>>>> +        (from == to && distance != LOCAL_DISTANCE) ||
+> >>>>> +        (from != to && distance == LOCAL_DISTANCE)) {
+> >>>>
+> >>>> The current code here is more-or-less lifted from the x86 implementation
+> >>>> of numa_set_distance().
+> >>>
+> >>> Right, I did notice this. I didn't think that x86 folks would be so
+> >>> concerned since they generally only use ACPI, and the ACPI code already
+> >>> validates these distances in drivers/acpi/numa.c: slit_valid() [unlike OF
+> >>> code].
+> >>>
+> >>>  I think we should either factor out the sanity check
+> >>>> into a core helper or make the core code robust to these funny configurations.
+> >>>
+> >>> OK, so to me it would make sense to factor out a sanity check into a core
+> >>> helper.
+> >>
+> >> That, or have the OF code perform the same validation that slit_valid() is
+> >> doing for ACPI. I'm just trying to avoid other architectures running into
+> >> this problem down the line.
+> >>
+> > 
+> > Right, OF code should do this validation job if ACPI is doing it
+> > (especially since the DT bindings actually specify the distance rules),
+> > and not rely on the arch NUMA code to accept/reject numa_set_distance()
+> > combinations.
+> 
+> I would say this particular condition checking still falls under arch NUMA init
+> code sanity check like other basic tests what numa_set_distance() currently does
+> already but it should not be a necessity for the OF driver to check these. It can
+> choose to check but arch NUMA should check basic things like two different NUMA
+> nodes should not have LOCAL_DISTANCE as distance like in this case.
+> 
+> 	(from == to && distance != LOCAL_DISTANCE) ||
+> 		(from != to && distance == LOCAL_DISTANCE))
+> 
+> 
+> > 
+> > And, in addition to this, I'd say OF should disable NUMA if given an
+> > invalid table (like ACPI does).
+> 
+> Taking a decision to disable NUMA should be with kernel (arch NUMA) once kernel
+> starts booting. Platform should have sent right values, OF driver trying to
+> adjust stuff what platform has sent with FDT once the kernel starts booting is
+> not right. For example "Kernel NUMA wont like the distance factors lets clean
+> then up before passing on to MM". Disabling NUMA is one such major decision which
+> should be with arch NUMA code not with OF driver.
 
-True, but there is no device specific quirk needed because who ever
-not needed simply use dummy regulator
-[    0.245821] sun6i-mipi-dsi 1ca0000.dsi: 1ca0000.dsi supply vcc-dsi
-not found, using dummy regulato
-r
+I don't fully understand what you're getting at here, but why would the
+check posted by John be arch-specific? It's already done in the core code
+for ACPI, so there's a discrepancy between ACPI and FDT that should be
+resolved. I'd also argue that the subtleties of this check are actually
+based on what the core code is willing to accept in terms of the NUMA
+description, so it's also the best place to enforce it.
 
-even like HVCC in hdmi driver [1]
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.c?id=633ba1e086e1abbeef1ffd899911de8cf3987d9f
+Will
