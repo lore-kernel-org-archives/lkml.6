@@ -2,117 +2,147 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F7B1C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:45:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ED6AC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:45:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 525C320851
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:45:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 525C320851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 129012084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:45:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 129012084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729692AbeJ2SdM (ORCPT
+        id S1729725AbeJ2Sdk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 14:33:12 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:41147 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726720AbeJ2SdL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 14:33:11 -0400
-Received: by mail-qt1-f193.google.com with SMTP id l41-v6so8393147qtl.8;
-        Mon, 29 Oct 2018 02:45:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dWc9XnPG4Gfy49eyLtufw+7TwqxHm1uIc1ndRudUdxc=;
-        b=d4RaDXAfjpj7uXWF/oy00sZ6p1aJy9FTPoNa58AuXiv/0YqvOTEVe+KJQ3mXqSAGWl
-         +oa/TL3+ieObhhSRH0JSSJtuanBvCS+2knqvo46s9XwPXA9DM2vwf9piQobOcwTC1yoe
-         AZKZh5BspP/q4xzTv7EIM+SvQYdosXB4CUCIMebVcS9cesKP3aQnQnHOo7Iujhmuuax0
-         KUIjezL7aCVnXw5WFSvZLDan6C8Ovbq7WOqjG6AKjFroyxI0kYXcaAMUo1Qemerl8nsa
-         0zZj1CTY5BeftQZslkqyn5Jw1isnLTAq1Vy5Im/+nGpTIG5NJ13F7za0uwBTQzfYf+E/
-         MdYw==
-X-Gm-Message-State: AGRZ1gIQCkgNFzIWtMS1UvDatlH8MU8N7PWb4HBPWxPcKsRCUrs1m2Pi
-        x1FbZVex5FZyCOvcN6RFpzwdSRWqC2KapYtbEwM=
-X-Google-Smtp-Source: AJdET5ft4Zjd5Ynw+8Zpvd7e78xFsPpovy9BXPunjutU0IKuVroqwO69NK2Kfg4UJ3fjlmAmHBqUizvpec/j7LZYN7A=
-X-Received: by 2002:a0c:8d4b:: with SMTP id s11mr12130328qvb.161.1540806316682;
- Mon, 29 Oct 2018 02:45:16 -0700 (PDT)
+        Mon, 29 Oct 2018 14:33:40 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37602 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729343AbeJ2Sdk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 14:33:40 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 33D78341;
+        Mon, 29 Oct 2018 02:45:46 -0700 (PDT)
+Received: from [10.1.197.36] (e112298-lin.cambridge.arm.com [10.1.197.36])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 698823F557;
+        Mon, 29 Oct 2018 02:45:45 -0700 (PDT)
+Subject: Re: [PATCH] efi/fdt: Indentation fix
+To:     Joe Perches <joe@perches.com>, linux-efi@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+References: <1538389776-8432-1-git-send-email-julien.thierry@arm.com>
+ <61d7bd590527166c58670b4c0ab65a08710f81cf.camel@perches.com>
+From:   Julien Thierry <julien.thierry@arm.com>
+Message-ID: <d7d0641b-f2a5-a51b-f52e-3db3b873f209@arm.com>
+Date:   Mon, 29 Oct 2018 09:45:44 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <1540613318-23877-1-git-send-email-ren_guo@c-sky.com> <CAHk-=whHhzsdgbVwRFB8oGVwnfN551HPQjtvuodf+W5dNHtjuA@mail.gmail.com>
-In-Reply-To: <CAHk-=whHhzsdgbVwRFB8oGVwnfN551HPQjtvuodf+W5dNHtjuA@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 29 Oct 2018 10:44:59 +0100
-Message-ID: <CAK8P3a2-wyXxctVtJxniUoeShASMhF-6Z1vyvfBnr6wKJuioAQ@mail.gmail.com>
-Subject: Re: [GIT PULL] C-SKY(csky) Port for Linux 4.20
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Guo Ren <ren_guo@c-sky.com>, Marc Zyngier <marc.zyngier@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Rob Herring <robh@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        c-sky_gcc_upstream@c-sky.com, guoren1983@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <61d7bd590527166c58670b4c0ab65a08710f81cf.camel@perches.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 28, 2018 at 10:11 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> Arnd,
->  I was kind of hoping/expecting to get an explicit ack for this from
-> you, since it's a new architecture.
->
-> Good to merge?
+Hi Joe,
 
-Yes.
+On 02/10/18 17:05, Joe Perches wrote:
+> On Mon, 2018-10-01 at 11:29 +0100, Julien Thierry wrote:
+>> Closing bracket seems to end a for statement when it is actually ending
+>> the contained if.
+>>
+>> No functional change/fix, just fix the indentation.
+> []
+>> diff --git a/drivers/firmware/efi/libstub/fdt.c b/drivers/firmware/efi/libstub/fdt.c
+> []
+>> @@ -381,7 +381,7 @@ void *get_fdt(efi_system_table_t *sys_table, unsigned long *fdt_size)
+>>   			}
+>>   			*fdt_size = fdt_totalsize(fdt);
+>>   			break;
+>> -	 }
+>> +		}
+>>
+>>   	return fdt;
+>>   }
+> 
+> Hello Julian.
+> 
+> [trivial style bikeshedding follows]
+> 
+> I think it better to add braces to the for loop so
+> this stands out better.
+> 
+> Also, I would generally write this so the if test is
+> reversed and uses a continue so the match block saves
+> an indent level.
+> 
+> This is the only use efi_guidcmp with a == test in
+> drivers/firmware, so perhaps remove that and use ! as
+> the other uses have no == or != test.
+> 
+> Lastly, a direct return might be better and the return
+> fdt could be removed and converted to return NULL.
+> 
 
-For the pull request (in case you want to add it to the merge changelog):
+The suggestions make sense, I'll respin this taking your remarks into 
+account.
 
-I did a thorough review of the ABI, which as usual mainly consists of spotting
-any files that don't use the asm-generic ABI itself, and having it changed to
-it matches exactly what we do on other new architectures.
+Thanks,
 
-I also looked at every other patch and commented on maybe half of them
-where I saw something that did not quite seem right. Others have reviewed
-specific patches in greater depth. I'm sure that one could fine more of the
-minor details, but as long as they are not ABI relevant, they can be fixed
-later.
+> Something like:
+> ---
+>   drivers/firmware/efi/libstub/fdt.c | 29 +++++++++++++++--------------
+>   1 file changed, 15 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/firmware/efi/libstub/fdt.c b/drivers/firmware/efi/libstub/fdt.c
+> index 8830fa601e45..2d0b895e2f67 100644
+> --- a/drivers/firmware/efi/libstub/fdt.c
+> +++ b/drivers/firmware/efi/libstub/fdt.c
+> @@ -366,22 +366,23 @@ void *get_fdt(efi_system_table_t *sys_table, unsigned long *fdt_size)
+>   {
+>   	efi_guid_t fdt_guid = DEVICE_TREE_GUID;
+>   	efi_config_table_t *tables;
+> -	void *fdt;
+>   	int i;
+>   
+> -	tables = (efi_config_table_t *) sys_table->tables;
+> -	fdt = NULL;
+> +	tables = (efi_config_table_t *)sys_table->tables;
+>   
+> -	for (i = 0; i < sys_table->nr_tables; i++)
+> -		if (efi_guidcmp(tables[i].guid, fdt_guid) == 0) {
+> -			fdt = (void *) tables[i].table;
+> -			if (fdt_check_header(fdt) != 0) {
+> -				pr_efi_err(sys_table, "Invalid header detected on UEFI supplied FDT, ignoring ...\n");
+> -				return NULL;
+> -			}
+> -			*fdt_size = fdt_totalsize(fdt);
+> -			break;
+> -	 }
+> +	for (i = 0; i < sys_table->nr_tables; i++) {
+> +		void *fdt;
+> +
+> +		if (efi_guidcmp(tables[i].guid, fdt_guid))
+> +			continue;
+> +		fdt = (void *)tables[i].table;
+> +		if (fdt_check_header(fdt) != 0) {
+> +			pr_efi_err(sys_table, "Invalid header detected on UEFI supplied FDT, ignoring ...\n");
+> +			return NULL;
+> +		}
+> +		*fdt_size = fdt_totalsize(fdt);
+> +		return fdt;
+> +	}
+>   
+> -	return fdt;
+> +	return NULL;
+>   }
+> 
+> 
 
-The only patch that is part of the ABI and that nobody reviewed is the
-signal handling. This is one of the areas I never worked on in much detail.
-I did not see anything wrong with it, but I also don't know what the problems
-with the other architectures are here, and we seem to be hitting issues
-occasionally, and we never managed to generalize this enough for new
-architectures to have a trivial implementation.
-
-I was originally hoping that we could have the 64-bit time_t interfaces
-ready in time to completely drop the 32-bit ones, but that did not
-happen. We might still remove them in the next merge window
-depending on whether the libc upstream people prefer to keep them
-or not.
-
-Acked-by: Arnd Bergmann <arnd@arndb.de>
----
-You may note that Guo rebased the series on top of v4.19. I tried
-to explain a while ago that it's better not to do that, but I suppose he
-was trying to add the last-minute Acks and it seemed like a good idea.
-
-Guo, in the future I recommend to add all patches on top of the latest
--rc1 (or maybe a later -rc) but not rebase them or pull in the mainline
-kernel into your own tree.
-
-One more general comment: I think this may well be the last new CPU
-architecture we ever add to the kernel. Both nds32 and c-sky are made
-by companies that also work on risc-v, and generally speaking risc-v
-seems to be killing off any of the minor licensable instruction set projects,
-just like ARM has mostly killed off the custom vendor-specific instruction
-sets already. If we add another architecture in the future, it may instead
-be something like the LLVM bitcode or WebAssembly, who knows?
-
-       Arnd
+-- 
+Julien Thierry
