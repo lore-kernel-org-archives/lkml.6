@@ -2,111 +2,87 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00879C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 16:04:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11941C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 16:05:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3D1E2082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 16:04:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B57B42082D
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 16:05:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="jxKfdqCl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3D1E2082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Tn1fv9w8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B57B42082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727809AbeJ3Axw (ORCPT
+        id S1727821AbeJ3AzK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 20:53:52 -0400
-Received: from conuserg-12.nifty.com ([210.131.2.79]:61845 "EHLO
-        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727586AbeJ3Axw (ORCPT
+        Mon, 29 Oct 2018 20:55:10 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:35214 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727516AbeJ3AzK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 20:53:52 -0400
-X-Greylist: delayed 1342 seconds by postgrey-1.27 at vger.kernel.org; Mon, 29 Oct 2018 20:53:50 EDT
-Received: from grover.tkatk1.zaq.ne.jp (zaqdadce369.zaq.ne.jp [218.220.227.105]) (authenticated)
-        by conuserg-12.nifty.com with ESMTP id w9TG45i0028068;
-        Tue, 30 Oct 2018 01:04:05 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com w9TG45i0028068
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1540829045;
-        bh=0tY//mM+jHbaE/ok29QOqhO+tPXAkxJXjjSXgjK7fho=;
-        h=From:To:Cc:Subject:Date:From;
-        b=jxKfdqClVW7bKA/7MNaoLr4tQAZIWuMcFvC7WworuZpvL5buCTsVCt/oeP1cAd2ni
-         /0oLLBDMbrFKFQ3LARl8ci7OkQ9gNI3vByyGHEE5FEeAsz9sPjYKCeMmCiyREE7SVq
-         HLIoTodN5a4O67tYcsscJ/TgqXJRNng8uxMIn8xyVA8oisIBXJJhdOGOBJcEOfS510
-         VpcACBG7Eqne8peB9JSAXJMzmDVQS9TFuDHL5CKuL/3G4tjsOOebEKcmCsg8XFIOIF
-         yd/44Ena80yAZwHEOvG6YRYstU+dQjDi0+NhJng4rKPy1LBiSwe7gFwpCVEUoOZBJ9
-         15TNzuzeYgFgA==
-X-Nifty-SrcIP: [218.220.227.105]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michal Marek <michal.lkml@markovi.net>
-Subject: [PATCH] kbuild: remove unused cc-fullversion variable
-Date:   Tue, 30 Oct 2018 01:03:54 +0900
-Message-Id: <1540829034-17725-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 29 Oct 2018 20:55:10 -0400
+Received: by mail-lj1-f195.google.com with SMTP id x85-v6so4145415ljb.2
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 09:05:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SdhJcZeXosYOeahKf1VNSPXOmnJepwE51rrCWCvI/Ps=;
+        b=Tn1fv9w85uRppSWEZ+jaHoBn/zqFMJmSc53a/Z7XT4b0MKxE8PGx6Vvm10nnnvQDDy
+         T3qc08puHk/fOpmgURlvlUnmhCE4qxt/4UFhJYjYeITnM5QNz4TWnnGKtkZJIArTBe8K
+         AtKXbTrnm7hhlnAjJcBaNZ82mQw5rxiFk9CzI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SdhJcZeXosYOeahKf1VNSPXOmnJepwE51rrCWCvI/Ps=;
+        b=FxKXZ3jtKCkQTR14NFgFPma/llLCMWrtjolfrdoDWASgoYXJRWm4t3M22I2DmvbBSw
+         o3WI8x+rR0safLyKR9zFnCr3eDLKP8ct8F2C/9YhN3gcHaIUT9Ve5XBSZ2bGxewyoGD4
+         Ide79nocWz5a1l8uNHLYAz08IHPLjwBRgdAWyP1IC/m+D7uLp1slkSrmuOjtGmxbBgzK
+         hMmXEpf9sjIwvvl6Fx7dbiqUlvd9a+7TPTLt1UjxP1vH/BT7XaETAkamUQMjR09Wlk8S
+         FwOG1aloz0a0Br21FDavHqk3cvuLBUAHBu+Wz8R+N4zHtJFyXSChzcd5YXFMeYF20t9U
+         mlYw==
+X-Gm-Message-State: AGRZ1gLHnGF1jI1DJcgdeY5IdQpN5D7JUNRQ57Y+IR+xC4gvN4nMhy0B
+        oan0cSLEwGhq8rZAXpudfM/BomO9t8S3FA==
+X-Google-Smtp-Source: AJdET5cibEFxsOomLoDKSssqbrVjZkCEDGdjag9BOoSqsKCn78De4waHUgNt16VLYO5d/mgf6VUghg==
+X-Received: by 2002:a2e:95c6:: with SMTP id y6-v6mr9495502ljh.59.1540829154267;
+        Mon, 29 Oct 2018 09:05:54 -0700 (PDT)
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
+        by smtp.gmail.com with ESMTPSA id v19-v6sm3362020lji.10.2018.10.29.09.05.53
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Oct 2018 09:05:53 -0700 (PDT)
+Received: by mail-lj1-f177.google.com with SMTP id j4-v6so8336617ljc.12
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 09:05:53 -0700 (PDT)
+X-Received: by 2002:a2e:9f42:: with SMTP id v2-v6mr4976721ljk.80.1540829152657;
+ Mon, 29 Oct 2018 09:05:52 -0700 (PDT)
+MIME-Version: 1.0
+References: <4071c24c-db60-c098-9fe7-aad3dc528f39@linux-m68k.org>
+In-Reply-To: <4071c24c-db60-c098-9fe7-aad3dc528f39@linux-m68k.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 29 Oct 2018 09:05:36 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj0gMicoQEHXfLJVohDqoFjZq0Ry57i_vTu=O=YFZBN+g@mail.gmail.com>
+Message-ID: <CAHk-=wj0gMicoQEHXfLJVohDqoFjZq0Ry57i_vTu=O=YFZBN+g@mail.gmail.com>
+Subject: Re: [git pull] m68knommu fix for v4.20
+To:     gerg@linux-m68k.org
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-m68k@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The last user of cc-fullversion was removed by commit f2910f0e6835
-("powerpc: remove old GCC version checks").
+On Sun, Oct 28, 2018 at 8:20 PM Greg Ungerer <gerg@linux-m68k.org> wrote:
+>
+> Only a single change to fix an out of bounds array access when
+> parsing boot command line.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Pulled,
 
- Documentation/kbuild/makefiles.txt | 15 ---------------
- scripts/Kbuild.include             |  4 ----
- 2 files changed, 19 deletions(-)
-
-diff --git a/Documentation/kbuild/makefiles.txt b/Documentation/kbuild/makefiles.txt
-index 7b6a2b2..8da26c6 100644
---- a/Documentation/kbuild/makefiles.txt
-+++ b/Documentation/kbuild/makefiles.txt
-@@ -537,21 +537,6 @@ more details, with real examples.
- 	The third parameter may be a text as in this example, but it may also
- 	be an expanded variable or a macro.
- 
--    cc-fullversion
--	cc-fullversion is useful when the exact version of gcc is needed.
--	One typical use-case is when a specific GCC version is broken.
--	cc-fullversion points out a more specific version than cc-version does.
--
--	Example:
--		#arch/powerpc/Makefile
--		$(Q)if test "$(cc-fullversion)" = "040200" ; then \
--			echo -n '*** GCC-4.2.0 cannot compile the 64-bit powerpc ' ; \
--			false ; \
--		fi
--
--	In this example for a specific GCC version the build will error out
--	explaining to the user why it stops.
--
-     cc-cross-prefix
- 	cc-cross-prefix is used to check if there exists a $(CC) in path with
- 	one of the listed prefixes. The first prefix where there exist a
-diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
-index ca21a35..19a63db 100644
---- a/scripts/Kbuild.include
-+++ b/scripts/Kbuild.include
-@@ -147,10 +147,6 @@ cc-name = $(shell $(CC) -v 2>&1 | grep -q "clang version" && echo clang || echo
- # cc-version
- cc-version = $(shell $(CONFIG_SHELL) $(srctree)/scripts/gcc-version.sh $(CC))
- 
--# cc-fullversion
--cc-fullversion = $(shell $(CONFIG_SHELL) \
--	$(srctree)/scripts/gcc-version.sh -p $(CC))
--
- # cc-ifversion
- # Usage:  EXTRA_CFLAGS += $(call cc-ifversion, -lt, 0402, -O1)
- cc-ifversion = $(shell [ $(cc-version) $(1) $(2) ] && echo $(3) || echo $(4))
--- 
-2.7.4
-
+                    Linus
