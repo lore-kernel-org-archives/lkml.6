@@ -2,101 +2,200 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D8C8C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:17:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EADBC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:18:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EC7B2082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:17:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EC7B2082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 40A3C2087A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:18:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40A3C2087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729284AbeJ2VFh (ORCPT
+        id S1729287AbeJ2VGb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 17:05:37 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:34077 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728950AbeJ2VFh (ORCPT
+        Mon, 29 Oct 2018 17:06:31 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:32836 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728947AbeJ2VGa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 17:05:37 -0400
-Received: by mail-vs1-f68.google.com with SMTP id q15so5075735vso.1
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 05:17:11 -0700 (PDT)
+        Mon, 29 Oct 2018 17:06:30 -0400
+Received: by mail-io1-f69.google.com with SMTP id b4-v6so4216862ioq.0
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 05:18:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qSVkAw/Y1q+GnTaKXbQTtIS0SXOXQO9BQN0hPdqlisQ=;
-        b=KatIYukCuY0/AQI2khc7UYQXLl2PyG9P57eLQZY3g+uYPuTPw2KStDBrXCH6R48dBX
-         JZWIgGlCFUTGKSL5LNIYQmzqZVA2rBd4LymSh9nF/q9ek3zI0dB+CbZSGhCszX9qTq19
-         JVW7rUZDA5x78JdBZiaHa+YPWF+3EbzmNP2O6V8NMOl1tzPs7TntKrFrmGAcL4LFILW3
-         utSXUumwqJnRniJe1C9qA0HB0WZ3cxDgLZcaYs04Yy1vwupCNknp+i7MYPRUE4oVxVZA
-         GwpWWqy73SGyDhXk0ls0GTQuEtJe3zff6oKdQ8iRkTKljaUtviR8XM5fGq3F5kEJOMFG
-         /Ixw==
-X-Gm-Message-State: AGRZ1gLW5i/ml9rTRZf3mw3TIMCxHZYBACFUAsAKxO6qy3aC5siLkzvx
-        gGj1f2il48l1GqiG5WIvU+zUVvEX5Ri4vG1SpV5mOw==
-X-Google-Smtp-Source: AJdET5d2gj+o+vp4VKEBLRJWW9uk2npT6zAhPeDQqBOoIGUUKAn1y62g819TQk6oDKQGUW6R+WOuHpkMFyMWlbz/Y3k=
-X-Received: by 2002:a67:d107:: with SMTP id u7mr2588063vsi.63.1540815430807;
- Mon, 29 Oct 2018 05:17:10 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=txKW0Ozi7yfljAQIOTmhvFeA6iwOoPXH5cTxdWPD43I=;
+        b=GQvzYKZZZC5rsJG1NeQpgi/fbbScQBiS/0YirQ9pzUvG73YmoReE9omSw9freP7Oep
+         ImpdPCQI+ts7ijoXAN5AXxJFtW7X5FRmEqAvQ3mMX3gza0HStWhNrOJEV+NYbUfinqzw
+         +kF0M4gj2wN8o1VMZXGmaPX3hZvrpssBlHr8iFc61tpnvmM+WjPzbr6KxSt8AgyXNVVT
+         LZl8deIpBW7VlcKMrJc+T3Gsr9QX/BSfITnpRkZ0wnkbP2Pygi4wB7wEcYc+liwHxV3N
+         9bjNc6ULudu0DZd4aLuZJKE/Ovx5+VGUK6GezFQtKs0UlUtwqxgrcfa/T78jbBJH6c+j
+         7qkw==
+X-Gm-Message-State: AGRZ1gK2VOsCh7VBaUlHCX6gmnGfltJ6+uTJtGEf56UBdmVUwV4FeCJJ
+        iaTpOaJNWY2e2gUfq1ZO0jo5AxCa6FFVD5JpKB75MRvBWheS
+X-Google-Smtp-Source: AJdET5eWfx2NGg0XDjsKF5EmNh8WoTVmECzCzufmb6dSEdcEM40Cdtl5P3RcIkfqGW4xNUsxnlK200ktB8C1i/c6Yzpm6zRO9sNL
 MIME-Version: 1.0
-References: <20181029170212.4a34959f@canb.auug.org.au> <20181029063319.GC8104@Ubuntu-DTI>
- <20181029204142.7dbce8d8@canb.auug.org.au> <20181029114225.GA2395@zrhn9910b> <20181029230841.1d9625ce@canb.auug.org.au>
-In-Reply-To: <20181029230841.1d9625ce@canb.auug.org.au>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 29 Oct 2018 13:16:59 +0100
-Message-ID: <CAMuHMdXM+Zcx_CnwPZyvz7JUD+r1eQ-MFv43kKAg1_cNMhLzvQ@mail.gmail.com>
-Subject: Re: linux-next: Tree for Oct 29
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     linux_dti@icloud.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        webmaster@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a05:660c:743:: with SMTP id a3mr3454165itl.36.1540815483654;
+ Mon, 29 Oct 2018 05:18:03 -0700 (PDT)
+Date:   Mon, 29 Oct 2018 05:18:03 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000091818d05795d0f2f@google.com>
+Subject: KASAN: use-after-free Read in __vb2_perform_fileio
+From:   syzbot <syzbot+4180ff9ca6810b06c1e9@syzkaller.appspotmail.com>
+To:     kyungmin.park@samsung.com, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, m.szyprowski@samsung.com,
+        mchehab@kernel.org, pawel@osciak.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 1:09 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> On Mon, 29 Oct 2018 12:42:26 +0100 damian <linux_dti@icloud.com> wrote:
-> > On Mon, 29. Oct 20:41, Stephen Rothwell wrote:
-> > > On Mon, 29 Oct 2018 07:33:19 +0100 Damian Tometzki <linux_dti@icloud.com> wrote:
-> > > >
-> > > > on the site isnt available the new linux-next ?
-> > > > Only the old one.
-> > > >
-> > > > https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> > >
-> > > It seems to be there now (at least for me).  Maybe just mirroring delays?
-> >
-> > i tried it from diffrent localtion and different systems the same sitation. My last tag what i
-> > see is: linux-next-next-20181019.tar.gz
->
-> so, I see:
->
-> $ dig -tcname +short git.kernel.org
-> syd.git.kernel.org.
-> $ git ls-remote git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git | grep 20181029
-> 0e2adec0725178efbb0b7019ee0198d93ba54843        refs/tags/next-20181029
-> b179f0826c6a13563c5ce0554c6da6748a1fa699        refs/tags/next-20181029^{}
-> $ git ls-remote https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git | grep 20181029
-> 0e2adec0725178efbb0b7019ee0198d93ba54843        refs/tags/next-20181029
-> b179f0826c6a13563c5ce0554c6da6748a1fa699        refs/tags/next-20181029^{}
->
-> cc'ing the kernel.org admins ...
+Hello,
 
-I can confirm syd.git.kernel.org and ord.git.kernel.org have it, but
-fra.git.kernel.org (my default) hasn't.
+syzbot found the following crash on:
 
-Gr{oetje,eeting}s,
+HEAD commit:    8c60c36d0b8c Add linux-next specific files for 20181019
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=13c73a33400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ddc97ab84fb1ff2a
+dashboard link: https://syzkaller.appspot.com/bug?extid=4180ff9ca6810b06c1e9
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13d0dbe5400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1688efc5400000
 
-                        Geert
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+4180ff9ca6810b06c1e9@syzkaller.appspotmail.com
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+==================================================================
+BUG: KASAN: use-after-free in __vb2_perform_fileio+0x10da/0x1210  
+drivers/media/common/videobuf2/videobuf2-core.c:2391
+Read of size 4 at addr ffff8801b6c52c5c by task syz-executor081/7270
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+CPU: 0 PID: 7270 Comm: syz-executor081 Not tainted  
+4.19.0-rc8-next-20181019+ #99
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
+  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
+  __vb2_perform_fileio+0x10da/0x1210  
+drivers/media/common/videobuf2/videobuf2-core.c:2391
+  vb2_read+0x3b/0x50 drivers/media/common/videobuf2/videobuf2-core.c:2502
+  vb2_fop_read+0x20a/0x400  
+drivers/media/common/videobuf2/videobuf2-v4l2.c:898
+  v4l2_read+0x168/0x220 drivers/media/v4l2-core/v4l2-dev.c:317
+  __vfs_read+0x117/0x9b0 fs/read_write.c:416
+  vfs_read+0x17f/0x3c0 fs/read_write.c:452
+  ksys_pread64+0x181/0x1b0 fs/read_write.c:626
+  __do_sys_pread64 fs/read_write.c:636 [inline]
+  __se_sys_pread64 fs/read_write.c:633 [inline]
+  __x64_sys_pread64+0x97/0xf0 fs/read_write.c:633
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x447a59
+Code: e8 fc e6 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 4b c5 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fffcdab1c58 EFLAGS: 00000286 ORIG_RAX: 0000000000000011
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000447a59
+RDX: 00000000000000d6 RSI: 0000000020000140 RDI: 0000000000000003
+RBP: 0000000000000000 R08: 000000000000000f R09: 000000000000000f
+R10: 0000000000000000 R11: 0000000000000286 R12: 000000000000000f
+R13: 000000000000b864 R14: 0000000000000000 R15: 0000000000000000
+
+Allocated by task 7270:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+  kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
+  kmalloc include/linux/slab.h:546 [inline]
+  kzalloc include/linux/slab.h:741 [inline]
+  __vb2_init_fileio+0x1ce/0xc90  
+drivers/media/common/videobuf2/videobuf2-core.c:2236
+  __vb2_perform_fileio+0xcfb/0x1210  
+drivers/media/common/videobuf2/videobuf2-core.c:2370
+  vb2_read+0x3b/0x50 drivers/media/common/videobuf2/videobuf2-core.c:2502
+  vb2_fop_read+0x20a/0x400  
+drivers/media/common/videobuf2/videobuf2-v4l2.c:898
+  v4l2_read+0x168/0x220 drivers/media/v4l2-core/v4l2-dev.c:317
+  __vfs_read+0x117/0x9b0 fs/read_write.c:416
+  vfs_read+0x17f/0x3c0 fs/read_write.c:452
+  ksys_pread64+0x181/0x1b0 fs/read_write.c:626
+  __do_sys_pread64 fs/read_write.c:636 [inline]
+  __se_sys_pread64 fs/read_write.c:633 [inline]
+  __x64_sys_pread64+0x97/0xf0 fs/read_write.c:633
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 7274:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3817
+  __vb2_cleanup_fileio+0xf8/0x160  
+drivers/media/common/videobuf2/videobuf2-core.c:2329
+  vb2_core_queue_release+0x1e/0x80  
+drivers/media/common/videobuf2/videobuf2-core.c:2052
+  vb2_queue_release drivers/media/common/videobuf2/videobuf2-v4l2.c:672  
+[inline]
+  _vb2_fop_release+0x1d2/0x2b0  
+drivers/media/common/videobuf2/videobuf2-v4l2.c:843
+  vb2_fop_release+0x77/0xc0  
+drivers/media/common/videobuf2/videobuf2-v4l2.c:857
+  vivid_fop_release+0x18e/0x440 drivers/media/platform/vivid/vivid-core.c:474
+  v4l2_release+0xfb/0x1a0 drivers/media/v4l2-core/v4l2-dev.c:448
+  __fput+0x3bc/0xa70 fs/file_table.c:279
+  ____fput+0x15/0x20 fs/file_table.c:312
+  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
+  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8801b6c52940
+  which belongs to the cache kmalloc-1k of size 1024
+The buggy address is located 796 bytes inside of
+  1024-byte region [ffff8801b6c52940, ffff8801b6c52d40)
+The buggy address belongs to the page:
+page:ffffea0006db1480 count:1 mapcount:0 mapping:ffff8801da800ac0 index:0x0  
+compound_mapcount: 0
+flags: 0x2fffc0000010200(slab|head)
+raw: 02fffc0000010200 ffffea00071f9e88 ffffea0006db1608 ffff8801da800ac0
+raw: 0000000000000000 ffff8801b6c52040 0000000100000007 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801b6c52b00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801b6c52b80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8801b6c52c00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                     ^
+  ffff8801b6c52c80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801b6c52d00: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
