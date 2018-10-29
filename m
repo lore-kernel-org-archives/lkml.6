@@ -2,57 +2,59 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71FE1C46475
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:43:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5239EC46475
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:43:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E1512084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:43:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AE772084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:43:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TTOFD26R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E1512084A
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="C+RgILs3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AE772084A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729699AbeJ2Say (ORCPT
+        id S1729723AbeJ2SbE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 14:30:54 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44683 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729558AbeJ2Sax (ORCPT
+        Mon, 29 Oct 2018 14:31:04 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40672 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729646AbeJ2SbC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 14:30:53 -0400
-Received: by mail-pf1-f195.google.com with SMTP id j13-v6so218980pff.11
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 02:43:01 -0700 (PDT)
+        Mon, 29 Oct 2018 14:31:02 -0400
+Received: by mail-pg1-f193.google.com with SMTP id o14-v6so3611054pgv.7
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 02:43:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=OZP8Inh49iXIb0437lQ+4o3hyTQZdb+CFCCyilHmvkA=;
-        b=TTOFD26RuZniRvsjRVyvUxVislQP+1vhMTpOV7SzVLeBI9s46CWaqAHxDEi/iM6Cj1
-         Wcsqxe2v8MzVEUxoJyQELfRR46immRCuxORz0eCDr1T+VU1OSvMhWLK5Wd0WpTszJ941
-         gyBBZKEL623GKcwviZUyxprVEoojFqQTDp4CI=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=wUFCaMP2U/9XAPvBBvehrJOX1gaBUfBxuvntsZn9/3s=;
+        b=C+RgILs3dUJi3yraFCTU5KozzhnQqfd6aNaaH6g/niqa6DtxemChy0W8NGhvefe0hc
+         eXZhBhncQ68vRSxmRQKktJb0TZtI/J6x6Rq6MfoPajHK5VBQBSxK/spann2Yv2cBvsDI
+         RRb8GoLdALuemVCAody9oaWDnCsVGkEliQCd4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=OZP8Inh49iXIb0437lQ+4o3hyTQZdb+CFCCyilHmvkA=;
-        b=UQVVw/rGW+y6IkOFtbo6MdBIa2KnL4uxDCJsO9z1/cRJagBqE2nNqTJ5d/K760PPlq
-         L/xHiFnHSkc/m+Wz7PC8gdvzkaVcC6yvPFfXZzIJ+/Piw0+ZK4rg49tRvkLJphZYbU/W
-         Y8a7s7W3FrN4IhARKaacCiO27a6qN7Wf6JPyBZP+g9yF2xZwKioDdWNWfP2+UIBqp9MB
-         yb9BlUT97xK30eInoNX23rHj50aelAXMTFfvv8/Uqe0m59H99Sjt3Ok7ILz1kKmK3hqY
-         cmJrhHcgTWAvK9U9tPiqtu9dYpXma++IFHkGTDGk7wwhc7CU4qHS3JP/zOocobEPc3xz
-         xUbQ==
-X-Gm-Message-State: AGRZ1gK0Js3i+vWw9Urvumsw+5N05SDbr2LpbOvbBfm+CygO8R1zmKJV
-        cnv5JcHTitfPQ871cx+IqRUf
-X-Google-Smtp-Source: AJdET5eoL7cH6BScLxi+SsHWX+Do0uTl/cX+hhur9XePoMU1nEeYwZq28usjxmhr+CFCKjhKR0912Q==
-X-Received: by 2002:a63:5308:: with SMTP id h8-v6mr12856165pgb.358.1540806180500;
-        Mon, 29 Oct 2018 02:43:00 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=wUFCaMP2U/9XAPvBBvehrJOX1gaBUfBxuvntsZn9/3s=;
+        b=jRgN8HyWIxmBomfp7UMZvgz1omkxvs0yg8H0FZ8MGu+PqxxqmQP0oJddvDaBcKlQpj
+         dpP17lYurr9JNplbEASV6mIGH7ddOfWF3S4JM3Dr5nszQ5rgJ0mM2N44LF3BrnD0ws92
+         hNTRBk2xxe76WPH7G95IL1sxPgqoOJT75IWsLXuqCKMNZLZPMlLfUiMCSpHMZ8yg2SY7
+         A/yLVp7l+n2SIb6/K5uTIB9956Eu4ccgbTeicAu6TRYvbFYSZdpon+7ht295olgSLqad
+         ljSH9SWL7/ddN3qPgQOc6s21xDc1XLc5h7hgdVREkzj9JVK9DliTNq9d/u47dy4J90nD
+         gZfg==
+X-Gm-Message-State: AGRZ1gL139uvp9InXFgOuCLk6ioAgNqNsdH6CbuLt63XRVjwoE3rpaa6
+        U95Qdi92uQzBKZVotLOPoouc
+X-Google-Smtp-Source: AJdET5fS54SjrO378Z1st9Q6dtXGznAhI4v8BaKMT7ORh4ePfM1UD/S6TF7rxeSXlreeNQeHE5nKhA==
+X-Received: by 2002:a63:1c1b:: with SMTP id c27-v6mr13211072pgc.351.1540806189478;
+        Mon, 29 Oct 2018 02:43:09 -0700 (PDT)
 Received: from localhost.localdomain ([2409:4072:6091:9d4b:9d82:66b9:3ee6:ffac])
-        by smtp.gmail.com with ESMTPSA id b62-v6sm21162056pfa.159.2018.10.29.02.42.50
+        by smtp.gmail.com with ESMTPSA id b62-v6sm21162056pfa.159.2018.10.29.02.43.01
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 02:42:59 -0700 (PDT)
+        Mon, 29 Oct 2018 02:43:09 -0700 (PDT)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     robh@kernel.org, heiko@sntech.de, ezequiel@collabora.com,
         xuwei5@hisilicon.com, michal.simek@xilinx.com, pavel@ucw.cz,
@@ -64,70 +66,128 @@ Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
         amit.kucheria@linaro.org, linus.walleij@linaro.org,
         koen.kooi@linaro.org, nicolas.dechesne@linaro.org,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 0/7] Standardize onboard LED support for 96Boards
-Date:   Mon, 29 Oct 2018 15:12:38 +0530
-Message-Id: <20181029094245.7886-1-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 1/7] arm64: dts: rockchip: ficus: Add on-board LED support
+Date:   Mon, 29 Oct 2018 15:12:39 +0530
+Message-Id: <20181029094245.7886-2-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181029094245.7886-1-manivannan.sadhasivam@linaro.org>
+References: <20181029094245.7886-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset standardizes the onboard LEDs on 96Boards by maintaining
-common labels and triggers as below:
+Add on-board LED support for Ficus board based on the following
+standard used by other 96Boards:
 
-green:user1  default-trigger: heartbeat
-green:user2  default-trigger: mmc0/disk-activity (onboard-storage)
-green:user3  default-trigger: mmc1 (SD card)
-green:user4  default-trigger: none, panic-indicator
-yellow:wlan  default-trigger: phy0tx
-blue:bt      default-trigger: hci0-power
+red:user1  default-trigger: heartbeat
+red:user2  default-trigger: mmc0/disk-activity (onboard-storage)
+red:user3  default-trigger: mmc1 (SD-card)
+red:user4  default-trigger: none, panic-indicator
+red:wlan   default-trigger: phy0tx
+red:bt     default-trigger: hci0-power
 
-This standardization is required to provide a common behaviour of LEDs
-across all mainline supported 96Boards and also making it easier to
-control it using an userspace library like MRAA.
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
+ arch/arm64/boot/dts/rockchip/rk3399-ficus.dts | 78 +++++++++++++++++++
+ 1 file changed, 78 insertions(+)
 
-For Rock960 and Ficus boards, the LED support is added in this patchset.
-Rest of the boards are converted to adopt the standard.
-
-Note: Since there is no UFS trigger available for now, user2 LED trigger
-is set to none on HiKey960.
-
-Thanks,
-Mani
-
-Changes in v3:
-
-* Added missing Signed-off-by tag for APQ8016 patch
-* Added Acked-by from Amit
-* Fixed user LED node names for HiKey board
-
-Changes in v2:
-
-* Removed device-name from LED labels as per the suggestion from Simon
-  and Pavel
-* Adopted APQ8016 SBC (Dragonboard410c)
-* Tested the Ficus patch on Ficus V1.1 board
-* CCed LED mailing list
-
-Manivannan Sadhasivam (7):
-  arm64: dts: rockchip: ficus: Add on-board LED support
-  arm64: dts: rockchip: rock960: Add on-board LED support
-  arm64: dts: hisilicon: hikey: Standardize LED labels and triggers
-  arm64: dts: hisilicon: hikey960: Standardize LED labels and triggers
-  arm64: dts: hisilicon: poplar: Standardize LED labels and triggers
-  arm64: dts: xilinx: ultra96: Standardize LED labels and triggers
-  arm64: dts: qcom: apq8016-sbc: Standardize LED labels
-
- .../boot/dts/hisilicon/hi3660-hikey960.dts    | 18 ++---
- .../boot/dts/hisilicon/hi3798cv200-poplar.dts | 13 +--
- .../arm64/boot/dts/hisilicon/hi6220-hikey.dts | 25 +++---
- arch/arm64/boot/dts/qcom/apq8016-sbc.dtsi     | 12 +--
- arch/arm64/boot/dts/rockchip/rk3399-ficus.dts | 78 ++++++++++++++++++
- .../boot/dts/rockchip/rk3399-rock960.dts      | 79 +++++++++++++++++++
- .../boot/dts/xilinx/zynqmp-zcu100-revC.dts    | 15 ++--
- 7 files changed, 200 insertions(+), 40 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-ficus.dts b/arch/arm64/boot/dts/rockchip/rk3399-ficus.dts
+index cce266da28cd..027d428917b8 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-ficus.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-ficus.dts
+@@ -23,6 +23,52 @@
+ 		clock-output-names = "clkin_gmac";
+ 		#clock-cells = <0>;
+ 	};
++
++	leds {
++		compatible = "gpio-leds";
++		pinctrl-names = "default";
++		pinctrl-0 = <&user_led1>, <&user_led2>, <&user_led3>,
++			    <&user_led4>, <&wlan_led>, <&bt_led>;
++
++		user_led1 {
++			label = "red:user1";
++			gpios = <&gpio4 25 0>;
++			linux,default-trigger = "heartbeat";
++		};
++
++		user_led2 {
++			label = "red:user2";
++			gpios = <&gpio4 26 0>;
++			linux,default-trigger = "mmc0";
++		};
++
++		user_led3 {
++			label = "red:user3";
++			gpios = <&gpio4 30 0>;
++			linux,default-trigger = "mmc1";
++		};
++
++		user_led4 {
++			label = "red:user4";
++			gpios = <&gpio1 0 0>;
++			panic-indicator;
++			linux,default-trigger = "none";
++		};
++
++		wlan_active_led {
++			label = "red:wlan";
++			gpios = <&gpio1 1 0>;
++			linux,default-trigger = "phy0tx";
++			default-state = "off";
++		};
++
++		bt_active_led {
++			label = "red:bt";
++			gpios = <&gpio1 4 0>;
++			linux,default-trigger = "hci0-power";
++			default-state = "off";
++		};
++	};
+ };
+ 
+ &gmac {
+@@ -66,6 +112,38 @@
+ 				<4 27 RK_FUNC_GPIO &pcfg_pull_none>;
+ 		};
+ 	};
++
++	leds {
++		user_led1: user_led1 {
++			rockchip,pins =
++				<4 25 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++		user_led2: user_led2 {
++			rockchip,pins =
++				<4 26 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++		user_led3: user_led3 {
++			rockchip,pins =
++				<4 30 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++		user_led4: user_led4 {
++			rockchip,pins =
++				<1 0 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++		wlan_led: wlan_led {
++			rockchip,pins =
++				<1 1 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++		bt_led: bt_led {
++			rockchip,pins =
++				<1 4 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
+ };
+ 
+ &usbdrd_dwc3_0 {
 -- 
 2.17.1
 
