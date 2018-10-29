@@ -2,170 +2,232 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7955BC2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:02:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73A08C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:03:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D3892064C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:02:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3682C20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:03:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b="gDWDofbE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D3892064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=hammerspace.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K5oTUjMh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3682C20870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728343AbeJ3CwS (ORCPT
+        id S1728350AbeJ3Cwz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 22:52:18 -0400
-Received: from mail-cys01nam02on0138.outbound.protection.outlook.com ([104.47.37.138]:14119
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728104AbeJ3CwR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 22:52:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZL2SdQK/hsKdaZSn/udiKusH2sOfMhQNPKJFZHpMEDg=;
- b=gDWDofbEsd0q/Jpq0LnlIoxjMti7fIxGPrZSF+DtObfgDVLD+Pzgl9HxE3KhDWOHRQJl9IARrGR/E87NwLpurE/nIbAPd3zMGIMJoxhP3elzY23lRh7yXZdRRm63jL5ZXjXCYxtB/2nj8Qzx1tO/QtjazPWYW0Bj52o7NZ2us5k=
-Received: from SN6PR13MB2494.namprd13.prod.outlook.com (52.135.95.148) by
- SN6SPR01MB08.namprd13.prod.outlook.com (52.132.115.30) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.16; Mon, 29 Oct 2018 18:02:30 +0000
-Received: from SN6PR13MB2494.namprd13.prod.outlook.com
- ([fe80::205a:69c2:1cf5:b475]) by SN6PR13MB2494.namprd13.prod.outlook.com
- ([fe80::205a:69c2:1cf5:b475%3]) with mapi id 15.20.1294.018; Mon, 29 Oct 2018
- 18:02:30 +0000
-From:   Trond Myklebust <trondmy@hammerspace.com>
-To:     "viro@ZenIV.linux.org.uk" <viro@ZenIV.linux.org.uk>,
-        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "julien.thierry@arm.com" <julien.thierry@arm.com>
-CC:     "bfields@fieldses.org" <bfields@fieldses.org>,
-        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] SUNRPC: Fix iter_iov_*vec warnings
-Thread-Topic: [PATCH] SUNRPC: Fix iter_iov_*vec warnings
-Thread-Index: AQHUb7CJz8h5owhNWEOeLWVlebGhlKU2g7oA
-Date:   Mon, 29 Oct 2018 18:02:30 +0000
-Message-ID: <13c918d699c45a3116b61e396d7c6eb881098940.camel@hammerspace.com>
-References: <1540835701-23176-1-git-send-email-julien.thierry@arm.com>
-In-Reply-To: <1540835701-23176-1-git-send-email-julien.thierry@arm.com>
-Accept-Language: en-US, en-GB
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=trondmy@hammerspace.com; 
-x-originating-ip: [68.40.195.73]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN6SPR01MB08;6:y1nrb9aY/16xhGGrKKh+7ZP6J0AD1/iPoGTUlCTTiK9bFczNq4vMUFNcVSDJtCtScm6CyAvDaC2BkAEkVtUi3fzTk1oIi0EOOl6Wn5perGOw6OcwWD/z+VuUYZzoTMKUcmkcf2jw7rANiirNggIYHOeUqaqhVFO+HHg86qbX31s19TCWd2LjMzeSUXSw4HQGZDsDnYaTUCPM5yIT2ipsdKtmiqYyS1c3JKsh1NzvsX9mk4HoGh2/O/U/GjTm5Q6lQQXhEAW8DMmdA4H3SdqPGE7GHvzWlrM4FBPU/SWlOy2BxxGgPBC/YB3lFYwp0+iEdPJ3JlMep7qEzhG1H6686qC7oHcyLpeHizzPWEOqHnB5JLWz9j/Xum5rUX5MC3fvqGLDoBravNrpTbpEsqwcCGK14TFwIxKYqYbNOv/U8nuviBvefDduCwuLLhFVKNXvadaILhZ1CQSyg5FTPrzuDg==;5:AUbt5HDI7uOoRlDKOBleEPx2ogJ09dJpliezjyV1GAHiTAWEt0VdcGQnlszCquBLzF7FL5cVDeZwjLl6QXlHYYd+NOwrIrneoCUmb09sjL7wGxW41cubI6xoY9hzYzdOqFFMchCkQAH6VcUQoDk9xEzvD2VMErxweMFovMwKlVk=;7:JCr8sVu2xcsTNmSBz5PE1P9mXl21+kshQB7aScLRBZ2oDuCbJ/kY7/B0iIBHDjxaHyTrwiOr+Oa42lUkgml7mh85MaOmX/9W8I270efhZwtlIyPc1wlHe46UqD2NQUW8qLQISB1Nt56k9dng0Vz01Q==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 0ba4f72d-0734-4841-8666-08d63dc8b1c8
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:SN6SPR01MB08;
-x-ms-traffictypediagnostic: SN6SPR01MB08:
-x-microsoft-antispam-prvs: <SN6SPR01MB0899254666361618D73FCAB8F30@SN6SPR01MB08.namprd13.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(180628864354917);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231382)(944501410)(52105095)(148016)(149066)(150057)(6041310)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:SN6SPR01MB08;BCL:0;PCL:0;RULEID:;SRVR:SN6SPR01MB08;
-x-forefront-prvs: 084080FC15
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(39830400003)(396003)(346002)(376002)(366004)(51234002)(189003)(199004)(6246003)(4326008)(25786009)(36756003)(7736002)(256004)(476003)(53936002)(14444005)(99286004)(305945005)(446003)(2906002)(2616005)(68736007)(6116002)(478600001)(3846002)(45080400002)(106356001)(486006)(105586002)(118296001)(66066001)(11346002)(71190400001)(14454004)(2900100001)(4001150100001)(6436002)(6486002)(97736004)(6512007)(71200400001)(2501003)(5250100002)(110136005)(316002)(54906003)(26005)(186003)(86362001)(8676002)(8936002)(2201001)(81156014)(229853002)(102836004)(81166006)(6506007)(76176011)(15974865002)(5660300001);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6SPR01MB08;H:SN6PR13MB2494.namprd13.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: hammerspace.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: GF6BfG1SrLRjd/AqqN15DTlJQNW7iETWl+cQOzansq+8uaK0e8VdQpPZSSUc8TNP8MfNJNbhGJIbNsa5KlllqRZAKAh5Ek044CHAnfkH9PY8yfgIxAsKLQAJktyuFVMDpkn/2JRQS0aHjAd0TrNIo3rqMN1SZQI8PiYl7Ug1DcUpeyoVRlvAygAL9fNyIdfHI+V6ViNCd57tbZSpPguLoM/k3g7NWzVl/mjHtUD+pRTmX9aGcBS7TA1MODxrC5I4jVFr/lIzd8UNimt18nM3ozmtecaB4BaZ9r6iTR9cO9atbgTnCptYeJLA0NGx0Q0bMZRV+PMJ/qPOyOiWLCaMlEKvyjS6O4/m1JBkX+XZVAQ=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <539E608E8CEB8F4DB58C4F682597CA9A@namprd13.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Mon, 29 Oct 2018 22:52:55 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:33622 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728161AbeJ3Cwz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 22:52:55 -0400
+Received: by mail-lj1-f193.google.com with SMTP id z21-v6so8748103ljz.0;
+        Mon, 29 Oct 2018 11:03:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=t6xiqK4v9iNRHHQrMF7tqrJ+DDjMcL+GLezehYMFE4c=;
+        b=K5oTUjMhkg0q73FRNd8lyRNADWFZDkJt9LISlnPQIxTtc+Q6h08RFofvPO4Y3rwj1u
+         b4FQOGE3/Rijvbh8EE8BGNW34pZAtO5YASQjhOKKGR44BMZr9DLC3kr7fXi3l5v1zPHy
+         p0gJpAlSs2wGJuASWXTN9GZrT57bwtoS8swLMRd+6oMY3gjexBXNqpBv2pkgIGSDFyo8
+         OfcefNTbn6p3msJF87ecWlyGsDzP2ojgogr7EidCyJg+rUEOmry8Wn9ZmAdaql8rX1wI
+         S9xZDajHlX45D08PycYyVIJHdcPLfxghji27kbmZ3+l3EoQFvHb6VgZJSllWzP1Ra8Wb
+         Dicg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=t6xiqK4v9iNRHHQrMF7tqrJ+DDjMcL+GLezehYMFE4c=;
+        b=IHvDVwJs52sMghi+qd39uPia3DRF5cgAJyzV9GuZYVjmqdSpLEFupZhKPU+FCNsWFZ
+         POf0qodel7OUGOQXdxYwB7C9ax/x5AfxfN6Bw4CSqJE5QwJX3cVDBK6u5eFWQXJkKSYt
+         Qa4etH2DUlwv5EwRMcbcdo/B41+zUvciH8JhWDDu3+yHFeQyUIIL6d4t+zD9QK0J2sUb
+         KLafNjhu1YhlNNkcLjzamdo/NRBwf0abdowc17efFR5U/WwPZy76QmJEdtO1/YKFTGvP
+         79Kk2cugGCQSnfUcOacE1WsEgXidUgHC8fsL7SaBSuFMBozIS9xM6EjpTOG2OR03ZHPG
+         MMPA==
+X-Gm-Message-State: AGRZ1gLyHyegjFxrxgp83mCxJMSRVPdvf0Y6EmbnjgkaJHxG4m2lPdHb
+        C49s3RomxdPZEbe5QvY/I5pDTl5NsyotJg==
+X-Google-Smtp-Source: AJdET5fCEGLpaah0Tq8vpMZOtvEPJ0sEGUnR3jKVv9n8dFJVLyRt777baMJHNcoCLOLNj4iobj9p2A==
+X-Received: by 2002:a2e:92:: with SMTP id e18-v6mr10962931lji.130.1540836190393;
+        Mon, 29 Oct 2018 11:03:10 -0700 (PDT)
+Received: from ?IPv6:2001:14bb:52:7be:f0bf:dd2d:f008:5213? (dmkd798g-7z2-yccwcp-4.rev.dnainternet.fi. [2001:14bb:52:7be:f0bf:dd2d:f008:5213])
+        by smtp.gmail.com with ESMTPSA id x29-v6sm1897421ljb.69.2018.10.29.11.03.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Oct 2018 11:03:09 -0700 (PDT)
+Subject: Re: [PATCH 02/17] prmem: write rare for static allocation
+To:     Dave Hansen <dave.hansen@intel.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        kernel-hardening@lists.openwall.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     igor.stoppa@huawei.com, Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-3-igor.stoppa@huawei.com>
+ <23022d8a-dcef-20d5-cb07-a218b08b7b9a@intel.com>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <311d06ab-df6d-134a-82fc-1e2098f8a924@gmail.com>
+Date:   Mon, 29 Oct 2018 20:03:07 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-OriginatorOrg: hammerspace.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0ba4f72d-0734-4841-8666-08d63dc8b1c8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Oct 2018 18:02:30.3385
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6SPR01MB08
+In-Reply-To: <23022d8a-dcef-20d5-cb07-a218b08b7b9a@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Q2M6IEFsLCBzaW5jZSB0aGlzIHdhbnRzIHRvIGdvIHRocm91Z2ggaGlzIHB1bGwgcmVxdWVzdCAo
-dGhlIFJQQyBjb2RlDQpoYXMgYWxyZWFkeSBiZWVuIG1lcmdlZCkuDQoNCk9uIE1vbiwgMjAxOC0x
-MC0yOSBhdCAxNzo1NSArMDAwMCwgSnVsaWVuIFRoaWVycnkgd3JvdGU6DQo+IFdoaWxlIGJvb3Rp
-bmcgbGludXgtbmV4dCBvbiBKdW5vIHdpdGggcm9vdGZzIG92ZXIgTkZTLCB0aGUgZm9sbG93aW5n
-DQo+IHdhcm5pbmcgaXMgc3BhbW1lZCBvbiBrZXJuZWwgbG9nOg0KPiANCj4gWyAgIDE2Ljk4ODE5
-MF0gV0FSTklORzogQ1BVOiAxIFBJRDogNjgwIGF0IGxpYi9pb3ZfaXRlci5jOjEwODINCj4gaW92
-X2l0ZXJfa3ZlYysweDIwLzB4NDANCj4gWyAgIDE2Ljk5NTc3Nl0gTW9kdWxlcyBsaW5rZWQgaW46
-DQo+IFsgICAxNi45OTg4MDFdIENQVTogMSBQSUQ6IDY4MCBDb21tOiBrd29ya2VyL3UxMzowIE5v
-dCB0YWludGVkDQo+IDQuMTkuMC1uZXh0LTIwMTgxMDI5ICMyMjM4DQo+IFsgICAxNy4wMDY2NDBd
-IEhhcmR3YXJlIG5hbWU6IEFSTSBKdW5vIGRldmVsb3BtZW50IGJvYXJkIChyMCkgKERUKQ0KPiBb
-ICAgMTcuMDEyNTA1XSBXb3JrcXVldWU6IHhwcnRpb2QgeHNfc3RyZWFtX2RhdGFfcmVjZWl2ZV93
-b3JrZm4NCj4gWyAgIDE3LjAxODEwOF0gcHN0YXRlOiAwMDAwMDAwNSAobnpjdiBkYWlmIC1QQU4g
-LVVBTykNCj4gWyAgIDE3LjAyMjg1MV0gcGMgOiBpb3ZfaXRlcl9rdmVjKzB4MjAvMHg0MA0KPiBb
-ICAgMTcuMDI2NzMzXSBsciA6IHhzX3N0cmVhbV9kYXRhX3JlY2VpdmUrMHgxOTQvMHgzNzgNCj4g
-WyAgIDE3LjAzMTU1OV0gc3AgOiBmZmZmMDAwMDBiMDMzY2UwDQo+IFsgICAxNy4wMzQ4MzZdIHgy
-OTogZmZmZjAwMDAwYjAzM2NlMCB4Mjg6IDAwMDAwMDAwMDAwMDAwMDANCj4gWyAgIDE3LjA0MDA5
-NV0geDI3OiBmZmZmODAwOTc2MGI5ODcwIHgyNjogZmZmZjAwMDAwOTE3ZTFjOA0KPiBbICAgMTcu
-MDQ1MzUyXSB4MjU6IDAwMDAwMDAwMDAwMDAwMDAgeDI0OiBmZmZmODAwOTc2YTkxNTk4DQo+IFsg
-ICAxNy4wNTA2MTBdIHgyMzogZmZmZjAwMDAwOTE2OTAwMCB4MjI6IGZmZmY4MDA5Nzc1ZjAwMDAN
-Cj4gWyAgIDE3LjA1NTg2N10geDIxOiAwMDAwMDAwMDAwMDAwMDBjIHgyMDogZmZmZjgwMDk3NmE5
-MTU3OA0KPiBbICAgMTcuMDYxMTI0XSB4MTk6IGZmZmY4MDA5NzZhOTEwMDAgeDE4OiAwMDAwMDAw
-MDAwMDAwMDAwDQo+IFsgICAxNy4wNjYzODFdIHgxNzogMDAwMDAwMDAwMDAwMDAwMCB4MTY6IDAw
-MDAwMDAwMDAwMDAwMDANCj4gWyAgIDE3LjA3MTYzOV0geDE1OiAwMDAwMDAwMDAwMDAwNDAwIHgx
-NDogMDAwMDAwMDAwMDAwMDQwMA0KPiBbICAgMTcuMDc2ODk2XSB4MTM6IDAwMDAwMDAwMDAwMDA0
-MDAgeDEyOiAwMDAwMDAwMDAwMDAyZjI4DQo+IFsgICAxNy4wODIxNTNdIHgxMTogMDAwMDAwMDAw
-MDAwMDAwMCB4MTA6IDAwMDAwMDAwMDAwMDA5NjANCj4gWyAgIDE3LjA4NzQxMF0geDkgOiBmZmZm
-MDAwMDBiMDMzZDUwIHg4IDogZmVmZWZlZmVmZWZlZmVmZg0KPiBbICAgMTcuMDkyNjY3XSB4NyA6
-IGZmZmY4MDA5N2ZmOWQzODAgeDYgOiAwMDAwMDAwMDAwMDAwMDAwDQo+IFsgICAxNy4wOTc5MjRd
-IHg1IDogMDA2NDZmNjk3NDcyNzA3OCB4NCA6IDAwMDAwMDAwMDAwMDAwMGMNCj4gWyAgIDE3LjEw
-MzE4MV0geDMgOiAwMDAwMDAwMDAwMDAwMDAxIHgyIDogZmZmZjAwMDAwYjAzM2QzMA0KPiBbICAg
-MTcuMTA4NDM4XSB4MSA6IDAwMDAwMDAwMDAwMDAwMDIgeDAgOiBmZmZmMDAwMDBiMDMzZDUwDQo+
-IFsgICAxNy4xMTM2OTVdIENhbGwgdHJhY2U6DQo+IFsgICAxNy4xMTYxMTVdICBpb3ZfaXRlcl9r
-dmVjKzB4MjAvMHg0MA0KPiBbICAgMTcuMTE5NjUyXSAgeHNfc3RyZWFtX2RhdGFfcmVjZWl2ZV93
-b3JrZm4rMHgxMC8weDE4DQo+IFsgICAxNy4xMjQ1NjhdICBwcm9jZXNzX29uZV93b3JrKzB4MWM4
-LzB4MzE4DQo+IFsgICAxNy4xMjg1MzVdICB3b3JrZXJfdGhyZWFkKzB4NDgvMHg0MjgNCj4gWyAg
-IDE3LjEzMjE1OF0gIGt0aHJlYWQrMHhmOC8weDEyOA0KPiBbICAgMTcuMTM1MjY2XSAgcmV0X2Zy
-b21fZm9yaysweDEwLzB4MTgNCj4gWyAgIDE3LjEzODgwMV0gLS0tWyBlbmQgdHJhY2UgNjVjYmNk
-MmRkYWVlZjU5ZSBdLS0tDQo+IA0KPiBUaGlzIGlzIGxpa2VseSBhIGNsYXNoIGJldHdlZW4gdGhl
-IHJlY2VudCBhZGRpdGlvbiBvZiB2ZWN0b3INCj4gaXRlcmF0b3JzIHRvDQo+IFNVTlJQQyBhbmQg
-dGhlIHJlY2VudA0KPiBjb21taXQgYWE1NjNkN2JjYTZlODgyZWMyYmRhZTI0NjAzYzhmMDE2NDAx
-YTE0NCAoImlvdl9pdGVyOiBTZXBhcmF0ZQ0KPiB0eXBlIGZyb20gZGlyZWN0aW9uIGFuZCB1c2Ug
-YWNjZXNzb3IgZnVuY3Rpb25zIikgd2hpY2ggc2xpZ2h0bHkNCj4gY2hhbmdlcw0KPiB0aGUgdXNh
-Z2Ugb2YgdGhvc2UgaXRlcmF0b3JzIGJ5IHNwbGl0dGluZyB0eXBlIGFuZCBkaXJlY3Rpb24uDQo+
-IA0KPiBGaXggdGhpcyBieSBub3QgaW5jbHVkaW5nIHR5cGUgaW4gdGhlIGRpcmVjdGlvbiBvZiB0
-aGUgb3BlcmF0aW9uLg0KPiANCj4gRml4ZXM6IDI3N2U0YWI3ZDUzMGJmMjg3ZTAyYjY1Y2ZjZDNl
-YThmNDg5Nzg0ZjYgKCJTVU5SUEM6IFNpbXBsaWZ5DQo+IFRDUA0KPiByZWNlaXZlIGNvZGUgYnkg
-c3dpdGNoaW5nIHRvIHVzaW5nIGl0ZXJhdG9ycyIpDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBKdWxp
-ZW4gVGhpZXJyeSA8anVsaWVuLnRoaWVycnlAYXJtLmNvbT4NCj4gQ2M6IFRyb25kIE15a2xlYnVz
-dCA8dHJvbmQubXlrbGVidXN0QGhhbW1lcnNwYWNlLmNvbT4NCj4gQ2M6IEFubmEgU2NodW1ha2Vy
-IDxhbm5hLnNjaHVtYWtlckBuZXRhcHAuY29tPg0KPiBDYzogIkouIEJydWNlIEZpZWxkcyIgPGJm
-aWVsZHNAZmllbGRzZXMub3JnPg0KPiBDYzogSmVmZiBMYXl0b24gPGpsYXl0b25Aa2VybmVsLm9y
-Zz4NCj4gQ2M6ICJEYXZpZCBTLiBNaWxsZXIiIDxkYXZlbUBkYXZlbWxvZnQubmV0Pg0KPiBDYzog
-bmV0ZGV2QHZnZXIua2VybmVsLm9yZw0KPiBDYzogbGludXgta2VybmVsQHZnZXIua2VybmVsLm9y
-Zw0KPiAtLS0NCj4gIG5ldC9zdW5ycGMveHBydHNvY2suYyB8IDQgKystLQ0KPiAgMSBmaWxlIGNo
-YW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQg
-YS9uZXQvc3VucnBjL3hwcnRzb2NrLmMgYi9uZXQvc3VucnBjL3hwcnRzb2NrLmMNCj4gaW5kZXgg
-MWI1MWUwNC4uYWU3N2M3MSAxMDA2NDQNCj4gLS0tIGEvbmV0L3N1bnJwYy94cHJ0c29jay5jDQo+
-ICsrKyBiL25ldC9zdW5ycGMveHBydHNvY2suYw0KPiBAQCAtMzYxLDcgKzM2MSw3IEBAIHN0YXRp
-YyB2b2lkIHhzX2ZyZWVfcGVlcl9hZGRyZXNzZXMoc3RydWN0DQo+IHJwY194cHJ0ICp4cHJ0KQ0K
-PiAgeHNfcmVhZF9rdmVjKHN0cnVjdCBzb2NrZXQgKnNvY2ssIHN0cnVjdCBtc2doZHIgKm1zZywg
-aW50IGZsYWdzLA0KPiAgCQlzdHJ1Y3Qga3ZlYyAqa3ZlYywgc2l6ZV90IGNvdW50LCBzaXplX3Qg
-c2VlaykNCj4gIHsNCj4gLQlpb3ZfaXRlcl9rdmVjKCZtc2ctPm1zZ19pdGVyLCBSRUFEIHwgSVRF
-Ul9LVkVDLCBrdmVjLCAxLA0KPiBjb3VudCk7DQo+ICsJaW92X2l0ZXJfa3ZlYygmbXNnLT5tc2df
-aXRlciwgUkVBRCwga3ZlYywgMSwgY291bnQpOw0KPiAgCXJldHVybiB4c19zb2NrX3JlY3Ztc2co
-c29jaywgbXNnLCBmbGFncywgc2Vlayk7DQo+ICB9DQo+ICANCj4gQEAgLTM3MCw3ICszNzAsNyBA
-QCBzdGF0aWMgdm9pZCB4c19mcmVlX3BlZXJfYWRkcmVzc2VzKHN0cnVjdA0KPiBycGNfeHBydCAq
-eHBydCkNCj4gIAkJc3RydWN0IGJpb192ZWMgKmJ2ZWMsIHVuc2lnbmVkIGxvbmcgbnIsIHNpemVf
-dCBjb3VudCwNCj4gIAkJc2l6ZV90IHNlZWspDQo+ICB7DQo+IC0JaW92X2l0ZXJfYnZlYygmbXNn
-LT5tc2dfaXRlciwgUkVBRCB8IElURVJfQlZFQywgYnZlYywgbnIsDQo+IGNvdW50KTsNCj4gKwlp
-b3ZfaXRlcl9idmVjKCZtc2ctPm1zZ19pdGVyLCBSRUFELCBidmVjLCBuciwgY291bnQpOw0KPiAg
-CXJldHVybiB4c19zb2NrX3JlY3Ztc2coc29jaywgbXNnLCBmbGFncywgc2Vlayk7DQo+ICB9DQo+
-ICANCi0tIA0KVHJvbmQgTXlrbGVidXN0DQpDVE8sIEhhbW1lcnNwYWNlIEluYw0KNDMwMCBFbCBD
-YW1pbm8gUmVhbCwgU3VpdGUgMTA1DQpMb3MgQWx0b3MsIENBIDk0MDIyDQp3d3cuaGFtbWVyLnNw
-YWNlDQoNCg0K
+On 25/10/2018 01:24, Dave Hansen wrote:
+>> +static __always_inline bool __is_wr_after_init(const void *ptr, size_t size)
+>> +{
+>> +	size_t start = (size_t)&__start_wr_after_init;
+>> +	size_t end = (size_t)&__end_wr_after_init;
+>> +	size_t low = (size_t)ptr;
+>> +	size_t high = (size_t)ptr + size;
+>> +
+>> +	return likely(start <= low && low < high && high <= end);
+>> +}
+> 
+> size_t is an odd type choice for doing address arithmetic.
+
+it seemed more portable than unsigned long
+
+>> +/**
+>> + * wr_memset() - sets n bytes of the destination to the c value
+>> + * @dst: beginning of the memory to write to
+>> + * @c: byte to replicate
+>> + * @size: amount of bytes to copy
+>> + *
+>> + * Returns true on success, false otherwise.
+>> + */
+>> +static __always_inline
+>> +bool wr_memset(const void *dst, const int c, size_t n_bytes)
+>> +{
+>> +	size_t size;
+>> +	unsigned long flags;
+>> +	uintptr_t d = (uintptr_t)dst;
+>> +
+>> +	if (WARN(!__is_wr_after_init(dst, n_bytes), WR_ERR_RANGE_MSG))
+>> +		return false;
+>> +	while (n_bytes) {
+>> +		struct page *page;
+>> +		uintptr_t base;
+>> +		uintptr_t offset;
+>> +		uintptr_t offset_complement;
+> 
+> Again, these are really odd choices for types.  vmap() returns a void*
+> pointer, on which you can do arithmetic.  
+
+I wasn't sure of how much I could rely on the compiler not doing some 
+unwanted optimizations.
+
+> Why bother keeping another
+> type to which you have to cast to and from?
+
+For the above reason. If I'm worrying unnecessarily, I can switch back 
+to void *
+It certainly is easier to use.
+
+> BTW, our usual "pointer stored in an integer type" is 'unsigned long',
+> if a pointer needs to be manipulated.
+
+yes, I noticed that, but it seemed strange ...
+size_t corresponds to unsigned long, afaik
+
+but it seems that I have not fully understood where to use it
+
+anyway, I can stick to the convention with unsigned long
+
+> 
+>> +		local_irq_save(flags);
+> 
+> Why are you doing the local_irq_save()?
+
+The idea was to avoid the case where an attack would somehow freeze the 
+core doing the write-rare operation, while the temporary mapping is 
+accessible.
+
+I have seen comments about using mappings that are private to the 
+current core (and I will reply to those comments as well), but this 
+approach seems architecture-dependent, while I was looking for a 
+solution that, albeit not 100% reliable, would work on any system with 
+an MMU. This would not prevent each arch to come up with own custom 
+implementation that provides better coverage, performance, etc.
+
+>> +		page = virt_to_page(d);
+>> +		offset = d & ~PAGE_MASK;
+>> +		offset_complement = PAGE_SIZE - offset;
+>> +		size = min(n_bytes, offset_complement);
+>> +		base = (uintptr_t)vmap(&page, 1, VM_MAP, PAGE_KERNEL);
+> 
+> Can you even call vmap() (which sleeps) with interrupts off?
+
+I accidentally disabled sleeping while atomic debugging and I totally 
+missed this problem :-(
+
+However, to answer your question, nothing exploded while I was testing 
+(without that type of debugging).
+
+I suspect I was just "lucky". Or maybe I was simply not triggering the 
+sleeping sub-case.
+
+As I understood the code, sleeping _might_ happen, but it's not going to 
+happen systematically.
+
+I wonder if I could split vmap() into two parts: first the sleeping one, 
+with interrupts enabled, then the non sleeping one, with interrupts 
+disabled.
+
+I need to read the code more carefully, but it seems that sleeping might 
+happen when memory for the mapping meta data is not immediately available.
+
+BTW, wouldn't the might_sleep() call belong more to the part which 
+really sleeps, instead than to the whole vmap() ?
+
+>> +		if (WARN(!base, WR_ERR_PAGE_MSG)) {
+>> +			local_irq_restore(flags);
+>> +			return false;
+>> +		}
+> 
+> You really need some kmap_atomic()-style accessors to wrap this stuff
+> for you.  This little pattern is repeated over and over.
+
+I really need to learn more about the way the kernel works and is 
+structured. It's a work in progress. Thanks for the advice.
+
+> ...
+>> +const char WR_ERR_RANGE_MSG[] = "Write rare on invalid memory range.";
+>> +const char WR_ERR_PAGE_MSG[] = "Failed to remap write rare page.";
+> 
+> Doesn't the compiler de-duplicate duplicated strings for you?  Is there
+> any reason to declare these like this?
+
+I noticed I have made some accidental modifications in a couple of 
+cases, when replicating the command.
+
+So I thought that if I really want to use the same string, why not doing 
+it explicitly? It seemed also easier, in case I want to tweak the 
+message. I need to do it only in one place.
+
+--
+igor
