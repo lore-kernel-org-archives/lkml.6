@@ -2,89 +2,330 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABD25C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF2D1C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:23:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F12E2080A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:18:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 633D220824
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:23:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SKwsonzb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F12E2080A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bKF3jkV2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 633D220824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726108AbeJ3EIM (ORCPT
+        id S1726172AbeJ3ENX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 00:08:12 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40119 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725830AbeJ3EIM (ORCPT
+        Tue, 30 Oct 2018 00:13:23 -0400
+Received: from mail-qk1-f201.google.com ([209.85.222.201]:54364 "EHLO
+        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725858AbeJ3ENX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 00:08:12 -0400
-Received: by mail-lj1-f195.google.com with SMTP id t22-v6so8956619lji.7
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 12:18:10 -0700 (PDT)
+        Tue, 30 Oct 2018 00:13:23 -0400
+Received: by mail-qk1-f201.google.com with SMTP id u20-v6so10775274qka.21
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 12:23:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=VdudfrFv81BEoG4fQ9EzkXararEE3L7ra7YZgHHrWqc=;
-        b=SKwsonzbRtgYR3Pb2gjYc0nXuX5G2N9ccuwCGAskh5qw1v7dX1qmBvYtIXumkL8KHH
-         rppfT816dE1OgZ4v8PTDjmkGYRlYM9JFKLRFI+45jhnPHfOMTHGb8DiDGck+XBx6j+wY
-         GzdwjDTL5E3WpSaUtjyQkP2PV7KSM7/MIswQm/dxRuiK5DL3UQe60ItB0G0WzjzuLvOA
-         stzDl8h0lvyVCXUwiXhm4I3Rll0EgRVDN2bwvAzbBP52HXmq6ZvFOElCBFfqo7EmURKQ
-         A3dFaVKda1gUgdhnBtv5hOjH5wIV+NFun5GN+Die8LTiZnoO0nberkiiF3UfGrKvnccb
-         08vQ==
+        bh=TDgDqU+PRPI+tahYx8UWJqG//Ge56nmot8k6iipA9H0=;
+        b=bKF3jkV2bMLYAIhLUStwlYI1TDV6+Ihe5lXQCdme10cQw7cDVr+dK58PAG7rzxBJtz
+         vvbKDE4dMF+mZIrxVdwXhQ3MbKpgiz1WBth/osj4pXOzW5TweXFuzGd8VyEgWwat1gf9
+         306Y+xvOy3ejUXfvdgtHllza2MUhZ02zCpQ1eZo8ib3I8l77v3lKi02ke4k8+QREUxZQ
+         9ywBdVfF2JWqFol4jFGxbgEEUaCEnB2//VBolU0tET/CGFsVK+VY3/ONTF4KMx1zO3a7
+         +gWgIFozshUhamW3n0wIPVX90ug6+4+siFx34YDScimrevDlKuHaY7y6blWgFtuQ8DON
+         lsIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VdudfrFv81BEoG4fQ9EzkXararEE3L7ra7YZgHHrWqc=;
-        b=S8gGuHVp59xQ0GtnL57i5hwIDazIf/iCyAQdDMukHeNH4dCLTGUU9HEID4IWQ2UPil
-         j7JfoFL8HWWa49V6hdIBOv+GLOLv4KlAP8qZE0oJ61eT4i8g54gZ0n8sFas7coVsAVqY
-         Cz6TnKxcGPtJfy93hV0CxV0oy9fXYo/Y4hQrMyyW8woYZSn3Ru9YVXJZR+lhfYY09Bha
-         Z/XwHRzrjvhS2n2wH43yPCZ9bVvLogn96+Sw0OFHxUMIXWkpepU1B1urBeCu59/j5esi
-         ttKYuzfBihDqevUkTgMH53o+wcK7JQDjlXVKIkDUTB4z71iDUhApk//i95zzjYE8XcVr
-         fg0g==
-X-Gm-Message-State: AGRZ1gJXh+I/LqXqYDruLxr7zmW5Rn2O6B/CQ5kEL3rlI83FLoeQgb90
-        jOOMJFQgq/bAcNxHbkSltYCb4uLAagji9ScVrhciBw==
-X-Google-Smtp-Source: AJdET5f6JiXPG3l5riGhlwYQ6yYkkcnQOKKi5cMMHtUlIDwXsvcoXRL+MhcBZYD9ngPYZCCCtwsasRd3zUnLVFDEfJY=
-X-Received: by 2002:a2e:6e08:: with SMTP id j8-v6mr11267818ljc.61.1540840689311;
- Mon, 29 Oct 2018 12:18:09 -0700 (PDT)
-MIME-Version: 1.0
-References: <20171108223020.24487-1-linux@rasmusvillemoes.dk>
- <20181026232409.16100-1-linux@rasmusvillemoes.dk> <20181026232409.16100-2-linux@rasmusvillemoes.dk>
- <CANiq72kEdD3hoHaxukkdzEJt+e_nptyO1GdgfUqWnSAog3k=JQ@mail.gmail.com> <1b3ba24e-0180-8472-199c-07aa56451e4a@rasmusvillemoes.dk>
-In-Reply-To: <1b3ba24e-0180-8472-199c-07aa56451e4a@rasmusvillemoes.dk>
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date:   Mon, 29 Oct 2018 20:17:57 +0100
-Message-ID: <CANiq72==2xOTxfGLWDEWqNOdCr-KXvzS0yOnzPEjzZJh+UsH8w@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/7] compiler_attributes.h: add __attribute__((format_arg))
- shorthand
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=TDgDqU+PRPI+tahYx8UWJqG//Ge56nmot8k6iipA9H0=;
+        b=GzqC2e4L5L6LmIwgAxPVIYGsB6sNNzzJY9FhR8Ig1AM/wAi9puGLXn59qChakFKStq
+         BHTYVQuSyIy/vCvPsN4k2KQ45RZqoXRkxB6q7fBHubPo2ELa8Op1RDOGzroKFaxiLN3P
+         fD3XZK2/2sM6XSGWZICHLeMHjgqucnibDx4ZXxrns/E+QdtLytEC/NEt9Z5t2GBPkAsT
+         Y4YxJ9DfpcMtgjh8NhcEXIGyXme2PxBOtQaUUH4KrRnOTjkkVsH/ACUVVMi04faHdq9v
+         F4e54b2liQuCbfGoycZ+uHrP+htoe2PWo9jU52VKd2v96s5iVazmmvsl3DHvLg2gtdZ8
+         WtZw==
+X-Gm-Message-State: AGRZ1gKjZZ1QXEeQITZ/b7BWcaVZHN1BadLiv/fzzzLoLVtjWnzo42zD
+        8v0YP8gd5Je/Qig/4H1Br4aFlooZP+CZXFkkv4FhCWAOjCcZSZ1gFcZ7RB5TZwYIT5qZjAFDU4T
+        NB8NM+HUgovuLwC4H3Qkf0BHT97g/L+zaUNmYyohbn3Dh6hPSyHO2l7f37/IkW1JbiBaXOg==
+X-Google-Smtp-Source: AJdET5cO0DtGwMZlFxx1bYJeEe5nwofiHYWlV4vVjQngr6MHVSSs7epVg9N+rc728P4b/Rg4g5pUY6q4NGc=
+X-Received: by 2002:a37:ba44:: with SMTP id k65-v6mr12923911qkf.49.1540841000223;
+ Mon, 29 Oct 2018 12:23:20 -0700 (PDT)
+Date:   Mon, 29 Oct 2018 19:22:50 +0000
+In-Reply-To: <20181029175322.189042-1-dancol@google.com>
+Message-Id: <20181029192250.130551-1-dancol@google.com>
+Mime-Version: 1.0
+References: <20181029175322.189042-1-dancol@google.com>
+X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
+Subject: [RFC PATCH v2] Minimal non-child process exit notification support
+From:   Daniel Colascione <dancol@google.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     timmurray@google.com, joelaf@google.com,
+        Daniel Colascione <dancol@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 11:20 AM Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
->
-> No idea. I think I didn't really know what was meant by
-> required/optional.
+This patch adds a new file under /proc/pid, /proc/pid/exithand.
+Attempting to read from an exithand file will block until the
+corresponding process exits, at which point the read will successfully
+complete with EOF.  The file descriptor supports both blocking
+operations and poll(2). It's intended to be a minimal interface for
+allowing a program to wait for the exit of a process that is not one
+of its children.
 
-Yeah, no worries, "optional" here is intended to mean "we cannot
-define it unconditionally (yet)". The word leads to confusion, I
-agree. I will improve the wording of the comment in the top and/or
-change the word after this lands.
+Why might we want this interface? Android's lmkd kills processes in
+order to free memory in response to various memory pressure
+signals. It's desirable to wait until a killed process actually exits
+before moving on (if needed) to killing the next process. Since the
+processes that lmkd kills are not lmkd's children, lmkd currently
+lacks a way to wait for a process to actually die after being sent
+SIGKILL; today, lmkd resorts to polling the proc filesystem pid
+entry. This interface allow lmkd to give up polling and instead block
+and wait for process death.
 
-Cheers,
-Miguel
+Signed-off-by: Daniel Colascione <dancol@google.com>
+---
+ fs/proc/Makefile             |   1 +
+ fs/proc/base.c               |   1 +
+ fs/proc/exithand.c           | 128 +++++++++++++++++++++++++++++++++++
+ fs/proc/internal.h           |   4 ++
+ include/linux/sched/signal.h |   8 +++
+ kernel/exit.c                |   2 +
+ kernel/signal.c              |   3 +
+ 7 files changed, 147 insertions(+)
+ create mode 100644 fs/proc/exithand.c
+
+diff --git a/fs/proc/Makefile b/fs/proc/Makefile
+index ead487e80510..21322280a2c1 100644
+--- a/fs/proc/Makefile
++++ b/fs/proc/Makefile
+@@ -27,6 +27,7 @@ proc-y	+= softirqs.o
+ proc-y	+= namespaces.o
+ proc-y	+= self.o
+ proc-y	+= thread_self.o
++proc-y  += exithand.o
+ proc-$(CONFIG_PROC_SYSCTL)	+= proc_sysctl.o
+ proc-$(CONFIG_NET)		+= proc_net.o
+ proc-$(CONFIG_PROC_KCORE)	+= kcore.o
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 7e9f07bf260d..31bc6bbb6dc4 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -3006,6 +3006,7 @@ static const struct pid_entry tgid_base_stuff[] = {
+ #ifdef CONFIG_LIVEPATCH
+ 	ONE("patch_state",  S_IRUSR, proc_pid_patch_state),
+ #endif
++	REG("exithand", S_IRUGO, proc_tgid_exithand_operations),
+ };
+ 
+ static int proc_tgid_base_readdir(struct file *file, struct dir_context *ctx)
+diff --git a/fs/proc/exithand.c b/fs/proc/exithand.c
+new file mode 100644
+index 000000000000..c2ac31c52ff9
+--- /dev/null
++++ b/fs/proc/exithand.c
+@@ -0,0 +1,128 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Synchronous exit notification of non-child processes
++ *
++ * Simple file descriptor /proc/pid/exithand. Read blocks (and poll
++ * reports non-readable) until process either dies or becomes
++ * a zombie.
++ */
++#include <linux/printk.h>
++#include <linux/sched/signal.h>
++#include <linux/poll.h>
++#include "internal.h"
++
++static int proc_tgid_exithand_open(struct inode *inode, struct file *file)
++{
++	/* If get_proc_task fails, it means the task is dead, which is
++	 * fine, since a subsequent read will return immediately and
++	 * indicate that, yes, the indicated process is dead.
++	 */
++	int res = 0;
++	struct task_struct *task = get_proc_task(inode);
++
++	if (task) {
++		if (!thread_group_leader(task))
++			res = -EINVAL;
++		put_task_struct(task);
++	}
++	return res;
++}
++
++static ssize_t proc_tgid_exithand_read(struct file *file,
++				       char __user *buf,
++				       size_t count, loff_t *ppos)
++{
++	struct task_struct *task = NULL;
++	wait_queue_entry_t wait;
++	ssize_t res = 0;
++	bool locked = false;
++
++	for (;;) {
++		/* Retrieve the task from the struct pid each time
++		 * through the loop in case the exact struct task
++		 * changes underneath us (e.g., if in exec.c, the
++		 * execing process kills the group leader and starts
++		 * using its PID).  The struct signal should be the
++		 * same though even in this case.
++		 */
++		task = get_proc_task(file_inode(file));
++		res = 0;
++		if (!task)
++			goto out;  /* No task?  Must have died.  */
++
++		BUG_ON(!thread_group_leader(task));
++
++		/* Synchronizes with exit.c machinery. */
++		read_lock(&tasklist_lock);
++		locked = true;
++
++		res = 0;
++		if (task->exit_state)
++			goto out;
++
++		res = -EAGAIN;
++		if (file->f_flags & O_NONBLOCK)
++			goto out;
++
++		/* Tell exit.c to go to the trouble of waking our
++		 * runqueue when this process gets around to
++		 * exiting.
++		 */
++		task->signal->exithand_is_interested = true;
++
++		/* Even if the task identity changes, task->signal
++		 * should be invariant across the wait, making it safe
++		 * to go remove our wait record from the wait queue
++		 * after we come back from schedule.
++		 */
++
++		init_waitqueue_entry(&wait, current);
++		add_wait_queue(&wait_exithand, &wait);
++
++		read_unlock(&tasklist_lock);
++		locked = false;
++
++		put_task_struct(task);
++		task = NULL;
++
++		set_current_state(TASK_INTERRUPTIBLE);
++		schedule();
++		set_current_state(TASK_RUNNING);
++		remove_wait_queue(&wait_exithand, &wait);
++
++		res = -ERESTARTSYS;
++		if (signal_pending(current))
++			goto out;
++	}
++out:
++	if (locked)
++		read_unlock(&tasklist_lock);
++	if (task)
++		put_task_struct(task);
++	return res;
++}
++
++static __poll_t proc_tgid_exithand_poll(struct file *file, poll_table *wait)
++{
++	__poll_t mask = 0;
++	struct task_struct *task = get_proc_task(file_inode(file));
++
++	if (!task) {
++		mask |= POLLIN;
++	} else if (READ_ONCE(task->exit_state)) {
++		mask |= POLLIN;
++	} else {
++		read_lock(&tasklist_lock);
++		task->signal->exithand_is_interested = true;
++		read_unlock(&tasklist_lock);
++		poll_wait(file,	&wait_exithand,	wait);
++	}
++	if (task)
++		put_task_struct(task);
++	return mask;
++}
++
++const struct file_operations proc_tgid_exithand_operations = {
++	.open           = proc_tgid_exithand_open,
++	.read		= proc_tgid_exithand_read,
++	.poll           = proc_tgid_exithand_poll,
++};
+diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+index 5185d7f6a51e..1009d20475bc 100644
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -304,3 +304,7 @@ extern unsigned long task_statm(struct mm_struct *,
+ 				unsigned long *, unsigned long *,
+ 				unsigned long *, unsigned long *);
+ extern void task_mem(struct seq_file *, struct mm_struct *);
++
++/* exithand.c */
++
++extern const struct file_operations proc_tgid_exithand_operations;
+diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
+index 13789d10a50e..f44397055429 100644
+--- a/include/linux/sched/signal.h
++++ b/include/linux/sched/signal.h
+@@ -74,6 +74,11 @@ struct multiprocess_signals {
+ 	struct hlist_node node;
+ };
+ 
++/* Need to stick the waitq for exithand outside process structures in
++ * case a process disappears across a poll.
++ */
++extern wait_queue_head_t wait_exithand;
++
+ /*
+  * NOTE! "signal_struct" does not have its own
+  * locking, because a shared signal_struct always
+@@ -87,6 +92,9 @@ struct signal_struct {
+ 	int			nr_threads;
+ 	struct list_head	thread_head;
+ 
++	/* Protected with tasklist_lock.  */
++	bool                    exithand_is_interested;
++
+ 	wait_queue_head_t	wait_chldexit;	/* for wait4() */
+ 
+ 	/* current thread group signal load-balancing target: */
+diff --git a/kernel/exit.c b/kernel/exit.c
+index 0e21e6d21f35..44a4e3796f8b 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -1485,6 +1485,8 @@ void __wake_up_parent(struct task_struct *p, struct task_struct *parent)
+ {
+ 	__wake_up_sync_key(&parent->signal->wait_chldexit,
+ 				TASK_INTERRUPTIBLE, 1, p);
++	if (p->signal->exithand_is_interested)
++		__wake_up_sync(&wait_exithand, TASK_INTERRUPTIBLE, 0);
+ }
+ 
+ static long do_wait(struct wait_opts *wo)
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 17565240b1c6..e156d48da70a 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -454,6 +454,9 @@ void flush_sigqueue(struct sigpending *queue)
+ 	}
+ }
+ 
++wait_queue_head_t wait_exithand =
++	__WAIT_QUEUE_HEAD_INITIALIZER(wait_exithand);
++
+ /*
+  * Flush all pending signals for this kthread.
+  */
+-- 
+2.19.1.568.g152ad8e336-goog
+
