@@ -2,102 +2,118 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45200ECDE44
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:11:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0908BC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:12:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B4012084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:11:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B4012084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id C9A412082D
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:12:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WXg2v0Sc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9A412082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728429AbeJ3DA5 (ORCPT
+        id S1728327AbeJ3DCW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 23:00:57 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:52511 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727502AbeJ3DA5 (ORCPT
+        Mon, 29 Oct 2018 23:02:22 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:34245 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726532AbeJ3DCW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 23:00:57 -0400
-Received: from tmo-115-37.customers.d1-online.com ([80.187.115.37] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gHC0M-0000J9-Ka; Mon, 29 Oct 2018 19:11:10 +0100
-Date:   Mon, 29 Oct 2018 19:11:09 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
-cc:     "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: RE: [PATCH V2 1/2] x86/efi: Unmap EFI boot services code/data regions
- from efi_pgd
-In-Reply-To: <FFF73D592F13FD46B8700F0A279B802F485E5549@ORSMSX114.amr.corp.intel.com>
-Message-ID: <alpine.DEB.2.21.1810291907320.5984@nanos.tec.linutronix.de>
-References: <20181026213845.28166-1-sai.praneeth.prakhya@intel.com> <20181026213845.28166-2-sai.praneeth.prakhya@intel.com> <alpine.DEB.2.21.1810291809490.5984@nanos.tec.linutronix.de> <alpine.DEB.2.21.1810291820250.5984@nanos.tec.linutronix.de>
- <FFF73D592F13FD46B8700F0A279B802F485E5549@ORSMSX114.amr.corp.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 29 Oct 2018 23:02:22 -0400
+Received: by mail-lf1-f68.google.com with SMTP id n26-v6so6818735lfl.1;
+        Mon, 29 Oct 2018 11:12:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=5a6ry7YS/1XocQEq1IL80cJaCAab2eR6B7M0r5JjgFc=;
+        b=WXg2v0ScrzR9IYVwfUfjD37ZnceesvUK34sTAfMJUnhu1hne6NOMw5luNk5cOQyGcS
+         TAAjXbwPfFO1P4BBydaPRj1Kbm8ZqVxiJI9vq1FwEBd0/0Ha2AucxC3COLyjBgoKg2d/
+         0QXKSj72Ek95PHJMmY8QP+Xpbt6Vp5VXpUCkd+YIbhnEqQg5tzRqi0t1AR9AVDZATmCJ
+         yRUMxCjUHi73rbZW9zziNcxMUf99lQ31tqI3ufksnPEhVvT3pP57s8WhLlpNHXS/L0eX
+         ROCsdGjeetoJXAe8L2ChEOop147Cenx98dmxF6hSEmai/hzONbvjdjvdblTeMyQkcgZ1
+         15lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5a6ry7YS/1XocQEq1IL80cJaCAab2eR6B7M0r5JjgFc=;
+        b=K9tLH5cAb6nyUG3Z1Do9eFztFR+ujp9hkSSlCLGWmYrpcGArrD/my//WIcq01/33z0
+         P0qVeXBhrxtESrXPodn9mjnAPMKBX2dsuKExygdQ1jPKy6Yxu7jSC9Y1JPV6HtZXtfNa
+         Alkdjm0y1uSgZPqiy0GcUTLZks8qper5ecPD1NceondUVoppzw+GLVIHFdK685QK14YX
+         lRFFa1cX0G5RZQSzffQtUnXoabEo5oMV2gen9zyqqJRozXq+OdiLX/Z7TZmzs2erSv/k
+         lYBv0fzgNRseSglbLhBozOBhwaijtZhivLi+xT5fKnHHFeSG/XfFY4cECYrBagHFRxzc
+         /RMA==
+X-Gm-Message-State: AGRZ1gJTLqGRNuT+SHsrAqprP4gHlZFehwAWu1GLSOGKsXyaEclLE7Dq
+        pKO642+jk3MB/tRpJ0OVZzWP9XlXpTDTzw==
+X-Google-Smtp-Source: AJdET5esv9xYVJMVq/i2+fiVUUAXZ9a1k5j+eVp1q5Nhca5Us3zfvSRM578DxByYPyH93j4ryxQ1VQ==
+X-Received: by 2002:a19:4c02:: with SMTP id z2-v6mr8555753lfa.48.1540836755411;
+        Mon, 29 Oct 2018 11:12:35 -0700 (PDT)
+Received: from ?IPv6:2001:14bb:52:7be:f0bf:dd2d:f008:5213? (dmkd798g-7z2-yccwcp-4.rev.dnainternet.fi. [2001:14bb:52:7be:f0bf:dd2d:f008:5213])
+        by smtp.gmail.com with ESMTPSA id e201-v6sm3310177lfg.42.2018.10.29.11.12.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Oct 2018 11:12:34 -0700 (PDT)
+Subject: Re: [PATCH 05/17] prmem: shorthands for write rare on common types
+To:     Dave Hansen <dave.hansen@intel.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        kernel-hardening@lists.openwall.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org
+Cc:     igor.stoppa@huawei.com, Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-6-igor.stoppa@huawei.com>
+ <fbb38802-3dc3-4890-c981-724b9096a6be@intel.com>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <aa6d9911-c5f8-d759-a117-810d59763467@gmail.com>
+Date:   Mon, 29 Oct 2018 20:12:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <fbb38802-3dc3-4890-c981-724b9096a6be@intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sai,
 
-On Mon, 29 Oct 2018, Prakhya, Sai Praneeth wrote:
 
-> Hi Thomas and Peter,
+On 25/10/2018 01:28, Dave Hansen wrote:
+> On 10/23/18 2:34 PM, Igor Stoppa wrote:
+>> Wrappers around the basic write rare functionality, addressing several
+>> common data types found in the kernel, allowing to specify the new
+>> values through immediates, like constants and defines.
 > 
-> [off the mailing list because I wasn't sure if it's a good idea to spam others with my questions]
+> I have to wonder whether this is the right way, or whether a
+> size-agnostic function like put_user() is the right way.  put_user() is
+> certainly easier to use.
 
-In general it's good to do on list because others can learn from the
-answers as well.
+I definitely did not like it either.
+But it was the best that came to my mind ...
+The main purpose of this code was to show what I wanted to do.
+Once more, thanks for pointing out a better way to do it.
 
-> > > > +	retval = __change_page_attr_set_clr(&cpa, 0);
-> > > > +	__flush_tlb_all();
-> > >
-> > > So this looks like you copied it from kernel_map_pages_in_pgd() which
-> > > has been discussed before to be not sufficient, but it can't be
-> > > changed right now due to locking issues.
-> >
-> > Managed to confuse myself. The place which cannot be changed is a different
-> > one, but still for your call site __flush_tlb_all() might not be sufficient.
-> 
-> Since the mappings are changed, I thought a flush_tlb() might be needed.
-> But, (to be honest), I don't completely understand the x86/mm code. So, could you 
-> please elaborate the issue more for my better understanding?
-> 
-> So some questions I have are,
-> 1. What did Peter Z mean here? "How is that not a TLB invalidation bug ?"
+--
+igor
 
-__flush_tlb_all() flushes only the mapping on the current CPU. So in a SMP
-environment it's not sufficient.
-
-> 2. I assumed kernel_map_pages_in_pgd() to be a good code but you said that 
-> it has some locking issues. So, could you please elaborate more on that.
-
-I corrected myself. It's the other function which cannot use the proper
-cpa_flush.*() functions.
-
-> Or, could you please provide me some pointers in the source code that I
-> can take a look at so that I could understand the issue much better.
-
-I'll have a second look at the whole thing and reply on list.
-
-Thanks,
-
-	tglx
