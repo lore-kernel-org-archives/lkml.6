@@ -2,237 +2,78 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC7A0C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:34:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 093A3C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:34:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5A8B2080A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:34:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5A8B2080A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D1C832084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:34:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1C832084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729584AbeJ3DXx (ORCPT
+        id S1729598AbeJ3DXx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 29 Oct 2018 23:23:53 -0400
-Received: from foss.arm.com ([217.140.101.70]:44666 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729275AbeJ3DXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 23:23:52 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4CC2A341;
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37293 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729567AbeJ3DXx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 23:23:53 -0400
+Received: by mail-pf1-f193.google.com with SMTP id j23-v6so4469501pfi.4;
         Mon, 29 Oct 2018 11:34:01 -0700 (PDT)
-Received: from e110439-lin.cambridge.arm.com (e110439-lin.cambridge.arm.com [10.1.194.43])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 5BA843F6A8;
-        Mon, 29 Oct 2018 11:33:58 -0700 (PDT)
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: [PATCH v5 09/15] sched/cpufreq: uclamp: add utilization clamping for FAIR tasks
-Date:   Mon, 29 Oct 2018 18:33:04 +0000
-Message-Id: <20181029183311.29175-11-patrick.bellasi@arm.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20181029183311.29175-1-patrick.bellasi@arm.com>
-References: <20181029183311.29175-1-patrick.bellasi@arm.com>
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=q6Ch81bOKQbe+tWZbblbd4wz1tPiXK3Kf20l9RfX0xk=;
+        b=pRVA1gf/rPhC5qYmreven0dlclBz79Q9cBfg6Syxm/Gjuuf2Sy7uRtudpQR/qE4Ddw
+         6zzQxBDJesTIuBgwPZ93hYtBaD3Os7u3fXx/OfvamHXusP5a3fJ4xATrl/7Ij35f8zR/
+         aZDtgFIWSdRBaX6SgcrO1zzq/U3wgjMxCqgMcIl9/JgOVWNWrFzJW1jwGT5Xa39Z9fOE
+         RZEJUAyY6F6lgI8wxvWXXsYD4gbx5DBAtsNGl/Q1S4DL1euTFL9s4AYEThjUNYNIq4Nn
+         8e1UXZCwDHqdLarT8xO57KXTTzkdm2yd1z+WbpgXqTT6BknKfv7iaIyX8IEPLBfQT7+V
+         7azA==
+X-Gm-Message-State: AGRZ1gJiaCJe8mshu4c5le2x/76GXQWNhjfmnAkx7uuv8Y/BWwK3+l1G
+        HfqFfpKE1nQAxqXvdBMQTcw=
+X-Google-Smtp-Source: AJdET5ckeOUtWPIoQB78bXdhJpqHFXqVGhAAusN/7n9lf0skfWhHuxr1O6OamXM186GCP1hEu+iYaQ==
+X-Received: by 2002:aa7:8546:: with SMTP id y6-v6mr8957325pfn.83.1540838041227;
+        Mon, 29 Oct 2018 11:34:01 -0700 (PDT)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id p13-v6sm10574957pgg.94.2018.10.29.11.34.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Oct 2018 11:34:00 -0700 (PDT)
+Message-ID: <1540838039.196084.78.camel@acm.org>
+Subject: Re: [PATCH 02/14] blk-mq: abstract out queue map
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 29 Oct 2018 11:33:59 -0700
+In-Reply-To: <20181029163738.10172-3-axboe@kernel.dk>
+References: <20181029163738.10172-1-axboe@kernel.dk>
+         <20181029163738.10172-3-axboe@kernel.dk>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Each time a frequency update is required via schedutil, a frequency is
-selected to (possibly) satisfy the utilization reported by the CFS
-class. However, when utilization clamping is in use, the frequency
-selection should consider userspace utilization clamping hints.
-This will allow, for example, to:
+On Mon, 2018-10-29 at 10:37 -0600, Jens Axboe wrote:
++AD4 struct blk+AF8-mq+AF8-tag+AF8-set +AHs
++AD4 -	unsigned int		+ACo-mq+AF8-map+ADs
++AD4 +-	struct blk+AF8-mq+AF8-queue+AF8-map	map+AFs-HCTX+AF8-MAX+AF8-TYPES+AF0AOw
++AD4  	const struct blk+AF8-mq+AF8-ops	+ACo-ops+ADs
++AD4  	unsigned int		nr+AF8-hw+AF8-queues+ADs
++AD4  	unsigned int		queue+AF8-depth+ADs	/+ACo max hw supported +ACo-/
 
- - boost tasks which are directly affecting the user experience
-   by running them at least at a minimum "requested" frequency
+How about documenting that nr+AF8-hw+AF8-queues is the number of hardware queues across
+all hardware queue types instead of e.g. the number of hardware queues for a
+single hardware queue type? This is something that only became clear to me after
+having reviewed a later patch in this series. Anyway:
 
- - cap low priority tasks not directly affecting the user experience
-   by running them only up to a maximum "allowed" frequency
-
-These constraints are meant to support a per-task based tuning of the
-frequency selection thus supporting a fine grained definition of
-performance boosting vs energy saving strategies in kernel space.
-
-This adds the required support to clamp the utilization generated by
-RUNNABLE FAIR tasks within the boundaries defined by their aggregated
-utilization clamp constraints.
-
-On each CPU the aggregated clamp values are obtained by considering the
-maximum of the {min,max}_util values for each task. This max aggregation
-responds to the goal of not penalizing, for example, high boosted (i.e.
-more important for the user-experience) CFS tasks which happens to be
-co-scheduled with high capped (i.e. less important for the
-user-experience) CFS tasks.
-
-For FAIR tasks both the utilization and the IOWait boost values
-are clamped according to the CPU aggregated utilization clamp
-constraints.
-
-The default values for boosting and capping are defined to be:
- - util_min: 0
- - util_max: SCHED_CAPACITY_SCALE
-which means that by default no boosting/capping is enforced on FAIR
-tasks, and thus the frequency will be selected considering the actual
-utilization value of each CPU.
-
-Signed-off-by: Patrick Bellasi <patrick.bellasi@arm.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Suren Baghdasaryan <surenb@google.com>
-Cc: Todd Kjos <tkjos@google.com>
-Cc: Joel Fernandes <joelaf@google.com>
-Cc: Juri Lelli <juri.lelli@redhat.com>
-Cc: Quentin Perret <quentin.perret@arm.com>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Morten Rasmussen <morten.rasmussen@arm.com>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-pm@vger.kernel.org
-
----
-Changes in v5:
-  Message-ID: <20180914133654.GL24124@hirez.programming.kicks-ass.net>
-  - add a comment to justify the assumptions on util clamping for FAIR tasks
-  Message-ID: <20180914093240.GB24082@hirez.programming.kicks-ass.net>
-  - removed uclamp_value and use inline access to data structures
-  Message-ID: <20180914135712.GQ1413@e110439-lin>
-  - the (unlikely(val == UCLAMP_NOT_VALID)) check is not more required
-    since we now ensure we always have a valid value configured
- Others:
- - rebased on v4.19
-
-Changes in v4:
- Message-ID: <CAKfTPtC2adLupg7wy1JU9zxKx1466Sza6fSCcr92wcawm1OYkg@mail.gmail.com>
- - use *rq instead of cpu for both uclamp_util() and uclamp_value()
- Message-ID: <20180816135300.GC2960@e110439-lin>
- - remove uclamp_value() which is never used outside CONFIG_UCLAMP_TASK
- Others:
- - rebased on v4.19-rc1
-Changes in v3:
- Message-ID: <CAJuCfpF6=L=0LrmNnJrTNPazT4dWKqNv+thhN0dwpKCgUzs9sg@mail.gmail.com>
- - rename UCLAMP_NONE into UCLAMP_NOT_VALID
- Others:
- - rebased on tip/sched/core
-Changes in v2:
- - rebased on v4.18-rc4
----
- kernel/sched/cpufreq_schedutil.c | 25 ++++++++++++++++++++++---
- kernel/sched/sched.h             | 28 ++++++++++++++++++++++++++++
- 2 files changed, 50 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/sched/cpufreq_schedutil.c b/kernel/sched/cpufreq_schedutil.c
-index 3fffad3bc8a8..fd3fe55d605b 100644
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -222,8 +222,13 @@ static unsigned long sugov_get_util(struct sugov_cpu *sg_cpu)
- 	 * CFS tasks and we use the same metric to track the effective
- 	 * utilization (PELT windows are synchronized) we can directly add them
- 	 * to obtain the CPU's actual utilization.
-+	 *
-+	 * CFS utilization can be boosted or capped, depending on utilization
-+	 * clamp constraints requested by currently RUNNABLE tasks.
-+	 * When there are no CFS RUNNABLE tasks, clamps are released and OPPs
-+	 * will be gracefully reduced with the utilization decay.
- 	 */
--	util = cpu_util_cfs(rq);
-+	util  = uclamp_util(rq, cpu_util_cfs(rq));
- 	util += cpu_util_rt(rq);
- 
- 	/*
-@@ -307,6 +312,7 @@ static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
- 			       unsigned int flags)
- {
- 	bool set_iowait_boost = flags & SCHED_CPUFREQ_IOWAIT;
-+	unsigned int max_boost;
- 
- 	/* Reset boost if the CPU appears to have been idle enough */
- 	if (sg_cpu->iowait_boost &&
-@@ -322,11 +328,24 @@ static void sugov_iowait_boost(struct sugov_cpu *sg_cpu, u64 time,
- 		return;
- 	sg_cpu->iowait_boost_pending = true;
- 
-+	/*
-+	 * Boost FAIR tasks only up to the CPU clamped utilization.
-+	 *
-+	 * Since DL tasks have a much more advanced bandwidth control, it's
-+	 * safe to assume that IO boost does not apply to those tasks.
-+	 * Instead, since RT tasks are not utiliation clamped, we don't want
-+	 * to apply clamping on IO boost while there is blocked RT
-+	 * utilization.
-+	 */
-+	max_boost = sg_cpu->iowait_boost_max;
-+	if (!cpu_util_rt(cpu_rq(sg_cpu->cpu)))
-+		max_boost = uclamp_util(cpu_rq(sg_cpu->cpu), max_boost);
-+
- 	/* Double the boost at each request */
- 	if (sg_cpu->iowait_boost) {
- 		sg_cpu->iowait_boost <<= 1;
--		if (sg_cpu->iowait_boost > sg_cpu->iowait_boost_max)
--			sg_cpu->iowait_boost = sg_cpu->iowait_boost_max;
-+		if (sg_cpu->iowait_boost > max_boost)
-+			sg_cpu->iowait_boost = max_boost;
- 		return;
- 	}
- 
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 859192ec492c..a7e9b7041ea5 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -2262,6 +2262,34 @@ static inline unsigned int uclamp_none(int clamp_id)
- 	return SCHED_CAPACITY_SCALE;
- }
- 
-+#ifdef CONFIG_UCLAMP_TASK
-+/**
-+ * clamp_util: clamp a utilization value for a specified CPU
-+ * @rq: the CPU's RQ to get the clamp values from
-+ * @util: the utilization signal to clamp
-+ *
-+ * Each CPU tracks util_{min,max} clamp values depending on the set of its
-+ * currently RUNNABLE tasks. Given a utilization signal, i.e a signal in
-+ * the [0..SCHED_CAPACITY_SCALE] range, this function returns a clamped
-+ * utilization signal considering the current clamp values for the
-+ * specified CPU.
-+ *
-+ * Return: a clamped utilization signal for a given CPU.
-+ */
-+static inline unsigned int uclamp_util(struct rq *rq, unsigned int util)
-+{
-+	unsigned int min_util = rq->uclamp.value[UCLAMP_MIN];
-+	unsigned int max_util = rq->uclamp.value[UCLAMP_MAX];
-+
-+	return clamp(util, min_util, max_util);
-+}
-+#else /* CONFIG_UCLAMP_TASK */
-+static inline unsigned int uclamp_util(struct rq *rq, unsigned int util)
-+{
-+	return util;
-+}
-+#endif /* CONFIG_UCLAMP_TASK */
-+
- #ifdef arch_scale_freq_capacity
- # ifndef arch_scale_freq_invariant
- #  define arch_scale_freq_invariant()	true
--- 
-2.18.0
+Reviewed-by: Bart Van Assche +ADw-bvanassche+AEA-acm.org+AD4
 
