@@ -2,76 +2,104 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 701FBC2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:25:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA78C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:29:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A74B2080A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:25:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A74B2080A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6ECE82084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:29:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qYFpsqr2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6ECE82084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729375AbeJ3DPq (ORCPT
+        id S1729192AbeJ3DTB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 23:15:46 -0400
-Received: from mga12.intel.com ([192.55.52.136]:23634 "EHLO mga12.intel.com"
+        Mon, 29 Oct 2018 23:19:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57314 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728238AbeJ3DPq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 23:15:46 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2018 11:25:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,441,1534834800"; 
-   d="scan'208";a="81862040"
-Received: from agluck-desk.sc.intel.com (HELO agluck-desk) ([10.3.52.160])
-  by fmsmga007.fm.intel.com with ESMTP; 29 Oct 2018 11:25:57 -0700
-Date:   Mon, 29 Oct 2018 11:25:57 -0700
-From:   "Luck, Tony" <tony.luck@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Daniel Aberger - Profihost AG <d.aberger@profihost.ag>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "s.priebe@profihost.ag" <s.priebe@profihost.ag>,
-        "n.fahldieck@profihost.ag" <n.fahldieck@profihost.ag>,
-        "p.kramme@profihost.ag" <p.kramme@profihost.ag>
-Subject: Re: MCE reports errors that can't be verified
-Message-ID: <20181029182557.GA13320@agluck-desk>
-References: <6ccf5413-ce2a-bbb9-0203-b0cc9fe2e641@profihost.ag>
- <20181029161525.GI32150@zn.tnic>
- <3908561D78D1C84285E8C5FCA982C28F7D43AA76@ORSMSX110.amr.corp.intel.com>
- <20181029175129.GL32150@zn.tnic>
+        id S1726852AbeJ3DTB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 23:19:01 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55E272080A;
+        Mon, 29 Oct 2018 18:29:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540837751;
+        bh=DmmkJElWMtcW2iNLRLdHlRZL6/ceYGta53SwvJwN/YA=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=qYFpsqr2NpbhGTufc0SAYl8xsZQik7rA4f8sGJQG92w4V9kyPciDvLI/lGNIWLLLG
+         IEqpr1ZAM4Dr4Zcq5wCQf4DgUHu+GH5dlrKGWTPpCx/n4oz96RHMTbtPpPYUrDb9Tm
+         5CjeQFrZQnnHbFAx4CGvMqVL3kSc02nVpOGTLEv0=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181029175129.GL32150@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+To:     geert+renesas@glider.be, horms@verge.net.au, jiada_wang@mentor.com,
+        magnus.damm@gmail.com, mark.rutland@arm.com,
+        mturquette@baylibre.com, robh+dt@kernel.org
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20181025072349.15173-3-jiada_wang@mentor.com>
+Cc:     linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        jiada_wang@mentor.com
+References: <20181025072349.15173-1-jiada_wang@mentor.com>
+ <20181025072349.15173-3-jiada_wang@mentor.com>
+Message-ID: <154083775062.98144.11157403961171783929@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH linux-next v1 2/4] clk: renesas: Add binding document for AVB
+ Counter Clock
+Date:   Mon, 29 Oct 2018 11:29:10 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 06:51:29PM +0100, Borislav Petkov wrote:
-> On Mon, Oct 29, 2018 at 04:59:44PM +0000, Luck, Tony wrote:
-> > The EDAC driver printed out those messages,
-> 
-> I don't think so - that's __print_mce() in mce.c which dumps the three
-> lines under "... events logged". Which means, that's the lowest prio,
-> fallback notifier which runs when nothing else before it has done any
-> logging.
+Quoting jiada_wang@mentor.com (2018-10-25 00:23:47)
+> From: Jiada Wang <jiada_wang@mentor.com>
+> =
 
-Ah yes. In which case the EDAC driver wasn't loaded (or gave up
-silently) to let us arrive at the end of the decode chain.
+> Add device tree bindings for avb counter clock for Renesas
+> R-Car Socs.
+> =
 
-Another question. Does /proc/interrupts show a lot of CMCI (for
-historical reasons this is the THR: line).
+> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+> ---
+>  .../bindings/clock/renesas,avb-clk.txt        | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/renesas,avb-c=
+lk.txt
+> =
 
--Tony
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,avb-clk.txt =
+b/Documentation/devicetree/bindings/clock/renesas,avb-clk.txt
+> new file mode 100644
+> index 000000000000..03bf50b5830c
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/renesas,avb-clk.txt
+> @@ -0,0 +1,19 @@
+> +* Renesas AVB Counter Clock
+> +
+> +The AVB Counter Clocks are provided by avb_counter8 Clock Generator,
+> +avb_counter8 has dividers which operates with S0D1=CF=95 clock and has
+> +8 output clocks.
+> +
+> +Required Properties:
+> +  - compatible: Must be "renesas,clk-avb"
+> +  - reg: Base address and length of the memory resource used by the AVB
+> +  - #clock-cells: Must be 1
+> +
+> +Example
+> +-------
+> +
+> +       clk_avb: avb-clock@ec5a011c {
+> +               compatible =3D "renesas,clk-avb";
+> +               reg =3D <0 0xec5a011c 0 0x24>;
+
+This is an odd register offset. Is this just one clk inside of a larger
+clk controller?
+
