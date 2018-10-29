@@ -2,154 +2,121 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93D83C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:08:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC005C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:12:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DFE12082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:08:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7399020870
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 21:12:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="lQqP848S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DFE12082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="O3RZjlLW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7399020870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727408AbeJ3F7D (ORCPT
+        id S1727312AbeJ3GCZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 01:59:03 -0400
-Received: from rcdn-iport-8.cisco.com ([173.37.86.79]:34161 "EHLO
-        rcdn-iport-8.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726016AbeJ3F7D (ORCPT
+        Tue, 30 Oct 2018 02:02:25 -0400
+Received: from mail-lj1-f182.google.com ([209.85.208.182]:42820 "EHLO
+        mail-lj1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726016AbeJ3GCY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 01:59:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=1386; q=dns/txt; s=iport;
-  t=1540847318; x=1542056918;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=P/xNm11nZw5q8XfeLANKDgWh2u4RRx89z45zxgwCwr0=;
-  b=lQqP848SjkptHglgLK7E7VummqBioBpI+0zFA3YhTTL/wUHMTgej2ui8
-   Dqt5BRGUwoCqvrk3yGQEDQKO7Xvp0BgJ3r5ugXWFyIsQpDCdmWwGIkXYE
-   +ZzkbTu98enAxhpXBScQLVOcKid++60YBK/NbSigHAEi7+gMxxfZTKYBp
-   A=;
-X-IronPort-AV: E=Sophos;i="5.54,441,1534809600"; 
-   d="scan'208";a="471041775"
-Received: from rcdn-core-11.cisco.com ([173.37.93.147])
-  by rcdn-iport-8.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2018 21:08:37 +0000
-Received: from [10.154.208.144] ([10.154.208.144])
-        by rcdn-core-11.cisco.com (8.15.2/8.15.2) with ESMTP id w9TL8ZqX015061;
-        Mon, 29 Oct 2018 21:08:36 GMT
-Subject: Re: [PATCH v4] kernel/signal: Signal-based pre-coredump notification
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Helge Deller <deller@gmx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Brauner <christian@brauner.io>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Roman Gushchin <guro@fb.com>,
-        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Jann Horn <jannh@google.com>,
-        Kees Cook <keescook@chromium.org>, x86@kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
-        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>,
-        Enke Chen <enkechen@cisco.com>
-References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
- <458c04d8-d189-4a26-729a-bb1d1d751534@cisco.com>
- <7741efa7-a3f8-62a1-ba52-613883164643@cisco.com>
- <84460a77-a111-404e-4bad-88104a6e246e@cisco.com>
- <20181026082812.GA10581@redhat.com>
- <21f678a8-4001-df36-c26e-e96cf203b1b1@cisco.com>
- <20181029111804.GA24820@redhat.com>
-From:   Enke Chen <enkechen@cisco.com>
-Message-ID: <634f9518-c742-16f0-84f4-90943af6aed2@cisco.com>
-Date:   Mon, 29 Oct 2018 14:08:34 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Tue, 30 Oct 2018 02:02:24 -0400
+Received: by mail-lj1-f182.google.com with SMTP id f3-v6so9280324ljk.9
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 14:11:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pXJ9v5cNmnvrVzHocIF6v4kXOg7XbDEkZHv+I+2MwJA=;
+        b=O3RZjlLW5BT2l9xx2REH1tgivRw7i21l3OcJ9+VQ4GTAS3pTnJ4CzBBk9JjFTgTrBM
+         KvpN1rnQ9lE8aMknIQGLO7gSO/6t9zGI2473MuNwyigxNGdS2O89SV37CTnqfMnFGnrb
+         gpX+l5caNoDPrM8E6gweXcV3J6tDS1uMEeyYc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pXJ9v5cNmnvrVzHocIF6v4kXOg7XbDEkZHv+I+2MwJA=;
+        b=YilV72gfHJdDX9kt/vSG9dJAyYkcmikGTQ/b/lyvS8KLmF/IM765SFhth511ruu8tK
+         glQd4IGZa7GhXGYV0FFposnYVOUt1ZMU6lyxYXz4ioCNFpqy1I+qsml7UzZ09wDrdUQX
+         AuBT4TfslQm0pw+AWE+z1zz5zMXop6f4rEZwOHVX5lfsiIIPnQgN9eVNVNjKV+ZP+bcu
+         dWaOKajxt0KcON68BmIvZnW52wmKXHyxyfx7TJD6Yg7CmIQMwVZvHAxgfMCtu6uTHcLI
+         eeKjH2pKx2f2kT3wALWifvoxd+0sLu1fDXjxBEaLQzKW4uASni7YDHVoh9pRQm4PLq6I
+         JSmQ==
+X-Gm-Message-State: AGRZ1gI+RBPqT0eUw19upBAvjWPLM4G2+hBG6yH+s91xgJDSVX1Fy5O8
+        LiLvvFLFrMn/V0fHDfhpEgBcg9wVb4jl5w==
+X-Google-Smtp-Source: AJdET5cknFjW/y9Lr97n3Af/2o+8dVMxYqW05KwqAMLuRFWfr5DfqKQq0AvEVNAbL5CkJe0kvkde6w==
+X-Received: by 2002:a2e:59ca:: with SMTP id g71-v6mr9947510ljf.79.1540847516838;
+        Mon, 29 Oct 2018 14:11:56 -0700 (PDT)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id q5-v6sm3244120lfj.85.2018.10.29.14.11.55
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Oct 2018 14:11:56 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id c16so7207970lfj.8
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 14:11:55 -0700 (PDT)
+X-Received: by 2002:ac2:41d8:: with SMTP id d24-v6mr197857lfi.138.1540847515262;
+ Mon, 29 Oct 2018 14:11:55 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181029111804.GA24820@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Auto-Response-Suppress: DR, OOF, AutoReply
-X-Outbound-SMTP-Client: 10.154.208.144, [10.154.208.144]
-X-Outbound-Node: rcdn-core-11.cisco.com
+References: <CAHk-=wjGKhoVaa60i5XZODEtzTUYVV3fouyYL4k=JsPY4K_xjQ@mail.gmail.com>
+ <nycvar.YFH.7.76.1810291415570.23511@cbobk.fhfr.pm> <CAHk-=wgwgmcqxChVXQb66itd__qJOBc7LBsJ+nRAM86qJH-S2Q@mail.gmail.com>
+ <CAHk-=wiRjotiAcy-=Jv5bMM2-r7KzWRGd84CwGmq1FLb1dWKcA@mail.gmail.com> <CA+jURcttJs05DFCuKCyOfe3oA9Q_KoiP3+g8-OVu4OPm9ufp6Q@mail.gmail.com>
+In-Reply-To: <CA+jURcttJs05DFCuKCyOfe3oA9Q_KoiP3+g8-OVu4OPm9ufp6Q@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 29 Oct 2018 14:11:36 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh3VO9hD9hUBS-H2d4jjGuYuVTudshHsPe9p-5sYhFfGg@mail.gmail.com>
+Message-ID: <CAHk-=wh3VO9hD9hUBS-H2d4jjGuYuVTudshHsPe9p-5sYhFfGg@mail.gmail.com>
+Subject: Re: Logitech high-resolution scrolling..
+To:     Harry Cutts <hcutts@chromium.org>
+Cc:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        peter.hutterer@who-t.net
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Oleg:
+On Mon, Oct 29, 2018 at 12:17 PM Harry Cutts <hcutts@chromium.org> wrote:
+>
+> I don't really understand why the half-multiplier thing would cause
+> the instability; there's still a low-res threshold every 8 high-res
+> units whichever way you do it
 
-Yes, it should be the "real_parent" that is more interested in the notification.
-Will revert back.
+No there isn't.
 
-+static void do_notify_parent_predump(void)
-+{
-+	struct task_struct *parent;
-+	int sig;
-+
-+	rcu_read_lock();
-+	parent = rcu_dereference(current->real_parent);
-+	sig = parent->signal->predump_signal;
-+	if (sig != 0)
-+		do_send_sig_info(sig, SEND_SIG_NOINFO, parent, PIDTYPE_TGID);
-+	rcu_read_unlock();
-+}
+So what the half-multiplier did, assuming a multiplier of 8 (which is
+what my MX Anywhere 2S reports) would be:
 
-Thanks.  -- Enke
+ - remainder starts at 3
+ - high-res is +1
+ - now remainder is 3+1, and it triggers the >= half logic
+ - 4/8 is 0, but then the code added 1 because high-res was positive,
+so the code decides to add 1
+ - the code does a wheel update of 1, and updates remainder with -8,
+so now it's -4
 
-On 10/29/18 4:18 AM, Oleg Nesterov wrote:
-> Hi,
-> 
-> On 10/26, Enke Chen wrote:
->>
->> This is really a good idea given that "parent" is declared as RCU-protected.
->> Just a bit odd, though, that the "parent" has not been accessed this way in
->> the code base.
-> 
-> It is acccessed when possible,
-> 
->> So just to confirm: the revised code would look like the following:
->>
->> static void do_notify_parent_predump(void)
->> {
->>         struct task_struct *parent;
->>         int sig;
->>
->>         rcu_read_lock();
->>         parent = rcu_dereference(current->parent);
->>         sig = parent->signal->predump_signal;
->>         if (sig != 0)
->>                 do_send_sig_info(sig, SEND_SIG_NOINFO, parent, PIDTYPE_TGID);
->>         rcu_read_unlock();
->> }
-> 
-> Yes, this is what I meant.
-> 
-> But I still think do_notify_parent_predump() should notify ->real_parent,
-> not ->parent.
-> 
-> Oleg.
-> 
+Next time around, if the high-res update is 0 or -1, it will go the
+other direction. And then it will oscillate.
+
+Notice how tiny movements of +1/-1 in the *high-res* count can
+translate into +1/-1 in the regular wheel movement.
+
+And those tiny movements very definitely happen. Maybe it's just my
+mouse, but the undeniable fact is that the old algorithm was simply
+not stable.
+
+It was literally unusable. I had to be careful not to even touch the
+wheel at all, or it would scroll randomly.
+
+I do not believe that you actually ever *used* that code, or if you
+did, you only did so with applications that were high-res aware and
+ignored the regular wheel entirely because you were testing in an
+environment with other changes than just the kernel.
+
+                    Linus
