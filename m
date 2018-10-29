@@ -7,62 +7,68 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F402C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 16:23:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C82C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 16:24:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38CF420664
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 16:23:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 793A120664
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 16:24:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="b9l2MmIp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38CF420664
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="du4esRFM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 793A120664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728115AbeJ3BNO (ORCPT
+        id S1728130AbeJ3BNT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 21:13:14 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44659 "EHLO
+        Mon, 29 Oct 2018 21:13:19 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37103 "EHLO
         mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727565AbeJ3BNN (ORCPT
+        with ESMTP id S1727793AbeJ3BNS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 21:13:13 -0400
-Received: by mail-wr1-f68.google.com with SMTP id d17-v6so9081318wre.11
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 09:23:55 -0700 (PDT)
+        Mon, 29 Oct 2018 21:13:18 -0400
+Received: by mail-wr1-f68.google.com with SMTP id g9-v6so9385199wrq.4
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 09:23:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=yJCtkrkfIFoRj9cRN8aqIPKmbD9Nc3jaK1cwdarWAHs=;
-        b=b9l2MmIpKRXHesHf2ofXp+b+1pZGE08G4PAHV2q0iy8mOYw7DmBHmPnxHI5pQmyaGT
-         pblfRnf9cTpHs0a0e24oHPG5zHSCbap2kpRrYg6eUP7HJxXMaMWhi9NdjVW1nDDjFz9x
-         zlOcJBtySx0RBYl5UYiiidYzf6roZaLuvmrRg=
+        bh=EHn6ZSQVTOKaLg/bsltnbcaMuQIuilo+eLx553lzoE4=;
+        b=du4esRFMfsG/CHN+tAw+Upgcaeh4mGCj+P/HX/DLpbrWe1SWcZNq92SMA+NmWYcrjf
+         dDuFTN/RB/KhTo6vZnSgXxtTQ9eeE/oMZxaXmsBqUAZMbtUJn57+/WFt97KEypsQu2he
+         npIR3XBuoZfKUpCzVXusp+Yt//RuxWOchtKak=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=yJCtkrkfIFoRj9cRN8aqIPKmbD9Nc3jaK1cwdarWAHs=;
-        b=fuhe/9GkHSDV5J18b4RqHbf7Gt3iv90F9ebd/rg4arVsFpRqC1ooLosnwigUHm4AkV
-         AjxyT/VgzVB2ngzWADh12HjOKGUG0MF93NfUtM6Vn0GPzZUI1hpXqob1rSTb6p8OB89p
-         NmHZuXH0s6s7aG8+WSwGGlWBjIH93PtuqEMSl5yEtrEUfxdT8RlcJVpNu0gjafffiX/4
-         4yXr1j8x92CxyZWMgjLk+3+gjwoH5mKBJY3UVMLgoXW8ZuJy0eNMyuEk4jL2CuNl79r9
-         ezzn+1e1NjvA3FKZhRZcIR4FglrsPMZW2ttpeyJNHfYgs/ZqIz4ObEa/T4rNCn5EYlDd
-         7MnQ==
-X-Gm-Message-State: AGRZ1gIn5ORQ2AbpM5ZJuj7pQzIXhkEyH8KLp7aoXx9KqDiMG59v+5sy
-        Yjz/Ldjye3nSaPbfc7rpLmmIsQ==
-X-Google-Smtp-Source: AJdET5f+n5fbm28BqusnV9aiGSdA+hUv+Wct5yk8c8fpVYH3ybioL+lpDQwmA2EfcgQJozsCUpxI5w==
-X-Received: by 2002:adf:e551:: with SMTP id z17-v6mr14524210wrm.238.1540830234197;
-        Mon, 29 Oct 2018 09:23:54 -0700 (PDT)
+        bh=EHn6ZSQVTOKaLg/bsltnbcaMuQIuilo+eLx553lzoE4=;
+        b=UGtefS/DIPOYgWTXg5jHml45778JNLv9m7AFIVtGevhFkPdItAehWejZqb2/oCqY5F
+         /S0WcTgd+tYPGvtgceTHjH/iTycfFij1+UYxwzw3w9N8BSIfpINMvZ/9hTKcdHnuDBYF
+         10DUoEirvNS/duzI9HLJNyrUF3k0FcdgmDqsPiGj043hvuts5RUiqhEyzYWPCLvsvYOi
+         NSJ91Z6FQMDhw1ilyMTnNRlWV/C+e5++ZovHbq3k+mpIjwOigbRhAEQGf/TLneCLtOmW
+         M+4YRbg6TubvdKMM+2uW0aelvq0DHVR3hZi6ll7ftXRs6D82fT6m9jb+GtjvTtFBbVzY
+         YEAg==
+X-Gm-Message-State: AGRZ1gKzLFBxAHJ6nErbrPBfeWAALkZtVxK3XhxA30LISsY26F8j/Sy2
+        EN4X4ewEhz+kPNUvQNEPFWhM4g==
+X-Google-Smtp-Source: AJdET5fhYVzPTXeR9x+u8Hvo2YtAMOz69DTGFAfsIEn5jRYgjckq4PBQSsB0sEGj/JMgiqm/wUb8PA==
+X-Received: by 2002:a05:6000:51:: with SMTP id k17mr14542750wrx.114.1540830238967;
+        Mon, 29 Oct 2018 09:23:58 -0700 (PDT)
 Received: from localhost.localdomain (137.55.88.92.rev.sfr.net. [92.88.55.137])
-        by smtp.gmail.com with ESMTPSA id y19-v6sm28150499wra.60.2018.10.29.09.23.52
+        by smtp.gmail.com with ESMTPSA id y19-v6sm28150499wra.60.2018.10.29.09.23.57
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 29 Oct 2018 09:23:52 -0700 (PDT)
+        Mon, 29 Oct 2018 09:23:58 -0700 (PDT)
 From:   Daniel Lezcano <daniel.lezcano@linaro.org>
 To:     rjw@rjwysocki.net
 Cc:     vincent.guittot@linaro.org, linux-kernel@vger.kernel.org,
+        Chris Redpath <chris.redpath@linaro.org>,
+        Quentin Perret <quentin.perret@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: [PATCH 3/4] base/drivers/topology: Move instructions in the error path
-Date:   Mon, 29 Oct 2018 17:23:19 +0100
-Message-Id: <1540830201-2947-3-git-send-email-daniel.lezcano@linaro.org>
+Subject: [PATCH 4/4] base/drivers/topology: Default dmpis-mhz if they are not set in DT
+Date:   Mon, 29 Oct 2018 17:23:20 +0100
+Message-Id: <1540830201-2947-4-git-send-email-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1540830201-2947-1-git-send-email-daniel.lezcano@linaro.org>
 References: <1540830201-2947-1-git-send-email-daniel.lezcano@linaro.org>
@@ -71,41 +77,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When the function topology_parse_cpu_capacity() fails, we set the boolean
-cap_parsing_failed to true and we free the raw_capacity. This is correct as
-the function begins with a check against cap_parsing_failed thus protecting
-the function to be re-entered.
+In the case of assymetric SoC with the same micro-architecture, we
+have a group of CPUs with smaller OPPs than the other group. One
+example is the 96boards dragonboard 820c. There is no dmips/MHz
+difference between both groups, so no need to specify the values in
+the DT. Unfortunately, without these defined, there is no scaling
+capacity comutation triggered, so we need to write
+'capacity-dmips-mhz' for each CPU with the same value in order to
+force the scaled capacity computation.
 
-However, even it is impossible that can happen with the current code, let's
-move in the instructions:
+Fix this by setting a default capacity to SCHED_CAPACITY_SCALE, if no
+'capacity-dmips-mhz' is defined in the DT.
 
- - cap_parsing_failed = true;
- - free_raw_capacity();
+This was tested on db820c:
+ - specified values in the DT (correct results)
+ - partial values defined in the DT (error + fallback to defaults)
+ - no specified values in the DT (correct results)
 
- ... in the 'else' block when the error is detected, that is more semantically
- correct.
+correct results are:
+  cat /sys/devices/system/cpu/cpu*/cpu_capacity
+   758
+   758
+  1024
+  1024
 
+  ... respectively for CPU0, CPU1, CPU2 and CPU3.
+
+That reflects the capacity for the max frequencies 1593600 and 2150400.
+
+Cc: Chris Redpath <chris.redpath@linaro.org>
+Cc: Quentin Perret <quentin.perret@linaro.org>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Amit Kucheria <amit.kucheria@linaro.org>
+Cc: Nicolas Dechesne <nicolas.dechesne@linaro.org>
+Cc: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/base/arch_topology.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/base/arch_topology.c | 27 ++++++++++++++++++++++++++-
+ 1 file changed, 26 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
-index b19d6d4..7311641 100644
+index 7311641..7d594a6 100644
 --- a/drivers/base/arch_topology.c
 +++ b/drivers/base/arch_topology.c
-@@ -155,9 +155,9 @@ bool __init topology_parse_cpu_capacity(struct device_node *cpu_node, int cpu)
- 			pr_err("cpu_capacity: missing %pOF raw capacity\n",
- 				cpu_node);
- 			pr_err("cpu_capacity: partial information: fallback to 1024 for all CPUs\n");
-+			cap_parsing_failed = true;
-+			free_raw_capacity();
- 		}
--		cap_parsing_failed = true;
--		free_raw_capacity();
- 	}
+@@ -205,6 +205,21 @@ static struct notifier_block init_cpu_capacity_notifier = {
+ 	.notifier_call = init_cpu_capacity_callback,
+ };
  
- 	return !ret;
++static int topology_set_default_capacity(void)
++{
++	int cpu;
++
++	raw_capacity = kzalloc(num_possible_cpus() * sizeof(*raw_capacity),
++			       GFP_KERNEL);
++	if (!raw_capacity)
++		return -ENOMEM;
++
++	for_each_possible_cpu(cpu)
++		raw_capacity[cpu] = SCHED_CAPACITY_SCALE;
++
++	return 0;
++}
++
+ static int __init register_cpufreq_notifier(void)
+ {
+ 	int ret;
+@@ -214,9 +229,19 @@ static int __init register_cpufreq_notifier(void)
+ 	 * until we have the necessary code to parse the cpu capacity, so
+ 	 * skip registering cpufreq notifier.
+ 	 */
+-	if (!acpi_disabled || !raw_capacity)
++	if (!acpi_disabled)
+ 		return -EINVAL;
+ 
++	if (!raw_capacity) {
++
++		pr_info("cpu_capacity: No capacity defined in DT, set default "
++		       "values to %ld\n", SCHED_CAPACITY_SCALE);
++
++		ret = topology_set_default_capacity();
++		if (ret)
++			return ret;
++	}
++
+ 	if (!alloc_cpumask_var(&cpus_to_visit, GFP_KERNEL)) {
+ 		pr_err("cpu_capacity: failed to allocate memory for cpus_to_visit\n");
+ 		return -ENOMEM;
 -- 
 2.7.4
 
