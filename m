@@ -2,104 +2,97 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47821C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:29:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26130C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:31:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B8BC2080A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:29:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B8BC2080A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EDF482080A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:31:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDF482080A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729372AbeJ3DTb convert rfc822-to-8bit (ORCPT
+        id S1729380AbeJ3DVK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 23:19:31 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:40138 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726852AbeJ3DTa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 23:19:30 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1E2F8325DB6;
-        Mon, 29 Oct 2018 18:29:41 +0000 (UTC)
-Received: from t450s.home (ovpn-116-100.phx2.redhat.com [10.3.116.100])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9479D5FC0E;
-        Mon, 29 Oct 2018 18:29:23 +0000 (UTC)
-Date:   Mon, 29 Oct 2018 12:29:22 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Jason Wang <jasowang@redhat.com>
-Cc:     Simon Guo <wei.guo.simon@linux.alibaba.com>,
-        Eric Auger <eric.auger@redhat.com>,
-        qixuan.wu@linux.alibaba.com, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, Peter Xu <peterx@redhat.com>
-Subject: Re: Can VFIO pin only a specific region of guest mem when use pass
- through devices?
-Message-ID: <20181029122922.7b2a9b0c@t450s.home>
-In-Reply-To: <e4be89df-2bf9-76a2-497f-c6ba3256c95a@redhat.com>
-References: <20181029024228.GA4279@simonLocalRHEL7.x64>
-        <e4be89df-2bf9-76a2-497f-c6ba3256c95a@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 29 Oct 2018 18:29:41 +0000 (UTC)
+        Mon, 29 Oct 2018 23:21:10 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:40090 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726852AbeJ3DVK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 23:21:10 -0400
+Received: by mail-pl1-f195.google.com with SMTP id b9-v6so4217110pls.7;
+        Mon, 29 Oct 2018 11:31:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=YLTVR03Av8/7EIy5uS3yczJLab47CXlH6S6gFsZdnJ8=;
+        b=JE1Os70omxp4svTXHlZKdafO3EbSjnQANxCOrQ+QuGulmhi4blVTN/PxkYot1cZi1H
+         vtc5lK0ZXQTxc2DO7IoVw6H5TQYypi5a3fcsfJ1HeE0ViWXZuum+duqRiribun2LVkXa
+         2Xa6d467qoOqRzT5u8bixK93swj7bz1RjbaqCd100TRVTtnAyfALY4JmXyqe6jspQm8p
+         WBWXwA0xyIUm84OYgVS+Iqf36StAdMiINTacPjnaxhEd+SeAc+uszHni3FJ+4Empvx6R
+         N6rKLn+5vlfuuPKN/FweWBZbjXXbywMNiVZ9e/M/fZTszJZ3Mtsshxoma1ZTI/7hJf0j
+         b3Yw==
+X-Gm-Message-State: AGRZ1gI/rfS8kRGlCKY5q6QPpWlVATTMchpvXTlEJZav5HH2yoCdlHmF
+        yGXxTl0zjYAMCcZ9NdgxYf8=
+X-Google-Smtp-Source: AJdET5eYPGHc6NGWUS/KGtab3LqqbNQNC/D5dB/ZyU+3pVJEmZDFXQpl15ZwsBEPeebIKuk2lEHZSA==
+X-Received: by 2002:a17:902:24b:: with SMTP id 69-v6mr15751840plc.280.1540837879311;
+        Mon, 29 Oct 2018 11:31:19 -0700 (PDT)
+Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
+        by smtp.gmail.com with ESMTPSA id s13-v6sm56156684pgs.76.2018.10.29.11.31.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Oct 2018 11:31:17 -0700 (PDT)
+Message-ID: <1540837876.196084.75.camel@acm.org>
+Subject: Re: [PATCH 08/14] blk-mq: separate number of hardware queues from
+ nr_cpu_ids
+From:   Bart Van Assche <bvanassche@acm.org>
+To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 29 Oct 2018 11:31:16 -0700
+In-Reply-To: <20181029163738.10172-9-axboe@kernel.dk>
+References: <20181029163738.10172-1-axboe@kernel.dk>
+         <20181029163738.10172-9-axboe@kernel.dk>
+Content-Type: text/plain; charset="UTF-7"
+X-Mailer: Evolution 3.26.2-1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 29 Oct 2018 17:14:46 +0800
-Jason Wang <jasowang@redhat.com> wrote:
+On Mon, 2018-10-29 at 10:37 -0600, Jens Axboe wrote:
++AD4 With multiple maps, nr+AF8-cpu+AF8-ids is no longer the maximum number of
++AD4 hardware queues we support on a given devices. The initializer of
++AD4 the tag+AF8-set can have set -+AD4-nr+AF8-hw+AF8-queues larger than the available
++AD4 number of CPUs, since we can exceed that with multiple queue maps.
++AD4 
++AD4 Reviewed-by: Hannes Reinecke +ADw-hare+AEA-suse.com+AD4
++AD4 Signed-off-by: Jens Axboe +ADw-axboe+AEA-kernel.dk+AD4
++AD4 ---
++AD4  block/blk-mq.c +AHw 28 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+--------
++AD4  1 file changed, 21 insertions(+-), 7 deletions(-)
++AD4 
++AD4 diff --git a/block/blk-mq.c b/block/blk-mq.c
++AD4 index 0fab36372ace..60a951c4934c 100644
++AD4 --- a/block/blk-mq.c
++AD4 +-+-+- b/block/blk-mq.c
++AD4 +AEAAQA -2663,6 +-2663,19 +AEAAQA static void blk+AF8-mq+AF8-realloc+AF8-hw+AF8-ctxs(struct blk+AF8-mq+AF8-tag+AF8-set +ACo-set,
++AD4  	mutex+AF8-unlock(+ACY-q-+AD4-sysfs+AF8-lock)+ADs
++AD4  +AH0
++AD4  
++AD4 +-/+ACo
++AD4 +- +ACo Maximum number of queues we support. For single sets, we'll never have
+                       +AF4
+                   hardware?
++AD4 +- +ACo more than the CPUs (software queues). For multiple sets, the tag+AF8-set
++AD4 +- +ACo user may have set -+AD4-nr+AF8-hw+AF8-queues larger.
++AD4 +- +ACo-/
 
-> On 2018/10/29 上午10:42, Simon Guo wrote:
-> > Hi,
-> >
-> > I am using network device pass through mode with qemu x86(-device vfio-pci,host=0000:xx:yy.z)
-> > and “intel_iommu=on” in host kernel command line, and it shows the whole guest memory
-> > were pinned(vfio_pin_pages()), viewed by the “top” RES memory output. I understand it is due
-> > to device can DMA to any guest memory address and it cannot be swapped.
-> >
-> > However can we just pin a rang of address space allowed by iommu group of that device,
-> > instead of pin whole address space? I do notice some code like vtd_host_dma_iommu().
-> > Maybe there is already some way to enable that?
-> >
-> > Sorry if I missed some basics. I googled some but no luck to find the answer yet. Please
-> > let me know if any discussion already raised on that.
-> >
-> > Any other suggestion will also be appreciated. For example, can we modify the guest network
-> > card driver to allocate only from a specific memory region(zone), and qemu advises guest
-> > kernel to only pin that memory region(zone) accordingly?
-> >
-> > Thanks,
-> > - Simon  
-> 
-> 
-> One possible method is to enable IOMMU of VM.
+Anyway:
 
-Right, making use of a virtual IOMMU in the VM is really the only way
-to bound the DMA to some subset of guest memory, but vIOMMU usage by
-the guest is optional on x86 and even if the guest does use it, it might
-enable passthrough mode, which puts you back at the problem that all
-guest memory is pinned with the additional problem that it might also
-be accounted for once per assigned device and may hit locked memory
-limits.  Also, the DMA mapping and unmapping path with a vIOMMU is very
-slow, so performance of the device in the guest will be abysmal unless
-the use case is limited to very static mappings, such as userspace use
-within the guest for nested assignment or perhaps DPDK use cases.
+Reviewed-by: Bart Van Assche +ADw-bvanassche+AEA-acm.org+AD4
 
-Modifying the guest to only use a portion of memory for DMA sounds like
-a quite intrusive option.  There are certainly IOMMU models where the
-IOMMU provides a fixed IOVA range, but creating dynamic mappings within
-that range doesn't really solve anything given that it simply returns
-us to a vIOMMU with slow mapping.  A window with a fixed identity
-mapping used as a DMA zone seems plausible, but again, also pretty
-intrusive to the guest, possibly also to the drivers.  Host IOMMU page
-faulting can also help the pinned memory footprint, but of course
-requires hardware support and lots of new code paths, many of which are
-already being discussed for things like Scalable IOV and SVA.  Thanks,
-
-Alex
