@@ -2,115 +2,232 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D51EFC2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:50:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B75DBC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:50:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98FA020657
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:50:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H8q//14y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98FA020657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 8A51A20657
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:50:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A51A20657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727312AbeJ2Wi7 (ORCPT
+        id S1727386AbeJ2WjX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 18:38:59 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:34648 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726029AbeJ2Wi7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 18:38:59 -0400
-Received: by mail-qt1-f193.google.com with SMTP id z2-v6so9246505qts.1;
-        Mon, 29 Oct 2018 06:50:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Y23NbwmZ2nljHa//mgsjD3PEO6d9VhL85U2ozlmq6Sw=;
-        b=H8q//14yozakf7H9aTktKFa98g8RFLWpK00AZsx9pbTKHy11YpeSGwXuoZMb5Z5qPv
-         r3v8y938dbtVuyq4gNMUylnGlof9oo7OLM/Ef78cIRSBadpTfm5jV0xNdN0f86bcLBOt
-         IXzuEEhw3Z9E2qzfHCuv93/kxRfcP/32oxzk2HdQea0+aVPAw5N/1l0qal7ldkqiUAOT
-         NBsyFhUMUJob6RBLYiSaTXKim/N5punJrPZt6UdjE0gVB+lZPeBXvfHEfxOQW2HJsJeY
-         6lqkAJc+SriblWF017wAHOfNqIvqrrFL2JsD690eDcOpwaCPOM7A3a9uhfbLrcE9BnZo
-         Ti9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Y23NbwmZ2nljHa//mgsjD3PEO6d9VhL85U2ozlmq6Sw=;
-        b=KAMCeeoMG4LxafWRCpEHaqk9H+lU0NXeqor5x+F5ERCTA710wvhtm+WHnt9ypkWxnB
-         pSdPX11psh/Ayx7CC/bxfEsdZqwowbT+SN0JO9z7NCeTcIiABVsvrGTyueDR7guRraXi
-         i83wO/iej8xBXfKjG3rc/yKdUKilP2yszoX8IAXErth/IqLaUAVftz5imr1an/dW7cS7
-         unMMMyQfYtXORKCR/Eg7tPUQ+2d3V2g0vl+FR8SRm8R00lwkE7onrCmUam7hGI8qVMi3
-         B/swQhXq0t8G4ZVuYv4O0AqNv87qRoOa03wSqxt2LMUKotNhrcFcWy8u772Idk4D+gQi
-         PM1g==
-X-Gm-Message-State: AGRZ1gKbqBgDK3yTNas9TyvSLyuq8x1jzP+OOSue02OsD6eLRroURzyn
-        RiMJxT+foKPgontO5a3jqFD4Zi/zG+6KGOfyoF2UrkGPr9g=
-X-Google-Smtp-Source: AJdET5dzYKHCHvvGwUYtkvji6Jef/bxrb0EjIltz+aNB+44rcq8w6hD/s/5VVEvwfd/DyH6suTKLyK/9ymMLFGOhpxI=
-X-Received: by 2002:ac8:764e:: with SMTP id i14-v6mr13074270qtr.373.1540821013182;
- Mon, 29 Oct 2018 06:50:13 -0700 (PDT)
+        Mon, 29 Oct 2018 18:39:23 -0400
+Received: from mga18.intel.com ([134.134.136.126]:15087 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726692AbeJ2WjX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 18:39:23 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2018 06:50:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,440,1534834800"; 
+   d="scan'208";a="103447155"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.111])
+  by fmsmga001.fm.intel.com with ESMTP; 29 Oct 2018 06:50:35 -0700
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] tpm: clean up tpm_try_transmit() error handling flow
+Date:   Mon, 29 Oct 2018 15:50:18 +0200
+Message-Id: <20181029135018.25547-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <20181026230723.12215-1-zombah@gmail.com>
-In-Reply-To: <20181026230723.12215-1-zombah@gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 29 Oct 2018 15:50:02 +0200
-Message-ID: <CAHp75Vdqm8ryJMRnOdsWd7Y8AKGLSuXDOgL37q-UE+_0S356FQ@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: ideapad: Add Y530-15ICH to no_hw_rfkill
-To:     zombah@gmail.com
-Cc:     Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Ike Panhc <ike.pan@canonical.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 27, 2018 at 2:08 AM Misha Komarovskiy <zombah@gmail.com> wrote:
->
-> Lenovo Legion Y530-15ICH is another model without
-> hardware radio switch. Add it to no_hw_rfkill to
-> enable wireless.
->
+Move locking, locality handling and power management to tpm_transmit()
+in order to simplify the flow and fix the error message formatting in
+tpm_try_transmit() to output correct function name by using the
+'__func__' macro.
 
-Pushed to my review and testing queue, thanks!
+Cc: Peter Huewe <peterhuewe@gmx.de>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+---
+ drivers/char/tpm/tpm-interface.c | 103 ++++++++++++++-----------------
+ 1 file changed, 47 insertions(+), 56 deletions(-)
 
-> Signed-off-by: Misha Komarovskiy <zombah@gmail.com>
-> ---
->  drivers/platform/x86/ideapad-laptop.c | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
-> index f856d59361f2..b6489cba2985 100644
-> --- a/drivers/platform/x86/ideapad-laptop.c
-> +++ b/drivers/platform/x86/ideapad-laptop.c
-> @@ -1147,6 +1147,13 @@ static const struct dmi_system_id no_hw_rfkill_list[] = {
->                 },
->         },
->         {
-> +               .ident = "Lenovo Legion Y530-15ICH",
-> +               .matches = {
-> +                       DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-> +                       DMI_MATCH(DMI_PRODUCT_VERSION, "Lenovo Legion Y530-15ICH"),
-> +               },
-> +       },
-> +       {
->                 .ident = "Lenovo Legion Y720-15IKB",
->                 .matches = {
->                         DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-> --
-> 2.13.7
->
-
-
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 64510ed81b46..967de254b156 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -171,7 +171,6 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+ 	ssize_t len = 0;
+ 	u32 count, ordinal;
+ 	unsigned long stop;
+-	bool need_locality;
+ 
+ 	rc = tpm_validate_command(chip, space, buf, bufsiz);
+ 	if (rc == -EINVAL)
+@@ -201,37 +200,16 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+ 		return -E2BIG;
+ 	}
+ 
+-	if (!(flags & TPM_TRANSMIT_UNLOCKED) && !(flags & TPM_TRANSMIT_NESTED))
+-		mutex_lock(&chip->tpm_mutex);
+-
+-	if (chip->ops->clk_enable != NULL)
+-		chip->ops->clk_enable(chip, true);
+-
+-	/* Store the decision as chip->locality will be changed. */
+-	need_locality = chip->locality == -1;
+-
+-	if (need_locality) {
+-		rc = tpm_request_locality(chip, flags);
+-		if (rc < 0) {
+-			need_locality = false;
+-			goto out_locality;
+-		}
+-	}
+-
+-	rc = tpm_cmd_ready(chip, flags);
+-	if (rc)
+-		goto out_locality;
+-
+ 	rc = tpm2_prepare_space(chip, space, ordinal, buf);
+ 	if (rc)
+-		goto out;
++		return rc;
+ 
+ 	rc = chip->ops->send(chip, buf, count);
+ 	if (rc < 0) {
+ 		if (rc != -EPIPE)
+ 			dev_err(&chip->dev,
+ 				"%s: tpm_send: error %d\n", __func__, rc);
+-		goto out;
++		return rc;
+ 	}
+ 
+ 	if (chip->flags & TPM_CHIP_FLAG_IRQ)
+@@ -246,8 +224,7 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+ 
+ 		if (chip->ops->req_canceled(chip, status)) {
+ 			dev_err(&chip->dev, "Operation Canceled\n");
+-			rc = -ECANCELED;
+-			goto out;
++			return -ECANCELED;
+ 		}
+ 
+ 		tpm_msleep(TPM_TIMEOUT_POLL);
+@@ -256,44 +233,24 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
+ 
+ 	chip->ops->cancel(chip);
+ 	dev_err(&chip->dev, "Operation Timed out\n");
+-	rc = -ETIME;
+-	goto out;
++	return -ETIME;
+ 
+ out_recv:
+ 	len = chip->ops->recv(chip, buf, bufsiz);
+ 	if (len < 0) {
+-		rc = len;
+-		dev_err(&chip->dev,
+-			"tpm_transmit: tpm_recv: error %d\n", rc);
+-		goto out;
+-	} else if (len < TPM_HEADER_SIZE) {
+-		rc = -EFAULT;
+-		goto out;
+-	}
+-
+-	if (len != be32_to_cpu(header->length)) {
+-		rc = -EFAULT;
+-		goto out;
++		dev_err(&chip->dev, "%s: recv error %d\n", __func__, rc);
++		return len;
+ 	}
++	if (len < TPM_HEADER_SIZE || len != be32_to_cpu(header->length))
++		return -EFAULT;
+ 
+ 	rc = tpm2_commit_space(chip, space, ordinal, buf, &len);
+-	if (rc)
+-		dev_err(&chip->dev, "tpm2_commit_space: error %d\n", rc);
+-
+-out:
+-	/* may fail but do not override previous error value in rc */
+-	tpm_go_idle(chip, flags);
+-
+-out_locality:
+-	if (need_locality)
+-		tpm_relinquish_locality(chip, flags);
+-
+-	if (chip->ops->clk_enable != NULL)
+-		chip->ops->clk_enable(chip, false);
++	if (rc) {
++		dev_err(&chip->dev, "%s: commit error %d\n", __func__, rc);
++		return rc;
++	}
+ 
+-	if (!(flags & TPM_TRANSMIT_UNLOCKED) && !(flags & TPM_TRANSMIT_NESTED))
+-		mutex_unlock(&chip->tpm_mutex);
+-	return rc ? rc : len;
++	return len;
+ }
+ 
+ /**
+@@ -322,6 +279,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 	/* space for header and handles */
+ 	u8 save[TPM_HEADER_SIZE + 3*sizeof(u32)];
+ 	unsigned int delay_msec = TPM2_DURATION_SHORT;
++	bool has_locality = false;
+ 	u32 rc = 0;
+ 	ssize_t ret;
+ 	const size_t save_size = min(space ? sizeof(save) : TPM_HEADER_SIZE,
+@@ -337,7 +295,40 @@ ssize_t tpm_transmit(struct tpm_chip *chip, struct tpm_space *space,
+ 	memcpy(save, buf, save_size);
+ 
+ 	for (;;) {
++		if (!(flags & TPM_TRANSMIT_UNLOCKED) &&
++		    !(flags & TPM_TRANSMIT_NESTED))
++			mutex_lock(&chip->tpm_mutex);
++
++		if (chip->ops->clk_enable != NULL)
++			chip->ops->clk_enable(chip, true);
++
++		if (chip->locality == -1) {
++			ret = tpm_request_locality(chip, flags);
++			if (ret)
++				goto out_locality;
++			has_locality = true;
++		}
++
++		ret = tpm_cmd_ready(chip, flags);
++		if (ret)
++			goto out_locality;
++
+ 		ret = tpm_try_transmit(chip, space, buf, bufsiz, flags);
++
++		/* This may fail but do not override ret. */
++		tpm_go_idle(chip, flags);
++
++out_locality:
++		if (has_locality)
++			tpm_relinquish_locality(chip, flags);
++
++		if (chip->ops->clk_enable != NULL)
++			chip->ops->clk_enable(chip, false);
++
++		if (!(flags & TPM_TRANSMIT_UNLOCKED) &&
++		    !(flags & TPM_TRANSMIT_NESTED))
++			mutex_unlock(&chip->tpm_mutex);
++
+ 		if (ret < 0)
+ 			break;
+ 		rc = be32_to_cpu(header->return_code);
 -- 
-With Best Regards,
-Andy Shevchenko
+2.19.1
+
