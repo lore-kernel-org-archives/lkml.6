@@ -2,104 +2,198 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A154CC46475
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:15:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C64C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:16:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66A7F20851
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:15:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66A7F20851
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 05A5520664
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 09:16:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="hT6HENAz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05A5520664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729562AbeJ2SDH (ORCPT
+        id S1729578AbeJ2SEL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 14:03:07 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:55242 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729467AbeJ2SDH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 14:03:07 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id D7EB320791; Mon, 29 Oct 2018 10:15:17 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-12-210.w90-88.abo.wanadoo.fr [90.88.133.210])
-        by mail.bootlin.com (Postfix) with ESMTPSA id A26992099B;
-        Mon, 29 Oct 2018 10:15:07 +0100 (CET)
-Date:   Mon, 29 Oct 2018 10:15:08 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+        Mon, 29 Oct 2018 14:04:11 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:37825 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729455AbeJ2SEL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 14:04:11 -0400
+Received: by mail-ed1-f65.google.com with SMTP id u12-v6so3729003eds.4
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 02:16:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=a+Q0XooCNhw1iHXF6EMgKn/+8ukSXlUAgxX8SxJjDGM=;
+        b=hT6HENAz5z8n6A5a4ftxzcIBsBavl1k7jns4Ya3VxEO6gIiUMgM3wY2lrEi3oniazI
+         wlXJr8zItH3WSpsLC7oGSe+TEk6ewOHVFlzcS68UnQXk3+N5bis+XbZ7vVPGMgT0PCCb
+         NEIghJ1wtOkkcsQHG7KLDzoJ8wac9Jvd7IjbY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=a+Q0XooCNhw1iHXF6EMgKn/+8ukSXlUAgxX8SxJjDGM=;
+        b=MuDNg2CuoGBwOZfUZVWA7fO1fdk456oE96oma+eb2oXbxdyz+h/eFfnTAyx8fud/sN
+         4hEjebRNpjmOw4fo7bb4/qqJ3PvQAXWfgGg8Q86UlE56dydHeCYTWVkPC4t8JnXfc/ob
+         IHEoWpCmr3D2Dp1XkAtkOR56hqzL0Cs/JfQf+rhOgVhdPlJi1QBFcHWkvCAeJaXVxSkQ
+         h+6J67KDPGV7QoNvSAuqEZv5yZrG4p0nb+3FkJhQQFmtPcQBwyoHhi4PF3KBUw/eAs/I
+         HB4+u5mY0+5pR55LKOIXWJiZ3gGDmM7Xa+0iF6i+kObISo3avXryOo8P55m6ZfxsImJA
+         PuGQ==
+X-Gm-Message-State: AGRZ1gLeVawGDp/vvC/P1zaUQUfF2AHKYFM6YERgUKGAWyvzV2UILJ3e
+        Qs1FrrYR9afhvwWMYHvxGqssag==
+X-Google-Smtp-Source: AJdET5dBqivkhjAU8yM4S+KlwrOyTQ/Wu9G+bdvLhZRdoUcG2tz3RRmI1YlXk7QKl8MCnd2rxxbwWw==
+X-Received: by 2002:a17:906:4d41:: with SMTP id b1-v6mr6996999ejv.171.1540804582578;
+        Mon, 29 Oct 2018 02:16:22 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id s20-v6sm3614189eja.9.2018.10.29.02.16.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Oct 2018 02:16:21 -0700 (PDT)
+Date:   Mon, 29 Oct 2018 10:16:19 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     CK Hu <ck.hu@mediatek.com>
+Cc:     Daniel Vetter <daniel@ffwll.ch>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
         David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v3 00/25] drm/sun4i: Allwinner A64 MIPI-DSI support
-Message-ID: <20181029091508.gyhn2m5fnbucvb34@flea>
-References: <20181026144344.27778-1-jagan@amarulasolutions.com>
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com
+Subject: Re: [PATCH 3/3] drm/mediatek: Use drm_gem_cma_object instead of
+ mtk_drm_gem_obj
+Message-ID: <20181029091619.GT21967@phenom.ffwll.local>
+Mail-Followup-To: CK Hu <ck.hu@mediatek.com>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <sean@poorly.run>, Philipp Zabel <p.zabel@pengutronix.de>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com
+References: <1540538523-1973-1-git-send-email-ck.hu@mediatek.com>
+ <1540538523-1973-4-git-send-email-ck.hu@mediatek.com>
+ <20181026102156.GH21967@phenom.ffwll.local>
+ <1540782676.13715.4.camel@mtksdaap41>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="36y45ohgmtyd7cei"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181026144344.27778-1-jagan@amarulasolutions.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <1540782676.13715.4.camel@mtksdaap41>
+X-Operating-System: Linux phenom 4.18.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Oct 29, 2018 at 11:11:16AM +0800, CK Hu wrote:
+> Hi,Daniel:
+> 
+> On Fri, 2018-10-26 at 12:21 +0200, Daniel Vetter wrote:
+> > On Fri, Oct 26, 2018 at 03:22:03PM +0800, CK Hu wrote:
+> > > After adding dma_dev in struct drm_device and
+> > > drm_gem_cma_dumb_create_no_kmap(), drm_gem_cma_object could replace
+> > > mtk_drm_gem_obj, so use drm_gem_cma_object instead of mtk_drm_gem_obj to
+> > > reduce redundant code.
+> > > 
+> > > Signed-off-by: CK Hu <ck.hu@mediatek.com>
+> > 
+> > A few questions/thoughts:
+> > 
+> > - Why do you need both drm_device->dev and drm_device->dma_dev? Can't you
+> >   just register the drm_device with the right struct device?
+> > 
+> 
+> In [1], mmsys is the drm driver and ovl0 and ovl1 is the sub device
+> which has dma function.
+> In this drm, there are two crtc and each one is comprised of many
+> component.
+> This is an example of mt8173:
+> 
+> crtc0: ovl0, color0, aal, od, rdma0, ufoe, dsi0
+> crtc1: ovl1, color1, gamma, rdma1, dpi0
+> 
+> In the device node of ovl0 and ovl1, there is a 'iommus' parameter in
+> it, so use dma_alloc_xxx() and dma_map_xxx() with that device would get
+> iova rather than pa. I don't think it's a good idea to register ovl0 or
+> ovl1 as drm device because each one is just a component in a pipeline.
+> mmsys controls the clock and routing of multi-media system which include
+> this drm system, so it's better to register mmsys as drm device. Maybe
+> we could move 'iommus' parameter from ovl device to mmsys device, so the
+> dma device changes from ovl device to mmsys device. I'm not sure this
+> would be a good choice, how do you think?
+> 
+> [1]
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/mediatek/mt8173.dtsi?h=v4.19
 
---36y45ohgmtyd7cei
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ah ok. But if you have 2 blocks that make up the overall drm device, why
+don't you need to switch at runtime between them? I.e. buffer allocated
+for crtc0 needs to be dma-mapped to crtc0, buffer allocated to crtc1 needs
+to be dma-mapped on crtc1?
 
-On Fri, Oct 26, 2018 at 08:13:19PM +0530, Jagan Teki wrote:
-> This series fixed the issues related to work DSI on 2-lane panel
-> which is reported on previous version[1].
->=20
-> Few comments from previous version still in discussion, but I just
-> send this version just to group all working changes together.
-> anyway I will fix in this in next version if any.
->=20
-> PLL_MIPI min rate is still weird, I tried many possible dclock rate
-> from panel driver to satisfy manual suggested min rate 500MHz but
-> none working so eventually moved 300MHz. any inputs on this area
-> are welcome.
->=20
-> All these changes are tested in 2-lane, 4-lane MIPI-DSI panels.
->=20
-> If anyone wants to test, use this repo [2] with WIP-A64-DSI branch.
+And if they're both the exact same iommu, then imo it would make indeed
+sense to move the iommu attribute up. Since your current code cant'
+actually handle truly separate dma-mappings. And neither can your patch
+series here handled separate iommu for crtc0 and crtc1.
 
-A changelog would be nice here, and usually you shouldn't send a new
-version while there is ongoing discussion on the previous version.
+> > - You don't use drm_gem_prime_import_dev, so prime import isn't using the
+> >   right device either.
+> 
+> Yes, you are right. I'm not familiar with whore drm core, so I start to
+> modify what Mediatek drm use. But this function still works for the drm
+> device that itself is dma device. If one day there is a drm device which
+> itself is not a dma device and need this function, send a patch to
+> modify this function and test it with that drm device. If you want me to
+> modify all in advance, I'm ok but need others to test it because
+> Mediatek drm driver does not use them.
 
-Maxime
+I meant to say that mediatek should use drm_gem_prime_import_dev, but
+currently isn't using that. And your patch series here doesn't fix that
+either. So there's more bugs left in this area.
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> > - exynos seems to have the same or at least similar issue, stronger case
+> >   for your patches if you can solve both.
+> 
+> I'm still Mediatek's employee. If I modify other company's driver and it
+> is not a MUST-BE for Mediatek, Mediatek may think I give contribution to
+> other company. So I've better not to modify exynos driver.
 
---36y45ohgmtyd7cei
-Content-Type: application/pgp-signature; name="signature.asc"
+This isn't how upstream works :-)
 
------BEGIN PGP SIGNATURE-----
+> > - I'd start out with using struct drm_gem_cma_object in mtk (similar to
+> >   what vc4 does), and then reusing as much as possible of the existing
+> >   helpers. And then looking later on what's still left (like the support
+> >   for leaving out the virtual mapping).
+> 
+> I'm not clear what vc4 does. It looks like that you want me to redefine
+> mtk_drm_gem_obj based on drm_gem_cma_object. So it would be like
+> 
+> struct mtk_drm_gem_obj {
+> 	struct drm_gem_cma_object base;
+> 	void *cookie;
+> 	unsigned long dma_attrs;
+> };
+> 
+> I could try to modify as this and see what have left.
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW9bPnAAKCRDj7w1vZxhR
-xc3TAPsGM9mbbgPEbeemnJdAp3i8+8IXWkv2qSQ+xPuWMuQo1AD/erFiP6S+Y096
-5le9/Ejs/zgE90IGY1rjAwpBliviFgs=
-=aut5
------END PGP SIGNATURE-----
+Yup, that's my suggestion. Then we can look at what mtk can use unchanged
+from the core helpers. And what would need to change and so better
+evaluate whether it makes sense to do that.
 
---36y45ohgmtyd7cei--
+I still think just moving the iommu is probably best.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
