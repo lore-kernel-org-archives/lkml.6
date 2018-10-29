@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82BCAC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 16:38:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2458C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 16:38:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49BF820657
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 16:38:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 972E220657
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 16:38:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="Qne8Q/R5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49BF820657
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="AIPNHXKu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 972E220657
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728334AbeJ3B10 (ORCPT
+        id S1728355AbeJ3B13 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 21:27:26 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:34844 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728293AbeJ3B1Z (ORCPT
+        Mon, 29 Oct 2018 21:27:29 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:54900 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727461AbeJ3B13 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 21:27:25 -0400
-Received: by mail-it1-f194.google.com with SMTP id p64-v6so10181381itp.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 09:38:04 -0700 (PDT)
+        Mon, 29 Oct 2018 21:27:29 -0400
+Received: by mail-it1-f195.google.com with SMTP id d6so4718660itl.4
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 09:38:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=kernel-dk.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Hu4SRygQduE3Ah39+YjJ5DfLsSb40qLLfETVJ69MQec=;
-        b=Qne8Q/R59peKayL//DkDF0zKocJo81nHGGU6Fx1JzYRYHOhZbze0azcwjFJabpP8X+
-         ABtnKdE1fmHihK1tir7me+SNQzUN69X46KPPXfWirjWcjAl/snCbDzghbEWBXZ0wGu6a
-         K+KyoiV6bTtnvR5u2FBiJBc0rwRf36pbB/b3kxLW/S3egAKFjwnfqFfoQZr5ZBLnsCJj
-         XBxrogqmOy9kcIiSb6xYhnhD8DROhBh1AchvYOctmYtdbiqxkJmn7yKfiXBRXssTD1Js
-         m3B2mgsr7WD4VttVAHgF1XEhU/YAmAcB3H2syrBFi+7t5JKqztU7PHAgFY4nUmH4bSQ0
-         8wCA==
+        bh=eukhLpnpSqFgkXd6fwxIBdknpGfhnAOi4PUxG7MjAPc=;
+        b=AIPNHXKuRPpEDkKj0gOHLJv8h1wUyO1OQ649DAib/5VXwcfXfApINpexfzi/OEmyWM
+         ByVl2GjNjeRztMNXg8Nyfy9/yUcgo6B7WCKskznq3ja+rMAiKsLtT8+g+TMxf2Wdzmre
+         DY0XBnYmjCeq3goRB6agwt8eSaoAMvG3tbN9sCh8tKkk4woixyCzuoZjlcvT/QtQEQAy
+         gZl2tI48OD3FxQU1SElBNX8arISa5ZFZWUQNjHJV9BtYIRZhF3hK7Ug1nmHFsSk20/Oa
+         JOpmGFtEhvRgHRRU6Kd5uIpJandGXpTdZ6u4nVS9tcyLrM+E00tOx/lSfWerxze27lof
+         QMPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Hu4SRygQduE3Ah39+YjJ5DfLsSb40qLLfETVJ69MQec=;
-        b=KDzz+vzWTqWGhec/WRy1ZMy8k9Wns/dKSMVGqzGmWwJHC0TYGi+bYK2FBa1bBBRqUG
-         cQY+vTZyW5l5RSgGUKeY2XXxfSn6FgAbhQsMIcupweO4uMEPCiF0We3luIWmu2Y1DZF5
-         O8EnO67X4Lz+19k7E/21U4uYTjvW4r6+vFo7+ipaJ5rVVlsi0jK4P/DlrBdLwj/QzKPj
-         NhJjJplySaH+V5znQHjIz8DmgI+p8bZ2ERnZp07/j8+yFSjiyDIttOkRKYFmNIsO/omx
-         HWp3G0kd+ndOpTN+rl/8GSyhMxeMIdmVbWn19HT1dVQli77NhbUrqZhlKbMHeTH+ABcD
-         zMsA==
-X-Gm-Message-State: AGRZ1gIhZp0WCFgcLQuX+CPv/wuuO15d05nzsiJLUcjYmu3MdbWrvqyi
-        IiHKxG2iKeRp346ZxdwyHTgi3w==
-X-Google-Smtp-Source: AJdET5dyPe1b17iC0D8wHHWNBSOj0Y/26jftcPO2w99nVKDSRdrIi60lcBEFoh16qhUPi0PYmD7ciQ==
-X-Received: by 2002:a05:660c:484:: with SMTP id a4mr3990245itk.116.1540831083626;
-        Mon, 29 Oct 2018 09:38:03 -0700 (PDT)
+        bh=eukhLpnpSqFgkXd6fwxIBdknpGfhnAOi4PUxG7MjAPc=;
+        b=CiCzEufDcGC8bmW7k7EDQIsGIUVEh591YS2MFdkS5RWF8iPKav1mu1JASPJXLeqXee
+         7DX4zkXyi5nApSZZzbu7jRf1kgrd9OIAWKNxyd5dqO4e1HBvUCEXEUDuGWsoHIuCxHnk
+         LxHG602l4hDBiSkqmRCcLRShRETzjTNvzRBh96zwFj8hsYoim8Tr9miekou3jtLjxDfl
+         QoR7E/EivuZ29RxexLyipfpPfQjTSUmKcQBDAbQ2EO162rJ6pdk3JqxZood65UmokeTs
+         Otg/Vw2M+ovTpMUixPyVcjFOXtHiQr3GTH1xdegdcAhjh1Tmq9SLabLItqp2LGZKKFBW
+         KH8w==
+X-Gm-Message-State: AGRZ1gKrzm7BCEmDXUOGymQYUoON8XpY8S1WHwnbzdXisMDFfAOleZAc
+        FhYKtwg461ktuj3F7B2iQyO8bA==
+X-Google-Smtp-Source: AJdET5fd+fbMZ5osHM5Yz/a2ZBO184Xx/g/2uQxElWT1m4lx66oTjIL/cDOBeMax1x6UOI1kliXEJg==
+X-Received: by 2002:a02:3b2c:: with SMTP id c44-v6mr10944100jaa.31.1540831087063;
+        Mon, 29 Oct 2018 09:38:07 -0700 (PDT)
 Received: from localhost.localdomain ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id q15-v6sm3367019itc.38.2018.10.29.09.38.01
+        by smtp.gmail.com with ESMTPSA id q15-v6sm3367019itc.38.2018.10.29.09.38.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 09:38:02 -0700 (PDT)
+        Mon, 29 Oct 2018 09:38:04 -0700 (PDT)
 From:   Jens Axboe <axboe@kernel.dk>
 To:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 10/14] blk-mq: initial support for multiple queue maps
-Date:   Mon, 29 Oct 2018 10:37:34 -0600
-Message-Id: <20181029163738.10172-11-axboe@kernel.dk>
+Cc:     Jens Axboe <axboe@kernel.dk>, Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH 11/14] irq: add support for allocating (and affinitizing) sets of IRQs
+Date:   Mon, 29 Oct 2018 10:37:35 -0600
+Message-Id: <20181029163738.10172-12-axboe@kernel.dk>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181029163738.10172-1-axboe@kernel.dk>
 References: <20181029163738.10172-1-axboe@kernel.dk>
@@ -73,95 +73,106 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a queue offset to the tag map. This enables users to map
-iteratively, for each queue map type they support.
+A driver may have a need to allocate multiple sets of MSI/MSI-X
+interrupts, and have them appropriately affinitized. Add support for
+defining a number of sets in the irq_affinity structure, of varying
+sizes, and get each set affinitized correctly across the machine.
 
-Bump maximum number of supported maps to 2, we're now fully
-able to support more than 1 map.
-
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org
 Reviewed-by: Hannes Reinecke <hare@suse.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 ---
- block/blk-mq-cpumap.c  | 9 +++++----
- block/blk-mq-pci.c     | 2 +-
- block/blk-mq-virtio.c  | 2 +-
- include/linux/blk-mq.h | 3 ++-
- 4 files changed, 9 insertions(+), 7 deletions(-)
+ include/linux/interrupt.h |  4 ++++
+ kernel/irq/affinity.c     | 40 ++++++++++++++++++++++++++++++---------
+ 2 files changed, 35 insertions(+), 9 deletions(-)
 
-diff --git a/block/blk-mq-cpumap.c b/block/blk-mq-cpumap.c
-index 6e6686c55984..03a534820271 100644
---- a/block/blk-mq-cpumap.c
-+++ b/block/blk-mq-cpumap.c
-@@ -14,9 +14,10 @@
- #include "blk.h"
- #include "blk-mq.h"
+diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+index 1d6711c28271..ca397ff40836 100644
+--- a/include/linux/interrupt.h
++++ b/include/linux/interrupt.h
+@@ -247,10 +247,14 @@ struct irq_affinity_notify {
+  *			the MSI(-X) vector space
+  * @post_vectors:	Don't apply affinity to @post_vectors at end of
+  *			the MSI(-X) vector space
++ * @nr_sets:		Length of passed in *sets array
++ * @sets:		Number of affinitized sets
+  */
+ struct irq_affinity {
+ 	int	pre_vectors;
+ 	int	post_vectors;
++	int	nr_sets;
++	int	*sets;
+ };
  
--static int cpu_to_queue_index(unsigned int nr_queues, const int cpu)
-+static int cpu_to_queue_index(struct blk_mq_queue_map *qmap,
-+			      unsigned int nr_queues, const int cpu)
+ #if defined(CONFIG_SMP)
+diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
+index f4f29b9d90ee..2046a0f0f0f1 100644
+--- a/kernel/irq/affinity.c
++++ b/kernel/irq/affinity.c
+@@ -180,6 +180,7 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+ 	int curvec, usedvecs;
+ 	cpumask_var_t nmsk, npresmsk, *node_to_cpumask;
+ 	struct cpumask *masks = NULL;
++	int i, nr_sets;
+ 
+ 	/*
+ 	 * If there aren't any vectors left after applying the pre/post
+@@ -210,10 +211,23 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
+ 	get_online_cpus();
+ 	build_node_to_cpumask(node_to_cpumask);
+ 
+-	/* Spread on present CPUs starting from affd->pre_vectors */
+-	usedvecs = irq_build_affinity_masks(affd, curvec, affvecs,
+-					    node_to_cpumask, cpu_present_mask,
+-					    nmsk, masks);
++	/*
++	 * Spread on present CPUs starting from affd->pre_vectors. If we
++	 * have multiple sets, build each sets affinity mask separately.
++	 */
++	nr_sets = affd->nr_sets;
++	if (!nr_sets)
++		nr_sets = 1;
++
++	for (i = 0, usedvecs = 0; i < nr_sets; i++) {
++		int this_vecs = affd->sets ? affd->sets[i] : affvecs;
++		int nr;
++
++		nr = irq_build_affinity_masks(affd, curvec, this_vecs,
++					      node_to_cpumask, cpu_present_mask,
++					      nmsk, masks + usedvecs);
++		usedvecs += nr;
++	}
+ 
+ 	/*
+ 	 * Spread on non present CPUs starting from the next vector to be
+@@ -258,13 +272,21 @@ int irq_calc_affinity_vectors(int minvec, int maxvec, const struct irq_affinity
  {
--	return cpu % nr_queues;
-+	return qmap->queue_offset + (cpu % nr_queues);
+ 	int resv = affd->pre_vectors + affd->post_vectors;
+ 	int vecs = maxvec - resv;
+-	int ret;
++	int set_vecs;
+ 
+ 	if (resv > minvec)
+ 		return 0;
+ 
+-	get_online_cpus();
+-	ret = min_t(int, cpumask_weight(cpu_possible_mask), vecs) + resv;
+-	put_online_cpus();
+-	return ret;
++	if (affd->nr_sets) {
++		int i;
++
++		for (i = 0, set_vecs = 0;  i < affd->nr_sets; i++)
++			set_vecs += affd->sets[i];
++	} else {
++		get_online_cpus();
++		set_vecs = cpumask_weight(cpu_possible_mask);
++		put_online_cpus();
++	}
++
++	return resv + min(set_vecs, vecs);
  }
- 
- static int get_first_sibling(unsigned int cpu)
-@@ -44,11 +45,11 @@ int blk_mq_map_queues(struct blk_mq_queue_map *qmap)
- 		 * performace optimizations.
- 		 */
- 		if (cpu < nr_queues) {
--			map[cpu] = cpu_to_queue_index(nr_queues, cpu);
-+			map[cpu] = cpu_to_queue_index(qmap, nr_queues, cpu);
- 		} else {
- 			first_sibling = get_first_sibling(cpu);
- 			if (first_sibling == cpu)
--				map[cpu] = cpu_to_queue_index(nr_queues, cpu);
-+				map[cpu] = cpu_to_queue_index(qmap, nr_queues, cpu);
- 			else
- 				map[cpu] = map[first_sibling];
- 		}
-diff --git a/block/blk-mq-pci.c b/block/blk-mq-pci.c
-index 40333d60a850..1dce18553984 100644
---- a/block/blk-mq-pci.c
-+++ b/block/blk-mq-pci.c
-@@ -43,7 +43,7 @@ int blk_mq_pci_map_queues(struct blk_mq_queue_map *qmap, struct pci_dev *pdev,
- 			goto fallback;
- 
- 		for_each_cpu(cpu, mask)
--			qmap->mq_map[cpu] = queue;
-+			qmap->mq_map[cpu] = qmap->queue_offset + queue;
- 	}
- 
- 	return 0;
-diff --git a/block/blk-mq-virtio.c b/block/blk-mq-virtio.c
-index 661fbfef480f..370827163835 100644
---- a/block/blk-mq-virtio.c
-+++ b/block/blk-mq-virtio.c
-@@ -44,7 +44,7 @@ int blk_mq_virtio_map_queues(struct blk_mq_queue_map *qmap,
- 			goto fallback;
- 
- 		for_each_cpu(cpu, mask)
--			qmap->mq_map[cpu] = queue;
-+			qmap->mq_map[cpu] = qmap->queue_offset + queue;
- 	}
- 
- 	return 0;
-diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
-index 837087cf07cc..b5ae2b5677c1 100644
---- a/include/linux/blk-mq.h
-+++ b/include/linux/blk-mq.h
-@@ -78,10 +78,11 @@ struct blk_mq_hw_ctx {
- struct blk_mq_queue_map {
- 	unsigned int *mq_map;
- 	unsigned int nr_queues;
-+	unsigned int queue_offset;
- };
- 
- enum {
--	HCTX_MAX_TYPES = 1,
-+	HCTX_MAX_TYPES = 2,
- };
- 
- struct blk_mq_tag_set {
 -- 
 2.17.1
 
