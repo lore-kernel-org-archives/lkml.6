@@ -7,106 +7,99 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 321ABC2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 07:17:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B401C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 07:26:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBEBE2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 07:17:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 224742080A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 07:26:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gI1N7dBt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBEBE2084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="1BL5M7Is"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 224742080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729416AbeJ2QFO (ORCPT
+        id S1729421AbeJ2QNZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 12:05:14 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:33591 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729280AbeJ2QFO (ORCPT
+        Mon, 29 Oct 2018 12:13:25 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:51822 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729368AbeJ2QNZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 12:05:14 -0400
-Received: by mail-pl1-f194.google.com with SMTP id x6-v6so3366171pln.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 00:17:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FDlV+Xbz1j+NaR368L2vTpe24uF3g5mlaQe0xzBflGQ=;
-        b=gI1N7dBtcaiUljcwKUPdD0lhNurPTNaQ728+UNi7gvxJ9tn08e3Hm9+efVxFd0rBys
-         42/qKw4i8NM/Sfjbc7JzC25VK7t8intb8J4+L6fWaZ5K1BvEDUSDCE1T7qsBBebA4EEr
-         NQRzQ6Iq6VRZ6d1kjnvDcJg+Io97QQKRXkeWk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=FDlV+Xbz1j+NaR368L2vTpe24uF3g5mlaQe0xzBflGQ=;
-        b=eqsdRBLdbLZVVe4yX2y5ytL9lfrzx/jp8KXljAAeDgAheNH9zAZCElPRh0mdUHdFlt
-         k1Wkf0GhWHk7vtZjj/t1jLLR44oD0RebuJ8bK0oDztDMvKQ3AWquEWX3GMm3z+6wXOTc
-         Z6FJOZXtYQ3pbtLeVb+83d20yWv7ZBiHdudRca7NoD49Qh00GYFGLHsLS1eGe85dw1aH
-         azUOLbV83NzJObLUaPc52MFRIa9x3HF2I4USt0b9USdSb9cxPLbAa+CGO4wRsEoTKslf
-         8BmSJgdbnEGIkp3myCf2TuAtLu7rv/uLjoUBOUNv1RU/IkvW6VD7zYVlM8JOXbSHgTCb
-         bGTA==
-X-Gm-Message-State: AGRZ1gIB7aD3/NogUDmbgtOisXOqhQpAEsoOtTbF3gElHb8D3IAk4Apd
-        +Lwe2gZvEfkOfSPOHiIdt2Hmcg==
-X-Google-Smtp-Source: AJdET5c8ObvQnCb8owdZb7slfRkHgqpPhewVlNYQGEQVn9ck0BMr+blRI5Y2ueprqD5ApFe0r8RTeA==
-X-Received: by 2002:a17:902:f203:: with SMTP id gn3mr12600884plb.93.1540797469909;
-        Mon, 29 Oct 2018 00:17:49 -0700 (PDT)
-Received: from localhost ([122.172.56.94])
-        by smtp.gmail.com with ESMTPSA id b16-v6sm21538679pfm.145.2018.10.29.00.17.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 00:17:48 -0700 (PDT)
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Rafael Wysocki <rjw@rjwysocki.net>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>, linux-pm@vger.kernel.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Pavel <pavel2000@ngs.ru>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] Documentation: cpu-freq: Frequencies aren't always sorted
-Date:   Mon, 29 Oct 2018 12:47:40 +0530
-Message-Id: <844626b372018192fd0e9fe399343e09ef4dc842.1540797432.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.19.1.568.g152ad8e3369a
+        Mon, 29 Oct 2018 12:13:25 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id D87F9886B5;
+        Mon, 29 Oct 2018 20:25:53 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail181024; t=1540797953;
+        bh=n51SL/YmzPg7vRBQ7CrnlxwLGtYG3UyWpyFXNCOkfm8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=1BL5M7Is/gwA1Ih2nz75rkZpcFEKHixYaRcbd7bAarBZeAvqx+Zim/o+y8KWC2MHD
+         1cmkXOXTzf+WpLJ4M1IqIbEbrhLK9dLuO8rKH6/djCJSFOmPJKZUoqBCDnEoXqRqP4
+         w8ge00nrPHc/8UjwKS+8zIpC+jS60P4EzQeXcJhMh7re7gmfgS240QZ/QiueY0sU3Y
+         DkF5ODXrGItjkxi0AJjBCNUPYCK3D0HW1jhXS5P7ys64GTgTByNNQgP1mzPNXnn6kJ
+         9S0oyz/l6MQ2fz10OK3ZeVon1Qtsk+QI7ih0OzL/gx0pJE10O4Ur/M6djdsGTTquD1
+         KLqIQy0ByRS6w==
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5bd6b5fc0001>; Mon, 29 Oct 2018 20:25:53 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+        by smtp (Postfix) with ESMTP id 39A6C13EF0F;
+        Mon, 29 Oct 2018 20:25:53 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id 605901E21FF; Mon, 29 Oct 2018 20:25:48 +1300 (NZDT)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     linux@armlinux.org.uk
+Cc:     u.kleine-koenig@pengutronix.de, jlu@pengutronix.de, bp@alien8.de,
+        linux-arm-kernel@lists.infradead.org, linux-edac@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [PATCH v5 1/8] ARM: l2c: move cache-aurora-l2.h to asm/hardware
+Date:   Mon, 29 Oct 2018 20:25:28 +1300
+Message-Id: <20181029072535.31667-2-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181029072535.31667-1-chris.packham@alliedtelesis.co.nz>
+References: <20181029072535.31667-1-chris.packham@alliedtelesis.co.nz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+x-atlnz-ls: pat
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The order in which the frequencies are displayed in cpufreq stats
-depends on the order in which the frequencies were sorted in the
-frequency table provided to cpufreq core by the cpufreq driver. They can
-be completely unsorted as well.
+From: Jan Luebbe <jlu@pengutronix.de>
 
-The documentation's claim that the stats will be sorted in descending
-order is hence incorrect and here is an attempt to fix it.
+This include file will be used by the AURORA EDAC code.
 
-Reported-by: Pavel <pavel2000@ngs.ru>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Jan Luebbe <jlu@pengutronix.de>
+Reviewed-by: Gregory CLEMENT <gregory.clement@free-electrons.com>
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 ---
- Documentation/cpu-freq/cpufreq-stats.txt | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+=20arch/arm/{mm =3D> include/asm/hardware}/cache-aurora-l2.h | 0
+=20arch/arm/mm/cache-l2x0.c                                | 2 +-
+=202 files changed, 1 insertion(+), 1 deletion(-)
+=20rename arch/arm/{mm =3D> include/asm/hardware}/cache-aurora-l2.h (100%=
+)
 
-diff --git a/Documentation/cpu-freq/cpufreq-stats.txt b/Documentation/cpu-freq/cpufreq-stats.txt
-index a873855c811d..14378cecb172 100644
---- a/Documentation/cpu-freq/cpufreq-stats.txt
-+++ b/Documentation/cpu-freq/cpufreq-stats.txt
-@@ -86,9 +86,11 @@ transitions.
- This will give a fine grained information about all the CPU frequency
- transitions. The cat output here is a two dimensional matrix, where an entry
- <i,j> (row i, column j) represents the count of number of transitions from 
--Freq_i to Freq_j. Freq_i is in descending order with increasing rows and 
--Freq_j is in descending order with increasing columns. The output here also 
--contains the actual freq values for each row and column for better readability.
-+Freq_i to Freq_j. Freq_i rows and Freq_j columns follow the sorting order in
-+which the driver has provided the frequency table initially to the cpufreq core
-+and so can be sorted (ascending or descending) or unsorted.  The output here
-+also contains the actual freq values for each row and column for better
-+readability.
- 
- If the transition table is bigger than PAGE_SIZE, reading this will
- return an -EFBIG error.
--- 
-2.19.1.568.g152ad8e3369a
-
+diff --git a/arch/arm/mm/cache-aurora-l2.h b/arch/arm/include/asm/hardwar=
+e/cache-aurora-l2.h
+similarity index 100%
+rename from arch/arm/mm/cache-aurora-l2.h
+rename to arch/arm/include/asm/hardware/cache-aurora-l2.h
+diff --git a/arch/arm/mm/cache-l2x0.c b/arch/arm/mm/cache-l2x0.c
+index 808efbb89b88..a00d6f7fd34c 100644
+--- a/arch/arm/mm/cache-l2x0.c
++++ b/arch/arm/mm/cache-l2x0.c
+@@ -30,8 +30,8 @@
+=20#include <asm/cp15.h>
+=20#include <asm/cputype.h>
+=20#include <asm/hardware/cache-l2x0.h>
++#include <asm/hardware/cache-aurora-l2.h>
+=20#include "cache-tauros3.h"
+-#include "cache-aurora-l2.h"
+=20
+=20struct l2c_init_data {
+=20	const char *type;
+--=20
+2.19.1
