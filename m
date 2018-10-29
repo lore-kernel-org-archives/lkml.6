@@ -2,250 +2,106 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF762C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:01:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF30C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:02:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C45320824
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:01:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C45320824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id DEDD420824
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:02:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEDD420824
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727603AbeJ3BvM (ORCPT
+        id S1727680AbeJ3Bvr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 21:51:12 -0400
-Received: from mga01.intel.com ([192.55.52.88]:2949 "EHLO mga01.intel.com"
+        Mon, 29 Oct 2018 21:51:47 -0400
+Received: from foss.arm.com ([217.140.101.70]:43328 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725920AbeJ3BvM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 21:51:12 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2018 10:01:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,441,1534834800"; 
-   d="scan'208";a="103664695"
-Received: from ahduyck-desk1.jf.intel.com ([10.7.198.76])
-  by orsmga001.jf.intel.com with ESMTP; 29 Oct 2018 10:01:28 -0700
-Message-ID: <18dfc5a0db11650ff31433311da32c95e19944d9.camel@linux.intel.com>
-Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
- point where we init pgmap
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Linux MM <linux-mm@kvack.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Pasha Tatashin <pavel.tatashin@microsoft.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
-        rppt@linux.vnet.ibm.com, Ingo Molnar <mingo@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        yi.z.zhang@linux.intel.com
-Date:   Mon, 29 Oct 2018 10:01:28 -0700
-In-Reply-To: <20181029163528.GL32673@dhcp22.suse.cz>
-References: <f97de51c-67dd-99b2-754e-0685cac06699@linux.intel.com>
-         <20181010172451.GK5873@dhcp22.suse.cz>
-         <98c35e19-13b9-0913-87d9-b3f1ab738b61@linux.intel.com>
-         <20181010185242.GP5873@dhcp22.suse.cz>
-         <20181011085509.GS5873@dhcp22.suse.cz>
-         <6f32f23c-c21c-9d42-7dda-a1d18613cd3c@linux.intel.com>
-         <20181017075257.GF18839@dhcp22.suse.cz>
-         <971729e6-bcfe-a386-361b-d662951e69a7@linux.intel.com>
-         <20181029141210.GJ32673@dhcp22.suse.cz>
-         <84f09883c16608ddd2ba88103f43ec6a1c649e97.camel@linux.intel.com>
-         <20181029163528.GL32673@dhcp22.suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1725920AbeJ3Bvr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 21:51:47 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EA4EA80D;
+        Mon, 29 Oct 2018 10:02:19 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id BA69E3F71D;
+        Mon, 29 Oct 2018 10:02:19 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id CA6221AE091C; Mon, 29 Oct 2018 17:02:26 +0000 (GMT)
+Date:   Mon, 29 Oct 2018 17:02:26 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Anders Roxell <anders.roxell@linaro.org>, catalin.marinas@arm.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Laura Abbott <labbott@redhat.com>
+Subject: Re: [PATCH] arm64: kprobe: make page to RO mode when allocate it
+Message-ID: <20181029170226.GA16739@arm.com>
+References: <20181015111600.5479-1-anders.roxell@linaro.org>
+ <20181029120434.GA15446@arm.com>
+ <CAK8P3a0oSn8Z6wJT1X2si8+A2wttkh7EjqD_MZYt4+L5a_XKLg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK8P3a0oSn8Z6wJT1X2si8+A2wttkh7EjqD_MZYt4+L5a_XKLg@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-10-29 at 17:35 +0100, Michal Hocko wrote:
-> On Mon 29-10-18 08:59:34, Alexander Duyck wrote:
-> > On Mon, 2018-10-29 at 15:12 +0100, Michal Hocko wrote:
-> > > On Wed 17-10-18 08:02:20, Alexander Duyck wrote:
-> > > > On 10/17/2018 12:52 AM, Michal Hocko wrote:
-> > > > > On Thu 11-10-18 10:38:39, Alexander Duyck wrote:
-> > > > > > On 10/11/2018 1:55 AM, Michal Hocko wrote:
-> > > > > > > On Wed 10-10-18 20:52:42, Michal Hocko wrote:
-> > > > > > > [...]
-> > > > > > > > My recollection was that we do clear the reserved bit in
-> > > > > > > > move_pfn_range_to_zone and we indeed do in __init_single_page. But then
-> > > > > > > > we set the bit back right afterwards. This seems to be the case since
-> > > > > > > > d0dc12e86b319 which reorganized the code. I have to study this some more
-> > > > > > > > obviously.
-> > > > > > > 
-> > > > > > > so my recollection was wrong and d0dc12e86b319 hasn't really changed
-> > > > > > > much because __init_single_page wouldn't zero out the struct page for
-> > > > > > > the hotplug contex. A comment in move_pfn_range_to_zone explains that we
-> > > > > > > want the reserved bit because pfn walkers already do see the pfn range
-> > > > > > > and the page is not fully associated with the zone until it is onlined.
-> > > > > > > 
-> > > > > > > I am thinking that we might be overzealous here. With the full state
-> > > > > > > initialized we shouldn't actually care. pfn_to_online_page should return
-> > > > > > > NULL regardless of the reserved bit and normal pfn walkers shouldn't
-> > > > > > > touch pages they do not recognize and a plain page with ref. count 1
-> > > > > > > doesn't tell much to anybody. So I _suspect_ that we can simply drop the
-> > > > > > > reserved bit setting here.
-> > > > > > 
-> > > > > > So this has me a bit hesitant to want to just drop the bit entirely. If
-> > > > > > nothing else I think I may wan to make that a patch onto itself so that if
-> > > > > > we aren't going to set it we just drop it there. That way if it does cause
-> > > > > > issues we can bisect it to that patch and pinpoint the cause.
-> > > > > 
-> > > > > Yes a patch on its own make sense for bisectability.
-> > > > 
-> > > > For now I think I am going to back off of this. There is a bunch of other
-> > > > changes that need to happen in order for us to make this work. As far as I
-> > > > can tell there are several places that are relying on this reserved bit.
-> > > 
-> > > Please be more specific. Unless I misremember, I have added this
-> > > PageReserved just to be sure (f1dd2cd13c4bb) because pages where just
-> > > half initialized back then. I am not aware anybody is depending on this.
-> > > If there is somebody then be explicit about that. The last thing I want
-> > > to see is to preserve a cargo cult and build a design around it.
-> > 
-> > It is mostly just a matter of going through and auditing all the
-> > places that are using PageReserved to identify pages that they aren't
-> > supposed to touch for whatever reason.
-> > 
-> > From what I can tell the issue appears to be the fact that the reserved
-> > bit is used to identify if a region of memory is "online" or "offline".
+On Mon, Oct 29, 2018 at 01:11:24PM +0100, Arnd Bergmann wrote:
+> On 10/29/18, Will Deacon <will.deacon@arm.com> wrote:
+> > On Mon, Oct 15, 2018 at 01:16:00PM +0200, Anders Roxell wrote:
 > 
-> No, this is wrong. pfn_to_online_page does that. PageReserved has
-> nothing to do with online vs. offline status. It merely says that you
-> shouldn't touch the page unless you own it. Sure we might have few
-> places relying on it but nothing should really depend the reserved bit
-> check from the MM hotplug POV.
+> >> -static int __kprobes patch_text(kprobe_opcode_t *addr, u32 opcode)
+> >> +void *alloc_insn_page(void)
+> >>  {
+> >> -	void *addrs[1];
+> >> -	u32 insns[1];
+> >> +	void *page;
+> >>
+> >> -	addrs[0] = (void *)addr;
+> >> -	insns[0] = (u32)opcode;
+> >> +	page = vmalloc_exec(PAGE_SIZE);
+> >> +	if (page)
+> >> +		set_memory_ro((unsigned long)page & PAGE_MASK, 1);
+> >
+> > This looks a bit strange to me -- you're allocating PAGE_SIZE bytes so
+> > that we can adjust the permissions, yet we can't guarantee that page is
+> > actually page-aligned and therefore end up explicitly masking down.
+> >
+> > In which case allocating an entire page isn't actually helping us, and
+> > we could end up racing with somebody else changing permission on the
+> > same page afaict.
+> >
+> > I think we need to ensure we really have an entire page, perhaps using
+> > vmap() instead? Or have I missed some subtle detail here?
 > 
-> > So for example the call "online_pages_range" doesn't invoke the
-> > online_page_callback unless the first pfn in the range is marked as
-> > reserved.
+> I'm fairly sure that vmalloc() and vmalloc_exec() is guaranteed to be page
+> aligned everywhere. The documentation is a bit vague here, but I'm
+> still confident enough that we can make that assumption based on
 > 
-> Yes and there is no fundamental reason to do that. We can easily check
-> the online status without that.
-> 
-> > Another example Dan had pointed out was the saveable_page function in
-> > kernel/power/snapshot.c.
-> 
-> Use pfn_to_online_page there.
+> /**
+>  *      vmalloc_exec  -  allocate virtually contiguous, executable memory
+>  *      @size:          allocation size
+>  *
+>  *      Kernel-internal function to allocate enough pages to cover @size
+>  *      the page level allocator and map them into contiguous and
+>  *      executable kernel virtual space.
+>  *
+>  *      For tight control over page level allocator and protection flags
+>  *      use __vmalloc() instead.
+>  */
+> void *vmalloc_exec(unsigned long size)
 
-Right. Which getting back to my original point, there is a bunch of
-other changes that need to happen in order for us to make this work. I
-am going to end up with yet another patch set to clean up all the spots
-that are using PageReserved that shouldn't be before I can get to the
-point of not setting that bit.
+FWIW, I did a bit of digging and I agree with your conclusion. vmalloc()
+allocations end up getting installed in map_vm_area() via
+__vmalloc_area_node(), which allocates things a page at a time.
 
-> > > > > > > Regarding the post initialization required by devm_memremap_pages and
-> > > > > > > potentially others. Can we update the altmap which is already a way how
-> > > > > > > to get alternative struct pages by a constructor which we could call
-> > > > > > > from memmap_init_zone and do the post initialization? This would reduce
-> > > > > > > the additional loop in the caller while it would still fit the overall
-> > > > > > > design of the altmap and the core hotplug doesn't have to know anything
-> > > > > > > about DAX or whatever needs a special treatment.
-> > > > > > > 
-> > > > > > > Does that make any sense?
-> > > > > > 
-> > > > > > I think the only thing that is currently using the altmap is the ZONE_DEVICE
-> > > > > > memory init. Specifically I think it is only really used by the
-> > > > > > devm_memremap_pages version of things, and then only under certain
-> > > > > > circumstances. Also the HMM driver doesn't pass an altmap. What we would
-> > > > > > really need is a non-ZONE_DEVICE users of the altmap to really justify
-> > > > > > sticking with that as the preferred argument to pass.
-> > > > > 
-> > > > > I am not aware of any upstream HMM user so I am not sure what are the
-> > > > > expectations there. But I thought that ZONE_DEVICE users use altmap. If
-> > > > > that is not generally true then we certainly have to think about a
-> > > > > better interface.
-> > > > 
-> > > > I'm just basing my statement on the use of the move_pfn_range_to_zone call.
-> > > > The only caller that is actually passing the altmap is devm_memremap_pages
-> > > > and if I understand things correctly that is only used when we want to stare
-> > > > the vmmemmap on the same memory that we just hotplugged.
-> > > 
-> > > Yes, and that is what I've called as allocator callback earlier.
-> > 
-> > I am really not a fan of the callback approach. It just means we will
-> > have to do everything multiple times in terms of initialization.
-> 
-> I do not follow. Could you elaborate?
+So we can simplify this patch to drop the masking when calling
+set_memory_ro().
 
-So there end up being a few different issues with constructors. First
-in my mind is that it means we have to initialize the region of memory
-and cannot assume what the constructors are going to do for us. As a
-result we will have to initialize the LRU pointers, and then overwrite
-them with the pgmap and hmm_data. I am generally not a fan of that as
-the next patch set I have gets rid of most of the redundancy we already
-had in the writes where we were memsetting everything to 0, then
-writing the values, and then taking care of the reserved bit and
-pgmap/hmm_data fields. Dealing with the init serially like that is just
-slow.
-
-Another complication is retpoline making function pointers just more
-expensive in general. I know in the networking area we have been
-dealing with this for a while as even the DMA ops have been a pain
-there.
-
-> > > > That is why it made more sense to me to just create a ZONE_DEVICE specific
-> > > > function for handling the page initialization because the one value I do
-> > > > have to pass is the dev_pagemap in both HMM and memremap case, and that has
-> > > > the altmap already embedded inside of it.
-> > > 
-> > > And I have argued that this is a wrong approach to the problem. If you
-> > > need a very specific struct page initialization then create a init
-> > > (constructor) callback.
-> > 
-> > The callback solution just ends up being more expensive because we lose
-> > multiple layers of possible optimization. By putting everything into on
-> > initization function we are able to let the compiler go through and
-> > optimize things to the point where we are essentially just doing
-> > something akin to one bit memcpy/memset where we are able to construct
-> > one set of page values and write that to every single page we have to
-> > initialize within a given page block.
-> 
-> You are already doing per-page initialization so I fail to see a larger
-> unit to operate on.
-
-I have a patch that makes it so that we can work at a pageblock level
-since all of the variables with the exception of only the LRU and page
-address fields can be precomputed. Doing that is one of the ways I was
-able to reduce page init to 1/3 to 1/4 of the time it was taking
-otherwise in the case of deferred page init.
-
-> > My concern is that we are going to see a 2-4x regression if I were to
-> > update the current patches I have to improve init performance in order
-> > to achieve the purity of the page initilization functions that you are
-> > looking for. I feel we are much better off having one function that can
-> > handle all cases and do so with high performance, than trying to
-> > construct a set of functions that end up having to reinitialize the
-> > same memory from the previous step and end up with us wasting cycles
-> > and duplicating overhead in multiple spots.
-> 
-> The memory hotplug is just one pile of unmaintainable mess mostly because
-> of this kind of attitude. You just care about _your_ particular usecase
-> and not a wee bit beyond that.
-
-I care about all of it. What I am proposing is a solution that works
-out best for all memory init. That is why my follow-on patch set had
-also improved standard deferred memory initialization.
-
-What I am concerned with is that your insistance that we cannot have
-any ZONE_DEVICE information initialized in the generic page init code
-is really just you focusing no _your_ particular use case and ignoring
-everything else.
-
-The fact is I already gave up quite a bit. With the follow-on patch set
-I am only getting it down to about 18s for my 3TB init case. I could
-have gotten it down to 12s - 15s, but that would have required moving
-the memset and that optimization would have hurt other cases. I opted
-not to do that because I wanted to keep the solution generic and as a
-net benefit for all cases.
-
+Will
