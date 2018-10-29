@@ -2,64 +2,66 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD573C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:23:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BCB4CC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:23:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80B3D20824
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:23:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7B6512084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:23:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EvOMZWey"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80B3D20824
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hrpn5ZdK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B6512084A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726485AbeJ3ENd (ORCPT
+        id S1726925AbeJ3ENh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 00:13:33 -0400
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:41123 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725858AbeJ3ENc (ORCPT
+        Tue, 30 Oct 2018 00:13:37 -0400
+Received: from mail-yb1-f193.google.com ([209.85.219.193]:46785 "EHLO
+        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725858AbeJ3ENg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 00:13:32 -0400
-Received: by mail-yw1-f67.google.com with SMTP id c126-v6so3861611ywd.8;
-        Mon, 29 Oct 2018 12:23:30 -0700 (PDT)
+        Tue, 30 Oct 2018 00:13:36 -0400
+Received: by mail-yb1-f193.google.com with SMTP id f15-v6so3453634ybq.13;
+        Mon, 29 Oct 2018 12:23:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Cx7LRpCbK0t68q5q4RBqh9Dn5V/BhNKc+ydKX4pEr30=;
-        b=EvOMZWeySDdWTZ0nJpWpuu9hinUvs3CPt8F93wj7wgfCrj5WNlk1ugRbxZmBz4+PZH
-         Sj3tK+oIrigti7lV+FiJ/2faf/33/xkk0tsPt6kizkfwYH3c3m3is8yrazzwRbCN1bVW
-         npswefSA2YYwzN9XBBiqN3mHEbelZmL57H47KGUJHr+Ft6faI2krdQWl50QZinKHA9L4
-         /D0cr5WZFGnZS/gvKBX/AWntzMpnQNJqsaO2MhNHxLibCw5P1kzEIMQbZD2W49B7ftk2
-         lwqZUgbxPPXTAYe+p6pSh/0GMWlfT2AyTGBhD77LB9k8eJkW/uEQFg2Iy6GP0SxJX9ZR
-         r1PQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=IHTYtlDQysopH/0k213hDNMRKYTEPiF5GpZvkqXkLyQ=;
+        b=Hrpn5ZdKlJRLhFupDCCpMwHTAFQEz0zJ6xVM1l4ESQStAsj9QwF2Q+5pFiznntWV2P
+         8bPD88SwLYQbcRUsTxLqvXnX9Fuui4iDSbcMTGmCbdfMFfVVOBPoqP3dgHIN5II43CpN
+         vohAWgB3X1jB4Vbme463Mec2t6cQvwZlEVEMZouVVRfcEgyO1tTDcLfDfeUIN0FF5KdF
+         BgQuuW4xjjB2Q0Kpb3HtRt0RBmfpcY7q3TofXjBXgGpHcs2IfG7OuD0cUqla1jvZlbaa
+         yrhiHuJdfeG5SW5I3dCJAKGRB07S1owLP7yue7SwFpJTVXla+FHTfdcAAD2ytMopOZmn
+         lDFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Cx7LRpCbK0t68q5q4RBqh9Dn5V/BhNKc+ydKX4pEr30=;
-        b=WM2r2wcvxWC78CnWh18PlFYAFq8J2XqGNGyqKMkL4GbozV3dWM5ApRozgOspDJ5Rwk
-         6l//fWrJpqR36UyBF43LQz2O4WEIV79NJAfls6Q1Hac04kIrlAhh+eJv16WjzwdpSBvf
-         lYoKXXPZEdESY9nW9IHOgrMZe+mpgp8+rXGQfnD1EoLEFW+RgIP2SWlAp+On2eI4/GGf
-         P3tJ0YVoM+32BKPNGB480155YHCfTLVA8VFdnBu/affKqPUA5ASSwY0EY6QOGcJ+CB7y
-         x+R7LDsS5z8OsRK1C98nSw/PtuLJ/2j8ZkhDpiINO6WBIy4mnQZpHrDDpMiiOmP/jNEd
-         PddQ==
-X-Gm-Message-State: AGRZ1gKjaigj7FtnLU4iIU5HTnE/UUlfFKxUXANASpKgWzC0/LVH9pLG
-        fXlyGchbUNJyQp3f4HQWIENzctbe
-X-Google-Smtp-Source: AJdET5eqwJmuvwFmaV6yzFaVUJNpHx07hIm3pVH0m0FwJc52o1IbaP+8NWa4iBiV+AZkXqRRK+fNcg==
-X-Received: by 2002:a0d:f6c7:: with SMTP id g190-v6mr15369214ywf.103.1540841008882;
-        Mon, 29 Oct 2018 12:23:28 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=IHTYtlDQysopH/0k213hDNMRKYTEPiF5GpZvkqXkLyQ=;
+        b=fubZem/khVdjaKsowloGImP3v+prwwJaPV03aYDwIwNvhJPhJ4AaW+8oSfoDYaUQfi
+         eZ26wcd82jl5ZKodnLIIbvflotIIkr0lKNsiIktUEXwNO5rmPsG+PVF0KQaGim4EweJS
+         IUUM7/3c/1FAPs5SADWlhHKI/8thTlrX75mG7NkYHXcPmlzGqFGZnPV262e+PRaNk3QW
+         IzlS0CVys5toz+9GWRHjWUVlc+OdkT8LMjfn3ftn5Vp2rJf7GTxVnYqLN9vzjyu3ttwC
+         xBKWb1A4pU3/1hPsrp3q0pv+E3YeXq2igayxrP1z8hTB/HnJHN8YpZdeMgYFPSk+nBH2
+         bWRg==
+X-Gm-Message-State: AGRZ1gIDfH5+zhjT075lbZNJly3hmv4s0sxlEdo6OSaXjxN2xd9Cib3J
+        wOPpSHuOXBQ2HsgwebQOtSv34rCi
+X-Google-Smtp-Source: AJdET5c0VsDtIxa10FRnWYrRAA+5kbaGIwFIXC9+c9puXVAKyWcvY/OAKYhQEKCTwrf2c+gIVYLV2g==
+X-Received: by 2002:a25:b43:: with SMTP id 64-v6mr15101073ybl.133.1540841012023;
+        Mon, 29 Oct 2018 12:23:32 -0700 (PDT)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id k85-v6sm5410014ywa.76.2018.10.29.12.23.25
+        by smtp.gmail.com with ESMTPSA id k85-v6sm5410014ywa.76.2018.10.29.12.23.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 12:23:27 -0700 (PDT)
+        Mon, 29 Oct 2018 12:23:30 -0700 (PDT)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -80,64 +82,147 @@ Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
         (AARCH64 ARCHITECTURE)),
         devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE), rppt@linux.ibm.com, linux@armlinux.org.uk
-Subject: [PATCH 0/2 v5] arm64: Get rid of __early_init_dt_declare_initrd()
-Date:   Mon, 29 Oct 2018 12:00:12 -0700
-Message-Id: <20181029190014.6455-1-f.fainelli@gmail.com>
+        DEVICE TREE), linux@armlinux.org.uk
+Subject: [PATCH 1/2 v5] arm64: Get rid of __early_init_dt_declare_initrd()
+Date:   Mon, 29 Oct 2018 12:00:13 -0700
+Message-Id: <20181029190014.6455-2-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181029190014.6455-1-f.fainelli@gmail.com>
+References: <20181029190014.6455-1-f.fainelli@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+ARM64 is the only architecture that re-defines
+__early_init_dt_declare_initrd() in order for that function to populate
+initrd_start/initrd_end with physical addresses instead of virtual
+addresses. Instead of having an override, just get rid of that
+implementation and perform the virtual to physical conversion of these
+addresses in arm64_memblock_init() where relevant.
 
-I numbered this v5 because this is still revolving around the same
-initial desire to cut the build time of an ARM64 kernel when toggling
-CONFIG_BLK_DEV_INITRD. This 4th version is basically the 3rd possible
-way to just get rid of __early_init_dt_declare_initrd() for ARM64.
-
-I previously mentioned that I was working on making
-phys_initrd_start/phys_initrd_size generic across architectures that
-make use of it, which would cover ARM (32-bit), unicore32 and possibly
-arm64, but upon second glance, this does not necessarily help, or rather
-this patch series actually helps make a smoother conversion in the
-future.
-
-Previous discussions/submissions list here:
-
-v3:
-https://www.spinics.net/lists/arm-kernel/msg683566.html
-v2:
-https://lkml.org/lkml/2018/10/25/4
-
-Changes in v5:
-
-- incorporate Mike's version which properly takes care of command-line
-  specified and FDT specified initrd location
-
-Changes in v4:
-
-- perform the physical to virtual initrd conversion straight within
-  arm64_memblock_init() to get the correct memblock reservation to occur
-
-Changes in v3:
-- attempt to change drivers/of/fdt.c to absorb ARM64's specific behavior
-
-Changes in v2:
-
-- put an /* empty */ comment in the asm-generic/initrd.h file
-- trim down the CC list to maximize the chances of people receiving this
-
-Florian Fainelli (2):
-  arm64: Get rid of __early_init_dt_declare_initrd()
-  of/fdt: Remove definition check for __early_init_dt_declare_initrd()
-
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
+---
  arch/arm64/include/asm/memory.h |  8 -------
  arch/arm64/mm/init.c            | 42 +++++++++++++++++++++------------
- drivers/of/fdt.c                |  2 --
- 3 files changed, 27 insertions(+), 25 deletions(-)
+ 2 files changed, 27 insertions(+), 23 deletions(-)
 
+diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
+index b96442960aea..dc3ca21ba240 100644
+--- a/arch/arm64/include/asm/memory.h
++++ b/arch/arm64/include/asm/memory.h
+@@ -168,14 +168,6 @@
+ #define IOREMAP_MAX_ORDER	(PMD_SHIFT)
+ #endif
+ 
+-#ifdef CONFIG_BLK_DEV_INITRD
+-#define __early_init_dt_declare_initrd(__start, __end)			\
+-	do {								\
+-		initrd_start = (__start);				\
+-		initrd_end = (__end);					\
+-	} while (0)
+-#endif
+-
+ #ifndef __ASSEMBLY__
+ 
+ #include <linux/bitops.h>
+diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
+index 3cf87341859f..292570b08f85 100644
+--- a/arch/arm64/mm/init.c
++++ b/arch/arm64/mm/init.c
+@@ -62,6 +62,8 @@
+ s64 memstart_addr __ro_after_init = -1;
+ phys_addr_t arm64_dma_phys_limit __ro_after_init;
+ 
++static phys_addr_t phys_initrd_start, phys_initrd_end;
++
+ #ifdef CONFIG_BLK_DEV_INITRD
+ static int __init early_initrd(char *p)
+ {
+@@ -72,8 +74,8 @@ static int __init early_initrd(char *p)
+ 	if (*endp == ',') {
+ 		size = memparse(endp + 1, NULL);
+ 
+-		initrd_start = start;
+-		initrd_end = start + size;
++		phys_initrd_start = start;
++		phys_initrd_end = start + size;
+ 	}
+ 	return 0;
+ }
+@@ -364,6 +366,7 @@ static void __init fdt_enforce_memory_region(void)
+ void __init arm64_memblock_init(void)
+ {
+ 	const s64 linear_region_size = -(s64)PAGE_OFFSET;
++	u64 __maybe_unused base, size;
+ 
+ 	/* Handle linux,usable-memory-range property */
+ 	fdt_enforce_memory_region();
+@@ -408,14 +411,25 @@ void __init arm64_memblock_init(void)
+ 		memblock_add(__pa_symbol(_text), (u64)(_end - _text));
+ 	}
+ 
+-	if (IS_ENABLED(CONFIG_BLK_DEV_INITRD) && initrd_start) {
++	if (IS_ENABLED(CONFIG_BLK_DEV_INITRD) &&
++	    (initrd_start || phys_initrd_start)) {
+ 		/*
+ 		 * Add back the memory we just removed if it results in the
+ 		 * initrd to become inaccessible via the linear mapping.
+ 		 * Otherwise, this is a no-op
+ 		 */
+-		u64 base = initrd_start & PAGE_MASK;
+-		u64 size = PAGE_ALIGN(initrd_end) - base;
++		if (phys_initrd_start) {
++			/* Command line specified the initrd location */
++			initrd_start = __phys_to_virt(phys_initrd_start);
++			initrd_end = __phys_to_virt(phys_initrd_end);
++		} else if (initrd_start) {
++			/* FDT specified the initrd location */
++			phys_initrd_start = __pa(initrd_start);
++			phys_initrd_end = __pa(initrd_end);
++		}
++
++		base = phys_initrd_start & PAGE_MASK;
++		size = PAGE_ALIGN(phys_initrd_end - phys_initrd_start);
+ 
+ 		/*
+ 		 * We can only add back the initrd memory if we don't end up
+@@ -434,6 +448,13 @@ void __init arm64_memblock_init(void)
+ 			memblock_remove(base, size); /* clear MEMBLOCK_ flags */
+ 			memblock_add(base, size);
+ 			memblock_reserve(base, size);
++
++			/*
++			 * initrd_below_start_ok can be changed by
++			 * __early_init_dt_declare_initrd(), set it back to what
++			 * we want here.
++			 */
++			initrd_below_start_ok = 0;
+ 		}
+ 	}
+ 
+@@ -455,19 +476,10 @@ void __init arm64_memblock_init(void)
+ 	}
+ 
+ 	/*
+-	 * Register the kernel text, kernel data, initrd, and initial
++	 * Register the kernel text, kernel data and initial
+ 	 * pagetables with memblock.
+ 	 */
+ 	memblock_reserve(__pa_symbol(_text), _end - _text);
+-#ifdef CONFIG_BLK_DEV_INITRD
+-	if (initrd_start) {
+-		memblock_reserve(initrd_start, initrd_end - initrd_start);
+-
+-		/* the generic initrd code expects virtual addresses */
+-		initrd_start = __phys_to_virt(initrd_start);
+-		initrd_end = __phys_to_virt(initrd_end);
+-	}
+-#endif
+ 
+ 	early_init_fdt_scan_reserved_mem();
+ 
 -- 
 2.17.1
 
