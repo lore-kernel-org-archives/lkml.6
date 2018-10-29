@@ -2,139 +2,150 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82DEFC0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:53:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 050A8C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:54:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F36C32087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:53:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8E2A20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 13:54:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="anougqh0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F36C32087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="CYU+kcJO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8E2A20870
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726364AbeJ2Wlq (ORCPT
+        id S1727507AbeJ2Wn0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 18:41:46 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:36238 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725920AbeJ2Wlp (ORCPT
+        Mon, 29 Oct 2018 18:43:26 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:44529 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726046AbeJ2WnZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 18:41:45 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181029135258euoutp023e435a26c27a8fc7328f6deb8f334d0a~iGLLBBHQo2097220972euoutp02Y
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 13:52:58 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181029135258euoutp023e435a26c27a8fc7328f6deb8f334d0a~iGLLBBHQo2097220972euoutp02Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1540821178;
-        bh=G893y91TBDqObOIS4HGfX5I4jbnjfITeREHllR1W5Yk=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=anougqh0vXcCwnPkVP9wBNQ0vEFNo06pPUAd4YEDEoLXT9eEkUFTnz+vvTEucqzcS
-         NbRDoBfbOupKWblhaTS48P8w5BI5X2ab0vPg/ufWI7BHn/4mjM0R9oLP333ce4Ml1h
-         bFwlALYHFTdV+upPMq3M2TXfj5JILWwW9+Hk5pZ4=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181029135257eucas1p1ce7a5e7f52e5102da026b4691d056f7a~iGLKB9lkN2114321143eucas1p13;
-        Mon, 29 Oct 2018 13:52:57 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 0E.39.04441.9B017DB5; Mon, 29
-        Oct 2018 13:52:57 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20181029135256eucas1p1451a2da7fbb5f0fc7eb08c115c1b83f2~iGLJJsbme1198211982eucas1p1o;
-        Mon, 29 Oct 2018 13:52:56 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20181029135256eusmtrp29b1d031d753ce2662fd6881f5d798f88~iGLI5T9nN2201122011eusmtrp2T;
-        Mon, 29 Oct 2018 13:52:56 +0000 (GMT)
-X-AuditID: cbfec7f2-a1ae89c000001159-2e-5bd710b9468b
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 88.E7.04128.8B017DB5; Mon, 29
-        Oct 2018 13:52:56 +0000 (GMT)
-Received: from [106.120.43.17] (unknown [106.120.43.17]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20181029135255eusmtip28d388b31ee222cdc5b45b15ffbb5053b~iGLIPE3xP2874828748eusmtip2l;
-        Mon, 29 Oct 2018 13:52:55 +0000 (GMT)
-Subject: Re: [PATCH v2] drm/bridge: analogix_dp: Fix misleading indentation
- reported by smatch
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        linux-kernel@vger.kernel.org
-Cc:     kernel@collabora.com, Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        zain wang <wzz@rock-chips.com>,
-        dri-devel@lists.freedesktop.org, Lin Huang <hl@rock-chips.com>,
+        Mon, 29 Oct 2018 18:43:25 -0400
+Received: by mail-ed1-f66.google.com with SMTP id z21-v6so7344214edb.11
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 06:54:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=iPs4Gs3Y/n3f7pwNOhpWRAjaXS8uccko7yxxth6Lx2E=;
+        b=CYU+kcJOlGafaF/e+lNnsWWVqWQqJIkBUC8HbyCOzZYXfihaJ3xvfYW26Tboomt0cZ
+         SffenIjkg2AY0VK25hPVl2xqC/T+km0hywOQjYtLi65zeLylcbGpjsP6YNj5uTHht3L0
+         RHe1pZ2N3BKTLvyGPg6xBREwceA0yO0lZhQ1c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=iPs4Gs3Y/n3f7pwNOhpWRAjaXS8uccko7yxxth6Lx2E=;
+        b=D4BxjKJGKcEPYprbpWslsTR3HoW1wLuQjh9VDCUHuBzcnF1yJgWlcXY7qZVktP3Mxm
+         dP2uK0KzKXXwOXW1fBnMRf1lK/IgFFyNa8M6GG2HcDT+MQt3la8Hvt8iBZJ5WQhDQt/x
+         3kg0N4BdqztcMXblAPuJBipUFsgpudpvNGXKZ0v/Hy4JYEOogAga5/SM4rlNsvx/bmTr
+         LQtq8cju9DWKu4LXfb4JPL1EyWD8fHHDnjJnGt/vyvzW/7twnR9dd+hymwachHYmffhz
+         E3wEwTNGF7U5xyQiDKuCTh6EiMOPWxZ3DhUdKu3qwvHpNoYbzFFfBHlbkugsJWnAvaPZ
+         9mJA==
+X-Gm-Message-State: AGRZ1gI/7XESPEcET7Yb/4hAVqIvQJ6HTqvDWPgGvesTKNOnM6eWfPGR
+        Ir+hs94Y4VopWYhj/dv6UxT8rQ==
+X-Google-Smtp-Source: AJdET5fpu57nXdsDZlK6f0BW4dSMiAnwNgPX9AJ/iYne9Hk4K6YwVHHFkMVk/roWH4O2FgaItyqybg==
+X-Received: by 2002:a50:afa2:: with SMTP id h31-v6mr13990219edd.169.1540821277694;
+        Mon, 29 Oct 2018 06:54:37 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id k13-v6sm471625edi.37.2018.10.29.06.54.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Oct 2018 06:54:36 -0700 (PDT)
+Date:   Mon, 29 Oct 2018 14:54:34 +0100
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Shayenne da Luz Moura <shayenneluzmoura@gmail.com>
+Cc:     Dave Airlie <airlied@redhat.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
         David Airlie <airlied@linux.ie>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Jeffy Chen <jeffy.chen@rock-chips.com>
-From:   Andrzej Hajda <a.hajda@samsung.com>
-Message-ID: <f2bb09b8-c916-dd2a-03a6-f2bec157c117@samsung.com>
-Date:   Mon, 29 Oct 2018 14:52:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
-        Thunderbird/52.9.1
+        virtualization@lists.linux-foundation.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        outreachy-kernel@googlegroups.com
+Subject: Re: [Outreachy kernel] [PATCH 0/6] drm/qxl: Remove checkpatch issues
+Message-ID: <20181029135434.GY21967@phenom.ffwll.local>
+Mail-Followup-To: Shayenne da Luz Moura <shayenneluzmoura@gmail.com>,
+        Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        virtualization@lists.linux-foundation.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        outreachy-kernel@googlegroups.com
+References: <cover.1540579956.git.shayenneluzmoura@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181016095336.15656-1-enric.balletbo@collabora.com>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRjm2zmbx+Xsc2l7UStcF7KyGyJHFElZdPwj/Sio+aOWHZbkZu04
-        uxB4qeZdzG44LTfLLNEyrWzlBZa4tDa6eFnFymgRBSKlToWs3I6S/573ed73e54HPoqQfhaG
-        UunaLFanVWXIRWLyUe+MI8qCh1O35uUF0GWOPgGdXzgqpM2fXQQ9MDkmops+WBE93dJP0FNO
-        u4huc5QK6aILN/3ot09qRHRzj8uPdrXYEW0YXr5DwlTnviaZt+VlAuax6yZiOj0mkqkurBIy
-        7Z4RIfOpxCZgZo3dJFP+oBEx460rd4uV4vjDbEZ6NqvbknBQfMTz5SV5rJc4OXbe5JeLfguK
-        kT8FOBq+9dmExUhMSfFtBDPVgwQ/TCCoNzgRP4wjKJsYIhdOui1OoRdLcQOCS5Wx/NIogu8D
-        BpFXWIYPwrUGt88jGO+HyoKfvpcIbCbgneMr8goiHAmzbe98BxKcAK6Ojz6exGvhzXAX4cUh
-        eB/0jJgRvxMEfVVuXwp/nASdEw6fAYFXQftoDcFjGbx31wq8ZoDzKDCY+/342AowVLyfb70M
-        ftgezPPh8NdSO8/nQH7VAMEfFyJ4fqNBxAtx8Mz2eq4zNecQCfeebOHpRKj56vDRgAPBORrE
-        ZwiEykdXCZ6WQKFBym9HwCf7Q4LHMqh/NSmqQHLjombGRW2Mi9oY//uaENmIZKye06hZbpuW
-        PbGZU2k4vVa9OS1T04rmPt6LP7Zfj9Hkm0NWhCkkD5CMLBlKlQpV2dwpjRUBRciDJT/sc5Tk
-        sOrUaVaXeUCnz2A5KwqjSLlMcuv6/VQpVquy2KMse4zVLagCyj80F52saLInXzWlHZ/OzpmJ
-        WZl7J6UqqyBladia4/UdSu6uK065t2sDVqyejStNih28aNWfqNxpPRcdGWFRKKUz7ihd4x6a
-        Wue2hKtjShNX9J82Bl+ZWu+pKzlbt73mvrNMX3S5V7ZxU7JLfcYdsivIpUDZkYr42oFbyqDm
-        p2apZ0hOckdU2zYQOk71D3Ybmet0AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMIsWRmVeSWpSXmKPExsVy+t/xe7o7BK5HG7Sf5LXoPXeSyaKp4y2r
-        xcKHd5ktrnx9z2ax5vYhRosfG04xW3y/cZbNYvO5HlaLzolL2C0u75rDZrH2yF12i7sbzjJa
-        tF0Xc+D1mN1wkcXjcl8vk8eOu0sYPfZ+W8DiMbtjJqvH9m8PWD3udx9n8vg7az+LR9+WVYwe
-        nzfJBXBF6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZmSrp29mkpOZklqUW6dsl
-        6GV8e3yGpeAYc8X71gXsDYx/mLoYOTkkBEwk9u+8wQpiCwksZZT4PckYIi4usXv+W2YIW1ji
-        z7Uuti5GLqCa14wS87d0sIEkhAUSJOYufwI2SEQgUuLY5gXsIEXMAouZJS6enscEMXUqo8Sr
-        t2ANbAKaEn833wSzeQXsJO7uuccIYrMIqEpcur4PbJuoQITE6uUvWCFqBCVOznzCAmJzCjhJ
-        7P1yDmwms4C6xJ95l5ghbHmJ7W/nQNniEreezGeawCg0C0n7LCQts5C0zELSsoCRZRWjSGpp
-        cW56brGRXnFibnFpXrpecn7uJkZghG879nPLDsaud8GHGAU4GJV4eB9wX4sWYk0sK67MPcQo
-        wcGsJML76ixQiDclsbIqtSg/vqg0J7X4EKMp0HMTmaVEk/OBySevJN7Q1NDcwtLQ3Njc2MxC
-        SZz3vEFllJBAemJJanZqakFqEUwfEwenVAPjxMzSIEM3t7f6K7yO5JSvEtrMMju4RPeDyqS9
-        dYfs3R0mP13+58oE97B7JlnsMmbmjMcF7I8r72DZOv+i4X7VQyx8flqL2pt0Dy9ndn5q7C08
-        zy9RoSpOZZqbvjiDTkp94fYXhr1WCrU3V/4z8stIXnPzwe27p++Ku5quTj2lvf/SKY1dTSxK
-        LMUZiYZazEXFiQCOI8jdBgMAAA==
-X-CMS-MailID: 20181029135256eucas1p1451a2da7fbb5f0fc7eb08c115c1b83f2
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20181016095350epcas4p3a71b29adb3fbeb8075568de20d43e3a0
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181016095350epcas4p3a71b29adb3fbeb8075568de20d43e3a0
-References: <CGME20181016095350epcas4p3a71b29adb3fbeb8075568de20d43e3a0@epcas4p3.samsung.com>
-        <20181016095336.15656-1-enric.balletbo@collabora.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1540579956.git.shayenneluzmoura@gmail.com>
+X-Operating-System: Linux phenom 4.18.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16.10.2018 11:53, Enric Balletbo i Serra wrote:
-> This patch avoids that building the bridge/analogix source code with
-> smatch triggers complaints about inconsistent indenting. It also fixes
-> a typo in DRM_ERROR message, attch is replaced for attach.
->
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+On Fri, Oct 26, 2018 at 04:20:30PM -0300, Shayenne da Luz Moura wrote:
+> This series cleans the following checkpatch.pl issues:
+> 
+> ERROR: trailing whitespace
+> WARNING: Missing a blank line after declarations
+> CHECK: Please don't use multiple blank lines
+> WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
+> ERROR: space required before the open parenthesis '('
+> CHECK: Avoid using bool structure members because of possible alignment issues
 
-Queued to drm-misc-next.
+I looked through the patches, all fine, great work. I've pinged
+maintainers and will merge it all as soon as they've acked it.
 
-Regards
-Andrzej
+Assuming you want to continue hacking on gpu drivers, we have a todo list
+with more advanced tasks:
 
+https://dri.freedesktop.org/docs/drm/gpu/todo.html
+
+Best to discuss those on #dri-devel irc before getting started, to make
+sure scope and all is clear.
+
+Cheers, Daniel
+
+> 
+> Shayenne da Luz Moura (6):
+>   drm/qxl: Remove trailing whitespace
+>   drm/qxl: Add line after variable declarations
+>   drm/qxl: Remove exceding whiteline
+>   drm/qxl: Use 'unsigned int' instead of 'usigned'
+>   drm/qxl: Add space before open parentheses
+>   drm/qxl: Use 'unsigned int' instead of bool
+> 
+>  drivers/gpu/drm/qxl/qxl_cmd.c     |  7 +++++--
+>  drivers/gpu/drm/qxl/qxl_debugfs.c |  5 ++---
+>  drivers/gpu/drm/qxl/qxl_dev.h     |  1 -
+>  drivers/gpu/drm/qxl/qxl_display.c | 19 ++++++++++---------
+>  drivers/gpu/drm/qxl/qxl_draw.c    | 11 ++++++-----
+>  drivers/gpu/drm/qxl/qxl_drv.h     | 31 ++++++++++++++-----------------
+>  drivers/gpu/drm/qxl/qxl_dumb.c    |  3 ++-
+>  drivers/gpu/drm/qxl/qxl_fb.c      |  4 ++--
+>  drivers/gpu/drm/qxl/qxl_image.c   |  4 +++-
+>  drivers/gpu/drm/qxl/qxl_ioctl.c   |  2 ++
+>  drivers/gpu/drm/qxl/qxl_kms.c     |  2 +-
+>  drivers/gpu/drm/qxl/qxl_object.c  |  5 ++---
+>  drivers/gpu/drm/qxl/qxl_object.h  |  2 ++
+>  drivers/gpu/drm/qxl/qxl_prime.c   |  1 -
+>  drivers/gpu/drm/qxl/qxl_release.c |  1 -
+>  drivers/gpu/drm/qxl/qxl_ttm.c     | 12 +++++-------
+>  16 files changed, 56 insertions(+), 54 deletions(-)
+> 
+> -- 
+> 2.19.1
+> 
+> -- 
+> You received this message because you are subscribed to the Google Groups "outreachy-kernel" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to outreachy-kernel+unsubscribe@googlegroups.com.
+> To post to this group, send email to outreachy-kernel@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/outreachy-kernel/cover.1540579956.git.shayenneluzmoura%40gmail.com.
+> For more options, visit https://groups.google.com/d/optout.
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
