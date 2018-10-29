@@ -2,93 +2,124 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72194C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 11:56:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFF69C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 11:58:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 175B52081B
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 11:56:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 175B52081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 982E32081B
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 11:58:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RQiFUw9b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 982E32081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729129AbeJ2Uo5 (ORCPT
+        id S1729177AbeJ2Uqd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 16:44:57 -0400
-Received: from sauhun.de ([88.99.104.3]:34342 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728142AbeJ2Uo5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 16:44:57 -0400
-Received: from localhost (unknown [87.114.85.207])
-        by pokefinder.org (Postfix) with ESMTPSA id 928222E35DD;
-        Mon, 29 Oct 2018 12:56:34 +0100 (CET)
-Date:   Mon, 29 Oct 2018 11:56:34 +0000
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Vitor soares <vitor.soares@synopsys.com>
-Cc:     boris.brezillon@bootlin.com, linux-i2c@vger.kernel.org,
-        corbet@lwn.net, linux-doc@vger.kernel.org,
-        gregkh@linuxfoundation.org, arnd@arndb.de, psroka@cadence.com,
-        agolec@cadence.com, adouglas@cadence.com, bfolta@cadence.com,
-        dkos@cadence.com, alicja@cadence.com, cwronka@cadence.com,
-        sureshp@cadence.com, rafalc@cadence.com,
-        thomas.petazzoni@bootlin.com, nm@ti.com, robh+dt@kernel.org,
-        pawel.moll@arm.com, mark.rutland@arm.com,
-        ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        geert@linux-m68k.org, linus.walleij@linaro.org,
-        Xiang.Lin@synaptics.com, linux-gpio@vger.kernel.org,
-        nsekhar@ti.com, pgaj@cadence.com, peda@axentia.se,
-        mshettel@codeaurora.org, swboyd@chromium.org,
-        joao.pinto@synopsys.com, luis.oliveira@synopsys.com,
-        manuel.abreu@synopsys.com, gustavo.pimentel@synopsys.com
-Subject: Re: [PATCH 0/3] Add driver for Synopsys DesignWare I3C master IP
-Message-ID: <20181029115633.GA5881@kunai>
-References: <1540807618-13246-1-git-send-email-soares@synopsys.com>
+        Mon, 29 Oct 2018 16:46:33 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:35491 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729072AbeJ2Uqd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 16:46:33 -0400
+Received: by mail-qk1-f193.google.com with SMTP id v68-v6so4684987qka.2;
+        Mon, 29 Oct 2018 04:58:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZsgI8DnTAjm8quf5lUzDCDe1tWl5N5lD40JHEmk7NWg=;
+        b=RQiFUw9bf/xAU/Depj08EIDWSDEgZYAqTU8xAq49BUbz67FtMKsisC8tyw92jqiOZj
+         1MUxuXgdQV1kCcZtTD8yND3YPiQ/oixSnB8qNTzweZxd4L1qjHPnH/+r7psYjeRHqbJI
+         9TgkjbC8bGk31nolM4vR3A6E7hiwTU8kaWCPttWUHXshyhV20t/hRIk1pxnBepELWvFA
+         ldEZSJzqiCSyAvjdre9G4RikN8KOJFyi4YD4Jz3ynqa6wQb3+ZpTKxDuLoLzZE/yMZop
+         aS/eheMrBlRUCnCPvK1X9htcn8qi9kz7eI1nCJkVlkEZ6KWA+xCJ0O+fTgFl+AA/U55q
+         hrtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZsgI8DnTAjm8quf5lUzDCDe1tWl5N5lD40JHEmk7NWg=;
+        b=idPIMVhHmTARA+yAwLpag+M792N/Aq90jxtqlqILj4XEea2DhR6FyIB+eKwo7iUgOC
+         MZ4wZcT5w5yLYYREtjW4TrgWr4LRWmehuELTj/Lgkt/8iAlJLKYnztNB61mX8t0BbTri
+         C1qnqUJKbwoo07mj53niXYHdzGFB0AX87zksqukbt7scBDVNtgsm0SFNDB2sOYgrQJ8u
+         LNeRLNJ1khAzEIGlek4pFh+eufSno4jjsx3L4PCS9tWQABesFRUbTZ8nMgH9oQJmUJhI
+         09G249wulgIXYjbVWG1+jsEcqredJyo9/xwqhphXF9A6ZRuQwsoRTWt9Prrvo/zW6H+Q
+         3xeQ==
+X-Gm-Message-State: AGRZ1gKRUZiG+y/pVakg8wjcWmEI4SXkW+6+3R8bcrZ57PYj9jRjJYuE
+        AXFed4winqmv9oRj+BIWhPQhV4D/xDw8x8DHEgY=
+X-Google-Smtp-Source: AJdET5f9n3suVnt9i2qa1eO0TpFE4JHgJSFqGDRcfzYTmH3MqF6g6O4GygGzzMDZmCDWM2mRiqd9x3S/qSwzMaHmVFA=
+X-Received: by 2002:ae9:f50d:: with SMTP id o13mr9187674qkg.137.1540814290701;
+ Mon, 29 Oct 2018 04:58:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="a8Wt8u1KmwUX3Y2C"
-Content-Disposition: inline
-In-Reply-To: <1540807618-13246-1-git-send-email-soares@synopsys.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CAHp75VfxyNSCcDL=ZnDOipnKBQYAms7_BGRmMdEbCAb184ujuA@mail.gmail.com>
+ <201810291854235724652@zte.com.cn>
+In-Reply-To: <201810291854235724652@zte.com.cn>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 29 Oct 2018 13:57:59 +0200
+Message-ID: <CAHp75VcPmnKRdKVs8E+ov=h3roSvD-CKL7m9EZ6cGJWH1dyk1Q@mail.gmail.com>
+Subject: Re: [PATCH V3 3/5] misc/pvpanic: add MMIO support
+To:     peng.hao2@zte.com.cn
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        hutao@cn.fujitsu.com,
+        Linux Documentation List <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Oct 29, 2018 at 12:54 PM <peng.hao2@zte.com.cn> wrote:
+>
+> >On Mon, Oct 29, 2018 at 5:22 AM Peng Hao <peng.hao2@zte.com.cn> wrote:
+> >>
+> >> On some architectures (e.g. arm64), it's preferable to use MMIO, since
+> >> this can be used standalone. Add MMIO support to the pvpanic driver.
+> >
+> >>  pvpanic_walk_resources(struct acpi_resource *res, void *context)
+> >>  {
+> >> +       struct acpi_resource_fixed_memory32 *fixmem32;
+> >> +
+> >>         switch (res->type) {
+> >>         case ACPI_RESOURCE_TYPE_END_TAG:
+> >>                 return AE_OK;
+> >>
+> >>         case ACPI_RESOURCE_TYPE_IO:
+> >> -               port = res->data.io.minimum;
+> >> +               base = (void __iomem *) ioport_map(res->data.io.minimum, 1);
+> >> +               return AE_OK;
+> >> +
+> >> +       case ACPI_RESOURCE_TYPE_FIXED_MEMORY32:
+> >> +               fixmem32 = &res->data.fixed_memory32;
+> >> +               base = ioremap(fixmem32->address, fixmem32->address_length);
+> >>                 return AE_OK;
+> >
+> >Ouch. Sorry, I forgot to look at this previously.
+> >
+> >This should be converted to use
+> >acpi_dev_resource_io()
+> >acpi_dev_resource_memory()
+> >
+> another question, here:
+> iounmap(base) and base may be a ioport. I read x86 code for iounmap that  checked the base.
+> so I think it is safe for x86. But I'm not sure if other architectures using ioport are also secure
+> in the same way of processing.
+> Do you have any suggestions?
 
---a8Wt8u1KmwUX3Y2C
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I would consider it as a bug if on some architectures iounmap() is not
+able to take a base got from ioport_map().
 
-Boris,
-
-> This patch series is a proposal for the I3C master driver for Synopsys IP.
-
-Any news on the I3C mailing list? It is not much yet, still I was
-wondering...
-
-
---a8Wt8u1KmwUX3Y2C
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlvW9W0ACgkQFA3kzBSg
-KbZC9A/+Ii8yRdJYBTx6mJ1Qq2cAjCodzhjGOYHap458IBp5QdRGZi2JAIaPD+Zo
-4RXK2gcYq59xC975wRfd6DrUTEQLvIr/qVWLCLqeBzWjbqWPPDKeDpdWUs39JRiJ
-kCxu15q+tpnIqtIpiocE5xGrWXL0xHatzOqn915hwOJr5ebqBgroHoMzVjR5v2+w
-hLxMnyDvYee0mN/AsgOObrCeHHbrpnFhduvISsTvNKz0CAE5OpbJNPQbjj3+U2aM
-GpfHGK5m5aPvW38BFsadD0lY+P0zNkHJ8ejL5mWlXqFS6G6gGLvHfEcYwxF5vfSJ
-gqFiKqDY/JOAEApDCiDe21UUXyy02l27PQwP4cXA3QiBObHWg+dlIKc5EnNoT+r5
-3pO6eteZnqF0gGA5JiruBw+vOZrPuse9NDuzRoPExO2KE7BXLwR0UDcprr4Z+Usi
-4LlaoagkaFMexuVFFykBaB9Z8U9Y6aBc9f52cjGCuQ28PkCzNuwYINGf65NUWOcY
-IEOjA9v/1RTrQPMlmywoOMyQnmZflvNf9uUG7Dk2HiViO5F7u0IxjwWqTOD7Sc1U
-QLhOGNlfDLJdcLRwlSFE4xsUkrMdAqSfx+Mnzwj0C53ds+2GX5g0zdA/TZmt7JVs
-MLCxt2rGulK1kRPBeVqVs6GH0yXy/iORF/OI4Y2u/OQl0yAteXg=
-=sUO6
------END PGP SIGNATURE-----
-
---a8Wt8u1KmwUX3Y2C--
+-- 
+With Best Regards,
+Andy Shevchenko
