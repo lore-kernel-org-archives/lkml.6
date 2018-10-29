@@ -2,221 +2,283 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D9E4C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 22:25:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C43AC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 22:31:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C42052080A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 22:25:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2DA642080A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 22:31:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="cY2+bZ6D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C42052080A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="iLxS/gCm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DA642080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727986AbeJ3HQg (ORCPT
+        id S1728312AbeJ3HWg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 03:16:36 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:37755 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727639AbeJ3HQg (ORCPT
+        Tue, 30 Oct 2018 03:22:36 -0400
+Received: from alln-iport-7.cisco.com ([173.37.142.94]:42825 "EHLO
+        alln-iport-7.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726568AbeJ3HWf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 03:16:36 -0400
-Received: by mail-oi1-f193.google.com with SMTP id w66-v6so4331865oiw.4
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 15:25:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Z+FNmrGMnhAt1VV5t/xKk65qEiK+YvqDLz2tQRn6SF8=;
-        b=cY2+bZ6DdqBMpUFeEZYyVzyfUjOLGuhdJzeB4Wz4NUlgWYTQJ5DdfOFUdU5fG11xF0
-         uRI/QmjDT30HXRgfowluVDIoS3ch3EZzxNKi9SyK/tXcsma6ZQWNOryvHoWj4veGymIJ
-         2RBRhVfjNTqHNMkL6lCHZPLmZFB8Qe8JxVB4Vj2p+hhz1yczmIJTtSsMReDl4P1hydUm
-         4oY3WLwkZz3PFJMB2kLnAu8lx3nG13mxT/qJvH/ZPkyDi2HDogQ2Xg8Mn4IZmYGnYmap
-         EzbBApgKJ9AmheVPasvPfDt1XYiIqy8x+Qeq6zVBMN7uZrmxvr7JOXCYyUpIIgGP06Ec
-         RRfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Z+FNmrGMnhAt1VV5t/xKk65qEiK+YvqDLz2tQRn6SF8=;
-        b=NUw7Jxzp4ujINAYXb0f5Nf2b5YDmOApy/q94MH2vwwgF52WUeEZtA8ahDlrm73FQEY
-         t2SNBIXG9LSxlNsLjU+nT6SXQ2t7tGiK14pTga/hxH8ppviaOyZ6N0X5qCv4tLlq6qLf
-         PBaQ4iwjv1GGiX+jH6ZUcrYlnEjOqzns4zYLG0VNtWw9tcYuln8ogOooOt8w2p3U7R4M
-         03GHeU++exDfiQVuCa0r7L6RYkRWigaH1HwqOoM59rl46Ss11SLA1hECLZmL6z9Mp/GJ
-         cHu1HSsKooaM3BaOKScGwGWN8V+qm6Ju53Zd4TxVtnSb3dpVnmtTrWPhcOjA3vJgxF3x
-         CBsg==
-X-Gm-Message-State: AGRZ1gK8KyqOkIloN6G7S/6DiWHW2Xf928aehAtxUdUfQzWkjewdedVp
-        kTDanETRncNqnjctTeqfSq9IDCxT/Hy7q96xUW7pDQ==
-X-Google-Smtp-Source: AJdET5e/sjQ/ELXAjtRHUPic1NWLIBYqETclNys6T6w31Zaj2x5O3v4qD4Lgnd9G9HJr9357qULdtn6OUdPNFlHR+WM=
-X-Received: by 2002:aca:ead4:: with SMTP id i203-v6mr10088894oih.149.1540851954211;
- Mon, 29 Oct 2018 15:25:54 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181029210716.212159-1-brho@google.com>
-In-Reply-To: <20181029210716.212159-1-brho@google.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 29 Oct 2018 15:25:42 -0700
-Message-ID: <CAPcyv4gJUjuSKwy7i2wuKR=Vz-AkDrxnGya5qkg7XTFxuXbtzw@mail.gmail.com>
-Subject: Re: [RFC PATCH] kvm: Use huge pages for DAX-backed files
-To:     Barret Rhoden <brho@google.com>
-Cc:     Dave Jiang <dave.jiang@intel.com>, zwisler@kernel.org,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
+        Tue, 30 Oct 2018 03:22:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=6478; q=dns/txt; s=iport;
+  t=1540852313; x=1542061913;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=r1TQDhYdOUNbsvzmM++LWs8/CrD7DlerAvxZ8GWiXXg=;
+  b=iLxS/gCmKbYIDa1OwNtdW2DqzLpmIzqNoF5g4v7Ll/eQVE2ft0AHWMrE
+   Nj0L4BMtb2VRn/k9XKsgGPpQmI4S6WrIkEvSCziGYM2s62t51Qmt6sBPw
+   x1zMj9NGp2wdaE+eoLh66sjrkcblpU9it5BMr1M/fk2+JhLMFpC8x5t+f
+   I=;
+X-IronPort-AV: E=Sophos;i="5.54,441,1534809600"; 
+   d="scan'208";a="192842329"
+Received: from rcdn-core-11.cisco.com ([173.37.93.147])
+  by alln-iport-7.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2018 22:31:52 +0000
+Received: from [10.154.208.144] ([10.154.208.144])
+        by rcdn-core-11.cisco.com (8.15.2/8.15.2) with ESMTP id w9TMVoRf024836;
+        Mon, 29 Oct 2018 22:31:50 GMT
+Subject: [PATCH v5] kernel/signal: Signal-based pre-coredump notification
+To:     Oleg Nesterov <oleg@redhat.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        KVM list <kvm@vger.kernel.org>,
-        "Zhang, Yu C" <yu.c.zhang@intel.com>,
-        "Zhang, Yi Z" <yi.z.zhang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Helge Deller <deller@gmx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <christian@brauner.io>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Jann Horn <jannh@google.com>, Kees Cook <keescook@chromium.org>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org,
+        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
+        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>,
+        Enke Chen <enkechen@cisco.com>
+References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
+ <458c04d8-d189-4a26-729a-bb1d1d751534@cisco.com>
+ <7741efa7-a3f8-62a1-ba52-613883164643@cisco.com>
+ <84460a77-a111-404e-4bad-88104a6e246e@cisco.com>
+ <20181026082812.GA10581@redhat.com>
+ <21f678a8-4001-df36-c26e-e96cf203b1b1@cisco.com>
+ <20181029111804.GA24820@redhat.com>
+From:   Enke Chen <enkechen@cisco.com>
+Message-ID: <0c197608-3b7e-ffd1-8943-801a60beb917@cisco.com>
+Date:   Mon, 29 Oct 2018 15:31:49 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <20181029111804.GA24820@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Auto-Response-Suppress: DR, OOF, AutoReply
+X-Outbound-SMTP-Client: 10.154.208.144, [10.154.208.144]
+X-Outbound-Node: rcdn-core-11.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 2:07 PM Barret Rhoden <brho@google.com> wrote:
->
-> This change allows KVM to map DAX-backed files made of huge pages with
-> huge mappings in the EPT/TDP.
->
-> DAX pages are not PageTransCompound.  The existing check is trying to
-> determine if the mapping for the pfn is a huge mapping or not.  For
-> non-DAX maps, e.g. hugetlbfs, that means checking PageTransCompound.
->
-> For DAX, we can check the page table itself.  Actually, we might always
-> be able to walk the page table, even for PageTransCompound pages, but
-> it's probably a little slower.
->
-> Note that KVM already faulted in the page (or huge page) in the host's
-> page table, and we hold the KVM mmu spinlock (grabbed before checking
-> the mmu seq).  Based on the other comments about not worrying about a
-> pmd split, we might be able to safely walk the page table without
-> holding the mm sem.
->
-> This patch relies on kvm_is_reserved_pfn() being false for DAX pages,
-> which I've hacked up for testing this code.  That change should
-> eventually happen:
->
-> https://lore.kernel.org/lkml/20181022084659.GA84523@tiger-server/
->
-> Another issue is that kvm_mmu_zap_collapsible_spte() also uses
-> PageTransCompoundMap() to detect huge pages, but we don't have a way to
-> get the HVA easily.  Can we just aggressively zap DAX pages there?
->
-> Alternatively, is there a better way to track at the struct page level
-> whether or not a page is huge-mapped?  Maybe the DAX huge pages mark
-> themselves as TransCompound or something similar, and we don't need to
-> special case DAX/ZONE_DEVICE pages.
->
-> Signed-off-by: Barret Rhoden <brho@google.com>
-> ---
->  arch/x86/kvm/mmu.c | 71 +++++++++++++++++++++++++++++++++++++++++++++-
->  1 file changed, 70 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-> index cf5f572f2305..9f3e0f83a2dd 100644
-> --- a/arch/x86/kvm/mmu.c
-> +++ b/arch/x86/kvm/mmu.c
-> @@ -3152,6 +3152,75 @@ static int kvm_handle_bad_page(struct kvm_vcpu *vcpu, gfn_t gfn, kvm_pfn_t pfn)
->         return -EFAULT;
->  }
->
-> +static unsigned long pgd_mapping_size(struct mm_struct *mm, unsigned long addr)
-> +{
-> +       pgd_t *pgd;
-> +       p4d_t *p4d;
-> +       pud_t *pud;
-> +       pmd_t *pmd;
-> +       pte_t *pte;
-> +
-> +       pgd = pgd_offset(mm, addr);
-> +       if (!pgd_present(*pgd))
-> +               return 0;
-> +
-> +       p4d = p4d_offset(pgd, addr);
-> +       if (!p4d_present(*p4d))
-> +               return 0;
-> +       if (p4d_huge(*p4d))
-> +               return P4D_SIZE;
-> +
-> +       pud = pud_offset(p4d, addr);
-> +       if (!pud_present(*pud))
-> +               return 0;
-> +       if (pud_huge(*pud))
-> +               return PUD_SIZE;
-> +
-> +       pmd = pmd_offset(pud, addr);
-> +       if (!pmd_present(*pmd))
-> +               return 0;
-> +       if (pmd_huge(*pmd))
-> +               return PMD_SIZE;
-> +
-> +       pte = pte_offset_map(pmd, addr);
-> +       if (!pte_present(*pte))
-> +               return 0;
-> +       return PAGE_SIZE;
-> +}
-> +
-> +static bool pfn_is_pmd_mapped(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn)
-> +{
-> +       struct page *page = pfn_to_page(pfn);
-> +       unsigned long hva, map_sz;
-> +
-> +       if (!is_zone_device_page(page))
-> +               return PageTransCompoundMap(page);
-> +
-> +       /*
-> +        * DAX pages do not use compound pages.  The page should have already
-> +        * been mapped into the host-side page table during try_async_pf(), so
-> +        * we can check the page tables directly.
-> +        */
-> +       hva = gfn_to_hva(kvm, gfn);
-> +       if (kvm_is_error_hva(hva))
-> +               return false;
-> +
-> +       /*
-> +        * Our caller grabbed the KVM mmu_lock with a successful
-> +        * mmu_notifier_retry, so we're safe to walk the page table.
-> +        */
-> +       map_sz = pgd_mapping_size(current->mm, hva);
-> +       switch (map_sz) {
-> +       case PMD_SIZE:
-> +               return true;
-> +       case P4D_SIZE:
-> +       case PUD_SIZE:
-> +               printk_once(KERN_INFO "KVM THP promo found a very large page");
+For simplicity and consistency, this patch provides an implementation
+for signal-based fault notification prior to the coredump of a child
+process. A new prctl command, PR_SET_PREDUMP_SIG, is defined that can
+be used by an application to express its interest and to specify the
+signal for such a notification.
 
-Why not allow PUD_SIZE? The device-dax interface supports PUD mappings.
+Changes to prctl(2):
 
-> +               return false;
-> +       }
-> +       return false;
-> +}
+   PR_SET_PREDUMP_SIG (since Linux 4.20.x)
+          Set the child pre-coredump signal of the calling process to
+          arg2 (either a signal value in the range 1..maxsig, or 0 to
+          clear). This is the signal that the calling process will get
+          prior to the coredump of a child process. This value is
+          cleared across execve(2), or for the child of a fork(2).
 
-The above 2 functions are  similar to what we need to do for
-determining the blast radius of a memory error, see
-dev_pagemap_mapping_shift() and its usage in add_to_kill().
+   PR_GET_PREDUMP_SIG (since Linux 4.20.x)
+          Return the current value of the child pre-coredump signal,
+          in the location pointed to by (int *) arg2.
 
-> +
->  static void transparent_hugepage_adjust(struct kvm_vcpu *vcpu,
->                                         gfn_t *gfnp, kvm_pfn_t *pfnp,
->                                         int *levelp)
-> @@ -3168,7 +3237,7 @@ static void transparent_hugepage_adjust(struct kvm_vcpu *vcpu,
->          */
->         if (!is_error_noslot_pfn(pfn) && !kvm_is_reserved_pfn(pfn) &&
->             level == PT_PAGE_TABLE_LEVEL &&
-> -           PageTransCompoundMap(pfn_to_page(pfn)) &&
-> +           pfn_is_pmd_mapped(vcpu->kvm, gfn, pfn) &&
+Background:
 
-I'm wondering if we're adding an explicit is_zone_device_page() check
-in this path to determine the page mapping size if that can be a
-replacement for the kvm_is_reserved_pfn() check. In other words, the
-goal of fixing up PageReserved() was to preclude the need for DAX-page
-special casing in KVM, but if we already need add some special casing
-for page size determination, might as well bypass the
-kvm_is_reserved_pfn() dependency as well.
+As the coredump of a process may take time, in certain time-sensitive
+applications it is necessary for a parent process (e.g., a process
+manager) to be notified of a child's imminent death before the coredump
+so that the parent process can act sooner, such as re-spawning an
+application process, or initiating a control-plane fail-over.
+
+One application is BFD. The early fault notification is a critical
+component for maintaining BFD sessions (with a timeout value of
+50 msec or 100 msec) across a control-plane failure.
+
+Currently there are two ways for a parent process to be notified of a
+child process's state change. One is to use the POSIX signal, and
+another is to use the kernel connector module. The specific events and
+actions are summarized as follows:
+
+Process Event    POSIX Signal                Connector-based
+----------------------------------------------------------------------
+ptrace_attach()  do_notify_parent_cldstop()  proc_ptrace_connector()
+                 SIGCHLD / CLD_STOPPED
+
+ptrace_detach()  do_notify_parent_cldstop()  proc_ptrace_connector()
+                 SIGCHLD / CLD_CONTINUED
+
+pre_coredump/    N/A                         proc_coredump_connector()
+get_signal()
+
+post_coredump/   do_notify_parent()          proc_exit_connector()
+do_exit()        SIGCHLD / exit_signal
+----------------------------------------------------------------------
+
+As shown in the table, the signal-based pre-coredump notification is not
+currently available. In some cases using a connector-based notification
+can be quite complicated (e.g., when a process manager is written in shell
+scripts and thus is subject to certain inherent limitations), and a
+signal-based notification would be simpler and better suited.
+
+Signed-off-by: Enke Chen <enkechen@cisco.com>
+Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+---
+v4 -> v5:
+Addressed review comments from Oleg Nesterov:
+o use rcu_read_lock instead.
+o revert back to notify the real_parent.
+
+ fs/coredump.c                | 23 +++++++++++++++++++++++
+ fs/exec.c                    |  3 +++
+ include/linux/sched/signal.h |  3 +++
+ include/uapi/linux/prctl.h   |  4 ++++
+ kernel/sys.c                 | 13 +++++++++++++
+ 5 files changed, 46 insertions(+)
+
+diff --git a/fs/coredump.c b/fs/coredump.c
+index e42e17e..740b1bb 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -536,6 +536,24 @@ static int umh_pipe_setup(struct subprocess_info *info, struct cred *new)
+ 	return err;
+ }
+ 
++/*
++ * While do_notify_parent() notifies the parent of a child's death post
++ * its coredump, this function lets the parent (if so desired) know about
++ * the imminent death of a child just prior to its coredump.
++ */
++static void do_notify_parent_predump(void)
++{
++	struct task_struct *parent;
++	int sig;
++
++	rcu_read_lock();
++	parent = rcu_dereference(current->real_parent);
++	sig = parent->signal->predump_signal;
++	if (sig != 0)
++		do_send_sig_info(sig, SEND_SIG_NOINFO, parent, PIDTYPE_TGID);
++	rcu_read_unlock();
++}
++
+ void do_coredump(const kernel_siginfo_t *siginfo)
+ {
+ 	struct core_state core_state;
+@@ -590,6 +608,11 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+ 	if (retval < 0)
+ 		goto fail_creds;
+ 
++	/*
++	 * Send the pre-coredump signal to the parent if requested.
++	 */
++	do_notify_parent_predump();
++
+ 	old_cred = override_creds(cred);
+ 
+ 	ispipe = format_corename(&cn, &cprm);
+diff --git a/fs/exec.c b/fs/exec.c
+index fc281b7..7714da7 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1181,6 +1181,9 @@ static int de_thread(struct task_struct *tsk)
+ 	/* we have changed execution domain */
+ 	tsk->exit_signal = SIGCHLD;
+ 
++	/* Clear the pre-coredump signal before loading a new binary */
++	sig->predump_signal = 0;
++
+ #ifdef CONFIG_POSIX_TIMERS
+ 	exit_itimers(sig);
+ 	flush_itimer_signals();
+diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
+index 13789d1..728ef68 100644
+--- a/include/linux/sched/signal.h
++++ b/include/linux/sched/signal.h
+@@ -112,6 +112,9 @@ struct signal_struct {
+ 	int			group_stop_count;
+ 	unsigned int		flags; /* see SIGNAL_* flags below */
+ 
++	/* The signal sent prior to a child's coredump */
++	int			predump_signal;
++
+ 	/*
+ 	 * PR_SET_CHILD_SUBREAPER marks a process, like a service
+ 	 * manager, to re-parent orphan (double-forking) child processes
+diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
+index c0d7ea0..79f0a8a 100644
+--- a/include/uapi/linux/prctl.h
++++ b/include/uapi/linux/prctl.h
+@@ -219,4 +219,8 @@ struct prctl_mm_map {
+ # define PR_SPEC_DISABLE		(1UL << 2)
+ # define PR_SPEC_FORCE_DISABLE		(1UL << 3)
+ 
++/* Whether to receive signal prior to child's coredump */
++#define PR_SET_PREDUMP_SIG	54
++#define PR_GET_PREDUMP_SIG	55
++
+ #endif /* _LINUX_PRCTL_H */
+diff --git a/kernel/sys.c b/kernel/sys.c
+index 123bd73..39aa3b8 100644
+--- a/kernel/sys.c
++++ b/kernel/sys.c
+@@ -2476,6 +2476,19 @@ int __weak arch_prctl_spec_ctrl_set(struct task_struct *t, unsigned long which,
+ 			return -EINVAL;
+ 		error = arch_prctl_spec_ctrl_set(me, arg2, arg3);
+ 		break;
++	case PR_SET_PREDUMP_SIG:
++		if (arg3 || arg4 || arg5)
++			return -EINVAL;
++		if (!valid_signal((int)arg2))
++			return -EINVAL;
++		me->signal->predump_signal = (int)arg2;
++		break;
++	case PR_GET_PREDUMP_SIG:
++		if (arg3 || arg4 || arg5)
++			return -EINVAL;
++		error = put_user(me->signal->predump_signal,
++				 (int __user *)arg2);
++		break;
+ 	default:
+ 		error = -EINVAL;
+ 		break;
+-- 
+1.8.3.1
+
