@@ -2,81 +2,74 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35461C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 20:05:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14730C0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 20:05:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF75B2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 20:05:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF75B2084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=monom.org
+	by mail.kernel.org (Postfix) with ESMTP id AC1842080A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 20:05:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC1842080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729529AbeJ3EzP (ORCPT
+        id S1729579AbeJ3Ezd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 00:55:15 -0400
-Received: from mail.monom.org ([188.138.9.77]:50632 "EHLO mail.monom.org"
+        Tue, 30 Oct 2018 00:55:33 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45474 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726196AbeJ3EzP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 00:55:15 -0400
-Received: from mail.monom.org (localhost [127.0.0.1])
-        by filter.mynetwork.local (Postfix) with ESMTP id BECE75007F3;
-        Mon, 29 Oct 2018 21:05:01 +0100 (CET)
-Received: from localhost (ppp-93-104-187-85.dynamic.mnet-online.de [93.104.187.85])
-        by mail.monom.org (Postfix) with ESMTPSA id 0CC6B500294;
-        Mon, 29 Oct 2018 21:05:01 +0100 (CET)
-Date:   Mon, 29 Oct 2018 21:04:59 +0100
-From:   Daniel Wagner <wagi@monom.org>
-Subject: [ANNOUNCE] 4.4.162-rt175
-Data:   Mon, 29 Oct 2018 19:58:21 -0000
-To:     LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Carsten Emde <C.Emde@osadl.org>,
-        John Kacur <jkacur@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Daniel Wagner <daniel.wagner@siemens.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Julia Cartwright <julia@ni.com>
-Message-Id: <20181029200501.BECE75007F3@mail.monom.org>
+        id S1726196AbeJ3Ezd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 00:55:33 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1D11AC04B2DA;
+        Mon, 29 Oct 2018 20:05:22 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-158.ams2.redhat.com [10.36.116.158])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BBB0C1850B;
+        Mon, 29 Oct 2018 20:05:21 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id E4E3C7731; Mon, 29 Oct 2018 21:05:20 +0100 (CET)
+Date:   Mon, 29 Oct 2018 21:05:20 +0100
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Jani Nikula <jani.nikula@linux.intel.com>
+Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        David Airlie <airlied@redhat.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DRM DRIVER FOR BOCHS VIRTUAL GPU" 
+        <virtualization@lists.linux-foundation.org>
+Subject: Re: [PATCH v3] drm/bochs: add edid support.
+Message-ID: <20181029200520.jfnmvbkng2er5qbc@sirius.home.kraxel.org>
+References: <20181029134507.7775-1-kraxel@redhat.com>
+ <87in1kejgj.fsf@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87in1kejgj.fsf@intel.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 29 Oct 2018 20:05:22 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello RT Folks!
+On Mon, Oct 29, 2018 at 07:44:28PM +0200, Jani Nikula wrote:
+> On Mon, 29 Oct 2018, Gerd Hoffmann <kraxel@redhat.com> wrote:
+> > Recent qemu (latest master branch, upcoming 3.1 release) got support
+> > for EDID data.  This patch adds guest driver support.
+> >
+> > EDID support in qemu is not (yet) enabled by default, so please use
+> > 'qemu -device VGA,edid=on' for testing.
+> 
+> Any chance of making this use drm_get_edid() (requires an i2c_adapter)
+> or at least drm_do_get_edid()?
 
-I'm pleased to announce the 4.4.162-rt175 stable release.
+I'll have a look at using drm_do_get_edid().  drm_get_edid() will not
+fly as there is no i2c adapter in the first place.
 
-This release is just an update to the new stable 4.4.120 version
-and no RT specific changes have been made.
+cheers,
+  Gerd
 
-This version still qspinlock enabled, because I wanted to update first
-to the last stable release and then resend the patch which drops back
-to ticket spinlocks.
-
-You can get this release via the git tree at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
-
-  branch: v4.4-rt
-  Head SHA1: 795fdff63ee1ad9582e242ab80e9257b64770cef
-
-Or to build 4.4.162-rt175 directly, the following patches should be applied:
-
-  https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.4.tar.xz
-
-  https://www.kernel.org/pub/linux/kernel/v4.x/patch-4.4.162.xz
-
-  https://www.kernel.org/pub/linux/kernel/projects/rt/4.4/4.4/patch-4.4.162-rt175.patch.xz
-
-
-You can also build from 4.4.157-rt174 by applying the incremental patch:
-
-  https://www.kernel.org/pub/linux/kernel/projects/rt/4.4/4.4/incr/patch-4.4.157-rt174-rt175.patch.xz
-
-Enjoy!
-   Daniel
