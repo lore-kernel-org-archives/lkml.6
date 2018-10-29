@@ -2,109 +2,96 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B161C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:14:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1B6DC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:15:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AA8A2082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:14:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AA8A2082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 8048020664
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 12:15:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N0o/8jgY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8048020664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729242AbeJ2VCt (ORCPT
+        id S1729251AbeJ2VDv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 17:02:49 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:36678 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728772AbeJ2VCt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 17:02:49 -0400
-Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id D105FD0A64461;
-        Mon, 29 Oct 2018 20:14:17 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.41) by DGGEMS411-HUB.china.huawei.com
- (10.3.19.211) with Microsoft SMTP Server id 14.3.408.0; Mon, 29 Oct 2018
- 20:14:13 +0800
-Subject: Re: [PATCH] arm64/numa: Add more vetting in numa_set_distance()
-To:     Will Deacon <will.deacon@arm.com>
-References: <1540562267-101152-1-git-send-email-john.garry@huawei.com>
- <20181029112504.GF14127@arm.com>
-CC:     <catalin.marinas@arm.com>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linuxarm@huawei.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <925009c6-226d-213f-dbcb-68b772d80a18@huawei.com>
-Date:   Mon, 29 Oct 2018 12:14:09 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
-MIME-Version: 1.0
-In-Reply-To: <20181029112504.GF14127@arm.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.41]
-X-CFilter-Loop: Reflected
+        Mon, 29 Oct 2018 17:03:51 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38621 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728523AbeJ2VDv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 17:03:51 -0400
+Received: by mail-wr1-f68.google.com with SMTP id d10-v6so8427208wrs.5
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 05:15:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=sLEKKbyvwHhkDcroeY9+oVKNgUdmgNgsvBDBfj2Nh14=;
+        b=N0o/8jgYOWI/iOHZmz7TUZxMjmYsP2PMVUeH0JWPjiLen7CmTprSCGJeJy+K8bRjnX
+         xQTWF9yBSJnU0xikP/Zqx7uYTtmmOSKLdpl66UysxoHgEOM0ScsHHk4gIdnPNTLTja0R
+         HQBpdGWvLyif7mIvEPbvJW/fLwKh/JddxX156Qf07ITBPoJ5DtREWCN5g+q6bPg+Hb7z
+         eJmFTCnxHdrOzpxeVlUkYhl39XozrSZGJmptTl0PMl0pOd8Q6mKoG9NocBVbIQ3Wm3At
+         xg8ELmR68jf5+RDnYVU+wHRcciJdUhPQWPyZD58B2vTDOsB+V0W2EspacblA6FPdJQd2
+         pn4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=sLEKKbyvwHhkDcroeY9+oVKNgUdmgNgsvBDBfj2Nh14=;
+        b=FrOXPh+vAS6vhRZHc22Jyfnd+4AAid1DHRsrtozbCIyH10NRIEIjvqpfsbPv1NU2w7
+         yGAEChMGezOoTuVQ2DsSTo9CB4ykY26Hqm2pmSKBByZ5oCANX/hX5n+A+Q/CJr/qUb6v
+         FR+5QtKooGLddSmIQJsWOEa9mPbnk0NUSsBL5fDMcBR0hgahkt53xo2dFAeqASLcEbQs
+         YGQ2BNXzoffCniA/OhIKFCOIICy1d0fYe2cc/vYfKctv27uLuSGwPuL1/hjsvE+BtPge
+         UBPLUqlRw6V070ugNIL/SBDz282bjiTAWJkJqo/1Sn720+9rURc/vZZdOKEZ3pgGpxft
+         +Jgw==
+X-Gm-Message-State: AGRZ1gLAUaYu8r875coOAddIN/4frOniMOv5JLVbyPPR1qJTeiSmGwwI
+        oPd7l7VJ7IYm2KX3Z2t0EM8=
+X-Google-Smtp-Source: AJdET5c3SMdYrOC0BKrIf8ou6gBd7zGParOGg4pWp92AkXrk1Tc/a5CCuzPuQnv7aR/v7OVCy1wm7g==
+X-Received: by 2002:adf:b716:: with SMTP id l22-v6mr15551671wre.157.1540815324342;
+        Mon, 29 Oct 2018 05:15:24 -0700 (PDT)
+Received: from localhost.localdomain (ip-76.net-89-3-178.rev.numericable.fr. [89.3.178.76])
+        by smtp.gmail.com with ESMTPSA id y19-v6sm27359575wra.60.2018.10.29.05.15.23
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 29 Oct 2018 05:15:23 -0700 (PDT)
+From:   David Abdurachmanov <david.abdurachmanov@gmail.com>
+To:     palmer@sifive.com, aou@eecs.berkeley.edu,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     David Abdurachmanov <david.abdurachmanov@gmail.com>
+Subject: [PATCH] riscv: fix trace_sys_exit hook
+Date:   Mon, 29 Oct 2018 13:15:16 +0100
+Message-Id: <20181029121516.29574-1-david.abdurachmanov@gmail.com>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/10/2018 11:25, Will Deacon wrote:
-> Hi John,
->
+Depends on:
+http://lists.infradead.org/pipermail/linux-riscv/2018-October/001931.html
 
-Hi Will,
+Why we don't have HAVE_SYSCALL_TRACEPOINTS in arch/riscv/Kconfig?
 
-> On Fri, Oct 26, 2018 at 09:57:47PM +0800, John Garry wrote:
->> Currently it is acceptable to set the distance between 2 separate nodes to
->> LOCAL_DISTANCE.
->>
->> Reject this as it is invalid.
->>
->> This change avoids a crash reported in [1].
->>
->> [1] https://www.spinics.net/lists/arm-kernel/msg683304.html
->>
->> Signed-off-by: John Garry <john.garry@huawei.com>
->>
->> diff --git a/arch/arm64/mm/numa.c b/arch/arm64/mm/numa.c
->> index 146c04c..6092e3d 100644
->> --- a/arch/arm64/mm/numa.c
->> +++ b/arch/arm64/mm/numa.c
->> @@ -335,7 +335,8 @@ void __init numa_set_distance(int from, int to, int distance)
->>  	}
->>
->>  	if ((u8)distance != distance ||
->> -	    (from == to && distance != LOCAL_DISTANCE)) {
->> +	    (from == to && distance != LOCAL_DISTANCE) ||
->> +	    (from != to && distance == LOCAL_DISTANCE)) {
->
-> The current code here is more-or-less lifted from the x86 implementation
-> of numa_set_distance().
+Signed-off-by: David Abdurachmanov <david.abdurachmanov@gmail.com>
+---
+ arch/riscv/kernel/ptrace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Right, I did notice this. I didn't think that x86 folks would be so 
-concerned since they generally only use ACPI, and the ACPI code already 
-validates these distances in drivers/acpi/numa.c: slit_valid() [unlike 
-OF code].
-
-  I think we should either factor out the sanity check
-> into a core helper or make the core code robust to these funny configurations.
-
-OK, so to me it would make sense to factor out a sanity check into a 
-core helper.
-
-Cheers,
-John
-
->
-> Will
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
->
-
+diff --git a/arch/riscv/kernel/ptrace.c b/arch/riscv/kernel/ptrace.c
+index 9f82a7e34c64..9db7d0076375 100644
+--- a/arch/riscv/kernel/ptrace.c
++++ b/arch/riscv/kernel/ptrace.c
+@@ -120,6 +120,6 @@ void do_syscall_trace_exit(struct pt_regs *regs)
+ 
+ #ifdef CONFIG_HAVE_SYSCALL_TRACEPOINTS
+ 	if (test_thread_flag(TIF_SYSCALL_TRACEPOINT))
+-		trace_sys_exit(regs, regs->regs[0]);
++		trace_sys_exit(regs, regs_return_value(regs));
+ #endif
+ }
+-- 
+2.17.2
 
