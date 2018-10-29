@@ -2,127 +2,90 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72775C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:38:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD81C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:38:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EC932064C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:38:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OqwQL3ky"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EC932064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 7DB192064C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 18:38:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DB192064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729411AbeJ3D1y (ORCPT
+        id S1729435AbeJ3D15 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 23:27:54 -0400
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:39269 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728897AbeJ3D1y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 23:27:54 -0400
-Received: by mail-ua1-f66.google.com with SMTP id j38so3432749uae.6
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 11:38:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Q6q+mNR4wPMMnGdcKzLeW+W3mMTI2m08qGqio7AhisY=;
-        b=OqwQL3kyVIVQpkwrNOH7ZB0dZighlsej+FjGZJpKf8BGWsorL0ULgVo4ibBB2FMx8f
-         poJKMf3WOuC4sKIcbF90w7fhn8Ts+feiO2B2K9aJVDYrHH0dVMtGb9WnbNGOWlcKKZrX
-         kwyNNpUPyEHxjo8PEl2kd6ntcRbhbLDflMNto=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Q6q+mNR4wPMMnGdcKzLeW+W3mMTI2m08qGqio7AhisY=;
-        b=nISuLVmtDNCy90aDX+Fpj6JGj3NgXwj0lxKnsM3n/VrRPDsFYDQ7Jlg2lSLedb85Ku
-         olDwlHz9BMI62mty/1THSGQlBNkwQWQzwIy8HmVlydvwYuX0DzRnzgx+sxj3QPvKRTpH
-         oPvRi64EFtPg+lDusi/aj0shVPDf9e7PGa2cGqSQ7ISjs8VXQTEOgZHpL5J8isUsAJqr
-         guDHLo8gRCvb77xbGbc3plgCIgDdRERT4/ogM2La79gM+srzmtjoyH1TqwdER525xjZ1
-         FvWvEhsIuCltfGEmp6dDeratun+gH32PtgtsXVSjY3uDfXrOHKBlvvgg4YsH3UxDv3ev
-         tgKg==
-X-Gm-Message-State: AGRZ1gL+fWgZda9GYkH9ngUnjR+0QKymNK2vrIrSrBkOjX6kaJnYC6D+
-        99ChppBP4O24DHGoS8vblE6D6tqWWuk=
-X-Google-Smtp-Source: AJdET5c0825W+IAdlMjH0Lcm8ptvW2UdwKvASaDIpdNI8FcnWMGxkI85p9U0yQJ9OguysESJ0sFPzQ==
-X-Received: by 2002:ab0:30d8:: with SMTP id c24mr141278uam.44.1540838280527;
-        Mon, 29 Oct 2018 11:38:00 -0700 (PDT)
-Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com. [209.85.217.45])
-        by smtp.gmail.com with ESMTPSA id j7sm5728365vsd.17.2018.10.29.11.37.58
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 11:37:59 -0700 (PDT)
-Received: by mail-vs1-f45.google.com with SMTP id j124so2708939vsd.4
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 11:37:58 -0700 (PDT)
-X-Received: by 2002:a67:b20e:: with SMTP id b14mr6472811vsf.121.1540838278336;
- Mon, 29 Oct 2018 11:37:58 -0700 (PDT)
+        Mon, 29 Oct 2018 23:27:57 -0400
+Received: from mga03.intel.com ([134.134.136.65]:23995 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728897AbeJ3D1z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 23:27:55 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 29 Oct 2018 11:38:02 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,441,1534834800"; 
+   d="scan'208";a="81864664"
+Received: from orsmsx105.amr.corp.intel.com ([10.22.225.132])
+  by fmsmga007.fm.intel.com with ESMTP; 29 Oct 2018 11:38:02 -0700
+Received: from orsmsx114.amr.corp.intel.com ([169.254.8.128]) by
+ ORSMSX105.amr.corp.intel.com ([169.254.2.237]) with mapi id 14.03.0415.000;
+ Mon, 29 Oct 2018 11:38:02 -0700
+From:   "Prakhya, Sai Praneeth" <sai.praneeth.prakhya@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+CC:     "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        "Ingo Molnar" <mingo@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: RE: [PATCH V2 1/2] x86/efi: Unmap EFI boot services code/data
+ regions from efi_pgd
+Thread-Topic: [PATCH V2 1/2] x86/efi: Unmap EFI boot services code/data
+ regions from efi_pgd
+Thread-Index: AQHUbXSDlG5yxQFZuUKIGr9tlrL5CKU27+KA//+iDfA=
+Date:   Mon, 29 Oct 2018 18:38:01 +0000
+Message-ID: <FFF73D592F13FD46B8700F0A279B802F485E5596@ORSMSX114.amr.corp.intel.com>
+References: <20181026213845.28166-1-sai.praneeth.prakhya@intel.com>
+ <20181026213845.28166-2-sai.praneeth.prakhya@intel.com>
+ <alpine.DEB.2.21.1810291809490.5984@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1810291809490.5984@nanos.tec.linutronix.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMGE2OGFjNTktMDExZi00NmFmLWE0MDEtOTdmZGY5YzRkMzFjIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiN0tFRGhxWm1VNndudWpcL3BZR1ZDZHk2RVVSekNvRlF3bHNNMHpTVlNYSDlxeXJEM1FqZHQ1enZmditXN2tkclEifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.140]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <20181026122745.5094-1-sibis@codeaurora.org>
-In-Reply-To: <20181026122745.5094-1-sibis@codeaurora.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 29 Oct 2018 11:37:46 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Xf7NXTV_OtBePn9QUQbzdkMxdYg-yRua_6SbV-av3P+g@mail.gmail.com>
-Message-ID: <CAD=FV=Xf7NXTV_OtBePn9QUQbzdkMxdYg-yRua_6SbV-av3P+g@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: qcom: sdm845: Add reserve-memory nodes
-To:     sibis@codeaurora.org
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Evan Green <evgreen@chromium.org>, benchan@chromium.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        tsoni@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+> >  /*
+> >   * The testcases use internal knowledge of the implementation that shouldn't
+> >   * be exposed to the rest of the kernel. Include these directly here.
+> > diff --git a/arch/x86/platform/efi/quirks.c
+> > b/arch/x86/platform/efi/quirks.c index 669babcaf245..fb1c44b11235
+> > 100644
+> > --- a/arch/x86/platform/efi/quirks.c
+> > +++ b/arch/x86/platform/efi/quirks.c
+> 
+> While you are at it, can you please split the EFI part out into a separate patch?
 
-On Fri, Oct 26, 2018 at 5:28 AM Sibi Sankar <sibis@codeaurora.org> wrote:
->
-> Add reserve-memory nodes for mpss and mba required for
-> remoteproc mss pil.
->
-> Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-> ---
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index d3fe012ad84e..f74892e447f9 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -88,6 +88,16 @@
->                         reg = <0 0x86200000 0 0x2d00000>;
->                         no-map;
->                 };
-> +
-> +               mpss_region: reserved-memory@8e000000 {
-> +                       no-map;
-> +                       reg = <0 0x8e000000 0 0x7800000>;
-> +               };
-> +
-> +               mba_region: reserved-memory@96500000 {
+Sure! I will do it in V3.
 
-nit: All of the other reserved memory in this same section just has
-the node name "memory".  Can you please follow suit?  Also above.
-This is the kind of thing that Rob H. usually cares about doing right.
-
-> +                       no-map;
-> +                       reg = <0 0x96500000 0 0x200000>;
-
-nit: All of the other reserved memory in this same section has "reg"
-above "no-map".  It doesn't matter a whole lot, but why not make it
-match everyone else?  Also above.
-
-
--Doug
+Regards,
+Sai
