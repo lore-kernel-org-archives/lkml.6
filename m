@@ -2,104 +2,100 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 384B2C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:07:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 088BCC46475
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:07:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 014452054F
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:07:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 014452054F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C9E0A2080A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 08:07:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9E0A2080A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gliwa.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729431AbeJ2Qym (ORCPT
+        id S1729447AbeJ2Qy5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 12:54:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42678 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726036AbeJ2Qym (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 12:54:42 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 20383B00A;
-        Mon, 29 Oct 2018 08:07:09 +0000 (UTC)
-Date:   Mon, 29 Oct 2018 09:07:08 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     miles.chen@mediatek.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Joe Perches <joe@perches.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, wsd_upstream@mediatek.com
-Subject: Re: [PATCH v3] mm/page_owner: use kvmalloc instead of kmalloc
-Message-ID: <20181029080708.GA32673@dhcp22.suse.cz>
-References: <1540790176-32339-1-git-send-email-miles.chen@mediatek.com>
+        Mon, 29 Oct 2018 12:54:57 -0400
+Received: from s30320.gliwa.com ([148.251.52.238]:40904 "EHLO mail.gliwa.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726036AbeJ2Qy5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 12:54:57 -0400
+X-Greylist: delayed 513 seconds by postgrey-1.27 at vger.kernel.org; Mon, 29 Oct 2018 12:54:56 EDT
+Received: by mail.gliwa.com (Postfix, from userid 992)
+        id AE028344D0A; Mon, 29 Oct 2018 08:58:51 +0100 (CET)
+X-Virus-Checker-Version: ClamAV 0.100.2/25073/Mon Oct 29 06:05:58 2018
+X-Virus-Status: OK
+Received: from [192.168.1.3] (x5f721fb9.dyn.telefonica.de [95.114.31.185])
+        by mail.gliwa.com (Postfix) with ESMTPSA id 7993C3449DC;
+        Mon, 29 Oct 2018 08:58:51 +0100 (CET)
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+From:   Claudio <claudio.fontana@gliwa.com>
+Subject: new arch-independent tracepoints on hardware entry/exit from
+ interrupt ?
+Message-ID: <a2e9ee60-e206-3775-62db-c05dc046b15e@gliwa.com>
+Date:   Mon, 29 Oct 2018 08:58:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1540790176-32339-1-git-send-email-miles.chen@mediatek.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 29-10-18 13:16:16, miles.chen@mediatek.com wrote:
-> From: Miles Chen <miles.chen@mediatek.com>
-> 
-> The kbuf used by page owner is allocated by kmalloc(), which means it
-> can use only normal memory and there might be a "out of memory"
-> issue when we're out of normal memory.
-> 
-> To solve this problem, use kvmalloc() to allocate kbuf
-> from normal/highmem. But there is one problem here: kvmalloc()
-> does not fallback to vmalloc for sub page allocations. So sub
-> page allocation fails due to out of normal memory cannot fallback
-> to vmalloc.
-> 
-> Modify kvmalloc() to allow sub page allocations fallback to
-> vmalloc when CONFIG_HIGHMEM=y and use kvmalloc() to allocate
-> kbuf.
-> 
-> Clamp buffer size to PAGE_SIZE to avoid arbitrary size allocation.
-> 
-> Change since v2:
->   - improve kvmalloc, allow sub page allocations fallback to
->     vmalloc when CONFIG_HIGHMEM=y
 
-Matthew has suggested a much more viable way to go around this. We do
-not really want to allow an unbound kernel allocation - even if the
-interface is root only.
+Hello,
 
-Besides that, the following doesn't make much sense to me. It simply
-makes no sense to use vmalloc for sub page allocation regardless of
-HIGHMEM.
+I am currently facing the requirements to trace OS events close to hardware entry and exit from
+interrupt.
 
-> diff --git a/mm/util.c b/mm/util.c
-> index 8bf08b5b5760..7b1c59b9bfbf 100644
-> --- a/mm/util.c
-> +++ b/mm/util.c
-> @@ -416,10 +416,10 @@ void *kvmalloc_node(size_t size, gfp_t flags, int node)
->  	ret = kmalloc_node(size, kmalloc_flags, node);
->  
->  	/*
-> -	 * It doesn't really make sense to fallback to vmalloc for sub page
-> -	 * requests
-> +	 * It only makes sense to fallback to vmalloc for sub page
-> +	 * requests if we might be able to allocate highmem pages.
->  	 */
-> -	if (ret || size <= PAGE_SIZE)
-> +	if (ret || (!IS_ENABLED(CONFIG_HIGHMEM) && size <= PAGE_SIZE))
->  		return ret;
->  
->  	return __vmalloc_node_flags_caller(size, node, flags,
-> -- 
-> 2.18.0
-> 
+There are currently arch-independent events defined for entry/exit from irq handlers as
+registered in Linux (irq_handler_entry, irq_handler_exit),
 
--- 
-Michal Hocko
-SUSE Labs
+However that is of course a different view compared with the entry and exit to/from the kernel from a hardware perspective.
+
+While playing around with the idea, I experimented with the idea of having two new events:
+
+name: hw_irq_entry
+ID: 93
+format:
+	field:unsigned short common_type;	offset:0;	size:2;	signed:0;
+	field:unsigned char common_flags;	offset:2;	size:1;	signed:0;
+	field:unsigned char common_preempt_count;	offset:3;	size:1;signed:0;
+	field:int common_pid;	offset:4;	size:4;	signed:1;
+
+	field:irq_hw_number_t hw_irq;	offset:8;	size:8;	signed:0;
+
+print fmt: "hw_irq=%lu", REC->hw_irq
+
+name: hw_irq_exit
+ID: 92
+format:
+	field:unsigned short common_type;	offset:0;	size:2;	signed:0;
+	field:unsigned char common_flags;	offset:2;	size:1;	signed:0;
+	field:unsigned char common_preempt_count;	offset:3;	size:1;signed:0;
+	field:int common_pid;	offset:4;	size:4;	signed:1;
+
+	field:irq_hw_number_t hw_irq;	offset:8;	size:8;	signed:0;
+
+print fmt: "hw_irq=%lu", REC->hw_irq
+
+With the intention to report on any architecture the specific number meaningful for that architecture.
+
+I noticed that on x86 we have a specific separate events for irq_vectors,
+apparently introduced by commit cf910e83ae23 ("x86, trace: Add irq vector tracepoints")
+
+but I wonder if a more general solution could be implemented to cover meaningfully all architectures,
+without having the tools having to special case all possible architectures and also special case all possible events generated as a consequence of irq entry.
+
+The use case here is about timing analysis for the automotive domain, the current architectures we are looking at are x86 and arm64.
+
+Thank you for your thoughts on this,
+
+Claudio
