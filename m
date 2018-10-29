@@ -2,88 +2,111 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BA42C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 20:25:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F67DC0044C
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 20:26:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9D2F2082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 20:25:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9D2F2082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id 0C9EF2082D
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 20:26:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C9EF2082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729639AbeJ3FPu (ORCPT
+        id S1729681AbeJ3FQy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 01:15:50 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43696 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728587AbeJ3FPu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 01:15:50 -0400
-Received: by mail-pg1-f193.google.com with SMTP id n10-v6so4442420pgv.10;
-        Mon, 29 Oct 2018 13:25:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=rrqyoCrZfskPg6mPnpOQaOugbRjG9DnnO5gBVrJbevY=;
-        b=PP59U+SbPC9nZPhM99386a9hJwTbvXtMyKTkXENL8cVHihuZJoHUVB531iTl1LhrdC
-         Q1YdHBmx+nhKFW9nVEylJHCaUiY/kkluMFo0ZZCqI7zsOFNmIBTH40R68yP6ogikQnIL
-         z+IXnVBj7e3/yhfppL37Yi0SEP/BRRrRw00Dzsl4sl7n7GmCfdDHXf328Bp1LEkGcN/+
-         2Uj+VVgnu3k+PrAkjiN87Uw5WYBwOUT8xQDGXuSIG4i8h/7sbf56QP1Q0pOO48Ay+62G
-         wsR5a70d71BBC+hEbd1uXoI2mxmPKQLCFLA0mFk33rbD32do4pAyqSHpyrQWMFn+sEeW
-         9yBA==
-X-Gm-Message-State: AGRZ1gKslyTkkZ9AC/C3Qor2zfSJ+bsL9Bh1D6xc8qsPAKthoWBUAf7a
-        Pkm3Dm9FLgJXa7sHgj+u1ko=
-X-Google-Smtp-Source: AJdET5fR1njXKCJgXLzeqmJy1V1g5mNuDdPsS2SUIeLOasEhNXRoPpzN4QcIXPNpMqNO2R/qG4pEnA==
-X-Received: by 2002:a62:6203:: with SMTP id w3-v6mr16673210pfb.175.1540844733213;
-        Mon, 29 Oct 2018 13:25:33 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id m1-v6sm23660542pgl.33.2018.10.29.13.25.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 29 Oct 2018 13:25:32 -0700 (PDT)
-Message-ID: <1540844730.196084.95.camel@acm.org>
-Subject: Re: [PATCH 10/14] blk-mq: initial support for multiple queue maps
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Mon, 29 Oct 2018 13:25:30 -0700
-In-Reply-To: <867d3e60-3edf-39e7-2bcb-02d7f1092f82@kernel.dk>
-References: <20181029163738.10172-1-axboe@kernel.dk>
-         <20181029163738.10172-11-axboe@kernel.dk>
-         <1540842034.196084.89.camel@acm.org>
-         <ac755067-1432-54ce-6a4f-c7383f1ecc9d@kernel.dk>
-         <1540843250.196084.93.camel@acm.org>
-         <867d3e60-3edf-39e7-2bcb-02d7f1092f82@kernel.dk>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 30 Oct 2018 01:16:54 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48102 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728587AbeJ3FQy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 01:16:54 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id DD76BABC1;
+        Mon, 29 Oct 2018 20:26:36 +0000 (UTC)
+Date:   Mon, 29 Oct 2018 21:26:34 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Mike Galbraith <efault@gmx.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>
+Subject: Re: memcg oops:
+ memcg_kmem_charge_memcg()->try_charge()->page_counter_try_charge()->BOOM
+Message-ID: <20181029202634.GQ32673@dhcp22.suse.cz>
+References: <1540792855.22373.34.camel@gmx.de>
+ <20181029132035.GI32673@dhcp22.suse.cz>
+ <1540830938.10478.4.camel@gmx.de>
+ <20181029185412.GA15760@tower.DHCP.thefacebook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181029185412.GA15760@tower.DHCP.thefacebook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-10-29 at 14:09 -0600, Jens Axboe wrote:
-+AD4 hctx-+AD4-type will be set to the value of the first type. This is all driver
-+AD4 private, blk-mq could not care less what the value of the type means.
-+AD4 
-+AD4 As to the other question, it works just fine since that is the queue
-+AD4 that is being accessed. There's no confusion there. I think you're
-+AD4 misunderstanding how it's seutp. To use nvme as the example, type 0
-+AD4 would be reads, 1 writes, and 2 pollable queues. If reads and writes
-+AD4 share the same set of hardware queues, then type 1 simply doesn't
-+AD4 exist in terms of -+AD4-flags+AF8-to+AF8-type() return value. This is purely
-+AD4 driven by the driver. That hook is the only decider of where something
-+AD4 will go. If we share hctx sets, we share the same hardware queue as
-+AD4 well. There is just the one set for that case.
+On Mon 29-10-18 18:54:19, Roman Gushchin wrote:
+> On Mon, Oct 29, 2018 at 05:35:38PM +0100, Mike Galbraith wrote:
+> > On Mon, 2018-10-29 at 14:20 +0100, Michal Hocko wrote:
+> > > 
+> > > > [    4.420976] Code: f3 c3 0f 1f 00 0f 1f 44 00 00 48 85 ff 0f 84 a8 00 00 00 41 56 48 89 f8 41 55 49 89 fe 41 54 49 89 d5 55 49 89 f4 53 48 89 f3 <f0> 48 0f c1 1f 48 01 f3 48 39 5f 18 48 89 fd 73 17 eb 41 48 89 e8
+> > > > [    4.424162] RSP: 0018:ffffb27840c57cb0 EFLAGS: 00010202
+> > > > [    4.425236] RAX: 00000000000000f8 RBX: 0000000000000020 RCX: 0000000000000200
+> > > > [    4.426467] RDX: ffffb27840c57d08 RSI: 0000000000000020 RDI: 00000000000000f8
+> > > > [    4.427652] RBP: 0000000000000001 R08: 0000000000000000 R09: ffffb278410bc000
+> > > > [    4.428883] R10: ffffb27840c57ed0 R11: 0000000000000040 R12: 0000000000000020
+> > > > [    4.430168] R13: ffffb27840c57d08 R14: 00000000000000f8 R15: 00000000006000c0
+> > > > [    4.431411] FS:  00007f79081a3940(0000) GS:ffff92a4b7bc0000(0000) knlGS:0000000000000000
+> > > > [    4.432748] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > > [    4.433836] CR2: 00000000000000f8 CR3: 00000002310ac002 CR4: 00000000001606e0
+> > > > [    4.435500] Call Trace:
+> > > > [    4.436319]  try_charge+0x92/0x7b0
+> > > > [    4.437284]  ? unlazy_walk+0x4c/0xb0
+> > > > [    4.438676]  ? terminate_walk+0x91/0x100
+> > > > [    4.439984]  memcg_kmem_charge_memcg+0x28/0x80
+> > > > [    4.441059]  memcg_kmem_charge+0x88/0x1d0
+> > > > [    4.442105]  copy_process.part.37+0x23a/0x2070
+> > > 
+> > > Could you faddr2line this please?
+> > 
+> > homer:/usr/local/src/kernel/linux-master # ./scripts/faddr2line vmlinux copy_process.part.37+0x23a
+> > copy_process.part.37+0x23a/0x2070:
+> > memcg_charge_kernel_stack at kernel/fork.c:401
+> > (inlined by) dup_task_struct at kernel/fork.c:850
+> > (inlined by) copy_process at kernel/fork.c:1750
+> > 
+> > I bisected it this afternoon, and confirmed the result via revert.
+> > 
+> > 9b6f7e163cd0f468d1b9696b785659d3c27c8667 is the first bad commit
+> > commit 9b6f7e163cd0f468d1b9696b785659d3c27c8667
+> > Author: Roman Gushchin <guro@fb.com>
+> > Date:   Fri Oct 26 15:03:19 2018 -0700
+> > 
+> >     mm: rework memcg kernel stack accounting
+> 
+> 
+> Hi Mike!
+> 
+> Thank you for the report!
+> 
+> Do you see it reliable every time you boot up the machine?
+> How do you run kvm? Is there something special about your cgroup setup?
+> 
+> I've made several attempts to reproduce the issue, but haven't got anything
+> so far. I've used your config, and played with different cgroups setups.
+> 
+> Do you know where in the page_counter_try_charge() it fails?
+> 
+> Also, can you, please, check if the following patch mitigates the problem?
 
-How about adding a comment in blk-mq.h that explains that hardware queues can
-be shared among different hardware queue types? I think this is nontrivial and
-deserves a comment.
-
-Thanks,
-
-Bart.
+It's been a long day so I might be completely wrong but it seems that
+the task_struct is not initialized yet so tsk->mm is a complete garbage.
+I guess you want to move charging down after arch_dup_task_struct.
+-- 
+Michal Hocko
+SUSE Labs
