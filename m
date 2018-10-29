@@ -2,102 +2,252 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EB13C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 01:16:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C7CDC6786F
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 01:16:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13D902082D
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 01:16:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1897120880
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 01:16:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="Qf5dpBMo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13D902082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ElREPohb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1897120880
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726222AbeJ2KC4 (ORCPT
+        id S1726493AbeJ2KDG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 06:02:56 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:43260 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725988AbeJ2KC4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 06:02:56 -0400
-Received: by mail-pl1-f193.google.com with SMTP id 30-v6so2962186plb.10
-        for <linux-kernel@vger.kernel.org>; Sun, 28 Oct 2018 18:16:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=kR/eUjzyO3DZ2lA5DhRx8E4YrP7im8f3HcYTQzzogLM=;
-        b=Qf5dpBMoM02jHDrHos8NByjl0rNE1G0avhsF+G4AZheujoqsRKg9KnNw6nJvzCi/3J
-         rnpt2iTUNsF5v3OFSck8cXJLy1cWMs9S6zKzTMAh7GvEqU4pPstoMQJ+SAlCdR5Q9vsv
-         yMtIoZ3zHQyyQeeGci2EQTCfHGDXW6GLOWwg4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kR/eUjzyO3DZ2lA5DhRx8E4YrP7im8f3HcYTQzzogLM=;
-        b=haEmIrvKh7ANoOlNQLO3zY9rklpr3MkgEDAvTk/kyPoXcYmPPE9ITFZurGYAC+McEt
-         tvw1O47KjUeLV9p4qVzloSdpUJtAHJb2M+vSFBXop9tApzGpmoDbOMpxq9ku+sFD1wuB
-         ziU+L7PfZPcGsICQAHPuB3T8K5k2rztD4B+R0l2H0Cn9R2HKcwT8zgEIOwEyaj9vCBwy
-         6dSAdDhME0Eq5MoOIEbDZTtT+dGAQ2lgHlvdnnZv3oURfL9wTBkQrcze8lGO9yYY9Onf
-         FgtXxmt2NtL5DO3b9eXdlouqqMaNPDFO1l6ZR5mvFy6WnkAZaUDMB1KVnm1dI1ozZkmW
-         ISAg==
-X-Gm-Message-State: AGRZ1gKxwAtpU/aElzx0+KcHvM+WOpvjcfX8JEDK6KEk115W0c237fpb
-        c0mv+pgssZNxEqRdZQPqNVd3lw==
-X-Google-Smtp-Source: AJdET5fQTUt/0nv7G+sxhHHbu8TgpgxthN5e+n5Cf+hIYmQ88emFztjBwyyUhyY0Mt0y8q9NL3+Sew==
-X-Received: by 2002:a17:902:8c84:: with SMTP id t4-v6mr12465092plo.188.1540775794402;
-        Sun, 28 Oct 2018 18:16:34 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id o1-v6sm19077662pgq.21.2018.10.28.18.16.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 28 Oct 2018 18:16:33 -0700 (PDT)
-Date:   Sun, 28 Oct 2018 18:16:31 -0700
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [RFC] rcu: doc: update example about stale data
-Message-ID: <20181029011631.GA261737@joelaf.mtv.corp.google.com>
-References: <20181028021653.155513-1-joel@joelfernandes.org>
- <20181028172142.GN4170@linux.ibm.com>
+        Mon, 29 Oct 2018 06:03:06 -0400
+Received: from ozlabs.org ([203.11.71.1]:52625 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725988AbeJ2KDG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 06:03:06 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42jxWs4cKvz9s7h;
+        Mon, 29 Oct 2018 12:16:40 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1540775802;
+        bh=+jt7/HqC76OKDilC/Bo0oyKyP0bB5BwDrIs3xta7gAQ=;
+        h=Date:From:To:Cc:Subject:From;
+        b=ElREPohbCB5heGFWYc7I85wLY4VuVSSf09YdlkrNtaF800WCSjf2toGWrCOwOo6kN
+         qK6KVijXOgRjezK16pWjv1/ZehWUMfOdcHWK6LoT8iKcgoQlXg6VFPuRHc9fJK0MTZ
+         Xxdq+8K4YOL4DLr65ha36j5qEc7tbr784kvVN3MsD6Yz3IK68guFtmJ1Fj2LLvUvnb
+         57dFns43p7Q97+Z1zyhsYAR60Y8QT/hQF3zXZOPyrUsuxskZNfQ7Qi4dCGH446sSTy
+         VjTM8LuHjoi6Wt+uivIu760ylziQfyPVjOhcxBfDDQPdq1XKbor5m07KmNUXY7OBs3
+         m9ezHEqRQ7LdQ==
+Date:   Mon, 29 Oct 2018 12:16:39 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Al Viro <viro@ZenIV.linux.org.uk>, Sage Weil <sage@newdream.net>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Yan, Zheng" <zyan@redhat.com>, Ilya Dryomov <idryomov@gmail.com>,
+        David Howells <dhowells@redhat.com>
+Subject: linux-next: manual merge of the vfs tree with the ceph tree
+Message-ID: <20181029121639.738ab89c@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181028172142.GN4170@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/4LK0Sc4kxDH7alXOXPPpFP_"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 28, 2018 at 10:21:42AM -0700, Paul E. McKenney wrote:
-> On Sat, Oct 27, 2018 at 07:16:53PM -0700, Joel Fernandes (Google) wrote:
-> > The RCU example for 'rejecting stale data' on system-call auditting
-> > stops iterating through the rules if a deleted one is found. It makes
-> > more sense to continue looking at other rules once a deleted one is
-> > rejected. Although the original example is fine, this makes it more
-> > meaningful.
-> > 
-> > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> 
-> Does the actual audit code that this was copied from now include the
-> continue statement?  If so, please update the commit log to state that
-> and then I will take the resulting patch.  (This example was inspired
-> by a long-ago version of the actual audit code.)
+--Sig_/4LK0Sc4kxDH7alXOXPPpFP_
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The document talks of a situation that could be but is not really in the
-implementation. It says "If the system-call audit module were to ever need to
-reject stale data". So its not really something implemented. I was just
-correcting the example you had there since it made more sense to me to
-continue looking for other rules in the list once a rule was shown to be
-stale. It just makes the example more correct.
+Hi Al,
 
-But I'm Ok if you want to leave that alone ;-) Hence, the RFC tag to this
-patch ;-)
+Today's linux-next merge of the vfs tree got a conflict in:
 
-- Joel
- 
+  fs/ceph/file.c
+
+between commit:
+
+  fce7a9744bdf ("ceph: refactor ceph_sync_read()")
+
+from the ceph tree and commit:
+
+  00e23707442a ("iov_iter: Use accessor function")
+
+from the vfs tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc fs/ceph/file.c
+index f788496fafcc,5dd433aa9b23..000000000000
+--- a/fs/ceph/file.c
++++ b/fs/ceph/file.c
+@@@ -594,103 -658,48 +594,103 @@@ static ssize_t ceph_sync_read(struct ki
+  	if (ret < 0)
+  		return ret;
+ =20
+ -	if (unlikely(iov_iter_is_pipe(to))) {
+ +	ret =3D 0;
+ +	while ((len =3D iov_iter_count(to)) > 0) {
+ +		struct ceph_osd_request *req;
+ +		struct page **pages;
+ +		int num_pages;
+  		size_t page_off;
+ -		ret =3D iov_iter_get_pages_alloc(to, &pages, len,
+ -					       &page_off);
+ -		if (ret <=3D 0)
+ -			return -ENOMEM;
+ -		num_pages =3D DIV_ROUND_UP(ret + page_off, PAGE_SIZE);
+ +		u64 i_size;
+ +		bool more;
+ +
+ +		req =3D ceph_osdc_new_request(osdc, &ci->i_layout,
+ +					ci->i_vino, off, &len, 0, 1,
+ +					CEPH_OSD_OP_READ, CEPH_OSD_FLAG_READ,
+ +					NULL, ci->i_truncate_seq,
+ +					ci->i_truncate_size, false);
+ +		if (IS_ERR(req)) {
+ +			ret =3D PTR_ERR(req);
+ +			break;
+ +		}
+ +
+ +		more =3D len < iov_iter_count(to);
+ =20
+- 		if (unlikely(to->type & ITER_PIPE)) {
+ -		ret =3D striped_read(inode, off, ret, pages, num_pages,
+ -				   page_off, checkeof);
+ -		if (ret > 0) {
+ -			iov_iter_advance(to, ret);
+ -			off +=3D ret;
+++		if (unlikely(iov_iter_is_pipe(to))) {
+ +			ret =3D iov_iter_get_pages_alloc(to, &pages, len,
+ +						       &page_off);
+ +			if (ret <=3D 0) {
+ +				ceph_osdc_put_request(req);
+ +				ret =3D -ENOMEM;
+ +				break;
+ +			}
+ +			num_pages =3D DIV_ROUND_UP(ret + page_off, PAGE_SIZE);
+ +			if (ret < len) {
+ +				len =3D ret;
+ +				osd_req_op_extent_update(req, 0, len);
+ +				more =3D false;
+ +			}
+  		} else {
+ -			iov_iter_advance(to, 0);
+ +			num_pages =3D calc_pages_for(off, len);
+ +			page_off =3D off & ~PAGE_MASK;
+ +			pages =3D ceph_alloc_page_vector(num_pages, GFP_KERNEL);
+ +			if (IS_ERR(pages)) {
+ +				ceph_osdc_put_request(req);
+ +				ret =3D PTR_ERR(pages);
+ +				break;
+ +			}
+  		}
+ -		ceph_put_page_vector(pages, num_pages, false);
+ -	} else {
+ -		num_pages =3D calc_pages_for(off, len);
+ -		pages =3D ceph_alloc_page_vector(num_pages, GFP_KERNEL);
+ -		if (IS_ERR(pages))
+ -			return PTR_ERR(pages);
+ -
+ -		ret =3D striped_read(inode, off, len, pages, num_pages,
+ -				   (off & ~PAGE_MASK), checkeof);
+ -		if (ret > 0) {
+ -			int l, k =3D 0;
+ -			size_t left =3D ret;
+ -
+ -			while (left) {
+ -				size_t page_off =3D off & ~PAGE_MASK;
+ -				size_t copy =3D min_t(size_t, left,
+ -						    PAGE_SIZE - page_off);
+ -				l =3D copy_page_to_iter(pages[k++], page_off,
+ -						      copy, to);
+ -				off +=3D l;
+ -				left -=3D l;
+ -				if (l < copy)
+ +
+ +		osd_req_op_extent_osd_data_pages(req, 0, pages, len, page_off,
+ +						 false, false);
+ +		ret =3D ceph_osdc_start_request(osdc, req, false);
+ +		if (!ret)
+ +			ret =3D ceph_osdc_wait_request(osdc, req);
+ +		ceph_osdc_put_request(req);
+ +
+ +		i_size =3D i_size_read(inode);
+ +		dout("sync_read %llu~%llu got %zd i_size %llu%s\n",
+ +		     off, len, ret, i_size, (more ? " MORE" : ""));
+ +
+ +		if (ret =3D=3D -ENOENT)
+ +			ret =3D 0;
+ +		if (ret >=3D 0 && ret < len && (off + ret < i_size)) {
+ +			int zlen =3D min(len - ret, i_size - off - ret);
+ +			int zoff =3D page_off + ret;
+ +			dout("sync_read zero gap %llu~%llu\n",
+ +                             off + ret, off + ret + zlen);
+ +			ceph_zero_page_vector_range(zoff, zlen, pages);
+ +			ret +=3D zlen;
+ +		}
+ +
+- 		if (unlikely(to->type & ITER_PIPE)) {
+++		if (unlikely(iov_iter_is_pipe(to))) {
+ +			if (ret > 0) {
+ +				iov_iter_advance(to, ret);
+ +				off +=3D ret;
+ +			} else {
+ +				iov_iter_advance(to, 0);
+ +			}
+ +			ceph_put_page_vector(pages, num_pages, false);
+ +		} else {
+ +			int idx =3D 0;
+ +			size_t left =3D ret > 0 ? ret : 0;
+ +			while (left > 0) {
+ +				size_t len, copied;
+ +				page_off =3D off & ~PAGE_MASK;
+ +				len =3D min_t(size_t, left, PAGE_SIZE - page_off);
+ +				copied =3D copy_page_to_iter(pages[idx++],
+ +							   page_off, len, to);
+ +				off +=3D copied;
+ +				left -=3D copied;
+ +				if (copied < len) {
+ +					ret =3D -EFAULT;
+  					break;
+ +				}
+  			}
+ +			ceph_release_page_vector(pages, num_pages);
+  		}
+ -		ceph_release_page_vector(pages, num_pages);
+ +
+ +		if (ret <=3D 0 || off >=3D i_size || !more)
+ +			break;
+  	}
+ =20
+  	if (off > iocb->ki_pos) {
+
+--Sig_/4LK0Sc4kxDH7alXOXPPpFP_
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvWX3cACgkQAVBC80lX
+0GzSDAgAggmOC9bz+ffXKkALC+f5kNx0MXl0IlnkXM7vC+QE5ucoLna4Zy3Kmc8a
+SuQuDE1lF7y95e1tWvMQT0N3eSsRYHuNB+4wLpyaD5DlD+A0fUbNszWOyEebaIwH
+TGTTd4i2hkUoqfqnqtnnQdfTWHEyAMFBFMW+c/L4qsXpPYvCC0pxzsNtRnoeyiJN
+Gdg2iL/nCyTVdPCFG7qhiOjoEHjnMplX3X6p51rJxFK8gTgJBGt9FOstuxp+ahCG
+xtwdjB4pZ2BLQLfbTGgOcmXPoBeVMls4HcgxX1EURMQtRNqu/F0I1GdmSY5g8D1x
+o7K0KfbbKOn4AevJH4qKoyMB4FwJlA==
+=U/Hs
+-----END PGP SIGNATURE-----
+
+--Sig_/4LK0Sc4kxDH7alXOXPPpFP_--
