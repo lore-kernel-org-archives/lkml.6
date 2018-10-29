@@ -2,330 +2,142 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF2D1C0044C
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:23:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD573C2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:23:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 633D220824
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:23:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80B3D20824
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 19:23:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bKF3jkV2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 633D220824
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EvOMZWey"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80B3D20824
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726172AbeJ3ENX (ORCPT
+        id S1726485AbeJ3ENd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 00:13:23 -0400
-Received: from mail-qk1-f201.google.com ([209.85.222.201]:54364 "EHLO
-        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725858AbeJ3ENX (ORCPT
+        Tue, 30 Oct 2018 00:13:33 -0400
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:41123 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725858AbeJ3ENc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 00:13:23 -0400
-Received: by mail-qk1-f201.google.com with SMTP id u20-v6so10775274qka.21
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 12:23:20 -0700 (PDT)
+        Tue, 30 Oct 2018 00:13:32 -0400
+Received: by mail-yw1-f67.google.com with SMTP id c126-v6so3861611ywd.8;
+        Mon, 29 Oct 2018 12:23:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=TDgDqU+PRPI+tahYx8UWJqG//Ge56nmot8k6iipA9H0=;
-        b=bKF3jkV2bMLYAIhLUStwlYI1TDV6+Ihe5lXQCdme10cQw7cDVr+dK58PAG7rzxBJtz
-         vvbKDE4dMF+mZIrxVdwXhQ3MbKpgiz1WBth/osj4pXOzW5TweXFuzGd8VyEgWwat1gf9
-         306Y+xvOy3ejUXfvdgtHllza2MUhZ02zCpQ1eZo8ib3I8l77v3lKi02ke4k8+QREUxZQ
-         9ywBdVfF2JWqFol4jFGxbgEEUaCEnB2//VBolU0tET/CGFsVK+VY3/ONTF4KMx1zO3a7
-         +gWgIFozshUhamW3n0wIPVX90ug6+4+siFx34YDScimrevDlKuHaY7y6blWgFtuQ8DON
-         lsIg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Cx7LRpCbK0t68q5q4RBqh9Dn5V/BhNKc+ydKX4pEr30=;
+        b=EvOMZWeySDdWTZ0nJpWpuu9hinUvs3CPt8F93wj7wgfCrj5WNlk1ugRbxZmBz4+PZH
+         Sj3tK+oIrigti7lV+FiJ/2faf/33/xkk0tsPt6kizkfwYH3c3m3is8yrazzwRbCN1bVW
+         npswefSA2YYwzN9XBBiqN3mHEbelZmL57H47KGUJHr+Ft6faI2krdQWl50QZinKHA9L4
+         /D0cr5WZFGnZS/gvKBX/AWntzMpnQNJqsaO2MhNHxLibCw5P1kzEIMQbZD2W49B7ftk2
+         lwqZUgbxPPXTAYe+p6pSh/0GMWlfT2AyTGBhD77LB9k8eJkW/uEQFg2Iy6GP0SxJX9ZR
+         r1PQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=TDgDqU+PRPI+tahYx8UWJqG//Ge56nmot8k6iipA9H0=;
-        b=GzqC2e4L5L6LmIwgAxPVIYGsB6sNNzzJY9FhR8Ig1AM/wAi9puGLXn59qChakFKStq
-         BHTYVQuSyIy/vCvPsN4k2KQ45RZqoXRkxB6q7fBHubPo2ELa8Op1RDOGzroKFaxiLN3P
-         fD3XZK2/2sM6XSGWZICHLeMHjgqucnibDx4ZXxrns/E+QdtLytEC/NEt9Z5t2GBPkAsT
-         Y4YxJ9DfpcMtgjh8NhcEXIGyXme2PxBOtQaUUH4KrRnOTjkkVsH/ACUVVMi04faHdq9v
-         F4e54b2liQuCbfGoycZ+uHrP+htoe2PWo9jU52VKd2v96s5iVazmmvsl3DHvLg2gtdZ8
-         WtZw==
-X-Gm-Message-State: AGRZ1gKjZZ1QXEeQITZ/b7BWcaVZHN1BadLiv/fzzzLoLVtjWnzo42zD
-        8v0YP8gd5Je/Qig/4H1Br4aFlooZP+CZXFkkv4FhCWAOjCcZSZ1gFcZ7RB5TZwYIT5qZjAFDU4T
-        NB8NM+HUgovuLwC4H3Qkf0BHT97g/L+zaUNmYyohbn3Dh6hPSyHO2l7f37/IkW1JbiBaXOg==
-X-Google-Smtp-Source: AJdET5cO0DtGwMZlFxx1bYJeEe5nwofiHYWlV4vVjQngr6MHVSSs7epVg9N+rc728P4b/Rg4g5pUY6q4NGc=
-X-Received: by 2002:a37:ba44:: with SMTP id k65-v6mr12923911qkf.49.1540841000223;
- Mon, 29 Oct 2018 12:23:20 -0700 (PDT)
-Date:   Mon, 29 Oct 2018 19:22:50 +0000
-In-Reply-To: <20181029175322.189042-1-dancol@google.com>
-Message-Id: <20181029192250.130551-1-dancol@google.com>
-Mime-Version: 1.0
-References: <20181029175322.189042-1-dancol@google.com>
-X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
-Subject: [RFC PATCH v2] Minimal non-child process exit notification support
-From:   Daniel Colascione <dancol@google.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Cx7LRpCbK0t68q5q4RBqh9Dn5V/BhNKc+ydKX4pEr30=;
+        b=WM2r2wcvxWC78CnWh18PlFYAFq8J2XqGNGyqKMkL4GbozV3dWM5ApRozgOspDJ5Rwk
+         6l//fWrJpqR36UyBF43LQz2O4WEIV79NJAfls6Q1Hac04kIrlAhh+eJv16WjzwdpSBvf
+         lYoKXXPZEdESY9nW9IHOgrMZe+mpgp8+rXGQfnD1EoLEFW+RgIP2SWlAp+On2eI4/GGf
+         P3tJ0YVoM+32BKPNGB480155YHCfTLVA8VFdnBu/affKqPUA5ASSwY0EY6QOGcJ+CB7y
+         x+R7LDsS5z8OsRK1C98nSw/PtuLJ/2j8ZkhDpiINO6WBIy4mnQZpHrDDpMiiOmP/jNEd
+         PddQ==
+X-Gm-Message-State: AGRZ1gKjaigj7FtnLU4iIU5HTnE/UUlfFKxUXANASpKgWzC0/LVH9pLG
+        fXlyGchbUNJyQp3f4HQWIENzctbe
+X-Google-Smtp-Source: AJdET5eqwJmuvwFmaV6yzFaVUJNpHx07hIm3pVH0m0FwJc52o1IbaP+8NWa4iBiV+AZkXqRRK+fNcg==
+X-Received: by 2002:a0d:f6c7:: with SMTP id g190-v6mr15369214ywf.103.1540841008882;
+        Mon, 29 Oct 2018 12:23:28 -0700 (PDT)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
+        by smtp.gmail.com with ESMTPSA id k85-v6sm5410014ywa.76.2018.10.29.12.23.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Oct 2018 12:23:27 -0700 (PDT)
+From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     timmurray@google.com, joelaf@google.com,
-        Daniel Colascione <dancol@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Greg Hackmann <ghackmann@android.com>,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        CHANDAN VN <chandan.vn@samsung.com>,
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
+        (AARCH64 ARCHITECTURE)),
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE), rppt@linux.ibm.com, linux@armlinux.org.uk
+Subject: [PATCH 0/2 v5] arm64: Get rid of __early_init_dt_declare_initrd()
+Date:   Mon, 29 Oct 2018 12:00:12 -0700
+Message-Id: <20181029190014.6455-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a new file under /proc/pid, /proc/pid/exithand.
-Attempting to read from an exithand file will block until the
-corresponding process exits, at which point the read will successfully
-complete with EOF.  The file descriptor supports both blocking
-operations and poll(2). It's intended to be a minimal interface for
-allowing a program to wait for the exit of a process that is not one
-of its children.
+Hi all,
 
-Why might we want this interface? Android's lmkd kills processes in
-order to free memory in response to various memory pressure
-signals. It's desirable to wait until a killed process actually exits
-before moving on (if needed) to killing the next process. Since the
-processes that lmkd kills are not lmkd's children, lmkd currently
-lacks a way to wait for a process to actually die after being sent
-SIGKILL; today, lmkd resorts to polling the proc filesystem pid
-entry. This interface allow lmkd to give up polling and instead block
-and wait for process death.
+I numbered this v5 because this is still revolving around the same
+initial desire to cut the build time of an ARM64 kernel when toggling
+CONFIG_BLK_DEV_INITRD. This 4th version is basically the 3rd possible
+way to just get rid of __early_init_dt_declare_initrd() for ARM64.
 
-Signed-off-by: Daniel Colascione <dancol@google.com>
----
- fs/proc/Makefile             |   1 +
- fs/proc/base.c               |   1 +
- fs/proc/exithand.c           | 128 +++++++++++++++++++++++++++++++++++
- fs/proc/internal.h           |   4 ++
- include/linux/sched/signal.h |   8 +++
- kernel/exit.c                |   2 +
- kernel/signal.c              |   3 +
- 7 files changed, 147 insertions(+)
- create mode 100644 fs/proc/exithand.c
+I previously mentioned that I was working on making
+phys_initrd_start/phys_initrd_size generic across architectures that
+make use of it, which would cover ARM (32-bit), unicore32 and possibly
+arm64, but upon second glance, this does not necessarily help, or rather
+this patch series actually helps make a smoother conversion in the
+future.
 
-diff --git a/fs/proc/Makefile b/fs/proc/Makefile
-index ead487e80510..21322280a2c1 100644
---- a/fs/proc/Makefile
-+++ b/fs/proc/Makefile
-@@ -27,6 +27,7 @@ proc-y	+= softirqs.o
- proc-y	+= namespaces.o
- proc-y	+= self.o
- proc-y	+= thread_self.o
-+proc-y  += exithand.o
- proc-$(CONFIG_PROC_SYSCTL)	+= proc_sysctl.o
- proc-$(CONFIG_NET)		+= proc_net.o
- proc-$(CONFIG_PROC_KCORE)	+= kcore.o
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 7e9f07bf260d..31bc6bbb6dc4 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -3006,6 +3006,7 @@ static const struct pid_entry tgid_base_stuff[] = {
- #ifdef CONFIG_LIVEPATCH
- 	ONE("patch_state",  S_IRUSR, proc_pid_patch_state),
- #endif
-+	REG("exithand", S_IRUGO, proc_tgid_exithand_operations),
- };
- 
- static int proc_tgid_base_readdir(struct file *file, struct dir_context *ctx)
-diff --git a/fs/proc/exithand.c b/fs/proc/exithand.c
-new file mode 100644
-index 000000000000..c2ac31c52ff9
---- /dev/null
-+++ b/fs/proc/exithand.c
-@@ -0,0 +1,128 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Synchronous exit notification of non-child processes
-+ *
-+ * Simple file descriptor /proc/pid/exithand. Read blocks (and poll
-+ * reports non-readable) until process either dies or becomes
-+ * a zombie.
-+ */
-+#include <linux/printk.h>
-+#include <linux/sched/signal.h>
-+#include <linux/poll.h>
-+#include "internal.h"
-+
-+static int proc_tgid_exithand_open(struct inode *inode, struct file *file)
-+{
-+	/* If get_proc_task fails, it means the task is dead, which is
-+	 * fine, since a subsequent read will return immediately and
-+	 * indicate that, yes, the indicated process is dead.
-+	 */
-+	int res = 0;
-+	struct task_struct *task = get_proc_task(inode);
-+
-+	if (task) {
-+		if (!thread_group_leader(task))
-+			res = -EINVAL;
-+		put_task_struct(task);
-+	}
-+	return res;
-+}
-+
-+static ssize_t proc_tgid_exithand_read(struct file *file,
-+				       char __user *buf,
-+				       size_t count, loff_t *ppos)
-+{
-+	struct task_struct *task = NULL;
-+	wait_queue_entry_t wait;
-+	ssize_t res = 0;
-+	bool locked = false;
-+
-+	for (;;) {
-+		/* Retrieve the task from the struct pid each time
-+		 * through the loop in case the exact struct task
-+		 * changes underneath us (e.g., if in exec.c, the
-+		 * execing process kills the group leader and starts
-+		 * using its PID).  The struct signal should be the
-+		 * same though even in this case.
-+		 */
-+		task = get_proc_task(file_inode(file));
-+		res = 0;
-+		if (!task)
-+			goto out;  /* No task?  Must have died.  */
-+
-+		BUG_ON(!thread_group_leader(task));
-+
-+		/* Synchronizes with exit.c machinery. */
-+		read_lock(&tasklist_lock);
-+		locked = true;
-+
-+		res = 0;
-+		if (task->exit_state)
-+			goto out;
-+
-+		res = -EAGAIN;
-+		if (file->f_flags & O_NONBLOCK)
-+			goto out;
-+
-+		/* Tell exit.c to go to the trouble of waking our
-+		 * runqueue when this process gets around to
-+		 * exiting.
-+		 */
-+		task->signal->exithand_is_interested = true;
-+
-+		/* Even if the task identity changes, task->signal
-+		 * should be invariant across the wait, making it safe
-+		 * to go remove our wait record from the wait queue
-+		 * after we come back from schedule.
-+		 */
-+
-+		init_waitqueue_entry(&wait, current);
-+		add_wait_queue(&wait_exithand, &wait);
-+
-+		read_unlock(&tasklist_lock);
-+		locked = false;
-+
-+		put_task_struct(task);
-+		task = NULL;
-+
-+		set_current_state(TASK_INTERRUPTIBLE);
-+		schedule();
-+		set_current_state(TASK_RUNNING);
-+		remove_wait_queue(&wait_exithand, &wait);
-+
-+		res = -ERESTARTSYS;
-+		if (signal_pending(current))
-+			goto out;
-+	}
-+out:
-+	if (locked)
-+		read_unlock(&tasklist_lock);
-+	if (task)
-+		put_task_struct(task);
-+	return res;
-+}
-+
-+static __poll_t proc_tgid_exithand_poll(struct file *file, poll_table *wait)
-+{
-+	__poll_t mask = 0;
-+	struct task_struct *task = get_proc_task(file_inode(file));
-+
-+	if (!task) {
-+		mask |= POLLIN;
-+	} else if (READ_ONCE(task->exit_state)) {
-+		mask |= POLLIN;
-+	} else {
-+		read_lock(&tasklist_lock);
-+		task->signal->exithand_is_interested = true;
-+		read_unlock(&tasklist_lock);
-+		poll_wait(file,	&wait_exithand,	wait);
-+	}
-+	if (task)
-+		put_task_struct(task);
-+	return mask;
-+}
-+
-+const struct file_operations proc_tgid_exithand_operations = {
-+	.open           = proc_tgid_exithand_open,
-+	.read		= proc_tgid_exithand_read,
-+	.poll           = proc_tgid_exithand_poll,
-+};
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index 5185d7f6a51e..1009d20475bc 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -304,3 +304,7 @@ extern unsigned long task_statm(struct mm_struct *,
- 				unsigned long *, unsigned long *,
- 				unsigned long *, unsigned long *);
- extern void task_mem(struct seq_file *, struct mm_struct *);
-+
-+/* exithand.c */
-+
-+extern const struct file_operations proc_tgid_exithand_operations;
-diff --git a/include/linux/sched/signal.h b/include/linux/sched/signal.h
-index 13789d10a50e..f44397055429 100644
---- a/include/linux/sched/signal.h
-+++ b/include/linux/sched/signal.h
-@@ -74,6 +74,11 @@ struct multiprocess_signals {
- 	struct hlist_node node;
- };
- 
-+/* Need to stick the waitq for exithand outside process structures in
-+ * case a process disappears across a poll.
-+ */
-+extern wait_queue_head_t wait_exithand;
-+
- /*
-  * NOTE! "signal_struct" does not have its own
-  * locking, because a shared signal_struct always
-@@ -87,6 +92,9 @@ struct signal_struct {
- 	int			nr_threads;
- 	struct list_head	thread_head;
- 
-+	/* Protected with tasklist_lock.  */
-+	bool                    exithand_is_interested;
-+
- 	wait_queue_head_t	wait_chldexit;	/* for wait4() */
- 
- 	/* current thread group signal load-balancing target: */
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 0e21e6d21f35..44a4e3796f8b 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -1485,6 +1485,8 @@ void __wake_up_parent(struct task_struct *p, struct task_struct *parent)
- {
- 	__wake_up_sync_key(&parent->signal->wait_chldexit,
- 				TASK_INTERRUPTIBLE, 1, p);
-+	if (p->signal->exithand_is_interested)
-+		__wake_up_sync(&wait_exithand, TASK_INTERRUPTIBLE, 0);
- }
- 
- static long do_wait(struct wait_opts *wo)
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 17565240b1c6..e156d48da70a 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -454,6 +454,9 @@ void flush_sigqueue(struct sigpending *queue)
- 	}
- }
- 
-+wait_queue_head_t wait_exithand =
-+	__WAIT_QUEUE_HEAD_INITIALIZER(wait_exithand);
-+
- /*
-  * Flush all pending signals for this kthread.
-  */
+Previous discussions/submissions list here:
+
+v3:
+https://www.spinics.net/lists/arm-kernel/msg683566.html
+v2:
+https://lkml.org/lkml/2018/10/25/4
+
+Changes in v5:
+
+- incorporate Mike's version which properly takes care of command-line
+  specified and FDT specified initrd location
+
+Changes in v4:
+
+- perform the physical to virtual initrd conversion straight within
+  arm64_memblock_init() to get the correct memblock reservation to occur
+
+Changes in v3:
+- attempt to change drivers/of/fdt.c to absorb ARM64's specific behavior
+
+Changes in v2:
+
+- put an /* empty */ comment in the asm-generic/initrd.h file
+- trim down the CC list to maximize the chances of people receiving this
+
+Florian Fainelli (2):
+  arm64: Get rid of __early_init_dt_declare_initrd()
+  of/fdt: Remove definition check for __early_init_dt_declare_initrd()
+
+ arch/arm64/include/asm/memory.h |  8 -------
+ arch/arm64/mm/init.c            | 42 +++++++++++++++++++++------------
+ drivers/of/fdt.c                |  2 --
+ 3 files changed, 27 insertions(+), 25 deletions(-)
+
 -- 
-2.19.1.568.g152ad8e336-goog
+2.17.1
 
