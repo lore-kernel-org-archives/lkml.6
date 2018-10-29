@@ -2,94 +2,103 @@ Return-Path: <SRS0=Xm/m=NJ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 867E1C2BC61
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:45:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0214FC2BC61
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:45:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4574420870
-	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:45:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RH1cNrr6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4574420870
+	by mail.kernel.org (Postfix) with ESMTP id CBFA92080A
+	for <linux-kernel@archiver.kernel.org>; Mon, 29 Oct 2018 17:45:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBFA92080A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728188AbeJ3CfA (ORCPT
+        id S1728204AbeJ3Cf3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 29 Oct 2018 22:35:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39030 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726205AbeJ3CfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 29 Oct 2018 22:35:00 -0400
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A63A22080A;
-        Mon, 29 Oct 2018 17:45:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540835121;
-        bh=9jnjpqdkmmVYhR3OAGNlh5vZeGI0JEtXyDuBjW7V8Mo=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=RH1cNrr6/ZIX16Xnu+QqUzhA8CgGl5woC2RaCEXF5RnLf+4E/w+C4TsqpzUHUGx2R
-         IoseNSEycNUxPcrlEAbh10/UY1UgEAIy1vuV1mNDG90whR4r9lag1mXwL94szAOLDC
-         0w6uHMxy6xZCeE78jMiOv0aWQo2SPiwIoLgzyrKw=
-Content-Type: text/plain; charset="utf-8"
+        Mon, 29 Oct 2018 22:35:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:52254 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726205AbeJ3Cf3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 29 Oct 2018 22:35:29 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E0A61ABAC;
+        Mon, 29 Oct 2018 17:45:50 +0000 (UTC)
+Date:   Mon, 29 Oct 2018 18:45:49 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     alexander.h.duyck@linux.intel.com, Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Pasha Tatashin <pavel.tatashin@microsoft.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        rppt@linux.vnet.ibm.com, Ingo Molnar <mingo@kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Zhang Yi <yi.z.zhang@linux.intel.com>
+Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
+ point where we init pgmap
+Message-ID: <20181029174549.GN32673@dhcp22.suse.cz>
+References: <20181011085509.GS5873@dhcp22.suse.cz>
+ <6f32f23c-c21c-9d42-7dda-a1d18613cd3c@linux.intel.com>
+ <20181017075257.GF18839@dhcp22.suse.cz>
+ <971729e6-bcfe-a386-361b-d662951e69a7@linux.intel.com>
+ <20181029141210.GJ32673@dhcp22.suse.cz>
+ <84f09883c16608ddd2ba88103f43ec6a1c649e97.camel@linux.intel.com>
+ <20181029163528.GL32673@dhcp22.suse.cz>
+ <18dfc5a0db11650ff31433311da32c95e19944d9.camel@linux.intel.com>
+ <20181029172415.GM32673@dhcp22.suse.cz>
+ <CAPcyv4goFsZR=O-P_KGrjV8hz0H=nqgYPGSGGLEnmtcagoTYrA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Dean Wallace <duffydack73@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20181025232517.ywnw54qibemosjws@picard>
-Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        stable@vger.kernel.org, Johannes Stezenbach <js@sig21.net>,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-References: <20181025232517.ywnw54qibemosjws@picard>
-Message-ID: <154083512089.98144.9141070901932719147@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
-Date:   Mon, 29 Oct 2018 10:45:20 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4goFsZR=O-P_KGrjV8hz0H=nqgYPGSGGLEnmtcagoTYrA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Dean Wallace (2018-10-25 16:25:17)
-> I have found a regression in 4.18.15 that means I lose sound on my old
-> Toshiba Chromebook 2 (Swanky).  My system details are:-
-> =
+On Mon 29-10-18 10:34:22, Dan Williams wrote:
+> On Mon, Oct 29, 2018 at 10:24 AM Michal Hocko <mhocko@kernel.org> wrote:
+> >
+> > On Mon 29-10-18 10:01:28, Alexander Duyck wrote:
+> > > On Mon, 2018-10-29 at 17:35 +0100, Michal Hocko wrote:
+> [..]
+> > > > You are already doing per-page initialization so I fail to see a larger
+> > > > unit to operate on.
+> > >
+> > > I have a patch that makes it so that we can work at a pageblock level
+> > > since all of the variables with the exception of only the LRU and page
+> > > address fields can be precomputed. Doing that is one of the ways I was
+> > > able to reduce page init to 1/3 to 1/4 of the time it was taking
+> > > otherwise in the case of deferred page init.
+> >
+> > You still have to call set_page_links for each page. But let's assume we
+> > can do initialization per larger units. Nothing really prevent to hide
+> > that into constructor as well.
+> 
+> A constructor / indirect function call makes sense when there are
+> multiple sub-classes of object initialization, on the table I only see
+> 3 cases: typical hotplug, base ZONE_DEVICE, ZONE_DEVICE + HMM. I think
+> we can look to move the HMM special casing out of line, then we're
+> down to 2. Even at 3 cases we're better off open-coding than a
+> constructor for such a low number of sub-cases to handle. I do not
+> foresee more cases arriving, so I struggle to see what the constructor
+> buys us in terms of code readability / maintainability?
 
-> Toshiba Chromebook (Swanky)
-> MrChromebox UEFI coreboot
-> Arch Linux running latest alsa/pulseaudio
-> =
+I haven't dreamed of ZONE_DEVICE and HMM few years back. But anyway,
+let me note that I am not in love with callbacks. I find them to be a
+useful abstraction. I can be convinced (by numbers) that special casing
+inside the core hotplug code is really beneficial. But let's do that at
+a single place.
 
-> Upgraded kernel from 4.18.14 to 4.18.15 and lost all sound output.  By
-> output I mean, the card is still detected, the module loaded, all apps
-> showing sound is being playing, but no actual audible sound comes
-> through.  Upgraded to 4.18.16 same issue.
-> =
+All I am arguing against throughout this thread is the
+memmap_init_zone_device and the whole code duplication just because zone
+device need something special.
 
-> Dug around and found Upstream commit 648e921888ad96ea3dc922739e96716ad322=
-5d7f
-> clk: x86: Stop marking clocks as CLK_IS_CRITICAL
-> "This commit removes the CLK_IS_CRITICAL marking, fixing Cherry Trail
-> devices not being able to reach S0i3 greatly decreasing their battery
-> drain when suspended."
-> =
-
-> I reverted it and compiled 4.18.16 and have sound back again.  Could
-> this be looked into, with possibility of fix.
-> =
-
-
-Thanks for the bug report. I'm adding some people involved in the commit
-you mention is causing audio regressions. The best plan is to probably
-revert the commit from the 4.18 linux stable tree. Or there may be
-another patch missing that would be useful to make this backported patch
-work. Hopefully Hans or Andy knows.
-
+-- 
+Michal Hocko
+SUSE Labs
