@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D6F2C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:23:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DCC0C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:23:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A27C2080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:23:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A27C2080A
+	by mail.kernel.org (Postfix) with ESMTP id 68BC72082B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:23:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68BC72082B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728249AbeJaER5 (ORCPT
+        id S1728260AbeJaESO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 00:17:57 -0400
-Received: from mga11.intel.com ([192.55.52.93]:23900 "EHLO mga11.intel.com"
+        Wed, 31 Oct 2018 00:18:14 -0400
+Received: from mga11.intel.com ([192.55.52.93]:23880 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728126AbeJaERd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 00:17:33 -0400
+        id S1728103AbeJaER2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 00:17:28 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 12:22:47 -0700
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 12:22:44 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,445,1534834800"; 
-   d="scan'208";a="103876803"
+   d="scan'208";a="103876787"
 Received: from skl-02.jf.intel.com ([10.54.74.62])
-  by fmsmga001.fm.intel.com with ESMTP; 30 Oct 2018 12:22:47 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 30 Oct 2018 12:22:43 -0700
 From:   Tim Chen <tim.c.chen@linux.intel.com>
 To:     Jiri Kosina <jikos@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -49,9 +49,9 @@ Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
         Jon Masters <jcm@redhat.com>,
         Waiman Long <longman9394@gmail.com>,
         linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [Patch v4 15/18] x86/speculation: Add Spectre v2 app to app protection modes
-Date:   Tue, 30 Oct 2018 11:49:22 -0700
-Message-Id: <d8907b5c048e7421d992f5b31cf7006bdd9791f0.1540923609.git.tim.c.chen@linux.intel.com>
+Subject: [Patch v4 11/18] x86/speculation: Update comment on TIF_SSBD
+Date:   Tue, 30 Oct 2018 11:49:18 -0700
+Message-Id: <813c155a780eeaa50423cddcb9af4d6345357ea4.1540923609.git.tim.c.chen@linux.intel.com>
 X-Mailer: git-send-email 2.9.4
 In-Reply-To: <cover.1540923609.git.tim.c.chen@linux.intel.com>
 References: <cover.1540923609.git.tim.c.chen@linux.intel.com>
@@ -62,385 +62,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds protection modes for Spectre v2 mitigations
-against attacks on user processes.  There are three modes:
-
-	strict mode:
-	In this mode, IBPB and STIBP are deployed full
-	time to protect all processes.
-
-	lite mode:
-	In this mode, IBPB and STIBP are only deployed on
-	processes marked with TIF_STIBP flag.
-
-	none mode:
-	In this mode, no mitigations are deployed.
-
-The protection mode can be specified by the spectre_v2_app2app
-boot parameter with the following semantics:
-
-spectre_v2_app2app=
-	off    - Turn off mitigation
-	lite   - Protect processes which are marked non-dumpable
-	strict - Protect all processes
-	auto   - Kernel selects the mode
-
-	Not specifying this option is equivalent to
-	spectre_v2_app2app=auto.
-
-	Setting spectre_v2=off will also turn off this mitigation.
-
-	Setting spectre_v2=on implies unconditionally enabling
-	this mitigation.
+Update comment on TIF_SSBD to use the correct name
+"Speculative store bypass disable".
 
 Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 ---
- Documentation/admin-guide/kernel-parameters.txt |  18 +++
- arch/x86/include/asm/nospec-branch.h            |   9 ++
- arch/x86/kernel/cpu/bugs.c                      | 153 +++++++++++++++++++++---
- arch/x86/mm/tlb.c                               |  23 +++-
- 4 files changed, 183 insertions(+), 20 deletions(-)
+ arch/x86/include/asm/thread_info.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 64a3bf5..5e7028e 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4186,6 +4186,24 @@
- 			Not specifying this option is equivalent to
- 			spectre_v2=auto.
- 
-+	spectre_v2_app2app=
-+			[X86] Control mitigation of Spectre variant 2
-+		        application to application (indirect branch speculation)
-+			vulnerability.
-+
-+			off    - Unconditionally disable mitigations
-+			lite   - Protect processes which are marked non-dumpable
-+			strict - Protect all processes
-+			auto   - Kernel selects the mode
-+
-+			Not specifying this option is equivalent to
-+			spectre_v2_app2app=auto.
-+
-+			Setting spectre_v2=off will also turn off this mitigation.
-+
-+			Setting spectre_v2=on implies unconditionally enabling
-+			this mitigation.
-+
- 	spec_store_bypass_disable=
- 			[HW] Control Speculative Store Bypass (SSB) Disable mitigation
- 			(Speculative Store Bypass vulnerability)
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index fd2a8c1..c59a6c4 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -3,6 +3,7 @@
- #ifndef _ASM_X86_NOSPEC_BRANCH_H_
- #define _ASM_X86_NOSPEC_BRANCH_H_
- 
-+#include <linux/static_key.h>
- #include <asm/alternative.h>
- #include <asm/alternative-asm.h>
- #include <asm/cpufeatures.h>
-@@ -217,6 +218,12 @@ enum spectre_v2_mitigation {
- 	SPECTRE_V2_IBRS_ENHANCED,
- };
- 
-+enum spectre_v2_app2app_mitigation {
-+	SPECTRE_V2_APP2APP_NONE,
-+	SPECTRE_V2_APP2APP_LITE,
-+	SPECTRE_V2_APP2APP_STRICT,
-+};
-+
- /* The Speculative Store Bypass disable variants */
- enum ssb_mitigation {
- 	SPEC_STORE_BYPASS_NONE,
-@@ -228,6 +235,8 @@ enum ssb_mitigation {
- extern char __indirect_thunk_start[];
- extern char __indirect_thunk_end[];
- 
-+DECLARE_STATIC_KEY_FALSE(spectre_v2_app_lite);
-+
- /*
-  * On VMEXIT we must ensure that no RSB predictions learned in the guest
-  * can be followed in the host, by overwriting the RSB completely. Both
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 190d6eb..54f4675 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -133,6 +133,14 @@ enum spectre_v2_mitigation_cmd {
- 	SPECTRE_V2_CMD_RETPOLINE_AMD,
- };
- 
-+enum spectre_v2_app2app_mitigation_cmd {
-+	SPECTRE_V2_APP2APP_CMD_NONE,
-+	SPECTRE_V2_APP2APP_CMD_AUTO,
-+	SPECTRE_V2_APP2APP_CMD_FORCE,
-+	SPECTRE_V2_APP2APP_CMD_LITE,
-+	SPECTRE_V2_APP2APP_CMD_STRICT,
-+};
-+
- static const char *spectre_v2_strings[] = {
- 	[SPECTRE_V2_NONE]			= "Vulnerable",
- 	[SPECTRE_V2_RETPOLINE_MINIMAL]		= "Vulnerable: Minimal generic ASM retpoline",
-@@ -142,12 +150,24 @@ static const char *spectre_v2_strings[] = {
- 	[SPECTRE_V2_IBRS_ENHANCED]		= "Mitigation: Enhanced IBRS",
- };
- 
-+static const char *spectre_v2_app2app_strings[] = {
-+	[SPECTRE_V2_APP2APP_NONE]   = "App-App Vulnerable",
-+	[SPECTRE_V2_APP2APP_LITE]   = "App-App Mitigation: Protect non-dumpable process",
-+	[SPECTRE_V2_APP2APP_STRICT] = "App-App Mitigation: Full app to app attack protection",
-+};
-+
-+DEFINE_STATIC_KEY_FALSE(spectre_v2_app_lite);
-+EXPORT_SYMBOL_GPL(spectre_v2_app_lite);
-+
- #undef pr_fmt
- #define pr_fmt(fmt)     "Spectre V2 : " fmt
- 
- static enum spectre_v2_mitigation spectre_v2_enabled __ro_after_init =
- 	SPECTRE_V2_NONE;
- 
-+static enum spectre_v2_app2app_mitigation
-+	spectre_v2_app2app_enabled __ro_after_init = SPECTRE_V2_APP2APP_NONE;
-+
- void
- x86_virt_spec_ctrl(u64 guest_spec_ctrl, u64 guest_virt_spec_ctrl, bool setguest)
- {
-@@ -169,6 +189,9 @@ x86_virt_spec_ctrl(u64 guest_spec_ctrl, u64 guest_virt_spec_ctrl, bool setguest)
- 		    static_cpu_has(X86_FEATURE_AMD_SSBD))
- 			hostval |= ssbd_tif_to_spec_ctrl(ti->flags);
- 
-+		if (static_branch_unlikely(&spectre_v2_app_lite))
-+			hostval |= stibp_tif_to_spec_ctrl(ti->flags);
-+
- 		if (hostval != guestval) {
- 			msrval = setguest ? guestval : hostval;
- 			wrmsrl(MSR_IA32_SPEC_CTRL, msrval);
-@@ -275,6 +298,66 @@ static const struct {
- 	{ "auto",              SPECTRE_V2_CMD_AUTO,              false },
- };
- 
-+static const struct {
-+	const char *option;
-+	enum spectre_v2_app2app_mitigation_cmd cmd;
-+	bool secure;
-+} app2app_options[] = {
-+	{ "off",	SPECTRE_V2_APP2APP_CMD_NONE,   false },
-+	{ "lite",	SPECTRE_V2_APP2APP_CMD_LITE,   false },
-+	{ "strict",	SPECTRE_V2_APP2APP_CMD_STRICT, false },
-+	{ "auto",	SPECTRE_V2_APP2APP_CMD_AUTO,   false },
-+	/*
-+	 * The "on" option is kept as last entry. It is implied by
-+	 * spectre_v2=on boot parameter and it is not checked
-+	 * in spectre_v2_app2app boot parameter.
-+	 */
-+	{ "on",		SPECTRE_V2_APP2APP_CMD_FORCE,  true  },
-+};
-+
-+static enum spectre_v2_app2app_mitigation_cmd __init
-+	    spectre_v2_parse_app2app_cmdline(enum spectre_v2_mitigation_cmd v2_cmd)
-+{
-+	enum spectre_v2_app2app_mitigation_cmd cmd;
-+	char arg[20];
-+	int ret, i;
-+
-+	if (v2_cmd == SPECTRE_V2_CMD_FORCE) {
-+		cmd = SPECTRE_V2_APP2APP_CMD_FORCE;
-+		goto show_cmd;
-+	}
-+
-+	cmd = SPECTRE_V2_APP2APP_CMD_AUTO;
-+	ret = cmdline_find_option(boot_command_line, "spectre_v2_app2app",
-+				  arg, sizeof(arg));
-+	if (ret < 0)
-+		return SPECTRE_V2_APP2APP_CMD_AUTO;
-+
-+	/*
-+	 * Don't check the last entry for forced mitigation. It is infered from
-+	 * v2_cmd == SPECTRE_V2_CMD_FORCE
-+	 */
-+	for (i = 0; i < ARRAY_SIZE(app2app_options)-1; i++) {
-+		if (!match_option(arg, ret, app2app_options[i].option))
-+			continue;
-+		cmd = app2app_options[i].cmd;
-+		break;
-+	}
-+
-+	if (i >= ARRAY_SIZE(app2app_options)) {
-+		pr_err("unknown app to app protection option (%s). Switching to AUTO select\n", arg);
-+		return SPECTRE_V2_APP2APP_CMD_AUTO;
-+	}
-+
-+show_cmd:
-+	if (app2app_options[i].secure)
-+		spec2_print_if_secure(app2app_options[i].option);
-+	else
-+		spec2_print_if_insecure(app2app_options[i].option);
-+
-+	return cmd;
-+}
-+
- static enum spectre_v2_mitigation_cmd __init spectre_v2_parse_cmdline(void)
- {
- 	char arg[20];
-@@ -327,14 +410,19 @@ static bool stibp_needed(void)
- 	/*
- 	 * Determine if STIBP should be always on.
- 	 * Using enhanced IBRS makes using STIBP unnecessary.
-+	 * For lite option, STIBP is used only for task with
-+	 * TIF_STIBP flag. STIBP is not always on for that case.
- 	 */
- 
--	if (spectre_v2_enabled == SPECTRE_V2_NONE)
-+	if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_NONE)
- 		return false;
- 
- 	if (static_cpu_has(X86_FEATURE_USE_IBRS_ENHANCED))
- 		return false;
- 
-+	if (static_branch_unlikely(&spectre_v2_app_lite))
-+		return false;
-+
- 	if (!boot_cpu_has(X86_FEATURE_STIBP))
- 		return false;
- 
-@@ -374,6 +462,8 @@ static void __init spectre_v2_select_mitigation(void)
- {
- 	enum spectre_v2_mitigation_cmd cmd = spectre_v2_parse_cmdline();
- 	enum spectre_v2_mitigation mode = SPECTRE_V2_NONE;
-+	enum spectre_v2_app2app_mitigation_cmd app2app_cmd;
-+	enum spectre_v2_app2app_mitigation app2app_mode;
- 
- 	/*
- 	 * If the CPU is not affected and the command line mode is NONE or AUTO
-@@ -449,12 +539,6 @@ static void __init spectre_v2_select_mitigation(void)
- 	setup_force_cpu_cap(X86_FEATURE_RSB_CTXSW);
- 	pr_info("Spectre v2 / SpectreRSB mitigation: Filling RSB on context switch\n");
- 
--	/* Initialize Indirect Branch Prediction Barrier if supported */
--	if (boot_cpu_has(X86_FEATURE_IBPB)) {
--		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
--		pr_info("Spectre v2 mitigation: Enabling Indirect Branch Prediction Barrier\n");
--	}
--
- 	/*
- 	 * Retpoline means the kernel is safe because it has no indirect
- 	 * branches. Enhanced IBRS protects firmware too, so, enable restricted
-@@ -471,6 +555,43 @@ static void __init spectre_v2_select_mitigation(void)
- 		pr_info("Enabling Restricted Speculation for firmware calls\n");
- 	}
- 
-+	app2app_mode = SPECTRE_V2_APP2APP_NONE;
-+	if (!boot_cpu_has(X86_FEATURE_IBPB) ||
-+	    !boot_cpu_has(X86_FEATURE_STIBP))
-+		goto set_app2app_mode;
-+
-+	app2app_cmd = spectre_v2_parse_app2app_cmdline(cmd);
-+
-+	switch (app2app_cmd) {
-+	case SPECTRE_V2_APP2APP_CMD_NONE:
-+		break;
-+
-+	case SPECTRE_V2_APP2APP_CMD_LITE:
-+	case SPECTRE_V2_APP2APP_CMD_AUTO:
-+		app2app_mode = SPECTRE_V2_APP2APP_LITE;
-+		break;
-+
-+	case SPECTRE_V2_APP2APP_CMD_STRICT:
-+	case SPECTRE_V2_APP2APP_CMD_FORCE:
-+		app2app_mode = SPECTRE_V2_APP2APP_STRICT;
-+		break;
-+	}
-+
-+	/*
-+	 * Initialize Indirect Branch Prediction Barrier if supported
-+	 * and not disabled explicitly
-+	 */
-+	if (app2app_mode != SPECTRE_V2_APP2APP_NONE) {
-+		setup_force_cpu_cap(X86_FEATURE_USE_IBPB);
-+		pr_info("Spectre v2 mitigation: Enabling Indirect Branch Prediction Barrier\n");
-+	}
-+
-+set_app2app_mode:
-+	spectre_v2_app2app_enabled = app2app_mode;
-+	pr_info("%s\n", spectre_v2_app2app_strings[app2app_mode]);
-+	if (app2app_mode == SPECTRE_V2_APP2APP_LITE)
-+		static_branch_enable(&spectre_v2_app_lite);
-+
- 	/* Enable STIBP if appropriate */
- 	arch_smt_update();
- }
-@@ -862,21 +983,23 @@ static ssize_t l1tf_show_state(char *buf)
- 
- static char *stibp_state(void)
- {
--	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED)
-+	if (spectre_v2_enabled == SPECTRE_V2_IBRS_ENHANCED ||
-+	    spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_NONE)
- 		return "";
--
--	if (x86_spec_ctrl_base & SPEC_CTRL_STIBP)
--		return ", STIBP";
-+	else if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_LITE)
-+		return ", STIBP-lite";
- 	else
--		return "";
-+		return ", STIBP-strict";
- }
- 
- static char *ibpb_state(void)
- {
--	if (boot_cpu_has(X86_FEATURE_USE_IBPB))
--		return ", IBPB";
--	else
-+	if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_NONE)
- 		return "";
-+	else if (spectre_v2_app2app_enabled == SPECTRE_V2_APP2APP_LITE)
-+		return ", IBPB-lite";
-+	else
-+		return ", IBPB-strict";
- }
- 
- static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 073b8df..65d8c1c 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -184,14 +184,27 @@ static void sync_current_stack_to_mm(struct mm_struct *mm)
- static bool ibpb_needed(struct task_struct *tsk, u64 last_ctx_id)
- {
- 	/*
--	 * Check if the current (previous) task has access to the memory
--	 * of the @tsk (next) task. If access is denied, make sure to
--	 * issue a IBPB to stop user->user Spectre-v2 attacks.
-+	 * Don't issue IBPB when switching to kernel threads or staying in the
-+	 * same mm context.
-+	 */
-+	if (!tsk || !tsk->mm || tsk->mm->context.ctx_id == last_ctx_id)
-+		return false;
-+
-+	/*
-+	 * If lite protection mode is enabled, check the STIBP thread flag.
-+	 *
-+	 * Otherwise check if the current (previous) task has access to the
-+	 * the memory of the @tsk (next) task for strict app to app protection.
-+	 * If access is denied, make sure to issue a IBPB to stop user->user
-+	 * Spectre-v2 attacks.
- 	 *
- 	 * Note: __ptrace_may_access() returns 0 or -ERRNO.
- 	 */
--	return (tsk && tsk->mm && tsk->mm->context.ctx_id != last_ctx_id &&
--		ptrace_may_access_sched(tsk, PTRACE_MODE_SPEC_IBPB));
-+
-+	if (static_branch_unlikely(&spectre_v2_app_lite))
-+		return test_tsk_thread_flag(tsk, TIF_STIBP);
-+	else
-+		return ptrace_may_access_sched(tsk, PTRACE_MODE_SPEC_IBPB);
- }
- 
- void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
+diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
+index 2ff2a30..523c69e 100644
+--- a/arch/x86/include/asm/thread_info.h
++++ b/arch/x86/include/asm/thread_info.h
+@@ -79,7 +79,7 @@ struct thread_info {
+ #define TIF_SIGPENDING		2	/* signal pending */
+ #define TIF_NEED_RESCHED	3	/* rescheduling necessary */
+ #define TIF_SINGLESTEP		4	/* reenable singlestep on user return*/
+-#define TIF_SSBD			5	/* Reduced data speculation */
++#define TIF_SSBD		5	/* Speculative store bypass disable */
+ #define TIF_SYSCALL_EMU		6	/* syscall emulation active */
+ #define TIF_SYSCALL_AUDIT	7	/* syscall auditing active */
+ #define TIF_SECCOMP		8	/* secure computing */
 -- 
 2.9.4
 
