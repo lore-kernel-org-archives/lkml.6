@@ -2,80 +2,89 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0461ECDE44
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:50:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BA54ECDE44
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:50:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8719C20870
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:50:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8719C20870
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
+	by mail.kernel.org (Postfix) with ESMTP id 1FE2B20664
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:50:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FE2B20664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727721AbeJaAoX (ORCPT
+        id S1727743AbeJaAop (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 20:44:23 -0400
-Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:23902
-        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725853AbeJaAoW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 20:44:22 -0400
-X-IronPort-AV: E=Sophos;i="5.54,445,1534802400"; 
-   d="scan'208";a="283843925"
-Received: from palace.rsr.lip6.fr (HELO palace.lip6.fr) ([132.227.105.202])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/AES128-SHA256; 30 Oct 2018 16:50:20 +0100
-From:   Julia Lawall <Julia.Lawall@lip6.fr>
-To:     Markus Mayer <mmayer@broadcom.com>
-Cc:     kernel-janitors@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Gregory Fong <gregory.0xf0@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] thermal: broadcom: constify thermal_zone_of_device_ops structure
-Date:   Tue, 30 Oct 2018 16:15:00 +0100
-Message-Id: <1540912500-21941-3-git-send-email-Julia.Lawall@lip6.fr>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1540912500-21941-1-git-send-email-Julia.Lawall@lip6.fr>
-References: <1540912500-21941-1-git-send-email-Julia.Lawall@lip6.fr>
+        Tue, 30 Oct 2018 20:44:45 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32704 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726792AbeJaAop (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 20:44:45 -0400
+Received: from lhreml703-cah.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 13B9732EFFD8B;
+        Tue, 30 Oct 2018 15:50:43 +0000 (GMT)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.153)
+ by smtpsuk.huawei.com (10.201.108.44) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Tue, 30 Oct 2018 15:50:37 +0000
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v3 1/5] tpm: change the end marker of the active_banks array to zero
+Date:   Tue, 30 Oct 2018 16:47:07 +0100
+Message-ID: <20181030154711.2782-2-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181030154711.2782-1-roberto.sassu@huawei.com>
+References: <20181030154711.2782-1-roberto.sassu@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.153]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The thermal_zone_of_device_ops structure can be const as it is only
-passed as the last argument of thermal_zone_of_sensor_register
-and the corresponding parameter is declared as const.
+This patch changes the end marker of the active_banks array from
+TPM2_ALG_ERROR to zero.
 
-Done with the help of Coccinelle.
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
 ---
+ drivers/char/tpm/tpm-interface.c | 2 +-
+ drivers/char/tpm/tpm2-cmd.c      | 3 ---
+ 2 files changed, 1 insertion(+), 4 deletions(-)
 
-Unrelated to this change, is there a reason not to use
-devm_thermal_zone_of_sensor_register?
-
- drivers/thermal/broadcom/brcmstb_thermal.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff -u -p a/drivers/thermal/broadcom/brcmstb_thermal.c b/drivers/thermal/broadcom/brcmstb_thermal.c
---- a/drivers/thermal/broadcom/brcmstb_thermal.c
-+++ b/drivers/thermal/broadcom/brcmstb_thermal.c
-@@ -299,7 +299,7 @@ static int brcmstb_set_trips(void *data,
- 	return 0;
- }
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 1a803b0cf980..f7fc4b5ee239 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -1051,7 +1051,7 @@ int tpm_pcr_extend(struct tpm_chip *chip, int pcr_idx, const u8 *hash)
+ 		memset(digest_list, 0, sizeof(digest_list));
  
--static struct thermal_zone_of_device_ops of_ops = {
-+static const struct thermal_zone_of_device_ops of_ops = {
- 	.get_temp	= brcmstb_get_temp,
- 	.set_trips	= brcmstb_set_trips,
- };
+ 		for (i = 0; i < ARRAY_SIZE(chip->active_banks) &&
+-			    chip->active_banks[i] != TPM2_ALG_ERROR; i++) {
++			    chip->active_banks[i]; i++) {
+ 			digest_list[i].alg_id = chip->active_banks[i];
+ 			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
+ 			count++;
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index c31b490bd41d..046c9d8f3c1e 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -908,9 +908,6 @@ static ssize_t tpm2_get_pcr_allocation(struct tpm_chip *chip)
+ 	}
+ 
+ out:
+-	if (i < ARRAY_SIZE(chip->active_banks))
+-		chip->active_banks[i] = TPM2_ALG_ERROR;
+-
+ 	tpm_buf_destroy(&buf);
+ 
+ 	return rc;
+-- 
+2.17.1
 
