@@ -6,128 +6,93 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D9EFC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 02:40:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAEDFC0044C
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 02:40:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 726AB2075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 02:40:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 726AB2075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id 9CC9B2075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 02:40:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CC9B2075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=amzn.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726963AbeJ3LcK (ORCPT
+        id S1727115AbeJ3LcK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 30 Oct 2018 07:32:10 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:40752 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726686AbeJ3LcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:33803 "EHLO
+        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726692AbeJ3LcD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 30 Oct 2018 07:32:03 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 42BAC20020F;
-        Tue, 30 Oct 2018 03:40:29 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id CDB3F20014E;
-        Tue, 30 Oct 2018 03:40:22 +0100 (CET)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id C80D440327;
-        Tue, 30 Oct 2018 10:40:10 +0800 (SGT)
-From:   Peng Ma <peng.ma@nxp.com>
-To:     vkoul@kernel.org
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        leoyang.li@nxp.com, dan.j.williams@intel.com, zw@zh-kernel.org,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linuxppc-dev@lists.ozlabs.org, Peng Ma <peng.ma@nxp.com>,
-        Wen He <wen.he_1@nxp.com>
-Subject: [v11 7/7] dt-bindings: fsl-qdma: Add NXP Layerscpae qDMA controller bindings
-Date:   Tue, 30 Oct 2018 10:36:04 +0800
-Message-Id: <20181030023604.34027-7-peng.ma@nxp.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20181030023604.34027-1-peng.ma@nxp.com>
-References: <20181030023604.34027-1-peng.ma@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+X-IronPort-AV: E=Sophos;i="5.54,442,1534809600"; 
+   d="scan'208";a="639170512"
+Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-1d-f273de60.us-east-1.amazon.com) ([10.47.22.38])
+  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 30 Oct 2018 02:40:27 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
+        by email-inbound-relay-1d-f273de60.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w9U2ePiT102751
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
+        Tue, 30 Oct 2018 02:40:25 GMT
+Received: from EX13D12UEA001.ant.amazon.com (10.43.61.99) by
+ EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 30 Oct 2018 02:40:25 +0000
+Received: from EX13MTAUEA001.ant.amazon.com (10.43.61.82) by
+ EX13D12UEA001.ant.amazon.com (10.43.61.99) with Microsoft SMTP Server (TLS)
+ id 15.0.1367.3; Tue, 30 Oct 2018 02:40:25 +0000
+Received: from localhost (172.23.204.141) by mail-relay.amazon.com
+ (10.43.61.243) with Microsoft SMTP Server id 15.0.1367.3 via Frontend
+ Transport; Tue, 30 Oct 2018 02:40:24 +0000
+From:   Balbir Singh <sblbir@amzn.com>
+To:     <axboe@kernel.dk>
+CC:     <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Balbir Singh" <sblbir@amzn.com>
+Subject: [PATCH] Add cmd_flags to print_req_error
+Date:   Tue, 30 Oct 2018 02:40:15 +0000
+Message-ID: <20181030024015.1092-1-sblbir@amzn.com>
+X-Mailer: git-send-email 2.16.2
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document the devicetree bindings for NXP Layerscape qDMA controller
-which could be found on NXP QorIQ Layerscape SoCs.
+I ran into a bug where after hibernation due to incompatible
+backends, the block driver returned BLK_STS_NOTSUPP, with the
+current message it's hard to find out what the command flags
+were. Adding req->cmd_flags help make the problem easier to
+diagnose.
 
-Signed-off-by: Wen He <wen.he_1@nxp.com>
-Signed-off-by: Peng Ma <peng.ma@nxp.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Balbir Singh <sblbir@amzn.com>
+Reviewed-by: Eduardo Valentin <eduval@amazon.com>
 ---
-change in v11:
-	- no
 
- Documentation/devicetree/bindings/dma/fsl-qdma.txt |   57 ++++++++++++++++++++
- 1 files changed, 57 insertions(+), 0 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/dma/fsl-qdma.txt
+Testing: Compile tested at my end
 
-diff --git a/Documentation/devicetree/bindings/dma/fsl-qdma.txt b/Documentation/devicetree/bindings/dma/fsl-qdma.txt
-new file mode 100644
-index 0000000..6a0ff90
---- /dev/null
-+++ b/Documentation/devicetree/bindings/dma/fsl-qdma.txt
-@@ -0,0 +1,57 @@
-+NXP Layerscape SoC qDMA Controller
-+==================================
-+
-+This device follows the generic DMA bindings defined in dma/dma.txt.
-+
-+Required properties:
-+
-+- compatible:		Must be one of
-+			 "fsl,ls1021a-qdma": for LS1021A Board
-+			 "fsl,ls1043a-qdma": for ls1043A Board
-+			 "fsl,ls1046a-qdma": for ls1046A Board
-+- reg:			Should contain the register's base address and length.
-+- interrupts:		Should contain a reference to the interrupt used by this
-+			device.
-+- interrupt-names:	Should contain interrupt names:
-+			 "qdma-queue0": the block0 interrupt
-+			 "qdma-queue1": the block1 interrupt
-+			 "qdma-queue2": the block2 interrupt
-+			 "qdma-queue3": the block3 interrupt
-+			 "qdma-error":  the error interrupt
-+- fsl,dma-queues:	Should contain number of queues supported.
-+- dma-channels:	Number of DMA channels supported
-+- block-number:	the virtual block number
-+- block-offset:	the offset of different virtual block
-+- status-sizes:	status queue size of per virtual block
-+- queue-sizes:		command queue size of per virtual block, the size number
-+			based on queues
-+
-+Optional properties:
-+
-+- dma-channels:		Number of DMA channels supported by the controller.
-+- big-endian:		If present registers and hardware scatter/gather descriptors
-+			of the qDMA are implemented in big endian mode, otherwise in little
-+			mode.
-+
-+Examples:
-+
-+	qdma: dma-controller@8390000 {
-+			compatible = "fsl,ls1021a-qdma";
-+			reg = <0x0 0x8388000 0x0 0x1000>, /* Controller regs */
-+			      <0x0 0x8389000 0x0 0x1000>, /* Status regs */
-+			      <0x0 0x838a000 0x0 0x2000>; /* Block regs */
-+			interrupts = <GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 76 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 77 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "qdma-error",
-+				"qdma-queue0", "qdma-queue1";
-+			dma-channels = <8>;
-+			block-number = <2>;
-+			block-offset = <0x1000>;
-+			fsl,dma-queues = <2>;
-+			status-sizes = <64>;
-+			queue-sizes = <64 64>;
-+			big-endian;
-+		};
-+
-+DMA clients must use the format described in dma/dma.txt file.
+Changelog
+  - convert %llx to %x and remove casting to unsigned long long
+
+ block/blk-core.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/block/blk-core.c b/block/blk-core.c
+index cdfabc5646da..0fd6104bb0d2 100644
+--- a/block/blk-core.c
++++ b/block/blk-core.c
+@@ -256,10 +256,11 @@ static void print_req_error(struct request *req, blk_status_t status)
+ 	if (WARN_ON_ONCE(idx >= ARRAY_SIZE(blk_errors)))
+ 		return;
+ 
+-	printk_ratelimited(KERN_ERR "%s: %s error, dev %s, sector %llu\n",
+-			   __func__, blk_errors[idx].name, req->rq_disk ?
+-			   req->rq_disk->disk_name : "?",
+-			   (unsigned long long)blk_rq_pos(req));
++	printk_ratelimited(KERN_ERR "%s: %s error, dev %s, sector %llu flags %x\n",
++				__func__, blk_errors[idx].name,
++				req->rq_disk ?  req->rq_disk->disk_name : "?",
++				(unsigned long long)blk_rq_pos(req),
++				req->cmd_flags);
+ }
+ 
+ static void req_bio_endio(struct request *rq, struct bio *bio,
 -- 
-1.7.1
+2.16.2
 
