@@ -2,97 +2,138 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAEDFC0044C
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 02:40:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87E34C0044C
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 02:46:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CC9B2075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 02:40:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CC9B2075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=amzn.com
+	by mail.kernel.org (Postfix) with ESMTP id 48BF42075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 02:46:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48BF42075D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727115AbeJ3LcK (ORCPT
+        id S1726199AbeJ3LiD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 07:32:10 -0400
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:33803 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726692AbeJ3LcD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 07:32:03 -0400
-X-IronPort-AV: E=Sophos;i="5.54,442,1534809600"; 
-   d="scan'208";a="639170512"
-Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-1d-f273de60.us-east-1.amazon.com) ([10.47.22.38])
-  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 30 Oct 2018 02:40:27 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan3.iad.amazon.com [10.40.159.166])
-        by email-inbound-relay-1d-f273de60.us-east-1.amazon.com (8.14.7/8.14.7) with ESMTP id w9U2ePiT102751
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Tue, 30 Oct 2018 02:40:25 GMT
-Received: from EX13D12UEA001.ant.amazon.com (10.43.61.99) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Tue, 30 Oct 2018 02:40:25 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (10.43.61.82) by
- EX13D12UEA001.ant.amazon.com (10.43.61.99) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Tue, 30 Oct 2018 02:40:25 +0000
-Received: from localhost (172.23.204.141) by mail-relay.amazon.com
- (10.43.61.243) with Microsoft SMTP Server id 15.0.1367.3 via Frontend
- Transport; Tue, 30 Oct 2018 02:40:24 +0000
-From:   Balbir Singh <sblbir@amzn.com>
-To:     <axboe@kernel.dk>
-CC:     <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Balbir Singh" <sblbir@amzn.com>
-Subject: [PATCH] Add cmd_flags to print_req_error
-Date:   Tue, 30 Oct 2018 02:40:15 +0000
-Message-ID: <20181030024015.1092-1-sblbir@amzn.com>
-X-Mailer: git-send-email 2.16.2
+        Tue, 30 Oct 2018 07:38:03 -0400
+Received: from foss.arm.com ([217.140.101.70]:48484 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725964AbeJ3LiD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 07:38:03 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0EBA8A78;
+        Mon, 29 Oct 2018 19:46:30 -0700 (PDT)
+Received: from [10.163.1.105] (unknown [10.163.1.105])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6535E3F5D3;
+        Mon, 29 Oct 2018 19:46:27 -0700 (PDT)
+Subject: Re: [PATCH] arm64/numa: Add more vetting in numa_set_distance()
+To:     John Garry <john.garry@huawei.com>,
+        Will Deacon <will.deacon@arm.com>
+Cc:     catalin.marinas@arm.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linuxarm@huawei.com
+References: <1540562267-101152-1-git-send-email-john.garry@huawei.com>
+ <20181029112504.GF14127@arm.com>
+ <925009c6-226d-213f-dbcb-68b772d80a18@huawei.com>
+ <20181029121638.GB15446@arm.com>
+ <839acfc7-6b3a-b7ac-2f4a-713960ece457@huawei.com>
+ <17e3006a-7ecd-968e-7e67-ea7d08858ec3@arm.com>
+ <bc7bd118-82f2-86be-71ea-46704df864a5@huawei.com>
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+Message-ID: <45a8e09d-b32b-df32-ba34-5aa1909fb11f@arm.com>
+Date:   Tue, 30 Oct 2018 08:16:21 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <bc7bd118-82f2-86be-71ea-46704df864a5@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I ran into a bug where after hibernation due to incompatible
-backends, the block driver returned BLK_STS_NOTSUPP, with the
-current message it's hard to find out what the command flags
-were. Adding req->cmd_flags help make the problem easier to
-diagnose.
 
-Signed-off-by: Balbir Singh <sblbir@amzn.com>
-Reviewed-by: Eduardo Valentin <eduval@amazon.com>
----
 
-Testing: Compile tested at my end
+On 10/29/2018 08:14 PM, John Garry wrote:
+>>>>>
+>>>>>  I think we should either factor out the sanity check
+>>>>>> into a core helper or make the core code robust to these funny configurations.
+>>>>>
+>>>>> OK, so to me it would make sense to factor out a sanity check into a core
+>>>>> helper.
+>>>>
+>>>> That, or have the OF code perform the same validation that slit_valid() is
+>>>> doing for ACPI. I'm just trying to avoid other architectures running into
+>>>> this problem down the line.
+>>>>
+>>>
+>>> Right, OF code should do this validation job if ACPI is doing it (especially since the DT bindings actually specify the distance rules), and not rely on the arch NUMA code to accept/reject numa_set_distance() combinations.
+>>
+>> I would say this particular condition checking still falls under arch NUMA init
+>> code sanity check like other basic tests what numa_set_distance() currently does
+>> already but it should not be a necessity for the OF driver to check these.
+> 
+> The checks in the arch NUMA code mean that invalid inter-node distance combinations are ignored.
 
-Changelog
-  - convert %llx to %x and remove casting to unsigned long long
+Right and should not this new test (from != to && distance == LOCAL_DISTANCE) be
+one of them as well ? numa_set_distance() updates the table or just throws some
+warnings while skipping entries it deems invalid. It would be okay to have this
+new check there in addition to others like this patch suggests.
 
- block/blk-core.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> However, if any entries in the table are invalid, then the whole table can be discarded as none of it can be believed, i.e. it's better to validate the table.
+>
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index cdfabc5646da..0fd6104bb0d2 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -256,10 +256,11 @@ static void print_req_error(struct request *req, blk_status_t status)
- 	if (WARN_ON_ONCE(idx >= ARRAY_SIZE(blk_errors)))
- 		return;
- 
--	printk_ratelimited(KERN_ERR "%s: %s error, dev %s, sector %llu\n",
--			   __func__, blk_errors[idx].name, req->rq_disk ?
--			   req->rq_disk->disk_name : "?",
--			   (unsigned long long)blk_rq_pos(req));
-+	printk_ratelimited(KERN_ERR "%s: %s error, dev %s, sector %llu flags %x\n",
-+				__func__, blk_errors[idx].name,
-+				req->rq_disk ?  req->rq_disk->disk_name : "?",
-+				(unsigned long long)blk_rq_pos(req),
-+				req->cmd_flags);
- }
- 
- static void req_bio_endio(struct request *rq, struct bio *bio,
--- 
-2.16.2
+Agreed. slit_valid() on the ACPI parsing is currently enforcing that before
+acpi_numa_slit_init() which would call into numa_set_distance(). Hence arch
+NUMA code numa_set_distance() never had the opportunity to do the sanity
+checks as ACPI slit_valid() has completely invalidated the table.
 
+Unlike ACPI path, of_numa_parse_distance_map_v1() does not do any sanity
+checks on the distance values parse from the "distance-matrix" property
+and all the checks directly falls on numa_set_distance(). This needs to
+be fixed in line with ACPI
+
+* If (to == from) ---> distance = LOCAL_DISTANCE
+* If (to != from) ---> distance > LOCAL_DISTANCE
+
+At the same time its okay to just enhance numa_set_distance() test coverage
+to include this new test. If we would have trusted firmware parsing all the
+way, existing basic checks about node range, distance stuff should not have
+been there in numa_set_distance(). Hence IMHO even if we fix the OF driver
+part, we should include this new check there as well.
+
+> It can
+>> choose to check but arch NUMA should check basic things like two different NUMA
+>> nodes should not have LOCAL_DISTANCE as distance like in this case.
+>>
+>>     (from == to && distance != LOCAL_DISTANCE) ||
+>>         (from != to && distance == LOCAL_DISTANCE))
+>>
+>>
+>>>
+>>> And, in addition to this, I'd say OF should disable NUMA if given an invalid table (like ACPI does).
+>>
+>> Taking a decision to disable NUMA should be with kernel (arch NUMA) once kernel
+>> starts booting. Platform should have sent right values, OF driver trying to
+>> adjust stuff what platform has sent with FDT once the kernel starts booting is
+>> not right. For example "Kernel NUMA wont like the distance factors lets clean
+>> then up before passing on to MM".
+> 
+> Sorry, but I don't know who was advocating this.
+
+I was just giving an example. Invalidating NUMA distance table during firmware
+table (ACPI or FDT) parsing forces arm64_numa_init() to fall back on dummy NUMA
+node which is like disabling NUMA. But that is the current semantics with ACPI
+parsing which I overlooked. Fixing OF driver to do the same wont extend this
+any further, hence my previous concern does not stand valid.
+
+> 
+> Disabling NUMA is one such major decision which
+>> should be with arch NUMA code not with OF driver.
+> 
+> I meant parsing the table would fail, so arch NUMA would fall back on dummy NUMA.
+
+Right and ACPI parsing does that and can force a fallback on a dummy NUMA node.
