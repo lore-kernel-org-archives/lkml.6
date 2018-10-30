@@ -2,304 +2,361 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12AABC6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 06:56:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13FC4C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 07:03:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9F3F20657
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 06:56:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="G3aGv/O3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9F3F20657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id AB0622075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 07:03:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB0622075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727556AbeJ3Psd (ORCPT
+        id S1726840AbeJ3P4L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 11:48:33 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:39314 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726225AbeJ3Psd (ORCPT
+        Tue, 30 Oct 2018 11:56:11 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36169 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726222AbeJ3P4L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 11:48:33 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9U6rtVI115038;
-        Tue, 30 Oct 2018 06:55:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- message-id : date : from : to : cc : subject : content-type :
- content-transfer-encoding; s=corp-2018-07-02;
- bh=fk3o7cmibQ7f9C3D4wKwG3V2IgdJiu07HiMQaRgbgi8=;
- b=G3aGv/O3McVO5NC7Ue5Q05bVUphPAIwu5+S18l8YtGU7YEekxIkwxxRzx7GFJTZ1irvR
- baw/JAwfkFpQjJm1Ka9trrdY3dfkbRktfjNtF+uEuqctaf8z2oD/BqRVrTyMZtU+COso
- p39rGWdHUaoQGl6uaPac9cOIdnqqi70Jgp/M+47eg1d/2DWqv7DKjKcU6Z73b/iTFVDM
- gNTYNYKn6PYloGBCF2TGQ4A5HL8Kx6UbYJkK7IuxeYU7CnXDmuCLtHSokUDJpTDyrXb0
- d7f49i2CAOuuVWcium36dSq0TJkarNu+wCaLOI2n9utbg0dx5hbJ/t8eJOF29gm+vUEJ hA== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2120.oracle.com with ESMTP id 2ncfypt01y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Oct 2018 06:55:09 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9U6t7xS017955
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Oct 2018 06:55:08 GMT
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9U6t5qr019539;
-        Tue, 30 Oct 2018 06:55:05 GMT
+        Tue, 30 Oct 2018 11:56:11 -0400
+Received: by mail-lj1-f193.google.com with SMTP id s15-v6so10301892lji.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 00:03:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Mr+N6nfrxDQuymjWAAXdfb4q9R0AjUBEH2NemjIvVo4=;
+        b=iHPmX3TWhH8omCzjVxbFkRXO1VLtrkAqnp/30RR4OMvlFkkoWcWHdE6QNMQSdMj7ZA
+         rCZEPjeTK2wR2XlVWQuRoMGu8vhA4A7PoTQ5FizCrxcWpHsJIrdvFxQnEMOCRc1PbEKI
+         Y4vELhW+y2UoZai3EKCpZ/bFXjHO1TD7v6cEadrw51UOYkmWtCF1XR3GezPW+Jot7obw
+         9su1aFX+ZK/rEYTD+BObT8y1ID8CjGtfgtC19+SnjHbGpOcDbjX0H+RHkOWhHrrE2VMJ
+         +L8c9EGPn6/6gf7PQxNAs3SbDPHmTvqc6wISKLP8droGdxcbAtFzSUcVIi7uRRq40aFr
+         BhpQ==
+X-Gm-Message-State: AGRZ1gI2IRXJYNbSgJ+m1+W/tZPf/rFfow7uPWrbhgxpHRvJF0ilAtrH
+        e7w+c22cEzmWrvZ1njfTR6KFD5MVOV+q4CrrGK9V6w==
+X-Google-Smtp-Source: AJdET5fgZT+f7Y/CtZ96ZmWrXqGzAvHP1rF4tJVBxV61blMv2SqG/zkP6lNxdmL7OTElYVV4tPRGMIWt5sL61PE7fmo=
+X-Received: by 2002:a2e:8403:: with SMTP id z3-v6mr730209ljg.121.1540883032593;
+ Tue, 30 Oct 2018 00:03:52 -0700 (PDT)
 MIME-Version: 1.0
-Message-ID: <e63900bc-d7af-4a57-aa96-f6cc84b89e09@default>
-Date:   Mon, 29 Oct 2018 23:55:04 -0700 (PDT)
-From:   Zhenzhong Duan <zhenzhong.duan@oracle.com>
-To:     Linux-Kernel <linux-kernel@vger.kernel.org>
-Cc:     <mingo@redhat.com>, <luto@kernel.org>, <konrad.wilk@oracle.com>,
-        <dwmw@amazon.co.uk>, <tglx@linutronix.de>,
-        Srinivas REDDY Eeda <srinivas.eeda@oracle.com>, <bp@suse.de>,
-        <daniel@iogearbox.net>, <yamada.masahiro@socionext.com>,
-        <michal.lkml@markovi.net>, <peterz@infradead.org>, <hpa@zytor.com>
-Subject: [PATCH 1/3] retpolines: Only enable retpoline when compiler support
- it
-X-Mailer: Zimbra on Oracle Beehive
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9061 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810300060
+References: <1540593788-28181-1-git-send-email-bhsharma@redhat.com>
+ <20181027100241.GB1884@MiWiFi-R3L-srv> <CACi5LpPf9Zr1beowRNGmLZY7DtS3JDt8D=FONjqas9yo7TyCjg@mail.gmail.com>
+ <20181030020752.GB11408@MiWiFi-R3L-srv>
+In-Reply-To: <20181030020752.GB11408@MiWiFi-R3L-srv>
+From:   Bhupesh Sharma <bhsharma@redhat.com>
+Date:   Tue, 30 Oct 2018 12:33:39 +0530
+Message-ID: <CACi5LpP0_s9zAF+QfKpU+kG6BKqqkiwQhcW-WFZ0=SnBeX7ZXA@mail.gmail.com>
+Subject: Re: [PATCH] x86_64, vmcoreinfo: Append 'page_offset_base' to vmcoreinfo
+To:     Baoquan He <bhe@redhat.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bhupesh SHARMA <bhupesh.linux@gmail.com>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kazuhito Hagio <k-hagio@ab.jp.nec.com>,
+        Dave Anderson <anderson@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        Omar Sandoval <osandov@fb.com>, x86@kernel.org,
+        kexec mailing list <kexec@lists.infradead.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since retpoline capable compilers are widely available, make
-CONFIG_RETPOLINE hard depend on it.
+Hi Baoquan,
 
-Change KBUILD to use CONFIG_RETPOLINE_SUPPORT to avoid conflict with
-CONFIG_RETPOLINE which is used by kernel.
+On Tue, Oct 30, 2018 at 7:37 AM Baoquan He <bhe@redhat.com> wrote:
+>
+> On 10/29/18 at 04:07pm, Bhupesh Sharma wrote:
+> > I am sorry, I understand that the commit log is a bit long and
+>
+> Yes, it's too long. Please summarize well so that it can save reviewers'
+> time.
 
-With all that stuff, the check of RETPOLINE is changed to
-CONFIG_RETPOLINE.
+I have tried to include all the points in the log which might be
+relevant to folks (there
+are user-space utility maintainers in Cc as well) who might not be
+aware of complete
+background on this (especially the kernel side of the things), while I
+am discussing the
+user-space changes with them :)
 
-This change is based on suggestion in https://lkml.org/lkml/2018/9/18/1016
+> > probably this part
+> > is not easy to infer. Currently, I see that the 'makedumpfile' utility
+> > is broken with newer kernels
+> > (I tested on 4.19-rc8+) as we KCORE_REMAP  was added to recent kernels
+> > thus leading to an additional section in kcore.
+> > [see <http://lists.infradead.org/pipermail/kexec/2018-October/021769.html>
+> > for details].
+>
+> Why it's broken? Have you investigated and figured out why it's broken?
+> If fix, what patch will it look like? Does the patch prove it's not
+> worth using the current way?
+>
+> Have you thought about this in advance? Or still like before, you said
+> on arm64 you found different boards have different behaviour, then
+> makedumpfile maintainer Kazu said he investigated and found it may be
+> caused by KALSR. This time, for this KCORE_REMAP adding, can you help to
+> investigate further and give an answer to the issue you found and
+> raised?
 
-Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: David Woodhouse <dwmw@amazon.co.uk>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Michal Marek <michal.lkml@markovi.net>
----
- Documentation/admin-guide/kernel-parameters.txt |  2 +-
- arch/x86/Kconfig                                |  8 ++++----
- arch/x86/Makefile                               |  5 +++--
- arch/x86/entry/vdso/Makefile                    |  4 ++--
- arch/x86/include/asm/nospec-branch.h            | 10 ++++++----
- arch/x86/kernel/cpu/bugs.c                      |  2 +-
- arch/x86/kernel/vmlinux.lds.S                   |  2 +-
- arch/x86/lib/Makefile                           |  2 +-
- arch/x86/lib/retpoline.S                        |  2 ++
- scripts/Makefile.build                          |  2 +-
- 10 files changed, 22 insertions(+), 17 deletions(-)
+Ofcourse, the patchset which added vmcoreinfo into kcore was discussed
+and it was agreed that this was a better approach to move forward and hence
+accepted in mainline.
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentatio=
-n/admin-guide/kernel-parameters.txt
-index e129cd8..c26264e 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -4187,7 +4187,7 @@
- =09=09=09Selecting 'on' will, and 'auto' may, choose a
- =09=09=09mitigation method at run time according to the
- =09=09=09CPU, the available microcode, the setting of the
--=09=09=09CONFIG_RETPOLINE configuration option, and the
-+=09=09=09CONFIG_RETPOLINE_SUPPORT configuration option, and the
- =09=09=09compiler with which the kernel was built.
-=20
- =09=09=09Specific mitigations can also be selected manually:
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index cbd5f28..766563f 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -433,7 +433,7 @@ config GOLDFISH
-        def_bool y
-        depends on X86_GOLDFISH
-=20
--config RETPOLINE
-+config RETPOLINE_SUPPORT
- =09bool "Avoid speculative indirect branches in kernel"
- =09default y
- =09select STACK_VALIDATION if HAVE_STACK_VALIDATION
-@@ -443,9 +443,9 @@ config RETPOLINE
- =09  branches. Requires a compiler with -mindirect-branch=3Dthunk-extern
- =09  support for full protection. The kernel may run slower.
-=20
--=09  Without compiler support, at least indirect branches in assembler
--=09  code are eliminated. Since this includes the syscall entry path,
--=09  it is not entirely pointless.
-+=09  Since retpoline capable compilers are widely available, kernel doesn'=
-t
-+=09  use CONFIG_RETPOLINE_SUPPORT directly but use CONFIG_RETPOLINE which
-+=09  is enabled when compiler support retpoline.
-=20
- config INTEL_RDT
- =09bool "Intel Resource Director Technology support"
-diff --git a/arch/x86/Makefile b/arch/x86/Makefile
-index 5b562e4..7ed35b1 100644
---- a/arch/x86/Makefile
-+++ b/arch/x86/Makefile
-@@ -221,9 +221,10 @@ KBUILD_CFLAGS +=3D -Wno-sign-compare
- KBUILD_CFLAGS +=3D -fno-asynchronous-unwind-tables
-=20
- # Avoid indirect branches in kernel to deal with Spectre
--ifdef CONFIG_RETPOLINE
-+ifdef CONFIG_RETPOLINE_SUPPORT
- ifneq ($(RETPOLINE_CFLAGS),)
--  KBUILD_CFLAGS +=3D $(RETPOLINE_CFLAGS) -DRETPOLINE
-+  KBUILD_CFLAGS +=3D $(RETPOLINE_CFLAGS) -DCONFIG_RETPOLINE
-+  KBUILD_AFLAGS +=3D -DCONFIG_RETPOLINE
- endif
- endif
-=20
-diff --git a/arch/x86/entry/vdso/Makefile b/arch/x86/entry/vdso/Makefile
-index 141d415..87acde1 100644
---- a/arch/x86/entry/vdso/Makefile
-+++ b/arch/x86/entry/vdso/Makefile
-@@ -70,7 +70,7 @@ CFL :=3D $(PROFILING) -mcmodel=3Dsmall -fPIC -O2 -fasynch=
-ronous-unwind-tables -m64 \
-        -fno-omit-frame-pointer -foptimize-sibling-calls \
-        -DDISABLE_BRANCH_PROFILING -DBUILD_VDSO
-=20
--ifdef CONFIG_RETPOLINE
-+ifdef CONFIG_RETPOLINE_SUPPORT
- ifneq ($(RETPOLINE_VDSO_CFLAGS),)
-   CFL +=3D $(RETPOLINE_VDSO_CFLAGS)
- endif
-@@ -145,7 +145,7 @@ KBUILD_CFLAGS_32 +=3D $(call cc-option, -foptimize-sibl=
-ing-calls)
- KBUILD_CFLAGS_32 +=3D -fno-omit-frame-pointer
- KBUILD_CFLAGS_32 +=3D -DDISABLE_BRANCH_PROFILING
-=20
--ifdef CONFIG_RETPOLINE
-+ifdef CONFIG_RETPOLINE_SUPPORT
- ifneq ($(RETPOLINE_VDSO_CFLAGS),)
-   KBUILD_CFLAGS_32 +=3D $(RETPOLINE_VDSO_CFLAGS)
- endif
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/no=
-spec-branch.h
-index 80dc144..8b09cbb 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -162,11 +162,12 @@
- =09_ASM_PTR " 999b\n\t"=09=09=09=09=09\
- =09".popsection\n\t"
-=20
--#if defined(CONFIG_X86_64) && defined(RETPOLINE)
-+#ifdef CONFIG_RETPOLINE
-+#ifdef CONFIG_X86_64
-=20
- /*
-- * Since the inline asm uses the %V modifier which is only in newer GCC,
-- * the 64-bit one is dependent on RETPOLINE not CONFIG_RETPOLINE.
-+ * Inline asm uses the %V modifier which is only in newer GCC
-+ * which is ensured when CONFIG_RETPOLINE is defined.
-  */
- # define CALL_NOSPEC=09=09=09=09=09=09\
- =09ANNOTATE_NOSPEC_ALTERNATIVE=09=09=09=09\
-@@ -181,7 +182,7 @@
- =09X86_FEATURE_RETPOLINE_AMD)
- # define THUNK_TARGET(addr) [thunk_target] "r" (addr)
-=20
--#elif defined(CONFIG_X86_32) && defined(CONFIG_RETPOLINE)
-+#else /* CONFIG_X86_32 */
- /*
-  * For i386 we use the original ret-equivalent retpoline, because
-  * otherwise we'll run out of registers. We don't care about CET
-@@ -211,6 +212,7 @@
- =09X86_FEATURE_RETPOLINE_AMD)
-=20
- # define THUNK_TARGET(addr) [thunk_target] "rm" (addr)
-+#endif
- #else /* No retpoline for C / inline asm */
- # define CALL_NOSPEC "call *%[thunk_target]\n"
- # define THUNK_TARGET(addr) [thunk_target] "rm" (addr)
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index c37e66e..d0108fb 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -252,7 +252,7 @@ static void __init spec2_print_if_secure(const char *re=
-ason)
-=20
- static inline bool retp_compiler(void)
- {
--=09return __is_defined(RETPOLINE);
-+=09return __is_defined(CONFIG_RETPOLINE);
- }
-=20
- static inline bool match_option(const char *arg, int arglen, const char *o=
-pt)
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index 0d618ee..07533f7 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -136,7 +136,7 @@ SECTIONS
- =09=09*(.fixup)
- =09=09*(.gnu.warning)
-=20
--#ifdef CONFIG_RETPOLINE
-+#ifdef CONFIG_RETPOLINE_SUPPORT
- =09=09__indirect_thunk_start =3D .;
- =09=09*(.text.__x86.indirect_thunk)
- =09=09__indirect_thunk_end =3D .;
-diff --git a/arch/x86/lib/Makefile b/arch/x86/lib/Makefile
-index 25a972c..edfa7ab 100644
---- a/arch/x86/lib/Makefile
-+++ b/arch/x86/lib/Makefile
-@@ -27,7 +27,7 @@ lib-$(CONFIG_RWSEM_XCHGADD_ALGORITHM) +=3D rwsem.o
- lib-$(CONFIG_INSTRUCTION_DECODER) +=3D insn.o inat.o insn-eval.o
- lib-$(CONFIG_RANDOMIZE_BASE) +=3D kaslr.o
- lib-$(CONFIG_FUNCTION_ERROR_INJECTION)=09+=3D error-inject.o
--lib-$(CONFIG_RETPOLINE) +=3D retpoline.o
-+lib-$(CONFIG_RETPOLINE_SUPPORT) +=3D retpoline.o
-=20
- obj-y +=3D msr.o msr-reg.o msr-reg-export.o hweight.o
-=20
-diff --git a/arch/x86/lib/retpoline.S b/arch/x86/lib/retpoline.S
-index c909961..81366ad 100644
---- a/arch/x86/lib/retpoline.S
-+++ b/arch/x86/lib/retpoline.S
-@@ -1,5 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0 */
-=20
-+#ifdef CONFIG_RETPOLINE
- #include <linux/stringify.h>
- #include <linux/linkage.h>
- #include <asm/dwarf2.h>
-@@ -46,3 +47,4 @@ GENERATE_THUNK(r13)
- GENERATE_THUNK(r14)
- GENERATE_THUNK(r15)
- #endif
-+#endif
-diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-index 54da4b0..259d9c6 100644
---- a/scripts/Makefile.build
-+++ b/scripts/Makefile.build
-@@ -247,7 +247,7 @@ endif
- ifdef CONFIG_GCOV_KERNEL
- objtool_args +=3D --no-unreachable
- endif
--ifdef CONFIG_RETPOLINE
-+ifdef CONFIG_RETPOLINE_SUPPORT
- ifneq ($(RETPOLINE_CFLAGS),)
-   objtool_args +=3D --retpoline
- endif
---=20
-1.8.3.1
+Regarding the makedumpfile issue, I have already provided a detailed
+reply to Kazu (you are Cc'ed on the thread) and also proposed a
+makedumpfile approach which
+reads the 'page_offset_base' value from kcore (using the kernel
+interface provided by this patch),
+[on which you are Cc'ed as well]:
+
+[1]. https://www.spinics.net/lists/kexec/msg21717.html
+[2]. https://www.spinics.net/lists/kexec/msg21722.html
+
+Again I think we are discussing on a wrong tangent here. The idea is
+not limited to only makedumpfile - it
+affects other user-space utilities (like crash) which are used for
+live debugging a running kernel.
+
+> > The details of the makedumpfile utility can be seen via the man page
+> > [MAKEDUMPFILE(8)],
+> > but in short it tries to make a small DUMPFILE by compressing dump
+> > data or by excluding
+> > unnecessary pages for analysis, or both.
+> >
+> > However the bigger problem is how we export machine specific details
+> > from kernel-space
+> > to user-land in a standardized way. As I mentioned in brief in the git
+> > log, I was seeing
+> > issues when I upgrade kernels or try to bring up user-space utilities
+> > on newer hardware,
+> > as currently we use different (and often flaky approaches) to
+> > calculate machine specific details in
+> > user-space code as there used to be lack of a clear ABI between the
+> > kernel and user-space on how
+> > machine specific details would be shared.
+> >
+> > Later on, kernel commit 23c85094fe1895caefdd came, which adds
+> > vmcoreinfo to 'kcore',
+> > as an arch agnostic approach to unify the differences existing in
+> > exporting kernel space information
+> > to the user-space code and James suggested that I use the same for
+> > user-space purposes to fix
+> > the issues I was observing.
+> >
+> > > Sorry I didn't get what problem this patch is trying to fix from the
+> > > patch log.
+> >
+> > So, here since the 'page_offset_base' variable (which holds the start
+> > of direct mapping of all physical
+> > memory) is not exported by the x86_64 kernel to the user-space via a
+> > standard interface, we resort
+> > to calculating the same via reading PT_LOADs in user-space (as an
+> > example from the makedumpfile
+> > implementation ). Now this implementation is usually different across
+> > user-space utilities.
+> >
+> > Also, if the PT_LOAD ordering changes (as we saw with the newer
+> > kernels), this approach will need
+> > fixing to calculate the addresses. In addition, we normally need
+> > 'page_offset_base' value in user-space (and retrieve it via
+> > vmlinux file in another user case from the same makedumpfile code) for
+> > calculating the start of direct mapping of all physical
+> > memory specifically for KASLR boot cases.
+> >
+> > Instead, if we can export 'page_offset_base' via vmcoreinfo, we can
+> > easily use the same
+> > for live-debugging a running kernel via user-space utilities, which
+> > can benefit by reading this value
+> > from the vmcoreinfo note inside kcore directly without relying on other methods.
+>
+> We have got a method, what's wrong with that? Only KCORE_REMAP adding,
+> again? if fix, what is the defect? Where's patch, analysis, only one
+> sentence to say KCORE_REMAP caused that?
+
+Please see above, this is not limited to one use-case of makedumpfile
+tool. Also, it extends
+to other user-space utilities (like crash) as well.
+
+See, why would we want to have every user-space utility implement a
+different mechanism for solving the same problem, right? If a standard interface
+is available from the kernel side we better use the same across all user-land.
+
+Plus, if this interface (vmcoreinfo in kcore) is available from the
+kernel side for all archs (like it is currently), it solves
+another set of problem in the user-space tools, i.e. we don't need to
+keep different arch specific
+implementations across different user-space tool (see [1] above for
+e.g., both x86_64 and arm64 makedumpfile code
+bases use an almost similar approach now). I understand that such
+changes are always
+obstructive, but hopefully it saves us the effort to manage
+differences across user-land in the longer run.
+
+So, via this patch I propose that the kernel export 'page_offset_base'
+variable via vmcoreinfo
+and user-space uses its uniformly to determine the start of direct
+mapping of all physical
+memory.
+
+Hope this clarifies the background.
+
+Regads,
+Bhupesh
+
+
+> >
+> > The x86_64 kernel code ('arch/x86/kernel/head64.c'), already sets the same as:
+> > unsigned long page_offset_base __ro_after_init = __PAGE_OFFSET_BASE_L4;
+> >
+> > and also uses the same to indicate the base of KASLR regions on x86_64:
+> > static __initdata struct kaslr_memory_region {
+> >     unsigned long *base;
+> >     unsigned long size_tb;
+> > } kaslr_regions[] = {
+> >     { &page_offset_base, 0 },
+> >
+> > so it can be used for both the above purposes across user-space utilities.
+> >
+> > Hope this explains the intention behind this patch.
+> >
+> > Thanks,
+> > Bhupesh
+> >
+> > > About this, I have replied to you in
+> > > lkml.kernel.org/r/20181025063446.GD2120@MiWiFi-R3L-srv
+> > > You might miss it.
+> > >
+> > > About this exporting, I ever posted patch to upstream and we have had
+> > > discussion, please check
+> > > https://lore.kernel.org/patchwork/patch/723472/
+> > >
+> > > In makedumpfile and crash, we have had a clear method to analyze and
+> > > deduce it from kcore or vmcore.
+> > >
+> > > Thanks
+> > > Baoquan
+> > >
+> > > On 10/27/18 at 04:13am, Bhupesh Sharma wrote:
+> > > > Since commit 23c85094fe1895caefdd
+> > > > ["proc/kcore: add vmcoreinfo note to /proc/kcore"]), '/proc/kcore'
+> > > > contains a new PT_NOTE which carries the VMCOREINFO information.
+> > > >
+> > > > If the same is available, one can use it in user-land to
+> > > > retrieve machine specific symbols or strings being appended to the
+> > > > vmcoreinfo even for live-debugging of the primary kernel as a
+> > > > standard interface exposed by kernel for sharing machine specific
+> > > > details with the user-land.
+> > > >
+> > > > In the past I had a discussion with James, where he suggested this
+> > > > approach (please see [0]) and I really liked the idea. Since then I
+> > > > have been working on unifying the implementations of
+> > > > (atleast) the commonly used user-space utilities that provide
+> > > > live-debugging capabilities (tools like 'makedumpfile' and
+> > > > 'crash-utility', see [1] for details of these tools).
+> > > >
+> > > > For the same, when live debugging on x86_64 machines, user-space
+> > > > tools currently rely on different mechanisms to determine
+> > > > the 'page_offset_base' value (i.e. start of direct mapping of all
+> > > > physical memory). One of the approach used by 'makedumpfile'
+> > > > user-space tool for e.g. is to calculate the same from the last
+> > > > PT_LOAD available in '/proc/kcore', which can be flaky as and when
+> > > > new sections (for e.g. KCORE_REMAP which was added
+> > > > to recent kernels) are added to kcore.
+> > > >
+> > > > For other architectures like arm64, I have already proposed using
+> > > > the vmcoreinfo note (in '/proc/kcore') in the user-space utilities to
+> > > > determine machine specific details like VA_BITS, PAGE_OFFSET,
+> > > > kasrl_offset() (see [2] for details), for which different user-space
+> > > > tools earlier used different (and at times flaky) approaches like:
+> > > >
+> > > > - Reading kernel CONFIGs from user-space and determining CONFIG values
+> > > >    like VA_BITS from there.
+> > > >  - Reading symbols from '/proc/kallsyms' and determining their values
+> > > >    via '/dev/mem' interface.
+> > > >  - Reading symbols from 'vmlinux' and determing their values from
+> > > >    reading memory.
+> > > >
+> > > > This patch allows appending 'page_offset_base' for x86_64 platforms
+> > > > to vmcoreinfo, so that user-space tools can use the same as a standard
+> > > > interface to determine the start of direct mapping of all physical
+> > > > memory.
+> > > >
+> > > > Testing:
+> > > > -------
+> > > >  - I tested this patch (rebased on 'linux-next') on a x86_64 machine
+> > > >    using the modified 'makedumpfile' user-space code (see [3] for my
+> > > >    github tree which contains the same) for determining how many pages
+> > > >    are dumpable when different dump_level is specified (which is
+> > > >    one use-case of live-debugging via 'makedumpfile').
+> > > >  - I tested both the KASLR and non-KASLR boot cases with this patch.
+> > > >  - Here is one sample log (for KASLR boot case) on my x86_64 machine:
+> > > >
+> > > >    < snip..>
+> > > >    The kernel doesn't support mmap(),read() will be used instead.
+> > > >
+> > > >    TYPE               PAGES                   EXCLUDABLE      DESCRIPTION
+> > > >    ----------------------------------------------------------------------
+> > > >    ZERO               21299                   yes             Pages filled
+> > > >    with zero
+> > > >    NON_PRI_CACHE      91785                   yes             Cache
+> > > >    pages without private flag
+> > > >    PRI_CACHE  1                       yes             Cache pages with
+> > > >    private flag
+> > > >    USER               14057                   yes             User process
+> > > >    pages
+> > > >    FREE               740346                  yes             Free pages
+> > > >    KERN_DATA  58152                   no              Dumpable kernel
+> > > >    data
+> > > >
+> > > >    page size:         4096
+> > > >    Total pages on system:     925640
+> > > >    Total size on system:      3791421440       Byte
+> > > >
+> > > > I understand that there might be some reservations about exporting
+> > > > such machine-specific details in the vmcoreinfo, but to unify
+> > > > the implementations across user-land and archs, perhaps this would be
+> > > > good starting point to start a discussion.
+> > > >
+> > > > [0]. https://www.mail-archive.com/kexec@lists.infradead.org/msg20300.html
+> > > > [1]. MAN pages -> MAKEDUMPFILE(8) and CRASH(8)
+> > > > [2]. https://www.spinics.net/lists/kexec/msg21608.html
+> > > >      http://lists.infradead.org/pipermail/kexec/2018-October/021725.html
+> > > > [3]. https://github.com/bhupesh-sharma/makedumpfile/tree/add-page-offset-base-to-vmcore-v1
+> > > >
+> > > > Cc: Boris Petkov <bp@alien8.de>
+> > > > Cc: Baoquan He <bhe@redhat.com>
+> > > > Cc: Ingo Molnar <mingo@kernel.org>
+> > > > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > > > Cc: Kazuhito Hagio <k-hagio@ab.jp.nec.com>
+> > > > Cc: Dave Anderson <anderson@redhat.com>
+> > > > Cc: James Morse <james.morse@arm.com>
+> > > > Cc: Omar Sandoval <osandov@fb.com>
+> > > > Cc: x86@kernel.org
+> > > > Cc: kexec@lists.infradead.org
+> > > > Cc: linux-arm-kernel@lists.infradead.org
+> > > > Signed-off-by: Bhupesh Sharma <bhsharma@redhat.com>
+> > > > ---
+> > > >  arch/x86/kernel/machine_kexec_64.c | 1 +
+> > > >  1 file changed, 1 insertion(+)
+> > > >
+> > > > diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+> > > > index 4c8acdfdc5a7..834ccefef867 100644
+> > > > --- a/arch/x86/kernel/machine_kexec_64.c
+> > > > +++ b/arch/x86/kernel/machine_kexec_64.c
+> > > > @@ -356,6 +356,7 @@ void arch_crash_save_vmcoreinfo(void)
+> > > >       VMCOREINFO_SYMBOL(init_top_pgt);
+> > > >       vmcoreinfo_append_str("NUMBER(pgtable_l5_enabled)=%d\n",
+> > > >                       pgtable_l5_enabled());
+> > > > +     VMCOREINFO_NUMBER(page_offset_base);
+> > > >
+> > > >  #ifdef CONFIG_NUMA
+> > > >       VMCOREINFO_SYMBOL(node_data);
+> > > > --
+> > > > 2.7.4
+> > > >
