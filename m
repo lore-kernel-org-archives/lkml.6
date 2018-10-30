@@ -2,152 +2,94 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E63EC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:38:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8666C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:39:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DD432081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:38:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ht93vtln"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DD432081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 7F56120823
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:39:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F56120823
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727734AbeJaBcN (ORCPT
+        id S1727710AbeJaBdm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 21:32:13 -0400
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:37045 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727387AbeJaBcN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 21:32:13 -0400
-Received: by mail-yb1-f193.google.com with SMTP id d18-v6so5307429yba.4
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 09:38:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=VZoNZooRaqDzEWaRLEKdrKAAKC6uL0sBgSFjdygxcXA=;
-        b=ht93vtlnvVM4sJvsrLS/XVPam18FZGYWOuKhoG7tTU9zDVRzID1jFV+Pax7TEqCHVT
-         dD2GI13/VwJzNEyXB7/8NzOxJcAEhXibtqz87TwTH8gKYu86BY5LT62L3bfaUl77oj3n
-         iqMPDW4MiC0cW8YiHyGJXjeza4kPQeL5zjHnA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=VZoNZooRaqDzEWaRLEKdrKAAKC6uL0sBgSFjdygxcXA=;
-        b=YicF4gf3bpakfo8mkfoGL7gBgerHv+jDlmPJqYI9CUN79mjwWkxqMQXK1ZByf555LA
-         umwc2WQrdMNribByYM++ayQmnyTwOL2IaSI+9d/iRfPlpYvZhukjNbnv4XkRJwfJ0cR8
-         qsFlGZuM55ZImpi3a0iY7Ptk4xxA4knSPKBqyPwxr+727tqMddpCaKlFZiPEMoZnzf75
-         tYnE60Lq8BTaNN9IPI79nK+BffClf/DCNCBWeCn8h4sgibrHPJsNhigumqRRRpYiaAwt
-         aQPJlB71zdZqCH9hoJBbnSGEU2KwRRHopxeGkIyrb9LXbmoxxOE/ectKSiBi7SvVdpuw
-         yrlg==
-X-Gm-Message-State: AGRZ1gJSSfx/ENg0QDO0BEn2LE6Y80eofVDm9AVN8riiRR637fRhF/zL
-        kE5dogxDK7OCnu+amsNzm0sCH2V30no=
-X-Google-Smtp-Source: AJdET5eZFgDxvtpCJhWDx++Ofh80WXACsTywu83ZKhSJL2h6RaRt9b9HR/AK4AVksynRgB59H+EOzQ==
-X-Received: by 2002:a25:5285:: with SMTP id g127-v6mr18487441ybb.5.1540917480549;
-        Tue, 30 Oct 2018 09:38:00 -0700 (PDT)
-Received: from mail-yw1-f42.google.com (mail-yw1-f42.google.com. [209.85.161.42])
-        by smtp.gmail.com with ESMTPSA id 79-v6sm5230961ywr.13.2018.10.30.09.37.58
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 09:37:58 -0700 (PDT)
-Received: by mail-yw1-f42.google.com with SMTP id h21-v6so4932076ywa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 09:37:58 -0700 (PDT)
-X-Received: by 2002:a81:813:: with SMTP id 19-v6mr3464914ywi.168.1540917477794;
- Tue, 30 Oct 2018 09:37:57 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Tue, 30 Oct 2018 09:37:56
- -0700 (PDT)
-In-Reply-To: <20181030152641.GE8177@hirez.programming.kicks-ass.net>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-11-igor.stoppa@huawei.com> <20181026092609.GB3159@worktop.c.hoisthospitality.com>
- <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
- <20181028183126.GB744@hirez.programming.kicks-ass.net> <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
- <20181030152641.GE8177@hirez.programming.kicks-ass.net>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 30 Oct 2018 09:37:56 -0700
-X-Gmail-Original-Message-ID: <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
-Message-ID: <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
-Subject: Re: [PATCH 10/17] prmem: documentation
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Igor Stoppa <igor.stoppa@gmail.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
+        Tue, 30 Oct 2018 21:33:42 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33416 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726501AbeJaBdm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 21:33:42 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4AD024E90D;
+        Tue, 30 Oct 2018 16:39:30 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.31])
+        by smtp.corp.redhat.com (Postfix) with SMTP id B9A0D5D757;
+        Tue, 30 Oct 2018 16:39:27 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Tue, 30 Oct 2018 17:39:29 +0100 (CET)
+Date:   Tue, 30 Oct 2018 17:39:26 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     Kees Cook <keescook@chromium.org>,
         Andy Lutomirski <luto@amacapital.net>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian@brauner.io>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Aleksa Sarai <asarai@suse.de>, linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v8 1/2] seccomp: add a return code to trap to userspace
+Message-ID: <20181030163926.GC7643@redhat.com>
+References: <20181029224031.29809-1-tycho@tycho.ws>
+ <20181029224031.29809-2-tycho@tycho.ws>
+ <20181030150254.GB3385@redhat.com>
+ <20181030155403.GC7343@cisco>
+ <20181030162752.GB7643@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181030162752.GB7643@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 30 Oct 2018 16:39:30 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 8:26 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-> I suppose the 'normal' attack goes like:
+On 10/30, Oleg Nesterov wrote:
 >
->  1) find buffer-overrun / bound check failure
->  2) use that to write to 'interesting' location
->  3) that write results arbitrary code execution
->  4) win
+> On 10/30, Tycho Andersen wrote:
+> >
+> > @@ -828,6 +823,11 @@ static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
+> >  	 */
+> >  	rmb();
+> >
+> > +	if (!sd) {
+> > +		populate_seccomp_data(&sd_local);
+> > +		sd = &sd_local;
+> > +	}
+> > +
 >
-> Of course, if the store of 2 is to the current cred structure, and
-> simply sets the effective uid to 0, we can skip 3.
+> To me it would be more clean to remove the "if (!sd)" check, case(SECCOMP_RET_TRACE)
+> in __seccomp_filter() can simply do populate_seccomp_data(&sd_local) unconditionally
+> and pass &sd_local to __seccomp_filter().
 
-In most cases, yes, gaining root is game over. However, I don't want
-to discount other threat models: some systems have been designed not
-to trust root, so a cred attack doesn't always get an attacker full
-control (e.g. lockdown series, signed modules, encrypted VMs, etc).
+Ah, please ignore, emulate_vsyscall() does secure_computing(NULL).
 
-> Which seems to suggest all cred structures should be made r/o like this.
-> But I'm not sure I remember these patches doing that.
+Btw. why __seccomp_filter() doesn't return a boolean?
 
-There are things that attempt to protect cred (and other things, like
-page tables) via hypervisors (see Samsung KNOX) or via syscall
-boundary checking (see Linux Kernel Runtime Guard). They're pretty
-interesting, but I'm not sure if there is a clear way forward on it
-working in upstream, but that's why I think these discussions are
-useful.
+Or at least, why can't case(SECCOMP_RET_TRACE) simply do
 
-> Also, there is an inverse situation with all this. If you make
-> everything R/O, then you need this allow-write for everything you do,
-> which then is about to include a case with an overflow / bound check
-> fail, and we're back to square 1.
+	return __seccomp_filter(this_syscall, NULL, true);
 
-Sure -- this is the fine line in trying to build these defenses. The
-point is to narrow the scope of attack. Stupid metaphor follows: right
-now we have only a couple walls; if we add walls we can focus on make
-sure the doors and windows are safe. If we make the relatively
-easy-to-find-in-memory page tables read-only-at-rest then a whole
-class of very powerful exploits that depend on page table attacks go
-away.
+?
 
-As part of all of this is the observation that there are two types of
-things clearly worth protecting: that which is updated rarely (no need
-to leave it writable for so much of its lifetime), and that which is
-especially sensitive (page tables, security policy, function pointers,
-etc). Finding a general purpose way to deal with these (like we have
-for other data-lifetime cases like const and __ro_after_init) would be
-very nice. I don't think there is a slippery slope here.
+Oleg.
 
--Kees
-
--- 
-Kees Cook
