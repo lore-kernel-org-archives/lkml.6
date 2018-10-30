@@ -2,117 +2,140 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F076BC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:33:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 999D4C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:34:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E7C520870
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:33:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Kpxzsg3t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E7C520870
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 53C5F2084A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:34:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53C5F2084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727386AbeJ3SZl (ORCPT
+        id S1726858AbeJ3S1H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 14:25:41 -0400
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:50472 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726212AbeJ3SZl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 14:25:41 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Jb538aBNadqCa/xt5ESYdyWD+Ch2sPuVswzApQteoU8=; b=Kpxzsg3toP1jr/D0j3EUFSL65
-        Rl2fxGNxAMxkKkTG8D5+Bo4jnUw9fBBVAO50XDuPDJW2pXA5wVcpX+wC1Jinm7xb4HJAMYHOmCSOo
-        yk5WF59ZXxJeQV9HAC/FAAXhEW3KXpP1LiY1rRrxHrK6VLmAp+Ab+AI0hWGrbg7AFve+g=;
-Received: from n2100.armlinux.org.uk ([fd8f:7570:feb6:1:214:fdff:fe10:4f86]:46148)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gHQOB-000111-EB; Tue, 30 Oct 2018 09:32:46 +0000
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gHQO8-0003ww-Mz; Tue, 30 Oct 2018 09:32:40 +0000
-Date:   Tue, 30 Oct 2018 09:32:39 +0000
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Greg Hackmann <ghackmann@android.com>,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        CHANDAN VN <chandan.vn@samsung.com>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE" 
-        <devicetree@vger.kernel.org>, rppt@linux.ibm.com,
-        green.hu@gmail.com, deanbo422@gmail.com, gxt@pku.edu.cn,
-        ard.biesheuvel@linaro.org
-Subject: Re: [PATCH 4/6] of/fdt: Populate phys_initrd_start/phys_initrd_size
- from FDT
-Message-ID: <20181030093239.GJ30658@n2100.armlinux.org.uk>
-References: <20181029235206.30060-1-f.fainelli@gmail.com>
- <20181029235206.30060-5-f.fainelli@gmail.com>
+        Tue, 30 Oct 2018 14:27:07 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:62983 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726225AbeJ3S1H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 14:27:07 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 9EFDA88317;
+        Tue, 30 Oct 2018 09:34:25 +0000 (UTC)
+Received: from krava (unknown [10.43.17.150])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 7698F5C559;
+        Tue, 30 Oct 2018 09:34:20 +0000 (UTC)
+Date:   Tue, 30 Oct 2018 10:34:18 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Len Brown <len.brown@intel.com>,
+        Markus Mayer <mmayer@broadcom.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Renninger <trenn@suse.com>,
+        Tzvetomir Stoyanov <tz.stoyanov@gmail.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        "Herton R. Krzesinski" <herton@redhat.com>
+Subject: Re: [PATCH 10/10] tools gpio: Override CFLAGS assignments
+Message-ID: <20181030093418.GC18538@krava>
+References: <20181016150614.21260-1-jolsa@kernel.org>
+ <20181022145007.GD2945@krava>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181029235206.30060-5-f.fainelli@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181022145007.GD2945@krava>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 30 Oct 2018 09:34:25 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 04:52:04PM -0700, Florian Fainelli wrote:
-> If the architecture implements ARCH_HAS_PHYS_INITRD, make the FDT
-> scanning code populate the physical address of the start of the FDT and
-> its size.
+ping
+
+thanks,
+jirka
+
+On Mon, Oct 22, 2018 at 04:50:07PM +0200, Jiri Olsa wrote:
+> On Tue, Oct 16, 2018 at 05:06:05PM +0200, Jiri Olsa wrote:
+> > hi,
+> > while hardening some of the tools rpm, we noticed we
+> > can't pass build flags to some of them. 
+> > 
+> > Sending separate tools fixes for what we found. It's
+> > mostly override for CFLAGS and adding LDFLAGS to the
+> > build commands.
+> > 
+> > thanks,
+> > jirka
+> > 
+> > 
+> > Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+> > Cc: Hartmut Knaack <knaack.h@gmx.de>
+> > Cc: Jonathan Cameron <jic23@kernel.org>
+> > Cc: Lars-Peter Clausen <lars@metafoo.de>
+> > Cc: Len Brown <len.brown@intel.com>
+> > Cc: Markus Mayer <mmayer@broadcom.com>
+> > Cc: Shuah Khan <shuah@kernel.org>
+> > Cc: Signed-off-by: Len Brown <len.brown@intel.com>
+> > Cc: Steven Rostedt <rostedt@goodmis.org>
+> > Cc: Thomas Renninger <trenn@suse.com>
+> > Cc: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
+> > Cc: Zhang Rui <rui.zhang@intel.com>
+> > ---
+> > Jiri Olsa (10):
+> >       tools lib traceevent: Use LDFLAGS in the build commands
+> >       tools perf: Pass build flags to traceevent build
+> >       tools cpupower debug: Allow to use outside build flags
+> >       tools cpupower: Override CFLAGS assignments
+> >       tools power x86_energy_perf_policy: Override CFLAGS assignments and add LDFLAGS to build command
+> >       tools thermal tmon: Override CFLAGS assignments
+> >       tools thermal tmon: Use -O3 instead of -O1 if available
+> >       tools power turbostat: Override CFLAGS assignments and add LDFLAGS to build command
+> >       tools iio: Override CFLAGS assignments
+> >       tools gpio: Override CFLAGS assignments
 > 
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> the last one did not get post for some reason,
+> attaching it now
+> 
+> jirka
+> 
+> 
 > ---
->  arch/arm/mm/init.c | 2 +-
->  drivers/of/fdt.c   | 4 ++++
->  2 files changed, 5 insertions(+), 1 deletion(-)
+> So user could specify outside CFLAGS values.
 > 
-> diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
-> index 8f364aa24172..517e95cfb5d2 100644
-> --- a/arch/arm/mm/init.c
-> +++ b/arch/arm/mm/init.c
-> @@ -237,7 +237,7 @@ static void __init arm_initrd_init(void)
->  	phys_addr_t start;
->  	unsigned long size;
+> Cc: Jonathan Cameron <jic23@kernel.org>
+> Cc: Hartmut Knaack <knaack.h@gmx.de>
+> Cc: Lars-Peter Clausen <lars@metafoo.de>
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  tools/gpio/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/gpio/Makefile b/tools/gpio/Makefile
+> index 240eda014b37..6ecdd1067826 100644
+> --- a/tools/gpio/Makefile
+> +++ b/tools/gpio/Makefile
+> @@ -12,7 +12,7 @@ endif
+>  # (this improves performance and avoids hard-to-debug behaviour);
+>  MAKEFLAGS += -r
 >  
-> -	/* FDT scan will populate initrd_start */
-> +	/* FDT scan will populate initrd_start and phys_initrd_start */
->  	if (initrd_start && !phys_initrd_size) {
->  		phys_initrd_start = __virt_to_phys(initrd_start);
->  		phys_initrd_size = initrd_end - initrd_start;
-
-We should be able to delete the whole if () { } block and comment as
-a result of this series - it was added by Rob in 65939301acdb to
-unify the DT initrd code.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+> -CFLAGS += -O2 -Wall -g -D_GNU_SOURCE -I$(OUTPUT)include
+> +override CFLAGS += -O2 -Wall -g -D_GNU_SOURCE -I$(OUTPUT)include
+>  
+>  ALL_TARGETS := lsgpio gpio-hammer gpio-event-mon
+>  ALL_PROGRAMS := $(patsubst %,$(OUTPUT)%,$(ALL_TARGETS))
+> -- 
+> 2.17.2
+> 
