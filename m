@@ -3,34 +3,34 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C091C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CFC8C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:22:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15C4F2080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:22:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15C4F2080A
+	by mail.kernel.org (Postfix) with ESMTP id 0D4E12080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:22:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D4E12080A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728173AbeJaERe (ORCPT
+        id S1728190AbeJaERg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 00:17:34 -0400
-Received: from mga11.intel.com ([192.55.52.93]:23880 "EHLO mga11.intel.com"
+        Wed, 31 Oct 2018 00:17:36 -0400
+Received: from mga11.intel.com ([192.55.52.93]:23900 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727764AbeJaERb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 00:17:31 -0400
+        id S1727764AbeJaERe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 00:17:34 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 12:22:45 -0700
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 12:22:49 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,445,1534834800"; 
-   d="scan'208";a="103876795"
+   d="scan'208";a="103876811"
 Received: from skl-02.jf.intel.com ([10.54.74.62])
-  by fmsmga001.fm.intel.com with ESMTP; 30 Oct 2018 12:22:45 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 30 Oct 2018 12:22:49 -0700
 From:   Tim Chen <tim.c.chen@linux.intel.com>
 To:     Jiri Kosina <jikos@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -49,9 +49,9 @@ Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
         Jon Masters <jcm@redhat.com>,
         Waiman Long <longman9394@gmail.com>,
         linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [Patch v4 13/18] security: Update security level of a process when modifying its dumpability
-Date:   Tue, 30 Oct 2018 11:49:20 -0700
-Message-Id: <e8b6b10e15653b3b2c5727e935f75142e441f834.1540923609.git.tim.c.chen@linux.intel.com>
+Subject: [Patch v4 17/18] x86/speculation: Update SPEC_CTRL MSRs of remote CPUs
+Date:   Tue, 30 Oct 2018 11:49:24 -0700
+Message-Id: <a14236d8b56dafe6988ce1b266a6e929be5296a8.1540923609.git.tim.c.chen@linux.intel.com>
 X-Mailer: git-send-email 2.9.4
 In-Reply-To: <cover.1540923609.git.tim.c.chen@linux.intel.com>
 References: <cover.1540923609.git.tim.c.chen@linux.intel.com>
@@ -62,141 +62,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a process is made non-dumpable, the action implies a higher level
-of security implicitly as its memory is imposed with access restriction.
+The SPEC_CTRL MSR of a remote CPU cannot be updated immediately when
+TIF_STIBP flag is changed on a task running on the remote CPU.
 
-A call to update_process_security() is added to update security defenses
-according to a process's dumpability and its implied security level.
+If next task's TIF_STIBP flag happened to be the same as the updated
+TIF_STIBP on the previous task on the next context switch, the SPEC_CTRL
+MSR update is missed as the SPEC_CTRL MSR update occurs only on flag
+changes, and update of the SPEC_CTRL MSR did not happen while previous
+task was running.
 
-Architecture specific defenses is erected for threads in the process
-by calling arch_set_security(task, SECURITY_LEVEL_HIGH) or the defenses
-relaxed via arch_set_security(task, SECURITY_LEVEL_NORMAL).  Such defenses
-may incur extra overhead and is reserved for tasks needing high security.
+This patch creates TIF_UPDATE_SPEC_CTRL bit and set it along with
+TIF_STIBP bit update for tasks running on remote CPU. This signals that
+the SPEC_CTRL MSR has a pending forced update on the next context
+switch.
 
 Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 ---
- fs/exec.c                |  2 ++
- include/linux/security.h |  6 ++++++
- kernel/cred.c            |  5 ++++-
- kernel/sys.c             |  1 +
- security/security.c      | 31 +++++++++++++++++++++++++++++++
- 5 files changed, 44 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/thread_info.h |  6 +++++-
+ arch/x86/kernel/cpu/bugs.c         |  2 ++
+ arch/x86/kernel/process.c          | 22 +++++++++++++++++++++-
+ 3 files changed, 28 insertions(+), 2 deletions(-)
 
-diff --git a/fs/exec.c b/fs/exec.c
-index 1ebf6e5..e70c8a7 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1366,6 +1366,8 @@ void setup_new_exec(struct linux_binprm * bprm)
- 	else
- 		set_dumpable(current->mm, SUID_DUMP_USER);
+diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
+index 4f6a7a9..7bdd097 100644
+--- a/arch/x86/include/asm/thread_info.h
++++ b/arch/x86/include/asm/thread_info.h
+@@ -97,6 +97,7 @@ struct thread_info {
+ #define TIF_USER_RETURN_NOTIFY	14	/* Notify kernel of userspace return */
+ #define TIF_PATCH_PENDING	15	/* Pending live patching update */
+ #define TIF_FSCHECK		16	/* Check FS is USER_DS on return */
++#define TIF_UPDATE_SPEC_CTRL    17	/* Pending update of speculation control MSR */
  
-+	update_process_security(current);
+ /* Task status */
+ #define TIF_UPROBE		18	/* Breakpointed or singlestepping */
+@@ -131,6 +132,7 @@ struct thread_info {
+ #define _TIF_USER_RETURN_NOTIFY	(1 << TIF_USER_RETURN_NOTIFY)
+ #define _TIF_PATCH_PENDING	(1 << TIF_PATCH_PENDING)
+ #define _TIF_FSCHECK		(1 << TIF_FSCHECK)
++#define _TIF_UPDATE_SPEC_CTRL	(1 << TIF_UPDATE_SPEC_CTRL)
+ 
+ #define _TIF_UPROBE		(1 << TIF_UPROBE)
+ #define _TIF_MEMDIE		(1 << TIF_MEMDIE)
+@@ -166,7 +168,9 @@ struct thread_info {
+ 	(_TIF_IO_BITMAP|_TIF_NOCPUID|_TIF_NOTSC|_TIF_BLOCKSTEP|		\
+ 	 _TIF_SSBD|_TIF_STIBP)
+ 
+-#define _TIF_WORK_CTXSW_PREV (_TIF_WORK_CTXSW|_TIF_USER_RETURN_NOTIFY)
++#define _TIF_WORK_CTXSW_PREV \
++	(_TIF_WORK_CTXSW|_TIF_USER_RETURN_NOTIFY|_TIF_UPDATE_SPEC_CTRL)
 +
- 	arch_setup_new_exec();
- 	perf_event_exec();
- 	__set_task_comm(current, kbasename(bprm->filename), true);
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 75f4156..469d05f 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -61,6 +61,12 @@ struct mm_struct;
- /* LSM Agnostic defines for sb_set_mnt_opts */
- #define SECURITY_LSM_NATIVE_LABELS	1
+ #define _TIF_WORK_CTXSW_NEXT (_TIF_WORK_CTXSW)
  
-+/* Security level */
-+#define SECURITY_NORMAL	0
-+#define SECURITY_HIGH	1
-+
-+extern int update_process_security(struct task_struct *task);
-+
- struct ctl_table;
- struct audit_krule;
- struct user_namespace;
-diff --git a/kernel/cred.c b/kernel/cred.c
-index ecf0365..0806a74 100644
---- a/kernel/cred.c
-+++ b/kernel/cred.c
-@@ -19,6 +19,7 @@
- #include <linux/security.h>
- #include <linux/binfmts.h>
- #include <linux/cn_proc.h>
-+#include <linux/security.h>
+ #define STACK_WARN		(THREAD_SIZE/8)
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index b402b96..1ba9cb5 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -789,6 +789,8 @@ static void set_task_stibp(struct task_struct *tsk, bool stibp_on)
  
- #if 0
- #define kdebug(FMT, ...)						\
-@@ -445,8 +446,10 @@ int commit_creds(struct cred *new)
- 	    !uid_eq(old->fsuid, new->fsuid) ||
- 	    !gid_eq(old->fsgid, new->fsgid) ||
- 	    !cred_cap_issubset(old, new)) {
--		if (task->mm)
-+		if (task->mm) {
- 			set_dumpable(task->mm, suid_dumpable);
-+			update_process_security(task);
-+		}
- 		task->pdeath_signal = 0;
- 		smp_wmb();
- 	}
-diff --git a/kernel/sys.c b/kernel/sys.c
-index cf5c675..c6f179a 100644
---- a/kernel/sys.c
-+++ b/kernel/sys.c
-@@ -2293,6 +2293,7 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
- 			break;
- 		}
- 		set_dumpable(me->mm, arg2);
-+		update_process_security(me);
- 		break;
- 
- 	case PR_SET_UNALIGN:
-diff --git a/security/security.c b/security/security.c
-index 736e78d..12460f2 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -28,6 +28,8 @@
- #include <linux/personality.h>
- #include <linux/backing-dev.h>
- #include <linux/string.h>
-+#include <linux/coredump.h>
-+#include <linux/sched/signal.h>
- #include <net/flow.h>
- 
- #include <trace/events/initcall.h>
-@@ -1353,6 +1355,35 @@ int security_inode_getsecctx(struct inode *inode, void **ctx, u32 *ctxlen)
+ 	if (tsk == current)
+ 		speculation_ctrl_update_current();
++	else if (task_cpu(tsk) != smp_processor_id())
++		set_tsk_thread_flag(tsk, TIF_UPDATE_SPEC_CTRL);
  }
- EXPORT_SYMBOL(security_inode_getsecctx);
  
-+void __weak arch_set_security(struct task_struct *task,
-+			      unsigned int security_level)
-+{
-+}
-+
-+int update_process_security(struct task_struct *task)
-+{
-+	unsigned long flags;
-+	struct task_struct *t;
-+	int security_level;
-+
-+	if (!task->mm)
-+		return -EINVAL;
-+
-+	if (!lock_task_sighand(task, &flags))
-+		return -ESRCH;
-+
-+	if (get_dumpable(task->mm) != SUID_DUMP_USER)
-+		security_level = SECURITY_HIGH;
-+	else
-+		security_level = SECURITY_NORMAL;
-+
-+	for_each_thread(task, t)
-+		arch_set_security(task, security_level);
-+
-+	unlock_task_sighand(task, &flags);
-+	return 0;
-+}
-+
- #ifdef CONFIG_SECURITY_NETWORK
+ void arch_set_security(struct task_struct *tsk, unsigned int value)
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index 943e90d..048b7f4b 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -426,7 +426,19 @@ static __always_inline void spec_ctrl_update_msr(unsigned long tifn)
+ static __always_inline void __speculation_ctrl_update(unsigned long tifp,
+ 						      unsigned long tifn)
+ {
+-	bool updmsr = !!((tifp ^ tifn) & _TIF_STIBP);
++	/*
++	 * If TIF_UPDATE_SPEC_CTRL bit is set in tifp, speculation related
++	 * TIF flags have changed when previous task was running, but
++	 * SPEC_CTRL MSR has not been synchronized with TIF flag changes.
++	 * SPEC_CTRL MSR value can be out of date.
++	 *
++	 * Need to force update SPEC_CTRL MSR if TIF_UPDATE_SPEC_CTRL
++	 * bit in tifp is set.
++	 *
++	 * The TIF_UPDATE_SPEC_CTRL bit in tifn was cleared before calling
++	 * this function.
++	 */
++	bool updmsr = !!((tifp ^ tifn) & (_TIF_STIBP|_TIF_UPDATE_SPEC_CTRL));
  
- int security_unix_stream_connect(struct sock *sock, struct sock *other, struct sock *newsk)
+ 	/* If TIF_SSBD is different, select the proper mitigation method */
+ 	if ((tifp ^ tifn) & _TIF_SSBD) {
+@@ -482,6 +494,14 @@ void __switch_to_xtra(struct task_struct *prev_p, struct task_struct *next_p,
+ 	if ((tifp ^ tifn) & _TIF_NOCPUID)
+ 		set_cpuid_faulting(!!(tifn & _TIF_NOCPUID));
+ 
++	if (tifp & _TIF_UPDATE_SPEC_CTRL)
++		clear_tsk_thread_flag(prev_p, TIF_UPDATE_SPEC_CTRL);
++
++	if (tifn & _TIF_UPDATE_SPEC_CTRL) {
++		clear_tsk_thread_flag(next_p, TIF_UPDATE_SPEC_CTRL);
++		tifn &= ~_TIF_UPDATE_SPEC_CTRL;
++	}
++
+ 	__speculation_ctrl_update(tifp, tifn);
+ }
+ 
 -- 
 2.9.4
 
