@@ -2,117 +2,88 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D84DC6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8397DC6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:01:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C849720823
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:01:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C849720823
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 43A2320848
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:01:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FHBDvlke"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43A2320848
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbeJ3Sxw (ORCPT
+        id S1727029AbeJ3SyD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 14:53:52 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:53533 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726225AbeJ3Sxw (ORCPT
+        Tue, 30 Oct 2018 14:54:03 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34152 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726679AbeJ3SyD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 14:53:52 -0400
-Received: from tmo-115-37.customers.d1-online.com ([80.187.115.37] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gHQp7-0003og-LD; Tue, 30 Oct 2018 11:00:33 +0100
-Date:   Tue, 30 Oct 2018 11:00:31 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Luwei Kang <luwei.kang@intel.com>, kvm@vger.kernel.org,
-        x86@kernel.org, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        rkrcmar@redhat.com, joro@8bytes.org, songliubraving@fb.com,
-        peterz@infradead.org, kstewart@linuxfoundation.org,
-        gregkh@linuxfoundation.org, thomas.lendacky@amd.com,
-        konrad.wilk@oracle.com, mattst88@gmail.com,
-        Janakarajan.Natarajan@amd.com, dwmw@amazon.co.uk,
-        jpoimboe@redhat.com, marcorr@google.com, ubizjak@gmail.com,
-        sean.j.christopherson@intel.com, jmattson@google.com,
-        linux-kernel@vger.kernel.org,
-        Chao Peng <chao.p.peng@linux.intel.com>
-Subject: Re: [PATCH v13 08/12] KVM: x86: Add Intel PT context switch for each
- vcpu
-In-Reply-To: <bc192976-2c56-3cfc-a697-cf941a92ad0a@redhat.com>
-Message-ID: <alpine.DEB.2.21.1810301058060.5984@nanos.tec.linutronix.de>
-References: <1540368316-12998-1-git-send-email-luwei.kang@intel.com> <1540368316-12998-9-git-send-email-luwei.kang@intel.com> <87a7n37iuf.fsf@ashishki-desk.ger.corp.intel.com> <bc192976-2c56-3cfc-a697-cf941a92ad0a@redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        Tue, 30 Oct 2018 14:54:03 -0400
+Received: by mail-wr1-f66.google.com with SMTP id l6-v6so11860208wrt.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 03:01:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=PcIdga3zkqCuJMMCGKfLMgVBdR4DqN1Jn/lpPqPfX2c=;
+        b=FHBDvlkeG5tM+SUh4g4qptsGHgK8OsP4k0df5y4l52hk6Y1Gg5f1HwaaoJzAYFdJEQ
+         xzp+HIxUJsj3kmLc7mgb4pTpHaudgGKZbZjVTVDHJ9AZozp3s5Lgoy7XHVuCdW2Pze2n
+         bBRC1N3r/AN84ziKil25hZFaMFzqgi5WdsXZ9uWjipuvN0JX+729y2nAhjY3JXYUP9RR
+         MIaQTP7Y2FYfQzmuUuIXfwJXf+HLXqY/E6Y+QhE35kzQzcYdbTAob9yHzZ5y6XuBhtTN
+         YjghldpzV88xnx+3UYs5AzS5piClWMpLVIr5nKcgSGX2343P0tuE5i29AccGhSf7/046
+         zhaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=PcIdga3zkqCuJMMCGKfLMgVBdR4DqN1Jn/lpPqPfX2c=;
+        b=ccFz8zZuzjSS9zXi/SWq16q6Rr03+ZupGzgFVtzy4vpl5bQHrpUZ0vLJmOU3pJ3ImT
+         zEZKuH3cjDiSsdPeqlVQy8eW7hoPcExZ8qkGGLhuJy0tngFX2sK0N08Gm0tG2KF1hu03
+         9lg11ZyLbZdF+AR1a4BpY+WYSD5QmB/HHd/4Zat4Ys7kl99sr9aXMRvYJlksq9kSyWd6
+         idfmQWCM8dkzPn8cYHzTY5vv0tFok5zDvQD20DYfPBAx0K1cxSE+foH3DAzTWNOSvBSY
+         ZESQ+IrOQwGYMpcQ+aApZ+UyqT3kbKmwFqHnwlLwcHp5ZZxOSl6X3gXsW40mhoMo6yhC
+         Ls0A==
+X-Gm-Message-State: AGRZ1gIMTIhwNu69MvHBITOxhkwbviy9kmtToEHXuBmeTagDXBJERq+Z
+        ROtaqFHYoUO0nl+EzvViKzQ=
+X-Google-Smtp-Source: AJdET5fSnJcvBXTDWEZzfcCwiO4xU4tI/3q70xIOCwRMF3mHO9fpl4eUh96mK+1CuwHUM5V/q8wRbQ==
+X-Received: by 2002:adf:e388:: with SMTP id e8-v6mr697516wrm.321.1540893674667;
+        Tue, 30 Oct 2018 03:01:14 -0700 (PDT)
+Received: from localhost.localdomain (ip-76.net-89-3-178.rev.numericable.fr. [89.3.178.76])
+        by smtp.gmail.com with ESMTPSA id f1-v6sm18420825wme.23.2018.10.30.03.01.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 30 Oct 2018 03:01:14 -0700 (PDT)
+From:   David Abdurachmanov <david.abdurachmanov@gmail.com>
+To:     palmer@sifive.com, aou@eecs.berkeley.edu, green.hu@gmail.com,
+        deanbo422@gmail.com, linux-kernel@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+Cc:     David Abdurachmanov <david.abdurachmanov@gmail.com>
+Subject: [PATCH 0/2] riscv: add ARCH_HAS_SG_CHAIN to Kconfig
+Date:   Tue, 30 Oct 2018 11:01:05 +0100
+Message-Id: <20181030100107.4590-1-david.abdurachmanov@gmail.com>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 29 Oct 2018, Paolo Bonzini wrote:
-> On 24/10/2018 12:13, Alexander Shishkin wrote:
-> > Luwei Kang <luwei.kang@intel.com> writes:
-> >> +	/*
-> >> +	 * Set guest state of MSR_IA32_RTIT_CTL MSR (PT will be disabled
-> >> +	 * on VM entry when it has been disabled in guest before).
-> >> +	 */
-> >> +	vmcs_write64(GUEST_IA32_RTIT_CTL, vmx->pt_desc.guest.ctl);
-> >> +
-> >> +	if (vmx->pt_desc.guest.ctl & RTIT_CTL_TRACEEN) {
-> >> +		wrmsrl(MSR_IA32_RTIT_CTL, 0);
-> >> +		pt_save_msr(&vmx->pt_desc.host, vmx->pt_desc.addr_range);
-> >> +		pt_load_msr(&vmx->pt_desc.guest, vmx->pt_desc.addr_range);
-> >> +	}
-> >> +}
-> > 
-> > From my side this is still a NAK, because [1].
-> > 
-> > [1] https://marc.info/?l=kvm&m=153847567226248&w=2
-> 
-> Then you should have replied to
-> https://marc.info/?l=kvm&m=153865386015249&w=2 instead of having Luwei
-> do the work for nothing.
-> 
-> Quoting from there:
-> 
-> >> One shouldn't have to enable or disable anything in KVM to stop it from
-> >> breaking one's existing workflow. That makes no sense.
-> > 
-> > If you "have to enable or disable anything" it means you have to
-> > override the default.  But the default in this patches is "no change
-> > compared to before the patches", leaving tracing of both host and guest
-> > entirely to the host, so I don't understand your remark.  What workflow
-> > is broken?
-> > 
-> >> There already are controls in perf that enable/disable guest tracing.
-> > 
-> > You are confusing "tracing guest from the host" and "the guest can trace
-> > itself".  This patchset is adding support for the latter, and that
-> > affects directly whether the tracing CPUID leaf can be added to the
-> > guest.  Therefore it's not perf that can decide whether to turn it on;
-> > KVM must know it when /dev/kvm is opened, which is why it is a module
-> > parameter.
-> 
-> I'd be happier if we found an agreement, but without discussion that
-> just won't happen.
+This should improve virtio-gpu support for riscv.
 
-So at least we need a way for perf on the host to programmatically detect,
-that 'guest traces itself' is enabled, so it can inject that information
-into the host data and post processing can tell that. W/o something like
-that it's going to be a FAQ.
+David Abdurachmanov (2):
+  riscv: add ARCH_HAS_SG_CHAIN
+  doc: re-run features-refresh.sh
 
-Thanks,
+ Documentation/features/io/sg-chain/arch-support.txt           | 4 ++--
+ .../features/locking/queued-spinlocks/arch-support.txt        | 2 +-
+ Documentation/features/perf/kprobes-event/arch-support.txt    | 2 +-
+ Documentation/features/vm/pte_special/arch-support.txt        | 2 +-
+ arch/riscv/Kconfig                                            | 1 +
+ 5 files changed, 6 insertions(+), 5 deletions(-)
 
-	tglx
-
+-- 
+2.17.2
 
