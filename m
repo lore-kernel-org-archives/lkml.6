@@ -2,121 +2,95 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A25C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:18:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97DBAC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:18:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A5512080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:18:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="Zefh9YT/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A5512080A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+	by mail.kernel.org (Postfix) with ESMTP id 69D082080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:18:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69D082080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726491AbeJ3RKY (ORCPT
+        id S1727085AbeJ3RKZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 30 Oct 2018 13:10:25 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35898 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726493AbeJ3RKY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 30 Oct 2018 13:10:24 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42266 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726172AbeJ3RKY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 13:10:24 -0400
-Received: by mail-lj1-f194.google.com with SMTP id f3-v6so10452382ljk.9
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 01:17:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=C5UMxB7npR4RaGrkvaFBDOE5Fk7KH1LfnH9Y4PcSTGI=;
-        b=Zefh9YT/8U2b5/NAQ+cw5iMDX+KdGAl4OE23rBysT145Gx5TdZx1smRoV4cqjIOHUV
-         EeL5Gw0YbrPHP0w62qSG+0hnQtzIYsjtUi/P/ya/6uAUUHJ+/18Q1GNaLC8DQ15o8MxD
-         TB29781gyR+dOxwQLCH0KuvJyqE5RRq6jdHdg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=C5UMxB7npR4RaGrkvaFBDOE5Fk7KH1LfnH9Y4PcSTGI=;
-        b=FNWyFE7CagvVwtGnm8TBFDFbqZAPXpTNZ8TfTS/79O6r868QkpSJbc8R+o/JsRawfV
-         boaU1xRIUxp+qCH/6WQSluUMnx/pKuHNvJShEhvtG31LMpJ1xsBTeQcf4O29fjGskrcI
-         j027XoozzRDsET31x+FtErL91Y+Mw6U2FmJfazvwy6KVNZZsjK6B/Ghz79tDwmAFnnah
-         yX2GJjknSTvlXq5xlWcHhKsYPk6OYum7ZcNexQWVP7+a1oBFZ2HpKC39+uCDrImZai49
-         8K5g2UMB1GZN/FnkxmQwIECMdqi/JaemaIxWKAd5Yp3codXoFdsD8iVDeMEAAfhOBmc6
-         0rEQ==
-X-Gm-Message-State: AGRZ1gIF706whEdVR35zya8fydfj8ruzISpjCzp1mryt/y7BYjVe/6y6
-        CwGa20N5wDWxXI4K+HnHOZN99Q==
-X-Google-Smtp-Source: AJdET5fTF5zxnu6ulCWRcmwi2CJ6d+6iKp7SkzD97XOIQzNGMoHni68VGD/mFWMJX714nj8/mTaB6Q==
-X-Received: by 2002:a2e:710c:: with SMTP id m12-v6mr11358444ljc.66.1540887476470;
-        Tue, 30 Oct 2018 01:17:56 -0700 (PDT)
-Received: from [172.16.11.40] ([81.216.59.226])
-        by smtp.gmail.com with ESMTPSA id h21sm2686389lfk.41.2018.10.30.01.17.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 01:17:55 -0700 (PDT)
-Subject: Re: [PATCH] fs: proc: move linux_proc_banner to where it is used
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild@vger.kernel.org
-References: <20181026212034.5491-1-linux@rasmusvillemoes.dk>
- <20181027194725.GA30155@avx2>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <408ef493-de1d-37bb-de66-69134c5a1aca@rasmusvillemoes.dk>
-Date:   Tue, 30 Oct 2018 09:17:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id F3AFCAF3F;
+        Tue, 30 Oct 2018 08:17:57 +0000 (UTC)
+Date:   Tue, 30 Oct 2018 09:17:57 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     alexander.h.duyck@linux.intel.com, Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Pasha Tatashin <pavel.tatashin@microsoft.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        rppt@linux.vnet.ibm.com, Ingo Molnar <mingo@kernel.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Zhang Yi <yi.z.zhang@linux.intel.com>,
+        osalvador@techadventures.net
+Subject: Re: [PATCH v5 4/4] mm: Defer ZONE_DEVICE page initialization to the
+ point where we init pgmap
+Message-ID: <20181030081757.GX32673@dhcp22.suse.cz>
+References: <20181029141210.GJ32673@dhcp22.suse.cz>
+ <84f09883c16608ddd2ba88103f43ec6a1c649e97.camel@linux.intel.com>
+ <20181029163528.GL32673@dhcp22.suse.cz>
+ <18dfc5a0db11650ff31433311da32c95e19944d9.camel@linux.intel.com>
+ <20181029172415.GM32673@dhcp22.suse.cz>
+ <8e7a4311a240b241822945c0bb4095c9ffe5a14d.camel@linux.intel.com>
+ <20181029181827.GO32673@dhcp22.suse.cz>
+ <3281f3044fa231bbc1b02d5c5efca3502a0d05a8.camel@linux.intel.com>
+ <20181030062915.GT32673@dhcp22.suse.cz>
+ <CAPcyv4itSde5oiW2j5uK8PCqdpXkHKz=kS8NBk2Ge+Ldb=yLUg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181027194725.GA30155@avx2>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4itSde5oiW2j5uK8PCqdpXkHKz=kS8NBk2Ge+Ldb=yLUg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-10-27 21:47, Alexey Dobriyan wrote:
-> On Fri, Oct 26, 2018 at 11:20:34PM +0200, Rasmus Villemoes wrote:
->> +#include <generated/compile.h>
+On Mon 29-10-18 23:55:12, Dan Williams wrote:
+> On Mon, Oct 29, 2018 at 11:29 PM Michal Hocko <mhocko@kernel.org> wrote:
+> >
+> > On Mon 29-10-18 12:59:11, Alexander Duyck wrote:
+> > > On Mon, 2018-10-29 at 19:18 +0100, Michal Hocko wrote:
+> [..]
+> > > The patches Andrew pushed addressed the immediate issue so that now
+> > > systems with nvdimm/DAX memory can at least initialize quick enough
+> > > that systemd doesn't refuse to mount the root file system due to a
+> > > timeout.
+> >
+> > This is about the first time you actually mention that. I have re-read
+> > the cover letter and all changelogs of patches in this serious. Unless I
+> > have missed something there is nothing about real users hitting issues
+> > out there. nvdimm is still considered a toy because there is no real HW
+> > users can play with.
 > 
->> +#define linux_proc_banner \
->> +	"%s version %s" \
->> +	" (" LINUX_COMPILE_BY "@" LINUX_COMPILE_HOST ")" \
->> +	" (" LINUX_COMPILER ") %s\n"
+> Yes, you have missed something, because that's incorrect. There's been
+> public articles about these parts sampling since May.
 > 
-> Include doesn't work if compiling from scratch:
+>     https://www.anandtech.com/show/12828/intel-launches-optane-dimms-up-to-512gb-apache-pass-is-here
 
-Urgh, thanks. I assumed that all the include/generated/ stuff was always
-generated by the prepare steps in the top Makefile. But the logic for
-making compile.h is in init/Makefile.
+indeed!
 
-> 	rm -rf ../obj
-> 	mkdir ../obj
-> 	make O=../obj defconfig
-> 	make O=../obj fs/proc/version.o
-> 
->   CC      fs/proc/version.o
-> fs/proc/version.c:2:10: fatal error: generated/compile.h: No such file or directory
+> That testing identified this initialization performance problem and
+> thankfully got it addressed in time for the current merge window.
 
-The same happens in current mainline for arch/x86/boot/version.o:
+And I still cannot see a word about that in changelogs.
 
-$ make arch/x86/boot/version.o
-  CALL    scripts/checksyscalls.sh
-  DESCEND  objtool
-  CC      arch/x86/boot/version.o
-arch/x86/boot/version.c:17:31: fatal error: generated/compile.h: No such
-file or directory
-
-Cc kbuild: Wouldn't it be a little nicer creating generated/compile.h
-along with the other files in generated/, so that everybody can rely on
-them being there instead of having the logic for compile.h hidden away
-in init/Makefile and listing it as an explicit dependency? Or is there
-some reason compile.h is special?
-
-Rasmus
-
+-- 
+Michal Hocko
+SUSE Labs
