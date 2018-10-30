@@ -7,44 +7,46 @@ X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DB8C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:33:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E579C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:33:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40B6D2080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:33:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E992420827
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:33:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BK7Kt2ei"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40B6D2080A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ny+dzJJo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E992420827
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728710AbeJ3W0c (ORCPT
+        id S1728871AbeJ3W0e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 18:26:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55034 "EHLO mail.kernel.org"
+        Tue, 30 Oct 2018 18:26:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55048 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727845AbeJ3W0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 18:26:32 -0400
+        id S1727845AbeJ3W0d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 18:26:33 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E34F9205F4;
-        Tue, 30 Oct 2018 13:33:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE3C72080A;
+        Tue, 30 Oct 2018 13:33:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540906382;
-        bh=n2UHXF0sSGQOs0GDiek/fRquEVOtIutWIXMV+vFnM+0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=BK7Kt2eiUNt0TjJAZiA0QSE2Nw6LgC1QqNstJWGcLnAAmcIwxe51wHVs/4Hc7/be+
-         Si7kSZriI9oFgqW8ZthNrlLOMELTscZpMOrd6lUrUdq7BxiRAekL9CDCsY23Rj0PP3
-         xHNVSB1CvnxBXuqIhFVcrA8Jkl4kDLCdaTpeTFwg=
+        s=default; t=1540906384;
+        bh=JrIRHIoIBRtWa5M8t85WcomeCvO62xcy3jUdGFbL4lQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Ny+dzJJoAVhDXF3eZNM/iY8swmGn55nfaOUi4WzpPYAwexbakEJS2r8rZL6Kbt5T/
+         ZxrgwglFg8RMk6MS4zKPV7yiIlgnX6rwUwJXXD4fY22qwSosik+oFaLagEiwLpBN8T
+         UxaouzUIjUzKg4kcXZ3/69nQpCx+14CCL9wIqe0E=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 1/5] sparc: Fix single-pcr perf event counter management.
-Date:   Tue, 30 Oct 2018 09:32:30 -0400
-Message-Id: <20181030133234.218251-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 2/5] sparc: Throttle perf events properly.
+Date:   Tue, 30 Oct 2018 09:32:31 -0400
+Message-Id: <20181030133234.218251-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181030133234.218251-1-sashal@kernel.org>
+References: <20181030133234.218251-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -52,91 +54,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "David S. Miller" <davem@davemloft.net>
 
-[ Upstream commit cfdc3170d214046b9509183fe9b9544dc644d40b ]
+[ Upstream commit 455adb3174d2c8518cef1a61140c211f6ac224d2 ]
 
-It is important to clear the hw->state value for non-stopped events
-when they are added into the PMU.  Otherwise when the event is
-scheduled out, we won't read the counter because HES_UPTODATE is still
-set.  This breaks 'perf stat' and similar use cases, causing all the
-events to show zero.
-
-This worked for multi-pcr because we make explicit sparc_pmu_start()
-calls in calculate_multiple_pcrs().  calculate_single_pcr() doesn't do
-this because the idea there is to accumulate all of the counter
-settings into the single pcr value.  So we have to add explicit
-hw->state handling there.
-
-Like x86, we use the PERF_HES_ARCH bit to track truly stopped events
-so that we don't accidently start them on a reload.
-
-Related to all of this, sparc_pmu_start() is missing a userpage update
-so add it.
+Like x86 and arm, call perf_sample_event_took() in perf event
+NMI interrupt handler.
 
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/sparc/kernel/perf_event.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ arch/sparc/kernel/perf_event.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
 diff --git a/arch/sparc/kernel/perf_event.c b/arch/sparc/kernel/perf_event.c
-index af53c25da2e7..8536532970bb 100644
+index 8536532970bb..c7647acf86b9 100644
 --- a/arch/sparc/kernel/perf_event.c
 +++ b/arch/sparc/kernel/perf_event.c
-@@ -919,6 +919,8 @@ static void read_in_all_counters(struct cpu_hw_events *cpuc)
- 			sparc_perf_event_update(cp, &cp->hw,
- 						cpuc->current_idx[i]);
- 			cpuc->current_idx[i] = PIC_NO_INDEX;
-+			if (cp->hw.state & PERF_HES_STOPPED)
-+				cp->hw.state |= PERF_HES_ARCH;
- 		}
+@@ -23,6 +23,7 @@
+ #include <asm/cpudata.h>
+ #include <asm/uaccess.h>
+ #include <linux/atomic.h>
++#include <linux/sched/clock.h>
+ #include <asm/nmi.h>
+ #include <asm/pcr.h>
+ #include <asm/cacheflush.h>
+@@ -1586,6 +1587,8 @@ static int __kprobes perf_event_nmi_handler(struct notifier_block *self,
+ 	struct perf_sample_data data;
+ 	struct cpu_hw_events *cpuc;
+ 	struct pt_regs *regs;
++	u64 finish_clock;
++	u64 start_clock;
+ 	int i;
+ 
+ 	if (!atomic_read(&active_events))
+@@ -1599,6 +1602,8 @@ static int __kprobes perf_event_nmi_handler(struct notifier_block *self,
+ 		return NOTIFY_DONE;
  	}
- }
-@@ -951,10 +953,12 @@ static void calculate_single_pcr(struct cpu_hw_events *cpuc)
  
- 		enc = perf_event_get_enc(cpuc->events[i]);
- 		cpuc->pcr[0] &= ~mask_for_index(idx);
--		if (hwc->state & PERF_HES_STOPPED)
-+		if (hwc->state & PERF_HES_ARCH) {
- 			cpuc->pcr[0] |= nop_for_index(idx);
--		else
-+		} else {
- 			cpuc->pcr[0] |= event_encoding(enc, idx);
-+			hwc->state = 0;
-+		}
- 	}
- out:
- 	cpuc->pcr[0] |= cpuc->event[0]->hw.config_base;
-@@ -980,6 +984,9 @@ static void calculate_multiple_pcrs(struct cpu_hw_events *cpuc)
- 
- 		cpuc->current_idx[i] = idx;
- 
-+		if (cp->hw.state & PERF_HES_ARCH)
-+			continue;
++	start_clock = sched_clock();
 +
- 		sparc_pmu_start(cp, PERF_EF_RELOAD);
- 	}
- out:
-@@ -1071,6 +1078,8 @@ static void sparc_pmu_start(struct perf_event *event, int flags)
- 	event->hw.state = 0;
+ 	regs = args->regs;
  
- 	sparc_pmu_enable_event(cpuc, &event->hw, idx);
+ 	cpuc = this_cpu_ptr(&cpu_hw_events);
+@@ -1637,6 +1642,10 @@ static int __kprobes perf_event_nmi_handler(struct notifier_block *self,
+ 			sparc_pmu_stop(event, 0);
+ 	}
+ 
++	finish_clock = sched_clock();
 +
-+	perf_event_update_userpage(event);
++	perf_sample_event_took(finish_clock - start_clock);
++
+ 	return NOTIFY_STOP;
  }
  
- static void sparc_pmu_stop(struct perf_event *event, int flags)
-@@ -1363,9 +1372,9 @@ static int sparc_pmu_add(struct perf_event *event, int ef_flags)
- 	cpuc->events[n0] = event->hw.event_base;
- 	cpuc->current_idx[n0] = PIC_NO_INDEX;
- 
--	event->hw.state = PERF_HES_UPTODATE;
-+	event->hw.state = PERF_HES_UPTODATE | PERF_HES_STOPPED;
- 	if (!(ef_flags & PERF_EF_START))
--		event->hw.state |= PERF_HES_STOPPED;
-+		event->hw.state |= PERF_HES_ARCH;
- 
- 	/*
- 	 * If group events scheduling transaction was started,
 -- 
 2.17.1
 
