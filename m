@@ -3,63 +3,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA09C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:15:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CB1FC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:16:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2B522080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:15:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2B522080A
+	by mail.kernel.org (Postfix) with ESMTP id 5D5E22080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:16:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D5E22080A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726761AbeJ3RIF (ORCPT
+        id S1726858AbeJ3RJH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 13:08:05 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35512 "EHLO mx1.suse.de"
+        Tue, 30 Oct 2018 13:09:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35706 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726247AbeJ3RIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 13:08:05 -0400
+        id S1726189AbeJ3RJH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 13:09:07 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9DF4EAF3F;
-        Tue, 30 Oct 2018 08:15:38 +0000 (UTC)
-Date:   Tue, 30 Oct 2018 09:15:37 +0100
+        by mx1.suse.de (Postfix) with ESMTP id 31314AF3F;
+        Tue, 30 Oct 2018 08:16:40 +0000 (UTC)
+Date:   Tue, 30 Oct 2018 09:16:39 +0100
 From:   Michal Hocko <mhocko@kernel.org>
-To:     Miles Chen <miles.chen@mediatek.com>
+To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Joe Perches <joe@perches.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, wsd_upstream@mediatek.com
-Subject: Re: [PATCH v3] mm/page_owner: use kvmalloc instead of kmalloc
-Message-ID: <20181030081537.GV32673@dhcp22.suse.cz>
-References: <1540790176-32339-1-git-send-email-miles.chen@mediatek.com>
- <20181029080708.GA32673@dhcp22.suse.cz>
- <20181029081706.GC32673@dhcp22.suse.cz>
- <1540862950.12374.40.camel@mtkswgap22>
- <20181030060601.GR32673@dhcp22.suse.cz>
- <1540882551.23278.12.camel@mtkswgap22>
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "xishi.qiuxishi@alibaba-inc.com" <xishi.qiuxishi@alibaba-inc.com>,
+        "zy.zhengyi@alibaba-inc.com" <zy.zhengyi@alibaba-inc.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>
+Subject: Re: [PATCH v2 0/2] mm: soft-offline: fix race against page allocation
+Message-ID: <20181030081639.GW32673@dhcp22.suse.cz>
+References: <1531805552-19547-1-git-send-email-n-horiguchi@ah.jp.nec.com>
+ <20180815154334.f3eecd1029a153421631413a@linux-foundation.org>
+ <20180822013748.GA10343@hori1.linux.bs1.fc.nec.co.jp>
+ <20180822080025.GD29735@dhcp22.suse.cz>
+ <20181026084636.GY18839@dhcp22.suse.cz>
+ <20181030065433.GA1119@hori1.linux.bs1.fc.nec.co.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1540882551.23278.12.camel@mtkswgap22>
+In-Reply-To: <20181030065433.GA1119@hori1.linux.bs1.fc.nec.co.jp>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 30-10-18 14:55:51, Miles Chen wrote:
-[...]
-> It's a real problem when using page_owner.
-> I found this issue recently: I'm not able to read page_owner information
-> during a overnight test. (error: read failed: Out of memory). I replace
-> kmalloc() with vmalloc() and it worked well.
+On Tue 30-10-18 06:54:33, Naoya Horiguchi wrote:
+> On Fri, Oct 26, 2018 at 10:46:36AM +0200, Michal Hocko wrote:
+> > On Wed 22-08-18 10:00:25, Michal Hocko wrote:
+> > > On Wed 22-08-18 01:37:48, Naoya Horiguchi wrote:
+> > > > On Wed, Aug 15, 2018 at 03:43:34PM -0700, Andrew Morton wrote:
+> > > > > On Tue, 17 Jul 2018 14:32:30 +0900 Naoya Horiguchi <n-horiguchi@ah.jp.nec.com> wrote:
+> > > > > 
+> > > > > > I've updated the patchset based on feedbacks:
+> > > > > > 
+> > > > > > - updated comments (from Andrew),
+> > > > > > - moved calling set_hwpoison_free_buddy_page() from mm/migrate.c to mm/memory-failure.c,
+> > > > > >   which is necessary to check the return code of set_hwpoison_free_buddy_page(),
+> > > > > > - lkp bot reported a build error when only 1/2 is applied.
+> > > > > > 
+> > > > > >   >    mm/memory-failure.c: In function 'soft_offline_huge_page':
+> > > > > >   > >> mm/memory-failure.c:1610:8: error: implicit declaration of function
+> > > > > >   > 'set_hwpoison_free_buddy_page'; did you mean 'is_free_buddy_page'?
+> > > > > >   > [-Werror=implicit-function-declaration]
+> > > > > >   >        if (set_hwpoison_free_buddy_page(page))
+> > > > > >   >            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > > > > >   >            is_free_buddy_page
+> > > > > >   >    cc1: some warnings being treated as errors
+> > > > > > 
+> > > > > >   set_hwpoison_free_buddy_page() is defined in 2/2, so we can't use it
+> > > > > >   in 1/2. Simply doing s/set_hwpoison_free_buddy_page/!TestSetPageHWPoison/
+> > > > > >   will fix this.
+> > > > > > 
+> > > > > > v1: https://lkml.org/lkml/2018/7/12/968
+> > > > > > 
+> > > > > 
+> > > > > Quite a bit of discussion on these two, but no actual acks or
+> > > > > review-by's?
+> > > > 
+> > > > Really sorry for late response.
+> > > > Xishi provided feedback on previous version, but no final ack/reviewed-by.
+> > > > This fix should work on the reported issue, but rewriting soft-offlining
+> > > > without PageHWPoison flag would be the better fix (no actual patch yet.)
+> > > 
+> > > If we can go with the later the I would obviously prefer that. I cannot
+> > > promise to work on the patch though. I can help with reviewing of
+> > > course.
+> > > 
+> > > If this is important enough that people are hitting the issue in normal
+> > > workloads then sure, let's go with the simple fix and continue on top of
+> > > that.
+> > 
+> > Naoya, did you have any chance to look at this or have any plans to look?
+> > I am willing to review and help with the overal design but I cannot
+> > really promise to work on the code.
+> 
+> I have a draft version of a patch to isolate a page in buddy-friendly manner
+> without PageHWPoison flag (that was written weeks ago, but I couldn't finish
+> because my other project interrupted me ...).
+> I'll post it after testing, especially confirming that hotplug code properly
+> reset the isolated page.
 
-Is this with trimming the allocation to a single page and doing shorter
-than requested reads?
+Thanks a lot Naoya. It is highly appreciated!
 -- 
 Michal Hocko
 SUSE Labs
