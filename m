@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AA87C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:33:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31482C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:33:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BE3B205F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:33:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED9722080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:33:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fO1M9MCf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BE3B205F4
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZaIDtCTg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED9722080A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729103AbeJ3W0k (ORCPT
+        id S1729108AbeJ3W0n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 18:26:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55134 "EHLO mail.kernel.org"
+        Tue, 30 Oct 2018 18:26:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728963AbeJ3W0i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 18:26:38 -0400
+        id S1727530AbeJ3W0m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 18:26:42 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED0C6205F4;
-        Tue, 30 Oct 2018 13:33:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA78B20838;
+        Tue, 30 Oct 2018 13:33:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540906389;
-        bh=9tVXNEQ8hJibso74ux6+eNgQFGKMQ+AXK4w4Yj21g5s=;
+        s=default; t=1540906392;
+        bh=K4myFZ/oLdGd1JDFoRYXGVt8FOfoafJ4QRU0BkkON0w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fO1M9MCffAJ9rYFI3d1ZIdIEsIaGpY9xOIgRaBNPaGJshhBfaYZtH8qTgoPW42gzr
-         q3yGSNWb8IJmvjhS9G8Q3MJm+ps5Og3UsR1u6Ms8e5Ujkh3xrIdVsk4Hr0LzHZ8fxf
-         xiRJPouOc5VNl4rp0sIwLwJMu9JX+Kz094vFMSKE=
+        b=ZaIDtCTgxGmEv0pwaHmqXckW/HbbrDy8+df71pKsZRV3eJUBda8g62cpXJH9X/cK9
+         Sc29KdARp4BFUuTdmBP16OK8Dks36TprkUFWOdQ+LOMfe0RPOsWxg07/quqGku3Ajv
+         BKpBn9a/lVRUFQwlCRFNB0dmpvT33XFowgkSjS18=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 4/5] r8169: fix NAPI handling under high load
-Date:   Tue, 30 Oct 2018 09:32:33 -0400
-Message-Id: <20181030133234.218251-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 5/5] selftests: ftrace: Add synthetic event syntax testcase
+Date:   Tue, 30 Oct 2018 09:32:34 -0400
+Message-Id: <20181030133234.218251-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181030133234.218251-1-sashal@kernel.org>
 References: <20181030133234.218251-1-sashal@kernel.org>
@@ -53,55 +53,110 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Heiner Kallweit <hkallweit1@gmail.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit 6b839b6cf9eada30b086effb51e5d6076bafc761 ]
+[ Upstream commit ba0e41ca81b935b958006c7120466e2217357827 ]
 
-rtl_rx() and rtl_tx() are called only if the respective bits are set
-in the interrupt status register. Under high load NAPI may not be
-able to process all data (work_done == budget) and it will schedule
-subsequent calls to the poll callback.
-rtl_ack_events() however resets the bits in the interrupt status
-register, therefore subsequent calls to rtl8169_poll() won't call
-rtl_rx() and rtl_tx() - chip interrupts are still disabled.
+Add a testcase to check the syntax and field types for
+synthetic_events interface.
 
-Fix this by calling rtl_rx() and rtl_tx() independent of the bits
-set in the interrupt status register. Both functions will detect
-if there's nothing to do for them.
+Link: http://lkml.kernel.org/r/153986838264.18251.16627517536956299922.stgit@devbox
 
-Fixes: da78dbff2e05 ("r8169: remove work from irq handler.")
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Acked-by: Shuah Khan <shuah@kernel.org>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/realtek/r8169.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ .../trigger-synthetic-event-syntax.tc         | 80 +++++++++++++++++++
+ 1 file changed, 80 insertions(+)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-syntax.tc
 
-diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
-index c9aa42ca2b64..9152bbe7a9fe 100644
---- a/drivers/net/ethernet/realtek/r8169.c
-+++ b/drivers/net/ethernet/realtek/r8169.c
-@@ -7445,17 +7445,15 @@ static int rtl8169_poll(struct napi_struct *napi, int budget)
- 	struct rtl8169_private *tp = container_of(napi, struct rtl8169_private, napi);
- 	struct net_device *dev = tp->dev;
- 	u16 enable_mask = RTL_EVENT_NAPI | tp->event_slow;
--	int work_done= 0;
-+	int work_done;
- 	u16 status;
- 
- 	status = rtl_get_events(tp);
- 	rtl_ack_events(tp, status & ~tp->event_slow);
- 
--	if (status & RTL_EVENT_NAPI_RX)
--		work_done = rtl_rx(dev, tp, (u32) budget);
-+	work_done = rtl_rx(dev, tp, (u32) budget);
- 
--	if (status & RTL_EVENT_NAPI_TX)
--		rtl_tx(dev, tp);
-+	rtl_tx(dev, tp);
- 
- 	if (status & tp->event_slow) {
- 		enable_mask &= ~tp->event_slow;
+diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-syntax.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-syntax.tc
+new file mode 100644
+index 000000000000..88e6c3f43006
+--- /dev/null
++++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-syntax.tc
+@@ -0,0 +1,80 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++# description: event trigger - test synthetic_events syntax parser
++
++do_reset() {
++    reset_trigger
++    echo > set_event
++    clear_trace
++}
++
++fail() { #msg
++    do_reset
++    echo $1
++    exit_fail
++}
++
++if [ ! -f set_event ]; then
++    echo "event tracing is not supported"
++    exit_unsupported
++fi
++
++if [ ! -f synthetic_events ]; then
++    echo "synthetic event is not supported"
++    exit_unsupported
++fi
++
++reset_tracer
++do_reset
++
++echo "Test synthetic_events syntax parser"
++
++echo > synthetic_events
++
++# synthetic event must have a field
++! echo "myevent" >> synthetic_events
++echo "myevent u64 var1" >> synthetic_events
++
++# synthetic event must be found in synthetic_events
++grep "myevent[[:space:]]u64 var1" synthetic_events
++
++# it is not possible to add same name event
++! echo "myevent u64 var2" >> synthetic_events
++
++# Non-append open will cleanup all events and add new one
++echo "myevent u64 var2" > synthetic_events
++
++# multiple fields with different spaces
++echo "myevent u64 var1; u64 var2;" > synthetic_events
++grep "myevent[[:space:]]u64 var1; u64 var2" synthetic_events
++echo "myevent u64 var1 ; u64 var2 ;" > synthetic_events
++grep "myevent[[:space:]]u64 var1; u64 var2" synthetic_events
++echo "myevent u64 var1 ;u64 var2" > synthetic_events
++grep "myevent[[:space:]]u64 var1; u64 var2" synthetic_events
++
++# test field types
++echo "myevent u32 var" > synthetic_events
++echo "myevent u16 var" > synthetic_events
++echo "myevent u8 var" > synthetic_events
++echo "myevent s64 var" > synthetic_events
++echo "myevent s32 var" > synthetic_events
++echo "myevent s16 var" > synthetic_events
++echo "myevent s8 var" > synthetic_events
++
++echo "myevent char var" > synthetic_events
++echo "myevent int var" > synthetic_events
++echo "myevent long var" > synthetic_events
++echo "myevent pid_t var" > synthetic_events
++
++echo "myevent unsigned char var" > synthetic_events
++echo "myevent unsigned int var" > synthetic_events
++echo "myevent unsigned long var" > synthetic_events
++grep "myevent[[:space:]]unsigned long var" synthetic_events
++
++# test string type
++echo "myevent char var[10]" > synthetic_events
++grep "myevent[[:space:]]char\[10\] var" synthetic_events
++
++do_reset
++
++exit 0
 -- 
 2.17.1
 
