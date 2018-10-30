@@ -2,102 +2,75 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFA3BC6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:23:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC6AC6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:23:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B774520823
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:23:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B774520823
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3D1382082B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:23:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D1382082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727772AbeJ3UQN (ORCPT
+        id S1727802AbeJ3UQO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 16:16:13 -0400
-Received: from mga01.intel.com ([192.55.52.88]:18171 "EHLO mga01.intel.com"
+        Tue, 30 Oct 2018 16:16:14 -0400
+Received: from mga17.intel.com ([192.55.52.151]:57538 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726225AbeJ3UQM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726692AbeJ3UQM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 30 Oct 2018 16:16:12 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 04:23:07 -0700
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 04:23:08 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,444,1534834800"; 
-   d="scan'208";a="85322871"
-Received: from jsakkine-mobl1.tm.intel.com ([10.237.50.120])
-  by orsmga007.jf.intel.com with ESMTP; 30 Oct 2018 04:23:03 -0700
-Date:   Tue, 30 Oct 2018 13:23:01 +0200 (EET)
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-X-X-Sender: jsakkine@jsakkine-mobl1
-To:     Tomas Winkler <tomas.winkler@intel.com>
-cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Nayna Jain <nayna@linux.vnet.ibm.com>,
-        Alexander Usyskin <alexander.usyskin@intel.com>,
-        Tadeusz Struk <tadeusz.struk@intel.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tpm: tpm_ibmvtpm: fix kdoc warnings
-In-Reply-To: <20181026184043.5524-2-tomas.winkler@intel.com>
-Message-ID: <alpine.DEB.2.21.1810301322480.16909@jsakkine-mobl1>
-References: <20181026184043.5524-1-tomas.winkler@intel.com> <20181026184043.5524-2-tomas.winkler@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+   d="scan'208";a="86735215"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
+  by orsmga006.jf.intel.com with ESMTP; 30 Oct 2018 04:23:06 -0700
+Subject: Re: [PATCH v3] xhci: Add quirk to workaround the errata seen on
+ Cavium Thunder-X2 Soc
+To:     "Cherian, George" <George.Cherian@cavium.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
+Cc:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>
+References: <1540896507-23876-1-git-send-email-george.cherian@cavium.com>
+From:   Mathias Nyman <mathias.nyman@intel.com>
+Message-ID: <d450f63d-b1ed-afe2-4bde-4d1aa246d079@intel.com>
+Date:   Tue, 30 Oct 2018 13:26:41 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+In-Reply-To: <1540896507-23876-1-git-send-email-george.cherian@cavium.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 26 Oct 2018, Tomas Winkler wrote:
-> Remove redundant lines in the kdoc:
->
-> Fixes kdoc warnings:
->
-> drivers/char/tpm/tpm_ibmvtpm.c:42: warning: Cannot understand  *
-> on line 42 - I thought it was a doc line
-> drivers/char/tpm/tpm_ibmvtpm.c:57: warning: Cannot understand  *
-> on line 57 - I thought it was a doc line
->
-> Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
-> ---
-> drivers/char/tpm/tpm_ibmvtpm.c | 6 ++----
-> 1 file changed, 2 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
-> index 25f6e2665385..07b5a487d0c8 100644
-> --- a/drivers/char/tpm/tpm_ibmvtpm.c
-> +++ b/drivers/char/tpm/tpm_ibmvtpm.c
-> @@ -39,8 +39,7 @@ static const struct vio_device_id tpm_ibmvtpm_device_table[] = {
-> MODULE_DEVICE_TABLE(vio, tpm_ibmvtpm_device_table);
->
-> /**
-> - *
-> - * ibmvtpm_send_crq_word - Send a CRQ request
-> + * ibmvtpm_send_crq_word() - Send a CRQ request
->  * @vdev:	vio device struct
->  * @w1:		pre-constructed first word of tpm crq (second word is reserved)
->  *
-> @@ -54,8 +53,7 @@ static int ibmvtpm_send_crq_word(struct vio_dev *vdev, u64 w1)
-> }
->
-> /**
-> - *
-> - * ibmvtpm_send_crq - Send a CRQ request
-> + * ibmvtpm_send_crq() - Send a CRQ request
->  *
->  * @vdev:	vio device struct
->  * @valid:	Valid field
-> -- 
-> 2.14.5
->
->
+On 30.10.2018 12:48, Cherian, George wrote:
+> Implement workaround for ThunderX2 Errata-129 (documented in
+> CN99XX Known Issues" available at Cavium support site).
+> As per ThunderX2errata-129, USB 2 device may come up as USB 1
+> if a connection to a USB 1 device is followed by another connection to
+> a USB 2 device, the link will come up as USB 1 for the USB 2 device.
+> 
+> Resolution: Reset the PHY after the USB 1 device is disconnected.
+> The PHY reset sequence is done using private registers in XHCI register
+> space. After the PHY is reset we check for the PLL lock status and retry
+> the operation if it fails. From our tests, retrying 4 times is sufficient.
+> 
+> Add a new quirk flag XHCI_RESET_PLL_ON_DISCONNECT to invoke the workaround
+> in handle_xhci_port_status().
+> 
+> Signed-off-by: George Cherian <george.cherian@cavium.com>
 
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Thanks, adding to queue
 
-/Jarkko
+-Mathias
