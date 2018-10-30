@@ -2,103 +2,150 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC75C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:12:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6B5BC6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:14:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15E882064C
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:12:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A2352081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:14:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y8hYkm3K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15E882064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="js+vjHyi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A2352081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726241AbeJaEGn (ORCPT
+        id S1726479AbeJaEJl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 00:06:43 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:38335 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725926AbeJaEGn (ORCPT
+        Wed, 31 Oct 2018 00:09:41 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:33213 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726287AbeJaEJk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 00:06:43 -0400
-Received: by mail-qk1-f196.google.com with SMTP id p3-v6so8002716qkb.5
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 12:11:59 -0700 (PDT)
+        Wed, 31 Oct 2018 00:09:40 -0400
+Received: by mail-yb1-f195.google.com with SMTP id i78-v6so5541788ybg.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 12:14:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=mxBOD5E4g/NvF4ndMpQa9bRsTKNvf9E8V532kAml20U=;
-        b=Y8hYkm3KIw/X8CQV5RX2Z+vC1zegJkWpgEfDj4xa+lpQnf8bPrgssr3VEu4pg6WHn1
-         Uxm8txRkcOgHsmJMbbDayXjmGKBL40cSjDfaKvNCFdy8iwmcZagv31AV5pgcdKYBfBgv
-         Nlt3yaQQ+EGht9IuzqIX76Gp/U/e/WE7mWEaOrR5d9eByJf7HDKNaYVBiaaRjtINFHCp
-         R2kMZ+DsMfU8vaAh37WAnrUVfxXIEh9mY8Nbvw/qfAAbxa0N2iYbN+R/pgj8UmyLCjAc
-         /HSBwIlAdtdXJP5kvzPXWP21UuAojT8B0m/mT/4z26op4DxdAVykeXSzUpK2jqXN5MQz
-         MvUg==
+        bh=snsTm8fAPGUfSdsnB6UIfUoFWMS1wWtbb4pqgSay4sA=;
+        b=js+vjHyiVy7gKOcR4aV8aB6qbFEHm1tQBHbY/tnoGr1sJ0IsCxOkyAi588iqVgxxTD
+         TmOGu3y1E6hYb+duMhWiN6w6UUykrHTIDJoGIUwZJUO/JjkT8puHgjty3vDuJLXFlBqB
+         K/j7WHf8RIxqYMxXPYrBZLJd7iQ6TARKKl9ek=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=mxBOD5E4g/NvF4ndMpQa9bRsTKNvf9E8V532kAml20U=;
-        b=WCLBiGUgSDlqmSAKj3RA3ivlIS2WDfvZgpHudF041T7o+n+dSf40yJbYnxGMILO6oR
-         1HjkockDDHvSG22fyNHou3jjA9p3bNDhvtuGgJXNHILUsDYsS3SNgmN8nlwHWD1tt0K3
-         vRVB7001t7bkKzufYgQT3ORMKQvqMelXPUWNxj/cLU5gheEwFeE0wocEezVylMO5ES+y
-         Tz8UYfPikcJ1/rq1nuczFCYVHk/O9TREBjk39o61ZjoCJzsuW82RTVlN/I8S6ka1lRzl
-         QUghuBExPbXsQNg1meJ7ADXkjJOekZZYn21QBtef5KrRjbUYIdzy4hd2Dxd9TdN6OANV
-         hs+w==
-X-Gm-Message-State: AGRZ1gL9VL4qi4J5GDz5bNFzoxV2KV0CP+GTmtqPpnQkcDMkqlUamX5x
-        CtmzK7k6ogJsPb0vE6AaW9CZNeyV3dzaO3RDr0mZ7A==
-X-Google-Smtp-Source: AJdET5fq5iQh41LcgDU4Vsv/vYHlQ7Zm6+E+Mx9tVfp0iIgiS1K9IKQK1CU5RhcGwC/B5fVGhoHgj1koZk4XF8vlggE=
-X-Received: by 2002:a37:5b83:: with SMTP id p125-v6mr149790qkb.88.1540926718810;
- Tue, 30 Oct 2018 12:11:58 -0700 (PDT)
+        bh=snsTm8fAPGUfSdsnB6UIfUoFWMS1wWtbb4pqgSay4sA=;
+        b=OgpB5QokcpB1F0u5XTpFPyjbq+0ShulKbVctuKHk0JLHAwiBwZSbnFs2UtC0hZcbBp
+         U6YOTGzbvG9FJUuk2rGk61zOsF0f4lzxwUC+mK6XdCN5YZhH+rP3oFHjp76+TDDCrAs8
+         Knkm4MNthh0l6YpqxTtO69GTAFEb5qONNMpxu1PiJAJ9v8BQXCxt+BiHGkk5du8kiAFL
+         lyTV9j3/76lSJuKqVR08SODKJ+wNRxStDh1AfXbFlCglWkiU2IW6mp/nJIpeeouE1EGV
+         ntgvLIAkz+Z+FpMefJNZPtrVifVbcPbTTt3bRrkSVufDCst6edd8XfwEOckz/XWyEgYS
+         kEaw==
+X-Gm-Message-State: AGRZ1gIfdbv2vtMdOp22Eyfmnq4H12dcVMVrgcv3uBP0cia2jyVFc7tr
+        VE1CFZu04wGPMDOeh1Dn+8srPYtckkc=
+X-Google-Smtp-Source: AJdET5fw40yN5kNMqWnk2XMgTDtbFUjFD5liEANcTxM+CqLMudzq41IhwcwWxVdWbZwQvoU7Mm4DoA==
+X-Received: by 2002:a25:7e01:: with SMTP id z1-v6mr142223ybc.91.1540926895861;
+        Tue, 30 Oct 2018 12:14:55 -0700 (PDT)
+Received: from mail-yw1-f53.google.com (mail-yw1-f53.google.com. [209.85.161.53])
+        by smtp.gmail.com with ESMTPSA id y126-v6sm5944426ywe.26.2018.10.30.12.14.52
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 12:14:54 -0700 (PDT)
+Received: by mail-yw1-f53.google.com with SMTP id j75-v6so5401502ywj.10
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 12:14:52 -0700 (PDT)
+X-Received: by 2002:a81:98cb:: with SMTP id p194-v6mr3973873ywg.353.1540926891605;
+ Tue, 30 Oct 2018 12:14:51 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181022222614.41016-1-mikewu@google.com>
-In-Reply-To: <20181022222614.41016-1-mikewu@google.com>
-From:   Ke Wu <mikewu@google.com>
-Date:   Tue, 30 Oct 2018 12:11:47 -0700
-Message-ID: <CANRnR9SOtjVtEWnt3_5ZLGhTGxquycbDYkEiRFbfM2pAEz0r_A@mail.gmail.com>
-Subject: Re: [PATCH] modsign: use all trusted keys to verify module signature
-To:     jeyu@kernel.org, dhowells@redhat.com
-Cc:     linux-kernel@vger.kernel.org
+Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Tue, 30 Oct 2018 12:14:50
+ -0700 (PDT)
+In-Reply-To: <28C8CD2A-BDC0-49A5-854E-1E18968528B8@amacapital.net>
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-11-igor.stoppa@huawei.com> <20181026092609.GB3159@worktop.c.hoisthospitality.com>
+ <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
+ <20181028183126.GB744@hirez.programming.kicks-ass.net> <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
+ <20181030152641.GE8177@hirez.programming.kicks-ass.net> <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
+ <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net> <20181030175814.GB10491@bombadil.infradead.org>
+ <28C8CD2A-BDC0-49A5-854E-1E18968528B8@amacapital.net>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 30 Oct 2018 12:14:50 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jK583zi9NPP2hwm51z6FbF2kkr5Em61eSp3EnwYFnKZEw@mail.gmail.com>
+Message-ID: <CAGXu5jK583zi9NPP2hwm51z6FbF2kkr5Em61eSp3EnwYFnKZEw@mail.gmail.com>
+Subject: Re: [PATCH 10/17] prmem: documentation
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Igor Stoppa <igor.stoppa@gmail.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Friendly ping.
+On Tue, Oct 30, 2018 at 11:51 AM, Andy Lutomirski <luto@amacapital.net> wrote:
+>
+>
+>> On Oct 30, 2018, at 10:58 AM, Matthew Wilcox <willy@infradead.org> wrote:
+>>
+>> On Tue, Oct 30, 2018 at 10:06:51AM -0700, Andy Lutomirski wrote:
+>>>> On Oct 30, 2018, at 9:37 AM, Kees Cook <keescook@chromium.org> wrote:
+>>> I support the addition of a rare-write mechanism to the upstream kernel.
+>>> And I think that there is only one sane way to implement it: using an
+>>> mm_struct. That mm_struct, just like any sane mm_struct, should only
+>>> differ from init_mm in that it has extra mappings in the *user* region.
+>>
+>> I'd like to understand this approach a little better.  In a syscall path,
+>> we run with the user task's mm.  What you're proposing is that when we
+>> want to modify rare data, we switch to rare_mm which contains a
+>> writable mapping to all the kernel data which is rare-write.
+>>
+>> So the API might look something like this:
+>>
+>>    void *p = rare_alloc(...);    /* writable pointer */
+>>    p->a = x;
+>>    q = rare_protect(p);        /* read-only pointer */
+>>
+>> To subsequently modify q,
+>>
+>>    p = rare_modify(q);
+>>    q->a = y;
+>>    rare_protect(p);
+>
+> How about:
+>
+> rare_write(&q->a, y);
+>
+> Or, for big writes:
+>
+> rare_write_copy(&q, local_q);
+>
+> This avoids a whole ton of issues.  In practice, actually running with a special mm requires preemption disabled as well as some other stuff, which Nadav carefully dealt with.
 
-On Mon, Oct 22, 2018 at 3:26 PM Ke Wu <mikewu@google.com> wrote:
->
-> Make mod_verify_sig to use all trusted keys. This allows keys in
-> secondary_trusted_keys to be used to verify PKCS#7 signature on a
-> kernel module.
->
-> Signed-off-by: Ke Wu <mikewu@google.com>
-> ---
->  kernel/module_signing.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/kernel/module_signing.c b/kernel/module_signing.c
-> index f2075ce8e4b3..a8b923ba1a39 100644
-> --- a/kernel/module_signing.c
-> +++ b/kernel/module_signing.c
-> @@ -83,6 +83,6 @@ int mod_verify_sig(const void *mod, struct load_info *info)
->         }
->
->         return verify_pkcs7_signature(mod, modlen, mod + modlen, sig_len,
-> -                                     NULL, VERIFYING_MODULE_SIGNATURE,
-> +                                     (void *)1UL, VERIFYING_MODULE_SIGNATURE,
->                                       NULL, NULL);
->  }
-> --
-> 2.19.1.568.g152ad8e336-goog
->
+This is what I had before, yes:
+https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=kspp/write-rarely&id=9ab0cb2618ebbc51f830ceaa06b7d2182fe1a52d
 
+It just needs the switch_mm() backend.
 
 -- 
-Ke Wu | Software Engineer | mikewu@google.com | Google Inc.
+Kees Cook
