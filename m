@@ -2,157 +2,141 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C50D5ECDE44
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5D0EC2BC61
 	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 07:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99E5B2082D
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 07:55:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99E5B2082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6B64F20823
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 07:55:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B64F20823
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=xiaomi.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726731AbeJ3Qri (ORCPT
+        id S1726491AbeJ3QrU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 12:47:38 -0400
-Received: from mga17.intel.com ([192.55.52.151]:43354 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726523AbeJ3Qri (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 12:47:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 00:55:15 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,443,1534834800"; 
-   d="scan'208";a="275599471"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.130]) ([10.237.72.130])
-  by fmsmga005.fm.intel.com with ESMTP; 30 Oct 2018 00:55:12 -0700
-Subject: Re: [PATCH v2] mmc: sdhci-pci: Try "cd" for card-detect lookup before
- using NULL
-To:     Rajat Jain <rajatja@google.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-mmc@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rajat Jain <rajatxjain@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dmitry Torokhov <dtor@google.com>, linux-gpio@vger.kernel.org,
-        linux-acpi@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <CAA93t1oaZ5zkv+BsGnYZg6pqKv0DzXi3j8oZHUyTyffUWHtHug@mail.gmail.com>
- <20181029221701.51376-1-rajatja@google.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <79f9fb1f-9318-6265-d642-11d57719f287@intel.com>
-Date:   Tue, 30 Oct 2018 09:53:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 30 Oct 2018 12:47:20 -0400
+Received: from outboundhk.mxmail.xiaomi.com ([207.226.244.126]:52637 "EHLO
+        outboundhk.mxmail.xiaomi.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726196AbeJ3QrU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 12:47:20 -0400
+X-AuditID: 0a3808ce-4afff70000012663-85-5bd80ddce9e1
+Received: from xiaomi.com (cnbox2.mioffice.cn [10.237.8.142])
+        by outboundhk.mxmail.xiaomi.com (xiaomi.com) with SMTP id D7.77.09827.CDD08DB5; Tue, 30 Oct 2018 15:53:00 +0800 (HKT)
+Received: from localhost (10.237.91.193) by cnbox2.mioffice.cn (10.237.8.142)
+ with Microsoft SMTP Server (TLS) id 15.0.1365.1; Tue, 30 Oct 2018 15:52:59
+ +0800
+From:   Peng Wang <wangpeng15@xiaomi.com>
+To:     <keescook@chromium.org>, <anton@enomsg.org>, <ccross@android.com>,
+        <tony.luck@intel.com>, <joel@joelfernandes.org>
+CC:     <linux-kernel@vger.kernel.org>, <vipwangerxiao@gmail.com>,
+        Peng Wang <wangpeng15@xiaomi.com>
+Subject: [PATCH v4] pstore: Avoid duplicate call of persistent_ram_zap()
+Date:   Tue, 30 Oct 2018 15:52:34 +0800
+Message-ID: <20181030075234.21137-1-wangpeng15@xiaomi.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <20181029221701.51376-1-rajatja@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.237.91.193]
+X-ClientProxiedBy: CNCAS1.mioffice.cn (10.237.8.131) To cnbox2.mioffice.cn
+ (10.237.8.142)
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGLMWRmVeSWpSXmKPExsXC9ZajT/cO741og9uv1C0ObtW02L7xG6vF
+        sgZVizPduRaXd81hs3hz4R6Lxcmfy1kd2D227d7G6jG74SKLx4T+T4weO2fdZfdYvOclk8fC
+        T19ZPT5vkgtgj+KySUnNySxLLdK3S+DK2Ln/N2vBZaGKd3ffMTUwdvF3MXJySAiYSFy4eIm9
+        i5GLQ0hgK6PEh4mbWCCcRYwS805fYQepYhNQl+je3gVmiwhUSFzdf4kNxGYWSJK48ekCmC0s
+        4CGx9NxJVhCbRUBV4sq3v2A2r4CVxL2JL9ggtslLNOzazA4RF5Q4OfMJC8QceYnmrbOZIWwJ
+        iYMvXoDZQgJKEhuutwP1cgD1Kkr8+h8LMSZa4sHvGWwTGAVmIZk0C8mkWUgmLWBkXsUomZGf
+        l54NxMUFibmGermZ+Wlpmcmpesl5mxhBoW/BcW4H44R3qYcYBTgYlXh4G/SuRwuxJpYVV+Ye
+        YpTgYFYS4Q3muhEtxJuSWFmVWpQfX1Sak1p8iFGag0VJnNeg8UC0kEB6YklqdmpqQWoRTJaJ
+        g1OqgdFhTvvWYtG5KWF3nFaUymStUPp2tzI3bfnC0P8Tf1peSpvuZKZz93qwi0/wtGWVb42K
+        zySqh/hGdk9z14pjcr70RfT2VWFjGxbRYo3pS6LkLPzuPHitt4RJ9u42ToOjL7i4T/24MDuv
+        dkN9z6U/MXsX7WC5XD7TzeZd1dUVe5y2fnbZfGnHx2QlluKMREMt5qLiRADSMDL6eQIAAA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/10/18 12:17 AM, Rajat Jain wrote:
-> Problem:
-> 
-> The card detect IRQ does not work with modern BIOS (that want
-> to use _DSD to provide the card detect GPIO to the driver).
-> 
-> Details:
-> 
-> The mmc core provides the mmc_gpiod_request_cd() API to let host drivers
-> request the gpio descriptor for the "card detect" pin.
-> This pin is specified in the ACPI for the SDHC device:
-> 
->  * Either as a resource using _CRS. This is a method used by legacy BIOS.
->    (The driver needs to tell which resource index).
-> 
->  * Or as a named property ("cd-gpios"/"cd-gpio") in _DSD (which internally
->    points to an entry in _CRS). This way, the driver can lookup using a
->    string. This is what modern BIOS prefer to use.
-> 
-> This API finally results in a call to the following code:
-> 
-> struct gpio_desc *acpi_find_gpio(..., const char *con_id,...)
-> {
-> ...
->    /* Lookup gpio (using "<con_id>-gpio") in the _DSD */
-> ...
->    if (!acpi_can_fallback_to_crs(adev, con_id))
->           return ERR_PTR(-ENOENT);
-> ...
->    /* Falling back to _CRS is allowed, Lookup gpio in the _CRS */
-> ...
-> }
-> 
-> Note that this means that if the ACPI has _DSD properties, the kernel
-> will never use _CRS for the lookup (Because acpi_can_fallback_to_crs()
-> will always be false for any device hat has _DSD entries).
-> 
-> The SDHCI driver is thus currently broken on a modern BIOS, even if
-> BIOS provides both _CRS (for index based lookup) and _DSD entries (for
-> string based lookup). Ironically, none of these will be used for the
-> lookup currently because:
-> 
-> * Since the con_id is NULL, acpi_find_gpio() does not find a matching
->   entry in DSDT. (The _DSDT entry has the property name = "cd-gpios")
-> 
-> * Because ACPI contains DSDT entries, thus acpi_can_fallback_to_crs()
->   returns false (because device properties have been populated from
->   _DSD), thus the _CRS is never used for the lookup.
-> 
-> Fix:
-> 
-> Try "cd" for lookup in the _DSD before falling back to using NULL so
-> as to try looking up in the _CRS.
-> 
-> I've tested this patch successfully with both Legacy BIOS (that
-> provide only _CRS method) as well as modern BIOS (that provide both
-> _CRS and _DSD). Also the use of "cd" appears to be fairly consistent
-> across other users of this API (other MMC host controller drivers).
-> 
-> Link: https://lkml.org/lkml/2018/9/25/1113
-> Signed-off-by: Rajat Jain <rajatja@google.com>
+When initialing prz with invalid data in buffer(no PERSISTENT_RAM_SIG),
+function call path is like this:
 
-This is good enough for a fix.  An ACPI GPIO mappings table can be done later.
+ramoops_init_prz ->
+|
+|-> persistent_ram_new -> persistent_ram_post_init -> persistent_ram_zap
+|
+|-> persistent_ram_zap
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+As we can see, persistent_ram_zap() is called twice.
+We can avoid this by adding an option to persistent_ram_new(), and
+only call persistent_ram_zap() when it is needed.
 
-> ---
-> v2: Fix the commit log to take care of Andy's comments.
-> 
->  drivers/mmc/host/sdhci-pci-core.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
-> index 7bfd366d970d..e53333c695b3 100644
-> --- a/drivers/mmc/host/sdhci-pci-core.c
-> +++ b/drivers/mmc/host/sdhci-pci-core.c
-> @@ -1762,8 +1762,13 @@ static struct sdhci_pci_slot *sdhci_pci_probe_slot(
->  		device_init_wakeup(&pdev->dev, true);
->  
->  	if (slot->cd_idx >= 0) {
-> -		ret = mmc_gpiod_request_cd(host->mmc, NULL, slot->cd_idx,
-> +		ret = mmc_gpiod_request_cd(host->mmc, "cd", slot->cd_idx,
->  					   slot->cd_override_level, 0, NULL);
-> +		if (ret && ret != -EPROBE_DEFER)
-> +			ret = mmc_gpiod_request_cd(host->mmc, NULL,
-> +						   slot->cd_idx,
-> +						   slot->cd_override_level,
-> +						   0, NULL);
->  		if (ret == -EPROBE_DEFER)
->  			goto remove;
->  
-> 
+Signed-off-by: Peng Wang <wangpeng15@xiaomi.com>
+---
+ fs/pstore/ram.c            | 4 +---
+ fs/pstore/ram_core.c       | 5 +++--
+ include/linux/pstore_ram.h | 1 +
+ 3 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+index ffcff6516e89..b51901f97dc2 100644
+--- a/fs/pstore/ram.c
++++ b/fs/pstore/ram.c
+@@ -640,7 +640,7 @@ static int ramoops_init_prz(const char *name,
+ 
+ 	label = kasprintf(GFP_KERNEL, "ramoops:%s", name);
+ 	*prz = persistent_ram_new(*paddr, sz, sig, &cxt->ecc_info,
+-				  cxt->memtype, 0, label);
++				  cxt->memtype, PRZ_FLAG_ZAP_OLD, label);
+ 	if (IS_ERR(*prz)) {
+ 		int err = PTR_ERR(*prz);
+ 
+@@ -649,8 +649,6 @@ static int ramoops_init_prz(const char *name,
+ 		return err;
+ 	}
+ 
+-	persistent_ram_zap(*prz);
+-
+ 	*paddr += sz;
+ 
+ 	return 0;
+diff --git a/fs/pstore/ram_core.c b/fs/pstore/ram_core.c
+index 12e21f789194..2ededd1ea1c2 100644
+--- a/fs/pstore/ram_core.c
++++ b/fs/pstore/ram_core.c
+@@ -505,15 +505,16 @@ static int persistent_ram_post_init(struct persistent_ram_zone *prz, u32 sig,
+ 			pr_debug("found existing buffer, size %zu, start %zu\n",
+ 				 buffer_size(prz), buffer_start(prz));
+ 			persistent_ram_save_old(prz);
+-			return 0;
++			if (!(prz->flags & PRZ_FLAG_ZAP_OLD))
++				return 0;
+ 		}
+ 	} else {
+ 		pr_debug("no valid data in buffer (sig = 0x%08x)\n",
+ 			 prz->buffer->sig);
++		prz->buffer->sig = sig;
+ 	}
+ 
+ 	/* Rewind missing or invalid memory area. */
+-	prz->buffer->sig = sig;
+ 	persistent_ram_zap(prz);
+ 
+ 	return 0;
+diff --git a/include/linux/pstore_ram.h b/include/linux/pstore_ram.h
+index 602d64725222..6e94980357d2 100644
+--- a/include/linux/pstore_ram.h
++++ b/include/linux/pstore_ram.h
+@@ -30,6 +30,7 @@
+  * PRZ_FLAG_NO_LOCK is used. For all other cases, locking is required.
+  */
+ #define PRZ_FLAG_NO_LOCK	BIT(0)
++#define PRZ_FLAG_ZAP_OLD	BIT(1)
+ 
+ struct persistent_ram_buffer;
+ struct rs_control;
+-- 
+2.19.1
 
