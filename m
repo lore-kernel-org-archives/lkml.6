@@ -2,89 +2,108 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 617FDC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 05:50:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08258C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 05:50:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED5152075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 05:50:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZQSrsFnN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED5152075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id CD8642075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 05:50:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD8642075D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726336AbeJ3Omh (ORCPT
+        id S1726522AbeJ3Omr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 10:42:37 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:33144 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726126AbeJ3Omh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 10:42:37 -0400
-Received: by mail-oi1-f195.google.com with SMTP id c25-v6so9374836oiy.0
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 22:50:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dfJK4B2Y8mscisFcx5galCYlcb3eipHpS0nZJamTh+Q=;
-        b=ZQSrsFnNiOCSn6txGqEvHMp7Bzw3Y54NkibPoFeGImOXblNz+Sl9NuXNncGFP0tyjx
-         Loxf0vGvdJ5j7JUz2KwLcZFM4GyBX9bvbkDgvlRuAVujGaPUtFmU3W84iMlrrnUch12a
-         L3KKdLBIsPKshaX9HAzWazkVqcBopJ+x1vu1s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dfJK4B2Y8mscisFcx5galCYlcb3eipHpS0nZJamTh+Q=;
-        b=YGBlvJbqwWkUociiohQmX087RiZsLIO4x3z2a5JbUyox86wQe3ONXEUzeu6MB4ou2R
-         HA1Hea9TXRwkp6Lb9mtvDUptq+ApZNzgezwKOY3LhO1tMWGKDAjZNhwbB3E+75iaRDI0
-         +4kOvHqnjI34eME9HWLBWIDQJDKpQBooGXnBVDnnNcR9uyRGUkYIJp6pTvqhceBITHZi
-         jFolmoBU0nZXdiaXs2A1DtS04nqN71lX/DPVxahVzWCxxiQOPiVYR7eJ9sbaompemz8v
-         tPbAK4ycwOWaD3Ca9p6Adk59FsuXMkl7KSYJ4/5ZIIXL2HZRafmJktSByOVsJFIUzHlF
-         yQ7A==
-X-Gm-Message-State: AGRZ1gIuFrx6dxse8mxZzsM0y2vUs5yKLsGsZ8lJ3eb2z29ZlEnZplNW
-        vvWyC8lpYTIfufi64iXVEL2FyTc4Pa0Owf073EY=
-X-Google-Smtp-Source: AJdET5fU4oCuBsUJSBgc1FROM35mS7gCWFs1bFsbc/pP4vnuclnQJoMI4tDcKtEjfRQyQSMFWV5JJu+gAUGgLzwbKWw=
-X-Received: by 2002:aca:5cc6:: with SMTP id q189-v6mr92791oib.121.1540878633671;
- Mon, 29 Oct 2018 22:50:33 -0700 (PDT)
+        Tue, 30 Oct 2018 10:42:47 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:14160 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726105AbeJ3Omr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 10:42:47 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 7908947DD653A;
+        Tue, 30 Oct 2018 13:50:41 +0800 (CST)
+Received: from localhost.localdomain (10.175.124.28) by smtp.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 30 Oct
+ 2018 13:50:34 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Will Deacon" <will.deacon@arm.com>,
+        <linux-kernel@vger.kernel.org>, Miao Xie <miaoxie@huawei.com>,
+        Chao Yu <chao@kernel.org>, Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH v2] bit_spinlock: introduce smp_cond_load_relaxed
+Date:   Tue, 30 Oct 2018 14:04:41 +0800
+Message-ID: <20181030060441.16107-1-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <1539413249-4402-1-git-send-email-hsiangkao@aol.com>
+References: <1539413249-4402-1-git-send-email-hsiangkao@aol.com>
 MIME-Version: 1.0
-References: <1540830201-2947-1-git-send-email-daniel.lezcano@linaro.org>
-In-Reply-To: <1540830201-2947-1-git-send-email-daniel.lezcano@linaro.org>
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-Date:   Tue, 30 Oct 2018 11:20:19 +0530
-Message-ID: <CAOh2x==y+7jEdC-3xpvhr6j+RTtXRwTnBFC2uRVUmuktbCvsKw@mail.gmail.com>
-Subject: Re: [PATCH 1/4] base/drivers/arch_topology: Remove useless check
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.175.124.28]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 9:56 PM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
+It is better to use wrapped smp_cond_load_relaxed
+instead of open-coded busy waiting for bit_spinlock.
 
-Would have been better if I was cc'd on all the patches since I was
-looking at this
-stuff actively this week :)
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+---
 
-> The function 'register_cpufreq_notifier' registers the
-> init_cpu_capacity_notifier() only if raw_capacity is not NULL.
->
-> Hence init_cpu_capacity_notifier() can not be called with raw_capacity
-> set to NULL, it is pointless to check it.
+change log v2:
+ - fix the incorrect expression !(VAL >> (bitnum & (BITS_PER_LONG-1)))
+ - the test result is described in the following reply.
 
-It isn't entirely pointless though.
+Thanks,
+Gao Xiang
 
-It is possible for init_cpu_capacity_notifier() to get called after
-free_raw_capacity()
-is called from it as the notifier unregistration happens from a workqueue.
+ include/linux/bit_spinlock.h | 23 ++++++++++-------------
+ 1 file changed, 10 insertions(+), 13 deletions(-)
+
+diff --git a/include/linux/bit_spinlock.h b/include/linux/bit_spinlock.h
+index bbc4730a6505..d5f922b5ffd9 100644
+--- a/include/linux/bit_spinlock.h
++++ b/include/linux/bit_spinlock.h
+@@ -15,22 +15,19 @@
+  */
+ static inline void bit_spin_lock(int bitnum, unsigned long *addr)
+ {
+-	/*
+-	 * Assuming the lock is uncontended, this never enters
+-	 * the body of the outer loop. If it is contended, then
+-	 * within the inner loop a non-atomic test is used to
+-	 * busywait with less bus contention for a good time to
+-	 * attempt to acquire the lock bit.
+-	 */
+-	preempt_disable();
+ #if defined(CONFIG_SMP) || defined(CONFIG_DEBUG_SPINLOCK)
+-	while (unlikely(test_and_set_bit_lock(bitnum, addr))) {
+-		preempt_enable();
+-		do {
+-			cpu_relax();
+-		} while (test_bit(bitnum, addr));
++	const unsigned int bitshift = bitnum & (BITS_PER_LONG - 1);
++
++	while (1) {
++		smp_cond_load_relaxed(&addr[BIT_WORD(bitnum)],
++				      !((VAL >> bitshift) & 1));
+ 		preempt_disable();
++		if (!test_and_set_bit_lock(bitnum, addr))
++			break;
++		preempt_enable();
+ 	}
++#else
++	preempt_disable();
+ #endif
+ 	__acquire(bitlock);
+ }
+-- 
+2.17.1
+
