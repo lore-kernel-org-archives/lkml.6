@@ -2,136 +2,144 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C030CC6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:41:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEAAEC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:42:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 944F82075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:41:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 944F82075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5CF332075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:42:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GNuN3GSV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CF332075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727507AbeJaAfb (ORCPT
+        id S1727534AbeJaAgc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 20:35:31 -0400
-Received: from foss.arm.com ([217.140.101.70]:54834 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726537AbeJaAfb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 20:35:31 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7FB2280D;
-        Tue, 30 Oct 2018 08:41:33 -0700 (PDT)
-Received: from filthy-habits.cambridge.arm.com (filthy-habits.cambridge.arm.com [10.1.196.62])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6D8383F5D3;
-        Tue, 30 Oct 2018 08:41:31 -0700 (PDT)
-From:   Marc Zyngier <marc.zyngier@arm.com>
-To:     davem@davemloft.net, Antoine Tenart <antoine.tenart@bootlin.com>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        thomas.petazzoni@bootlin.com, maxime.chevallier@bootlin.com,
-        miquel.raynal@bootlin.com, gregory.clement@bootlin.com,
-        nadavh@marvell.com, stefanc@marvell.com, ymarkman@marvell.com,
-        mw@semihalf.com
-Subject: [PATCH] net: mvpp2: Fix affinity hint allocation
-Date:   Tue, 30 Oct 2018 15:41:00 +0000
-Message-Id: <20181030154100.78512-1-marc.zyngier@arm.com>
-X-Mailer: git-send-email 2.19.1
+        Tue, 30 Oct 2018 20:36:32 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:45399 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726743AbeJaAgc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 20:36:32 -0400
+Received: by mail-qt1-f193.google.com with SMTP id l9-v6so13954460qtj.12
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 08:42:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=OeZIwayCWQ6XYEBnHlqoCfxNVrtXG8gOPPDqAGaAy5c=;
+        b=GNuN3GSVx8RiUoZJxCRI7Ziyfe/hPxcEinp8xucTIIdvjDqk3BeivG5rxYn6099xzs
+         pU8iEmmc9emOMEDfzCZuLmJEL8p9XU/ABZ5opfJbE1mUf95e5v6Rhf9/Dp5Qf5HAliKi
+         /ddNCDHw84mfdGSb866PlgjNMTw0wanfwEEZA+5fE7qm3qq6rUPcsNa5zWeQUXFVVRRV
+         SKz8LB90WzsA6KAQf/382JALC7XFyAxfreoXHZ8t1fgVIfSqsrd57Pkp4N8rttwQqoWQ
+         HPDekbXWFwQcK6Y+f1Z9+VP6vFMVzYHi+wrL7M9VbSMm6+015b48CKeSZ/aPT4PE82hH
+         O8FA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=OeZIwayCWQ6XYEBnHlqoCfxNVrtXG8gOPPDqAGaAy5c=;
+        b=pYR1plMPDnsarJI5LsL5UKLMFpI/4drdU/lI9epRjqcd3XLI+HdjGuRhAaJh7JzafC
+         geZxNI1wywzepH4xf9Y36R/zRgNxfeScfQTomgjQeuUahrs704jOMVufMBotYI29YZzW
+         dxygRb8/rbdpyVCk+OVXvZIqinsBok2h9EPOeo6CJQHnUIi/oxncfeBabnl3eMHdRYfk
+         4n54tesjU5wHj2RvBeTg1yGVLeQUFRoghOGUs5sJlbd1OhwGdmNdoQDkh2Yme5VBUPkv
+         czXAmWCApHyzdTgXo7FHa7S+Q/zhuid8MAYB9JpKBOB9E8/V1m5ow2+0gCwhwHOSI4Sg
+         GNRA==
+X-Gm-Message-State: AGRZ1gIpOV2hMViQzH4YWzhx2j9hCCKxdlRluVMPyQVxtI6RQmB8WHKh
+        qXQxxN8NzERRt7/8p12uetjSE7dLkwtrvb3e2pg=
+X-Google-Smtp-Source: AJdET5ePej7ubH9DVsqDFWE9zrZhNmBo4aeW2CYSQ0OXaaIVqTIdnUZYDxLIq1eTN1wZ2NYZFRoMPAUOvvHeIlMicnY=
+X-Received: by 2002:ac8:2c49:: with SMTP id e9-v6mr2743202qta.17.1540914153111;
+ Tue, 30 Oct 2018 08:42:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181030144530.89995-1-smuchun@gmail.com> <201810302302.5Bvf0Uf8%fengguang.wu@intel.com>
+In-Reply-To: <201810302302.5Bvf0Uf8%fengguang.wu@intel.com>
+From:   =?UTF-8?B?5a6L54mn5pil?= <smuchun@gmail.com>
+Date:   Tue, 30 Oct 2018 23:42:22 +0800
+Message-ID: <CAPSr9jGMw7WsgV86QetPq_hYsOLZ0cP1tvQz6Uta5wEHezfRgg@mail.gmail.com>
+Subject: Re: [PATCH] sched/rt: Remove unnecessary CONFIG_RT_GROUP_SCHED in rt_se_prio()
+To:     lkp@intel.com
+Cc:     kbuild-all@01.org, Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The mvpp2 driver has the curious behaviour of passing a stack variable
-to irq_set_affinity_hint(), which results in the kernel exploding
-the first time anyone accesses this information. News flash: userspace
-does, and irqbalance will happily take the machine down. Great stuff.
+Hi,
 
-An easy fix is to track the mask within the queue_vector structure,
-and to make sure it has the same lifetime as the interrupt itself.
+I am sorry that I did not consider CONFIG_SMP is also not configured.
+In this case, 'struct rt_rq' has no member named 'highest_prio'. So, I
+I understand why the code here needs CONFIG_RT_GROUP_SCHED.
+When CONFIG_SMP or CONFIG_RT_GROUP_SCHED is configured,
+'struct rt_rq' will have member named 'highest_prio'.
 
-Fixes: e531f76757eb ("net: mvpp2: handle cases where more CPUs are available than s/w threads")
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
----
-As requested in https://lore.kernel.org/lkml/20181030135354.GD3407@kwain/
+So, this patch does't make sense.
 
- drivers/net/ethernet/marvell/mvpp2/mvpp2.h     |  1 +
- .../net/ethernet/marvell/mvpp2/mvpp2_main.c    | 18 ++++++++++++++----
- 2 files changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
-index 176c6b56fdcc..398328f10743 100644
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2.h
-@@ -796,6 +796,7 @@ struct mvpp2_queue_vector {
- 	int nrxqs;
- 	u32 pending_cause_rx;
- 	struct mvpp2_port *port;
-+	struct cpumask *mask;
- };
- 
- struct mvpp2_port {
-diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-index 14f9679c957c..7a37a37e3fb3 100644
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-@@ -3298,24 +3298,30 @@ static int mvpp2_irqs_init(struct mvpp2_port *port)
- 	for (i = 0; i < port->nqvecs; i++) {
- 		struct mvpp2_queue_vector *qv = port->qvecs + i;
- 
--		if (qv->type == MVPP2_QUEUE_VECTOR_PRIVATE)
-+		if (qv->type == MVPP2_QUEUE_VECTOR_PRIVATE) {
-+			qv->mask = kzalloc(cpumask_size(), GFP_KERNEL);
-+			if (!qv->mask) {
-+				err = -ENOMEM;
-+				goto err;
-+			}
-+
- 			irq_set_status_flags(qv->irq, IRQ_NO_BALANCING);
-+		}
- 
- 		err = request_irq(qv->irq, mvpp2_isr, 0, port->dev->name, qv);
- 		if (err)
- 			goto err;
- 
- 		if (qv->type == MVPP2_QUEUE_VECTOR_PRIVATE) {
--			unsigned long mask = 0;
- 			unsigned int cpu;
- 
- 			for_each_present_cpu(cpu) {
- 				if (mvpp2_cpu_to_thread(port->priv, cpu) ==
- 				    qv->sw_thread_id)
--					mask |= BIT(cpu);
-+					cpumask_set_cpu(cpu, qv->mask);
- 			}
- 
--			irq_set_affinity_hint(qv->irq, to_cpumask(&mask));
-+			irq_set_affinity_hint(qv->irq, qv->mask);
- 		}
- 	}
- 
-@@ -3325,6 +3331,8 @@ static int mvpp2_irqs_init(struct mvpp2_port *port)
- 		struct mvpp2_queue_vector *qv = port->qvecs + i;
- 
- 		irq_set_affinity_hint(qv->irq, NULL);
-+		kfree(qv->mask);
-+		qv->mask = NULL;
- 		free_irq(qv->irq, qv);
- 	}
- 
-@@ -3339,6 +3347,8 @@ static void mvpp2_irqs_deinit(struct mvpp2_port *port)
- 		struct mvpp2_queue_vector *qv = port->qvecs + i;
- 
- 		irq_set_affinity_hint(qv->irq, NULL);
-+		kfree(qv->mask);
-+		qv->mask = NULL;
- 		irq_clear_status_flags(qv->irq, IRQ_NO_BALANCING);
- 		free_irq(qv->irq, qv);
- 	}
--- 
-2.19.1
-
+kbuild test robot <lkp@intel.com> =E4=BA=8E2018=E5=B9=B410=E6=9C=8830=E6=97=
+=A5=E5=91=A8=E4=BA=8C =E4=B8=8B=E5=8D=8811:14=E5=86=99=E9=81=93=EF=BC=9A
+>
+> Hi Muchun,
+>
+> Thank you for the patch! Yet something to improve:
+>
+> [auto build test ERROR on tip/sched/core]
+> [also build test ERROR on v4.19 next-20181030]
+> [if your patch is applied to the wrong git tree, please drop us a note to=
+ help improve the system]
+>
+> url:    https://github.com/0day-ci/linux/commits/Muchun-Song/sched-rt-Rem=
+ove-unnecessary-CONFIG_RT_GROUP_SCHED-in-rt_se_prio/20181030-225925
+> config: i386-randconfig-x002-201843 (attached as .config)
+> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=3Di386
+>
+> All errors (new ones prefixed by >>):
+>
+>    kernel/sched/rt.c: In function 'rt_se_prio':
+> >> kernel/sched/rt.c:900:15: error: 'struct rt_rq' has no member named 'h=
+ighest_prio'
+>       return rt_rq->highest_prio.curr;
+>                   ^~
+>
+> vim +900 kernel/sched/rt.c
+>
+> ac086bc2 kernel/sched_rt.c Peter Zijlstra  2008-04-19  894
+> 6f505b16 kernel/sched_rt.c Peter Zijlstra  2008-01-25  895  static inline=
+ int rt_se_prio(struct sched_rt_entity *rt_se)
+> 6f505b16 kernel/sched_rt.c Peter Zijlstra  2008-01-25  896  {
+> 6f505b16 kernel/sched_rt.c Peter Zijlstra  2008-01-25  897      struct rt=
+_rq *rt_rq =3D group_rt_rq(rt_se);
+> 6f505b16 kernel/sched_rt.c Peter Zijlstra  2008-01-25  898
+> 6f505b16 kernel/sched_rt.c Peter Zijlstra  2008-01-25  899      if (rt_rq=
+)
+> e864c499 kernel/sched_rt.c Gregory Haskins 2008-12-29 @900              r=
+eturn rt_rq->highest_prio.curr;
+> 6f505b16 kernel/sched_rt.c Peter Zijlstra  2008-01-25  901
+> 6f505b16 kernel/sched_rt.c Peter Zijlstra  2008-01-25  902      return rt=
+_task_of(rt_se)->prio;
+> 6f505b16 kernel/sched_rt.c Peter Zijlstra  2008-01-25  903  }
+> 6f505b16 kernel/sched_rt.c Peter Zijlstra  2008-01-25  904
+>
+> :::::: The code at line 900 was first introduced by commit
+> :::::: e864c499d9e57805ae1f9e7ea404dd223759cd53 sched: track the next-hig=
+hest priority on each runqueue
+>
+> :::::: TO: Gregory Haskins <ghaskins@novell.com>
+> :::::: CC: Gregory Haskins <ghaskins@novell.com>
+>
+> ---
+> 0-DAY kernel test infrastructure                Open Source Technology Ce=
+nter
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corpora=
+tion
