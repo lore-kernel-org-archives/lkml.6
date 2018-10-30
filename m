@@ -2,108 +2,177 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9BEDC0044C
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 00:58:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42A92C0044C
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 01:01:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DC912080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 00:58:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DC912080A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengaru.com
+	by mail.kernel.org (Postfix) with ESMTP id EE44C2080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 01:01:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE44C2080A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726158AbeJ3JuA (ORCPT
+        id S1726214AbeJ3Jw6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 05:50:00 -0400
-Received: from shells.gnugeneration.com ([66.240.222.126]:59378 "EHLO
-        shells.gnugeneration.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725964AbeJ3JuA (ORCPT
+        Tue, 30 Oct 2018 05:52:58 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:49314 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725851AbeJ3Jw5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 05:50:00 -0400
-Received: by shells.gnugeneration.com (Postfix, from userid 1000)
-        id 9B5CC1A402D8; Mon, 29 Oct 2018 17:58:45 -0700 (PDT)
-Date:   Mon, 29 Oct 2018 17:58:45 -0700
-From:   Vito Caputo <vcaputo@pengaru.com>
-To:     Daniel Colascione <dancol@google.com>
-Cc:     Davidlohr Bueso <dave@stgolabs.net>,
-        Andrew Morton <akpm@linux-foundation.org>, longman@redhat.com,
-        linux-fsdevel@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Davidlohr Bueso <dbueso@suse.de>
-Subject: Re: [PATCH] fs/proc: introduce /proc/stat2 file
-Message-ID: <20181030005845.c3x2z72ns4qhbida@shells.gnugeneration.com>
-References: <20181029192521.23059-1-dave@stgolabs.net>
- <CAKOZuevx9beEB-KWz0gRNaJQLfzu0cu7nuMYaB5ZT1O_ooQYAA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKOZuevx9beEB-KWz0gRNaJQLfzu0cu7nuMYaB5ZT1O_ooQYAA@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Tue, 30 Oct 2018 05:52:57 -0400
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1gHIPY-0005We-QM; Mon, 29 Oct 2018 21:01:36 -0400
+Message-ID: <50e780fba8f2af412e1962823cf759f7dff8b40d.camel@surriel.com>
+Subject: Re: [PATCH] mm: handle no memcg case in memcg_kmem_charge() properly
+From:   Rik van Riel <riel@surriel.com>
+To:     Shakeel Butt <shakeelb@google.com>, Roman Gushchin <guro@fb.com>
+Cc:     Linux MM <linux-mm@kvack.org>, efault@gmx.de,
+        LKML <linux-kernel@vger.kernel.org>, Kernel-team@fb.com,
+        Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Date:   Mon, 29 Oct 2018 21:01:36 -0400
+In-Reply-To: <CALvZod7tZd6t7d9o8Mj88211McpUH0oANFqESStt7G94-PBbaQ@mail.gmail.com>
+References: <20181029215123.17830-1-guro@fb.com>
+         <CALvZod7tZd6t7d9o8Mj88211McpUH0oANFqESStt7G94-PBbaQ@mail.gmail.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-xKxK4bAoXaiSFgDdPwZp"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 11:04:45PM +0000, Daniel Colascione wrote:
-> On Mon, Oct 29, 2018 at 7:25 PM, Davidlohr Bueso <dave@stgolabs.net> wrote:
-> > This patch introduces a new /proc/stat2 file that is identical to the
-> > regular 'stat' except that it zeroes all hard irq statistics. The new
-> > file is a drop in replacement to stat for users that need performance.
-> 
-> For a while now, I've been thinking over ways to improve the
-> performance of collecting various bits of kernel information. I don't
-> think that a proliferation of special-purpose named bag-of-fields file
-> variants is the right answer, because even if you add a few info-file
-> variants, you're still left with a situation where a given file
-> provides a particular caller with too little or too much information.
-> I'd much rather move to a model in which userspace *explicitly* tells
-> the kernel which fields it wants, with the kernel replying with just
-> those particular fields, maybe in their raw binary representations.
-> The ASCII-text bag-of-everything files would remain available for
-> ad-hoc and non-performance critical use, but programs that cared about
-> performance would have an efficient bypass. One concrete approach is
-> to let users open up today's proc files and, instead of read(2)ing a
-> text blob, use an ioctl to retrieve specified and targeted information
-> of the sort that would normally be encoded in the text blob. Because
-> callers would open the same file when using either the text or binary
-> interfaces, little would have to change, and it'd be easy to implement
-> fallbacks when a particular system doesn't support a particular
-> fast-path ioctl.
 
+--=-xKxK4bAoXaiSFgDdPwZp
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-We have two extremes of granularity in the /proc and /sys virtual
-filesystems today:
+On Mon, 2018-10-29 at 17:50 -0700, Shakeel Butt wrote:
+> On Mon, Oct 29, 2018 at 2:52 PM Roman Gushchin <guro@fb.com> wrote:
+> >=20
+> > Mike Galbraith reported a regression caused by the commit
+> > 9b6f7e163cd0
+> > ("mm: rework memcg kernel stack accounting") on a system with
+> > "cgroup_disable=3Dmemory" boot option: the system panics with the
+> > following stack trace:
+> >=20
+> >   [0.928542] BUG: unable to handle kernel NULL pointer dereference
+> > at 00000000000000f8
+> >   [0.929317] PGD 0 P4D 0
+> >   [0.929573] Oops: 0002 [#1] PREEMPT SMP PTI
+> >   [0.929984] CPU: 0 PID: 1 Comm: systemd Not tainted 4.19.0-
+> > preempt+ #410
+> >   [0.930637] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+> > BIOS ?-20180531_142017-buildhw-08.phx2.fed4
+> >   [0.931862] RIP: 0010:page_counter_try_charge+0x22/0xc0
+> >   [0.932376] Code: 41 5d c3 c3 0f 1f 40 00 0f 1f 44 00 00 48 85 ff
+> > 0f 84 a7 00 00 00 41 56 48 89 f8 49 89 fe 49
+> >   [0.934283] RSP: 0018:ffffacf68031fcb8 EFLAGS: 00010202
+> >   [0.934826] RAX: 00000000000000f8 RBX: 0000000000000000 RCX:
+> > 0000000000000000
+> >   [0.935558] RDX: ffffacf68031fd08 RSI: 0000000000000020 RDI:
+> > 00000000000000f8
+> >   [0.936288] RBP: 0000000000000001 R08: 8000000000000063 R09:
+> > ffff99ff7cd37a40
+> >   [0.937021] R10: ffffacf68031fed0 R11: 0000000000200000 R12:
+> > 0000000000000020
+> >   [0.937749] R13: ffffacf68031fd08 R14: 00000000000000f8 R15:
+> > ffff99ff7da1ec60
+> >   [0.938486] FS:  00007fc2140bb280(0000) GS:ffff99ff7da00000(0000)
+> > knlGS:0000000000000000
+> >   [0.939311] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> >   [0.939905] CR2: 00000000000000f8 CR3: 0000000012dc8002 CR4:
+> > 0000000000760ef0
+> >   [0.940638] DR0: 0000000000000000 DR1: 0000000000000000 DR2:
+> > 0000000000000000
+> >   [0.941366] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7:
+> > 0000000000000400
+> >   [0.942110] PKRU: 55555554
+> >   [0.942412] Call Trace:
+> >   [0.942673]  try_charge+0xcb/0x780
+> >   [0.943031]  memcg_kmem_charge_memcg+0x28/0x80
+> >   [0.943486]  ? __vmalloc_node_range+0x1e4/0x280
+> >   [0.943971]  memcg_kmem_charge+0x8b/0x1d0
+> >   [0.944396]  copy_process.part.41+0x1ca/0x2070
+> >   [0.944853]  ? get_acl+0x1a/0x120
+> >   [0.945200]  ? shmem_tmpfile+0x90/0x90
+> >   [0.945596]  _do_fork+0xd7/0x3d0
+> >   [0.945934]  ? trace_hardirqs_off_thunk+0x1a/0x1c
+> >   [0.946421]  do_syscall_64+0x5a/0x180
+> >   [0.946798]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> >=20
+> > The problem occurs because get_mem_cgroup_from_current() returns
+> > the NULL pointer if memory controller is disabled. Let's check
+> > if this is a case at the beginning of memcg_kmem_charge() and
+> > just return 0 if mem_cgroup_disabled() returns true. This is how
+> > we handle this case in many other places in the memory controller
+> > code.
+> >=20
+> > Fixes: 9b6f7e163cd0 ("mm: rework memcg kernel stack accounting")
+> > Reported-by: Mike Galbraith <efault@gmx.de>
+> > Signed-off-by: Roman Gushchin <guro@fb.com>
+> > Cc: Michal Hocko <mhocko@kernel.org>
+> > Cc: Johannes Weiner <hannes@cmpxchg.org>
+> > Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > ---
+> >  mm/memcontrol.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > index 54920cbc46bf..6e1469b80cb7 100644
+> > --- a/mm/memcontrol.c
+> > +++ b/mm/memcontrol.c
+> > @@ -2593,7 +2593,7 @@ int memcg_kmem_charge(struct page *page,
+> > gfp_t gfp, int order)
+> >         struct mem_cgroup *memcg;
+> >         int ret =3D 0;
+> >=20
+> > -       if (memcg_kmem_bypass())
+> > +       if (mem_cgroup_disabled() || memcg_kmem_bypass())
+> >                 return 0;
+> >=20
+>=20
+> Why not check memcg_kmem_enabled() before calling memcg_kmem_charge()
+> in memcg_charge_kernel_stack()?
 
-On procfs there's these legacy files which aggregate loosely-related
-system information, and in cases where you actually want most of what's
-provided, it's a nice optimization because you can sample it all in a
-single pread() call.
+Check Roman's backtrace again. The function
+memcg_charge_kernel_stack() is not in it.
 
-On sysfs the granularity is much finer with it being fairly common to
-find a file-per-datum.  This has other advantages, like not needing to
-parse snowflake formats which sometimes varied across kernel versions
-like in procfs, or needing to burden the kernel to produce more
-information than necessary.
+That is why it is generally better to check
+in the called function, rather than add a
+check to every call site (and maybe miss one
+or two).
 
-But anyone who has written tools trying to sample large subsets of the
-granular information in sysfs at a high rate will know how quickly it
-becomes rather costly in terms of system calls.
+Acked-by: Rik van Riel <riel@surriel.com>
+--=20
+All Rights Reversed.
 
-The last time I went down this path, I wished there were a system call
-like readv() which accepted a vector a new iovec type specifying an fd.
+--=-xKxK4bAoXaiSFgDdPwZp
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
 
-Then the sysfs model could be made a more efficient by coalescing all
-the required read syscalls into a single megaread bundling all the
-relevant fds that are simply kept open and reused.
+-----BEGIN PGP SIGNATURE-----
 
-If we had such a readv() variant, the sysfs granular model could be used
-to granularly expose all the information we currently expose in /proc,
-while still being relatively efficient in terms of system calls per
-sample.  Sure you still have to lookup and open all the files of
-interest, but that only needs to occur once at initialization.
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlvXrXAACgkQznnekoTE
+3oPXGQf7BoaA5KT3SOfI7bfRPLMsQfHJDgulsQqAV5NbT3IuZKy4+b0PKPPK3bNd
+EM4rFRS4akHfZCyI8PbW81cq6Jo4O+pR4pl1RjE9PG5WGFGWwwmOQcFZ9QthbX0v
+mKLG1ObiT70qWVcgA7ImYwV0lYlGakDywj6mXPdQxk/ppVTMRBdjTIodwwodOm4C
+Q5qUwRPP8Z9XG+frqymGsg0AiU7uPO0U7P/AUFeGmaXx+kOi7QIjsmt8M0gakGqy
+4kJFDiQjSsarDICcsbj2f4/ep1wxvwg0JyUT4xDedxn++v+2kOOUwo9XKZ/YxNvW
+djzengEvPZsHWshdeuLdB0LAJWbiVw==
+=od5N
+-----END PGP SIGNATURE-----
 
-Regards,
-Vito Caputo
+--=-xKxK4bAoXaiSFgDdPwZp--
+
