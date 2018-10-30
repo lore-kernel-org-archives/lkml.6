@@ -2,420 +2,310 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47B72C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:09:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C414C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:11:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBF2B2080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:09:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBF2B2080A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id B280A2080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:11:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B280A2080A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=magewell.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726563AbeJ3RBe (ORCPT
+        id S1726701AbeJ3RDp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 13:01:34 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33937 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726196AbeJ3RBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 13:01:33 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B21B88046B;
-        Tue, 30 Oct 2018 08:09:08 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-20.pek2.redhat.com [10.72.8.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2CB072A16D;
-        Tue, 30 Oct 2018 08:09:01 +0000 (UTC)
-Date:   Tue, 30 Oct 2018 16:08:57 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Bart Van Assche <bvanassche@acm.org>, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/14] blk-mq: ensure that plug lists don't straddle
- hardware queues
-Message-ID: <20181030080856.GA13582@ming.t460p>
-References: <20181029163738.10172-1-axboe@kernel.dk>
- <20181029163738.10172-10-axboe@kernel.dk>
- <1540841278.196084.84.camel@acm.org>
- <2e8ae405-6cc2-ce7b-a6a3-ca2e19549e40@kernel.dk>
- <32904af4-90b1-1762-5c46-4d52808cb601@kernel.dk>
+        Tue, 30 Oct 2018 13:03:45 -0400
+Received: from out20-62.mail.aliyun.com ([115.124.20.62]:51982 "EHLO
+        out20-62.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726196AbeJ3RDp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 13:03:45 -0400
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07437118|-1;CH=green;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03294;MF=yong.deng@magewell.com;NM=1;PH=DS;RN=24;RT=24;SR=0;TI=SMTPD_---.DAZa-AC_1540887034;
+Received: from linuxproject.localdomain(mailfrom:yong.deng@magewell.com fp:SMTPD_---.DAZa-AC_1540887034)
+          by smtp.aliyun-inc.com(10.147.43.95);
+          Tue, 30 Oct 2018 16:10:34 +0800
+From:   Yong Deng <yong.deng@magewell.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Yong Deng <yong.deng@magewell.com>
+Subject: [PATCH v12 0/2] Initial Allwinner V3s CSI Support
+Date:   Tue, 30 Oct 2018 16:09:48 +0800
+Message-Id: <1540886988-27696-1-git-send-email-yong.deng@magewell.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <32904af4-90b1-1762-5c46-4d52808cb601@kernel.dk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Tue, 30 Oct 2018 08:09:08 +0000 (UTC)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 01:49:18PM -0600, Jens Axboe wrote:
-> On 10/29/18 1:30 PM, Jens Axboe wrote:
-> > On 10/29/18 1:27 PM, Bart Van Assche wrote:
-> >> On Mon, 2018-10-29 at 10:37 -0600, Jens Axboe wrote:
-> >>>  void blk_mq_flush_plug_list(struct blk_plug *plug, bool from_schedule)
-> >>>  {
-> >>>  	struct blk_mq_ctx *this_ctx;
-> >>> @@ -1628,7 +1649,7 @@ void blk_mq_flush_plug_list(struct blk_plug *plug, bool from_schedule)
-> >>>  	struct request *rq;
-> >>>  	LIST_HEAD(list);
-> >>>  	LIST_HEAD(ctx_list);
-> >>> -	unsigned int depth;
-> >>> +	unsigned int depth, this_flags;
-> >>>  
-> >>>  	list_splice_init(&plug->mq_list, &list);
-> >>>  
-> >>> @@ -1636,13 +1657,14 @@ void blk_mq_flush_plug_list(struct blk_plug *plug, bool from_schedule)
-> >>>  
-> >>>  	this_q = NULL;
-> >>>  	this_ctx = NULL;
-> >>> +	this_flags = 0;
-> >>>  	depth = 0;
-> >>>  
-> >>>  	while (!list_empty(&list)) {
-> >>>  		rq = list_entry_rq(list.next);
-> >>>  		list_del_init(&rq->queuelist);
-> >>>  		BUG_ON(!rq->q);
-> >>> -		if (rq->mq_ctx != this_ctx) {
-> >>> +		if (!ctx_match(rq, this_ctx, this_flags)) {
-> >>>  			if (this_ctx) {
-> >>>  				trace_block_unplug(this_q, depth, !from_schedule);
-> >>>  				blk_mq_sched_insert_requests(this_q, this_ctx,
-> >>> @@ -1650,6 +1672,7 @@ void blk_mq_flush_plug_list(struct blk_plug *plug, bool from_schedule)
-> >>>  								from_schedule);
-> >>>  			}
-> >>>  
-> >>> +			this_flags = rq->cmd_flags;
-> >>>  			this_ctx = rq->mq_ctx;
-> >>>  			this_q = rq->q;
-> >>>  			depth = 0;
-> >>
-> >> This patch will cause the function stored in the flags_to_type pointer to be
-> >> called 2 * (n - 1) times where n is the number of elements in 'list' when
-> >> blk_mq_sched_insert_requests() is called. Have you considered to rearrange
-> >> the code such that that number of calls is reduced to n?
-> > 
-> > One alternative is to improve the sorting, but then we'd need to call
-> > it in there instead. My longer term plan is something like the below,
-> > which will reduce the number of calls in general, not just for
-> > this path. But that is a separate change, should not be mixed
-> > with this one.
-> 
-> Here's an updated one that applies on top of the current tree,
-> and also uses this information to sort efficiently. This eliminates
-> all this, and also makes the whole thing more clear.
-> 
-> I'll split this into two patches, just didn't want to include in
-> the series just yet.
-> 
-> 
-> diff --git a/block/blk-flush.c b/block/blk-flush.c
-> index 7922dba81497..397985808b75 100644
-> --- a/block/blk-flush.c
-> +++ b/block/blk-flush.c
-> @@ -219,7 +219,7 @@ static void flush_end_io(struct request *flush_rq, blk_status_t error)
->  
->  	/* release the tag's ownership to the req cloned from */
->  	spin_lock_irqsave(&fq->mq_flush_lock, flags);
-> -	hctx = blk_mq_map_queue(q, flush_rq->cmd_flags, flush_rq->mq_ctx->cpu);
-> +	hctx = flush_rq->mq_hctx;
->  	if (!q->elevator) {
->  		blk_mq_tag_set_rq(hctx, flush_rq->tag, fq->orig_rq);
->  		flush_rq->tag = -1;
-> @@ -307,13 +307,13 @@ static bool blk_kick_flush(struct request_queue *q, struct blk_flush_queue *fq,
->  	if (!q->elevator) {
->  		fq->orig_rq = first_rq;
->  		flush_rq->tag = first_rq->tag;
-> -		hctx = blk_mq_map_queue(q, first_rq->cmd_flags,
-> -					first_rq->mq_ctx->cpu);
-> +		hctx = flush_rq->mq_hctx;
->  		blk_mq_tag_set_rq(hctx, first_rq->tag, flush_rq);
->  	} else {
->  		flush_rq->internal_tag = first_rq->internal_tag;
->  	}
->  
-> +	flush_rq->mq_hctx = first_rq->mq_hctx;
->  	flush_rq->cmd_flags = REQ_OP_FLUSH | REQ_PREFLUSH;
->  	flush_rq->cmd_flags |= (flags & REQ_DRV) | (flags & REQ_FAILFAST_MASK);
->  	flush_rq->rq_flags |= RQF_FLUSH_SEQ;
-> @@ -326,13 +326,11 @@ static bool blk_kick_flush(struct request_queue *q, struct blk_flush_queue *fq,
->  static void mq_flush_data_end_io(struct request *rq, blk_status_t error)
->  {
->  	struct request_queue *q = rq->q;
-> -	struct blk_mq_hw_ctx *hctx;
-> +	struct blk_mq_hw_ctx *hctx = rq->mq_hctx;
->  	struct blk_mq_ctx *ctx = rq->mq_ctx;
->  	unsigned long flags;
->  	struct blk_flush_queue *fq = blk_get_flush_queue(q, ctx);
->  
-> -	hctx = blk_mq_map_queue(q, rq->cmd_flags, ctx->cpu);
-> -
->  	if (q->elevator) {
->  		WARN_ON(rq->tag < 0);
->  		blk_mq_put_driver_tag_hctx(hctx, rq);
-> diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
-> index fac70c81b7de..cde19be36135 100644
-> --- a/block/blk-mq-debugfs.c
-> +++ b/block/blk-mq-debugfs.c
-> @@ -427,10 +427,8 @@ struct show_busy_params {
->  static void hctx_show_busy_rq(struct request *rq, void *data, bool reserved)
->  {
->  	const struct show_busy_params *params = data;
-> -	struct blk_mq_hw_ctx *hctx;
->  
-> -	hctx = blk_mq_map_queue(rq->q, rq->cmd_flags, rq->mq_ctx->cpu);
-> -	if (hctx == params->hctx)
-> +	if (rq->mq_hctx == params->hctx)
->  		__blk_mq_debugfs_rq_show(params->m,
->  					 list_entry_rq(&rq->queuelist));
->  }
-> diff --git a/block/blk-mq-sched.c b/block/blk-mq-sched.c
-> index d232ecf3290c..25c558358255 100644
-> --- a/block/blk-mq-sched.c
-> +++ b/block/blk-mq-sched.c
-> @@ -367,9 +367,7 @@ void blk_mq_sched_insert_request(struct request *rq, bool at_head,
->  	struct request_queue *q = rq->q;
->  	struct elevator_queue *e = q->elevator;
->  	struct blk_mq_ctx *ctx = rq->mq_ctx;
-> -	struct blk_mq_hw_ctx *hctx;
-> -
-> -	hctx = blk_mq_map_queue(q, rq->cmd_flags, ctx->cpu);
-> +	struct blk_mq_hw_ctx *hctx = rq->mq_hctx;
->  
->  	/* flush rq in flush machinery need to be dispatched directly */
->  	if (!(rq->rq_flags & RQF_FLUSH_SEQ) && op_is_flush(rq->cmd_flags)) {
-> @@ -399,16 +397,10 @@ void blk_mq_sched_insert_request(struct request *rq, bool at_head,
->  }
->  
->  void blk_mq_sched_insert_requests(struct request_queue *q,
-> -				  struct blk_mq_ctx *ctx,
-> +				  struct blk_mq_hw_ctx *hctx,
->  				  struct list_head *list, bool run_queue_async)
->  {
-> -	struct blk_mq_hw_ctx *hctx;
->  	struct elevator_queue *e;
-> -	struct request *rq;
-> -
-> -	/* For list inserts, requests better be on the same hw queue */
-> -	rq = list_first_entry(list, struct request, queuelist);
-> -	hctx = blk_mq_map_queue(q, rq->cmd_flags, ctx->cpu);
->  
->  	e = hctx->queue->elevator;
->  	if (e && e->type->ops.mq.insert_requests)
-> @@ -424,7 +416,7 @@ void blk_mq_sched_insert_requests(struct request_queue *q,
->  			if (list_empty(list))
->  				return;
->  		}
-> -		blk_mq_insert_requests(hctx, ctx, list);
-> +		blk_mq_insert_requests(hctx, list);
->  	}
->  
->  	blk_mq_run_hw_queue(hctx, run_queue_async);
-> diff --git a/block/blk-mq-sched.h b/block/blk-mq-sched.h
-> index 8a9544203173..a42547213f58 100644
-> --- a/block/blk-mq-sched.h
-> +++ b/block/blk-mq-sched.h
-> @@ -20,7 +20,7 @@ void blk_mq_sched_restart(struct blk_mq_hw_ctx *hctx);
->  void blk_mq_sched_insert_request(struct request *rq, bool at_head,
->  				 bool run_queue, bool async);
->  void blk_mq_sched_insert_requests(struct request_queue *q,
-> -				  struct blk_mq_ctx *ctx,
-> +				  struct blk_mq_hw_ctx *hctx,
->  				  struct list_head *list, bool run_queue_async);
->  
->  void blk_mq_sched_dispatch_requests(struct blk_mq_hw_ctx *hctx);
-> diff --git a/block/blk-mq-tag.c b/block/blk-mq-tag.c
-> index 478a959357f5..fb836d818b80 100644
-> --- a/block/blk-mq-tag.c
-> +++ b/block/blk-mq-tag.c
-> @@ -527,14 +527,7 @@ int blk_mq_tag_update_depth(struct blk_mq_hw_ctx *hctx,
->   */
->  u32 blk_mq_unique_tag(struct request *rq)
->  {
-> -	struct request_queue *q = rq->q;
-> -	struct blk_mq_hw_ctx *hctx;
-> -	int hwq = 0;
-> -
-> -	hctx = blk_mq_map_queue(q, rq->cmd_flags, rq->mq_ctx->cpu);
-> -	hwq = hctx->queue_num;
-> -
-> -	return (hwq << BLK_MQ_UNIQUE_TAG_BITS) |
-> +	return (rq->mq_hctx->queue_num << BLK_MQ_UNIQUE_TAG_BITS) |
->  		(rq->tag & BLK_MQ_UNIQUE_TAG_MASK);
->  }
->  EXPORT_SYMBOL(blk_mq_unique_tag);
-> diff --git a/block/blk-mq.c b/block/blk-mq.c
-> index 37310cc55733..17ea522bd7c1 100644
-> --- a/block/blk-mq.c
-> +++ b/block/blk-mq.c
-> @@ -300,6 +300,7 @@ static struct request *blk_mq_rq_ctx_init(struct blk_mq_alloc_data *data,
->  	/* csd/requeue_work/fifo_time is initialized before use */
->  	rq->q = data->q;
->  	rq->mq_ctx = data->ctx;
-> +	rq->mq_hctx = data->hctx;
->  	rq->rq_flags = rq_flags;
->  	rq->cpu = -1;
->  	rq->cmd_flags = op;
-> @@ -473,10 +474,11 @@ static void __blk_mq_free_request(struct request *rq)
->  {
->  	struct request_queue *q = rq->q;
->  	struct blk_mq_ctx *ctx = rq->mq_ctx;
-> -	struct blk_mq_hw_ctx *hctx = blk_mq_map_queue(q, rq->cmd_flags, ctx->cpu);
-> +	struct blk_mq_hw_ctx *hctx = rq->mq_hctx;
->  	const int sched_tag = rq->internal_tag;
->  
->  	blk_pm_mark_last_busy(rq);
-> +	rq->mq_hctx = NULL;
->  	if (rq->tag != -1)
->  		blk_mq_put_tag(hctx, hctx->tags, ctx, rq->tag);
->  	if (sched_tag != -1)
-> @@ -490,7 +492,7 @@ void blk_mq_free_request(struct request *rq)
->  	struct request_queue *q = rq->q;
->  	struct elevator_queue *e = q->elevator;
->  	struct blk_mq_ctx *ctx = rq->mq_ctx;
-> -	struct blk_mq_hw_ctx *hctx = blk_mq_map_queue(q, rq->cmd_flags, ctx->cpu);
-> +	struct blk_mq_hw_ctx *hctx = rq->mq_hctx;
->  
->  	if (rq->rq_flags & RQF_ELVPRIV) {
->  		if (e && e->type->ops.mq.finish_request)
-> @@ -982,7 +984,7 @@ bool blk_mq_get_driver_tag(struct request *rq)
->  {
->  	struct blk_mq_alloc_data data = {
->  		.q = rq->q,
-> -		.hctx = blk_mq_map_queue(rq->q, rq->cmd_flags, rq->mq_ctx->cpu),
-> +		.hctx = rq->mq_hctx,
->  		.flags = BLK_MQ_REQ_NOWAIT,
->  		.cmd_flags = rq->cmd_flags,
->  	};
-> @@ -1148,7 +1150,7 @@ bool blk_mq_dispatch_rq_list(struct request_queue *q, struct list_head *list,
->  
->  		rq = list_first_entry(list, struct request, queuelist);
->  
-> -		hctx = blk_mq_map_queue(rq->q, rq->cmd_flags, rq->mq_ctx->cpu);
-> +		hctx = rq->mq_hctx;
->  		if (!got_budget && !blk_mq_get_dispatch_budget(hctx))
->  			break;
->  
-> @@ -1578,9 +1580,7 @@ void __blk_mq_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
->   */
->  void blk_mq_request_bypass_insert(struct request *rq, bool run_queue)
->  {
-> -	struct blk_mq_ctx *ctx = rq->mq_ctx;
-> -	struct blk_mq_hw_ctx *hctx = blk_mq_map_queue(rq->q, rq->cmd_flags,
-> -							ctx->cpu);
-> +	struct blk_mq_hw_ctx *hctx = rq->mq_hctx;
->  
->  	spin_lock(&hctx->lock);
->  	list_add_tail(&rq->queuelist, &hctx->dispatch);
-> @@ -1590,10 +1590,10 @@ void blk_mq_request_bypass_insert(struct request *rq, bool run_queue)
->  		blk_mq_run_hw_queue(hctx, false);
->  }
->  
-> -void blk_mq_insert_requests(struct blk_mq_hw_ctx *hctx, struct blk_mq_ctx *ctx,
-> -			    struct list_head *list)
-> +void blk_mq_insert_requests(struct blk_mq_hw_ctx *hctx, struct list_head *list)
->  
->  {
-> +	struct blk_mq_ctx *ctx = NULL;
->  	struct request *rq;
->  
->  	/*
-> @@ -1601,7 +1601,8 @@ void blk_mq_insert_requests(struct blk_mq_hw_ctx *hctx, struct blk_mq_ctx *ctx,
->  	 * offline now
->  	 */
->  	list_for_each_entry(rq, list, queuelist) {
-> -		BUG_ON(rq->mq_ctx != ctx);
-> +		BUG_ON(ctx && rq->mq_ctx != ctx);
-> +		ctx = rq->mq_ctx;
->  		trace_block_rq_insert(hctx->queue, rq);
->  	}
->  
-> @@ -1611,84 +1612,61 @@ void blk_mq_insert_requests(struct blk_mq_hw_ctx *hctx, struct blk_mq_ctx *ctx,
->  	spin_unlock(&ctx->lock);
->  }
->  
-> -static int plug_ctx_cmp(void *priv, struct list_head *a, struct list_head *b)
-> +static int plug_hctx_cmp(void *priv, struct list_head *a, struct list_head *b)
->  {
->  	struct request *rqa = container_of(a, struct request, queuelist);
->  	struct request *rqb = container_of(b, struct request, queuelist);
->  
-> -	return !(rqa->mq_ctx < rqb->mq_ctx ||
-> -		 (rqa->mq_ctx == rqb->mq_ctx &&
-> +	return !(rqa->mq_hctx < rqb->mq_hctx ||
-> +		 (rqa->mq_hctx == rqb->mq_hctx &&
->  		  blk_rq_pos(rqa) < blk_rq_pos(rqb)));
->  }
->  
-> -/*
-> - * Need to ensure that the hardware queue matches, so we don't submit
-> - * a list of requests that end up on different hardware queues.
-> - */
-> -static bool ctx_match(struct request *req, struct blk_mq_ctx *ctx,
-> -		      unsigned int flags)
-> -{
-> -	if (req->mq_ctx != ctx)
-> -		return false;
-> -
-> -	/*
-> -	 * If we just have one map, then we know the hctx will match
-> -	 * if the ctx matches
-> -	 */
-> -	if (req->q->tag_set->nr_maps == 1)
-> -		return true;
-> -
-> -	return blk_mq_map_queue(req->q, req->cmd_flags, ctx->cpu) ==
-> -		blk_mq_map_queue(req->q, flags, ctx->cpu);
-> -}
-> -
->  void blk_mq_flush_plug_list(struct blk_plug *plug, bool from_schedule)
->  {
-> -	struct blk_mq_ctx *this_ctx;
-> +	struct blk_mq_hw_ctx *this_hctx;
->  	struct request_queue *this_q;
->  	struct request *rq;
->  	LIST_HEAD(list);
-> -	LIST_HEAD(ctx_list);
-> -	unsigned int depth, this_flags;
-> +	LIST_HEAD(hctx_list);
-> +	unsigned int depth;
->  
->  	list_splice_init(&plug->mq_list, &list);
->  
-> -	list_sort(NULL, &list, plug_ctx_cmp);
-> +	list_sort(NULL, &list, plug_hctx_cmp);
->  
->  	this_q = NULL;
-> -	this_ctx = NULL;
-> -	this_flags = 0;
-> +	this_hctx = NULL;
->  	depth = 0;
->  
->  	while (!list_empty(&list)) {
->  		rq = list_entry_rq(list.next);
->  		list_del_init(&rq->queuelist);
->  		BUG_ON(!rq->q);
-> -		if (!ctx_match(rq, this_ctx, this_flags)) {
-> -			if (this_ctx) {
-> +		if (rq->mq_hctx != this_hctx) {
-> +			if (this_hctx) {
->  				trace_block_unplug(this_q, depth, !from_schedule);
-> -				blk_mq_sched_insert_requests(this_q, this_ctx,
-> -								&ctx_list,
-> +				blk_mq_sched_insert_requests(this_q, this_hctx,
-> +								&hctx_list,
->  								from_schedule);
->  			}
+I can't make v4l2-compliance always happy.
+The V3s CSI support many pixformats. But they are not always available.
+It's dependent on the input bus format (MEDIA_BUS_FMT_*). 
+Example:
+V4L2_PIX_FMT_SBGGR8: MEDIA_BUS_FMT_SBGGR8_1X8
+V4L2_PIX_FMT_YUYV: MEDIA_BUS_FMT_YUYV8_2X8
+But I can't get the subdev's format code before starting stream as the
+subdev may change it. So I can't know which pixformats are available.
+So I exports all the pixformats supported by SoC.
+The result is the app (v4l2-compliance) is likely to fail on streamon.
 
-Requests can be added to plug list from different ctx because of
-preemption. However, blk_mq_sched_insert_requests() requires that
-all requests in 'hctx_list' belong to same ctx. 
+This patchset add initial support for Allwinner V3s CSI.
 
-Thanks,
-Ming
+Allwinner V3s SoC features a CSI module with parallel interface.
+
+This patchset implement a v4l2 framework driver and add a binding 
+documentation for it. 
+
+Changes in v12:
+  * use strscpy instead of strlcpy
+  * fix defination of PHYS_OFFSET
+  * fix return value in sun6i_video_link_validate
+  * fix some missing release functions
+  * fix dt documentation
+
+Changes in v11:
+  * only check format when starting stream
+  * do not check subdev's input status in enum input
+  * fix order of v4l2_async_notifier's unregister and cleanup
+  * unprepare and disable clks if fails in sun6i_csi_set_power
+  * move supported_pixformats to sun6i_video.c
+  * fix SPDX-License-Identifier to match MODULE_LICENSE
+  * fix capture for interlace signal
+
+Changes in v10:
+  * change sun6i_csi_is_format_support to sun6i_csi_is_format_supported
+  * using media_entity_get_fwnode_pad to get source pad
+  * switch media_entity_call to media_entity_setup_link
+  * remove V4L2_INPUT_TYPE_CAMERA
+
+Changes in v9:
+  * Merge the patchs from Maxime:
+    a. Fill dma_pfn_offset to accomodate for the RAM offset
+    b. Reduce the error level
+    c. Pass the sun6i_csi_dev pointer to our helpers
+    d. Don't emit a warning when the configured format isn't found
+    e. Support the YUYV format properly
+    f. Invert the polaritie of all signals
+    g. Expose controls on the v4l2_device
+
+Changes in v8:
+  * Revert to v6 and add 'hack' for PHYS_OFFSET.
+
+Changes in v7:
+  * Add 'depends on ARM' in Kconfig to avoid built with non-ARM arch.
+
+Changes in v6:
+  * Add Rob Herring's review tag.
+  * Fix a NULL pointer dereference by picking Maxime Ripard's patch.
+  * Add Maxime Ripard's test tag.
+
+Changes in v5:
+  * Using the new SPDX tags.
+  * Fix MODULE_LICENSE.
+  * Add many default cases and warning messages.
+  * Detail the parallel bus properties
+  * Fix some spelling and syntax mistakes.
+
+Changes in v4:
+  * Deal with the CSI 'INNER QUEUE'.
+    CSI will lookup the next dma buffer for next frame before the
+    the current frame done IRQ triggered. This is not documented
+    but reported by Ondřej Jirman.
+    The BSP code has workaround for this too. It skip to mark the
+    first buffer as frame done for VB2 and pass the second buffer
+    to CSI in the first frame done ISR call. Then in second frame
+    done ISR call, it mark the first buffer as frame done for VB2
+    and pass the third buffer to CSI. And so on. The bad thing is
+    that the first buffer will be written twice and the first frame
+    is dropped even the queued buffer is sufficient.
+    So, I make some improvement here. Pass the next buffer to CSI
+    just follow starting the CSI. In this case, the first frame
+    will be stored in first buffer, second frame in second buffer.
+    This mothed is used to avoid dropping the first frame, it
+    would also drop frame when lacking of queued buffer.
+  * Fix: using a wrong mbus_code when getting the supported formats
+  * Change all fourcc to pixformat
+  * Change some function names
+
+Changes in v3:
+  * Get rid of struct sun6i_csi_ops
+  * Move sun6i-csi to new directory drivers/media/platform/sunxi
+  * Merge sun6i_csi.c and sun6i_csi_v3s.c into sun6i_csi.c
+  * Use generic fwnode endpoints parser
+  * Only support a single subdev to make things simple
+  * Many complaintion fix
+
+Changes in v2: 
+  * Change sunxi-csi to sun6i-csi
+  * Rebase to media_tree master branch 
+
+Following is the 'v4l2-compliance -s -f' output:
+
+# ./bin/v4l2-compliance -s
+v4l2-compliance SHA: c36dbbdfa8b30b2badd4f893b59d0bd4f0bd12aa, 32 bits
+
+Compliance test for device /dev/video0:
+
+Driver Info:
+        Driver name      : sun6i-video
+        Card type        : sun6i-csi
+        Bus info         : platform:csi
+        Driver version   : 4.15.0
+        Capabilities     : 0x84200001
+                Video Capture
+                Streaming
+                Extended Pix Format
+                Device Capabilities
+        Device Caps      : 0x04200001
+                Video Capture
+                Streaming
+                Extended Pix Format
+Media Driver Info:
+        Driver name      : sun6i-csi
+        Model            : Allwinner Video Capture Device
+        Serial           : 
+        Bus info         : 
+        Media version    : 4.15.0
+        Hardware revision: 0x00000000 (0)
+        Driver version   : 4.15.0
+Interface Info:
+        ID               : 0x03000003
+        Type             : V4L Video
+Entity Info:
+        ID               : 0x00000001 (1)
+        Name             : sun6i-csi
+        Function         : V4L2 I/O
+        Pad 0x01000002   : Sink, Must Connect
+          Link 0x02000007: from remote pad 0x1000006 of entity 'adv7611 0-004c': Data, Enabled, Immutable
+
+Required ioctls:
+        test MC information (see 'Media Driver Info' above): OK
+        test VIDIOC_QUERYCAP: OK
+
+Allow for multiple opens:
+        test second /dev/video0 open: OK
+        test VIDIOC_QUERYCAP: OK
+        test VIDIOC_G/S_PRIORITY: OK
+        test for unlimited opens: OK
+
+Debug ioctls:
+        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+        test VIDIOC_LOG_STATUS: OK
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 1 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls (Input 0):
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+        test VIDIOC_QUERYCTRL: OK
+        test VIDIOC_G/S_CTRL: OK
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK (Not Supported)
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 0 Private Controls: 0
+
+Format ioctls (Input 0):
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+        test VIDIOC_G/S_PARM: OK (Not Supported)
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK
+        test VIDIOC_TRY_FMT: OK
+        test VIDIOC_S_FMT: OK
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK (Not Supported)
+        test Scaling: OK
+
+Codec ioctls (Input 0):
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls (Input 0):
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+        test VIDIOC_EXPBUF: OK
+
+Test input 0:
+
+Streaming ioctls:
+        test read/write: OK (Not Supported)
+        test blocking wait: OK
+                fail: v4l2-test-buffers.cpp(946): node->streamon(q.g_type())
+        test MMAP: FAIL
+        test USERPTR: OK (Not Supported)
+        test DMABUF: Cannot test, specify --expbuf-device
+
+Total: 48, Succeeded: 47, Failed: 1, Warnings: 0
+
+Yong Deng (2):
+  dt-bindings: media: Add Allwinner V3s Camera Sensor Interface (CSI)
+  media: V3s: Add support for Allwinner CSI.
+
+ .../devicetree/bindings/media/sun6i-csi.txt        |  56 ++
+ MAINTAINERS                                        |   8 +
+ drivers/media/platform/Kconfig                     |   1 +
+ drivers/media/platform/Makefile                    |   2 +
+ drivers/media/platform/sunxi/sun6i-csi/Kconfig     |   9 +
+ drivers/media/platform/sunxi/sun6i-csi/Makefile    |   3 +
+ drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c | 915 +++++++++++++++++++++
+ drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.h | 135 +++
+ .../media/platform/sunxi/sun6i-csi/sun6i_csi_reg.h | 196 +++++
+ .../media/platform/sunxi/sun6i-csi/sun6i_video.c   | 678 +++++++++++++++
+ .../media/platform/sunxi/sun6i-csi/sun6i_video.h   |  38 +
+ 11 files changed, 2041 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/media/sun6i-csi.txt
+ create mode 100644 drivers/media/platform/sunxi/sun6i-csi/Kconfig
+ create mode 100644 drivers/media/platform/sunxi/sun6i-csi/Makefile
+ create mode 100644 drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
+ create mode 100644 drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.h
+ create mode 100644 drivers/media/platform/sunxi/sun6i-csi/sun6i_csi_reg.h
+ create mode 100644 drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c
+ create mode 100644 drivers/media/platform/sunxi/sun6i-csi/sun6i_video.h
+
+-- 
+1.8.3.1
+
