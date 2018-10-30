@@ -2,148 +2,111 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0168C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:32:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6653FC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:33:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 902EE2075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:32:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 902EE2075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1C24A20657
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:33:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hrjdgZYK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C24A20657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727597AbeJaA0i (ORCPT
+        id S1727615AbeJaA1u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 20:26:38 -0400
-Received: from mga11.intel.com ([192.55.52.93]:3850 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725988AbeJaA0h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 20:26:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 08:32:41 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,444,1534834800"; 
-   d="scan'208";a="276902351"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.130]) ([10.237.72.130])
-  by fmsmga006.fm.intel.com with ESMTP; 30 Oct 2018 08:32:38 -0700
-Subject: Re: [PATCH] perf cs-etm: Correct CPU mode for samples
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>, leo.yan@linaro.org
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Coresight ML <coresight@lists.linaro.org>
-References: <1540883908-17018-1-git-send-email-leo.yan@linaro.org>
- <20181030143226.GA23310@kernel.org>
- <20181030150449.GB8344@leoy-ThinkPad-X240s>
- <20181030151137.GF23310@kernel.org>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <b00357d2-10ab-e75e-6748-13341641f107@intel.com>
-Date:   Tue, 30 Oct 2018 17:30:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 30 Oct 2018 20:27:50 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:33354 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725988AbeJaA1u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 20:27:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=JrT+GY2FMwB2T1XAI7yMtLPtyidWS9RM37PHU0M8ADE=; b=hrjdgZYKhW66jsqwqYy7iBEqT
+        aNllxbN4/e8ECyE0JYYVlRz4hYMQq+5XyXBhJug9T7NXVMGsZYNnB48zQ5AONXgGCCz5pSF7PKDGv
+        pUVDc3Gfy6dNIDOhDp3hygtwI+6Ayy/kWZdsh+gXrZwiOSnojSmqIpKvUnWw65wIWG/RWwAdU+PXE
+        ybavT2cUzBF09n3j7ot0t/xu+zRu2FHWKXET0xypzw3UeDhmVbOVREEUYAxmV9gYCr96vhkDYDukA
+        /HU86umn8HQtqmSEHxnQN9yJjjim6IzloRma9Rh3rDily9mqzwc2/lKjda/4VtIWu1flnKNK/ibTj
+        tmapDlxkw==;
+Received: from [24.132.217.100] (helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gHPLh-000790-S1; Tue, 30 Oct 2018 08:26:51 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 47C7E202A40A3; Tue, 30 Oct 2018 09:25:25 +0100 (CET)
+Date:   Tue, 30 Oct 2018 09:25:25 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        tglx@linutronix.de, mingo@kernel.org, gregkh@linuxfoundation.org,
+        linux-arm-msm@vger.kernel.org,
+        kgdb-bugreport@lists.sourceforge.net, linux-mips@linux-mips.org,
+        linux-sh@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        frederic@kernel.org, riel@surriel.com,
+        linux-kernel@vger.kernel.org, luto@kernel.org,
+        sparclinux@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 6/7] smp: Don't yell about IRQs disabled in
+ kgdb_roundup_cpus()
+Message-ID: <20181030082525.GA13436@hirez.programming.kicks-ass.net>
+References: <20181029180707.207546-1-dianders@chromium.org>
+ <20181029180707.207546-7-dianders@chromium.org>
 MIME-Version: 1.0
-In-Reply-To: <20181030151137.GF23310@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181029180707.207546-7-dianders@chromium.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/10/18 5:11 PM, Arnaldo Carvalho de Melo wrote:
-> Em Tue, Oct 30, 2018 at 11:04:49PM +0800, leo.yan@linaro.org escreveu:
->> Hi Arnaldo,
->>
->> On Tue, Oct 30, 2018 at 11:32:26AM -0300, Arnaldo Carvalho de Melo wrote:
->>> Em Tue, Oct 30, 2018 at 03:18:28PM +0800, Leo Yan escreveu:
->>>> Since commit 9042f5e3539e ("perf tools: Stop fallbacking to kallsyms
->>>> for vdso symbols lookup"), the kernel address cannot be properly parsed
->>>> to kernel symbol with command 'perf script -k vmlinux'.  The reason is
->>>> CoreSight samples is always to set CPU mode as PERF_RECORD_MISC_USER,
->>>> thus it fails to find corresponding map/dso in below flows:
->>>>
->>>>   process_sample_event()
->>>>     `-> machine__resolve()
->>>> 	  `-> thread__find_map(thread, sample->cpumode, sample->ip, al);
->>>>
->>>> In this flow it needs to pass argument 'sample->cpumode' to tell what's
->>>> the CPU mode, before it always passed PERF_RECORD_MISC_USER but without
->>>> any failure until the commit 9042f5e3539e ("perf tools: Stop fallbacking
->>>> to kallsyms for vdso symbols lookup") has been merged.  The reason is
->>>> even with the wrong CPU mode the function thread__find_map() firstly
->>>> fails to find map but it will rollback to find kernel map for vdso
->>>> symbols lookup.  In the latest code it has removed the fallback code,
->>>> thus if CPU mode is PERF_RECORD_MISC_USER then it cannot find map
->>>> anymore with kernel address.
->>>>
->>>> This patch is to correct samples CPU mode setting, it creates a new
->>>> helper function cs_etm__cpu_mode() to tell what's the CPU mode based on
->>>> the address with the info from machine structure; this patch has a bit
->>>> extension to check not only kernel and user mode, but also check for
->>>> host/guest and hypervisor mode.  Finally this patch uses the function
->>>> in instruction and branch samples and also apply in cs_etm__mem_access()
->>>> for a minor polishing.
->>>
->>> Mathieu, can I have your Acked-by, please? Leo, thanks for acting so
->>> quickly on this one! 
->>
->> Thanks for reivewing.  Yeah, let's wait for Mathieu reviewing as well,
->> as I know he is travelling so might be delay a bit.
+On Mon, Oct 29, 2018 at 11:07:06AM -0700, Douglas Anderson wrote:
+> In kgdb_roundup_cpus() we've got code that looks like:
+>   local_irq_enable();
+>   smp_call_function(kgdb_call_nmi_hook, NULL, 0);
+>   local_irq_disable();
+
+> Let's add kgdb to the list of reasons not to warn in
+> smp_call_function_many().  That will allow us (in a future patch) to
+> stop calling local_irq_enable() which will get rid of the original
+> splat.
 > 
-> I'm tentatively applying the patch, as this needs fixing ASAP, and I
-> take that you have tested it and it cured the problem for you, so should
-> be a good indication for the acceptance of the patch.
-> 
-> We can always fix some detail later.
+> NOTE: with this change comes the obvious question: will we start
+> deadlocking more often now when we drop into the debugger.  I can't
+> say that for sure one way or the other, but the fact that we do the
+> same logic for "oops_in_progress" makes me feel like it shouldn't
+> happen too often.  Also note that the old logic of turning on
+> interrupts temporarily wasn't exactly safe since (I presume) that
+> could have violated spin_lock_irqsave() semantics and ended up with a
+> deadlock of its own.
+
+How is any of that not utterly and terminally broken?
+
+> @@ -413,7 +414,8 @@ void smp_call_function_many(const struct cpumask *mask,
+>  	 * can't happen.
+>  	 */
+>  	WARN_ON_ONCE(cpu_online(this_cpu) && irqs_disabled()
+> -		     && !oops_in_progress && !early_boot_irqs_disabled);
+> +		     && !oops_in_progress && !early_boot_irqs_disabled
+> +		     && !in_dbg_master());
 >  
->> Just remind, we might need the similiar change for util/intel-pt.c and
->> util/intel-bts.c when generate samples, otherwise they might have the
->> same regression for kernel symbols.  I am not the best person to change
->> these two files, but bring up this for attention.
-> 
-> Right, I think Adrian is working on it, Adrian?
+>  	/* Try to fastpath.  So, what's a CPU they want? Ignoring this one. */
+>  	cpu = cpumask_first_and(mask, cpu_online_mask);
 
-Yes although I am more concerned with branches from user space to kernel
-space and vice versa, which this patch doesn't deal with.  Also there are
-many cpumode issues in perf tools, and really the only way to deal with
-them simply at the moment is to put back the fallback for arches other
-than sparc i.e.
+Not a fan of this. There is a distinct difference between
+oops_in_progress and dropping into kgdb in that you don't ever expect to
+return/survive oopses, whereas we do expect to survive kgdb.
 
-diff --git a/tools/perf/util/event.c b/tools/perf/util/event.c
-index bc646185f8d9..b7a79cf490ad 100644
---- a/tools/perf/util/event.c
-+++ b/tools/perf/util/event.c
-@@ -1561,9 +1561,18 @@ struct map *thread__find_map(struct thread *thread, u8 cpumode, u64 addr,
- 
- 		return NULL;
- 	}
--
-+try_again:
- 	al->map = map_groups__find(mg, al->addr);
--	if (al->map != NULL) {
-+	if (al->map == NULL) {
-+		if (cpumode == PERF_RECORD_MISC_USER && machine &&
-+		    strcmp(perf_env__arch(machine->env), "sparc") &&
-+		    mg != &machine->kmaps &&
-+		    machine__kernel_ip(machine, al->addr)) {
-+			mg = &machine->kmaps;
-+			load_map = true;
-+			goto try_again;
-+		}
-+	} else {
- 		/*
- 		 * Kernel maps might be changed when loading symbols so loading
- 		 * must be done prior to using kernel maps.
+Also, how does kgdb work at all without actual NMIs ?
 
-
+So no, NAK on this.
