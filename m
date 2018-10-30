@@ -2,123 +2,170 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C469EC6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:54:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB6F6C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:55:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8905C20657
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:54:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FEF620657
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:55:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JZy3VjlT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8905C20657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="h4ZSBp5o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FEF620657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728019AbeJaBsZ (ORCPT
+        id S1728023AbeJaBtN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 21:48:25 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:48184 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727604AbeJaBsY (ORCPT
+        Tue, 30 Oct 2018 21:49:13 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37248 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727845AbeJaBtN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 21:48:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=rS9g+6Ctk8k7UtvWGyswZ5XHHFWf/nudIqbMYHp4gW0=; b=JZy3VjlTaIrgEqDyPfRPFSIT6
-        oQZe2VhTexbxdnBBh2ARHbGJKq5q3qRU+cCL9BORrVptU06rrqx3vkBhnF2eMsJ3EgcY8Dj8C4IJX
-        8iThzvHJ8HQyYj2o636B+NNLK/6AtJ1cdJK19PDoSLBuVswqp5fePQuDZMbF9LaJXJFIFF6JBaGWC
-        svlOH4nmwyZCowI9Mu5hzW7IkQw+zwSxdbbWf5csHCSDfnftSyYj5n18c6wcnkLlCRXC2qR7XPJS+
-        nS3dZ8lDoeiDF0c2SanG4TS7ma/UdZ5AkkQUWNjBIGQq4sEZnEYkfpSjDNLCZo+39PuHfpV2to5Tj
-        c9DMg30kg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gHXHL-0003XA-A6; Tue, 30 Oct 2018 16:54:07 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>,
-        dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
+        Tue, 30 Oct 2018 21:49:13 -0400
+Received: by mail-wr1-f66.google.com with SMTP id g9-v6so13400380wrq.4
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 09:54:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9dAkYr2Q3ZZk3b4DNA7rtl3LpN8B52eOdHvfIesVBNY=;
+        b=h4ZSBp5oDde5WZ8tqFvYJIdgV3EGGhfUZPTkGNDTBiXUbDVYgtSOk0qhniKD/c9ubb
+         BZ/FqPpWcZkyzfpquZpt6YvVT3gKZSR5IMrWkqtbzQZDwkn36S9DyMqSjviBq7zRMWTw
+         Wor7wrAcOzC/Cwjl3+FdnPOt852Vi1yR9R39Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9dAkYr2Q3ZZk3b4DNA7rtl3LpN8B52eOdHvfIesVBNY=;
+        b=CATr0nznExhIlJwkhgY1gz6GpMnYeAiJhh9LOKbPAYKjnobnTL1dCVnZDF1Ko9YPWk
+         WcXKKWPwbiBCpYqVPDAVrDBzxUEUz/x3MAhtuq6rvdRQFRCqWW7ay8m53/uCvOOW3CuV
+         Ugm7L+3VI28FDgRXiQuESPBA02pnw7JBlUl0WNBkgJfZSb1zdvDcFeo2LUxRxdwU4Llt
+         mkgjy7RguaV4Zfhat3WevkowvADU2GBcu9idjORxMsuLCXCl6kXpotBE6a3vm/EG2VO0
+         V44dmzP16bMOp2o4iwrE/QlJ3R12srjloCZ8YmY8NsShil1OoN516yXhU50FCUYXEeri
+         cmXw==
+X-Gm-Message-State: AGRZ1gL7h+jtv0KNCbWIIDgAefzEWygij24FPBOwa9BXM4Gf5I01FYt7
+        F4UA+m7jsM+K1ub6tcJXqCWOGmstTWM=
+X-Google-Smtp-Source: AJdET5c4Xd5zj0WQSK8mikWZGuu4SPliIooH463qaICeJzE+5YgFX9SU9nG57VqHqJaUIZxY7GoHaw==
+X-Received: by 2002:a5d:4292:: with SMTP id k18-v6mr18412175wrq.225.1540918496058;
+        Tue, 30 Oct 2018 09:54:56 -0700 (PDT)
+Received: from [192.168.0.40] (12.152.88.92.rev.sfr.net. [92.88.152.12])
+        by smtp.googlemail.com with ESMTPSA id 195-v6sm20057913wmx.21.2018.10.30.09.54.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 09:54:55 -0700 (PDT)
+Subject: Re: [PATCH] thermal: broadcom: use
+ devm_thermal_zone_of_sensor_register
+To:     Julia Lawall <Julia.Lawall@lip6.fr>,
+        Markus Mayer <mmayer@broadcom.com>
+Cc:     kernel-janitors@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Gregory Fong <gregory.0xf0@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org
-Cc:     Matthew Wilcox <willy@infradead.org>
-Subject: [PATCH v2 2/2] drm/virtio: Use IDAs more efficiently
-Date:   Tue, 30 Oct 2018 09:53:52 -0700
-Message-Id: <20181030165352.13065-2-willy@infradead.org>
-X-Mailer: git-send-email 2.14.5
-In-Reply-To: <20181030165352.13065-1-willy@infradead.org>
-References: <20181029215339.aywdmehccrwwls2n@sirius.home.kraxel.org>
- <20181030165352.13065-1-willy@infradead.org>
+References: <1540915731-22312-1-git-send-email-Julia.Lawall@lip6.fr>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <14095608-e080-d907-c9ea-788a3abe1645@linaro.org>
+Date:   Tue, 30 Oct 2018 17:54:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <1540915731-22312-1-git-send-email-Julia.Lawall@lip6.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-0-based IDAs are more efficient than any other base.  Convert the
-1-based IDAs to be 0-based.
+On 30/10/2018 17:08, Julia Lawall wrote:
+> Using devm_thermal_zone_of_sensor_register allows to simplify some
+> error handling code, drop a label, and drop the remove function.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-Signed-off-by: Matthew Wilcox <willy@infradead.org>
----
- drivers/gpu/drm/virtio/virtgpu_kms.c    | 5 +++--
- drivers/gpu/drm/virtio/virtgpu_object.c | 6 +++---
- 2 files changed, 6 insertions(+), 5 deletions(-)
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-diff --git a/drivers/gpu/drm/virtio/virtgpu_kms.c b/drivers/gpu/drm/virtio/virtgpu_kms.c
-index bf609dcae224..8118f10fde4a 100644
---- a/drivers/gpu/drm/virtio/virtgpu_kms.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_kms.c
-@@ -55,10 +55,11 @@ static void virtio_gpu_config_changed_work_func(struct work_struct *work)
- static int virtio_gpu_context_create(struct virtio_gpu_device *vgdev,
- 				      uint32_t nlen, const char *name)
- {
--	int handle = ida_alloc_min(&vgdev->ctx_id_ida, 1, GFP_KERNEL);
-+	int handle = ida_alloc(&vgdev->ctx_id_ida, GFP_KERNEL);
- 
- 	if (handle < 0)
- 		return handle;
-+	handle += 1;
- 	virtio_gpu_cmd_context_create(vgdev, handle, nlen, name);
- 	return handle;
- }
-@@ -67,7 +68,7 @@ static void virtio_gpu_context_destroy(struct virtio_gpu_device *vgdev,
- 				      uint32_t ctx_id)
- {
- 	virtio_gpu_cmd_context_destroy(vgdev, ctx_id);
--	ida_free(&vgdev->ctx_id_ida, ctx_id);
-+	ida_free(&vgdev->ctx_id_ida, ctx_id - 1);
- }
- 
- static void virtio_gpu_init_vq(struct virtio_gpu_queue *vgvq,
-diff --git a/drivers/gpu/drm/virtio/virtgpu_object.c b/drivers/gpu/drm/virtio/virtgpu_object.c
-index 5ac42dded217..f39a183d59c2 100644
---- a/drivers/gpu/drm/virtio/virtgpu_object.c
-+++ b/drivers/gpu/drm/virtio/virtgpu_object.c
-@@ -28,18 +28,18 @@
- static int virtio_gpu_resource_id_get(struct virtio_gpu_device *vgdev,
- 				       uint32_t *resid)
- {
--	int handle = ida_alloc_min(&vgdev->resource_ida, 1, GFP_KERNEL);
-+	int handle = ida_alloc(&vgdev->resource_ida, GFP_KERNEL);
- 
- 	if (handle < 0)
- 		return handle;
- 
--	*resid = handle;
-+	*resid = handle + 1;
- 	return 0;
- }
- 
- static void virtio_gpu_resource_id_put(struct virtio_gpu_device *vgdev, uint32_t id)
- {
--	ida_free(&vgdev->resource_ida, id);
-+	ida_free(&vgdev->resource_ida, id - 1);
- }
- 
- static void virtio_gpu_ttm_bo_destroy(struct ttm_buffer_object *tbo)
+> ---
+> 
+> This patch is completely orthogonal to the recent constification
+> patch.
+> 
+>  drivers/thermal/broadcom/brcmstb_thermal.c |   24 ++++--------------------
+>  1 file changed, 4 insertions(+), 20 deletions(-)
+> 
+> diff --git a/drivers/thermal/broadcom/brcmstb_thermal.c b/drivers/thermal/broadcom/brcmstb_thermal.c
+> index 1919f91fa756..956eef8717bb 100644
+> --- a/drivers/thermal/broadcom/brcmstb_thermal.c
+> +++ b/drivers/thermal/broadcom/brcmstb_thermal.c
+> @@ -329,7 +329,8 @@ static int brcmstb_thermal_probe(struct platform_device *pdev)
+>  	priv->dev = &pdev->dev;
+>  	platform_set_drvdata(pdev, priv);
+>  
+> -	thermal = thermal_zone_of_sensor_register(&pdev->dev, 0, priv, &of_ops);
+> +	thermal = devm_thermal_zone_of_sensor_register(&pdev->dev, 0, priv,
+> +						       &of_ops);
+>  	if (IS_ERR(thermal)) {
+>  		ret = PTR_ERR(thermal);
+>  		dev_err(&pdev->dev, "could not register sensor: %d\n", ret);
+> @@ -341,40 +342,23 @@ static int brcmstb_thermal_probe(struct platform_device *pdev)
+>  	irq = platform_get_irq(pdev, 0);
+>  	if (irq < 0) {
+>  		dev_err(&pdev->dev, "could not get IRQ\n");
+> -		ret = irq;
+> -		goto err;
+> +		return irq;
+>  	}
+>  	ret = devm_request_threaded_irq(&pdev->dev, irq, NULL,
+>  					brcmstb_tmon_irq_thread, IRQF_ONESHOT,
+>  					DRV_NAME, priv);
+>  	if (ret < 0) {
+>  		dev_err(&pdev->dev, "could not request IRQ: %d\n", ret);
+> -		goto err;
+> +		return ret;
+>  	}
+>  
+>  	dev_info(&pdev->dev, "registered AVS TMON of-sensor driver\n");
+>  
+>  	return 0;
+> -
+> -err:
+> -	thermal_zone_of_sensor_unregister(&pdev->dev, thermal);
+> -	return ret;
+> -}
+> -
+> -static int brcmstb_thermal_exit(struct platform_device *pdev)
+> -{
+> -	struct brcmstb_thermal_priv *priv = platform_get_drvdata(pdev);
+> -	struct thermal_zone_device *thermal = priv->thermal;
+> -
+> -	if (thermal)
+> -		thermal_zone_of_sensor_unregister(&pdev->dev, priv->thermal);
+> -
+> -	return 0;
+>  }
+>  
+>  static struct platform_driver brcmstb_thermal_driver = {
+>  	.probe = brcmstb_thermal_probe,
+> -	.remove = brcmstb_thermal_exit,
+>  	.driver = {
+>  		.name = DRV_NAME,
+>  		.of_match_table = brcmstb_thermal_id_table,
+> 
+
+
 -- 
-2.19.1
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
