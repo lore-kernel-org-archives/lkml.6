@@ -2,110 +2,101 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BEB4C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:20:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9895C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:23:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C0BA2082D
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:20:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C0BA2082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6960E205F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:23:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6960E205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728306AbeJ3XOP (ORCPT
+        id S1728190AbeJ3XR2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 19:14:15 -0400
-Received: from mga01.intel.com ([192.55.52.88]:31308 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726563AbeJ3XOP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 19:14:15 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 07:20:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,444,1534834800"; 
-   d="scan'208";a="86882686"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
-  by orsmga006.jf.intel.com with ESMTP; 30 Oct 2018 07:20:33 -0700
-Subject: Re: [PATCH] USB: Don't enable LPM if it's already enabled
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        gregkh@linuxfoundation.org
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alan Stern <stern@rowland.harvard.edu>
-References: <20181030055452.25969-1-kai.heng.feng@canonical.com>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Message-ID: <c5d72c60-c13c-8801-26d5-2fe8ab48d98c@linux.intel.com>
-Date:   Tue, 30 Oct 2018 16:24:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 30 Oct 2018 19:17:28 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36202 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727834AbeJ3XR2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 19:17:28 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 21EB9B0E0;
+        Tue, 30 Oct 2018 14:23:47 +0000 (UTC)
+Date:   Tue, 30 Oct 2018 15:23:44 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     linux-mm@kvack.org, Roman Gushchin <guro@fb.com>,
+        David Rientjes <rientjes@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH v2 3/3] mm, oom: hand over MMF_OOM_SKIP to exit path
+ if it is guranteed to finish
+Message-ID: <20181030142344.GF32673@dhcp22.suse.cz>
+References: <20181025082403.3806-1-mhocko@kernel.org>
+ <20181025082403.3806-4-mhocko@kernel.org>
+ <201810300445.w9U4jMhu076672@www262.sakura.ne.jp>
+ <20181030063136.GU32673@dhcp22.suse.cz>
+ <95cb93ec-2421-3c5d-fd1e-91d9696b0f5a@I-love.SAKURA.ne.jp>
+ <20181030113915.GB32673@dhcp22.suse.cz>
+ <ca390ac1-2f10-b734-fff7-56767253e8c5@i-love.sakura.ne.jp>
+ <20181030121012.GC32673@dhcp22.suse.cz>
+ <0b1a8c3b-8346-ba7d-da7b-3c79354e11d7@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-In-Reply-To: <20181030055452.25969-1-kai.heng.feng@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0b1a8c3b-8346-ba7d-da7b-3c79354e11d7@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30.10.2018 07:54, Kai-Heng Feng wrote:
-> USB Bluetooth controller QCA ROME (0cf3:e007) sometimes stops working
-> after S3:
-> [ 165.110742] Bluetooth: hci0: using NVM file: qca/nvm_usb_00000302.bin
-> [ 168.432065] Bluetooth: hci0: Failed to send body at 4 of 1953 (-110)
+On Tue 30-10-18 22:57:37, Tetsuo Handa wrote:
+> On 2018/10/30 21:10, Michal Hocko wrote:
+> > I misunderstood your concern. oom_reaper would back off without
+> > MMF_OOF_SKIP as well. You are right we cannot assume anything about
+> > close callbacks so MMF_OOM_SKIP has to come before that. I will move it
+> > behind the pagetable freeing.
+> > 
 > 
-> After some experiments, I found that disabling LPM can workaround the
-> issue.
-> 
-> On some platforms, the USB power is cut during S3, so the driver uses
-> reset-resume to resume the device. During port resume, LPM gets enabled
-> twice, by usb_reset_and_verify_device() and usb_port_resume().
-> 
-> So let's enable LPM for just once, as this solves the issue for the
-> device in question.
-> 
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-> ---
->   drivers/usb/core/driver.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
-> index 53564386ed57..e11d2eac76b6 100644
-> --- a/drivers/usb/core/driver.c
-> +++ b/drivers/usb/core/driver.c
-> @@ -1901,7 +1901,8 @@ int usb_set_usb2_hardware_lpm(struct usb_device *udev, int enable)
->   	struct usb_hcd *hcd = bus_to_hcd(udev->bus);
->   	int ret = -EPERM;
->   
-> -	if (enable && !udev->usb2_hw_lpm_allowed)
-> +	if (enable && !udev->usb2_hw_lpm_allowed ||
-> +	    udev->usb2_hw_lpm_enabled == enable)
->   		return 0;
->   
->   	if (hcd->driver->set_usb2_hw_lpm) {
-> 
+> And at that point, your patch can at best wait for only __free_pgtables(),
 
-Something like that would probably work.
+Yes, mostly on the grounds that oom victims are mostly sitting on mapped
+memory and page tables. I can see how last ->close() can release some
+memory as well but a) we do not consider that memory when selecting a
+victim and b) it shouldn't be a large memory consumer on its own.
 
-Would it make sense to skip USB2 hw LPM enabling in usb_port_resume() if
-port was just reset (and thus LPM enabled)?
+> at the cost/risk of complicating exit_mmap() and arch specific code.Also,
+> you are asking for comments to wrong audiences. It is arch maintainers who
+> need to precisely understand the OOM behavior / possibility of OOM lockup,
+> and you must persuade them about restricting/complicating future changes in
+> their arch code due to your wish to allow handover. Without "up-to-dated
+> big fat comments to all relevant functions affected by your change" and
+> "acks from all arch maintainers", I'm sure that people keep making
+> errors/mistakes/overlooks.
 
-something like this:
+Are you talking about arch_exit_mmap or which part of the arch code?
 
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -3520,7 +3520,7 @@ int usb_port_resume(struct usb_device *udev, pm_message_t msg)
-                 hub_port_logical_disconnect(hub, port1);
-         } else  {
-                 /* Try to enable USB2 hardware LPM */
--               if (udev->usb2_hw_lpm_capable == 1)
-+               if (udev->usb2_hw_lpm_capable == 1 && !udev->reset_resume)
-                         usb_set_usb2_hardware_lpm(udev, 1);
-  
-                 /* Try to enable USB3 LTM */
+> My patch can wait for completion of (not only exit_mmap() but also) __mmput(),
+> by using simple polling approach. My patch can allow NOMMU kernels to avoid
+> possibility of OOM lockup by setting MMF_OOM_SKIP at __mmput() (and future
+> patch will implement timeout based back off for NOMMU kernels), and allows you
+> to get rid of TIF_MEMDIE (which you recently added to your TODO list) by getting
+> rid of conditional handling of oom_reserves_allowed() and ALLOC_OOM.
 
--Mathias
+OK, let's settle on a simple fact. I would like to discuss _this_
+approach here. Bringing up _yours_ all the time is not productive much.
+You might have noticed that I have posted this for discussion (hence the
+RGC) and as such I would appreciate staying on the topic.
+
+What is the best approach in the end is a matter of discsussion of
+course. At thise stage it is quite clear we can only agree to disagree
+which approach is better and discussing the same set of points back and
+forth is not going to get us anywhere. Therefore we would have to rely on the
+maintainer to decide.
+-- 
+Michal Hocko
+SUSE Labs
