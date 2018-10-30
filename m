@@ -2,120 +2,130 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B12AC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:53:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14D72C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:54:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D475720664
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:53:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D475720664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BCB0420664
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:54:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="y30ofgft"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCB0420664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728096AbeJaGsn (ORCPT
+        id S1728102AbeJaGtU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 02:48:43 -0400
-Received: from mga17.intel.com ([192.55.52.151]:41971 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727985AbeJaGsm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 02:48:42 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 14:53:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,446,1534834800"; 
-   d="scan'208";a="103909753"
-Received: from orsmsx107.amr.corp.intel.com ([10.22.240.5])
-  by fmsmga001.fm.intel.com with ESMTP; 30 Oct 2018 14:53:28 -0700
-Received: from orsmsx163.amr.corp.intel.com (10.22.240.88) by
- ORSMSX107.amr.corp.intel.com (10.22.240.5) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Tue, 30 Oct 2018 14:53:21 -0700
-Received: from orsmsx110.amr.corp.intel.com ([169.254.10.166]) by
- ORSMSX163.amr.corp.intel.com ([169.254.9.34]) with mapi id 14.03.0415.000;
- Tue, 30 Oct 2018 14:53:21 -0700
-From:   "Schaufler, Casey" <casey.schaufler@intel.com>
-To:     Tim Chen <tim.c.chen@linux.intel.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-CC:     Tom Lendacky <thomas.lendacky@amd.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "Mallick, Asit K" <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "Schaufler, Casey" <casey.schaufler@intel.com>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-Subject: RE: [Patch v4 13/18] security: Update security level of a process
- when modifying its dumpability
-Thread-Topic: [Patch v4 13/18] security: Update security level of a process
- when modifying its dumpability
-Thread-Index: AQHUcIX1hxicXgbmAEOLDSitei16taU4PnJAgACFdgD//42oYA==
-Date:   Tue, 30 Oct 2018 21:53:20 +0000
-Message-ID: <99FC4B6EFCEFD44486C35F4C281DC6732148DCEC@ORSMSX110.amr.corp.intel.com>
-References: <cover.1540923609.git.tim.c.chen@linux.intel.com>
- <e8b6b10e15653b3b2c5727e935f75142e441f834.1540923609.git.tim.c.chen@linux.intel.com>
- <99FC4B6EFCEFD44486C35F4C281DC6732148DC65@ORSMSX110.amr.corp.intel.com>
- <f63e412c-d768-9f47-7a47-953a15db5850@linux.intel.com>
-In-Reply-To: <f63e412c-d768-9f47-7a47-953a15db5850@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYjYwZDQ1MDEtNjgyNi00YTA2LWJhMDEtYzRiNTdmMzM0NTQ0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiaWg5MXYyakdrd3ZhV25XNkhKV3ZxTnRPRURqeEhcL2RNOFRpS3J2VHRhQjlmWDVWbDBTQ0lqcFhYRmc5dHZuTUoifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 31 Oct 2018 02:49:20 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:43943 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725743AbeJaGtU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 02:49:20 -0400
+Received: by mail-pg1-f196.google.com with SMTP id n10-v6so6311822pgv.10
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 14:54:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Rew2gv4nVpDtTMnjKCCNmg5kcJfYNGTT9ybPrEx+zJQ=;
+        b=y30ofgftD0wIeQyusVx0RfEuXqttEXrfgimH/kIKElSYpGPd+eTZWstqQPjcWcbEat
+         a6AgsyGckFFVgcaNoneYihXEWf8Uk7c7sCtZAoZdNx4WfhPj+9qbPODLd+n7EdVzLF2C
+         sA+9J/Al0oFrfKkxskDlAqwoQ5PHAzlT87RhRfrZS6KaocRnb4Rd0vEPH70NpNEbAxAn
+         uBG1yVG3Q1Vy29entfqF/rbEJxNI6jhwpACjyr3tA9CRx6vZZTGLWgBCNjfShR1p8ZKu
+         4GjwOTGoumN829cd/+BA8HFLoUGs03eA4FNhCf7G082xHWEXR4zYK4jbzE9qrOhk2Q/h
+         TNTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Rew2gv4nVpDtTMnjKCCNmg5kcJfYNGTT9ybPrEx+zJQ=;
+        b=WaMrjw79gh2BuYEGcpXC49oCYMU6AjxnDMJOYY7nzacRCepMig/uJR9RJiRFxLo1hp
+         sFNwFfv7cMm4mKydJoGzWZ7DQ3+A82E+8xirzEeB47B3fHypkcpZ99sLzrpHlfCU8V3j
+         QmncbzIH9vhbPvuL0f65siUiAon+IfpyGv1QLiKi5ugfSHU9Rbs02ljqH3N6nVm9Uwof
+         SUqmPAt3tPvDYhgqVsfG/8W0sjrYUYz2kbafaM55g/wMCENnQeA5FdFlHKDk2vEZPfiu
+         uwOQwbjbTa8Bp/MmjbHQADfZnv0kDFRk+U92TTAkNaRglvGyE6KGXFr2UzS3OOVeM9lc
+         z6ZQ==
+X-Gm-Message-State: AGRZ1gL+NgePr40+Im4M8511DGgsnBSRq9kYV2lt3ybT0jF8mHoSnTkQ
+        kTnCp+RI2xSovX7yVJ7hkAC0LQ==
+X-Google-Smtp-Source: AJdET5eD4JV8kM0uXTB1HgZyo1g+QYgmjGCh3oJIPxI97sUoNTs284t/4yLY5xZgwqvYBkw8EARUSA==
+X-Received: by 2002:a63:2586:: with SMTP id l128mr475518pgl.104.1540936448037;
+        Tue, 30 Oct 2018 14:54:08 -0700 (PDT)
+Received: from cisco ([128.107.241.161])
+        by smtp.gmail.com with ESMTPSA id d2-v6sm44579313pfj.122.2018.10.30.14.54.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 30 Oct 2018 14:54:07 -0700 (PDT)
+Date:   Tue, 30 Oct 2018 15:54:04 -0600
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian@brauner.io>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Aleksa Sarai <asarai@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH v8 1/2] seccomp: add a return code to trap to userspace
+Message-ID: <20181030215404.GF7343@cisco>
+References: <20181029224031.29809-1-tycho@tycho.ws>
+ <20181029224031.29809-2-tycho@tycho.ws>
+ <CAGXu5jLjum=TDab67L5XdWKEmzU_5rYeLfGXB1vb2BmfZdPuHQ@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jLjum=TDab67L5XdWKEmzU_5rYeLfGXB1vb2BmfZdPuHQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBUaW0gQ2hlbiBbbWFpbHRvOnRp
-bS5jLmNoZW5AbGludXguaW50ZWwuY29tXQ0KPiBTZW50OiBUdWVzZGF5LCBPY3RvYmVyIDMwLCAy
-MDE4IDI6MzEgUE0NCj4gVG86IFNjaGF1ZmxlciwgQ2FzZXkgPGNhc2V5LnNjaGF1ZmxlckBpbnRl
-bC5jb20+OyBKaXJpIEtvc2luYQ0KPiA8amlrb3NAa2VybmVsLm9yZz47IFRob21hcyBHbGVpeG5l
-ciA8dGdseEBsaW51dHJvbml4LmRlPg0KPiBDYzogVG9tIExlbmRhY2t5IDx0aG9tYXMubGVuZGFj
-a3lAYW1kLmNvbT47IEluZ28gTW9sbmFyDQo+IDxtaW5nb0ByZWRoYXQuY29tPjsgUGV0ZXIgWmlq
-bHN0cmEgPHBldGVyekBpbmZyYWRlYWQub3JnPjsgSm9zaCBQb2ltYm9ldWYNCj4gPGpwb2ltYm9l
-QHJlZGhhdC5jb20+OyBBbmRyZWEgQXJjYW5nZWxpIDxhYXJjYW5nZUByZWRoYXQuY29tPjsgRGF2
-aWQNCj4gV29vZGhvdXNlIDxkd213QGFtYXpvbi5jby51az47IEFuZGkgS2xlZW4gPGFrQGxpbnV4
-LmludGVsLmNvbT47DQo+IEhhbnNlbiwgRGF2ZSA8ZGF2ZS5oYW5zZW5AaW50ZWwuY29tPjsgTWFs
-bGljaywgQXNpdCBLDQo+IDxhc2l0LmsubWFsbGlja0BpbnRlbC5jb20+OyBBcmphbiB2YW4gZGUg
-VmVuIDxhcmphbkBsaW51eC5pbnRlbC5jb20+OyBKb24NCj4gTWFzdGVycyA8amNtQHJlZGhhdC5j
-b20+OyBXYWltYW4gTG9uZyA8bG9uZ21hbjkzOTRAZ21haWwuY29tPjsNCj4gbGludXgta2VybmVs
-QHZnZXIua2VybmVsLm9yZzsgeDg2QGtlcm5lbC5vcmc7IGxpbnV4LXNlY3VyaXR5LW1vZHVsZSA8
-bGludXgtDQo+IHNlY3VyaXR5LW1vZHVsZUB2Z2VyLmtlcm5lbC5vcmc+DQo+IFN1YmplY3Q6IFJl
-OiBbUGF0Y2ggdjQgMTMvMThdIHNlY3VyaXR5OiBVcGRhdGUgc2VjdXJpdHkgbGV2ZWwgb2YgYSBw
-cm9jZXNzIHdoZW4NCj4gbW9kaWZ5aW5nIGl0cyBkdW1wYWJpbGl0eQ0KPiANCj4gT24gMTAvMzAv
-MjAxOCAwMTo1NyBQTSwgU2NoYXVmbGVyLCBDYXNleSB3cm90ZToNCj4gDQo+ID4NCj4gPiBUaGlz
-IGlzbid0IGFuIExTTSBob29rIGFuZCBoZW5jZSBkb2VzIG5vdCBiZWxvbmcgaW4gdGhpcyBmaWxl
-Lg0KPiA+IGFyY2hfc2V0X3NlY3VyaXR5KCkgaXNuJ3QgZGVzY3JpcHRpdmUsIGFuZCBpcyBpbiBm
-YWN0IGEgYmFkIGNob2ljZQ0KPiA+IGFzIHRhc2tfc3RydWN0IGhhcyBhIGZpZWxkICJzZWN1cml0
-eSIuIFRoaXMgZnVuY3Rpb24gaGFzIG5vdGhpbmcNCj4gPiB0byBkbyB3aXRoIHRoZSB0YXNrLT5z
-ZWN1cml0eSBmaWVsZCwgd2hpY2ggaXMgd2hhdCBJIHdvdWxkIGV4cGVjdA0KPiA+IGJhc2VkIG9u
-IHRoZSBuYW1lLg0KPiA+DQo+IA0KPiBXaGF0IGZpbGUgd2lsbCBiZSBhIGxvZ2ljYWwgcGxhY2Ug
-Zm9yIHRoaXMgZnVuY3Rpb24/DQoNCmtlcm5lbC9jcHUuYyA/IFlvdSdyZSB3b3JraW5nIHdpdGgg
-Q1BVIGxvY2FsaXplZCBtaXRpZ2F0aW9ucywgcmlnaHQ/DQoNCllvdSBkb24ndCB3YW50IGl0IHVu
-ZGVyIHNlY3VyaXR5LyBhcyB0aGF0J3MgYWxsIHN1cHBvc2VkIHRvDQpiZSBiaXRzIG9mIHRoZSBM
-U00gaW5mcmFzdHJ1Y3R1cmUuDQoNCj4gPj4gKw0KPiA+PiAraW50IHVwZGF0ZV9wcm9jZXNzX3Nl
-Y3VyaXR5KHN0cnVjdCB0YXNrX3N0cnVjdCAqdGFzaykNCj4gPg0KPiA+IEFnYWluLCB0aGlzIGlz
-bid0IGFuIExTTSBob29rIGFuZCBkb2VzIG5vdCBiZWxvbmcgaW4gdGhpcyBmaWxlLg0KPiA+IEFs
-c28gYWdhaW4sICJzZWN1cml0eSIgaXNuJ3QgZGVzY3JpcHRpdmUgaW4gdGhlIG5hbWUuDQo+ID4N
-Cj4gDQo+IFRoYW5rcy4NCj4gDQo+IFRpbQ0K
+On Tue, Oct 30, 2018 at 02:49:21PM -0700, Kees Cook wrote:
+> On Mon, Oct 29, 2018 at 3:40 PM, Tycho Andersen <tycho@tycho.ws> wrote:
+> >     * switch to a flags based future-proofing mechanism for struct
+> >       seccomp_notif and seccomp_notif_resp, thus avoiding version issues
+> >       with structure length (Kees)
+> [...]
+> >
+> > +struct seccomp_notif {
+> > +       __u64 id;
+> > +       __u32 pid;
+> > +       __u32 flags;
+> > +       struct seccomp_data data;
+> > +};
+> > +
+> > +struct seccomp_notif_resp {
+> > +       __u64 id;
+> > +       __s64 val;
+> > +       __s32 error;
+> > +       __u32 flags;
+> > +};
+> 
+> Hrm, so, what's the plan for when struct seccomp_data changes size?
+
+I guess my plan was don't ever change the size again, just use flags
+and have extra state available via ioctl().
+
+> I'm realizing that it might be "too late" for userspace to discover
+> it's running on a newer kernel. i.e. it gets a user notification, and
+> discovers flags it doesn't know how to handle. Do we actually need
+> both flags AND a length? Designing UAPI is frustrating! :)
+
+:). I don't see this as such a big problem -- in fact it's better than
+the length mode, where you don't know what you don't know, because it
+only copied as much info as you could handle. Older userspace would
+simply not use information it didn't know how to use.
+
+> Do we need another ioctl to discover the seccomp_data size maybe?
+
+That could be an option as well, assuming we agree that size would
+work, which I thought we didn't?
+
+Tycho
