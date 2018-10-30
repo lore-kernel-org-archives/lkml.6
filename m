@@ -2,78 +2,141 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83209C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:32:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DB8C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:33:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 459372080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:32:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40B6D2080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:33:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IP0WEFJw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 459372080A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BK7Kt2ei"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40B6D2080A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728939AbeJ3W0K (ORCPT
+        id S1728710AbeJ3W0c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 18:26:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54894 "EHLO mail.kernel.org"
+        Tue, 30 Oct 2018 18:26:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55034 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728657AbeJ3W0K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 18:26:10 -0400
-Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1727845AbeJ3W0c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 18:26:32 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C0BF205F4;
-        Tue, 30 Oct 2018 13:32:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E34F9205F4;
+        Tue, 30 Oct 2018 13:33:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540906360;
-        bh=Jkj1rwjCmq2w6IYlbcm7iP2/WCQqMaV+RPcaYaJUB68=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IP0WEFJwddWKgn931IhESZ30Gpf0yA//QGcgPi1lVPqMESboi+4iS1eGz2IIfhr6E
-         j/7Ypju3+3EPVkfpNUOt/zlrQ2g/EtX5KrF3bN77R/zgiJJrja8puAEI3hABa+EL/o
-         LkigY/U9G8Jz4va4UjAaMTWjv8myra6IgNSbljRQ=
-Date:   Tue, 30 Oct 2018 08:32:39 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Suganath Prabu <suganath-prabu.subramani@broadcom.com>
-Cc:     lukas@wunner.de, linux-scsi@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        benh@kernel.crashing.org, ruscur@russell.cc,
-        sbobroff@linux.ibm.com, oohall@gmail.com,
-        andy.shevchenko@gmail.com, Sathya.Prakash@broadcom.com,
-        sreekanth.reddy@broadcom.com
-Subject: Re: [v6 2/4] mpt3sas: Fix Sync cache command failure during driver
- unload
-Message-ID: <20181030133239.GB41022@google.com>
-References: <1540290081-15827-1-git-send-email-suganath-prabu.subramani@broadcom.com>
- <1540290081-15827-3-git-send-email-suganath-prabu.subramani@broadcom.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1540290081-15827-3-git-send-email-suganath-prabu.subramani@broadcom.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        s=default; t=1540906382;
+        bh=n2UHXF0sSGQOs0GDiek/fRquEVOtIutWIXMV+vFnM+0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=BK7Kt2eiUNt0TjJAZiA0QSE2Nw6LgC1QqNstJWGcLnAAmcIwxe51wHVs/4Hc7/be+
+         Si7kSZriI9oFgqW8ZthNrlLOMELTscZpMOrd6lUrUdq7BxiRAekL9CDCsY23Rj0PP3
+         xHNVSB1CvnxBXuqIhFVcrA8Jkl4kDLCdaTpeTFwg=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 1/5] sparc: Fix single-pcr perf event counter management.
+Date:   Tue, 30 Oct 2018 09:32:30 -0400
+Message-Id: <20181030133234.218251-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 03:51:19PM +0530, Suganath Prabu wrote:
-> This is to fix Sync cache and start stop command
->  failures with DID_NO_CONNECT during driver unload.
-> 
-> 1) Release drives first from SML, then remove internally
-> in driver.
-> 2) And allow sync cache and Start stop commands to firmware,
-> even when remove_host flag is set
+From: "David S. Miller" <davem@davemloft.net>
 
-This looks like it should be two or maybe even three patches: (1) call
-sas_remove_host() before releasing volumes and ports, (2) skipping
-sas_port_delete_phy() and sas_port_delete() when ioc->remove_host (I'm not
-sure if this is logically part of the sas_remove_host() change), and (3)
-add _scsih_allow_scmd_to_device() -- this is purely mpt3sas-specific thing
-independent of the SCSI midlayer.
+[ Upstream commit cfdc3170d214046b9509183fe9b9544dc644d40b ]
 
-Bjorn
+It is important to clear the hw->state value for non-stopped events
+when they are added into the PMU.  Otherwise when the event is
+scheduled out, we won't read the counter because HES_UPTODATE is still
+set.  This breaks 'perf stat' and similar use cases, causing all the
+events to show zero.
+
+This worked for multi-pcr because we make explicit sparc_pmu_start()
+calls in calculate_multiple_pcrs().  calculate_single_pcr() doesn't do
+this because the idea there is to accumulate all of the counter
+settings into the single pcr value.  So we have to add explicit
+hw->state handling there.
+
+Like x86, we use the PERF_HES_ARCH bit to track truly stopped events
+so that we don't accidently start them on a reload.
+
+Related to all of this, sparc_pmu_start() is missing a userpage update
+so add it.
+
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/sparc/kernel/perf_event.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
+
+diff --git a/arch/sparc/kernel/perf_event.c b/arch/sparc/kernel/perf_event.c
+index af53c25da2e7..8536532970bb 100644
+--- a/arch/sparc/kernel/perf_event.c
++++ b/arch/sparc/kernel/perf_event.c
+@@ -919,6 +919,8 @@ static void read_in_all_counters(struct cpu_hw_events *cpuc)
+ 			sparc_perf_event_update(cp, &cp->hw,
+ 						cpuc->current_idx[i]);
+ 			cpuc->current_idx[i] = PIC_NO_INDEX;
++			if (cp->hw.state & PERF_HES_STOPPED)
++				cp->hw.state |= PERF_HES_ARCH;
+ 		}
+ 	}
+ }
+@@ -951,10 +953,12 @@ static void calculate_single_pcr(struct cpu_hw_events *cpuc)
+ 
+ 		enc = perf_event_get_enc(cpuc->events[i]);
+ 		cpuc->pcr[0] &= ~mask_for_index(idx);
+-		if (hwc->state & PERF_HES_STOPPED)
++		if (hwc->state & PERF_HES_ARCH) {
+ 			cpuc->pcr[0] |= nop_for_index(idx);
+-		else
++		} else {
+ 			cpuc->pcr[0] |= event_encoding(enc, idx);
++			hwc->state = 0;
++		}
+ 	}
+ out:
+ 	cpuc->pcr[0] |= cpuc->event[0]->hw.config_base;
+@@ -980,6 +984,9 @@ static void calculate_multiple_pcrs(struct cpu_hw_events *cpuc)
+ 
+ 		cpuc->current_idx[i] = idx;
+ 
++		if (cp->hw.state & PERF_HES_ARCH)
++			continue;
++
+ 		sparc_pmu_start(cp, PERF_EF_RELOAD);
+ 	}
+ out:
+@@ -1071,6 +1078,8 @@ static void sparc_pmu_start(struct perf_event *event, int flags)
+ 	event->hw.state = 0;
+ 
+ 	sparc_pmu_enable_event(cpuc, &event->hw, idx);
++
++	perf_event_update_userpage(event);
+ }
+ 
+ static void sparc_pmu_stop(struct perf_event *event, int flags)
+@@ -1363,9 +1372,9 @@ static int sparc_pmu_add(struct perf_event *event, int ef_flags)
+ 	cpuc->events[n0] = event->hw.event_base;
+ 	cpuc->current_idx[n0] = PIC_NO_INDEX;
+ 
+-	event->hw.state = PERF_HES_UPTODATE;
++	event->hw.state = PERF_HES_UPTODATE | PERF_HES_STOPPED;
+ 	if (!(ef_flags & PERF_EF_START))
+-		event->hw.state |= PERF_HES_STOPPED;
++		event->hw.state |= PERF_HES_ARCH;
+ 
+ 	/*
+ 	 * If group events scheduling transaction was started,
+-- 
+2.17.1
+
