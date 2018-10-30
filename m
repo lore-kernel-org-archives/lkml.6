@@ -2,414 +2,302 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25A2EC6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0994BC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:04:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A88A220823
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:03:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 916EF20823
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:04:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mQAmD6Rm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A88A220823
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="t7uniJtQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 916EF20823
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728172AbeJ3W5F (ORCPT
+        id S1728225AbeJ3W6O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 18:57:05 -0400
-Received: from casper.infradead.org ([85.118.1.10]:44754 "EHLO
+        Tue, 30 Oct 2018 18:58:14 -0400
+Received: from casper.infradead.org ([85.118.1.10]:44918 "EHLO
         casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728059AbeJ3W5F (ORCPT
+        with ESMTP id S1727969AbeJ3W6O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 18:57:05 -0400
-X-Greylist: delayed 596 seconds by postgrey-1.27 at vger.kernel.org; Tue, 30 Oct 2018 18:57:04 EDT
+        Tue, 30 Oct 2018 18:58:14 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=chrSvhTXnMXUDWC7vX6Gooxv4o7/FnfINLHqUl+sz2I=; b=mQAmD6RmRiVsTa3slxlz93uZ8k
-        bwxnwFApWf/Zpqs6nElAQB50ou7JfB1TWNc7UtByoEVFFn+/4hIfxj0nDuNkLGZ83U2pIWx6tOmZo
-        1reX6TgkgeDN4YL+xzsZ/jd8HLecc2c2A3uFlHAZoP0JrM1Q953kUH2DJ/NG5OnlCDtL+x4tXxzY0
-        pScfqIuMgZvgnRasIyQe4QD59w3GmcwqQvOe2c7IIoez/uAOxUK7ETbeTfQsQDzC5OG2zouKsempS
-        XQSdf0k2Ld6gKTEna0HlnojsoTRZDfpQeWffyosafaYend9gX9M8QylCZCyNwCwvE7SsCS8CDYvyF
-        HQoKkhEQ==;
+        MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=qqio4rEYtD19csnqnCg75iRKOC8UzLU2QgfaGP/SZDM=; b=t7uniJtQgS1eESF+pA9X+CgteQ
+        fnzFGYlMvopJiM3K3k9KYpXNDJD0jn8SgTkxMpQ0Lik1tvoRbFCnP2JdDjCgiUf1IoKK31KWfctaB
+        F2IHNObGBztP2uIozF+/U+u4WzWZxVDEtN8AwaI+XUXLR4jxmBQksujp4mcyYPyM/6kaP+CAzEy67
+        i/CJOFcmKenFcENsa2IcVVOkBTkzcsNsGyFpCJGNK9ojgrHhpuYxhhkrbkIcti3Eg/VtwKV1WwLa8
+        B4Ci4EM3t/9bTayfGO4vnq5hdYCC15tLZDzUGrRSNWgegQCdR0ByKgzCAem4krcWIpE/6hRbAc13C
+        2mlpAdEQ==;
 Received: from [191.33.133.96] (helo=coco.lan)
         by casper.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gHUc8-0006wd-E3; Tue, 30 Oct 2018 14:03:24 +0000
-Date:   Tue, 30 Oct 2018 11:03:19 -0300
+        id 1gHUSb-0006dC-5N; Tue, 30 Oct 2018 13:53:33 +0000
+Date:   Tue, 30 Oct 2018 10:53:28 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     David Howells <dhowells@redhat.com>,
-        Michael Krufky <mkrufky@linuxtv.org>,
-        Sean Young <sean@mess.org>, Brad Love <brad@nextdimension.cc>
-Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dvb: Allow MAC addresses to be mapped to stable device
- names with udev
-Message-ID: <20181030110319.764f33f0@coco.lan>
-In-Reply-To: <153778383104.14867.1567557014782141706.stgit@warthog.procyon.org.uk>
-References: <153778383104.14867.1567557014782141706.stgit@warthog.procyon.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL for v4.20-rc1] new experimental media request API
+Message-ID: <20181030105328.0667ec68@coco.lan>
 X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Mon, 24 Sep 2018 11:10:31 +0100
-David Howells <dhowells@redhat.com> escreveu:
+Hi Linus,
 
-> Some devices, such as the DVBSky S952 and T982 cards, are dual port cards
-> that provide two cx23885 devices on the same PCI device, which means the
-> attributes available for writing udev rules are exactly the same, apart
-> from the adapter number.  Unfortunately, the adapter numbers are dependent
-> on the order in which things are initialised, so this can change over
-> different releases of the kernel.
->=20
-> Devices have a MAC address available, which is printed during boot:
->=20
-> 	[   10.951517] DVBSky T982 port 1 MAC address: 00:11:22:33:44:55
-> 	...
-> 	[   10.984875] DVBSky T982 port 2 MAC address: 00:11:22:33:44:56
->=20
-> To make it possible to distinguish these in udev, provide sysfs attributes
-> to make the MAC address, adapter number and type available.  There are
-> other fields that could perhaps be exported also.  In particular, it would
-> be nice to provide the port number, but somehow that doesn't manage to
-> propagate through the labyrinthine initialisation process.
->=20
-> The new sysfs attributes can be seen from userspace as:
->=20
-> 	[root@deneb ~]# ls /sys/class/dvb/dvb0.frontend0/
-> 	dev  device  dvb_adapter  dvb_mac  dvb_type
-> 	power  subsystem  uevent
-> 	[root@deneb ~]# cat /sys/class/dvb/dvb0.frontend0/dvb_*
-> 	0
-> 	00:11:22:33:44:55
-> 	frontend
->=20
-> They can be used in udev rules:
->=20
-> 	SUBSYSTEM=3D=3D"dvb", ATTRS{vendor}=3D=3D"0x14f1", ATTRS{device}=3D=3D"0=
-x8852", ATTRS{subsystem_device}=3D=3D"0x0982", ATTR{dvb_mac}=3D=3D"00:11:22=
-:33:44:55", PROGRAM=3D"/bin/sh -c 'K=3D%k; K=3D$${K#dvb}; printf dvb/adapte=
-r9820/%%s $${K#*.}'", SYMLINK+=3D"%c"
-> 	SUBSYSTEM=3D=3D"dvb", ATTRS{vendor}=3D=3D"0x14f1", ATTRS{device}=3D=3D"0=
-x8852", ATTRS{subsystem_device}=3D=3D"0x0982", ATTR{dvb_mac}=3D=3D"00:11.22=
-.33.44.56", PROGRAM=3D"/bin/sh -c 'K=3D%k; K=3D$${K#dvb}; printf dvb/adapte=
-r9821/%%s $${K#*.}'", SYMLINK+=3D"%c"
->=20
-> where the match is made with ATTR{dvb_mac} or similar.  The rules above
-> make symlinks from /dev/dvb/adapter982/* to /dev/dvb/adapterXX/*.
->=20
-> Note that binding the dvb-net device to a network interface and changing =
-it
-> there does not reflect back into the the dvb_adapter struct and doesn't
-> change the MAC address here.  This means that a system with two identical
-> cards in it may need to distinguish them by some other means than MAC
-> address.
->=20
-> Signed-off-by: David Howells <dhowells@redhat.com>
+Please pull from:
 
-Looks OK to me.
+  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/media/v4.20-2
 
-Michael/Sean/Brad,
+For a new media API: the request API
 
-Any comments? If not, I'll probably submit it this week upstream.
+This API is needed to support device drivers that can dynamically
+change their parameters for each new frame. The latest versions of 
+Google camera and codec HAL depends on such feature.
+
+At this stage, it supports only stateless codecs.
+
+It has been discussed for a long time (at least over the last 3-4
+years), and we finally reached to something that seem to work.
+
+This series contain both the API and core changes required to support it
+and a new m2m decoder driver (cedrus).
+
+As the current API is still experimental, the only real driver using it
+(cedrus) was added at staging[1]. We intend to keep it there for a while,
+in order to test the API. Only when we're sure that this API works
+for other cases (like encoders), we'll move this driver out of staging
+and set the API into a stone.
+
+[1] We added support for the vivid virtual driver (used only for testing)
+to it too, as it makes easier to test the API for the ones that don't have
+the cedrus hardware.
 
 
-> ---
->=20
->  Documentation/ABI/testing/sysfs-class-dvb     |   29 +++++++++++
->  Documentation/media/dvb-drivers/udev.rst      |   29 +++++++++++
->  Documentation/media/uapi/dvb/intro.rst        |    7 +++
->  Documentation/media/uapi/dvb/stable_names.rst |   66 +++++++++++++++++++=
-++++++
->  drivers/media/dvb-core/dvbdev.c               |   36 ++++++++++++++
->  5 files changed, 167 insertions(+)
->  create mode 100644 Documentation/ABI/testing/sysfs-class-dvb
->  create mode 100644 Documentation/media/uapi/dvb/stable_names.rst
->=20
-> diff --git a/Documentation/ABI/testing/sysfs-class-dvb b/Documentation/AB=
-I/testing/sysfs-class-dvb
-> new file mode 100644
-> index 000000000000..09e3be329c92
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-class-dvb
-> @@ -0,0 +1,29 @@
-> +What:		/sys/class/dvb/.../dvb_adapter
-> +Date:		September 2018
-> +KernelVersion:	4.20
-> +Contact:	David Howells <dhowells@redhat.com>
-> +Description:
-> +		This displays the assigned adapter number of a DVB device.
-> +
-> +What:		/sys/class/dvb/.../dvb_mac
-> +Date:		September 2018
-> +KernelVersion:	4.20
-> +Contact:	David Howells <dhowells@redhat.com>
-> +Description:
-> +		This displays the mac address of a DVB device.  This can be
-> +		used by udev to name stable device files for DVB devices and
-> +		avoid problems with changes in the order of device
-> +		initialisation changing the assigned device numbers.  See:
-> +
-> +			Documentation/media/dvb-drivers/udev.rst
-> +			Documentation/media/uapi/dvb/stable_names.rst
-> +
-> +		for information on how to actually do this.
-> +
-> +What:		/sys/class/dvb/.../dvb_type
-> +Date:		September 2018
-> +KernelVersion:	4.20
-> +Contact:	David Howells <dhowells@redhat.com>
-> +Description:
-> +		This displays the object type of a DVB device interface, such
-> +		as "frontend" or "demux".
-> diff --git a/Documentation/media/dvb-drivers/udev.rst b/Documentation/med=
-ia/dvb-drivers/udev.rst
-> index 7d7d5d82108a..df754312f1f4 100644
-> --- a/Documentation/media/dvb-drivers/udev.rst
-> +++ b/Documentation/media/dvb-drivers/udev.rst
-> @@ -59,3 +59,32 @@ have a look at "man udev".
->  For every device that registers to the sysfs subsystem with a "dvb" pref=
-ix,
->  the helper script /etc/udev/scripts/dvb.sh is invoked, which will then
->  create the proper device node in your /dev/ directory.
-> +
-> +2. A DVB device's adapter number, type and MAC addresses are exposed thr=
-ough
-> +the sysfs interface as files dvb_adapter, dvb_type and dvb_mac in the va=
-rious
-> +dvb object directories, e.g. /sys/class/dvb/dvb0.demux0/dvb_mac.
-> +
-> +These can be used to influence the binding of devices to names in /dev t=
-o avoid
-> +problems when the order in which names are assigned changes.  This is of
-> +particular interest when you have, say, a PCI card with multiple identic=
-al
-> +devices on board under the same PCI function slot.  The only way to dist=
-inguish
-> +them is either by the DVB port number or the DVB MAC address.
-> +
-> +To make use of this with udev, a rule needs to be emplaced in a file und=
-er
-> +/etc/udev/rules.d/ that has an appropriate ATTR{} clause in it.  Somethi=
-ng like
-> +the following, for example::
-> +
-> +	SUBSYSTEM=3D=3D"dvb", ATTRS{vendor}=3D=3D"0x14f1", ATTRS{device}=3D=3D"=
-0x8852", ATTRS{subsystem_device}=3D=3D"0x0982", ATTR{dvb_mac}=3D=3D"00:11:2=
-2:33:44:55", PROGRAM=3D"/bin/sh -c 'K=3D%k; K=3D$${K#dvb}; printf dvb/adapt=
-er9820/%%s $${K#*.}'", SYMLINK+=3D"%c"
-> +
-> +Note the 'ATTR{dvb_mac}' clause that indicates the MAC address to look f=
-or.
-> +This should be different for every device, even if the devices are other=
-wise
-> +identical.  The other ATTR{} clauses in this example refer to PCI parame=
-ters.
-> +
-> +This example generates a directory called /dev/dvb/adapter9820/ and plac=
-es
-> +symlinks in it to the device files under the appropriate /dev/dvb/adapte=
-rX/
-> +directory - whatever X happens to be today.
-> +
-> +The generated name is then stable and can be relied on by programs that =
-need to
-> +pick it up without user interaction.
-> +
-> +Note that this facility does not exist in v4.19 kernels and earlier.
-> diff --git a/Documentation/media/uapi/dvb/intro.rst b/Documentation/media=
-/uapi/dvb/intro.rst
-> index 79b4d0e4e920..074fb3b3ee21 100644
-> --- a/Documentation/media/uapi/dvb/intro.rst
-> +++ b/Documentation/media/uapi/dvb/intro.rst
-> @@ -153,6 +153,13 @@ where ``N`` enumerates the Digital TV cards in a sys=
-tem starting from=C2=A00, and
->  from=C2=A00, too. We will omit the =E2=80=9C``/dev/dvb/adapterN/``\ =E2=
-=80=9D in the further
->  discussion of these devices.
-> =20
-> +Note that the automatic numbering of adapters isn't stable and may vary
-> +depending on changes to the order in which devices are initialised, both=
- in
-> +the order in which individual devices get initialised and also the order=
- in
-> +which subdevices get initialised (e.g. a PCI card with multiple identica=
-l DVB
-> +devices attached to the same PCI function).  :ref:`stable_names` shows u=
-se
-> +udev rules to create stable names.
-> +
->  More details about the data structures and function calls of all the
->  devices are described in the following chapters.
-> =20
-> diff --git a/Documentation/media/uapi/dvb/stable_names.rst b/Documentatio=
-n/media/uapi/dvb/stable_names.rst
-> new file mode 100644
-> index 000000000000..1b5dc5171ee3
-> --- /dev/null
-> +++ b/Documentation/media/uapi/dvb/stable_names.rst
-> @@ -0,0 +1,66 @@
-> +.. -*- coding: utf-8; mode: rst -*-
-> +
-> +.. _stable_names:
-> +
-> +*********************************
-> +Creating stable device file names
-> +*********************************
-> +
-> +From time to time the order in which the Linux kernel initialises device=
-s and
-> +initialises subdevices within those devices has changed.  This can cause=
- the
-> +assignment of user-visible device numbers to devices to fluctuate - lead=
-ing to
-> +the failure of services to operate correctly in non-obvious ways when mu=
-ltiple,
-> +otherwise identical devices are available in a system.
-> +
-> +To counteract this, udev rules can be defined that map devices onto stab=
-le
-> +names.  This must, however, be done in relation to attributes of a devic=
-e that
-> +don't vary, such as the MAC address.
-> +
-> +Take, for example, a PCI DVB card that has two identical DVB devices att=
-ached
-> +to the same PCI function.  The devices cannot be distinguished on PCI
-> +parameters and the DVB port number - which could otherwise distinguish t=
-hese
-> +subdevices - is not easily accessible by userspace.
-> +
-> +The MAC address, however, *is* made available, and this is supposed to be
-> +unique to each individual DVB device, and won't vary even if the device =
-is
-> +moved to another slot.  This is exported to userspace through sysfs.  It=
- can
-> +be found by looking in the dvb_mac file that can be found in a device
-> +interface's directory, for example:
-> +
-> +	/sys/class/dvb/dvb0.demux0/dvb_mac
-> +
-> +Two other files can be found there that export the adapter number and the
-> +interface type:
-> +
-> +	/sys/class/dvb/dvb0.demux0/dvb_adapter
-> +	/sys/class/dvb/dvb0.demux0/dvb_type
-> +
-> +Note that the two numbers in the path are assigned based on the order in=
- which
-> +the devices are registered with the core code, and not necessarily on the
-> +physical arrangement of the device - and thus should not be considered s=
-table.
-> +
-> +
-> +The creation of stable names can be done by writing rules for udev to ma=
-tch on
-> +the MAC addresses of the devices.  Rules needs to be placed in a file in=
- the
-> +/etc/udev/rules.d/ directory for udev to pick up.  They need appropriate
-> +ATTR{} clauses to specify the attribute matches to make.  Any of the abo=
-ve
-> +mentioned files can be used.  For example::
-> +
-> +	SUBSYSTEM=3D=3D"dvb", ATTRS{vendor}=3D=3D"0x14f1", ATTRS{device}=3D=3D"=
-0x8852", ATTRS{subsystem_device}=3D=3D"0x0982", ATTR{dvb_mac}=3D=3D"00:11:2=
-2:33:44:55", PROGRAM=3D"/bin/sh -c 'K=3D%k; K=3D$${K#dvb}; printf dvb/adapt=
-er9820/%%s $${K#*.}'", SYMLINK+=3D"%c"
-> +	SUBSYSTEM=3D=3D"dvb", ATTRS{vendor}=3D=3D"0x14f1", ATTRS{device}=3D=3D"=
-0x8852", ATTRS{subsystem_device}=3D=3D"0x0982", ATTR{dvb_mac}=3D=3D"00:11.2=
-2.33.44.56", PROGRAM=3D"/bin/sh -c 'K=3D%k; K=3D$${K#dvb}; printf dvb/adapt=
-er9821/%%s $${K#*.}'", SYMLINK+=3D"%c"
-> +
-> +In each of these example rules, the first three ATTR{} clauses specify t=
-he PCI
-> +card to match - in this case the same DVBsky T982 dual T2 receiver card.=
-  The
-> +ATTR{dvb_mac} attribute in each specifies the card MAC address of that
-> +receiver unit (the name of the attribute refers to the name of sysfs fil=
-e to
-> +read).
-> +
-> +This example generates a pair of directories called /dev/dvb/adapter9820=
-/ and
-> +/dev/dvb/adapter9821/ and places in each symlinks to the device files un=
-der
-> +the appropriate /dev/dvb/adapterX/ and /dev/dvb/adapterY/ directories -
-> +whatever X and Y happens to be today.
-> +
-> +The generated names are then stable and can be relied on by programs tha=
-t need
-> +to pick it up without user interaction.
-> +
-> +Note that this facility does not exist in v4.19 kernels and earlier.
-> diff --git a/drivers/media/dvb-core/dvbdev.c b/drivers/media/dvb-core/dvb=
-dev.c
-> index 64d6793674b9..41be3ba66341 100644
-> --- a/drivers/media/dvb-core/dvbdev.c
-> +++ b/drivers/media/dvb-core/dvbdev.c
-> @@ -995,6 +995,41 @@ void dvb_module_release(struct i2c_client *client)
->  EXPORT_SYMBOL_GPL(dvb_module_release);
->  #endif
-> =20
-> +static ssize_t dvb_adapter_show(struct device *dev,
-> +				struct device_attribute *attr, char *buf)
-> +{
-> +	struct dvb_device *dvbdev =3D dev_get_drvdata(dev);
-> +
-> +	return sprintf(buf, "%d\n", dvbdev->adapter->num);
-> +}
-> +static DEVICE_ATTR_RO(dvb_adapter);
-> +
-> +static ssize_t dvb_mac_show(struct device *dev,
-> +			    struct device_attribute *attr, char *buf)
-> +{
-> +	struct dvb_device *dvbdev =3D dev_get_drvdata(dev);
-> +
-> +	return sprintf(buf, "%pM\n", dvbdev->adapter->proposed_mac);
-> +}
-> +static DEVICE_ATTR_RO(dvb_mac);
-> +
-> +static ssize_t dvb_type_show(struct device *dev,
-> +			     struct device_attribute *attr, char *buf)
-> +{
-> +	struct dvb_device *dvbdev =3D dev_get_drvdata(dev);
-> +
-> +	return sprintf(buf, "%s\n", dnames[dvbdev->type]);
-> +}
-> +static DEVICE_ATTR_RO(dvb_type);
-> +
-> +static struct attribute *dvb_class_attrs[] =3D {
-> +	&dev_attr_dvb_adapter.attr,
-> +	&dev_attr_dvb_mac.attr,
-> +	&dev_attr_dvb_type.attr,
-> +	NULL
-> +};
-> +ATTRIBUTE_GROUPS(dvb_class);
-> +
->  static int dvb_uevent(struct device *dev, struct kobj_uevent_env *env)
->  {
->  	struct dvb_device *dvbdev =3D dev_get_drvdata(dev);
-> @@ -1035,6 +1070,7 @@ static int __init init_dvbdev(void)
->  		retval =3D PTR_ERR(dvb_class);
->  		goto error;
->  	}
-> +	dvb_class->dev_groups =3D dvb_class_groups,
->  	dvb_class->dev_uevent =3D dvb_uevent;
->  	dvb_class->devnode =3D dvb_devnode;
->  	return 0;
->=20
-
-
-
-Thanks,
+Thanks!
 Mauro
+
+
+The following changes since commit d842a7cf938b6e0f8a1aa9f1aec0476c9a599310:
+
+  media: adv7842: enable reduced fps detection (2018-08-31 10:03:51 -0400)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media tags/media/v4.20-2
+
+for you to fetch changes up to e4183d3256e3cd668e899d06af66da5aac3a51af:
+
+  media: dt-bindings: Document the Rockchip VPU bindings (2018-10-05 07:00:43 -0400)
+
+----------------------------------------------------------------
+media updates for v4.20-rc1
+
+----------------------------------------------------------------
+Alexandre Courbot (2):
+      media: Documentation: v4l: document request API
+      media: videodev2.h: add request_fd field to v4l2_ext_controls
+
+Ezequiel Garcia (1):
+      media: dt-bindings: Document the Rockchip VPU bindings
+
+Hans Verkuil (44):
+      media: uapi/linux/media.h: add request API
+      media: media-request: implement media requests
+      media: media-request: add media_request_get_by_fd
+      media: media-request: add media_request_object_find
+      media: v4l2-device.h: add v4l2_device_supports_requests() helper
+      media: v4l2-dev: lock req_queue_mutex
+      media: v4l2-ctrls: v4l2_ctrl_add_handler: add from_other_dev
+      media: v4l2-ctrls: prepare internal structs for request API
+      media: v4l2-ctrls: alloc memory for p_req
+      media: v4l2-ctrls: use ref in helper instead of ctrl
+      media: v4l2-ctrls: add core request support
+      media: v4l2-ctrls: support g/s_ext_ctrls for requests
+      media: v4l2-ctrls: add v4l2_ctrl_request_hdl_find/put/ctrl_find functions
+      media: videobuf2-v4l2: move __fill_v4l2_buffer() function
+      media: videobuf2-v4l2: replace if by switch in __fill_vb2_buffer()
+      media: vb2: store userspace data in vb2_v4l2_buffer
+      media: davinci_vpfe: remove bogus vb2->state check
+      media: vb2: drop VB2_BUF_STATE_PREPARED, use bool prepared/synced instead
+      media: videodev2.h: Add request_fd field to v4l2_buffer
+      media: vb2: add init_buffer buffer op
+      media: videobuf2-core: embed media_request_object
+      media: videobuf2-core: integrate with media requests
+      media: videobuf2-v4l2: integrate with media requests
+      media: videobuf2-core: add request helper functions
+      media: videobuf2-v4l2: add vb2_request_queue/validate helpers
+      media: videobuf2-core: add uses_requests/qbuf flags
+      media: videobuf2-v4l2: refuse qbuf if queue uses requests or vv.
+      media: v4l2-mem2mem: add vb2_m2m_request_queue
+      media: vim2m: use workqueue
+      media: vim2m: support requests
+      media: vivid: add mc
+      media: vivid: add request support
+      media: media-request: return -EINVAL for invalid request_fds
+      media: v4l2-ctrls: return -EACCES if request wasn't completed
+      media: buffer.rst: only set V4L2_BUF_FLAG_REQUEST_FD for QBUF
+      media: videodev2.h: add new capabilities for buffer types
+      media: vb2: set reqbufs/create_bufs capabilities
+      media: media-request: add media_request_(un)lock_for_access
+      media: v4l2-ctrls: use media_request_(un)lock_for_access
+      media: v4l2-ctrls: improve media_request_(un)lock_for_update
+      media: media-request: EPERM -> EACCES/EBUSY
+      media: media-request: update documentation
+      media: v4l2-compat-ioctl32.c: add missing documentation for a field
+      media: v4l2-ctrls.c: initialize an error return code with zero
+
+Paul Kocialkowski (5):
+      media: videobuf2-core: Rework and rename helper for request buffer count
+      media: v4l: Add definitions for MPEG-2 slice format and metadata
+      media: v4l: Add definition for the Sunxi tiled NV12 format
+      media: dt-bindings: media: Document bindings for the Cedrus VPU driver
+      media: platform: Add Cedrus VPU decoder driver
+
+Sakari Ailus (1):
+      media: doc: Add media-request.h header to documentation build
+
+ Documentation/devicetree/bindings/media/cedrus.txt |  54 ++
+ .../devicetree/bindings/media/rockchip-vpu.txt     |  29 +
+ Documentation/media/kapi/mc-core.rst               |   2 +
+ .../media/uapi/mediactl/media-controller.rst       |   1 +
+ Documentation/media/uapi/mediactl/media-funcs.rst  |   6 +
+ .../uapi/mediactl/media-ioc-request-alloc.rst      |  66 +++
+ .../uapi/mediactl/media-request-ioc-queue.rst      |  78 +++
+ .../uapi/mediactl/media-request-ioc-reinit.rst     |  51 ++
+ Documentation/media/uapi/mediactl/request-api.rst  | 252 +++++++++
+ .../media/uapi/mediactl/request-func-close.rst     |  49 ++
+ .../media/uapi/mediactl/request-func-ioctl.rst     |  67 +++
+ .../media/uapi/mediactl/request-func-poll.rst      |  77 +++
+ Documentation/media/uapi/v4l/buffer.rst            |  29 +-
+ Documentation/media/uapi/v4l/extended-controls.rst | 176 ++++++
+ Documentation/media/uapi/v4l/pixfmt-compressed.rst |  16 +
+ Documentation/media/uapi/v4l/pixfmt-reserved.rst   |  15 +-
+ .../media/uapi/v4l/vidioc-create-bufs.rst          |  14 +-
+ .../media/uapi/v4l/vidioc-g-ext-ctrls.rst          |  59 +-
+ Documentation/media/uapi/v4l/vidioc-qbuf.rst       |  37 +-
+ Documentation/media/uapi/v4l/vidioc-queryctrl.rst  |  14 +-
+ Documentation/media/uapi/v4l/vidioc-reqbufs.rst    |  42 +-
+ Documentation/media/videodev2.h.rst.exceptions     |   3 +
+ MAINTAINERS                                        |   7 +
+ drivers/media/Makefile                             |   3 +-
+ drivers/media/common/videobuf2/videobuf2-core.c    | 260 +++++++--
+ drivers/media/common/videobuf2/videobuf2-v4l2.c    | 528 ++++++++++++------
+ drivers/media/dvb-core/dvb_vb2.c                   |   5 +-
+ drivers/media/dvb-frontends/rtl2832_sdr.c          |   5 +-
+ drivers/media/media-device.c                       |  24 +-
+ drivers/media/media-request.c                      | 501 +++++++++++++++++
+ drivers/media/pci/bt8xx/bttv-driver.c              |   2 +-
+ drivers/media/pci/cx23885/cx23885-417.c            |   2 +-
+ drivers/media/pci/cx88/cx88-blackbird.c            |   2 +-
+ drivers/media/pci/cx88/cx88-video.c                |   2 +-
+ drivers/media/pci/saa7134/saa7134-empress.c        |   4 +-
+ drivers/media/pci/saa7134/saa7134-video.c          |   2 +-
+ drivers/media/platform/exynos4-is/fimc-capture.c   |   2 +-
+ drivers/media/platform/omap3isp/ispvideo.c         |   4 +-
+ drivers/media/platform/rcar-vin/rcar-core.c        |   2 +-
+ drivers/media/platform/rcar_drif.c                 |   2 +-
+ drivers/media/platform/s3c-camif/camif-capture.c   |   4 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc_dec.c       |   4 +-
+ drivers/media/platform/s5p-mfc/s5p_mfc_enc.c       |   4 +-
+ drivers/media/platform/soc_camera/soc_camera.c     |   7 +-
+ drivers/media/platform/vim2m.c                     |  50 +-
+ drivers/media/platform/vivid/vivid-core.c          |  74 +++
+ drivers/media/platform/vivid/vivid-core.h          |   8 +
+ drivers/media/platform/vivid/vivid-ctrls.c         |  46 +-
+ drivers/media/platform/vivid/vivid-kthread-cap.c   |  12 +
+ drivers/media/platform/vivid/vivid-kthread-out.c   |  12 +
+ drivers/media/platform/vivid/vivid-sdr-cap.c       |  16 +
+ drivers/media/platform/vivid/vivid-vbi-cap.c       |  10 +
+ drivers/media/platform/vivid/vivid-vbi-out.c       |  10 +
+ drivers/media/platform/vivid/vivid-vid-cap.c       |  10 +
+ drivers/media/platform/vivid/vivid-vid-out.c       |  10 +
+ drivers/media/usb/cpia2/cpia2_v4l.c                |   2 +-
+ drivers/media/usb/cx231xx/cx231xx-417.c            |   2 +-
+ drivers/media/usb/cx231xx/cx231xx-video.c          |   4 +-
+ drivers/media/usb/msi2500/msi2500.c                |   2 +-
+ drivers/media/usb/tm6000/tm6000-video.c            |   2 +-
+ drivers/media/usb/uvc/uvc_queue.c                  |   5 +-
+ drivers/media/usb/uvc/uvc_v4l2.c                   |   3 +-
+ drivers/media/usb/uvc/uvcvideo.h                   |   1 +
+ drivers/media/v4l2-core/v4l2-compat-ioctl32.c      |  19 +-
+ drivers/media/v4l2-core/v4l2-ctrls.c               | 612 ++++++++++++++++++++-
+ drivers/media/v4l2-core/v4l2-dev.c                 |  18 +-
+ drivers/media/v4l2-core/v4l2-device.c              |   3 +-
+ drivers/media/v4l2-core/v4l2-ioctl.c               |  50 +-
+ drivers/media/v4l2-core/v4l2-mem2mem.c             |  67 ++-
+ drivers/media/v4l2-core/v4l2-subdev.c              |   9 +-
+ drivers/staging/media/Kconfig                      |   2 +
+ drivers/staging/media/Makefile                     |   1 +
+ drivers/staging/media/davinci_vpfe/vpfe_video.c    |   7 +-
+ drivers/staging/media/imx/imx-media-dev.c          |   2 +-
+ drivers/staging/media/imx/imx-media-fim.c          |   2 +-
+ drivers/staging/media/omap4iss/iss_video.c         |   3 +-
+ drivers/staging/media/sunxi/Kconfig                |  15 +
+ drivers/staging/media/sunxi/Makefile               |   1 +
+ drivers/staging/media/sunxi/cedrus/Kconfig         |  14 +
+ drivers/staging/media/sunxi/cedrus/Makefile        |   3 +
+ drivers/staging/media/sunxi/cedrus/TODO            |   7 +
+ drivers/staging/media/sunxi/cedrus/cedrus.c        | 431 +++++++++++++++
+ drivers/staging/media/sunxi/cedrus/cedrus.h        | 167 ++++++
+ drivers/staging/media/sunxi/cedrus/cedrus_dec.c    |  70 +++
+ drivers/staging/media/sunxi/cedrus/cedrus_dec.h    |  27 +
+ drivers/staging/media/sunxi/cedrus/cedrus_hw.c     | 327 +++++++++++
+ drivers/staging/media/sunxi/cedrus/cedrus_hw.h     |  30 +
+ drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c  | 246 +++++++++
+ drivers/staging/media/sunxi/cedrus/cedrus_regs.h   | 235 ++++++++
+ drivers/staging/media/sunxi/cedrus/cedrus_video.c  | 542 ++++++++++++++++++
+ drivers/staging/media/sunxi/cedrus/cedrus_video.h  |  30 +
+ drivers/usb/gadget/function/uvc_queue.c            |   2 +-
+ include/media/media-device.h                       |  29 +
+ include/media/media-request.h                      | 442 +++++++++++++++
+ include/media/v4l2-ctrls.h                         | 141 ++++-
+ include/media/v4l2-device.h                        |  11 +
+ include/media/v4l2-mem2mem.h                       |   4 +
+ include/media/videobuf2-core.h                     |  64 ++-
+ include/media/videobuf2-v4l2.h                     |  20 +-
+ include/uapi/linux/media.h                         |   8 +
+ include/uapi/linux/v4l2-controls.h                 |  65 +++
+ include/uapi/linux/videodev2.h                     |  33 +-
+ 102 files changed, 6166 insertions(+), 385 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/cedrus.txt
+ create mode 100644 Documentation/devicetree/bindings/media/rockchip-vpu.txt
+ create mode 100644 Documentation/media/uapi/mediactl/media-ioc-request-alloc.rst
+ create mode 100644 Documentation/media/uapi/mediactl/media-request-ioc-queue.rst
+ create mode 100644 Documentation/media/uapi/mediactl/media-request-ioc-reinit.rst
+ create mode 100644 Documentation/media/uapi/mediactl/request-api.rst
+ create mode 100644 Documentation/media/uapi/mediactl/request-func-close.rst
+ create mode 100644 Documentation/media/uapi/mediactl/request-func-ioctl.rst
+ create mode 100644 Documentation/media/uapi/mediactl/request-func-poll.rst
+ create mode 100644 drivers/media/media-request.c
+ create mode 100644 drivers/staging/media/sunxi/Kconfig
+ create mode 100644 drivers/staging/media/sunxi/Makefile
+ create mode 100644 drivers/staging/media/sunxi/cedrus/Kconfig
+ create mode 100644 drivers/staging/media/sunxi/cedrus/Makefile
+ create mode 100644 drivers/staging/media/sunxi/cedrus/TODO
+ create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus.c
+ create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus.h
+ create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+ create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_dec.h
+ create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_hw.c
+ create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_hw.h
+ create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
+ create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_regs.h
+ create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_video.c
+ create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_video.h
+ create mode 100644 include/media/media-request.h
+
