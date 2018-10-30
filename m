@@ -2,91 +2,145 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33964C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 18:39:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51974C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 18:39:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C604E20823
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 18:39:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nx1OX4/u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C604E20823
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 23F522082D
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 18:39:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23F522082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727672AbeJaDdy (ORCPT
+        id S1727744AbeJaDeJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 23:33:54 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:43965 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726376AbeJaDdy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 23:33:54 -0400
-Received: by mail-qt1-f194.google.com with SMTP id q41-v6so14705120qtq.10;
-        Tue, 30 Oct 2018 11:39:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mD9MNXdI/4NjoJAnUKMHjVYl/7kc/0kRBTRVncU5bc0=;
-        b=nx1OX4/uncD731SQJTGjtZw3mGfXapV5A9iaDH8tAL7t42jRVR3hMoEBhb2FaKRWNv
-         Mb0QNDehYuRoGuCK+5ylJbH8sbGTrIzXYb3H2pNfFl9h4mquPqs5qQY0HjPDFyJjMbzy
-         3XxcGEbWbMvk0FVexeKFG6AgrShaXoCDXVuDDS7lyqGft39fp8bKc5PqwmjmC7dcx4F1
-         umMf6g66HRxqSA/Lh/D5TpW2EW8YrvUpgfd+oGNtx/qjulwo34kuLDYqMN8fHiSU8wJa
-         Fy9Of/utsrdrQTp2OO3I2NZdaP+mdaK2m+H2/zFI5ZnRB7zVVFLtyRkxIQhDBiG63LhY
-         YqEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mD9MNXdI/4NjoJAnUKMHjVYl/7kc/0kRBTRVncU5bc0=;
-        b=RAo5opr4gmnEPX/V0KUsJENnRK2xQlaZD4aa64AeF7XHiny//l2/rQfu5iXNw5D/QA
-         cWtAyGmX4+uB6pwQi9Jp0J1y+zV+0xR55BpkKVkNyk9azobQamITvO1Jjm67FOzVaT16
-         tMuHjUNjz5zbLxoHwR+/W9BeLOeTZ8JO2leUgW+C/21MnTZ4PRELU2RC88H6+pNEAsu3
-         DOK+jQe4JvWQFl17O8JNMO8hdYMzb6JDEihDK+2kWcJuvc5quHXoc1wMX4HMmphN6WPG
-         ikeuc0AN7YB1dUFr5ZZWGqpyqk0YbkLjt61xPDljLBUbQjJx27jhTpjtlSaG/AV5N4oM
-         eDIA==
-X-Gm-Message-State: AGRZ1gLp5/f0KUT0EtG07b3DeGvA8tTWDXeJHWAu0L71AJBJ5Rk7OChK
-        RieHpj+Qa64Fnq8Zi0FiRNXp0GI2/DAp8tZhfRnMnw58
-X-Google-Smtp-Source: AJdET5eKfvEbKJ8tFvul3anRAoxIAWaGq14J/d9uS2nGYTjfsRu2CWh5YpY90/+t4FyTNRsnH2m2zgIpi2tor3X5vYE=
-X-Received: by 2002:aed:3b4b:: with SMTP id q11-v6mr3325117qte.229.1540924756447;
- Tue, 30 Oct 2018 11:39:16 -0700 (PDT)
+        Tue, 30 Oct 2018 23:34:09 -0400
+Received: from mga18.intel.com ([134.134.136.126]:53880 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726376AbeJaDeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 23:34:09 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 11:39:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,445,1534834800"; 
+   d="scan'208";a="276958912"
+Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
+  by fmsmga006.fm.intel.com with ESMTP; 30 Oct 2018 11:39:31 -0700
+Date:   Tue, 30 Oct 2018 11:35:45 -0700
+From:   Fenghua Yu <fenghua.yu@intel.com>
+To:     Babu Moger <babu.moger@amd.com>, Fenghua Yu <fenghua.yu@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        James Morse <james.morse@arm.com>,
+        Ravi V Shankar <ravi.v.shankar@intel.com>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: Fwd: [PATCH v2 2/8] selftests/resctrl: Add basic resctrl file
+ system operations and data
+Message-ID: <20181030183544.GA173608@romley-ivt3.sc.intel.com>
+References: <1540508826-144502-1-git-send-email-fenghua.yu@intel.com>
+ <1540508826-144502-3-git-send-email-fenghua.yu@intel.com>
+ <DM5PR12MB2471679DD21D00A33D092A1795F30@DM5PR12MB2471.namprd12.prod.outlook.com>
+ <CALBSrqDRKbth2NAUFM+emBHVv7eZPX=O9Ki-=vUxi-QQc1wVnQ@mail.gmail.com>
 MIME-Version: 1.0
-References: <20181029200311.16947-1-semen.protsenko@linaro.org>
- <CAKaJLVvpNZW2a+3xc7PE0+iU1nm39A7PEjCu8F9ijrT+wEXOag@mail.gmail.com>
- <20181030063408.GA26627@kroah.com> <CAKaJLVtT+pFzOBjybAXmOC0mJyN=BHavsfAYEzgSWn-i7UYEjA@mail.gmail.com>
- <20181030130401.3ab5gl4fsvpa2fes@cs.cmu.edu> <CAKaJLVvXUTB5hyoRPZpfnzFKiLrCfLmras_37B5JxSYs4438Tg@mail.gmail.com>
-In-Reply-To: <CAKaJLVvXUTB5hyoRPZpfnzFKiLrCfLmras_37B5JxSYs4438Tg@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 30 Oct 2018 20:39:05 +0200
-Message-ID: <CAHp75VcofObTqAK_wwAcz006OYeoS2XZdiafswt6QrwG6JoFCQ@mail.gmail.com>
-Subject: Re: [PATCH v2] codafs: Fix build using bare-metal toolchain
-To:     Sam Protsenko <semen.protsenko@linaro.org>
-Cc:     jaharkes@cs.cmu.edu,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        Praneeth Bajjuri <praneeth@ti.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        codalist@coda.cs.cmu.edu, coda@cs.cmu.edu
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CALBSrqDRKbth2NAUFM+emBHVv7eZPX=O9Ki-=vUxi-QQc1wVnQ@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 8:33 PM Sam Protsenko
-<semen.protsenko@linaro.org> wrote:
-> On Tue, Oct 30, 2018 at 3:04 PM, Jan Harkes <jaharkes@cs.cmu.edu> wrote:
+> From: Moger, Babu <Babu.Moger@amd.com>
+> > From: Fenghua Yu <fenghua.yu@intel.com>
+> > From: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+> >
+> > The basic resctrl file system operations and data are added for future
+> > usage by resctrl selftest tool.
+> >
+> > +     return 0;
+> > +}
+> > +
+> > +char get_sock_num(int cpu_no)
+> > +{
+> > +     char sock_num, phys_pkg_path[1024];
+> > +     FILE *fp;
+> > +
+> > +     sprintf(phys_pkg_path, "%s%d/topology/physical_package_id",
+> > +             PHYS_ID_PATH, cpu_no);
+> > +     fp = fopen(phys_pkg_path, "r");
+> 
+> There should corresponding fclose for this. In general, I would check all the
+> fopens in this series. I found few of the files not closed while returning.
+> More comments below.
+> 
+> > +     if (!fp || fscanf(fp, "%c", &sock_num) <= 0 || fclose(fp) == EOF) {
 
-> > I thought I had responded
+fclose is here.
 
-I don't see your response either previously or now (currently only via
-Sam's reply), perhaps you have an issue with mail delivery?
+> > +             perror("Could not get socket number");
+> > +
+> > +             return -1;
+> > +     }
+> > +
+> > +      */
+> > +     if (!freopen("/dev/null", "w", stdout))
+> > +             PARENT_EXIT("Unable to direct BM op to /dev/null");
+> 
+> Do you need fclose for this before returning from this function?
 
--- 
-With Best Regards,
-Andy Shevchenko
+This fclose is missing. I will add it.
+
+> > +     /* Write child pid to con_mon grp */
+> > +     fp = fopen(controlgroup, "w");
+> 
+> I don't see corresponding fclose.
+> 
+> > +     if (!fp || fprintf(fp, "%d\n", bm_pid) <= 0 || fclose(fp) == EOF) {
+
+fclose is here:)
+
+> > +             perror("Failed to write child to con_mon grp");
+> > +
+> > +             return errno;
+> > +     }
+> > +
+> > +     /* Write child pid to mon grp, only for "mbm" */
+> > +     if ((strcmp(resctrl_val, "mbm") == 0)) {
+> > +             if (mongrp) {
+> > +                     fp = fopen(monitorgroup, "w");
+> > +                     if (!fp || fprintf(fp, "%d\n", bm_pid) <= 0 ||
+> > +                         fclose(fp) == EOF) {
+> 
+> 
+> I feel too many checks at one place.  If fprintf fails,  will it fclose the
+> file? I suggest to separate these checks.
+
+You are right. I will separate the checks in multiple lines.
+
+> 
+> > +
+> > +             fp = fopen(controlgroup, "w");
+> > +             if (!fp || fprintf(fp, "%s\n", schema) <= 0 ||
+> > +                 fclose(fp) == EOF) {
+> 
+> Same comment as above.. If fprintf fails,  will it fclose the file? I suggest
+> to separate these checks.
+
+Sure.
+
+I will change code based on your comments.
+
+Thanks.
+
+-Fenghua
