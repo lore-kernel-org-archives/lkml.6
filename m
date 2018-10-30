@@ -2,144 +2,234 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 104AEC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 822B3C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:34:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD91D2064C
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:32:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mPFmG2px"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD91D2064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 2C2292081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:34:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C2292081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727317AbeJaG1r (ORCPT
+        id S1727547AbeJaG3x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 02:27:47 -0400
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:46747 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725743AbeJaG1q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 02:27:46 -0400
-Received: by mail-yw1-f65.google.com with SMTP id j202-v6so5566885ywa.13
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 14:32:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=TKlVqK1niLEC8fP9S1q2z+Hkwf9doq+mPKOaiJ5zglE=;
-        b=mPFmG2pxuyw83+auc2DE6g96oiFiaRsrt3G/qfabFXmDxvG7jraheCaDzR7By5Kzba
-         /BnFJ6xKTBG21/+jWo9tQNCQnlP3tLXId1Pyaih3Ur8KVMbwBOgl0cwAOfvgZlRbE3Ka
-         4PWJKh1ng+IgSk+QrCOZwVYYiZATD6eoG7lcE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=TKlVqK1niLEC8fP9S1q2z+Hkwf9doq+mPKOaiJ5zglE=;
-        b=bwbvgXdDULpPyFmCCj5KcFISpR4d2AAUzCDyaUVJI29dH/nNGUH7hRut0jDT+kHDtS
-         NZkQrUHWlJV50Jlzj5EFplA2jhogI9gCRHgh5D5//sWayj+hh7WXCWM+e55TqRPzxdsR
-         XA/xCoJmjPOy3Zv92XJRnCJF9vOWMF1IkqFbnb38ViXaUqRmmjJxImloafxM2waLezNj
-         XlCGhrP400FDpaAjzn/16mf0Dr0Apm/gH7j3d25iBxzgtcl2FCZXHVsT98mxCI/bGqu3
-         cl7Vl2ygH4sjbu3W4cVl431SRpY81AxI5mFEPrKSi54h2/KI86wS9fUP1zle4fvV7U0G
-         0+UQ==
-X-Gm-Message-State: AGRZ1gJiMBF+36nJSw3BhY622orhy1xgmZmeZ6foitXMKaX+4jgrBvKp
-        2X+TGlQ/+gpE6iE1qXLqrkAPOqCF9fc=
-X-Google-Smtp-Source: AJdET5cABEir5VUNdNATMH7y5FANPJp9gY7Mbxo0k48W1usPXXp6T8ggT91fPoXGapg/CrEyT8OWuA==
-X-Received: by 2002:a81:4686:: with SMTP id t128-v6mr510630ywa.52.1540935156966;
-        Tue, 30 Oct 2018 14:32:36 -0700 (PDT)
-Received: from mail-yw1-f47.google.com (mail-yw1-f47.google.com. [209.85.161.47])
-        by smtp.gmail.com with ESMTPSA id h84-v6sm3073621ywh.61.2018.10.30.14.32.35
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 14:32:35 -0700 (PDT)
-Received: by mail-yw1-f47.google.com with SMTP id l2-v6so1066679ywb.9
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 14:32:35 -0700 (PDT)
-X-Received: by 2002:a81:2953:: with SMTP id p80-v6mr442964ywp.407.1540935154512;
- Tue, 30 Oct 2018 14:32:34 -0700 (PDT)
+        Wed, 31 Oct 2018 02:29:53 -0400
+Received: from mga04.intel.com ([192.55.52.120]:2367 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725743AbeJaG3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 02:29:53 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 14:34:44 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,446,1534834800"; 
+   d="scan'208";a="104625428"
+Received: from schen9-desk.jf.intel.com (HELO [10.54.74.144]) ([10.54.74.144])
+  by orsmga002.jf.intel.com with ESMTP; 30 Oct 2018 14:34:44 -0700
+Subject: Re: [Patch v4 16/18] x86/speculation: Enable STIBP to protect
+ security sensitive tasks
+To:     "Schaufler, Casey" <casey.schaufler@intel.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "Mallick, Asit K" <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+References: <cover.1540923609.git.tim.c.chen@linux.intel.com>
+ <26ec186930a8fb33033743997bd56e5ce44050ec.1540923609.git.tim.c.chen@linux.intel.com>
+ <99FC4B6EFCEFD44486C35F4C281DC6732148DC8C@ORSMSX110.amr.corp.intel.com>
+From:   Tim Chen <tim.c.chen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <5793bddc-cd09-eebb-bc0c-51c9b3aca0c1@linux.intel.com>
+Date:   Tue, 30 Oct 2018 14:34:43 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.0
 MIME-Version: 1.0
-Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Tue, 30 Oct 2018 14:32:33
- -0700 (PDT)
-In-Reply-To: <20181030172143.GD7343@cisco>
-References: <20181029224031.29809-1-tycho@tycho.ws> <20181029224031.29809-2-tycho@tycho.ws>
- <20181030150254.GB3385@redhat.com> <20181030155403.GC7343@cisco>
- <20181030162752.GB7643@redhat.com> <20181030163926.GC7643@redhat.com> <20181030172143.GD7343@cisco>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 30 Oct 2018 14:32:33 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+MYbAiSxdhLnQHdOZC-B=FWZoODxzwkYVEUqDc9SHnBQ@mail.gmail.com>
-Message-ID: <CAGXu5j+MYbAiSxdhLnQHdOZC-B=FWZoODxzwkYVEUqDc9SHnBQ@mail.gmail.com>
-Subject: Re: [PATCH v8 1/2] seccomp: add a return code to trap to userspace
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     Oleg Nesterov <oleg@redhat.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian@brauner.io>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Aleksa Sarai <asarai@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <99FC4B6EFCEFD44486C35F4C281DC6732148DC8C@ORSMSX110.amr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 10:21 AM, Tycho Andersen <tycho@tycho.ws> wrote:
-> On Tue, Oct 30, 2018 at 05:39:26PM +0100, Oleg Nesterov wrote:
->> On 10/30, Oleg Nesterov wrote:
->> >
->> > On 10/30, Tycho Andersen wrote:
->> > >
->> > > @@ -828,6 +823,11 @@ static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
->> > >    */
->> > >   rmb();
->> > >
->> > > + if (!sd) {
->> > > +         populate_seccomp_data(&sd_local);
->> > > +         sd = &sd_local;
->> > > + }
->> > > +
->> >
->> > To me it would be more clean to remove the "if (!sd)" check, case(SECCOMP_RET_TRACE)
->> > in __seccomp_filter() can simply do populate_seccomp_data(&sd_local) unconditionally
->> > and pass &sd_local to __seccomp_filter().
+On 10/30/2018 02:07 PM, Schaufler, Casey wrote:
+>> -----Original Message-----
+>> From: Tim Chen [mailto:tim.c.chen@linux.intel.com]
+>> Sent: Tuesday, October 30, 2018 11:49 AM
+>> To: Jiri Kosina <jikos@kernel.org>; Thomas Gleixner <tglx@linutronix.de>
+>> Cc: Tim Chen <tim.c.chen@linux.intel.com>; Tom Lendacky
+>> <thomas.lendacky@amd.com>; Ingo Molnar <mingo@redhat.com>; Peter
+>> Zijlstra <peterz@infradead.org>; Josh Poimboeuf <jpoimboe@redhat.com>;
+>> Andrea Arcangeli <aarcange@redhat.com>; David Woodhouse
+>> <dwmw@amazon.co.uk>; Andi Kleen <ak@linux.intel.com>; Hansen, Dave
+>> <dave.hansen@intel.com>; Schaufler, Casey <casey.schaufler@intel.com>;
+>> Mallick, Asit K <asit.k.mallick@intel.com>; Arjan van de Ven
+>> <arjan@linux.intel.com>; Jon Masters <jcm@redhat.com>; Waiman Long
+>> <longman9394@gmail.com>; linux-kernel@vger.kernel.org; x86@kernel.org
+>> Subject: [Patch v4 16/18] x86/speculation: Enable STIBP to protect security
+>> sensitive tasks
 >>
->> Ah, please ignore, emulate_vsyscall() does secure_computing(NULL).
-
-Right.
-
+>> Enable STIBP defense on high security tasks.
 >>
->> Btw. why __seccomp_filter() doesn't return a boolean?
-
-Because it was wrapped by __secure_computing(). *shrug* The common
-method in the kernel is to use int and 0=ok.
-
->> Or at least, why can't case(SECCOMP_RET_TRACE) simply do
+>> For normal tasks, STIBP is unused so they are not impacted by overhead
+>> from STIBP in lite protection mode.
 >>
->>       return __seccomp_filter(this_syscall, NULL, true);
+>> Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
+>> ---
+>>  arch/x86/kernel/cpu/bugs.c | 33 +++++++++++++++++++++++++++++++++
+>>  1 file changed, 33 insertions(+)
 >>
->> ?
->
-> Yeah, at least the second one definitely makes sense. I can add that
-> as a patch in the next version of this series unless Kees does it
-> before.
+>> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+>> index 54f4675..b402b96 100644
+>> --- a/arch/x86/kernel/cpu/bugs.c
+>> +++ b/arch/x86/kernel/cpu/bugs.c
+>> @@ -14,6 +14,8 @@
+>>  #include <linux/module.h>
+>>  #include <linux/nospec.h>
+>>  #include <linux/prctl.h>
+>> +#include <linux/sched/coredump.h>
+>> +#include <linux/security.h>
+>>
+>>  #include <asm/spec-ctrl.h>
+>>  #include <asm/cmdline.h>
+>> @@ -770,6 +772,37 @@ static int ssb_prctl_set(struct task_struct *task,
+>> unsigned long ctrl)
+>>  	return 0;
+>>  }
+>>
+>> +static void set_task_stibp(struct task_struct *tsk, bool stibp_on)
+>> +{
+>> +	bool update = false;
+>> +
+>> +	if (!static_branch_unlikely(&spectre_v2_app_lite))
+>> +		return;
+>> +
+>> +	if (stibp_on)
+>> +		update = !test_and_set_tsk_thread_flag(tsk, TIF_STIBP);
+>> +	else
+>> +		update = test_and_clear_tsk_thread_flag(tsk, TIF_STIBP);
+>> +
+>> +	if (!update)
+>> +		return;
+>> +
+>> +	if (tsk == current)
+>> +		speculation_ctrl_update_current();
+>> +}
+>> +
+>> +void arch_set_security(struct task_struct *tsk, unsigned int value)
+> 
+> In this context "security" isn't descriptive. arch_set_stibp_defenses()
+> would be better.
 
-I'd like to avoid changing the return value of __secure_computing() to
-just avoid having to touch all the callers. And I'd prefer not to
-change __seccomp_filter() to a bool, since I'd like the return values
-to be consistent through the call chain.
+A more generic name decoupled from STIBP will be preferable.  There
+can other kind of security defenses to be erected in
+the future.
 
-I find the existing code more readable than a single-line return, just
-because it's very explicit. I don't want to have to think any harder
-when reading seccomp. ;)
+Perhaps arch_set_mitigation?
 
--Kees
+Thanks.
 
--- 
-Kees Cook
+Tim
+
+> 
+> Since "value" should only ever have one of two values, and those
+> map directly to "true" or "false" this should be a bool, making the
+> code trivial:
+> 
+> void arch_set_stibp_defenses(struct task_struct *task, bool stibp)
+> {
+> 	set_task_stibp(task, stibp);
+> }
+> 
+> Or perhaps arch_set_security() should go away, and the calling
+> code would call set_task_stibp() directly. Unless there is some compelling
+> reason for the abstractions.
+> 
+>> +{
+>> +	if (value > SECURITY_HIGH)
+>> +		return;
+>> +
+>> +	/* Update STIBP defenses */
+>> +	if (value == SECURITY_HIGH)
+>> +		set_task_stibp(tsk, true);
+>> +	else
+>> +		set_task_stibp(tsk, false);
+>> +}
+>> +
+>>  int arch_prctl_spec_ctrl_set(struct task_struct *task, unsigned long which,
+>>  			     unsigned long ctrl)
+>>  {
+>> --
+>> 2.9.4
+> 
+
