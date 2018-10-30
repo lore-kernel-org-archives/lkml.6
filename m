@@ -5,57 +5,57 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EAADC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 00:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE7B8C0044C
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 00:45:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25C822084A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 00:45:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83A8B2084A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 00:45:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="U0qdt04S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25C822084A
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="TYegb46z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83A8B2084A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726863AbeJ3JgS (ORCPT
+        id S1727078AbeJ3Jgd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 05:36:18 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44209 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726700AbeJ3JgP (ORCPT
+        Tue, 30 Oct 2018 05:36:33 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:38401 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726503AbeJ3JgO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 05:36:15 -0400
-Received: by mail-pg1-f193.google.com with SMTP id w3-v6so4718777pgs.11
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 17:45:03 -0700 (PDT)
+        Tue, 30 Oct 2018 05:36:14 -0400
+Received: by mail-pg1-f194.google.com with SMTP id f8-v6so4731986pgq.5
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 17:45:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=TE49An1zFFtJ+IdMUHGtuRHRbV/615YwoE46NHTF3GE=;
-        b=U0qdt04SzswoeoSwEAZZDrCDOqsGM2l9HdbhwAu8QNnNPz8cE5O5Ne31aKG4H6vqC6
-         VGO9mavopK/YnV17psAk8Iatu6M8WabCILqhoUKVCE+uvpvCzMcBgeX5UredbNMXVEn0
-         Xye5amJKCmpQcHqiABmfrvmgeNDRiqk0Q/UQg=
+        bh=HW/Q8BVeJMtf9yQ5kKym3FAHud330282YrV2VBJ/ek4=;
+        b=TYegb46zBVmdslU0uGWemO9p5ifDjTAEEgRxNCOOIUktHqeyv9v22z0PFVUeaJAgEv
+         mYFuuyGNg9mJCTypLsLy2JYph9Tx5RuIcHh2EnVAAFpy/kDnA8BsHBk9DzkxHvoEH7G1
+         TjEPvO6LA2aTxr4lm6+LIk/jveKCnCeh50gAw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=TE49An1zFFtJ+IdMUHGtuRHRbV/615YwoE46NHTF3GE=;
-        b=cogN8OUM2p4nWLLbZwfbkQ+oRVLAW/heYhw14YvmOC1CYaMAdBy5ODj88Us5Mdr/zP
-         DT75q1g/lCWmVedy/mgojwB94R5Cx8yl5wJCnrDjCLYxsAcv5tco0Ik3J3wULCAcZaaX
-         JgX0KZYp443K5RNOXAgln6A0xxDnUjdk6NSg1LqCUc+npgivuZMco98fqG9dUCRX/Lsr
-         Sb//njy7XVU+KK4gLNADlQqxKox7NMbseJ8AxZzWtGo1zic/BpRZ4zceXyEi3tj9OoBq
-         NY+b9EJHTYCgC8lLQ7ycnV+I4hJS01URBMD0VbzgLJR4NYA/tOi9vSgiQW3TmJ9WPrvG
-         2dBA==
-X-Gm-Message-State: AGRZ1gJVf8EM7KO02m+PZEYraDNWbyPAUFQrKqpgNBBsoO7K74dooLeT
-        bornaJC9YefWfpUK2RE5sBfN1A==
-X-Google-Smtp-Source: AJdET5fCu/7b9ONgCnTWUWkjHmICTT6GT7ZxYQ/U5HCYXSUlAbHL+tl4hNb3zgI+3N/1tEatKvS84Q==
-X-Received: by 2002:a62:418a:: with SMTP id g10-v6mr688804pfd.44.1540860303211;
-        Mon, 29 Oct 2018 17:45:03 -0700 (PDT)
-Received: from mka.mtv.corp.google.com ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id y1-v6sm24289644pfy.89.2018.10.29.17.45.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        bh=HW/Q8BVeJMtf9yQ5kKym3FAHud330282YrV2VBJ/ek4=;
+        b=STLeO6HbZho5RDRwV6B8ZmaRekR0K73+jd+LT5Drk/s1E2XmNebjZBC/4/vqP7FFI2
+         YSpS7i4zu8Er0bu5HBs+w3r387y0oEwQ4MdoOjGeXML7m+fHq0yuP3O8tVGgetqwU8/S
+         U2eN18k/005dkirs1qqCLDJYRzmTQTTZhj/gIvnNUptBmTHM/2CbQzb1i2+hR/aF9hc3
+         v8G1oFwwo6BBOuJV5ssdhSIrl6kssI1i9nyzNdT4D5YqUfZM5IaIAncSLyCzF+Bs0WP7
+         oTgUg4SHLMyLWdIXIHaSGDjxzkIOR4/Sddoovbtq6hw3k5fPLXAyS1ulUEyGEMsqh0a3
+         Afjg==
+X-Gm-Message-State: AGRZ1gKvDam19EGA+YKaPgbzBZ2oWrfH1vH7SRg9RW9312UpwQeLMA6S
+        fV95GOnoaUqrFDqd7HDnto2jhw==
+X-Google-Smtp-Source: AJdET5dGdq1QdubERIgGqoA+OhTCQ0g6r/liT2cZUEBLRKmr9NRusYjrWYdi7t7lPtNTTOJWlWYpWA==
+X-Received: by 2002:a63:6302:: with SMTP id x2mr15885730pgb.183.1540860302096;
         Mon, 29 Oct 2018 17:45:02 -0700 (PDT)
+Received: from mka.mtv.corp.google.com ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id y1-v6sm24289644pfy.89.2018.10.29.17.45.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 29 Oct 2018 17:45:01 -0700 (PDT)
 From:   Matthias Kaehlcke <mka@chromium.org>
 To:     Marcel Holtmann <marcel@holtmann.org>,
         Johan Hedberg <johan.hedberg@gmail.com>,
@@ -67,9 +67,9 @@ Cc:     linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
         Brian Norris <briannorris@chromium.org>,
         Dmitry Grinberg <dmitrygr@google.com>,
         Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v2 3/3] Bluetooth: hci_qca: Set HCI_QUIRK_USE_BDADDR_PROPERTY for wcn3990
-Date:   Mon, 29 Oct 2018 17:44:15 -0700
-Message-Id: <20181030004415.237101-4-mka@chromium.org>
+Subject: [PATCH v2 2/3] Bluetooth: btqcomsmd: use HCI_QUIRK_USE_BDADDR_PROPERTY
+Date:   Mon, 29 Oct 2018 17:44:14 -0700
+Message-Id: <20181030004415.237101-3-mka@chromium.org>
 X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
 In-Reply-To: <20181030004415.237101-1-mka@chromium.org>
 References: <20181030004415.237101-1-mka@chromium.org>
@@ -80,31 +80,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Set quirk for wcn3990 to read BD_ADDR from a firmware node property.
+Use the HCI_QUIRK_USE_BDADDR_PROPERTY quirk to let the HCI
+core handle the reading of 'local-bd-address'. With this there
+is no need to set HCI_QUIRK_INVALID_BDADDR, the case of a
+non-existing or invalid fwnode property is handled by the core
+code.
 
 Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
 ---
+I couldn't actually test the changes in this driver since I
+don't have a device with this controller. Could someone
+from Qualcomm help with this?
+
 Changes in v2:
-- patch added to the series
-
-tested with https://lore.kernel.org/patchwork/patch/1003830
-("Bluetooth: hci_qca: Add helper to set device address.")
+- removed now unused field 'bdaddr' from struct btqcomsmd
+- added 'Reviewed-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>' tag
 ---
- drivers/bluetooth/hci_qca.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/bluetooth/btqcomsmd.c | 29 +++--------------------------
+ 1 file changed, 3 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-index f036c8f98ea3..0535833caa52 100644
---- a/drivers/bluetooth/hci_qca.c
-+++ b/drivers/bluetooth/hci_qca.c
-@@ -1193,6 +1193,7 @@ static int qca_setup(struct hci_uart *hu)
- 		 * setup for every hci up.
- 		 */
- 		set_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks);
-+		set_bit(HCI_QUIRK_USE_BDADDR_PROPERTY, &hdev->quirks);
- 		hu->hdev->shutdown = qca_power_off;
- 		ret = qca_wcn3990_init(hu);
- 		if (ret)
+diff --git a/drivers/bluetooth/btqcomsmd.c b/drivers/bluetooth/btqcomsmd.c
+index 7df3eed1ef5e..b3020fab6c8e 100644
+--- a/drivers/bluetooth/btqcomsmd.c
++++ b/drivers/bluetooth/btqcomsmd.c
+@@ -28,7 +28,6 @@
+ struct btqcomsmd {
+ 	struct hci_dev *hdev;
+ 
+-	bdaddr_t bdaddr;
+ 	struct rpmsg_endpoint *acl_channel;
+ 	struct rpmsg_endpoint *cmd_channel;
+ };
+@@ -125,23 +124,10 @@ static int btqcomsmd_setup(struct hci_dev *hdev)
+ 		return PTR_ERR(skb);
+ 	kfree_skb(skb);
+ 
+-	/* Devices do not have persistent storage for BD address. If no
+-	 * BD address has been retrieved during probe, mark the device
+-	 * as having an invalid BD address.
++	/* Devices do not have persistent storage for BD address. Retrieve
++	 * it from the firmware node property.
+ 	 */
+-	if (!bacmp(&btq->bdaddr, BDADDR_ANY)) {
+-		set_bit(HCI_QUIRK_INVALID_BDADDR, &hdev->quirks);
+-		return 0;
+-	}
+-
+-	/* When setting a configured BD address fails, mark the device
+-	 * as having an invalid BD address.
+-	 */
+-	err = qca_set_bdaddr_rome(hdev, &btq->bdaddr);
+-	if (err) {
+-		set_bit(HCI_QUIRK_INVALID_BDADDR, &hdev->quirks);
+-		return 0;
+-	}
++	set_bit(HCI_QUIRK_USE_BDADDR_PROPERTY, &hdev->quirks);
+ 
+ 	return 0;
+ }
+@@ -169,15 +155,6 @@ static int btqcomsmd_probe(struct platform_device *pdev)
+ 	if (IS_ERR(btq->cmd_channel))
+ 		return PTR_ERR(btq->cmd_channel);
+ 
+-	/* The local-bd-address property is usually injected by the
+-	 * bootloader which has access to the allocated BD address.
+-	 */
+-	if (!of_property_read_u8_array(pdev->dev.of_node, "local-bd-address",
+-				       (u8 *)&btq->bdaddr, sizeof(bdaddr_t))) {
+-		dev_info(&pdev->dev, "BD address %pMR retrieved from device-tree",
+-			 &btq->bdaddr);
+-	}
+-
+ 	hdev = hci_alloc_dev();
+ 	if (!hdev)
+ 		return -ENOMEM;
 -- 
 2.19.1.568.g152ad8e336-goog
 
