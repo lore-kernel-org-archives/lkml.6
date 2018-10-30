@@ -2,223 +2,151 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97963C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:26:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1C5DC6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:26:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CA052082B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:26:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3B3220664
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:26:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="g0jclvpw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CA052082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="OdbZCJGp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3B3220664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728484AbeJaHVp (ORCPT
+        id S1728565AbeJaHWL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 03:21:45 -0400
-Received: from mail-dm3nam03on0052.outbound.protection.outlook.com ([104.47.41.52]:36064
-        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727369AbeJaHVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 03:21:45 -0400
+        Wed, 31 Oct 2018 03:22:11 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:35767 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727369AbeJaHWL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 03:22:11 -0400
+Received: by mail-pl1-f193.google.com with SMTP id n4-v6so5674948plp.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 15:26:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tXUGVTqm+Ho7lvwdcK4KahElyNQPbZLKIoXX1mV8tPI=;
- b=g0jclvpwY84zPXO0LPR6t9MlbFU/fltbIJsbbgNfWKhC8dX5qhtSmKoF4Fr2/jZfldymZdEdb6uSqBCK3HUj9jCyZEsk6Coo43V6qrmqRiOJ/9coheehIXGrpSdHYIexTmXtwTPgP+3tjaw75+McMCSlcxjBC48hkG/irWL6Gw4=
-Received: from DM5PR12MB2471.namprd12.prod.outlook.com (52.132.141.138) by
- DM5PR12MB1579.namprd12.prod.outlook.com (10.172.40.9) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1273.26; Tue, 30 Oct 2018 22:26:22 +0000
-Received: from DM5PR12MB2471.namprd12.prod.outlook.com
- ([fe80::4c23:f551:bc6a:554e]) by DM5PR12MB2471.namprd12.prod.outlook.com
- ([fe80::4c23:f551:bc6a:554e%3]) with mapi id 15.20.1273.027; Tue, 30 Oct 2018
- 22:26:22 +0000
-From:   "Moger, Babu" <Babu.Moger@amd.com>
-To:     Fenghua Yu <fenghua.yu@intel.com>
-CC:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, H Peter Anvin <hpa@zytor.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Reinette Chatre <reinette.chatre@intel.com>,
-        James Morse <james.morse@arm.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Arshiya Hayatkhan Pathan <arshiya.hayatkhan.pathan@intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: RE: Fwd: [PATCH v2 2/8] selftests/resctrl: Add basic resctrl file
- system operations and data
-Thread-Topic: Fwd: [PATCH v2 2/8] selftests/resctrl: Add basic resctrl file
- system operations and data
-Thread-Index: AQHUbLgDlrQML4ljtECAffIL8h1TDaU2w6awgAFit6CAADyrgA==
-Date:   Tue, 30 Oct 2018 22:26:22 +0000
-Message-ID: <DM5PR12MB24718634BDBD91020E52218895CC0@DM5PR12MB2471.namprd12.prod.outlook.com>
-References: <1540508826-144502-1-git-send-email-fenghua.yu@intel.com>
- <1540508826-144502-3-git-send-email-fenghua.yu@intel.com>
- <DM5PR12MB2471679DD21D00A33D092A1795F30@DM5PR12MB2471.namprd12.prod.outlook.com>
- <CALBSrqDRKbth2NAUFM+emBHVv7eZPX=O9Ki-=vUxi-QQc1wVnQ@mail.gmail.com>
- <20181030183544.GA173608@romley-ivt3.sc.intel.com>
-In-Reply-To: <20181030183544.GA173608@romley-ivt3.sc.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Babu.Moger@amd.com; 
-x-originating-ip: [2600:1700:270:e9d0:7ddf:c3d4:bdf8:6702]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR12MB1579;20:hPawEn7f3wWpyZpjuNkNvIlDlKqQUvYfynSXVL5yw2MrT50vnXczf5NuifMtOHFYQm5veSkf+Dlm3ZvZ4lxYKQ54Vpr6rwLs0s8dZvCQEQgv97nVS4Oq9kxYR8doxO3qrBoHkE+E4qIBYpX50ZjrN5okqgNYinJ6BV0tqbLEYUGoYYYyIu8Ve9jTy2uLYNfB5Q7moxJ4QH7jGlLKugyZnPHj2b9VYsJwg30NJbwwQEfVeHSr4SUex+E4L80FSX3/
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: ce461d64-b8b3-492c-6f3c-08d63eb6b8c0
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1579;
-x-ms-traffictypediagnostic: DM5PR12MB1579:
-x-microsoft-antispam-prvs: <DM5PR12MB157902871A251DCB977E916C95CC0@DM5PR12MB1579.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(228905959029699)(767451399110)(180628864354917);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231382)(944501410)(52105095)(3002001)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:DM5PR12MB1579;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1579;
-x-forefront-prvs: 08417837C5
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(136003)(39860400002)(376002)(346002)(189003)(199004)(13464003)(2900100001)(478600001)(33656002)(54906003)(76176011)(71190400001)(71200400001)(7736002)(99286004)(5660300001)(2906002)(68736007)(6916009)(6246003)(7696005)(186003)(14454004)(72206003)(97736004)(229853002)(106356001)(4326008)(25786009)(86362001)(93886005)(105586002)(53936002)(256004)(6436002)(11346002)(446003)(102836004)(476003)(46003)(316002)(486006)(74316002)(8676002)(81156014)(305945005)(5250100002)(8936002)(53546011)(7416002)(6506007)(81166006)(9686003)(6116002)(55016002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1579;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: Wecn5YzchzkI8+xUXFxS7m4hfoVU11ti6dHL0JYITEtZ0SPmKF4RjAeNK5zwwasUtoyw3ZGfxwS0tDmL4X0ONuavVH1qrz2SJPXdRXNeXQKblk9s//ay8b1Qc3jjMq/IgziFurnavGsrB5kphrITUVhSxiyWv2EI06mcHnTPe69TS8F+FuRXco+tsnBceLybWomk2CLkTA4aTJPrzeAmkEDvPgZtjPc+msgaX5d7amM/XZzBGbwXTc4DaYCSONxR8TluF9nrhasuw7Tz8NA/LH+dn7I0WHjmwYf+lsjuVTAcDuKzG5yacQDIEomiP2UdvNuLcjY9CEYfL7JuL5oWta+xxWIPfslPavIpJvbZ6Ec=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=joelfernandes.org; s=google;
+        h=date:from:to:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ODUHw4UpJEs657WSrEknsU0kC3MCLVZKf+dGAdOHRew=;
+        b=OdbZCJGpOkizf9H6t8umcdfivPvqBSxuC6T0SV0SNrwAGhjxzOPuX5CtjgU8sUCM+b
+         /ntrl0y+HNiir/q17RDWQvmzf95zQGtXogHd1oqVUaz6zJf8jMReb6yc8L8UeXu0WZ3i
+         3eUbKPHm/XvUL9f2zk9BkSikpscTu+D/7iOXc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ODUHw4UpJEs657WSrEknsU0kC3MCLVZKf+dGAdOHRew=;
+        b=r2hDYh2F2XoNkLyiquuJWEhHdIL/unLsqJ8ly2BMI7giOYOOj3bdBofi5bxJQDw4nA
+         duiHp2GLkF7D/G3rVq+A1RMA+BKtV5cywSCdCCX3642RRK8wikQ2IFnh8TkjY2JXr5ta
+         3B9aT1OWxmaP7GutLLVkcXBqJBZlWFcW54mBCLT6oaxWZw+cl7EcCMu5oAljRcmmE77u
+         BO9sWF6eS4CGg6jIjKKn0dc4N5OEBEsWghbbaFA5d/2Zi3iDL8YRl5G2hEmyLvwv68kT
+         KxezfFm5woJloC5Q2WaAzla2nr2of75+NPWpwX6sQfcVdmgeWJHNXPcvoqXcTpbtNjgc
+         2hNw==
+X-Gm-Message-State: AGRZ1gL7smngqTrraLFMqFIE/jUtOb4ID0jgPxFTOfEMaB6PKIG9fme6
+        oVZVGzQi/WRWZ+L87e6owd7aSA==
+X-Google-Smtp-Source: AJdET5cuUN0CWOsrtq8MBcy3JATU/S6jH6zq+Y/1/4193zUhu5ZYKURyGRSx4Ibhj06MbdFePFYL3A==
+X-Received: by 2002:a17:902:744a:: with SMTP id e10-v6mr559443plt.61.1540938411854;
+        Tue, 30 Oct 2018 15:26:51 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id q11-v6sm2518580pgp.62.2018.10.30.15.26.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 30 Oct 2018 15:26:50 -0700 (PDT)
+Date:   Tue, 30 Oct 2018 15:26:49 -0700
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     paulmck@linux.vnet.ibm.com, linux-kernel@vger.kernel.org
+Subject: Re: [RFC] doc: rcu: remove note on smp_mb during synchronize_rcu
+Message-ID: <20181030222649.GA105735@joelaf.mtv.corp.google.com>
+References: <20181028043046.198403-1-joel@joelfernandes.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ce461d64-b8b3-492c-6f3c-08d63eb6b8c0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Oct 2018 22:26:22.3467
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1579
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181028043046.198403-1-joel@joelfernandes.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fenghua,
+Hi Paul,
 
-> -----Original Message-----
-> From: Fenghua Yu <fenghua.yu@intel.com>
-> Sent: Tuesday, October 30, 2018 1:36 PM
-> To: Moger, Babu <Babu.Moger@amd.com>; Fenghua Yu
-> <fenghua.yu@intel.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>; Ingo Molnar
-> <mingo@redhat.com>; H Peter Anvin <hpa@zytor.com>; Tony Luck
-> <tony.luck@intel.com>; Peter Zijlstra <peterz@infradead.org>; Reinette
-> Chatre <reinette.chatre@intel.com>; James Morse
-> <james.morse@arm.com>; Ravi V Shankar <ravi.v.shankar@intel.com>; Sai
-> Praneeth Prakhya <sai.praneeth.prakhya@intel.com>; Arshiya Hayatkhan
-> Pathan <arshiya.hayatkhan.pathan@intel.com>; linux-kernel <linux-
-> kernel@vger.kernel.org>
-> Subject: Re: Fwd: [PATCH v2 2/8] selftests/resctrl: Add basic resctrl fil=
-e
-> system operations and data
->=20
-> > From: Moger, Babu <Babu.Moger@amd.com>
-> > > From: Fenghua Yu <fenghua.yu@intel.com>
-> > > From: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-> > >
-> > > The basic resctrl file system operations and data are added for futur=
-e
-> > > usage by resctrl selftest tool.
-> > >
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +char get_sock_num(int cpu_no)
-> > > +{
-> > > +     char sock_num, phys_pkg_path[1024];
-> > > +     FILE *fp;
-> > > +
-> > > +     sprintf(phys_pkg_path, "%s%d/topology/physical_package_id",
-> > > +             PHYS_ID_PATH, cpu_no);
-> > > +     fp =3D fopen(phys_pkg_path, "r");
-> >
-> > There should corresponding fclose for this. In general, I would check a=
-ll the
-> > fopens in this series. I found few of the files not closed while return=
-ing.
-> > More comments below.
-> >
-> > > +     if (!fp || fscanf(fp, "%c", &sock_num) <=3D 0 || fclose(fp) =3D=
-=3D EOF) {
->=20
-> fclose is here.
+On Sat, Oct 27, 2018 at 09:30:46PM -0700, Joel Fernandes (Google) wrote:
+> As per this thread [1], it seems this smp_mb isn't needed anymore:
+> "So the smp_mb() that I was trying to add doesn't need to be there."
+> 
+> So let us remove this part from the memory ordering documentation.
+> 
+> [1] https://lkml.org/lkml/2017/10/6/707
+> 
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-Yes. It is there. Let's take a case(hypothetical) where fp is valid and fsc=
-anf returns -1.
+I was just checking about this patch. Do you feel it is correct to remove
+this part from the docs? Are you satisified that a barrier isn't needed there
+now? Or did I miss something?
 
-             If( false || true || fclose(fp))
+thanks,
 
-Will this execute fclose?  Or am I missing something here?
+- Joel
 
 
->=20
-> > > +             perror("Could not get socket number");
-> > > +
-> > > +             return -1;
-> > > +     }
-> > > +
-> > > +      */
-> > > +     if (!freopen("/dev/null", "w", stdout))
-> > > +             PARENT_EXIT("Unable to direct BM op to /dev/null");
-> >
-> > Do you need fclose for this before returning from this function?
->=20
-> This fclose is missing. I will add it.
->=20
-> > > +     /* Write child pid to con_mon grp */
-> > > +     fp =3D fopen(controlgroup, "w");
-> >
-> > I don't see corresponding fclose.
-> >
-> > > +     if (!fp || fprintf(fp, "%d\n", bm_pid) <=3D 0 || fclose(fp) =3D=
-=3D EOF) {
->=20
-> fclose is here:)
->=20
-> > > +             perror("Failed to write child to con_mon grp");
-> > > +
-> > > +             return errno;
-> > > +     }
-> > > +
-> > > +     /* Write child pid to mon grp, only for "mbm" */
-> > > +     if ((strcmp(resctrl_val, "mbm") =3D=3D 0)) {
-> > > +             if (mongrp) {
-> > > +                     fp =3D fopen(monitorgroup, "w");
-> > > +                     if (!fp || fprintf(fp, "%d\n", bm_pid) <=3D 0 |=
-|
-> > > +                         fclose(fp) =3D=3D EOF) {
-> >
-> >
-> > I feel too many checks at one place.  If fprintf fails,  will it fclose=
- the
-> > file? I suggest to separate these checks.
->=20
-> You are right. I will separate the checks in multiple lines.
->=20
-> >
-> > > +
-> > > +             fp =3D fopen(controlgroup, "w");
-> > > +             if (!fp || fprintf(fp, "%s\n", schema) <=3D 0 ||
-> > > +                 fclose(fp) =3D=3D EOF) {
-> >
-> > Same comment as above.. If fprintf fails,  will it fclose the file? I s=
-uggest
-> > to separate these checks.
->=20
-> Sure.
->=20
-> I will change code based on your comments.
->=20
-> Thanks.
->=20
-> -Fenghua
+> ---
+>  .../Tree-RCU-Memory-Ordering.html             | 32 +------------------
+>  1 file changed, 1 insertion(+), 31 deletions(-)
+> 
+> diff --git a/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.html b/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.html
+> index a346ce0116eb..0fb1511763d4 100644
+> --- a/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.html
+> +++ b/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.html
+> @@ -77,7 +77,7 @@ The key point is that the lock-acquisition functions, including
+>  <tt>smp_mb__after_unlock_lock()</tt> immediately after successful
+>  acquisition of the lock.
+>  
+> -<p>Therefore, for any given <tt>rcu_node</tt> struction, any access
+> +<p>Therefore, for any given <tt>rcu_node</tt> structure, any access
+>  happening before one of the above lock-release functions will be seen
+>  by all CPUs as happening before any access happening after a later
+>  one of the above lock-acquisition functions.
+> @@ -162,36 +162,6 @@ an <tt>atomic_add_return()</tt> of zero) to detect idle CPUs.
+>  <tr><td>&nbsp;</td></tr>
+>  </table>
+>  
+> -<p>The approach must be extended to handle one final case, that
+> -of waking a task blocked in <tt>synchronize_rcu()</tt>.
+> -This task might be affinitied to a CPU that is not yet aware that
+> -the grace period has ended, and thus might not yet be subject to
+> -the grace period's memory ordering.
+> -Therefore, there is an <tt>smp_mb()</tt> after the return from
+> -<tt>wait_for_completion()</tt> in the <tt>synchronize_rcu()</tt>
+> -code path.
+> -
+> -<table>
+> -<tr><th>&nbsp;</th></tr>
+> -<tr><th align="left">Quick Quiz:</th></tr>
+> -<tr><td>
+> -	What?  Where???
+> -	I don't see any <tt>smp_mb()</tt> after the return from
+> -	<tt>wait_for_completion()</tt>!!!
+> -</td></tr>
+> -<tr><th align="left">Answer:</th></tr>
+> -<tr><td bgcolor="#ffffff"><font color="ffffff">
+> -	That would be because I spotted the need for that
+> -	<tt>smp_mb()</tt> during the creation of this documentation,
+> -	and it is therefore unlikely to hit mainline before v4.14.
+> -	Kudos to Lance Roy, Will Deacon, Peter Zijlstra, and
+> -	Jonathan Cameron for asking questions that sensitized me
+> -	to the rather elaborate sequence of events that demonstrate
+> -	the need for this memory barrier.
+> -</font></td></tr>
+> -<tr><td>&nbsp;</td></tr>
+> -</table>
+> -
+>  <p>Tree RCU's grace--period memory-ordering guarantees rely most
+>  heavily on the <tt>rcu_node</tt> structure's <tt>-&gt;lock</tt>
+>  field, so much so that it is necessary to abbreviate this pattern
+> -- 
+> 2.19.1.568.g152ad8e336-goog
+> 
