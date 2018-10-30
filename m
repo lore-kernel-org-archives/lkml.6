@@ -2,135 +2,118 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91361C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:59:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3DBBC6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:59:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C69C2080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:59:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l+GRQWTf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C69C2080A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 727242080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:59:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 727242080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727286AbeJ3RwB (ORCPT
+        id S1727216AbeJ3RwB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 30 Oct 2018 13:52:01 -0400
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:46172 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726225AbeJ3RwA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+Received: from mx1.redhat.com ([209.132.183.28]:6151 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726858AbeJ3RwA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 30 Oct 2018 13:52:00 -0400
-Received: by mail-vs1-f65.google.com with SMTP id l6so7131924vsj.13
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 01:59:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=I56xSu4RY4TGKO99XbtGs2nK5ZhjNUH4Tr9D+ZItFAM=;
-        b=l+GRQWTfX3biGvqREt9Ceo9/28nN9YRxtd6uBuxhQQjZ7L9JTazd9ZOY8iGdJhJ3QS
-         vlj3BjfUE46zgCgZq1WD4H8krQTMqgfq5vaP2EobOW1gpq2885XZKY1mmfEryIML/PNp
-         c+BNlPXIH8PXctOiSKh/Uw8h/JPNShfXOXrTYhOIMvbJO5hP1LlMKxw1gk3nJVXfALXk
-         kZQHAN8+GuNLv/AmIAExI6HYhey8nT52c1dc6uhAS4ggnwoLYfQZemSDJdTdU+NAKmge
-         utwsRoRIeH8IoeOw9ROnhZ4F9t8zkWBSpK5oGnhjQOEX+plW7IfzGq3yZC1k/rNi97o1
-         V47Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=I56xSu4RY4TGKO99XbtGs2nK5ZhjNUH4Tr9D+ZItFAM=;
-        b=cGHDyvJFqloa7RO5QpgZP2LGqxHsx6zQo5pwfcaAT7KJ5wpAWVjrL5r3eMnlTKV13c
-         PIXmpJpR1qeHDrUCMKLocCljdwWvnBpd536mHxLPCrbXlbWkXPFpcAJriTWcLYpl9SgS
-         XgY+vYcLcKvS1jsS7OpGOyaCgFq4ZzTvdo9CSuGPilarcM8SEzAJgdHlTXda50iVA7hP
-         aERlh42cLms7fJKXnVPUbor6z+bBq83DIwokDl/nBprMVGW5nJGNiaqVTv43UPDAMjD3
-         6+J7TkCRAi1RylsfQmOzEQ7VofSIR6tG2WLFaSQXMe4e5IlnqjixUPqOfidgfLHJwlxt
-         sJZQ==
-X-Gm-Message-State: AGRZ1gLKds7EfMgmJnlrdWXzIz6QSmdNwWcJhU0p7rao4kcSiwOkZ/lC
-        zN+vof3RwHuZgTs0pdj9peR995Vx3Jyt92D7q0iCFt8TEgU=
-X-Google-Smtp-Source: AJdET5dXeTby7YpO2oGQe3pi9KjHwkV2NPavrVFHOl152RQwaPe1HMUkY6yv+7dgsi6sfbBNM7NSznZaFcCX/i6Qgv8=
-X-Received: by 2002:a67:6cc1:: with SMTP id h184mr2746911vsc.149.1540889966495;
- Tue, 30 Oct 2018 01:59:26 -0700 (PDT)
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0A679A6E13;
+        Tue, 30 Oct 2018 08:59:22 +0000 (UTC)
+Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 20410608EF;
+        Tue, 30 Oct 2018 08:59:20 +0000 (UTC)
+Date:   Tue, 30 Oct 2018 16:59:17 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Bhupesh Sharma <bhsharma@redhat.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bhupesh SHARMA <bhupesh.linux@gmail.com>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kazuhito Hagio <k-hagio@ab.jp.nec.com>,
+        Dave Anderson <anderson@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        Omar Sandoval <osandov@fb.com>, x86@kernel.org,
+        kexec mailing list <kexec@lists.infradead.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH] x86_64, vmcoreinfo: Append 'page_offset_base' to
+ vmcoreinfo
+Message-ID: <20181030085917.GC11408@MiWiFi-R3L-srv>
+References: <1540593788-28181-1-git-send-email-bhsharma@redhat.com>
+ <20181027100241.GB1884@MiWiFi-R3L-srv>
+ <CACi5LpPf9Zr1beowRNGmLZY7DtS3JDt8D=FONjqas9yo7TyCjg@mail.gmail.com>
+ <20181030020752.GB11408@MiWiFi-R3L-srv>
+ <CACi5LpP0_s9zAF+QfKpU+kG6BKqqkiwQhcW-WFZ0=SnBeX7ZXA@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a67:f492:0:0:0:0:0 with HTTP; Tue, 30 Oct 2018 01:59:25
- -0700 (PDT)
-In-Reply-To: <CAJWu+orRE9HL2KWRzEhr2B2Owi=66x-mgjYiJV=cje-rgOeSxQ@mail.gmail.com>
-References: <20181029175322.189042-1-dancol@google.com> <CAJWu+opR5bU7b0ux5GZjO-Wu+=2F8sARke-E_y4PpH0XSubx9g@mail.gmail.com>
- <CAKOZuetEeP2QgowUL60LYoOgavN7e-WX52adzTdMQhZX0bZn-Q@mail.gmail.com> <CAJWu+orRE9HL2KWRzEhr2B2Owi=66x-mgjYiJV=cje-rgOeSxQ@mail.gmail.com>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Tue, 30 Oct 2018 08:59:25 +0000
-Message-ID: <CAKOZuetNC8Z4a5HAZkm2D4RMrTOCWj71rLJXOOtuoFaF3gGEpA@mail.gmail.com>
-Subject: Re: [RFC PATCH] Minimal non-child process exit notification support
-To:     Joel Fernandes <joelaf@google.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACi5LpP0_s9zAF+QfKpU+kG6BKqqkiwQhcW-WFZ0=SnBeX7ZXA@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 30 Oct 2018 08:59:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 3:06 AM, Joel Fernandes <joelaf@google.com> wrote:
-> On Mon, Oct 29, 2018 at 1:01 PM Daniel Colascione <dancol@google.com> wrote:
->>
->> Thanks for taking a look.
->>
->> On Mon, Oct 29, 2018 at 7:45 PM, Joel Fernandes <joelaf@google.com> wrote:
->> >
->> > On Mon, Oct 29, 2018 at 10:53 AM Daniel Colascione <dancol@google.com> wrote:
->> > >
->> > > This patch adds a new file under /proc/pid, /proc/pid/exithand.
->> > > Attempting to read from an exithand file will block until the
->> > > corresponding process exits, at which point the read will successfully
->> > > complete with EOF.  The file descriptor supports both blocking
->> > > operations and poll(2). It's intended to be a minimal interface for
->> > > allowing a program to wait for the exit of a process that is not one
->> > > of its children.
->> > >
->> > > Why might we want this interface? Android's lmkd kills processes in
->> > > order to free memory in response to various memory pressure
->> > > signals. It's desirable to wait until a killed process actually exits
->> > > before moving on (if needed) to killing the next process. Since the
->> > > processes that lmkd kills are not lmkd's children, lmkd currently
->> > > lacks a way to wait for a proces to actually die after being sent
->> > > SIGKILL; today, lmkd resorts to polling the proc filesystem pid
->> >
->> > Any idea why it needs to wait and then send SIGKILL? Why not do
->> > SIGKILL and look for errno == ESRCH in a loop with a delay.
->>
->> I want to get polling loops out of the system. Polling loops are bad
->> for wakeup attribution, bad for power, bad for priority inheritance,
->> and bad for latency. There's no right answer to the question "How long
->> should I wait before checking $CONDITION again?". If we can have an
->> explicit waitqueue interface to something, we should. Besides, PID
->> polling is vulnerable to PID reuse, whereas this mechanism (just like
->> anything based on struct pid) is immune to it.
->
-> The argument sounds Ok to me. I would also more details in the commit
-> message about the alternate methods to do this (such as kill polling
-> or ptrace) and why they don't work well etc so no one asks any
-> questions. Like maybe under a "other ways to do this" section. A bit
-> of googling also showed a netlink way of doing it without polling
-> (though I don't look into that much and wouldn't be surprised if its
-> more complicated)
+Hi Bhupesh,
 
-Thanks for taking a look. I'll add to the commit message.
+On 10/30/18 at 12:33pm, Bhupesh Sharma wrote:
+> > Why it's broken? Have you investigated and figured out why it's broken?
+> > If fix, what patch will it look like? Does the patch prove it's not
+> > worth using the current way?
+> >
+> > Have you thought about this in advance? Or still like before, you said
+> > on arm64 you found different boards have different behaviour, then
+> > makedumpfile maintainer Kazu said he investigated and found it may be
+> > caused by KALSR. This time, for this KCORE_REMAP adding, can you help to
+> > investigate further and give an answer to the issue you found and
+> > raised?
+> 
+> Ofcourse, the patchset which added vmcoreinfo into kcore was discussed
+> and it was agreed that this was a better approach to move forward and hence
+> accepted in mainline.
 
-Re: netlink isn't enabled everywhere and is subject to lossy buffy
-overruns, AIUI. You could also monitor process exit by setting up
-ftrace and watching events, or by installing BPF that watched for
-process exit and sent a perf event. :-) All of these interfaces feel
-like abusing a "monitoring" API for controlling system operations, and
-this kind of abuse tends to have ugly failure modes. I'm looking for
-something a bit more explicit and robust.
+Currently I am wondering why x86_64 need add page_offset_base to
+vmcoreinfo. Is it because any feature or userspace tool is broken if
+page_offset_base is not added into vmcoreinfo? 
 
->
-> Also I guess when you send a patch, it'd be good to pass
-> "--cc-cmd='./scripts/get_maintainer.pl" to git-send-email so it
-> automatically CCs the maintainers who maintain this.
+Why KCORE_REMAP adding broke makedumpfile, do you find out the root
+cause and what it looks like if you fix it in the current way?
 
-Thanks for the tip!
+Can you list the reasons one by one as below with short sentence?
+1)
+2)
+3)
+
+> 
+> Regarding the makedumpfile issue, I have already provided a detailed
+> reply to Kazu (you are Cc'ed on the thread) and also proposed a
+> makedumpfile approach which
+> reads the 'page_offset_base' value from kcore (using the kernel
+> interface provided by this patch),
+> [on which you are Cc'ed as well]:
+
+This is your replying mail link:
+https://www.spinics.net/lists/kexec/msg21616.html
+
+Then what on earth do you want to fix in this patch?
+
+So Kazu's patch which decuding page_offset_base like x86 64 have done works.
+Yes, and your way using vmcoreinfo in kcore also works, but this is not
+the reason which supports you to discard the old way Kazu suggested. Now
+we are talking about why you want to discard the old way, and adding
+page_offset_base to vmcoreinfo.
+
+Please elaborate and reply with simple and clear logic.
+
+Thanks
+Baoquan
+
