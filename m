@@ -2,98 +2,131 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80243C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:26:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 533E5C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:28:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36B262082B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:26:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36B262082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 02F8C20831
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:28:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02F8C20831
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726643AbeJ3RSp (ORCPT
+        id S1726720AbeJ3RUl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 13:18:45 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:52326 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726211AbeJ3RSp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 13:18:45 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 548E2207C3; Tue, 30 Oct 2018 09:26:16 +0100 (CET)
-Received: from bbrezillon (aaubervilliers-681-1-12-210.w90-88.abo.wanadoo.fr [90.88.133.210])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 07C5820731;
-        Tue, 30 Oct 2018 09:26:06 +0100 (CET)
-Date:   Tue, 30 Oct 2018 09:26:05 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     "Grandbois, Brett" <brett.grandbois@opengear.com>
-Cc:     Marek Vasut <marek.vasut@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] mtd: spi-nor: Add support for SPI boot flash access
- for AMD Family 16h
-Message-ID: <20181030092605.38851906@bbrezillon>
-In-Reply-To: <a6edf985-0d15-5b2b-a6ba-9cfcd7a67836@opengear.com>
-References: <20181016005726.26813-1-brett.grandbois@opengear.com>
-        <20181027173945.241e87b2@bbrezillon>
-        <a6edf985-0d15-5b2b-a6ba-9cfcd7a67836@opengear.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Tue, 30 Oct 2018 13:20:41 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:45941 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726222AbeJ3RUl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 13:20:41 -0400
+Received: by mail-ot1-f67.google.com with SMTP id q25so10253068otn.12;
+        Tue, 30 Oct 2018 01:28:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=P798P3HQ9dxfDOICSjE6Oua23MaXe2I6mwiTxcy7bYY=;
+        b=eekkxtywvKaujo2NhwaHZ5iK8j0GOR6q3V+kRxU5mQpPHobBTupsa/qd2mtZ21HACj
+         WtIYjDdzNziMvEZGLtudO7LLcI3p1uqcT9t3uHayBH1bzzxRaXMngNxz4BSqfyEQqb5F
+         UkXXSsufHkIdb4HX+kRMEq7mtBdUf1ArI+bfPZzgwwmbhmxbbTRAsjeZUkMQtRAE0gEH
+         i3osoi2+2A7SxSZHaY7ZbgOdRBQHuZYqtshYHOmX2cquicKoXLEGAp9I6XMOIN/IDu9c
+         ukugafovzggGhlfTGRI9stCPSDrEQ0O36zFxJZ3heRxyppZ0fa99M8PEUNdTOL+4VX5p
+         Kuxg==
+X-Gm-Message-State: AGRZ1gKs5uT8IqjpUOYOh4K2v+3ecaHQ8yjjAcCuOoPLGGwbkBHSIvW/
+        y9QvWEE0YXpnbBVbpunTM9SVhy8db+a16du4LaGu2sjt
+X-Google-Smtp-Source: AJdET5dciriIghG820JdaIbolZCa0TXo0T4fFzobQeewAyE4Uxapk1oimopcfVbAqejI77SRcfnYv6RAiAhJYi1oaMI=
+X-Received: by 2002:a9d:64ce:: with SMTP id n14mr11410382otl.343.1540888093114;
+ Tue, 30 Oct 2018 01:28:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Tue, 30 Oct 2018 09:28:01 +0100
+Message-ID: <CAJZ5v0g7iRUA2=fi3+rkJcsx38YTE6fx26bnnpjeMHwv_CSMVw@mail.gmail.com>
+Subject: [GIT PULL] More power management updates for v4.20-rc1
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 29 Oct 2018 23:15:42 +0000
-"Grandbois, Brett" <brett.grandbois@opengear.com> wrote:
+Hi Linus,
 
-> On 28/10/18 1:39 am, Boris Brezillon wrote:
-> > Hi Brett,
-> >
-> > On Tue, 16 Oct 2018 00:57:41 +0000
-> > "Grandbois, Brett"<brett.grandbois@opengear.com>  wrote:
-> >  
-> >> Add support to expose the SPI boot flash on AMD Family 16h CPUs as
-> >> a standard mtd device to give userspace BIOS updaters greater
-> >> feature support.  The BIOS and Kernel Developer's Guide refers to
-> >> this as the 'SPI ROM' controller and so the driver follows that
-> >> naming convention for consistency.
-> >>  
-> > We're currently trying to convert spi-nor controller drivers to the
-> > spi-mem interface [1]. Can you look at this new interface and tell
-> > me if you'd be able to implement it? If that's not possible, then
-> > I'd prefer to have this driver implement the mtd_info interface
-> > directly.  
-> 
-> So from going over the spi-mem interface it looks like the intent is
-> for these sorts of devices to be a standard spi_controller with only
-> mem_ops defined and the transfer/_one/_one_message left as NULL?  Is
-> that correct? 
+Please pull from the tag
 
-Yes
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ pm-4.20-rc1-2
 
-> That's a bit of a pivot from how it's currently done
-> (it's conceptually similar to the intel-spi-pci driver so I was
-> following that)
+with top-most commit c4ac6889930d027ffa5cf77e0c202e7e97a4be06
 
-Yes, and that's exactly what I'd like to avoid. intel-spi-pci will
-probably be the trickiest conversion, so I'd like to avoid having
-another one ;-).
+ Merge branches 'pm-cpuidle' and 'pm-cpufreq'
 
-> but I should be able to rework it to the new
-> interface.  This then lives under drivers/spi and thus should be
-> submitted to linux-spi? 
+on top of commit bd6bf7c10484f026505814b690104cdef27ed460
 
-Actually, if the controller is only ever connected to the same SPI NOR
-chip (no need for advanced detection scheme) and does not support
-support Octo/Quad/Dual modes (or any other advanced features), you'll
-be better off implementing mtd->_read/_write/_erase() directly (the
-driver would then live in drivers/mtd/devices/).
+ Merge tag 'pci-v4.20-changes' of
+git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci
+
+to receive additional power management updates for 4.20-rc1.
+
+These remove a questionable heuristic from the menu cpuidle governor,
+fix a recent build regression in the intel_pstate driver, clean up
+ARM big-Little support in cpufreq and fix up hung task watchdog's
+interaction with system-wide power management transitions.
+
+Specifics:
+
+ - Fix build regression in the intel_pstate driver that doesn't
+   build without CONFIG_ACPI after recent changes (Dominik Brodowski).
+
+ - One of the heuristics in the menu cpuidle governor is based on a
+   function returning 0 most of the time, so drop it and clean up
+   the scheduler code related to it (Daniel Lezcano).
+
+ - Prevent the arm_big_little cpufreq driver from being used on ARM64
+   which is not suitable for it and drop the arm_big_little_dt driver
+   that is not used any more (Sudeep Holla).
+
+ - Prevent the hung task watchdog from triggering during resume from
+   system-wide sleep states by disabling it before freezing tasks and
+   enabling it again after they have been thawed (Vitaly Kuznetsov).
+
+There is a merge conflict between the menu governor changes included
+here and the (already merged) material from Andrew, but it should be
+straightforward to resolve [1].
+
+Thanks!
+
+[1] https://lore.kernel.org/lkml/20181029130124.290346e9@canb.auug.org.au/
+
+---------------
+
+Daniel Lezcano (2):
+      sched: Factor out nr_iowait and nr_iowait_cpu
+      cpuidle: menu: Remove get_loadavg() from the performance multiplier
+
+Dominik Brodowski (1):
+      cpufreq: intel_pstate: Fix compilation for !CONFIG_ACPI
+
+Sudeep Holla (2):
+      cpufreq: drop ARM_BIG_LITTLE_CPUFREQ support for ARM64
+      cpufreq: remove unused arm_big_little_dt driver
+
+Vitaly Kuznetsov (1):
+      kernel: hung_task.c: disable on suspend
+
+---------------
+
+ MAINTAINERS                         |   1 -
+ drivers/cpufreq/Kconfig.arm         |   9 +---
+ drivers/cpufreq/Makefile            |   3 --
+ drivers/cpufreq/arm_big_little_dt.c | 100 ------------------------------------
+ drivers/cpufreq/intel_pstate.c      |  20 ++++----
+ drivers/cpuidle/governors/menu.c    |  25 +++------
+ include/linux/sched/stat.h          |   1 -
+ kernel/hung_task.c                  |  30 ++++++++++-
+ kernel/sched/core.c                 |  34 +++++-------
+ 9 files changed, 60 insertions(+), 163 deletions(-)
