@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2BBEC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:29:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91AB3C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:29:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8931720870
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:29:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5971020827
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:29:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gBiETnJ8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8931720870
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KOpuGhSm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5971020827
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728913AbeJ3WWr (ORCPT
+        id S1728927AbeJ3WWt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 18:22:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53516 "EHLO mail.kernel.org"
+        Tue, 30 Oct 2018 18:22:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53552 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728046AbeJ3WWr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 18:22:47 -0400
+        id S1728046AbeJ3WWs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 18:22:48 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2323020838;
-        Tue, 30 Oct 2018 13:29:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0CCB620827;
+        Tue, 30 Oct 2018 13:29:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540906158;
-        bh=K4myFZ/oLdGd1JDFoRYXGVt8FOfoafJ4QRU0BkkON0w=;
+        s=default; t=1540906160;
+        bh=uq7/w8IhV8b96X9znXP0SW5fA13ry0k8K0/a+mnouak=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gBiETnJ8icKtCKsmMM4oiR5XHubeqEtuksqCktOxqLnzP5G6Ecx07HQ5SkAJ0ZX2i
-         2y7vEPSOBlJHnyqS+Vc9SpWoyhw/Bc0CUeGjgRBkF6x09BRcG1BxqtZgAGmZoU7+sE
-         23LrN9H/8YJ+WqnF7EPWx6Fl03GmT9ZkXDmftaaE=
+        b=KOpuGhSmnInf8mxXENkQa4vxdtu6NPwTxlBiXYAJWd8zQ5Gc5smEEUjb4myUV/8uU
+         7xmLu9+Tjkz8LnyjvtDNng86ek7pERnTlsorWliUp543hSt4xzu5nW6mYSxZF4OjKM
+         OmdnCOVZgR7/7i83ipak420CXUSO27g/XLwzy4D4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Masami Hiramatsu <mhiramat@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
+Cc:     Dimitris Michailidis <dmichail@google.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 17/19] selftests: ftrace: Add synthetic event syntax testcase
-Date:   Tue, 30 Oct 2018 09:28:22 -0400
-Message-Id: <20181030132824.218056-17-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 18/19] net: fix pskb_trim_rcsum_slow() with odd trim offset
+Date:   Tue, 30 Oct 2018 09:28:23 -0400
+Message-Id: <20181030132824.218056-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181030132824.218056-1-sashal@kernel.org>
 References: <20181030132824.218056-1-sashal@kernel.org>
@@ -53,110 +53,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masami Hiramatsu <mhiramat@kernel.org>
+From: Dimitris Michailidis <dmichail@google.com>
 
-[ Upstream commit ba0e41ca81b935b958006c7120466e2217357827 ]
+[ Upstream commit d55bef5059dd057bd077155375c581b49d25be7e ]
 
-Add a testcase to check the syntax and field types for
-synthetic_events interface.
+We've been getting checksum errors involving small UDP packets, usually
+59B packets with 1 extra non-zero padding byte. netdev_rx_csum_fault()
+has been complaining that HW is providing bad checksums. Turns out the
+problem is in pskb_trim_rcsum_slow(), introduced in commit 88078d98d1bb
+("net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are friends").
 
-Link: http://lkml.kernel.org/r/153986838264.18251.16627517536956299922.stgit@devbox
+The source of the problem is that when the bytes we are trimming start
+at an odd address, as in the case of the 1 padding byte above,
+skb_checksum() returns a byte-swapped value. We cannot just combine this
+with skb->csum using csum_sub(). We need to use csum_block_sub() here
+that takes into account the parity of the start address and handles the
+swapping.
 
-Acked-by: Shuah Khan <shuah@kernel.org>
-Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Matches existing code in __skb_postpull_rcsum() and esp_remove_trailer().
+
+Fixes: 88078d98d1bb ("net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are friends")
+Signed-off-by: Dimitris Michailidis <dmichail@google.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../trigger-synthetic-event-syntax.tc         | 80 +++++++++++++++++++
- 1 file changed, 80 insertions(+)
- create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-syntax.tc
+ net/core/skbuff.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-syntax.tc b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-syntax.tc
-new file mode 100644
-index 000000000000..88e6c3f43006
---- /dev/null
-+++ b/tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-synthetic-event-syntax.tc
-@@ -0,0 +1,80 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+# description: event trigger - test synthetic_events syntax parser
-+
-+do_reset() {
-+    reset_trigger
-+    echo > set_event
-+    clear_trace
-+}
-+
-+fail() { #msg
-+    do_reset
-+    echo $1
-+    exit_fail
-+}
-+
-+if [ ! -f set_event ]; then
-+    echo "event tracing is not supported"
-+    exit_unsupported
-+fi
-+
-+if [ ! -f synthetic_events ]; then
-+    echo "synthetic event is not supported"
-+    exit_unsupported
-+fi
-+
-+reset_tracer
-+do_reset
-+
-+echo "Test synthetic_events syntax parser"
-+
-+echo > synthetic_events
-+
-+# synthetic event must have a field
-+! echo "myevent" >> synthetic_events
-+echo "myevent u64 var1" >> synthetic_events
-+
-+# synthetic event must be found in synthetic_events
-+grep "myevent[[:space:]]u64 var1" synthetic_events
-+
-+# it is not possible to add same name event
-+! echo "myevent u64 var2" >> synthetic_events
-+
-+# Non-append open will cleanup all events and add new one
-+echo "myevent u64 var2" > synthetic_events
-+
-+# multiple fields with different spaces
-+echo "myevent u64 var1; u64 var2;" > synthetic_events
-+grep "myevent[[:space:]]u64 var1; u64 var2" synthetic_events
-+echo "myevent u64 var1 ; u64 var2 ;" > synthetic_events
-+grep "myevent[[:space:]]u64 var1; u64 var2" synthetic_events
-+echo "myevent u64 var1 ;u64 var2" > synthetic_events
-+grep "myevent[[:space:]]u64 var1; u64 var2" synthetic_events
-+
-+# test field types
-+echo "myevent u32 var" > synthetic_events
-+echo "myevent u16 var" > synthetic_events
-+echo "myevent u8 var" > synthetic_events
-+echo "myevent s64 var" > synthetic_events
-+echo "myevent s32 var" > synthetic_events
-+echo "myevent s16 var" > synthetic_events
-+echo "myevent s8 var" > synthetic_events
-+
-+echo "myevent char var" > synthetic_events
-+echo "myevent int var" > synthetic_events
-+echo "myevent long var" > synthetic_events
-+echo "myevent pid_t var" > synthetic_events
-+
-+echo "myevent unsigned char var" > synthetic_events
-+echo "myevent unsigned int var" > synthetic_events
-+echo "myevent unsigned long var" > synthetic_events
-+grep "myevent[[:space:]]unsigned long var" synthetic_events
-+
-+# test string type
-+echo "myevent char var[10]" > synthetic_events
-+grep "myevent[[:space:]]char\[10\] var" synthetic_events
-+
-+do_reset
-+
-+exit 0
+diff --git a/net/core/skbuff.c b/net/core/skbuff.c
+index 9f80b947f53b..c19a118f9f82 100644
+--- a/net/core/skbuff.c
++++ b/net/core/skbuff.c
+@@ -1843,8 +1843,9 @@ int pskb_trim_rcsum_slow(struct sk_buff *skb, unsigned int len)
+ 	if (skb->ip_summed == CHECKSUM_COMPLETE) {
+ 		int delta = skb->len - len;
+ 
+-		skb->csum = csum_sub(skb->csum,
+-				     skb_checksum(skb, len, delta, 0));
++		skb->csum = csum_block_sub(skb->csum,
++					   skb_checksum(skb, len, delta, 0),
++					   len);
+ 	}
+ 	return __pskb_trim(skb, len);
+ }
 -- 
 2.17.1
 
