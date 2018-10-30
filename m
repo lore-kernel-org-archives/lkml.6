@@ -2,101 +2,118 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23AD2C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 12:45:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19346C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 12:46:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E98FC20827
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 12:45:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E98FC20827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id DD88920827
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 12:46:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD88920827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727650AbeJ3Viu (ORCPT
+        id S1727774AbeJ3VjT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 17:38:50 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:57072 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726761AbeJ3Viu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 17:38:50 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 0B938BB6E0F88;
-        Tue, 30 Oct 2018 20:45:30 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.408.0; Tue, 30 Oct 2018
- 20:45:26 +0800
-Message-ID: <5BD85266.6000301@huawei.com>
-Date:   Tue, 30 Oct 2018 20:45:26 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        Tue, 30 Oct 2018 17:39:19 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:41548 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726563AbeJ3VjS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 17:39:18 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9UCdTCf125022
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 08:46:00 -0400
+Received: from e15.ny.us.ibm.com (e15.ny.us.ibm.com [129.33.205.205])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nep2gvj0m-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 08:45:59 -0400
+Received: from localhost
+        by e15.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Tue, 30 Oct 2018 08:45:58 -0400
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e15.ny.us.ibm.com (146.89.104.202) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 30 Oct 2018 08:45:56 -0400
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9UCjtMN33357974
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 30 Oct 2018 12:45:55 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7346EB2066;
+        Tue, 30 Oct 2018 12:45:55 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 53233B205F;
+        Tue, 30 Oct 2018 12:45:55 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.194.11])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 30 Oct 2018 12:45:55 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 7005116C3120; Tue, 30 Oct 2018 05:45:55 -0700 (PDT)
+Date:   Tue, 30 Oct 2018 05:45:55 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com
+Subject: Re: [PATCH] doc: correct parameter in stallwarn
+Reply-To: paulmck@linux.ibm.com
+References: <20181030051559.256849-1-joel@joelfernandes.org>
 MIME-Version: 1.0
-To:     <herbert@gondor.apana.org.au>
-CC:     <linux-crypto@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: [Qestion]  Lots of memory leaks when mounting and unmounting nfs
- client to server continuously.
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181030051559.256849-1-joel@joelfernandes.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18103012-0068-0000-0000-00000355FFA5
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009953; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01110134; UDB=6.00575196; IPR=6.00890226;
+ MB=3.00023963; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-30 12:45:57
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18103012-0069-0000-0000-000046403770
+Message-Id: <20181030124555.GD4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-30_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=963 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810300111
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,   Herbert
+On Mon, Oct 29, 2018 at 10:15:59PM -0700, Joel Fernandes (Google) wrote:
+> The stallwarn document incorrectly mentions 'fps=' instead of 'fqs='.
+> Correct that.
+> 
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
-Recently,  I  hit  a memory leak issue when  mounting and unmounting nfs with  the way of  krb5.
-The issue happens to the linux-3.10-stable.
+Good catch, queued, thank you!
 
-I find that slab-1024 and slab-512 will take up most of the memory.  And it can not be freed.
-Meanwhile, it result in rpcsec_gss_krb5 can be unregistered as well.
+							Thanx, Paul
 
-nfs-sve1:/home # cat /proc/modules | grep krb5
-rpcsec_gss_krb5 31477 239730 - Live 0xffffffffa0334000
-auth_rpcgss 59314 3 rpcsec_gss_krb5,nfsd, Live 0xffffffffa0123000
-sunrpc 300546 25 rpcsec_gss_krb5,nfsd,auth_rpcgss,nfs_acl,lockd, Live 0xffffffffa013b000
-
-I open the slab-1024 trace by enabling /sys/kernel/slab/:t-0001024/trace and get the following
-
-[123420.989831] Call Trace:
-[123420.989834]  [<ffffffff81642d2a>] dump_stack+0x19/0x1b
-[123420.989837]  [<ffffffff8163f25e>] alloc_debug_processing+0xc5/0x118
-[123420.989839]  [<ffffffff8163fd4d>] __slab_alloc+0x400/0x48f
-[123420.989841]  [<ffffffff812b1795>] ? __crypto_alloc_tfm+0x45/0x170
-[123420.989845]  [<ffffffff812b2307>] ? setkey+0x57/0x110
-[123420.989847]  [<ffffffff8118b5fd>] ? kzfree+0x2d/0x30
-[123420.989850]  [<ffffffff811c6e88>] __kmalloc+0x1c8/0x230
-[123420.989852]  [<ffffffff812b1795>] __crypto_alloc_tfm+0x45/0x170
-[123420.989854]  [<ffffffff812b2e45>] crypto_spawn_tfm+0x45/0x80
-[123420.989857]  [<ffffffff811c6eb3>] ? __kmalloc+0x1f3/0x230
-[123420.989859]  [<ffffffff812c15c7>] crypto_cbc_init_tfm+0x27/0x40
-[123420.989864]  [<ffffffff812b1851>] __crypto_alloc_tfm+0x101/0x170
-[123420.989866]  [<ffffffff812b1ffc>] crypto_alloc_base+0x4c/0xb0
-[123420.989869]  [<ffffffffa033411b>] context_v2_alloc_cipher.isra.2+0x2b/0xc0 [rpcsec_gss_krb5]
-[123420.989871]  [<ffffffffa0334da8>] gss_import_sec_context_kerberos+0xbf8/0xf00 [rpcsec_gss_krb5]
-[123420.989875]  [<ffffffffa0126d5d>] gss_import_sec_context+0x7d/0xb0 [auth_rpcgss]
-[123420.989878]  [<ffffffffa012b35e>] gss_proxy_save_rsc+0x137/0x1b0 [auth_rpcgss]
-[123420.989884]  [<ffffffffa012b51e>] svcauth_gss_proxy_init+0x147/0x1e4 [auth_rpcgss]
-[123420.989886]  [<ffffffff810c2ad6>] ? dequeue_entity+0x106/0x520
-[123420.989890]  [<ffffffffa0128e2a>] svcauth_gss_accept+0x3da/0xb70 [auth_rpcgss]
-[123420.989892]  [<ffffffff810b6c25>] ? check_preempt_curr+0x85/0xa0
-[123420.989894]  [<ffffffff810b6c59>] ? ttwu_do_wakeup+0x19/0xd0
-[123420.989897]  [<ffffffff810b6ded>] ? ttwu_do_activate.constprop.86+0x5d/0x70
-[123420.989900]  [<ffffffff810b9422>] ? try_to_wake_up+0x162/0x330
-[123420.989908]  [<ffffffffa014f490>] svc_authenticate+0xc0/0xe0 [sunrpc]
-[123420.989914]  [<ffffffffa014c04a>] svc_process_common+0x21a/0x6f0 [sunrpc]
-[123420.989921]  [<ffffffffa014c623>] svc_process+0x103/0x170 [sunrpc]
-[123420.989928]  [<ffffffffa01baaaf>] nfsd+0xdf/0x150 [nfsd]
-[123420.989932]  [<ffffffffa01ba9d0>] ? nfsd_destroy+0x80/0x80 [nfsd]
-[123420.989934]  [<ffffffff810a648f>] kthread+0xcf/0xe0
-[123420.989936]  [<ffffffff810a63c0>] ? kthread_create_on_node+0x140/0x140
-[123420.989939]  [<ffffffff81653318>] ret_from_fork+0x58/0x90
-[123420.989943]  [<ffffffff810a63c0>] ? kthread_create_on_node+0x140/0x140
-
-I am unfamiliar with crypto.   I will be appreciated  if you could give me some suggestion.
-
-Thanks,
-zhong jiang
+> ---
+>  Documentation/RCU/stallwarn.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/RCU/stallwarn.txt b/Documentation/RCU/stallwarn.txt
+> index b01bcafc64aa..073dbc12d1ea 100644
+> --- a/Documentation/RCU/stallwarn.txt
+> +++ b/Documentation/RCU/stallwarn.txt
+> @@ -205,7 +205,7 @@ handlers are no longer able to execute on this CPU.  This can happen if
+>  the stalled CPU is spinning with interrupts are disabled, or, in -rt
+>  kernels, if a high-priority process is starving RCU's softirq handler.
+>  
+> -The "fps=" shows the number of force-quiescent-state idle/offline
+> +The "fqs=" shows the number of force-quiescent-state idle/offline
+>  detection passes that the grace-period kthread has made across this
+>  CPU since the last time that this CPU noted the beginning of a grace
+>  period.
+> -- 
+> 2.19.1.568.g152ad8e336-goog
+> 
 
