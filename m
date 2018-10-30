@@ -2,95 +2,100 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D8D3C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 07:06:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3137DC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 07:12:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5071D2075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 07:06:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gGVo453w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5071D2075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 1F1D72082B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 07:12:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F1D72082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727244AbeJ3P6S (ORCPT
+        id S1727065AbeJ3QE0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 11:58:18 -0400
-Received: from mail-it1-f193.google.com ([209.85.166.193]:52294 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726154AbeJ3P6R (ORCPT
+        Tue, 30 Oct 2018 12:04:26 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:29191 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726154AbeJ3QEZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 11:58:17 -0400
-Received: by mail-it1-f193.google.com with SMTP id r5-v6so10578426ith.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 00:06:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DI7Os5ztz1YkuX9GcHkyfoOe0ZK7Ez27MR+mHaIdmiA=;
-        b=gGVo453w0KKQL4OXpx6TFohPGyQblkcXQcCLkUNQlCHjT3yzciNz/54RNh8EpVp9rg
-         Y7neW3lRrWNu/qn8WZUAEjWzNdqY5gGkhgvZUtWrS4+dMSfkbr34oCM+dst1nClZYoo6
-         7DrtptuBMCsiaBniFb8sdJblnqpH1hCrTc4JYlWUpPFCGupeJoIEu/bJ/PPX0XvCxucT
-         y7FyqLmerN4ioAEXHZzec7hEgyJkKbiJksdIoJWOsUm3tRDSPYEWR82c1rHhFg+u0PSM
-         kIGd/akRywKFQiLcb4Ptj3ku/Ntkp3aoIrvOAYzxgsZn9obeKm/f3GkZPr/+zS/rqNOg
-         FIQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DI7Os5ztz1YkuX9GcHkyfoOe0ZK7Ez27MR+mHaIdmiA=;
-        b=UJoMkqh/+gaxM1Ot9QHW9BKSHoJgy90rz5jJIwumSe0wNLL6QokG+vbLYCM6NKZ45H
-         nnBSnhVv9wbACn6cqGUFHERs3lcPtvxWcI69rh6iWEWTu+ZlljHm8ikIr6tsBoS3U0PR
-         IRBOaT3N9hVi/x7DfiYe6I15ZJgIQsqERQ/OHVqZZR8hLumOwivwvU8Q2dlZ1wSa5dqa
-         LYI+LVD2IpXXAowfTtJIJ/biL6KMeJsRXaS/GhP+KMbo/v5v3Rib6wk1UfepbNuhsjNb
-         GdtRWX1zXiS3Noeyn+GbMonL/B0SbSN9lnuAzmVMZZV16XVSvc6RcApgZ4hstzVs/rHr
-         KHtg==
-X-Gm-Message-State: AGRZ1gKeL47XH5HpvD+f4zxB320L3Y0jCWmPjs9Do0J6XPx72IcEi4Ey
-        6gMyrOif6cpm2i6rVbpooJ+EKVLKAM8/IJ0y+0scV1692Ms4hw==
-X-Google-Smtp-Source: AJdET5efpzfZE/ulkWBtwXS6LOWJX0Q6mUhNNEDIqDFnup3zS8w6UOxAx7jmlrgQD2l+930f4AneS+SJi9oWPoI2mZw=
-X-Received: by 2002:a24:7406:: with SMTP id o6-v6mr291362itc.81.1540883161077;
- Tue, 30 Oct 2018 00:06:01 -0700 (PDT)
-MIME-Version: 1.0
-References: <1540881776.20660.9.camel@abdul.in.ibm.com>
-In-Reply-To: <1540881776.20660.9.camel@abdul.in.ibm.com>
-From:   Eric Dumazet <edumazet@google.com>
-Date:   Tue, 30 Oct 2018 00:05:49 -0700
-Message-ID: <CANn89iJGgCMYRp7h=h+g=o+P9VA+8U+NxFhXP70B_PSG_mp7OQ@mail.gmail.com>
-Subject: Re: [mainline][bisected 55469b][ppc] build error at drivers/net/ethernet/mellanox/mlx4/en_rx.c
-To:     abdhalee@linux.vnet.ibm.com
-Cc:     linuxppc-dev@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        sachinp@linux.vnet.ibm.com, manvanth@linux.vnet.ibm.com,
-        aneesh.kumar@linux.vnet.ibm.com, brking@linux.vnet.ibm.com,
-        netdev <netdev@vger.kernel.org>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        linux-rdma <linux-rdma@vger.kernel.org>
+        Tue, 30 Oct 2018 12:04:25 -0400
+X-UUID: 9c32585e50a5430fb9e55472fc83f575-20181030
+X-UUID: 9c32585e50a5430fb9e55472fc83f575-20181030
+Received: from mtkcas34.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
+        (envelope-from <biao.huang@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 825455708; Tue, 30 Oct 2018 15:11:55 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31DR.mediatek.inc
+ (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 30 Oct
+ 2018 15:11:53 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 30 Oct 2018 15:11:52 +0800
+Message-ID: <1540883512.26982.10.camel@mhfsdcap03>
+Subject: Re: [PATCH 1/2] net:stmmac: dwmac-mediatek: add support for mt2712
+From:   biao huang <biao.huang@mediatek.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+CC:     <davem@davemloft.net>, <robh+dt@kernel.org>,
+        <honghui.zhang@mediatek.com>, <yt.shen@mediatek.com>,
+        <liguo.zhang@mediatek.com>, <mark.rutland@arm.com>,
+        <sean.wang@mediatek.com>, <nelson.chang@mediatek.com>,
+        <matthias.bgg@gmail.com>, <netdev@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <joabreu@synopsys.com>
+Date:   Tue, 30 Oct 2018 15:11:52 +0800
+In-Reply-To: <20181029122731.GA9174@lunn.ch>
+References: <1540782294-27721-1-git-send-email-biao.huang@mediatek.com>
+         <1540782294-27721-2-git-send-email-biao.huang@mediatek.com>
+         <20181029122731.GA9174@lunn.ch>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 11:43 PM Abdul Haleem
-<abdhalee@linux.vnet.ibm.com> wrote:
->
-> Greeting's
->
-> mainline build fails on my powerpc with commit 55469b : drivers: net:
-> remove <net/busy_poll.h> inclusion when not needed
->
-> Machine type: PowerPC power 8 bare-metal
-> kernel : 4.19.0
-> gcc :  4.8.5
-> config attached
->
+Thanks for your kindly comments.
+On Mon, 2018-10-29 at 13:27 +0100, Andrew Lunn wrote:
+> > +static int mt2712_config_dt(struct mediatek_dwmac_plat_data *plat)
+> > +{
+> > +	u32 mac_timings[4];
+> > +
+> > +	plat->peri_regmap = syscon_regmap_lookup_by_compatible("mediatek,mt2712-pericfg");
+> > +	if (IS_ERR(plat->peri_regmap)) {
+> > +		dev_err(plat->dev, "Failed to get pericfg syscon\n");
+> > +		return PTR_ERR(plat->peri_regmap);
+> > +	}
+> > +
+> > +	if (!of_property_read_u32_array(plat->np, "mac-delay", mac_timings,
+> > +					ARRAY_SIZE(mac_timings))) {
+> > +		plat->mac_delay.tx_delay = mac_timings[0];
+> > +		plat->mac_delay.rx_delay = mac_timings[1];
+> > +		plat->mac_delay.tx_inv = mac_timings[2];
+> > +		plat->mac_delay.rx_inv = mac_timings[3];
+> > +	}
+> > +
+> > +	plat->fine_tune = of_property_read_bool(plat->np, "fine-tune");
+> > +
+> > +	plat->rmii_rxc = of_property_read_bool(plat->np, "rmii-rxc");
+> 
+> Please add document for these properties in the binding.
+ok, I forgot these properties.
+> 
+> Ideally, you should reuse the binding that some of the other stmmac
+> glue layer uses. e.g. there is already allwinner,tx-delay-ps,
+> allwinner,rx-delay-ps.
+take it, seems that tx-delay/rx-delay will be more readable than
+mac-delay in dts. will be changed in next patch.
+> 
+>        Thanks
+>               Andrew
 
-Thanks for the report, but this patch is not in 4.19 kernel ? It is
-scheduled for 4.20 only.
 
-Anyway, mlx4 needs to include  <net/ip.h> directly, instead of
-assuming it is indirectly included by another file.
