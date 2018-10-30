@@ -2,162 +2,191 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C61C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 20:58:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15E86C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:02:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 753BE2080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 20:58:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4A00204FD
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:02:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NNnWt3HJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 753BE2080A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="wtlh+YOU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4A00204FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727941AbeJaFx4 (ORCPT
+        id S1727862AbeJaF5V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 01:53:56 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:37244 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726116AbeJaFx4 (ORCPT
+        Wed, 31 Oct 2018 01:57:21 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:43075 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727765AbeJaF5V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 01:53:56 -0400
-Received: by mail-yb1-f194.google.com with SMTP id d18-v6so5676445yba.4
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 13:58:52 -0700 (PDT)
+        Wed, 31 Oct 2018 01:57:21 -0400
+Received: by mail-pf1-f195.google.com with SMTP id h4-v6so6461226pfi.10
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 14:02:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=LpIdpzRClILpUZup6nsIZl5u2kpkq/WM5ywfhwtfMF0=;
-        b=NNnWt3HJOE6+qFzr1PqH+tPM5N0sTEXau1wlpeO+28TJiwXJ+iDtri2fphbAdNYSio
-         t5jMRoYuskteAQHpEg0a2pBbeB9av40T7DzIfQpOPbXHpiLg+lxJdj+MYff9AV8M0vsF
-         USuV/blQIcq16ulzUgBAVwlE6bcGpWktZSfJU=
+        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=6dY837RQhEmGwvz9vbze/eT+gbXOrsHQHQPFduJSgN0=;
+        b=wtlh+YOUjRSN6oC/c4JvA5EAWBxuor+FSzHoEDhcIqcBqFVyoVBNtL6jyfHcDmlN0N
+         xnElEL66EgOYVxrXy+IG29L0tTU2VwFGVUJG7Yb/KDkILMNsiuU88Gub+Qqheage9e/4
+         YorOF4RLHUjJrtACPZnECW/R00mQdJtXfDiy7aB0CeTFFM291Jzt35ZSxXQxE5ISMT3K
+         k/bHOTCbY0oef4v7M/V9kB67GtKOoGBkPz5vxlDUbR6Imk3cv+ajBmbUbhhWleXLMnsV
+         rY6Z40NqZzfqC3OYK7TKbsK2jp8/xBOnJu+SRYeJKv/YggkM3ZW+cKmT/LY+LQgBB4zl
+         iHdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=LpIdpzRClILpUZup6nsIZl5u2kpkq/WM5ywfhwtfMF0=;
-        b=KhoDDW0b0djHxxau3Nxc3UuzYtpbdPUHiD1CuU2iZiTwIvMdCVqDa1TGHqoeRdEYIF
-         mgb97TgxrFq5/IoUZkEAbVR+6mNGcjZG0/Lv3F0IZzXefDUWAxPuwQVHJY2bGTJBRv2D
-         GUb9y5C1UbRkW472eP/MYBlbiY+Bm4LGfPFKP9xAtLSZne/0wNetatYRdlTMJCUpu4RQ
-         cvDYuxvfbZo1lizU7p23rPzT9WSkIhgRxReutLwz1jXBnhGJwOCLTqvTMT2eMzh3oOGA
-         r7In3bbDsr0pXSal86Yh59CY8Ldh7PwGQS/jzYPRGbFRfNV/ZnGseAIwCZwaNpB9hsl9
-         r4hw==
-X-Gm-Message-State: AGRZ1gLDh4+aNGvDF5Idzo/LrGLlY1FBfHfk3Vr4qaI0D8y355IIicPS
-        nHZSLt1PRA25PTKpG5FAgNwkaYG1j84=
-X-Google-Smtp-Source: AJdET5e4dx0BmlxMIJ1hD0h9TN2s+dn8QaBTh/SDUZuD7B6OoJW0of61xeMZU0Q6KOztVDZWsyGZWQ==
-X-Received: by 2002:a25:b98b:: with SMTP id r11-v6mr356507ybg.498.1540933131203;
-        Tue, 30 Oct 2018 13:58:51 -0700 (PDT)
-Received: from mail-yw1-f48.google.com (mail-yw1-f48.google.com. [209.85.161.48])
-        by smtp.gmail.com with ESMTPSA id k85-v6sm6220566ywa.76.2018.10.30.13.58.49
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=6dY837RQhEmGwvz9vbze/eT+gbXOrsHQHQPFduJSgN0=;
+        b=MlC3v9lKdzdRtWlVS6iWV6QkIxjgfbM6nWbT7A/eC+xZe5fyfDufqMIqCHr1m11Cr1
+         A7ZVvE8OkjPutN+zQl+1aHX37DosVLJrYFB5o8FDOEdrDz1nwRLwXftvjljCEkdhDGJl
+         WirCW6nf3BRg5pHJQZAkC0mkCa6+21BMbUGCS6mTji7CVG71M8Cyvx90t5lWiPsBkxrd
+         XE4em0UatGwt4vvH5KlY3mOXBQiV+2F7NEmZVCgzb2Vxopn9xS8RUW+RryVnw4wkYqWR
+         UYAtXId+pvrijNoODDsLcpbZGzmCHUvBZ488ooSYE/jtZJohxOPQoDk1m0LxUMFzTEBN
+         eeVA==
+X-Gm-Message-State: AGRZ1gIkvbRppfjNHczlvEXRLTf3qNWn4jHkxfC8bXDBXznEg9LVQHPq
+        jGEl6kZQl/j8m45w8NoRC00DHA==
+X-Google-Smtp-Source: AJdET5fS1xJL+nycTTrL8Be3Jq5vtgnwxCO6ZpbPxMxvSIQcdV7HAeGx78CJqVAXtaq0VqB5KAKUNw==
+X-Received: by 2002:a62:a50d:: with SMTP id v13-v6mr333447pfm.18.1540933335870;
+        Tue, 30 Oct 2018 14:02:15 -0700 (PDT)
+Received: from ?IPv6:2600:1010:b021:f9e6:a9a5:9545:35ee:19c8? ([2600:1010:b021:f9e6:a9a5:9545:35ee:19c8])
+        by smtp.gmail.com with ESMTPSA id m12-v6sm24976627pgd.81.2018.10.30.14.02.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 13:58:49 -0700 (PDT)
-Received: by mail-yw1-f48.google.com with SMTP id f192-v6so3930914ywh.7
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 13:58:49 -0700 (PDT)
-X-Received: by 2002:a0d:fec6:: with SMTP id o189-v6mr341870ywf.237.1540933128893;
- Tue, 30 Oct 2018 13:58:48 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Tue, 30 Oct 2018 13:58:48
- -0700 (PDT)
-In-Reply-To: <20181026232409.16100-1-linux@rasmusvillemoes.dk>
-References: <20171108223020.24487-1-linux@rasmusvillemoes.dk> <20181026232409.16100-1-linux@rasmusvillemoes.dk>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 30 Oct 2018 13:58:48 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+eGQ3oo_1qSwW-BEVSK=vcLmNLWH8E7fPiawobo=_fbQ@mail.gmail.com>
-Message-ID: <CAGXu5j+eGQ3oo_1qSwW-BEVSK=vcLmNLWH8E7fPiawobo=_fbQ@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/7] runtime format string checking
-To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Tue, 30 Oct 2018 14:02:14 -0700 (PDT)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH 10/17] prmem: documentation
+From:   Andy Lutomirski <luto@amacapital.net>
+X-Mailer: iPhone Mail (16A404)
+In-Reply-To: <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com>
+Date:   Tue, 30 Oct 2018 14:02:12 -0700
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        "open list:NFS, SUNRPC, AND..." <linux-nfs@vger.kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        linux-hwmon@vger.kernel.org,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
+        Thomas Gleixner <tglx@linutronix.de>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <BAA65A07-F3AF-4209-9D18-7075CEF11EE8@amacapital.net>
+References: <20181023213504.28905-11-igor.stoppa@huawei.com> <20181026092609.GB3159@worktop.c.hoisthospitality.com> <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com> <20181028183126.GB744@hirez.programming.kicks-ass.net> <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com> <20181030152641.GE8177@hirez.programming.kicks-ass.net> <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com> <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net> <20181030175814.GB10491@bombadil.infradead.org> <20181030182841.GE7343@cisco> <20181030192021.GC10491@bombadil.infradead.org> <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com>
+To:     Igor Stoppa <igor.stoppa@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Oct 27, 2018 at 12:24 AM, Rasmus Villemoes
-<linux@rasmusvillemoes.dk> wrote:
-> This is a resurrection of something I sent out about a year ago. In
-> the relatively few places where we use a non-literal as format string,
-> we can annotate the source with a fmtcheck() call that will (a) at
-> build time, allow the compiler to check the variadic arguments against
-> the template, and (b) at runtime, check that the format specifiers
-> present in the actual format string match those in the template (and
-> if not, WARN and use the template to ensure runtime type safety).
->
-> Finding places to annotate is just
->
->   make -j8 KCFLAGS='-Wformat-nonliteral'
->
-> So far, in about half the places I looked, one might as well get
-> completely rid of the non-literal format string.
-
-Agreed. When I was still updating format string sites regularly, I had
-a couple "just make the build quiet" patches to do this:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=kspp/format-security&id=ce9b938574042d09920650cb3c63ec29658edc87
-The above seemed to "noisy" to send, but perhaps we should just land
-it anyway. They really _should_ be const.
-
-https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=kspp/format-security&id=b7dcfc8f48caaafcc423e5793f7ef61b9bb5c458
-This one covers cases where the pointer is pointing to a const string,
-so really there's no sense in injecting the "%s", but I was collecting
-them to make real ones stand out.
-
-> Patches 5,6,7 are
-> some examples of where one might add fmtcheck() calls. I don't think
-> we can get to a state where we can unconditionally add
-> -Wformat-nonliteral to the build, but I think there's a lot of
-> low-hanging fruit.
-
-How much work do you think it'd take to get to a
-format-nonliteral-clean build? I think it's worth doing the work if
-it's not totally intractable.
-
--Kees
-
->
-> This is on top of Miguel's compiler attributes series [1], which I
-> hope will land in mainline soon.
->
-> [1] https://github.com/ojeda/linux.git tags/compiler-attributes-for-linus-4.20-rc1
->
-> Rasmus Villemoes (7):
->   compiler_attributes.h: add __attribute__((format_arg)) shorthand
->   lib/vsprintf.c: add fmtcheck utility
->   kernel.h: implement fmtmatch() wrapper around fmtcheck()
->   lib/test_printf.c: add a few fmtcheck() test cases
->   kernel/kthread.c: do runtime check of format string in
->     kthread_create_on_cpu()
->   nfs: use fmtcheck() in root_nfs_data
->   drivers: hwmon: add runtime format string checking
->
->  drivers/hwmon/hwmon.c               |  3 +-
->  fs/nfs/nfsroot.c                    |  2 +-
->  include/linux/compiler_attributes.h | 13 ++++++
->  include/linux/kernel.h              | 25 +++++++++++
->  kernel/kthread.c                    |  4 +-
->  lib/Kconfig.debug                   |  9 ++++
->  lib/test_printf.c                   | 43 +++++++++++++++++++
->  lib/vsprintf.c                      | 65 +++++++++++++++++++++++++++++
->  8 files changed, 160 insertions(+), 4 deletions(-)
->
-> --
-> 2.19.1.6.gbde171bbf5
->
 
 
+> On Oct 30, 2018, at 1:43 PM, Igor Stoppa <igor.stoppa@gmail.com> wrote:
+>=20
+>> On 30/10/2018 21:20, Matthew Wilcox wrote:
+>>> On Tue, Oct 30, 2018 at 12:28:41PM -0600, Tycho Andersen wrote:
+>>>> On Tue, Oct 30, 2018 at 10:58:14AM -0700, Matthew Wilcox wrote:
+>>>> On Tue, Oct 30, 2018 at 10:06:51AM -0700, Andy Lutomirski wrote:
+>>>>>> On Oct 30, 2018, at 9:37 AM, Kees Cook <keescook@chromium.org> wrote:=
 
--- 
-Kees Cook
+>>>>> I support the addition of a rare-write mechanism to the upstream kerne=
+l.
+>>>>> And I think that there is only one sane way to implement it: using an
+>>>>> mm_struct. That mm_struct, just like any sane mm_struct, should only
+>>>>> differ from init_mm in that it has extra mappings in the *user* region=
+.
+>>>>=20
+>>>> I'd like to understand this approach a little better.  In a syscall pat=
+h,
+>>>> we run with the user task's mm.  What you're proposing is that when we
+>>>> want to modify rare data, we switch to rare_mm which contains a
+>>>> writable mapping to all the kernel data which is rare-write.
+>>>>=20
+>>>> So the API might look something like this:
+>>>>=20
+>>>>    void *p =3D rare_alloc(...);    /* writable pointer */
+>>>>    p->a =3D x;
+>>>>    q =3D rare_protect(p);        /* read-only pointer */
+>=20
+> With pools and memory allocated from vmap_areas, I was able to say
+>=20
+> protect(pool)
+>=20
+> and that would do a swipe on all the pages currently in use.
+> In the SELinux policyDB, for example, one doesn't really want to individua=
+lly protect each allocation.
+>=20
+> The loading phase happens usually at boot, when the system can be assumed t=
+o be sane (one might even preload a bare-bone set of rules from initramfs an=
+d then replace it later on, with the full blown set).
+>=20
+> There is no need to process each of these tens of thousands allocations an=
+d initialization as write-rare.
+>=20
+> Would it be possible to do the same here?
+
+I don=E2=80=99t see why not, although getting the API right will be a tad co=
+mplicated.
+
+>=20
+>>>>=20
+>>>> To subsequently modify q,
+>>>>=20
+>>>>    p =3D rare_modify(q);
+>>>>    q->a =3D y;
+>>>=20
+>>> Do you mean
+>>>=20
+>>>     p->a =3D y;
+>>>=20
+>>> here? I assume the intent is that q isn't writable ever, but that's
+>>> the one we have in the structure at rest.
+>> Yes, that was my intent, thanks.
+>> To handle the list case that Igor has pointed out, you might want to
+>> do something like this:
+>>    list_for_each_entry(x, &xs, entry) {
+>>        struct foo *writable =3D rare_modify(entry);
+>=20
+> Would this mapping be impossible to spoof by other cores?
+>=20
+
+Indeed. Only the core with the special mm loaded could see it.
+
+But I dislike allowing regular writes in the protected region. We really onl=
+y need four write primitives:
+
+1. Just write one value.  Call at any time (except NMI).
+
+2. Just copy some bytes. Same as (1) but any number of bytes.
+
+3,4: Same as 1 and 2 but must be called inside a special rare write region. T=
+his is purely an optimization.
+
+Actually getting a modifiable pointer should be disallowed for two reasons:
+
+1. Some architectures may want to use a special write-different-address-spac=
+e operation. Heck, x86 could, too: make the actual offset be a secret and sh=
+ove the offset into FSBASE or similar. Then %fs-prefixed writes would do the=
+ rare writes.
+
+2. Alternatively, x86 could set the U bit. Then the actual writes would use t=
+he uaccess helpers, giving extra protection via SMAP.
+
+We don=E2=80=99t really want a situation where an unchecked pointer in the r=
+are write region completely defeats the mechanism.=
