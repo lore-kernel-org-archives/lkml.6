@@ -2,106 +2,85 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A679C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 12:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43AE3C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 12:01:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4D2E20827
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 12:01:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BD8520827
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 12:01:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iLKxfAbb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4D2E20827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yp4dzD3c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BD8520827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727840AbeJ3UyT (ORCPT
+        id S1727862AbeJ3Uyy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 16:54:19 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37975 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727669AbeJ3UyS (ORCPT
+        Tue, 30 Oct 2018 16:54:54 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:35486 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727763AbeJ3Uyy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 16:54:18 -0400
-Received: by mail-wr1-f67.google.com with SMTP id d10-v6so12275842wrs.5
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 05:01:06 -0700 (PDT)
+        Tue, 30 Oct 2018 16:54:54 -0400
+Received: by mail-pf1-f196.google.com with SMTP id z2-v6so3136610pfe.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 05:01:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=+GL2sUHHEGgreMiH4z8weRH4cbA778bev1J+TebjaPY=;
-        b=iLKxfAbbDnyhGJGL/DQ7A1hRHDM2DW+894sVA0w+HdyEfcmiGXB09aDqgykn/qfuai
-         P8XIeH7QyPjP93VFsSoXycX/Yk21gEV9ljTvWyNG4AWNCbUE+LvHAqJHefdslq3M06wH
-         jIufnnCfuQwx3Man40FOYLdDd5MyMecUFFgtw=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=OuYIINrjySJD1JGbLstZALDDWLoQ3+u/7/4Fp4ClFOU=;
+        b=Yp4dzD3cFy+QT7PJpBsyhK3FDXhb7FYAnuHKfF+s2mlTJ2bza3s6BMpnUN4e5amGE0
+         AdmdlSmh5RfxEyRqM5yOufvAtrsItzX4tiENgHigq6uXjQYQqBuUocoqBAHoM8VCNMvB
+         B/T5jRCXcrUH+hs3t14hYKKczI/R6INqg6DXFbWfl18vmB4X+se+NRja3uwLqn2DGq7R
+         51Bbqz3kHtULGbZUQyjMuJQOsGnWM134ngoobimqp4gAn7vjAYQzjb3Wt0SDGpCu+SPW
+         3SWfTHHq8bfQDS6+Bk/VBbASxXLQgO+p6PA2NYk8av5vi5kw7sJV+pDU4Yumpm9Mlv6n
+         UXLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=+GL2sUHHEGgreMiH4z8weRH4cbA778bev1J+TebjaPY=;
-        b=Pr3g4gx0wgsZkbE3PrghU1kwbj5n6W+/KSjlTnQu4OHhyDvDtV4gHGg1DSLtAP8SXa
-         g5850Dws8MO3MwjR2ewCTx5yrxiP+G+NjmDGjgPZx8vwpUS1MQIshyleuxt9bls+F+l1
-         sZMD0ruCn+ml96IZkUU8TSM4jfpkWIjA7jCrRTLOm9SU6TQ6lHO94GAQIsvqQyR/142z
-         S+KMDMMVA1vUoUjPS3/SykowGe2OCiMo3ypPLVNDTag2MIMhMyxOA4YXNpEnNydSVe2l
-         2gGVkYqArYHtflu69a08eDygMdniRSozFjZbtqJVlq8pK342xTIjRJQTHViANbQKYQAw
-         sE5Q==
-X-Gm-Message-State: AGRZ1gL6INyXJQ1AtDI3z1Ut9ekmat1nKA1+Lbd5U2tcOmFgNmQ5teJx
-        uUwtyp4i+pla3c4BJy51LcZML6/F62DXuzPFmmdohw==
-X-Google-Smtp-Source: AJdET5dDRf8VzRgVXSU6235m2mGmTh3L5Rp5n6kTpi4GIe5vmyEARXtUD/NxBoZ/DLgDm+MyzOI6cNKOEM3FRoalWGg=
-X-Received: by 2002:adf:e2c1:: with SMTP id d1-v6mr18378198wrj.26.1540900865341;
- Tue, 30 Oct 2018 05:01:05 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:adf:9f03:0:0:0:0:0 with HTTP; Tue, 30 Oct 2018 05:01:04
- -0700 (PDT)
-In-Reply-To: <20181030063408.GA26627@kroah.com>
-References: <20181029200311.16947-1-semen.protsenko@linaro.org>
- <CAKaJLVvpNZW2a+3xc7PE0+iU1nm39A7PEjCu8F9ijrT+wEXOag@mail.gmail.com> <20181030063408.GA26627@kroah.com>
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-Date:   Tue, 30 Oct 2018 14:01:04 +0200
-Message-ID: <CAKaJLVtT+pFzOBjybAXmOC0mJyN=BHavsfAYEzgSWn-i7UYEjA@mail.gmail.com>
-Subject: Re: [PATCH v2] codafs: Fix build using bare-metal toolchain
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
-        codalist@coda.cs.cmu.edu, coda@cs.cmu.edu,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Praneeth Bajjuri <praneeth@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=OuYIINrjySJD1JGbLstZALDDWLoQ3+u/7/4Fp4ClFOU=;
+        b=P8zGP2ssF4vS1yAUbtqNfmPsPTvykvYVV5sg/kmex7OqasKOCb2GQ1Ku1WtJUia3GH
+         oEsEiQ4nT+3Pbe2Um9eegjG1hA4i9OrI7H5yZnmBjTVSfR07BkEu+t/FdMIQfGEhFkQG
+         ejQFfIyZJXuB/IeD+oSzygUg6cJ22nSyVA9Jd6AYeLykNHQ13VNHGL3+Oqzkbq/EPGw/
+         XFzIx1jaj93mwwoPgDHP4FUU6ovH3F1BwfIH7BxX5+R8cndugmUIAuBs2vPDx/f7PIpZ
+         qFYzMRvDMYAh8D8VSBZWEf5EUKAFaGoOuGobx8kIXq9eLQ9KqelLTOtlaN3EeqHNGiHR
+         CeXQ==
+X-Gm-Message-State: AGRZ1gIXek38lBkYDLh2CAKH9OOrbZKI5a//H2mjNQjixnDCJAqzsQki
+        Z9EL+lKB755vZA4f/I3R6xs=
+X-Google-Smtp-Source: AJdET5ctar8n2pTBY/biaEzXHF02X+WpnTisyAZzPc/aKzH236YnIaNJIlz4uPgHn2vjQ0UorztTHw==
+X-Received: by 2002:a63:db04:: with SMTP id e4-v6mr17803294pgg.280.1540900902199;
+        Tue, 30 Oct 2018 05:01:42 -0700 (PDT)
+Received: from localhost.localdomain ([191.101.9.198])
+        by smtp.gmail.com with ESMTPSA id s80-v6sm27378369pfa.114.2018.10.30.05.01.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 30 Oct 2018 05:01:41 -0700 (PDT)
+From:   Bo YU <tsu.yubo@gmail.com>
+To:     gregkh@linuxfoundation.org, rafael@kernel.org
+Cc:     linux-kernel@vger.kernel.org, Bo YU <tsu.yubo@gmail.com>
+Subject: [PATCH 0/3] kobject: fix warnings from ehcekpatch.pl
+Date:   Tue, 30 Oct 2018 08:01:13 -0400
+Message-Id: <cover.1540886346.git.tsu.yubo@gmail.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 8:34 AM, Greg KH <gregkh@linuxfoundation.org> wrote:
-> On Mon, Oct 29, 2018 at 10:05:49PM +0200, Sam Protsenko wrote:
->> Hi Greg,
->>
->> On Mon, Oct 29, 2018 at 10:03 PM, Sam Protsenko
->> <semen.protsenko@linaro.org> wrote:
->> > The kernel is self-contained project and can be built with bare-metal
->> > toolchain. But bare-metal toolchain doesn't define __linux__. Because of
->> > this u_quad_t type is not defined when using bare-metal toolchain and
->> > codafs build fails. This patch fixes it by defining u_quad_t type
->> > unconditionally.
->> >
->> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
->> > ---
->>
->> Can you please pull this one, if this applicable? I sent it a while
->> ago, but I guess it got lost in mailing list. It might be also
->> applicable to stable branch (as it fixes allmodconfig build for ARM
->> with bare-metal toolchain).
->
-> Why are you asking me?  I'm not the maintainer of this file :(
->
-> confused,
->
+Hi,this is a series of patches which fix warning from checkpatch.pl.
+I do not know which tree should apply these patches,so i git format-patch
+from linus' s kernel tree.
 
-Sorry to bother you. I just thought you might be interested in this
-one, as it fixes build for "allmodconfig" configuration, hence it can
-be related to stable branch. Also, maintainers didn't respond to that
-patch, so I'm kinda dead in the water.
+Bo YU (3):
+  kobject: drop unnecessary cast "%llu" for u64
+  kobject: Fix warnings in lib/kobject_uevent.c
+  kobject: fix warnings use pr_* to replace  printk
 
-Anyway, will try to ping maintainers one more time.
+ lib/kobject_uevent.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
 
-> greg k-h
+--
+2.11.0
+
