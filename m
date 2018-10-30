@@ -2,176 +2,89 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 449E9C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:35:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12835C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:40:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DABF720827
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:35:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="S0uJoWV5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DABF720827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id B91B620838
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:40:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B91B620838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengaru.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728572AbeJaHaT (ORCPT
+        id S1728434AbeJaHfe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 03:30:19 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:34585 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726021AbeJaHaT (ORCPT
+        Wed, 31 Oct 2018 03:35:34 -0400
+Received: from shells.gnugeneration.com ([66.240.222.126]:38592 "EHLO
+        shells.gnugeneration.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727715AbeJaHfe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 03:30:19 -0400
-Received: by mail-yb1-f195.google.com with SMTP id n140-v6so5788891yba.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 15:34:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=P+CpiIaAa20vdoTi62NN2BO1YHwx0s+ZBngzRfEg6sk=;
-        b=S0uJoWV5ZxMe1+/A2KKVl4JK3QkaEPb8gRCCecxjaFmPosIqzbbHMWUH7suZRyjj8K
-         H2PwoBHoHNPSstl4bgPlyB9B6T+Okd5s8xGPZn6UW3xkEMOx0y/BpilYAxu5TlkCLUWc
-         mHMzl6WU7Yij8lCrtWlsUXyw5sN5rB9wlibFo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=P+CpiIaAa20vdoTi62NN2BO1YHwx0s+ZBngzRfEg6sk=;
-        b=cHM8EkLuAol0Bhw9O/rkRGFEMdz4VQjn+OWptjTg4lyF5Yo5ke53oY86Nk6VAdv2ux
-         kSFFw5P0JnYuF5IELaQWjSkdVI8glR6FDfmuJVPg0qwoGKKERGswCnAtqc1WwE16OPoa
-         TXGP06xTraOlMR4umgS2o7PDLNEFkvH9+GH0xAVgZgJTXubmN30LiW4QaW824M2XTHhP
-         Jo/UaVdRmYDJ091GlWPZvoJOBN6CTqp4GtgY4O5oyvw64GaFLheRbklyHpEqP7A8c0gr
-         HPRltE5oroPM+4LfgIVDGRmtjA8VZoHgAtgFdMIbczeVsfq+bgcc6HFKMqaIOWH8j36U
-         StIg==
-X-Gm-Message-State: AGRZ1gKjMtnjZlLZlVvxrXZ4/96qwdLvA3hQSztHikHiwBHJT8GjSng8
-        7LDfEMrp5hPxfBBhiI4il51i4NMksBw=
-X-Google-Smtp-Source: AJdET5dbYjHOnbHrFL2DuV963HNyGauIGOZXOZa21KfpQfUrkRMkJdaJhmgw5xIIwAD9dIDkLiSmYQ==
-X-Received: by 2002:a25:570b:: with SMTP id l11-v6mr647829ybb.435.1540938897244;
-        Tue, 30 Oct 2018 15:34:57 -0700 (PDT)
-Received: from mail-yw1-f46.google.com (mail-yw1-f46.google.com. [209.85.161.46])
-        by smtp.gmail.com with ESMTPSA id u67-v6sm5521253ywd.14.2018.10.30.15.34.55
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 15:34:56 -0700 (PDT)
-Received: by mail-yw1-f46.google.com with SMTP id c126-v6so5636020ywd.8
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 15:34:55 -0700 (PDT)
-X-Received: by 2002:a0d:cd84:: with SMTP id p126-v6mr688728ywd.288.1540938895234;
- Tue, 30 Oct 2018 15:34:55 -0700 (PDT)
+        Wed, 31 Oct 2018 03:35:34 -0400
+Received: by shells.gnugeneration.com (Postfix, from userid 1000)
+        id 7DABE1A402D8; Tue, 30 Oct 2018 15:40:12 -0700 (PDT)
+Date:   Tue, 30 Oct 2018 15:40:12 -0700
+From:   Vito Caputo <vcaputo@pengaru.com>
+To:     Davidlohr Bueso <dave@stgolabs.net>
+Cc:     Waiman Long <longman@redhat.com>, akpm@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH] fs/proc: introduce /proc/stat2 file
+Message-ID: <20181030224012.mgatj7ddhj3sefkv@shells.gnugeneration.com>
+References: <20181029192521.23059-1-dave@stgolabs.net>
+ <0afed890-7c5a-93ee-cdb9-e30775bd9cf1@redhat.com>
+ <20181029200050.iejuxckzbm742dmw@linux-r8p5>
+ <3c5ba85b-5114-c751-0114-ac2cb64c02ea@redhat.com>
+ <20181029203818.pot26ewxbncfrnua@linux-r8p5>
+ <b40690db-273f-ff67-01bf-de0111deb499@redhat.com>
+ <20181029212314.nwruqg6au23ebqlu@shells.gnugeneration.com>
+ <20181030185756.w3f2trelb7nikgmk@linux-r8p5>
 MIME-Version: 1.0
-Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Tue, 30 Oct 2018 15:34:54
- -0700 (PDT)
-In-Reply-To: <20181030223228.GG7343@cisco>
-References: <20181029224031.29809-1-tycho@tycho.ws> <20181029224031.29809-2-tycho@tycho.ws>
- <CAGXu5jLjum=TDab67L5XdWKEmzU_5rYeLfGXB1vb2BmfZdPuHQ@mail.gmail.com>
- <20181030215404.GF7343@cisco> <CAGXu5j+ZPxu6egE1fEr+N9+zLx3N+SJ_vbS_zzj9_hrdWrrrWQ@mail.gmail.com>
- <20181030223228.GG7343@cisco>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 30 Oct 2018 15:34:54 -0700
-X-Gmail-Original-Message-ID: <CAGXu5j+XEYqVye7yZaYF1_-xpCQt7pA=YgsTpQJnYupE5MSa4Q@mail.gmail.com>
-Message-ID: <CAGXu5j+XEYqVye7yZaYF1_-xpCQt7pA=YgsTpQJnYupE5MSa4Q@mail.gmail.com>
-Subject: Re: [PATCH v8 1/2] seccomp: add a return code to trap to userspace
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian@brauner.io>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Aleksa Sarai <asarai@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181030185756.w3f2trelb7nikgmk@linux-r8p5>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 3:32 PM, Tycho Andersen <tycho@tycho.ws> wrote:
-> On Tue, Oct 30, 2018 at 03:00:17PM -0700, Kees Cook wrote:
->> On Tue, Oct 30, 2018 at 2:54 PM, Tycho Andersen <tycho@tycho.ws> wrote:
->> > On Tue, Oct 30, 2018 at 02:49:21PM -0700, Kees Cook wrote:
->> >> On Mon, Oct 29, 2018 at 3:40 PM, Tycho Andersen <tycho@tycho.ws> wrote:
->> >> >     * switch to a flags based future-proofing mechanism for struct
->> >> >       seccomp_notif and seccomp_notif_resp, thus avoiding version issues
->> >> >       with structure length (Kees)
->> >> [...]
->> >> >
->> >> > +struct seccomp_notif {
->> >> > +       __u64 id;
->> >> > +       __u32 pid;
->> >> > +       __u32 flags;
->> >> > +       struct seccomp_data data;
->> >> > +};
->> >> > +
->> >> > +struct seccomp_notif_resp {
->> >> > +       __u64 id;
->> >> > +       __s64 val;
->> >> > +       __s32 error;
->> >> > +       __u32 flags;
->> >> > +};
->> >>
->> >> Hrm, so, what's the plan for when struct seccomp_data changes size?
->> >
->> > I guess my plan was don't ever change the size again, just use flags
->> > and have extra state available via ioctl().
->> >
->> >> I'm realizing that it might be "too late" for userspace to discover
->> >> it's running on a newer kernel. i.e. it gets a user notification, and
->> >> discovers flags it doesn't know how to handle. Do we actually need
->> >> both flags AND a length? Designing UAPI is frustrating! :)
->> >
->> > :). I don't see this as such a big problem -- in fact it's better than
->> > the length mode, where you don't know what you don't know, because it
->> > only copied as much info as you could handle. Older userspace would
->> > simply not use information it didn't know how to use.
->> >
->> >> Do we need another ioctl to discover the seccomp_data size maybe?
->> >
->> > That could be an option as well, assuming we agree that size would
->> > work, which I thought we didn't?
->>
->> Size alone wasn't able to determine the layout of the seccomp_notif
->> structure since it had holes (in the prior version). seccomp_data
->> doesn't have holes and is likely to change in size (see the recent
->> thread on adding the MPK register to it...)
->
-> Oh, sorry, I misread this as seccomp_notif, not seccomp_data.
->
->> I'm trying to imagine the right API for this. A portable user of
->> seccomp_notif expects the id/pid/flags/data to always be in the same
->> place, but it's the size of seccomp_data that may change. So it wants
->> to allocate space for seccomp_notif header and "everything else", of
->> which is may only understand the start of seccomp_data (and ignore any
->> new trailing fields).
->>
->> So... perhaps the "how big are things?" ioctl would report the header
->> size and the seccomp_data size. Then both are flexible. And flags
->> would be left as a way to "version" the header?
->>
->> Any Linux API list members want to chime in here?
->
-> So:
->
-> struct seccomp_notify_sizes {
->     u16 seccomp_notify;
->     u16 seccomp_data;
-> };
->
-> ioctl(fd, SECCOMP_IOCTL_GET_SIZE, &sizes);
->
-> This would be only one extra syscall over the lifetime of the listener
-> process, which doesn't seem too bad. One thing that's slightly
-> annoying is that you can't do it until you actually get an event, so
-> maybe it could be a command on the seccomp syscall instead:
->
-> seccomp(SECCOMP_GET_NOTIF_SIZES, 0, &sizes);
+On Tue, Oct 30, 2018 at 11:57:56AM -0700, Davidlohr Bueso wrote:
+> On Mon, 29 Oct 2018, Vito Caputo wrote:
+> 
+> > I'm definitely not in favor of just adding another stat file that is the
+> > same format as the existing one with the intrs zeroed out.  It's a dirty
+> > hack; fine for your local needs but too gross for upstream IMHO.
+> 
+> I suspect very few users of /proc/stat actually use the irq fields in the
+> first place. So the common case ends up doing unnecessary operations. The
+> stat2 approach is not perfect, but I think it's the best approach so far.
+> This sort of renaming is not uncommon when we cannot break userspace, and
+> its not like procfs is not already far contaminated already.
+> 
+> There are not enough users that care about this stuff, afaik. What you
+> suggest sounds like a lot of over-engineering.
+> 
 
-Yeah, top-level makes more sense. u16 seems fine too.
+What you suggest sounds like a kludge with zero engineering at all.
 
--- 
-Kees Cook
+My suggestion might be stupid, insofar as the same thing can be achieved
+using ioctls without assigning surprising semantics to an existing vfs
+api.  But I think the spirit of the suggestion is a reasonable
+compromise, if /proc/stat is not a deprecated interface and it's
+too difficult to make everything it collects sufficiently efficient on
+any size machine.
+
+If you create /proc/stat2 to omit interrupts, do we then create
+/proc/stat3 to omit CPUs when just interrupts are of interest to the
+application running on a 256-cpu machine?
+
+Furthermore, your rationale of procfs already being contaminated is an
+active embrace of the broken windows effect.  If you recognize something
+is flawed, it's cause to work harder to improve the situation when
+working in the flawed area, not worsen it.
+
+Regards,
+Vito Caputo
