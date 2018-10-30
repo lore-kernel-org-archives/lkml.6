@@ -2,118 +2,248 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3DBBC6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:59:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A2CBC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:01:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 727242080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:59:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 727242080A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0F5002080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:01:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F5002080A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727216AbeJ3RwB (ORCPT
+        id S1726852AbeJ3Ry2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 13:52:01 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:6151 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726858AbeJ3RwA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 13:52:00 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 0A679A6E13;
-        Tue, 30 Oct 2018 08:59:22 +0000 (UTC)
-Received: from localhost (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 20410608EF;
-        Tue, 30 Oct 2018 08:59:20 +0000 (UTC)
-Date:   Tue, 30 Oct 2018 16:59:17 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Bhupesh Sharma <bhsharma@redhat.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bhupesh SHARMA <bhupesh.linux@gmail.com>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kazuhito Hagio <k-hagio@ab.jp.nec.com>,
-        Dave Anderson <anderson@redhat.com>,
-        James Morse <james.morse@arm.com>,
-        Omar Sandoval <osandov@fb.com>, x86@kernel.org,
-        kexec mailing list <kexec@lists.infradead.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] x86_64, vmcoreinfo: Append 'page_offset_base' to
- vmcoreinfo
-Message-ID: <20181030085917.GC11408@MiWiFi-R3L-srv>
-References: <1540593788-28181-1-git-send-email-bhsharma@redhat.com>
- <20181027100241.GB1884@MiWiFi-R3L-srv>
- <CACi5LpPf9Zr1beowRNGmLZY7DtS3JDt8D=FONjqas9yo7TyCjg@mail.gmail.com>
- <20181030020752.GB11408@MiWiFi-R3L-srv>
- <CACi5LpP0_s9zAF+QfKpU+kG6BKqqkiwQhcW-WFZ0=SnBeX7ZXA@mail.gmail.com>
+        Tue, 30 Oct 2018 13:54:28 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:45333 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726225AbeJ3Ry1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 13:54:27 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w9U91TYk1906836
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 30 Oct 2018 02:01:29 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w9U91SsH1906833;
+        Tue, 30 Oct 2018 02:01:28 -0700
+Date:   Tue, 30 Oct 2018 02:01:28 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Juergen Gross <tipbot@zytor.com>
+Message-ID: <tip-7847c7be0481558f17e3ef3b03f573677fd30d29@git.kernel.org>
+Cc:     hpa@zytor.com, jgross@suse.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        tglx@linutronix.de, peterz@infradead.org
+Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org,
+          tglx@linutronix.de, torvalds@linux-foundation.org,
+          peterz@infradead.org, hpa@zytor.com, jgross@suse.com
+In-Reply-To: <20181030063301.15054-1-jgross@suse.com>
+References: <20181030063301.15054-1-jgross@suse.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/paravirt: Remove unused _paravirt_ident_32
+Git-Commit-ID: 7847c7be0481558f17e3ef3b03f573677fd30d29
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 Content-Disposition: inline
-In-Reply-To: <CACi5LpP0_s9zAF+QfKpU+kG6BKqqkiwQhcW-WFZ0=SnBeX7ZXA@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 30 Oct 2018 08:59:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bhupesh,
+Commit-ID:  7847c7be0481558f17e3ef3b03f573677fd30d29
+Gitweb:     https://git.kernel.org/tip/7847c7be0481558f17e3ef3b03f573677fd30d29
+Author:     Juergen Gross <jgross@suse.com>
+AuthorDate: Tue, 30 Oct 2018 07:33:01 +0100
+Committer:  Ingo Molnar <mingo@kernel.org>
+CommitDate: Tue, 30 Oct 2018 09:55:31 +0100
 
-On 10/30/18 at 12:33pm, Bhupesh Sharma wrote:
-> > Why it's broken? Have you investigated and figured out why it's broken?
-> > If fix, what patch will it look like? Does the patch prove it's not
-> > worth using the current way?
-> >
-> > Have you thought about this in advance? Or still like before, you said
-> > on arm64 you found different boards have different behaviour, then
-> > makedumpfile maintainer Kazu said he investigated and found it may be
-> > caused by KALSR. This time, for this KCORE_REMAP adding, can you help to
-> > investigate further and give an answer to the issue you found and
-> > raised?
-> 
-> Ofcourse, the patchset which added vmcoreinfo into kcore was discussed
-> and it was agreed that this was a better approach to move forward and hence
-> accepted in mainline.
+x86/paravirt: Remove unused _paravirt_ident_32
 
-Currently I am wondering why x86_64 need add page_offset_base to
-vmcoreinfo. Is it because any feature or userspace tool is broken if
-page_offset_base is not added into vmcoreinfo? 
+There is no user of _paravirt_ident_32 left in the tree. Remove it
+together with the related paravirt_patch_ident_32().
 
-Why KCORE_REMAP adding broke makedumpfile, do you find out the root
-cause and what it looks like if you fix it in the current way?
+paravirt_patch_ident_64() can be moved inside CONFIG_PARAVIRT_XXL=y.
 
-Can you list the reasons one by one as below with short sentence?
-1)
-2)
-3)
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: akataria@vmware.com
+Cc: boris.ostrovsky@oracle.com
+Cc: rusty@rustcorp.com.au
+Cc: virtualization@lists.linux-foundation.org
+Cc: xen-devel@lists.xenproject.org
+Link: http://lkml.kernel.org/r/20181030063301.15054-1-jgross@suse.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
+ arch/x86/include/asm/paravirt_types.h |  2 --
+ arch/x86/kernel/paravirt.c            | 26 +++++++-------------------
+ arch/x86/kernel/paravirt_patch_32.c   | 18 ++++++------------
+ arch/x86/kernel/paravirt_patch_64.c   | 20 ++++++--------------
+ 4 files changed, 19 insertions(+), 47 deletions(-)
 
-> 
-> Regarding the makedumpfile issue, I have already provided a detailed
-> reply to Kazu (you are Cc'ed on the thread) and also proposed a
-> makedumpfile approach which
-> reads the 'page_offset_base' value from kcore (using the kernel
-> interface provided by this patch),
-> [on which you are Cc'ed as well]:
-
-This is your replying mail link:
-https://www.spinics.net/lists/kexec/msg21616.html
-
-Then what on earth do you want to fix in this patch?
-
-So Kazu's patch which decuding page_offset_base like x86 64 have done works.
-Yes, and your way using vmcoreinfo in kcore also works, but this is not
-the reason which supports you to discard the old way Kazu suggested. Now
-we are talking about why you want to discard the old way, and adding
-page_offset_base to vmcoreinfo.
-
-Please elaborate and reply with simple and clear logic.
-
-Thanks
-Baoquan
-
+diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
+index fba54ca23b2a..26942ad63830 100644
+--- a/arch/x86/include/asm/paravirt_types.h
++++ b/arch/x86/include/asm/paravirt_types.h
+@@ -361,7 +361,6 @@ extern struct paravirt_patch_template pv_ops;
+ 	__visible extern const char start_##ops##_##name[], end_##ops##_##name[];	\
+ 	asm(NATIVE_LABEL("start_", ops, name) code NATIVE_LABEL("end_", ops, name))
+ 
+-unsigned paravirt_patch_ident_32(void *insnbuf, unsigned len);
+ unsigned paravirt_patch_ident_64(void *insnbuf, unsigned len);
+ unsigned paravirt_patch_default(u8 type, void *insnbuf,
+ 				unsigned long addr, unsigned len);
+@@ -651,7 +650,6 @@ void paravirt_leave_lazy_mmu(void);
+ void paravirt_flush_lazy_mmu(void);
+ 
+ void _paravirt_nop(void);
+-u32 _paravirt_ident_32(u32);
+ u64 _paravirt_ident_64(u64);
+ 
+ #define paravirt_nop	((void *)_paravirt_nop)
+diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
+index 45123b116c05..c0e0101133f3 100644
+--- a/arch/x86/kernel/paravirt.c
++++ b/arch/x86/kernel/paravirt.c
+@@ -56,17 +56,6 @@ asm (".pushsection .entry.text, \"ax\"\n"
+      ".type _paravirt_nop, @function\n\t"
+      ".popsection");
+ 
+-/* identity function, which can be inlined */
+-u32 notrace _paravirt_ident_32(u32 x)
+-{
+-	return x;
+-}
+-
+-u64 notrace _paravirt_ident_64(u64 x)
+-{
+-	return x;
+-}
+-
+ void __init default_banner(void)
+ {
+ 	printk(KERN_INFO "Booting paravirtualized kernel on %s\n",
+@@ -102,6 +91,12 @@ static unsigned paravirt_patch_call(void *insnbuf, const void *target,
+ }
+ 
+ #ifdef CONFIG_PARAVIRT_XXL
++/* identity function, which can be inlined */
++u64 notrace _paravirt_ident_64(u64 x)
++{
++	return x;
++}
++
+ static unsigned paravirt_patch_jmp(void *insnbuf, const void *target,
+ 				   unsigned long addr, unsigned len)
+ {
+@@ -146,13 +141,11 @@ unsigned paravirt_patch_default(u8 type, void *insnbuf,
+ 	else if (opfunc == _paravirt_nop)
+ 		ret = 0;
+ 
++#ifdef CONFIG_PARAVIRT_XXL
+ 	/* identity functions just return their single argument */
+-	else if (opfunc == _paravirt_ident_32)
+-		ret = paravirt_patch_ident_32(insnbuf, len);
+ 	else if (opfunc == _paravirt_ident_64)
+ 		ret = paravirt_patch_ident_64(insnbuf, len);
+ 
+-#ifdef CONFIG_PARAVIRT_XXL
+ 	else if (type == PARAVIRT_PATCH(cpu.iret) ||
+ 		 type == PARAVIRT_PATCH(cpu.usergs_sysret64))
+ 		/* If operation requires a jmp, then jmp */
+@@ -309,13 +302,8 @@ struct pv_info pv_info = {
+ #endif
+ };
+ 
+-#if defined(CONFIG_X86_32) && !defined(CONFIG_X86_PAE)
+-/* 32-bit pagetable entries */
+-#define PTE_IDENT	__PV_IS_CALLEE_SAVE(_paravirt_ident_32)
+-#else
+ /* 64-bit pagetable entries */
+ #define PTE_IDENT	__PV_IS_CALLEE_SAVE(_paravirt_ident_64)
+-#endif
+ 
+ struct paravirt_patch_template pv_ops = {
+ 	/* Init ops. */
+diff --git a/arch/x86/kernel/paravirt_patch_32.c b/arch/x86/kernel/paravirt_patch_32.c
+index 6368c22fa1fa..de138d3912e4 100644
+--- a/arch/x86/kernel/paravirt_patch_32.c
++++ b/arch/x86/kernel/paravirt_patch_32.c
+@@ -10,24 +10,18 @@ DEF_NATIVE(cpu, iret, "iret");
+ DEF_NATIVE(mmu, read_cr2, "mov %cr2, %eax");
+ DEF_NATIVE(mmu, write_cr3, "mov %eax, %cr3");
+ DEF_NATIVE(mmu, read_cr3, "mov %cr3, %eax");
+-#endif
+-
+-#if defined(CONFIG_PARAVIRT_SPINLOCKS)
+-DEF_NATIVE(lock, queued_spin_unlock, "movb $0, (%eax)");
+-DEF_NATIVE(lock, vcpu_is_preempted, "xor %eax, %eax");
+-#endif
+-
+-unsigned paravirt_patch_ident_32(void *insnbuf, unsigned len)
+-{
+-	/* arg in %eax, return in %eax */
+-	return 0;
+-}
+ 
+ unsigned paravirt_patch_ident_64(void *insnbuf, unsigned len)
+ {
+ 	/* arg in %edx:%eax, return in %edx:%eax */
+ 	return 0;
+ }
++#endif
++
++#if defined(CONFIG_PARAVIRT_SPINLOCKS)
++DEF_NATIVE(lock, queued_spin_unlock, "movb $0, (%eax)");
++DEF_NATIVE(lock, vcpu_is_preempted, "xor %eax, %eax");
++#endif
+ 
+ extern bool pv_is_native_spin_unlock(void);
+ extern bool pv_is_native_vcpu_is_preempted(void);
+diff --git a/arch/x86/kernel/paravirt_patch_64.c b/arch/x86/kernel/paravirt_patch_64.c
+index 7ca9cb726f4d..9d9e04b31077 100644
+--- a/arch/x86/kernel/paravirt_patch_64.c
++++ b/arch/x86/kernel/paravirt_patch_64.c
+@@ -15,27 +15,19 @@ DEF_NATIVE(cpu, wbinvd, "wbinvd");
+ 
+ DEF_NATIVE(cpu, usergs_sysret64, "swapgs; sysretq");
+ DEF_NATIVE(cpu, swapgs, "swapgs");
+-#endif
+-
+-DEF_NATIVE(, mov32, "mov %edi, %eax");
+ DEF_NATIVE(, mov64, "mov %rdi, %rax");
+ 
+-#if defined(CONFIG_PARAVIRT_SPINLOCKS)
+-DEF_NATIVE(lock, queued_spin_unlock, "movb $0, (%rdi)");
+-DEF_NATIVE(lock, vcpu_is_preempted, "xor %eax, %eax");
+-#endif
+-
+-unsigned paravirt_patch_ident_32(void *insnbuf, unsigned len)
+-{
+-	return paravirt_patch_insns(insnbuf, len,
+-				    start__mov32, end__mov32);
+-}
+-
+ unsigned paravirt_patch_ident_64(void *insnbuf, unsigned len)
+ {
+ 	return paravirt_patch_insns(insnbuf, len,
+ 				    start__mov64, end__mov64);
+ }
++#endif
++
++#if defined(CONFIG_PARAVIRT_SPINLOCKS)
++DEF_NATIVE(lock, queued_spin_unlock, "movb $0, (%rdi)");
++DEF_NATIVE(lock, vcpu_is_preempted, "xor %eax, %eax");
++#endif
+ 
+ extern bool pv_is_native_spin_unlock(void);
+ extern bool pv_is_native_vcpu_is_preempted(void);
