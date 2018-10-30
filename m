@@ -2,117 +2,158 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80663C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:16:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E233C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:18:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4829F2080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:16:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="Oqz1dG0b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4829F2080A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	by mail.kernel.org (Postfix) with ESMTP id 27F3F2080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:18:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27F3F2080A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728286AbeJ3XJ5 (ORCPT
+        id S1728301AbeJ3XLq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 19:09:57 -0400
-Received: from imap.thunk.org ([74.207.234.97]:44006 "EHLO imap.thunk.org"
+        Tue, 30 Oct 2018 19:11:46 -0400
+Received: from ozlabs.org ([203.11.71.1]:58699 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728033AbeJ3XJ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 19:09:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=wqnl0Byl/Ja8fcv0nyZPDb2TwWsmDZPb4XrYgH6Yr28=; b=Oqz1dG0bZsj8bPR3Nwku/KSjZa
-        sPTZpZ5Z6Fwe65xsOqnWE99otK5F42AjGjRJwA2NNAgtR2VjzQXs4Ni/NDJXJxiOPIPiYJRUKsvQN
-        MDM2A9HUTwZE97paaJV5oQWmcU29UAPN6XZPUK34BzgM5WgSZylRABX51lS3BtuXe5Bo=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1gHUo5-0007Jr-0T; Tue, 30 Oct 2018 14:15:45 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 40EC27A45B5; Tue, 30 Oct 2018 10:15:44 -0400 (EDT)
-Date:   Tue, 30 Oct 2018 10:15:44 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
-Cc:     Kurt Roeckx <kurt@roeckx.be>, 912087@bugs.debian.org,
-        "Package Development List for OpenSSL packages." 
-        <pkg-openssl-devel@alioth-lists.debian.net>,
-        linux-kernel@vger.kernel.org,
-        Bernhard =?iso-8859-1?Q?=DCbelacker?= <bernhardu@mailbox.org>,
-        pkg-systemd-maintainers@lists.alioth.debian.org,
-        debian-ssh@lists.debian.org, 912087-submitter@bugs.debian.org
-Subject: Re: Bug#912087: openssh-server: Slow startup after the upgrade to
- 7.9p1
-Message-ID: <20181030141544.GE15839@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Sebastian Andrzej Siewior <sebastian@breakpoint.cc>,
-        Kurt Roeckx <kurt@roeckx.be>, 912087@bugs.debian.org,
-        "Package Development List for OpenSSL packages." <pkg-openssl-devel@alioth-lists.debian.net>,
-        linux-kernel@vger.kernel.org,
-        Bernhard =?iso-8859-1?Q?=DCbelacker?= <bernhardu@mailbox.org>,
-        pkg-systemd-maintainers@lists.alioth.debian.org,
-        debian-ssh@lists.debian.org, 912087-submitter@bugs.debian.org
-References: <20181029223334.GH10011@roeckx.be>
- <20181030001807.7wailpm37mlinsli@breakpoint.cc>
+        id S1728033AbeJ3XLq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 19:11:46 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42ktpz4z82z9s8r;
+        Wed, 31 Oct 2018 01:18:03 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Cc:     Frank Rowand <frowand.list@gmail.com>
+Subject: Re: [PATCH 01/21] of: Add cpu node iterator for_each_of_cpu_node()
+In-Reply-To: <20180905193738.19325-2-robh@kernel.org>
+References: <20180905193738.19325-1-robh@kernel.org> <20180905193738.19325-2-robh@kernel.org>
+Date:   Wed, 31 Oct 2018 01:18:00 +1100
+Message-ID: <874ld3jz6v.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181030001807.7wailpm37mlinsli@breakpoint.cc>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 01:18:08AM +0100, Sebastian Andrzej Siewior wrote:
-> Using ioctl(/dev/urandom, RNDADDENTROPY, ) instead writting to
-> /dev/urandom would do the trick. Or using RNDADDTOENTCNT to increment
-> the entropy count after it was written. Those two are documented in
-> random(4). Or RNDRESEEDCRNG could be used to force crng to be reseeded.
-> It does also the job, too.
-> 
-> Ted, is there any best practise what to do with the seed which as
-> extrected from /dev/urandom on system shutdown? Using RNDADDTOENTCNT to
-> speed up init or just write to back to urandom and issue RNDRESEEDCRNG?
+Hi Rob,
 
-The reason why writing to /dev/[u]random via something like:
+Sorry I missed this when you posted it.
 
-    cat /var/lib/random/seed > /dev/random
+Rob Herring <robh@kernel.org> writes:
+> Iterating thru cpu nodes is a common pattern. Create a common iterator
+> which can find child nodes either by node name or device_type == cpu.
+> Using the former will allow for eventually dropping device_type
+> properties which are deprecated for FDT.
 
-Dosn't bump the the entropy counter is because it's possible that an
-attacker could read /var/lib/random/seed.  Even if the seed file is
-refreshed on shutdown, (a) the attacker could have read the file while
-the system is down, or (b) the system could have crashed so the seed
-file was not refreshed and the attacker could have read the file
-before the crash.
+Device trees we see on powerpc generally don't (never?) use "cpu" as the
+node name for CPU nodes. And many of those device trees come from
+firmware, so we can't update them.
 
-If you are using a VM, if the host has virtio-rng, using a kernel that
-has virtio-rng support will solve the problem.  For qemu, this means
-you can enable via something like this:
+So dropping support for device_type is a non-starter from our POV.
 
-         -object rng-random,filename=/dev/urandom,id=rng0 \
-	 -device virtio-rng-pci,rng=rng0
+cheers
 
-If you are using Google Compute Engine, I can't comment about future
-product features, but I would encourage you to file a feature request
-bug with Google requesting virtio-rng support ASAP.
-
-On any VM (cloud or on-prem), since you have to trust the host
-*anyway*, with v4.19, you can add random.trust_cpu=on to the boot
-command-line, or build the kernel with CONFIG_RANDOM_TRUST_CPU.
-
-For the Debian 4.18 kernel, this can be backported via commits
-39a8883a2b98 and 9b25436662d5.
-
-					- Ted
+> Cc: Frank Rowand <frowand.list@gmail.com>
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> ---
+>  drivers/of/base.c  | 39 +++++++++++++++++++++++++++++++++++++++
+>  include/linux/of.h | 11 +++++++++++
+>  2 files changed, 50 insertions(+)
+>
+> diff --git a/drivers/of/base.c b/drivers/of/base.c
+> index a055cd1ef96d..4807db0a35b3 100644
+> --- a/drivers/of/base.c
+> +++ b/drivers/of/base.c
+> @@ -741,6 +741,45 @@ struct device_node *of_get_next_available_child(const struct device_node *node,
+>  }
+>  EXPORT_SYMBOL(of_get_next_available_child);
+>
+> +/**
+> + *	of_get_next_cpu_node - Iterate on cpu nodes
+> + *	@prev:	previous child of the /cpus node, or NULL to get first
+> + *
+> + *	Returns a cpu node pointer with refcount incremented, use of_node_put()
+> + *	on it when done. Returns NULL when prev is the last child. Decrements
+> + *	the refcount of prev.
+> + */
+> +struct device_node *of_get_next_cpu_node(struct device_node *prev)
+> +{
+> +	struct device_node *next = NULL;
+> +	unsigned long flags;
+> +	struct device_node *node;
+> +
+> +	if (!prev)
+> +		node = of_find_node_by_path("/cpus");
+> +
+> +	raw_spin_lock_irqsave(&devtree_lock, flags);
+> +	if (prev)
+> +		next = prev->sibling;
+> +	else if (node) {
+> +		next = node->child;
+> +		of_node_put(node);
+> +	}
+> +	for (; next; next = next->sibling) {
+> +		if (!(of_node_name_eq(next, "cpu") ||
+> +		      (next->type && !of_node_cmp(next->type, "cpu"))))
+> +			continue;
+> +		if (!__of_device_is_available(next))
+> +			continue;
+> +		if (of_node_get(next))
+> +			break;
+> +	}
+> +	of_node_put(prev);
+> +	raw_spin_unlock_irqrestore(&devtree_lock, flags);
+> +	return next;
+> +}
+> +EXPORT_SYMBOL(of_get_next_cpu_node);
+> +
+>  /**
+>   * of_get_compatible_child - Find compatible child node
+>   * @parent:	parent node
+> diff --git a/include/linux/of.h b/include/linux/of.h
+> index 99b0ebf49632..1aca0dbd35df 100644
+> --- a/include/linux/of.h
+> +++ b/include/linux/of.h
+> @@ -353,6 +353,8 @@ extern const void *of_get_property(const struct device_node *node,
+>  				const char *name,
+>  				int *lenp);
+>  extern struct device_node *of_get_cpu_node(int cpu, unsigned int *thread);
+> +extern struct device_node *of_get_next_cpu_node(struct device_node *prev);
+> +
+>  #define for_each_property_of_node(dn, pp) \
+>  	for (pp = dn->properties; pp != NULL; pp = pp->next)
+>
+> @@ -754,6 +756,11 @@ static inline struct device_node *of_get_cpu_node(int cpu,
+>  	return NULL;
+>  }
+>
+> +static inline struct device_node *of_get_next_cpu_node(struct device_node *prev)
+> +{
+> +	return NULL;
+> +}
+> +
+>  static inline int of_n_addr_cells(struct device_node *np)
+>  {
+>  	return 0;
+> @@ -1217,6 +1224,10 @@ static inline int of_property_read_s32(const struct device_node *np,
+>  	for (child = of_get_next_available_child(parent, NULL); child != NULL; \
+>  	     child = of_get_next_available_child(parent, child))
+>
+> +#define for_each_of_cpu_node(cpu) \
+> +	for (cpu = of_get_next_cpu_node(NULL); cpu != NULL; \
+> +	     cpu = of_get_next_cpu_node(cpu))
+> +
+>  #define for_each_node_with_property(dn, prop_name) \
+>  	for (dn = of_find_node_with_property(NULL, prop_name); dn; \
+>  	     dn = of_find_node_with_property(dn, prop_name))
+> --
+> 2.17.1
