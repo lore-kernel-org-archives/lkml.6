@@ -2,165 +2,135 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E48A1C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:58:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91361C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:59:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8D312080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:58:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C69C2080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:59:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eQozo8Cc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8D312080A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l+GRQWTf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C69C2080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbeJ3RvX (ORCPT
+        id S1727286AbeJ3RwB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 13:51:23 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:37924 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726225AbeJ3RvW (ORCPT
+        Tue, 30 Oct 2018 13:52:01 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:46172 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726225AbeJ3RwA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 13:51:22 -0400
-Received: by mail-pf1-f194.google.com with SMTP id b11-v6so5482081pfi.5
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 01:58:49 -0700 (PDT)
+        Tue, 30 Oct 2018 13:52:00 -0400
+Received: by mail-vs1-f65.google.com with SMTP id l6so7131924vsj.13
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 01:59:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4ZM/SFg4Knl1OGfZXZQiGDeitPhUmraDyd+79sffCSI=;
-        b=eQozo8CczMsRameLaDPrGC3Z2UhTnJFHN5msyrf5QFTm8ADCNCWUa8hdWiKJqUTJ/o
-         5rZDqTtDC1y9TbZ0hm7+iJD07m3PjFKhHUwZ0vk4ByWmc9IdbJHmctfNthLVNBJH4625
-         M/ARmhBA0A6OrOT0XZA24L1/DsqMCa/A7QkpU=
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=I56xSu4RY4TGKO99XbtGs2nK5ZhjNUH4Tr9D+ZItFAM=;
+        b=l+GRQWTfX3biGvqREt9Ceo9/28nN9YRxtd6uBuxhQQjZ7L9JTazd9ZOY8iGdJhJ3QS
+         vlj3BjfUE46zgCgZq1WD4H8krQTMqgfq5vaP2EobOW1gpq2885XZKY1mmfEryIML/PNp
+         c+BNlPXIH8PXctOiSKh/Uw8h/JPNShfXOXrTYhOIMvbJO5hP1LlMKxw1gk3nJVXfALXk
+         kZQHAN8+GuNLv/AmIAExI6HYhey8nT52c1dc6uhAS4ggnwoLYfQZemSDJdTdU+NAKmge
+         utwsRoRIeH8IoeOw9ROnhZ4F9t8zkWBSpK5oGnhjQOEX+plW7IfzGq3yZC1k/rNi97o1
+         V47Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4ZM/SFg4Knl1OGfZXZQiGDeitPhUmraDyd+79sffCSI=;
-        b=YXSM415Un6I0DpZGxfJjBRgUyh0WdGyyA+trhb5Uiyeb9At0ZVKgo1jtVUAAUEphi5
-         Ut4AfmDGMCk3KlRqcY1OmU9vQ5+BtxgRAeeumX9S8nnaYg1ay47vRj39FazDFlGHJbwu
-         En90mzd0iloku9EwdyAl1P27QFOiqRQbNmbXd9LYiFcxqCPlsWZ3cKknhbyM+9CzttrH
-         QewnYneb/8i3lH3lg75YLhPevxfu8rWyo7mpeESGCMrl1qr+oRXlBK21/OYBilque/0S
-         BX2kpMzPjFCIx0p+GUVzRwLpnJGdS2CMfc7Yzi0NDEGhMHJ/7BkfWEWQweQnfhpU7O6s
-         ffjA==
-X-Gm-Message-State: AGRZ1gIMacZ9/VIu7Q/ZWye3vLCrSibGFsF5Fkri+g/actHDBjHOI4Gj
-        eUTigliLaj0DDsMa13X1mMp1wg==
-X-Google-Smtp-Source: AJdET5fEk3W+tJ8eGEkauKdi5vYdOSJ7kTxajFcBhl7f2F2VKXqq0pqAkZ70eWSB5DSyMzZdxkCAfg==
-X-Received: by 2002:a62:4bd2:: with SMTP id d79-v6mr2063417pfj.38.1540889928468;
-        Tue, 30 Oct 2018 01:58:48 -0700 (PDT)
-Received: from localhost ([171.61.116.174])
-        by smtp.gmail.com with ESMTPSA id t3-v6sm12495156pfk.59.2018.10.30.01.58.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 01:58:47 -0700 (PDT)
-Date:   Tue, 30 Oct 2018 14:28:45 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     rjw@rjwysocki.net, vincent.guittot@linaro.org,
-        linux-kernel@vger.kernel.org,
-        Chris Redpath <chris.redpath@linaro.org>,
-        Quentin Perret <quentin.perret@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH 4/4] base/drivers/topology: Default dmpis-mhz if they are
- not set in DT
-Message-ID: <20181030085845.az2dstibnrcl7im4@vireshk-i7>
-References: <1540830201-2947-1-git-send-email-daniel.lezcano@linaro.org>
- <1540830201-2947-4-git-send-email-daniel.lezcano@linaro.org>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=I56xSu4RY4TGKO99XbtGs2nK5ZhjNUH4Tr9D+ZItFAM=;
+        b=cGHDyvJFqloa7RO5QpgZP2LGqxHsx6zQo5pwfcaAT7KJ5wpAWVjrL5r3eMnlTKV13c
+         PIXmpJpR1qeHDrUCMKLocCljdwWvnBpd536mHxLPCrbXlbWkXPFpcAJriTWcLYpl9SgS
+         XgY+vYcLcKvS1jsS7OpGOyaCgFq4ZzTvdo9CSuGPilarcM8SEzAJgdHlTXda50iVA7hP
+         aERlh42cLms7fJKXnVPUbor6z+bBq83DIwokDl/nBprMVGW5nJGNiaqVTv43UPDAMjD3
+         6+J7TkCRAi1RylsfQmOzEQ7VofSIR6tG2WLFaSQXMe4e5IlnqjixUPqOfidgfLHJwlxt
+         sJZQ==
+X-Gm-Message-State: AGRZ1gLKds7EfMgmJnlrdWXzIz6QSmdNwWcJhU0p7rao4kcSiwOkZ/lC
+        zN+vof3RwHuZgTs0pdj9peR995Vx3Jyt92D7q0iCFt8TEgU=
+X-Google-Smtp-Source: AJdET5dXeTby7YpO2oGQe3pi9KjHwkV2NPavrVFHOl152RQwaPe1HMUkY6yv+7dgsi6sfbBNM7NSznZaFcCX/i6Qgv8=
+X-Received: by 2002:a67:6cc1:: with SMTP id h184mr2746911vsc.149.1540889966495;
+ Tue, 30 Oct 2018 01:59:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1540830201-2947-4-git-send-email-daniel.lezcano@linaro.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Received: by 2002:a67:f492:0:0:0:0:0 with HTTP; Tue, 30 Oct 2018 01:59:25
+ -0700 (PDT)
+In-Reply-To: <CAJWu+orRE9HL2KWRzEhr2B2Owi=66x-mgjYiJV=cje-rgOeSxQ@mail.gmail.com>
+References: <20181029175322.189042-1-dancol@google.com> <CAJWu+opR5bU7b0ux5GZjO-Wu+=2F8sARke-E_y4PpH0XSubx9g@mail.gmail.com>
+ <CAKOZuetEeP2QgowUL60LYoOgavN7e-WX52adzTdMQhZX0bZn-Q@mail.gmail.com> <CAJWu+orRE9HL2KWRzEhr2B2Owi=66x-mgjYiJV=cje-rgOeSxQ@mail.gmail.com>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Tue, 30 Oct 2018 08:59:25 +0000
+Message-ID: <CAKOZuetNC8Z4a5HAZkm2D4RMrTOCWj71rLJXOOtuoFaF3gGEpA@mail.gmail.com>
+Subject: Re: [RFC PATCH] Minimal non-child process exit notification support
+To:     Joel Fernandes <joelaf@google.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-s/dmpis/dmips/ in $subject
+On Tue, Oct 30, 2018 at 3:06 AM, Joel Fernandes <joelaf@google.com> wrote:
+> On Mon, Oct 29, 2018 at 1:01 PM Daniel Colascione <dancol@google.com> wrote:
+>>
+>> Thanks for taking a look.
+>>
+>> On Mon, Oct 29, 2018 at 7:45 PM, Joel Fernandes <joelaf@google.com> wrote:
+>> >
+>> > On Mon, Oct 29, 2018 at 10:53 AM Daniel Colascione <dancol@google.com> wrote:
+>> > >
+>> > > This patch adds a new file under /proc/pid, /proc/pid/exithand.
+>> > > Attempting to read from an exithand file will block until the
+>> > > corresponding process exits, at which point the read will successfully
+>> > > complete with EOF.  The file descriptor supports both blocking
+>> > > operations and poll(2). It's intended to be a minimal interface for
+>> > > allowing a program to wait for the exit of a process that is not one
+>> > > of its children.
+>> > >
+>> > > Why might we want this interface? Android's lmkd kills processes in
+>> > > order to free memory in response to various memory pressure
+>> > > signals. It's desirable to wait until a killed process actually exits
+>> > > before moving on (if needed) to killing the next process. Since the
+>> > > processes that lmkd kills are not lmkd's children, lmkd currently
+>> > > lacks a way to wait for a proces to actually die after being sent
+>> > > SIGKILL; today, lmkd resorts to polling the proc filesystem pid
+>> >
+>> > Any idea why it needs to wait and then send SIGKILL? Why not do
+>> > SIGKILL and look for errno == ESRCH in a loop with a delay.
+>>
+>> I want to get polling loops out of the system. Polling loops are bad
+>> for wakeup attribution, bad for power, bad for priority inheritance,
+>> and bad for latency. There's no right answer to the question "How long
+>> should I wait before checking $CONDITION again?". If we can have an
+>> explicit waitqueue interface to something, we should. Besides, PID
+>> polling is vulnerable to PID reuse, whereas this mechanism (just like
+>> anything based on struct pid) is immune to it.
+>
+> The argument sounds Ok to me. I would also more details in the commit
+> message about the alternate methods to do this (such as kill polling
+> or ptrace) and why they don't work well etc so no one asks any
+> questions. Like maybe under a "other ways to do this" section. A bit
+> of googling also showed a netlink way of doing it without polling
+> (though I don't look into that much and wouldn't be surprised if its
+> more complicated)
 
-On 29-10-18, 17:23, Daniel Lezcano wrote:
-> In the case of assymetric SoC with the same micro-architecture, we
+Thanks for taking a look. I'll add to the commit message.
 
-                 asymmetric ?
+Re: netlink isn't enabled everywhere and is subject to lossy buffy
+overruns, AIUI. You could also monitor process exit by setting up
+ftrace and watching events, or by installing BPF that watched for
+process exit and sent a perf event. :-) All of these interfaces feel
+like abusing a "monitoring" API for controlling system operations, and
+this kind of abuse tends to have ugly failure modes. I'm looking for
+something a bit more explicit and robust.
 
-> have a group of CPUs with smaller OPPs than the other group. One
-> example is the 96boards dragonboard 820c. There is no dmips/MHz
-> difference between both groups, so no need to specify the values in
-> the DT. Unfortunately, without these defined, there is no scaling
-> capacity comutation triggered, so we need to write
+>
+> Also I guess when you send a patch, it'd be good to pass
+> "--cc-cmd='./scripts/get_maintainer.pl" to git-send-email so it
+> automatically CCs the maintainers who maintain this.
 
-           computation
-
-> 'capacity-dmips-mhz' for each CPU with the same value in order to
-> force the scaled capacity computation.
-> 
-> Fix this by setting a default capacity to SCHED_CAPACITY_SCALE, if no
-> 'capacity-dmips-mhz' is defined in the DT.
-> 
-> This was tested on db820c:
->  - specified values in the DT (correct results)
->  - partial values defined in the DT (error + fallback to defaults)
->  - no specified values in the DT (correct results)
-> 
-> correct results are:
->   cat /sys/devices/system/cpu/cpu*/cpu_capacity
->    758
->    758
->   1024
->   1024
-> 
->   ... respectively for CPU0, CPU1, CPU2 and CPU3.
-> 
-> That reflects the capacity for the max frequencies 1593600 and 2150400.
-> 
-> Cc: Chris Redpath <chris.redpath@linaro.org>
-> Cc: Quentin Perret <quentin.perret@linaro.org>
-> Cc: Viresh Kumar <viresh.kumar@linaro.org>
-> Cc: Amit Kucheria <amit.kucheria@linaro.org>
-> Cc: Nicolas Dechesne <nicolas.dechesne@linaro.org>
-> Cc: Niklas Cassel <niklas.cassel@linaro.org>
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->  drivers/base/arch_topology.c | 27 ++++++++++++++++++++++++++-
->  1 file changed, 26 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
-> index 7311641..7d594a6 100644
-> --- a/drivers/base/arch_topology.c
-> +++ b/drivers/base/arch_topology.c
-> @@ -205,6 +205,21 @@ static struct notifier_block init_cpu_capacity_notifier = {
->  	.notifier_call = init_cpu_capacity_callback,
->  };
->  
-> +static int topology_set_default_capacity(void)
-> +{
-> +	int cpu;
-> +
-> +	raw_capacity = kzalloc(num_possible_cpus() * sizeof(*raw_capacity),
-> +			       GFP_KERNEL);
-> +	if (!raw_capacity)
-> +		return -ENOMEM;
-> +
-> +	for_each_possible_cpu(cpu)
-> +		raw_capacity[cpu] = SCHED_CAPACITY_SCALE;
-
-This isn't actually required as the value of raw_capacity isn't used
-anymore after this point in code. Rather it is forcefully updated in
-init_cpu_capacity_callback():
-
-raw_capacity[cpu] = topology_get_cpu_scale(NULL, cpu) *
-                    policy->cpuinfo.max_freq / 1000UL;
-
-Maybe it is better to allocate raw_capacity once at boot and use
-another global variable as flag (raw_capacity is used as a flag right
-now at many places).
-
--- 
-viresh
+Thanks for the tip!
