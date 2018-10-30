@@ -2,110 +2,111 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4BD3C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:04:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CE6DC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:05:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5B4E20664
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:04:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5B4E20664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E365920664
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:05:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E365920664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727688AbeJaA63 (ORCPT
+        id S1727753AbeJaA7J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 20:58:29 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:37613 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725853AbeJaA63 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 20:58:29 -0400
-Received: by mail-wm1-f66.google.com with SMTP id p2-v6so11830966wmc.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 09:04:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=BYnaQcLx06HAjRIELsZiqQrtQWk7Prf2bT5hLFZ6RWo=;
-        b=AOLPDEcMXd81R2gRTw0NCPWIFzyLutp0nNDjVghWM0iuCla0zvsTN7hC56YxqNYQi+
-         xn1vEynPeRaF+4zujCmpiOF7Ss4yGZumsJ2B2NOPIWgsH+bA2LozkC9aGprhhWEwCD4c
-         99PGY5l7smkrOFL1REMmPw+gr2yLOsq1NmixXpshqdcF/GWsVycAeSNh4GS2z3vz7ZDp
-         Ocr5rnslitOqq+C80nVAdXhwOjb/WNxkpE10VsVKSkOjpSYfm7zI73aktnjSBr7gR4OC
-         evHtBKSzDVT+WzMs/5fuPx/l9xHuQpMmlptP1QEy/bi+8TlOwXFjl3y1pdQOmBFRfqIo
-         Nqwg==
-X-Gm-Message-State: AGRZ1gIwil+EbHoYdrTXk0FZgp+jG+9i5Qtadnow1hcNlDgrZd6J3kp4
-        O7J2xI62EYnZD0MuzR7dxLxAaQ==
-X-Google-Smtp-Source: AJdET5dEDKa6jBiSy5bWFKgIJp4T5zvz2dpCwA6wPocNa+16dik7U9eULEvZEf3PmvOlJ2t3DqOJEQ==
-X-Received: by 2002:a1c:930c:: with SMTP id v12-v6mr2374554wmd.9.1540915464389;
-        Tue, 30 Oct 2018 09:04:24 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id l125-v6sm19653447wmb.1.2018.10.30.09.04.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 09:04:23 -0700 (PDT)
-Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Dean Wallace <duffydack73@gmail.com>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Johannes Stezenbach <js@sig21.net>,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mogens Jensen <mogens-jensen@protonmail.com>
-References: <20181025232517.ywnw54qibemosjws@picard>
- <154083512089.98144.9141070901932719147@swboyd.mtv.corp.google.com>
- <CAHp75VfnN5tF1Z9+CDDhKFNG5QfCRcGOZeAkpf-5BfCEx16gvg@mail.gmail.com>
- <CAHp75VctdBE-GM60udJawBCXdmoOqZn4N=kFWz5GLHzjPG2iQQ@mail.gmail.com>
- <20181029190819.2ivlx73n6y6sx4vk@picard>
- <ffc4bcc9-62c3-8940-85d6-d0fd01f3a1b8@linux.intel.com>
- <c8fb730a-c160-41b4-dad0-8ed8594e5687@redhat.com>
- <20181030143836.feo7zcxiestylxoo@picard>
- <2d429c87-24c5-4075-683e-b0d12c3eb1c2@linux.intel.com>
- <d00df762-e4fc-06c5-701e-d5100bfd0e35@redhat.com>
-Message-ID: <e48696f0-aa3e-e20e-d038-9d8dda9cbfce@redhat.com>
-Date:   Tue, 30 Oct 2018 17:04:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 30 Oct 2018 20:59:09 -0400
+Received: from mga09.intel.com ([134.134.136.24]:4372 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726925AbeJaA7J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 20:59:09 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 09:05:04 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,445,1534834800"; 
+   d="scan'208";a="96294721"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by orsmga003.jf.intel.com with ESMTP; 30 Oct 2018 09:05:04 -0700
+Date:   Tue, 30 Oct 2018 10:02:42 -0600
+From:   Keith Busch <keith.busch@intel.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 11/14] irq: add support for allocating (and affinitizing)
+ sets of IRQs
+Message-ID: <20181030160242.GD18906@localhost.localdomain>
+References: <20181029163738.10172-1-axboe@kernel.dk>
+ <20181029163738.10172-12-axboe@kernel.dk>
+ <20181030142601.GA18906@localhost.localdomain>
+ <c11c95ae-5e10-38bd-d2c2-e2407634f52a@kernel.dk>
+ <20181030144527.GB18906@localhost.localdomain>
+ <46dbcbcd-799f-9970-a68f-de7e96b1a6bb@kernel.dk>
+ <20181030150840.GC18906@localhost.localdomain>
+ <d049e764-b9d1-f06f-40d3-39517f3f65a2@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <d00df762-e4fc-06c5-701e-d5100bfd0e35@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d049e764-b9d1-f06f-40d3-39517f3f65a2@kernel.dk>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 30-10-18 16:46, Hans de Goede wrote:
-> Hi,
+On Tue, Oct 30, 2018 at 09:18:05AM -0600, Jens Axboe wrote:
+> On 10/30/18 9:08 AM, Keith Busch wrote:
+> > On Tue, Oct 30, 2018 at 08:53:37AM -0600, Jens Axboe wrote:
+> >> The sum of the set can't exceed the nvecs passed in, the nvecs passed in
+> >> should be the less than or equal to nvecs. Granted this isn't enforced,
+> >> and perhaps that should be the case.
+> > 
+> > That should at least initially be true for a proper functioning
+> > driver. It's not enforced as you mentioned, but that's only related to
+> > the issue I'm referring to.
+> > 
+> > The problem is pci_alloc_irq_vectors_affinity() takes a range, min_vecs
+> > and max_vecs, but a range of allowable vector allocations doesn't make
+> > sense when using sets.
 > 
-> On 30-10-18 16:04, Pierre-Louis Bossart wrote:
->> In addition I am not aware of any baytrail device using plt_clk_0, so moving a common machine driver such a cht_bsw_max98090_ti to use plt_clk0 only would break other devices (e.g. Rambi/Orco). Asking for both clocks to be on might work though, 
-> 
-> Ok, so we need to have a DMI based quirk for the Swanky and maybe also
-> the clapper to use plt_clk_0 there. Asking for 2 clks if we only need
-> one does not seem like a good plan.
+> I feel like we're going in circles here, not sure what you feel the
+> issue is now? The range is fine, whoever uses sets will need to adjust
+> their sets based on what pci_alloc_irq_vectors_affinity() returns,
+> if it didn't return the passed in desired max.
 
-Dean, Mogens,
+Sorry, let me to try again.
 
-To write a proper patch for this I'm going to need DMI strings
-from your devices.
+pci_alloc_irq_vectors_affinity() starts at the provided max_vecs. If
+that doesn't work, it will iterate down to min_vecs without returning to
+the caller. The caller doesn't have a chance to adjust its sets between
+iterations when you provide a range.
 
-Can you please run (as normal user):
+The 'masks' overrun problem happens if the caller provides min_vecs
+as a smaller value than the sum of the set (plus any reserved).
 
-grep . /sys/class/dmi/id/* 2> /dev/null
+If it's up to the caller to ensure that doesn't happen, then min and
+max must both be the same value, and that value must also be the same as
+the set sum + reserved vectors. The range just becomes redundant since
+it is already bounded by the set.
 
-And reply with the output of this command?
+Using the nvme example, it would need something like this to prevent the
+'masks' overrun:
 
-Thanks,
-
-Hans
+---
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index a8747b956e43..625eff570eaa 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2120,7 +2120,7 @@ static int nvme_setup_io_queues(struct nvme_dev *dev)
+ 	 * setting up the full range we need.
+ 	 */
+ 	pci_free_irq_vectors(pdev);
+-	result = pci_alloc_irq_vectors_affinity(pdev, 1, nr_io_queues,
++	result = pci_alloc_irq_vectors_affinity(pdev, nr_io_queues, nr_io_queues,
+ 			PCI_IRQ_ALL_TYPES | PCI_IRQ_AFFINITY, &affd);
+ 	if (result <= 0)
+ 		return -EIO;
+--
