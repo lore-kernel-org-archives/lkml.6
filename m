@@ -2,147 +2,217 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE0ABC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:53:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3205BC6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:54:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A14E22081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:53:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E57CE20664
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:54:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="GO4Y/bPT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A14E22081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="q6nCH2HN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E57CE20664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727646AbeJaAry (ORCPT
+        id S1727703AbeJaAsK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 20:47:54 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:21954 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725988AbeJaAry (ORCPT
+        Tue, 30 Oct 2018 20:48:10 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:38673 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726788AbeJaAsJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 20:47:54 -0400
-Received: from mail-vs1-f42.google.com (mail-vs1-f42.google.com [209.85.217.42]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id w9UFrj8r000501;
-        Wed, 31 Oct 2018 00:53:46 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w9UFrj8r000501
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1540914826;
-        bh=CKniLgXz8dUH930owUPENtyfG8FEv8M/QPpG1WaKR7w=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=GO4Y/bPTpFnbRHLV/eJZPwTw8VKDCHRQ/HeIetgf6tIhQxWuDxj6m9hH96c2e9Iq/
-         NQduQjH/g7cJz2abYLFOhEOA8sK+/GdDd0kj7XVyWm2AfOTq50+Wz84Cch/2fZivMR
-         /KPh9GETrpEuKAZzvOhZSIxvd51RuUl683SWV2rXGSLP/hpgGbFjRE6RyF3D5yNZ5j
-         AdJaeop2Qr1GD0F9wW5S+/hGaNUVeDC/tjq8RVFjDMpDjDlDHtt41EyD15mLPB1Ubr
-         ez863Ydyt45IsBrT9trMYLDB3qi73FtFiTKd/Wr2a7hjN/udkfY7PcJufb2vreSpbf
-         XrzKAzIyyoh7w==
-X-Nifty-SrcIP: [209.85.217.42]
-Received: by mail-vs1-f42.google.com with SMTP id p74so1004511vsc.0;
-        Tue, 30 Oct 2018 08:53:46 -0700 (PDT)
-X-Gm-Message-State: AGRZ1gKEdgi5ZYy00rj+2yH8J6ETeZ0Le70kfsDMMkrlhjPqMFfJbERo
-        STqTifKjnBhalS8ZtfvsdBHWxfhJEDF3z0IntCw=
-X-Google-Smtp-Source: AJdET5emySK/WnJxnhf2Tkkb0nTi51SfcdMJ+QkOa9ml50kTKllFKFAcWA7aYU/jvP40NfOoufgkgFDRO8BVcSg7uyE=
-X-Received: by 2002:a67:5f03:: with SMTP id t3mr1523408vsb.155.1540914824725;
- Tue, 30 Oct 2018 08:53:44 -0700 (PDT)
+        Tue, 30 Oct 2018 20:48:09 -0400
+Received: by mail-it1-f195.google.com with SMTP id j9so2376315itl.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 08:54:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=cjXmaT6rVr4WW7EDTBdm+IVmVRptEFlS1nyxWXVduaQ=;
+        b=q6nCH2HNB0J0sX9tCZyhhh5gLF1KyRZ+SleYBfTD3uDT59Iz0gmyFJQRSm2YFGit6W
+         JHxg2iCqZ6j3nsTrBLwHIfSKVefQyMDQTem662DkXeaBkfMO7PhhASqcDjw5SZPxMP/s
+         79Qojz99vsqSS8EQxKGieCnGhF+hl3NgJpRU6+70XdL6LQ3c2ZZ6556kShYpJ8MD2DyH
+         eE8Kh1wXosjwPt59ZG79pXPbwKnhkQnv27oXAyilB0ZSpQXlOREX+s7M0b5s0fF6E4IU
+         L0+WcJe3tr4k08UI5jxa62q02IM9M8BBHSLtj02dBKWmfLzDiTqZcX4pOgqeERhkCKRD
+         pSow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cjXmaT6rVr4WW7EDTBdm+IVmVRptEFlS1nyxWXVduaQ=;
+        b=WY3HF1TWxjc405DGexEG17JYL8Vmw1XsFTPRIDc3d90OgiwjZciLNT8gWnHzphZ563
+         e+AWi4B4coUJnvcUXKZZEX7Gv/bmTr8McPdfOf2ZsD2wGZJocWwtTHir8PPFYm4NFEa7
+         pxM1YvCFUJ1ZWGI7q5pbvwjO5oVmh3rkS2kHo7jZiF4hW8UL8Zrm3yBNij+eGXxKCMn7
+         jmqw9EegBzIFzv92AcTKDgI43iO8EbenRAX0pQsTn2ZSx6ETzoXscHtssP1MuLIlWBI8
+         19ztRLu33NtmXoC1ehfFK8yqj6HkYqvJFjdkMeKorS/hqFCyphJcKM/CIDwptxjXTykU
+         M9fQ==
+X-Gm-Message-State: AGRZ1gLaHrTSJXk7t9zqFCK5hoXZS/HRXvWLxXCWi7q3fuC4yNia1rz7
+        nHjbXHWYRxm6Cz6l3G5g+6gQkg==
+X-Google-Smtp-Source: AJdET5dEyrLHc6o8FGhN2S80PjeXzNHPiysmCC6zJaKrjNKaf4C52k/34N4UldqhvUsXHMWF0ieDlg==
+X-Received: by 2002:a24:8347:: with SMTP id d68-v6mr995682ite.158.1540914847179;
+        Tue, 30 Oct 2018 08:54:07 -0700 (PDT)
+Received: from cisco (75-166-175-210.hlrn.qwest.net. [75.166.175.210])
+        by smtp.gmail.com with ESMTPSA id j75-v6sm8469258itj.33.2018.10.30.08.54.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 30 Oct 2018 08:54:05 -0700 (PDT)
+Date:   Tue, 30 Oct 2018 09:54:03 -0600
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian@brauner.io>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Aleksa Sarai <asarai@suse.de>, linux-kernel@vger.kernel.org,
+        containers@lists.linux-foundation.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v8 1/2] seccomp: add a return code to trap to userspace
+Message-ID: <20181030155403.GC7343@cisco>
+References: <20181029224031.29809-1-tycho@tycho.ws>
+ <20181029224031.29809-2-tycho@tycho.ws>
+ <20181030150254.GB3385@redhat.com>
 MIME-Version: 1.0
-References: <20181030104637.382c26d0@canb.auug.org.au> <20181030104941.4fef7dad@canb.auug.org.au>
- <CANiq72k2w2T0Cy0D--OEmE+sOPkjZtXpukBm+Mz1_xY6MCGg0A@mail.gmail.com> <20181030150412.peayixjav2lvbp4s@mail.google.com>
-In-Reply-To: <20181030150412.peayixjav2lvbp4s@mail.google.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 31 Oct 2018 00:53:08 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARsV=GbwERyy_TViiYB_Go1GqYC2_GNbtvhoArSo1zgsg@mail.gmail.com>
-Message-ID: <CAK7LNARsV=GbwERyy_TViiYB_Go1GqYC2_GNbtvhoArSo1zgsg@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the compiler-attributes tree with the
- kbuild tree
-To:     Changbin Du <changbin.du@gmail.com>
-Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181030150254.GB3385@redhat.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 12:06 AM Changbin Du <changbin.du@gmail.com> wrote:
->
-> On Tue, Oct 30, 2018 at 12:21:52PM +0100, Miguel Ojeda wrote:
-> > On Tue, Oct 30, 2018 at 12:49 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > >
-> > > Hi all,
-> > >
-> > > On Tue, 30 Oct 2018 10:46:37 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > > >
-> > > > Today's linux-next merge of the compiler-attributes tree got a conflict
-> > > > in:
-> > > >
-> > > >   include/linux/compiler-gcc.h
-> > > >
-> > > > between commit:
-> > > >
-> > > >   94c7dfd01652 ("kernel hacking: support building kernel with -Og optimization level")
-> > > >
-> > > > from the kbuild tree and commits:
-> > > >
-> > > >   5c67a52f3da0 ("Compiler Attributes: always use the extra-underscores syntax")
-> > > >   989bd5000f36 ("Compiler Attributes: remove unneeded sparse (__CHECKER__) tests")
-> > > >
-> > > > from the compiler-attributes tree.
-> > > >
-> > > > I fixed it up (the latter just removed the __CHECKER__ check, so I did
-> > > > that) and can carry the fix as necessary. This is now fixed as far as
-> > >
-> > > On reflection, that may not have been the correct resolution ...
+On Tue, Oct 30, 2018 at 04:02:54PM +0100, Oleg Nesterov wrote:
+> On 10/29, Tycho Andersen wrote:
 > >
-> > From a quick look, it seems we want:
-> >
-> > #ifndef CONFIG_CC_OPTIMIZE_FOR_DEBUGGING
-> > #define __compiletime_warning(message) __attribute__((__warning__(message)))
-> > #define __compiletime_error(message) __attribute__((__error__(message)))
-> > #endif
-> >
-> > i.e. kbuild tree added the CONFIG_CC_OPTIMIZE_FOR_DEBUGGING guard,
-> > while the compiler-attributes tree removed the __CHECKER__ one, so we
-> > still need the former.
-> >
-> > By the way, I think 94c7dfd01652 is wrong: it changes the guard also
-> > for __latent_entropy (and it does not change the corresponding comment
-> > at "#endif /* __CHECKER__ */").
-> >
-> > Also, the commit message does not mention __compiletime_warning --
-> > should that one be guarded too by CONFIG_CC_OPTIMIZE_FOR_DEBUGGING?
-> >
-> To avoid future possible warning, __compiletime_warning should also be
-> guarded. So I did the flow change so __latent_entropy is not affected.
->
-> --- a/include/linux/compiler-gcc.h
-> +++ b/include/linux/compiler-gcc.h
-> @@ -85,9 +85,11 @@
->
->  #define __compiletime_object_size(obj) __builtin_object_size(obj, 0)
->
-> -#if !defined(__CHECKER__) && !defined(CONFIG_CC_OPTIMIZE_FOR_DEBUGGING)
-> +#if !defined(__CHECKER__)
-> +#if !defined(CONFIG_CC_OPTIMIZE_FOR_DEBUGGING)
->  #define __compiletime_warning(message) __attribute__((warning(message)))
->  #define __compiletime_error(message) __attribute__((error(message)))
-> +#endif
->
->  #ifdef LATENT_ENTROPY_PLUGIN
->  #define __latent_entropy __attribute__((latent_entropy))
->
+> > +static long seccomp_notify_recv(struct seccomp_filter *filter,
+> > +				void __user *buf)
+> > +{
+> > +	struct seccomp_knotif *knotif = NULL, *cur;
+> > +	struct seccomp_notif unotif;
+> > +	ssize_t ret;
+> > +
+> > +	memset(&unotif, 0, sizeof(unotif));
+> > +
+> > +	ret = down_interruptible(&filter->notif->request);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	mutex_lock(&filter->notify_lock);
+> > +	list_for_each_entry(cur, &filter->notif->notifications, list) {
+> > +		if (cur->state == SECCOMP_NOTIFY_INIT) {
+> > +			knotif = cur;
+> > +			break;
+> > +		}
+> > +	}
+> > +
+> > +	/*
+> > +	 * If we didn't find a notification, it could be that the task was
+> > +	 * interrupted by a fatal signal between the time we were woken and
+> > +	 * when we were able to acquire the rw lock.
+> > +	 *
+> > +	 * This is the place where we handle the extra high semaphore count
+> > +	 * mentioned in seccomp_do_user_notification().
+> > +	 */
+> > +	if (!knotif) {
+> > +		ret = -ENOENT;
+> > +		goto out;
+> > +	}
+> > +
+> > +	unotif.id = knotif->id;
+> > +	unotif.pid = task_pid_vnr(knotif->task);
+> > +	if (knotif->signaled)
+> > +		unotif.flags |= SECCOMP_NOTIF_FLAG_SIGNALED;
+> > +	unotif.data = *(knotif->data);
+> 
+> Tycho, I forgot everything about seccomp, most probably I am wrong but let me
+> ask anyway.
+> 
+> __seccomp_filter(SECCOMP_RET_TRACE) does
+> 
+> 		/*
+> 		 * Recheck the syscall, since it may have changed. This
+> 		 * intentionally uses a NULL struct seccomp_data to force
+> 		 * a reload of all registers. This does not goto skip since
+> 		 * a skip would have already been reported.
+> 		 */
+> 		if (__seccomp_filter(this_syscall, NULL, true))
+> 			return -1;
+> 
+> and the next seccomp_run_filters() can return SECCOMP_RET_USER_NOTIF, right?
+> seccomp_do_user_notification() doesn't check recheck_after_trace and it simply
+> does n.data = sd.
+> 
+> Doesn't this mean that "unotif.data = *(knotif->data)" can hit NULL ?
+> 
+> seccomp_run_filters() does populate_seccomp_data() in this case, but this
+> won't affect "seccomp_data *sd" passed to seccomp_do_user_notification().
+
+Oof, yes, you're right. Seems like there are no other users of sd in
+__seccomp_filter(). Seems to me like we can just do the
+populate_seccomp_data() one level higher in __seccomp_filter()?
+
+Tycho
 
 
-OK, I locally fixed it up.
+From 9e0f75ea51a2c328567910df3122a236ebeccab0 Mon Sep 17 00:00:00 2001
+From: Tycho Andersen <tycho@tycho.ws>
+Date: Tue, 30 Oct 2018 09:51:14 -0600
+Subject: [PATCH] seccomp: hoist struct seccomp_data recalculation higher
 
-I hope it will be fine for tomorrow's linux-next
+Signed-off-by: Tycho Andersen <tycho@tycho.ws>
+---
+ kernel/seccomp.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Thanks.
-
+diff --git a/kernel/seccomp.c b/kernel/seccomp.c
+index 4c5fb6ced4cd..1525cb753ad2 100644
+--- a/kernel/seccomp.c
++++ b/kernel/seccomp.c
+@@ -257,7 +257,6 @@ static int seccomp_check_filter(struct sock_filter *filter, unsigned int flen)
+ static u32 seccomp_run_filters(const struct seccomp_data *sd,
+ 			       struct seccomp_filter **match)
+ {
+-	struct seccomp_data sd_local;
+ 	u32 ret = SECCOMP_RET_ALLOW;
+ 	/* Make sure cross-thread synced filter points somewhere sane. */
+ 	struct seccomp_filter *f =
+@@ -267,11 +266,6 @@ static u32 seccomp_run_filters(const struct seccomp_data *sd,
+ 	if (unlikely(WARN_ON(f == NULL)))
+ 		return SECCOMP_RET_KILL_PROCESS;
+ 
+-	if (!sd) {
+-		populate_seccomp_data(&sd_local);
+-		sd = &sd_local;
+-	}
+-
+ 	/*
+ 	 * All filters in the list are evaluated and the lowest BPF return
+ 	 * value always takes priority (ignoring the DATA).
+@@ -821,6 +815,7 @@ static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
+ 	u32 filter_ret, action;
+ 	struct seccomp_filter *match = NULL;
+ 	int data;
++	struct seccomp_data sd_local;
+ 
+ 	/*
+ 	 * Make sure that any changes to mode from another thread have
+@@ -828,6 +823,11 @@ static int __seccomp_filter(int this_syscall, const struct seccomp_data *sd,
+ 	 */
+ 	rmb();
+ 
++	if (!sd) {
++		populate_seccomp_data(&sd_local);
++		sd = &sd_local;
++	}
++
+ 	filter_ret = seccomp_run_filters(sd, &match);
+ 	data = filter_ret & SECCOMP_RET_DATA;
+ 	action = filter_ret & SECCOMP_RET_ACTION_FULL;
 -- 
-Best Regards
-Masahiro Yamada
+2.17.1
+
