@@ -2,84 +2,91 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17D76C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 17:38:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0667DC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 17:40:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACEC72075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 17:38:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACEC72075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id AC6C42075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 17:40:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC6C42075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727866AbeJaCca (ORCPT
+        id S1727962AbeJaCew (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 22:32:30 -0400
-Received: from mga03.intel.com ([134.134.136.65]:60224 "EHLO mga03.intel.com"
+        Tue, 30 Oct 2018 22:34:52 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:58794 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727566AbeJaCca (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 22:32:30 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 10:38:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,445,1534834800"; 
-   d="scan'208";a="270051889"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by orsmga005.jf.intel.com with ESMTP; 30 Oct 2018 10:38:04 -0700
-Date:   Tue, 30 Oct 2018 11:35:43 -0600
-From:   Keith Busch <keith.busch@intel.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 11/14] irq: add support for allocating (and affinitizing)
- sets of IRQs
-Message-ID: <20181030173543.GG18906@localhost.localdomain>
-References: <c11c95ae-5e10-38bd-d2c2-e2407634f52a@kernel.dk>
- <20181030144527.GB18906@localhost.localdomain>
- <46dbcbcd-799f-9970-a68f-de7e96b1a6bb@kernel.dk>
- <20181030150840.GC18906@localhost.localdomain>
- <d049e764-b9d1-f06f-40d3-39517f3f65a2@kernel.dk>
- <20181030160242.GD18906@localhost.localdomain>
- <27c1017a-9560-80cb-038d-f64727a162c3@kernel.dk>
- <535480f3-9087-b4ae-e7c8-cfe3c2d1e2c9@kernel.dk>
- <20181030172234.GF18906@localhost.localdomain>
- <d393e6f3-bc45-e038-9a5e-e51018f0a15a@kernel.dk>
+        id S1727621AbeJaCew (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 22:34:52 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DDFD6307D96B;
+        Tue, 30 Oct 2018 17:40:27 +0000 (UTC)
+Received: from [10.13.129.51] (dhcp129-51.rdu.redhat.com [10.13.129.51])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 79366177A9;
+        Tue, 30 Oct 2018 17:40:27 +0000 (UTC)
+Subject: Re: [PATCH] ARM: kprobes: Fix false positive with FORTIFY_SOURCE
+To:     Kees Cook <keescook@chromium.org>,
+        Russell King <linux@armlinux.org.uk>
+Cc:     Laura Abbott <labbott@redhat.com>, linux-kernel@vger.kernel.org,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        linux-arm-kernel@lists.infradead.org
+References: <20181022093023.GA8920@beast>
+From:   William Cohen <wcohen@redhat.com>
+Message-ID: <cbeccaf1-33ec-0e54-0cfa-8cff81bbc1cd@redhat.com>
+Date:   Tue, 30 Oct 2018 13:40:27 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d393e6f3-bc45-e038-9a5e-e51018f0a15a@kernel.dk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <20181022093023.GA8920@beast>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.48]); Tue, 30 Oct 2018 17:40:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 11:33:51AM -0600, Jens Axboe wrote:
-> On 10/30/18 11:22 AM, Keith Busch wrote:
-> > On Tue, Oct 30, 2018 at 11:09:04AM -0600, Jens Axboe wrote:
-> >> Pretty trivial, below. This also keeps the queue mapping calculations
-> >> more clean, as we don't have to do one after we're done allocating
-> >> IRQs.
-> > 
-> > Yep, this addresses my concern. It less efficient than PCI since PCI
-> > can usually jump straight to a valid vector count in a single iteration
-> > where this only subtracts by 1. I really can't be bothered to care for
-> > optimizing that, so this works for me! :) 
+On 10/22/18 5:30 AM, Kees Cook wrote:
+> The arm compiler internally interprets an inline assembly label
+> as an unsigned long value, not a pointer. As a result, under
+> CONFIG_FORTIFY_SOURCE, the size of the array pointed to by an address
+> of a label is 4 bytes, which was tripping the runtime checks. Instead,
+> we can just cast the label (as done with the size calculations earlier)
+> to avoid the problem.
 > 
-> It definitely is less efficient than just getting the count that we
-> can support, but it's at probe time so I could not really be bothered
-> either.
+> Reported-by: William Cohen <wcohen@redhat.com>
+> Fixes: 6974f0c4555e ("include/linux/string.h: add the option of fortified string.h functions")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Kees Cook <keescook@chromium.org>
+> ---
+>  arch/arm/probes/kprobes/opt-arm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Can I add your reviewed-by?
+> diff --git a/arch/arm/probes/kprobes/opt-arm.c b/arch/arm/probes/kprobes/opt-arm.c
+> index b2aa9b32bff2..2c118a6ab358 100644
+> --- a/arch/arm/probes/kprobes/opt-arm.c
+> +++ b/arch/arm/probes/kprobes/opt-arm.c
+> @@ -247,7 +247,7 @@ int arch_prepare_optimized_kprobe(struct optimized_kprobe *op, struct kprobe *or
+>  	}
+>  
+>  	/* Copy arch-dep-instance from template. */
+> -	memcpy(code, &optprobe_template_entry,
+> +	memcpy(code, (unsigned char *)optprobe_template_entry,
+>  			TMPL_END_IDX * sizeof(kprobe_opcode_t));
+>  
+>  	/* Adjust buffer according to instruction. */
+> 
 
-Yes, please.
+The patch fixes the issue for kretprobes.  It looks good to me.
 
-Reviewed-by: Keith Busch <keith.busch@intel.com>
+Thanks,
 
-> -- 
-> Jens Axboe
+-Will
