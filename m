@@ -2,274 +2,146 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62DCEC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:27:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25A59C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:30:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 163302081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:27:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="jbiOZqTH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 163302081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=Dell.com
+	by mail.kernel.org (Postfix) with ESMTP id DAFC02081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:30:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAFC02081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727709AbeJaGWJ (ORCPT
+        id S1726925AbeJaGZx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 02:22:09 -0400
-Received: from esa4.dell-outbound.iphmx.com ([68.232.149.214]:15129 "EHLO
-        esa4.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725743AbeJaGWI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 02:22:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
-  t=1540934821; x=1572470821;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=00MlkvZgvcXpcnkBOzvgHGLprHdObT8/zYwhl+KmqNc=;
-  b=jbiOZqTHDXYHrilpjvWPvj4tHos3EJ6zMGlO8jF54NQ/CLr7CztzcUz6
-   buhNwwK3Wn+keiEqg0j39e8dQlhACQYWktGykkvhm36FGWvN2xDMU9PK8
-   firHahzvERUI2H1Lo5ozjMONtQ/gWmKs7T6BMBVaRr3fklzQYsgQXzUZn
-   Y=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FNAADvy9hbhyeV50NkHAEBAQQBAQc?=
- =?us-ascii?q?EAQGBVAQBAQsBgVWCFDKMY6R7gWYLAQGEbAKDJSI3Cg0BAwEBAgEBAgEBAhA?=
- =?us-ascii?q?BAQEKCwkIKS+CNiKCZAIBAxIVEy0SEAIBCDYQVwIEAQ0NGoJ/ggKdawKBEIl?=
- =?us-ascii?q?YAQEBgWgziimLZ4IXgRGDEoRnhXICgSoBhzCGC49YVAYBAo0mg1oggXWOVCy?=
- =?us-ascii?q?WVQIEAgQFAhSBWYF4cIFugU+CJQ4JjhqMEIEfAQE?=
-X-IPAS-Result: =?us-ascii?q?A2FNAADvy9hbhyeV50NkHAEBAQQBAQcEAQGBVAQBAQsBg?=
- =?us-ascii?q?VWCFDKMY6R7gWYLAQGEbAKDJSI3Cg0BAwEBAgEBAgEBAhABAQEKCwkIKS+CN?=
- =?us-ascii?q?iKCZAIBAxIVEy0SEAIBCDYQVwIEAQ0NGoJ/ggKdawKBEIlYAQEBgWgziimLZ?=
- =?us-ascii?q?4IXgRGDEoRnhXICgSoBhzCGC49YVAYBAo0mg1oggXWOVCyWVQIEAgQFAhSBW?=
- =?us-ascii?q?YF4cIFugU+CJQ4JjhqMEIEfAQE?=
-Received: from mx0a-00154901.pphosted.com ([67.231.149.39])
-  by esa4.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 30 Oct 2018 16:27:00 -0500
-Received: from pps.filterd (m0090351.ppops.net [127.0.0.1])
-        by mx0b-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9ULNU5S106707;
-        Tue, 30 Oct 2018 17:27:00 -0400
-Received: from esa4.dell-outbound2.iphmx.com (esa4.dell-outbound2.iphmx.com [68.232.154.98])
-        by mx0b-00154901.pphosted.com with ESMTP id 2nexh1r7fd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 30 Oct 2018 17:27:00 -0400
-From:   <Justin.Lee1@Dell.com>
-Received: from ausc60pc101.us.dell.com ([143.166.85.206])
-  by esa4.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 31 Oct 2018 03:26:59 +0600
-X-LoopCount0: from 10.166.135.91
-X-IronPort-AV: E=Sophos;i="5.54,446,1534827600"; 
-   d="scan'208";a="1319704866"
-To:     <sam@mendozajonas.com>, <netdev@vger.kernel.org>
-CC:     <davem@davemloft.net>, <linux-kernel@vger.kernel.org>,
-        <openbmc@lists.ozlabs.org>
-Subject: RE: [PATCH net-next 5/6] net/ncsi: Reset channel state in
- ncsi_start_dev()
-Thread-Topic: [PATCH net-next 5/6] net/ncsi: Reset channel state in
- ncsi_start_dev()
-Thread-Index: AQHUZpcV/jLZttPJVESchUXzrlpHT6U4CxHw
-Date:   Tue, 30 Oct 2018 21:26:57 +0000
-Message-ID: <96158616f0774e3d9fae0e99bb16e605@AUSX13MPS306.AMER.DELL.COM>
-References: <20181018035917.19413-1-sam@mendozajonas.com>
- <20181018035917.19413-6-sam@mendozajonas.com>
-In-Reply-To: <20181018035917.19413-6-sam@mendozajonas.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.18.86]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 31 Oct 2018 02:25:53 -0400
+Received: from mga14.intel.com ([192.55.52.115]:39340 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725743AbeJaGZw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 02:25:52 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 14:30:41 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,446,1534834800"; 
+   d="scan'208";a="104624729"
+Received: from schen9-desk.jf.intel.com (HELO [10.54.74.144]) ([10.54.74.144])
+  by orsmga002.jf.intel.com with ESMTP; 30 Oct 2018 14:30:42 -0700
+Subject: Re: [Patch v4 13/18] security: Update security level of a process
+ when modifying its dumpability
+To:     "Schaufler, Casey" <casey.schaufler@intel.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Tom Lendacky <thomas.lendacky@amd.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Andi Kleen <ak@linux.intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "Mallick, Asit K" <asit.k.mallick@intel.com>,
+        Arjan van de Ven <arjan@linux.intel.com>,
+        Jon Masters <jcm@redhat.com>,
+        Waiman Long <longman9394@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>
+References: <cover.1540923609.git.tim.c.chen@linux.intel.com>
+ <e8b6b10e15653b3b2c5727e935f75142e441f834.1540923609.git.tim.c.chen@linux.intel.com>
+ <99FC4B6EFCEFD44486C35F4C281DC6732148DC65@ORSMSX110.amr.corp.intel.com>
+From:   Tim Chen <tim.c.chen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <f63e412c-d768-9f47-7a47-953a15db5850@linux.intel.com>
+Date:   Tue, 30 Oct 2018 14:30:40 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.0
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-30_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=864 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810300178
+In-Reply-To: <99FC4B6EFCEFD44486C35F4C281DC6732148DC65@ORSMSX110.amr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +int ncsi_reset_dev(struct ncsi_dev *nd)
-> +{
-> +	struct ncsi_dev_priv *ndp =3D TO_NCSI_DEV_PRIV(nd);
-> +	struct ncsi_channel *nc, *active;
-> +	struct ncsi_package *np;
-> +	unsigned long flags;
-> +	bool enabled;
-> +	int state;
-> +
-> +	active =3D NULL;
-> +	NCSI_FOR_EACH_PACKAGE(ndp, np) {
-> +		NCSI_FOR_EACH_CHANNEL(np, nc) {
-> +			spin_lock_irqsave(&nc->lock, flags);
-> +			enabled =3D nc->monitor.enabled;
-> +			state =3D nc->state;
-> +			spin_unlock_irqrestore(&nc->lock, flags);
-> +
-> +			if (enabled)
-> +				ncsi_stop_channel_monitor(nc);
-> +			if (state =3D=3D NCSI_CHANNEL_ACTIVE) {
-> +				active =3D nc;
-> +				break;
+On 10/30/2018 01:57 PM, Schaufler, Casey wrote:
 
-Is the original intention to process the channel one by one?
-If it is the case, there are two loops and we might need to use
-"goto found" instead.
+> 
+> This isn't an LSM hook and hence does not belong in this file.
+> arch_set_security() isn't descriptive, and is in fact a bad choice
+> as task_struct has a field "security". This function has nothing
+> to do with the task->security field, which is what I would expect
+> based on the name.
+> 
 
-> +			}
-> +		}
-> +	}
-> +
+What file will be a logical place for this function?
 
-found: ?
+>> +
+>> +int update_process_security(struct task_struct *task)
+> 
+> Again, this isn't an LSM hook and does not belong in this file.
+> Also again, "security" isn't descriptive in the name.
+> 
 
-> +	if (!active) {
-> +		/* Done */
-> +		spin_lock_irqsave(&ndp->lock, flags);
-> +		ndp->flags &=3D ~NCSI_DEV_RESET;
-> +		spin_unlock_irqrestore(&ndp->lock, flags);
-> +		return ncsi_choose_active_channel(ndp);
-> +	}
-> +
-> +	spin_lock_irqsave(&ndp->lock, flags);
-> +	ndp->flags |=3D NCSI_DEV_RESET;
-> +	ndp->active_channel =3D active;
-> +	ndp->active_package =3D active->package;
-> +	spin_unlock_irqrestore(&ndp->lock, flags);
-> +
-> +	nd->state =3D ncsi_dev_state_suspend;
-> +	schedule_work(&ndp->work);
-> +	return 0;
-> +}
+Thanks.
 
-
-Also similar issue in ncsi_choose_active_channel() function below.
-
-> @@ -916,32 +1045,49 @@ static int ncsi_choose_active_channel(struct ncsi_=
-dev_priv *ndp)
-> =20
->  			ncm =3D &nc->modes[NCSI_MODE_LINK];
->  			if (ncm->data[2] & 0x1) {
-> -				spin_unlock_irqrestore(&nc->lock, flags);
->  				found =3D nc;
-> -				goto out;
-> +				with_link =3D true;
->  			}
-> =20
-> -			spin_unlock_irqrestore(&nc->lock, flags);
-> +			/* If multi_channel is enabled configure all valid
-> +			 * channels whether or not they currently have link
-> +			 * so they will have AENs enabled.
-> +			 */
-> +			if (with_link || np->multi_channel) {
-
-I notice that there is a case that we will misconfigure the interface.
-For example below, multi-channel is not enable for package 1.
-But we enable the channel for ncsi2 below (package 1 channel 0) as that int=
-erface is the first
-channel for that package with link.
-
-cat /sys/kernel/debug/ncsi_protocol/ncsi_device_
-IFIDX IFNAME NAME   PID CID RX TX MP MC WP WC PC CS PS LS RU CR NQ HA
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-  2   eth2   ncsi0  000 000 1  1  1  1  1  1  0  2  1  1  1  1  0  1
-  2   eth2   ncsi1  000 001 1  0  1  1  1  1  0  2  1  1  1  1  0  1
-  2   eth2   ncsi2  001 000 1  0  1  0  1  1  0  2  1  1  1  1  0  1
-  2   eth2   ncsi3  001 001 0  0  1  0  1  1  0  1  0  1  1  1  0  1
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-MP: Multi-mode Package     WP: Whitelist Package
-MC: Multi-mode Channel     WC: Whitelist Channel
-PC: Primary Channel        CS: Channel State IA/A/IV 1/2/3
-PS: Poll Status            LS: Link Status
-RU: Running                CR: Carrier OK
-NQ: Queue Stopped          HA: Hardware Arbitration
-
-I temporally change to the following to avoid that.
-			if ((with_link &&
-			     !np->multi_channel &&
-			     list_empty(&ndp->channel_queue)) || np->multi_channel) {
-
-> +				spin_lock_irqsave(&ndp->lock, flags);
-> +				list_add_tail_rcu(&nc->link,
-> +						  &ndp->channel_queue);
-> +				spin_unlock_irqrestore(&ndp->lock, flags);
-> +
-> +				netdev_dbg(ndp->ndev.dev,
-> +					   "NCSI: Channel %u added to queue (link %s)\n",
-> +					   nc->id,
-> +					   ncm->data[2] & 0x1 ? "up" : "down");
-> +			}
-> +
-> +			spin_unlock_irqrestore(&nc->lock, cflags);
-> +
-> +			if (with_link && !np->multi_channel)
-> +				break;
-
-Similar issue here. As we are using break, so each package will configure o=
-ne active TX.
-
->  		}
-> +		if (with_link && !ndp->multi_package)
-> +			break;
->  	}
-> =20
-> -	if (!found) {
-> +	if (list_empty(&ndp->channel_queue) && found) {
-> +		netdev_info(ndp->ndev.dev,
-> +			    "NCSI: No channel with link found, configuring channel %u\n",
-> +			    found->id);
-> +		spin_lock_irqsave(&ndp->lock, flags);
-> +		list_add_tail_rcu(&found->link, &ndp->channel_queue);
-> +		spin_unlock_irqrestore(&ndp->lock, flags);
-> +	} else if (!found) {
->  		netdev_warn(ndp->ndev.dev,
-> -			    "NCSI: No channel found with link\n");
-> +			    "NCSI: No channel found to configure!\n");
->  		ncsi_report_link(ndp, true);
->  		return -ENODEV;
->  	}
-
-
-Also, for deselect package handler function, do we want to set to inactive =
-here?
-If we just change the state, the cached data still keeps the old value. If =
-the new=20
-ncsi_reset_dev() function is handling one by one, can we skip this part?
-
-static int ncsi_rsp_handler_dp(struct ncsi_request *nr)
-{
-	struct ncsi_rsp_pkt *rsp;
-	struct ncsi_dev_priv *ndp =3D nr->ndp;
-	struct ncsi_package *np;
-	struct ncsi_channel *nc;
-	unsigned long flags;
-
-	/* Find the package */
-	rsp =3D (struct ncsi_rsp_pkt *)skb_network_header(nr->rsp);
-	ncsi_find_package_and_channel(ndp, rsp->rsp.common.channel,
-				      &np, NULL);
-	if (!np)
-		return -ENODEV;
-
-	/* Change state of all channels attached to the package */
-	NCSI_FOR_EACH_CHANNEL(np, nc) {
-		spin_lock_irqsave(&nc->lock, flags);
-		nc->state =3D NCSI_CHANNEL_INACTIVE;
-
-		spin_unlock_irqrestore(&nc->lock, flags);
-	}
-
-	return 0;
-}
-
-
+Tim
