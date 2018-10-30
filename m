@@ -2,348 +2,284 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 270C8C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:45:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CA4AC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:46:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D56F920823
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:45:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D56F920823
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id 413D320831
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:46:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3VvhCdgM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 413D320831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727656AbeJ3TiM (ORCPT
+        id S1727669AbeJ3TjJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 15:38:12 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:12424 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727558AbeJ3TiM (ORCPT
+        Tue, 30 Oct 2018 15:39:09 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:46046 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726692AbeJ3TjJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 15:38:12 -0400
-Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
-  by relmlie3.idc.renesas.com with ESMTP; 30 Oct 2018 19:45:12 +0900
-Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
-        by relmlir3.idc.renesas.com (Postfix) with ESMTP id B20E895EDF;
-        Tue, 30 Oct 2018 19:45:12 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.54,444,1534777200"; 
-   d="scan'208";a="296394891"
-Received: from unknown (HELO vbox.ree.adwin.renesas.com) ([10.226.37.67])
-  by relmlii2.idc.renesas.com with ESMTP; 30 Oct 2018 19:45:10 +0900
-From:   Phil Edworthy <phil.edworthy@renesas.com>
-To:     Marc Zyngier <marc.zyngier@arm.com>,
+        Tue, 30 Oct 2018 15:39:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=yilsHGeLrvWkzS1/U3VUQx0exaT16U5qH+taFg0cJfw=; b=3VvhCdgM6dpEsbVSjcrGYf5AO
+        STGHLdU+2Yz1WHFNDKT3QC6aautp9ONtxjz2I6aL9I/+TwfwmHdYd+PjTajRDkfZk+EwVycXy9PR+
+        VfbhDVw7VgEkXoRLDfI7Bmcscb+e1PiRtSno36vUVgozWZOzsOTFIthdzu7f/2xi6+nN0Fu16UPdA
+        7vnbB1WLUrBBPVubv1TnNPc3pY511oVMSlGgd65vUFxly849CRrX7RVM7F0EPzrQoU9Cg2HOhwsoz
+        MvUocHhEtyvP/eqtBRJ2nYsZXfWIb6XNUWSMdj2UxWK4odk2t1z13f+eUvaX5bZUEFsIMoYQ3pWQ0
+        JXrkXjMGg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gHRX3-00028q-6r; Tue, 30 Oct 2018 10:45:57 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A20042029FA14; Tue, 30 Oct 2018 11:45:54 +0100 (CET)
+Date:   Tue, 30 Oct 2018 11:45:54 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Juri Lelli <juri.lelli@redhat.com>
+Cc:     luca abeni <luca.abeni@santannapisa.it>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v2 2/2] irqchip: Add support for Renesas RZ/N1 GPIO interrupt multiplexer
-Date:   Tue, 30 Oct 2018 10:44:38 +0000
-Message-Id: <20181030104438.27827-3-phil.edworthy@renesas.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181030104438.27827-1-phil.edworthy@renesas.com>
-References: <20181030104438.27827-1-phil.edworthy@renesas.com>
+        Juri Lelli <juri.lelli@gmail.com>,
+        syzbot <syzbot+385468161961cee80c31@syzkaller.appspotmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        LKML <linux-kernel@vger.kernel.org>, mingo@redhat.com,
+        nstange@suse.de, syzkaller-bugs@googlegroups.com, henrik@austad.us,
+        Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>,
+        Claudio Scordino <claudio@evidence.eu.com>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>
+Subject: Re: INFO: rcu detected stall in do_idle
+Message-ID: <20181030104554.GB8177@hirez.programming.kicks-ass.net>
+References: <20181016144045.GF9130@localhost.localdomain>
+ <alpine.DEB.2.21.1810161643540.7787@nanos.tec.linutronix.de>
+ <20181016153608.GH9130@localhost.localdomain>
+ <20181018082838.GA21611@localhost.localdomain>
+ <20181018122331.50ed3212@luca64>
+ <20181018104713.GC21611@localhost.localdomain>
+ <20181018130811.61337932@luca64>
+ <20181019113942.GH3121@hirez.programming.kicks-ass.net>
+ <20181019225005.61707c64@nowhere>
+ <20181024120335.GE29272@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181024120335.GE29272@localhost.localdomain>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On RZ/N1 devices, there are 3 Synopsys DesignWare GPIO blocks each
-configured to have 32 interrupt outputs, so we have a total of 96 GPIO
-interrupts. All of these are passed to the GPIO IRQ Muxer, which selects
-8 of the GPIO interrupts to pass onto the GIC. The interrupt signals
-aren't latched, so there is nothing to do in this driver when an interrupt
-is received, other than tell the corresponding GPIO block.
+On Wed, Oct 24, 2018 at 02:03:35PM +0200, Juri Lelli wrote:
+> Pain points:
+> 
+>  1. Granularity of enforcement (at each tick) is huge compared with
+>     the task runtime. This makes starting the replenishment timer,
+>     when runtime is depleted, always to fail (because old deadline
+>     is way in the past). So, the task is fully replenished and put
+>     back to run.
+> 
+>     - Luca's proposal should help here, since the deadline is postponed
+>       at throttling time, and replenishment timer set to that (and it
+>       should be in the future)
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
----
-v2:
- - Use interrupt-map to allow the GPIO controller info to be specified
-   as part of the irq.
- - Renamed struct and funcs from 'girq' to a more comprehenisble 'irqmux'.
----
- drivers/irqchip/Kconfig        |  10 ++
- drivers/irqchip/Makefile       |   1 +
- drivers/irqchip/rzn1-irq-mux.c | 235 +++++++++++++++++++++++++++++++++
- 3 files changed, 246 insertions(+)
- create mode 100644 drivers/irqchip/rzn1-irq-mux.c
+ACK
 
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 96451b581452..3a60a8af60dd 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -204,6 +204,16 @@ config RENESAS_IRQC
- 	select GENERIC_IRQ_CHIP
- 	select IRQ_DOMAIN
+>  1.1 Even if we fix 1. in a configuration like this, the task would
+>      still be able to run for ~10ms (worst case) and potentially starve
+>      other tasks. It doesn't seem a too big interval maybe, but there
+>      might be other very short activities that might miss an occasion
+>      to run "quickly".
+> 
+>      - Might be fixed by imposing (via sysctl) reasonable defaults for
+>        minimum runtime (w.r.t. HZ, like HZ/2) and maximum for period
+>        (as also a very small bandwidth task can have a big runtime if
+>        period is big as well)
+
+ACK
+
+>  (1.2) When runtime becomes very negative (because delta_exec was big)
+>        we seem to spend lot of time inside the replenishment loop.
+> 
+>        - Not sure it's such a big problem, might need more profiling.
+>          Feeling is that once the other points will be addressed this
+> 	 won't matter anymore
+
+Right, once the sysctl limits are in place, we should not have such
+excessive cases anymore.
+
+>  2. This is related to perf_event_open syscall reproducer does before
+>     becoming DEADLINE and entering the busy loop. Enabling of perf
+>     swevents generates lot of hrtimers load that happens in the
+>     reproducer task context. Now, DEADLINE uses rq_clock() for setting
+>     deadlines, but rq_clock_task() for doing runtime enforcement.
+>     In a situation like this it seems that the amount of irq pressure
+>     becomes pretty big (I'm seeing this on kvm, real hw should maybe do
+>     better, pain point remains I guess), so rq_clock() and
+>     rq_clock_task() might become more a more skewed w.r.t. each other.
+>     Since rq_clock() is only used when setting absolute deadlines for
+>     the first time (or when resetting them in certain cases), after a
+>     bit the replenishment code will start to see postponed deadlines
+>     always in the past w.r.t. rq_clock(). And this brings us back to the
+>     fact that the task is never stopped, since it can't keep up with
+>     rq_clock().
+> 
+>     - Not sure yet how we want to address this [1]. We could use
+>       rq_clock() everywhere, but tasks might be penalized by irq
+>       pressure (theoretically this would mandate that irqs are
+>       explicitly accounted for I guess). I tried to use the skew between
+>       the two clocks to "fix" deadlines, but that puts us at risks of
+>       de-synchronizing userspace and kernel views of deadlines.
+
+Hurm.. right. We knew of this issue back when we did it.
+I suppose now it hurts and we need to figure something out.
+
+By virtue of being a real-time class, we do indeed need to have deadline
+on the wall-clock. But if we then don't account runtime on that same
+clock, but on a potentially slower clock, we get the problem that we can
+run longer than our period/deadline, which is what we're running into
+here I suppose.
+
+And yes, at some point RT workloads need to be aware of the jitter
+injected by things like IRQs and such. But I believe the rationale was
+that for soft real-time workloads this current semantic was 'easier'
+because we get to ignore IRQ overhead for workload estimation etc.
+
+What we could maybe do is track runtime in both rq_clock_task() and
+rq_clock() and detect where the rq_clock based one exceeds the period
+and then push out the deadline (and add runtime).
+
+Maybe something along such lines; does that make sense?
+
+---
+ include/linux/sched.h   |  3 +++
+ kernel/sched/deadline.c | 53 ++++++++++++++++++++++++++++++++-----------------
+ 2 files changed, 38 insertions(+), 18 deletions(-)
+
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 8f8a5418b627..6aec81cb3d2e 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -522,6 +522,9 @@ struct sched_dl_entity {
+ 	u64				deadline;	/* Absolute deadline for this instance	*/
+ 	unsigned int			flags;		/* Specifying the scheduler behaviour	*/
  
-+config RENESAS_RZN1_IRQ_MUX
-+	bool "Renesas RZ/N1 GPIO IRQ multiplexer support"
-+	depends on ARCH_RZN1
-+	select IRQ_DOMAIN
-+	select IRQ_DOMAIN_HIERARCHY
-+	help
-+	  Say yes here to add support for the GPIO IRQ multiplexer embedded
-+	  in Renesas RZ/N1 SoC devices. The GPIO IRQ Muxer selects which of
-+	  the interrupts coming from the GPIO controllers are used.
++	u64				wallstamp;
++	s64				walltime;
 +
- config ST_IRQCHIP
- 	bool
- 	select REGMAP
-diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index b822199445ff..b090f84dd42e 100644
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@ -45,6 +45,7 @@ obj-$(CONFIG_SIRF_IRQ)			+= irq-sirfsoc.o
- obj-$(CONFIG_JCORE_AIC)			+= irq-jcore-aic.o
- obj-$(CONFIG_RENESAS_INTC_IRQPIN)	+= irq-renesas-intc-irqpin.o
- obj-$(CONFIG_RENESAS_IRQC)		+= irq-renesas-irqc.o
-+obj-$(CONFIG_RENESAS_RZN1_IRQ_MUX)	+= rzn1-irq-mux.o
- obj-$(CONFIG_VERSATILE_FPGA_IRQ)	+= irq-versatile-fpga.o
- obj-$(CONFIG_ARCH_NSPIRE)		+= irq-zevio.o
- obj-$(CONFIG_ARCH_VT8500)		+= irq-vt8500.o
-diff --git a/drivers/irqchip/rzn1-irq-mux.c b/drivers/irqchip/rzn1-irq-mux.c
-new file mode 100644
-index 000000000000..767ce67e34d2
---- /dev/null
-+++ b/drivers/irqchip/rzn1-irq-mux.c
-@@ -0,0 +1,235 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * RZ/N1 GPIO Interrupt Multiplexer
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ * On RZ/N1 devices, there are 3 Synopsys DesignWare GPIO blocks each configured
-+ * to have 32 interrupt outputs, so we have a total of 96 GPIO interrupts.
-+ * All of these are passed to the GPIO IRQ Muxer, which selects 8 of the GPIO
-+ * interrupts to pass onto the GIC.
-+ */
-+
-+#include <linux/bitops.h>
-+#include <linux/interrupt.h>
-+#include <linux/irq.h>
-+#include <linux/irqchip/chained_irq.h>
-+#include <linux/irqdomain.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of_irq.h>
-+#include <linux/of_platform.h>
-+
-+#define GPIO_IRQ_SPEC_SIZE	3
-+#define MAX_NR_GPIO_CONTROLLERS	3
-+#define MAX_NR_GPIO_IRQ		32
-+#define MAX_NR_INPUT_IRQS	(MAX_NR_GPIO_CONTROLLERS * MAX_NR_GPIO_IRQ)
-+#define MAX_NR_OUTPUT_IRQS	8
-+
-+struct irqmux_priv;
-+struct irqmux_one {
-+	unsigned int mapped_irq;
-+	unsigned int input_irq_nr;
-+	struct irqmux_priv *priv;
-+};
-+
-+struct irqmux_priv {
-+	struct device *dev;
-+	struct irq_chip irq_chip;
-+	struct irq_domain *irq_domain;
-+	unsigned int nr_irqs;
-+	struct irqmux_one irq[MAX_NR_OUTPUT_IRQS];
-+};
-+
-+static void irqmux_handler(struct irq_desc *desc)
-+{
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	struct irqmux_one *girq = irq_desc_get_handler_data(desc);
-+	struct irqmux_priv *priv = girq->priv;
-+	unsigned int irq;
-+
-+	chained_irq_enter(chip, desc);
-+
-+	irq = irq_find_mapping(priv->irq_domain, girq->input_irq_nr);
-+	generic_handle_irq(irq);
-+
-+	chained_irq_exit(chip, desc);
-+}
-+
-+static int irqmux_domain_map(struct irq_domain *h, unsigned int irq,
-+			     irq_hw_number_t hwirq)
-+{
-+	struct irqmux_priv *priv = h->host_data;
-+
-+	irq_set_chip_data(irq, h->host_data);
-+	irq_set_chip_and_handler(irq, &priv->irq_chip, handle_simple_irq);
-+
-+	return 0;
-+}
-+
-+static const struct irq_domain_ops irqmux_domain_ops = {
-+	.map	= irqmux_domain_map,
-+};
-+
-+static int irqmux_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+	struct resource *res;
-+	u32 __iomem *regs;
-+	struct irqmux_priv *priv;
-+	u32 int_specs[MAX_NR_OUTPUT_IRQS][GPIO_IRQ_SPEC_SIZE];
-+	DECLARE_BITMAP(irqs_in_used, MAX_NR_INPUT_IRQS);
-+	unsigned int irqs_out_used = 0;
-+	unsigned int i;
-+	int nr_irqs;
-+	int ret;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->dev = dev;
-+	platform_set_drvdata(pdev, priv);
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	regs = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(regs))
-+		return PTR_ERR(regs);
-+
-+	nr_irqs = of_irq_count(np);
-+	if (nr_irqs < 0)
-+		return nr_irqs;
-+
-+	if (nr_irqs > MAX_NR_OUTPUT_IRQS) {
-+		dev_err(dev, "too many output interrupts\n");
-+		return -ENOENT;
+ 	/*
+ 	 * Some bool flags:
+ 	 *
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 91e4202b0634..633c8f36c700 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -683,16 +683,7 @@ static void replenish_dl_entity(struct sched_dl_entity *dl_se,
+ 	if (dl_se->dl_yielded && dl_se->runtime > 0)
+ 		dl_se->runtime = 0;
+ 
+-	/*
+-	 * We keep moving the deadline away until we get some
+-	 * available runtime for the entity. This ensures correct
+-	 * handling of situations where the runtime overrun is
+-	 * arbitrary large.
+-	 */
+-	while (dl_se->runtime <= 0) {
+-		dl_se->deadline += pi_se->dl_period;
+-		dl_se->runtime += pi_se->dl_runtime;
+-	}
++	/* XXX what do we do with pi_se */
+ 
+ 	/*
+ 	 * At this point, the deadline really should be "in
+@@ -1148,9 +1139,9 @@ static void update_curr_dl(struct rq *rq)
+ {
+ 	struct task_struct *curr = rq->curr;
+ 	struct sched_dl_entity *dl_se = &curr->dl;
+-	u64 delta_exec, scaled_delta_exec;
++	u64 delta_exec, scaled_delta_exec, delta_wall;
+ 	int cpu = cpu_of(rq);
+-	u64 now;
++	u64 now, wall;
+ 
+ 	if (!dl_task(curr) || !on_dl_rq(dl_se))
+ 		return;
+@@ -1171,6 +1162,17 @@ static void update_curr_dl(struct rq *rq)
+ 		return;
+ 	}
+ 
++	wall = rq_clock();
++	delta_wall = wall - dl_se->wallstamp;
++	if (delta_wall > 0) {
++		dl_se->walltime += delta_wall;
++		dl_se->wallstamp = wall;
 +	}
 +
-+	priv->nr_irqs = nr_irqs;
++	/* check if rq_clock_task() has been too slow */
++	if (unlikely(dl_se->walltime > dl_se->period))
++		goto throttle;
 +
-+	/* Get the interrupt specifers */
-+	if (of_property_read_u32_array(dev->of_node, "interrupts",
-+				       (u32 *)int_specs,
-+				       priv->nr_irqs * GPIO_IRQ_SPEC_SIZE)) {
-+		dev_err(dev, "cannot get interrupt specifiers\n");
-+		return -ENOENT;
-+	}
+ 	schedstat_set(curr->se.statistics.exec_max,
+ 		      max(curr->se.statistics.exec_max, delta_exec));
+ 
+@@ -1204,14 +1206,27 @@ static void update_curr_dl(struct rq *rq)
+ 
+ 	dl_se->runtime -= scaled_delta_exec;
+ 
+-throttle:
+ 	if (dl_runtime_exceeded(dl_se) || dl_se->dl_yielded) {
++throttle:
+ 		dl_se->dl_throttled = 1;
+ 
+-		/* If requested, inform the user about runtime overruns. */
+-		if (dl_runtime_exceeded(dl_se) &&
+-		    (dl_se->flags & SCHED_FLAG_DL_OVERRUN))
+-			dl_se->dl_overrun = 1;
++		if (dl_runtime_exceeded(dl_se)) {
++			/* If requested, inform the user about runtime overruns. */
++			if (dl_se->flags & SCHED_FLAG_DL_OVERRUN)
++				dl_se->dl_overrun = 1;
 +
-+	bitmap_zero(irqs_in_used, MAX_NR_INPUT_IRQS);
-+
-+	/* Check the interrupt specifiers */
-+	for (i = 0; i < priv->nr_irqs; i++) {
-+		u32 *int_spec = int_specs[i];
-+		u32 input_irq = int_spec[1] * MAX_NR_GPIO_IRQ + int_spec[2];
-+
-+		dev_info(dev, "irq %u=gpio%ua:%u\n", int_spec[0], int_spec[1],
-+			 int_spec[2]);
-+
-+		if (int_spec[0] >= MAX_NR_OUTPUT_IRQS ||
-+		    int_spec[1] >= MAX_NR_GPIO_CONTROLLERS ||
-+		    int_spec[2] >= MAX_NR_GPIO_IRQ) {
-+			dev_err(dev, "invalid interrupt args\n");
-+			return -ENOENT;
 +		}
 +
-+		if (irqs_out_used & BIT(int_spec[0]) ||
-+		    test_bit(input_irq, irqs_in_used)) {
-+			dev_err(dev, "irq %d already used\n", i);
-+			return -ENOENT;
++		/*
++		 * We keep moving the deadline away until we get some available
++		 * runtime for the entity. This ensures correct handling of
++		 * situations where the runtime overrun is arbitrary large.
++		 */
++		while (dl_se->runtime <= 0 || dl_se->walltime > dl_se->period) {
++			dl_se->deadline += dl_se->dl_period;
++			dl_se->runtime  += dl_se->dl_runtime;
++			dl_se->walltime -= dl_se->dl_period;
 +		}
-+
-+		irqs_out_used |= BIT(int_spec[0]);
-+		set_bit(input_irq, irqs_in_used);
-+	}
-+
-+	/* Create IRQ domain for the interrupts coming from the GPIO blocks */
-+	priv->irq_chip.name = dev_name(dev);
-+	priv->irq_domain = irq_domain_add_linear(np, MAX_NR_INPUT_IRQS,
-+						 &irqmux_domain_ops, priv);
-+	if (!priv->irq_domain)
-+		return -ENOMEM;
-+
-+	/* Setup the interrupts */
-+	for (i = 0; i < priv->nr_irqs; i++) {
-+		struct of_phandle_args ofirq;
-+		u32 *int_spec = int_specs[i];
-+		u32 input_irq = int_spec[1] * MAX_NR_GPIO_IRQ + int_spec[2];
-+		struct irqmux_one *irq = &priv->irq[i];
-+
-+		if (of_irq_parse_one(dev->of_node, i, &ofirq)) {
-+			ret = -ENOENT;
-+			goto err;
-+		}
-+
-+		priv->irq[i].mapped_irq = irq_create_of_mapping(&ofirq);
-+		if (!priv->irq[i].mapped_irq) {
-+			dev_err(dev, "cannot get interrupt\n");
-+			ret = -ENOENT;
-+			goto err;
-+		}
-+
-+		irq->priv = priv;
-+		irq->input_irq_nr = input_irq;
-+
-+		irq_set_chained_handler_and_data(irq->mapped_irq,
-+						 irqmux_handler, irq);
-+
-+		/* Set up the hardware to pass the interrupt through */
-+		writel(irq->input_irq_nr, &regs[int_spec[0]]);
-+	}
-+
-+	dev_info(dev, "probed, %d gpio interrupts\n", priv->nr_irqs);
-+
-+	return 0;
-+
-+err:
-+	while (i--) {
-+		struct irqmux_one *irq = &priv->irq[i];
-+
-+		irq_set_chained_handler_and_data(irq->mapped_irq, NULL, NULL);
-+		irq_dispose_mapping(irq->mapped_irq);
-+	}
-+	irq_domain_remove(priv->irq_domain);
-+
-+	return 0;
-+}
-+
-+static int irqmux_remove(struct platform_device *pdev)
-+{
-+	struct irqmux_priv *priv = platform_get_drvdata(pdev);
-+	unsigned int i;
-+
-+	for (i = 0; i < priv->nr_irqs; i++) {
-+		struct irqmux_one *irq = &priv->irq[i];
-+
-+		irq_set_chained_handler_and_data(irq->mapped_irq, NULL, NULL);
-+		irq_dispose_mapping(irq->mapped_irq);
-+	}
-+	irq_domain_remove(priv->irq_domain);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id irqmux_match[] = {
-+	{ .compatible = "renesas,rzn1-gpioirqmux", },
-+	{ /* sentinel */ },
-+};
-+
-+MODULE_DEVICE_TABLE(of, irqmux_match);
-+
-+static struct platform_driver irqmux_driver = {
-+	.driver = {
-+		.name = "gpio_irq_mux",
-+		.owner = THIS_MODULE,
-+		.of_match_table = irqmux_match,
-+	},
-+	.probe = irqmux_probe,
-+	.remove = irqmux_remove,
-+};
-+
-+module_platform_driver(irqmux_driver);
-+
-+MODULE_DESCRIPTION("Renesas RZ/N1 GPIO IRQ Multiplexer Driver");
-+MODULE_AUTHOR("Phil Edworthy <phil.edworthy@renesas.com>");
-+MODULE_LICENSE("GPL v2");
--- 
-2.17.1
-
+ 
+ 		__dequeue_task_dl(rq, curr, 0);
+ 		if (unlikely(dl_se->dl_boosted || !start_dl_timer(curr)))
+@@ -1751,9 +1766,10 @@ pick_next_task_dl(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ 
+ 	p = dl_task_of(dl_se);
+ 	p->se.exec_start = rq_clock_task(rq);
++	dl_se->wallstamp = rq_clock(rq);
+ 
+ 	/* Running task will never be pushed. */
+-       dequeue_pushable_dl_task(rq, p);
++	dequeue_pushable_dl_task(rq, p);
+ 
+ 	if (hrtick_enabled(rq))
+ 		start_hrtick_dl(rq, p);
+@@ -1811,6 +1827,7 @@ static void set_curr_task_dl(struct rq *rq)
+ 	struct task_struct *p = rq->curr;
+ 
+ 	p->se.exec_start = rq_clock_task(rq);
++	p->dl_se.wallstamp = rq_clock(rq);
+ 
+ 	/* You can't push away the running task */
+ 	dequeue_pushable_dl_task(rq, p);
