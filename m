@@ -2,59 +2,95 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7214C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:24:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD672C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:24:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A005220838
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:24:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A005220838
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 74E5120838
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:24:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74E5120838
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727843AbeJ3WRa (ORCPT
+        id S1728140AbeJ3WRe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 18:17:30 -0400
-Received: from verein.lst.de ([213.95.11.211]:60245 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726985AbeJ3WR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 18:17:29 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 3A3CF68B02; Tue, 30 Oct 2018 14:24:02 +0100 (CET)
-Date:   Tue, 30 Oct 2018 14:24:02 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Alistair Popple <alistair@popple.id.au>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        mpe@ellerman.id.au
-Subject: Re: [PATCH] powerpc/npu-dma: Remove NPU DMA ops
-Message-ID: <20181030132401.GC30783@lst.de>
-References: <20181030110203.27257-1-alistair@popple.id.au> <20181030125841.GB30158@lst.de> <30359cc433e97739d93e13717b2897e462895097.camel@kernel.crashing.org>
+        Tue, 30 Oct 2018 18:17:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:54576 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726135AbeJ3WRe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 18:17:34 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D36CEACA9;
+        Tue, 30 Oct 2018 13:24:06 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id A4AE3DAB9E; Tue, 30 Oct 2018 14:23:56 +0100 (CET)
+From:   David Sterba <dsterba@suse.com>
+To:     torvalds@linux-foundation.org
+Cc:     David Sterba <dsterba@suse.com>, clm@fb.com,
+        linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Btrfs updates for 4.20, part 2
+Date:   Tue, 30 Oct 2018 14:23:52 +0100
+Message-Id: <cover.1540904580.git.dsterba@suse.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <30359cc433e97739d93e13717b2897e462895097.camel@kernel.crashing.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 31, 2018 at 12:09:29AM +1100, Benjamin Herrenschmidt wrote:
-> On Tue, 2018-10-30 at 13:58 +0100, Christoph Hellwig wrote:
-> > Please take my patch instead.  We have a kernel polcity to not keep
-> > dead code around, and everyone including Linus and the attending IBMers
-> > confirmed this.
-> 
-> Let's call a cat a cat ... ;-)
-> 
-> It's not *dead* code. It's code that is used by an out of tree driver
-> (which also happen not to be open source).
+Hi,
 
-Which clearly makes it a derived work of the kernel if it uses an
-interface just create for it, and thus even more important to remove
-it to not get anyone into legal trouble.
+this part contains a few minor updates and fixes that were under testing
+or arrived shortly after the merge window freeze, mostly stable material.
+
+Please pull, thanks.
+
+----------------------------------------------------------------
+The following changes since commit d9352794dad9f28535439d85a815978878c141ab:
+
+  btrfs: switch return_bigger to bool in find_ref_head (2018-10-15 17:23:41 +0200)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-4.20-part2-tag
+
+for you to fetch changes up to 9084cb6a24bf5838a665af92ded1af8363f9e563:
+
+  Btrfs: fix use-after-free when dumping free space (2018-10-22 20:31:22 +0200)
+
+----------------------------------------------------------------
+Filipe Manana (5):
+      Btrfs: fix null pointer dereference on compressed write path error
+      Btrfs: fix assertion on fsync of regular file when using no-holes feature
+      Btrfs: fix deadlock when writing out free space caches
+      Btrfs: fix use-after-free during inode eviction
+      Btrfs: fix use-after-free when dumping free space
+
+Josef Bacik (8):
+      MAINTAINERS: update my email address for btrfs
+      btrfs: reset max_extent_size properly
+      btrfs: set max_extent_size properly
+      btrfs: don't use ctl->free_space for max_extent_size
+      btrfs: only free reserved extent if we didn't insert it
+      btrfs: fix insert_reserved error handling
+      btrfs: don't run delayed_iputs in commit
+      btrfs: move the dio_sem higher up the callchain
+
+Lu Fengqi (1):
+      btrfs: delayed-ref: extract find_first_ref_head from find_ref_head
+
+ MAINTAINERS                 |  2 +-
+ fs/btrfs/ctree.c            | 17 +++++++++++++++
+ fs/btrfs/delayed-ref.c      | 50 ++++++++++++++++++++++++---------------------
+ fs/btrfs/extent-tree.c      | 37 +++++++++++++++------------------
+ fs/btrfs/file.c             | 12 +++++++++++
+ fs/btrfs/free-space-cache.c | 32 ++++++++++++++++++++---------
+ fs/btrfs/inode.c            | 15 ++++++++++++--
+ fs/btrfs/transaction.c      |  9 --------
+ fs/btrfs/tree-log.c         |  5 ++---
+ 9 files changed, 111 insertions(+), 68 deletions(-)
