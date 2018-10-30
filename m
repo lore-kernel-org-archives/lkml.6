@@ -2,223 +2,100 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6CD1C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:36:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F9CC6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:37:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C9132080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:36:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="HgyCJeGT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C9132080A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id 68D652080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:37:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68D652080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726752AbeJ3S2l (ORCPT
+        id S1726884AbeJ3SaZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 14:28:41 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:33065 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726222AbeJ3S2k (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 14:28:40 -0400
-Received: by mail-ed1-f68.google.com with SMTP id f1-v6so9860481edi.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 02:35:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=XDAs3SF98HH12IOYZbN/UWo734FIEEUqVXIC267NxFA=;
-        b=HgyCJeGTtjlz+QxSgBLH8KqMos7QpzFNXmFpR7sS2qQ1dG+sMVGN/xyjlFqLp1tnOL
-         wvgHiJzZKm91HwsJzr+jtVszUCM19bVgBGXGC7QKOfHv/578c1LSln78kQX5bjKOr5DG
-         sLwIzo4Xqn/xYxCMb7vihFmDdQCl/KRCQt8w0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=XDAs3SF98HH12IOYZbN/UWo734FIEEUqVXIC267NxFA=;
-        b=Ab3ZYOq5zC/KFpIxnwdomJF4iViykemW8MVYw/rMDr0UX/o6hyLxQs1APBaharY1HK
-         5t0Wv0oMZ3JCvNW2L2QLCEwtYbKr03Wl6W6c2HYWLiO9xNkaLWEdm1SLf4lkaDUzz2NI
-         DSu5ZsT214yWnTc5U35rW7VHzb4wooR2hT5LkKLF8QXLvYP7gxgtQGFfla2yBryS/526
-         gZN9kMVWsc3JYswAdMEitvvBC3ZjpnJ6ibA0HkgHJPTdosjwj7fK9GyewnmOGypYWSSe
-         jsBeD0vQBFNmcAPObPJU+re0fkuohBqM8nLbUN72wIWfWkfVYHsaF8796iBUvhZx+mG0
-         1mEQ==
-X-Gm-Message-State: AGRZ1gIOxc8jXquhH7j8rRj1ltjmm1GdsmFuUsq3NWqFtyL5GKlA2mDc
-        /y8XEBvOimR1kkYv6WJ+HJ8LEg==
-X-Google-Smtp-Source: AJdET5d/1OCY7uHyWaEUV71W9TbUBtCD8ymLHuZIEF8zemcq9AUyD77pXpXk+z2ETF0N72NSud4bfA==
-X-Received: by 2002:a17:906:7048:: with SMTP id r8-v6mr12682101ejj.131.1540892157072;
-        Tue, 30 Oct 2018 02:35:57 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id d18-v6sm3748798edq.53.2018.10.30.02.35.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Oct 2018 02:35:56 -0700 (PDT)
-Date:   Tue, 30 Oct 2018 10:35:54 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DRM DRIVER FOR BOCHS VIRTUAL GPU" 
-        <virtualization@lists.linux-foundation.org>,
-        David Airlie <airlied@redhat.com>
-Subject: Re: [PATCH v4] drm/bochs: add edid support.
-Message-ID: <20181030093554.GP21967@phenom.ffwll.local>
-Mail-Followup-To: Gerd Hoffmann <kraxel@redhat.com>,
-        dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DRM DRIVER FOR BOCHS VIRTUAL GPU" <virtualization@lists.linux-foundation.org>,
-        David Airlie <airlied@redhat.com>
-References: <20181029205048.13200-1-kraxel@redhat.com>
+        Tue, 30 Oct 2018 14:30:25 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:54668 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726529AbeJ3SaZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 14:30:25 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 83A063001971;
+        Tue, 30 Oct 2018 09:37:43 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-20.pek2.redhat.com [10.72.8.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id DB08619745;
+        Tue, 30 Oct 2018 09:37:38 +0000 (UTC)
+Date:   Tue, 30 Oct 2018 17:37:34 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Balbir Singh <sblbir@amzn.com>
+Cc:     axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Add cmd_flags to print_req_error
+Message-ID: <20181030093708.GC13582@ming.t460p>
+References: <20181030024015.1092-1-sblbir@amzn.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181029205048.13200-1-kraxel@redhat.com>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181030024015.1092-1-sblbir@amzn.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 30 Oct 2018 09:37:43 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 09:50:48PM +0100, Gerd Hoffmann wrote:
-> Recent qemu (latest master branch, upcoming 3.1 release) got support
-> for EDID data.  This patch adds guest driver support.
+On Tue, Oct 30, 2018 at 02:40:15AM +0000, Balbir Singh wrote:
+> I ran into a bug where after hibernation due to incompatible
+> backends, the block driver returned BLK_STS_NOTSUPP, with the
+> current message it's hard to find out what the command flags
+> were. Adding req->cmd_flags help make the problem easier to
+> diagnose.
 > 
-> EDID support in qemu is not (yet) enabled by default, so please use
-> 'qemu -device VGA,edid=on' for testing.
-> 
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-
-I liked v3 more, but Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch> on
-either wone.
--Daniel
-
+> Signed-off-by: Balbir Singh <sblbir@amzn.com>
+> Reviewed-by: Eduardo Valentin <eduval@amazon.com>
 > ---
->  drivers/gpu/drm/bochs/bochs.h     |  2 ++
->  drivers/gpu/drm/bochs/bochs_hw.c  | 30 ++++++++++++++++++++++++++++++
->  drivers/gpu/drm/bochs/bochs_kms.c | 20 +++++++++++++++++---
->  3 files changed, 49 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/bochs/bochs.h b/drivers/gpu/drm/bochs/bochs.h
-> index e7a69077e4..577a8b917c 100644
-> --- a/drivers/gpu/drm/bochs/bochs.h
-> +++ b/drivers/gpu/drm/bochs/bochs.h
-> @@ -66,6 +66,7 @@ struct bochs_device {
->  	u16 yres_virtual;
->  	u32 stride;
->  	u32 bpp;
-> +	struct edid *edid;
+> Testing: Compile tested at my end
+> 
+> Changelog
+>   - convert %llx to %x and remove casting to unsigned long long
+> 
+>  block/blk-core.c | 9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/block/blk-core.c b/block/blk-core.c
+> index cdfabc5646da..0fd6104bb0d2 100644
+> --- a/block/blk-core.c
+> +++ b/block/blk-core.c
+> @@ -256,10 +256,11 @@ static void print_req_error(struct request *req, blk_status_t status)
+>  	if (WARN_ON_ONCE(idx >= ARRAY_SIZE(blk_errors)))
+>  		return;
 >  
->  	/* drm */
->  	struct drm_device  *dev;
-> @@ -126,6 +127,7 @@ void bochs_hw_setmode(struct bochs_device *bochs,
->  		      const struct drm_format_info *format);
->  void bochs_hw_setbase(struct bochs_device *bochs,
->  		      int x, int y, u64 addr);
-> +int bochs_hw_load_edid(struct bochs_device *bochs);
->  
->  /* bochs_mm.c */
->  int bochs_mm_init(struct bochs_device *bochs);
-> diff --git a/drivers/gpu/drm/bochs/bochs_hw.c b/drivers/gpu/drm/bochs/bochs_hw.c
-> index cacff73a64..c90a0d492f 100644
-> --- a/drivers/gpu/drm/bochs/bochs_hw.c
-> +++ b/drivers/gpu/drm/bochs/bochs_hw.c
-> @@ -69,6 +69,35 @@ static void bochs_hw_set_little_endian(struct bochs_device *bochs)
->  #define bochs_hw_set_native_endian(_b) bochs_hw_set_little_endian(_b)
->  #endif
->  
-> +static int bochs_get_edid_block(void *data, u8 *buf,
-> +				unsigned int block, size_t len)
-> +{
-> +	struct bochs_device *bochs = data;
-> +	size_t i, start = block * EDID_LENGTH;
-> +
-> +	if (start + len > 0x400 /* vga register offset */)
-> +		return -1;
-> +
-> +	for (i = 0; i < len; i++) {
-> +		buf[i] = readb(bochs->mmio + start + i);
-> +	}
-> +	return 0;
-> +}
-> +
-> +int bochs_hw_load_edid(struct bochs_device *bochs)
-> +{
-> +	if (!bochs->mmio)
-> +		return -1;
-> +
-> +	kfree(bochs->edid);
-> +	bochs->edid = drm_do_get_edid(&bochs->connector,
-> +				      bochs_get_edid_block, bochs);
-> +	if (bochs->edid == NULL)
-> +		return -1;
-> +
-> +	return 0;
-> +}
-> +
->  int bochs_hw_init(struct drm_device *dev)
->  {
->  	struct bochs_device *bochs = dev->dev_private;
-> @@ -164,6 +193,7 @@ void bochs_hw_fini(struct drm_device *dev)
->  	if (bochs->fb_map)
->  		iounmap(bochs->fb_map);
->  	pci_release_regions(dev->pdev);
-> +	kfree(bochs->edid);
+> -	printk_ratelimited(KERN_ERR "%s: %s error, dev %s, sector %llu\n",
+> -			   __func__, blk_errors[idx].name, req->rq_disk ?
+> -			   req->rq_disk->disk_name : "?",
+> -			   (unsigned long long)blk_rq_pos(req));
+> +	printk_ratelimited(KERN_ERR "%s: %s error, dev %s, sector %llu flags %x\n",
+> +				__func__, blk_errors[idx].name,
+> +				req->rq_disk ?  req->rq_disk->disk_name : "?",
+> +				(unsigned long long)blk_rq_pos(req),
+> +				req->cmd_flags);
 >  }
 >  
->  void bochs_hw_setmode(struct bochs_device *bochs,
-> diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
-> index 9bc5b438ae..f87c284dd9 100644
-> --- a/drivers/gpu/drm/bochs/bochs_kms.c
-> +++ b/drivers/gpu/drm/bochs/bochs_kms.c
-> @@ -213,10 +213,17 @@ static void bochs_encoder_init(struct drm_device *dev)
->  
->  static int bochs_connector_get_modes(struct drm_connector *connector)
->  {
-> -	int count;
-> +	struct bochs_device *bochs =
-> +		container_of(connector, struct bochs_device, connector);
-> +	int count = 0;
->  
-> -	count = drm_add_modes_noedid(connector, 8192, 8192);
-> -	drm_set_preferred_mode(connector, defx, defy);
-> +	if (bochs->edid)
-> +		count = drm_add_edid_modes(connector, bochs->edid);
-> +
-> +	if (!count) {
-> +		count = drm_add_modes_noedid(connector, 8192, 8192);
-> +		drm_set_preferred_mode(connector, defx, defy);
-> +	}
->  	return count;
->  }
->  
-> @@ -271,6 +278,13 @@ static void bochs_connector_init(struct drm_device *dev)
->  	drm_connector_helper_add(connector,
->  				 &bochs_connector_connector_helper_funcs);
->  	drm_connector_register(connector);
-> +
-> +	bochs_hw_load_edid(bochs);
-> +	if (bochs->edid) {
-> +		DRM_INFO("Found EDID data blob.\n");
-> +		drm_connector_attach_edid_property(connector);
-> +		drm_connector_update_edid_property(connector, bochs->edid);
-> +	}
->  }
->  
->  
+>  static void req_bio_endio(struct request *rq, struct bio *bio,
 > -- 
-> 2.9.3
+> 2.16.2
 > 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+
+Looks fine:
+
+Reviewed-by: Ming Lei <ming.lei@redhat.com>
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Ming
