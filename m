@@ -4,87 +4,99 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96C33C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1B4BC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:28:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EE6420838
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:28:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86AFE20880
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:28:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="tpp3HyWA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EE6420838
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UBNxgtzK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86AFE20880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728661AbeJ3WVw (ORCPT
+        id S1728673AbeJ3WWA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 18:21:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52796 "EHLO mail.kernel.org"
+        Tue, 30 Oct 2018 18:22:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726925AbeJ3WVv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 18:21:51 -0400
+        id S1727759AbeJ3WV7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 18:21:59 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 852672080A;
-        Tue, 30 Oct 2018 13:28:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86AA62080A;
+        Tue, 30 Oct 2018 13:28:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540906103;
-        bh=lbfWnvG0PZQINMwNXiPqwwMqYKCfACTmKlLlAaKUAp4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tpp3HyWAIGUkY7ljLg3TUObxGkN2n67OpkrYrq/8ECPZ94cqDLorgUZj4ll0mi//g
-         2gWy2/eaMiydX8T5rn3N1RvTJGPMlvYN95eB/jvjlv4PaKJUVdS6u1tpqjx/ak9cjp
-         ykHJJgvYVrAol9vMZaJMTRtWzOvy/wcySZ24tM/o=
+        s=default; t=1540906111;
+        bh=9oW7HV5TWB+xI9PP1euB86qqbz06Xv+geUhczDXLZ5Q=;
+        h=From:To:Cc:Subject:Date:From;
+        b=UBNxgtzK74f6cuK6IMgSPhsb08Y7bmY5ecIGW1JUSTqIpDwpk9RD3h4rG6V0Aolo8
+         cHOJ86ewMOnpzC+2rPbjAPVFC7NZBEIphl/3tSPq2neSSKwcj/N3ONeJBk+AQNwnKF
+         Tjfi2FWOQ3xweevli4ErPfYcNhLFnBip1bdvGXDM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
+Cc:     Eric Dumazet <edumazet@google.com>,
+        John Sperbeck <jsperbeck@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 33/33] i2c: rcar: cleanup DMA for all kinds of failure
-Date:   Tue, 30 Oct 2018 09:26:57 -0400
-Message-Id: <20181030132657.217970-33-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 01/19] bpf: do not blindly change rlimit in reuseport net selftest
+Date:   Tue, 30 Oct 2018 09:28:06 -0400
+Message-Id: <20181030132824.218056-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181030132657.217970-1-sashal@kernel.org>
-References: <20181030132657.217970-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 31d86033a0749a0463ea654130b2de5c163154f1 ]
+[ Upstream commit 262f9d811c7608f1e74258ceecfe1fa213bdf912 ]
 
-DMA needs to be cleaned up not only on timeout, but on all errors where
-it has been setup before.
+If the current process has unlimited RLIMIT_MEMLOCK,
+we should should leave it as is.
 
-Fixes: 73e8b0528346 ("i2c: rcar: add DMA support")
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Fixes: 941ff6f11c02 ("bpf: fix rlimit in reuseport net selftest")
+Signed-off-by: John Sperbeck <jsperbeck@google.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Acked-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-rcar.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ tools/testing/selftests/net/reuseport_bpf.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index 3c1c817f6968..e152716bf07f 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -812,8 +812,12 @@ static int rcar_i2c_master_xfer(struct i2c_adapter *adap,
+diff --git a/tools/testing/selftests/net/reuseport_bpf.c b/tools/testing/selftests/net/reuseport_bpf.c
+index cad14cd0ea92..b5277106df1f 100644
+--- a/tools/testing/selftests/net/reuseport_bpf.c
++++ b/tools/testing/selftests/net/reuseport_bpf.c
+@@ -437,14 +437,19 @@ void enable_fastopen(void)
+ 	}
+ }
  
- 	time_left = wait_event_timeout(priv->wait, priv->flags & ID_DONE,
- 				     num * adap->timeout);
--	if (!time_left) {
+-static struct rlimit rlim_old, rlim_new;
++static struct rlimit rlim_old;
+ 
+ static  __attribute__((constructor)) void main_ctor(void)
+ {
+ 	getrlimit(RLIMIT_MEMLOCK, &rlim_old);
+-	rlim_new.rlim_cur = rlim_old.rlim_cur + (1UL << 20);
+-	rlim_new.rlim_max = rlim_old.rlim_max + (1UL << 20);
+-	setrlimit(RLIMIT_MEMLOCK, &rlim_new);
 +
-+	/* cleanup DMA if it couldn't complete properly due to an error */
-+	if (priv->dma_direction != DMA_NONE)
- 		rcar_i2c_cleanup_dma(priv);
++	if (rlim_old.rlim_cur != RLIM_INFINITY) {
++		struct rlimit rlim_new;
 +
-+	if (!time_left) {
- 		rcar_i2c_init(priv);
- 		ret = -ETIMEDOUT;
- 	} else if (priv->flags & ID_NACK) {
++		rlim_new.rlim_cur = rlim_old.rlim_cur + (1UL << 20);
++		rlim_new.rlim_max = rlim_old.rlim_max + (1UL << 20);
++		setrlimit(RLIMIT_MEMLOCK, &rlim_new);
++	}
+ }
+ 
+ static __attribute__((destructor)) void main_dtor(void)
 -- 
 2.17.1
 
