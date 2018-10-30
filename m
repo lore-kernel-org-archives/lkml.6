@@ -2,246 +2,184 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BBB1ECDE44
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:48:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEDB6C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:48:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02D9A2075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:48:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02D9A2075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 61CE32075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:48:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dtbkx8yc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61CE32075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727317AbeJ3Xlz (ORCPT
+        id S1727381AbeJ3XmJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 19:41:55 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40063 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727008AbeJ3Xlz (ORCPT
+        Tue, 30 Oct 2018 19:42:09 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:39210 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726683AbeJ3XmJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 19:41:55 -0400
-Received: by mail-wm1-f68.google.com with SMTP id b203-v6so11635662wme.5
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 07:48:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MJaGbOdp3+rEMlsEEHHjHKrXU3Zr97J4XEMPjDbKUN0=;
-        b=fNRolmCwFzx/D7w7viCPo+37sI9Xw60TTsSpEMdZoMKLv6BBgeM22DoAzy8Qb1dylQ
-         tNmFjnZw8k/y4eMGnZK2kMpnnpu+uF6J66mnfCq2CSLzyisVinAE1DQcVUo//3N67SRc
-         443lo79kqwcbIQCj5TRzTTjvrbW4eVAMsH9tDgKzhYWLZuplVsLGWf3hgIF7NJDpwJYy
-         /KtUzjnn0IesQ0zWZxBw7VZ6BQBVKz6OHyRoTpPPo1sxU4qrd+EwpRFyBsqwMdZwZza6
-         FE7a4PuX3jwSttKAkJAXY4FeE6VqrrRV7RO8nGM1Tc0c958IdaOkvVeGYDp7NErXhBSc
-         IyDA==
-X-Gm-Message-State: AGRZ1gJFP9JUS1xjlCWPFXaemgARdv3kv17xuEy9GU7LOq57pgb47tyF
-        +irLhmF04+ee7v0CTJh73/fEkg==
-X-Google-Smtp-Source: AJdET5f7kl17EEMjqKJ4aCGKsuy8Qatli8a6E8xfR8KbWzVxlU7CXUY1GHsCUCUVmQWM+BevG6ctXQ==
-X-Received: by 2002:a1c:e456:: with SMTP id b83-v6mr2011577wmh.143.1540910887845;
-        Tue, 30 Oct 2018 07:48:07 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id m192-v6sm5525847wmb.29.2018.10.30.07.48.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 07:48:07 -0700 (PDT)
-Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
-To:     Dean Wallace <duffydack73@gmail.com>
-Cc:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Johannes Stezenbach <js@sig21.net>,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mogens Jensen <mogens-jensen@protonmail.com>
-References: <20181025232517.ywnw54qibemosjws@picard>
- <154083512089.98144.9141070901932719147@swboyd.mtv.corp.google.com>
- <CAHp75VfnN5tF1Z9+CDDhKFNG5QfCRcGOZeAkpf-5BfCEx16gvg@mail.gmail.com>
- <CAHp75VctdBE-GM60udJawBCXdmoOqZn4N=kFWz5GLHzjPG2iQQ@mail.gmail.com>
- <20181029190819.2ivlx73n6y6sx4vk@picard>
- <ffc4bcc9-62c3-8940-85d6-d0fd01f3a1b8@linux.intel.com>
- <c8fb730a-c160-41b4-dad0-8ed8594e5687@redhat.com>
- <20181030143836.feo7zcxiestylxoo@picard>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <d21fe935-5732-7f8c-2c26-3fc3969b4c1c@redhat.com>
-Date:   Tue, 30 Oct 2018 15:48:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 30 Oct 2018 19:42:09 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9UEi2cg103727;
+        Tue, 30 Oct 2018 14:48:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=smDSUCCYSUuQaN0jdFIUuESIt9jx/3qRvYL37f3U5dw=;
+ b=dtbkx8ycwRHweYind0afBX3j0+SqrSm6lIUU4IntuOpXNf/MHq1ukML841suKvxTmW4q
+ svdqAWR9q+Y9nJfnaopOuPl5XYUfFE/9xDFaTEXaPrv1fhLxaCcSvJxUjBaKZC09j609
+ ppt0vDyFZZQBH3wvj5L+Ay8G5bb7xAXEJQlNA0aMKjcC5DZ6Cu2jRwcxgrsD2Qb9iDxp
+ 4VzHPSd0Zpq+22hJ6vF/OjgoofEvh4Ip5Rgt5nh9KxlABEi8MNVqpriYqul7mcBk978l
+ h7pJvOzeGWcrkHo46qQw8bxGFB68eJARTILUyAlbGgh0/jysVDEeCNQv/hQ7H/4DKAPO fw== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2ncgnqvs7g-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Oct 2018 14:48:09 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9UEm8KX013152
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 30 Oct 2018 14:48:08 GMT
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9UEm8XT022459;
+        Tue, 30 Oct 2018 14:48:08 GMT
+Received: from [10.211.47.88] (/10.211.47.88)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 30 Oct 2018 07:48:07 -0700
+Subject: Re: [Xen-devel] [PATCH] xen-swiotlb: exchange memory with Xen only
+ when pages are contiguous
+To:     Paul Durrant <Paul.Durrant@citrix.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc:     John Sobecki <john.sobecki@oracle.com>,
+        "DONGLI.ZHANG" <dongli.zhang@oracle.com>,
+        "linux-kernel@vger.kernel.org\"" <linux-kernel@vger.kernel.org>,
+        "konrad@kernel.org" <konrad@kernel.org>,
+        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+        Christoph Helwig <hch@lst.de>
+References: <bb6d87b4-c371-c6c0-8c48-bc95df018ad1@oracle.com>
+ <20181024130246.GA22616@localhost.localdomain>
+ <83900cf4-690c-9725-d022-d427fdeb4f7d@oracle.com>
+ <581cb7ea-3112-791d-918d-9bb887e4744f@oracle.com>
+ <24a62522-1629-5d0b-398e-6d2c1a0b97f7@oracle.com>
+ <922914c9-22db-c5d1-33da-d07691ebd7d7@oracle.com>
+ <a47fabe8-53d1-47b8-0efc-f9f1e5b4898a@oracle.com>
+ <45f5ffe8-3f48-4485-53f0-5a056be69b0c@oracle.com>
+ <5b64850f-9142-0360-fe4e-9e7bc74d2368@oracle.com>
+ <3e65208c-cb11-d918-00eb-012a97e56fec@oracle.com>
+ <57e5593233c64dc0a36c7d4c750a1ed4@AMSPEX02CL03.citrite.net>
+ <cd2efe58-4efb-cf5b-db6e-0bc7838bd9c9@oracle.com>
+ <097f1f6f16f7415aa3a52a7c4f5e52dc@AMSPEX02CL03.citrite.net>
+From:   Joe Jin <joe.jin@oracle.com>
+Message-ID: <a7c9265b-1218-264b-b67d-5d80e44fb7d4@oracle.com>
+Date:   Tue, 30 Oct 2018 07:48:07 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181030143836.feo7zcxiestylxoo@picard>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <097f1f6f16f7415aa3a52a7c4f5e52dc@AMSPEX02CL03.citrite.net>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9061 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1810300128
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 30-10-18 15:38, Dean Wallace wrote:
-> On 30-10-18, Hans de Goede wrote:
->> Hi Dean,
+On 10/30/18 7:21 AM, Paul Durrant wrote:
+>> -----Original Message-----
+>> From: Xen-devel [mailto:xen-devel-bounces@lists.xenproject.org] On Behalf
+>> Of Joe Jin
+>> Sent: 30 October 2018 14:13
+>> To: Paul Durrant <Paul.Durrant@citrix.com>; Boris Ostrovsky
+>> <boris.ostrovsky@oracle.com>; Konrad Rzeszutek Wilk
+>> <konrad.wilk@oracle.com>
+>> Cc: John Sobecki <john.sobecki@oracle.com>; DONGLI.ZHANG
+>> <dongli.zhang@oracle.com>; linux-kernel@vger.kernel.org" <linux-
+>> kernel@vger.kernel.org>; konrad@kernel.org; xen-
+>> devel@lists.xenproject.org; Christoph Helwig <hch@lst.de>
+>> Subject: Re: [Xen-devel] [PATCH] xen-swiotlb: exchange memory with Xen
+>> only when pages are contiguous
 >>
->> Attached are 2 different attempts at fixing this.
+>> On 10/30/18 1:59 AM, Paul Durrant wrote:
+>>>> On 10/25/18 11:56 AM, Joe Jin wrote:
+>>>>> I just discussed this patch with Boris in private, his opinions(Boris,
+>>>>> please correct me if any misunderstood) are:
+>>>>>
+>>>>> 1. With/without the check, both are incorrect, he thought we need to
+>>>>>    prevented unalloc'd free at here.
+>>>>> 2. On freeing, if upper layer already checked the memory was DMA-able,
+>>>>>    the checking at here does not make sense, we can remove all checks.
+>>>>> 3. xen_create_contiguous_region() and xen_destroy_contiguous_region()
+>>>>>    to come in pairs.
+>>>> I tried to added radix_tree to track allocating/freeing and I found
+>> some
+>>>> memory only allocated but was not freed, I guess it caused by driver
+>> used
+>>>> dma_pool, that means if lots of such requests, the list will consume
+>> lot
+>>>> of memory for it. Will continue to work on it, if anyone have good idea
+>>>> for it please let me know, I'd like to try it.
+>>>>
+>>> FWIW, in my Xen PV-IOMMU test patches, I have also tried keeping a list
+>> of ranges mapped for DMA and have discovered apparent issues with some
+>> drivers, particularly tg3, that seem to free mappings that have not been
+>> allocated (or possibly double-free). I've never fully tracked down the
+>> issue.
 >>
->> When trying these patches do not forget to remove the revert of the
->> "Stop-marking-clocks-as-CLK_IS_CRITICAL" commit.
+>> Call trace of first called xen_swiotlb_alloc_coherent(The pages never
+>> backed to Xen):
 >>
->> Please first try the 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch
->> patch I expect that one to do the trick indicating that the Swanky model
->> uses a different pmc clk then which is normally used for the codec clock.
+>> [   23.436333]  [<ffffffff814040c9>]
+>> xen_swiotlb_alloc_coherent+0x169/0x510
+>> [   23.436623]  [<ffffffff811eb38d>] ? kmem_cache_alloc_trace+0x1ed/0x280
+>> [   23.436900]  [<ffffffff811d72af>] dma_pool_alloc+0x11f/0x260
+>> [   23.437190]  [<ffffffff81537442>] ehci_qh_alloc+0x52/0x120
+>> [   23.437481]  [<ffffffff8153b80f>] ehci_setup+0x2bf/0x8e0
+>> [   23.437760]  [<ffffffff81476d06>] ? __dev_printk+0x46/0xa0
+>> [   23.438042]  [<ffffffff814770b3>] ? _dev_info+0x53/0x60
+>> [   23.438327]  [<ffffffff8153f620>] ehci_pci_setup+0xc0/0x5f0
+>> [   23.438615]  [<ffffffff81519fcd>] usb_add_hcd+0x25d/0xaf0
+>> [   23.438901]  [<ffffffff8152c9a6>] usb_hcd_pci_probe+0x406/0x520
+>> [   23.439177]  [<ffffffff8153f486>] ehci_pci_probe+0x36/0x40
+>> [   23.439469]  [<ffffffff8136e99a>] local_pci_probe+0x4a/0xb0
+>> [   23.439752]  [<ffffffff8136fba5>] ? pci_match_device+0xe5/0x110
+>> [   23.440027]  [<ffffffff8136fce1>] pci_device_probe+0xd1/0x120
+>> [   23.440320]  [<ffffffff8147b13c>] driver_probe_device+0x20c/0x4d0
+>> [   23.440599]  [<ffffffff8147b4eb>] __driver_attach+0x9b/0xa0
+>> [   23.440879]  [<ffffffff8147b450>] ? __device_attach+0x50/0x50
 >>
->> If that patch does not fix things, please give the other patch a try.
+>> Above was EHCI used DMA pool to allocate DMA memory.
 >>
->> Regards,
+>> During my testing, ~1000 entries was not freed, if more PCI devices
+>> use DMA pool, the tree/list will have more entries, looks it's not a
+>> good idea that use a list to track it.
 >>
->> Hans
->>
->>
->>
->> On 29-10-18 23:03, Pierre-Louis Bossart wrote:
->>>
->>> On 10/29/18 2:08 PM, Dean Wallace wrote:
->>>> On 29-10-18, Andy Shevchenko wrote:
->>>>> On Mon, Oct 29, 2018 at 7:52 PM Andy Shevchenko
->>>>> <andy.shevchenko@gmail.com> wrote:
->>>>>> Cc: Pierre as well.
->>>>>>
->>>>>> On Mon, Oct 29, 2018 at 7:48 PM Stephen Boyd <sboyd@kernel.org> wrote:
->>>>>>> Quoting Dean Wallace (2018-10-25 16:25:17)
->>>>>>>> I have found a regression in 4.18.15 that means I lose sound on my old
->>>>>>>> Toshiba Chromebook 2 (Swanky).  My system details are:-
->>>>>>>>
->>>>>>>> Toshiba Chromebook (Swanky)
->>>>>>>> MrChromebox UEFI coreboot
->>>>>>>> Arch Linux running latest alsa/pulseaudio
->>>>>>>>
->>>>>>>> Upgraded kernel from 4.18.14 to 4.18.15 and lost all sound output.  By
->>>>>>>> output I mean, the card is still detected, the module loaded, all apps
->>>>>>>> showing sound is being playing, but no actual audible sound comes
->>>>>>>> through.  Upgraded to 4.18.16 same issue.
->>>>>>>>
->>>>>>>> Dug around and found Upstream commit 648e921888ad96ea3dc922739e96716ad3225d7f
->>>>>>>> clk: x86: Stop marking clocks as CLK_IS_CRITICAL
->>>>>>>> "This commit removes the CLK_IS_CRITICAL marking, fixing Cherry Trail
->>>>>>>> devices not being able to reach S0i3 greatly decreasing their battery
->>>>>>>> drain when suspended."
->>>>>>>>
->>>>>>>> I reverted it and compiled 4.18.16 and have sound back again.  Could
->>>>>>>> this be looked into, with possibility of fix.
->>>>>>>>
->>>>>>> Thanks for the bug report. I'm adding some people involved in the commit
->>>>>>> you mention is causing audio regressions. The best plan is to probably
->>>>>>> revert the commit from the 4.18 linux stable tree. Or there may be
->>>>>>> another patch missing that would be useful to make this backported patch
->>>>>>> work. Hopefully Hans or Andy knows.
->>>>>> Hans has been investigating S0ix issues on Baytrail and Cherrytrail machines.
->>>>>> I have a feeling that the problem can be fixed by properly handling
->>>>>> clock in ASoC driver(s). Perhaps Hans and Pierre can figure this out
->>>>>> better than me.
->>>>> Looking to sound/soc/intel/boards/cht_bsw_rt5672.c I see no
->>>>> suspend-resume hooks. Perhaps, adding them like in the commit
->>>>> ac8bd9e13be2 ("r8169: Disable clk during suspend / resume") would
->>>>> help.
->>>
->>> I missed this change while i was away. It's indeed the expectation that the audio mclk is handled by the firmware,
->>
->> I believe that the statement "It's indeed the expectation that the
->> audio mclk is handled by the firmware" is not correct for BYT/CHT
->> platforms (and the commit causing the regression only affects BYT/CHT
->> platforms). Various machine drivers under sound/soc/intel/boards have
->> code to deal with the mclk themselves, like this:
->>
->>          drv->mclk = devm_clk_get(&pdev->dev, "pmc_plt_clk_3");
->> ...
->>
->>          if (SND_SOC_DAPM_EVENT_ON(event)) {
->>                  ret = clk_prepare_enable(ctx->mclk);
->> 		...
->>          } else {
->>                  clk_disable_unprepare(ctx->mclk);
->>          }
->>
->> The above code is from sound/soc/intel/boards/cht_bsw_max98090_ti.c
->> which is the machine driver used on the machines for which problems
->> are now being reported.
->>
->> And my commit introducing the problem is in essence a revert of:
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=d31fd43c0f9a41e2678a1e78c0f22f0384c6edd3
->>
->> Which is from 2017-07-14 and the ASoC code for BYT/CHT platforms is
->> much older then that.
->>
->> Also I asked Carlo why he wrote that patch and it was to fix a problem
->> with ethernet on some laptops.
->>
->>> not sure I understand why removing the CLK_IS_CRITICAL was necessary or what it has to do with S0ix.
->>
->> It is necessary, because if it is set the clock never gets disabled and
->> on x86 platforms using suspend2idle we are responsible for *all* the hardware
->> power-management as OS. If we do not disable the clocks then we can only
->> reach S0i1 instead of S0i3 when suspended leading to increased battery
->> drain during suspend.
->>
->> Also note that this patch is only causing problems on CHT + max98090 codec
->> using machines. I've tested it on many other BYT/CHT machines myself and
->> we've not had any other bug reports related to this.
->>
->> So this clearly points to a problem with the clock management in the
->> cht_bsw_max98090_ti.c machine driver.
->>
->> I've some ideas how to fix this and I will prepare some patches to test.
->>
->> Regards,
->>
->> Hans
 > 
-> Excellent work Hans.  Compiled 4.19 with
-> 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch, sound
-> works as before.
+> Yes, it seems pools can hang onto a serious number of allocations so a list is probably not wise.
+
+I agree with you.
+
+> What I was pointing out, though, is that it appears you can't even track mappings (as opposed to allocations) with a list.
+
+Right.
+
+
+> either because drivers apparently try to unmap things they have not mapped.
+
+If this happened, should be fixed by driver :)
+
+Thanks,
+Joe
 > 
-> for i in /sys/kernel/debug/clk/pmc_plt_clk_?; do echo -n "$i: "; cat $i/clk_flags; echo; done
-> /sys/kernel/debug/clk/pmc_plt_clk_0:
-> /sys/kernel/debug/clk/pmc_plt_clk_1:
-> /sys/kernel/debug/clk/pmc_plt_clk_2:
-> /sys/kernel/debug/clk/pmc_plt_clk_3:
-> /sys/kernel/debug/clk/pmc_plt_clk_4:
-> /sys/kernel/debug/clk/pmc_plt_clk_5:
-
-Ok, so as I expected the Swanky is using pmc_plt_clk_0
-as mclk instead of pmc_plt_clk_3. Now the question
-becomes is this true for all the designs using the
-max98090 codec?
-
-Mogens, can you give the 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch
-a try on your Clapper model, using the SND_SOC_INTEL_CHT_BSW_MAX98090_TI_MACH
-kernel option together with the asoundrc from Dean?
-
-I have the feeling that your Clapper is also using the
-pmc_plt_clk_0.
-
-Pierre-Louis, as maintainer/reviewer of all the drivers under
-sound/soc/intel/boards, how would you like to proceed with this?
-
-I see 2 possible ways forwards:
-
-1) Unconditionally use pmc_plt_clk_0 as mclk (as my test patch does)
-in the cht_bsw_max98090_ti.c machine driver
-
-2) Use DMI quirks for the Swansky (and probably also the Clapper) to
-use pmc_plt_clk_0 as mclk there while keeping pmc_plt_clk_3 as the
-default.
-
-If you (Pierre-Louis) can let me know which solution you prepare then
-I can prepare and submit a patch to fix this.
-
-Regards,
-
-Hans
+>   Paul
+> 
