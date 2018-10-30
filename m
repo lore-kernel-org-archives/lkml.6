@@ -6,48 +6,43 @@ X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 404CDC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:27:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A452CC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:27:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8C5520838
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:27:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B9692080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:27:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0OOTubVN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8C5520838
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G2ncj3JB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B9692080A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728332AbeJ3WVF (ORCPT
+        id S1728345AbeJ3WVF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 30 Oct 2018 18:21:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51984 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:51996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727650AbeJ3WVE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 18:21:04 -0400
+        id S1728315AbeJ3WVF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 18:21:05 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBF6A20827;
-        Tue, 30 Oct 2018 13:27:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 938F420838;
+        Tue, 30 Oct 2018 13:27:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540906056;
-        bh=VeN+nm3FwSedrAqTdQeibDANMxxRpBWrEwbz/dIoXqc=;
+        s=default; t=1540906057;
+        bh=9U+CfokTfA2cWR3s1dM2bxvF4kFv5yu812nXV+mHAf8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0OOTubVNEP2hk5wF1wOXOOYvRsXo6tTbNH3Icjz85AOUKnMBa21M3An8zTpLYZIMJ
-         44/dyRKgFHt0I2X9IbvHoc1dTCAVxjQwEcQ40ITADOVdj3IPgjEl1id6rf8+QhA2zn
-         /Os/J5uxg1s6YQGCE3twFDVyPuX6wVvM8KfdoSCs=
+        b=G2ncj3JB8meZBw8VwEJVUj7p3mvSjbs1+EoKEh1fuUiH6bX4B8VrzAT85FdOWqELA
+         /o5wFnN7bxcp/5zWLYXZ6d57uOFkib/dBf22mSaOp2oc1R4e6gMJ59z32pUq5ktDDV
+         xa+m9NBK3Kz/VD3ndnLPNameZfmgC90xotnrRgfI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jiri Olsa <jolsa@redhat.com>, Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+Cc:     "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 11/33] perf vendor events intel: Fix wrong filter_band* values for uncore events
-Date:   Tue, 30 Oct 2018 09:26:35 -0400
-Message-Id: <20181030132657.217970-11-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 12/33] sparc: Fix single-pcr perf event counter management.
+Date:   Tue, 30 Oct 2018 09:26:36 -0400
+Message-Id: <20181030132657.217970-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181030132657.217970-1-sashal@kernel.org>
 References: <20181030132657.217970-1-sashal@kernel.org>
@@ -56,217 +51,93 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@redhat.com>
+From: "David S. Miller" <davem@davemloft.net>
 
-[ Upstream commit 94aafb74cee0002e2f2eb6dc5376f54d5951ab4d ]
+[ Upstream commit cfdc3170d214046b9509183fe9b9544dc644d40b ]
 
-Michael reported that he could not stat following event:
+It is important to clear the hw->state value for non-stopped events
+when they are added into the PMU.  Otherwise when the event is
+scheduled out, we won't read the counter because HES_UPTODATE is still
+set.  This breaks 'perf stat' and similar use cases, causing all the
+events to show zero.
 
-  $ perf stat -e unc_p_freq_ge_1200mhz_cycles -a -- ls
-  event syntax error: '..e_1200mhz_cycles'
-                                    \___ value too big for format, maximum is 255
-  Run 'perf list' for a list of valid events
+This worked for multi-pcr because we make explicit sparc_pmu_start()
+calls in calculate_multiple_pcrs().  calculate_single_pcr() doesn't do
+this because the idea there is to accumulate all of the counter
+settings into the single pcr value.  So we have to add explicit
+hw->state handling there.
 
-The event is unwrapped into:
+Like x86, we use the PERF_HES_ARCH bit to track truly stopped events
+so that we don't accidently start them on a reload.
 
-  uncore_pcu/event=0xb,filter_band0=1200/
+Related to all of this, sparc_pmu_start() is missing a userpage update
+so add it.
 
-where filter_band0 format says it's one byte only:
-
-  # cat uncore_pcu/format/filter_band0
-  config1:0-7
-
-while JSON files specifies bigger number:
-
-  "Filter": "filter_band0=1200",
-
-all the filter_band* formats show 1 byte width:
-
-  # cat uncore_pcu/format/filter_band1
-  config1:8-15
-  # cat uncore_pcu/format/filter_band2
-  config1:16-23
-  # cat uncore_pcu/format/filter_band3
-  config1:24-31
-
-The reason of the issue is that filter_band* values are supposed to be
-in 100Mhz units.. it's stated in the JSON help for the events, like:
-
-  filter_band3=XXX, with XXX in 100Mhz units
-
-This patch divides the filter_band* values by 100, plus there's couple
-of changes that actually change the number completely, like:
-
-  -        "Filter": "edge=1,filter_band2=4000",
-  +        "Filter": "edge=1,filter_band2=30",
-
-Reported-by: Michael Petlan <mpetlan@redhat.com>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Acked-by: Andi Kleen <ak@linux.intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20181010080339.GB15790@krava
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../arch/x86/ivytown/uncore-power.json           | 16 ++++++++--------
- .../arch/x86/jaketown/uncore-power.json          | 16 ++++++++--------
- 2 files changed, 16 insertions(+), 16 deletions(-)
+ arch/sparc/kernel/perf_event.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/pmu-events/arch/x86/ivytown/uncore-power.json b/tools/perf/pmu-events/arch/x86/ivytown/uncore-power.json
-index d40498f2cb1e..635c09fda1d9 100644
---- a/tools/perf/pmu-events/arch/x86/ivytown/uncore-power.json
-+++ b/tools/perf/pmu-events/arch/x86/ivytown/uncore-power.json
-@@ -188,7 +188,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xb",
-         "EventName": "UNC_P_FREQ_GE_1200MHZ_CYCLES",
--        "Filter": "filter_band0=1200",
-+        "Filter": "filter_band0=12",
-         "MetricExpr": "(UNC_P_FREQ_GE_1200MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_1200mhz_cycles %",
-         "PerPkg": "1",
-@@ -199,7 +199,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xc",
-         "EventName": "UNC_P_FREQ_GE_2000MHZ_CYCLES",
--        "Filter": "filter_band1=2000",
-+        "Filter": "filter_band1=20",
-         "MetricExpr": "(UNC_P_FREQ_GE_2000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_2000mhz_cycles %",
-         "PerPkg": "1",
-@@ -210,7 +210,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xd",
-         "EventName": "UNC_P_FREQ_GE_3000MHZ_CYCLES",
--        "Filter": "filter_band2=3000",
-+        "Filter": "filter_band2=30",
-         "MetricExpr": "(UNC_P_FREQ_GE_3000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_3000mhz_cycles %",
-         "PerPkg": "1",
-@@ -221,7 +221,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xe",
-         "EventName": "UNC_P_FREQ_GE_4000MHZ_CYCLES",
--        "Filter": "filter_band3=4000",
-+        "Filter": "filter_band3=40",
-         "MetricExpr": "(UNC_P_FREQ_GE_4000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_4000mhz_cycles %",
-         "PerPkg": "1",
-@@ -232,7 +232,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xb",
-         "EventName": "UNC_P_FREQ_GE_1200MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band0=1200",
-+        "Filter": "edge=1,filter_band0=12",
-         "MetricExpr": "(UNC_P_FREQ_GE_1200MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_1200mhz_cycles %",
-         "PerPkg": "1",
-@@ -243,7 +243,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xc",
-         "EventName": "UNC_P_FREQ_GE_2000MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band1=2000",
-+        "Filter": "edge=1,filter_band1=20",
-         "MetricExpr": "(UNC_P_FREQ_GE_2000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_2000mhz_cycles %",
-         "PerPkg": "1",
-@@ -254,7 +254,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xd",
-         "EventName": "UNC_P_FREQ_GE_3000MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band2=4000",
-+        "Filter": "edge=1,filter_band2=30",
-         "MetricExpr": "(UNC_P_FREQ_GE_3000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_3000mhz_cycles %",
-         "PerPkg": "1",
-@@ -265,7 +265,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xe",
-         "EventName": "UNC_P_FREQ_GE_4000MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band3=4000",
-+        "Filter": "edge=1,filter_band3=40",
-         "MetricExpr": "(UNC_P_FREQ_GE_4000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_4000mhz_cycles %",
-         "PerPkg": "1",
-diff --git a/tools/perf/pmu-events/arch/x86/jaketown/uncore-power.json b/tools/perf/pmu-events/arch/x86/jaketown/uncore-power.json
-index 16034bfd06dd..8755693d86c6 100644
---- a/tools/perf/pmu-events/arch/x86/jaketown/uncore-power.json
-+++ b/tools/perf/pmu-events/arch/x86/jaketown/uncore-power.json
-@@ -187,7 +187,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xb",
-         "EventName": "UNC_P_FREQ_GE_1200MHZ_CYCLES",
--        "Filter": "filter_band0=1200",
-+        "Filter": "filter_band0=12",
-         "MetricExpr": "(UNC_P_FREQ_GE_1200MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_1200mhz_cycles %",
-         "PerPkg": "1",
-@@ -198,7 +198,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xc",
-         "EventName": "UNC_P_FREQ_GE_2000MHZ_CYCLES",
--        "Filter": "filter_band1=2000",
-+        "Filter": "filter_band1=20",
-         "MetricExpr": "(UNC_P_FREQ_GE_2000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_2000mhz_cycles %",
-         "PerPkg": "1",
-@@ -209,7 +209,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xd",
-         "EventName": "UNC_P_FREQ_GE_3000MHZ_CYCLES",
--        "Filter": "filter_band2=3000",
-+        "Filter": "filter_band2=30",
-         "MetricExpr": "(UNC_P_FREQ_GE_3000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_3000mhz_cycles %",
-         "PerPkg": "1",
-@@ -220,7 +220,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xe",
-         "EventName": "UNC_P_FREQ_GE_4000MHZ_CYCLES",
--        "Filter": "filter_band3=4000",
-+        "Filter": "filter_band3=40",
-         "MetricExpr": "(UNC_P_FREQ_GE_4000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_4000mhz_cycles %",
-         "PerPkg": "1",
-@@ -231,7 +231,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xb",
-         "EventName": "UNC_P_FREQ_GE_1200MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band0=1200",
-+        "Filter": "edge=1,filter_band0=12",
-         "MetricExpr": "(UNC_P_FREQ_GE_1200MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_1200mhz_cycles %",
-         "PerPkg": "1",
-@@ -242,7 +242,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xc",
-         "EventName": "UNC_P_FREQ_GE_2000MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band1=2000",
-+        "Filter": "edge=1,filter_band1=20",
-         "MetricExpr": "(UNC_P_FREQ_GE_2000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_2000mhz_cycles %",
-         "PerPkg": "1",
-@@ -253,7 +253,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xd",
-         "EventName": "UNC_P_FREQ_GE_3000MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band2=4000",
-+        "Filter": "edge=1,filter_band2=30",
-         "MetricExpr": "(UNC_P_FREQ_GE_3000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_3000mhz_cycles %",
-         "PerPkg": "1",
-@@ -264,7 +264,7 @@
-         "Counter": "0,1,2,3",
-         "EventCode": "0xe",
-         "EventName": "UNC_P_FREQ_GE_4000MHZ_TRANSITIONS",
--        "Filter": "edge=1,filter_band3=4000",
-+        "Filter": "edge=1,filter_band3=40",
-         "MetricExpr": "(UNC_P_FREQ_GE_4000MHZ_CYCLES / UNC_P_CLOCKTICKS) * 100.",
-         "MetricName": "freq_ge_4000mhz_cycles %",
-         "PerPkg": "1",
+diff --git a/arch/sparc/kernel/perf_event.c b/arch/sparc/kernel/perf_event.c
+index d3149baaa33c..a4cc26bd89a2 100644
+--- a/arch/sparc/kernel/perf_event.c
++++ b/arch/sparc/kernel/perf_event.c
+@@ -927,6 +927,8 @@ static void read_in_all_counters(struct cpu_hw_events *cpuc)
+ 			sparc_perf_event_update(cp, &cp->hw,
+ 						cpuc->current_idx[i]);
+ 			cpuc->current_idx[i] = PIC_NO_INDEX;
++			if (cp->hw.state & PERF_HES_STOPPED)
++				cp->hw.state |= PERF_HES_ARCH;
+ 		}
+ 	}
+ }
+@@ -959,10 +961,12 @@ static void calculate_single_pcr(struct cpu_hw_events *cpuc)
+ 
+ 		enc = perf_event_get_enc(cpuc->events[i]);
+ 		cpuc->pcr[0] &= ~mask_for_index(idx);
+-		if (hwc->state & PERF_HES_STOPPED)
++		if (hwc->state & PERF_HES_ARCH) {
+ 			cpuc->pcr[0] |= nop_for_index(idx);
+-		else
++		} else {
+ 			cpuc->pcr[0] |= event_encoding(enc, idx);
++			hwc->state = 0;
++		}
+ 	}
+ out:
+ 	cpuc->pcr[0] |= cpuc->event[0]->hw.config_base;
+@@ -988,6 +992,9 @@ static void calculate_multiple_pcrs(struct cpu_hw_events *cpuc)
+ 
+ 		cpuc->current_idx[i] = idx;
+ 
++		if (cp->hw.state & PERF_HES_ARCH)
++			continue;
++
+ 		sparc_pmu_start(cp, PERF_EF_RELOAD);
+ 	}
+ out:
+@@ -1079,6 +1086,8 @@ static void sparc_pmu_start(struct perf_event *event, int flags)
+ 	event->hw.state = 0;
+ 
+ 	sparc_pmu_enable_event(cpuc, &event->hw, idx);
++
++	perf_event_update_userpage(event);
+ }
+ 
+ static void sparc_pmu_stop(struct perf_event *event, int flags)
+@@ -1371,9 +1380,9 @@ static int sparc_pmu_add(struct perf_event *event, int ef_flags)
+ 	cpuc->events[n0] = event->hw.event_base;
+ 	cpuc->current_idx[n0] = PIC_NO_INDEX;
+ 
+-	event->hw.state = PERF_HES_UPTODATE;
++	event->hw.state = PERF_HES_UPTODATE | PERF_HES_STOPPED;
+ 	if (!(ef_flags & PERF_EF_START))
+-		event->hw.state |= PERF_HES_STOPPED;
++		event->hw.state |= PERF_HES_ARCH;
+ 
+ 	/*
+ 	 * If group events scheduling transaction was started,
 -- 
 2.17.1
 
