@@ -2,93 +2,85 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFF17C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:27:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F786C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:27:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7489620831
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:27:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7489620831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2F17120827
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:27:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F17120827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727502AbeJ3SUM (ORCPT
+        id S1727524AbeJ3SUQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 14:20:12 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39946 "EHLO mx1.redhat.com"
+        Tue, 30 Oct 2018 14:20:16 -0400
+Received: from mga11.intel.com ([192.55.52.93]:40858 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726925AbeJ3SUL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 14:20:11 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7056F7F6CE;
-        Tue, 30 Oct 2018 09:27:32 +0000 (UTC)
-Received: from krava (unknown [10.43.17.150])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 495CB2A2D5;
-        Tue, 30 Oct 2018 09:27:29 +0000 (UTC)
-Date:   Tue, 30 Oct 2018 10:27:27 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Jiri Olsa <jolsa@kernel.org>
-Cc:     lkml <linux-kernel@vger.kernel.org>,
-        Len Brown <len.brown@intel.com>,
-        "Herton R. Krzesinski" <herton@redhat.com>
-Subject: Re: [PATCH 08/10] tools power turbostat: Override CFLAGS assignments
- and add LDFLAGS to build command
-Message-ID: <20181030092727.GD19259@krava>
-References: <20181016150614.21260-1-jolsa@kernel.org>
- <20181016150614.21260-9-jolsa@kernel.org>
+        id S1726451AbeJ3SUQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 14:20:16 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 02:27:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,444,1534834800"; 
+   d="scan'208";a="103722239"
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.72.61])
+  by fmsmga001.fm.intel.com with ESMTP; 30 Oct 2018 02:27:33 -0700
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Daniel Vetter <daniel@ffwll.ch>, Gerd Hoffmann <kraxel@redhat.com>
+Cc:     David Airlie <airlied@linux.ie>, David Airlie <airlied@redhat.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        dri-devel@lists.freedesktop.org,
+        "open list\:DRM DRIVER FOR BOCHS VIRTUAL GPU" 
+        <virtualization@lists.linux-foundation.org>
+Subject: Re: [PATCH v3] drm/bochs: add edid support.
+In-Reply-To: <20181030090632.GJ21967@phenom.ffwll.local>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20181029134507.7775-1-kraxel@redhat.com> <87in1kejgj.fsf@intel.com> <20181029200520.jfnmvbkng2er5qbc@sirius.home.kraxel.org> <20181030090632.GJ21967@phenom.ffwll.local>
+Date:   Tue, 30 Oct 2018 11:28:24 +0200
+Message-ID: <87y3afokav.fsf@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181016150614.21260-9-jolsa@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 30 Oct 2018 09:27:32 +0000 (UTC)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ping
+On Tue, 30 Oct 2018, Daniel Vetter <daniel@ffwll.ch> wrote:
+> On Mon, Oct 29, 2018 at 09:05:20PM +0100, Gerd Hoffmann wrote:
+>> On Mon, Oct 29, 2018 at 07:44:28PM +0200, Jani Nikula wrote:
+>> > On Mon, 29 Oct 2018, Gerd Hoffmann <kraxel@redhat.com> wrote:
+>> > > Recent qemu (latest master branch, upcoming 3.1 release) got support
+>> > > for EDID data.  This patch adds guest driver support.
+>> > >
+>> > > EDID support in qemu is not (yet) enabled by default, so please use
+>> > > 'qemu -device VGA,edid=on' for testing.
+>> > 
+>> > Any chance of making this use drm_get_edid() (requires an i2c_adapter)
+>> > or at least drm_do_get_edid()?
+>> 
+>> I'll have a look at using drm_do_get_edid().  drm_get_edid() will not
+>> fly as there is no i2c adapter in the first place.
+>
+> Hm, not sure that makes sense. drm_do_get_edid is to handle the real-world
+> flakiness of sinks (it's where all the retry logic resides), if you don't
+> have a i2c_adapater (because the hw has some magic "give me an edid"
+> block). For virtual hw we hopefully don't randomly drop bits on the floor
+> between the guest and host. Imo totally fine as-is.
+>
+> E.g. we also don't feed the VBT edid through drm_do_get_edid either.
 
-thanks,
-jirka
+But nowadays we do handle the debugfs EDID override and the EDID
+firmware loading in drm_do_get_edid(), so using that gives you those
+features.
 
-On Tue, Oct 16, 2018 at 05:06:13PM +0200, Jiri Olsa wrote:
-> So user could specify outside CFLAGS/LDFLAGS values.
-> 
-> Cc: Len Brown <len.brown@intel.com>
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  tools/power/x86/turbostat/Makefile | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/tools/power/x86/turbostat/Makefile b/tools/power/x86/turbostat/Makefile
-> index 2ab25aa38263..1598b4fa0b11 100644
-> --- a/tools/power/x86/turbostat/Makefile
-> +++ b/tools/power/x86/turbostat/Makefile
-> @@ -9,13 +9,13 @@ ifeq ("$(origin O)", "command line")
->  endif
->  
->  turbostat : turbostat.c
-> -CFLAGS +=	-Wall
-> -CFLAGS +=	-DMSRHEADER='"../../../../arch/x86/include/asm/msr-index.h"'
-> -CFLAGS +=	-DINTEL_FAMILY_HEADER='"../../../../arch/x86/include/asm/intel-family.h"'
-> +override CFLAGS +=	-Wall
-> +override CFLAGS +=	-DMSRHEADER='"../../../../arch/x86/include/asm/msr-index.h"'
-> +override CFLAGS +=	-DINTEL_FAMILY_HEADER='"../../../../arch/x86/include/asm/intel-family.h"'
->  
->  %: %.c
->  	@mkdir -p $(BUILD_OUTPUT)
-> -	$(CC) $(CFLAGS) $< -o $(BUILD_OUTPUT)/$@
-> +	$(CC) $(CFLAGS) $< -o $(BUILD_OUTPUT)/$@ $(LDFLAGS)
->  
->  .PHONY : clean
->  clean :
-> -- 
-> 2.17.2
-> 
+BR,
+Jani.
+
+
+-- 
+Jani Nikula, Intel Open Source Graphics Center
