@@ -2,221 +2,107 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11665C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 03:20:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EBF7C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 03:22:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8FF92064C
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 03:20:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8FF92064C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
+	by mail.kernel.org (Postfix) with ESMTP id A8EE22064C
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 03:22:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g7Sx35Zd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8EE22064C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726592AbeJ3MLw (ORCPT
+        id S1726731AbeJ3MNn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 08:11:52 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:34908 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726016AbeJ3MLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 08:11:51 -0400
-Received: from smtp1.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:1:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id 70605A103F;
-        Tue, 30 Oct 2018 04:20:09 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by spamfilter05.heinlein-hosting.de (spamfilter05.heinlein-hosting.de [80.241.56.123]) (amavisd-new, port 10030)
-        with ESMTP id h5TYESYlst3T; Tue, 30 Oct 2018 04:20:07 +0100 (CET)
-Date:   Tue, 30 Oct 2018 14:19:53 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Christian Brauner <christian@brauner.io>,
-        Aleksa Sarai <asarai@suse.de>,
-        Aleksa Sarai <cyphar@cyphar.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kretprobe: produce sane stack traces
-Message-ID: <20181030031953.5petvkbt45adewdt@yavin>
-References: <20181026132210.12569-1-cyphar@cyphar.com>
- <20181030101206.2e5998ca3c75496c91ba5b09@kernel.org>
+        Tue, 30 Oct 2018 08:13:43 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:36760 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726016AbeJ3MNn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 08:13:43 -0400
+Received: by mail-qt1-f194.google.com with SMTP id u34-v6so11917961qth.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 20:22:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=R0EIfBijL/UxPZzgpFvC5osTlwjsHUFUOn8FK6CMeE0=;
+        b=g7Sx35ZdD2zh3XwwtEKoP5iZ32Lvbwhco11LrGDEGm0J9Qd5lxaa0TH1mK2ViLzzjE
+         gTHlru2iDdufhuax2QBjEaSTcVnloI/C5+cnIi/3zS4zKPB2XBsTA5T5WG0LFMu4Tt4u
+         9NwXPFrJP9H7XtbaTVDDeWxy8nE3yLwg58W7YwRTnfutxwlfWYeez4Djd1fyvTZk2ufZ
+         KdtP9IwvpUe4Y5tqwMA/z5IfTR6uz5IfiNMM7FKhnVtgFxn09SEMNxI25WtUmvFLZMJx
+         2cd23e3OegjAjsnDLtgqOpX/yr83uK97UHhORLW5Bs+Pe0Oq2GXqqEWpFh9JrWCLfSQz
+         IrGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=R0EIfBijL/UxPZzgpFvC5osTlwjsHUFUOn8FK6CMeE0=;
+        b=YTdwC7bcG+4qMIr0U3MAT0Jl+TE2k6zE09NJYYXYL+/LM6sM+ABpHdgOICdcUan8cf
+         zkpO0mIhZr38dhJiB4IIdTCJfDzbGtYXpUeQ6B5uBEdL4X/1o6isTQh6+4uBdbUTUoQ7
+         J5YPfAWRdrShXbfVLyLJIEk5UKz4wX4p6KxzgYsRlra07d3Enwipv1oVlUx2ZsovGqut
+         v5cCDYnh0Z7MtiM5CyweAy2DTFWdA11kzBD6BzsX7qg/LWKjzUGj7Bfmwqek5UsSK+NF
+         2LPLJGbgmsqgwCS46kQAOK0L+ockUgc+KSybhgtkTk3ClcwfRt67/+RtCGWo22/cSZKp
+         LZXQ==
+X-Gm-Message-State: AGRZ1gKB4wEUfT7S7WD49o55v9A5IXb9OHVDlpxReITu9AtY6Zt1EjkP
+        +cUyYBHmOYHe/BbgL8H8IpJJ2hcDjjPJO3qjFpXOiulhpaGaaA==
+X-Google-Smtp-Source: AJdET5eb3hfa1ey1nucc08s0dyfdfy4DlErsfvuM/TStMtSGRewKhHJLhqX9Fx1JbLQRqNlaZAnyzlfnwE4V9dMo7n4=
+X-Received: by 2002:aed:2ec1:: with SMTP id k59-v6mr849818qtd.304.1540869722757;
+ Mon, 29 Oct 2018 20:22:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="unl4yk5o34rxufjm"
-Content-Disposition: inline
-In-Reply-To: <20181030101206.2e5998ca3c75496c91ba5b09@kernel.org>
+References: <20181029221037.87724-1-dancol@google.com>
+In-Reply-To: <20181029221037.87724-1-dancol@google.com>
+From:   Joel Fernandes <joelaf@google.com>
+Date:   Mon, 29 Oct 2018 20:21:51 -0700
+Message-ID: <CAJWu+oquh1RXz+1tD91NzvicYAL3GP0KVi7RLR2cgouSgHXjOw@mail.gmail.com>
+Subject: Re: [RFC PATCH] Implement /proc/pid/kill
+To:     Daniel Colascione <dancol@google.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Oct 29, 2018 at 3:11 PM Daniel Colascione <dancol@google.com> wrote:
+>
+> Add a simple proc-based kill interface. To use /proc/pid/kill, just
+> write the signal number in base-10 ASCII to the kill file of the
+> process to be killed: for example, 'echo 9 > /proc/$$/kill'.
+>
+> Semantically, /proc/pid/kill works like kill(2), except that the
+> process ID comes from the proc filesystem context instead of from an
+> explicit system call parameter. This way, it's possible to avoid races
+> between inspecting some aspect of a process and that process's PID
+> being reused for some other process.
+>
+> With /proc/pid/kill, it's possible to write a proper race-free and
+> safe pkill(1). An approximation follows. A real program might use
+> openat(2), having opened a process's /proc/pid directory explicitly,
+> with the directory file descriptor serving as a sort of "process
+> handle".
 
---unl4yk5o34rxufjm
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+How long does the 'inspection' procedure take? If its a short
+duration, then is PID reuse really an issue, I mean the PIDs are not
+reused until wrap around and the only reason this can be a problem is
+if you have the wrap around while the 'inspecting some aspect'
+procedure takes really long.
 
-On 2018-10-30, Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > Historically, kretprobe has always produced unusable stack traces
-> > (kretprobe_trampoline is the only entry in most cases, because of the
-> > funky stack pointer overwriting). This has caused quite a few annoyances
-> > when using tracing to debug problems[1] -- since return values are only
-> > available with kretprobes but stack traces were only usable for kprobes,
-> > users had to probe both and then manually associate them.
->=20
-> Yes, this unfortunately still happens. I once tried to fix it by
-> replacing current "kretprobe instance" with graph-tracer's per-thread
-> return stack. (https://lkml.org/lkml/2017/8/21/553)
+Also the proc fs is typically not the right place for this. Some
+entries in proc are writeable, but those are for changing values of
+kernel data structures. The title of man proc(5) is "proc - process
+information pseudo-filesystem". So its "information" right?
 
-I played with graph-tracer a while ago and it didn't appear to have
-associated return values? Is this hidden somewhere or did I just miss
-it?
+IMO without a really good reason for this, it could really be a hard
+sell but the RFC was worth it anyway to discuss it ;-)
 
-> I still believe that direction is the best solution to solve this kind
-> of issues, otherwise, we have to have 2 different stack fixups for
-> kretprobe and ftrace graph tracer. (I will have a talk with Steve at
-> plumbers next month)
+thanks,
 
-I'm definitely :+1: on removing the duplication of the stack fixups, my
-first instinct was to try to refactor all of the stack_trace code so
-that we didn't have multiple arch-specific "get the stack trace" paths
-(and so we could generically add current_kretprobe_instance() to one
-codepath). But after looking into it, I was convinced this would be more
-than a little ugly to do.
-
-> > With the advent of bpf_trace, users would have been able to do this
-> > association in bpf, but this was less than ideal (because
-> > bpf_get_stackid would still produce rubbish and programs that didn't
-> > know better would get silly results). The main usecase for stack traces
-> > (at least with bpf_trace) is for DTrace-style aggregation on stack
-> > traces (both entry and exit). Therefore we cannot simply correct the
-> > stack trace on exit -- we must stash away the stack trace and return the
-> > entry stack trace when it is requested.
-> >=20
-> > In theory, patches like commit 76094a2cf46e ("ftrace: distinguish
-> > kretprobe'd functions in trace logs") are no longer necessary *for
-> > tracing* because now all kretprobe traces should produce sane stack
-> > traces. However it's not clear whether removing them completely is
-> > reasonable.
->=20
-> Then, let's try to revert it :)
-
-Sure. :P
-
-> BTW, could you also add a test case for ftrace too?
-> also, I have some comments below.
-
-Yup, will do.
-
-> > +#define KRETPROBE_TRACE_SIZE 1024
-> > +struct kretprobe_trace {
-> > +	int nr_entries;
-> > +	unsigned long entries[KRETPROBE_TRACE_SIZE];
-> > +};
->=20
-> Hmm, do we really need all entries? It takes 8KB for each instances.
-> Note that the number of instances can be big if the system core number
-> is larger.
-
-Yeah, you're right this is too large for a default.
-
-But the problem is that we need it to be large enough for any of the
-tracers to be happy -- otherwise we'd have to dynamically allocate it
-and I had a feeling this would be seen as a Bad Idea=E2=84=A2 in the kprobe
-paths.
-
-  * ftrace uses PAGE_SIZE/sizeof(u64) =3D=3D 512 (on x86_64).
-  * perf_events (and thus BPF) uses 127 as the default but can be
-    configured via sysctl -- and thus can be unbounded.
-  * show_stack(...) doesn't appear to have a limit, but I might just be
-    misreading the x86-specific code.
-
-As mentioned above, the lack of consensus on a single structure for
-storing stack traces also means that there is a lack of consensus on
-what the largest reasonable stack is.
-
-But maybe just doing 127 would be "reasonable"?
-
-(Athough, dynamically allocating would allow us to just use 'struct
-stack_trace' directly without needing to embed a different structure.)
-
-> > +	hlist_for_each_entry_safe(iter, next, head, hlist) {
->=20
-> Why would you use "_safe" variant here? if you don't modify the hlist,
-> you don't need to use it.
-
-Yup, my mistake.
-
-> > +void kretprobe_save_stack_trace(struct kretprobe_instance *ri,
-> > +				struct stack_trace *trace)
-> > +{
-> > +	int i;
-> > +	struct kretprobe_trace *krt =3D &ri->entry;
-> > +
-> > +	for (i =3D trace->skip; i < krt->nr_entries; i++) {
-> > +		if (trace->nr_entries >=3D trace->max_entries)
-> > +			break;
-> > +		trace->entries[trace->nr_entries++] =3D krt->entries[i];
-> > +	}
-> > +}
-> > +EXPORT_SYMBOL_GPL(kretprobe_save_stack_trace);
-> > +
-> > +void kretprobe_perf_callchain_kernel(struct kretprobe_instance *ri,
-> > +				     struct perf_callchain_entry_ctx *ctx)
-> > +{
-> > +	int i;
-> > +	struct kretprobe_trace *krt =3D &ri->entry;
-> > +
-> > +	for (i =3D 0; i < krt->nr_entries; i++) {
-> > +		if (krt->entries[i] =3D=3D ULONG_MAX)
-> > +			break;
-> > +		perf_callchain_store(ctx, (u64) krt->entries[i]);
-> > +	}
-> > +}
-> > +EXPORT_SYMBOL_GPL(kretprobe_perf_callchain_kernel);
->=20
->=20
-> Why do we need to export these functions?
-
-That's a good question -- I must've just banged out the EXPORT
-statements without thinking. I'll remove them in v2.
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---unl4yk5o34rxufjm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEb6Gz4/mhjNy+aiz1Snvnv3Dem58FAlvXzdUACgkQSnvnv3De
-m58ZeA//XvVrDhEbPziCxnA/9X2okNsPPon9p/R1APZHR3Zz6aukGUsmqJaR1KYn
-Dt6AKJ1MtHdyHBG+5PsXU915z3mJihTX8Mknl+kdD4QDe++jmW0u6uUMDsdTsicv
-UuPsaeOZPOC0Kj15izjmpQMryM032wOV4j57GR0ViPmYHaeO8PaeXFTliLNd1UXM
-hi+ysXLmQYk2Vmxbba4rXAtRd4cUzvyCiSgwAv8rD1c9GzgE7U78KJ7hJgLKTbUA
-mnVp7ip720eyzZsWpPM6BaO+LASAO59VN/++QNMSjolqKBYDIyybyctXf4DQmdmH
-OGVw+9VYJ58LHt2fxtOYpgJt1PCD1hrx/8Yxkri2MmWOJ0K1dKqMN3AEwVLYzzRI
-3q4kxOU4QfIKhg54yH1YoQNwunH63obzAxVyVOCenAbSOTPhLnM4QPdFifJ+7fTY
-iF1n5y2WaFtbhMypu/Av/IV2xAN13oCLRhRZdE4/CdQyf4axjfNEzHkHI0a0eK5w
-02PYNCg/Hhi9dmX1WI2eKgwb0jvIdnoYlzDIeEB7l55YiRxSvbM/YKUrns7EWLLK
-i1JC4sbdKaU1GvpDiA1BQer5M3hGgz9mC8/bfGSFAyP8geFc+44y+ZvC2KC/jDzY
-wdZ+2MCY3oV4wzCI8K3ndhXjOBdnH/4RMDP9NQs7u9PafJHssYI=
-=vJhx
------END PGP SIGNATURE-----
-
---unl4yk5o34rxufjm--
+- Joel
