@@ -2,114 +2,140 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04587C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:30:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 751EDC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:34:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A90EE20831
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:30:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YjOhnG5b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A90EE20831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 3517A2080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:34:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3517A2080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727521AbeJ3TXE (ORCPT
+        id S1727317AbeJ3T1p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 15:23:04 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:43773 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726721AbeJ3TXE (ORCPT
+        Tue, 30 Oct 2018 15:27:45 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:41070 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726720AbeJ3T1p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 15:23:04 -0400
-Received: by mail-io1-f66.google.com with SMTP id y10-v6so6880011ioa.10
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 03:30:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=6Nj+yWUe+wiS0rgS+is2Mtfyw+0vHdQsT72Jg+h9wCg=;
-        b=YjOhnG5b9z0MMUmEzcNrcMVP7FqukyxMURT/br1pXLi280kwsa+a3wD9zg7g/0bI3u
-         6t/RspR1ETzfoyevAFW9ErAGNOFVbdPig3eNWWwW5nuqrXOJ94Laq3+erepgULRSVdi4
-         HnT2sZlv496v/PKY0HPQDP3tGR8iBqUmLPpk4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=6Nj+yWUe+wiS0rgS+is2Mtfyw+0vHdQsT72Jg+h9wCg=;
-        b=KY7PNed8SjxCCK8Yk16mU8RLBumXzsxS802flvNPyWZdjTgodMdx2yx4HA6B2V6Qxi
-         B98eIRrqekhnE26IlY1/5L4PYf1VzlcY86iQQWU5EnkSpKoGC6Y6i96jnl8dAW3upVyi
-         dxWwHC5JlxgZfFKRfgF8yK1Jqhwn3Ic26OeQlVCYvhv4pJukbFvND2YWoB8VGkKz3Je+
-         uQc0fz0nDaw8kmoKFZeoHlZ6KxmIHtOp9zMMgWVPAbostcYWolffHQQ2XMnYL+7URC9W
-         gl8eEdjWG2SW5N5B46OBXdaphIkRGMpS0VOovvR3w5E/QJ4mjuo0Y7TW8rs/rnAxwdaE
-         svKg==
-X-Gm-Message-State: AGRZ1gK3PS5qSghitap325NeFG2UOZ+k+x3BJn8flxhwNHwkLUmPREZi
-        EfNzeknqD70xpyBJUndB3JRJe7EvZw8VDOQ3/Xf2+g==
-X-Google-Smtp-Source: AJdET5enf8kMFwlVQLkvEbc3jctf5TIPks0yT9TCfh0Ov55jCcswduTSjw7UkKzZ+eC1SHVac3kpZfhGrpfTWRa1NjQ=
-X-Received: by 2002:a6b:8fca:: with SMTP id r193-v6mr11447222iod.266.1540895410140;
- Tue, 30 Oct 2018 03:30:10 -0700 (PDT)
+        Tue, 30 Oct 2018 15:27:45 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 82BC8260875
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+To:     linux-kernel@vger.kernel.org, robert.jarzmik@free.fr,
+        daniel.thompson@linaro.org, lee.jones@linaro.org
+Cc:     kernel@collabora.com, heiko@sntech.de, stable@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        dri-devel@lists.freedesktop.org, Jingoo Han <jingoohan1@gmail.com>
+Subject: [PATCH v2] backlight: pwm_bl: Fix brightness levels for non-DT case.
+Date:   Tue, 30 Oct 2018 11:34:41 +0100
+Message-Id: <20181030103441.29145-1-enric.balletbo@collabora.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Received: by 2002:a02:38d:0:0:0:0:0 with HTTP; Tue, 30 Oct 2018 03:29:29 -0700 (PDT)
-In-Reply-To: <alpine.DEB.2.21.1810292334160.5984@nanos.tec.linutronix.de>
-References: <1539206455-29342-1-git-send-email-rplsssn@codeaurora.org>
- <1539206455-29342-4-git-send-email-rplsssn@codeaurora.org> <alpine.DEB.2.21.1810292334160.5984@nanos.tec.linutronix.de>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 30 Oct 2018 11:29:29 +0100
-Message-ID: <CAPDyKFrV-YJ4k_4Vnm-eFx8YAUF9b82U7PLPLFkz2fzcqYWybw@mail.gmail.com>
-Subject: Re: [PATCH RFC v1 3/8] timer: Export next wakeup time of a CPU
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-soc@vger.kernel.org, Rajendra Nayak <rnayak@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Evan Green <evgreen@chromium.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Lina Iyer <lina.iyer@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29 October 2018 at 23:36, Thomas Gleixner <tglx@linutronix.de> wrote:
-> Raju,
->
-> On Thu, 11 Oct 2018, Raju P.L.S.S.S.N wrote:
->>
->> +/**
->> + * tick_nohz_get_next_wakeup - return the next wake up of the CPU
->
-> Lacks documentation of @cpu. Please include kernel docs into your test
-> builds.
+Commit '88ba95bedb79 ("backlight: pwm_bl: Compute brightness of LED
+linearly to human eye")' allows the possibility to compute a default
+brightness table when there isn't the brightness-levels property in the
+DT. Unfortunately the changes made broke the pwm backlight for the
+non-DT boards.
 
-Good point!
+Usually, the non-DT boards don't pass the brightness levels via platform
+data, instead, it sets the max_brightness in their platform data and the
+driver calculates the level without a table. The ofending patch assumed
+hat when there is no brightness levels table we should create one, but this
+is clearly wrong for the non-DT case.
 
->
->> + */
->> +ktime_t tick_nohz_get_next_wakeup(int cpu)
->> +{
->> +     struct clock_event_device *dev = per_cpu(tick_cpu_device.evtdev, cpu);
->> +
->> +     return dev->next_event;
->> +}
+After this patch the code handles the DT and the non-DT case taking in
+consideration also if max_brightness is set or not.
 
-Thanks for your review!
+Fixes: '88ba95bedb79 ("backlight: pwm_bl: Compute brightness of LED linearly to human eye")'
+Cc: <stable@vger.kernel.org>
+Reported-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Tested-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+---
 
-Kind regards
-Uffe
+Changes in v2:
+- Rebase on top of mainline
+- Add Tested-by and Acked-by tags.
+
+ drivers/video/backlight/pwm_bl.c | 41 +++++++++++++++++++++++++++-----
+ 1 file changed, 35 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+index 678b27063198..f9ef0673a083 100644
+--- a/drivers/video/backlight/pwm_bl.c
++++ b/drivers/video/backlight/pwm_bl.c
+@@ -562,7 +562,30 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+ 		goto err_alloc;
+ 	}
+ 
+-	if (!data->levels) {
++	if (data->levels) {
++		/*
++		 * For the DT case, only when brightness levels is defined
++		 * data->levels is filled. For the non-DT case, data->levels
++		 * can come from platform data, however is not usual.
++		 */
++		for (i = 0; i <= data->max_brightness; i++) {
++			if (data->levels[i] > pb->scale)
++				pb->scale = data->levels[i];
++
++			pb->levels = data->levels;
++		}
++	} else if (!data->max_brightness) {
++		/*
++		 * If no brightness levels are provided and max_brightness is
++		 * not set, use the default brightness table. For the DT case,
++		 * max_brightness is set to 0 when brightness levels is not
++		 * specified. For the non-DT case, max_brightness is usually
++		 * set to some value.
++		 */
++
++		/* Get the PWM period (in nanoseconds) */
++		pwm_get_state(pb->pwm, &state);
++
+ 		ret = pwm_backlight_brightness_default(&pdev->dev, data,
+ 						       state.period);
+ 		if (ret < 0) {
+@@ -570,13 +593,19 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+ 				"failed to setup default brightness table\n");
+ 			goto err_alloc;
+ 		}
+-	}
+ 
+-	for (i = 0; i <= data->max_brightness; i++) {
+-		if (data->levels[i] > pb->scale)
+-			pb->scale = data->levels[i];
++		for (i = 0; i <= data->max_brightness; i++) {
++			if (data->levels[i] > pb->scale)
++				pb->scale = data->levels[i];
+ 
+-		pb->levels = data->levels;
++			pb->levels = data->levels;
++		}
++	} else {
++		/*
++		 * That only happens for the non-DT case, where platform data
++		 * sets the max_brightness value.
++		 */
++		pb->scale = data->max_brightness;
+ 	}
+ 
+ 	pb->lth_brightness = data->lth_brightness * (state.period / pb->scale);
+-- 
+2.19.1
+
