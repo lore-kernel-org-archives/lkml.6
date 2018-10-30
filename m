@@ -2,128 +2,99 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96D4DC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:03:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F3DC6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:03:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BE422082D
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:03:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BE422082D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C43382082D
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:03:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C43382082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbeJ3X4s (ORCPT
+        id S1727629AbeJ3X44 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 19:56:48 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:50100 "EHLO mx1.redhat.com"
+        Tue, 30 Oct 2018 19:56:56 -0400
+Received: from ozlabs.org ([203.11.71.1]:50007 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726135AbeJ3X4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 19:56:47 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726135AbeJ3X44 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 19:56:56 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 82429312E9DB;
-        Tue, 30 Oct 2018 15:02:58 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.31])
-        by smtp.corp.redhat.com (Postfix) with SMTP id ED281194AB;
-        Tue, 30 Oct 2018 15:02:55 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue, 30 Oct 2018 16:02:57 +0100 (CET)
-Date:   Tue, 30 Oct 2018 16:02:54 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian@brauner.io>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Aleksa Sarai <asarai@suse.de>, linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v8 1/2] seccomp: add a return code to trap to userspace
-Message-ID: <20181030150254.GB3385@redhat.com>
-References: <20181029224031.29809-1-tycho@tycho.ws>
- <20181029224031.29809-2-tycho@tycho.ws>
+        by ozlabs.org (Postfix) with ESMTPSA id 42kvpv4fCmz9s9J;
+        Wed, 31 Oct 2018 02:03:03 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux-MIPS <linux-mips@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Paul Mackerras <paulus@samba.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: [PATCH 1/2] kbuild: replace cc-name test with CONFIG_CC_IS_CLANG
+In-Reply-To: <CAK7LNASrdToqTrffe5XD+_LuK9+0=Bv8L_7ZWeN6iSivYe8Gmg@mail.gmail.com>
+References: <1540873293-29817-1-git-send-email-yamada.masahiro@socionext.com> <877ehzk3we.fsf@concordia.ellerman.id.au> <CAK7LNASrdToqTrffe5XD+_LuK9+0=Bv8L_7ZWeN6iSivYe8Gmg@mail.gmail.com>
+Date:   Wed, 31 Oct 2018 02:03:02 +1100
+Message-ID: <87tvl3iijd.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181029224031.29809-2-tycho@tycho.ws>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Tue, 30 Oct 2018 15:02:58 +0000 (UTC)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/29, Tycho Andersen wrote:
+Masahiro Yamada <yamada.masahiro@socionext.com> writes:
+> On Tue, Oct 30, 2018 at 9:36 PM Michael Ellerman <mpe@ellerman.id.au> wrote:
+>>
+>> Masahiro Yamada <yamada.masahiro@socionext.com> writes:
+>> > diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
+>> > index 17be664..338e827 100644
+>> > --- a/arch/powerpc/Makefile
+>> > +++ b/arch/powerpc/Makefile
+>> > @@ -96,7 +96,7 @@ aflags-$(CONFIG_CPU_BIG_ENDIAN)             += $(call cc-option,-mabi=elfv1)
+>> >  aflags-$(CONFIG_CPU_LITTLE_ENDIAN)   += -mabi=elfv2
+>> >  endif
+>> >
+>> > -ifneq ($(cc-name),clang)
+>> > +ifneq ($(CONFIG_CC_IS_CLANG),y)
+>> >    cflags-$(CONFIG_CPU_LITTLE_ENDIAN) += -mno-strict-align
+>> >  endif
+>> >
+>> > @@ -175,7 +175,7 @@ endif
+>> >  # Work around gcc code-gen bugs with -pg / -fno-omit-frame-pointer in gcc <= 4.8
+>> >  # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=44199
+>> >  # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=52828
+>> > -ifneq ($(cc-name),clang)
+>> > +ifneq ($(CONFIG_CC_IS_CLANG),y)
+>> >  CC_FLAGS_FTRACE      += $(call cc-ifversion, -lt, 0409, -mno-sched-epilog)
+>> >  endif
+>> >  endif
+>>
+>> Does this behave like other CONFIG variables, ie. it will not be defined
+>> when it's false?
 >
-> +static long seccomp_notify_recv(struct seccomp_filter *filter,
-> +				void __user *buf)
-> +{
-> +	struct seccomp_knotif *knotif = NULL, *cur;
-> +	struct seccomp_notif unotif;
-> +	ssize_t ret;
-> +
-> +	memset(&unotif, 0, sizeof(unotif));
-> +
-> +	ret = down_interruptible(&filter->notif->request);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	mutex_lock(&filter->notify_lock);
-> +	list_for_each_entry(cur, &filter->notif->notifications, list) {
-> +		if (cur->state == SECCOMP_NOTIFY_INIT) {
-> +			knotif = cur;
-> +			break;
-> +		}
-> +	}
-> +
-> +	/*
-> +	 * If we didn't find a notification, it could be that the task was
-> +	 * interrupted by a fatal signal between the time we were woken and
-> +	 * when we were able to acquire the rw lock.
-> +	 *
-> +	 * This is the place where we handle the extra high semaphore count
-> +	 * mentioned in seccomp_do_user_notification().
-> +	 */
-> +	if (!knotif) {
-> +		ret = -ENOENT;
-> +		goto out;
-> +	}
-> +
-> +	unotif.id = knotif->id;
-> +	unotif.pid = task_pid_vnr(knotif->task);
-> +	if (knotif->signaled)
-> +		unotif.flags |= SECCOMP_NOTIF_FLAG_SIGNALED;
-> +	unotif.data = *(knotif->data);
+> Right.
+>
+>> And if so can't we use ifdef/ifndef? eg:
+>>
+>> ifndef CONFIG_CC_IS_CLANG
+>>   CC_FLAGS_FTRACE       += $(call cc-ifversion, -lt, 0409, -mno-sched-epilog)
+>>
+>> That reads cleaner to me.
+>
+>
+> OK, will do respin if you prefer ifdef/ifndef style.
 
-Tycho, I forgot everything about seccomp, most probably I am wrong but let me
-ask anyway.
+I do prefer it, but I can also fix it up later if you're in a hurry to
+get this merged.
 
-__seccomp_filter(SECCOMP_RET_TRACE) does
-
-		/*
-		 * Recheck the syscall, since it may have changed. This
-		 * intentionally uses a NULL struct seccomp_data to force
-		 * a reload of all registers. This does not goto skip since
-		 * a skip would have already been reported.
-		 */
-		if (__seccomp_filter(this_syscall, NULL, true))
-			return -1;
-
-and the next seccomp_run_filters() can return SECCOMP_RET_USER_NOTIF, right?
-seccomp_do_user_notification() doesn't check recheck_after_trace and it simply
-does n.data = sd.
-
-Doesn't this mean that "unotif.data = *(knotif->data)" can hit NULL ?
-
-seccomp_run_filters() does populate_seccomp_data() in this case, but this
-won't affect "seccomp_data *sd" passed to seccomp_do_user_notification().
-
-Oleg.
-
+cheers
