@@ -2,117 +2,120 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 095A9C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:32:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC065C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:35:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE3462064C
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:32:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE3462064C
+	by mail.kernel.org (Postfix) with ESMTP id 7EE42205F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:35:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EE42205F4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728196AbeJ3X0W (ORCPT
+        id S1726563AbeJ3X2r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 19:26:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:11729 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727453AbeJ3X0W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 19:26:22 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id E96773002C72;
-        Tue, 30 Oct 2018 14:32:39 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.31])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 398D167C6E;
-        Tue, 30 Oct 2018 14:32:36 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue, 30 Oct 2018 15:32:39 +0100 (CET)
-Date:   Tue, 30 Oct 2018 15:32:36 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian@brauner.io>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Aleksa Sarai <asarai@suse.de>, linux-kernel@vger.kernel.org,
-        containers@lists.linux-foundation.org, linux-api@vger.kernel.org
-Subject: Re: [PATCH v8 1/2] seccomp: add a return code to trap to userspace
-Message-ID: <20181030143235.GA3385@redhat.com>
-References: <20181029224031.29809-1-tycho@tycho.ws>
- <20181029224031.29809-2-tycho@tycho.ws>
+        Tue, 30 Oct 2018 19:28:47 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:42799 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726135AbeJ3X2r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 19:28:47 -0400
+Received: by mail-qk1-f195.google.com with SMTP id u68so3400063qkg.9
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 07:35:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5sDRN6IPWQ3x7HrGoo2fr8elXUd6LLxUE4O0TljxdAc=;
+        b=C2aWaU984rFSmUZQ1Dw4DELER6HEfEQqIppteB7SNorGk0Z0H+4uVFdgrlD8sale2P
+         8KZ3/rRa9siD1n/VOOwLwZDfiBXycDtlMqSItCcbXy8Fd53vOTfR592FO7tGD8J6zBus
+         xwLg+cFhv3uRyYldL0VvXjurfd0hku423n00WAMpQgL4Q1D4W5WtRZS1f1PofYV9tqcL
+         G277QLYknUoB+ysF9T7g9cCmYiMTI6n51t7DRclI12NFjao9HTYwe6RSaXmQwaXlWsJl
+         4L+ExJ+DUvZMAoffxnTHjNmz0d20O/etjcYfncnLWf0Nkb2eSQTSXhkHzXcNYDDgC/cu
+         VAuA==
+X-Gm-Message-State: AGRZ1gK6/V9EOtVlOX6DQkUeQPVs1IN5L+kiGxbwp3TzpZEg5OwUGr2Z
+        2fbaJP3li1agBdIJgO1vYVesPnl1pBnwdmhP8VXjS/fT
+X-Google-Smtp-Source: AJdET5emfthXdVfDI3qBvqqrLRYT2Q9CSvCgxo3mp8wXFy9hZI3yeYfcmXFVeKclXugE1z+rTJawqmjn5XMHBlWD5Ow=
+X-Received: by 2002:ae9:e102:: with SMTP id g2mr639438qkm.343.1540910103230;
+ Tue, 30 Oct 2018 07:35:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181029224031.29809-2-tycho@tycho.ws>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 30 Oct 2018 14:32:40 +0000 (UTC)
+References: <20181019085958.32694-1-ckeepax@opensource.cirrus.com>
+ <20181019085958.32694-2-ckeepax@opensource.cirrus.com> <20181028223116.GJ1882@kunai>
+ <CAO-hwJLw74k+jBnDuQ7OrVzJOy8i82OXKNWuNhxNqUj+8nzwhg@mail.gmail.com> <20181030115120.GI16508@imbe.wolfsonmicro.main>
+In-Reply-To: <20181030115120.GI16508@imbe.wolfsonmicro.main>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Tue, 30 Oct 2018 15:34:51 +0100
+Message-ID: <CAO-hwJ+B5iUpbUamsCfNKGwxJMM9fNBUnrb2-csn1VpNG58KBA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] i2c: Clear client->irq in i2c_device_remove
+To:     ckeepax@opensource.cirrus.com
+Cc:     Wolfram Sang <wsa@the-dreams.de>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        patches@opensource.cirrus.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/29, Tycho Andersen wrote:
+On Tue, Oct 30, 2018 at 12:51 PM Charles Keepax
+<ckeepax@opensource.cirrus.com> wrote:
 >
-> +	/* This is where we wait for a reply from userspace. */
-> +	err = wait_for_completion_interruptible(&n.ready);
-> +	mutex_lock(&match->notify_lock);
-> +
-> +	/*
-> +	 * If the noticiation fd died before we re-acquired the lock, we still
-> +	 * give -ENOSYS.
-> +	 */
-> +	if (!match->notif)
-> +		goto remove_list;
-> +
-> +	/*
-> +	 * Here it's possible we got a signal and then had to wait on the mutex
-> +	 * while the reply was sent, so let's be sure there wasn't a response
-> +	 * in the meantime.
-> +	 */
-> +	if (err < 0 && n.state != SECCOMP_NOTIFY_REPLIED) {
-> +		/*
-> +		 * We got a signal. Let's tell userspace about it (potentially
-> +		 * again, if we had already notified them about the first one).
-> +		 */
-> +		n.signaled = true;
-> +		if (n.state == SECCOMP_NOTIFY_SENT) {
-> +			n.state = SECCOMP_NOTIFY_INIT;
-> +			up(&match->notif->request);
-> +		}
+> On Mon, Oct 29, 2018 at 11:15:47AM +0100, Benjamin Tissoires wrote:
+> > On Sun, Oct 28, 2018 at 11:31 PM Wolfram Sang <wsa@the-dreams.de> wrote:
+> > >
+> > > On Fri, Oct 19, 2018 at 09:59:58AM +0100, Charles Keepax wrote:
+> > > > The IRQ will be mapped in i2c_device_probe only if client->irq is zero and
+> > > > i2c_device_remove does not clear this. When rebinding an I2C device,
+> > > > whos IRQ provider has also been rebound this means that an IRQ mapping
+> > > > will never be created, causing the I2C device to fail to acquire its
+> > > > IRQ. Fix this issue by clearing client->irq in i2c_device_remove,
+> > > > forcing i2c_device_probe to lookup the mapping again.
+> > > >
+> > > > Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+> > >
+> > > Adding Benjamin here again. Also, should there be a Fixes: tag?
+> >
+> > Not sure if the circumstances are preventing me to think straight, but
+> > how can you reprobe the i2c_device?
+>
+> You just head into /sys/bus/i2c/drivers/<the_driver> and use the
+> unbind file to remove the driver. You can then probe the driver
+> again using the bind file.
 
-I am not sure I understand the value of signaled/SECCOMP_NOTIF_FLAG_SIGNALED...
-I mean, why it is actually useful?
+Right... not sure why I haven't seen that one yesterday
 
-Sorry if this was already discussed.
+>
+> > And in all cases, for the Host notify part, having the IRQ already set
+> > shouldn't be an issue.
+>
+> To be clear this isn't a theoretical issue this is something I
+> can replicate very easily. The problem comes in when you unbind
+> both the I2C device and the device that is providing its IRQ. In
+> my case the I2C device is a speaker amp and the device providing
+> IRQs is an audio CODEC.
+>
+> When the device providing the IRQ is unbound it will delete the
+> IRQ mapping. For the I2C device to acquire its IRQ something
+> needs to recreate that mapping, this would normally happen (in a
+> DT system) as a result of the of_irq_get/_by_name. But as
+> client->irq is already set this doesn't happen, causing the I2C
+> device to fail probe because it couldn't locate its IRQ.
 
-> +		wake_up_poll(&match->notif->wqh, EPOLLIN | EPOLLRDNORM);
-> +
-> +		mutex_unlock(&match->notify_lock);
-> +		err = wait_for_completion_killable(&n.ready);
-> +		mutex_lock(&match->notify_lock);
+Right. I completely missed the fact that the driver of the IRQ could
+be reset during the period the device is unbound.
+That's a pretty strong case for this patch.
 
-And it seems that SECCOMP_NOTIF_FLAG_SIGNALED is the only reason why
-seccomp_do_user_notification() doesn't do wait_for_completion_killable() from
-the very beginning.
+>
+> I can provide some stack traces or something if that would help
+> to clarify the issue?
 
-But my main concern is that either way wait_for_completion_killable() allows
-to trivially create a process which doesn't react to SIGSTOP, not good...
+No, that's fine. Now I get this, and I totally agree with the approach:
 
-Note also that this can happen if, say, both the tracer and tracee run in the
-same process group and SIGSTOP is sent to their pgid, if the tracer gets the
-signal first the tracee won't stop.
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-Of freezer. try_to_freeze_tasks() can fail if it freezes the tracer before
-it does SECCOMP_IOCTL_NOTIF_SEND.
-
-Oleg.
-
+Cheers,
+Benjamin
