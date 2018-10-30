@@ -2,173 +2,338 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 626C2C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:56:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10C5CC6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:56:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F21420831
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:56:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F21420831
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id B84E42082B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:56:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PFEUvrhs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B84E42082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbeJ3Ssv (ORCPT
+        id S1726908AbeJ3Ss5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 14:48:51 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:14584 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726247AbeJ3Ssv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 14:48:51 -0400
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id BAC4CA148B755;
-        Tue, 30 Oct 2018 17:56:01 +0800 (CST)
-Received: from [127.0.0.1] (10.202.226.41) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.408.0; Tue, 30 Oct 2018
- 17:55:53 +0800
-Subject: Re: Crash report: Broken NUMA distance map causes crash on arm64
- system
-To:     Peter Zijlstra <peterz@infradead.org>
-References: <b89bf686-05bd-a3de-e7ef-4ab9ab7bdb6c@huawei.com>
- <20181030092640.GE1459@hirez.programming.kicks-ass.net>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Will Deacon" <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        "Ingo Molnar" <mingo@redhat.com>, Linuxarm <linuxarm@huawei.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <d126099d-2698-8e3a-06ca-f229e57c3052@huawei.com>
-Date:   Tue, 30 Oct 2018 09:55:47 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        Tue, 30 Oct 2018 14:48:57 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:40216 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726451AbeJ3Ss5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 14:48:57 -0400
+Received: by mail-lf1-f68.google.com with SMTP id n3-v6so8350296lfe.7
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 02:56:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eXk89ebXZWCfCuxQ5noLjVs3vz6yneAcyh7EMfi/L8g=;
+        b=PFEUvrhsFK+tM2pA92lARQXf6WVSZ/SlJCOA6ybOZ3YaWti/cackMCweqPa3k5dwr4
+         fxhOsL3Q/QfEe6c0eVTowZpeSpzT5/y5YHKhTZTxevZLqK7hq6KFZoaqB7Y2HYW6eIbx
+         vyGzJ+ganE3Nxc6i8XFANqWFH/2uq3iiGj+PQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eXk89ebXZWCfCuxQ5noLjVs3vz6yneAcyh7EMfi/L8g=;
+        b=s8fR6VzVZZPtXFJmv0D1Ns5qxrqL8fHq1UHBAL3iSzvdx1Hc2xuycJJp70huRqS3+T
+         VmLKxYdA5enGy8dv5AvKPKFZ+hoNKjMP9nk8yTe6439jGnjXSCO90fbkcqEk84xTjh/f
+         bzV0thMa7dABnZBjRdjYMTKzaItuos59yeIeo6B599gy97e9edrMRunhnqLBXZw/ClJM
+         3XWYB25LSPxrxH+D0Xs7Mjkasj0tMfMuxGoPj62rURWHNZyCwejs6Yw9yC7r4wEU8RF5
+         jM4wVJquFVKNXKmb+0uo0DL/pjIdVYOVxCE7TPVpQ8wGw1iPa+quFZsZSs7FBSMcI/T5
+         t57Q==
+X-Gm-Message-State: AGRZ1gJ2Kzn+ipXlJ/EIJMFgqTuBBFm2+hYF6Mma83koZVYdgefXFL8j
+        D5+lp6jYbkuSynv5gvX6GQXWmAWUkKTYZjkZVzsjPg==
+X-Google-Smtp-Source: AJdET5dhhDxxTGKa378Pg93uWTVrsJUilxWaLSBrWSlwsRM5Z3N/hm8cGL9SREKoi4EXuoZZx5EC0eWjEF/Aomwv4Pg=
+X-Received: by 2002:a19:2752:: with SMTP id n79mr1518921lfn.11.1540893368257;
+ Tue, 30 Oct 2018 02:56:08 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20181030092640.GE1459@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.41]
-X-CFilter-Loop: Reflected
+References: <20181025152058.9176-1-TheSven73@googlemail.com>
+In-Reply-To: <20181025152058.9176-1-TheSven73@googlemail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 30 Oct 2018 10:55:54 +0100
+Message-ID: <CACRpkdYVN-s7shQmPkRjB9sxwi32TiKhmd_vKU+Jm--vGy2dSA@mail.gmail.com>
+Subject: Re: [PATCH anybus v1 3/4] bus: support HMS Anybus-S bus.
+To:     Sven Van Asbroeck <thesven73@gmail.com>
+Cc:     svendev@arcx.com, Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Thierry Reding <treding@nvidia.com>,
+        David Lechner <david@lechnology.com>,
+        =?UTF-8?Q?Noralf_Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        Johan Hovold <johan@kernel.org>,
+        Michal Simek <monstr@monstr.eu>, michal.vokac@ysoft.com,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg KH <gregkh@linuxfoundation.org>, john.garry@huawei.com,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Sebastien Bourdelin <sebastien.bourdelin@savoirfairelinux.com>,
+        Icenowy Zheng <icenowy@aosc.io>, yuanzhichang@hisilicon.com,
+        Stuart Yoder <stuyoder@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        bogdan.purcareata@nxp.com,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/10/2018 09:26, Peter Zijlstra wrote:
-> On Tue, Oct 23, 2018 at 11:30:11AM +0100, John Garry wrote:
->> Hi all,
->>
->> I have stumbled upon this crash on my arm64 system:
->>
->> [    7.040874] SMP: Total of 64 processors activated.
->> [    7.045720] CPU features: detected: GIC system register CPU interface
->> [    7.052240] CPU features: detected: 32-bit EL0 Support
->> [    7.144026] CPU: All CPU(s) started at EL2
->> [    7.148298] alternatives: patching kernel code
->> [    7.155277] Unable to handle kernel NULL pointer dereference at virtual
->> address 0000000000000000
->> [    7.164163] Mem abort info:
->> [    7.166978]   ESR = 0x96000004
->> [    7.170061]   Exception class = DABT (current EL), IL = 32 bits
->> [    7.176043]   SET = 0, FnV = 0
->> [    7.179121]   EA = 0, S1PTW = 0
->> [    7.182291] Data abort info:
->> [    7.185193]   ISV = 0, ISS = 0x00000004
->> [    7.189066]   CM = 0, WnR = 0
->> [    7.192056] [0000000000000000] user address but active_mm is swapper
->> [    7.198480] Internal error: Oops: 96000004 [#1] PREEMPT SMP
->> [    7.204107] Modules linked in:
->> [    7.207189] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G        W
->> 4.19.0-00002-g3ed52fd-dirty #807
->> [    7.216596] Hardware name: Hisilicon Hip07 D05 Development Board (DT)
->> [    7.223102] pstate: 20000005 (nzCv daif -PAN -UAO)
->> [    7.227946] pc : __ll_sc_atomic_sub_return+0x4/0x20
->> [    7.232873] lr : free_sched_groups.part.1+0x40/0x98
->> [    7.237797] sp : ffff00000947bc60
->> [    7.241138] x29: ffff00000947bc60 x28: ffff801fb49ba000
->> [    7.246504] x27: ffff000009109b38 x26: ffff801fb4a38000
->> [    7.251869] x25: ffff801fb48cc000 x24: ffff000009109000
->> [    7.257235] x23: 0000000000000010 x22: 0000000000000001
->> [    7.262599] x21: ffff801fb4a0b000 x20: ffff801fb4a65f00
->> [    7.267964] x19: ffff801fb4a65f80 x18: 0000000000000400
->> [    7.273329] x17: 00000000ffffffff x16: 0000000000000000
->> [    7.278694] x15: ffff801ffbffef80 x14: ffff7e007ed14bc0
->> [    7.284059] x13: 00000000000000c0 x12: 000000000000003f
->> [    7.289423] x11: ffff801fb62258b8 x10: 0000000000000001
->> [    7.294788] x9 : ffff801fb44b0100 x8 : 000000000000000f
->> [    7.300153] x7 : ffff801fb48b1900 x6 : 0000801ff2efb000
->> [    7.305518] x5 : ffff0000091096f0 x4 : 0000000000000400
->> [    7.310882] x3 : ffff801fb4a65000 x2 : ffff801fb4a0b000
->> [    7.316247] x1 : 0000000000000000 x0 : 0000000000000001
->> [    7.321613] Process swapper/0 (pid: 1, stack limit = 0x(____ptrval____))
->> [    7.328382] Call trace:
->> [    7.330847]  __ll_sc_atomic_sub_return+0x4/0x20
->> [    7.335420]  destroy_sched_domain+0x20/0x70
->> [    7.339642]  cpu_attach_domain+0xc8/0x2e8
->> [    7.343687]  build_sched_domains+0xd44/0xde0
->> [    7.347996]  sched_init_domains+0x68/0x88
->> [    7.352044]  sched_init_smp+0x2c/0x7c
->> [    7.355738]  kernel_init_freeable+0xdc/0x244
->> [    7.360049]  kernel_init+0x10/0x108
->> [    7.363567]  ret_from_fork+0x10/0x18
->> [    7.367174] Code: 88107c31 35ffffb0 d65f03c0 f9800031 (885f7c31)
->> [    7.373400] ---[ end trace 8150af869a14363f ]---
->> [    7.378076] Kernel panic - not syncing: Attempted to kill init!
->> exitcode=0x0000000b
->> [    7.378076]
->> [    7.387320] SMP: stopping secondary CPUs
->> [    7.391297] ---[ end Kernel panic - not syncing: Attempted to kill init!
->> exitcode=0x0000000b
->> [    7.391297]  ]---
->>
->> I will straightaway note that I have been fiddling with my board's device
->> tree, specifically (breaking!) the NUMA distance map, like this:
->>
->> distance-matrix = <0 0 10>,
->>                    <0 1 15>,
->>                    <0 2 20>,
->>                    <0 3 25>,
->>                    <1 0 15>,
->>                    <1 1 10>,
->>                    <1 2 25>,
->>                    <1 3 30>,
->>                    <2 0 20>,
->>                    <2 1 25>,
->>                    <2 2 10>,
->>                    <2 3 15>,
->>                    <3 0 10>,* should be same as 0->3 and > 10
->>                    <3 1 10>,* should be same as 1->3 and > 10
->>                    <3 2 15>,
->>                    <3 3 15>;* should be 10
->>
->> However I don't think that this should crash the kernel. I'd say
->> of_numa_parse_distance_map_v1() should robustly handle broken maps, probably
->> by erroring and causing NUMA to be disabled.
+Hi Sven,
+
+some tries to answer questions... (I am no expert in this but
+I try my best)
+
+On Thu, Oct 25, 2018 at 5:21 PM <thesven73@gmail.com> wrote:
+
+> I had originally architected this driver to be much simpler, with everything
+> running in the context of the userspace threads (except obviously the
+> interrupt). But it stood zero chance, the presence of the soft interrupt + the
+> h/w requirement to lock/unlock the region when acking the soft interrupt meant
+> that there were circular locking dependencies that always resulted in
+> deadlock :(
+
+I think the kernel should run all hardware drivers so IMO you did the
+right thing.
+
+> > also "buss" is a germanism isn't it?  It should be just "anybus"?
 >
-> If build with CONFIG_SCHED_DEBUG=y and boot with "sched_debug" I think
-> sched_init_numa() should yell at you for the above 'mistake'.
+> There are several different types of anybus:
+> Anybus-M
+> Anybus-S
+> Anybus-CompactCOM
 >
-
-Right, I have since turned on debug and it was complaining - I'll 
-provide a log.
-
->> However I am interested to know if the scheduler crash is a real problem.
+> This driver implements Anybus-S only. I had originally prefixed files and
+> functions with anybus-s and anybus_s respectively, but it looked horrible
+> visually:
 >
-> Ideally we'd not crash of course.. let me see if I can still make sense
-> of that topology code.
+> struct anybus_s_host *cd = data;
+> drivers/bus/anybus-s-host.c
+> include/linux/anybus-s-client.h
 
-JFYI, https://lkml.org/lkml/2018/10/26/527
+Hm I think this looks pretty neat actually. Anyways, in the overall
+architecture explain the three Anybus:es and why things pertaining
+to Anybus-s are named as they are.
 
-So it seems to be that setting the distance between separate nodes to 
-LOCAL_DISTANCE causes the problem. x86 NUMA code - like arm64 - allows 
-this. However ACPI SLIT validation rejects this, unlike OF distance map 
-parsing.
+> >> +static irqreturn_t irq_handler(int irq, void *data)
+> >> +{
+> >> +       struct anybuss_host *cd = data;
+> >> +       int ind_ab;
+> >> +
+> >> +       /* reading the anybus indicator register acks the interrupt */
+> >> +       ind_ab = read_ind_ab(cd->regmap);
+> >> +       if (ind_ab < 0)
+> >> +               return IRQ_NONE;
+> >> +       atomic_set(&cd->ind_ab, ind_ab);
+> >> +       complete(&cd->card_boot);
+> >> +       wake_up(&cd->wq);
+> >> +       return IRQ_HANDLED;
+> >> +}
+>
+> > It looks a bit like you reinvent threaded interrupts but enlighten me
+> > on the architecture and I might be able to get it.
+>
+> HMS Industrial Networks designed the anybus interrupt line to be dual purpose.
+> In addition to being a 'real' interrupt during normal operation, it also signals
+> that the card has initialized when coming out of reset. As this is a one-time
+> thing, it needs a 'struct completion', not a wait_queue.
 
-Thanks,
-John
+OK but you also have an atomic_set() going on and the struct completion
+already contains a waitqueue and I start to worry about overuse of
+primitives here. How does ps aux look on your system when running this?
 
+> It is of course possible to emulate a struct completion using a waitqueue and
+> an atomic variable, but wasn't struct completion invented to eliminate the
+> subtle dangers of this?
+
+The completion is a waitqueue entry and a spinlock, essentially.
+But you're right, if you're waiting in process context for something
+to happen, such as an ack interrupt for something you initiated,
+a completion is the right abstraction to use.
+
+> So this is why the irq_handler has to call both complete() and wake_up(), so
+> it can't be modelled by a threaded interrupt.
+
+It's just that when you do things like this:
+
+   complete(&cd->card_boot);
+   wake_up(&cd->wq);
+
+I start asking: OK so why is that waitqueue not woken up from
+wherever you are doing wait_for_completion()? I hope it is not
+because you are waiting for the completion in the very same
+waitqueue. That would be really messy.
+
+So I guess what we like is clear program flow, as easy as possible
+to follow what happens in the driver.
+
+> Maybe if we use two separate irq_handlers: put the first one in place during
+> initialization, then when the card is initialized, remove it and put a threaded
+> one in place? Would this be a bit too complicated?
+
+Nah one irq handler is fine, but you can have an optional
+bottom half:
+
+request_threaded_irq(irq, fastpath, slowpath...):
+
+From fastpath you return IRQ_WAKE_THREAD only
+if you want to continue running the slowpath callback
+in process context, else just complete() and
+return IRQ_HANDLED and the slowpath thread will not be
+executed.
+
+> Yes, I am modeling a state machine.
+> When userspace asks the anybus to do something, it throws a task into a queue,
+> and waits on the completion of that task.
+> The anybus processes the tasks sequentially, each task will go through
+> multiple states before completing:
+>
+> userspace processes     A       B       C
+>                         |       |       |
+>                         v       v       v
+>                         -----------------
+>                         | task waiting  |
+>                         | task waiting  |
+>                         | task waiting  |
+>                         |---------------|
+>                         | task running  |
+>                         -----------------
+>                                 ^
+>                                 |
+>                         -----------------
+>                         | anybus process |
+>                         | single-thread  |
+>                         | h/w access     |
+>                         ------------------
+>
+> There is only one single kernel thread that accesses the hardware and the queue.
+> This prevents various subtle synchronization/deadlock issues related to the
+> soft interrupts.
+
+This should all go into the comment section on the top of the
+C file so we understand what is going on :)
+(Good explanation BTW.)
+
+> The tasks change state by re-assigning their own task_fn callback:
+>
+> function do_state_1(self) {
+>         ...
+>         if (need state 2)
+>                 self->task_fn = do_state_2;
+> }
+>
+> function do_state_2(self) {
+>         ...
+>         if (need_state_1)
+>                 self->task_fn = do_state_1;
+> }
+>
+> I could have opted for a classic state machine in a single callback:
+>
+> function do_state(self) {
+>         switch (self->state) {
+>         case state_1:
+>                 ...
+>                 if (need_state_2)
+>                         self->state = state_2;
+>                 break;
+>         case state_2:
+>                 ...
+>                 if (need_state_1)
+>                         self->state = state_1;
+>                 break;
+>         }
+> }
+>
+> But the former seemed easier to understand.
+
+OK I honestly don't know what is the best way. But what about
+calling that "task" a "state" instead so we know what is going
+on (i.e. you are switching between different states in process
+context).
+
+> >> +static void softint_ack(struct anybuss_host *cd)
+> >> +static void process_softint(struct anybuss_host *cd)
+> >
+> > This looks like MSI (message signalled interrupt) and makes me think
+> > that you should probably involve the irqchip maintainers. Interrupts
+> > shall be represented in the irqchip abstraction.
+>
+> This is not a *real* software interrupt - it's just a bit in an internal
+> register that gets set by the anybus on a certain condition, and needs
+> to be ACKed. When the bit is set, the bus driver then tells userspace
+> about it - anyone who is running poll/select on the sysfs node or devnode.
+>
+> The anybus documentation calls this a 'software interrupt'.
+
+OK I get it... I think.
+
+Silly question but why does userspace need to know about
+this software interrupt? Can't you just hide that?
+Userspace ABIs should be minimal.
+
+> Right now I'm using platform_data for the bus driver's dependencies:
+> (the irq is passed out-of-band, via platform_get_resource())
+(...)
+> +/**
+> + * Platform data of the Anybus-S host controller.
+> + *
+> + * @regmap: provides access to the card dpram.
+> + *             MUST NOT use caching
+> + *             MUST NOT sleep
+> + * @reset:  controls the card reset line.
+> + */
+> +struct anybuss_host_pdata {
+> +       struct regmap *regmap;
+> +       anybuss_reset_t reset;
+> +};
+>
+> Now imagine that the underlying anybus bridge is defined as a reset controller.
+> I could not find a way to pass a reset controller handle through platform_data.
+> It seemed possible via the devicetree only. I was developing on 4.9 at the time.
+
+I don't get the question. The reset controller is a provider just
+like a clock controller or regulator. You look up the resource
+associated with your device.
+
+The platform_data is surely associated with a struct device *
+and the reset controller handle should be associated with the
+same struct device* and obtained with
+[devm_]reset_control_get().
+
+If you mean that you can't figure out how to associate a reset
+controller handle with a device in the first place, then we need
+to fix the reset controller subsystem to provide a mechanism for
+that if there is not one already, not work around its shortcomings.
+But reset_controller_add_lookup() seems to do what you want.
+See for example drivers/clk/davinci/psc-da850.c
+for an example of how to use that.
+
+> So what if we pass the dependencies not via platform_data, but via the
+> devicetree? In that case, I cannot find a way to pass the struct regmap
+> via the devicetree...
+
+The abstraction you associate resources with is struct device *
+not device tree (nodes).
+
+When I pass struct regmap to subdrivers I usually define a struct
+that I pass in driver_data one way or another.
+Sometimes I look up the driver_data of a parent by just
+walking the ->parent hierarchy in struct device.
+
+> Wait... are you talking about
+> reset_controller_add_lookup() / devm_reset_control_get_exclusive() ?
+> That's new to me, and only used in a single driver right now. Would that work?
+
+Yeah I think so.
+
+Yours,
+Linus Walleij
