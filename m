@@ -2,296 +2,188 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F330C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 20:42:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AFC1C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 20:43:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C5932081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 20:42:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C5932081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3382C2081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 20:43:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b0aWIQci"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3382C2081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727317AbeJaFhw (ORCPT
+        id S1727679AbeJaFiV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 01:37:52 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:45479 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725812AbeJaFhv (ORCPT
+        Wed, 31 Oct 2018 01:38:21 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:40013 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725812AbeJaFiV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 01:37:51 -0400
-Received: by mail-ot1-f65.google.com with SMTP id g10so1422185otl.12;
-        Tue, 30 Oct 2018 13:42:49 -0700 (PDT)
+        Wed, 31 Oct 2018 01:38:21 -0400
+Received: by mail-lf1-f68.google.com with SMTP id n3-v6so9982150lfe.7;
+        Tue, 30 Oct 2018 13:43:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=xu5WEvOdkhwAcw/tDTH6tw+32SrXTot1y5NB/AFoBIs=;
+        b=b0aWIQciD2DGRdfad6mVuqrT1TXY/CanJEtTZyG6XTjz+2+EOLjtS+rkfnpr2boN03
+         oN9lVCpGlyc0tzzkI/I5TdRulXOXBnCtUmStuLEC424QT09opngSh3BEjE4ihuJXDcG3
+         m+taoz6yBFDiLKzINxZZupGq8xq3fmGbW2J2Dc4n+4tUUciYVhR+T5ST3tUeXCRKz6W5
+         HoeepadUg8CE5t6HfOzFnqMwpZoodPw3l0UXcacKN06WCuLjmHxVedUGoYk+x3AK5K5r
+         s03Hn2XEzSk9Gy8m5mXkMQcJgu0soW8vQ+nxi8L8zbRSktJ7o/73zW8kG8MKcM2lWrwR
+         q/3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9EytBVc0/b96Hu0pFYOWE5cWM4ByObpAYT0thqnQhOE=;
-        b=Y/p6WG5hAb6Nnd69N7UyDQBC631wGEOzgeUYUMB6n674ssFdS1Oxa6DW8OQewm+W4X
-         14comWJPIoWH8Dw0Zv3ziivE5Db0iykwQt3yq8pRO0z+OEjVV1YlsujC/zwU2gM9XYCn
-         oyU5hL+Pi72c+FsbyW75zMAXs7DPGZN0JSoJMES0vnhryplIkRM0qfMElUBhyn3mmGRj
-         UwpG1FRC2zDrrJI4YOI0vp94R9jUXE/cnEWcs9KVCeIIQj3A26Bf+wyEHPOaSQHRwh/e
-         CcxnscsDXeki4khL0S4LNwTbbNMKkpfwToZjDAvQ6oMwkMAqa0iXRXIdQm9+LGZPJ0Ef
-         Sbjw==
-X-Gm-Message-State: AGRZ1gKscGttQjQXH0jG1KKaVxd9FKFzFvHOYjydEf/l1lzcr+OF6jvl
-        NNIv1+dy3QwoXwCl8dHLNQ==
-X-Google-Smtp-Source: AJdET5e5QH5m5XzqhSiZr5FyQl2mpXo0BxTPzRMYzLSEdKnRa/veIzrkO3TkHpZkuCfymWdciXcyug==
-X-Received: by 2002:a9d:3644:: with SMTP id w62mr171298otb.23.1540932168897;
-        Tue, 30 Oct 2018 13:42:48 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id c202-v6sm1412861oih.26.2018.10.30.13.42.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Oct 2018 13:42:47 -0700 (PDT)
-Date:   Tue, 30 Oct 2018 15:42:47 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Manish Narani <manish.narani@xilinx.com>
-Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, mark.rutland@arm.com, michal.simek@xilinx.com,
-        amit.kucheria@linaro.org, sudeep.holla@arm.com, olof@lixom.net,
-        broonie@kernel.org, arnaud.pouliquen@st.com,
-        eugen.hristev@microchip.com, linus.walleij@linaro.org,
-        vilhelm.gray@gmail.com, geert@linux-m68k.org,
-        freeman.liu@spreadtrum.com, rdunlap@infradead.org,
-        tglx@linutronix.de, baolin.wang@linaro.org,
-        gregkh@linuxfoundation.org, jdelvare@suse.com, linux@roeck-us.net,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] dt-bindings: iio: adc: Add Xilinx AMS binding
- documentation
-Message-ID: <20181030204247.GA22521@bogus>
-References: <1540815026-1012-1-git-send-email-manish.narani@xilinx.com>
- <1540815026-1012-2-git-send-email-manish.narani@xilinx.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=xu5WEvOdkhwAcw/tDTH6tw+32SrXTot1y5NB/AFoBIs=;
+        b=MOwjWdxMkdASGOArDEjwpgnJfuS0MP7MFgBFviDz9GV8EkUTCsQnwi6oB45iCMUtL8
+         2I+7dEt1lSYr0f555JNqc9dwGngv1LMF6G/66Ic7d4NbgcJsd0pEwpOWeAOhEwjj4c3D
+         mnY3gJWk1SVOCWVOg3iWS6UNbDUxARoyv6Kz49BjNcW+jEUDSazyTs+I2OniOyLUOjAY
+         L9sIc7fkMPEtcDw65na5/x2Lib5jKZSC/tODcBjgt+zJ2Rl9AXf7wvmEaHlIT5SjfNlr
+         EA+hHdryj6ZTu0Fptt5PPYQXids/QH/OXYFcMA9cgt9+TTLWe6gIqjCp8xG70WEd4RJV
+         zw4w==
+X-Gm-Message-State: AGRZ1gIk1QOeoZvxAC4BZOvsMi6LlYUhel9As9hEECh3cQo7Z5naWogI
+        i3cE92mXXMIx4ltTBEHmfRs=
+X-Google-Smtp-Source: AJdET5dXWs7fa9BaqgZOVF6fMUdOnr5Ha1IdjeehNskiWZnKSyoAqYLsDI8EHJfZ96s+YcHb7RUc6A==
+X-Received: by 2002:a19:ab1a:: with SMTP id u26-v6mr139559lfe.103.1540932196483;
+        Tue, 30 Oct 2018 13:43:16 -0700 (PDT)
+Received: from [192.168.10.160] (91-159-62-169.elisa-laajakaista.fi. [91.159.62.169])
+        by smtp.gmail.com with ESMTPSA id s69-v6sm3848162lfs.92.2018.10.30.13.43.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 13:43:15 -0700 (PDT)
+Subject: Re: [PATCH 10/17] prmem: documentation
+To:     Matthew Wilcox <willy@infradead.org>,
+        Tycho Andersen <tycho@tycho.ws>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20181023213504.28905-11-igor.stoppa@huawei.com>
+ <20181026092609.GB3159@worktop.c.hoisthospitality.com>
+ <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
+ <20181028183126.GB744@hirez.programming.kicks-ass.net>
+ <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
+ <20181030152641.GE8177@hirez.programming.kicks-ass.net>
+ <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
+ <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
+ <20181030175814.GB10491@bombadil.infradead.org> <20181030182841.GE7343@cisco>
+ <20181030192021.GC10491@bombadil.infradead.org>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com>
+Date:   Tue, 30 Oct 2018 22:43:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1540815026-1012-2-git-send-email-manish.narani@xilinx.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181030192021.GC10491@bombadil.infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 05:40:24PM +0530, Manish Narani wrote:
-> Xilinx AMS have several ADC channels that can be used for measurement of
-> different voltages and temperatures. Document the same in the bindings.
+On 30/10/2018 21:20, Matthew Wilcox wrote:
+> On Tue, Oct 30, 2018 at 12:28:41PM -0600, Tycho Andersen wrote:
+>> On Tue, Oct 30, 2018 at 10:58:14AM -0700, Matthew Wilcox wrote:
+>>> On Tue, Oct 30, 2018 at 10:06:51AM -0700, Andy Lutomirski wrote:
+>>>>> On Oct 30, 2018, at 9:37 AM, Kees Cook <keescook@chromium.org> wrote:
+>>>> I support the addition of a rare-write mechanism to the upstream kernel.
+>>>> And I think that there is only one sane way to implement it: using an
+>>>> mm_struct. That mm_struct, just like any sane mm_struct, should only
+>>>> differ from init_mm in that it has extra mappings in the *user* region.
+>>>
+>>> I'd like to understand this approach a little better.  In a syscall path,
+>>> we run with the user task's mm.  What you're proposing is that when we
+>>> want to modify rare data, we switch to rare_mm which contains a
+>>> writable mapping to all the kernel data which is rare-write.
+>>>
+>>> So the API might look something like this:
+>>>
+>>> 	void *p = rare_alloc(...);	/* writable pointer */
+>>> 	p->a = x;
+>>> 	q = rare_protect(p);		/* read-only pointer */
+
+With pools and memory allocated from vmap_areas, I was able to say
+
+protect(pool)
+
+and that would do a swipe on all the pages currently in use.
+In the SELinux policyDB, for example, one doesn't really want to 
+individually protect each allocation.
+
+The loading phase happens usually at boot, when the system can be 
+assumed to be sane (one might even preload a bare-bone set of rules from 
+initramfs and then replace it later on, with the full blown set).
+
+There is no need to process each of these tens of thousands allocations 
+and initialization as write-rare.
+
+Would it be possible to do the same here?
+
+>>>
+>>> To subsequently modify q,
+>>>
+>>> 	p = rare_modify(q);
+>>> 	q->a = y;
+>>
+>> Do you mean
+>>
+>>      p->a = y;
+>>
+>> here? I assume the intent is that q isn't writable ever, but that's
+>> the one we have in the structure at rest.
 > 
-> Signed-off-by: Manish Narani <manish.narani@xilinx.com>
-> ---
->  .../devicetree/bindings/iio/adc/xilinx-ams.txt     | 183 +++++++++++++++++++++
->  1 file changed, 183 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/xilinx-ams.txt
+> Yes, that was my intent, thanks.
 > 
-> diff --git a/Documentation/devicetree/bindings/iio/adc/xilinx-ams.txt b/Documentation/devicetree/bindings/iio/adc/xilinx-ams.txt
-> new file mode 100644
-> index 0000000..1635576
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/xilinx-ams.txt
-> @@ -0,0 +1,183 @@
-> +Xilinx AMS controller
-> +`````````````````````
-> +The AMS includes an ADC as well as on-chip sensors that can be used to
-
-AMS stands for?
-
-> +sample external voltages and monitor on-die operating conditions, such as
-> +temperature and supply voltage levels.
-> +The AMS has two SYSMON blocks which are PL (Programmable Logic) SYSMON and
-> +PS (Processing System) SYSMON.
-> +All designs should have AMS registers, but PS and PL are optional. The
-> +AMS controller can work with only PS, only PL and both PS and PL
-> +configurations. Please specify registers according to your design. Devicetree
-> +should always have AMS module property. Providing PS & PL module is optional.
-> +
-> +Required properties:
-> +	- compatible: Should be "xlnx,zynqmp-ams"
-> +	- reg: Should specify AMS register space
-> +	- interrupts: Interrupt number for the AMS control interface
-> +	- interrupt-names: Interrupt name, must be "ams-irq"
-> +	- clocks: Should contain a clock specifier for the device
-> +	- ranges: keep the property empty to map child address space
-> +	          (for PS and/or PL) nodes 1:1 onto the parent address
-> +	          space
-> +
-> +	AMS sub-nodes:
-> +		- ams_ps : Used as PS-SYSMON node
-> +		- ams_pl : Used as PL-SYSMON node
-
-Don't use '_' in node or property names.
-
-> +
-> +
-> +
-> +AMS PS-SYSMON
-> +`````````````
-> +PS (Processing System) SYSMON is memory mapped to PS. This block has built-in
-> +alarm generation logic that is used to interrupt the processor based on
-> +condition set.
-> +
-> +Required properties:
-> +	- compatible: Should be "xlnx,zynqmp-ams-ps"
-> +	- reg: Register space for PS-SYSMON
-> +
-> +
-> +
-> +AMS PL-SYSMON
-> +`````````````
-> +PL-SYSMON is capable of monitoring off chip voltage and temperature. PL-SYSMON
-> +block has DRP, JTAG and I2C interface to enable monitoring from external master.
-> +Out of this interface currently only DRP is supported. This block has alarm
-> +generation logic that is used to interrupt the processor based on condition set.
-> +
-> +Required properties:
-> +	- compatible: Should be "xlnx,zynqmp-ams-pl"
-> +	- reg: Register space for PL-SYSMON
-> +
-> +PL-SYSMON optional sub-nodes:
-> +	- xlnx,ext-channels: List of external channels that are connected to the
-> +	                     AMS PL module.
-> +
-> +	  The child nodes of PL-SYSMON represent the external channels which are
-> +	  connected to this Module. If the property is not present
-> +	  no external channels will be assumed to be connected.
-> +
-> +	  Each child node represents one channel and has the following
-> +	  properties:
-> +
-> +	Required properties:
-> +		* reg: Pair of pins the channel is connected to.
-> +
-> +		    'reg' value		Channel Name		Channel Number
-> +		    -----------		------------		--------------
-> +			 0		VP/VN			      30
-> +			 1		VUSER0			      31
-> +			 2		VUSER1			      32
-> +			 3		VUSER3			      33
-> +			 4		VUSER4			      34
-> +			 5		VAUXP[0]/VAUXN[0]	      35
-> +			 6		VAUXP[1]/VAUXN[1]	      36
-> +			...
-> +			20		VAUXP[15]/VAUXN[15]	      50
-
-Why this reg to channel mapping? Just use channel numbers for reg. I'm 
-confused by this table and the one below.
-
-> +
-> +		Each channel number should only be used at most once. For
-> +		more details on channels, refer to the table given at the end.
-> +
-> +	Optional properties:
-> +		* xlnx,bipolar: If set the channel is used in bipolar
-> +		  mode.
-> +
-> +
-> +Example:
-> +	xilinx_ams: ams@ffa50000 {
-> +		compatible = "xlnx,zynqmp-ams";
-> +		interrupt-parent = <&gic>;
-> +		interrupts = <0 56 4>;
-> +		interrupt-names = "ams-irq";
-> +		reg = <0x0 0xffa50000 0x0 0x800>;
-> +		reg-names = "ams-base";
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		#io-channel-cells = <1>;
-> +		ranges = <0 0 0xffa50800 0x400
-> +			  1 0 0xffa50c00 0x400>;
-
-This doesn't work. This is mapping child addresses 0 and 1, but both 
-child nodes are at address 0. I believe you want the length to be 0x800 
-and drop the 2nd entry.
-
-> +
-> +		ams_ps: ams_ps@0,0 {
-> +			compatible = "xlnx,zynqmp-ams-ps";
-> +			reg = <0 0x400>;
-> +		};
-> +
-> +		ams_pl: ams_pl@1,0 {
-> +			compatible = "xlnx,zynqmp-ams-pl";
-> +			reg = <0 0x400>;
-
-And then this should be address 0x400.
-
-> +			xlnx,ext-channels {
-> +				channel@0 {
-> +					reg = <0>;
-> +					xlnx,bipolar;
-> +				};
-> +				channel@1 {
-> +					reg = <1>;
-> +				};
-> +				channel@8 {
-> +					reg = <8>;
-> +					xlnx,bipolar;
-> +				};
-> +			};
-> +		};
-> +	};
-> +
-> +
-> +AMS Channel Details
-> +```````````````````
-> +Sysmon Block	|Channel|			Details					|Measurement
-> +		|Number	|							 	|Type
-> +---------------------------------------------------------------------------------------------------------
-> +AMS CTRL	|0	|System PLLs voltage measurement, VCC_PSPLL.			|Voltage
-> +		|1	|Battery voltage measurement, VCC_PSBATT.			|Voltage
-> +		|2	|PL Internal voltage measurement, VCCINT.			|Voltage
-> +		|3	|Block RAM voltage measurement, VCCBRAM.			|Voltage
-> +		|4	|PL Aux voltage measurement, VCCAUX.				|Voltage
-> +		|5	|Voltage measurement for six DDR I/O PLLs, VCC_PSDDR_PLL.	|Voltage
-> +		|6	|VCC_PSINTFP_DDR voltage measurement.				|Voltage
-> +---------------------------------------------------------------------------------------------------------
-> +PS Sysmon	|7	|LPD temperature measurement.					|Temperature
-> +		|8	|FPD temperature measurement (REMOTE).				|Temperature
-> +		|9	|VCC PS LPD voltage measurement (supply1).			|Voltage
-> +		|10	|VCC PS FPD voltage measurement (supply2).			|Voltage
-> +		|11	|PS Aux voltage reference (supply3).				|Voltage
-> +		|12	|DDR I/O VCC voltage measurement.				|Voltage
-> +		|13	|PS IO Bank 503 voltage measurement (supply5).			|Voltage
-> +		|14	|PS IO Bank 500 voltage measurement (supply6).			|Voltage
-> +		|15	|VCCO_PSIO1 voltage measurement.				|Voltage
-> +		|16	|VCCO_PSIO2 voltage measurement.				|Voltage
-> +		|17	|VCC_PS_GTR voltage measurement (VPS_MGTRAVCC).			|Voltage
-> +		|18	|VTT_PS_GTR voltage measurement (VPS_MGTRAVTT).			|Voltage
-> +		|19	|VCC_PSADC voltage measurement.					|Voltage
-> +---------------------------------------------------------------------------------------------------------
-> +PL Sysmon	|20	|PL temperature measurement.					|Temperature
-> +		|21	|PL Internal voltage measurement, VCCINT.			|Voltage
-> +		|22	|PL Auxiliary voltage measurement, VCCAUX.			|Voltage
-> +		|23	|ADC Reference P+ voltage measurement.				|Voltage
-> +		|24	|ADC Reference N- voltage measurement.				|Voltage
-> +		|25	|PL Block RAM voltage measurement, VCCBRAM.			|Voltage
-> +		|26	|LPD Internal voltage measurement, VCC_PSINTLP (supply4).	|Voltage
-> +		|27	|FPD Internal voltage measurement, VCC_PSINTFP (supply5).	|Voltage
-> +		|28	|PS Auxiliary voltage measurement (supply6).			|Voltage
-> +		|29	|PL VCCADC voltage measurement (vccams).			|Voltage
-> +		|30	|Differential analog input signal voltage measurment.		|Voltage
-> +		|31	|VUser0 voltage measurement (supply7).				|Voltage
-> +		|32	|VUser1 voltage measurement (supply8).				|Voltage
-> +		|33	|VUser2 voltage measurement (supply9).				|Voltage
-> +		|34	|VUser3 voltage measurement (supply10).				|Voltage
-> +		|35	|Auxiliary ch 0 voltage measurement (VAux0).			|Voltage
-> +		|36	|Auxiliary ch 1 voltage measurement (VAux1).			|Voltage
-> +		|37	|Auxiliary ch 2 voltage measurement (VAux2).			|Voltage
-> +		|38	|Auxiliary ch 3 voltage measurement (VAux3).			|Voltage
-> +		|39	|Auxiliary ch 4 voltage measurement (VAux4).			|Voltage
-> +		|40	|Auxiliary ch 5 voltage measurement (VAux5).			|Voltage
-> +		|41	|Auxiliary ch 6 voltage measurement (VAux6).			|Voltage
-> +		|42	|Auxiliary ch 7 voltage measurement (VAux7).			|Voltage
-> +		|43	|Auxiliary ch 8 voltage measurement (VAux8).			|Voltage
-> +		|44	|Auxiliary ch 9 voltage measurement (VAux9).			|Voltage
-> +		|45	|Auxiliary ch 10 voltage measurement (VAux10).			|Voltage
-> +		|46	|Auxiliary ch 11 voltage measurement (VAux11).			|Voltage
-> +		|47	|Auxiliary ch 12 voltage measurement (VAux12).			|Voltage
-> +		|48	|Auxiliary ch 13 voltage measurement (VAux13).			|Voltage
-> +		|49	|Auxiliary ch 14 voltage measurement (VAux14).			|Voltage
-> +		|50	|Auxiliary ch 15 voltage measurement (VAux15).			|Voltage
-> +---------------------------------------------------------------------------------------------------------
-> -- 
-> 2.1.1
+> To handle the list case that Igor has pointed out, you might want to
+> do something like this:
 > 
+> 	list_for_each_entry(x, &xs, entry) {
+> 		struct foo *writable = rare_modify(entry);
+
+Would this mapping be impossible to spoof by other cores?
+
+I'm asking this because, from what I understand, local interrupts are 
+enabled here, so an attack could freeze the core performing the 
+write-rare operation, while another scrapes the memory.
+
+But blocking interrupts for the entire body of the loop would make RT 
+latency unpredictable.
+
+> 		kref_get(&writable->ref);
+> 		rare_protect(writable);
+> 	}
+> 
+> but we'd probably wrap it in list_for_each_rare_entry(), just to be nicer.
+
+This seems suspiciously close to the duplication of kernel interfaces 
+that I was roasted for :-)
+
+--
+igor
+
