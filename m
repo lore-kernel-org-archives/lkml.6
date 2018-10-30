@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91AB3C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:29:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC9E4C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:29:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5971020827
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:29:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 945B920838
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:29:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KOpuGhSm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5971020827
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ts5skIKA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 945B920838
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728927AbeJ3WWt (ORCPT
+        id S1728943AbeJ3WWv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 18:22:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53552 "EHLO mail.kernel.org"
+        Tue, 30 Oct 2018 18:22:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53590 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728046AbeJ3WWs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 18:22:48 -0400
+        id S1727772AbeJ3WWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 18:22:50 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CCB620827;
-        Tue, 30 Oct 2018 13:29:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2824920838;
+        Tue, 30 Oct 2018 13:29:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540906160;
-        bh=uq7/w8IhV8b96X9znXP0SW5fA13ry0k8K0/a+mnouak=;
+        s=default; t=1540906162;
+        bh=eRFk+heWeeLFuXOBj4eDq6wTwxLyXRqDToiPTr/4sq4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KOpuGhSmnInf8mxXENkQa4vxdtu6NPwTxlBiXYAJWd8zQ5Gc5smEEUjb4myUV/8uU
-         7xmLu9+Tjkz8LnyjvtDNng86ek7pERnTlsorWliUp543hSt4xzu5nW6mYSxZF4OjKM
-         OmdnCOVZgR7/7i83ipak420CXUSO27g/XLwzy4D4=
+        b=Ts5skIKATssyQdf+FCjSOORKnG9bFZm1e2fYuNzbyerba2H1Xu+tIJtZ0WmVYuE+q
+         BpeTxFaZ55nG16d+Y+ZFNoeuXt9IUHftYThQXO3VTgcFzRXAHykef8xrm32FzrFWBS
+         cc3hUQ2CxGSrR7Tp4PEo5u7TrIP8P5N5N1BOUDCI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dimitris Michailidis <dmichail@google.com>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 18/19] net: fix pskb_trim_rcsum_slow() with odd trim offset
-Date:   Tue, 30 Oct 2018 09:28:23 -0400
-Message-Id: <20181030132824.218056-18-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 19/19] i2c: rcar: cleanup DMA for all kinds of failure
+Date:   Tue, 30 Oct 2018 09:28:24 -0400
+Message-Id: <20181030132824.218056-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181030132824.218056-1-sashal@kernel.org>
 References: <20181030132824.218056-1-sashal@kernel.org>
@@ -53,50 +53,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dimitris Michailidis <dmichail@google.com>
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-[ Upstream commit d55bef5059dd057bd077155375c581b49d25be7e ]
+[ Upstream commit 31d86033a0749a0463ea654130b2de5c163154f1 ]
 
-We've been getting checksum errors involving small UDP packets, usually
-59B packets with 1 extra non-zero padding byte. netdev_rx_csum_fault()
-has been complaining that HW is providing bad checksums. Turns out the
-problem is in pskb_trim_rcsum_slow(), introduced in commit 88078d98d1bb
-("net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are friends").
+DMA needs to be cleaned up not only on timeout, but on all errors where
+it has been setup before.
 
-The source of the problem is that when the bytes we are trimming start
-at an odd address, as in the case of the 1 padding byte above,
-skb_checksum() returns a byte-swapped value. We cannot just combine this
-with skb->csum using csum_sub(). We need to use csum_block_sub() here
-that takes into account the parity of the start address and handles the
-swapping.
-
-Matches existing code in __skb_postpull_rcsum() and esp_remove_trailer().
-
-Fixes: 88078d98d1bb ("net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are friends")
-Signed-off-by: Dimitris Michailidis <dmichail@google.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 73e8b0528346 ("i2c: rcar: add DMA support")
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/skbuff.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-rcar.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index 9f80b947f53b..c19a118f9f82 100644
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -1843,8 +1843,9 @@ int pskb_trim_rcsum_slow(struct sk_buff *skb, unsigned int len)
- 	if (skb->ip_summed == CHECKSUM_COMPLETE) {
- 		int delta = skb->len - len;
+diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
+index 7f044df1ea07..3415733a9364 100644
+--- a/drivers/i2c/busses/i2c-rcar.c
++++ b/drivers/i2c/busses/i2c-rcar.c
+@@ -761,8 +761,12 @@ static int rcar_i2c_master_xfer(struct i2c_adapter *adap,
  
--		skb->csum = csum_sub(skb->csum,
--				     skb_checksum(skb, len, delta, 0));
-+		skb->csum = csum_block_sub(skb->csum,
-+					   skb_checksum(skb, len, delta, 0),
-+					   len);
- 	}
- 	return __pskb_trim(skb, len);
- }
+ 	time_left = wait_event_timeout(priv->wait, priv->flags & ID_DONE,
+ 				     num * adap->timeout);
+-	if (!time_left) {
++
++	/* cleanup DMA if it couldn't complete properly due to an error */
++	if (priv->dma_direction != DMA_NONE)
+ 		rcar_i2c_cleanup_dma(priv);
++
++	if (!time_left) {
+ 		rcar_i2c_init(priv);
+ 		ret = -ETIMEDOUT;
+ 	} else if (priv->flags & ID_NACK) {
 -- 
 2.17.1
 
