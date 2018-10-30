@@ -2,417 +2,101 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24D8EC6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:44:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2CC8C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:46:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4DC92081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:44:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4DC92081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
+	by mail.kernel.org (Postfix) with ESMTP id 38CCF20664
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:46:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38CCF20664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727959AbeJaBim (ORCPT
+        id S1727800AbeJaBky (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 21:38:42 -0400
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:56942 "EHLO
-        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727429AbeJaBim (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 21:38:42 -0400
-Received: from [109.168.11.45] (port=36342 helo=[192.168.101.125])
-        by srv-hp10.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1gHX7t-00AT2p-Ru; Tue, 30 Oct 2018 17:44:21 +0100
-Subject: Re: [PATCH 4/7] mfd: ds90ux9xx: add TI DS90Ux9xx de-/serializer MFD
- driver
-To:     Vladimir Zapolskiy <vz@mleia.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
-        kieran.bingham@ideasonboard.com, Lee Jones <lee.jones@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20181008211205.2900-1-vz@mleia.com>
- <506c03d7-7986-44dd-3290-92d16a8106ad@mentor.com>
- <4a807a53-1592-a895-f140-54e7acc473b3@ideasonboard.com>
- <3599186.afdMBtdL0k@avalon> <735126c6-9780-a9ef-4fd0-699d6876ed37@mleia.com>
- <f0a52a64-a7e7-b266-a402-1279036fad36@mleia.com>
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Message-ID: <7c4cbfa7-d91e-82cd-d754-0ef04397af13@lucaceresoli.net>
-Date:   Tue, 30 Oct 2018 17:44:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 30 Oct 2018 21:40:54 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:46368 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727429AbeJaBkx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 21:40:53 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BCBDA88E4A;
+        Tue, 30 Oct 2018 16:46:38 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.31])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 071CA2AA88;
+        Tue, 30 Oct 2018 16:46:29 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Tue, 30 Oct 2018 17:46:38 +0100 (CET)
+Date:   Tue, 30 Oct 2018 17:46:29 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Enke Chen <enkechen@cisco.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Khalid Aziz <khalid.aziz@oracle.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Helge Deller <deller@gmx.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Brauner <christian@brauner.io>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Dave Martin <Dave.Martin@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Roman Gushchin <guro@fb.com>,
+        Marcos Paulo de Souza <marcos.souza.org@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>, x86@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        "Victor Kamensky (kamensky)" <kamensky@cisco.com>,
+        xe-linux-external@cisco.com, Stefan Strogin <sstrogin@cisco.com>
+Subject: Re: [PATCH v5] kernel/signal: Signal-based pre-coredump notification
+Message-ID: <20181030164628.GD7643@redhat.com>
+References: <e7ed306f-8992-9d00-bcab-5131159e8d89@cisco.com>
+ <458c04d8-d189-4a26-729a-bb1d1d751534@cisco.com>
+ <7741efa7-a3f8-62a1-ba52-613883164643@cisco.com>
+ <84460a77-a111-404e-4bad-88104a6e246e@cisco.com>
+ <20181026082812.GA10581@redhat.com>
+ <21f678a8-4001-df36-c26e-e96cf203b1b1@cisco.com>
+ <20181029111804.GA24820@redhat.com>
+ <0c197608-3b7e-ffd1-8943-801a60beb917@cisco.com>
 MIME-Version: 1.0
-In-Reply-To: <f0a52a64-a7e7-b266-a402-1279036fad36@mleia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca@lucaceresoli.net
-X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0c197608-3b7e-ffd1-8943-801a60beb917@cisco.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Tue, 30 Oct 2018 16:46:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vladimir,
+On 10/29, Enke Chen wrote:
+>
+> Reviewed-by: Oleg Nesterov <oleg@redhat.com>
 
-On 23/10/18 10:16, Vladimir Zapolskiy wrote:
-> Hi Laurent,
-> 
-> On 10/12/2018 02:59 PM, Vladimir Zapolskiy wrote:
->> Hello Laurent.
->>
->> On 10/12/2018 04:01 PM, Laurent Pinchart wrote:
->>> Hello Vladimir,
->>>
-> 
-> ...
-> 
->>> then move to the driver side. In that area I would like to have a full example 
->>> of a system using these chips, as the "initial support" is too limited for a 
->>> proper review. This won't come as a surprise, but I will expect the OF graph 
->>> bindings to be used to model data connections.
->>>
->>
->> The leverage of "the initial support" to "the complete support" requires:
->> * audio bridge cell driver -- trivial, just one mute/unmute control,
->> * interrupt controller cell driver -- trivial, but for sake of perfection
->>   it requires some minimal changes in drivers/base/regmap/regmap-irq.c
->> * DS90Ux940 MIPI CSI-2 -- non-trivial one, but we have it ready, I just
->>   don't want to add it to the pile at the moment, otherwise we'll continue
->>   discussing cameras, and I'd like to postpone it :)
->>
->> No more than that is needed to get absolutely complete support of 5 claimed
->> DS90UB9xx ICs, really. 5 other DS90UH9xx will require HDCP support in addition.
->>
->> I'll try to roll out an example of DTS snippet soon.
-> 
-> Below I share an example of the serializer and deserializer equipped boards
-> described in DT.
-> 
-> The example naturally describes *two* simplistic boards in device tree
-> representation -- main board with an application SoC (ordinary i.MX6*)
-> and panel display module board. For demonstation I select a simple
-> FPD-Link III connection between two boards, note that significantly
-> more advanced configurations are also supported by the published
-> drivers, for example deliberately I skip audio bridging functionality.
+Hmm. I didn't say this ;)
 
-Thanks for the comprehensive example, it helps a lot in understanding
-your proposal.
+But OK, feel free to keep this tag.
 
-> The main board features:
-> * TI DS90UB927Q serializer (LVDS input) at 0xc, connected to SoC over I2C2,
->   SoC GPIO5[10] signal is connected to the IC PDB pin,
-> * a status LED connected to DS90UB927Q GPIO2, it shall turn on,
->   if FPD-Link III connection is established,
-> * TI DS90UB928Q GPIO0 line signal is pulled-up,
-> * TI DS90UB927Q GPIO3 line serves as generic GPIO, it is supposed to be
->   controlled from userspace,
-> * TI DS90UB927Q INTB line is connected to SoC GPIO5[4], the line serves
->   as an interrupt line routed from a touchscreen controller on a panel
->   display module.
-> 
-> The panel display module board features:
-> * TI DS90UB928Q deserializer (LVDS output), *mapped* to have 0x3b address,
-> * AUO C070EAT01 panel,
-> * I2C EEPROM at 0x50, *mapped* to have 0x52 address on SoC I2C bus,
-> * Atmel MaxTouch touchscreen controller at 0x4b, *mapped* to have 0x60
->   address on SoC I2C bus, power-up control signal is connected to DS90UB928Q GPIO4,
-> * a status LED connected to DS90UB928Q GPIO0, its on/off status shall
->   repeat a user-defined status of DS90UB927Q GPIO0 on the main board,
-> * TI DS90UB928Q GPIO1 controls panel backlight, bridges DS90UB927Q
->   GPIO1 signal level, which in turn is connected to a SoC controlled GPIO,
-> * TI DS90UB928Q GPIO2 line signal is pulled-up,
-> * TI DS90UB928Q GPIO3 line serves as generic GPIOs, it is supposed to be
->   controlled from userspace.
-> 
-> All OF hard-coded controls like pinmuxing, I2C bridging of a remote
-> deserializer and I2C devices behind it, GPIO line state setting and so
-> forth must be applied with no interaction from a user -- and it just
-> works with the current / published versions of the drivers, in other
-> words a panel display module as a whole is truly hot-pluggable over
-> FPD-Link III connection.
-> 
-> The example is quite close to ones found in reality, if we put aside
-> production main boards from the real world, *the panel display modules*
-> or sensor modules (in case of a reverted serializer to deserializer link
-> connection to SoC) are even more complex, they host FPGAs, all kinds of
-> sensors, RF tuners, audio sources and sinks, and loads of other
-> incredible and fascinating stuff.
-> 
-> The published drivers allow to support very intricate and fine grained
-> control of "remote" PCBs, and reducing the complexity to "just a media
-> device" level could be done only if various IC functions are excluded
-> from the consideration. Here my purpose is to demonstrate that
-> * pinmux and GPIO controller functions are crucial and non-replaceable,
-> * I2C bridge function modeled as another cell device actually does not
->   fit into the existing I2C host/mux device driver models, and it is
->   a completely new abstraction with custom device tree properties,
-> * video bridge is absolutely transparent, thus trivial, and is modeled
->   as another cell device, if needed it would be possible to write a
->   DRM driver at no cost,
-> * reusing OF graph model fits naturally, bus vs. link discussion can
->   be started separately, note that LVDS (a.k.a FPD-Link) is formally
->   an electric bus, so please define the difference,
-> * to sum up I see no real objections to the given model of IC series
->   support in Linux as an MFD parent device driver, plus pinmux/GPIO
->   controller cell device driver, plus other needed cell device drivers.
-> 
-> For video bridging I fabricated a "video-bridge" device driver, it can
-> be substituted by your "lvds-encoder" driver, here I just need a simple
-> transparent video bridge driver with NO media controls, its only purpose
-> is to establish OF graph links, also note that on "remote" side a
-> video bridge cell node can be omitted (but it may ).
-> 
-> The example is NOT build tested and it may contain errors of secondary
-> importance, but it tends to repeat the real usage and description of
-> TI DS90Ux9xx equipped boards.
-> 
-> ======== The panel display module board device tree description ========
-> 
-> / {
-> 	display-module {
-> 		panel {
-> 			compatible = "auo,c070eat01", "panel-lvds";
-> 			pinctrl-names = "default";
-> 			pinctrl-0 = <&panel_pins>;
-> 
-> 			width-mm = <153>;
-> 			height-mm = <90>;
-> 
-> 			data-mapping = "jeida-24";
-> 
-> 			panel-timing {
-> 				clock-frequency = <71000000>;
-> 				hactive = <1280>;
-> 				vactive = <800>;
-> 				hsync-len = <70>;
-> 				hfront-porch = <20>;
-> 				hback-porch = <70>;
-> 				vsync-len = <5>;
-> 				vfront-porch = <3>;
-> 				vback-porch = <15>;
-> 			};
-> 
-> 			port {
-> 				panel_input: endpoint {
-> 					remote-endpoint = <&ds90ub928_output>;
-> 				};
-> 			};
-> 		};
-> 
-> 		deserializer: deserializer {
-> 			compatible = "ti,ds90ub928q", "ti,ds90ux9xx";
-> 
-> 			i2c-bridge {
-> 				compatible = "ti,ds90ux9xx-i2c-bridge";
-> 				#address-cells = <1>;
-> 				#size-cells = <0>;
-> 
-> 				touchscreen@4b {
-> 					compatible = "atmel,maxtouch";
-> 					reg = <0x4b>;
-> 					pinctrl-names = "default";
-> 					pinctrl-0 = <&touchscreen_pins>;
-> 					interrupt-parent = <&ds90ub927_intc>;
-> 					interrupts = <0>;
-> 					atmel,mtu = <200>;
-> 				};
-> 
-> 				eeprom@50 {
-> 					compatible = "microchip,24lc128";
-> 					reg = <0x50>;
-> 					pagesize = <64>;
-> 				};
-> 			};
-> 
-> 			ds90ub928_pctrl: pin-controller {
-> 				compatible = "ti,ds90ub928q-pinctrl", "ti,ds90ux9xx-pinctrl";
-> 				gpio-controller;
-> 				#gpio-cells = <2>;
-> 				gpio-ranges = <&ds90ub928_pctrl 0 0 8>;
-> 
-> 				pinctrl-names = "default";
-> 				pinctrl-0 = <&led_pins>;
-> 
-> 				led_pins: pinmux {
-> 					gpio-remote {
-> 						pins = "gpio0";
-> 						function = "gpio-remote";
-> 					};
-> 				};
-> 
-> 				panel_pins: panel-pwm {
-> 					gpio-remote {
-> 						pins = "gpio1";
-> 						function = "gpio-remote";
-> 					};
-> 				};
-> 
-> 				touchscreen_pins: touchscreen-power-up {
-> 					gpio-hog;
-> 					gpios = <4 GPIO_ACTIVE_HIGH>;
-> 					output-high;
-> 				};
-> 			};
-> 
-> 			/*
-> 			 * For simplicity video-bridge can be simply removed here
-> 			 * by "connecting" ds90ub927_fpd to &panel_input directly.
-> 			 */
-> 			video-bridge {
-> 				compatible = "ti,ds90ux9xx-video-bridge", "video-bridge";
-> 
-> 				ports {
-> 					#address-cells = <1>;
-> 					#size-cells = <0>;
-> 
-> 					port@0 {
-> 						reg = <0>;
-> 						ds90ub928_fpd: endpoint {
-> 							remote-endpoint = <&ds90ub927_fpd>;
-> 						};
-> 					};
-> 
-> 					port@1 {
-> 						reg = <1>;
-> 						ds90ub928_output: endpoint {
-> 							remote-endpoint = <&panel_input>;
-> 						};
-> 					};
-> 				};
-> 			};
-> 		};
-> 	};
-> };
-> 
-> ======== The main board device tree description ========
-> 
-> / {
-> 	/* iMX6 series SoC for demonstration purpose */
-> 
-> 	&ldb {
-> 		status = "okay";
-> 
-> 		lvds-channel@1 {
-> 			status = "okay";
-> 			fsl,data-mapping = "jeida";
-> 			fsl,data-width = <24>;
-> 
-> 			port@4 {
-> 				reg = <4>;
-> 
-> 				lvds1_out: endpoint {
-> 					remote-endpoint = <&ds90ub927_lvds>;
-> 				};
-> 			};
-> 		};
-> 	};
-> 
-> 	&i2c2 {
-> 		status = "okay";
-> 		clock-frequency = <400000>;
-> 
-> 		serializer: serializer@c {
-> 			compatible = "ti,ds90ub927q", "ti,ds90ux9xx";
-> 			reg = <0xc>;
-> 			power-gpios = <&gpio5 10 GPIO_ACTIVE_HIGH>;
-> 			ti,backward-compatible-mode = <0>;
-> 			ti,low-frequency-mode = <0>;
-> 
-> 			i2c-bridge {
-> 				compatible = "ti,ds90ux9xx-i2c-bridge";
-> 				ti,i2c-bridges = <&deserializer 0 0x3b>;
+I do not like this feauture. But I see no technical problems in this version
+and I never pretented I understand the user-space needs, so I won't argue.
 
-DT should describe the connections with leaf nodes pointing towards the
-centre (CPU). Thus the local chip (serializer) pointing to the remote
-chip (serializer) is wrong here. Among others, it forbids the
-display-module tree from being a DT overlay inserted at runtime. This is
-fundamental to have different remote boards, detected at runtime.
+Oleg.
 
-Of course runtime insertion/removal opens other issues, namely the fact
-that media-ctl nodes point to each other, and a media pipeline is not
-quite modifiable while streaming. But that is another issue.
-
-> 				ti,i2c-bridge-maps = <0 0x4b 0x60>, <0 0x50 0x52>;
-> 			};
-> 
-> 			ds90ub927_intc: interrupt-controller {
-> 				compatible = "ti,ds90ub927-intc";
-> 				interrupt-parent = <&gpio5>;
-> 				interrupts = <4 IRQ_TYPE_EDGE_RISING>;
-> 				interrupt-controller;
-> 				#interrupt-cells = <1>;
-> 			};
-> 
-> 			ds90ub927_pctrl: pin-controller {
-> 				compatible = "ti,ds90ub927b-pinctrl", "ti,ds90ux9xx-pinctrl";
-> 				gpio-controller;
-> 				#gpio-cells = <2>;
-> 				gpio-ranges = <&ds90ub927_pctrl 0 0 8>;
-> 
-> 				/* Wired to some SoC controlled GPIO */
-> 				pwm-backlight {
-> 					gpio-hog;
-> 					gpios = <1 GPIO_ACTIVE_HIGH>;
-> 					input;
-> 				};
-> 
-> 				led_pins: pinmux {
-> 					gpio-remote {
-> 						pins = "gpio2";
-> 						function = "gpio-remote";
-> 					};
-> 				};
-> 			};
-> 
-> 			video-bridge {
-> 				compatible = "ti,ds90ux9xx-video-bridge", "video-bridge";
-> 
-> 				ports {
-> 					#address-cells = <1>;
-> 					#size-cells = <0>;
-> 
-> 					port@0 {
-> 						reg = <0>;
-> 						ds90ub927_lvds: endpoint {
-> 							remote-endpoint = <&lvds1_out>;
-> 						};
-> 					};
-> 
-> 					port@1 {
-> 						reg = <1>;
-> 						ds90ub927_fpd: endpoint {
-> 							remote-endpoint = <&ds90ub928_fpd>;
-> 						};
-> 					};
-> 				};
-> 			};
-> 		};
-> 	};
-> };
-> 
-> ==== end of example =====
-> 
-> --
-> Best wishes,
-> Vladimir
-> 
-
--- 
-Luca
