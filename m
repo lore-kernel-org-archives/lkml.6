@@ -2,136 +2,70 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01D0FC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 06:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C5A3C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 06:15:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C246B2064C
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 06:12:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C246B2064C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D1CAC2082D
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 06:15:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1CAC2082D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbeJ3PFB (ORCPT
+        id S1726491AbeJ3PHj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 11:05:01 -0400
-Received: from mx2.suse.de ([195.135.220.15]:51210 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726050AbeJ3PFB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 11:05:01 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id CBEDFACA7;
-        Tue, 30 Oct 2018 06:12:52 +0000 (UTC)
-Date:   Tue, 30 Oct 2018 07:12:49 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Mike Galbraith <efault@gmx.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shakeel Butt <shakeelb@google.com>
-Subject: Re: [PATCH] mm: handle no memcg case in memcg_kmem_charge() properly
-Message-ID: <20181030061249.GS32673@dhcp22.suse.cz>
-References: <20181029215123.17830-1-guro@fb.com>
+        Tue, 30 Oct 2018 11:07:39 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:34994 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726053AbeJ3PHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 11:07:39 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E219FC049585;
+        Tue, 30 Oct 2018 06:15:31 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-158.ams2.redhat.com [10.36.116.158])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9BAEF29363;
+        Tue, 30 Oct 2018 06:15:31 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id A924EB3DC7; Tue, 30 Oct 2018 07:15:30 +0100 (CET)
+Date:   Tue, 30 Oct 2018 07:15:30 +0100
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Shayenne da Luz Moura <shayenneluzmoura@gmail.com>
+Cc:     Dave Airlie <airlied@redhat.com>, David Airlie <airlied@linux.ie>,
+        virtualization@lists.linux-foundation.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        outreachy-kernel@googlegroups.com
+Subject: Re: [PATCH 0/6] drm/qxl: Remove checkpatch issues
+Message-ID: <20181030061530.3npr2e3m6uwwxbza@sirius.home.kraxel.org>
+References: <cover.1540579956.git.shayenneluzmoura@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181029215123.17830-1-guro@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <cover.1540579956.git.shayenneluzmoura@gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 30 Oct 2018 06:15:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 29-10-18 21:51:55, Roman Gushchin wrote:
-> Mike Galbraith reported a regression caused by the commit 9b6f7e163cd0
-> ("mm: rework memcg kernel stack accounting") on a system with
-> "cgroup_disable=memory" boot option: the system panics with the
-> following stack trace:
+On Fri, Oct 26, 2018 at 04:20:30PM -0300, Shayenne da Luz Moura wrote:
+> This series cleans the following checkpatch.pl issues:
 > 
->   [0.928542] BUG: unable to handle kernel NULL pointer dereference at 00000000000000f8
->   [0.929317] PGD 0 P4D 0
->   [0.929573] Oops: 0002 [#1] PREEMPT SMP PTI
->   [0.929984] CPU: 0 PID: 1 Comm: systemd Not tainted 4.19.0-preempt+ #410
->   [0.930637] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS ?-20180531_142017-buildhw-08.phx2.fed4
->   [0.931862] RIP: 0010:page_counter_try_charge+0x22/0xc0
->   [0.932376] Code: 41 5d c3 c3 0f 1f 40 00 0f 1f 44 00 00 48 85 ff 0f 84 a7 00 00 00 41 56 48 89 f8 49 89 fe 49
->   [0.934283] RSP: 0018:ffffacf68031fcb8 EFLAGS: 00010202
->   [0.934826] RAX: 00000000000000f8 RBX: 0000000000000000 RCX: 0000000000000000
->   [0.935558] RDX: ffffacf68031fd08 RSI: 0000000000000020 RDI: 00000000000000f8
->   [0.936288] RBP: 0000000000000001 R08: 8000000000000063 R09: ffff99ff7cd37a40
->   [0.937021] R10: ffffacf68031fed0 R11: 0000000000200000 R12: 0000000000000020
->   [0.937749] R13: ffffacf68031fd08 R14: 00000000000000f8 R15: ffff99ff7da1ec60
->   [0.938486] FS:  00007fc2140bb280(0000) GS:ffff99ff7da00000(0000) knlGS:0000000000000000
->   [0.939311] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->   [0.939905] CR2: 00000000000000f8 CR3: 0000000012dc8002 CR4: 0000000000760ef0
->   [0.940638] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->   [0.941366] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->   [0.942110] PKRU: 55555554
->   [0.942412] Call Trace:
->   [0.942673]  try_charge+0xcb/0x780
->   [0.943031]  memcg_kmem_charge_memcg+0x28/0x80
->   [0.943486]  ? __vmalloc_node_range+0x1e4/0x280
->   [0.943971]  memcg_kmem_charge+0x8b/0x1d0
->   [0.944396]  copy_process.part.41+0x1ca/0x2070
->   [0.944853]  ? get_acl+0x1a/0x120
->   [0.945200]  ? shmem_tmpfile+0x90/0x90
->   [0.945596]  _do_fork+0xd7/0x3d0
->   [0.945934]  ? trace_hardirqs_off_thunk+0x1a/0x1c
->   [0.946421]  do_syscall_64+0x5a/0x180
->   [0.946798]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> 
-> The problem occurs because get_mem_cgroup_from_current() returns
-> the NULL pointer if memory controller is disabled. Let's check
-> if this is a case at the beginning of memcg_kmem_charge() and
-> just return 0 if mem_cgroup_disabled() returns true. This is how
-> we handle this case in many other places in the memory controller
-> code.
-> 
-> Fixes: 9b6f7e163cd0 ("mm: rework memcg kernel stack accounting")
-> Reported-by: Mike Galbraith <efault@gmx.de>
-> Signed-off-by: Roman Gushchin <guro@fb.com>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
+> ERROR: trailing whitespace
+> WARNING: Missing a blank line after declarations
+> CHECK: Please don't use multiple blank lines
+> WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
+> ERROR: space required before the open parenthesis '('
+> CHECK: Avoid using bool structure members because of possible alignment issues
 
-I tend to agree with Shakeel that consistency with the other caller
-would be less confusing. I would split the function to __memcg_kmem_charge
-without any checks and call it from __alloc_pages_nodemask and add the
-check to memcg_kmem_charge. This would be less confusing I guess.
+Patches queued up.
 
-Something for a follow up clean up though.
+thanks,
+  Gerd
 
-Acked-by: Michal Hocko <mhocko@suse.com>
-
-> ---
->  mm/memcontrol.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 54920cbc46bf..6e1469b80cb7 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -2593,7 +2593,7 @@ int memcg_kmem_charge(struct page *page, gfp_t gfp, int order)
->  	struct mem_cgroup *memcg;
->  	int ret = 0;
->  
-> -	if (memcg_kmem_bypass())
-> +	if (mem_cgroup_disabled() || memcg_kmem_bypass())
->  		return 0;
->  
->  	memcg = get_mem_cgroup_from_current();
-> -- 
-> 2.17.2
-
--- 
-Michal Hocko
-SUSE Labs
