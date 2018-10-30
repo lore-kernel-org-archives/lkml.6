@@ -2,162 +2,120 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80661C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B3DCC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:10:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DEF020827
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:05:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DEF020827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
+	by mail.kernel.org (Postfix) with ESMTP id D831520827
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:10:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Xs5fUYIj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D831520827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbeJ3S6e (ORCPT
+        id S1726721AbeJ3TDY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 14:58:34 -0400
-Received: from lucky1.263xmail.com ([211.157.147.130]:45934 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726792AbeJ3S6e (ORCPT
+        Tue, 30 Oct 2018 15:03:24 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:45812 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726523AbeJ3TDY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 14:58:34 -0400
-Received: from tony.xie?rock-chips.com (unknown [192.168.167.73])
-        by lucky1.263xmail.com (Postfix) with ESMTP id ED721380;
-        Tue, 30 Oct 2018 18:05:27 +0800 (CST)
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 1
-X-MAIL-DELIVERY: 0
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        by smtp.263.net (Postfix) with ESMTPA id CD0A3380;
-        Tue, 30 Oct 2018 18:05:23 +0800 (CST)
-X-RL-SENDER: tony.xie@rock-chips.com
-X-FST-TO: heiko@sntech.de
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: tony.xie@rock-chips.com
-X-UNIQUE-TAG: <8eacf3333ed0056239eae0e09ff5e877>
-X-ATTACHMENT-NUM: 0
-X-SENDER: xxx@rock-chips.com
-X-DNS-TYPE: 0
-Received: from unknown (unknown [58.22.7.114])
-        by smtp.263.net (Postfix) whith SMTP id 11686FOIDIY;
-        Tue, 30 Oct 2018 18:05:26 +0800 (CST)
-From:   Tony Xie <tony.xie@rock-chips.com>
-To:     heiko@sntech.de
-Cc:     broonie@kernel.org, lee.jones@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
-        xsf@rock-chips.com, zhangqing@rock-chips.com,
-        huangtao@rock-chips.com, tony.xie@rock-chips.com
-Subject: [PATCH v6 4/6] dt-bindings: mfd: rk808: Add binding information for RK809 and RK817.
-Date:   Tue, 30 Oct 2018 18:07:59 +0800
-Message-Id: <1540894081-31270-5-git-send-email-tony.xie@rock-chips.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1540894081-31270-1-git-send-email-tony.xie@rock-chips.com>
-References: <1540894081-31270-1-git-send-email-tony.xie@rock-chips.com>
+        Tue, 30 Oct 2018 15:03:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=XhjwoH8+GWRr9XXZHE455Tgdoy/5aq911Rln+JBJLFo=; b=Xs5fUYIjEeq4A48Ki5QEecCX6
+        jRRlB+fSYqGu/oVTVjXx3OeOITN0VzerRSF4vpbyPYNRDwHStHm3uNZwn4BO0LkBG2E/SnZumcFay
+        mxmcCfY71ifxIwRDw9FnVPKxz1rohN5/7KbI8s42U19dLpcBhdUB1Ikugdr9hM/fmWtNX2edRPGIn
+        42rpTN0YidmvDvrWuch5rYOBe2P9p3tQFnX4hVfShh+LLikUQYueBbEAr32YYaXgkRQJPLSefO9KF
+        nBaQRRq7kn5QT/9fp/ZEtWFQs6uszUA0Es3qUmMCYMR0hYzjK/420w4wNaYWWsgo0O+pQK+jNgas/
+        Ja1LVAlaw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gHQyD-00021w-O4; Tue, 30 Oct 2018 10:09:58 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 28A1E2029FA14; Tue, 30 Oct 2018 11:09:54 +0100 (CET)
+Date:   Tue, 30 Oct 2018 11:09:54 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     zhenzhong.duan@oracle.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andy Lutomirski <luto@kernel.org>, konrad.wilk@oracle.com,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Thomas Gleixner <tglx@linutronix.de>, srinivas.eeda@oracle.com,
+        Borislav Petkov <bp@suse.de>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Michal Marek <michal.lkml@markovi.net>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [PATCH 1/3] retpolines: Only enable retpoline when compiler
+ support it
+Message-ID: <20181030100954.GF744@hirez.programming.kicks-ass.net>
+References: <e63900bc-d7af-4a57-aa96-f6cc84b89e09@default>
+ <CAK7LNAQG62vzFpDC_xoTEh6CuxmRVU7jAtVe7YpVmqou1hEagQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAK7LNAQG62vzFpDC_xoTEh6CuxmRVU7jAtVe7YpVmqou1hEagQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add device tree bindings documentation for Rockchip's RK809 & RK817 PMIC.
+On Tue, Oct 30, 2018 at 06:39:24PM +0900, Masahiro Yamada wrote:
+> Hi,
+> 
+> 
+> 
+> On Tue, Oct 30, 2018 at 3:57 PM Zhenzhong Duan
+> <zhenzhong.duan@oracle.com> wrote:
+> >
+> > Since retpoline capable compilers are widely available, make
+> > CONFIG_RETPOLINE hard depend on it.
+> >
+> > Change KBUILD to use CONFIG_RETPOLINE_SUPPORT to avoid conflict with
+> > CONFIG_RETPOLINE which is used by kernel.
+> >
+> > With all that stuff, the check of RETPOLINE is changed to
+> > CONFIG_RETPOLINE.
+> >
+> > This change is based on suggestion in https://lkml.org/lkml/2018/9/18/1016
+> >
+> > Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Borislav Petkov <bp@suse.de>
+> > Cc: Daniel Borkmann <daniel@iogearbox.net>
+> > Cc: David Woodhouse <dwmw@amazon.co.uk>
+> > Cc: H. Peter Anvin <hpa@zytor.com>
+> > Cc: Ingo Molnar <mingo@redhat.com>
+> > Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+> > Cc: Andy Lutomirski <luto@kernel.org>
+> > Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > Cc: Michal Marek <michal.lkml@markovi.net>
+> > ---
+> 
+> 
+> Instead of adding another CONFIG option,
+> does it make sense to add compiler support checks
+> to 'depends on' syntax ?
+> 
+> 
+> config RETPOLINE
+>          bool "Avoid speculative indirect branches in kernel"
+>          depends on $(cc-option,-mindirect-branch=thunk-extern
+> -mindirect-branch-register) || \
+>                     $(cc-option,-mretpoline-external-thunk)
+>          default y
+>          select STACK_VALIDATION if HAVE_STACK_VALIDATION
 
-Signed-off-by: Tony Xie <tony.xie@rock-chips.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
----
- Documentation/devicetree/bindings/mfd/rk808.txt | 44 +++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/mfd/rk808.txt b/Documentation/devicetree/bindings/mfd/rk808.txt
-index 91b6522..f306fa0 100644
---- a/Documentation/devicetree/bindings/mfd/rk808.txt
-+++ b/Documentation/devicetree/bindings/mfd/rk808.txt
-@@ -3,11 +3,15 @@ RK8XX Power Management Integrated Circuit
- The rk8xx family current members:
- rk805
- rk808
-+rk809
-+rk817
- rk818
- 
- Required properties:
- - compatible: "rockchip,rk805"
- - compatible: "rockchip,rk808"
-+- compatible: "rockchip,rk809"
-+- compatible: "rockchip,rk817"
- - compatible: "rockchip,rk818"
- - reg: I2C slave address
- - interrupt-parent: The parent interrupt controller.
-@@ -46,6 +50,23 @@ Optional RK808 properties:
-   the gpio controller. If DVS GPIOs aren't present, voltage changes will happen
-   very quickly with no slow ramp time.
- 
-+Optional shared RK809 and RK817 properties:
-+- vcc1-supply:  The input supply for DCDC_REG1
-+- vcc2-supply:  The input supply for DCDC_REG2
-+- vcc3-supply:  The input supply for DCDC_REG3
-+- vcc4-supply:  The input supply for DCDC_REG4
-+- vcc5-supply:  The input supply for LDO_REG1, LDO_REG2, LDO_REG3
-+- vcc6-supply:  The input supply for LDO_REG4, LDO_REG5, LDO_REG6
-+- vcc7-supply:  The input supply for LDO_REG7, LDO_REG8, LDO_REG9
-+
-+Optional RK809 properties:
-+- vcc8-supply:  The input supply for SWITCH_REG1
-+- vcc9-supply:  The input supply for DCDC_REG5, SWITCH_REG2
-+
-+Optional RK817 properties:
-+- vcc8-supply:  The input supply for BOOST
-+- vcc9-supply:  The input supply for OTG_SWITCH
-+
- Optional RK818 properties:
- - vcc1-supply:  The input supply for DCDC_REG1
- - vcc2-supply:  The input supply for DCDC_REG2
-@@ -87,6 +108,21 @@ number as described in RK808 datasheet.
- 	- SWITCH_REGn
- 		- valid values for n are 1 to 2
- 
-+Following regulators of the RK809 and RK817 PMIC blocks are supported. Note that
-+the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
-+number as described in RK809 and RK817 datasheets.
-+
-+	- DCDC_REGn
-+		- valid values for n are 1 to 5 for RK809.
-+		- valid values for n are 1 to 4 for RK817.
-+	- LDO_REGn
-+		- valid values for n are 1 to 9 for RK809.
-+		- valid values for n are 1 to 9 for RK817.
-+	- SWITCH_REGn
-+		- valid values for n are 1 to 2 for RK809.
-+	- BOOST for RK817
-+	- OTG_SWITCH for RK817
-+
- Following regulators of the RK818 PMIC block are supported. Note that
- the 'n' in regulator name, as in DCDC_REGn or LDOn, represents the DCDC or LDO
- number as described in RK818 datasheet.
-@@ -99,6 +135,14 @@ number as described in RK818 datasheet.
- 	- HDMI_SWITCH
- 	- OTG_SWITCH
- 
-+It is necessary to configure three pins for both the RK809 and RK817, the three
-+pins are "gpio_ts" "gpio_gt" "gpio_slp".
-+	The gpio_gt and gpio_ts pins support the gpio function.
-+	The gpio_slp pin is for controlling the pmic states, as below:
-+		- reset
-+		- power down
-+		- sleep
-+
- Standard regulator bindings are used inside regulator subnodes. Check
-   Documentation/devicetree/bindings/regulator/regulator.txt
- for more details
--- 
-1.9.1
-
-
+That seems to be what we did for stackprotector, which is similar in
+that it used to fail the build. So yes, this seems sane.
