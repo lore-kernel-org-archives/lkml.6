@@ -2,148 +2,175 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39DBFECDE44
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 18:51:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E48F6C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 18:52:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB03C20657
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 18:51:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="dlnDeEWl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB03C20657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	by mail.kernel.org (Postfix) with ESMTP id 9DA5320657
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 18:52:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DA5320657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727676AbeJaDqB (ORCPT
+        id S1727745AbeJaDrQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 23:46:01 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44515 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727429AbeJaDqA (ORCPT
+        Tue, 30 Oct 2018 23:47:16 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46419 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727684AbeJaDrQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 23:46:00 -0400
-Received: by mail-pf1-f195.google.com with SMTP id j13-v6so2801497pff.11
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 11:51:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=rb6YvcGOAMe/gwiFBMF9WZ2MVHDY2CeNDGz9YQsONMw=;
-        b=dlnDeEWl/upXbbOU895iXNU3Fv7dD34w37fudMV6cLJ0OWuqgP2au4nclePyohHbeC
-         t2624op9N/hpZYLdggT+0lWOYZz0XaIaOYScrz6WpzaA8Ar45iShOgq0Lc2Y9U7yn9f0
-         sS9HPVTm8/kfK2CeoXd+oV/W6ps7FkjzRvAiAOJEFq1DNTAH7y8WC3gBHSdwAD//rHch
-         zxoJnEQ4Di9AwFI5VVIwM8VjExVK5S4saWiwV08gFAgIeqauKSck1AKUbds34kGgddeJ
-         3YYKRpyPuC4DsexudYrLf9PY3Yau7g6crupTZJ46n6t0e51biDl9VQfxwKuPkn8Has9f
-         8dDQ==
+        Tue, 30 Oct 2018 23:47:16 -0400
+Received: by mail-wr1-f67.google.com with SMTP id 74-v6so5583641wrb.13
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 11:52:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=rb6YvcGOAMe/gwiFBMF9WZ2MVHDY2CeNDGz9YQsONMw=;
-        b=EVj+KgMofcBNDwIHiNSYMd6EOg/qCAhBE0KaoZFm4tr16t8y39suB6GGo8OhAfdBaI
-         f8ABK51CUzFvl5NzLwRuZBxP5nsdPDsrjFcLZ7UYWQ1VFRnnxqkaYp16v6pdcANrJyCB
-         BqTAueq/g6tw+TrTRD+CuwX2yMaReK/U8ebZawVCumOsojWdvIdmgrxexg8j55dqvSHa
-         nrs3lhcTSLqCBTU9Wx7Ep+AlirL0T9DcfOaWER7BNgU6vO/8sDMxGKMKiR654MSGuIx3
-         fKNbn0OhRqOQSH7w4a6Uw8K+Ud3ZAJC/7ceq927FIY5yWpHPbfXAXW8UAGWegfEquCL4
-         4qZA==
-X-Gm-Message-State: AGRZ1gKw1gcvj6nie2RMZPW8PBlBCeNHr0WIQDDr3OLXVYvRbsD1NXXX
-        p4fl5N2jcHiZbuEamvQpOFd7gA==
-X-Google-Smtp-Source: AJdET5dJlZ4nxUnqhdvGPbfJBzHxBH8NcYilBZIMH/rItwX1GAspFkxj86srmnWm+e37pScA+3erQg==
-X-Received: by 2002:a62:5343:: with SMTP id h64-v6mr4136829pfb.226.1540925480273;
-        Tue, 30 Oct 2018 11:51:20 -0700 (PDT)
-Received: from ?IPv6:2600:1010:b021:f9e6:a9a5:9545:35ee:19c8? ([2600:1010:b021:f9e6:a9a5:9545:35ee:19c8])
-        by smtp.gmail.com with ESMTPSA id u1-v6sm24711389pgr.61.2018.10.30.11.51.18
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=uSJZDchg3STA2ei1ezY/bwG1hzGRPLQxANLFffduMeU=;
+        b=qhdId1cZz1nyi8YbgPzs+yRrazYcUfCQhFLIv77LUkFXYfmFBetF0osKcT1GqMn7Sh
+         IQAP64lXQpLUUbAJ6NZ/LQyShLy/0cpJqP6hkCkw7wA8pTfB1raItQqYZuBsismDBN6G
+         zmbMbFhsEqMDzSGPNzGG1K6oVfzwzIaRYrwhR0m2FdEP2sNkgrnzExt2n76bvm4RWiYb
+         Y/RRnPId/0cA4WmARBlHE7PZ+OJDuSyPAB2FY+N4/1uNAUM1N3KkqFe/0G4auPFZtE2B
+         yrd7k+jjNTJeZurLFDMhkFy1BsY+6amlv7usWo7n7jZ3epxC49fBy0keRbEUEoSg8kKO
+         /mBg==
+X-Gm-Message-State: AGRZ1gKxqiJCq1ao3rPpXQ6oqj40eJkGrfIdhm1AWt+UILRl7IuM/P0d
+        KiM4xVoDPouvbuxS75SdXNVGFA==
+X-Google-Smtp-Source: AJdET5f16QsTMU3XexgJazxQdQWxs/ivanefl3q3kCN1OIUbOeWE67KtMY4fJ3YPkQB/58bpl8osbQ==
+X-Received: by 2002:adf:e7cd:: with SMTP id e13-v6mr59870wrn.115.1540925553922;
+        Tue, 30 Oct 2018 11:52:33 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id m2-v6sm21623890wrj.80.2018.10.30.11.52.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 11:51:18 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 10/17] prmem: documentation
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16A404)
-In-Reply-To: <20181030175814.GB10491@bombadil.infradead.org>
-Date:   Tue, 30 Oct 2018 11:51:17 -0700
-Cc:     Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Igor Stoppa <igor.stoppa@gmail.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <28C8CD2A-BDC0-49A5-854E-1E18968528B8@amacapital.net>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com> <20181023213504.28905-11-igor.stoppa@huawei.com> <20181026092609.GB3159@worktop.c.hoisthospitality.com> <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com> <20181028183126.GB744@hirez.programming.kicks-ass.net> <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com> <20181030152641.GE8177@hirez.programming.kicks-ass.net> <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com> <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net> <20181030175814.GB10491@bombadil.infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>, nadav.amit@gmail.com
+        Tue, 30 Oct 2018 11:52:33 -0700 (PDT)
+Subject: Re: [RFC][PATCH v1] ACPI / scan: Create platform device for BOSC0200
+ ACPI nodes
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-acpi@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+        linux-iio@vger.kernel.org, Darren Hart <dvhart@infradead.org>,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Javier Martinez Canillas <javierm@redhat.com>
+Cc:     Steven Presser <steve@pressers.name>,
+        Bastien Nocera <hadess@hadess.net>
+References: <20181030144706.6737-1-andriy.shevchenko@linux.intel.com>
+ <3e34f7c0-e747-7393-4b79-317b8483f0a6@redhat.com>
+Message-ID: <93b9b138-2e58-8fcc-f86d-688afc3a59c1@redhat.com>
+Date:   Tue, 30 Oct 2018 19:52:32 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <3e34f7c0-e747-7393-4b79-317b8483f0a6@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
+
+On 30-10-18 16:27, Hans de Goede wrote:
+> Hi,
+> 
+> On 30-10-18 15:47, Andy Shevchenko wrote:
+>> On some laptops the ACPI device with BOSC0200 _HID is representing
+>> two accelerometers under one node.
+>>
+>> We add an ID to the I2C multi instantiate list to enumerate
+>> all I2C slaves correctly.
+> 
+> I believe that overall the approach here is correct, but I've
+> several (at least 4 different models) devices which use the
+> BOSC0200 _HID but with only 1 accelerometer / 1 I2cSerialBus
+> resource in the _CRS table.
+> 
+> So I believe that you need to add a new optional bool to
+> struct i2c_inst_data and ignore i2c_acpi_new_device()
+> returning NULL when this is set (and set it for the second
+> accelerometer).
+> 
+> i2c_unregister_device can handle NULL, so some entries
+> of the multi->clients[i] array ending up as NULL is not
+> a problem.
+> 
+> Hmm, I have just realized that there is another issue
+> which is a real problem, we have stuff like this:
+> 
+> [hans@shalem linux]$ ack BOSC0200 /lib/udev/hwdb.d/60-sensor.hwdb
+> sensor:modalias:acpi:BOSC0200*:dmi:*:svnHampoo:pnD2D3_Vi8A1:*
+> sensor:modalias:acpi:BOSC0200*:dmi:*:svnHampoo:pnX1D3_C806N:*
+> sensor:modalias:acpi:BOSC0200*:dmi:*:svn*CHUWIINNOVATIONANDTECHNOLOGY*:pnHi10protablet:*
+> sensor:modalias:acpi:BOSC0200*:dmi:*:svnHampoo:pnP02BD6_HI-122LP:*
+> # match the entire dmi-alias, assuming that the use of a BOSC0200 +
+> sensor:modalias:acpi:BOSC0200*:dmi:bvnAmericanMegatrendsInc.:bvr5.11:bd05/07/2016:svnDefaultstring:pnDefaultstring:pvrDefaultstring:rvnHampoo:rnCherryTrailCR:rvrDefaultstring:cvnDefaultstring:ct3:cvrDefaultstring:
+> sensor:modalias:acpi:BOSC0200*:dmi:bvnAmericanMegatrendsInc.:bvr5.11:bd05/28/2016:svnDefaultstring:pnDefaultstring:pvrDefaultstring:rvnHampoo:rnCherryTrailCR:rvrDefaultstring:cvnDefaultstring:ct3:cvrDefaultstring:
+> sensor:modalias:acpi:BOSC0200*:dmi:bvnINSYDECorp.:bvrjumperx.T87.KFBNEE*
+> sensor:modalias:acpi:BOSC0200*:dmi:*:svnJumper:pnEZpad:*:rvr.A006:*
+> sensor:modalias:acpi:BOSC0200:BOSC0200:dmi:*ThinkPadYoga11e3rdGen*
+> sensor:modalias:acpi:*BOSC0200*:dmi:*:svnLENOVO*:pn80XF:*
+> sensor:modalias:acpi:*BOSC0200*:dmi:*:svnLENOVO*:pn80XE:*
+> sensor:modalias:acpi:BOSC0200*:dmi:*:svnLINX*:pnLINX1010B:*
+> 
+> And using i2c-multi-instantiate will change the modalias from
+> acpi:BOSC0200 to i2c:bmc150_accel breaking this.
+> 
+> One way to fix this would be making sure we only use an
+> i2c:bmc150_accel modalias for the second device. This will
+> also allow differentiating between the 2 in hwdb quirks for
+> devices with 2 accelerometers. But the way we currently
+> generate modalias-es does not allow doing this in an
+> easy way. Making this possible will require some changes to
+> show_modalias() and i2c_device_uevent() in
+> drivers/i2c/i2c-core-base.c
+
+Ok, new idea how about we modify the code in acpi_device_enumeration_by_parent
+to instead of looking at a HID list, to simply count if there is more then
+1 I2cSerialBus resource and if that is the case enumerate the device as
+a platform device for i2c-multi-instantiate.c to handle. This means that
+we will only change the way how the BOSC0200 is enumerated on the
+Yoga 11e and not elsewhere.
+
+This is somewhat likely to trigger a regression somewhere, but we should
+be able to fix those regressions by adding the necessary info to
+i2c-multi-instantiate.c.  Then it could still be a problem because of
+the modalias changing for an i2c device from some other DSDT which we
+are not aware of yet, but that only is a problem if the modalias is
+used in hwdb. The actual driver for the hardware should bind to the
+new modalias too and if not we can fix that.
+
+I believe the amount of devices which turn out to have more then 1
+I2cSerialBus resource will be small and the set of devices which are already
+working somehow (because the 1st resource is the one we care about) and also
+have a hwdb entry will likely be very small and we can help users who
+hit this combo by providing hwdb patches.
+
+...
+
+Hmm, a quick random spot check of a few of the too many DSTDs I have
+turns out that at least the INT34D3 (Intel Whiskey Cove PMIC) will
+be bitten by this. This is trivial to fix though.
+
+And another one is the "CPLM3218" ambient light sensor, which does
+not have an in tree driver, but there is an out of tree one which
+is on my list to upstream...
+
+This will also cause us to stop generating i2c-clients for some of
+the camera sensors on BYT/CHT since some list multiple (some up to 10 ???)
+addresses I guess this is for some sorta auto-probe function in
+the windows drivers.
+
+TL;DR: the idea of just checking for multiple I2cSerialBus resources
+in a single acpi_fwnode is interesting, but might cause more problems
+then I would hope.
+
+Regards,
+
+Hans
 
 
-> On Oct 30, 2018, at 10:58 AM, Matthew Wilcox <willy@infradead.org> wrote:
->=20
-> On Tue, Oct 30, 2018 at 10:06:51AM -0700, Andy Lutomirski wrote:
->>> On Oct 30, 2018, at 9:37 AM, Kees Cook <keescook@chromium.org> wrote:
->> I support the addition of a rare-write mechanism to the upstream kernel.
->> And I think that there is only one sane way to implement it: using an
->> mm_struct. That mm_struct, just like any sane mm_struct, should only
->> differ from init_mm in that it has extra mappings in the *user* region.
->=20
-> I'd like to understand this approach a little better.  In a syscall path,
-> we run with the user task's mm.  What you're proposing is that when we
-> want to modify rare data, we switch to rare_mm which contains a
-> writable mapping to all the kernel data which is rare-write.
->=20
-> So the API might look something like this:
->=20
->    void *p =3D rare_alloc(...);    /* writable pointer */
->    p->a =3D x;
->    q =3D rare_protect(p);        /* read-only pointer */
->=20
-> To subsequently modify q,
->=20
->    p =3D rare_modify(q);
->    q->a =3D y;
->    rare_protect(p);
-
-How about:
-
-rare_write(&q->a, y);
-
-Or, for big writes:
-
-rare_write_copy(&q, local_q);
-
-This avoids a whole ton of issues.  In practice, actually running with a spe=
-cial mm requires preemption disabled as well as some other stuff, which Nada=
-v carefully dealt with.
-
-Also, can we maybe focus on getting something merged for statically allocate=
-d data first?
-
-Finally, one issue: rare_alloc() is going to utterly suck performance-wise d=
-ue to the global IPI when the region gets zapped out of the direct map or ot=
-herwise made RO.  This is the same issue that makes all existing XPO efforts=
- so painful. We need to either optimize the crap out of it somehow or we nee=
-d to make sure it=E2=80=99s not called except during rare events like device=
- enumeration.
-
-Nadav, want to resubmit your series?  IIRC the only thing wrong with it was t=
-hat it was a big change and we wanted a simpler fix to backport. But that=E2=
-=80=99s all done now, and I, at least, rather liked your code. :)
