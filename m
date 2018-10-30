@@ -2,250 +2,164 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 838C5C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:46:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2CB1C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:48:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C1902075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:46:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C1902075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 960792080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:48:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jucLq9aF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 960792080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727524AbeJaAkG (ORCPT
+        id S1727521AbeJaAm0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 20:40:06 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55021 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726218AbeJaAkG (ORCPT
+        Tue, 30 Oct 2018 20:42:26 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:34012 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726488AbeJaAm0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 20:40:06 -0400
-Received: by mail-wm1-f65.google.com with SMTP id r63-v6so12282573wma.4
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 08:46:06 -0700 (PDT)
+        Tue, 30 Oct 2018 20:42:26 -0400
+Received: by mail-lf1-f66.google.com with SMTP id n26-v6so9278418lfl.1;
+        Tue, 30 Oct 2018 08:48:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=GcZ7EOi9s7kPW7Txdhst3pBLq8Z9IPCc8E47B//kiq8=;
+        b=jucLq9aF5NfjYmVfFWxLsrmNQLBSZTI4+N6moDLB4383t/Bl14q62Y/FmZ/iZeheel
+         lAjE+PTUW3npGg5htFhzEoUeA9E1eDW7C7l0wdyCZ1s0AG4dbKhTtvC64B0tmFo7STcA
+         WLaqxRyuQuhddbVM799j3OJNzctxK9RM1Mrif4YaGykDXaZW0TGpGfv2NBSHEcCXVb98
+         B4NyUNx09aI6LrUVi1I5np5oQHdIyxavGA+JCGycxadjq0OnoOqzAUpFadFJOohm9yv/
+         Lnew0JuPMQMP4vAu0aoeCuvknUZAZYw/C0q4nb30cSnTapyAMalKadUGvgctq86pNTu0
+         EF5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=+IMOTyld/IBUpLwmGclrPYvrGQlHXXjZruuWXHiYeaw=;
-        b=lrwK260EYQdvQo1Xtrwi22qlJn2gvUbLKk0AVwjh4T3ESJRJvQwi2/Rx+Eyj3Okl0G
-         SgfeJXGqjwNwEco3XcE4H4GqP3JJhFGOgBavaKZnFMjld3e0cD+mRWCDZ3ay9L5awrr6
-         /AtJCYAgsYQ7cEb6GHikvr8NzxhGsYl1bH++l9VArgYH8K/lXSfY6omCDgINgMRxmH2p
-         m0JtjLWQInD6Tf7ykyb8SMSiuFOP1bPL+jjCxQ8XTs7gVxbMU14l4YHwzIrXfzTy7SXf
-         5JakEh2CLJNxF57lzhrNVmmxustFe9+sUsQOMEjSXwH7NmaHQUcapqygO/UOgurKypjR
-         rpQA==
-X-Gm-Message-State: AGRZ1gJngMQyFPky3TygAW4cdHLHulwPR8H5jGOgypZhF2jOvRYqe1Dd
-        6Oti2MCMxlYFlcGsBo/tT1wsFA==
-X-Google-Smtp-Source: AJdET5cFqII+0GIjHRL4FyTKERoBFIhgEMEzYdgzz6hJz4ygwa2UGUG19F4ZnK6i4CDWVh6uDZpH5g==
-X-Received: by 2002:a1c:6483:: with SMTP id y125-v6mr2341815wmb.66.1540914365471;
-        Tue, 30 Oct 2018 08:46:05 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id a1sm2483454wrx.29.2018.10.30.08.46.04
+        bh=GcZ7EOi9s7kPW7Txdhst3pBLq8Z9IPCc8E47B//kiq8=;
+        b=JdSP0bMGvsghSHllZS5EBS0Hk0Ee5T8s4Tz8UcZB0dftMvD+h0Py0zUy7h9NcRftOe
+         mHPMzC8/bj+GAar5/W2fGKDbPGsCXQb5lBImo/FeFwdVXUJSfWnoYOYnHXXWq4Xwf6DP
+         NYL2l+B+zBzHEiW/Zwbd1wXZtk5mUSnsDoJJvOZIRib+WInFh589DQiI/ja6NifjWTam
+         96/63pBCT/gj/rUfGPNoYHWwWKZp58tcRW4bv4+BuoO1cb6DuPU8/0KykG6WRdiZyGoJ
+         dFAmfF5XxBw0ODUErVLeCDK8c3kMa4tHuDBZj5Qp/dzJD2WYYMEQgsSOZRDSYvM8N3Cw
+         +bcQ==
+X-Gm-Message-State: AGRZ1gIimiqGcBeeg2T1/310B2jWtB4xFP9cpHiyUQqoLddQLm6d1Lok
+        jrEm0TizkjwsdgiwNZz6JxGcCOXJ
+X-Google-Smtp-Source: AJdET5cwqSlQKvX9mhH/FvKIvRw8GfsBsc4WOvIAKOnuPwo52s4EYPI/NUEcMMieGUufSdf6IXC5/w==
+X-Received: by 2002:a19:d405:: with SMTP id l5mr2383302lfg.133.1540914503068;
+        Tue, 30 Oct 2018 08:48:23 -0700 (PDT)
+Received: from [192.168.2.145] ([109.252.91.118])
+        by smtp.googlemail.com with ESMTPSA id v5-v6sm1272177lje.78.2018.10.30.08.48.21
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 08:46:04 -0700 (PDT)
-Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Dean Wallace <duffydack73@gmail.com>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Johannes Stezenbach <js@sig21.net>,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mogens Jensen <mogens-jensen@protonmail.com>
-References: <20181025232517.ywnw54qibemosjws@picard>
- <154083512089.98144.9141070901932719147@swboyd.mtv.corp.google.com>
- <CAHp75VfnN5tF1Z9+CDDhKFNG5QfCRcGOZeAkpf-5BfCEx16gvg@mail.gmail.com>
- <CAHp75VctdBE-GM60udJawBCXdmoOqZn4N=kFWz5GLHzjPG2iQQ@mail.gmail.com>
- <20181029190819.2ivlx73n6y6sx4vk@picard>
- <ffc4bcc9-62c3-8940-85d6-d0fd01f3a1b8@linux.intel.com>
- <c8fb730a-c160-41b4-dad0-8ed8594e5687@redhat.com>
- <20181030143836.feo7zcxiestylxoo@picard>
- <2d429c87-24c5-4075-683e-b0d12c3eb1c2@linux.intel.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <d00df762-e4fc-06c5-701e-d5100bfd0e35@redhat.com>
-Date:   Tue, 30 Oct 2018 16:46:03 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 30 Oct 2018 08:48:22 -0700 (PDT)
+Subject: Re: [RFC PATCH v2 01/17] OPP: Allow to request stub voltage
+ regulators
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181021205501.23943-1-digetx@gmail.com>
+ <20181021205501.23943-2-digetx@gmail.com>
+ <20181022053636.ag62j3rj3vovbz53@vireshk-i7>
+ <e4027793-9436-413d-2a7b-34cf519218c3@gmail.com>
+ <20181022113224.b5fiebgy2aap66nd@vireshk-i7>
+ <29f893be-feed-c4c5-8468-51f7228dd468@gmail.com>
+ <20181024064123.lbpbeervghp35fe7@vireshk-i7>
+ <ba782346-6ac0-7bf3-e187-00d2634b145b@gmail.com>
+ <20181029065328.6vkbwjnq2zzwxric@vireshk-i7>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <08a1978a-32b2-0234-a461-a11e1abcff6a@gmail.com>
+Date:   Tue, 30 Oct 2018 18:48:19 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <2d429c87-24c5-4075-683e-b0d12c3eb1c2@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20181029065328.6vkbwjnq2zzwxric@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 30-10-18 16:04, Pierre-Louis Bossart wrote:
-> 
-> On 10/30/18 9:38 AM, Dean Wallace wrote:
->> On 30-10-18, Hans de Goede wrote:
->>> Hi Dean,
+On 10/29/18 9:53 AM, Viresh Kumar wrote:
+> On 26-10-18, 15:03, Dmitry Osipenko wrote:
+>> On 10/24/18 9:41 AM, Viresh Kumar wrote:
+>>> On 22-10-18, 15:12, Dmitry Osipenko wrote:
+>>>> Because there is one Tegra20 board (tegra20-trimslice) that doesn't declare
+>>>> necessary regulators, but we want to have CPU frequency scaling. I couldn't
+>>>> find board schematics and so don't know if CPU / CORE voltages are fixed on
+>>>> Trim-Slice or it is just preferable not to have DVFS for that board, it is an
+>>>> outlet-powered device [0]. Hence tegra20-cpufreq driver will request a dummy
+>>>> regulators when appropriate. 
 >>>
->>> Attached are 2 different attempts at fixing this.
+>>> We have been using the regulator_get_optional() variant until now in the OPP
+>>> core to make sure that we don't do DVFS for the CPU without the mandatory
+>>> regulators being present, as that may make things unstable and cause harm to the
+>>> SoC if we try to take CPU to frequency range over the currently programmed
+>>> regulator can support.
 >>>
->>> When trying these patches do not forget to remove the revert of the
->>> "Stop-marking-clocks-as-CLK_IS_CRITICAL" commit.
->>>
->>> Please first try the 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch
->>> patch I expect that one to do the trick indicating that the Swanky model
->>> uses a different pmc clk then which is normally used for the codec clock.
->>>
->>> If that patch does not fix things, please give the other patch a try.
-> 
-> For Baytrail devices, the audio platform clocks are not managed by the firmware. They are for CHT-based devices - as can be seen by clock resources being described in the DSDT. We used to have a if(baytrail) in the code which was replaced by this CRITICAL label, but the point remains that there is a difference between the two SOC versions.
-
-As I mentioned before the CRITICAL flag was only added a year ago to workaround
-an issue with on board ethernet needing plt_clk_4 on some laptops, this never
-had anything to do with sound.
-
-> In addition I am not aware of any baytrail device using plt_clk_0, so moving a common machine driver such a cht_bsw_max98090_ti to use plt_clk0 only would break other devices (e.g. Rambi/Orco). Asking for both clocks to be on might work though, 
-
-Ok, so we need to have a DMI based quirk for the Swanky and maybe also
-the clapper to use plt_clk_0 there. Asking for 2 clks if we only need
-one does not seem like a good plan.
-
-> however you still have the problem of trying to manage from the kernel what the firmware already manages.
-
-The firmware only manages it when going to D3 state, with ASoC most of
-the codecs gets turned off (and we no longer need the clock) but we do
-not put the device in D3 / execute the _PS3 method. So from a pm pov
-it is better if we manage the clk ourselves.
-
-Once we do actually put the device in D3 (on suspend) the kernel will have
-already turned off the clk and the _OFF method of the CLK3 power resource
-which directly pokes mmio, will just set the enable bit to 0 when it
-already is 0, so no problem.
-
-Regards,
-
-Hans
-
-
-
-
-
-
-
-> 
->>>
->>> Regards,
->>>
->>> Hans
->>>
->>>
->>>
->>> On 29-10-18 23:03, Pierre-Louis Bossart wrote:
->>>> On 10/29/18 2:08 PM, Dean Wallace wrote:
->>>>> On 29-10-18, Andy Shevchenko wrote:
->>>>>> On Mon, Oct 29, 2018 at 7:52 PM Andy Shevchenko
->>>>>> <andy.shevchenko@gmail.com> wrote:
->>>>>>> Cc: Pierre as well.
->>>>>>>
->>>>>>> On Mon, Oct 29, 2018 at 7:48 PM Stephen Boyd <sboyd@kernel.org> wrote:
->>>>>>>> Quoting Dean Wallace (2018-10-25 16:25:17)
->>>>>>>>> I have found a regression in 4.18.15 that means I lose sound on my old
->>>>>>>>> Toshiba Chromebook 2 (Swanky).  My system details are:-
->>>>>>>>>
->>>>>>>>> Toshiba Chromebook (Swanky)
->>>>>>>>> MrChromebox UEFI coreboot
->>>>>>>>> Arch Linux running latest alsa/pulseaudio
->>>>>>>>>
->>>>>>>>> Upgraded kernel from 4.18.14 to 4.18.15 and lost all sound output.  By
->>>>>>>>> output I mean, the card is still detected, the module loaded, all apps
->>>>>>>>> showing sound is being playing, but no actual audible sound comes
->>>>>>>>> through.  Upgraded to 4.18.16 same issue.
->>>>>>>>>
->>>>>>>>> Dug around and found Upstream commit 648e921888ad96ea3dc922739e96716ad3225d7f
->>>>>>>>> clk: x86: Stop marking clocks as CLK_IS_CRITICAL
->>>>>>>>> "This commit removes the CLK_IS_CRITICAL marking, fixing Cherry Trail
->>>>>>>>> devices not being able to reach S0i3 greatly decreasing their battery
->>>>>>>>> drain when suspended."
->>>>>>>>>
->>>>>>>>> I reverted it and compiled 4.18.16 and have sound back again.  Could
->>>>>>>>> this be looked into, with possibility of fix.
->>>>>>>>>
->>>>>>>> Thanks for the bug report. I'm adding some people involved in the commit
->>>>>>>> you mention is causing audio regressions. The best plan is to probably
->>>>>>>> revert the commit from the 4.18 linux stable tree. Or there may be
->>>>>>>> another patch missing that would be useful to make this backported patch
->>>>>>>> work. Hopefully Hans or Andy knows.
->>>>>>> Hans has been investigating S0ix issues on Baytrail and Cherrytrail machines.
->>>>>>> I have a feeling that the problem can be fixed by properly handling
->>>>>>> clock in ASoC driver(s). Perhaps Hans and Pierre can figure this out
->>>>>>> better than me.
->>>>>> Looking to sound/soc/intel/boards/cht_bsw_rt5672.c I see no
->>>>>> suspend-resume hooks. Perhaps, adding them like in the commit
->>>>>> ac8bd9e13be2 ("r8169: Disable clk during suspend / resume") would
->>>>>> help.
->>>> I missed this change while i was away. It's indeed the expectation that the audio mclk is handled by the firmware,
->>> I believe that the statement "It's indeed the expectation that the
->>> audio mclk is handled by the firmware" is not correct for BYT/CHT
->>> platforms (and the commit causing the regression only affects BYT/CHT
->>> platforms). Various machine drivers under sound/soc/intel/boards have
->>> code to deal with the mclk themselves, like this:
->>>
->>>          drv->mclk = devm_clk_get(&pdev->dev, "pmc_plt_clk_3");
->>> ...
->>>
->>>          if (SND_SOC_DAPM_EVENT_ON(event)) {
->>>                  ret = clk_prepare_enable(ctx->mclk);
->>>         ...
->>>          } else {
->>>                  clk_disable_unprepare(ctx->mclk);
->>>          }
->>>
->>> The above code is from sound/soc/intel/boards/cht_bsw_max98090_ti.c
->>> which is the machine driver used on the machines for which problems
->>> are now being reported.
->>>
->>> And my commit introducing the problem is in essence a revert of:
->>>
->>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=d31fd43c0f9a41e2678a1e78c0f22f0384c6edd3
->>>
->>> Which is from 2017-07-14 and the ASoC code for BYT/CHT platforms is
->>> much older then that.
->>>
->>> Also I asked Carlo why he wrote that patch and it was to fix a problem
->>> with ethernet on some laptops.
->>>
->>>> not sure I understand why removing the CLK_IS_CRITICAL was necessary or what it has to do with S0ix.
->>> It is necessary, because if it is set the clock never gets disabled and
->>> on x86 platforms using suspend2idle we are responsible for *all* the hardware
->>> power-management as OS. If we do not disable the clocks then we can only
->>> reach S0i1 instead of S0i3 when suspended leading to increased battery
->>> drain during suspend.
->>>
->>> Also note that this patch is only causing problems on CHT + max98090 codec
->>> using machines. I've tested it on many other BYT/CHT machines myself and
->>> we've not had any other bug reports related to this.
->>>
->>> So this clearly points to a problem with the clock management in the
->>> cht_bsw_max98090_ti.c machine driver.
->>>
->>> I've some ideas how to fix this and I will prepare some patches to test.
->>>
->>> Regards,
->>>
->>> Hans
->> Excellent work Hans.  Compiled 4.19 with
->> 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch, sound
->> works as before.
+>>> Now coming back to tegra-20 SoC, which actually requires a regulator normally by
+>>> design. On one of the boards (which is outlet powered), you aren't sure if there
+>>> is a programmable regulator or not, or if DVFS should really be done or not.
+>>> Isn't it worth checking the same from Tegra maintainers, or whomsoever has
+>>> information on that board ?
 >>
->> for i in /sys/kernel/debug/clk/pmc_plt_clk_?; do echo -n "$i: "; cat $i/clk_flags; echo; done
->> /sys/kernel/debug/clk/pmc_plt_clk_0:
->> /sys/kernel/debug/clk/pmc_plt_clk_1:
->> /sys/kernel/debug/clk/pmc_plt_clk_2:
->> /sys/kernel/debug/clk/pmc_plt_clk_3:
->> /sys/kernel/debug/clk/pmc_plt_clk_4:
->> /sys/kernel/debug/clk/pmc_plt_clk_5:
+>> I'll try to find out more detailed information for the next revision of the patchset.
+> 
+> Thanks Dmitry.
+> 
+>>  What would happen if there actually was a regulator
+> 
+> Please preserve the '>' from previous replies at the beginning of the
+> lines. Otherwise it looks as if you have written the above line. :)
+> 
+>>> and its default settings aren't good enough for high end frequencies ?
 >>
->> Regards
+>> Usually this causes kernel/applications crashes and/or machine hang.
+> 
+> Sure. I also do remember from some guys (maybe TI), where they
+> mentioned that such scenarios can harm the hardware as well sometimes.
+> Don't remember the details though.
+> 
+>>  And because you are moving to regulator_get() API for
+>>> the entire SoC (i.e. its cpufreq driver), people will never find the missing
+>>> regulator.
+>>
+>> Regulators core prints info message when dummy regulator is being used.
+> 
+> Sure, but they are easy to miss and they are only seen by developers
+> not regular users of a machine.
+> 
+>>> If we can do it safely for all tegra20 boards, why not migrate to using
+>>> regulator_get() instead of regulator_get_optional() in the OPP core API itself
+>>> for everyone ?
+>>>
+>>
+>> This should be a platform-specific decision. For Tegra we know that regulators should be in a good state at kernel boot time, I don't think that this applies to other platforms.
+> 
+> Based on the other discussion with Lucas on this thread, I don't think
+> this is correct any more ?
+> 
+> Don't get me wrong, I am all good for changes and another API change
+> doesn't matter much to me. I am just wondering if it would be the
+> right approach to fix the issue. Why not rather call
+> dev_pm_opp_set_regulators() conditionally and avoid calling it for the
+> specific tegra20 board.
+
+The right approach should be to specify device tree correctly. Probably we won't need this change at all with the correct DT, will see.
+
+Calling dev_pm_opp_set_regulators() conditionally should work, but that is extra churning in the driver that I tried to avoid.
