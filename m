@@ -2,175 +2,448 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MIME_QP_LONG_LINE,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB8AFECDE46
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 17:06:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52709C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 17:09:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 683002080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 17:06:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E059E2080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 17:09:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="p1l66SWY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 683002080A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="n0Xz+iPN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E059E2080A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727547AbeJaCBP (ORCPT
+        id S1726840AbeJaCD0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 22:01:15 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46120 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726522AbeJaCBO (ORCPT
+        Tue, 30 Oct 2018 22:03:26 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:53605 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726522AbeJaCD0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 22:01:14 -0400
-Received: by mail-pl1-f195.google.com with SMTP id bb7-v6so5841521plb.13
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 10:06:56 -0700 (PDT)
+        Tue, 30 Oct 2018 22:03:26 -0400
+Received: by mail-it1-f195.google.com with SMTP id f16-v6so7082474ita.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 10:09:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=sJmp+TrcVE0cp1ysnbfmg2a9gbYbs/fVQwhmUWhAsKM=;
-        b=p1l66SWYsa9jw7rC4PMjsgTC62QiTmvIb5lE1PnTeKkdUJFayeHPDUMw6jW3+RzpFu
-         pKOQdHK/b5u9j+v+6E8yGOsp0dO9E5G9WVJE6wotNmtxGeYIsom8GcQWnDNIieLtPMwM
-         xigXW4Ywm9Thy8f/fQfppOcFf0vRpJptRvlODU2nlbnsra2MhrrcYXTosAjSIoNUsarb
-         XbdLjn4SBUPrxtf7sJctAqhEe63yVYFXz9rBzwtsYjLNX7+riHwnd+r62e4XzN7ZkZeK
-         /u3L9UQyFp87WLV1aHCGlhTtqW5Jz1NE+fSsKJvtD2Ndlj10qlKLdOxDeK1rt9YdIPRo
-         yH/Q==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=X4yOAW79//h5hdW6C1Sk0Z+boSsRkdqL+MarT/CIreg=;
+        b=n0Xz+iPNuCJAB3Dv/lm4TR8KdkytBruCKMIy5mRrBvDVcwSVTjvJA/Mw4Parjt080Q
+         g/6/W5L5pqIAiidecmGZRgq5nLPr3bWg25tNL5rxiLKZNQykwndFvXztX0iNcGa8AFDV
+         Qi1/K5/YaX/vSQfpUPLbBfo0ttTL4frmrunqKhf87fWdgSYl0CNyY2fytBRpkpNxgeUO
+         UGHW/Vuny08W8GslSEsdj6mreInqv4beXqzTDLDys0XOkyU4Jhy8yYwwsK1MsM35rJYZ
+         LLVZFgG6v1dB6RV8neKT1OA8R/9YAFiqFJyGht3AY0xU+TrPVJV9jyMHkPrGPrcT/lYe
+         t5AQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=sJmp+TrcVE0cp1ysnbfmg2a9gbYbs/fVQwhmUWhAsKM=;
-        b=XvtEavM9PTPxAm7MMQjyeS+GPUCjl63Z3xprC7nj760i2mO6bSBtTOrit/qNRdGjOx
-         wG0GaX7UEojSS0Dbt3e1BdiyFUocAMLXsOHr4j+qs4jp93zQjV9d435uThRx2nL5+Rt4
-         5+mOs82YmiITooL727pNKEOgjIdBfdEBb9pbFRpPn+B1BI0Fas6xqNkDgjnsbdjvZ4BJ
-         2EXWTJaM2IHTtalsZpve6/+YBSFzLi6T9ItvgNVsMLyU9tUkoiolLpV5z62+MIOAmCA2
-         xdA2REAVCGdDJOvyy7vrYXsBVxekOo1cIdDSXjSX/NGwJnPgxDZXRdrf9ZCnU+efjjCe
-         o4sQ==
-X-Gm-Message-State: AGRZ1gKm1gZOKDE6fzgLt5L13dH7o1m+R5B/tiRXY/UecguQ542wKuY7
-        ULhKKnVInwKpB17jtw+4M8C/LA==
-X-Google-Smtp-Source: AJdET5fnTABXu89GAubNDA3hUzdJdWV/ivDrtYqUoxQ/cSMvKdlm4RK2+Mqv63Iu2OSxu7de7vlwHA==
-X-Received: by 2002:a17:902:4025:: with SMTP id b34-v6mr15610050pld.318.1540919215631;
-        Tue, 30 Oct 2018 10:06:55 -0700 (PDT)
-Received: from ?IPv6:2600:1010:b06f:4f72:1c47:d0f8:77c2:af6e? ([2600:1010:b06f:4f72:1c47:d0f8:77c2:af6e])
-        by smtp.gmail.com with ESMTPSA id e8-v6sm948953pgh.67.2018.10.30.10.06.53
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=X4yOAW79//h5hdW6C1Sk0Z+boSsRkdqL+MarT/CIreg=;
+        b=oaGLpVTI65xGTILy3G6XrroWXjFYeH5zIoUODSjQ1So6h1ZqjVHZP/s7CggxKDzjJK
+         vSK4S3bNXCHq8uz77Jxq4quIYUp/qR8m3ZFfU3Yt2AOwp4UyxPvTSPUDsB/Y3JvgvED6
+         boFG14UbFE1DF2svwA31c/bTDoN2ptYIqDzKTdMK5b2uyoooXbqC/BaZSRq7bW9MOs9I
+         2dOyzo6h5m05gdiaLUjVulypRAKApSLwPfECzPlasyyfmGWLlV+E+T0Yu+I84KL854fl
+         ocvM/d6mO0OGaShchfKB54GJx0r/tp6TiWk6Zpwam2WEOBC8Y67el6oPB/RT8VLSeZGg
+         8RtQ==
+X-Gm-Message-State: AGRZ1gKTaudXt5sWsk94hxcu9RmWP0g182EJ1dUnjobuniOY1axxkNPv
+        cuoT+sJJHh5sOJFo5ouw/Nhhow==
+X-Google-Smtp-Source: AJdET5devvWXEla986Jepg7EMaZwfT9+yE3RYwCmiOygUWfGGB8psLXePlH5zuWAxjCsG3/TU7LVoA==
+X-Received: by 2002:a05:660c:611:: with SMTP id i17mr1885075itk.117.1540919346668;
+        Tue, 30 Oct 2018 10:09:06 -0700 (PDT)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id z132-v6sm1922278ioe.78.2018.10.30.10.09.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 10:06:53 -0700 (PDT)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 10/17] prmem: documentation
-From:   Andy Lutomirski <luto@amacapital.net>
-X-Mailer: iPhone Mail (16A404)
-In-Reply-To: <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
-Date:   Tue, 30 Oct 2018 10:06:51 -0700
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Igor Stoppa <igor.stoppa@gmail.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        Igor Stoppa <igor.stoppa@huawei.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com> <20181023213504.28905-11-igor.stoppa@huawei.com> <20181026092609.GB3159@worktop.c.hoisthospitality.com> <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com> <20181028183126.GB744@hirez.programming.kicks-ass.net> <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com> <20181030152641.GE8177@hirez.programming.kicks-ass.net> <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
-To:     Kees Cook <keescook@chromium.org>
+        Tue, 30 Oct 2018 10:09:05 -0700 (PDT)
+Subject: Re: [PATCH 11/14] irq: add support for allocating (and affinitizing)
+ sets of IRQs
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+References: <20181029163738.10172-1-axboe@kernel.dk>
+ <20181029163738.10172-12-axboe@kernel.dk>
+ <20181030142601.GA18906@localhost.localdomain>
+ <c11c95ae-5e10-38bd-d2c2-e2407634f52a@kernel.dk>
+ <20181030144527.GB18906@localhost.localdomain>
+ <46dbcbcd-799f-9970-a68f-de7e96b1a6bb@kernel.dk>
+ <20181030150840.GC18906@localhost.localdomain>
+ <d049e764-b9d1-f06f-40d3-39517f3f65a2@kernel.dk>
+ <20181030160242.GD18906@localhost.localdomain>
+ <27c1017a-9560-80cb-038d-f64727a162c3@kernel.dk>
+Message-ID: <535480f3-9087-b4ae-e7c8-cfe3c2d1e2c9@kernel.dk>
+Date:   Tue, 30 Oct 2018 11:09:04 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <27c1017a-9560-80cb-038d-f64727a162c3@kernel.dk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 10/30/18 10:42 AM, Jens Axboe wrote:
+> On 10/30/18 10:02 AM, Keith Busch wrote:
+>> On Tue, Oct 30, 2018 at 09:18:05AM -0600, Jens Axboe wrote:
+>>> On 10/30/18 9:08 AM, Keith Busch wrote:
+>>>> On Tue, Oct 30, 2018 at 08:53:37AM -0600, Jens Axboe wrote:
+>>>>> The sum of the set can't exceed the nvecs passed in, the nvecs passed in
+>>>>> should be the less than or equal to nvecs. Granted this isn't enforced,
+>>>>> and perhaps that should be the case.
+>>>>
+>>>> That should at least initially be true for a proper functioning
+>>>> driver. It's not enforced as you mentioned, but that's only related to
+>>>> the issue I'm referring to.
+>>>>
+>>>> The problem is pci_alloc_irq_vectors_affinity() takes a range, min_vecs
+>>>> and max_vecs, but a range of allowable vector allocations doesn't make
+>>>> sense when using sets.
+>>>
+>>> I feel like we're going in circles here, not sure what you feel the
+>>> issue is now? The range is fine, whoever uses sets will need to adjust
+>>> their sets based on what pci_alloc_irq_vectors_affinity() returns,
+>>> if it didn't return the passed in desired max.
+>>
+>> Sorry, let me to try again.
+>>
+>> pci_alloc_irq_vectors_affinity() starts at the provided max_vecs. If
+>> that doesn't work, it will iterate down to min_vecs without returning to
+>> the caller. The caller doesn't have a chance to adjust its sets between
+>> iterations when you provide a range.
+>>
+>> The 'masks' overrun problem happens if the caller provides min_vecs
+>> as a smaller value than the sum of the set (plus any reserved).
+>>
+>> If it's up to the caller to ensure that doesn't happen, then min and
+>> max must both be the same value, and that value must also be the same as
+>> the set sum + reserved vectors. The range just becomes redundant since
+>> it is already bounded by the set.
+>>
+>> Using the nvme example, it would need something like this to prevent the
+>> 'masks' overrun:
+> 
+> OK, now I hear what you are saying. And you are right, the callers needs
+> to provide minvec == maxvec for sets, and then have a loop around that
+> to adjust as needed.
+> 
+> I'll make that change in nvme.
 
-> On Oct 30, 2018, at 9:37 AM, Kees Cook <keescook@chromium.org> wrote:
->=20
->> On Tue, Oct 30, 2018 at 8:26 AM, Peter Zijlstra <peterz@infradead.org> wr=
-ote:
->> I suppose the 'normal' attack goes like:
->>=20
->> 1) find buffer-overrun / bound check failure
->> 2) use that to write to 'interesting' location
->> 3) that write results arbitrary code execution
->> 4) win
->>=20
->> Of course, if the store of 2 is to the current cred structure, and
->> simply sets the effective uid to 0, we can skip 3.
->=20
-> In most cases, yes, gaining root is game over. However, I don't want
-> to discount other threat models: some systems have been designed not
-> to trust root, so a cred attack doesn't always get an attacker full
-> control (e.g. lockdown series, signed modules, encrypted VMs, etc).
->=20
->> Which seems to suggest all cred structures should be made r/o like this.
->> But I'm not sure I remember these patches doing that.
->=20
-> There are things that attempt to protect cred (and other things, like
-> page tables) via hypervisors (see Samsung KNOX) or via syscall
-> boundary checking (see Linux Kernel Runtime Guard). They're pretty
-> interesting, but I'm not sure if there is a clear way forward on it
-> working in upstream, but that's why I think these discussions are
-> useful.
->=20
->> Also, there is an inverse situation with all this. If you make
->> everything R/O, then you need this allow-write for everything you do,
->> which then is about to include a case with an overflow / bound check
->> fail, and we're back to square 1.
->=20
-> Sure -- this is the fine line in trying to build these defenses. The
-> point is to narrow the scope of attack. Stupid metaphor follows: right
-> now we have only a couple walls; if we add walls we can focus on make
-> sure the doors and windows are safe. If we make the relatively
-> easy-to-find-in-memory page tables read-only-at-rest then a whole
-> class of very powerful exploits that depend on page table attacks go
-> away.
->=20
-> As part of all of this is the observation that there are two types of
-> things clearly worth protecting: that which is updated rarely (no need
-> to leave it writable for so much of its lifetime), and that which is
-> especially sensitive (page tables, security policy, function pointers,
-> etc). Finding a general purpose way to deal with these (like we have
-> for other data-lifetime cases like const and __ro_after_init) would be
-> very nice. I don't think there is a slippery slope here.
->=20
->=20
+Pretty trivial, below. This also keeps the queue mapping calculations
+more clean, as we don't have to do one after we're done allocating
+IRQs.
 
-Since I wasn=E2=80=99t cc=E2=80=99d on this series:
 
-I support the addition of a rare-write mechanism to the upstream kernel.  An=
-d I think that there is only one sane way to implement it: using an mm_struc=
-t. That mm_struct, just like any sane mm_struct, should only differ from ini=
-t_mm in that it has extra mappings in the *user* region.
+commit e8a35d023a192e34540c60f779fe755970b8eeb2
+Author: Jens Axboe <axboe@kernel.dk>
+Date:   Tue Oct 30 11:06:29 2018 -0600
 
-If anyone wants to use CR0.WP instead, I=E2=80=99ll remind them that they ha=
-ve to fix up the entry code and justify the added complexity. And make perfo=
-rmance not suck in a VM (i.e. CR0 reads on entry are probably off the table)=
-.  None of these will be easy.
+    nvme: utilize two queue maps, one for reads and one for writes
+    
+    NVMe does round-robin between queues by default, which means that
+    sharing a queue map for both reads and writes can be problematic
+    in terms of read servicing. It's much easier to flood the queue
+    with writes and reduce the read servicing.
+    
+    Implement two queue maps, one for reads and one for writes. The
+    write queue count is configurable through the 'write_queues'
+    parameter.
+    
+    By default, we retain the previous behavior of having a single
+    queue set, shared between reads and writes. Setting 'write_queues'
+    to a non-zero value will create two queue sets, one for reads and
+    one for writes, the latter using the configurable number of
+    queues (hardware queue counts permitting).
+    
+    Reviewed-by: Hannes Reinecke <hare@suse.com>
+    Signed-off-by: Jens Axboe <axboe@kernel.dk>
 
-If anyone wants to use kmap_atomic-like tricks, I=E2=80=99ll point out that w=
-e already have enough problems with dangling TLB entries due to SMP issues. T=
-he last thing we need is more of them. If someone proposes a viable solution=
- that doesn=E2=80=99t involve CR3 fiddling, I=E2=80=99ll be surprised.
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index e5d783cb6937..17170686105f 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -74,11 +74,29 @@ static int io_queue_depth = 1024;
+ module_param_cb(io_queue_depth, &io_queue_depth_ops, &io_queue_depth, 0644);
+ MODULE_PARM_DESC(io_queue_depth, "set io queue depth, should >= 2");
+ 
++static int queue_count_set(const char *val, const struct kernel_param *kp);
++static const struct kernel_param_ops queue_count_ops = {
++	.set = queue_count_set,
++	.get = param_get_int,
++};
++
++static int write_queues;
++module_param_cb(write_queues, &queue_count_ops, &write_queues, 0644);
++MODULE_PARM_DESC(write_queues,
++	"Number of queues to use for writes. If not set, reads and writes "
++	"will share a queue set.");
++
+ struct nvme_dev;
+ struct nvme_queue;
+ 
+ static void nvme_dev_disable(struct nvme_dev *dev, bool shutdown);
+ 
++enum {
++	NVMEQ_TYPE_READ,
++	NVMEQ_TYPE_WRITE,
++	NVMEQ_TYPE_NR,
++};
++
+ /*
+  * Represents an NVM Express device.  Each nvme_dev is a PCI function.
+  */
+@@ -92,6 +110,7 @@ struct nvme_dev {
+ 	struct dma_pool *prp_small_pool;
+ 	unsigned online_queues;
+ 	unsigned max_qid;
++	unsigned io_queues[NVMEQ_TYPE_NR];
+ 	unsigned int num_vecs;
+ 	int q_depth;
+ 	u32 db_stride;
+@@ -134,6 +153,17 @@ static int io_queue_depth_set(const char *val, const struct kernel_param *kp)
+ 	return param_set_int(val, kp);
+ }
+ 
++static int queue_count_set(const char *val, const struct kernel_param *kp)
++{
++	int n = 0, ret;
++
++	ret = kstrtoint(val, 10, &n);
++	if (n > num_possible_cpus())
++		n = num_possible_cpus();
++
++	return param_set_int(val, kp);
++}
++
+ static inline unsigned int sq_idx(unsigned int qid, u32 stride)
+ {
+ 	return qid * 2 * stride;
+@@ -218,9 +248,20 @@ static inline void _nvme_check_size(void)
+ 	BUILD_BUG_ON(sizeof(struct nvme_dbbuf) != 64);
+ }
+ 
++static unsigned int max_io_queues(void)
++{
++	return num_possible_cpus() + write_queues;
++}
++
++static unsigned int max_queue_count(void)
++{
++	/* IO queues + admin queue */
++	return 1 + max_io_queues();
++}
++
+ static inline unsigned int nvme_dbbuf_size(u32 stride)
+ {
+-	return ((num_possible_cpus() + 1) * 8 * stride);
++	return (max_queue_count() * 8 * stride);
+ }
+ 
+ static int nvme_dbbuf_dma_alloc(struct nvme_dev *dev)
+@@ -431,12 +472,41 @@ static int nvme_init_request(struct blk_mq_tag_set *set, struct request *req,
+ 	return 0;
+ }
+ 
++static int queue_irq_offset(struct nvme_dev *dev)
++{
++	/* if we have more than 1 vec, admin queue offsets us 1 */
++	if (dev->num_vecs > 1)
++		return 1;
++
++	return 0;
++}
++
+ static int nvme_pci_map_queues(struct blk_mq_tag_set *set)
+ {
+ 	struct nvme_dev *dev = set->driver_data;
++	int i, qoff, offset;
++
++	offset = queue_irq_offset(dev);
++	for (i = 0, qoff = 0; i < set->nr_maps; i++) {
++		struct blk_mq_queue_map *map = &set->map[i];
+ 
+-	return blk_mq_pci_map_queues(&set->map[0], to_pci_dev(dev->dev),
+-			dev->num_vecs > 1 ? 1 /* admin queue */ : 0);
++		map->nr_queues = dev->io_queues[i];
++		if (!map->nr_queues) {
++			BUG_ON(i == NVMEQ_TYPE_READ);
++
++			/* shared set, resuse read set parameters */
++			map->nr_queues = dev->io_queues[NVMEQ_TYPE_READ];
++			qoff = 0;
++			offset = queue_irq_offset(dev);
++		}
++
++		map->queue_offset = qoff;
++		blk_mq_pci_map_queues(map, to_pci_dev(dev->dev), offset);
++		qoff += map->nr_queues;
++		offset += map->nr_queues;
++	}
++
++	return 0;
+ }
+ 
+ /**
+@@ -849,6 +919,14 @@ static blk_status_t nvme_queue_rq(struct blk_mq_hw_ctx *hctx,
+ 	return ret;
+ }
+ 
++static int nvme_flags_to_type(struct request_queue *q, unsigned int flags)
++{
++	if ((flags & REQ_OP_MASK) == REQ_OP_READ)
++		return NVMEQ_TYPE_READ;
++
++	return NVMEQ_TYPE_WRITE;
++}
++
+ static void nvme_pci_complete_rq(struct request *req)
+ {
+ 	struct nvme_iod *iod = blk_mq_rq_to_pdu(req);
+@@ -1476,6 +1554,7 @@ static const struct blk_mq_ops nvme_mq_admin_ops = {
+ 
+ static const struct blk_mq_ops nvme_mq_ops = {
+ 	.queue_rq	= nvme_queue_rq,
++	.flags_to_type	= nvme_flags_to_type,
+ 	.complete	= nvme_pci_complete_rq,
+ 	.init_hctx	= nvme_init_hctx,
+ 	.init_request	= nvme_init_request,
+@@ -1888,18 +1967,53 @@ static int nvme_setup_host_mem(struct nvme_dev *dev)
+ 	return ret;
+ }
+ 
++static void nvme_calc_io_queues(struct nvme_dev *dev, unsigned int nr_io_queues)
++{
++	unsigned int this_w_queues = write_queues;
++
++	/*
++	 * Setup read/write queue split
++	 */
++	if (nr_io_queues == 1) {
++		dev->io_queues[NVMEQ_TYPE_READ] = 1;
++		dev->io_queues[NVMEQ_TYPE_WRITE] = 0;
++		return;
++	}
++
++	/*
++	 * If 'write_queues' is set, ensure it leaves room for at least
++	 * one read queue
++	 */
++	if (this_w_queues >= nr_io_queues)
++		this_w_queues = nr_io_queues - 1;
++
++	/*
++	 * If 'write_queues' is set to zero, reads and writes will share
++	 * a queue set.
++	 */
++	if (!this_w_queues) {
++		dev->io_queues[NVMEQ_TYPE_WRITE] = 0;
++		dev->io_queues[NVMEQ_TYPE_READ] = nr_io_queues;
++	} else {
++		dev->io_queues[NVMEQ_TYPE_WRITE] = this_w_queues;
++		dev->io_queues[NVMEQ_TYPE_READ] = nr_io_queues - this_w_queues;
++	}
++}
++
+ static int nvme_setup_io_queues(struct nvme_dev *dev)
+ {
+ 	struct nvme_queue *adminq = &dev->queues[0];
+ 	struct pci_dev *pdev = to_pci_dev(dev->dev);
+ 	int result, nr_io_queues;
+ 	unsigned long size;
+-
++	int irq_sets[2];
+ 	struct irq_affinity affd = {
+-		.pre_vectors = 1
++		.pre_vectors = 1,
++		.nr_sets = ARRAY_SIZE(irq_sets),
++		.sets = irq_sets,
+ 	};
+ 
+-	nr_io_queues = num_possible_cpus();
++	nr_io_queues = max_io_queues();
+ 	result = nvme_set_queue_count(&dev->ctrl, &nr_io_queues);
+ 	if (result < 0)
+ 		return result;
+@@ -1934,13 +2048,48 @@ static int nvme_setup_io_queues(struct nvme_dev *dev)
+ 	 * setting up the full range we need.
+ 	 */
+ 	pci_free_irq_vectors(pdev);
+-	result = pci_alloc_irq_vectors_affinity(pdev, 1, nr_io_queues + 1,
+-			PCI_IRQ_ALL_TYPES | PCI_IRQ_AFFINITY, &affd);
+-	if (result <= 0)
+-		return -EIO;
++
++	/*
++	 * For irq sets, we have to ask for minvec == maxvec. This passes
++	 * any reduction back to us, so we can adjust our queue counts and
++	 * IRQ vector needs.
++	 */
++	do {
++		nvme_calc_io_queues(dev, nr_io_queues);
++		irq_sets[0] = dev->io_queues[NVMEQ_TYPE_READ];
++		irq_sets[1] = dev->io_queues[NVMEQ_TYPE_WRITE];
++		if (!irq_sets[1])
++			affd.nr_sets = 1;
++
++		/*
++		 * Need IRQs for read+write queues, and one for the admin queue
++		 */
++		nr_io_queues = irq_sets[0] + irq_sets[1] + 1;
++
++		result = pci_alloc_irq_vectors_affinity(pdev, nr_io_queues,
++				nr_io_queues,
++				PCI_IRQ_ALL_TYPES | PCI_IRQ_AFFINITY, &affd);
++
++		/*
++		 * Need to reduce our vec counts
++		 */
++		if (result == -ENOSPC) {
++			nr_io_queues--;
++			if (!nr_io_queues)
++				return result;
++			continue;
++		} else if (result <= 0)
++			return -EIO;
++		break;
++	} while (1);
++
+ 	dev->num_vecs = result;
+ 	dev->max_qid = max(result - 1, 1);
+ 
++	dev_info(dev->ctrl.device, "%d/%d/%d read/write queues\n",
++					dev->io_queues[NVMEQ_TYPE_READ],
++					dev->io_queues[NVMEQ_TYPE_WRITE]);
++
+ 	/*
+ 	 * Should investigate if there's a performance win from allocating
+ 	 * more queues than interrupt vectors; it might allow the submission
+@@ -2042,6 +2191,7 @@ static int nvme_dev_add(struct nvme_dev *dev)
+ 	if (!dev->ctrl.tagset) {
+ 		dev->tagset.ops = &nvme_mq_ops;
+ 		dev->tagset.nr_hw_queues = dev->online_queues - 1;
++		dev->tagset.nr_maps = NVMEQ_TYPE_NR;
+ 		dev->tagset.timeout = NVME_IO_TIMEOUT;
+ 		dev->tagset.numa_node = dev_to_node(dev->dev);
+ 		dev->tagset.queue_depth =
+@@ -2489,8 +2639,8 @@ static int nvme_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	if (!dev)
+ 		return -ENOMEM;
+ 
+-	dev->queues = kcalloc_node(num_possible_cpus() + 1,
+-			sizeof(struct nvme_queue), GFP_KERNEL, node);
++	dev->queues = kcalloc_node(max_queue_count(), sizeof(struct nvme_queue),
++					GFP_KERNEL, node);
+ 	if (!dev->queues)
+ 		goto free;
+ 
 
-Keep in mind that switch_mm() is actually decently fast on modern CPUs.  It=E2=
-=80=99s probably considerably faster than writing CR0, although I haven=E2=80=
-=99t benchmarked it. It=E2=80=99s certainly faster than writing CR4.  It=E2=80=
-=99s also faster than INVPCID, surprisingly, which means that it will be qui=
-te hard to get better performance using any sort of trickery.
+-- 
+Jens Axboe
 
-Nadav=E2=80=99s patch set would be an excellent starting point.
-
-P.S. EFI is sort of grandfathered in as a hackish alternate page table hiera=
-rchy. We=E2=80=99re not adding another one.=
