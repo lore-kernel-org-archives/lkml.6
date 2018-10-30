@@ -2,102 +2,92 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0606DC6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 12:10:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14C0AC6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 12:10:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBFF520831
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 12:10:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBFF520831
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D1E9720831
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 12:10:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="s7ZAakij"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1E9720831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728020AbeJ3VD0 (ORCPT
+        id S1728032AbeJ3VDy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 17:03:26 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42792 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727768AbeJ3VD0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 17:03:26 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D6F28B08A;
-        Tue, 30 Oct 2018 12:10:12 +0000 (UTC)
-Date:   Tue, 30 Oct 2018 13:10:12 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     linux-mm@kvack.org, Roman Gushchin <guro@fb.com>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH v2 3/3] mm, oom: hand over MMF_OOM_SKIP to exit path
- if it is guranteed to finish
-Message-ID: <20181030121012.GC32673@dhcp22.suse.cz>
-References: <20181025082403.3806-1-mhocko@kernel.org>
- <20181025082403.3806-4-mhocko@kernel.org>
- <201810300445.w9U4jMhu076672@www262.sakura.ne.jp>
- <20181030063136.GU32673@dhcp22.suse.cz>
- <95cb93ec-2421-3c5d-fd1e-91d9696b0f5a@I-love.SAKURA.ne.jp>
- <20181030113915.GB32673@dhcp22.suse.cz>
- <ca390ac1-2f10-b734-fff7-56767253e8c5@i-love.sakura.ne.jp>
+        Tue, 30 Oct 2018 17:03:54 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:46056 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727863AbeJ3VDy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 17:03:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=DA0W34KdCdXK/M1/fLBkxMH1gHDRPC+AUNQWiO2+iN0=;
+        b=s7ZAakijiwU/THh9P3rH0x0//N+a8O59YT1lpdqG/Y7to0auMvCnFbIvLiabkYjg0gTQj0PO2Tw6G5J31dHRbk+w1y/uSuhRpHYQxUP9peFSAXJOlzeEG/nPy0QKE2RCJiNlmvc/MZM6kpUY5S0Ua/CvUvfaDDtSueMWX7kZbfA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1gHSqs-0007U1-3i; Tue, 30 Oct 2018 13:10:30 +0100
+Date:   Tue, 30 Oct 2018 13:10:30 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Kurt Kanzenbach <kurt@linutronix.de>
+Cc:     Anirudha Sarangi <anirudh@xilinx.com>,
+        John Linn <John.Linn@xilinx.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>,
+        YueHaibing <yuehaibing@huawei.com>, netdev@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] net: xilinx_emaclite: recheck condition after
+ timeout in mdio_wait()
+Message-ID: <20181030121030.GD27873@lunn.ch>
+References: <20181030093139.10226-1-kurt@linutronix.de>
+ <20181030093139.10226-3-kurt@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ca390ac1-2f10-b734-fff7-56767253e8c5@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181030093139.10226-3-kurt@linutronix.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 30-10-18 21:02:40, Tetsuo Handa wrote:
-> On 2018/10/30 20:39, Michal Hocko wrote:
-> > On Tue 30-10-18 18:47:43, Tetsuo Handa wrote:
-> >> On 2018/10/30 15:31, Michal Hocko wrote:
-> >>> On Tue 30-10-18 13:45:22, Tetsuo Handa wrote:
-> >>>> Michal Hocko wrote:
-> >>>>> @@ -3156,6 +3166,13 @@ void exit_mmap(struct mm_struct *mm)
-> >>>>>                 vma = remove_vma(vma);
-> >>>>>         }
-> >>>>>         vm_unacct_memory(nr_accounted);
-> >>>>> +
-> >>>>> +       /*
-> >>>>> +        * Now that the full address space is torn down, make sure the
-> >>>>> +        * OOM killer skips over this task
-> >>>>> +        */
-> >>>>> +       if (oom)
-> >>>>> +               set_bit(MMF_OOM_SKIP, &mm->flags);
-> >>>>>  }
-> >>>>>
-> >>>>>  /* Insert vm structure into process list sorted by address
-> >>>>
-> >>>> I don't like setting MMF_OOF_SKIP after remove_vma() loop. 50 users might
-> >>>> call vma->vm_ops->close() from remove_vma(). Some of them are doing fs
-> >>>> writeback, some of them might be doing GFP_KERNEL allocation from
-> >>>> vma->vm_ops->open() with a lock also held by vma->vm_ops->close().
-> >>>>
-> >>>> I don't think that waiting for completion of remove_vma() loop is safe.
-> >>>
-> >>> What do you mean by 'safe' here?
-> >>>
-> >>
-> >> safe = "Does not cause OOM lockup."
-> >>
-> >> remove_vma() is allowed to sleep, and some users might depend on memory
-> >> allocation when the OOM killer is waiting for remove_vma() to complete.
-> > 
-> > But MMF_OOF_SKIP is set after we are done with remove_vma. In fact it is
-> > the very last thing in exit_mmap. So I do not follow what you mean.
-> > 
+On Tue, Oct 30, 2018 at 10:31:39AM +0100, Kurt Kanzenbach wrote:
+> The function could report a false positive if it gets preempted between reading
+> the XEL_MDIOCTRL_OFFSET register and checking for the timeout.  In such a case,
+> the condition has to be rechecked to avoid false positives.
 > 
-> So what? Think the worst case. Quite obvious bug here.
+> Therefore, check for expected condition even after the timeout occurred.
+> 
+> Signed-off-by: Kurt Kanzenbach <kurt@linutronix.de>
+> ---
+>  drivers/net/ethernet/xilinx/xilinx_emaclite.c | 20 +++++++++++++++-----
+>  1 file changed, 15 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/xilinx/xilinx_emaclite.c b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
+> index 639e3e99af46..957d03085bd0 100644
+> --- a/drivers/net/ethernet/xilinx/xilinx_emaclite.c
+> +++ b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
+> @@ -714,19 +714,29 @@ static irqreturn_t xemaclite_interrupt(int irq, void *dev_id)
+>  static int xemaclite_mdio_wait(struct net_local *lp)
+>  {
+>  	unsigned long end = jiffies + 2;
+> +	u32 val;
+>  
+>  	/* wait for the MDIO interface to not be busy or timeout
+>  	 * after some time.
+>  	 */
+> -	while (xemaclite_readl(lp->base_addr + XEL_MDIOCTRL_OFFSET) &
+> -			XEL_MDIOCTRL_MDIOSTS_MASK) {
+> +	while (1) {
+> +		val = xemaclite_readl(lp->base_addr + XEL_MDIOCTRL_OFFSET);
 
-I misunderstood your concern. oom_reaper would back off without
-MMF_OOF_SKIP as well. You are right we cannot assume anything about
-close callbacks so MMF_OOM_SKIP has to come before that. I will move it
-behind the pagetable freeing.
--- 
-Michal Hocko
-SUSE Labs
+Hi Kurt
+
+It looks like readx_poll_timeout() should work here.
+
+   Andrew
