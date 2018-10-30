@@ -2,245 +2,296 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B39B8C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:27:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C2D7C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:28:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CF7220657
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:27:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CF7220657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 245C620657
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:28:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oj6mwOG6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 245C620657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727520AbeJaAVg (ORCPT
+        id S1727610AbeJaAWL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 20:21:36 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55064 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726985AbeJaAVf (ORCPT
+        Tue, 30 Oct 2018 20:22:11 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52872 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726491AbeJaAWK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 20:21:35 -0400
-Received: by mail-wm1-f65.google.com with SMTP id r63-v6so12217445wma.4
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 08:27:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uE3s+ozqng/e1H2fNFPeYSYLcb1UhwZgqLar/x1R4J0=;
-        b=d+9xEAv73UNEf0exUucdYIq0DoaSbXlaMrBkk6nirzCVEn8uS0ZklofTYErQVji7Ag
-         AwDyltP6rltL4wApuhX85fyhmUd92ZO3DUUeKaVva6RZLeeqzsHQQXBw5i4KDqLWhwqr
-         kc0fldogKAtoN2+rDIPxcKGZQ8/RVwwDrakD/wfbfAZa63i7sdL5dQdDcFe2qTASq0Br
-         fBTV1YI7amm6p5iqUHkIRRiStHl2xcXStR+rx4U1bfmPkIEAsno3Ax7f+GfgjSVb8ktl
-         zXyRJvfgJ+m/AJhG3McMUvo2a3Kyk5g1BOqSGKGjn50j/kl8A7XbT9eoG3sLo6kUGWSr
-         1z6w==
-X-Gm-Message-State: AGRZ1gJdk7yFpbz+4G2ykeuRYWPhXy+AmuRj8RtoEqMWrh+Kd+zl/gPY
-        YTSpmTX9iR8aJEOpEbB+jy6LZA==
-X-Google-Smtp-Source: AJdET5ePwSaZfRezYtwiQByaGgWyJPRSUXYb74sZiy6H7E6HHGAB7KQwoKGOGE5Yh1JGETcRsbJYEQ==
-X-Received: by 2002:a1c:b7c1:: with SMTP id h184-v6mr2248720wmf.33.1540913258361;
-        Tue, 30 Oct 2018 08:27:38 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id x139-v6sm27747482wme.3.2018.10.30.08.27.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 08:27:37 -0700 (PDT)
-Subject: Re: [RFC][PATCH v1] ACPI / scan: Create platform device for BOSC0200
- ACPI nodes
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-acpi@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
-        linux-iio@vger.kernel.org, Darren Hart <dvhart@infradead.org>,
-        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Javier Martinez Canillas <javierm@redhat.com>
-Cc:     Steven Presser <steve@pressers.name>,
-        Bastien Nocera <hadess@hadess.net>
-References: <20181030144706.6737-1-andriy.shevchenko@linux.intel.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <3e34f7c0-e747-7393-4b79-317b8483f0a6@redhat.com>
-Date:   Tue, 30 Oct 2018 16:27:36 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 30 Oct 2018 20:22:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=wHGp11HAaDCle3hbuoAqr3aCpac9p2AxS6QghFI+7jk=; b=oj6mwOG6K3x/MQafk4JIbKOBy
+        9rZgLPOh6ZV0ouWOqVvota++uL85RCu/BE+lLJ1fPUADAHQRVRAbYBQ6KAerWlSRv42ZLK9A7e8UO
+        bXveSkXX5C6WjS18O7VqpuwBYnRJu6F0WSfRLO+qWIHojB4gPxruPr0swMYHhBJNn6GNRmURiRXZl
+        0QwFPOYp0+H8MwXh15Xs2e6bJ05LpjYOR6xjbAoMiPq03kjozVt6o4zsNytxgrOtCQIwyBZQvumkG
+        jd3DX2TQJIk6GKs8m1X+dl4CT2vv8gFH31ZojonFQcAmvhbD0wyC8jsLSZyd4lL87qRXKCGAaikTN
+        jNutzUJ5g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gHVum-0004fO-Hu; Tue, 30 Oct 2018 15:26:50 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C3F292029FA14; Tue, 30 Oct 2018 16:26:41 +0100 (CET)
+Date:   Tue, 30 Oct 2018 16:26:41 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Igor Stoppa <igor.stoppa@gmail.com>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 10/17] prmem: documentation
+Message-ID: <20181030152641.GE8177@hirez.programming.kicks-ass.net>
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-11-igor.stoppa@huawei.com>
+ <20181026092609.GB3159@worktop.c.hoisthospitality.com>
+ <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
+ <20181028183126.GB744@hirez.programming.kicks-ass.net>
+ <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181030144706.6737-1-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 30-10-18 15:47, Andy Shevchenko wrote:
-> On some laptops the ACPI device with BOSC0200 _HID is representing
-> two accelerometers under one node.
+On Mon, Oct 29, 2018 at 11:04:01PM +0200, Igor Stoppa wrote:
+> On 28/10/2018 18:31, Peter Zijlstra wrote:
+> > On Fri, Oct 26, 2018 at 11:46:28AM +0100, Kees Cook wrote:
+> > > On Fri, Oct 26, 2018 at 10:26 AM, Peter Zijlstra <peterz@infradead.org> wrote:
+> > > > I still don't really understand the whole write-rare thing; how does it
+> > > > really help? If we can write in kernel memory, we can write to
+> > > > page-tables too.
+> > 
+> > > One aspect of hardening the kernel against attack is reducing the
+> > > internal attack surface. Not all flaws are created equal, so there is
+> > > variation in what limitations an attacker may have when exploiting
+> > > flaws (not many flaws end up being a fully controlled "write anything,
+> > > anywhere, at any time"). By making the more sensitive data structures
+> > > of the kernel read-only, we reduce the risk of an attacker finding a
+> > > path to manipulating the kernel's behavior in a significant way.
+> > > 
+> > > Examples of typical sensitive targets are function pointers, security
+> > > policy, and page tables. Having these "read only at rest" makes them
+> > > much harder to control by an attacker using memory integrity flaws.
+> > 
+> > Because 'write-anywhere' exploits are easier than (and the typical first
+> > step to) arbitrary code execution thingies?
+> > 
+> > > The "write rarely" name itself may not sufficiently describe what is
+> > > wanted either (I'll take the blame for the inaccurate name), so I'm
+> > > open to new ideas there. The implementation requirements for the
+> > > "sensitive data read-only at rest" feature are rather tricky:
+> > > 
+> > > - allow writes only from specific places in the kernel
+> > > - keep those locations inline to avoid making them trivial ROP targets
+> > > - keep the writeability window open only to a single uninterruptable CPU
+> > 
+> > The current patch set does not achieve that because it uses a global
+> > address space for the alias mapping (vmap) which is equally accessible
+> > from all CPUs.
 > 
-> We add an ID to the I2C multi instantiate list to enumerate
-> all I2C slaves correctly.
+> I never claimed to achieve 100% resilience to attacks.
 
-I believe that overall the approach here is correct, but I've
-several (at least 4 different models) devices which use the
-BOSC0200 _HID but with only 1 accelerometer / 1 I2cSerialBus
-resource in the _CRS table.
+You never even begun explaining what you were defending against. Let
+alone how well it achieved its stated goals.
 
-So I believe that you need to add a new optional bool to
-struct i2c_inst_data and ignore i2c_acpi_new_device()
-returning NULL when this is set (and set it for the second
-accelerometer).
-
-i2c_unregister_device can handle NULL, so some entries
-of the multi->clients[i] array ending up as NULL is not
-a problem.
-
-Hmm, I have just realized that there is another issue
-which is a real problem, we have stuff like this:
-
-[hans@shalem linux]$ ack BOSC0200 /lib/udev/hwdb.d/60-sensor.hwdb
-sensor:modalias:acpi:BOSC0200*:dmi:*:svnHampoo:pnD2D3_Vi8A1:*
-sensor:modalias:acpi:BOSC0200*:dmi:*:svnHampoo:pnX1D3_C806N:*
-sensor:modalias:acpi:BOSC0200*:dmi:*:svn*CHUWIINNOVATIONANDTECHNOLOGY*:pnHi10protablet:*
-sensor:modalias:acpi:BOSC0200*:dmi:*:svnHampoo:pnP02BD6_HI-122LP:*
-# match the entire dmi-alias, assuming that the use of a BOSC0200 +
-sensor:modalias:acpi:BOSC0200*:dmi:bvnAmericanMegatrendsInc.:bvr5.11:bd05/07/2016:svnDefaultstring:pnDefaultstring:pvrDefaultstring:rvnHampoo:rnCherryTrailCR:rvrDefaultstring:cvnDefaultstring:ct3:cvrDefaultstring:
-sensor:modalias:acpi:BOSC0200*:dmi:bvnAmericanMegatrendsInc.:bvr5.11:bd05/28/2016:svnDefaultstring:pnDefaultstring:pvrDefaultstring:rvnHampoo:rnCherryTrailCR:rvrDefaultstring:cvnDefaultstring:ct3:cvrDefaultstring:
-sensor:modalias:acpi:BOSC0200*:dmi:bvnINSYDECorp.:bvrjumperx.T87.KFBNEE*
-sensor:modalias:acpi:BOSC0200*:dmi:*:svnJumper:pnEZpad:*:rvr.A006:*
-sensor:modalias:acpi:BOSC0200:BOSC0200:dmi:*ThinkPadYoga11e3rdGen*
-sensor:modalias:acpi:*BOSC0200*:dmi:*:svnLENOVO*:pn80XF:*
-sensor:modalias:acpi:*BOSC0200*:dmi:*:svnLENOVO*:pn80XE:*
-sensor:modalias:acpi:BOSC0200*:dmi:*:svnLINX*:pnLINX1010B:*
-
-And using i2c-multi-instantiate will change the modalias from
-acpi:BOSC0200 to i2c:bmc150_accel breaking this.
-
-One way to fix this would be making sure we only use an
-i2c:bmc150_accel modalias for the second device. This will
-also allow differentiating between the 2 in hwdb quirks for
-devices with 2 accelerometers. But the way we currently
-generate modalias-es does not allow doing this in an
-easy way. Making this possible will require some changes to
-show_modalias() and i2c_device_uevent() in
-drivers/i2c/i2c-core-base.c
-
-> For reference here is the relevant DSDT blurb from the Yoga 11e:
+> While it's true that the address space is accessible to all the CPUs, it is
+> also true that the access has a limited duration in time, and the location
+> where the access can be performed is not fixed.
 > 
-> Device (ACC)
-> {
-> 	Name (_ADR, Zero)  // _ADR: Address
-> 	Name (_HID, "BOSC0200")  // _HID: Hardware ID
-> 	Name (_CID, "BOSC0200")  // _CID: Compatible ID
-> 	Name (_DDN, "Accelerometer")  // _DDN: DOS Device Name
-> 	Name (_UID, One)  // _UID: Unique ID
-> 	Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
-> 	{
-> 		Name (RBUF, ResourceTemplate ()
-> 		{
-> 			I2cSerialBusV2 (0x0019, ControllerInitiated, 0x00061A80,
-> 				AddressingMode7Bit, "\\_SB.PCI0.I2C3",
-> 				0x00, ResourceConsumer, , Exclusive,
-> 			)
-> 			I2cSerialBusV2 (0x0018, ControllerInitiated, 0x00061A80,
-> 				AddressingMode7Bit, "\\_SB.PCI0.I2C3",
-> 				0x00, ResourceConsumer, , Exclusive,
-> 			)
-> 		})
-> 		Return (RBUF) /* \_SB_.PCI0.I2C3.ACC_._CRS.RBUF */
-> 	}
+> Iow, assuming that the CPUs not involved in the write-rare operations are
+> compromised and that they are trying to perform a concurrent access to the
+> data in the writable page, they have a limited window of opportunity.
+
+That sounds like security through obscurity. Sure it makes it harder,
+but it doesn't stop anything.
+
+> Said this, this I have posted is just a tentative implementation.
+> My primary intent was to at least give an idea of what I'd like to do: alter
+> some data in a way that is not easily exploitable.
+
+Since you need to modify page-tables in order to achieve this, the
+page-tables are also there for the attacker to write to.
+
+> > > - fast enough to deal with page table updates
+> > 
+> > The proposed implementation needs page-tables for the alias; I don't see
+> > how you could ever do R/O page-tables when you need page-tables to
+> > modify your page-tables.
 > 
-> Reported-by: Jeremy Cline <jeremy@jcline.org>
-> Cc: Steven Presser <steve@pressers.name>
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
+> It's not all-or-nothing.
+
+I really am still strugging with what it is this thing is supposed to
+do. As it stands, I see very little value. Yes it makes a few things a
+little harder, but it doesn't really do away with things.
+
+> I hope we agree at least on the reasoning that having only a limited amount
+> of address space directly attackable, instead of the whole set of pages
+> containing exploitable data, is  reducing the attack surface.
+
+I do not in fact agree. Most pages are not interesting for an attack at
+all. So simply reducing the set of pages you can write to isn't
+sufficient.
+
+IOW. removing all noninteresting pages from the writable set will
+satisfy your criteria, but it avoids exactly 0 exploits.
+
+What you need to argue is that we remove common exploit targets, and
+you've utterly failed to do so.
+
+Kees mentioned: function pointers, page-tables and a few other things.
+You mentioned nothing.
+
+> Furthermore, if we think about possible limitations that the attack might
+> have (maximum reach), the level of protection might be even higher. I have
+> to use "might" because I cannot foresee the vulnerability.
+
+That's just a bunch of words together that don't really say anything
+afaict.
+
+> Furthermore, taking a different angle: your average attacker is not
+> necessarily very social and inclined to share the vulnerability found.
+> It is safe to assume that in most cases each attacker has to identify the
+> attack strategy autonomously.
+> Reducing the amount of individual who can perform an attack, by increasing
+> the expertise required is also a way of doing damage control.
+
+If you make RO all noninteresting pages, you in fact increase the
+density of interesting targets and make things easier.
+
+> > And this is entirely irrespective of performance.
 > 
-> The previous approach had been discussed at
-> https://lore.kernel.org/lkml/010001602cf53153-39ad69f1-1b39-4e6d-a748-9455a16c2fbd-000000@email.amazonses.com/
+> I have not completely given up on performance, but, being write-rare, I see
+> improved performance as just a way of widening the range of possible
+> recipients for the hardening.
+
+What?! Are you saying you don't care about performance?
+
+> > Right... /me goes find the patches we did for text_poke. Hmm, those
+> > never seem to have made it:
+> > 
+> >    https://lkml.kernel.org/r/20180902173224.30606-1-namit@vmware.com
+> > 
+> > like that. That approach will in fact work and not be a completely
+> > broken mess like this thing.
 > 
-> This has an obvious regression as per commit 1911f48de0d9 ("iio: accel: bmc150:
-> Add support for BOSC0200 ACPI device id") there are tables where under same ID
-> we have different sets of the devices (luckily some of that is possible to
-> autodetect):
+> That approach is x86 specific.
+
+It is not. Every architecture does switch_mm() with IRQs disabled, as
+that is exactly what the scheduler does.
+
+And keeping a second init_mm around also isn't very architecture
+specific I feel.
+
+> > > We need to find a good way to do the write-windowing that works well
+> > > for static and dynamic structures _and_ for the page tables... this
+> > > continues to be tricky.
+> > > 
+> > > Making it resilient against ROP-style targets makes it difficult to
+> > > deal with certain data structures (like list manipulation). In my
+> > > earlier RFC, I tried to provide enough examples of where this could
+> > > get used to let people see some of the complexity[1]. Igor's series
+> > > expands this to even more examples using dynamic allocation.
+> > 
+> > Doing 2 CR3 writes for 'every' WR write doesn't seem like it would be
+> > fast enough for much of anything.
 > 
-> - one accellerometer  (250e)
-> - one accellerometer  (222e)
-> - two accellerometers (???)
+> Part of the reason for the duplication is that, even if the wr_API I came up
+> with, can be collapsed with the regular API, the implementation needs to be
+> different, to be faster.
 > 
-> The proper enabling of the last case w/o a regression sounds like a DMI based
-> data for I2C multi instantiate driver along with automatic selection of the latter
-> whenever user selects bmc150-accel-i2c.c.
+> Ex:
+> * force the list_head structure to be aligned so that it will always be
+> fully contained by a single page
+> * create alternate mapping for all the pages involved (max 1 page for each
+> list_head)
+> * do the lsit operation on the remapped list_heads
+> * destroy all the mappings
 
-We can just use "bmc150_accel" everywhere without problems, i2c_device_id.driver_data
-does get set by bmc150-accel-i2c.c but not used. i2c_device_id.name does get used
-as the name for the iio-dev but that is purely cosmetic so we can simply use
-"bmc150_accel" everywhere as the drivers/iio/accel/bmc150-accel-core.c code
-will always auto-detect the actual type anyways. So this bit is not a problem
-(unlike the modalias changing).
+Those constraints are due to single page aliases.
 
-Regards,
+> I can try to introduce some wrapper similar to kmap_atomic(), as suggested
+> by Dave Hansen, which can improve the coding, but it will not change the
+> actual set of operations performed.
 
-Hans
+See below, I don't think kmap_atomic() is either correct or workable.
 
+One thing that might be interesting is teaching objtool about the
+write-enable write-disable markers and making it guarantee we reach a
+disable after every enable. IOW, ensure we never leak this state.
 
+I think that was part of why we hated on that initial thing Kees did --
+well that an disabling all WP is of course completely insane ;-).
 
-
-
-
+> > And I don't suppose we can take the WP fault and then fix up from there,
+> > because if we're doing R/O page-tables, that'll incrase the fault depth
+> > and we'll double fault all the time, and tripple fault where we
+> > currently double fault. And we all know how _awesome_ tripple faults
+> > are.
+> > 
+> > But duplicating (and wrapping in gunk) whole APIs is just not going to
+> > work.
 > 
->   drivers/acpi/scan.c                          | 1 +
->   drivers/iio/accel/bmc150-accel-i2c.c         | 1 -
->   drivers/platform/x86/i2c-multi-instantiate.c | 7 +++++++
->   3 files changed, 8 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-> index bd1c59fb0e17..a8cdae057a47 100644
-> --- a/drivers/acpi/scan.c
-> +++ b/drivers/acpi/scan.c
-> @@ -1539,6 +1539,7 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
->   	 * which i2c_device_id to use for each resource.
->   	 */
->   	static const struct acpi_device_id i2c_multi_instantiate_ids[] = {
-> +		{"BOSC0200", },
->   		{"BSG1160", },
->   		{"INT33FE", },
->   		{}
-> diff --git a/drivers/iio/accel/bmc150-accel-i2c.c b/drivers/iio/accel/bmc150-accel-i2c.c
-> index 8ffc308d5fd0..9d22a4d9d568 100644
-> --- a/drivers/iio/accel/bmc150-accel-i2c.c
-> +++ b/drivers/iio/accel/bmc150-accel-i2c.c
-> @@ -64,7 +64,6 @@ static const struct acpi_device_id bmc150_accel_acpi_match[] = {
->   	{"BMA250E",	bma250e},
->   	{"BMA222E",	bma222e},
->   	{"BMA0280",	bma280},
-> -	{"BOSC0200"},
->   	{ },
->   };
->   MODULE_DEVICE_TABLE(acpi, bmc150_accel_acpi_match);
-> diff --git a/drivers/platform/x86/i2c-multi-instantiate.c b/drivers/platform/x86/i2c-multi-instantiate.c
-> index 5456581b473c..8e763765a05e 100644
-> --- a/drivers/platform/x86/i2c-multi-instantiate.c
-> +++ b/drivers/platform/x86/i2c-multi-instantiate.c
-> @@ -100,6 +100,12 @@ static int i2c_multi_inst_remove(struct platform_device *pdev)
->   	return 0;
->   }
->   
-> +static const struct i2c_inst_data bosc0200_data[]  = {
-> +	{ "bmc150_accel", -1 },
-> +	{ "bmc150_accel", -1 },
-> +	{}
-> +};
-> +
->   static const struct i2c_inst_data bsg1160_data[]  = {
->   	{ "bmc150_accel", 0 },
->   	{ "bmc150_magn", -1 },
-> @@ -112,6 +118,7 @@ static const struct i2c_inst_data bsg1160_data[]  = {
->    * drivers/acpi/scan.c: acpi_device_enumeration_by_parent().
->    */
->   static const struct acpi_device_id i2c_multi_inst_acpi_ids[] = {
-> +	{ "BOSC0200", (unsigned long)bosc0200_data },
->   	{ "BSG1160", (unsigned long)bsg1160_data },
->   	{ }
->   };
-> 
+> Would something like kmap_atomic() be acceptable?
+
+Don't think so. kmap_atomic() on x86_32 (64bit doesn't have it at all)
+only does the TLB invalidate on the one CPU, which we've established is
+incorrect.
+
+Also, kmap_atomic is still page-table based, which means not all
+page-tables can be read-only.
+
+> Do you have some better proposal, now that (I hope) it should be more clear
+> what I'm trying to do and why?
+
+You've still not talked about any actual attack vectors and how they're
+mitigated by these patches.
+
+I suppose the 'normal' attack goes like:
+
+ 1) find buffer-overrun / bound check failure
+ 2) use that to write to 'interesting' location
+ 3) that write results arbitrary code execution
+ 4) win
+
+Of course, if the store of 2 is to the current cred structure, and
+simply sets the effective uid to 0, we can skip 3.
+
+Which seems to suggest all cred structures should be made r/o like this.
+But I'm not sure I remember these patches doing that.
+
+
+Also, there is an inverse situation with all this. If you make
+everything R/O, then you need this allow-write for everything you do,
+which then is about to include a case with an overflow / bound check
+fail, and we're back to square 1.
+
+What are you doing to avoid that?
