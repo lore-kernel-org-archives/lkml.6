@@ -2,172 +2,391 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAF4CC6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:32:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A61FC6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:32:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7026420664
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:32:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="cudBxkTZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7026420664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
+	by mail.kernel.org (Postfix) with ESMTP id 037CC20664
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:32:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 037CC20664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mess.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728397AbeJaH1x (ORCPT
+        id S1728499AbeJaH2M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 03:27:53 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42709 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726376AbeJaH1x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 03:27:53 -0400
-Received: by mail-pf1-f193.google.com with SMTP id f26-v6so6572119pfn.9
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 15:32:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=8OuOJaXdqAriTvinMmIHBpzpbXpIMiG/JA7aCf5n8ys=;
-        b=cudBxkTZ65rcexeB1AGKzMWBs8RncUZ7VYT37tqwFl30HyKzsqNKIazV/QUHiLND8A
-         k3AUBLlWuy0SnY95VBfbSgoQee2pXs2MD9NDuOJgcccQrl9utvkqrYDF774iKPEBXCef
-         fs9YoZSo84xlC9EUSCxvE17THeJAh7fnbPpw+eAZMn8GEXjcNhiNVaOle1bCkrBEwYvw
-         AxAS8OZtkqyWGb5eINoYZo26hYglgmD8pB9SON2NqqCUDPy6j1WploNHYcc5DSU58OD0
-         cvZd/a6XrxirA9bWMpNgbgSWUYimET7J2u9RqMVY3AESZ4upxDVWsazZ9BwnUQpIrv9X
-         c0Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8OuOJaXdqAriTvinMmIHBpzpbXpIMiG/JA7aCf5n8ys=;
-        b=nR/g8bgCr+dRZH8w4AjRwRomOjlBVdRTTt4YIL2uMT4w30xRqpQrfgq3x9oVKznRgp
-         VMVD1tyhuVBUEFw1cHQtRqjrYCauzbNtZnHq7F0eEdXmiiWm79h2b7RDSdSeecCw760w
-         xN+WxVU/RzCuzfj3ImpbwX6duVikhDDYPC6ZgcYH3Y5fW8K/O0UOQlRUhjpI2U6t1F8J
-         DFEVF5mICnyl7X6SeVaCkTRgY/KE/oRK/Ielg2IrQrKcHOe+S/0Z1R/1f9EqqOPRAS78
-         H5cza7bMZnvAx+STi/pcfzSE7QWNs5U99kWOVIy7xhSlZ3Nihhqdf/9/VxJbNcttDOyI
-         owHQ==
-X-Gm-Message-State: AGRZ1gL8yNnuiivLzRvKTRipS9iVVziMUFS9EjYdVhPi0H280tmZkKAI
-        q8+9m5WkoA1osBGaJ2XNQLpwnQ==
-X-Google-Smtp-Source: AJdET5cLykzC7sfSdRfm9ssL1ewLiQIq5oyi+39n7Dj0ZSIyYf/tc/NlFJ44SJnKBkSoR8T9lfJDhw==
-X-Received: by 2002:a62:4681:: with SMTP id o1-v6mr593748pfi.108.1540938752213;
-        Tue, 30 Oct 2018 15:32:32 -0700 (PDT)
-Received: from cisco ([128.107.241.161])
-        by smtp.gmail.com with ESMTPSA id 124-v6sm24718034pfb.132.2018.10.30.15.32.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Oct 2018 15:32:31 -0700 (PDT)
-Date:   Tue, 30 Oct 2018 16:32:28 -0600
-From:   Tycho Andersen <tycho@tycho.ws>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian@brauner.io>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Aleksa Sarai <asarai@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH v8 1/2] seccomp: add a return code to trap to userspace
-Message-ID: <20181030223228.GG7343@cisco>
-References: <20181029224031.29809-1-tycho@tycho.ws>
- <20181029224031.29809-2-tycho@tycho.ws>
- <CAGXu5jLjum=TDab67L5XdWKEmzU_5rYeLfGXB1vb2BmfZdPuHQ@mail.gmail.com>
- <20181030215404.GF7343@cisco>
- <CAGXu5j+ZPxu6egE1fEr+N9+zLx3N+SJ_vbS_zzj9_hrdWrrrWQ@mail.gmail.com>
+        Wed, 31 Oct 2018 03:28:12 -0400
+Received: from gofer.mess.org ([88.97.38.141]:49061 "EHLO gofer.mess.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726376AbeJaH2M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 03:28:12 -0400
+Received: by gofer.mess.org (Postfix, from userid 1000)
+        id 3DA7E601E4; Tue, 30 Oct 2018 22:32:50 +0000 (GMT)
+Date:   Tue, 30 Oct 2018 22:32:50 +0000
+From:   Sean Young <sean@mess.org>
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Michael Krufky <mkrufky@linuxtv.org>,
+        Brad Love <brad@nextdimension.cc>, mchehab@kernel.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dvb: Allow MAC addresses to be mapped to stable device
+ names with udev
+Message-ID: <20181030223249.dhwhxdjipzmjxzsy@gofer.mess.org>
+References: <153778383104.14867.1567557014782141706.stgit@warthog.procyon.org.uk>
+ <20181030110319.764f33f0@coco.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAGXu5j+ZPxu6egE1fEr+N9+zLx3N+SJ_vbS_zzj9_hrdWrrrWQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181030110319.764f33f0@coco.lan>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 03:00:17PM -0700, Kees Cook wrote:
-> On Tue, Oct 30, 2018 at 2:54 PM, Tycho Andersen <tycho@tycho.ws> wrote:
-> > On Tue, Oct 30, 2018 at 02:49:21PM -0700, Kees Cook wrote:
-> >> On Mon, Oct 29, 2018 at 3:40 PM, Tycho Andersen <tycho@tycho.ws> wrote:
-> >> >     * switch to a flags based future-proofing mechanism for struct
-> >> >       seccomp_notif and seccomp_notif_resp, thus avoiding version issues
-> >> >       with structure length (Kees)
-> >> [...]
-> >> >
-> >> > +struct seccomp_notif {
-> >> > +       __u64 id;
-> >> > +       __u32 pid;
-> >> > +       __u32 flags;
-> >> > +       struct seccomp_data data;
-> >> > +};
-> >> > +
-> >> > +struct seccomp_notif_resp {
-> >> > +       __u64 id;
-> >> > +       __s64 val;
-> >> > +       __s32 error;
-> >> > +       __u32 flags;
-> >> > +};
-> >>
-> >> Hrm, so, what's the plan for when struct seccomp_data changes size?
-> >
-> > I guess my plan was don't ever change the size again, just use flags
-> > and have extra state available via ioctl().
-> >
-> >> I'm realizing that it might be "too late" for userspace to discover
-> >> it's running on a newer kernel. i.e. it gets a user notification, and
-> >> discovers flags it doesn't know how to handle. Do we actually need
-> >> both flags AND a length? Designing UAPI is frustrating! :)
-> >
-> > :). I don't see this as such a big problem -- in fact it's better than
-> > the length mode, where you don't know what you don't know, because it
-> > only copied as much info as you could handle. Older userspace would
-> > simply not use information it didn't know how to use.
-> >
-> >> Do we need another ioctl to discover the seccomp_data size maybe?
-> >
-> > That could be an option as well, assuming we agree that size would
-> > work, which I thought we didn't?
+On Tue, Oct 30, 2018 at 11:03:19AM -0300, Mauro Carvalho Chehab wrote:
+> Em Mon, 24 Sep 2018 11:10:31 +0100
+> David Howells <dhowells@redhat.com> escreveu:
 > 
-> Size alone wasn't able to determine the layout of the seccomp_notif
-> structure since it had holes (in the prior version). seccomp_data
-> doesn't have holes and is likely to change in size (see the recent
-> thread on adding the MPK register to it...)
+> > Some devices, such as the DVBSky S952 and T982 cards, are dual port cards
+> > that provide two cx23885 devices on the same PCI device, which means the
+> > attributes available for writing udev rules are exactly the same, apart
+> > from the adapter number.  Unfortunately, the adapter numbers are dependent
+> > on the order in which things are initialised, so this can change over
+> > different releases of the kernel.
+> > 
+> > Devices have a MAC address available, which is printed during boot:
 
-Oh, sorry, I misread this as seccomp_notif, not seccomp_data.
+Not all dvb devices have a mac address.
 
-> I'm trying to imagine the right API for this. A portable user of
-> seccomp_notif expects the id/pid/flags/data to always be in the same
-> place, but it's the size of seccomp_data that may change. So it wants
-> to allocate space for seccomp_notif header and "everything else", of
-> which is may only understand the start of seccomp_data (and ignore any
-> new trailing fields).
+> > 
+> > 	[   10.951517] DVBSky T982 port 1 MAC address: 00:11:22:33:44:55
+> > 	...
+> > 	[   10.984875] DVBSky T982 port 2 MAC address: 00:11:22:33:44:56
+> > 
+> > To make it possible to distinguish these in udev, provide sysfs attributes
+> > to make the MAC address, adapter number and type available.  There are
+> > other fields that could perhaps be exported also.  In particular, it would
+> > be nice to provide the port number, but somehow that doesn't manage to
+> > propagate through the labyrinthine initialisation process.
+> > 
+> > The new sysfs attributes can be seen from userspace as:
+> > 
+> > 	[root@deneb ~]# ls /sys/class/dvb/dvb0.frontend0/
+> > 	dev  device  dvb_adapter  dvb_mac  dvb_type
+> > 	power  subsystem  uevent
+> > 	[root@deneb ~]# cat /sys/class/dvb/dvb0.frontend0/dvb_*
+> > 	0
+> > 	00:11:22:33:44:55
+> > 	frontend
+> > 
+> > They can be used in udev rules:
+> > 
+> > 	SUBSYSTEM=="dvb", ATTRS{vendor}=="0x14f1", ATTRS{device}=="0x8852", ATTRS{subsystem_device}=="0x0982", ATTR{dvb_mac}=="00:11:22:33:44:55", PROGRAM="/bin/sh -c 'K=%k; K=$${K#dvb}; printf dvb/adapter9820/%%s $${K#*.}'", SYMLINK+="%c"
+> > 	SUBSYSTEM=="dvb", ATTRS{vendor}=="0x14f1", ATTRS{device}=="0x8852", ATTRS{subsystem_device}=="0x0982", ATTR{dvb_mac}=="00:11.22.33.44.56", PROGRAM="/bin/sh -c 'K=%k; K=$${K#dvb}; printf dvb/adapter9821/%%s $${K#*.}'", SYMLINK+="%c"
+> > 
+> > where the match is made with ATTR{dvb_mac} or similar.  The rules above
+> > make symlinks from /dev/dvb/adapter982/* to /dev/dvb/adapterXX/*.
+> > 
+> > Note that binding the dvb-net device to a network interface and changing it
+> > there does not reflect back into the the dvb_adapter struct and doesn't
+> > change the MAC address here.  This means that a system with two identical
+> > cards in it may need to distinguish them by some other means than MAC
+> > address.
+> > 
+> > Signed-off-by: David Howells <dhowells@redhat.com>
 > 
-> So... perhaps the "how big are things?" ioctl would report the header
-> size and the seccomp_data size. Then both are flexible. And flags
-> would be left as a way to "version" the header?
+> Looks OK to me.
 > 
-> Any Linux API list members want to chime in here?
+> Michael/Sean/Brad,
+> 
+> Any comments? If not, I'll probably submit it this week upstream.
 
-So:
+With this patch, with a usb Hauppauge Nova-T Stick I get:
 
-struct seccomp_notify_sizes {
-    u16 seccomp_notify;
-    u16 seccomp_data;
-};
+$ tail /sys/class/dvb/*/dvb_*
+==> /sys/class/dvb/dvb0.demux0/dvb_adapter <==
+0
 
-ioctl(fd, SECCOMP_IOCTL_GET_SIZE, &sizes);
+==> /sys/class/dvb/dvb0.demux0/dvb_mac <==
+00:00:00:00:00:00
 
-This would be only one extra syscall over the lifetime of the listener
-process, which doesn't seem too bad. One thing that's slightly
-annoying is that you can't do it until you actually get an event, so
-maybe it could be a command on the seccomp syscall instead:
+==> /sys/class/dvb/dvb0.demux0/dvb_type <==
+demux
 
-seccomp(SECCOMP_GET_NOTIF_SIZES, 0, &sizes);
+==> /sys/class/dvb/dvb0.dvr0/dvb_adapter <==
+0
 
-?
+==> /sys/class/dvb/dvb0.dvr0/dvb_mac <==
+00:00:00:00:00:00
 
-Tycho
+==> /sys/class/dvb/dvb0.dvr0/dvb_type <==
+dvr
+
+==> /sys/class/dvb/dvb0.frontend0/dvb_adapter <==
+0
+
+==> /sys/class/dvb/dvb0.frontend0/dvb_mac <==
+00:00:00:00:00:00
+
+==> /sys/class/dvb/dvb0.frontend0/dvb_type <==
+frontend
+
+==> /sys/class/dvb/dvb0.net0/dvb_adapter <==
+0
+
+==> /sys/class/dvb/dvb0.net0/dvb_mac <==
+00:00:00:00:00:00
+
+==> /sys/class/dvb/dvb0.net0/dvb_type <==
+net
+
+
+This would mean a stable name is based on a mac of 0, and there are many
+more devices don't have a mac so they would all match this stable name.
+
+Devices without a mac address shouldn't have a mac_dvb sysfs attribute,
+I think.
+
+The dvb type and dvb adapter no is already present in the device name,
+I'm not sure why this needs duplicating.
+
+
+Sean
+
+> > ---
+> > 
+> >  Documentation/ABI/testing/sysfs-class-dvb     |   29 +++++++++++
+> >  Documentation/media/dvb-drivers/udev.rst      |   29 +++++++++++
+> >  Documentation/media/uapi/dvb/intro.rst        |    7 +++
+> >  Documentation/media/uapi/dvb/stable_names.rst |   66 +++++++++++++++++++++++++
+> >  drivers/media/dvb-core/dvbdev.c               |   36 ++++++++++++++
+> >  5 files changed, 167 insertions(+)
+> >  create mode 100644 Documentation/ABI/testing/sysfs-class-dvb
+> >  create mode 100644 Documentation/media/uapi/dvb/stable_names.rst
+> > 
+> > diff --git a/Documentation/ABI/testing/sysfs-class-dvb b/Documentation/ABI/testing/sysfs-class-dvb
+> > new file mode 100644
+> > index 000000000000..09e3be329c92
+> > --- /dev/null
+> > +++ b/Documentation/ABI/testing/sysfs-class-dvb
+> > @@ -0,0 +1,29 @@
+> > +What:		/sys/class/dvb/.../dvb_adapter
+> > +Date:		September 2018
+> > +KernelVersion:	4.20
+> > +Contact:	David Howells <dhowells@redhat.com>
+> > +Description:
+> > +		This displays the assigned adapter number of a DVB device.
+> > +
+> > +What:		/sys/class/dvb/.../dvb_mac
+> > +Date:		September 2018
+> > +KernelVersion:	4.20
+> > +Contact:	David Howells <dhowells@redhat.com>
+> > +Description:
+> > +		This displays the mac address of a DVB device.  This can be
+> > +		used by udev to name stable device files for DVB devices and
+> > +		avoid problems with changes in the order of device
+> > +		initialisation changing the assigned device numbers.  See:
+> > +
+> > +			Documentation/media/dvb-drivers/udev.rst
+> > +			Documentation/media/uapi/dvb/stable_names.rst
+> > +
+> > +		for information on how to actually do this.
+> > +
+> > +What:		/sys/class/dvb/.../dvb_type
+> > +Date:		September 2018
+> > +KernelVersion:	4.20
+> > +Contact:	David Howells <dhowells@redhat.com>
+> > +Description:
+> > +		This displays the object type of a DVB device interface, such
+> > +		as "frontend" or "demux".
+> > diff --git a/Documentation/media/dvb-drivers/udev.rst b/Documentation/media/dvb-drivers/udev.rst
+> > index 7d7d5d82108a..df754312f1f4 100644
+> > --- a/Documentation/media/dvb-drivers/udev.rst
+> > +++ b/Documentation/media/dvb-drivers/udev.rst
+> > @@ -59,3 +59,32 @@ have a look at "man udev".
+> >  For every device that registers to the sysfs subsystem with a "dvb" prefix,
+> >  the helper script /etc/udev/scripts/dvb.sh is invoked, which will then
+> >  create the proper device node in your /dev/ directory.
+> > +
+> > +2. A DVB device's adapter number, type and MAC addresses are exposed through
+> > +the sysfs interface as files dvb_adapter, dvb_type and dvb_mac in the various
+> > +dvb object directories, e.g. /sys/class/dvb/dvb0.demux0/dvb_mac.
+> > +
+> > +These can be used to influence the binding of devices to names in /dev to avoid
+> > +problems when the order in which names are assigned changes.  This is of
+> > +particular interest when you have, say, a PCI card with multiple identical
+> > +devices on board under the same PCI function slot.  The only way to distinguish
+> > +them is either by the DVB port number or the DVB MAC address.
+> > +
+> > +To make use of this with udev, a rule needs to be emplaced in a file under
+> > +/etc/udev/rules.d/ that has an appropriate ATTR{} clause in it.  Something like
+> > +the following, for example::
+> > +
+> > +	SUBSYSTEM=="dvb", ATTRS{vendor}=="0x14f1", ATTRS{device}=="0x8852", ATTRS{subsystem_device}=="0x0982", ATTR{dvb_mac}=="00:11:22:33:44:55", PROGRAM="/bin/sh -c 'K=%k; K=$${K#dvb}; printf dvb/adapter9820/%%s $${K#*.}'", SYMLINK+="%c"
+> > +
+> > +Note the 'ATTR{dvb_mac}' clause that indicates the MAC address to look for.
+> > +This should be different for every device, even if the devices are otherwise
+> > +identical.  The other ATTR{} clauses in this example refer to PCI parameters.
+> > +
+> > +This example generates a directory called /dev/dvb/adapter9820/ and places
+> > +symlinks in it to the device files under the appropriate /dev/dvb/adapterX/
+> > +directory - whatever X happens to be today.
+> > +
+> > +The generated name is then stable and can be relied on by programs that need to
+> > +pick it up without user interaction.
+> > +
+> > +Note that this facility does not exist in v4.19 kernels and earlier.
+> > diff --git a/Documentation/media/uapi/dvb/intro.rst b/Documentation/media/uapi/dvb/intro.rst
+> > index 79b4d0e4e920..074fb3b3ee21 100644
+> > --- a/Documentation/media/uapi/dvb/intro.rst
+> > +++ b/Documentation/media/uapi/dvb/intro.rst
+> > @@ -153,6 +153,13 @@ where ``N`` enumerates the Digital TV cards in a system starting from 0, and
+> >  from 0, too. We will omit the “``/dev/dvb/adapterN/``\ ” in the further
+> >  discussion of these devices.
+> >  
+> > +Note that the automatic numbering of adapters isn't stable and may vary
+> > +depending on changes to the order in which devices are initialised, both in
+> > +the order in which individual devices get initialised and also the order in
+> > +which subdevices get initialised (e.g. a PCI card with multiple identical DVB
+> > +devices attached to the same PCI function).  :ref:`stable_names` shows use
+> > +udev rules to create stable names.
+> > +
+> >  More details about the data structures and function calls of all the
+> >  devices are described in the following chapters.
+> >  
+> > diff --git a/Documentation/media/uapi/dvb/stable_names.rst b/Documentation/media/uapi/dvb/stable_names.rst
+> > new file mode 100644
+> > index 000000000000..1b5dc5171ee3
+> > --- /dev/null
+> > +++ b/Documentation/media/uapi/dvb/stable_names.rst
+> > @@ -0,0 +1,66 @@
+> > +.. -*- coding: utf-8; mode: rst -*-
+> > +
+> > +.. _stable_names:
+> > +
+> > +*********************************
+> > +Creating stable device file names
+> > +*********************************
+> > +
+> > +From time to time the order in which the Linux kernel initialises devices and
+> > +initialises subdevices within those devices has changed.  This can cause the
+> > +assignment of user-visible device numbers to devices to fluctuate - leading to
+> > +the failure of services to operate correctly in non-obvious ways when multiple,
+> > +otherwise identical devices are available in a system.
+> > +
+> > +To counteract this, udev rules can be defined that map devices onto stable
+> > +names.  This must, however, be done in relation to attributes of a device that
+> > +don't vary, such as the MAC address.
+> > +
+> > +Take, for example, a PCI DVB card that has two identical DVB devices attached
+> > +to the same PCI function.  The devices cannot be distinguished on PCI
+> > +parameters and the DVB port number - which could otherwise distinguish these
+> > +subdevices - is not easily accessible by userspace.
+> > +
+> > +The MAC address, however, *is* made available, and this is supposed to be
+> > +unique to each individual DVB device, and won't vary even if the device is
+> > +moved to another slot.  This is exported to userspace through sysfs.  It can
+> > +be found by looking in the dvb_mac file that can be found in a device
+> > +interface's directory, for example:
+> > +
+> > +	/sys/class/dvb/dvb0.demux0/dvb_mac
+> > +
+> > +Two other files can be found there that export the adapter number and the
+> > +interface type:
+> > +
+> > +	/sys/class/dvb/dvb0.demux0/dvb_adapter
+> > +	/sys/class/dvb/dvb0.demux0/dvb_type
+> > +
+> > +Note that the two numbers in the path are assigned based on the order in which
+> > +the devices are registered with the core code, and not necessarily on the
+> > +physical arrangement of the device - and thus should not be considered stable.
+> > +
+> > +
+> > +The creation of stable names can be done by writing rules for udev to match on
+> > +the MAC addresses of the devices.  Rules needs to be placed in a file in the
+> > +/etc/udev/rules.d/ directory for udev to pick up.  They need appropriate
+> > +ATTR{} clauses to specify the attribute matches to make.  Any of the above
+> > +mentioned files can be used.  For example::
+> > +
+> > +	SUBSYSTEM=="dvb", ATTRS{vendor}=="0x14f1", ATTRS{device}=="0x8852", ATTRS{subsystem_device}=="0x0982", ATTR{dvb_mac}=="00:11:22:33:44:55", PROGRAM="/bin/sh -c 'K=%k; K=$${K#dvb}; printf dvb/adapter9820/%%s $${K#*.}'", SYMLINK+="%c"
+> > +	SUBSYSTEM=="dvb", ATTRS{vendor}=="0x14f1", ATTRS{device}=="0x8852", ATTRS{subsystem_device}=="0x0982", ATTR{dvb_mac}=="00:11.22.33.44.56", PROGRAM="/bin/sh -c 'K=%k; K=$${K#dvb}; printf dvb/adapter9821/%%s $${K#*.}'", SYMLINK+="%c"
+> > +
+> > +In each of these example rules, the first three ATTR{} clauses specify the PCI
+> > +card to match - in this case the same DVBsky T982 dual T2 receiver card.  The
+> > +ATTR{dvb_mac} attribute in each specifies the card MAC address of that
+> > +receiver unit (the name of the attribute refers to the name of sysfs file to
+> > +read).
+> > +
+> > +This example generates a pair of directories called /dev/dvb/adapter9820/ and
+> > +/dev/dvb/adapter9821/ and places in each symlinks to the device files under
+> > +the appropriate /dev/dvb/adapterX/ and /dev/dvb/adapterY/ directories -
+> > +whatever X and Y happens to be today.
+> > +
+> > +The generated names are then stable and can be relied on by programs that need
+> > +to pick it up without user interaction.
+> > +
+> > +Note that this facility does not exist in v4.19 kernels and earlier.
+> > diff --git a/drivers/media/dvb-core/dvbdev.c b/drivers/media/dvb-core/dvbdev.c
+> > index 64d6793674b9..41be3ba66341 100644
+> > --- a/drivers/media/dvb-core/dvbdev.c
+> > +++ b/drivers/media/dvb-core/dvbdev.c
+> > @@ -995,6 +995,41 @@ void dvb_module_release(struct i2c_client *client)
+> >  EXPORT_SYMBOL_GPL(dvb_module_release);
+> >  #endif
+> >  
+> > +static ssize_t dvb_adapter_show(struct device *dev,
+> > +				struct device_attribute *attr, char *buf)
+> > +{
+> > +	struct dvb_device *dvbdev = dev_get_drvdata(dev);
+> > +
+> > +	return sprintf(buf, "%d\n", dvbdev->adapter->num);
+> > +}
+> > +static DEVICE_ATTR_RO(dvb_adapter);
+> > +
+> > +static ssize_t dvb_mac_show(struct device *dev,
+> > +			    struct device_attribute *attr, char *buf)
+> > +{
+> > +	struct dvb_device *dvbdev = dev_get_drvdata(dev);
+> > +
+> > +	return sprintf(buf, "%pM\n", dvbdev->adapter->proposed_mac);
+> > +}
+> > +static DEVICE_ATTR_RO(dvb_mac);
+> > +
+> > +static ssize_t dvb_type_show(struct device *dev,
+> > +			     struct device_attribute *attr, char *buf)
+> > +{
+> > +	struct dvb_device *dvbdev = dev_get_drvdata(dev);
+> > +
+> > +	return sprintf(buf, "%s\n", dnames[dvbdev->type]);
+> > +}
+> > +static DEVICE_ATTR_RO(dvb_type);
+> > +
+> > +static struct attribute *dvb_class_attrs[] = {
+> > +	&dev_attr_dvb_adapter.attr,
+> > +	&dev_attr_dvb_mac.attr,
+> > +	&dev_attr_dvb_type.attr,
+> > +	NULL
+> > +};
+> > +ATTRIBUTE_GROUPS(dvb_class);
+> > +
+> >  static int dvb_uevent(struct device *dev, struct kobj_uevent_env *env)
+> >  {
+> >  	struct dvb_device *dvbdev = dev_get_drvdata(dev);
+> > @@ -1035,6 +1070,7 @@ static int __init init_dvbdev(void)
+> >  		retval = PTR_ERR(dvb_class);
+> >  		goto error;
+> >  	}
+> > +	dvb_class->dev_groups = dvb_class_groups,
+> >  	dvb_class->dev_uevent = dvb_uevent;
+> >  	dvb_class->devnode = dvb_devnode;
+> >  	return 0;
+> > 
+> 
+> 
+> 
+> Thanks,
+> Mauro
