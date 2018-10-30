@@ -2,236 +2,250 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1B4DC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:46:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 838C5C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:46:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7907F20823
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:46:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1+csxoJL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7907F20823
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4C1902075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:46:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C1902075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727085AbeJaAkB (ORCPT
+        id S1727524AbeJaAkG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 20:40:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59066 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726218AbeJaAkB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 20:40:01 -0400
-Received: from jouet.infradead.org (unknown [190.15.121.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E76C2075D;
-        Tue, 30 Oct 2018 15:46:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540914361;
-        bh=DMI+mSbPqcMaQ969uXQVoOY12d/BWqdimfujq818P58=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1+csxoJLjYkHapcy4k1ylWBjohOc13+h3Y51f/ZH+47Hp4/nhVRJRAEI0ViSo7g4D
-         oV8Evx9altWSL/tVNhXIv9B12J0ColCli2ssIe7eoG8Unb022KCak/FBz7TaJ9xjfQ
-         8PvMxd9XRIXKWMnuGJBaGFYh9uoyp6odKwcH0Kr4=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id A0B0A142C5F; Tue, 30 Oct 2018 12:45:52 -0300 (-03)
-Date:   Tue, 30 Oct 2018 12:45:52 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Adrian Hunter <adrian.hunter@intel.com>
-Cc:     leo.yan@linaro.org, Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        David Miller <davem@davemloft.net>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Coresight ML <coresight@lists.linaro.org>
-Subject: Re: [PATCH] perf cs-etm: Correct CPU mode for samples
-Message-ID: <20181030154552.GH23310@kernel.org>
-References: <1540883908-17018-1-git-send-email-leo.yan@linaro.org>
- <20181030143226.GA23310@kernel.org>
- <20181030150449.GB8344@leoy-ThinkPad-X240s>
- <20181030151137.GF23310@kernel.org>
- <b00357d2-10ab-e75e-6748-13341641f107@intel.com>
+        Tue, 30 Oct 2018 20:40:06 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55021 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726218AbeJaAkG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 20:40:06 -0400
+Received: by mail-wm1-f65.google.com with SMTP id r63-v6so12282573wma.4
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 08:46:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+IMOTyld/IBUpLwmGclrPYvrGQlHXXjZruuWXHiYeaw=;
+        b=lrwK260EYQdvQo1Xtrwi22qlJn2gvUbLKk0AVwjh4T3ESJRJvQwi2/Rx+Eyj3Okl0G
+         SgfeJXGqjwNwEco3XcE4H4GqP3JJhFGOgBavaKZnFMjld3e0cD+mRWCDZ3ay9L5awrr6
+         /AtJCYAgsYQ7cEb6GHikvr8NzxhGsYl1bH++l9VArgYH8K/lXSfY6omCDgINgMRxmH2p
+         m0JtjLWQInD6Tf7ykyb8SMSiuFOP1bPL+jjCxQ8XTs7gVxbMU14l4YHwzIrXfzTy7SXf
+         5JakEh2CLJNxF57lzhrNVmmxustFe9+sUsQOMEjSXwH7NmaHQUcapqygO/UOgurKypjR
+         rpQA==
+X-Gm-Message-State: AGRZ1gJngMQyFPky3TygAW4cdHLHulwPR8H5jGOgypZhF2jOvRYqe1Dd
+        6Oti2MCMxlYFlcGsBo/tT1wsFA==
+X-Google-Smtp-Source: AJdET5cFqII+0GIjHRL4FyTKERoBFIhgEMEzYdgzz6hJz4ygwa2UGUG19F4ZnK6i4CDWVh6uDZpH5g==
+X-Received: by 2002:a1c:6483:: with SMTP id y125-v6mr2341815wmb.66.1540914365471;
+        Tue, 30 Oct 2018 08:46:05 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id a1sm2483454wrx.29.2018.10.30.08.46.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 08:46:04 -0700 (PDT)
+Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Dean Wallace <duffydack73@gmail.com>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Johannes Stezenbach <js@sig21.net>,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mogens Jensen <mogens-jensen@protonmail.com>
+References: <20181025232517.ywnw54qibemosjws@picard>
+ <154083512089.98144.9141070901932719147@swboyd.mtv.corp.google.com>
+ <CAHp75VfnN5tF1Z9+CDDhKFNG5QfCRcGOZeAkpf-5BfCEx16gvg@mail.gmail.com>
+ <CAHp75VctdBE-GM60udJawBCXdmoOqZn4N=kFWz5GLHzjPG2iQQ@mail.gmail.com>
+ <20181029190819.2ivlx73n6y6sx4vk@picard>
+ <ffc4bcc9-62c3-8940-85d6-d0fd01f3a1b8@linux.intel.com>
+ <c8fb730a-c160-41b4-dad0-8ed8594e5687@redhat.com>
+ <20181030143836.feo7zcxiestylxoo@picard>
+ <2d429c87-24c5-4075-683e-b0d12c3eb1c2@linux.intel.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <d00df762-e4fc-06c5-701e-d5100bfd0e35@redhat.com>
+Date:   Tue, 30 Oct 2018 16:46:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b00357d2-10ab-e75e-6748-13341641f107@intel.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <2d429c87-24c5-4075-683e-b0d12c3eb1c2@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Tue, Oct 30, 2018 at 05:30:55PM +0200, Adrian Hunter escreveu:
-> On 30/10/18 5:11 PM, Arnaldo Carvalho de Melo wrote:
-> > Em Tue, Oct 30, 2018 at 11:04:49PM +0800, leo.yan@linaro.org escreveu:
-> >> Hi Arnaldo,
-> >>
-> >> On Tue, Oct 30, 2018 at 11:32:26AM -0300, Arnaldo Carvalho de Melo wrote:
-> >>> Em Tue, Oct 30, 2018 at 03:18:28PM +0800, Leo Yan escreveu:
-> >>>> Since commit 9042f5e3539e ("perf tools: Stop fallbacking to kallsyms
-> >>>> for vdso symbols lookup"), the kernel address cannot be properly parsed
-> >>>> to kernel symbol with command 'perf script -k vmlinux'.  The reason is
-> >>>> CoreSight samples is always to set CPU mode as PERF_RECORD_MISC_USER,
-> >>>> thus it fails to find corresponding map/dso in below flows:
-> >>>>
-> >>>>   process_sample_event()
-> >>>>     `-> machine__resolve()
-> >>>> 	  `-> thread__find_map(thread, sample->cpumode, sample->ip, al);
-> >>>>
-> >>>> In this flow it needs to pass argument 'sample->cpumode' to tell what's
-> >>>> the CPU mode, before it always passed PERF_RECORD_MISC_USER but without
-> >>>> any failure until the commit 9042f5e3539e ("perf tools: Stop fallbacking
-> >>>> to kallsyms for vdso symbols lookup") has been merged.  The reason is
-> >>>> even with the wrong CPU mode the function thread__find_map() firstly
-> >>>> fails to find map but it will rollback to find kernel map for vdso
-> >>>> symbols lookup.  In the latest code it has removed the fallback code,
-> >>>> thus if CPU mode is PERF_RECORD_MISC_USER then it cannot find map
-> >>>> anymore with kernel address.
-> >>>>
-> >>>> This patch is to correct samples CPU mode setting, it creates a new
-> >>>> helper function cs_etm__cpu_mode() to tell what's the CPU mode based on
-> >>>> the address with the info from machine structure; this patch has a bit
-> >>>> extension to check not only kernel and user mode, but also check for
-> >>>> host/guest and hypervisor mode.  Finally this patch uses the function
-> >>>> in instruction and branch samples and also apply in cs_etm__mem_access()
-> >>>> for a minor polishing.
-> >>>
-> >>> Mathieu, can I have your Acked-by, please? Leo, thanks for acting so
-> >>> quickly on this one! 
-> >>
-> >> Thanks for reivewing.  Yeah, let's wait for Mathieu reviewing as well,
-> >> as I know he is travelling so might be delay a bit.
-> > 
-> > I'm tentatively applying the patch, as this needs fixing ASAP, and I
-> > take that you have tested it and it cured the problem for you, so should
-> > be a good indication for the acceptance of the patch.
-> > 
-> > We can always fix some detail later.
-> >  
-> >> Just remind, we might need the similiar change for util/intel-pt.c and
-> >> util/intel-bts.c when generate samples, otherwise they might have the
-> >> same regression for kernel symbols.  I am not the best person to change
-> >> these two files, but bring up this for attention.
- 
-> > Right, I think Adrian is working on it, Adrian?
- 
-> Yes although I am more concerned with branches from user space to kernel
-> space and vice versa, which this patch doesn't deal with.  Also there are
-> many cpumode issues in perf tools, and really the only way to deal with
-> them simply at the moment is to put back the fallback for arches other
-> than sparc i.e.
+Hi,
 
-We can do that, sure, but the opportunity to fix at least some of those
-problems and then make this fallback not to take place looks reasonable,
-for instance, I have this patch now in my local tree, from David, that
-posted just as a way to show part of the problem, parts of the commit
-message I wrote, parts are from David:
+On 30-10-18 16:04, Pierre-Louis Bossart wrote:
+> 
+> On 10/30/18 9:38 AM, Dean Wallace wrote:
+>> On 30-10-18, Hans de Goede wrote:
+>>> Hi Dean,
+>>>
+>>> Attached are 2 different attempts at fixing this.
+>>>
+>>> When trying these patches do not forget to remove the revert of the
+>>> "Stop-marking-clocks-as-CLK_IS_CRITICAL" commit.
+>>>
+>>> Please first try the 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch
+>>> patch I expect that one to do the trick indicating that the Swanky model
+>>> uses a different pmc clk then which is normally used for the codec clock.
+>>>
+>>> If that patch does not fix things, please give the other patch a try.
+> 
+> For Baytrail devices, the audio platform clocks are not managed by the firmware. They are for CHT-based devices - as can be seen by clock resources being described in the DSDT. We used to have a if(baytrail) in the code which was replaced by this CRITICAL label, but the point remains that there is a difference between the two SOC versions.
 
-commit 54ac9007e6cb77c37ebf4f5e3debb23075cc90f0
-Author: David S. Miller <davem@davemloft.net>
-Date:   Tue Oct 30 12:12:26 2018 -0300
+As I mentioned before the CRITICAL flag was only added a year ago to workaround
+an issue with on board ethernet needing plt_clk_4 on some laptops, this never
+had anything to do with sound.
 
-    perf callchain: Honour the ordering of PERF_CONTEXT_{USER,KERNEL,etc}
-    
-    When processing using 'perf report -g caller', which is the default, we
-    ended up reverting the callchain entries received from the kernel, but
-    simply reverting trows away the information that tells that from a point
-    onwards the addresses are for userspace, kernel, guest kernel, guest
-    user, hypervisor.
-    
-    The idea is that if we are walking backwards, for each cluster of
-    non-cpumode entries we have to first scan backwards for the next one and
-    use that for the cluster.
-    
-    This seems silly and more expensive than it needs to be but it is enough
-    for a initial fix.
-    
-    The code here is really complicated because it is intimately intertwined
-    with the lbr and branch handling, as well as this callchain order,
-    further fixes will be needed to properly take into account the cpumode
-    in those cases.
-    
-    Another problem with ORDER_CALLER is that the NULL "0" IP that is at the
-    end of most callchains shows up at the top of the histogram because
-    every callchain contains it and with ORDER_CALLER it is the first entry.
-    
-    Signed-off-by: David S. Miller <davem@davemloft.net>
-    Cc: Adrian Hunter <adrian.hunter@intel.com>
-    Cc: David Ahern <dsahern@gmail.com>
-    Cc: Jiri Olsa <jolsa@kernel.org>
-    Cc: Namhyung Kim <namhyung@kernel.org>
-    Cc: Souvik Banerjee <souvik1997@gmail.com>
-    Cc: Wang Nan <wangnan0@huawei.com>
-    Cc: stable@vger.kernel.org # 4.19
-    Link: https://lkml.kernel.org/n/tip-2wt3ayp6j2y2f2xowixa8y6y@git.kernel.org
-    Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> In addition I am not aware of any baytrail device using plt_clk_0, so moving a common machine driver such a cht_bsw_max98090_ti to use plt_clk0 only would break other devices (e.g. Rambi/Orco). Asking for both clocks to be on might work though, 
 
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index 111ae858cbcb..8ee8ab39d8ac 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -2140,6 +2140,27 @@ static int resolve_lbr_callchain_sample(struct thread *thread,
- 	return 0;
- }
- 
-+static int find_prev_cpumode(struct ip_callchain *chain, struct thread *thread,
-+			     struct callchain_cursor *cursor,
-+			     struct symbol **parent,
-+			     struct addr_location *root_al,
-+			     u8 *cpumode, int ent)
-+{
-+	int err = 0;
-+
-+	while (--ent >= 0) {
-+		u64 ip = chain->ips[ent];
-+
-+		if (ip >= PERF_CONTEXT_MAX) {
-+			err = add_callchain_ip(thread, cursor, parent,
-+					       root_al, cpumode, ip,
-+					       false, NULL, NULL, 0);
-+			break;
-+		}
-+	}
-+	return err;
-+}
-+
- static int thread__resolve_callchain_sample(struct thread *thread,
- 					    struct callchain_cursor *cursor,
- 					    struct perf_evsel *evsel,
-@@ -2246,6 +2267,12 @@ static int thread__resolve_callchain_sample(struct thread *thread,
- 	}
- 
- check_calls:
-+	if (callchain_param.order != ORDER_CALLEE) {
-+		err = find_prev_cpumode(chain, thread, cursor, parent, root_al,
-+					&cpumode, chain->nr - first_call);
-+		if (err)
-+			return (err < 0) ? err : 0;
-+	}
- 	for (i = first_call, nr_entries = 0;
- 	     i < chain_nr && nr_entries < max_stack; i++) {
- 		u64 ip;
-@@ -2260,9 +2287,15 @@ static int thread__resolve_callchain_sample(struct thread *thread,
- 			continue;
- #endif
- 		ip = chain->ips[j];
--
- 		if (ip < PERF_CONTEXT_MAX)
-                        ++nr_entries;
-+		else if (callchain_param.order != ORDER_CALLEE) {
-+			err = find_prev_cpumode(chain, thread, cursor, parent,
-+						root_al, &cpumode, j);
-+			if (err)
-+				return (err < 0) ? err : 0;
-+			continue;
-+		}
- 
- 		err = add_callchain_ip(thread, cursor, parent,
- 				       root_al, &cpumode, ip,
+Ok, so we need to have a DMI based quirk for the Swanky and maybe also
+the clapper to use plt_clk_0 there. Asking for 2 clks if we only need
+one does not seem like a good plan.
+
+> however you still have the problem of trying to manage from the kernel what the firmware already manages.
+
+The firmware only manages it when going to D3 state, with ASoC most of
+the codecs gets turned off (and we no longer need the clock) but we do
+not put the device in D3 / execute the _PS3 method. So from a pm pov
+it is better if we manage the clk ourselves.
+
+Once we do actually put the device in D3 (on suspend) the kernel will have
+already turned off the clk and the _OFF method of the CLK3 power resource
+which directly pokes mmio, will just set the enable bit to 0 when it
+already is 0, so no problem.
+
+Regards,
+
+Hans
+
+
+
+
+
+
+
+> 
+>>>
+>>> Regards,
+>>>
+>>> Hans
+>>>
+>>>
+>>>
+>>> On 29-10-18 23:03, Pierre-Louis Bossart wrote:
+>>>> On 10/29/18 2:08 PM, Dean Wallace wrote:
+>>>>> On 29-10-18, Andy Shevchenko wrote:
+>>>>>> On Mon, Oct 29, 2018 at 7:52 PM Andy Shevchenko
+>>>>>> <andy.shevchenko@gmail.com> wrote:
+>>>>>>> Cc: Pierre as well.
+>>>>>>>
+>>>>>>> On Mon, Oct 29, 2018 at 7:48 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>>>>>>>> Quoting Dean Wallace (2018-10-25 16:25:17)
+>>>>>>>>> I have found a regression in 4.18.15 that means I lose sound on my old
+>>>>>>>>> Toshiba Chromebook 2 (Swanky).  My system details are:-
+>>>>>>>>>
+>>>>>>>>> Toshiba Chromebook (Swanky)
+>>>>>>>>> MrChromebox UEFI coreboot
+>>>>>>>>> Arch Linux running latest alsa/pulseaudio
+>>>>>>>>>
+>>>>>>>>> Upgraded kernel from 4.18.14 to 4.18.15 and lost all sound output.  By
+>>>>>>>>> output I mean, the card is still detected, the module loaded, all apps
+>>>>>>>>> showing sound is being playing, but no actual audible sound comes
+>>>>>>>>> through.  Upgraded to 4.18.16 same issue.
+>>>>>>>>>
+>>>>>>>>> Dug around and found Upstream commit 648e921888ad96ea3dc922739e96716ad3225d7f
+>>>>>>>>> clk: x86: Stop marking clocks as CLK_IS_CRITICAL
+>>>>>>>>> "This commit removes the CLK_IS_CRITICAL marking, fixing Cherry Trail
+>>>>>>>>> devices not being able to reach S0i3 greatly decreasing their battery
+>>>>>>>>> drain when suspended."
+>>>>>>>>>
+>>>>>>>>> I reverted it and compiled 4.18.16 and have sound back again.  Could
+>>>>>>>>> this be looked into, with possibility of fix.
+>>>>>>>>>
+>>>>>>>> Thanks for the bug report. I'm adding some people involved in the commit
+>>>>>>>> you mention is causing audio regressions. The best plan is to probably
+>>>>>>>> revert the commit from the 4.18 linux stable tree. Or there may be
+>>>>>>>> another patch missing that would be useful to make this backported patch
+>>>>>>>> work. Hopefully Hans or Andy knows.
+>>>>>>> Hans has been investigating S0ix issues on Baytrail and Cherrytrail machines.
+>>>>>>> I have a feeling that the problem can be fixed by properly handling
+>>>>>>> clock in ASoC driver(s). Perhaps Hans and Pierre can figure this out
+>>>>>>> better than me.
+>>>>>> Looking to sound/soc/intel/boards/cht_bsw_rt5672.c I see no
+>>>>>> suspend-resume hooks. Perhaps, adding them like in the commit
+>>>>>> ac8bd9e13be2 ("r8169: Disable clk during suspend / resume") would
+>>>>>> help.
+>>>> I missed this change while i was away. It's indeed the expectation that the audio mclk is handled by the firmware,
+>>> I believe that the statement "It's indeed the expectation that the
+>>> audio mclk is handled by the firmware" is not correct for BYT/CHT
+>>> platforms (and the commit causing the regression only affects BYT/CHT
+>>> platforms). Various machine drivers under sound/soc/intel/boards have
+>>> code to deal with the mclk themselves, like this:
+>>>
+>>>          drv->mclk = devm_clk_get(&pdev->dev, "pmc_plt_clk_3");
+>>> ...
+>>>
+>>>          if (SND_SOC_DAPM_EVENT_ON(event)) {
+>>>                  ret = clk_prepare_enable(ctx->mclk);
+>>>         ...
+>>>          } else {
+>>>                  clk_disable_unprepare(ctx->mclk);
+>>>          }
+>>>
+>>> The above code is from sound/soc/intel/boards/cht_bsw_max98090_ti.c
+>>> which is the machine driver used on the machines for which problems
+>>> are now being reported.
+>>>
+>>> And my commit introducing the problem is in essence a revert of:
+>>>
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=d31fd43c0f9a41e2678a1e78c0f22f0384c6edd3
+>>>
+>>> Which is from 2017-07-14 and the ASoC code for BYT/CHT platforms is
+>>> much older then that.
+>>>
+>>> Also I asked Carlo why he wrote that patch and it was to fix a problem
+>>> with ethernet on some laptops.
+>>>
+>>>> not sure I understand why removing the CLK_IS_CRITICAL was necessary or what it has to do with S0ix.
+>>> It is necessary, because if it is set the clock never gets disabled and
+>>> on x86 platforms using suspend2idle we are responsible for *all* the hardware
+>>> power-management as OS. If we do not disable the clocks then we can only
+>>> reach S0i1 instead of S0i3 when suspended leading to increased battery
+>>> drain during suspend.
+>>>
+>>> Also note that this patch is only causing problems on CHT + max98090 codec
+>>> using machines. I've tested it on many other BYT/CHT machines myself and
+>>> we've not had any other bug reports related to this.
+>>>
+>>> So this clearly points to a problem with the clock management in the
+>>> cht_bsw_max98090_ti.c machine driver.
+>>>
+>>> I've some ideas how to fix this and I will prepare some patches to test.
+>>>
+>>> Regards,
+>>>
+>>> Hans
+>> Excellent work Hans.  Compiled 4.19 with
+>> 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch, sound
+>> works as before.
+>>
+>> for i in /sys/kernel/debug/clk/pmc_plt_clk_?; do echo -n "$i: "; cat $i/clk_flags; echo; done
+>> /sys/kernel/debug/clk/pmc_plt_clk_0:
+>> /sys/kernel/debug/clk/pmc_plt_clk_1:
+>> /sys/kernel/debug/clk/pmc_plt_clk_2:
+>> /sys/kernel/debug/clk/pmc_plt_clk_3:
+>> /sys/kernel/debug/clk/pmc_plt_clk_4:
+>> /sys/kernel/debug/clk/pmc_plt_clk_5:
+>>
+>> Regards
