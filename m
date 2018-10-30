@@ -2,229 +2,173 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DBDDC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:02:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDF51C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:03:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBA962080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:02:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="X7NOXu82"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBA962080A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id 2FFE02080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:03:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FFE02080A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727312AbeJ3RzN (ORCPT
+        id S1727372AbeJ3R4R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 13:55:13 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:39914 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726225AbeJ3RzN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 13:55:13 -0400
-Received: by mail-ed1-f65.google.com with SMTP id e5-v6so9747501eds.6
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 02:02:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ShWHzED1d3dJTvmU9bZYAzxMevsmE/WhuyAJCfQ1tAs=;
-        b=X7NOXu82tTvZp6m52daAGC4OD2pELfctpqTcQrCg3WWO+cnHxT7IcH/r5vV9bDHoHY
-         McFe7vuSjaR4bmjXSA0EC5XhR6c4/Tvvsdwfdk12uxGQ5Yr+dA+3vuxur6DPVME8lJR7
-         p/k0XipRvwZGc2UIVKlFqJ3ENroKcgEpOHK4Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=ShWHzED1d3dJTvmU9bZYAzxMevsmE/WhuyAJCfQ1tAs=;
-        b=M80SjN3C5GwDt5LdXGGmna9iXo4OhMr2rPNq7kX90anx093f3ho+RbJhkp1ravCw9Q
-         JlE2w4DmV47Zzx3btrgG6OPkEDP2DPA4Mi+wrBkLvk+bxhJ919LGhQPMO61Xd2wWb2/1
-         aqyNiQ78CRb3tBeUwCwpLjZIXghSw3AA55ZivNuPLA3UIIcP7jHXfIvU0LHwkwqJT8Rb
-         5UyYFX8a+dydKUEx2TCrbqfNIW3kVuvGkoVTYQBoFBCWGLfk6Fo4eZhJjnGgdi1CrdF+
-         dJL7iC7bCeGTY/gN/x4XtkKsiA+9z3eSmJziDIDOzXu4uSOS0i/6nmTL7q8qnUG7R8Sl
-         Ti9A==
-X-Gm-Message-State: AGRZ1gKWRWaJYx6l6pL7um8iQa1NIBYydNJRXJbkAa+pcLBWuHpCdThB
-        mt4h8UwNM3ielLN2cVHcXHFiiQ==
-X-Google-Smtp-Source: AJdET5f1Lv7w11eNfvA9KHp3zOte8GIK9t5ae5bxnl1r+JlySOOGX2bXJco3ugfl9mhxledA3XavLA==
-X-Received: by 2002:a50:d710:: with SMTP id t16-v6mr16345353edi.75.1540890156558;
-        Tue, 30 Oct 2018 02:02:36 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id m90-v6sm1989153ede.58.2018.10.30.02.02.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Oct 2018 02:02:35 -0700 (PDT)
-Date:   Tue, 30 Oct 2018 10:02:33 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     CK Hu <ck.hu@mediatek.com>
-Cc:     Daniel Vetter <daniel@ffwll.ch>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com
-Subject: Re: [PATCH 3/3] drm/mediatek: Use drm_gem_cma_object instead of
- mtk_drm_gem_obj
-Message-ID: <20181030090233.GH21967@phenom.ffwll.local>
-Mail-Followup-To: CK Hu <ck.hu@mediatek.com>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <sean@poorly.run>, Philipp Zabel <p.zabel@pengutronix.de>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com
-References: <1540538523-1973-1-git-send-email-ck.hu@mediatek.com>
- <1540538523-1973-4-git-send-email-ck.hu@mediatek.com>
- <20181026102156.GH21967@phenom.ffwll.local>
- <1540782676.13715.4.camel@mtksdaap41>
- <20181029091619.GT21967@phenom.ffwll.local>
- <1540882471.31817.9.camel@mtksdaap41>
+        Tue, 30 Oct 2018 13:56:17 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:14582 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726172AbeJ3R4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 13:56:17 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 25B162462ACF7;
+        Tue, 30 Oct 2018 17:03:39 +0800 (CST)
+Received: from [127.0.0.1] (10.177.96.96) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.408.0; Tue, 30 Oct 2018
+ 17:03:38 +0800
+Subject: Re: bnx2: rx_fw_discards: BCM5716 sporadically drops packets when
+ update to driver version 2.2.6
+To:     "Mody, Rasesh" <Rasesh.Mody@cavium.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "andrew@lunn.ch" <andrew@lunn.ch>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <1a94796f-1760-f332-46f0-6ab0b5a0aab7@huawei.com>
+ <BYAPR07MB536505C0A8C27C76C352C3239FCC0@BYAPR07MB5365.namprd07.prod.outlook.com>
+CC:     "Rahman, Ameen" <Ameen.Rahman@cavium.com>
+From:   maowenan <maowenan@huawei.com>
+Message-ID: <090bad42-5ddb-2973-8cb1-bcdd03a05814@huawei.com>
+Date:   Tue, 30 Oct 2018 17:03:00 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1540882471.31817.9.camel@mtksdaap41>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <BYAPR07MB536505C0A8C27C76C352C3239FCC0@BYAPR07MB5365.namprd07.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.177.96.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 02:54:31PM +0800, CK Hu wrote:
-> Hi, Daniel:
-> 
-> On Mon, 2018-10-29 at 10:16 +0100, Daniel Vetter wrote:
-> > On Mon, Oct 29, 2018 at 11:11:16AM +0800, CK Hu wrote:
-> > > Hi,Daniel:
-> > > 
-> > > On Fri, 2018-10-26 at 12:21 +0200, Daniel Vetter wrote:
-> > > > On Fri, Oct 26, 2018 at 03:22:03PM +0800, CK Hu wrote:
-> > > > > After adding dma_dev in struct drm_device and
-> > > > > drm_gem_cma_dumb_create_no_kmap(), drm_gem_cma_object could replace
-> > > > > mtk_drm_gem_obj, so use drm_gem_cma_object instead of mtk_drm_gem_obj to
-> > > > > reduce redundant code.
-> > > > > 
-> > > > > Signed-off-by: CK Hu <ck.hu@mediatek.com>
-> > > > 
-> > > > A few questions/thoughts:
-> > > > 
-> > > > - Why do you need both drm_device->dev and drm_device->dma_dev? Can't you
-> > > >   just register the drm_device with the right struct device?
-> > > > 
-> > > 
-> > > In [1], mmsys is the drm driver and ovl0 and ovl1 is the sub device
-> > > which has dma function.
-> > > In this drm, there are two crtc and each one is comprised of many
-> > > component.
-> > > This is an example of mt8173:
-> > > 
-> > > crtc0: ovl0, color0, aal, od, rdma0, ufoe, dsi0
-> > > crtc1: ovl1, color1, gamma, rdma1, dpi0
-> > > 
-> > > In the device node of ovl0 and ovl1, there is a 'iommus' parameter in
-> > > it, so use dma_alloc_xxx() and dma_map_xxx() with that device would get
-> > > iova rather than pa. I don't think it's a good idea to register ovl0 or
-> > > ovl1 as drm device because each one is just a component in a pipeline.
-> > > mmsys controls the clock and routing of multi-media system which include
-> > > this drm system, so it's better to register mmsys as drm device. Maybe
-> > > we could move 'iommus' parameter from ovl device to mmsys device, so the
-> > > dma device changes from ovl device to mmsys device. I'm not sure this
-> > > would be a good choice, how do you think?
-> > > 
-> > > [1]
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/mediatek/mt8173.dtsi?h=v4.19
-> > 
-> > Ah ok. But if you have 2 blocks that make up the overall drm device, why
-> > don't you need to switch at runtime between them? I.e. buffer allocated
-> > for crtc0 needs to be dma-mapped to crtc0, buffer allocated to crtc1 needs
-> > to be dma-mapped on crtc1?
-> > 
-> > And if they're both the exact same iommu, then imo it would make indeed
-> > sense to move the iommu attribute up. Since your current code cant'
-> > actually handle truly separate dma-mappings. And neither can your patch
-> > series here handled separate iommu for crtc0 and crtc1.
-> 
-> Yes, they're the exact same iommu. So I would move iommu attribute up.
-> 
-> > 
-> > > > - You don't use drm_gem_prime_import_dev, so prime import isn't using the
-> > > >   right device either.
-> > > 
-> > > Yes, you are right. I'm not familiar with whore drm core, so I start to
-> > > modify what Mediatek drm use. But this function still works for the drm
-> > > device that itself is dma device. If one day there is a drm device which
-> > > itself is not a dma device and need this function, send a patch to
-> > > modify this function and test it with that drm device. If you want me to
-> > > modify all in advance, I'm ok but need others to test it because
-> > > Mediatek drm driver does not use them.
-> > 
-> > I meant to say that mediatek should use drm_gem_prime_import_dev, but
-> > currently isn't using that. And your patch series here doesn't fix that
-> > either. So there's more bugs left in this area.
-> 
-> Great, you find a bug. My test only include export but not import. This
-> would take time to generate import-test environment.
 
-igt has a bunch of import tests for display iirc, using vgem.
 
-> > > > - exynos seems to have the same or at least similar issue, stronger case
-> > > >   for your patches if you can solve both.
-> > > 
-> > > I'm still Mediatek's employee. If I modify other company's driver and it
-> > > is not a MUST-BE for Mediatek, Mediatek may think I give contribution to
-> > > other company. So I've better not to modify exynos driver.
-> > 
-> > This isn't how upstream works :-)
+On 2018/10/30 14:47, Mody, Rasesh wrote:
+>> From: maowenan <maowenan@huawei.com>
+>> Sent: Thursday, October 25, 2018 8:16 PM
+>>
+>> Hi，
+>>
+>> After I update version of bnx2 driver from 2.2.1 to 2.2.6, I find BCM5716
+>> sporadically drops packets, which shows in rx_fw_discards.
+>> C36-141-5:~ #  ethtool -S NIC0
+>>
+>> NIC statistics:
+>>     rx_ucast_packets: 11902
+>>
+>>     rx_mcast_packets: 217
+>>
+>>     rx_bcast_packets: 4954320
+>>
+>>     rx_filtered_packets: 328793
+>>
+>>     rx_fw_discards: 2742
+>>
+>> C36-141-5:~ #
+>>
+>> 5s later:
+>>
+>> C36-141-5:~ #  ethtool -S NIC0
+>>
+>> NIC statistics:
+>>     rx_ucast_packets: 11910
+>>
+>>     rx_mcast_packets: 217
+>>
+>>     rx_bcast_packets: 4958117
+>>
+>>     rx_filtered_packets: 328897
+>>
+>>     rx_fw_discards: 2750
+>>
+>> C36-141-5:~ #
+>>
+>> so rx_fw_discards: 2742-----> rx_fw_discards: 2750, lost 8 packets.
+>>
+>> the information of bnx2
+>> C36-141-5:~ # modinfo bnx2
+>> kernel/drivers/net/ethernet/broadcom/bnx2.ko
+>>
+>> firmware:       bnx2/bnx2-rv2p-09ax-6.0.17.fw
+>>
+>> firmware:       bnx2/bnx2-rv2p-09-6.0.17.fw
+>>
+>> firmware:       bnx2/bnx2-mips-09-6.2.1b.fw
+>>
+>> firmware:       bnx2/bnx2-rv2p-06-6.0.15.fw
+>>
+>> firmware:       bnx2/bnx2-mips-06-6.2.3.fw
+>> version:        2.2.6
+>>
+>>
+>> 1) Firstly, I check the patches from 2.2.1 to 2.2.6, below patch is interesting.
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id
+>> =0021850d0417a4dc38ed871d929b651b87e2ead9
+>> Do not enable filter SORT MODE in chip init routine. This patch addresses an
+>> issue where BCM5716 sporadically drops packets when changing multicast list.
+>>
+>> diff --git a/drivers/net/ethernet/broadcom/bnx2.c
+>> b/drivers/net/ethernet/broadcom/bnx2.c
+>> index 8957eb5f4478..8c9a8b7787d2 100644
+>> --- a/drivers/net/ethernet/broadcom/bnx2.c
+>> +++ b/drivers/net/ethernet/broadcom/bnx2.c
+>> @@ -4984,8 +4984,6 @@ bnx2_init_chip(struct bnx2 *bp)
+>>
+>>        bp->idle_chk_status_idx = 0xffff;
+>>
+>> -       bp->rx_mode = BNX2_EMAC_RX_MODE_SORT_MODE;
+>> -
+>>        /* Set up how to generate a link change interrupt. */
+>>        BNX2_WR(bp, BNX2_EMAC_ATTENTION_ENA,
+>> BNX2_EMAC_ATTENTION_ENA_LINK);
+>>
+>>
+>> 2) Secondly, I revert this patch, after verify it, I find rx_fw_discards does not
+>> increasing.
+>> so I think this patch can fix current issue. But I'm not sure the issue of this
+>> patch to fix will be reproduced?
+>> I'm not convinced that what factor will trigger rx_fw_discards increasing?
+>> And how to fix this?
 > 
-> OK, because now I would not modify drm core, I would focus on Mediatek
-> drm driver first. If the modification of exynos driver is easy, I could
-> try. But if the modification of exynos is huge, I suggest that someone
-> who is familiar with exynos driver and have exynos platform to do it.
+> Can you please reword your point above? i.e. what is working and what is not. I am not sure if I understand it completely.
+> 
+> Is the rx_fw_disacard count incrementing with 2.2.6 upstream driver on BCM5716? What is the kernel version?
+> Which test is being run?
 
-Since we now clarified that you only have 1 iommu (and that it's kinda
-misplaced in the DT) I think exonys is a different case. This was more
-about your original patch series, which looked like exynos could need too.
--Daniel
+
+The case is based on BCM5716's driver version of 2.2.6, and both 3.10 and mainline kernel version exist this issue .
+The testing seems like using one port of BCM5716 to receive packets, it can be found rx_fw_disacard increasing occasionally.
+There is one patch in 2.2.6, 0021850d0417a4dc38ed871d929b651b87e2ead9, if I remove this patch, I can't reproduce this issue,
+rx_fw_disacard doesn't increase.
+So I don't know why this patch(0021850d0417a4dc38ed871d929b651b87e2ead9) can fix my problem(rx_fw_disacard increasing)?
+If I remove this patch, how to fix the issue that the patch had resolved?
 
 > 
-> Regards,
-> CK
-> > 
-> > > > - I'd start out with using struct drm_gem_cma_object in mtk (similar to
-> > > >   what vc4 does), and then reusing as much as possible of the existing
-> > > >   helpers. And then looking later on what's still left (like the support
-> > > >   for leaving out the virtual mapping).
-> > > 
-> > > I'm not clear what vc4 does. It looks like that you want me to redefine
-> > > mtk_drm_gem_obj based on drm_gem_cma_object. So it would be like
-> > > 
-> > > struct mtk_drm_gem_obj {
-> > > 	struct drm_gem_cma_object base;
-> > > 	void *cookie;
-> > > 	unsigned long dma_attrs;
-> > > };
-> > > 
-> > > I could try to modify as this and see what have left.
-> > 
-> > Yup, that's my suggestion. Then we can look at what mtk can use unchanged
-> > from the core helpers. And what would need to change and so better
-> > evaluate whether it makes sense to do that.
-> > 
-> > I still think just moving the iommu is probably best.
-> > -Daniel
-> 
+>>
+>> Thanks a lot.
+>>
+>>
+>>
+>>
+>>
+>>
+>>
+>>
+>>
+>>
+>>
 > 
 
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
