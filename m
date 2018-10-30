@@ -2,272 +2,169 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A140C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:14:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B6FECDE44
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:15:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E9162081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:14:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20C732082B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:15:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="BJNytPjk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E9162081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ujaGyG03"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20C732082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728529AbeJaHJu (ORCPT
+        id S1728431AbeJaHLI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 03:09:50 -0400
-Received: from the.earth.li ([46.43.34.31]:54244 "EHLO the.earth.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727369AbeJaHJt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 03:09:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
-         s=the; h=Content-Type:MIME-Version:Message-ID:Subject:To:From:Date:Sender:
-        Reply-To:Cc:Content-Transfer-Encoding:Content-ID:Content-Description:
-        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=JJMEdzBMrNnJ7b5efrEICcCar/n7/EFpp+zoElJCmfo=; b=BJNytPjkFaWXR90inTbzQlrMn/
-        sALJvLeZzkIfli+C0ixu2XBKq5HwtmAfg1qW6r6KBxP1cgRc7ncpTIjpo2uzWjJ057depX8noYf2j
-        wwL2BqPy6jGGxa1pbqO70tN1UAL/6HYggWjpwJCQvAe76JaghxSHZ/fi3f/1f6wZMYvG5Jg3A/28o
-        CHcxXxtGbDz97ub+WHuCMoMjoWdY/hWVl1YFGA7KcHxQCZDaYfwN4k3QZ/PYzvp+Alpn2iVW/j6/v
-        ayHcwh7/x4Tr/esG3eyTR23FFiaCbR69ckPJww1hI0IqGEchSuSOsoH2GXuUwb9iNHGjaMNrWAO7j
-        NhyFW2jA==;
-Received: from noodles by the.earth.li with local (Exim 4.89)
-        (envelope-from <noodles@earth.li>)
-        id 1gHcHO-0005Qh-SR; Tue, 30 Oct 2018 22:14:30 +0000
-Date:   Tue, 30 Oct 2018 22:14:30 +0000
-From:   Jonathan McDowell <noodles@earth.li>
-To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCHv2] ARM: dts: sun8i-h3: Add dts for the Mapleboard MP130
-Message-ID: <20181030221430.wu5cxicyf4ub2boa@earth.li>
+        Wed, 31 Oct 2018 03:11:08 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:45278 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726021AbeJaHLH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 03:11:07 -0400
+Received: by mail-lf1-f68.google.com with SMTP id c24-v6so10131041lfi.12;
+        Tue, 30 Oct 2018 15:15:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=5Ky3uiKRIkgCOv3N0jJvjqQ23cVkr/7JkItMxX78SbQ=;
+        b=ujaGyG03GOtuFjUJZIu2eAQzgm6NK2JTwXOltUPpx6nXKFLGbqGZC5IKtsI3xXeAX2
+         ivRnhJJpJbDHp6yCFpcraDcKyMzwwX2hk6UtkPpTr2jikgp6zO/X26orMQ22dbGlSe5Y
+         c4DQFR6EclBCeM9bxMP2xSetjrt6iC2V9VNxUyjmF6hD4Mmti368oMeQb1aaQ+Xv3oGS
+         L/tFlhHz8qSb/a8tRGtJtI2svKIdbyh9knE4tPQudiGTlGj2mmqOOt0vLzlLz10nBcIR
+         aT0nGswAi7ucysGJIfMri+Fpcso28891sM9EtH8XcP/MPXZ/5uIROZXooaUTFu7Y0nWT
+         pmNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5Ky3uiKRIkgCOv3N0jJvjqQ23cVkr/7JkItMxX78SbQ=;
+        b=P8YhsGVkrqGlVj+fU6egPMROtb9dhFkqwSC7QsNimuWxVQPkVFk9LD75MZr//92KAO
+         eTFoSxq0lN/1j6YMeycwNSWnNZw/UOCQPuBh8BMIdqyCxLd/dIUXPxPYCHevox/tC1gM
+         aZMnwe7ntrz39UOOJs3gehglNMHtumtNQlrGuHrMRTnIV4/y32fkanBertgp99cFNGOt
+         m0amACjbo/n69PcDl2WVAz/iEnDu55qn8jn+PAF9Qa4DEDk0QZsocHnEClwNdHsuFqCc
+         PRC4SqCbPGJgyV9bEr8BxLiG8E9M+OyAJqWdvHGCpgL5EmLwWlQtiGzhxpAhmXZoqRQR
+         pGpg==
+X-Gm-Message-State: AGRZ1gKl7jaQ+c2CLC5K3U8smWMLw6cnxPiRyvJZppV0aLkIoKlhq1AC
+        dMd9vCvNWnj3oe7wC+FOVgg=
+X-Google-Smtp-Source: AJdET5cLfZ/LiUZETwLRKti0DlIEs5ZZWN7s5o0SKnm9C5hTnMmQ1HWGdfadZaZxwn14awXniefvbQ==
+X-Received: by 2002:a19:5713:: with SMTP id l19mr297890lfb.85.1540937748834;
+        Tue, 30 Oct 2018 15:15:48 -0700 (PDT)
+Received: from [192.168.10.160] (91-159-62-242.elisa-laajakaista.fi. [91.159.62.242])
+        by smtp.gmail.com with ESMTPSA id a8-v6sm3672465ljd.6.2018.10.30.15.15.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 15:15:48 -0700 (PDT)
+Subject: Re: [PATCH 10/17] prmem: documentation
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Tycho Andersen <tycho@tycho.ws>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Igor Stoppa <igor.stoppa@huawei.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+References: <20181023213504.28905-11-igor.stoppa@huawei.com>
+ <20181026092609.GB3159@worktop.c.hoisthospitality.com>
+ <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
+ <20181028183126.GB744@hirez.programming.kicks-ass.net>
+ <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
+ <20181030152641.GE8177@hirez.programming.kicks-ass.net>
+ <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
+ <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
+ <20181030175814.GB10491@bombadil.infradead.org> <20181030182841.GE7343@cisco>
+ <20181030192021.GC10491@bombadil.infradead.org>
+ <9edbdf8b-b5fb-5a82-43b4-b639f5ec8484@gmail.com>
+ <BAA65A07-F3AF-4209-9D18-7075CEF11EE8@amacapital.net>
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Message-ID: <2cfb3835-0c18-b3fb-1722-5d693ae0ecd2@gmail.com>
+Date:   Wed, 31 Oct 2018 00:15:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <BAA65A07-F3AF-4209-9D18-7075CEF11EE8@amacapital.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Mapleboard MP130 is a single board computer based on the Allwinner
-H3 SoC, with all schematics freely available. The Lite version includes
-1GB main memory and 8GB eMMC.
 
-https://www.mapleboard.org/en (still mostly in Chinese even when English
-is selected)
 
-This DTS is based upon the DTS shipped with the board which uses
-mapleboard,mp130- prefixes instead of the allwinner,sun8i variants.
+On 30/10/2018 23:02, Andy Lutomirski wrote:
+> 
+> 
+>> On Oct 30, 2018, at 1:43 PM, Igor Stoppa <igor.stoppa@gmail.com> wrote:
 
-v2: Fold in review comments from Maxime Ripard
 
-Signed-off-by: Jonathan McDowell <noodles@earth.li>
----
- arch/arm/boot/dts/Makefile                    |   1 +
- .../boot/dts/sun8i-h3-mapleboard-mp130.dts    | 174 ++++++++++++++++++
- 2 files changed, 175 insertions(+)
- create mode 100644 arch/arm/boot/dts/sun8i-h3-mapleboard-mp130.dts
+>> There is no need to process each of these tens of thousands allocations and initialization as write-rare.
+>>
+>> Would it be possible to do the same here?
+> 
+> I don’t see why not, although getting the API right will be a tad complicated.
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index b5bd3de87c33..dcf1b9e7f71e 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -1035,6 +1035,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
- 	sun8i-h3-bananapi-m2-plus.dtb \
- 	sun8i-h3-beelink-x2.dtb \
- 	sun8i-h3-libretech-all-h3-cc.dtb \
-+	sun8i-h3-mapleboard-mp130.dtb \
- 	sun8i-h3-nanopi-m1.dtb	\
- 	sun8i-h3-nanopi-m1-plus.dtb \
- 	sun8i-h3-nanopi-neo.dtb \
-diff --git a/arch/arm/boot/dts/sun8i-h3-mapleboard-mp130.dts b/arch/arm/boot/dts/sun8i-h3-mapleboard-mp130.dts
-new file mode 100644
-index 000000000000..13ad55be4454
---- /dev/null
-+++ b/arch/arm/boot/dts/sun8i-h3-mapleboard-mp130.dts
-@@ -0,0 +1,174 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2017 Centrum Embedded Systems, Jia-Bin Huang <jb@ces.com.tw>
-+ * Copyright (C) 2018 Jonathan McDowell <noodles@earth.li>
-+ */
-+
-+/dts-v1/;
-+#include "sun8i-h3.dtsi"
-+#include "sunxi-common-regulators.dtsi"
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+
-+/ {
-+	model = "MapleBoard MP130";
-+	compatible = "mapleboard,mp130", "allwinner,sun8i-h3";
-+
-+	aliases {
-+		ethernet0 = &emac;
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+
-+		pwr_led {
-+			label = "mp130:orange:pwr";
-+			gpios = <&r_pio 0 10 GPIO_ACTIVE_HIGH>;
-+			default-state = "on";
-+		};
-+
-+		status_led {
-+			label = "mp130:orange:status";
-+			gpios = <&pio 0 10 GPIO_ACTIVE_HIGH>;
-+		};
-+	};
-+
-+	r_gpio_keys {
-+		compatible = "gpio-keys";
-+		pinctrl-names = "default";
-+
-+		power {
-+			label = "mp130:power";
-+			linux,code = <KEY_POWER>;
-+			gpios = <&r_pio 0 3 GPIO_ACTIVE_LOW>; /* PL3 */
-+		};
-+
-+		user {
-+			label = "mp130:user";
-+			linux,code = <BTN_0>;
-+			gpios = <&r_pio 0 4 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+};
-+
-+&codec {
-+	allwinner,audio-routing =
-+		"Line Out", "LINEOUT",
-+		"LINEIN", "Line In";
-+	status = "okay";
-+};
-+
-+&ehci1 {
-+	status = "okay";
-+};
-+
-+&ehci2 {
-+	status = "okay";
-+};
-+
-+&ehci3 {
-+	status = "okay";
-+};
-+
-+&emac {
-+	phy-handle = <&int_mii_phy>;
-+	phy-mode = "mii";
-+	allwinner,leds-active-low;
-+	status = "okay";
-+};
-+
-+&ir {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&ir_pins_a>;
-+	status = "okay";
-+};
-+
-+&mmc0 {
-+	vmmc-supply = <&reg_vcc3v3>;
-+	bus-width = <4>;
-+	cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
-+	cd-inverted;
-+	status = "okay";
-+};
-+
-+&mmc2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mmc2_8bit_pins>;
-+	vmmc-supply = <&reg_vcc3v3>;
-+	bus-width = <8>;
-+	non-removable;
-+	cap-mmc-hw-reset;
-+	status = "okay";
-+};
-+
-+&ohci1 {
-+	status = "okay";
-+};
-+
-+&ohci2 {
-+	status = "okay";
-+};
-+
-+&ohci3 {
-+	status = "okay";
-+};
-+
-+&pio {
-+	leds_pio: led_pins {
-+		pins = "PA15";
-+		function = "gpio_out";
-+	};
-+};
-+
-+&r_pio {
-+	leds_r_pio: led_pins {
-+		pins = "PL10";
-+		function = "gpio_out";
-+	};
-+
-+	sw_r_pio: key_pins {
-+		pins = "PL3", "PL4";
-+		function = "gpio_in";
-+	};
-+};
-+
-+&uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart0_pins_a>;
-+	status = "okay";
-+};
-+
-+&uart1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart1_pins>;
-+	status = "disabled";
-+};
-+
-+&uart2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart2_pins>;
-+	status = "disabled";
-+};
-+
-+&uart3 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&uart3_pins>;
-+	status = "disabled";
-+};
-+
-+&usb_otg {
-+	dr_mode = "peripheral";
-+	status = "okay";
-+};
-+
-+&usbphy {
-+	/* USB VBUS is always on */
-+	status = "okay";
-+};
--- 
-2.19.1
+yes, I have some first-hand experience with this :-/
 
+>>
+>>>>>
+>>>>> To subsequently modify q,
+>>>>>
+>>>>>     p = rare_modify(q);
+>>>>>     q->a = y;
+>>>>
+>>>> Do you mean
+>>>>
+>>>>      p->a = y;
+>>>>
+>>>> here? I assume the intent is that q isn't writable ever, but that's
+>>>> the one we have in the structure at rest.
+>>> Yes, that was my intent, thanks.
+>>> To handle the list case that Igor has pointed out, you might want to
+>>> do something like this:
+>>>     list_for_each_entry(x, &xs, entry) {
+>>>         struct foo *writable = rare_modify(entry);
+>>
+>> Would this mapping be impossible to spoof by other cores?
+>>
+> 
+> Indeed. Only the core with the special mm loaded could see it.
+> 
+> But I dislike allowing regular writes in the protected region. We really only need four write primitives:
+> 
+> 1. Just write one value.  Call at any time (except NMI).
+> 
+> 2. Just copy some bytes. Same as (1) but any number of bytes.
+> 
+> 3,4: Same as 1 and 2 but must be called inside a special rare write region. This is purely an optimization.
+
+Atomic? RCU?
+
+Yes, they are technically just memory writes, but shouldn't the "normal" 
+operation be executed on the writable mapping?
+
+It is possible to sandwich any call between a rare_modify/rare_protect, 
+however isn't that pretty close to having a write-rare version of these 
+plain function.
+
+--
+igor
