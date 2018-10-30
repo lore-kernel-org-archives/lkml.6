@@ -2,180 +2,92 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34C59C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:09:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E394FC6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:11:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3BB720664
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:09:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3BB720664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A7A8820664
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:11:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="merO8jjf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7A8820664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jms.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728145AbeJaGEi (ORCPT
+        id S1727547AbeJaGGj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 02:04:38 -0400
-Received: from mga09.intel.com ([134.134.136.24]:28959 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727453AbeJaGEh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 02:04:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 14:09:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,446,1534834800"; 
-   d="scan'208";a="100110068"
-Received: from maru.jf.intel.com ([10.54.51.77])
-  by fmsmga002.fm.intel.com with ESMTP; 30 Oct 2018 14:09:31 -0700
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-To:     Wolfram Sang <wsa@the-dreams.de>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Joel Stanley <joel@jms.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-i2c@vger.kernel.org,
-        openbmc@lists.ozlabs.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc:     Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-        James Feist <james.feist@linux.intel.com>,
-        Vernon Mauery <vernon.mauery@linux.intel.com>,
-        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Subject: [PATCH i2c-next v9 5/5] i2c: aspeed: Add bus idle waiting logic for multi-master use cases
-Date:   Tue, 30 Oct 2018 14:09:16 -0700
-Message-Id: <20181030210917.32711-6-jae.hyun.yoo@linux.intel.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181030210917.32711-1-jae.hyun.yoo@linux.intel.com>
-References: <20181030210917.32711-1-jae.hyun.yoo@linux.intel.com>
+        Wed, 31 Oct 2018 02:06:39 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:40369 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725743AbeJaGGj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 02:06:39 -0400
+Received: by mail-qk1-f194.google.com with SMTP id f18-v6so8224406qkm.7;
+        Tue, 30 Oct 2018 14:11:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Geo1F+rcWiR1yH6tDsVfLVgB6tNCnOzh06qBDUj6Wpw=;
+        b=merO8jjfclSY449GGyNc6gtmZYe754ISceV1K31uiUFYlIxBKsX4XOzF/ieVUOw6EC
+         uyClrdDEs5K3WWkxEm7oOwwBgPEt3pGbSYH9Pb0Ok/Jdn6mjb7vMza/JdKwvoFLonvM0
+         2KEZ2rzsKPpGjrDQ8uczOHylITpy9YxSp8K58=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Geo1F+rcWiR1yH6tDsVfLVgB6tNCnOzh06qBDUj6Wpw=;
+        b=uUyJJBNolhCxK1euHsRWGNxz34xp05nrUxFJosV+iwdNSZx9NJ6p5Pej5yQHLFFTf6
+         KmsYP2MtAu97JNeUgkht79szYZgHLMGAXPN4wB+7cNnnHlI7AAooecTTAh78S0sAibc5
+         GgXVeA3o/NuU6wkJBsAFsdWA7Z4GOvEZdEtyDgX3T7weKln79C9yDc/Jtv5d1YK600Zb
+         HW6da+u85fIm6VOD4se1Rlivt/cPYsEbxGxm1gTj/rMD0Q7PMCe6ZDSZD40wkT/A8IsG
+         6vRW/BzqXuuXVK5/OKS+7byEdTxdqE+Ie2B5V7mWIA1UxIGzC60wOosYwkSm85VoQLwO
+         /hSA==
+X-Gm-Message-State: AGRZ1gJEVFnHIdVaBXufQlDcocPlMuKDkBmc1AOPIt+gHkk/Le9q5VA9
+        wuCqi9E36mLA//8pri5ZegVsePY5Y5K9uGFv47s=
+X-Google-Smtp-Source: AJdET5fq9zBHJ2GMvSSou9qc8qDiQ88IpkB04UUhK5+9PcLbHPJxQrdFkeqWWLTSVgzxPmVRDzWsFfWLZfpY/nwV/rU=
+X-Received: by 2002:ae9:ef8a:: with SMTP id d132mr306114qkg.11.1540933893205;
+ Tue, 30 Oct 2018 14:11:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1540905994-6073-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1540905994-6073-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Wed, 31 Oct 2018 07:41:21 +1030
+Message-ID: <CACPK8Xf4+M9Q1zC5GBC0PBJBZnim14m_s5HoQJQOn5Dc-uCDag@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] kbuild: replace cc-name test with CONFIG_CC_IS_CLANG
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-kbuild@vger.kernel.org, linux-mips@linux-mips.org,
+        Michal Marek <michal.lkml@markovi.net>, jhogan@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ralf@linux-mips.org, paul.burton@mips.com,
+        Paul Mackerras <paulus@samba.org>,
+        linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In multi-master environment, this driver's master cannot know
-exactly when a peer master sends data to this driver's slave so a
-case can be happened that this master tries to send data through
-the master_xfer function but slave data from peer master is still
-being processed by this driver.
+On Tue, 30 Oct 2018 at 23:58, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> Evaluating cc-name invokes the compiler every time even when you are
+> not compiling anything, like 'make help'. This is not efficient.
+>
+> The compiler type has been already detected in the Kconfig stage.
+> Use CONFIG_CC_IS_CLANG, instead.
 
-To prevent any state corruption in the case, this patch adds
-checking code if any slave operation is ongoing and it waits up to
-the bus timeout duration before starting a master_xfer operation.
+Thanks, I didn't know about this.
 
-Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Reviewed-by: Brendan Higgins <brendanhiggins@google.com>
----
- drivers/i2c/busses/i2c-aspeed.c | 55 ++++++++++++++++++++++++---------
- 1 file changed, 40 insertions(+), 15 deletions(-)
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
 
-diff --git a/drivers/i2c/busses/i2c-aspeed.c b/drivers/i2c/busses/i2c-aspeed.c
-index 833b6b6a4c7e..30c3ab3a4844 100644
---- a/drivers/i2c/busses/i2c-aspeed.c
-+++ b/drivers/i2c/busses/i2c-aspeed.c
-@@ -12,6 +12,7 @@
- 
- #include <linux/clk.h>
- #include <linux/completion.h>
-+#include <linux/delay.h>
- #include <linux/err.h>
- #include <linux/errno.h>
- #include <linux/i2c.h>
-@@ -115,6 +116,9 @@
- /* 0x18 : I2CD Slave Device Address Register   */
- #define ASPEED_I2CD_DEV_ADDR_MASK			GENMASK(6, 0)
- 
-+/* Busy checking */
-+#define ASPEED_I2C_BUS_BUSY_CHECK_INTERVAL_US		(10 * 1000)
-+
- enum aspeed_i2c_master_state {
- 	ASPEED_I2C_MASTER_INACTIVE,
- 	ASPEED_I2C_MASTER_START,
-@@ -156,6 +160,8 @@ struct aspeed_i2c_bus {
- 	int				cmd_err;
- 	/* Protected only by i2c_lock_bus */
- 	int				master_xfer_result;
-+	/* Multi-master */
-+	bool				multi_master;
- #if IS_ENABLED(CONFIG_I2C_SLAVE)
- 	struct i2c_client		*slave;
- 	enum aspeed_i2c_slave_state	slave_state;
-@@ -596,27 +602,44 @@ static irqreturn_t aspeed_i2c_bus_irq(int irq, void *dev_id)
- 	return irq_remaining ? IRQ_NONE : IRQ_HANDLED;
- }
- 
-+static int aspeed_i2c_check_bus_busy(struct aspeed_i2c_bus *bus)
-+{
-+	unsigned long timeout;
-+
-+	if (bus->multi_master) {
-+		might_sleep();
-+		/* Initialize it only when multi_master is set */
-+		timeout = jiffies + bus->adap.timeout;
-+	}
-+
-+	for (;;) {
-+		if (!(readl(bus->base + ASPEED_I2C_CMD_REG) &
-+		      ASPEED_I2CD_BUS_BUSY_STS))
-+#if IS_ENABLED(CONFIG_I2C_SLAVE)
-+			if (bus->slave_state == ASPEED_I2C_SLAVE_STOP)
-+#endif
-+				return 0;
-+		if (!bus->multi_master)
-+			break;
-+		if (time_after(jiffies, timeout))
-+			break;
-+		usleep_range((ASPEED_I2C_BUS_BUSY_CHECK_INTERVAL_US >> 2) + 1,
-+			     ASPEED_I2C_BUS_BUSY_CHECK_INTERVAL_US);
-+	}
-+
-+	return aspeed_i2c_recover_bus(bus);
-+}
-+
- static int aspeed_i2c_master_xfer(struct i2c_adapter *adap,
- 				  struct i2c_msg *msgs, int num)
- {
- 	struct aspeed_i2c_bus *bus = i2c_get_adapdata(adap);
- 	unsigned long time_left, flags;
--	int ret = 0;
- 
--	spin_lock_irqsave(&bus->lock, flags);
--	bus->cmd_err = 0;
--
--	/* If bus is busy, attempt recovery. We assume a single master
--	 * environment.
--	 */
--	if (readl(bus->base + ASPEED_I2C_CMD_REG) & ASPEED_I2CD_BUS_BUSY_STS) {
--		spin_unlock_irqrestore(&bus->lock, flags);
--		ret = aspeed_i2c_recover_bus(bus);
--		if (ret)
--			return ret;
--		spin_lock_irqsave(&bus->lock, flags);
--	}
-+	if (aspeed_i2c_check_bus_busy(bus))
-+		return -EAGAIN;
- 
-+	spin_lock_irqsave(&bus->lock, flags);
- 	bus->cmd_err = 0;
- 	bus->msgs = msgs;
- 	bus->msgs_index = 0;
-@@ -827,7 +850,9 @@ static int aspeed_i2c_init(struct aspeed_i2c_bus *bus,
- 	if (ret < 0)
- 		return ret;
- 
--	if (!of_property_read_bool(pdev->dev.of_node, "multi-master"))
-+	if (of_property_read_bool(pdev->dev.of_node, "multi-master"))
-+		bus->multi_master = true;
-+	else
- 		fun_ctrl_reg |= ASPEED_I2CD_MULTI_MASTER_DIS;
- 
- 	/* Enable Master Mode */
--- 
-2.19.1
+Acked-by: Joel Stanley <joel@jms.id.au>
 
+Cheers,
+
+Joel
