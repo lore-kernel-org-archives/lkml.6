@@ -2,85 +2,272 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E2EAC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:14:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A140C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:14:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A6D02081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:14:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A6D02081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 1E9162081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:14:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="BJNytPjk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E9162081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728501AbeJaHJp (ORCPT
+        id S1728529AbeJaHJu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 03:09:45 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:42530 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727369AbeJaHJp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 03:09:45 -0400
-Received: by mail-oi1-f195.google.com with SMTP id h23-v6so11907828oih.9;
-        Tue, 30 Oct 2018 15:14:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/ffhZjt0Wm8VhZLlXaITurAxlh83+EeL4ugcRGXeI9g=;
-        b=cLG6QnzdbJvmeoUg9jUHvKn2WeqXASnS13PBeXDhETV8tSFbtAUk+phuRmuLf+HL5E
-         Ur2CSSvu49u9GzVmsPwqTJMs5Vl0bQGtmxWN5JUWSkaKE+GlRJlnItbV0v81Ry9FrS37
-         Ysq/YvkpGKnb5B+c92aw461/lMZtzdRy6zxMwXfhNMO3brLMPoQ3qWmlMsv3+UFeGelm
-         LIry0sZ9MLOJZbpR+KIxKQNh/fzkrdyxfhS48CnY51I1d0ZRqUzcCkp7lytEOyhEdAs2
-         l1J6XnvmcUDkOyfkx96Km4HSLiUPTW4R9LvtqZx/aUi2V/zdlvg9qWR2w1OCZVsbmHNy
-         0Ltw==
-X-Gm-Message-State: AGRZ1gLJXebmL8Z37/DKLuYFy1qp+M1vTJ9ozD62SGwIKVaBNvUecyE4
-        6hmz4KjA+QoV9Edos0XzFA==
-X-Google-Smtp-Source: AJdET5dmRXk2ph+whQoZACABfNcePUAOC0RUpcorfuM+kNWBWBmd5OSnbvnNK0s4Z+CANrn5rAOXDg==
-X-Received: by 2002:aca:e8ca:: with SMTP id f193-v6mr358779oih.12.1540937668788;
-        Tue, 30 Oct 2018 15:14:28 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id j21-v6sm5409741oih.34.2018.10.30.15.14.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Oct 2018 15:14:28 -0700 (PDT)
-Date:   Tue, 30 Oct 2018 17:14:27 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     catalin.marinas@arm.com, Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] dt-bindings: arm: Explain capacities-dmips-mhz
- calculations in example
-Message-ID: <20181030221427.GA27075@bogus>
-References: <1cd2594fff3fb54948dcd2af65ae1867dd1c541a.1540806119.git.viresh.kumar@linaro.org>
+        Wed, 31 Oct 2018 03:09:50 -0400
+Received: from the.earth.li ([46.43.34.31]:54244 "EHLO the.earth.li"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727369AbeJaHJt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 03:09:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+         s=the; h=Content-Type:MIME-Version:Message-ID:Subject:To:From:Date:Sender:
+        Reply-To:Cc:Content-Transfer-Encoding:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=JJMEdzBMrNnJ7b5efrEICcCar/n7/EFpp+zoElJCmfo=; b=BJNytPjkFaWXR90inTbzQlrMn/
+        sALJvLeZzkIfli+C0ixu2XBKq5HwtmAfg1qW6r6KBxP1cgRc7ncpTIjpo2uzWjJ057depX8noYf2j
+        wwL2BqPy6jGGxa1pbqO70tN1UAL/6HYggWjpwJCQvAe76JaghxSHZ/fi3f/1f6wZMYvG5Jg3A/28o
+        CHcxXxtGbDz97ub+WHuCMoMjoWdY/hWVl1YFGA7KcHxQCZDaYfwN4k3QZ/PYzvp+Alpn2iVW/j6/v
+        ayHcwh7/x4Tr/esG3eyTR23FFiaCbR69ckPJww1hI0IqGEchSuSOsoH2GXuUwb9iNHGjaMNrWAO7j
+        NhyFW2jA==;
+Received: from noodles by the.earth.li with local (Exim 4.89)
+        (envelope-from <noodles@earth.li>)
+        id 1gHcHO-0005Qh-SR; Tue, 30 Oct 2018 22:14:30 +0000
+Date:   Tue, 30 Oct 2018 22:14:30 +0000
+From:   Jonathan McDowell <noodles@earth.li>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCHv2] ARM: dts: sun8i-h3: Add dts for the Mapleboard MP130
+Message-ID: <20181030221430.wu5cxicyf4ub2boa@earth.li>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1cd2594fff3fb54948dcd2af65ae1867dd1c541a.1540806119.git.viresh.kumar@linaro.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 03:13:05PM +0530, Viresh Kumar wrote:
-> The example contains two values for the capacity currently, 446 in text
-> and 578 in code. The numbers are all correct but can confuse some of the
-> readers. This patch tries to explain how the numbers are calculated to
-> avoid same confusion going forward.
-> 
-> Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
-> V1->V2:
-> - The numbers weren't incorrect in the example, just that it needs a
->   bit more explanation for some people.
-> 
->  Documentation/devicetree/bindings/arm/cpu-capacity.txt | 8 +++++---
->  1 file changed, 5 insertions(+), 3 deletions(-)
+The Mapleboard MP130 is a single board computer based on the Allwinner
+H3 SoC, with all schematics freely available. The Lite version includes
+1GB main memory and 8GB eMMC.
 
-Applied.
+https://www.mapleboard.org/en (still mostly in Chinese even when English
+is selected)
+
+This DTS is based upon the DTS shipped with the board which uses
+mapleboard,mp130- prefixes instead of the allwinner,sun8i variants.
+
+v2: Fold in review comments from Maxime Ripard
+
+Signed-off-by: Jonathan McDowell <noodles@earth.li>
+---
+ arch/arm/boot/dts/Makefile                    |   1 +
+ .../boot/dts/sun8i-h3-mapleboard-mp130.dts    | 174 ++++++++++++++++++
+ 2 files changed, 175 insertions(+)
+ create mode 100644 arch/arm/boot/dts/sun8i-h3-mapleboard-mp130.dts
+
+diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+index b5bd3de87c33..dcf1b9e7f71e 100644
+--- a/arch/arm/boot/dts/Makefile
++++ b/arch/arm/boot/dts/Makefile
+@@ -1035,6 +1035,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
+ 	sun8i-h3-bananapi-m2-plus.dtb \
+ 	sun8i-h3-beelink-x2.dtb \
+ 	sun8i-h3-libretech-all-h3-cc.dtb \
++	sun8i-h3-mapleboard-mp130.dtb \
+ 	sun8i-h3-nanopi-m1.dtb	\
+ 	sun8i-h3-nanopi-m1-plus.dtb \
+ 	sun8i-h3-nanopi-neo.dtb \
+diff --git a/arch/arm/boot/dts/sun8i-h3-mapleboard-mp130.dts b/arch/arm/boot/dts/sun8i-h3-mapleboard-mp130.dts
+new file mode 100644
+index 000000000000..13ad55be4454
+--- /dev/null
++++ b/arch/arm/boot/dts/sun8i-h3-mapleboard-mp130.dts
+@@ -0,0 +1,174 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2017 Centrum Embedded Systems, Jia-Bin Huang <jb@ces.com.tw>
++ * Copyright (C) 2018 Jonathan McDowell <noodles@earth.li>
++ */
++
++/dts-v1/;
++#include "sun8i-h3.dtsi"
++#include "sunxi-common-regulators.dtsi"
++
++#include <dt-bindings/gpio/gpio.h>
++#include <dt-bindings/input/input.h>
++
++/ {
++	model = "MapleBoard MP130";
++	compatible = "mapleboard,mp130", "allwinner,sun8i-h3";
++
++	aliases {
++		ethernet0 = &emac;
++		serial0 = &uart0;
++	};
++
++	chosen {
++		stdout-path = "serial0:115200n8";
++	};
++
++	leds {
++		compatible = "gpio-leds";
++		pinctrl-names = "default";
++
++		pwr_led {
++			label = "mp130:orange:pwr";
++			gpios = <&r_pio 0 10 GPIO_ACTIVE_HIGH>;
++			default-state = "on";
++		};
++
++		status_led {
++			label = "mp130:orange:status";
++			gpios = <&pio 0 10 GPIO_ACTIVE_HIGH>;
++		};
++	};
++
++	r_gpio_keys {
++		compatible = "gpio-keys";
++		pinctrl-names = "default";
++
++		power {
++			label = "mp130:power";
++			linux,code = <KEY_POWER>;
++			gpios = <&r_pio 0 3 GPIO_ACTIVE_LOW>; /* PL3 */
++		};
++
++		user {
++			label = "mp130:user";
++			linux,code = <BTN_0>;
++			gpios = <&r_pio 0 4 GPIO_ACTIVE_LOW>;
++		};
++	};
++};
++
++&codec {
++	allwinner,audio-routing =
++		"Line Out", "LINEOUT",
++		"LINEIN", "Line In";
++	status = "okay";
++};
++
++&ehci1 {
++	status = "okay";
++};
++
++&ehci2 {
++	status = "okay";
++};
++
++&ehci3 {
++	status = "okay";
++};
++
++&emac {
++	phy-handle = <&int_mii_phy>;
++	phy-mode = "mii";
++	allwinner,leds-active-low;
++	status = "okay";
++};
++
++&ir {
++	pinctrl-names = "default";
++	pinctrl-0 = <&ir_pins_a>;
++	status = "okay";
++};
++
++&mmc0 {
++	vmmc-supply = <&reg_vcc3v3>;
++	bus-width = <4>;
++	cd-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>; /* PF6 */
++	cd-inverted;
++	status = "okay";
++};
++
++&mmc2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&mmc2_8bit_pins>;
++	vmmc-supply = <&reg_vcc3v3>;
++	bus-width = <8>;
++	non-removable;
++	cap-mmc-hw-reset;
++	status = "okay";
++};
++
++&ohci1 {
++	status = "okay";
++};
++
++&ohci2 {
++	status = "okay";
++};
++
++&ohci3 {
++	status = "okay";
++};
++
++&pio {
++	leds_pio: led_pins {
++		pins = "PA15";
++		function = "gpio_out";
++	};
++};
++
++&r_pio {
++	leds_r_pio: led_pins {
++		pins = "PL10";
++		function = "gpio_out";
++	};
++
++	sw_r_pio: key_pins {
++		pins = "PL3", "PL4";
++		function = "gpio_in";
++	};
++};
++
++&uart0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart0_pins_a>;
++	status = "okay";
++};
++
++&uart1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart1_pins>;
++	status = "disabled";
++};
++
++&uart2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart2_pins>;
++	status = "disabled";
++};
++
++&uart3 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart3_pins>;
++	status = "disabled";
++};
++
++&usb_otg {
++	dr_mode = "peripheral";
++	status = "okay";
++};
++
++&usbphy {
++	/* USB VBUS is always on */
++	status = "okay";
++};
+-- 
+2.19.1
+
