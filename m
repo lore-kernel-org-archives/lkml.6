@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC9E4C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:29:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12018C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:30:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 945B920838
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:29:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1D4F20827
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:30:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ts5skIKA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 945B920838
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bhl0cqti"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1D4F20827
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728943AbeJ3WWv (ORCPT
+        id S1728251AbeJ3WXh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 18:22:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53590 "EHLO mail.kernel.org"
+        Tue, 30 Oct 2018 18:23:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52944 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727772AbeJ3WWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 18:22:50 -0400
+        id S1728016AbeJ3WWE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 18:22:04 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2824920838;
-        Tue, 30 Oct 2018 13:29:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 983372084A;
+        Tue, 30 Oct 2018 13:28:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540906162;
-        bh=eRFk+heWeeLFuXOBj4eDq6wTwxLyXRqDToiPTr/4sq4=;
+        s=default; t=1540906116;
+        bh=8qDYNP9SRUuTg36NxtrveRhtlEhXGJwurBEhNg0van4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ts5skIKATssyQdf+FCjSOORKnG9bFZm1e2fYuNzbyerba2H1Xu+tIJtZ0WmVYuE+q
-         BpeTxFaZ55nG16d+Y+ZFNoeuXt9IUHftYThQXO3VTgcFzRXAHykef8xrm32FzrFWBS
-         cc3hUQ2CxGSrR7Tp4PEo5u7TrIP8P5N5N1BOUDCI=
+        b=bhl0cqtid57cNcdNY4RaEwir9xu3HNaJMOFu0Rj1Mi9mU2D5cFV1V/YwDSpJOKzq6
+         OqggKUqF5BUZQieJ54e/NzfE2FQUyGsbFQG8aiohu0TBrSNa3eCDs713gPSn/51w9h
+         9FTxl396ys43Br4Z2PeBSXoFVKNZCSnBMDGR0PWM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
+Cc:     Huy Nguyen <huyn@mellanox.com>, Eli Cohen <eli@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 19/19] i2c: rcar: cleanup DMA for all kinds of failure
-Date:   Tue, 30 Oct 2018 09:28:24 -0400
-Message-Id: <20181030132824.218056-19-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 03/19] net/mlx5: Take only bit 24-26 of wqe.pftype_wq for page fault type
+Date:   Tue, 30 Oct 2018 09:28:08 -0400
+Message-Id: <20181030132824.218056-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181030132824.218056-1-sashal@kernel.org>
 References: <20181030132824.218056-1-sashal@kernel.org>
@@ -53,39 +53,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+From: Huy Nguyen <huyn@mellanox.com>
 
-[ Upstream commit 31d86033a0749a0463ea654130b2de5c163154f1 ]
+[ Upstream commit a48bc513159d4767f9988f0d857b2b0c38a4d614 ]
 
-DMA needs to be cleaned up not only on timeout, but on all errors where
-it has been setup before.
+The HW spec defines only bits 24-26 of pftype_wq as the page fault type,
+use the required mask to ensure that.
 
-Fixes: 73e8b0528346 ("i2c: rcar: add DMA support")
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Fixes: d9aaed838765 ("{net,IB}/mlx5: Refactor page fault handling")
+Signed-off-by: Huy Nguyen <huyn@mellanox.com>
+Signed-off-by: Eli Cohen <eli@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-rcar.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/mellanox/mlx5/core/eq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-rcar.c b/drivers/i2c/busses/i2c-rcar.c
-index 7f044df1ea07..3415733a9364 100644
---- a/drivers/i2c/busses/i2c-rcar.c
-+++ b/drivers/i2c/busses/i2c-rcar.c
-@@ -761,8 +761,12 @@ static int rcar_i2c_master_xfer(struct i2c_adapter *adap,
- 
- 	time_left = wait_event_timeout(priv->wait, priv->flags & ID_DONE,
- 				     num * adap->timeout);
--	if (!time_left) {
-+
-+	/* cleanup DMA if it couldn't complete properly due to an error */
-+	if (priv->dma_direction != DMA_NONE)
- 		rcar_i2c_cleanup_dma(priv);
-+
-+	if (!time_left) {
- 		rcar_i2c_init(priv);
- 		ret = -ETIMEDOUT;
- 	} else if (priv->flags & ID_NACK) {
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eq.c b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+index eb91de86202b..5da0b6e11530 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+@@ -262,7 +262,7 @@ static void eq_pf_process(struct mlx5_eq *eq)
+ 		case MLX5_PFAULT_SUBTYPE_WQE:
+ 			/* WQE based event */
+ 			pfault->type =
+-				be32_to_cpu(pf_eqe->wqe.pftype_wq) >> 24;
++				(be32_to_cpu(pf_eqe->wqe.pftype_wq) >> 24) & 0x7;
+ 			pfault->token =
+ 				be32_to_cpu(pf_eqe->wqe.token);
+ 			pfault->wqe.wq_num =
 -- 
 2.17.1
 
