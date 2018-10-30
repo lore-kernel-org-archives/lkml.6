@@ -7,119 +7,101 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D62B4C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 20:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E8CC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 20:27:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFF0D20657
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 20:25:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61C0020657
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 20:27:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="N69dETul"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFF0D20657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ECO3CHK4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61C0020657
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727659AbeJaFUb (ORCPT
+        id S1726532AbeJaFWP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 01:20:31 -0400
-Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:54725 "EHLO
-        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725765AbeJaFUb (ORCPT
+        Wed, 31 Oct 2018 01:22:15 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:40388 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726072AbeJaFWP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 01:20:31 -0400
-Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 567D28364E;
-        Wed, 31 Oct 2018 09:25:31 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-        s=mail181024; t=1540931131;
-        bh=1pKnJt/ZX742GPF4+kiLlg/Iapmx3cHhdSVoJX2yVlY=;
-        h=From:To:Cc:Subject:Date;
-        b=N69dETulL9kcIQVWvcDB7fEgE6+hTZzmQDOLgFfoKI02nWP3y2lFzFLy1cwsE8Yhn
-         KayyGQUjs4FMeqkj2QdHpRhquexnU8AePIpqllQ4RZXq5QGQ9NwkVaF95hg4UdEeqv
-         /Ss3IoPKwjSyx3a8gGi0c76r6WAa+aLtJXXycxaKiNxLGG15LjMPuSDh0qkWj2WMBL
-         JvwYISDIDOS4mV0Hh9W9BrY/DAAjBYtLwp8uEH2QguZYjoO1rS/6mmB1NEjyoj2bNN
-         gw/XwpfmcUkgJ6C4xWr70m0C+VP0tucYE6znK4+HC3i9rQt7XkDa577Mv4RwQ+Paa8
-         EOgwfQLx93CEg==
-Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
-        id <B5bd8be3c0000>; Wed, 31 Oct 2018 09:25:32 +1300
-Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-        by smtp (Postfix) with ESMTP id 03A4413EF06;
-        Wed, 31 Oct 2018 09:25:36 +1300 (NZDT)
-Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
-        id 15EA11E21FF; Wed, 31 Oct 2018 09:25:31 +1300 (NZDT)
-From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
-To:     linux@roeck-us.net
-Cc:     jdelvare@suse.com, corbet@lwn.net, linux-hwmon@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chris Packham <chris.packham@alliedtelesis.co.nz>
-Subject: [PATCH] hwmon: (adt7475) document mapping of sysfs entries to inputs
-Date:   Wed, 31 Oct 2018 09:25:27 +1300
-Message-Id: <20181030202527.14581-1-chris.packham@alliedtelesis.co.nz>
+        Wed, 31 Oct 2018 01:22:15 -0400
+Received: by mail-lj1-f196.google.com with SMTP id t22-v6so12688237lji.7
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 13:27:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1BOhPRBeyyTugmq02tnr63je4AqDPCmKKAU4utoq3Js=;
+        b=ECO3CHK4osbr1hJAnV5m8Ut57BFiZ83GOPSTcralvCEYPY1zLc1VH7laadGKEFA6zC
+         JWzrJdjx5vIIwI1hjFgGa9EoK8nKyERX6u9TFrBI8P1NjA34ZmJ4g2skTiuzppM5pBK7
+         ndjdyaoXhCs5EJwIYwIrzeVVp9OOHj7Dp92uY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1BOhPRBeyyTugmq02tnr63je4AqDPCmKKAU4utoq3Js=;
+        b=Idi9fuHejlX5btynlKHtvymtKdy2sdCecWRk3Zui+wsv1VLuu9HV9Eck4ifTM2Gdh7
+         VwCc/Ftlc0+iaP78YhiG65MNPyA8uH//ZRe2esGvkvgQ5suA8k2FY4z3npDULQ9sZfs8
+         f1fFIZD6lXTjwks9mo8CK5BFRElhKnq9fryJ3rUPVVrx5Zj7UlwfILl3Sni9N0LFj0yN
+         sIESwfkZzs9m0bRfWsWD880kHRy/e2YqUcoDPWmSG7qWxhIKmNqd/V79iDXI33PxobSN
+         n8VVf1xuS2t4tMF9wYPvfxzSavBYJMNgSP/ZjStt9XxyUhmlsKfALciz293zJl/mIj2h
+         w6lA==
+X-Gm-Message-State: AGRZ1gKeJ5rahJ3CdRwhRFsvCu2jiS84QIcfpbHNS8HKjBw90BfiKFdQ
+        rLuYGInC+0Nu/7z0oAvBtlG0eQ==
+X-Google-Smtp-Source: AJdET5fnMJULJGRooeRjDHudDs7rWPHdnfkS8B7AuGScHoNXJBxujtup+7EswROhM+Iu7Y2oedNPrA==
+X-Received: by 2002:a2e:1241:: with SMTP id t62-v6mr110414lje.81.1540931234956;
+        Tue, 30 Oct 2018 13:27:14 -0700 (PDT)
+Received: from localhost ([195.238.92.132])
+        by smtp.gmail.com with ESMTPSA id z17-v6sm427925lfd.14.2018.10.30.13.27.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 30 Oct 2018 13:27:14 -0700 (PDT)
+From:   Sam Protsenko <semen.protsenko@linaro.org>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        kernel-janitors@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        codalist@coda.cs.cmu.edu, coda@cs.cmu.edu,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Praneeth Bajjuri <praneeth@ti.com>
+Subject: [PATCH v2] codafs: Fix build using bare-metal toolchain
+Date:   Tue, 30 Oct 2018 22:27:13 +0200
+Message-Id: <20181030202713.26203-1-semen.protsenko@linaro.org>
 X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-x-atlnz-ls: pat
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As per the usual standard with hwmon drivers the mapping to sysfs
-entries follows the register map of the device e.g. in0_input
-corresponds to the register 0x20, in1_input corresponds to 0x21 etc.
+The kernel is self-contained project and can be built with bare-metal
+toolchain. But bare-metal toolchain doesn't define __linux__. Because of
+this u_quad_t type is not defined when using bare-metal toolchain and
+codafs build fails. This patch fixes it by defining u_quad_t type
+unconditionally.
 
-Hardware designers tend to work with input pins instead of registers
-which is where things start to get confusing. A hardware designer might
-say "the 1.5V rail is connected to the VCCP pin" leaving the software
-designer none the wiser as to which of the sysfs entries should be
-associated with the label "1.5V".
-
-Try to bridge the gap by documenting the mapping of sysfs entries to
-the corresponding pins. This should allow someone to create a
-configuration file or other mapping without needing to dive into the
-code and ADT datasheets.
-
-Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: Jan Harkes <jaharkes@cs.cmu.edu>
+Cc: Christoph Hellwig <hch@infradead.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
 ---
-After being given numerous hardware designs over the years using ADT chip=
-s for
-hardware monitoring I found myself always having to read the schematic, A=
-DT
-datasheet and the adt7475.c driver.
+ include/linux/coda.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-I was about to document this mapping on an internal wiki page but I figur=
-ed
-it's probably of interest to the wider community. Hence this patch.
-
-I've only documented the voltage mapping as the pwm and temperature and
-tachometer pins appear to have reasonably sensible naming.
-
-=20Documentation/hwmon/adt7475 | 12 ++++++++++++
-=201 file changed, 12 insertions(+)
-
-diff --git a/Documentation/hwmon/adt7475 b/Documentation/hwmon/adt7475
-index 09d73a10644c..01b46b290532 100644
---- a/Documentation/hwmon/adt7475
-+++ b/Documentation/hwmon/adt7475
-@@ -79,6 +79,18 @@ ADT7490:
-=20  * 2 GPIO pins (not implemented)
-=20  * system acoustics optimizations (not implemented)
-=20
-+Sysfs Mapping
-+-------------
+diff --git a/include/linux/coda.h b/include/linux/coda.h
+index d30209b9cef8..0ca0c83fdb1c 100644
+--- a/include/linux/coda.h
++++ b/include/linux/coda.h
+@@ -58,8 +58,7 @@ Mellon the rights to redistribute these changes without encumbrance.
+ #ifndef _CODA_HEADER_
+ #define _CODA_HEADER_
+ 
+-#if defined(__linux__)
+ typedef unsigned long long u_quad_t;
+-#endif
 +
-+     ADT7490     ADT7476     ADT7475   ADT7473
-+     -------     -------     -------   -------
-+in0  2.5VIN (22) 2.5VIN (22) -         -
-+in1  VCCP   (23) VCCP   (23) VCCP (14) VCCP (14)
-+in2  VCC    (4)  VCC    (4)  VCC  (4)  VCC  (3)
-+in3  5VIN   (20) 5VIN   (20)
-+in4  12VIN  (21) 12VIN  (21)
-+in5  VTT    (8)
-+
-=20Special Features
-=20----------------
-=20
---=20
+ #include <uapi/linux/coda.h>
+ #endif 
+-- 
 2.19.1
+
