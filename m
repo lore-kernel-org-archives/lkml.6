@@ -2,147 +2,101 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C84E6C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:00:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22101C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:00:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F0702081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:00:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE83620664
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:00:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UuYWgeLh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F0702081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IpQitV9O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE83620664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727677AbeJaAyc (ORCPT
+        id S1727695AbeJaAy7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 20:54:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36790 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726364AbeJaAyc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 20:54:32 -0400
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A2AA920847;
-        Tue, 30 Oct 2018 16:00:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540915228;
-        bh=N/BPXaHp6n++Pw2wc7QflHYtnWhTE1Acea35/56KQZc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=UuYWgeLhVfJrqfqI/YURb8DQAG5IpmnHlfTBWCa21Pb4fSvrVIXkN+rSxRDBHwTDc
-         M6YuSf6D8qO7scQ1+AQAz4tLErQaNXQTLbMfhrfwFVWje2c6T1UYkGhnU8WeOse+Xn
-         CVH/qZc+BLUUuwL+7IHoW9Al0QieyRgrBwnNVlXE=
-Received: by mail-qt1-f177.google.com with SMTP id g10-v6so14057640qtq.6;
-        Tue, 30 Oct 2018 09:00:28 -0700 (PDT)
-X-Gm-Message-State: AGRZ1gL4g+6+kLTXrL6cocDdK9xjQTdzx2NXJCpwFyNSbM4ob1Xsr9x2
-        bChg/GBU9D3zfWKd/Fopbuc5XkGvK6TsValg9w==
-X-Google-Smtp-Source: AJdET5fEHvAkl0y26i1+aVgiK/yMSNCvXIFQD/fBS7EBT0/VDRwRoCgwt/is1hSj00+6QMOX+1DcSRSBrcV9W9+or9c=
-X-Received: by 2002:ac8:2d35:: with SMTP id n50mr2277207qta.38.1540915227805;
- Tue, 30 Oct 2018 09:00:27 -0700 (PDT)
+        Tue, 30 Oct 2018 20:54:59 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:46957 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727317AbeJaAy7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 20:54:59 -0400
+Received: by mail-lf1-f66.google.com with SMTP id o2-v6so9268266lfl.13;
+        Tue, 30 Oct 2018 09:00:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:message-id:date:user-agent:mime-version
+         :content-language:content-transfer-encoding;
+        bh=1IEEeuUR/J5GCCap9VgHErkjtB5GQJrDwGqFb/dZsqI=;
+        b=IpQitV9Ozh/cfI7YXZrHpi5qh+kMPgggVRyjwuy3x1rePfzvmkLQGTm6qsFxDRPXR7
+         ZlRxs8lVrcWZRe0EoVj99NA0eQLJiX0yrPuXEKwe/2jUcJhyqyd8vEhpOr2Sp9EN7/R/
+         F98dk7FFwI+Jq9b3xnG40NWJNhaGqUee+QHJ/OqjMd7QbOeyQW8mCaQmAN1y2tHho4Zq
+         S7U9r7qEoPwJdLT3VojbkngKGy1bCBRfz9AqmBy2bDAqGcsJKRh13TjF3JqAn2zSzXxr
+         ZI9bzrqAQBtzUJEq/V1SoEnVsmg/S37/t6QmzpcS8mRc+K9jzeKppHQH6PEKpC6npdC2
+         mAVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
+         :mime-version:content-language:content-transfer-encoding;
+        bh=1IEEeuUR/J5GCCap9VgHErkjtB5GQJrDwGqFb/dZsqI=;
+        b=M/xtTTdXgZfvGC+7KWqaLF/0Phl0oMjS41FsjqmwguKJef/PjCobmdFHUapp1/davX
+         KhuiWmZqTCL6YKhMtT4nCOnBloteJc3qgcNUI/w3tlvv46blEcbP6NOYbENf8IQVq3sI
+         V2xgaXr0inxwLlOByz8scRjKEEJTwhfW3PPK712Y3tIxjg3VTubyfTMjT7GMR2u2Iqjq
+         /C34rSgqTHdr9whH7LIYNMuuCYlSflaGt9FsxHfPTiQ4ItqUrdfX9CtqdGsG2BEJI9eH
+         z6SPug5sMbTdmsKf3nNHXGk1bIvHA5Vi71P9gtUBC+7rvYzpGpckR2Nor3U/Qfmss00V
+         hx2g==
+X-Gm-Message-State: AGRZ1gJMNnE+lpTwoRuuOyZea3OLtBD5lQUBzUMVtgvspjs8kovWgy1f
+        7I/DPe3FDYasue8D796rCI+NKxM6pKw=
+X-Google-Smtp-Source: AJdET5ectI9MyGwzDpn/YdWd4K2lckLVG8lNGQ9qBDaJ9s6MvT+J6x24PM1bfNJ/QDOidGyqI/4zrg==
+X-Received: by 2002:a19:4948:: with SMTP id l8-v6mr2182701lfj.16.1540915254528;
+        Tue, 30 Oct 2018 09:00:54 -0700 (PDT)
+Received: from ?IPv6:2001:14bb:52:7be:f0bf:dd2d:f008:5213? (dmkd798g-7z2-yccwcp-4.rev.dnainternet.fi. [2001:14bb:52:7be:f0bf:dd2d:f008:5213])
+        by smtp.gmail.com with ESMTPSA id a4-v6sm3747201lfa.91.2018.10.30.09.00.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 09:00:53 -0700 (PDT)
+From:   Igor Stoppa <igor.stoppa@gmail.com>
+Subject: Build error in drivers/cpufreq/intel_pstate.c
+To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Len Brown <lenb@kernel.org>
+Cc:     linux-pm@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Message-ID: <e176a41a-eb24-7f2c-bb75-a9b18eab420f@gmail.com>
+Date:   Tue, 30 Oct 2018 18:00:52 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181004001432.21218-1-mka@chromium.org> <20181004001432.21218-2-mka@chromium.org>
- <20181005204743.GA17135@bogus> <20181012171523.GQ22824@google.com>
- <20181018194010.GV22824@google.com> <20181021151701.7b9daa41@archlinux>
-In-Reply-To: <20181021151701.7b9daa41@archlinux>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 30 Oct 2018 11:00:16 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJ1KAHg2QR+R7f5Vdx7Z41Y8T1wVarwocjoYiHwqk12pw@mail.gmail.com>
-Message-ID: <CAL_JsqJ1KAHg2QR+R7f5Vdx7Z41Y8T1wVarwocjoYiHwqk12pw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/2] dt-bindings: iio: vadc: Update example to include
- unit address for node 'usb-id-nopull'
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Matthias Kaehlcke <mka@chromium.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald <pmeerw@pmeerw.net>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Doug Anderson <dianders@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Oct 21, 2018 at 9:17 AM Jonathan Cameron <jic23@kernel.org> wrote:
->
-> On Thu, 18 Oct 2018 12:40:10 -0700
-> Matthias Kaehlcke <mka@chromium.org> wrote:
->
-> > On Fri, Oct 12, 2018 at 10:15:23AM -0700, Matthias Kaehlcke wrote:
-> > > On Fri, Oct 05, 2018 at 03:47:43PM -0500, Rob Herring wrote:
-> > > > On Wed, Oct 03, 2018 at 05:14:31PM -0700, Matthias Kaehlcke wrote:
-> > > > > The node has a reg property, therefore its name should include a unit
-> > > > > address.
-> > > > >
-> > > > > Also change the name from 'usb_id_nopull' to 'usb-id-nopull' to follow
-> > > > > DT conventions.
-> > > >
-> > > > This is ADC channels? If so, then DT convention would really be
-> > > > "adc@...".
-> > >
-> > > Is it really? A grep for 'adc@' in arch/${ARCH}/boot/dts yields
-> > > mostly ADC controller not channel nodes.
-> > >
-> > > I'm totally fine with changing the name to 'adc@...' if that's the
-> > > preference/convention, just want to reconfirm since the actual use is
-> > > a bit ambiguous.
-> >
-> > Could we please reach a conclusion on this?
-> >
-> > Summarizing the options on the table so far are:
-> >
-> > 1. usb-id-nopull@VADC_LR_MUX10_USB_ID
-> > 2. usb-id-nopull@57
-> > 3. adc@VADC_LR_MUX10_USB_ID
-> > 4. adc@57
-> >
-> > My personal preference goes to something <node name>@<define>
-> > since the unit address doesn't just resolve to an ADC channel number
-> > but also includes configuation information. A literal like '57'
-> > conveys less information than the define, it's easier to introduce
-> > errors and these errors are harder to spot.
->
-> I agree that to my mind this is the most sensible option.
+Hi,
+I'm getting the following build error:
 
-If you really want the defines, then fine. Of course, that only works
-if the function is fixed. It won't work if the function is defined per
-board.
+/home/igor/dev/kernel/linux/drivers/cpufreq/intel_pstate.c: In function 
+‘show_base_frequency’:
+/home/igor/dev/kernel/linux/drivers/cpufreq/intel_pstate.c:726:10: 
+error: implicit declaration of function 
+‘intel_pstate_get_cppc_guranteed’; did you mean ‘intel_pstate_get_epp’? 
+[-Werror=implicit-function-declaration]
+   ratio = intel_pstate_get_cppc_guranteed(policy->cpu);
+           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+           intel_pstate_get_epp
 
-Eventually, examples using defines will have to also include the
-headers. I plan to make the examples build-able.
 
-> > If 'adc@...' really was the convention (or should be) I'd be clearly
-> > in favor of following it. As mentioned above, in practice the use of
-> > the 'adc@...' node name seems to be more prevalent for ADC controllers
-> > than channels, so I'm more inclined towards 'usb-id-nopull@...' or
-> > similar.
-> >
-> > All that said, these are just my preferences for the reasons outlined
-> > above, if DT maintainers really want it to be 'adc@57' or some
-> > variation of that, I'm fine with that too. Please let me know and we
-> > can move forward with this trivial series.
->
-> Rob, what's your view on this?
 
-I want node names that reflect the class of the node (not a specific
-model) and consistency across bindings. What that looks like for
-multi-channel ADCs is really up to you. There was another binding
-recently which mapped sub-nodes to inputs rather than channels. Maybe
-that's needed too if you have more inputs than simultaneous channels.
+on top of:
 
-Also, if your goal is to just quiet dtc warnings, then I'd prefer you
-not. They often point to bigger issues even if they can be fixed with
-trivial changes. Of course, if not fixed someone else will come along
-and try the trivial fix again.
+commit 11743c56785c751c087eecdb98713eef796609e0
+Merge: 929e134c43c9 928002a5e9da
 
-Rob
+--
+igor
