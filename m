@@ -2,185 +2,147 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C38A9C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 20:36:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 190AFC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 20:40:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DD082081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 20:36:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kdab.com header.i=@kdab.com header.b="I28CSxfx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DD082081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kdab.com
+	by mail.kernel.org (Postfix) with ESMTP id B87F82081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 20:40:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B87F82081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727665AbeJaFbu (ORCPT
+        id S1726750AbeJaFfF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 01:31:50 -0400
-Received: from mail.kdab.com ([176.9.126.58]:9348 "EHLO mail.kdab.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725812AbeJaFbu (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 01:31:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kdab.com; h=
- content-type:content-type:mime-version:references:in-reply-to
- :organization:message-id:date:date:subject:subject:from:from; s=
- dkim; t=1540931805; x=1541795806; bh=aaXSbHdyxUXrcQM0Jr3PgNtbEvQ
- Mj5kOHUYNTS54QH8=; b=I28CSxfxD1JWG0KlAdEDdGaAsaMkQSAiaKneeuN2uN0
- GDg/kVjkBchxBBo4ZYRqzVKBdZ9baXR9yBdO69wdxAvv8neoeljDMxabpPizlwWp
- DAxNCgZZylvJjX8lCbEEDPh/W0sPkzHhPy1n8GM1FzN8tr0l61+Ud+gX9/qvoBhE
- =
-X-Virus-Scanned: amavisd-new at kdab.com
-From:   Milian Wolff <milian.wolff@kdab.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     jolsa@kernel.org, Linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH] perf util: take pgoff into account when reporting elf to
- libdwfl
-Date:   Tue, 30 Oct 2018 21:36:39 +0100
-Message-ID: <2799419.aVeE0VMyCs@agathebauer>
-Organization: KDAB
-In-Reply-To: <20181029174014.GG21857@kernel.org>
-References: <20181029141644.3907-1-milian.wolff@kdab.com>
- <3361238.noN1Jb7VD2@milian-kdab2> <20181029174014.GG21857@kernel.org>
+        Wed, 31 Oct 2018 01:35:05 -0400
+Received: from mail-it1-f200.google.com ([209.85.166.200]:53477 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725743AbeJaFfE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 01:35:04 -0400
+Received: by mail-it1-f200.google.com with SMTP id f79-v6so13808821ita.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 13:40:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=YiT/1DAoDx7HhO61DB3QfZzctrUZLP52MPCXiwUzRSk=;
+        b=jcDoPjznk1REJ76pUqCcLcR50wm+cF7EMFjYBLqDU1RfqFw56v53CMoaa8tEpXOCM6
+         TqL64tSvWeHxhBC3Wvdrj5OavLI41KFQXIi00LuKOifNiuHxuhHP2YM9uqwLRSUi6Tzt
+         3e+3CSUYlHnPAOjBhXqH9EBn9TqU3Y3JUPaw8vCoUO+vfD/ytkFk21TI/uTN39o6pb2l
+         BJNoBCv62vqSbgFrW3NxoE5kdON7jHcXuuTzLd+Gb5sXYAXDatw+iPmvKf/6Hm9rcHEP
+         E6tYXZuzs+IkS6oCTuO72OmBmmHWB6nLYrKfXoa+SEHOimMK6RyPwiF2pLmg2s7oKSKk
+         aVeg==
+X-Gm-Message-State: AGRZ1gJZKkKehi97YpA2uYMi3DByuxBeZUR4VKi1fJ96LEU9/81ZRma7
+        xtlyCcQaM4t2MRbtusEWPjwlaBHXs8vfmWOc6zTXBqNWU3bA
+X-Google-Smtp-Source: AJdET5dk5HqMVRnkTmzHKZ+M4Sj/HPUnnbZIW1eFXrddc2VV7VIUKHqGzSecbQl5lsU1izj0WGxGvywjd8VO/P7SYKuJteSYr8/B
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2299280.lfgxnSjn8h";
- micalg="sha256"; protocol="application/pkcs7-signature"
+X-Received: by 2002:a24:9883:: with SMTP id n125-v6mr106816itd.15.1540932003339;
+ Tue, 30 Oct 2018 13:40:03 -0700 (PDT)
+Date:   Tue, 30 Oct 2018 13:40:03 -0700
+In-Reply-To: <00000000000003920305797785a0@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000aeaf8a057978304e@google.com>
+Subject: Re: general protection fault in __vb2_queue_free
+From:   syzbot <syzbot+e1fb118a2ebb88031d21@syzkaller.appspotmail.com>
+To:     kyungmin.park@samsung.com, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, m.szyprowski@samsung.com,
+        mchehab@kernel.org, pawel@osciak.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---nextPart2299280.lfgxnSjn8h
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+syzbot has found a reproducer for the following crash on:
 
-On Montag, 29. Oktober 2018 18:40:14 CET Arnaldo Carvalho de Melo wrote:
-> Em Mon, Oct 29, 2018 at 04:26:27PM +0100, Milian Wolff escreveu:
-> > On Monday, October 29, 2018 3:16:44 PM CET Milian Wolff wrote:
-> > > Libdwfl parses an ELF file itself and creates mappings for the
-> > > individual sections. Perf on the other hand sees raw mmap events which
-> > > represent individual sections. When we encounter an address pointing
-> > > into a mapping with pgoff != 0, we must take that into account and
-> > > report the file at the non-offset base address.
-> > 
-> > > This fixes unwinding with libdwfl in some cases. E.g. for a file like:
-> > <snip>
-> > 
-> > > Note that the backtrace is still stopping too early, when
-> > > compared to the nice results obtained via libunwind. It's
-> > > unclear so far what the reason for that is.
-> > 
-> > The remaining issue is due to a bug in elfutils:
-> > 
-> > https://sourceware.org/ml/elfutils-devel/2018-q4/msg00089.html
-> > 
-> > With both patches applied, libunwind and elfutils produce the same output
-> > for the above scenario.
-> 
-> I'm updating the patch to remove:
-> 
-> "It's unclear so far what the reason for that is."
-> 
-> Adding:
-> 
-> "See https://sourceware.org/ml/elfutils-devel/2018-q4/msg00089.html for
-> a patch fixing that."
-> 
-> Ok?
+HEAD commit:    11743c56785c Merge tag 'rpmsg-v4.20' of git://github.com/a..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14c8eb5b400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=93932074d01b4a5
+dashboard link: https://syzkaller.appspot.com/bug?extid=e1fb118a2ebb88031d21
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=158fdbcb400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11d7d06d400000
 
-Yes, thanks. I figured the fix for elfutils out after I submitted the perf 
-patch.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+e1fb118a2ebb88031d21@syzkaller.appspotmail.com
 
-> Or are you saying that that "unclear" part applies to both libunwind
-> and elfutils?
-
-No, libunwind worked fine without these patches for this specific case.
-
-Cheers
-
--- 
-Milian Wolff | milian.wolff@kdab.com | Senior Software Engineer
-KDAB (Deutschland) GmbH, a KDAB Group company
-Tel: +49-30-521325470
-KDAB - The Qt, C++ and OpenGL Experts
---nextPart2299280.lfgxnSjn8h
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCDEIw
-ggXmMIIDzqADAgECAhBqm+E4O/8ra58B1dm4p1JWMA0GCSqGSIb3DQEBDAUAMIGFMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYD
-VQQKExFDT01PRE8gQ0EgTGltaXRlZDErMCkGA1UEAxMiQ09NT0RPIFJTQSBDZXJ0aWZpY2F0aW9u
-IEF1dGhvcml0eTAeFw0xMzAxMTAwMDAwMDBaFw0yODAxMDkyMzU5NTlaMIGXMQswCQYDVQQGEwJH
-QjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRowGAYDVQQK
-ExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RPIFJTQSBDbGllbnQgQXV0aGVudGlj
-YXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
-AL6znlesKHZ1QBbHOAOY08YYdiFQ8yV5C0y1oNF9Olg+nKcxLqf2NHbZhGra0D00SOTq9bus3/mx
-gUsg/Wh/eXQ0pnp8tZ8XZWAnlyKMpjL+qUByRjXCA6RQyDMqVaVUkbIr5SU0RDX/kSsKwer3H1pT
-/HUrBN0X8sKtPTdGX8XAWt/VdMLBrZBlgvnkCos+KQWWCo63OTTqRvaq8aWccm+KOMjTcE6s2mj6
-RkalweyDI7X+7U5lNo6jzC8RTXtVV4/Vwdax720YpMPJQaDaElmOupyTf1Qib+cpukNJnQmwygjD
-8m046DQkLnpXNCAGjuJy1F5NATksUsbfJAr7FLUCAwEAAaOCATwwggE4MB8GA1UdIwQYMBaAFLuv
-fgI9+qbxPISOre44mOzZMjLUMB0GA1UdDgQWBBSCr2yM+MX+lmF86B89K3FIXsSLwDAOBgNVHQ8B
-Af8EBAMCAYYwEgYDVR0TAQH/BAgwBgEB/wIBADARBgNVHSAECjAIMAYGBFUdIAAwTAYDVR0fBEUw
-QzBBoD+gPYY7aHR0cDovL2NybC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQ2VydGlmaWNhdGlvbkF1
-dGhvcml0eS5jcmwwcQYIKwYBBQUHAQEEZTBjMDsGCCsGAQUFBzAChi9odHRwOi8vY3J0LmNvbW9k
-b2NhLmNvbS9DT01PRE9SU0FBZGRUcnVzdENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3Au
-Y29tb2RvY2EuY29tMA0GCSqGSIb3DQEBDAUAA4ICAQB4XLKBKDRPPO5fVs6fl1bsj6JrF/bz9kkI
-BtTYLzXN30D+03Hj6OxCDBEaIeNmsBhrJmuubvyE7HtoSmR809AgcYboW+rcTNZ/8u/Hv+GTrNI/
-AhqX2/kiQNxmgUPt/eJPs92Qclj0HnVyy9TnSvGkSDU7I5Px+TbO+88G4zipA2psZaWeEykgzClZ
-lPz1FjTCkk77ZXp5cQYYexE6zeeN4/0OqqoAloFrjAF4o50YJafX8mnahjp3I2Y2mkjhk0xQfhNq
-bzlLWPoT3m7j7U26u7zg6swjOq8hITYc3/np5tM5aVyu6t99p17bTbY7+1RTWBviN9YJzK8HxzOb
-XYWBf/L+VGOYNsQDTxAk0Hbvb1j6KjUhg7fO294F29QIhhmiNOr84JHoy+fNLpfvYc/Q9EtFOI5I
-SYgOxLk3nD/whbUe9rmEQXLp8MB933Ij474gwwCPUpwv9mj2PMnXoc7mbrS22XUSeTwxCTP9bcmU
-dp4jmIoWfhQm7X9w/Zgddg+JZ/YnIHOwsGsaTUgj7fIvxqith7DoJC91WJ8Lce3CVJqb1XWeKIJ8
-4F7YLXZN0oa7TktYgDdmQVxYkZo1c5noaDKH9Oq9cbm/vOYRUM1cWcef20Wkyk5S/GFyyPJwG0fR
-1nRas3DqAf4cXxMiEKcff7PNa4M3RGTqH0pWR8p6EjCCBlQwggU8oAMCAQICEAf6KCF9+1doL2oE
-OTPysLwwDQYJKoZIhvcNAQELBQAwgZcxCzAJBgNVBAYTAkdCMRswGQYDVQQIExJHcmVhdGVyIE1h
-bmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGjAYBgNVBAoTEUNPTU9ETyBDQSBMaW1pdGVkMT0w
-OwYDVQQDEzRDT01PRE8gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWls
-IENBMB4XDTE3MDUyMzAwMDAwMFoXDTIwMDUyMjIzNTk1OVowggFZMQswCQYDVQQGEwJTRTEPMA0G
-A1UEERMGNjgzIDMxMRIwEAYDVQQIEwlWYWVybWxhbmQxEDAOBgNVBAcTB0hhZ2ZvcnMxGDAWBgNV
-BAkTD05vcnJpbmdzIHZhZWcgMjEPMA0GA1UEEhMGQm94IDMwMSYwJAYDVQQKDB1LbGFyw6RsdmRh
-bGVucyBEYXRha29uc3VsdCBBQjEdMBsGA1UECxMUQSBLREFCIEdyb3VwIENvbXBhbnkxQzBBBgNV
-BAsMOklzc3VlZCB0aHJvdWdoIEtsYXLDpGx2ZGFsZW5zIERhdGFrb25zdWx0IEFCIEUtUEtJIE1h
-bmFnZXIxHzAdBgNVBAsTFkNvcnBvcmF0ZSBTZWN1cmUgRW1haWwxFTATBgNVBAMTDE1pbGlhbiBX
-b2xmZjEkMCIGCSqGSIb3DQEJARYVbWlsaWFuLndvbGZmQGtkYWIuY29tMIIBIjANBgkqhkiG9w0B
-AQEFAAOCAQ8AMIIBCgKCAQEAxrzfNBVvRbiAknuTBXuQnNm9sLIFLo0vbPB6kswk78A3tA++Zn5c
-lQUHhGlQq1cdYxagnUpqwvG3Sod15mPSOLkAPf/mabLN7p+lFbRaUP+97ZkTZtvb4BCC3osIEFI4
-G393OSFWqc2qmIPE/SwSASbAA20Fcaa2M6P1lhOk/ttUh2jIurTPF0wUycIA7lBddrOgaOA8e2m6
-iLTNHtlrfRbBaUX91D5ebY+UWmIjXSQ9+CtutMzBkwnF0rZKririvOkklg9VzEGNQVHrQfDF2s/U
-pOtmtuVSwElauGT/KALyCFuIrYC1pmaKH8S1xODJqiRaf6jH8E+KQzKjyM/ErwIDAQABo4IB1TCC
-AdEwHwYDVR0jBBgwFoAUgq9sjPjF/pZhfOgfPStxSF7Ei8AwHQYDVR0OBBYEFN+m99RtIuA1bSdw
-6b1brOX7X3AJMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8EAjAAMB0GA1UdJQQWMBQGCCsGAQUF
-BwMEBggrBgEFBQcDAjBGBgNVHSAEPzA9MDsGDCsGAQQBsjEBAgEDBTArMCkGCCsGAQUFBwIBFh1o
-dHRwczovL3NlY3VyZS5jb21vZG8ubmV0L0NQUzBaBgNVHR8EUzBRME+gTaBLhklodHRwOi8vY3Js
-LmNvbW9kb2NhLmNvbS9DT01PRE9SU0FDbGllbnRBdXRoZW50aWNhdGlvbmFuZFNlY3VyZUVtYWls
-Q0EuY3JsMIGLBggrBgEFBQcBAQR/MH0wVQYIKwYBBQUHMAKGSWh0dHA6Ly9jcnQuY29tb2RvY2Eu
-Y29tL0NPTU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcnQwJAYI
-KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTAgBgNVHREEGTAXgRVtaWxpYW4ud29s
-ZmZAa2RhYi5jb20wDQYJKoZIhvcNAQELBQADggEBABf47LSJADqH+ow9INv3QM1NC/qq2bjxGvsZ
-68iD11VEUAFlsYfsVTgQqUirwPVTYenXtwVBELHZyywsui1JxL7HKQetLQegDDP/RyfjReVaWxhy
-3OpuItsgLVbru9QVgPifnoBFPtfZcwjeJDmeSbLT8oj4Rd0KYBOIve7WKvsfNPsNwfbLwY2zILkE
-LjxZcVi2AwZHDyab+dzL/3YcLuJj1lSawBGn7ilpcdZydlv4aye51pD/MemLIYLcylt+ImrmjnTV
-y+QlAHRF3s5FE8yAr+W1MBD/1bKZCSgFt8VQoAlz3hiQh8QqZp4Zl8WuVL4+mP/mT6VDEWgq/0Bo
-cukxggJuMIICagIBATCBrDCBlzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hl
-c3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNV
-BAMTNENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EC
-EAf6KCF9+1doL2oEOTPysLwwDQYJYIZIAWUDBAIBBQCggZMwGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMTgxMDMwMjAzNjM5WjAoBgkqhkiG9w0BCQ8xGzAZMAsGCWCG
-SAFlAwQBAjAKBggqhkiG9w0DBzAvBgkqhkiG9w0BCQQxIgQg1KgRULI7AxfTfBJlFDG5UuKrBE0R
-SpI9CzIoNq9jOxwwDQYJKoZIhvcNAQEBBQAEggEAOyGLzqvSlIaSVv6KHHOX+BAafR3T4fXt9F/N
-4cJ4aGY1KPSI+vd3WfOR10GyijN1OXdbVj18jTVC+Ek2wmHYbClS/cpXI50WPKrZ6z5sDBsaQxIp
-ZGcn3h8vKjfUMGV0ZwM8j38L3/iqrtF9/K8w5toyinah+c4SUa3MZygTMHRHoMWrDghKu3d/WVoD
-w9YHqODNKBuLbetAXbvPcX6Ub97WUEQDmL6msmSbKMzIAFRSJjz/3RDcHzUYGs7OI1gPZg7ZPrpt
-80V3YeHjkAI20apZeQxZ3OEZeH0/eak+d8/OnMh9p11pIgkRPpNThG/HFghmxnHUceUku8x1bqF2
-OQAAAAAAAA==
-
-
---nextPart2299280.lfgxnSjn8h--
-
+audit: type=1800 audit(1540931695.249:30): pid=5573 uid=0 auid=4294967295  
+ses=4294967295 subj=_ op=collect_data cause=failed(directio)  
+comm="startpar" name="rmnologin" dev="sda1" ino=2423 res=0
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 5728 Comm: syz-executor006 Not tainted 4.19.0+ #88
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:vb2_vmalloc_put_userptr+0x73/0x250  
+drivers/media/common/videobuf2/videobuf2-vmalloc.c:136
+Code: fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 c2 01 00 00 48 b8 00 00 00 00  
+00 fc ff df 49 8b 5e 08 48 8d 7b 09 48 89 fa 48 c1 ea 03 <0f> b6 04 02 48  
+89 fa 83 e2 07 38 d0 7f 08 84 c0 0f 85 72 01 00 00
+RSP: 0018:ffff8801d2d77408 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 1ffffffff113e0ac
+RDX: 0000000000000001 RSI: ffffffff854c11d9 RDI: 0000000000000009
+RBP: ffff8801d2d77438 R08: ffff8801d4b246c0 R09: ffffed003a5d044e
+R10: ffff8801d2d77530 R11: ffff8801d2e82277 R12: ffffc90002551000
+R13: 0000000000000000 R14: ffff8801cec5f380 R15: ffff8801cec5f380
+FS:  0000000000000000(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000000043e910 CR3: 000000000946a000 CR4: 00000000001406f0
+Call Trace:
+  __vb2_buf_userptr_put drivers/media/common/videobuf2/videobuf2-core.c:258  
+[inline]
+  __vb2_free_mem drivers/media/common/videobuf2/videobuf2-core.c:415 [inline]
+  __vb2_queue_free+0x4b1/0xa30  
+drivers/media/common/videobuf2/videobuf2-core.c:456
+  vb2_core_queue_release+0x62/0x80  
+drivers/media/common/videobuf2/videobuf2-core.c:2055
+  vb2_queue_release+0x15/0x20  
+drivers/media/common/videobuf2/videobuf2-v4l2.c:672
+  v4l2_m2m_ctx_release+0x1e/0x35 drivers/media/v4l2-core/v4l2-mem2mem.c:927
+  vicodec_release+0xbd/0x120  
+drivers/media/platform/vicodec/vicodec-core.c:1236
+  v4l2_release+0xfb/0x1a0 drivers/media/v4l2-core/v4l2-dev.c:448
+  __fput+0x385/0xa30 fs/file_table.c:278
+  ____fput+0x15/0x20 fs/file_table.c:309
+  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+  exit_task_work include/linux/task_work.h:22 [inline]
+  do_exit+0x1ad6/0x26d0 kernel/exit.c:867
+  do_group_exit+0x177/0x440 kernel/exit.c:970
+  __do_sys_exit_group kernel/exit.c:981 [inline]
+  __se_sys_exit_group kernel/exit.c:979 [inline]
+  __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:979
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x442d98
+Code: Bad RIP value.
+RSP: 002b:00007ffc32d53f78 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000442d98
+RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
+RBP: 00000000004c2968 R08: 00000000000000e7 R09: ffffffffffffffd0
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00000000006d4180 R14: 0000000000000000 R15: 0000000000000000
+Modules linked in:
+---[ end trace 894fb90190094ea9 ]---
+RIP: 0010:vb2_vmalloc_put_userptr+0x73/0x250  
+drivers/media/common/videobuf2/videobuf2-vmalloc.c:136
+Code: fc ff df 48 c1 ea 03 80 3c 02 00 0f 85 c2 01 00 00 48 b8 00 00 00 00  
+00 fc ff df 49 8b 5e 08 48 8d 7b 09 48 89 fa 48 c1 ea 03 <0f> b6 04 02 48  
+89 fa 83 e2 07 38 d0 7f 08 84 c0 0f 85 72 01 00 00
+RSP: 0018:ffff8801d2d77408 EFLAGS: 00010202
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 1ffffffff113e0ac
+RDX: 0000000000000001 RSI: ffffffff854c11d9 RDI: 0000000000000009
+RBP: ffff8801d2d77438 R08: ffff8801d4b246c0 R09: ffffed003a5d044e
+R10: ffff8801d2d77530 R11: ffff8801d2e82277 R12: ffffc90002551000
+R13: 0000000000000000 R14: ffff8801cec5f380 R15: ffff8801cec5f380
+FS:  000000000073c880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000442d6e CR3: 000000000946a000 CR4: 00000000001406f0
 
