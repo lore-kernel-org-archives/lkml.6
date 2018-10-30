@@ -2,112 +2,137 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT,USER_IN_DEF_DKIM_WL autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E747C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:40:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E34C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:42:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F210E20664
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:40:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF53C20664
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:42:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Pn613Bh6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F210E20664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="d1RWjEk8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF53C20664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727724AbeJaBeo (ORCPT
+        id S1727698AbeJaBgX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 21:34:44 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:44238 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727477AbeJaBen (ORCPT
+        Tue, 30 Oct 2018 21:36:23 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:35856 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727477AbeJaBgW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 21:34:43 -0400
-Received: by mail-io1-f68.google.com with SMTP id c6-v6so7651271iob.11
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 09:40:31 -0700 (PDT)
+        Tue, 30 Oct 2018 21:36:22 -0400
+Received: by mail-it1-f196.google.com with SMTP id t4-v6so6164358itf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 09:42:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LfS6KoU32w9BT0xsemMgbsjrnSc7TivyeZsvun1cINw=;
-        b=Pn613Bh6Ki/3l3lw984fWyNienOtpe8vsc2BQA0MgrSFaqjVLm8dj4IW0hjjrt6UKN
-         +Fof2cQdGBodfvKAubfU9P5KiKudgjzS5A6esTXeRwHY9ajyjkGsa3Sss9q/7pUGsRM+
-         Zt0Vo390S57GPnND2B5X2nRQ48YSchJfMgNp556LnaLOGe+KHjdMOq3o2ZbVCXv8y/WP
-         wVPH579NzIm8sUaOmQv0ZMm/9Gn7Rjiv0Lu67NQ8+Bz88khsVl8Vy/JQhG8i/k9P4z2k
-         wyP9tWr3EZOqCjlsNn68RYtxlqDOSTdNiMUQJCMjXD7/imeo0OlU9JS/uKZmaGrrlrXJ
-         FaJQ==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=zBU+uABuxWUGARspHsS+ByrApK2CO9TEU3m4XjfnKPA=;
+        b=d1RWjEk8WEpmD9XHoiBVEbEQ09F60auNfmxBqZj4ocqO6niLoQoPN4ClAUoU+kuhM7
+         lGEcqCg6StOQhyTxkHwUKeu5BmayQYtc90llPpEljz37V+dWlrofQSoAUJjtqaPNEfSX
+         /je3zyqX3oVtTFpT2SCM+ta1t+Q4corl7O16/mj9F2isJg3OiWrDXGsIxiQNOyOJ7YLI
+         chwhFHFo9CVpf5rvNcU6VZKeaKxO3kSZNS6YSwdEToMGtMMbw2vfqzwFk7+ZxrXEJaIN
+         Cs7fwo4Vf9qHhH5O6ojvnNIjS2ZEWTD6IJ6GqF30grwTUmku/73p+a0TEK6fNrUuWqxp
+         UJLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LfS6KoU32w9BT0xsemMgbsjrnSc7TivyeZsvun1cINw=;
-        b=lFR0mK6Cn9Po9r2muf9yFpNstEOUG6HNeKbczLej5bpLjmNwzHTVTmno6cJSBNgy6n
-         AXVxj21tvZU3CIm9DN2Mpuzjblx2HDJWdrGm0FBhZr7O+sSMoWMmYGxTZ+QETOnM/RoR
-         T3fxFLoCuFWLQiTuhjuBKlaWPqgoymltw7mBeHgMOHkVlWScFdHiQQZ+c+oNWp3/211Y
-         WY77K5qjecJakO9SM+o2NhHvWb7OQmqLNegf4FK6Ue0rfnLABcnvDt+WBQZlm4o02e3t
-         lpYuVAKpOluI/5v8PvP6rkvMkzzzxV6HSg24EqK7d+MD81SWw6SodqIrOypC8VfGSiwC
-         N5+Q==
-X-Gm-Message-State: AGRZ1gKwS6/rQv4oP2/B7TPziI1FRrH4Zn71z7Rx/aUtclA4mkkL6VMZ
-        hJ6ZkSvNJf6UTWTqR+vGid0xlA==
-X-Google-Smtp-Source: AJdET5dJSOT1VIPdVjFPaN5zvhuPCKtmNV6No2EH9bhzawQrB7kBczGDY3DZBiSq+TTP1H1pc3AWWw==
-X-Received: by 2002:a6b:6818:: with SMTP id d24-v6mr11705776ioc.293.1540917630553;
-        Tue, 30 Oct 2018 09:40:30 -0700 (PDT)
-Received: from google.com ([2620:15c:183:0:d68b:e645:8da4:bbe1])
-        by smtp.gmail.com with ESMTPSA id v134-v6sm9180609ita.23.2018.10.30.09.40.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Oct 2018 09:40:29 -0700 (PDT)
-Date:   Tue, 30 Oct 2018 10:40:27 -0600
-From:   Benjamin Gordon <bmgordon@google.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-kernel@vger.kernel.org, John Stultz <john.stultz@linaro.org>,
-        Kees Cook <keescook@chromium.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Oren Laadan <orenl@cellrox.com>,
-        Ruchi Kandoi <kandoiruchi@google.com>,
-        Rom Lemarchand <romlem@android.com>,
-        Todd Kjos <tkjos@google.com>, Colin Cross <ccross@android.com>,
-        Nick Kralevich <nnk@google.com>,
-        Dmitry Shmidt <dimitrysh@google.com>,
-        Elliott Hughes <enh@google.com>,
-        Android Kernel Team <kernel-team@android.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] proc: use ns_capable instead of capable for timerslack_ns
-Message-ID: <20181030164027.GA184838@google.com>
-References: <20181017224738.193598-1-bmgordon@google.com>
- <87in1pn9d0.fsf@xmission.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zBU+uABuxWUGARspHsS+ByrApK2CO9TEU3m4XjfnKPA=;
+        b=rBPGUFsvsh3A830i3cAReZ8VnzexLr73DJSFb0yYOe6cgn0pvOM28hGfXjqxDq5Uv+
+         aiuYQuwDG7YiZWdogtf1DXOAeRUHP3kBi8YRU46jNN9bPPm4+AKsZ941NCKu4YnsiHjs
+         uU8TaQ2qrL4sTAjR2OXbGtpe7tBXoCua3dGIgQkUHZLPPh/KQ8y+xi1Ya/sMeuTkHeYh
+         ttiSUkkrFU/q196SGUHfDzxuhKlEbySCxi0cYc1MJxgpEzkTJ8PdbnHUUgNTnN+qvxYS
+         8c4TTYmRJChlq9idlq18DszzaKXFQeZNC6+FummiD3hCdcJbRg3t6tDDNx6rfHYwDuOk
+         d6Lg==
+X-Gm-Message-State: AGRZ1gIBu909UYiCJ7VNraBhLpNOUKnqwqTI+nmPgS8LryYfRM51jlfP
+        YDRQVmXqQWA4eMoBynYoD1Vq7A==
+X-Google-Smtp-Source: AJdET5csVRLOF6mrdPDRRy+swH+Vw/jku7BPqj8KFLml56KLjBbaRTHAgIFwCkH5WC2sVy8MJXhLUw==
+X-Received: by 2002:a24:94d:: with SMTP id 74-v6mr1838014itm.178.1540917729740;
+        Tue, 30 Oct 2018 09:42:09 -0700 (PDT)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id c185-v6sm8249961itc.5.2018.10.30.09.42.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 09:42:08 -0700 (PDT)
+Subject: Re: [PATCH 11/14] irq: add support for allocating (and affinitizing)
+ sets of IRQs
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+References: <20181029163738.10172-1-axboe@kernel.dk>
+ <20181029163738.10172-12-axboe@kernel.dk>
+ <20181030142601.GA18906@localhost.localdomain>
+ <c11c95ae-5e10-38bd-d2c2-e2407634f52a@kernel.dk>
+ <20181030144527.GB18906@localhost.localdomain>
+ <46dbcbcd-799f-9970-a68f-de7e96b1a6bb@kernel.dk>
+ <20181030150840.GC18906@localhost.localdomain>
+ <d049e764-b9d1-f06f-40d3-39517f3f65a2@kernel.dk>
+ <20181030160242.GD18906@localhost.localdomain>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <27c1017a-9560-80cb-038d-f64727a162c3@kernel.dk>
+Date:   Tue, 30 Oct 2018 10:42:07 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87in1pn9d0.fsf@xmission.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181030160242.GD18906@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 25, 2018 at 01:56:27PM -0500, Eric W. Biederman wrote:
-> > Access to timerslack_ns is controlled by a process having CAP_SYS_NICE
-> > in its effective capability set, but the current check looks in the root
-> > namespace instead of the process' user namespace.  Since a process is
-> > allowed to do other activities controlled by CAP_SYS_NICE inside a
-> > namespace, it should also be able to adjust timerslack_ns.
+On 10/30/18 10:02 AM, Keith Busch wrote:
+> On Tue, Oct 30, 2018 at 09:18:05AM -0600, Jens Axboe wrote:
+>> On 10/30/18 9:08 AM, Keith Busch wrote:
+>>> On Tue, Oct 30, 2018 at 08:53:37AM -0600, Jens Axboe wrote:
+>>>> The sum of the set can't exceed the nvecs passed in, the nvecs passed in
+>>>> should be the less than or equal to nvecs. Granted this isn't enforced,
+>>>> and perhaps that should be the case.
+>>>
+>>> That should at least initially be true for a proper functioning
+>>> driver. It's not enforced as you mentioned, but that's only related to
+>>> the issue I'm referring to.
+>>>
+>>> The problem is pci_alloc_irq_vectors_affinity() takes a range, min_vecs
+>>> and max_vecs, but a range of allowable vector allocations doesn't make
+>>> sense when using sets.
+>>
+>> I feel like we're going in circles here, not sure what you feel the
+>> issue is now? The range is fine, whoever uses sets will need to adjust
+>> their sets based on what pci_alloc_irq_vectors_affinity() returns,
+>> if it didn't return the passed in desired max.
 > 
-> The goal seems legitimate.  However the permission checks look wrong.
+> Sorry, let me to try again.
 > 
-> In particular the choice of user namespace should be
-> "p->cred->user_ns".  This will limit this to tasks that have
-> CAP_SYS_NICE in the same namespace as the task that is being modified.
+> pci_alloc_irq_vectors_affinity() starts at the provided max_vecs. If
+> that doesn't work, it will iterate down to min_vecs without returning to
+> the caller. The caller doesn't have a chance to adjust its sets between
+> iterations when you provide a range.
 > 
-> Testing file->f_cred->user_ns it is testing whoever opened the file and
-> that could be anyone.
+> The 'masks' overrun problem happens if the caller provides min_vecs
+> as a smaller value than the sum of the set (plus any reserved).
+> 
+> If it's up to the caller to ensure that doesn't happen, then min and
+> max must both be the same value, and that value must also be the same as
+> the set sum + reserved vectors. The range just becomes redundant since
+> it is already bounded by the set.
+> 
+> Using the nvme example, it would need something like this to prevent the
+> 'masks' overrun:
 
-Thanks, that seems like the right answer here.  I'll send a v2 to fix
-it.
+OK, now I hear what you are saying. And you are right, the callers needs
+to provide minvec == maxvec for sets, and then have a loop around that
+to adjust as needed.
 
-Thanks,
-Benjamin
+I'll make that change in nvme.
+
+-- 
+Jens Axboe
+
