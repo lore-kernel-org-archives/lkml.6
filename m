@@ -2,101 +2,160 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1B4BC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:28:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5EABC6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:28:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86AFE20880
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:28:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC27E2087A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:28:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UBNxgtzK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86AFE20880
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="PbOFWe21"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC27E2087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728673AbeJ3WWA (ORCPT
+        id S1728691AbeJ3WWD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 18:22:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52896 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727759AbeJ3WV7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 18:21:59 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 86AA62080A;
-        Tue, 30 Oct 2018 13:28:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540906111;
-        bh=9oW7HV5TWB+xI9PP1euB86qqbz06Xv+geUhczDXLZ5Q=;
+        Tue, 30 Oct 2018 18:22:03 -0400
+Received: from conuserg-11.nifty.com ([210.131.2.78]:38426 "EHLO
+        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726925AbeJ3WWC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 18:22:02 -0400
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-11.nifty.com with ESMTP id w9UDQcm0022568;
+        Tue, 30 Oct 2018 22:26:38 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com w9UDQcm0022568
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1540905999;
+        bh=skUFf3WNnS8Fe4IYW9gvWo00Z0AKhP9n/utRSDh/eC4=;
         h=From:To:Cc:Subject:Date:From;
-        b=UBNxgtzK74f6cuK6IMgSPhsb08Y7bmY5ecIGW1JUSTqIpDwpk9RD3h4rG6V0Aolo8
-         cHOJ86ewMOnpzC+2rPbjAPVFC7NZBEIphl/3tSPq2neSSKwcj/N3ONeJBk+AQNwnKF
-         Tjfi2FWOQ3xweevli4ErPfYcNhLFnBip1bdvGXDM=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Eric Dumazet <edumazet@google.com>,
-        John Sperbeck <jsperbeck@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 01/19] bpf: do not blindly change rlimit in reuseport net selftest
-Date:   Tue, 30 Oct 2018 09:28:06 -0400
-Message-Id: <20181030132824.218056-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        b=PbOFWe21d7KJAJtQgRPuTATo7B3/HuloM6ffOv3sk4aV+4bCDF3HNBKYgejbulHZ0
+         L/NMow1PfvQPfMsZcc6b3hoXxQ355jLDhk5TCabuQ0tH8ExhkHWCHkuJtSkkTBKBjg
+         LEopFs2hvA+JhbIpSeplGSrP2/w9/U2xrg4/GCnJV96ikeh+aDaAG9H+5wIEEW5p1J
+         Uy1/jk4PWgCO9hyFnfT6WYEMvYIeqZy58EQ2dGgMFSUXpnfV+dczHXJdW3BWH6aIYv
+         aCOb8uj7c1cwdOn9xm6/hPlwa2TcSgBp4YsQlxAJb96GT3uS8iQLd/RT52Qd7gu1Mq
+         oikoVXyhBHchA==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-mips@linux-mips.org, James Hogan <jhogan@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linux-kernel@vger.kernel.org,
+        Michal Marek <michal.lkml@markovi.net>,
+        Paul Mackerras <paulus@samba.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v2 1/2] kbuild: replace cc-name test with CONFIG_CC_IS_CLANG
+Date:   Tue, 30 Oct 2018 22:26:33 +0900
+Message-Id: <1540905994-6073-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+Evaluating cc-name invokes the compiler every time even when you are
+not compiling anything, like 'make help'. This is not efficient.
 
-[ Upstream commit 262f9d811c7608f1e74258ceecfe1fa213bdf912 ]
+The compiler type has been already detected in the Kconfig stage.
+Use CONFIG_CC_IS_CLANG, instead.
 
-If the current process has unlimited RLIMIT_MEMLOCK,
-we should should leave it as is.
-
-Fixes: 941ff6f11c02 ("bpf: fix rlimit in reuseport net selftest")
-Signed-off-by: John Sperbeck <jsperbeck@google.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Acked-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
 ---
- tools/testing/selftests/net/reuseport_bpf.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/tools/testing/selftests/net/reuseport_bpf.c b/tools/testing/selftests/net/reuseport_bpf.c
-index cad14cd0ea92..b5277106df1f 100644
---- a/tools/testing/selftests/net/reuseport_bpf.c
-+++ b/tools/testing/selftests/net/reuseport_bpf.c
-@@ -437,14 +437,19 @@ void enable_fastopen(void)
- 	}
- }
+Changes in v2:
+ - Use ifdef/ifndef insteaed of ifeq/ifneq
+
+ Makefile                   | 2 +-
+ arch/mips/Makefile         | 2 +-
+ arch/mips/vdso/Makefile    | 2 +-
+ arch/powerpc/Makefile      | 4 ++--
+ scripts/Makefile.extrawarn | 2 +-
+ 5 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 0a42d06..1c0696d 100644
+--- a/Makefile
++++ b/Makefile
+@@ -707,7 +707,7 @@ stackp-flags-$(CONFIG_STACKPROTECTOR_STRONG)      := -fstack-protector-strong
  
--static struct rlimit rlim_old, rlim_new;
-+static struct rlimit rlim_old;
+ KBUILD_CFLAGS += $(stackp-flags-y)
  
- static  __attribute__((constructor)) void main_ctor(void)
- {
- 	getrlimit(RLIMIT_MEMLOCK, &rlim_old);
--	rlim_new.rlim_cur = rlim_old.rlim_cur + (1UL << 20);
--	rlim_new.rlim_max = rlim_old.rlim_max + (1UL << 20);
--	setrlimit(RLIMIT_MEMLOCK, &rlim_new);
-+
-+	if (rlim_old.rlim_cur != RLIM_INFINITY) {
-+		struct rlimit rlim_new;
-+
-+		rlim_new.rlim_cur = rlim_old.rlim_cur + (1UL << 20);
-+		rlim_new.rlim_max = rlim_old.rlim_max + (1UL << 20);
-+		setrlimit(RLIMIT_MEMLOCK, &rlim_new);
-+	}
- }
+-ifeq ($(cc-name),clang)
++ifdef CONFIG_CC_IS_CLANG
+ KBUILD_CPPFLAGS += $(call cc-option,-Qunused-arguments,)
+ KBUILD_CFLAGS += $(call cc-disable-warning, format-invalid-specifier)
+ KBUILD_CFLAGS += $(call cc-disable-warning, gnu)
+diff --git a/arch/mips/Makefile b/arch/mips/Makefile
+index 15a84cf..6841049 100644
+--- a/arch/mips/Makefile
++++ b/arch/mips/Makefile
+@@ -128,7 +128,7 @@ cflags-y += -ffreestanding
+ # clang's output will be based upon the build machine. So for clang we simply
+ # unconditionally specify -EB or -EL as appropriate.
+ #
+-ifeq ($(cc-name),clang)
++ifdef CONFIG_CC_IS_CLANG
+ cflags-$(CONFIG_CPU_BIG_ENDIAN)		+= -EB
+ cflags-$(CONFIG_CPU_LITTLE_ENDIAN)	+= -EL
+ else
+diff --git a/arch/mips/vdso/Makefile b/arch/mips/vdso/Makefile
+index 34605ca..58a0315 100644
+--- a/arch/mips/vdso/Makefile
++++ b/arch/mips/vdso/Makefile
+@@ -10,7 +10,7 @@ ccflags-vdso := \
+ 	$(filter -march=%,$(KBUILD_CFLAGS)) \
+ 	-D__VDSO__
  
- static __attribute__((destructor)) void main_dtor(void)
+-ifeq ($(cc-name),clang)
++ifdef CONFIG_CC_IS_CLANG
+ ccflags-vdso += $(filter --target=%,$(KBUILD_CFLAGS))
+ endif
+ 
+diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
+index 17be664..8a2ce14 100644
+--- a/arch/powerpc/Makefile
++++ b/arch/powerpc/Makefile
+@@ -96,7 +96,7 @@ aflags-$(CONFIG_CPU_BIG_ENDIAN)		+= $(call cc-option,-mabi=elfv1)
+ aflags-$(CONFIG_CPU_LITTLE_ENDIAN)	+= -mabi=elfv2
+ endif
+ 
+-ifneq ($(cc-name),clang)
++ifndef CONFIG_CC_IS_CLANG
+   cflags-$(CONFIG_CPU_LITTLE_ENDIAN)	+= -mno-strict-align
+ endif
+ 
+@@ -175,7 +175,7 @@ endif
+ # Work around gcc code-gen bugs with -pg / -fno-omit-frame-pointer in gcc <= 4.8
+ # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=44199
+ # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=52828
+-ifneq ($(cc-name),clang)
++ifndef CONFIG_CC_IS_CLANG
+ CC_FLAGS_FTRACE	+= $(call cc-ifversion, -lt, 0409, -mno-sched-epilog)
+ endif
+ endif
+diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
+index 24b2fb1..800a10f 100644
+--- a/scripts/Makefile.extrawarn
++++ b/scripts/Makefile.extrawarn
+@@ -64,7 +64,7 @@ endif
+ KBUILD_CFLAGS += $(warning)
+ else
+ 
+-ifeq ($(cc-name),clang)
++ifdef CONFIG_CC_IS_CLANG
+ KBUILD_CFLAGS += $(call cc-disable-warning, initializer-overrides)
+ KBUILD_CFLAGS += $(call cc-disable-warning, unused-value)
+ KBUILD_CFLAGS += $(call cc-disable-warning, format)
 -- 
-2.17.1
+2.7.4
 
