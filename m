@@ -2,96 +2,129 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3416C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:33:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 095ADC6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:34:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71CE32080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:33:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0B362080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:33:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="aTpwl84j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71CE32080A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qqYgeKID"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0B362080A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727868AbeJaB1z (ORCPT
+        id S1727946AbeJaB2J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 21:27:55 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39588 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726985AbeJaB1z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 21:27:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=fWz6HrZ68bNUnNZpsN0wctLJUAmatCId4BX0HnC0y2k=; b=aTpwl84jSVjuFiK95OTYAiqCK
-        EQRBkUlq9Coke7A1PUEiCgTfipPd4B04jHxgnpe9VHkcsxLivOd+EmE6DKd7zgG0MFcnE+ZjDEVgZ
-        Cm8FiZKyjs3Kzkkrf+wB3q63HEs2nE4VFcl1bvTBkqLU3PEqD2ZB947amxuhse64rFzTE=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gHWxD-0002eY-J4; Tue, 30 Oct 2018 16:33:19 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 0FBAE1123997; Tue, 30 Oct 2018 16:33:19 +0000 (GMT)
-Date:   Tue, 30 Oct 2018 16:33:19 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Olivier Moysan <olivier.moysan@st.com>,
-        Arnaud Pouliquen <arnaud.pouliquen@st.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
-        kernel-janitors@vger.kernel.org, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [alsa-devel] [PATCH] ASoC: stm32: sai: fix invalid use of sizeof
- in stm32_sai_add_mclk_provider()
-Message-ID: <20181030163319.GA6462@sirena.org.uk>
-References: <1540606799-164510-1-git-send-email-weiyongjun1@huawei.com>
+        Tue, 30 Oct 2018 21:28:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50358 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726985AbeJaB2J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 21:28:09 -0400
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D79B2080A;
+        Tue, 30 Oct 2018 16:33:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540917237;
+        bh=zqQnAEYkuxDKvM8f3wzIaFjVEVx39n54TXoc8cC1WkE=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=qqYgeKIDbDpKX+Y1MB+K3aSw2hBQ5uwUX74dK6+U3aBFar80CFSBZylrpVnYy+N/G
+         ZRvmPdFIhBGWkjk42P/aoglubV1Cjchgrg+aX5GTjjCTlat+PV0IIctIvCEcMKakCO
+         N/xi9E/gJ8Dryc/p46uRvtGyO9VwmuvvQ9TudhVY=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="k+w/mQv8wyuph6w0"
-Content-Disposition: inline
-In-Reply-To: <1540606799-164510-1-git-send-email-weiyongjun1@huawei.com>
-X-Cookie: Save yourself!  Reboot in 5 seconds!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <f3e40308-d2dd-cce9-4b19-3af419841bc1@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        chandanu@codeaurora.org, linux-arm-msm-owner@vger.kernel.org
+References: <1539093467-12123-1-git-send-email-tdas@codeaurora.org>
+ <1539093467-12123-3-git-send-email-tdas@codeaurora.org>
+ <153911726378.119890.5522594539667887860@swboyd.mtv.corp.google.com>
+ <3c4cccca-2c5c-927f-f471-2bbbd71b4155@codeaurora.org>
+ <9c359e26-3708-14b6-f22a-fb529446d325@codeaurora.org>
+ <154083859263.98144.15690571729193618604@swboyd.mtv.corp.google.com>
+ <f3e40308-d2dd-cce9-4b19-3af419841bc1@codeaurora.org>
+Message-ID: <154091723693.98144.6979314028521443413@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH v1 2/2] clk: qcom : dispcc: Add support for display port clocks
+Date:   Tue, 30 Oct 2018 09:33:56 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Quoting Taniya Das (2018-10-29 23:01:44)
+> On 10/30/2018 12:13 AM, Stephen Boyd wrote:
+> > Quoting Taniya Das (2018-10-28 03:34:55)
+> >> On 2018-10-19 16:04, Taniya Das wrote:
+> >>> On 10/10/2018 2:04 AM, Stephen Boyd wrote:
+> >>>> Quoting Taniya Das (2018-10-09 06:57:47)
+> >>>>> diff --git a/drivers/clk/qcom/dispcc-sdm845.c
+> >>>>> b/drivers/clk/qcom/dispcc-sdm845.c
+> >>>>> index 0cc4909..6d3136a 100644
+> >>>>> --- a/drivers/clk/qcom/dispcc-sdm845.c
+> >>>>> +++ b/drivers/clk/qcom/dispcc-sdm845.c
+> >>>>> +       },
+> >>>>> +};
+> >>>>> +
+> >>>>> +static const struct freq_tbl ftbl_disp_cc_mdss_dp_link_clk_src[] =
+=3D {
+> >>>>> +       F(162000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
+> >>>>> +       F(270000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
+> >>>>> +       F(540000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
+> >>>>> +       F(810000, P_DP_PHY_PLL_LINK_CLK,   1,   0,   0),
+> >>>>
+> >>>> Are these in kHz? They really look like it and that's bad. Why do we
+> >>>> need them at all? Just to make sure the display driver picks these
+> >>>> exact
+> >>>> frequencies? It seems like we could just pass whatever number comes =
+in
+> >>>> up to the parent and see what it can do.
+> >>>>
+> >>>
+> >>> Let me check back the reason we had to make this change.
+> >>
+> >> We will need this flag since we reset/power-down the PLL every time we
+> >> disconnect/connect the DP cable or during suspend/resume. Only with th=
+is
+> >> flag, the calls to the PLL driver are properly called.
+> > =
 
---k+w/mQv8wyuph6w0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> > What does this mean? I wanted to know about the weird frequencies listed
+> > above, and why it can't be done without a frequency table and direct
+> > rates passed up to the parent.
+> >
+> =
 
-On Sat, Oct 27, 2018 at 02:19:59AM +0000, Wei Yongjun wrote:
-> sizeof() when applied to a pointer typed expression gives the
-> size of the pointer, not that of the pointed data.
+> OOps, my bad :(.
+> =
 
-Someone else already sent a fix for this.
+> We added these changes to handle higher clock rates. These rates when =
 
---k+w/mQv8wyuph6w0
-Content-Type: application/pgp-signature; name="signature.asc"
+> greater than 4.3Ghz cannot be represented in 32bit variables. For DP, we =
 
------BEGIN PGP SIGNATURE-----
+> already have 5.4G and 8.1GHz freq for VCO clock. We will need these Khz =
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvYh84ACgkQJNaLcl1U
-h9D2PAf8CQBR//hQIVawDMD9txVZHFp1FeTXTFRNmYHoG7e7Hukr3a2IEhRCBa4f
-eM4kmf1UpVKD8V5kUPDKDllx9SGVxrxEeDPAQmu3detQ8vdWsS1p5+Q8fCvwbTsc
-GuBk+IXKzFybzSqiu3tAf3DSPU9p0z+00mo4KmghbrwUAZuKAeu55KC32EEf85Cd
-WDPAVGEQ9rUm+YcdNGidf604yjGQy0gB5DuwLpq+t5f41O1NscnLEeusM83if7Qh
-fSpFccKSr+CN8yniLocbcRE/B2NUZymGfa7+ZMeqD+eU+G7fCHqQ1yBJH9OhpH/f
-Swim64E6tY3M8WOeqe+ZLrLN/De0dw==
-=Yi0e
------END PGP SIGNATURE-----
+> freq list in clock driver.
+>   Let me check if they can do something like the byte/pixel clocks of =
 
---k+w/mQv8wyuph6w0--
+> display.
+
+Well then we really should just throw away the freq table here and have
+rcg ops that pass the frequency up to the display PLL. Also, those
+numbers look like gigabits per second (Gbit/s) for the DP spec which
+isn't exactly the same as a clk frequency. What frequency does the PLL
+run at for these various DP link speeds?
+
