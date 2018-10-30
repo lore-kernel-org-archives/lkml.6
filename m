@@ -2,79 +2,208 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EEF9C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 17:25:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C10C0C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 17:28:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5274920664
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 17:25:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5274920664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 7FF4C20664
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 17:28:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FF4C20664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728071AbeJaCUQ (ORCPT
+        id S1727776AbeJaCWf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 22:20:16 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:54402 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727621AbeJaCUQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 22:20:16 -0400
-Received: from tmo-115-37.customers.d1-online.com ([80.187.115.37] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gHXm1-0003bD-0P; Tue, 30 Oct 2018 18:25:49 +0100
-Date:   Tue, 30 Oct 2018 18:25:47 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Jens Axboe <axboe@kernel.dk>
-cc:     Keith Busch <keith.busch@intel.com>, linux-block@vger.kernel.org,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 11/14] irq: add support for allocating (and affinitizing)
- sets of IRQs
-In-Reply-To: <27c1017a-9560-80cb-038d-f64727a162c3@kernel.dk>
-Message-ID: <alpine.DEB.2.21.1810301824570.5984@nanos.tec.linutronix.de>
-References: <20181029163738.10172-1-axboe@kernel.dk> <20181029163738.10172-12-axboe@kernel.dk> <20181030142601.GA18906@localhost.localdomain> <c11c95ae-5e10-38bd-d2c2-e2407634f52a@kernel.dk> <20181030144527.GB18906@localhost.localdomain>
- <46dbcbcd-799f-9970-a68f-de7e96b1a6bb@kernel.dk> <20181030150840.GC18906@localhost.localdomain> <d049e764-b9d1-f06f-40d3-39517f3f65a2@kernel.dk> <20181030160242.GD18906@localhost.localdomain> <27c1017a-9560-80cb-038d-f64727a162c3@kernel.dk>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 30 Oct 2018 22:22:35 -0400
+Received: from mga18.intel.com ([134.134.136.126]:47936 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727561AbeJaCWe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 22:22:34 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 10:28:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,445,1534834800"; 
+   d="scan'208";a="101972827"
+Received: from chang-linux-2.sc.intel.com ([10.3.52.60])
+  by fmsmga004.fm.intel.com with ESMTP; 30 Oct 2018 10:28:11 -0700
+From:   "Chang S. Bae" <chang.seok.bae@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H . Peter Anvin" <hpa@zytor.com>
+Cc:     Andi Kleen <ak@linux.intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ravi Shankar <ravi.v.shankar@intel.com>,
+        "Chang S . Bae" <chang.seok.bae@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH] x86/fsgsbase/64: Fix the base write helper functions
+Date:   Tue, 30 Oct 2018 10:27:19 -0700
+Message-Id: <20181030172719.6753-1-chang.seok.bae@intel.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jens,
+Factor out the code to change index from x86_fsbase_write_cpu() and
+x86_gsbase_write_cpu_inactive(). Now the code is located in
+do_arch_prctl_64().
 
-On Tue, 30 Oct 2018, Jens Axboe wrote:
-> On 10/30/18 10:02 AM, Keith Busch wrote:
-> > pci_alloc_irq_vectors_affinity() starts at the provided max_vecs. If
-> > that doesn't work, it will iterate down to min_vecs without returning to
-> > the caller. The caller doesn't have a chance to adjust its sets between
-> > iterations when you provide a range.
-> > 
-> > The 'masks' overrun problem happens if the caller provides min_vecs
-> > as a smaller value than the sum of the set (plus any reserved).
-> > 
-> > If it's up to the caller to ensure that doesn't happen, then min and
-> > max must both be the same value, and that value must also be the same as
-> > the set sum + reserved vectors. The range just becomes redundant since
-> > it is already bounded by the set.
-> > 
-> > Using the nvme example, it would need something like this to prevent the
-> > 'masks' overrun:
-> 
-> OK, now I hear what you are saying. And you are right, the callers needs
-> to provide minvec == maxvec for sets, and then have a loop around that
-> to adjust as needed.
+The helper functions that purport to write the base register should just
+write the base register only. It shouldn't have magic optimizations to
+change the index.
 
-But then we should enforce it in the core code, right?
+putreg() in ptrace does not write the current task, but a stopped task.
 
-Thanks,
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+---
+ arch/x86/kernel/process_64.c | 67 +++++++++++++++++++++---------------
+ 1 file changed, 39 insertions(+), 28 deletions(-)
 
-	tglx
+diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
+index 31b4755369f0..4fd865fb7097 100644
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -339,19 +339,11 @@ static unsigned long x86_fsgsbase_read_task(struct task_struct *task,
+ 
+ void x86_fsbase_write_cpu(unsigned long fsbase)
+ {
+-	/*
+-	 * Set the selector to 0 as a notion, that the segment base is
+-	 * overwritten, which will be checked for skipping the segment load
+-	 * during context switch.
+-	 */
+-	loadseg(FS, 0);
+ 	wrmsrl(MSR_FS_BASE, fsbase);
+ }
+ 
+ void x86_gsbase_write_cpu_inactive(unsigned long gsbase)
+ {
+-	/* Set the selector to 0 for the same reason as %fs above. */
+-	loadseg(GS, 0);
+ 	wrmsrl(MSR_KERNEL_GS_BASE, gsbase);
+ }
+ 
+@@ -359,9 +351,7 @@ unsigned long x86_fsbase_read_task(struct task_struct *task)
+ {
+ 	unsigned long fsbase;
+ 
+-	if (task == current)
+-		fsbase = x86_fsbase_read_cpu();
+-	else if (task->thread.fsindex == 0)
++	if (task->thread.fsindex == 0)
+ 		fsbase = task->thread.fsbase;
+ 	else
+ 		fsbase = x86_fsgsbase_read_task(task, task->thread.fsindex);
+@@ -373,9 +363,7 @@ unsigned long x86_gsbase_read_task(struct task_struct *task)
+ {
+ 	unsigned long gsbase;
+ 
+-	if (task == current)
+-		gsbase = x86_gsbase_read_cpu_inactive();
+-	else if (task->thread.gsindex == 0)
++	if (task->thread.gsindex == 0)
+ 		gsbase = task->thread.gsbase;
+ 	else
+ 		gsbase = x86_fsgsbase_read_task(task, task->thread.gsindex);
+@@ -392,12 +380,8 @@ int x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase)
+ 	if (unlikely(fsbase >= TASK_SIZE_MAX))
+ 		return -EPERM;
+ 
+-	preempt_disable();
+ 	task->thread.fsbase = fsbase;
+-	if (task == current)
+-		x86_fsbase_write_cpu(fsbase);
+ 	task->thread.fsindex = 0;
+-	preempt_enable();
+ 
+ 	return 0;
+ }
+@@ -407,12 +391,8 @@ int x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase)
+ 	if (unlikely(gsbase >= TASK_SIZE_MAX))
+ 		return -EPERM;
+ 
+-	preempt_disable();
+ 	task->thread.gsbase = gsbase;
+-	if (task == current)
+-		x86_gsbase_write_cpu_inactive(gsbase);
+ 	task->thread.gsindex = 0;
+-	preempt_enable();
+ 
+ 	return 0;
+ }
+@@ -757,22 +737,53 @@ long do_arch_prctl_64(struct task_struct *task, int option, unsigned long arg2)
+ 	int ret = 0;
+ 
+ 	switch (option) {
+-	case ARCH_SET_GS: {
+-		ret = x86_gsbase_write_task(task, arg2);
+-		break;
+-	}
+ 	case ARCH_SET_FS: {
++		preempt_disable();
+ 		ret = x86_fsbase_write_task(task, arg2);
++		if (task == current && ret == 0) {
++			/*
++			 * Set the selector to 0, implying that the base is
++			 * overwritten. The index value will be checked
++			 * during context switch for skipping segment reload.
++			 */
++			loadseg(FS, 0);
++			x86_fsbase_write_cpu(arg2);
++		}
++		preempt_enable();
++		break;
++	}
++	case ARCH_SET_GS: {
++		preempt_disable();
++		ret = x86_gsbase_write_task(task, arg2);
++		if (task == current && ret == 0) {
++			/*
++			 * Set the selector to 0 for the same reason
++			 * as %fs above.
++			 */
++			loadseg(GS, 0);
++			x86_gsbase_write_cpu_inactive(arg2);
++		}
++		preempt_enable();
+ 		break;
+ 	}
+ 	case ARCH_GET_FS: {
+-		unsigned long base = x86_fsbase_read_task(task);
++		unsigned long base;
++
++		if (task == current)
++			base = x86_fsbase_read_cpu();
++		else
++			base = x86_fsbase_read_task(task);
+ 
+ 		ret = put_user(base, (unsigned long __user *)arg2);
+ 		break;
+ 	}
+ 	case ARCH_GET_GS: {
+-		unsigned long base = x86_gsbase_read_task(task);
++		unsigned long base;
++
++		if (task == current)
++			base = x86_gsbase_read_cpu_inactive();
++		else
++			base = x86_gsbase_read_task(task);
+ 
+ 		ret = put_user(base, (unsigned long __user *)arg2);
+ 		break;
+-- 
+2.19.1
+
