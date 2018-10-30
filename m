@@ -2,134 +2,146 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C1ABC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:01:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B54FCC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:02:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53A0A2081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:01:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="rtHHHHyM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53A0A2081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 8861520664
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:02:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8861520664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbeJaA4A (ORCPT
+        id S1727809AbeJaA4G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 20:56:00 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:25840 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726532AbeJaA4A (ORCPT
+        Tue, 30 Oct 2018 20:56:06 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:40081 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726532AbeJaA4G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 20:56:00 -0400
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id w9UG1Wn1026048;
-        Wed, 31 Oct 2018 01:01:32 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w9UG1Wn1026048
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1540915293;
-        bh=csSMXhMjG7/uDF21k0QboUXvMeiYQ+MmLmbh/gWkjIs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=rtHHHHyM5UqBUP+EKBTM0LEZ438DaX/Zb6aaqwQ2MzSt+L8nMmCJIsn5uR7R4cDgx
-         ImYPEfTQeIFOXhQOG+PAAeME3AJ9LayqELeVr4ZL76XnCN198wM1YW7B+jKJSyq/YS
-         nglS0+6tCackbjLJ1gG/wKD0wXlnSMbAbNvQ9QsB/zd4V1UYBqtxnMIiXZjeiqkvGa
-         MQ/HQ8g7Wu6+vVCi/IbiXJkEmnvE9AqHff2j93gJB1Fkc3SVAqiYyk7nUvgAOqTFaa
-         kbuwgIgxEtEnUmDvdr3qRfV7ytAt3ZlaUQl1eZNQa3WoxW7mfJA7o/mysAQCmOfDFZ
-         qcLLv8SQpImwg==
-X-Nifty-SrcIP: [209.85.222.50]
-Received: by mail-ua1-f50.google.com with SMTP id d8so3686308ual.2;
-        Tue, 30 Oct 2018 09:01:32 -0700 (PDT)
-X-Gm-Message-State: AGRZ1gJnxoxdM+JjYX1nLWBL6hv6d11xK8Jt33cWqYMsemvDqd4gooHi
-        WIj6GkIC86bNMUzSReQoujSDFuwIM9pWsol2Cnw=
-X-Google-Smtp-Source: AJdET5fmZ4h9Aw8PIZTyTcc3BBnxAhbyyJl3L5r1Q9CjJTVXKEW16yE15z6fddODURosNY69rm5q7dt9YJ1ylo/Iy1o=
-X-Received: by 2002:ab0:3402:: with SMTP id z2mr1162812uap.6.1540915291458;
- Tue, 30 Oct 2018 09:01:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <1540829034-17725-1-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1540829034-17725-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 31 Oct 2018 01:00:55 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASEogAqYTZHdtPWk4xZPXKkJPuWX9BF3o_Cy5s0jCB2cg@mail.gmail.com>
-Message-ID: <CAK7LNASEogAqYTZHdtPWk4xZPXKkJPuWX9BF3o_Cy5s0jCB2cg@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: remove unused cc-fullversion variable
-To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc:     "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Tue, 30 Oct 2018 20:56:06 -0400
+Received: by mail-wm1-f68.google.com with SMTP id b203-v6so11885891wme.5
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 09:02:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=eUUWXsHyPEdsJNyTQsdt8A4rZRWlaB55E03Ok6c9p0k=;
+        b=jbrKm0aS0nGkLeDEuc4gIX1dAGwG9zGZ8bMMf9oM79ghPi2PTxoQBRVOgwuCXyu1pv
+         46gLI3ux6c+0Cc4RNgxOsGU6n3M8E7ma5qPMZQPZxEPSD2gMSsJYQassc2KDnTW3yILG
+         rxPTuR3awACrqH3ITqXItPRjB3+9vPgjqG+eGTu2msH/0D52eGkLAlZof3oh6u7qO82E
+         j3wL7hdmprzPp4Lo6FGJFpuAIIfr6ntlTisohcB5aAKkt3IDo5quGkwdqgsGpUJDmZ/D
+         fIUdBY+4Ouu614PVfT2AS66kTqLir5m27ECGx3O4H5V1/kuj98Gw3z+37pzDCS1YCJa0
+         oYGA==
+X-Gm-Message-State: AGRZ1gINsoMbY4alcYfKXv4fCWB1erXW4ABdCBGhUB9ysy1C7dnc/iGs
+        Sck5mOiX0vjcBD4aNTcC8ar/iA==
+X-Google-Smtp-Source: AJdET5f/GfnSvgbcPS6Rh/HSmYulm7Z7NjHnQFIugDkx87fB+mCFMsfClMm5xvjWv5t7xEkf0JHvHQ==
+X-Received: by 2002:a1c:e456:: with SMTP id b83-v6mr2230726wmh.143.1540915321602;
+        Tue, 30 Oct 2018 09:02:01 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id i7-v6sm27262444wmd.41.2018.10.30.09.02.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 09:02:00 -0700 (PDT)
+Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Dean Wallace <duffydack73@gmail.com>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Johannes Stezenbach <js@sig21.net>,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michal Marek <michal.lkml@markovi.net>
-Content-Type: text/plain; charset="UTF-8"
+        Mogens Jensen <mogens-jensen@protonmail.com>
+References: <20181025232517.ywnw54qibemosjws@picard>
+ <154083512089.98144.9141070901932719147@swboyd.mtv.corp.google.com>
+ <CAHp75VfnN5tF1Z9+CDDhKFNG5QfCRcGOZeAkpf-5BfCEx16gvg@mail.gmail.com>
+ <CAHp75VctdBE-GM60udJawBCXdmoOqZn4N=kFWz5GLHzjPG2iQQ@mail.gmail.com>
+ <20181029190819.2ivlx73n6y6sx4vk@picard>
+ <ffc4bcc9-62c3-8940-85d6-d0fd01f3a1b8@linux.intel.com>
+ <c8fb730a-c160-41b4-dad0-8ed8594e5687@redhat.com>
+ <20181030143836.feo7zcxiestylxoo@picard>
+ <2d429c87-24c5-4075-683e-b0d12c3eb1c2@linux.intel.com>
+ <d00df762-e4fc-06c5-701e-d5100bfd0e35@redhat.com>
+Message-ID: <783f17c2-ecc6-00fc-5629-02319b965205@redhat.com>
+Date:   Tue, 30 Oct 2018 17:02:00 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <d00df762-e4fc-06c5-701e-d5100bfd0e35@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 1:05 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> The last user of cc-fullversion was removed by commit f2910f0e6835
-> ("powerpc: remove old GCC version checks").
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+Hi,
 
-Applied to linux-kbuild.
+On 30-10-18 16:46, Hans de Goede wrote:
+> Hi,
+> 
+> On 30-10-18 16:04, Pierre-Louis Bossart wrote:
+>>
+>> On 10/30/18 9:38 AM, Dean Wallace wrote:
+>>> On 30-10-18, Hans de Goede wrote:
+>>>> Hi Dean,
+>>>>
+>>>> Attached are 2 different attempts at fixing this.
+>>>>
+>>>> When trying these patches do not forget to remove the revert of the
+>>>> "Stop-marking-clocks-as-CLK_IS_CRITICAL" commit.
+>>>>
+>>>> Please first try the 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch
+>>>> patch I expect that one to do the trick indicating that the Swanky model
+>>>> uses a different pmc clk then which is normally used for the codec clock.
+>>>>
+>>>> If that patch does not fix things, please give the other patch a try.
+>>
+>> For Baytrail devices, the audio platform clocks are not managed by the firmware. They are for CHT-based devices - as can be seen by clock resources being described in the DSDT. We used to have a if(baytrail) in the code which was replaced by this CRITICAL label, but the point remains that there is a difference between the two SOC versions.
+> 
+> As I mentioned before the CRITICAL flag was only added a year ago to workaround
+> an issue with on board ethernet needing plt_clk_4 on some laptops, this never
+> had anything to do with sound.
 
+Ah I see now that you later made some changes based on the patch to fix the ethernet:
 
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=7735bce05a9c0bb0eb0f08c9002d65843a7c5798
 
+Note though that that does not touch the machine driver which we are discussing
+now and the reporters machine is also BYT based.
 
->  Documentation/kbuild/makefiles.txt | 15 ---------------
->  scripts/Kbuild.include             |  4 ----
->  2 files changed, 19 deletions(-)
->
-> diff --git a/Documentation/kbuild/makefiles.txt b/Documentation/kbuild/makefiles.txt
-> index 7b6a2b2..8da26c6 100644
-> --- a/Documentation/kbuild/makefiles.txt
-> +++ b/Documentation/kbuild/makefiles.txt
-> @@ -537,21 +537,6 @@ more details, with real examples.
->         The third parameter may be a text as in this example, but it may also
->         be an expanded variable or a macro.
->
-> -    cc-fullversion
-> -       cc-fullversion is useful when the exact version of gcc is needed.
-> -       One typical use-case is when a specific GCC version is broken.
-> -       cc-fullversion points out a more specific version than cc-version does.
-> -
-> -       Example:
-> -               #arch/powerpc/Makefile
-> -               $(Q)if test "$(cc-fullversion)" = "040200" ; then \
-> -                       echo -n '*** GCC-4.2.0 cannot compile the 64-bit powerpc ' ; \
-> -                       false ; \
-> -               fi
-> -
-> -       In this example for a specific GCC version the build will error out
-> -       explaining to the user why it stops.
-> -
->      cc-cross-prefix
->         cc-cross-prefix is used to check if there exists a $(CC) in path with
->         one of the listed prefixes. The first prefix where there exist a
-> diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
-> index ca21a35..19a63db 100644
-> --- a/scripts/Kbuild.include
-> +++ b/scripts/Kbuild.include
-> @@ -147,10 +147,6 @@ cc-name = $(shell $(CC) -v 2>&1 | grep -q "clang version" && echo clang || echo
->  # cc-version
->  cc-version = $(shell $(CONFIG_SHELL) $(srctree)/scripts/gcc-version.sh $(CC))
->
-> -# cc-fullversion
-> -cc-fullversion = $(shell $(CONFIG_SHELL) \
-> -       $(srctree)/scripts/gcc-version.sh -p $(CC))
-> -
->  # cc-ifversion
->  # Usage:  EXTRA_CFLAGS += $(call cc-ifversion, -lt, 0402, -O1)
->  cc-ifversion = $(shell [ $(cc-version) $(1) $(2) ] && echo $(3) || echo $(4))
-> --
-> 2.7.4
->
+As explained below (in my original reply) I think it is fine to always
+manage the clk from within the kernel. But if you think this is a bad
+idea, we could re-introduce the is_valleyview() checks in machine
+drivers which are used on CHT devices.
 
+>> In addition I am not aware of any baytrail device using plt_clk_0, so moving a common machine driver such a cht_bsw_max98090_ti to use plt_clk0 only would break other devices (e.g. Rambi/Orco). Asking for both clocks to be on might work though, 
+> 
+> Ok, so we need to have a DMI based quirk for the Swanky and maybe also
+> the clapper to use plt_clk_0 there. Asking for 2 clks if we only need
+> one does not seem like a good plan.
+> 
+>> however you still have the problem of trying to manage from the kernel what the firmware already manages.
+> 
+> The firmware only manages it when going to D3 state, with ASoC most of
+> the codecs gets turned off (and we no longer need the clock) but we do
+> not put the device in D3 / execute the _PS3 method. So from a pm pov
+> it is better if we manage the clk ourselves.
+> 
+> Once we do actually put the device in D3 (on suspend) the kernel will have
+> already turned off the clk and the _OFF method of the CLK3 power resource
+> which directly pokes mmio, will just set the enable bit to 0 when it
+> already is 0, so no problem.
 
--- 
-Best Regards
-Masahiro Yamada
+Regards,
+
+Hans
