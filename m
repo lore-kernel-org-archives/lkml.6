@@ -2,194 +2,111 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97BBAC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 17:31:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8991FC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 17:33:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53FCF204FD
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 17:31:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53FCF204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3757520664
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 17:33:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="Dq0+mn1b"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3757520664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727840AbeJaC0N (ORCPT
+        id S1727959AbeJaC2S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 22:26:13 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:50612 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727462AbeJaC0N (ORCPT
+        Tue, 30 Oct 2018 22:28:18 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:32933 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727698AbeJaC2R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 22:26:13 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9UHUuTf032548
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 13:31:49 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2nessn5x4v-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 13:31:48 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <borntraeger@de.ibm.com>;
-        Tue, 30 Oct 2018 17:31:46 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 30 Oct 2018 17:31:41 -0000
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9UHVe0P59048022
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 30 Oct 2018 17:31:40 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9BE27AE045;
-        Tue, 30 Oct 2018 17:31:40 +0000 (GMT)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B6FFBAE057;
-        Tue, 30 Oct 2018 17:31:38 +0000 (GMT)
-Received: from oc7455500831.ibm.com (unknown [9.145.66.239])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 30 Oct 2018 17:31:38 +0000 (GMT)
-Subject: Re: [PATCH V5 0/5] KVM: X86: Introducing ROE Protection Kernel
- Hardening
-To:     Ahmed Abd El Mawgood <ahmedsoliman0x666@gmail.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, rkrcmar@redhat.com,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ovich00@gmail.com, kernel-hardening@lists.openwall.com,
-        nigel.edwards@hpe.com, Boris Lukashev <blukashev@sempervictus.com>,
-        Hossam Hassan <7ossam9063@gmail.com>,
-        Ahmed Lotfy <A7med.lotfey@gmail.com>
-References: <20181026151223.16810-1-ahmedsoliman0x666@gmail.com>
-From:   Christian Borntraeger <borntraeger@de.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=borntraeger@de.ibm.com; prefer-encrypt=mutual; keydata=
- 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
- syiRa+UVlsKmx1hsEg==
-Date:   Tue, 30 Oct 2018 18:31:38 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 30 Oct 2018 22:28:17 -0400
+Received: by mail-io1-f66.google.com with SMTP id f12-v6so4528398iog.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 10:33:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=buNwFDxTWFskPDzSjp2WeLtCfda2WjX38lJIxhn+3Io=;
+        b=Dq0+mn1bsG5KFKbgKEvli8H6WfmyZG0f+OL46Iopq92W3CmMEe5H4qOHqIAH0aBnx8
+         SEsbQJsK4K3x2U3UJ/jpLpqt8L+o1gnkYfnUvkZ95wdL7TThdCf132iun92qnnFThkSI
+         54zSsCBFB98uW4jYahY73xnAoOQP7fA1icRAb01kM0MVbYXINpbF84XbLB2CBREiJ8Dp
+         nXfOAvsB2VKyCosoKPZLz0p3MG3q0QaS5aD8sDjsLYSw2MyXMBJ+pfn8W6hCcRKvQ0fd
+         0QmAYOg5wmNq/uo/6HDYKSr22K+FH3NVl/aLYzmlVrVIkXUWqCRyFVAqn5VTJSdOh1nD
+         vMvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=buNwFDxTWFskPDzSjp2WeLtCfda2WjX38lJIxhn+3Io=;
+        b=siRiKbcm+gLLNwXBeMRiplKC6QaC4dK8eiuuPpyjnybCOpasA2Yof/682b4LhYv7qO
+         xiWsJxl1U4VCfHG3yBTjIB+0fWabOyFESjtH1z6VccqkAJ1R5AWqNlO98cAuDUiqQXCQ
+         wwHUjekyADL2P5qzUMJo3YmVh1EMkLyG7N+o058PhuG4I4AdakzeKJtE8NYsKdCYO6HL
+         yuylNfTjDpa1WxKdbhCowPtDeJ6UOQ3GT+k2mK3ohVGzGpyoH5TX3PTRqP4w25HgUkLL
+         iTv/ridveAYgQzJQ5SI7kj98Pxft3tJYpMC/lQZUhVzDOBSH4wzSdghK1tdAQPu0Dst+
+         2aXA==
+X-Gm-Message-State: AGRZ1gLpJnzcxn5MmdBOzBaVT8yb55ZHASpIEfojGSycvgz9kCknvk31
+        3Fcoha8KoKCuAmRturhdFa2WpQ==
+X-Google-Smtp-Source: AJdET5eR7sTWfXMaQVUeLphNNtchWwzfIRZy2fpf2yaOjAdfdeNFbg2LPHjnh//4xlBIGY/NBGBslg==
+X-Received: by 2002:a6b:1807:: with SMTP id 7-v6mr1712383ioy.143.1540920833859;
+        Tue, 30 Oct 2018 10:33:53 -0700 (PDT)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id o10-v6sm7086137iob.43.2018.10.30.10.33.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 10:33:52 -0700 (PDT)
+Subject: Re: [PATCH 11/14] irq: add support for allocating (and affinitizing)
+ sets of IRQs
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+References: <20181029163738.10172-12-axboe@kernel.dk>
+ <20181030142601.GA18906@localhost.localdomain>
+ <c11c95ae-5e10-38bd-d2c2-e2407634f52a@kernel.dk>
+ <20181030144527.GB18906@localhost.localdomain>
+ <46dbcbcd-799f-9970-a68f-de7e96b1a6bb@kernel.dk>
+ <20181030150840.GC18906@localhost.localdomain>
+ <d049e764-b9d1-f06f-40d3-39517f3f65a2@kernel.dk>
+ <20181030160242.GD18906@localhost.localdomain>
+ <27c1017a-9560-80cb-038d-f64727a162c3@kernel.dk>
+ <535480f3-9087-b4ae-e7c8-cfe3c2d1e2c9@kernel.dk>
+ <20181030172234.GF18906@localhost.localdomain>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <d393e6f3-bc45-e038-9a5e-e51018f0a15a@kernel.dk>
+Date:   Tue, 30 Oct 2018 11:33:51 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181026151223.16810-1-ahmedsoliman0x666@gmail.com>
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18103017-0012-0000-0000-000002C08EFE
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18103017-0013-0000-0000-000020F4B6A1
-Message-Id: <e778a30c-f32e-eb4c-5492-21c81926b87f@de.ibm.com>
+In-Reply-To: <20181030172234.GF18906@localhost.localdomain>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-30_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1810300148
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 10/30/18 11:22 AM, Keith Busch wrote:
+> On Tue, Oct 30, 2018 at 11:09:04AM -0600, Jens Axboe wrote:
+>> Pretty trivial, below. This also keeps the queue mapping calculations
+>> more clean, as we don't have to do one after we're done allocating
+>> IRQs.
+> 
+> Yep, this addresses my concern. It less efficient than PCI since PCI
+> can usually jump straight to a valid vector count in a single iteration
+> where this only subtracts by 1. I really can't be bothered to care for
+> optimizing that, so this works for me! :) 
 
-On 10/26/2018 05:12 PM, Ahmed Abd El Mawgood wrote:
-> This is the 5th version which is 4th version with minor fixes. ROE is a 
-> hypercall that enables host operating system to restrict guest's access to its
-> own memory. This will provide a hardening mechanism that can be used to stop
-> rootkits from manipulating kernel static data structures and code. Once a memory
-> region is protected the guest kernel can't even request undoing the protection.
+It definitely is less efficient than just getting the count that we
+can support, but it's at probe time so I could not really be bothered
+either.
 
-At the KVM forum we considered this as something that could be implemented across
-multiple architectures. Yes, there will be architecture specific implementations 
-and yes some  architectures might be not able to provide everything (e.g. sub-page
-granularity).
-But we should really check if we can come up with a guest interface or guest common 
-code that can be useful across architectures.
-> 
-> Memory protected by ROE should be non-swapable because even if the ROE protected
-> page got swapped out, It won't be possible to write anything in its place.
-> 
-> ROE hypercall should be capable of either protecting a whole memory frame or
-> parts of it. With these two, it should be possible for guest kernel to protect
-> its memory and all the page table entries for that memory inside the page table.
-> I am still not sure whether this should be part of ROE job or the guest's job.
-> 
-> 
-> The reason why it would be better to implement this from inside kvm: instead of
-> (host) user space is the need to access SPTEs to modify the permissions, while
-> mprotect() from user space can work in theory. It will become a big performance
-> hit to vmexit and switch to user space mode on each fault, on the other hand,
-> having the permission handled by EPT should make some remarkable performance
-> gain.
-> 
-> Our model assumes that an attacker got full root access to a running guest and
-> his goal is to manipulate kernel code/data (hook syscalls, overwrite IDT ..etc).
-> 
-> There is future work in progress to also put some sort of protection on the page
-> table register CR3 and other critical registers that can be intercepted by KVM.
-> This way it won't be possible for an attacker to manipulate any part of the
-> guests page table.
-> 
-> V4->V5 change log:
-> - Fixed summary (it was reverted summary)
-> - Fixed an inaccurate documentation in patch [4/5]
-> 
-> Summary:
-> 
->  Documentation/virtual/kvm/hypercalls.txt |  40 +++++
->  arch/x86/include/asm/kvm_host.h          |  11 +-
->  arch/x86/kvm/Kconfig                     |   7 +
->  arch/x86/kvm/mmu.c                       | 129 ++++++++++----
->  arch/x86/kvm/vmx.c                       |   2 +-
->  arch/x86/kvm/x86.c                       | 281 ++++++++++++++++++++++++++++++-
->  include/linux/kvm_host.h                 |  29 ++++
->  include/uapi/linux/kvm_para.h            |   5 +
->  virt/kvm/kvm_main.c                      | 119 +++++++++++--
->  9 files changed, 572 insertions(+), 51 deletions(-)
-> 
-> Signed-off-by: Ahmed Abd El Mawgood <ahmedsoliman0x666@gmail.com>
-> 
+Can I add your reviewed-by?
+
+-- 
+Jens Axboe
 
