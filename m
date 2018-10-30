@@ -3,130 +3,110 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 286DDC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 06:56:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC82C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 06:56:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF51520657
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 06:56:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF51520657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ah.jp.nec.com
+	by mail.kernel.org (Postfix) with ESMTP id 0E7C02082D
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 06:56:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E7C02082D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727525AbeJ3PsR convert rfc822-to-8bit (ORCPT
+        id S1727547AbeJ3PsT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 11:48:17 -0400
-Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:57132 "EHLO
-        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727498AbeJ3PsR (ORCPT
+        Tue, 30 Oct 2018 11:48:19 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:63313 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727501AbeJ3PsS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 11:48:17 -0400
-Received: from mailgate02.nec.co.jp ([114.179.233.122])
-        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id w9U6tkeV024245
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Tue, 30 Oct 2018 15:55:46 +0900
-Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id w9U6tkDD014360;
-        Tue, 30 Oct 2018 15:55:46 +0900
-Received: from mail03.kamome.nec.co.jp (mail03.kamome.nec.co.jp [10.25.43.7])
-        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id w9U6rARW002869;
-        Tue, 30 Oct 2018 15:55:46 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.148] [10.38.151.148]) by mail01b.kamome.nec.co.jp with ESMTP id BT-MMP-5018466; Tue, 30 Oct 2018 15:54:35 +0900
-Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
- BPXC20GP.gisp.nec.co.jp ([10.38.151.148]) with mapi id 14.03.0319.002; Tue,
- 30 Oct 2018 15:54:34 +0900
-From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+        Tue, 30 Oct 2018 11:48:18 -0400
+X-UUID: fce3c53b849b4bad842c84424a684b20-20181030
+X-UUID: fce3c53b849b4bad842c84424a684b20-20181030
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <miles.chen@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1840357904; Tue, 30 Oct 2018 14:55:53 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 30 Oct 2018 14:55:51 +0800
+Received: from [172.21.77.33] (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 30 Oct 2018 14:55:51 +0800
+Message-ID: <1540882551.23278.12.camel@mtkswgap22>
+Subject: Re: [PATCH v3] mm/page_owner: use kvmalloc instead of kmalloc
+From:   Miles Chen <miles.chen@mediatek.com>
 To:     Michal Hocko <mhocko@kernel.org>
 CC:     Andrew Morton <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "xishi.qiuxishi@alibaba-inc.com" <xishi.qiuxishi@alibaba-inc.com>,
-        "zy.zhengyi@alibaba-inc.com" <zy.zhengyi@alibaba-inc.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: Re: [PATCH v2 0/2] mm: soft-offline: fix race against page
- allocation
-Thread-Topic: [PATCH v2 0/2] mm: soft-offline: fix race against page
- allocation
-Thread-Index: AQHUNOlnrqT+pxWFwUe9BDyggy7ShKTKcMQAgGc3NyeABZIlgA==
-Date:   Tue, 30 Oct 2018 06:54:33 +0000
-Message-ID: <20181030065433.GA1119@hori1.linux.bs1.fc.nec.co.jp>
-References: <1531805552-19547-1-git-send-email-n-horiguchi@ah.jp.nec.com>
- <20180815154334.f3eecd1029a153421631413a@linux-foundation.org>
- <20180822013748.GA10343@hori1.linux.bs1.fc.nec.co.jp>
- <20180822080025.GD29735@dhcp22.suse.cz>
- <20181026084636.GY18839@dhcp22.suse.cz>
-In-Reply-To: <20181026084636.GY18839@dhcp22.suse.cz>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.51.8.82]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <7022FA189286CD4F87E4A444A2A70611@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
+        Joe Perches <joe@perches.com>,
+        Matthew Wilcox <willy@infradead.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>
+Date:   Tue, 30 Oct 2018 14:55:51 +0800
+In-Reply-To: <20181030060601.GR32673@dhcp22.suse.cz>
+References: <1540790176-32339-1-git-send-email-miles.chen@mediatek.com>
+         <20181029080708.GA32673@dhcp22.suse.cz>
+         <20181029081706.GC32673@dhcp22.suse.cz>
+         <1540862950.12374.40.camel@mtkswgap22>
+         <20181030060601.GR32673@dhcp22.suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-X-TM-AS-MML: disable
+X-TM-SNTS-SMTP: 2E26B09DC99F707EAE83DE70B9D57D6161CD602C3CEB5221A275CD5945312BFA2000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Oct 26, 2018 at 10:46:36AM +0200, Michal Hocko wrote:
-> On Wed 22-08-18 10:00:25, Michal Hocko wrote:
-> > On Wed 22-08-18 01:37:48, Naoya Horiguchi wrote:
-> > > On Wed, Aug 15, 2018 at 03:43:34PM -0700, Andrew Morton wrote:
-> > > > On Tue, 17 Jul 2018 14:32:30 +0900 Naoya Horiguchi <n-horiguchi@ah.jp.nec.com> wrote:
-> > > > 
-> > > > > I've updated the patchset based on feedbacks:
-> > > > > 
-> > > > > - updated comments (from Andrew),
-> > > > > - moved calling set_hwpoison_free_buddy_page() from mm/migrate.c to mm/memory-failure.c,
-> > > > >   which is necessary to check the return code of set_hwpoison_free_buddy_page(),
-> > > > > - lkp bot reported a build error when only 1/2 is applied.
-> > > > > 
-> > > > >   >    mm/memory-failure.c: In function 'soft_offline_huge_page':
-> > > > >   > >> mm/memory-failure.c:1610:8: error: implicit declaration of function
-> > > > >   > 'set_hwpoison_free_buddy_page'; did you mean 'is_free_buddy_page'?
-> > > > >   > [-Werror=implicit-function-declaration]
-> > > > >   >        if (set_hwpoison_free_buddy_page(page))
-> > > > >   >            ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > > > >   >            is_free_buddy_page
-> > > > >   >    cc1: some warnings being treated as errors
-> > > > > 
-> > > > >   set_hwpoison_free_buddy_page() is defined in 2/2, so we can't use it
-> > > > >   in 1/2. Simply doing s/set_hwpoison_free_buddy_page/!TestSetPageHWPoison/
-> > > > >   will fix this.
-> > > > > 
-> > > > > v1: https://lkml.org/lkml/2018/7/12/968
-> > > > > 
-> > > > 
-> > > > Quite a bit of discussion on these two, but no actual acks or
-> > > > review-by's?
+On Tue, 2018-10-30 at 07:06 +0100, Michal Hocko wrote:
+> On Tue 30-10-18 09:29:10, Miles Chen wrote:
+> > On Mon, 2018-10-29 at 09:17 +0100, Michal Hocko wrote:
+> > > On Mon 29-10-18 09:07:08, Michal Hocko wrote:
+> > > [...]
+> > > > Besides that, the following doesn't make much sense to me. It simply
+> > > > makes no sense to use vmalloc for sub page allocation regardless of
+> > > > HIGHMEM.
 > > > 
-> > > Really sorry for late response.
-> > > Xishi provided feedback on previous version, but no final ack/reviewed-by.
-> > > This fix should work on the reported issue, but rewriting soft-offlining
-> > > without PageHWPoison flag would be the better fix (no actual patch yet.)
+> > > OK, it is still early morning here. Now I get the point of the patch.
+> > > You just want to (ab)use highmeme for smaller requests. I do not like
+> > > this, to be honest. It causes an internal fragmentation and more
+> > > importantly the VMALLOC space on 32b where HIGHMEM is enabled (do we
+> > > have any 64b with HIGHMEM btw?) is quite small to be wasted like that.
+> > > 
+> > thanks for your comment. It looks like that using vmalloc fallback for
+> > sub page allocation is not good here.
 > > 
-> > If we can go with the later the I would obviously prefer that. I cannot
-> > promise to work on the patch though. I can help with reviewing of
-> > course.
+> > Your comment gave another idea:
 > > 
-> > If this is important enough that people are hitting the issue in normal
-> > workloads then sure, let's go with the simple fix and continue on top of
-> > that.
+> > 1. force kbuf to PAGE_SIZE
+> > 2. allocate a page by alloc_page(GFP_KERNEL | __GFP_HIGHMEM); so we can
+> > get a highmem page if possible
+> > 3. use kmap/kunmap pair to create mapping for this page. No vmalloc
+> > space is used.
+> > 4. do not change kvmalloc logic.
 > 
-> Naoya, did you have any chance to look at this or have any plans to look?
-> I am willing to review and help with the overal design but I cannot
-> really promise to work on the code.
+> If you mean for this particular situation then is this really worth
+> it? I mean this is a short term allocation for root only so you do not
+> have to worry about low mem depletion.
 
-I have a draft version of a patch to isolate a page in buddy-friendly manner
-without PageHWPoison flag (that was written weeks ago, but I couldn't finish
-because my other project interrupted me ...).
-I'll post it after testing, especially confirming that hotplug code properly
-reset the isolated page.
+The 1...3 are applied to print_page_owner(), not in kmalloc() or
+kvmalloc() logic. 
 
-Thanks,
-Naoya Horiguchi
+
+It's a real problem when using page_owner.
+I found this issue recently: I'm not able to read page_owner information
+during a overnight test. (error: read failed: Out of memory). I replace
+kmalloc() with vmalloc() and it worked well.
+
+> 
+> If you are thiking in more generic terms to allow kmalloc to use highmem
+> then I am not really sure this will work out.
+
+I'm thinking about modify print_page_owner().
+
+
