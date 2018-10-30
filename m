@@ -2,137 +2,174 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC2E1C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 23:41:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34462C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 23:43:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A717820664
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 23:41:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A717820664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mleia.com
+	by mail.kernel.org (Postfix) with ESMTP id DCC2520664
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 23:43:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCC2520664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728719AbeJaIgm (ORCPT
+        id S1728341AbeJaIjS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 04:36:42 -0400
-Received: from mleia.com ([178.79.152.223]:43290 "EHLO mail.mleia.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726908AbeJaIgl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 04:36:41 -0400
-Received: from mail.mleia.com (localhost [127.0.0.1])
-        by mail.mleia.com (Postfix) with ESMTP id 56E7C428018;
-        Tue, 30 Oct 2018 23:41:03 +0000 (GMT)
-Subject: Re: [PATCH 1/7] dt-bindings: mfd: ds90ux9xx: add description of TI
- DS90Ux9xx ICs
-To:     Luca Ceresoli <luca@lucaceresoli.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Wolfram Sang <wsa@the-dreams.de>, devicetree@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Sandeep Jain <Sandeep_Jain@mentor.com>,
-        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>
-References: <20181008211205.2900-1-vz@mleia.com>
- <20181008211205.2900-2-vz@mleia.com>
- <fd0a91c9-6e38-5a18-12e5-955fbf81bfce@lucaceresoli.net>
-From:   Vladimir Zapolskiy <vz@mleia.com>
-Message-ID: <8ae609a1-f3ce-e216-d572-bf509ca482f9@mleia.com>
-Date:   Wed, 31 Oct 2018 01:40:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 31 Oct 2018 04:39:18 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41078 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727683AbeJaIjR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 04:39:17 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w9UNYUqB006875
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 19:43:40 -0400
+Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2nex1jpsh3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 19:43:40 -0400
+Received: from localhost
+        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Tue, 30 Oct 2018 23:43:40 -0000
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 30 Oct 2018 23:43:37 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w9UNhbJG3932574
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 30 Oct 2018 23:43:37 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 05F2EB2065;
+        Tue, 30 Oct 2018 23:43:37 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C9B74B2064;
+        Tue, 30 Oct 2018 23:43:36 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.141])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 30 Oct 2018 23:43:36 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id D748B16C0276; Tue, 30 Oct 2018 16:43:36 -0700 (PDT)
+Date:   Tue, 30 Oct 2018 16:43:36 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [RFC] doc: rcu: remove note on smp_mb during synchronize_rcu
+Reply-To: paulmck@linux.ibm.com
+References: <20181028043046.198403-1-joel@joelfernandes.org>
+ <20181030222649.GA105735@joelaf.mtv.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <fd0a91c9-6e38-5a18-12e5-955fbf81bfce@lucaceresoli.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CRM114-Version: 20100106-BlameMichelson ( TRE 0.8.0 (BSD) ) MR-49551924 
-X-CRM114-CacheID: sfid-20181030_234103_377943_DEE731D3 
-X-CRM114-Status: GOOD (  18.75  )
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181030222649.GA105735@joelaf.mtv.corp.google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18103023-2213-0000-0000-0000030E1900
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009956; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000268; SDB=6.01110353; UDB=6.00575327; IPR=6.00890445;
+ MB=3.00023971; MTD=3.00000008; XFM=3.00000015; UTC=2018-10-30 23:43:39
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18103023-2214-0000-0000-00005C157F16
+Message-Id: <20181030234336.GW4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-10-30_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1810300196
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Luca,
-
-thank you for review, please find my comments below.
-
-On 10/30/2018 06:43 PM, Luca Ceresoli wrote:
-> Hi Vladimir,
+On Tue, Oct 30, 2018 at 03:26:49PM -0700, Joel Fernandes wrote:
+> Hi Paul,
 > 
-> On 08/10/18 23:11, Vladimir Zapolskiy wrote:
->> From: Sandeep Jain <Sandeep_Jain@mentor.com>
->>
->> The change adds device tree binding description of TI DS90Ux9xx
->> series of serializer and deserializer controllers which support video,
->> audio and control data transmission over FPD-III Link connection.
-> [...]
->> +Example:
->> +
->> +serializer: serializer@c {
->> +	compatible = "ti,ds90ub927q", "ti,ds90ux9xx";
->> +	reg = <0xc>;
->> +	power-gpios = <&gpio5 12 GPIO_ACTIVE_HIGH>;
->> +	ti,backward-compatible-mode = <0>;
->> +	ti,low-frequency-mode = <0>;
->> +	ti,pixel-clock-edge = <0>;
->> +	...
->> +}
->> +
->> +deserializer: deserializer@3c {
->> +	compatible = "ti,ds90ub940q", "ti,ds90ux9xx";
->> +	reg = <0x3c>;
->> +	power-gpios = <&gpio6 31 GPIO_ACTIVE_HIGH>;
->> +	...
->> +}
+> On Sat, Oct 27, 2018 at 09:30:46PM -0700, Joel Fernandes (Google) wrote:
+> > As per this thread [1], it seems this smp_mb isn't needed anymore:
+> > "So the smp_mb() that I was trying to add doesn't need to be there."
+> > 
+> > So let us remove this part from the memory ordering documentation.
+> > 
+> > [1] https://lkml.org/lkml/2017/10/6/707
+> > 
+> > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 > 
-> Interesting patchset, thanks. At the moment I'm working on a driver for
-> the TI FPD-III camera serdes chips [0]. At very first sight they have
-> many commonalities with the display chipsets [1] you implemented. Did
-> you have a look into them? Do you think they could be implemented by the
-> same driver?
+> I was just checking about this patch. Do you feel it is correct to remove
+> this part from the docs? Are you satisified that a barrier isn't needed there
+> now? Or did I miss something?
 
-Absolutely, I believe that it should be no more than a matter of adding
-the correspondent data fields to describe IC specifics to the set of the
-published drivers.
+Apologies, it got lost in the shuffle.  I have now applied it with a
+bit of rework to the commit log, thank you!
 
-In general, and from my experience, there is no big difference between
-camera and display ICs from the series, my understanding is that it's
-just a marketing or common usecase difference.
+							Thanx, Paul
 
+> thanks,
 > 
-> The camera serdes chips lack some features found on the display chips
-> (e.g. audio, white balance). OTOH they have dual or quad input
-> deserializers, which adds complexity.
-
-For what it's worth the shown core drivers support DS90Ux940 (2 mutually
-exclusive links, the support is already added to the series of drivers)
-and DS90UB964 (4 parallel independent links) ICs, both deserializers are
-used in connection to camera sensors.
-
-So, the short answer is that multi-link ICs are also well supported,
-and my intention is to push the essential core drivers firstly, then
-add remarkably more trivial DRM and V4L2 drivers as cell drivers.
-
-> I'm commenting on the details in reply to the following patches
-> documenting the DT bindings.
+> - Joel
+> 
+> 
+> > ---
+> >  .../Tree-RCU-Memory-Ordering.html             | 32 +------------------
+> >  1 file changed, 1 insertion(+), 31 deletions(-)
+> > 
+> > diff --git a/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.html b/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.html
+> > index a346ce0116eb..0fb1511763d4 100644
+> > --- a/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.html
+> > +++ b/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.html
+> > @@ -77,7 +77,7 @@ The key point is that the lock-acquisition functions, including
+> >  <tt>smp_mb__after_unlock_lock()</tt> immediately after successful
+> >  acquisition of the lock.
+> >  
+> > -<p>Therefore, for any given <tt>rcu_node</tt> struction, any access
+> > +<p>Therefore, for any given <tt>rcu_node</tt> structure, any access
+> >  happening before one of the above lock-release functions will be seen
+> >  by all CPUs as happening before any access happening after a later
+> >  one of the above lock-acquisition functions.
+> > @@ -162,36 +162,6 @@ an <tt>atomic_add_return()</tt> of zero) to detect idle CPUs.
+> >  <tr><td>&nbsp;</td></tr>
+> >  </table>
+> >  
+> > -<p>The approach must be extended to handle one final case, that
+> > -of waking a task blocked in <tt>synchronize_rcu()</tt>.
+> > -This task might be affinitied to a CPU that is not yet aware that
+> > -the grace period has ended, and thus might not yet be subject to
+> > -the grace period's memory ordering.
+> > -Therefore, there is an <tt>smp_mb()</tt> after the return from
+> > -<tt>wait_for_completion()</tt> in the <tt>synchronize_rcu()</tt>
+> > -code path.
+> > -
+> > -<table>
+> > -<tr><th>&nbsp;</th></tr>
+> > -<tr><th align="left">Quick Quiz:</th></tr>
+> > -<tr><td>
+> > -	What?  Where???
+> > -	I don't see any <tt>smp_mb()</tt> after the return from
+> > -	<tt>wait_for_completion()</tt>!!!
+> > -</td></tr>
+> > -<tr><th align="left">Answer:</th></tr>
+> > -<tr><td bgcolor="#ffffff"><font color="ffffff">
+> > -	That would be because I spotted the need for that
+> > -	<tt>smp_mb()</tt> during the creation of this documentation,
+> > -	and it is therefore unlikely to hit mainline before v4.14.
+> > -	Kudos to Lance Roy, Will Deacon, Peter Zijlstra, and
+> > -	Jonathan Cameron for asking questions that sensitized me
+> > -	to the rather elaborate sequence of events that demonstrate
+> > -	the need for this memory barrier.
+> > -</font></td></tr>
+> > -<tr><td>&nbsp;</td></tr>
+> > -</table>
+> > -
+> >  <p>Tree RCU's grace--period memory-ordering guarantees rely most
+> >  heavily on the <tt>rcu_node</tt> structure's <tt>-&gt;lock</tt>
+> >  field, so much so that it is necessary to abbreviate this pattern
+> > -- 
+> > 2.19.1.568.g152ad8e336-goog
+> > 
 > 
 
-Thank you for review, I'm planning to collect more review comments and
-publish v2 in about two weeks, any kind of essential rework is not
-expected, the selected design of having an MFD and the drivers are
-proven to be easily scalable, as usual any additional wanted features
-could be added later on.
-
-> [0] http://www.ti.com/interface/fpd-link-serdes/camera-serdes/overview.html
-> [1] http://www.ti.com/interface/fpd-link-serdes/display-serdes/overview.html
-> 
-
---
-Best wishes,
-Vladimir
