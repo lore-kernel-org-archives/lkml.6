@@ -4,46 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2CCEC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C219C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:30:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA57120827
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:30:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C80AA2084A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:30:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YjWuT9Kr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA57120827
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sCfwCk5k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C80AA2084A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729024AbeJ3WYR (ORCPT
+        id S1729036AbeJ3WYT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 18:24:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54192 "EHLO mail.kernel.org"
+        Tue, 30 Oct 2018 18:24:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54200 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727826AbeJ3WYQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 18:24:16 -0400
+        id S1727774AbeJ3WYS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 18:24:18 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69B2E20827;
-        Tue, 30 Oct 2018 13:30:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9FB472080A;
+        Tue, 30 Oct 2018 13:30:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540906248;
-        bh=SOJxcm9dReDwSv9uaioWCpulJhLK2b/yU4PS86iNi8A=;
+        s=default; t=1540906250;
+        bh=srjviTABLaaNPhkcbbLY6R7X9maXpQOiF98EfmvSfD4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YjWuT9KrcfYlxDBLP+XG61qSTDVEq+kQi4K20m2mGfD3f2bPNRVRZVhpDwLxgiWcj
-         Pvnnq5zq7sLFeHextfFRrzzUzaSsnM6s8IsZkGw8eA+Z1JQ5qgzFh85d/3lKX1hzhd
-         yZIAH6qkBl45z0ERo/4STATJbEF7xLOB+LCRDMJ8=
+        b=sCfwCk5kuUJP2Mp8zP/yb9n3vXG3OZxPJKgyHNbuhHOVVNg8QgeK9go3AnJc7ktrL
+         iL9mvy1KcDVWFn6bJwFe6oCwZvbqMvsEROSSEY2rM0DnMQBGP1H920vUwMb04c0K1P
+         AFYW3gmNkDuJbhiJR+/K8RGoJkvyTKCGi1C0OyIQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+Cc:     Heiner Kallweit <hkallweit1@gmail.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 09/13] net: qla3xxx: Remove overflowing shift statement
-Date:   Tue, 30 Oct 2018 09:29:19 -0400
-Message-Id: <20181030132923.218124-9-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 10/13] r8169: fix NAPI handling under high load
+Date:   Tue, 30 Oct 2018 09:29:20 -0400
+Message-Id: <20181030132923.218124-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181030132923.218124-1-sashal@kernel.org>
 References: <20181030132923.218124-1-sashal@kernel.org>
@@ -52,52 +53,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Heiner Kallweit <hkallweit1@gmail.com>
 
-[ Upstream commit 8c3bf9b62b667456a57aefcf1689e826df146159 ]
+[ Upstream commit 6b839b6cf9eada30b086effb51e5d6076bafc761 ]
 
-Clang currently warns:
+rtl_rx() and rtl_tx() are called only if the respective bits are set
+in the interrupt status register. Under high load NAPI may not be
+able to process all data (work_done == budget) and it will schedule
+subsequent calls to the poll callback.
+rtl_ack_events() however resets the bits in the interrupt status
+register, therefore subsequent calls to rtl8169_poll() won't call
+rtl_rx() and rtl_tx() - chip interrupts are still disabled.
 
-drivers/net/ethernet/qlogic/qla3xxx.c:384:24: warning: signed shift
-result (0xF00000000) requires 37 bits to represent, but 'int' only has
-32 bits [-Wshift-overflow]
-                    ((ISP_NVRAM_MASK << 16) | qdev->eeprom_cmd_data));
-                      ~~~~~~~~~~~~~~ ^  ~~
-1 warning generated.
+Fix this by calling rtl_rx() and rtl_tx() independent of the bits
+set in the interrupt status register. Both functions will detect
+if there's nothing to do for them.
 
-The warning is certainly accurate since ISP_NVRAM_MASK is defined as
-(0x000F << 16) which is then shifted by 16, resulting in 64424509440,
-well above UINT_MAX.
-
-Given that this is the only location in this driver where ISP_NVRAM_MASK
-is shifted again, it seems likely that ISP_NVRAM_MASK was originally
-defined without a shift and during the move of the shift to the
-definition, this statement wasn't properly removed (since ISP_NVRAM_MASK
-is used in the statenent right above this). Only the maintainers can
-confirm this since this statment has been here since the driver was
-first added to the kernel.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/127
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Fixes: da78dbff2e05 ("r8169: remove work from irq handler.")
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qla3xxx.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/net/ethernet/realtek/r8169.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qla3xxx.c b/drivers/net/ethernet/qlogic/qla3xxx.c
-index b09a6b80d107..355c5fb802cd 100644
---- a/drivers/net/ethernet/qlogic/qla3xxx.c
-+++ b/drivers/net/ethernet/qlogic/qla3xxx.c
-@@ -380,8 +380,6 @@ static void fm93c56a_select(struct ql3_adapter *qdev)
+diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
+index 20f5c0cabc89..24754d3fb0ac 100644
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -7559,17 +7559,15 @@ static int rtl8169_poll(struct napi_struct *napi, int budget)
+ 	struct rtl8169_private *tp = container_of(napi, struct rtl8169_private, napi);
+ 	struct net_device *dev = tp->dev;
+ 	u16 enable_mask = RTL_EVENT_NAPI | tp->event_slow;
+-	int work_done= 0;
++	int work_done;
+ 	u16 status;
  
- 	qdev->eeprom_cmd_data = AUBURN_EEPROM_CS_1;
- 	ql_write_nvram_reg(qdev, spir, ISP_NVRAM_MASK | qdev->eeprom_cmd_data);
--	ql_write_nvram_reg(qdev, spir,
--			   ((ISP_NVRAM_MASK << 16) | qdev->eeprom_cmd_data));
- }
+ 	status = rtl_get_events(tp);
+ 	rtl_ack_events(tp, status & ~tp->event_slow);
  
- /*
+-	if (status & RTL_EVENT_NAPI_RX)
+-		work_done = rtl_rx(dev, tp, (u32) budget);
++	work_done = rtl_rx(dev, tp, (u32) budget);
+ 
+-	if (status & RTL_EVENT_NAPI_TX)
+-		rtl_tx(dev, tp);
++	rtl_tx(dev, tp);
+ 
+ 	if (status & tp->event_slow) {
+ 		enable_mask &= ~tp->event_slow;
 -- 
 2.17.1
 
