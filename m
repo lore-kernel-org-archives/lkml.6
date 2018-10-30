@@ -2,166 +2,129 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4EDFC6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 18:34:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E82C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 18:35:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87FF62081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 18:34:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 647862080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 18:35:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="rvJN3FEp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87FF62081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jdbRyarD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 647862080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728073AbeJaD2w (ORCPT
+        id S1727583AbeJaDaK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 23:28:52 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:50837 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727870AbeJaD1r (ORCPT
+        Tue, 30 Oct 2018 23:30:10 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:38039 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726219AbeJaDaK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 23:27:47 -0400
-Received: by mail-it1-f194.google.com with SMTP id k206-v6so14965073ite.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 11:33:12 -0700 (PDT)
+        Tue, 30 Oct 2018 23:30:10 -0400
+Received: by mail-qk1-f195.google.com with SMTP id p3-v6so7926628qkb.5;
+        Tue, 30 Oct 2018 11:35:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=YaNlZPxgZjMsE6yDVY2FyfjFvXinmFQDne8Zv8Bpjm0=;
-        b=rvJN3FEpSNBj12cWkHpNYG7i5NmARKfJSGWGLfZWELhd2ghH2qATNNTI3NmE9wB6de
-         LvZOmj22JPpd8H4nShUmkioSmKplguqzr/kxV4D2wF5GA7EIjYBx3sIYHadXPUlpodaK
-         aTk9KYY0EJsFCicSrCPQjTc+SJXkJWz5SIOmiiA6dx62gfeuiakNh6IgTtKsM7vjYQBJ
-         9/f6GzuJo8mNiAs+s45s5lJHYxmHUPkyZJKhSFRNSFrSJ/CKf7+TtsrNFBh5i11x52CP
-         Cy745LEdaBZVaS2/t09CxGR+9OKdh2YkJUh/ZkCMO5Sr8dmh1JSOKXZyNxnUZxKueWev
-         GxhA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JRcMjB+Fme9fl/5ALTRje9Vh2hE2H5faUJKQ79aVThc=;
+        b=jdbRyarDjRakPlpvBwYQEbZjCjKSggjzD322Sx3FdYNKlwDp27jHwPcBmNOQtgJPRi
+         YtBgdZ6NYNxGgAehRFZhaqv+yCNCWNW1o2tAhgorh+SJSL3WCPHS+/tScf7ZnagPdwmL
+         CIPyDydQ6m/xSr5NLJfptQKIqbl//ECp+vMPfKdvguDT075BykcQ5ofAGyy/c4EbiQhI
+         Jif1sNasVssaYEOyazCGxFYLuyLRRw2T0g6qM2NiGul6lXh+tTMIorXMRpxdUh6+ZMIT
+         jA71//GPk8Fmv6hJsc+PZCAby9xEIarhM3mXbFKiq93dZdSeId45lkx6/XSZZoQ0aagb
+         BoFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=YaNlZPxgZjMsE6yDVY2FyfjFvXinmFQDne8Zv8Bpjm0=;
-        b=oLF5qwwrjLfPrwlKuU/nUMiKdFl1hMvj+mQmXgYOxADhvVE78YYGSfnQw9IdLS+gj9
-         0ZcvNqZ9Y6UWIoj+6UNYMUnuB7La86U5RMHVkBzrjnSLsibVsah5DTnsuFPLv2jtbIi3
-         zGE7yMLqrB/cQKsuL94L8oZnPuKsqrapGwz7SYop7iwAUUlVYKAhPR0lzzYm9lh73Qv3
-         BLHAcShq0LwxsNEZbhO4fOIoiJPFsc4FNUihU7g6yNKGVYJjgJWmWKSvNd6Mirrw+X2f
-         AwlKPAKqNSwLCnYhLGhNCnsrtXO6ZDltS3xp3ke/naeui9wk8YZx1iC/UhQ9STsOc37A
-         4HvQ==
-X-Gm-Message-State: AGRZ1gIzFVUVeC0YjOpsPicGaEhCvrnhXks3VWPBu/c/7RPW/9GhpyH9
-        0Hmbvv+VwLtAkbsBhUMPfCfJWg==
-X-Google-Smtp-Source: AJdET5c8lhycrzLUP6kjXFFrkwzLDmmX+RTAN+tgh/t7zJztE849d8dlf2ZIv1LnyNCbA7+t6iUeYA==
-X-Received: by 2002:a24:b303:: with SMTP id e3-v6mr19471itf.82.1540924392117;
-        Tue, 30 Oct 2018 11:33:12 -0700 (PDT)
-Received: from localhost.localdomain ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id o20-v6sm4895739itc.34.2018.10.30.11.33.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 11:33:10 -0700 (PDT)
-From:   Jens Axboe <axboe@kernel.dk>
-To:     linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 08/16] blk-mq: separate number of hardware queues from nr_cpu_ids
-Date:   Tue, 30 Oct 2018 12:32:44 -0600
-Message-Id: <20181030183252.17857-9-axboe@kernel.dk>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181030183252.17857-1-axboe@kernel.dk>
-References: <20181030183252.17857-1-axboe@kernel.dk>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JRcMjB+Fme9fl/5ALTRje9Vh2hE2H5faUJKQ79aVThc=;
+        b=CHVb4bgMYLjKDwBrAcph12vaXQM3qQcyenECXRi/23vzZSaWyqxg3SwPDWW2r20ZNi
+         3gDuNc8aEupV/A3RF1mFwKAmllOyT6Vm7RlOEr2lTi4hTb3cw9W5JYfs+X4egS7lGO6y
+         gsVya/ikmeq8JzAVzGoMGXs5Hbq7Xn7u9PZ3DhLsKFjINI0cjyp6y/XRmrvWCSBM54PC
+         uQ92fcWr9RKCRvL/c6PTqPt9femskavUVqveA6qgFUS/Qaz+RIZk82wBH7FgHWx79V41
+         BJlf9i//rahj31juJuMjq9OulJ8ECuEFmuCFmsq2yfFzjEsltVutZ3+qk6DGYv3Jl4GC
+         cN4w==
+X-Gm-Message-State: AGRZ1gKrVYDIpfTM4tB5lZR8XEf2+eE5kDm74+7+HXyl29j+CUYZLQJn
+        VFP5KajyWDkajDGeStC9XpHo0iaQLstcmfkCSrORFLUa
+X-Google-Smtp-Source: AJdET5eB4EUJXGgFvf9Y6NBK4VwXsbB8IHIADjQrxO84mPv58MfRudz/iKbpxu7DRMYCmroBlL8VvyQMEWmEeI/zSHo=
+X-Received: by 2002:a37:6749:: with SMTP id b70mr12379qkc.41.1540924533747;
+ Tue, 30 Oct 2018 11:35:33 -0700 (PDT)
+MIME-Version: 1.0
+References: <1540869355-13324-1-git-send-email-lizhijian@cn.fujitsu.com>
+In-Reply-To: <1540869355-13324-1-git-send-email-lizhijian@cn.fujitsu.com>
+From:   Song Liu <liu.song.a23@gmail.com>
+Date:   Tue, 30 Oct 2018 11:35:21 -0700
+Message-ID: <CAPhsuW4Bm2H7sV8xgzcD9s=9d_z1bpeEYbo2OMTTh9mcgmrC0w@mail.gmail.com>
+Subject: Re: [PATCH v2] kselftests/bpf: use ping6 as the default ipv6 ping
+ binary if it exists
+To:     lizhijian@cn.fujitsu.com
+Cc:     shuah@kernel.org, Networking <netdev@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With multiple maps, nr_cpu_ids is no longer the maximum number of
-hardware queues we support on a given devices. The initializer of
-the tag_set can have set ->nr_hw_queues larger than the available
-number of CPUs, since we can exceed that with multiple queue maps.
+On Mon, Oct 29, 2018 at 7:35 PM Li Zhijian <lizhijian@cn.fujitsu.com> wrote:
+>
+> ping binary on some distros doesn't support "ping -6" anymore.
+>
+> Signed-off-by: Li Zhijian <lizhijian@cn.fujitsu.com>
 
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- block/blk-mq.c | 28 +++++++++++++++++++++-------
- 1 file changed, 21 insertions(+), 7 deletions(-)
+I think this should go bpf-next. Please resubmit when the bpf-next tree is open
+(after the merge window). Other than this:
 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 9d6e2f6f8ee9..1ca48cf3bbc7 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -2668,6 +2668,19 @@ static void blk_mq_realloc_hw_ctxs(struct blk_mq_tag_set *set,
- 	mutex_unlock(&q->sysfs_lock);
- }
- 
-+/*
-+ * Maximum number of hardware queues we support. For single sets, we'll never
-+ * have more than the CPUs (software queues). For multiple sets, the tag_set
-+ * user may have set ->nr_hw_queues larger.
-+ */
-+static unsigned int nr_hw_queues(struct blk_mq_tag_set *set)
-+{
-+	if (set->nr_maps == 1)
-+		return nr_cpu_ids;
-+
-+	return max(set->nr_hw_queues, nr_cpu_ids);
-+}
-+
- struct request_queue *blk_mq_init_allocated_queue(struct blk_mq_tag_set *set,
- 						  struct request_queue *q)
- {
-@@ -2687,7 +2700,8 @@ struct request_queue *blk_mq_init_allocated_queue(struct blk_mq_tag_set *set,
- 	/* init q->mq_kobj and sw queues' kobjects */
- 	blk_mq_sysfs_init(q);
- 
--	q->queue_hw_ctx = kcalloc_node(nr_cpu_ids, sizeof(*(q->queue_hw_ctx)),
-+	q->nr_queues = nr_hw_queues(set);
-+	q->queue_hw_ctx = kcalloc_node(q->nr_queues, sizeof(*(q->queue_hw_ctx)),
- 						GFP_KERNEL, set->numa_node);
- 	if (!q->queue_hw_ctx)
- 		goto err_percpu;
-@@ -2699,7 +2713,6 @@ struct request_queue *blk_mq_init_allocated_queue(struct blk_mq_tag_set *set,
- 	INIT_WORK(&q->timeout_work, blk_mq_timeout_work);
- 	blk_queue_rq_timeout(q, set->timeout ? set->timeout : 30 * HZ);
- 
--	q->nr_queues = nr_cpu_ids;
- 	q->tag_set = set;
- 
- 	q->queue_flags |= QUEUE_FLAG_MQ_DEFAULT;
-@@ -2889,12 +2902,13 @@ int blk_mq_alloc_tag_set(struct blk_mq_tag_set *set)
- 		set->queue_depth = min(64U, set->queue_depth);
- 	}
- 	/*
--	 * There is no use for more h/w queues than cpus.
-+	 * There is no use for more h/w queues than cpus if we just have
-+	 * a single map
- 	 */
--	if (set->nr_hw_queues > nr_cpu_ids)
-+	if (set->nr_maps == 1 && set->nr_hw_queues > nr_cpu_ids)
- 		set->nr_hw_queues = nr_cpu_ids;
- 
--	set->tags = kcalloc_node(nr_cpu_ids, sizeof(struct blk_mq_tags *),
-+	set->tags = kcalloc_node(nr_hw_queues(set), sizeof(struct blk_mq_tags *),
- 				 GFP_KERNEL, set->numa_node);
- 	if (!set->tags)
- 		return -ENOMEM;
-@@ -2937,7 +2951,7 @@ void blk_mq_free_tag_set(struct blk_mq_tag_set *set)
- {
- 	int i, j;
- 
--	for (i = 0; i < nr_cpu_ids; i++)
-+	for (i = 0; i < nr_hw_queues(set); i++)
- 		blk_mq_free_map_and_requests(set, i);
- 
- 	for (j = 0; j < set->nr_maps; j++) {
-@@ -3069,7 +3083,7 @@ static void __blk_mq_update_nr_hw_queues(struct blk_mq_tag_set *set,
- 
- 	lockdep_assert_held(&set->tag_list_lock);
- 
--	if (nr_hw_queues > nr_cpu_ids)
-+	if (set->nr_maps == 1 && nr_hw_queues > nr_cpu_ids)
- 		nr_hw_queues = nr_cpu_ids;
- 	if (nr_hw_queues < 1 || nr_hw_queues == set->nr_hw_queues)
- 		return;
--- 
-2.17.1
+Acked-by: Song Liu <songliubraving@fb.com>
 
+> ---
+>  tools/testing/selftests/bpf/test_skb_cgroup_id.sh | 3 ++-
+>  tools/testing/selftests/bpf/test_sock_addr.sh     | 3 ++-
+>  2 files changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/tools/testing/selftests/bpf/test_skb_cgroup_id.sh b/tools/testing/selftests/bpf/test_skb_cgroup_id.sh
+> index 42544a9..a9bc6f8 100755
+> --- a/tools/testing/selftests/bpf/test_skb_cgroup_id.sh
+> +++ b/tools/testing/selftests/bpf/test_skb_cgroup_id.sh
+> @@ -10,7 +10,7 @@ wait_for_ip()
+>         echo -n "Wait for testing link-local IP to become available "
+>         for _i in $(seq ${MAX_PING_TRIES}); do
+>                 echo -n "."
+> -               if ping -6 -q -c 1 -W 1 ff02::1%${TEST_IF} >/dev/null 2>&1; then
+> +               if $PING6 -c 1 -W 1 ff02::1%${TEST_IF} >/dev/null 2>&1; then
+>                         echo " OK"
+>                         return
+>                 fi
+> @@ -58,5 +58,6 @@ BPF_PROG_OBJ="${DIR}/test_skb_cgroup_id_kern.o"
+>  BPF_PROG_SECTION="cgroup_id_logger"
+>  BPF_PROG_ID=0
+>  PROG="${DIR}/test_skb_cgroup_id_user"
+> +type ping6 >/dev/null 2>&1 && PING6="ping6" || PING6="ping -6"
+>
+>  main
+> diff --git a/tools/testing/selftests/bpf/test_sock_addr.sh b/tools/testing/selftests/bpf/test_sock_addr.sh
+> index 9832a87..3b9fdb8 100755
+> --- a/tools/testing/selftests/bpf/test_sock_addr.sh
+> +++ b/tools/testing/selftests/bpf/test_sock_addr.sh
+> @@ -4,7 +4,8 @@ set -eu
+>
+>  ping_once()
+>  {
+> -       ping -${1} -q -c 1 -W 1 ${2%%/*} >/dev/null 2>&1
+> +       type ping${1} >/dev/null 2>&1 && PING="ping${1}" || PING="ping -${1}"
+> +       $PING -q -c 1 -W 1 ${2%%/*} >/dev/null 2>&1
+>  }
+>
+>  wait_for_ip()
+> --
+> 2.7.4
+>
