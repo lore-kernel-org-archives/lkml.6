@@ -2,101 +2,129 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22101C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:00:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 090E9C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:01:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE83620664
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:00:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE3A62081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:01:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IpQitV9O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE83620664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="NhhMOUaO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE3A62081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727695AbeJaAy7 (ORCPT
+        id S1727736AbeJaAzt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 20:54:59 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:46957 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727317AbeJaAy7 (ORCPT
+        Tue, 30 Oct 2018 20:55:49 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:23674 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726532AbeJaAzt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 20:54:59 -0400
-Received: by mail-lf1-f66.google.com with SMTP id o2-v6so9268266lfl.13;
-        Tue, 30 Oct 2018 09:00:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:subject:to:cc:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=1IEEeuUR/J5GCCap9VgHErkjtB5GQJrDwGqFb/dZsqI=;
-        b=IpQitV9Ozh/cfI7YXZrHpi5qh+kMPgggVRyjwuy3x1rePfzvmkLQGTm6qsFxDRPXR7
-         ZlRxs8lVrcWZRe0EoVj99NA0eQLJiX0yrPuXEKwe/2jUcJhyqyd8vEhpOr2Sp9EN7/R/
-         F98dk7FFwI+Jq9b3xnG40NWJNhaGqUee+QHJ/OqjMd7QbOeyQW8mCaQmAN1y2tHho4Zq
-         S7U9r7qEoPwJdLT3VojbkngKGy1bCBRfz9AqmBy2bDAqGcsJKRh13TjF3JqAn2zSzXxr
-         ZI9bzrqAQBtzUJEq/V1SoEnVsmg/S37/t6QmzpcS8mRc+K9jzeKppHQH6PEKpC6npdC2
-         mAVg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=1IEEeuUR/J5GCCap9VgHErkjtB5GQJrDwGqFb/dZsqI=;
-        b=M/xtTTdXgZfvGC+7KWqaLF/0Phl0oMjS41FsjqmwguKJef/PjCobmdFHUapp1/davX
-         KhuiWmZqTCL6YKhMtT4nCOnBloteJc3qgcNUI/w3tlvv46blEcbP6NOYbENf8IQVq3sI
-         V2xgaXr0inxwLlOByz8scRjKEEJTwhfW3PPK712Y3tIxjg3VTubyfTMjT7GMR2u2Iqjq
-         /C34rSgqTHdr9whH7LIYNMuuCYlSflaGt9FsxHfPTiQ4ItqUrdfX9CtqdGsG2BEJI9eH
-         z6SPug5sMbTdmsKf3nNHXGk1bIvHA5Vi71P9gtUBC+7rvYzpGpckR2Nor3U/Qfmss00V
-         hx2g==
-X-Gm-Message-State: AGRZ1gJMNnE+lpTwoRuuOyZea3OLtBD5lQUBzUMVtgvspjs8kovWgy1f
-        7I/DPe3FDYasue8D796rCI+NKxM6pKw=
-X-Google-Smtp-Source: AJdET5ectI9MyGwzDpn/YdWd4K2lckLVG8lNGQ9qBDaJ9s6MvT+J6x24PM1bfNJ/QDOidGyqI/4zrg==
-X-Received: by 2002:a19:4948:: with SMTP id l8-v6mr2182701lfj.16.1540915254528;
-        Tue, 30 Oct 2018 09:00:54 -0700 (PDT)
-Received: from ?IPv6:2001:14bb:52:7be:f0bf:dd2d:f008:5213? (dmkd798g-7z2-yccwcp-4.rev.dnainternet.fi. [2001:14bb:52:7be:f0bf:dd2d:f008:5213])
-        by smtp.gmail.com with ESMTPSA id a4-v6sm3747201lfa.91.2018.10.30.09.00.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 09:00:53 -0700 (PDT)
-From:   Igor Stoppa <igor.stoppa@gmail.com>
-Subject: Build error in drivers/cpufreq/intel_pstate.c
-To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-        Len Brown <lenb@kernel.org>
-Cc:     linux-pm@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Message-ID: <e176a41a-eb24-7f2c-bb75-a9b18eab420f@gmail.com>
-Date:   Tue, 30 Oct 2018 18:00:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 30 Oct 2018 20:55:49 -0400
+X-Greylist: delayed 87859 seconds by postgrey-1.27 at vger.kernel.org; Tue, 30 Oct 2018 20:55:48 EDT
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id w9UG1Huf027973;
+        Wed, 31 Oct 2018 01:01:18 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w9UG1Huf027973
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1540915278;
+        bh=gxsTxRVsNBaDN5WHw2NyXWcrNlZfCDNMLpXBasA15/A=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=NhhMOUaOo5jSXN+Dx3hWNwUa+/b1+Ai1x8vC2iBajdvC2DivyZBWTQEDeSWjYcQn2
+         cbHz8c3PPwfsw9c9gMTs0aO1rU64SxhSiJA/oVKwdkT7Iw8AdWdSUpc2ykloRmJWtE
+         W43D3PzrafC7LvuJhCELxN5dim8em6KO3zuKTir7MGUB4NEjAdgqo/cqakAKdW6pvv
+         WwqQIrYz74nONUSUlJMmbUrl8ZdruCdeG1UDn50XmQ6Xn6D3PO8AejFgdEu41/Fnm3
+         8jejzqEOmbeWTx9hRvELM46FI2nD+yY6/hTs7OzluKC5Syjbi+/CPg4QqFxkgWkJ7j
+         6vtki0cPQoPBQ==
+X-Nifty-SrcIP: [209.85.217.54]
+Received: by mail-vs1-f54.google.com with SMTP id l6so8000291vsj.13;
+        Tue, 30 Oct 2018 09:01:18 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gJ08UHMBGHLKlAdcIPdy1sWW9yaFubYw6fPAHM6QPYz9OEJSZMU
+        UGpcouGNUp7Of1m4YB1mBweBhWNRwVkJgeTzHXs=
+X-Google-Smtp-Source: AJdET5fKOdL6drdx7QJiZXd6DD8CtdSvyQlYnb9dSrtvyJkWTaWKqdTK+fytOQn4JnbnkuTFUopU4I0qERiqqGGrT+w=
+X-Received: by 2002:a67:f1d6:: with SMTP id v22mr8080376vsm.181.1540915277097;
+ Tue, 30 Oct 2018 09:01:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <1540827688-15999-1-git-send-email-yamada.masahiro@socionext.com> <1540827688-15999-2-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1540827688-15999-2-git-send-email-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 31 Oct 2018 01:00:40 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARQ2fJS95NevLpeo4duvOr3zbMm_xSBwc3_uAPr1SKKXA@mail.gmail.com>
+Message-ID: <CAK7LNARQ2fJS95NevLpeo4duvOr3zbMm_xSBwc3_uAPr1SKKXA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] kconfig: remove silentoldconfig target
+To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        intel-wired-lan@lists.osuosl.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-I'm getting the following build error:
+On Tue, Oct 30, 2018 at 12:43 AM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> As commit 911a91c39cab ("kconfig: rename silentoldconfig to
+> syncconfig") announced, it is time for the removal.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
-/home/igor/dev/kernel/linux/drivers/cpufreq/intel_pstate.c: In function 
-‘show_base_frequency’:
-/home/igor/dev/kernel/linux/drivers/cpufreq/intel_pstate.c:726:10: 
-error: implicit declaration of function 
-‘intel_pstate_get_cppc_guranteed’; did you mean ‘intel_pstate_get_epp’? 
-[-Werror=implicit-function-declaration]
-   ratio = intel_pstate_get_cppc_guranteed(policy->cpu);
-           ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-           intel_pstate_get_epp
+Applied to linux-kbuild.
 
 
 
-on top of:
+>  Documentation/networking/ice.rst | 2 +-
+>  scripts/kconfig/Makefile         | 9 +--------
+>  2 files changed, 2 insertions(+), 9 deletions(-)
+>
+> diff --git a/Documentation/networking/ice.rst b/Documentation/networking/ice.rst
+> index 1e4948c..4d118b8 100644
+> --- a/Documentation/networking/ice.rst
+> +++ b/Documentation/networking/ice.rst
+> @@ -20,7 +20,7 @@ Enabling the driver
+>  The driver is enabled via the standard kernel configuration system,
+>  using the make command::
+>
+> -  make oldconfig/silentoldconfig/menuconfig/etc.
+> +  make oldconfig/menuconfig/etc.
+>
+>  The driver is located in the menu structure at:
+>
+> diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
+> index 5d37a60..63b6092 100644
+> --- a/scripts/kconfig/Makefile
+> +++ b/scripts/kconfig/Makefile
+> @@ -68,14 +68,7 @@ PHONY += $(simple-targets)
+>  $(simple-targets): $(obj)/conf
+>         $< $(silent) --$@ $(Kconfig)
+>
+> -PHONY += silentoldconfig savedefconfig defconfig
+> -
+> -# We do not expect manual invokcation of "silentoldcofig" (or "syncconfig").
+> -silentoldconfig: syncconfig
+> -       @echo "  WARNING: \"silentoldconfig\" has been renamed to \"syncconfig\""
+> -       @echo "            and is now an internal implementation detail."
+> -       @echo "            What you want is probably \"oldconfig\"."
+> -       @echo "            \"silentoldconfig\" will be removed after Linux 4.19"
+> +PHONY += savedefconfig defconfig
+>
+>  savedefconfig: $(obj)/conf
+>         $< $(silent) --$@=defconfig $(Kconfig)
+> --
+> 2.7.4
+>
 
-commit 11743c56785c751c087eecdb98713eef796609e0
-Merge: 929e134c43c9 928002a5e9da
 
---
-igor
+-- 
+Best Regards
+Masahiro Yamada
