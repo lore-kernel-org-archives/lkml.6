@@ -2,210 +2,124 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A403C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:40:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78217C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:42:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9A2720823
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:40:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14F7C205F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:42:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kl88a5T0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9A2720823
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="sZ6UjcSo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14F7C205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726556AbeJ3Rcb (ORCPT
+        id S1726721AbeJ3RfH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 13:32:31 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36252 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726172AbeJ3Rcb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 13:32:31 -0400
-Received: by mail-wm1-f68.google.com with SMTP id a8-v6so10416384wmf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 01:39:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=XJ5YBm0RDwtMaQVWXizp2zxzgKmqAzFC71V/yRtLN7s=;
-        b=kl88a5T0WMsrkwywqAiuBLL8/oeMDB5r8whxNkCMz4TTC4VCDXJbUzKntE5ALlv31A
-         nXu0pihAEM1UdMpqv0Cx2PYECbnuJ+bx5PFVFPBLfoQawvYCgK3LtGoFXW+f6J1HN9/9
-         sYbtEbwK6wauwtIJx3LYpCLunGBecOtywMXE4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=XJ5YBm0RDwtMaQVWXizp2zxzgKmqAzFC71V/yRtLN7s=;
-        b=B+HRcNYaQjK2nfMogE3iJsNgLjYV31yvahjFKItGRC2tDV60mFIntOysDWAU0uwRLA
-         7MBvZtz9lsDH6IT2T0ZnrywaWCxtM9uME03Rxyl/ek2flh8RSYfGsp5KOt/FIBb7Wk9R
-         K4k43TuAtGuhqpsh1ginc1TPE0sTnQDiYHvJqwMmI41haU6jLOqvHLB8gnEjo3bsoYDC
-         Gr5SQOKTfgLKW+xsVeRA7WXJtCZzsF+cb0z/KVSLg4pMvR3ADzS+NfT0aVG1xn1iZEol
-         BJyQ8XxooMXykkKY2lg1ob83DOg3zO8DCstX2Rmw5v0GE4is103nVzudrmHCSvjiAEms
-         60/A==
-X-Gm-Message-State: AGRZ1gLtAEcs766f56GsZNxHM8SWR3GD9UwxTZZjRurPEdVPq4YRKb0h
-        KnrkMRucbRpdemkryi+oxhy20w==
-X-Google-Smtp-Source: AJdET5eHtDWG7OvuET4UfNpMsf2DsYxX3cAFBBDm7W4W3H3cijnSZx6Pc2VUWGfOP0KVz+Si0P/yfA==
-X-Received: by 2002:a1c:3e8d:: with SMTP id l135-v6mr913249wma.13.1540888798553;
-        Tue, 30 Oct 2018 01:39:58 -0700 (PDT)
-Received: from [192.168.0.40] (137.55.88.92.rev.sfr.net. [92.88.55.137])
-        by smtp.googlemail.com with ESMTPSA id l9-v6sm3054785wrf.4.2018.10.30.01.39.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 01:39:57 -0700 (PDT)
-Subject: Re: [PATCH 4/4] base/drivers/topology: Default dmpis-mhz if they are
- not set in DT
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     rjw@rjwysocki.net, vincent.guittot@linaro.org,
-        linux-kernel@vger.kernel.org,
-        Chris Redpath <chris.redpath@linaro.org>,
-        Quentin Perret <quentin.perret@linaro.org>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Nicolas Dechesne <nicolas.dechesne@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-References: <1540830201-2947-1-git-send-email-daniel.lezcano@linaro.org>
- <1540830201-2947-4-git-send-email-daniel.lezcano@linaro.org>
- <20181030071313.rq2d4cmfrla5boc7@vireshk-i7>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <39cacba7-07e7-b06b-1502-0dc4496c58a8@linaro.org>
-Date:   Tue, 30 Oct 2018 09:39:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181030071313.rq2d4cmfrla5boc7@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
+        Tue, 30 Oct 2018 13:35:07 -0400
+Received: from mail-db5eur01on0071.outbound.protection.outlook.com ([104.47.2.71]:61277
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726189AbeJ3RfH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 13:35:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iqtoISKdmhUaBQGnS5CEKA56s80R9o9OgchDsCLyAPM=;
+ b=sZ6UjcSoAIvKxUZWNgJEZwsJTYAz91DcJnqBIJyUCurkcsJxYHoe1qMFpljFLCWBjUDEM0Qi2ANPM0tUwsC8YmTeeYpu9B3kKuoIYvfiB3K8ZnXkd6l6IxIr5MQ3HqdTQTkUf0BK7io6Q34Qp+5VdcdeDPAdyFS3HCCkLdfKInk=
+Received: from DB7PR04MB4618.eurprd04.prod.outlook.com (52.135.138.152) by
+ DB7PR04MB4122.eurprd04.prod.outlook.com (52.135.130.143) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1273.19; Tue, 30 Oct 2018 08:42:34 +0000
+Received: from DB7PR04MB4618.eurprd04.prod.outlook.com
+ ([fe80::51ba:96d4:721e:f6a9]) by DB7PR04MB4618.eurprd04.prod.outlook.com
+ ([fe80::51ba:96d4:721e:f6a9%5]) with mapi id 15.20.1273.027; Tue, 30 Oct 2018
+ 08:42:34 +0000
+From:   Joakim Zhang <qiangqing.zhang@nxp.com>
+To:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>
+CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Joakim Zhang <qiangqing.zhang@nxp.com>
+Subject: [PATCH V2 0/3] ARM: dts: sabreauto: Add flexcan support
+Thread-Topic: [PATCH V2 0/3] ARM: dts: sabreauto: Add flexcan support
+Thread-Index: AQHUcCyADUIVvC44GE6JoLmFX6Z4yg==
+Date:   Tue, 30 Oct 2018 08:42:33 +0000
+Message-ID: <20181030083954.26440-1-qiangqing.zhang@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.17.1
+x-clientproxiedby: SG2PR0302CA0022.apcprd03.prod.outlook.com
+ (2603:1096:3:2::32) To DB7PR04MB4618.eurprd04.prod.outlook.com
+ (2603:10a6:5:36::24)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=qiangqing.zhang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [92.121.68.129]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB7PR04MB4122;6:0rbANDiTL21R3MV888WJQbKvtgBz7YGjoHNm5Pq1CYOQXBr/8C6/yq2/ww1uIS28mC/PZCtwfZ8YJiYgTsyrY7x2C6EgKcTjBjJBg/94xp28i09itTPnTfhn3ek305tFtz4SNlVX2eIDkIV8vyMXgLY2Lez/PqmeNA2j1o9aTLgHIRVH2KCa1aM9E9MSibQKM576Vw8FYyKMdc2WEC0M7u4IHc+aQhu4DDg10bFf7/H0lmV64WJ8Vowqj37HagFM70aCjV7qGr4MJxOzyOoRG1TYJwXa1yuHfyoKzQQ3ngdJjjuOQV0WDjloTtdoByhBwFnwZCnNDMrx7FpEn13zuVKdgMFdQAQEdFhhKUGeKf6i7cPkOW0g0U3ANSdV0+XMpODSWiRnNHddk2enNPbWFXQRS1ety6rA1tezqaRCvDI61DPvMVZp+lZqzUN3yq9z6Y7J5CxWfRr9JyEfzC2JRg==;5:SQqXH0x3KRTGEyLhx2MQDRDCJ+1XRF6ECeJBahYYEXi0fd93wjkR5FOiPqwZRdsMqTZreffp6Lu/smXPgN6Hl+eLEVK7IIWrKyt/+w0pP+U6EQ4UYVZOsktxYHjCJuYUcxGDQx6EUrLJnFClUjutDqEhHM42NxSQrKaFxosMgKk=;7:GYWjcuaq5bZ8wePI8EeSx1KJHEFfulmNo3oP1ea7wWpL9ZPQK6zfLOzArxytw14ueOeweSXzVJQ3beZ8vvdWoADmK5p1tUZZLgfLuLTTSYLoVUIQzGyyePROjTsXSNVweyHkk3509pSOcyNzB8gdCQ==
+x-ms-office365-filtering-correlation-id: f946a598-2ae0-4c86-0f4d-08d63e43a2af
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DB7PR04MB4122;
+x-ms-traffictypediagnostic: DB7PR04MB4122:
+x-microsoft-antispam-prvs: <DB7PR04MB4122583937F6B80CEF4E964DE6CC0@DB7PR04MB4122.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231382)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:DB7PR04MB4122;BCL:0;PCL:0;RULEID:;SRVR:DB7PR04MB4122;
+x-forefront-prvs: 08417837C5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(136003)(366004)(346002)(376002)(54534003)(189003)(199004)(6436002)(8676002)(36756003)(97736004)(6512007)(478600001)(6486002)(68736007)(2906002)(50226002)(14454004)(99286004)(476003)(6506007)(2900100001)(66066001)(5660300001)(386003)(2616005)(2501003)(5250100002)(86362001)(53936002)(1076002)(6116002)(3846002)(256004)(102836004)(52116002)(316002)(105586002)(8936002)(81166006)(81156014)(106356001)(25786009)(110136005)(486006)(54906003)(4326008)(305945005)(71200400001)(71190400001)(186003)(7736002)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4122;H:DB7PR04MB4618.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: sDG7fhPJ9ADG1sCv4kf7H1gAC9tbq/o9IH8MUNucF7ljMANDn0nra0jKHH5vNhnfvQE2hI+AJtvgqRO34SxNpm7myOuVpsEJ/i65ZIQrSFq5YYLSbrUtH/Eaxv58jYJXNO7F/G1gcLxUMG6zqUt298hT+V7dTAz2Qca1NJ7WSkq9AG7nUihgZWn5h+G70YkVEP+Q27xa6uGIrJMurC2ryW8RDLwxtFiomfPRhj6lnud6IiPDzLjvM5IftrSdRyKn4ZSiDj9Gzawt2ChXr3d2s5g3Z/jKt6/e4mNYzGPkkFZoQtzogSzXGycLSKqSm8RssCNcrmbDqDFa5vag8r4yavmeqF9i+qJljNiQ+aCLGIc=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f946a598-2ae0-4c86-0f4d-08d63e43a2af
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Oct 2018 08:42:33.9691
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4122
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/10/2018 08:13, Viresh Kumar wrote:
-> On 29-10-18, 17:23, Daniel Lezcano wrote:
->> In the case of assymetric SoC with the same micro-architecture, we
->> have a group of CPUs with smaller OPPs than the other group. One
->> example is the 96boards dragonboard 820c. There is no dmips/MHz
->> difference between both groups, so no need to specify the values in
->> the DT. Unfortunately, without these defined, there is no scaling
->> capacity comutation triggered, so we need to write
->> 'capacity-dmips-mhz' for each CPU with the same value in order to
->> force the scaled capacity computation.
->>
->> Fix this by setting a default capacity to SCHED_CAPACITY_SCALE, if no
->> 'capacity-dmips-mhz' is defined in the DT.
->>
->> This was tested on db820c:
->>  - specified values in the DT (correct results)
->>  - partial values defined in the DT (error + fallback to defaults)
->>  - no specified values in the DT (correct results)
->>
->> correct results are:
->>   cat /sys/devices/system/cpu/cpu*/cpu_capacity
->>    758
->>    758
->>   1024
->>   1024
->>
->>   ... respectively for CPU0, CPU1, CPU2 and CPU3.
->>
->> That reflects the capacity for the max frequencies 1593600 and 2150400.
->>
->> Cc: Chris Redpath <chris.redpath@linaro.org>
->> Cc: Quentin Perret <quentin.perret@linaro.org>
->> Cc: Viresh Kumar <viresh.kumar@linaro.org>
->> Cc: Amit Kucheria <amit.kucheria@linaro.org>
->> Cc: Nicolas Dechesne <nicolas.dechesne@linaro.org>
->> Cc: Niklas Cassel <niklas.cassel@linaro.org>
->> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
->> ---
->>  drivers/base/arch_topology.c | 27 ++++++++++++++++++++++++++-
->>  1 file changed, 26 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
->> index 7311641..7d594a6 100644
->> --- a/drivers/base/arch_topology.c
->> +++ b/drivers/base/arch_topology.c
->> @@ -205,6 +205,21 @@ static struct notifier_block init_cpu_capacity_notifier = {
->>  	.notifier_call = init_cpu_capacity_callback,
->>  };
->>  
->> +static int topology_set_default_capacity(void)
->> +{
->> +	int cpu;
->> +
->> +	raw_capacity = kzalloc(num_possible_cpus() * sizeof(*raw_capacity),
->> +			       GFP_KERNEL);
-> 
-> kmalloc ?
-> 
->> +	if (!raw_capacity)
->> +		return -ENOMEM;
->> +
->> +	for_each_possible_cpu(cpu)
->> +		raw_capacity[cpu] = SCHED_CAPACITY_SCALE;
-> 
-> It makes it look as if it is important to set default values to
-> SCHED_CAPACITY_SCALE while that is not the case. Maybe add a comment
-> that all CPUs are assumed to have same capacity now. Maybe initialize
-> to 1 instead ? Not sure if that would be better or not.
+This patch series intends to add flexcan support for IMX6 platforms.
 
-SCHED_CAPACITY_SCALE is the default value in this file.
+ChangeLog:
+V1-V2:
+ *using SPDX tag for new files and remove pinctrl-assert-gpios property.
 
-eg.
+Dong Aisheng (3):
+  ARM: dts: imx6sx-sdb: Add flexcan support
+  ARM: dts: imx6sx-sabreauto: Add flexcan support
+  ARM: dts: sabreauto: Add flexcan support
 
-DEFINE_PER_CPU(unsigned long, cpu_scale) = SCHED_CAPACITY_SCALE
-...
-pr_err("cpu_capacity: partial information: fallback to 1024 for all
-CPUs\n");
-...
+ .../boot/dts/imx6dl-sabreauto-flexcan1.dts    | 14 +++++
+ .../arm/boot/dts/imx6q-sabreauto-flexcan1.dts | 14 +++++
+ arch/arm/boot/dts/imx6qdl-sabreauto.dtsi      | 47 +++++++++++++++
+ arch/arm/boot/dts/imx6sx-sabreauto.dts        | 57 +++++++++++++++++++
+ arch/arm/boot/dts/imx6sx-sdb-reva.dts         | 12 ++++
+ arch/arm/boot/dts/imx6sx-sdb.dts              |  5 ++
+ arch/arm/boot/dts/imx6sx-sdb.dtsi             | 42 ++++++++++++++
+ 7 files changed, 191 insertions(+)
+ create mode 100644 arch/arm/boot/dts/imx6dl-sabreauto-flexcan1.dts
+ create mode 100644 arch/arm/boot/dts/imx6q-sabreauto-flexcan1.dts
 
-So I prefer to use the SCHED_CAPACITY_SCALE for consistency.
-
->> +
->> +	return 0;
->> +}
->> +
->>  static int __init register_cpufreq_notifier(void)
->>  {
->>  	int ret;
->> @@ -214,9 +229,19 @@ static int __init register_cpufreq_notifier(void)
->>  	 * until we have the necessary code to parse the cpu capacity, so
->>  	 * skip registering cpufreq notifier.
->>  	 */
->> -	if (!acpi_disabled || !raw_capacity)
->> +	if (!acpi_disabled)
->>  		return -EINVAL;
->>  
->> +	if (!raw_capacity) {
->> +
->> +		pr_info("cpu_capacity: No capacity defined in DT, set default "
->> +		       "values to %ld\n", SCHED_CAPACITY_SCALE);
-> 
-> So we will end up doing this also for the case where the DT is
-> partially filled with the capacity info and we already printed error
-> messages for it. Should we really do that ?
-
-Yes, it is the default behavior as stated in the documentation:
-
-"capacity-dmips-mhz property is all-or-nothing: if it is specified for a
-cpu node, it has to be specified for every other cpu nodes, or the
-system will fall back to the default capacity value for every CPU."
-
-and also in the error message:
-
-pr_err("cpu_capacity: partial information: fallback to 1024 for all
-CPUs\n");
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+--=20
+2.17.1
 
