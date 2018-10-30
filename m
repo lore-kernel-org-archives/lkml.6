@@ -2,149 +2,147 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21A99C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 608CBC6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCCDA2081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:28:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="oDK6xB3B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCCDA2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 31ADF2080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:28:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31ADF2080A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727762AbeJaBWH (ORCPT
+        id S1727825AbeJaBWT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 21:22:07 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:40202 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727020AbeJaBWG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 21:22:06 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9UGQBmP055112;
-        Tue, 30 Oct 2018 16:27:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=SM7mBkCODtz4FAhzP8nKJCqWAmrCM/Nl3VpN4x3IKfg=;
- b=oDK6xB3BGSiilZDq7q4BX1rtquy8nHJ89yOGuGtObV+PxKiimbh+70e2Oxvy0OUzXAUb
- /qCtIiIWAx4dwWM0nZEclges4OqTNq+FcGrcs8IRH2PPHhO8hkbhzd5n8ZckUqMmqKaw
- RiATVstsTuW4PVBdBuqlv7BjACyRZgPaXGGoFj+hnU1Fdn/kj+UbZkvx/+GH0RzLU9te
- nEtLF1hpLoNvZ3nFXnhzqS/Kt1CkCRQO9hhMqhj7zH1mjiBmgAhby5RqnIZ13lV6O9Vv
- M/EcgBtfo9dwbg+hOSbLRkUvvnAks1HfqS+asRkW5pk1F3SmVYvGHFz6xojS0miHaLpI JQ== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2nducm26ed-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Oct 2018 16:27:46 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9UGRj1X003460
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Oct 2018 16:27:45 GMT
-Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9UGRjwm029126;
-        Tue, 30 Oct 2018 16:27:45 GMT
-Received: from [10.211.46.57] (/10.211.46.57)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 30 Oct 2018 09:27:45 -0700
-Subject: Re: [Xen-devel] [PATCH] xen-blkfront: fix kernel panic with
- negotiate_mq error path
-To:     Juergen Gross <jgross@suse.com>, boris.ostrovsky@oracle.com,
-        konrad.wilk@oracle.com, roger.pau@citrix.com
-Cc:     axboe@kernel.dk, xen-devel@lists.xenproject.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1540837916-14356-1-git-send-email-manjunath.b.patil@oracle.com>
- <65b5d648-d9dc-9248-751c-b6e15109b52e@suse.com>
-From:   Manjunath Patil <manjunath.b.patil@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <bffbe7ff-afc9-c1b6-698f-fe3228a38760@oracle.com>
-Date:   Tue, 30 Oct 2018 09:27:43 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 30 Oct 2018 21:22:19 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:56938 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727008AbeJaBWT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 21:22:19 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7552180D;
+        Tue, 30 Oct 2018 09:28:09 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 445323F557;
+        Tue, 30 Oct 2018 09:28:09 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id B20FB1AE0CFD; Tue, 30 Oct 2018 16:28:16 +0000 (GMT)
+Date:   Tue, 30 Oct 2018 16:28:16 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Igor Stoppa <igor.stoppa@gmail.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        kernel-hardening@lists.openwall.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, igor.stoppa@huawei.com,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 16/17] prmem: pratomic-long
+Message-ID: <20181030162815.GB20827@arm.com>
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-17-igor.stoppa@huawei.com>
+ <20181025001312.GA3159@worktop.c.hoisthospitality.com>
+ <806bfff0-8d62-9918-480d-ec791b93841e@gmail.com>
+ <20181030155841.GF8177@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <65b5d648-d9dc-9248-751c-b6e15109b52e@suse.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9062 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810300139
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181030155841.GF8177@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thank you Juergen for your comments.
+On Tue, Oct 30, 2018 at 04:58:41PM +0100, Peter Zijlstra wrote:
+> On Mon, Oct 29, 2018 at 11:17:14PM +0200, Igor Stoppa wrote:
+> > 
+> > 
+> > On 25/10/2018 01:13, Peter Zijlstra wrote:
+> > > On Wed, Oct 24, 2018 at 12:35:03AM +0300, Igor Stoppa wrote:
+> > > > +static __always_inline
+> > > > +bool __pratomic_long_op(bool inc, struct pratomic_long_t *l)
+> > > > +{
+> > > > +	struct page *page;
+> > > > +	uintptr_t base;
+> > > > +	uintptr_t offset;
+> > > > +	unsigned long flags;
+> > > > +	size_t size = sizeof(*l);
+> > > > +	bool is_virt = __is_wr_after_init(l, size);
+> > > > +
+> > > > +	if (WARN(!(is_virt || likely(__is_wr_pool(l, size))),
+> > > > +		 WR_ERR_RANGE_MSG))
+> > > > +		return false;
+> > > > +	local_irq_save(flags);
+> > > > +	if (is_virt)
+> > > > +		page = virt_to_page(l);
+> > > > +	else
+> > > > +		vmalloc_to_page(l);
+> > > > +	offset = (~PAGE_MASK) & (uintptr_t)l;
+> > > > +	base = (uintptr_t)vmap(&page, 1, VM_MAP, PAGE_KERNEL);
+> > > > +	if (WARN(!base, WR_ERR_PAGE_MSG)) {
+> > > > +		local_irq_restore(flags);
+> > > > +		return false;
+> > > > +	}
+> > > > +	if (inc)
+> > > > +		atomic_long_inc((atomic_long_t *)(base + offset));
+> > > > +	else
+> > > > +		atomic_long_dec((atomic_long_t *)(base + offset));
+> > > > +	vunmap((void *)base);
+> > > > +	local_irq_restore(flags);
+> > > > +	return true;
+> > > > +
+> > > > +}
+> > > 
+> > > That's just hideously nasty.. and horribly broken.
+> > > 
+> > > We're not going to duplicate all these kernel interfaces wrapped in gunk
+> > > like that.
+> > 
+> > one possibility would be to have macros which use typeof() on the parameter
+> > being passed, to decide what implementation to use: regular or write-rare
+> > 
+> > This means that type punning would still be needed, to select the
+> > implementation.
+> > 
+> > Would this be enough? Is there some better way?
+> 
+> Like mentioned elsewhere; if you do write_enable() + write_disable()
+> thingies, it all becomes:
+> 
+> 	write_enable();
+> 	atomic_foo(&bar);
+> 	write_disable();
+> 
+> No magic gunk infested duplication at all. Of course, ideally you'd then
+> teach objtool about this (or a GCC plugin I suppose) to ensure any
+> enable reached a disable.
 
-I will soon send v2 patch.
+Isn't the issue here that we don't want to change the page tables for the
+mapping of &bar, but instead want to create a temporary writable alias
+at a random virtual address?
 
--Thanks,
-Manjunath
-On 10/30/2018 12:04 AM, Juergen Gross wrote:
-> On 29/10/2018 19:31, Manjunath Patil wrote:
->> info->nr_rings isn't adjusted in case of ENOMEM error from
->> negotiate_mq(). This leads to kernel panic in error path.
->>
->> Typical call stack involving panic -
->>   #8 page_fault at ffffffff8175936f
->>      [exception RIP: blkif_free_ring+33]
->>      RIP: ffffffffa0149491  RSP: ffff8804f7673c08  RFLAGS: 00010292
->>   ...
->>   #9 blkif_free at ffffffffa0149aaa [xen_blkfront]
->>   #10 talk_to_blkback at ffffffffa014c8cd [xen_blkfront]
->>   #11 blkback_changed at ffffffffa014ea8b [xen_blkfront]
->>   #12 xenbus_otherend_changed at ffffffff81424670
->>   #13 backend_changed at ffffffff81426dc3
->>   #14 xenwatch_thread at ffffffff81422f29
->>   #15 kthread at ffffffff810abe6a
->>   #16 ret_from_fork at ffffffff81754078
->>
->> Though either of my changes avoid the panic, I included both the
->> changes. This issue got introduced with "7ed8ce1 xen-blkfront: move
->> negotiate_mq to cover all cases of new VBDs"
-> Please us the correct format for specifying another commit.
->
->> Signed-off-by: Manjunath Patil <manjunath.b.patil@oracle.com>
-> Can you please add a "Fixes:" tag and "Cc: stable@vger.kernel.org" ?
->
->> ---
->>   drivers/block/xen-blkfront.c |    7 +++++--
->>   1 files changed, 5 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
->> index 429d201..dc8fe25 100644
->> --- a/drivers/block/xen-blkfront.c
->> +++ b/drivers/block/xen-blkfront.c
->> @@ -1350,8 +1350,10 @@ static void blkif_free(struct blkfront_info *info, int suspend)
->>   	if (info->rq)
->>   		blk_mq_stop_hw_queues(info->rq);
->>   
->> -	for (i = 0; i < info->nr_rings; i++)
->> -		blkif_free_ring(&info->rinfo[i]);
->> +	if (info->rinfo) {
->> +		for (i = 0; i < info->nr_rings; i++)
->> +			blkif_free_ring(&info->rinfo[i]);
->> +	}
-> I'd drop this change.
->
->>   
->>   	kfree(info->rinfo);
->>   	info->rinfo = NULL;
->> @@ -1919,6 +1921,7 @@ static int negotiate_mq(struct blkfront_info *info)
->>   			      GFP_KERNEL);
->>   	if (!info->rinfo) {
->>   		xenbus_dev_fatal(info->xbdev, -ENOMEM, "allocating ring_info structure");
->> +		info->nr_rings = 0;
->>   		return -ENOMEM;
->>   	}
->
-> Juergen
->
+So you'd want:
 
+	wbar = write_enable(&bar);
+	atomic_foo(wbar);
+	write_disable(wbar);
+
+which is probably better expressed as a map/unmap API. I suspect this
+would also be the only way to do things for cmpxchg() loops, where you
+want to create the mapping outside of the loop to minimise your time in
+the critical section.
+
+Will
