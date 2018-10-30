@@ -2,92 +2,87 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B961ECDE44
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:22:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1DECC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:23:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0127F2081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:22:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B784920827
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:23:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k+8XoeKG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0127F2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="RlViRAAP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B784920827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728141AbeJ3WQA (ORCPT
+        id S1728154AbeJ3WQk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 18:16:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50642 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725853AbeJ3WP7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 18:15:59 -0400
-Received: from localhost (173-25-171-118.client.mchsi.com [173.25.171.118])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77C30205F4;
-        Tue, 30 Oct 2018 13:22:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540905753;
-        bh=25ucqojyfC70GmvwUeOb5tjCN27kRMoedKdCdKasCmU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=k+8XoeKGsit9tzrFo5AUZOcIG9eYw3wmilmnBMGsFZkiHUm6OWWG/7mnCPHSAO1rf
-         WszcaozZAzrnrsAjNaG42TBdtSWMQBUrXztCo50btk8dfzDetKaQWSOWI7CpHa1ZBL
-         GQCewrADaGFSy/iLet454sfyxBgku+Trh7LUqzTg=
-Date:   Tue, 30 Oct 2018 08:22:32 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Suganath Prabu <suganath-prabu.subramani@broadcom.com>
-Cc:     lukas@wunner.de, linux-scsi@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        benh@kernel.crashing.org, ruscur@russell.cc,
-        sbobroff@linux.ibm.com, oohall@gmail.com,
-        andy.shevchenko@gmail.com, Sathya.Prakash@broadcom.com,
-        sreekanth.reddy@broadcom.com
-Subject: Re: [v6 1/4] mpt3sas: Separate out
- mpt3sas_wait_for_ioc_to_operational
-Message-ID: <20181030132232.GA41022@google.com>
-References: <1540290081-15827-1-git-send-email-suganath-prabu.subramani@broadcom.com>
- <1540290081-15827-2-git-send-email-suganath-prabu.subramani@broadcom.com>
+        Tue, 30 Oct 2018 18:16:40 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:36941 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727759AbeJ3WQk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 18:16:40 -0400
+Received: by mail-lf1-f68.google.com with SMTP id p17so2384829lfh.4
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 06:23:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rVu8PkhHvK2ia82YJEMgs3xkbYsJg8i5sGiX/0yxUf8=;
+        b=RlViRAAPiWeAY1YZoZddoPyhtoUVXyPy1v+aMQb6oOMDSujYXEKlG0NkVI1ytBKSiQ
+         Ml7V4RASkex4mgmjA551HJQr+umXsawb/JM/Forfxb42j6sIkLyhKsj6I/HuV0Sgg9r8
+         0TsEOaL146v+BHUzD7vc1xOHvfedj6XtIkzG4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rVu8PkhHvK2ia82YJEMgs3xkbYsJg8i5sGiX/0yxUf8=;
+        b=HFZSU+dYVneb0NPOYrgOWZtVP9zDtncWLWiyfiBI/w6N2Rjm/4Kl6wHcDL50TFEs2z
+         c/xGZS2ZJqrvaaFaC6oDelqaXFYJs9wXGHZO/VUSmJS3545Ctm8qK1VINbAesOOcDwR7
+         xpDN7eGpPH2DxIMxSkqGqsCnjd0ovybFoEbPMEx4UGzLsYqa+MvYsxHEZzL2DFoGfaVg
+         21+z9X4rgNQmAjCWHGuI0J2g4o2vWdfL4W7PZhGC829koAQAP/5xFPtZ0PuktxTHeWGX
+         VlFfbyGTGcChCp5Pr6Jrq1QXnPQex24Ce2wMFGkrCRQFRnLeV6W/OQWitGxYhnxZnWqt
+         yIBg==
+X-Gm-Message-State: AGRZ1gKA/fcu0bbMBNzWi4ePa2cZkyLrDhUgaTjUdsw740SqQF8w57Pw
+        CMXntkYRr5L9EZR0QVL1i9mdrojuf/++pht2f9T5ow==
+X-Google-Smtp-Source: AJdET5ctRM9y02jiTSsEknX2a9sUwhB93BDR8bOin6g1tegPcE7zNXwSQvYnTE6nkQWt6NEa1jfnnnQ9bJ3vOUTgEyM=
+X-Received: by 2002:a19:41c4:: with SMTP id o187mr2010002lfa.32.1540905792364;
+ Tue, 30 Oct 2018 06:23:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1540290081-15827-2-git-send-email-suganath-prabu.subramani@broadcom.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181021200032.1833-1-wsa+renesas@sang-engineering.com> <20181021200032.1833-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181021200032.1833-2-wsa+renesas@sang-engineering.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 30 Oct 2018 14:22:59 +0100
+Message-ID: <CACRpkdai_bEJ8K=Bo0KeARS=KF5BP4C8B0fGGAJQFZ6RMZRRsw@mail.gmail.com>
+Subject: Re: [PATCH 1/5] pinctrl: intel: pinctrl-baytrail: simplify getting .driver_data
+To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 23, 2018 at 03:51:18PM +0530, Suganath Prabu wrote:
-> No functional changes. This section of code
->  "wait for IOC to be operational" is used in many places
->  across the driver, and hence moved this code in to
->  a function "mpt3sas_wait_for_ioc_to_operational()"
-> 
-> Signed-off-by: Suganath Prabu <suganath-prabu.subramani@broadcom.com>
+On Sun, Oct 21, 2018 at 10:00 PM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
 
-I'm not really a reviewer of mpt3sas, but since I commented earlier,
-I took a quick look at this.  Minor comments:
+> We should get 'driver_data' from 'struct device' directly. Going via
+> platform_device is an unneeded step back and forth.
+>
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-  - Remove leading spaces from changelog and reformat to use the whole
-    width, e.g.,
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+for all 3 Intel patches
 
-      No functional changes. This section of code "wait for IOC to be
-      operational" is used in many places across the driver.  Factor
-      this code out into a new mpt3sas_wait_for_ioc_to_operational().
+Andy is collecting Intel pin control patches so he will
+pick these 3 up I think, let me know if all works out!
 
-  - "mpt3sas_wait_for_ioc_to_operational" isn't really grammatical in
-    English; maybe "mpt3sas_wait_for_ioc" would be better?
-
-  - It would be slightly easier to review this if it were split into three
-    patches: (1) add and use the IOC_OPERATIONAL_WAIT_COUNT #define, (2)
-    factor out mpt3sas_wait_for_ioc() using the exact same code structure
-    (the while loop), and (3) convert mpt3sas_wait_for_ioc() to use the do
-    loop instead of the while.  The idea is that each individual patch is
-    simpler and more obvious because it only contains a single logical
-    change.
-
-Reviewed-by: Bjorn Helgaas <bhelgaas@google.com>
+Yours,
+Linus Walleij
