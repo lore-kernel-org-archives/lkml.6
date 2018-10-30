@@ -2,339 +2,198 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FBAAC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:19:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54E5CC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:20:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA40A20827
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:19:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA40A20827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 17BE62082B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:20:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17BE62082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727630AbeJ3UMS (ORCPT
+        id S1727679AbeJ3UNM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 16:12:18 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52579 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726721AbeJ3UMS (ORCPT
+        Tue, 30 Oct 2018 16:13:12 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:48730 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727151AbeJ3UNL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 16:12:18 -0400
-Received: by mail-wm1-f67.google.com with SMTP id 189-v6so11339397wmw.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 04:19:13 -0700 (PDT)
+        Tue, 30 Oct 2018 16:13:11 -0400
+Received: from mail-vs1-f71.google.com ([209.85.217.71])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <christian.brauner@canonical.com>)
+        id 1gHS47-0004UI-3v
+        for linux-kernel@vger.kernel.org; Tue, 30 Oct 2018 11:20:07 +0000
+Received: by mail-vs1-f71.google.com with SMTP id g13so541157vso.7
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 04:20:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language;
-        bh=YBAjtYBHPMbOhvf67wYNjvQkFVV9ngJxYuFL7Y/ZQLs=;
-        b=TRwveKDuwl/OAJ0t7QMgYnaV5FASr3DRvG+vxlaP9Ar/vmMS6BYCW9b2redx9WgXfz
-         Imn2qgE6/ONmD7gpyvGmnF7ry7Ei25ynmUodBJ2Vt6EJkx1x8yAj7CkJsn0fPDBGMvu1
-         jUJ1FJL+FDtwpzDm2W2psFq+tAtwjMtI2cSr2e6sP8sLk3S2zqBgrUa2Js9NAJJYTNU1
-         8CSGrtbyZdL2zidpwBfOpXHQ0hZkE+MSSumKuzM28lZKwLLE66ntIt5+MOdcPrgd3HIB
-         /z/HlEFHC4YFzsKgtwoGuxo/nG0P19qUV/JcnoV8kR7pRULLpd+9/1p+rthSWX28g2WD
-         vdGw==
-X-Gm-Message-State: AGRZ1gK6itwPQYhJo4u2XnVbBsWF1DmpE5g+oMbqUIgFGjF9LsdNpjle
-        PrP1D9t3X9ERyB8q66DOcAsHAfviJ+o=
-X-Google-Smtp-Source: AJdET5cmSvXk/9P9f7tRf78qcp1ubLH9/WSkFtb+8bZrCPQa1rjIeSg8l1RBVrdktq0QnWQgMup/bA==
-X-Received: by 2002:a1c:e088:: with SMTP id x130-v6mr1373951wmg.6.1540898352636;
-        Tue, 30 Oct 2018 04:19:12 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id 74-v6sm16946432wmi.23.2018.10.30.04.19.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 04:19:11 -0700 (PDT)
-From:   Hans de Goede <hdegoede@redhat.com>
-Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Dean Wallace <duffydack73@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Johannes Stezenbach <js@sig21.net>,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mogens Jensen <mogens-jensen@protonmail.com>
-References: <20181025232517.ywnw54qibemosjws@picard>
- <154083512089.98144.9141070901932719147@swboyd.mtv.corp.google.com>
- <CAHp75VfnN5tF1Z9+CDDhKFNG5QfCRcGOZeAkpf-5BfCEx16gvg@mail.gmail.com>
- <CAHp75VctdBE-GM60udJawBCXdmoOqZn4N=kFWz5GLHzjPG2iQQ@mail.gmail.com>
- <20181029190819.2ivlx73n6y6sx4vk@picard>
- <ffc4bcc9-62c3-8940-85d6-d0fd01f3a1b8@linux.intel.com>
-Message-ID: <c8fb730a-c160-41b4-dad0-8ed8594e5687@redhat.com>
-Date:   Tue, 30 Oct 2018 12:19:10 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1sDuTsLiLT/HmT1tPv3oURZ2+zCFjuPhDiGlUQbk+nU=;
+        b=KV4jW3qJAgRDRsv9nUCRWMYquRDh+ceefvD5nXJm+GMowl3fefsJEaZX77jJ1MbUiR
+         oobMOH5HZ91tipF+PbGcAuTssJrgj40qEu8wagbejFVGMYVbpPnLS7UBuXL7AA6/elHq
+         zR2eVcne+S+jUJrMrmbpdyOS76/B5os2nrWq9Vx1d1VJaYIucMxPprGFhoD0D0qkGJ94
+         zzaSCmWwdhqjPb/s77sj0X6Of7jlEIHmMFWCML/9O/fKCfG/d3JeMk6k2MM+3IhEbr+T
+         c/W/SexPEbmwtF2j3e39tK6pmm6n3UCh9F/P4Ev9HP7a2+qU6q4/Fi+SF8+YhehzE3xH
+         xz1Q==
+X-Gm-Message-State: AGRZ1gJpU7I6kHd+gfL0ny487bTOWdxgy85CIIe+2pJ/3lR9Fe+Nz/f0
+        DTzOLXi0qln1xW5HycVMfCxWfCfILNX/otPffKfcRdmZiy6eS5Tix+B/ZAPRu5OcNciVUkrOwun
+        KkMvdwctVgioiXzLFJslPO/SPfZDXtCFvOEoP5VcpVbErvo5P/XbG/KaLxA==
+X-Received: by 2002:a67:f085:: with SMTP id i5mr2896673vsl.198.1540898402932;
+        Tue, 30 Oct 2018 04:20:02 -0700 (PDT)
+X-Google-Smtp-Source: AJdET5dJlNElf1nzKQZUoUb0LqGsPZN9PbqGmMV9/Eu4AcfQMtkItLLZmZDgbi1ORnYzs9U69j/dCg9gV6oD9DE+ucA=
+X-Received: by 2002:a67:f085:: with SMTP id i5mr2896660vsl.198.1540898402349;
+ Tue, 30 Oct 2018 04:20:02 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <ffc4bcc9-62c3-8940-85d6-d0fd01f3a1b8@linux.intel.com>
-Content-Type: multipart/mixed;
- boundary="------------D8E333DA52011A9414FDF4E5"
-Content-Language: en-US
+References: <20181029221037.87724-1-dancol@google.com> <CAJWu+oquh1RXz+1tD91NzvicYAL3GP0KVi7RLR2cgouSgHXjOw@mail.gmail.com>
+ <CAKOZueub941EHifyf7zEk_yvf=2P+HV-8esE1QPFypRoxtt1qQ@mail.gmail.com>
+ <20181030103910.mnzot3zcoh6j7did@gmail.com> <20181030104037.73t5uz3piywxwmye@gmail.com>
+ <CAKOZuesb4ns1dM7itX9uzvYBGp_aSgQXV1ONuV4eQRq0FiehYQ@mail.gmail.com>
+ <CAPP7u0VE-4c10A7A+WO+rMFbNF42CROP7+xGttzU_3HWQk883Q@mail.gmail.com> <CAKOZueswuOTvkOeuipRwg5VCYGvpf=8j1ChJftAk_fJO6xPPtQ@mail.gmail.com>
+In-Reply-To: <CAKOZueswuOTvkOeuipRwg5VCYGvpf=8j1ChJftAk_fJO6xPPtQ@mail.gmail.com>
+From:   Christian Brauner <christian.brauner@canonical.com>
+Date:   Tue, 30 Oct 2018 12:19:51 +0100
+Message-ID: <CAPP7u0X-FRgS0kGcL7dMEGzLys54UkXU3+drX76=NmMbCOLsxg@mail.gmail.com>
+Subject: Re: [RFC PATCH] Implement /proc/pid/kill
+To:     Daniel Colascione <dancol@google.com>
+Cc:     Joel Fernandes <joelaf@google.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tim Murray <timmurray@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------D8E333DA52011A9414FDF4E5
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+On Tue, Oct 30, 2018 at 12:12 PM Daniel Colascione <dancol@google.com> wrote:
+>
+> On Tue, Oct 30, 2018 at 11:04 AM, Christian Brauner
+> <christian.brauner@canonical.com> wrote:
+> > On Tue, Oct 30, 2018 at 11:48 AM Daniel Colascione <dancol@google.com> wrote:
+> >>
+> >> On Tue, Oct 30, 2018 at 10:40 AM, Christian Brauner
+> >> <christian.brauner@canonical.com> wrote:
+> >> > On Tue, Oct 30, 2018 at 11:39:11AM +0100, Christian Brauner wrote:
+> >> >> On Tue, Oct 30, 2018 at 08:50:22AM +0000, Daniel Colascione wrote:
+> >> >> > On Tue, Oct 30, 2018 at 3:21 AM, Joel Fernandes <joelaf@google.com> wrote:
+> >> >> > > On Mon, Oct 29, 2018 at 3:11 PM Daniel Colascione <dancol@google.com> wrote:
+> >> >> > >>
+> >> >> > >> Add a simple proc-based kill interface. To use /proc/pid/kill, just
+> >> >> > >> write the signal number in base-10 ASCII to the kill file of the
+> >> >> > >> process to be killed: for example, 'echo 9 > /proc/$$/kill'.
+> >> >> > >>
+> >> >> > >> Semantically, /proc/pid/kill works like kill(2), except that the
+> >> >> > >> process ID comes from the proc filesystem context instead of from an
+> >> >> > >> explicit system call parameter. This way, it's possible to avoid races
+> >> >> > >> between inspecting some aspect of a process and that process's PID
+> >> >> > >> being reused for some other process.
+> >> >> > >>
+> >> >> > >> With /proc/pid/kill, it's possible to write a proper race-free and
+> >> >> > >> safe pkill(1). An approximation follows. A real program might use
+> >> >> > >> openat(2), having opened a process's /proc/pid directory explicitly,
+> >> >> > >> with the directory file descriptor serving as a sort of "process
+> >> >> > >> handle".
+> >> >> > >
+> >> >> > > How long does the 'inspection' procedure take? If its a short
+> >> >> > > duration, then is PID reuse really an issue, I mean the PIDs are not
+> >> >> > > reused until wrap around and the only reason this can be a problem is
+> >> >> > > if you have the wrap around while the 'inspecting some aspect'
+> >> >> > > procedure takes really long.
+> >> >> >
+> >> >> > It's a race. Would you make similar statements about a similar fix for
+> >> >> > a race condition involving a mutex and a double-free just because the
+> >> >> > race didn't crash most of the time? The issue I'm trying to fix here
+> >> >> > is the same problem, one level higher up in the abstraction hierarchy.
+> >> >> >
+> >> >> > > Also the proc fs is typically not the right place for this. Some
+> >> >> > > entries in proc are writeable, but those are for changing values of
+> >> >> > > kernel data structures. The title of man proc(5) is "proc - process
+> >> >> > > information pseudo-filesystem". So its "information" right?
+> >> >> >
+> >> >> > Why should userspace care whether a particular operation is "changing
+> >> >> > [a] value[] of [a] kernel data structure" or something else? That
+> >> >> > something in /proc is a struct field is an implementation detail. It's
+> >> >> > the interface semantics that matters, and whether a particular
+> >> >> > operation is achieved by changing a struct field or by making a
+> >> >> > function call is irrelevant to userspace. Proc is a filesystem about
+> >> >> > processes. Why shouldn't you be able to send a signal to a process via
+> >> >> > proc? It's an operation involving processes.
+> >> >> >
+> >> >> > It's already possible to do things *to* processes via proc, e.g.,
+> >> >> > adjust OOM killer scores. Proc filesystem file descriptors are
+> >> >> > userspace references to kernel-side struct pid instances, and as such,
+> >> >> > make good process handles. There are already "verb" files in procfs,
+> >> >> > such as /proc/sys/vm/drop_caches and /proc/sysrq-trigger. Why not add
+> >> >> > a kill "verb", especially if it closes a race that can't be closed
+> >> >> > some other way?
+> >> >> >
+> >> >> > You could implement this interface as a system call that took a procfs
+> >> >> > directory file descriptor, but relative to this proposal, it would be
+> >> >> > all downside. Such a thing would act just the same way as
+> >> >> > /pric/pid/kill, and wouldn't be usable from the shell or from programs
+> >> >> > that didn't want to use syscall(2). (Since glibc isn't adding new
+> >> >> > system call wrappers.) AFAIK, the only downside of having a "kill"
+> >> >> > file is the need for a string-to-integer conversion, but compared to
+> >> >> > process killing, integer parsing is insignificant.
+> >> >> >
+> >> >> > > IMO without a really good reason for this, it could really be a hard
+> >> >> > > sell but the RFC was worth it anyway to discuss it ;-)
+> >> >> >
+> >> >> > The traditional unix process API is down there at level -10 of Rusty
+> >> >> > Russel's old bad API scale: "It's impossible to get right". The races
+> >> >> > in the current API are unavoidable. That most programs don't hit these
+> >> >> > races most of the time doesn't mean that the race isn't present.
+> >> >> >
+> >> >> > We've moved to a model where we identify other system resources, like
+> >> >> > DRM fences, locks, sockets, and everything else via file descriptors.
+> >> >> > This change is a step toward using procfs file descriptors to work
+> >> >> > with processes, which makes the system more regular and easier to
+> >> >> > reason about. A clean API that's possible to use correctly is a
+> >> >> > worthwhile project.
+> >> >>
+> >> >> So I have been disucssing a new process API With David Howells, Kees
+> >> >> Cook and a few others and I am working on an RFC/proposal for this. It
+> >> >> is partially inspired by the new mount API. So I would like to block
+> >> >> this patch until then. I would like to get this right very much and
+> >>
+> >> It's good to hear that others are thinking about this problem.
+> >>
+> >> >> I
+> >> >> don't think this is the way to go.
+> >
+> > Because we want this to be generic and things like getting handles on
+> > processes via /proc is just a part of that
+>
+> The word "generic" is like the word "secure": it's hard to tell what
 
-Hi Dean,
+Ha, trolling hard but true. :)
 
-Attached are 2 different attempts at fixing this.
+> it means in isolation. :-) Over what domain do we need to be generic?
+> Procfs file descriptors already work on processes generally, and they
+> allow for race-free access to anything that's reachable via a procfs
+> pid directory. In what way would an alternate approach be even more
+> generic?
+>
+> >> Why not?
+> >>
+> >> Does your proposed API allow for a race-free pkill, with arbitrary
+> >> selection criteria? This capability is a good litmus test for fixing
+> >> the long-standing Unix process API issues.
+> >
+> > You'd have a handle on the process with an fd so yes, it would be.
+>
+> Thanks. That's good to hear.
+>
+> Any idea on the timetable for this proposal? I'm open to lots of
+> alternative technical approaches, but I don't want this capability to
+> languish for a long time.
 
-When trying these patches do not forget to remove the revert of the
-"Stop-marking-clocks-as-CLK_IS_CRITICAL" commit.
-
-Please first try the 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch
-patch I expect that one to do the trick indicating that the Swanky model
-uses a different pmc clk then which is normally used for the codec clock.
-
-If that patch does not fix things, please give the other patch a try.
-
-Regards,
-
-Hans
-
-
-
-On 29-10-18 23:03, Pierre-Louis Bossart wrote:
-> 
-> On 10/29/18 2:08 PM, Dean Wallace wrote:
->> On 29-10-18, Andy Shevchenko wrote:
->>> On Mon, Oct 29, 2018 at 7:52 PM Andy Shevchenko
->>> <andy.shevchenko@gmail.com> wrote:
->>>> Cc: Pierre as well.
->>>>
->>>> On Mon, Oct 29, 2018 at 7:48 PM Stephen Boyd <sboyd@kernel.org> wrote:
->>>>> Quoting Dean Wallace (2018-10-25 16:25:17)
->>>>>> I have found a regression in 4.18.15 that means I lose sound on my old
->>>>>> Toshiba Chromebook 2 (Swanky).  My system details are:-
->>>>>>
->>>>>> Toshiba Chromebook (Swanky)
->>>>>> MrChromebox UEFI coreboot
->>>>>> Arch Linux running latest alsa/pulseaudio
->>>>>>
->>>>>> Upgraded kernel from 4.18.14 to 4.18.15 and lost all sound output.  By
->>>>>> output I mean, the card is still detected, the module loaded, all apps
->>>>>> showing sound is being playing, but no actual audible sound comes
->>>>>> through.  Upgraded to 4.18.16 same issue.
->>>>>>
->>>>>> Dug around and found Upstream commit 648e921888ad96ea3dc922739e96716ad3225d7f
->>>>>> clk: x86: Stop marking clocks as CLK_IS_CRITICAL
->>>>>> "This commit removes the CLK_IS_CRITICAL marking, fixing Cherry Trail
->>>>>> devices not being able to reach S0i3 greatly decreasing their battery
->>>>>> drain when suspended."
->>>>>>
->>>>>> I reverted it and compiled 4.18.16 and have sound back again.  Could
->>>>>> this be looked into, with possibility of fix.
->>>>>>
->>>>> Thanks for the bug report. I'm adding some people involved in the commit
->>>>> you mention is causing audio regressions. The best plan is to probably
->>>>> revert the commit from the 4.18 linux stable tree. Or there may be
->>>>> another patch missing that would be useful to make this backported patch
->>>>> work. Hopefully Hans or Andy knows.
->>>> Hans has been investigating S0ix issues on Baytrail and Cherrytrail machines.
->>>> I have a feeling that the problem can be fixed by properly handling
->>>> clock in ASoC driver(s). Perhaps Hans and Pierre can figure this out
->>>> better than me.
->>> Looking to sound/soc/intel/boards/cht_bsw_rt5672.c I see no
->>> suspend-resume hooks. Perhaps, adding them like in the commit
->>> ac8bd9e13be2 ("r8169: Disable clk during suspend / resume") would
->>> help.
-> 
-> I missed this change while i was away. It's indeed the expectation that the audio mclk is handled by the firmware,
-
-I believe that the statement "It's indeed the expectation that the
-audio mclk is handled by the firmware" is not correct for BYT/CHT
-platforms (and the commit causing the regression only affects BYT/CHT
-platforms). Various machine drivers under sound/soc/intel/boards have
-code to deal with the mclk themselves, like this:
-
-         drv->mclk = devm_clk_get(&pdev->dev, "pmc_plt_clk_3");
-...
-
-         if (SND_SOC_DAPM_EVENT_ON(event)) {
-                 ret = clk_prepare_enable(ctx->mclk);
-		...
-         } else {
-                 clk_disable_unprepare(ctx->mclk);
-         }
-
-The above code is from sound/soc/intel/boards/cht_bsw_max98090_ti.c
-which is the machine driver used on the machines for which problems
-are now being reported.
-
-And my commit introducing the problem is in essence a revert of:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=d31fd43c0f9a41e2678a1e78c0f22f0384c6edd3
-
-Which is from 2017-07-14 and the ASoC code for BYT/CHT platforms is
-much older then that.
-
-Also I asked Carlo why he wrote that patch and it was to fix a problem
-with ethernet on some laptops.
-
-> not sure I understand why removing the CLK_IS_CRITICAL was necessary or what it has to do with S0ix.
-
-It is necessary, because if it is set the clock never gets disabled and
-on x86 platforms using suspend2idle we are responsible for *all* the hardware
-power-management as OS. If we do not disable the clocks then we can only
-reach S0i1 instead of S0i3 when suspended leading to increased battery
-drain during suspend.
-
-Also note that this patch is only causing problems on CHT + max98090 codec
-using machines. I've tested it on many other BYT/CHT machines myself and
-we've not had any other bug reports related to this.
-
-So this clearly points to a problem with the clock management in the
-cht_bsw_max98090_ti.c machine driver.
-
-I've some ideas how to fix this and I will prepare some patches to test.
-
-Regards,
-
-Hans
-
---------------D8E333DA52011A9414FDF4E5
-Content-Type: text/x-patch;
- name="0001-ASoC-intel-cht_bsw_max98090_ti-Also-enable-disable-p.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="0001-ASoC-intel-cht_bsw_max98090_ti-Also-enable-disable-p.pa";
- filename*1="tch"
-
-From 52e56378721f2e0ffde337f38db96a92d1870dc7 Mon Sep 17 00:00:00 2001
-From: Hans de Goede <hdegoede@redhat.com>
-Date: Tue, 30 Oct 2018 12:14:27 +0100
-Subject: [PATCH] ASoC: intel: cht_bsw_max98090_ti: Also enable/disable
- pmc_plt_clk_0
-
-Testing has shown that some boards not only use pmc_plt_clk_3 but also
-use pmc_plt_clk_0.
-
-This commit makes us also get and enable/disable pmc_plt_clk_0 as
-necessary, fixing sound not working on these boards.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- sound/soc/intel/boards/cht_bsw_max98090_ti.c | 24 ++++++++++----------
- 1 file changed, 12 insertions(+), 12 deletions(-)
-
-diff --git a/sound/soc/intel/boards/cht_bsw_max98090_ti.c b/sound/soc/intel/boards/cht_bsw_max98090_ti.c
-index db6976f4ddaa..750ac2160200 100644
---- a/sound/soc/intel/boards/cht_bsw_max98090_ti.c
-+++ b/sound/soc/intel/boards/cht_bsw_max98090_ti.c
-@@ -36,7 +36,7 @@
- #define CHT_CODEC_DAI	"HiFi"
- 
- struct cht_mc_private {
--	struct clk *mclk;
-+	struct clk_bulk_data clks[2];
- 	struct snd_soc_jack jack;
- 	bool ts3a227e_present;
- };
-@@ -57,14 +57,14 @@ static int platform_clock_control(struct snd_soc_dapm_widget *w,
- 	}
- 
- 	if (SND_SOC_DAPM_EVENT_ON(event)) {
--		ret = clk_prepare_enable(ctx->mclk);
-+		ret = clk_bulk_prepare_enable(ARRAY_SIZE(ctx->clks), ctx->clks);
- 		if (ret < 0) {
- 			dev_err(card->dev,
- 				"could not configure MCLK state");
- 			return ret;
- 		}
- 	} else {
--		clk_disable_unprepare(ctx->mclk);
-+		clk_bulk_disable_unprepare(ARRAY_SIZE(ctx->clks), ctx->clks);
- 	}
- 
- 	return 0;
-@@ -229,11 +229,11 @@ static int cht_codec_init(struct snd_soc_pcm_runtime *runtime)
- 	 * to disable a clock that has not been enabled,
- 	 * we need to enable the clock first.
- 	 */
--	ret = clk_prepare_enable(ctx->mclk);
-+	ret = clk_prepare_enable(ctx->clks[0].clk);
- 	if (!ret)
--		clk_disable_unprepare(ctx->mclk);
-+		clk_disable_unprepare(ctx->clks[0].clk);
- 
--	ret = clk_set_rate(ctx->mclk, CHT_PLAT_CLK_3_HZ);
-+	ret = clk_set_rate(ctx->clks[0].clk, CHT_PLAT_CLK_3_HZ);
- 
- 	if (ret)
- 		dev_err(runtime->dev, "unable to set MCLK rate\n");
-@@ -411,12 +411,12 @@ static int snd_cht_mc_probe(struct platform_device *pdev)
- 	snd_soc_card_cht.dev = &pdev->dev;
- 	snd_soc_card_set_drvdata(&snd_soc_card_cht, drv);
- 
--	drv->mclk = devm_clk_get(&pdev->dev, "pmc_plt_clk_3");
--	if (IS_ERR(drv->mclk)) {
--		dev_err(&pdev->dev,
--			"Failed to get MCLK from pmc_plt_clk_3: %ld\n",
--			PTR_ERR(drv->mclk));
--		return PTR_ERR(drv->mclk);
-+	drv->clks[0].id = "pmc_plt_clk_3"; /* Standard codec clk */
-+	drv->clks[1].id = "pmc_plt_clk_0"; /* Extra clk used on some boards */
-+	ret_val = devm_clk_bulk_get(&pdev->dev, 2, drv->clks);
-+	if (ret_val) {
-+		dev_err(&pdev->dev, "Failed to get clocks: %d\n", ret_val);
-+		return ret_val;
- 	}
- 
- 	ret_val = devm_snd_soc_register_card(&pdev->dev, &snd_soc_card_cht);
--- 
-2.19.0
-
-
---------------D8E333DA52011A9414FDF4E5
-Content-Type: text/x-patch;
- name="0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.pa";
- filename*1="tch"
-
-From 03c73955ccc8cf925fac48295e92e62b6b1b35f7 Mon Sep 17 00:00:00 2001
-From: Hans de Goede <hdegoede@redhat.com>
-Date: Tue, 30 Oct 2018 11:55:28 +0100
-Subject: [PATCH] ASoC: intel: cht_bsw_max98090_ti: Use pmc_plt_clk_0 instead
- of pmc_plt_clk_3
-
-Testing has shown that CHT boards with a max98090 codec use pmc_plt_clk_0
-instead of pmc_plt_clk_3, adjust the code to match this.
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
----
- sound/soc/intel/boards/cht_bsw_max98090_ti.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/sound/soc/intel/boards/cht_bsw_max98090_ti.c b/sound/soc/intel/boards/cht_bsw_max98090_ti.c
-index db6976f4ddaa..ce44ebee8d88 100644
---- a/sound/soc/intel/boards/cht_bsw_max98090_ti.c
-+++ b/sound/soc/intel/boards/cht_bsw_max98090_ti.c
-@@ -411,10 +411,10 @@ static int snd_cht_mc_probe(struct platform_device *pdev)
- 	snd_soc_card_cht.dev = &pdev->dev;
- 	snd_soc_card_set_drvdata(&snd_soc_card_cht, drv);
- 
--	drv->mclk = devm_clk_get(&pdev->dev, "pmc_plt_clk_3");
-+	drv->mclk = devm_clk_get(&pdev->dev, "pmc_plt_clk_0");
- 	if (IS_ERR(drv->mclk)) {
- 		dev_err(&pdev->dev,
--			"Failed to get MCLK from pmc_plt_clk_3: %ld\n",
-+			"Failed to get MCLK from pmc_plt_clk_0: %ld\n",
- 			PTR_ERR(drv->mclk));
- 		return PTR_ERR(drv->mclk);
- 	}
--- 
-2.19.0
-
-
---------------D8E333DA52011A9414FDF4E5--
+Latest end of year likely sooner depending on the feedback I'm getting
+during LPC.
