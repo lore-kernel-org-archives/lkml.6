@@ -2,92 +2,176 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E394FC6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:11:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61E05C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:22:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7A8820664
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:11:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07A502081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:22:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="merO8jjf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7A8820664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jms.id.au
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cxeQWjNB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07A502081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727547AbeJaGGj (ORCPT
+        id S1727502AbeJaGRL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 02:06:39 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:40369 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725743AbeJaGGj (ORCPT
+        Wed, 31 Oct 2018 02:17:11 -0400
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:43142 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726287AbeJaGRK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 02:06:39 -0400
-Received: by mail-qk1-f194.google.com with SMTP id f18-v6so8224406qkm.7;
-        Tue, 30 Oct 2018 14:11:33 -0700 (PDT)
+        Wed, 31 Oct 2018 02:17:10 -0400
+Received: by mail-yw1-f66.google.com with SMTP id j75-v6so5563772ywj.10
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 14:22:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=Geo1F+rcWiR1yH6tDsVfLVgB6tNCnOzh06qBDUj6Wpw=;
-        b=merO8jjfclSY449GGyNc6gtmZYe754ISceV1K31uiUFYlIxBKsX4XOzF/ieVUOw6EC
-         uyClrdDEs5K3WWkxEm7oOwwBgPEt3pGbSYH9Pb0Ok/Jdn6mjb7vMza/JdKwvoFLonvM0
-         2KEZ2rzsKPpGjrDQ8uczOHylITpy9YxSp8K58=
+        bh=A3GtamlUW6fXb7w6Fyunb3q7NAD4+BRgLXRT9qulAng=;
+        b=cxeQWjNBpOS0ZubpgiTyMLJ/yj0sQT9pwwaXYhO/t1R1C/GFIqAx0kkSlOQ9/F1/m0
+         7reNqthvtQfk76ivAyAaiZXjCk6vNq7S7/+r4z6HuQkq+mvMA2+p8N7lGkeAO5nXsO/A
+         osx2fwLU2KYdBlQO7bIk2ezz55bwwVxMQE624=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=Geo1F+rcWiR1yH6tDsVfLVgB6tNCnOzh06qBDUj6Wpw=;
-        b=uUyJJBNolhCxK1euHsRWGNxz34xp05nrUxFJosV+iwdNSZx9NJ6p5Pej5yQHLFFTf6
-         KmsYP2MtAu97JNeUgkht79szYZgHLMGAXPN4wB+7cNnnHlI7AAooecTTAh78S0sAibc5
-         GgXVeA3o/NuU6wkJBsAFsdWA7Z4GOvEZdEtyDgX3T7weKln79C9yDc/Jtv5d1YK600Zb
-         HW6da+u85fIm6VOD4se1Rlivt/cPYsEbxGxm1gTj/rMD0Q7PMCe6ZDSZD40wkT/A8IsG
-         6vRW/BzqXuuXVK5/OKS+7byEdTxdqE+Ie2B5V7mWIA1UxIGzC60wOosYwkSm85VoQLwO
-         /hSA==
-X-Gm-Message-State: AGRZ1gJEVFnHIdVaBXufQlDcocPlMuKDkBmc1AOPIt+gHkk/Le9q5VA9
-        wuCqi9E36mLA//8pri5ZegVsePY5Y5K9uGFv47s=
-X-Google-Smtp-Source: AJdET5fq9zBHJ2GMvSSou9qc8qDiQ88IpkB04UUhK5+9PcLbHPJxQrdFkeqWWLTSVgzxPmVRDzWsFfWLZfpY/nwV/rU=
-X-Received: by 2002:ae9:ef8a:: with SMTP id d132mr306114qkg.11.1540933893205;
- Tue, 30 Oct 2018 14:11:33 -0700 (PDT)
+        bh=A3GtamlUW6fXb7w6Fyunb3q7NAD4+BRgLXRT9qulAng=;
+        b=mFgewL1QXUPh6nD8id3VfJqQ0Cd15YMb8ttI8epYW3rTYQ8eNvz3uiFTHMDhFkWz65
+         oFiCcpZINejEoM7+ffcyZPpitLP5Wf4Np02QGmz4Na/43sWGcXhECB+v82RNZjnvmVz6
+         3uJdk55yLv4tbGgOJwVEembKXFk/rybJRLRWPpT8kDk+qzg0+bvPS8FN0eZs5UyW0up1
+         MBZiN4ZQG2OXlgI3n/R64VL8X3rIBC8gbayw8/XGihqHk5YMhl4sjmQbXse7AHHa8dc6
+         Xg/fnSd6b5Pqko0GS8pp/GrVn/WIEUSVcD+JLAXqZIOesk3serN2dpDDbfGCq+BXnVrO
+         fRwg==
+X-Gm-Message-State: AGRZ1gKJc6C/kqTp/zWdhirFjm1Uy34SVufn3qZ0q7FrWVvwHTQ6W75G
+        +GjcxRBnC+PRgIdITVFM1y+nB9B9hHA=
+X-Google-Smtp-Source: AJdET5dpfG8wvf/01OgTTT5dCRO/hux5whtF9Bdar0SVG+4zb0hAkq5DDQZH7XLK22dzkNu4oiPucQ==
+X-Received: by 2002:a81:6256:: with SMTP id w83-v6mr406264ywb.501.1540934522425;
+        Tue, 30 Oct 2018 14:22:02 -0700 (PDT)
+Received: from mail-yw1-f52.google.com (mail-yw1-f52.google.com. [209.85.161.52])
+        by smtp.gmail.com with ESMTPSA id z11-v6sm7291402ywl.36.2018.10.30.14.22.00
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 14:22:01 -0700 (PDT)
+Received: by mail-yw1-f52.google.com with SMTP id k6-v6so1188947ywa.11
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 14:22:00 -0700 (PDT)
+X-Received: by 2002:a81:9b83:: with SMTP id s125-v6mr420345ywg.47.1540934520178;
+ Tue, 30 Oct 2018 14:22:00 -0700 (PDT)
 MIME-Version: 1.0
-References: <1540905994-6073-1-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1540905994-6073-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Wed, 31 Oct 2018 07:41:21 +1030
-Message-ID: <CACPK8Xf4+M9Q1zC5GBC0PBJBZnim14m_s5HoQJQOn5Dc-uCDag@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] kbuild: replace cc-name test with CONFIG_CC_IS_CLANG
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kbuild@vger.kernel.org, linux-mips@linux-mips.org,
-        Michal Marek <michal.lkml@markovi.net>, jhogan@kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ralf@linux-mips.org, paul.burton@mips.com,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev@lists.ozlabs.org
+Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Tue, 30 Oct 2018 14:21:59
+ -0700 (PDT)
+In-Reply-To: <20181030075234.21137-1-wangpeng15@xiaomi.com>
+References: <20181030075234.21137-1-wangpeng15@xiaomi.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 30 Oct 2018 14:21:59 -0700
+X-Gmail-Original-Message-ID: <CAGXu5jKKgn4WZWo1Jv3h5DfNFR6ku-eAP1pcOUad5D4rA1Kzqg@mail.gmail.com>
+Message-ID: <CAGXu5jKKgn4WZWo1Jv3h5DfNFR6ku-eAP1pcOUad5D4rA1Kzqg@mail.gmail.com>
+Subject: Re: [PATCH v4] pstore: Avoid duplicate call of persistent_ram_zap()
+To:     Peng Wang <wangpeng15@xiaomi.com>
+Cc:     Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        LKML <linux-kernel@vger.kernel.org>, vipwangerxiao@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 30 Oct 2018 at 23:58, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On Tue, Oct 30, 2018 at 12:52 AM, Peng Wang <wangpeng15@xiaomi.com> wrote:
+> When initialing prz with invalid data in buffer(no PERSISTENT_RAM_SIG),
+> function call path is like this:
 >
-> Evaluating cc-name invokes the compiler every time even when you are
-> not compiling anything, like 'make help'. This is not efficient.
+> ramoops_init_prz ->
+> |
+> |-> persistent_ram_new -> persistent_ram_post_init -> persistent_ram_zap
+> |
+> |-> persistent_ram_zap
 >
-> The compiler type has been already detected in the Kconfig stage.
-> Use CONFIG_CC_IS_CLANG, instead.
-
-Thanks, I didn't know about this.
-
+> As we can see, persistent_ram_zap() is called twice.
+> We can avoid this by adding an option to persistent_ram_new(), and
+> only call persistent_ram_zap() when it is needed.
 >
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
+> Signed-off-by: Peng Wang <wangpeng15@xiaomi.com>
 
-Acked-by: Joel Stanley <joel@jms.id.au>
+Thanks! I've applied this to my devel branch. I'll have it in
+linux-next once -rc2 lands.
 
-Cheers,
+-Kees
 
-Joel
+> ---
+>  fs/pstore/ram.c            | 4 +---
+>  fs/pstore/ram_core.c       | 5 +++--
+>  include/linux/pstore_ram.h | 1 +
+>  3 files changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
+> index ffcff6516e89..b51901f97dc2 100644
+> --- a/fs/pstore/ram.c
+> +++ b/fs/pstore/ram.c
+> @@ -640,7 +640,7 @@ static int ramoops_init_prz(const char *name,
+>
+>         label = kasprintf(GFP_KERNEL, "ramoops:%s", name);
+>         *prz = persistent_ram_new(*paddr, sz, sig, &cxt->ecc_info,
+> -                                 cxt->memtype, 0, label);
+> +                                 cxt->memtype, PRZ_FLAG_ZAP_OLD, label);
+>         if (IS_ERR(*prz)) {
+>                 int err = PTR_ERR(*prz);
+>
+> @@ -649,8 +649,6 @@ static int ramoops_init_prz(const char *name,
+>                 return err;
+>         }
+>
+> -       persistent_ram_zap(*prz);
+> -
+>         *paddr += sz;
+>
+>         return 0;
+> diff --git a/fs/pstore/ram_core.c b/fs/pstore/ram_core.c
+> index 12e21f789194..2ededd1ea1c2 100644
+> --- a/fs/pstore/ram_core.c
+> +++ b/fs/pstore/ram_core.c
+> @@ -505,15 +505,16 @@ static int persistent_ram_post_init(struct persistent_ram_zone *prz, u32 sig,
+>                         pr_debug("found existing buffer, size %zu, start %zu\n",
+>                                  buffer_size(prz), buffer_start(prz));
+>                         persistent_ram_save_old(prz);
+> -                       return 0;
+> +                       if (!(prz->flags & PRZ_FLAG_ZAP_OLD))
+> +                               return 0;
+>                 }
+>         } else {
+>                 pr_debug("no valid data in buffer (sig = 0x%08x)\n",
+>                          prz->buffer->sig);
+> +               prz->buffer->sig = sig;
+>         }
+>
+>         /* Rewind missing or invalid memory area. */
+> -       prz->buffer->sig = sig;
+>         persistent_ram_zap(prz);
+>
+>         return 0;
+> diff --git a/include/linux/pstore_ram.h b/include/linux/pstore_ram.h
+> index 602d64725222..6e94980357d2 100644
+> --- a/include/linux/pstore_ram.h
+> +++ b/include/linux/pstore_ram.h
+> @@ -30,6 +30,7 @@
+>   * PRZ_FLAG_NO_LOCK is used. For all other cases, locking is required.
+>   */
+>  #define PRZ_FLAG_NO_LOCK       BIT(0)
+> +#define PRZ_FLAG_ZAP_OLD       BIT(1)
+>
+>  struct persistent_ram_buffer;
+>  struct rs_control;
+> --
+> 2.19.1
+>
+
+
+
+-- 
+Kees Cook
