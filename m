@@ -3,174 +3,203 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAFB9C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:05:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 975FCC6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:05:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97FDA20827
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:05:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97FDA20827
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 59D2D20827
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:05:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59D2D20827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727704AbeJ3T6G (ORCPT
+        id S1727724AbeJ3T6I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 15:58:06 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:48492 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727239AbeJ3T6G (ORCPT
+        Tue, 30 Oct 2018 15:58:08 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:39678 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727638AbeJ3T6H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 15:58:06 -0400
-Received: from mail-vs1-f71.google.com ([209.85.217.71])
-        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <christian.brauner@canonical.com>)
-        id 1gHRpX-0003al-ID
-        for linux-kernel@vger.kernel.org; Tue, 30 Oct 2018 11:05:03 +0000
-Received: by mail-vs1-f71.google.com with SMTP id z73so2935817vsc.10
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 04:05:03 -0700 (PDT)
+        Tue, 30 Oct 2018 15:58:07 -0400
+Received: by mail-wr1-f68.google.com with SMTP id r10-v6so12087842wrv.6
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 04:05:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+xD8uEpiSIMs93mm0jrRvaJ5Pldce2QKveGyTBtfPY4=;
-        b=KlFzy+ZhnyMsWEOM0usKnrcs26aynx/vTYX5i/7QcCeAi3FkcvDP0itk69UUMsnIYU
-         i6QRcGmTDDpsmoFkz3yQpciiaf+C/T1RqJNWP7RaCoSPy9uq3jz4BageAqr/Att/yo1w
-         sxv2Bme/xGfv8DOa02+N/THPlzCjKvczs1GZAYDOLUgV1QgXoS48/kMeZdDHulhKiysf
-         CuVJBdtlcYl4wcOSBX1Nvflw4R2P3MdoMai367vx583YHYI5EAX/FO/KSZ08HLKg2Nky
-         um1UWq+7VeCPU00LICnIHcorfG73zKvMTv20vOkErkQeGnS/hCDOwW1n/ar8x/jBy53L
-         jWXA==
-X-Gm-Message-State: AGRZ1gIJHgvlV+3WAHYtATtiQkMu3cPPs6OnpovXmK/tNj0CBtbe6E+D
-        ECjnQ/4hJHcv/VaX5vXnqz4S0ViEhUICB80EZxDgkusp1HIt1p53Je/hUKGwzsC9vcm1tTlIXxS
-        RIpMoIZ5kya/RrvQnU+pRAzy9QygvUNQbGrLGzf2Mo9dMUYVl9hkCg6wAwg==
-X-Received: by 2002:a9f:308a:: with SMTP id j10mr8033116uab.28.1540897502235;
-        Tue, 30 Oct 2018 04:05:02 -0700 (PDT)
-X-Google-Smtp-Source: AJdET5fgzYiO3d8edkqSKozAQ6pdIFVeXEV23t7jZOni/bNkUwmVfvnWZ206oqzir1EvlYPs1BpTrWqz1B5WZIPGI1Y=
-X-Received: by 2002:a9f:308a:: with SMTP id j10mr8033094uab.28.1540897501579;
- Tue, 30 Oct 2018 04:05:01 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181029221037.87724-1-dancol@google.com> <CAJWu+oquh1RXz+1tD91NzvicYAL3GP0KVi7RLR2cgouSgHXjOw@mail.gmail.com>
- <CAKOZueub941EHifyf7zEk_yvf=2P+HV-8esE1QPFypRoxtt1qQ@mail.gmail.com>
- <20181030103910.mnzot3zcoh6j7did@gmail.com> <20181030104037.73t5uz3piywxwmye@gmail.com>
- <CAKOZuesb4ns1dM7itX9uzvYBGp_aSgQXV1ONuV4eQRq0FiehYQ@mail.gmail.com>
-In-Reply-To: <CAKOZuesb4ns1dM7itX9uzvYBGp_aSgQXV1ONuV4eQRq0FiehYQ@mail.gmail.com>
-From:   Christian Brauner <christian.brauner@canonical.com>
-Date:   Tue, 30 Oct 2018 12:04:50 +0100
-Message-ID: <CAPP7u0VE-4c10A7A+WO+rMFbNF42CROP7+xGttzU_3HWQk883Q@mail.gmail.com>
-Subject: Re: [RFC PATCH] Implement /proc/pid/kill
-To:     Daniel Colascione <dancol@google.com>
-Cc:     Joel Fernandes <joelaf@google.com>,
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Pq3egYQUyuuJbhC2nWzxHhInwWV28VvPoPKdYpujsls=;
+        b=cQnR4NQP4RtA65+gQK2KPaUzuhropX32uLHzE8M0YgM07Rr4ArCGICSdmQWzKsA6Xl
+         uBepBRvSKcAksTcNDy2VP6/S+tQaEpaoN8/AyqiBSY1hwkwiSY02742zzEN0XI1dqwCI
+         EVSnLzSWxONIQLF4tY3yXvcIlX5tJMAuj7uLoQE1rf4vkdPkqEkDYLeyQsA3a4WHeXqu
+         7dpfpOwMs7idqBevBkb38RpCq1JF6Y9qh2pBJfyKMGMFNiG5vdCd1+5B4T/irEKXW8KM
+         d35VfnyD/Qac4qvqJxyay4RVIndzlhZsGW0/cEOj+01dgWSO1z957NQvktAo8XIw30BE
+         UA/A==
+X-Gm-Message-State: AGRZ1gLmqo2EUW+tA4WPrMyhmeuBGxhNMSwg9Ur+P2pDZIi0rh/tXS+y
+        vMBE1Wbw1/RPW9sTVNzD4Quw0g==
+X-Google-Smtp-Source: AJdET5fVVcRKSuITJ04gkn74HBq3qrHApzt948QR12YD8cvI1N1pX1/4/MmOGkoHC9Zs8yNkWMI3kA==
+X-Received: by 2002:a5d:4d81:: with SMTP id b1-v6mr19230463wru.80.1540897505393;
+        Tue, 30 Oct 2018 04:05:05 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id r16-v6sm21258596wrv.21.2018.10.30.04.05.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 04:05:04 -0700 (PDT)
+Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Dean Wallace <duffydack73@gmail.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Johannes Stezenbach <js@sig21.net>,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mogens Jensen <mogens-jensen@protonmail.com>
+References: <20181025232517.ywnw54qibemosjws@picard>
+ <154083512089.98144.9141070901932719147@swboyd.mtv.corp.google.com>
+ <CAHp75VfnN5tF1Z9+CDDhKFNG5QfCRcGOZeAkpf-5BfCEx16gvg@mail.gmail.com>
+ <CAHp75VctdBE-GM60udJawBCXdmoOqZn4N=kFWz5GLHzjPG2iQQ@mail.gmail.com>
+ <20181029190819.2ivlx73n6y6sx4vk@picard>
+ <ffc4bcc9-62c3-8940-85d6-d0fd01f3a1b8@linux.intel.com>
+ <ac7720fd-ed2e-dd77-d60b-7ab535daf167@redhat.com>
+Message-ID: <2696c9c2-29f7-18cf-1893-bd2fc2f203f9@redhat.com>
+Date:   Tue, 30 Oct 2018 12:05:03 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <ac7720fd-ed2e-dd77-d60b-7ab535daf167@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 11:48 AM Daniel Colascione <dancol@google.com> wrote:
->
-> On Tue, Oct 30, 2018 at 10:40 AM, Christian Brauner
-> <christian.brauner@canonical.com> wrote:
-> > On Tue, Oct 30, 2018 at 11:39:11AM +0100, Christian Brauner wrote:
-> >> On Tue, Oct 30, 2018 at 08:50:22AM +0000, Daniel Colascione wrote:
-> >> > On Tue, Oct 30, 2018 at 3:21 AM, Joel Fernandes <joelaf@google.com> wrote:
-> >> > > On Mon, Oct 29, 2018 at 3:11 PM Daniel Colascione <dancol@google.com> wrote:
-> >> > >>
-> >> > >> Add a simple proc-based kill interface. To use /proc/pid/kill, just
-> >> > >> write the signal number in base-10 ASCII to the kill file of the
-> >> > >> process to be killed: for example, 'echo 9 > /proc/$$/kill'.
-> >> > >>
-> >> > >> Semantically, /proc/pid/kill works like kill(2), except that the
-> >> > >> process ID comes from the proc filesystem context instead of from an
-> >> > >> explicit system call parameter. This way, it's possible to avoid races
-> >> > >> between inspecting some aspect of a process and that process's PID
-> >> > >> being reused for some other process.
-> >> > >>
-> >> > >> With /proc/pid/kill, it's possible to write a proper race-free and
-> >> > >> safe pkill(1). An approximation follows. A real program might use
-> >> > >> openat(2), having opened a process's /proc/pid directory explicitly,
-> >> > >> with the directory file descriptor serving as a sort of "process
-> >> > >> handle".
-> >> > >
-> >> > > How long does the 'inspection' procedure take? If its a short
-> >> > > duration, then is PID reuse really an issue, I mean the PIDs are not
-> >> > > reused until wrap around and the only reason this can be a problem is
-> >> > > if you have the wrap around while the 'inspecting some aspect'
-> >> > > procedure takes really long.
-> >> >
-> >> > It's a race. Would you make similar statements about a similar fix for
-> >> > a race condition involving a mutex and a double-free just because the
-> >> > race didn't crash most of the time? The issue I'm trying to fix here
-> >> > is the same problem, one level higher up in the abstraction hierarchy.
-> >> >
-> >> > > Also the proc fs is typically not the right place for this. Some
-> >> > > entries in proc are writeable, but those are for changing values of
-> >> > > kernel data structures. The title of man proc(5) is "proc - process
-> >> > > information pseudo-filesystem". So its "information" right?
-> >> >
-> >> > Why should userspace care whether a particular operation is "changing
-> >> > [a] value[] of [a] kernel data structure" or something else? That
-> >> > something in /proc is a struct field is an implementation detail. It's
-> >> > the interface semantics that matters, and whether a particular
-> >> > operation is achieved by changing a struct field or by making a
-> >> > function call is irrelevant to userspace. Proc is a filesystem about
-> >> > processes. Why shouldn't you be able to send a signal to a process via
-> >> > proc? It's an operation involving processes.
-> >> >
-> >> > It's already possible to do things *to* processes via proc, e.g.,
-> >> > adjust OOM killer scores. Proc filesystem file descriptors are
-> >> > userspace references to kernel-side struct pid instances, and as such,
-> >> > make good process handles. There are already "verb" files in procfs,
-> >> > such as /proc/sys/vm/drop_caches and /proc/sysrq-trigger. Why not add
-> >> > a kill "verb", especially if it closes a race that can't be closed
-> >> > some other way?
-> >> >
-> >> > You could implement this interface as a system call that took a procfs
-> >> > directory file descriptor, but relative to this proposal, it would be
-> >> > all downside. Such a thing would act just the same way as
-> >> > /pric/pid/kill, and wouldn't be usable from the shell or from programs
-> >> > that didn't want to use syscall(2). (Since glibc isn't adding new
-> >> > system call wrappers.) AFAIK, the only downside of having a "kill"
-> >> > file is the need for a string-to-integer conversion, but compared to
-> >> > process killing, integer parsing is insignificant.
-> >> >
-> >> > > IMO without a really good reason for this, it could really be a hard
-> >> > > sell but the RFC was worth it anyway to discuss it ;-)
-> >> >
-> >> > The traditional unix process API is down there at level -10 of Rusty
-> >> > Russel's old bad API scale: "It's impossible to get right". The races
-> >> > in the current API are unavoidable. That most programs don't hit these
-> >> > races most of the time doesn't mean that the race isn't present.
-> >> >
-> >> > We've moved to a model where we identify other system resources, like
-> >> > DRM fences, locks, sockets, and everything else via file descriptors.
-> >> > This change is a step toward using procfs file descriptors to work
-> >> > with processes, which makes the system more regular and easier to
-> >> > reason about. A clean API that's possible to use correctly is a
-> >> > worthwhile project.
-> >>
-> >> So I have been disucssing a new process API With David Howells, Kees
-> >> Cook and a few others and I am working on an RFC/proposal for this. It
-> >> is partially inspired by the new mount API. So I would like to block
-> >> this patch until then. I would like to get this right very much and
->
-> It's good to hear that others are thinking about this problem.
->
-> >> I
-> >> don't think this is the way to go.
+Hi,
 
-Because we want this to be generic and things like getting handles on
-processes via /proc is just a part of that.
+On 30-10-18 11:17, Hans de Goede wrote:
+> Hi Pierre-Louis,
+> 
+> On 29-10-18 23:03, Pierre-Louis Bossart wrote:
+>>
+>> On 10/29/18 2:08 PM, Dean Wallace wrote:
+>>> On 29-10-18, Andy Shevchenko wrote:
+>>>> On Mon, Oct 29, 2018 at 7:52 PM Andy Shevchenko
+>>>> <andy.shevchenko@gmail.com> wrote:
+>>>>> Cc: Pierre as well.
+>>>>>
+>>>>> On Mon, Oct 29, 2018 at 7:48 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>>>>>> Quoting Dean Wallace (2018-10-25 16:25:17)
+>>>>>>> I have found a regression in 4.18.15 that means I lose sound on my old
+>>>>>>> Toshiba Chromebook 2 (Swanky).  My system details are:-
+>>>>>>>
+>>>>>>> Toshiba Chromebook (Swanky)
+>>>>>>> MrChromebox UEFI coreboot
+>>>>>>> Arch Linux running latest alsa/pulseaudio
+>>>>>>>
+>>>>>>> Upgraded kernel from 4.18.14 to 4.18.15 and lost all sound output.  By
+>>>>>>> output I mean, the card is still detected, the module loaded, all apps
+>>>>>>> showing sound is being playing, but no actual audible sound comes
+>>>>>>> through.  Upgraded to 4.18.16 same issue.
+>>>>>>>
+>>>>>>> Dug around and found Upstream commit 648e921888ad96ea3dc922739e96716ad3225d7f
+>>>>>>> clk: x86: Stop marking clocks as CLK_IS_CRITICAL
+>>>>>>> "This commit removes the CLK_IS_CRITICAL marking, fixing Cherry Trail
+>>>>>>> devices not being able to reach S0i3 greatly decreasing their battery
+>>>>>>> drain when suspended."
+>>>>>>>
+>>>>>>> I reverted it and compiled 4.18.16 and have sound back again.  Could
+>>>>>>> this be looked into, with possibility of fix.
+>>>>>>>
+>>>>>> Thanks for the bug report. I'm adding some people involved in the commit
+>>>>>> you mention is causing audio regressions. The best plan is to probably
+>>>>>> revert the commit from the 4.18 linux stable tree. Or there may be
+>>>>>> another patch missing that would be useful to make this backported patch
+>>>>>> work. Hopefully Hans or Andy knows.
+>>>>> Hans has been investigating S0ix issues on Baytrail and Cherrytrail machines.
+>>>>> I have a feeling that the problem can be fixed by properly handling
+>>>>> clock in ASoC driver(s). Perhaps Hans and Pierre can figure this out
+>>>>> better than me.
+>>>> Looking to sound/soc/intel/boards/cht_bsw_rt5672.c I see no
+>>>> suspend-resume hooks. Perhaps, adding them like in the commit
+>>>> ac8bd9e13be2 ("r8169: Disable clk during suspend / resume") would
+>>>> help.
+>>
+>> I missed this change while i was away. It's indeed the expectation that the audio mclk is handled by the firmware,
+> 
+> I believe that the statement "It's indeed the expectation that the
+> audio mclk is handled by the firmware" is not correct for BYT/CHT
+> platforms (and the commit causing the regression only affects BYT/CHT
+> platforms). Various machine drivers under sound/soc/intel/boards have
+> code to deal with the mclk themselves, like this:
+> 
+>          drv->mclk = devm_clk_get(&pdev->dev, "pmc_plt_clk_3");
+> ...
+> 
+>          if (SND_SOC_DAPM_EVENT_ON(event)) {
+>                  ret = clk_prepare_enable(ctx->mclk);
+>          ...
+>          } else {
+>                  clk_disable_unprepare(ctx->mclk);
+>          }
+> 
+> The above code is from sound/soc/intel/boards/cht_bsw_max98090_ti.c
+> which is the machine driver used on the machines for which problems
+> are now being reported.
+> 
+> And my commit introducing the problem is in essence a revert of:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=d31fd43c0f9a41e2678a1e78c0f22f0384c6edd3
+> 
+> Which is from 2017-07-14 and the ASoC code for BYT/CHT platforms is
+> much older then that.
+> 
+> Also I asked Carlo why he wrote that patch and it was to fix a problem
+> with ethernet on some laptops.
+> 
+>> not sure I understand why removing the CLK_IS_CRITICAL was necessary or what it has to do with S0ix.
+> 
+> It is necessary, because if it is set the clock never gets disabled and
+> on x86 platforms using suspend2idle we are responsible for *all* the hardware
+> power-management as OS. If we do not disable the clocks then we can only
+> reach S0i1 instead of S0i3 when suspended leading to increased battery
+> drain during suspend.
+> 
+> Also note that this patch is only causing problems on CHT + max98090 codec
+> using machines. I've tested it on many other BYT/CHT machines myself and
+> we've not had any other bug reports related to this.
+> 
+> So this clearly points to a problem with the clock management in the
+> cht_bsw_max98090_ti.c machine driver.
+> 
+> I've some ideas how to fix this and I will prepare some patches to test.
 
->
-> Why not?
->
-> Does your proposed API allow for a race-free pkill, with arbitrary
-> selection criteria? This capability is a good litmus test for fixing
-> the long-standing Unix process API issues.
+p.s.
 
-You'd have a handle on the process with an fd so yes, it would be.
+It seems that a sub-thread of this thread where me and the reporter have
+been working on debugging this has lost most of the people in the Cc.
+
+So here is a quick status update. So far this issue has been seen on
+Swanky and Clapper model chromebooks.
+
+Reverting the patch causing this regression and then doing:
+
+for i in /sys/kernel/debug/clk/pmc_plt_clk_?; do echo -n "$i: "; cat $i/clk_flags; echo; done
+
+has shown that before my patch to not set CLK_IS_CRITICAL the
+CLK_IS_CRITICAL was being set on pmc_plt_clk_0. Which shows
+that that clock is somehow being used for sounds on these boards.
+
+I think that pmc_plt_clk_0 is being used instead of pmc_plt_clk_3,
+but it could also be the case that both are being used.
+
+I'm currently preparing patches to test both scenarios.
+
+Regards,
+
+Hans
