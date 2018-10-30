@@ -2,215 +2,83 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65FFDC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 06:33:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74556C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 06:33:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 347622082D
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 06:33:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 347622082D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 12F8A2084A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 06:33:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="09vZJyLR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12F8A2084A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbeJ3PZQ (ORCPT
+        id S1726761AbeJ3PZ5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 11:25:16 -0400
-Received: from mx2.suse.de ([195.135.220.15]:53438 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726087AbeJ3PZQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 11:25:16 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2B6F1AEC0;
-        Tue, 30 Oct 2018 06:33:04 +0000 (UTC)
-From:   Juergen Gross <jgross@suse.com>
-To:     linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        x86@kernel.org, virtualization@lists.linux-foundation.org
-Cc:     akataria@vmware.com, rusty@rustcorp.com.au,
-        boris.ostrovsky@oracle.com, hpa@zytor.com, tglx@linutronix.de,
-        mingo@redhat.com, Juergen Gross <jgross@suse.com>
-Subject: [PATCH] x86/paravirt: remove unused _paravirt_ident_32
-Date:   Tue, 30 Oct 2018 07:33:01 +0100
-Message-Id: <20181030063301.15054-1-jgross@suse.com>
-X-Mailer: git-send-email 2.16.4
+        Tue, 30 Oct 2018 11:25:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44488 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726087AbeJ3PZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 11:25:57 -0400
+Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0509E2082D;
+        Tue, 30 Oct 2018 06:33:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540881226;
+        bh=X+ZQEgQW1dlB6+sS1QOs3d1MGyFA9c4IjXWjMre3tUE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=09vZJyLRbl2jEydlVRIgvqLPoDWAPdGATxZqwHfYSkQ3MC91qbV6HKas3yaQ/s2fU
+         SHSa6be5jaULZR/XT1DrdTehd2FP066jHvwCBLpuE6G0U29p5Xwy4dxIK6sQJZEM3M
+         ZuWeaQ/D3+gP5Xrcjd+s1CywBrd5lZoo+VOGg1H4=
+Date:   Tue, 30 Oct 2018 07:34:08 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Sam Protsenko <semen.protsenko@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        codalist@coda.cs.cmu.edu, coda@cs.cmu.edu,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Praneeth Bajjuri <praneeth@ti.com>
+Subject: Re: [PATCH v2] codafs: Fix build using bare-metal toolchain
+Message-ID: <20181030063408.GA26627@kroah.com>
+References: <20181029200311.16947-1-semen.protsenko@linaro.org>
+ <CAKaJLVvpNZW2a+3xc7PE0+iU1nm39A7PEjCu8F9ijrT+wEXOag@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKaJLVvpNZW2a+3xc7PE0+iU1nm39A7PEjCu8F9ijrT+wEXOag@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no user of _paravirt_ident_32 left in the tree. Remove it
-together with the related paravirt_patch_ident_32().
+On Mon, Oct 29, 2018 at 10:05:49PM +0200, Sam Protsenko wrote:
+> Hi Greg,
+> 
+> On Mon, Oct 29, 2018 at 10:03 PM, Sam Protsenko
+> <semen.protsenko@linaro.org> wrote:
+> > The kernel is self-contained project and can be built with bare-metal
+> > toolchain. But bare-metal toolchain doesn't define __linux__. Because of
+> > this u_quad_t type is not defined when using bare-metal toolchain and
+> > codafs build fails. This patch fixes it by defining u_quad_t type
+> > unconditionally.
+> >
+> > Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+> > ---
+> 
+> Can you please pull this one, if this applicable? I sent it a while
+> ago, but I guess it got lost in mailing list. It might be also
+> applicable to stable branch (as it fixes allmodconfig build for ARM
+> with bare-metal toolchain).
 
-paravirt_patch_ident_64() can be moved inside CONFIG_PARAVIRT_XXL.
+Why are you asking me?  I'm not the maintainer of this file :(
 
-Signed-off-by: Juergen Gross <jgross@suse.com>
----
- arch/x86/include/asm/paravirt_types.h |  2 --
- arch/x86/kernel/paravirt.c            | 26 +++++++-------------------
- arch/x86/kernel/paravirt_patch_32.c   | 18 ++++++------------
- arch/x86/kernel/paravirt_patch_64.c   | 20 ++++++--------------
- 4 files changed, 19 insertions(+), 47 deletions(-)
+confused,
 
-diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
-index fba54ca23b2a..26942ad63830 100644
---- a/arch/x86/include/asm/paravirt_types.h
-+++ b/arch/x86/include/asm/paravirt_types.h
-@@ -361,7 +361,6 @@ extern struct paravirt_patch_template pv_ops;
- 	__visible extern const char start_##ops##_##name[], end_##ops##_##name[];	\
- 	asm(NATIVE_LABEL("start_", ops, name) code NATIVE_LABEL("end_", ops, name))
- 
--unsigned paravirt_patch_ident_32(void *insnbuf, unsigned len);
- unsigned paravirt_patch_ident_64(void *insnbuf, unsigned len);
- unsigned paravirt_patch_default(u8 type, void *insnbuf,
- 				unsigned long addr, unsigned len);
-@@ -651,7 +650,6 @@ void paravirt_leave_lazy_mmu(void);
- void paravirt_flush_lazy_mmu(void);
- 
- void _paravirt_nop(void);
--u32 _paravirt_ident_32(u32);
- u64 _paravirt_ident_64(u64);
- 
- #define paravirt_nop	((void *)_paravirt_nop)
-diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-index 45123b116c05..c0e0101133f3 100644
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -56,17 +56,6 @@ asm (".pushsection .entry.text, \"ax\"\n"
-      ".type _paravirt_nop, @function\n\t"
-      ".popsection");
- 
--/* identity function, which can be inlined */
--u32 notrace _paravirt_ident_32(u32 x)
--{
--	return x;
--}
--
--u64 notrace _paravirt_ident_64(u64 x)
--{
--	return x;
--}
--
- void __init default_banner(void)
- {
- 	printk(KERN_INFO "Booting paravirtualized kernel on %s\n",
-@@ -102,6 +91,12 @@ static unsigned paravirt_patch_call(void *insnbuf, const void *target,
- }
- 
- #ifdef CONFIG_PARAVIRT_XXL
-+/* identity function, which can be inlined */
-+u64 notrace _paravirt_ident_64(u64 x)
-+{
-+	return x;
-+}
-+
- static unsigned paravirt_patch_jmp(void *insnbuf, const void *target,
- 				   unsigned long addr, unsigned len)
- {
-@@ -146,13 +141,11 @@ unsigned paravirt_patch_default(u8 type, void *insnbuf,
- 	else if (opfunc == _paravirt_nop)
- 		ret = 0;
- 
-+#ifdef CONFIG_PARAVIRT_XXL
- 	/* identity functions just return their single argument */
--	else if (opfunc == _paravirt_ident_32)
--		ret = paravirt_patch_ident_32(insnbuf, len);
- 	else if (opfunc == _paravirt_ident_64)
- 		ret = paravirt_patch_ident_64(insnbuf, len);
- 
--#ifdef CONFIG_PARAVIRT_XXL
- 	else if (type == PARAVIRT_PATCH(cpu.iret) ||
- 		 type == PARAVIRT_PATCH(cpu.usergs_sysret64))
- 		/* If operation requires a jmp, then jmp */
-@@ -309,13 +302,8 @@ struct pv_info pv_info = {
- #endif
- };
- 
--#if defined(CONFIG_X86_32) && !defined(CONFIG_X86_PAE)
--/* 32-bit pagetable entries */
--#define PTE_IDENT	__PV_IS_CALLEE_SAVE(_paravirt_ident_32)
--#else
- /* 64-bit pagetable entries */
- #define PTE_IDENT	__PV_IS_CALLEE_SAVE(_paravirt_ident_64)
--#endif
- 
- struct paravirt_patch_template pv_ops = {
- 	/* Init ops. */
-diff --git a/arch/x86/kernel/paravirt_patch_32.c b/arch/x86/kernel/paravirt_patch_32.c
-index 6368c22fa1fa..de138d3912e4 100644
---- a/arch/x86/kernel/paravirt_patch_32.c
-+++ b/arch/x86/kernel/paravirt_patch_32.c
-@@ -10,24 +10,18 @@ DEF_NATIVE(cpu, iret, "iret");
- DEF_NATIVE(mmu, read_cr2, "mov %cr2, %eax");
- DEF_NATIVE(mmu, write_cr3, "mov %eax, %cr3");
- DEF_NATIVE(mmu, read_cr3, "mov %cr3, %eax");
--#endif
--
--#if defined(CONFIG_PARAVIRT_SPINLOCKS)
--DEF_NATIVE(lock, queued_spin_unlock, "movb $0, (%eax)");
--DEF_NATIVE(lock, vcpu_is_preempted, "xor %eax, %eax");
--#endif
--
--unsigned paravirt_patch_ident_32(void *insnbuf, unsigned len)
--{
--	/* arg in %eax, return in %eax */
--	return 0;
--}
- 
- unsigned paravirt_patch_ident_64(void *insnbuf, unsigned len)
- {
- 	/* arg in %edx:%eax, return in %edx:%eax */
- 	return 0;
- }
-+#endif
-+
-+#if defined(CONFIG_PARAVIRT_SPINLOCKS)
-+DEF_NATIVE(lock, queued_spin_unlock, "movb $0, (%eax)");
-+DEF_NATIVE(lock, vcpu_is_preempted, "xor %eax, %eax");
-+#endif
- 
- extern bool pv_is_native_spin_unlock(void);
- extern bool pv_is_native_vcpu_is_preempted(void);
-diff --git a/arch/x86/kernel/paravirt_patch_64.c b/arch/x86/kernel/paravirt_patch_64.c
-index 7ca9cb726f4d..9d9e04b31077 100644
---- a/arch/x86/kernel/paravirt_patch_64.c
-+++ b/arch/x86/kernel/paravirt_patch_64.c
-@@ -15,27 +15,19 @@ DEF_NATIVE(cpu, wbinvd, "wbinvd");
- 
- DEF_NATIVE(cpu, usergs_sysret64, "swapgs; sysretq");
- DEF_NATIVE(cpu, swapgs, "swapgs");
--#endif
--
--DEF_NATIVE(, mov32, "mov %edi, %eax");
- DEF_NATIVE(, mov64, "mov %rdi, %rax");
- 
--#if defined(CONFIG_PARAVIRT_SPINLOCKS)
--DEF_NATIVE(lock, queued_spin_unlock, "movb $0, (%rdi)");
--DEF_NATIVE(lock, vcpu_is_preempted, "xor %eax, %eax");
--#endif
--
--unsigned paravirt_patch_ident_32(void *insnbuf, unsigned len)
--{
--	return paravirt_patch_insns(insnbuf, len,
--				    start__mov32, end__mov32);
--}
--
- unsigned paravirt_patch_ident_64(void *insnbuf, unsigned len)
- {
- 	return paravirt_patch_insns(insnbuf, len,
- 				    start__mov64, end__mov64);
- }
-+#endif
-+
-+#if defined(CONFIG_PARAVIRT_SPINLOCKS)
-+DEF_NATIVE(lock, queued_spin_unlock, "movb $0, (%rdi)");
-+DEF_NATIVE(lock, vcpu_is_preempted, "xor %eax, %eax");
-+#endif
- 
- extern bool pv_is_native_spin_unlock(void);
- extern bool pv_is_native_vcpu_is_preempted(void);
--- 
-2.16.4
-
+greg k-h
