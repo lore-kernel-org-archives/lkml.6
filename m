@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A147C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:58:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAEA2C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:58:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F30B20664
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:58:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F30B20664
+	by mail.kernel.org (Postfix) with ESMTP id B87C920664
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:58:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B87C920664
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728361AbeJaGyA (ORCPT
+        id S1728382AbeJaGyI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 02:54:00 -0400
-Received: from relay.sw.ru ([185.231.240.75]:46010 "EHLO relay.sw.ru"
+        Wed, 31 Oct 2018 02:54:08 -0400
+Received: from relay.sw.ru ([185.231.240.75]:46020 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725743AbeJaGyA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 02:54:00 -0400
+        id S1725743AbeJaGyH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 02:54:07 -0400
 Received: from [172.16.24.21]
         by relay.sw.ru with esmtp (Exim 4.90_1)
         (envelope-from <vvs@virtuozzo.com>)
-        id 1gHc2A-0003hJ-KO; Wed, 31 Oct 2018 00:58:46 +0300
+        id 1gHc2H-0003hQ-Vl; Wed, 31 Oct 2018 00:58:54 +0300
 From:   Vasily Averin <vvs@virtuozzo.com>
-Subject: [PATCH v2 10/11] ext4: remove useless brelse call in
- ext4_xattr_inode_update_ref()
+Subject: [PATCH v2 11/11] ext4: access to uninitialized bh fields in
+ ext4_xattr_set_handle()
 To:     linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>
 Cc:     Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-kernel@vger.kernel.org, Tahsin Erdogan <tahsin@google.com>
+        linux-kernel@vger.kernel.org
 References: <cover.1540935522.git.vvs@virtuozzo.com>
-Message-ID: <fb87bcc2-5e4a-34ba-a063-3f43e9de976c@virtuozzo.com>
-Date:   Wed, 31 Oct 2018 00:58:46 +0300
+Message-ID: <b8523c3a-0eb2-3aeb-fdf9-2e9d6d320d5c@virtuozzo.com>
+Date:   Wed, 31 Oct 2018 00:58:53 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.9.1
 MIME-Version: 1.0
@@ -47,45 +47,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-brelse(iloc.bh) is useless here, it is always called with iloc.bh = NULL
+On-stack initialization does not guarantee zeroying of unintialized
+fields. So is.iloc.bh and bs.bh can be contain garbage of old stack
+conent.
 
-Fixes dec214d00e0d ("ext4: xattr inode deduplication") # 4.13
-cc: Tahsin Erdogan <tahsin@google.com>
+Errors in the beginning of ext4_xattr_set_handle() function
+lead to jump to "cleanup:" label where brelse(is.iloc.bh)
+and brelse(bs.bh) can access uninitialized bh fields of
+on-stack located "is" and "bs" structures.
+
+Issue was inherited from ext3 and was present in first ext4 commit.
+
+Fixes ac27a0ec112a ("ext4: initial copy of files from ext3") # 2.6.19
 
 Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
 ---
- fs/ext4/xattr.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+ fs/ext4/xattr.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
-index f36fc5d5b257..dc1aeab06dba 100644
+index dc1aeab06dba..aae12425597e 100644
 --- a/fs/ext4/xattr.c
 +++ b/fs/ext4/xattr.c
-@@ -1031,10 +1031,8 @@ static int ext4_xattr_inode_update_ref(handle_t *handle, struct inode *ea_inode,
- 	inode_lock(ea_inode);
- 
- 	ret = ext4_reserve_inode_write(handle, ea_inode, &iloc);
--	if (ret) {
--		iloc.bh = NULL;
-+	if (ret)
- 		goto out;
--	}
- 
- 	ref_count = ext4_xattr_inode_get_ref(ea_inode);
- 	ref_count += ref_change;
-@@ -1080,12 +1078,10 @@ static int ext4_xattr_inode_update_ref(handle_t *handle, struct inode *ea_inode,
- 	}
- 
- 	ret = ext4_mark_iloc_dirty(handle, ea_inode, &iloc);
--	iloc.bh = NULL;
- 	if (ret)
- 		ext4_warning_inode(ea_inode,
- 				   "ext4_mark_iloc_dirty() failed ret=%d", ret);
- out:
--	brelse(iloc.bh);
- 	inode_unlock(ea_inode);
- 	return ret;
- }
+@@ -2303,9 +2303,11 @@ ext4_xattr_set_handle(handle_t *handle, struct inode *inode, int name_index,
+ 	};
+ 	struct ext4_xattr_ibody_find is = {
+ 		.s = { .not_found = -ENODATA, },
++		.iloc = { .bh = NULL, },
+ 	};
+ 	struct ext4_xattr_block_find bs = {
+ 		.s = { .not_found = -ENODATA, },
++		.bh = NULL,
+ 	};
+ 	int no_expand;
+ 	int error;
 -- 
 2.17.1
 
