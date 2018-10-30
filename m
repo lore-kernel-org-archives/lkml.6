@@ -2,129 +2,177 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFE5EC6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 18:33:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD875C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 18:33:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8299D2081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 18:33:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 974B52082B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 18:33:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nf4zCaJh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8299D2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="PGNr4zA6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 974B52082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728415AbeJaD2Q (ORCPT
+        id S1728350AbeJaD2C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 23:28:16 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:40711 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728056AbeJaD2P (ORCPT
+        Tue, 30 Oct 2018 23:28:02 -0400
+Received: from mail-it1-f196.google.com ([209.85.166.196]:38759 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727876AbeJaD2C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 23:28:15 -0400
-Received: by mail-qt1-f193.google.com with SMTP id k12so8836942qtf.7;
-        Tue, 30 Oct 2018 11:33:39 -0700 (PDT)
+        Tue, 30 Oct 2018 23:28:02 -0400
+Received: by mail-it1-f196.google.com with SMTP id j9so3072407itl.3
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 11:33:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=n3ldqB7sqGLLhjb7b7WUPwK9+CPZA78yPvaHaPUjv0A=;
-        b=nf4zCaJhdTQ6jGzq7PLBpTix6P1G2XG+Eu4tHDL8YZr7n4P3JBEMgxQx614myxrBL4
-         V8hM9CTvVsrNoIocG1JxvTfhSsGnE9PIf/Ew/QAZWuyG+NqK1I8vDo6nQ+xNH2BMjrkO
-         9IUEVMry5MXqHI9anc13Kq1RAhs0ODll/aWMTTPUjsFRHVUHQf3ZH5H2/OH8z+762/EF
-         H8AD87DiluzLWROSZvXpJeATN+P5/18sMmLghPziuZmwbg2uwaJoeBciFF+ozBPXDSMH
-         KrCzylnEPOMOqltEIB0B0QCWHFfxnROg5KpRQxk5vtWYIRYahLuhqBGjq/noY7MOgm73
-         0nyw==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Q05dSOPfwm/UowrXt9AMeUMp3mZmjRCMcDVjG5ZA724=;
+        b=PGNr4zA6ebujuKlxOULXkMmbfq/R4beWrMw0Nu0fvrEeiA5Igow5iNHLwpY4+BzyuK
+         2Mw1k6TX/N3b47omYHlIDk1NlwWLJEgIYORpyDa3NwnB1J//92Y4tSJAhaLetXfAQPPu
+         ZYcpGtPPKuFNmPSSQzA+wC/nzPBVocGc9KVRdgOGB6Kmj0GsFEiRESXyODL+7GxD4B+K
+         FmrZJ5bTVm0QGKQ1dYN9mrH5Bf/HAUq4hQJ0Gjmcd4AQUzAWUZR8VndwB9MkNGSmYc9u
+         ZmYrhx5TR2M0C3DubfvEAagYyAFAC9ByKjQUJ4/9YCvXCvg1w0+hFs32d4YehDSBYQc/
+         Cizg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=n3ldqB7sqGLLhjb7b7WUPwK9+CPZA78yPvaHaPUjv0A=;
-        b=L0u55UkDdMQTEFuK2qpuWQkT2yx1fid7fBps3ycLFbqyl0QzCxupWnE2g7tcHtp7WG
-         JoY9coI6vInqL5h03Csy3SVGTCiw9Ea0Ey0WGY+3cApJbSwvKRw6kUMW1Qqcz3ZcPU8j
-         3+F6xIrPpND7JTqxlhZ2FI/UNuFsZzb8K9pbwUk2vNpaHTr7bxl0TnR/ymTdFEYx0no4
-         U5Z6c6t5+Qb7Xf2y2O0hQfRuyrX4osos4kAYoJBPadys9593o4xd9RmdXSxZTVfWsLw4
-         yonNTK3Y9c2nvnmchF0Im39WKXDXOP/hfNRdgmj9uCP9r9xn9h9WwRuVyhoDtrC62X5q
-         tdxg==
-X-Gm-Message-State: AGRZ1gIuZFTIKNr+GyV7do5XvlV8QgRRE5wtHS3BTmCQkh34YpnZ8e3J
-        UmvLRK3hMIRMVld3qt7hwrQHcvFeV8Ss9QsnFfQ=
-X-Google-Smtp-Source: AJdET5em6aEElhcN1DSOY3LRnxLXO5pOoRbbVrpCaCANakuQwrJgnRDD9j432nLNtGcHAtz+mbI5f4PoZJKnDCdHKnA=
-X-Received: by 2002:ac8:2413:: with SMTP id c19-v6mr3295168qtc.194.1540924419084;
- Tue, 30 Oct 2018 11:33:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <20181006065113.669-1-rajneesh.bhardwaj@linux.intel.com>
- <CAHp75VcQ3SDQ4X9+LX+y2vB4PWQURid4R=qy5+5PkWHC5nGqQA@mail.gmail.com>
- <a839e9d3-838b-0fb1-55ac-07562ec71313@linux.intel.com> <CAHp75Vd8zUR9LYOj1X-3FgqnB_XVZD5hbA+WPN_7T_6kZBAQ5w@mail.gmail.com>
- <0d940313e1be7ddaa06c5ebf4aea7a4df84540f2.camel@linux.intel.com>
-In-Reply-To: <0d940313e1be7ddaa06c5ebf4aea7a4df84540f2.camel@linux.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 30 Oct 2018 20:33:06 +0200
-Message-ID: <CAHp75VcF5jB6hnLVbMJJKRvuRN7=0BS+OS1nB-EeR8Y8nTVz3w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] platform/x86: intel_pmc_core: Show Latency
- Tolerance info
-To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc:     rajneesh.bhardwaj@linux.intel.com,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Q05dSOPfwm/UowrXt9AMeUMp3mZmjRCMcDVjG5ZA724=;
+        b=MAdEJLU0OdbLTcEYwxpj6GbzWT28nDKgrgo9PZ3dE5hH6ed5yj+wFGAfvR3VQ8BiyX
+         1R6McD4BPyfscu/9qzOyj7duvdxg/oxL9gcil+wmeR/+KLVkmlfTw8aARYtpVNLnJi7j
+         OC58JvQNxFxVHQ5CyGTy3w3iqp5zvWoP2SvJ/ZpJnmsal9EBFNB9pQE2Pb9RJubqk/v8
+         mf740YZqZsmlImG2vLyuW4sN66tZyQ9vIOz8fQpSDvFyjDfnwPJzc4JkGLOfMXt+PwJZ
+         yODcEzDV7zUToNNg8yTrogGyk551i+yXivl9fAZf9evewuZ31tU+LfE3Lh1/GzoKbYbT
+         pWPQ==
+X-Gm-Message-State: AGRZ1gLn+7o0PxEvv5UZ36yjBosrj5qWhTs6gK4ra87s5D0Ym4x6lRo6
+        XD1xg0oD5rz9TGQjjOTQvDzLZw==
+X-Google-Smtp-Source: AJdET5dy6uy6nRfx5Hma+m2+ePPwrCzjLsteH9Avh6zyrLjEgCl1yJSs4diaNDq8i4+18SHX7TaQSQ==
+X-Received: by 2002:a24:8247:: with SMTP id t68-v6mr24622itd.68.1540924406008;
+        Tue, 30 Oct 2018 11:33:26 -0700 (PDT)
+Received: from localhost.localdomain ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id o20-v6sm4895739itc.34.2018.10.30.11.33.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 11:33:24 -0700 (PDT)
+From:   Jens Axboe <axboe@kernel.dk>
+To:     linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 15/16] block: add REQ_HIPRI and inherit it from IOCB_HIPRI
+Date:   Tue, 30 Oct 2018 12:32:51 -0600
+Message-Id: <20181030183252.17857-16-axboe@kernel.dk>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181030183252.17857-1-axboe@kernel.dk>
+References: <20181030183252.17857-1-axboe@kernel.dk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 8:03 PM Srinivas Pandruvada
-<srinivas.pandruvada@linux.intel.com> wrote:
+We use IOCB_HIPRI to poll for IO in the caller instead of scheduling.
+This information is not available for (or after) IO submission. The
+driver may make different queue choices based on the type of IO, so
+make the fact that we will poll for this IO known to the lower layers
+as well.
 
-> > > Index printing is required here (for LTR Show and LTR Ignore)
-> > > because it
-> > > paves an obvious and easy way for the users of this driver to know
-> > > the
-> > > IP number to be used for LTR ignore. This was specifically
-> > > requested by
-> > > some customer and Srinivas asked me to implement this so adding him
-> > > for
-> > > his inputs.
-> >
-> > So, why it should be in kernel? When user prints this, they usually
-> > call `cat /.../file`, right?
-> > Is it too hard to call `cat -n /.../file` instead? The benefit of
-> > such
-> > approach is that it's independent on the file we are printing.
-> >
-> > (Note, `grep -n <PATTERN> /.../file` does the same`)
-> >
-> > For more variants
-> >
-> https://stackoverflow.com/questions/8206370/add-numbers-to-the-beginning-of-every-line-in-a-file
-> >
-> We get copy/paste data from some serial terminals from systems which
-> don't have traditional linux shell or busy box. Not sure if they can do
-> cat "-n" option or have this command at all. So line number helps. They
-> can't even store output as as file as this is RO file system.
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ fs/block_dev.c            | 2 ++
+ fs/direct-io.c            | 2 ++
+ fs/iomap.c                | 9 ++++++++-
+ include/linux/blk_types.h | 4 +++-
+ 4 files changed, 15 insertions(+), 2 deletions(-)
 
-Hmm... I'm not following this. If there is serial connection where at
-least you may see things, how it's guaranteed that it will not print
-more enough to rewrite the DTE's input buffer?
-On the other hand if you copy the data to the other system which, I
-bet, has `cat -n` available, not a problem either.
-
-So, the use case here, AFAICS, if you have a debug log enabled and
-it's spitted out like SysRq where you can see, but not able to copy
-and it's guaranteed not to overflow on the screen / output device.
-
-> But I am not as sticky on this.
-
-Since it's a debugfs and not any ABI implied, I'm fine with it to
-have, but I would like to understand the real use case of it (and this
-definitely should be reflected in the commit message).
-
+diff --git a/fs/block_dev.c b/fs/block_dev.c
+index 38b8ce05cbc7..8bb8090c57a7 100644
+--- a/fs/block_dev.c
++++ b/fs/block_dev.c
+@@ -232,6 +232,8 @@ __blkdev_direct_IO_simple(struct kiocb *iocb, struct iov_iter *iter,
+ 		bio.bi_opf = dio_bio_write_op(iocb);
+ 		task_io_account_write(ret);
+ 	}
++	if (iocb->ki_flags & IOCB_HIPRI)
++		bio.bi_opf |= REQ_HIPRI;
+ 
+ 	qc = submit_bio(&bio);
+ 	for (;;) {
+diff --git a/fs/direct-io.c b/fs/direct-io.c
+index 093fb54cd316..ffb46b7aa5f7 100644
+--- a/fs/direct-io.c
++++ b/fs/direct-io.c
+@@ -1265,6 +1265,8 @@ do_blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
+ 	} else {
+ 		dio->op = REQ_OP_READ;
+ 	}
++	if (iocb->ki_flags & IOCB_HIPRI)
++		dio->op_flags |= REQ_HIPRI;
+ 
+ 	/*
+ 	 * For AIO O_(D)SYNC writes we need to defer completions to a workqueue
+diff --git a/fs/iomap.c b/fs/iomap.c
+index ec15cf2ec696..50ad8c8d1dcb 100644
+--- a/fs/iomap.c
++++ b/fs/iomap.c
+@@ -1554,6 +1554,7 @@ iomap_dio_zero(struct iomap_dio *dio, struct iomap *iomap, loff_t pos,
+ 		unsigned len)
+ {
+ 	struct page *page = ZERO_PAGE(0);
++	int flags = REQ_SYNC | REQ_IDLE;
+ 	struct bio *bio;
+ 
+ 	bio = bio_alloc(GFP_KERNEL, 1);
+@@ -1562,9 +1563,12 @@ iomap_dio_zero(struct iomap_dio *dio, struct iomap *iomap, loff_t pos,
+ 	bio->bi_private = dio;
+ 	bio->bi_end_io = iomap_dio_bio_end_io;
+ 
++	if (dio->iocb->ki_flags & IOCB_HIPRI)
++		flags |= REQ_HIPRI;
++
+ 	get_page(page);
+ 	__bio_add_page(bio, page, len, 0);
+-	bio_set_op_attrs(bio, REQ_OP_WRITE, REQ_SYNC | REQ_IDLE);
++	bio_set_op_attrs(bio, REQ_OP_WRITE, flags);
+ 
+ 	atomic_inc(&dio->ref);
+ 	return submit_bio(bio);
+@@ -1663,6 +1667,9 @@ iomap_dio_bio_actor(struct inode *inode, loff_t pos, loff_t length,
+ 				bio_set_pages_dirty(bio);
+ 		}
+ 
++		if (dio->iocb->ki_flags & IOCB_HIPRI)
++			bio->bi_opf |= REQ_HIPRI;
++
+ 		iov_iter_advance(dio->submit.iter, n);
+ 
+ 		dio->size += n;
+diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
+index 093a818c5b68..d6c2558d6b73 100644
+--- a/include/linux/blk_types.h
++++ b/include/linux/blk_types.h
+@@ -322,6 +322,8 @@ enum req_flag_bits {
+ 	/* command specific flags for REQ_OP_WRITE_ZEROES: */
+ 	__REQ_NOUNMAP,		/* do not free blocks when zeroing */
+ 
++	__REQ_HIPRI,
++
+ 	/* for driver use */
+ 	__REQ_DRV,
+ 	__REQ_SWAP,		/* swapping request. */
+@@ -342,8 +344,8 @@ enum req_flag_bits {
+ #define REQ_RAHEAD		(1ULL << __REQ_RAHEAD)
+ #define REQ_BACKGROUND		(1ULL << __REQ_BACKGROUND)
+ #define REQ_NOWAIT		(1ULL << __REQ_NOWAIT)
+-
+ #define REQ_NOUNMAP		(1ULL << __REQ_NOUNMAP)
++#define REQ_HIPRI		(1ULL << __REQ_HIPRI)
+ 
+ #define REQ_DRV			(1ULL << __REQ_DRV)
+ #define REQ_SWAP		(1ULL << __REQ_SWAP)
 -- 
-With Best Regards,
-Andy Shevchenko
+2.17.1
+
