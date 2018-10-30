@@ -1,143 +1,85 @@
 Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.4 required=3.0 tests=CHARSET_FARAWAY_HEADER,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A13BC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 04:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB1EBC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 04:47:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDDFA20664
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 04:45:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDDFA20664
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 993F420664
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 04:47:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 993F420664
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726135AbeJ3NhQ (ORCPT
+        id S1726214AbeJ3NjB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 09:37:16 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:59866 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725969AbeJ3NhQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 09:37:16 -0400
-Received: from fsav109.sakura.ne.jp (fsav109.sakura.ne.jp [27.133.134.236])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9U4jMhB076678;
-        Tue, 30 Oct 2018 13:45:22 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav109.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav109.sakura.ne.jp);
- Tue, 30 Oct 2018 13:45:22 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav109.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w9U4jMqc076673;
-        Tue, 30 Oct 2018 13:45:22 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: (from i-love@localhost)
-        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id w9U4jMhu076672;
-        Tue, 30 Oct 2018 13:45:22 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Message-Id: <201810300445.w9U4jMhu076672@www262.sakura.ne.jp>
-X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
-Subject: Re: [RFC PATCH v2 3/3] mm, oom: hand over =?ISO-2022-JP?B?TU1GX09PTV9T?=
- =?ISO-2022-JP?B?S0lQIHRvIGV4aXQgcGF0aCBpZiBpdCBpcyBndXJhbnRlZWQgdG8gZmlu?=
- =?ISO-2022-JP?B?aXNo?=
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     linux-mm@kvack.org,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Roman Gushchin <guro@fb.com>,
-        David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
+        Tue, 30 Oct 2018 09:39:01 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56122 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725969AbeJ3NjB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 09:39:01 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id AA25C4E90E;
+        Tue, 30 Oct 2018 04:47:09 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-109.pek2.redhat.com [10.72.12.109])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0E1E75ED20;
+        Tue, 30 Oct 2018 04:46:57 +0000 (UTC)
+Subject: Re: [PATCH] kdump, vmcoreinfo: Export sme_me_mask value to vmcoreinfo
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Baoquan He <bhe@redhat.com>, Petr Tesarik <ptesarik@suse.cz>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        kexec@lists.infradead.org, mingo@redhat.com, tglx@linutronix.de,
+        dyoung@redhat.com
+References: <C5F8ED8E-F361-4C6C-B9E2-E3C8BCD8E050@alien8.de>
+ <c55bef2a-b972-7e6e-b698-6ac1bc736046@redhat.com>
+ <20181027145151.GA7338@nazgul.tnic>
+ <390b16ba-05d7-3590-c3b2-4b69aa3ae051@redhat.com>
+ <20181029083118.GC1884@MiWiFi-R3L-srv>
+ <d6f93848-c750-f29c-4ca7-9661596cad62@redhat.com>
+ <20181029095738.GB20101@zn.tnic>
+ <15897206-c1a6-ced6-3a1b-f71da8fc9c83@redhat.com>
+ <20181029114414.GA11408@MiWiFi-R3L-srv>
+ <90385882-7fd1-a674-ec5a-19bd42471a5e@redhat.com>
+ <20181029134918.GB32150@zn.tnic>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <699ab34e-1373-582d-4e58-e76bd57ec34f@redhat.com>
+Date:   Tue, 30 Oct 2018 12:46:52 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Date:   Tue, 30 Oct 2018 13:45:22 +0900
-References: <20181025082403.3806-1-mhocko@kernel.org> <20181025082403.3806-4-mhocko@kernel.org>
-In-Reply-To: <20181025082403.3806-4-mhocko@kernel.org>
-Content-Type: text/plain; charset="ISO-2022-JP"
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20181029134918.GB32150@zn.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 30 Oct 2018 04:47:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Michal Hocko wrote:
-> @@ -3156,6 +3166,13 @@ void exit_mmap(struct mm_struct *mm)
->                 vma = remove_vma(vma);
->         }
->         vm_unacct_memory(nr_accounted);
-> +
-> +       /*
-> +        * Now that the full address space is torn down, make sure the
-> +        * OOM killer skips over this task
-> +        */
-> +       if (oom)
-> +               set_bit(MMF_OOM_SKIP, &mm->flags);
->  }
+在 2018年10月29日 21:49, Borislav Petkov 写道:
+> On Mon, Oct 29, 2018 at 09:41:26PM +0800, lijiang wrote:
+>>>         VMCOREINFO_NUMBER(phys_base);
+>>>         VMCOREINFO_SYMBOL(init_top_pgt);
+>>>         vmcoreinfo_append_str("NUMBER(pgtable_l5_enabled)=%d\n",
+>>>                         pgtable_l5_enabled());
+>>>
+>>> +       VMCOREINFO_NUMBER(sme_mask);
 > 
->  /* Insert vm structure into process list sorted by address
+> What I'm still missing from the whole fun is where are we documenting
+> the contents of that vmcoreinfo thing?
+> 
 
-I don't like setting MMF_OOF_SKIP after remove_vma() loop. 50 users might
-call vma->vm_ops->close() from remove_vma(). Some of them are doing fs
-writeback, some of them might be doing GFP_KERNEL allocation from
-vma->vm_ops->open() with a lock also held by vma->vm_ops->close().
+I'm not sure whether the following document is what you need.
+Documentation/ABI/testing/sysfs-kernel-vmcoreinfo
 
-I don't think that waiting for completion of remove_vma() loop is safe.
-And my patch is safe.
-
- drivers/android/binder.c                          |    2 +-
- drivers/gpu/drm/drm_gem_cma_helper.c              |    2 +-
- drivers/gpu/drm/drm_vm.c                          |    8 ++++----
- drivers/gpu/drm/gma500/framebuffer.c              |    2 +-
- drivers/gpu/drm/gma500/psb_drv.c                  |    2 +-
- drivers/gpu/drm/i915/i915_drv.c                   |    2 +-
- drivers/gpu/drm/ttm/ttm_bo_vm.c                   |    2 +-
- drivers/gpu/drm/udl/udl_drv.c                     |    2 +-
- drivers/gpu/drm/v3d/v3d_drv.c                     |    2 +-
- drivers/gpu/drm/vc4/vc4_drv.c                     |    2 +-
- drivers/gpu/drm/vgem/vgem_drv.c                   |    2 +-
- drivers/gpu/drm/vkms/vkms_drv.c                   |    2 +-
- drivers/gpu/drm/xen/xen_drm_front.c               |    2 +-
- drivers/hwtracing/intel_th/msu.c                  |    2 +-
- drivers/hwtracing/stm/core.c                      |    2 +-
- drivers/infiniband/core/uverbs_main.c             |    2 +-
- drivers/infiniband/sw/rdmavt/mmap.c               |    2 +-
- drivers/infiniband/sw/rxe/rxe_mmap.c              |    2 +-
- drivers/media/common/videobuf2/videobuf2-memops.c |    2 +-
- drivers/media/pci/meye/meye.c                     |    2 +-
- drivers/media/platform/omap/omap_vout.c           |    2 +-
- drivers/media/usb/stkwebcam/stk-webcam.c          |    2 +-
- drivers/media/v4l2-core/videobuf-dma-contig.c     |    2 +-
- drivers/media/v4l2-core/videobuf-dma-sg.c         |    2 +-
- drivers/media/v4l2-core/videobuf-vmalloc.c        |    2 +-
- drivers/misc/genwqe/card_dev.c                    |    2 +-
- drivers/misc/mic/scif/scif_mmap.c                 |    2 +-
- drivers/misc/sgi-gru/grufile.c                    |    2 +-
- drivers/rapidio/devices/rio_mport_cdev.c          |    2 +-
- drivers/staging/comedi/comedi_fops.c              |    2 +-
- drivers/staging/media/zoran/zoran_driver.c        |    2 +-
- drivers/staging/vme/devices/vme_user.c            |    2 +-
- drivers/usb/core/devio.c                          |    2 +-
- drivers/usb/mon/mon_bin.c                         |    2 +-
- drivers/video/fbdev/omap2/omapfb/omapfb-main.c    |    2 +-
- drivers/xen/gntalloc.c                            |    2 +-
- drivers/xen/gntdev.c                              |    2 +-
- drivers/xen/privcmd-buf.c                         |    2 +-
- drivers/xen/privcmd.c                             |    2 +-
- fs/9p/vfs_file.c                                  |    2 +-
- fs/fuse/file.c                                    |    2 +-
- fs/kernfs/file.c                                  |    2 +-
- include/linux/mm.h                                |    2 +-
- ipc/shm.c                                         |    2 +-
- kernel/events/core.c                              |    2 +-
- kernel/relay.c                                    |    2 +-
- mm/hugetlb.c                                      |    2 +-
- mm/mmap.c                                         |   14 +++++++-------
- net/packet/af_packet.c                            |    2 +-
- sound/core/pcm_native.c                           |    4 ++--
- sound/usb/usx2y/us122l.c                          |    2 +-
- sound/usb/usx2y/usx2yhwdeppcm.c                   |    2 +-
- 52 files changed, 62 insertions(+), 62 deletions(-)
+Thanks.
+Lianbo
+> If not, we need it documented.
+> 
