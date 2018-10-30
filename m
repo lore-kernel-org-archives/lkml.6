@@ -2,143 +2,132 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F85AC6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:17:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE3F8C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:19:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 135DB2081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:17:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 135DB2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 525D92081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:19:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="F5MtIjUS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 525D92081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728571AbeJaHMU (ORCPT
+        id S1728574AbeJaHOV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 03:12:20 -0400
-Received: from mail-it1-f197.google.com ([209.85.166.197]:40448 "EHLO
-        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726021AbeJaHMU (ORCPT
+        Wed, 31 Oct 2018 03:14:21 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38692 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727672AbeJaHOU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 03:12:20 -0400
-Received: by mail-it1-f197.google.com with SMTP id y144-v6so5987531itc.5
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 15:17:03 -0700 (PDT)
+        Wed, 31 Oct 2018 03:14:20 -0400
+Received: by mail-pf1-f194.google.com with SMTP id b11-v6so6564245pfi.5
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 15:19:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SPVTCN7yB3EvcS3VgTBTPuwRPE6icIQDbNo/cFgw8x4=;
+        b=F5MtIjUSmfPSLlRLUcvlxb8bgwO944Vzlwsrb+STW1m9SKp+FbIUnhKepFgX1d/6zY
+         WFEsTME5GAO3fNxqCMjL5qf9DfZtUWW/0eu+pQx31M+moNIAPuITstIM3gP6+QCFd8p4
+         spMZEp8n6pfvs7QIBWD5+GLOMia4bijBqXNww=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=ZU+tpPzlCCAxeI3NALHfQeTD2HiOPKluY50KjZDyDmo=;
-        b=pk8ll4Y/boCg5t791jr9mQ2jeOeu5wIUzll30alEo2XAaR4Ih/r+N4KvkbXS4eGxjm
-         Fubn+L2Xw2AQWekUPU3Y/GQjGXBXR6PTjkRLPT+WoZcXxXBFDV657z7GeMh+gDJHWbUO
-         KoTS48AFbj+PEB+Z317L5EabqIvh0BbgLmm0fIKrs7aGtTt7kq+6IEqJyXyqdYw/YOSQ
-         qnVAnY6Bc+TOgQiD5LiTTGw3n4XDGtVS1qb2uKIbTevP6/SeCl1d4+Dhxdb1HVvua5oj
-         0Vn7M2G1JiZnDfjw2su2prgWwExFKqfOHWczrPCTRTYjhCn+zjIYfxeU1JbQUNy6Fy82
-         6Uew==
-X-Gm-Message-State: AGRZ1gKd059SZJ0yBxivIRI02aOeG4dMNOtJ8h+iMrxi7/Dto/ycsIVk
-        SA8vZYHIs4QCMWya0m19etGhUYuzspx3cwKO6hBXp5QyqeAd
-X-Google-Smtp-Source: AJdET5dpU+sSUx6nAS+y8WFhHLaIO8+CHC2l2Cfjq1mV38mLHp0csY3QVwY+OskbC6elIFJ9rhuyFd7oD2mXLU+dQlNUUDE9cjAI
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=SPVTCN7yB3EvcS3VgTBTPuwRPE6icIQDbNo/cFgw8x4=;
+        b=cL/aMZvHWHJZz80SZatbUg4njw/4yaIlhmExTFaJLfjitDfH/jbW/IRL58tOCgbNCo
+         a6jFEmHs3iRDs0TPB0DlHzwnBN/h6c7dir8U+FBVWprTSiCBX86+dhLTdJXCpMk/+C2a
+         IBzWaUHKaT5YY9C3mpgypSERV5ZX0OM4LKoob/q++eX6p2l0N0h/50PYIUzx9zywwYnT
+         DheU+GVgPZbLNIlW7FXwT1xBhKK9OlGzbeAosxOpXTfsjK63HvdOoqWcsdU9/ZbvCuD7
+         aYz4hUUxg7PekA4g3BfyTxz8KiiKSXSltNDuN6P5+R+uQR23U6ISIN1YuNUX5lKqRFFX
+         F9rw==
+X-Gm-Message-State: AGRZ1gLMWs1uR4M4Us2FxGfS33XPeo8qQKbu9e8rA8GCeMlN+woKGqxz
+        9h8wct6MrT/zwtjuIcm76f14Ug==
+X-Google-Smtp-Source: AJdET5c8VEq72Qy0GxQVPtDW46vA6aevXpwki6KHW4SNnqLPDwpMxBbEkvTAqWJGZKK3oeUkFc+Anw==
+X-Received: by 2002:a62:571b:: with SMTP id l27-v6mr521667pfb.209.1540937943074;
+        Tue, 30 Oct 2018 15:19:03 -0700 (PDT)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:c8e0:70d7:4be7:a36])
+        by smtp.gmail.com with ESMTPSA id c70-v6sm2889774pfe.93.2018.10.30.15.19.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 15:19:02 -0700 (PDT)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>
+Cc:     kgdb-bugreport@lists.sourceforge.net,
+        Peter Zijlstra <peterz@infradead.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-mips@linux-mips.org, linux-sh@vger.kernel.org,
+        Borislav Petkov <bp@alien8.de>,
+        Paul Burton <paul.burton@mips.com>, sparclinux@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        James Hogan <jhogan@kernel.org>, linux-hexagon@vger.kernel.org,
+        x86@kernel.org, Vineet Gupta <vgupta@synopsys.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        linux-snps-arc@lists.infradead.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-arm-kernel@lists.infradead.org,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        Huang Ying <ying.huang@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rich Felker <dalias@libc.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-kernel@vger.kernel.org, Richard Kuo <rkuo@codeaurora.org>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v2 0/2] kgdb: Fix kgdb_roundup_cpus()
+Date:   Tue, 30 Oct 2018 15:18:41 -0700
+Message-Id: <20181030221843.121254-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
 MIME-Version: 1.0
-X-Received: by 2002:a24:6182:: with SMTP id s124-v6mr371217itc.16.1540937823522;
- Tue, 30 Oct 2018 15:17:03 -0700 (PDT)
-Date:   Tue, 30 Oct 2018 15:17:03 -0700
-In-Reply-To: <000000000000949c7a0579612eb3@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000097b0940579798baa@google.com>
-Subject: Re: divide error in vivid_vid_cap_s_dv_timings
-From:   syzbot <syzbot+57c3d83d71187054d56f@syzkaller.appspotmail.com>
-To:     hverkuil@xs4all.nl, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, mchehab@kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+This series was originally part of the series ("serial: Finish kgdb on
+qcom_geni; fix many lockdep splats w/ kgdb") but it made sense to
+split it up.
 
-HEAD commit:    6201f31a39f8 Add linux-next specific files for 20181030
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=178f6999400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2a22859d870756c1
-dashboard link: https://syzkaller.appspot.com/bug?extid=57c3d83d71187054d56f
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13c44dbd400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15210599400000
+It's believed that dropping into kgdb should be more robust once these
+patches are applied.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+57c3d83d71187054d56f@syzkaller.appspotmail.com
+Changes in v2:
+- Removing irq flags separated from fixing lockdep splat.
+- Don't use smp_call_function (Daniel).
 
-divide error: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 5676 Comm: syz-executor345 Not tainted 4.19.0-next-20181030+  
-#101
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:valid_cvt_gtf_timings  
-drivers/media/platform/vivid/vivid-vid-cap.c:1633 [inline]
-RIP: 0010:vivid_vid_cap_s_dv_timings+0x60e/0x11e0  
-drivers/media/platform/vivid/vivid-vid-cap.c:1664
-Code: c6 84 c9 0f 95 c1 40 84 ce 0f 85 ce 0a 00 00 83 e0 07 38 c2 0f 9e c1  
-84 d2 0f 95 c0 84 c1 0f 85 b9 0a 00 00 48 8b 43 14 31 d2 <41> f7 f7 48 ba  
-00 00 00 00 00 fc ff df 4c 8d 7b 40 89 85 64 ff ff
-RSP: 0018:ffff8801d80a7630 EFLAGS: 00010246
-RAX: 0000000000d59f80 RBX: ffff8801d7a9e600 RCX: 0000000000000001
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff8801d7a9e614
-RBP: ffff8801d80a76f0 R08: 0000000000000001 R09: ffffed0039694024
-R10: ffffed0039694024 R11: ffff8801cb4a0123 R12: ffff8801cb4a0080
-R13: 1ffff1003b014ecd R14: 0000000000000000 R15: 0000000000000000
-FS:  000000000228d880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000006cf090 CR3: 00000001d7948000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  vidioc_s_dv_timings+0xa4/0xc0 drivers/media/platform/vivid/vivid-core.c:323
-  v4l_stub_s_dv_timings+0x4f/0x60 drivers/media/v4l2-core/v4l2-ioctl.c:2581
-  __video_do_ioctl+0x519/0xf00 drivers/media/v4l2-core/v4l2-ioctl.c:2833
-  video_usercopy+0x5c1/0x1750 drivers/media/v4l2-core/v4l2-ioctl.c:3013
-  video_ioctl2+0x2c/0x33 drivers/media/v4l2-core/v4l2-ioctl.c:3057
-  v4l2_ioctl+0x154/0x1b0 drivers/media/v4l2-core/v4l2-dev.c:364
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:501 [inline]
-  do_vfs_ioctl+0x1de/0x1790 fs/ioctl.c:688
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:705
-  __do_sys_ioctl fs/ioctl.c:712 [inline]
-  __se_sys_ioctl fs/ioctl.c:710 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:710
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x444c19
-Code: e8 0c ad 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 db ce fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffce23353f8 EFLAGS: 00000213 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000444c19
-RDX: 0000000020000000 RSI: 00000000c0845657 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 0000ffff00000000 R09: 00000000004002e0
-R10: 000000000000f8ff R11: 0000000000000213 R12: 000000000000c1b9
-R13: 0000000000402010 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace eca9bbb7e84ba3e6 ]---
-RIP: 0010:valid_cvt_gtf_timings  
-drivers/media/platform/vivid/vivid-vid-cap.c:1633 [inline]
-RIP: 0010:vivid_vid_cap_s_dv_timings+0x60e/0x11e0  
-drivers/media/platform/vivid/vivid-vid-cap.c:1664
-Code: c6 84 c9 0f 95 c1 40 84 ce 0f 85 ce 0a 00 00 83 e0 07 38 c2 0f 9e c1  
-84 d2 0f 95 c0 84 c1 0f 85 b9 0a 00 00 48 8b 43 14 31 d2 <41> f7 f7 48 ba  
-00 00 00 00 00 fc ff df 4c 8d 7b 40 89 85 64 ff ff
-RSP: 0018:ffff8801d80a7630 EFLAGS: 00010246
-RAX: 0000000000d59f80 RBX: ffff8801d7a9e600 RCX: 0000000000000001
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff8801d7a9e614
-RBP: ffff8801d80a76f0 R08: 0000000000000001 R09: ffffed0039694024
-R10: ffffed0039694024 R11: ffff8801cb4a0123 R12: ffff8801cb4a0080
-R13: 1ffff1003b014ecd R14: 0000000000000000 R15: 0000000000000000
-FS:  000000000228d880(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000006cf090 CR3: 00000001d7948000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Douglas Anderson (2):
+  kgdb: Remove irq flags from roundup
+  kgdb: Fix kgdb_roundup_cpus() for arches who used smp_call_function()
+
+ arch/arc/kernel/kgdb.c     | 10 ++--------
+ arch/arm/kernel/kgdb.c     | 12 ------------
+ arch/arm64/kernel/kgdb.c   | 12 ------------
+ arch/hexagon/kernel/kgdb.c | 32 --------------------------------
+ arch/mips/kernel/kgdb.c    |  9 +--------
+ arch/powerpc/kernel/kgdb.c |  6 +++---
+ arch/sh/kernel/kgdb.c      | 12 ------------
+ arch/sparc/kernel/smp_64.c |  2 +-
+ arch/x86/kernel/kgdb.c     |  9 ++-------
+ include/linux/kgdb.h       | 22 ++++++++++++++--------
+ kernel/debug/debug_core.c  | 38 +++++++++++++++++++++++++++++++++++++-
+ 11 files changed, 60 insertions(+), 104 deletions(-)
+
+-- 
+2.19.1.568.g152ad8e336-goog
 
