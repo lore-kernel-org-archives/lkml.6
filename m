@@ -2,107 +2,84 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C32C3C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:05:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C527C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:09:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8951D2081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:05:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B8F52081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:09:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="R7A3zKxi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8951D2081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="W5I1fqcD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B8F52081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725931AbeJaEAW (ORCPT
+        id S1726021AbeJaEE3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 00:00:22 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:51744 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725743AbeJaEAV (ORCPT
+        Wed, 31 Oct 2018 00:04:29 -0400
+Received: from mail-qt1-f180.google.com ([209.85.160.180]:39027 "EHLO
+        mail-qt1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725954AbeJaEE3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 00:00:21 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9UJ4RXX004532;
-        Tue, 30 Oct 2018 19:05:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=o78ILJnIH8Xfvc6/30XumdhVhRWD189CZ9vRKakZeIU=;
- b=R7A3zKxilhtoR3U3XRg0fdgAQRP4C+Mnh6mfAwqu1edSFkc8+5BCxHPKbRVm713zt7YN
- HJEOHK5674jcucKwvy2TOvL5xfXGmUfa1ri8d4QWKVidAX0xbwx/Fgx44/oHw5Wx7EJU
- 9WqybD6+nLpw6zEjVz4AFyVjUJZMJmN5FKAEMrq9BQu1o62opz5Gp7ilPEZORDNJQ/7q
- MCpY4xPMd6IV66EtFTNwCq8aMVk4ZfAACXSZaVY/2O4Z2NJPtQmFrjDVrgSVS2gk2LpI
- j8EMaRXeNfL/HIu/crwNr2eNVuNQTuT+UYWYXy2yXjVMIxmKc1RbxvpITbNW8zdwJO9X xQ== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2nducm35c9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Oct 2018 19:05:20 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w9UJ5JGN020614
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Oct 2018 19:05:19 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w9UJ5IIW009172;
-        Tue, 30 Oct 2018 19:05:18 GMT
-Received: from Santoshs-MacBook-Pro.local (/10.11.38.116)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 30 Oct 2018 12:05:18 -0700
-Subject: Re: [PATCH] soc: ti: QMSS: Fix usage of irq_set_affinity_hint
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Santosh Shilimkar <ssantosh@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        stable@vger.kernel.org
-References: <20181030111103.12110-1-marc.zyngier@arm.com>
- <ea4e3273-39da-d9f9-49ce-f18268767ce3@oracle.com>
- <20181030190051.GA1697@kroah.com>
-From:   "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <e5dba35a-03bf-70e7-ad3c-8f08631400bc@oracle.com>
-Date:   Tue, 30 Oct 2018 12:05:18 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Wed, 31 Oct 2018 00:04:29 -0400
+Received: by mail-qt1-f180.google.com with SMTP id g10-v6so14847714qtq.6
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 12:09:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:user-agent:mime-version;
+        bh=zjm74yT45oMI4Ow3UZQOt1y8Cq9wGH0DB+1d1nDtGcc=;
+        b=W5I1fqcDs18ZyMXBZUOSl+JAISaQn10UC4ExXe6zA1bfOGlHO9V6BbjZk40Sa+Exeu
+         yjWGVgSVqPiv31D0K4A1YAN98MOtj18ZLI8c59ZqSRXTRRaplT39Jwo92E4yMSlGANPL
+         CPxVZ+adMjUiXIkDMi5FmLv1ZXfHdDsrG/zU4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:user-agent
+         :mime-version;
+        bh=zjm74yT45oMI4Ow3UZQOt1y8Cq9wGH0DB+1d1nDtGcc=;
+        b=VMt0F+tkb9DG8qM0YBBhWLF4DUtZOzXSLaWBnsAafl26NZJw8tXP5lyoy3D3E7dMz2
+         UxleZL5yUtILFr5fgkC/Yg+F9I2IyKpO8/0OF0NkgpBO1xlprAAy/lj2Dx4g+h287VQF
+         99+APntYcYv4KRa7oaS4Vxwj+LgOBlvqxvGXk3WsmyT+BHw74dk5M2QGdeGCymc94qHG
+         Ndr6jGlbpCN1kNrMee3GyJ1ZEphrCO/F3tBEQu2VNsXRyxfP0kxvbEzAS4XB7SkBWrK6
+         ypJmcinnE1tZZ1TO/tuP64Y1tlbw5SWJnriDztiBIrhmHlHox1ZDT/5Qda+qE38z19k4
+         Cc5w==
+X-Gm-Message-State: AGRZ1gKBonGwrZVhBPcSUD/8D59Y7395ouE3jNHcJgMT8sD0oHjTVTAG
+        Mk9nQ3Nu/C9/jnFLhLflBqKuwLR6AFA=
+X-Google-Smtp-Source: AJdET5cQHSjDe1/ytCUu/ZAL7gvHQ631uZN1021T7xj4FSXdPlBI/3IUVRUtqk7udMZWc2p94xvPGw==
+X-Received: by 2002:a0c:f4c2:: with SMTP id o2mr136362qvm.236.1540926585364;
+        Tue, 30 Oct 2018 12:09:45 -0700 (PDT)
+Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
+        by smtp.gmail.com with ESMTPSA id k184-v6sm14362114qkf.48.2018.10.30.12.09.44
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 30 Oct 2018 12:09:44 -0700 (PDT)
+Date:   Tue, 30 Oct 2018 15:09:43 -0400 (EDT)
+From:   Nicolas Pitre <nicolas.pitre@linaro.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Cramfs fixes
+Message-ID: <nycvar.YSQ.7.76.1810301455170.1498@knanqh.ubzr>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20181030190051.GA1697@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9062 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=736
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810300160
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/30/18 12:00 PM, Greg Kroah-Hartman wrote:
-> On Tue, Oct 30, 2018 at 10:18:08AM -0700, Santosh Shilimkar wrote:
->> Hi Greg,
+Linus,
 
-[...]
+Please pull from:
 
->> Would be able to apply this fix from Marc for stable or it needs
->> to be re-posted with CC to stable ?
-> 
-> <formletter>
-> 
-> This is not the correct way to submit patches for inclusion in the
-> stable kernel tree.  Please read:
->      https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-> for how to do this properly.
-> 
-Thanks Greg !!
+  git://git.linaro.org/people/nicolas.pitre/linux tags/cramfs_fixes
 
-Hi Marc,
-Could you please resend the patch to the stable ?
+Make the Cramfs code more robust against filesystem corruptions,
+plus trivial indentation fixes.
 
-Regards,
-Santosh
+Tag: 37b13f91069f87579018f4870da082bd172be005
+Branch: 56ce68bceeefa38e5b3509bf3d39259138e2d76a
 
 
+ fs/cramfs/inode.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
