@@ -2,110 +2,152 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06A47C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:50:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9095C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:51:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 786F02081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:50:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 930462081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:51:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mLO4DhUZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 786F02081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wmbqrhab"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 930462081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727771AbeJaBpA (ORCPT
+        id S1727865AbeJaBpX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 21:45:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54066 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727484AbeJaBpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 21:45:00 -0400
-Received: from localhost (ip-213-127-77-176.ip.prioritytelecom.net [213.127.77.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F348D20664;
-        Tue, 30 Oct 2018 16:50:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540918245;
-        bh=TmgARSgPS53rF2j9sW6Vxnn8vSv59GJF7tX+pW+IB/4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=mLO4DhUZSFYZ8x926eDjDPUp+BL6v/RmYZjmARDyjAEufl5br+Sb4lEcL9drWWVID
-         Sf1mSspfdq9dcn0is2wOsrCh5uZ6nXuSkPfForjV2pvAnmxmsUs+VeAeVBQnbEGEJI
-         a4Uhju9G3yP3XXMWkzBKTmrkYU+222mXuOXN+rt4=
-Date:   Tue, 30 Oct 2018 17:51:19 +0100
-From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To:     Nadav Amit <namit@vmware.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Xavier Deguillard <xdeguillard@vmware.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>
-Subject: Re: [PATCH v3 00/20] vmw_balloon: compaction, shrinker, 64-bit, etc.
-Message-ID: <20181030165119.GA23017@kroah.com>
-References: <20180926191336.101885-1-namit@vmware.com>
- <E1B69BF2-458D-435C-8065-6944111A9EC6@vmware.com>
+        Tue, 30 Oct 2018 21:45:23 -0400
+Received: from mail-it1-f195.google.com ([209.85.166.195]:54644 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727484AbeJaBpX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 21:45:23 -0400
+Received: by mail-it1-f195.google.com with SMTP id d6so8962850itl.4;
+        Tue, 30 Oct 2018 09:51:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=xbJZ0jBQRAT1UWNJTqYZCeGU/7QDoqBNuoSoR3iB0OQ=;
+        b=WmbqrhabceHBp4QLjP0T6XkAWJ0IZ8la+kDj8ZvX1CCK5oSRlcbYC9pOEQ8xtvd7kE
+         HYtE8WkpfIdQnZOEcBoLXZlWJD/3bQRs4xMyG3dgl+rSaNjYeBQKq9fJVD4bzlOG2nJc
+         68TRxLw2EGPjhzBXl3M0seMzJfaFZz7Nmi3O5AzMoWG7pTM51vPABbQdLIu61DUSRSVV
+         gDGCqUHNWqfC7wtXVLHc3TqEdPkVV19SE+u+Ap3su+Edh4GcYVNQ4Hzwx59HuQ6lx7J+
+         irNlX3lql5vA9gdVeMH4forGbdhHp/ZIS6zH8bKGO5WhEyzHd+SQeACEte9sUaIBwQeK
+         m0Ug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xbJZ0jBQRAT1UWNJTqYZCeGU/7QDoqBNuoSoR3iB0OQ=;
+        b=CaTPeOPbmn2/H/znh5MVPEnef4Mge/qnN6tSLnZD5tL8zS80j68KXvaQYlquetg4B4
+         XjB7mSjNBrnmf76XVw7fmEWm4zsLRHBhHPW7AGFaWJNleRLJvBWGYPE0vPaXIklnaKbW
+         GeVrpJHESlS04Ja1h6Il82T65UF+gHQA6Yz+M7QELcatX01crAd+MFGDjpT8z9VibKCI
+         4qZxOP/OZA8ncHPKjHIhZ9YfB8ivMhjU40eqBXHM+BOejZYdeEGgIso48MUKq8fmuvbJ
+         mcc7wxJpAvs+3ENXWJLSJI4fSElHqFYUnK55BUWW75QOFMA2ayxII12UrPLz/OZSR5L4
+         Ez+A==
+X-Gm-Message-State: AGRZ1gJQBgb61Ng9Gjj+QqI6sjf66iDtZKABSnBWcuU6W8YCWx85d0SQ
+        ilQyUE3v+Es9iy2a+zFPNyZm7c4VoIxbvFITKaE=
+X-Google-Smtp-Source: AJdET5dTOI31dORLHX6nLPycN+e6U3P91g9jty0cXL0rT2RHqB5c0fpscozinN6Fb8cISz4raj36vkL99dwtJdbcITk=
+X-Received: by 2002:a24:59c1:: with SMTP id p184-v6mr1986241itb.93.1540918267830;
+ Tue, 30 Oct 2018 09:51:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <E1B69BF2-458D-435C-8065-6944111A9EC6@vmware.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181026151223.16810-1-ahmedsoliman0x666@gmail.com> <20181029064640.GE128403@gmail.com>
+In-Reply-To: <20181029064640.GE128403@gmail.com>
+From:   Ahmed Soliman <ahmedsoliman0x666@gmail.com>
+Date:   Tue, 30 Oct 2018 18:49:35 +0200
+Message-ID: <CAAGnT3atejrUi6ypZPiDCtMVUP6vx51sKkc2yeQg0SF8-kra8w@mail.gmail.com>
+Subject: Re: [PATCH V5 0/5] KVM: X86: Introducing ROE Protection Kernel Hardening
+To:     mingo@kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        nathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "the arch/x86 maintainers" <x86@kernel.org>, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?B?6rmA7J246rK4?= <ovich00@gmail.com>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        nigel.edwards@hpe.com, Boris Lukashev <blukashev@sempervictus.com>,
+        Hossam Hassan <7ossam9063@gmail.com>,
+        Ahmed Lotfy <A7med.lotfey@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 04:32:22PM +0000, Nadav Amit wrote:
-> From: Nadav Amit
-> Sent: September 26, 2018 at 7:13:16 PM GMT
-> > To: Arnd Bergmann <arnd@arndb.de>, gregkh@linuxfoundation.org
-> > Cc: Xavier Deguillard <xdeguillard@vmware.com>, linux-kernel@vger.kernel.org>, Nadav Amit <namit@vmware.com>, Michael S. Tsirkin <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, linux-mm@kvack.org>, virtualization@lists.linux-foundation.org
-> > Subject: [PATCH v3 00/20] vmw_balloon: compaction, shrinker, 64-bit, etc.
-> > 
-> > 
-> > This patch-set adds the following enhancements to the VMware balloon
-> > driver:
-> > 
-> > 1. Balloon compaction support.
-> > 2. Report the number of inflated/deflated ballooned pages through vmstat.
-> > 3. Memory shrinker to avoid balloon over-inflation (and OOM).
-> > 4. Support VMs with memory limit that is greater than 16TB.
-> > 5. Faster and more aggressive inflation.
-> > 
-> > To support compaction we wish to use the existing infrastructure.
-> > However, we need to make slight adaptions for it. We add a new list
-> > interface to balloon-compaction, which is more generic and efficient,
-> > since it does not require as many IRQ save/restore operations. We leave
-> > the old interface that is used by the virtio balloon.
-> > 
-> > Big parts of this patch-set are cleanup and documentation. Patches 1-13
-> > simplify the balloon code, document its behavior and allow the balloon
-> > code to run concurrently. The support for concurrency is required for
-> > compaction and the shrinker interface.
-> > 
-> > For documentation we use the kernel-doc format. We are aware that the
-> > balloon interface is not public, but following the kernel-doc format may
-> > be useful one day.
-> > 
-> > v2->v3: * Moving the balloon magic-number out of uapi (Greg)
-> > 
-> > v1->v2:	* Fix build error when THP is off (kbuild)
-> > 	* Fix build error on i386 (kbuild)
-> > 
-> 
-> Greg,
-> 
-> I realize you didn’t apply patches 17-20. Any reason for that?
+On Mon, 29 Oct 2018 at 08:46, Ingo Molnar <mingo@kernel.org> wrote:
+>
+>
+> * Ahmed Abd El Mawgood <ahmedsoliman0x666@gmail.com> wrote:
+>
+> > This is the 5th version which is 4th version with minor fixes. ROE is a
+> > hypercall that enables host operating system to restrict guest's access to its
+> > own memory. This will provide a hardening mechanism that can be used to stop
+> > rootkits from manipulating kernel static data structures and code. Once a memory
+> > region is protected the guest kernel can't even request undoing the protection.
+> >
+> > Memory protected by ROE should be non-swapable because even if the ROE protected
+> > page got swapped out, It won't be possible to write anything in its place.
+> >
+> > ROE hypercall should be capable of either protecting a whole memory frame or
+> > parts of it. With these two, it should be possible for guest kernel to protect
+> > its memory and all the page table entries for that memory inside the page table.
+> > I am still not sure whether this should be part of ROE job or the guest's job.
+> >
+> >
+> > The reason why it would be better to implement this from inside kvm: instead of
+> > (host) user space is the need to access SPTEs to modify the permissions, while
+> > mprotect() from user space can work in theory. It will become a big performance
+> > hit to vmexit and switch to user space mode on each fault, on the other hand,
+> > having the permission handled by EPT should make some remarkable performance
+> > gain.
+> >
+> > Our model assumes that an attacker got full root access to a running guest and
+> > his goal is to manipulate kernel code/data (hook syscalls, overwrite IDT ..etc).
+> >
+> > There is future work in progress to also put some sort of protection on the page
+> > table register CR3 and other critical registers that can be intercepted by KVM.
+> > This way it won't be possible for an attacker to manipulate any part of the
+> > guests page table.
+>
+> BTW., transparent detection and trapping of attacks would also be nice:
+> if ROE is active and something running on the guest still attempts to
+> change the pagetables, the guest should be frozen and a syslog warning on
+> the hypervisor side should be printed?
 
-I have no idea, that was a few thousand patches reviewed ago...
+I was thinking about logging ROE violations to host's kernel logs too
+and I will have it in the next
+version of the patch set, but I am not sure if we should really freeze
+the guest once a violation
+happens, I wanted to completely isolate the mechanism from the policy.
+In the current implementation,
+the policy followed  is left to users pace host process using kvm. It
+will be notified about a Memory IO
+error in the guest, and the guest will be waiting for the host to take
+actions (vmexit). Of course the
+simplest action shall be "do nothing", so the writing operation will
+fail but the guest continues to run, or it
+can freeze the guest, or maybe do something advanced like cloning the
+vm and disconnecting network
+interface from the cloned vm, then enable the write operation and keep
+track of what is going on somehow.
+Because of the many varieties of possible reactions, we decided to
+keep the them out of KVM and just let the
+user space process decide how should the situation be handled.
 
-Did I not say anything about this when I applied them?
+> Also, the feature should probably be 'default y' to help spread it on the
+> distro side. It's opt-in functionality from the guest side anyway, so
+> there's no real cost on the host side other than some minor resident
+> memory.
 
-greg k-h
+Noted, I will have it `default y` in the next patches set.
+
+Thanks,
+Ahmed
