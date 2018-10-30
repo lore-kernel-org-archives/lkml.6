@@ -7,81 +7,96 @@ X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12018C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:30:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE96AC6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:30:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1D4F20827
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:30:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A54B520838
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:30:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bhl0cqti"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1D4F20827
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Up2sWGzR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A54B520838
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728251AbeJ3WXh (ORCPT
+        id S1728296AbeJ3WXx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 18:23:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52944 "EHLO mail.kernel.org"
+        Tue, 30 Oct 2018 18:23:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728016AbeJ3WWE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 18:22:04 -0400
+        id S1727826AbeJ3WXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 18:23:52 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 983372084A;
-        Tue, 30 Oct 2018 13:28:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 643332080A;
+        Tue, 30 Oct 2018 13:30:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540906116;
-        bh=8qDYNP9SRUuTg36NxtrveRhtlEhXGJwurBEhNg0van4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bhl0cqtid57cNcdNY4RaEwir9xu3HNaJMOFu0Rj1Mi9mU2D5cFV1V/YwDSpJOKzq6
-         OqggKUqF5BUZQieJ54e/NzfE2FQUyGsbFQG8aiohu0TBrSNa3eCDs713gPSn/51w9h
-         9FTxl396ys43Br4Z2PeBSXoFVKNZCSnBMDGR0PWM=
+        s=default; t=1540906224;
+        bh=9oW7HV5TWB+xI9PP1euB86qqbz06Xv+geUhczDXLZ5Q=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Up2sWGzRp58jHJ6pmTCQcXtV/lqtzudTuQpJ3fQDBx01JWTK4DuDfDrvNpHkjqPIv
+         zTuhUOp3R6oWKl6c5ACX5oq/sR+ShqB0HUAEPYiCGw0ehWZXbnUOnHiq6t8mKce9KE
+         dfWO7Oz6q5dHxtMAJiQFOesbnCtxfrxAil42CTHE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Huy Nguyen <huyn@mellanox.com>, Eli Cohen <eli@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>,
+Cc:     Eric Dumazet <edumazet@google.com>,
+        John Sperbeck <jsperbeck@google.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 03/19] net/mlx5: Take only bit 24-26 of wqe.pftype_wq for page fault type
-Date:   Tue, 30 Oct 2018 09:28:08 -0400
-Message-Id: <20181030132824.218056-3-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 01/13] bpf: do not blindly change rlimit in reuseport net selftest
+Date:   Tue, 30 Oct 2018 09:29:11 -0400
+Message-Id: <20181030132923.218124-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181030132824.218056-1-sashal@kernel.org>
-References: <20181030132824.218056-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huy Nguyen <huyn@mellanox.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit a48bc513159d4767f9988f0d857b2b0c38a4d614 ]
+[ Upstream commit 262f9d811c7608f1e74258ceecfe1fa213bdf912 ]
 
-The HW spec defines only bits 24-26 of pftype_wq as the page fault type,
-use the required mask to ensure that.
+If the current process has unlimited RLIMIT_MEMLOCK,
+we should should leave it as is.
 
-Fixes: d9aaed838765 ("{net,IB}/mlx5: Refactor page fault handling")
-Signed-off-by: Huy Nguyen <huyn@mellanox.com>
-Signed-off-by: Eli Cohen <eli@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Fixes: 941ff6f11c02 ("bpf: fix rlimit in reuseport net selftest")
+Signed-off-by: John Sperbeck <jsperbeck@google.com>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Acked-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlx5/core/eq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/testing/selftests/net/reuseport_bpf.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eq.c b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-index eb91de86202b..5da0b6e11530 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-@@ -262,7 +262,7 @@ static void eq_pf_process(struct mlx5_eq *eq)
- 		case MLX5_PFAULT_SUBTYPE_WQE:
- 			/* WQE based event */
- 			pfault->type =
--				be32_to_cpu(pf_eqe->wqe.pftype_wq) >> 24;
-+				(be32_to_cpu(pf_eqe->wqe.pftype_wq) >> 24) & 0x7;
- 			pfault->token =
- 				be32_to_cpu(pf_eqe->wqe.token);
- 			pfault->wqe.wq_num =
+diff --git a/tools/testing/selftests/net/reuseport_bpf.c b/tools/testing/selftests/net/reuseport_bpf.c
+index cad14cd0ea92..b5277106df1f 100644
+--- a/tools/testing/selftests/net/reuseport_bpf.c
++++ b/tools/testing/selftests/net/reuseport_bpf.c
+@@ -437,14 +437,19 @@ void enable_fastopen(void)
+ 	}
+ }
+ 
+-static struct rlimit rlim_old, rlim_new;
++static struct rlimit rlim_old;
+ 
+ static  __attribute__((constructor)) void main_ctor(void)
+ {
+ 	getrlimit(RLIMIT_MEMLOCK, &rlim_old);
+-	rlim_new.rlim_cur = rlim_old.rlim_cur + (1UL << 20);
+-	rlim_new.rlim_max = rlim_old.rlim_max + (1UL << 20);
+-	setrlimit(RLIMIT_MEMLOCK, &rlim_new);
++
++	if (rlim_old.rlim_cur != RLIM_INFINITY) {
++		struct rlimit rlim_new;
++
++		rlim_new.rlim_cur = rlim_old.rlim_cur + (1UL << 20);
++		rlim_new.rlim_max = rlim_old.rlim_max + (1UL << 20);
++		setrlimit(RLIMIT_MEMLOCK, &rlim_new);
++	}
+ }
+ 
+ static __attribute__((destructor)) void main_dtor(void)
 -- 
 2.17.1
 
