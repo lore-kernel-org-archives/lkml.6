@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A154C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 05:15:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C141C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 05:16:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3E7220823
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 05:15:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13A4B20823
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 05:16:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="IjJxFoeP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3E7220823
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="GNVyQ8Gz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13A4B20823
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726214AbeJ3OHi (ORCPT
+        id S1726523AbeJ3OIE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 10:07:38 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:43101 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726040AbeJ3OHh (ORCPT
+        Tue, 30 Oct 2018 10:08:04 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:35881 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726011AbeJ3OIE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 10:07:37 -0400
-Received: by mail-pl1-f195.google.com with SMTP id g59-v6so901209plb.10
-        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 22:15:40 -0700 (PDT)
+        Tue, 30 Oct 2018 10:08:04 -0400
+Received: by mail-pl1-f193.google.com with SMTP id y11-v6so4933520plt.3
+        for <linux-kernel@vger.kernel.org>; Mon, 29 Oct 2018 22:16:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=joelfernandes.org; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
         bh=RCjkjiTRGgZL2A0FAx+5895V+sW9tiOmXxjM8S1+Okk=;
-        b=IjJxFoePkltq37DEUMfY5cZa3fiOA909kBsNXCt/vf2itu+FsMoBX1SU8HhrtbHUPa
-         MgcNU1BKTergtaT/vBzoVeH4zEn49UKos68wRO4/vU5QcbSdHPFA3KpMsoX/s7VE/IgU
-         fGjE2eqFpzht0Q2mJGvnXGYo0+SLkAbss7ioQ=
+        b=GNVyQ8GzCCVBM1NJCSEfq4Bm326e+VrzHWmgMhoAJezYXjDP8IUpn54S3Sb+zJhluJ
+         MdQxMQmVSSn+awqE+9t+lGJKkXioUY7Spu+NGWaqFG+3qmue9ISpd7Tjrhcd5qqoAM2l
+         yQm8BTLKG9NQ5NRC+meC6wARIB1NwrCvvfrkA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
         bh=RCjkjiTRGgZL2A0FAx+5895V+sW9tiOmXxjM8S1+Okk=;
-        b=Vh8mep3CEcDyG+WsndahvtU1l1fmgj2dNPfhBlmDRQRgfyWzvaA53U+ljZP8myf2hf
-         xY6jFqc+zQ1mKK7gl68sw3PHXpAFmDMe152EsrS0NlKr3C3jkSZgKkRhF1JF6zOTniRJ
-         rZUNNr6zBLKpJuoRfluVRtRr3Nk49/g663JhQ2gALwq9IYUoTIFNo/2XQ8hm3af0I1Cu
-         PCSM22Z1cD2Ry7h1r7n/eFg8wZPEgOzVHFyuMjJDpflnV8W3xaaVV6uBP56NOrnYgoUv
-         mQWAGMg5/Pgku2Rcb00w5qypcVo4kG8YVdWtn5n1NN5zj4T7HL88gzdC9y75ZN87SVN/
-         o0lw==
-X-Gm-Message-State: AGRZ1gLW+PKhJbDjyTCTlEHNOFXUdWU1IjncC8101EjojZSrOPyO5Ite
-        0ixnbVPkXWO8YeZgfAuxSH/p03tjeuw=
-X-Google-Smtp-Source: AJdET5cabykt6yrZFLTct9Z0C4l+VLI+9y3OMGbHfHame3WREXzHr6RT5eJk0gU6AAGkvhq/C2qbVA==
-X-Received: by 2002:a17:902:8d83:: with SMTP id v3-v6mr17238139plo.162.1540876539636;
-        Mon, 29 Oct 2018 22:15:39 -0700 (PDT)
+        b=OVL8cDG1N2ZvR0v1EuAZvbTLaSD+hTny6OeMtzDmFlx93CVotNMoKDZSfeIx4Hl2R/
+         2h4anQoKCHAxZKwDPkV+p9Nb5hhDk4fqv4+aHvHt4owNhsFyvSIYO8k8V+2yLQyfl8PO
+         dzAwEkEq/2A1u16HCfyoOR3OPL2JwaeLF2B8SttLLfFrniSoQjDcA774Op3zZjUH6glx
+         8SKWBhSYsN3Yb+eXh9mAMm5qFmq7g8Qx4MmI5sNXjw6nKbke9VXB+rYBWPBvhDIVZohX
+         mxba63oCYRke7VGNZuGLSy9RRNXaJprmHymsQpS9jfiVsNHIcCSP85y2gI1ew5HHi+S2
+         AeaQ==
+X-Gm-Message-State: AGRZ1gLGnMnoFv/ByTuCWMeLpNnqHZSPPv4RsurS8D0J+NF1KE3fLrv9
+        NFseEYLvqCciR73Yb/86M1OHkO/Aw6g=
+X-Google-Smtp-Source: AJdET5cWH6adaZ7h00vBqggqtZi5Jsrk89KgOWTNBib8G9swlcmGiAVqqNPYH5mdCIDHyePBDL0lMA==
+X-Received: by 2002:a17:902:b486:: with SMTP id y6-v6mr8530983plr.263.1540876566028;
+        Mon, 29 Oct 2018 22:16:06 -0700 (PDT)
 Received: from joelaf.mtv.corp.google.com ([2620:0:1000:1601:3aef:314f:b9ea:889f])
-        by smtp.gmail.com with ESMTPSA id z5-v6sm10985602pfd.99.2018.10.29.22.15.37
+        by smtp.gmail.com with ESMTPSA id n64-v6sm28398742pfi.185.2018.10.29.22.16.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 29 Oct 2018 22:15:38 -0700 (PDT)
+        Mon, 29 Oct 2018 22:16:04 -0700 (PDT)
 From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        linux-doc@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     kernel-team@android.com,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>
 Subject: [PATCH] doc: correct parameter in stallwarn
-Date:   Mon, 29 Oct 2018 22:15:34 -0700
-Message-Id: <20181030051534.256658-1-joel@joelfernandes.org>
+Date:   Mon, 29 Oct 2018 22:15:59 -0700
+Message-Id: <20181030051559.256849-1-joel@joelfernandes.org>
 X-Mailer: git-send-email 2.19.1.568.g152ad8e336-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
