@@ -3,122 +3,217 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA75EC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 18:29:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15602C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 18:31:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B6562081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 18:29:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B6562081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D0A092081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 18:31:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0A092081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727668AbeJaDY0 (ORCPT
+        id S1727835AbeJaD00 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 23:24:26 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58582 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726522AbeJaDY0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 23:24:26 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 62177341;
-        Tue, 30 Oct 2018 11:29:51 -0700 (PDT)
-Received: from [10.1.196.62] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7F6C43F557;
-        Tue, 30 Oct 2018 11:29:50 -0700 (PDT)
-Subject: Re: [PATCH] soc: ti: QMSS: Fix usage of irq_set_affinity_hint
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20181030111103.12110-1-marc.zyngier@arm.com>
- <1d813bdf-3161-1514-0368-48fbe24f2205@gmail.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=marc.zyngier@arm.com; prefer-encrypt=mutual; keydata=
- xsFNBE6Jf0UBEADLCxpix34Ch3kQKA9SNlVQroj9aHAEzzl0+V8jrvT9a9GkK+FjBOIQz4KE
- g+3p+lqgJH4NfwPm9H5I5e3wa+Scz9wAqWLTT772Rqb6hf6kx0kKd0P2jGv79qXSmwru28vJ
- t9NNsmIhEYwS5eTfCbsZZDCnR31J6qxozsDHpCGLHlYym/VbC199Uq/pN5gH+5JHZyhyZiNW
- ozUCjMqC4eNW42nYVKZQfbj/k4W9xFfudFaFEhAf/Vb1r6F05eBP1uopuzNkAN7vqS8XcgQH
- qXI357YC4ToCbmqLue4HK9+2mtf7MTdHZYGZ939OfTlOGuxFW+bhtPQzsHiW7eNe0ew0+LaL
- 3wdNzT5abPBscqXWVGsZWCAzBmrZato+Pd2bSCDPLInZV0j+rjt7MWiSxEAEowue3IcZA++7
- ifTDIscQdpeKT8hcL+9eHLgoSDH62SlubO/y8bB1hV8JjLW/jQpLnae0oz25h39ij4ijcp8N
- t5slf5DNRi1NLz5+iaaLg4gaM3ywVK2VEKdBTg+JTg3dfrb3DH7ctTQquyKun9IVY8AsxMc6
- lxl4HxrpLX7HgF10685GG5fFla7R1RUnW5svgQhz6YVU33yJjk5lIIrrxKI/wLlhn066mtu1
- DoD9TEAjwOmpa6ofV6rHeBPehUwMZEsLqlKfLsl0PpsJwov8TQARAQABzSNNYXJjIFp5bmdp
- ZXIgPG1hcmMuenluZ2llckBhcm0uY29tPsLBewQTAQIAJQIbAwYLCQgHAwIGFQgCCQoLBBYC
- AwECHgECF4AFAk6NvYYCGQEACgkQI9DQutE9ekObww/+NcUATWXOcnoPflpYG43GZ0XjQLng
- LQFjBZL+CJV5+1XMDfz4ATH37cR+8gMO1UwmWPv5tOMKLHhw6uLxGG4upPAm0qxjRA/SE3LC
- 22kBjWiSMrkQgv5FDcwdhAcj8A+gKgcXBeyXsGBXLjo5UQOGvPTQXcqNXB9A3ZZN9vS6QUYN
- TXFjnUnzCJd+PVI/4jORz9EUVw1q/+kZgmA8/GhfPH3xNetTGLyJCJcQ86acom2liLZZX4+1
- 6Hda2x3hxpoQo7pTu+XA2YC4XyUstNDYIsE4F4NVHGi88a3N8yWE+Z7cBI2HjGvpfNxZnmKX
- 6bws6RQ4LHDPhy0yzWFowJXGTqM/e79c1UeqOVxKGFF3VhJJu1nMlh+5hnW4glXOoy/WmDEM
- UMbl9KbJUfo+GgIQGMp8mwgW0vK4HrSmevlDeMcrLdfbbFbcZLNeFFBn6KqxFZaTd+LpylIH
- bOPN6fy1Dxf7UZscogYw5Pt0JscgpciuO3DAZo3eXz6ffj2NrWchnbj+SpPBiH4srfFmHY+Y
- LBemIIOmSqIsjoSRjNEZeEObkshDVG5NncJzbAQY+V3Q3yo9og/8ZiaulVWDbcpKyUpzt7pv
- cdnY3baDE8ate/cymFP5jGJK++QCeA6u6JzBp7HnKbngqWa6g8qDSjPXBPCLmmRWbc5j0lvA
- 6ilrF8nOwU0ETol/RQEQAM/2pdLYCWmf3rtIiP8Wj5NwyjSL6/UrChXtoX9wlY8a4h3EX6E3
- 64snIJVMLbyr4bwdmPKULlny7T/R8dx/mCOWu/DztrVNQiXWOTKJnd/2iQblBT+W5W8ep/nS
- w3qUIckKwKdplQtzSKeE+PJ+GMS+DoNDDkcrVjUnsoCEr0aK3cO6g5hLGu8IBbC1CJYSpple
- VVb/sADnWF3SfUvJ/l4K8Uk4B4+X90KpA7U9MhvDTCy5mJGaTsFqDLpnqp/yqaT2P7kyMG2E
- w+eqtVIqwwweZA0S+tuqput5xdNAcsj2PugVx9tlw/LJo39nh8NrMxAhv5aQ+JJ2I8UTiHLX
- QvoC0Yc/jZX/JRB5r4x4IhK34Mv5TiH/gFfZbwxd287Y1jOaD9lhnke1SX5MXF7eCT3cgyB+
- hgSu42w+2xYl3+rzIhQqxXhaP232t/b3ilJO00ZZ19d4KICGcakeiL6ZBtD8TrtkRiewI3v0
- o8rUBWtjcDRgg3tWx/PcJvZnw1twbmRdaNvsvnlapD2Y9Js3woRLIjSAGOijwzFXSJyC2HU1
- AAuR9uo4/QkeIrQVHIxP7TJZdJ9sGEWdeGPzzPlKLHwIX2HzfbdtPejPSXm5LJ026qdtJHgz
- BAb3NygZG6BH6EC1NPDQ6O53EXorXS1tsSAgp5ZDSFEBklpRVT3E0NrDABEBAAHCwV8EGAEC
- AAkFAk6Jf0UCGwwACgkQI9DQutE9ekMLBQ//U+Mt9DtFpzMCIHFPE9nNlsCm75j22lNiw6mX
- mx3cUA3pl+uRGQr/zQC5inQNtjFUmwGkHqrAw+SmG5gsgnM4pSdYvraWaCWOZCQCx1lpaCOl
- MotrNcwMJTJLQGc4BjJyOeSH59HQDitKfKMu/yjRhzT8CXhys6R0kYMrEN0tbe1cFOJkxSbV
- 0GgRTDF4PKyLT+RncoKxQe8lGxuk5614aRpBQa0LPafkirwqkUtxsPnarkPUEfkBlnIhAR8L
- kmneYLu0AvbWjfJCUH7qfpyS/FRrQCoBq9QIEcf2v1f0AIpA27f9KCEv5MZSHXGCdNcbjKw1
- 39YxYZhmXaHFKDSZIC29YhQJeXWlfDEDq6nIhvurZy3mSh2OMQgaIoFexPCsBBOclH8QUtMk
- a3jW/qYyrV+qUq9Wf3SKPrXf7B3xB332jFCETbyZQXqmowV+2b3rJFRWn5hK5B+xwvuxKyGq
- qDOGjof2dKl2zBIxbFgOclV7wqCVkhxSJi/QaOj2zBqSNPXga5DWtX3ekRnJLa1+ijXxmdjz
- hApihi08gwvP5G9fNGKQyRETePEtEAWt0b7dOqMzYBYGRVr7uS4uT6WP7fzOwAJC4lU7ZYWZ
- yVshCa0IvTtp1085RtT3qhh9mobkcZ+7cQOY+Tx2RGXS9WeOh2jZjdoWUv6CevXNQyOUXMM=
-Organization: ARM Ltd
-Message-ID: <6b6307bc-dca1-c334-ca6d-9ab6fc8acdf0@arm.com>
-Date:   Tue, 30 Oct 2018 18:29:49 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 30 Oct 2018 23:26:26 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:33051 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726522AbeJaD0X (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 23:26:23 -0400
+Received: by mail-wm1-f68.google.com with SMTP id y140-v6so12507944wmd.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 11:31:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=DFsFFLjRXDGHuUWoOloyRgpJvoEH8MXDHnD+qyam8/4=;
+        b=CkNfFP/SS8p4TG+0B3Cp2FiEmsDu0uHb+fp4yzq70gJRjS4hRdGSUiyEPVAETJLx/w
+         LHqCZNItVeIKD6lNszfJTn5jw+tYS/NoSoZhBhJcL3zIInDAstG69YQzvSbMEjT6DxHh
+         Uj4U35UiQ7upYei6QHfa6Jw/ppWbg/YyOHMcm5Zfw3fJP2WuZTCcdnDAftvjDJ9jGGDQ
+         EZtub9gdV3CQ3lOb4oZKi1JC36QW0iNIVe0Hg2v4J9LvafXqXZb4cAgmHXp1GSK4AO1j
+         sFIoeqrgSDE9/P5VRNM8q2MftqA0vvZf9cKleBjwQYLzXhKLPBaxjXeoea12Pxtk3a6F
+         5ijw==
+X-Gm-Message-State: AGRZ1gKQnx336o+9yCdyMvILKHRw1FK5kbSsWsy61LnoV4Pnx+7HUaYm
+        F3PXWhjHCY/1azQT8M+9Ibv37g==
+X-Google-Smtp-Source: AJdET5dOfR/+itHEF2hfqEdIn6ADZ3mt1Tz2WeLCQS/L20kTmZXjJ4tiZB8GtheM08vc2DVBFiVZZw==
+X-Received: by 2002:a1c:9b4b:: with SMTP id d72-v6mr15816wme.72.1540924306273;
+        Tue, 30 Oct 2018 11:31:46 -0700 (PDT)
+Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
+        by smtp.gmail.com with ESMTPSA id x8-v6sm61689685wrd.54.2018.10.30.11.31.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 11:31:45 -0700 (PDT)
+Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        Dean Wallace <duffydack73@gmail.com>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Johannes Stezenbach <js@sig21.net>,
+        Carlo Caione <carlo@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mogens Jensen <mogens-jensen@protonmail.com>
+References: <20181025232517.ywnw54qibemosjws@picard>
+ <154083512089.98144.9141070901932719147@swboyd.mtv.corp.google.com>
+ <CAHp75VfnN5tF1Z9+CDDhKFNG5QfCRcGOZeAkpf-5BfCEx16gvg@mail.gmail.com>
+ <CAHp75VctdBE-GM60udJawBCXdmoOqZn4N=kFWz5GLHzjPG2iQQ@mail.gmail.com>
+ <20181029190819.2ivlx73n6y6sx4vk@picard>
+ <ffc4bcc9-62c3-8940-85d6-d0fd01f3a1b8@linux.intel.com>
+ <c8fb730a-c160-41b4-dad0-8ed8594e5687@redhat.com>
+ <20181030143836.feo7zcxiestylxoo@picard>
+ <2d429c87-24c5-4075-683e-b0d12c3eb1c2@linux.intel.com>
+ <d00df762-e4fc-06c5-701e-d5100bfd0e35@redhat.com>
+ <783f17c2-ecc6-00fc-5629-02319b965205@redhat.com>
+ <fe975fde-836a-8d24-46ca-55b02db06b45@linux.intel.com>
+From:   Hans de Goede <hdegoede@redhat.com>
+Message-ID: <be955ec5-7f37-3fd8-658d-c2070e46a0cb@redhat.com>
+Date:   Tue, 30 Oct 2018 19:31:44 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <1d813bdf-3161-1514-0368-48fbe24f2205@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+In-Reply-To: <fe975fde-836a-8d24-46ca-55b02db06b45@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/10/18 17:02, Florian Fainelli wrote:
-> On 10/30/18 4:11 AM, Marc Zyngier wrote:
->> The Keystone QMSS driver is pretty damaged, in the sense that it
->> does things like this:
->>
->> 	irq_set_affinity_hint(irq, to_cpumask(&cpu_map));
->>
->> where cpu_map is a local variable. As we leave the function, this
->> will point to nowhere-land, and things will end-up badly.
->>
->> Instead, let's use a proper cpumask that gets allocated, giving
->> the driver a chance to actually work with things like irqbalance
->> as well as have a hypothetical 64bit future.
+Hi Pierre-Louis,
+
+On 30-10-18 17:27, Pierre-Louis Bossart wrote:
 > 
-> Since this is at least the second patch from you that I can see in this
-> area, would it make sense to sprinkle object_is_on_stack() checks
-> throughout irq_set_affinity_hint() to help catch offenders?
+> On 10/30/18 11:02 AM, Hans de Goede wrote:
+>> Hi,
+>>
+>> On 30-10-18 16:46, Hans de Goede wrote:
+>>> Hi,
+>>>
+>>> On 30-10-18 16:04, Pierre-Louis Bossart wrote:
+>>>>
+>>>> On 10/30/18 9:38 AM, Dean Wallace wrote:
+>>>>> On 30-10-18, Hans de Goede wrote:
+>>>>>> Hi Dean,
+>>>>>>
+>>>>>> Attached are 2 different attempts at fixing this.
+>>>>>>
+>>>>>> When trying these patches do not forget to remove the revert of the
+>>>>>> "Stop-marking-clocks-as-CLK_IS_CRITICAL" commit.
+>>>>>>
+>>>>>> Please first try the 0001-ASoC-intel-cht_bsw_max98090_ti-Use-pmc_plt_clk_0-ins.patch
+>>>>>> patch I expect that one to do the trick indicating that the Swanky model
+>>>>>> uses a different pmc clk then which is normally used for the codec clock.
+>>>>>>
+>>>>>> If that patch does not fix things, please give the other patch a try.
+>>>>
+>>>> For Baytrail devices, the audio platform clocks are not managed by the firmware. They are for CHT-based devices - as can be seen by clock resources being described in the DSDT. We used to have a if(baytrail) in the code which was replaced by this CRITICAL label, but the point remains that there is a difference between the two SOC versions.
+>>>
+>>> As I mentioned before the CRITICAL flag was only added a year ago to workaround
+>>> an issue with on board ethernet needing plt_clk_4 on some laptops, this never
+>>> had anything to do with sound.
+>>
+>> Ah I see now that you later made some changes based on the patch to fix the ethernet:
+>>
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit?id=7735bce05a9c0bb0eb0f08c9002d65843a7c5798
+>>
+>> Note though that that does not touch the machine driver which we are discussing
+>> now and the reporters machine is also BYT based.
+>>
+>> As explained below (in my original reply) I think it is fine to always
+>> manage the clk from within the kernel. But if you think this is a bad
+>> idea, we could re-introduce the is_valleyview() checks in machine
+>> drivers which are used on CHT devices.
+> 
+> I am having difficulties following the proposal
+> 
+> for audio, managing the platform clocks from the kernel is only useful for Baytrail, and the code handling the CRITICAL flags is really equivalent to having a is_valleyview() test in the machine drivers. I don't quite understand the S0ix-related changes and I also don't get how using plt_clk_0 makes things better or wonder if audio on Swanky worked before the commit 7735bce05a9c ('ASoC: Intel: boards: use devm_clk_get() unconditionally'.
+> 
+> In other words, I don't know if we are dealing with a platform that only started working with 7735bce05a9c and does need a quirk to make use of plt_clk_0 or a fundamental issue with clock/power management.
 
-I think I nuked the only two offenders in the tree. And to be honest,
-I'm far more worried about the use of to_cpumask() itself, because this
-can be wrong in quite a number of ways.
+Ok let me try to clarify this by breaking this out into the 3 separate
+things which I believe are in play here:
 
-As much as I dislike checkpatch, I wonder if having a rule checking for
-the usage of to_cpumask() would be a good idea...
 
-Thanks,
+1) The PMC clocks should NOT be marked as CLK_IS_CRITICAL
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Commit d31fd43c0f9a ("clk: x86: Do not gate clocks enabled by the firmware")
+should, in hindsight, never have been merged. CLK_IS_CRITICAL disables all
+management of the clk in question and is really intended for clks which are
+e.g. driving the CPU core itself or DRAM. The proper fix for the ethernet
+problem that patch was meant to address is for the ethernet driver to get
+and enable the clock itself. As I've done in a recent series which has as
+purpose to revert d31fd43c0f9a.
+
+d31fd43c0f9a marks any PMC clock which is enabled by the firmware as boot
+as critical, not only the codec mclk, but *any* clk.  This means that unless
+all clks which are enabled at boot are controlled by the firmware as
+either ACPI pwr-resources, or by a device's _PS3 method, some clks will
+stay on during suspend, see e.g. :
+
+https://bugzilla.kernel.org/show_bug.cgi?id=193891#c102
+https://bugzilla.kernel.org/show_bug.cgi?id=196861
+
+Also on BYT this means that if the firmware has enabled the coded mclk at
+boot it will get marked as CLK_IS_CRITICAL and we will now never disable it.
+
+If some clocks are still on during suspend then the SoC cannot reach its
+deepest sleep states while suspended, which obviously is bad.
+
+TL;DR: CLK_IS_CRITICAL block reaching the deepest sleep states so
+d31fd43c0f9a needs to be reverted.
+
+
+2) Dropping the CLK_IS_CRITICAL flag means we are now also controlling
+the codec mclk on CHT.
+
+Just like setting the CLK_IS_CRITICAL flag on the mclk meant that we were
+effectively no longer controlling the mclk on BYT, reverting this change
+combined with your 7735bce05a9c ("ASoC: Intel: boards: use devm_clk_get()
+unconditionally") change means that we are now controlling the mclk on
+CHT platforms.
+
+As you point out the firmware also controls the mclk on these platforms,
+so arguably this is undesirable. As I tried to explain I do not believe
+that this is actually a problem. But if you think this is a problem then
+we will need to revert 7735bce05a9c. If you prefer to go that route then
+I can prepare a patch for this.
+
+
+3) No longer marking PMC clocks enabled at boot as CLK_IS_CRITICAL has
+caused a regression on Swanky and Clapper model chromebooks
+
+You wrote: "I wonder if audio on Swanky worked before the commit 7735bce05a9c"
+I don't think that that commit has impacted Swanky at all since Swanky is BYT
+based. Instead I believe that d31fd43c0f9a ("clk: x86: Do not gate clocks
+enabled by the firmware") has accidentally fixed audio on Swanky laptops.
+This also explains why my "Stop-marking-clocks-as-CLK_IS_CRITICAL" commit
+has broken it again as that is effectively a revert of d31fd43c0f9.
+
+As I wrote before the as a result of d31fd43c0f9a the clk enable/disable
+behavior is not only ignored on CHT, as you noticed when writing 7735bce05a9c,
+but it also causes it to be ignored on BYT, including the initial disable of
+unused clocks just before the kernel starts /sbin/init. This not only fixed
+the ethernet on the laptop model that d31fd43c0f9a targeted but also caused
+us to no longer disable plt_clk_0 on Swanky (debugging done outside of
+this thread has shown that d31fd43c0f9a sets CLK_IS_CRITICAL on plt_clk_0).
+
+TL;DR: d31fd43c0f9a ("clk: x86: Do not gate clocks enabled by the firmware")
+caused plt_clk_0 to be marked as CLK_IS_CRITICAL on Swanky, accidentally
+fixing audio. The proper fix for this is to make the cht_bsw_max98090_ti.c
+code control pmc_plt_clk_0 instead of pmc_plt_clk_3 as the Swanky board is
+actually using pmc_plt_clk_0 and since this is a BYT board we should be
+controlling the mclk there.
+
+
+I hope this helps to clarify things, if not please keep asking questions.
+
+Regards,
+
+Hans
