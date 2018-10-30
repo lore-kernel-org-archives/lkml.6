@@ -2,108 +2,91 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA2FEC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 20:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2677C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 20:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD29620664
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 20:28:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bOeaD2YD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD29620664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 708B420827
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 20:28:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 708B420827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727664AbeJaFXL (ORCPT
+        id S1727676AbeJaFXc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 01:23:11 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:34144 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725931AbeJaFXL (ORCPT
+        Wed, 31 Oct 2018 01:23:32 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:40641 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725743AbeJaFXc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 01:23:11 -0400
-Received: by mail-lf1-f67.google.com with SMTP id n26-v6so9970015lfl.1
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 13:28:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UIW1UYQw4eKeTZv5sBJ9BCIRK6s/SbrfrZFiIpToa6s=;
-        b=bOeaD2YDMx+BPaoXbX6DUOsR8Wd71ECXKNBYUH90AzQCBYioqxQhSPexpnHGOGrfr3
-         Un17H3pQ7Bqb/3IlQMPYWzwOap8U+PCF8O+2igRyvDeXqkVTDmKriYpNXvQIKzC13NHO
-         vNkwqW54ZFpKrs/F+VD1AAx2bCXV+u4f62fnU=
+        Wed, 31 Oct 2018 01:23:32 -0400
+Received: by mail-ot1-f68.google.com with SMTP id m15so12441097otl.7;
+        Tue, 30 Oct 2018 13:28:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UIW1UYQw4eKeTZv5sBJ9BCIRK6s/SbrfrZFiIpToa6s=;
-        b=jND5XaJYlfKiNDDJLhmTYNDQwxR+0ophqh+cbc8skWhhgXR4H/BkxG9iX0RfnDNC/H
-         De1zARI3im8kAmS4y3kC+T02wknIys1fgtvE4nGBskoAaocVwtiYt2Tv8WkBKnqgHP/m
-         fbAcftJZw0VYumw5ig8TEHYzqQkZG8uDcrJhmpBCKKUjRZEaL2S48rLphUX9e7TA25SQ
-         EPWIx/kXH3hwylpzGp8/px4laTlrYD8l9TwTH3TYoGRJ9Z7OXwqiG63MN+cw/CLtlQja
-         86ypSrW6ClGmXxvU8V6YmyRw4OYzYuu5vyVB5r6/wNgHBtnx01ULGg/gJFSyOVwb08N3
-         HQJA==
-X-Gm-Message-State: AGRZ1gJeq10jDmn4zkKQWpMDbGhkc8FfEa3Be4a9Yy3ImEZUHWI1q6oh
-        XI+xgPiPc8vefGkzY68tTg+Iaw==
-X-Google-Smtp-Source: AJdET5d2MdZT2SmiwXwZNEO4ZZp+OyQk+OHrABe0C7J2pLIqYmETGQ2u1TfWtQe0rx62ZAko8zZnQA==
-X-Received: by 2002:a19:9844:: with SMTP id a65-v6mr118404lfe.63.1540931290586;
-        Tue, 30 Oct 2018 13:28:10 -0700 (PDT)
-Received: from localhost ([195.238.92.132])
-        by smtp.gmail.com with ESMTPSA id a9sm1312322lfi.57.2018.10.30.13.28.09
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=37aYZuhg1Zxza/c3j3Mc6wWnVbttgexS56fKhEeknMc=;
+        b=boC71BtWBuCLCSVa/XPfwrHIuyL5b/vSM9rGf2VPEs4qYARSHy9w4AGuG8LCZbDHBA
+         DQFQSuVV0GPmgcLKE66QK/vm+nDwVvKkwyRA5lvmEfPN3uIKnb265+GWlrGqy3Qg3/dN
+         0AJ38eL8XG6miRlFF98UscFwJWKhW7Ac8YjhG87JJdelX9XGJVGD9fzedfPg+LoClHbJ
+         lL640L3Bzz0O5SmoN3U7TwtFUHbEh/MjoK6mdW7mvb0EKoO/IGYXM5LuYvpvjMWqKxd9
+         L4TJ/MJIfIhMHnFupXr0CRj/dPUJHDjdZhhxavJmQT2dKDM1/aQsqfXfqpsnWzDoBfkO
+         dQHg==
+X-Gm-Message-State: AGRZ1gJilkSgCD7BX9iXgoDxBvhvJ8+a7f1YlDILp8uRy4MzTgWDljEb
+        Avg/zUQZZmt8y8uuLWuPdw==
+X-Google-Smtp-Source: AJdET5ecfvtN94QYoVj0R/ErV2Ndx7UCFG0MNNxcAFXy0efxki8bApnvOq1vBqBzdzbQ1zw/C3B4IA==
+X-Received: by 2002:a9d:c43:: with SMTP id 61mr154223otr.222.1540931313154;
+        Tue, 30 Oct 2018 13:28:33 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id a93sm8563857otc.16.2018.10.30.13.28.32
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Oct 2018 13:28:09 -0700 (PDT)
-From:   Sam Protsenko <semen.protsenko@linaro.org>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        kernel-janitors@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v2] kernel/SRCU: Fix ctags
-Date:   Tue, 30 Oct 2018 22:28:08 +0200
-Message-Id: <20181030202808.28027-1-semen.protsenko@linaro.org>
-X-Mailer: git-send-email 2.19.1
+        Tue, 30 Oct 2018 13:28:32 -0700 (PDT)
+Date:   Tue, 30 Oct 2018 15:28:31 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        linux-clk@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: Re: [PATCH v3 22/25] dt-bindings: sun6i-dsi: Add compatible for A64
+ DPHY
+Message-ID: <20181030202831.GA22352@bogus>
+References: <20181026144344.27778-1-jagan@amarulasolutions.com>
+ <20181026144344.27778-23-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181026144344.27778-23-jagan@amarulasolutions.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ctags indexing ("make tags" command) throws this warning:
+On Fri, 26 Oct 2018 20:13:41 +0530, Jagan Teki wrote:
+> The MIPI DSI PHY HDMI controller on Allwinner A64 is similar
+> on the one on A31.
+> 
+> Add A64 compatible and append A31 compatible as fallback.
+> 
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> ---
+> Changes for v3:
+> - none
+> Changes for v2:
+> - new patch
+> 
+>  Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-    ctags: Warning: include/linux/notifier.h:125:
-    null expansion of name pattern "\1"
-
-This is the result of DEFINE_PER_CPU() macro expansion. Fix that by
-getting rid of line break.
-
-Similar fix was already done in commit 25528213fe9f ("tags: Fix
-DEFINE_PER_CPU expansions"), but this one probably wasn't noticed.
-
-Fixes: 9c80172b902d ("kernel/SRCU: provide a static initializer")
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
----
- include/linux/notifier.h | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/include/linux/notifier.h b/include/linux/notifier.h
-index f35c7bf76143..0096a05395e3 100644
---- a/include/linux/notifier.h
-+++ b/include/linux/notifier.h
-@@ -122,8 +122,7 @@ extern void srcu_init_notifier_head(struct srcu_notifier_head *nh);
- 
- #ifdef CONFIG_TREE_SRCU
- #define _SRCU_NOTIFIER_HEAD(name, mod)				\
--	static DEFINE_PER_CPU(struct srcu_data,			\
--			name##_head_srcu_data);			\
-+	static DEFINE_PER_CPU(struct srcu_data, name##_head_srcu_data); \
- 	mod struct srcu_notifier_head name =			\
- 			SRCU_NOTIFIER_INIT(name, name##_head_srcu_data)
- 
--- 
-2.19.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
