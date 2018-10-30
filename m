@@ -2,97 +2,84 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8E43C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:32:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87A1FC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:34:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A925D2080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:32:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A925D2080A
+	by mail.kernel.org (Postfix) with ESMTP id 323FF2081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:34:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uiArynSz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 323FF2081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726419AbeJaE1L (ORCPT
+        id S1726532AbeJaE3P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 00:27:11 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:33178 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725765AbeJaE1K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 00:27:10 -0400
-Received: by mail-ot1-f67.google.com with SMTP id q1so2841224otk.0;
-        Tue, 30 Oct 2018 12:32:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Uk/maA6BLspR10tnwh6s4NYQudleC4WwHdDJbYoY2/4=;
-        b=WuDYfQMqrqrd3Hc/wmNrzEE01l8cbjmtVeY3Wv8dFxTSo9dzBaYVYY5kYOIWn2A0bf
-         0N/PfR/F10D2aK8Nm3Ojk1iSO22yyCjVPAWr4YNc061cBfS1bHCw5e7WCqYB8L7rtinO
-         zocM2g0HMb7GK81oWcHQpaYnRUe75n2t8H2WcZLkWe1Kv3gGXp9zsgb2cdxIYFwv9L48
-         vVRCibdAM/fN/coQSjWPkaGhHfAEcl4jkdhYKxIg0IzYL2HYesvbeMfDWmJOxOKvMYp6
-         RBvCbATR0aamyZtbTAYYn/6HFmdA0vEKn0RHez76kXvUxfikAPsRLdUET8h567gV5fsn
-         NfTQ==
-X-Gm-Message-State: AGRZ1gJtym6Ola9ANUbouqnABKpYutWIb9i42pxfpTlmfMkPCEFwSgO5
-        swjFiWqHfcc6GrhlNYHxPw==
-X-Google-Smtp-Source: AJdET5fDEElTBJ9t4bel3Caj/rmn2TZ11K03Xjh/EpIwVsk1U0BUqpJ/6T5ntIfOsuz25OYqeAXeOA==
-X-Received: by 2002:a9d:3f25:: with SMTP id m34mr30963otc.248.1540927942371;
-        Tue, 30 Oct 2018 12:32:22 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id h21sm2472941otj.9.2018.10.30.12.32.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Oct 2018 12:32:21 -0700 (PDT)
-Date:   Tue, 30 Oct 2018 14:32:20 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Pascal PAILLET-LME <p.paillet@st.com>
-Cc:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
-        "linux@roeck-us.net" <linux@roeck-us.net>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
-        "eballetbo@gmail.com" <eballetbo@gmail.com>,
-        "axel.lin@ingics.com" <axel.lin@ingics.com>,
-        Pascal PAILLET-LME <p.paillet@st.com>
-Subject: Re: [PATCH v5 1/8] dt-bindings: mfd: document stpmic1
-Message-ID: <20181030193220.GA29498@bogus>
-References: <1540830122-2577-1-git-send-email-p.paillet@st.com>
- <1540830122-2577-2-git-send-email-p.paillet@st.com>
+        Wed, 31 Oct 2018 00:29:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60636 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725765AbeJaE3O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 00:29:14 -0400
+Received: from jouet.infradead.org (unknown [190.15.121.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3E2372080A;
+        Tue, 30 Oct 2018 19:34:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540928066;
+        bh=2Zs05wlmLciUTudtNyCe337d/XT1uNuskCUz0a9ltvw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uiArynSzmYFJKwcD3fOCed4ezYFEZ1c0YwcwFIrxEddqnNOdZ4xfxddcfhbg+B0jj
+         HbS1qVEeTvED3S7sjAyPIEcA5/5MDNi5e2vrOiktui1BXL6XQnjymv2ilfGi2Rhh7p
+         iupe7Ni9wNdlx6EQ8TZfeYiaZy41WJXVZIO5r0Kk=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 3829D142C5F; Tue, 30 Oct 2018 16:34:23 -0300 (-03)
+Date:   Tue, 30 Oct 2018 16:34:23 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Colin King <colin.king@canonical.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf/core: clean up inconsisent indentation
+Message-ID: <20181030193423.GC4454@kernel.org>
+References: <20181029233211.21475-1-colin.king@canonical.com>
+ <20181030144444.GB23310@kernel.org>
+ <20181030192531.2ormldhqj2qizy33@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1540830122-2577-2-git-send-email-p.paillet@st.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181030192531.2ormldhqj2qizy33@mwanda>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 29 Oct 2018 16:22:04 +0000, Pascal PAILLET-LME wrote:
-> stpmic1 is a pmic from STMicroelectronics. The STPMIC1 integrates 10
-> regulators, 3 power switches, a watchdog and an input for a power on key.
-> 
-> Signed-off-by: Pascal Paillet <p.paillet@st.com>
-> ---
-> changes in v5:
-> * removed st properties
-> * added buck modes definitions in the header
-> 
->  .../devicetree/bindings/mfd/st,stpmic1.txt         | 61 ++++++++++++++++++++++
->  include/dt-bindings/mfd/st,stpmic1.h               | 50 ++++++++++++++++++
->  2 files changed, 111 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/st,stpmic1.txt
->  create mode 100644 include/dt-bindings/mfd/st,stpmic1.h
-> 
+Em Tue, Oct 30, 2018 at 10:25:31PM +0300, Dan Carpenter escreveu:
+> On Tue, Oct 30, 2018 at 11:44:44AM -0300, Arnaldo Carvalho de Melo wrote:
+> > Em Mon, Oct 29, 2018 at 11:32:11PM +0000, Colin King escreveu:
+> > > From: Colin Ian King <colin.king@canonical.com>
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> > > Replace a bunch of spaces with tab, cleans up indentation
+
+> > I think we can live with the spaces as the 'git blame' information is
+> > more valuable, i.e. who was that touched that line last?
+ 
+> You can use "git blame -w" to ignore white space changes.  I add it
+> whenever I run blame.
+
+Great! I didn't knew that, will try and get this to be the default for
+'git blame' in my machines.
+
+Thanks,
+
+- Arnaldo
