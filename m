@@ -2,69 +2,129 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF487C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:11:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D92FEC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:11:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67616204FD
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:11:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67616204FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9E932204FD
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:11:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C62qNvxY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E932204FD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727477AbeJaAE5 (ORCPT
+        id S1727547AbeJaAFF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 20:04:57 -0400
-Received: from mga04.intel.com ([192.55.52.120]:35310 "EHLO mga04.intel.com"
+        Tue, 30 Oct 2018 20:05:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727078AbeJaAE4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 20:04:56 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 08:11:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,444,1534834800"; 
-   d="scan'208";a="86946152"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by orsmga006.jf.intel.com with ESMTP; 30 Oct 2018 08:11:02 -0700
-Date:   Tue, 30 Oct 2018 09:08:40 -0600
-From:   Keith Busch <keith.busch@intel.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 11/14] irq: add support for allocating (and affinitizing)
- sets of IRQs
-Message-ID: <20181030150840.GC18906@localhost.localdomain>
-References: <20181029163738.10172-1-axboe@kernel.dk>
- <20181029163738.10172-12-axboe@kernel.dk>
- <20181030142601.GA18906@localhost.localdomain>
- <c11c95ae-5e10-38bd-d2c2-e2407634f52a@kernel.dk>
- <20181030144527.GB18906@localhost.localdomain>
- <46dbcbcd-799f-9970-a68f-de7e96b1a6bb@kernel.dk>
+        id S1726903AbeJaAFF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 20:05:05 -0400
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D169E208A3;
+        Tue, 30 Oct 2018 15:11:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1540912273;
+        bh=j55T4BEsJzj3tXD1UP5KA33jRJgXefZZn+fGyA8xjg4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=C62qNvxYZQXtRCdhG0QnCW1N7Nr9Ui/ZHAs8B6oCE60FaF+sTWPp88ZSJyqz3R0yt
+         wZwE8LQSej/WePwqM+P+LeQutk5yGH3UGGOM+rTz9PneLvTIOaSfU2xEjbhZbBO9qe
+         +3ckNo+yeJ50++yRQd5g8DtzE9NqvMAwKEo2vnCw=
+Received: by mail-qk1-f171.google.com with SMTP id p3-v6so7457447qkb.5;
+        Tue, 30 Oct 2018 08:11:12 -0700 (PDT)
+X-Gm-Message-State: AGRZ1gLTizJdwbdihqGbv0cZqO4u2H78O71CcZ+VsmqHvcaf750dS0d+
+        lOMd2WpPm1a/+2LTVHrMvDB6LB5qG4bpU3vsLg==
+X-Google-Smtp-Source: AJdET5dfew/O2cSjnjEFdI14pEjXvr+Q1enSTEjNC6+bvQ/Tqc9t8rEDW/bzvjzfPY3MgHoZTrWyotkQ5a+m6X2XpI8=
+X-Received: by 2002:ae9:ef14:: with SMTP id d20mr16541988qkg.147.1540912271915;
+ Tue, 30 Oct 2018 08:11:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <46dbcbcd-799f-9970-a68f-de7e96b1a6bb@kernel.dk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+References: <20181029235206.30060-1-f.fainelli@gmail.com> <20181029235206.30060-3-f.fainelli@gmail.com>
+In-Reply-To: <20181029235206.30060-3-f.fainelli@gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 30 Oct 2018 10:10:59 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKrrmMOQrV62L0QXAPiLGceMbvA7HZ=1U3PW0_MpqtC=w@mail.gmail.com>
+Message-ID: <CAL_JsqKrrmMOQrV62L0QXAPiLGceMbvA7HZ=1U3PW0_MpqtC=w@mail.gmail.com>
+Subject: Re: [PATCH 2/6] arch: Make phys_initrd_start and phys_initrd_size
+ global variables
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        aryabinin@virtuozzo.com, Andrey Konovalov <andreyknvl@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Johannes Weiner <hannes@cmpxchg.org>, ghackmann@android.com,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        chandan.vn@samsung.com,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
+        rppt@linux.ibm.com, Russell King <linux@armlinux.org.uk>,
+        Greentime Hu <green.hu@gmail.com>, deanbo422@gmail.com,
+        gxt@pku.edu.cn, Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 08:53:37AM -0600, Jens Axboe wrote:
-> The sum of the set can't exceed the nvecs passed in, the nvecs passed in
-> should be the less than or equal to nvecs. Granted this isn't enforced,
-> and perhaps that should be the case.
+On Mon, Oct 29, 2018 at 6:52 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
+>
+> Make phys_initrd_start and phys_initrd_size global variables that will
+> later be referenced by generic code under drivers/of/fdt.c.
+>
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+>  arch/arm/mm/init.c       | 4 ++--
+>  arch/unicore32/mm/init.c | 4 ++--
+>  include/linux/initrd.h   | 3 +++
+>  3 files changed, 7 insertions(+), 4 deletions(-)
+>
+> diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+> index 0cc8e04295a4..8f364aa24172 100644
+> --- a/arch/arm/mm/init.c
+> +++ b/arch/arm/mm/init.c
+> @@ -51,8 +51,8 @@ unsigned long __init __clear_cr(unsigned long mask)
+>  }
+>  #endif
+>
+> -static phys_addr_t phys_initrd_start __initdata = 0;
+> -static unsigned long phys_initrd_size __initdata = 0;
+> +phys_addr_t phys_initrd_start __initdata = 0;
+> +unsigned long phys_initrd_size __initdata = 0;
 
-That should at least initially be true for a proper functioning
-driver. It's not enforced as you mentioned, but that's only related to
-the issue I'm referring to.
+I would declare these in common initrd code instead. Then you don't
+need a kconfig symbol.
 
-The problem is pci_alloc_irq_vectors_affinity() takes a range, min_vecs
-and max_vecs, but a range of allowable vector allocations doesn't make
-sense when using sets.
+>  static int __init early_initrd(char *p)
+>  {
+> diff --git a/arch/unicore32/mm/init.c b/arch/unicore32/mm/init.c
+> index 8f8699e62bd5..4dd26d6f02e5 100644
+> --- a/arch/unicore32/mm/init.c
+> +++ b/arch/unicore32/mm/init.c
+> @@ -31,8 +31,8 @@
+>
+>  #include "mm.h"
+>
+> -static unsigned long phys_initrd_start __initdata = 0x01000000;
+> -static unsigned long phys_initrd_size __initdata = SZ_8M;
+> +phys_addr_t phys_initrd_start __initdata = 0x01000000;
+> +unsigned long phys_initrd_size __initdata = SZ_8M;
+
+You'll have to set these at runtime though. However, I seem to
+remember that an exact size was needed for decompressing an initrd
+which would make these defaults pointless. Maybe that was only certain
+compression formats.
+
+Rob
