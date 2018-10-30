@@ -7,65 +7,65 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4419C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:01:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E651FC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:01:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A56420823
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:01:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB63320823
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:01:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N83Hw7rW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A56420823
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rLS5aEgW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB63320823
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727240AbeJ3SyH (ORCPT
+        id S1727312AbeJ3SyK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 14:54:07 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38178 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726551AbeJ3SyH (ORCPT
+        Tue, 30 Oct 2018 14:54:10 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:52104 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726503AbeJ3SyK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 14:54:07 -0400
-Received: by mail-wr1-f66.google.com with SMTP id d10-v6so11848929wrs.5
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 03:01:20 -0700 (PDT)
+        Tue, 30 Oct 2018 14:54:10 -0400
+Received: by mail-wm1-f68.google.com with SMTP id w7-v6so44513wmc.1
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 03:01:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=PyDDzwHXyMj+C+OLQdTaYPyj7+co5RvLTagufcNFpVY=;
-        b=N83Hw7rWQmTs1BhwxhbXr3l2e0O97q0i49fFu6bwUEBWMsvK5BHua7294+uuQC9Cd1
-         94Ypjctq67FCZxGcXeRJIHREgj0SRIBKvOMz9DvQXVnfkSe9DfZwiEKtuct8TTbMrO1f
-         BI6gKApdDTIF5xzmW2uGgD0O7YsLOC8OvQrfRGgrOCRXw4WpqdDQhFbEokntiQ1v7Yml
-         xeTIwcgPcyrsa0OMEJf3wQ7u3yr8ToUmQgkIxjoemvlIBtIFJON7f3iTxvnEArjCfP1U
-         bwbSCkS7EMkm79FbIT4Ru68Y1rRGyHqXqaCQt/gxAKupB+dPZ57TuaNzgAMGmZIg/qxP
-         O7xQ==
+        bh=NuxinlPFkTFdjaEbQkXHMBa3Mw58yZFqIfMCUEnEDSY=;
+        b=rLS5aEgWL6fDLTgU58G5ZB9HwHHBeowRFymG8eSvRJY2YwW6XNTNxvxs5AFDa0WCOR
+         N/n0rcFSbIi6+5sq4HauX8VPp2pKXMiw0a7EwJzQDLIfvEqeu/uOBGRUUL6ch4SPLjlY
+         D2RrZFxq7WUBe0bNEAbkHELw/4oJ2WX9f/zZptfFHiHN7i8V/JqqfKm1sXa+d1ULgi2r
+         FLvPLcW1ZT/BO9spbf1H5ip0oFx16zug2gajmwx6nbx4atKDZo+msiEypwH9npzD9Cj1
+         6+cjm4j5BDxLB6KvnSSS6O9qhy8RrYp2t6DBu4ZjCHXw0f239udR7uSj1AxIbuqBCVjH
+         ibCQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=PyDDzwHXyMj+C+OLQdTaYPyj7+co5RvLTagufcNFpVY=;
-        b=U/WdnnEKaMV9TBcCEZSlELqShiiHCnG/VOu0i/76dF1tgjS2TMM66xXHh0qMbW3TBb
-         OVHP8oaLanOmSwYWp6kYxtwF1YzFeZyQlm4l97zzA4DlqP8xtXPewgx6psnjtOW86ULM
-         3xB+l+6rCJ4G8yrjFF0tjjbGQtGozWdhtVMqAB6PgVgWzj7OPuSGAWQ247zIRD+4UpZB
-         QbohQ3i+3wYYrN4DXkhUcA44hYdoRSEKAQb9VvhifTQmw/k7A8YFfuP0eN/mlI2XXqJA
-         eo12OUAQGcTGmroh7oSufwE8hrMU+kbjY2XBB7bSPb/IcX4rhmQQnFN3OodjaTC7HSZd
-         tH3w==
-X-Gm-Message-State: AGRZ1gI+4qQu0GPlzLogErtqhA7uqeYyySY3h79IrtRKnoclBtzEhThE
-        z8ly245vEcIhFm91IBAq34Q=
-X-Google-Smtp-Source: AJdET5eDJ3Vv7Wh6CqIymLAytfrTnCbc1rS8td6DgwmOlj9RLRjpFqRLTEuJo9YmmyMYtmpzUwd7mg==
-X-Received: by 2002:adf:fcc1:: with SMTP id f1-v6mr17961330wrs.172.1540893679373;
-        Tue, 30 Oct 2018 03:01:19 -0700 (PDT)
+        bh=NuxinlPFkTFdjaEbQkXHMBa3Mw58yZFqIfMCUEnEDSY=;
+        b=F8yOkOicIMfNQgD2KMPvlPMhjicUPmW60yhnF/n/N7v8wdtK1DzmeUCCUP4+ylkpCh
+         rMrbtXhpYiIvn0BszOSgtFcfp7Ufi7IokHZD5IoI6xdL95PsPEKZTDnnZmVx6iA+95r0
+         kw8yTOAoluwauNDME9HW/3rG9kdVhUsR29AwCQKKmjX/hNWSttBq4zCnGJOUHrL9Gozx
+         ET1Wa1X1qTuB/QV9lO5XqValm/yBZ2WS+tOm3aFIT0b0C2MAunfntviA4Fo63pZMYlmk
+         xWLyPxGOhcbmrnMHW1BmuGP3R+ybmVoqdWEuqkJKvRjMxX1+eHd6X+ooF4b+qYJA9VwE
+         jutg==
+X-Gm-Message-State: AGRZ1gIFKDe8mbZitNqlhJOeY4Q+VWxm6acb6WDGcQX62L3NecOsaiD3
+        PmzycMNC5xw8UxgaM1Qyosc=
+X-Google-Smtp-Source: AJdET5ch03jlyaZ8QsjzPLguPHICXfvserlErz048N4EwfQi8L+ZjEqnN0qYfgCiyNDePha1y/3uWQ==
+X-Received: by 2002:a1c:f60f:: with SMTP id w15-v6mr1228836wmc.101.1540893681699;
+        Tue, 30 Oct 2018 03:01:21 -0700 (PDT)
 Received: from localhost.localdomain (ip-76.net-89-3-178.rev.numericable.fr. [89.3.178.76])
-        by smtp.gmail.com with ESMTPSA id f1-v6sm18420825wme.23.2018.10.30.03.01.18
+        by smtp.gmail.com with ESMTPSA id f1-v6sm18420825wme.23.2018.10.30.03.01.20
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Oct 2018 03:01:18 -0700 (PDT)
+        Tue, 30 Oct 2018 03:01:21 -0700 (PDT)
 From:   David Abdurachmanov <david.abdurachmanov@gmail.com>
 To:     palmer@sifive.com, aou@eecs.berkeley.edu, green.hu@gmail.com,
         deanbo422@gmail.com, linux-kernel@vger.kernel.org,
         linux-riscv@lists.infradead.org
 Cc:     David Abdurachmanov <david.abdurachmanov@gmail.com>
-Subject: [PATCH 1/2] riscv: add ARCH_HAS_SG_CHAIN
-Date:   Tue, 30 Oct 2018 11:01:06 +0100
-Message-Id: <20181030100107.4590-2-david.abdurachmanov@gmail.com>
+Subject: [PATCH 2/2] doc: re-run features-refresh.sh
+Date:   Tue, 30 Oct 2018 11:01:07 +0100
+Message-Id: <20181030100107.4590-3-david.abdurachmanov@gmail.com>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20181030100107.4590-1-david.abdurachmanov@gmail.com>
 References: <20181030100107.4590-1-david.abdurachmanov@gmail.com>
@@ -74,26 +74,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This seems to be needed for virtio-gpu.
+Some arch-support.txt are out-of-date.
+This also incl. riscv in sg-chain and pte_special tables.
 
 Signed-off-by: David Abdurachmanov <david.abdurachmanov@gmail.com>
-Reported-by: Michael Forney <mforney@mforney.org>
 ---
- arch/riscv/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/features/io/sg-chain/arch-support.txt           | 4 ++--
+ .../features/locking/queued-spinlocks/arch-support.txt        | 2 +-
+ Documentation/features/perf/kprobes-event/arch-support.txt    | 2 +-
+ Documentation/features/vm/pte_special/arch-support.txt        | 2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index a344980287a5..b54f2ade769b 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -44,6 +44,7 @@ config RISCV
- 	select RISCV_TIMER
- 	select GENERIC_IRQ_MULTI_HANDLER
- 	select ARCH_HAS_PTE_SPECIAL
-+	select ARCH_HAS_SG_CHAIN
- 
- config MMU
- 	def_bool y
+diff --git a/Documentation/features/io/sg-chain/arch-support.txt b/Documentation/features/io/sg-chain/arch-support.txt
+index 6554f0372c3f..41ea6f738b38 100644
+--- a/Documentation/features/io/sg-chain/arch-support.txt
++++ b/Documentation/features/io/sg-chain/arch-support.txt
+@@ -22,12 +22,12 @@
+     |    openrisc: | TODO |
+     |      parisc: | TODO |
+     |     powerpc: |  ok  |
+-    |       riscv: | TODO |
++    |       riscv: |  ok  |
+     |        s390: |  ok  |
+     |          sh: | TODO |
+     |       sparc: |  ok  |
+     |          um: | TODO |
+     |   unicore32: | TODO |
+     |         x86: |  ok  |
+-    |      xtensa: | TODO |
++    |      xtensa: |  ok  |
+     -----------------------
+diff --git a/Documentation/features/locking/queued-spinlocks/arch-support.txt b/Documentation/features/locking/queued-spinlocks/arch-support.txt
+index 478e9101322c..beb013a72a90 100644
+--- a/Documentation/features/locking/queued-spinlocks/arch-support.txt
++++ b/Documentation/features/locking/queued-spinlocks/arch-support.txt
+@@ -9,7 +9,7 @@
+     |       alpha: | TODO |
+     |         arc: | TODO |
+     |         arm: | TODO |
+-    |       arm64: | TODO |
++    |       arm64: |  ok  |
+     |         c6x: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+diff --git a/Documentation/features/perf/kprobes-event/arch-support.txt b/Documentation/features/perf/kprobes-event/arch-support.txt
+index 7331402d1887..bfe41d68b7af 100644
+--- a/Documentation/features/perf/kprobes-event/arch-support.txt
++++ b/Documentation/features/perf/kprobes-event/arch-support.txt
+@@ -20,7 +20,7 @@
+     |       nds32: |  ok  |
+     |       nios2: | TODO |
+     |    openrisc: | TODO |
+-    |      parisc: | TODO |
++    |      parisc: |  ok  |
+     |     powerpc: |  ok  |
+     |       riscv: | TODO |
+     |        s390: |  ok  |
+diff --git a/Documentation/features/vm/pte_special/arch-support.txt b/Documentation/features/vm/pte_special/arch-support.txt
+index a8378424bc98..5bca00664a4f 100644
+--- a/Documentation/features/vm/pte_special/arch-support.txt
++++ b/Documentation/features/vm/pte_special/arch-support.txt
+@@ -22,7 +22,7 @@
+     |    openrisc: | TODO |
+     |      parisc: | TODO |
+     |     powerpc: |  ok  |
+-    |       riscv: | TODO |
++    |       riscv: |  ok  |
+     |        s390: |  ok  |
+     |          sh: |  ok  |
+     |       sparc: |  ok  |
 -- 
 2.17.2
 
