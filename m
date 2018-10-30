@@ -7,96 +7,139 @@ X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE96AC6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:30:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD89BC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:30:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A54B520838
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:30:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 854C120870
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:30:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Up2sWGzR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A54B520838
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZP6L4qy6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 854C120870
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728296AbeJ3WXx (ORCPT
+        id S1728475AbeJ3WX5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 18:23:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53850 "EHLO mail.kernel.org"
+        Tue, 30 Oct 2018 18:23:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727826AbeJ3WXw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 18:23:52 -0400
+        id S1727826AbeJ3WX4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 18:23:56 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 643332080A;
-        Tue, 30 Oct 2018 13:30:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0ED720827;
+        Tue, 30 Oct 2018 13:30:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540906224;
-        bh=9oW7HV5TWB+xI9PP1euB86qqbz06Xv+geUhczDXLZ5Q=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Up2sWGzRp58jHJ6pmTCQcXtV/lqtzudTuQpJ3fQDBx01JWTK4DuDfDrvNpHkjqPIv
-         zTuhUOp3R6oWKl6c5ACX5oq/sR+ShqB0HUAEPYiCGw0ehWZXbnUOnHiq6t8mKce9KE
-         dfWO7Oz6q5dHxtMAJiQFOesbnCtxfrxAil42CTHE=
+        s=default; t=1540906227;
+        bh=i+6EuoPh6KJWR9lvqja0In9PNDRkqSvsakH753pTfkw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ZP6L4qy6BrrpKKcSbY1ZwaEg+XKm6ILzFfe1SSrnToO7UEoQI+58y3AQhYVk2zpLS
+         bpRezNdSAlR06KVWxxOgSi3VqzmEYNRo386+L1c9zPHw77RlNboMGcsQriJe1CeGDQ
+         5hAmV/av0SpUHiQWuBjdP4qI7vfPbHvq1lUSfLHI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Eric Dumazet <edumazet@google.com>,
-        John Sperbeck <jsperbeck@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 01/13] bpf: do not blindly change rlimit in reuseport net selftest
-Date:   Tue, 30 Oct 2018 09:29:11 -0400
-Message-Id: <20181030132923.218124-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 02/13] Revert "perf tools: Fix PMU term format max value calculation"
+Date:   Tue, 30 Oct 2018 09:29:12 -0400
+Message-Id: <20181030132923.218124-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181030132923.218124-1-sashal@kernel.org>
+References: <20181030132923.218124-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Jiri Olsa <jolsa@kernel.org>
 
-[ Upstream commit 262f9d811c7608f1e74258ceecfe1fa213bdf912 ]
+[ Upstream commit 1b9caa10b31dda0866f4028e4bfb923fb6e4072f ]
 
-If the current process has unlimited RLIMIT_MEMLOCK,
-we should should leave it as is.
+This reverts commit ac0e2cd555373ae6f8f3a3ad3fbbf5b6d1e7aaaa.
 
-Fixes: 941ff6f11c02 ("bpf: fix rlimit in reuseport net selftest")
-Signed-off-by: John Sperbeck <jsperbeck@google.com>
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Acked-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Michael reported an issue with oversized terms values assignment
+and I noticed there was actually a misunderstanding of the max
+value check in the past.
+
+The above commit's changelog says:
+
+  If bit 21 is set, there is parsing issues as below.
+
+    $ perf stat -a -e uncore_qpi_0/event=0x200002,umask=0x8/
+    event syntax error: '..pi_0/event=0x200002,umask=0x8/'
+                                      \___ value too big for format, maximum is 511
+
+But there's no issue there, because the event value is distributed
+along the value defined by the format. Even if the format defines
+separated bit, the value is treated as a continual number, which
+should follow the format definition.
+
+In above case it's 9-bit value with last bit separated:
+  $ cat uncore_qpi_0/format/event
+  config:0-7,21
+
+Hence the value 0x200002 is correctly reported as format violation,
+because it exceeds 9 bits. It should have been 0x102 instead, which
+sets the 9th bit - the bit 21 of the format.
+
+  $ perf stat -vv -a -e uncore_qpi_0/event=0x102,umask=0x8/
+  Using CPUID GenuineIntel-6-2D
+  ...
+  ------------------------------------------------------------
+  perf_event_attr:
+    type                             10
+    size                             112
+    config                           0x200802
+    sample_type                      IDENTIFIER
+  ...
+
+Reported-by: Michael Petlan <mpetlan@redhat.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Fixes: ac0e2cd55537 ("perf tools: Fix PMU term format max value calculation")
+Link: http://lkml.kernel.org/r/20181003072046.29276-1-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/net/reuseport_bpf.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ tools/perf/util/pmu.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/tools/testing/selftests/net/reuseport_bpf.c b/tools/testing/selftests/net/reuseport_bpf.c
-index cad14cd0ea92..b5277106df1f 100644
---- a/tools/testing/selftests/net/reuseport_bpf.c
-+++ b/tools/testing/selftests/net/reuseport_bpf.c
-@@ -437,14 +437,19 @@ void enable_fastopen(void)
- 	}
- }
+diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+index b1474dcadfa2..0f84371d4d6b 100644
+--- a/tools/perf/util/pmu.c
++++ b/tools/perf/util/pmu.c
+@@ -685,13 +685,14 @@ static void pmu_format_value(unsigned long *format, __u64 value, __u64 *v,
  
--static struct rlimit rlim_old, rlim_new;
-+static struct rlimit rlim_old;
- 
- static  __attribute__((constructor)) void main_ctor(void)
+ static __u64 pmu_format_max_value(const unsigned long *format)
  {
- 	getrlimit(RLIMIT_MEMLOCK, &rlim_old);
--	rlim_new.rlim_cur = rlim_old.rlim_cur + (1UL << 20);
--	rlim_new.rlim_max = rlim_old.rlim_max + (1UL << 20);
--	setrlimit(RLIMIT_MEMLOCK, &rlim_new);
-+
-+	if (rlim_old.rlim_cur != RLIM_INFINITY) {
-+		struct rlimit rlim_new;
-+
-+		rlim_new.rlim_cur = rlim_old.rlim_cur + (1UL << 20);
-+		rlim_new.rlim_max = rlim_old.rlim_max + (1UL << 20);
-+		setrlimit(RLIMIT_MEMLOCK, &rlim_new);
-+	}
+-	__u64 w = 0;
+-	int fbit;
+-
+-	for_each_set_bit(fbit, format, PERF_PMU_FORMAT_BITS)
+-		w |= (1ULL << fbit);
++	int w;
+ 
+-	return w;
++	w = bitmap_weight(format, PERF_PMU_FORMAT_BITS);
++	if (!w)
++		return 0;
++	if (w < 64)
++		return (1ULL << w) - 1;
++	return -1;
  }
  
- static __attribute__((destructor)) void main_dtor(void)
+ /*
 -- 
 2.17.1
 
