@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFE5BC6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:27:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07358C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:27:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7905420838
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:27:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4BD52075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:27:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BwJMElIo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7905420838
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UJvgYkyw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4BD52075D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728231AbeJ3WUl (ORCPT
+        id S1728250AbeJ3WUo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 18:20:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51608 "EHLO mail.kernel.org"
+        Tue, 30 Oct 2018 18:20:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51660 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727576AbeJ3WUl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 18:20:41 -0400
+        id S1728233AbeJ3WUn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 18:20:43 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E80CD2084A;
-        Tue, 30 Oct 2018 13:27:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A65822075D;
+        Tue, 30 Oct 2018 13:27:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540906034;
-        bh=wYPLamTqlR6u3PgV7Mliop5wBaf6bA0NNQ36AapjNaw=;
+        s=default; t=1540906036;
+        bh=UEQ33jLgt5zC9RovDK5d0XbS8fluiB8GM4ynci80Rco=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BwJMElIo4Gc1klPxJqNjGX3cpmeo0+BcKPz4N/vthlMzwpAyq6VeS0DVu6Yr0UkRZ
-         I8QbruThxQuuzUaETRtFvpws6O/4ntZKbK3mKlHbL/MZj2BWy3pJ/ZjSXhYMdTF7wU
-         pPDaouuS/yIEJYSstZav6P3HyeC3UDM6RxT5ZaME=
+        b=UJvgYkywwBqlSgqXjEpsj1+owTzX7JLMfdAvdBdmpArA9HUjJFbd1S4XViz+33PvF
+         itzRLMO1BzPwqXwyz37csZTNkk3cNT9dL7e/v3gfT3U8uEo64T0eQKoySx0uv7K3mg
+         vfHdEnzkv3mf7cd8g4t1sDeQSZ1VGcL5ZBolE/7c=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     Talat Batheesh <talatb@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 05/33] selftests: usbip: add wait after attach and before checking port status
-Date:   Tue, 30 Oct 2018 09:26:29 -0400
-Message-Id: <20181030132657.217970-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 06/33] net/mlx5: Fix memory leak when setting fpga ipsec caps
+Date:   Tue, 30 Oct 2018 09:26:30 -0400
+Message-Id: <20181030132657.217970-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181030132657.217970-1-sashal@kernel.org>
 References: <20181030132657.217970-1-sashal@kernel.org>
@@ -53,35 +53,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
+From: Talat Batheesh <talatb@mellanox.com>
 
-[ Upstream commit 4b0aaacee51eb6592a03fdefd5ce97558518e291 ]
+[ Upstream commit fd7e848077c1a466b9187537adce16658f7cb94b ]
 
-Add sleep between attach and "usbip port" check to make sure status is
-updated. Running attach and query back shows incorrect status.
+Allocated memory for context should be freed once
+finished working with it.
 
-Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: d6c4f0298cec ("net/mlx5: Refactor accel IPSec code")
+Signed-off-by: Talat Batheesh <talatb@mellanox.com>
+Reviewed-by: Or Gerlitz <ogerlitz@mellanox.com>
+Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/drivers/usb/usbip/usbip_test.sh | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/tools/testing/selftests/drivers/usb/usbip/usbip_test.sh b/tools/testing/selftests/drivers/usb/usbip/usbip_test.sh
-index 1893d0f59ad7..059b7e81b922 100755
---- a/tools/testing/selftests/drivers/usb/usbip/usbip_test.sh
-+++ b/tools/testing/selftests/drivers/usb/usbip/usbip_test.sh
-@@ -143,6 +143,10 @@ echo "Import devices from localhost - should work"
- src/usbip attach -r localhost -b $busid;
- echo "=============================================================="
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c b/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c
+index 5645a4facad2..b8ee9101c506 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/fpga/ipsec.c
+@@ -245,7 +245,7 @@ static void *mlx5_fpga_ipsec_cmd_exec(struct mlx5_core_dev *mdev,
+ 		return ERR_PTR(res);
+ 	}
  
-+# Wait for sysfs file to be updated. Without this sleep, usbip port
-+# shows no imported devices.
-+sleep 3;
-+
- echo "List imported devices - expect to see imported devices";
- src/usbip port;
- echo "=============================================================="
+-	/* Context will be freed by wait func after completion */
++	/* Context should be freed by the caller after completion. */
+ 	return context;
+ }
+ 
+@@ -418,10 +418,8 @@ static int mlx5_fpga_ipsec_set_caps(struct mlx5_core_dev *mdev, u32 flags)
+ 	cmd.cmd = htonl(MLX5_FPGA_IPSEC_CMD_OP_SET_CAP);
+ 	cmd.flags = htonl(flags);
+ 	context = mlx5_fpga_ipsec_cmd_exec(mdev, &cmd, sizeof(cmd));
+-	if (IS_ERR(context)) {
+-		err = PTR_ERR(context);
+-		goto out;
+-	}
++	if (IS_ERR(context))
++		return PTR_ERR(context);
+ 
+ 	err = mlx5_fpga_ipsec_cmd_wait(context);
+ 	if (err)
+@@ -435,6 +433,7 @@ static int mlx5_fpga_ipsec_set_caps(struct mlx5_core_dev *mdev, u32 flags)
+ 	}
+ 
+ out:
++	kfree(context);
+ 	return err;
+ }
+ 
 -- 
 2.17.1
 
