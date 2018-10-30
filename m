@@ -2,73 +2,66 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4D39C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:56:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB124C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:58:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51A472080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:56:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51A472080A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id A831920848
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 08:58:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A831920848
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbeJ3RtR (ORCPT
+        id S1726925AbeJ3Ruf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 13:49:17 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41666 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726211AbeJ3RtR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 13:49:17 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 5EAD1AE92;
-        Tue, 30 Oct 2018 08:56:43 +0000 (UTC)
-Message-ID: <1540889786.12349.9.camel@suse.com>
-Subject: Re: scsi_set_medium_removal timeout issue
-From:   Oliver Neukum <oneukum@suse.com>
-To:     "Zengtao (B)" <prime.zeng@hisilicon.com>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>
-Cc:     "usb-storage@lists.one-eyed-alien.net" 
-        <usb-storage@lists.one-eyed-alien.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
-Date:   Tue, 30 Oct 2018 09:56:26 +0100
-In-Reply-To: <678F3D1BB717D949B966B68EAEB446ED1F19F1CF@dggemm526-mbx.china.huawei.com>
-References: <678F3D1BB717D949B966B68EAEB446ED1F19F1CF@dggemm526-mbx.china.huawei.com>
+        Tue, 30 Oct 2018 13:50:35 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:43453 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726172AbeJ3Ruf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 13:50:35 -0400
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1gHPqY-0000qm-MZ; Tue, 30 Oct 2018 09:57:58 +0100
+Message-ID: <1540889876.5088.0.camel@pengutronix.de>
+Subject: Re: [PATCH 7/8] drm/imx: imx-tve: constify clk_ops structure
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Julia Lawall <Julia.Lawall@lip6.fr>
+Cc:     kernel-janitors@vger.kernel.org, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Date:   Tue, 30 Oct 2018 09:57:56 +0100
+In-Reply-To: <1540619262-22681-8-git-send-email-Julia.Lawall@lip6.fr>
+References: <1540619262-22681-1-git-send-email-Julia.Lawall@lip6.fr>
+         <1540619262-22681-8-git-send-email-Julia.Lawall@lip6.fr>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
+X-Mailer: Evolution 3.22.6-1+deb9u1 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Di, 2018-10-30 at 08:28 +0000,  Zengtao (B)  wrote:
-> Hi 
+Hi Julia,
 
-> For the issue itself, there is my observation:
-> In the step 4, the Host will issue an PREVENT_ALLOW_MEDIUM_REMOVAL scsi command.
-> and and timeout happens due to the device 's very slow fsg_lun_fsync_sub.
-> I found there are two methods to workaround the issue: 
-> 1. Change the timeout value of host scsi command PREVENT_ALLOW_MEDIUM_REMOVAL to
-> to about 60 seconds from 10 seconds.
+On Sat, 2018-10-27 at 07:47 +0200, Julia Lawall wrote:
+> The clk_ops structure is only stored in the ops field of a
+> clk_init_data structure.  This field is const, so the clk_ops
+> structure can be const as well.
+> 
+> Identified and transformed using Coccinelle.
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-That is near useless, because the gadget can be used with other
-systems.
+Thank you, applied to imx-drm/next.
 
-> 2. Remove the fsg_lun_fsync_sub in the device's Mass storage gadget driver.
-
-It exists for a reason. The blocks have to be on the medium.
-It seems to me that your gadget just allows too many dirty pages in the
-cache.
-
-	Regards
-		Oliver
-
+regards
+Philipp
