@@ -6,120 +6,94 @@ X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84907C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F254C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:27:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EA1D20838
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:27:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 450D820880
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:27:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FPJJM+GG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EA1D20838
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="afOUcsDx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 450D820880
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728295AbeJ3WU5 (ORCPT
+        id S1728310AbeJ3WVA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 18:20:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51874 "EHLO mail.kernel.org"
+        Tue, 30 Oct 2018 18:21:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51890 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727768AbeJ3WU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 18:20:57 -0400
+        id S1727650AbeJ3WU7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 18:20:59 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1FD752080A;
-        Tue, 30 Oct 2018 13:27:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4AD622084A;
+        Tue, 30 Oct 2018 13:27:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540906049;
-        bh=xr6qys1tLzdVxTyuQ9ICVYPij5NuuU/hRtzp3gbIVa4=;
+        s=default; t=1540906051;
+        bh=gQRWuTCKX7z4+lNTChOl1s4WPDN4AJW9pZhe6EK57xQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FPJJM+GGe9/YIOAS2UFET/jkJHVhvb2VB3IFQjGdGSdEvv8ujuq49x87MVHOtIC3q
-         kX6OG+iqNFXniOMvmN0RXnNduoVxILweYQONgRq5pYgaOjeL1rsRSLu8dK2V5GRyqH
-         8lFo/6/+EcvEZU1k8HVjFaQfCRveC8i/Fyo9zt7k=
+        b=afOUcsDxk84Wb/wnRy1BtUhglu+myFuYKUGR7zryFdGm/dnQYf3LVk2tU2munvhYC
+         nUDEsZuC3Hv67tTQnJBZgOLrNxE2HDlyKf8rjgvBIV8fTqSJmtpc1QLZjgPNWVkC3X
+         8W7gRToSBMQ+kt++y5VlZyykMSNb34k3+1o+8EDU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@intel.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+Cc:     Florian Westphal <fw@strlen.de>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 09/33] xsk: do not call synchronize_net() under RCU read lock
-Date:   Tue, 30 Oct 2018 09:26:33 -0400
-Message-Id: <20181030132657.217970-9-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 10/33] xfrm: policy: use hlist rcu variants on insert
+Date:   Tue, 30 Oct 2018 09:26:34 -0400
+Message-Id: <20181030132657.217970-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181030132657.217970-1-sashal@kernel.org>
 References: <20181030132657.217970-1-sashal@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Björn Töpel <bjorn.topel@intel.com>
+From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit cee271678d0e3177a25d0fcb2fa5e051d48e4262 ]
+[ Upstream commit 9dffff200fd178f11dd50eb1fd8ccd0650c9284e ]
 
-The XSKMAP update and delete functions called synchronize_net(), which
-can sleep. It is not allowed to sleep during an RCU read section.
+bydst table/list lookups use rcu, so insertions must use rcu versions.
 
-Instead we need to make sure that the sock sk_destruct (xsk_destruct)
-function is asynchronously called after an RCU grace period. Setting
-the SOCK_RCU_FREE flag for XDP sockets takes care of this.
-
-Fixes: fbfc504a24f5 ("bpf: introduce new bpf AF_XDP map type BPF_MAP_TYPE_XSKMAP")
-Reported-by: Eric Dumazet <eric.dumazet@gmail.com>
-Signed-off-by: Björn Töpel <bjorn.topel@intel.com>
-Acked-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Fixes: a7c44247f704e ("xfrm: policy: make xfrm_policy_lookup_bytype lockless")
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/xskmap.c | 10 ++--------
- net/xdp/xsk.c       |  2 ++
- 2 files changed, 4 insertions(+), 8 deletions(-)
+ net/xfrm/xfrm_policy.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/bpf/xskmap.c b/kernel/bpf/xskmap.c
-index b3c557476a8d..c98501a04742 100644
---- a/kernel/bpf/xskmap.c
-+++ b/kernel/bpf/xskmap.c
-@@ -191,11 +191,8 @@ static int xsk_map_update_elem(struct bpf_map *map, void *key, void *value,
- 	sock_hold(sock->sk);
+diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
+index a94983e03a8b..85097c4dc10c 100644
+--- a/net/xfrm/xfrm_policy.c
++++ b/net/xfrm/xfrm_policy.c
+@@ -625,9 +625,9 @@ static void xfrm_hash_rebuild(struct work_struct *work)
+ 				break;
+ 		}
+ 		if (newpos)
+-			hlist_add_behind(&policy->bydst, newpos);
++			hlist_add_behind_rcu(&policy->bydst, newpos);
+ 		else
+-			hlist_add_head(&policy->bydst, chain);
++			hlist_add_head_rcu(&policy->bydst, chain);
+ 	}
  
- 	old_xs = xchg(&m->xsk_map[i], xs);
--	if (old_xs) {
--		/* Make sure we've flushed everything. */
--		synchronize_net();
-+	if (old_xs)
- 		sock_put((struct sock *)old_xs);
--	}
+ 	spin_unlock_bh(&net->xfrm.xfrm_policy_lock);
+@@ -766,9 +766,9 @@ int xfrm_policy_insert(int dir, struct xfrm_policy *policy, int excl)
+ 			break;
+ 	}
+ 	if (newpos)
+-		hlist_add_behind(&policy->bydst, newpos);
++		hlist_add_behind_rcu(&policy->bydst, newpos);
+ 	else
+-		hlist_add_head(&policy->bydst, chain);
++		hlist_add_head_rcu(&policy->bydst, chain);
+ 	__xfrm_policy_link(policy, dir);
  
- 	sockfd_put(sock);
- 	return 0;
-@@ -211,11 +208,8 @@ static int xsk_map_delete_elem(struct bpf_map *map, void *key)
- 		return -EINVAL;
- 
- 	old_xs = xchg(&m->xsk_map[k], NULL);
--	if (old_xs) {
--		/* Make sure we've flushed everything. */
--		synchronize_net();
-+	if (old_xs)
- 		sock_put((struct sock *)old_xs);
--	}
- 
- 	return 0;
- }
-diff --git a/net/xdp/xsk.c b/net/xdp/xsk.c
-index 4e937cd7c17d..661504042d30 100644
---- a/net/xdp/xsk.c
-+++ b/net/xdp/xsk.c
-@@ -744,6 +744,8 @@ static int xsk_create(struct net *net, struct socket *sock, int protocol,
- 	sk->sk_destruct = xsk_destruct;
- 	sk_refcnt_debug_inc(sk);
- 
-+	sock_set_flag(sk, SOCK_RCU_FREE);
-+
- 	xs = xdp_sk(sk);
- 	mutex_init(&xs->mutex);
- 	spin_lock_init(&xs->tx_completion_lock);
+ 	/* After previous checking, family can either be AF_INET or AF_INET6 */
 -- 
 2.17.1
 
