@@ -2,202 +2,232 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B9FECDE44
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:49:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF292C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 23:04:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 305922080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:49:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 305922080A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
+	by mail.kernel.org (Postfix) with ESMTP id 4FAA52081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 23:04:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FAA52081B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728561AbeJaHoo (ORCPT
+        id S1728576AbeJaH7t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 03:44:44 -0400
-Received: from mx2.mailbox.org ([80.241.60.215]:56274 "EHLO mx2.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726077AbeJaHon (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 03:44:43 -0400
-Received: from smtp1.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:1:0])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
-        (No client certificate requested)
-        by mx2.mailbox.org (Postfix) with ESMTPS id BBC1DA11BD;
-        Tue, 30 Oct 2018 23:49:17 +0100 (CET)
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp1.mailbox.org ([80.241.60.240])
-        by gerste.heinlein-support.de (gerste.heinlein-support.de [91.198.250.173]) (amavisd-new, port 10030)
-        with ESMTP id gMV-MhX8UvsS; Tue, 30 Oct 2018 23:49:15 +0100 (CET)
-Date:   Wed, 31 Oct 2018 09:49:08 +1100
-From:   Aleksa Sarai <cyphar@cyphar.com>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Daniel Colascione <dancol@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Tim Murray <timmurray@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [RFC PATCH] Implement /proc/pid/kill
-Message-ID: <20181030224908.5rsldg4jsos7o5sa@yavin>
-References: <20181029221037.87724-1-dancol@google.com>
- <20181030050012.u43lcvydy6nom3ul@yavin>
- <CAKOZuesKVic-5epRj8XcFNR_63SgvaPcbjDQuSLxNrEfS=O=Jg@mail.gmail.com>
- <20181030204501.jnbe7dyqui47hd2x@yavin>
- <20181030214243.GB32621@google.com>
- <20181030222339.ud4wfp75tidowuo4@yavin>
- <20181030223343.GB105735@joelaf.mtv.corp.google.com>
+        Wed, 31 Oct 2018 03:59:49 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:41409 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727630AbeJaH7t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 03:59:49 -0400
+Received: by mail-ot1-f68.google.com with SMTP id c32so12807601otb.8;
+        Tue, 30 Oct 2018 16:04:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cCxb3gJMZuEekxxxYEZGwHEfo9PDi9VJAB2r29n9eXE=;
+        b=rVU2IGWcg0Ps1f6GkfI63Fl7jF9Q37Adx5Hf5/MfG2IFKApnqfzjGE9AeU8hnfDOE0
+         XoR+RdKg+76x4fapQWS4o7gIuXfWJvPXFmdBcLGnVe3+YnWf0DUmmJtUFc8ji3FfMvbM
+         UOthwinu8r9WDq+h70Sgsts2K3Gpcrglh3b6yJcWK2yV8+tZV2RYCcD/z8p1nXXFWj0a
+         1cdOuhOnLc8L0iaOwUyYzPRXUk9houfyH4ZeiP/SbBKuWwR6HRwzgWGj9EXpE757uBa6
+         YgCoYRXrpjM6a/B2ZLlt2+RVOnf6H5AdlmZUnX/iTqEcaRb6UdgsSxdsok65+bG8XV1D
+         aOSg==
+X-Gm-Message-State: AGRZ1gLfGYuvrTGcZ1EzAxFS88hrkQ1X7mdG4TkALY4VfQGBJSyHnA5e
+        8w6gUcQXXNdbOZsGh+0She7GgOw=
+X-Google-Smtp-Source: AJdET5d94Isd5ZLAvB10RXSJvdHovqV73kp9UHMzCkuFSpQKa25E0WjqWd4s67stKsO2plAYmwSqsQ==
+X-Received: by 2002:a9d:682:: with SMTP id 2mr445989otx.356.1540940661686;
+        Tue, 30 Oct 2018 16:04:21 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id p130-v6sm7108722oig.1.2018.10.30.16.04.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 30 Oct 2018 16:04:21 -0700 (PDT)
+Date:   Tue, 30 Oct 2018 18:04:20 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Phil Edworthy <phil.edworthy@renesas.com>
+Cc:     Marc Zyngier <marc.zyngier@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] dt-bindings/interrupt-controller: rzn1: Add RZ/N1
+ gpio irq mux binding
+Message-ID: <20181030230420.GA25133@bogus>
+References: <20181030104438.27827-1-phil.edworthy@renesas.com>
+ <20181030104438.27827-2-phil.edworthy@renesas.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rutzm3ujqe4ffmok"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181030223343.GB105735@joelaf.mtv.corp.google.com>
+In-Reply-To: <20181030104438.27827-2-phil.edworthy@renesas.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Oct 30, 2018 at 10:44:37AM +0000, Phil Edworthy wrote:
+> Add device binding documentation for the Renesas RZ/N1 GPIO interrupt
+> multiplexer.
+> 
+> Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+> ---
+> v2:
+>  - Use interrupt-map to allow the GPIO controller info to be specified
+>    as part of the irq.
+>  - Don't show status in binding examples.
+>  - Don't show the soc/board split in binding doc.
+> ---
+>  .../interrupt-controller/renesas,rzn1-mux.txt | 92 +++++++++++++++++++
+>  1 file changed, 92 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt
+> new file mode 100644
+> index 000000000000..0b4ba27c00ef
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt
+> @@ -0,0 +1,92 @@
+> +* Renesas RZ/N1 GPIO Interrupt Multiplexer
+> +
+> +On Renesas RZ/N1 devices, there are several GPIO Controllers each with a number
+> +of interrupt outputs. All of the interrupts from the GPIO Controllers are passed
+> +to the GPIO Interrupt Multiplexer, which selects a sub-set of the interrupts to
 
---rutzm3ujqe4ffmok
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+s/sub-set/subset/
 
-On 2018-10-30, Joel Fernandes <joel@joelfernandes.org> wrote:
-> > > [...]=20
-> > > > > > (Unfortunately
-> > > > > > there are lots of things that make it a bit difficult to use /p=
-roc/$pid
-> > > > > > exclusively for introspection of a process -- especially in the=
- context
-> > > > > > of containers.)
-> > > > >=20
-> > > > > Tons of things already break without a working /proc. What do you=
- have in mind?
-> > > >=20
-> > > > Heh, if only that was the only blocker. :P
-> > > >=20
-> > > > The basic problem is that currently container runtimes either depen=
-d on
-> > > > some non-transient on-disk state (which becomes invalid on machine
-> > > > reboots or dead processes and so on), or on long-running processes =
-that
-> > > > keep file descriptors required for administration of a container al=
-ive
-> > > > (think O_PATH to /dev/pts/ptmx to avoid malicious container filesys=
-tem
-> > > > attacks). Usually both.
-> > > >=20
-> > > > What would be really useful would be having some way of "hiding awa=
-y" a
-> > > > mount namespace (of the pid1 of the container) that has all of the
-> > > > information and bind-mounts-to-file-descriptors that are necessary =
-for
-> > > > administration. If the container's pid1 dies all of the transient s=
-tate
-> > > > has disappeared automatically -- because the stashed mount namespac=
-e has
-> > > > died. In addition, if this was done the way I'm thinking with (and =
-this
-> > > > is the contentious bit) hierarchical mount namespaces you could mak=
-e it
-> > > > so that the pid1 could not manipulate its current mount namespace to
-> > > > confuse the administrative process. You would also then create an
-> > > > intermediate user namespace to help with several race conditions (t=
-hat
-> > > > have caused security bugs like CVE-2016-9962) we've seen when joini=
-ng
-> > > > containers.
-> > > >=20
-> > > > Unfortunately this all depends on hierarchical mount namespaces (and
-> > > > note that this would just be that NS_GET_PARENT gives you the mount
-> > > > namespace that it was created in -- I'm not suggesting we redesign =
-peers
-> > > > or anything like that). This makes it basically a non-starter.
-> > > >=20
-> > > > But if, on top of this ground-work, we then referenced containers
-> > > > entirely via an fd to /proc/$pid then you could also avoid PID reuse
-> > > > races (as well as being able to find out implicitly whether a conta=
-iner
-> > > > has died thanks to the error semantics of /proc/$pid). And that's t=
-he
-> > > > way I would suggest doing it (if we had these other things in place=
-).
-> > >=20
-> > > I didn't fully follow exactly what you mean. If you can explain for t=
-he
-> > > layman who doesn't know much experience with containers..
-> > >=20
-> > > Are you saying that keeping open a /proc/$pid directory handle is not
-> > > sufficient to prevent PID reuse while the proc entries under /proc/$p=
-id are
-> > > being looked into? If its not sufficient, then isn't that a bug? If i=
-t is
-> > > sufficient, then can we not just keep the handle open while we do wha=
-tever we
-> > > want under /proc/$pid ?
-> >=20
-> > Sorry, I went on a bit of a tangent about various internals of container
-> > runtimes. My main point is that I would love to use /proc/$pid because
-> > it makes reuse handling very trivial and is always correct, but that
-> > there are things which stop us from being able to use it for everything
-> > (which is what my incoherent rambling was on about).
->=20
-> Ok thanks. So I am guessing if the following sequence works, then Dan's p=
-atch is not
-> needed.
->=20
-> 1. open /proc/<pid> directory
-> 2. inspect /proc/<pid> or do whatever with <pid>
-> 3. Issue the kill on <pid>
-> 4. Close the /proc/<pid> directory opened in step 1.
->=20
-> So unless I missed something, the above sequence will not cause any PID r=
-euse
-> races.
+> +pass onto the system interrupt controller.
+> +
+> +A single node in the device tree is used to describe the GPIO IRQ Muxer.
+> +
+> +Required properties:
+> +- compatible: SoC-specific compatible string "renesas,<soc-specific>-gpioirqmux"
+> +  followed by "renesas,rzn1-gpioirqmux" as fallback. The SoC-specific compatible
+> +  strings must be one of:
+> +	"renesas,r9a06g032-gpioirqmux" for RZ/N1D
+> +	"renesas,r9a06g033-gpioirqmux" for RZ/N1S
+> +- interrupt-controller: Identifies the node as an interrupt controller.
+> +- #interrupt-cells: should be <1>. The meaning of the cells is the input
+> +   interrupt index, 0 to 95.
+> +- reg: Base address and size of GPIO IRQ Muxer registers.
+> +- interrupts: This is a list of interrupt specifiers. Each interrupt consists of
+> +   three numbers that represent:
+> +     - (a) the index of the GPIO Interrupt Multiplexer output interrupt (0..7)
+> +     - (b) the index of the GPIO Controller input interrupt (0..2)
+> +     - (c) the interrupt index of the GPIO Controller input interrupt (0..31).
+> +- interrupt-parent: A phandle for a local node that specifies an interrupt-map.
+> +   The interrupt-map node must specify #interrupt-cells = <3>, and an
+> +   interrupt-map property. The interrupt-map is used to translate the interrupt
+> +   specifier to the output interrupts. It is used in conjunction with an
+> +   interrupt-map-mask property to mask (b) and (c) from the interrupt specifier
+> +   so that essentially there is a direct map from (a) to the output interrupt.
+> +   Therefore (b) and (c) can be used to determine the interrupt source and
+> +   configure the hardware accordingly. For information on interrupts,
+> +   see Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
+> +
+> +Example:
+> +
+> +	The following is an example for the RZ/N1D SoC.
 
-(Sorry, I misunderstood your original question.)
+This looks a bit strange...
 
-The problem is that holding /proc/$pid doesn't stop the PID from dying
-and being reused. The benefit of holding open /proc/$pid is that you
-will get an error if you try to use it *after* the PID has died -- which
-means that you don't need to worry about explicitly checking for PID
-reuse if you are only operating with the file descriptor and not the
-PID.
+> +
+> +	gpioirqmux: gpioirqmux@51000480 {
+> +		compatible = "renesas,r9a06g032-gpioirqmux",
+> +				"renesas,rzn1-gpioirqmux";
+> +		reg = <0x51000480 0x20>;
+> +
 
-So that sequence won't always work. There is a race where the pid might
-die and be recycled by the time you call kill(2) -- after you've done
-step 2. By tying step 2 and 3 together -- in this patch -- you remove
-the race (since in order to resolve the "kill" procfs file VFS must
-resolve the PID first -- atomically).
+> +		interrupt-controller;
+> +		#interrupt-cells = <1>;
+> +		interrupt-parent = <&gpioirqmux_map>;
+> +		interrupts =
+> +			<0 1 17>,	/* gpio1a 17 */
+> +			<1 1 24>,	/* gpio1a 24 */
+> +			<2 1 26>;	/* gpio1a 26 */
 
-Though this race window is likely very tiny, and I wonder how much PID
-churn you really need to hit it.
+Remove all these and...
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
+> +
+> +		gpioirqmux_map: gpioirqmux-map {
 
---rutzm3ujqe4ffmok
-Content-Type: application/pgp-signature; name="signature.asc"
+Move everything in this node up a level.
 
------BEGIN PGP SIGNATURE-----
+> +			#interrupt-cells = <3>;
 
-iQIzBAABCAAdFiEEb6Gz4/mhjNy+aiz1Snvnv3Dem58FAlvY3+QACgkQSnvnv3De
-m5/xExAArWrrPvGbFNWCpH9s0JEtzgkpYZhAiCvFxLavDm7/UeSZEoc9CPX7mWdJ
-0rRwprX81j4ZirQj926ZfWvxJ3wrWGZzxiIqZqOhNeTxhRuXcPDt0cDXTtPEyzXG
-VUYvbCkbZK9OReojq8iiOlD8iJf9nlvmUSr+jNXKepmwAv2J9+LX2MuQQ7xJihQ5
-1Tmip4a8CHRJBn8k2QTO9cjG4gN9BAPDBxIg/PukLclJHlsXq2++7mr46MiXuI0A
-2LHNoERiIMckYhcvNJB0kNp94A05UGxHPpONmNpR4EB0avhDz1TwC12DteCIvFUu
-Fx9P0FysCWQDJ6Quq7fK3KPeXb4fomj97XmPUNVfQmxQz2KKMg+Lkj+dU/v/LaVk
-5p8qMlXH4PU5ptWjn413rulljGlCmxRUVlT2iw+8slWg2a4S21+G8A2bnAAPY0TP
-qLwEeXahy9g0mhXSk7KxbiGdezflN+U5v1QGo1+3g41EAyiQxWvoSbo0FTyivlaR
-h3YpMQQrzf36om9CqJ6y2JRxfVhL0l6W7jZA4JNVSXq+O9Ao9gpM6xkUy/+Y0Cnn
-7UIcQzgC95xkbdhNOyXAMGM9s1rN7DMbWTkj4GjpdHTWrRHGY70bCFzFWMQufer0
-/7rvPvl7eILtQ2AqlHUxH0XcmYaIef5hdCe5jipakgXzLASoPgY=
-=dxRO
------END PGP SIGNATURE-----
+This should be 1.
 
---rutzm3ujqe4ffmok--
+Or perhaps 2 cells if you need the GPIO controller index (cell 2 above). 
+But is that numbering really meaningful to the GPIO irq mux or does it 
+just have Nx32 inputs? #interrupt-cells should be defined based on the 
+GPIO irq mux, not what it is connected to. You could always have a 
+single linear number space and mask out bits to get banks if you need 
+to.
+
+> +			#address-cells = <0>;
+> +			interrupt-map-mask = <7 0 0>;
+
+Then 1 cell here, but the mask should be 31.
+
+> +			interrupt-map =
+> +				<0 0 0 &gic GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
+
+Then this should be:
+
+<17 &gic GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>
+
+> +				<1 0 0 &gic GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
+
+<24 &gic GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>
+
+If I understand what you are trying to do. :)
+
+If the 0-7 numbering and mapping to the downstream numbering was 
+important (i.e. the 1 combined with 1 and 24 in the interrupts 
+property), then you can use the index of the interrupt-map entries for 
+that.
+
+> +				<2 0 0 &gic GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
+> +				<3 0 0 &gic GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
+> +				<4 0 0 &gic GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>,
+> +				<5 0 0 &gic GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>,
+> +				<6 0 0 &gic GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>,
+> +				<7 0 0 &gic GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>;
+
+These all seem to be unused?
+
+> +		};
+> +	};
+> +
+> +	gpio1: gpio@5000c000 {
+> +		compatible = "snps,dw-apb-gpio";
+> +		reg = <0x5000c000 0x80>;
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		clock-names = "bus";
+> +		clocks = <&sysctrl R9A06G032_HCLK_GPIO1>;
+> +
+> +		gpio1a: gpio-controller@0 {
+> +			compatible = "snps,dw-apb-gpio-port";
+> +			bank-name = "gpio1a";
+> +			gpio-controller;
+> +			#gpio-cells = <2>;
+> +			snps,nr-gpios = <32>;
+> +			reg = <0>;
+> +
+> +			interrupt-controller;
+> +			interrupt-parent = <&gpioirqmux>;
+> +			interrupts =   < 0  1  2  3  4  5  6  7
+> +					 8  9 10 11 12 13 14 15
+> +					16 17 18 19 20 21 22 23
+> +					24 25 26 27 28 29 30 31 >;
+> +			#interrupt-cells = <2>;
+> +		};
+> +	};
+> -- 
+> 2.17.1
+> 
