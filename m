@@ -2,85 +2,139 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDE68C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:05:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5763FC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:06:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 835F120827
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:05:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="1V5SOoh5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 835F120827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 18FE72075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:06:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18FE72075D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727745AbeJ3T6e (ORCPT
+        id S1727752AbeJ3T7v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 15:58:34 -0400
-Received: from conuserg-11.nifty.com ([210.131.2.78]:19853 "EHLO
-        conuserg-11.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727636AbeJ3T6e (ORCPT
+        Tue, 30 Oct 2018 15:59:51 -0400
+Received: from mail.windriver.com ([147.11.1.11]:33980 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727381AbeJ3T7v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 15:58:34 -0400
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-11.nifty.com with ESMTP id w9UB5Bw0029866;
-        Tue, 30 Oct 2018 20:05:11 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-11.nifty.com w9UB5Bw0029866
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1540897511;
-        bh=M6yRGBpHUd+p53zd9fWHkh1Gf0qW+k/Xw+V/E90ZVUA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=1V5SOoh5+Nyy8L5N8lGK+zcLKz/HEgs0tH+JVSEo8RuK2Kc1aevMCXLoiddUr7meR
-         KAUJVdAHnLaIfiwyQ6eiZUhk43iltfPjHPMuvSa5sI4y8LYW5JtouKJkGPWEDfeDIl
-         CijCGS5UDdEAmmqIB7XoNm47ft2VHhQPnnnvX2itnh4SoMkOp1kxFeVe8lOKymrTGe
-         hryeI75+O5hUFk4VEglfQvm9I/IwRsiHrKCVTSb3Wo2t7dGfvgivpdu4+vdeBSN82h
-         ADhSsDXr6Nw1HkOotK6iUfKWevBthYItf4MSZ9Xb7mybvn4cMjuIeTVsI5ELg8H7h6
-         cj8XBMbzUqaTw==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-mmc@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] mmc: sdhci-cadence: include <linux/bits.h> instead of <linux/bitops.h>
-Date:   Tue, 30 Oct 2018 20:05:06 +0900
-Message-Id: <1540897506-3075-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Tue, 30 Oct 2018 15:59:51 -0400
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id w9UB6I9x011952
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Tue, 30 Oct 2018 04:06:19 -0700 (PDT)
+Received: from [128.224.162.216] (128.224.162.216) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 30 Oct
+ 2018 04:06:18 -0700
+Subject: Re: [PATCH] kernel/dma: Fix panic caused by passing swiotlb to
+ command line
+To:     Konrad Rzeszutek Wilk <konrad@darnok.org>
+CC:     <konrad.wilk@oracle.com>, <hch@lst.de>, <m.szyprowski@samsung.com>,
+        <robin.murphy@arm.com>, <iommu@lists.linux-foundation.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1537154831-447363-1-git-send-email-zhe.he@windriver.com>
+ <c3536f4f-9bde-4f7f-a180-aa569d4e786d@windriver.com>
+ <20181022192921.GA20677@dhcp-10-175-29-12.vpn.oracle.com>
+ <87ee40fa-7a01-4d4c-7fa3-81aafc93e14f@windriver.com>
+From:   He Zhe <zhe.he@windriver.com>
+Message-ID: <5fa82cb9-bd32-8a3f-ddca-053f544e2883@windriver.com>
+Date:   Tue, 30 Oct 2018 19:06:10 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <87ee40fa-7a01-4d4c-7fa3-81aafc93e14f@windriver.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [128.224.162.216]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The reason of including <linux/bitops.h> here is just for BIT() and
-GENMASK() macros.
 
-Since commit 8bd9cb51daac8 ("locking/atomics, asm-generic: Move some
-macros from <linux/bitops.h> to a new <linux/bits.h> file"),
-<linux/bits.h> is enough for such compile-time macros.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+On 2018/10/23 19:14, He Zhe wrote:
+>
+> On 2018/10/23 03:29, Konrad Rzeszutek Wilk wrote:
+>> On Sat, Sep 22, 2018 at 08:56:58PM +0800, He Zhe wrote:
+>>> May I have your input?
+>> Alternatively would it make more sense for it to assume some default
+>> value?
+> Maybe, but the original code has no default value and I have no idea
+> what default value is proper here.
 
- drivers/mmc/host/sdhci-cadence.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Can anyone give some suggestions? Though I'd prefer to do nothing when
+no option is provided.
 
-diff --git a/drivers/mmc/host/sdhci-cadence.c b/drivers/mmc/host/sdhci-cadence.c
-index 7a343b8..e241287 100644
---- a/drivers/mmc/host/sdhci-cadence.c
-+++ b/drivers/mmc/host/sdhci-cadence.c
-@@ -14,7 +14,7 @@
-  */
- 
- #include <linux/bitfield.h>
--#include <linux/bitops.h>
-+#include <linux/bits.h>
- #include <linux/iopoll.h>
- #include <linux/module.h>
- #include <linux/mmc/host.h>
--- 
-2.7.4
+Thanks,
+Zhe
+
+>
+> Zhe
+>
+>>> Thanks,
+>>> Zhe
+>>>
+>>> On 2018年09月17日 11:27, zhe.he@windriver.com wrote:
+>>>> From: He Zhe <zhe.he@windriver.com>
+>>>>
+>>>> setup_io_tlb_npages does not check input argument before passing it
+>>>> to isdigit. The argument would be a NULL pointer if "swiotlb", without
+>>>> its value, is set in command line and thus causes the following panic.
+>>>>
+>>>> PANIC: early exception 0xe3 IP 10:ffffffffbb9b8e9f error 0 cr2 0x0
+>>>> [    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 4.19.0-rc3-yocto-standard+ #9
+>>>> [    0.000000] RIP: 0010:setup_io_tlb_npages+0xf/0x95
+>>>> ...
+>>>> [    0.000000] Call Trace:
+>>>> [    0.000000]  do_early_param+0x57/0x8e
+>>>> [    0.000000]  parse_args+0x208/0x320
+>>>> [    0.000000]  ? rdinit_setup+0x30/0x30
+>>>> [    0.000000]  parse_early_options+0x29/0x2d
+>>>> [    0.000000]  ? rdinit_setup+0x30/0x30
+>>>> [    0.000000]  parse_early_param+0x36/0x4d
+>>>> [    0.000000]  setup_arch+0x336/0x99e
+>>>> [    0.000000]  start_kernel+0x6f/0x4e6
+>>>> [    0.000000]  x86_64_start_reservations+0x24/0x26
+>>>> [    0.000000]  x86_64_start_kernel+0x6f/0x72
+>>>> [    0.000000]  secondary_startup_64+0xa4/0xb0
+>>>>
+>>>> This patch adds a check to prevent the panic.
+>>>>
+>>>> Signed-off-by: He Zhe <zhe.he@windriver.com>
+>>>> Cc: stable@vger.kernel.org
+>>>> Cc: konrad.wilk@oracle.com
+>>>> Cc: hch@lst.de
+>>>> Cc: m.szyprowski@samsung.com
+>>>> Cc: robin.murphy@arm.com
+>>>> ---
+>>>>  kernel/dma/swiotlb.c | 5 +++++
+>>>>  1 file changed, 5 insertions(+)
+>>>>
+>>>> diff --git a/kernel/dma/swiotlb.c b/kernel/dma/swiotlb.c
+>>>> index 4f8a6db..46fc34e 100644
+>>>> --- a/kernel/dma/swiotlb.c
+>>>> +++ b/kernel/dma/swiotlb.c
+>>>> @@ -109,6 +109,11 @@ static int late_alloc;
+>>>>  static int __init
+>>>>  setup_io_tlb_npages(char *str)
+>>>>  {
+>>>> +	if (!str) {
+>>>> +		pr_err("Config string not provided\n");
+>>>> +		return -EINVAL;
+>>>> +	}
+>>>> +
+>>>>  	if (isdigit(*str)) {
+>>>>  		io_tlb_nslabs = simple_strtoul(str, &str, 0);
+>>>>  		/* avoid tail segment of size < IO_TLB_SEGSIZE */
+>>> _______________________________________________
+>>> iommu mailing list
+>>> iommu@lists.linux-foundation.org
+>>> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+>
 
