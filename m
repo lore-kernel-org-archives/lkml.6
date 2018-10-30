@@ -2,101 +2,164 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E0E6C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84E00C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:47:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 444872075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:45:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VyTfcAQF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 444872075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 419902075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:47:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 419902075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727029AbeJ3Xjd (ORCPT
+        id S1727085AbeJ3Xk5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 19:39:33 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45544 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726336AbeJ3Xjd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 19:39:33 -0400
-Received: by mail-pf1-f195.google.com with SMTP id v5-v6so1044452pfm.12
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 07:45:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=pjgxNZM2WE2d3ONPl/GeCY4/NIOvaMxXAvrJVd5+Azk=;
-        b=VyTfcAQFCkWEDRFn7l+mv4oQuBveV6lGiicpiPrF8IeCJw+QimVLTyPTEyiggibU3t
-         4qUXqGqc39ypFtbUZNy+0H+yTEkEM0I8tS909IlcK4UcLdA7u4MRDgdtZIoV91x3nUA9
-         l8imL2j3CIYQ18Qcfvaxu2/unCDtXQgAfAd36EpP2caoWY2Cffos4RydRYe8LlhgZeYp
-         bCzIE8PkDhOlo0tq7CoECQbZdQOJ655KlhCNL9Zn9jjV7F/RIt//L7+13M+IDLG3DKmh
-         BcBeSDQ1slJow61BXnzNlBNqf8DyJsRXZXlXIjhoBNASDC9Ez9CognvxFCG9Ro/xgqTZ
-         Cdeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=pjgxNZM2WE2d3ONPl/GeCY4/NIOvaMxXAvrJVd5+Azk=;
-        b=JjZUFjIPjYig6iUw8snxbCy20X3CutRsqCGeTyy+acO+sRkIUIxc/B6172/CbuOwZh
-         kGOMuantEIAuOfAhV9fhMPohQMlE0sBIwWNuHrvFWevGs49FOZv5P8htDjdkcFnMQDzC
-         Wa3DtrDx+o5dIrC9dEOg5dLJIwyn/ztxLeh4TANFz5S+vc/eONQc/+4OsYiogKPxDs2p
-         iGJDvHq/wlvod2C3FO0KUWhTsNjAWselk0MheN+byNln1qowXblIyIc6Sp5AsGMhqGxd
-         mICesPJE+Bg1Uybu+WnbklHOwFf4j+Jkf69ttusB4xZ3X3hIHk7St24uf6GiBIFYL2fg
-         37lg==
-X-Gm-Message-State: AGRZ1gJQy3iCBPnm4SPn0voq8UWi1IHzsvaskXu9TQXj5EVSYnIL4U73
-        frWcPsvQ0n7PDPj+WY+arpk=
-X-Google-Smtp-Source: AJdET5f2a96Ux3PvntGSJbeLQn3D9bEWe7a2NlAwgday+bn97CazEZWszYVuetEB8Rm82BWQrICnUg==
-X-Received: by 2002:a63:1157:: with SMTP id 23mr18446603pgr.245.1540910747742;
-        Tue, 30 Oct 2018 07:45:47 -0700 (PDT)
-Received: from localhost.localdomain ([104.238.150.158])
-        by smtp.gmail.com with ESMTPSA id q2-v6sm26055490pgk.4.2018.10.30.07.45.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 07:45:46 -0700 (PDT)
-From:   Muchun Song <smuchun@gmail.com>
-To:     mingo@kernel.org, peterz@infradead.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] sched/rt: Remove unnecessary CONFIG_RT_GROUP_SCHED in rt_se_prio()
-Date:   Tue, 30 Oct 2018 22:45:30 +0800
-Message-Id: <20181030144530.89995-1-smuchun@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 30 Oct 2018 19:40:57 -0400
+Received: from mga01.intel.com ([192.55.52.88]:33375 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725853AbeJ3Xk5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 19:40:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 07:47:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,444,1534834800"; 
+   d="scan'208";a="82097535"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga007.fm.intel.com with ESMTP; 30 Oct 2018 07:47:09 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 419F61F2; Tue, 30 Oct 2018 16:47:07 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        linux-acpi@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>,
+        linux-iio@vger.kernel.org, Darren Hart <dvhart@infradead.org>,
+        platform-driver-x86@vger.kernel.org,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-kernel@vger.kernel.org, Wolfram Sang <wsa@the-dreams.de>,
+        Javier Martinez Canillas <javierm@redhat.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Steven Presser <steve@pressers.name>
+Subject: [RFC][PATCH v1] ACPI / scan: Create platform device for BOSC0200 ACPI nodes
+Date:   Tue, 30 Oct 2018 16:47:06 +0200
+Message-Id: <20181030144706.6737-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CONFIG_RT_GROUP_SCHED is not configured, group_rt_rq() will
-return NULL. With this patch applied, we also can get the same result.
-Because the compiler will help us optimize the code.
+On some laptops the ACPI device with BOSC0200 _HID is representing
+two accelerometers under one node.
 
-So, we can remove unnecessary CONFIG_RT_GROUP_SCHED in rt_se_prio().
+We add an ID to the I2C multi instantiate list to enumerate
+all I2C slaves correctly.
 
-Signed-off-by: Muchun Song <smuchun@gmail.com>
+For reference here is the relevant DSDT blurb from the Yoga 11e:
+
+Device (ACC)
+{
+	Name (_ADR, Zero)  // _ADR: Address
+	Name (_HID, "BOSC0200")  // _HID: Hardware ID
+	Name (_CID, "BOSC0200")  // _CID: Compatible ID
+	Name (_DDN, "Accelerometer")  // _DDN: DOS Device Name
+	Name (_UID, One)  // _UID: Unique ID
+	Method (_CRS, 0, NotSerialized)  // _CRS: Current Resource Settings
+	{
+		Name (RBUF, ResourceTemplate ()
+		{
+			I2cSerialBusV2 (0x0019, ControllerInitiated, 0x00061A80,
+				AddressingMode7Bit, "\\_SB.PCI0.I2C3",
+				0x00, ResourceConsumer, , Exclusive,
+			)
+			I2cSerialBusV2 (0x0018, ControllerInitiated, 0x00061A80,
+				AddressingMode7Bit, "\\_SB.PCI0.I2C3",
+				0x00, ResourceConsumer, , Exclusive,
+			)
+		})
+		Return (RBUF) /* \_SB_.PCI0.I2C3.ACC_._CRS.RBUF */
+	}
+
+Reported-by: Jeremy Cline <jeremy@jcline.org>
+Cc: Steven Presser <steve@pressers.name>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- kernel/sched/rt.c | 2 --
- 1 file changed, 2 deletions(-)
 
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index a21ea6021929..47b4800761db 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -894,12 +894,10 @@ static int do_sched_rt_period_timer(struct rt_bandwidth *rt_b, int overrun)
- 
- static inline int rt_se_prio(struct sched_rt_entity *rt_se)
- {
--#ifdef CONFIG_RT_GROUP_SCHED
- 	struct rt_rq *rt_rq = group_rt_rq(rt_se);
- 
- 	if (rt_rq)
- 		return rt_rq->highest_prio.curr;
--#endif
- 
- 	return rt_task_of(rt_se)->prio;
+The previous approach had been discussed at
+https://lore.kernel.org/lkml/010001602cf53153-39ad69f1-1b39-4e6d-a748-9455a16c2fbd-000000@email.amazonses.com/
+
+This has an obvious regression as per commit 1911f48de0d9 ("iio: accel: bmc150:
+Add support for BOSC0200 ACPI device id") there are tables where under same ID
+we have different sets of the devices (luckily some of that is possible to
+autodetect):
+
+- one accellerometer  (250e)
+- one accellerometer  (222e)
+- two accellerometers (???)
+
+The proper enabling of the last case w/o a regression sounds like a DMI based
+data for I2C multi instantiate driver along with automatic selection of the latter
+whenever user selects bmc150-accel-i2c.c.
+
+ drivers/acpi/scan.c                          | 1 +
+ drivers/iio/accel/bmc150-accel-i2c.c         | 1 -
+ drivers/platform/x86/i2c-multi-instantiate.c | 7 +++++++
+ 3 files changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+index bd1c59fb0e17..a8cdae057a47 100644
+--- a/drivers/acpi/scan.c
++++ b/drivers/acpi/scan.c
+@@ -1539,6 +1539,7 @@ static bool acpi_device_enumeration_by_parent(struct acpi_device *device)
+ 	 * which i2c_device_id to use for each resource.
+ 	 */
+ 	static const struct acpi_device_id i2c_multi_instantiate_ids[] = {
++		{"BOSC0200", },
+ 		{"BSG1160", },
+ 		{"INT33FE", },
+ 		{}
+diff --git a/drivers/iio/accel/bmc150-accel-i2c.c b/drivers/iio/accel/bmc150-accel-i2c.c
+index 8ffc308d5fd0..9d22a4d9d568 100644
+--- a/drivers/iio/accel/bmc150-accel-i2c.c
++++ b/drivers/iio/accel/bmc150-accel-i2c.c
+@@ -64,7 +64,6 @@ static const struct acpi_device_id bmc150_accel_acpi_match[] = {
+ 	{"BMA250E",	bma250e},
+ 	{"BMA222E",	bma222e},
+ 	{"BMA0280",	bma280},
+-	{"BOSC0200"},
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(acpi, bmc150_accel_acpi_match);
+diff --git a/drivers/platform/x86/i2c-multi-instantiate.c b/drivers/platform/x86/i2c-multi-instantiate.c
+index 5456581b473c..8e763765a05e 100644
+--- a/drivers/platform/x86/i2c-multi-instantiate.c
++++ b/drivers/platform/x86/i2c-multi-instantiate.c
+@@ -100,6 +100,12 @@ static int i2c_multi_inst_remove(struct platform_device *pdev)
+ 	return 0;
  }
+ 
++static const struct i2c_inst_data bosc0200_data[]  = {
++	{ "bmc150_accel", -1 },
++	{ "bmc150_accel", -1 },
++	{}
++};
++
+ static const struct i2c_inst_data bsg1160_data[]  = {
+ 	{ "bmc150_accel", 0 },
+ 	{ "bmc150_magn", -1 },
+@@ -112,6 +118,7 @@ static const struct i2c_inst_data bsg1160_data[]  = {
+  * drivers/acpi/scan.c: acpi_device_enumeration_by_parent().
+  */
+ static const struct acpi_device_id i2c_multi_inst_acpi_ids[] = {
++	{ "BOSC0200", (unsigned long)bosc0200_data },
+ 	{ "BSG1160", (unsigned long)bsg1160_data },
+ 	{ }
+ };
 -- 
-2.17.1
+2.19.1
 
