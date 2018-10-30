@@ -2,73 +2,125 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F1C5C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20251C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:56:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 453F420827
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:56:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="dVkvjuPH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 453F420827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	by mail.kernel.org (Postfix) with ESMTP id E3D5A20827
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 11:56:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3D5A20827
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=users.sourceforge.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727832AbeJ3Ut6 (ORCPT
+        id S1727848AbeJ3Ut7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 30 Oct 2018 16:49:59 -0400
+Received: from mail03.asahi-net.or.jp ([202.224.55.15]:55896 "EHLO
+        mail03.asahi-net.or.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727501AbeJ3Ut6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 30 Oct 2018 16:49:58 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:46033 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727800AbeJ3Ut6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 16:49:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=fGAXxkMpjEQScWxcavJWXrtG5M3JJ/Cg71rddAg+URg=;
-        b=dVkvjuPHiiSGA404TpAyYNH26Hm8ZDWYMzQPx+NeYPBePlqKnyyo1Q8Ir9RER1mSNeDsbwv4eUbmLH1yitU+ERyViUkINZiw+UkSfkwo98zO5xD4RYC0cG0wah1YyXP3F+0IGOFG/Tybm2kxds55LOhIg+8+bd4lctii/9I+IRE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gHSdS-0007Jn-JW; Tue, 30 Oct 2018 12:56:38 +0100
-Date:   Tue, 30 Oct 2018 12:56:38 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     biao huang <biao.huang@mediatek.com>
-Cc:     Corentin Labbe <clabbe.montjoie@gmail.com>, davem@davemloft.net,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, nelson.chang@mediatek.com,
-        netdev@vger.kernel.org, sean.wang@mediatek.com,
-        liguo.zhang@mediatek.com, linux-kernel@vger.kernel.org,
-        matthias.bgg@gmail.com, joabreu@synopsys.com,
-        linux-mediatek@lists.infradead.org, honghui.zhang@mediatek.com,
-        yt.shen@mediatek.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/2] net:stmmac: dwmac-mediatek: add support for mt2712
-Message-ID: <20181030115638.GB27873@lunn.ch>
-References: <1540782294-27721-1-git-send-email-biao.huang@mediatek.com>
- <1540782294-27721-2-git-send-email-biao.huang@mediatek.com>
- <20181029100828.GA19103@Red>
- <1540883812.26982.15.camel@mhfsdcap03>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1540883812.26982.15.camel@mhfsdcap03>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+X-Greylist: delayed 356 seconds by postgrey-1.27 at vger.kernel.org; Tue, 30 Oct 2018 16:49:58 EDT
+Received: from h61-195-96-97.vps.ablenet.jp (h61-195-96-97.vps.ablenet.jp [61.195.96.97])
+        (Authenticated sender: PQ4Y-STU)
+        by mail03.asahi-net.or.jp (Postfix) with ESMTPA id 872B0F7552;
+        Tue, 30 Oct 2018 20:50:50 +0900 (JST)
+Received: from yo-satoh-debian.ysato.ml (v099207.dynamic.ppp.asahi-net.or.jp [124.155.99.207])
+        by h61-195-96-97.vps.ablenet.jp (Postfix) with ESMTPSA id 5260B240070;
+        Tue, 30 Oct 2018 20:50:49 +0900 (JST)
+Date:   Tue, 30 Oct 2018 20:50:48 +0900
+Message-ID: <871s87k607.wl-ysato@users.sourceforge.jp>
+From:   Yoshinori Sato <ysato@users.sourceforge.jp>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Guo Ren <ren_guo@c-sky.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Rob Herring <robh@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        c-sky_gcc_upstream@c-sky.com, guoren1983@gmail.com
+Subject: Re: [GIT PULL] C-SKY(csky) Port for Linux 4.20
+In-Reply-To: <CAK8P3a2-wyXxctVtJxniUoeShASMhF-6Z1vyvfBnr6wKJuioAQ@mail.gmail.com>
+References: <1540613318-23877-1-git-send-email-ren_guo@c-sky.com>
+        <CAHk-=whHhzsdgbVwRFB8oGVwnfN551HPQjtvuodf+W5dNHtjuA@mail.gmail.com>
+        <CAK8P3a2-wyXxctVtJxniUoeShASMhF-6Z1vyvfBnr6wKJuioAQ@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?ISO-8859-4?Q?Goj=F2?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > > +	plat_dat->interface = priv_plat->phy_mode;
-> > > +	/* clk_csr_i = 250-300MHz & MDC = clk_csr_i/124 */
-> > > +	plat_dat->clk_csr = 5;
-> > > +	plat_dat->has_gmac4 = 1;
-> > > +	plat_dat->has_gmac = 0;
-> > > +	plat_dat->pmt = 0;
-> > > +	plat_dat->maxmtu = 1500;
-> > 
-> > ETH_DATA_LEN ?
-> how about getting maxmtu from device tree rather than assignment here?
+On Mon, 29 Oct 2018 18:44:59 +0900,
+Arnd Bergmann wrote:
+> 
+> On Sun, Oct 28, 2018 at 10:11 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > Arnd,
+> >  I was kind of hoping/expecting to get an explicit ack for this from
+> > you, since it's a new architecture.
+> >
+> > Good to merge?
+> 
+> Yes.
+> 
+> For the pull request (in case you want to add it to the merge changelog):
+> 
+> I did a thorough review of the ABI, which as usual mainly consists of spotting
+> any files that don't use the asm-generic ABI itself, and having it changed to
+> it matches exactly what we do on other new architectures.
+> 
+> I also looked at every other patch and commented on maybe half of them
+> where I saw something that did not quite seem right. Others have reviewed
+> specific patches in greater depth. I'm sure that one could fine more of the
+> minor details, but as long as they are not ABI relevant, they can be fixed
+> later.
+> 
+> The only patch that is part of the ABI and that nobody reviewed is the
+> signal handling. This is one of the areas I never worked on in much detail.
+> I did not see anything wrong with it, but I also don't know what the problems
+> with the other architectures are here, and we seem to be hitting issues
+> occasionally, and we never managed to generalize this enough for new
+> architectures to have a trivial implementation.
+> 
+> I was originally hoping that we could have the 64-bit time_t interfaces
+> ready in time to completely drop the 32-bit ones, but that did not
+> happen. We might still remove them in the next merge window
+> depending on whether the libc upstream people prefer to keep them
+> or not.
+> 
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> You may note that Guo rebased the series on top of v4.19. I tried
+> to explain a while ago that it's better not to do that, but I suppose he
+> was trying to add the last-minute Acks and it seemed like a good idea.
+> 
+> Guo, in the future I recommend to add all patches on top of the latest
+> -rc1 (or maybe a later -rc) but not rebase them or pull in the mainline
+> kernel into your own tree.
+> 
+> One more general comment: I think this may well be the last new CPU
+> architecture we ever add to the kernel. Both nds32 and c-sky are made
+> by companies that also work on risc-v, and generally speaking risc-v
+> seems to be killing off any of the minor licensable instruction set projects,
+> just like ARM has mostly killed off the custom vendor-specific instruction
+> sets already. If we add another architecture in the future, it may instead
+> be something like the LLVM bitcode or WebAssembly, who knows?
+> 
 
-Does it vary between devices? I expect it is a constant, determined by
-the DMA hardware design. So no need to make it configurabale.
+I have one another port.
+Now we have a build environment so we can not merge right away,
+but I'd like to update it to the latest within a few months.
 
-    Andrew
+>        Arnd
+
+-- 
+Yosinori Sato
