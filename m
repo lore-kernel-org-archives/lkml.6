@@ -2,120 +2,123 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F3EAC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:40:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46144C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:41:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC45D205F4
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:40:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC45D205F4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id ED97F205F4
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:41:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Y8COcsCC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED97F205F4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728131AbeJ3Wd7 (ORCPT
+        id S1728151AbeJ3Wew (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 18:33:59 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:51892 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727450AbeJ3Wd7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 18:33:59 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id w9UDeI1x058507;
-        Tue, 30 Oct 2018 08:40:18 -0500
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id w9UDeIaL088424
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 30 Oct 2018 08:40:18 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 30
- Oct 2018 08:40:18 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 30 Oct 2018 08:40:18 -0500
-Received: from [172.22.172.64] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w9UDeIbU015015;
-        Tue, 30 Oct 2018 08:40:18 -0500
-Subject: Re: [PATCH v4 2/7] dt-bindings: ti-lmu: Modify dt bindings for the
- LM3697
-To:     Pavel Machek <pavel@ucw.cz>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>
-CC:     Rob Herring <robh@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-leds@vger.kernel.org>,
-        <lee.jones@linaro.org>, <tony@atomide.com>
-References: <20181023170623.31820-1-dmurphy@ti.com>
- <20181023170623.31820-2-dmurphy@ti.com> <20181024090421.GB24997@amd>
- <e8800c2e-8ada-7a0d-c1a6-14ddcbe1576d@ti.com> <20181024145434.GC9327@bogus>
- <beb1a6e1-8120-be94-b1a4-60ea6721765d@ti.com>
- <ade3121a-58ab-c0c3-6605-cf7d6a638da0@gmail.com> <20181026083703.GB19434@amd>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <bdb73aa2-60d9-3356-f934-091f738e20a0@ti.com>
-Date:   Tue, 30 Oct 2018 08:40:04 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20181026083703.GB19434@amd>
-Content-Type: text/plain; charset="windows-1252"
+        Tue, 30 Oct 2018 18:34:52 -0400
+Received: from mail-eopbgr730119.outbound.protection.outlook.com ([40.107.73.119]:31488
+        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727450AbeJ3Wew (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 18:34:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=u4VoEgresdi+zDJ/fC7qonHDriRtQ/SofLuvmeJaAKs=;
+ b=Y8COcsCCHo7bF8scVpidtYMYr8Mtt2KOXlmdmzmpJNlLRUhmIXd2fnvawn48xKaAdsLdQR8C155ZXUZgJ63rNeJAu8Vmsl8ZbR/sjd71jqd6LVMT+I/hRi7/QHolDq+Q4NDS5fEWnImQmocRNvV9v8gh1H3nsIog1ywAcLQnpbU=
+Received: from CY4PR21MB0773.namprd21.prod.outlook.com (10.173.192.19) by
+ CY4PR21MB0472.namprd21.prod.outlook.com (10.172.121.150) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.4; Tue, 30 Oct 2018 13:41:17 +0000
+Received: from CY4PR21MB0773.namprd21.prod.outlook.com
+ ([fe80::6d0b:b90f:7a73:99fb]) by CY4PR21MB0773.namprd21.prod.outlook.com
+ ([fe80::6d0b:b90f:7a73:99fb%8]) with mapi id 15.20.1294.014; Tue, 30 Oct 2018
+ 13:41:17 +0000
+From:   Michael Kelley <mikelley@microsoft.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        "olaf@aepfle.de" <olaf@aepfle.de>,
+        "apw@canonical.com" <apw@canonical.com>,
+        vkuznets <vkuznets@redhat.com>,
+        "jasowang@redhat.com" <jasowang@redhat.com>,
+        "marcelo.cerri@canonical.com" <marcelo.cerri@canonical.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>
+Subject: RE: [PATCH v2 char-misc 1/1] x86/hyperv: Fix PIT shutdown quirk
+Thread-Topic: [PATCH v2 char-misc 1/1] x86/hyperv: Fix PIT shutdown quirk
+Thread-Index: AQHUaiUQ3a7qHQo2LESQRWPEN4INt6U3guCAgABTtSA=
+Date:   Tue, 30 Oct 2018 13:41:17 +0000
+Message-ID: <CY4PR21MB0773848862C8F0E91CD318F3D7CC0@CY4PR21MB0773.namprd21.prod.outlook.com>
+References: <1540226025-45092-1-git-send-email-mikelley@microsoft.com>
+ <alpine.DEB.2.21.1810300859420.5984@nanos.tec.linutronix.de>
+In-Reply-To: <alpine.DEB.2.21.1810300859420.5984@nanos.tec.linutronix.de>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=mikelley@ntdev.microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-10-30T13:41:14.9129628Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
+ Sensitivity=General
+x-originating-ip: [24.22.167.197]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;CY4PR21MB0472;6:osD6c+PZ82r7wB5AZu7iKVQnAREf2YQIYO3bdOsbwkJc0g8eggszj4Q2n1drGN713PmIwRllrvb22wbDLEsTiaPHjDiDRfjnI7Df8OSZQSBJfZlT9JxU0Gg0xeYWmZGdlJki6NEdMvX/05AN8j1nNZDq2+4alM7V5ClkygXnEgg88+o6qK76Tt53WqfiXPQl6ZLaQ6J+yQ0lFB64yjcrasrf7llXUZd9Eu+zC6R3V70aYvRj+AymGQNXrpQODFihmt6paJ/8teD/nP0zpamJ26OOh4HllsYjmrHlffPSI/+A5z+X3khBNgSAdZ7QjtpVoikGUaCNNfbCEJxp+PxvhV1RqUOvQe2Po57dlAUS/uDXgFyJ+FsdLn+C6mde9okH8AQs2OECxxj/pOiwZE/QPoQ3H6DszlB+VS14eRws3REzXWw0H7PSwkrFMF+GsZa+92UXgyPzUCftdfv3yHOdKA==;5:0gPd2xTpki1HY0HtstabdzzRPIdWOlbF2asOmqakfQNKfoMd7qmd4rPtYYTKZSGXFLe6pFQLnCtBoP8dhoKHYNH4buftLbqsw3qBIE1KmFQwIvrspYONiawzwOJSNRHn3Wx7GCFCKfiRvjWIojBsMV7c5/j1orcuclaLZr/i5es=;7:1asZoZiHlKghbYz6/GWSN+KXIb9gzWoBZ1v6TQiIsL48L9XwxJJp3jfr5Pkz5X2WLu7vzyNtTLog9HdBhR3LUQj7tenPgnri6xjnjmTykcEvjY18JYn6zckieXGrwSVgEskvRK8xtUCIi0BQYB0UBg==
+x-ms-office365-filtering-correlation-id: 0f5acbb9-6f2b-40be-989e-08d63e6d5e53
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7193020);SRVR:CY4PR21MB0472;
+x-ms-traffictypediagnostic: CY4PR21MB0472:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=mikelley@microsoft.com; 
+x-ld-processed: 72f988bf-86f1-41af-91ab-2d7cd011db47,ExtAddr
+x-microsoft-antispam-prvs: <CY4PR21MB0472527F1C8F89E09BD2CFE6D7CC0@CY4PR21MB0472.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(8220027)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231382)(944501410)(52105095)(2018427008)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:CY4PR21MB0472;BCL:0;PCL:0;RULEID:;SRVR:CY4PR21MB0472;
+x-forefront-prvs: 08417837C5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(366004)(396003)(39860400002)(136003)(189003)(199004)(305945005)(7736002)(106356001)(486006)(86612001)(86362001)(99286004)(97736004)(5250100002)(4326008)(476003)(25786009)(3846002)(22452003)(68736007)(186003)(316002)(11346002)(6506007)(6436002)(66066001)(76176011)(7696005)(53936002)(7416002)(26005)(8676002)(81156014)(81166006)(2900100001)(2906002)(10290500003)(10090500001)(5660300001)(102836004)(33656002)(8936002)(446003)(54906003)(6116002)(478600001)(107886003)(6246003)(14454004)(74316002)(8990500004)(105586002)(256004)(71190400001)(71200400001)(55016002)(9686003)(6916009)(229853002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR21MB0472;H:CY4PR21MB0773.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: Xak2Bv7ut+xb+bhWOu1qh1oi4uQK//HsGyvGMoInU3XghvDn7NRW4dcOTeICbY1aAdxTwWYLiTvF4eY9To7zje3A6/vJTFdzopliJfIt8WiIyP0wOHUSSnnZyCQeFeeY71UYKLc0b0PcumRExqpLoQz4psvq2F6YOnQjvpyPyRiXMMz1Xd5PThhbHaHbADSkzYYFy6GD/XI+IZNcOsbuYd0oBLgiYGC3pvAz55c5NbIASgWV945QG46AN9z4/5GaJpSCEk7BqwwYLjR0dYJCu+W3riNBWsvKLvy97VekHCs1mZ5K1yNSG80G6BAj8ragfM/iEnGHYSX9LGE+0KozLYvavo9QKQunoq2/Y0EmWGQ=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0f5acbb9-6f2b-40be-989e-08d63e6d5e53
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Oct 2018 13:41:17.3357
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR21MB0472
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All
+From: Thomas Gleixner <tglx@linutronix.de> Sent: Tuesday, October 30, 2018 =
+1:36 AM
+>=20
+> You can avoid the ideffery completely. Something like the uncompiled patc=
+h
+> (lacks comments) below keeps everything in i8253 and should just work.
+>=20
 
-On 10/26/2018 03:37 AM, Pavel Machek wrote:
-> Hi!
-> 
->>> Do you have an opinion on this?
->>
->> This is this problem with the Device Tree's scope of responsibility.
->> It is defined as a means for "describing the hardware", but often
->> this rule is abused by the properties that fall into "configuration"
->> category. E.g. default-state, retain-state-suspended from leds-gpio.txt
->> or linux-default-trigger from common LED bindings.
-> 
-> "retain-state-suspended" is actually hardware property. On PCs,
-> (most?) LEDs will go off in suspend. On android phones, LEDs stay on
-> while suspended.
-> 
-> "linux-default-trigger" is actually kind-of hardware property, too. If
-> LED has an icon near it (or on it), you want to use that LED in that
-> meaning.
-> 
-> (Thinkpad X60 has "wifi", "bluetooth", "numlock", "capslock", "hdd",
-> "power", "battery", "ac" and "sleep" leds. Surely we should use them
-> in that meaning?)
-> 
-> Now, if someone has leds labeled "user 1..user 4" and uses
-> "linux-default-trigger" there, that is kind of "more interesting".
-> 
-> "default-state" is similar (subset of "linux-default-trigger"); you
-> don't want power LED to go off during kernel boot...
+Thanks.  I'll spin a new version with that approach.  Having to clutter the=
+ i8253
+code with a Hyper-V quirk is unfortunate, but it's a lot fewer lines of cod=
+e overall.
 
-
-I just want to follow up here and let you know that I have not abandoned this.
-I am trying to rework and fix up the ti lmu binding as asked by Pavel.  Its proving
-to be a bit of a challenge based on looking forward to what will be the implementation.
-
-I also did go offline and speak with Tony.  I have a Droid 4 so I can test all of this on
-production hardware as well.
-
-Updated patchset will take some time to get out.
-
-Dan
-
-> 
-> 								Pavel
-> 
-
-
--- 
-------------------
-Dan Murphy
+Michael
