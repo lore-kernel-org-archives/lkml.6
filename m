@@ -2,211 +2,204 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42859C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25A03C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:48:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0C2820823
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:48:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0C2820823
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D515420823
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:48:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=CAVIUMNETWORKS.onmicrosoft.com header.i=@CAVIUMNETWORKS.onmicrosoft.com header.b="LqHUBBa1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D515420823
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cavium.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727603AbeJ3TlC (ORCPT
+        id S1727673AbeJ3Tlk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 15:41:02 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:50275 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727239AbeJ3TlB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 15:41:01 -0400
-Received: by mail-io1-f70.google.com with SMTP id q127-v6so10488962iod.17
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 03:48:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=8dtsMNBb5PFfklelMP4AwHhz5Wzw8uOI6sPnKlq0l/U=;
-        b=syMevZE0C5xsJdP5TqinradVSiStSt19SkF5rXSN5hJoZrIP8FgjijVHFgBI6PVwgf
-         g+e4nWyobUgVByOzi5iclrQU3SBMdhZzt2qQv0BkIwRMKBfzdBDsLQJp8hXJ1KAgTkLt
-         E/1vbWCh//V1PYQg9aCsrBg5x1Jwp6sYzEBPWB1oUzS1ZdMnmV+q/TXNWW9pZ3HDVqQv
-         GVweq9LSl/GjaoalB7KwwtAy6i9QXK8Hdu1BdloWDz2WAK3B7omDtmmABo0vWsWd6v0V
-         ZIqj9wQiIg/JsKhF03Di9ftl/XNwoG8SioFdRF09gdtHLxiRsctFJIK4+SVQERkdA2ri
-         nIeQ==
-X-Gm-Message-State: AGRZ1gJpRDNwn3lK2n/5+AY98JnqoZpHTm3q2NwtuTimtkDeBG02S3Ct
-        uOl3TuFrumXb+Mchzwb1yq+SyVSMjxMrUKCGZGIovCgncrr0
-X-Google-Smtp-Source: AJdET5c1Xd632oWUlHA5PebtA8NesOHeIwt47Ld+IRw1WUmSgK7vL0AaxyXjOZEwBhgP4mRYQ9I9zynA3LiCKcZt+g/GG3T+0RkU
+        Tue, 30 Oct 2018 15:41:40 -0400
+Received: from mail-by2nam03on0086.outbound.protection.outlook.com ([104.47.42.86]:37044
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727239AbeJ3Tlj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 15:41:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=CAVIUMNETWORKS.onmicrosoft.com; s=selector1-cavium-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zr7ocejrAFheClVqY2yL3cwEkthKdNDjFW1zcHwmPn4=;
+ b=LqHUBBa1onz0CTi+aRfBGgaDBuClNjD0BhyggKaQUSCzgvzhpexN2xHefeTPssynbFtUpqcpRxogADK/cdzKfBxlLw0jzKtrGGMdrQeVZAKhEAtAWsXyylCHPr7mGEpZrjdn+fItiFhRRzxZwO6jb/EVTSZ2vpSOH6Qdx90MXGc=
+Received: from BYAPR07MB4920.namprd07.prod.outlook.com (52.135.237.93) by
+ BYAPR07MB5509.namprd07.prod.outlook.com (20.177.231.143) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1273.27; Tue, 30 Oct 2018 10:48:38 +0000
+Received: from BYAPR07MB4920.namprd07.prod.outlook.com
+ ([fe80::69f7:b92b:5107:d9e5]) by BYAPR07MB4920.namprd07.prod.outlook.com
+ ([fe80::69f7:b92b:5107:d9e5%4]) with mapi id 15.20.1273.027; Tue, 30 Oct 2018
+ 10:48:38 +0000
+From:   "Cherian, George" <George.Cherian@cavium.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
+CC:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "mathias.nyman@intel.com" <mathias.nyman@intel.com>,
+        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>,
+        "Cherian, George" <George.Cherian@cavium.com>
+Subject: [PATCH v3] xhci: Add quirk to workaround the errata seen on Cavium
+ Thunder-X2 Soc
+Thread-Topic: [PATCH v3] xhci: Add quirk to workaround the errata seen on
+ Cavium Thunder-X2 Soc
+Thread-Index: AQHUcD4detu6/VwpiUybz2IrVAWqaQ==
+Date:   Tue, 30 Oct 2018 10:48:38 +0000
+Message-ID: <1540896507-23876-1-git-send-email-george.cherian@cavium.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: BYAPR07CA0060.namprd07.prod.outlook.com
+ (2603:10b6:a03:60::37) To BYAPR07MB4920.namprd07.prod.outlook.com
+ (2603:10b6:a03:55::29)
+x-originating-ip: [50.233.148.155]
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=George.Cherian@cavium.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR07MB5509;6:fXL8j2doFquQ7oQnqAajZx79CCJ8zpEhDbr8umlKd7rKApytVA50nXhuB/JysLPu1rcbo/hAe6Et73rxp6zus5yLMYkG7m+R52UDJag7iLGiua1E0VKwHXWm6NabSuTi/1ZbzDf3flfWT+Co5PKyPji0LccagAbajeY/6R32aMYaSwSAI2wEVWJgUtUM6XEzy5gB3fV94gNFI4uCuyx5I99ZoqW3U46u5wnC5Ll5wYzN77SiLJiu5cGcpSpoLmGI4LPUgSV/JdXKTXtSHDvH8pGcVhJZK/36Yl1b0NRGBlBYRMcI9PkdNewCZkkI07Jxe9PQUWmx1qovQx9PX1LkgnH60Cx3iJbRsICtGk4rXNqeqJX4v17ZYXF+i4iaL/Y1Ve3XVrr4iExcpgUJb0jkPhEMXbrSi2buwVK/oIN3feqlc6CBv/GBslsgAskw05G/O4hzk+mvsBxZr1j5mxkaBA==;5:jR0hOEerWDQB8wWj6knW07pihGCOYTpKZd9R6LpYtB8nXpnKRNs90Vml2qW2g6rNC3ATi0fN4CPCOJPfrNXwgdAwvKepQHhRKOh9smpoSX4MuOeOVPfBwHqzsLNmPw40LBzSGBKtWDKx74s5n7nt83CskxQmU865X90S8Cfk7bo=;7:kFsY3RXxw5pYVVrZRpjGbuQeZCnBZJ1cJinFa2i3+tw2atpRweILSREJ7agy7WCNT65pRoOmExgIomUDIg5tzeb0PVb7boGii2JifkxDn+sYmCLtRnCqzckfoiCFYvf5BqAUPi91yCTyKI4NR6B8Wg==
+x-ms-office365-filtering-correlation-id: 63f3dee0-1d4b-4c74-dc22-08d63e553f80
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR07MB5509;
+x-ms-traffictypediagnostic: BYAPR07MB5509:
+x-microsoft-antispam-prvs: <BYAPR07MB5509957C7ED52995968FFAB6F9CC0@BYAPR07MB5509.namprd07.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231382)(944501410)(52105095)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:BYAPR07MB5509;BCL:0;PCL:0;RULEID:;SRVR:BYAPR07MB5509;
+x-forefront-prvs: 08417837C5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(39860400002)(346002)(376002)(366004)(189003)(199004)(5250100002)(305945005)(256004)(54906003)(6436002)(110136005)(5660300001)(7736002)(53936002)(316002)(107886003)(6486002)(6512007)(86362001)(575784001)(66066001)(25786009)(4326008)(105586002)(36756003)(106356001)(2900100001)(8936002)(478600001)(8676002)(68736007)(81156014)(81166006)(486006)(71200400001)(71190400001)(2616005)(476003)(6506007)(99286004)(6116002)(26005)(52116002)(2906002)(14454004)(14444005)(386003)(72206003)(2501003)(186003)(102836004)(3846002)(97736004);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR07MB5509;H:BYAPR07MB4920.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: cavium.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: c7v2IfpNrj8vys0A0i3qxpFUvos2F6yRe7zJjy7ogH3hHkjkKW9pzAPUQoYviZLqA1DWLZB2BSqfauz4OC8PtAQLTnC1O0EjTlTi8A+oVkZ8OrCATEmXvlnuvV9Sk9Hd72q8XTmaM/5pekaXvo3Gk6iMF0IicTb3NNIKz3vam/iuMnOLPg1qKhX6EER25FSCRfRhFujWnTxJeQFRZKhYBJePEfWWwcguamZ8Twq/SLKwnUi937wH9HgWOBwJwr3bjffNHmOelg4HiBcpEp1aQuJoFEAXvPFGojWtNCWsPEaJIaxBkWEag+ck3VsBh+bls82MFMFoEHa2VnUc6nfczKTKebKMrQC1HB7AUo52Nxw=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-Received: by 2002:a6b:c941:: with SMTP id z62-v6mr14426718iof.20.1540896483857;
- Tue, 30 Oct 2018 03:48:03 -0700 (PDT)
-Date:   Tue, 30 Oct 2018 03:48:03 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008e601f05796feb24@google.com>
-Subject: KASAN: use-after-free Read in vb2_mmap
-From:   syzbot <syzbot+be93025dd45dccd8923c@syzkaller.appspotmail.com>
-To:     kyungmin.park@samsung.com, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, m.szyprowski@samsung.com,
-        mchehab@kernel.org, pawel@osciak.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+X-OriginatorOrg: cavium.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 63f3dee0-1d4b-4c74-dc22-08d63e553f80
+X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Oct 2018 10:48:38.1336
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR07MB5509
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Implement workaround for ThunderX2 Errata-129 (documented in
+CN99XX Known Issues" available at Cavium support site).
+As per ThunderX2errata-129, USB 2 device may come up as USB 1
+if a connection to a USB 1 device is followed by another connection to
+a USB 2 device, the link will come up as USB 1 for the USB 2 device.
 
-syzbot found the following crash on:
+Resolution: Reset the PHY after the USB 1 device is disconnected.
+The PHY reset sequence is done using private registers in XHCI register
+space. After the PHY is reset we check for the PLL lock status and retry
+the operation if it fails. From our tests, retrying 4 times is sufficient.
 
-HEAD commit:    4b42745211af Merge tag 'armsoc-soc' of git://git.kernel.or..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=114278d5400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=93932074d01b4a5
-dashboard link: https://syzkaller.appspot.com/bug?extid=be93025dd45dccd8923c
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-userspace arch: i386
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15b8dbe5400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15c71e83400000
+Add a new quirk flag XHCI_RESET_PLL_ON_DISCONNECT to invoke the workaround
+in handle_xhci_port_status().
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+be93025dd45dccd8923c@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: use-after-free in vb2_mmap+0x65f/0x6e0  
-drivers/media/common/videobuf2/videobuf2-core.c:1971
-Read of size 8 at addr ffff8801bcddaac0 by task syz-executor694/5674
-
-CPU: 1 PID: 5674 Comm: syz-executor694 Not tainted 4.19.0+ #213
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  vb2_mmap+0x65f/0x6e0 drivers/media/common/videobuf2/videobuf2-core.c:1971
-  vb2_fop_mmap+0x4b/0x70 drivers/media/common/videobuf2/videobuf2-v4l2.c:832
-  v4l2_mmap+0x153/0x200 drivers/media/v4l2-core/v4l2-dev.c:401
-  call_mmap include/linux/fs.h:1844 [inline]
-  mmap_region+0xe85/0x1cd0 mm/mmap.c:1786
-  do_mmap+0xa22/0x1230 mm/mmap.c:1559
-  do_mmap_pgoff include/linux/mm.h:2320 [inline]
-  vm_mmap_pgoff+0x213/0x2c0 mm/util.c:350
-  ksys_mmap_pgoff+0x4da/0x660 mm/mmap.c:1609
-  __do_sys_mmap_pgoff mm/mmap.c:1620 [inline]
-  __se_sys_mmap_pgoff mm/mmap.c:1616 [inline]
-  __ia32_sys_mmap_pgoff+0xdd/0x1a0 mm/mmap.c:1616
-  do_syscall_32_irqs_on arch/x86/entry/common.c:326 [inline]
-  do_fast_syscall_32+0x34d/0xfb2 arch/x86/entry/common.c:397
-  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-RIP: 0023:0xf7fcba29
-Code: 85 d2 74 02 89 0a 5b 5d c3 8b 04 24 c3 8b 14 24 c3 8b 3c 24 c3 90 90  
-90 90 90 90 90 90 90 90 90 90 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90  
-90 90 90 eb 0d 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 002b:00000000ffb6de5c EFLAGS: 00000286 ORIG_RAX: 00000000000000c0
-RAX: ffffffffffffffda RBX: 0000000020fff000 RCX: 0000000000001000
-RDX: 0000000002000002 RSI: 0000000000000013 RDI: 0000000000000003
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
-
-Allocated by task 5673:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
-  __do_kmalloc mm/slab.c:3722 [inline]
-  __kmalloc+0x15b/0x760 mm/slab.c:3731
-  kmalloc include/linux/slab.h:551 [inline]
-  kzalloc include/linux/slab.h:741 [inline]
-  __vb2_queue_alloc+0xf7/0xf20  
-drivers/media/common/videobuf2/videobuf2-core.c:343
-  vb2_core_reqbufs+0x971/0x1040  
-drivers/media/common/videobuf2/videobuf2-core.c:732
-  __vb2_init_fileio+0x344/0xc90  
-drivers/media/common/videobuf2/videobuf2-core.c:2251
-  __vb2_perform_fileio+0xcfb/0x1210  
-drivers/media/common/videobuf2/videobuf2-core.c:2370
-  vb2_write+0x38/0x50 drivers/media/common/videobuf2/videobuf2-core.c:2509
-  vb2_fop_write+0x20a/0x400  
-drivers/media/common/videobuf2/videobuf2-v4l2.c:874
-  v4l2_write+0x168/0x220 drivers/media/v4l2-core/v4l2-dev.c:334
-  __vfs_write+0x119/0x9f0 fs/read_write.c:485
-  vfs_write+0x1fc/0x560 fs/read_write.c:549
-  ksys_write+0x101/0x260 fs/read_write.c:598
-  __do_sys_write fs/read_write.c:610 [inline]
-  __se_sys_write fs/read_write.c:607 [inline]
-  __ia32_sys_write+0x71/0xb0 fs/read_write.c:607
-  do_syscall_32_irqs_on arch/x86/entry/common.c:326 [inline]
-  do_fast_syscall_32+0x34d/0xfb2 arch/x86/entry/common.c:397
-  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-
-Freed by task 5673:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xcf/0x230 mm/slab.c:3817
-  __vb2_queue_free+0x5e2/0xa30  
-drivers/media/common/videobuf2/videobuf2-core.c:523
-  vb2_core_reqbufs+0x2da/0x1040  
-drivers/media/common/videobuf2/videobuf2-core.c:691
-  __vb2_cleanup_fileio+0xf0/0x160  
-drivers/media/common/videobuf2/videobuf2-core.c:2328
-  vb2_core_queue_release+0x1e/0x80  
-drivers/media/common/videobuf2/videobuf2-core.c:2052
-  vb2_queue_release drivers/media/common/videobuf2/videobuf2-v4l2.c:672  
-[inline]
-  _vb2_fop_release+0x1d2/0x2b0  
-drivers/media/common/videobuf2/videobuf2-v4l2.c:843
-  vb2_fop_release+0x77/0xc0  
-drivers/media/common/videobuf2/videobuf2-v4l2.c:857
-  vivid_fop_release+0x18e/0x440 drivers/media/platform/vivid/vivid-core.c:474
-  v4l2_release+0xfb/0x1a0 drivers/media/v4l2-core/v4l2-dev.c:448
-  __fput+0x385/0xa30 fs/file_table.c:278
-  ____fput+0x15/0x20 fs/file_table.c:309
-  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:188 [inline]
-  exit_to_usermode_loop+0x318/0x380 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_32_irqs_on arch/x86/entry/common.c:341 [inline]
-  do_fast_syscall_32+0xcd5/0xfb2 arch/x86/entry/common.c:397
-  entry_SYSENTER_compat+0x70/0x7f arch/x86/entry/entry_64_compat.S:139
-
-The buggy address belongs to the object at ffff8801bcddaac0
-  which belongs to the cache kmalloc-512 of size 512
-The buggy address is located 0 bytes inside of
-  512-byte region [ffff8801bcddaac0, ffff8801bcddacc0)
-The buggy address belongs to the page:
-page:ffffea0006f37680 count:1 mapcount:0 mapping:ffff8801da800940 index:0x0
-flags: 0x2fffc0000000200(slab)
-raw: 02fffc0000000200 ffffea0006f11d08 ffffea0006edf908 ffff8801da800940
-raw: 0000000000000000 ffff8801bcdda0c0 0000000100000006 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801bcdda980: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801bcddaa00: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-> ffff8801bcddaa80: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
-                                            ^
-  ffff8801bcddab00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801bcddab80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
+Signed-off-by: George Cherian <george.cherian@cavium.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/usb/host/xhci-pci.c  |  5 +++++
+ drivers/usb/host/xhci-ring.c | 35 ++++++++++++++++++++++++++++++++++-
+ drivers/usb/host/xhci.h      |  1 +
+ 3 files changed, 40 insertions(+), 1 deletion(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
+index 51dd8e0..334c009 100644
+--- a/drivers/usb/host/xhci-pci.c
++++ b/drivers/usb/host/xhci-pci.c
+@@ -231,6 +231,11 @@ static void xhci_pci_quirks(struct device *dev, struct=
+ xhci_hcd *xhci)
+ 	if (pdev->vendor =3D=3D PCI_VENDOR_ID_TI && pdev->device =3D=3D 0x8241)
+ 		xhci->quirks |=3D XHCI_LIMIT_ENDPOINT_INTERVAL_7;
+=20
++	if ((pdev->vendor =3D=3D PCI_VENDOR_ID_BROADCOM ||
++	     pdev->vendor =3D=3D PCI_VENDOR_ID_CAVIUM) &&
++	     pdev->device =3D=3D 0x9026)
++		xhci->quirks |=3D XHCI_RESET_PLL_ON_DISCONNECT;
++
+ 	if (xhci->quirks & XHCI_RESET_ON_RESUME)
+ 		xhci_dbg_trace(xhci, trace_xhci_dbg_quirks,
+ 				"QUIRK: Resetting on resume");
+diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+index f0a99aa..b434869 100644
+--- a/drivers/usb/host/xhci-ring.c
++++ b/drivers/usb/host/xhci-ring.c
+@@ -1517,6 +1517,35 @@ static void handle_device_notification(struct xhci_h=
+cd *xhci,
+ 		usb_wakeup_notification(udev->parent, udev->portnum);
+ }
+=20
++/*
++ * Quirk hanlder for errata seen on Cavium ThunderX2 processor XHCI
++ * Controller.
++ * As per ThunderX2errata-129 USB 2 device may come up as USB 1
++ * If a connection to a USB 1 device is followed by another connection
++ * to a USB 2 device.
++ *
++ * Reset the PHY after the USB device is disconnected if device speed
++ * is less than HCD_USB3.
++ * Retry the reset sequence max of 4 times checking the PLL lock status.
++ *
++ */
++static void xhci_cavium_reset_phy_quirk(struct xhci_hcd *xhci)
++{
++	struct usb_hcd *hcd =3D xhci_to_hcd(xhci);
++	u32 pll_lock_check;
++	u32 retry_count =3D 4;
++
++	do {
++		/* Assert PHY reset */
++		writel(0x6F, hcd->regs + 0x1048);
++		udelay(10);
++		/* De-assert the PHY reset */
++		writel(0x7F, hcd->regs + 0x1048);
++		udelay(200);
++		pll_lock_check =3D readl(hcd->regs + 0x1070);
++	} while (!(pll_lock_check & 0x1) && --retry_count);
++}
++
+ static void handle_port_status(struct xhci_hcd *xhci,
+ 		union xhci_trb *event)
+ {
+@@ -1642,8 +1671,12 @@ static void handle_port_status(struct xhci_hcd *xhci=
+,
+ 		goto cleanup;
+ 	}
+=20
+-	if (hcd->speed < HCD_USB3)
++	if (hcd->speed < HCD_USB3) {
+ 		xhci_test_and_clear_bit(xhci, port, PORT_PLC);
++		if ((xhci->quirks & XHCI_RESET_PLL_ON_DISCONNECT) &&
++		    (portsc & PORT_CSC) && !(portsc & PORT_CONNECT))
++			xhci_cavium_reset_phy_quirk(xhci);
++	}
+=20
+ cleanup:
+ 	/* Update event ring dequeue pointer before dropping the lock */
+diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
+index 6230a57..004b832 100644
+--- a/drivers/usb/host/xhci.h
++++ b/drivers/usb/host/xhci.h
+@@ -1846,6 +1846,7 @@ struct xhci_hcd {
+ #define XHCI_SUSPEND_DELAY	BIT_ULL(30)
+ #define XHCI_INTEL_USB_ROLE_SW	BIT_ULL(31)
+ #define XHCI_ZERO_64B_REGS	BIT_ULL(32)
++#define XHCI_RESET_PLL_ON_DISCONNECT BIT_ULL(33)
+=20
+ 	unsigned int		num_active_eps;
+ 	unsigned int		limit_active_eps;
+--=20
+1.8.3.1
+
