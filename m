@@ -2,76 +2,110 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BDC2C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:52:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23D23C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:52:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50DA220657
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:52:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="e5Xo3UBK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50DA220657
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id E77D62064C
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:52:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E77D62064C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727980AbeJaBqj (ORCPT
+        id S1727991AbeJaBq5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 21:46:39 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:47984 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727561AbeJaBqj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 21:46:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=xuLioHbLphynXpSDo3PR4aDJTxzK9RI6VnpK+vGqijU=; b=e5Xo3UBKd0LHdh6Xc8IED2mMN
-        lyA4JdCQBTAmPHnZx1x7gkMmI+apD2DLOKIsZIu7wkCtid8neHca2q887s3eD9NZ82e3304dXsExS
-        L3qsVVP25JZi4pHgY1wm3rhW4TgKH25mlEBImaGJZh45drXrYYD60zdLNGBb7x0uDklt1wXqTLFs1
-        ZanzVkfllZ9T0kWewBemD7kmrln8hWwlEevpM1mw1uhTW89dmEVuZFV6hHsvA1Slci9N5g2ncwHOa
-        DI6sEuf9+92+nYi8lmuFvYzAcTJn0SLCpDxXpYUqeUwS19eFqoyOunIF4ZUekbozH4GmrE8/v47sO
-        DdKdKO4CA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gHXFf-0003Lb-0Q; Tue, 30 Oct 2018 16:52:23 +0000
-Date:   Tue, 30 Oct 2018 09:52:22 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org,
-        virtualization@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] Improve virtio ID allocation
-Message-ID: <20181030165222.GA10491@bombadil.infradead.org>
-References: <20180926160031.15721-1-willy@infradead.org>
- <20181029215339.aywdmehccrwwls2n@sirius.home.kraxel.org>
+        Tue, 30 Oct 2018 21:46:57 -0400
+Received: from mx2.suse.de ([195.135.220.15]:44414 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727561AbeJaBq4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 21:46:56 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id BEFE5B13E;
+        Tue, 30 Oct 2018 16:52:40 +0000 (UTC)
+Subject: Re: [PATCH v2] xen-blkfront: fix kernel panic with negotiate_mq error
+ path
+To:     Manjunath Patil <manjunath.b.patil@oracle.com>,
+        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
+        roger.pau@citrix.com
+Cc:     axboe@kernel.dk, xen-devel@lists.xenproject.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+References: <1540918161-31283-1-git-send-email-manjunath.b.patil@oracle.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <2d099bff-648f-e9bf-f2b6-127eb97852fb@suse.com>
+Date:   Tue, 30 Oct 2018 17:52:39 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181029215339.aywdmehccrwwls2n@sirius.home.kraxel.org>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1540918161-31283-1-git-send-email-manjunath.b.patil@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 10:53:39PM +0100, Gerd Hoffmann wrote:
-> On Wed, Sep 26, 2018 at 09:00:27AM -0700, Matthew Wilcox wrote:
-> > I noticed you were using IDRs where you could be using the more efficient
-> > IDAs, then while fixing that I noticed the lack of error handling,
-> > and I decided to follow that up with an efficiency improvement.
-> > 
-> > There's probably a v2 of this to follow because I couldn't figure
-> > out how to properly handle one of the error cases ... see the comment
-> > embedded in one of the patches.
+On 30/10/2018 17:49, Manjunath Patil wrote:
+> info->nr_rings isn't adjusted in case of ENOMEM error from
+> negotiate_mq(). This leads to kernel panic in error path.
 > 
-> #1 + #2 pushed to drm-misc-next now.
-> #3 should not be needed any more.
-> waiting for v2 of #4 ...
+> Typical call stack involving panic -
+>  #8 page_fault at ffffffff8175936f
+>     [exception RIP: blkif_free_ring+33]
+>     RIP: ffffffffa0149491  RSP: ffff8804f7673c08  RFLAGS: 00010292
+>  ...
+>  #9 blkif_free at ffffffffa0149aaa [xen_blkfront]
+>  #10 talk_to_blkback at ffffffffa014c8cd [xen_blkfront]
+>  #11 blkback_changed at ffffffffa014ea8b [xen_blkfront]
+>  #12 xenbus_otherend_changed at ffffffff81424670
+>  #13 backend_changed at ffffffff81426dc3
+>  #14 xenwatch_thread at ffffffff81422f29
+>  #15 kthread at ffffffff810abe6a
+>  #16 ret_from_fork at ffffffff81754078
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 7ed8ce1c5fc7 ("xen-blkfront: move negotiate_mq to cover all cases of new VBDs")
+> Signed-off-by: Manjunath Patil <manjunath.b.patil@oracle.com>
 
-Thanks!  I think we do still need a small part of #3.  Patches in
-replies to this email.
+Reviewed-by: Juergen Gross <jgross@suse.com>
+
+
+Juergen
+
