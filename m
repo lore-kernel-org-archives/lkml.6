@@ -2,124 +2,128 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=FUZZY_XPILL,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 979D1C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:01:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F30B6C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:05:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56D4020823
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:01:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56D4020823
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id C00B220848
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 10:05:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C00B220848
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727377AbeJ3Sy3 (ORCPT
+        id S1726752AbeJ3S6I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 14:54:29 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:59218 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726225AbeJ3Sy3 (ORCPT
+        Tue, 30 Oct 2018 14:58:08 -0400
+Received: from lucky1.263xmail.com ([211.157.147.132]:43504 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726225AbeJ3S6I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 14:54:29 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id C2CE58078C; Tue, 30 Oct 2018 11:01:37 +0100 (CET)
-Date:   Tue, 30 Oct 2018 11:01:39 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        James Cameron <quozl@laptop.org>, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 0/8] OLPC 1.75 Keyboard/Touchpad fixes
-Message-ID: <20181030100139.GB21529@amd>
-References: <20181010142504.233467-1-lkundrak@v3.sk>
- <20181015195612.GB29649@amd>
- <c4edf9b09e88cd265a0829644aa962c28cbc3d51.camel@v3.sk>
+        Tue, 30 Oct 2018 14:58:08 -0400
+Received: from tony.xie?rock-chips.com (unknown [192.168.167.73])
+        by lucky1.263xmail.com (Postfix) with ESMTP id 3A9582B5;
+        Tue, 30 Oct 2018 18:05:12 +0800 (CST)
+X-263anti-spam: KSV:0;
+X-MAIL-GRAY: 1
+X-MAIL-DELIVERY: 0
+X-KSVirus-check: 0
+X-ABS-CHECKED: 4
+Received: from localhost.localdomain (localhost [127.0.0.1])
+        by smtp.263.net (Postfix) with ESMTPA id 45B8C380;
+        Tue, 30 Oct 2018 18:05:08 +0800 (CST)
+X-IP-DOMAINF: 1
+X-RL-SENDER: tony.xie@rock-chips.com
+X-FST-TO: heiko@sntech.de
+X-SENDER-IP: 58.22.7.114
+X-LOGIN-NAME: tony.xie@rock-chips.com
+X-UNIQUE-TAG: <406baa6dd25b2a126f606f7947d0674f>
+X-ATTACHMENT-NUM: 0
+X-SENDER: xxx@rock-chips.com
+X-DNS-TYPE: 0
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (Postfix) whith ESMTP id 11686JEC4L7;
+        Tue, 30 Oct 2018 18:05:10 +0800 (CST)
+From:   Tony Xie <tony.xie@rock-chips.com>
+To:     heiko@sntech.de
+Cc:     broonie@kernel.org, lee.jones@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, chenjh@rock-chips.com,
+        xsf@rock-chips.com, zhangqing@rock-chips.com,
+        huangtao@rock-chips.com, tony.xie@rock-chips.com
+Subject: [PATCH v6 0/6] support a new type of PMIC,including two chips(rk817 and rk809)
+Date:   Tue, 30 Oct 2018 18:07:55 +0800
+Message-Id: <1540894081-31270-1-git-send-email-tony.xie@rock-chips.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="7iMSBzlTiPOCCT2k"
-Content-Disposition: inline
-In-Reply-To: <c4edf9b09e88cd265a0829644aa962c28cbc3d51.camel@v3.sk>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Most of functions and registers of the rk817 and rk808 are the same,
+so they can share allmost all codes.
 
---7iMSBzlTiPOCCT2k
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Their specifications are as follows:
+  1) The RK809 and RK809 consist of 5 DCDCs, 9 LDOs and have the same registers
+     for these components except dcdc5.
+  2) The dcdc5 is a boost dcdc for RK817 and is a buck for RK809.
+  3) The RK817 has one switch but The Rk809 has two.
 
-Hi!
+Changes in V2:
+1. initialize the pm_pwroff_fn to NULL. 
+2. use EXPORT_SYMBOL_GPL to export pm_power_off_prepare.
+3. change patch 2/3/4/5 subjects. 
 
-> > > This makes keyboard/touchpad work on a DT MMP2 platform.
-> > >=20
-> > > I believe that it would be a good idea if this, once reviewed, went
-> > > in
-> > > via the input tree. The DT and CLK parts got reviews/acks.
-> > >=20
-> > > Changes from v1:
-> > > - Basically none, just re-send, including Ack and Review tags in
-> > > patches
-> > >   that received them. Plus an extra Cc.
-> > >   I'd be very thankful for reviews.
-> >=20
-> > Ok, I believe I have OLPC 1.75, and it is actually a nice
-> > machine. Can I get recent kernel working there in useful fashion? (Is
-> > there docs somewhere)?
->=20
-> A lovely machine indeed. I've written this now:
->=20
-> https://github.com/hackerspace/olpc-xo175-linux/wiki/How-to-run-an-up-to-=
-date-Linux-on-a-XO-1.75
->=20
-> I didn't test it yet -- will do when I get home in the evening. But
-> chances are it's good enough and I guess you'd be able to get it
-> working even if I messed up some details.
+Changes in V3
+1. change patch 4 subjects
+2. replace pr_ with dev_ for printing in patch 2
+3. modify switch1 and switch2 configs in patch 2
+4. explain gpio information for rk809 and rk817 in patch 4
 
-Ok, let me check. I went to this branch:
+Changes in V4:
+1. modify some codes for patch 2 and patch 5 according to comments 
+2. add reviewer mail lists for patch 3 and 4
 
-commit f99b274084d320814f4b035a7e3455af424229ea
-Author: Lubomir Rintel <lkundrak@v3.sk>
-Date:   Sun Aug 5 23:11:27 2018 +0200
+Changes in V5:
+modify some codes for patch 1 according to reveiw comments for v3.
+ 1) remove the pm_power_off_prepare() and replace with shutdown call-back from syscore
+ 2) move the macro REGMAP_IRQ_M into the regmap.h and rename it REGMAP_IRQ_LINE
+ 3) make some dev_warn() log clear
 
-First comment: the zImage size adjusting hack should really be
-somewhere in tools/ and preferably in python. This is way beyond
-reasonable use of shell.
+Changes in V6:
+modify some codes according to reveiw comments for v5.
 
-> Please let me know if it works for you -- I'm having trouble getting
-> reviews/acks/tested-bys for the XO-1.75 patch sets [1] and will be
-> super thankful if I get some feedback from you.
->=20
-> [1] https://lore.kernel.org/patchwork/bundle/lkundrak/OLPC%20XO%201.75/
+Tony Xie (6):
+  regmap: add a new macro:REGMAP_IRQ_REG_LINE(_id, _reg_bits)
+  mfd: rk808: Add RK817 and RK809 support
+  regulator: rk808: add RK809 and RK817 support.
+  dt-bindings: mfd: rk808: Add binding information for RK809 and RK817.
+  rtc: rk808: add RK809 and RK817 support.
+  clk: RK808: add RK809 and RK817 support.
 
-You want to just continue without them :-). As long as you don't
-change the core code, you should be ok.
+ Documentation/devicetree/bindings/mfd/rk808.txt |  44 ++
+ drivers/clk/Kconfig                             |   9 +-
+ drivers/clk/clk-rk808.c                         |  64 ++-
+ drivers/mfd/Kconfig                             |   6 +-
+ drivers/mfd/rk808.c                             | 225 +++++++-
+ drivers/regulator/Kconfig                       |   4 +-
+ drivers/regulator/rk808-regulator.c             | 657 +++++++++++++++++++++++-
+ drivers/rtc/Kconfig                             |   4 +-
+ drivers/rtc/rtc-rk808.c                         |  68 ++-
+ include/linux/mfd/rk808.h                       | 175 +++++++
+ include/linux/regmap.h                          |   6 +
+ 11 files changed, 1193 insertions(+), 69 deletions(-)
 
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+-- 
+1.9.1
 
---7iMSBzlTiPOCCT2k
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlvYLAIACgkQMOfwapXb+vIJdwCfbPsc+dDKc8pF4G+DixcMANs4
-IhkAn05f8C5B7DFCPkU2Xhc4eAp1Jr9/
-=I0OY
------END PGP SIGNATURE-----
-
---7iMSBzlTiPOCCT2k--
