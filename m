@@ -1,107 +1,165 @@
 Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.0 required=3.0 tests=FUZZY_XPILL,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EA77C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:38:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E21EBC6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:40:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6229E20657
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:38:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="uCVnlT2+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6229E20657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id AC95C20657
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 19:40:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC95C20657
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727573AbeJaEdH (ORCPT
+        id S1727668AbeJaEfk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 00:33:07 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:53448 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725843AbeJaEdH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 00:33:07 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9UJXxZV030956;
-        Tue, 30 Oct 2018 19:38:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
- references : cc : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=KEIjtm5bgNeDYYr0dcUriss0t4duB+ZqE6yc7CFPKUg=;
- b=uCVnlT2+c79XjTLtHaZWq9tEYBqdxYgtrZTfPTNFhmJgKaNNbeFjrFXU+ujQ+U5rP6uc
- lUFYiY8K8nkCAr1ZJqEnMsWy9kGTfIexi3LacB8QZc+UTQBSNBnQgEQea8lk1Hsb4xPM
- T4XJ5WYDrcNYJ4B4kqW61Ed+Qrljw0MlwazWT37zcQQYDctwN+zHrBwLPghC9zjE5nrR
- HHtrqslMsMNvzGBS63O4Ve82JaKL2RsbuWf7ovU8yHWk9PHLFqISu3oM6fbt3RqRESpY
- VGX8IyezK89PQREJ2JV1UgU3JT/nlaUf/C9QxSM7+4hIiaWarxYtlHBniQA9znEi4Yad +g== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2nducm3bcu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Oct 2018 19:38:11 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9UJc4L2013086
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Oct 2018 19:38:05 GMT
-Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9UJc4QC021767;
-        Tue, 30 Oct 2018 19:38:04 GMT
-Received: from [10.209.243.127] (/10.209.243.127)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 30 Oct 2018 12:38:04 -0700
-Subject: Re: WARNING in rds_message_alloc_sgs
-To:     syzbot <syzbot+26de17458aeda9d305d8@syzkaller.appspotmail.com>,
-        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
-        rds-devel@oss.oracle.com, syzkaller-bugs@googlegroups.com
-References: <0000000000003c6b7b0579772ff3@google.com>
-Cc:     davem@davemloft.net, linux-kernel@vger.kernel.org
-From:   Santosh Shilimkar <santosh.shilimkar@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <a7a834e0-c300-b5b9-67b5-78fa3eba8ebb@oracle.com>
-Date:   Tue, 30 Oct 2018 12:38:02 -0700
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <0000000000003c6b7b0579772ff3@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9062 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=907
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810300165
+        Wed, 31 Oct 2018 00:35:40 -0400
+Received: from shell.v3.sk ([90.176.6.54]:49499 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726072AbeJaEfk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 31 Oct 2018 00:35:40 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 648FFC48A9;
+        Tue, 30 Oct 2018 20:40:44 +0100 (CET)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id lPgAu88fNFlh; Tue, 30 Oct 2018 20:40:41 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 53E53C48AA;
+        Tue, 30 Oct 2018 20:40:41 +0100 (CET)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id EViGJRb0AfFv; Tue, 30 Oct 2018 20:40:40 +0100 (CET)
+Received: from odvarok.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 3226CC48A9;
+        Tue, 30 Oct 2018 20:40:40 +0100 (CET)
+Message-ID: <2761d7e31cf7118492e466a5249303c92f68049b.camel@v3.sk>
+Subject: Re: [PATCH v2 0/8] OLPC 1.75 Keyboard/Touchpad fixes
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        James Cameron <quozl@laptop.org>, linux-input@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Date:   Tue, 30 Oct 2018 20:40:38 +0100
+In-Reply-To: <20181030102610.GC21529@amd>
+References: <20181010142504.233467-1-lkundrak@v3.sk>
+         <20181015195612.GB29649@amd>
+         <c4edf9b09e88cd265a0829644aa962c28cbc3d51.camel@v3.sk>
+         <20181030100139.GB21529@amd> <20181030102610.GC21529@amd>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.1 (3.30.1-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/30/2018 12:28 PM, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    6201f31a39f8 Add linux-next specific files for 20181030
-> git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1397d06d400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=2a22859d870756c1
-> dashboard link: 
-> https://syzkaller.appspot.com/bug?extid=26de17458aeda9d305d8
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10bb52eb400000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=118bdfc5400000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+26de17458aeda9d305d8@syzkaller.appspotmail.com
-> 
-> WARNING: CPU: 0 PID: 19789 at net/rds/message.c:316 
-> rds_message_alloc_sgs+0x10c/0x160 net/rds/message.c:316
-> Kernel panic - not syncing: panic_on_warn set ...
-Looks like this kernel build has panic on warn enabled which
-triggers panic for " WARN_ON(!nr_pages)" case. Will look into
-it. Thanks !!
+Hello Pavel,
 
-Regards,
-Santosh
+On Tue, 2018-10-30 at 11:26 +0100, Pavel Machek wrote:
+> Hi!
+> 
+> > > https://github.com/hackerspace/olpc-xo175-linux/wiki/How-to-run-an-up-to-date-Linux-on-a-XO-1.75
+> > > 
+> > > I didn't test it yet -- will do when I get home in the evening.
+> > > But
+> > > chances are it's good enough and I guess you'd be able to get it
+> > > working even if I messed up some details.
+> 
+> Instruction say make, but you really need to do make zImage and make
+> mmp2-olpc-xo-1-75.dtb .
+
+Have you tried? I'm typically doing just a plain "make".
+
+According to "make help", a plain "make" (assuming it's equivalent to
+"make all") includes "zImage" and "dtbs" targets.
+
+> 
+> Instructions say "make -j", which is nice way to crash a machine. I
+> suggest "make -j 8" :-).
+
+Holy... what sort of a machine do you have?
+
+> Ok, I think I followed the instructions. I am using empty root
+> filesystem, just with /boot -- want to see kernel messages first
+> before I mess with the userland.
+> 
+> But I don't get kernel messages during boot:
+> 
+> OLPC 1B1, 512 MiB memory...
+> OpenFirmware Q4C02 EC Frimware 0.3.02
+
+"Frimware" -- I assume you don't have a serial console hooked on? :)
+
+Doesn't matter though, your OF doesn't seem to even get to load the
+kernel anyways. And the framebuffer console (though only by the means
+of a hacked pxa168fb for the time being, no armada drm yet) works.
+
+Here's my bootup banner:
+
+OLPC 1B1, 800 MHz, 512 MiB memory, 4 GB internal storage...
+OpenFirmware  Q4D38   EC Firmware 1.0.01   2018-10-30 19:11:36 UTC
+
+I seem to have a bit newer OF.
+
+> Type any key to interrupt...
+> (but keys do not interrupt anything, ouch).
+
+In my version of the OLPC OF the routine is replaced with one that only
+accepts the Escape key, because kids like to press random keys without
+really wanting a shell. Maybe try that one?
+
+Although my prompt is also a bit different: "Type the Esc key to
+interrupt automatic startup"
+
+> Warning... partition type is 0xb...
+> Boot device: /usb/disk:\boot\olpc.fth Arguments:
+> Boot device ....
+> Warning... partition type is 0xb...
+
+Maybe the older version wouldn't support a VFAT volume, hence the
+complains about the id=0xb volume? Try ext3?
+> 
+> And that's it, cursor and no kernel messages.
+> 
+> Any ideas?
+> 
+> Could I get prepared binary zImage for testing?
+
+https://github.com/hackerspace/olpc-xo175-buildroot/releases
+
+Here's a SD card image that works for me. The topmost commit in the
+same repository is the build configuration that was used to generate
+it:
+
+https://github.com/hackerspace/olpc-xo175-buildroot/commit/71783d599.patch
+
+Note it is only going to boot off the SD card, because the root=
+argument is hardwired in the devicetree. Sorry about that -- I built
+the image before I noticed you're booting off an USB stick and I don't
+have the resources to regenerate the image at the moment.
+
+If this won't boot for you, we may need fixes for older FW. Until then
+it might be a good idea if you just update to the latest one (it is as
+easy as booting the last version of the stock distro with a charged
+battery pack).
+
+> Thanks.							
+>
+> 		
+> Pavel
+
+Take care
+Lubo
+
