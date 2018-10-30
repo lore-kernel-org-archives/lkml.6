@@ -2,164 +2,165 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D14B0C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:06:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A5CCC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:09:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 980BC2081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:06:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wRIaA2Yx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 980BC2081B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	by mail.kernel.org (Postfix) with ESMTP id 3F68220831
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:09:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F68220831
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728030AbeJ3V7r (ORCPT
+        id S1727845AbeJ3WDQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 17:59:47 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:56352 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725853AbeJ3V7r (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 17:59:47 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 80682992;
-        Tue, 30 Oct 2018 14:06:21 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1540904782;
-        bh=6HuerUdipknqN1v3KCRRQo6yKMoxxz6IWRe6jlejfuQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wRIaA2YxeDm8zoYamFJ/TgSQPP7vVBMLJ3n4Ty6gfoYlNqQ2G3yc0mwVK8MeKWZ//
-         Alqscb7HjRLP4JZJoAqCzRMdMtwEkziIXk3HJ7WBs8Xr8oOwHt8HFBOZpUbQbHWqPP
-         SIARvF8r/xe9IE59qTqIYolgrQENa5zgRCV3VvPk=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Yong Deng <yong.deng@magewell.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH v12 1/2] dt-bindings: media: Add Allwinner V3s Camera Sensor Interface (CSI)
-Date:   Tue, 30 Oct 2018 15:06:24 +0200
-Message-ID: <308184907.pMD7ZDI2dr@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <1540887143-27904-1-git-send-email-yong.deng@magewell.com>
-References: <1540887143-27904-1-git-send-email-yong.deng@magewell.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Tue, 30 Oct 2018 18:03:16 -0400
+Received: from gate.crashing.org ([63.228.1.57]:37568 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727705AbeJ3WDQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 18:03:16 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w9UD9TCI030426;
+        Tue, 30 Oct 2018 08:09:31 -0500
+Message-ID: <30359cc433e97739d93e13717b2897e462895097.camel@kernel.crashing.org>
+Subject: Re: [PATCH] powerpc/npu-dma: Remove NPU DMA ops
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Christoph Hellwig <hch@lst.de>,
+        Alistair Popple <alistair@popple.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        mpe@ellerman.id.au
+Date:   Wed, 31 Oct 2018 00:09:29 +1100
+In-Reply-To: <20181030125841.GB30158@lst.de>
+References: <20181030110203.27257-1-alistair@popple.id.au>
+         <20181030125841.GB30158@lst.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yong,
+On Tue, 2018-10-30 at 13:58 +0100, Christoph Hellwig wrote:
+> Please take my patch instead.  We have a kernel polcity to not keep
+> dead code around, and everyone including Linus and the attending IBMers
+> confirmed this.
 
-Thank you for the patch.
+Let's call a cat a cat ... ;-)
 
-On Tuesday, 30 October 2018 10:12:23 EET Yong Deng wrote:
-> Add binding documentation for Allwinner V3s CSI.
+It's not *dead* code. It's code that is used by an out of tree driver
+(which also happen not to be open source).
+
+Just making things clear for everybody.
+
+Cheers,
+Ben.
+
+> On Tue, Oct 30, 2018 at 10:02:03PM +1100, Alistair Popple wrote:
+> > The NPU IOMMU is setup to mirror the parent PCIe device IOMMU
+> > setup. Therefore it does not make sense to call dma operations such as
+> > dma_map_page, etc. directly on these devices. The existing dma-ops
+> > simply print a warning if they are ever called, however this is
+> > unnecessary and the warnings are likely to go unnoticed.
+> > 
+> > It is instead simpler to remove these operations and let the generic
+> > DMA code print warnings (eg. via a NULL pointer deref) in cases of
+> > buggy drivers attempting dma operations on NVLink devices.
+> > 
+> > Signed-off-by: Alistair Popple <alistair@popple.id.au>
+> > ---
+> >  arch/powerpc/platforms/powernv/npu-dma.c | 64 ++------------------------------
+> >  1 file changed, 4 insertions(+), 60 deletions(-)
+> > 
+> > diff --git a/arch/powerpc/platforms/powernv/npu-dma.c b/arch/powerpc/platforms/powernv/npu-dma.c
+> > index 6f60e0931922..75b935252981 100644
+> > --- a/arch/powerpc/platforms/powernv/npu-dma.c
+> > +++ b/arch/powerpc/platforms/powernv/npu-dma.c
+> > @@ -102,63 +102,6 @@ struct pci_dev *pnv_pci_get_npu_dev(struct pci_dev *gpdev, int index)
+> >  }
+> >  EXPORT_SYMBOL(pnv_pci_get_npu_dev);
+> > 
+> > -#define NPU_DMA_OP_UNSUPPORTED()					\
+> > -	dev_err_once(dev, "%s operation unsupported for NVLink devices\n", \
+> > -		__func__)
+> > -
+> > -static void *dma_npu_alloc(struct device *dev, size_t size,
+> > -			   dma_addr_t *dma_handle, gfp_t flag,
+> > -			   unsigned long attrs)
+> > -{
+> > -	NPU_DMA_OP_UNSUPPORTED();
+> > -	return NULL;
+> > -}
+> > -
+> > -static void dma_npu_free(struct device *dev, size_t size,
+> > -			 void *vaddr, dma_addr_t dma_handle,
+> > -			 unsigned long attrs)
+> > -{
+> > -	NPU_DMA_OP_UNSUPPORTED();
+> > -}
+> > -
+> > -static dma_addr_t dma_npu_map_page(struct device *dev, struct page *page,
+> > -				   unsigned long offset, size_t size,
+> > -				   enum dma_data_direction direction,
+> > -				   unsigned long attrs)
+> > -{
+> > -	NPU_DMA_OP_UNSUPPORTED();
+> > -	return 0;
+> > -}
+> > -
+> > -static int dma_npu_map_sg(struct device *dev, struct scatterlist *sglist,
+> > -			  int nelems, enum dma_data_direction direction,
+> > -			  unsigned long attrs)
+> > -{
+> > -	NPU_DMA_OP_UNSUPPORTED();
+> > -	return 0;
+> > -}
+> > -
+> > -static int dma_npu_dma_supported(struct device *dev, u64 mask)
+> > -{
+> > -	NPU_DMA_OP_UNSUPPORTED();
+> > -	return 0;
+> > -}
+> > -
+> > -static u64 dma_npu_get_required_mask(struct device *dev)
+> > -{
+> > -	NPU_DMA_OP_UNSUPPORTED();
+> > -	return 0;
+> > -}
+> > -
+> > -static const struct dma_map_ops dma_npu_ops = {
+> > -	.map_page		= dma_npu_map_page,
+> > -	.map_sg			= dma_npu_map_sg,
+> > -	.alloc			= dma_npu_alloc,
+> > -	.free			= dma_npu_free,
+> > -	.dma_supported		= dma_npu_dma_supported,
+> > -	.get_required_mask	= dma_npu_get_required_mask,
+> > -};
+> > -
+> >  /*
+> >   * Returns the PE assoicated with the PCI device of the given
+> >   * NPU. Returns the linked pci device if pci_dev != NULL.
+> > @@ -270,10 +213,11 @@ static void pnv_npu_dma_set_32(struct pnv_ioda_pe *npe)
+> >  	rc = pnv_npu_set_window(npe, 0, gpe->table_group.tables[0]);
+> > 
+> >  	/*
+> > -	 * We don't initialise npu_pe->tce32_table as we always use
+> > -	 * dma_npu_ops which are nops.
+> > +	 * NVLink devices use the same TCE table configuration as
+> > +	 * their parent device so drivers shouldn't be doing DMA
+> > +	 * operations directly on these devices.
+> >  	 */
+> > -	set_dma_ops(&npe->pdev->dev, &dma_npu_ops);
+> > +	set_dma_ops(&npe->pdev->dev, NULL);
+> >  }
+> > 
+> >  /*
+> > --
+> > 2.11.0
 > 
-> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> Signed-off-by: Yong Deng <yong.deng@magewell.com>
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> ---
->  .../devicetree/bindings/media/sun6i-csi.txt        | 56 +++++++++++++++++++
->  1 file changed, 56 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/sun6i-csi.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/media/sun6i-csi.txt
-> b/Documentation/devicetree/bindings/media/sun6i-csi.txt new file mode
-> 100644
-> index 000000000000..443e18c181b3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/sun6i-csi.txt
-> @@ -0,0 +1,56 @@
-> +Allwinner V3s Camera Sensor Interface
-> +-------------------------------------
-> +
-> +Allwinner V3s SoC features a CSI module(CSI1) with parallel interface.
-> +
-> +Required properties:
-> +  - compatible: value must be "allwinner,sun8i-v3s-csi"
-> +  - reg: base address and size of the memory-mapped region.
-> +  - interrupts: interrupt associated to this IP
-> +  - clocks: phandles to the clocks feeding the CSI
-> +    * bus: the CSI interface clock
-> +    * mod: the CSI module clock
-> +    * ram: the CSI DRAM clock
-> +  - clock-names: the clock names mentioned above
-> +  - resets: phandles to the reset line driving the CSI
-> +
-> +The CSI node should contain one 'port' child node with one child 'endpoint'
-> +node, according to the bindings defined in
-> +Documentation/devicetree/bindings/media/video-interfaces.txt.
-> +
-> +Endpoint node properties for CSI
-> +---------------------------------
-> +See the video-interfaces.txt for a detailed description of these
-> properties. +- remote-endpoint	: (required) a phandle to the bus receiver's
-> endpoint +			   node
-> +- bus-width:		: (required) must be 8, 10, 12 or 16
-> +- pclk-sample		: (optional) (default: sample on falling edge)
-> +- hsync-active		: (required; parallel-only)
-> +- vsync-active		: (required; parallel-only)
-> +
-> +Example:
-> +
-> +csi1: csi@1cb4000 {
-> +	compatible = "allwinner,sun8i-v3s-csi";
-> +	reg = <0x01cb4000 0x1000>;
-> +	interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
-> +	clocks = <&ccu CLK_BUS_CSI>,
-> +		 <&ccu CLK_CSI1_SCLK>,
-> +		 <&ccu CLK_DRAM_CSI>;
-> +	clock-names = "bus", "mod", "ram";
-> +	resets = <&ccu RST_BUS_CSI>;
-> +
-> +	port {
-> +		/* Parallel bus endpoint */
-> +		csi1_ep: endpoint {
-> +			remote-endpoint = <&adv7611_ep>;
-> +			bus-width = <16>;
-> +
-> +			/* If hsync-active/vsync-active are missing,
-> +			   embedded BT.656 sync is used */
-> +			hsync-active = <0>; /* Active low */
-> +			vsync-active = <0>; /* Active low */
-> +			pclk-sample = <1>;  /* Rising */
-> +		};
-> +	};
-> +};
-
-
--- 
-Regards,
-
-Laurent Pinchart
-
-
+> ---end quoted text---
 
