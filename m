@@ -2,145 +2,95 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B8CC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 07:04:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D8D3C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 07:06:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 250F92075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 07:04:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 250F92075D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 5071D2075D
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 07:06:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gGVo453w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5071D2075D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727203AbeJ3P5C (ORCPT
+        id S1727244AbeJ3P6S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 11:57:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:56814 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726222AbeJ3P5B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 11:57:01 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1B153AF04;
-        Tue, 30 Oct 2018 07:04:44 +0000 (UTC)
-Subject: Re: [PATCH] xen-blkfront: fix kernel panic with negotiate_mq error
- path
-To:     Manjunath Patil <manjunath.b.patil@oracle.com>,
-        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
-        roger.pau@citrix.com
-Cc:     axboe@kernel.dk, xen-devel@lists.xenproject.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1540837916-14356-1-git-send-email-manjunath.b.patil@oracle.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <65b5d648-d9dc-9248-751c-b6e15109b52e@suse.com>
-Date:   Tue, 30 Oct 2018 08:04:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 30 Oct 2018 11:58:18 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:52294 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726154AbeJ3P6R (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 11:58:17 -0400
+Received: by mail-it1-f193.google.com with SMTP id r5-v6so10578426ith.2
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 00:06:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DI7Os5ztz1YkuX9GcHkyfoOe0ZK7Ez27MR+mHaIdmiA=;
+        b=gGVo453w0KKQL4OXpx6TFohPGyQblkcXQcCLkUNQlCHjT3yzciNz/54RNh8EpVp9rg
+         Y7neW3lRrWNu/qn8WZUAEjWzNdqY5gGkhgvZUtWrS4+dMSfkbr34oCM+dst1nClZYoo6
+         7DrtptuBMCsiaBniFb8sdJblnqpH1hCrTc4JYlWUpPFCGupeJoIEu/bJ/PPX0XvCxucT
+         y7FyqLmerN4ioAEXHZzec7hEgyJkKbiJksdIoJWOsUm3tRDSPYEWR82c1rHhFg+u0PSM
+         kIGd/akRywKFQiLcb4Ptj3ku/Ntkp3aoIrvOAYzxgsZn9obeKm/f3GkZPr/+zS/rqNOg
+         FIQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DI7Os5ztz1YkuX9GcHkyfoOe0ZK7Ez27MR+mHaIdmiA=;
+        b=UJoMkqh/+gaxM1Ot9QHW9BKSHoJgy90rz5jJIwumSe0wNLL6QokG+vbLYCM6NKZ45H
+         nnBSnhVv9wbACn6cqGUFHERs3lcPtvxWcI69rh6iWEWTu+ZlljHm8ikIr6tsBoS3U0PR
+         IRBOaT3N9hVi/x7DfiYe6I15ZJgIQsqERQ/OHVqZZR8hLumOwivwvU8Q2dlZ1wSa5dqa
+         LYI+LVD2IpXXAowfTtJIJ/biL6KMeJsRXaS/GhP+KMbo/v5v3Rib6wk1UfepbNuhsjNb
+         GdtRWX1zXiS3Noeyn+GbMonL/B0SbSN9lnuAzmVMZZV16XVSvc6RcApgZ4hstzVs/rHr
+         KHtg==
+X-Gm-Message-State: AGRZ1gKeL47XH5HpvD+f4zxB320L3Y0jCWmPjs9Do0J6XPx72IcEi4Ey
+        6gMyrOif6cpm2i6rVbpooJ+EKVLKAM8/IJ0y+0scV1692Ms4hw==
+X-Google-Smtp-Source: AJdET5efpzfZE/ulkWBtwXS6LOWJX0Q6mUhNNEDIqDFnup3zS8w6UOxAx7jmlrgQD2l+930f4AneS+SJi9oWPoI2mZw=
+X-Received: by 2002:a24:7406:: with SMTP id o6-v6mr291362itc.81.1540883161077;
+ Tue, 30 Oct 2018 00:06:01 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1540837916-14356-1-git-send-email-manjunath.b.patil@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+References: <1540881776.20660.9.camel@abdul.in.ibm.com>
+In-Reply-To: <1540881776.20660.9.camel@abdul.in.ibm.com>
+From:   Eric Dumazet <edumazet@google.com>
+Date:   Tue, 30 Oct 2018 00:05:49 -0700
+Message-ID: <CANn89iJGgCMYRp7h=h+g=o+P9VA+8U+NxFhXP70B_PSG_mp7OQ@mail.gmail.com>
+Subject: Re: [mainline][bisected 55469b][ppc] build error at drivers/net/ethernet/mellanox/mlx4/en_rx.c
+To:     abdhalee@linux.vnet.ibm.com
+Cc:     linuxppc-dev@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        sachinp@linux.vnet.ibm.com, manvanth@linux.vnet.ibm.com,
+        aneesh.kumar@linux.vnet.ibm.com, brking@linux.vnet.ibm.com,
+        netdev <netdev@vger.kernel.org>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        linux-rdma <linux-rdma@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/10/2018 19:31, Manjunath Patil wrote:
-> info->nr_rings isn't adjusted in case of ENOMEM error from
-> negotiate_mq(). This leads to kernel panic in error path.
-> 
-> Typical call stack involving panic -
->  #8 page_fault at ffffffff8175936f
->     [exception RIP: blkif_free_ring+33]
->     RIP: ffffffffa0149491  RSP: ffff8804f7673c08  RFLAGS: 00010292
->  ...
->  #9 blkif_free at ffffffffa0149aaa [xen_blkfront]
->  #10 talk_to_blkback at ffffffffa014c8cd [xen_blkfront]
->  #11 blkback_changed at ffffffffa014ea8b [xen_blkfront]
->  #12 xenbus_otherend_changed at ffffffff81424670
->  #13 backend_changed at ffffffff81426dc3
->  #14 xenwatch_thread at ffffffff81422f29
->  #15 kthread at ffffffff810abe6a
->  #16 ret_from_fork at ffffffff81754078
-> 
-> Though either of my changes avoid the panic, I included both the
-> changes. This issue got introduced with "7ed8ce1 xen-blkfront: move
-> negotiate_mq to cover all cases of new VBDs"
+On Mon, Oct 29, 2018 at 11:43 PM Abdul Haleem
+<abdhalee@linux.vnet.ibm.com> wrote:
+>
+> Greeting's
+>
+> mainline build fails on my powerpc with commit 55469b : drivers: net:
+> remove <net/busy_poll.h> inclusion when not needed
+>
+> Machine type: PowerPC power 8 bare-metal
+> kernel : 4.19.0
+> gcc :  4.8.5
+> config attached
+>
 
-Please us the correct format for specifying another commit.
+Thanks for the report, but this patch is not in 4.19 kernel ? It is
+scheduled for 4.20 only.
 
-> Signed-off-by: Manjunath Patil <manjunath.b.patil@oracle.com>
-
-Can you please add a "Fixes:" tag and "Cc: stable@vger.kernel.org" ?
-
-> ---
->  drivers/block/xen-blkfront.c |    7 +++++--
->  1 files changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
-> index 429d201..dc8fe25 100644
-> --- a/drivers/block/xen-blkfront.c
-> +++ b/drivers/block/xen-blkfront.c
-> @@ -1350,8 +1350,10 @@ static void blkif_free(struct blkfront_info *info, int suspend)
->  	if (info->rq)
->  		blk_mq_stop_hw_queues(info->rq);
->  
-> -	for (i = 0; i < info->nr_rings; i++)
-> -		blkif_free_ring(&info->rinfo[i]);
-> +	if (info->rinfo) {
-> +		for (i = 0; i < info->nr_rings; i++)
-> +			blkif_free_ring(&info->rinfo[i]);
-> +	}
-
-I'd drop this change.
-
->  
->  	kfree(info->rinfo);
->  	info->rinfo = NULL;
-> @@ -1919,6 +1921,7 @@ static int negotiate_mq(struct blkfront_info *info)
->  			      GFP_KERNEL);
->  	if (!info->rinfo) {
->  		xenbus_dev_fatal(info->xbdev, -ENOMEM, "allocating ring_info structure");
-> +		info->nr_rings = 0;
->  		return -ENOMEM;
->  	}
-
-
-Juergen
-
+Anyway, mlx4 needs to include  <net/ip.h> directly, instead of
+assuming it is indirectly included by another file.
