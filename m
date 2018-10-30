@@ -2,128 +2,178 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77219C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:50:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A9AC6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:50:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C2BA20827
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:50:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C2BA20827
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id BD7BA20827
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:50:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lPIafA8S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD7BA20827
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728006AbeJ3WoD (ORCPT
+        id S1728144AbeJ3WoU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 18:44:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59218 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726925AbeJ3WoD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 18:44:03 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DFC39ACA9;
-        Tue, 30 Oct 2018 13:50:27 +0000 (UTC)
-Subject: Re: x86/paravirt: Use a single ops structure
-To:     Marc Dionne <marc.dionne@auristor.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <git-mailbomb-linux-master-5c83511bdb9832c86be20fb86b783356e2f58062@kernel.org>
- <CAB9dFdtLHkpZqrmNEuMfPdOmZm32q5SXYx1zMexSd94rt3KyDw@mail.gmail.com>
- <d8d4b1bd-2b80-ae4c-18f3-3d2957409500@suse.com>
- <CAB9dFdtw1_YuBXUY3Rb74WisR1iipZK+Sm60pD4cvcrYvbZb6w@mail.gmail.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
- ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
- dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
- NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
- XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
- AAHNHkp1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmRlPsLAeQQTAQIAIwUCU4xw6wIbAwcL
- CQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJELDendYovxMvi4UH/Ri+OXlObzqMANruTd4N
- zmVBAZgx1VW6jLc8JZjQuJPSsd/a+bNr3BZeLV6lu4Pf1Yl2Log129EX1KWYiFFvPbIiq5M5
- kOXTO8Eas4CaScCvAZ9jCMQCgK3pFqYgirwTgfwnPtxFxO/F3ZcS8jovza5khkSKL9JGq8Nk
- czDTruQ/oy0WUHdUr9uwEfiD9yPFOGqp4S6cISuzBMvaAiC5YGdUGXuPZKXLpnGSjkZswUzY
- d9BVSitRL5ldsQCg6GhDoEAeIhUC4SQnT9SOWkoDOSFRXZ+7+WIBGLiWMd+yKDdRG5RyP/8f
- 3tgGiB6cyuYfPDRGsELGjUaTUq3H2xZgIPfOwE0EU4xwFgEIAMsx+gDjgzAY4H1hPVXgoLK8
- B93sTQFN9oC6tsb46VpxyLPfJ3T1A6Z6MVkLoCejKTJ3K9MUsBZhxIJ0hIyvzwI6aYJsnOew
- cCiCN7FeKJ/oA1RSUemPGUcIJwQuZlTOiY0OcQ5PFkV5YxMUX1F/aTYXROXgTmSaw0aC1Jpo
- w7Ss1mg4SIP/tR88/d1+HwkJDVW1RSxC1PWzGizwRv8eauImGdpNnseneO2BNWRXTJumAWDD
- pYxpGSsGHXuZXTPZqOOZpsHtInFyi5KRHSFyk2Xigzvh3b9WqhbgHHHE4PUVw0I5sIQt8hJq
- 5nH5dPqz4ITtCL9zjiJsExHuHKN3NZsAEQEAAcLAXwQYAQIACQUCU4xwFgIbDAAKCRCw3p3W
- KL8TL0P4B/9YWver5uD/y/m0KScK2f3Z3mXJhME23vGBbMNlfwbr+meDMrJZ950CuWWnQ+d+
- Ahe0w1X7e3wuLVODzjcReQ/v7b4JD3wwHxe+88tgB9byc0NXzlPJWBaWV01yB2/uefVKryAf
- AHYEd0gCRhx7eESgNBe3+YqWAQawunMlycsqKa09dBDL1PFRosF708ic9346GLHRc6Vj5SRA
- UTHnQqLetIOXZm3a2eQ1gpQK9MmruO86Vo93p39bS1mqnLLspVrL4rhoyhsOyh0Hd28QCzpJ
- wKeHTd0MAWAirmewHXWPco8p1Wg+V+5xfZzuQY0f4tQxvOpXpt4gQ1817GQ5/Ed/wsDtBBgB
- CAAgFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAlrd8NACGwIAgQkQsN6d1ii/Ey92IAQZFggA
- HRYhBFMtsHpB9jjzHji4HoBcYbtP2GO+BQJa3fDQAAoJEIBcYbtP2GO+TYsA/30H/0V6cr/W
- V+J/FCayg6uNtm3MJLo4rE+o4sdpjjsGAQCooqffpgA+luTT13YZNV62hAnCLKXH9n3+ZAgJ
- RtAyDWk1B/0SMDVs1wxufMkKC3Q/1D3BYIvBlrTVKdBYXPxngcRoqV2J77lscEvkLNUGsu/z
- W2pf7+P3mWWlrPMJdlbax00vevyBeqtqNKjHstHatgMZ2W0CFC4hJ3YEetuRBURYPiGzuJXU
- pAd7a7BdsqWC4o+GTm5tnGrCyD+4gfDSpkOT53S/GNO07YkPkm/8J4OBoFfgSaCnQ1izwgJQ
- jIpcG2fPCI2/hxf2oqXPYbKr1v4Z1wthmoyUgGN0LPTIm+B5vdY82wI5qe9uN6UOGyTH2B3p
- hRQUWqCwu2sqkI3LLbTdrnyDZaixT2T0f4tyF5Lfs+Ha8xVMhIyzNb1byDI5FKCb
-Message-ID: <995fc335-47f5-6884-eaee-283ad81e28b7@suse.com>
-Date:   Tue, 30 Oct 2018 14:50:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 30 Oct 2018 18:44:20 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:38674 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727977AbeJ3WoT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 18:44:19 -0400
+Received: by mail-io1-f66.google.com with SMTP id q18-v6so7269736iod.5;
+        Tue, 30 Oct 2018 06:50:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version:references
+         :in-reply-to:content-transfer-encoding;
+        bh=AEGxIEJmeOgPgVc1e6OlXilnPSW3o+iTHbd+Ub79nhs=;
+        b=lPIafA8SuXvlYCGYa+fkZwUuyXCPFhXoxDfvzViVSlQRr6JcsPFxwTwleIf/J6ZUZ5
+         y9Die1D+yvF3zFjIYMp9WnEAuAovNzOv04cReRIubEdJRcSMGNjpYemtoyTSVobKQvm3
+         3IXvP1wJG+2YsxoXH1Gk33y6/H3ibynmbKejtec5KBVDq2R1Hp29s/4/iXxhAjWh5zxH
+         dUC6lVJv9QuJ31osVlkOhyyheOVmK3Re92mDaW4KnXWaJBkqPkt7wODvie9bFK/Nwvt/
+         /54j+vY4A/2WRHUJBOf2YpU9bBvoSfU/iGemv44IHx3IljkpnGgxcAaSpevqF/PGkewm
+         /3+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :references:in-reply-to:content-transfer-encoding;
+        bh=AEGxIEJmeOgPgVc1e6OlXilnPSW3o+iTHbd+Ub79nhs=;
+        b=pGgPX5prozsOnemgaP7G2R2Vhr69Eid+GmAuRBvior7shdDU+S0JcU2YxNHBFDMwbS
+         2Cex/2YNz1PBjGnp/s0VndD8GRLt/rIpb6x7CMU82Na7dt9L4x3BHUujP4bR2m4dvXBc
+         XW54dxeYga/rv3vJeEWxwO3ttAEKhX56x/nDphuXADyjXxClrOmM5S+t/7ON1YeMqnlN
+         wuXg9e05/l2ugXkCAvksuPzn7fhymQ35uKcl4llZ1llikzAoEf5EZKGaEUrJL9b6PUgI
+         Uq9j2cFRoA3xxeY7yLEw0b75kgQlNlY8W/CR245GkTZtcWWB00iTLB73D8iJf0PgqmnH
+         OiQg==
+X-Gm-Message-State: AGRZ1gKpyjDpK875rW+DNnczEQySM5HLLj18NtgiBZY1gE8AEEo3ZBPS
+        sZfy/mTVTKVGLTR0umW9NYU=
+X-Google-Smtp-Source: AJdET5eMZgL1x0ydWC2dPLH45yQLnukTIVo5x/d3cKcOla7EwIfWWeGU/RoCad5e6z+t7zDBwgte0A==
+X-Received: by 2002:a6b:6407:: with SMTP id t7-v6mr5040057iog.213.1540907444891;
+        Tue, 30 Oct 2018 06:50:44 -0700 (PDT)
+Received: from svens-asus.arcx.com ([184.94.50.30])
+        by smtp.gmail.com with ESMTPSA id n1sm526206itk.22.2018.10.30.06.50.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 06:50:44 -0700 (PDT)
+From:   thesven73@gmail.com
+X-Google-Original-From: TheSven73@googlemail.com
+To:     svendev@arcx.com, lee.jones@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, afaerber@suse.de, treding@nvidia.com,
+        david@lechnology.com, noralf@tronnes.org, johan@kernel.org,
+        monstr@monstr.eu, michal.vokac@ysoft.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org, john.garry@huawei.com,
+        geert+renesas@glider.be, robin.murphy@arm.com,
+        paul.gortmaker@windriver.com,
+        sebastien.bourdelin@savoirfairelinux.com, icenowy@aosc.io,
+        stuyoder@gmail.com, linus.walleij@linaro.org,
+        maxime.ripard@bootlin.com
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH anybus v1 3/4] bus: support HMS Anybus-S bus.
+Date:   Tue, 30 Oct 2018 09:50:41 -0400
+Message-Id: <20181030135041.5593-1-TheSven73@googlemail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <CAB9dFdtw1_YuBXUY3Rb74WisR1iipZK+Sm60pD4cvcrYvbZb6w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+References: <CACRpkdYVN-s7shQmPkRjB9sxwi32TiKhmd_vKU+Jm--vGy2dSA@mail.gmail.com>
+In-Reply-To: <CACRpkdYVN-s7shQmPkRjB9sxwi32TiKhmd_vKU+Jm--vGy2dSA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30/10/2018 14:33, Marc Dionne wrote:
-> On Mon, Oct 29, 2018 at 11:25 AM Juergen Gross <jgross@suse.com> wrote:
->>
->> On 29/10/2018 13:58, Marc Dionne wrote:
->>> On Tue, Oct 23, 2018 at 2:37 PM Linux Kernel Mailing List
->>> <linux-kernel@vger.kernel.org> wrote:
->>>>
->>>> Commit:     5c83511bdb9832c86be20fb86b783356e2f58062
->>>> Parent:     27876f3882fdd4acb3d3614a0133ecdc777fc292
->>>> Refname:    refs/heads/master
->>>> Web:        https://git.kernel.org/torvalds/c/5c83511bdb9832c86be20fb86b783356e2f58062
->>>> Author:     Juergen Gross <jgross@suse.com>
->>>> AuthorDate: Tue Aug 28 09:40:19 2018 +0200
->>>> Committer:  Thomas Gleixner <tglx@linutronix.de>
->>>> CommitDate: Mon Sep 3 16:50:35 2018 +0200
->>>>
->>>>     x86/paravirt: Use a single ops structure
->>>>
->>>>     Instead of using six globally visible paravirt ops structures combine
->>>>     them in a single structure, keeping the original structures as
->>>>     sub-structures.
->>>>
->>>>     This avoids the need to assemble struct paravirt_patch_template at
->>>>     runtime on the stack each time apply_paravirt() is being called (i.e.
->>>>     when loading a module).
->>>
->>> The above commit replaces pv_lock_ops, which was EXPORT_SYMBOL, with
->>> something that is part of pv_ops, which is EXPORT_SYMBOL_GPL.    When
->>> CONFIG_PARAVIRT_SPINLOCKS is set, this has the side effect of making
->>> spin_lock() unusable by out of tree modules, which will likely be an
->>> issue for many, if not most of them.
->>
->> Thanks for noticing!
->>
->> Sending a patch soon...
->>
->>
->> Juergen
+>> struct anybus_s_host *cd = data;
+>> drivers/bus/anybus-s-host.c
+>> include/linux/anybus-s-client.h
+>
+> Hm I think this looks pretty neat actually. Anyways, in the overall
+> architecture explain the three Anybus:es and why things pertaining
+> to Anybus-s are named as they are.
+
+Ok, so should I rename anybuss -> anybus[_|-]s ?
+Or maybe wait until a future patch iteration?
+
+> OK but you also have an atomic_set() going on and the struct completion
+> already contains a waitqueue and I start to worry about overuse of
+> primitives here. How does ps aux look on your system when running this?
+
+ps -aux only lists a single kernel thread associated with this driver,
+no other theads, as it should:
+
+$ ps
+...
+   78 root     [anybuss-host.0.]
+...
+
+> It's just that when you do things like this:
 > 
-> Thanks for the quick patch.  Does this also need fixing for arm/arm64?
-> I can't easily verify but it seems like it would have the same issue.
+>    complete(&cd->card_boot);
+>    wake_up(&cd->wq);
+>
+> I start asking: OK so why is that waitqueue not woken up from
+> wherever you are doing wait_for_completion()? I hope it is not
+> because you are waiting for the completion in the very same
+> waitqueue. That would be really messy.
 
-pv_lock_ops was x86 only.
+The two primitives are there because the irq handler is dual purpose, and that
+is because the interrupt is dual purpose:
+- complete card boot while in the initialization stage
+- tell the driver that something has happened while running
 
+You may have a point about the atomic_set(). I'll think about why it's there,
+and move it out if unnecessary. Or document why we need it there.
 
-Juergen
+> Nah one irq handler is fine, but you can have an optional
+> bottom half:
+>
+> request_threaded_irq(irq, fastpath, slowpath...):
+
+I don't think any of these abstractions fit :(
+Let's wait for the v2 patch with the architecture doc, and you will see why I
+believe that's the case. We can then take the discussion from there.
+
+> OK I honestly don't know what is the best way. But what about
+> calling that "task" a "state" instead so we know what is going
+> on (i.e. you are switching between different states in process
+> context).
+
+Let's wait for the architecture docs in the v2 patch.
+
+> Silly question but why does userspace need to know about
+> this software interrupt? Can't you just hide that?
+> Userspace ABIs should be minimal.
+
+I agree, but in this case the "s/w interrupt" indicates to the user that
+someone on the network changed the contents of the card's internal memory.
+
+A client application using this driver will typically sit in a loop, running
+poll()/select() on this driver's devnode, waking up when someone modifies
+the internal memory.
+
+Example, imagine the card's internal memory is 10 bytes in size.
+The internal memory is exposed over the network, and anyone may read
+or change it.
+
+|T.h.e. .Q.u.i.c.k]	original contents
+				read("/dev/profinet0", 10) => "The Quick"
+				poll("/dev/profinet0", PRI|ERR) blocks
+|T.h.X. .Q.u.i.c.k]	someone on the network changed position 2, interrupt !
+				poll("/dev/profinet0", PRI|ERR) releases
+				read("/dev/profinet0", 10) => "ThX Quick"	
+
+Perhaps there is a better / clearer abstraction to accomplish this?
+
+>> Wait... are you talking about
+>> reset_controller_add_lookup() / devm_reset_control_get_exclusive() ?
+>> That's new to me, and only used in a single driver right now. Would that work?
+>
+> Yeah I think so.
+
+Good ! I'll put that mechanism in v2, which should be ready soon.
+
+Yours,
+Sven
