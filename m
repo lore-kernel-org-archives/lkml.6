@@ -2,201 +2,108 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 583CCC6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:05:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73B0FC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:05:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 170A92081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:05:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38EE020870
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:05:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="i3fORnA4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 170A92081B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="l3wptRdK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38EE020870
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727825AbeJaA7O (ORCPT
+        id S1727659AbeJaA74 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 20:59:14 -0400
-Received: from mail-it1-f194.google.com ([209.85.166.194]:37645 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727231AbeJaA7N (ORCPT
+        Tue, 30 Oct 2018 20:59:56 -0400
+Received: from us01smtprelay-2.synopsys.com ([198.182.47.9]:35030 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726532AbeJaA7z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 20:59:13 -0400
-Received: by mail-it1-f194.google.com with SMTP id e74-v6so14328277ita.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 09:05:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=NPVWYEJRQQKNVCb5tkmbpUkncCOOz9lvepIVk2pGNqo=;
-        b=i3fORnA4nVEeeq5wjOfbNOb2RcYwRihBBEzQPKfw64OQabZY/zDgOvbAk4EsYHrgBC
-         ZYlm4YxX+7fJrx0HG7TqZNKLnBd1AQX420WbrSP+Oeh8wfRn2XBM73Po91PyvD3+dMXI
-         m+gu0aowYY+Foz/JQbQN1jfWecHPLr6DJNU/A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=NPVWYEJRQQKNVCb5tkmbpUkncCOOz9lvepIVk2pGNqo=;
-        b=ploztvtRBMSNNsheT/6I2eaNx4mptUjSGdaZG64UGJijtoZ5FbjN1I6OLtxA4QJMdk
-         t3kVp1edteY0n9AQnWyIJzz64KgS0HNV3k2QwTxVRvWEHfYzj+mhi8kcse5ECx3xzE6J
-         t/0069PJNnHLOBV5EW6JzfLOe2yhj/lh4aQb5qwkslrhRR5WTQYAp5M2pt9GUNJPzjEM
-         JHMDn7/DgLMRWTcZ/uOAy7nzzsbkr9VNSEGoKcVq0/H9NCFrgpOm1+qzSw0l1oU0qRpJ
-         Mcg1R4muiNJE2xvLCHBT9eQDTdcNUU/DRTclx695KbL/lWizChUvLaHoQlABJp9MmetU
-         cxlA==
-X-Gm-Message-State: AGRZ1gLbNCcBy1KuAX0SNTaQDEtrDcSPObHqz9RsTmcyys36CmiMZloD
-        C+Sh3xQQjqol3SXqu0tt/JxvS/Ze8VeRxngJl+UzNA==
-X-Google-Smtp-Source: AJdET5d2R51CV518ziAaIqXvpXERz795a/FDPPeV2vzjYBaJCkfyXwBTZVEJb2lLljXjqudOosnY6OdrGJAS7VHvCxA=
-X-Received: by 2002:a02:2b29:: with SMTP id h41-v6mr13267565jaa.12.1540915509326;
- Tue, 30 Oct 2018 09:05:09 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a02:38d:0:0:0:0:0 with HTTP; Tue, 30 Oct 2018 09:04:28 -0700 (PDT)
-In-Reply-To: <3881A95A-CDDE-4C69-859F-C1F92F0C5724@canonical.com>
-References: <20181024084958.4627-1-kai.heng.feng@canonical.com>
- <20181024084958.4627-3-kai.heng.feng@canonical.com> <CAPDyKFrtQeDUK0Dxu9Z3-eyyMbChHHb2He1AFq2My_7-cTY2FA@mail.gmail.com>
- <E8BC3191-E48C-423C-B704-929F7FAC4930@canonical.com> <CAPDyKFrNBH5jrfF9M_BcTr9JfzAxj0doaQU7V4o5sJRp1=7P4w@mail.gmail.com>
- <3881A95A-CDDE-4C69-859F-C1F92F0C5724@canonical.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 30 Oct 2018 17:04:28 +0100
-Message-ID: <CAPDyKFqQiT=mSw3yo_0nx0mpXCWC0tggxvWYMtEqatB-U=b9yQ@mail.gmail.com>
-Subject: Re: [PATCH 2/4 v5] memstick: Prevent memstick host from getting
- runtime suspended during card detection
-To:     Kai Heng Feng <kai.heng.feng@canonical.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Linux USB List <linux-usb@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 30 Oct 2018 20:59:55 -0400
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id C3F7C24E1056;
+        Tue, 30 Oct 2018 09:05:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1540915551; bh=CHCKeUD2lFBeui0FSrELj4dT6AT5144glo5YAxnhHwA=;
+        h=From:To:CC:Subject:Date:References:From;
+        b=l3wptRdKoo242r2DjT1aMZtTrOuXf/4yVrF8lwQmgXqx/YPy8IJiFnKZr+FR0oR5A
+         75DTKQHcEOdmjsliDUtWqT2yj710sZlBEQ1FvYuof+ueRcPATYQGEkVuUruRRoMlqt
+         2AF9C3i4fynIHaXR3wadRUS4DgHdvqgPlZj2Hugp/5ByX035r02q/vZr8dYxxLi3FX
+         uwci68HM4BVyk0sI7uWUehNkbICxhuS8Fp+17yCsYyI3m05TgKX+QI+26hRS3mOKZp
+         fe5aRUH9tMNSbqGNuNFyyCoPRWxvNydtJUd5hIylkxQPsFRMTzn3P5Fiv4HwXHX4tD
+         U6+vwnz5+UsEg==
+Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2-vip.internal.synopsys.com [10.12.239.238])
+        by mailhost.synopsys.com (Postfix) with ESMTP id B2AFD5A3F;
+        Tue, 30 Oct 2018 09:05:51 -0700 (PDT)
+Received: from us01wembx1.internal.synopsys.com ([169.254.1.228]) by
+ US01WEHTC2.internal.synopsys.com ([10.12.239.237]) with mapi id
+ 14.03.0415.000; Tue, 30 Oct 2018 09:05:51 -0700
+From:   Vineet Gupta <vineet.gupta1@synopsys.com>
+To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        "linux-snps-arc@lists.infradead.org" 
+        <linux-snps-arc@lists.infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Alexey Brodkin" <alexey.brodkin@synopsys.com>
+Subject: Re: [PATCH v2] ARC: IOC: panic if kernel was started with
+ previously enabled IOC
+Thread-Topic: [PATCH v2] ARC: IOC: panic if kernel was started with
+ previously enabled IOC
+Thread-Index: AQHUcC4rsYY5HtVEO0ekS8lnQMQtuw==
+Date:   Tue, 30 Oct 2018 16:05:51 +0000
+Message-ID: <C2D7FE5348E1B147BCA15975FBA23075013A5892D6@us01wembx1.internal.synopsys.com>
+References: <20181030085421.7657-1-Eugeniy.Paltsev@synopsys.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.144.199.106]
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 30 October 2018 at 16:23, Kai Heng Feng <kai.heng.feng@canonical.com> wr=
-ote:
->
->
->> On Oct 30, 2018, at 21:03, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->>
->> On 29 October 2018 at 17:31, Kai Heng Feng <kai.heng.feng@canonical.com>=
- wrote:
->>>
->>>
->>>> On Oct 29, 2018, at 20:25, Ulf Hansson <ulf.hansson@linaro.org> wrote:
->>>>
->>>> On 24 October 2018 at 10:49, Kai-Heng Feng <kai.heng.feng@canonical.co=
-m> wrote:
->>>>> We can use MEMSTICK_POWER_{ON,OFF} along with pm_runtime_{get,put}
->>>>> helpers to let memstick host support runtime pm.
->>>>>
->>>>> There's a small window between memstick_detect_change() and its queue=
-d
->>>>> work, memstick_check(). In this window the rpm count may go down to z=
-ero
->>>>> before the memstick host powers on, so the host can be inadvertently
->>>>> suspended.
->>>>>
->>>>> Increment rpm count before calling memstick_check(), and decrement rp=
-m
->>>>> count afterward, as now we are sure the memstick host should be
->>>>> suspended or not.
->>>>>
->>>>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
->>>>> ---
->>>>> drivers/memstick/core/memstick.c | 4 ++++
->>>>> 1 file changed, 4 insertions(+)
->>>>>
->>>>> diff --git a/drivers/memstick/core/memstick.c b/drivers/memstick/core=
-/memstick.c
->>>>> index 76382c858c35..5f16a8826401 100644
->>>>> --- a/drivers/memstick/core/memstick.c
->>>>> +++ b/drivers/memstick/core/memstick.c
->>>>> @@ -18,6 +18,7 @@
->>>>> #include <linux/delay.h>
->>>>> #include <linux/slab.h>
->>>>> #include <linux/module.h>
->>>>> +#include <linux/pm_runtime.h>
->>>>>
->>>>> #define DRIVER_NAME "memstick"
->>>>>
->>>>> @@ -209,6 +210,7 @@ static int memstick_dummy_check(struct memstick_d=
-ev *card)
->>>>> */
->>>>> void memstick_detect_change(struct memstick_host *host)
->>>>> {
->>>>> +       pm_runtime_get_noresume(host->dev.parent);
->>>>>       queue_work(workqueue, &host->media_checker);
->>>>> }
->>>>> EXPORT_SYMBOL(memstick_detect_change);
->>>>> @@ -479,6 +481,8 @@ static void memstick_check(struct work_struct *wo=
-rk)
->>>>>               host->set_param(host, MEMSTICK_POWER, MEMSTICK_POWER_OF=
-F);
->>>>>
->>>>>       mutex_unlock(&host->lock);
->>>>> +
->>>>> +       pm_runtime_put(host->dev.parent);
->>>>>       dev_dbg(&host->dev, "memstick_check finished\n");
->>>>> }
->>>>>
->>>>
->>>> I am not sure this works, sorry.
->>>>
->>>> More precisely, I don't think there is a guarantee that the calls to
->>>> pm_runtime_get|put*() becomes properly balanced. In principle
->>>> memstick_detect_change() could be called, without actually causing a
->>>> new work to be scheduled if there is already such a work in the queue
->>>> (depends on the workqueue configuration). Isn't it so?
->>>
->>> You are right.
->>>
->>> We can use test_and_set_bit() or alike to properly balance pm_runtime
->>> helpers, but the most straightforward solution in my mind is to merge
->>> memstick_detect_change() and memstick_check() as one function.
->>>
->>> memstick_detect_change() it=E2=80=99s the only user of memstick_check()=
- anyway.
->>
->> I suspect memstick_detect_change() is supposed to be called by host
->> drivers, when they receive some kind of notification due to a card
->> being inserted or removed. I guess that happen (at least
->> hypothetically) also from atomic (IRQ) context.
->>
->> As memstick_check() is doing hole bunch of operations, I am not sure
->> bypassing the work-queue is a good idea, if that is what you are
->> proposing.
->
-> Okay, it=E2=80=99s better to keep it that way.
->
->>
->>>
->>> Or is there a better way in your mind?
->>
->> I don't know.
->>
->> Well, I am not sure I understand why you need to call
->> pm_runtime_get_noresume() from memstick_detect_change() in the first
->> place. Could you explain that in more detail?
->
-> I guess it didn=E2=80=99t explain it well enough in the log, let me add s=
-ome detail:
-> There's a small window between memstick_detect_change() and its queued
-> work, memstick_check(). In this window the rpm count may go down to zero
-> before the memstick host powers on, where I use
-> pm_runtime_get_noresume() to increment the rpm count.
->
-> memstick_check() uses some functions in rtsx_usb_ms that have
-> pm_runtime_put*() so the rpm count may go down to zero, before the
-> memstick host powers on.
-
-So then, why doesn't memstick_check() early on calls
-pm_runtime_get_sync() and when it has finished with probing for a
-card, balance that with a call pm_runtime_put()?
-
-Kind regards
-Uffe
+On 10/30/18 1:54 AM, Eugeniy Paltsev wrote:=0A=
+> If IOC was already enabled (due to bootloader) it technically needs to=0A=
+> be reconfigured with aperture base,size corresponding to Linux memory=0A=
+> map which will certainly be different than uboot's. But disabling and=0A=
+> reenabling IOC when DMA might be potentially active is tricky business.=
+=0A=
+> To avoid random memory issues later, just panic here and ask user to=0A=
+> upgrade bootloader to one which doesn't enable IOC.=0A=
+>=0A=
+> This was actually seen as issue on some of the HSDK board with a version=
+=0A=
+> of uboot which enabled IOC. There were random issues later with starting=
+=0A=
+> of X or peripherals etc.=0A=
+>=0A=
+> Also while I'm at it, replace hardcoded bits in ARC_REG_IO_COH_PARTIAL=0A=
+> and ARC_REG_IO_COH_ENABLE registers by definitions.=0A=
+>=0A=
+> Inspired by: https://lkml.org/lkml/2018/1/19/557=0A=
+> Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>=0A=
+> ---=0A=
+> Changes v1->v2:=0A=
+>  * Fix regression: check for IOC existence before accessing to any IOC=0A=
+>    register.=0A=
+>=0A=
+...=0A=
+...=0A=
+>  		arc_slc_disable();=0A=
+>  =0A=
+> -	if (is_isa_arcv2() && ioc_enable)=0A=
+> +	if (is_isa_arcv2() && ioc_exists)=0A=
+>  		arc_ioc_setup();=0A=
+=0A=
+Folded this hunk into existing patch in for-curr.=0A=
+=0A=
+Thx,=0A=
+-Vineet=0A=
