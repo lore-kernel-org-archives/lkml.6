@@ -2,130 +2,160 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE04EC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:44:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DED9CC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:46:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B4182080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:44:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="aECUkXh+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B4182080A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id 9758A2080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 09:46:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9758A2080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726701AbeJ3Sg4 (ORCPT
+        id S1726721AbeJ3SjV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 14:36:56 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38796 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726225AbeJ3Sg4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 14:36:56 -0400
-Received: by mail-ed1-f67.google.com with SMTP id c1-v6so9868205ede.5
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 02:44:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EMI8ijDWJjyJR+8arWfKlS2x1Y3OW9bwd9ZalBi1s1o=;
-        b=aECUkXh+ySpOTYSXOzKPvm4av9rQULlpiJd+mTF4SOLE6+TsI1bl+LbKsyq9GBLMKr
-         cluj1dRxyJLVEHupPM7HGuKYH0ayRci+lJlCpWzCG3cEc20xgU9HOY2VoHVsA9eFcyRb
-         Ws6l6QNpHwQ6VCMWtLRyP2E+pvd5KMoKMtgT4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=EMI8ijDWJjyJR+8arWfKlS2x1Y3OW9bwd9ZalBi1s1o=;
-        b=TpUy1BMjGLPoXRPKgETVQwDnYeW5NPty2Xw7szikHf3VUNvtRtZ+5a4GlmUXGpaUe6
-         VB9Aktnqc0OE9efj0Ny/lAXPqgih3QUJgZE4JJDWk3RGwL4zpZcrFLurj3YkO/agJSFJ
-         CMdIxYvr0as8JyyPPaK7CmO2wTH+dV+wDycqVzE3/dH2Jw6CF5DuUcokopE/g2byNzil
-         n7lAYkHzlyY9xoW6G7Z4x8ZSg0Ab7FMQvXO7HpDT2FZTlOvOP/vyNdycN0KQhSXz2Ict
-         eLeYuEbyC9EOz0LYPyBCIPZsV/eg6rxJUEFIs/AaIF3NFZhJKIoyavGhvIg4ukL+hRUF
-         dt3A==
-X-Gm-Message-State: AGRZ1gLqRvTlLdfueQVoiei348UwWrvquiTrMqii/G6YiLHPrGjPd15N
-        6eqcnT2VuaUEQUedm6v+Ywgglw==
-X-Google-Smtp-Source: AJdET5fI+bO+R+iNqFxecI4WIui7mnNqy5s7tO6664OcjQp32FU/wpVUG46X/IBYi4wsqkmhj8/9TA==
-X-Received: by 2002:a50:90a7:: with SMTP id c36-v6mr15793267eda.31.1540892651496;
-        Tue, 30 Oct 2018 02:44:11 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id t19-v6sm7381286edd.68.2018.10.30.02.44.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 30 Oct 2018 02:44:10 -0700 (PDT)
-Date:   Tue, 30 Oct 2018 10:44:08 +0100
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Jani Nikula <jani.nikula@linux.intel.com>
-Cc:     Daniel Vetter <daniel@ffwll.ch>, Gerd Hoffmann <kraxel@redhat.com>,
-        David Airlie <airlied@linux.ie>,
-        David Airlie <airlied@redhat.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        dri-devel@lists.freedesktop.org,
-        "open list:DRM DRIVER FOR BOCHS VIRTUAL GPU" 
-        <virtualization@lists.linux-foundation.org>
-Subject: Re: [PATCH v3] drm/bochs: add edid support.
-Message-ID: <20181030094408.GR21967@phenom.ffwll.local>
-Mail-Followup-To: Jani Nikula <jani.nikula@linux.intel.com>,
-        Gerd Hoffmann <kraxel@redhat.com>, David Airlie <airlied@linux.ie>,
-        David Airlie <airlied@redhat.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        dri-devel@lists.freedesktop.org,
-        "open list:DRM DRIVER FOR BOCHS VIRTUAL GPU" <virtualization@lists.linux-foundation.org>
-References: <20181029134507.7775-1-kraxel@redhat.com>
- <87in1kejgj.fsf@intel.com>
- <20181029200520.jfnmvbkng2er5qbc@sirius.home.kraxel.org>
- <20181030090632.GJ21967@phenom.ffwll.local>
- <87y3afokav.fsf@intel.com>
+        Tue, 30 Oct 2018 14:39:21 -0400
+Received: from mga01.intel.com ([192.55.52.88]:11381 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726247AbeJ3SjV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 14:39:21 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Oct 2018 02:46:36 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,444,1534834800"; 
+   d="scan'208";a="86699692"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
+  by orsmga006.jf.intel.com with ESMTP; 30 Oct 2018 02:46:33 -0700
+Subject: Re: [PATCH v2] xhci: Add quirk to workaround the errata seen on
+ Cavium Thunder-X2 Soc
+To:     "Cherian, George" <George.Cherian@cavium.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>
+Cc:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "mathias.nyman@intel.com" <mathias.nyman@intel.com>,
+        "stern@rowland.harvard.edu" <stern@rowland.harvard.edu>
+References: <1540832062-22224-1-git-send-email-george.cherian@cavium.com>
+From:   Mathias Nyman <mathias.nyman@linux.intel.com>
+Message-ID: <f0d31ea6-5e2c-35c2-c4ab-746181d6f326@linux.intel.com>
+Date:   Tue, 30 Oct 2018 11:50:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87y3afokav.fsf@intel.com>
-X-Operating-System: Linux phenom 4.18.0-2-amd64 
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1540832062-22224-1-git-send-email-george.cherian@cavium.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 11:28:24AM +0200, Jani Nikula wrote:
-> On Tue, 30 Oct 2018, Daniel Vetter <daniel@ffwll.ch> wrote:
-> > On Mon, Oct 29, 2018 at 09:05:20PM +0100, Gerd Hoffmann wrote:
-> >> On Mon, Oct 29, 2018 at 07:44:28PM +0200, Jani Nikula wrote:
-> >> > On Mon, 29 Oct 2018, Gerd Hoffmann <kraxel@redhat.com> wrote:
-> >> > > Recent qemu (latest master branch, upcoming 3.1 release) got support
-> >> > > for EDID data.  This patch adds guest driver support.
-> >> > >
-> >> > > EDID support in qemu is not (yet) enabled by default, so please use
-> >> > > 'qemu -device VGA,edid=on' for testing.
-> >> > 
-> >> > Any chance of making this use drm_get_edid() (requires an i2c_adapter)
-> >> > or at least drm_do_get_edid()?
-> >> 
-> >> I'll have a look at using drm_do_get_edid().  drm_get_edid() will not
-> >> fly as there is no i2c adapter in the first place.
-> >
-> > Hm, not sure that makes sense. drm_do_get_edid is to handle the real-world
-> > flakiness of sinks (it's where all the retry logic resides), if you don't
-> > have a i2c_adapater (because the hw has some magic "give me an edid"
-> > block). For virtual hw we hopefully don't randomly drop bits on the floor
-> > between the guest and host. Imo totally fine as-is.
-> >
-> > E.g. we also don't feed the VBT edid through drm_do_get_edid either.
+On 29.10.2018 18:54, Cherian, George wrote:
+> Implement workaround for ThunderX2 Errata-129 (documented in
+> CN99XX Known Issues" available at Cavium support site).
+> As per ThunderX2errata-129, USB 2 device may come up as USB 1
+> if a connection to a USB 1 device is followed by another connection to
+> a USB 2 device, the link will come up as USB 1 for the USB 2 device.
 > 
-> But nowadays we do handle the debugfs EDID override and the EDID
-> firmware loading in drm_do_get_edid(), so using that gives you those
-> features.
+> Resolution: Reset the PHY after the USB 1 device is disconnected.
+> The PHY reset sequence is done using private registers in XHCI register
+> space. After the PHY is reset we check for the PLL lock status and retry
+> the operation if it fails. From our tests, retrying 4 times is sufficient.
+> 
+> Add a new quirk flag XHCI_RESET_PLL_ON_DISCONNECT to invoke the workaround
+> in handle_xhci_port_status().
+> 
+> Signed-off-by: George Cherian <george.cherian@cavium.com>
+> ---
+>   drivers/usb/host/xhci-pci.c  |  5 +++++
+>   drivers/usb/host/xhci-ring.c | 35 ++++++++++++++++++++++++++++++++++-
+>   drivers/usb/host/xhci.h      |  1 +
+>   3 files changed, 40 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
+> index 51dd8e0..334c009 100644
+> --- a/drivers/usb/host/xhci-pci.c
+> +++ b/drivers/usb/host/xhci-pci.c
+> @@ -231,6 +231,11 @@ static void xhci_pci_quirks(struct device *dev, struct xhci_hcd *xhci)
+>   	if (pdev->vendor == PCI_VENDOR_ID_TI && pdev->device == 0x8241)
+>   		xhci->quirks |= XHCI_LIMIT_ENDPOINT_INTERVAL_7;
+>   
+> +	if ((pdev->vendor == PCI_VENDOR_ID_BROADCOM ||
+> +	     pdev->vendor == PCI_VENDOR_ID_CAVIUM) &&
+> +	     pdev->device == 0x9026)
+> +		xhci->quirks |= XHCI_RESET_PLL_ON_DISCONNECT;
+> +
+>   	if (xhci->quirks & XHCI_RESET_ON_RESUME)
+>   		xhci_dbg_trace(xhci, trace_xhci_dbg_quirks,
+>   				"QUIRK: Resetting on resume");
+> diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+> index f0a99aa..342dd5ac 100644
+> --- a/drivers/usb/host/xhci-ring.c
+> +++ b/drivers/usb/host/xhci-ring.c
+> @@ -1517,6 +1517,35 @@ static void handle_device_notification(struct xhci_hcd *xhci,
+>   		usb_wakeup_notification(udev->parent, udev->portnum);
+>   }
+>   
+> +/*
+> + * Quirk hanlder for errata seen on Cavium ThunderX2 processor XHCI
+> + * Controller.
+> + * As per ThunderX2errata-129 USB 2 device may come up as USB 1
+> + * If a connection to a USB 1 device is followed by another connection
+> + * to a USB 2 device.
+> + *
+> + * Reset the PHY after the USB device is disconnected if device speed
+> + * is less than HCD_USB3.
+> + * Retry the reset sequence max of 4 times checking the PLL lock status.
+> + *
+> + */
+> +static void xhci_handle_tx2_wrapper_reset(struct xhci_hcd *xhci)
 
-Oh, missed that. Would be good to clarify the kernel doc and mention this
-in e.g. both drm_add_edid_modes() and &drm_connector_helper_funcs.get_modes?
+Maybe rename this to make it more obvious it's about a quirk.
+xhci_cavium_reset_phy_quirk() maybe?
 
-And maybe make it more obvious that drm_do_get_edid is also for virtual
-drivers, atm the kerneldoc talks a lot about DDC and everything hw.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+> +{
+> +	struct usb_hcd *hcd = xhci_to_hcd(xhci);
+> +	u32 pll_lock_check;
+> +	u32 retry_count = 4;
+> +
+> +	do {
+> +		/* Assert PHY reset */
+> +		writel(0x6F, hcd->regs + 0x1048);
+> +		udelay(10);
+> +		/* De-assert the PHY reset */
+> +		writel(0x7F, hcd->regs + 0x1048);
+> +		udelay(200);
+> +		pll_lock_check = readl(hcd->regs + 0x1070);
+> +	} while (!(pll_lock_check & 0x1) && --retry_count);
+> +}
+> +
+>   static void handle_port_status(struct xhci_hcd *xhci,
+>   		union xhci_trb *event)
+>   {
+> @@ -1642,8 +1671,12 @@ static void handle_port_status(struct xhci_hcd *xhci,
+>   		goto cleanup;
+>   	}
+>   
+> -	if (hcd->speed < HCD_USB3)
+> +	if (hcd->speed < HCD_USB3) {
+>   		xhci_test_and_clear_bit(xhci, port, PORT_PLC);
+> +		if ((portsc & PORT_CSC) && !(portsc & 0x1) &&
+> +		    (xhci->quirks & XHCI_RESET_PLL_ON_DISCONNECT))
+> +			xhci_handle_tx2_wrapper_reset(xhci);
+> +	}
+
+Check for the quirk first, this way I can ignore the rest of the code when
+debugging other issues,  and use PORT_CONNECT instead of 0x1
+
+something like:
+
+if ((xhci->quirks & XHCI_RESET_PLL_ON_DISCONNECT) &&
+     (portsc & PORT_CSC) && !(portsc & PORT_CONNECT))
+
+Thanks
+-Mathias
