@@ -2,129 +2,109 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BD36C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:17:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4EE0C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:18:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41AB820657
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:17:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3744A20664
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:18:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="t1ljjk1d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41AB820657
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="HfBr3dtf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3744A20664
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbeJaAKu (ORCPT
+        id S1727408AbeJaAMD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 20:10:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50098 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725988AbeJaAKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 20:10:50 -0400
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 775AE2080A;
-        Tue, 30 Oct 2018 15:16:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540912616;
-        bh=OAW+d5ZkGsIfxN8uBnAEwwVYdU9L9TDQp1wbGIMdkvI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=t1ljjk1d88FGBjpp9sOfyPcJaKeLXlR535NQVnBVz0unUs8lRi0tJ789OAhVHAwpJ
-         w1kU1gJymptSfpnbinGCXaENtAq9wPupTGGJ11x7tm7lmr4PnUjut2V+HoxR1BYNMR
-         7Rn2f/k8GL3PpNmffbL2C8gHXsGCvGP3BkiOH7qE=
-Received: by mail-qt1-f181.google.com with SMTP id l41-v6so13864679qtl.8;
-        Tue, 30 Oct 2018 08:16:56 -0700 (PDT)
-X-Gm-Message-State: AGRZ1gLZ8KJBIavMX686ssn7R7JHGe7iiMnRgO3qvjdcjQPuMFcxJoBE
-        Jc3YKBs9u3OU35H4DcSpDuD47rRrCq3Vmpw4rQ==
-X-Google-Smtp-Source: AJdET5f17LwMCUki0IshTwL00758sknMnd2itiisQYlpvfwjdNF+JAx/lsHJqLu3+tC9ytvGJ27q1s4ypvhrMjT7o7M=
-X-Received: by 2002:aed:3ef1:: with SMTP id o46-v6mr690322qtf.26.1540912615689;
- Tue, 30 Oct 2018 08:16:55 -0700 (PDT)
+        Tue, 30 Oct 2018 20:12:03 -0400
+Received: from mail-it1-f193.google.com ([209.85.166.193]:51199 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726725AbeJaAMC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 20:12:02 -0400
+Received: by mail-it1-f193.google.com with SMTP id k206-v6so14150903ite.0
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 08:18:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=OjfRhRv23qil778Hvb40+cZ9PaAdBfTdgJhkqoxeGPU=;
+        b=HfBr3dtf5IZjoW9choJSWDukpycrUWinuzVLqmXHghBdh4PP4x18lAlSnuE2qZDfIH
+         43Syskd1H6ybUmgiOcnr/9W3hmbaDrnjipFRu1pbQzRCHyrhv1Q20UYJhM2uw8utkW6Q
+         uI3FEkWA3RTrLRC5WR+eZvjBvQdyERWPRKMfaOs+yxv9PQcuUaY4wUEnDBdcy3bn3aqb
+         jGEPV6s0pm8UfUk2VS0DdG4hh1k1yfCQD8ow2gKFCXFp5//vbfPfKXasbSPfofPA0BSq
+         +4I1NmlDeXZ9DQJViR9uBOcG509kpDQp3iej2Zl5llLUjp5G7ZmY7QJUbMTHqbjy3imi
+         LjAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OjfRhRv23qil778Hvb40+cZ9PaAdBfTdgJhkqoxeGPU=;
+        b=WXvubTvEXeEF2ZuQViqlJZWViOzLIUJfNoEGaaqyMQIjwMX0iA8pNf2T87jCbtn8MP
+         ptvQEHZie5By9Tt/TxRg8HTsLCcwm4XdzCnM4FaphrtsQUfnxzS28wXOa5/rz6R2SbKw
+         nyNs7V4nYJAf/RS04GeT26rl/nYRqFe3xNDdlZrQ8QDOMuaKWWvaqEin09HYkFm7Voad
+         PuL2Uy1frXgo27v6TYzp/aQi+Ng+OdzwCQC7m9si0nyfJ1Co03zyyu2EM3DDF0wnwRmA
+         4qAsaLTD4PZDE24E1lJzU7xzc3FJbbOvvr2a8QJFeGDj9Di0QQjkIsLaHLxTdvYkpQpt
+         2hCQ==
+X-Gm-Message-State: AGRZ1gJI56zHUe5dtbOU86Ga1k5RPDUcSMWdeypg+8XngAAUunflSTn4
+        j8hmbAgn0ubnh0rqgh1GZt+d6Q==
+X-Google-Smtp-Source: AJdET5d58aUMeGtju/H6/9xeremeWOaU5rrdrsz1+lSZjakvxg/tvaoERm3Nk7FxmuBa/FbosSkL5A==
+X-Received: by 2002:a02:5605:: with SMTP id o5-v6mr9652053jab.107.1540912688860;
+        Tue, 30 Oct 2018 08:18:08 -0700 (PDT)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id w124-v6sm8912104ita.0.2018.10.30.08.18.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 08:18:07 -0700 (PDT)
+Subject: Re: [PATCH 11/14] irq: add support for allocating (and affinitizing)
+ sets of IRQs
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
+References: <20181029163738.10172-1-axboe@kernel.dk>
+ <20181029163738.10172-12-axboe@kernel.dk>
+ <20181030142601.GA18906@localhost.localdomain>
+ <c11c95ae-5e10-38bd-d2c2-e2407634f52a@kernel.dk>
+ <20181030144527.GB18906@localhost.localdomain>
+ <46dbcbcd-799f-9970-a68f-de7e96b1a6bb@kernel.dk>
+ <20181030150840.GC18906@localhost.localdomain>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <d049e764-b9d1-f06f-40d3-39517f3f65a2@kernel.dk>
+Date:   Tue, 30 Oct 2018 09:18:05 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181029235206.30060-1-f.fainelli@gmail.com> <20181029235206.30060-5-f.fainelli@gmail.com>
-In-Reply-To: <20181029235206.30060-5-f.fainelli@gmail.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 30 Oct 2018 10:16:44 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+2u_J+F-+b=cL4ACtp70_zgvk_Q-HKOY=iqAD9gzxR-g@mail.gmail.com>
-Message-ID: <CAL_Jsq+2u_J+F-+b=cL4ACtp70_zgvk_Q-HKOY=iqAD9gzxR-g@mail.gmail.com>
-Subject: Re: [PATCH 4/6] of/fdt: Populate phys_initrd_start/phys_initrd_size
- from FDT
-To:     Florian Fainelli <f.fainelli@gmail.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        aryabinin@virtuozzo.com, Andrey Konovalov <andreyknvl@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Johannes Weiner <hannes@cmpxchg.org>, ghackmann@android.com,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        chandan.vn@samsung.com,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
-        rppt@linux.ibm.com, Russell King <linux@armlinux.org.uk>,
-        Greentime Hu <green.hu@gmail.com>, deanbo422@gmail.com,
-        gxt@pku.edu.cn, Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181030150840.GC18906@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Oct 29, 2018 at 6:52 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
->
-> If the architecture implements ARCH_HAS_PHYS_INITRD, make the FDT
-> scanning code populate the physical address of the start of the FDT and
-> its size.
->
-> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-> ---
->  arch/arm/mm/init.c | 2 +-
->  drivers/of/fdt.c   | 4 ++++
->  2 files changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
-> index 8f364aa24172..517e95cfb5d2 100644
-> --- a/arch/arm/mm/init.c
-> +++ b/arch/arm/mm/init.c
-> @@ -237,7 +237,7 @@ static void __init arm_initrd_init(void)
->         phys_addr_t start;
->         unsigned long size;
->
-> -       /* FDT scan will populate initrd_start */
-> +       /* FDT scan will populate initrd_start and phys_initrd_start */
->         if (initrd_start && !phys_initrd_size) {
->                 phys_initrd_start = __virt_to_phys(initrd_start);
->                 phys_initrd_size = initrd_end - initrd_start;
-> diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
-> index 76c83c1ffeda..313cd4f24258 100644
-> --- a/drivers/of/fdt.c
-> +++ b/drivers/of/fdt.c
-> @@ -899,6 +899,10 @@ static void __early_init_dt_declare_initrd(unsigned long start,
->         initrd_start = (unsigned long)__va(start);
->         initrd_end = (unsigned long)__va(end);
+On 10/30/18 9:08 AM, Keith Busch wrote:
+> On Tue, Oct 30, 2018 at 08:53:37AM -0600, Jens Axboe wrote:
+>> The sum of the set can't exceed the nvecs passed in, the nvecs passed in
+>> should be the less than or equal to nvecs. Granted this isn't enforced,
+>> and perhaps that should be the case.
+> 
+> That should at least initially be true for a proper functioning
+> driver. It's not enforced as you mentioned, but that's only related to
+> the issue I'm referring to.
+> 
+> The problem is pci_alloc_irq_vectors_affinity() takes a range, min_vecs
+> and max_vecs, but a range of allowable vector allocations doesn't make
+> sense when using sets.
 
-As Ard pointed out, these __va() calls will BUG on arm64 if VM
-debugging is enabled. Unless the arm64 folks want to remove that check
-(probably not), I'm fine with a 'if (!IS_ENABLED(CONFIG_ARM64)) {'
-conditional here.
+I feel like we're going in circles here, not sure what you feel the
+issue is now? The range is fine, whoever uses sets will need to adjust
+their sets based on what pci_alloc_irq_vectors_affinity() returns,
+if it didn't return the passed in desired max.
 
->         initrd_below_start_ok = 1;
-> +#ifdef CONFIG_ARCH_HAS_PHYS_INITRD
-> +       phys_initrd_start = start;
-> +       phys_initrd_size = end - start;
-> +#endif
->  }
->  #endif
->
-> --
-> 2.17.1
->
+-- 
+Jens Axboe
+
