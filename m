@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-9.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB0DEC6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:27:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C40A1C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:27:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 718DD20838
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:27:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D38D2084A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:27:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RjCHYy+3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 718DD20838
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lVYGtdY8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D38D2084A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728363AbeJ3WVI (ORCPT
+        id S1728378AbeJ3WVJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 18:21:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52012 "EHLO mail.kernel.org"
+        Tue, 30 Oct 2018 18:21:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52064 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727804AbeJ3WVH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 18:21:07 -0400
+        id S1728351AbeJ3WVJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 18:21:09 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 11D012084A;
-        Tue, 30 Oct 2018 13:27:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 99AC020838;
+        Tue, 30 Oct 2018 13:27:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540906059;
-        bh=VlOjR0Ch568BE8f68o9wUsUAfvEEdrGIJFgP+puYs5g=;
+        s=default; t=1540906061;
+        bh=xpuePyFa6wD8qATTEHJPN+vRC66lrU+c1SmFdJQybYc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RjCHYy+3lkgOsB/aR13wWpPLbui5bhiranEjG+JWX26VG5QcEuHu1zZw6VDFAPVEm
-         ttFmF91IwBMyu9/CD86AhRItp3WShIm6E7gqwpEMVfwAkUUJNLeF20B0j3p6GoK5Jm
-         /He1YHO9cZ6MKB86t6e2hwyaFQWfIIR68m4ZuGqY=
+        b=lVYGtdY8HNIpGgi1BiMCnbgT0np/T/c3u8/9m0+uZ6ZzTHfCoL7wqeDA+c/YL+yI3
+         TMt7P2r9W9UR4/rh1TCS4BQ+IkR4Kst29LFeip/hosshs8iZ/xU4ijx6Piv7Dvrhin
+         KRgebLTdP/+PqvB08FEz4uApz4ELokeMTOJcjUrI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 13/33] sparc: Throttle perf events properly.
-Date:   Tue, 30 Oct 2018 09:26:37 -0400
-Message-Id: <20181030132657.217970-13-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 14/33] sparc64: Make proc_id signed.
+Date:   Tue, 30 Oct 2018 09:26:38 -0400
+Message-Id: <20181030132657.217970-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181030132657.217970-1-sashal@kernel.org>
 References: <20181030132657.217970-1-sashal@kernel.org>
@@ -54,58 +54,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: "David S. Miller" <davem@davemloft.net>
 
-[ Upstream commit 455adb3174d2c8518cef1a61140c211f6ac224d2 ]
+[ Upstream commit b3e1eb8e7ac9aaa283989496651d99267c4cad6c ]
 
-Like x86 and arm, call perf_sample_event_took() in perf event
-NMI interrupt handler.
+So that when it is unset, ie. '-1', userspace can see it
+properly.
 
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/sparc/kernel/perf_event.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ arch/sparc/include/asm/cpudata_64.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/sparc/kernel/perf_event.c b/arch/sparc/kernel/perf_event.c
-index a4cc26bd89a2..67b3e6b3ce5d 100644
---- a/arch/sparc/kernel/perf_event.c
-+++ b/arch/sparc/kernel/perf_event.c
-@@ -24,6 +24,7 @@
- #include <asm/cpudata.h>
- #include <linux/uaccess.h>
- #include <linux/atomic.h>
-+#include <linux/sched/clock.h>
- #include <asm/nmi.h>
- #include <asm/pcr.h>
- #include <asm/cacheflush.h>
-@@ -1612,6 +1613,8 @@ static int __kprobes perf_event_nmi_handler(struct notifier_block *self,
- 	struct perf_sample_data data;
- 	struct cpu_hw_events *cpuc;
- 	struct pt_regs *regs;
-+	u64 finish_clock;
-+	u64 start_clock;
- 	int i;
+diff --git a/arch/sparc/include/asm/cpudata_64.h b/arch/sparc/include/asm/cpudata_64.h
+index 666d6b5c0440..9c3fc03abe9a 100644
+--- a/arch/sparc/include/asm/cpudata_64.h
++++ b/arch/sparc/include/asm/cpudata_64.h
+@@ -28,7 +28,7 @@ typedef struct {
+ 	unsigned short	sock_id;	/* physical package */
+ 	unsigned short	core_id;
+ 	unsigned short  max_cache_id;	/* groupings of highest shared cache */
+-	unsigned short	proc_id;	/* strand (aka HW thread) id */
++	signed short	proc_id;	/* strand (aka HW thread) id */
+ } cpuinfo_sparc;
  
- 	if (!atomic_read(&active_events))
-@@ -1625,6 +1628,8 @@ static int __kprobes perf_event_nmi_handler(struct notifier_block *self,
- 		return NOTIFY_DONE;
- 	}
- 
-+	start_clock = sched_clock();
-+
- 	regs = args->regs;
- 
- 	cpuc = this_cpu_ptr(&cpu_hw_events);
-@@ -1663,6 +1668,10 @@ static int __kprobes perf_event_nmi_handler(struct notifier_block *self,
- 			sparc_pmu_stop(event, 0);
- 	}
- 
-+	finish_clock = sched_clock();
-+
-+	perf_sample_event_took(finish_clock - start_clock);
-+
- 	return NOTIFY_STOP;
- }
- 
+ DECLARE_PER_CPU(cpuinfo_sparc, __cpu_data);
 -- 
 2.17.1
 
