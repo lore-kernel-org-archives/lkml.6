@@ -2,254 +2,152 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 824FDC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:00:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81FA1C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:00:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B0122082B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:00:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A3792082B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:00:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="QNlS5zdK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B0122082B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Qf6j8Pgy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A3792082B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728164AbeJaGzZ (ORCPT
+        id S1728233AbeJaGzg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 02:55:25 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:34294 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727838AbeJaGzY (ORCPT
+        Wed, 31 Oct 2018 02:55:36 -0400
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:44195 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727838AbeJaGzg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 02:55:24 -0400
-Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 426A41A9D;
-        Tue, 30 Oct 2018 23:00:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1540936810;
-        bh=a3JncIOALPe9vZc23kO4Ge6mZDsvdq7ne5AyYE+vL1I=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QNlS5zdKEGcBBaftMBvWHUwHyRuFQissp8KcWef5JuE72F7z63qsLFJP4FVKBkBSa
-         WpSMgPkas4xc8gICZnj643g32th/1qHGbhRvw/goAt9KZxikQAkfaDPKvEB2kui0mE
-         1BLXFB7XEndSb4QqZeGkaDx9xim7QqzxVxb36em8=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     "Matwey V. Kornilov" <matwey@sai.msu.ru>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        matwey.kornilov@gmail.com, tfiga@chromium.org,
-        stern@rowland.harvard.edu, ezequiel@collabora.com,
-        hdegoede@redhat.com, hverkuil@xs4all.nl, mchehab@kernel.org,
-        rostedt@goodmis.org, mingo@redhat.com, isely@pobox.com,
-        bhumirks@gmail.com, colin.king@canonical.com,
-        kieran.bingham@ideasonboard.com, keiichiw@chromium.org,
-        Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v5 2/2] media: usb: pwc: Don't use coherent DMA buffers for ISO transfer
-Date:   Wed, 31 Oct 2018 00:00:12 +0200
-Message-ID: <2213616.rQm4DhIJ7U@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <20180821170629.18408-3-matwey@sai.msu.ru>
-References: <20180821170629.18408-1-matwey@sai.msu.ru> <20180821170629.18408-3-matwey@sai.msu.ru>
+        Wed, 31 Oct 2018 02:55:36 -0400
+Received: by mail-yb1-f195.google.com with SMTP id p144-v6so5730427yba.11
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 15:00:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Ie4VEMtorXQzSuqf1DMphjdt24z9SzsJCLFEUF8pqJk=;
+        b=Qf6j8PgyPsdDibELN7LhE60q/nYfcoMtfME6YiCSuLGerkM6SonG2Votfi6A+HcLN3
+         x+4qug/94+TwVg/E9y5v9YZ/UC0jfgl6eSyLZhnayGySnVwa8Fp4nkp32lXcZIrmvp0L
+         wUcc+iBOUaQqqOd5e4bIpc0rDNP33bnVlxFu0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Ie4VEMtorXQzSuqf1DMphjdt24z9SzsJCLFEUF8pqJk=;
+        b=Xkc/LFYOF79sYo49Ggk2/O9XxDxoE97gxFex3oKDoxEN6/o5WOvCH7pf7iKd4ludJF
+         M4t2xwlVgrekd9RCy3elOSXbuzYmISxRBwtVqCQqeCheXWaMGcGDCWktoymVtRGedi0H
+         23qwSgMSCJWyftEKHHrhwQIlH6fhhuBLYfS66+iIifmJwdRux53TZ7z33kWrwB7hkck0
+         rnsbNLqtWbCQxtLOrMgResnn1pK9UvOm2CkD5x7r9iox9cpXfRc10JUHFW+AG5o5HtgI
+         0NgsHf/jljO0PhQuzflIA3LjelS6z6/zRFsiJEefnWyXWEwxoAutevsjuVk5xbwcCfTC
+         rZEg==
+X-Gm-Message-State: AGRZ1gI4/OsgPvDWfL/e6IJ9dhReGYbvSbf4BsoIX4b7D2DX1BGNXiQJ
+        2SD/qZA/hmIrjLPlmDFqHxmrwi14cDc=
+X-Google-Smtp-Source: AJdET5dBnRMb5ZkR32k4cDZqZT9BFMM6BmutlhQIDtmRoS7/ypGnmROuyBM4JGDeON2S9EGAPYNACg==
+X-Received: by 2002:a25:578b:: with SMTP id l133-v6mr560442ybb.3.1540936822021;
+        Tue, 30 Oct 2018 15:00:22 -0700 (PDT)
+Received: from mail-yw1-f52.google.com (mail-yw1-f52.google.com. [209.85.161.52])
+        by smtp.gmail.com with ESMTPSA id v19-v6sm9885683ywv.19.2018.10.30.15.00.19
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 30 Oct 2018 15:00:19 -0700 (PDT)
+Received: by mail-yw1-f52.google.com with SMTP id d126-v6so5604267ywa.5
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 15:00:19 -0700 (PDT)
+X-Received: by 2002:a0d:cd84:: with SMTP id p126-v6mr574179ywd.288.1540936818774;
+ Tue, 30 Oct 2018 15:00:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Received: by 2002:a25:3990:0:0:0:0:0 with HTTP; Tue, 30 Oct 2018 15:00:17
+ -0700 (PDT)
+In-Reply-To: <20181030215404.GF7343@cisco>
+References: <20181029224031.29809-1-tycho@tycho.ws> <20181029224031.29809-2-tycho@tycho.ws>
+ <CAGXu5jLjum=TDab67L5XdWKEmzU_5rYeLfGXB1vb2BmfZdPuHQ@mail.gmail.com> <20181030215404.GF7343@cisco>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 30 Oct 2018 15:00:17 -0700
+X-Gmail-Original-Message-ID: <CAGXu5j+ZPxu6egE1fEr+N9+zLx3N+SJ_vbS_zzj9_hrdWrrrWQ@mail.gmail.com>
+Message-ID: <CAGXu5j+ZPxu6egE1fEr+N9+zLx3N+SJ_vbS_zzj9_hrdWrrrWQ@mail.gmail.com>
+Subject: Re: [PATCH v8 1/2] seccomp: add a return code to trap to userspace
+To:     Tycho Andersen <tycho@tycho.ws>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        Christian Brauner <christian@brauner.io>,
+        Tyler Hicks <tyhicks@canonical.com>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Aleksa Sarai <asarai@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Linux API <linux-api@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matwey,
+On Tue, Oct 30, 2018 at 2:54 PM, Tycho Andersen <tycho@tycho.ws> wrote:
+> On Tue, Oct 30, 2018 at 02:49:21PM -0700, Kees Cook wrote:
+>> On Mon, Oct 29, 2018 at 3:40 PM, Tycho Andersen <tycho@tycho.ws> wrote:
+>> >     * switch to a flags based future-proofing mechanism for struct
+>> >       seccomp_notif and seccomp_notif_resp, thus avoiding version issues
+>> >       with structure length (Kees)
+>> [...]
+>> >
+>> > +struct seccomp_notif {
+>> > +       __u64 id;
+>> > +       __u32 pid;
+>> > +       __u32 flags;
+>> > +       struct seccomp_data data;
+>> > +};
+>> > +
+>> > +struct seccomp_notif_resp {
+>> > +       __u64 id;
+>> > +       __s64 val;
+>> > +       __s32 error;
+>> > +       __u32 flags;
+>> > +};
+>>
+>> Hrm, so, what's the plan for when struct seccomp_data changes size?
+>
+> I guess my plan was don't ever change the size again, just use flags
+> and have extra state available via ioctl().
+>
+>> I'm realizing that it might be "too late" for userspace to discover
+>> it's running on a newer kernel. i.e. it gets a user notification, and
+>> discovers flags it doesn't know how to handle. Do we actually need
+>> both flags AND a length? Designing UAPI is frustrating! :)
+>
+> :). I don't see this as such a big problem -- in fact it's better than
+> the length mode, where you don't know what you don't know, because it
+> only copied as much info as you could handle. Older userspace would
+> simply not use information it didn't know how to use.
+>
+>> Do we need another ioctl to discover the seccomp_data size maybe?
+>
+> That could be an option as well, assuming we agree that size would
+> work, which I thought we didn't?
 
-(CC'ing Christoph)
+Size alone wasn't able to determine the layout of the seccomp_notif
+structure since it had holes (in the prior version). seccomp_data
+doesn't have holes and is likely to change in size (see the recent
+thread on adding the MPK register to it...)
 
-Thank you for the patch, and my apologies for the late answer. For the record, 
-I don't think this should have been blocked by lack of time on my side: even 
-if I'm one of the core developers in the subsystem, and possibly have the most 
-experience with USB webcams recently due to uvcvideo, patches shouldn't be 
-blocked indefinitely by the absence of reply from anyone, me included.
+I'm trying to imagine the right API for this. A portable user of
+seccomp_notif expects the id/pid/flags/data to always be in the same
+place, but it's the size of seccomp_data that may change. So it wants
+to allocate space for seccomp_notif header and "everything else", of
+which is may only understand the start of seccomp_data (and ignore any
+new trailing fields).
 
-(On a side note, thanks to Ezequiel for pointing my attention to this patch in 
-our face to face meeting during ELCE, side channels are very useful in this 
-kind of situation, including IRC.)
+So... perhaps the "how big are things?" ioctl would report the header
+size and the seccomp_data size. Then both are flexible. And flags
+would be left as a way to "version" the header?
 
-On Tuesday, 21 August 2018 20:06:29 EET Matwey V. Kornilov wrote:
-> DMA cocherency slows the transfer down on systems without hardware
-> coherent DMA.
-> Instead we use noncocherent DMA memory and explicit sync at data receive
-> handler.
-> 
-> Based on previous commit the following performance benchmarks have been
-> carried out. Average memcpy() data transfer rate (rate) and handler
-> completion time (time) have been measured when running video stream at
-> 640x480 resolution at 10fps.
-> 
-> x86_64 based system (Intel Core i5-3470). This platform has hardware
-> coherent DMA support and proposed change doesn't make big difference here.
-> 
->  * kmalloc:            rate = (2.0 +- 0.4) GBps
->                        time = (5.0 +- 3.0) usec
->  * usb_alloc_coherent: rate = (3.4 +- 1.2) GBps
->                        time = (3.5 +- 3.0) usec
-> 
-> We see that the measurements agree within error ranges in this case.
-> So theoretically predicted performance downgrade cannot be reliably
-> measured here.
-> 
-> armv7l based system (TI AM335x BeagleBone Black @ 300MHz). This platform
-> has no hardware coherent DMA support. DMA coherence is implemented via
-> disabled page caching that slows down memcpy() due to memory controller
-> behaviour.
-> 
->  * kmalloc:            rate =  (114 +- 5) MBps
->                        time =   (84 +- 4) usec
->  * usb_alloc_coherent: rate = (28.1 +- 0.1) MBps
->                        time =  (341 +- 2) usec
-> 
-> Note, that quantative difference leads (this commit leads to 4 times
-> acceleration) to qualitative behavior change in this case. As it was
-> stated before, the video stream cannot be successfully received at AM335x
-> platforms with MUSB based USB host controller due to performance issues
-> [1].
-> 
-> [1] https://www.spinics.net/lists/linux-usb/msg165735.html
-> 
-> Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
-> ---
->  drivers/media/usb/pwc/pwc-if.c | 57 ++++++++++++++++++++++++++++++--------
->  1 file changed, 44 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/media/usb/pwc/pwc-if.c b/drivers/media/usb/pwc/pwc-if.c
-> index 72d2897a4b9f..1360722ab423 100644
-> --- a/drivers/media/usb/pwc/pwc-if.c
-> +++ b/drivers/media/usb/pwc/pwc-if.c
-> @@ -159,6 +159,32 @@ static const struct video_device pwc_template = {
->  /**************************************************************************
-> */ /* Private functions */
-> 
-> +static void *pwc_alloc_urb_buffer(struct device *dev,
-> +				  size_t size, dma_addr_t *dma_handle)
-> +{
-> +	void *buffer = kmalloc(size, GFP_KERNEL);
-> +
-> +	if (!buffer)
-> +		return NULL;
-> +
-> +	*dma_handle = dma_map_single(dev, buffer, size, DMA_FROM_DEVICE);
-> +	if (dma_mapping_error(dev, *dma_handle)) {
-> +		kfree(buffer);
-> +		return NULL;
-> +	}
-> +
-> +	return buffer;
-
-As discussed before, we're clearly missing a proper non-coherent memory 
-allocation API. As much as I would like to see a volunteer for this, I don't 
-think it's a reason to block the performance improvement we get from this 
-patch.
-
-This being said, I'm a bit concerned about the allocation of 16kB blocks from 
-kmalloc(), and believe that the priority of the non-coherent memory allocation 
-API implementation should be increased. Christoph, you mentioned in a recent 
-discussion on this topic that you are working on removing the existing non-
-coherent DMA allocation API, what is your opinion on how we should gllobally 
-solve the problem that this patch addresses ?
-
-> +}
-> +
-> +static void pwc_free_urb_buffer(struct device *dev,
-> +				size_t size,
-> +				void *buffer,
-> +				dma_addr_t dma_handle)
-> +{
-> +	dma_unmap_single(dev, dma_handle, size, DMA_FROM_DEVICE);
-> +	kfree(buffer);
-> +}
-> +
->  static struct pwc_frame_buf *pwc_get_next_fill_buf(struct pwc_device *pdev)
-> {
->  	unsigned long flags = 0;
-> @@ -306,6 +332,11 @@ static void pwc_isoc_handler(struct urb *urb)
->  	/* Reset ISOC error counter. We did get here, after all. */
->  	pdev->visoc_errors = 0;
-> 
-> +	dma_sync_single_for_cpu(&urb->dev->dev,
-> +				urb->transfer_dma,
-> +				urb->transfer_buffer_length,
-> +				DMA_FROM_DEVICE);
-> +
-
-As explained before as well, I think we need dma_sync_single_for_device() 
-calls, and I know they would degrade performances until we fix the problem on 
-the DMA mapping API side. This is not a reason to block the patch either. I 
-would appreciate, however, if a comment could be added to the place where 
-dma_sync_single_for_device() should be called, to explain the problem.
-
-Is there anyone who would like to volunteer to drive the effort on the DMA 
-mapping API side ? I'm unfortunately too short on time to address this myself 
-:-(
-
->  	/* vsync: 0 = don't copy data
->  		  1 = sync-hunt
->  		  2 = synched
-> @@ -428,16 +459,15 @@ static int pwc_isoc_init(struct pwc_device *pdev)
->  		urb->dev = udev;
->  		urb->pipe = usb_rcvisocpipe(udev, pdev->vendpoint);
->  		urb->transfer_flags = URB_ISO_ASAP | URB_NO_TRANSFER_DMA_MAP;
-> -		urb->transfer_buffer = usb_alloc_coherent(udev,
-> -							  ISO_BUFFER_SIZE,
-> -							  GFP_KERNEL,
-> -							  &urb->transfer_dma);
-> +		urb->transfer_buffer_length = ISO_BUFFER_SIZE;
-> +		urb->transfer_buffer = pwc_alloc_urb_buffer(&udev->dev,
-> +							    urb->transfer_buffer_length,
-> +							    &urb->transfer_dma);
->  		if (urb->transfer_buffer == NULL) {
->  			PWC_ERROR("Failed to allocate urb buffer %d\n", i);
->  			pwc_isoc_cleanup(pdev);
->  			return -ENOMEM;
->  		}
-> -		urb->transfer_buffer_length = ISO_BUFFER_SIZE;
->  		urb->complete = pwc_isoc_handler;
->  		urb->context = pdev;
->  		urb->start_frame = 0;
-> @@ -488,15 +518,16 @@ static void pwc_iso_free(struct pwc_device *pdev)
-> 
->  	/* Freeing ISOC buffers one by one */
->  	for (i = 0; i < MAX_ISO_BUFS; i++) {
-> -		if (pdev->urbs[i]) {
-> +		struct urb *urb = pdev->urbs[i];
-> +
-> +		if (urb) {
->  			PWC_DEBUG_MEMORY("Freeing URB\n");
-> -			if (pdev->urbs[i]->transfer_buffer) {
-> -				usb_free_coherent(pdev->udev,
-> -					pdev->urbs[i]->transfer_buffer_length,
-> -					pdev->urbs[i]->transfer_buffer,
-> -					pdev->urbs[i]->transfer_dma);
-> -			}
-> -			usb_free_urb(pdev->urbs[i]);
-> +			if (urb->transfer_buffer)
-> +				pwc_free_urb_buffer(&urb->dev->dev,
-> +						    urb->transfer_buffer_length,
-> +						    urb->transfer_buffer,
-> +						    urb->transfer_dma);
-> +			usb_free_urb(urb);
->  			pdev->urbs[i] = NULL;
->  		}
->  	}
-
-The rest of the patch looks fine, so
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-(if possible with a comment about dma_sync_single_for_device() added)
+Any Linux API list members want to chime in here?
 
 -- 
-Regards,
-
-Laurent Pinchart
-
-
-
+Kees Cook
