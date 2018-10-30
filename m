@@ -2,150 +2,132 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82147C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:05:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13340C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:06:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4758520823
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:05:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l2rjFdvE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4758520823
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CE9AE20823
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:06:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE9AE20823
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727997AbeJ3V7A (ORCPT
+        id S1728014AbeJ3V72 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 17:59:00 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:40755 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725853AbeJ3V7A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 17:59:00 -0400
-Received: by mail-qt1-f194.google.com with SMTP id k12so7410566qtf.7;
-        Tue, 30 Oct 2018 06:05:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8NHRHjwDRCgnJAFXkyLVDSfRknR6+fivwcsoAsTXEb4=;
-        b=l2rjFdvEH+9vm6N8jJ8fBQhw2Sg1hUDr+KW5semJP0Oz393c36BvopLvh3LGLqnmHU
-         hxbWRYzZy8TeL/wPek4hQux/Qg7+aw/ILr1nsklzx7x8QPWi5ImYPnHugAdfUClheqf2
-         aMPcpKLjUt0+UwP7ehroXZYR+HxrlRVSFtcTlBXhLvnTdotZi9HJSE2btkW/lwei+ZS0
-         S9TZgpc4SG6zhtFHXFJXpWIlbpR9iym0rXzUQ7elyy+IP3tu8oj4Rr1LW8H32fk/gFYl
-         CQdxMGs/CvaOWGQZmP6USt9WQ4+WrtsfTuHPxp5RTa28nPb2BaEJNfgmUiIOhNqLczAJ
-         TPhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8NHRHjwDRCgnJAFXkyLVDSfRknR6+fivwcsoAsTXEb4=;
-        b=ced4pO72sa/h5wFnbAtgXFYt7h0zNgn+PPK20fau6fjFz8OmTQ4Dmvv/xLOMqCU0tY
-         V4NofRSamshqum4SOkz4hpT8jLufWBqJsU5o/+pG6+Gvj6rOPdz3uFQNyLI7FwIOQokZ
-         EGLpB9xjQph7S/ny17UfbANU+kYs6MkAr6JN22qHCZc3ApG2iNzB+PaziKzx0G7O7wO0
-         LXMjAuHFh0N08b4NsZs0qxXXQRBTjeJZqYBFG3F2Zt6mF+LNQkPBXV+O+tmB6EgoBcIW
-         nY3MVZP0T9+HqjgW8fOSWIGbuoSypNTAK5aWWARIbWr3wIHxOlkubiZ2UzxYscInmDO5
-         nDMg==
-X-Gm-Message-State: AGRZ1gLPxcQNBkNm49qy3sJkn0rlWD4zJJ/4X4ogXPJNSC0MfLq2rUEh
-        YNRWCaiiHfFktW+EzncVzTCbqEWMpJ7XbJ3/WYk=
-X-Google-Smtp-Source: AJdET5cOsKE1pHbAxzqwZAYzhNc3f0Dd7bhiFXI8/c1D4l9jDERGx9iEnalC0iyECY/9YlAzdzdyS4a0SorsmxTX/EE=
-X-Received: by 2002:a0c:b60a:: with SMTP id f10-v6mr17184835qve.7.1540904734929;
- Tue, 30 Oct 2018 06:05:34 -0700 (PDT)
+        Tue, 30 Oct 2018 17:59:28 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:22524 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725853AbeJ3V72 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 17:59:28 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C37FF2DE416;
+        Tue, 30 Oct 2018 13:06:06 +0000 (UTC)
+Received: from [172.16.176.1] (ovpn-121-196.rdu2.redhat.com [10.10.121.196])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 185271084261;
+        Tue, 30 Oct 2018 13:06:05 +0000 (UTC)
+From:   "Benjamin Coddington" <bcodding@redhat.com>
+To:     "zhong jiang" <zhongjiang@huawei.com>
+Cc:     herbert@gondor.apana.org.au, linux-crypto@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [Qestion] Lots of memory leaks when mounting and unmounting nfs
+ client to server continuously.
+Date:   Tue, 30 Oct 2018 09:06:06 -0400
+Message-ID: <1DEE371C-69EB-4D92-8F78-535AA5203007@redhat.com>
+In-Reply-To: <5BD85266.6000301@huawei.com>
+References: <5BD85266.6000301@huawei.com>
 MIME-Version: 1.0
-References: <1540290081-15827-1-git-send-email-suganath-prabu.subramani@broadcom.com>
- <CA+RiK64Y=FLr=SZmxEoCvWCvZq8ppqFsL=q2L1Q7T5sZfDQfkQ@mail.gmail.com>
-In-Reply-To: <CA+RiK64Y=FLr=SZmxEoCvWCvZq8ppqFsL=q2L1Q7T5sZfDQfkQ@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Tue, 30 Oct 2018 15:05:23 +0200
-Message-ID: <CAHp75VeNSG7=79pQ=9zFkp0mSSSoFnjacbQQa=kQu2+hKWvMwQ@mail.gmail.com>
-Subject: Re: [v6 0/4] mpt3sas: Hot-Plug Surprise removal support on IOC.
-To:     Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>, Lukas Wunner <lukas@wunner.de>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-pci@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        ruscur@russell.cc, sbobroff@linux.ibm.com,
-        Oliver <oohall@gmail.com>,
-        Sathya Prakash <Sathya.Prakash@broadcom.com>,
-        Sreekanth Reddy <sreekanth.reddy@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; format=flowed
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 30 Oct 2018 13:06:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 8:41 AM Suganath Prabu Subramani
-<suganath-prabu.subramani@broadcom.com> wrote:
->
-> Any update on this ?
-> In V6, I have posted has only defect fixes (Other than HBA Hot-Plug
-> Surprise remove support).
->
-> We are reworking and incorporating the suggestions from Bjorn.
-> And after covering tests, we ll post Hot-Plug Surprise removal patches.
->
+Hi zhong jiang,
 
-FWIW,
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Try asking in linux-nfs.. but I'll also note that 3.10-stable may be 
+missing a number of fixes to leaks in the NFS GSS code.
 
-P.S. We are in the middle of merge window, so, this week is a little
-chance anyone will look at it.
+I can see a more than a few fixes to memory leaks with:
+git log --grep=leak --oneline net/sunrpc/auth_gss/
 
+Ben
+
+On 30 Oct 2018, at 8:45, zhong jiang wrote:
+
+> Hi,   Herbert
+>
+> Recently,  I  hit  a memory leak issue when  mounting and unmounting 
+> nfs with  the way of  krb5.
+> The issue happens to the linux-3.10-stable.
+>
+> I find that slab-1024 and slab-512 will take up most of the memory.  
+> And it can not be freed.
+> Meanwhile, it result in rpcsec_gss_krb5 can be unregistered as well.
+>
+> nfs-sve1:/home # cat /proc/modules | grep krb5
+> rpcsec_gss_krb5 31477 239730 - Live 0xffffffffa0334000
+> auth_rpcgss 59314 3 rpcsec_gss_krb5,nfsd, Live 0xffffffffa0123000
+> sunrpc 300546 25 rpcsec_gss_krb5,nfsd,auth_rpcgss,nfs_acl,lockd, Live 
+> 0xffffffffa013b000
+>
+> I open the slab-1024 trace by enabling 
+> /sys/kernel/slab/:t-0001024/trace and get the following
+>
+> [123420.989831] Call Trace:
+> [123420.989834]  [<ffffffff81642d2a>] dump_stack+0x19/0x1b
+> [123420.989837]  [<ffffffff8163f25e>] 
+> alloc_debug_processing+0xc5/0x118
+> [123420.989839]  [<ffffffff8163fd4d>] __slab_alloc+0x400/0x48f
+> [123420.989841]  [<ffffffff812b1795>] ? __crypto_alloc_tfm+0x45/0x170
+> [123420.989845]  [<ffffffff812b2307>] ? setkey+0x57/0x110
+> [123420.989847]  [<ffffffff8118b5fd>] ? kzfree+0x2d/0x30
+> [123420.989850]  [<ffffffff811c6e88>] __kmalloc+0x1c8/0x230
+> [123420.989852]  [<ffffffff812b1795>] __crypto_alloc_tfm+0x45/0x170
+> [123420.989854]  [<ffffffff812b2e45>] crypto_spawn_tfm+0x45/0x80
+> [123420.989857]  [<ffffffff811c6eb3>] ? __kmalloc+0x1f3/0x230
+> [123420.989859]  [<ffffffff812c15c7>] crypto_cbc_init_tfm+0x27/0x40
+> [123420.989864]  [<ffffffff812b1851>] __crypto_alloc_tfm+0x101/0x170
+> [123420.989866]  [<ffffffff812b1ffc>] crypto_alloc_base+0x4c/0xb0
+> [123420.989869]  [<ffffffffa033411b>] 
+> context_v2_alloc_cipher.isra.2+0x2b/0xc0 [rpcsec_gss_krb5]
+> [123420.989871]  [<ffffffffa0334da8>] 
+> gss_import_sec_context_kerberos+0xbf8/0xf00 [rpcsec_gss_krb5]
+> [123420.989875]  [<ffffffffa0126d5d>] gss_import_sec_context+0x7d/0xb0 
+> [auth_rpcgss]
+> [123420.989878]  [<ffffffffa012b35e>] gss_proxy_save_rsc+0x137/0x1b0 
+> [auth_rpcgss]
+> [123420.989884]  [<ffffffffa012b51e>] 
+> svcauth_gss_proxy_init+0x147/0x1e4 [auth_rpcgss]
+> [123420.989886]  [<ffffffff810c2ad6>] ? dequeue_entity+0x106/0x520
+> [123420.989890]  [<ffffffffa0128e2a>] svcauth_gss_accept+0x3da/0xb70 
+> [auth_rpcgss]
+> [123420.989892]  [<ffffffff810b6c25>] ? check_preempt_curr+0x85/0xa0
+> [123420.989894]  [<ffffffff810b6c59>] ? ttwu_do_wakeup+0x19/0xd0
+> [123420.989897]  [<ffffffff810b6ded>] ? 
+> ttwu_do_activate.constprop.86+0x5d/0x70
+> [123420.989900]  [<ffffffff810b9422>] ? try_to_wake_up+0x162/0x330
+> [123420.989908]  [<ffffffffa014f490>] svc_authenticate+0xc0/0xe0 
+> [sunrpc]
+> [123420.989914]  [<ffffffffa014c04a>] svc_process_common+0x21a/0x6f0 
+> [sunrpc]
+> [123420.989921]  [<ffffffffa014c623>] svc_process+0x103/0x170 [sunrpc]
+> [123420.989928]  [<ffffffffa01baaaf>] nfsd+0xdf/0x150 [nfsd]
+> [123420.989932]  [<ffffffffa01ba9d0>] ? nfsd_destroy+0x80/0x80 [nfsd]
+> [123420.989934]  [<ffffffff810a648f>] kthread+0xcf/0xe0
+> [123420.989936]  [<ffffffff810a63c0>] ? 
+> kthread_create_on_node+0x140/0x140
+> [123420.989939]  [<ffffffff81653318>] ret_from_fork+0x58/0x90
+> [123420.989943]  [<ffffffff810a63c0>] ? 
+> kthread_create_on_node+0x140/0x140
+>
+> I am unfamiliar with crypto.   I will be appreciated  if you could 
+> give me some suggestion.
+>
 > Thanks,
-> Suganath Prabu
-> On Tue, Oct 23, 2018 at 3:51 PM Suganath Prabu
-> <suganath-prabu.subramani@broadcom.com> wrote:
-> >
-> > v6 Change set:
-> > Incorporated changes as suggested by Andy.
-> > In Patch 1 converted while loop to do while in
-> > function mpt3sas_wait_for_ioc_to_operational().
-> > And in patch 3 removed parentheses.
-> >
-> > V5 Change set:
-> > V5 post has only defect fixes.
-> > We are reworking and incorporating the suggestions from Bjorn.
-> > And after covering tests, we ll be post Hot-Plug Surprise
-> >  removal patches.
-> >
-> > V4 Change set:
-> > Reframe split strings in print statement, to avoid
-> >
-> > V3 Change Set:
-> > Simplified function "mpt3sas_base_pci_device_is_available" and
-> > made inline
-> >
-> > V2 changes:
-> > Replaced mpt3sas_base_pci_device_is_unplugged with
-> > pci_device_is_present.
-> >
-> > V1 changes:
-> > In Patch 0001 - unlock mutex, if active reset is in progress.
-> > Suganath Prabu (4):
-> >   mpt3sas: Separate out mpt3sas_wait_for_ioc_to_operational
-> >   mpt3sas: Fix Sync cache command failure during driver unload
-> >   mpt3sas:Fix driver modifying persistent data.
-> >   mpt3sas: Bump driver version to 27.100.00.00.
-> >
-> >  drivers/scsi/mpt3sas/mpt3sas_base.c      | 75 ++++++++++++++++++--------------
-> >  drivers/scsi/mpt3sas/mpt3sas_base.h      |  8 +++-
-> >  drivers/scsi/mpt3sas/mpt3sas_config.c    | 28 +++---------
-> >  drivers/scsi/mpt3sas/mpt3sas_ctl.c       | 21 ++-------
-> >  drivers/scsi/mpt3sas/mpt3sas_scsih.c     | 38 +++++++++++++++-
-> >  drivers/scsi/mpt3sas/mpt3sas_transport.c | 70 ++++++-----------------------
-> >  6 files changed, 106 insertions(+), 134 deletions(-)
-> >
-> > --
-> > 1.8.3.1
-> >
-
-
-
--- 
-With Best Regards,
-Andy Shevchenko
+> zhong jiang
