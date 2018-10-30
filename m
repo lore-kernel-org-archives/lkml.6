@@ -2,128 +2,254 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E505AC6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:59:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 824FDC2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:00:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A69DF20664
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 21:59:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B0122082B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 22:00:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="h+6VyBDG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A69DF20664
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=amazon.de
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="QNlS5zdK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B0122082B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728402AbeJaGyJ (ORCPT
+        id S1728164AbeJaGzZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 02:54:09 -0400
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:31568 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728374AbeJaGyJ (ORCPT
+        Wed, 31 Oct 2018 02:55:25 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:34294 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727838AbeJaGzY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 02:54:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1540936736; x=1572472736;
-  h=from:to:cc:subject:date:message-id:mime-version;
-  bh=ulXauuLE2yNyr7a4rI5BK89njn86knnx0RtvbNaaQ+s=;
-  b=h+6VyBDGPtQpk/jJI1e6segyLRnOJLEPKtVLH5eJMZhQDdhIHk3ixHab
-   Fisx2ihqKbb0RtsNHspju39iRdyWAN9p8uQeTfRAIAnuUfbW7fSovMSgY
-   IPCHbBJHr5EwnhQV3GCndaBUKfbhaZw97Nu6gXaZMunG69IusNEaeBvrc
-   c=;
-X-IronPort-AV: E=Sophos;i="5.54,446,1534809600"; 
-   d="scan'208";a="639353382"
-Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-2a-8549039f.us-west-2.amazon.com) ([10.47.22.38])
-  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 30 Oct 2018 21:58:53 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan3.pdx.amazon.com [10.236.137.198])
-        by email-inbound-relay-2a-8549039f.us-west-2.amazon.com (8.14.7/8.14.7) with ESMTP id w9ULwm1E067762
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Tue, 30 Oct 2018 21:58:52 GMT
-Received: from EX13D08UEE004.ant.amazon.com (10.43.62.182) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.243) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Tue, 30 Oct 2018 21:58:52 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (10.43.61.82) by
- EX13D08UEE004.ant.amazon.com (10.43.62.182) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Tue, 30 Oct 2018 21:58:52 +0000
-Received: from dev-dsk-mheyne-1a-d7497a7f.eu-west-1.amazon.com (10.15.98.203)
- by mail-relay.amazon.com (10.43.61.243) with Microsoft SMTP Server id
- 15.0.1367.3 via Frontend Transport; Tue, 30 Oct 2018 21:58:51 +0000
-Received: by dev-dsk-mheyne-1a-d7497a7f.eu-west-1.amazon.com (Postfix, from userid 5466572)
-        id C1D51A96E7; Tue, 30 Oct 2018 21:58:51 +0000 (UTC)
-From:   Maximilian Heyne <mheyne@amazon.de>
-CC:     Christoph Hellwig <hch@lst.de>,
-        Maximilian Heyne <mheyne@amazon.de>, <stable@vger.kernel.org>,
-        Torsten Mehlan <tomeh@amazon.de>,
-        Uwe Dannowski <uwed@amazon.de>, Amit Shah <aams@amazon.de>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] fs: fix lost error code in dio_complete
-Date:   Tue, 30 Oct 2018 21:57:39 +0000
-Message-ID: <20181030215739.4557-1-mheyne@amazon.de>
-X-Mailer: git-send-email 2.16.2
+        Wed, 31 Oct 2018 02:55:24 -0400
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 426A41A9D;
+        Tue, 30 Oct 2018 23:00:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1540936810;
+        bh=a3JncIOALPe9vZc23kO4Ge6mZDsvdq7ne5AyYE+vL1I=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=QNlS5zdKEGcBBaftMBvWHUwHyRuFQissp8KcWef5JuE72F7z63qsLFJP4FVKBkBSa
+         WpSMgPkas4xc8gICZnj643g32th/1qHGbhRvw/goAt9KZxikQAkfaDPKvEB2kui0mE
+         1BLXFB7XEndSb4QqZeGkaDx9xim7QqzxVxb36em8=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     "Matwey V. Kornilov" <matwey@sai.msu.ru>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        matwey.kornilov@gmail.com, tfiga@chromium.org,
+        stern@rowland.harvard.edu, ezequiel@collabora.com,
+        hdegoede@redhat.com, hverkuil@xs4all.nl, mchehab@kernel.org,
+        rostedt@goodmis.org, mingo@redhat.com, isely@pobox.com,
+        bhumirks@gmail.com, colin.king@canonical.com,
+        kieran.bingham@ideasonboard.com, keiichiw@chromium.org,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH v5 2/2] media: usb: pwc: Don't use coherent DMA buffers for ISO transfer
+Date:   Wed, 31 Oct 2018 00:00:12 +0200
+Message-ID: <2213616.rQm4DhIJ7U@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <20180821170629.18408-3-matwey@sai.msu.ru>
+References: <20180821170629.18408-1-matwey@sai.msu.ru> <20180821170629.18408-3-matwey@sai.msu.ru>
 MIME-Version: 1.0
-Content-Type: text/plain
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit e259221763a40403d5bb232209998e8c45804ab8 ("fs: simplify the
-generic_write_sync prototype") reworked callers of generic_write_sync(),
-and ended up dropping the error return for the directio path. Prior to
-that commit, in dio_complete(), an error would be bubbled up the stack,
-but after that commit, errors passed on to dio_complete were eaten up.
+Hi Matwey,
 
-This was reported on the list earlier, and a fix was proposed in
-https://lore.kernel.org/lkml/20160921141539.GA17898@infradead.org/, but
-never followed up with.  We recently hit this bug in our testing where
-fencing io errors, which were previously erroring out with EIO, were
-being returned as success operations after this commit.
+(CC'ing Christoph)
 
-The fix proposed on the list earlier was a little short -- it would have
-still called generic_write_sync() in case `ret` already contained an
-error.  This fix ensures generic_write_sync() is only called when
-there's no pending error in the write.
+Thank you for the patch, and my apologies for the late answer. For the record, 
+I don't think this should have been blocked by lack of time on my side: even 
+if I'm one of the core developers in the subsystem, and possibly have the most 
+experience with USB webcams recently due to uvcvideo, patches shouldn't be 
+blocked indefinitely by the absence of reply from anyone, me included.
 
-CC: stable@vger.kernel.org
-Reported-by: Ravi Nankani <rnankani@amazon.com>
-Signed-off-by: Maximilian Heyne <mheyne@amazon.de>
-Signed-off-by: Torsten Mehlan <tomeh@amazon.de>
-Signed-off-by: Uwe Dannowski <uwed@amazon.de>
-Signed-off-by: Amit Shah <aams@amazon.de>
-Signed-off-by: David Woodhouse <dwmw@amazon.co.uk>
----
- fs/direct-io.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+(On a side note, thanks to Ezequiel for pointing my attention to this patch in 
+our face to face meeting during ELCE, side channels are very useful in this 
+kind of situation, including IRC.)
 
-diff --git a/fs/direct-io.c b/fs/direct-io.c
-index 093fb54cd316..199146036093 100644
---- a/fs/direct-io.c
-+++ b/fs/direct-io.c
-@@ -325,8 +325,8 @@ static ssize_t dio_complete(struct dio *dio, ssize_t ret, unsigned int flags)
- 		 */
- 		dio->iocb->ki_pos += transferred;
- 
--		if (dio->op == REQ_OP_WRITE)
--			ret = generic_write_sync(dio->iocb,  transferred);
-+		if (ret > 0 && dio->op == REQ_OP_WRITE)
-+			ret = generic_write_sync(dio->iocb, ret);
- 		dio->iocb->ki_complete(dio->iocb, ret, 0);
- 	}
- 
+On Tuesday, 21 August 2018 20:06:29 EET Matwey V. Kornilov wrote:
+> DMA cocherency slows the transfer down on systems without hardware
+> coherent DMA.
+> Instead we use noncocherent DMA memory and explicit sync at data receive
+> handler.
+> 
+> Based on previous commit the following performance benchmarks have been
+> carried out. Average memcpy() data transfer rate (rate) and handler
+> completion time (time) have been measured when running video stream at
+> 640x480 resolution at 10fps.
+> 
+> x86_64 based system (Intel Core i5-3470). This platform has hardware
+> coherent DMA support and proposed change doesn't make big difference here.
+> 
+>  * kmalloc:            rate = (2.0 +- 0.4) GBps
+>                        time = (5.0 +- 3.0) usec
+>  * usb_alloc_coherent: rate = (3.4 +- 1.2) GBps
+>                        time = (3.5 +- 3.0) usec
+> 
+> We see that the measurements agree within error ranges in this case.
+> So theoretically predicted performance downgrade cannot be reliably
+> measured here.
+> 
+> armv7l based system (TI AM335x BeagleBone Black @ 300MHz). This platform
+> has no hardware coherent DMA support. DMA coherence is implemented via
+> disabled page caching that slows down memcpy() due to memory controller
+> behaviour.
+> 
+>  * kmalloc:            rate =  (114 +- 5) MBps
+>                        time =   (84 +- 4) usec
+>  * usb_alloc_coherent: rate = (28.1 +- 0.1) MBps
+>                        time =  (341 +- 2) usec
+> 
+> Note, that quantative difference leads (this commit leads to 4 times
+> acceleration) to qualitative behavior change in this case. As it was
+> stated before, the video stream cannot be successfully received at AM335x
+> platforms with MUSB based USB host controller due to performance issues
+> [1].
+> 
+> [1] https://www.spinics.net/lists/linux-usb/msg165735.html
+> 
+> Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
+> ---
+>  drivers/media/usb/pwc/pwc-if.c | 57 ++++++++++++++++++++++++++++++--------
+>  1 file changed, 44 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/media/usb/pwc/pwc-if.c b/drivers/media/usb/pwc/pwc-if.c
+> index 72d2897a4b9f..1360722ab423 100644
+> --- a/drivers/media/usb/pwc/pwc-if.c
+> +++ b/drivers/media/usb/pwc/pwc-if.c
+> @@ -159,6 +159,32 @@ static const struct video_device pwc_template = {
+>  /**************************************************************************
+> */ /* Private functions */
+> 
+> +static void *pwc_alloc_urb_buffer(struct device *dev,
+> +				  size_t size, dma_addr_t *dma_handle)
+> +{
+> +	void *buffer = kmalloc(size, GFP_KERNEL);
+> +
+> +	if (!buffer)
+> +		return NULL;
+> +
+> +	*dma_handle = dma_map_single(dev, buffer, size, DMA_FROM_DEVICE);
+> +	if (dma_mapping_error(dev, *dma_handle)) {
+> +		kfree(buffer);
+> +		return NULL;
+> +	}
+> +
+> +	return buffer;
+
+As discussed before, we're clearly missing a proper non-coherent memory 
+allocation API. As much as I would like to see a volunteer for this, I don't 
+think it's a reason to block the performance improvement we get from this 
+patch.
+
+This being said, I'm a bit concerned about the allocation of 16kB blocks from 
+kmalloc(), and believe that the priority of the non-coherent memory allocation 
+API implementation should be increased. Christoph, you mentioned in a recent 
+discussion on this topic that you are working on removing the existing non-
+coherent DMA allocation API, what is your opinion on how we should gllobally 
+solve the problem that this patch addresses ?
+
+> +}
+> +
+> +static void pwc_free_urb_buffer(struct device *dev,
+> +				size_t size,
+> +				void *buffer,
+> +				dma_addr_t dma_handle)
+> +{
+> +	dma_unmap_single(dev, dma_handle, size, DMA_FROM_DEVICE);
+> +	kfree(buffer);
+> +}
+> +
+>  static struct pwc_frame_buf *pwc_get_next_fill_buf(struct pwc_device *pdev)
+> {
+>  	unsigned long flags = 0;
+> @@ -306,6 +332,11 @@ static void pwc_isoc_handler(struct urb *urb)
+>  	/* Reset ISOC error counter. We did get here, after all. */
+>  	pdev->visoc_errors = 0;
+> 
+> +	dma_sync_single_for_cpu(&urb->dev->dev,
+> +				urb->transfer_dma,
+> +				urb->transfer_buffer_length,
+> +				DMA_FROM_DEVICE);
+> +
+
+As explained before as well, I think we need dma_sync_single_for_device() 
+calls, and I know they would degrade performances until we fix the problem on 
+the DMA mapping API side. This is not a reason to block the patch either. I 
+would appreciate, however, if a comment could be added to the place where 
+dma_sync_single_for_device() should be called, to explain the problem.
+
+Is there anyone who would like to volunteer to drive the effort on the DMA 
+mapping API side ? I'm unfortunately too short on time to address this myself 
+:-(
+
+>  	/* vsync: 0 = don't copy data
+>  		  1 = sync-hunt
+>  		  2 = synched
+> @@ -428,16 +459,15 @@ static int pwc_isoc_init(struct pwc_device *pdev)
+>  		urb->dev = udev;
+>  		urb->pipe = usb_rcvisocpipe(udev, pdev->vendpoint);
+>  		urb->transfer_flags = URB_ISO_ASAP | URB_NO_TRANSFER_DMA_MAP;
+> -		urb->transfer_buffer = usb_alloc_coherent(udev,
+> -							  ISO_BUFFER_SIZE,
+> -							  GFP_KERNEL,
+> -							  &urb->transfer_dma);
+> +		urb->transfer_buffer_length = ISO_BUFFER_SIZE;
+> +		urb->transfer_buffer = pwc_alloc_urb_buffer(&udev->dev,
+> +							    urb->transfer_buffer_length,
+> +							    &urb->transfer_dma);
+>  		if (urb->transfer_buffer == NULL) {
+>  			PWC_ERROR("Failed to allocate urb buffer %d\n", i);
+>  			pwc_isoc_cleanup(pdev);
+>  			return -ENOMEM;
+>  		}
+> -		urb->transfer_buffer_length = ISO_BUFFER_SIZE;
+>  		urb->complete = pwc_isoc_handler;
+>  		urb->context = pdev;
+>  		urb->start_frame = 0;
+> @@ -488,15 +518,16 @@ static void pwc_iso_free(struct pwc_device *pdev)
+> 
+>  	/* Freeing ISOC buffers one by one */
+>  	for (i = 0; i < MAX_ISO_BUFS; i++) {
+> -		if (pdev->urbs[i]) {
+> +		struct urb *urb = pdev->urbs[i];
+> +
+> +		if (urb) {
+>  			PWC_DEBUG_MEMORY("Freeing URB\n");
+> -			if (pdev->urbs[i]->transfer_buffer) {
+> -				usb_free_coherent(pdev->udev,
+> -					pdev->urbs[i]->transfer_buffer_length,
+> -					pdev->urbs[i]->transfer_buffer,
+> -					pdev->urbs[i]->transfer_dma);
+> -			}
+> -			usb_free_urb(pdev->urbs[i]);
+> +			if (urb->transfer_buffer)
+> +				pwc_free_urb_buffer(&urb->dev->dev,
+> +						    urb->transfer_buffer_length,
+> +						    urb->transfer_buffer,
+> +						    urb->transfer_dma);
+> +			usb_free_urb(urb);
+>  			pdev->urbs[i] = NULL;
+>  		}
+>  	}
+
+The rest of the patch looks fine, so
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+(if possible with a comment about dma_sync_single_for_device() added)
+
 -- 
-2.16.2
+Regards,
 
-Amazon Development Center Germany GmbH
-Berlin - Dresden - Aachen
-main office: Krausenstr. 38, 10117 Berlin
-Geschaeftsfuehrer: Dr. Ralf Herbrich, Christian Schlaeger
-Ust-ID: DE289237879
-Eingetragen am Amtsgericht Charlottenburg HRB 149173 B
+Laurent Pinchart
+
+
 
