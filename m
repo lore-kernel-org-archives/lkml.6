@@ -6,58 +6,58 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2288C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:15:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF09C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:17:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 689282081B
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:15:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6FD62064C
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:17:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JJ4j8XZ2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 689282081B
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="j9hxMrRl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6FD62064C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728061AbeJ3WIw (ORCPT
+        id S1728033AbeJ3WKY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 18:08:52 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:35279 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727806AbeJ3WIw (ORCPT
+        Tue, 30 Oct 2018 18:10:24 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:44063 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727742AbeJ3WKY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 18:08:52 -0400
-Received: by mail-lj1-f195.google.com with SMTP id x85-v6so7090271ljb.2
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 06:15:27 -0700 (PDT)
+        Tue, 30 Oct 2018 18:10:24 -0400
+Received: by mail-lf1-f68.google.com with SMTP id m18-v6so8813003lfl.11
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 06:16:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=vl0HyFr3dq0xQVM/zfnWXgc5CNEk/3xLwfWTWcjCfpM=;
-        b=JJ4j8XZ2tdFyYpuFoIPjw2YmQf3nqmlqW9urp+DQfv/5eCCBK6dUsqtQbchxLci7X0
-         5aTuNZrzobGaq3AOhO66ayQjKOYu3Yvf9tqcntOvxZou2VQsvYpQu6oTywlg4LfqRrj4
-         w/RqC2wFqCdGOfXRP6yvbSaaYc/d5ZNQp6eWE=
+        bh=HspSmfBDzptBzR2Kjg+MRKQqBhB8F2WJHal4+FQ9+OI=;
+        b=j9hxMrRl3LeJ8BDIr8gsbuCYC5x1jis1un28w+/ifkjYGgLBY9kK5obuIXypaoZZQ2
+         tp/Jfe2gQufGxHNM/kdj0dJKyWJ8daKMR+pAZu8Sv4Mz6cnkdqrjdhzRRR93/lVTqqqo
+         2EWKRRE0znv7y1pUln7Ff3+jvNn4bPs7O2RDQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=vl0HyFr3dq0xQVM/zfnWXgc5CNEk/3xLwfWTWcjCfpM=;
-        b=j75ywN3m/01DTqy563uKuvwAVZuPkneOuNRF7ZsAsCd9Xv5IUGoludcRho1qE3xQdz
-         savDYvyn34rV2iCcv9akMn5Va5XSq3VX7LOC4PPO5mv848ABPhZb6bBRv/qtCP9c6sPe
-         JchVtCbrYf+p42G9Kf+B45Brfj6lMijZDNGWglcdqrOI/mVNAaj7PR6TgknLkp71SLXD
-         TgYmIglWEYFEvZI6mChImSFnJjUV5fj7r8CTm70IEmFvcDlhK0v6jNC+LGdi5wdNAxbZ
-         IAaWof528gjLoVFGrJosvceyibyuKCThHXAs9pFWpgAXBOniVMNvuO02CMkMJ8wXoJaX
-         pFWQ==
-X-Gm-Message-State: AGRZ1gLfSvWOKhxh38RsgTVgOunqRAKNb7DUZNt/AA8Dv5Lh8YfS96Rt
-        GWSwAkjzu7v343jU5AefYsq5YY0O7A6tAZRQG/fTAw==
-X-Google-Smtp-Source: AJdET5fhXz9EL2zqpiN3RJTuN2TmQMylKbSbJX6DNd5sHBiD6cuZ2VDrALTuBCBL1XGlm6KVn5cG1YWUSGqR+3nVkvc=
-X-Received: by 2002:a2e:9849:: with SMTP id e9-v6mr5304951ljj.9.1540905326421;
- Tue, 30 Oct 2018 06:15:26 -0700 (PDT)
+        bh=HspSmfBDzptBzR2Kjg+MRKQqBhB8F2WJHal4+FQ9+OI=;
+        b=lw/WhiA+8ELSckCbYD0bVIP7zTvmUjS6wTOgbag8b1xtvZf70z9jSXEvjbHv8gOzG1
+         SF2wrcxi3ISbe+Pd4zzC0gao8UfjKASBpeHw7yTpfY+x7ObIDYVsZceEZuZoJZzQeaoC
+         s6K7Pn4I1pY7n+ey01SC2qXA77Xm76AbyA7D50qVNzr25ImAWbuQllZR8eIayDbtBkmL
+         a5jGEd74Prp+AojYxtmUOhtfGF7FGOsfQuan+0syjKsi7ss3+PYLOv2ciF6aOW1E51RP
+         4/tVjiojUun82e3ZiGoTrX3H8yNPWZT78mYxA5IgFuqXK6hxjvZ0KpgD2YtLukFxyZcy
+         G6Pg==
+X-Gm-Message-State: AGRZ1gKyPQtw4hdNj352WQukvq5Yc3PBJOUPGK+4wyFEt3IgmY8PGlAj
+        rRCSWkSLih9LSG1E9pd5h+AQmSRQ6PBRbJNHkr2q9g==
+X-Google-Smtp-Source: AJdET5epC9Q4o9TKHtb8zedDFZfAp7pCA/5HS52EId1Ki8DnBpDAi6HVK3XJORwfz5ZlPESq4HKH7R64gZ7TcBiUvOA=
+X-Received: by 2002:a19:8d01:: with SMTP id p1mr1768841lfd.149.1540905417956;
+ Tue, 30 Oct 2018 06:16:57 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181021200002.1472-1-wsa+renesas@sang-engineering.com> <20181021200002.1472-4-wsa+renesas@sang-engineering.com>
-In-Reply-To: <20181021200002.1472-4-wsa+renesas@sang-engineering.com>
+References: <20181021200032.1833-1-wsa+renesas@sang-engineering.com> <20181021200032.1833-5-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20181021200032.1833-5-wsa+renesas@sang-engineering.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 30 Oct 2018 14:15:14 +0100
-Message-ID: <CACRpkdb0fkqK5fVKhN4+QDbO=6ex4V0kwXgERVCua7NSOjfWqw@mail.gmail.com>
-Subject: Re: [PATCH 3/6] gpio: gpio-mxc: simplify getting .driver_data
+Date:   Tue, 30 Oct 2018 14:16:46 +0100
+Message-ID: <CACRpkdbOM5N+OBbZnT0SQATpsRdXZLEE1YgODW9ZGewytGVdYQ@mail.gmail.com>
+Subject: Re: [PATCH 4/5] pinctrl: pinctrl-amd: simplify getting .driver_data
 To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
 Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
@@ -76,7 +76,7 @@ On Sun, Oct 21, 2018 at 10:00 PM Wolfram Sang
 >
 > Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Patch applied for v4.21.
+Patch applied.
 
 Yours,
 Linus Walleij
