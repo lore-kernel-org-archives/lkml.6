@@ -2,184 +2,100 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEDB6C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:48:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EEE6C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:51:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61CE32075D
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:48:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dtbkx8yc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61CE32075D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id EBEA52080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 14:51:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBEA52080A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727381AbeJ3XmJ (ORCPT
+        id S1726757AbeJ3Xot (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 19:42:09 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:39210 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726683AbeJ3XmJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 19:42:09 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w9UEi2cg103727;
-        Tue, 30 Oct 2018 14:48:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=smDSUCCYSUuQaN0jdFIUuESIt9jx/3qRvYL37f3U5dw=;
- b=dtbkx8ycwRHweYind0afBX3j0+SqrSm6lIUU4IntuOpXNf/MHq1ukML841suKvxTmW4q
- svdqAWR9q+Y9nJfnaopOuPl5XYUfFE/9xDFaTEXaPrv1fhLxaCcSvJxUjBaKZC09j609
- ppt0vDyFZZQBH3wvj5L+Ay8G5bb7xAXEJQlNA0aMKjcC5DZ6Cu2jRwcxgrsD2Qb9iDxp
- 4VzHPSd0Zpq+22hJ6vF/OjgoofEvh4Ip5Rgt5nh9KxlABEi8MNVqpriYqul7mcBk978l
- h7pJvOzeGWcrkHo46qQw8bxGFB68eJARTILUyAlbGgh0/jysVDEeCNQv/hQ7H/4DKAPO fw== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2120.oracle.com with ESMTP id 2ncgnqvs7g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Oct 2018 14:48:09 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w9UEm8KX013152
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 30 Oct 2018 14:48:08 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w9UEm8XT022459;
-        Tue, 30 Oct 2018 14:48:08 GMT
-Received: from [10.211.47.88] (/10.211.47.88)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 30 Oct 2018 07:48:07 -0700
-Subject: Re: [Xen-devel] [PATCH] xen-swiotlb: exchange memory with Xen only
- when pages are contiguous
-To:     Paul Durrant <Paul.Durrant@citrix.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc:     John Sobecki <john.sobecki@oracle.com>,
-        "DONGLI.ZHANG" <dongli.zhang@oracle.com>,
-        "linux-kernel@vger.kernel.org\"" <linux-kernel@vger.kernel.org>,
-        "konrad@kernel.org" <konrad@kernel.org>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        Christoph Helwig <hch@lst.de>
-References: <bb6d87b4-c371-c6c0-8c48-bc95df018ad1@oracle.com>
- <20181024130246.GA22616@localhost.localdomain>
- <83900cf4-690c-9725-d022-d427fdeb4f7d@oracle.com>
- <581cb7ea-3112-791d-918d-9bb887e4744f@oracle.com>
- <24a62522-1629-5d0b-398e-6d2c1a0b97f7@oracle.com>
- <922914c9-22db-c5d1-33da-d07691ebd7d7@oracle.com>
- <a47fabe8-53d1-47b8-0efc-f9f1e5b4898a@oracle.com>
- <45f5ffe8-3f48-4485-53f0-5a056be69b0c@oracle.com>
- <5b64850f-9142-0360-fe4e-9e7bc74d2368@oracle.com>
- <3e65208c-cb11-d918-00eb-012a97e56fec@oracle.com>
- <57e5593233c64dc0a36c7d4c750a1ed4@AMSPEX02CL03.citrite.net>
- <cd2efe58-4efb-cf5b-db6e-0bc7838bd9c9@oracle.com>
- <097f1f6f16f7415aa3a52a7c4f5e52dc@AMSPEX02CL03.citrite.net>
-From:   Joe Jin <joe.jin@oracle.com>
-Message-ID: <a7c9265b-1218-264b-b67d-5d80e44fb7d4@oracle.com>
-Date:   Tue, 30 Oct 2018 07:48:07 -0700
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <097f1f6f16f7415aa3a52a7c4f5e52dc@AMSPEX02CL03.citrite.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9061 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1810300128
+        Tue, 30 Oct 2018 19:44:49 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:38218 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726135AbeJ3Xot (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 19:44:49 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1904D3091749;
+        Tue, 30 Oct 2018 14:51:03 +0000 (UTC)
+Received: from loberhel74.redhat.com (ovpn-125-191.rdu2.redhat.com [10.10.125.191])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3AC9A5F703;
+        Tue, 30 Oct 2018 14:51:02 +0000 (UTC)
+From:   Laurence Oberman <loberman@redhat.com>
+To:     tglx@linutronix.de
+Cc:     linux-kernel@vger.kernel.org, rdunlap@infradead.org,
+        prarit@redhat.com, Laurence Oberman <loberman@redhat.com>
+Subject: [PATCH] [PATCH V7] watchdog/core: Add watchdog_thresh command line  parameter
+Date:   Tue, 30 Oct 2018 10:50:04 -0400
+Message-Id: <1540911004-11539-1-git-send-email-loberman@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Tue, 30 Oct 2018 14:51:03 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/30/18 7:21 AM, Paul Durrant wrote:
->> -----Original Message-----
->> From: Xen-devel [mailto:xen-devel-bounces@lists.xenproject.org] On Behalf
->> Of Joe Jin
->> Sent: 30 October 2018 14:13
->> To: Paul Durrant <Paul.Durrant@citrix.com>; Boris Ostrovsky
->> <boris.ostrovsky@oracle.com>; Konrad Rzeszutek Wilk
->> <konrad.wilk@oracle.com>
->> Cc: John Sobecki <john.sobecki@oracle.com>; DONGLI.ZHANG
->> <dongli.zhang@oracle.com>; linux-kernel@vger.kernel.org" <linux-
->> kernel@vger.kernel.org>; konrad@kernel.org; xen-
->> devel@lists.xenproject.org; Christoph Helwig <hch@lst.de>
->> Subject: Re: [Xen-devel] [PATCH] xen-swiotlb: exchange memory with Xen
->> only when pages are contiguous
->>
->> On 10/30/18 1:59 AM, Paul Durrant wrote:
->>>> On 10/25/18 11:56 AM, Joe Jin wrote:
->>>>> I just discussed this patch with Boris in private, his opinions(Boris,
->>>>> please correct me if any misunderstood) are:
->>>>>
->>>>> 1. With/without the check, both are incorrect, he thought we need to
->>>>>    prevented unalloc'd free at here.
->>>>> 2. On freeing, if upper layer already checked the memory was DMA-able,
->>>>>    the checking at here does not make sense, we can remove all checks.
->>>>> 3. xen_create_contiguous_region() and xen_destroy_contiguous_region()
->>>>>    to come in pairs.
->>>> I tried to added radix_tree to track allocating/freeing and I found
->> some
->>>> memory only allocated but was not freed, I guess it caused by driver
->> used
->>>> dma_pool, that means if lots of such requests, the list will consume
->> lot
->>>> of memory for it. Will continue to work on it, if anyone have good idea
->>>> for it please let me know, I'd like to try it.
->>>>
->>> FWIW, in my Xen PV-IOMMU test patches, I have also tried keeping a list
->> of ranges mapped for DMA and have discovered apparent issues with some
->> drivers, particularly tg3, that seem to free mappings that have not been
->> allocated (or possibly double-free). I've never fully tracked down the
->> issue.
->>
->> Call trace of first called xen_swiotlb_alloc_coherent(The pages never
->> backed to Xen):
->>
->> [   23.436333]  [<ffffffff814040c9>]
->> xen_swiotlb_alloc_coherent+0x169/0x510
->> [   23.436623]  [<ffffffff811eb38d>] ? kmem_cache_alloc_trace+0x1ed/0x280
->> [   23.436900]  [<ffffffff811d72af>] dma_pool_alloc+0x11f/0x260
->> [   23.437190]  [<ffffffff81537442>] ehci_qh_alloc+0x52/0x120
->> [   23.437481]  [<ffffffff8153b80f>] ehci_setup+0x2bf/0x8e0
->> [   23.437760]  [<ffffffff81476d06>] ? __dev_printk+0x46/0xa0
->> [   23.438042]  [<ffffffff814770b3>] ? _dev_info+0x53/0x60
->> [   23.438327]  [<ffffffff8153f620>] ehci_pci_setup+0xc0/0x5f0
->> [   23.438615]  [<ffffffff81519fcd>] usb_add_hcd+0x25d/0xaf0
->> [   23.438901]  [<ffffffff8152c9a6>] usb_hcd_pci_probe+0x406/0x520
->> [   23.439177]  [<ffffffff8153f486>] ehci_pci_probe+0x36/0x40
->> [   23.439469]  [<ffffffff8136e99a>] local_pci_probe+0x4a/0xb0
->> [   23.439752]  [<ffffffff8136fba5>] ? pci_match_device+0xe5/0x110
->> [   23.440027]  [<ffffffff8136fce1>] pci_device_probe+0xd1/0x120
->> [   23.440320]  [<ffffffff8147b13c>] driver_probe_device+0x20c/0x4d0
->> [   23.440599]  [<ffffffff8147b4eb>] __driver_attach+0x9b/0xa0
->> [   23.440879]  [<ffffffff8147b450>] ? __device_attach+0x50/0x50
->>
->> Above was EHCI used DMA pool to allocate DMA memory.
->>
->> During my testing, ~1000 entries was not freed, if more PCI devices
->> use DMA pool, the tree/list will have more entries, looks it's not a
->> good idea that use a list to track it.
->>
-> 
-> Yes, it seems pools can hang onto a serious number of allocations so a list is probably not wise.
+Both graphics and serial consoles are exposed to hard lockups
+when handling a large amount of messaging. The kernel watchdog_thresh
+parameter up to now has not been available to be set on the kernel line for
+early boot.
+This patch allows the setting of watchdog_thresh to be increased
+when needed to extend the hard lockup timer in the console code.
+Note that this also affects the soft lockup detector
 
-I agree with you.
+Signed-off-by: Laurence Oberman <loberman@redhat.com>
 
-> What I was pointing out, though, is that it appears you can't even track mappings (as opposed to allocations) with a list.
+---
+ Documentation/admin-guide/kernel-parameters.txt | 8 ++++++++
+ kernel/watchdog.c                               | 7 +++++++
+ 2 files changed, 15 insertions(+)
 
-Right.
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index b90fe3b6bc6c..4263937f4aa9 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4957,6 +4957,14 @@
+ 			or other driver-specific files in the
+ 			Documentation/watchdog/ directory.
+ 
++        watchdog_thresh=
++                        [KNL]
++                        Set the hard lockup detector stall duration
++                        threshold in seconds. The soft lockup detector
++                        threshold is set to twice the value. A value of 0
++                        disables both lockup detectors. Default is 10
++                        seconds.
++
+ 	workqueue.watchdog_thresh=
+ 			If CONFIG_WQ_WATCHDOG is configured, workqueue can
+ 			warn stall conditions and dump internal state to
+diff --git a/kernel/watchdog.c b/kernel/watchdog.c
+index 977918d5d350..8fbfda94a67b 100644
+--- a/kernel/watchdog.c
++++ b/kernel/watchdog.c
+@@ -199,6 +199,13 @@ static int __init nosoftlockup_setup(char *str)
+ }
+ __setup("nosoftlockup", nosoftlockup_setup);
+ 
++static int __init watchdog_thresh_setup(char *str)
++{
++	get_option(&str, &watchdog_thresh);
++	return 1;
++}
++__setup("watchdog_thresh=", watchdog_thresh_setup);
++
+ #ifdef CONFIG_SMP
+ int __read_mostly sysctl_softlockup_all_cpu_backtrace;
+ 
+-- 
+2.18.1
 
-
-> either because drivers apparently try to unmap things they have not mapped.
-
-If this happened, should be fixed by driver :)
-
-Thanks,
-Joe
-> 
->   Paul
-> 
