@@ -2,132 +2,164 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13340C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:06:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D14B0C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:06:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE9AE20823
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:06:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE9AE20823
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 980BC2081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 13:06:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="wRIaA2Yx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 980BC2081B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728014AbeJ3V72 (ORCPT
+        id S1728030AbeJ3V7r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 17:59:28 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:22524 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725853AbeJ3V72 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 17:59:28 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C37FF2DE416;
-        Tue, 30 Oct 2018 13:06:06 +0000 (UTC)
-Received: from [172.16.176.1] (ovpn-121-196.rdu2.redhat.com [10.10.121.196])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 185271084261;
-        Tue, 30 Oct 2018 13:06:05 +0000 (UTC)
-From:   "Benjamin Coddington" <bcodding@redhat.com>
-To:     "zhong jiang" <zhongjiang@huawei.com>
-Cc:     herbert@gondor.apana.org.au, linux-crypto@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [Qestion] Lots of memory leaks when mounting and unmounting nfs
- client to server continuously.
-Date:   Tue, 30 Oct 2018 09:06:06 -0400
-Message-ID: <1DEE371C-69EB-4D92-8F78-535AA5203007@redhat.com>
-In-Reply-To: <5BD85266.6000301@huawei.com>
-References: <5BD85266.6000301@huawei.com>
+        Tue, 30 Oct 2018 17:59:47 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:56352 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725853AbeJ3V7r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 17:59:47 -0400
+Received: from avalon.localnet (dfj612ybrt5fhg77mgycy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:2e86:4862:ef6a:2804])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 80682992;
+        Tue, 30 Oct 2018 14:06:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1540904782;
+        bh=6HuerUdipknqN1v3KCRRQo6yKMoxxz6IWRe6jlejfuQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=wRIaA2YxeDm8zoYamFJ/TgSQPP7vVBMLJ3n4Ty6gfoYlNqQ2G3yc0mwVK8MeKWZ//
+         Alqscb7HjRLP4JZJoAqCzRMdMtwEkziIXk3HJ7WBs8Xr8oOwHt8HFBOZpUbQbHWqPP
+         SIARvF8r/xe9IE59qTqIYolgrQENa5zgRCV3VvPk=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Yong Deng <yong.deng@magewell.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: Re: [PATCH v12 1/2] dt-bindings: media: Add Allwinner V3s Camera Sensor Interface (CSI)
+Date:   Tue, 30 Oct 2018 15:06:24 +0200
+Message-ID: <308184907.pMD7ZDI2dr@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <1540887143-27904-1-git-send-email-yong.deng@magewell.com>
+References: <1540887143-27904-1-git-send-email-yong.deng@magewell.com>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 30 Oct 2018 13:06:06 +0000 (UTC)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi zhong jiang,
+Hi Yong,
 
-Try asking in linux-nfs.. but I'll also note that 3.10-stable may be 
-missing a number of fixes to leaks in the NFS GSS code.
+Thank you for the patch.
 
-I can see a more than a few fixes to memory leaks with:
-git log --grep=leak --oneline net/sunrpc/auth_gss/
+On Tuesday, 30 October 2018 10:12:23 EET Yong Deng wrote:
+> Add binding documentation for Allwinner V3s CSI.
+> 
+> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+> Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> Signed-off-by: Yong Deng <yong.deng@magewell.com>
 
-Ben
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-On 30 Oct 2018, at 8:45, zhong jiang wrote:
+> ---
+>  .../devicetree/bindings/media/sun6i-csi.txt        | 56 +++++++++++++++++++
+>  1 file changed, 56 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/sun6i-csi.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/media/sun6i-csi.txt
+> b/Documentation/devicetree/bindings/media/sun6i-csi.txt new file mode
+> 100644
+> index 000000000000..443e18c181b3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/sun6i-csi.txt
+> @@ -0,0 +1,56 @@
+> +Allwinner V3s Camera Sensor Interface
+> +-------------------------------------
+> +
+> +Allwinner V3s SoC features a CSI module(CSI1) with parallel interface.
+> +
+> +Required properties:
+> +  - compatible: value must be "allwinner,sun8i-v3s-csi"
+> +  - reg: base address and size of the memory-mapped region.
+> +  - interrupts: interrupt associated to this IP
+> +  - clocks: phandles to the clocks feeding the CSI
+> +    * bus: the CSI interface clock
+> +    * mod: the CSI module clock
+> +    * ram: the CSI DRAM clock
+> +  - clock-names: the clock names mentioned above
+> +  - resets: phandles to the reset line driving the CSI
+> +
+> +The CSI node should contain one 'port' child node with one child 'endpoint'
+> +node, according to the bindings defined in
+> +Documentation/devicetree/bindings/media/video-interfaces.txt.
+> +
+> +Endpoint node properties for CSI
+> +---------------------------------
+> +See the video-interfaces.txt for a detailed description of these
+> properties. +- remote-endpoint	: (required) a phandle to the bus receiver's
+> endpoint +			   node
+> +- bus-width:		: (required) must be 8, 10, 12 or 16
+> +- pclk-sample		: (optional) (default: sample on falling edge)
+> +- hsync-active		: (required; parallel-only)
+> +- vsync-active		: (required; parallel-only)
+> +
+> +Example:
+> +
+> +csi1: csi@1cb4000 {
+> +	compatible = "allwinner,sun8i-v3s-csi";
+> +	reg = <0x01cb4000 0x1000>;
+> +	interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_HIGH>;
+> +	clocks = <&ccu CLK_BUS_CSI>,
+> +		 <&ccu CLK_CSI1_SCLK>,
+> +		 <&ccu CLK_DRAM_CSI>;
+> +	clock-names = "bus", "mod", "ram";
+> +	resets = <&ccu RST_BUS_CSI>;
+> +
+> +	port {
+> +		/* Parallel bus endpoint */
+> +		csi1_ep: endpoint {
+> +			remote-endpoint = <&adv7611_ep>;
+> +			bus-width = <16>;
+> +
+> +			/* If hsync-active/vsync-active are missing,
+> +			   embedded BT.656 sync is used */
+> +			hsync-active = <0>; /* Active low */
+> +			vsync-active = <0>; /* Active low */
+> +			pclk-sample = <1>;  /* Rising */
+> +		};
+> +	};
+> +};
 
-> Hi,   Herbert
->
-> Recently,  I  hit  a memory leak issue when  mounting and unmounting 
-> nfs with  the way of  krb5.
-> The issue happens to the linux-3.10-stable.
->
-> I find that slab-1024 and slab-512 will take up most of the memory.  
-> And it can not be freed.
-> Meanwhile, it result in rpcsec_gss_krb5 can be unregistered as well.
->
-> nfs-sve1:/home # cat /proc/modules | grep krb5
-> rpcsec_gss_krb5 31477 239730 - Live 0xffffffffa0334000
-> auth_rpcgss 59314 3 rpcsec_gss_krb5,nfsd, Live 0xffffffffa0123000
-> sunrpc 300546 25 rpcsec_gss_krb5,nfsd,auth_rpcgss,nfs_acl,lockd, Live 
-> 0xffffffffa013b000
->
-> I open the slab-1024 trace by enabling 
-> /sys/kernel/slab/:t-0001024/trace and get the following
->
-> [123420.989831] Call Trace:
-> [123420.989834]  [<ffffffff81642d2a>] dump_stack+0x19/0x1b
-> [123420.989837]  [<ffffffff8163f25e>] 
-> alloc_debug_processing+0xc5/0x118
-> [123420.989839]  [<ffffffff8163fd4d>] __slab_alloc+0x400/0x48f
-> [123420.989841]  [<ffffffff812b1795>] ? __crypto_alloc_tfm+0x45/0x170
-> [123420.989845]  [<ffffffff812b2307>] ? setkey+0x57/0x110
-> [123420.989847]  [<ffffffff8118b5fd>] ? kzfree+0x2d/0x30
-> [123420.989850]  [<ffffffff811c6e88>] __kmalloc+0x1c8/0x230
-> [123420.989852]  [<ffffffff812b1795>] __crypto_alloc_tfm+0x45/0x170
-> [123420.989854]  [<ffffffff812b2e45>] crypto_spawn_tfm+0x45/0x80
-> [123420.989857]  [<ffffffff811c6eb3>] ? __kmalloc+0x1f3/0x230
-> [123420.989859]  [<ffffffff812c15c7>] crypto_cbc_init_tfm+0x27/0x40
-> [123420.989864]  [<ffffffff812b1851>] __crypto_alloc_tfm+0x101/0x170
-> [123420.989866]  [<ffffffff812b1ffc>] crypto_alloc_base+0x4c/0xb0
-> [123420.989869]  [<ffffffffa033411b>] 
-> context_v2_alloc_cipher.isra.2+0x2b/0xc0 [rpcsec_gss_krb5]
-> [123420.989871]  [<ffffffffa0334da8>] 
-> gss_import_sec_context_kerberos+0xbf8/0xf00 [rpcsec_gss_krb5]
-> [123420.989875]  [<ffffffffa0126d5d>] gss_import_sec_context+0x7d/0xb0 
-> [auth_rpcgss]
-> [123420.989878]  [<ffffffffa012b35e>] gss_proxy_save_rsc+0x137/0x1b0 
-> [auth_rpcgss]
-> [123420.989884]  [<ffffffffa012b51e>] 
-> svcauth_gss_proxy_init+0x147/0x1e4 [auth_rpcgss]
-> [123420.989886]  [<ffffffff810c2ad6>] ? dequeue_entity+0x106/0x520
-> [123420.989890]  [<ffffffffa0128e2a>] svcauth_gss_accept+0x3da/0xb70 
-> [auth_rpcgss]
-> [123420.989892]  [<ffffffff810b6c25>] ? check_preempt_curr+0x85/0xa0
-> [123420.989894]  [<ffffffff810b6c59>] ? ttwu_do_wakeup+0x19/0xd0
-> [123420.989897]  [<ffffffff810b6ded>] ? 
-> ttwu_do_activate.constprop.86+0x5d/0x70
-> [123420.989900]  [<ffffffff810b9422>] ? try_to_wake_up+0x162/0x330
-> [123420.989908]  [<ffffffffa014f490>] svc_authenticate+0xc0/0xe0 
-> [sunrpc]
-> [123420.989914]  [<ffffffffa014c04a>] svc_process_common+0x21a/0x6f0 
-> [sunrpc]
-> [123420.989921]  [<ffffffffa014c623>] svc_process+0x103/0x170 [sunrpc]
-> [123420.989928]  [<ffffffffa01baaaf>] nfsd+0xdf/0x150 [nfsd]
-> [123420.989932]  [<ffffffffa01ba9d0>] ? nfsd_destroy+0x80/0x80 [nfsd]
-> [123420.989934]  [<ffffffff810a648f>] kthread+0xcf/0xe0
-> [123420.989936]  [<ffffffff810a63c0>] ? 
-> kthread_create_on_node+0x140/0x140
-> [123420.989939]  [<ffffffff81653318>] ret_from_fork+0x58/0x90
-> [123420.989943]  [<ffffffff810a63c0>] ? 
-> kthread_create_on_node+0x140/0x140
->
-> I am unfamiliar with crypto.   I will be appreciated  if you could 
-> give me some suggestion.
->
-> Thanks,
-> zhong jiang
+
+-- 
+Regards,
+
+Laurent Pinchart
+
+
+
