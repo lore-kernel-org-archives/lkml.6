@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A8D9C2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:18:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF2F9C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:18:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C02B220823
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:18:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C02B220823
+	by mail.kernel.org (Postfix) with ESMTP id 95FFD2081B
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 16:18:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95FFD2081B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727693AbeJaBML (ORCPT
+        id S1727732AbeJaBMQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 21:12:11 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:49074 "EHLO
-        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726249AbeJaBML (ORCPT
+        Tue, 30 Oct 2018 21:12:16 -0400
+Received: from mail-it1-f200.google.com ([209.85.166.200]:44711 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726488AbeJaBML (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 30 Oct 2018 21:12:11 -0400
-Received: by mail-io1-f70.google.com with SMTP id c17-v6so11376702ioi.15
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 09:18:03 -0700 (PDT)
+Received: by mail-it1-f200.google.com with SMTP id r188-v6so13497558itb.9
+        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 09:18:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=/5EgYZgd1afPwZpeHSzKiYj8R4yFQR5C9ygU+fqJtdE=;
-        b=iyWAJE8CYWTullqariIYcCMR+Mgs2HxgICPGLFW9xKM9W1q5kjgQNdko/HqrQmEV6y
-         0fNeUmyX4l7N0JEcNwaZA9FaBZdLI9Pe2ALjDEI5qy2PIEZJY+OGX9ZPfjUuYKojhyct
-         CzBeH/PMJfRb19+xmHmAKX9qfKR93m1OJSC5bDV6WojIvXDVdIpWqrrFBFuSEy0CUQYT
-         OtQSzHKVYGGOeZerrFmFRrc4e8/GDDViUu4iNIpxK278ElG6yk/7uDC8dMmRtEvL+DP1
-         dve4j7CYSgWR1G+zjGV2YLGG4lbfY0c4hQIzg2PkPx11XgWTe06VkeIyySSDlWKCwC/1
-         R+LA==
-X-Gm-Message-State: AGRZ1gJnZ/yf8W473D6BYZ7ADcgVxCKjvWr5KH6qHhZm2RIW50KHu7Xj
-        U+KlowLLz8n+xawCr/6lD1kmYwpBgS/nzor4obqSYA9aLH6P
-X-Google-Smtp-Source: AJdET5cqN5O7XWCvGTymhPoSHGcR3EDu2f8igFksecBIMAdUDRec1mr2B/C14s2Y5e1Ix0mFpmEAUQsPileoWPOYOMKR2kb2qLAS
+        bh=d9mXKts4L1dqv4sS50VXoaRcEV7vYXqNSi4Zusxvnx0=;
+        b=NJCvWEGpUhV+Otr+VdS3oUe8U7L9iDZ9+TEYDEgMSiL/E9Wp4FdLRZjTZgMqnYpkHz
+         3flJGhhmHyPd+FZeuKtSqQyvoTzyoYXYSs9FpqiLcP2G9Fu3F9admBqzXBRSsNS1+DuP
+         Naah9tEDLDlVHYWaegtjkR74UGXsSVP7QsTcQENV6Kr/rCES74napfCLYrHIP0QAoYYc
+         ReF7m1+MXmPKieENzk0yFftJXBWEAmaZMkaZk0m+0EhSHJTVmS/ObUkxT/EXi3X47XH9
+         pSIng3BgpewlwAJn8/E5ByQpV6pdAif1J6qFvbRrBDHNFPZHnRuAL3YVYwhxxYe7G7Nq
+         uRag==
+X-Gm-Message-State: AGRZ1gKARbq0L7gnOcNwfkwkqdm57q8ABYAAHJcMKQRatJLeD5qFvD21
+        hTleSryuccY3Tk20R4/yw6DnHc0mA+ntrWj1NweFHsW+pUvs
+X-Google-Smtp-Source: AJdET5eMWKP7gcNAN8wz+9GmGnB1fK1xgZzjsfIRtSySpp8DP31xOQZhL3ZnJm4dJRdd1khQ3brAgnxqmSVqSQ42cYshj+DjxMjY
 MIME-Version: 1.0
-X-Received: by 2002:a24:68c7:: with SMTP id v190-v6mr12385321itb.12.1540916283585;
+X-Received: by 2002:a05:660c:b41:: with SMTP id m1mr6494590itl.32.1540916283787;
  Tue, 30 Oct 2018 09:18:03 -0700 (PDT)
 Date:   Tue, 30 Oct 2018 09:18:03 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b641b70579748761@google.com>
-Subject: KMSAN: uninit-value in tipc_nl_compat_bearer_enable
-From:   syzbot <syzbot+b33d5cae0efd35dbfe77@syzkaller.appspotmail.com>
+Message-ID: <000000000000b95fb10579748790@google.com>
+Subject: KMSAN: uninit-value in tipc_nl_compat_name_table_dump
+From:   syzbot <syzbot+06e771a754829716a327@syzkaller.appspotmail.com>
 To:     davem@davemloft.net, jon.maloy@ericsson.com,
         linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
         syzkaller-bugs@googlegroups.com,
@@ -63,19 +63,23 @@ syzbot found the following crash on:
 
 HEAD commit:    4bb25354f0b0 kmsan: unpoison pt_regs in do_nmi()
 git tree:       https://github.com/google/kmsan.git/master
-console output: https://syzkaller.appspot.com/x/log.txt?x=107556e5400000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1708369d400000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=36c582b1a617b1e6
-dashboard link: https://syzkaller.appspot.com/bug?extid=b33d5cae0efd35dbfe77
+dashboard link: https://syzkaller.appspot.com/bug?extid=06e771a754829716a327
 compiler:       clang version 8.0.0 (trunk 339414)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17c2e95b400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=129a919d400000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11e4c523400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14ec1bf9400000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+b33d5cae0efd35dbfe77@syzkaller.appspotmail.com
+Reported-by: syzbot+06e771a754829716a327@syzkaller.appspotmail.com
 
 ==================================================================
-BUG: KMSAN: uninit-value in strlen+0x3b/0xa0 lib/string.c:484
-CPU: 1 PID: 6371 Comm: syz-executor652 Not tainted 4.19.0-rc8+ #70
+BUG: KMSAN: uninit-value in __arch_swab32  
+arch/x86/include/uapi/asm/swab.h:10 [inline]
+BUG: KMSAN: uninit-value in __fswab32 include/uapi/linux/swab.h:59 [inline]
+BUG: KMSAN: uninit-value in tipc_nl_compat_name_table_dump+0x4a8/0xba0  
+net/tipc/netlink_compat.c:826
+CPU: 0 PID: 6290 Comm: syz-executor848 Not tainted 4.19.0-rc8+ #70
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
@@ -83,12 +87,13 @@ Call Trace:
   dump_stack+0x306/0x460 lib/dump_stack.c:113
   kmsan_report+0x1a2/0x2e0 mm/kmsan/kmsan.c:917
   __msan_warning+0x7c/0xe0 mm/kmsan/kmsan_instr.c:500
-  strlen+0x3b/0xa0 lib/string.c:484
-  nla_put_string include/net/netlink.h:1011 [inline]
-  tipc_nl_compat_bearer_enable+0x238/0x7b0 net/tipc/netlink_compat.c:389
-  __tipc_nl_compat_doit net/tipc/netlink_compat.c:311 [inline]
-  tipc_nl_compat_doit+0x39f/0xae0 net/tipc/netlink_compat.c:344
-  tipc_nl_compat_recv+0x147c/0x2760 net/tipc/netlink_compat.c:1107
+  __arch_swab32 arch/x86/include/uapi/asm/swab.h:10 [inline]
+  __fswab32 include/uapi/linux/swab.h:59 [inline]
+  tipc_nl_compat_name_table_dump+0x4a8/0xba0 net/tipc/netlink_compat.c:826
+  __tipc_nl_compat_dumpit+0x59e/0xdb0 net/tipc/netlink_compat.c:205
+  tipc_nl_compat_dumpit+0x63a/0x820 net/tipc/netlink_compat.c:270
+  tipc_nl_compat_handle net/tipc/netlink_compat.c:1151 [inline]
+  tipc_nl_compat_recv+0x1402/0x2760 net/tipc/netlink_compat.c:1210
   genl_family_rcv_msg net/netlink/genetlink.c:601 [inline]
   genl_rcv_msg+0x185c/0x1a20 net/netlink/genetlink.c:626
   netlink_rcv_skb+0x394/0x640 net/netlink/af_netlink.c:2454
@@ -109,7 +114,7 @@ RIP: 0033:0x440179
 Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
 ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fffef7beee8 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
+RSP: 002b:00007ffecec49318 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
 RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440179
 RDX: 0000000000000000 RSI: 0000000020000100 RDI: 0000000000000003
 RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
