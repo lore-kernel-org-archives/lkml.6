@@ -2,103 +2,169 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 635AAC2BC61
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 20:07:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F3A1C2BC61
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 20:08:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9C2A2080A
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 20:07:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBF972080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 20:08:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="d72Byb2Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9C2A2080A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mLxXlZ9F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBF972080A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727851AbeJaFCM (ORCPT
+        id S1727879AbeJaFDv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 31 Oct 2018 01:02:12 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:42972 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726863AbeJaFCM (ORCPT
+        Wed, 31 Oct 2018 01:03:51 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:43106 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726059AbeJaFDv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 31 Oct 2018 01:02:12 -0400
-Received: by mail-lf1-f66.google.com with SMTP id q6-v6so9883783lfh.9
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 13:07:16 -0700 (PDT)
+        Wed, 31 Oct 2018 01:03:51 -0400
+Received: by mail-qk1-f195.google.com with SMTP id r71so8110326qkr.10;
+        Tue, 30 Oct 2018 13:08:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YHlA1Gy9bikOKYy8gzOAw1wz0+eQluWCb2m298a9UsA=;
-        b=d72Byb2QHgPqTgAXvhHNvfoMjdDL+qRXq8PyQsTUBX+BSh1aY+dF33CZzrYg8JSsSn
-         /HZRfN5/n7oQ/Dg4G9zq20D61EXR1n9qOKtknZY+dxm6Wn7pHGrgtl2aohmKZF9AiuVE
-         Fmy7UPs8GF+4fssy3XS+X2ixM640fNszugEqM=
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=RpTo1KM0PRBTIdeibAxOamsQPtaTgRc/rVpIA1Y7jxI=;
+        b=mLxXlZ9FdIyl49+VmVfhD8nx3bpU/aBaM3XgI6kO+rQfhK5cYX/Fo5ITW04Akdum16
+         O3jGu4gdMuaakN6VqHiGQgGzFAkiOTAsoNAbZwa73SvZ1wH/RGjQkr8847MEn4atSe6k
+         /k9cyI1vS6HTCt4lsgKUKvr/nRS/EXt6ghEusgYqYMZPHUmZnphRew1JS44cmlcHAxaj
+         uqiWpb1vIlSVtBGhZ7Nt4SilbHL2dHgcb1Axs/02IKdGGXbl4ZaLWsu77ogIa0sjXOCK
+         DW+v1MNWOOub51DgC5ScygStbA8DThdsBDb7xZixEgaQ2N9p4itErswFAp9JFjAVqhqc
+         qXFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YHlA1Gy9bikOKYy8gzOAw1wz0+eQluWCb2m298a9UsA=;
-        b=SgVA3xU+KAPhESHhYWGCHZP61EQR+idvV3aIRdUVdRwdMK1BLVPf2P24ImFQMvTGwH
-         Jsh9byCD2lE3iGTGfV2X3R2htkxyHPyLboe9qT9vEqPeD/4QhF+KivX9zUfFlU/Q1DdV
-         jni7MiBZoo/iYB2/gvs3y1yM6jUd627mWwuIoMp0Txf11t3fi9nqv9Hl9fF68tS3lxND
-         FiIV0I9sJzwsBSVUdF3cjZcr02Vhi5Kou5k9xbimlrpxszH30nQYHnfYNQjDDhjGwLsi
-         Q//RTdd8qigwWvP48802KONTI2x1rY0EuNNbLuZMTG7m/6wtEXekQFawSqgTne1qg/oq
-         x8fQ==
-X-Gm-Message-State: AGRZ1gJsp1CP9ioLSePs5E/3cSu9VNYGg2Z8cVvR0ss5F+CEeSG/DvBM
-        1LCBd8mTWF4XBJ4Ne1A+6uC6PeQO7McwIw==
-X-Google-Smtp-Source: AJdET5eRzWQaLsVA4CbB+vJvvBaVJ6xTPbPUQ6xeL4+Z23HI/hOTfmNRBYvf9HF+k4kpVNLGv7TvfQ==
-X-Received: by 2002:a19:6719:: with SMTP id b25mr88728lfc.38.1540930035468;
-        Tue, 30 Oct 2018 13:07:15 -0700 (PDT)
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
-        by smtp.gmail.com with ESMTPSA id f76sm678670lfl.74.2018.10.30.13.07.14
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Oct 2018 13:07:14 -0700 (PDT)
-Received: by mail-lf1-f43.google.com with SMTP id h192so9917251lfg.3
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 13:07:14 -0700 (PDT)
-X-Received: by 2002:a19:7019:: with SMTP id h25-v6mr68821lfc.147.1540930033935;
- Tue, 30 Oct 2018 13:07:13 -0700 (PDT)
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=RpTo1KM0PRBTIdeibAxOamsQPtaTgRc/rVpIA1Y7jxI=;
+        b=JgAJPa5sjYqjv2+A2yAZNLNNc5bQwQQqWpnaBTt4hI0nrAVTqWxPJxHb9/xzxnVLSk
+         EkB6B7oUyMdmYffa69xqHKAybBKuqV6ZblXdnVNPA88CnvjQdKqWm995dJGePuXWZbIU
+         DXRolg3TyU4PK8J/bNrvzOmpBP5x6tmvgicRNOm4yTSTXtyXAnjv/xTL5/YmSzREfSqZ
+         i7pUGPZlyftF5Ec9AKYpBVXWj4G83/3H8R0eIGD3sgyAMiTg1V0+thpRDDJ6rwP9gq72
+         LEYHkeouWz6aqxDuWOenOzOeCLlkOXxfBUswpaPC2gT+l7H9jR6DWbflecFWP5RAj0oA
+         LkPg==
+X-Gm-Message-State: AGRZ1gKSAYQjktEnLhfqgKeH6Jli3Kd9YpiRuv5scb6ZlY2hTeyiaS9o
+        AxgBq18NGzayvmcj/B0D1J9+FvVd9ps7rSfOFPo=
+X-Google-Smtp-Source: AJdET5f+U8CdFKdL1vTgsVWutGUwn2DgKxDedsgjEZJhh1YVjH5XD54vbVKdWYOX2c66FFoMj3M6CopX0Yk+k7tf4tU=
+X-Received: by 2002:a37:4116:: with SMTP id o22-v6mr123885qka.107.1540930135735;
+ Tue, 30 Oct 2018 13:08:55 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181030191710.GA23042@fieldses.org> <CAHk-=wi+-POnmS41x9SKR+CB9va3ZnmRmCF8S7wNEw0QVATHXA@mail.gmail.com>
-In-Reply-To: <CAHk-=wi+-POnmS41x9SKR+CB9va3ZnmRmCF8S7wNEw0QVATHXA@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 30 Oct 2018 13:06:58 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgeJzBWjCafB3nKP0QMJCyh3rAjN+s6Z+T+5hfAT81YMw@mail.gmail.com>
-Message-ID: <CAHk-=wgeJzBWjCafB3nKP0QMJCyh3rAjN+s6Z+T+5hfAT81YMw@mail.gmail.com>
-Subject: Re: [GIT PULL] nfsd changes for 4.20
-To:     bfields@fieldses.org
-Cc:     linux-nfs@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        jlayton@redhat.com
+Received: by 2002:a0c:988d:0:0:0:0:0 with HTTP; Tue, 30 Oct 2018 13:08:54
+ -0700 (PDT)
+In-Reply-To: <CAOGqxeVfZaJWCVvjNq6_N_eQBvW-8z7NaOmRcQb6hE_c416v6A@mail.gmail.com>
+References: <CAOGqxeVfZaJWCVvjNq6_N_eQBvW-8z7NaOmRcQb6hE_c416v6A@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Tue, 30 Oct 2018 21:08:54 +0100
+X-Google-Sender-Auth: pv2tco8mjbSvl20gHyF3lxxk040
+Message-ID: <CAK8P3a3M5ppNKwthz5NcCrXc74r1aG9aJhQXzaP-Fa5a81U8yw@mail.gmail.com>
+Subject: Re: [PATCH V2 4/6] usb: ohci-platform: Add support for Broadcom STB SoC's
+To:     Alan Cooper <alcooperx@gmail.com>
+Cc:     ": Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Alban Bedel <albeu@free.fr>, Alex Elder <elder@linaro.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Avi Fishman <avifishman70@gmail.com>,
+        bcm-kernel-feedback-list@broadcom.com,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        David Miller <davem@davemloft.net>,
+        DTML <devicetree@vger.kernel.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        gregkh <gregkh@linuxfoundation.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        James Hogan <jhogan@kernel.org>,
+        Jianguo Sun <sunjianguo1@huawei.com>,
+        Johan Hovold <johan@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Rishabh Bhatnagar <rishabhb@codeaurora.org>,
+        Rob Herring <robh+dt@kernel.org>, Roger Quadros <rogerq@ti.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 12:55 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On 10/30/18, Alan Cooper <alcooperx@gmail.com> wrote:
+>> On 10/24/18 3:11 AM, Arnd Bergmann wrote:
+>>
+>> On Wed, Oct 17, 2018 at 11:30 PM Al Cooper <alcooperx@gmail.com> wrote:
+>>
+>> Add support for Broadcom STB SoC's to the ohci platform driver.
+>>
+>> Signed-off-by: Al Cooper <alcooperx@gmail.com>
+>> ---
+>>  drivers/usb/host/ohci-platform.c | 35
+>> +++++++++++++++++++++++++++++------
+>>  include/linux/usb/ohci_pdriver.h |  1 +
+>>  2 files changed, 30 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/usb/host/ohci-platform.c
+> b/drivers/usb/host/ohci-platform.c
+>> index 65a1c3fdc88c..363d6fa676a5 100644
+>> --- a/drivers/usb/host/ohci-platform.c
+>> +++ b/drivers/usb/host/ohci-platform.c
+>> @@ -22,6 +22,7 @@
+>>  #include <linux/module.h>
+>>  #include <linux/err.h>
+>>  #include <linux/of.h>
+>> +#include <linux/of_device.h>
+>>  #include <linux/platform_device.h>
+>>  #include <linux/pm_runtime.h>
+>>  #include <linux/reset.h>
+>> @@ -99,12 +100,24 @@ static int ohci_platform_probe(struct
+> platform_device *dev)
+>>         if (usb_disabled())
+>>                 return -ENODEV;
+>>
+>> -       /*
+>> -        * Use reasonable defaults so platforms don't have to provide
+> these
+>> -        * with DT probing on ARM.
+>> -        */
+>> -       if (!pdata)
+>> -               pdata = &ohci_platform_defaults;
+>> +       if (!pdata) {
+>> +               const struct usb_ohci_pdata *match_pdata;
+>> +
+>> +               match_pdata = of_device_get_match_data(&dev->dev);
+>> +               if (match_pdata) {
+>> +                       pdata = devm_kzalloc(&dev->dev, sizeof(*pdata),
+>> +                                            GFP_KERNEL);
+>> +                       if (!pdata)
+>> +                               return -ENOMEM;
+>> +                       *pdata = *match_pdata;
+>>
+>> It looks like you copy the const pdata to get a non-const version.
+>> Have you tried
+>> propagating the 'const' modifier so that users can rely on that here?
 >
-> Pulled,
+> The problem is that the const pdata from of_device_get_match() needs to be
+> saved in device->platform_data which is not a const pointer (and can't be
+> changed). How can I propagate the "const" to solve the problem?
 
-Oh, I take that back. Semantic conflict with locking name change
-(recv_lock -> queue_lock) and new code in
+Ah, I see your problem, and unfortunately don't have an easy answer.
 
-   net/sunrpc/xprtrdma/svc_rdma_backchannel.c
+You could split up the structure between a constant part and a non-constant
+part, and have the latter be what gets put into the platform_data, but that
+wouldn't really be much nicer than what you have here.
 
-exposed by my build test.
+You could use devm_kmemdup() to save a few lines to simplify your
+code without any other changes maybe, but it doesn't solve the
+fact that the mismatch between platform_data being non-const and
+of_match_data being const is a bit ugly.
 
-And looking around, it was reported in linux-next, but you didn't
-mention it, which kind of makes the whole reporting pointless.
-
-Guys, what is the point of linux-next if you then don't *react* to it?
-The correct reaction is to say during the merge window that "hey,
-linux-next showed this issue", just so that I know about it and it
-doesn't take me by surprise.
-
-Yes, my normal build tests caught it, and I've fixed up my merge, but
-this isn't how things are supposed to work.
-
-                      Linus
+        Arnd
