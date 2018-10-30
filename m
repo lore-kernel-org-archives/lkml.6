@@ -2,92 +2,111 @@ Return-Path: <SRS0=BpFy=NK=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91750C6786F
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FE20C6786F
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:00:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50C0320823
-	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:00:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ngqvoVqC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50C0320823
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3037C2080A
+	for <linux-kernel@archiver.kernel.org>; Tue, 30 Oct 2018 15:00:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3037C2080A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727543AbeJ3XyU (ORCPT
+        id S1727581AbeJ3Xyf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 30 Oct 2018 19:54:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39900 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726721AbeJ3XyT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 30 Oct 2018 19:54:19 -0400
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD1F62080A
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 15:00:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1540911631;
-        bh=Hc+hlHS3aRqyDEd1NfDRRTBYE0yYIaFyC57wsxwYOpI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ngqvoVqCSBhB+J5HbBcWWUBK++pQ7yhgMHjacsF9SHSWm98yElwMezH2HEbqNrvIN
-         xsAj1QZtfMb2l2gNhvuMSHa0mzuHKvm6k3Sj89o/SFRldzQFjp7QphU8jP5/XtXsaT
-         UMgj5jzxAphg3mWcQOTkBMB1FnD9hjPynN6ToN6M=
-Received: by mail-wm1-f50.google.com with SMTP id q12-v6so8938664wmq.0
-        for <linux-kernel@vger.kernel.org>; Tue, 30 Oct 2018 08:00:30 -0700 (PDT)
-X-Gm-Message-State: AGRZ1gJ6rYa1itpYkvQB4+2qLAPoBU1zrEZoIq1jCZdlApPSchmefN46
-        fjQFMWfu1SMfRG843KG1wOdO8O2LQiUvlX9r01oXyw==
-X-Google-Smtp-Source: AJdET5eADw3llxB/QBHgPe0GjVPIR6TXmPb0lrHJDbFObJY6D6ehsaXkO7rrxhzxm2c5cV7NAU0kXA4F9DCdZ77Dv7M=
-X-Received: by 2002:a1c:b20b:: with SMTP id b11-v6mr2081584wmf.64.1540911629267;
- Tue, 30 Oct 2018 08:00:29 -0700 (PDT)
+        Tue, 30 Oct 2018 19:54:35 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:51706 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1727545AbeJ3Xyf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 30 Oct 2018 19:54:35 -0400
+Received: (qmail 4836 invoked by uid 2102); 30 Oct 2018 11:00:46 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 30 Oct 2018 11:00:46 -0400
+Date:   Tue, 30 Oct 2018 11:00:46 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Mathias Nyman <mathias.nyman@linux.intel.com>
+cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] USB: Don't enable LPM if it's already enabled
+In-Reply-To: <c5d72c60-c13c-8801-26d5-2fe8ab48d98c@linux.intel.com>
+Message-ID: <Pine.LNX.4.44L0.1810301058540.1515-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-References: <20180905193738.19325-1-robh@kernel.org> <20180905193738.19325-2-robh@kernel.org>
- <874ld3jz6v.fsf@concordia.ellerman.id.au> <871s87jz3g.fsf@concordia.ellerman.id.au>
-In-Reply-To: <871s87jz3g.fsf@concordia.ellerman.id.au>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 30 Oct 2018 10:00:17 -0500
-X-Gmail-Original-Message-ID: <CABGGisw_bd+bJedZ_T2e-dxmRnXf2N_gGBZj8u+QVGQxj_gc+Q@mail.gmail.com>
-Message-ID: <CABGGisw_bd+bJedZ_T2e-dxmRnXf2N_gGBZj8u+QVGQxj_gc+Q@mail.gmail.com>
-Subject: Re: [PATCH 01/21] of: Add cpu node iterator for_each_of_cpu_node()
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     devicetree@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org,
-        Frank Rowand <frowand.list@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 9:20 AM Michael Ellerman <mpe@ellerman.id.au> wrote:
->
-> Michael Ellerman <mpe@ellerman.id.au> writes:
-> > Hi Rob,
-> >
-> > Sorry I missed this when you posted it.
-> >
-> > Rob Herring <robh@kernel.org> writes:
-> >> Iterating thru cpu nodes is a common pattern. Create a common iterator
-> >> which can find child nodes either by node name or device_type == cpu.
-> >> Using the former will allow for eventually dropping device_type
-> >> properties which are deprecated for FDT.
-> >
-> > Device trees we see on powerpc generally don't (never?) use "cpu" as the
-> > node name for CPU nodes. And many of those device trees come from
-> > firmware, so we can't update them.
-> >
-> > So dropping support for device_type is a non-starter from our POV.
->
-> ps. presumably that's what you meant by deprecated *for FDT*.
+On Tue, 30 Oct 2018, Mathias Nyman wrote:
 
-Right.
+> On 30.10.2018 07:54, Kai-Heng Feng wrote:
+> > USB Bluetooth controller QCA ROME (0cf3:e007) sometimes stops working
+> > after S3:
+> > [ 165.110742] Bluetooth: hci0: using NVM file: qca/nvm_usb_00000302.bin
+> > [ 168.432065] Bluetooth: hci0: Failed to send body at 4 of 1953 (-110)
+> > 
+> > After some experiments, I found that disabling LPM can workaround the
+> > issue.
+> > 
+> > On some platforms, the USB power is cut during S3, so the driver uses
+> > reset-resume to resume the device. During port resume, LPM gets enabled
+> > twice, by usb_reset_and_verify_device() and usb_port_resume().
+> > 
+> > So let's enable LPM for just once, as this solves the issue for the
+> > device in question.
+> > 
+> > Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+> > ---
+> >   drivers/usb/core/driver.c | 3 ++-
+> >   1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
+> > index 53564386ed57..e11d2eac76b6 100644
+> > --- a/drivers/usb/core/driver.c
+> > +++ b/drivers/usb/core/driver.c
+> > @@ -1901,7 +1901,8 @@ int usb_set_usb2_hardware_lpm(struct usb_device *udev, int enable)
+> >   	struct usb_hcd *hcd = bus_to_hcd(udev->bus);
+> >   	int ret = -EPERM;
+> >   
+> > -	if (enable && !udev->usb2_hw_lpm_allowed)
+> > +	if (enable && !udev->usb2_hw_lpm_allowed ||
+> > +	    udev->usb2_hw_lpm_enabled == enable)
+> >   		return 0;
+> >   
+> >   	if (hcd->driver->set_usb2_hw_lpm) {
+> > 
+> 
+> Something like that would probably work.
+> 
+> Would it make sense to skip USB2 hw LPM enabling in usb_port_resume() if
+> port was just reset (and thus LPM enabled)?
+> 
+> something like this:
+> 
+> --- a/drivers/usb/core/hub.c
+> +++ b/drivers/usb/core/hub.c
+> @@ -3520,7 +3520,7 @@ int usb_port_resume(struct usb_device *udev, pm_message_t msg)
+>                  hub_port_logical_disconnect(hub, port1);
+>          } else  {
+>                  /* Try to enable USB2 hardware LPM */
+> -               if (udev->usb2_hw_lpm_capable == 1)
+> +               if (udev->usb2_hw_lpm_capable == 1 && !udev->reset_resume)
+>                          usb_set_usb2_hardware_lpm(udev, 1);
+>   
+>                  /* Try to enable USB3 LTM */
 
-> But anyway just wanted to make sure we are on the same page.
+Why not simply test whether udev->usb2_hw_lpm_enabled is already true?
 
-Yes, I was aware at least older powerpc DTs don't use 'cpu' for node names.
+		if (udev->usb2_hw_lpm_capable == 1 &&
+				!udev->usb2_hw_lpm_enabled)
 
-Rob
+Or even put this extra test into usb_set_usb2_hardware_lpm().
+
+Alan Stern
+
